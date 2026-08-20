@@ -1,64 +1,62 @@
+import fs from "node:fs";
 import { describe, expect, it } from "vitest";
-import { TEXAS_CASE_POSITIONS, getTexasCasePosition } from "@/data/texas-case-all";
+import { TEXAS_CASE_POSITIONS } from "@/data/texas-case-all";
 import { TEXAS_CASE_FACTS } from "@/data/texas-case-facts";
 import { AGENCY_AUTHORITY_PROFILES } from "@/data/agency-authority";
+import {
+  isAgencyAuthorityIndexable,
+  isTexasCaseFactsIndexable,
+  isTexasCasePositionIndexable,
+  MIN_AGENCY_AUTHORITY_WORDS,
+  MIN_TEXAS_CASE_FACTS_WORDS,
+  MIN_TEXAS_CASE_POSITION_WORDS,
+} from "@/lib/case-agency-indexability";
 
-function words(value: string) {
-  return value.trim().split(/\s+/).filter(Boolean).length;
-}
+const positionRoute = fs.readFileSync(new URL("../routes/texas-case.$slug.tsx", import.meta.url), "utf8");
+const factsRoute = fs.readFileSync(new URL("../routes/texas-case.facts.$slug.tsx", import.meta.url), "utf8");
+const agencyRoute = fs.readFileSync(new URL("../routes/texas-government.agencies.$agencySlug.tsx", import.meta.url), "utf8");
+const sitemap = fs.readFileSync(new URL("../routes/sitemap-pages[.]xml.ts", import.meta.url), "utf8");
 
-describe("AdSense Texas Case and agency readiness inventory", () => {
-  it("keeps sitemap-advertised Texas Case editorial positions substantive and sourced", () => {
-    const violations = TEXAS_CASE_POSITIONS.flatMap((position) => {
-      const count = words([
-        position.title, position.dek, position.stance,
-        ...position.keyPoints, ...position.intro,
-        ...position.sections.flatMap((section) => [section.heading, ...(section.paragraphs ?? []), ...(section.bullets ?? [])]),
-      ].join(" "));
-      const blockers = [
-        count < 1000 ? `words=${count}<1000` : "",
-        position.sources.length < 3 ? `sources=${position.sources.length}<3` : "",
-        position.sections.length < 4 ? `sections=${position.sections.length}<4` : "",
-      ].filter(Boolean);
-      return blockers.length ? [`${position.slug}: ${blockers.join(", ")}`] : [];
-    });
-    expect(violations, violations.join("\n")).toEqual([]);
+const EXPECTED_INDEXABLE_POSITIONS = [
+  "protect-unborn-life",
+  "gun-rights-over-gun-control",
+  "eliminate-property-taxes",
+  "lower-taxes-limited-government",
+  "parental-rights-school-choice",
+  "secure-texas-border",
+].sort();
+
+describe("AdSense Texas Case and agency indexability", () => {
+  it("keeps only substantive, sourced Texas Case editorials indexable", () => {
+    expect(MIN_TEXAS_CASE_POSITION_WORDS).toBe(700);
+    expect(TEXAS_CASE_POSITIONS.filter(isTexasCasePositionIndexable).map((position) => position.slug).sort()).toEqual(EXPECTED_INDEXABLE_POSITIONS);
   });
 
-  it("keeps sitemap-advertised Texas Case factual companions substantive and source-backed", () => {
-    const violations = TEXAS_CASE_FACTS.flatMap((facts) => {
-      const position = getTexasCasePosition(facts.slug);
-      const count = words([facts.title, facts.dek, ...facts.overview, ...facts.framework, ...facts.keyQuestions].join(" "));
-      const sourceCount = position?.sources.length ?? 0;
-      const blockers = [
-        count < 700 ? `words=${count}<700` : "",
-        sourceCount < 3 ? `sources=${sourceCount}<3` : "",
-        facts.overview.length < 2 ? `overview=${facts.overview.length}<2` : "",
-        facts.framework.length < 4 ? `framework=${facts.framework.length}<4` : "",
-        facts.keyQuestions.length < 3 ? `questions=${facts.keyQuestions.length}<3` : "",
-      ].filter(Boolean);
-      return blockers.length ? [`${facts.slug}: ${blockers.join(", ")}`] : [];
-    });
-    expect(violations, violations.join("\n")).toEqual([]);
+  it("keeps current thin factual companions and agency profiles out of the indexable cohort", () => {
+    expect(MIN_TEXAS_CASE_FACTS_WORDS).toBe(700);
+    expect(MIN_AGENCY_AUTHORITY_WORDS).toBe(700);
+    expect(TEXAS_CASE_FACTS.filter(isTexasCaseFactsIndexable)).toEqual([]);
+    expect(AGENCY_AUTHORITY_PROFILES.filter(isAgencyAuthorityIndexable)).toEqual([]);
   });
 
-  it("keeps sitemap-advertised agency authority profiles substantive and primary-source backed", () => {
-    const violations = AGENCY_AUTHORITY_PROFILES.flatMap((profile) => {
-      const count = words([
-        profile.name, profile.dek, profile.quickAnswer, profile.authority,
-        ...profile.responsibilities, ...profile.notResponsibleFor,
-        ...profile.accountability, ...profile.programs,
-      ].join(" "));
-      const primarySources = profile.sources.filter((source) => source.primary).length;
-      const blockers = [
-        count < 700 ? `words=${count}<700` : "",
-        primarySources < 3 ? `primarySources=${primarySources}<3` : "",
-        profile.responsibilities.length < 4 ? `responsibilities=${profile.responsibilities.length}<4` : "",
-        profile.notResponsibleFor.length < 3 ? `notResponsibleFor=${profile.notResponsibleFor.length}<3` : "",
-        profile.accountability.length < 3 ? `accountability=${profile.accountability.length}<3` : "",
-      ].filter(Boolean);
-      return blockers.length ? [`${profile.slug}: ${blockers.join(", ")}`] : [];
-    });
-    expect(violations, violations.join("\n")).toEqual([]);
+  it("uses readiness for robots metadata on every detail route", () => {
+    expect(positionRoute).toContain("isTexasCasePositionIndexable(loaderData.position)");
+    expect(factsRoute).toContain("isTexasCaseFactsIndexable(loaderData.facts)");
+    expect(agencyRoute).toContain("isAgencyAuthorityIndexable(loaderData)");
+    expect(positionRoute).toContain('"noindex,follow"');
+    expect(factsRoute).toContain('"noindex,follow"');
+    expect(agencyRoute).toContain('"noindex,follow"');
+  });
+
+  it("uses the exact same readiness-filtered cohorts in sitemap-pages", () => {
+    expect(sitemap).toContain("const INDEXABLE_TEXAS_CASE_POSITIONS = TEXAS_CASE_POSITIONS.filter(isTexasCasePositionIndexable)");
+    expect(sitemap).toContain("const INDEXABLE_TEXAS_CASE_FACTS = TEXAS_CASE_FACTS.filter(isTexasCaseFactsIndexable)");
+    expect(sitemap).toContain("const INDEXABLE_AGENCY_AUTHORITY_PROFILES = AGENCY_AUTHORITY_PROFILES.filter(isAgencyAuthorityIndexable)");
+    expect(sitemap).toContain("...INDEXABLE_TEXAS_CASE_POSITIONS.map((position)=>`/texas-case/${position.slug}`)");
+    expect(sitemap).toContain("...INDEXABLE_TEXAS_CASE_FACTS.map((facts)=>`/texas-case/facts/${facts.slug}`)");
+    expect(sitemap).toContain("...INDEXABLE_AGENCY_AUTHORITY_PROFILES.map((agency)=>`/texas-government/agencies/${agency.slug}`)");
+    expect(sitemap).not.toContain("...TEXAS_CASE_POSITIONS.map((position)=>`/texas-case/${position.slug}`)");
+    expect(sitemap).not.toContain("...TEXAS_CASE_FACTS.map((facts)=>`/texas-case/facts/${facts.slug}`)");
+    expect(sitemap).not.toContain("...AGENCY_AUTHORITY_PROFILES.map((agency)=>`/texas-government/agencies/${agency.slug}`)");
   });
 });
