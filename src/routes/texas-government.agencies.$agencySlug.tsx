@@ -1,13 +1,14 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { getAgencyAuthorityProfile } from "@/data/agency-authority";
+import { upgradeAgencyAuthorityProfile } from "@/data/agency-authority-upgrades";
 import { buildSeo, SITE_URL } from "@/lib/seo";
 import { isAgencyAuthorityIndexable } from "@/lib/agency-authority-indexability";
 
 export const Route = createFileRoute("/texas-government/agencies/$agencySlug")({
   loader: ({ params }) => {
-    const profile = getAgencyAuthorityProfile(params.agencySlug);
-    if (!profile) throw notFound();
-    return profile;
+    const baseProfile = getAgencyAuthorityProfile(params.agencySlug);
+    if (!baseProfile) throw notFound();
+    return upgradeAgencyAuthorityProfile(baseProfile);
   },
   head: ({ loaderData }) => {
     if (!loaderData) return { meta: [{ name: "robots", content: "noindex,follow" }] };
