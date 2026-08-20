@@ -1,5 +1,6 @@
 import type { AgencyAuthorityProfile } from "@/data/agency-authority";
 import { upgradeAgencyAuthorityProfile } from "@/data/agency-authority-upgrades";
+import { getAgencyAuthoritySupplement } from "@/data/agency-authority-supplements";
 
 export const MIN_AGENCY_AUTHORITY_WORDS = 700;
 
@@ -22,6 +23,7 @@ export function agencyAuthorityWordCount(profile: AgencyAuthorityProfile) {
     ...effective.notResponsibleFor,
     ...effective.accountability,
     ...effective.programs,
+    ...getAgencyAuthoritySupplement(effective.slug),
     ...effective.sources.map((source) => source.label),
   ].join(" "));
 }
