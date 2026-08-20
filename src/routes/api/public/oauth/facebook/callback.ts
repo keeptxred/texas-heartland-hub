@@ -3,6 +3,7 @@ import { createHmac, timingSafeEqual } from "crypto";
 
 const GRAPH_VERSION = "v21.0";
 const KEEP_TX_RED_PAGE_ID = "1211420085383129";
+const TEXASDEFINED_PAGE_ID = "61592643126518";
 
 type FacebookPage = { id: string; name: string; access_token?: string };
 
@@ -51,6 +52,41 @@ function safePageSummary(pages: FacebookPage[] | undefined) {
   }));
 }
 
+async function upsertPageConnection(
+  supabaseAdmin: any,
+  platform: "facebook" | "facebook_texasdefined",
+  page: FacebookPage,
+) {
+  const { data: existing, error: lookupError } = await supabaseAdmin
+    .from("social_connections")
+    .select("id")
+    .eq("platform", platform)
+    .maybeSingle();
+  if (lookupError) throw new Error(lookupError.message);
+
+  const row = {
+    platform,
+    account_name: page.name,
+    account_id: page.id,
+    access_token: page.access_token,
+    connection_status: "CONNECTED",
+    token_expires_at: null as string | null,
+    updated_at: new Date().toISOString(),
+  };
+
+  console.log("[fb-oauth-debug] storing facebook connection", {
+    provider: platform,
+    page_id: row.account_id,
+    page_name: row.account_name,
+    has_page_access_token: Boolean(row.access_token),
+  });
+
+  const mutation = existing?.id
+    ? await supabaseAdmin.from("social_connections").update(row).eq("id", existing.id)
+    : await supabaseAdmin.from("social_connections").insert(row);
+  if (mutation.error) throw new Error(mutation.error.message);
+}
+
 export const Route = createFileRoute("/api/public/oauth/facebook/callback")({
   server: {
     handlers: {
@@ -72,7 +108,6 @@ export const Route = createFileRoute("/api/public/oauth/facebook/callback")({
         const origin = `${url.protocol}//${url.host}`;
         const redirectUri = `${origin}/api/public/oauth/facebook/callback`;
 
-        // 1. Exchange code -> short-lived user token
         const tokenUrl = new URL(`https://graph.facebook.com/${GRAPH_VERSION}/oauth/access_token`);
         tokenUrl.searchParams.set("client_id", appId);
         tokenUrl.searchParams.set("client_secret", appSecret);
@@ -84,7 +119,6 @@ export const Route = createFileRoute("/api/public/oauth/facebook/callback")({
           return htmlResult("Token exchange failed", tokenJson.error?.message ?? "Unknown error", false);
         }
 
-        // 2. Exchange for long-lived user token (~60 days)
         const llUrl = new URL(`https://graph.facebook.com/${GRAPH_VERSION}/oauth/access_token`);
         llUrl.searchParams.set("grant_type", "fb_exchange_token");
         llUrl.searchParams.set("client_id", appId);
@@ -94,8 +128,6 @@ export const Route = createFileRoute("/api/public/oauth/facebook/callback")({
         const llJson = (await llRes.json()) as { access_token?: string; expires_in?: number };
         const userToken = llJson.access_token ?? tokenJson.access_token;
 
-        // 3. Fetch pages the user manages (page tokens are long-lived when derived from long-lived user token)
-        // DEBUG: inspect what the user actually granted and which pages/business assets FB returns.
         try {
           const [permsRes, meRes, businessesRes] = await Promise.all([
             fetch(`https://graph.facebook.com/${GRAPH_VERSION}/me/permissions?access_token=${encodeURIComponent(userToken)}`),
@@ -111,6 +143,7 @@ export const Route = createFileRoute("/api/public/oauth/facebook/callback")({
         } catch (e) {
           console.error("[fb-oauth-debug] permission probe failed", e);
         }
+
         const pagesRes = await fetch(
           `https://graph.facebook.com/${GRAPH_VERSION}/me/accounts?fields=id,name,access_token&access_token=${encodeURIComponent(userToken)}`,
         );
@@ -130,66 +163,62 @@ export const Route = createFileRoute("/api/public/oauth/facebook/callback")({
         if (pagesJson.data.length === 0) {
           return htmlResult(
             "No Facebook Pages available",
-            "This account does not manage any Pages, or you did not grant Page access. Re-run the flow and select at least one Page. (Debug logs written server-side — check server function logs for [fb-oauth-debug].)",
+            "This account does not manage any Pages, or you did not grant Page access. Re-run the flow and select the Pages you want to publish to.",
             false,
           );
         }
-        const page = pagesJson.data.find((p) => p.id === KEEP_TX_RED_PAGE_ID);
-        console.log("[fb-oauth-debug] selected page", {
-          expected_page_id: KEEP_TX_RED_PAGE_ID,
-          selected_page_id: page?.id ?? null,
-          selected_page_name: page?.name ?? null,
-          has_page_access_token: Boolean(page?.access_token),
+
+        const keepTxRedPage = pagesJson.data.find((page) => page.id === KEEP_TX_RED_PAGE_ID);
+        const texasDefinedPage = pagesJson.data.find((page) => page.id === TEXASDEFINED_PAGE_ID);
+        console.log("[fb-oauth-debug] selected pages", {
+          keep_tx_red_page_id: keepTxRedPage?.id ?? null,
+          keep_tx_red_page_name: keepTxRedPage?.name ?? null,
+          keep_tx_red_has_token: Boolean(keepTxRedPage?.access_token),
+          texasdefined_page_id: texasDefinedPage?.id ?? null,
+          texasdefined_page_name: texasDefinedPage?.name ?? null,
+          texasdefined_has_token: Boolean(texasDefinedPage?.access_token),
         });
-        if (!page) {
+
+        if (!keepTxRedPage) {
           return htmlResult(
             "Keep TX Red Page not available",
-            "Facebook did not return the Keep TX Red Page for this authorization. Reconnect and ensure the Page is selected in the Meta consent screen.",
+            "Facebook did not return the Keep TX Red Page for this authorization. Reconnect and ensure the Keep TX Red Page is selected in the Meta consent screen.",
             false,
           );
         }
-        if (!page.access_token) {
+        if (!keepTxRedPage.access_token) {
           return htmlResult(
-            "Missing Page access token",
+            "Missing Keep TX Red Page access token",
             "Facebook returned the Keep TX Red Page but did not include a Page access token for publishing.",
             false,
           );
         }
 
-        // 4. Upsert connection row
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const { data: existing } = await supabaseAdmin
-          .from("social_connections")
-          .select("id")
-          .ilike("platform", "facebook")
-          .maybeSingle();
+        try {
+          await upsertPageConnection(supabaseAdmin, "facebook", keepTxRedPage);
+          if (texasDefinedPage?.access_token) {
+            await upsertPageConnection(supabaseAdmin, "facebook_texasdefined", texasDefinedPage);
+          }
+        } catch (connectionError) {
+          return htmlResult(
+            "Facebook connection could not be saved",
+            connectionError instanceof Error ? connectionError.message : String(connectionError),
+            false,
+          );
+        }
 
-        const row = {
-          platform: "facebook",
-          account_name: page.name,
-          account_id: page.id,
-          access_token: page.access_token,
-          connection_status: "CONNECTED",
-          token_expires_at: null as string | null,
-          updated_at: new Date().toISOString(),
-        };
-
-        console.log("[fb-oauth-debug] storing facebook connection", {
-          provider: "facebook",
-          page_id: row.account_id,
-          page_name: row.account_name,
-          has_page_access_token: Boolean(row.access_token),
-        });
-
-        if (existing?.id) {
-          await supabaseAdmin.from("social_connections").update(row).eq("id", existing.id);
-        } else {
-          await supabaseAdmin.from("social_connections").insert(row);
+        if (texasDefinedPage?.access_token) {
+          return htmlResult(
+            "Facebook connected",
+            `Linked Pages: <strong>${keepTxRedPage.name}</strong> and <strong>${texasDefinedPage.name}</strong>. You can close this tab and return to Admin.`,
+            true,
+          );
         }
 
         return htmlResult(
-          "Facebook connected",
-          `Linked Page: <strong>${page.name}</strong>. You can close this tab and return to Admin.`,
+          "Keep TX Red connected",
+          `Linked Page: <strong>${keepTxRedPage.name}</strong>. TexasDefined was not returned by Meta, so TexasDefined auto-posting will remain paused until you reconnect and select that Page too.`,
           true,
         );
       },
