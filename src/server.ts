@@ -49,8 +49,19 @@ const LOVABLE_IMAGE_GATEWAY = "https://ai.gateway.lovable.dev/v1/images/generati
 const GEMINI_INTERACTIONS = "https://generativelanguage.googleapis.com/v1beta/interactions";
 const GEMINI_IMAGE_MIME_TYPE = "image/jpeg";
 const CLOUDFLARE_TEXT_MODEL = "@cf/meta/llama-3.1-8b-instruct-fast";
+const CANONICAL_HOST = "keeptxred.com";
 const nativeFetch = globalThis.fetch.bind(globalThis);
 let directAiFetchInstalled = false;
+
+export function canonicalHostRedirect(request: Request): Response | null {
+  const url = new URL(request.url);
+  if (url.hostname !== `www.${CANONICAL_HOST}`) return null;
+
+  url.protocol = "https:";
+  url.hostname = CANONICAL_HOST;
+  url.port = "";
+  return Response.redirect(url.toString(), 308);
+}
 
 function directGeminiApiKey(): string | undefined {
   return process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GOOGLE_AI_API_KEY;
@@ -417,6 +428,9 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
 
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    const canonicalRedirect = canonicalHostRedirect(request);
+    if (canonicalRedirect) return canonicalRedirect;
+
     try {
       installDirectAiFetch();
       const handler = await getServerEntry();
