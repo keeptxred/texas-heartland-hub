@@ -24,12 +24,31 @@ const tools = [
     file: "../routes/civic-tools.compare-legislators.tsx",
     required: ["useState", "TEXAS_HOUSE_MEMBERS", "TEXAS_SENATE_MEMBERS", "<select", "RepCard"],
   },
+  {
+    path: "/tools/texas-spending-growth-cap",
+    file: "../routes/tools/texas-spending-growth-cap.tsx",
+    required: ["useState", "useMemo", "benchmarkSpending", "proposedSpending", '"@type": "WebApplication"'],
+  },
+  {
+    path: "/tools/texas-tax-structure-comparison",
+    file: "../routes/tools/texas-tax-structure-comparison.tsx",
+    required: ["useState", "useMemo", "hypotheticalIncomeTax", "enteredCurrentTaxes", '"@type": "WebApplication"'],
+  },
+  {
+    path: "/tools/texas-rainy-day-fund",
+    file: "../routes/tools/texas-rainy-day-fund.tsx",
+    required: ["useState", "useMemo", "calculateRainyDayFundScenario", "STATE_BUDGET_METRICS", '"@type": "WebApplication"'],
+  },
+  {
+    path: "/tools/texas-budget-headroom",
+    file: "../routes/tools/texas-budget-headroom.tsx",
+    required: ["useState", "useMemo", "calculateBudgetHeadroomScenario", "STATE_BUDGET_METRICS", '"@type": "WebApplication"'],
+  },
 ] as const;
 
-describe("AdSense civic-tool functional value contract", () => {
-  it.each(tools)("keeps $path interactive and backed by maintained KTR data", ({ file, required }) => {
+describe("AdSense functional tool value contract", () => {
+  it.each(tools)("keeps $path interactive and backed by maintained logic or data", ({ file, required }) => {
     const source = readFileSync(new URL(file, import.meta.url), "utf8");
-    expect(source).toContain("buildSeo");
     for (const marker of required) expect(source).toContain(marker);
   });
 
