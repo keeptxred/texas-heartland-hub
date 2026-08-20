@@ -9,6 +9,11 @@ describe("featured image retry budget", () => {
     expect(source).not.toContain("attempt <= 3");
   });
 
+  it("uses the rejection reason to steer the one corrected composition", () => {
+    expect(source).toContain("Previous attempt rejected: ${verdict.reason}");
+    expect(source).toContain("buildNegativeImagePrompt(subject, verdict.reason)");
+  });
+
   it("still validates both the initial and corrected image", () => {
     expect(source).toContain("let verdict = await validateImageMatchesArticle(bytes, subject)");
     expect(source).toContain("verdict = await validateImageMatchesArticle(bytes, subject)");
