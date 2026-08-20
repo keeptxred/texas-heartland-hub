@@ -2,6 +2,7 @@ import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
+import { normalizeJsonContent } from "./lib/ai-json-normalization";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -253,18 +254,6 @@ async function directGeminiVisionResponse(
   });
 }
 
-function normalizeCloudflareJsonContent(rawContent: unknown): string | null {
-  if (rawContent && typeof rawContent === "object") return JSON.stringify(rawContent);
-  if (typeof rawContent !== "string") return null;
-  const content = rawContent.trim();
-  if (!content) return null;
-  try {
-    return JSON.stringify(JSON.parse(content));
-  } catch {
-    return null;
-  }
-}
-
 async function directCloudflareTextResponse(
   body: OpenAiCompatBody,
   credentials: { accountId: string; apiToken: string },
@@ -332,7 +321,7 @@ async function directCloudflareTextResponse(
       continue;
     }
 
-    const content = normalizeCloudflareJsonContent(payload?.result?.response);
+    const content = normalizeJsonContent(payload?.result?.response);
     if (content) {
       return Response.json({
         choices: [{ message: { role: "assistant", content } }],
