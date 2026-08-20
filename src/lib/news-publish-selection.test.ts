@@ -28,6 +28,8 @@ describe("news publish candidate selection", () => {
   it("recognizes repeated data-center compliance releases as one series", () => {
     expect(releaseSeriesKey("Governor Abbott Announces Amazon, Lancium And Cipher Digital Commit To Comply With His Data Center Standards"))
       .toBe("abbott-data-center-standards");
+    expect(releaseSeriesKey("Governor Abbott Announces Power House Data Centers, CoreWeave And Emergent Data Centers Commit To Comply With His Data Centers Standards"))
+      .toBe("abbott-data-center-standards");
     expect(releaseSeriesKey("Texas counties sue over election security funding conditions")).toBeNull();
   });
 
