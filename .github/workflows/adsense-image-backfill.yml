@@ -70,7 +70,9 @@ jobs:
             exit 0
           fi
 
-          max_per_run=24
+          # Keep recurring Cloudflare AI spend bounded while still clearing the
+          # newest missing-image backlog over successive four-hour runs.
+          max_per_run=8
           mapfile -t slugs < <(jq -r --argjson max "$max_per_run" '.slugs[:$max][]' /tmp/adsense-image-dry.json)
           failures=0
           processed=0
