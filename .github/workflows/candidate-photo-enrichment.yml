@@ -4,6 +4,16 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "30 13 * * 1"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/candidate-photo-enrichment.yml"
+      - "scripts/elections/merge-approved-candidate-photo-assets.mjs"
+      - "scripts/elections/apply-direct-web-photo-findings.mjs"
+      - "scripts/elections/apply-verified-photo-findings-2026-07-31.mjs"
+      - "scripts/elections/apply-automation-verified-photo-findings.mjs"
+      - "src/data/elections/2026/candidate-photo-assets.json"
 
 permissions:
   contents: write
