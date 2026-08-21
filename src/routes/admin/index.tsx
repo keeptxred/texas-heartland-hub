@@ -10,6 +10,7 @@ import { SavedPackagesPanel } from "@/components/admin/SavedPackagesPanel";
 import { BrandSettings } from "@/components/admin/BrandSettings";
 import { ReelRadarPanel } from "@/components/admin/ReelRadarPanel";
 import { ContentSourceManager } from "@/components/admin/ContentSourceManager";
+import { SourceHealthDiagnostics } from "@/components/admin/SourceHealthDiagnostics";
 import { PublishingQueuePanel } from "@/components/admin/PublishingQueuePanel";
 import { MetaConnectionManager } from "@/components/admin/MetaConnectionManager";
 import { ViralRadarPanel } from "@/components/admin/ViralRadarPanel";
@@ -294,8 +295,12 @@ function AdminDashboardPage() {
         <ReelRadarPanel />
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 pb-16">
+      <section className="mx-auto max-w-6xl px-4 pb-8">
         <ContentSourceManager />
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-16">
+        <SourceHealthDiagnostics />
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-16">
