@@ -1,8 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHmac, timingSafeEqual } from "crypto";
+import {
+  FACEBOOK_PLATFORM_KEEP_TX_RED,
+  KEEP_TX_RED_FACEBOOK_PAGE_ID,
+  facebookPlatformForPage,
+} from "@/lib/facebook-page-platform";
 
 const GRAPH_VERSION = "v21.0";
-const KEEP_TX_RED_PAGE_ID = "1211420085383129";
 
 type FacebookPage = { id: string; name: string; access_token?: string };
 
@@ -47,6 +51,7 @@ function safePageSummary(pages: FacebookPage[] | undefined) {
   return (pages ?? []).map((page) => ({
     id: page.id,
     name: page.name,
+    platform: facebookPlatformForPage(page),
     has_access_token: Boolean(page.access_token),
   }));
 }
@@ -58,33 +63,52 @@ export const Route = createFileRoute("/api/public/oauth/facebook/callback")({
         const appId = process.env.FACEBOOK_APP_ID;
         const appSecret = process.env.FACEBOOK_APP_SECRET;
         if (!appId || !appSecret) {
-          return htmlResult("Facebook not configured", "FACEBOOK_APP_ID / FACEBOOK_APP_SECRET are missing.", false);
+          return htmlResult(
+            "Facebook not configured",
+            "FACEBOOK_APP_ID / FACEBOOK_APP_SECRET are missing.",
+            false,
+          );
         }
+
         const url = new URL(request.url);
         const code = url.searchParams.get("code");
         const state = url.searchParams.get("state");
         const err = url.searchParams.get("error_description") ?? url.searchParams.get("error");
         if (err) return htmlResult("Facebook connection cancelled", String(err), false);
-        if (!code || !state) return htmlResult("Missing code or state", "The OAuth response was incomplete.", false);
+        if (!code || !state) {
+          return htmlResult("Missing code or state", "The OAuth response was incomplete.", false);
+        }
+
         const verified = verifyState(state, appSecret);
-        if (!verified.ok) return htmlResult("Invalid state", "The OAuth state failed verification. Try connecting again.", false);
+        if (!verified.ok) {
+          return htmlResult(
+            "Invalid state",
+            "The OAuth state failed verification. Try connecting again.",
+            false,
+          );
+        }
 
         const origin = `${url.protocol}//${url.host}`;
         const redirectUri = `${origin}/api/public/oauth/facebook/callback`;
 
-        // 1. Exchange code -> short-lived user token
         const tokenUrl = new URL(`https://graph.facebook.com/${GRAPH_VERSION}/oauth/access_token`);
         tokenUrl.searchParams.set("client_id", appId);
         tokenUrl.searchParams.set("client_secret", appSecret);
         tokenUrl.searchParams.set("redirect_uri", redirectUri);
         tokenUrl.searchParams.set("code", code);
         const tokenRes = await fetch(tokenUrl.toString());
-        const tokenJson = (await tokenRes.json()) as { access_token?: string; error?: { message?: string } };
+        const tokenJson = (await tokenRes.json()) as {
+          access_token?: string;
+          error?: { message?: string };
+        };
         if (!tokenRes.ok || !tokenJson.access_token) {
-          return htmlResult("Token exchange failed", tokenJson.error?.message ?? "Unknown error", false);
+          return htmlResult(
+            "Token exchange failed",
+            tokenJson.error?.message ?? "Unknown error",
+            false,
+          );
         }
 
-        // 2. Exchange for long-lived user token (~60 days)
         const llUrl = new URL(`https://graph.facebook.com/${GRAPH_VERSION}/oauth/access_token`);
         llUrl.searchParams.set("grant_type", "fb_exchange_token");
         llUrl.searchParams.set("client_id", appId);
@@ -94,23 +118,6 @@ export const Route = createFileRoute("/api/public/oauth/facebook/callback")({
         const llJson = (await llRes.json()) as { access_token?: string; expires_in?: number };
         const userToken = llJson.access_token ?? tokenJson.access_token;
 
-        // 3. Fetch pages the user manages (page tokens are long-lived when derived from long-lived user token)
-        // DEBUG: inspect what the user actually granted and which pages/business assets FB returns.
-        try {
-          const [permsRes, meRes, businessesRes] = await Promise.all([
-            fetch(`https://graph.facebook.com/${GRAPH_VERSION}/me/permissions?access_token=${encodeURIComponent(userToken)}`),
-            fetch(`https://graph.facebook.com/${GRAPH_VERSION}/me?fields=id,name&access_token=${encodeURIComponent(userToken)}`),
-            fetch(`https://graph.facebook.com/${GRAPH_VERSION}/me/businesses?access_token=${encodeURIComponent(userToken)}`),
-          ]);
-          const permsJson = await permsRes.json();
-          const meJson = await meRes.json();
-          const businessesJson = await businessesRes.json();
-          console.log("[fb-oauth-debug] /me/permissions", JSON.stringify(permsJson));
-          console.log("[fb-oauth-debug] /me", JSON.stringify(meJson));
-          console.log("[fb-oauth-debug] /me/businesses", JSON.stringify(businessesJson));
-        } catch (e) {
-          console.error("[fb-oauth-debug] permission probe failed", e);
-        }
         const pagesRes = await fetch(
           `https://graph.facebook.com/${GRAPH_VERSION}/me/accounts?fields=id,name,access_token&access_token=${encodeURIComponent(userToken)}`,
         );
@@ -118,37 +125,39 @@ export const Route = createFileRoute("/api/public/oauth/facebook/callback")({
           data?: FacebookPage[];
           error?: { message?: string };
         };
-        console.log("[fb-oauth-debug] /me/accounts", {
+        console.log("[fb-oauth] /me/accounts", {
           status: pagesRes.status,
           page_count: pagesJson.data?.length ?? 0,
           pages: safePageSummary(pagesJson.data),
           error: pagesJson.error?.message ?? null,
         });
+
         if (!pagesRes.ok || !pagesJson.data) {
-          return htmlResult("Could not list Facebook Pages", pagesJson.error?.message ?? "Unknown error", false);
+          return htmlResult(
+            "Could not list Facebook Pages",
+            pagesJson.error?.message ?? "Unknown error",
+            false,
+          );
         }
         if (pagesJson.data.length === 0) {
           return htmlResult(
             "No Facebook Pages available",
-            "This account does not manage any Pages, or you did not grant Page access. Re-run the flow and select at least one Page. (Debug logs written server-side — check server function logs for [fb-oauth-debug].)",
+            "This account does not manage any Pages, or Page access was not granted. Reconnect and select the Keep TX Red and TexasDefined Pages.",
             false,
           );
         }
-        const page = pagesJson.data.find((p) => p.id === KEEP_TX_RED_PAGE_ID);
-        console.log("[fb-oauth-debug] selected page", {
-          expected_page_id: KEEP_TX_RED_PAGE_ID,
-          selected_page_id: page?.id ?? null,
-          selected_page_name: page?.name ?? null,
-          has_page_access_token: Boolean(page?.access_token),
-        });
-        if (!page) {
+
+        const keepTxRedPage = pagesJson.data.find(
+          (page) => page.id === KEEP_TX_RED_FACEBOOK_PAGE_ID,
+        );
+        if (!keepTxRedPage) {
           return htmlResult(
             "Keep TX Red Page not available",
             "Facebook did not return the Keep TX Red Page for this authorization. Reconnect and ensure the Page is selected in the Meta consent screen.",
             false,
           );
         }
-        if (!page.access_token) {
+        if (!keepTxRedPage.access_token) {
           return htmlResult(
             "Missing Page access token",
             "Facebook returned the Keep TX Red Page but did not include a Page access token for publishing.",
@@ -156,40 +165,88 @@ export const Route = createFileRoute("/api/public/oauth/facebook/callback")({
           );
         }
 
-        // 4. Upsert connection row
+        const managedPages = pagesJson.data
+          .map((page) => ({ page, platform: facebookPlatformForPage(page) }))
+          .filter(
+            (
+              item,
+            ): item is {
+              page: FacebookPage & { access_token: string };
+              platform: NonNullable<ReturnType<typeof facebookPlatformForPage>>;
+            } => Boolean(item.platform && item.page.access_token),
+          );
+
+        if (!managedPages.some((item) => item.platform === FACEBOOK_PLATFORM_KEEP_TX_RED)) {
+          return htmlResult(
+            "Missing Keep TX Red Page token",
+            "Keep TX Red was selected, but Facebook did not provide a usable Page token.",
+            false,
+          );
+        }
+
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const { data: existing } = await supabaseAdmin
-          .from("social_connections")
-          .select("id")
-          .ilike("platform", "facebook")
-          .maybeSingle();
+        const savedNames: string[] = [];
+        for (const { page, platform } of managedPages) {
+          const { data: existing, error: lookupError } = await supabaseAdmin
+            .from("social_connections")
+            .select("id")
+            .ilike("platform", platform)
+            .order("updated_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
 
-        const row = {
-          platform: "facebook",
-          account_name: page.name,
-          account_id: page.id,
-          access_token: page.access_token,
-          connection_status: "CONNECTED",
-          token_expires_at: null as string | null,
-          updated_at: new Date().toISOString(),
-        };
+          if (lookupError) {
+            console.error("[fb-oauth] connection lookup failed", {
+              platform,
+              page_id: page.id,
+              error: lookupError.message,
+            });
+            return htmlResult(
+              "Could not save Facebook connection",
+              `Database lookup failed for ${page.name}.`,
+              false,
+            );
+          }
 
-        console.log("[fb-oauth-debug] storing facebook connection", {
-          provider: "facebook",
-          page_id: row.account_id,
-          page_name: row.account_name,
-          has_page_access_token: Boolean(row.access_token),
-        });
+          const row = {
+            platform,
+            account_name: page.name,
+            account_id: page.id,
+            access_token: page.access_token,
+            connection_status: "CONNECTED",
+            token_expires_at: null as string | null,
+            updated_at: new Date().toISOString(),
+          };
 
-        if (existing?.id) {
-          await supabaseAdmin.from("social_connections").update(row).eq("id", existing.id);
-        } else {
-          await supabaseAdmin.from("social_connections").insert(row);
+          const write = existing?.id
+            ? await supabaseAdmin.from("social_connections").update(row).eq("id", existing.id)
+            : await supabaseAdmin.from("social_connections").insert(row);
+
+          if (write.error) {
+            console.error("[fb-oauth] connection write failed", {
+              platform,
+              page_id: page.id,
+              error: write.error.message,
+            });
+            return htmlResult(
+              "Could not save Facebook connection",
+              `Database update failed for ${page.name}.`,
+              false,
+            );
+          }
+
+          savedNames.push(page.name);
+          console.log("[fb-oauth] stored Facebook Page", {
+            platform,
+            page_id: page.id,
+            page_name: page.name,
+            has_page_access_token: true,
+          });
         }
 
         return htmlResult(
           "Facebook connected",
-          `Linked Page: <strong>${page.name}</strong>. You can close this tab and return to Admin.`,
+          `Linked Pages: <strong>${savedNames.join(", ")}</strong>. You can close this tab and return to Admin.`,
           true,
         );
       },
