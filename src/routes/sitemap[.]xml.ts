@@ -111,7 +111,10 @@ export const Route = createFileRoute("/sitemap.xml")({
           { file: "sitemap-government.xml", count: GOVERNMENT_ENTITIES.length + 1 },
           { file: "sitemap-legislature.xml", count: 1 },
           { file: "sitemap-committees.xml", count: 1 },
-          { file: "sitemap-bills.xml", count: 1 },
+          // The dedicated bill endpoint remains valid because it was historically
+          // submitted directly in Search Console, but do not advertise it from the
+          // index while /bills itself is still waiting to be indexed. This prevents
+          // a second discovery path from flooding Google with database-detail URLs.
           { file: "sitemap-authors.xml", count: authorCount },
           { file: "sitemap-products.xml", count: productCount },
           { file: "sitemap-images.xml", count: imageCount },
