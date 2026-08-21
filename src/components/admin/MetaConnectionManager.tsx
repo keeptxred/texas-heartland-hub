@@ -6,9 +6,10 @@ import {
   testSocialConnection,
   facebookConnectUrl,
   type SocialConnection,
+  type SocialPlatform,
 } from "@/services/socialConnections";
 
-type PlatformKey = "facebook" | "instagram";
+type PlatformKey = SocialPlatform;
 
 const PLATFORMS: Array<{
   key: PlatformKey;
@@ -18,8 +19,14 @@ const PLATFORMS: Array<{
 }> = [
   {
     key: "facebook",
-    label: "Facebook Page",
-    placeholder: "No Facebook Page linked",
+    label: "Keep TX Red Facebook Page",
+    placeholder: "Keep TX Red Page not linked",
+    connectLabel: "Connect Facebook",
+  },
+  {
+    key: "facebook_texasdefined",
+    label: "TexasDefined Facebook Page",
+    placeholder: "TexasDefined Page not linked",
     connectLabel: "Connect Facebook",
   },
   {
@@ -72,7 +79,9 @@ export function MetaConnectionManager() {
 
   async function handleConnect(key: PlatformKey) {
     if (key === "instagram") {
-      setNotice("Instagram publishes through a linked Facebook Page. Connect Facebook first; Instagram support is coming next.");
+      setNotice(
+        "Instagram publishes through a linked Facebook Page. Connect Facebook first; Instagram support is coming next.",
+      );
       return;
     }
     window.location.href = facebookConnectUrl();
@@ -84,7 +93,7 @@ export function MetaConnectionManager() {
     const res = await disconnectSocial(key);
     setBusy(null);
     if (!res.ok) setError(res.error ?? "Disconnect failed");
-    else setNotice(`${key} disconnected.`);
+    else setNotice(`${PLATFORMS.find((platform) => platform.key === key)?.label ?? key} disconnected.`);
     refresh();
   }
 
@@ -94,7 +103,7 @@ export function MetaConnectionManager() {
     setError(null);
     const res = await testSocialConnection(key);
     setBusy(null);
-    if (res.ok) setNotice(`✓ ${key} connection works. Linked to: ${res.account}`);
+    if (res.ok) setNotice(`✓ Connection works. Linked to: ${res.account}`);
     else setError(`Test failed: ${res.error}`);
     refresh();
   }
@@ -104,7 +113,7 @@ export function MetaConnectionManager() {
       <div className="mb-4">
         <h2 className="text-xl font-bold">Social Connections</h2>
         <p className="text-sm text-neutral-600">
-          Manage Meta account connections used for future publishing. No credentials are stored yet.
+          Manage the Meta Page connections used by Keep TX Red and TexasDefined publishing.
         </p>
       </div>
 
@@ -119,13 +128,13 @@ export function MetaConnectionManager() {
         </div>
       ) : null}
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-3">
         {PLATFORMS.map((p) => {
           const row = findRow(p.key);
           const status = row?.connection_status ?? "NOT_CONNECTED";
           return (
             <div key={p.key} className="rounded border border-neutral-200 p-4">
-              <div className="mb-2 flex items-center justify-between">
+              <div className="mb-2 flex items-center justify-between gap-2">
                 <h3 className="font-semibold">{p.label}</h3>
                 {statusBadge(status)}
               </div>
