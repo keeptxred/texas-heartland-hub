@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-20T13:10:41.791Z",
+  "generatedAt": "2026-08-21T13:10:52.952Z",
   "authoritySources": [
     "Texas Secretary of State Qualified Candidate Listing",
     "Keep TX Red verified election race registry"
@@ -8642,6 +8642,26 @@
       ]
     },
     {
+      "id": "candidate-stephen-samuelson-other-race-2026-lieutenant-governor",
+      "aliases": [
+        "STEPHEN SAMUELSON",
+        "Stephen Samuelson"
+      ],
+      "party": "other",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-lieutenant-governor",
+          "electionYear": 2026,
+          "office": "Lieutenant Governor",
+          "officeLevel": "state",
+          "districtId": null,
+          "districtName": null,
+          "districtNumber": null
+        }
+      ]
+    },
+    {
       "id": "candidate-stephen-w-stanley-republican-race-2026-texas-house-113",
       "aliases": [
         "STEPHEN W. STANLEY",
@@ -9462,6 +9482,26 @@
         "Valencia Williams"
       ],
       "party": "independent",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-us-house-18",
+          "electionYear": 2026,
+          "office": "U.S. House",
+          "officeLevel": "federal",
+          "districtId": "district-us-house-18",
+          "districtName": "U.S. House District 18",
+          "districtNumber": "18"
+        }
+      ]
+    },
+    {
+      "id": "candidate-valencia-williams-other-race-2026-us-house-18",
+      "aliases": [
+        "VALENCIA WILLIAMS",
+        "Valencia Williams"
+      ],
+      "party": "other",
       "externalIds": {},
       "contests": [
         {

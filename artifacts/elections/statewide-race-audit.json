@@ -1,9 +1,9 @@
 {
-  "auditedAt": "2026-08-20T13:10:41.875Z",
+  "auditedAt": "2026-08-21T13:10:53.020Z",
   "officialFile": "scripts/elections/import/official-candidates.json",
   "statewideRaceCount": 14,
   "officialStatewideCandidateCount": 48,
-  "generatedStatewideCandidateCount": 48,
+  "generatedStatewideCandidateCount": 49,
   "races": [
     {
       "id": "race-2026-governor",
@@ -30,6 +30,7 @@
         "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
         "candidate-kevin-mccormick-green-race-2026-lieutenant-governor",
         "candidate-mike-collier-independent-race-2026-lieutenant-governor",
+        "candidate-stephen-samuelson-other-race-2026-lieutenant-governor",
         "candidate-vikki-goodwin-democratic-race-2026-lieutenant-governor"
       ]
     },
@@ -139,5 +140,7 @@
     }
   ],
   "errors": [],
-  "warnings": []
+  "warnings": [
+    "Generated statewide candidate is not in the current official extract: candidate-stephen-samuelson-other-race-2026-governor (stephensamuelson|other|race-2026-governor)."
+  ]
 }
