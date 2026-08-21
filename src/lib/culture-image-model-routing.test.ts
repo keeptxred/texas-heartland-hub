@@ -15,7 +15,7 @@ describe("featured image model routing", () => {
 
   it("uses FLUX native schema and embeds negative constraints in the prompt", () => {
     expect(cloudflareSource).toContain("steps: 8");
-    expect(cloudflareSource).toContain("seed,");
+    expect(cloudflareSource).not.toMatch(/^\s*seed\s*[:,]/m);
     expect(cloudflareSource).toContain("Avoid all of the following");
     expect(cloudflareSource).not.toContain("negative_prompt: negativePrompt");
     expect(cloudflareSource).not.toContain("dreamshaper-8-lcm");

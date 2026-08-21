@@ -37,14 +37,13 @@ export async function generateImageBytes(
   const apiToken = process.env.CLOUDFLARE_API_TOKEN;
   if (!accountId || !apiToken) throw new Error("Missing Cloudflare Workers AI credentials: CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required");
 
-  const seed = Math.floor(Math.random() * 2_147_483_646) + 1;
   // FLUX.1 Schnell uses its own compact Workers AI schema. Put the negative
   // constraints into the prompt because the model does not accept the
-  // DreamShaper negative_prompt parameter.
+  // DreamShaper negative_prompt parameter. Do not send a seed: the current
+  // Workers AI REST schema rejects it as an unevaluated property.
   const requestBody = {
     prompt: `${prompt} Avoid all of the following: ${negativePrompt}`.slice(0, 2048),
     steps: 8,
-    seed,
   };
 
   const res = await fetch(cloudflareEndpoint(accountId, model), {
