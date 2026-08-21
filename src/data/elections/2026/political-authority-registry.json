@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-20T13:10:41.791Z",
+  "generatedAt": "2026-08-21T15:58:07.174Z",
   "authoritySources": [
     "Texas Secretary of State Qualified Candidate Listing",
     "Keep TX Red verified election race registry"
@@ -5792,6 +5792,26 @@
       ]
     },
     {
+      "id": "candidate-l-d-howard-other-race-2026-texas-house-124",
+      "aliases": [
+        "L.D. HOWARD",
+        "L.d. Howard"
+      ],
+      "party": "other",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-texas-house-124",
+          "electionYear": 2026,
+          "office": "Texas House",
+          "officeLevel": "state",
+          "districtId": "district-texas-house-124",
+          "districtName": "Texas House District 124",
+          "districtNumber": "124"
+        }
+      ]
+    },
+    {
       "id": "candidate-lacey-hull-republican-race-2026-texas-house-138",
       "aliases": [
         "LACEY HULL",
@@ -6288,6 +6308,26 @@
           "districtId": "district-texas-house-84",
           "districtName": "Texas House District 84",
           "districtNumber": "84"
+        }
+      ]
+    },
+    {
+      "id": "candidate-margo-jordan-other-race-2026-state-board-of-education-6",
+      "aliases": [
+        "MARGO JORDAN",
+        "Margo Jordan"
+      ],
+      "party": "other",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-state-board-of-education-6",
+          "electionYear": 2026,
+          "office": "State Board of Education",
+          "officeLevel": "state",
+          "districtId": "district-state-board-of-education-6",
+          "districtName": "State Board of Education District 6",
+          "districtNumber": "6"
         }
       ]
     },
@@ -8642,6 +8682,26 @@
       ]
     },
     {
+      "id": "candidate-stephen-samuelson-other-race-2026-lieutenant-governor",
+      "aliases": [
+        "STEPHEN SAMUELSON",
+        "Stephen Samuelson"
+      ],
+      "party": "other",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-lieutenant-governor",
+          "electionYear": 2026,
+          "office": "Lieutenant Governor",
+          "officeLevel": "state",
+          "districtId": null,
+          "districtName": null,
+          "districtNumber": null
+        }
+      ]
+    },
+    {
       "id": "candidate-stephen-w-stanley-republican-race-2026-texas-house-113",
       "aliases": [
         "STEPHEN W. STANLEY",
@@ -9462,6 +9522,26 @@
         "Valencia Williams"
       ],
       "party": "independent",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-us-house-18",
+          "electionYear": 2026,
+          "office": "U.S. House",
+          "officeLevel": "federal",
+          "districtId": "district-us-house-18",
+          "districtName": "U.S. House District 18",
+          "districtNumber": "18"
+        }
+      ]
+    },
+    {
+      "id": "candidate-valencia-williams-other-race-2026-us-house-18",
+      "aliases": [
+        "VALENCIA WILLIAMS",
+        "Valencia Williams"
+      ],
+      "party": "other",
       "externalIds": {},
       "contests": [
         {
