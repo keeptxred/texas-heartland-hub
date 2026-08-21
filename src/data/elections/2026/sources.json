@@ -6,8 +6,8 @@
     "sourceUrl": "https://keeptxred.com/elections/methodology",
     "type": "forecast_provider",
     "url": "https://keeptxred.com/elections/methodology",
-    "retrievedAt": "2026-08-20T11:44:51.278Z",
-    "lastVerifiedAt": "2026-08-20T11:44:51.278Z",
+    "retrievedAt": "2026-08-21T11:43:51.260Z",
+    "lastVerifiedAt": "2026-08-21T11:43:51.260Z",
     "notes": "Keep TX Red deterministic election model"
   },
   {
@@ -18,7 +18,7 @@
     "type": "government",
     "url": "https://www.fec.gov/data/candidate/H6TX14181/?election_full=true&cycle=2026",
     "retrievedAt": "2026-07-28T20:24:58.080Z",
-    "lastVerifiedAt": "2026-08-08T13:12:13.769Z",
+    "lastVerifiedAt": "2026-08-20T13:10:40.866Z",
     "notes": "Candidate profile source for candidate-thurman-bill-bartie-democratic-race-2026-us-house-14."
   },
   {
@@ -29,7 +29,7 @@
     "type": "government",
     "url": "https://www.fec.gov/data/candidate/H6TX19206/?election_full=true&cycle=2026",
     "retrievedAt": "2026-07-28T20:24:58.080Z",
-    "lastVerifiedAt": "2026-08-08T13:12:13.769Z",
+    "lastVerifiedAt": "2026-08-20T13:10:40.866Z",
     "notes": "Candidate profile source for candidate-tom-sell-republican-race-2026-us-house-19."
   },
   {
@@ -40,7 +40,7 @@
     "type": "government",
     "url": "https://www.fec.gov/data/candidate/H6TX17168/?election_full=true&cycle=2026",
     "retrievedAt": "2026-07-28T20:24:58.080Z",
-    "lastVerifiedAt": "2026-08-08T13:12:13.769Z",
+    "lastVerifiedAt": "2026-08-20T13:10:40.866Z",
     "notes": "Candidate profile source for candidate-casey-shepard-democratic-race-2026-us-house-17."
   },
   {
@@ -51,7 +51,7 @@
     "type": "government",
     "url": "https://www.fec.gov/data/candidate/H6TX24172/?election_full=true&cycle=2026",
     "retrievedAt": "2026-07-28T20:24:58.080Z",
-    "lastVerifiedAt": "2026-08-08T13:12:13.769Z",
+    "lastVerifiedAt": "2026-08-20T13:10:40.866Z",
     "notes": "Candidate profile source for candidate-kevin-burge-democratic-race-2026-us-house-24."
   },
   {
@@ -61,8 +61,8 @@
     "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
     "type": "official",
     "url": "https://electionresults.sos.state.tx.us/results.html",
-    "retrievedAt": "2026-08-08T13:12:13.769Z",
-    "lastVerifiedAt": "2026-08-08T13:12:13.769Z",
+    "retrievedAt": "2026-08-20T13:10:40.866Z",
+    "lastVerifiedAt": "2026-08-20T13:10:40.866Z",
     "notes": "candidates source for candidate-ken-paxton-republican-race-2026-us-senate."
   },
   {
@@ -73,7 +73,7 @@
     "type": "official",
     "url": "https://goelect.txelections.civixapps.com/ivis-enr-ui/races",
     "retrievedAt": "2026-08-08T02:36:41.523Z",
-    "lastVerifiedAt": "2026-08-08T13:12:13.769Z",
+    "lastVerifiedAt": "2026-08-20T13:10:40.866Z",
     "notes": "Candidate profile source for candidate-ken-paxton-republican-race-2026-us-senate."
   },
   {
@@ -94,9 +94,9 @@
     "sourceUrl": "https://goelect.txelections.civixapps.com/ivis-cbp-ui/candidate-information",
     "type": "official",
     "url": "https://goelect.txelections.civixapps.com/ivis-cbp-ui/candidate-information",
-    "retrievedAt": "2026-08-08T13:12:07.596Z",
-    "lastVerifiedAt": "2026-08-08T13:12:13.769Z",
-    "notes": "candidates source for candidate-ted-brown-libertarian-race-2026-us-senate."
+    "retrievedAt": "2026-08-20T13:10:33.677Z",
+    "lastVerifiedAt": "2026-08-20T13:10:40.866Z",
+    "notes": "candidates source for candidate-zul-mohamed-other-race-2026-us-senate."
   },
   {
     "id": "source-tpor-may-2026-general-election",
