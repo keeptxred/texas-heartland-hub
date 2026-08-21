@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { issueGuides } from "@/data/issue-guides";
 import { PRIORITY_ISSUE_GUIDE_SLUGS } from "@/data/issue-guide-priority-upgrades";
+import { WAVE2_ISSUE_GUIDE_SLUGS } from "@/data/issue-guide-wave2-upgrades";
 import {
   isIssueGuideIndexable,
   issueGuideWordCount,
@@ -8,6 +9,7 @@ import {
 } from "@/lib/issue-guide-indexability";
 
 const priority = new Set(PRIORITY_ISSUE_GUIDE_SLUGS);
+const deliberatePromotions = new Set([...PRIORITY_ISSUE_GUIDE_SLUGS, ...WAVE2_ISSUE_GUIDE_SLUGS]);
 
 describe("AdSense priority issue-guide readiness", () => {
   it("makes the five priority issue guides genuinely publication-ready", () => {
@@ -27,9 +29,9 @@ describe("AdSense priority issue-guide readiness", () => {
     expect(failures, failures.join("\n")).toEqual([]);
   });
 
-  it("does not accidentally promote the remaining thin issue guides", () => {
+  it("does not accidentally promote guides outside deliberate expansion cohorts", () => {
     const promoted = issueGuides
-      .filter((guide) => !priority.has(guide.slug))
+      .filter((guide) => !deliberatePromotions.has(guide.slug))
       .filter(isIssueGuideIndexable)
       .map((guide) => `${guide.slug}:${issueGuideWordCount(guide)}`);
 
