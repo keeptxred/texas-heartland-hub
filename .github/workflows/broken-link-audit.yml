@@ -1,5 +1,6 @@
 name: Broken link audit
 
+# Verification touch: rerun the full broken-link audit from current main after merge.
 on:
   workflow_dispatch:
   schedule:
