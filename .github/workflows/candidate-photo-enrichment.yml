@@ -28,8 +28,14 @@ jobs:
         with:
           node-version: 22
 
+      - name: Merge approved candidate photo assets
+        run: node scripts/elections/merge-approved-candidate-photo-assets.mjs
       - name: Apply direct verified web findings
         run: node scripts/elections/apply-direct-web-photo-findings.mjs
+      - name: Apply July 31 verified campaign findings
+        run: node scripts/elections/apply-verified-photo-findings-2026-07-31.mjs
+      - name: Apply automation-verified candidate-guide findings
+        run: node scripts/elections/apply-automation-verified-photo-findings.mjs
       - name: Discover directory candidate portraits
         run: node scripts/elections/discover-candidate-photos-directories.mjs
       - name: Discover linked and public-source candidate portraits
