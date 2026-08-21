@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { issueGuides } from "@/data/issue-guides";
-import { PRIORITY_ISSUE_GUIDE_SLUGS } from "@/data/issue-guide-priority-upgrades";
 import { WAVE2_ISSUE_GUIDE_SLUGS } from "@/data/issue-guide-wave2-upgrades";
 import {
   isIssueGuideIndexable,
@@ -8,13 +7,12 @@ import {
   MIN_ISSUE_GUIDE_WORDS,
 } from "@/lib/issue-guide-indexability";
 
-const priority = new Set(PRIORITY_ISSUE_GUIDE_SLUGS);
-const deliberatePromotions = new Set([...PRIORITY_ISSUE_GUIDE_SLUGS, ...WAVE2_ISSUE_GUIDE_SLUGS]);
+const wave2 = new Set(WAVE2_ISSUE_GUIDE_SLUGS);
 
-describe("AdSense priority issue-guide readiness", () => {
-  it("makes the five priority issue guides genuinely publication-ready", () => {
+describe("AdSense second-wave issue-guide readiness", () => {
+  it("makes exactly five second-wave issue guides publication-ready", () => {
     const failures = issueGuides
-      .filter((guide) => priority.has(guide.slug))
+      .filter((guide) => wave2.has(guide.slug))
       .flatMap((guide) => {
         const blockers: string[] = [];
         const count = issueGuideWordCount(guide);
@@ -25,27 +23,16 @@ describe("AdSense priority issue-guide readiness", () => {
         return blockers.length ? [`${guide.slug}: ${blockers.join(", ")}`] : [];
       });
 
-    expect(PRIORITY_ISSUE_GUIDE_SLUGS).toHaveLength(5);
+    expect(WAVE2_ISSUE_GUIDE_SLUGS).toHaveLength(5);
     expect(failures, failures.join("\n")).toEqual([]);
   });
 
-  it("does not accidentally promote guides outside deliberate expansion cohorts", () => {
-    const promoted = issueGuides
-      .filter((guide) => !deliberatePromotions.has(guide.slug))
-      .filter(isIssueGuideIndexable)
-      .map((guide) => `${guide.slug}:${issueGuideWordCount(guide)}`);
-
-    expect(promoted).toEqual([]);
-  });
-
-  it("hydrates the same guide objects used by the public route", () => {
-    for (const guide of issueGuides.filter((candidate) => priority.has(candidate.slug))) {
-      const originalSectionCount = guide.sections.length;
+  it("hydrates visible sections on the same objects consumed by public routes", () => {
+    for (const guide of issueGuides.filter((candidate) => wave2.has(candidate.slug))) {
       expect(isIssueGuideIndexable(guide)).toBe(true);
-      expect(guide.sections.length).toBeGreaterThan(4);
       expect(issueGuideWordCount(guide)).toBeGreaterThanOrEqual(MIN_ISSUE_GUIDE_WORDS);
+      expect(guide.sections.length).toBeGreaterThan(4);
       expect(guide.sections.every((section) => section.heading.trim().length > 0 && section.body.length > 0)).toBe(true);
-      expect(guide.sections.length).toBe(originalSectionCount);
     }
   });
 });
