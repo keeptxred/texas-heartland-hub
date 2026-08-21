@@ -2,6 +2,7 @@ import type { IssueGuide } from "@/data/issue-guides";
 import { applyPriorityIssueGuideUpgrade } from "@/data/issue-guide-priority-upgrades";
 import { applyWave2IssueGuideUpgrade } from "@/data/issue-guide-wave2-upgrades";
 import { applyWave3IssueGuideUpgrade } from "@/data/issue-guide-wave3-upgrades";
+import { applyWave3DepthPatch } from "@/data/issue-guide-wave3-depth-patches";
 import { applyWave4IssueGuideUpgrade } from "@/data/issue-guide-wave4-upgrades";
 
 export const MIN_ISSUE_GUIDE_WORDS = 1000;
@@ -17,7 +18,8 @@ function hydrateIssueGuide(guide: IssueGuide) {
   const priorityUpgraded = applyPriorityIssueGuideUpgrade(guide);
   const wave2Upgraded = applyWave2IssueGuideUpgrade(priorityUpgraded);
   const wave3Upgraded = applyWave3IssueGuideUpgrade(wave2Upgraded);
-  const wave4Upgraded = applyWave4IssueGuideUpgrade(wave3Upgraded);
+  const wave3Patched = applyWave3DepthPatch(wave3Upgraded);
+  const wave4Upgraded = applyWave4IssueGuideUpgrade(wave3Patched);
   if (wave4Upgraded !== guide) {
     guide.sections = wave4Upgraded.sections;
     guide.sources = wave4Upgraded.sources;
