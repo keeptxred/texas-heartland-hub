@@ -71,11 +71,12 @@ jobs:
             if jq -e '.posted == true' "$output" >/dev/null 2>&1; then
               slug=$(jq -r '.slug // ""' "$output")
               title=$(jq -r '.title // ""' "$output")
+              kind=$(jq -r '.kind // "article"' "$output")
               article_url=$(jq -r '.article_url // ""' "$output")
               post_url=$(jq -r '.post_url // ""' "$output")
-              echo "AUTO_FACEBOOK_POST_SUCCESS page=${label} slug=${slug} title=${title} article_url=${article_url} post_url=${post_url}"
+              echo "AUTO_FACEBOOK_POST_SUCCESS page=${label} kind=${kind} slug=${slug} title=${title} article_url=${article_url} post_url=${post_url}"
             else
-              reason=$(jq -r '.reason // "no eligible article"' "$output")
+              reason=$(jq -r '.reason // "no eligible post"' "$output")
               next_target=$(jq -r '.next_target_local // ""' "$output")
               posts_today=$(jq -r '.posts_today // ""' "$output")
               echo "AUTO_FACEBOOK_POST_NOOP page=${label} reason=${reason} next_target=${next_target} posts_today=${posts_today}"
@@ -91,7 +92,7 @@ jobs:
 
           run_page \
             "texasdefined" \
-            "https://keeptxred.com/api/public/hooks/auto-facebook-post-texasdefined" \
+            "https://keeptxred.com/api/public/hooks/auto-facebook-post-texasdefined-smart" \
             "/tmp/facebook-post-texasdefined.json"
 
           if (( failures > 0 )); then
