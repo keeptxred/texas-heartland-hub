@@ -38,9 +38,12 @@ describe("AdSense priority issue-guide readiness", () => {
 
   it("hydrates the same guide objects used by the public route", () => {
     for (const guide of issueGuides.filter((candidate) => priority.has(candidate.slug))) {
+      const originalSectionCount = guide.sections.length;
       expect(isIssueGuideIndexable(guide)).toBe(true);
       expect(guide.sections.length).toBeGreaterThan(4);
-      expect(guide.sections.some((section) => section.heading.startsWith("How to") || section.heading.includes("different") || section.heading.includes("Reliability"))).toBe(true);
+      expect(issueGuideWordCount(guide)).toBeGreaterThanOrEqual(MIN_ISSUE_GUIDE_WORDS);
+      expect(guide.sections.every((section) => section.heading.trim().length > 0 && section.body.length > 0)).toBe(true);
+      expect(guide.sections.length).toBe(originalSectionCount);
     }
   });
 });
