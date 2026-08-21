@@ -1,18 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  getContentSourceDiagnosticsFn,
+  getContentSourceDiagnostics,
   type SourceDiagnostics,
   type SourceDiagnosticRow,
-} from "@/services/contentSourceDiagnostics.functions";
-
-function getAdminToken(): string {
-  if (typeof window === "undefined") return "";
-  return (
-    sessionStorage.getItem("ktr-admin-passcode") ||
-    (import.meta.env.VITE_ADMIN_PASSCODE as string) ||
-    "keeptxred"
-  );
-}
+} from "@/services/contentSourceDiagnostics";
 
 function statusLabel(row: SourceDiagnosticRow): string {
   if (row.health_status === "no_rss") return "No RSS configured";
@@ -40,9 +31,7 @@ export function SourceHealthDiagnostics() {
     setLoading(true);
     setError("");
     try {
-      const res = await getContentSourceDiagnosticsFn({ data: { token: getAdminToken() } });
-      if (!res.ok) throw new Error(res.error);
-      setData(res.diagnostics);
+      setData(await getContentSourceDiagnostics());
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load source diagnostics");
     } finally {
