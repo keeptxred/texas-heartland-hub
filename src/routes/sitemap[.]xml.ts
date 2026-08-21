@@ -14,6 +14,7 @@ import { AUTHORS, authorSlug } from "@/data/authors";
 import { getPublishedAuthorArticles } from "@/lib/daily-news.functions";
 import { ELECTION_STATIC_SITEMAP_COUNT } from "@/lib/elections/sitemap";
 import { GOVERNMENT_ENTITIES } from "@/lib/texas-government";
+import { TEXAS_POLITICAL_FIGURES } from "@/data/texas-political-figures";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 import { hasEnoughAuthorArticles, isCompleteAuthorProfile } from "@/lib/author-indexability";
 
@@ -109,6 +110,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           // Their routes remain live and internally discoverable; they can be promoted
           // back into the index once they meet stronger unique-content thresholds.
           { file: "sitemap-government.xml", count: GOVERNMENT_ENTITIES.length + 1 },
+          { file: "sitemap-political-figures.xml", count: TEXAS_POLITICAL_FIGURES.length + 1 },
           { file: "sitemap-legislature.xml", count: 1 },
           { file: "sitemap-committees.xml", count: 1 },
           // The dedicated bill endpoint remains valid because it was historically
