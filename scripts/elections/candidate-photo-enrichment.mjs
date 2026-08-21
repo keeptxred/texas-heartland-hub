@@ -8,6 +8,7 @@ const CANDIDATES_PATH = path.join(ROOT, "src/data/elections/2026/candidates.json
 const MANIFEST_PATH = path.join(ROOT, "src/data/elections/2026/candidate-photos.json");
 const REPORT_PATH = path.join(ROOT, "artifacts/elections/candidate-photo-report.json");
 const APPLY = process.argv.includes("--apply");
+const TARGET_COVERAGE = 0.85;
 
 const [candidates, manifest] = await Promise.all([
   readJson(CANDIDATES_PATH),
@@ -78,12 +79,20 @@ const missing = enriched
     priority: candidate.featured ? "featured" : candidate.primaryRaceId?.includes("governor") ? "statewide" : "standard",
   }));
 
+const approvedPhotoCount = enriched.length - missing.length;
+const targetApprovedPhotoCount = Math.ceil(candidates.length * TARGET_COVERAGE);
+const coverage = candidates.length ? approvedPhotoCount / candidates.length : 0;
 const report = {
   generatedAt: new Date().toISOString(),
   candidateCount: candidates.length,
-  approvedPhotoCount: enriched.length - missing.length,
+  approvedPhotoCount,
   missingPhotoCount: missing.length,
   manifestEntryCount: manifest.length,
+  coverage,
+  coveragePercent: Number((coverage * 100).toFixed(2)),
+  targetCoverage: TARGET_COVERAGE,
+  targetApprovedPhotoCount,
+  targetMet: approvedPhotoCount >= targetApprovedPhotoCount,
   errors,
   warnings,
   missing,
@@ -98,8 +107,10 @@ if (errors.length) {
 } else if (APPLY) {
   await writeFile(CANDIDATES_PATH, `${JSON.stringify(enriched, null, 2)}\n`);
   console.log(`Applied ${approved.length} approved candidate photo(s).`);
+  console.log(`Coverage: ${approvedPhotoCount}/${candidates.length} (${report.coveragePercent}%). Target: ${targetApprovedPhotoCount}.`);
 } else {
-  console.log(`Audit complete: ${approved.length} approved, ${missing.length} missing.`);
+  console.log(`Audit complete: ${approvedPhotoCount} approved, ${missing.length} missing.`);
+  console.log(`Coverage: ${report.coveragePercent}%. Target: ${targetApprovedPhotoCount} (${TARGET_COVERAGE * 100}%).`);
   console.log("Run with --apply to write approved manifest entries into candidates.json.");
 }
 
