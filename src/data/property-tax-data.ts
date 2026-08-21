@@ -6,7 +6,13 @@ export type PropertyTaxOfficialFile = {
   format: "XLSX";
 };
 
-export const PROPERTY_TAX_DATA_REVIEWED_AT = "2026-08-19";
+export type PropertyTaxHistoryFile = {
+  year: number;
+  countyUrl: string;
+  combinedUrl: string;
+};
+
+export const PROPERTY_TAX_DATA_REVIEWED_AT = "2026-08-21";
 
 export const PROPERTY_TAX_OFFICIAL_FILES: PropertyTaxOfficialFile[] = [
   {
@@ -45,6 +51,12 @@ export const PROPERTY_TAX_OFFICIAL_FILES: PropertyTaxOfficialFile[] = [
     format: "XLSX",
   },
 ];
+
+export const PROPERTY_TAX_HISTORY_FILES: PropertyTaxHistoryFile[] = [2025, 2024, 2023, 2022, 2021].map((year) => ({
+  year,
+  countyUrl: `https://comptroller.texas.gov/taxes/property-tax/docs/${year}-county-rates-levies.xlsx`,
+  combinedUrl: `https://comptroller.texas.gov/taxes/property-tax/docs/${year}-total-rates-levies.xlsx`,
+}));
 
 export const PROPERTY_TAX_REFERENCE_LINKS = [
   {
