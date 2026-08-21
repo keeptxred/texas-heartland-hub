@@ -7,12 +7,14 @@ import {
 import {
   facebookPostMatchesArticle,
   fetchRecentFacebookPagePosts,
+  normalizeFacebookHeadline,
   type FacebookPagePost,
 } from "@/lib/facebook-page-history";
 import {
   facebookPostingDecision,
   formatCentralMinute,
 } from "@/lib/facebook-posting-schedule";
+import { KTR_EVERGREEN_FACEBOOK_POSTS, type KtrEvergreenFacebookPost } from "@/lib/ktr-facebook-evergreen";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 import { quickPublishToFacebookFn } from "@/services/quickPublish.functions";
 
@@ -20,10 +22,15 @@ const OIDC_AUDIENCE = "keeptxred-facebook";
 const REPOSITORY = "keeptxred/texas-heartland-hub";
 const WORKFLOW_PATH = ".github/workflows/auto-facebook-posts.yml";
 const SITE_URL = "https://keeptxred.com";
+const GRAPH_VERSION = "v21.0";
 const MAX_AUTO_FACEBOOK_ARTICLE_AGE_DAYS = 4;
 const MAX_CANDIDATES = 160;
 const MAX_ATTEMPTS = 12;
 const DIVERSITY_WINDOW_HOURS = 30;
+
+// Keep the existing five-post KTR schedule, but reserve roughly two of those
+// slots for discussion-first posts that do not require an article link.
+const EVERGREEN_TEXT_SLOTS = new Set([1, 3]);
 
 type ArticleRow = {
   slug: string;
@@ -70,6 +77,60 @@ function articleUrl(row: ArticleRow): string {
   return `${SITE_URL}/news/${encodeURIComponent(row.slug)}`;
 }
 
+function hash32(value: string): number {
+  let hash = 0x811c9dc5;
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return hash >>> 0;
+}
+
+function shouldUseEvergreenTextPost(postsToday: number): boolean {
+  return EVERGREEN_TEXT_SLOTS.has(postsToday);
+}
+
+function chooseEvergreenTextPost(args: {
+  seed: string;
+  dateKey: string;
+  slot: number;
+  livePosts: FacebookPagePost[];
+}): KtrEvergreenFacebookPost | null {
+  const recent = new Set(
+    args.livePosts
+      .map((post) => normalizeFacebookHeadline(post.message ?? ""))
+      .filter(Boolean),
+  );
+  if (KTR_EVERGREEN_FACEBOOK_POSTS.length === 0) return null;
+
+  const start = hash32(`${args.seed}:ktr-evergreen:${args.dateKey}:${args.slot}`) % KTR_EVERGREEN_FACEBOOK_POSTS.length;
+  for (let offset = 0; offset < KTR_EVERGREEN_FACEBOOK_POSTS.length; offset += 1) {
+    const post = KTR_EVERGREEN_FACEBOOK_POSTS[(start + offset) % KTR_EVERGREEN_FACEBOOK_POSTS.length];
+    if (!recent.has(normalizeFacebookHeadline(post.message))) return post;
+  }
+  return null;
+}
+
+async function loadFacebookConnection(db: any): Promise<SocialConnectionRow> {
+  const { data: rawConnection, error } = await db
+    .from("social_connections")
+    .select("account_id,access_token,connection_status")
+    .ilike("platform", "facebook")
+    .maybeSingle();
+
+  if (error) throw new Error(error.message);
+  const connection = rawConnection as SocialConnectionRow | null;
+  if (
+    !connection ||
+    connection.connection_status !== "CONNECTED" ||
+    !connection.account_id ||
+    !connection.access_token
+  ) {
+    throw new Error("Facebook Page connection is unavailable");
+  }
+  return connection;
+}
+
 async function loadRecentFacebookPosts(db: any): Promise<RecentFacebookPost[]> {
   const cutoff = new Date(Date.now() - DIVERSITY_WINDOW_HOURS * 60 * 60 * 1000).toISOString();
   const { data: rawQueueRows, error: queueError } = await db
@@ -107,27 +168,138 @@ async function loadRecentFacebookPosts(db: any): Promise<RecentFacebookPost[]> {
 }
 
 async function loadLiveFacebookPagePosts(db: any): Promise<FacebookPagePost[]> {
-  const { data: rawConnection, error } = await db
-    .from("social_connections")
-    .select("account_id,access_token,connection_status")
-    .ilike("platform", "facebook")
-    .maybeSingle();
-
-  if (error) throw new Error(error.message);
-  const connection = rawConnection as SocialConnectionRow | null;
-  if (
-    !connection ||
-    connection.connection_status !== "CONNECTED" ||
-    !connection.account_id ||
-    !connection.access_token
-  ) {
-    throw new Error("Facebook Page connection is unavailable for duplicate verification");
-  }
-
+  const connection = await loadFacebookConnection(db);
   return fetchRecentFacebookPagePosts({
     pageId: String(connection.account_id),
     pageToken: String(connection.access_token),
     limit: 100,
+  });
+}
+
+async function recordEvergreenTextPost(
+  db: any,
+  post: KtrEvergreenFacebookPost,
+  externalId: string | null,
+): Promise<string | null> {
+  const { data: inserted, error } = await db
+    .from("content_packages")
+    .insert({
+      source_title: post.title,
+      source_url: null,
+      category: post.category,
+      facebook_hook: post.message,
+      facebook_body: null,
+      facebook_cta: null,
+      status: "PUBLISHED",
+      asset_type: "TEXT",
+      asset_url: null,
+      workflow_status: "PUBLISHED",
+    })
+    .select("id")
+    .single();
+  if (error) throw new Error(error.message);
+
+  const packageId = inserted.id as string;
+  const { error: queueError } = await db.from("publishing_queue").insert({
+    content_package_id: packageId,
+    platform: "facebook",
+    status: "PUBLISHED",
+    published_time: new Date().toISOString(),
+    notes: externalId
+      ? `Facebook post ${externalId}; kind=evergreen-discussion`
+      : "KeepTXRed Facebook post; kind=evergreen-discussion",
+  });
+  if (queueError) throw new Error(queueError.message);
+  return packageId;
+}
+
+async function publishEvergreenTextPost(args: {
+  db: any;
+  seed: string;
+  dateKey: string;
+  slot: number;
+  mode: string;
+}): Promise<Response | null> {
+  let connection: SocialConnectionRow;
+  let livePosts: FacebookPagePost[];
+  try {
+    connection = await loadFacebookConnection(args.db);
+    livePosts = await fetchRecentFacebookPagePosts({
+      pageId: String(connection.account_id),
+      pageToken: String(connection.access_token),
+      limit: 100,
+    });
+  } catch (error) {
+    return Response.json(
+      {
+        ok: false,
+        posted: false,
+        error: "Facebook evergreen post stopped because Page verification failed",
+        detail: error instanceof Error ? error.message : String(error),
+      },
+      { status: 503 },
+    );
+  }
+
+  const post = chooseEvergreenTextPost({
+    seed: args.seed,
+    dateKey: args.dateKey,
+    slot: args.slot,
+    livePosts,
+  });
+  if (!post) return null;
+
+  const graphUrl = `https://graph.facebook.com/${GRAPH_VERSION}/${encodeURIComponent(String(connection.account_id))}/feed`;
+  const graphResponse = await fetch(graphUrl, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      message: post.message,
+      access_token: String(connection.access_token),
+    }),
+  });
+  const graphJson = (await graphResponse.json().catch(() => ({}))) as {
+    id?: string;
+    error?: { message?: string };
+  };
+
+  if (!graphResponse.ok || !graphJson.id) {
+    return Response.json(
+      {
+        ok: false,
+        posted: false,
+        error: graphJson.error?.message ?? `Facebook Graph API returned HTTP ${graphResponse.status}`,
+        requires_connection: graphResponse.status === 401 || graphResponse.status === 403,
+      },
+      { status: 502 },
+    );
+  }
+
+  const externalId = graphJson.id ?? null;
+  let packageId: string | null = null;
+  let recordWarning: string | null = null;
+  try {
+    packageId = await recordEvergreenTextPost(args.db, post, externalId);
+  } catch (error) {
+    recordWarning = error instanceof Error ? error.message : String(error);
+    console.error("[KeepTXRed Facebook] text post succeeded but history recording failed", recordWarning);
+  }
+
+  return Response.json({
+    ok: true,
+    posted: true,
+    site: "KeepTXRed",
+    kind: "evergreen-discussion",
+    title: post.title,
+    category: post.category,
+    article_url: null,
+    external_id: externalId,
+    post_url: externalId ? `https://www.facebook.com/${externalId}` : null,
+    package_id: packageId,
+    record_warning: recordWarning,
+    posted_at: new Date().toISOString(),
+    mode: args.mode,
+    content_mix: { article_slots: 3, evergreen_discussion_slots: 2 },
   });
 }
 
@@ -175,26 +347,35 @@ async function runAutoFacebookPost(request: Request) {
   }
 
   const mode = request.headers.get("x-ktr-facebook-mode")?.trim().toLowerCase() || "scheduled";
-  if (mode !== "manual") {
-    const decision = facebookPostingDecision({
-      now: new Date(),
-      seed: adminToken,
-      recentPosts,
-    });
+  const decision = facebookPostingDecision({
+    now: new Date(),
+    seed: adminToken,
+    recentPosts,
+  });
 
-    if (!decision.shouldPost) {
-      return Response.json({
-        ok: true,
-        posted: false,
-        scheduled_wait: true,
-        reason: decision.reason,
-        schedule_date: decision.dateKey,
-        posts_today: decision.postsToday,
-        elapsed_slots: decision.elapsedSlots,
-        next_target_local: formatCentralMinute(decision.nextTargetMinute),
-        targets_local: decision.targets.map((target) => formatCentralMinute(target)),
-      });
-    }
+  if (mode !== "manual" && !decision.shouldPost) {
+    return Response.json({
+      ok: true,
+      posted: false,
+      scheduled_wait: true,
+      reason: decision.reason,
+      schedule_date: decision.dateKey,
+      posts_today: decision.postsToday,
+      elapsed_slots: decision.elapsedSlots,
+      next_target_local: formatCentralMinute(decision.nextTargetMinute),
+      targets_local: decision.targets.map((target) => formatCentralMinute(target)),
+    });
+  }
+
+  if (shouldUseEvergreenTextPost(decision.postsToday)) {
+    const response = await publishEvergreenTextPost({
+      db,
+      seed: adminToken,
+      dateKey: decision.dateKey,
+      slot: decision.postsToday,
+      mode,
+    });
+    if (response) return response;
   }
 
   const cutoff = new Date(
@@ -354,6 +535,7 @@ async function runAutoFacebookPost(request: Request) {
         attempted: attempts.length + 1,
         mode,
         live_duplicates_filtered: liveDuplicateCount,
+        content_mix: { article_slots: 3, evergreen_discussion_slots: 2 },
       });
     }
 
