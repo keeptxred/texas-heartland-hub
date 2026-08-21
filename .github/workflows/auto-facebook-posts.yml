@@ -3,9 +3,9 @@ name: Auto Facebook Posts
 on:
   schedule:
     # Lightweight checks every 30 minutes across the Texas waking/evening day.
-    # The application generates five different randomized Central-time targets
-    # per day and only publishes when the next target is due. This avoids long
-    # sleeping Actions jobs while keeping the actual Facebook times variable.
+    # Keep TX Red can publish up to five randomized posts per day and
+    # TexasDefined can publish up to two. Each site decides independently
+    # whether a randomized Central-time target is due.
     - cron: "0,30 12-23 * * *"
     - cron: "0,30 0-4 * * *"
   workflow_dispatch:
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Check randomized Facebook schedule and post if due
+      - name: Check randomized Facebook schedules and post if due
         shell: bash
         run: |
           set -euo pipefail
@@ -43,29 +43,57 @@ jobs:
             mode="manual"
           fi
 
-          status=$(curl -sS -X POST -o /tmp/facebook-post.json -w '%{http_code}' \
-            --max-time 420 \
-            -H 'accept: application/json' \
-            -H "Authorization: Bearer ${oidc_token}" \
-            -H "X-KTR-Facebook-Mode: ${mode}" \
-            'https://keeptxred.com/api/public/hooks/auto-facebook-post' || echo 000)
+          failures=0
 
-          echo "auto-facebook-post HTTP ${status} mode=${mode}"
-          cat /tmp/facebook-post.json 2>/dev/null || true
-          echo
+          run_page() {
+            local label="$1"
+            local endpoint="$2"
+            local output="$3"
+            local status
 
-          if [[ "$status" != "200" ]] || ! jq -e '.ok == true' /tmp/facebook-post.json >/dev/null 2>&1; then
-            echo 'AUTO_FACEBOOK_POST_FAILED' >&2
+            status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
+              --max-time 420 \
+              -H 'accept: application/json' \
+              -H "Authorization: Bearer ${oidc_token}" \
+              -H "X-KTR-Facebook-Mode: ${mode}" \
+              "$endpoint" || echo 000)
+
+            echo "${label} auto-facebook HTTP ${status} mode=${mode}"
+            cat "$output" 2>/dev/null || true
+            echo
+
+            if [[ "$status" != "200" ]] || ! jq -e '.ok == true' "$output" >/dev/null 2>&1; then
+              echo "AUTO_FACEBOOK_POST_FAILED page=${label}" >&2
+              failures=$((failures + 1))
+              return
+            fi
+
+            if jq -e '.posted == true' "$output" >/dev/null 2>&1; then
+              slug=$(jq -r '.slug // ""' "$output")
+              title=$(jq -r '.title // ""' "$output")
+              article_url=$(jq -r '.article_url // ""' "$output")
+              post_url=$(jq -r '.post_url // ""' "$output")
+              echo "AUTO_FACEBOOK_POST_SUCCESS page=${label} slug=${slug} title=${title} article_url=${article_url} post_url=${post_url}"
+            else
+              reason=$(jq -r '.reason // "no eligible article"' "$output")
+              next_target=$(jq -r '.next_target_local // ""' "$output")
+              posts_today=$(jq -r '.posts_today // ""' "$output")
+              echo "AUTO_FACEBOOK_POST_NOOP page=${label} reason=${reason} next_target=${next_target} posts_today=${posts_today}"
+            fi
+          }
+
+          # Run the two Page publishers independently so a problem with one Page
+          # never prevents the other Page from getting its scheduled check.
+          run_page \
+            "keeptxred" \
+            "https://keeptxred.com/api/public/hooks/auto-facebook-post" \
+            "/tmp/facebook-post-keeptxred.json"
+
+          run_page \
+            "texasdefined" \
+            "https://keeptxred.com/api/public/hooks/auto-facebook-post-texasdefined" \
+            "/tmp/facebook-post-texasdefined.json"
+
+          if (( failures > 0 )); then
             exit 1
-          fi
-
-          if jq -e '.posted == true' /tmp/facebook-post.json >/dev/null 2>&1; then
-            slug=$(jq -r '.slug // ""' /tmp/facebook-post.json)
-            post_url=$(jq -r '.post_url // ""' /tmp/facebook-post.json)
-            echo "AUTO_FACEBOOK_POST_SUCCESS slug=${slug} post_url=${post_url}"
-          else
-            reason=$(jq -r '.reason // "no eligible article"' /tmp/facebook-post.json)
-            next_target=$(jq -r '.next_target_local // ""' /tmp/facebook-post.json)
-            posts_today=$(jq -r '.posts_today // ""' /tmp/facebook-post.json)
-            echo "AUTO_FACEBOOK_POST_NOOP reason=${reason} next_target=${next_target} posts_today=${posts_today}"
           fi
