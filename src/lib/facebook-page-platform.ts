@@ -7,6 +7,8 @@ export type ManagedFacebookPlatform =
   | typeof FACEBOOK_PLATFORM_KEEP_TX_RED
   | typeof FACEBOOK_PLATFORM_TEXASDEFINED;
 
+export type FacebookOAuthTarget = "keeptxred" | "texasdefined";
+
 type FacebookPageIdentity = {
   id: string;
   name: string;
@@ -28,4 +30,18 @@ export function facebookPlatformForPage(
   }
 
   return null;
+}
+
+export function facebookPlatformForTarget(
+  target: FacebookOAuthTarget,
+): ManagedFacebookPlatform {
+  return target === "texasdefined"
+    ? FACEBOOK_PLATFORM_TEXASDEFINED
+    : FACEBOOK_PLATFORM_KEEP_TX_RED;
+}
+
+export function facebookTargetForPlatform(
+  platform: ManagedFacebookPlatform,
+): FacebookOAuthTarget {
+  return platform === FACEBOOK_PLATFORM_TEXASDEFINED ? "texasdefined" : "keeptxred";
 }
