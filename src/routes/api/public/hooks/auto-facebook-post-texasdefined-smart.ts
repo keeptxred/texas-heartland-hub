@@ -58,6 +58,12 @@ type ReservoirSnapshot = {
   monthAgoPercent: number | null;
 };
 
+type ReservoirCsvRow = {
+  date: string;
+  timestamp: number;
+  percentFull: number;
+};
+
 const RESERVOIR_CANDIDATES: readonly ReservoirCandidate[] = [
   { name: "Lake Corpus Christi", waterDataSlug: "corpus-christi" },
   { name: "Lake Conroe", waterDataSlug: "conroe" },
@@ -247,6 +253,90 @@ function chooseFromPool(pool: readonly string[], seed: string, key: string, rece
   return pool[start];
 }
 
+function parseCsvLine(line: string): string[] {
+  const values: string[] = [];
+  let current = "";
+  let quoted = false;
+  for (let index = 0; index < line.length; index += 1) {
+    const char = line[index];
+    if (char === '"') {
+      if (quoted && line[index + 1] === '"') {
+        current += '"';
+        index += 1;
+      } else {
+        quoted = !quoted;
+      }
+      continue;
+    }
+    if (char === "," && !quoted) {
+      values.push(current.trim());
+      current = "";
+      continue;
+    }
+    current += char;
+  }
+  values.push(current.trim());
+  return values;
+}
+
+function normalizeCsvHeader(value: string): string {
+  return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+}
+
+function parseReservoirCsvRows(csv: string): ReservoirCsvRow[] {
+  const lines = csv.replace(/^\uFEFF/, "").split(/\r?\n/).filter((line) => line.trim().length > 0);
+  const headerIndex = lines.findIndex((line) => {
+    const headers = parseCsvLine(line).map(normalizeCsvHeader);
+    return headers.includes("date") && headers.includes("percent_full");
+  });
+  if (headerIndex < 0) return [];
+
+  const headers = parseCsvLine(lines[headerIndex]).map(normalizeCsvHeader);
+  const dateIndex = headers.indexOf("date");
+  const percentIndex = headers.indexOf("percent_full");
+  const rows: ReservoirCsvRow[] = [];
+
+  for (const line of lines.slice(headerIndex + 1)) {
+    const values = parseCsvLine(line);
+    const date = values[dateIndex]?.match(/\d{4}-\d{2}-\d{2}/)?.[0] ?? null;
+    const percentFull = Number(values[percentIndex]?.replace(/,/g, ""));
+    if (!date || !Number.isFinite(percentFull) || percentFull < 0 || percentFull > 150) continue;
+    const timestamp = Date.parse(`${date}T12:00:00Z`);
+    if (!Number.isFinite(timestamp)) continue;
+    rows.push({ date, timestamp, percentFull });
+  }
+
+  return rows.sort((a, b) => b.timestamp - a.timestamp);
+}
+
+function nearestPercent(rows: ReservoirCsvRow[], target: number, toleranceDays = 3): number | null {
+  let best: { delta: number; percentFull: number } | null = null;
+  for (const row of rows) {
+    const delta = Math.abs(row.timestamp - target);
+    if (delta > toleranceDays * 86_400_000) continue;
+    if (!best || delta < best.delta) best = { delta, percentFull: row.percentFull };
+  }
+  return best?.percentFull ?? null;
+}
+
+function parseReservoirCsvSnapshot(candidate: ReservoirCandidate, csv: string): ReservoirSnapshot | null {
+  const rows = parseReservoirCsvRows(csv);
+  const latest = rows[0];
+  if (!latest) return null;
+  const latestDate = new Date(latest.timestamp);
+  const weekTarget = latest.timestamp - 7 * 86_400_000;
+  const monthDate = new Date(latestDate);
+  monthDate.setUTCMonth(monthDate.getUTCMonth() - 1);
+  return {
+    name: candidate.name,
+    sourceUrl: `${WATER_DATA_BASE}/${candidate.waterDataSlug}`,
+    date: latest.date,
+    percentFull: latest.percentFull,
+    weekAgoPercent: nearestPercent(rows, weekTarget, 2),
+    monthAgoPercent: nearestPercent(rows, monthDate.getTime(), 3),
+  };
+}
+
 function stripHtml(value: string): string {
   return value
     .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
@@ -309,15 +399,29 @@ function reservoirSnapshotIsPostworthy(snapshot: ReservoirSnapshot): boolean {
 async function loadReservoirSnapshot(candidate: ReservoirCandidate): Promise<ReservoirSnapshot | null> {
   const sourceUrl = `${WATER_DATA_BASE}/${candidate.waterDataSlug}`;
   try {
-    const response = await fetch(sourceUrl, {
+    const csvResponse = await fetch(`${sourceUrl}-1year.csv`, {
+      cache: "no-store",
       headers: {
-        accept: "text/html,application/xhtml+xml",
-        "user-agent": "TexasDefined-Facebook-Publisher/1.0",
+        accept: "text/csv,text/plain;q=0.9,*/*;q=0.1",
+        "user-agent": "TexasDefined-Facebook-Publisher/1.1",
       },
       signal: AbortSignal.timeout(8000),
     });
-    if (!response.ok) return null;
-    return parseReservoirSnapshot(candidate, await response.text());
+    if (csvResponse.ok) {
+      const csvSnapshot = parseReservoirCsvSnapshot(candidate, await csvResponse.text());
+      if (csvSnapshot) return csvSnapshot;
+    }
+
+    const htmlResponse = await fetch(sourceUrl, {
+      cache: "no-store",
+      headers: {
+        accept: "text/html,application/xhtml+xml",
+        "user-agent": "TexasDefined-Facebook-Publisher/1.1",
+      },
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!htmlResponse.ok) return null;
+    return parseReservoirSnapshot(candidate, await htmlResponse.text());
   } catch {
     return null;
   }
