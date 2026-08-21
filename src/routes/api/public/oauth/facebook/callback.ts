@@ -1,16 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHmac, timingSafeEqual } from "crypto";
 import {
-  FACEBOOK_PLATFORM_KEEP_TX_RED,
-  KEEP_TX_RED_FACEBOOK_PAGE_ID,
   facebookPlatformForPage,
+  facebookPlatformForTarget,
+  type FacebookOAuthTarget,
 } from "@/lib/facebook-page-platform";
 
 const GRAPH_VERSION = "v21.0";
 
 type FacebookPage = { id: string; name: string; access_token?: string };
 
-function verifyState(state: string, secret: string): { ok: boolean; origin?: string } {
+type VerifiedState = {
+  ok: boolean;
+  origin?: string;
+  target?: FacebookOAuthTarget;
+};
+
+function verifyState(state: string, secret: string): VerifiedState {
   const idx = state.lastIndexOf(".");
   if (idx <= 0) return { ok: false };
   const payload = state.slice(0, idx);
@@ -24,7 +30,13 @@ function verifyState(state: string, secret: string): { ok: boolean; origin?: str
     if (typeof decoded.t !== "number" || Date.now() - decoded.t > 15 * 60 * 1000) {
       return { ok: false };
     }
-    return { ok: true, origin: decoded.o };
+    const target: FacebookOAuthTarget | undefined =
+      decoded.target === "texasdefined"
+        ? "texasdefined"
+        : decoded.target === "keeptxred"
+          ? "keeptxred"
+          : undefined;
+    return { ok: true, origin: decoded.o, target };
   } catch {
     return { ok: false };
   }
@@ -88,6 +100,11 @@ export const Route = createFileRoute("/api/public/oauth/facebook/callback")({
           );
         }
 
+        // Legacy state values created before target-specific OAuth default to Keep TX Red.
+        const target: FacebookOAuthTarget = verified.target ?? "keeptxred";
+        const expectedPlatform = facebookPlatformForTarget(target);
+        const targetLabel = target === "texasdefined" ? "Texas Defined" : "Keep TX Red";
+
         const origin = `${url.protocol}//${url.host}`;
         const redirectUri = `${origin}/api/public/oauth/facebook/callback`;
 
@@ -126,6 +143,7 @@ export const Route = createFileRoute("/api/public/oauth/facebook/callback")({
           error?: { message?: string };
         };
         console.log("[fb-oauth] /me/accounts", {
+          target,
           status: pagesRes.status,
           page_count: pagesJson.data?.length ?? 0,
           pages: safePageSummary(pagesJson.data),
@@ -142,25 +160,7 @@ export const Route = createFileRoute("/api/public/oauth/facebook/callback")({
         if (pagesJson.data.length === 0) {
           return htmlResult(
             "No Facebook Pages available",
-            "This account does not manage any Pages, or Page access was not granted. Reconnect and select the Keep TX Red and TexasDefined Pages.",
-            false,
-          );
-        }
-
-        const keepTxRedPage = pagesJson.data.find(
-          (page) => page.id === KEEP_TX_RED_FACEBOOK_PAGE_ID,
-        );
-        if (!keepTxRedPage) {
-          return htmlResult(
-            "Keep TX Red Page not available",
-            "Facebook did not return the Keep TX Red Page for this authorization. Reconnect and ensure the Page is selected in the Meta consent screen.",
-            false,
-          );
-        }
-        if (!keepTxRedPage.access_token) {
-          return htmlResult(
-            "Missing Page access token",
-            "Facebook returned the Keep TX Red Page but did not include a Page access token for publishing.",
+            `Facebook did not return the ${targetLabel} Page. Reconnect that Page and select its own business portfolio in Meta.`,
             false,
           );
         }
@@ -176,17 +176,18 @@ export const Route = createFileRoute("/api/public/oauth/facebook/callback")({
             } => Boolean(item.platform && item.page.access_token),
           );
 
-        if (!managedPages.some((item) => item.platform === FACEBOOK_PLATFORM_KEEP_TX_RED)) {
+        const targetPages = managedPages.filter((item) => item.platform === expectedPlatform);
+        if (targetPages.length === 0) {
           return htmlResult(
-            "Missing Keep TX Red Page token",
-            "Keep TX Red was selected, but Facebook did not provide a usable Page token.",
+            `${targetLabel} Page not available`,
+            `Facebook did not return a usable token for ${targetLabel}. In the Meta chooser, select the ${targetLabel} business portfolio and Page, then continue.`,
             false,
           );
         }
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const savedNames: string[] = [];
-        for (const { page, platform } of managedPages) {
+        for (const { page, platform } of targetPages) {
           const { data: existing, error: lookupError } = await supabaseAdmin
             .from("social_connections")
             .select("id")
@@ -237,6 +238,7 @@ export const Route = createFileRoute("/api/public/oauth/facebook/callback")({
 
           savedNames.push(page.name);
           console.log("[fb-oauth] stored Facebook Page", {
+            target,
             platform,
             page_id: page.id,
             page_name: page.name,
@@ -246,7 +248,7 @@ export const Route = createFileRoute("/api/public/oauth/facebook/callback")({
 
         return htmlResult(
           "Facebook connected",
-          `Linked Pages: <strong>${savedNames.join(", ")}</strong>. You can close this tab and return to Admin.`,
+          `Linked Page: <strong>${savedNames.join(", ")}</strong>. You can close this tab and return to Admin.`,
           true,
         );
       },

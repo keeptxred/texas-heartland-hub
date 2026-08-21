@@ -21,13 +21,13 @@ const PLATFORMS: Array<{
     key: "facebook",
     label: "Keep TX Red Facebook Page",
     placeholder: "Keep TX Red Page not linked",
-    connectLabel: "Connect Facebook",
+    connectLabel: "Connect Keep TX Red",
   },
   {
     key: "facebook_texasdefined",
     label: "TexasDefined Facebook Page",
     placeholder: "TexasDefined Page not linked",
-    connectLabel: "Connect Facebook",
+    connectLabel: "Connect TexasDefined",
   },
   {
     key: "instagram",
@@ -84,7 +84,7 @@ export function MetaConnectionManager() {
       );
       return;
     }
-    window.location.href = facebookConnectUrl();
+    window.location.href = facebookConnectUrl(key);
   }
 
   async function handleDisconnect(key: PlatformKey) {
@@ -113,7 +113,7 @@ export function MetaConnectionManager() {
       <div className="mb-4">
         <h2 className="text-xl font-bold">Social Connections</h2>
         <p className="text-sm text-neutral-600">
-          Manage the Meta Page connections used by Keep TX Red and TexasDefined publishing.
+          Connect each Facebook Page independently so each site keeps its own Page token.
         </p>
       </div>
 

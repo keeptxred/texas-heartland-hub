@@ -4,6 +4,8 @@ import {
   FACEBOOK_PLATFORM_TEXASDEFINED,
   KEEP_TX_RED_FACEBOOK_PAGE_ID,
   facebookPlatformForPage,
+  facebookPlatformForTarget,
+  facebookTargetForPlatform,
 } from "./facebook-page-platform";
 
 describe("facebookPlatformForPage", () => {
@@ -27,5 +29,17 @@ describe("facebookPlatformForPage", () => {
 
   it("ignores unrelated Facebook pages", () => {
     expect(facebookPlatformForPage({ id: "other", name: "Other Page" })).toBeNull();
+  });
+});
+
+describe("Facebook OAuth target mapping", () => {
+  it("maps each OAuth target to its own stored platform", () => {
+    expect(facebookPlatformForTarget("keeptxred")).toBe(FACEBOOK_PLATFORM_KEEP_TX_RED);
+    expect(facebookPlatformForTarget("texasdefined")).toBe(FACEBOOK_PLATFORM_TEXASDEFINED);
+  });
+
+  it("maps stored Facebook platforms back to the correct OAuth target", () => {
+    expect(facebookTargetForPlatform(FACEBOOK_PLATFORM_KEEP_TX_RED)).toBe("keeptxred");
+    expect(facebookTargetForPlatform(FACEBOOK_PLATFORM_TEXASDEFINED)).toBe("texasdefined");
   });
 });

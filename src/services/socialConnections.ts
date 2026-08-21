@@ -31,6 +31,9 @@ export function testSocialConnection(platform: SocialPlatform) {
   return testSocialConnectionFn({ data: { token: getAdminToken(), platform } });
 }
 
-export function facebookConnectUrl(): string {
-  return `/api/public/oauth/facebook/start?t=${encodeURIComponent(getAdminToken())}`;
+export function facebookConnectUrl(
+  platform: "facebook" | "facebook_texasdefined" = "facebook",
+): string {
+  const target = platform === "facebook_texasdefined" ? "texasdefined" : "keeptxred";
+  return `/api/public/oauth/facebook/start?t=${encodeURIComponent(getAdminToken())}&target=${target}`;
 }
