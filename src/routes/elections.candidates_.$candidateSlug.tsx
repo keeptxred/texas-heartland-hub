@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import candidates from "@/data/elections/2026/candidates.json";
 import {
   CandidateBiographySection,
@@ -31,7 +31,21 @@ import { electionSlugs, isElectionSlug } from "@/types/elections";
 export const Route = createFileRoute("/elections/candidates_/$candidateSlug")({
   beforeLoad: ({ params }) => {
     const storedSlug = findCandidateStoredSlug(params.candidateSlug, candidates);
-    if (!storedSlug) return;
+    const record = storedSlug
+      ? candidates.find(
+          (item) =>
+            item.slug === storedSlug &&
+            item.publicationStatus === "published" &&
+            item.verificationStatus === "verified",
+        )
+      : undefined;
+
+    // Do not render a 200-status "candidate not found" shell. Google correctly
+    // treats those as soft 404s. Unknown, unpublished, and unverified candidate
+    // URLs must be real 404 responses until a publishable record exists.
+    if (!storedSlug || !record || !isElectionSlug(storedSlug)) {
+      throw notFound();
+    }
 
     const canonicalSlug = candidateSeoSlug(storedSlug);
     if (params.candidateSlug !== canonicalSlug) {
