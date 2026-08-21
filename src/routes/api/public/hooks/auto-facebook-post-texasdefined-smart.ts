@@ -16,6 +16,8 @@ const MAX_DAILY_POSTS = 2;
 const MIN_GAP_MINUTES = 180;
 const ARTICLE_ENDPOINT = "https://keeptxred.com/api/public/hooks/auto-facebook-post-texasdefined";
 const SHOP_URL = "https://texasdefined.com/shop";
+const WATER_DATA_BASE = "https://waterdatafortexas.org/reservoirs/individual";
+const LAKE_LEVEL_MAX_AGE_DAYS = 3;
 
 const TARGET_WINDOWS: ReadonlyArray<readonly [number, number]> = [
   [10 * 60, 12 * 60 + 30],
@@ -34,12 +36,44 @@ type SocialConnectionRow = {
 };
 
 type PostKind = "engagement" | "article" | "fact" | "seasonal" | "shop";
+type TextPostKind = Exclude<PostKind, "article"> | "lake_level";
 
 type TextPost = {
-  kind: Exclude<PostKind, "article">;
+  kind: TextPostKind;
   message: string;
   title: string;
 };
+
+type ReservoirCandidate = {
+  name: string;
+  waterDataSlug: string;
+};
+
+type ReservoirSnapshot = {
+  name: string;
+  sourceUrl: string;
+  date: string;
+  percentFull: number;
+  weekAgoPercent: number | null;
+  monthAgoPercent: number | null;
+};
+
+const RESERVOIR_CANDIDATES: readonly ReservoirCandidate[] = [
+  { name: "Lake Corpus Christi", waterDataSlug: "corpus-christi" },
+  { name: "Lake Conroe", waterDataSlug: "conroe" },
+  { name: "Lake Fork", waterDataSlug: "fork" },
+  { name: "Sam Rayburn Reservoir", waterDataSlug: "sam-rayburn" },
+  { name: "Toledo Bend Reservoir", waterDataSlug: "toledo-bend" },
+  { name: "Possum Kingdom Lake", waterDataSlug: "possum-kingdom" },
+  { name: "Canyon Lake", waterDataSlug: "canyon" },
+  { name: "Choke Canyon Reservoir", waterDataSlug: "choke-canyon" },
+  { name: "Amistad Reservoir", waterDataSlug: "amistad" },
+  { name: "Lake Travis", waterDataSlug: "travis" },
+  { name: "Lake Buchanan", waterDataSlug: "buchanan" },
+  { name: "Lake Livingston", waterDataSlug: "livingston" },
+  { name: "Lake Whitney", waterDataSlug: "whitney" },
+  { name: "Lake Texoma", waterDataSlug: "texoma" },
+] as const;
 
 const ENGAGEMENT_POSTS = [
   "You get a free three-day weekend anywhere in Texas. Where are you going?",
@@ -201,11 +235,7 @@ function selectKind(seed: string, dateKey: string, slot: number): PostKind {
 }
 
 function recentMessageSet(posts: FacebookPagePost[]): Set<string> {
-  return new Set(
-    posts
-      .map((post) => normalizeFacebookHeadline(post.message ?? ""))
-      .filter(Boolean),
-  );
+  return new Set(posts.map((post) => normalizeFacebookHeadline(post.message ?? "")).filter(Boolean));
 }
 
 function chooseFromPool(pool: readonly string[], seed: string, key: string, recent: Set<string>): string {
@@ -215,6 +245,133 @@ function chooseFromPool(pool: readonly string[], seed: string, key: string, rece
     if (!recent.has(normalizeFacebookHeadline(candidate))) return candidate;
   }
   return pool[start];
+}
+
+function stripHtml(value: string): string {
+  return value
+    .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/&quot;/gi, '"')
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function parseReservoirSnapshot(candidate: ReservoirCandidate, html: string): ReservoirSnapshot | null {
+  const text = stripHtml(html);
+  const headline = text.match(/([A-Za-z0-9 .&'()-]+):\s*([0-9]{1,3}(?:\.[0-9]+)?)%\s+full\s+as\s+of\s+(\d{4}-\d{2}-\d{2})/i);
+  if (!headline) return null;
+  const percentFull = Number(headline[2]);
+  if (!Number.isFinite(percentFull) || percentFull < 0 || percentFull > 150) return null;
+
+  const week = text.match(/1\s+week\s+ago\s+\d{4}-\d{2}-\d{2}\s+([0-9]{1,3}(?:\.[0-9]+)?)/i);
+  const month = text.match(/1\s+month\s+ago\s+\d{4}-\d{2}-\d{2}\s+([0-9]{1,3}(?:\.[0-9]+)?)/i);
+  const weekAgoPercent = week ? Number(week[1]) : null;
+  const monthAgoPercent = month ? Number(month[1]) : null;
+
+  return {
+    name: candidate.name,
+    sourceUrl: `${WATER_DATA_BASE}/${candidate.waterDataSlug}`,
+    date: headline[3],
+    percentFull,
+    weekAgoPercent: Number.isFinite(weekAgoPercent) ? weekAgoPercent : null,
+    monthAgoPercent: Number.isFinite(monthAgoPercent) ? monthAgoPercent : null,
+  };
+}
+
+function reservoirSnapshotIsFresh(snapshot: ReservoirSnapshot, now = new Date()): boolean {
+  const measured = Date.parse(`${snapshot.date}T23:59:59Z`);
+  if (!Number.isFinite(measured)) return false;
+  const ageDays = (now.getTime() - measured) / 86_400_000;
+  return ageDays >= -1 && ageDays <= LAKE_LEVEL_MAX_AGE_DAYS;
+}
+
+function reservoirInterestScore(snapshot: ReservoirSnapshot): number {
+  const weekChange = snapshot.weekAgoPercent == null ? 0 : snapshot.percentFull - snapshot.weekAgoPercent;
+  const monthChange = snapshot.monthAgoPercent == null ? 0 : snapshot.percentFull - snapshot.monthAgoPercent;
+  let score = Math.max(Math.abs(weekChange) * 4, Math.abs(monthChange) * 2);
+  if (snapshot.percentFull >= 90) score += 12;
+  if (snapshot.percentFull <= 50) score += 12;
+  if (snapshot.percentFull >= 99) score += 8;
+  return score;
+}
+
+function reservoirSnapshotIsPostworthy(snapshot: ReservoirSnapshot): boolean {
+  if (!reservoirSnapshotIsFresh(snapshot)) return false;
+  const weekChange = snapshot.weekAgoPercent == null ? 0 : Math.abs(snapshot.percentFull - snapshot.weekAgoPercent);
+  const monthChange = snapshot.monthAgoPercent == null ? 0 : Math.abs(snapshot.percentFull - snapshot.monthAgoPercent);
+  return snapshot.percentFull >= 90 || snapshot.percentFull <= 50 || weekChange >= 3 || monthChange >= 5;
+}
+
+async function loadReservoirSnapshot(candidate: ReservoirCandidate): Promise<ReservoirSnapshot | null> {
+  const sourceUrl = `${WATER_DATA_BASE}/${candidate.waterDataSlug}`;
+  try {
+    const response = await fetch(sourceUrl, {
+      headers: {
+        accept: "text/html,application/xhtml+xml",
+        "user-agent": "TexasDefined-Facebook-Publisher/1.0",
+      },
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!response.ok) return null;
+    return parseReservoirSnapshot(candidate, await response.text());
+  } catch {
+    return null;
+  }
+}
+
+function lakeLevelPost(snapshot: ReservoirSnapshot): TextPost {
+  const weekChange = snapshot.weekAgoPercent == null ? null : snapshot.percentFull - snapshot.weekAgoPercent;
+  const monthChange = snapshot.monthAgoPercent == null ? null : snapshot.percentFull - snapshot.monthAgoPercent;
+  let observation = `is ${snapshot.percentFull.toFixed(1)}% full`;
+
+  if (weekChange != null && Math.abs(weekChange) >= 3) {
+    observation += `, ${weekChange > 0 ? "up" : "down"} ${Math.abs(weekChange).toFixed(1)} points from a week earlier`;
+  } else if (monthChange != null && Math.abs(monthChange) >= 5) {
+    observation += `, ${monthChange > 0 ? "up" : "down"} ${Math.abs(monthChange).toFixed(1)} points from a month earlier`;
+  }
+
+  let opener = `We love keeping an eye on Texas lakes, and ${snapshot.name} ${observation}.`;
+  if (snapshot.percentFull >= 90) opener = `It is great to see ${snapshot.name} sitting at ${snapshot.percentFull.toFixed(1)}% full.`;
+  if (snapshot.percentFull <= 50) opener = `${snapshot.name} is sitting at just ${snapshot.percentFull.toFixed(1)}% full right now — a reminder of how much Texas water conditions can change.`;
+
+  return {
+    kind: "lake_level",
+    title: `${snapshot.name} lake level`,
+    message: `${opener}\n\nHave you been out there lately? What are conditions looking like from the shoreline?\n\nWater Data for Texas · ${snapshot.date}\n${snapshot.sourceUrl}`,
+  };
+}
+
+async function chooseLakeLevelPost(args: {
+  seed: string;
+  dateKey: string;
+  slot: number;
+  recentPosts: FacebookPagePost[];
+}): Promise<TextPost | null> {
+  const recent = recentMessageSet(args.recentPosts);
+  const start = hash32(`${args.seed}:${args.dateKey}:${args.slot}:lake-level`) % RESERVOIR_CANDIDATES.length;
+  const ordered = Array.from({ length: RESERVOIR_CANDIDATES.length }, (_, offset) =>
+    RESERVOIR_CANDIDATES[(start + offset) % RESERVOIR_CANDIDATES.length],
+  );
+
+  const snapshots: ReservoirSnapshot[] = [];
+  for (const candidate of ordered.slice(0, 8)) {
+    const snapshot = await loadReservoirSnapshot(candidate);
+    if (snapshot && reservoirSnapshotIsPostworthy(snapshot)) snapshots.push(snapshot);
+  }
+  snapshots.sort((a, b) => reservoirInterestScore(b) - reservoirInterestScore(a));
+
+  for (const snapshot of snapshots) {
+    const post = lakeLevelPost(snapshot);
+    const normalized = normalizeFacebookHeadline(post.message);
+    if (!recent.has(normalized) && ![...recent].some((message) => message.includes(normalizeFacebookHeadline(snapshot.name)))) {
+      return post;
+    }
+  }
+  return null;
 }
 
 function chooseTextPost(args: {
@@ -231,12 +388,10 @@ function chooseTextPost(args: {
     const message = chooseFromPool(ENGAGEMENT_POSTS, args.seed, `${args.dateKey}:${args.slot}:engagement`, recent);
     return { kind: "engagement", message, title: "Texas conversation" };
   }
-
   if (args.kind === "fact") {
     const message = chooseFromPool(FACT_POSTS, args.seed, `${args.dateKey}:${args.slot}:fact`, recent);
     return { kind: "fact", message, title: "Texas fact and question" };
   }
-
   if (args.kind === "seasonal") {
     const message = chooseFromPool(seasonalPosts(month), args.seed, `${args.dateKey}:${args.slot}:seasonal`, recent);
     return { kind: "seasonal", message, title: "Texas seasonal conversation" };
@@ -269,7 +424,7 @@ async function recordTextPost(db: any, post: TextPost, externalId: string | null
     .from("content_packages")
     .insert({
       source_title: post.title,
-      source_url: null,
+      source_url: post.kind === "lake_level" ? post.message.match(/https:\/\/\S+$/m)?.[0] ?? null : null,
       category: "TexasDefined",
       facebook_hook: post.message,
       facebook_body: null,
@@ -313,26 +468,12 @@ async function forwardArticlePost(token: string): Promise<Response> {
 
 async function runSmartTexasDefinedFacebookPost(request: Request) {
   const token = bearerToken(request);
-  if (!token) {
-    return Response.json({ ok: false, error: "Missing GitHub Actions OIDC token" }, { status: 401 });
-  }
+  if (!token) return Response.json({ ok: false, error: "Missing GitHub Actions OIDC token" }, { status: 401 });
 
   try {
-    await verifyGitHubActionsOidc({
-      token,
-      audience: OIDC_AUDIENCE,
-      repository: REPOSITORY,
-      workflowPath: WORKFLOW_PATH,
-    });
+    await verifyGitHubActionsOidc({ token, audience: OIDC_AUDIENCE, repository: REPOSITORY, workflowPath: WORKFLOW_PATH });
   } catch (error) {
-    return Response.json(
-      {
-        ok: false,
-        error: "GitHub Actions OIDC verification failed",
-        detail: error instanceof Error ? error.message : String(error),
-      },
-      { status: 403 },
-    );
+    return Response.json({ ok: false, error: "GitHub Actions OIDC verification failed", detail: error instanceof Error ? error.message : String(error) }, { status: 403 });
   }
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -344,10 +485,7 @@ async function runSmartTexasDefinedFacebookPost(request: Request) {
   try {
     recentRows = await loadRecentQueue(db);
   } catch (error) {
-    return Response.json(
-      { ok: false, posted: false, error: "Failed to load TexasDefined Facebook history", detail: error instanceof Error ? error.message : String(error) },
-      { status: 500 },
-    );
+    return Response.json({ ok: false, posted: false, error: "Failed to load TexasDefined Facebook history", detail: error instanceof Error ? error.message : String(error) }, { status: 500 });
   }
 
   const decision = postingDecision({ now: new Date(), seed: adminSeed, recentRows });
@@ -365,71 +503,49 @@ async function runSmartTexasDefinedFacebookPost(request: Request) {
   }
 
   const kind = selectKind(adminSeed, decision.dateKey, decision.postsToday);
-  if (kind === "article") {
-    return forwardArticlePost(token);
-  }
+  if (kind === "article") return forwardArticlePost(token);
 
   const { data: rawConnection, error: connectionError } = await db
     .from("social_connections")
     .select("account_id,access_token,connection_status")
     .eq("platform", SOCIAL_PLATFORM)
     .maybeSingle();
-  if (connectionError) {
-    return Response.json({ ok: false, posted: false, error: connectionError.message }, { status: 500 });
-  }
+  if (connectionError) return Response.json({ ok: false, posted: false, error: connectionError.message }, { status: 500 });
+
   const connection = rawConnection as SocialConnectionRow | null;
   if (!connection || connection.connection_status !== "CONNECTED" || !connection.account_id || !connection.access_token) {
-    return Response.json(
-      { ok: false, posted: false, error: "TexasDefined Facebook Page is not connected", requires_connection: true },
-      { status: 503 },
-    );
+    return Response.json({ ok: false, posted: false, error: "TexasDefined Facebook Page is not connected", requires_connection: true }, { status: 503 });
   }
 
   let livePosts: FacebookPagePost[];
   try {
-    livePosts = await fetchRecentFacebookPagePosts({
-      pageId: String(connection.account_id),
-      pageToken: String(connection.access_token),
-      limit: 100,
-    });
+    livePosts = await fetchRecentFacebookPagePosts({ pageId: String(connection.account_id), pageToken: String(connection.access_token), limit: 100 });
   } catch (error) {
-    return Response.json(
-      { ok: false, posted: false, error: "TexasDefined Facebook duplicate verification failed", detail: error instanceof Error ? error.message : String(error) },
-      { status: 503 },
-    );
+    return Response.json({ ok: false, posted: false, error: "TexasDefined Facebook duplicate verification failed", detail: error instanceof Error ? error.message : String(error) }, { status: 503 });
   }
 
-  const post = chooseTextPost({
-    kind,
-    seed: adminSeed,
-    dateKey: decision.dateKey,
-    slot: decision.postsToday,
-    recentPosts: livePosts,
-  });
+  let post: TextPost | null = null;
+  if (kind === "fact" || kind === "seasonal") {
+    post = await chooseLakeLevelPost({ seed: adminSeed, dateKey: decision.dateKey, slot: decision.postsToday, recentPosts: livePosts });
+  }
+  if (!post) {
+    post = chooseTextPost({ kind, seed: adminSeed, dateKey: decision.dateKey, slot: decision.postsToday, recentPosts: livePosts });
+  }
 
   const graphUrl = `https://graph.facebook.com/${GRAPH_VERSION}/${encodeURIComponent(String(connection.account_id))}/feed`;
   const graphResponse = await fetch(graphUrl, {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({
-      message: post.message,
-      access_token: String(connection.access_token),
-    }),
+    body: JSON.stringify({ message: post.message, access_token: String(connection.access_token) }),
   });
-  const graphJson = (await graphResponse.json().catch(() => ({}))) as {
-    id?: string;
-    error?: { message?: string };
-  };
+  const graphJson = (await graphResponse.json().catch(() => ({}))) as { id?: string; error?: { message?: string } };
   if (!graphResponse.ok || !graphJson.id) {
-    return Response.json(
-      {
-        ok: false,
-        posted: false,
-        error: graphJson.error?.message ?? `Facebook Graph API returned HTTP ${graphResponse.status}`,
-        requires_connection: graphResponse.status === 401 || graphResponse.status === 403,
-      },
-      { status: 502 },
-    );
+    return Response.json({
+      ok: false,
+      posted: false,
+      error: graphJson.error?.message ?? `Facebook Graph API returned HTTP ${graphResponse.status}`,
+      requires_connection: graphResponse.status === 401 || graphResponse.status === 403,
+    }, { status: 502 });
   }
 
   const externalId = graphJson.id ?? null;
@@ -456,20 +572,16 @@ async function runSmartTexasDefinedFacebookPost(request: Request) {
     posted_at: new Date().toISOString(),
     mode,
     posts_today_before_post: decision.postsToday,
-    content_mix: {
-      engagement: 40,
-      article: 30,
-      fact: 15,
-      seasonal: 10,
-      shop: 5,
+    content_mix: { engagement: 40, article: 30, fact: 15, seasonal: 10, shop: 5 },
+    lake_level_policy: {
+      enabled: true,
+      source: "Water Data for Texas",
+      max_age_days: LAKE_LEVEL_MAX_AGE_DAYS,
+      used_for_fact_or_seasonal_slots_when_postworthy: true,
     },
   });
 }
 
 export const Route = createFileRoute("/api/public/hooks/auto-facebook-post-texasdefined-smart")({
-  server: {
-    handlers: {
-      POST: async ({ request }) => runSmartTexasDefinedFacebookPost(request),
-    },
-  },
+  server: { handlers: { POST: async ({ request }) => runSmartTexasDefinedFacebookPost(request) } },
 });
