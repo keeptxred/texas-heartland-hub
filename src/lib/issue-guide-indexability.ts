@@ -1,6 +1,7 @@
 import type { IssueGuide } from "@/data/issue-guides";
 import { applyPriorityIssueGuideUpgrade } from "@/data/issue-guide-priority-upgrades";
 import { applyWave2IssueGuideUpgrade } from "@/data/issue-guide-wave2-upgrades";
+import { applyWave3IssueGuideUpgrade } from "@/data/issue-guide-wave3-upgrades";
 
 export const MIN_ISSUE_GUIDE_WORDS = 1000;
 
@@ -14,7 +15,11 @@ function hydrateIssueGuide(guide: IssueGuide) {
   if (hydratedGuides.has(guide)) return guide;
   const priorityUpgraded = applyPriorityIssueGuideUpgrade(guide);
   const wave2Upgraded = applyWave2IssueGuideUpgrade(priorityUpgraded);
-  if (wave2Upgraded !== guide) guide.sections = wave2Upgraded.sections;
+  const wave3Upgraded = applyWave3IssueGuideUpgrade(wave2Upgraded);
+  if (wave3Upgraded !== guide) {
+    guide.sections = wave3Upgraded.sections;
+    guide.sources = wave3Upgraded.sources;
+  }
   hydratedGuides.add(guide);
   return guide;
 }
