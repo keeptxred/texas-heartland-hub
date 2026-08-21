@@ -1,15 +1,15 @@
 name: Admin visibility remediation
 on:
-  workflow_dispatch:
+  push:
+    branches: [old-chat-admin-visibility-remediation]
 permissions:
   contents: write
 jobs:
   patch:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: old-chat-admin-visibility-remediation
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -17,38 +17,31 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          p=Path('src/components/admin/ContentOpportunityPanel.tsx')
-          s=p.read_text()
+          p=Path('src/components/admin/ContentOpportunityPanel.tsx'); s=p.read_text()
           s=s.replace('  const [previewId, setPreviewId] = useState<number | null>(null);', '  const [previewId, setPreviewId] = useState<number | null>(null);\n  const [visibleCount, setVisibleCount] = useState(75);')
           s=s.replace('  const previewRow = useMemo(', '  useEffect(() => {\n    setVisibleCount(75);\n  }, [filter]);\n\n  const previewRow = useMemo(')
           s=s.replace('{filtered.slice(0, 75).map((r) => {', '{filtered.slice(0, visibleCount).map((r) => {')
           anchor='''          </table>\n        </div>\n      )}'''
-          replacement='''          </table>\n          <div className="mt-3 flex items-center justify-between gap-3 text-[11px] text-muted-foreground">\n            <span>Showing {Math.min(visibleCount, filtered.length)} of {filtered.length} matching opportunities · {items.length} loaded</span>\n            {visibleCount < filtered.length ? (\n              <button type="button" onClick={() => setVisibleCount((count) => Math.min(count + 75, filtered.length))} className="px-3 py-1 border border-border font-bold uppercase tracking-widest text-foreground hover:bg-muted">Load more</button>\n            ) : null}\n          </div>\n        </div>\n      )}'''
+          replacement='''          </table>\n          <div className="mt-3 flex items-center justify-between gap-3 text-[11px] text-muted-foreground">\n            <span>Showing {Math.min(visibleCount, filtered.length)} of {filtered.length} matching opportunities · {items.length} loaded</span>\n            {visibleCount < filtered.length ? (<button type="button" onClick={() => setVisibleCount((count) => Math.min(count + 75, filtered.length))} className="px-3 py-1 border border-border font-bold uppercase tracking-widest text-foreground hover:bg-muted">Load more</button>) : null}\n          </div>\n        </div>\n      )}'''
           if anchor not in s: raise SystemExit('content opportunity anchor not found')
           p.write_text(s.replace(anchor,replacement,1))
-
-          p=Path('src/services/publishArticle.functions.ts')
-          s=p.read_text()
-          start=s.find('type UsageRow = {')
-          end=s.find('\n\nfunction explainPublishFailure', start)
-          if start >= 0 and end >= 0: s=s[:start]+s[end+2:]
-          start=s.find('\nfunction isMissingBypassRpc(')
-          end=s.find('\n\nexport const publishFeedItemFn', start)
-          if start >= 0 and end >= 0: s=s[:start]+s[end:]
-          start=s.find('      const manualStartedAt = new Date().toISOString();')
-          end=s.find('      const { publishSingleFeedItem } = await import(', start)
-          if start < 0 or end < 0: raise SystemExit('publish fallback start/end not found')
-          replacement='''      // Explicit authenticated admin publishing receives a one-time database\n      // bypass. Production now has this RPC; fail closed if it cannot be granted.\n      const { error: bypassError } = await supabaseAdmin.rpc(\n        "grant_manual_ai_rewrite_bypass" as never,\n        { p_feed_item_id: data.feed_item_id } as never,\n      );\n      if (bypassError) {\n        return {\n          ok: false,\n          error: `Could not authorize manual rewrite bypass: ${bypassError.message}`,\n        };\n      }\n\n'''
+          p=Path('src/services/publishArticle.functions.ts'); s=p.read_text()
+          start=s.find('type UsageRow = {'); end=s.find('\n\nfunction explainPublishFailure', start)
+          if start>=0 and end>=0: s=s[:start]+s[end+2:]
+          start=s.find('\nfunction isMissingBypassRpc('); end=s.find('\n\nexport const publishFeedItemFn', start)
+          if start>=0 and end>=0: s=s[:start]+s[end:]
+          start=s.find('      const manualStartedAt = new Date().toISOString();'); end=s.find('      const { publishSingleFeedItem } = await import(', start)
+          if start<0 or end<0: raise SystemExit('publish fallback anchors not found')
+          replacement='''      // Explicit authenticated admin publishing receives a one-time database\n      // bypass. Production has this RPC; fail closed if it cannot be granted.\n      const { error: bypassError } = await supabaseAdmin.rpc(\n        "grant_manual_ai_rewrite_bypass" as never,\n        { p_feed_item_id: data.feed_item_id } as never,\n      );\n      if (bypassError) return { ok: false, error: `Could not authorize manual rewrite bypass: ${bypassError.message}` };\n\n'''
           s=s[:start]+replacement+s[end:]
           start=s.find('      if (isMissingBypassRpc(bypassError)) {', s.find('let res = await publishSingleFeedItem'))
-          if start >= 0:
+          if start>=0:
             end=s.find('\n\n      if (!res.ok)', start)
-            if end < 0: raise SystemExit('publish fallback cleanup end not found')
+            if end<0: raise SystemExit('cleanup end not found')
             s=s[:start]+s[end:]
           p.write_text(s)
-
-          p=Path('src/lib/ingest-feeds-legacy.ts')
-          s=p.read_text().replace('process.env.DAILY_AI_REWRITE_LIMIT ?? "8"', 'process.env.DAILY_AI_REWRITE_LIMIT ?? "25"').replace('      : 8;\n    const { data: claimData', '      : 25;\n    const { data: claimData')
+          p=Path('src/lib/ingest-feeds-legacy.ts'); s=p.read_text()
+          s=s.replace('process.env.DAILY_AI_REWRITE_LIMIT ?? "8"','process.env.DAILY_AI_REWRITE_LIMIT ?? "25"').replace('      : 8;\n    const { data: claimData','      : 25;\n    const { data: claimData')
           p.write_text(s)
           PY
       - run: npm ci
@@ -59,4 +52,4 @@ jobs:
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add -- src/components/admin/ContentOpportunityPanel.tsx src/services/publishArticle.functions.ts src/lib/ingest-feeds-legacy.ts
           git commit -m "fix: finish admin visibility and rewrite budget cleanup" || exit 0
-          git push origin HEAD:old-chat-admin-visibility-remediation
+          git push
