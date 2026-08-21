@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
+  facebookHeadlineSimilarity,
   fetchRecentFacebookPagePosts,
   normalizeFacebookHeadline,
   type FacebookPagePost,
@@ -14,6 +15,7 @@ const SOCIAL_PLATFORM = "facebook_texasdefined";
 const GRAPH_VERSION = "v21.0";
 const MAX_DAILY_POSTS = 2;
 const MIN_GAP_MINUTES = 180;
+const HISTORY_DAYS = 30;
 const ARTICLE_ENDPOINT = "https://keeptxred.com/api/public/hooks/auto-facebook-post-texasdefined";
 const SHOP_URL = "https://texasdefined.com/shop";
 const WATER_DATA_BASE = "https://waterdatafortexas.org/reservoirs/individual";
@@ -27,6 +29,11 @@ const TARGET_WINDOWS: ReadonlyArray<readonly [number, number]> = [
 type QueueRow = {
   content_package_id: string;
   published_time: string | null;
+};
+
+type RecordedPackageRow = {
+  id: string;
+  facebook_hook: string | null;
 };
 
 type SocialConnectionRow = {
@@ -126,6 +133,21 @@ const FACT_POSTS = [
   "Texas was an independent republic from 1836 to 1845. Which chapter of Texas history fascinates you most?",
   "We love how one Texas road trip can take you from pine forests to desert mountains to the Gulf. Which Texas landscape feels most like home to you?",
   "One thing we love about Texas is how much history is hiding in plain sight. What historic place near you deserves more attention?",
+] as const;
+
+const SHOP_POSTS = [
+  `Texas pride looks different for everybody. What kind of Texas gear do you actually like to wear or keep around the house?\n\n${SHOP_URL}`,
+  `If you could put one unmistakably Texas design on a shirt, hat or mug, what would it be?\n\n${SHOP_URL}`,
+  `When you buy Texas-themed gear, what actually gets your attention first — the flag, bluebonnets, a favorite city, wildlife or something else?\n\n${SHOP_URL}`,
+  `What makes a Texas shirt worth wearing more than once: a clean design, a funny line, local pride or something nobody else has?\n\n${SHOP_URL}`,
+  `If you were sending one Texas-themed gift to somebody out of state, what would you choose?\n\n${SHOP_URL}`,
+  `Which belongs on the best Texas gear: the Lone Star, bluebonnets, longhorns, an armadillo or a shape of the state?\n\n${SHOP_URL}`,
+  `Do you prefer Texas gear that is loud and obvious or something subtle that another Texan would recognize right away?\n\n${SHOP_URL}`,
+  `What Texas place would you actually wear on a shirt — your hometown, a state park, a lake, the Hill Country, the coast or somewhere else?\n\n${SHOP_URL}`,
+  `Texas has no shortage of symbols. Which one do you think is overused on shirts and which one deserves more attention?\n\n${SHOP_URL}`,
+  `If we made a Texas road-trip collection, what destination absolutely has to be represented?\n\n${SHOP_URL}`,
+  `What is the most Texas thing you have ever seen printed on a shirt, hat, sticker or mug?\n\n${SHOP_URL}`,
+  `Would you rather have Texas gear built around history, outdoors, food, hometown pride or pure Texas humor?\n\n${SHOP_URL}`,
 ] as const;
 
 function seasonalPosts(month: number): readonly string[] {
@@ -240,17 +262,32 @@ function selectKind(seed: string, dateKey: string, slot: number): PostKind {
   return "shop";
 }
 
-function recentMessageSet(posts: FacebookPagePost[]): Set<string> {
-  return new Set(posts.map((post) => normalizeFacebookHeadline(post.message ?? "")).filter(Boolean));
+function recentMessageSet(posts: FacebookPagePost[], recordedMessages: readonly string[] = []): Set<string> {
+  return new Set(
+    [...posts.map((post) => post.message ?? ""), ...recordedMessages]
+      .map((message) => normalizeFacebookHeadline(message))
+      .filter(Boolean),
+  );
 }
 
-function chooseFromPool(pool: readonly string[], seed: string, key: string, recent: Set<string>): string {
+function isDuplicateMessage(candidate: string, recent: Set<string>): boolean {
+  const normalized = normalizeFacebookHeadline(candidate);
+  if (!normalized) return true;
+  if (recent.has(normalized)) return true;
+  for (const message of recent) {
+    if (facebookHeadlineSimilarity(candidate, message) >= 0.86) return true;
+  }
+  return false;
+}
+
+function chooseFromPool(pool: readonly string[], seed: string, key: string, recent: Set<string>): string | null {
+  if (pool.length === 0) return null;
   const start = hash32(`${seed}:${key}`) % pool.length;
   for (let offset = 0; offset < pool.length; offset += 1) {
     const candidate = pool[(start + offset) % pool.length];
-    if (!recent.has(normalizeFacebookHeadline(candidate))) return candidate;
+    if (!isDuplicateMessage(candidate, recent)) return candidate;
   }
-  return pool[start];
+  return null;
 }
 
 function parseCsvLine(line: string): string[] {
@@ -484,33 +521,30 @@ function chooseTextPost(args: {
   dateKey: string;
   slot: number;
   recentPosts: FacebookPagePost[];
-}): TextPost {
-  const recent = recentMessageSet(args.recentPosts);
+  recordedMessages: readonly string[];
+}): TextPost | null {
+  const recent = recentMessageSet(args.recentPosts, args.recordedMessages);
   const month = Number(args.dateKey.slice(5, 7));
 
   if (args.kind === "engagement") {
     const message = chooseFromPool(ENGAGEMENT_POSTS, args.seed, `${args.dateKey}:${args.slot}:engagement`, recent);
-    return { kind: "engagement", message, title: "Texas conversation" };
+    return message ? { kind: "engagement", message, title: "Texas conversation" } : null;
   }
   if (args.kind === "fact") {
     const message = chooseFromPool(FACT_POSTS, args.seed, `${args.dateKey}:${args.slot}:fact`, recent);
-    return { kind: "fact", message, title: "Texas fact and question" };
+    return message ? { kind: "fact", message, title: "Texas fact and question" } : null;
   }
   if (args.kind === "seasonal") {
     const message = chooseFromPool(seasonalPosts(month), args.seed, `${args.dateKey}:${args.slot}:seasonal`, recent);
-    return { kind: "seasonal", message, title: "Texas seasonal conversation" };
+    return message ? { kind: "seasonal", message, title: "Texas seasonal conversation" } : null;
   }
 
-  const shopMessages = [
-    `Texas pride looks different for everybody. What kind of Texas gear do you actually like to wear or keep around the house?\n\n${SHOP_URL}`,
-    `If you could put one unmistakably Texas design on a shirt, hat or mug, what would it be?\n\n${SHOP_URL}`,
-  ] as const;
-  const message = chooseFromPool(shopMessages, args.seed, `${args.dateKey}:${args.slot}:shop`, recent);
-  return { kind: "shop", message, title: "TexasDefined shop conversation" };
+  const message = chooseFromPool(SHOP_POSTS, args.seed, `${args.dateKey}:${args.slot}:shop`, recent);
+  return message ? { kind: "shop", message, title: "TexasDefined shop conversation" } : null;
 }
 
 async function loadRecentQueue(db: any): Promise<QueueRow[]> {
-  const cutoff = new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString();
+  const cutoff = new Date(Date.now() - HISTORY_DAYS * 24 * 60 * 60 * 1000).toISOString();
   const { data, error } = await db
     .from("publishing_queue")
     .select("content_package_id,published_time")
@@ -518,9 +552,66 @@ async function loadRecentQueue(db: any): Promise<QueueRow[]> {
     .eq("status", "PUBLISHED")
     .gte("published_time", cutoff)
     .order("published_time", { ascending: false })
-    .limit(20);
+    .limit(100);
   if (error) throw new Error(error.message);
   return (data ?? []) as QueueRow[];
+}
+
+async function loadRecordedMessages(db: any, recentRows: QueueRow[]): Promise<string[]> {
+  const packageIds = [...new Set(recentRows.map((row) => row.content_package_id).filter(Boolean))];
+  if (packageIds.length === 0) return [];
+  const { data, error } = await db
+    .from("content_packages")
+    .select("id,facebook_hook")
+    .in("id", packageIds);
+  if (error) throw new Error(error.message);
+  return ((data ?? []) as RecordedPackageRow[])
+    .map((row) => row.facebook_hook?.trim() ?? "")
+    .filter(Boolean);
+}
+
+function hardPostingGuard(args: {
+  now: Date;
+  recentRows: QueueRow[];
+  livePosts: FacebookPagePost[];
+}): { allowed: boolean; reason: string | null; postsToday: number; latestPublishedAt: string | null } {
+  const todayKey = centralClock(args.now).dateKey;
+  const dbTimes = args.recentRows
+    .map((row) => row.published_time)
+    .filter((value): value is string => Boolean(value) && centralDateKey(value as string) === todayKey);
+  const liveTimes = args.livePosts
+    .map((post) => post.created_time)
+    .filter((value): value is string => Boolean(value) && centralDateKey(value as string) === todayKey);
+
+  const postsToday = Math.max(dbTimes.length, liveTimes.length);
+  const latestTimestamp = [...dbTimes, ...liveTimes]
+    .map((value) => Date.parse(value))
+    .filter((value) => Number.isFinite(value))
+    .sort((a, b) => b - a)[0] ?? null;
+  const latestPublishedAt = latestTimestamp == null ? null : new Date(latestTimestamp).toISOString();
+
+  if (postsToday >= MAX_DAILY_POSTS) {
+    return {
+      allowed: false,
+      reason: "TexasDefined hard Facebook daily cap reached",
+      postsToday,
+      latestPublishedAt,
+    };
+  }
+
+  if (latestTimestamp != null) {
+    const gapMinutes = (args.now.getTime() - latestTimestamp) / 60_000;
+    if (gapMinutes < MIN_GAP_MINUTES) {
+      return {
+        allowed: false,
+        reason: `TexasDefined hard Facebook minimum gap is ${MIN_GAP_MINUTES} minutes`,
+        postsToday,
+        latestPublishedAt,
+      };
+    }
+  }
+
+  return { allowed: true, reason: null, postsToday, latestPublishedAt };
 }
 
 async function recordTextPost(db: any, post: TextPost, externalId: string | null): Promise<string | null> {
@@ -584,15 +675,18 @@ async function runSmartTexasDefinedFacebookPost(request: Request) {
   const db = supabaseAdmin as any;
   const adminSeed = process.env.ADMIN_PASSCODE ?? "keeptxred";
   const mode = request.headers.get("x-ktr-facebook-mode")?.trim().toLowerCase() || "scheduled";
+  const now = new Date();
 
   let recentRows: QueueRow[];
+  let recordedMessages: string[];
   try {
     recentRows = await loadRecentQueue(db);
+    recordedMessages = await loadRecordedMessages(db, recentRows);
   } catch (error) {
     return Response.json({ ok: false, posted: false, error: "Failed to load TexasDefined Facebook history", detail: error instanceof Error ? error.message : String(error) }, { status: 500 });
   }
 
-  const decision = postingDecision({ now: new Date(), seed: adminSeed, recentRows });
+  const decision = postingDecision({ now, seed: adminSeed, recentRows });
   if (mode !== "manual" && !decision.shouldPost) {
     return Response.json({
       ok: true,
@@ -605,9 +699,6 @@ async function runSmartTexasDefinedFacebookPost(request: Request) {
       targets_local: decision.targets.map((target) => formatCentralMinute(target)),
     });
   }
-
-  const kind = selectKind(adminSeed, decision.dateKey, decision.postsToday);
-  if (kind === "article") return forwardArticlePost(token);
 
   const { data: rawConnection, error: connectionError } = await db
     .from("social_connections")
@@ -628,12 +719,64 @@ async function runSmartTexasDefinedFacebookPost(request: Request) {
     return Response.json({ ok: false, posted: false, error: "TexasDefined Facebook duplicate verification failed", detail: error instanceof Error ? error.message : String(error) }, { status: 503 });
   }
 
+  const hardGuard = hardPostingGuard({ now, recentRows, livePosts });
+  if (!hardGuard.allowed) {
+    return Response.json({
+      ok: true,
+      posted: false,
+      hard_guard: true,
+      reason: hardGuard.reason,
+      posts_today: hardGuard.postsToday,
+      latest_published_at: hardGuard.latestPublishedAt,
+      minimum_gap_minutes: MIN_GAP_MINUTES,
+      max_daily_posts: MAX_DAILY_POSTS,
+    });
+  }
+
+  const kind = selectKind(adminSeed, decision.dateKey, Math.max(decision.postsToday, hardGuard.postsToday));
+  if (kind === "article") return forwardArticlePost(token);
+
+  const combinedRecentPosts: FacebookPagePost[] = [
+    ...livePosts,
+    ...recordedMessages.map((message) => ({ message })),
+  ];
+
   let post: TextPost | null = null;
   if (kind === "fact" || kind === "seasonal") {
-    post = await chooseLakeLevelPost({ seed: adminSeed, dateKey: decision.dateKey, slot: decision.postsToday, recentPosts: livePosts });
+    post = await chooseLakeLevelPost({ seed: adminSeed, dateKey: decision.dateKey, slot: hardGuard.postsToday, recentPosts: combinedRecentPosts });
   }
   if (!post) {
-    post = chooseTextPost({ kind, seed: adminSeed, dateKey: decision.dateKey, slot: decision.postsToday, recentPosts: livePosts });
+    post = chooseTextPost({
+      kind,
+      seed: adminSeed,
+      dateKey: decision.dateKey,
+      slot: hardGuard.postsToday,
+      recentPosts: livePosts,
+      recordedMessages,
+    });
+  }
+
+  if (!post) {
+    return Response.json({
+      ok: true,
+      posted: false,
+      duplicate_guard: true,
+      reason: "No non-duplicate TexasDefined Facebook text post is available in the current content pool",
+      kind,
+      history_days: HISTORY_DAYS,
+    });
+  }
+
+  const recent = recentMessageSet(livePosts, recordedMessages);
+  if (isDuplicateMessage(post.message, recent)) {
+    return Response.json({
+      ok: true,
+      posted: false,
+      duplicate_guard: true,
+      reason: "TexasDefined Facebook post blocked as an exact or near duplicate",
+      kind: post.kind,
+      history_days: HISTORY_DAYS,
+    });
   }
 
   const graphUrl = `https://graph.facebook.com/${GRAPH_VERSION}/${encodeURIComponent(String(connection.account_id))}/feed`;
@@ -675,8 +818,14 @@ async function runSmartTexasDefinedFacebookPost(request: Request) {
     record_warning: recordWarning,
     posted_at: new Date().toISOString(),
     mode,
-    posts_today_before_post: decision.postsToday,
+    posts_today_before_post: hardGuard.postsToday,
     content_mix: { engagement: 40, article: 30, fact: 15, seasonal: 10, shop: 5 },
+    duplicate_policy: {
+      history_days: HISTORY_DAYS,
+      exact_and_near_duplicate_guard: true,
+      sources: ["facebook", "publishing_queue"],
+      shop_pool_size: SHOP_POSTS.length,
+    },
     lake_level_policy: {
       enabled: true,
       source: "Water Data for Texas",
