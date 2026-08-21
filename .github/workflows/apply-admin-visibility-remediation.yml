@@ -1,0 +1,72 @@
+name: Apply admin visibility remediation
+on:
+  push:
+    branches: [old-chat-admin-visibility-remediation]
+permissions:
+  contents: write
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Apply scoped fixes
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p=Path('src/components/admin/ContentOpportunityPanel.tsx')
+          s=p.read_text()
+          if 'const [visibleCount, setVisibleCount] = useState(75);' not in s:
+            s=s.replace('  const [previewId, setPreviewId] = useState<number | null>(null);', '  const [previewId, setPreviewId] = useState<number | null>(null);\n  const [visibleCount, setVisibleCount] = useState(75);')
+          if 'setVisibleCount(75);\n  }, [filter]);' not in s:
+            s=s.replace('  const previewRow = useMemo(', '  useEffect(() => {\n    setVisibleCount(75);\n  }, [filter]);\n\n  const previewRow = useMemo(')
+          s=s.replace('{filtered.slice(0, 75).map((r) => {', '{filtered.slice(0, visibleCount).map((r) => {')
+          anchor='''          </table>\n        </div>\n      )}'''
+          if 'Showing {Math.min(visibleCount, filtered.length)} of {filtered.length}' not in s:
+            replacement='''          </table>\n          <div className="mt-3 flex items-center justify-between gap-3 text-[11px] text-muted-foreground">\n            <span>Showing {Math.min(visibleCount, filtered.length)} of {filtered.length} matching opportunities · {items.length} loaded</span>\n            {visibleCount < filtered.length ? (\n              <button\n                type="button"\n                onClick={() => setVisibleCount((count) => Math.min(count + 75, filtered.length))}\n                className="px-3 py-1 border border-border font-bold uppercase tracking-widest text-foreground hover:bg-muted"\n              >\n                Load more\n              </button>\n            ) : null}\n          </div>\n        </div>\n      )}'''
+            if anchor not in s: raise SystemExit('content opportunity table anchor not found')
+            s=s.replace(anchor,replacement,1)
+          p.write_text(s)
+
+          Path('src/services/contentSourceHealth.functions.ts').write_text('''import { createServerFn } from "@tanstack/react-start";\nimport { z } from "zod";\n\nconst InputSchema = z.object({ token: z.string().min(1) });\n\nexport type ContentSourceHealth = {\n  source_name: string;\n  rss_url: string | null;\n  category: string | null;\n  latest_item_at: string | null;\n  items_24h: number | null;\n  items_7d: number | null;\n  covered_7d: number | null;\n  health_status: string | null;\n  coverage_rate_7d: number | string | null;\n};\n\nexport const listContentSourceHealthFn = createServerFn({ method: "POST" })\n  .validator((d: unknown) => InputSchema.parse(d))\n  .handler(async ({ data }): Promise<{ ok: true; rows: ContentSourceHealth[] } | { ok: false; error: string }> => {\n    const expected = process.env.ADMIN_PASSCODE ?? "keeptxred";\n    if (data.token !== expected) return { ok: false, error: "Unauthorized" };\n    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");\n    const { data: rows, error } = await supabaseAdmin\n      .from("news_source_health")\n      .select("source_name,rss_url,category,latest_item_at,items_24h,items_7d,covered_7d,health_status,coverage_rate_7d")\n      .order("source_name", { ascending: true });\n    if (error) return { ok: false, error: error.message };\n    return { ok: true, rows: (rows ?? []) as ContentSourceHealth[] };\n  });\n''')
+
+          Path('src/services/contentSourceHealth.ts').write_text('''import { listContentSourceHealthFn, type ContentSourceHealth } from "./contentSourceHealth.functions";\n\nexport type { ContentSourceHealth };\n\nfunction getAdminToken(): string {\n  if (typeof window === "undefined") return "";\n  return sessionStorage.getItem("ktr-admin-passcode") || (import.meta.env.VITE_ADMIN_PASSCODE as string) || "keeptxred";\n}\n\nexport async function listContentSourceHealth(): Promise<ContentSourceHealth[]> {\n  const res = await listContentSourceHealthFn({ data: { token: getAdminToken() } });\n  if (!res.ok) throw new Error(res.error);\n  return res.rows;\n}\n''')
+
+          p=Path('src/components/admin/ContentSourceManager.tsx')
+          s=p.read_text()
+          if '@/services/contentSourceHealth' not in s:
+            s=s.replace('import { listReelCandidates, type ReelCandidate } from "@/services/reelCandidates";', 'import { listReelCandidates, type ReelCandidate } from "@/services/reelCandidates";\nimport { listContentSourceHealth, type ContentSourceHealth } from "@/services/contentSourceHealth";')
+          if 'const [health, setHealth]' not in s:
+            s=s.replace('  const [reels, setReels] = useState<ReelCandidate[]>([]);', '  const [reels, setReels] = useState<ReelCandidate[]>([]);\n  const [health, setHealth] = useState<ContentSourceHealth[]>([]);')
+          s=s.replace('const [s, r] = await Promise.all([listContentSources(), listReelCandidates()]);\n      setRows(s);\n      setReels(r);', 'const [s, r, h] = await Promise.all([listContentSources(), listReelCandidates(), listContentSourceHealth()]);\n      setRows(s);\n      setReels(r);\n      setHealth(h);')
+          if 'const healthByName = useMemo' not in s:
+            insert='''\n  const healthByName = useMemo(() => {\n    const map = new Map<string, ContentSourceHealth>();\n    for (const row of health) map.set(row.source_name.trim().toLowerCase(), row);\n    return map;\n  }, [health]);\n\n  const sourceDiagnostics = useMemo(() => {\n    const enabled = rows.filter((row) => row.enabled);\n    const rssConfigured = enabled.filter((row) => Boolean(row.rss_url?.trim())).length;\n    const healthy = health.filter((row) => row.health_status === "healthy").length;\n    const contributing = health.filter((row) => Number(row.items_7d ?? 0) > 0).length;\n    return { enabled: enabled.length, rssConfigured, healthy, contributing };\n  }, [rows, health]);\n'''
+            s=s.replace('  async function handleSave(input: ContentSourceInput, id?: string) {', insert+'\n  async function handleSave(input: ContentSourceInput, id?: string) {')
+          s=s.replace('Curated Texas presets. Enable to add to your active sources.', 'Curated Texas presets. RSS-configured sources are fetched directly; no-RSS sources may rely on direct/manual monitoring.')
+          s=s.replace('{p.rss_url ? " · RSS" : ""}', '{p.rss_url ? " · RSS" : " · No RSS"}')
+          header='''          <p className="text-xs text-muted-foreground">\n            Track trusted accounts and sites. Stats pulled from Reel Radar by matching platform + source name.\n          </p>'''
+          if 'RSS configured:' not in s:
+            repl=header+'''\n          <p className="text-[11px] text-muted-foreground mt-1">\n            Enabled: {sourceDiagnostics.enabled} · RSS configured: {sourceDiagnostics.rssConfigured} · Healthy feeds: {sourceDiagnostics.healthy} · Contributing in 7d: {sourceDiagnostics.contributing}\n          </p>'''
+            if header not in s: raise SystemExit('source manager header anchor not found')
+            s=s.replace(header,repl,1)
+          marker='''                        <span>Skipped: {stats.skipped}</span>'''
+          if '7d feed rows:' not in s:
+            repl=marker+'''\n                        {(() => {\n                          const h = healthByName.get(r.source_name.trim().toLowerCase());\n                          return (\n                            <>\n                              <span>{r.rss_url ? "RSS configured" : "No RSS configured"}</span>\n                              {h ? <span>Health: {h.health_status ?? "unknown"}</span> : null}\n                              {h ? <span>7d feed rows: {Number(h.items_7d ?? 0)}</span> : null}\n                            </>\n                          );\n                        })()}'''
+            if marker not in s: raise SystemExit('source row metadata anchor not found')
+            s=s.replace(marker,repl,1)
+          p.write_text(s)
+          PY
+      - run: npm ci
+      - run: npm run build
+      - name: Commit fixes and remove one-time workflow
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git rm .github/workflows/apply-admin-visibility-remediation.yml
+          git add -- src/components/admin/ContentOpportunityPanel.tsx src/components/admin/ContentSourceManager.tsx src/services/contentSourceHealth.functions.ts src/services/contentSourceHealth.ts
+          git commit -m "fix: complete admin content visibility remediation"
+          git push
