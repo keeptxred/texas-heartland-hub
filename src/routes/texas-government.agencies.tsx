@@ -1,11 +1,13 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { CitationTrustPanel } from '@/components/authority/CitationTrustPanel';
 import { AGENCY_AUTHORITY_PROFILES } from '@/data/agency-authority';
+import { EXTRA_AGENCY_AUTHORITY_PROFILES } from '@/data/agency-authority-extra';
 
 const SITE_URL = 'https://keeptxred.com';
 const CANONICAL = `${SITE_URL}/texas-government/agencies`;
 const TEXAS_GOV_DIRECTORY = 'https://www.texas.gov/texas-state-agencies-departments/';
 const TSL_DIRECTORY = 'https://www.tsl.texas.gov/apps/lrs/agencies/index.html';
+const ALL_AGENCY_PROFILES = [...AGENCY_AUTHORITY_PROFILES, ...EXTRA_AGENCY_AUTHORITY_PROFILES];
 
 const SERVICE_AREAS = [
   'Agriculture', 'Business', 'Driver services', 'Education', 'Employment',
@@ -37,12 +39,12 @@ export const Route = createFileRoute('/texas-government/agencies')({
       '@type': 'CollectionPage',
       name: 'Texas State Agency Directory & Authority Profiles',
       url: CANONICAL,
-      dateModified: '2026-08-19',
+      dateModified: '2026-08-20',
       isBasedOn: [TEXAS_GOV_DIRECTORY, TSL_DIRECTORY],
       mainEntity: {
         '@type': 'ItemList',
-        numberOfItems: AGENCY_AUTHORITY_PROFILES.length,
-        itemListElement: AGENCY_AUTHORITY_PROFILES.map((agency, index) => ({
+        numberOfItems: ALL_AGENCY_PROFILES.length,
+        itemListElement: ALL_AGENCY_PROFILES.map((agency, index) => ({
           '@type': 'ListItem', position: index + 1, name: agency.name,
           url: `${SITE_URL}/texas-government/agencies/${agency.slug}`, description: agency.dek,
         })),
@@ -71,7 +73,7 @@ function TexasAgencyDirectory() {
         <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-primary">Permanent KTR reference layer</p>
         <h2 id="ktr-authority-profiles" className="mt-2 text-3xl font-bold">High-use agency authority profiles</h2>
         <p className="mt-3 max-w-4xl leading-7 text-muted-foreground">These pages are not generic contact cards. They explain the institutional boundary behind recurring Texas stories so readers can distinguish a regulator from an operator, a state agency from a local board, and an executive action from authority that requires legislation.</p>
-        <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">{AGENCY_AUTHORITY_PROFILES.map((agency) => (
+        <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">{ALL_AGENCY_PROFILES.map((agency) => (
           <a key={agency.slug} href={`/texas-government/agencies/${agency.slug}`} className="rounded-xl border bg-card p-5 hover:border-primary">
             <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">{agency.shortName} · {agency.entityType.replaceAll('-', ' ')}</p>
             <h3 className="mt-2 text-xl font-bold">{agency.name}</h3>
@@ -94,7 +96,7 @@ function TexasAgencyDirectory() {
           { name: 'Texas State Library — State Agency Information', url: TSL_DIRECTORY, note: 'Agency website and TRAIL reference directory.' },
         ]}
         methodology="The official statewide directories remain the complete discovery source. KTR only creates deeper authority profiles when an agency repeatedly matters to policy coverage and its jurisdiction can be grounded in official records."
-        lastVerified="August 19, 2026"
+        lastVerified="August 20, 2026"
         title="Agency directory sources and methodology"
       />
     </main>
