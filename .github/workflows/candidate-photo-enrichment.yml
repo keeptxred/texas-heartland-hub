@@ -13,6 +13,7 @@ on:
       - "scripts/elections/apply-direct-web-photo-findings.mjs"
       - "scripts/elections/apply-verified-photo-findings-2026-07-31.mjs"
       - "scripts/elections/apply-automation-verified-photo-findings.mjs"
+      - "scripts/elections/apply-official-government-photo-findings-2026-08-21.mjs"
       - "src/data/elections/2026/candidate-photo-assets.json"
 
 permissions:
@@ -46,6 +47,8 @@ jobs:
         run: node scripts/elections/apply-verified-photo-findings-2026-07-31.mjs
       - name: Apply automation-verified candidate-guide findings
         run: node scripts/elections/apply-automation-verified-photo-findings.mjs
+      - name: Apply verified official government portraits
+        run: node scripts/elections/apply-official-government-photo-findings-2026-08-21.mjs
       - name: Discover directory candidate portraits
         run: node scripts/elections/discover-candidate-photos-directories.mjs
       - name: Discover linked and public-source candidate portraits
