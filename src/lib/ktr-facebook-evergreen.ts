@@ -4,10 +4,11 @@ export type KtrEvergreenFacebookPost = {
   message: string;
 };
 
-// Evergreen, discussion-first posts for KeepTXRed. These are intentionally
-// phrased as questions or neutral historical/civic prompts so they can stand
-// alone on Facebook without requiring an article link or asserting a disputed
-// conclusion as fact.
+// Attention-first Facebook prompts for KeepTXRed. Despite the legacy export
+// name, this is NOT an evergreen-article backlog. These are short social-native
+// conversation starters designed to earn reach, comments and repeat Page views.
+// They can stand alone without an article link; separate article slots remain
+// the direct traffic path back to KeepTXRed.
 export const KTR_EVERGREEN_FACEBOOK_POSTS: readonly KtrEvergreenFacebookPost[] = [
   { category: "Texas politics", title: "Local control", message: "Where should Texas draw the line between local control and statewide rules? What issue best shows the tension?" },
   { category: "Texas politics", title: "Property taxes", message: "What would make the biggest real-world difference to Texas property-tax bills: lower rates, tighter spending limits, higher exemptions, or something else?" },
@@ -17,6 +18,8 @@ export const KTR_EVERGREEN_FACEBOOK_POSTS: readonly KtrEvergreenFacebookPost[] =
   { category: "Texas politics", title: "State spending", message: "If Texas had to cut one area of state spending and protect another, what would you choose?" },
   { category: "Texas politics", title: "Election rules", message: "Which election rule matters most for public confidence: voter ID, paper records, faster counting, stronger audits, easier registration, or something else?" },
   { category: "Texas politics", title: "Legislative priorities", message: "If the Texas Legislature could pass only ONE major reform next session, what should it be?" },
+  { category: "Texas politics", title: "Texas growth", message: "Texas keeps growing. Which issue gets harder as the state gets bigger: roads, schools, water, power, housing, taxes, or something else?" },
+  { category: "Texas politics", title: "County government", message: "What is one thing your county government does that most voters barely notice until something goes wrong?" },
 
   { category: "Constitution", title: "First Amendment", message: "Which First Amendment freedom do you think Americans take most for granted today?" },
   { category: "Constitution", title: "Second Amendment", message: "What should responsible gun ownership mean in practice beyond simply following the law?" },
@@ -26,6 +29,8 @@ export const KTR_EVERGREEN_FACEBOOK_POSTS: readonly KtrEvergreenFacebookPost[] =
   { category: "Constitution", title: "Electoral College", message: "Keep it, reform it, or replace it: what is your view of the Electoral College and why?" },
   { category: "Constitution", title: "Executive power", message: "Do presidents rely too much on executive orders today? Where should Congress draw the line?" },
   { category: "Constitution", title: "Privacy", message: "Which privacy protection needs the most attention today: phones, financial data, location tracking, cameras, or government databases?" },
+  { category: "Constitution", title: "Property rights", message: "Where should government power end when private-property rights begin?" },
+  { category: "Constitution", title: "Jury duty", message: "Jury duty: civic burden, civic privilege, or both?" },
 
   { category: "Texas history", title: "Alamo history", message: "What is one Alamo fact or story you think every Texan should know?" },
   { category: "Texas history", title: "Texas Republic", message: "Which part of the Republic of Texas era deserves more attention in Texas classrooms?" },
@@ -37,6 +42,11 @@ export const KTR_EVERGREEN_FACEBOOK_POSTS: readonly KtrEvergreenFacebookPost[] =
   { category: "Texas history", title: "Texas courthouses", message: "Which Texas county courthouse is the most impressive you’ve seen?" },
   { category: "Texas history", title: "Texas monuments", message: "What Texas monument or landmark gives you the strongest sense of state history?" },
   { category: "Texas history", title: "Military Texans", message: "Which Texan from U.S. military history deserves to be better known nationally?" },
+  { category: "Texas history", title: "Forgotten Texans", message: "Who is the most important Texas historical figure most people never learned about in school?" },
+  { category: "Texas history", title: "Old photographs", message: "If you could see one Texas city or town exactly as it looked 100 years ago, which would you pick?" },
+  { category: "Texas history", title: "County stories", message: "What is the most interesting piece of history from your Texas county?" },
+  { category: "Texas history", title: "Historic preservation", message: "What old Texas building near you absolutely needs to be preserved?" },
+  { category: "Texas history", title: "Texas independence", message: "Which event in the Texas Revolution do you think changed the course of the conflict the most?" },
 
   { category: "Economy", title: "Texas economy", message: "What is the single biggest reason businesses keep moving to or expanding in Texas?" },
   { category: "Economy", title: "Small business", message: "What is the biggest obstacle facing a small Texas business right now: taxes, regulation, labor, insurance, rent, financing, or something else?" },
@@ -48,6 +58,10 @@ export const KTR_EVERGREEN_FACEBOOK_POSTS: readonly KtrEvergreenFacebookPost[] =
   { category: "Economy", title: "Tariffs", message: "Are tariffs worth higher prices if they bring more manufacturing back to America? Where is your line?" },
   { category: "Economy", title: "Right to work", message: "What does worker freedom mean to you: the right to organize, the right not to join, both, or something else?" },
   { category: "Economy", title: "Gig economy", message: "For gig workers, what matters more: flexibility or traditional employee protections?" },
+  { category: "Economy", title: "Made in Texas", message: "What product do you wish was manufactured in Texas instead of overseas?" },
+  { category: "Economy", title: "Family business", message: "What family-owned Texas business has been around long enough that it feels like part of the community?" },
+  { category: "Economy", title: "Trade careers", message: "Which skilled trade is most underrated right now?" },
+  { category: "Economy", title: "First job", message: "What was your first job, and what did it teach you that school didn’t?" },
 
   { category: "Energy", title: "Texas grid", message: "What change would make you most confident in the Texas electric grid before the next major freeze or heat wave?" },
   { category: "Energy", title: "Oil and gas", message: "How should Texas balance oil-and-gas growth with land, water, and air concerns?" },
@@ -57,6 +71,8 @@ export const KTR_EVERGREEN_FACEBOOK_POSTS: readonly KtrEvergreenFacebookPost[] =
   { category: "Energy", title: "EV policy", message: "Should governments set EV adoption targets, or should consumers and the market decide the pace?" },
   { category: "Energy", title: "Transmission", message: "Texas is growing fast. What matters more for the grid right now: more generation or more transmission?" },
   { category: "Energy", title: "Emergency power", message: "After recent Texas weather disasters, what backup-power lesson do you think every household should take seriously?" },
+  { category: "Energy", title: "Power bill", message: "What matters most when choosing an electric plan: price, contract length, renewable content, bill predictability, or something else?" },
+  { category: "Energy", title: "Oilfield families", message: "How many people here have a family connection to drilling, refining, pipelines, petrochemicals, or the oilfield?" },
 
   { category: "Education", title: "Civic education", message: "What is one thing every Texas high-school graduate should understand about the Constitution before receiving a diploma?" },
   { category: "Education", title: "Phonics", message: "Parents and teachers: what reading method have you seen work best for kids who are struggling?" },
@@ -66,6 +82,9 @@ export const KTR_EVERGREEN_FACEBOOK_POSTS: readonly KtrEvergreenFacebookPost[] =
   { category: "Education", title: "Charter schools", message: "What should Texas measure when deciding whether a charter school is succeeding?" },
   { category: "Education", title: "Parents rights", message: "Which school decisions should always require meaningful parental input?" },
   { category: "Education", title: "Student debt", message: "What should young Texans know about college debt before signing their first student-loan paperwork?" },
+  { category: "Education", title: "Shop class", message: "Should shop class, home economics, personal finance, and basic home repair be standard high-school courses again?" },
+  { category: "Education", title: "Best teacher", message: "What did your best teacher do differently from everyone else?" },
+  { category: "Education", title: "School discipline", message: "What school rule from your childhood would surprise students today?" },
 
   { category: "Family and community", title: "Family dinner", message: "How many nights a week does your family actually sit down for dinner together — and does it still matter?" },
   { category: "Family and community", title: "Chores", message: "What chore taught you the most responsibility when you were growing up?" },
@@ -75,6 +94,10 @@ export const KTR_EVERGREEN_FACEBOOK_POSTS: readonly KtrEvergreenFacebookPost[] =
   { category: "Family and community", title: "Youth sports", message: "What should youth sports teach first: winning, discipline, teamwork, resilience, or something else?" },
   { category: "Family and community", title: "Digital childhood", message: "What is one phone or social-media rule you think more families should adopt?" },
   { category: "Family and community", title: "Community traditions", message: "What local tradition makes your Texas town feel like a real community?" },
+  { category: "Family and community", title: "Neighbor help", message: "What is something neighbors used to do for each other that you wish was more common today?" },
+  { category: "Family and community", title: "Sunday tradition", message: "What Sunday tradition did your family have growing up?" },
+  { category: "Family and community", title: "Local heroes", message: "Who is an unsung hero in your Texas community?" },
+  { category: "Family and community", title: "Town identity", message: "What one place, event, or tradition defines your hometown?" },
 
   { category: "Media literacy", title: "Headline framing", message: "What is the fastest way you spot a headline that is trying to persuade instead of inform?" },
   { category: "Media literacy", title: "Primary sources", message: "Before sharing a political story, do you look for the original speech, bill, court filing, or data? Which source do you trust most?" },
@@ -84,6 +107,9 @@ export const KTR_EVERGREEN_FACEBOOK_POSTS: readonly KtrEvergreenFacebookPost[] =
   { category: "Media literacy", title: "Citizen journalism", message: "Has citizen journalism made local news better, worse, or simply faster?" },
   { category: "Media literacy", title: "Fact checks", message: "What should a trustworthy fact-check always show its readers?" },
   { category: "Media literacy", title: "Anonymous sources", message: "When should a news organization use anonymous sources — and when should readers be skeptical?" },
+  { category: "Media literacy", title: "Read past headline", message: "Be honest: how often do people argue over an article after reading only the headline?" },
+  { category: "Media literacy", title: "Local news", message: "What local Texas news source still does genuinely useful reporting in your area?" },
+  { category: "Media literacy", title: "Source documents", message: "Would you rather read a five-minute summary or spend twenty minutes with the original bill, ruling, or report?" },
 
   { category: "Self reliance", title: "Texas homestead", message: "What self-reliance skill should every Texan know, even if they live in the suburbs?" },
   { category: "Self reliance", title: "Grid outage", message: "If the power went out for three days, what item would you be happiest you already had?" },
@@ -93,6 +119,11 @@ export const KTR_EVERGREEN_FACEBOOK_POSTS: readonly KtrEvergreenFacebookPost[] =
   { category: "Self reliance", title: "First aid", message: "What first-aid skill do you think everyone should know before an emergency happens?" },
   { category: "Self reliance", title: "Backyard food", message: "If you had to produce one food at home, would you choose a garden, fruit trees, chickens, or something else?" },
   { category: "Self reliance", title: "Storm prep", message: "What is the Texas storm-prep purchase you made once and have never regretted?" },
+  { category: "Self reliance", title: "Generator", message: "Generator owners: what do you wish you had known before buying one?" },
+  { category: "Self reliance", title: "Toolbox", message: "What tool should every household own even if nobody in the house considers themselves handy?" },
+  { category: "Self reliance", title: "Food storage", message: "What pantry staple do you always keep extra of before hurricane or freeze season?" },
+  { category: "Self reliance", title: "Outdoor skills", message: "What outdoor skill should every Texas kid learn before adulthood?" },
+  { category: "Self reliance", title: "Garden lessons", message: "Texas gardeners: what plant survives our weather better than people expect?" },
 
   { category: "Foreign policy", title: "China", message: "What China-related issue should concern Americans most: trade, Taiwan, technology, supply chains, military power, or something else?" },
   { category: "Foreign policy", title: "Deterrence", message: "What does ‘peace through strength’ require in practice today?" },
@@ -102,6 +133,7 @@ export const KTR_EVERGREEN_FACEBOOK_POSTS: readonly KtrEvergreenFacebookPost[] =
   { category: "Foreign policy", title: "Trade", message: "Which products or industries are too strategically important for America to depend heavily on foreign suppliers?" },
   { category: "Foreign policy", title: "Cybersecurity", message: "Which part of U.S. infrastructure worries you most in a major cyberattack: power, water, banking, hospitals, communications, or transportation?" },
   { category: "Foreign policy", title: "Intervention", message: "What test should the United States meet before committing troops to a foreign conflict?" },
+  { category: "Foreign policy", title: "Supply chains", message: "What everyday product surprised you most when you learned how dependent its supply chain is on another country?" },
 
   { category: "Texas culture", title: "High school football", message: "What is the best Texas high-school football tradition in your town?" },
   { category: "Texas culture", title: "Stockyards", message: "Fort Worth Stockyards fans: what is the one thing a first-time visitor should not miss?" },
@@ -116,6 +148,23 @@ export const KTR_EVERGREEN_FACEBOOK_POSTS: readonly KtrEvergreenFacebookPost[] =
   { category: "Texas culture", title: "Roughneck history", message: "Do you have a roughneck, refinery, pipeline, or oilfield story in your family?" },
   { category: "Texas culture", title: "Western films", message: "What classic Western do you think every Texan should watch at least once?" },
   { category: "Texas culture", title: "Chuckwagon", message: "What old-school Texas or trail recipe still deserves a place at the table today?" },
+  { category: "Texas culture", title: "Best courthouse square", message: "Which Texas town has the best courthouse square?" },
+  { category: "Texas culture", title: "Friday night lights", message: "What is the loudest Texas high-school football stadium you have ever been in?" },
+  { category: "Texas culture", title: "Texas dance hall", message: "Which old Texas dance hall should everybody visit at least once?" },
+  { category: "Texas culture", title: "Small town diner", message: "Name a small-town Texas diner that is worth driving out of the way for." },
+  { category: "Texas culture", title: "Texas road trip", message: "You have a full tank and one free day. Which direction are you driving?" },
+  { category: "Texas culture", title: "Texas saying", message: "What Texas saying did you grow up hearing that you still use?" },
+  { category: "Texas culture", title: "State pride", message: "What is one thing Texas does differently that you hope never changes?" },
+  { category: "Texas culture", title: "County check-in", message: "Roll call: what Texas county are you checking in from today?" },
+  { category: "Texas culture", title: "Texas food fight", message: "Pick one forever: brisket, chicken-fried steak, breakfast tacos, chili, or Tex-Mex." },
+  { category: "Texas culture", title: "Buc-ees stop", message: "What is the one thing you always buy when you stop at Buc-ee’s?" },
+  { category: "Texas culture", title: "Texas fair", message: "What is your must-do tradition at a Texas fair or rodeo?" },
+  { category: "Texas culture", title: "Texas weather", message: "What temperature actually counts as cold in Texas?" },
+  { category: "Texas culture", title: "Texas transplant test", message: "What is the first thing a new Texas transplant has to learn the hard way?" },
+  { category: "Texas culture", title: "Texas rivalry", message: "What harmless Texas rivalry gets people arguing faster than it should?" },
+  { category: "Texas culture", title: "Texas landmark", message: "If you could keep only one Texas landmark forever, which one survives?" },
+  { category: "Texas culture", title: "Texas song", message: "What song instantly makes you think of Texas?" },
+  { category: "Texas culture", title: "Old Texas restaurant", message: "What Texas restaurant from your childhood do you wish you could bring back exactly as it was?" },
 
   { category: "Faith and civic life", title: "Religious liberty", message: "Where do you think the hardest modern religious-liberty questions are showing up: schools, workplaces, healthcare, public spaces, or elsewhere?" },
   { category: "Faith and civic life", title: "Church history", message: "What historic Texas church or congregation has the most interesting story in your area?" },
@@ -123,4 +172,6 @@ export const KTR_EVERGREEN_FACEBOOK_POSTS: readonly KtrEvergreenFacebookPost[] =
   { category: "Faith and civic life", title: "Stewardship", message: "What does good stewardship of Texas land and natural resources look like to you?" },
   { category: "Faith and civic life", title: "Founding ideas", message: "Which idea from the American founding — liberty, self-government, religious freedom, property rights, civic duty — matters most today?" },
   { category: "Faith and civic life", title: "Western civilization", message: "Which book, speech, law, or historical event best explains the Western idea of individual liberty?" },
+  { category: "Faith and civic life", title: "Community service", message: "What local church, food pantry, shelter, or volunteer group quietly holds your community together?" },
+  { category: "Faith and civic life", title: "Civic duty", message: "Besides voting, what civic duty do Americans neglect the most?" },
 ] as const;
