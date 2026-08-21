@@ -5,13 +5,20 @@ import { MIN_AUTHOR_ARTICLES_FOR_INDEXING } from "@/lib/author-indexability";
 const read = (path: string) => readFileSync(path, "utf8");
 
 describe("discovered-not-indexed crawl priority", () => {
-  it("requires candidate substance before sitemap inclusion", () => {
+  it("keeps election detail inventory out of the priority sitemap during recovery", () => {
     const source = read("src/routes/sitemap-elections[.]xml.ts");
-    expect(source).toContain("isSitemapWorthyCandidate");
-    expect(source).toContain("return score >= 3");
-    expect(source).toContain("candidates: publicCandidateRecords(candidates)");
-    expect(source).toContain('record.publicationStatus === "published"');
-    expect(source).toContain('record.verificationStatus === "verified"');
+    expect(source).toContain("PRIORITY_ELECTION_PATHS");
+    expect(source).toContain('"/elections/2026"');
+    expect(source).toContain('"/elections/races"');
+    expect(source).toContain('"/elections/candidates"');
+    expect(source).toContain('"/elections/polls"');
+    expect(source).not.toContain('candidates.json');
+    expect(source).not.toContain('races.json');
+    expect(source).not.toContain('polls.json');
+    expect(source).not.toContain('forecasts.json');
+    expect(source).not.toContain('results.json');
+    expect(source).not.toContain('/elections/candidates/${');
+    expect(source).not.toContain('/elections/races/${');
   });
 
   it("requires sustained author activity before sitemap inclusion", () => {
