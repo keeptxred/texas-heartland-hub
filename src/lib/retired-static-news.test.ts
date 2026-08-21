@@ -13,6 +13,29 @@ describe("retired static news hard removal", () => {
     expect(isExplicitlyRetiredStaticNewsPath("/news/live-2026-07-07-texas-pitmasters-to-feature-in-new-food-network-competition-series-v3wglp")).toBe(false);
   });
 
+  it("lets exact TexasDefined migrations reach their permanent redirect routes", () => {
+    for (const slug of [
+      "renting-vs-buying-in-texas",
+      "texas-house-down-payment-guide",
+      "true-cost-of-owning-a-home-in-texas",
+      "should-you-refinance-texas-mortgage",
+      "texas-home-equity-heloc-guide",
+      "texas-mortgage-payment-guide",
+      "texas-closing-costs-guide",
+      "texas-utility-costs-guide",
+      "texas-homeowners-insurance-guide",
+      "salary-needed-to-buy-a-house-in-texas",
+      "moving-to-houston-address-checklist",
+      "moving-to-dallas-fort-worth-guide",
+      "moving-to-san-antonio-guide",
+      "moving-to-austin-guide",
+      "moving-to-el-paso-guide",
+    ]) {
+      expect(isExplicitlyRetiredStaticNewsPath(`/news/${slug}`)).toBe(false);
+    }
+    expect(isExplicitlyRetiredStaticNewsPath("/news/moving-to-texas-guide")).toBe(true);
+  });
+
   it("retires explicit pre-quality-gate fixture news", () => {
     expect(isExplicitlyRetiredStaticNewsPath("/news/voter-id-surge")).toBe(true);
     expect(isExplicitlyRetiredStaticNewsPath("/news/operation-lone-star")).toBe(true);
