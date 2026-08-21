@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHmac, randomBytes } from "crypto";
+import type { FacebookOAuthTarget } from "@/lib/facebook-page-platform";
 
 const GRAPH_VERSION = "v21.0";
 const SCOPES = [
@@ -30,11 +31,13 @@ export const Route = createFileRoute("/api/public/oauth/facebook/start")({
         if (passcode !== expected) {
           return new Response("Unauthorized", { status: 401 });
         }
+        const target: FacebookOAuthTarget =
+          url.searchParams.get("target") === "texasdefined" ? "texasdefined" : "keeptxred";
         const origin = `${url.protocol}//${url.host}`;
         const redirectUri = `${origin}/api/public/oauth/facebook/callback`;
         const nonce = randomBytes(16).toString("hex");
         const payload = Buffer.from(
-          JSON.stringify({ n: nonce, o: origin, t: Date.now() }),
+          JSON.stringify({ n: nonce, o: origin, t: Date.now(), target }),
         ).toString("base64url");
         const state = signState(payload, appSecret);
         const authorize = new URL(`https://www.facebook.com/${GRAPH_VERSION}/dialog/oauth`);
