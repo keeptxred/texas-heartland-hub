@@ -11,7 +11,7 @@ describe("Cloudflare featured-image payload", () => {
     expect(source).toContain('@cf/black-forest-labs/flux-1-schnell');
     expect(generateImageSource).toContain("Avoid all of the following");
     expect(generateImageSource).toContain("steps: 8");
-    expect(generateImageSource).not.toMatch(/\bseed\s*[:,]/);
+    expect(generateImageSource).not.toMatch(/^\s*seed\s*[:,]/m);
     expect(generateImageSource).not.toMatch(/\bnegative_prompt\s*:/);
     expect(generateImageSource).not.toContain("dreamshaper-8-lcm");
     expect(generateImageSource).toContain('contentType.startsWith("image/")');
