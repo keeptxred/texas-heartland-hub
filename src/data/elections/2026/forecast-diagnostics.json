@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-08-21T11:43:51.260Z",
+  "generatedAt": "2026-08-21T15:58:21.682Z",
   "totals": {
     "races": 227,
-    "candidates": 487,
+    "candidates": 491,
     "polls": 8,
     "publishedVerifiedRaces": 227,
     "racesWithCandidateMatches": 208,
@@ -110,13 +110,14 @@
         "candidate-anthony-cristo-libertarian-race-2026-lieutenant-governor",
         "candidate-kevin-mccormick-green-race-2026-lieutenant-governor"
       ],
-      "matchedCandidateCount": 6,
+      "matchedCandidateCount": 7,
       "matchedCandidateIds": [
         "candidate-vikki-goodwin-democratic-race-2026-lieutenant-governor",
         "candidate-kevin-mccormick-green-race-2026-lieutenant-governor",
         "candidate-mike-collier-independent-race-2026-lieutenant-governor",
         "candidate-anthony-cristo-libertarian-race-2026-lieutenant-governor",
         "candidate-arturo-espinosa-other-race-2026-lieutenant-governor",
+        "candidate-stephen-samuelson-other-race-2026-lieutenant-governor",
         "candidate-dan-patrick-republican-race-2026-lieutenant-governor"
       ],
       "republicanCandidateId": "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
