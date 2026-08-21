@@ -57,6 +57,19 @@ const GENERIC_VISIBLE_CONTENT = [
   /more information will be added as it becomes available/i,
 ];
 
+/**
+ * `live-` slugs belong to the original provisional/rapid-publish pipeline that
+ * preceded the site's current publication-quality gates. Search Console showed
+ * that several of those URLs received the site's initial discovery burst and
+ * then disappeared from search as visibility collapsed. Keep the URLs available
+ * for users and historical links, but never proactively re-advertise them via
+ * XML discovery feeds. A future live-blog product should use its own explicitly
+ * reviewed indexability contract instead of inheriting these legacy slugs.
+ */
+function isLegacyLiveSlug(slug: string): boolean {
+  return String(slug ?? "").trim().toLowerCase().startsWith("live-");
+}
+
 function client() {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_PUBLISHABLE_KEY;
@@ -248,6 +261,7 @@ export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
     const eligible = rows
       .filter((a) => {
         if (!a.body_json) return false;
+        if (isLegacyLiveSlug(a.slug)) return false;
         if (!isSitemapEligibleSlug(a.slug, a.published_at)) return false;
         if (!isPublicArticleReady(a)) return false;
         const sanitized = sanitizeEvergreenBody(a.body_json, a.published_at);

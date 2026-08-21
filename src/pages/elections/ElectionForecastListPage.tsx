@@ -43,9 +43,9 @@ export function ElectionForecastListPage({
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">
             KeepTXRed Election Central
           </p>
-          <h1 className="mt-3 text-4xl font-bold tracking-tight text-slate-950 sm:text-5xl">
+          <h2 className="mt-3 text-4xl font-bold tracking-tight text-slate-950 sm:text-5xl">
             Texas election forecasts
-          </h1>
+          </h2>
           <p className="mt-4 text-lg leading-8 text-slate-600">
             Compare published model outlooks for Texas races with provider, rating, candidate
             probabilities, and update information.
