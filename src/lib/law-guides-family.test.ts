@@ -38,6 +38,7 @@ describe("Marriage & Family evergreen guide registry", () => {
       const guide = ALL_GUIDES[meta.slug];
       expect(meta.canonicalPath).toBe(`/guides/${meta.slug}`);
       expect(guide).toBeDefined();
+      if (!guide) throw new Error(`Missing public family-law guide for ${meta.slug}`);
       expect(meta.lastVerified).toBe(guide.updated);
       expect(meta.lastVerified >= FAMILY_GUIDE_BASELINE).toBe(true);
       expect(meta.statutes?.length).toBeGreaterThan(0);
@@ -55,8 +56,9 @@ describe("Marriage & Family evergreen guide registry", () => {
       const meta = registry.get(slug);
       expect(guide).toBeDefined();
       expect(meta).toBeDefined();
+      if (!guide || !meta) throw new Error(`Missing family-law registry/content pair for ${slug}`);
       expect(guide.slug).toBe(slug);
-      expect(guide.updated).toBe(meta?.lastVerified);
+      expect(guide.updated).toBe(meta.lastVerified);
       expect(guide.updated >= FAMILY_GUIDE_BASELINE).toBe(true);
       expect(guide.pillarHref).toBe("/laws");
       expect(guide.keyTakeaways.length).toBeGreaterThanOrEqual(4);
