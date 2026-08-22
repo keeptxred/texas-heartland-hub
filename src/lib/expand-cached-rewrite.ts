@@ -76,19 +76,17 @@ export async function expandCachedRewriteForFeedItem(
   let currentWords = mainProseWordCount(candidate);
   if (currentWords >= target) return true;
 
-  const lovableApiKey = process.env.LOVABLE_API_KEY;
-  if (!lovableApiKey) return false;
+  if (!process.env.KTR_AI_PROVIDER_READY) return false;
 
-  // The server compatibility layer intercepts this legacy endpoint and routes
-  // text-only requests to Cloudflare Workers AI. Try more than once because a
-  // valid expansion can still be longer than the cached draft without yet
-  // clearing the publishing tier.
+  // Text-only requests are routed through the site's direct provider layer.
+  // Try more than once because a valid expansion can still be longer than the
+  // cached draft without yet clearing the publishing tier.
   try {
     for (let attempt = 1; attempt <= 3 && currentWords < target; attempt += 1) {
       const needed = target - currentWords;
-      const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      const response = await fetch("https://ai.internal.keeptxred.local/v1/chat/completions", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "Lovable-API-Key": lovableApiKey },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "google/gemini-3-flash-preview",
           messages: [
@@ -129,10 +127,6 @@ export async function expandCachedRewriteForFeedItem(
       currentWords = expandedWords;
     }
 
-    // Never report a successful repair unless the draft actually satisfies the
-    // same minimum that blocked publication. This prevents the old behavior
-    // where a 415-word draft could become, for example, 900 words and still be
-    // treated as repaired against a 1,200-word gate.
     if (currentWords < target) return false;
 
     const { error } = await cacheClient
