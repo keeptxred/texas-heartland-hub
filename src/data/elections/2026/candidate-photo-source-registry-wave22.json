@@ -36,6 +36,33 @@
     "notes": "Verified August 22, 2026. Vote-USA's current November 3, 2026 Texas general-election guide identifies Melanie Medley-Thomas as the Republican candidate for Texas House District 103 and links melanie4texas.com. TCTA and the Dallas County Republican Party independently confirm the candidate/race pairing."
   },
   {
+    "domain": "jorgefortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Jorge Borrego's official Texas House District 118 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, donation graphics, stock imagery, issue graphics, videos, and third-party embeds.",
+    "searchHint": "site:jorgefortexas.com Jorge Borrego Texas House District 118 portrait about",
+    "notes": "Verified August 22, 2026. Community Impact's 2026 District 118 candidate Q&A identifies https://www.jorgefortexas.com as Jorge Borrego's campaign website, while official Bexar County primary results and current general-election directories confirm he won the Republican primary for District 118."
+  },
+  {
+    "domain": "kristianfortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Kristian Carranza's official Texas House District 118 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, donation graphics, stock imagery, issue graphics, videos, and third-party embeds.",
+    "searchHint": "site:kristianfortexas.com Kristian Carranza Texas House District 118 portrait about",
+    "notes": "Verified August 22, 2026. TCTA's current candidate directory links kristianfortexas.com for Kristian Carranza in District 118. The live site identifies itself as Kristian Carranza for TX HD-118, contains multiple candidate-identifying images, and carries a Political ad paid for by Kristian Carranza for Texas disclaimer."
+  },
+  {
+    "domain": "melvafortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Melva Rivera Perez's official Texas House District 119 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, donation graphics, generic military imagery, stock imagery, issue graphics, videos, and third-party embeds.",
+    "searchHint": "site:melvafortexas.com Melva Rivera Perez Texas House District 119 portrait about",
+    "notes": "Verified August 22, 2026. TCTA's current candidate directory links melvafortexas.com for Melva Perez in District 119. The live site identifies LTC Melva Pérez (Ret.) as a candidate for Texas State Representative House District 119, and Bexar County official primary results confirm her 2026 Republican nomination."
+  },
+  {
     "domain": "dallasgop.org",
     "sourceClass": "county-party-candidate-directory",
     "discoveryStatus": "discovery-only",
