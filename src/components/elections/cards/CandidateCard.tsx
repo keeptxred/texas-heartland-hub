@@ -26,8 +26,8 @@ const PARTY_STYLES: Record<CandidateParty, string> = {
   libertarian: "border-amber-200 bg-amber-50 text-amber-800",
   green: "border-green-200 bg-green-50 text-green-800",
   independent: "border-violet-200 bg-violet-50 text-violet-800",
-  nonpartisan: "border-slate-200 bg-slate-50 text-slate-700",
-  other: "border-slate-200 bg-slate-50 text-slate-700",
+  nonpartisan: "border-border bg-muted/50 text-muted-foreground",
+  other: "border-border bg-muted/50 text-muted-foreground",
 };
 
 export function CandidateCard({
@@ -56,10 +56,10 @@ export function CandidateCard({
 
   return (
     <article
-      className={`overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm ${className}`.trim()}
+      className={`overflow-hidden rounded-xl border border-border bg-card shadow-sm ${className}`.trim()}
     >
       <div className="flex gap-4 p-5">
-        <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-slate-100 text-xl font-bold text-slate-500">
+        <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-muted text-xl font-bold text-muted-foreground">
           {photoUrl ? (
             <img
               src={photoUrl}
@@ -80,7 +80,7 @@ export function CandidateCard({
               {partyLabel ?? formatParty(party)}
             </span>
             {incumbent && (
-              <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-700">
+              <span className="rounded-full border border-border bg-muted/50 px-2.5 py-1 text-xs font-semibold text-muted-foreground">
                 Incumbent
               </span>
             )}
@@ -91,9 +91,9 @@ export function CandidateCard({
             )}
           </div>
 
-          <h3 className="mt-3 text-xl font-bold tracking-tight text-slate-950">
+          <h3 className="mt-3 text-xl font-bold tracking-tight text-foreground">
             {profileHref ? (
-              <Link to={profileHref} className="hover:text-red-700 hover:underline">
+              <Link to={profileHref} className="hover:text-primary hover:underline">
                 {name}
               </Link>
             ) : (
@@ -101,45 +101,45 @@ export function CandidateCard({
             )}
           </h3>
           {(office || district) && (
-            <p className="mt-1 text-sm font-medium text-slate-600">
+            <p className="mt-1 text-sm font-medium text-muted-foreground">
               {[office, district].filter(Boolean).join(" · ")}
             </p>
           )}
         </div>
       </div>
 
-      <div className="border-t border-slate-100 px-5 py-4">
+      <div className="border-t border-border px-5 py-4">
         {(occupation || hometown) && (
           <dl className="grid gap-3 text-sm sm:grid-cols-2">
             {occupation && (
               <div>
-                <dt className="font-semibold text-slate-950">Occupation</dt>
-                <dd className="mt-1 text-slate-600">{occupation}</dd>
+                <dt className="font-semibold text-foreground">Occupation</dt>
+                <dd className="mt-1 text-muted-foreground">{occupation}</dd>
               </div>
             )}
             {hometown && (
               <div>
-                <dt className="font-semibold text-slate-950">Hometown</dt>
-                <dd className="mt-1 text-slate-600">{hometown}</dd>
+                <dt className="font-semibold text-foreground">Hometown</dt>
+                <dd className="mt-1 text-muted-foreground">{hometown}</dd>
               </div>
             )}
           </dl>
         )}
 
         {biography && (
-          <p className="mt-4 line-clamp-3 text-sm leading-6 text-slate-600">{biography}</p>
+          <p className="mt-4 line-clamp-3 text-sm leading-6 text-muted-foreground">{biography}</p>
         )}
 
         <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-sm font-semibold">
           {profileHref ? (
-            <Link to={profileHref} className="text-red-700 underline-offset-4 hover:underline">
+            <Link to={profileHref} className="text-primary underline-offset-4 hover:underline">
               View candidate profile →
             </Link>
           ) : null}
           {raceHref && (
             <Link
               to={raceHref}
-              className="text-slate-700 underline-offset-4 hover:text-red-700 hover:underline"
+              className="text-muted-foreground underline-offset-4 hover:text-primary hover:underline"
             >
               View race overview →
             </Link>
@@ -149,14 +149,14 @@ export function CandidateCard({
         {relatedLinks.length > 0 && (
           <nav
             aria-label={`Related resources for ${name}`}
-            className="mt-4 border-t border-slate-100 pt-4"
+            className="mt-4 border-t border-border pt-4"
           >
             <ul className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
               {relatedLinks.map((link) => (
                 <li key={`${link.href}-${link.label}`}>
                   <a
                     href={link.href}
-                    className="font-medium text-slate-600 underline-offset-4 hover:text-red-700 hover:underline"
+                    className="font-medium text-muted-foreground underline-offset-4 hover:text-primary hover:underline"
                   >
                     {link.label}
                   </a>
