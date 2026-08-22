@@ -4,57 +4,7 @@ import { CitationCollectionTrustRouter } from "@/components/authority/CitationCo
 import { NewsGovernmentGraphRouter } from "@/components/news-government-graph-router";
 import { SocialLinks } from "@/components/social-links";
 import { TexasDefinedCrosslinks } from "@/components/texas-defined-crosslinks";
-
-const PRIMARY_LINKS = [
-  { to: "/", label: "Home" },
-  { to: "/news", label: "Texas News" },
-  { to: "/texas-politics", label: "Politics" },
-  { to: "/texas-case", label: "The Texas Case" },
-  { to: "/issues", label: "Texas Issues" },
-  { to: "/elections/2026", label: "Election Central" },
-  { to: "/bills", label: "Bills" },
-  { to: "/texas-legislature", label: "Texas Legislature" },
-  { to: "/representatives", label: "Representatives" },
-  { to: "/shop", label: "Shop" },
-] as const;
-
-const NEWS_LINKS = [
-  { to: "/news", label: "Latest News" },
-  { to: "/texas-economy", label: "Economy" },
-  { to: "/texas-business", label: "Business" },
-  { to: "/texas-sports", label: "Sports" },
-  { to: "/houston", label: "Houston" },
-  { to: "/dallas-fort-worth", label: "Dallas–Fort Worth" },
-  { to: "/san-antonio", label: "San Antonio" },
-  { to: "/austin", label: "Austin" },
-  { to: "/el-paso", label: "El Paso" },
-] as const;
-
-const TRUST_LINKS = [
-  { to: "/about", label: "About" },
-  { to: "/editorial-standards", label: "Editorial Standards" },
-  { to: "/contact", label: "Contact Us" },
-] as const;
-
-// Priority crawl targets: authority pages that need durable internal links
-// from every page of the site.
-const CIVIC_LINKS = [
-  { to: "/find-representative", label: "Find My Representative" },
-  { to: "/contact-legislators", label: "Contact Legislators" },
-  { to: "/elections/candidates", label: "Candidates" },
-  { to: "/laws", label: "Texas Laws" },
-  { to: "/bills", label: "Track Legislation" },
-  { to: "/tools", label: "Policy Tools" },
-  { to: "/authors", label: "Newsroom Desks" },
-] as const;
-
-const SHOP_POLICY_LINKS = [
-  { to: "/return-refund-policy", label: "Returns & Refunds" },
-  { to: "/shipping-policy", label: "Shipping Policy" },
-  { to: "/privacy", label: "Privacy Policy" },
-  { to: "/terms-of-service", label: "Terms of Service" },
-  { to: "/contact", label: "Order Support" },
-] as const;
+import { ABOUT_LINKS, SHOP_LINK, SHOP_POLICY_LINKS, SITE_NAV_GROUPS } from "@/lib/site-navigation";
 
 export function SiteFooter() {
   return (
@@ -65,7 +15,7 @@ export function SiteFooter() {
       <TexasDefinedCrosslinks />
       <footer className="mt-16 bg-secondary text-secondary-foreground">
         <div className="mx-auto max-w-7xl px-4 py-14">
-          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr_1fr]">
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-[1.45fr_repeat(5,1fr)]">
             <div>
               <div className="mb-5 grid size-12 place-items-center rounded-full border border-white/20" aria-hidden>
                 <span className="font-display text-2xl leading-none text-accent">★</span>
@@ -74,15 +24,61 @@ export function SiteFooter() {
               <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/80">
                 Texas news, commentary, government accountability, and common-sense analysis.
               </p>
+              <div className="mt-5 flex flex-wrap gap-2">
+                <Link
+                  to="/news"
+                  className="rounded-md bg-primary px-3 py-2 text-xs font-bold text-primary-foreground"
+                >
+                  Latest news
+                </Link>
+                <Link
+                  to={SHOP_LINK.to}
+                  search={SHOP_LINK.search}
+                  className="rounded-md border border-white/20 px-3 py-2 text-xs font-bold text-white/90 hover:border-white/40 hover:text-white"
+                >
+                  KTR Shop
+                </Link>
+              </div>
             </div>
-            <FooterColumn heading="Explore" links={PRIMARY_LINKS} />
-            <FooterColumn heading="Texas News" links={NEWS_LINKS} />
-            <FooterColumn heading="Civic Tools" links={CIVIC_LINKS} />
-            <FooterColumn heading="About" links={TRUST_LINKS} />
-            <FooterColumn heading="Shop Policies" links={SHOP_POLICY_LINKS} />
+
+            {SITE_NAV_GROUPS.map((group) => (
+              <nav key={group.id} aria-label={`${group.label} footer links`}>
+                <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.16em] text-accent">
+                  {group.label}
+                </h2>
+                <ul className="space-y-2 text-sm text-white/75">
+                  {group.links.map((link) => (
+                    <li key={link.to}>
+                      <Link to={link.to} className="hover:text-white">
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            ))}
           </div>
+
           <SocialLinks variant="footer" />
-          <div className="mt-10 border-t border-white/10 pt-6 text-center text-[10px] uppercase leading-relaxed tracking-[0.25em] text-white/75">
+
+          <div className="mt-10 grid gap-6 border-t border-white/10 pt-7 md:grid-cols-2 md:items-start">
+            <nav aria-label="About Keep TX Red" className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-white/70">
+              {ABOUT_LINKS.map((link) => (
+                <Link key={link.to} to={link.to} className="hover:text-white">
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+            <nav aria-label="Site and shop policies" className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-white/70 md:justify-end">
+              {SHOP_POLICY_LINKS.map((link) => (
+                <Link key={link.to} to={link.to} className="hover:text-white">
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          <div className="mt-7 border-t border-white/10 pt-6 text-center text-[10px] uppercase leading-relaxed tracking-[0.25em] text-white/75">
             &copy; {new Date().getFullYear()} keeptxred.com — All rights reserved
             <br />
             <span className="normal-case tracking-normal">Independent commentary. Not authorized by any candidate or candidate&apos;s committee.</span>
@@ -97,16 +93,5 @@ export function SiteFooter() {
         </div>
       </footer>
     </>
-  );
-}
-
-function FooterColumn({ heading, links }: { heading: string; links: ReadonlyArray<{ readonly to: string; readonly label: string }> }) {
-  return (
-    <nav aria-label={`${heading} footer links`}>
-      <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-accent">{heading}</h2>
-      <ul className="space-y-2 text-sm text-white/75">
-        {links.map((link) => <li key={link.to}><Link to={link.to} className="hover:text-white">{link.label}</Link></li>)}
-      </ul>
-    </nav>
   );
 }

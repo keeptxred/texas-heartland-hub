@@ -86,22 +86,24 @@ export function ElectionLayout({
         <script type="application/ld+json">{JSON.stringify(schema ?? defaultSchema)}</script>
       </Helmet>
 
-      <section className="min-h-screen bg-slate-50">
-        <div className="border-b border-slate-200 bg-white">
-          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <section className="min-h-screen bg-muted/20 text-foreground">
+        <div className="border-b border-border bg-background">
+          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
               <header className="max-w-4xl">
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-red-700">
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
                   {eyebrow}
                 </p>
-                <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl lg:text-5xl">
+                <h1 className="mt-2 font-display text-4xl leading-none tracking-tight text-foreground sm:text-5xl lg:text-6xl">
                   {title}
                 </h1>
-                <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg">
+                <p className="mt-4 max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg">
                   {description}
                 </p>
                 {lastUpdated && (
-                  <p className="mt-3 text-sm text-slate-500">Last updated: {lastUpdated}</p>
+                  <p className="mt-3 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
+                    Last updated: {lastUpdated}
+                  </p>
                 )}
               </header>
 
@@ -111,30 +113,30 @@ export function ElectionLayout({
         </div>
 
         {navigation && (
-          <div className="border-b border-slate-200 bg-white">
+          <div className="border-b border-border bg-background">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">{navigation}</div>
           </div>
         )}
 
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
           {sidebar ? (
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
               <main className={fullWidth ? "lg:col-span-9" : "lg:col-span-8"}>{children}</main>
               <aside className={fullWidth ? "lg:col-span-3" : "lg:col-span-4"}>
-                <div className="space-y-6 lg:sticky lg:top-6">{sidebar}</div>
+                <div className="space-y-6 lg:sticky lg:top-32">{sidebar}</div>
               </aside>
             </div>
           ) : (
             <main>{children}</main>
           )}
-          <aside className="mt-10 border-t border-slate-200 pt-5 text-sm leading-6 text-slate-600">
-            <strong className="text-slate-800">Election data notice:</strong> Election Central
+          <aside className="mt-10 border-t border-border pt-5 text-sm leading-6 text-muted-foreground">
+            <strong className="text-foreground">Election data notice:</strong> Election Central
             republishes source-backed public information. Polls are survey snapshots, forecasts are
             estimates available for selected races only, and election returns are unofficial until
             certified. Confirm voting and ballot information with the responsible election authority.{" "}
             <a
               href="/elections/corrections"
-              className="font-semibold text-red-700 underline-offset-4 hover:underline"
+              className="font-semibold text-primary underline-offset-4 hover:underline"
             >
               Report a correction
             </a>

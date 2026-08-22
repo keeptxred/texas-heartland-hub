@@ -51,6 +51,7 @@ const [
   flags,
   electionRoutes,
   electionSitemap,
+  siteNavigation,
   siteHeader,
   siteFooter,
   start,
@@ -65,6 +66,7 @@ const [
   read("src/lib/elections/featureFlags.ts"),
   read("src/lib/elections/routes.ts"),
   read("src/lib/elections/sitemap.ts"),
+  read("src/lib/site-navigation.ts"),
   read("src/components/site-header.tsx"),
   read("src/components/site-footer.tsx"),
   read("src/start.ts"),
@@ -146,14 +148,39 @@ requireText(
   "Election Central hub is missing CollectionPage structured data.",
 );
 requireText(
+  siteNavigation,
+  'id: "elections"',
+  "Election Central is missing its primary navigation group.",
+);
+requireText(
+  siteNavigation,
+  'href: "/elections/2026"',
+  "Election Central navigation group does not target the canonical 2026 hub.",
+);
+requireText(
+  siteNavigation,
+  '{ to: "/elections/2026", label: "Election Central"',
+  "Election Central is missing from the shared site navigation contract.",
+);
+requireText(
   siteHeader,
-  '{ to: "/elections/2026", label: "Elections" }',
-  "Election Central is missing from the primary site navigation.",
+  'from "@/lib/site-navigation"',
+  "Primary site navigation is not connected to the shared navigation contract.",
+);
+requireText(
+  siteHeader,
+  "SITE_NAV_GROUPS.map",
+  "Primary site navigation does not render the shared navigation groups.",
 );
 requireText(
   siteFooter,
-  '{ to: "/elections/2026", label: "Election Central" }',
-  "Election Central is missing from the site footer.",
+  'from "@/lib/site-navigation"',
+  "Site footer is not connected to the shared navigation contract.",
+);
+requireText(
+  siteFooter,
+  "SITE_NAV_GROUPS.map",
+  "Site footer does not render the shared navigation groups.",
 );
 for (const redirectSource of [
   '["/election", "/elections/2026"]',
@@ -179,7 +206,7 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log(`Election route QA passed: ${requiredFiles.length} route files and gated homepage integration verified.`);
+console.log(`Election route QA passed: ${requiredFiles.length} route files and shared navigation integration verified.`);
 
 async function read(relative) {
   try {

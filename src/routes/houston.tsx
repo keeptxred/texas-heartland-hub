@@ -68,7 +68,7 @@ function HoustonPage() {
           Local government, elections, courts, public safety, energy, business, and state-policy decisions affecting Houston, Harris County, and the Gulf Coast.
         </p>
         <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm">
-          <Link to="/elections" className="text-primary hover:underline">Election Central →</Link>
+          <Link to="/elections/2026" className="text-primary hover:underline">Election Central →</Link>
           <Link to="/texas-business" className="text-primary hover:underline">Texas Business →</Link>
           <Link to="/texas-energy" className="text-primary hover:underline">Texas Energy →</Link>
           <Link to="/laws" className="text-primary hover:underline">Texas Laws →</Link>
