@@ -28,6 +28,28 @@ function bytesToBase64(bytes: Uint8Array): string {
   return btoa(binary);
 }
 
+export function buildFluxImagePrompt(prompt: string, negativePrompt: string): string {
+  // FLUX.1 Schnell has a compact prompt budget. Keep the hard photographic
+  // constraints at the beginning and reserve explicit room for the exclusions
+  // at the end instead of letting a long article-specific prompt truncate them.
+  // This specifically targets the live failure cohort where otherwise relevant
+  // generations drifted into posters, infographics, text overlays, or vector art.
+  const photographicLock = [
+    "REAL CAMERA PHOTOGRAPH ONLY.",
+    "One coherent documentary photojournalism scene with natural lighting, lifelike materials, realistic optics and depth of field.",
+    "No readable text, typography, poster, illustration, graphic design, vector art, iconography, collage, infographic, CGI, or synthetic promotional artwork.",
+  ].join(" ");
+  const essentialExclusions = negativePrompt
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .slice(0, 30)
+    .join(", ");
+  const core = prompt.replace(/\s+/g, " ").trim().slice(0, 1380);
+  const exclusions = essentialExclusions.slice(0, 420);
+  return `${photographicLock} ${core} HARD EXCLUSIONS: ${exclusions}`.slice(0, 2048);
+}
+
 export async function generateImageBytes(
   prompt: string,
   negativePrompt: string,
@@ -37,12 +59,12 @@ export async function generateImageBytes(
   const apiToken = process.env.CLOUDFLARE_API_TOKEN;
   if (!accountId || !apiToken) throw new Error("Missing Cloudflare Workers AI credentials: CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required");
 
-  // FLUX.1 Schnell uses its own compact Workers AI schema. Put the negative
+  // FLUX.1 Schnell uses its own compact Workers AI schema. Put negative
   // constraints into the prompt because the model does not accept the
   // DreamShaper negative_prompt parameter. Do not send a seed: the current
   // Workers AI REST schema rejects it as an unevaluated property.
   const requestBody = {
-    prompt: `${prompt} Avoid all of the following: ${negativePrompt}`.slice(0, 2048),
+    prompt: buildFluxImagePrompt(prompt, negativePrompt),
     steps: 8,
   };
 
