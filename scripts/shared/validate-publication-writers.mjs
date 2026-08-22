@@ -106,8 +106,7 @@ for (const marker of [
 if (hasArticleWrite(disabledLegacyWriter)) {
   errors.push('Retired legacy Daily Texas News endpoint must never write daily_articles.');
 }
-const retiredGatewayHost = ['ai.gateway.', ['lova', 'ble'].join(''), '.dev'].join('');
-for (const forbidden of [retiredGatewayHost, 'runCloudflareJson']) {
+for (const forbidden of ['ai.gateway.', 'runCloudflareJson']) {
   if (disabledLegacyWriter.includes(forbidden)) {
     errors.push(`Retired legacy Daily Texas News endpoint still contains AI execution path: ${forbidden}`);
   }
