@@ -4,7 +4,30 @@ import { CitationCollectionTrustRouter } from "@/components/authority/CitationCo
 import { NewsGovernmentGraphRouter } from "@/components/news-government-graph-router";
 import { SocialLinks } from "@/components/social-links";
 import { TexasDefinedCrosslinks } from "@/components/texas-defined-crosslinks";
-import { ABOUT_LINKS, SHOP_LINK, SHOP_POLICY_LINKS, SITE_NAV_GROUPS } from "@/lib/site-navigation";
+import { ABOUT_LINKS, SHOP_LINK, SHOP_POLICY_LINKS } from "@/lib/site-navigation";
+
+const FOOTER_NAV_GROUPS = [
+  {
+    id: "coverage",
+    label: "Coverage",
+    links: [
+      { to: "/news", label: "Texas News" },
+      { to: "/texas-politics", label: "Politics" },
+      { to: "/elections/2026", label: "Election Central" },
+      { to: "/issues", label: "Issues & Guides" },
+    ],
+  },
+  {
+    id: "government",
+    label: "Government",
+    links: [
+      { to: "/texas-legislature", label: "Texas Legislature" },
+      { to: "/bills", label: "Track Texas Bills" },
+      { to: "/representatives", label: "Representatives" },
+      { to: "/laws", label: "Texas Laws" },
+    ],
+  },
+] as const;
 
 export function SiteFooter() {
   return (
@@ -15,7 +38,7 @@ export function SiteFooter() {
       <TexasDefinedCrosslinks />
       <footer className="mt-16 bg-secondary text-secondary-foreground">
         <div className="mx-auto max-w-7xl px-4 py-14">
-          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-[1.45fr_repeat(5,1fr)]">
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr]">
             <div>
               <div className="mb-5 grid size-12 place-items-center rounded-full border border-white/20" aria-hidden>
                 <span className="font-display text-2xl leading-none text-accent">★</span>
@@ -41,7 +64,7 @@ export function SiteFooter() {
               </div>
             </div>
 
-            {SITE_NAV_GROUPS.map((group) => (
+            {FOOTER_NAV_GROUPS.map((group) => (
               <nav key={group.id} aria-label={`${group.label} footer links`}>
                 <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.16em] text-accent">
                   {group.label}
@@ -84,7 +107,7 @@ export function SiteFooter() {
             <span className="normal-case tracking-normal">Independent commentary. Not authorized by any candidate or candidate&apos;s committee.</span>
             <br />
             <span className="normal-case tracking-normal">
-              Looking for the nonpolitical side of Texas?{" "}
+              TexasDefined is a nonpolitical sister publication from the same publisher, focused on Texas places, culture, travel, and practical guides.{" "}
               <a href="https://texasdefined.com" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-white">
                 Visit TexasDefined ↗
               </a>
