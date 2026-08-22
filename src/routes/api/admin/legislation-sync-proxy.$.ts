@@ -73,7 +73,7 @@ async function handle(request: Request) {
 
   const supabaseUrl = String(process.env.SUPABASE_URL || "").replace(/\/$/, "");
   const serviceKey = String(process.env.SUPABASE_SERVICE_ROLE_KEY || "");
-  if (!supabaseUrl || !serviceKey) return Response.json({ error: "Lovable server database credentials are unavailable" }, { status: 503 });
+  if (!supabaseUrl || !serviceKey) return Response.json({ error: "legacy builder server database credentials are unavailable" }, { status: 503 });
 
   const body = method === "GET" ? undefined : await request.text();
   const upstream = await fetch(`${supabaseUrl}/rest/v1/${resourcePath}`, {

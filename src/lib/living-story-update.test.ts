@@ -38,12 +38,12 @@ describe("living story canonical updates", () => {
     expect(updater).not.toMatch(/\.update\(\{[\s\S]{0,500}internal_url:/);
   });
 
-  it("uses Cloudflare structured newsroom generation rather than Lovable", () => {
+  it("uses Cloudflare structured newsroom generation rather than legacy builder", () => {
     expect(updater).toContain("runCloudflareJson<NewsroomDraft>");
     expect(updater).toContain("NEWSROOM_DRAFT_JSON_SCHEMA");
     expect(updater).toContain("validateNewsroomDraft");
-    expect(updater).not.toContain("lovable.dev");
-    expect(updater).not.toContain("LOVABLE_API_KEY");
+    expect(updater).not.toContain("legacy-builder.dev");
+    expect(updater).not.toContain("KTR_AI_PROVIDER_READY");
   });
 
   it("keeps an auditable material-update history", () => {

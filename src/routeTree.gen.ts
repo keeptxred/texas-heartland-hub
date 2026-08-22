@@ -15,6 +15,7 @@ import { Route as TopicsRouteImport } from './routes/topics'
 import { Route as TexasVeteransRouteImport } from './routes/texas-veterans'
 import { Route as TexasUtilityCostCalculatorRouteImport } from './routes/texas-utility-cost-calculator'
 import { Route as TexasSportsRouteImport } from './routes/texas-sports'
+import { Route as TexasSecretaryOfStateRouteImport } from './routes/texas-secretary-of-state'
 import { Route as TexasSalesTaxExplainedRouteImport } from './routes/texas-sales-tax-explained'
 import { Route as TexasSalaryComparisonByCityRouteImport } from './routes/texas-salary-comparison-by-city'
 import { Route as TexasSalaryCalculatorRouteImport } from './routes/texas-salary-calculator'
@@ -24,6 +25,7 @@ import { Route as TexasRefinanceSavingsCalculatorRouteImport } from './routes/te
 import { Route as TexasPropertyTaxProtestGuideRouteImport } from './routes/texas-property-tax-protest-guide'
 import { Route as TexasPropertyTaxIncreaseCalculatorRouteImport } from './routes/texas-property-tax-increase-calculator'
 import { Route as TexasPoliticsRouteImport } from './routes/texas-politics'
+import { Route as TexasPoliticalReferenceRouteImport } from './routes/texas-political-reference'
 import { Route as TexasNewsRouteImport } from './routes/texas-news'
 import { Route as TexasMovingCostCalculatorRouteImport } from './routes/texas-moving-cost-calculator'
 import { Route as TexasMortgagePayoffCalculatorRouteImport } from './routes/texas-mortgage-payoff-calculator'
@@ -47,18 +49,24 @@ import { Route as TexasDownPaymentCalculatorRouteImport } from './routes/texas-d
 import { Route as TexasDownPaymentAssistanceCalculatorRouteImport } from './routes/texas-down-payment-assistance-calculator'
 import { Route as TexasDataRouteImport } from './routes/texas-data'
 import { Route as TexasCostOfLivingCalculatorRouteImport } from './routes/texas-cost-of-living-calculator'
+import { Route as TexasComptrollerRouteImport } from './routes/texas-comptroller'
 import { Route as TexasClosingCostCalculatorRouteImport } from './routes/texas-closing-cost-calculator'
+import { Route as TexasChildSupportRouteImport } from './routes/texas-child-support'
+import { Route as TexasCaseRouteImport } from './routes/texas-case'
 import { Route as TexasBusinessRouteImport } from './routes/texas-business'
 import { Route as TexasBudgetPlannerRouteImport } from './routes/texas-budget-planner'
 import { Route as TexasBorderSecurityRouteImport } from './routes/texas-border-security'
+import { Route as TexasAttorneyGeneralRouteImport } from './routes/texas-attorney-general'
 import { Route as TexasAgricultureRouteImport } from './routes/texas-agriculture'
 import { Route as TexasRouteImport } from './routes/texas'
 import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TaxCalculatorRouteImport } from './routes/tax-calculator'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SitemapSourcesDotxmlRouteImport } from './routes/sitemap-sources[.]xml'
 import { Route as SitemapRepresentativesDotxmlRouteImport } from './routes/sitemap-representatives[.]xml'
 import { Route as SitemapProductsDotxmlRouteImport } from './routes/sitemap-products[.]xml'
+import { Route as SitemapPoliticalFiguresDotxmlRouteImport } from './routes/sitemap-political-figures[.]xml'
 import { Route as SitemapPagesDotxmlRouteImport } from './routes/sitemap-pages[.]xml'
 import { Route as SitemapNewsDotxmlRouteImport } from './routes/sitemap-news[.]xml'
 import { Route as SitemapLegislatureDotxmlRouteImport } from './routes/sitemap-legislature[.]xml'
@@ -80,6 +88,8 @@ import { Route as ReturnRefundPolicyRouteImport } from './routes/return-refund-p
 import { Route as RepresentativesRouteImport } from './routes/representatives'
 import { Route as RegisterToVoteRouteImport } from './routes/register-to-vote'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PolicyTrackersDottxtRouteImport } from './routes/policy-trackers[.]txt'
+import { Route as PolicyRouteImport } from './routes/policy'
 import { Route as NewsSitemapDotxmlRouteImport } from './routes/news-sitemap[.]xml'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as MovingToTexasChecklistRouteImport } from './routes/moving-to-texas-checklist'
@@ -91,6 +101,7 @@ import { Route as LegislativeUpdatesRouteImport } from './routes/legislative-upd
 import { Route as LawsToKnowRouteImport } from './routes/laws-to-know'
 import { Route as LawsRouteImport } from './routes/laws'
 import { Route as KeepTexasRedRouteImport } from './routes/keep-texas-red'
+import { Route as IssueGuidesDottxtRouteImport } from './routes/issue-guides[.]txt'
 import { Route as HoustonRouteImport } from './routes/houston'
 import { Route as HappeningNowRouteImport } from './routes/happening-now'
 import { Route as GoogleMerchantFeedDotxmlRouteImport } from './routes/google-merchant-feed[.]xml'
@@ -104,10 +115,13 @@ import { Route as ElectionsRouteImport } from './routes/elections'
 import { Route as ElPasoRouteImport } from './routes/el-paso'
 import { Route as EditorialStandardsRouteImport } from './routes/editorial-standards'
 import { Route as DmvRouteImport } from './routes/dmv'
+import { Route as DistrictsRouteImport } from './routes/districts'
+import { Route as DataRouteImport } from './routes/data'
 import { Route as DallasFortWorthRouteImport } from './routes/dallas-fort-worth'
 import { Route as CountyElectionsRouteImport } from './routes/county-elections'
 import { Route as ContactLegislatorsRouteImport } from './routes/contact-legislators'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CivicToolsRouteImport } from './routes/civic-tools'
 import { Route as CitationGuideRouteImport } from './routes/citation-guide'
 import { Route as CandidateGuidesRouteImport } from './routes/candidate-guides'
 import { Route as BillsRouteImport } from './routes/bills'
@@ -116,11 +130,14 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutKeepTexasRedRouteImport } from './routes/about-keep-texas-red'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ToolsIndexRouteImport } from './routes/tools/index'
 import { Route as TexasSportsIndexRouteImport } from './routes/texas-sports.index'
 import { Route as TexasNewsIndexRouteImport } from './routes/texas-news/index'
 import { Route as TexasLegislatureIndexRouteImport } from './routes/texas-legislature.index'
+import { Route as SourcesIndexRouteImport } from './routes/sources.index'
 import { Route as ShopIndexRouteImport } from './routes/shop.index'
 import { Route as NewsIndexRouteImport } from './routes/news.index'
+import { Route as IssuesIndexRouteImport } from './routes/issues/index'
 import { Route as ExploreIndexRouteImport } from './routes/explore.index'
 import { Route as ElectionsIndexRouteImport } from './routes/elections.index'
 import { Route as BillsIndexRouteImport } from './routes/bills/index'
@@ -149,7 +166,13 @@ import { Route as VehiclesBuyingSellingRouteImport } from './routes/vehicles.buy
 import { Route as VehiclesBuyingACarRouteImport } from './routes/vehicles.buying-a-car'
 import { Route as VehiclesBondedTitlesRouteImport } from './routes/vehicles.bonded-titles'
 import { Route as VehiclesAutoInsuranceRequirementsRouteImport } from './routes/vehicles.auto-insurance-requirements'
+import { Route as ToolsTexasTaxStructureComparisonRouteImport } from './routes/tools/texas-tax-structure-comparison'
+import { Route as ToolsTexasSpendingGrowthCapRouteImport } from './routes/tools/texas-spending-growth-cap'
+import { Route as ToolsTexasRainyDayFundRouteImport } from './routes/tools/texas-rainy-day-fund'
+import { Route as ToolsTexasBudgetHeadroomRouteImport } from './routes/tools/texas-budget-headroom'
 import { Route as TexasSportsLeagueRouteImport } from './routes/texas-sports.$league'
+import { Route as TexasPoliticsFiguresRouteImport } from './routes/texas-politics.figures'
+import { Route as TexasPoliticalReferenceSlugRouteImport } from './routes/texas-political-reference.$slug'
 import { Route as TexasNewsTopicRouteImport } from './routes/texas-news.$topic'
 import { Route as TexasLegislatureVotesRouteImport } from './routes/texas-legislature.votes'
 import { Route as TexasLegislatureSessionsRouteImport } from './routes/texas-legislature.sessions'
@@ -160,17 +183,92 @@ import { Route as TexasLegislatureCommitteesRouteImport } from './routes/texas-l
 import { Route as TexasGovernmentAgenciesRouteImport } from './routes/texas-government.agencies'
 import { Route as TexasGovernmentEntitySlugRouteImport } from './routes/texas-government.$entitySlug'
 import { Route as TexasDataDatasetSlugRouteImport } from './routes/texas-data.$datasetSlug'
+import { Route as TexasCaseFactsRouteImport } from './routes/texas-case.facts'
+import { Route as TexasCaseSlugRouteImport } from './routes/texas-case.$slug'
 import { Route as TexasBusinessTopicRouteImport } from './routes/texas-business.$topic'
+import { Route as SourcesSlugRouteImport } from './routes/sources.$slug'
+import { Route as ShopCheckoutSandboxReturnRouteImport } from './routes/shop.checkout-sandbox-return'
+import { Route as ShopCheckoutSandboxRouteImport } from './routes/shop.checkout-sandbox'
 import { Route as ShopCheckoutReturnRouteImport } from './routes/shop.checkout-return'
 import { Route as ShopCheckoutRouteImport } from './routes/shop.checkout'
 import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
 import { Route as RepresentativesRepresentativeSlugRouteImport } from './routes/representatives.$representativeSlug'
+import { Route as PolicyWomensSportsRouteImport } from './routes/policy.womens-sports'
+import { Route as PolicyViolentOffenseBailRouteImport } from './routes/policy.violent-offense-bail'
+import { Route as PolicyTexasCyberCommandRouteImport } from './routes/policy.texas-cyber-command'
+import { Route as PolicyTanfWorkParticipationRouteImport } from './routes/policy.tanf-work-participation'
+import { Route as PolicyStateFederalPowerRouteImport } from './routes/policy.state-federal-power'
+import { Route as PolicySemiconductorManufacturingRouteImport } from './routes/policy.semiconductor-manufacturing'
+import { Route as PolicyScopeActOnlineMinorsRouteImport } from './routes/policy.scope-act-online-minors'
+import { Route as PolicySchoolSafetySecurityRouteImport } from './routes/policy.school-safety-security'
+import { Route as PolicySchoolLibraryMaterialsRouteImport } from './routes/policy.school-library-materials'
+import { Route as PolicyRightToWorkRouteImport } from './routes/policy.right-to-work'
+import { Route as PolicyReligiousLibertyRouteImport } from './routes/policy.religious-liberty'
+import { Route as PolicyRegulatoryReformTreoRouteImport } from './routes/policy.regulatory-reform-treo'
+import { Route as PolicyPublicSectorLaborRouteImport } from './routes/policy.public-sector-labor'
+import { Route as PolicyParentalRightsRouteImport } from './routes/policy.parental-rights'
+import { Route as PolicyOnlineAgeVerificationRouteImport } from './routes/policy.online-age-verification'
+import { Route as PolicyOccupationalLicensingMobilityRouteImport } from './routes/policy.occupational-licensing-mobility'
+import { Route as PolicyMinorGenderTransitionMedicalLawRouteImport } from './routes/policy.minor-gender-transition-medical-law'
+import { Route as PolicyMedicalFreedomRouteImport } from './routes/policy.medical-freedom'
+import { Route as PolicyLocalPreemptionRegulatoryConsistencyRouteImport } from './routes/policy.local-preemption-regulatory-consistency'
+import { Route as PolicyHomeschoolAutonomyRouteImport } from './routes/policy.homeschool-autonomy'
+import { Route as PolicyHigherEducationDeiRouteImport } from './routes/policy.higher-education-dei'
+import { Route as PolicyGeneticDataPrivacyRouteImport } from './routes/policy.genetic-data-privacy'
+import { Route as PolicyForeignAdversaryPropertyRouteImport } from './routes/policy.foreign-adversary-property'
+import { Route as PolicyFaithBasedChildWelfareRouteImport } from './routes/policy.faith-based-child-welfare'
+import { Route as PolicyEsgEnergyBoycottsRouteImport } from './routes/policy.esg-energy-boycotts'
+import { Route as PolicyElectionIntegrityRouteImport } from './routes/policy.election-integrity'
+import { Route as PolicyEVerifyEmploymentRouteImport } from './routes/policy.e-verify-employment'
+import { Route as PolicyDataCentersLargeLoadsRouteImport } from './routes/policy.data-centers-large-loads'
+import { Route as PolicyDataBrokersRouteImport } from './routes/policy.data-brokers'
+import { Route as PolicyCriticalMineralsRareEarthsRouteImport } from './routes/policy.critical-minerals-rare-earths'
+import { Route as PolicyConsumerDataPrivacyRouteImport } from './routes/policy.consumer-data-privacy'
+import { Route as PolicyConsumableHempCannabisRouteImport } from './routes/policy.consumable-hemp-cannabis'
+import { Route as PolicyConstitutionalTaxProtectionsRouteImport } from './routes/policy.constitutional-tax-protections'
+import { Route as PolicyChinaInvestmentRestrictionsRouteImport } from './routes/policy.china-investment-restrictions'
+import { Route as PolicyCharterSchoolsRouteImport } from './routes/policy.charter-schools'
+import { Route as PolicyCentralBankDigitalCurrencyRouteImport } from './routes/policy.central-bank-digital-currency'
+import { Route as PolicyCareerTechnicalWorkforceRouteImport } from './routes/policy.career-technical-workforce'
+import { Route as PolicyCampusFreeSpeechRouteImport } from './routes/policy.campus-free-speech'
+import { Route as PolicyBitcoinReserveRouteImport } from './routes/policy.bitcoin-reserve'
+import { Route as PolicyBiometricPrivacyRouteImport } from './routes/policy.biometric-privacy'
+import { Route as PolicyAssistedSuicideRouteImport } from './routes/policy.assisted-suicide'
+import { Route as PolicyAppStoreParentalControlsRouteImport } from './routes/policy.app-store-parental-controls'
+import { Route as PolicyAiGovernanceRouteImport } from './routes/policy.ai-governance'
+import { Route as PolicyAgricultureFamilyFarmsRouteImport } from './routes/policy.agriculture-family-farms'
+import { Route as PolicyAdvancedNuclearEnergyRouteImport } from './routes/policy.advanced-nuclear-energy'
+import { Route as PolicySlugRouteImport } from './routes/policy.$slug'
+import { Route as NewsTrueCostOfOwningAHomeInTexasRouteImport } from './routes/news.true-cost-of-owning-a-home-in-texas'
+import { Route as NewsTexasUtilityCostsGuideRouteImport } from './routes/news.texas-utility-costs-guide'
+import { Route as NewsTexasMortgagePaymentGuideRouteImport } from './routes/news.texas-mortgage-payment-guide'
+import { Route as NewsTexasHouseDownPaymentGuideRouteImport } from './routes/news.texas-house-down-payment-guide'
+import { Route as NewsTexasHomeownersInsuranceGuideRouteImport } from './routes/news.texas-homeowners-insurance-guide'
+import { Route as NewsTexasHomeEquityHelocGuideRouteImport } from './routes/news.texas-home-equity-heloc-guide'
+import { Route as NewsTexasClosingCostsGuideRouteImport } from './routes/news.texas-closing-costs-guide'
+import { Route as NewsShouldYouRefinanceTexasMortgageRouteImport } from './routes/news.should-you-refinance-texas-mortgage'
+import { Route as NewsSalaryNeededToBuyAHouseInTexasRouteImport } from './routes/news.salary-needed-to-buy-a-house-in-texas'
+import { Route as NewsRentingVsBuyingInTexasRouteImport } from './routes/news.renting-vs-buying-in-texas'
 import { Route as NewsNonPoliticalRouteImport } from './routes/news.non-political'
+import { Route as NewsMovingToTexasGuideRouteImport } from './routes/news.moving-to-texas-guide'
+import { Route as NewsMovingToSanAntonioGuideRouteImport } from './routes/news.moving-to-san-antonio-guide'
+import { Route as NewsMovingToHoustonAddressChecklistRouteImport } from './routes/news.moving-to-houston-address-checklist'
+import { Route as NewsMovingToElPasoGuideRouteImport } from './routes/news.moving-to-el-paso-guide'
+import { Route as NewsMovingToDallasFortWorthGuideRouteImport } from './routes/news.moving-to-dallas-fort-worth-guide'
+import { Route as NewsMovingToAustinGuideRouteImport } from './routes/news.moving-to-austin-guide'
 import { Route as NewsIsdTaxBurdensRouteImport } from './routes/news.isd-tax-burdens'
+import { Route as NewsCanyonLakePushesToFullCapacityFollowingMultiyearDrought2025D9be1db3RouteImport } from './routes/news.canyon-lake-pushes-to-full-capacity-following-multiyear-drought-2025-d9be1db3'
 import { Route as News20260809CanyonLakeFullCapacityRecoveryRouteImport } from './routes/news.2026-08-09-canyon-lake-full-capacity-recovery'
+import { Route as News20260704TheRealReasonBehindTheResilienceOfTexasIdentityIn2026ExplainedSimplyRouteImport } from './routes/news.2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity-in-2026-explained-simply'
+import { Route as News20260704TheRealReasonBehindTheResilienceOfTexasIdentityRouteImport } from './routes/news.2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity'
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
+import { Route as LawsTopicsRouteImport } from './routes/laws.topics'
 import { Route as LawsEffectiveDatesRouteImport } from './routes/laws.effective-dates'
 import { Route as LawsConstitutionalAmendmentsRouteImport } from './routes/laws.constitutional-amendments'
+import { Route as IssuesTexasPolicyHandbookRouteImport } from './routes/issues/texas-policy-handbook'
+import { Route as IssuesTexasLocalGovernmentHandbookRouteImport } from './routes/issues/texas-local-government-handbook'
+import { Route as IssuesTexasGovernmentAccountabilityHandbookRouteImport } from './routes/issues/texas-government-accountability-handbook'
+import { Route as IssuesSlugRouteImport } from './routes/issues/$slug'
 import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
 import { Route as ExploreWildlifeManagementAreasRouteImport } from './routes/explore.wildlife-management-areas'
 import { Route as ExploreTripPlannerRouteImport } from './routes/explore.trip-planner'
@@ -197,6 +295,7 @@ import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe
 import { Route as ElectionsVotingRouteImport } from './routes/elections.voting'
 import { Route as ElectionsStatewideRouteImport } from './routes/elections.statewide'
 import { Route as ElectionsResultsRouteImport } from './routes/elections.results'
+import { Route as ElectionsReferenceDotjsonRouteImport } from './routes/elections.reference[.]json'
 import { Route as ElectionsRacesRouteImport } from './routes/elections.races'
 import { Route as ElectionsPollsRouteImport } from './routes/elections.polls'
 import { Route as ElectionsMethodologyRouteImport } from './routes/elections.methodology'
@@ -220,14 +319,26 @@ import { Route as DmvChangeAddressRouteImport } from './routes/dmv.change-addres
 import { Route as DmvCdlEndorsementsRouteImport } from './routes/dmv.cdl-endorsements'
 import { Route as DmvCdlClassesRouteImport } from './routes/dmv.cdl-classes'
 import { Route as DmvCdlRouteImport } from './routes/dmv.cdl'
+import { Route as DistrictsDistrictSlugRouteImport } from './routes/districts.$districtSlug'
+import { Route as DataSlugRouteImport } from './routes/data.$slug'
+import { Route as CivicToolsTexasLawFinderRouteImport } from './routes/civic-tools.texas-law-finder'
+import { Route as CivicToolsGovernmentAuthorityFinderRouteImport } from './routes/civic-tools.government-authority-finder'
+import { Route as CivicToolsEducationFreedomAccountGuideRouteImport } from './routes/civic-tools.education-freedom-account-guide'
+import { Route as CivicToolsCompareLegislatorsRouteImport } from './routes/civic-tools.compare-legislators'
+import { Route as CivicToolsBillFinderRouteImport } from './routes/civic-tools.bill-finder'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
 import { Route as ArticleSlugRouteImport } from './routes/article.$slug'
+import { Route as ApiReferenceFreshnessRouteImport } from './routes/api/reference-freshness'
 import { Route as ApiPublicationGateRouteImport } from './routes/api.publication-gate'
 import { Route as ApiPlatformCoreStatusRouteImport } from './routes/api.platform-core-status'
 import { Route as ApiGovernanceHealthRouteImport } from './routes/api.governance-health'
 import { Route as ApiContentDispositionRouteImport } from './routes/api.content-disposition'
+import { Route as AdminSourceProvenanceRouteImport } from './routes/admin.source-provenance'
 import { Route as AdminShopProductsRouteImport } from './routes/admin/shop-products'
+import { Route as AdminNewsroomShadowRouteImport } from './routes/admin/newsroom-shadow'
 import { Route as AdminNewsroomMetricsRouteImport } from './routes/admin.newsroom-metrics'
+import { Route as AdminNewsroomBacktestRouteImport } from './routes/admin/newsroom-backtest'
+import { Route as AdminNewsroomRouteImport } from './routes/admin/newsroom'
 import { Route as AdminGovernanceHealthRouteImport } from './routes/admin/governance-health'
 import { Route as AdminCoverageGapsRouteImport } from './routes/admin.coverage-gaps'
 import { Route as TexasLegislatureSessionsIndexRouteImport } from './routes/texas-legislature.sessions.index'
@@ -239,9 +350,13 @@ import { Route as TexasSportsTeamTeamRouteImport } from './routes/texas-sports.t
 import { Route as TexasResourcesTypeTypeRouteImport } from './routes/texas-resources.type.$type'
 import { Route as TexasResourcesTopicTopicIdRouteImport } from './routes/texas-resources.topic.$topicId'
 import { Route as TexasResourcesJourneyJourneyIdRouteImport } from './routes/texas-resources.journey.$journeyId'
+import { Route as TexasPoliticsFiguresFigureSlugRouteImport } from './routes/texas-politics.figures_.$figureSlug'
 import { Route as TexasLegislatureSessionsSessionSlugRouteImport } from './routes/texas-legislature.sessions.$sessionSlug'
 import { Route as TexasLegislatureCommitteesCommitteeSlugRouteImport } from './routes/texas-legislature.committees.$committeeSlug'
-import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
+import { Route as TexasGovernmentAgenciesAgencySlugRouteImport } from './routes/texas-government.agencies.$agencySlug'
+import { Route as TexasCaseFactsSlugRouteImport } from './routes/texas-case.facts.$slug'
+import { Route as ProductOfferProductIdVariantIdRouteImport } from './routes/product-offer.$productId.$variantId'
+import { Route as LawsTopicSlugRouteImport } from './routes/laws.topic.$slug'
 import { Route as ExploreTripTokenRouteImport } from './routes/explore.trip.$token'
 import { Route as ExploreStateParkSlugRouteImport } from './routes/explore.state-park.$slug'
 import { Route as ExploreRiverSlugRouteImport } from './routes/explore.river.$slug'
@@ -256,8 +371,10 @@ import { Route as ElectionsForecastForecastSlugRouteImport } from './routes/elec
 import { Route as ElectionsDistrictsDistrictSlugRouteImport } from './routes/elections.districts.$districtSlug'
 import { Route as ElectionsCandidatesCandidateSlugRouteImport } from './routes/elections.candidates_.$candidateSlug'
 import { Route as BillsSubjectSubjectSlugRouteImport } from './routes/bills/subject/$subjectSlug'
+import { Route as ApiShopStripeWebhookRouteImport } from './routes/api/shop/stripe-webhook'
 import { Route as ApiPublicTexasdefinedCheckoutRouteImport } from './routes/api/public/texasdefined-checkout'
 import { Route as ApiPublicStoreProductsRouteImport } from './routes/api/public/store-products'
+import { Route as ApiPublicOfficialBillTextRouteImport } from './routes/api/public/official-bill-text'
 import { Route as ApiPublicNewsroomHealthRouteImport } from './routes/api/public/newsroom-health'
 import { Route as ApiPublicDeploymentFingerprintRouteImport } from './routes/api/public/deployment-fingerprint'
 import { Route as ApiPublicCrossSitePublicationHealthRouteImport } from './routes/api/public/cross-site-publication-health'
@@ -278,30 +395,48 @@ import { Route as AdminBillsEditorialRouteImport } from './routes/admin/bills/ed
 import { Route as AdminBillsBackfillRouteImport } from './routes/admin/bills/backfill'
 import { Route as BillsTexasLegislatureIndexRouteImport } from './routes/bills/texas/$legislature/index'
 import { Route as AdminExploreImportsIndexRouteImport } from './routes/admin/explore/imports/index'
-import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
-import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
-import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as ApiPublicPaymentsSandboxHealthRouteImport } from './routes/api/public/payments/sandbox-health'
+import { Route as ApiPublicPaymentsSandboxConfigRouteImport } from './routes/api/public/payments/sandbox-config'
+import { Route as ApiPublicPaymentsHealthRouteImport } from './routes/api/public/payments/health'
 import { Route as ApiPublicHooksTrackVariantRouteImport } from './routes/api/public/hooks/track-variant'
 import { Route as ApiPublicHooksSyncPrintifyRouteImport } from './routes/api/public/hooks/sync-printify'
 import { Route as ApiPublicHooksScoreViralBackfillRouteImport } from './routes/api/public/hooks/score-viral-backfill'
 import { Route as ApiPublicHooksScoreViralRouteImport } from './routes/api/public/hooks/score-viral'
+import { Route as ApiPublicHooksScoreNewsroomStoriesRouteImport } from './routes/api/public/hooks/score-newsroom-stories'
 import { Route as ApiPublicHooksRunGenerateNewsRouteImport } from './routes/api/public/hooks/run-generate-news'
+import { Route as ApiPublicHooksRetestNewsroomShadowRouteImport } from './routes/api/public/hooks/retest-newsroom-shadow'
 import { Route as ApiPublicHooksRepairSb37ProductionRouteImport } from './routes/api/public/hooks/repair-sb37-production'
 import { Route as ApiPublicHooksRepairArticleStructureRouteImport } from './routes/api/public/hooks/repair-article-structure'
 import { Route as ApiPublicHooksRemediateAug10FlyoverRouteImport } from './routes/api/public/hooks/remediate-aug10-flyover'
+import { Route as ApiPublicHooksReconcileNewsHistoryRouteImport } from './routes/api/public/hooks/reconcile-news-history'
 import { Route as ApiPublicHooksPublishingSafetyNetRouteImport } from './routes/api/public/hooks/publishing-safety-net'
+import { Route as ApiPublicHooksPublishOverdueGapRouteImport } from './routes/api/public/hooks/publish-overdue-gap'
+import { Route as ApiPublicHooksNormalizeNewsroomFeedRouteImport } from './routes/api/public/hooks/normalize-newsroom-feed'
+import { Route as ApiPublicHooksNewsroomGenerationDiagnosticsRouteImport } from './routes/api/public/hooks/newsroom-generation-diagnostics'
 import { Route as ApiPublicHooksListShopsRouteImport } from './routes/api/public/hooks/list-shops'
 import { Route as ApiPublicHooksIngestSportsRouteImport } from './routes/api/public/hooks/ingest-sports'
 import { Route as ApiPublicHooksIngestFeedsRouteImport } from './routes/api/public/hooks/ingest-feeds'
+import { Route as ApiPublicHooksImageBacklogRecoveryRouteImport } from './routes/api/public/hooks/image-backlog-recovery'
 import { Route as ApiPublicHooksHealthRouteImport } from './routes/api/public/hooks/health'
 import { Route as ApiPublicHooksGenerateSportsRouteImport } from './routes/api/public/hooks/generate-sports'
+import { Route as ApiPublicHooksGenerateNewsroomRouteImport } from './routes/api/public/hooks/generate-newsroom'
 import { Route as ApiPublicHooksGenerateNewsRouteImport } from './routes/api/public/hooks/generate-news'
 import { Route as ApiPublicHooksGenerateEvergreenRouteImport } from './routes/api/public/hooks/generate-evergreen'
+import { Route as ApiPublicHooksGenerateDailyBriefRouteImport } from './routes/api/public/hooks/generate-daily-brief'
+import { Route as ApiPublicHooksFinalizeNewsroomArticleRouteImport } from './routes/api/public/hooks/finalize-newsroom-article'
+import { Route as ApiPublicHooksEnrichNewsroomRssEvidenceRouteImport } from './routes/api/public/hooks/enrich-newsroom-rss-evidence'
+import { Route as ApiPublicHooksDecideNewsroomPackagesRouteImport } from './routes/api/public/hooks/decide-newsroom-packages'
+import { Route as ApiPublicHooksClusterNewsroomStoriesRouteImport } from './routes/api/public/hooks/cluster-newsroom-stories'
 import { Route as ApiPublicHooksClassifySportsRouteImport } from './routes/api/public/hooks/classify-sports'
 import { Route as ApiPublicHooksClassifyPillarsRouteImport } from './routes/api/public/hooks/classify-pillars'
 import { Route as ApiPublicHooksClassifyArticlePillarsRouteImport } from './routes/api/public/hooks/classify-article-pillars'
+import { Route as ApiPublicHooksBuildNewsroomResearchPacketsRouteImport } from './routes/api/public/hooks/build-newsroom-research-packets'
 import { Route as ApiPublicHooksBackfillFeaturedImagesRouteImport } from './routes/api/public/hooks/backfill-featured-images'
+import { Route as ApiPublicHooksAutoFacebookPostTexasdefinedSmartRouteImport } from './routes/api/public/hooks/auto-facebook-post-texasdefined-smart'
+import { Route as ApiPublicHooksAutoFacebookPostTexasdefinedRouteImport } from './routes/api/public/hooks/auto-facebook-post-texasdefined'
+import { Route as ApiPublicHooksAutoFacebookPostRouteImport } from './routes/api/public/hooks/auto-facebook-post'
+import { Route as ApiPublicHooksAdsenseImageBackfillRouteImport } from './routes/api/public/hooks/adsense-image-backfill'
 import { Route as ApiPublicExploreRecommendationsRouteImport } from './routes/api/public/explore/recommendations'
 import { Route as ApiPublicExploreMapRouteImport } from './routes/api/public/explore/map'
 import { Route as ApiPublicExploreEntitiesRouteImport } from './routes/api/public/explore/entities'
@@ -313,6 +448,7 @@ import { Route as BillsTexasLegislatureBillTypeIndexRouteImport } from './routes
 import { Route as BillsTexasLegislatureBillTypeBillNumberRouteImport } from './routes/bills/texas/$legislature/$billType/$billNumber'
 import { Route as ApiPublicOauthFacebookStartRouteImport } from './routes/api/public/oauth/facebook/start'
 import { Route as ApiPublicOauthFacebookCallbackRouteImport } from './routes/api/public/oauth/facebook/callback'
+import { Route as BillsTexasLegislatureBillTypeBillNumberReferenceDotjsonRouteImport } from './routes/bills.texas.$legislature.$billType.$billNumber.reference[.]json'
 
 const VotingLocationsRoute = VotingLocationsRouteImport.update({
   id: '/voting-locations',
@@ -343,6 +479,11 @@ const TexasUtilityCostCalculatorRoute =
 const TexasSportsRoute = TexasSportsRouteImport.update({
   id: '/texas-sports',
   path: '/texas-sports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasSecretaryOfStateRoute = TexasSecretaryOfStateRouteImport.update({
+  id: '/texas-secretary-of-state',
+  path: '/texas-secretary-of-state',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TexasSalesTaxExplainedRoute = TexasSalesTaxExplainedRouteImport.update({
@@ -393,6 +534,11 @@ const TexasPropertyTaxIncreaseCalculatorRoute =
 const TexasPoliticsRoute = TexasPoliticsRouteImport.update({
   id: '/texas-politics',
   path: '/texas-politics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasPoliticalReferenceRoute = TexasPoliticalReferenceRouteImport.update({
+  id: '/texas-political-reference',
+  path: '/texas-political-reference',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TexasNewsRoute = TexasNewsRouteImport.update({
@@ -521,12 +667,27 @@ const TexasCostOfLivingCalculatorRoute =
     path: '/texas-cost-of-living-calculator',
     getParentRoute: () => rootRouteImport,
   } as any)
+const TexasComptrollerRoute = TexasComptrollerRouteImport.update({
+  id: '/texas-comptroller',
+  path: '/texas-comptroller',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TexasClosingCostCalculatorRoute =
   TexasClosingCostCalculatorRouteImport.update({
     id: '/texas-closing-cost-calculator',
     path: '/texas-closing-cost-calculator',
     getParentRoute: () => rootRouteImport,
   } as any)
+const TexasChildSupportRoute = TexasChildSupportRouteImport.update({
+  id: '/texas-child-support',
+  path: '/texas-child-support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasCaseRoute = TexasCaseRouteImport.update({
+  id: '/texas-case',
+  path: '/texas-case',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TexasBusinessRoute = TexasBusinessRouteImport.update({
   id: '/texas-business',
   path: '/texas-business',
@@ -540,6 +701,11 @@ const TexasBudgetPlannerRoute = TexasBudgetPlannerRouteImport.update({
 const TexasBorderSecurityRoute = TexasBorderSecurityRouteImport.update({
   id: '/texas-border-security',
   path: '/texas-border-security',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasAttorneyGeneralRoute = TexasAttorneyGeneralRouteImport.update({
+  id: '/texas-attorney-general',
+  path: '/texas-attorney-general',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TexasAgricultureRoute = TexasAgricultureRouteImport.update({
@@ -572,6 +738,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapSourcesDotxmlRoute = SitemapSourcesDotxmlRouteImport.update({
+  id: '/sitemap-sources.xml',
+  path: '/sitemap-sources.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapRepresentativesDotxmlRoute =
   SitemapRepresentativesDotxmlRouteImport.update({
     id: '/sitemap-representatives.xml',
@@ -583,6 +754,12 @@ const SitemapProductsDotxmlRoute = SitemapProductsDotxmlRouteImport.update({
   path: '/sitemap-products.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapPoliticalFiguresDotxmlRoute =
+  SitemapPoliticalFiguresDotxmlRouteImport.update({
+    id: '/sitemap-political-figures.xml',
+    path: '/sitemap-political-figures.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const SitemapPagesDotxmlRoute = SitemapPagesDotxmlRouteImport.update({
   id: '/sitemap-pages.xml',
   path: '/sitemap-pages.xml',
@@ -690,6 +867,16 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PolicyTrackersDottxtRoute = PolicyTrackersDottxtRouteImport.update({
+  id: '/policy-trackers.txt',
+  path: '/policy-trackers.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PolicyRoute = PolicyRouteImport.update({
+  id: '/policy',
+  path: '/policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NewsSitemapDotxmlRoute = NewsSitemapDotxmlRouteImport.update({
   id: '/news-sitemap.xml',
   path: '/news-sitemap.xml',
@@ -743,6 +930,11 @@ const LawsRoute = LawsRouteImport.update({
 const KeepTexasRedRoute = KeepTexasRedRouteImport.update({
   id: '/keep-texas-red',
   path: '/keep-texas-red',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IssueGuidesDottxtRoute = IssueGuidesDottxtRouteImport.update({
+  id: '/issue-guides.txt',
+  path: '/issue-guides.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HoustonRoute = HoustonRouteImport.update({
@@ -811,6 +1003,16 @@ const DmvRoute = DmvRouteImport.update({
   path: '/dmv',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DistrictsRoute = DistrictsRouteImport.update({
+  id: '/districts',
+  path: '/districts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DataRoute = DataRouteImport.update({
+  id: '/data',
+  path: '/data',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DallasFortWorthRoute = DallasFortWorthRouteImport.update({
   id: '/dallas-fort-worth',
   path: '/dallas-fort-worth',
@@ -829,6 +1031,11 @@ const ContactLegislatorsRoute = ContactLegislatorsRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CivicToolsRoute = CivicToolsRouteImport.update({
+  id: '/civic-tools',
+  path: '/civic-tools',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CitationGuideRoute = CitationGuideRouteImport.update({
@@ -871,6 +1078,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ToolsIndexRoute = ToolsIndexRouteImport.update({
+  id: '/tools/',
+  path: '/tools/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TexasSportsIndexRoute = TexasSportsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -886,6 +1098,11 @@ const TexasLegislatureIndexRoute = TexasLegislatureIndexRouteImport.update({
   path: '/',
   getParentRoute: () => TexasLegislatureRoute,
 } as any)
+const SourcesIndexRoute = SourcesIndexRouteImport.update({
+  id: '/sources/',
+  path: '/sources/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShopIndexRoute = ShopIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -895,6 +1112,11 @@ const NewsIndexRoute = NewsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => NewsRoute,
+} as any)
+const IssuesIndexRoute = IssuesIndexRouteImport.update({
+  id: '/issues/',
+  path: '/issues/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ExploreIndexRoute = ExploreIndexRouteImport.update({
   id: '/',
@@ -1046,11 +1268,45 @@ const VehiclesAutoInsuranceRequirementsRoute =
     path: '/vehicles/auto-insurance-requirements',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ToolsTexasTaxStructureComparisonRoute =
+  ToolsTexasTaxStructureComparisonRouteImport.update({
+    id: '/tools/texas-tax-structure-comparison',
+    path: '/tools/texas-tax-structure-comparison',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ToolsTexasSpendingGrowthCapRoute =
+  ToolsTexasSpendingGrowthCapRouteImport.update({
+    id: '/tools/texas-spending-growth-cap',
+    path: '/tools/texas-spending-growth-cap',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ToolsTexasRainyDayFundRoute = ToolsTexasRainyDayFundRouteImport.update({
+  id: '/tools/texas-rainy-day-fund',
+  path: '/tools/texas-rainy-day-fund',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ToolsTexasBudgetHeadroomRoute =
+  ToolsTexasBudgetHeadroomRouteImport.update({
+    id: '/tools/texas-budget-headroom',
+    path: '/tools/texas-budget-headroom',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const TexasSportsLeagueRoute = TexasSportsLeagueRouteImport.update({
   id: '/$league',
   path: '/$league',
   getParentRoute: () => TexasSportsRoute,
 } as any)
+const TexasPoliticsFiguresRoute = TexasPoliticsFiguresRouteImport.update({
+  id: '/figures',
+  path: '/figures',
+  getParentRoute: () => TexasPoliticsRoute,
+} as any)
+const TexasPoliticalReferenceSlugRoute =
+  TexasPoliticalReferenceSlugRouteImport.update({
+    id: '/$slug',
+    path: '/$slug',
+    getParentRoute: () => TexasPoliticalReferenceRoute,
+  } as any)
 const TexasNewsTopicRoute = TexasNewsTopicRouteImport.update({
   id: '/$topic',
   path: '/$topic',
@@ -1105,10 +1361,36 @@ const TexasDataDatasetSlugRoute = TexasDataDatasetSlugRouteImport.update({
   path: '/$datasetSlug',
   getParentRoute: () => TexasDataRoute,
 } as any)
+const TexasCaseFactsRoute = TexasCaseFactsRouteImport.update({
+  id: '/facts',
+  path: '/facts',
+  getParentRoute: () => TexasCaseRoute,
+} as any)
+const TexasCaseSlugRoute = TexasCaseSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => TexasCaseRoute,
+} as any)
 const TexasBusinessTopicRoute = TexasBusinessTopicRouteImport.update({
   id: '/$topic',
   path: '/$topic',
   getParentRoute: () => TexasBusinessRoute,
+} as any)
+const SourcesSlugRoute = SourcesSlugRouteImport.update({
+  id: '/sources/$slug',
+  path: '/sources/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShopCheckoutSandboxReturnRoute =
+  ShopCheckoutSandboxReturnRouteImport.update({
+    id: '/checkout-sandbox-return',
+    path: '/checkout-sandbox-return',
+    getParentRoute: () => ShopRoute,
+  } as any)
+const ShopCheckoutSandboxRoute = ShopCheckoutSandboxRouteImport.update({
+  id: '/checkout-sandbox',
+  path: '/checkout-sandbox',
+  getParentRoute: () => ShopRoute,
 } as any)
 const ShopCheckoutReturnRoute = ShopCheckoutReturnRouteImport.update({
   id: '/checkout-return',
@@ -1131,9 +1413,359 @@ const RepresentativesRepresentativeSlugRoute =
     path: '/$representativeSlug',
     getParentRoute: () => RepresentativesRoute,
   } as any)
+const PolicyWomensSportsRoute = PolicyWomensSportsRouteImport.update({
+  id: '/womens-sports',
+  path: '/womens-sports',
+  getParentRoute: () => PolicyRoute,
+} as any)
+const PolicyViolentOffenseBailRoute =
+  PolicyViolentOffenseBailRouteImport.update({
+    id: '/violent-offense-bail',
+    path: '/violent-offense-bail',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicyTexasCyberCommandRoute = PolicyTexasCyberCommandRouteImport.update({
+  id: '/texas-cyber-command',
+  path: '/texas-cyber-command',
+  getParentRoute: () => PolicyRoute,
+} as any)
+const PolicyTanfWorkParticipationRoute =
+  PolicyTanfWorkParticipationRouteImport.update({
+    id: '/tanf-work-participation',
+    path: '/tanf-work-participation',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicyStateFederalPowerRoute = PolicyStateFederalPowerRouteImport.update({
+  id: '/state-federal-power',
+  path: '/state-federal-power',
+  getParentRoute: () => PolicyRoute,
+} as any)
+const PolicySemiconductorManufacturingRoute =
+  PolicySemiconductorManufacturingRouteImport.update({
+    id: '/semiconductor-manufacturing',
+    path: '/semiconductor-manufacturing',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicyScopeActOnlineMinorsRoute =
+  PolicyScopeActOnlineMinorsRouteImport.update({
+    id: '/scope-act-online-minors',
+    path: '/scope-act-online-minors',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicySchoolSafetySecurityRoute =
+  PolicySchoolSafetySecurityRouteImport.update({
+    id: '/school-safety-security',
+    path: '/school-safety-security',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicySchoolLibraryMaterialsRoute =
+  PolicySchoolLibraryMaterialsRouteImport.update({
+    id: '/school-library-materials',
+    path: '/school-library-materials',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicyRightToWorkRoute = PolicyRightToWorkRouteImport.update({
+  id: '/right-to-work',
+  path: '/right-to-work',
+  getParentRoute: () => PolicyRoute,
+} as any)
+const PolicyReligiousLibertyRoute = PolicyReligiousLibertyRouteImport.update({
+  id: '/religious-liberty',
+  path: '/religious-liberty',
+  getParentRoute: () => PolicyRoute,
+} as any)
+const PolicyRegulatoryReformTreoRoute =
+  PolicyRegulatoryReformTreoRouteImport.update({
+    id: '/regulatory-reform-treo',
+    path: '/regulatory-reform-treo',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicyPublicSectorLaborRoute = PolicyPublicSectorLaborRouteImport.update({
+  id: '/public-sector-labor',
+  path: '/public-sector-labor',
+  getParentRoute: () => PolicyRoute,
+} as any)
+const PolicyParentalRightsRoute = PolicyParentalRightsRouteImport.update({
+  id: '/parental-rights',
+  path: '/parental-rights',
+  getParentRoute: () => PolicyRoute,
+} as any)
+const PolicyOnlineAgeVerificationRoute =
+  PolicyOnlineAgeVerificationRouteImport.update({
+    id: '/online-age-verification',
+    path: '/online-age-verification',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicyOccupationalLicensingMobilityRoute =
+  PolicyOccupationalLicensingMobilityRouteImport.update({
+    id: '/occupational-licensing-mobility',
+    path: '/occupational-licensing-mobility',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicyMinorGenderTransitionMedicalLawRoute =
+  PolicyMinorGenderTransitionMedicalLawRouteImport.update({
+    id: '/minor-gender-transition-medical-law',
+    path: '/minor-gender-transition-medical-law',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicyMedicalFreedomRoute = PolicyMedicalFreedomRouteImport.update({
+  id: '/medical-freedom',
+  path: '/medical-freedom',
+  getParentRoute: () => PolicyRoute,
+} as any)
+const PolicyLocalPreemptionRegulatoryConsistencyRoute =
+  PolicyLocalPreemptionRegulatoryConsistencyRouteImport.update({
+    id: '/local-preemption-regulatory-consistency',
+    path: '/local-preemption-regulatory-consistency',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicyHomeschoolAutonomyRoute =
+  PolicyHomeschoolAutonomyRouteImport.update({
+    id: '/homeschool-autonomy',
+    path: '/homeschool-autonomy',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicyHigherEducationDeiRoute =
+  PolicyHigherEducationDeiRouteImport.update({
+    id: '/higher-education-dei',
+    path: '/higher-education-dei',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicyGeneticDataPrivacyRoute =
+  PolicyGeneticDataPrivacyRouteImport.update({
+    id: '/genetic-data-privacy',
+    path: '/genetic-data-privacy',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicyForeignAdversaryPropertyRoute =
+  PolicyForeignAdversaryPropertyRouteImport.update({
+    id: '/foreign-adversary-property',
+    path: '/foreign-adversary-property',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicyFaithBasedChildWelfareRoute =
+  PolicyFaithBasedChildWelfareRouteImport.update({
+    id: '/faith-based-child-welfare',
+    path: '/faith-based-child-welfare',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicyEsgEnergyBoycottsRoute = PolicyEsgEnergyBoycottsRouteImport.update({
+  id: '/esg-energy-boycotts',
+  path: '/esg-energy-boycotts',
+  getParentRoute: () => PolicyRoute,
+} as any)
+const PolicyElectionIntegrityRoute = PolicyElectionIntegrityRouteImport.update({
+  id: '/election-integrity',
+  path: '/election-integrity',
+  getParentRoute: () => PolicyRoute,
+} as any)
+const PolicyEVerifyEmploymentRoute = PolicyEVerifyEmploymentRouteImport.update({
+  id: '/e-verify-employment',
+  path: '/e-verify-employment',
+  getParentRoute: () => PolicyRoute,
+} as any)
+const PolicyDataCentersLargeLoadsRoute =
+  PolicyDataCentersLargeLoadsRouteImport.update({
+    id: '/data-centers-large-loads',
+    path: '/data-centers-large-loads',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicyDataBrokersRoute = PolicyDataBrokersRouteImport.update({
+  id: '/data-brokers',
+  path: '/data-brokers',
+  getParentRoute: () => PolicyRoute,
+} as any)
+const PolicyCriticalMineralsRareEarthsRoute =
+  PolicyCriticalMineralsRareEarthsRouteImport.update({
+    id: '/critical-minerals-rare-earths',
+    path: '/critical-minerals-rare-earths',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicyConsumerDataPrivacyRoute =
+  PolicyConsumerDataPrivacyRouteImport.update({
+    id: '/consumer-data-privacy',
+    path: '/consumer-data-privacy',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicyConsumableHempCannabisRoute =
+  PolicyConsumableHempCannabisRouteImport.update({
+    id: '/consumable-hemp-cannabis',
+    path: '/consumable-hemp-cannabis',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicyConstitutionalTaxProtectionsRoute =
+  PolicyConstitutionalTaxProtectionsRouteImport.update({
+    id: '/constitutional-tax-protections',
+    path: '/constitutional-tax-protections',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicyChinaInvestmentRestrictionsRoute =
+  PolicyChinaInvestmentRestrictionsRouteImport.update({
+    id: '/china-investment-restrictions',
+    path: '/china-investment-restrictions',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicyCharterSchoolsRoute = PolicyCharterSchoolsRouteImport.update({
+  id: '/charter-schools',
+  path: '/charter-schools',
+  getParentRoute: () => PolicyRoute,
+} as any)
+const PolicyCentralBankDigitalCurrencyRoute =
+  PolicyCentralBankDigitalCurrencyRouteImport.update({
+    id: '/central-bank-digital-currency',
+    path: '/central-bank-digital-currency',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicyCareerTechnicalWorkforceRoute =
+  PolicyCareerTechnicalWorkforceRouteImport.update({
+    id: '/career-technical-workforce',
+    path: '/career-technical-workforce',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicyCampusFreeSpeechRoute = PolicyCampusFreeSpeechRouteImport.update({
+  id: '/campus-free-speech',
+  path: '/campus-free-speech',
+  getParentRoute: () => PolicyRoute,
+} as any)
+const PolicyBitcoinReserveRoute = PolicyBitcoinReserveRouteImport.update({
+  id: '/bitcoin-reserve',
+  path: '/bitcoin-reserve',
+  getParentRoute: () => PolicyRoute,
+} as any)
+const PolicyBiometricPrivacyRoute = PolicyBiometricPrivacyRouteImport.update({
+  id: '/biometric-privacy',
+  path: '/biometric-privacy',
+  getParentRoute: () => PolicyRoute,
+} as any)
+const PolicyAssistedSuicideRoute = PolicyAssistedSuicideRouteImport.update({
+  id: '/assisted-suicide',
+  path: '/assisted-suicide',
+  getParentRoute: () => PolicyRoute,
+} as any)
+const PolicyAppStoreParentalControlsRoute =
+  PolicyAppStoreParentalControlsRouteImport.update({
+    id: '/app-store-parental-controls',
+    path: '/app-store-parental-controls',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicyAiGovernanceRoute = PolicyAiGovernanceRouteImport.update({
+  id: '/ai-governance',
+  path: '/ai-governance',
+  getParentRoute: () => PolicyRoute,
+} as any)
+const PolicyAgricultureFamilyFarmsRoute =
+  PolicyAgricultureFamilyFarmsRouteImport.update({
+    id: '/agriculture-family-farms',
+    path: '/agriculture-family-farms',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicyAdvancedNuclearEnergyRoute =
+  PolicyAdvancedNuclearEnergyRouteImport.update({
+    id: '/advanced-nuclear-energy',
+    path: '/advanced-nuclear-energy',
+    getParentRoute: () => PolicyRoute,
+  } as any)
+const PolicySlugRoute = PolicySlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => PolicyRoute,
+} as any)
+const NewsTrueCostOfOwningAHomeInTexasRoute =
+  NewsTrueCostOfOwningAHomeInTexasRouteImport.update({
+    id: '/true-cost-of-owning-a-home-in-texas',
+    path: '/true-cost-of-owning-a-home-in-texas',
+    getParentRoute: () => NewsRoute,
+  } as any)
+const NewsTexasUtilityCostsGuideRoute =
+  NewsTexasUtilityCostsGuideRouteImport.update({
+    id: '/texas-utility-costs-guide',
+    path: '/texas-utility-costs-guide',
+    getParentRoute: () => NewsRoute,
+  } as any)
+const NewsTexasMortgagePaymentGuideRoute =
+  NewsTexasMortgagePaymentGuideRouteImport.update({
+    id: '/texas-mortgage-payment-guide',
+    path: '/texas-mortgage-payment-guide',
+    getParentRoute: () => NewsRoute,
+  } as any)
+const NewsTexasHouseDownPaymentGuideRoute =
+  NewsTexasHouseDownPaymentGuideRouteImport.update({
+    id: '/texas-house-down-payment-guide',
+    path: '/texas-house-down-payment-guide',
+    getParentRoute: () => NewsRoute,
+  } as any)
+const NewsTexasHomeownersInsuranceGuideRoute =
+  NewsTexasHomeownersInsuranceGuideRouteImport.update({
+    id: '/texas-homeowners-insurance-guide',
+    path: '/texas-homeowners-insurance-guide',
+    getParentRoute: () => NewsRoute,
+  } as any)
+const NewsTexasHomeEquityHelocGuideRoute =
+  NewsTexasHomeEquityHelocGuideRouteImport.update({
+    id: '/texas-home-equity-heloc-guide',
+    path: '/texas-home-equity-heloc-guide',
+    getParentRoute: () => NewsRoute,
+  } as any)
+const NewsTexasClosingCostsGuideRoute =
+  NewsTexasClosingCostsGuideRouteImport.update({
+    id: '/texas-closing-costs-guide',
+    path: '/texas-closing-costs-guide',
+    getParentRoute: () => NewsRoute,
+  } as any)
+const NewsShouldYouRefinanceTexasMortgageRoute =
+  NewsShouldYouRefinanceTexasMortgageRouteImport.update({
+    id: '/should-you-refinance-texas-mortgage',
+    path: '/should-you-refinance-texas-mortgage',
+    getParentRoute: () => NewsRoute,
+  } as any)
+const NewsSalaryNeededToBuyAHouseInTexasRoute =
+  NewsSalaryNeededToBuyAHouseInTexasRouteImport.update({
+    id: '/salary-needed-to-buy-a-house-in-texas',
+    path: '/salary-needed-to-buy-a-house-in-texas',
+    getParentRoute: () => NewsRoute,
+  } as any)
+const NewsRentingVsBuyingInTexasRoute =
+  NewsRentingVsBuyingInTexasRouteImport.update({
+    id: '/renting-vs-buying-in-texas',
+    path: '/renting-vs-buying-in-texas',
+    getParentRoute: () => NewsRoute,
+  } as any)
 const NewsNonPoliticalRoute = NewsNonPoliticalRouteImport.update({
   id: '/non-political',
   path: '/non-political',
+  getParentRoute: () => NewsRoute,
+} as any)
+const NewsMovingToTexasGuideRoute = NewsMovingToTexasGuideRouteImport.update({
+  id: '/moving-to-texas-guide',
+  path: '/moving-to-texas-guide',
+  getParentRoute: () => NewsRoute,
+} as any)
+const NewsMovingToSanAntonioGuideRoute =
+  NewsMovingToSanAntonioGuideRouteImport.update({
+    id: '/moving-to-san-antonio-guide',
+    path: '/moving-to-san-antonio-guide',
+    getParentRoute: () => NewsRoute,
+  } as any)
+const NewsMovingToHoustonAddressChecklistRoute =
+  NewsMovingToHoustonAddressChecklistRouteImport.update({
+    id: '/moving-to-houston-address-checklist',
+    path: '/moving-to-houston-address-checklist',
+    getParentRoute: () => NewsRoute,
+  } as any)
+const NewsMovingToElPasoGuideRoute = NewsMovingToElPasoGuideRouteImport.update({
+  id: '/moving-to-el-paso-guide',
+  path: '/moving-to-el-paso-guide',
+  getParentRoute: () => NewsRoute,
+} as any)
+const NewsMovingToDallasFortWorthGuideRoute =
+  NewsMovingToDallasFortWorthGuideRouteImport.update({
+    id: '/moving-to-dallas-fort-worth-guide',
+    path: '/moving-to-dallas-fort-worth-guide',
+    getParentRoute: () => NewsRoute,
+  } as any)
+const NewsMovingToAustinGuideRoute = NewsMovingToAustinGuideRouteImport.update({
+  id: '/moving-to-austin-guide',
+  path: '/moving-to-austin-guide',
   getParentRoute: () => NewsRoute,
 } as any)
 const NewsIsdTaxBurdensRoute = NewsIsdTaxBurdensRouteImport.update({
@@ -1141,16 +1773,45 @@ const NewsIsdTaxBurdensRoute = NewsIsdTaxBurdensRouteImport.update({
   path: '/isd-tax-burdens',
   getParentRoute: () => NewsRoute,
 } as any)
+const NewsCanyonLakePushesToFullCapacityFollowingMultiyearDrought2025D9be1db3Route =
+  NewsCanyonLakePushesToFullCapacityFollowingMultiyearDrought2025D9be1db3RouteImport.update(
+    {
+      id: '/canyon-lake-pushes-to-full-capacity-following-multiyear-drought-2025-d9be1db3',
+      path: '/canyon-lake-pushes-to-full-capacity-following-multiyear-drought-2025-d9be1db3',
+      getParentRoute: () => NewsRoute,
+    } as any,
+  )
 const News20260809CanyonLakeFullCapacityRecoveryRoute =
   News20260809CanyonLakeFullCapacityRecoveryRouteImport.update({
     id: '/2026-08-09-canyon-lake-full-capacity-recovery',
     path: '/2026-08-09-canyon-lake-full-capacity-recovery',
     getParentRoute: () => NewsRoute,
   } as any)
+const News20260704TheRealReasonBehindTheResilienceOfTexasIdentityIn2026ExplainedSimplyRoute =
+  News20260704TheRealReasonBehindTheResilienceOfTexasIdentityIn2026ExplainedSimplyRouteImport.update(
+    {
+      id: '/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity-in-2026-explained-simply',
+      path: '/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity-in-2026-explained-simply',
+      getParentRoute: () => NewsRoute,
+    } as any,
+  )
+const News20260704TheRealReasonBehindTheResilienceOfTexasIdentityRoute =
+  News20260704TheRealReasonBehindTheResilienceOfTexasIdentityRouteImport.update(
+    {
+      id: '/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity',
+      path: '/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity',
+      getParentRoute: () => NewsRoute,
+    } as any,
+  )
 const NewsSlugRoute = NewsSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
   getParentRoute: () => NewsRoute,
+} as any)
+const LawsTopicsRoute = LawsTopicsRouteImport.update({
+  id: '/topics',
+  path: '/topics',
+  getParentRoute: () => LawsRoute,
 } as any)
 const LawsEffectiveDatesRoute = LawsEffectiveDatesRouteImport.update({
   id: '/effective-dates',
@@ -1163,6 +1824,29 @@ const LawsConstitutionalAmendmentsRoute =
     path: '/constitutional-amendments',
     getParentRoute: () => LawsRoute,
   } as any)
+const IssuesTexasPolicyHandbookRoute =
+  IssuesTexasPolicyHandbookRouteImport.update({
+    id: '/issues/texas-policy-handbook',
+    path: '/issues/texas-policy-handbook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const IssuesTexasLocalGovernmentHandbookRoute =
+  IssuesTexasLocalGovernmentHandbookRouteImport.update({
+    id: '/issues/texas-local-government-handbook',
+    path: '/issues/texas-local-government-handbook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const IssuesTexasGovernmentAccountabilityHandbookRoute =
+  IssuesTexasGovernmentAccountabilityHandbookRouteImport.update({
+    id: '/issues/texas-government-accountability-handbook',
+    path: '/issues/texas-government-accountability-handbook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const IssuesSlugRoute = IssuesSlugRouteImport.update({
+  id: '/issues/$slug',
+  path: '/issues/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GuidesSlugRoute = GuidesSlugRouteImport.update({
   id: '/guides/$slug',
   path: '/guides/$slug',
@@ -1303,6 +1987,12 @@ const ElectionsResultsRoute = ElectionsResultsRouteImport.update({
   path: '/results',
   getParentRoute: () => ElectionsRoute,
 } as any)
+const ElectionsReferenceDotjsonRoute =
+  ElectionsReferenceDotjsonRouteImport.update({
+    id: '/reference.json',
+    path: '/reference.json',
+    getParentRoute: () => ElectionsRoute,
+  } as any)
 const ElectionsRacesRoute = ElectionsRacesRouteImport.update({
   id: '/races',
   path: '/races',
@@ -1419,6 +2109,45 @@ const DmvCdlRoute = DmvCdlRouteImport.update({
   path: '/cdl',
   getParentRoute: () => DmvRoute,
 } as any)
+const DistrictsDistrictSlugRoute = DistrictsDistrictSlugRouteImport.update({
+  id: '/$districtSlug',
+  path: '/$districtSlug',
+  getParentRoute: () => DistrictsRoute,
+} as any)
+const DataSlugRoute = DataSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => DataRoute,
+} as any)
+const CivicToolsTexasLawFinderRoute =
+  CivicToolsTexasLawFinderRouteImport.update({
+    id: '/texas-law-finder',
+    path: '/texas-law-finder',
+    getParentRoute: () => CivicToolsRoute,
+  } as any)
+const CivicToolsGovernmentAuthorityFinderRoute =
+  CivicToolsGovernmentAuthorityFinderRouteImport.update({
+    id: '/government-authority-finder',
+    path: '/government-authority-finder',
+    getParentRoute: () => CivicToolsRoute,
+  } as any)
+const CivicToolsEducationFreedomAccountGuideRoute =
+  CivicToolsEducationFreedomAccountGuideRouteImport.update({
+    id: '/education-freedom-account-guide',
+    path: '/education-freedom-account-guide',
+    getParentRoute: () => CivicToolsRoute,
+  } as any)
+const CivicToolsCompareLegislatorsRoute =
+  CivicToolsCompareLegislatorsRouteImport.update({
+    id: '/compare-legislators',
+    path: '/compare-legislators',
+    getParentRoute: () => CivicToolsRoute,
+  } as any)
+const CivicToolsBillFinderRoute = CivicToolsBillFinderRouteImport.update({
+  id: '/bill-finder',
+  path: '/bill-finder',
+  getParentRoute: () => CivicToolsRoute,
+} as any)
 const AuthorsSlugRoute = AuthorsSlugRouteImport.update({
   id: '/authors/$slug',
   path: '/authors/$slug',
@@ -1427,6 +2156,11 @@ const AuthorsSlugRoute = AuthorsSlugRouteImport.update({
 const ArticleSlugRoute = ArticleSlugRouteImport.update({
   id: '/article/$slug',
   path: '/article/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiReferenceFreshnessRoute = ApiReferenceFreshnessRouteImport.update({
+  id: '/api/reference-freshness',
+  path: '/api/reference-freshness',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicationGateRoute = ApiPublicationGateRouteImport.update({
@@ -1449,14 +2183,34 @@ const ApiContentDispositionRoute = ApiContentDispositionRouteImport.update({
   path: '/api/content-disposition',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminSourceProvenanceRoute = AdminSourceProvenanceRouteImport.update({
+  id: '/source-provenance',
+  path: '/source-provenance',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminShopProductsRoute = AdminShopProductsRouteImport.update({
   id: '/shop-products',
   path: '/shop-products',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminNewsroomShadowRoute = AdminNewsroomShadowRouteImport.update({
+  id: '/newsroom-shadow',
+  path: '/newsroom-shadow',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminNewsroomMetricsRoute = AdminNewsroomMetricsRouteImport.update({
   id: '/newsroom-metrics',
   path: '/newsroom-metrics',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminNewsroomBacktestRoute = AdminNewsroomBacktestRouteImport.update({
+  id: '/newsroom-backtest',
+  path: '/newsroom-backtest',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminNewsroomRoute = AdminNewsroomRouteImport.update({
+  id: '/newsroom',
+  path: '/newsroom',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminGovernanceHealthRoute = AdminGovernanceHealthRouteImport.update({
@@ -1518,6 +2272,12 @@ const TexasResourcesJourneyJourneyIdRoute =
     path: '/journey/$journeyId',
     getParentRoute: () => TexasResourcesRoute,
   } as any)
+const TexasPoliticsFiguresFigureSlugRoute =
+  TexasPoliticsFiguresFigureSlugRouteImport.update({
+    id: '/figures_/$figureSlug',
+    path: '/figures/$figureSlug',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
 const TexasLegislatureSessionsSessionSlugRoute =
   TexasLegislatureSessionsSessionSlugRouteImport.update({
     id: '/$sessionSlug',
@@ -1530,10 +2290,27 @@ const TexasLegislatureCommitteesCommitteeSlugRoute =
     path: '/$committeeSlug',
     getParentRoute: () => TexasLegislatureCommitteesRoute,
   } as any)
-const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
-  id: '/lovable/email/suppression',
-  path: '/lovable/email/suppression',
-  getParentRoute: () => rootRouteImport,
+const TexasGovernmentAgenciesAgencySlugRoute =
+  TexasGovernmentAgenciesAgencySlugRouteImport.update({
+    id: '/$agencySlug',
+    path: '/$agencySlug',
+    getParentRoute: () => TexasGovernmentAgenciesRoute,
+  } as any)
+const TexasCaseFactsSlugRoute = TexasCaseFactsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => TexasCaseFactsRoute,
+} as any)
+const ProductOfferProductIdVariantIdRoute =
+  ProductOfferProductIdVariantIdRouteImport.update({
+    id: '/product-offer/$productId/$variantId',
+    path: '/product-offer/$productId/$variantId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const LawsTopicSlugRoute = LawsTopicSlugRouteImport.update({
+  id: '/topic/$slug',
+  path: '/topic/$slug',
+  getParentRoute: () => LawsRoute,
 } as any)
 const ExploreTripTokenRoute = ExploreTripTokenRouteImport.update({
   id: '/trip/$token',
@@ -1609,6 +2386,11 @@ const BillsSubjectSubjectSlugRoute = BillsSubjectSubjectSlugRouteImport.update({
   path: '/subject/$subjectSlug',
   getParentRoute: () => BillsRoute,
 } as any)
+const ApiShopStripeWebhookRoute = ApiShopStripeWebhookRouteImport.update({
+  id: '/api/shop/stripe-webhook',
+  path: '/api/shop/stripe-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicTexasdefinedCheckoutRoute =
   ApiPublicTexasdefinedCheckoutRouteImport.update({
     id: '/api/public/texasdefined-checkout',
@@ -1620,6 +2402,12 @@ const ApiPublicStoreProductsRoute = ApiPublicStoreProductsRouteImport.update({
   path: '/api/public/store-products',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicOfficialBillTextRoute =
+  ApiPublicOfficialBillTextRouteImport.update({
+    id: '/api/public/official-bill-text',
+    path: '/api/public/official-bill-text',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicNewsroomHealthRoute = ApiPublicNewsroomHealthRouteImport.update({
   id: '/api/public/newsroom-health',
   path: '/api/public/newsroom-health',
@@ -1727,30 +2515,29 @@ const AdminExploreImportsIndexRoute =
     path: '/explore/imports/',
     getParentRoute: () => AdminRoute,
   } as any)
-const LovableEmailTransactionalSendRoute =
-  LovableEmailTransactionalSendRouteImport.update({
-    id: '/lovable/email/transactional/send',
-    path: '/lovable/email/transactional/send',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const LovableEmailTransactionalPreviewRoute =
-  LovableEmailTransactionalPreviewRouteImport.update({
-    id: '/lovable/email/transactional/preview',
-    path: '/lovable/email/transactional/preview',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const LovableEmailQueueProcessRoute =
-  LovableEmailQueueProcessRouteImport.update({
-    id: '/lovable/email/queue/process',
-    path: '/lovable/email/queue/process',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicPaymentsSandboxHealthRoute =
+  ApiPublicPaymentsSandboxHealthRouteImport.update({
+    id: '/api/public/payments/sandbox-health',
+    path: '/api/public/payments/sandbox-health',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicPaymentsSandboxConfigRoute =
+  ApiPublicPaymentsSandboxConfigRouteImport.update({
+    id: '/api/public/payments/sandbox-config',
+    path: '/api/public/payments/sandbox-config',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicPaymentsHealthRoute = ApiPublicPaymentsHealthRouteImport.update({
+  id: '/api/public/payments/health',
+  path: '/api/public/payments/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicHooksTrackVariantRoute =
   ApiPublicHooksTrackVariantRouteImport.update({
     id: '/api/public/hooks/track-variant',
@@ -1775,10 +2562,22 @@ const ApiPublicHooksScoreViralRoute =
     path: '/api/public/hooks/score-viral',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksScoreNewsroomStoriesRoute =
+  ApiPublicHooksScoreNewsroomStoriesRouteImport.update({
+    id: '/api/public/hooks/score-newsroom-stories',
+    path: '/api/public/hooks/score-newsroom-stories',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksRunGenerateNewsRoute =
   ApiPublicHooksRunGenerateNewsRouteImport.update({
     id: '/api/public/hooks/run-generate-news',
     path: '/api/public/hooks/run-generate-news',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksRetestNewsroomShadowRoute =
+  ApiPublicHooksRetestNewsroomShadowRouteImport.update({
+    id: '/api/public/hooks/retest-newsroom-shadow',
+    path: '/api/public/hooks/retest-newsroom-shadow',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksRepairSb37ProductionRoute =
@@ -1799,10 +2598,34 @@ const ApiPublicHooksRemediateAug10FlyoverRoute =
     path: '/api/public/hooks/remediate-aug10-flyover',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksReconcileNewsHistoryRoute =
+  ApiPublicHooksReconcileNewsHistoryRouteImport.update({
+    id: '/api/public/hooks/reconcile-news-history',
+    path: '/api/public/hooks/reconcile-news-history',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksPublishingSafetyNetRoute =
   ApiPublicHooksPublishingSafetyNetRouteImport.update({
     id: '/api/public/hooks/publishing-safety-net',
     path: '/api/public/hooks/publishing-safety-net',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksPublishOverdueGapRoute =
+  ApiPublicHooksPublishOverdueGapRouteImport.update({
+    id: '/api/public/hooks/publish-overdue-gap',
+    path: '/api/public/hooks/publish-overdue-gap',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksNormalizeNewsroomFeedRoute =
+  ApiPublicHooksNormalizeNewsroomFeedRouteImport.update({
+    id: '/api/public/hooks/normalize-newsroom-feed',
+    path: '/api/public/hooks/normalize-newsroom-feed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksNewsroomGenerationDiagnosticsRoute =
+  ApiPublicHooksNewsroomGenerationDiagnosticsRouteImport.update({
+    id: '/api/public/hooks/newsroom-generation-diagnostics',
+    path: '/api/public/hooks/newsroom-generation-diagnostics',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksListShopsRoute = ApiPublicHooksListShopsRouteImport.update({
@@ -1822,6 +2645,12 @@ const ApiPublicHooksIngestFeedsRoute =
     path: '/api/public/hooks/ingest-feeds',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksImageBacklogRecoveryRoute =
+  ApiPublicHooksImageBacklogRecoveryRouteImport.update({
+    id: '/api/public/hooks/image-backlog-recovery',
+    path: '/api/public/hooks/image-backlog-recovery',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksHealthRoute = ApiPublicHooksHealthRouteImport.update({
   id: '/api/public/hooks/health',
   path: '/api/public/hooks/health',
@@ -1831,6 +2660,12 @@ const ApiPublicHooksGenerateSportsRoute =
   ApiPublicHooksGenerateSportsRouteImport.update({
     id: '/api/public/hooks/generate-sports',
     path: '/api/public/hooks/generate-sports',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksGenerateNewsroomRoute =
+  ApiPublicHooksGenerateNewsroomRouteImport.update({
+    id: '/api/public/hooks/generate-newsroom',
+    path: '/api/public/hooks/generate-newsroom',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksGenerateNewsRoute =
@@ -1843,6 +2678,36 @@ const ApiPublicHooksGenerateEvergreenRoute =
   ApiPublicHooksGenerateEvergreenRouteImport.update({
     id: '/api/public/hooks/generate-evergreen',
     path: '/api/public/hooks/generate-evergreen',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksGenerateDailyBriefRoute =
+  ApiPublicHooksGenerateDailyBriefRouteImport.update({
+    id: '/api/public/hooks/generate-daily-brief',
+    path: '/api/public/hooks/generate-daily-brief',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksFinalizeNewsroomArticleRoute =
+  ApiPublicHooksFinalizeNewsroomArticleRouteImport.update({
+    id: '/api/public/hooks/finalize-newsroom-article',
+    path: '/api/public/hooks/finalize-newsroom-article',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksEnrichNewsroomRssEvidenceRoute =
+  ApiPublicHooksEnrichNewsroomRssEvidenceRouteImport.update({
+    id: '/api/public/hooks/enrich-newsroom-rss-evidence',
+    path: '/api/public/hooks/enrich-newsroom-rss-evidence',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksDecideNewsroomPackagesRoute =
+  ApiPublicHooksDecideNewsroomPackagesRouteImport.update({
+    id: '/api/public/hooks/decide-newsroom-packages',
+    path: '/api/public/hooks/decide-newsroom-packages',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksClusterNewsroomStoriesRoute =
+  ApiPublicHooksClusterNewsroomStoriesRouteImport.update({
+    id: '/api/public/hooks/cluster-newsroom-stories',
+    path: '/api/public/hooks/cluster-newsroom-stories',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksClassifySportsRoute =
@@ -1863,10 +2728,40 @@ const ApiPublicHooksClassifyArticlePillarsRoute =
     path: '/api/public/hooks/classify-article-pillars',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksBuildNewsroomResearchPacketsRoute =
+  ApiPublicHooksBuildNewsroomResearchPacketsRouteImport.update({
+    id: '/api/public/hooks/build-newsroom-research-packets',
+    path: '/api/public/hooks/build-newsroom-research-packets',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksBackfillFeaturedImagesRoute =
   ApiPublicHooksBackfillFeaturedImagesRouteImport.update({
     id: '/api/public/hooks/backfill-featured-images',
     path: '/api/public/hooks/backfill-featured-images',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksAutoFacebookPostTexasdefinedSmartRoute =
+  ApiPublicHooksAutoFacebookPostTexasdefinedSmartRouteImport.update({
+    id: '/api/public/hooks/auto-facebook-post-texasdefined-smart',
+    path: '/api/public/hooks/auto-facebook-post-texasdefined-smart',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksAutoFacebookPostTexasdefinedRoute =
+  ApiPublicHooksAutoFacebookPostTexasdefinedRouteImport.update({
+    id: '/api/public/hooks/auto-facebook-post-texasdefined',
+    path: '/api/public/hooks/auto-facebook-post-texasdefined',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksAutoFacebookPostRoute =
+  ApiPublicHooksAutoFacebookPostRouteImport.update({
+    id: '/api/public/hooks/auto-facebook-post',
+    path: '/api/public/hooks/auto-facebook-post',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksAdsenseImageBackfillRoute =
+  ApiPublicHooksAdsenseImageBackfillRouteImport.update({
+    id: '/api/public/hooks/adsense-image-backfill',
+    path: '/api/public/hooks/adsense-image-backfill',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicExploreRecommendationsRoute =
@@ -1934,6 +2829,12 @@ const ApiPublicOauthFacebookCallbackRoute =
     path: '/api/public/oauth/facebook/callback',
     getParentRoute: () => rootRouteImport,
   } as any)
+const BillsTexasLegislatureBillTypeBillNumberReferenceDotjsonRoute =
+  BillsTexasLegislatureBillTypeBillNumberReferenceDotjsonRouteImport.update({
+    id: '/reference.json',
+    path: '/reference.json',
+    getParentRoute: () => BillsTexasLegislatureBillTypeBillNumberRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -1944,10 +2845,13 @@ export interface FileRoutesByFullPath {
   '/bills': typeof BillsRouteWithChildren
   '/candidate-guides': typeof CandidateGuidesRoute
   '/citation-guide': typeof CitationGuideRoute
+  '/civic-tools': typeof CivicToolsRouteWithChildren
   '/contact': typeof ContactRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
   '/dallas-fort-worth': typeof DallasFortWorthRoute
+  '/data': typeof DataRouteWithChildren
+  '/districts': typeof DistrictsRouteWithChildren
   '/dmv': typeof DmvRouteWithChildren
   '/editorial-standards': typeof EditorialStandardsRoute
   '/el-paso': typeof ElPasoRoute
@@ -1961,6 +2865,7 @@ export interface FileRoutesByFullPath {
   '/google-merchant-feed.xml': typeof GoogleMerchantFeedDotxmlRoute
   '/happening-now': typeof HappeningNowRoute
   '/houston': typeof HoustonRoute
+  '/issue-guides.txt': typeof IssueGuidesDottxtRoute
   '/keep-texas-red': typeof KeepTexasRedRoute
   '/laws': typeof LawsRouteWithChildren
   '/laws-to-know': typeof LawsToKnowRoute
@@ -1972,6 +2877,8 @@ export interface FileRoutesByFullPath {
   '/moving-to-texas-checklist': typeof MovingToTexasChecklistRoute
   '/news': typeof NewsRouteWithChildren
   '/news-sitemap.xml': typeof NewsSitemapDotxmlRoute
+  '/policy': typeof PolicyRouteWithChildren
+  '/policy-trackers.txt': typeof PolicyTrackersDottxtRoute
   '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRouteWithChildren
@@ -1993,18 +2900,24 @@ export interface FileRoutesByFullPath {
   '/sitemap-legislature.xml': typeof SitemapLegislatureDotxmlRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
+  '/sitemap-political-figures.xml': typeof SitemapPoliticalFiguresDotxmlRoute
   '/sitemap-products.xml': typeof SitemapProductsDotxmlRoute
   '/sitemap-representatives.xml': typeof SitemapRepresentativesDotxmlRoute
+  '/sitemap-sources.xml': typeof SitemapSourcesDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
   '/terms-of-service': typeof TermsOfServiceRoute
   '/texas': typeof TexasRoute
   '/texas-agriculture': typeof TexasAgricultureRoute
+  '/texas-attorney-general': typeof TexasAttorneyGeneralRoute
   '/texas-border-security': typeof TexasBorderSecurityRoute
   '/texas-budget-planner': typeof TexasBudgetPlannerRoute
   '/texas-business': typeof TexasBusinessRouteWithChildren
+  '/texas-case': typeof TexasCaseRouteWithChildren
+  '/texas-child-support': typeof TexasChildSupportRoute
   '/texas-closing-cost-calculator': typeof TexasClosingCostCalculatorRoute
+  '/texas-comptroller': typeof TexasComptrollerRoute
   '/texas-cost-of-living-calculator': typeof TexasCostOfLivingCalculatorRoute
   '/texas-data': typeof TexasDataRouteWithChildren
   '/texas-down-payment-assistance-calculator': typeof TexasDownPaymentAssistanceCalculatorRoute
@@ -2028,7 +2941,8 @@ export interface FileRoutesByFullPath {
   '/texas-mortgage-payoff-calculator': typeof TexasMortgagePayoffCalculatorRoute
   '/texas-moving-cost-calculator': typeof TexasMovingCostCalculatorRoute
   '/texas-news': typeof TexasNewsRouteWithChildren
-  '/texas-politics': typeof TexasPoliticsRoute
+  '/texas-political-reference': typeof TexasPoliticalReferenceRouteWithChildren
+  '/texas-politics': typeof TexasPoliticsRouteWithChildren
   '/texas-property-tax-increase-calculator': typeof TexasPropertyTaxIncreaseCalculatorRoute
   '/texas-property-tax-protest-guide': typeof TexasPropertyTaxProtestGuideRoute
   '/texas-refinance-savings-calculator': typeof TexasRefinanceSavingsCalculatorRoute
@@ -2037,6 +2951,7 @@ export interface FileRoutesByFullPath {
   '/texas-salary-calculator': typeof TexasSalaryCalculatorRoute
   '/texas-salary-comparison-by-city': typeof TexasSalaryComparisonByCityRoute
   '/texas-sales-tax-explained': typeof TexasSalesTaxExplainedRoute
+  '/texas-secretary-of-state': typeof TexasSecretaryOfStateRoute
   '/texas-sports': typeof TexasSportsRouteWithChildren
   '/texas-utility-cost-calculator': typeof TexasUtilityCostCalculatorRoute
   '/texas-veterans': typeof TexasVeteransRoute
@@ -2045,14 +2960,26 @@ export interface FileRoutesByFullPath {
   '/voting-locations': typeof VotingLocationsRoute
   '/admin/coverage-gaps': typeof AdminCoverageGapsRoute
   '/admin/governance-health': typeof AdminGovernanceHealthRoute
+  '/admin/newsroom': typeof AdminNewsroomRoute
+  '/admin/newsroom-backtest': typeof AdminNewsroomBacktestRoute
   '/admin/newsroom-metrics': typeof AdminNewsroomMetricsRoute
+  '/admin/newsroom-shadow': typeof AdminNewsroomShadowRoute
   '/admin/shop-products': typeof AdminShopProductsRoute
+  '/admin/source-provenance': typeof AdminSourceProvenanceRoute
   '/api/content-disposition': typeof ApiContentDispositionRoute
   '/api/governance-health': typeof ApiGovernanceHealthRoute
   '/api/platform-core-status': typeof ApiPlatformCoreStatusRoute
   '/api/publication-gate': typeof ApiPublicationGateRoute
+  '/api/reference-freshness': typeof ApiReferenceFreshnessRoute
   '/article/$slug': typeof ArticleSlugRoute
   '/authors/$slug': typeof AuthorsSlugRoute
+  '/civic-tools/bill-finder': typeof CivicToolsBillFinderRoute
+  '/civic-tools/compare-legislators': typeof CivicToolsCompareLegislatorsRoute
+  '/civic-tools/education-freedom-account-guide': typeof CivicToolsEducationFreedomAccountGuideRoute
+  '/civic-tools/government-authority-finder': typeof CivicToolsGovernmentAuthorityFinderRoute
+  '/civic-tools/texas-law-finder': typeof CivicToolsTexasLawFinderRoute
+  '/data/$slug': typeof DataSlugRoute
+  '/districts/$districtSlug': typeof DistrictsDistrictSlugRoute
   '/dmv/cdl': typeof DmvCdlRoute
   '/dmv/cdl-classes': typeof DmvCdlClassesRoute
   '/dmv/cdl-endorsements': typeof DmvCdlEndorsementsRoute
@@ -2076,6 +3003,7 @@ export interface FileRoutesByFullPath {
   '/elections/methodology': typeof ElectionsMethodologyRoute
   '/elections/polls': typeof ElectionsPollsRouteWithChildren
   '/elections/races': typeof ElectionsRacesRoute
+  '/elections/reference.json': typeof ElectionsReferenceDotjsonRoute
   '/elections/results': typeof ElectionsResultsRouteWithChildren
   '/elections/statewide': typeof ElectionsStatewideRoute
   '/elections/voting': typeof ElectionsVotingRoute
@@ -2102,20 +3030,95 @@ export interface FileRoutesByFullPath {
   '/explore/trip-planner': typeof ExploreTripPlannerRoute
   '/explore/wildlife-management-areas': typeof ExploreWildlifeManagementAreasRoute
   '/guides/$slug': typeof GuidesSlugRoute
+  '/issues/$slug': typeof IssuesSlugRoute
+  '/issues/texas-government-accountability-handbook': typeof IssuesTexasGovernmentAccountabilityHandbookRoute
+  '/issues/texas-local-government-handbook': typeof IssuesTexasLocalGovernmentHandbookRoute
+  '/issues/texas-policy-handbook': typeof IssuesTexasPolicyHandbookRoute
   '/laws/constitutional-amendments': typeof LawsConstitutionalAmendmentsRoute
   '/laws/effective-dates': typeof LawsEffectiveDatesRoute
+  '/laws/topics': typeof LawsTopicsRoute
   '/news/$slug': typeof NewsSlugRoute
+  '/news/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity': typeof News20260704TheRealReasonBehindTheResilienceOfTexasIdentityRoute
+  '/news/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity-in-2026-explained-simply': typeof News20260704TheRealReasonBehindTheResilienceOfTexasIdentityIn2026ExplainedSimplyRoute
   '/news/2026-08-09-canyon-lake-full-capacity-recovery': typeof News20260809CanyonLakeFullCapacityRecoveryRoute
+  '/news/canyon-lake-pushes-to-full-capacity-following-multiyear-drought-2025-d9be1db3': typeof NewsCanyonLakePushesToFullCapacityFollowingMultiyearDrought2025D9be1db3Route
   '/news/isd-tax-burdens': typeof NewsIsdTaxBurdensRoute
+  '/news/moving-to-austin-guide': typeof NewsMovingToAustinGuideRoute
+  '/news/moving-to-dallas-fort-worth-guide': typeof NewsMovingToDallasFortWorthGuideRoute
+  '/news/moving-to-el-paso-guide': typeof NewsMovingToElPasoGuideRoute
+  '/news/moving-to-houston-address-checklist': typeof NewsMovingToHoustonAddressChecklistRoute
+  '/news/moving-to-san-antonio-guide': typeof NewsMovingToSanAntonioGuideRoute
+  '/news/moving-to-texas-guide': typeof NewsMovingToTexasGuideRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
+  '/news/renting-vs-buying-in-texas': typeof NewsRentingVsBuyingInTexasRoute
+  '/news/salary-needed-to-buy-a-house-in-texas': typeof NewsSalaryNeededToBuyAHouseInTexasRoute
+  '/news/should-you-refinance-texas-mortgage': typeof NewsShouldYouRefinanceTexasMortgageRoute
+  '/news/texas-closing-costs-guide': typeof NewsTexasClosingCostsGuideRoute
+  '/news/texas-home-equity-heloc-guide': typeof NewsTexasHomeEquityHelocGuideRoute
+  '/news/texas-homeowners-insurance-guide': typeof NewsTexasHomeownersInsuranceGuideRoute
+  '/news/texas-house-down-payment-guide': typeof NewsTexasHouseDownPaymentGuideRoute
+  '/news/texas-mortgage-payment-guide': typeof NewsTexasMortgagePaymentGuideRoute
+  '/news/texas-utility-costs-guide': typeof NewsTexasUtilityCostsGuideRoute
+  '/news/true-cost-of-owning-a-home-in-texas': typeof NewsTrueCostOfOwningAHomeInTexasRoute
+  '/policy/$slug': typeof PolicySlugRoute
+  '/policy/advanced-nuclear-energy': typeof PolicyAdvancedNuclearEnergyRoute
+  '/policy/agriculture-family-farms': typeof PolicyAgricultureFamilyFarmsRoute
+  '/policy/ai-governance': typeof PolicyAiGovernanceRoute
+  '/policy/app-store-parental-controls': typeof PolicyAppStoreParentalControlsRoute
+  '/policy/assisted-suicide': typeof PolicyAssistedSuicideRoute
+  '/policy/biometric-privacy': typeof PolicyBiometricPrivacyRoute
+  '/policy/bitcoin-reserve': typeof PolicyBitcoinReserveRoute
+  '/policy/campus-free-speech': typeof PolicyCampusFreeSpeechRoute
+  '/policy/career-technical-workforce': typeof PolicyCareerTechnicalWorkforceRoute
+  '/policy/central-bank-digital-currency': typeof PolicyCentralBankDigitalCurrencyRoute
+  '/policy/charter-schools': typeof PolicyCharterSchoolsRoute
+  '/policy/china-investment-restrictions': typeof PolicyChinaInvestmentRestrictionsRoute
+  '/policy/constitutional-tax-protections': typeof PolicyConstitutionalTaxProtectionsRoute
+  '/policy/consumable-hemp-cannabis': typeof PolicyConsumableHempCannabisRoute
+  '/policy/consumer-data-privacy': typeof PolicyConsumerDataPrivacyRoute
+  '/policy/critical-minerals-rare-earths': typeof PolicyCriticalMineralsRareEarthsRoute
+  '/policy/data-brokers': typeof PolicyDataBrokersRoute
+  '/policy/data-centers-large-loads': typeof PolicyDataCentersLargeLoadsRoute
+  '/policy/e-verify-employment': typeof PolicyEVerifyEmploymentRoute
+  '/policy/election-integrity': typeof PolicyElectionIntegrityRoute
+  '/policy/esg-energy-boycotts': typeof PolicyEsgEnergyBoycottsRoute
+  '/policy/faith-based-child-welfare': typeof PolicyFaithBasedChildWelfareRoute
+  '/policy/foreign-adversary-property': typeof PolicyForeignAdversaryPropertyRoute
+  '/policy/genetic-data-privacy': typeof PolicyGeneticDataPrivacyRoute
+  '/policy/higher-education-dei': typeof PolicyHigherEducationDeiRoute
+  '/policy/homeschool-autonomy': typeof PolicyHomeschoolAutonomyRoute
+  '/policy/local-preemption-regulatory-consistency': typeof PolicyLocalPreemptionRegulatoryConsistencyRoute
+  '/policy/medical-freedom': typeof PolicyMedicalFreedomRoute
+  '/policy/minor-gender-transition-medical-law': typeof PolicyMinorGenderTransitionMedicalLawRoute
+  '/policy/occupational-licensing-mobility': typeof PolicyOccupationalLicensingMobilityRoute
+  '/policy/online-age-verification': typeof PolicyOnlineAgeVerificationRoute
+  '/policy/parental-rights': typeof PolicyParentalRightsRoute
+  '/policy/public-sector-labor': typeof PolicyPublicSectorLaborRoute
+  '/policy/regulatory-reform-treo': typeof PolicyRegulatoryReformTreoRoute
+  '/policy/religious-liberty': typeof PolicyReligiousLibertyRoute
+  '/policy/right-to-work': typeof PolicyRightToWorkRoute
+  '/policy/school-library-materials': typeof PolicySchoolLibraryMaterialsRoute
+  '/policy/school-safety-security': typeof PolicySchoolSafetySecurityRoute
+  '/policy/scope-act-online-minors': typeof PolicyScopeActOnlineMinorsRoute
+  '/policy/semiconductor-manufacturing': typeof PolicySemiconductorManufacturingRoute
+  '/policy/state-federal-power': typeof PolicyStateFederalPowerRoute
+  '/policy/tanf-work-participation': typeof PolicyTanfWorkParticipationRoute
+  '/policy/texas-cyber-command': typeof PolicyTexasCyberCommandRoute
+  '/policy/violent-offense-bail': typeof PolicyViolentOffenseBailRoute
+  '/policy/womens-sports': typeof PolicyWomensSportsRoute
   '/representatives/$representativeSlug': typeof RepresentativesRepresentativeSlugRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/shop/checkout': typeof ShopCheckoutRoute
   '/shop/checkout-return': typeof ShopCheckoutReturnRoute
+  '/shop/checkout-sandbox': typeof ShopCheckoutSandboxRoute
+  '/shop/checkout-sandbox-return': typeof ShopCheckoutSandboxReturnRoute
+  '/sources/$slug': typeof SourcesSlugRoute
   '/texas-business/$topic': typeof TexasBusinessTopicRoute
+  '/texas-case/$slug': typeof TexasCaseSlugRoute
+  '/texas-case/facts': typeof TexasCaseFactsRouteWithChildren
   '/texas-data/$datasetSlug': typeof TexasDataDatasetSlugRoute
   '/texas-government/$entitySlug': typeof TexasGovernmentEntitySlugRoute
-  '/texas-government/agencies': typeof TexasGovernmentAgenciesRoute
+  '/texas-government/agencies': typeof TexasGovernmentAgenciesRouteWithChildren
   '/texas-legislature/committees': typeof TexasLegislatureCommitteesRouteWithChildren
   '/texas-legislature/current-session': typeof TexasLegislatureCurrentSessionRoute
   '/texas-legislature/house': typeof TexasLegislatureHouseRoute
@@ -2123,7 +3126,13 @@ export interface FileRoutesByFullPath {
   '/texas-legislature/sessions': typeof TexasLegislatureSessionsRouteWithChildren
   '/texas-legislature/votes': typeof TexasLegislatureVotesRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
+  '/texas-political-reference/$slug': typeof TexasPoliticalReferenceSlugRoute
+  '/texas-politics/figures': typeof TexasPoliticsFiguresRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
+  '/tools/texas-budget-headroom': typeof ToolsTexasBudgetHeadroomRoute
+  '/tools/texas-rainy-day-fund': typeof ToolsTexasRainyDayFundRoute
+  '/tools/texas-spending-growth-cap': typeof ToolsTexasSpendingGrowthCapRoute
+  '/tools/texas-tax-structure-comparison': typeof ToolsTexasTaxStructureComparisonRoute
   '/vehicles/auto-insurance-requirements': typeof VehiclesAutoInsuranceRequirementsRoute
   '/vehicles/bonded-titles': typeof VehiclesBondedTitlesRoute
   '/vehicles/buying-a-car': typeof VehiclesBuyingACarRoute
@@ -2152,11 +3161,14 @@ export interface FileRoutesByFullPath {
   '/bills/': typeof BillsIndexRoute
   '/elections/': typeof ElectionsIndexRoute
   '/explore/': typeof ExploreIndexRoute
+  '/issues/': typeof IssuesIndexRoute
   '/news/': typeof NewsIndexRoute
   '/shop/': typeof ShopIndexRoute
+  '/sources/': typeof SourcesIndexRoute
   '/texas-legislature/': typeof TexasLegislatureIndexRoute
   '/texas-news/': typeof TexasNewsIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
+  '/tools/': typeof ToolsIndexRoute
   '/admin/bills/backfill': typeof AdminBillsBackfillRoute
   '/admin/bills/editorial': typeof AdminBillsEditorialRoute
   '/admin/bills/enrichment': typeof AdminBillsEnrichmentRoute
@@ -2175,8 +3187,10 @@ export interface FileRoutesByFullPath {
   '/api/public/cross-site-publication-health': typeof ApiPublicCrossSitePublicationHealthRoute
   '/api/public/deployment-fingerprint': typeof ApiPublicDeploymentFingerprintRoute
   '/api/public/newsroom-health': typeof ApiPublicNewsroomHealthRoute
+  '/api/public/official-bill-text': typeof ApiPublicOfficialBillTextRoute
   '/api/public/store-products': typeof ApiPublicStoreProductsRoute
   '/api/public/texasdefined-checkout': typeof ApiPublicTexasdefinedCheckoutRoute
+  '/api/shop/stripe-webhook': typeof ApiShopStripeWebhookRoute
   '/bills/subject/$subjectSlug': typeof BillsSubjectSubjectSlugRoute
   '/elections/candidates/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
   '/elections/districts/$districtSlug': typeof ElectionsDistrictsDistrictSlugRoute
@@ -2191,9 +3205,13 @@ export interface FileRoutesByFullPath {
   '/explore/river/$slug': typeof ExploreRiverSlugRoute
   '/explore/state-park/$slug': typeof ExploreStateParkSlugRoute
   '/explore/trip/$token': typeof ExploreTripTokenRoute
-  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/laws/topic/$slug': typeof LawsTopicSlugRoute
+  '/product-offer/$productId/$variantId': typeof ProductOfferProductIdVariantIdRoute
+  '/texas-case/facts/$slug': typeof TexasCaseFactsSlugRoute
+  '/texas-government/agencies/$agencySlug': typeof TexasGovernmentAgenciesAgencySlugRoute
   '/texas-legislature/committees/$committeeSlug': typeof TexasLegislatureCommitteesCommitteeSlugRoute
   '/texas-legislature/sessions/$sessionSlug': typeof TexasLegislatureSessionsSessionSlugRoute
+  '/texas-politics/figures/$figureSlug': typeof TexasPoliticsFiguresFigureSlugRoute
   '/texas-resources/journey/$journeyId': typeof TexasResourcesJourneyJourneyIdRoute
   '/texas-resources/topic/$topicId': typeof TexasResourcesTopicTopicIdRoute
   '/texas-resources/type/$type': typeof TexasResourcesTypeTypeRoute
@@ -2210,36 +3228,55 @@ export interface FileRoutesByFullPath {
   '/api/public/explore/entities': typeof ApiPublicExploreEntitiesRoute
   '/api/public/explore/map': typeof ApiPublicExploreMapRoute
   '/api/public/explore/recommendations': typeof ApiPublicExploreRecommendationsRoute
+  '/api/public/hooks/adsense-image-backfill': typeof ApiPublicHooksAdsenseImageBackfillRoute
+  '/api/public/hooks/auto-facebook-post': typeof ApiPublicHooksAutoFacebookPostRoute
+  '/api/public/hooks/auto-facebook-post-texasdefined': typeof ApiPublicHooksAutoFacebookPostTexasdefinedRoute
+  '/api/public/hooks/auto-facebook-post-texasdefined-smart': typeof ApiPublicHooksAutoFacebookPostTexasdefinedSmartRoute
   '/api/public/hooks/backfill-featured-images': typeof ApiPublicHooksBackfillFeaturedImagesRoute
+  '/api/public/hooks/build-newsroom-research-packets': typeof ApiPublicHooksBuildNewsroomResearchPacketsRoute
   '/api/public/hooks/classify-article-pillars': typeof ApiPublicHooksClassifyArticlePillarsRoute
   '/api/public/hooks/classify-pillars': typeof ApiPublicHooksClassifyPillarsRoute
   '/api/public/hooks/classify-sports': typeof ApiPublicHooksClassifySportsRoute
+  '/api/public/hooks/cluster-newsroom-stories': typeof ApiPublicHooksClusterNewsroomStoriesRoute
+  '/api/public/hooks/decide-newsroom-packages': typeof ApiPublicHooksDecideNewsroomPackagesRoute
+  '/api/public/hooks/enrich-newsroom-rss-evidence': typeof ApiPublicHooksEnrichNewsroomRssEvidenceRoute
+  '/api/public/hooks/finalize-newsroom-article': typeof ApiPublicHooksFinalizeNewsroomArticleRoute
+  '/api/public/hooks/generate-daily-brief': typeof ApiPublicHooksGenerateDailyBriefRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
+  '/api/public/hooks/generate-newsroom': typeof ApiPublicHooksGenerateNewsroomRoute
   '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
   '/api/public/hooks/health': typeof ApiPublicHooksHealthRoute
+  '/api/public/hooks/image-backlog-recovery': typeof ApiPublicHooksImageBacklogRecoveryRoute
   '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
   '/api/public/hooks/ingest-sports': typeof ApiPublicHooksIngestSportsRoute
   '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
+  '/api/public/hooks/newsroom-generation-diagnostics': typeof ApiPublicHooksNewsroomGenerationDiagnosticsRoute
+  '/api/public/hooks/normalize-newsroom-feed': typeof ApiPublicHooksNormalizeNewsroomFeedRoute
+  '/api/public/hooks/publish-overdue-gap': typeof ApiPublicHooksPublishOverdueGapRoute
   '/api/public/hooks/publishing-safety-net': typeof ApiPublicHooksPublishingSafetyNetRoute
+  '/api/public/hooks/reconcile-news-history': typeof ApiPublicHooksReconcileNewsHistoryRoute
   '/api/public/hooks/remediate-aug10-flyover': typeof ApiPublicHooksRemediateAug10FlyoverRoute
   '/api/public/hooks/repair-article-structure': typeof ApiPublicHooksRepairArticleStructureRoute
   '/api/public/hooks/repair-sb37-production': typeof ApiPublicHooksRepairSb37ProductionRoute
+  '/api/public/hooks/retest-newsroom-shadow': typeof ApiPublicHooksRetestNewsroomShadowRoute
   '/api/public/hooks/run-generate-news': typeof ApiPublicHooksRunGenerateNewsRoute
+  '/api/public/hooks/score-newsroom-stories': typeof ApiPublicHooksScoreNewsroomStoriesRoute
   '/api/public/hooks/score-viral': typeof ApiPublicHooksScoreViralRoute
   '/api/public/hooks/score-viral-backfill': typeof ApiPublicHooksScoreViralBackfillRoute
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
   '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
+  '/api/public/payments/health': typeof ApiPublicPaymentsHealthRoute
+  '/api/public/payments/sandbox-config': typeof ApiPublicPaymentsSandboxConfigRoute
+  '/api/public/payments/sandbox-health': typeof ApiPublicPaymentsSandboxHealthRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
-  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
-  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
-  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/admin/explore/imports/': typeof AdminExploreImportsIndexRoute
   '/bills/texas/$legislature/': typeof BillsTexasLegislatureIndexRoute
   '/api/public/oauth/facebook/callback': typeof ApiPublicOauthFacebookCallbackRoute
   '/api/public/oauth/facebook/start': typeof ApiPublicOauthFacebookStartRoute
-  '/bills/texas/$legislature/$billType/$billNumber': typeof BillsTexasLegislatureBillTypeBillNumberRoute
+  '/bills/texas/$legislature/$billType/$billNumber': typeof BillsTexasLegislatureBillTypeBillNumberRouteWithChildren
   '/bills/texas/$legislature/$billType/': typeof BillsTexasLegislatureBillTypeIndexRoute
+  '/bills/texas/$legislature/$billType/$billNumber/reference.json': typeof BillsTexasLegislatureBillTypeBillNumberReferenceDotjsonRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -2248,10 +3285,13 @@ export interface FileRoutesByTo {
   '/austin': typeof AustinRoute
   '/candidate-guides': typeof CandidateGuidesRoute
   '/citation-guide': typeof CitationGuideRoute
+  '/civic-tools': typeof CivicToolsRouteWithChildren
   '/contact': typeof ContactRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
   '/dallas-fort-worth': typeof DallasFortWorthRoute
+  '/data': typeof DataRouteWithChildren
+  '/districts': typeof DistrictsRouteWithChildren
   '/dmv': typeof DmvRouteWithChildren
   '/editorial-standards': typeof EditorialStandardsRoute
   '/el-paso': typeof ElPasoRoute
@@ -2263,6 +3303,7 @@ export interface FileRoutesByTo {
   '/google-merchant-feed.xml': typeof GoogleMerchantFeedDotxmlRoute
   '/happening-now': typeof HappeningNowRoute
   '/houston': typeof HoustonRoute
+  '/issue-guides.txt': typeof IssueGuidesDottxtRoute
   '/keep-texas-red': typeof KeepTexasRedRoute
   '/laws': typeof LawsRouteWithChildren
   '/laws-to-know': typeof LawsToKnowRoute
@@ -2273,6 +3314,8 @@ export interface FileRoutesByTo {
   '/moving-to-texas': typeof MovingToTexasRoute
   '/moving-to-texas-checklist': typeof MovingToTexasChecklistRoute
   '/news-sitemap.xml': typeof NewsSitemapDotxmlRoute
+  '/policy': typeof PolicyRouteWithChildren
+  '/policy-trackers.txt': typeof PolicyTrackersDottxtRoute
   '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRouteWithChildren
@@ -2293,18 +3336,24 @@ export interface FileRoutesByTo {
   '/sitemap-legislature.xml': typeof SitemapLegislatureDotxmlRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
+  '/sitemap-political-figures.xml': typeof SitemapPoliticalFiguresDotxmlRoute
   '/sitemap-products.xml': typeof SitemapProductsDotxmlRoute
   '/sitemap-representatives.xml': typeof SitemapRepresentativesDotxmlRoute
+  '/sitemap-sources.xml': typeof SitemapSourcesDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
   '/terms-of-service': typeof TermsOfServiceRoute
   '/texas': typeof TexasRoute
   '/texas-agriculture': typeof TexasAgricultureRoute
+  '/texas-attorney-general': typeof TexasAttorneyGeneralRoute
   '/texas-border-security': typeof TexasBorderSecurityRoute
   '/texas-budget-planner': typeof TexasBudgetPlannerRoute
   '/texas-business': typeof TexasBusinessRouteWithChildren
+  '/texas-case': typeof TexasCaseRouteWithChildren
+  '/texas-child-support': typeof TexasChildSupportRoute
   '/texas-closing-cost-calculator': typeof TexasClosingCostCalculatorRoute
+  '/texas-comptroller': typeof TexasComptrollerRoute
   '/texas-cost-of-living-calculator': typeof TexasCostOfLivingCalculatorRoute
   '/texas-data': typeof TexasDataRouteWithChildren
   '/texas-down-payment-assistance-calculator': typeof TexasDownPaymentAssistanceCalculatorRoute
@@ -2326,7 +3375,8 @@ export interface FileRoutesByTo {
   '/texas-mortgage-calculator': typeof TexasMortgageCalculatorRoute
   '/texas-mortgage-payoff-calculator': typeof TexasMortgagePayoffCalculatorRoute
   '/texas-moving-cost-calculator': typeof TexasMovingCostCalculatorRoute
-  '/texas-politics': typeof TexasPoliticsRoute
+  '/texas-political-reference': typeof TexasPoliticalReferenceRouteWithChildren
+  '/texas-politics': typeof TexasPoliticsRouteWithChildren
   '/texas-property-tax-increase-calculator': typeof TexasPropertyTaxIncreaseCalculatorRoute
   '/texas-property-tax-protest-guide': typeof TexasPropertyTaxProtestGuideRoute
   '/texas-refinance-savings-calculator': typeof TexasRefinanceSavingsCalculatorRoute
@@ -2335,6 +3385,7 @@ export interface FileRoutesByTo {
   '/texas-salary-calculator': typeof TexasSalaryCalculatorRoute
   '/texas-salary-comparison-by-city': typeof TexasSalaryComparisonByCityRoute
   '/texas-sales-tax-explained': typeof TexasSalesTaxExplainedRoute
+  '/texas-secretary-of-state': typeof TexasSecretaryOfStateRoute
   '/texas-utility-cost-calculator': typeof TexasUtilityCostCalculatorRoute
   '/texas-veterans': typeof TexasVeteransRoute
   '/topics': typeof TopicsRoute
@@ -2342,14 +3393,26 @@ export interface FileRoutesByTo {
   '/voting-locations': typeof VotingLocationsRoute
   '/admin/coverage-gaps': typeof AdminCoverageGapsRoute
   '/admin/governance-health': typeof AdminGovernanceHealthRoute
+  '/admin/newsroom': typeof AdminNewsroomRoute
+  '/admin/newsroom-backtest': typeof AdminNewsroomBacktestRoute
   '/admin/newsroom-metrics': typeof AdminNewsroomMetricsRoute
+  '/admin/newsroom-shadow': typeof AdminNewsroomShadowRoute
   '/admin/shop-products': typeof AdminShopProductsRoute
+  '/admin/source-provenance': typeof AdminSourceProvenanceRoute
   '/api/content-disposition': typeof ApiContentDispositionRoute
   '/api/governance-health': typeof ApiGovernanceHealthRoute
   '/api/platform-core-status': typeof ApiPlatformCoreStatusRoute
   '/api/publication-gate': typeof ApiPublicationGateRoute
+  '/api/reference-freshness': typeof ApiReferenceFreshnessRoute
   '/article/$slug': typeof ArticleSlugRoute
   '/authors/$slug': typeof AuthorsSlugRoute
+  '/civic-tools/bill-finder': typeof CivicToolsBillFinderRoute
+  '/civic-tools/compare-legislators': typeof CivicToolsCompareLegislatorsRoute
+  '/civic-tools/education-freedom-account-guide': typeof CivicToolsEducationFreedomAccountGuideRoute
+  '/civic-tools/government-authority-finder': typeof CivicToolsGovernmentAuthorityFinderRoute
+  '/civic-tools/texas-law-finder': typeof CivicToolsTexasLawFinderRoute
+  '/data/$slug': typeof DataSlugRoute
+  '/districts/$districtSlug': typeof DistrictsDistrictSlugRoute
   '/dmv/cdl': typeof DmvCdlRoute
   '/dmv/cdl-classes': typeof DmvCdlClassesRoute
   '/dmv/cdl-endorsements': typeof DmvCdlEndorsementsRoute
@@ -2372,6 +3435,7 @@ export interface FileRoutesByTo {
   '/elections/methodology': typeof ElectionsMethodologyRoute
   '/elections/polls': typeof ElectionsPollsRouteWithChildren
   '/elections/races': typeof ElectionsRacesRoute
+  '/elections/reference.json': typeof ElectionsReferenceDotjsonRoute
   '/elections/results': typeof ElectionsResultsRouteWithChildren
   '/elections/statewide': typeof ElectionsStatewideRoute
   '/elections/voting': typeof ElectionsVotingRoute
@@ -2398,26 +3462,107 @@ export interface FileRoutesByTo {
   '/explore/trip-planner': typeof ExploreTripPlannerRoute
   '/explore/wildlife-management-areas': typeof ExploreWildlifeManagementAreasRoute
   '/guides/$slug': typeof GuidesSlugRoute
+  '/issues/$slug': typeof IssuesSlugRoute
+  '/issues/texas-government-accountability-handbook': typeof IssuesTexasGovernmentAccountabilityHandbookRoute
+  '/issues/texas-local-government-handbook': typeof IssuesTexasLocalGovernmentHandbookRoute
+  '/issues/texas-policy-handbook': typeof IssuesTexasPolicyHandbookRoute
   '/laws/constitutional-amendments': typeof LawsConstitutionalAmendmentsRoute
   '/laws/effective-dates': typeof LawsEffectiveDatesRoute
+  '/laws/topics': typeof LawsTopicsRoute
   '/news/$slug': typeof NewsSlugRoute
+  '/news/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity': typeof News20260704TheRealReasonBehindTheResilienceOfTexasIdentityRoute
+  '/news/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity-in-2026-explained-simply': typeof News20260704TheRealReasonBehindTheResilienceOfTexasIdentityIn2026ExplainedSimplyRoute
   '/news/2026-08-09-canyon-lake-full-capacity-recovery': typeof News20260809CanyonLakeFullCapacityRecoveryRoute
+  '/news/canyon-lake-pushes-to-full-capacity-following-multiyear-drought-2025-d9be1db3': typeof NewsCanyonLakePushesToFullCapacityFollowingMultiyearDrought2025D9be1db3Route
   '/news/isd-tax-burdens': typeof NewsIsdTaxBurdensRoute
+  '/news/moving-to-austin-guide': typeof NewsMovingToAustinGuideRoute
+  '/news/moving-to-dallas-fort-worth-guide': typeof NewsMovingToDallasFortWorthGuideRoute
+  '/news/moving-to-el-paso-guide': typeof NewsMovingToElPasoGuideRoute
+  '/news/moving-to-houston-address-checklist': typeof NewsMovingToHoustonAddressChecklistRoute
+  '/news/moving-to-san-antonio-guide': typeof NewsMovingToSanAntonioGuideRoute
+  '/news/moving-to-texas-guide': typeof NewsMovingToTexasGuideRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
+  '/news/renting-vs-buying-in-texas': typeof NewsRentingVsBuyingInTexasRoute
+  '/news/salary-needed-to-buy-a-house-in-texas': typeof NewsSalaryNeededToBuyAHouseInTexasRoute
+  '/news/should-you-refinance-texas-mortgage': typeof NewsShouldYouRefinanceTexasMortgageRoute
+  '/news/texas-closing-costs-guide': typeof NewsTexasClosingCostsGuideRoute
+  '/news/texas-home-equity-heloc-guide': typeof NewsTexasHomeEquityHelocGuideRoute
+  '/news/texas-homeowners-insurance-guide': typeof NewsTexasHomeownersInsuranceGuideRoute
+  '/news/texas-house-down-payment-guide': typeof NewsTexasHouseDownPaymentGuideRoute
+  '/news/texas-mortgage-payment-guide': typeof NewsTexasMortgagePaymentGuideRoute
+  '/news/texas-utility-costs-guide': typeof NewsTexasUtilityCostsGuideRoute
+  '/news/true-cost-of-owning-a-home-in-texas': typeof NewsTrueCostOfOwningAHomeInTexasRoute
+  '/policy/$slug': typeof PolicySlugRoute
+  '/policy/advanced-nuclear-energy': typeof PolicyAdvancedNuclearEnergyRoute
+  '/policy/agriculture-family-farms': typeof PolicyAgricultureFamilyFarmsRoute
+  '/policy/ai-governance': typeof PolicyAiGovernanceRoute
+  '/policy/app-store-parental-controls': typeof PolicyAppStoreParentalControlsRoute
+  '/policy/assisted-suicide': typeof PolicyAssistedSuicideRoute
+  '/policy/biometric-privacy': typeof PolicyBiometricPrivacyRoute
+  '/policy/bitcoin-reserve': typeof PolicyBitcoinReserveRoute
+  '/policy/campus-free-speech': typeof PolicyCampusFreeSpeechRoute
+  '/policy/career-technical-workforce': typeof PolicyCareerTechnicalWorkforceRoute
+  '/policy/central-bank-digital-currency': typeof PolicyCentralBankDigitalCurrencyRoute
+  '/policy/charter-schools': typeof PolicyCharterSchoolsRoute
+  '/policy/china-investment-restrictions': typeof PolicyChinaInvestmentRestrictionsRoute
+  '/policy/constitutional-tax-protections': typeof PolicyConstitutionalTaxProtectionsRoute
+  '/policy/consumable-hemp-cannabis': typeof PolicyConsumableHempCannabisRoute
+  '/policy/consumer-data-privacy': typeof PolicyConsumerDataPrivacyRoute
+  '/policy/critical-minerals-rare-earths': typeof PolicyCriticalMineralsRareEarthsRoute
+  '/policy/data-brokers': typeof PolicyDataBrokersRoute
+  '/policy/data-centers-large-loads': typeof PolicyDataCentersLargeLoadsRoute
+  '/policy/e-verify-employment': typeof PolicyEVerifyEmploymentRoute
+  '/policy/election-integrity': typeof PolicyElectionIntegrityRoute
+  '/policy/esg-energy-boycotts': typeof PolicyEsgEnergyBoycottsRoute
+  '/policy/faith-based-child-welfare': typeof PolicyFaithBasedChildWelfareRoute
+  '/policy/foreign-adversary-property': typeof PolicyForeignAdversaryPropertyRoute
+  '/policy/genetic-data-privacy': typeof PolicyGeneticDataPrivacyRoute
+  '/policy/higher-education-dei': typeof PolicyHigherEducationDeiRoute
+  '/policy/homeschool-autonomy': typeof PolicyHomeschoolAutonomyRoute
+  '/policy/local-preemption-regulatory-consistency': typeof PolicyLocalPreemptionRegulatoryConsistencyRoute
+  '/policy/medical-freedom': typeof PolicyMedicalFreedomRoute
+  '/policy/minor-gender-transition-medical-law': typeof PolicyMinorGenderTransitionMedicalLawRoute
+  '/policy/occupational-licensing-mobility': typeof PolicyOccupationalLicensingMobilityRoute
+  '/policy/online-age-verification': typeof PolicyOnlineAgeVerificationRoute
+  '/policy/parental-rights': typeof PolicyParentalRightsRoute
+  '/policy/public-sector-labor': typeof PolicyPublicSectorLaborRoute
+  '/policy/regulatory-reform-treo': typeof PolicyRegulatoryReformTreoRoute
+  '/policy/religious-liberty': typeof PolicyReligiousLibertyRoute
+  '/policy/right-to-work': typeof PolicyRightToWorkRoute
+  '/policy/school-library-materials': typeof PolicySchoolLibraryMaterialsRoute
+  '/policy/school-safety-security': typeof PolicySchoolSafetySecurityRoute
+  '/policy/scope-act-online-minors': typeof PolicyScopeActOnlineMinorsRoute
+  '/policy/semiconductor-manufacturing': typeof PolicySemiconductorManufacturingRoute
+  '/policy/state-federal-power': typeof PolicyStateFederalPowerRoute
+  '/policy/tanf-work-participation': typeof PolicyTanfWorkParticipationRoute
+  '/policy/texas-cyber-command': typeof PolicyTexasCyberCommandRoute
+  '/policy/violent-offense-bail': typeof PolicyViolentOffenseBailRoute
+  '/policy/womens-sports': typeof PolicyWomensSportsRoute
   '/representatives/$representativeSlug': typeof RepresentativesRepresentativeSlugRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/shop/checkout': typeof ShopCheckoutRoute
   '/shop/checkout-return': typeof ShopCheckoutReturnRoute
+  '/shop/checkout-sandbox': typeof ShopCheckoutSandboxRoute
+  '/shop/checkout-sandbox-return': typeof ShopCheckoutSandboxReturnRoute
+  '/sources/$slug': typeof SourcesSlugRoute
   '/texas-business/$topic': typeof TexasBusinessTopicRoute
+  '/texas-case/$slug': typeof TexasCaseSlugRoute
+  '/texas-case/facts': typeof TexasCaseFactsRouteWithChildren
   '/texas-data/$datasetSlug': typeof TexasDataDatasetSlugRoute
   '/texas-government/$entitySlug': typeof TexasGovernmentEntitySlugRoute
-  '/texas-government/agencies': typeof TexasGovernmentAgenciesRoute
+  '/texas-government/agencies': typeof TexasGovernmentAgenciesRouteWithChildren
   '/texas-legislature/current-session': typeof TexasLegislatureCurrentSessionRoute
   '/texas-legislature/house': typeof TexasLegislatureHouseRoute
   '/texas-legislature/senate': typeof TexasLegislatureSenateRoute
   '/texas-legislature/votes': typeof TexasLegislatureVotesRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
+  '/texas-political-reference/$slug': typeof TexasPoliticalReferenceSlugRoute
+  '/texas-politics/figures': typeof TexasPoliticsFiguresRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
+  '/tools/texas-budget-headroom': typeof ToolsTexasBudgetHeadroomRoute
+  '/tools/texas-rainy-day-fund': typeof ToolsTexasRainyDayFundRoute
+  '/tools/texas-spending-growth-cap': typeof ToolsTexasSpendingGrowthCapRoute
+  '/tools/texas-tax-structure-comparison': typeof ToolsTexasTaxStructureComparisonRoute
   '/vehicles/auto-insurance-requirements': typeof VehiclesAutoInsuranceRequirementsRoute
   '/vehicles/bonded-titles': typeof VehiclesBondedTitlesRoute
   '/vehicles/buying-a-car': typeof VehiclesBuyingACarRoute
@@ -2446,11 +3591,14 @@ export interface FileRoutesByTo {
   '/bills': typeof BillsIndexRoute
   '/elections': typeof ElectionsIndexRoute
   '/explore': typeof ExploreIndexRoute
+  '/issues': typeof IssuesIndexRoute
   '/news': typeof NewsIndexRoute
   '/shop': typeof ShopIndexRoute
+  '/sources': typeof SourcesIndexRoute
   '/texas-legislature': typeof TexasLegislatureIndexRoute
   '/texas-news': typeof TexasNewsIndexRoute
   '/texas-sports': typeof TexasSportsIndexRoute
+  '/tools': typeof ToolsIndexRoute
   '/admin/bills/backfill': typeof AdminBillsBackfillRoute
   '/admin/bills/editorial': typeof AdminBillsEditorialRoute
   '/admin/bills/enrichment': typeof AdminBillsEnrichmentRoute
@@ -2469,8 +3617,10 @@ export interface FileRoutesByTo {
   '/api/public/cross-site-publication-health': typeof ApiPublicCrossSitePublicationHealthRoute
   '/api/public/deployment-fingerprint': typeof ApiPublicDeploymentFingerprintRoute
   '/api/public/newsroom-health': typeof ApiPublicNewsroomHealthRoute
+  '/api/public/official-bill-text': typeof ApiPublicOfficialBillTextRoute
   '/api/public/store-products': typeof ApiPublicStoreProductsRoute
   '/api/public/texasdefined-checkout': typeof ApiPublicTexasdefinedCheckoutRoute
+  '/api/shop/stripe-webhook': typeof ApiShopStripeWebhookRoute
   '/bills/subject/$subjectSlug': typeof BillsSubjectSubjectSlugRoute
   '/elections/candidates/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
   '/elections/districts/$districtSlug': typeof ElectionsDistrictsDistrictSlugRoute
@@ -2485,9 +3635,13 @@ export interface FileRoutesByTo {
   '/explore/river/$slug': typeof ExploreRiverSlugRoute
   '/explore/state-park/$slug': typeof ExploreStateParkSlugRoute
   '/explore/trip/$token': typeof ExploreTripTokenRoute
-  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/laws/topic/$slug': typeof LawsTopicSlugRoute
+  '/product-offer/$productId/$variantId': typeof ProductOfferProductIdVariantIdRoute
+  '/texas-case/facts/$slug': typeof TexasCaseFactsSlugRoute
+  '/texas-government/agencies/$agencySlug': typeof TexasGovernmentAgenciesAgencySlugRoute
   '/texas-legislature/committees/$committeeSlug': typeof TexasLegislatureCommitteesCommitteeSlugRoute
   '/texas-legislature/sessions/$sessionSlug': typeof TexasLegislatureSessionsSessionSlugRoute
+  '/texas-politics/figures/$figureSlug': typeof TexasPoliticsFiguresFigureSlugRoute
   '/texas-resources/journey/$journeyId': typeof TexasResourcesJourneyJourneyIdRoute
   '/texas-resources/topic/$topicId': typeof TexasResourcesTopicTopicIdRoute
   '/texas-resources/type/$type': typeof TexasResourcesTypeTypeRoute
@@ -2504,36 +3658,55 @@ export interface FileRoutesByTo {
   '/api/public/explore/entities': typeof ApiPublicExploreEntitiesRoute
   '/api/public/explore/map': typeof ApiPublicExploreMapRoute
   '/api/public/explore/recommendations': typeof ApiPublicExploreRecommendationsRoute
+  '/api/public/hooks/adsense-image-backfill': typeof ApiPublicHooksAdsenseImageBackfillRoute
+  '/api/public/hooks/auto-facebook-post': typeof ApiPublicHooksAutoFacebookPostRoute
+  '/api/public/hooks/auto-facebook-post-texasdefined': typeof ApiPublicHooksAutoFacebookPostTexasdefinedRoute
+  '/api/public/hooks/auto-facebook-post-texasdefined-smart': typeof ApiPublicHooksAutoFacebookPostTexasdefinedSmartRoute
   '/api/public/hooks/backfill-featured-images': typeof ApiPublicHooksBackfillFeaturedImagesRoute
+  '/api/public/hooks/build-newsroom-research-packets': typeof ApiPublicHooksBuildNewsroomResearchPacketsRoute
   '/api/public/hooks/classify-article-pillars': typeof ApiPublicHooksClassifyArticlePillarsRoute
   '/api/public/hooks/classify-pillars': typeof ApiPublicHooksClassifyPillarsRoute
   '/api/public/hooks/classify-sports': typeof ApiPublicHooksClassifySportsRoute
+  '/api/public/hooks/cluster-newsroom-stories': typeof ApiPublicHooksClusterNewsroomStoriesRoute
+  '/api/public/hooks/decide-newsroom-packages': typeof ApiPublicHooksDecideNewsroomPackagesRoute
+  '/api/public/hooks/enrich-newsroom-rss-evidence': typeof ApiPublicHooksEnrichNewsroomRssEvidenceRoute
+  '/api/public/hooks/finalize-newsroom-article': typeof ApiPublicHooksFinalizeNewsroomArticleRoute
+  '/api/public/hooks/generate-daily-brief': typeof ApiPublicHooksGenerateDailyBriefRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
+  '/api/public/hooks/generate-newsroom': typeof ApiPublicHooksGenerateNewsroomRoute
   '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
   '/api/public/hooks/health': typeof ApiPublicHooksHealthRoute
+  '/api/public/hooks/image-backlog-recovery': typeof ApiPublicHooksImageBacklogRecoveryRoute
   '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
   '/api/public/hooks/ingest-sports': typeof ApiPublicHooksIngestSportsRoute
   '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
+  '/api/public/hooks/newsroom-generation-diagnostics': typeof ApiPublicHooksNewsroomGenerationDiagnosticsRoute
+  '/api/public/hooks/normalize-newsroom-feed': typeof ApiPublicHooksNormalizeNewsroomFeedRoute
+  '/api/public/hooks/publish-overdue-gap': typeof ApiPublicHooksPublishOverdueGapRoute
   '/api/public/hooks/publishing-safety-net': typeof ApiPublicHooksPublishingSafetyNetRoute
+  '/api/public/hooks/reconcile-news-history': typeof ApiPublicHooksReconcileNewsHistoryRoute
   '/api/public/hooks/remediate-aug10-flyover': typeof ApiPublicHooksRemediateAug10FlyoverRoute
   '/api/public/hooks/repair-article-structure': typeof ApiPublicHooksRepairArticleStructureRoute
   '/api/public/hooks/repair-sb37-production': typeof ApiPublicHooksRepairSb37ProductionRoute
+  '/api/public/hooks/retest-newsroom-shadow': typeof ApiPublicHooksRetestNewsroomShadowRoute
   '/api/public/hooks/run-generate-news': typeof ApiPublicHooksRunGenerateNewsRoute
+  '/api/public/hooks/score-newsroom-stories': typeof ApiPublicHooksScoreNewsroomStoriesRoute
   '/api/public/hooks/score-viral': typeof ApiPublicHooksScoreViralRoute
   '/api/public/hooks/score-viral-backfill': typeof ApiPublicHooksScoreViralBackfillRoute
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
   '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
+  '/api/public/payments/health': typeof ApiPublicPaymentsHealthRoute
+  '/api/public/payments/sandbox-config': typeof ApiPublicPaymentsSandboxConfigRoute
+  '/api/public/payments/sandbox-health': typeof ApiPublicPaymentsSandboxHealthRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
-  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
-  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
-  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/admin/explore/imports': typeof AdminExploreImportsIndexRoute
   '/bills/texas/$legislature': typeof BillsTexasLegislatureIndexRoute
   '/api/public/oauth/facebook/callback': typeof ApiPublicOauthFacebookCallbackRoute
   '/api/public/oauth/facebook/start': typeof ApiPublicOauthFacebookStartRoute
-  '/bills/texas/$legislature/$billType/$billNumber': typeof BillsTexasLegislatureBillTypeBillNumberRoute
+  '/bills/texas/$legislature/$billType/$billNumber': typeof BillsTexasLegislatureBillTypeBillNumberRouteWithChildren
   '/bills/texas/$legislature/$billType': typeof BillsTexasLegislatureBillTypeIndexRoute
+  '/bills/texas/$legislature/$billType/$billNumber/reference.json': typeof BillsTexasLegislatureBillTypeBillNumberReferenceDotjsonRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -2545,10 +3718,13 @@ export interface FileRoutesById {
   '/bills': typeof BillsRouteWithChildren
   '/candidate-guides': typeof CandidateGuidesRoute
   '/citation-guide': typeof CitationGuideRoute
+  '/civic-tools': typeof CivicToolsRouteWithChildren
   '/contact': typeof ContactRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
   '/dallas-fort-worth': typeof DallasFortWorthRoute
+  '/data': typeof DataRouteWithChildren
+  '/districts': typeof DistrictsRouteWithChildren
   '/dmv': typeof DmvRouteWithChildren
   '/editorial-standards': typeof EditorialStandardsRoute
   '/el-paso': typeof ElPasoRoute
@@ -2562,6 +3738,7 @@ export interface FileRoutesById {
   '/google-merchant-feed.xml': typeof GoogleMerchantFeedDotxmlRoute
   '/happening-now': typeof HappeningNowRoute
   '/houston': typeof HoustonRoute
+  '/issue-guides.txt': typeof IssueGuidesDottxtRoute
   '/keep-texas-red': typeof KeepTexasRedRoute
   '/laws': typeof LawsRouteWithChildren
   '/laws-to-know': typeof LawsToKnowRoute
@@ -2573,6 +3750,8 @@ export interface FileRoutesById {
   '/moving-to-texas-checklist': typeof MovingToTexasChecklistRoute
   '/news': typeof NewsRouteWithChildren
   '/news-sitemap.xml': typeof NewsSitemapDotxmlRoute
+  '/policy': typeof PolicyRouteWithChildren
+  '/policy-trackers.txt': typeof PolicyTrackersDottxtRoute
   '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRouteWithChildren
@@ -2594,18 +3773,24 @@ export interface FileRoutesById {
   '/sitemap-legislature.xml': typeof SitemapLegislatureDotxmlRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
+  '/sitemap-political-figures.xml': typeof SitemapPoliticalFiguresDotxmlRoute
   '/sitemap-products.xml': typeof SitemapProductsDotxmlRoute
   '/sitemap-representatives.xml': typeof SitemapRepresentativesDotxmlRoute
+  '/sitemap-sources.xml': typeof SitemapSourcesDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
   '/terms-of-service': typeof TermsOfServiceRoute
   '/texas': typeof TexasRoute
   '/texas-agriculture': typeof TexasAgricultureRoute
+  '/texas-attorney-general': typeof TexasAttorneyGeneralRoute
   '/texas-border-security': typeof TexasBorderSecurityRoute
   '/texas-budget-planner': typeof TexasBudgetPlannerRoute
   '/texas-business': typeof TexasBusinessRouteWithChildren
+  '/texas-case': typeof TexasCaseRouteWithChildren
+  '/texas-child-support': typeof TexasChildSupportRoute
   '/texas-closing-cost-calculator': typeof TexasClosingCostCalculatorRoute
+  '/texas-comptroller': typeof TexasComptrollerRoute
   '/texas-cost-of-living-calculator': typeof TexasCostOfLivingCalculatorRoute
   '/texas-data': typeof TexasDataRouteWithChildren
   '/texas-down-payment-assistance-calculator': typeof TexasDownPaymentAssistanceCalculatorRoute
@@ -2629,7 +3814,8 @@ export interface FileRoutesById {
   '/texas-mortgage-payoff-calculator': typeof TexasMortgagePayoffCalculatorRoute
   '/texas-moving-cost-calculator': typeof TexasMovingCostCalculatorRoute
   '/texas-news': typeof TexasNewsRouteWithChildren
-  '/texas-politics': typeof TexasPoliticsRoute
+  '/texas-political-reference': typeof TexasPoliticalReferenceRouteWithChildren
+  '/texas-politics': typeof TexasPoliticsRouteWithChildren
   '/texas-property-tax-increase-calculator': typeof TexasPropertyTaxIncreaseCalculatorRoute
   '/texas-property-tax-protest-guide': typeof TexasPropertyTaxProtestGuideRoute
   '/texas-refinance-savings-calculator': typeof TexasRefinanceSavingsCalculatorRoute
@@ -2638,6 +3824,7 @@ export interface FileRoutesById {
   '/texas-salary-calculator': typeof TexasSalaryCalculatorRoute
   '/texas-salary-comparison-by-city': typeof TexasSalaryComparisonByCityRoute
   '/texas-sales-tax-explained': typeof TexasSalesTaxExplainedRoute
+  '/texas-secretary-of-state': typeof TexasSecretaryOfStateRoute
   '/texas-sports': typeof TexasSportsRouteWithChildren
   '/texas-utility-cost-calculator': typeof TexasUtilityCostCalculatorRoute
   '/texas-veterans': typeof TexasVeteransRoute
@@ -2646,14 +3833,26 @@ export interface FileRoutesById {
   '/voting-locations': typeof VotingLocationsRoute
   '/admin/coverage-gaps': typeof AdminCoverageGapsRoute
   '/admin/governance-health': typeof AdminGovernanceHealthRoute
+  '/admin/newsroom': typeof AdminNewsroomRoute
+  '/admin/newsroom-backtest': typeof AdminNewsroomBacktestRoute
   '/admin/newsroom-metrics': typeof AdminNewsroomMetricsRoute
+  '/admin/newsroom-shadow': typeof AdminNewsroomShadowRoute
   '/admin/shop-products': typeof AdminShopProductsRoute
+  '/admin/source-provenance': typeof AdminSourceProvenanceRoute
   '/api/content-disposition': typeof ApiContentDispositionRoute
   '/api/governance-health': typeof ApiGovernanceHealthRoute
   '/api/platform-core-status': typeof ApiPlatformCoreStatusRoute
   '/api/publication-gate': typeof ApiPublicationGateRoute
+  '/api/reference-freshness': typeof ApiReferenceFreshnessRoute
   '/article/$slug': typeof ArticleSlugRoute
   '/authors/$slug': typeof AuthorsSlugRoute
+  '/civic-tools/bill-finder': typeof CivicToolsBillFinderRoute
+  '/civic-tools/compare-legislators': typeof CivicToolsCompareLegislatorsRoute
+  '/civic-tools/education-freedom-account-guide': typeof CivicToolsEducationFreedomAccountGuideRoute
+  '/civic-tools/government-authority-finder': typeof CivicToolsGovernmentAuthorityFinderRoute
+  '/civic-tools/texas-law-finder': typeof CivicToolsTexasLawFinderRoute
+  '/data/$slug': typeof DataSlugRoute
+  '/districts/$districtSlug': typeof DistrictsDistrictSlugRoute
   '/dmv/cdl': typeof DmvCdlRoute
   '/dmv/cdl-classes': typeof DmvCdlClassesRoute
   '/dmv/cdl-endorsements': typeof DmvCdlEndorsementsRoute
@@ -2677,6 +3876,7 @@ export interface FileRoutesById {
   '/elections/methodology': typeof ElectionsMethodologyRoute
   '/elections/polls': typeof ElectionsPollsRouteWithChildren
   '/elections/races': typeof ElectionsRacesRoute
+  '/elections/reference.json': typeof ElectionsReferenceDotjsonRoute
   '/elections/results': typeof ElectionsResultsRouteWithChildren
   '/elections/statewide': typeof ElectionsStatewideRoute
   '/elections/voting': typeof ElectionsVotingRoute
@@ -2703,20 +3903,95 @@ export interface FileRoutesById {
   '/explore/trip-planner': typeof ExploreTripPlannerRoute
   '/explore/wildlife-management-areas': typeof ExploreWildlifeManagementAreasRoute
   '/guides/$slug': typeof GuidesSlugRoute
+  '/issues/$slug': typeof IssuesSlugRoute
+  '/issues/texas-government-accountability-handbook': typeof IssuesTexasGovernmentAccountabilityHandbookRoute
+  '/issues/texas-local-government-handbook': typeof IssuesTexasLocalGovernmentHandbookRoute
+  '/issues/texas-policy-handbook': typeof IssuesTexasPolicyHandbookRoute
   '/laws/constitutional-amendments': typeof LawsConstitutionalAmendmentsRoute
   '/laws/effective-dates': typeof LawsEffectiveDatesRoute
+  '/laws/topics': typeof LawsTopicsRoute
   '/news/$slug': typeof NewsSlugRoute
+  '/news/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity': typeof News20260704TheRealReasonBehindTheResilienceOfTexasIdentityRoute
+  '/news/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity-in-2026-explained-simply': typeof News20260704TheRealReasonBehindTheResilienceOfTexasIdentityIn2026ExplainedSimplyRoute
   '/news/2026-08-09-canyon-lake-full-capacity-recovery': typeof News20260809CanyonLakeFullCapacityRecoveryRoute
+  '/news/canyon-lake-pushes-to-full-capacity-following-multiyear-drought-2025-d9be1db3': typeof NewsCanyonLakePushesToFullCapacityFollowingMultiyearDrought2025D9be1db3Route
   '/news/isd-tax-burdens': typeof NewsIsdTaxBurdensRoute
+  '/news/moving-to-austin-guide': typeof NewsMovingToAustinGuideRoute
+  '/news/moving-to-dallas-fort-worth-guide': typeof NewsMovingToDallasFortWorthGuideRoute
+  '/news/moving-to-el-paso-guide': typeof NewsMovingToElPasoGuideRoute
+  '/news/moving-to-houston-address-checklist': typeof NewsMovingToHoustonAddressChecklistRoute
+  '/news/moving-to-san-antonio-guide': typeof NewsMovingToSanAntonioGuideRoute
+  '/news/moving-to-texas-guide': typeof NewsMovingToTexasGuideRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
+  '/news/renting-vs-buying-in-texas': typeof NewsRentingVsBuyingInTexasRoute
+  '/news/salary-needed-to-buy-a-house-in-texas': typeof NewsSalaryNeededToBuyAHouseInTexasRoute
+  '/news/should-you-refinance-texas-mortgage': typeof NewsShouldYouRefinanceTexasMortgageRoute
+  '/news/texas-closing-costs-guide': typeof NewsTexasClosingCostsGuideRoute
+  '/news/texas-home-equity-heloc-guide': typeof NewsTexasHomeEquityHelocGuideRoute
+  '/news/texas-homeowners-insurance-guide': typeof NewsTexasHomeownersInsuranceGuideRoute
+  '/news/texas-house-down-payment-guide': typeof NewsTexasHouseDownPaymentGuideRoute
+  '/news/texas-mortgage-payment-guide': typeof NewsTexasMortgagePaymentGuideRoute
+  '/news/texas-utility-costs-guide': typeof NewsTexasUtilityCostsGuideRoute
+  '/news/true-cost-of-owning-a-home-in-texas': typeof NewsTrueCostOfOwningAHomeInTexasRoute
+  '/policy/$slug': typeof PolicySlugRoute
+  '/policy/advanced-nuclear-energy': typeof PolicyAdvancedNuclearEnergyRoute
+  '/policy/agriculture-family-farms': typeof PolicyAgricultureFamilyFarmsRoute
+  '/policy/ai-governance': typeof PolicyAiGovernanceRoute
+  '/policy/app-store-parental-controls': typeof PolicyAppStoreParentalControlsRoute
+  '/policy/assisted-suicide': typeof PolicyAssistedSuicideRoute
+  '/policy/biometric-privacy': typeof PolicyBiometricPrivacyRoute
+  '/policy/bitcoin-reserve': typeof PolicyBitcoinReserveRoute
+  '/policy/campus-free-speech': typeof PolicyCampusFreeSpeechRoute
+  '/policy/career-technical-workforce': typeof PolicyCareerTechnicalWorkforceRoute
+  '/policy/central-bank-digital-currency': typeof PolicyCentralBankDigitalCurrencyRoute
+  '/policy/charter-schools': typeof PolicyCharterSchoolsRoute
+  '/policy/china-investment-restrictions': typeof PolicyChinaInvestmentRestrictionsRoute
+  '/policy/constitutional-tax-protections': typeof PolicyConstitutionalTaxProtectionsRoute
+  '/policy/consumable-hemp-cannabis': typeof PolicyConsumableHempCannabisRoute
+  '/policy/consumer-data-privacy': typeof PolicyConsumerDataPrivacyRoute
+  '/policy/critical-minerals-rare-earths': typeof PolicyCriticalMineralsRareEarthsRoute
+  '/policy/data-brokers': typeof PolicyDataBrokersRoute
+  '/policy/data-centers-large-loads': typeof PolicyDataCentersLargeLoadsRoute
+  '/policy/e-verify-employment': typeof PolicyEVerifyEmploymentRoute
+  '/policy/election-integrity': typeof PolicyElectionIntegrityRoute
+  '/policy/esg-energy-boycotts': typeof PolicyEsgEnergyBoycottsRoute
+  '/policy/faith-based-child-welfare': typeof PolicyFaithBasedChildWelfareRoute
+  '/policy/foreign-adversary-property': typeof PolicyForeignAdversaryPropertyRoute
+  '/policy/genetic-data-privacy': typeof PolicyGeneticDataPrivacyRoute
+  '/policy/higher-education-dei': typeof PolicyHigherEducationDeiRoute
+  '/policy/homeschool-autonomy': typeof PolicyHomeschoolAutonomyRoute
+  '/policy/local-preemption-regulatory-consistency': typeof PolicyLocalPreemptionRegulatoryConsistencyRoute
+  '/policy/medical-freedom': typeof PolicyMedicalFreedomRoute
+  '/policy/minor-gender-transition-medical-law': typeof PolicyMinorGenderTransitionMedicalLawRoute
+  '/policy/occupational-licensing-mobility': typeof PolicyOccupationalLicensingMobilityRoute
+  '/policy/online-age-verification': typeof PolicyOnlineAgeVerificationRoute
+  '/policy/parental-rights': typeof PolicyParentalRightsRoute
+  '/policy/public-sector-labor': typeof PolicyPublicSectorLaborRoute
+  '/policy/regulatory-reform-treo': typeof PolicyRegulatoryReformTreoRoute
+  '/policy/religious-liberty': typeof PolicyReligiousLibertyRoute
+  '/policy/right-to-work': typeof PolicyRightToWorkRoute
+  '/policy/school-library-materials': typeof PolicySchoolLibraryMaterialsRoute
+  '/policy/school-safety-security': typeof PolicySchoolSafetySecurityRoute
+  '/policy/scope-act-online-minors': typeof PolicyScopeActOnlineMinorsRoute
+  '/policy/semiconductor-manufacturing': typeof PolicySemiconductorManufacturingRoute
+  '/policy/state-federal-power': typeof PolicyStateFederalPowerRoute
+  '/policy/tanf-work-participation': typeof PolicyTanfWorkParticipationRoute
+  '/policy/texas-cyber-command': typeof PolicyTexasCyberCommandRoute
+  '/policy/violent-offense-bail': typeof PolicyViolentOffenseBailRoute
+  '/policy/womens-sports': typeof PolicyWomensSportsRoute
   '/representatives/$representativeSlug': typeof RepresentativesRepresentativeSlugRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/shop/checkout': typeof ShopCheckoutRoute
   '/shop/checkout-return': typeof ShopCheckoutReturnRoute
+  '/shop/checkout-sandbox': typeof ShopCheckoutSandboxRoute
+  '/shop/checkout-sandbox-return': typeof ShopCheckoutSandboxReturnRoute
+  '/sources/$slug': typeof SourcesSlugRoute
   '/texas-business/$topic': typeof TexasBusinessTopicRoute
+  '/texas-case/$slug': typeof TexasCaseSlugRoute
+  '/texas-case/facts': typeof TexasCaseFactsRouteWithChildren
   '/texas-data/$datasetSlug': typeof TexasDataDatasetSlugRoute
   '/texas-government/$entitySlug': typeof TexasGovernmentEntitySlugRoute
-  '/texas-government/agencies': typeof TexasGovernmentAgenciesRoute
+  '/texas-government/agencies': typeof TexasGovernmentAgenciesRouteWithChildren
   '/texas-legislature/committees': typeof TexasLegislatureCommitteesRouteWithChildren
   '/texas-legislature/current-session': typeof TexasLegislatureCurrentSessionRoute
   '/texas-legislature/house': typeof TexasLegislatureHouseRoute
@@ -2724,7 +3999,13 @@ export interface FileRoutesById {
   '/texas-legislature/sessions': typeof TexasLegislatureSessionsRouteWithChildren
   '/texas-legislature/votes': typeof TexasLegislatureVotesRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
+  '/texas-political-reference/$slug': typeof TexasPoliticalReferenceSlugRoute
+  '/texas-politics/figures': typeof TexasPoliticsFiguresRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
+  '/tools/texas-budget-headroom': typeof ToolsTexasBudgetHeadroomRoute
+  '/tools/texas-rainy-day-fund': typeof ToolsTexasRainyDayFundRoute
+  '/tools/texas-spending-growth-cap': typeof ToolsTexasSpendingGrowthCapRoute
+  '/tools/texas-tax-structure-comparison': typeof ToolsTexasTaxStructureComparisonRoute
   '/vehicles/auto-insurance-requirements': typeof VehiclesAutoInsuranceRequirementsRoute
   '/vehicles/bonded-titles': typeof VehiclesBondedTitlesRoute
   '/vehicles/buying-a-car': typeof VehiclesBuyingACarRoute
@@ -2753,11 +4034,14 @@ export interface FileRoutesById {
   '/bills/': typeof BillsIndexRoute
   '/elections/': typeof ElectionsIndexRoute
   '/explore/': typeof ExploreIndexRoute
+  '/issues/': typeof IssuesIndexRoute
   '/news/': typeof NewsIndexRoute
   '/shop/': typeof ShopIndexRoute
+  '/sources/': typeof SourcesIndexRoute
   '/texas-legislature/': typeof TexasLegislatureIndexRoute
   '/texas-news/': typeof TexasNewsIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
+  '/tools/': typeof ToolsIndexRoute
   '/admin/bills/backfill': typeof AdminBillsBackfillRoute
   '/admin/bills/editorial': typeof AdminBillsEditorialRoute
   '/admin/bills/enrichment': typeof AdminBillsEnrichmentRoute
@@ -2776,8 +4060,10 @@ export interface FileRoutesById {
   '/api/public/cross-site-publication-health': typeof ApiPublicCrossSitePublicationHealthRoute
   '/api/public/deployment-fingerprint': typeof ApiPublicDeploymentFingerprintRoute
   '/api/public/newsroom-health': typeof ApiPublicNewsroomHealthRoute
+  '/api/public/official-bill-text': typeof ApiPublicOfficialBillTextRoute
   '/api/public/store-products': typeof ApiPublicStoreProductsRoute
   '/api/public/texasdefined-checkout': typeof ApiPublicTexasdefinedCheckoutRoute
+  '/api/shop/stripe-webhook': typeof ApiShopStripeWebhookRoute
   '/bills/subject/$subjectSlug': typeof BillsSubjectSubjectSlugRoute
   '/elections/candidates_/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
   '/elections/districts/$districtSlug': typeof ElectionsDistrictsDistrictSlugRoute
@@ -2792,9 +4078,13 @@ export interface FileRoutesById {
   '/explore/river/$slug': typeof ExploreRiverSlugRoute
   '/explore/state-park/$slug': typeof ExploreStateParkSlugRoute
   '/explore/trip/$token': typeof ExploreTripTokenRoute
-  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/laws/topic/$slug': typeof LawsTopicSlugRoute
+  '/product-offer/$productId/$variantId': typeof ProductOfferProductIdVariantIdRoute
+  '/texas-case/facts/$slug': typeof TexasCaseFactsSlugRoute
+  '/texas-government/agencies/$agencySlug': typeof TexasGovernmentAgenciesAgencySlugRoute
   '/texas-legislature/committees/$committeeSlug': typeof TexasLegislatureCommitteesCommitteeSlugRoute
   '/texas-legislature/sessions/$sessionSlug': typeof TexasLegislatureSessionsSessionSlugRoute
+  '/texas-politics/figures_/$figureSlug': typeof TexasPoliticsFiguresFigureSlugRoute
   '/texas-resources/journey/$journeyId': typeof TexasResourcesJourneyJourneyIdRoute
   '/texas-resources/topic/$topicId': typeof TexasResourcesTopicTopicIdRoute
   '/texas-resources/type/$type': typeof TexasResourcesTypeTypeRoute
@@ -2811,36 +4101,55 @@ export interface FileRoutesById {
   '/api/public/explore/entities': typeof ApiPublicExploreEntitiesRoute
   '/api/public/explore/map': typeof ApiPublicExploreMapRoute
   '/api/public/explore/recommendations': typeof ApiPublicExploreRecommendationsRoute
+  '/api/public/hooks/adsense-image-backfill': typeof ApiPublicHooksAdsenseImageBackfillRoute
+  '/api/public/hooks/auto-facebook-post': typeof ApiPublicHooksAutoFacebookPostRoute
+  '/api/public/hooks/auto-facebook-post-texasdefined': typeof ApiPublicHooksAutoFacebookPostTexasdefinedRoute
+  '/api/public/hooks/auto-facebook-post-texasdefined-smart': typeof ApiPublicHooksAutoFacebookPostTexasdefinedSmartRoute
   '/api/public/hooks/backfill-featured-images': typeof ApiPublicHooksBackfillFeaturedImagesRoute
+  '/api/public/hooks/build-newsroom-research-packets': typeof ApiPublicHooksBuildNewsroomResearchPacketsRoute
   '/api/public/hooks/classify-article-pillars': typeof ApiPublicHooksClassifyArticlePillarsRoute
   '/api/public/hooks/classify-pillars': typeof ApiPublicHooksClassifyPillarsRoute
   '/api/public/hooks/classify-sports': typeof ApiPublicHooksClassifySportsRoute
+  '/api/public/hooks/cluster-newsroom-stories': typeof ApiPublicHooksClusterNewsroomStoriesRoute
+  '/api/public/hooks/decide-newsroom-packages': typeof ApiPublicHooksDecideNewsroomPackagesRoute
+  '/api/public/hooks/enrich-newsroom-rss-evidence': typeof ApiPublicHooksEnrichNewsroomRssEvidenceRoute
+  '/api/public/hooks/finalize-newsroom-article': typeof ApiPublicHooksFinalizeNewsroomArticleRoute
+  '/api/public/hooks/generate-daily-brief': typeof ApiPublicHooksGenerateDailyBriefRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
+  '/api/public/hooks/generate-newsroom': typeof ApiPublicHooksGenerateNewsroomRoute
   '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
   '/api/public/hooks/health': typeof ApiPublicHooksHealthRoute
+  '/api/public/hooks/image-backlog-recovery': typeof ApiPublicHooksImageBacklogRecoveryRoute
   '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
   '/api/public/hooks/ingest-sports': typeof ApiPublicHooksIngestSportsRoute
   '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
+  '/api/public/hooks/newsroom-generation-diagnostics': typeof ApiPublicHooksNewsroomGenerationDiagnosticsRoute
+  '/api/public/hooks/normalize-newsroom-feed': typeof ApiPublicHooksNormalizeNewsroomFeedRoute
+  '/api/public/hooks/publish-overdue-gap': typeof ApiPublicHooksPublishOverdueGapRoute
   '/api/public/hooks/publishing-safety-net': typeof ApiPublicHooksPublishingSafetyNetRoute
+  '/api/public/hooks/reconcile-news-history': typeof ApiPublicHooksReconcileNewsHistoryRoute
   '/api/public/hooks/remediate-aug10-flyover': typeof ApiPublicHooksRemediateAug10FlyoverRoute
   '/api/public/hooks/repair-article-structure': typeof ApiPublicHooksRepairArticleStructureRoute
   '/api/public/hooks/repair-sb37-production': typeof ApiPublicHooksRepairSb37ProductionRoute
+  '/api/public/hooks/retest-newsroom-shadow': typeof ApiPublicHooksRetestNewsroomShadowRoute
   '/api/public/hooks/run-generate-news': typeof ApiPublicHooksRunGenerateNewsRoute
+  '/api/public/hooks/score-newsroom-stories': typeof ApiPublicHooksScoreNewsroomStoriesRoute
   '/api/public/hooks/score-viral': typeof ApiPublicHooksScoreViralRoute
   '/api/public/hooks/score-viral-backfill': typeof ApiPublicHooksScoreViralBackfillRoute
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
   '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
+  '/api/public/payments/health': typeof ApiPublicPaymentsHealthRoute
+  '/api/public/payments/sandbox-config': typeof ApiPublicPaymentsSandboxConfigRoute
+  '/api/public/payments/sandbox-health': typeof ApiPublicPaymentsSandboxHealthRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
-  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
-  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
-  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/admin/explore/imports/': typeof AdminExploreImportsIndexRoute
   '/bills/texas/$legislature/': typeof BillsTexasLegislatureIndexRoute
   '/api/public/oauth/facebook/callback': typeof ApiPublicOauthFacebookCallbackRoute
   '/api/public/oauth/facebook/start': typeof ApiPublicOauthFacebookStartRoute
-  '/bills/texas/$legislature/$billType/$billNumber': typeof BillsTexasLegislatureBillTypeBillNumberRoute
+  '/bills/texas/$legislature/$billType/$billNumber': typeof BillsTexasLegislatureBillTypeBillNumberRouteWithChildren
   '/bills/texas/$legislature/$billType/': typeof BillsTexasLegislatureBillTypeIndexRoute
+  '/bills/texas/$legislature/$billType/$billNumber/reference.json': typeof BillsTexasLegislatureBillTypeBillNumberReferenceDotjsonRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -2853,10 +4162,13 @@ export interface FileRouteTypes {
     | '/bills'
     | '/candidate-guides'
     | '/citation-guide'
+    | '/civic-tools'
     | '/contact'
     | '/contact-legislators'
     | '/county-elections'
     | '/dallas-fort-worth'
+    | '/data'
+    | '/districts'
     | '/dmv'
     | '/editorial-standards'
     | '/el-paso'
@@ -2870,6 +4182,7 @@ export interface FileRouteTypes {
     | '/google-merchant-feed.xml'
     | '/happening-now'
     | '/houston'
+    | '/issue-guides.txt'
     | '/keep-texas-red'
     | '/laws'
     | '/laws-to-know'
@@ -2881,6 +4194,8 @@ export interface FileRouteTypes {
     | '/moving-to-texas-checklist'
     | '/news'
     | '/news-sitemap.xml'
+    | '/policy'
+    | '/policy-trackers.txt'
     | '/privacy'
     | '/register-to-vote'
     | '/representatives'
@@ -2902,18 +4217,24 @@ export interface FileRouteTypes {
     | '/sitemap-legislature.xml'
     | '/sitemap-news.xml'
     | '/sitemap-pages.xml'
+    | '/sitemap-political-figures.xml'
     | '/sitemap-products.xml'
     | '/sitemap-representatives.xml'
+    | '/sitemap-sources.xml'
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
     | '/terms-of-service'
     | '/texas'
     | '/texas-agriculture'
+    | '/texas-attorney-general'
     | '/texas-border-security'
     | '/texas-budget-planner'
     | '/texas-business'
+    | '/texas-case'
+    | '/texas-child-support'
     | '/texas-closing-cost-calculator'
+    | '/texas-comptroller'
     | '/texas-cost-of-living-calculator'
     | '/texas-data'
     | '/texas-down-payment-assistance-calculator'
@@ -2937,6 +4258,7 @@ export interface FileRouteTypes {
     | '/texas-mortgage-payoff-calculator'
     | '/texas-moving-cost-calculator'
     | '/texas-news'
+    | '/texas-political-reference'
     | '/texas-politics'
     | '/texas-property-tax-increase-calculator'
     | '/texas-property-tax-protest-guide'
@@ -2946,6 +4268,7 @@ export interface FileRouteTypes {
     | '/texas-salary-calculator'
     | '/texas-salary-comparison-by-city'
     | '/texas-sales-tax-explained'
+    | '/texas-secretary-of-state'
     | '/texas-sports'
     | '/texas-utility-cost-calculator'
     | '/texas-veterans'
@@ -2954,14 +4277,26 @@ export interface FileRouteTypes {
     | '/voting-locations'
     | '/admin/coverage-gaps'
     | '/admin/governance-health'
+    | '/admin/newsroom'
+    | '/admin/newsroom-backtest'
     | '/admin/newsroom-metrics'
+    | '/admin/newsroom-shadow'
     | '/admin/shop-products'
+    | '/admin/source-provenance'
     | '/api/content-disposition'
     | '/api/governance-health'
     | '/api/platform-core-status'
     | '/api/publication-gate'
+    | '/api/reference-freshness'
     | '/article/$slug'
     | '/authors/$slug'
+    | '/civic-tools/bill-finder'
+    | '/civic-tools/compare-legislators'
+    | '/civic-tools/education-freedom-account-guide'
+    | '/civic-tools/government-authority-finder'
+    | '/civic-tools/texas-law-finder'
+    | '/data/$slug'
+    | '/districts/$districtSlug'
     | '/dmv/cdl'
     | '/dmv/cdl-classes'
     | '/dmv/cdl-endorsements'
@@ -2985,6 +4320,7 @@ export interface FileRouteTypes {
     | '/elections/methodology'
     | '/elections/polls'
     | '/elections/races'
+    | '/elections/reference.json'
     | '/elections/results'
     | '/elections/statewide'
     | '/elections/voting'
@@ -3011,17 +4347,92 @@ export interface FileRouteTypes {
     | '/explore/trip-planner'
     | '/explore/wildlife-management-areas'
     | '/guides/$slug'
+    | '/issues/$slug'
+    | '/issues/texas-government-accountability-handbook'
+    | '/issues/texas-local-government-handbook'
+    | '/issues/texas-policy-handbook'
     | '/laws/constitutional-amendments'
     | '/laws/effective-dates'
+    | '/laws/topics'
     | '/news/$slug'
+    | '/news/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity'
+    | '/news/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity-in-2026-explained-simply'
     | '/news/2026-08-09-canyon-lake-full-capacity-recovery'
+    | '/news/canyon-lake-pushes-to-full-capacity-following-multiyear-drought-2025-d9be1db3'
     | '/news/isd-tax-burdens'
+    | '/news/moving-to-austin-guide'
+    | '/news/moving-to-dallas-fort-worth-guide'
+    | '/news/moving-to-el-paso-guide'
+    | '/news/moving-to-houston-address-checklist'
+    | '/news/moving-to-san-antonio-guide'
+    | '/news/moving-to-texas-guide'
     | '/news/non-political'
+    | '/news/renting-vs-buying-in-texas'
+    | '/news/salary-needed-to-buy-a-house-in-texas'
+    | '/news/should-you-refinance-texas-mortgage'
+    | '/news/texas-closing-costs-guide'
+    | '/news/texas-home-equity-heloc-guide'
+    | '/news/texas-homeowners-insurance-guide'
+    | '/news/texas-house-down-payment-guide'
+    | '/news/texas-mortgage-payment-guide'
+    | '/news/texas-utility-costs-guide'
+    | '/news/true-cost-of-owning-a-home-in-texas'
+    | '/policy/$slug'
+    | '/policy/advanced-nuclear-energy'
+    | '/policy/agriculture-family-farms'
+    | '/policy/ai-governance'
+    | '/policy/app-store-parental-controls'
+    | '/policy/assisted-suicide'
+    | '/policy/biometric-privacy'
+    | '/policy/bitcoin-reserve'
+    | '/policy/campus-free-speech'
+    | '/policy/career-technical-workforce'
+    | '/policy/central-bank-digital-currency'
+    | '/policy/charter-schools'
+    | '/policy/china-investment-restrictions'
+    | '/policy/constitutional-tax-protections'
+    | '/policy/consumable-hemp-cannabis'
+    | '/policy/consumer-data-privacy'
+    | '/policy/critical-minerals-rare-earths'
+    | '/policy/data-brokers'
+    | '/policy/data-centers-large-loads'
+    | '/policy/e-verify-employment'
+    | '/policy/election-integrity'
+    | '/policy/esg-energy-boycotts'
+    | '/policy/faith-based-child-welfare'
+    | '/policy/foreign-adversary-property'
+    | '/policy/genetic-data-privacy'
+    | '/policy/higher-education-dei'
+    | '/policy/homeschool-autonomy'
+    | '/policy/local-preemption-regulatory-consistency'
+    | '/policy/medical-freedom'
+    | '/policy/minor-gender-transition-medical-law'
+    | '/policy/occupational-licensing-mobility'
+    | '/policy/online-age-verification'
+    | '/policy/parental-rights'
+    | '/policy/public-sector-labor'
+    | '/policy/regulatory-reform-treo'
+    | '/policy/religious-liberty'
+    | '/policy/right-to-work'
+    | '/policy/school-library-materials'
+    | '/policy/school-safety-security'
+    | '/policy/scope-act-online-minors'
+    | '/policy/semiconductor-manufacturing'
+    | '/policy/state-federal-power'
+    | '/policy/tanf-work-participation'
+    | '/policy/texas-cyber-command'
+    | '/policy/violent-offense-bail'
+    | '/policy/womens-sports'
     | '/representatives/$representativeSlug'
     | '/shop/$productId'
     | '/shop/checkout'
     | '/shop/checkout-return'
+    | '/shop/checkout-sandbox'
+    | '/shop/checkout-sandbox-return'
+    | '/sources/$slug'
     | '/texas-business/$topic'
+    | '/texas-case/$slug'
+    | '/texas-case/facts'
     | '/texas-data/$datasetSlug'
     | '/texas-government/$entitySlug'
     | '/texas-government/agencies'
@@ -3032,7 +4443,13 @@ export interface FileRouteTypes {
     | '/texas-legislature/sessions'
     | '/texas-legislature/votes'
     | '/texas-news/$topic'
+    | '/texas-political-reference/$slug'
+    | '/texas-politics/figures'
     | '/texas-sports/$league'
+    | '/tools/texas-budget-headroom'
+    | '/tools/texas-rainy-day-fund'
+    | '/tools/texas-spending-growth-cap'
+    | '/tools/texas-tax-structure-comparison'
     | '/vehicles/auto-insurance-requirements'
     | '/vehicles/bonded-titles'
     | '/vehicles/buying-a-car'
@@ -3061,11 +4478,14 @@ export interface FileRouteTypes {
     | '/bills/'
     | '/elections/'
     | '/explore/'
+    | '/issues/'
     | '/news/'
     | '/shop/'
+    | '/sources/'
     | '/texas-legislature/'
     | '/texas-news/'
     | '/texas-sports/'
+    | '/tools/'
     | '/admin/bills/backfill'
     | '/admin/bills/editorial'
     | '/admin/bills/enrichment'
@@ -3084,8 +4504,10 @@ export interface FileRouteTypes {
     | '/api/public/cross-site-publication-health'
     | '/api/public/deployment-fingerprint'
     | '/api/public/newsroom-health'
+    | '/api/public/official-bill-text'
     | '/api/public/store-products'
     | '/api/public/texasdefined-checkout'
+    | '/api/shop/stripe-webhook'
     | '/bills/subject/$subjectSlug'
     | '/elections/candidates/$candidateSlug'
     | '/elections/districts/$districtSlug'
@@ -3100,9 +4522,13 @@ export interface FileRouteTypes {
     | '/explore/river/$slug'
     | '/explore/state-park/$slug'
     | '/explore/trip/$token'
-    | '/lovable/email/suppression'
+    | '/laws/topic/$slug'
+    | '/product-offer/$productId/$variantId'
+    | '/texas-case/facts/$slug'
+    | '/texas-government/agencies/$agencySlug'
     | '/texas-legislature/committees/$committeeSlug'
     | '/texas-legislature/sessions/$sessionSlug'
+    | '/texas-politics/figures/$figureSlug'
     | '/texas-resources/journey/$journeyId'
     | '/texas-resources/topic/$topicId'
     | '/texas-resources/type/$type'
@@ -3119,36 +4545,55 @@ export interface FileRouteTypes {
     | '/api/public/explore/entities'
     | '/api/public/explore/map'
     | '/api/public/explore/recommendations'
+    | '/api/public/hooks/adsense-image-backfill'
+    | '/api/public/hooks/auto-facebook-post'
+    | '/api/public/hooks/auto-facebook-post-texasdefined'
+    | '/api/public/hooks/auto-facebook-post-texasdefined-smart'
     | '/api/public/hooks/backfill-featured-images'
+    | '/api/public/hooks/build-newsroom-research-packets'
     | '/api/public/hooks/classify-article-pillars'
     | '/api/public/hooks/classify-pillars'
     | '/api/public/hooks/classify-sports'
+    | '/api/public/hooks/cluster-newsroom-stories'
+    | '/api/public/hooks/decide-newsroom-packages'
+    | '/api/public/hooks/enrich-newsroom-rss-evidence'
+    | '/api/public/hooks/finalize-newsroom-article'
+    | '/api/public/hooks/generate-daily-brief'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
+    | '/api/public/hooks/generate-newsroom'
     | '/api/public/hooks/generate-sports'
     | '/api/public/hooks/health'
+    | '/api/public/hooks/image-backlog-recovery'
     | '/api/public/hooks/ingest-feeds'
     | '/api/public/hooks/ingest-sports'
     | '/api/public/hooks/list-shops'
+    | '/api/public/hooks/newsroom-generation-diagnostics'
+    | '/api/public/hooks/normalize-newsroom-feed'
+    | '/api/public/hooks/publish-overdue-gap'
     | '/api/public/hooks/publishing-safety-net'
+    | '/api/public/hooks/reconcile-news-history'
     | '/api/public/hooks/remediate-aug10-flyover'
     | '/api/public/hooks/repair-article-structure'
     | '/api/public/hooks/repair-sb37-production'
+    | '/api/public/hooks/retest-newsroom-shadow'
     | '/api/public/hooks/run-generate-news'
+    | '/api/public/hooks/score-newsroom-stories'
     | '/api/public/hooks/score-viral'
     | '/api/public/hooks/score-viral-backfill'
     | '/api/public/hooks/sync-printify'
     | '/api/public/hooks/track-variant'
+    | '/api/public/payments/health'
+    | '/api/public/payments/sandbox-config'
+    | '/api/public/payments/sandbox-health'
     | '/api/public/payments/webhook'
-    | '/lovable/email/queue/process'
-    | '/lovable/email/transactional/preview'
-    | '/lovable/email/transactional/send'
     | '/admin/explore/imports/'
     | '/bills/texas/$legislature/'
     | '/api/public/oauth/facebook/callback'
     | '/api/public/oauth/facebook/start'
     | '/bills/texas/$legislature/$billType/$billNumber'
     | '/bills/texas/$legislature/$billType/'
+    | '/bills/texas/$legislature/$billType/$billNumber/reference.json'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -3157,10 +4602,13 @@ export interface FileRouteTypes {
     | '/austin'
     | '/candidate-guides'
     | '/citation-guide'
+    | '/civic-tools'
     | '/contact'
     | '/contact-legislators'
     | '/county-elections'
     | '/dallas-fort-worth'
+    | '/data'
+    | '/districts'
     | '/dmv'
     | '/editorial-standards'
     | '/el-paso'
@@ -3172,6 +4620,7 @@ export interface FileRouteTypes {
     | '/google-merchant-feed.xml'
     | '/happening-now'
     | '/houston'
+    | '/issue-guides.txt'
     | '/keep-texas-red'
     | '/laws'
     | '/laws-to-know'
@@ -3182,6 +4631,8 @@ export interface FileRouteTypes {
     | '/moving-to-texas'
     | '/moving-to-texas-checklist'
     | '/news-sitemap.xml'
+    | '/policy'
+    | '/policy-trackers.txt'
     | '/privacy'
     | '/register-to-vote'
     | '/representatives'
@@ -3202,18 +4653,24 @@ export interface FileRouteTypes {
     | '/sitemap-legislature.xml'
     | '/sitemap-news.xml'
     | '/sitemap-pages.xml'
+    | '/sitemap-political-figures.xml'
     | '/sitemap-products.xml'
     | '/sitemap-representatives.xml'
+    | '/sitemap-sources.xml'
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
     | '/terms-of-service'
     | '/texas'
     | '/texas-agriculture'
+    | '/texas-attorney-general'
     | '/texas-border-security'
     | '/texas-budget-planner'
     | '/texas-business'
+    | '/texas-case'
+    | '/texas-child-support'
     | '/texas-closing-cost-calculator'
+    | '/texas-comptroller'
     | '/texas-cost-of-living-calculator'
     | '/texas-data'
     | '/texas-down-payment-assistance-calculator'
@@ -3235,6 +4692,7 @@ export interface FileRouteTypes {
     | '/texas-mortgage-calculator'
     | '/texas-mortgage-payoff-calculator'
     | '/texas-moving-cost-calculator'
+    | '/texas-political-reference'
     | '/texas-politics'
     | '/texas-property-tax-increase-calculator'
     | '/texas-property-tax-protest-guide'
@@ -3244,6 +4702,7 @@ export interface FileRouteTypes {
     | '/texas-salary-calculator'
     | '/texas-salary-comparison-by-city'
     | '/texas-sales-tax-explained'
+    | '/texas-secretary-of-state'
     | '/texas-utility-cost-calculator'
     | '/texas-veterans'
     | '/topics'
@@ -3251,14 +4710,26 @@ export interface FileRouteTypes {
     | '/voting-locations'
     | '/admin/coverage-gaps'
     | '/admin/governance-health'
+    | '/admin/newsroom'
+    | '/admin/newsroom-backtest'
     | '/admin/newsroom-metrics'
+    | '/admin/newsroom-shadow'
     | '/admin/shop-products'
+    | '/admin/source-provenance'
     | '/api/content-disposition'
     | '/api/governance-health'
     | '/api/platform-core-status'
     | '/api/publication-gate'
+    | '/api/reference-freshness'
     | '/article/$slug'
     | '/authors/$slug'
+    | '/civic-tools/bill-finder'
+    | '/civic-tools/compare-legislators'
+    | '/civic-tools/education-freedom-account-guide'
+    | '/civic-tools/government-authority-finder'
+    | '/civic-tools/texas-law-finder'
+    | '/data/$slug'
+    | '/districts/$districtSlug'
     | '/dmv/cdl'
     | '/dmv/cdl-classes'
     | '/dmv/cdl-endorsements'
@@ -3281,6 +4752,7 @@ export interface FileRouteTypes {
     | '/elections/methodology'
     | '/elections/polls'
     | '/elections/races'
+    | '/elections/reference.json'
     | '/elections/results'
     | '/elections/statewide'
     | '/elections/voting'
@@ -3307,17 +4779,92 @@ export interface FileRouteTypes {
     | '/explore/trip-planner'
     | '/explore/wildlife-management-areas'
     | '/guides/$slug'
+    | '/issues/$slug'
+    | '/issues/texas-government-accountability-handbook'
+    | '/issues/texas-local-government-handbook'
+    | '/issues/texas-policy-handbook'
     | '/laws/constitutional-amendments'
     | '/laws/effective-dates'
+    | '/laws/topics'
     | '/news/$slug'
+    | '/news/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity'
+    | '/news/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity-in-2026-explained-simply'
     | '/news/2026-08-09-canyon-lake-full-capacity-recovery'
+    | '/news/canyon-lake-pushes-to-full-capacity-following-multiyear-drought-2025-d9be1db3'
     | '/news/isd-tax-burdens'
+    | '/news/moving-to-austin-guide'
+    | '/news/moving-to-dallas-fort-worth-guide'
+    | '/news/moving-to-el-paso-guide'
+    | '/news/moving-to-houston-address-checklist'
+    | '/news/moving-to-san-antonio-guide'
+    | '/news/moving-to-texas-guide'
     | '/news/non-political'
+    | '/news/renting-vs-buying-in-texas'
+    | '/news/salary-needed-to-buy-a-house-in-texas'
+    | '/news/should-you-refinance-texas-mortgage'
+    | '/news/texas-closing-costs-guide'
+    | '/news/texas-home-equity-heloc-guide'
+    | '/news/texas-homeowners-insurance-guide'
+    | '/news/texas-house-down-payment-guide'
+    | '/news/texas-mortgage-payment-guide'
+    | '/news/texas-utility-costs-guide'
+    | '/news/true-cost-of-owning-a-home-in-texas'
+    | '/policy/$slug'
+    | '/policy/advanced-nuclear-energy'
+    | '/policy/agriculture-family-farms'
+    | '/policy/ai-governance'
+    | '/policy/app-store-parental-controls'
+    | '/policy/assisted-suicide'
+    | '/policy/biometric-privacy'
+    | '/policy/bitcoin-reserve'
+    | '/policy/campus-free-speech'
+    | '/policy/career-technical-workforce'
+    | '/policy/central-bank-digital-currency'
+    | '/policy/charter-schools'
+    | '/policy/china-investment-restrictions'
+    | '/policy/constitutional-tax-protections'
+    | '/policy/consumable-hemp-cannabis'
+    | '/policy/consumer-data-privacy'
+    | '/policy/critical-minerals-rare-earths'
+    | '/policy/data-brokers'
+    | '/policy/data-centers-large-loads'
+    | '/policy/e-verify-employment'
+    | '/policy/election-integrity'
+    | '/policy/esg-energy-boycotts'
+    | '/policy/faith-based-child-welfare'
+    | '/policy/foreign-adversary-property'
+    | '/policy/genetic-data-privacy'
+    | '/policy/higher-education-dei'
+    | '/policy/homeschool-autonomy'
+    | '/policy/local-preemption-regulatory-consistency'
+    | '/policy/medical-freedom'
+    | '/policy/minor-gender-transition-medical-law'
+    | '/policy/occupational-licensing-mobility'
+    | '/policy/online-age-verification'
+    | '/policy/parental-rights'
+    | '/policy/public-sector-labor'
+    | '/policy/regulatory-reform-treo'
+    | '/policy/religious-liberty'
+    | '/policy/right-to-work'
+    | '/policy/school-library-materials'
+    | '/policy/school-safety-security'
+    | '/policy/scope-act-online-minors'
+    | '/policy/semiconductor-manufacturing'
+    | '/policy/state-federal-power'
+    | '/policy/tanf-work-participation'
+    | '/policy/texas-cyber-command'
+    | '/policy/violent-offense-bail'
+    | '/policy/womens-sports'
     | '/representatives/$representativeSlug'
     | '/shop/$productId'
     | '/shop/checkout'
     | '/shop/checkout-return'
+    | '/shop/checkout-sandbox'
+    | '/shop/checkout-sandbox-return'
+    | '/sources/$slug'
     | '/texas-business/$topic'
+    | '/texas-case/$slug'
+    | '/texas-case/facts'
     | '/texas-data/$datasetSlug'
     | '/texas-government/$entitySlug'
     | '/texas-government/agencies'
@@ -3326,7 +4873,13 @@ export interface FileRouteTypes {
     | '/texas-legislature/senate'
     | '/texas-legislature/votes'
     | '/texas-news/$topic'
+    | '/texas-political-reference/$slug'
+    | '/texas-politics/figures'
     | '/texas-sports/$league'
+    | '/tools/texas-budget-headroom'
+    | '/tools/texas-rainy-day-fund'
+    | '/tools/texas-spending-growth-cap'
+    | '/tools/texas-tax-structure-comparison'
     | '/vehicles/auto-insurance-requirements'
     | '/vehicles/bonded-titles'
     | '/vehicles/buying-a-car'
@@ -3355,11 +4908,14 @@ export interface FileRouteTypes {
     | '/bills'
     | '/elections'
     | '/explore'
+    | '/issues'
     | '/news'
     | '/shop'
+    | '/sources'
     | '/texas-legislature'
     | '/texas-news'
     | '/texas-sports'
+    | '/tools'
     | '/admin/bills/backfill'
     | '/admin/bills/editorial'
     | '/admin/bills/enrichment'
@@ -3378,8 +4934,10 @@ export interface FileRouteTypes {
     | '/api/public/cross-site-publication-health'
     | '/api/public/deployment-fingerprint'
     | '/api/public/newsroom-health'
+    | '/api/public/official-bill-text'
     | '/api/public/store-products'
     | '/api/public/texasdefined-checkout'
+    | '/api/shop/stripe-webhook'
     | '/bills/subject/$subjectSlug'
     | '/elections/candidates/$candidateSlug'
     | '/elections/districts/$districtSlug'
@@ -3394,9 +4952,13 @@ export interface FileRouteTypes {
     | '/explore/river/$slug'
     | '/explore/state-park/$slug'
     | '/explore/trip/$token'
-    | '/lovable/email/suppression'
+    | '/laws/topic/$slug'
+    | '/product-offer/$productId/$variantId'
+    | '/texas-case/facts/$slug'
+    | '/texas-government/agencies/$agencySlug'
     | '/texas-legislature/committees/$committeeSlug'
     | '/texas-legislature/sessions/$sessionSlug'
+    | '/texas-politics/figures/$figureSlug'
     | '/texas-resources/journey/$journeyId'
     | '/texas-resources/topic/$topicId'
     | '/texas-resources/type/$type'
@@ -3413,36 +4975,55 @@ export interface FileRouteTypes {
     | '/api/public/explore/entities'
     | '/api/public/explore/map'
     | '/api/public/explore/recommendations'
+    | '/api/public/hooks/adsense-image-backfill'
+    | '/api/public/hooks/auto-facebook-post'
+    | '/api/public/hooks/auto-facebook-post-texasdefined'
+    | '/api/public/hooks/auto-facebook-post-texasdefined-smart'
     | '/api/public/hooks/backfill-featured-images'
+    | '/api/public/hooks/build-newsroom-research-packets'
     | '/api/public/hooks/classify-article-pillars'
     | '/api/public/hooks/classify-pillars'
     | '/api/public/hooks/classify-sports'
+    | '/api/public/hooks/cluster-newsroom-stories'
+    | '/api/public/hooks/decide-newsroom-packages'
+    | '/api/public/hooks/enrich-newsroom-rss-evidence'
+    | '/api/public/hooks/finalize-newsroom-article'
+    | '/api/public/hooks/generate-daily-brief'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
+    | '/api/public/hooks/generate-newsroom'
     | '/api/public/hooks/generate-sports'
     | '/api/public/hooks/health'
+    | '/api/public/hooks/image-backlog-recovery'
     | '/api/public/hooks/ingest-feeds'
     | '/api/public/hooks/ingest-sports'
     | '/api/public/hooks/list-shops'
+    | '/api/public/hooks/newsroom-generation-diagnostics'
+    | '/api/public/hooks/normalize-newsroom-feed'
+    | '/api/public/hooks/publish-overdue-gap'
     | '/api/public/hooks/publishing-safety-net'
+    | '/api/public/hooks/reconcile-news-history'
     | '/api/public/hooks/remediate-aug10-flyover'
     | '/api/public/hooks/repair-article-structure'
     | '/api/public/hooks/repair-sb37-production'
+    | '/api/public/hooks/retest-newsroom-shadow'
     | '/api/public/hooks/run-generate-news'
+    | '/api/public/hooks/score-newsroom-stories'
     | '/api/public/hooks/score-viral'
     | '/api/public/hooks/score-viral-backfill'
     | '/api/public/hooks/sync-printify'
     | '/api/public/hooks/track-variant'
+    | '/api/public/payments/health'
+    | '/api/public/payments/sandbox-config'
+    | '/api/public/payments/sandbox-health'
     | '/api/public/payments/webhook'
-    | '/lovable/email/queue/process'
-    | '/lovable/email/transactional/preview'
-    | '/lovable/email/transactional/send'
     | '/admin/explore/imports'
     | '/bills/texas/$legislature'
     | '/api/public/oauth/facebook/callback'
     | '/api/public/oauth/facebook/start'
     | '/bills/texas/$legislature/$billType/$billNumber'
     | '/bills/texas/$legislature/$billType'
+    | '/bills/texas/$legislature/$billType/$billNumber/reference.json'
   id:
     | '__root__'
     | '/'
@@ -3453,10 +5034,13 @@ export interface FileRouteTypes {
     | '/bills'
     | '/candidate-guides'
     | '/citation-guide'
+    | '/civic-tools'
     | '/contact'
     | '/contact-legislators'
     | '/county-elections'
     | '/dallas-fort-worth'
+    | '/data'
+    | '/districts'
     | '/dmv'
     | '/editorial-standards'
     | '/el-paso'
@@ -3470,6 +5054,7 @@ export interface FileRouteTypes {
     | '/google-merchant-feed.xml'
     | '/happening-now'
     | '/houston'
+    | '/issue-guides.txt'
     | '/keep-texas-red'
     | '/laws'
     | '/laws-to-know'
@@ -3481,6 +5066,8 @@ export interface FileRouteTypes {
     | '/moving-to-texas-checklist'
     | '/news'
     | '/news-sitemap.xml'
+    | '/policy'
+    | '/policy-trackers.txt'
     | '/privacy'
     | '/register-to-vote'
     | '/representatives'
@@ -3502,18 +5089,24 @@ export interface FileRouteTypes {
     | '/sitemap-legislature.xml'
     | '/sitemap-news.xml'
     | '/sitemap-pages.xml'
+    | '/sitemap-political-figures.xml'
     | '/sitemap-products.xml'
     | '/sitemap-representatives.xml'
+    | '/sitemap-sources.xml'
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
     | '/terms-of-service'
     | '/texas'
     | '/texas-agriculture'
+    | '/texas-attorney-general'
     | '/texas-border-security'
     | '/texas-budget-planner'
     | '/texas-business'
+    | '/texas-case'
+    | '/texas-child-support'
     | '/texas-closing-cost-calculator'
+    | '/texas-comptroller'
     | '/texas-cost-of-living-calculator'
     | '/texas-data'
     | '/texas-down-payment-assistance-calculator'
@@ -3537,6 +5130,7 @@ export interface FileRouteTypes {
     | '/texas-mortgage-payoff-calculator'
     | '/texas-moving-cost-calculator'
     | '/texas-news'
+    | '/texas-political-reference'
     | '/texas-politics'
     | '/texas-property-tax-increase-calculator'
     | '/texas-property-tax-protest-guide'
@@ -3546,6 +5140,7 @@ export interface FileRouteTypes {
     | '/texas-salary-calculator'
     | '/texas-salary-comparison-by-city'
     | '/texas-sales-tax-explained'
+    | '/texas-secretary-of-state'
     | '/texas-sports'
     | '/texas-utility-cost-calculator'
     | '/texas-veterans'
@@ -3554,14 +5149,26 @@ export interface FileRouteTypes {
     | '/voting-locations'
     | '/admin/coverage-gaps'
     | '/admin/governance-health'
+    | '/admin/newsroom'
+    | '/admin/newsroom-backtest'
     | '/admin/newsroom-metrics'
+    | '/admin/newsroom-shadow'
     | '/admin/shop-products'
+    | '/admin/source-provenance'
     | '/api/content-disposition'
     | '/api/governance-health'
     | '/api/platform-core-status'
     | '/api/publication-gate'
+    | '/api/reference-freshness'
     | '/article/$slug'
     | '/authors/$slug'
+    | '/civic-tools/bill-finder'
+    | '/civic-tools/compare-legislators'
+    | '/civic-tools/education-freedom-account-guide'
+    | '/civic-tools/government-authority-finder'
+    | '/civic-tools/texas-law-finder'
+    | '/data/$slug'
+    | '/districts/$districtSlug'
     | '/dmv/cdl'
     | '/dmv/cdl-classes'
     | '/dmv/cdl-endorsements'
@@ -3585,6 +5192,7 @@ export interface FileRouteTypes {
     | '/elections/methodology'
     | '/elections/polls'
     | '/elections/races'
+    | '/elections/reference.json'
     | '/elections/results'
     | '/elections/statewide'
     | '/elections/voting'
@@ -3611,17 +5219,92 @@ export interface FileRouteTypes {
     | '/explore/trip-planner'
     | '/explore/wildlife-management-areas'
     | '/guides/$slug'
+    | '/issues/$slug'
+    | '/issues/texas-government-accountability-handbook'
+    | '/issues/texas-local-government-handbook'
+    | '/issues/texas-policy-handbook'
     | '/laws/constitutional-amendments'
     | '/laws/effective-dates'
+    | '/laws/topics'
     | '/news/$slug'
+    | '/news/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity'
+    | '/news/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity-in-2026-explained-simply'
     | '/news/2026-08-09-canyon-lake-full-capacity-recovery'
+    | '/news/canyon-lake-pushes-to-full-capacity-following-multiyear-drought-2025-d9be1db3'
     | '/news/isd-tax-burdens'
+    | '/news/moving-to-austin-guide'
+    | '/news/moving-to-dallas-fort-worth-guide'
+    | '/news/moving-to-el-paso-guide'
+    | '/news/moving-to-houston-address-checklist'
+    | '/news/moving-to-san-antonio-guide'
+    | '/news/moving-to-texas-guide'
     | '/news/non-political'
+    | '/news/renting-vs-buying-in-texas'
+    | '/news/salary-needed-to-buy-a-house-in-texas'
+    | '/news/should-you-refinance-texas-mortgage'
+    | '/news/texas-closing-costs-guide'
+    | '/news/texas-home-equity-heloc-guide'
+    | '/news/texas-homeowners-insurance-guide'
+    | '/news/texas-house-down-payment-guide'
+    | '/news/texas-mortgage-payment-guide'
+    | '/news/texas-utility-costs-guide'
+    | '/news/true-cost-of-owning-a-home-in-texas'
+    | '/policy/$slug'
+    | '/policy/advanced-nuclear-energy'
+    | '/policy/agriculture-family-farms'
+    | '/policy/ai-governance'
+    | '/policy/app-store-parental-controls'
+    | '/policy/assisted-suicide'
+    | '/policy/biometric-privacy'
+    | '/policy/bitcoin-reserve'
+    | '/policy/campus-free-speech'
+    | '/policy/career-technical-workforce'
+    | '/policy/central-bank-digital-currency'
+    | '/policy/charter-schools'
+    | '/policy/china-investment-restrictions'
+    | '/policy/constitutional-tax-protections'
+    | '/policy/consumable-hemp-cannabis'
+    | '/policy/consumer-data-privacy'
+    | '/policy/critical-minerals-rare-earths'
+    | '/policy/data-brokers'
+    | '/policy/data-centers-large-loads'
+    | '/policy/e-verify-employment'
+    | '/policy/election-integrity'
+    | '/policy/esg-energy-boycotts'
+    | '/policy/faith-based-child-welfare'
+    | '/policy/foreign-adversary-property'
+    | '/policy/genetic-data-privacy'
+    | '/policy/higher-education-dei'
+    | '/policy/homeschool-autonomy'
+    | '/policy/local-preemption-regulatory-consistency'
+    | '/policy/medical-freedom'
+    | '/policy/minor-gender-transition-medical-law'
+    | '/policy/occupational-licensing-mobility'
+    | '/policy/online-age-verification'
+    | '/policy/parental-rights'
+    | '/policy/public-sector-labor'
+    | '/policy/regulatory-reform-treo'
+    | '/policy/religious-liberty'
+    | '/policy/right-to-work'
+    | '/policy/school-library-materials'
+    | '/policy/school-safety-security'
+    | '/policy/scope-act-online-minors'
+    | '/policy/semiconductor-manufacturing'
+    | '/policy/state-federal-power'
+    | '/policy/tanf-work-participation'
+    | '/policy/texas-cyber-command'
+    | '/policy/violent-offense-bail'
+    | '/policy/womens-sports'
     | '/representatives/$representativeSlug'
     | '/shop/$productId'
     | '/shop/checkout'
     | '/shop/checkout-return'
+    | '/shop/checkout-sandbox'
+    | '/shop/checkout-sandbox-return'
+    | '/sources/$slug'
     | '/texas-business/$topic'
+    | '/texas-case/$slug'
+    | '/texas-case/facts'
     | '/texas-data/$datasetSlug'
     | '/texas-government/$entitySlug'
     | '/texas-government/agencies'
@@ -3632,7 +5315,13 @@ export interface FileRouteTypes {
     | '/texas-legislature/sessions'
     | '/texas-legislature/votes'
     | '/texas-news/$topic'
+    | '/texas-political-reference/$slug'
+    | '/texas-politics/figures'
     | '/texas-sports/$league'
+    | '/tools/texas-budget-headroom'
+    | '/tools/texas-rainy-day-fund'
+    | '/tools/texas-spending-growth-cap'
+    | '/tools/texas-tax-structure-comparison'
     | '/vehicles/auto-insurance-requirements'
     | '/vehicles/bonded-titles'
     | '/vehicles/buying-a-car'
@@ -3661,11 +5350,14 @@ export interface FileRouteTypes {
     | '/bills/'
     | '/elections/'
     | '/explore/'
+    | '/issues/'
     | '/news/'
     | '/shop/'
+    | '/sources/'
     | '/texas-legislature/'
     | '/texas-news/'
     | '/texas-sports/'
+    | '/tools/'
     | '/admin/bills/backfill'
     | '/admin/bills/editorial'
     | '/admin/bills/enrichment'
@@ -3684,8 +5376,10 @@ export interface FileRouteTypes {
     | '/api/public/cross-site-publication-health'
     | '/api/public/deployment-fingerprint'
     | '/api/public/newsroom-health'
+    | '/api/public/official-bill-text'
     | '/api/public/store-products'
     | '/api/public/texasdefined-checkout'
+    | '/api/shop/stripe-webhook'
     | '/bills/subject/$subjectSlug'
     | '/elections/candidates_/$candidateSlug'
     | '/elections/districts/$districtSlug'
@@ -3700,9 +5394,13 @@ export interface FileRouteTypes {
     | '/explore/river/$slug'
     | '/explore/state-park/$slug'
     | '/explore/trip/$token'
-    | '/lovable/email/suppression'
+    | '/laws/topic/$slug'
+    | '/product-offer/$productId/$variantId'
+    | '/texas-case/facts/$slug'
+    | '/texas-government/agencies/$agencySlug'
     | '/texas-legislature/committees/$committeeSlug'
     | '/texas-legislature/sessions/$sessionSlug'
+    | '/texas-politics/figures_/$figureSlug'
     | '/texas-resources/journey/$journeyId'
     | '/texas-resources/topic/$topicId'
     | '/texas-resources/type/$type'
@@ -3719,36 +5417,55 @@ export interface FileRouteTypes {
     | '/api/public/explore/entities'
     | '/api/public/explore/map'
     | '/api/public/explore/recommendations'
+    | '/api/public/hooks/adsense-image-backfill'
+    | '/api/public/hooks/auto-facebook-post'
+    | '/api/public/hooks/auto-facebook-post-texasdefined'
+    | '/api/public/hooks/auto-facebook-post-texasdefined-smart'
     | '/api/public/hooks/backfill-featured-images'
+    | '/api/public/hooks/build-newsroom-research-packets'
     | '/api/public/hooks/classify-article-pillars'
     | '/api/public/hooks/classify-pillars'
     | '/api/public/hooks/classify-sports'
+    | '/api/public/hooks/cluster-newsroom-stories'
+    | '/api/public/hooks/decide-newsroom-packages'
+    | '/api/public/hooks/enrich-newsroom-rss-evidence'
+    | '/api/public/hooks/finalize-newsroom-article'
+    | '/api/public/hooks/generate-daily-brief'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
+    | '/api/public/hooks/generate-newsroom'
     | '/api/public/hooks/generate-sports'
     | '/api/public/hooks/health'
+    | '/api/public/hooks/image-backlog-recovery'
     | '/api/public/hooks/ingest-feeds'
     | '/api/public/hooks/ingest-sports'
     | '/api/public/hooks/list-shops'
+    | '/api/public/hooks/newsroom-generation-diagnostics'
+    | '/api/public/hooks/normalize-newsroom-feed'
+    | '/api/public/hooks/publish-overdue-gap'
     | '/api/public/hooks/publishing-safety-net'
+    | '/api/public/hooks/reconcile-news-history'
     | '/api/public/hooks/remediate-aug10-flyover'
     | '/api/public/hooks/repair-article-structure'
     | '/api/public/hooks/repair-sb37-production'
+    | '/api/public/hooks/retest-newsroom-shadow'
     | '/api/public/hooks/run-generate-news'
+    | '/api/public/hooks/score-newsroom-stories'
     | '/api/public/hooks/score-viral'
     | '/api/public/hooks/score-viral-backfill'
     | '/api/public/hooks/sync-printify'
     | '/api/public/hooks/track-variant'
+    | '/api/public/payments/health'
+    | '/api/public/payments/sandbox-config'
+    | '/api/public/payments/sandbox-health'
     | '/api/public/payments/webhook'
-    | '/lovable/email/queue/process'
-    | '/lovable/email/transactional/preview'
-    | '/lovable/email/transactional/send'
     | '/admin/explore/imports/'
     | '/bills/texas/$legislature/'
     | '/api/public/oauth/facebook/callback'
     | '/api/public/oauth/facebook/start'
     | '/bills/texas/$legislature/$billType/$billNumber'
     | '/bills/texas/$legislature/$billType/'
+    | '/bills/texas/$legislature/$billType/$billNumber/reference.json'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -3760,10 +5477,13 @@ export interface RootRouteChildren {
   BillsRoute: typeof BillsRouteWithChildren
   CandidateGuidesRoute: typeof CandidateGuidesRoute
   CitationGuideRoute: typeof CitationGuideRoute
+  CivicToolsRoute: typeof CivicToolsRouteWithChildren
   ContactRoute: typeof ContactRoute
   ContactLegislatorsRoute: typeof ContactLegislatorsRoute
   CountyElectionsRoute: typeof CountyElectionsRoute
   DallasFortWorthRoute: typeof DallasFortWorthRoute
+  DataRoute: typeof DataRouteWithChildren
+  DistrictsRoute: typeof DistrictsRouteWithChildren
   DmvRoute: typeof DmvRouteWithChildren
   EditorialStandardsRoute: typeof EditorialStandardsRoute
   ElPasoRoute: typeof ElPasoRoute
@@ -3777,6 +5497,7 @@ export interface RootRouteChildren {
   GoogleMerchantFeedDotxmlRoute: typeof GoogleMerchantFeedDotxmlRoute
   HappeningNowRoute: typeof HappeningNowRoute
   HoustonRoute: typeof HoustonRoute
+  IssueGuidesDottxtRoute: typeof IssueGuidesDottxtRoute
   KeepTexasRedRoute: typeof KeepTexasRedRoute
   LawsRoute: typeof LawsRouteWithChildren
   LawsToKnowRoute: typeof LawsToKnowRoute
@@ -3788,6 +5509,8 @@ export interface RootRouteChildren {
   MovingToTexasChecklistRoute: typeof MovingToTexasChecklistRoute
   NewsRoute: typeof NewsRouteWithChildren
   NewsSitemapDotxmlRoute: typeof NewsSitemapDotxmlRoute
+  PolicyRoute: typeof PolicyRouteWithChildren
+  PolicyTrackersDottxtRoute: typeof PolicyTrackersDottxtRoute
   PrivacyRoute: typeof PrivacyRoute
   RegisterToVoteRoute: typeof RegisterToVoteRoute
   RepresentativesRoute: typeof RepresentativesRouteWithChildren
@@ -3809,18 +5532,24 @@ export interface RootRouteChildren {
   SitemapLegislatureDotxmlRoute: typeof SitemapLegislatureDotxmlRoute
   SitemapNewsDotxmlRoute: typeof SitemapNewsDotxmlRoute
   SitemapPagesDotxmlRoute: typeof SitemapPagesDotxmlRoute
+  SitemapPoliticalFiguresDotxmlRoute: typeof SitemapPoliticalFiguresDotxmlRoute
   SitemapProductsDotxmlRoute: typeof SitemapProductsDotxmlRoute
   SitemapRepresentativesDotxmlRoute: typeof SitemapRepresentativesDotxmlRoute
+  SitemapSourcesDotxmlRoute: typeof SitemapSourcesDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TaxCalculatorRoute: typeof TaxCalculatorRoute
   TermsRoute: typeof TermsRoute
   TermsOfServiceRoute: typeof TermsOfServiceRoute
   TexasRoute: typeof TexasRoute
   TexasAgricultureRoute: typeof TexasAgricultureRoute
+  TexasAttorneyGeneralRoute: typeof TexasAttorneyGeneralRoute
   TexasBorderSecurityRoute: typeof TexasBorderSecurityRoute
   TexasBudgetPlannerRoute: typeof TexasBudgetPlannerRoute
   TexasBusinessRoute: typeof TexasBusinessRouteWithChildren
+  TexasCaseRoute: typeof TexasCaseRouteWithChildren
+  TexasChildSupportRoute: typeof TexasChildSupportRoute
   TexasClosingCostCalculatorRoute: typeof TexasClosingCostCalculatorRoute
+  TexasComptrollerRoute: typeof TexasComptrollerRoute
   TexasCostOfLivingCalculatorRoute: typeof TexasCostOfLivingCalculatorRoute
   TexasDataRoute: typeof TexasDataRouteWithChildren
   TexasDownPaymentAssistanceCalculatorRoute: typeof TexasDownPaymentAssistanceCalculatorRoute
@@ -3844,7 +5573,8 @@ export interface RootRouteChildren {
   TexasMortgagePayoffCalculatorRoute: typeof TexasMortgagePayoffCalculatorRoute
   TexasMovingCostCalculatorRoute: typeof TexasMovingCostCalculatorRoute
   TexasNewsRoute: typeof TexasNewsRouteWithChildren
-  TexasPoliticsRoute: typeof TexasPoliticsRoute
+  TexasPoliticalReferenceRoute: typeof TexasPoliticalReferenceRouteWithChildren
+  TexasPoliticsRoute: typeof TexasPoliticsRouteWithChildren
   TexasPropertyTaxIncreaseCalculatorRoute: typeof TexasPropertyTaxIncreaseCalculatorRoute
   TexasPropertyTaxProtestGuideRoute: typeof TexasPropertyTaxProtestGuideRoute
   TexasRefinanceSavingsCalculatorRoute: typeof TexasRefinanceSavingsCalculatorRoute
@@ -3853,6 +5583,7 @@ export interface RootRouteChildren {
   TexasSalaryCalculatorRoute: typeof TexasSalaryCalculatorRoute
   TexasSalaryComparisonByCityRoute: typeof TexasSalaryComparisonByCityRoute
   TexasSalesTaxExplainedRoute: typeof TexasSalesTaxExplainedRoute
+  TexasSecretaryOfStateRoute: typeof TexasSecretaryOfStateRoute
   TexasSportsRoute: typeof TexasSportsRouteWithChildren
   TexasUtilityCostCalculatorRoute: typeof TexasUtilityCostCalculatorRoute
   TexasVeteransRoute: typeof TexasVeteransRoute
@@ -3863,10 +5594,20 @@ export interface RootRouteChildren {
   ApiGovernanceHealthRoute: typeof ApiGovernanceHealthRoute
   ApiPlatformCoreStatusRoute: typeof ApiPlatformCoreStatusRoute
   ApiPublicationGateRoute: typeof ApiPublicationGateRoute
+  ApiReferenceFreshnessRoute: typeof ApiReferenceFreshnessRoute
   ArticleSlugRoute: typeof ArticleSlugRoute
   AuthorsSlugRoute: typeof AuthorsSlugRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   GuidesSlugRoute: typeof GuidesSlugRoute
+  IssuesSlugRoute: typeof IssuesSlugRoute
+  IssuesTexasGovernmentAccountabilityHandbookRoute: typeof IssuesTexasGovernmentAccountabilityHandbookRoute
+  IssuesTexasLocalGovernmentHandbookRoute: typeof IssuesTexasLocalGovernmentHandbookRoute
+  IssuesTexasPolicyHandbookRoute: typeof IssuesTexasPolicyHandbookRoute
+  SourcesSlugRoute: typeof SourcesSlugRoute
+  ToolsTexasBudgetHeadroomRoute: typeof ToolsTexasBudgetHeadroomRoute
+  ToolsTexasRainyDayFundRoute: typeof ToolsTexasRainyDayFundRoute
+  ToolsTexasSpendingGrowthCapRoute: typeof ToolsTexasSpendingGrowthCapRoute
+  ToolsTexasTaxStructureComparisonRoute: typeof ToolsTexasTaxStructureComparisonRoute
   VehiclesAutoInsuranceRequirementsRoute: typeof VehiclesAutoInsuranceRequirementsRoute
   VehiclesBondedTitlesRoute: typeof VehiclesBondedTitlesRoute
   VehiclesBuyingACarRoute: typeof VehiclesBuyingACarRoute
@@ -3891,6 +5632,9 @@ export interface RootRouteChildren {
   VehiclesTemporaryTagsRoute: typeof VehiclesTemporaryTagsRoute
   VehiclesTitleTransferRoute: typeof VehiclesTitleTransferRoute
   AuthorsIndexRoute: typeof AuthorsIndexRoute
+  IssuesIndexRoute: typeof IssuesIndexRoute
+  SourcesIndexRoute: typeof SourcesIndexRoute
+  ToolsIndexRoute: typeof ToolsIndexRoute
   ApiAdminGscSyncRoute: typeof ApiAdminGscSyncRoute
   ApiAdminLegislationSyncProxyRoute: typeof ApiAdminLegislationSyncProxyRouteWithChildren
   ApiAdminNewsroomMetricsRoute: typeof ApiAdminNewsroomMetricsRoute
@@ -3899,39 +5643,59 @@ export interface RootRouteChildren {
   ApiPublicCrossSitePublicationHealthRoute: typeof ApiPublicCrossSitePublicationHealthRoute
   ApiPublicDeploymentFingerprintRoute: typeof ApiPublicDeploymentFingerprintRoute
   ApiPublicNewsroomHealthRoute: typeof ApiPublicNewsroomHealthRoute
+  ApiPublicOfficialBillTextRoute: typeof ApiPublicOfficialBillTextRoute
   ApiPublicStoreProductsRoute: typeof ApiPublicStoreProductsRoute
   ApiPublicTexasdefinedCheckoutRoute: typeof ApiPublicTexasdefinedCheckoutRoute
-  LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
+  ApiShopStripeWebhookRoute: typeof ApiShopStripeWebhookRoute
+  ProductOfferProductIdVariantIdRoute: typeof ProductOfferProductIdVariantIdRoute
   ApiEmailTransactionalSendRoute: typeof ApiEmailTransactionalSendRoute
   ApiPublicArticleImageFilenameRoute: typeof ApiPublicArticleImageFilenameRoute
   ApiPublicExploreAutocompleteRoute: typeof ApiPublicExploreAutocompleteRoute
   ApiPublicExploreEntitiesRoute: typeof ApiPublicExploreEntitiesRoute
   ApiPublicExploreMapRoute: typeof ApiPublicExploreMapRoute
   ApiPublicExploreRecommendationsRoute: typeof ApiPublicExploreRecommendationsRoute
+  ApiPublicHooksAdsenseImageBackfillRoute: typeof ApiPublicHooksAdsenseImageBackfillRoute
+  ApiPublicHooksAutoFacebookPostRoute: typeof ApiPublicHooksAutoFacebookPostRoute
+  ApiPublicHooksAutoFacebookPostTexasdefinedRoute: typeof ApiPublicHooksAutoFacebookPostTexasdefinedRoute
+  ApiPublicHooksAutoFacebookPostTexasdefinedSmartRoute: typeof ApiPublicHooksAutoFacebookPostTexasdefinedSmartRoute
   ApiPublicHooksBackfillFeaturedImagesRoute: typeof ApiPublicHooksBackfillFeaturedImagesRoute
+  ApiPublicHooksBuildNewsroomResearchPacketsRoute: typeof ApiPublicHooksBuildNewsroomResearchPacketsRoute
   ApiPublicHooksClassifyArticlePillarsRoute: typeof ApiPublicHooksClassifyArticlePillarsRoute
   ApiPublicHooksClassifyPillarsRoute: typeof ApiPublicHooksClassifyPillarsRoute
   ApiPublicHooksClassifySportsRoute: typeof ApiPublicHooksClassifySportsRoute
+  ApiPublicHooksClusterNewsroomStoriesRoute: typeof ApiPublicHooksClusterNewsroomStoriesRoute
+  ApiPublicHooksDecideNewsroomPackagesRoute: typeof ApiPublicHooksDecideNewsroomPackagesRoute
+  ApiPublicHooksEnrichNewsroomRssEvidenceRoute: typeof ApiPublicHooksEnrichNewsroomRssEvidenceRoute
+  ApiPublicHooksFinalizeNewsroomArticleRoute: typeof ApiPublicHooksFinalizeNewsroomArticleRoute
+  ApiPublicHooksGenerateDailyBriefRoute: typeof ApiPublicHooksGenerateDailyBriefRoute
   ApiPublicHooksGenerateEvergreenRoute: typeof ApiPublicHooksGenerateEvergreenRoute
   ApiPublicHooksGenerateNewsRoute: typeof ApiPublicHooksGenerateNewsRoute
+  ApiPublicHooksGenerateNewsroomRoute: typeof ApiPublicHooksGenerateNewsroomRoute
   ApiPublicHooksGenerateSportsRoute: typeof ApiPublicHooksGenerateSportsRoute
   ApiPublicHooksHealthRoute: typeof ApiPublicHooksHealthRoute
+  ApiPublicHooksImageBacklogRecoveryRoute: typeof ApiPublicHooksImageBacklogRecoveryRoute
   ApiPublicHooksIngestFeedsRoute: typeof ApiPublicHooksIngestFeedsRoute
   ApiPublicHooksIngestSportsRoute: typeof ApiPublicHooksIngestSportsRoute
   ApiPublicHooksListShopsRoute: typeof ApiPublicHooksListShopsRoute
+  ApiPublicHooksNewsroomGenerationDiagnosticsRoute: typeof ApiPublicHooksNewsroomGenerationDiagnosticsRoute
+  ApiPublicHooksNormalizeNewsroomFeedRoute: typeof ApiPublicHooksNormalizeNewsroomFeedRoute
+  ApiPublicHooksPublishOverdueGapRoute: typeof ApiPublicHooksPublishOverdueGapRoute
   ApiPublicHooksPublishingSafetyNetRoute: typeof ApiPublicHooksPublishingSafetyNetRoute
+  ApiPublicHooksReconcileNewsHistoryRoute: typeof ApiPublicHooksReconcileNewsHistoryRoute
   ApiPublicHooksRemediateAug10FlyoverRoute: typeof ApiPublicHooksRemediateAug10FlyoverRoute
   ApiPublicHooksRepairArticleStructureRoute: typeof ApiPublicHooksRepairArticleStructureRoute
   ApiPublicHooksRepairSb37ProductionRoute: typeof ApiPublicHooksRepairSb37ProductionRoute
+  ApiPublicHooksRetestNewsroomShadowRoute: typeof ApiPublicHooksRetestNewsroomShadowRoute
   ApiPublicHooksRunGenerateNewsRoute: typeof ApiPublicHooksRunGenerateNewsRoute
+  ApiPublicHooksScoreNewsroomStoriesRoute: typeof ApiPublicHooksScoreNewsroomStoriesRoute
   ApiPublicHooksScoreViralRoute: typeof ApiPublicHooksScoreViralRoute
   ApiPublicHooksScoreViralBackfillRoute: typeof ApiPublicHooksScoreViralBackfillRoute
   ApiPublicHooksSyncPrintifyRoute: typeof ApiPublicHooksSyncPrintifyRoute
   ApiPublicHooksTrackVariantRoute: typeof ApiPublicHooksTrackVariantRoute
+  ApiPublicPaymentsHealthRoute: typeof ApiPublicPaymentsHealthRoute
+  ApiPublicPaymentsSandboxConfigRoute: typeof ApiPublicPaymentsSandboxConfigRoute
+  ApiPublicPaymentsSandboxHealthRoute: typeof ApiPublicPaymentsSandboxHealthRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
-  LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
-  LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
-  LovableEmailTransactionalSendRoute: typeof LovableEmailTransactionalSendRoute
   ApiPublicOauthFacebookCallbackRoute: typeof ApiPublicOauthFacebookCallbackRoute
   ApiPublicOauthFacebookStartRoute: typeof ApiPublicOauthFacebookStartRoute
 }
@@ -3978,6 +5742,13 @@ declare module '@tanstack/react-router' {
       path: '/texas-sports'
       fullPath: '/texas-sports'
       preLoaderRoute: typeof TexasSportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-secretary-of-state': {
+      id: '/texas-secretary-of-state'
+      path: '/texas-secretary-of-state'
+      fullPath: '/texas-secretary-of-state'
+      preLoaderRoute: typeof TexasSecretaryOfStateRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/texas-sales-tax-explained': {
@@ -4041,6 +5812,13 @@ declare module '@tanstack/react-router' {
       path: '/texas-politics'
       fullPath: '/texas-politics'
       preLoaderRoute: typeof TexasPoliticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-political-reference': {
+      id: '/texas-political-reference'
+      path: '/texas-political-reference'
+      fullPath: '/texas-political-reference'
+      preLoaderRoute: typeof TexasPoliticalReferenceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/texas-news': {
@@ -4204,11 +5982,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasCostOfLivingCalculatorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/texas-comptroller': {
+      id: '/texas-comptroller'
+      path: '/texas-comptroller'
+      fullPath: '/texas-comptroller'
+      preLoaderRoute: typeof TexasComptrollerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/texas-closing-cost-calculator': {
       id: '/texas-closing-cost-calculator'
       path: '/texas-closing-cost-calculator'
       fullPath: '/texas-closing-cost-calculator'
       preLoaderRoute: typeof TexasClosingCostCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-child-support': {
+      id: '/texas-child-support'
+      path: '/texas-child-support'
+      fullPath: '/texas-child-support'
+      preLoaderRoute: typeof TexasChildSupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-case': {
+      id: '/texas-case'
+      path: '/texas-case'
+      fullPath: '/texas-case'
+      preLoaderRoute: typeof TexasCaseRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/texas-business': {
@@ -4230,6 +6029,13 @@ declare module '@tanstack/react-router' {
       path: '/texas-border-security'
       fullPath: '/texas-border-security'
       preLoaderRoute: typeof TexasBorderSecurityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-attorney-general': {
+      id: '/texas-attorney-general'
+      path: '/texas-attorney-general'
+      fullPath: '/texas-attorney-general'
+      preLoaderRoute: typeof TexasAttorneyGeneralRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/texas-agriculture': {
@@ -4274,6 +6080,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap-sources.xml': {
+      id: '/sitemap-sources.xml'
+      path: '/sitemap-sources.xml'
+      fullPath: '/sitemap-sources.xml'
+      preLoaderRoute: typeof SitemapSourcesDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap-representatives.xml': {
       id: '/sitemap-representatives.xml'
       path: '/sitemap-representatives.xml'
@@ -4286,6 +6099,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap-products.xml'
       fullPath: '/sitemap-products.xml'
       preLoaderRoute: typeof SitemapProductsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-political-figures.xml': {
+      id: '/sitemap-political-figures.xml'
+      path: '/sitemap-political-figures.xml'
+      fullPath: '/sitemap-political-figures.xml'
+      preLoaderRoute: typeof SitemapPoliticalFiguresDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap-pages.xml': {
@@ -4435,6 +6255,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/policy-trackers.txt': {
+      id: '/policy-trackers.txt'
+      path: '/policy-trackers.txt'
+      fullPath: '/policy-trackers.txt'
+      preLoaderRoute: typeof PolicyTrackersDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/policy': {
+      id: '/policy'
+      path: '/policy'
+      fullPath: '/policy'
+      preLoaderRoute: typeof PolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/news-sitemap.xml': {
       id: '/news-sitemap.xml'
       path: '/news-sitemap.xml'
@@ -4510,6 +6344,13 @@ declare module '@tanstack/react-router' {
       path: '/keep-texas-red'
       fullPath: '/keep-texas-red'
       preLoaderRoute: typeof KeepTexasRedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/issue-guides.txt': {
+      id: '/issue-guides.txt'
+      path: '/issue-guides.txt'
+      fullPath: '/issue-guides.txt'
+      preLoaderRoute: typeof IssueGuidesDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/houston': {
@@ -4603,6 +6444,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DmvRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/districts': {
+      id: '/districts'
+      path: '/districts'
+      fullPath: '/districts'
+      preLoaderRoute: typeof DistrictsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/data': {
+      id: '/data'
+      path: '/data'
+      fullPath: '/data'
+      preLoaderRoute: typeof DataRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dallas-fort-worth': {
       id: '/dallas-fort-worth'
       path: '/dallas-fort-worth'
@@ -4629,6 +6484,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/civic-tools': {
+      id: '/civic-tools'
+      path: '/civic-tools'
+      fullPath: '/civic-tools'
+      preLoaderRoute: typeof CivicToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/citation-guide': {
@@ -4687,6 +6549,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tools/': {
+      id: '/tools/'
+      path: '/tools'
+      fullPath: '/tools/'
+      preLoaderRoute: typeof ToolsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/texas-sports/': {
       id: '/texas-sports/'
       path: '/'
@@ -4708,6 +6577,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasLegislatureIndexRouteImport
       parentRoute: typeof TexasLegislatureRoute
     }
+    '/sources/': {
+      id: '/sources/'
+      path: '/sources'
+      fullPath: '/sources/'
+      preLoaderRoute: typeof SourcesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shop/': {
       id: '/shop/'
       path: '/'
@@ -4721,6 +6597,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/news/'
       preLoaderRoute: typeof NewsIndexRouteImport
       parentRoute: typeof NewsRoute
+    }
+    '/issues/': {
+      id: '/issues/'
+      path: '/issues'
+      fullPath: '/issues/'
+      preLoaderRoute: typeof IssuesIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/explore/': {
       id: '/explore/'
@@ -4918,12 +6801,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VehiclesAutoInsuranceRequirementsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tools/texas-tax-structure-comparison': {
+      id: '/tools/texas-tax-structure-comparison'
+      path: '/tools/texas-tax-structure-comparison'
+      fullPath: '/tools/texas-tax-structure-comparison'
+      preLoaderRoute: typeof ToolsTexasTaxStructureComparisonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tools/texas-spending-growth-cap': {
+      id: '/tools/texas-spending-growth-cap'
+      path: '/tools/texas-spending-growth-cap'
+      fullPath: '/tools/texas-spending-growth-cap'
+      preLoaderRoute: typeof ToolsTexasSpendingGrowthCapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tools/texas-rainy-day-fund': {
+      id: '/tools/texas-rainy-day-fund'
+      path: '/tools/texas-rainy-day-fund'
+      fullPath: '/tools/texas-rainy-day-fund'
+      preLoaderRoute: typeof ToolsTexasRainyDayFundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tools/texas-budget-headroom': {
+      id: '/tools/texas-budget-headroom'
+      path: '/tools/texas-budget-headroom'
+      fullPath: '/tools/texas-budget-headroom'
+      preLoaderRoute: typeof ToolsTexasBudgetHeadroomRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/texas-sports/$league': {
       id: '/texas-sports/$league'
       path: '/$league'
       fullPath: '/texas-sports/$league'
       preLoaderRoute: typeof TexasSportsLeagueRouteImport
       parentRoute: typeof TexasSportsRoute
+    }
+    '/texas-politics/figures': {
+      id: '/texas-politics/figures'
+      path: '/figures'
+      fullPath: '/texas-politics/figures'
+      preLoaderRoute: typeof TexasPoliticsFiguresRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-political-reference/$slug': {
+      id: '/texas-political-reference/$slug'
+      path: '/$slug'
+      fullPath: '/texas-political-reference/$slug'
+      preLoaderRoute: typeof TexasPoliticalReferenceSlugRouteImport
+      parentRoute: typeof TexasPoliticalReferenceRoute
     }
     '/texas-news/$topic': {
       id: '/texas-news/$topic'
@@ -4995,12 +6920,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasDataDatasetSlugRouteImport
       parentRoute: typeof TexasDataRoute
     }
+    '/texas-case/facts': {
+      id: '/texas-case/facts'
+      path: '/facts'
+      fullPath: '/texas-case/facts'
+      preLoaderRoute: typeof TexasCaseFactsRouteImport
+      parentRoute: typeof TexasCaseRoute
+    }
+    '/texas-case/$slug': {
+      id: '/texas-case/$slug'
+      path: '/$slug'
+      fullPath: '/texas-case/$slug'
+      preLoaderRoute: typeof TexasCaseSlugRouteImport
+      parentRoute: typeof TexasCaseRoute
+    }
     '/texas-business/$topic': {
       id: '/texas-business/$topic'
       path: '/$topic'
       fullPath: '/texas-business/$topic'
       preLoaderRoute: typeof TexasBusinessTopicRouteImport
       parentRoute: typeof TexasBusinessRoute
+    }
+    '/sources/$slug': {
+      id: '/sources/$slug'
+      path: '/sources/$slug'
+      fullPath: '/sources/$slug'
+      preLoaderRoute: typeof SourcesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shop/checkout-sandbox-return': {
+      id: '/shop/checkout-sandbox-return'
+      path: '/checkout-sandbox-return'
+      fullPath: '/shop/checkout-sandbox-return'
+      preLoaderRoute: typeof ShopCheckoutSandboxReturnRouteImport
+      parentRoute: typeof ShopRoute
+    }
+    '/shop/checkout-sandbox': {
+      id: '/shop/checkout-sandbox'
+      path: '/checkout-sandbox'
+      fullPath: '/shop/checkout-sandbox'
+      preLoaderRoute: typeof ShopCheckoutSandboxRouteImport
+      parentRoute: typeof ShopRoute
     }
     '/shop/checkout-return': {
       id: '/shop/checkout-return'
@@ -5030,11 +6990,445 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RepresentativesRepresentativeSlugRouteImport
       parentRoute: typeof RepresentativesRoute
     }
+    '/policy/womens-sports': {
+      id: '/policy/womens-sports'
+      path: '/womens-sports'
+      fullPath: '/policy/womens-sports'
+      preLoaderRoute: typeof PolicyWomensSportsRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/violent-offense-bail': {
+      id: '/policy/violent-offense-bail'
+      path: '/violent-offense-bail'
+      fullPath: '/policy/violent-offense-bail'
+      preLoaderRoute: typeof PolicyViolentOffenseBailRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/texas-cyber-command': {
+      id: '/policy/texas-cyber-command'
+      path: '/texas-cyber-command'
+      fullPath: '/policy/texas-cyber-command'
+      preLoaderRoute: typeof PolicyTexasCyberCommandRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/tanf-work-participation': {
+      id: '/policy/tanf-work-participation'
+      path: '/tanf-work-participation'
+      fullPath: '/policy/tanf-work-participation'
+      preLoaderRoute: typeof PolicyTanfWorkParticipationRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/state-federal-power': {
+      id: '/policy/state-federal-power'
+      path: '/state-federal-power'
+      fullPath: '/policy/state-federal-power'
+      preLoaderRoute: typeof PolicyStateFederalPowerRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/semiconductor-manufacturing': {
+      id: '/policy/semiconductor-manufacturing'
+      path: '/semiconductor-manufacturing'
+      fullPath: '/policy/semiconductor-manufacturing'
+      preLoaderRoute: typeof PolicySemiconductorManufacturingRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/scope-act-online-minors': {
+      id: '/policy/scope-act-online-minors'
+      path: '/scope-act-online-minors'
+      fullPath: '/policy/scope-act-online-minors'
+      preLoaderRoute: typeof PolicyScopeActOnlineMinorsRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/school-safety-security': {
+      id: '/policy/school-safety-security'
+      path: '/school-safety-security'
+      fullPath: '/policy/school-safety-security'
+      preLoaderRoute: typeof PolicySchoolSafetySecurityRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/school-library-materials': {
+      id: '/policy/school-library-materials'
+      path: '/school-library-materials'
+      fullPath: '/policy/school-library-materials'
+      preLoaderRoute: typeof PolicySchoolLibraryMaterialsRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/right-to-work': {
+      id: '/policy/right-to-work'
+      path: '/right-to-work'
+      fullPath: '/policy/right-to-work'
+      preLoaderRoute: typeof PolicyRightToWorkRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/religious-liberty': {
+      id: '/policy/religious-liberty'
+      path: '/religious-liberty'
+      fullPath: '/policy/religious-liberty'
+      preLoaderRoute: typeof PolicyReligiousLibertyRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/regulatory-reform-treo': {
+      id: '/policy/regulatory-reform-treo'
+      path: '/regulatory-reform-treo'
+      fullPath: '/policy/regulatory-reform-treo'
+      preLoaderRoute: typeof PolicyRegulatoryReformTreoRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/public-sector-labor': {
+      id: '/policy/public-sector-labor'
+      path: '/public-sector-labor'
+      fullPath: '/policy/public-sector-labor'
+      preLoaderRoute: typeof PolicyPublicSectorLaborRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/parental-rights': {
+      id: '/policy/parental-rights'
+      path: '/parental-rights'
+      fullPath: '/policy/parental-rights'
+      preLoaderRoute: typeof PolicyParentalRightsRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/online-age-verification': {
+      id: '/policy/online-age-verification'
+      path: '/online-age-verification'
+      fullPath: '/policy/online-age-verification'
+      preLoaderRoute: typeof PolicyOnlineAgeVerificationRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/occupational-licensing-mobility': {
+      id: '/policy/occupational-licensing-mobility'
+      path: '/occupational-licensing-mobility'
+      fullPath: '/policy/occupational-licensing-mobility'
+      preLoaderRoute: typeof PolicyOccupationalLicensingMobilityRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/minor-gender-transition-medical-law': {
+      id: '/policy/minor-gender-transition-medical-law'
+      path: '/minor-gender-transition-medical-law'
+      fullPath: '/policy/minor-gender-transition-medical-law'
+      preLoaderRoute: typeof PolicyMinorGenderTransitionMedicalLawRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/medical-freedom': {
+      id: '/policy/medical-freedom'
+      path: '/medical-freedom'
+      fullPath: '/policy/medical-freedom'
+      preLoaderRoute: typeof PolicyMedicalFreedomRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/local-preemption-regulatory-consistency': {
+      id: '/policy/local-preemption-regulatory-consistency'
+      path: '/local-preemption-regulatory-consistency'
+      fullPath: '/policy/local-preemption-regulatory-consistency'
+      preLoaderRoute: typeof PolicyLocalPreemptionRegulatoryConsistencyRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/homeschool-autonomy': {
+      id: '/policy/homeschool-autonomy'
+      path: '/homeschool-autonomy'
+      fullPath: '/policy/homeschool-autonomy'
+      preLoaderRoute: typeof PolicyHomeschoolAutonomyRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/higher-education-dei': {
+      id: '/policy/higher-education-dei'
+      path: '/higher-education-dei'
+      fullPath: '/policy/higher-education-dei'
+      preLoaderRoute: typeof PolicyHigherEducationDeiRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/genetic-data-privacy': {
+      id: '/policy/genetic-data-privacy'
+      path: '/genetic-data-privacy'
+      fullPath: '/policy/genetic-data-privacy'
+      preLoaderRoute: typeof PolicyGeneticDataPrivacyRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/foreign-adversary-property': {
+      id: '/policy/foreign-adversary-property'
+      path: '/foreign-adversary-property'
+      fullPath: '/policy/foreign-adversary-property'
+      preLoaderRoute: typeof PolicyForeignAdversaryPropertyRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/faith-based-child-welfare': {
+      id: '/policy/faith-based-child-welfare'
+      path: '/faith-based-child-welfare'
+      fullPath: '/policy/faith-based-child-welfare'
+      preLoaderRoute: typeof PolicyFaithBasedChildWelfareRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/esg-energy-boycotts': {
+      id: '/policy/esg-energy-boycotts'
+      path: '/esg-energy-boycotts'
+      fullPath: '/policy/esg-energy-boycotts'
+      preLoaderRoute: typeof PolicyEsgEnergyBoycottsRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/election-integrity': {
+      id: '/policy/election-integrity'
+      path: '/election-integrity'
+      fullPath: '/policy/election-integrity'
+      preLoaderRoute: typeof PolicyElectionIntegrityRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/e-verify-employment': {
+      id: '/policy/e-verify-employment'
+      path: '/e-verify-employment'
+      fullPath: '/policy/e-verify-employment'
+      preLoaderRoute: typeof PolicyEVerifyEmploymentRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/data-centers-large-loads': {
+      id: '/policy/data-centers-large-loads'
+      path: '/data-centers-large-loads'
+      fullPath: '/policy/data-centers-large-loads'
+      preLoaderRoute: typeof PolicyDataCentersLargeLoadsRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/data-brokers': {
+      id: '/policy/data-brokers'
+      path: '/data-brokers'
+      fullPath: '/policy/data-brokers'
+      preLoaderRoute: typeof PolicyDataBrokersRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/critical-minerals-rare-earths': {
+      id: '/policy/critical-minerals-rare-earths'
+      path: '/critical-minerals-rare-earths'
+      fullPath: '/policy/critical-minerals-rare-earths'
+      preLoaderRoute: typeof PolicyCriticalMineralsRareEarthsRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/consumer-data-privacy': {
+      id: '/policy/consumer-data-privacy'
+      path: '/consumer-data-privacy'
+      fullPath: '/policy/consumer-data-privacy'
+      preLoaderRoute: typeof PolicyConsumerDataPrivacyRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/consumable-hemp-cannabis': {
+      id: '/policy/consumable-hemp-cannabis'
+      path: '/consumable-hemp-cannabis'
+      fullPath: '/policy/consumable-hemp-cannabis'
+      preLoaderRoute: typeof PolicyConsumableHempCannabisRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/constitutional-tax-protections': {
+      id: '/policy/constitutional-tax-protections'
+      path: '/constitutional-tax-protections'
+      fullPath: '/policy/constitutional-tax-protections'
+      preLoaderRoute: typeof PolicyConstitutionalTaxProtectionsRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/china-investment-restrictions': {
+      id: '/policy/china-investment-restrictions'
+      path: '/china-investment-restrictions'
+      fullPath: '/policy/china-investment-restrictions'
+      preLoaderRoute: typeof PolicyChinaInvestmentRestrictionsRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/charter-schools': {
+      id: '/policy/charter-schools'
+      path: '/charter-schools'
+      fullPath: '/policy/charter-schools'
+      preLoaderRoute: typeof PolicyCharterSchoolsRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/central-bank-digital-currency': {
+      id: '/policy/central-bank-digital-currency'
+      path: '/central-bank-digital-currency'
+      fullPath: '/policy/central-bank-digital-currency'
+      preLoaderRoute: typeof PolicyCentralBankDigitalCurrencyRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/career-technical-workforce': {
+      id: '/policy/career-technical-workforce'
+      path: '/career-technical-workforce'
+      fullPath: '/policy/career-technical-workforce'
+      preLoaderRoute: typeof PolicyCareerTechnicalWorkforceRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/campus-free-speech': {
+      id: '/policy/campus-free-speech'
+      path: '/campus-free-speech'
+      fullPath: '/policy/campus-free-speech'
+      preLoaderRoute: typeof PolicyCampusFreeSpeechRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/bitcoin-reserve': {
+      id: '/policy/bitcoin-reserve'
+      path: '/bitcoin-reserve'
+      fullPath: '/policy/bitcoin-reserve'
+      preLoaderRoute: typeof PolicyBitcoinReserveRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/biometric-privacy': {
+      id: '/policy/biometric-privacy'
+      path: '/biometric-privacy'
+      fullPath: '/policy/biometric-privacy'
+      preLoaderRoute: typeof PolicyBiometricPrivacyRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/assisted-suicide': {
+      id: '/policy/assisted-suicide'
+      path: '/assisted-suicide'
+      fullPath: '/policy/assisted-suicide'
+      preLoaderRoute: typeof PolicyAssistedSuicideRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/app-store-parental-controls': {
+      id: '/policy/app-store-parental-controls'
+      path: '/app-store-parental-controls'
+      fullPath: '/policy/app-store-parental-controls'
+      preLoaderRoute: typeof PolicyAppStoreParentalControlsRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/ai-governance': {
+      id: '/policy/ai-governance'
+      path: '/ai-governance'
+      fullPath: '/policy/ai-governance'
+      preLoaderRoute: typeof PolicyAiGovernanceRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/agriculture-family-farms': {
+      id: '/policy/agriculture-family-farms'
+      path: '/agriculture-family-farms'
+      fullPath: '/policy/agriculture-family-farms'
+      preLoaderRoute: typeof PolicyAgricultureFamilyFarmsRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/advanced-nuclear-energy': {
+      id: '/policy/advanced-nuclear-energy'
+      path: '/advanced-nuclear-energy'
+      fullPath: '/policy/advanced-nuclear-energy'
+      preLoaderRoute: typeof PolicyAdvancedNuclearEnergyRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/$slug': {
+      id: '/policy/$slug'
+      path: '/$slug'
+      fullPath: '/policy/$slug'
+      preLoaderRoute: typeof PolicySlugRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/news/true-cost-of-owning-a-home-in-texas': {
+      id: '/news/true-cost-of-owning-a-home-in-texas'
+      path: '/true-cost-of-owning-a-home-in-texas'
+      fullPath: '/news/true-cost-of-owning-a-home-in-texas'
+      preLoaderRoute: typeof NewsTrueCostOfOwningAHomeInTexasRouteImport
+      parentRoute: typeof NewsRoute
+    }
+    '/news/texas-utility-costs-guide': {
+      id: '/news/texas-utility-costs-guide'
+      path: '/texas-utility-costs-guide'
+      fullPath: '/news/texas-utility-costs-guide'
+      preLoaderRoute: typeof NewsTexasUtilityCostsGuideRouteImport
+      parentRoute: typeof NewsRoute
+    }
+    '/news/texas-mortgage-payment-guide': {
+      id: '/news/texas-mortgage-payment-guide'
+      path: '/texas-mortgage-payment-guide'
+      fullPath: '/news/texas-mortgage-payment-guide'
+      preLoaderRoute: typeof NewsTexasMortgagePaymentGuideRouteImport
+      parentRoute: typeof NewsRoute
+    }
+    '/news/texas-house-down-payment-guide': {
+      id: '/news/texas-house-down-payment-guide'
+      path: '/texas-house-down-payment-guide'
+      fullPath: '/news/texas-house-down-payment-guide'
+      preLoaderRoute: typeof NewsTexasHouseDownPaymentGuideRouteImport
+      parentRoute: typeof NewsRoute
+    }
+    '/news/texas-homeowners-insurance-guide': {
+      id: '/news/texas-homeowners-insurance-guide'
+      path: '/texas-homeowners-insurance-guide'
+      fullPath: '/news/texas-homeowners-insurance-guide'
+      preLoaderRoute: typeof NewsTexasHomeownersInsuranceGuideRouteImport
+      parentRoute: typeof NewsRoute
+    }
+    '/news/texas-home-equity-heloc-guide': {
+      id: '/news/texas-home-equity-heloc-guide'
+      path: '/texas-home-equity-heloc-guide'
+      fullPath: '/news/texas-home-equity-heloc-guide'
+      preLoaderRoute: typeof NewsTexasHomeEquityHelocGuideRouteImport
+      parentRoute: typeof NewsRoute
+    }
+    '/news/texas-closing-costs-guide': {
+      id: '/news/texas-closing-costs-guide'
+      path: '/texas-closing-costs-guide'
+      fullPath: '/news/texas-closing-costs-guide'
+      preLoaderRoute: typeof NewsTexasClosingCostsGuideRouteImport
+      parentRoute: typeof NewsRoute
+    }
+    '/news/should-you-refinance-texas-mortgage': {
+      id: '/news/should-you-refinance-texas-mortgage'
+      path: '/should-you-refinance-texas-mortgage'
+      fullPath: '/news/should-you-refinance-texas-mortgage'
+      preLoaderRoute: typeof NewsShouldYouRefinanceTexasMortgageRouteImport
+      parentRoute: typeof NewsRoute
+    }
+    '/news/salary-needed-to-buy-a-house-in-texas': {
+      id: '/news/salary-needed-to-buy-a-house-in-texas'
+      path: '/salary-needed-to-buy-a-house-in-texas'
+      fullPath: '/news/salary-needed-to-buy-a-house-in-texas'
+      preLoaderRoute: typeof NewsSalaryNeededToBuyAHouseInTexasRouteImport
+      parentRoute: typeof NewsRoute
+    }
+    '/news/renting-vs-buying-in-texas': {
+      id: '/news/renting-vs-buying-in-texas'
+      path: '/renting-vs-buying-in-texas'
+      fullPath: '/news/renting-vs-buying-in-texas'
+      preLoaderRoute: typeof NewsRentingVsBuyingInTexasRouteImport
+      parentRoute: typeof NewsRoute
+    }
     '/news/non-political': {
       id: '/news/non-political'
       path: '/non-political'
       fullPath: '/news/non-political'
       preLoaderRoute: typeof NewsNonPoliticalRouteImport
+      parentRoute: typeof NewsRoute
+    }
+    '/news/moving-to-texas-guide': {
+      id: '/news/moving-to-texas-guide'
+      path: '/moving-to-texas-guide'
+      fullPath: '/news/moving-to-texas-guide'
+      preLoaderRoute: typeof NewsMovingToTexasGuideRouteImport
+      parentRoute: typeof NewsRoute
+    }
+    '/news/moving-to-san-antonio-guide': {
+      id: '/news/moving-to-san-antonio-guide'
+      path: '/moving-to-san-antonio-guide'
+      fullPath: '/news/moving-to-san-antonio-guide'
+      preLoaderRoute: typeof NewsMovingToSanAntonioGuideRouteImport
+      parentRoute: typeof NewsRoute
+    }
+    '/news/moving-to-houston-address-checklist': {
+      id: '/news/moving-to-houston-address-checklist'
+      path: '/moving-to-houston-address-checklist'
+      fullPath: '/news/moving-to-houston-address-checklist'
+      preLoaderRoute: typeof NewsMovingToHoustonAddressChecklistRouteImport
+      parentRoute: typeof NewsRoute
+    }
+    '/news/moving-to-el-paso-guide': {
+      id: '/news/moving-to-el-paso-guide'
+      path: '/moving-to-el-paso-guide'
+      fullPath: '/news/moving-to-el-paso-guide'
+      preLoaderRoute: typeof NewsMovingToElPasoGuideRouteImport
+      parentRoute: typeof NewsRoute
+    }
+    '/news/moving-to-dallas-fort-worth-guide': {
+      id: '/news/moving-to-dallas-fort-worth-guide'
+      path: '/moving-to-dallas-fort-worth-guide'
+      fullPath: '/news/moving-to-dallas-fort-worth-guide'
+      preLoaderRoute: typeof NewsMovingToDallasFortWorthGuideRouteImport
+      parentRoute: typeof NewsRoute
+    }
+    '/news/moving-to-austin-guide': {
+      id: '/news/moving-to-austin-guide'
+      path: '/moving-to-austin-guide'
+      fullPath: '/news/moving-to-austin-guide'
+      preLoaderRoute: typeof NewsMovingToAustinGuideRouteImport
       parentRoute: typeof NewsRoute
     }
     '/news/isd-tax-burdens': {
@@ -5044,11 +7438,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NewsIsdTaxBurdensRouteImport
       parentRoute: typeof NewsRoute
     }
+    '/news/canyon-lake-pushes-to-full-capacity-following-multiyear-drought-2025-d9be1db3': {
+      id: '/news/canyon-lake-pushes-to-full-capacity-following-multiyear-drought-2025-d9be1db3'
+      path: '/canyon-lake-pushes-to-full-capacity-following-multiyear-drought-2025-d9be1db3'
+      fullPath: '/news/canyon-lake-pushes-to-full-capacity-following-multiyear-drought-2025-d9be1db3'
+      preLoaderRoute: typeof NewsCanyonLakePushesToFullCapacityFollowingMultiyearDrought2025D9be1db3RouteImport
+      parentRoute: typeof NewsRoute
+    }
     '/news/2026-08-09-canyon-lake-full-capacity-recovery': {
       id: '/news/2026-08-09-canyon-lake-full-capacity-recovery'
       path: '/2026-08-09-canyon-lake-full-capacity-recovery'
       fullPath: '/news/2026-08-09-canyon-lake-full-capacity-recovery'
       preLoaderRoute: typeof News20260809CanyonLakeFullCapacityRecoveryRouteImport
+      parentRoute: typeof NewsRoute
+    }
+    '/news/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity-in-2026-explained-simply': {
+      id: '/news/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity-in-2026-explained-simply'
+      path: '/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity-in-2026-explained-simply'
+      fullPath: '/news/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity-in-2026-explained-simply'
+      preLoaderRoute: typeof News20260704TheRealReasonBehindTheResilienceOfTexasIdentityIn2026ExplainedSimplyRouteImport
+      parentRoute: typeof NewsRoute
+    }
+    '/news/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity': {
+      id: '/news/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity'
+      path: '/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity'
+      fullPath: '/news/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity'
+      preLoaderRoute: typeof News20260704TheRealReasonBehindTheResilienceOfTexasIdentityRouteImport
       parentRoute: typeof NewsRoute
     }
     '/news/$slug': {
@@ -5057,6 +7472,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/news/$slug'
       preLoaderRoute: typeof NewsSlugRouteImport
       parentRoute: typeof NewsRoute
+    }
+    '/laws/topics': {
+      id: '/laws/topics'
+      path: '/topics'
+      fullPath: '/laws/topics'
+      preLoaderRoute: typeof LawsTopicsRouteImport
+      parentRoute: typeof LawsRoute
     }
     '/laws/effective-dates': {
       id: '/laws/effective-dates'
@@ -5071,6 +7493,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/laws/constitutional-amendments'
       preLoaderRoute: typeof LawsConstitutionalAmendmentsRouteImport
       parentRoute: typeof LawsRoute
+    }
+    '/issues/texas-policy-handbook': {
+      id: '/issues/texas-policy-handbook'
+      path: '/issues/texas-policy-handbook'
+      fullPath: '/issues/texas-policy-handbook'
+      preLoaderRoute: typeof IssuesTexasPolicyHandbookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/issues/texas-local-government-handbook': {
+      id: '/issues/texas-local-government-handbook'
+      path: '/issues/texas-local-government-handbook'
+      fullPath: '/issues/texas-local-government-handbook'
+      preLoaderRoute: typeof IssuesTexasLocalGovernmentHandbookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/issues/texas-government-accountability-handbook': {
+      id: '/issues/texas-government-accountability-handbook'
+      path: '/issues/texas-government-accountability-handbook'
+      fullPath: '/issues/texas-government-accountability-handbook'
+      preLoaderRoute: typeof IssuesTexasGovernmentAccountabilityHandbookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/issues/$slug': {
+      id: '/issues/$slug'
+      path: '/issues/$slug'
+      fullPath: '/issues/$slug'
+      preLoaderRoute: typeof IssuesSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/guides/$slug': {
       id: '/guides/$slug'
@@ -5254,6 +7704,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ElectionsResultsRouteImport
       parentRoute: typeof ElectionsRoute
     }
+    '/elections/reference.json': {
+      id: '/elections/reference.json'
+      path: '/reference.json'
+      fullPath: '/elections/reference.json'
+      preLoaderRoute: typeof ElectionsReferenceDotjsonRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
     '/elections/races': {
       id: '/elections/races'
       path: '/races'
@@ -5415,6 +7872,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DmvCdlRouteImport
       parentRoute: typeof DmvRoute
     }
+    '/districts/$districtSlug': {
+      id: '/districts/$districtSlug'
+      path: '/$districtSlug'
+      fullPath: '/districts/$districtSlug'
+      preLoaderRoute: typeof DistrictsDistrictSlugRouteImport
+      parentRoute: typeof DistrictsRoute
+    }
+    '/data/$slug': {
+      id: '/data/$slug'
+      path: '/$slug'
+      fullPath: '/data/$slug'
+      preLoaderRoute: typeof DataSlugRouteImport
+      parentRoute: typeof DataRoute
+    }
+    '/civic-tools/texas-law-finder': {
+      id: '/civic-tools/texas-law-finder'
+      path: '/texas-law-finder'
+      fullPath: '/civic-tools/texas-law-finder'
+      preLoaderRoute: typeof CivicToolsTexasLawFinderRouteImport
+      parentRoute: typeof CivicToolsRoute
+    }
+    '/civic-tools/government-authority-finder': {
+      id: '/civic-tools/government-authority-finder'
+      path: '/government-authority-finder'
+      fullPath: '/civic-tools/government-authority-finder'
+      preLoaderRoute: typeof CivicToolsGovernmentAuthorityFinderRouteImport
+      parentRoute: typeof CivicToolsRoute
+    }
+    '/civic-tools/education-freedom-account-guide': {
+      id: '/civic-tools/education-freedom-account-guide'
+      path: '/education-freedom-account-guide'
+      fullPath: '/civic-tools/education-freedom-account-guide'
+      preLoaderRoute: typeof CivicToolsEducationFreedomAccountGuideRouteImport
+      parentRoute: typeof CivicToolsRoute
+    }
+    '/civic-tools/compare-legislators': {
+      id: '/civic-tools/compare-legislators'
+      path: '/compare-legislators'
+      fullPath: '/civic-tools/compare-legislators'
+      preLoaderRoute: typeof CivicToolsCompareLegislatorsRouteImport
+      parentRoute: typeof CivicToolsRoute
+    }
+    '/civic-tools/bill-finder': {
+      id: '/civic-tools/bill-finder'
+      path: '/bill-finder'
+      fullPath: '/civic-tools/bill-finder'
+      preLoaderRoute: typeof CivicToolsBillFinderRouteImport
+      parentRoute: typeof CivicToolsRoute
+    }
     '/authors/$slug': {
       id: '/authors/$slug'
       path: '/authors/$slug'
@@ -5427,6 +7933,13 @@ declare module '@tanstack/react-router' {
       path: '/article/$slug'
       fullPath: '/article/$slug'
       preLoaderRoute: typeof ArticleSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/reference-freshness': {
+      id: '/api/reference-freshness'
+      path: '/api/reference-freshness'
+      fullPath: '/api/reference-freshness'
+      preLoaderRoute: typeof ApiReferenceFreshnessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/publication-gate': {
@@ -5457,6 +7970,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiContentDispositionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/source-provenance': {
+      id: '/admin/source-provenance'
+      path: '/source-provenance'
+      fullPath: '/admin/source-provenance'
+      preLoaderRoute: typeof AdminSourceProvenanceRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/shop-products': {
       id: '/admin/shop-products'
       path: '/shop-products'
@@ -5464,11 +7984,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminShopProductsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/newsroom-shadow': {
+      id: '/admin/newsroom-shadow'
+      path: '/newsroom-shadow'
+      fullPath: '/admin/newsroom-shadow'
+      preLoaderRoute: typeof AdminNewsroomShadowRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/newsroom-metrics': {
       id: '/admin/newsroom-metrics'
       path: '/newsroom-metrics'
       fullPath: '/admin/newsroom-metrics'
       preLoaderRoute: typeof AdminNewsroomMetricsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/newsroom-backtest': {
+      id: '/admin/newsroom-backtest'
+      path: '/newsroom-backtest'
+      fullPath: '/admin/newsroom-backtest'
+      preLoaderRoute: typeof AdminNewsroomBacktestRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/newsroom': {
+      id: '/admin/newsroom'
+      path: '/newsroom'
+      fullPath: '/admin/newsroom'
+      preLoaderRoute: typeof AdminNewsroomRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/governance-health': {
@@ -5548,6 +8089,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasResourcesJourneyJourneyIdRouteImport
       parentRoute: typeof TexasResourcesRoute
     }
+    '/texas-politics/figures_/$figureSlug': {
+      id: '/texas-politics/figures_/$figureSlug'
+      path: '/figures/$figureSlug'
+      fullPath: '/texas-politics/figures/$figureSlug'
+      preLoaderRoute: typeof TexasPoliticsFiguresFigureSlugRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
     '/texas-legislature/sessions/$sessionSlug': {
       id: '/texas-legislature/sessions/$sessionSlug'
       path: '/$sessionSlug'
@@ -5562,12 +8110,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasLegislatureCommitteesCommitteeSlugRouteImport
       parentRoute: typeof TexasLegislatureCommitteesRoute
     }
-    '/lovable/email/suppression': {
-      id: '/lovable/email/suppression'
-      path: '/lovable/email/suppression'
-      fullPath: '/lovable/email/suppression'
-      preLoaderRoute: typeof LovableEmailSuppressionRouteImport
+    '/texas-government/agencies/$agencySlug': {
+      id: '/texas-government/agencies/$agencySlug'
+      path: '/$agencySlug'
+      fullPath: '/texas-government/agencies/$agencySlug'
+      preLoaderRoute: typeof TexasGovernmentAgenciesAgencySlugRouteImport
+      parentRoute: typeof TexasGovernmentAgenciesRoute
+    }
+    '/texas-case/facts/$slug': {
+      id: '/texas-case/facts/$slug'
+      path: '/$slug'
+      fullPath: '/texas-case/facts/$slug'
+      preLoaderRoute: typeof TexasCaseFactsSlugRouteImport
+      parentRoute: typeof TexasCaseFactsRoute
+    }
+    '/product-offer/$productId/$variantId': {
+      id: '/product-offer/$productId/$variantId'
+      path: '/product-offer/$productId/$variantId'
+      fullPath: '/product-offer/$productId/$variantId'
+      preLoaderRoute: typeof ProductOfferProductIdVariantIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/laws/topic/$slug': {
+      id: '/laws/topic/$slug'
+      path: '/topic/$slug'
+      fullPath: '/laws/topic/$slug'
+      preLoaderRoute: typeof LawsTopicSlugRouteImport
+      parentRoute: typeof LawsRoute
     }
     '/explore/trip/$token': {
       id: '/explore/trip/$token'
@@ -5667,6 +8236,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BillsSubjectSubjectSlugRouteImport
       parentRoute: typeof BillsRoute
     }
+    '/api/shop/stripe-webhook': {
+      id: '/api/shop/stripe-webhook'
+      path: '/api/shop/stripe-webhook'
+      fullPath: '/api/shop/stripe-webhook'
+      preLoaderRoute: typeof ApiShopStripeWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/texasdefined-checkout': {
       id: '/api/public/texasdefined-checkout'
       path: '/api/public/texasdefined-checkout'
@@ -5679,6 +8255,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/store-products'
       fullPath: '/api/public/store-products'
       preLoaderRoute: typeof ApiPublicStoreProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/official-bill-text': {
+      id: '/api/public/official-bill-text'
+      path: '/api/public/official-bill-text'
+      fullPath: '/api/public/official-bill-text'
+      preLoaderRoute: typeof ApiPublicOfficialBillTextRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/newsroom-health': {
@@ -5821,32 +8404,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminExploreImportsIndexRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/lovable/email/transactional/send': {
-      id: '/lovable/email/transactional/send'
-      path: '/lovable/email/transactional/send'
-      fullPath: '/lovable/email/transactional/send'
-      preLoaderRoute: typeof LovableEmailTransactionalSendRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lovable/email/transactional/preview': {
-      id: '/lovable/email/transactional/preview'
-      path: '/lovable/email/transactional/preview'
-      fullPath: '/lovable/email/transactional/preview'
-      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lovable/email/queue/process': {
-      id: '/lovable/email/queue/process'
-      path: '/lovable/email/queue/process'
-      fullPath: '/lovable/email/queue/process'
-      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
       fullPath: '/api/public/payments/webhook'
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/payments/sandbox-health': {
+      id: '/api/public/payments/sandbox-health'
+      path: '/api/public/payments/sandbox-health'
+      fullPath: '/api/public/payments/sandbox-health'
+      preLoaderRoute: typeof ApiPublicPaymentsSandboxHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/payments/sandbox-config': {
+      id: '/api/public/payments/sandbox-config'
+      path: '/api/public/payments/sandbox-config'
+      fullPath: '/api/public/payments/sandbox-config'
+      preLoaderRoute: typeof ApiPublicPaymentsSandboxConfigRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/payments/health': {
+      id: '/api/public/payments/health'
+      path: '/api/public/payments/health'
+      fullPath: '/api/public/payments/health'
+      preLoaderRoute: typeof ApiPublicPaymentsHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/track-variant': {
@@ -5877,11 +8460,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksScoreViralRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/score-newsroom-stories': {
+      id: '/api/public/hooks/score-newsroom-stories'
+      path: '/api/public/hooks/score-newsroom-stories'
+      fullPath: '/api/public/hooks/score-newsroom-stories'
+      preLoaderRoute: typeof ApiPublicHooksScoreNewsroomStoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/run-generate-news': {
       id: '/api/public/hooks/run-generate-news'
       path: '/api/public/hooks/run-generate-news'
       fullPath: '/api/public/hooks/run-generate-news'
       preLoaderRoute: typeof ApiPublicHooksRunGenerateNewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/retest-newsroom-shadow': {
+      id: '/api/public/hooks/retest-newsroom-shadow'
+      path: '/api/public/hooks/retest-newsroom-shadow'
+      fullPath: '/api/public/hooks/retest-newsroom-shadow'
+      preLoaderRoute: typeof ApiPublicHooksRetestNewsroomShadowRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/repair-sb37-production': {
@@ -5905,11 +8502,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksRemediateAug10FlyoverRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/reconcile-news-history': {
+      id: '/api/public/hooks/reconcile-news-history'
+      path: '/api/public/hooks/reconcile-news-history'
+      fullPath: '/api/public/hooks/reconcile-news-history'
+      preLoaderRoute: typeof ApiPublicHooksReconcileNewsHistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/publishing-safety-net': {
       id: '/api/public/hooks/publishing-safety-net'
       path: '/api/public/hooks/publishing-safety-net'
       fullPath: '/api/public/hooks/publishing-safety-net'
       preLoaderRoute: typeof ApiPublicHooksPublishingSafetyNetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/publish-overdue-gap': {
+      id: '/api/public/hooks/publish-overdue-gap'
+      path: '/api/public/hooks/publish-overdue-gap'
+      fullPath: '/api/public/hooks/publish-overdue-gap'
+      preLoaderRoute: typeof ApiPublicHooksPublishOverdueGapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/normalize-newsroom-feed': {
+      id: '/api/public/hooks/normalize-newsroom-feed'
+      path: '/api/public/hooks/normalize-newsroom-feed'
+      fullPath: '/api/public/hooks/normalize-newsroom-feed'
+      preLoaderRoute: typeof ApiPublicHooksNormalizeNewsroomFeedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/newsroom-generation-diagnostics': {
+      id: '/api/public/hooks/newsroom-generation-diagnostics'
+      path: '/api/public/hooks/newsroom-generation-diagnostics'
+      fullPath: '/api/public/hooks/newsroom-generation-diagnostics'
+      preLoaderRoute: typeof ApiPublicHooksNewsroomGenerationDiagnosticsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/list-shops': {
@@ -5933,6 +8558,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksIngestFeedsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/image-backlog-recovery': {
+      id: '/api/public/hooks/image-backlog-recovery'
+      path: '/api/public/hooks/image-backlog-recovery'
+      fullPath: '/api/public/hooks/image-backlog-recovery'
+      preLoaderRoute: typeof ApiPublicHooksImageBacklogRecoveryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/health': {
       id: '/api/public/hooks/health'
       path: '/api/public/hooks/health'
@@ -5947,6 +8579,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksGenerateSportsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/generate-newsroom': {
+      id: '/api/public/hooks/generate-newsroom'
+      path: '/api/public/hooks/generate-newsroom'
+      fullPath: '/api/public/hooks/generate-newsroom'
+      preLoaderRoute: typeof ApiPublicHooksGenerateNewsroomRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/generate-news': {
       id: '/api/public/hooks/generate-news'
       path: '/api/public/hooks/generate-news'
@@ -5959,6 +8598,41 @@ declare module '@tanstack/react-router' {
       path: '/api/public/hooks/generate-evergreen'
       fullPath: '/api/public/hooks/generate-evergreen'
       preLoaderRoute: typeof ApiPublicHooksGenerateEvergreenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/generate-daily-brief': {
+      id: '/api/public/hooks/generate-daily-brief'
+      path: '/api/public/hooks/generate-daily-brief'
+      fullPath: '/api/public/hooks/generate-daily-brief'
+      preLoaderRoute: typeof ApiPublicHooksGenerateDailyBriefRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/finalize-newsroom-article': {
+      id: '/api/public/hooks/finalize-newsroom-article'
+      path: '/api/public/hooks/finalize-newsroom-article'
+      fullPath: '/api/public/hooks/finalize-newsroom-article'
+      preLoaderRoute: typeof ApiPublicHooksFinalizeNewsroomArticleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/enrich-newsroom-rss-evidence': {
+      id: '/api/public/hooks/enrich-newsroom-rss-evidence'
+      path: '/api/public/hooks/enrich-newsroom-rss-evidence'
+      fullPath: '/api/public/hooks/enrich-newsroom-rss-evidence'
+      preLoaderRoute: typeof ApiPublicHooksEnrichNewsroomRssEvidenceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/decide-newsroom-packages': {
+      id: '/api/public/hooks/decide-newsroom-packages'
+      path: '/api/public/hooks/decide-newsroom-packages'
+      fullPath: '/api/public/hooks/decide-newsroom-packages'
+      preLoaderRoute: typeof ApiPublicHooksDecideNewsroomPackagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/cluster-newsroom-stories': {
+      id: '/api/public/hooks/cluster-newsroom-stories'
+      path: '/api/public/hooks/cluster-newsroom-stories'
+      fullPath: '/api/public/hooks/cluster-newsroom-stories'
+      preLoaderRoute: typeof ApiPublicHooksClusterNewsroomStoriesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/classify-sports': {
@@ -5982,11 +8656,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksClassifyArticlePillarsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/build-newsroom-research-packets': {
+      id: '/api/public/hooks/build-newsroom-research-packets'
+      path: '/api/public/hooks/build-newsroom-research-packets'
+      fullPath: '/api/public/hooks/build-newsroom-research-packets'
+      preLoaderRoute: typeof ApiPublicHooksBuildNewsroomResearchPacketsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/backfill-featured-images': {
       id: '/api/public/hooks/backfill-featured-images'
       path: '/api/public/hooks/backfill-featured-images'
       fullPath: '/api/public/hooks/backfill-featured-images'
       preLoaderRoute: typeof ApiPublicHooksBackfillFeaturedImagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/auto-facebook-post-texasdefined-smart': {
+      id: '/api/public/hooks/auto-facebook-post-texasdefined-smart'
+      path: '/api/public/hooks/auto-facebook-post-texasdefined-smart'
+      fullPath: '/api/public/hooks/auto-facebook-post-texasdefined-smart'
+      preLoaderRoute: typeof ApiPublicHooksAutoFacebookPostTexasdefinedSmartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/auto-facebook-post-texasdefined': {
+      id: '/api/public/hooks/auto-facebook-post-texasdefined'
+      path: '/api/public/hooks/auto-facebook-post-texasdefined'
+      fullPath: '/api/public/hooks/auto-facebook-post-texasdefined'
+      preLoaderRoute: typeof ApiPublicHooksAutoFacebookPostTexasdefinedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/auto-facebook-post': {
+      id: '/api/public/hooks/auto-facebook-post'
+      path: '/api/public/hooks/auto-facebook-post'
+      fullPath: '/api/public/hooks/auto-facebook-post'
+      preLoaderRoute: typeof ApiPublicHooksAutoFacebookPostRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/adsense-image-backfill': {
+      id: '/api/public/hooks/adsense-image-backfill'
+      path: '/api/public/hooks/adsense-image-backfill'
+      fullPath: '/api/public/hooks/adsense-image-backfill'
+      preLoaderRoute: typeof ApiPublicHooksAdsenseImageBackfillRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/explore/recommendations': {
@@ -6066,14 +8775,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicOauthFacebookCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/bills/texas/$legislature/$billType/$billNumber/reference.json': {
+      id: '/bills/texas/$legislature/$billType/$billNumber/reference.json'
+      path: '/reference.json'
+      fullPath: '/bills/texas/$legislature/$billType/$billNumber/reference.json'
+      preLoaderRoute: typeof BillsTexasLegislatureBillTypeBillNumberReferenceDotjsonRouteImport
+      parentRoute: typeof BillsTexasLegislatureBillTypeBillNumberRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
   AdminCoverageGapsRoute: typeof AdminCoverageGapsRoute
   AdminGovernanceHealthRoute: typeof AdminGovernanceHealthRoute
+  AdminNewsroomRoute: typeof AdminNewsroomRoute
+  AdminNewsroomBacktestRoute: typeof AdminNewsroomBacktestRoute
   AdminNewsroomMetricsRoute: typeof AdminNewsroomMetricsRoute
+  AdminNewsroomShadowRoute: typeof AdminNewsroomShadowRoute
   AdminShopProductsRoute: typeof AdminShopProductsRoute
+  AdminSourceProvenanceRoute: typeof AdminSourceProvenanceRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminBillsBackfillRoute: typeof AdminBillsBackfillRoute
   AdminBillsEditorialRoute: typeof AdminBillsEditorialRoute
@@ -6092,8 +8812,12 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminCoverageGapsRoute: AdminCoverageGapsRoute,
   AdminGovernanceHealthRoute: AdminGovernanceHealthRoute,
+  AdminNewsroomRoute: AdminNewsroomRoute,
+  AdminNewsroomBacktestRoute: AdminNewsroomBacktestRoute,
   AdminNewsroomMetricsRoute: AdminNewsroomMetricsRoute,
+  AdminNewsroomShadowRoute: AdminNewsroomShadowRoute,
   AdminShopProductsRoute: AdminShopProductsRoute,
+  AdminSourceProvenanceRoute: AdminSourceProvenanceRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminBillsBackfillRoute: AdminBillsBackfillRoute,
   AdminBillsEditorialRoute: AdminBillsEditorialRoute,
@@ -6111,11 +8835,26 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface BillsTexasLegislatureBillTypeBillNumberRouteChildren {
+  BillsTexasLegislatureBillTypeBillNumberReferenceDotjsonRoute: typeof BillsTexasLegislatureBillTypeBillNumberReferenceDotjsonRoute
+}
+
+const BillsTexasLegislatureBillTypeBillNumberRouteChildren: BillsTexasLegislatureBillTypeBillNumberRouteChildren =
+  {
+    BillsTexasLegislatureBillTypeBillNumberReferenceDotjsonRoute:
+      BillsTexasLegislatureBillTypeBillNumberReferenceDotjsonRoute,
+  }
+
+const BillsTexasLegislatureBillTypeBillNumberRouteWithChildren =
+  BillsTexasLegislatureBillTypeBillNumberRoute._addFileChildren(
+    BillsTexasLegislatureBillTypeBillNumberRouteChildren,
+  )
+
 interface BillsRouteChildren {
   BillsIndexRoute: typeof BillsIndexRoute
   BillsSubjectSubjectSlugRoute: typeof BillsSubjectSubjectSlugRoute
   BillsTexasLegislatureIndexRoute: typeof BillsTexasLegislatureIndexRoute
-  BillsTexasLegislatureBillTypeBillNumberRoute: typeof BillsTexasLegislatureBillTypeBillNumberRoute
+  BillsTexasLegislatureBillTypeBillNumberRoute: typeof BillsTexasLegislatureBillTypeBillNumberRouteWithChildren
   BillsTexasLegislatureBillTypeIndexRoute: typeof BillsTexasLegislatureBillTypeIndexRoute
 }
 
@@ -6124,12 +8863,56 @@ const BillsRouteChildren: BillsRouteChildren = {
   BillsSubjectSubjectSlugRoute: BillsSubjectSubjectSlugRoute,
   BillsTexasLegislatureIndexRoute: BillsTexasLegislatureIndexRoute,
   BillsTexasLegislatureBillTypeBillNumberRoute:
-    BillsTexasLegislatureBillTypeBillNumberRoute,
+    BillsTexasLegislatureBillTypeBillNumberRouteWithChildren,
   BillsTexasLegislatureBillTypeIndexRoute:
     BillsTexasLegislatureBillTypeIndexRoute,
 }
 
 const BillsRouteWithChildren = BillsRoute._addFileChildren(BillsRouteChildren)
+
+interface CivicToolsRouteChildren {
+  CivicToolsBillFinderRoute: typeof CivicToolsBillFinderRoute
+  CivicToolsCompareLegislatorsRoute: typeof CivicToolsCompareLegislatorsRoute
+  CivicToolsEducationFreedomAccountGuideRoute: typeof CivicToolsEducationFreedomAccountGuideRoute
+  CivicToolsGovernmentAuthorityFinderRoute: typeof CivicToolsGovernmentAuthorityFinderRoute
+  CivicToolsTexasLawFinderRoute: typeof CivicToolsTexasLawFinderRoute
+}
+
+const CivicToolsRouteChildren: CivicToolsRouteChildren = {
+  CivicToolsBillFinderRoute: CivicToolsBillFinderRoute,
+  CivicToolsCompareLegislatorsRoute: CivicToolsCompareLegislatorsRoute,
+  CivicToolsEducationFreedomAccountGuideRoute:
+    CivicToolsEducationFreedomAccountGuideRoute,
+  CivicToolsGovernmentAuthorityFinderRoute:
+    CivicToolsGovernmentAuthorityFinderRoute,
+  CivicToolsTexasLawFinderRoute: CivicToolsTexasLawFinderRoute,
+}
+
+const CivicToolsRouteWithChildren = CivicToolsRoute._addFileChildren(
+  CivicToolsRouteChildren,
+)
+
+interface DataRouteChildren {
+  DataSlugRoute: typeof DataSlugRoute
+}
+
+const DataRouteChildren: DataRouteChildren = {
+  DataSlugRoute: DataSlugRoute,
+}
+
+const DataRouteWithChildren = DataRoute._addFileChildren(DataRouteChildren)
+
+interface DistrictsRouteChildren {
+  DistrictsDistrictSlugRoute: typeof DistrictsDistrictSlugRoute
+}
+
+const DistrictsRouteChildren: DistrictsRouteChildren = {
+  DistrictsDistrictSlugRoute: DistrictsDistrictSlugRoute,
+}
+
+const DistrictsRouteWithChildren = DistrictsRoute._addFileChildren(
+  DistrictsRouteChildren,
+)
 
 interface DmvRouteChildren {
   DmvCdlRoute: typeof DmvCdlRoute
@@ -6224,6 +9007,7 @@ interface ElectionsRouteChildren {
   ElectionsMethodologyRoute: typeof ElectionsMethodologyRoute
   ElectionsPollsRoute: typeof ElectionsPollsRouteWithChildren
   ElectionsRacesRoute: typeof ElectionsRacesRoute
+  ElectionsReferenceDotjsonRoute: typeof ElectionsReferenceDotjsonRoute
   ElectionsResultsRoute: typeof ElectionsResultsRouteWithChildren
   ElectionsStatewideRoute: typeof ElectionsStatewideRoute
   ElectionsVotingRoute: typeof ElectionsVotingRoute
@@ -6242,6 +9026,7 @@ const ElectionsRouteChildren: ElectionsRouteChildren = {
   ElectionsMethodologyRoute: ElectionsMethodologyRoute,
   ElectionsPollsRoute: ElectionsPollsRouteWithChildren,
   ElectionsRacesRoute: ElectionsRacesRoute,
+  ElectionsReferenceDotjsonRoute: ElectionsReferenceDotjsonRoute,
   ElectionsResultsRoute: ElectionsResultsRouteWithChildren,
   ElectionsStatewideRoute: ElectionsStatewideRoute,
   ElectionsVotingRoute: ElectionsVotingRoute,
@@ -6325,33 +9110,188 @@ const ExploreRouteWithChildren =
 interface LawsRouteChildren {
   LawsConstitutionalAmendmentsRoute: typeof LawsConstitutionalAmendmentsRoute
   LawsEffectiveDatesRoute: typeof LawsEffectiveDatesRoute
+  LawsTopicsRoute: typeof LawsTopicsRoute
+  LawsTopicSlugRoute: typeof LawsTopicSlugRoute
 }
 
 const LawsRouteChildren: LawsRouteChildren = {
   LawsConstitutionalAmendmentsRoute: LawsConstitutionalAmendmentsRoute,
   LawsEffectiveDatesRoute: LawsEffectiveDatesRoute,
+  LawsTopicsRoute: LawsTopicsRoute,
+  LawsTopicSlugRoute: LawsTopicSlugRoute,
 }
 
 const LawsRouteWithChildren = LawsRoute._addFileChildren(LawsRouteChildren)
 
 interface NewsRouteChildren {
   NewsSlugRoute: typeof NewsSlugRoute
+  News20260704TheRealReasonBehindTheResilienceOfTexasIdentityRoute: typeof News20260704TheRealReasonBehindTheResilienceOfTexasIdentityRoute
+  News20260704TheRealReasonBehindTheResilienceOfTexasIdentityIn2026ExplainedSimplyRoute: typeof News20260704TheRealReasonBehindTheResilienceOfTexasIdentityIn2026ExplainedSimplyRoute
   News20260809CanyonLakeFullCapacityRecoveryRoute: typeof News20260809CanyonLakeFullCapacityRecoveryRoute
+  NewsCanyonLakePushesToFullCapacityFollowingMultiyearDrought2025D9be1db3Route: typeof NewsCanyonLakePushesToFullCapacityFollowingMultiyearDrought2025D9be1db3Route
   NewsIsdTaxBurdensRoute: typeof NewsIsdTaxBurdensRoute
+  NewsMovingToAustinGuideRoute: typeof NewsMovingToAustinGuideRoute
+  NewsMovingToDallasFortWorthGuideRoute: typeof NewsMovingToDallasFortWorthGuideRoute
+  NewsMovingToElPasoGuideRoute: typeof NewsMovingToElPasoGuideRoute
+  NewsMovingToHoustonAddressChecklistRoute: typeof NewsMovingToHoustonAddressChecklistRoute
+  NewsMovingToSanAntonioGuideRoute: typeof NewsMovingToSanAntonioGuideRoute
+  NewsMovingToTexasGuideRoute: typeof NewsMovingToTexasGuideRoute
   NewsNonPoliticalRoute: typeof NewsNonPoliticalRoute
+  NewsRentingVsBuyingInTexasRoute: typeof NewsRentingVsBuyingInTexasRoute
+  NewsSalaryNeededToBuyAHouseInTexasRoute: typeof NewsSalaryNeededToBuyAHouseInTexasRoute
+  NewsShouldYouRefinanceTexasMortgageRoute: typeof NewsShouldYouRefinanceTexasMortgageRoute
+  NewsTexasClosingCostsGuideRoute: typeof NewsTexasClosingCostsGuideRoute
+  NewsTexasHomeEquityHelocGuideRoute: typeof NewsTexasHomeEquityHelocGuideRoute
+  NewsTexasHomeownersInsuranceGuideRoute: typeof NewsTexasHomeownersInsuranceGuideRoute
+  NewsTexasHouseDownPaymentGuideRoute: typeof NewsTexasHouseDownPaymentGuideRoute
+  NewsTexasMortgagePaymentGuideRoute: typeof NewsTexasMortgagePaymentGuideRoute
+  NewsTexasUtilityCostsGuideRoute: typeof NewsTexasUtilityCostsGuideRoute
+  NewsTrueCostOfOwningAHomeInTexasRoute: typeof NewsTrueCostOfOwningAHomeInTexasRoute
   NewsIndexRoute: typeof NewsIndexRoute
 }
 
 const NewsRouteChildren: NewsRouteChildren = {
   NewsSlugRoute: NewsSlugRoute,
+  News20260704TheRealReasonBehindTheResilienceOfTexasIdentityRoute:
+    News20260704TheRealReasonBehindTheResilienceOfTexasIdentityRoute,
+  News20260704TheRealReasonBehindTheResilienceOfTexasIdentityIn2026ExplainedSimplyRoute:
+    News20260704TheRealReasonBehindTheResilienceOfTexasIdentityIn2026ExplainedSimplyRoute,
   News20260809CanyonLakeFullCapacityRecoveryRoute:
     News20260809CanyonLakeFullCapacityRecoveryRoute,
+  NewsCanyonLakePushesToFullCapacityFollowingMultiyearDrought2025D9be1db3Route:
+    NewsCanyonLakePushesToFullCapacityFollowingMultiyearDrought2025D9be1db3Route,
   NewsIsdTaxBurdensRoute: NewsIsdTaxBurdensRoute,
+  NewsMovingToAustinGuideRoute: NewsMovingToAustinGuideRoute,
+  NewsMovingToDallasFortWorthGuideRoute: NewsMovingToDallasFortWorthGuideRoute,
+  NewsMovingToElPasoGuideRoute: NewsMovingToElPasoGuideRoute,
+  NewsMovingToHoustonAddressChecklistRoute:
+    NewsMovingToHoustonAddressChecklistRoute,
+  NewsMovingToSanAntonioGuideRoute: NewsMovingToSanAntonioGuideRoute,
+  NewsMovingToTexasGuideRoute: NewsMovingToTexasGuideRoute,
   NewsNonPoliticalRoute: NewsNonPoliticalRoute,
+  NewsRentingVsBuyingInTexasRoute: NewsRentingVsBuyingInTexasRoute,
+  NewsSalaryNeededToBuyAHouseInTexasRoute:
+    NewsSalaryNeededToBuyAHouseInTexasRoute,
+  NewsShouldYouRefinanceTexasMortgageRoute:
+    NewsShouldYouRefinanceTexasMortgageRoute,
+  NewsTexasClosingCostsGuideRoute: NewsTexasClosingCostsGuideRoute,
+  NewsTexasHomeEquityHelocGuideRoute: NewsTexasHomeEquityHelocGuideRoute,
+  NewsTexasHomeownersInsuranceGuideRoute:
+    NewsTexasHomeownersInsuranceGuideRoute,
+  NewsTexasHouseDownPaymentGuideRoute: NewsTexasHouseDownPaymentGuideRoute,
+  NewsTexasMortgagePaymentGuideRoute: NewsTexasMortgagePaymentGuideRoute,
+  NewsTexasUtilityCostsGuideRoute: NewsTexasUtilityCostsGuideRoute,
+  NewsTrueCostOfOwningAHomeInTexasRoute: NewsTrueCostOfOwningAHomeInTexasRoute,
   NewsIndexRoute: NewsIndexRoute,
 }
 
 const NewsRouteWithChildren = NewsRoute._addFileChildren(NewsRouteChildren)
+
+interface PolicyRouteChildren {
+  PolicySlugRoute: typeof PolicySlugRoute
+  PolicyAdvancedNuclearEnergyRoute: typeof PolicyAdvancedNuclearEnergyRoute
+  PolicyAgricultureFamilyFarmsRoute: typeof PolicyAgricultureFamilyFarmsRoute
+  PolicyAiGovernanceRoute: typeof PolicyAiGovernanceRoute
+  PolicyAppStoreParentalControlsRoute: typeof PolicyAppStoreParentalControlsRoute
+  PolicyAssistedSuicideRoute: typeof PolicyAssistedSuicideRoute
+  PolicyBiometricPrivacyRoute: typeof PolicyBiometricPrivacyRoute
+  PolicyBitcoinReserveRoute: typeof PolicyBitcoinReserveRoute
+  PolicyCampusFreeSpeechRoute: typeof PolicyCampusFreeSpeechRoute
+  PolicyCareerTechnicalWorkforceRoute: typeof PolicyCareerTechnicalWorkforceRoute
+  PolicyCentralBankDigitalCurrencyRoute: typeof PolicyCentralBankDigitalCurrencyRoute
+  PolicyCharterSchoolsRoute: typeof PolicyCharterSchoolsRoute
+  PolicyChinaInvestmentRestrictionsRoute: typeof PolicyChinaInvestmentRestrictionsRoute
+  PolicyConstitutionalTaxProtectionsRoute: typeof PolicyConstitutionalTaxProtectionsRoute
+  PolicyConsumableHempCannabisRoute: typeof PolicyConsumableHempCannabisRoute
+  PolicyConsumerDataPrivacyRoute: typeof PolicyConsumerDataPrivacyRoute
+  PolicyCriticalMineralsRareEarthsRoute: typeof PolicyCriticalMineralsRareEarthsRoute
+  PolicyDataBrokersRoute: typeof PolicyDataBrokersRoute
+  PolicyDataCentersLargeLoadsRoute: typeof PolicyDataCentersLargeLoadsRoute
+  PolicyEVerifyEmploymentRoute: typeof PolicyEVerifyEmploymentRoute
+  PolicyElectionIntegrityRoute: typeof PolicyElectionIntegrityRoute
+  PolicyEsgEnergyBoycottsRoute: typeof PolicyEsgEnergyBoycottsRoute
+  PolicyFaithBasedChildWelfareRoute: typeof PolicyFaithBasedChildWelfareRoute
+  PolicyForeignAdversaryPropertyRoute: typeof PolicyForeignAdversaryPropertyRoute
+  PolicyGeneticDataPrivacyRoute: typeof PolicyGeneticDataPrivacyRoute
+  PolicyHigherEducationDeiRoute: typeof PolicyHigherEducationDeiRoute
+  PolicyHomeschoolAutonomyRoute: typeof PolicyHomeschoolAutonomyRoute
+  PolicyLocalPreemptionRegulatoryConsistencyRoute: typeof PolicyLocalPreemptionRegulatoryConsistencyRoute
+  PolicyMedicalFreedomRoute: typeof PolicyMedicalFreedomRoute
+  PolicyMinorGenderTransitionMedicalLawRoute: typeof PolicyMinorGenderTransitionMedicalLawRoute
+  PolicyOccupationalLicensingMobilityRoute: typeof PolicyOccupationalLicensingMobilityRoute
+  PolicyOnlineAgeVerificationRoute: typeof PolicyOnlineAgeVerificationRoute
+  PolicyParentalRightsRoute: typeof PolicyParentalRightsRoute
+  PolicyPublicSectorLaborRoute: typeof PolicyPublicSectorLaborRoute
+  PolicyRegulatoryReformTreoRoute: typeof PolicyRegulatoryReformTreoRoute
+  PolicyReligiousLibertyRoute: typeof PolicyReligiousLibertyRoute
+  PolicyRightToWorkRoute: typeof PolicyRightToWorkRoute
+  PolicySchoolLibraryMaterialsRoute: typeof PolicySchoolLibraryMaterialsRoute
+  PolicySchoolSafetySecurityRoute: typeof PolicySchoolSafetySecurityRoute
+  PolicyScopeActOnlineMinorsRoute: typeof PolicyScopeActOnlineMinorsRoute
+  PolicySemiconductorManufacturingRoute: typeof PolicySemiconductorManufacturingRoute
+  PolicyStateFederalPowerRoute: typeof PolicyStateFederalPowerRoute
+  PolicyTanfWorkParticipationRoute: typeof PolicyTanfWorkParticipationRoute
+  PolicyTexasCyberCommandRoute: typeof PolicyTexasCyberCommandRoute
+  PolicyViolentOffenseBailRoute: typeof PolicyViolentOffenseBailRoute
+  PolicyWomensSportsRoute: typeof PolicyWomensSportsRoute
+}
+
+const PolicyRouteChildren: PolicyRouteChildren = {
+  PolicySlugRoute: PolicySlugRoute,
+  PolicyAdvancedNuclearEnergyRoute: PolicyAdvancedNuclearEnergyRoute,
+  PolicyAgricultureFamilyFarmsRoute: PolicyAgricultureFamilyFarmsRoute,
+  PolicyAiGovernanceRoute: PolicyAiGovernanceRoute,
+  PolicyAppStoreParentalControlsRoute: PolicyAppStoreParentalControlsRoute,
+  PolicyAssistedSuicideRoute: PolicyAssistedSuicideRoute,
+  PolicyBiometricPrivacyRoute: PolicyBiometricPrivacyRoute,
+  PolicyBitcoinReserveRoute: PolicyBitcoinReserveRoute,
+  PolicyCampusFreeSpeechRoute: PolicyCampusFreeSpeechRoute,
+  PolicyCareerTechnicalWorkforceRoute: PolicyCareerTechnicalWorkforceRoute,
+  PolicyCentralBankDigitalCurrencyRoute: PolicyCentralBankDigitalCurrencyRoute,
+  PolicyCharterSchoolsRoute: PolicyCharterSchoolsRoute,
+  PolicyChinaInvestmentRestrictionsRoute:
+    PolicyChinaInvestmentRestrictionsRoute,
+  PolicyConstitutionalTaxProtectionsRoute:
+    PolicyConstitutionalTaxProtectionsRoute,
+  PolicyConsumableHempCannabisRoute: PolicyConsumableHempCannabisRoute,
+  PolicyConsumerDataPrivacyRoute: PolicyConsumerDataPrivacyRoute,
+  PolicyCriticalMineralsRareEarthsRoute: PolicyCriticalMineralsRareEarthsRoute,
+  PolicyDataBrokersRoute: PolicyDataBrokersRoute,
+  PolicyDataCentersLargeLoadsRoute: PolicyDataCentersLargeLoadsRoute,
+  PolicyEVerifyEmploymentRoute: PolicyEVerifyEmploymentRoute,
+  PolicyElectionIntegrityRoute: PolicyElectionIntegrityRoute,
+  PolicyEsgEnergyBoycottsRoute: PolicyEsgEnergyBoycottsRoute,
+  PolicyFaithBasedChildWelfareRoute: PolicyFaithBasedChildWelfareRoute,
+  PolicyForeignAdversaryPropertyRoute: PolicyForeignAdversaryPropertyRoute,
+  PolicyGeneticDataPrivacyRoute: PolicyGeneticDataPrivacyRoute,
+  PolicyHigherEducationDeiRoute: PolicyHigherEducationDeiRoute,
+  PolicyHomeschoolAutonomyRoute: PolicyHomeschoolAutonomyRoute,
+  PolicyLocalPreemptionRegulatoryConsistencyRoute:
+    PolicyLocalPreemptionRegulatoryConsistencyRoute,
+  PolicyMedicalFreedomRoute: PolicyMedicalFreedomRoute,
+  PolicyMinorGenderTransitionMedicalLawRoute:
+    PolicyMinorGenderTransitionMedicalLawRoute,
+  PolicyOccupationalLicensingMobilityRoute:
+    PolicyOccupationalLicensingMobilityRoute,
+  PolicyOnlineAgeVerificationRoute: PolicyOnlineAgeVerificationRoute,
+  PolicyParentalRightsRoute: PolicyParentalRightsRoute,
+  PolicyPublicSectorLaborRoute: PolicyPublicSectorLaborRoute,
+  PolicyRegulatoryReformTreoRoute: PolicyRegulatoryReformTreoRoute,
+  PolicyReligiousLibertyRoute: PolicyReligiousLibertyRoute,
+  PolicyRightToWorkRoute: PolicyRightToWorkRoute,
+  PolicySchoolLibraryMaterialsRoute: PolicySchoolLibraryMaterialsRoute,
+  PolicySchoolSafetySecurityRoute: PolicySchoolSafetySecurityRoute,
+  PolicyScopeActOnlineMinorsRoute: PolicyScopeActOnlineMinorsRoute,
+  PolicySemiconductorManufacturingRoute: PolicySemiconductorManufacturingRoute,
+  PolicyStateFederalPowerRoute: PolicyStateFederalPowerRoute,
+  PolicyTanfWorkParticipationRoute: PolicyTanfWorkParticipationRoute,
+  PolicyTexasCyberCommandRoute: PolicyTexasCyberCommandRoute,
+  PolicyViolentOffenseBailRoute: PolicyViolentOffenseBailRoute,
+  PolicyWomensSportsRoute: PolicyWomensSportsRoute,
+}
+
+const PolicyRouteWithChildren =
+  PolicyRoute._addFileChildren(PolicyRouteChildren)
 
 interface RepresentativesRouteChildren {
   RepresentativesRepresentativeSlugRoute: typeof RepresentativesRepresentativeSlugRoute
@@ -6370,6 +9310,8 @@ interface ShopRouteChildren {
   ShopProductIdRoute: typeof ShopProductIdRoute
   ShopCheckoutRoute: typeof ShopCheckoutRoute
   ShopCheckoutReturnRoute: typeof ShopCheckoutReturnRoute
+  ShopCheckoutSandboxRoute: typeof ShopCheckoutSandboxRoute
+  ShopCheckoutSandboxReturnRoute: typeof ShopCheckoutSandboxReturnRoute
   ShopIndexRoute: typeof ShopIndexRoute
 }
 
@@ -6377,6 +9319,8 @@ const ShopRouteChildren: ShopRouteChildren = {
   ShopProductIdRoute: ShopProductIdRoute,
   ShopCheckoutRoute: ShopCheckoutRoute,
   ShopCheckoutReturnRoute: ShopCheckoutReturnRoute,
+  ShopCheckoutSandboxRoute: ShopCheckoutSandboxRoute,
+  ShopCheckoutSandboxReturnRoute: ShopCheckoutSandboxReturnRoute,
   ShopIndexRoute: ShopIndexRoute,
 }
 
@@ -6394,6 +9338,32 @@ const TexasBusinessRouteWithChildren = TexasBusinessRoute._addFileChildren(
   TexasBusinessRouteChildren,
 )
 
+interface TexasCaseFactsRouteChildren {
+  TexasCaseFactsSlugRoute: typeof TexasCaseFactsSlugRoute
+}
+
+const TexasCaseFactsRouteChildren: TexasCaseFactsRouteChildren = {
+  TexasCaseFactsSlugRoute: TexasCaseFactsSlugRoute,
+}
+
+const TexasCaseFactsRouteWithChildren = TexasCaseFactsRoute._addFileChildren(
+  TexasCaseFactsRouteChildren,
+)
+
+interface TexasCaseRouteChildren {
+  TexasCaseSlugRoute: typeof TexasCaseSlugRoute
+  TexasCaseFactsRoute: typeof TexasCaseFactsRouteWithChildren
+}
+
+const TexasCaseRouteChildren: TexasCaseRouteChildren = {
+  TexasCaseSlugRoute: TexasCaseSlugRoute,
+  TexasCaseFactsRoute: TexasCaseFactsRouteWithChildren,
+}
+
+const TexasCaseRouteWithChildren = TexasCaseRoute._addFileChildren(
+  TexasCaseRouteChildren,
+)
+
 interface TexasDataRouteChildren {
   TexasDataDatasetSlugRoute: typeof TexasDataDatasetSlugRoute
 }
@@ -6406,14 +9376,29 @@ const TexasDataRouteWithChildren = TexasDataRoute._addFileChildren(
   TexasDataRouteChildren,
 )
 
+interface TexasGovernmentAgenciesRouteChildren {
+  TexasGovernmentAgenciesAgencySlugRoute: typeof TexasGovernmentAgenciesAgencySlugRoute
+}
+
+const TexasGovernmentAgenciesRouteChildren: TexasGovernmentAgenciesRouteChildren =
+  {
+    TexasGovernmentAgenciesAgencySlugRoute:
+      TexasGovernmentAgenciesAgencySlugRoute,
+  }
+
+const TexasGovernmentAgenciesRouteWithChildren =
+  TexasGovernmentAgenciesRoute._addFileChildren(
+    TexasGovernmentAgenciesRouteChildren,
+  )
+
 interface TexasGovernmentRouteChildren {
   TexasGovernmentEntitySlugRoute: typeof TexasGovernmentEntitySlugRoute
-  TexasGovernmentAgenciesRoute: typeof TexasGovernmentAgenciesRoute
+  TexasGovernmentAgenciesRoute: typeof TexasGovernmentAgenciesRouteWithChildren
 }
 
 const TexasGovernmentRouteChildren: TexasGovernmentRouteChildren = {
   TexasGovernmentEntitySlugRoute: TexasGovernmentEntitySlugRoute,
-  TexasGovernmentAgenciesRoute: TexasGovernmentAgenciesRoute,
+  TexasGovernmentAgenciesRoute: TexasGovernmentAgenciesRouteWithChildren,
 }
 
 const TexasGovernmentRouteWithChildren = TexasGovernmentRoute._addFileChildren(
@@ -6491,6 +9476,34 @@ const TexasNewsRouteWithChildren = TexasNewsRoute._addFileChildren(
   TexasNewsRouteChildren,
 )
 
+interface TexasPoliticalReferenceRouteChildren {
+  TexasPoliticalReferenceSlugRoute: typeof TexasPoliticalReferenceSlugRoute
+}
+
+const TexasPoliticalReferenceRouteChildren: TexasPoliticalReferenceRouteChildren =
+  {
+    TexasPoliticalReferenceSlugRoute: TexasPoliticalReferenceSlugRoute,
+  }
+
+const TexasPoliticalReferenceRouteWithChildren =
+  TexasPoliticalReferenceRoute._addFileChildren(
+    TexasPoliticalReferenceRouteChildren,
+  )
+
+interface TexasPoliticsRouteChildren {
+  TexasPoliticsFiguresRoute: typeof TexasPoliticsFiguresRoute
+  TexasPoliticsFiguresFigureSlugRoute: typeof TexasPoliticsFiguresFigureSlugRoute
+}
+
+const TexasPoliticsRouteChildren: TexasPoliticsRouteChildren = {
+  TexasPoliticsFiguresRoute: TexasPoliticsFiguresRoute,
+  TexasPoliticsFiguresFigureSlugRoute: TexasPoliticsFiguresFigureSlugRoute,
+}
+
+const TexasPoliticsRouteWithChildren = TexasPoliticsRoute._addFileChildren(
+  TexasPoliticsRouteChildren,
+)
+
 interface TexasResourcesRouteChildren {
   TexasResourcesJourneyJourneyIdRoute: typeof TexasResourcesJourneyJourneyIdRoute
   TexasResourcesTopicTopicIdRoute: typeof TexasResourcesTopicTopicIdRoute
@@ -6549,10 +9562,13 @@ const rootRouteChildren: RootRouteChildren = {
   BillsRoute: BillsRouteWithChildren,
   CandidateGuidesRoute: CandidateGuidesRoute,
   CitationGuideRoute: CitationGuideRoute,
+  CivicToolsRoute: CivicToolsRouteWithChildren,
   ContactRoute: ContactRoute,
   ContactLegislatorsRoute: ContactLegislatorsRoute,
   CountyElectionsRoute: CountyElectionsRoute,
   DallasFortWorthRoute: DallasFortWorthRoute,
+  DataRoute: DataRouteWithChildren,
+  DistrictsRoute: DistrictsRouteWithChildren,
   DmvRoute: DmvRouteWithChildren,
   EditorialStandardsRoute: EditorialStandardsRoute,
   ElPasoRoute: ElPasoRoute,
@@ -6566,6 +9582,7 @@ const rootRouteChildren: RootRouteChildren = {
   GoogleMerchantFeedDotxmlRoute: GoogleMerchantFeedDotxmlRoute,
   HappeningNowRoute: HappeningNowRoute,
   HoustonRoute: HoustonRoute,
+  IssueGuidesDottxtRoute: IssueGuidesDottxtRoute,
   KeepTexasRedRoute: KeepTexasRedRoute,
   LawsRoute: LawsRouteWithChildren,
   LawsToKnowRoute: LawsToKnowRoute,
@@ -6577,6 +9594,8 @@ const rootRouteChildren: RootRouteChildren = {
   MovingToTexasChecklistRoute: MovingToTexasChecklistRoute,
   NewsRoute: NewsRouteWithChildren,
   NewsSitemapDotxmlRoute: NewsSitemapDotxmlRoute,
+  PolicyRoute: PolicyRouteWithChildren,
+  PolicyTrackersDottxtRoute: PolicyTrackersDottxtRoute,
   PrivacyRoute: PrivacyRoute,
   RegisterToVoteRoute: RegisterToVoteRoute,
   RepresentativesRoute: RepresentativesRouteWithChildren,
@@ -6598,18 +9617,24 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapLegislatureDotxmlRoute: SitemapLegislatureDotxmlRoute,
   SitemapNewsDotxmlRoute: SitemapNewsDotxmlRoute,
   SitemapPagesDotxmlRoute: SitemapPagesDotxmlRoute,
+  SitemapPoliticalFiguresDotxmlRoute: SitemapPoliticalFiguresDotxmlRoute,
   SitemapProductsDotxmlRoute: SitemapProductsDotxmlRoute,
   SitemapRepresentativesDotxmlRoute: SitemapRepresentativesDotxmlRoute,
+  SitemapSourcesDotxmlRoute: SitemapSourcesDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TaxCalculatorRoute: TaxCalculatorRoute,
   TermsRoute: TermsRoute,
   TermsOfServiceRoute: TermsOfServiceRoute,
   TexasRoute: TexasRoute,
   TexasAgricultureRoute: TexasAgricultureRoute,
+  TexasAttorneyGeneralRoute: TexasAttorneyGeneralRoute,
   TexasBorderSecurityRoute: TexasBorderSecurityRoute,
   TexasBudgetPlannerRoute: TexasBudgetPlannerRoute,
   TexasBusinessRoute: TexasBusinessRouteWithChildren,
+  TexasCaseRoute: TexasCaseRouteWithChildren,
+  TexasChildSupportRoute: TexasChildSupportRoute,
   TexasClosingCostCalculatorRoute: TexasClosingCostCalculatorRoute,
+  TexasComptrollerRoute: TexasComptrollerRoute,
   TexasCostOfLivingCalculatorRoute: TexasCostOfLivingCalculatorRoute,
   TexasDataRoute: TexasDataRouteWithChildren,
   TexasDownPaymentAssistanceCalculatorRoute:
@@ -6634,7 +9659,8 @@ const rootRouteChildren: RootRouteChildren = {
   TexasMortgagePayoffCalculatorRoute: TexasMortgagePayoffCalculatorRoute,
   TexasMovingCostCalculatorRoute: TexasMovingCostCalculatorRoute,
   TexasNewsRoute: TexasNewsRouteWithChildren,
-  TexasPoliticsRoute: TexasPoliticsRoute,
+  TexasPoliticalReferenceRoute: TexasPoliticalReferenceRouteWithChildren,
+  TexasPoliticsRoute: TexasPoliticsRouteWithChildren,
   TexasPropertyTaxIncreaseCalculatorRoute:
     TexasPropertyTaxIncreaseCalculatorRoute,
   TexasPropertyTaxProtestGuideRoute: TexasPropertyTaxProtestGuideRoute,
@@ -6644,6 +9670,7 @@ const rootRouteChildren: RootRouteChildren = {
   TexasSalaryCalculatorRoute: TexasSalaryCalculatorRoute,
   TexasSalaryComparisonByCityRoute: TexasSalaryComparisonByCityRoute,
   TexasSalesTaxExplainedRoute: TexasSalesTaxExplainedRoute,
+  TexasSecretaryOfStateRoute: TexasSecretaryOfStateRoute,
   TexasSportsRoute: TexasSportsRouteWithChildren,
   TexasUtilityCostCalculatorRoute: TexasUtilityCostCalculatorRoute,
   TexasVeteransRoute: TexasVeteransRoute,
@@ -6654,10 +9681,22 @@ const rootRouteChildren: RootRouteChildren = {
   ApiGovernanceHealthRoute: ApiGovernanceHealthRoute,
   ApiPlatformCoreStatusRoute: ApiPlatformCoreStatusRoute,
   ApiPublicationGateRoute: ApiPublicationGateRoute,
+  ApiReferenceFreshnessRoute: ApiReferenceFreshnessRoute,
   ArticleSlugRoute: ArticleSlugRoute,
   AuthorsSlugRoute: AuthorsSlugRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   GuidesSlugRoute: GuidesSlugRoute,
+  IssuesSlugRoute: IssuesSlugRoute,
+  IssuesTexasGovernmentAccountabilityHandbookRoute:
+    IssuesTexasGovernmentAccountabilityHandbookRoute,
+  IssuesTexasLocalGovernmentHandbookRoute:
+    IssuesTexasLocalGovernmentHandbookRoute,
+  IssuesTexasPolicyHandbookRoute: IssuesTexasPolicyHandbookRoute,
+  SourcesSlugRoute: SourcesSlugRoute,
+  ToolsTexasBudgetHeadroomRoute: ToolsTexasBudgetHeadroomRoute,
+  ToolsTexasRainyDayFundRoute: ToolsTexasRainyDayFundRoute,
+  ToolsTexasSpendingGrowthCapRoute: ToolsTexasSpendingGrowthCapRoute,
+  ToolsTexasTaxStructureComparisonRoute: ToolsTexasTaxStructureComparisonRoute,
   VehiclesAutoInsuranceRequirementsRoute:
     VehiclesAutoInsuranceRequirementsRoute,
   VehiclesBondedTitlesRoute: VehiclesBondedTitlesRoute,
@@ -6684,6 +9723,9 @@ const rootRouteChildren: RootRouteChildren = {
   VehiclesTemporaryTagsRoute: VehiclesTemporaryTagsRoute,
   VehiclesTitleTransferRoute: VehiclesTitleTransferRoute,
   AuthorsIndexRoute: AuthorsIndexRoute,
+  IssuesIndexRoute: IssuesIndexRoute,
+  SourcesIndexRoute: SourcesIndexRoute,
+  ToolsIndexRoute: ToolsIndexRoute,
   ApiAdminGscSyncRoute: ApiAdminGscSyncRoute,
   ApiAdminLegislationSyncProxyRoute:
     ApiAdminLegislationSyncProxyRouteWithChildren,
@@ -6694,45 +9736,79 @@ const rootRouteChildren: RootRouteChildren = {
     ApiPublicCrossSitePublicationHealthRoute,
   ApiPublicDeploymentFingerprintRoute: ApiPublicDeploymentFingerprintRoute,
   ApiPublicNewsroomHealthRoute: ApiPublicNewsroomHealthRoute,
+  ApiPublicOfficialBillTextRoute: ApiPublicOfficialBillTextRoute,
   ApiPublicStoreProductsRoute: ApiPublicStoreProductsRoute,
   ApiPublicTexasdefinedCheckoutRoute: ApiPublicTexasdefinedCheckoutRoute,
-  LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
+  ApiShopStripeWebhookRoute: ApiShopStripeWebhookRoute,
+  ProductOfferProductIdVariantIdRoute: ProductOfferProductIdVariantIdRoute,
   ApiEmailTransactionalSendRoute: ApiEmailTransactionalSendRoute,
   ApiPublicArticleImageFilenameRoute: ApiPublicArticleImageFilenameRoute,
   ApiPublicExploreAutocompleteRoute: ApiPublicExploreAutocompleteRoute,
   ApiPublicExploreEntitiesRoute: ApiPublicExploreEntitiesRoute,
   ApiPublicExploreMapRoute: ApiPublicExploreMapRoute,
   ApiPublicExploreRecommendationsRoute: ApiPublicExploreRecommendationsRoute,
+  ApiPublicHooksAdsenseImageBackfillRoute:
+    ApiPublicHooksAdsenseImageBackfillRoute,
+  ApiPublicHooksAutoFacebookPostRoute: ApiPublicHooksAutoFacebookPostRoute,
+  ApiPublicHooksAutoFacebookPostTexasdefinedRoute:
+    ApiPublicHooksAutoFacebookPostTexasdefinedRoute,
+  ApiPublicHooksAutoFacebookPostTexasdefinedSmartRoute:
+    ApiPublicHooksAutoFacebookPostTexasdefinedSmartRoute,
   ApiPublicHooksBackfillFeaturedImagesRoute:
     ApiPublicHooksBackfillFeaturedImagesRoute,
+  ApiPublicHooksBuildNewsroomResearchPacketsRoute:
+    ApiPublicHooksBuildNewsroomResearchPacketsRoute,
   ApiPublicHooksClassifyArticlePillarsRoute:
     ApiPublicHooksClassifyArticlePillarsRoute,
   ApiPublicHooksClassifyPillarsRoute: ApiPublicHooksClassifyPillarsRoute,
   ApiPublicHooksClassifySportsRoute: ApiPublicHooksClassifySportsRoute,
+  ApiPublicHooksClusterNewsroomStoriesRoute:
+    ApiPublicHooksClusterNewsroomStoriesRoute,
+  ApiPublicHooksDecideNewsroomPackagesRoute:
+    ApiPublicHooksDecideNewsroomPackagesRoute,
+  ApiPublicHooksEnrichNewsroomRssEvidenceRoute:
+    ApiPublicHooksEnrichNewsroomRssEvidenceRoute,
+  ApiPublicHooksFinalizeNewsroomArticleRoute:
+    ApiPublicHooksFinalizeNewsroomArticleRoute,
+  ApiPublicHooksGenerateDailyBriefRoute: ApiPublicHooksGenerateDailyBriefRoute,
   ApiPublicHooksGenerateEvergreenRoute: ApiPublicHooksGenerateEvergreenRoute,
   ApiPublicHooksGenerateNewsRoute: ApiPublicHooksGenerateNewsRoute,
+  ApiPublicHooksGenerateNewsroomRoute: ApiPublicHooksGenerateNewsroomRoute,
   ApiPublicHooksGenerateSportsRoute: ApiPublicHooksGenerateSportsRoute,
   ApiPublicHooksHealthRoute: ApiPublicHooksHealthRoute,
+  ApiPublicHooksImageBacklogRecoveryRoute:
+    ApiPublicHooksImageBacklogRecoveryRoute,
   ApiPublicHooksIngestFeedsRoute: ApiPublicHooksIngestFeedsRoute,
   ApiPublicHooksIngestSportsRoute: ApiPublicHooksIngestSportsRoute,
   ApiPublicHooksListShopsRoute: ApiPublicHooksListShopsRoute,
+  ApiPublicHooksNewsroomGenerationDiagnosticsRoute:
+    ApiPublicHooksNewsroomGenerationDiagnosticsRoute,
+  ApiPublicHooksNormalizeNewsroomFeedRoute:
+    ApiPublicHooksNormalizeNewsroomFeedRoute,
+  ApiPublicHooksPublishOverdueGapRoute: ApiPublicHooksPublishOverdueGapRoute,
   ApiPublicHooksPublishingSafetyNetRoute:
     ApiPublicHooksPublishingSafetyNetRoute,
+  ApiPublicHooksReconcileNewsHistoryRoute:
+    ApiPublicHooksReconcileNewsHistoryRoute,
   ApiPublicHooksRemediateAug10FlyoverRoute:
     ApiPublicHooksRemediateAug10FlyoverRoute,
   ApiPublicHooksRepairArticleStructureRoute:
     ApiPublicHooksRepairArticleStructureRoute,
   ApiPublicHooksRepairSb37ProductionRoute:
     ApiPublicHooksRepairSb37ProductionRoute,
+  ApiPublicHooksRetestNewsroomShadowRoute:
+    ApiPublicHooksRetestNewsroomShadowRoute,
   ApiPublicHooksRunGenerateNewsRoute: ApiPublicHooksRunGenerateNewsRoute,
+  ApiPublicHooksScoreNewsroomStoriesRoute:
+    ApiPublicHooksScoreNewsroomStoriesRoute,
   ApiPublicHooksScoreViralRoute: ApiPublicHooksScoreViralRoute,
   ApiPublicHooksScoreViralBackfillRoute: ApiPublicHooksScoreViralBackfillRoute,
   ApiPublicHooksSyncPrintifyRoute: ApiPublicHooksSyncPrintifyRoute,
   ApiPublicHooksTrackVariantRoute: ApiPublicHooksTrackVariantRoute,
+  ApiPublicPaymentsHealthRoute: ApiPublicPaymentsHealthRoute,
+  ApiPublicPaymentsSandboxConfigRoute: ApiPublicPaymentsSandboxConfigRoute,
+  ApiPublicPaymentsSandboxHealthRoute: ApiPublicPaymentsSandboxHealthRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
-  LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
-  LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
-  LovableEmailTransactionalSendRoute: LovableEmailTransactionalSendRoute,
   ApiPublicOauthFacebookCallbackRoute: ApiPublicOauthFacebookCallbackRoute,
   ApiPublicOauthFacebookStartRoute: ApiPublicOauthFacebookStartRoute,
 }

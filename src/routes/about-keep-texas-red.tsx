@@ -31,7 +31,7 @@ export const Route = createFileRoute("/about-keep-texas-red")({
             name: "Keep Texas Red",
             alternateName: ["Keep TX Red", "KeepTXRed"],
             url: "https://keeptxred.com/",
-            logo: "https://keeptxred.com/__l5e/assets-v1/44ccd7e8-589f-48c9-b255-0b52bb83c041/red-texas-icon.png",
+            logo: "https://keeptxred.com/keep-tx-red-icon.svg",
           },
         }),
       },

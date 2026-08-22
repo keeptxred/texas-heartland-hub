@@ -20,7 +20,7 @@ const BASE = baseArg > -1 ? process.argv[baseArg + 1] : process.env.SEO_BASE || 
 const CANONICAL_HOST = "https://keeptxred.com";
 const SAMPLE = Number(process.env.SEO_SAMPLE || 60);
 const DERIVATIVE_SITEMAPS = new Set(["/sitemap-news.xml", "/sitemap-images.xml"]);
-const DISALLOWED = [/\?/, /#/, /^\/admin/, /^\/api\//, /^\/cart/, /^\/shop\/checkout/, /^\/preview\//, /^\/lovable\//, /^\/hubs/, /^\/email\//];
+const DISALLOWED = [/\?/, /#/, /^\/admin/, /^\/api\//, /^\/cart/, /^\/shop\/checkout/, /^\/preview\//, /^\/legacy-builder\//, /^\/hubs/, /^\/email\//];
 const INDEXABLE_PRIORITY_PATHS = [
   "/contact-legislators",
   "/find-representative",

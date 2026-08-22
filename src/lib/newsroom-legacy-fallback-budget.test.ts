@@ -24,7 +24,7 @@ describe("retired newsroom legacy fallback", () => {
     expect(legacyWriter).toContain("LEGACY_GENERATE_NEWS_DISABLED = true");
     expect(legacyWriter).toContain("aiCalls: 0");
     expect(legacyWriter).toContain("inserted: 0");
-    expect(legacyWriter).not.toContain("ai.gateway.lovable.dev");
+    expect(legacyWriter).not.toContain("ai.gateway.legacy-builder.dev");
     expect(legacyWriter).not.toMatch(/\.from\(["']daily_articles["']\)/);
   });
 

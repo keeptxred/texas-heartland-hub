@@ -32,8 +32,8 @@ type GeminiInteraction = {
 export const INTERNAL_AI_ORIGIN = "https://ai.internal.keeptxred.local";
 const INTERNAL_CHAT = `${INTERNAL_AI_ORIGIN}/v1/chat/completions`;
 const INTERNAL_IMAGES = `${INTERNAL_AI_ORIGIN}/v1/images/generations`;
-const LEGACY_CHAT = "https://ai.gateway.lovable.dev/v1/chat/completions";
-const LEGACY_IMAGES = "https://ai.gateway.lovable.dev/v1/images/generations";
+const LEGACY_CHAT = "https://ai.internal.keeptxred.local/v1/chat/completions";
+const LEGACY_IMAGES = "https://ai.internal.keeptxred.local/v1/images/generations";
 const GEMINI_INTERACTIONS = "https://generativelanguage.googleapis.com/v1beta/interactions";
 const CLOUDFLARE_TEXT_MODEL = "@cf/meta/llama-3.1-8b-instruct-fast";
 const CLOUDFLARE_IMAGE_MODEL = "@cf/black-forest-labs/flux-1-schnell";
@@ -319,7 +319,7 @@ export function installDirectAiFetch(): void {
     process.env.KTR_AI_PROVIDER_READY = "direct-provider";
     // Temporary compatibility for old callers that only use this variable as
     // an availability gate. The value is never sent to any external service.
-    if (!process.env.LOVABLE_API_KEY) process.env.LOVABLE_API_KEY = "direct-provider";
+    if (!process.env.KTR_AI_PROVIDER_READY) process.env.KTR_AI_PROVIDER_READY = "direct-provider";
   }
 
   globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {

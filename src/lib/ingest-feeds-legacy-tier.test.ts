@@ -15,7 +15,7 @@ describe("legacy ingest evidence-driven rewrite length", () => {
   it("does not make a third paid expansion call after shared editorial repair", () => {
     expect(source).toContain("The shared editorial engine already performs one targeted repair");
     expect(source).toContain("return prior;");
-    expect(source).not.toContain('fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {\n      method: "POST",\n      headers: { "Content-Type": "application/json", "Lovable-API-Key": lovableApiKey },\n      body: JSON.stringify({\n        model: "google/gemini-3-flash-preview",\n        messages: [\n          { role: "system", content: REWRITE_SYSTEM },');
+    expect(source).not.toContain('fetch("https://ai.internal.keeptxred.local/v1/chat/completions", {\n      method: "POST",\n      headers: { "Content-Type": "application/json", "X-KTR-AI-Provider": aiProviderReady },\n      body: JSON.stringify({\n        model: "google/gemini-3-flash-preview",\n        messages: [\n          { role: "system", content: REWRITE_SYSTEM },');
   });
 
   it("keeps the downstream evidence-driven publication floor", () => {
