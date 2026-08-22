@@ -13,6 +13,10 @@ on:
           - '5'
           - '10'
           - '20'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/backfill-featured-images.yml'
 
 permissions:
   contents: read
@@ -29,7 +33,7 @@ jobs:
       - name: Run production guarded image backfill
         env:
           BACKFILL_URL: https://keeptxred.com/api/public/hooks/backfill-featured-images
-          LIMIT: ${{ inputs.limit }}
+          LIMIT: ${{ inputs.limit || '20' }}
         run: |
           set -euo pipefail
           response="$(curl --fail-with-body --silent --show-error --retry 2 --retry-all-errors --max-time 1500 -X POST "${BACKFILL_URL}?limit=${LIMIT}")"
