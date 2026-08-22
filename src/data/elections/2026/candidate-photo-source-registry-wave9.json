@@ -1,14 +1,5 @@
 [
   {
-    "domain": "vote411.org",
-    "sourceClass": "league-of-women-voters-candidate-guide",
-    "discoveryStatus": "discovery-only",
-    "autoApprove": false,
-    "rightsRule": "Use VOTE411 and its Texas candidate/race pages to confirm candidate identity, office, and candidate-supplied profile information and to locate downstream campaign or official-source links. Do not reuse VOTE411-hosted portraits unless the specific image provenance and reuse basis are independently verified.",
-    "searchHint": "site:vote411.org Texas 2026 candidate name OR site:onyourballot.vote411.org candidate name Texas 2026",
-    "notes": "Verified August 22, 2026 as the League of Women Voters Education Fund voter-guide platform for Texas, with 2026 Texas races and candidate information available through its ballot and all-candidates views."
-  },
-  {
     "domain": "guides.vote",
     "sourceClass": "nonpartisan-voter-guide",
     "discoveryStatus": "discovery-only",
@@ -16,15 +7,6 @@
     "rightsRule": "Use current candidate-guide pages to identify candidates, candidate websites, issue links, and portrait leads. Do not reuse Guides.vote-hosted candidate images unless the original image provenance and reuse permission are separately verified.",
     "searchHint": "site:guides.vote Texas 2026 candidate name",
     "notes": "Verified August 22, 2026 as a current voter-guide source with a live 2026 Texas U.S. Senate guide containing candidate profiles, images, and campaign links."
-  },
-  {
-    "domain": "ballotready.org",
-    "sourceClass": "candidate-ballot-directory",
-    "discoveryStatus": "discovery-only",
-    "autoApprove": false,
-    "rightsRule": "Use BallotReady to identify current Texas races, candidates, offices, and downstream source leads. Do not reuse BallotReady-hosted imagery unless a campaign, government, public-domain, or explicitly licensed origin is independently established.",
-    "searchHint": "site:ballotready.org/us/texas candidate name 2026",
-    "notes": "Verified August 22, 2026 as a live Texas general-election ballot directory covering federal, state, county, and local offices."
   },
   {
     "domain": "smarter.vote",
