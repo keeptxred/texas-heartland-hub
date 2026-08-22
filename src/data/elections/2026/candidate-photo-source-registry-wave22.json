@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "colorfulconservative.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Bonnie Abadie's official Texas House District 102 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, donation graphics, stock imagery, event flyers, third-party embeds, and photographs that do not clearly identify Bonnie Abadie.",
+    "searchHint": "site:colorfulconservative.com Bonnie Abadie Texas House District 102 portrait about candidate",
+    "notes": "Verified August 22, 2026. Current Dallas County Republican Party event listings identify Bonnie Abadie as the Texas House District 102 candidate and link colorfulconservative.com as her campaign website. Vote-USA and TCTA independently identify her as the 2026 Republican candidate for District 102."
+  },
+  {
+    "domain": "hoffnaglefortexas.org",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Jordan Scott Hoffnagle's official Texas House District 100 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, donation graphics, stock imagery, issue graphics, videos, and third-party embeds.",
+    "searchHint": "site:hoffnaglefortexas.org Jordan Scott Hoffnagle Texas House District 100 portrait about",
+    "notes": "Verified August 22, 2026. Vote-USA's current November 3, 2026 Texas general-election guide identifies Jordan Scott Hoffnagle as the Republican candidate for Texas House District 100 and links hoffnaglefortexas.org as the candidate website. TCTA independently lists the same candidate/race pairing."
+  },
+  {
+    "domain": "theofficialfacetofaceprojectofcampaignvideosforvotereducation.com",
+    "sourceClass": "candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use this directory only to confirm candidate identity, race context, biographies, social links, and outbound campaign-source leads. Do not automatically reuse Wix-hosted candidate images, screenshots, or other directory-hosted imagery. Any portrait discovered through this source must be independently traced to an official campaign, government, public-domain, or properly licensed originating source before approval.",
+    "searchHint": "site:theofficialfacetofaceprojectofcampaignvideosforvotereducation.com Texas 2026 candidate Website Biography",
+    "notes": "Discovered August 22, 2026. The Face to Face Project maintains extensive Texas candidate-by-office and county directories with biographies, portraits, social links, and outbound Website links. It is valuable for source discovery across many currently uncovered legislative candidates, but image reuse rights are not sufficiently uniform for automatic approval."
+  }
+]
