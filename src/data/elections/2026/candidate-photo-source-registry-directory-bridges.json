@@ -1,0 +1,56 @@
+[
+  {
+    "domain": "tcta.org",
+    "sourceClass": "texas-educator-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use TCTA Texas Teachers Vote candidate profiles to locate official campaign websites and candidate-linked sources. Do not copy directory imagery unless the specific image has a separately documented provenance and reuse basis.",
+    "searchHint": "site:tcta.org/texasteachersvote/find-candidates candidate name Texas 2026",
+    "notes": "Verified August 2026 as a current Texas candidate directory with race context and outbound campaign links."
+  },
+  {
+    "domain": "ballotready.org",
+    "sourceClass": "candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use BallotReady profiles only to discover verified candidate webpages and downstream official sources. Do not auto-approve BallotReady-hosted imagery.",
+    "searchHint": "site:ballotready.org/people candidate name Texas 2026",
+    "notes": "Verified August 2026 as a candidate directory that can expose candidate-linked webpages."
+  },
+  {
+    "domain": "branch.vote",
+    "sourceClass": "candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Branch candidate pages to discover candidate websites and corroborate race identity. Do not auto-approve Branch-hosted imagery.",
+    "searchHint": "site:branch.vote/races candidate name Texas 2026",
+    "notes": "Verified August 2026 as a current election candidate directory with outbound candidate website references."
+  },
+  {
+    "domain": "transparencyusa.org",
+    "sourceClass": "campaign-finance-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Transparency USA to corroborate active candidate/race identity and discover downstream candidate sources. Do not auto-approve directory imagery.",
+    "searchHint": "site:transparencyusa.org/tx candidate name 2026",
+    "notes": "Verified August 2026 as a current Texas campaign-finance and election directory."
+  },
+  {
+    "domain": "actblue.com",
+    "sourceClass": "candidate-fundraising-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use ActBlue candidate directory records only to locate the candidate's linked campaign website and corroborate identity. Do not auto-approve ActBlue-hosted imagery.",
+    "searchHint": "site:secure.actblue.com/directory/TX candidate name 2026",
+    "notes": "Verified August 2026 as a high-yield directory for Democratic candidate campaign links and candidate identity."
+  },
+  {
+    "domain": "vote411.org",
+    "sourceClass": "nonpartisan-voter-guide-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use VOTE411 candidate profiles and guides to locate candidate-provided links and corroborate ballot identity. Do not auto-approve VOTE411-hosted imagery.",
+    "searchHint": "site:vote411.org candidate name Texas 2026",
+    "notes": "Verified August 2026 as a League of Women Voters voter-guide source useful for candidate-source discovery."
+  }
+]
