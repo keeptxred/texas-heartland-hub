@@ -4,6 +4,9 @@ on:
   schedule:
     # Monday and Thursday mornings in Texas during daylight-saving season.
     - cron: '15 14 * * 1,4'
+    # Temporary read-only production smoke. It validates the endpoint but skips
+    # GitHub issue creation/update even when strong audience signals are found.
+    - cron: '52 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -19,6 +22,8 @@ jobs:
   analyze:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      COMMENT_SIGNAL_SMOKE: ${{ github.event_name == 'schedule' && github.event.schedule == '52 * * * *' }}
     steps:
       - name: Request audience signals
         id: signals
@@ -50,6 +55,13 @@ jobs:
 
           signal_count="$(jq '.signals | length' "$output")"
           echo "signal_count=$signal_count" >> "$GITHUB_OUTPUT"
+
+          if [[ "$COMMENT_SIGNAL_SMOKE" == "true" ]]; then
+            jq -e '.site == "TexasDefined" and (.lookback_days | type == "number") and (.minimum_signal_comments | type == "number") and (.posts_scanned | type == "number") and (.signals | type == "array")' "$output" >/dev/null
+            echo "TexasDefined Facebook comment-signal production smoke passed with ${signal_count} qualifying theme(s); no GitHub planning issue was created or modified."
+            exit 0
+          fi
+
           if [[ "$signal_count" -eq 0 ]]; then
             echo 'No strong Facebook audience themes met the threshold.'
             exit 0
