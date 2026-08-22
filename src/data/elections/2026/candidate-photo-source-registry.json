@@ -178,5 +178,59 @@
     "rightsRule": "Use Openverse to find candidate images, then verify identity, license, creator, and source on the originating item page before approval.",
     "searchHint": "site:openverse.org candidate name Texas",
     "notes": "New source-discovery index for Creative Commons and public-domain media; never treat index metadata alone as sufficient rights verification."
+  },
+  {
+    "domain": "lrl.texas.gov",
+    "sourceClass": "official-texas-legislative-reference-library",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use the Legislative Reference Library to identify official or archival legislator photographs and their credited originating collections. Do not auto-approve the LRL listing alone; follow the cited photograph source and verify the specific item's reuse basis.",
+    "searchHint": "site:lrl.texas.gov/legeleaders/members candidate name photograph",
+    "notes": "Verified August 2026: Texas Legislators: Past & Present includes biographies, photographs, photo provenance, and source notes for current and former legislators."
+  },
+  {
+    "domain": "govinfo.gov",
+    "sourceClass": "official-congressional-pictorial-directory",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use GovInfo Congressional Pictorial Directory pages to locate official congressional portraits. Before approval, verify the image is a federal-government work or otherwise has a compatible reuse basis; preserve the GovInfo edition/page source.",
+    "searchHint": "site:govinfo.gov/content/pkg/GPO-PICTDIR candidate name Texas portrait",
+    "notes": "Verified August 2026: the Government Publishing Office hosts Congressional Pictorial Directories sponsored by the House and Senate with member photographs."
+  },
+  {
+    "domain": "bioguide.congress.gov",
+    "sourceClass": "official-congressional-biographical-directory",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use Biographical Directory profiles to identify a member and discover portrait assets. Verify the individual image's credit/reuse basis before approval because source provenance can vary by member.",
+    "searchHint": "site:bioguide.congress.gov/search/bio candidate name Texas",
+    "notes": "Official Biographical Directory of the United States Congress; useful for current and former federal officeholders and portrait-source discovery."
+  },
+  {
+    "domain": "vote411.org",
+    "sourceClass": "nonpartisan-voter-guide-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use VOTE411 candidate profiles to confirm candidate identity and locate candidate-provided information or downstream official links. Do not copy candidate images without a separately documented reuse basis.",
+    "searchHint": "site:vote411.org candidate name Texas 2026",
+    "notes": "Verified August 2026: League of Women Voters of Texas states its 2026 guide covers statewide, congressional, Texas Senate, Texas House, SBOE and appellate races."
+  },
+  {
+    "domain": "onyourballot.vote411.org",
+    "sourceClass": "nonpartisan-voter-guide-candidate-profile",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use candidate detail pages for identity/context and source discovery only unless a separate item-level image permission basis is documented.",
+    "searchHint": "site:onyourballot.vote411.org/candidate-detail.do candidate name Texas",
+    "notes": "Candidate-detail subdomain exposes candidate profiles and images but is not treated as an image-rights source by itself."
+  },
+  {
+    "domain": "tcta.org",
+    "sourceClass": "texas-house-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use TCTA candidate pages to locate campaign websites, social links, and other downstream official sources. Do not copy TCTA imagery without separately documented reuse rights.",
+    "searchHint": "site:tcta.org/texasteachersvote/find-candidates candidate name",
+    "notes": "Verified August 2026: Texas Classroom Teachers Association publishes a district-by-district Texas House candidate directory with links to campaign websites and social profiles."
   }
 ]
