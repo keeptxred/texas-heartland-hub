@@ -4,12 +4,15 @@ on:
   push:
     branches:
       - cleanup/remove-legacy-builder-traces
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: write
 
 concurrency:
-  group: retired-builder-cleanup-${{ github.ref }}
+  group: retired-builder-cleanup-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -21,6 +24,7 @@ jobs:
       - name: Checkout cleanup branch
         uses: actions/checkout@v5
         with:
+          ref: cleanup/remove-legacy-builder-traces
           fetch-depth: 0
 
       - name: Setup Bun
@@ -48,7 +52,6 @@ jobs:
           tracked = subprocess.check_output(['git', 'ls-files', '-z']).decode().split('\0')
           tracked = [p for p in tracked if p]
 
-          # Preserve retired hosted images under first-party stable public URLs.
           asset_re = re.compile(
               rf'https://keeptxred\.com/{re.escape(old_asset_marker)}/assets-v1/([0-9a-f-]+)/([^\s\"\'\)]+)',
               re.I,
@@ -77,7 +80,6 @@ jobs:
                       shutil.copyfile(source, public_rel)
                   replacements[old_url] = f'https://keeptxred.com/media/{public_rel.name}'
 
-          # Text-only cleanup. Lockfiles and generated route tree are rebuilt below.
           skip_initial = {'bun.lock', 'package-lock.json', 'src/routeTree.gen.ts'}
           for rel in tracked:
               if rel in skip_initial:
@@ -94,7 +96,6 @@ jobs:
               for old_url, new_url in replacements.items():
                   text = text.replace(old_url, new_url)
 
-              # Provider/runtime identifiers now use first-party names only.
               text = text.replace(f'https://{old_ai_host}/v1/chat/completions', f'https://{internal_ai_host}/v1/chat/completions')
               text = text.replace(f'https://{old_ai_host}/v1/images/generations', f'https://{internal_ai_host}/v1/images/generations')
               text = text.replace(f'https://{old_ai_host}', f'https://{internal_ai_host}')
@@ -121,7 +122,6 @@ jobs:
               text = text.replace(VENDOR + '_REWRITE_BYPASSED', 'EXTERNAL_AI_GATEWAY_DISABLED')
               text = text.replace(VENDOR + '_IMAGE_BYPASSED', 'EXTERNAL_IMAGE_GATEWAY_DISABLED')
 
-              # The obsolete crawl path no longer exists; remove its robots entry.
               text = re.sub(
                   rf'^\s*[\"\']Disallow: /{re.escape(vendor)}/[\"\'],?\s*\n',
                   '',
@@ -129,13 +129,11 @@ jobs:
                   flags=re.I | re.M,
               )
 
-              # Identifier-safe cleanup for any remaining historical naming.
               text = re.sub(rf'\b{re.escape(vendor)}(?=[A-Z])', 'legacyBuilder', text)
               text = re.sub(rf'\b{re.escape(Vendor)}(?=[A-Z])', 'LegacyBuilder', text)
               text = re.sub(rf'\b{re.escape(VENDOR)}(?=_)', 'LEGACY_BUILDER', text)
               text = re.sub(rf'\b{re.escape(vendor)}(?=_)', 'legacy_builder', text)
 
-              # Standalone prose/path references become provider-neutral wording.
               text = re.sub(rf'\b{re.escape(Vendor)}\b', 'legacy builder', text)
               text = re.sub(rf'\b{re.escape(VENDOR)}\b', 'LEGACY_BUILDER', text)
               text = re.sub(rf'\b{re.escape(vendor)}\b', 'legacy-builder', text)
@@ -143,7 +141,6 @@ jobs:
               if text != original:
                   path.write_text(text, encoding='utf-8')
 
-          # Generated route metadata must be rebuilt from the actual current files.
           route_tree = root / 'src' / 'routeTree.gen.ts'
           if route_tree.exists():
               route_tree.unlink()
