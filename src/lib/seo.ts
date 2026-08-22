@@ -14,7 +14,7 @@ export const WEBSITE_ID = `${SITE_URL}/#website`;
 export const TWITTER_HANDLE = "@KeepTXRed";
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/og/default.jpg`;
 export const DEFAULT_OG_ALT = "Keep TX Red — Texas News, Politics & Conservative Commentary";
-export const PUBLISHER_LOGO = `${SITE_URL}/__l5e/assets-v1/44ccd7e8-589f-48c9-b255-0b52bb83c041/red-texas-icon.png`;
+export const PUBLISHER_LOGO = `${SITE_URL}/keep-tx-red-icon.svg`;
 export const PUBLISHER_LOGO_ALT = "Keep TX Red red Texas logo";
 export const OFFICIAL_PROFILE_URLS = [
   "https://www.instagram.com/keeptxreddotcom/",
