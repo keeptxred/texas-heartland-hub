@@ -4,30 +4,17 @@ import { CitationCollectionTrustRouter } from "@/components/authority/CitationCo
 import { NewsGovernmentGraphRouter } from "@/components/news-government-graph-router";
 import { SocialLinks } from "@/components/social-links";
 import { TexasDefinedCrosslinks } from "@/components/texas-defined-crosslinks";
-import { ABOUT_LINKS, SHOP_LINK, SHOP_POLICY_LINKS } from "@/lib/site-navigation";
+import { ABOUT_LINKS, SHOP_LINK, SHOP_POLICY_LINKS, SITE_NAV_GROUPS } from "@/lib/site-navigation";
 
-const FOOTER_NAV_GROUPS = [
-  {
-    id: "coverage",
-    label: "Coverage",
-    links: [
-      { to: "/news", label: "Texas News" },
-      { to: "/texas-politics", label: "Politics" },
-      { to: "/elections/2026", label: "Election Central" },
-      { to: "/issues", label: "Issues & Guides" },
-    ],
-  },
-  {
-    id: "government",
-    label: "Government",
-    links: [
-      { to: "/texas-legislature", label: "Texas Legislature" },
-      { to: "/bills", label: "Track Texas Bills" },
-      { to: "/representatives", label: "Representatives" },
-      { to: "/laws", label: "Texas Laws" },
-    ],
-  },
-] as const;
+const FOOTER_GROUP_IDS = new Set<string>(["news", "government"]);
+const FOOTER_LINK_LABELS = new Set<string>([
+  "Latest Texas News",
+  "Texas Politics",
+  "Texas Legislature",
+  "Track Texas Bills",
+  "Representatives",
+  "Texas Laws",
+]);
 
 export function SiteFooter() {
   return (
@@ -64,22 +51,26 @@ export function SiteFooter() {
               </div>
             </div>
 
-            {FOOTER_NAV_GROUPS.map((group) => (
-              <nav key={group.id} aria-label={`${group.label} footer links`}>
-                <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.16em] text-accent">
-                  {group.label}
-                </h2>
-                <ul className="space-y-2 text-sm text-white/75">
-                  {group.links.map((link) => (
-                    <li key={link.to}>
-                      <Link to={link.to} className="hover:text-white">
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-            ))}
+            {SITE_NAV_GROUPS.map((group) => {
+              if (!FOOTER_GROUP_IDS.has(group.id)) return null;
+              const links = group.links.filter((link) => FOOTER_LINK_LABELS.has(link.label));
+              return (
+                <nav key={group.id} aria-label={`${group.label} footer links`}>
+                  <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.16em] text-accent">
+                    {group.label}
+                  </h2>
+                  <ul className="space-y-2 text-sm text-white/75">
+                    {links.map((link) => (
+                      <li key={link.to}>
+                        <Link to={link.to} className="hover:text-white">
+                          {link.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              );
+            })}
           </div>
 
           <SocialLinks variant="footer" />
