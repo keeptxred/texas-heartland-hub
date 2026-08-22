@@ -54,6 +54,24 @@
     "notes": "Existing verified source for Green Party nominees."
   },
   {
+    "domain": "commons.wikimedia.org",
+    "sourceClass": "licensed-public-image-repository",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Approve only after item-level verification that the file depicts the candidate and carries a compatible reusable license or public-domain status; preserve the exact file-page source and license attribution.",
+    "searchHint": "site:commons.wikimedia.org/wiki/File candidate name official portrait Texas",
+    "notes": "Verified as a high-value source for public-domain U.S. Congress portraits and other properly licensed candidate images. Existing Wikimedia discovery remains subject to item-level identity and rights checks."
+  },
+  {
+    "domain": "dvidshub.net",
+    "sourceClass": "official-defense-public-media-archive",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use only items whose DVIDS page explicitly marks the image Public Domain and whose caption clearly identifies the candidate; preserve photographer, agency, image-page attribution, and any DVIDS copyright restrictions.",
+    "searchHint": "site:dvidshub.net/image candidate name Texas",
+    "notes": "Newly verified source class. DVIDS contains high-resolution public-domain military and federal-government event photography of Texas officeholders, including candidate-identifiable images. Prefer formal portraits when available; use DVIDS as a fallback/event-photo source after item-level review."
+  },
+  {
     "domain": "texasgop.org",
     "sourceClass": "official-state-party-directory",
     "discoveryStatus": "discovery-only",
