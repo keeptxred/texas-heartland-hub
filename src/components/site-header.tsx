@@ -79,7 +79,7 @@ export function SiteHeader() {
         <nav aria-label="Primary navigation" className="hidden items-center gap-1 lg:flex">
           {SITE_NAV_GROUPS.map((group) => {
             const active =
-              isPathActive(pathname, group.href) ||
+              (group.href ? isPathActive(pathname, group.href) : false) ||
               group.links.some((link) => isPathActive(pathname, link.to));
 
             return (
@@ -153,14 +153,20 @@ export function SiteHeader() {
           <div className="mx-auto grid max-w-2xl gap-6">
             {SITE_NAV_GROUPS.map((group) => (
               <section key={group.id}>
-                <Link
-                  to={group.href}
-                  onClick={() => setOpen(false)}
-                  className="flex items-center justify-between text-sm font-bold text-white"
-                >
-                  <span>{group.label}</span>
-                  <span className="text-primary" aria-hidden>→</span>
-                </Link>
+                {group.href ? (
+                  <Link
+                    to={group.href}
+                    onClick={() => setOpen(false)}
+                    className="flex items-center justify-between text-sm font-bold text-white"
+                  >
+                    <span>{group.label}</span>
+                    <span className="text-primary" aria-hidden>→</span>
+                  </Link>
+                ) : (
+                  <div className="flex items-center justify-between text-sm font-bold text-white">
+                    <span>{group.label}</span>
+                  </div>
+                )}
                 <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 border-t border-white/10 pt-2">
                   {group.links
                     .filter((link) => link.to !== group.href)
