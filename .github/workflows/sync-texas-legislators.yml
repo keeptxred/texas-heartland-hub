@@ -38,7 +38,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PR_TITLE: Refresh Texas legislator authority profiles
           PR_BODY: Automated official-roster refresh. The existing protected verify check must pass before the trusted same-repository auto-merge workflow can merge and deploy this data.
-          COMMIT_MESSAGE: data: refresh Texas legislator authority profiles
+          COMMIT_MESSAGE: "data: refresh Texas legislator authority profiles"
         shell: bash
         run: |
           set -euo pipefail
