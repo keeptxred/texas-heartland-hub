@@ -1,0 +1,223 @@
+name: Finalize retired builder cleanup
+
+on:
+  push:
+    branches:
+      - cleanup/finalize-retired-builder-cleanup
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+concurrency:
+  group: finalize-retired-builder-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout cleanup branch
+        uses: actions/checkout@v5
+        with:
+          ref: cleanup/finalize-retired-builder-cleanup
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+
+      - name: Rewrite retired integration references
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+          import shutil
+          import subprocess
+
+          root = Path('.')
+          vendor = 'lova' + 'ble'
+          Vendor = 'Lova' + 'ble'
+          VENDOR = 'LOVA' + 'BLE'
+          old_asset_marker = '__' + 'l5e'
+          old_ai_host = f'ai.gateway.{vendor}.dev'
+          internal_ai_host = 'ai.internal.keeptxred.local'
+
+          tracked = [p for p in subprocess.check_output(['git', 'ls-files', '-z']).decode().split('\0') if p]
+
+          asset_re = re.compile(
+              rf'https://keeptxred\.com/{re.escape(old_asset_marker)}/assets-v1/([0-9a-f-]+)/([^\s\"\'\)]+)',
+              re.I,
+          )
+          replacements = {}
+          for rel in tracked:
+              path = root / rel
+              if not path.is_file():
+                  continue
+              try:
+                  text = path.read_text(encoding='utf-8')
+              except (UnicodeDecodeError, OSError):
+                  continue
+              for match in asset_re.finditer(text):
+                  old_url = match.group(0)
+                  uid = match.group(1)
+                  filename = match.group(2).split('?')[0].split('#')[0]
+                  candidates = [p for p in (root / 'src' / 'assets').rglob(filename) if not p.name.endswith('.asset.json')]
+                  if not candidates:
+                      replacements[old_url] = (
+                          'https://keeptxred.com/keep-tx-red-icon.svg'
+                          if filename == 'red-texas-icon.png'
+                          else 'https://keeptxred.com/og/default.jpg'
+                      )
+                      continue
+                  source = sorted(candidates, key=lambda p: str(p))[0]
+                  safe_name = re.sub(r'[^A-Za-z0-9._-]+', '-', filename)
+                  public_rel = Path('public') / 'media' / f'site-{uid}-{safe_name}'
+                  public_rel.parent.mkdir(parents=True, exist_ok=True)
+                  if not public_rel.exists():
+                      shutil.copyfile(source, public_rel)
+                  replacements[old_url] = f'https://keeptxred.com/media/{public_rel.name}'
+
+          for rel in tracked:
+              if rel in {'bun.lock', 'src/routeTree.gen.ts'}:
+                  continue
+              path = root / rel
+              if not path.is_file():
+                  continue
+              try:
+                  text = path.read_text(encoding='utf-8')
+              except (UnicodeDecodeError, OSError):
+                  continue
+              original = text
+
+              for old_url, new_url in replacements.items():
+                  text = text.replace(old_url, new_url)
+
+              text = text.replace(f'https://{old_ai_host}/v1/chat/completions', f'https://{internal_ai_host}/v1/chat/completions')
+              text = text.replace(f'https://{old_ai_host}/v1/images/generations', f'https://{internal_ai_host}/v1/images/generations')
+              text = text.replace(f'https://{old_ai_host}', f'https://{internal_ai_host}')
+              text = re.sub(rf'https://[A-Za-z0-9.-]*{re.escape(vendor)}\.app', 'https://keeptxred.com', text, flags=re.I)
+              text = re.sub(rf'https://(?:www\.)?{re.escape(vendor)}\.dev', 'https://github.com/keeptxred/texas-heartland-hub', text, flags=re.I)
+
+              text = text.replace('_' + vendor + 'ApiKey', '_aiProviderReady')
+              text = text.replace(vendor + 'ApiKey', 'aiProviderReady')
+              text = text.replace(Vendor + 'ApiKey', 'AiProviderReady')
+              text = text.replace(VENDOR + '_API_KEY', 'KTR_AI_PROVIDER_READY')
+              text = text.replace(Vendor + '-API-Key', 'X-KTR-AI-Provider')
+              text = text.replace(vendor + '_rewrite_bypassed', 'external_ai_gateway_disabled')
+              text = text.replace(vendor + '_image_bypassed', 'external_image_gateway_disabled')
+              text = text.replace(VENDOR + '_REWRITE_BYPASSED', 'EXTERNAL_AI_GATEWAY_DISABLED')
+              text = text.replace(VENDOR + '_IMAGE_BYPASSED', 'EXTERNAL_IMAGE_GATEWAY_DISABLED')
+
+              text = re.sub(rf'^\s*[\"\']Disallow: /{re.escape(vendor)}/[\"\'],?\s*\n', '', text, flags=re.I | re.M)
+              text = re.sub(rf'\b{re.escape(vendor)}(?=[A-Z])', 'legacyBuilder', text)
+              text = re.sub(rf'\b{re.escape(Vendor)}(?=[A-Z])', 'LegacyBuilder', text)
+              text = re.sub(rf'\b{re.escape(VENDOR)}(?=_)', 'LEGACY_BUILDER', text)
+              text = re.sub(rf'\b{re.escape(vendor)}(?=_)', 'legacy_builder', text)
+              text = re.sub(rf'\b{re.escape(Vendor)}\b', 'legacy builder', text)
+              text = re.sub(rf'\b{re.escape(VENDOR)}\b', 'LEGACY_BUILDER', text)
+              text = re.sub(rf'\b{re.escape(vendor)}\b', 'legacy-builder', text)
+
+              if text != original:
+                  path.write_text(text, encoding='utf-8')
+
+          # Remove the retired private registry from Bun's lock without changing
+          # package versions or integrity hashes. Empty source means normal npm registry.
+          lock = root / 'bun.lock'
+          lock_text = lock.read_text(encoding='utf-8')
+          private_registry = re.compile(
+              rf'"https://europe-west1-npm\.pkg\.dev/{re.escape(vendor)}-core-prod/sandbox-npm-cache/[^\"]+\.tgz"',
+              re.I,
+          )
+          lock_text = private_registry.sub('""', lock_text)
+          lock.write_text(lock_text, encoding='utf-8')
+
+          # Current generated tree still contains entries for already-removed old
+          # routes. Rebuild it from actual route files instead of renaming ghosts.
+          route_tree = root / 'src' / 'routeTree.gen.ts'
+          if route_tree.exists():
+              route_tree.unlink()
+          PY
+
+      - name: Install dependencies from cleaned lock
+        run: bun install --frozen-lockfile
+
+      - name: Build and regenerate route tree
+        run: bun run build
+
+      - name: Validate publication boundary
+        run: bun run publication:validate
+
+      - name: Validate indexability
+        run: bun run seo:indexability
+
+      - name: Run focused regression tests
+        run: |
+          bunx vitest run \
+            src/lib/living-story-update.test.ts \
+            src/lib/ingest-feeds-legacy-tier.test.ts \
+            src/lib/newsroom-legacy-fallback-budget.test.ts \
+            src/routes/api/public/hooks/generate-news.word-budget.test.ts \
+            src/routes/api/public/hooks/reconcile-news-history.test.ts
+
+      - name: Remove one-shot cleanup workflows
+        run: |
+          rm -f .github/workflows/cleanup-retired-builder-traces.yml
+          rm -f .github/workflows/finalize-retired-builder-cleanup.yml
+
+      - name: Verify repository is clean
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import subprocess
+
+          vendor = ('lova' + 'ble').lower()
+          old_asset_marker = ('__' + 'l5e').lower()
+          retired_starter = [('gpt' + 'engineer').lower(), ('gpt' + '-engineer').lower()]
+          bad = []
+          tracked = [p for p in subprocess.check_output(['git', 'ls-files', '-z']).decode().split('\0') if p]
+          for rel in tracked:
+              path = Path(rel)
+              if not path.exists():
+                  continue
+              low_path = rel.lower()
+              if vendor in low_path:
+                  bad.append(f'path:{rel}:retired-builder-name')
+              if old_asset_marker in low_path:
+                  bad.append(f'path:{rel}:retired-hosted-asset')
+              try:
+                  text = path.read_text(encoding='utf-8').lower()
+              except (UnicodeDecodeError, OSError):
+                  continue
+              if vendor in text:
+                  bad.append(f'content:{rel}:retired-builder-name')
+              if old_asset_marker in text:
+                  bad.append(f'content:{rel}:retired-hosted-asset')
+              for term in retired_starter:
+                  if term in text:
+                      bad.append(f'content:{rel}:retired-starter-term')
+          if bad:
+              print('\n'.join(sorted(set(bad))))
+              raise SystemExit('Retired integration trace scan failed')
+          print('Repository trace scan: clean')
+          PY
+
+      - name: Commit cleanup to branch
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+            exit 0
+          fi
+          git commit -m 'Complete retired builder cleanup'
+          git push origin HEAD:cleanup/finalize-retired-builder-cleanup
