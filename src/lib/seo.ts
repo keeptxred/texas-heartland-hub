@@ -11,12 +11,12 @@ export const SITE_NAME = "Keep TX Red";
 export const SITE_ALTERNATE_NAMES = ["Keep Texas Red", "KeepTXRed.com"] as const;
 export const ORGANIZATION_ID = `${SITE_URL}/#organization`;
 export const WEBSITE_ID = `${SITE_URL}/#website`;
-export const TWITTER_HANDLE = "@KeepTXRed";
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/og/default.jpg`;
 export const DEFAULT_OG_ALT = "Keep TX Red — Texas News, Politics & Conservative Commentary";
 export const PUBLISHER_LOGO = `${SITE_URL}/keep-tx-red-icon.svg`;
 export const PUBLISHER_LOGO_ALT = "Keep TX Red red Texas logo";
 export const OFFICIAL_PROFILE_URLS = [
+  "https://www.facebook.com/profile.php?id=61591363654407",
   "https://www.instagram.com/keeptxreddotcom/",
   "https://github.com/keeptxred",
 ] as const;
@@ -168,8 +168,6 @@ export function buildSeo(input: SeoInput) {
     { property: "og:image:alt", content: imageAlt },
     { property: "og:image:type", content: image.endsWith(".png") ? "image/png" : "image/jpeg" },
     { name: "twitter:card", content: "summary_large_image" },
-    { name: "twitter:site", content: TWITTER_HANDLE },
-    { name: "twitter:creator", content: TWITTER_HANDLE },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
     { name: "twitter:image", content: image },
