@@ -15,6 +15,7 @@ on:
       - "scripts/elections/apply-automation-verified-photo-findings.mjs"
       - "scripts/elections/apply-official-government-photo-findings-2026-08-21.mjs"
       - "scripts/elections/apply-official-federal-photo-findings-2026-08-21-wave2.mjs"
+      - "scripts/elections/apply-official-judicial-photo-findings-2026-08-21-wave2.mjs"
       - "scripts/elections/discover-candidate-photos-house-clerk.mjs"
       - "scripts/elections/discover-candidate-photos-congress-gov.mjs"
       - "src/data/elections/2026/candidate-photo-assets.json"
@@ -54,6 +55,8 @@ jobs:
         run: node scripts/elections/apply-official-government-photo-findings-2026-08-21.mjs
       - name: Apply verified official federal portrait wave 2
         run: node scripts/elections/apply-official-federal-photo-findings-2026-08-21-wave2.mjs
+      - name: Apply verified Texas appellate portrait wave 2
+        run: node scripts/elections/apply-official-judicial-photo-findings-2026-08-21-wave2.mjs
       - name: Discover Congress.gov member portraits
         run: node scripts/elections/discover-candidate-photos-congress-gov.mjs
       - name: Discover U.S. House Clerk member portraits
