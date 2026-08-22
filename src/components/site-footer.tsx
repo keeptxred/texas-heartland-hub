@@ -15,7 +15,7 @@ export function SiteFooter() {
       <TexasDefinedCrosslinks />
       <footer className="mt-16 bg-secondary text-secondary-foreground">
         <div className="mx-auto max-w-7xl px-4 py-14">
-          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.45fr_repeat(5,1fr)]">
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-[1.45fr_repeat(5,1fr)]">
             <div>
               <div className="mb-5 grid size-12 place-items-center rounded-full border border-white/20" aria-hidden>
                 <span className="font-display text-2xl leading-none text-accent">★</span>
