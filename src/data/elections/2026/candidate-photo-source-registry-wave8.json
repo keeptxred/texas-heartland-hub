@@ -34,5 +34,50 @@
     "rightsRule": "Use current Texas candidate listings and campaign-site links as discovery leads only. Do not reuse Politics1-hosted imagery without tracing the image to a campaign, government, public-domain, or explicitly licensed source.",
     "searchHint": "site:politics1.com/tx.htm candidate name 2026",
     "notes": "Verified August 22, 2026 as a frequently updated Texas candidate directory listing active federal and statewide candidates with campaign-site links; the Texas page showed an August 11, 2026 update date."
+  },
+  {
+    "domain": "sanantonioreport.org",
+    "sourceClass": "nonprofit-news-candidate-profile-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use 2026 candidate profile pages to confirm identity and locate campaign or official-source leads. Do not reuse San Antonio Report staff imagery without a separately documented permission or license.",
+    "searchHint": "site:sanantonioreport.org/profile candidate name 2026 Texas",
+    "notes": "Verified August 22, 2026 as a current candidate-profile directory with portraits for statewide and local Texas candidates, including hard-to-find minor-party candidates."
+  },
+  {
+    "domain": "ivoterguide.com",
+    "sourceClass": "candidate-voter-guide-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use candidate profile pages to identify current candidates and downstream campaign or official links. Do not reuse profile images unless their original provenance and reuse basis are separately verified.",
+    "searchHint": "site:ivoterguide.com/candidate candidate name Texas 2026",
+    "notes": "Verified August 22, 2026 as a live 2026 Texas candidate guide covering statewide and district races with candidate profile images."
+  },
+  {
+    "domain": "vote-usa.org",
+    "sourceClass": "candidate-biographical-voter-guide",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use candidate comparison/profile pages to identify campaign websites and biographical details. Do not reuse Vote-USA-hosted imagery without separately verified image provenance and rights.",
+    "searchHint": "site:vote-usa.org candidate name Texas 2026",
+    "notes": "Verified August 22, 2026 as a current Texas general-election candidate comparison source exposing candidate websites and images."
+  },
+  {
+    "domain": "texastribune.org",
+    "sourceClass": "reputable-news-candidate-guide",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Candidate-guide images may be used only when the specific image is explicitly campaign-supplied or another documented reuse basis applies. Do not assume the Tribune article's Creative Commons republishing permission covers staff or third-party photographs.",
+    "searchHint": "site:texastribune.org/2026 candidate name campaign photo voter guide",
+    "notes": "Verified August 22, 2026 as a high-value 2026 Texas voter-guide source; several candidate images are explicitly credited as campaign photos and can be reviewed individually."
+  },
+  {
+    "domain": "candidatefilings.com",
+    "sourceClass": "candidate-filing-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use filing-derived candidate lists to confirm names, office, and filing context and to drive downstream searches. Do not treat this directory as an image-rights source.",
+    "searchHint": "site:candidatefilings.com/state/tx candidate name 2026",
+    "notes": "Verified August 22, 2026 as a current Texas candidate filing directory useful for finding write-in and minor-party candidates that may be absent from larger voter guides."
   }
 ]
