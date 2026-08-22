@@ -19,6 +19,7 @@ const HISTORY_DAYS = 30;
 const ARTICLE_ENDPOINT = "https://keeptxred.com/api/public/hooks/auto-facebook-post-texasdefined";
 const SHOP_URL = "https://texasdefined.com/shop";
 const WATER_DATA_BASE = "https://waterdatafortexas.org/reservoirs/individual";
+const WATER_DATA_RECENT_URL = "https://waterdatafortexas.org/reservoirs/recent-conditions.json";
 const LAKE_LEVEL_MAX_AGE_DAYS = 3;
 
 const TARGET_WINDOWS: ReadonlyArray<readonly [number, number]> = [
@@ -320,6 +321,43 @@ function normalizeCsvHeader(value: string): string {
   return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
 }
 
+function normalizeReservoirIdentity(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, "");
+}
+
+function parseReservoirRecentSnapshot(candidate: ReservoirCandidate, payload: unknown): ReservoirSnapshot | null {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) return null;
+  const wanted = normalizeReservoirIdentity(candidate.waterDataSlug);
+  let partial: Record<string, unknown> | null = null;
+
+  for (const value of Object.values(payload as Record<string, unknown>)) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) continue;
+    const record = value as Record<string, unknown>;
+    const names = [record.condensed_name, record.short_name, record.full_name]
+      .filter((name): name is string => typeof name === "string")
+      .map(normalizeReservoirIdentity);
+    if (names.some((name) => name === wanted)) {
+      partial = record;
+      break;
+    }
+    if (!partial && names.some((name) => name.includes(wanted) || wanted.includes(name))) partial = record;
+  }
+
+  if (!partial) return null;
+  const percentFull = typeof partial.percent_full === "number" ? partial.percent_full : Number(partial.percent_full);
+  const date = typeof partial.timestamp === "string" ? partial.timestamp.match(/\d{4}-\d{2}-\d{2}/)?.[0] ?? null : null;
+  if (!date || !Number.isFinite(percentFull) || percentFull < 0 || percentFull > 150) return null;
+
+  return {
+    name: candidate.name,
+    sourceUrl: `${WATER_DATA_BASE}/${candidate.waterDataSlug}`,
+    date,
+    percentFull,
+    weekAgoPercent: null,
+    monthAgoPercent: null,
+  };
+}
+
 function parseReservoirCsvRows(csv: string): ReservoirCsvRow[] {
   const lines = csv.replace(/^\uFEFF/, "").split(/\r?\n/).filter((line) => line.trim().length > 0);
   const headerIndex = lines.findIndex((line) => {
@@ -433,27 +471,61 @@ function reservoirSnapshotIsPostworthy(snapshot: ReservoirSnapshot): boolean {
   return snapshot.percentFull >= 90 || snapshot.percentFull <= 50 || weekChange >= 3 || monthChange >= 5;
 }
 
-async function loadReservoirSnapshot(candidate: ReservoirCandidate): Promise<ReservoirSnapshot | null> {
-  const sourceUrl = `${WATER_DATA_BASE}/${candidate.waterDataSlug}`;
+async function fetchReservoirCsvSnapshot(candidate: ReservoirCandidate, sourceUrl: string): Promise<ReservoirSnapshot | null> {
   try {
-    const csvResponse = await fetch(`${sourceUrl}-1year.csv`, {
+    const response = await fetch(`${sourceUrl}-1year.csv`, {
       cache: "no-store",
       headers: {
         accept: "text/csv,text/plain;q=0.9,*/*;q=0.1",
-        "user-agent": "TexasDefined-Facebook-Publisher/1.1",
+        "user-agent": "TexasDefined-Facebook-Publisher/1.2",
       },
       signal: AbortSignal.timeout(8000),
     });
-    if (csvResponse.ok) {
-      const csvSnapshot = parseReservoirCsvSnapshot(candidate, await csvResponse.text());
-      if (csvSnapshot) return csvSnapshot;
-    }
+    if (!response.ok) return null;
+    return parseReservoirCsvSnapshot(candidate, await response.text());
+  } catch {
+    return null;
+  }
+}
 
+async function loadReservoirSnapshot(candidate: ReservoirCandidate): Promise<ReservoirSnapshot | null> {
+  const sourceUrl = `${WATER_DATA_BASE}/${candidate.waterDataSlug}`;
+
+  try {
+    const recentResponse = await fetch(WATER_DATA_RECENT_URL, {
+      cache: "no-store",
+      headers: {
+        accept: "application/json,text/plain;q=0.9,*/*;q=0.1",
+        "user-agent": "TexasDefined-Facebook-Publisher/1.2",
+      },
+      signal: AbortSignal.timeout(8000),
+    });
+    if (recentResponse.ok) {
+      const recentSnapshot = parseReservoirRecentSnapshot(candidate, await recentResponse.json());
+      if (recentSnapshot && reservoirSnapshotIsFresh(recentSnapshot)) {
+        const historical = await fetchReservoirCsvSnapshot(candidate, sourceUrl);
+        return historical
+          ? {
+              ...recentSnapshot,
+              weekAgoPercent: historical.weekAgoPercent,
+              monthAgoPercent: historical.monthAgoPercent,
+            }
+          : recentSnapshot;
+      }
+    }
+  } catch {
+    // Continue through the documented CSV and HTML fallbacks below.
+  }
+
+  const csvSnapshot = await fetchReservoirCsvSnapshot(candidate, sourceUrl);
+  if (csvSnapshot) return csvSnapshot;
+
+  try {
     const htmlResponse = await fetch(sourceUrl, {
       cache: "no-store",
       headers: {
         accept: "text/html,application/xhtml+xml",
-        "user-agent": "TexasDefined-Facebook-Publisher/1.1",
+        "user-agent": "TexasDefined-Facebook-Publisher/1.2",
       },
       signal: AbortSignal.timeout(8000),
     });
@@ -829,6 +901,7 @@ async function runSmartTexasDefinedFacebookPost(request: Request) {
     lake_level_policy: {
       enabled: true,
       source: "Water Data for Texas",
+      source_order: ["recent-conditions.json", "1year.csv", "reservoir page"],
       max_age_days: LAKE_LEVEL_MAX_AGE_DAYS,
       used_for_fact_or_seasonal_slots_when_postworthy: true,
     },
