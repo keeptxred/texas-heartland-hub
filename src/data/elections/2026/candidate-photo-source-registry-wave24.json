@@ -18,6 +18,15 @@
     "notes": "Verified August 22, 2026. The live campaign site states Allison Mitchell is running for Texas House District 108, and current Texas candidate directories independently confirm the candidate and race pairing."
   },
   {
+    "domain": "willcampbellfortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Will Campbell's official Texas House District 109 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, donation graphics, policy graphics, stock imagery, event flyers, third-party embeds, military photographs where Will Campbell cannot be unambiguously identified, and imagery whose context could imply military endorsement.",
+    "searchHint": "site:willcampbellfortexas.com Will Campbell Texas House District 109 portrait about candidate",
+    "notes": "Verified August 22, 2026. The live site labels itself the official campaign website for Will Campbell for Texas House District 109, publishes current August and September 2026 campaign events, and provides direct campaign contact information."
+  },
+  {
     "domain": "shellynickels.com",
     "sourceClass": "official-campaign-site",
     "discoveryStatus": "active",
