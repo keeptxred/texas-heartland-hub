@@ -36,6 +36,10 @@ jobs:
         id: main_write_policy
         run: node scripts/ci/validate-protected-main-write-policy.mjs
 
+      - name: Validate retired integration traces
+        id: retired_integration
+        run: node scripts/ci/validate-retired-integration-traces.mjs
+
       - name: Install dependencies
         id: install
         run: bun install --frozen-lockfile
@@ -89,6 +93,7 @@ jobs:
         shell: bash
         env:
           MAIN_WRITE_POLICY: ${{ steps.main_write_policy.outcome }}
+          RETIRED_INTEGRATION: ${{ steps.retired_integration.outcome }}
           INSTALL: ${{ steps.install.outcome }}
           LINT: ${{ steps.lint.outcome }}
           TESTS: ${{ steps.tests.outcome }}
@@ -107,6 +112,7 @@ jobs:
             echo '| Stage | Failure class | Outcome |'
             echo '|---|---|---|'
             echo "| Protected-main workflow policy | DEFAULT-BRANCH SAFETY | ${MAIN_WRITE_POLICY:-not-run} |"
+            echo "| Retired integration trace guard | RETIRED INTEGRATION | ${RETIRED_INTEGRATION:-not-run} |"
             echo "| Dependency install | DEPENDENCY / INSTALL | ${INSTALL:-not-run} |"
             echo "| ESLint | LINT / STATIC ANALYSIS | ${LINT:-not-run} |"
             echo "| Full Vitest suite | TESTS | ${TESTS:-not-run} |"
@@ -122,6 +128,8 @@ jobs:
 
           if [[ "$MAIN_WRITE_POLICY" == failure ]]; then
             echo '::error title=verify failure class: DEFAULT-BRANCH SAFETY::A GitHub Actions workflow writes generated repository changes directly to protected main. Publish through a same-repository PR instead.'
+          elif [[ "$RETIRED_INTEGRATION" == failure ]]; then
+            echo '::error title=verify failure class: RETIRED INTEGRATION::A retired external integration trace was reintroduced into tracked current source.'
           elif [[ "$INSTALL" == failure ]]; then
             echo '::error title=verify failure class: DEPENDENCY / INSTALL::Dependency installation failed.'
           elif [[ "$LINT" == failure ]]; then
