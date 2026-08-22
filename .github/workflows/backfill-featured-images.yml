@@ -1,0 +1,37 @@
+name: Backfill KeepTXRed featured images
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: Maximum missing featured images to process
+        required: true
+        default: '10'
+        type: choice
+        options:
+          - '1'
+          - '5'
+          - '10'
+          - '20'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: keeptxred-featured-image-backfill
+  cancel-in-progress: false
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Run production guarded image backfill
+        env:
+          BACKFILL_URL: https://keeptxred.com/api/public/hooks/backfill-featured-images
+          LIMIT: ${{ inputs.limit }}
+        run: |
+          set -euo pipefail
+          response="$(curl --fail-with-body --silent --show-error --retry 2 --retry-all-errors --max-time 1500 -X POST "${BACKFILL_URL}?limit=${LIMIT}")"
+          printf '%s\n' "$response"
+          node -e 'const r=JSON.parse(process.argv[1]); if(typeof r.processed!=="number"||typeof r.ok!=="number"||typeof r.failed!=="number") process.exit(2); if(r.processed>0&&r.ok===0) process.exit(1)' "$response"
