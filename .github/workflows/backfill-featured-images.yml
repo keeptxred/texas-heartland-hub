@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       limit:
-        description: Maximum missing featured images to process
+        description: Maximum missing featured images per pass
         required: true
         default: '10'
         type: choice
@@ -28,14 +28,48 @@ concurrency:
 jobs:
   backfill:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
-      - name: Run production guarded image backfill
+      - name: Run bounded guarded image-backfill passes
         env:
           BACKFILL_URL: https://keeptxred.com/api/public/hooks/backfill-featured-images
           LIMIT: ${{ inputs.limit || '20' }}
+          MAX_PASSES: '3'
         run: |
           set -euo pipefail
-          response="$(curl --fail-with-body --silent --show-error --retry 2 --retry-all-errors --max-time 1500 -X POST "${BACKFILL_URL}?limit=${LIMIT}")"
-          printf '%s\n' "$response"
-          node -e 'const r=JSON.parse(process.argv[1]); if(typeof r.processed!=="number"||typeof r.ok!=="number"||typeof r.failed!=="number") process.exit(2); if(r.processed>0&&r.ok===0) process.exit(1)' "$response"
+          total_processed=0
+          total_ok=0
+          total_failed=0
+
+          for pass in $(seq 1 "$MAX_PASSES"); do
+            echo "Starting guarded image-backfill pass ${pass}/${MAX_PASSES} (limit=${LIMIT})"
+            response="$(curl --fail-with-body --silent --show-error --retry 2 --retry-all-errors --max-time 1500 -X POST "${BACKFILL_URL}?limit=${LIMIT}")"
+            printf '%s\n' "$response"
+
+            processed="$(printf '%s' "$response" | jq -r '.processed // -1')"
+            ok="$(printf '%s' "$response" | jq -r '.ok // -1')"
+            failed="$(printf '%s' "$response" | jq -r '.failed // -1')"
+            if ! [[ "$processed" =~ ^[0-9]+$ && "$ok" =~ ^[0-9]+$ && "$failed" =~ ^[0-9]+$ ]]; then
+              echo 'Backfill endpoint returned an invalid result contract.' >&2
+              exit 2
+            fi
+
+            total_processed=$((total_processed + processed))
+            total_ok=$((total_ok + ok))
+            total_failed=$((total_failed + failed))
+
+            if [[ "$processed" -eq 0 ]]; then
+              echo 'No eligible missing-image rows remain for this backfill scope.'
+              break
+            fi
+            if [[ "$ok" -eq 0 ]]; then
+              echo 'This pass made no progress; stopping rather than repeatedly regenerating the same failed cohort.' >&2
+              break
+            fi
+            sleep 3
+          done
+
+          echo "IMAGE_BACKFILL_TOTAL processed=${total_processed} ok=${total_ok} failed=${total_failed}"
+          if [[ "$total_processed" -gt 0 && "$total_ok" -eq 0 ]]; then
+            exit 1
+          fi
