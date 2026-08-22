@@ -1,21 +1,21 @@
 import { normalizeJsonContent } from "./ai-json-normalization";
 
-type OpenAiTextPart = { type?: "text"; text?: string };
-type OpenAiImagePart = { type?: "image_url"; image_url?: { url?: string } };
-type OpenAiContent = string | Array<OpenAiTextPart | OpenAiImagePart>;
-type OpenAiMessage = { role?: string; content?: OpenAiContent };
-type OpenAiCompatBody = {
+type TextPart = { type?: "text"; text?: string };
+type ImagePart = { type?: "image_url"; image_url?: { url?: string } };
+type MessageContent = string | Array<TextPart | ImagePart>;
+type Message = { role?: string; content?: MessageContent };
+type ChatRequest = {
   model?: string;
-  messages?: OpenAiMessage[];
+  messages?: Message[];
   max_tokens?: number;
   response_format?: { type?: string; json_schema?: unknown };
 };
-type OpenAiImageBody = {
+type ImageRequest = {
   model?: string;
-  messages?: OpenAiMessage[];
+  messages?: Message[];
   prompt?: string;
 };
-type CloudflareAiResponse = {
+type CloudflareResponse = {
   success?: boolean;
   result?: { response?: unknown; image?: string };
   errors?: Array<{ code?: number; message?: string }>;
@@ -32,11 +32,9 @@ type GeminiInteraction = {
 export const INTERNAL_AI_ORIGIN = "https://ai.internal.keeptxred.local";
 const INTERNAL_CHAT = `${INTERNAL_AI_ORIGIN}/v1/chat/completions`;
 const INTERNAL_IMAGES = `${INTERNAL_AI_ORIGIN}/v1/images/generations`;
-const LEGACY_CHAT = "https://ai.gateway.lovable.dev/v1/chat/completions";
-const LEGACY_IMAGES = "https://ai.gateway.lovable.dev/v1/images/generations";
 const GEMINI_INTERACTIONS = "https://generativelanguage.googleapis.com/v1beta/interactions";
-const CLOUDFLARE_TEXT_MODEL = "@cf/meta/llama-3.1-8b-instruct-fast";
-const CLOUDFLARE_IMAGE_MODEL = "@cf/black-forest-labs/flux-1-schnell";
+const DEFAULT_CLOUDFLARE_TEXT_MODEL = "@cf/meta/llama-3.1-8b-instruct-fast";
+const DEFAULT_CLOUDFLARE_IMAGE_MODEL = "@cf/black-forest-labs/flux-1-schnell";
 const nativeFetch = globalThis.fetch.bind(globalThis);
 let installed = false;
 
@@ -50,53 +48,71 @@ function cloudflareCredentials(): { accountId: string; apiToken: string } | null
   return accountId && apiToken ? { accountId, apiToken } : null;
 }
 
-function textFromContent(content: OpenAiContent | undefined): string {
+function textFromContent(content: MessageContent | undefined): string {
   if (typeof content === "string") return content;
   if (!Array.isArray(content)) return "";
   return content
-    .filter((part): part is OpenAiTextPart => part?.type === "text")
+    .filter((part): part is TextPart => part?.type === "text")
     .map((part) => part.text?.trim() || "")
     .filter(Boolean)
     .join("\n");
 }
 
-function partsFromContent(content: OpenAiContent | undefined): Array<Record<string, unknown>> {
+function geminiParts(content: MessageContent | undefined): Array<Record<string, unknown>> {
   if (typeof content === "string") return [{ text: content }];
   if (!Array.isArray(content)) return [];
+
   const parts: Array<Record<string, unknown>> = [];
   for (const part of content) {
     if (part?.type === "text" && part.text) {
       parts.push({ text: part.text });
-    } else if (part?.type === "image_url") {
-      const match = (part.image_url?.url || "").match(/^data:([^;,]+);base64,([A-Za-z0-9+/=]+)$/);
-      if (match) parts.push({ inline_data: { mime_type: match[1], data: match[2] } });
+      continue;
     }
+    if (part?.type !== "image_url") continue;
+    const match = (part.image_url?.url || "").match(/^data:([^;,]+);base64,([A-Za-z0-9+/=]+)$/);
+    if (!match) continue;
+    parts.push({ inline_data: { mime_type: match[1], data: match[2] } });
   }
   return parts;
 }
 
-function hasImageInput(body: OpenAiCompatBody): boolean {
+function hasImageInput(body: ChatRequest): boolean {
   return (body.messages ?? []).some(
-    (message) => Array.isArray(message.content) && message.content.some((part) => part?.type === "image_url"),
+    (message) =>
+      Array.isArray(message.content) &&
+      message.content.some((part) => part?.type === "image_url"),
   );
 }
 
-async function directGeminiImage(
-  body: OpenAiImageBody,
+function requestPrompt(body: ImageRequest): string {
+  return (
+    body.prompt?.trim() ||
+    (body.messages ?? [])
+      .map((message) => textFromContent(message.content))
+      .filter(Boolean)
+      .join("\n\n")
+      .trim()
+  );
+}
+
+async function generateGeminiImage(
+  body: ImageRequest,
   apiKey: string,
   signal?: AbortSignal | null,
 ): Promise<Response> {
-  const prompt =
-    body.prompt?.trim() ||
-    (body.messages ?? []).map((message) => textFromContent(message.content)).filter(Boolean).join("\n\n").trim();
+  const prompt = requestPrompt(body);
   if (!prompt) {
     return Response.json({ error: { message: "Image request contained no prompt" } }, { status: 400 });
   }
+
   const requested = body.model?.replace(/^google\//, "").trim();
   const model = process.env.AI_IMAGE_MODEL || requested || "gemini-3.1-flash-image";
   const response = await nativeFetch(GEMINI_INTERACTIONS, {
     method: "POST",
-    headers: { "content-type": "application/json", "x-goog-api-key": apiKey },
+    headers: {
+      "content-type": "application/json",
+      "x-goog-api-key": apiKey,
+    },
     body: JSON.stringify({
       model,
       input: prompt,
@@ -109,24 +125,28 @@ async function directGeminiImage(
     }),
     signal: signal ?? undefined,
   });
-  const text = await response.text();
+
+  const raw = await response.text();
   if (!response.ok) {
-    return new Response(text, {
+    return new Response(raw, {
       status: response.status,
       headers: { "content-type": response.headers.get("content-type") || "application/json" },
     });
   }
+
   let payload: GeminiInteraction;
   try {
-    payload = JSON.parse(text) as GeminiInteraction;
+    payload = JSON.parse(raw) as GeminiInteraction;
   } catch {
     return Response.json({ error: { message: "Gemini image API returned invalid JSON" } }, { status: 502 });
   }
-  const outputs = (payload.steps ?? []).filter((step) => step.type === "model_output");
-  const image = outputs
+
+  const image = (payload.steps ?? [])
+    .filter((step) => step.type === "model_output")
     .flatMap((step) => step.content ?? [])
     .reverse()
     .find((part) => part.type === "image" && typeof part.data === "string" && part.data.length > 0);
+
   if (!image?.data) {
     const failure = (payload.steps ?? []).find((step) => step.error?.message)?.error?.message;
     return Response.json(
@@ -134,11 +154,16 @@ async function directGeminiImage(
       { status: 502 },
     );
   }
-  return Response.json({ data: [{ b64_json: image.data }], provider: "google-gemini-direct", model });
+
+  return Response.json({
+    data: [{ b64_json: image.data }],
+    provider: "google-gemini-direct",
+    model,
+  });
 }
 
-async function directGeminiVision(
-  body: OpenAiCompatBody,
+async function validateWithGemini(
+  body: ChatRequest,
   apiKey: string,
   signal?: AbortSignal | null,
 ): Promise<Response> {
@@ -148,21 +173,25 @@ async function directGeminiVision(
     .map((message) => textFromContent(message.content).trim())
     .filter(Boolean)
     .join("\n\n");
-  const conversational = messages
+  const contents = messages
     .filter((message) => message.role !== "system")
     .map((message) => ({
       role: message.role === "assistant" ? "model" : "user",
-      parts: partsFromContent(message.content),
+      parts: geminiParts(message.content),
     }))
     .filter((message) => message.parts.length > 0);
+
   const model = process.env.AI_VALIDATION_MODEL || "gemini-3.5-flash";
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
   const response = await nativeFetch(endpoint, {
     method: "POST",
-    headers: { "content-type": "application/json", "x-goog-api-key": apiKey },
+    headers: {
+      "content-type": "application/json",
+      "x-goog-api-key": apiKey,
+    },
     body: JSON.stringify({
       ...(system ? { systemInstruction: { parts: [{ text: system }] } } : {}),
-      contents: conversational,
+      contents,
       generationConfig: {
         responseMimeType: "application/json",
         ...(body.response_format?.type === "json_schema" && body.response_format.json_schema
@@ -173,19 +202,22 @@ async function directGeminiVision(
     }),
     signal: signal ?? undefined,
   });
-  const text = await response.text();
+
+  const raw = await response.text();
   if (!response.ok) {
-    return new Response(text, {
+    return new Response(raw, {
       status: response.status,
       headers: { "content-type": response.headers.get("content-type") || "application/json" },
     });
   }
+
   let payload: { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> };
   try {
-    payload = JSON.parse(text) as typeof payload;
+    payload = JSON.parse(raw) as typeof payload;
   } catch {
     return Response.json({ error: { message: "Gemini returned invalid JSON" } }, { status: 502 });
   }
+
   const content = payload.candidates?.[0]?.content?.parts
     ?.map((part) => part.text || "")
     .join("")
@@ -193,6 +225,7 @@ async function directGeminiVision(
   if (!content) {
     return Response.json({ error: { message: "Gemini returned an empty response" } }, { status: 502 });
   }
+
   return Response.json({
     choices: [{ message: { role: "assistant", content } }],
     provider: "google-gemini-direct",
@@ -200,35 +233,48 @@ async function directGeminiVision(
   });
 }
 
-async function directCloudflareText(
-  body: OpenAiCompatBody,
+async function generateCloudflareText(
+  body: ChatRequest,
   credentials: { accountId: string; apiToken: string },
   signal?: AbortSignal | null,
 ): Promise<Response> {
   const messages = (body.messages ?? [])
     .map((message) => ({
-      role: message.role === "assistant" ? "assistant" : message.role === "system" ? "system" : "user",
+      role:
+        message.role === "assistant"
+          ? "assistant"
+          : message.role === "system"
+            ? "system"
+            : "user",
       content: textFromContent(message.content),
     }))
     .filter((message) => message.content.trim().length > 0);
-  if (!messages.length) {
+
+  if (messages.length === 0) {
     return Response.json({ error: { message: "AI text request contained no prompt" } }, { status: 400 });
   }
-  const model = process.env.AI_REWRITE_MODEL_CF || CLOUDFLARE_TEXT_MODEL;
+
+  const model = process.env.AI_REWRITE_MODEL_CF || DEFAULT_CLOUDFLARE_TEXT_MODEL;
   const endpoint = `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(credentials.accountId)}/ai/run/${model}`;
   const maxTokens = Math.min(Math.max(Number(body.max_tokens) || 9000, 256), 12000);
   let lastFailure = "Cloudflare Workers AI returned invalid JSON";
+
   for (let attempt = 1; attempt <= 3; attempt += 1) {
-    const retryInstruction = attempt === 1
-      ? null
-      : {
-          role: "system" as const,
-          content:
-            "CRITICAL: Your previous attempt was malformed or truncated. Return one COMPLETE valid JSON object only. Close every string, array, and object. Do not include markdown fences or prose outside the JSON object.",
-        };
+    const retryInstruction =
+      attempt === 1
+        ? null
+        : {
+            role: "system" as const,
+            content:
+              "CRITICAL: Your previous attempt was malformed or truncated. Return one COMPLETE valid JSON object only. Close every string, array, and object. Do not include markdown fences or prose outside the JSON object.",
+          };
+
     const response = await nativeFetch(endpoint, {
       method: "POST",
-      headers: { Authorization: `Bearer ${credentials.apiToken}`, "content-type": "application/json" },
+      headers: {
+        Authorization: `Bearer ${credentials.apiToken}`,
+        "content-type": "application/json",
+      },
       body: JSON.stringify({
         messages: retryInstruction ? [...messages, retryInstruction] : messages,
         response_format: body.response_format ?? { type: "json_object" },
@@ -237,26 +283,34 @@ async function directCloudflareText(
       }),
       signal: signal ?? undefined,
     });
-    const text = await response.text();
-    let payload: CloudflareAiResponse | null = null;
+
+    const raw = await response.text();
+    let payload: CloudflareResponse | null = null;
     try {
-      payload = JSON.parse(text) as CloudflareAiResponse;
+      payload = JSON.parse(raw) as CloudflareResponse;
     } catch {
       lastFailure = `Cloudflare Workers AI ${response.status}: provider envelope was invalid JSON`;
       continue;
     }
+
     if (!response.ok || payload?.success === false) {
       const detail =
-        payload?.errors?.map((error) => error.message).filter(Boolean).join("; ") || text.slice(0, 400);
+        payload?.errors?.map((error) => error.message).filter(Boolean).join("; ") || raw.slice(0, 400);
       lastFailure = `Cloudflare Workers AI ${response.status}: ${detail}`;
       if (response.status === 429 && /daily free allocation|used up.*neurons/i.test(detail)) {
         return Response.json({ error: { message: lastFailure } }, { status: 429 });
       }
-      if (response.status >= 400 && response.status < 500 && response.status !== 408 && response.status !== 429) {
+      if (
+        response.status >= 400 &&
+        response.status < 500 &&
+        response.status !== 408 &&
+        response.status !== 429
+      ) {
         return Response.json({ error: { message: lastFailure } }, { status: response.status || 502 });
       }
       continue;
     }
+
     const content = normalizeJsonContent(payload?.result?.response);
     if (content) {
       return Response.json({
@@ -268,101 +322,121 @@ async function directCloudflareText(
     }
     lastFailure = `Cloudflare Workers AI returned malformed or truncated JSON on attempt ${attempt}`;
   }
+
   return Response.json({ error: { message: lastFailure } }, { status: 502 });
 }
 
-async function directCloudflareImage(
-  body: OpenAiImageBody,
+async function generateCloudflareImage(
+  body: ImageRequest,
   credentials: { accountId: string; apiToken: string },
   signal?: AbortSignal | null,
 ): Promise<Response> {
-  const prompt =
-    body.prompt?.trim() ||
-    (body.messages ?? []).map((message) => textFromContent(message.content)).filter(Boolean).join("\n\n").trim();
+  const prompt = requestPrompt(body);
   if (!prompt) {
     return Response.json({ error: { message: "Image request contained no prompt" } }, { status: 400 });
   }
-  const model = process.env.AI_IMAGE_MODEL_CF || CLOUDFLARE_IMAGE_MODEL;
+
+  const model = process.env.AI_IMAGE_MODEL_CF || DEFAULT_CLOUDFLARE_IMAGE_MODEL;
   const endpoint = `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(credentials.accountId)}/ai/run/${model}`;
   const response = await nativeFetch(endpoint, {
     method: "POST",
-    headers: { Authorization: `Bearer ${credentials.apiToken}`, "content-type": "application/json" },
+    headers: {
+      Authorization: `Bearer ${credentials.apiToken}`,
+      "content-type": "application/json",
+    },
     body: JSON.stringify({ prompt: prompt.slice(0, 2048), steps: 4 }),
     signal: signal ?? undefined,
   });
+
   if (!response.ok) {
     return Response.json(
       { error: { message: `Cloudflare image generation failed (${response.status})` } },
       { status: response.status },
     );
   }
+
   const contentType = response.headers.get("content-type") || "";
   if (contentType.includes("application/json")) {
-    const payload = (await response.json()) as CloudflareAiResponse;
+    const payload = (await response.json()) as CloudflareResponse;
     const image = payload?.result?.image;
     if (!image) {
-      return Response.json({ error: { message: "Cloudflare image generation returned no image" } }, { status: 502 });
+      return Response.json(
+        { error: { message: "Cloudflare image generation returned no image" } },
+        { status: 502 },
+      );
     }
-    return Response.json({ data: [{ b64_json: image }], provider: "cloudflare-workers-ai", model });
+    return Response.json({
+      data: [{ b64_json: image }],
+      provider: "cloudflare-workers-ai",
+      model,
+    });
   }
+
   const bytes = new Uint8Array(await response.arrayBuffer());
   let binary = "";
   for (const byte of bytes) binary += String.fromCharCode(byte);
-  return Response.json({ data: [{ b64_json: btoa(binary) }], provider: "cloudflare-workers-ai", model });
+  return Response.json({
+    data: [{ b64_json: btoa(binary) }],
+    provider: "cloudflare-workers-ai",
+    model,
+  });
 }
 
 export function installDirectAiFetch(): void {
   if (installed) return;
-  const cf = cloudflareCredentials();
+
+  const cloudflare = cloudflareCredentials();
   const geminiKey = geminiApiKey();
-  if (cf || geminiKey) {
-    process.env.KTR_AI_PROVIDER_READY = "direct-provider";
-    // Temporary compatibility for old callers that only use this variable as
-    // an availability gate. The value is never sent to any external service.
-    if (!process.env.LOVABLE_API_KEY) process.env.LOVABLE_API_KEY = "direct-provider";
-  }
+  if (cloudflare || geminiKey) process.env.KTR_AI_PROVIDER_READY = "direct-provider";
 
   globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url;
-    const isInternalChat = url === INTERNAL_CHAT;
-    const isInternalImages = url === INTERNAL_IMAGES;
-    const isLegacyChat = url === LEGACY_CHAT;
-    const isLegacyImages = url === LEGACY_IMAGES;
+    if (!url.startsWith(INTERNAL_AI_ORIGIN)) return nativeFetch(input, init);
 
-    if (!isInternalChat && !isInternalImages && !isLegacyChat && !isLegacyImages) {
-      return nativeFetch(input, init);
+    if (url !== INTERNAL_CHAT && url !== INTERNAL_IMAGES) {
+      return Response.json(
+        { error: { message: `Unsupported internal AI endpoint: ${url}` } },
+        { status: 501 },
+      );
     }
 
-    let body: OpenAiCompatBody | OpenAiImageBody;
+    let body: ChatRequest | ImageRequest;
     try {
-      body = JSON.parse(typeof init?.body === "string" ? init.body : "{}") as OpenAiCompatBody | OpenAiImageBody;
+      body = JSON.parse(typeof init?.body === "string" ? init.body : "{}") as ChatRequest | ImageRequest;
     } catch {
       return Response.json({ error: { message: "Invalid AI request JSON" } }, { status: 400 });
     }
 
-    if (isInternalImages || isLegacyImages) {
-      if (cf) return directCloudflareImage(body as OpenAiImageBody, cf, init?.signal);
-      if (geminiKey) return directGeminiImage(body as OpenAiImageBody, geminiKey, init?.signal);
+    if (url === INTERNAL_IMAGES) {
+      if (cloudflare) return generateCloudflareImage(body as ImageRequest, cloudflare, init?.signal);
+      if (geminiKey) return generateGeminiImage(body as ImageRequest, geminiKey, init?.signal);
       return Response.json({ error: { message: "Image AI provider is not configured" } }, { status: 503 });
     }
 
-    const chatBody = body as OpenAiCompatBody;
+    const chatBody = body as ChatRequest;
     if (hasImageInput(chatBody)) {
       if (!geminiKey) {
-        return Response.json({ error: { message: "Image validation provider is not configured" } }, { status: 503 });
+        return Response.json(
+          { error: { message: "Image validation provider is not configured" } },
+          { status: 503 },
+        );
       }
-      return directGeminiVision(chatBody, geminiKey, init?.signal);
+      return validateWithGemini(chatBody, geminiKey, init?.signal);
     }
-    if (!cf) {
-      return Response.json({ error: { message: "Cloudflare Workers AI text provider is not configured" } }, { status: 503 });
+
+    if (!cloudflare) {
+      return Response.json(
+        { error: { message: "Cloudflare Workers AI text provider is not configured" } },
+        { status: 503 },
+      );
     }
-    return directCloudflareText(chatBody, cf, init?.signal);
+    return generateCloudflareText(chatBody, cloudflare, init?.signal);
   }) as typeof globalThis.fetch;
 
   installed = true;
-  if (cf) {
+  if (cloudflare) {
     console.info(
-      `[AI] direct text provider = Cloudflare Workers AI (${process.env.AI_REWRITE_MODEL_CF || CLOUDFLARE_TEXT_MODEL})`,
+      `[AI] direct text provider = Cloudflare Workers AI (${process.env.AI_REWRITE_MODEL_CF || DEFAULT_CLOUDFLARE_TEXT_MODEL})`,
     );
   } else {
     console.warn("[AI] Cloudflare Workers AI credentials missing; text AI calls will fail closed");
