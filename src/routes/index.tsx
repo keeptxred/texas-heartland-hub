@@ -12,19 +12,37 @@ import { buildSeo, organizationJsonLd, SITE_URL, webPageJsonLd, websiteJsonLd } 
 const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
 const EMPTY_SHOP_SEARCH = { category: undefined, collection: undefined, q: undefined, sort: undefined } as const;
 
-const DISCOVERY_PRIORITY_LINKS = [
-  { title: "Latest Texas news", href: "/news", description: "Breaking news, statewide reporting, politics, business, and public affairs." },
-  { title: "Texas politics", href: "/texas-politics", description: "Reporting and explainers on state government, campaigns, officials, and policy." },
-  { title: "The Texas Case", href: "/texas-case", description: "KTR's permanent editorial arguments on life, liberty, taxes, rights, education, and border security." },
-  { title: "Policy trackers", href: "/policy", description: "Permanent issue pages for taxes, border security, education, energy, elections, crime, water, healthcare, and more." },
-  { title: "Legislative districts", href: "/districts", description: "Permanent authority pages for every Texas House and Senate district, independent of the current officeholder." },
-  { title: "Texas Legislature", href: "/texas-legislature", description: "Sessions, lawmakers, committees, chambers, and legislative resources." },
-  { title: "Texas law library", href: "/laws/topics", description: "Plain-English legal frameworks grounded in Texas statutes and official sources." },
-  { title: "Texas Data Center", href: "/data", description: "Authoritative source maps for taxes, spending, elections, demographics, energy, water, and public safety." },
-  { title: "Representatives", href: "/representatives", description: "Find Texas lawmakers and connect legislative coverage to public officials." },
-  { title: "Border security", href: "/texas-border-security", description: "Texas border policy, enforcement, federal-state disputes, and related reporting." },
-  { title: "Energy", href: "/texas-energy", description: "ERCOT, oil and gas, electricity, grid policy, and the Texas energy economy." },
-  { title: "Texas economy", href: "/texas-economy", description: "Jobs, taxes, business, growth, regulation, and major economic developments." },
+const DISCOVERY_PRIORITY_GROUPS = [
+  {
+    title: "News & analysis",
+    description: "Current reporting, political coverage, economic context, and KTR's permanent editorial case.",
+    links: [
+      { title: "Latest Texas news", href: "/news", description: "Breaking news, statewide reporting, politics, business, and public affairs." },
+      { title: "Texas politics", href: "/texas-politics", description: "Reporting and explainers on state government, campaigns, officials, and policy." },
+      { title: "Texas economy", href: "/texas-economy", description: "Jobs, taxes, business, growth, regulation, and major economic developments." },
+      { title: "The Texas Case", href: "/texas-case", description: "KTR's permanent editorial arguments on life, liberty, taxes, rights, education, and border security." },
+    ],
+  },
+  {
+    title: "Government & elections",
+    description: "Find the people, institutions, districts, and races that shape Texas government.",
+    links: [
+      { title: "Election Central", href: "/elections/2026", description: "Races, candidates, polling, forecasts, results, and voting information for 2026." },
+      { title: "Texas Legislature", href: "/texas-legislature", description: "Sessions, lawmakers, committees, chambers, and legislative resources." },
+      { title: "Representatives", href: "/representatives", description: "Find Texas lawmakers and connect legislative coverage to public officials." },
+      { title: "Legislative districts", href: "/districts", description: "Permanent authority pages for every Texas House and Senate district." },
+    ],
+  },
+  {
+    title: "Issues & reference",
+    description: "Go deeper with policy trackers, law guides, official-data references, and practical tools.",
+    links: [
+      { title: "Policy trackers", href: "/policy", description: "Current issue pages for taxes, border security, education, energy, elections, crime, water, healthcare, and more." },
+      { title: "Texas law library", href: "/laws", description: "Plain-English legal frameworks grounded in Texas statutes and official sources." },
+      { title: "Texas Data Center", href: "/data", description: "Authoritative source maps for taxes, spending, elections, demographics, energy, water, and public safety." },
+      { title: "Policy tools", href: "/tools", description: "Calculators and scenario tools with transparent assumptions and Texas-specific context." },
+    ],
+  },
 ] as const;
 
 function homepageHead() {
@@ -80,21 +98,32 @@ function BreakingStrip({ articles }: { articles: DailyArticle[] }) {
 function DiscoveryPriorityLinks() {
   return (
     <section className="border-t bg-background" aria-labelledby="keep-tx-red-discovery-priority">
-      <div className="mx-auto max-w-[1200px] px-6 py-12">
+      <div className="mx-auto max-w-[1200px] px-6 py-12 sm:py-14">
         <div className="max-w-3xl">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">More from Keep TX Red</p>
-          <h2 id="keep-tx-red-discovery-priority" className="mt-2 font-display text-3xl">Texas news, commentary, government and policy</h2>
-          <p className="mt-3 leading-7 text-muted-foreground">Election Central is the homepage focus during election season, while KTR continues publishing statewide news, permanent editorial positions, policy trackers, district authority, law guides, and official-data reference coverage.</p>
+          <h2 id="keep-tx-red-discovery-priority" className="mt-2 font-display text-3xl sm:text-4xl">Find the part of KTR you need</h2>
+          <p className="mt-3 leading-7 text-muted-foreground">Election Central is the homepage focus during election season. The rest of Keep TX Red is organized below so news, government resources, policy coverage, and reference material remain easy to find.</p>
         </div>
-        <nav className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-label="Core Keep TX Red coverage">
-          {DISCOVERY_PRIORITY_LINKS.map((item) => (
-            <a key={item.href} href={item.href} className="rounded-xl border bg-card p-5 transition hover:border-primary hover:shadow-sm">
-              <h3 className="font-semibold">{item.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.description}</p>
-              <span className="mt-4 block text-sm font-semibold text-primary">Explore →</span>
-            </a>
+
+        <div className="mt-9 grid gap-8 lg:grid-cols-3">
+          {DISCOVERY_PRIORITY_GROUPS.map((group) => (
+            <section key={group.title} aria-labelledby={`discovery-${group.title.toLowerCase().replaceAll(" ", "-").replaceAll("&", "and")}`}>
+              <div className="border-b pb-4">
+                <h3 id={`discovery-${group.title.toLowerCase().replaceAll(" ", "-").replaceAll("&", "and")}`} className="text-lg font-semibold text-foreground">{group.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{group.description}</p>
+              </div>
+              <nav className="mt-4 grid gap-3" aria-label={group.title}>
+                {group.links.map((item) => (
+                  <a key={item.href} href={item.href} className="group rounded-xl border bg-card p-4 transition hover:border-primary hover:shadow-sm">
+                    <h4 className="font-semibold text-foreground group-hover:text-primary">{item.title}</h4>
+                    <p className="mt-1.5 text-sm leading-6 text-muted-foreground">{item.description}</p>
+                    <span className="mt-3 block text-sm font-semibold text-primary">Explore →</span>
+                  </a>
+                ))}
+              </nav>
+            </section>
           ))}
-        </nav>
+        </div>
       </div>
     </section>
   );
@@ -140,7 +169,7 @@ function PoliticalHomepage() {
           <aside className="rounded-xl border border-white/15 bg-white/5 p-6">
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Start here</p>
             <nav className="mt-4 grid gap-3">
-              {[["Read The Texas Case", "/texas-case"], ["Find your representatives", "/find-representative"], ["Browse legislative districts", "/districts"], ["Explore policy trackers", "/policy"], ["Explore the Texas Legislature", "/texas-legislature"], ["Browse Texas laws", "/laws/topics"]].map(([label, to]) => <Link key={to} to={to} className="flex justify-between border-b border-white/10 py-2 text-sm font-semibold hover:text-primary"><span>{label}</span><span aria-hidden>→</span></Link>)}
+              {[["Read The Texas Case", "/texas-case"], ["Find your representatives", "/find-representative"], ["Browse legislative districts", "/districts"], ["Explore policy trackers", "/policy"], ["Explore the Texas Legislature", "/texas-legislature"], ["Browse Texas laws", "/laws"]].map(([label, to]) => <Link key={to} to={to} className="flex justify-between border-b border-white/10 py-2 text-sm font-semibold hover:text-primary"><span>{label}</span><span aria-hidden>→</span></Link>)}
             </nav>
           </aside>
         </div>
