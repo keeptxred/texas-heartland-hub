@@ -1,0 +1,47 @@
+[
+  {
+    "domain": "michelleforstaterep.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Michelle Williams's official Texas House District 127 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude endorsement graphics, stock, logos, issue imagery, and third-party embeds.",
+    "searchHint": "site:michelleforstaterep.com Michelle Williams Texas House District 127 portrait candidate",
+    "notes": "Verified August 22, 2026. The live site states Michelle Williams is a Democrat running for State Representative for House District 127 and carries a political-ad disclaimer paid for by the Campaign Fund for Michelle Williams."
+  },
+  {
+    "domain": "desireeklaustx.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Desiree Klaus's official Texas House District 128 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude generic event graphics, stock, community-only photographs without candidate identification, logos, and third-party embeds.",
+    "searchHint": "site:desireeklaustx.com Desiree Klaus Texas House District 128 portrait candidate",
+    "notes": "Verified August 22, 2026. The current site labels itself Desiree Klaus for Texas House District 128 and publishes current 2026 campaign events."
+  },
+  {
+    "domain": "tombutler.org",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Tom Butler's official Texas House District 128 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude endorsement portraits of other people, logos, stock, issue graphics, and third-party embeds.",
+    "searchHint": "site:tombutler.org Tom Butler Texas House District 128 portrait meet Tom",
+    "notes": "Verified August 22, 2026. The live site identifies Tom Butler as the House District 128 candidate and ATPE's 2026 candidate profile independently identifies TOM@TOMBUTLER.ORG."
+  },
+  {
+    "domain": "mcgeefortx.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Sara McGee's official Texas House District 132 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, stock, issue graphics, and third-party embeds.",
+    "searchHint": "site:mcgeefortx.com Sara McGee Texas House District 132 portrait headshot",
+    "notes": "Verified August 22, 2026. The live campaign site identifies Sara McGee as a Texas House District 132 candidate and explicitly hosts a high-resolution Sara headshot plus an About Sara candidate image."
+  },
+  {
+    "domain": "josh4texas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Josh Wallenstein's official Texas House District 133 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude endorsement logos, third-party media thumbnails, stock, and issue graphics.",
+    "searchHint": "site:josh4texas.com Josh Wallenstein Texas House District 133 portrait meet Josh",
+    "notes": "Verified August 22, 2026. The live site identifies Josh Wallenstein as the Democratic nominee for HD133 and hosts clearly labeled candidate images on the home and Meet Josh pages."
+  }
+]
