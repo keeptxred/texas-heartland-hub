@@ -6,6 +6,10 @@ on:
     types: [completed]
     branches: [main]
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/force-image-backlog-recovery'
 
 permissions:
   contents: read
@@ -21,6 +25,7 @@ jobs:
   recover:
     if: >-
       github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'push' ||
       github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 90
@@ -66,8 +71,8 @@ jobs:
             exit 0
           fi
 
-          # Bound each deployment-triggered pass so Cloudflare usage stays
-          # predictable while still draining the finite legacy placeholder cohort.
+          # Bound each pass so Cloudflare usage stays predictable while still
+          # draining the finite missing/legacy image cohort.
           max_per_run=40
           mapfile -t slugs < <(jq -r --argjson max "$max_per_run" '.slugs[:$max][]' /tmp/image-backlog-dry.json)
           failures=0
