@@ -1,0 +1,33 @@
+name: Dispatch TexasDefined Facebook production smokes
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/dispatch-texasdefined-facebook-smokes.yml'
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Dispatch trusted workflow dry runs
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh workflow run auto-facebook-posts.yml \
+            --repo "$GITHUB_REPOSITORY" \
+            --ref main \
+            -f texasdefined_dry_run=true
+          gh workflow run texasdefined-facebook-comment-signals.yml \
+            --repo "$GITHUB_REPOSITORY" \
+            --ref main \
+            -f smoke_only=true
+          echo 'Dispatched trusted main-branch TexasDefined Facebook dry runs.'
