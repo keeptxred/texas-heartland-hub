@@ -1,0 +1,38 @@
+[
+  {
+    "domain": "texasturf.org",
+    "sourceClass": "issue-advocacy-voter-guide",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use current voter-guide entries to confirm candidate/race context and discover campaign links or candidate-supplied materials. Do not reuse voter-guide imagery unless the underlying image has a separately verified campaign, government, public-domain, or licensed provenance.",
+    "searchHint": "site:texasturf.org/resources/report-cards-voter-guides 2026 candidate name",
+    "notes": "Verified August 22, 2026 as a current Texas 2026 voter-guide source covering congressional, statewide, judicial, senate, and house candidates."
+  },
+  {
+    "domain": "cairaction.org",
+    "sourceClass": "advocacy-voter-guide",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use current Texas voter-guide PDFs/pages to confirm candidate context and identify campaign or official-source leads. Do not reuse publication-hosted portraits without independently verified provenance and image-use rights.",
+    "searchHint": "site:cairaction.org Texas Voter Guide 2026 candidate name",
+    "notes": "Verified August 22, 2026 as a current Texas runoff voter-guide source containing statewide, congressional, state-house, and SBOE candidate references."
+  },
+  {
+    "domain": "card.txcourts.gov",
+    "sourceClass": "official-texas-judicial-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use the official Texas Judicial Branch directory to confirm current judicial office, court, contact details, and identity before tracing portraits to the court, campaign, or another source with documented image rights.",
+    "searchHint": "site:card.txcourts.gov candidate or judge name",
+    "notes": "Verified August 22, 2026 as an official Texas Judicial Branch directory useful for matching statewide and appellate judicial candidates to current offices."
+  },
+  {
+    "domain": "politics1.com",
+    "sourceClass": "independent-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use current Texas candidate listings and campaign-site links as discovery leads only. Do not reuse Politics1-hosted imagery without tracing the image to a campaign, government, public-domain, or explicitly licensed source.",
+    "searchHint": "site:politics1.com/tx.htm candidate name 2026",
+    "notes": "Verified August 22, 2026 as a frequently updated Texas candidate directory listing active federal and statewide candidates with campaign-site links; the Texas page showed an August 11, 2026 update date."
+  }
+]
