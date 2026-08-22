@@ -25,6 +25,7 @@ import {
 
 const ADSENSE_CLIENT = "ca-pub-1891256141359926";
 const ADSENSE_SCRIPT = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`;
+const ICON_VERSION = "20260822";
 const ADSENSE_EXCLUDED_PATH_PREFIXES = [
   "/admin",
   "/api",
@@ -87,8 +88,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", type: "image/svg+xml", href: "/keep-tx-red-icon.svg" },
-      { rel: "apple-touch-icon", href: "/keep-tx-red-icon.svg" },
+      { rel: "icon", href: `/favicon.ico?v=${ICON_VERSION}`, sizes: "any" },
+      { rel: "icon", type: "image/svg+xml", href: `/keep-tx-red-icon.svg?v=${ICON_VERSION}` },
+      { rel: "shortcut icon", href: `/favicon.ico?v=${ICON_VERSION}` },
+      { rel: "apple-touch-icon", href: `/keep-tx-red-icon.svg?v=${ICON_VERSION}` },
       { rel: "dns-prefetch", href: "https://fonts.googleapis.com" },
       { rel: "dns-prefetch", href: "https://pagead2.googlesyndication.com" },
       { rel: "dns-prefetch", href: "https://googleads.g.doubleclick.net" },
