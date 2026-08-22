@@ -286,7 +286,7 @@ export function TexasNewsView({
           <li><Link to="/houston" className="text-primary hover:underline">Houston News →</Link></li>
           <li><Link to="/texas-sports" className="text-primary hover:underline">Texas Sports →</Link></li>
           <li><Link to="/texas-business" className="text-primary hover:underline">Texas Business →</Link></li>
-          <li><Link to="/elections" className="text-primary hover:underline">Elections →</Link></li>
+          <li><Link to="/elections/2026" className="text-primary hover:underline">Election Central →</Link></li>
           <li><Link to="/bills" search={EMPTY_BILLS_SEARCH} className="text-primary hover:underline">Texas Bills →</Link></li>
         </ul>
       </section>
