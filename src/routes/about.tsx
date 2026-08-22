@@ -84,7 +84,8 @@ function AboutPage() {
 
         <section>
           <h2 className="font-display text-3xl tracking-tight">Nonpolitical Texas Resources</h2>
-          <p className="mt-3 text-muted-foreground">Travel, relocation, food, events, Texas culture, property-tax planning, household calculators, county and city directories, and other lifestyle resources are published separately by TexasDefined.</p>
+          <p className="mt-3 text-muted-foreground">TexasDefined is a nonpolitical sister publication from the same publisher. It covers Texas travel, relocation, food, events, culture, property-tax planning, household calculators, county and city directories, and other lifestyle resources separately from Keep TX Red&apos;s political and public-affairs coverage.</p>
+          <p className="mt-3"><a href="https://texasdefined.com" target="_blank" rel="noopener noreferrer" className="text-primary underline">Visit TexasDefined</a>.</p>
         </section>
 
         <section>
