@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
+import { buildFluxImagePrompt } from "./featured-image-cloudflare";
 
 describe("Cloudflare featured-image payload", () => {
   it("uses FLUX with explicit anti-illustration prompt controls", () => {
@@ -9,12 +10,26 @@ describe("Cloudflare featured-image payload", () => {
     const generateImageSource = source.slice(start, end);
 
     expect(source).toContain('@cf/black-forest-labs/flux-1-schnell');
-    expect(generateImageSource).toContain("Avoid all of the following");
+    expect(generateImageSource).toContain("buildFluxImagePrompt");
     expect(generateImageSource).toContain("steps: 8");
     expect(generateImageSource).not.toMatch(/^\s*seed\s*[:,]/m);
     expect(generateImageSource).not.toMatch(/\bnegative_prompt\s*:/);
     expect(generateImageSource).not.toContain("dreamshaper-8-lcm");
     expect(generateImageSource).toContain('contentType.startsWith("image/")');
+  });
+
+  it("reserves prompt space for photographic lock and hard exclusions", () => {
+    const longStoryPrompt = `Story-specific material ${"details ".repeat(500)}`;
+    const negativePrompt = "illustration, cartoon, vector art, graphic design, infographic, poster, text, headline, caption, watermark, logo, collage, CGI, concept art";
+    const prompt = buildFluxImagePrompt(longStoryPrompt, negativePrompt);
+
+    expect(prompt.length).toBeLessThanOrEqual(2048);
+    expect(prompt).toMatch(/^REAL CAMERA PHOTOGRAPH ONLY\./);
+    expect(prompt).toContain("No readable text");
+    expect(prompt).toContain("HARD EXCLUSIONS:");
+    expect(prompt).toContain("illustration");
+    expect(prompt).toContain("graphic design");
+    expect(prompt).toContain("logo");
   });
 
   it("requests, normalizes, and parses a structured JSON verdict from Cloudflare vision", () => {
