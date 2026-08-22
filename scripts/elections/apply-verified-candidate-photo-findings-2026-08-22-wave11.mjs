@@ -19,6 +19,17 @@ const findings = [
     permissionBasis: "Candidate image is directly hosted and displayed by the official 2026 Katy Padilla Stout for Congress campaign website and is used for editorial candidate identification with attribution and a source link.",
     usageStatus: "approved",
     discoveryMethod: "official-campaign-homepage"
+  },
+  {
+    candidateId: "candidate-brandon-herrera-republican-race-2026-us-house-23",
+    imageUrl: "https://brandonherreraforcongress.com/wp-content/uploads/video-4-screenshot.png",
+    sourceUrl: "https://brandonherreraforcongress.com/",
+    altText: "Brandon Herrera, Republican candidate for U.S. House Texas District 23, speaking at a campaign event",
+    credit: "Brandon Herrera for Congress",
+    license: null,
+    permissionBasis: "Campaign-event image is directly hosted and displayed by the official current Brandon Herrera for Congress website and is used for editorial candidate identification with attribution and a source link.",
+    usageStatus: "approved",
+    discoveryMethod: "official-campaign-homepage"
   }
 ];
 
