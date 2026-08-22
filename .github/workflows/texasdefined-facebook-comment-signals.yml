@@ -8,6 +8,12 @@ on:
     # GitHub issue creation/update even when strong audience signals are found.
     - cron: '*/5 * * * *'
   workflow_dispatch:
+    inputs:
+      smoke_only:
+        description: Validate Facebook comment signals without creating or updating a planning issue
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -24,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      COMMENT_SIGNAL_SMOKE: ${{ github.event_name == 'schedule' && github.event.schedule == '*/5 * * * *' }}
+      COMMENT_SIGNAL_SMOKE: ${{ (github.event_name == 'workflow_dispatch' && inputs.smoke_only) || (github.event_name == 'schedule' && github.event.schedule == '*/5 * * * *') }}
       GH_TOKEN: ${{ github.token }}
     steps:
       - name: Request audience signals
