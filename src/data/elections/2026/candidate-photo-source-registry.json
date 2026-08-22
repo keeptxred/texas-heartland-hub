@@ -1,0 +1,74 @@
+[
+  {
+    "domain": "congress.gov",
+    "sourceClass": "official-federal-member-profile",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only member portraits from official Congress.gov member profiles with source attribution.",
+    "searchHint": "site:congress.gov/member candidate name Texas",
+    "notes": "Verified as a useful source for current U.S. House incumbents; dedicated discovery script is wired into enrichment."
+  },
+  {
+    "domain": "clerk.house.gov",
+    "sourceClass": "official-house-clerk-profile",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only portraits on official Office of the Clerk member profiles with source attribution.",
+    "searchHint": "site:clerk.house.gov/members candidate name Texas",
+    "notes": "Verified as a useful source for current U.S. House incumbents; dedicated discovery script is wired into enrichment."
+  },
+  {
+    "domain": "txcourts.gov",
+    "sourceClass": "official-texas-judicial-profile",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use portraits hosted on official Texas Judicial Branch judge or justice biography pages with source attribution.",
+    "searchHint": "site:txcourts.gov candidate name justice judge",
+    "notes": "Verified on Third Court of Appeals biographies and statewide judicial profiles."
+  },
+  {
+    "domain": "sboe.texas.gov",
+    "sourceClass": "official-state-board-profile",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use portraits hosted on official State Board of Education member pages with source attribution.",
+    "searchHint": "site:sboe.texas.gov candidate name",
+    "notes": "Existing verified source for SBOE incumbents."
+  },
+  {
+    "domain": "history.house.gov",
+    "sourceClass": "official-house-history-profile",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Do not auto-approve merely because the page is governmental; many images are explicitly courtesy of the Member. Verify the linked rights/reproduction terms or obtain a stronger source.",
+    "searchHint": "site:history.house.gov/People/Detail candidate name",
+    "notes": "Newly confirmed as a high-recall identity and portrait-discovery source, but reuse rights require item-level review."
+  },
+  {
+    "domain": "harrisdemocrats.org",
+    "sourceClass": "official-county-party-candidate-slate",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Treat as candidate identification/source discovery unless the image provenance or editorial reuse basis is documented.",
+    "searchHint": "site:harrisdemocrats.org/candidates candidate name",
+    "notes": "Newly confirmed live 2026 candidate slate with candidate images; useful for finding campaign links and downstream sources."
+  },
+  {
+    "domain": "ballotready.org",
+    "sourceClass": "candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use to locate verified campaign/government webpages; do not copy portrait assets without documented reusable rights.",
+    "searchHint": "site:ballotready.org/people candidate name Texas",
+    "notes": "Useful source-expansion directory because profiles expose verified webpages and current-office context."
+  },
+  {
+    "domain": "reutersconnect.com",
+    "sourceClass": "licensed-news-photo-marketplace",
+    "discoveryStatus": "licensed-only",
+    "autoApprove": false,
+    "rightsRule": "Do not use licensable assets unless KeepTXRed has a valid license for the specific image.",
+    "searchHint": "candidate name Texas Reuters Connect",
+    "notes": "Useful only as evidence that event photography exists; not a free image source."
+  }
+]
