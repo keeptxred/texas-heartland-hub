@@ -9,6 +9,12 @@ on:
     - cron: "0,30 12-23 * * *"
     - cron: "0,30 0-4 * * *"
   workflow_dispatch:
+    inputs:
+      texasdefined_dry_run:
+        description: Preview the TexasDefined candidate without posting or recording it
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -22,6 +28,8 @@ jobs:
   post:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      TEXASDEFINED_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.texasdefined_dry_run || false }}
     steps:
       - name: Check randomized Facebook schedules and post if due
         shell: bash
@@ -50,16 +58,23 @@ jobs:
             local endpoint="$2"
             local output="$3"
             local requested_mode="${4:-$mode}"
+            local dry_run="${5:-false}"
             local status
+            local -a extra_headers=()
+
+            if [[ "$dry_run" == "true" ]]; then
+              extra_headers+=( -H 'X-KTR-Facebook-Dry-Run: true' )
+            fi
 
             status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
               --max-time 420 \
               -H 'accept: application/json' \
               -H "Authorization: Bearer ${oidc_token}" \
               -H "X-KTR-Facebook-Mode: ${requested_mode}" \
+              "${extra_headers[@]}" \
               "$endpoint" || echo 000)
 
-            echo "${label} auto-facebook HTTP ${status} mode=${requested_mode}"
+            echo "${label} auto-facebook HTTP ${status} mode=${requested_mode} dry_run=${dry_run}"
             cat "$output" 2>/dev/null || true
             echo
 
@@ -69,7 +84,12 @@ jobs:
               return
             fi
 
-            if jq -e '.posted == true' "$output" >/dev/null 2>&1; then
+            if jq -e '.dry_run == true' "$output" >/dev/null 2>&1; then
+              kind=$(jq -r '.kind // "unknown"' "$output")
+              title=$(jq -r '.title // ""' "$output")
+              would_post=$(jq -r '.would_post // false' "$output")
+              echo "AUTO_FACEBOOK_DRY_RUN page=${label} kind=${kind} title=${title} would_post=${would_post}"
+            elif jq -e '.posted == true' "$output" >/dev/null 2>&1; then
               slug=$(jq -r '.slug // ""' "$output")
               title=$(jq -r '.title // ""' "$output")
               kind=$(jq -r '.kind // "article"' "$output")
@@ -84,21 +104,24 @@ jobs:
             fi
           }
 
-          # Run the two Page publishers independently so a problem with one Page
-          # never prevents the other Page from getting its scheduled check.
-          run_page \
-            "keeptxred" \
-            "https://keeptxred.com/api/public/hooks/auto-facebook-post" \
-            "/tmp/facebook-post-keeptxred.json"
+          # A TexasDefined dry run is intentionally isolated: it never invokes
+          # the Keep TX Red publisher and therefore cannot create an unrelated post.
+          if [[ "$TEXASDEFINED_DRY_RUN" != "true" ]]; then
+            run_page \
+              "keeptxred" \
+              "https://keeptxred.com/api/public/hooks/auto-facebook-post" \
+              "/tmp/facebook-post-keeptxred.json"
+          fi
 
-          # TexasDefined always goes through scheduled-mode safeguards, even on
-          # workflow_dispatch. A manual workflow run must never bypass its hard
-          # daily cap, minimum-gap logic, or randomized posting windows.
+          # TexasDefined always goes through scheduled-mode safeguards. Dry run
+          # evaluates those safeguards and candidate selection but cannot post or
+          # write publishing history.
           run_page \
             "texasdefined" \
             "https://keeptxred.com/api/public/hooks/auto-facebook-post-texasdefined-smart" \
             "/tmp/facebook-post-texasdefined.json" \
-            "scheduled"
+            "scheduled" \
+            "$TEXASDEFINED_DRY_RUN"
 
           if (( failures > 0 )); then
             exit 1
