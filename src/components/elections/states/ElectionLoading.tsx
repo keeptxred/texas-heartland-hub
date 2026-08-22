@@ -70,6 +70,7 @@ export function ElectionLoading({
   className = "",
 }: ElectionLoadingProps) {
   const safeCount = Math.max(1, Math.min(count, 12));
+  const isResultStatus = label.toLowerCase().includes("result");
 
   return (
     <div
@@ -79,6 +80,12 @@ export function ElectionLoading({
       aria-busy="true"
       className={className}
     >
+      {isResultStatus ? (
+        <p className="mb-4 text-sm leading-6 text-muted-foreground">
+          Result totals are published only from sourced official returns. Placeholder vote totals are not displayed.
+        </p>
+      ) : null}
+
       {variant === "metrics" ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: safeCount }, (_, index) => (
