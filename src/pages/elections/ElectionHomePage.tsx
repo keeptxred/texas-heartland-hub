@@ -135,7 +135,7 @@ export function ElectionHomePage() {
     <ElectionLayout
       title="Texas Election Central"
       description="Follow Texas races, candidates, polls, forecasts, results, and the voting information Texans need before election day."
-      canonicalUrl="https://keeptxred.com/elections"
+      canonicalUrl="https://keeptxred.com/elections/2026"
       schema={buildElectionCollectionSchema({
         name: "Texas Election Central",
         description:
@@ -149,17 +149,17 @@ export function ElectionHomePage() {
       <div className="space-y-12">
         <section
           aria-label="Next Texas election overview"
-          className="overflow-hidden rounded-2xl bg-slate-950 text-white shadow-sm"
+          className="overflow-hidden rounded-2xl bg-secondary text-secondary-foreground shadow-sm"
         >
           <div className="grid gap-8 px-6 py-8 sm:px-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center lg:px-10 lg:py-10">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.22em] text-red-400">
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-primary">
                 2026 Texas election pulse
               </p>
-              <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
+              <h2 className="mt-3 font-display text-3xl leading-none tracking-tight sm:text-4xl">
                 Every race. Every vote. One Texas election hub.
               </h2>
-              <p className="mt-4 max-w-2xl leading-7 text-slate-300">
+              <p className="mt-4 max-w-2xl leading-7 text-secondary-foreground/80">
                 Election Central brings together race ratings, candidate profiles, polling,
                 forecasts, sourced results, ballot research, and practical voting guidance in one
                 public hub.
@@ -167,13 +167,13 @@ export function ElectionHomePage() {
               <div className="mt-6 flex flex-wrap gap-3">
                 <a
                   href={ELECTION_ROUTES.races}
-                  className="rounded-md bg-red-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-600"
+                  className="rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
                 >
                   Explore races
                 </a>
                 <a
                   href="/register-to-vote"
-                  className="rounded-md border border-white/20 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
+                  className="rounded-md border border-secondary-foreground/20 px-4 py-2.5 text-sm font-semibold text-secondary-foreground transition hover:bg-secondary-foreground/10"
                 >
                   Register to vote
                 </a>
@@ -196,12 +196,12 @@ export function ElectionHomePage() {
         <section aria-labelledby="election-summary-metrics">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
                 Election Central data
               </p>
               <h2
                 id="election-summary-metrics"
-                className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl"
+                className="mt-2 font-display text-3xl leading-none tracking-tight text-foreground"
               >
                 Active election overview
               </h2>
@@ -222,9 +222,9 @@ export function ElectionHomePage() {
                   ["Polls", PUBLISHED_POLLS.length],
                   ["Results", PUBLISHED_RESULT_COUNT],
                 ].map(([label, value]) => (
-                  <div key={label} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                    <dt className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">{label}</dt>
-                    <dd className="mt-3 text-3xl font-bold tracking-tight text-slate-950">{Number(value).toLocaleString("en-US")}</dd>
+                  <div key={label} className="rounded-xl border border-border bg-card p-5 shadow-sm">
+                    <dt className="text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">{label}</dt>
+                    <dd className="mt-3 text-3xl font-bold tracking-tight text-foreground">{Number(value).toLocaleString("en-US")}</dd>
                   </div>
                 ))}
               </dl>
@@ -251,12 +251,12 @@ export function ElectionHomePage() {
                 ].map(([label, value]) => (
                   <div
                     key={label}
-                    className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+                    className="rounded-xl border border-border bg-card p-5 shadow-sm"
                   >
-                    <dt className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
+                    <dt className="text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">
                       {label}
                     </dt>
-                    <dd className="mt-3 text-3xl font-bold tracking-tight text-slate-950">
+                    <dd className="mt-3 text-3xl font-bold tracking-tight text-foreground">
                       {Number(value).toLocaleString("en-US")}
                     </dd>
                   </div>
@@ -275,12 +275,12 @@ export function ElectionHomePage() {
         <section aria-labelledby="election-central-start">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
                 Start here
               </p>
               <h2
                 id="election-central-start"
-                className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl"
+                className="mt-2 font-display text-3xl leading-none tracking-tight text-foreground"
               >
                 Explore Election Central
               </h2>
@@ -291,13 +291,13 @@ export function ElectionHomePage() {
               <a
                 key={item.href}
                 href={item.href}
-                className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-red-200 hover:shadow-md"
+                className="group rounded-xl border border-border bg-card p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-primary hover:shadow-md"
               >
-                <h3 className="font-semibold text-slate-950 group-hover:text-red-700">
+                <h3 className="font-semibold text-foreground group-hover:text-primary">
                   {item.title}
                 </h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600">{item.description}</p>
-                <span className="mt-4 block text-sm font-semibold text-red-700">
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.description}</p>
+                <span className="mt-4 block text-sm font-semibold text-primary">
                   Open section →
                 </span>
               </a>
@@ -308,19 +308,19 @@ export function ElectionHomePage() {
         <section aria-labelledby="featured-races">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
                 Race watch
               </p>
               <h2
                 id="featured-races"
-                className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl"
+                className="mt-2 font-display text-3xl leading-none tracking-tight text-foreground"
               >
                 Featured Texas races
               </h2>
             </div>
             <a
               href={ELECTION_ROUTES.races}
-              className="text-sm font-semibold text-red-700 hover:underline"
+              className="text-sm font-semibold text-primary hover:underline"
             >
               View all races →
             </a>
@@ -329,10 +329,10 @@ export function ElectionHomePage() {
             {activeCycle.isPending || (activeCycle.data && featuredRaces.isPending) ? (
               <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                 {PUBLISHED_RACES.slice(0, 3).map((race) => (
-                  <a key={race.id} href={ELECTION_ROUTES.race(race.slug)} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                    <h3 className="font-semibold text-slate-950">{race.name}</h3>
-                    <p className="mt-2 text-sm text-slate-600">{race.officeName} · {race.electionType.replaceAll("_", " ")}</p>
-                    <span className="mt-4 block text-sm font-semibold text-red-700">Race overview →</span>
+                  <a key={race.id} href={ELECTION_ROUTES.race(race.slug)} className="rounded-xl border border-border bg-card p-5 shadow-sm">
+                    <h3 className="font-semibold text-foreground">{race.name}</h3>
+                    <p className="mt-2 text-sm text-muted-foreground">{race.officeName} · {race.electionType.replaceAll("_", " ")}</p>
+                    <span className="mt-4 block text-sm font-semibold text-primary">Race overview →</span>
                   </a>
                 ))}
               </div>
@@ -377,17 +377,17 @@ export function ElectionHomePage() {
         <section aria-labelledby="latest-polls">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">Polling</p>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Polling</p>
               <h2
                 id="latest-polls"
-                className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl"
+                className="mt-2 font-display text-3xl leading-none tracking-tight text-foreground"
               >
                 Latest election polls
               </h2>
             </div>
             <a
               href={ELECTION_ROUTES.polls}
-              className="text-sm font-semibold text-red-700 hover:underline"
+              className="text-sm font-semibold text-primary hover:underline"
             >
               View all polls →
             </a>
@@ -395,9 +395,9 @@ export function ElectionHomePage() {
 
           <div className="mt-6">
             {activeCycle.isPending || (activeCycle.data && latestPolls.isPending) ? (
-              <div className="rounded-xl border border-slate-200 bg-white p-5">
-                <p className="font-semibold text-slate-950">{PUBLISHED_POLLS.length} verified poll records are published.</p>
-                <a href={ELECTION_ROUTES.polls} className="mt-3 inline-block text-sm font-semibold text-red-700">Review polls and methodology →</a>
+              <div className="rounded-xl border border-border bg-card p-5">
+                <p className="font-semibold text-foreground">{PUBLISHED_POLLS.length} verified poll records are published.</p>
+                <a href={ELECTION_ROUTES.polls} className="mt-3 inline-block text-sm font-semibold text-primary">Review polls and methodology →</a>
               </div>
             ) : activeCycle.isError || latestPolls.isError ? (
               <ElectionErrorState
@@ -470,17 +470,17 @@ export function ElectionHomePage() {
         <section aria-labelledby="featured-forecasts">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">Forecasts</p>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Forecasts</p>
               <h2
                 id="featured-forecasts"
-                className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl"
+                className="mt-2 font-display text-3xl leading-none tracking-tight text-foreground"
               >
                 Featured race forecasts
               </h2>
             </div>
             <a
               href={ELECTION_ROUTES.methodology}
-              className="text-sm font-semibold text-red-700 hover:underline"
+              className="text-sm font-semibold text-primary hover:underline"
             >
               Review forecast methodology →
             </a>
@@ -488,9 +488,9 @@ export function ElectionHomePage() {
 
           <div className="mt-6">
             {activeCycle.isPending || (activeCycle.data && featuredForecasts.isPending) ? (
-              <div className="rounded-xl border border-slate-200 bg-white p-5">
-                <p className="font-semibold text-slate-950">{PUBLISHED_FORECASTS.length} sourced forecasts are currently published.</p>
-                <a href={ELECTION_ROUTES.forecast} className="mt-3 inline-block text-sm font-semibold text-red-700">Review forecasts and methodology →</a>
+              <div className="rounded-xl border border-border bg-card p-5">
+                <p className="font-semibold text-foreground">{PUBLISHED_FORECASTS.length} sourced forecasts are currently published.</p>
+                <a href={ELECTION_ROUTES.forecast} className="mt-3 inline-block text-sm font-semibold text-primary">Review forecasts and methodology →</a>
               </div>
             ) : activeCycle.isError || featuredForecasts.isError ? (
               <ElectionErrorState
@@ -517,30 +517,30 @@ export function ElectionHomePage() {
                 {featuredForecasts.data?.map((forecast) => (
                   <article
                     key={forecast.id}
-                    className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+                    className="rounded-xl border border-border bg-card p-6 shadow-sm"
                   >
-                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-700">
+                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
                       {forecast.sourceName}
                     </p>
-                    <h3 className="mt-2 text-xl font-bold tracking-tight text-slate-950">
+                    <h3 className="mt-2 text-xl font-bold tracking-tight text-foreground">
                       {forecast.race.name}
                     </h3>
-                    <p className="mt-1 text-sm text-slate-600">Updated {forecast.updatedAt}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">Updated {forecast.updatedAt}</p>
 
                     <dl className="mt-5 grid gap-3 text-sm sm:grid-cols-2">
-                      <div className="rounded-lg bg-slate-50 p-3">
-                        <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                      <div className="rounded-lg bg-muted/40 p-3">
+                        <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                           Rating
                         </dt>
-                        <dd className="mt-1 font-semibold text-slate-950">
+                        <dd className="mt-1 font-semibold text-foreground">
                           {FORECAST_RATING_LABELS[forecast.rating]}
                         </dd>
                       </div>
-                      <div className="rounded-lg bg-slate-50 p-3">
-                        <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                      <div className="rounded-lg bg-muted/40 p-3">
+                        <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                           Confidence
                         </dt>
-                        <dd className="mt-1 font-semibold text-slate-950">
+                        <dd className="mt-1 font-semibold text-foreground">
                           {FORECAST_CONFIDENCE_LEVEL_LABELS[forecast.confidenceLevel]}
                         </dd>
                       </div>
@@ -556,20 +556,20 @@ export function ElectionHomePage() {
                             key={candidate.candidateId}
                             className="flex items-center justify-between gap-3 text-sm"
                           >
-                            <span className="font-semibold text-slate-800">
+                            <span className="font-semibold text-foreground">
                               {candidate.candidateName}
                             </span>
-                            <span className="font-mono font-bold text-slate-950">
+                            <span className="font-mono font-bold text-foreground">
                               {candidate.winProbability.toFixed(1)}%
                             </span>
                           </div>
                         ))}
                     </div>
 
-                    <div className="mt-6 border-t border-slate-200 pt-4">
+                    <div className="mt-6 border-t border-border pt-4">
                       <a
                         href={ELECTION_ROUTES.forecastDetail(forecast.slug)}
-                        className="text-sm font-semibold text-red-700 hover:underline"
+                        className="text-sm font-semibold text-primary hover:underline"
                       >
                         How this forecast works →
                       </a>
@@ -584,17 +584,17 @@ export function ElectionHomePage() {
         <section aria-labelledby="results-preview">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">Results</p>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Results</p>
               <h2
                 id="results-preview"
-                className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl"
+                className="mt-2 font-display text-3xl leading-none tracking-tight text-foreground"
               >
                 Active election results
               </h2>
             </div>
             <a
               href={ELECTION_ROUTES.results}
-              className="text-sm font-semibold text-red-700 hover:underline"
+              className="text-sm font-semibold text-primary hover:underline"
             >
               View election results →
             </a>
@@ -627,18 +627,18 @@ export function ElectionHomePage() {
                 {activeResults.data?.map((result) => (
                   <article
                     key={result.id}
-                    className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+                    className="rounded-xl border border-border bg-card p-6 shadow-sm"
                   >
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
-                        <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-700">
+                        <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
                           Unofficial results
                         </p>
-                        <h3 className="mt-2 text-xl font-bold tracking-tight text-slate-950">
+                        <h3 className="mt-2 text-xl font-bold tracking-tight text-foreground">
                           {result.race.name}
                         </h3>
                       </div>
-                      <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                      <span className="rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
                         {result.reporting.reportingPercentage == null
                           ? "Reporting percentage unavailable"
                           : `${result.reporting.reportingPercentage.toFixed(1)}% reporting`}
@@ -657,12 +657,12 @@ export function ElectionHomePage() {
                         .map((candidate) => (
                           <div
                             key={candidate.candidateId}
-                            className="flex items-center justify-between gap-4 border-b border-slate-100 pb-3 text-sm last:border-0 last:pb-0"
+                            className="flex items-center justify-between gap-4 border-b border-border pb-3 text-sm last:border-0 last:pb-0"
                           >
-                            <span className="font-semibold text-slate-800">
+                            <span className="font-semibold text-foreground">
                               {candidate.candidateName}
                             </span>
-                            <span className="text-right font-mono font-bold text-slate-950">
+                            <span className="text-right font-mono font-bold text-foreground">
                               {candidate.votes.toLocaleString("en-US")}
                               {candidate.voteShare == null
                                 ? ""
@@ -672,7 +672,7 @@ export function ElectionHomePage() {
                         ))}
                     </div>
 
-                    <p className="mt-5 border-t border-slate-200 pt-4 text-xs leading-5 text-slate-600">
+                    <p className="mt-5 border-t border-border pt-4 text-xs leading-5 text-muted-foreground">
                       Last updated {result.lastVoteUpdateAt ?? result.updatedAt}. Totals remain
                       unofficial until certified.
                     </p>
@@ -686,17 +686,17 @@ export function ElectionHomePage() {
         <section aria-labelledby="election-news">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
                 Latest coverage
               </p>
               <h2
                 id="election-news"
-                className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl"
+                className="mt-2 font-display text-3xl leading-none tracking-tight text-foreground"
               >
                 Texas election news
               </h2>
             </div>
-            <Link to="/texas-news" className="text-sm font-semibold text-red-700 hover:underline">
+            <Link to="/news" className="text-sm font-semibold text-primary hover:underline">
               More Texas news →
             </Link>
           </div>
@@ -708,9 +708,9 @@ export function ElectionHomePage() {
                   key={article.slug}
                   to="/news/$slug"
                   params={{ slug: article.slug }}
-                  className="group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                  className="group overflow-hidden rounded-xl border border-border bg-card shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
                 >
-                  <div className="aspect-[16/9] overflow-hidden bg-slate-100">
+                  <div className="aspect-[16/9] overflow-hidden bg-muted">
                     <img
                       src={uniqueImages.get(article.slug) ?? article.image}
                       alt=""
@@ -719,19 +719,19 @@ export function ElectionHomePage() {
                     />
                   </div>
                   <div className="p-5">
-                    <p className="text-xs font-bold uppercase tracking-wider text-red-700">
+                    <p className="text-xs font-bold uppercase tracking-wider text-primary">
                       {article.category}
                     </p>
-                    <h3 className="mt-2 font-semibold leading-snug text-slate-950 group-hover:text-red-700">
+                    <h3 className="mt-2 font-semibold leading-snug text-foreground group-hover:text-primary">
                       {article.title}
                     </h3>
-                    <p className="mt-3 text-xs text-slate-500">{article.date}</p>
+                    <p className="mt-3 text-xs text-muted-foreground">{article.date}</p>
                   </div>
                 </Link>
               ))}
             </div>
           ) : (
-            <div className="mt-6 rounded-xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-600">
+            <div className="mt-6 rounded-xl border border-dashed border-border bg-card p-8 text-center text-muted-foreground">
               Election coverage will appear here as new stories are published.
             </div>
           )}
