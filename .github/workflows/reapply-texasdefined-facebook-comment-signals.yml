@@ -1,0 +1,34 @@
+name: Reapply TexasDefined Facebook comment signals
+
+on:
+  push:
+    branches:
+      - texasdefined-facebook-comment-signals-v2
+    paths:
+      - '.github/workflows/reapply-texasdefined-facebook-comment-signals.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  reapply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: texasdefined-facebook-comment-signals-v2
+          fetch-depth: 0
+      - name: Copy focused audience-signal files onto current main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin texasdefined-facebook-comment-signals
+          git checkout origin/texasdefined-facebook-comment-signals -- \
+            src/routes/api/public/hooks/texasdefined-facebook-comment-signals.ts \
+            .github/workflows/texasdefined-facebook-comment-signals.yml
+          git rm .github/workflows/reapply-texasdefined-facebook-comment-signals.yml
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add src/routes/api/public/hooks/texasdefined-facebook-comment-signals.ts .github/workflows/texasdefined-facebook-comment-signals.yml
+          git commit -m 'Turn TexasDefined Facebook comments into content signals'
+          git push origin HEAD:texasdefined-facebook-comment-signals-v2
