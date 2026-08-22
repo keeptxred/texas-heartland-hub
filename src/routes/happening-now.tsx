@@ -20,6 +20,10 @@ function timeAgo(iso: string) {
   return `${Math.floor(hours / 24)}d ago`;
 }
 
+function isRollingNewsKind(kind?: string | null) {
+  return kind === "news" || Boolean(kind?.startsWith("sports-"));
+}
+
 export const Route = createFileRoute("/happening-now")({
   head: () => ({
     meta: [
@@ -164,6 +168,7 @@ function HappeningNowPage() {
           (article) =>
             Boolean(article.slug)
             && Boolean(article.published_at)
+            && isRollingNewsKind(article.kind)
             && !isLowValueTitle(article.title)
             && isPublicArticleReady(article)
             && meetsArticleMainWordCount(article.kind, article.body_json as never),
