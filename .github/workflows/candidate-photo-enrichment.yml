@@ -16,13 +16,16 @@ on:
       - "scripts/elections/apply-official-government-photo-findings-2026-08-21.mjs"
       - "scripts/elections/apply-official-federal-photo-findings-2026-08-21-wave2.mjs"
       - "scripts/elections/apply-public-domain-congress-photo-findings-2026-08-21-wave3.mjs"
+      - "scripts/elections/apply-public-domain-congress-photo-findings-2026-08-22-wave4.mjs"
       - "scripts/elections/apply-official-judicial-photo-findings-2026-08-21-wave2.mjs"
       - "scripts/elections/discover-candidate-photo-sources.mjs"
       - "scripts/elections/discover-candidate-photos-house-clerk.mjs"
       - "scripts/elections/discover-candidate-photos-congress-gov.mjs"
       - "scripts/elections/discover-candidate-photos-tcta.mjs"
+      - "scripts/elections/discover-candidate-photos-texas-archives.mjs"
       - "src/data/elections/2026/candidate-photo-assets.json"
       - "src/data/elections/2026/candidate-photo-source-registry.json"
+      - "src/data/elections/2026/candidate-photo-source-registry-texas-archives.json"
 
 permissions:
   actions: write
@@ -63,6 +66,8 @@ jobs:
         run: node scripts/elections/apply-official-federal-photo-findings-2026-08-21-wave2.mjs
       - name: Apply verified public-domain congressional portrait wave 3
         run: node scripts/elections/apply-public-domain-congress-photo-findings-2026-08-21-wave3.mjs
+      - name: Apply verified public-domain congressional portrait wave 4
+        run: node scripts/elections/apply-public-domain-congress-photo-findings-2026-08-22-wave4.mjs
       - name: Apply verified Texas appellate portrait wave 2
         run: node scripts/elections/apply-official-judicial-photo-findings-2026-08-21-wave2.mjs
       - name: Discover previously unseen candidate photo source domains
@@ -73,6 +78,8 @@ jobs:
         run: node scripts/elections/discover-candidate-photos-house-clerk.mjs
       - name: Discover TCTA-linked official campaign portraits
         run: node scripts/elections/discover-candidate-photos-tcta.mjs
+      - name: Discover Texas and national archive portrait leads
+        run: node scripts/elections/discover-candidate-photos-texas-archives.mjs
       - name: Discover directory candidate portraits
         run: node scripts/elections/discover-candidate-photos-directories.mjs
       - name: Discover linked and public-source candidate portraits
@@ -116,6 +123,7 @@ jobs:
             artifacts/elections/candidate-photo-congress-gov-report.json
             artifacts/elections/candidate-photo-house-clerk-report.json
             artifacts/elections/candidate-photo-tcta-report.json
+            artifacts/elections/candidate-photo-texas-archives-report.json
             artifacts/elections/candidate-photo-search-provider-report.json
             artifacts/elections/candidate-photo-expanded-report.json
             artifacts/elections/candidate-photo-race-aware-report.json
