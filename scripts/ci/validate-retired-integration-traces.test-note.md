@@ -1,0 +1,1 @@
+This branch adds a permanent CI guard that scans current tracked files for retired external integration traces. It does not inspect Git history or branch names, and it does not alter publication, deployment, database, or social automation behavior.
