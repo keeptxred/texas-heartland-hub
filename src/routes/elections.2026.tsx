@@ -134,25 +134,25 @@ function ElectionCentral2026Route() {
 
 function PriorityElectionLinks() {
   return (
-    <section className="border-t bg-white" aria-labelledby="priority-election-pages">
+    <section className="border-t border-border bg-background" aria-labelledby="priority-election-pages">
       <div className="mx-auto max-w-[1200px] px-6 py-12">
         <div className="max-w-3xl">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">Explore verified election pages</p>
-          <h2 id="priority-election-pages" className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Candidate and district pages</h2>
-          <p className="mt-3 leading-7 text-slate-600">These links point directly to published, verified Election Central records so voters and search engines can reach important detail pages without relying on filters or search forms.</p>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Explore verified election pages</p>
+          <h2 id="priority-election-pages" className="mt-2 font-display text-3xl leading-none tracking-tight text-foreground">Candidate and district pages</h2>
+          <p className="mt-3 leading-7 text-muted-foreground">These links point directly to published, verified Election Central records so voters and search engines can reach important detail pages without relying on filters or search forms.</p>
         </div>
 
         {PRIORITY_CANDIDATES.length ? (
           <div className="mt-8">
-            <div className="flex items-end justify-between gap-4"><h3 className="text-lg font-bold text-slate-950">Verified candidate profiles</h3><Link to="/elections/candidates" className="text-sm font-semibold text-red-700 hover:underline">Browse all candidates →</Link></div>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{PRIORITY_CANDIDATES.map((candidate) => <Link key={candidate.id} to="/elections/candidates/$candidateSlug" params={{ candidateSlug: candidate.slug }} className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 font-semibold text-slate-900 hover:border-red-300 hover:text-red-700">{candidate.fullName}</Link>)}</div>
+            <div className="flex items-end justify-between gap-4"><h3 className="text-lg font-bold text-foreground">Verified candidate profiles</h3><Link to="/elections/candidates" className="text-sm font-semibold text-primary hover:underline">Browse all candidates →</Link></div>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{PRIORITY_CANDIDATES.map((candidate) => <Link key={candidate.id} to="/elections/candidates/$candidateSlug" params={{ candidateSlug: candidate.slug }} className="rounded-lg border border-border bg-muted/30 px-4 py-3 font-semibold text-foreground hover:border-primary hover:text-primary">{candidate.fullName}</Link>)}</div>
           </div>
         ) : null}
 
         {PRIORITY_DISTRICTS.length ? (
           <div className="mt-8">
-            <div className="flex items-end justify-between gap-4"><h3 className="text-lg font-bold text-slate-950">Active 2026 district pages</h3><Link to="/elections/districts" className="text-sm font-semibold text-red-700 hover:underline">Browse all districts →</Link></div>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{PRIORITY_DISTRICTS.map((district) => <Link key={district.slug} to="/elections/districts/$districtSlug" params={{ districtSlug: district.slug }} className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 font-semibold text-slate-900 hover:border-red-300 hover:text-red-700">{district.label}</Link>)}</div>
+            <div className="flex items-end justify-between gap-4"><h3 className="text-lg font-bold text-foreground">Active 2026 district pages</h3><Link to="/elections/districts" className="text-sm font-semibold text-primary hover:underline">Browse all districts →</Link></div>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{PRIORITY_DISTRICTS.map((district) => <Link key={district.slug} to="/elections/districts/$districtSlug" params={{ districtSlug: district.slug }} className="rounded-lg border border-border bg-muted/30 px-4 py-3 font-semibold text-foreground hover:border-primary hover:text-primary">{district.label}</Link>)}</div>
           </div>
         ) : null}
       </div>
