@@ -3,23 +3,30 @@ import { describe, expect, it } from "vitest";
 
 const source = readFileSync(new URL("./ingest-feeds-legacy.ts", import.meta.url), "utf8");
 
-describe("legacy ingest evidence-driven rewrite length", () => {
-  it("uses compact, standard, and rich evidence floors", () => {
-    expect(source).toContain("const MIN_WORDS_COMPACT = 650;");
-    expect(source).toContain("const MIN_WORDS_STANDARD = 800;");
-    expect(source).toContain("const MIN_WORDS_ANALYSIS = 1200;");
-    expect(source).toContain("if (evidenceChars < COMPACT_SOURCE_MAX_CHARS) return MIN_WORDS_COMPACT;");
-    expect(source).toContain("if (analysisCategory && evidenceChars >= RICH_SOURCE_MIN_CHARS) return MIN_WORDS_ANALYSIS;");
-  });
-
-  it("does not make a third paid expansion call after shared editorial repair", () => {
-    expect(source).toContain("The shared editorial engine already performs one targeted repair");
-    expect(source).toContain("return prior;");
-    expect(source).not.toContain('fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {\n      method: "POST",\n      headers: { "Content-Type": "application/json", "Lovable-API-Key": lovableApiKey },\n      body: JSON.stringify({\n        model: "google/gemini-3-flash-preview",\n        messages: [\n          { role: "system", content: REWRITE_SYSTEM },');
-  });
-
-  it("keeps the downstream evidence-driven publication floor", () => {
-    expect(source).toContain("const target = minWordsForItem(item, rw);");
+describe("feed-item publisher evidence-driven rewrite contract", () => {
+  it("uses the shared evidence-driven editorial minimum", () => {
+    expect(source).toContain("editorialMinimumFor");
+    expect(source).toContain("const target = editorialMinimumFor(");
     expect(source).toContain("Rewrite below tiered minimum (${words}/${target} words). Try again.");
+  });
+
+  it("keeps the shared two-call editorial repair ceiling", () => {
+    expect(source).toContain("runEditorialRewrite<Rewrite>");
+    expect(source).toContain("maxAttempts: 1");
+    expect(source).not.toContain('attempt: "length-completion"');
+  });
+
+  it("uses the direct Cloudflare provider and keeps rewrite-budget accounting", () => {
+    expect(source).toContain("runCloudflareJson");
+    expect(source).toContain("claim_ai_rewrite_slot");
+    expect(source).toContain("DAILY_AI_REWRITE_LIMIT");
+    expect(source).toContain("CLOUDFLARE_ACCOUNT_ID");
+    expect(source).toContain("CLOUDFLARE_API_TOKEN");
+  });
+
+  it("keeps source preflight and political authority validation", () => {
+    expect(source).toContain("assessRewritePreflight");
+    expect(source).toContain("assertRewriteableOrThrow");
+    expect(source).toContain("validatePoliticalAuthority");
   });
 });
