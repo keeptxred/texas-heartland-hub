@@ -40,6 +40,7 @@ export const Route = createFileRoute("/issues/")({
 });
 
 const AUTHORITY_LAYERS = [
+  { href: "/issues/texas-policy-handbook", label: "Texas Policy Handbook", eyebrow: "Start here", text: "Understand who controls what across taxes, energy, border security, schools, public safety, elections, healthcare and local government." },
   { href: "/policy", label: "Policy Trackers", eyebrow: "Current status", text: "Follow narrower policy questions as laws, agencies, litigation, implementation and official data change." },
   { href: "/tools", label: "Policy Tools", eyebrow: "Do the math", text: "Test fiscal-policy assumptions with transparent calculators and scenario explorers tied back to source context." },
   { href: "/civic-tools", label: "Civic Tools", eyebrow: "Find the source", text: "Locate Texas laws, bills, government authority and elected officials without relying on a summary alone." },
@@ -57,10 +58,10 @@ function IssuesHub() {
 
       <div className="mt-10 border-l-4 border-primary bg-muted/40 p-5">
         <p className="font-semibold">How these pages work</p>
-        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">Issue guides explain the durable framework. Policy trackers handle narrower questions that change more often. Tools expose the arithmetic. Civic tools help you reach the underlying law, bill or official. News coverage handles the live event. That division keeps KTR from creating multiple pages that compete to answer the same search.</p>
+        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">Start with the Texas Policy Handbook for the statewide framework. Issue guides explain durable policy questions. Policy trackers handle narrower questions that change more often. Tools expose the arithmetic. Civic tools help you reach the underlying law, bill or official. News coverage handles the live event. That division keeps KTR from creating multiple pages that compete to answer the same search.</p>
       </div>
 
-      <section className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4" aria-label="Keep TX Red authority layers">
+      <section className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-5" aria-label="Keep TX Red authority layers">
         {AUTHORITY_LAYERS.map((layer) => (
           <a key={layer.href} href={layer.href} className="group border bg-background p-5 transition hover:border-primary">
             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">{layer.eyebrow}</span>
@@ -69,6 +70,14 @@ function IssuesHub() {
             <span className="mt-4 inline-block text-sm font-semibold text-primary">Open →</span>
           </a>
         ))}
+      </section>
+
+      <section className="mt-12 border-y py-8">
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">New permanent reference</p>
+        <div className="mt-3 grid gap-5 md:grid-cols-[1.4fr_.6fr] md:items-end">
+          <div><h2 className="font-display text-4xl tracking-tight">Texas Policy Handbook</h2><p className="mt-3 max-w-3xl leading-7 text-muted-foreground">Ten chapters connecting Texas government authority, taxes, energy, border security, education, public safety, elections, rural healthcare and local preemption. It is built to answer the question behind the headline: who has the power, what law controls, and where can you verify it?</p></div>
+          <div className="md:text-right"><Link to="/issues/texas-policy-handbook" className="inline-flex border border-primary px-5 py-3 font-semibold text-primary hover:bg-primary hover:text-primary-foreground">Read the handbook →</Link></div>
+        </div>
       </section>
 
       <div className="mt-12 space-y-14">
@@ -99,6 +108,7 @@ function IssuesHub() {
         <h2 className="font-display text-3xl tracking-tight">Use the reporting, not just the label</h2>
         <p className="mt-3 max-w-4xl leading-relaxed text-muted-foreground">Keep TX Red has a conservative editorial perspective, but these reference pages are built to make claims checkable. Primary-source links are included so readers can inspect enacted bills, current statutes and agency material directly. Commentary belongs on top of a factual foundation, not in place of one.</p>
         <div className="mt-5 flex flex-wrap gap-4 text-sm font-semibold">
+          <Link to="/issues/texas-policy-handbook" className="text-primary hover:underline">Read the Texas Policy Handbook →</Link>
           <Link to="/policy" className="text-primary hover:underline">Browse policy trackers →</Link>
           <Link to="/tools" className="text-primary hover:underline">Use policy tools →</Link>
           <Link to="/texas-case" className="text-primary hover:underline">Read The Texas Case →</Link>
