@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "shellynickels.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Shelly Nickels's official Texas House District 122 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude stock, issue, QR-code, logo, and third-party imagery.",
+    "searchHint": "site:shellynickels.com Shelly Nickels Texas House District 122 portrait meet Shelly",
+    "notes": "Verified August 22, 2026. The live site identifies Dr. Shelly Nickels as the Democratic candidate for Texas House District 122 and the campaign biography page explicitly includes a portrait of Dr. Shelly Nickels. TCTA independently links shellynickels.com as her candidate website."
+  },
+  {
+    "domain": "voteadrianreyna.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Adrian Reyna's official Texas House District 125 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude stock, issue graphics, logos, and third-party embeds.",
+    "searchHint": "site:voteadrianreyna.com Adrian Reyna Texas House District 125 portrait meet Adrian",
+    "notes": "Verified August 22, 2026. The live campaign site contains a current Meet Adrian biography and identifies Adrian Reyna as a candidate for Texas House District 125."
+  },
+  {
+    "domain": "stefaniebordfortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Stefanie Bord's official Texas House District 126 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude endorsement logos, stock, issue, donation, and third-party imagery.",
+    "searchHint": "site:stefaniebordfortexas.com Stefanie Bord Texas House District 126 portrait about Stefanie",
+    "notes": "Verified August 22, 2026. The live site identifies Stefanie Bord as running for Texas House District 126 and carries a political-ad disclaimer paid for by Stefanie Bord for Texas 126."
+  }
+]
