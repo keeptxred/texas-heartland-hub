@@ -24,6 +24,10 @@ const approved = new Set(
     .map((entry) => entry.candidateId)
 );
 const knownDomains = new Set(registry.map((entry) => normalizeHost(entry.domain)).filter(Boolean));
+const discoveryDirectories = registry
+  .filter((entry) => entry?.discoveryStatus === "discovery-only" && entry?.autoApprove === false && entry?.domain)
+  .map((entry) => ({ ...entry, domain: normalizeHost(entry.domain) }));
+const discoveryDirectoryDomains = new Set(discoveryDirectories.map((entry) => entry.domain));
 const missingCandidates = candidates
   .filter((candidate) => !approved.has(candidate.id))
   .sort(prioritySort);
@@ -38,10 +42,11 @@ const nextCandidateOffset = missingCandidates.length
 
 const discoveries = [];
 const failures = [];
+const directoryBridgeStats = new Map();
 
 await runPool(queue, CONCURRENCY, async (candidate) => {
   try {
-    const urls = await discoverSourceUrls(candidate);
+    const urls = await discoverSourceUrls(candidate, discoveryDirectories, discoveryDirectoryDomains, directoryBridgeStats);
     for (const url of urls) {
       const host = hostOf(url);
       if (!host || isKnownDomain(host, knownDomains) || isBlockedHost(host)) continue;
@@ -83,6 +88,8 @@ await writeFile(REPORT_PATH, `${JSON.stringify({
   searchedCandidateIds: queue.map((candidate) => candidate.id),
   knownSourceDomainCount: knownDomains.size,
   loadedRegistryEntryCount: registry.length,
+  discoveryOnlyDirectoryCount: discoveryDirectories.length,
+  directoryBridgeStats: Object.fromEntries([...directoryBridgeStats.entries()].sort()),
   newSourceCandidateCount: deduped.length,
   newDomainCount: domainSummary.size,
   newDomains: [...domainSummary.values()],
@@ -93,9 +100,10 @@ await writeFile(REPORT_PATH, `${JSON.stringify({
 console.log(`Source expansion searched ${queue.length} missing candidates starting at offset ${searchStartOffset} and found ${domainSummary.size} previously unregistered domain(s).`);
 console.log(`Next source-expansion run will continue at missing-candidate offset ${nextCandidateOffset}.`);
 console.log(`Loaded ${registry.length} source entries from every candidate-photo-source-registry*.json file.`);
+console.log(`Actively searched ${discoveryDirectories.length} discovery-only directory source(s) as bridges to downstream candidate sources.`);
 console.log("New domains remain review-only until identity, provenance, and reuse rights are verified.");
 
-async function discoverSourceUrls(candidate) {
+async function discoverSourceUrls(candidate, directories, directoryDomains, bridgeStats) {
   const name = `\"${candidate.fullName}\"`;
   const race = raceContext(candidate.primaryRaceId);
   const queries = [
@@ -109,13 +117,53 @@ async function discoverSourceUrls(candidate) {
     `${name} Texas ${race} archive portrait photo`,
     `${name} Texas ${race} campaign photos media resources`,
   ];
+  for (const directory of directories) {
+    queries.push(`site:${directory.domain} ${name} Texas ${race} candidate`);
+  }
+
   const urls = [];
+  const directoryPages = [];
   for (const query of queries) {
     const results = await duckDuckGoSearch(query);
-    urls.push(...results);
-    if (urls.length >= 42) break;
+    for (const url of results) {
+      const host = hostOf(url);
+      if (host && isDomainInSet(host, directoryDomains)) directoryPages.push(url);
+      else urls.push(url);
+    }
+    if (urls.length + directoryPages.length >= 64) break;
   }
-  return [...new Set(urls)].slice(0, 42);
+
+  for (const directoryPage of [...new Set(directoryPages)].slice(0, 12)) {
+    const outbound = await discoverOutboundSourceUrls(directoryPage, candidate, directoryDomains);
+    if (outbound.length) {
+      const host = hostOf(directoryPage) || "unknown-directory";
+      bridgeStats.set(host, (bridgeStats.get(host) || 0) + outbound.length);
+      urls.push(...outbound);
+    }
+  }
+  return [...new Set(urls)].slice(0, 64);
+}
+
+async function discoverOutboundSourceUrls(directoryPageUrl, candidate, directoryDomains) {
+  const response = await safeFetch(directoryPageUrl, { headers: { accept: "text/html" } });
+  if (!response?.ok) return [];
+  const contentType = response.headers.get("content-type") || "";
+  if (!contentType.includes("text/html")) return [];
+  const html = await response.text();
+  const text = normalize(stripHtml(html));
+  const fullName = normalize(candidate.fullName);
+  const tokens = fullName.split(" ").filter((token) => token.length >= 4);
+  if (fullName && !text.includes(fullName) && !(tokens.length >= 2 && tokens.every((token) => text.includes(token)))) return [];
+
+  const links = [];
+  for (const match of html.matchAll(/<a[^>]+href=["']([^"'#]+)["'][^>]*>/gi)) {
+    const url = absoluteUrl(match[1], response.url || directoryPageUrl);
+    if (!url) continue;
+    const host = hostOf(url);
+    if (!host || isDomainInSet(host, directoryDomains) || isBlockedHost(host)) continue;
+    links.push(url);
+  }
+  return [...new Set(links)].slice(0, 24);
 }
 
 async function duckDuckGoSearch(query) {
@@ -190,6 +238,13 @@ function isKnownDomain(host, knownDomains) {
   return false;
 }
 
+function isDomainInSet(host, domains) {
+  for (const domain of domains) {
+    if (host === domain || host.endsWith(`.${domain}`) || domain.endsWith(`.${host}`)) return true;
+  }
+  return false;
+}
+
 function isBlockedHost(host) {
   return /(^|\.)(google|bing|duckduckgo|yahoo|facebook|instagram|linkedin|x|twitter|youtube|tiktok|pinterest|reddit)\./.test(host)
     || /wikipedia\.org$|wikimedia\.org$/.test(host);
@@ -211,6 +266,9 @@ async function loadSourceRegistries(directory) {
 
 function hostOf(value) { try { return new URL(value).hostname.toLowerCase().replace(/^www\./, ""); } catch { return null; } }
 function normalizeHost(value) { return String(value || "").toLowerCase().replace(/^https?:\/\//, "").replace(/^www\./, "").split("/")[0]; }
+function absoluteUrl(value, base) { try { const url = new URL(value, base); return /^https?:$/.test(url.protocol) ? url.toString() : null; } catch { return null; } }
+function stripHtml(value) { return String(value || "").replace(/<script[\s\S]*?<\/script>/gi, " ").replace(/<style[\s\S]*?<\/style>/gi, " ").replace(/<[^>]+>/g, " ").replace(/&[a-z0-9#]+;/gi, " "); }
+function normalize(value) { return String(value || "").toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim(); }
 
 async function safeFetch(url, init = {}) {
   try {
