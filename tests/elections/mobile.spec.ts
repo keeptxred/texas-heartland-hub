@@ -2,6 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 
 const STANDARD_HOMEPAGE_HEADING = /follow the decisions shaping texas/i;
 const ELECTION_HOMEPAGE_HEADING = /texas election central/i;
+const LOCAL_PREVIEW = "http://127.0.0.1:4173";
 
 const ROUTES = [
   "/elections/2026",
@@ -15,6 +16,18 @@ const ROUTES = [
   "/elections/voting",
   "/elections/methodology",
 ] as const;
+
+test.beforeEach(async ({ page }) => {
+  await page.route(`${LOCAL_PREVIEW}/**`, async (route) => {
+    await route.continue({
+      headers: {
+        ...route.request().headers(),
+        "x-forwarded-host": "keeptxred.com",
+        "x-forwarded-proto": "https",
+      },
+    });
+  });
+});
 
 test("homepage renders exactly one supported experience", async ({ page }) => {
   const response = await page.goto("/", { waitUntil: "domcontentloaded" });
