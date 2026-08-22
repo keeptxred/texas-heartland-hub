@@ -8,9 +8,9 @@ export const Route = createFileRoute("/issues/")({
   head: () => ({
     meta: [
       { title: "Texas Issues & Policy Guides | Keep TX Red" },
-      { name: "description", content: "Source-first Keep TX Red guides to Texas energy, border security, taxes, education, constitutional rights, elections, healthcare, rural policy and government accountability." },
+      { name: "description", content: "Source-first Keep TX Red guides to Texas energy, border security, taxes, education, constitutional rights, elections, healthcare, rural policy, local government and accountability." },
       { property: "og:title", content: "Texas Issues & Policy Guides | Keep TX Red" },
-      { property: "og:description", content: "Evergreen Texas policy and accountability explainers built around statutes, bills, agencies, records and primary sources." },
+      { property: "og:description", content: "Evergreen Texas policy, local-government and accountability explainers built around statutes, bills, agencies, records and primary sources." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: PAGE_URL },
     ],
@@ -22,7 +22,7 @@ export const Route = createFileRoute("/issues/")({
         "@type": "CollectionPage",
         name: "Texas Issues & Policy Guides",
         url: PAGE_URL,
-        description: "Evergreen, source-first guides to major Texas policy issues and government accountability.",
+        description: "Evergreen, source-first guides to major Texas policy issues, local government and government accountability.",
         mainEntity: {
           "@type": "ItemList",
           numberOfItems: issueGuides.length,
@@ -40,12 +40,12 @@ export const Route = createFileRoute("/issues/")({
 });
 
 const AUTHORITY_LAYERS = [
-  { href: "/issues/texas-policy-handbook", label: "Texas Policy Handbook", eyebrow: "Start here", text: "Understand who controls what across taxes, energy, border security, schools, public safety, elections, healthcare and local government." },
+  { href: "/issues/texas-policy-handbook", label: "Texas Policy Handbook", eyebrow: "Start here", text: "Understand who controls what across taxes, energy, border security, schools, public safety, elections, healthcare and state-local power." },
   { href: "/issues/texas-government-accountability-handbook", label: "Accountability Handbook", eyebrow: "Follow the record", text: "Trace public records, meetings, budgets, contracts, campaign finance, audits and the timeline behind government claims." },
+  { href: "/issues/texas-local-government-handbook", label: "Local Government Handbook", eyebrow: "Map the authority", text: "Separate counties, cities, school districts, MUDs, PIDs, ESDs, appraisal districts and other overlapping local governments." },
   { href: "/policy", label: "Policy Trackers", eyebrow: "Current status", text: "Follow narrower policy questions as laws, agencies, litigation, implementation and official data change." },
   { href: "/tools", label: "Policy Tools", eyebrow: "Do the math", text: "Test fiscal-policy assumptions with transparent calculators and scenario explorers tied back to source context." },
   { href: "/civic-tools", label: "Civic Tools", eyebrow: "Find the source", text: "Locate Texas laws, bills, government authority and elected officials without relying on a summary alone." },
-  { href: "/news", label: "Texas News", eyebrow: "Live coverage", text: "Move from permanent background into the latest bills, rulings, campaigns, agency actions and political fights." },
 ] as const;
 
 function IssuesHub() {
@@ -54,12 +54,12 @@ function IssuesHub() {
       <header className="max-w-4xl">
         <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-primary">★ Texas Policy</span>
         <h1 className="mt-2 font-display text-5xl leading-none tracking-tight md:text-7xl">TEXAS ISSUES<br /><span className="text-primary">EXPLAINED</span></h1>
-        <p className="mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">The permanent context behind the daily headlines. These guides separate statutes from slogans, identify which level of government controls what, follow the public record, link directly to bills and agencies, and connect breaking KTR coverage to the underlying Texas policy fight.</p>
+        <p className="mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">The permanent context behind the daily headlines. These guides separate statutes from slogans, identify which level of government controls what, follow the public record, map overlapping local jurisdictions, link directly to bills and agencies, and connect breaking KTR coverage to the underlying Texas policy fight.</p>
       </header>
 
       <div className="mt-10 border-l-4 border-primary bg-muted/40 p-5">
         <p className="font-semibold">How these pages work</p>
-        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">Start with the Texas Policy Handbook for the statewide framework, then use the Government Accountability Handbook when the question is what officials actually knew, authorized, spent, disclosed or decided. Issue guides explain durable policy questions. Policy trackers handle narrower questions that change more often. Tools expose the arithmetic. Civic tools help you reach the underlying law, bill or official. News coverage handles the live event.</p>
+        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">Start with the Texas Policy Handbook for the statewide framework. Use the Government Accountability Handbook when the question is what officials actually knew, authorized, spent, disclosed or decided. Use the Local Government Handbook when the first question is which county, city, school district or special district actually has authority. Policy trackers handle narrower questions that change more often. Tools expose the arithmetic. Civic tools lead back to the underlying law, bill or official.</p>
       </div>
 
       <section className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3" aria-label="Keep TX Red authority layers">
@@ -75,16 +75,21 @@ function IssuesHub() {
 
       <section className="mt-12 border-y py-8">
         <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Permanent reference library</p>
-        <div className="mt-4 grid gap-8 lg:grid-cols-2">
+        <div className="mt-4 grid gap-8 lg:grid-cols-3">
           <div>
-            <h2 className="font-display text-4xl tracking-tight">Texas Policy Handbook</h2>
+            <h2 className="font-display text-3xl tracking-tight">Texas Policy Handbook</h2>
             <p className="mt-3 leading-7 text-muted-foreground">Ten chapters connecting Texas government authority, taxes, energy, border security, education, public safety, elections, rural healthcare and local preemption.</p>
             <Link to="/issues/texas-policy-handbook" className="mt-5 inline-flex border border-primary px-5 py-3 font-semibold text-primary hover:bg-primary hover:text-primary-foreground">Read the policy handbook →</Link>
           </div>
           <div>
-            <h2 className="font-display text-4xl tracking-tight">Government Accountability Handbook</h2>
+            <h2 className="font-display text-3xl tracking-tight">Government Accountability Handbook</h2>
             <p className="mt-3 leading-7 text-muted-foreground">Eight chapters for following records, public meetings, budgets, procurement, campaign finance, audits and chronology before assigning blame or credit.</p>
             <Link to="/issues/texas-government-accountability-handbook" className="mt-5 inline-flex border border-primary px-5 py-3 font-semibold text-primary hover:bg-primary hover:text-primary-foreground">Read the accountability handbook →</Link>
+          </div>
+          <div>
+            <h2 className="font-display text-3xl tracking-tight">Texas Local Government Handbook</h2>
+            <p className="mt-3 leading-7 text-muted-foreground">Nine layers explaining counties, cities, ISDs, MUDs, PIDs, ESDs, appraisal districts, special-purpose districts and overlapping boundaries.</p>
+            <Link to="/issues/texas-local-government-handbook" className="mt-5 inline-flex border border-primary px-5 py-3 font-semibold text-primary hover:bg-primary hover:text-primary-foreground">Read the local government handbook →</Link>
           </div>
         </div>
       </section>
@@ -119,6 +124,7 @@ function IssuesHub() {
         <div className="mt-5 flex flex-wrap gap-4 text-sm font-semibold">
           <Link to="/issues/texas-policy-handbook" className="text-primary hover:underline">Texas Policy Handbook →</Link>
           <Link to="/issues/texas-government-accountability-handbook" className="text-primary hover:underline">Government Accountability Handbook →</Link>
+          <Link to="/issues/texas-local-government-handbook" className="text-primary hover:underline">Local Government Handbook →</Link>
           <Link to="/policy" className="text-primary hover:underline">Browse policy trackers →</Link>
           <Link to="/tools" className="text-primary hover:underline">Use policy tools →</Link>
           <Link to="/texas-case" className="text-primary hover:underline">Read The Texas Case →</Link>
