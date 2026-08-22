@@ -27,8 +27,8 @@ jobs:
     timeout-minutes: 15
     env:
       # Preferred path: a Supabase Postgres Session Pooler connection string.
-      # This talks directly to Postgres and requires neither Lovable nor a
-      # Supabase Personal Access Token.
+      # This talks directly to Postgres and requires no external site-builder
+      # integration or Supabase Personal Access Token.
       SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
 
       # Backward-compatible fallback for a linked-project workflow.
@@ -64,7 +64,7 @@ jobs:
 
           echo 'No Supabase migration transport is configured.' >&2
           echo 'Preferred fix: add repository secret SUPABASE_DB_URL using the Supabase Session Pooler URI from Project > Connect.' >&2
-          echo 'This direct database path bypasses Lovable and does not require SUPABASE_ACCESS_TOKEN.' >&2
+          echo 'This direct database path does not require SUPABASE_ACCESS_TOKEN.' >&2
           exit 1
 
       - name: Link production project for legacy transport
