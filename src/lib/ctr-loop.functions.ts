@@ -4,15 +4,14 @@ import { shouldGenerateNewVariant } from "@/lib/ctr-score";
 /**
  * Manual/admin trigger: for every article whose on-site A/B CTR is
  * meaningfully below the site average, generate a fresh variant B using
- * the existing Lovable AI Gateway. Writes back into headline_variants.
+ * the site's direct AI provider layer. Writes back into headline_variants.
  * Does NOT change URLs, titles, or slugs.
  *
  * Not scheduled — call from an admin action or add a cron later.
  */
 export const refreshUnderperformingHeadlines = createServerFn({ method: "POST" }).handler(
   async () => {
-    const lovableApiKey = process.env.LOVABLE_API_KEY;
-    if (!lovableApiKey) return { ok: false, error: "LOVABLE_API_KEY missing" };
+    if (!process.env.KTR_AI_PROVIDER_READY) return { ok: false, error: "AI provider unavailable" };
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
@@ -46,9 +45,9 @@ export const refreshUnderperformingHeadlines = createServerFn({ method: "POST" }
     let refreshed = 0;
     for (const row of targets as any[]) {
       try {
-        const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        const r = await fetch("https://ai.internal.keeptxred.local/v1/chat/completions", {
           method: "POST",
-          headers: { "Content-Type": "application/json", "Lovable-API-Key": lovableApiKey },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             model: "google/gemini-3-flash-preview",
             messages: [
