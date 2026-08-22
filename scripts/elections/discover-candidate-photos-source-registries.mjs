@@ -154,9 +154,13 @@ function extractImageCandidates(html, baseUrl) {
 
 function looksLikeCandidatePortrait(image, candidate) {
   const text = normalize(`${image.url} ${image.text}`);
-  if (/logo|icon|favicon|seal|flag|map|district|donate|button|yard sign|endorsement|sponsor|stock|background|placeholder|sprite|social/.test(text)) return false;
-  if (/headshot|portrait|candidate|profile|bio|about|meet|hero|person/.test(text)) return true;
-  return normalize(candidate.fullName).split(" ").filter((token) => token.length >= 4).some((token) => text.includes(token));
+  if (/logo|icon|favicon|seal|flag|map|district|donate|button|yard sign|endorsement|sponsor|stock|background|placeholder|sprite|social|group|team photo/.test(text)) return false;
+  const candidateTokens = normalize(candidate.fullName).split(" ").filter((token) => token.length >= 4);
+  const hasCandidateName = candidateTokens.length >= 2
+    ? candidateTokens.filter((token) => text.includes(token)).length >= 2
+    : candidateTokens.some((token) => text.includes(token));
+  if (hasCandidateName) return true;
+  return /headshot|portrait|candidate photo|candidate headshot|profile photo|official photo/.test(text);
 }
 
 async function validateImage(url) {
