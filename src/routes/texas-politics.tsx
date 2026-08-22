@@ -6,15 +6,15 @@ import { PillarRelationshipNav } from "@/components/pillar-relationship-nav";
 
 const HUB = HUBS.find((h) => h.slug === "texas-politics")!;
 const SECTIONS = [
-  { title: "Elections", description: "Primaries, runoffs, and the races shaping the next Texas Legislature.", href: "/elections" },
+  { title: "Elections", description: "Primaries, runoffs, and the races shaping the next Texas Legislature.", href: "/elections/2026" },
   { title: "Legislative Districts", description: "Permanent authority pages for all 150 Texas House districts and 31 Texas Senate districts, independent of the current officeholder.", href: "/districts" },
   { title: "Policy Trackers", description: "Permanent trackers for taxes, border security, education, energy, elections, crime, water, housing, healthcare, and the state budget.", href: "/policy" },
-  { title: "Texas Law Library", description: "Plain-English guides to the statutes behind property taxes, gun rights, elections, parental rights, open records, property rights, and agency power.", href: "/laws/topics" },
+  { title: "Texas Law Library", description: "Plain-English guides to the statutes behind property taxes, gun rights, elections, parental rights, open records, property rights, and agency power.", href: "/laws" },
   { title: "Texas Data Center", description: "Official-source maps for taxes, state spending, election results, demographics, energy, water, and public-safety data.", href: "/data" },
   { title: "Political Reference", description: "Races, redistricting, voter trends, policy questions, PACs, and campaign activity — 50 source-backed search guides.", href: "/texas-political-reference" },
   { title: "State Legislature", description: "Bills, special sessions, and the conservative caucus in Austin.", href: "/texas-legislature" },
   { title: "Governor & Leadership", description: "The Governor, Lt. Governor, AG, and statewide officeholders.", href: "/representatives" },
-  { title: "Voting & Policy", description: "Voter ID, registration, election integrity, and ballot access.", href: "/register-to-vote" },
+  { title: "Voting & Policy", description: "Voter ID, registration, election integrity, and ballot access.", href: "/elections/voting" },
 ];
 
 const POLITICS_TOPICS = [
@@ -102,7 +102,7 @@ function TexasPoliticsPage() {
               Our <a href="/policy" className="font-semibold text-primary underline underline-offset-4">Texas Policy Trackers</a> are the permanent layer beneath the news — taxes, border security, education, school choice, energy, water, housing, immigration, gun rights, elections, criminal justice, transportation, life policy, healthcare, and the state budget. Each tracker connects the issue to official sources, laws, legislation, KTR's editorial position, and related search guides.
             </p>
             <p>
-              The <a href="/laws/topics" className="font-semibold text-primary underline underline-offset-4">Texas Law Library</a> explains the controlling statutes, while the <a href="/data" className="font-semibold text-primary underline underline-offset-4">Texas Data Center</a> identifies the authoritative datasets, methodology, and limitations behind KTR's factual claims. Together they give daily stories a permanent legal and evidentiary backbone.
+              The <a href="/laws" className="font-semibold text-primary underline underline-offset-4">Texas Law Library</a> explains the controlling statutes, while the <a href="/data" className="font-semibold text-primary underline underline-offset-4">Texas Data Center</a> identifies the authoritative datasets, methodology, and limitations behind KTR's factual claims. Together they give daily stories a permanent legal and evidentiary backbone.
             </p>
             <p>
               Our <a href="/texas-political-reference" className="font-semibold text-primary underline underline-offset-4">Texas Political Reference</a> answers the high-intent questions behind the daily headlines — current races, map changes, voter trends, policy disputes, campaign finance, PACs, and public grassroots events — with dated status and source links.
