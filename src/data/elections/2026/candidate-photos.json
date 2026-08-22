@@ -36,6 +36,54 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-alex-mcmenemy-green-race-2026-us-house-38",
+    "imageUrl": "https://assets.nationbuilder.com/gptx/pages/5955/attachments/original/1768313717/1a2e2914-7c7a-4edf-9b93-451ad78f23dc.jpg?1768313717=",
+    "sourceUrl": "https://www.txgreens.org/2026_nominated_candidates",
+    "altText": "Alex McMenemy, Green Party candidate for U.S. House District 38 in Texas",
+    "credit": "Green Party of Texas",
+    "license": null,
+    "permissionBasis": "Official Green Party of Texas 2026 nominated-candidate slate portrait used for editorial candidate identification with party attribution and a source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-state-party-candidate-slate",
+    "discoveredAt": "2026-08-22T12:06:46.662Z"
+  },
+  {
+    "candidateId": "candidate-alfred-molison-jr-green-race-2026-agriculture-commissioner",
+    "imageUrl": "https://assets.nationbuilder.com/gptx/pages/5955/attachments/original/1784299947/alfred.jpg?1784299947=",
+    "sourceUrl": "https://www.txgreens.org/2026_nominated_candidates",
+    "altText": "Alfred Molison Jr., Green Party candidate for Texas Agriculture Commissioner",
+    "credit": "Green Party of Texas",
+    "license": null,
+    "permissionBasis": "Official party candidate-slate portrait used for editorial candidate identification with attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "direct-public-web-search",
+    "discoveredAt": "2026-08-22T12:06:46.153Z"
+  },
+  {
+    "candidateId": "candidate-allison-bush-democratic-race-2026-state-board-of-education-5",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/6855b5e8df6e7f51f6ee6cfd/fedcb696-eea5-49c5-a94c-770ea4c9980f/IMG_8859.jpeg",
+    "sourceUrl": "https://www.allisonfortx.com/",
+    "altText": "Allison Bush, Democratic candidate for Texas State Board of Education District 5",
+    "credit": "Allison Bush campaign",
+    "license": null,
+    "permissionBasis": "Candidate portrait published on the official campaign homepage and used for editorial candidate identification with attribution and a source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-profile",
+    "discoveredAt": "2026-08-22T12:06:46.622Z"
+  },
+  {
+    "candidateId": "candidate-amy-taylor-democratic-race-2026-state-board-of-education-14",
+    "imageUrl": "https://i0.wp.com/amytaylortexas.com/wp-content/uploads/2026/04/AmyTaylor-Headshot-Circle-1.webp?resize=1024%2C1024&ssl=1",
+    "sourceUrl": "https://amytaylortexas.com/",
+    "altText": "Amy Taylor, Democratic candidate for Texas State Board of Education District 14",
+    "credit": "Amy Taylor for State Board of Education District 14 campaign",
+    "license": null,
+    "permissionBasis": "Candidate headshot published directly beside the official campaign site's Meet Amy Taylor biography and used for editorial candidate identification with attribution and a source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-profile",
+    "discoveredAt": "2026-08-22T12:06:46.539Z"
+  },
+  {
     "candidateId": "candidate-ana-hernandez-democratic-race-2026-texas-house-143",
     "imageUrl": "https://house.texas.gov/images/members/3155.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/143",
@@ -96,6 +144,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-anissa-chilmeran-green-race-2026-texas-house-61",
+    "imageUrl": "https://assets.nationbuilder.com/gptx/pages/5955/attachments/original/1769363904/WhatsApp_Image_2026-01-25_at_11.50.04_AM.jpg?1769363904=",
+    "sourceUrl": "https://www.txgreens.org/2026_nominated_candidates",
+    "altText": "Anissa Chilmeran, Green Party candidate for Texas House District 61",
+    "credit": "Green Party of Texas",
+    "license": null,
+    "permissionBasis": "Official Green Party of Texas 2026 nominated-candidate slate portrait used for editorial candidate identification with party attribution and a source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-state-party-candidate-slate",
+    "discoveredAt": "2026-08-22T12:06:46.662Z"
+  },
+  {
     "candidateId": "candidate-ann-johnson-democratic-race-2026-texas-house-134",
     "imageUrl": "https://house.texas.gov/images/members/3985.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/134",
@@ -116,6 +176,18 @@
     "license": null,
     "permissionBasis": "Official party candidate-slate image used for editorial candidate identification with attribution and a link to the source page.",
     "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-april-williams-moore-republican-race-2026-state-board-of-education-13",
+    "imageUrl": "https://aprilfortexas.com/_next/image?q=75&url=https%3A%2F%2Fcdn.durable.co%2Fblocks%2F2dDtMzXmsUx4c3jJrsDYkKXtWnMzZgsQfRXVMHnQwjZj3WnuzDJ9MN5lK7HIld9B.jpg&w=1920",
+    "sourceUrl": "https://aprilfortexas.com/meet-april-williams-moore",
+    "altText": "April Williams Moore, Republican candidate for Texas State Board of Education District 13",
+    "credit": "April Williams Moore campaign",
+    "license": null,
+    "permissionBasis": "Candidate image published on the official campaign's Meet April biography page and used for editorial candidate identification with attribution and a source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-profile",
+    "discoveredAt": "2026-08-22T12:06:46.539Z"
   },
   {
     "candidateId": "candidate-armando-lucio-walle-democratic-race-2026-texas-house-140",
@@ -142,6 +214,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-arshia-papari-green-race-2026-texas-house-49",
+    "imageUrl": "https://assets.nationbuilder.com/gptx/pages/5955/attachments/original/1769540626/square_2.jpg?1769540626=",
+    "sourceUrl": "https://www.txgreens.org/2026_nominated_candidates",
+    "altText": "Arshia Papari, Green Party candidate for Texas House District 49",
+    "credit": "Green Party of Texas",
+    "license": null,
+    "permissionBasis": "Official Green Party of Texas 2026 nominated-candidate slate portrait used for editorial candidate identification with party attribution and a source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-state-party-candidate-slate",
+    "discoveredAt": "2026-08-22T12:06:46.662Z"
+  },
+  {
     "candidateId": "candidate-arthur-dibianca-libertarian-race-2026-railroad-commissioner",
     "imageUrl": "https://assets.nationbuilder.com/lptexas/pages/8541/attachments/original/1777575646/arthur-dibianca.png?1777575646=",
     "sourceUrl": "https://www.lptexas.org/candidates",
@@ -150,6 +234,42 @@
     "license": null,
     "permissionBasis": "Official party candidate-slate image used for editorial candidate identification with attribution and a link to the source page.",
     "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-audra-riley-democratic-race-2026-court-of-criminal-appeals-place-4",
+    "imageUrl": "https://www.judgeaudrariley.com/images/arileyblue.png",
+    "sourceUrl": "https://www.judgeaudrariley.com/",
+    "altText": "Judge Audra Riley in an official judicial campaign graphic",
+    "credit": "Audra Riley for Judge",
+    "license": null,
+    "permissionBasis": "Image published by the official judicial campaign and used for editorial candidate identification with attribution and source link.",
+    "usageStatus": "approved",
+    "discoveredAt": "2026-08-22T12:06:46.090Z",
+    "discoveryMethod": "verified-asset:campaign-portrait-graphic"
+  },
+  {
+    "candidateId": "candidate-audrey-g-young-republican-race-2026-state-board-of-education-8",
+    "imageUrl": "https://sboe.texas.gov/sites/default/files/District%208-A%20Young.jpg",
+    "sourceUrl": "https://sboe.texas.gov/state-board-of-education/sboe-board-members/sboe-member-district-8",
+    "altText": "Audrey G. Young, Republican candidate for Texas State Board of Education District 8",
+    "credit": "Texas State Board of Education",
+    "license": null,
+    "permissionBasis": "Official government portrait published by the Texas State Board of Education, used for editorial candidate identification with attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-government-profile",
+    "discoveredAt": "2026-08-22T12:06:46.153Z"
+  },
+  {
+    "candidateId": "candidate-august-pfluger-republican-race-2026-us-house-11",
+    "imageUrl": "https://pfluger.house.gov/uploadedphotos/highresolution/7af8ae14-2d20-4e15-9b8d-541cfff11571.jpg",
+    "sourceUrl": "https://pfluger.house.gov/about/about-august.htm",
+    "altText": "August Pfluger, Republican candidate for U.S. House Texas District 11",
+    "credit": "Office of U.S. Representative August Pfluger",
+    "license": null,
+    "permissionBasis": "Official high-resolution congressional headshot explicitly offered from the member's U.S. House biography page; used for editorial candidate identification with source attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-government-downloadable-headshot",
+    "discoveredAt": "2026-08-22T12:06:46.315Z"
   },
   {
     "candidateId": "candidate-austin-r-kelly-libertarian-race-2026-agriculture-commissioner",
@@ -184,6 +304,42 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:53:21.019Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-benjamin-flores-democratic-race-2026-land-commissioner",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/691122492e4c8c1a6bc9c376/1764553941177-L6RI347IPZAUPX4Y61BD/IMG_9152.png",
+    "sourceUrl": "https://www.letsgowithben.com/gallery-1",
+    "altText": "Benjamin Flores meeting voters during his Texas listening tour",
+    "credit": "Benjamin Flores for Texas Campaign",
+    "license": null,
+    "permissionBasis": "Image published in the official campaign photo gallery and used for editorial candidate coverage with attribution and source link.",
+    "usageStatus": "approved",
+    "discoveredAt": "2026-08-22T12:06:46.089Z",
+    "discoveryMethod": "verified-asset:campaign-event"
+  },
+  {
+    "candidateId": "candidate-beth-van-duyne-republican-race-2026-us-house-24",
+    "imageUrl": "https://vanduyne.house.gov/index.cfm?File_id=15E268CB-4F09-4C86-9622-6A0950770256&a=Files.Serve",
+    "sourceUrl": "https://vanduyne.house.gov/about",
+    "altText": "Official biography portrait of U.S. Representative Beth Van Duyne of Texas",
+    "credit": "Office of U.S. Representative Beth Van Duyne",
+    "license": null,
+    "permissionBasis": "Portrait hosted directly on the official U.S. House member biography page and used for informational candidate identification with source attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-us-house-biography",
+    "discoveredAt": "2026-08-22T12:06:46.375Z"
+  },
+  {
+    "candidateId": "candidate-bo-french-republican-race-2026-railroad-commissioner",
+    "imageUrl": "https://bofrench.com/wp-content/uploads/2025/11/BoFrench05-updated.jpg",
+    "sourceUrl": "https://bofrench.com/",
+    "altText": "Bo French with his family in an official campaign photograph",
+    "credit": "Bo French Campaign",
+    "license": null,
+    "permissionBasis": "Image published by the official campaign and used for editorial candidate coverage with attribution and source link.",
+    "usageStatus": "approved",
+    "discoveredAt": "2026-08-22T12:06:46.090Z",
+    "discoveryMethod": "verified-asset:campaign-family-portrait"
   },
   {
     "candidateId": "candidate-bob-hall-republican-race-2026-texas-senate-2",
@@ -222,6 +378,30 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-brandon-gill-republican-race-2026-us-house-26",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Brandon_Gill%2C_official_portrait%2C_119th_Congress.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Brandon_Gill,_official_portrait,_119th_Congress.jpg",
+    "altText": "Official congressional portrait of U.S. Representative Brandon Gill of Texas",
+    "credit": "House Creative Services via Wikimedia Commons",
+    "license": "Public domain — U.S. Congress",
+    "permissionBasis": "Wikimedia Commons file page identifies the image as Brandon Gill's official 119th Congress portrait, credits House Creative Services, and marks it as a public-domain U.S. Congress/federal-government work.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-public-domain-us-congress",
+    "discoveredAt": "2026-08-22T12:06:46.484Z"
+  },
+  {
+    "candidateId": "candidate-brandon-herrera-republican-race-2026-us-house-23",
+    "imageUrl": "https://brandonherreraforcongress.com/wp-content/uploads/video-4-screenshot.png",
+    "sourceUrl": "https://brandonherreraforcongress.com/",
+    "altText": "Brandon Herrera, Republican candidate for U.S. House Texas District 23, speaking at a campaign event",
+    "credit": "Brandon Herrera for Congress",
+    "license": null,
+    "permissionBasis": "Campaign-event image is directly hosted and displayed by the official current Brandon Herrera for Congress website and is used for editorial candidate identification with attribution and a source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-08-22T12:06:46.582Z"
+  },
+  {
     "candidateId": "candidate-brent-a-money-republican-race-2026-texas-house-2",
     "imageUrl": "https://house.texas.gov/images/members/4670.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/2",
@@ -234,6 +414,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-brett-busby-republican-race-2026-texas-supreme-court-place-8",
+    "imageUrl": "https://www.txcourts.gov/media/1461169/brett-busby.png",
+    "sourceUrl": "https://www.txcourts.gov/supreme/about-the-court/justices/justice-brett-busby/",
+    "altText": "Official portrait of Texas Supreme Court Justice Brett Busby",
+    "credit": "Texas Judicial Branch",
+    "license": null,
+    "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
+    "usageStatus": "approved",
+    "discoveredAt": "2026-08-22T12:06:46.090Z",
+    "discoveryMethod": "verified-asset:official-court-portrait"
+  },
+  {
     "candidateId": "candidate-brett-w-ligon-republican-race-2026-texas-senate-4",
     "imageUrl": "https://senate.texas.gov/_assets/img/og_image.jpg",
     "sourceUrl": "https://senate.texas.gov/member.php?d=4",
@@ -244,6 +436,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:53:40.403Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-brian-babin-republican-race-2026-us-house-36",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Brian_Babin_official_congressional_photo_2.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Brian_Babin_official_congressional_photo_2.jpg",
+    "altText": "Official congressional portrait of U.S. Representative Brian Babin of Texas",
+    "credit": "United States Congress via Wikimedia Commons",
+    "license": "Public domain — U.S. Congress",
+    "permissionBasis": "Wikimedia Commons file page identifies the image as an official congressional photo and public-domain U.S. Congress work.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-public-domain-us-congress",
+    "discoveredAt": "2026-08-22T12:06:46.429Z"
   },
   {
     "candidateId": "candidate-brian-harrison-republican-race-2026-texas-house-10",
@@ -354,6 +558,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-chari-kelly-democratic-race-2026-texas-supreme-court-place-2",
+    "imageUrl": "https://txcourts.gov/media/1445093/kelly-1.jpg",
+    "sourceUrl": "https://txcourts.gov/3rdcoa/about-the-court/justices/justice-chari-l-kelly/",
+    "altText": "Official portrait of Third Court of Appeals Justice Chari L. Kelly",
+    "credit": "Texas Judicial Branch",
+    "license": null,
+    "permissionBasis": "Official Texas government appellate-court portrait used for informational candidate identification with source attribution.",
+    "usageStatus": "approved",
+    "discoveredAt": "2026-08-22T12:06:46.090Z",
+    "discoveryMethod": "verified-asset:official-appellate-portrait"
+  },
+  {
     "candidateId": "candidate-charlene-ward-johnson-democratic-race-2026-texas-house-139",
     "imageUrl": "https://house.texas.gov/images/members/4785.jpg?v=3",
     "sourceUrl": "https://house.texas.gov/members/139",
@@ -460,6 +676,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-clayton-tucker-democratic-race-2026-agriculture-commissioner",
+    "imageUrl": "https://assets.nationbuilder.com/cht/pages/330/attachments/original/1783878147/FullSizeRender_3.jpeg?1783878147=",
+    "sourceUrl": "https://www.claytontuckertx.com/",
+    "altText": "Clayton Tucker holding young goats on his family farm",
+    "credit": "Clayton Tucker Campaign",
+    "license": null,
+    "permissionBasis": "Image published by the official campaign and used for editorial candidate coverage with attribution and source link.",
+    "usageStatus": "approved",
+    "discoveredAt": "2026-08-22T12:06:46.089Z",
+    "discoveryMethod": "verified-asset:campaign-farm-portrait"
+  },
+  {
     "candidateId": "candidate-cody-harris-republican-race-2026-texas-house-8",
     "imageUrl": "https://house.texas.gov/images/members/3580.jpg?v=3",
     "sourceUrl": "https://house.texas.gov/members/8",
@@ -496,6 +724,30 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-colin-allred-democratic-race-2026-us-house-33",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Colin_Allred%2C_official_portrait%2C_117th_Congress_%283x4%29.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Colin_Allred,_official_portrait,_117th_Congress_(3x4).jpg",
+    "altText": "Official congressional portrait of former U.S. Representative Colin Allred of Texas",
+    "credit": "Ike Hayman, House Creative Services via Wikimedia Commons",
+    "license": "Public domain — U.S. Congress",
+    "permissionBasis": "Wikimedia Commons identifies the source as Representative Allred's official House biography, credits House Creative Services photographer Ike Hayman, and marks the image public domain as a U.S. Congress work.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-public-domain-us-congress",
+    "discoveredAt": "2026-08-22T12:06:46.662Z"
+  },
+  {
+    "candidateId": "candidate-craig-goldman-republican-race-2026-us-house-12",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Representative_Craig_Goldman_Official_Portrait.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Representative_Craig_Goldman_Official_Portrait.jpg",
+    "altText": "Official congressional portrait of U.S. Representative Craig Goldman of Texas",
+    "credit": "Ike Hayman, House Creative Services via Wikimedia Commons",
+    "license": "Public domain — U.S. Congress",
+    "permissionBasis": "Wikimedia Commons file page identifies the source as the Biographical Directory of the U.S. Congress, the author as House Creative Services, and the official portrait as public domain.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-public-domain-us-congress",
+    "discoveredAt": "2026-08-22T12:06:46.429Z"
+  },
+  {
     "candidateId": "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
     "imageUrl": "https://www.senate.texas.gov/_assets/photos/LtGov_Patrick_2021.jpg",
     "sourceUrl": "https://www.senate.texas.gov/ltgov.php?lang=en",
@@ -504,6 +756,18 @@
     "license": null,
     "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
     "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-dana-van-de-walker-democratic-race-2026-state-board-of-education-8",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/6907828b5a9d2d481a907164/bf841149-c1d1-4943-9c69-07c304143158/Untitled%2Bdesign%2B%2815%29.png",
+    "sourceUrl": "https://www.dana4txsboe8.com/about",
+    "altText": "Dana Van De Walker, Democratic candidate for Texas State Board of Education District 8",
+    "credit": "Dana for TX State Board of Education, District 8 campaign",
+    "license": null,
+    "permissionBasis": "Candidate image published on the official campaign's Meet Dana biography page and used for editorial candidate identification with attribution and a source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-profile",
+    "discoveredAt": "2026-08-22T12:06:46.539Z"
   },
   {
     "candidateId": "candidate-daniel-alders-republican-race-2026-texas-house-6",
@@ -644,6 +908,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-eddie-espinoza-green-race-2026-us-house-34",
+    "imageUrl": "https://assets.nationbuilder.com/gptx/pages/5955/attachments/original/1767969290/EspinozaCampaignPhoto.jpg?1767969290=",
+    "sourceUrl": "https://www.txgreens.org/2026_nominated_candidates",
+    "altText": "Eddie Espinoza, Green Party candidate for U.S. House District 34 in Texas",
+    "credit": "Green Party of Texas",
+    "license": null,
+    "permissionBasis": "Official Green Party of Texas 2026 nominated-candidate slate portrait used for editorial candidate identification with party attribution and a source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-state-party-candidate-slate",
+    "discoveredAt": "2026-08-22T12:06:46.662Z"
+  },
+  {
     "candidateId": "candidate-eddie-morales-jr-democratic-race-2026-texas-house-74",
     "imageUrl": "https://house.texas.gov/images/members/4000.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/74",
@@ -680,6 +956,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-ericka-ledferd-democratic-race-2026-state-board-of-education-9",
+    "imageUrl": "https://static.wixstatic.com/media/nsplsh_909f297f020d4cd899ae0b4957273d0e~mv2.jpg/v1/fill/w_980%2Ch_1470%2Cal_c%2Cq_85%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/Image%20by%20Adam%20Thomas.jpg",
+    "sourceUrl": "https://www.ledferd4texas.com/",
+    "altText": "Ericka Ledferd, Democratic candidate for Texas State Board of Education District 9",
+    "credit": "Ledferd for SBOE 9 campaign; photograph credited on the campaign page to Adam Thomas",
+    "license": null,
+    "permissionBasis": "Candidate portrait published on the official campaign homepage directly under the candidate biography heading and used for editorial candidate identification with campaign attribution and a source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-profile",
+    "discoveredAt": "2026-08-22T12:06:46.622Z"
+  },
+  {
     "candidateId": "candidate-erin-elizabeth-gamez-democratic-race-2026-texas-house-38",
     "imageUrl": "https://house.texas.gov/images/members/4095.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/38",
@@ -702,6 +990,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:53:12.212Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-espoir-ngabo-green-race-2026-us-house-7",
+    "imageUrl": "https://assets.nationbuilder.com/gptx/pages/5955/attachments/original/1768310337/d057fc31-03b2-4242-b289-b2528bece4a7.jpg?1768310337=",
+    "sourceUrl": "https://www.txgreens.org/2026_nominated_candidates",
+    "altText": "Espoir Ngabo, Green Party candidate for U.S. House District 7 in Texas",
+    "credit": "Green Party of Texas",
+    "license": null,
+    "permissionBasis": "Official Green Party of Texas 2026 nominated-candidate slate portrait used for editorial candidate identification with party attribution and a source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-state-party-candidate-slate",
+    "discoveredAt": "2026-08-22T12:06:46.662Z"
   },
   {
     "candidateId": "candidate-gary-gates-republican-race-2026-texas-house-28",
@@ -738,6 +1038,18 @@
     "usageStatus": "approved"
   },
   {
+    "candidateId": "candidate-gisela-d-triana-democratic-race-2026-texas-supreme-court-place-8",
+    "imageUrl": "https://www.justicetriana.com/wp-content/uploads/2018/05/Donate-GiselaPortraits-41.jpg",
+    "sourceUrl": "https://www.justicetriana.com/",
+    "altText": "Justice Gisela Triana, Democratic nominee for Texas Supreme Court Place 8",
+    "credit": "Justice Gisela Triana campaign",
+    "license": null,
+    "permissionBasis": "Candidate portrait published on the official campaign website and used for editorial candidate identification with attribution and a source link.",
+    "usageStatus": "approved",
+    "discoveredAt": "2026-08-22T12:06:46.090Z",
+    "discoveryMethod": "verified-asset:campaign-portrait"
+  },
+  {
     "candidateId": "candidate-greg-abbott-republican-race-2026-governor",
     "imageUrl": "https://gov.texas.gov/uploads/images/general/governor2024.png",
     "sourceUrl": "https://gov.texas.gov/site",
@@ -758,6 +1070,30 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:52:59.658Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-greg-casar-democratic-race-2026-us-house-37",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Rep._Greg_Casar_-_118th_Congress.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Rep._Greg_Casar_-_118th_Congress.jpg",
+    "altText": "Official congressional portrait of U.S. Representative Greg Casar of Texas",
+    "credit": "U.S. House of Representatives via Wikimedia Commons",
+    "license": "Public domain — U.S. Congress",
+    "permissionBasis": "Wikimedia Commons file page identifies the image as an official U.S. House portrait and public-domain federal government work.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-public-domain-us-congress",
+    "discoveredAt": "2026-08-22T12:06:46.429Z"
+  },
+  {
+    "candidateId": "candidate-greg-stoker-green-race-2026-us-house-31",
+    "imageUrl": "https://assets.nationbuilder.com/gptx/pages/5955/attachments/original/1768581805/Stoker_headshot.jpg?1768581805=",
+    "sourceUrl": "https://www.txgreens.org/2026_nominated_candidates",
+    "altText": "Greg Stoker, Green Party candidate for U.S. House District 31 in Texas",
+    "credit": "Green Party of Texas",
+    "license": null,
+    "permissionBasis": "Official Green Party of Texas 2026 nominated-candidate slate portrait used for editorial candidate identification with party attribution and a source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-state-party-candidate-slate",
+    "discoveredAt": "2026-08-22T12:06:46.662Z"
   },
   {
     "candidateId": "candidate-harold-v-dutton-jr-democratic-race-2026-texas-house-142",
@@ -784,6 +1120,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-henry-cuellar-democratic-race-2026-us-house-28",
+    "imageUrl": "https://www.congress.gov/img/member/116_rp_tx_28_cuellar_henry_200.jpg",
+    "sourceUrl": "https://www.congress.gov/member/henry-cuellar/C001063",
+    "altText": "Official Congress.gov portrait of U.S. Representative Henry Cuellar of Texas",
+    "credit": "Congress.gov / Library of Congress, Congressional Pictorial Directory",
+    "license": null,
+    "permissionBasis": "Official Congress.gov member portrait used for informational candidate identification with source attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-congress-gov-member-profile",
+    "discoveredAt": "2026-08-22T12:06:46.375Z"
+  },
+  {
     "candidateId": "candidate-hillary-hickland-republican-race-2026-texas-house-55",
     "imageUrl": "https://house.texas.gov/images/members/4520.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/55",
@@ -794,6 +1142,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:53:16.553Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-holly-taylor-democratic-race-2026-court-of-criminal-appeals-place-9",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/656b914f3b6db119ed7e75b7/9682dbf5-3bb1-4678-ad81-d1ebf2739fda/024_Taylor_%C2%A92025BrendaLadd%2B7inPrint.cropped.1150x1500.jpg",
+    "sourceUrl": "https://www.hollytforjudge.com/bio",
+    "altText": "Holly Taylor, Democratic candidate for Court of Criminal Appeals Place 9",
+    "credit": "Holly Taylor Campaign; photograph credited in filename to Brenda Ladd",
+    "license": null,
+    "permissionBasis": "High-resolution portrait published by the official campaign and used for editorial candidate identification with attribution and source link.",
+    "usageStatus": "approved",
+    "discoveredAt": "2026-08-22T12:06:46.090Z",
+    "discoveryMethod": "verified-asset:campaign-portrait"
   },
   {
     "candidateId": "candidate-j-m-lozano-republican-race-2026-texas-house-43",
@@ -808,6 +1168,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-jake-ellzey-republican-race-2026-us-house-6",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Jake_Ellzey_Official_Portrait_-_117th_Congress_%28cropped%29.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Jake_Ellzey_Official_Portrait_-_117th_Congress_(cropped).jpg",
+    "altText": "Official congressional portrait of U.S. Representative Jake Ellzey of Texas",
+    "credit": "U.S. House of Representatives via Wikimedia Commons",
+    "license": "Public domain — U.S. Congress",
+    "permissionBasis": "Wikimedia Commons file page identifies the image as an official U.S. House portrait and a public-domain U.S. Congress work.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-public-domain-us-congress",
+    "discoveredAt": "2026-08-22T12:06:46.429Z"
+  },
+  {
     "candidateId": "candidate-james-b-frank-republican-race-2026-texas-house-69",
     "imageUrl": "https://house.texas.gov/images/members/2385.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/69",
@@ -818,6 +1190,30 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:53:24.188Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-james-p-sullivan-republican-race-2026-texas-supreme-court-place-2",
+    "imageUrl": "https://www.txcourts.gov/media/1460010/justice-james-p-sullivan-2025-web.jpg",
+    "sourceUrl": "https://www.txcourts.gov/supreme/about-the-court/justices/justice-james-p-sullivan/",
+    "altText": "James P. Sullivan, Republican candidate for Texas Supreme Court Place 2",
+    "credit": "Texas Judicial Branch",
+    "license": null,
+    "permissionBasis": "Official judicial portrait published on the Texas Judicial Branch biography page; used for editorial candidate identification with source attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-government-judicial-portrait",
+    "discoveredAt": "2026-08-22T12:06:46.315Z"
+  },
+  {
+    "candidateId": "candidate-james-talarico-democratic-race-2026-us-senate",
+    "imageUrl": "https://jamestalarico.com/wp-content/uploads/2025/09/t4tx-hero.webp",
+    "sourceUrl": "https://jamestalarico.com/",
+    "altText": "James Talarico, Democratic candidate for U.S. Senate in Texas, speaking to a crowd",
+    "credit": "Talarico for Texas",
+    "license": null,
+    "permissionBasis": "Campaign-event hero image is directly hosted and displayed by the official current Talarico for Texas U.S. Senate campaign website and is used for editorial candidate identification with attribution and a source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-08-22T12:06:46.582Z"
   },
   {
     "candidateId": "candidate-janis-holt-republican-race-2026-texas-house-18",
@@ -912,6 +1308,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-jimmy-blacklock-republican-race-2026-texas-supreme-court-place-1",
+    "imageUrl": "https://www.txcourts.gov/media/1460030/chief-justice-jimmy-blacklock-web.jpg",
+    "sourceUrl": "https://www.txcourts.gov/supreme/about-the-court/justices/chief-justice-jimmy-blacklock/",
+    "altText": "Official portrait of Texas Supreme Court Chief Justice Jimmy Blacklock",
+    "credit": "Texas Judicial Branch",
+    "license": null,
+    "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
+    "usageStatus": "approved",
+    "discoveredAt": "2026-08-22T12:06:46.090Z",
+    "discoveryMethod": "verified-asset:official-court-portrait"
+  },
+  {
     "candidateId": "candidate-joanne-shofner-republican-race-2026-texas-house-11",
     "imageUrl": "https://house.texas.gov/images/members/4755.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/11",
@@ -922,6 +1330,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:52:27.653Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-joaquin-castro-democratic-race-2026-us-house-20",
+    "imageUrl": "https://castro.house.gov/imo/media/image/2023-05-11_NP_0015_re%20%28002%29.jpg",
+    "sourceUrl": "https://castro.house.gov/about",
+    "altText": "Official portrait of U.S. Representative Joaquin Castro of Texas",
+    "credit": "Office of U.S. Representative Joaquin Castro",
+    "license": null,
+    "permissionBasis": "Official U.S. House member biography page explicitly provides this image as the downloadable official photo; used for informational candidate identification with source attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-us-house-downloadable-photo",
+    "discoveredAt": "2026-08-22T12:06:46.375Z"
   },
   {
     "candidateId": "candidate-joe-moody-democratic-race-2026-texas-house-78",
@@ -948,6 +1368,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-john-carter-republican-race-2026-us-house-31",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Rep._John_Carter_%28RTX%29.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Rep._John_Carter_(RTX).jpg",
+    "altText": "Official congressional portrait of U.S. Representative John Carter of Texas",
+    "credit": "U.S. Congress via Wikimedia Commons",
+    "license": "Public domain — U.S. Congress",
+    "permissionBasis": "Wikimedia Commons file page identifies the image as a U.S. Congress member portrait sourced from Representative Carter's official House page and public domain.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-public-domain-us-congress",
+    "discoveredAt": "2026-08-22T12:06:46.429Z"
+  },
+  {
     "candidateId": "candidate-john-h-bucy-iii-democratic-race-2026-texas-house-136",
     "imageUrl": "https://house.texas.gov/images/members/3595.jpg?v=5",
     "sourceUrl": "https://house.texas.gov/members/136",
@@ -958,6 +1390,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:52:46.636Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-john-messinger-republican-race-2026-court-of-criminal-appeals-place-9",
+    "imageUrl": "https://www.texastribune.org/wp-content/uploads/2026/02/CCA-John-Messinger-Campaign.jpg",
+    "sourceUrl": "https://www.texastribune.org/2026/02/12/texas-court-of-criminal-appeals-primary-2026/",
+    "altText": "John Messinger, Republican candidate for Texas Court of Criminal Appeals Place 9",
+    "credit": "John Messinger campaign via The Texas Tribune",
+    "license": null,
+    "permissionBasis": "Campaign-supplied candidate portrait published in The Texas Tribune candidate guide, used for editorial candidate identification with source attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "verified-candidate-guide",
+    "discoveredAt": "2026-08-22T12:06:46.262Z"
   },
   {
     "candidateId": "candidate-john-w-mcqueeney-republican-race-2026-texas-house-97",
@@ -1030,6 +1474,42 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-julian-villarreal-green-race-2026-texas-senate-26",
+    "imageUrl": "https://assets.nationbuilder.com/gptx/pages/5955/attachments/original/1784300332/julian_v.jpg?1784300332=",
+    "sourceUrl": "https://www.txgreens.org/2026_nominated_candidates",
+    "altText": "Julian Villarreal, Green Party candidate for Texas Senate District 26",
+    "credit": "Green Party of Texas",
+    "license": null,
+    "permissionBasis": "Official Green Party of Texas 2026 nominated-candidate slate portrait used for editorial candidate identification with party attribution and a source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-state-party-candidate-slate",
+    "discoveredAt": "2026-08-22T12:06:46.662Z"
+  },
+  {
+    "candidateId": "candidate-julie-pickren-republican-race-2026-state-board-of-education-7",
+    "imageUrl": "https://sboe.texas.gov/sites/default/files/2023-j-pickren-sboe7.jpg",
+    "sourceUrl": "https://sboe.texas.gov/state-board-of-education/sboe-board-members/sboe-member-district-7",
+    "altText": "Julie Pickren, Republican candidate for Texas State Board of Education District 7",
+    "credit": "Texas State Board of Education",
+    "license": null,
+    "permissionBasis": "Official government portrait published by the Texas State Board of Education, used for editorial candidate identification with attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-government-profile",
+    "discoveredAt": "2026-08-22T12:06:46.153Z"
+  },
+  {
+    "candidateId": "candidate-kason-huddleston-republican-race-2026-state-board-of-education-9",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/68dc133a82d9d77b237c29c0/d49c04b5-d087-44ba-b3c7-43160ad05ed7/Dad%2Bheadshot.png",
+    "sourceUrl": "https://huddlestonfortexas.com/",
+    "altText": "Kason Huddleston, Republican candidate for Texas State Board of Education District 9",
+    "credit": "Kason Huddleston for Texas campaign",
+    "license": null,
+    "permissionBasis": "Candidate headshot published prominently on the official campaign homepage beside the campaign message and used for editorial candidate identification with attribution and a source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-profile",
+    "discoveredAt": "2026-08-22T12:06:46.539Z"
+  },
+  {
     "candidateId": "candidate-katrina-pierson-republican-race-2026-texas-house-33",
     "imageUrl": "https://house.texas.gov/images/members/4715.jpg?v=2",
     "sourceUrl": "https://house.texas.gov/members/33",
@@ -1040,6 +1520,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:53:05.135Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-katy-padilla-stout-democratic-race-2026-us-house-23",
+    "imageUrl": "https://www.katyforcongress.com/wp-content/uploads/2023/06/katy-picnic-website-3.png",
+    "sourceUrl": "https://www.katyforcongress.com/",
+    "altText": "Katy Padilla Stout, Democratic candidate for U.S. House Texas District 23",
+    "credit": "Katy Padilla Stout for Congress",
+    "license": null,
+    "permissionBasis": "Candidate image is directly hosted and displayed by the official 2026 Katy Padilla Stout for Congress campaign website and is used for editorial candidate identification with attribution and a source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-08-22T12:06:46.582Z"
   },
   {
     "candidateId": "candidate-keith-bell-republican-race-2026-texas-house-4",
@@ -1054,6 +1546,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-keith-self-republican-race-2026-us-house-3",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Rep._Keith_Self_official_photo%2C_118th_Congress.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Rep._Keith_Self_official_photo,_118th_Congress.jpg",
+    "altText": "Official congressional portrait of U.S. Representative Keith Self of Texas",
+    "credit": "United States Congress via Wikimedia Commons",
+    "license": "Public domain — U.S. Congress",
+    "permissionBasis": "Wikimedia Commons file page identifies the image as an official U.S. Congress portrait and public-domain federal government work.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-public-domain-us-congress",
+    "discoveredAt": "2026-08-22T12:06:46.429Z"
+  },
+  {
     "candidateId": "candidate-ken-king-republican-race-2026-texas-house-88",
     "imageUrl": "https://house.texas.gov/images/members/2455.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/88",
@@ -1064,6 +1568,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:53:33.931Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-ken-paxton-republican-race-2026-us-senate",
+    "imageUrl": "https://www.texasattorneygeneral.gov/sites/default/files/inline-images/ken_paxton_bio_thumb.jpg",
+    "sourceUrl": "https://www.texasattorneygeneral.gov/about-office",
+    "altText": "Official portrait of Texas Attorney General Ken Paxton",
+    "credit": "Office of the Attorney General of Texas",
+    "license": null,
+    "permissionBasis": "Official Texas government biography portrait used for informational candidate identification with source attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-texas-attorney-general-profile",
+    "discoveredAt": "2026-08-22T12:06:46.622Z"
   },
   {
     "candidateId": "candidate-keresa-richardson-republican-race-2026-texas-house-61",
@@ -1078,6 +1594,30 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-kevin-mccormick-green-race-2026-lieutenant-governor",
+    "imageUrl": "https://assets.nationbuilder.com/gptx/pages/5955/attachments/original/1784300285/kevin_M.jpg?1784300285=",
+    "sourceUrl": "https://www.txgreens.org/2026_nominated_candidates",
+    "altText": "Kevin McCormick, Green Party candidate for Lieutenant Governor of Texas",
+    "credit": "Green Party of Texas",
+    "license": null,
+    "permissionBasis": "Official Green Party of Texas 2026 nominated-candidate slate portrait used for editorial candidate identification with party attribution and a source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-state-party-candidate-slate",
+    "discoveredAt": "2026-08-22T12:06:46.662Z"
+  },
+  {
+    "candidateId": "candidate-kevin-patrick-yeary-republican-race-2026-court-of-criminal-appeals-place-4",
+    "imageUrl": "https://www.txcourts.gov/media/1462538/yeary.jpg",
+    "sourceUrl": "https://www.txcourts.gov/cca/about-the-court/judges/judge-kevin-yeary/",
+    "altText": "Official portrait of Court of Criminal Appeals Judge Kevin Yeary",
+    "credit": "Texas Judicial Branch",
+    "license": null,
+    "permissionBasis": "Official Texas Judicial Branch portrait used for informational candidate identification with source attribution.",
+    "usageStatus": "approved",
+    "discoveredAt": "2026-08-22T12:06:46.090Z",
+    "discoveryMethod": "verified-asset:official-court-portrait"
+  },
+  {
     "candidateId": "candidate-kevin-sparks-republican-race-2026-texas-senate-31",
     "imageUrl": "https://senate.texas.gov/_assets/img/og_image.jpg",
     "sourceUrl": "https://senate.texas.gov/member.php?d=31",
@@ -1090,6 +1630,30 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-kristen-hawkins-democratic-race-2026-texas-supreme-court-place-7",
+    "imageUrl": "https://judgehawkins.com/wp-content/uploads/2024/02/Judge-Kristen-Hawkins-127-HR-scaled.jpg",
+    "sourceUrl": "https://judgehawkins.com/about/",
+    "altText": "Judge Kristen Hawkins, Democratic nominee for Texas Supreme Court Place 7",
+    "credit": "Kristen Hawkins campaign",
+    "license": null,
+    "permissionBasis": "High-resolution candidate portrait published on the official judicial campaign biography page and used for editorial candidate identification with attribution and a source link.",
+    "usageStatus": "approved",
+    "discoveredAt": "2026-08-22T12:06:46.090Z",
+    "discoveryMethod": "verified-asset:campaign-judge-portrait"
+  },
+  {
+    "candidateId": "candidate-kyle-hawkins-republican-race-2026-texas-supreme-court-place-7",
+    "imageUrl": "https://www.txcourts.gov/media/1461570/justice-kyle-hawkins.jpg",
+    "sourceUrl": "https://www.txcourts.gov/supreme/about-the-court/justices/justice-kyle-d-hawkins/",
+    "altText": "Official portrait of Texas Supreme Court Justice Kyle Hawkins",
+    "credit": "Texas Judicial Branch",
+    "license": null,
+    "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
+    "usageStatus": "approved",
+    "discoveredAt": "2026-08-22T12:06:46.090Z",
+    "discoveryMethod": "verified-asset:official-court-portrait"
+  },
+  {
     "candidateId": "candidate-lacey-hull-republican-race-2026-texas-house-138",
     "imageUrl": "https://house.texas.gov/images/members/3975.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/138",
@@ -1100,6 +1664,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:52:47.862Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-lance-gooden-republican-race-2026-us-house-5",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Lance_Gooden%2C_official_portrait%2C_116th_Congress.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Lance_Gooden,_official_portrait,_116th_Congress.jpg",
+    "altText": "Official congressional portrait of U.S. Representative Lance Gooden of Texas",
+    "credit": "United States Congress via Wikimedia Commons",
+    "license": "Public domain — U.S. Congress",
+    "permissionBasis": "Wikimedia Commons file page identifies the image as the official congressional headshot and a public-domain U.S. Congress work.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-public-domain-us-congress",
+    "discoveredAt": "2026-08-22T12:06:46.429Z"
   },
   {
     "candidateId": "candidate-lauren-ashley-simmons-democratic-race-2026-texas-house-146",
@@ -1126,6 +1702,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-lizzie-pannill-fletcher-democratic-race-2026-us-house-7",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Lizzie_Fletcher.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Lizzie_Fletcher.jpg",
+    "altText": "Official congressional portrait of U.S. Representative Lizzie Fletcher of Texas",
+    "credit": "U.S. House of Representatives via Wikimedia Commons",
+    "license": "Public domain — U.S. federal government",
+    "permissionBasis": "Wikimedia Commons file page identifies the source as the official U.S. House portrait and the work as public domain under 17 U.S.C. § 105.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-public-domain-us-congress",
+    "discoveredAt": "2026-08-22T12:06:46.429Z"
+  },
+  {
     "candidateId": "candidate-lois-w-kolkhorst-republican-race-2026-texas-senate-18",
     "imageUrl": "https://senate.texas.gov/_assets/img/og_image.jpg",
     "sourceUrl": "https://senate.texas.gov/member.php?d=18",
@@ -1136,6 +1724,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:53:38.761Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-maggie-ellis-democratic-race-2026-texas-supreme-court-place-1",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/5ffe1e10830ce5345e720df1/fc9a7df2-b728-43b4-87fb-668b570bf316/ellis1.jpg",
+    "sourceUrl": "https://www.maggieforjustice.com/",
+    "altText": "Maggie Ellis, Democratic nominee for Chief Justice of the Texas Supreme Court",
+    "credit": "Maggie Ellis campaign",
+    "license": null,
+    "permissionBasis": "Candidate portrait published on the official campaign website and used for editorial candidate identification with attribution and a source link.",
+    "usageStatus": "approved",
+    "discoveredAt": "2026-08-22T12:06:46.090Z",
+    "discoveryMethod": "verified-asset:campaign-portrait"
   },
   {
     "candidateId": "candidate-mano-deayala-republican-race-2026-texas-house-133",
@@ -1196,6 +1796,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-marlon-duran-green-race-2026-us-house-28",
+    "imageUrl": "https://assets.nationbuilder.com/gptx/pages/5955/attachments/original/1768311357/IMG_8310.jpg?1768311357=",
+    "sourceUrl": "https://www.txgreens.org/2026_nominated_candidates",
+    "altText": "Marlon Duran, Green Party candidate for U.S. House District 28 in Texas",
+    "credit": "Green Party of Texas",
+    "license": null,
+    "permissionBasis": "Official Green Party of Texas 2026 nominated-candidate slate portrait used for editorial candidate identification with party attribution and a source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-state-party-candidate-slate",
+    "discoveredAt": "2026-08-22T12:06:46.662Z"
+  },
+  {
     "candidateId": "candidate-mary-ann-perez-democratic-race-2026-texas-house-144",
     "imageUrl": "https://house.texas.gov/images/members/2535.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/144",
@@ -1254,6 +1866,30 @@
     "usageStatus": "approved"
   },
   {
+    "candidateId": "candidate-mica-arellano-republican-race-2026-state-board-of-education-5",
+    "imageUrl": "https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https%3A//assets.cdn.filesafe.space/ggxeWPIAhnIsXRqvLmwz/media/69f5774d8831cb2c6c9d2582.png",
+    "sourceUrl": "https://micatx.com/",
+    "altText": "Mica Arellano, Republican candidate for Texas State Board of Education District 5",
+    "credit": "Mica Arellano campaign",
+    "license": null,
+    "permissionBasis": "Candidate image published at the top of the official campaign homepage immediately with the Meet Mica Arellano introduction and used for editorial candidate identification with attribution and a source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-profile",
+    "discoveredAt": "2026-08-22T12:06:46.539Z"
+  },
+  {
+    "candidateId": "candidate-michael-cloud-republican-race-2026-us-house-27",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Michael_Cloud%2C_Official_Portrait%2C_115th_Congress.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Michael_Cloud,_Official_Portrait,_115th_Congress.jpg",
+    "altText": "Official congressional portrait of U.S. Representative Michael Cloud of Texas",
+    "credit": "U.S. House Office of Photography via Wikimedia Commons",
+    "license": "Public domain — U.S. Congress",
+    "permissionBasis": "Wikimedia Commons file page identifies the image as the official U.S. House portrait and public domain.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-public-domain-us-congress",
+    "discoveredAt": "2026-08-22T12:06:46.429Z"
+  },
+  {
     "candidateId": "candidate-mihaela-elizabeth-plesa-democratic-race-2026-texas-house-70",
     "imageUrl": "https://house.texas.gov/images/members/4345.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/70",
@@ -1302,6 +1938,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-monica-de-la-cruz-republican-race-2026-us-house-15",
+    "imageUrl": "https://delacruz.house.gov/images/headshot.jpg",
+    "sourceUrl": "https://delacruz.house.gov/about/",
+    "altText": "Official portrait of U.S. Representative Monica De La Cruz of Texas",
+    "credit": "Office of U.S. Representative Monica De La Cruz",
+    "license": null,
+    "permissionBasis": "Official U.S. House member biography page explicitly provides this image as the downloadable official photo; used for informational candidate identification with source attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-us-house-downloadable-photo",
+    "discoveredAt": "2026-08-22T12:06:46.375Z"
+  },
+  {
     "candidateId": "candidate-morgan-meyer-republican-race-2026-texas-house-108",
     "imageUrl": "https://house.texas.gov/images/members/3075.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/108",
@@ -1314,6 +1962,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-nate-sheets-republican-race-2026-agriculture-commissioner",
+    "imageUrl": "https://natesheets.com/wp-content/uploads/2026/02/698229cb10bc691f40bd25c7_NS-2-1-1-1.avif",
+    "sourceUrl": "https://natesheets.com/",
+    "altText": "Nate Sheets speaking at an agriculture campaign event",
+    "credit": "Nate Sheets Campaign",
+    "license": null,
+    "permissionBasis": "High-resolution image published by the official campaign and used for editorial candidate coverage with attribution and source link.",
+    "usageStatus": "approved",
+    "discoveredAt": "2026-08-22T12:06:46.089Z",
+    "discoveryMethod": "verified-asset:campaign-event-portrait"
+  },
+  {
     "candidateId": "candidate-nathan-johnson-democratic-race-2026-attorney-general",
     "imageUrl": "https://senate.texas.gov/members/d16/img/SNJ-Headshot-2023-web.jpg",
     "sourceUrl": "https://senate.texas.gov/member.php?d=16",
@@ -1322,6 +1982,18 @@
     "license": null,
     "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
     "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-nathaniel-moran-republican-race-2026-us-house-1",
+    "imageUrl": "https://moran.house.gov/uploadedphotos/highresolution/88691a90-eaa4-4698-b3fa-0a8f6a3e970f.jpg",
+    "sourceUrl": "https://moran.house.gov/about/",
+    "altText": "Nathaniel Moran, Republican candidate for U.S. House Texas District 1",
+    "credit": "Office of U.S. Representative Nathaniel Moran",
+    "license": null,
+    "permissionBasis": "Official high-resolution congressional headshot published for download on the member's U.S. House website; used for editorial candidate identification with source attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-government-downloadable-headshot",
+    "discoveredAt": "2026-08-22T12:06:46.315Z"
   },
   {
     "candidateId": "candidate-neill-snider-libertarian-race-2026-land-commissioner",
@@ -1344,6 +2016,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:53:36.633Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-okey-anyiam-democratic-race-2026-court-of-criminal-appeals-place-3",
+    "imageUrl": "https://www.texastribune.org/wp-content/uploads/2026/02/CCA-Okey-Anyiam-Campaign-1.jpg",
+    "sourceUrl": "https://www.texastribune.org/2026/02/12/texas-court-of-criminal-appeals-primary-2026/",
+    "altText": "Okey Anyiam, Democratic candidate for Texas Court of Criminal Appeals Place 3",
+    "credit": "Okey Anyiam campaign via The Texas Tribune",
+    "license": null,
+    "permissionBasis": "Campaign-supplied candidate portrait published in The Texas Tribune candidate guide, used for editorial candidate identification with source attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "verified-candidate-guide",
+    "discoveredAt": "2026-08-22T12:06:46.262Z"
   },
   {
     "candidateId": "candidate-oscar-longoria-democratic-race-2026-texas-house-35",
@@ -1380,6 +2064,18 @@
     "usageStatus": "approved"
   },
   {
+    "candidateId": "candidate-pat-fallon-republican-race-2026-us-house-4",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Pat_Fallon%2C_official_portrait%2C_117th_Congress_%28cropped%29.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Pat_Fallon,_official_portrait,_117th_Congress_(cropped).jpg",
+    "altText": "Official congressional portrait of U.S. Representative Pat Fallon of Texas",
+    "credit": "Office of U.S. Representative Pat Fallon via Wikimedia Commons",
+    "license": "Public domain — U.S. Congress",
+    "permissionBasis": "Wikimedia Commons file page identifies the portrait as a public-domain U.S. Congress image with House Creative Services metadata.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-public-domain-us-congress",
+    "discoveredAt": "2026-08-22T12:06:46.429Z"
+  },
+  {
     "candidateId": "candidate-paul-dyson-republican-race-2026-texas-house-14",
     "imageUrl": "https://house.texas.gov/images/members/4475.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/14",
@@ -1414,6 +2110,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:53:39.718Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-pete-sessions-republican-race-2026-us-house-17",
+    "imageUrl": "https://sessions.house.gov/index.cfm?File_id=544C8E78-63A9-4FE3-8D3E-2BE6533EF0D0&a=Files.Serve",
+    "sourceUrl": "https://sessions.house.gov/about",
+    "altText": "Official biography portrait of U.S. Representative Pete Sessions of Texas",
+    "credit": "Office of U.S. Representative Pete Sessions",
+    "license": null,
+    "permissionBasis": "Portrait hosted directly on the official U.S. House member biography page and used for informational candidate identification with source attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-us-house-biography",
+    "discoveredAt": "2026-08-22T12:06:46.375Z"
   },
   {
     "candidateId": "candidate-phil-gray-libertarian-race-2026-us-house-26",
@@ -1462,6 +2170,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-randy-weber-republican-race-2026-us-house-14",
+    "imageUrl": "https://weber.house.gov/uploadedphotos/mediumresolution/6c96555e-486a-4585-9e8d-d47cb896abe2.png",
+    "sourceUrl": "https://weber.house.gov/biography/about-randy.htm",
+    "altText": "Official portrait of U.S. Representative Randy Weber of Texas",
+    "credit": "Office of U.S. Representative Randy Weber",
+    "license": null,
+    "permissionBasis": "Official U.S. House member biography portrait used for informational candidate identification with source attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-us-house-biography",
+    "discoveredAt": "2026-08-22T12:06:46.375Z"
+  },
+  {
     "candidateId": "candidate-rhetta-andrews-bowers-democratic-race-2026-texas-house-113",
     "imageUrl": "https://house.texas.gov/images/members/3565.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/113",
@@ -1498,6 +2218,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-roger-williams-republican-race-2026-us-house-25",
+    "imageUrl": "https://www.congress.gov/img/member/w000816_200.jpg",
+    "sourceUrl": "https://www.congress.gov/member/roger-williams/W000816",
+    "altText": "Official Congress.gov portrait of U.S. Representative Roger Williams of Texas",
+    "credit": "Congress.gov / Library of Congress; image courtesy of the Member",
+    "license": null,
+    "permissionBasis": "Official Congress.gov member portrait used for informational candidate identification with source attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-congress-gov-member-profile",
+    "discoveredAt": "2026-08-22T12:06:46.375Z"
+  },
+  {
     "candidateId": "candidate-roland-gutierrez-democratic-race-2026-texas-senate-19",
     "imageUrl": "https://senate.texas.gov/_assets/img/og_image.jpg",
     "sourceUrl": "https://senate.texas.gov/member.php?d=19",
@@ -1520,6 +2252,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:53:01.339Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-ronny-jackson-republican-race-2026-us-house-13",
+    "imageUrl": "https://jackson.house.gov/UploadedPhotos/HighResolution/29506959-b933-4de0-9256-7ad65700f913.jpg",
+    "sourceUrl": "https://jackson.house.gov/about/",
+    "altText": "Official portrait of U.S. Representative Ronny Jackson of Texas",
+    "credit": "Office of U.S. Representative Ronny Jackson",
+    "license": null,
+    "permissionBasis": "Official U.S. House member biography portrait used for informational candidate identification with source attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-us-house-biography",
+    "discoveredAt": "2026-08-22T12:06:46.375Z"
   },
   {
     "candidateId": "candidate-ryan-guillen-republican-race-2026-texas-house-31",
@@ -1580,6 +2324,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-shehla-faizi-green-race-2026-comptroller",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/6940b3b801659d28f153ab75/7f56185a-2012-4392-86ed-61f1c118f5fc/MomentsbyManar.Headshot-Shehla-2026-08.jpg",
+    "sourceUrl": "https://www.faizifortexas.com/",
+    "altText": "Shehla Faizi, Green Party candidate for Texas Comptroller",
+    "credit": "Shehla Faizi campaign / Moments by Manar",
+    "license": null,
+    "permissionBasis": "Candidate headshot published on the official campaign website, used for editorial candidate identification with attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "direct-public-web-search",
+    "discoveredAt": "2026-08-22T12:06:46.153Z"
+  },
+  {
     "candidateId": "candidate-shelby-slawson-republican-race-2026-texas-house-59",
     "imageUrl": "https://house.texas.gov/images/members/4055.jpg?v=2",
     "sourceUrl": "https://house.texas.gov/members/59",
@@ -1626,6 +2382,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:53:27.986Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-sylvia-garcia-democratic-race-2026-us-house-29",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Sylvia_Garcia%2C_official_portrait%2C_116th_Congress_%28cropped%29.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sylvia_Garcia,_official_portrait,_116th_Congress_(cropped).jpg",
+    "altText": "Official congressional portrait of U.S. Representative Sylvia Garcia of Texas",
+    "credit": "United States Congress via Wikimedia Commons",
+    "license": "Public domain — U.S. Congress",
+    "permissionBasis": "Wikimedia Commons file page marks the official congressional portrait as a public-domain U.S. Congress image.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-public-domain-us-congress",
+    "discoveredAt": "2026-08-22T12:06:46.429Z"
   },
   {
     "candidateId": "candidate-ted-brown-libertarian-race-2026-us-senate",
@@ -1684,6 +2452,42 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:52:24.552Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-thomas-smith-republican-race-2026-court-of-criminal-appeals-place-3",
+    "imageUrl": "https://smithfortexas.org/UserFiles/image/Thomas_Smith_Family.webp",
+    "sourceUrl": "https://smithfortexas.org/about.html",
+    "altText": "Thomas Smith with his family in an official campaign photograph",
+    "credit": "Texans for Thomas Smith",
+    "license": null,
+    "permissionBasis": "Image published by the candidate's official campaign and used for editorial candidate coverage with attribution and source link.",
+    "usageStatus": "approved",
+    "discoveredAt": "2026-08-22T12:06:46.090Z",
+    "discoveryMethod": "verified-asset:campaign-family-portrait"
+  },
+  {
+    "candidateId": "candidate-tiffany-clark-democratic-race-2026-state-board-of-education-13",
+    "imageUrl": "https://sboe.texas.gov/sites/default/files/clark-sboe-district-13.jpg",
+    "sourceUrl": "https://sboe.texas.gov/state-board-of-education/sboe-board-members/sboe-member-district-13",
+    "altText": "Tiffany Clark, Democratic candidate for Texas State Board of Education District 13",
+    "credit": "Texas State Board of Education",
+    "license": null,
+    "permissionBasis": "Official government portrait published by the Texas State Board of Education, used for editorial candidate identification with attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-government-profile",
+    "discoveredAt": "2026-08-22T12:06:46.153Z"
+  },
+  {
+    "candidateId": "candidate-tiffany-nelson-republican-race-2026-state-board-of-education-6",
+    "imageUrl": "https://static.wixstatic.com/media/130645_442aa3b8dfa94c10a6d1edabcd42d02b~mv2.jpeg/v1/fill/w_980%2Ch_653%2Cal_c%2Cq_85%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/image3%20%281%29.jpeg",
+    "sourceUrl": "https://www.tiffanynelsonfortexas.com/",
+    "altText": "Tiffany Nelson, Republican candidate for Texas State Board of Education District 6",
+    "credit": "Tiffany Nelson campaign",
+    "license": null,
+    "permissionBasis": "Candidate image published on the official campaign homepage in the campaign biography section and used for editorial candidate identification with attribution and a source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-profile",
+    "discoveredAt": "2026-08-22T12:06:46.622Z"
   },
   {
     "candidateId": "candidate-todd-hunter-republican-race-2026-texas-house-32",
@@ -1788,6 +2592,30 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:52:22.109Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-veronica-escobar-democratic-race-2026-us-house-16",
+    "imageUrl": "https://www.congress.gov/img/member/e000299_200.jpg",
+    "sourceUrl": "https://www.congress.gov/member/veronica-escobar/E000299",
+    "altText": "Official Congress.gov portrait of U.S. Representative Veronica Escobar of Texas",
+    "credit": "Congress.gov / Library of Congress; image courtesy of the Member",
+    "license": null,
+    "permissionBasis": "Official Congress.gov member portrait used for informational candidate identification with source attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-congress-gov-member-profile",
+    "discoveredAt": "2026-08-22T12:06:46.375Z"
+  },
+  {
+    "candidateId": "candidate-vicente-gonzalez-democratic-race-2026-us-house-34",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Vicente_Gonzalez%2C_official_portrait%2C_118th_Congress_%28cropped%29.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Vicente_Gonzalez,_official_portrait,_118th_Congress_(cropped).jpg",
+    "altText": "Official congressional portrait of U.S. Representative Vicente Gonzalez of Texas",
+    "credit": "U.S. House of Representatives via Wikimedia Commons",
+    "license": "Public domain — U.S. Congress",
+    "permissionBasis": "Wikimedia Commons identifies the image as an official U.S. House portrait by the U.S. House of Representatives and marks it public domain as a U.S. federal government work.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-public-domain-us-congress",
+    "discoveredAt": "2026-08-22T12:06:46.662Z"
   },
   {
     "candidateId": "candidate-vikki-goodwin-democratic-race-2026-lieutenant-governor",
