@@ -19,7 +19,7 @@ const VALUE_CLASSES = {
   ],
   authorityReference: [
     "/texas-legislature/current-session", "/texas-legislature/votes", "/register-to-vote", "/contact-legislators", "/county-elections",
-    "/laws/constitutional-amendments", "/laws/effective-dates", "/glossary", "/citation-guide",
+    "/laws/constitutional-amendments", "/laws/effective-dates", "/glossary", "/citation-guide", "/issues/texas-policy-handbook",
   ],
   trustOrCommerce: [
     "/about", "/contact", "/privacy", "/terms-of-service", "/shipping-policy", "/return-refund-policy", "/editorial-standards",
@@ -53,6 +53,7 @@ describe("AdSense static sitemap value classification", () => {
       "/county-elections",
       "/laws/constitutional-amendments",
       "/laws/effective-dates",
+      "/issues/texas-policy-handbook",
     ]));
   });
 
