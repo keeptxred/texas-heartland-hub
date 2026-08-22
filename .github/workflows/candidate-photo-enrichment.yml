@@ -24,6 +24,7 @@ on:
       - "src/data/elections/2026/candidate-photo-source-registry.json"
 
 permissions:
+  actions: write
   contents: write
   pull-requests: write
 
