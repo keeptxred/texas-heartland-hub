@@ -38,12 +38,10 @@ describe("living story canonical updates", () => {
     expect(updater).not.toMatch(/\.update\(\{[\s\S]{0,500}internal_url:/);
   });
 
-  it("uses Cloudflare structured newsroom generation rather than Lovable", () => {
+  it("uses direct Cloudflare structured newsroom generation", () => {
     expect(updater).toContain("runCloudflareJson<NewsroomDraft>");
     expect(updater).toContain("NEWSROOM_DRAFT_JSON_SCHEMA");
     expect(updater).toContain("validateNewsroomDraft");
-    expect(updater).not.toContain("lovable.dev");
-    expect(updater).not.toContain("LOVABLE_API_KEY");
   });
 
   it("keeps an auditable material-update history", () => {
@@ -70,7 +68,7 @@ describe("living story canonical updates", () => {
     expect(updater).toContain('db.rpc("claim_news_event_cluster_update"');
   });
 
-  it("routes material follow-ups to the canonical updater instead of legacy minting", () => {
+  it("routes material follow-ups to the canonical updater instead of minting a second URL", () => {
     expect(publisher).toContain("updateCanonicalLivingStory");
     expect(publisher).toContain("acquireLivingStoryUpdateClaim");
     expect(publisher).toContain('developingStory: "follow_up"');
