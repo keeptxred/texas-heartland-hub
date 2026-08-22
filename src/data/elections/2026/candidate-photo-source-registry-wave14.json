@@ -1,0 +1,65 @@
+[
+  {
+    "domain": "joemayesfortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Joe Mayes's official Texas House District 106 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude issue graphics, stock imagery, and third-party embeds.",
+    "searchHint": "site:joemayesfortexas.com Joe Mayes portrait meet Joe photo",
+    "notes": "Verified August 22, 2026. The current site identifies Joe Mayes as the Democratic candidate for Texas House District 106 and contains campaign-hosted candidate imagery."
+  },
+  {
+    "domain": "allisonmitchellfortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Allison Mitchell's official Texas House District 108 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude stock, issue, map, and third-party imagery.",
+    "searchHint": "site:allisonmitchellfortexas.com Allison Mitchell portrait meet Allison photo",
+    "notes": "Verified August 22, 2026. The site identifies Allison Mitchell as a Texas House District 108 candidate and carries a campaign disclaimer naming the Allison Mitchell for State House Campaign."
+  },
+  {
+    "domain": "willcampbellfortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Will Campbell's official Texas House District 109 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Do not use deployment group photographs with intentionally obscured faces, stock imagery, or third-party embeds as candidate portraits.",
+    "searchHint": "site:willcampbellfortexas.com Will Campbell portrait about candidate photo",
+    "notes": "Verified August 22, 2026. The current site explicitly labels itself the official campaign website and identifies Will Campbell as the Republican candidate for Texas House District 109."
+  },
+  {
+    "domain": "stanleyfortexashouse.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Stephen W. Stanley's official Texas House District 113 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Do not infer rights for embedded third-party content.",
+    "searchHint": "site:stanleyfortexashouse.com Stephen Stanley portrait about campaign",
+    "notes": "Verified August 22, 2026 through a current Dallas County campaign endorsement page that identifies Stephen Stanley as the Texas House District 113 candidate and links stanleyfortexashouse.com as his campaign website."
+  },
+  {
+    "domain": "timforhouse.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Tim McDonough's official Texas House District 114 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Do not infer rights for third-party embeds or linked media.",
+    "searchHint": "site:timforhouse.com Tim McDonough portrait campaign Texas House 114",
+    "notes": "Verified August 22, 2026 through a current Dallas County campaign endorsement page that identifies Tim McDonough as the Texas House District 114 candidate and links timforhouse.com as his campaign website."
+  },
+  {
+    "domain": "rosellinifortx.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Danny Rosellini's official Texas House District 115 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Do not infer rights for third-party embeds or linked media.",
+    "searchHint": "site:rosellinifortx.com Danny Rosellini portrait campaign Texas House 115",
+    "notes": "Verified August 22, 2026 through a current Dallas County campaign endorsement page that identifies Danny Rosellini as the Texas House District 115 candidate and links rosellinifortx.com as his campaign website."
+  },
+  {
+    "domain": "zach4texas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Zach Herbert's official Texas House District 112 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Do not auto-approve social-media screenshots or third-party opposition-research copies.",
+    "searchHint": "site:zach4texas.com Zach Herbert portrait campaign Texas House 112",
+    "notes": "Verified August 22, 2026 from current campaign materials and a 2026 research document reproducing the candidate's campaign social profile, which identifies ZACH4TEXAS.COM as the campaign website."
+  }
+]
