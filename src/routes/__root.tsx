@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "../components/site-header";
 import { SiteFooter } from "../components/site-footer";
+import { SiteNotFound } from "../components/site-not-found";
 import { ArticleSourceTransparencyPanel } from "../components/article-source-transparency";
 import { organizationJsonLd } from "../lib/seo";
 import { exploreDestinations } from "../data/explore/all-destinations";
@@ -37,28 +38,6 @@ const ADSENSE_EXCLUDED_PATH_PREFIXES = [
   "/contact",
 ] as const;
 const ADSENSE_BOOTSTRAP = `(function(){var p=location.pathname;var x=${JSON.stringify(ADSENSE_EXCLUDED_PATH_PREFIXES)};var excluded=x.some(function(prefix){return p===prefix||p.indexOf(prefix+'/')===0;});var noindex=Array.prototype.some.call(document.querySelectorAll('meta[name="robots"]'),function(m){return /(?:^|[,\\s])noindex(?:$|[,\\s])/i.test(m.content||'');});if(excluded||noindex)return;var s=document.createElement('script');s.async=true;s.crossOrigin='anonymous';s.src='${ADSENSE_SCRIPT}';s.setAttribute('data-adsense-gated','true');document.head.appendChild(s);}());`;
-
-function NotFoundComponent() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
-        </p>
-        <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Go home
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
@@ -146,7 +125,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   }),
   shellComponent: RootShell,
   component: RootComponent,
-  notFoundComponent: NotFoundComponent,
+  notFoundComponent: SiteNotFound,
   errorComponent: ErrorComponent,
 });
 
