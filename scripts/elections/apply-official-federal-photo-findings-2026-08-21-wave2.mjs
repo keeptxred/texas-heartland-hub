@@ -74,6 +74,39 @@ const findings = [
     permissionBasis: "Portrait hosted directly on the official U.S. House member biography page and used for informational candidate identification with source attribution.",
     usageStatus: "approved",
     discoveryMethod: "official-us-house-biography"
+  },
+  {
+    candidateId: "candidate-veronica-escobar-democratic-race-2026-us-house-16",
+    imageUrl: "https://www.congress.gov/img/member/e000299_200.jpg",
+    sourceUrl: "https://www.congress.gov/member/veronica-escobar/E000299",
+    altText: "Official Congress.gov portrait of U.S. Representative Veronica Escobar of Texas",
+    credit: "Congress.gov / Library of Congress; image courtesy of the Member",
+    license: null,
+    permissionBasis: "Official Congress.gov member portrait used for informational candidate identification with source attribution.",
+    usageStatus: "approved",
+    discoveryMethod: "official-congress-gov-member-profile"
+  },
+  {
+    candidateId: "candidate-roger-williams-republican-race-2026-us-house-25",
+    imageUrl: "https://www.congress.gov/img/member/w000816_200.jpg",
+    sourceUrl: "https://www.congress.gov/member/roger-williams/W000816",
+    altText: "Official Congress.gov portrait of U.S. Representative Roger Williams of Texas",
+    credit: "Congress.gov / Library of Congress; image courtesy of the Member",
+    license: null,
+    permissionBasis: "Official Congress.gov member portrait used for informational candidate identification with source attribution.",
+    usageStatus: "approved",
+    discoveryMethod: "official-congress-gov-member-profile"
+  },
+  {
+    candidateId: "candidate-henry-cuellar-democratic-race-2026-us-house-28",
+    imageUrl: "https://www.congress.gov/img/member/116_rp_tx_28_cuellar_henry_200.jpg",
+    sourceUrl: "https://www.congress.gov/member/henry-cuellar/C001063",
+    altText: "Official Congress.gov portrait of U.S. Representative Henry Cuellar of Texas",
+    credit: "Congress.gov / Library of Congress, Congressional Pictorial Directory",
+    license: null,
+    permissionBasis: "Official Congress.gov member portrait used for informational candidate identification with source attribution.",
+    usageStatus: "approved",
+    discoveryMethod: "official-congress-gov-member-profile"
   }
 ];
 
