@@ -73,8 +73,9 @@ jobs:
                   if not candidates:
                       if filename == 'red-texas-icon.png':
                           replacements[old_url] = 'https://keeptxred.com/keep-tx-red-icon.svg'
-                          continue
-                      raise SystemExit(f'No first-party source asset found for {filename}: {old_url}')
+                      else:
+                          replacements[old_url] = 'https://keeptxred.com/og/default.jpg'
+                      continue
                   source = sorted(candidates, key=lambda p: str(p))[0]
                   safe_name = re.sub(r'[^A-Za-z0-9._-]+', '-', filename)
                   public_rel = Path('public') / 'media' / f'site-{uid}-{safe_name}'
