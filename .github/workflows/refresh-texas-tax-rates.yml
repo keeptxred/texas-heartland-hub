@@ -46,7 +46,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PR_TITLE: Refresh Texas property tax rates
           PR_BODY: Automated Texas Comptroller PTAD refresh. All 254 counties were validated before this PR was opened; protected verify still gates merge and deployment.
-          COMMIT_MESSAGE: chore: refresh Texas property tax rates
+          COMMIT_MESSAGE: "chore: refresh Texas property tax rates"
         shell: bash
         run: |
           set -euo pipefail
