@@ -140,17 +140,26 @@ export function normalizeCloudflareVisionVerdictOutput(value: unknown): unknown 
     .replace(/\bPhotorealistic\s*:\s*N\/?A\b/gi, "Photorealistic: no");
 }
 
+export function imageValidationDomainGuidance(subject: SubjectExtract): string {
+  if (subject.domain === "legal") {
+    return "For a court-ruling story, a believable photorealistic courthouse exterior or courtroom interior IS a valid direct story match; it does not need to literally visualize the abstract legal wording. Reject maps, state outlines, politicians, capitol scenes, election graphics, cartoons, and illustrations.";
+  }
+  if (subject.domain === "politics") {
+    return "For politics or public-policy stories, do NOT require a recognizable likeness of a named politician, the exact date, the exact venue, a specific broadcast or interview, a press conference, or any other historically exact scene. A believable photorealistic Texas government or policy-impact setting that directly represents one or more concrete issues in the story IS a valid direct story match. Prefer anonymous or non-identifiable people. Reject unrelated generic government imagery, fabricated readable text or logos, and recognizable faces presented as the named politician unless independently verified.";
+  }
+  if (subject.domain === "sports") {
+    return "For sports schedules, watch lists, roster stories, previews, honors, and results, do NOT require a recognizable likeness of a named athlete, exact team uniform or logo, exact game, exact date, or exact venue. A believable photorealistic anonymous athlete or athletes performing the exact sport and relevant action in an appropriate real field, track, course, stadium, or practice setting IS a valid representative editorial match. The depicted sport and action must fit the story. Reject unrelated sports, generic non-athletic scenes, readable logos or invented named-player likenesses, posters, illustrations, cartoons, and promotional graphics.";
+  }
+  return "A valid match must depict the concrete real-world subject or setting, not generic symbolism.";
+}
+
 export async function validateImageMatchesArticle(bytes: Uint8Array, subject: SubjectExtract): Promise<{ matches: boolean; reason: string }> {
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
   const apiToken = process.env.CLOUDFLARE_API_TOKEN;
   if (!accountId || !apiToken) return { matches: false, reason: "Cloudflare vision validator unavailable: missing credentials" };
   try {
     const image = `data:image/jpeg;base64,${bytesToBase64(bytes)}`;
-    const domainGuidance = subject.domain === "legal"
-      ? "For a court-ruling story, a believable photorealistic courthouse exterior or courtroom interior IS a valid direct story match; it does not need to literally visualize the abstract legal wording. Reject maps, state outlines, politicians, capitol scenes, election graphics, cartoons, and illustrations."
-      : subject.domain === "politics"
-        ? "For politics or public-policy stories, do NOT require a recognizable likeness of a named politician, the exact date, the exact venue, a specific broadcast or interview, a press conference, or any other historically exact scene. A believable photorealistic Texas government or policy-impact setting that directly represents one or more concrete issues in the story IS a valid direct story match. Prefer anonymous or non-identifiable people. Reject unrelated generic government imagery, fabricated readable text or logos, and recognizable faces presented as the named politician unless independently verified."
-        : "A valid match must depict the concrete real-world subject or setting, not generic symbolism.";
+    const domainGuidance = imageValidationDomainGuidance(subject);
     const validationPrompt = [
       `Article title: "${subject.title}"`,
       `Article domain: ${subject.domain}`,

@@ -46,7 +46,8 @@ describe("Cloudflare featured-image payload", () => {
     expect(validatorSource).toContain("max_tokens: 256");
     expect(validatorSource).toContain("normalizeCloudflareVisionVerdictOutput(output)");
     expect(validatorSource).toContain("parseVisionVerdict(normalizedOutput)");
-    expect(validatorSource).toContain("a believable photorealistic courthouse exterior or courtroom interior IS a valid direct story match");
+    expect(validatorSource).toContain("imageValidationDomainGuidance(subject)");
+    expect(runtime).toContain("a believable photorealistic courthouse exterior or courtroom interior IS a valid direct story match");
   });
 
   it("accepts representative political editorial photography without demanding an exact event recreation", () => {
@@ -54,10 +55,10 @@ describe("Cloudflare featured-image payload", () => {
     const start = runtime.indexOf("export async function validateImageMatchesArticle");
     const validatorSource = runtime.slice(start);
 
-    expect(validatorSource).toContain('subject.domain === "politics"');
-    expect(validatorSource).toContain("do NOT require a recognizable likeness of a named politician");
-    expect(validatorSource).toContain("the exact date");
-    expect(validatorSource).toContain("policy-impact setting");
+    expect(runtime).toContain('subject.domain === "politics"');
+    expect(runtime).toContain("do NOT require a recognizable likeness of a named politician");
+    expect(runtime).toContain("the exact date");
+    expect(runtime).toContain("policy-impact setting");
     expect(validatorSource).toContain("Do not require it to prove that it was captured at the exact historical event");
     expect(validatorSource).toContain("Judge topical relevance and photorealism, not whether a generated editorial image proves an exact historical moment");
   });
