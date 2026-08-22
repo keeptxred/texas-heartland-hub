@@ -1,74 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Input } from "@/components/ui/input";
 import { isLowValueTitle } from "@/lib/low-value-titles";
 import { PUBLISHER_LOGO } from "@/lib/seo";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
 import { isPublicArticleReady, type PublicArticleCandidate } from "@/lib/public-article-readiness";
 
-const FAQS = [
-  {
-    q: "What is the status of Texas property tax relief?",
-    a: "Texas school districts must provide a $140,000 residence homestead exemption. Homeowners who are age 65 or older or disabled may qualify for an additional $60,000 school-district exemption. Local exemptions and tax rates still vary, so homeowners should confirm eligibility and taxable value with their county appraisal district.",
-    sourceLabel: "Texas Comptroller property-tax exemptions",
-    sourceUrl: "https://comptroller.texas.gov/taxes/property-tax/exemptions/",
-  },
-  {
-    q: "What are the key 2026 Texas election dates?",
-    a: "The 2026 Texas primary was held March 3, followed by primary runoffs on May 26. The general election is November 3, 2026. The Texas Secretary of State publishes the official calendar, candidate information, registration deadlines, and voting guidance.",
-    sourceLabel: "Texas Secretary of State election dates",
-    sourceUrl: "https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml",
-  },
-  {
-    q: "What did the Texas Legislature do on border security?",
-    a: "Operation Lone Star continues with state funding for additional DPS troopers, Texas Military Department deployments, and border-barrier construction. SB 4 and related measures created state-level criminal penalties for illegal entry, currently under federal court review.",
-  },
-  {
-    q: "What is Texas doing on school choice?",
-    a: "Texas enacted a universal Education Savings Account program providing eligible families approximately $10,000 per student for private school tuition, tutoring, and approved educational expenses. Public school districts retain per-pupil funding through separate appropriations.",
-  },
-  {
-    q: "How does Texas regulate elections?",
-    a: "Texas requires photo ID at the polls, prohibits mass mail-ballot solicitation, and limits drive-through and 24-hour voting. The Secretary of State oversees uniform election procedures and audits. Counties run polling locations; early voting typically runs 12 days before Election Day.",
-  },
-  {
-    q: "What is the Texas Attorney General doing right now?",
-    a: "The Office of the Attorney General leads multistate litigation against federal overreach, defends Texas election and immigration laws, and prosecutes Medicaid fraud and human trafficking through specialized divisions.",
-  },
-  {
-    q: "How is Texas handling energy policy?",
-    a: "Texas continues expanding oil, gas, and natural-gas-fired generation while requiring grid reliability investments through the Public Utility Commission and ERCOT. The Texas Energy Fund provides low-interest loans for dispatchable power plants to strengthen winter grid capacity.",
-  },
-];
-
-const SOURCE_FILTERS = ["All", "Governor", "Secretary of State", "Register"] as const;
-const PRIMARY_WINDOW_MS = 24 * 60 * 60 * 1000;
-const FALLBACK_WINDOW_MS = 7 * PRIMARY_WINDOW_MS;
-
-const OFFICIAL_SOURCE_PATTERNS = [
-  "office of the governor",
-  "governor of texas",
-  "gov.texas.gov",
-  "texas secretary of state",
-  "secretary of state",
-  "sos.state.tx.us",
-  "texas register",
-  "texreg.sos.state.tx.us",
-  "texas legislature",
-  "capitol.texas.gov",
-] as const;
-
-function isOfficialGovernmentSource(source: string, sourceUrl?: string | null) {
-  const normalized = `${source} ${sourceUrl ?? ""}`.trim().toLowerCase();
-  return OFFICIAL_SOURCE_PATTERNS.some((pattern) => normalized.includes(pattern));
-}
+const MAX_VISIBLE_STORIES = 24;
+const FETCH_CANDIDATES = 72;
+const REFRESH_MS = 60_000;
 
 function timeAgo(iso: string) {
   const timestamp = Date.parse(iso);
@@ -80,19 +20,23 @@ function timeAgo(iso: string) {
   return `${Math.floor(hours / 24)}d ago`;
 }
 
+function isRollingNewsKind(kind?: string | null) {
+  return kind === "news" || Boolean(kind?.startsWith("sports-"));
+}
+
 export const Route = createFileRoute("/happening-now")({
   head: () => ({
     meta: [
-      { title: "Happening Now — Live Texas Political & Legislative Feeds | Keep TX Red" },
+      { title: "Happening Now — Latest Texas News | Keep TX Red" },
       {
         name: "description",
         content:
-          "Happening Now: live aggregated feeds from the Texas Legislature, the Governor's Office, and the Secretary of State. Filter bills, press releases, and political updates in real time.",
+          "Happening Now on Keep TX Red: the newest publish-ready Texas news, politics, elections, business, economy, and sports stories in one rolling feed.",
       },
       { property: "og:title", content: "Happening Now — Keep TX Red" },
       {
         property: "og:description",
-        content: "Real-time Texas political and legislative updates aggregated from official state sources.",
+        content: "The newest Keep TX Red stories, automatically refreshed as new reporting is published.",
       },
       { property: "og:url", content: "https://keeptxred.com/happening-now" },
     ],
@@ -114,232 +58,157 @@ export const Route = createFileRoute("/happening-now")({
                 contentUrl: PUBLISHER_LOGO,
                 caption: "Keep TX Red",
               },
-              sameAs: [],
-              knowsAbout: [
-                "Texas Legislative Tracking",
-                "Conservative Policy News",
-                "Texas Primary Elections",
-                "Texas Property Tax Relief",
-                "Texas Border Security",
-              ],
               areaServed: { "@type": "State", name: "Texas" },
             },
             {
               "@type": "CollectionPage",
               "@id": "https://keeptxred.com/happening-now#page",
               url: "https://keeptxred.com/happening-now",
-              name: "Statewide Conservative News Dashboard",
+              name: "Happening Now — Latest Texas News",
               description:
-                "Live aggregated feeds from official Texas government sources: Legislature bills filed, Governor press releases, and Secretary of State updates.",
+                "A rolling feed of the newest publish-ready Keep TX Red reporting across Texas news, politics, elections, business, economy, and sports.",
               isPartOf: { "@id": "https://keeptxred.com/#org" },
-              about: [
-                { "@type": "Thing", name: "Texas Legislative Tracking" },
-                { "@type": "Thing", name: "Conservative Policy News" },
-                { "@type": "Thing", name: "Texas Primary Elections" },
-              ],
-              mainEntity: {
-                "@type": "FAQPage",
-                mainEntity: FAQS.map((faq) => ({
-                  "@type": "Question",
-                  name: faq.q,
-                  acceptedAnswer: { "@type": "Answer", text: faq.a },
-                })),
-              },
             },
           ],
         }),
       },
     ],
   }),
-  component: DashboardPage,
+  component: HappeningNowPage,
 });
 
-type Row = {
-  id: number;
-  title: string;
-  source: string;
-  link: string | null;
-  sourceUrl: string | null;
-  officialSource: boolean;
-  pendingArticle: boolean;
-  description: string | null;
-  pub_date: string;
-};
-
-type FeedRow = {
-  id: number;
-  title: string;
-  source: string;
-  link: string | null;
-  internal_slug: string | null;
-  description: string | null;
-  pub_date: string;
-};
-
-type LinkedArticleRow = PublicArticleCandidate & {
+type ArticleRow = PublicArticleCandidate & {
+  id: string;
   slug: string;
+  title: string;
+  dek: string | null;
+  category: string;
+  source_name: string | null;
+  published_at: string;
   kind?: string | null;
+  featured_image_url?: string | null;
+  image_url?: string | null;
+  image_alt_text?: string | null;
+  is_breaking?: boolean | null;
 };
 
-function DashboardPage() {
-  const [items, setItems] = useState<Row[]>([]);
+function storyImage(article: ArticleRow) {
+  return article.featured_image_url || article.image_url || null;
+}
+
+function StoryCard({ article }: { article: ArticleRow }) {
+  const image = storyImage(article);
+
+  return (
+    <article className="overflow-hidden border-2 border-foreground/10 bg-card transition-colors hover:border-primary">
+      {image ? (
+        <a href={`/news/${article.slug}`} className="block aspect-[16/9] overflow-hidden bg-muted">
+          <img
+            src={image}
+            alt={article.image_alt_text || article.title}
+            className="h-full w-full object-cover transition-transform duration-300 hover:scale-[1.02]"
+            loading="lazy"
+          />
+        </a>
+      ) : null}
+      <div className="p-5">
+        <div className="mb-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] font-semibold uppercase tracking-widest">
+          {article.is_breaking ? <span className="text-primary">Breaking</span> : null}
+          <span className="text-muted-foreground">{article.category}</span>
+          <time className="text-muted-foreground" dateTime={article.published_at}>
+            {timeAgo(article.published_at)}
+          </time>
+        </div>
+        <h2 className="font-serif text-lg font-bold leading-snug">
+          <a href={`/news/${article.slug}`} className="hover:underline underline-offset-4">
+            {article.title}
+          </a>
+        </h2>
+        {article.dek ? (
+          <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">{article.dek}</p>
+        ) : null}
+        {article.source_name ? (
+          <p className="mt-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+            Source: {article.source_name}
+          </p>
+        ) : null}
+      </div>
+    </article>
+  );
+}
+
+function HappeningNowPage() {
+  const [items, setItems] = useState<ArticleRow[]>([]);
   const [fetchedAt, setFetchedAt] = useState("");
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
-  const [query, setQuery] = useState("");
-  const [sourceFilter, setSourceFilter] =
-    useState<(typeof SOURCE_FILTERS)[number]>("All");
 
   useEffect(() => {
     let active = true;
 
     async function load() {
-      const sinceIso = new Date(Date.now() - FALLBACK_WINDOW_MS).toISOString();
-      const { data: feedData, error: feedError } = await supabase
-        .from("texas_news_feed")
-        .select("id,title,source,link,internal_slug,description,pub_date")
-        .gte("pub_date", sinceIso)
-        .order("pub_date", { ascending: false })
-        .limit(240);
+      const { data, error } = await supabase
+        .from("daily_articles")
+        .select(
+          "id,slug,title,dek,category,source_name,source_url,published_at,kind,featured_image_url,image_url,image_alt_text,is_breaking,content_quality_score,body_json,quality_flags",
+        )
+        .order("published_at", { ascending: false })
+        .limit(FETCH_CANDIDATES);
 
       if (!active) return;
-      if (feedError) {
-        console.error("[happening-now] load failed", {
-          feed: feedError.message,
-        });
+      if (error) {
+        console.error("[happening-now] published article load failed", error.message);
         setLoadError(true);
         setLoading(false);
         return;
       }
 
-      const rawFeed = (feedData ?? []) as FeedRow[];
-      const candidateSlugs = Array.from(
-        new Set(rawFeed.flatMap((row) => (row.internal_slug ? [row.internal_slug] : []))),
-      );
-      const { data: linkedArticles, error: linkedArticleError } = candidateSlugs.length
-        ? await supabase
-            .from("daily_articles")
-            .select("slug,kind,category,source_name,source_url,published_at,content_quality_score,body_json,quality_flags")
-            .in("slug", candidateSlugs)
-        : { data: [], error: null };
-
-      if (!active) return;
-      if (linkedArticleError) {
-        console.error("[happening-now] linked article lookup failed", linkedArticleError.message);
-        setLoadError(true);
-        setLoading(false);
-        return;
-      }
-
-      const validArticleSlugs = new Set(
-        ((linkedArticles ?? []) as LinkedArticleRow[])
-          .filter((article) =>
-            isPublicArticleReady(article)
+      const latest = ((data ?? []) as ArticleRow[])
+        .filter(
+          (article) =>
+            Boolean(article.slug)
+            && Boolean(article.published_at)
+            && isRollingNewsKind(article.kind)
+            && !isLowValueTitle(article.title)
+            && isPublicArticleReady(article)
             && meetsArticleMainWordCount(article.kind, article.body_json as never),
-          )
-          .map((article) => article.slug),
-      );
+        )
+        .sort((a, b) => Date.parse(b.published_at) - Date.parse(a.published_at))
+        .slice(0, MAX_VISIBLE_STORIES);
 
-      const feedRows = rawFeed.flatMap<Row>((row) => {
-        const hasNativeArticle =
-          Boolean(row.internal_slug) && validArticleSlugs.has(row.internal_slug as string);
-        const officialSource = isOfficialGovernmentSource(row.source, row.link);
-
-        if (!officialSource) return [];
-
-        return [
-          {
-            id: row.id,
-            title: row.title,
-            source: row.source,
-            link: hasNativeArticle ? `/news/${row.internal_slug}` : row.link,
-            sourceUrl: row.link,
-            officialSource,
-            pendingArticle: !hasNativeArticle,
-            description: row.description,
-            pub_date: row.pub_date,
-          },
-        ];
-      });
-
-      const deduplicated = new Map<string, Row>();
-      feedRows
-        .sort((a, b) => Date.parse(b.pub_date) - Date.parse(a.pub_date))
-        .forEach((row) => {
-          const key = row.link ?? `${row.source.toLowerCase()}::${row.title.toLowerCase()}`;
-          if (!deduplicated.has(key)) deduplicated.set(key, row);
-        });
-
-      setItems(Array.from(deduplicated.values()));
+      setItems(latest);
       setFetchedAt(new Date().toISOString());
       setLoadError(false);
       setLoading(false);
     }
 
     void load();
-    const timer = window.setInterval(() => void load(), 60_000);
+    const timer = window.setInterval(() => void load(), REFRESH_MS);
     return () => {
       active = false;
       window.clearInterval(timer);
     };
   }, []);
 
-  const displayWindowMs = useMemo(() => {
-    const primaryCutoff = Date.now() - PRIMARY_WINDOW_MS;
-    const hasPrimaryItems = items.some((item) => {
-      const timestamp = Date.parse(item.pub_date);
-      return (
-        item.officialSource &&
-        Number.isFinite(timestamp) &&
-        timestamp >= primaryCutoff &&
-        !isLowValueTitle(item.title)
-      );
-    });
-    return hasPrimaryItems ? PRIMARY_WINDOW_MS : FALLBACK_WINDOW_MS;
-  }, [items]);
-
-  const filtered = useMemo(() => {
-    const needle = query.trim().toLowerCase();
-    const cutoff = Date.now() - displayWindowMs;
-
-    return items.filter((item) => {
-      const timestamp = Date.parse(item.pub_date);
-      if (Number.isFinite(timestamp) && timestamp < cutoff) return false;
-      if (isLowValueTitle(item.title)) return false;
-      if (
-        sourceFilter !== "All" &&
-        !item.source.toLowerCase().includes(sourceFilter.toLowerCase())
-      ) {
-        return false;
-      }
-      if (!needle) return true;
-      return (
-        item.title.toLowerCase().includes(needle) ||
-        (item.description ?? "").toLowerCase().includes(needle) ||
-        item.source.toLowerCase().includes(needle)
-      );
-    });
-  }, [displayWindowMs, items, query, sourceFilter]);
-
-  const isFallbackWindow = displayWindowMs === FALLBACK_WINDOW_MS;
-  const quickFilters = ["Tax", "Border", "Primary", "Paxton", "Election", "School"];
+  const lead = items[0];
+  const rest = items.slice(1);
 
   return (
     <div className="bg-white">
-      <section className="bg-secondary text-secondary-foreground border-b-4 border-primary">
+      <section className="border-b-4 border-primary bg-secondary text-secondary-foreground">
         <div className="mx-auto max-w-6xl px-4 py-12 md:py-16">
-          <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-accent">
+          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent">
             ★ Happening Now
           </span>
-          <h1 className="font-display text-4xl md:text-6xl leading-[0.95] tracking-tight mt-3">
-            Happening Now in
+          <h1 className="mt-3 font-display text-4xl leading-[0.95] tracking-tight md:text-6xl">
+            Latest & Greatest
             <br />
-            <span className="text-primary">Texas Government</span>
+            <span className="text-primary">Texas News</span>
           </h1>
-          <p className="mt-4 max-w-2xl text-base md:text-lg text-white/90">
-            Current feeds from the Texas Legislature, the Governor&apos;s Office, and the Secretary of
-            State. The newest 24 hours are shown when available; during quiet periods, the feed keeps
-            the latest seven days visible.
+          <p className="mt-4 max-w-2xl text-base text-white/90 md:text-lg">
+            The newest publish-ready Keep TX Red stories in one rolling newsroom. New reporting moves
+            to the top automatically; older stories roll off this page while remaining in their
+            permanent news and category archives.
           </p>
           {fetchedAt ? (
             <p className="mt-3 text-xs uppercase tracking-widest text-white/85">
@@ -352,166 +221,68 @@ function DashboardPage() {
         </div>
       </section>
 
-      <section className="border-b border-border bg-white sticky top-[57px] z-30">
-        <div className="mx-auto max-w-6xl px-4 py-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div className="flex-1 max-w-md">
-            <Input
-              type="search"
-              placeholder="Filter by keyword: Tax, Border, Paxton..."
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              className="border-2 border-foreground/20"
-            />
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              {quickFilters.map((filter) => (
-                <button
-                  key={filter}
-                  type="button"
-                  onClick={() => setQuery(filter)}
-                  className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 border border-border hover:border-primary hover:text-primary"
-                >
-                  {filter}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="flex flex-wrap gap-1.5">
-            {SOURCE_FILTERS.map((filter) => (
-              <button
-                key={filter}
-                type="button"
-                onClick={() => setSourceFilter(filter)}
-                className={`text-[11px] font-semibold uppercase tracking-widest px-3 py-1.5 border ${
-                  filter === sourceFilter
-                    ? "bg-foreground text-background border-foreground"
-                    : "border-border hover:border-primary hover:text-primary"
-                }`}
-              >
-                {filter}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-4 py-10">
-        <div className="flex items-baseline justify-between gap-4 mb-6">
-          <h2 className="font-display text-2xl md:text-3xl tracking-tight">
-            Live Feed · {isFallbackWindow ? "Latest 7 Days" : "Last 24 Hours"}
-          </h2>
-          <span className="text-xs text-muted-foreground whitespace-nowrap">
-            {filtered.length} updates
+      <main className="mx-auto max-w-6xl px-4 py-10">
+        <div className="mb-6 flex items-baseline justify-between gap-4">
+          <h2 className="font-display text-2xl tracking-tight md:text-3xl">Newest Stories</h2>
+          <span className="whitespace-nowrap text-xs text-muted-foreground">
+            {items.length} current stories
           </span>
         </div>
-        {isFallbackWindow && filtered.length > 0 ? (
-          <p className="mb-5 text-sm text-muted-foreground">
-            No qualifying update was published in the last 24 hours, so the most recent Texas updates
-            remain visible.
-          </p>
-        ) : null}
-        {filtered.length === 0 ? (
+
+        {!lead ? (
           <div className="border-2 border-dashed border-border p-10 text-center text-muted-foreground">
             {loading
-              ? "Loading the latest Texas political feeds…"
+              ? "Loading the latest Keep TX Red stories…"
               : loadError
-                ? "The live feed is temporarily unavailable. Please try again shortly."
-                : items.length === 0
-                  ? "No recent Texas political updates are available. The feed refreshes automatically."
-                  : "No items match your filters."}
+                ? "The latest-news feed is temporarily unavailable. Please try again shortly."
+                : "No publish-ready stories are available right now. The page refreshes automatically."}
           </div>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((item) => (
-              <article
-                key={item.link ?? `source-${item.id}`}
-                className="border-2 border-foreground/10 bg-card p-5 hover:border-primary transition-colors"
-              >
-                <time
-                  className="block text-[10px] uppercase tracking-widest text-muted-foreground mb-2"
-                  dateTime={item.pub_date}
-                >
-                  {timeAgo(item.pub_date)}
-                </time>
-                <h3 className="font-serif text-base font-bold leading-snug">
-                  {item.link ? (
-                    <a
-                      href={item.link}
-                      target={item.pendingArticle ? "_blank" : undefined}
-                      rel={item.pendingArticle ? "noopener noreferrer" : undefined}
-                      className="hover:underline underline-offset-4"
-                    >
-                      {item.title}
-                    </a>
-                  ) : (
-                    item.title
-                  )}
-                </h3>
-                {item.description ? (
-                  <p className="mt-2 text-sm text-muted-foreground line-clamp-3">
-                    {item.description}
-                  </p>
-                ) : null}
-                <p className="mt-3 text-[10px] font-semibold uppercase tracking-widest text-primary">
-                  Official source: {item.source}
-                </p>
-                {item.pendingArticle ? (
-                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                    Opens the official source · Keep TX Red article in progress
-                  </p>
-                ) : item.sourceUrl ? (
-                  <a
-                    href={item.sourceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-1 inline-block text-[10px] font-semibold uppercase tracking-widest text-muted-foreground hover:text-primary"
-                  >
-                    View official source ↗
+          <>
+            <article className="mb-8 overflow-hidden border-2 border-foreground/10 bg-card md:grid md:grid-cols-[1.25fr_1fr]">
+              {storyImage(lead) ? (
+                <a href={`/news/${lead.slug}`} className="block min-h-64 overflow-hidden bg-muted md:min-h-full">
+                  <img
+                    src={storyImage(lead) as string}
+                    alt={lead.image_alt_text || lead.title}
+                    className="h-full w-full object-cover"
+                  />
+                </a>
+              ) : null}
+              <div className="flex flex-col justify-center p-6 md:p-8">
+                <div className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] font-semibold uppercase tracking-widest">
+                  {lead.is_breaking ? <span className="text-primary">Breaking</span> : null}
+                  <span className="text-muted-foreground">{lead.category}</span>
+                  <time className="text-muted-foreground" dateTime={lead.published_at}>
+                    {timeAgo(lead.published_at)}
+                  </time>
+                </div>
+                <h2 className="font-display text-3xl leading-tight tracking-tight md:text-4xl">
+                  <a href={`/news/${lead.slug}`} className="hover:underline underline-offset-4">
+                    {lead.title}
                   </a>
+                </h2>
+                {lead.dek ? (
+                  <p className="mt-4 text-base leading-relaxed text-muted-foreground">{lead.dek}</p>
                 ) : null}
-              </article>
-            ))}
-          </div>
-        )}
-      </section>
+                {lead.source_name ? (
+                  <p className="mt-5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                    Source: {lead.source_name}
+                  </p>
+                ) : null}
+              </div>
+            </article>
 
-      <section className="border-t-2 border-foreground/10 bg-muted/40">
-        <div className="mx-auto max-w-4xl px-4 py-14">
-          <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-primary">
-            ★ Frequently Asked
-          </span>
-          <h2 className="font-display text-3xl md:text-5xl tracking-tight mt-2">
-            Texas Political FAQs
-          </h2>
-          <p className="mt-3 text-muted-foreground max-w-2xl">
-            Plain-language answers on the issues driving Texas conservatives — written for readers
-            and structured for AI search engines.
-          </p>
-          <div className="mt-8 bg-white border-2 border-foreground/10 px-6">
-            <Accordion type="single" collapsible className="w-full">
-              {FAQS.map((faq, index) => (
-                <AccordionItem key={faq.q} value={`faq-${index}`}>
-                  <AccordionTrigger className="font-serif text-base md:text-lg font-bold">
-                    {faq.q}
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <p className="text-sm md:text-base text-foreground/80 leading-relaxed">{faq.a}</p>
-                    {"sourceUrl" in faq ? (
-                      <a
-                        href={faq.sourceUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-3 inline-block text-sm font-semibold text-primary underline underline-offset-4"
-                      >
-                        {faq.sourceLabel}
-                      </a>
-                    ) : null}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
-        </div>
-      </section>
+            {rest.length > 0 ? (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {rest.map((article) => (
+                  <StoryCard key={article.id} article={article} />
+                ))}
+              </div>
+            ) : null}
+          </>
+        )}
+      </main>
     </div>
   );
 }
