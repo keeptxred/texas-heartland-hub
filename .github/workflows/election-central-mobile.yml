@@ -48,6 +48,10 @@ jobs:
           VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "false"
           CLOUDFLARE_VITE_REMOTE_BINDINGS: "false"
           CLOUDFLARE_VITE_COMPATIBILITY_DATE: "2026-08-11"
+          # The preview server is loopback-only. Production keeps
+          # global_fetch_strictly_public in wrangler.jsonc; only this local QA
+          # runtime opts into Cloudflare's private-origin compatibility mode.
+          CLOUDFLARE_VITE_ALLOW_PRIVATE_ORIGIN: "true"
         run: bun run elections:test:mobile
       - name: Create mobile QA report
         if: always()
@@ -74,6 +78,7 @@ jobs:
             "## Election Central mobile QA", "", `**Conclusion:** ${passed ? "PASS" : "FAIL"}`, "",
             `- Mobile browser tests: ${checks.mobileTests === "success" ? "✅" : "❌"} ${checks.mobileTests}`,
             "- Cloudflare remote bindings are disabled for browser QA; bindings are locally simulated and no deploy credential is required.",
+            "- Local loopback QA opts into global_fetch_private_origin so Workerd can service its own 127.0.0.1 preview requests; production keeps global_fetch_strictly_public.",
             "- Local workerd uses its newest supported compatibility date (2026-08-11); production remains configured at 2026-08-12.",
             "- Production build is validated by the dedicated Production Build Validation workflow.",
             "- Viewport: 390 × 844", "",
