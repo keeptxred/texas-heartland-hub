@@ -70,7 +70,7 @@ jobs:
 
           date_key="$(date -u +%F)"
           title="[TexasDefined audience signals] ${date_key}"
-          existing="$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --search "${title} in:title" --json number,title --jq '.[] | select(.title == env.title) | .number' 2>/dev/null || true)"
+          existing="$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --search "${title} in:title" --json number,title | jq -r --arg title "$title" '.[] | select(.title == $title) | .number' | head -1)"
           if [[ -n "$existing" ]]; then
             gh issue edit "$existing" --repo "$GITHUB_REPOSITORY" --body-file "$report"
             echo "Updated existing audience-signal issue #$existing"
