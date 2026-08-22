@@ -22,6 +22,7 @@ on:
       - "scripts/elections/apply-verified-candidate-photo-findings-*.mjs"
       - "scripts/elections/apply-official-judicial-photo-findings-2026-08-21-wave2.mjs"
       - "scripts/elections/discover-candidate-photo-sources.mjs"
+      - "scripts/elections/discover-candidate-photos-source-registries.mjs"
       - "scripts/elections/discover-candidate-photos-house-clerk.mjs"
       - "scripts/elections/discover-candidate-photos-congress-gov.mjs"
       - "scripts/elections/discover-candidate-photos-tcta.mjs"
@@ -86,6 +87,8 @@ jobs:
           done
       - name: Apply verified Texas appellate portrait wave 2
         run: node scripts/elections/apply-official-judicial-photo-findings-2026-08-21-wave2.mjs
+      - name: Discover portraits from verified source registries
+        run: node scripts/elections/discover-candidate-photos-source-registries.mjs
       - name: Discover previously unseen candidate photo source domains
         run: node scripts/elections/discover-candidate-photo-sources.mjs
       - name: Discover Congress.gov member portraits
@@ -125,7 +128,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PR_TITLE: Discover and apply verified candidate photos
-          PR_BODY: Automated candidate-photo enrichment from approved, verified, official, public-domain, and review-queued sources. Authoritative rejected or withdrawn filings remain in canonical data but are excluded from coverage only through supported lifecycle fields. Existing source verification and candidate-photo validation are unchanged; protected verify gates merge and deployment.
+          PR_BODY: Automated candidate-photo enrichment from approved, verified, official, public-domain, registry-driven, and review-queued sources. Authoritative rejected or withdrawn filings remain in canonical data but are excluded from coverage only through supported lifecycle fields. Existing source verification and candidate-photo validation are unchanged; protected verify gates merge and deployment.
           COMMIT_MESSAGE: Discover and apply candidate photos from expanded sources
         shell: bash
         run: |
@@ -137,6 +140,7 @@ jobs:
             artifacts/elections/candidate-photo-eligibility-reconciliation.json
             artifacts/elections/candidate-photo-discovery-report.json
             artifacts/elections/candidate-photo-source-discovery-report.json
+            artifacts/elections/candidate-photo-source-registry-report.json
             artifacts/elections/candidate-photo-congress-gov-report.json
             artifacts/elections/candidate-photo-house-clerk-report.json
             artifacts/elections/candidate-photo-tcta-report.json
