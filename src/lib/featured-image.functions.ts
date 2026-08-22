@@ -37,6 +37,7 @@ type ArticleRow = {
   texas_impact_summary: string | null;
   featured_image_url: string | null;
   image_generation_status: string | null;
+  image_validation_note: string | null;
   body_json: unknown;
 };
 
@@ -189,20 +190,26 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
   }
 
   const subject = extractImageSubject(row, grounding);
-  const prompt = buildImagePrompt(subject);
+  const previousFailure = row.image_generation_status === "failed" && row.image_validation_note?.trim()
+    ? row.image_validation_note.trim().slice(0, 600)
+    : "";
+  const initialCorrection = previousFailure
+    ? `A prior production attempt was rejected by the strict validator: ${previousFailure}. Start with a completely different real-world photographic composition that directly depicts the article's concrete action, place, institution, infrastructure, sport, or event without inventing a recognizable person.`
+    : "";
+  const prompt = buildImagePrompt(subject, initialCorrection);
   const alt = buildAltText(row);
   const filename = `${sanitizeFilename(row.slug)}.jpg`;
   await supabase.from("daily_articles").update({ image_generation_status: "generating", image_prompt: prompt }).eq("slug", row.slug);
 
   try {
-    let negativePrompt = buildNegativeImagePrompt(subject);
+    let negativePrompt = buildNegativeImagePrompt(subject, previousFailure);
     const imageModel = subject.domain === "culture" ? CLOUDFLARE_CULTURE_IMAGE_MODEL : undefined;
     let bytes = await generateImageBytes(prompt, negativePrompt, imageModel);
     let verdict = await validateImageMatchesArticle(bytes, subject);
     let usedPrompt = prompt;
 
-    for (let attempt = 1; !verdict.matches && attempt <= 1; attempt += 1) {
-      const correction = `Previous attempt rejected: ${verdict.reason}. Generate a completely new photographic composition. Use unmistakably real camera photography with natural materials and lighting. Do not repeat the rejected motif.`;
+    for (let attempt = 1; !verdict.matches && attempt <= 3; attempt += 1) {
+      const correction = `Validator rejection ${attempt}: ${verdict.reason}. Generate a completely new physical-camera news photograph. The next composition must make the exact concrete story subject obvious from the scene itself, not from text or symbols. Use a different camera position, subject arrangement, and real-world setting from the rejected attempt. No illustration, graphic design, typography, poster, collage, symbolic Texas shape, generic skyline, or generic institutional placeholder. Do not fabricate a recognizable named person's face.`;
       const stronger = buildImagePrompt(subject, correction);
       usedPrompt = stronger;
       negativePrompt = buildNegativeImagePrompt(subject, verdict.reason);
@@ -238,7 +245,7 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
   }
 }
 
-const SELECT_COLS = "slug,title,dek,category,keywords,seo_keywords,affected_regions,seo_headline,discover_category,texas_impact_summary,featured_image_url,image_generation_status,body_json";
+const SELECT_COLS = "slug,title,dek,category,keywords,seo_keywords,affected_regions,seo_headline,discover_category,texas_impact_summary,featured_image_url,image_generation_status,image_validation_note,body_json";
 
 export const generateFeaturedImageForSlug = createServerFn({ method: "POST" })
   .validator((d) => z.object({ slug: z.string().min(1).max(200), overwrite: z.boolean().optional() }).parse(d))
