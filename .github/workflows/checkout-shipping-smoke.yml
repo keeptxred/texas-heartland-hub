@@ -126,10 +126,9 @@ jobs:
           if payload.get("success") is not True:
               raise SystemExit(f"Cloudflare secret-name audit failed: {payload.get('errors')!r}")
           names = sorted({entry.get("name") for entry in payload.get("result", []) if entry.get("name")})
-          payment_names = [name for name in names if any(word in name for word in ("STRIPE", "PRINTIFY", "LOVABLE"))]
+          payment_names = [name for name in names if any(word in name for word in ("STRIPE", "PRINTIFY"))]
           print("Payment-related Worker secret names: " + (", ".join(payment_names) if payment_names else "none"))
           print("Direct Stripe secret-key binding present: " + str(any(name in names for name in ("STRIPE_LIVE_SECRET_KEY", "STRIPE_SECRET_KEY", "STRIPE_SANDBOX_SECRET_KEY"))))
-          print("Lovable gateway binding present: " + str("LOVABLE_API_KEY" in names))
           print("Printify quote bindings present: " + str("PRINTIFY_API_TOKEN" in names and "PRINTIFY_SHOP_ID" in names))
           PY
 
