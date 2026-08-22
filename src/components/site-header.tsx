@@ -125,6 +125,7 @@ export function SiteHeader() {
           })}
           <Link
             to={SHOP_LINK.to}
+            search={SHOP_LINK.search}
             className="ml-1 inline-flex min-h-10 items-center rounded-md border border-white/20 px-3 text-sm font-semibold text-white/90 transition hover:border-white/40 hover:bg-white/10 hover:text-white"
             activeProps={{ className: "border-primary text-white" }}
           >
@@ -185,6 +186,7 @@ export function SiteHeader() {
             ))}
             <Link
               to={SHOP_LINK.to}
+              search={SHOP_LINK.search}
               onClick={() => setOpen(false)}
               className="inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-4 text-sm font-bold text-primary-foreground"
             >
