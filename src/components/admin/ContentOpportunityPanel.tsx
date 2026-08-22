@@ -245,6 +245,7 @@ export function ContentOpportunityPanel() {
   const [imageWorking, setImageWorking] = useState<Record<number, boolean>>({});
   const [filter, setFilter] = useState<FilterKey>("ready");
   const [previewId, setPreviewId] = useState<number | null>(null);
+  const [visibleCount, setVisibleCount] = useState(75);
 
   const IGNORE_STORAGE_KEY = "ktr.opportunities.ignored.v1";
   const [ignored, setIgnored] = useState<Set<string>>(() => {
@@ -640,6 +641,10 @@ export function ContentOpportunityPanel() {
     });
   }, [scored, filter, statuses, preflightById]);
 
+  useEffect(() => {
+    setVisibleCount(75);
+  }, [filter]);
+
   const previewRow = useMemo(
     () => (previewId == null ? null : scored.find((r) => r.id === previewId) ?? null),
     [previewId, scored],
@@ -685,7 +690,7 @@ export function ContentOpportunityPanel() {
               </tr>
             </thead>
             <tbody>
-              {filtered.slice(0, 75).map((r) => {
+              {filtered.slice(0, visibleCount).map((r) => {
                 const status = statuses[r.id];
                 const alreadyPublished = !!status?.rewritten;
                 const isDailyArticle = r.id < 0;
@@ -803,6 +808,20 @@ export function ContentOpportunityPanel() {
               })}
             </tbody>
           </table>
+          <div className="mt-3 flex items-center justify-between gap-3 text-[11px] text-muted-foreground">
+            <span>
+              Showing {Math.min(visibleCount, filtered.length)} of {filtered.length} matching opportunities · {items.length} loaded
+            </span>
+            {visibleCount < filtered.length ? (
+              <button
+                type="button"
+                onClick={() => setVisibleCount((count) => Math.min(count + 75, filtered.length))}
+                className="px-3 py-1 border border-border font-bold uppercase tracking-widest text-foreground hover:bg-muted"
+              >
+                Load more
+              </button>
+            ) : null}
+          </div>
         </div>
       )}
 
