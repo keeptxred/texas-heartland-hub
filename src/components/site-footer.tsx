@@ -41,11 +41,20 @@ export function SiteFooter() {
             </div>
 
             {SITE_NAV_GROUPS.map((group) => (
-              <FooterColumn
-                key={group.id}
-                heading={group.label}
-                links={group.links.map((link) => ({ to: link.to, label: link.label }))}
-              />
+              <nav key={group.id} aria-label={`${group.label} footer links`}>
+                <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.16em] text-accent">
+                  {group.label}
+                </h2>
+                <ul className="space-y-2 text-sm text-white/75">
+                  {group.links.map((link) => (
+                    <li key={link.to}>
+                      <Link to={link.to} className="hover:text-white">
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
             ))}
           </div>
 
@@ -83,28 +92,5 @@ export function SiteFooter() {
         </div>
       </footer>
     </>
-  );
-}
-
-function FooterColumn({
-  heading,
-  links,
-}: {
-  heading: string;
-  links: ReadonlyArray<{ readonly to: string; readonly label: string }>;
-}) {
-  return (
-    <nav aria-label={`${heading} footer links`}>
-      <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.16em] text-accent">{heading}</h2>
-      <ul className="space-y-2 text-sm text-white/75">
-        {links.map((link) => (
-          <li key={link.to}>
-            <Link to={link.to} className="hover:text-white">
-              {link.label}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </nav>
   );
 }
