@@ -20,10 +20,8 @@ function aiProviderState() {
     image_provider_ready: ready,
     image_model: ready ? CLOUDFLARE_IMAGE_MODEL : null,
     image_validation_model: ready ? CLOUDFLARE_VISION_MODEL : null,
-    lovable_rewrite_bypassed: true,
-    lovable_image_bypassed: true,
-    lovable_ai_network_disabled: true,
-    lovable_ai_fallback_allowed: false,
+    external_ai_gateway_disabled: true,
+    direct_provider_only: true,
   };
 }
 

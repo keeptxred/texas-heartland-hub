@@ -8,10 +8,9 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "../components/site-header";
 import { SiteFooter } from "../components/site-footer";
 import { SiteNotFound } from "../components/site-not-found";
@@ -26,6 +25,7 @@ import {
 
 const ADSENSE_CLIENT = "ca-pub-1891256141359926";
 const ADSENSE_SCRIPT = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`;
+const ICON_VERSION = "20260822";
 const ADSENSE_EXCLUDED_PATH_PREFIXES = [
   "/admin",
   "/api",
@@ -42,9 +42,6 @@ const ADSENSE_BOOTSTRAP = `(function(){var p=location.pathname;var x=${JSON.stri
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -91,15 +88,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      {
-        rel: "icon",
-        type: "image/png",
-        href: "/__l5e/assets-v1/44ccd7e8-589f-48c9-b255-0b52bb83c041/red-texas-icon.png",
-      },
-      {
-        rel: "apple-touch-icon",
-        href: "/__l5e/assets-v1/44ccd7e8-589f-48c9-b255-0b52bb83c041/red-texas-icon.png",
-      },
+      { rel: "icon", href: `/favicon.ico?v=${ICON_VERSION}`, sizes: "any" },
+      { rel: "icon", type: "image/svg+xml", href: `/keep-tx-red-icon.svg?v=${ICON_VERSION}` },
+      { rel: "shortcut icon", href: `/favicon.ico?v=${ICON_VERSION}` },
+      { rel: "apple-touch-icon", href: `/keep-tx-red-icon.svg?v=${ICON_VERSION}` },
       { rel: "dns-prefetch", href: "https://fonts.googleapis.com" },
       { rel: "dns-prefetch", href: "https://pagead2.googlesyndication.com" },
       { rel: "dns-prefetch", href: "https://googleads.g.doubleclick.net" },

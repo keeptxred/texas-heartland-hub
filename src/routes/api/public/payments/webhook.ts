@@ -31,15 +31,24 @@ async function createPrintifyOrder(
     return null;
   }
 
-  if (cart.some((item) => !item.p || item.v == null || !Number.isInteger(item.v) || !Number.isInteger(item.q) || item.q < 1)) {
+  if (
+    cart.some(
+      (item) =>
+        !item.p ||
+        item.v == null ||
+        !Number.isInteger(item.v) ||
+        !Number.isInteger(item.q) ||
+        item.q < 1,
+    )
+  ) {
     console.error("Malformed or unfulfillable cart — refusing partial Printify order", externalId, cart);
     return null;
   }
 
-  const line_items = cart.map((i) => ({
-    product_id: i.p,
-    variant_id: i.v as number,
-    quantity: i.q,
+  const line_items = cart.map((item) => ({
+    product_id: item.p,
+    variant_id: item.v as number,
+    quantity: item.q,
   }));
 
   if (line_items.length === 0) {
@@ -85,7 +94,6 @@ function splitName(name?: string | null): { first: string; last: string } {
 
 async function handleCheckoutCompleted(sessionObj: any, env: StripeEnv) {
   const stripe = createStripeClient(env);
-  // Retrieve full session to guarantee shipping_details is present.
   const session = await stripe.checkout.sessions.retrieve(sessionObj.id, {
     expand: ["customer_details", "shipping_details", "line_items", "line_items.data.price.product"],
   });
@@ -137,18 +145,15 @@ async function handleCheckoutCompleted(sessionObj: any, env: StripeEnv) {
 
   const printifyOrderId = await createPrintifyOrder(cart, address, session.id);
 
-  // Persist the order and dispatch notifications. Never let this crash the
-  // webhook — Stripe retries for 3 days and we've already attempted
-  // Printify fulfillment above.
   try {
     const fullName = ship?.name || customer.name || `${first} ${last}`.trim();
     const lineItems = (session as any).line_items?.data ?? [];
-    const items = lineItems.map((li: any) => ({
-      description: li.description,
-      quantity: li.quantity,
-      amount_subtotal: li.amount_subtotal,
-      amount_total: li.amount_total,
-      currency: li.currency,
+    const items = lineItems.map((lineItem: any) => ({
+      description: lineItem.description,
+      quantity: lineItem.quantity,
+      amount_subtotal: lineItem.amount_subtotal,
+      amount_total: lineItem.amount_total,
+      currency: lineItem.currency,
     }));
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -213,7 +218,12 @@ type OrderEmailInput = {
   sessionId: string;
   customerEmail: string;
   customerName: string;
-  items: Array<{ description?: string | null; quantity?: number | null; amount_total?: number | null; currency?: string | null }>;
+  items: Array<{
+    description?: string | null;
+    quantity?: number | null;
+    amount_total?: number | null;
+    currency?: string | null;
+  }>;
   totalCents: number;
   currency: string;
   shipping: {
@@ -229,14 +239,11 @@ type OrderEmailInput = {
 };
 
 async function sendOrderEmails(input: OrderEmailInput) {
-  // Best-effort: /lovable/email/transactional/send exists once the sender
-  // domain is configured and email infra is scaffolded. Until then, log and
-  // move on so payments still succeed.
   const origin =
     (input.request && new URL(input.request.url).origin) ||
     process.env.PUBLIC_SITE_URL ||
     "https://keeptxred.com";
-  const endpoint = `${origin}/lovable/email/transactional/send`;
+  const endpoint = `${origin}/api/email/transactional/send`;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!serviceKey) {
     console.warn("No service role key; skipping order emails", input.sessionId);
@@ -246,11 +253,11 @@ async function sendOrderEmails(input: OrderEmailInput) {
   const templateData = {
     orderId: input.sessionId,
     customerName: input.customerName,
-    items: input.items.map((i) => ({
-      description: i.description ?? "Item",
-      quantity: i.quantity ?? 1,
-      amount: ((i.amount_total ?? 0) / 100).toFixed(2),
-      currency: (i.currency ?? input.currency).toUpperCase(),
+    items: input.items.map((item) => ({
+      description: item.description ?? "Item",
+      quantity: item.quantity ?? 1,
+      amount: ((item.amount_total ?? 0) / 100).toFixed(2),
+      currency: (item.currency ?? input.currency).toUpperCase(),
     })),
     total: (input.totalCents / 100).toFixed(2),
     currency: input.currency,
@@ -291,14 +298,9 @@ async function sendOrderEmails(input: OrderEmailInput) {
 }
 
 async function handleWebhook(req: Request, env: StripeEnv) {
-  // Expose the request so downstream helpers can build absolute URLs for the
-  // in-app email send endpoint without re-plumbing every argument.
   (globalThis as any).__ktrWebhookRequest = req;
   const event = await verifyWebhook(req, env);
 
-  // Defense in depth: the legacy shared endpoint still accepts an env query
-  // parameter, but only live events may reach persistence, email, or Printify
-  // fulfillment. Sandbox events are signature-verified and then stop here.
   if (!allowsRealFulfillment(env)) {
     console.log("Sandbox payment event verified; real fulfillment suppressed", event.type);
     return;
@@ -327,8 +329,8 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
         try {
           await handleWebhook(request, rawEnv as StripeEnv);
           return Response.json({ received: true });
-        } catch (e) {
-          console.error("Webhook error:", e);
+        } catch (error) {
+          console.error("Webhook error:", error);
           return new Response("Webhook error", { status: 400 });
         }
       },
