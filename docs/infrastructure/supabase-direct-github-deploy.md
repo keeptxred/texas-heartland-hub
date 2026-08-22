@@ -1,6 +1,6 @@
 # Direct Supabase migrations from GitHub
 
-KeepTXRed can deploy Supabase database migrations without Lovable.
+KeepTXRed deploys Supabase database migrations directly from GitHub Actions.
 
 ## Preferred production path
 
@@ -17,7 +17,7 @@ supabase db push --db-url "$SUPABASE_DB_URL" --include-all
 supabase migration list --db-url "$SUPABASE_DB_URL"
 ```
 
-This path talks directly to Postgres. It does not use Lovable and it does not require a Supabase Personal Access Token.
+This path talks directly to Postgres and does not require a Supabase Personal Access Token.
 
 ## One-time GitHub setup
 
