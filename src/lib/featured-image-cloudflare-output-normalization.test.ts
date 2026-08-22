@@ -14,6 +14,17 @@ describe("Cloudflare vision verdict normalization", () => {
     });
   });
 
+  it("accepts equals-style positive verdicts seen in production without weakening the gate", () => {
+    const normalized = normalizeCloudflareVisionVerdictOutput(
+      "matches=true photorealistic=true reason=The image depicts a realistic courthouse exterior directly representing the judicial story.",
+    );
+    expect(parseVisionVerdict(normalized)).toEqual({
+      matches: true,
+      photorealistic: true,
+      reason: "The image depicts a realistic courthouse exterior directly representing the judicial story.",
+    });
+  });
+
   it("converts numeric and N/A labels into a conservative parseable rejection", () => {
     const normalized = normalizeCloudflareVisionVerdictOutput(
       "Matches: 0 Photorealistic: N/A Reason: The image is not an adequate editorial photograph for this story.",
