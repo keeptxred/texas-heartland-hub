@@ -733,7 +733,9 @@ export function ElectionHomePage() {
                     <h3 className="mt-2 font-semibold leading-snug text-foreground group-hover:text-primary">
                       {article.title}
                     </h3>
-                    <p className="mt-3 text-xs text-muted-foreground">{article.date}</p>
+                    <p className="mt-3 text-xs text-muted-foreground">
+                      By {article.author} · {article.date}
+                    </p>
                   </div>
                 </Link>
               ))}
