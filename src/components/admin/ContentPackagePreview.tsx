@@ -59,7 +59,7 @@ export function buildPackage(item: SourceItem): ContentPackage {
         `[0-3s] Hook: "${truncate(title, 80)}"\n` +
         `[3-15s] Context: Explain the who, what, and where in plain language.\n` +
         `[15-35s] Why it matters: Impact on Texas families, taxes, or safety.\n` +
-        `[35-45s] CTA: "Follow @KeepTXRed for the full story — link in bio."`,
+        `[35-45s] CTA: "Follow Keep TX Red for the full story — link in bio."`,
       caption: `${truncate(title, 140)}\n\nFull story on KeepTXRed.com. Source: ${item.source}.`,
       hashtags: tagify(kws, [...baseTags, "#TexasNews", "#Reels"]),
     },
