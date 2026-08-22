@@ -5,7 +5,7 @@ on:
   # permanently removing an otherwise publishable article from Facebook and
   # AdSense-ready inventory. The endpoint still applies the full image gate.
   schedule:
-    - cron: "47 */4 * * *"
+    - cron: "*/5 * * * *"
   workflow_run:
     workflows: ["Deploy verified KeepTXRed to Cloudflare"]
     types: [completed]
@@ -70,9 +70,9 @@ jobs:
             exit 0
           fi
 
-          # Keep recurring Cloudflare AI spend bounded while still clearing the
-          # newest missing-image backlog over successive four-hour runs.
-          max_per_run=8
+          # Keep Cloudflare AI spend bounded while aggressively clearing the
+          # finite missing-image backlog under the existing strict quality gate.
+          max_per_run=20
           mapfile -t slugs < <(jq -r --argjson max "$max_per_run" '.slugs[:$max][]' /tmp/adsense-image-dry.json)
           failures=0
           processed=0
