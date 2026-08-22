@@ -43,6 +43,17 @@ const findings = [
     discoveryMethod: "wikimedia-verified-public-domain-us-congress"
   },
   {
+    candidateId: "candidate-jake-ellzey-republican-race-2026-us-house-6",
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Jake_Ellzey_Official_Portrait_-_117th_Congress_%28cropped%29.jpg",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:Jake_Ellzey_Official_Portrait_-_117th_Congress_(cropped).jpg",
+    altText: "Official congressional portrait of U.S. Representative Jake Ellzey of Texas",
+    credit: "U.S. House of Representatives via Wikimedia Commons",
+    license: "Public domain — U.S. Congress",
+    permissionBasis: "Wikimedia Commons file page identifies the image as an official U.S. House portrait and a public-domain U.S. Congress work.",
+    usageStatus: "approved",
+    discoveryMethod: "wikimedia-verified-public-domain-us-congress"
+  },
+  {
     candidateId: "candidate-lizzie-pannill-fletcher-democratic-race-2026-us-house-7",
     imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Lizzie_Fletcher.jpg",
     sourceUrl: "https://commons.wikimedia.org/wiki/File:Lizzie_Fletcher.jpg",
@@ -54,6 +65,28 @@ const findings = [
     discoveryMethod: "wikimedia-verified-public-domain-us-congress"
   },
   {
+    candidateId: "candidate-craig-goldman-republican-race-2026-us-house-12",
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Representative_Craig_Goldman_Official_Portrait.jpg",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:Representative_Craig_Goldman_Official_Portrait.jpg",
+    altText: "Official congressional portrait of U.S. Representative Craig Goldman of Texas",
+    credit: "Ike Hayman, House Creative Services via Wikimedia Commons",
+    license: "Public domain — U.S. Congress",
+    permissionBasis: "Wikimedia Commons file page identifies the source as the Biographical Directory of the U.S. Congress, the author as House Creative Services, and the official portrait as public domain.",
+    usageStatus: "approved",
+    discoveryMethod: "wikimedia-verified-public-domain-us-congress"
+  },
+  {
+    candidateId: "candidate-michael-cloud-republican-race-2026-us-house-27",
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Michael_Cloud%2C_Official_Portrait%2C_115th_Congress.jpg",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:Michael_Cloud,_Official_Portrait,_115th_Congress.jpg",
+    altText: "Official congressional portrait of U.S. Representative Michael Cloud of Texas",
+    credit: "U.S. House Office of Photography via Wikimedia Commons",
+    license: "Public domain — U.S. Congress",
+    permissionBasis: "Wikimedia Commons file page identifies the image as the official U.S. House portrait and public domain.",
+    usageStatus: "approved",
+    discoveryMethod: "wikimedia-verified-public-domain-us-congress"
+  },
+  {
     candidateId: "candidate-sylvia-garcia-democratic-race-2026-us-house-29",
     imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Sylvia_Garcia%2C_official_portrait%2C_116th_Congress_%28cropped%29.jpg",
     sourceUrl: "https://commons.wikimedia.org/wiki/File:Sylvia_Garcia,_official_portrait,_116th_Congress_(cropped).jpg",
@@ -61,6 +94,28 @@ const findings = [
     credit: "United States Congress via Wikimedia Commons",
     license: "Public domain — U.S. Congress",
     permissionBasis: "Wikimedia Commons file page marks the official congressional portrait as a public-domain U.S. Congress image.",
+    usageStatus: "approved",
+    discoveryMethod: "wikimedia-verified-public-domain-us-congress"
+  },
+  {
+    candidateId: "candidate-john-carter-republican-race-2026-us-house-31",
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Rep._John_Carter_%28RTX%29.jpg",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:Rep._John_Carter_(RTX).jpg",
+    altText: "Official congressional portrait of U.S. Representative John Carter of Texas",
+    credit: "U.S. Congress via Wikimedia Commons",
+    license: "Public domain — U.S. Congress",
+    permissionBasis: "Wikimedia Commons file page identifies the image as a U.S. Congress member portrait sourced from Representative Carter's official House page and public domain.",
+    usageStatus: "approved",
+    discoveryMethod: "wikimedia-verified-public-domain-us-congress"
+  },
+  {
+    candidateId: "candidate-brian-babin-republican-race-2026-us-house-36",
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Brian_Babin_official_congressional_photo_2.jpg",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:Brian_Babin_official_congressional_photo_2.jpg",
+    altText: "Official congressional portrait of U.S. Representative Brian Babin of Texas",
+    credit: "United States Congress via Wikimedia Commons",
+    license: "Public domain — U.S. Congress",
+    permissionBasis: "Wikimedia Commons file page identifies the image as an official congressional photo and public-domain U.S. Congress work.",
     usageStatus: "approved",
     discoveryMethod: "wikimedia-verified-public-domain-us-congress"
   },
