@@ -1,0 +1,74 @@
+[
+  {
+    "domain": "jennmackfortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying portraits and campaign photography directly published on Jenn Mack Raphoon's official campaign website only when the image itself is clearly attributable to the campaign and is used for editorial candidate identification with source attribution. Do not infer rights for third-party embeds or linked media.",
+    "searchHint": "site:jennmackfortexas.com Jenn Mack Raphoon portrait about image",
+    "notes": "Verified August 22, 2026. The official 2026 Texas governor campaign site has a dedicated About page with a candidate-identifying image and identifies Jenn Mack Raphoon as an independent write-in candidate."
+  },
+  {
+    "domain": "huffmanforhd1.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying portraits and campaign imagery directly hosted on Sean Huffman's official Texas House District 1 campaign website when the image is clearly attributable to the campaign and used for editorial identification with source attribution. Do not auto-approve third-party podcast or embedded-media imagery.",
+    "searchHint": "site:huffmanforhd1.com Sean Huffman portrait about campaign",
+    "notes": "Verified August 22, 2026 through the campaign site and independent 2026 candidate directories linking the same official domain."
+  },
+  {
+    "domain": "chrisspencer.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying portraits and campaign imagery directly hosted on Chris Spencer's official Texas House District 1 campaign website when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Do not infer rights for third-party or embedded media.",
+    "searchHint": "site:chrisspencer.com Chris Spencer Texas House District 1 portrait",
+    "notes": "Verified August 22, 2026 from current 2026 candidate directories and a July 16, 2025 campaign announcement that identifies chrisspencer.com as the campaign website."
+  },
+  {
+    "domain": "votejuniorezeonu.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying portraits and campaign imagery directly hosted on Junior Ezeonu's official Texas House District 101 campaign website when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Do not infer rights for linked or embedded third-party imagery.",
+    "searchHint": "site:votejuniorezeonu.com Junior Ezeonu portrait campaign",
+    "notes": "Verified August 22, 2026 from the League of Women Voters of Tarrant County guide and current candidate profiles identifying votejuniorezeonu.com as the official campaign website."
+  },
+  {
+    "domain": "secure.actblue.com",
+    "sourceClass": "candidate-fundraising-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use candidate directory entries to confirm candidate context and follow official campaign website links. Do not reuse ActBlue-hosted candidate images unless item-level provenance and reuse permission are independently verified.",
+    "searchHint": "site:secure.actblue.com/directory/TX candidate name Texas 2026",
+    "notes": "Verified August 22, 2026 as a current Texas candidate directory containing candidate images and outbound campaign-site links, including Sean Huffman and other 2026 Texas House candidates."
+  },
+  {
+    "domain": "branch.vote",
+    "sourceClass": "candidate-voter-guide-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use current candidate profiles to confirm race context and locate official campaign websites. Do not reuse Branch-hosted candidate photographs unless original provenance and image-use permission are separately verified at item level.",
+    "searchHint": "site:branch.vote Texas 2026 candidate name campaign website",
+    "notes": "Verified August 22, 2026 through a current Texas House District 101 profile that links Junior Ezeonu's campaign website and includes candidate context."
+  },
+  {
+    "domain": "shoutoutdfw.com",
+    "sourceClass": "local-profile-with-image-rights-leads",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use profile pages as provenance leads when the page expressly states that the interview subject has rights and permissions for submitted images. Do not promote a hosted image until the exact image, candidate identity, original submitter provenance, and reuse basis are verified at item level.",
+    "searchHint": "site:shoutoutdfw.com Texas candidate name image credits rights permissions",
+    "notes": "Verified August 22, 2026 through a Junior Ezeonu profile whose image-credit section states that the subject has rights and permissions for the submitted images. This remains review-only rather than blanket permission."
+  },
+  {
+    "domain": "taketexasback.com",
+    "sourceClass": "texas-candidate-profile-directory",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use candidate profile pages to confirm identity, campaign context, and locate original campaign sources. Do not reuse Take Texas Back-hosted portrait assets unless their original provenance and reuse permission are independently verified at item level.",
+    "searchHint": "site:taketexasback.com/candidate Texas candidate name 2026",
+    "notes": "Verified August 22, 2026 through a Jenn Mack Raphoon candidate profile with a portrait. The hosted image remains review-only because the page does not establish a reusable license for the asset."
+  }
+]
