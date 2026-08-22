@@ -747,6 +747,8 @@ async function runSmartTexasDefinedFacebookPost(request: Request) {
   const db = supabaseAdmin as any;
   const adminSeed = process.env.ADMIN_PASSCODE ?? "keeptxred";
   const mode = request.headers.get("x-ktr-facebook-mode")?.trim().toLowerCase() || "scheduled";
+  const dryRunHeader = request.headers.get("x-ktr-facebook-dry-run")?.trim().toLowerCase() ?? "";
+  const dryRun = dryRunHeader === "1" || dryRunHeader === "true" || dryRunHeader === "yes";
   const now = new Date();
 
   let recentRows: QueueRow[];
@@ -759,7 +761,7 @@ async function runSmartTexasDefinedFacebookPost(request: Request) {
   }
 
   const decision = postingDecision({ now, seed: adminSeed, recentRows });
-  if (mode !== "manual" && !decision.shouldPost) {
+  if (!dryRun && mode !== "manual" && !decision.shouldPost) {
     return Response.json({
       ok: true,
       posted: false,
@@ -792,7 +794,7 @@ async function runSmartTexasDefinedFacebookPost(request: Request) {
   }
 
   const hardGuard = hardPostingGuard({ now, recentRows, livePosts });
-  if (!hardGuard.allowed) {
+  if (!dryRun && !hardGuard.allowed) {
     return Response.json({
       ok: true,
       posted: false,
@@ -806,7 +808,23 @@ async function runSmartTexasDefinedFacebookPost(request: Request) {
   }
 
   const kind = selectKind(adminSeed, decision.dateKey, Math.max(decision.postsToday, hardGuard.postsToday));
-  if (kind === "article") return forwardArticlePost(token);
+  if (kind === "article") {
+    if (dryRun) {
+      return Response.json({
+        ok: true,
+        posted: false,
+        dry_run: true,
+        site: "TexasDefined",
+        kind: "article",
+        would_post: decision.shouldPost && hardGuard.allowed,
+        would_forward_article: true,
+        schedule_decision: decision,
+        hard_guard: hardGuard,
+        note: "Dry run: no Facebook post, article forward, or database write occurred",
+      });
+    }
+    return forwardArticlePost(token);
+  }
 
   const combinedRecentPosts: FacebookPagePost[] = [
     ...livePosts,
@@ -848,6 +866,35 @@ async function runSmartTexasDefinedFacebookPost(request: Request) {
       reason: "TexasDefined Facebook post blocked as an exact or near duplicate",
       kind: post.kind,
       history_days: HISTORY_DAYS,
+    });
+  }
+
+  if (dryRun) {
+    return Response.json({
+      ok: true,
+      posted: false,
+      dry_run: true,
+      site: "TexasDefined",
+      kind: post.kind,
+      title: post.title,
+      message: post.message,
+      article_url: null,
+      would_post: decision.shouldPost && hardGuard.allowed,
+      schedule_decision: decision,
+      hard_guard: hardGuard,
+      content_mix: { engagement: 40, article: 30, fact: 15, seasonal: 10, shop: 5 },
+      duplicate_policy: {
+        history_days: HISTORY_DAYS,
+        exact_and_near_duplicate_guard: true,
+        sources: ["facebook", "publishing_queue"],
+      },
+      lake_level_policy: {
+        enabled: true,
+        source: "Water Data for Texas",
+        source_order: ["recent-conditions.json", "1year.csv", "reservoir page"],
+        max_age_days: LAKE_LEVEL_MAX_AGE_DAYS,
+      },
+      note: "Dry run: no Facebook post or database write occurred",
     });
   }
 
