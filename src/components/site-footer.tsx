@@ -33,6 +33,7 @@ export function SiteFooter() {
                 </Link>
                 <Link
                   to={SHOP_LINK.to}
+                  search={SHOP_LINK.search}
                   className="rounded-md border border-white/20 px-3 py-2 text-xs font-bold text-white/90 hover:border-white/40 hover:text-white"
                 >
                   KTR Shop
