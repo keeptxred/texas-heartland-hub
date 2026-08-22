@@ -1,0 +1,22 @@
+{
+  "sourceName": "Texas Secretary of State — 2026 Independent Candidate Filings",
+  "sourceUrl": "https://www.sos.state.tx.us/elections/laws/independent-declarations-2026.shtml",
+  "retrievedAt": "2026-08-22T13:50:00Z",
+  "entries": [
+    { "fullName": "Jade Simmons", "raceId": "race-2026-us-senate", "filingStatus": "rejected" },
+    { "fullName": "Roy Morales", "raceId": "race-2026-us-house-9", "filingStatus": "rejected" },
+    { "fullName": "Valencia Williams", "raceId": "race-2026-us-house-18", "filingStatus": "rejected" },
+    { "fullName": "Gerard Anthony Villalobos", "raceId": "race-2026-us-house-20", "filingStatus": "rejected" },
+    { "fullName": "Ben Mendoza", "raceId": "race-2026-us-house-23", "filingStatus": "accepted", "ballotAccessStatus": "qualified" },
+    { "fullName": "Scott Cubbler", "raceId": "race-2026-us-house-38", "filingStatus": "rejected" },
+    { "fullName": "William Taggart", "raceId": "race-2026-us-house-38", "filingStatus": "rejected" },
+    { "fullName": "Sarah Bowman Cunningham", "raceId": "race-2026-governor", "filingStatus": "rejected" },
+    { "fullName": "Demetra Jefferson Wysinger", "raceId": "race-2026-governor", "filingStatus": "rejected" },
+    { "fullName": "Mike Collier", "raceId": "race-2026-lieutenant-governor", "filingStatus": "rejected" },
+    { "fullName": "Steve Clugston", "raceId": "race-2026-texas-senate-1", "filingStatus": "rejected" },
+    { "fullName": "L.D. Howard", "raceId": "race-2026-texas-house-124", "filingStatus": "rejected" },
+    { "fullName": "Lisa Emerson", "raceId": "race-2026-texas-house-126", "filingStatus": "rejected" },
+    { "fullName": "Jason Wolff", "raceId": "race-2026-criminal-district-attorney-bexar-county", "filingStatus": "accepted", "ballotAccessStatus": "qualified" },
+    { "fullName": "Kirsta Melton", "raceId": "race-2026-criminal-district-attorney-hays-county", "filingStatus": "accepted", "ballotAccessStatus": "qualified" }
+  ]
+}
