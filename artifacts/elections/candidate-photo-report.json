@@ -1,81 +1,37 @@
 {
-  "generatedAt": "2026-07-30T22:54:01.803Z",
-  "candidateCount": 464,
-  "approvedPhotoCount": 157,
-  "missingPhotoCount": 307,
-  "manifestEntryCount": 157,
+  "generatedAt": "2026-08-22T12:06:46.787Z",
+  "candidateCount": 491,
+  "approvedPhotoCount": 226,
+  "missingPhotoCount": 265,
+  "manifestEntryCount": 226,
+  "coverage": 0.46028513238289204,
+  "coveragePercent": 46.03,
+  "targetCoverage": 0.85,
+  "targetApprovedPhotoCount": 418,
+  "targetMet": false,
   "errors": [],
   "warnings": [],
   "missing": [
     {
-      "candidateId": "candidate-clayton-tucker-democratic-race-2026-agriculture-commissioner",
-      "name": "CLAYTON TUCKER",
-      "raceId": "race-2026-agriculture-commissioner",
-      "party": "democratic",
-      "priority": "standard"
+      "candidateId": "candidate-demetra-jefferson-wysinger-independent-race-2026-governor",
+      "name": "DEMETRA JEFFERSON WYSINGER",
+      "raceId": "race-2026-governor",
+      "party": "independent",
+      "priority": "statewide"
     },
     {
-      "candidateId": "candidate-alfred-molison-jr-green-race-2026-agriculture-commissioner",
-      "name": "ALFRED MOLISON JR.",
-      "raceId": "race-2026-agriculture-commissioner",
-      "party": "green",
-      "priority": "standard"
+      "candidateId": "candidate-sarah-bowman-cunningham-independent-race-2026-governor",
+      "name": "SARAH BOWMAN CUNNINGHAM",
+      "raceId": "race-2026-governor",
+      "party": "independent",
+      "priority": "statewide"
     },
     {
-      "candidateId": "candidate-nate-sheets-republican-race-2026-agriculture-commissioner",
-      "name": "NATE SHEETS",
-      "raceId": "race-2026-agriculture-commissioner",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-shehla-faizi-green-race-2026-comptroller",
-      "name": "SHEHLA FAIZI",
-      "raceId": "race-2026-comptroller",
-      "party": "green",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-okey-anyiam-democratic-race-2026-court-of-criminal-appeals-place-3",
-      "name": "OKEY ANYIAM",
-      "raceId": "race-2026-court-of-criminal-appeals-place-3",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-thomas-smith-republican-race-2026-court-of-criminal-appeals-place-3",
-      "name": "THOMAS SMITH",
-      "raceId": "race-2026-court-of-criminal-appeals-place-3",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-audra-riley-democratic-race-2026-court-of-criminal-appeals-place-4",
-      "name": "AUDRA RILEY",
-      "raceId": "race-2026-court-of-criminal-appeals-place-4",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-kevin-patrick-yeary-republican-race-2026-court-of-criminal-appeals-place-4",
-      "name": "KEVIN PATRICK YEARY",
-      "raceId": "race-2026-court-of-criminal-appeals-place-4",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-holly-taylor-democratic-race-2026-court-of-criminal-appeals-place-9",
-      "name": "HOLLY TAYLOR",
-      "raceId": "race-2026-court-of-criminal-appeals-place-9",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-john-messinger-republican-race-2026-court-of-criminal-appeals-place-9",
-      "name": "JOHN MESSINGER",
-      "raceId": "race-2026-court-of-criminal-appeals-place-9",
-      "party": "republican",
-      "priority": "standard"
+      "candidateId": "candidate-edward-earl-giles-other-race-2026-governor",
+      "name": "EDWARD EARL GILES",
+      "raceId": "race-2026-governor",
+      "party": "other",
+      "priority": "statewide"
     },
     {
       "candidateId": "candidate-jenn-mack-other-race-2026-governor",
@@ -85,17 +41,31 @@
       "priority": "statewide"
     },
     {
-      "candidateId": "candidate-benjamin-flores-democratic-race-2026-land-commissioner",
-      "name": "BENJAMIN FLORES",
-      "raceId": "race-2026-land-commissioner",
-      "party": "democratic",
-      "priority": "standard"
+      "candidateId": "candidate-jinghpaw-majoishingra-other-race-2026-governor",
+      "name": "JINGHPAW MAJOISHINGRA",
+      "raceId": "race-2026-governor",
+      "party": "other",
+      "priority": "statewide"
     },
     {
-      "candidateId": "candidate-kevin-mccormick-green-race-2026-lieutenant-governor",
-      "name": "KEVIN MCCORMICK",
+      "candidateId": "candidate-mike-miller-other-race-2026-governor",
+      "name": "MIKE MILLER",
+      "raceId": "race-2026-governor",
+      "party": "other",
+      "priority": "statewide"
+    },
+    {
+      "candidateId": "candidate-stephen-samuelson-other-race-2026-governor",
+      "name": "STEPHEN SAMUELSON",
+      "raceId": "race-2026-governor",
+      "party": "other",
+      "priority": "statewide"
+    },
+    {
+      "candidateId": "candidate-mike-collier-independent-race-2026-lieutenant-governor",
+      "name": "MIKE COLLIER",
       "raceId": "race-2026-lieutenant-governor",
-      "party": "green",
+      "party": "independent",
       "priority": "statewide"
     },
     {
@@ -106,32 +76,11 @@
       "priority": "statewide"
     },
     {
-      "candidateId": "candidate-bo-french-republican-race-2026-railroad-commissioner",
-      "name": "BO FRENCH",
-      "raceId": "race-2026-railroad-commissioner",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-tiffany-clark-democratic-race-2026-state-board-of-education-13",
-      "name": "TIFFANY CLARK",
-      "raceId": "race-2026-state-board-of-education-13",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-april-williams-moore-republican-race-2026-state-board-of-education-13",
-      "name": "APRIL WILLIAMS MOORE",
-      "raceId": "race-2026-state-board-of-education-13",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-amy-taylor-democratic-race-2026-state-board-of-education-14",
-      "name": "AMY TAYLOR",
-      "raceId": "race-2026-state-board-of-education-14",
-      "party": "democratic",
-      "priority": "standard"
+      "candidateId": "candidate-stephen-samuelson-other-race-2026-lieutenant-governor",
+      "name": "STEPHEN SAMUELSON",
+      "raceId": "race-2026-lieutenant-governor",
+      "party": "other",
+      "priority": "statewide"
     },
     {
       "candidateId": "candidate-mindy-bumgarner-republican-race-2026-state-board-of-education-14",
@@ -155,20 +104,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-allison-bush-democratic-race-2026-state-board-of-education-5",
-      "name": "ALLISON BUSH",
-      "raceId": "race-2026-state-board-of-education-5",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-mica-arellano-republican-race-2026-state-board-of-education-5",
-      "name": "MICA ARELLANO",
-      "raceId": "race-2026-state-board-of-education-5",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-michelle-palmer-democratic-race-2026-state-board-of-education-6",
       "name": "MICHELLE PALMER",
       "raceId": "race-2026-state-board-of-education-6",
@@ -176,10 +111,10 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-tiffany-nelson-republican-race-2026-state-board-of-education-6",
-      "name": "TIFFANY NELSON",
+      "candidateId": "candidate-margo-jordan-other-race-2026-state-board-of-education-6",
+      "name": "MARGO JORDAN",
       "raceId": "race-2026-state-board-of-education-6",
-      "party": "republican",
+      "party": "other",
       "priority": "standard"
     },
     {
@@ -187,41 +122,6 @@
       "name": "TIFFANY PERKINZ",
       "raceId": "race-2026-state-board-of-education-7",
       "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-julie-pickren-republican-race-2026-state-board-of-education-7",
-      "name": "JULIE PICKREN",
-      "raceId": "race-2026-state-board-of-education-7",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-dana-van-de-walker-democratic-race-2026-state-board-of-education-8",
-      "name": "DANA VAN DE WALKER",
-      "raceId": "race-2026-state-board-of-education-8",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-audrey-g-young-republican-race-2026-state-board-of-education-8",
-      "name": "AUDREY G. YOUNG",
-      "raceId": "race-2026-state-board-of-education-8",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-ericka-ledferd-democratic-race-2026-state-board-of-education-9",
-      "name": "ERICKA LEDFERD",
-      "raceId": "race-2026-state-board-of-education-9",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-kason-huddleston-republican-race-2026-state-board-of-education-9",
-      "name": "KASON HUDDLESTON",
-      "raceId": "race-2026-state-board-of-education-9",
-      "party": "republican",
       "priority": "standard"
     },
     {
@@ -393,6 +293,20 @@
       "priority": "standard"
     },
     {
+      "candidateId": "candidate-l-d-howard-independent-race-2026-texas-house-124",
+      "name": "L.D. HOWARD",
+      "raceId": "race-2026-texas-house-124",
+      "party": "independent",
+      "priority": "standard"
+    },
+    {
+      "candidateId": "candidate-l-d-howard-other-race-2026-texas-house-124",
+      "name": "L.D. HOWARD",
+      "raceId": "race-2026-texas-house-124",
+      "party": "other",
+      "priority": "standard"
+    },
+    {
       "candidateId": "candidate-sylvia-soto-republican-race-2026-texas-house-124",
       "name": "SYLVIA SOTO",
       "raceId": "race-2026-texas-house-124",
@@ -418,6 +332,13 @@
       "name": "STEFANIE BORD",
       "raceId": "race-2026-texas-house-126",
       "party": "democratic",
+      "priority": "standard"
+    },
+    {
+      "candidateId": "candidate-lisa-emerson-independent-race-2026-texas-house-126",
+      "name": "LISA EMERSON",
+      "raceId": "race-2026-texas-house-126",
+      "party": "independent",
       "priority": "standard"
     },
     {
@@ -687,6 +608,13 @@
       "priority": "standard"
     },
     {
+      "candidateId": "candidate-kelly-hall-democratic-race-2026-texas-house-19",
+      "name": "KELLY HALL",
+      "raceId": "race-2026-texas-house-19",
+      "party": "democratic",
+      "priority": "standard"
+    },
+    {
       "candidateId": "candidate-tom-luck-democratic-race-2026-texas-house-19",
       "name": "TOM LUCK",
       "raceId": "race-2026-texas-house-19",
@@ -932,13 +860,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-arshia-papari-green-race-2026-texas-house-49",
-      "name": "ARSHIA PAPARI",
-      "raceId": "race-2026-texas-house-49",
-      "party": "green",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-hector-garza-democratic-race-2026-texas-house-5",
       "name": "HECTOR GARZA",
       "raceId": "race-2026-texas-house-5",
@@ -1041,13 +962,6 @@
       "name": "BRITTANY BLACK",
       "raceId": "race-2026-texas-house-61",
       "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-anissa-chilmeran-green-race-2026-texas-house-61",
-      "name": "ANISSA CHILMERAN",
-      "raceId": "race-2026-texas-house-61",
-      "party": "green",
       "priority": "standard"
     },
     {
@@ -1380,6 +1294,13 @@
       "priority": "standard"
     },
     {
+      "candidateId": "candidate-steve-clugston-independent-race-2026-texas-senate-1",
+      "name": "STEVE CLUGSTON",
+      "raceId": "race-2026-texas-senate-1",
+      "party": "independent",
+      "priority": "standard"
+    },
+    {
       "candidateId": "candidate-shannon-dicely-democratic-race-2026-texas-senate-11",
       "name": "SHANNON DICELY",
       "raceId": "race-2026-texas-senate-11",
@@ -1443,13 +1364,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-julian-villarreal-green-race-2026-texas-senate-26",
-      "name": "JULIÁN VILLARREAL",
-      "raceId": "race-2026-texas-senate-26",
-      "party": "green",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-riley-rodriquez-democratic-race-2026-texas-senate-28",
       "name": "RILEY RODRIQUEZ",
       "raceId": "race-2026-texas-senate-28",
@@ -1506,73 +1420,10 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-maggie-ellis-democratic-race-2026-texas-supreme-court-place-1",
-      "name": "MAGGIE ELLIS",
-      "raceId": "race-2026-texas-supreme-court-place-1",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-jimmy-blacklock-republican-race-2026-texas-supreme-court-place-1",
-      "name": "JIMMY BLACKLOCK",
-      "raceId": "race-2026-texas-supreme-court-place-1",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-chari-kelly-democratic-race-2026-texas-supreme-court-place-2",
-      "name": "CHARI KELLY",
-      "raceId": "race-2026-texas-supreme-court-place-2",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-james-p-sullivan-republican-race-2026-texas-supreme-court-place-2",
-      "name": "JAMES P. SULLIVAN",
-      "raceId": "race-2026-texas-supreme-court-place-2",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-kristen-hawkins-democratic-race-2026-texas-supreme-court-place-7",
-      "name": "KRISTEN HAWKINS",
-      "raceId": "race-2026-texas-supreme-court-place-7",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-kyle-hawkins-republican-race-2026-texas-supreme-court-place-7",
-      "name": "KYLE HAWKINS",
-      "raceId": "race-2026-texas-supreme-court-place-7",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-gisela-d-triana-democratic-race-2026-texas-supreme-court-place-8",
-      "name": "GISELA D. TRIANA",
-      "raceId": "race-2026-texas-supreme-court-place-8",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-brett-busby-republican-race-2026-texas-supreme-court-place-8",
-      "name": "BRETT BUSBY",
-      "raceId": "race-2026-texas-supreme-court-place-8",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-yolanda-r-prince-democratic-race-2026-us-house-1",
       "name": "YOLANDA R. PRINCE",
       "raceId": "race-2026-us-house-1",
       "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-nathaniel-moran-republican-race-2026-us-house-1",
-      "name": "NATHANIEL MORAN",
-      "raceId": "race-2026-us-house-1",
-      "party": "republican",
       "priority": "standard"
     },
     {
@@ -1597,24 +1448,10 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-august-pfluger-republican-race-2026-us-house-11",
-      "name": "AUGUST PFLUGER",
-      "raceId": "race-2026-us-house-11",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-angela-heli-rodriguez-prilliman-democratic-race-2026-us-house-12",
       "name": "ANGELA \"HELI\" RODRIGUEZ PRILLIMAN",
       "raceId": "race-2026-us-house-12",
       "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-craig-goldman-republican-race-2026-us-house-12",
-      "name": "CRAIG GOLDMAN",
-      "raceId": "race-2026-us-house-12",
-      "party": "republican",
       "priority": "standard"
     },
     {
@@ -1625,13 +1462,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-ronny-jackson-republican-race-2026-us-house-13",
-      "name": "RONNY JACKSON",
-      "raceId": "race-2026-us-house-13",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-thurman-bill-bartie-democratic-race-2026-us-house-14",
       "name": "THURMAN BILL BARTIE",
       "raceId": "race-2026-us-house-14",
@@ -1639,30 +1469,9 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-randy-weber-republican-race-2026-us-house-14",
-      "name": "RANDY WEBER",
-      "raceId": "race-2026-us-house-14",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-bobby-pulido-democratic-race-2026-us-house-15",
       "name": "BOBBY PULIDO",
       "raceId": "race-2026-us-house-15",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-monica-de-la-cruz-republican-race-2026-us-house-15",
-      "name": "MONICA DE LA CRUZ",
-      "raceId": "race-2026-us-house-15",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-veronica-escobar-democratic-race-2026-us-house-16",
-      "name": "VERONICA ESCOBAR",
-      "raceId": "race-2026-us-house-16",
       "party": "democratic",
       "priority": "standard"
     },
@@ -1681,17 +1490,24 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-pete-sessions-republican-race-2026-us-house-17",
-      "name": "PETE SESSIONS",
-      "raceId": "race-2026-us-house-17",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-christian-dashaun-menefee-democratic-race-2026-us-house-18",
       "name": "CHRISTIAN DASHAUN MENEFEE",
       "raceId": "race-2026-us-house-18",
       "party": "democratic",
+      "priority": "standard"
+    },
+    {
+      "candidateId": "candidate-valencia-williams-independent-race-2026-us-house-18",
+      "name": "VALENCIA WILLIAMS",
+      "raceId": "race-2026-us-house-18",
+      "party": "independent",
+      "priority": "standard"
+    },
+    {
+      "candidateId": "candidate-valencia-williams-other-race-2026-us-house-18",
+      "name": "VALENCIA WILLIAMS",
+      "raceId": "race-2026-us-house-18",
+      "party": "other",
       "priority": "standard"
     },
     {
@@ -1730,10 +1546,10 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-joaquin-castro-democratic-race-2026-us-house-20",
-      "name": "JOAQUIN CASTRO",
+      "candidateId": "candidate-gerard-anthony-villalobos-independent-race-2026-us-house-20",
+      "name": "GERARD ANTHONY VILLALOBOS",
       "raceId": "race-2026-us-house-20",
-      "party": "democratic",
+      "party": "independent",
       "priority": "standard"
     },
     {
@@ -1772,24 +1588,10 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-katy-padilla-stout-democratic-race-2026-us-house-23",
-      "name": "KATY PADILLA STOUT",
-      "raceId": "race-2026-us-house-23",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-ben-mendoza-independent-race-2026-us-house-23",
       "name": "BEN MENDOZA",
       "raceId": "race-2026-us-house-23",
       "party": "independent",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-brandon-herrera-republican-race-2026-us-house-23",
-      "name": "BRANDON HERRERA",
-      "raceId": "race-2026-us-house-23",
-      "party": "republican",
       "priority": "standard"
     },
     {
@@ -1800,13 +1602,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-beth-van-duyne-republican-race-2026-us-house-24",
-      "name": "BETH VAN DUYNE",
-      "raceId": "race-2026-us-house-24",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-dione-sims-democratic-race-2026-us-house-25",
       "name": "DIONE SIMS",
       "raceId": "race-2026-us-house-25",
@@ -1814,24 +1609,10 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-roger-williams-republican-race-2026-us-house-25",
-      "name": "ROGER WILLIAMS",
-      "raceId": "race-2026-us-house-25",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-steven-shook-democratic-race-2026-us-house-26",
       "name": "STEVEN SHOOK",
       "raceId": "race-2026-us-house-26",
       "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-brandon-gill-republican-race-2026-us-house-26",
-      "name": "BRANDON GILL",
-      "raceId": "race-2026-us-house-26",
-      "party": "republican",
       "priority": "standard"
     },
     {
@@ -1849,38 +1630,10 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-michael-cloud-republican-race-2026-us-house-27",
-      "name": "MICHAEL CLOUD",
-      "raceId": "race-2026-us-house-27",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-henry-cuellar-democratic-race-2026-us-house-28",
-      "name": "HENRY CUELLAR",
-      "raceId": "race-2026-us-house-28",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-marlon-duran-green-race-2026-us-house-28",
-      "name": "MARLÓN DURÁN",
-      "raceId": "race-2026-us-house-28",
-      "party": "green",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-tano-e-tijerina-republican-race-2026-us-house-28",
       "name": "TANO E. TIJERINA",
       "raceId": "race-2026-us-house-28",
       "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-sylvia-garcia-democratic-race-2026-us-house-29",
-      "name": "SYLVIA GARCIA",
-      "raceId": "race-2026-us-house-29",
-      "party": "democratic",
       "priority": "standard"
     },
     {
@@ -1895,13 +1648,6 @@
       "name": "EVAN HUNT",
       "raceId": "race-2026-us-house-3",
       "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-keith-self-republican-race-2026-us-house-3",
-      "name": "KEITH SELF",
-      "raceId": "race-2026-us-house-3",
-      "party": "republican",
       "priority": "standard"
     },
     {
@@ -1926,22 +1672,15 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-greg-stoker-green-race-2026-us-house-31",
-      "name": "GREG STOKER",
-      "raceId": "race-2026-us-house-31",
-      "party": "green",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-john-carter-republican-race-2026-us-house-31",
-      "name": "JOHN CARTER",
-      "raceId": "race-2026-us-house-31",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-anthony-bridges-democratic-race-2026-us-house-32",
       "name": "ANTHONY BRIDGES",
+      "raceId": "race-2026-us-house-32",
+      "party": "democratic",
+      "priority": "standard"
+    },
+    {
+      "candidateId": "candidate-dan-barrios-democratic-race-2026-us-house-32",
+      "name": "DAN BARRIOS",
       "raceId": "race-2026-us-house-32",
       "party": "democratic",
       "priority": "standard"
@@ -1954,10 +1693,10 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-colin-allred-democratic-race-2026-us-house-33",
-      "name": "COLIN ALLRED",
+      "candidateId": "candidate-michelle-craig-other-race-2026-us-house-33",
+      "name": "MICHELLE CRAIG",
       "raceId": "race-2026-us-house-33",
-      "party": "democratic",
+      "party": "other",
       "priority": "standard"
     },
     {
@@ -1965,20 +1704,6 @@
       "name": "PATRICK DAVID GILLESPIE",
       "raceId": "race-2026-us-house-33",
       "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-vicente-gonzalez-democratic-race-2026-us-house-34",
-      "name": "VICENTE GONZALEZ",
-      "raceId": "race-2026-us-house-34",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-eddie-espinoza-green-race-2026-us-house-34",
-      "name": "EDDIE ESPINOZA",
-      "raceId": "race-2026-us-house-34",
-      "party": "green",
       "priority": "standard"
     },
     {
@@ -2010,20 +1735,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-brian-babin-republican-race-2026-us-house-36",
-      "name": "BRIAN BABIN",
-      "raceId": "race-2026-us-house-36",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-greg-casar-democratic-race-2026-us-house-37",
-      "name": "GREG CASAR",
-      "raceId": "race-2026-us-house-37",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-lauren-b-pena-republican-race-2026-us-house-37",
       "name": "LAUREN B. PEÑA",
       "raceId": "race-2026-us-house-37",
@@ -2038,10 +1749,17 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-alex-mcmenemy-green-race-2026-us-house-38",
-      "name": "ALEX MCMENEMY",
+      "candidateId": "candidate-scott-cubbler-independent-race-2026-us-house-38",
+      "name": "SCOTT CUBBLER",
       "raceId": "race-2026-us-house-38",
-      "party": "green",
+      "party": "independent",
+      "priority": "standard"
+    },
+    {
+      "candidateId": "candidate-william-taggart-independent-race-2026-us-house-38",
+      "name": "WILLIAM TAGGART",
+      "raceId": "race-2026-us-house-38",
+      "party": "independent",
       "priority": "standard"
     },
     {
@@ -2059,13 +1777,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-pat-fallon-republican-race-2026-us-house-4",
-      "name": "PAT FALLON",
-      "raceId": "race-2026-us-house-4",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-chelsey-hockett-democratic-race-2026-us-house-5",
       "name": "CHELSEY HOCKETT",
       "raceId": "race-2026-us-house-5",
@@ -2073,38 +1784,10 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-lance-gooden-republican-race-2026-us-house-5",
-      "name": "LANCE GOODEN",
-      "raceId": "race-2026-us-house-5",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-danny-minton-democratic-race-2026-us-house-6",
       "name": "DANNY MINTON",
       "raceId": "race-2026-us-house-6",
       "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-jake-ellzey-republican-race-2026-us-house-6",
-      "name": "JAKE ELLZEY",
-      "raceId": "race-2026-us-house-6",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-lizzie-pannill-fletcher-democratic-race-2026-us-house-7",
-      "name": "LIZZIE PANNILL FLETCHER",
-      "raceId": "race-2026-us-house-7",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-espoir-ngabo-green-race-2026-us-house-7",
-      "name": "ESPOIR NGABO",
-      "raceId": "race-2026-us-house-7",
-      "party": "green",
       "priority": "standard"
     },
     {
@@ -2136,6 +1819,13 @@
       "priority": "standard"
     },
     {
+      "candidateId": "candidate-roy-morales-independent-race-2026-us-house-9",
+      "name": "ROY MORALES",
+      "raceId": "race-2026-us-house-9",
+      "party": "independent",
+      "priority": "standard"
+    },
+    {
       "candidateId": "candidate-alex-mealer-republican-race-2026-us-house-9",
       "name": "ALEX MEALER",
       "raceId": "race-2026-us-house-9",
@@ -2143,17 +1833,38 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-james-talarico-democratic-race-2026-us-senate",
-      "name": "JAMES TALARICO",
+      "candidateId": "candidate-jade-simmons-independent-race-2026-us-senate",
+      "name": "JADE SIMMONS",
       "raceId": "race-2026-us-senate",
-      "party": "democratic",
+      "party": "independent",
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-ken-paxton-republican-race-2026-us-senate",
-      "name": "KEN PAXTON",
+      "candidateId": "candidate-avery-ayers-other-race-2026-us-senate",
+      "name": "AVERY AYERS",
       "raceId": "race-2026-us-senate",
-      "party": "republican",
+      "party": "other",
+      "priority": "standard"
+    },
+    {
+      "candidateId": "candidate-bradford-brad-hall-other-race-2026-us-senate",
+      "name": "BRADFORD \"BRAD\" HALL",
+      "raceId": "race-2026-us-senate",
+      "party": "other",
+      "priority": "standard"
+    },
+    {
+      "candidateId": "candidate-jade-simmons-other-race-2026-us-senate",
+      "name": "JADE SIMMONS",
+      "raceId": "race-2026-us-senate",
+      "party": "other",
+      "priority": "standard"
+    },
+    {
+      "candidateId": "candidate-zul-mohamed-other-race-2026-us-senate",
+      "name": "ZUL MOHAMED",
+      "raceId": "race-2026-us-senate",
+      "party": "other",
       "priority": "standard"
     }
   ]
