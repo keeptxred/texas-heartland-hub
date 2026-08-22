@@ -15,32 +15,26 @@ const EMPTY_SHOP_SEARCH = { category: undefined, collection: undefined, q: undef
 const DISCOVERY_PRIORITY_GROUPS = [
   {
     title: "News & analysis",
-    description: "Current reporting, political coverage, economic context, and KTR's permanent editorial case.",
+    description: "Go deeper than the headline feed with durable economic context and KTR's permanent editorial case.",
     links: [
-      { title: "Latest Texas news", href: "/news", description: "Breaking news, statewide reporting, politics, business, and public affairs." },
-      { title: "Texas politics", href: "/texas-politics", description: "Reporting and explainers on state government, campaigns, officials, and policy." },
       { title: "Texas economy", href: "/texas-economy", description: "Jobs, taxes, business, growth, regulation, and major economic developments." },
       { title: "The Texas Case", href: "/texas-case", description: "KTR's permanent editorial arguments on life, liberty, taxes, rights, education, and border security." },
     ],
   },
   {
-    title: "Government & elections",
-    description: "Find the people, institutions, districts, and races that shape Texas government.",
+    title: "Government & representation",
+    description: "Use permanent authority pages to move from statewide coverage to the officials and districts behind it.",
     links: [
-      { title: "Election Central", href: "/elections/2026", description: "Races, candidates, polling, forecasts, results, and voting information for 2026." },
-      { title: "Texas Legislature", href: "/texas-legislature", description: "Sessions, lawmakers, committees, chambers, and legislative resources." },
       { title: "Representatives", href: "/representatives", description: "Find Texas lawmakers and connect legislative coverage to public officials." },
       { title: "Legislative districts", href: "/districts", description: "Permanent authority pages for every Texas House and Senate district." },
     ],
   },
   {
     title: "Issues & reference",
-    description: "Go deeper with policy trackers, law guides, official-data references, and practical tools.",
+    description: "Use source-first trackers and official-data references when you need more than a category landing page.",
     links: [
       { title: "Policy trackers", href: "/policy", description: "Current issue pages for taxes, border security, education, energy, elections, crime, water, healthcare, and more." },
-      { title: "Texas law library", href: "/laws", description: "Plain-English legal frameworks grounded in Texas statutes and official sources." },
       { title: "Texas Data Center", href: "/data", description: "Authoritative source maps for taxes, spending, elections, demographics, energy, water, and public safety." },
-      { title: "Policy tools", href: "/tools", description: "Calculators and scenario tools with transparent assumptions and Texas-specific context." },
     ],
   },
 ] as const;
@@ -102,7 +96,7 @@ function DiscoveryPriorityLinks() {
         <div className="max-w-3xl">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">More from Keep TX Red</p>
           <h2 id="keep-tx-red-discovery-priority" className="mt-2 font-display text-3xl sm:text-4xl">Find the part of KTR you need</h2>
-          <p className="mt-3 leading-7 text-muted-foreground">Election Central is the homepage focus during election season. The rest of Keep TX Red is organized below so news, government resources, policy coverage, and reference material remain easy to find.</p>
+          <p className="mt-3 leading-7 text-muted-foreground">Election Central is the homepage focus during election season. These deeper destinations add context and reference material without repeating the primary navigation.</p>
         </div>
 
         <div className="mt-9 grid gap-8 lg:grid-cols-3">
