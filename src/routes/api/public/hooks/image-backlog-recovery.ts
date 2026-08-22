@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
+import { isLegacyGeneratedNewsAsset } from "@/lib/facebook-image-readiness";
 import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 
@@ -39,16 +40,28 @@ async function authorized(request: Request): Promise<boolean> {
   }
 }
 
+function isMissingImage(row: BacklogRow): boolean {
+  return !row.featured_image_url?.trim();
+}
+
 function isEligible(row: BacklogRow): boolean {
   if (!row.published_at) return false;
+  if (!meetsArticleMainWordCount(row.kind, row.body_json)) return false;
+
   const status = (row.image_generation_status ?? "").trim().toLowerCase();
-  if (status !== "pending" && status !== "failed") return false;
-  if (row.featured_image_url?.trim()) return false;
-  return meetsArticleMainWordCount(row.kind, row.body_json);
+  const missing = isMissingImage(row);
+  const legacy = isLegacyGeneratedNewsAsset(row.featured_image_url);
+  if (!missing && !legacy) return false;
+
+  if (missing) return status === "pending" || status === "failed";
+  return status === "pending" || status === "failed" || status === "ready";
 }
 
 function priority(row: BacklogRow): number {
-  return (row.image_generation_status ?? "").trim().toLowerCase() === "pending" ? 0 : 1;
+  const status = (row.image_generation_status ?? "").trim().toLowerCase();
+  if (isMissingImage(row)) return status === "pending" ? 0 : 1;
+  if (status === "pending" || status === "failed") return 2;
+  return 3;
 }
 
 async function post({ request }: { request: Request }) {
@@ -62,17 +75,33 @@ async function post({ request }: { request: Request }) {
   // Generated database types can lag internal image-recovery fields.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabaseAdmin as any;
+  const columns = "slug,published_at,featured_image_url,image_generation_status,kind,body_json";
 
-  const { data, error } = await db
-    .from("daily_articles")
-    .select("slug,published_at,featured_image_url,image_generation_status,kind,body_json")
-    .is("featured_image_url", null)
-    .in("image_generation_status", ["pending", "failed"])
-    .order("published_at", { ascending: false })
-    .limit(250);
-  if (error) return Response.json({ error: error.message }, { status: 500 });
+  const [missingResult, legacyResult] = await Promise.all([
+    db
+      .from("daily_articles")
+      .select(columns)
+      .is("featured_image_url", null)
+      .in("image_generation_status", ["pending", "failed"])
+      .order("published_at", { ascending: false })
+      .limit(250),
+    db
+      .from("daily_articles")
+      .select(columns)
+      .like("featured_image_url", "%/images/news/generated/%")
+      .in("image_generation_status", ["pending", "failed", "ready"])
+      .order("published_at", { ascending: false })
+      .limit(250),
+  ]);
+  if (missingResult.error) return Response.json({ error: missingResult.error.message }, { status: 500 });
+  if (legacyResult.error) return Response.json({ error: legacyResult.error.message }, { status: 500 });
 
-  const eligible = ((data ?? []) as BacklogRow[])
+  const merged = new Map<string, BacklogRow>();
+  for (const row of [...(missingResult.data ?? []), ...(legacyResult.data ?? [])] as BacklogRow[]) {
+    if (row?.slug) merged.set(row.slug, row);
+  }
+
+  const eligible = [...merged.values()]
     .filter(isEligible)
     .sort((a, b) => {
       const byStatus = priority(a) - priority(b);
@@ -82,22 +111,24 @@ async function post({ request }: { request: Request }) {
       return bTime - aTime;
     });
   const slugs = eligible.map((row) => row.slug);
+  const missingCount = eligible.filter(isMissingImage).length;
+  const legacyCount = eligible.filter((row) => isLegacyGeneratedNewsAsset(row.featured_image_url)).length;
 
   if (dryRun) {
     return Response.json({
       ok: true,
       dryRun: true,
       ready: slugs.length,
-      pending: eligible.filter((row) => priority(row) === 0).length,
-      failed: eligible.filter((row) => priority(row) === 1).length,
+      missing: missingCount,
+      legacy: legacyCount,
       slugs,
-      scope: "missing_published_quality_article_images_pending_first",
+      scope: "missing_or_legacy_published_quality_article_images_pending_first",
     });
   }
 
   if (!requestedSlug) return Response.json({ error: "Missing eligible slug" }, { status: 400 });
   if (!slugs.includes(requestedSlug)) {
-    return Response.json({ error: "Slug is not currently an eligible published missing-image backlog item" }, { status: 409 });
+    return Response.json({ error: "Slug is not currently an eligible published image-recovery backlog item" }, { status: 409 });
   }
 
   const generated = await generateFeaturedImageForSlugDirect(requestedSlug, true);
@@ -110,7 +141,7 @@ async function post({ request }: { request: Request }) {
     processed: 1,
     succeeded: result.ok ? 1 : 0,
     failed: result.ok ? 0 : 1,
-    scope: "missing_published_quality_article_images_pending_first",
+    scope: "missing_or_legacy_published_quality_article_images_pending_first",
     results: [result],
   }, { status: result.ok ? 200 : 422 });
 }
