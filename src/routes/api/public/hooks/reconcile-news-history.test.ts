@@ -40,7 +40,7 @@ describe("reconcile news history hook", () => {
     expect(source).toContain("persistStructuredFacts");
     expect(source).toContain("aiCalls: 0");
     expect(source).not.toContain("runCloudflareJson");
-    expect(source).not.toContain("LOVABLE_API_KEY");
+    expect(source).not.toContain("KTR_AI_PROVIDER_READY");
   });
 
   it("queues ambiguous and contaminated history for review without assigning cluster ownership", () => {

@@ -273,7 +273,7 @@ function deterministicImageBucket(title: string, dek: string): ImageBucket {
 
 async function classifyImageBuckets(
   rows: { slug: string; title: string; dek: string }[],
-  _lovableApiKey: string,
+  _aiProviderReady: string,
 ): Promise<Record<string, ImageBucket>> {
   return Object.fromEntries(
     rows.map((row) => [row.slug, deterministicImageBucket(row.title, row.dek)]),
@@ -282,14 +282,14 @@ async function classifyImageBuckets(
 
 async function rewriteHeadlinesBatch(
   rows: { slug: string; title: string }[],
-  _lovableApiKey: string,
+  _aiProviderReady: string,
 ): Promise<Record<string, string>> {
   return Object.fromEntries(rows.map((row) => [row.slug, neutralizeFirstPersonTitle(row.title)]));
 }
 
 async function generateHeadlineVariantsBatch(
   rows: { slug: string; title: string }[],
-  _lovableApiKey: string,
+  _aiProviderReady: string,
 ): Promise<Record<string, HeadlineVariants>> {
   return Object.fromEntries(rows.map((row) => [row.slug, { a: row.title, b: row.title }]));
 }
@@ -544,7 +544,7 @@ function getRewriteFailure(it: Item): string {
   return rewriteFailureReasons.get(it) ?? "AI rewrite failed — unknown failure after AI generation";
 }
 
-async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | null> {
+async function rewriteItem(it: Item, aiProviderReady: string): Promise<Rewrite | null> {
   // Neutralize first-person / personal-experience headlines BEFORE the AI
   // sees them so the model never echoes "I visited…" / "My parents…" back
   // into the article title, prompt, or downstream Facebook caption.
@@ -566,9 +566,9 @@ async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | n
   const result = await runEditorialRewrite<Rewrite>(async (addendum, attempt) => {
     gatewayFailureReason = null;
     try {
-      const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      const r = await fetch("https://ai.internal.keeptxred.local/v1/chat/completions", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "Lovable-API-Key": lovableApiKey },
+        headers: { "Content-Type": "application/json", "X-KTR-AI-Provider": aiProviderReady },
         body: JSON.stringify({
           model: "google/gemini-3-flash-preview",
           messages: [
@@ -668,20 +668,20 @@ function rewriteMainProseWordCount(rw: Rewrite): number {
 async function expandRewrite(
   it: Item,
   prior: Rewrite,
-  lovableApiKey: string,
+  aiProviderReady: string,
 ): Promise<Rewrite | null> {
   // The shared editorial engine already performs one targeted repair. Do not
   // spend a third paid call expanding a draft that passed evidence-driven
   // validation; the scheduler should move to another candidate instead.
   void it;
-  void lovableApiKey;
+  void aiProviderReady;
   return prior;
 }
 
 // One draft and, only when needed, one expansion. A failed paid call is left
 // for a deliberate manual retry instead of being multiplied automatically.
-async function rewriteItemWithRetry(it: Item, lovableApiKey: string): Promise<Rewrite | null> {
-  let draft = await rewriteItem(it, lovableApiKey);
+async function rewriteItemWithRetry(it: Item, aiProviderReady: string): Promise<Rewrite | null> {
+  let draft = await rewriteItem(it, aiProviderReady);
   if (!draft) {
     console.warn("[publishSingleFeedItem] rewrite failed", { source: it.source, link: it.link });
     return null;
@@ -691,7 +691,7 @@ async function rewriteItemWithRetry(it: Item, lovableApiKey: string): Promise<Re
   // value. Expansion is skipped once the draft clears the tiered minimum,
   // avoiding filler paragraphs written solely to hit a word count.
   if (rewriteMainProseWordCount(draft) < target) {
-    const expanded = await expandRewrite(it, draft, lovableApiKey);
+    const expanded = await expandRewrite(it, draft, aiProviderReady);
     if (expanded) draft = expanded;
   }
   const finalWords = rewriteMainProseWordCount(draft);
@@ -975,15 +975,15 @@ async function handler() {
     internalSlugsLinked: 0,
   };
   if (articleEligibleFresh.length > 0) {
-    const lovableApiKey = process.env.LOVABLE_API_KEY;
+    const aiProviderReady = process.env.KTR_AI_PROVIDER_READY;
     // Concurrency-limited so the Worker request budget can absorb large
     // ingestion bursts (Google News catch-up windows can produce 100+ fresh
     // items). Empirically 4 parallel Gemini calls complete comfortably inside
     // the request budget; unbounded Promise.all caused every fetch to abort.
-    stageCounts.rewriteAttempted = lovableApiKey ? articleEligibleFresh.length : 0;
-    const rewrites: (Rewrite | null)[] = lovableApiKey
+    stageCounts.rewriteAttempted = aiProviderReady ? articleEligibleFresh.length : 0;
+    const rewrites: (Rewrite | null)[] = aiProviderReady
       ? await mapWithConcurrency(articleEligibleFresh, 4, (it) =>
-          rewriteItemWithRetry(it, lovableApiKey!),
+          rewriteItemWithRetry(it, aiProviderReady!),
         )
       : articleEligibleFresh.map(() => null);
     for (const r of rewrites) {
@@ -1037,17 +1037,17 @@ async function handler() {
     }
 
     // ONE AI call classifies the whole batch into image buckets (cached in DB).
-    const imageMap = lovableApiKey
+    const imageMap = aiProviderReady
       ? await classifyImageBuckets(
           articleRows.map((r) => ({ slug: r.slug, title: r.title, dek: r.dek })),
-          lovableApiKey!,
+          aiProviderReady!,
         )
       : {};
     // ONE AI call rewrites the batch's headlines for SEO/Discover (cached in DB).
-    const seoMap = lovableApiKey
+    const seoMap = aiProviderReady
       ? await rewriteHeadlinesBatch(
           articleRows.map((r) => ({ slug: r.slug, title: r.title })),
-          lovableApiKey!,
+          aiProviderReady!,
         )
       : {};
     for (const row of articleRows) {
@@ -1062,13 +1062,13 @@ async function handler() {
     }
 
     // ONE AI call generates A/B headline variants for the whole batch.
-    const variantMap = lovableApiKey
+    const variantMap = aiProviderReady
       ? await generateHeadlineVariantsBatch(
           articleRows.map((r) => ({
             slug: r.slug,
             title: (r as { seo_headline?: string | null }).seo_headline ?? r.title,
           })),
-          lovableApiKey!,
+          aiProviderReady!,
         )
       : {};
 
@@ -1197,7 +1197,7 @@ async function handler() {
     .is("internal_slug", null)
     .limit(25);
   if (orphans?.length) {
-    const lovableApiKey = process.env.LOVABLE_API_KEY;
+    const aiProviderReady = process.env.KTR_AI_PROVIDER_READY;
     // Routine Texas Register orphans stay feed-only forever — filtering here
     // stops them from re-consuming AI rewrite attempts on every backfill run.
     const items: Item[] = orphans!
@@ -1209,8 +1209,8 @@ async function handler() {
         description: row.description ?? "",
       }))
       .filter(isSignificantTexasRegisterItem);
-    const rewrites: (Rewrite | null)[] = lovableApiKey
-      ? await mapWithConcurrency(items, 4, (it) => rewriteItemWithRetry(it, lovableApiKey!))
+    const rewrites: (Rewrite | null)[] = aiProviderReady
+      ? await mapWithConcurrency(items, 4, (it) => rewriteItemWithRetry(it, aiProviderReady!))
       : items.map(() => null);
     console.log("[ingest-feeds] orphan backfill", {
       candidates: items.length,
@@ -1354,8 +1354,8 @@ export async function publishSingleFeedItem(
   if (isPuzzleTitle(row.title)) {
     return { ok: false, error: "Puzzle / filler titles are blocked from publish." };
   }
-  const lovableApiKey = process.env.LOVABLE_API_KEY;
-  if (!lovableApiKey) return { ok: false, error: "Missing LOVABLE_API_KEY" };
+  const aiProviderReady = process.env.KTR_AI_PROVIDER_READY;
+  if (!aiProviderReady) return { ok: false, error: "Missing KTR_AI_PROVIDER_READY" };
 
   const item: Item = {
     title: row.title,
@@ -1540,7 +1540,7 @@ export async function publishSingleFeedItem(
       rw = refreshed?.result_json ?? null;
       rewriteFailureReason = refreshed?.failure_reason ?? rewriteFailureReason;
     } else {
-      rw = await rewriteItemWithRetry(item, lovableApiKey);
+      rw = await rewriteItemWithRetry(item, aiProviderReady);
       rewriteFailureReason = rw ? null : getRewriteFailure(item);
       const cacheUpdate = rw
         ? {

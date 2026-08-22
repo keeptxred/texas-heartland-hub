@@ -85,7 +85,7 @@ function BackfillDashboard() {
 
   async function runPass() {
     setRunning(true);
-    setMessage('Running one bounded Lovable Cloud backfill pass…');
+    setMessage('Running one bounded server-side backfill pass…');
     const result = await runLegislativeBackfillPass({
       data: { token, session: '89R', maxSeconds: 60, limit: 100 },
     });
@@ -114,7 +114,7 @@ function BackfillDashboard() {
         <div className="mx-auto max-w-6xl px-4 py-8">
           <a href="/admin" className="text-sm text-white/80 hover:underline">← Editorial Dashboard</a>
           <h1 className="mt-3 text-3xl font-bold md:text-5xl">Legislative Backfill</h1>
-          <p className="mt-2 text-sm text-white/85">Run bounded official-subject and relationship passes inside Lovable Cloud.</p>
+          <p className="mt-2 text-sm text-white/85">Run bounded official-subject and relationship passes through the production admin runtime.</p>
         </div>
       </header>
 

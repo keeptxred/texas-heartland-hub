@@ -26,7 +26,7 @@ const sessions = String(args.sessions || process.env.TLO_SESSIONS || '89R').spli
 const dryRun = Boolean(args['dry-run']);
 const maxRecords = Number(args.limit || 0);
 const freshRun = Boolean(args.fresh);
-// A Lovable/CI command has a hard execution ceiling; stop cleanly before it and checkpoint.
+// A legacy builder/CI command has a hard execution ceiling; stop cleanly before it and checkpoint.
 const maxSeconds = Number(args['max-seconds'] || process.env.TLO_MAX_SECONDS || 480);
 // Already-imported source files are re-downloaded only after this many days, so restarts are cheap
 // while later incremental runs still pick up upstream changes.
