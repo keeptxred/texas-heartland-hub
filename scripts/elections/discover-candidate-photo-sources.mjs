@@ -12,10 +12,11 @@ const USER_AGENT = "KeepTXRedCandidatePhotoBot/2.0 (+https://keeptxred.com)";
 const MAX_CANDIDATES_PER_RUN = 36;
 const CONCURRENCY = 3;
 
-const [candidates, manifest, registry] = await Promise.all([
+const [candidates, manifest, registry, previousReport] = await Promise.all([
   readJson(CANDIDATES_PATH),
   readJson(MANIFEST_PATH),
   loadSourceRegistries(REGISTRY_DIR),
+  readJsonIfExists(REPORT_PATH),
 ]);
 
 const approved = new Set(
@@ -23,10 +24,17 @@ const approved = new Set(
     .map((entry) => entry.candidateId)
 );
 const knownDomains = new Set(registry.map((entry) => normalizeHost(entry.domain)).filter(Boolean));
-const queue = candidates
+const missingCandidates = candidates
   .filter((candidate) => !approved.has(candidate.id))
-  .sort(prioritySort)
-  .slice(0, MAX_CANDIDATES_PER_RUN);
+  .sort(prioritySort);
+const requestedOffset = Number(previousReport?.nextCandidateOffset ?? 0);
+const searchStartOffset = missingCandidates.length
+  ? ((Number.isFinite(requestedOffset) ? requestedOffset : 0) % missingCandidates.length + missingCandidates.length) % missingCandidates.length
+  : 0;
+const queue = takeWrapped(missingCandidates, searchStartOffset, MAX_CANDIDATES_PER_RUN);
+const nextCandidateOffset = missingCandidates.length
+  ? (searchStartOffset + queue.length) % missingCandidates.length
+  : 0;
 
 const discoveries = [];
 const failures = [];
@@ -68,8 +76,11 @@ await writeFile(REPORT_PATH, `${JSON.stringify({
   generatedAt: new Date().toISOString(),
   purpose: "Discover previously unseen candidate-photo source domains without auto-approving their images.",
   candidateCount: candidates.length,
-  missingCandidateCount: candidates.length - approved.size,
+  missingCandidateCount: missingCandidates.length,
   searchedCandidateCount: queue.length,
+  searchStartOffset,
+  nextCandidateOffset,
+  searchedCandidateIds: queue.map((candidate) => candidate.id),
   knownSourceDomainCount: knownDomains.size,
   loadedRegistryEntryCount: registry.length,
   newSourceCandidateCount: deduped.length,
@@ -79,7 +90,8 @@ await writeFile(REPORT_PATH, `${JSON.stringify({
   failures,
 }, null, 2)}\n`);
 
-console.log(`Source expansion searched ${queue.length} missing candidates and found ${domainSummary.size} previously unregistered domain(s).`);
+console.log(`Source expansion searched ${queue.length} missing candidates starting at offset ${searchStartOffset} and found ${domainSummary.size} previously unregistered domain(s).`);
+console.log(`Next source-expansion run will continue at missing-candidate offset ${nextCandidateOffset}.`);
 console.log(`Loaded ${registry.length} source entries from every candidate-photo-source-registry*.json file.`);
 console.log("New domains remain review-only until identity, provenance, and reuse rights are verified.");
 
@@ -183,6 +195,12 @@ function isBlockedHost(host) {
     || /wikipedia\.org$|wikimedia\.org$/.test(host);
 }
 
+function takeWrapped(items, start, limit) {
+  if (!items.length || limit <= 0) return [];
+  const count = Math.min(limit, items.length);
+  return Array.from({ length: count }, (_, index) => items[(start + index) % items.length]);
+}
+
 async function loadSourceRegistries(directory) {
   const names = (await readdir(directory))
     .filter((name) => /^candidate-photo-source-registry(?:-[a-z0-9-]+)?\.json$/i.test(name))
@@ -215,3 +233,4 @@ async function runPool(items, concurrency, worker) {
 
 function dedupeBy(items, keyFn) { const seen = new Set(); return items.filter((item) => { const key = keyFn(item); if (seen.has(key)) return false; seen.add(key); return true; }); }
 async function readJson(filePath) { return JSON.parse(await readFile(filePath, "utf8")); }
+async function readJsonIfExists(filePath) { try { return await readJson(filePath); } catch { return null; } }
