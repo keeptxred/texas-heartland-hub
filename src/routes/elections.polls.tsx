@@ -103,6 +103,28 @@ function ElectionPollsContent() {
     sort: [{ field: "field_end_date", direction: "desc" }],
   });
 
+  const hasFilters = Boolean(
+    raceId ||
+      candidateId ||
+      pollsterName.trim() ||
+      population ||
+      sponsorType ||
+      fieldDateFrom ||
+      fieldDateTo ||
+      internalPoll != null,
+  );
+
+  const clearFilters = () => {
+    setRaceId(null);
+    setCandidateId(null);
+    setPollsterName("");
+    setPopulation(null);
+    setSponsorType(null);
+    setFieldDateFrom("");
+    setFieldDateTo("");
+    setInternalPoll(null);
+  };
+
   return (
     <ElectionPollListPage
       error={races.error ?? candidates.error ?? polls.error}
@@ -114,88 +136,111 @@ function ElectionPollsContent() {
       }}
     >
       <div className="space-y-6">
-        <div
-          aria-label="Filter election polls"
-          className="grid gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4 md:grid-cols-2 xl:grid-cols-3"
+        <section
+          aria-labelledby="poll-filter-heading"
+          className="rounded-xl border border-border bg-card p-5 shadow-sm"
         >
-          <PollFilterSelect
-            label="Race"
-            value={raceId ?? ""}
-            options={
-              races.data?.items.map((race) => ({
-                value: race.id,
-                label: race.name,
-              })) ?? []
-            }
-            onChange={(value) =>
-              setRaceId((current) => {
-                const next = races.data?.items.find((race) => race.id === value)?.id ?? null;
-                if (next !== current) setCandidateId(null);
-                return next;
-              })
-            }
-          />
-          <PollFilterSelect
-            label="Candidate"
-            value={candidateId ?? ""}
-            options={
-              candidates.data?.items.map((candidate) => ({
-                value: candidate.id,
-                label: candidate.fullName,
-              })) ?? []
-            }
-            onChange={(value) =>
-              setCandidateId(
-                candidates.data?.items.find((candidate) => candidate.id === value)?.id ?? null,
-              )
-            }
-          />
-          <label className="text-sm font-semibold text-slate-900">
-            Pollster
-            <input
-              type="search"
-              value={pollsterName}
-              onChange={(event) => setPollsterName(event.target.value)}
-              placeholder="Pollster name"
-              className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-100"
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Refine polling</p>
+              <h2 id="poll-filter-heading" className="mt-1 text-lg font-bold text-foreground">
+                Filter published polls
+              </h2>
+              <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
+                Narrow verified polling by race, candidate, pollster, sample population, sponsor, source type, or field dates.
+              </p>
+            </div>
+            {hasFilters ? (
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="text-sm font-semibold text-primary underline-offset-4 hover:underline"
+              >
+                Clear all filters
+              </button>
+            ) : null}
+          </div>
+
+          <div aria-label="Filter election polls" className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <PollFilterSelect
+              label="Race"
+              value={raceId ?? ""}
+              options={
+                races.data?.items.map((race) => ({
+                  value: race.id,
+                  label: race.name,
+                })) ?? []
+              }
+              onChange={(value) =>
+                setRaceId((current) => {
+                  const next = races.data?.items.find((race) => race.id === value)?.id ?? null;
+                  if (next !== current) setCandidateId(null);
+                  return next;
+                })
+              }
             />
-          </label>
-          <PollFilterSelect
-            label="Population"
-            value={population ?? ""}
-            options={POLL_POPULATIONS.map((value) => ({
-              value,
-              label: POLL_POPULATION_LABELS[value],
-            }))}
-            onChange={(value) =>
-              setPopulation(POLL_POPULATIONS.find((item) => item === value) ?? null)
-            }
-          />
-          <PollFilterSelect
-            label="Sponsor type"
-            value={sponsorType ?? ""}
-            options={POLL_SPONSOR_TYPES.map((value) => ({
-              value,
-              label: POLL_SPONSOR_TYPE_LABELS[value],
-            }))}
-            onChange={(value) =>
-              setSponsorType(POLL_SPONSOR_TYPES.find((item) => item === value) ?? null)
-            }
-          />
-          <PollFilterSelect
-            label="Poll source"
-            value={internalPoll == null ? "" : internalPoll ? "internal" : "independent"}
-            options={[
-              { value: "independent", label: "Independent polls" },
-              { value: "internal", label: "Internal polls" },
-            ]}
-            onChange={(value) =>
-              setInternalPoll(value === "internal" ? true : value === "independent" ? false : null)
-            }
-          />
-          <DateFilter label="Field date from" value={fieldDateFrom} onChange={setFieldDateFrom} />
-          <DateFilter label="Field date to" value={fieldDateTo} onChange={setFieldDateTo} />
-        </div>
+            <PollFilterSelect
+              label="Candidate"
+              value={candidateId ?? ""}
+              options={
+                candidates.data?.items.map((candidate) => ({
+                  value: candidate.id,
+                  label: candidate.fullName,
+                })) ?? []
+              }
+              onChange={(value) =>
+                setCandidateId(
+                  candidates.data?.items.find((candidate) => candidate.id === value)?.id ?? null,
+                )
+              }
+            />
+            <label className="text-sm font-semibold text-foreground">
+              Pollster
+              <input
+                type="search"
+                value={pollsterName}
+                onChange={(event) => setPollsterName(event.target.value)}
+                placeholder="Pollster name"
+                className="mt-2 block w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+              />
+            </label>
+            <PollFilterSelect
+              label="Population"
+              value={population ?? ""}
+              options={POLL_POPULATIONS.map((value) => ({
+                value,
+                label: POLL_POPULATION_LABELS[value],
+              }))}
+              onChange={(value) =>
+                setPopulation(POLL_POPULATIONS.find((item) => item === value) ?? null)
+              }
+            />
+            <PollFilterSelect
+              label="Sponsor type"
+              value={sponsorType ?? ""}
+              options={POLL_SPONSOR_TYPES.map((value) => ({
+                value,
+                label: POLL_SPONSOR_TYPE_LABELS[value],
+              }))}
+              onChange={(value) =>
+                setSponsorType(POLL_SPONSOR_TYPES.find((item) => item === value) ?? null)
+              }
+            />
+            <PollFilterSelect
+              label="Poll source"
+              value={internalPoll == null ? "" : internalPoll ? "internal" : "independent"}
+              options={[
+                { value: "independent", label: "Independent polls" },
+                { value: "internal", label: "Internal polls" },
+              ]}
+              onChange={(value) =>
+                setInternalPoll(value === "internal" ? true : value === "independent" ? false : null)
+              }
+            />
+            <DateFilter label="Field date from" value={fieldDateFrom} onChange={setFieldDateFrom} />
+            <DateFilter label="Field date to" value={fieldDateTo} onChange={setFieldDateTo} />
+          </div>
+        </section>
 
         {polls.isEmpty ? (
           raceId &&
@@ -279,12 +324,12 @@ interface PollFilterSelectProps {
 
 function PollFilterSelect({ label, value, options, onChange }: PollFilterSelectProps) {
   return (
-    <label className="text-sm font-semibold text-slate-900">
+    <label className="text-sm font-semibold text-foreground">
       {label}
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-100"
+        className="mt-2 block w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
       >
         <option value="">All</option>
         {options.map((option) => (
@@ -307,13 +352,13 @@ function DateFilter({
   onChange: (value: string) => void;
 }) {
   return (
-    <label className="text-sm font-semibold text-slate-900">
+    <label className="text-sm font-semibold text-foreground">
       {label}
       <input
         type="date"
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-100"
+        className="mt-2 block w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
       />
     </label>
   );

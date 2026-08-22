@@ -86,16 +86,16 @@ function TexasStatewideElections() {
       navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.statewide} />}
     >
       <section className="mb-10">
-        <p className="text-sm font-semibold text-red-700">{verifiedStatewideCount} of {STATEWIDE_RACES.length} expected statewide race records are currently published and verified.</p>
-        <h2 className="mt-2 text-2xl font-bold text-slate-950">2026 statewide races and candidates</h2>
-        <p className="mt-2 max-w-3xl leading-7 text-slate-600">These offices are elected statewide. Candidate names below come only from published, verified candidate records attached to the corresponding verified race record.</p>
+        <p className="text-sm font-semibold text-primary">{verifiedStatewideCount} of {STATEWIDE_RACES.length} expected statewide race records are currently published and verified.</p>
+        <h2 className="mt-2 text-2xl font-bold text-foreground">2026 statewide races and candidates</h2>
+        <p className="mt-2 max-w-3xl leading-7 text-muted-foreground">These offices are elected statewide. Candidate names below come only from published, verified candidate records attached to the corresponding verified race record.</p>
         <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {STATEWIDE_RECORDS.map((item) => (
-            <article key={item.slug} className="rounded-xl border border-slate-200 bg-white p-5">
-              <a href={`/elections/races/${item.slug}`} className="text-lg font-bold text-slate-950 hover:text-red-700 hover:underline">{item.name}</a>
+            <article key={item.slug} className="rounded-xl border border-border bg-card p-5 shadow-sm">
+              <a href={`/elections/races/${item.slug}`} className="text-lg font-bold text-foreground hover:text-primary hover:underline">{item.name}</a>
               {item.race ? (
-                item.candidates.length ? <ul className="mt-3 space-y-2">{item.candidates.map((candidate) => <li key={candidate.id}><a href={`/elections/candidates/${candidate.slug}`} className="text-sm font-semibold text-red-700 hover:underline">{candidate.fullName} →</a></li>)}</ul>
-                : <p className="mt-3 text-sm text-slate-500">Race verified; no published verified candidate profiles are attached yet.</p>
+                item.candidates.length ? <ul className="mt-3 space-y-2">{item.candidates.map((candidate) => <li key={candidate.id}><a href={`/elections/candidates/${candidate.slug}`} className="text-sm font-semibold text-primary hover:underline">{candidate.fullName} →</a></li>)}</ul>
+                : <p className="mt-3 text-sm text-muted-foreground">Race verified; no published verified candidate profiles are attached yet.</p>
               ) : <p className="mt-3 text-sm text-amber-700">Expected 2026 office; verified race record not yet published.</p>}
             </article>
           ))}
@@ -120,5 +120,5 @@ function TexasStatewideElections() {
 }
 
 function ElectionSeoLink({ href, title, description }: { href: string; title: string; description: string }) {
-  return <a href={href} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-red-300 hover:shadow-md"><h2 className="text-xl font-bold text-slate-950">{title}</h2><p className="mt-2 leading-7 text-slate-600">{description}</p><span className="mt-4 inline-block font-semibold text-red-700">View election coverage →</span></a>;
+  return <a href={href} className="rounded-xl border border-border bg-card p-6 shadow-sm transition hover:border-primary/40 hover:shadow-md"><h2 className="text-xl font-bold text-foreground">{title}</h2><p className="mt-2 leading-7 text-muted-foreground">{description}</p><span className="mt-4 inline-block font-semibold text-primary">View election coverage →</span></a>;
 }

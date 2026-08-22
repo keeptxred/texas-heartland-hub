@@ -10,6 +10,16 @@ export interface CandidateBiographySectionProps {
   race: RaceDetail | null;
 }
 
+const PARTY_STYLES: Record<CandidateParty, string> = {
+  republican: "border-red-200 bg-red-50 text-red-800",
+  democratic: "border-blue-200 bg-blue-50 text-blue-800",
+  libertarian: "border-amber-200 bg-amber-50 text-amber-800",
+  green: "border-green-200 bg-green-50 text-green-800",
+  independent: "border-violet-200 bg-violet-50 text-violet-800",
+  nonpartisan: "border-border bg-muted/50 text-muted-foreground",
+  other: "border-border bg-muted/50 text-muted-foreground",
+};
+
 function formatParty(value: CandidateParty) {
   return value
     .split("_")
@@ -34,10 +44,10 @@ export function CandidateBiographySection({ candidate, race }: CandidateBiograph
   const biography = candidate.biography ?? featuredProfile?.biography ?? null;
 
   return (
-    <article className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+    <article className="rounded-xl border border-border bg-card p-6 shadow-sm sm:p-8">
       <div className="grid gap-7 md:grid-cols-[12rem_1fr]">
         <div>
-          <div className="flex aspect-square items-center justify-center overflow-hidden rounded-xl bg-slate-100 text-4xl font-bold text-slate-500">
+          <div className="flex aspect-square items-center justify-center overflow-hidden rounded-xl bg-muted text-4xl font-bold text-muted-foreground">
             {usableImage ? (
               <img
                 src={usableImage}
@@ -49,11 +59,11 @@ export function CandidateBiographySection({ candidate, race }: CandidateBiograph
             )}
           </div>
           {approvedCandidateImage && candidate.imageRights?.credit ? (
-            <p className="mt-2 text-xs text-slate-500">Photo: {candidate.imageRights.credit}</p>
+            <p className="mt-2 text-xs text-muted-foreground">Photo: {candidate.imageRights.credit}</p>
           ) : featuredProfile ? (
-            <p className="mt-2 text-xs leading-5 text-slate-500">
+            <p className="mt-2 text-xs leading-5 text-muted-foreground">
               Photo: {featuredProfile.imageCredit}. {featuredProfile.imageLicense}.{" "}
-              <a className="font-semibold text-red-700 hover:underline" href={featuredProfile.imageSourceUrl} target="_blank" rel="noreferrer">
+              <a className="font-semibold text-primary hover:underline" href={featuredProfile.imageSourceUrl} target="_blank" rel="noreferrer">
                 Source and license
               </a>
             </p>
@@ -62,31 +72,31 @@ export function CandidateBiographySection({ candidate, race }: CandidateBiograph
 
         <div>
           <div className="flex flex-wrap gap-2">
-            <span className="rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-700 ring-1 ring-inset ring-red-200">
+            <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${PARTY_STYLES[candidate.party]}`}>
               {candidate.partyLabel ?? formatParty(candidate.party)}
             </span>
-            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+            <span className="rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
               {CANDIDATE_STATUS_LABELS[candidate.status]}
             </span>
           </div>
-          <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-950 sm:text-5xl">
+          <h1 className="mt-4 font-display text-4xl leading-none tracking-tight text-foreground sm:text-5xl">
             {candidate.fullName}
           </h1>
 
           <dl className="mt-6 grid gap-4 sm:grid-cols-2">
-            <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Office</dt>
-              <dd className="mt-1 font-semibold text-slate-950">{officeName ?? "No office assignment published"}</dd>
+            <div className="rounded-lg bg-muted/30 p-4">
+              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Office</dt>
+              <dd className="mt-1 font-semibold text-foreground">{officeName ?? "No office assignment published"}</dd>
             </div>
-            <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Incumbency</dt>
-              <dd className="mt-1 font-semibold text-slate-950">{INCUMBENCY_TYPE_LABELS[candidate.incumbencyType]}</dd>
+            <div className="rounded-lg bg-muted/30 p-4">
+              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Incumbency</dt>
+              <dd className="mt-1 font-semibold text-foreground">{INCUMBENCY_TYPE_LABELS[candidate.incumbencyType]}</dd>
             </div>
           </dl>
 
           <section aria-labelledby="candidate-biography-heading" className="mt-7">
-            <h2 id="candidate-biography-heading" className="text-xl font-bold text-slate-950">Biography</h2>
-            <p className="mt-3 whitespace-pre-line text-sm leading-7 text-slate-600">
+            <h2 id="candidate-biography-heading" className="text-xl font-bold text-foreground">Biography</h2>
+            <p className="mt-3 whitespace-pre-line text-sm leading-7 text-muted-foreground">
               {biography ?? "A verified candidate biography has not been published."}
             </p>
           </section>
@@ -94,18 +104,18 @@ export function CandidateBiographySection({ candidate, race }: CandidateBiograph
       </div>
 
       {featuredProfile ? (
-        <div className="mt-8 grid gap-6 border-t border-slate-200 pt-8 lg:grid-cols-2">
+        <div className="mt-8 grid gap-6 border-t border-border pt-8 lg:grid-cols-2">
           <ProfileList title="Education" items={featuredProfile.education} />
           <ProfileList title="Career and public service" items={featuredProfile.career} />
           {featuredProfile.committees?.length ? <ProfileList title="Committee assignments" items={featuredProfile.committees} /> : null}
           <ProfileList title="Key public record" items={featuredProfile.keyRecord} />
           <section className="lg:col-span-2" aria-labelledby="candidate-sources-heading">
-            <h2 id="candidate-sources-heading" className="text-lg font-bold text-slate-950">Primary sources</h2>
+            <h2 id="candidate-sources-heading" className="text-lg font-bold text-foreground">Primary sources</h2>
             <ul className="mt-3 flex flex-wrap gap-3">
               {featuredProfile.sources.map((source) => (
                 <li key={source.url}>
-                  <a href={source.url} target="_blank" rel="noreferrer" className="inline-flex rounded-full border border-slate-300 px-3 py-1.5 text-xs font-semibold text-red-700 hover:border-red-300 hover:bg-red-50">
-                    {source.label}
+                  <a href={source.url} target="_blank" rel="noreferrer" className="inline-flex rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold text-primary transition hover:border-primary hover:bg-primary/5">
+                    {source.label} ↗
                   </a>
                 </li>
               ))}
@@ -120,9 +130,9 @@ export function CandidateBiographySection({ candidate, race }: CandidateBiograph
 function ProfileList({ title, items }: { title: string; items: readonly string[] }) {
   return (
     <section>
-      <h2 className="text-lg font-bold text-slate-950">{title}</h2>
-      <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-600">
-        {items.map((item) => <li key={item} className="rounded-lg bg-slate-50 px-4 py-3">{item}</li>)}
+      <h2 className="text-lg font-bold text-foreground">{title}</h2>
+      <ul className="mt-3 space-y-2 text-sm leading-6 text-muted-foreground">
+        {items.map((item) => <li key={item} className="rounded-lg bg-muted/30 px-4 py-3">{item}</li>)}
       </ul>
     </section>
   );

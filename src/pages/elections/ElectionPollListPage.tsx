@@ -42,13 +42,13 @@ export function ElectionPollListPage({
     >
       <div className="space-y-8">
         <header className="max-w-3xl">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
             KeepTXRed Election Central
           </p>
-          <h2 className="mt-3 text-4xl font-bold tracking-tight text-slate-950 sm:text-5xl">
+          <h2 className="mt-3 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
             Texas election polls
           </h2>
-          <p className="mt-4 text-lg leading-8 text-slate-600">
+          <p className="mt-4 text-lg leading-8 text-muted-foreground">
             Compare qualifying public polls with their field dates, samples, sponsors, toplines, and
             available methodology.
           </p>
@@ -62,16 +62,16 @@ export function ElectionPollListPage({
 
         <section
           aria-labelledby="polling-source-network"
-          className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+          className="rounded-2xl border border-border bg-card p-6 shadow-sm"
         >
           <div className="max-w-3xl">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-700">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
               Source transparency
             </p>
-            <h2 id="polling-source-network" className="mt-2 text-2xl font-bold text-slate-950">
+            <h2 id="polling-source-network" className="mt-2 text-2xl font-bold text-foreground">
               Texas polling source network
             </h2>
-            <p className="mt-3 leading-7 text-slate-600">
+            <p className="mt-3 leading-7 text-muted-foreground">
               KeepTXRed reviews original pollster releases and cross-checks major public indexes,
               including RealClearPolling. Aggregator pages help identify missing polls; their
               averages are not copied into the KeepTXRed average. Every poll shown below links to
@@ -80,16 +80,16 @@ export function ElectionPollListPage({
           </div>
           <div className="mt-5 grid gap-4 md:grid-cols-2">
             {TEXAS_POLLING_REFERENCE_SOURCES.map((source) => (
-              <article key={source.url} className="rounded-xl border border-slate-200 p-4">
+              <article key={source.url} className="rounded-xl border border-border bg-background p-4">
                 <div className="flex items-start justify-between gap-3">
-                  <h3 className="font-bold text-slate-950">{source.name}</h3>
-                  <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold capitalize text-slate-700">
+                  <h3 className="font-bold text-foreground">{source.name}</h3>
+                  <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-semibold capitalize text-muted-foreground">
                     {source.role}
                   </span>
                 </div>
-                <p className="mt-2 text-sm leading-6 text-slate-600">{source.description}</p>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{source.description}</p>
                 <a
-                  className="mt-3 inline-flex text-sm font-bold text-red-700 underline-offset-4 hover:underline"
+                  className="mt-3 inline-flex text-sm font-bold text-primary underline-offset-4 hover:underline"
                   href={source.url}
                   rel={source.url.startsWith("https://keeptxred.com") ? undefined : "noopener noreferrer"}
                   target={source.url.startsWith("https://keeptxred.com") ? undefined : "_blank"}

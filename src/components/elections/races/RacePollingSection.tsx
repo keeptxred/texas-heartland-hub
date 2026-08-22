@@ -26,10 +26,10 @@ export function RacePollingSection({ race, polls, hasStaleData = false }: RacePo
   return (
     <section aria-labelledby="race-polls-heading" className="space-y-5">
       <div>
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-700">Public polling</p>
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Public polling</p>
         <h2
           id="race-polls-heading"
-          className="mt-2 text-2xl font-bold tracking-tight text-slate-950"
+          className="mt-2 text-2xl font-bold tracking-tight text-foreground"
         >
           Latest polls
         </h2>
@@ -94,9 +94,9 @@ export function RacePollingSection({ race, polls, hasStaleData = false }: RacePo
                   sourceUrl={poll.methodology.methodologyUrl ?? undefined}
                 />
                 {methodologyNotes.length > 0 ? (
-                  <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-4">
-                    <h3 className="text-sm font-semibold text-slate-950">Methodology notes</h3>
-                    <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-slate-600">
+                  <div className="mt-3 rounded-lg border border-border bg-muted/30 p-4">
+                    <h3 className="text-sm font-semibold text-foreground">Methodology notes</h3>
+                    <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-muted-foreground">
                       {methodologyNotes.map((note) => (
                         <li key={note}>{note}</li>
                       ))}
