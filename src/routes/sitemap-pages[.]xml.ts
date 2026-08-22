@@ -26,6 +26,7 @@ import { isAgencyAuthorityIndexable } from "@/lib/agency-authority-indexability"
 const GUIDE_LASTMOD = toIsoDate("2026-08-09T00:00:00-05:00");
 const ISSUE_GUIDE_REFRESH = toIsoDate("2026-08-19T13:15:00-05:00");
 const HANDBOOK_REFRESH = toIsoDate("2026-08-22T10:11:00-05:00");
+const ACCOUNTABILITY_HANDBOOK_REFRESH = toIsoDate("2026-08-22T11:00:00-05:00");
 const GSC_CANONICAL_REFRESH = toIsoDate("2026-08-11T12:30:00-05:00");
 const CITATION_MAGNET_REFRESH = toIsoDate("2026-08-11T22:00:00-05:00");
 const TEXAS_CASE_REFRESH = toIsoDate("2026-08-18T23:00:00-05:00");
@@ -86,6 +87,7 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/topics": GUIDE_LASTMOD,
   "/issues": ISSUE_GUIDE_REFRESH,
   "/issues/texas-policy-handbook": HANDBOOK_REFRESH,
+  "/issues/texas-government-accountability-handbook": ACCOUNTABILITY_HANDBOOK_REFRESH,
   "/tools": ISSUE_GUIDE_REFRESH,
   "/tools/texas-spending-growth-cap": ISSUE_GUIDE_REFRESH,
   "/tools/texas-tax-structure-comparison": ISSUE_GUIDE_REFRESH,
@@ -124,7 +126,7 @@ const STATIC_PATHS:string[]=[
   "/civic-tools","/civic-tools/government-authority-finder","/civic-tools/texas-law-finder","/civic-tools/bill-finder","/civic-tools/compare-legislators",
   "/contact","/privacy","/terms-of-service",
   "/shipping-policy","/return-refund-policy","/glossary","/editorial-standards","/citation-guide",
-  "/topics","/issues","/issues/texas-policy-handbook","/tools","/tools/texas-spending-growth-cap","/tools/texas-tax-structure-comparison","/tools/texas-rainy-day-fund","/tools/texas-budget-headroom","/texas-politics","/texas-political-reference","/policy","/texas-economy","/texas-border-security","/texas-energy",
+  "/topics","/issues","/issues/texas-policy-handbook","/issues/texas-government-accountability-handbook","/tools","/tools/texas-spending-growth-cap","/tools/texas-tax-structure-comparison","/tools/texas-rainy-day-fund","/tools/texas-budget-headroom","/texas-politics","/texas-political-reference","/policy","/texas-economy","/texas-border-security","/texas-energy",
   "/texas-agriculture","/texas-veterans","/texas-law-enforcement","/texas-case","/texas-case/facts",
   "/authors","/shop",
 ];
