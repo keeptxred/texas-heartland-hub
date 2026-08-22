@@ -2,7 +2,7 @@ name: KeepTXRed Image Backlog Recovery
 
 on:
   workflow_run:
-    workflows: ["Deploy verified KeepTXRed to Cloudflare"]
+    workflows: ["Repository test and build health", "Deploy verified KeepTXRed to Cloudflare"]
     types: [completed]
     branches: [main]
   workflow_dispatch:
