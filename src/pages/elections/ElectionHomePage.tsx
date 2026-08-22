@@ -49,6 +49,12 @@ const PUBLISHED_FORECASTS = forecastsSnapshot.filter(
 );
 const PUBLISHED_RESULT_COUNT = resultsSnapshot.length;
 
+function formatSummaryMetricValue(label: string | number, value: string | number) {
+  const count = Number(value);
+  if (label === "Results" && count === 0) return "Not reporting";
+  return count.toLocaleString("en-US");
+}
+
 const QUICK_LINKS = [
   {
     title: "Track the races",
@@ -224,7 +230,9 @@ export function ElectionHomePage() {
                 ].map(([label, value]) => (
                   <div key={label} className="rounded-xl border border-border bg-card p-5 shadow-sm">
                     <dt className="text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">{label}</dt>
-                    <dd className="mt-3 text-3xl font-bold tracking-tight text-foreground">{Number(value).toLocaleString("en-US")}</dd>
+                    <dd className="mt-3 text-3xl font-bold tracking-tight text-foreground">
+                      {formatSummaryMetricValue(label, value)}
+                    </dd>
                   </div>
                 ))}
               </dl>
@@ -257,7 +265,7 @@ export function ElectionHomePage() {
                       {label}
                     </dt>
                     <dd className="mt-3 text-3xl font-bold tracking-tight text-foreground">
-                      {Number(value).toLocaleString("en-US")}
+                      {formatSummaryMetricValue(label, value)}
                     </dd>
                   </div>
                 ))}
