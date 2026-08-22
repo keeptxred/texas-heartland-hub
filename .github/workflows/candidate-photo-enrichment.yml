@@ -20,6 +20,7 @@ on:
       - "scripts/elections/discover-candidate-photo-sources.mjs"
       - "scripts/elections/discover-candidate-photos-house-clerk.mjs"
       - "scripts/elections/discover-candidate-photos-congress-gov.mjs"
+      - "scripts/elections/discover-candidate-photos-tcta.mjs"
       - "src/data/elections/2026/candidate-photo-assets.json"
       - "src/data/elections/2026/candidate-photo-source-registry.json"
 
@@ -70,6 +71,8 @@ jobs:
         run: node scripts/elections/discover-candidate-photos-congress-gov.mjs
       - name: Discover U.S. House Clerk member portraits
         run: node scripts/elections/discover-candidate-photos-house-clerk.mjs
+      - name: Discover TCTA-linked official campaign portraits
+        run: node scripts/elections/discover-candidate-photos-tcta.mjs
       - name: Discover directory candidate portraits
         run: node scripts/elections/discover-candidate-photos-directories.mjs
       - name: Discover linked and public-source candidate portraits
@@ -112,6 +115,7 @@ jobs:
             artifacts/elections/candidate-photo-source-discovery-report.json
             artifacts/elections/candidate-photo-congress-gov-report.json
             artifacts/elections/candidate-photo-house-clerk-report.json
+            artifacts/elections/candidate-photo-tcta-report.json
             artifacts/elections/candidate-photo-search-provider-report.json
             artifacts/elections/candidate-photo-expanded-report.json
             artifacts/elections/candidate-photo-race-aware-report.json
