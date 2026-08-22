@@ -17,9 +17,7 @@ on:
       - "scripts/elections/apply-official-federal-photo-findings-2026-08-21-wave2.mjs"
       - "scripts/elections/apply-public-domain-congress-photo-findings-2026-08-21-wave3.mjs"
       - "scripts/elections/apply-public-domain-congress-photo-findings-2026-08-22-wave4.mjs"
-      - "scripts/elections/apply-verified-candidate-photo-findings-2026-08-22-wave6.mjs"
-      - "scripts/elections/apply-verified-candidate-photo-findings-2026-08-22-wave8.mjs"
-      - "scripts/elections/apply-verified-candidate-photo-findings-2026-08-22-wave10.mjs"
+      - "scripts/elections/apply-verified-candidate-photo-findings-*.mjs"
       - "scripts/elections/apply-official-judicial-photo-findings-2026-08-21-wave2.mjs"
       - "scripts/elections/discover-candidate-photo-sources.mjs"
       - "scripts/elections/discover-candidate-photos-house-clerk.mjs"
@@ -71,12 +69,16 @@ jobs:
         run: node scripts/elections/apply-public-domain-congress-photo-findings-2026-08-21-wave3.mjs
       - name: Apply verified public-domain congressional portrait wave 4
         run: node scripts/elections/apply-public-domain-congress-photo-findings-2026-08-22-wave4.mjs
-      - name: Apply verified statewide and SBOE portrait wave 6
-        run: node scripts/elections/apply-verified-candidate-photo-findings-2026-08-22-wave6.mjs
-      - name: Apply verified candidate portrait wave 8
-        run: node scripts/elections/apply-verified-candidate-photo-findings-2026-08-22-wave8.mjs
-      - name: Apply verified SBOE portrait wave 10
-        run: node scripts/elections/apply-verified-candidate-photo-findings-2026-08-22-wave10.mjs
+      - name: Apply all verified candidate portrait waves
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          scripts=(scripts/elections/apply-verified-candidate-photo-findings-*.mjs)
+          for script in "${scripts[@]}"; do
+            echo "Applying $script"
+            node "$script"
+          done
       - name: Apply verified Texas appellate portrait wave 2
         run: node scripts/elections/apply-official-judicial-photo-findings-2026-08-21-wave2.mjs
       - name: Discover previously unseen candidate photo source domains
