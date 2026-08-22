@@ -34,5 +34,23 @@
     "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Chris Spencer's official Texas House campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, donation graphics, endorsement imagery featuring other people, stock imagery, issue graphics, videos, and third-party embeds.",
     "searchHint": "site:chrisspencer.com Chris Spencer Texas House District 1 portrait about",
     "notes": "Verified August 22, 2026. The live campaign site identifies Chris Spencer as running for Texas House, contains an About Chris Spencer biography and candidate imagery, and carries a political-advertising disclaimer paid for by the Chris Spencer Campaign. TCTA and Vote-USA identify him as the 2026 House District 1 Republican candidate."
+  },
+  {
+    "domain": "nicolekingforall.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Nicole King's official Texas House District 3 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, donation graphics, stock imagery, issue graphics, videos, and third-party embeds.",
+    "searchHint": "site:nicolekingforall.com Nicole King Texas House District 3 portrait meet Nicole",
+    "notes": "Verified August 22, 2026. The live campaign site identifies Nicole King as the Democratic candidate for Texas House District 3 for the November 3, 2026 election, includes a Meet Nicole page and candidate imagery, and carries a Paid for by Friends of Nicole King disclaimer."
+  },
+  {
+    "domain": "kristenplaisance.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Kristen Plaisance's official Texas House District 3 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude donation graphics, endorsement imagery featuring other people, stock imagery, issue graphics, videos, and third-party embeds.",
+    "searchHint": "site:kristenplaisance.com Kristen Plaisance Texas House District 3 portrait about",
+    "notes": "Verified August 22, 2026. The live campaign site states that Kristen Plaisance is running for Texas House District 3, includes candidate-identifying imagery and an About page, and carries a Paid for by Kristen Plaisance Campaign disclaimer."
   }
 ]
