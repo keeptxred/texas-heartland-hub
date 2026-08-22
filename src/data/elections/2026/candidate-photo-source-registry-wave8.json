@@ -25,5 +25,14 @@
     "rightsRule": "Use the official Texas Judicial Branch directory to confirm current judicial office, court, contact details, and identity before tracing portraits to the court, campaign, or another source with documented image rights.",
     "searchHint": "site:card.txcourts.gov candidate or judge name",
     "notes": "Verified August 22, 2026 as an official Texas Judicial Branch directory useful for matching statewide and appellate judicial candidates to current offices."
+  },
+  {
+    "domain": "politics1.com",
+    "sourceClass": "independent-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use current Texas candidate listings and campaign-site links as discovery leads only. Do not reuse Politics1-hosted imagery without tracing the image to a campaign, government, public-domain, or explicitly licensed source.",
+    "searchHint": "site:politics1.com/tx.htm candidate name 2026",
+    "notes": "Verified August 22, 2026 as a frequently updated Texas candidate directory listing active federal and statewide candidates with campaign-site links; the Texas page showed an August 11, 2026 update date."
   }
 ]
