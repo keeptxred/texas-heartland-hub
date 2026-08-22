@@ -22,6 +22,7 @@ type JwksResponse = { keys?: Jwk[] };
 
 const ISSUER = "https://token.actions.githubusercontent.com";
 const JWKS_URL = `${ISSUER}/.well-known/jwks`;
+const DEFAULT_ALLOWED_EVENT_NAMES = ["schedule", "workflow_dispatch"] as const;
 
 function decodeBase64Url(value: string): Uint8Array {
   const base64 = value.replace(/-/g, "+").replace(/_/g, "/");
@@ -46,11 +47,19 @@ function audienceMatches(audience: string | string[] | undefined, expected: stri
   return Array.isArray(audience) && audience.includes(expected);
 }
 
+export function isAllowedGitHubActionsEvent(
+  eventName: string | undefined,
+  allowedEventNames: readonly string[] = DEFAULT_ALLOWED_EVENT_NAMES,
+): boolean {
+  return Boolean(eventName && allowedEventNames.includes(eventName));
+}
+
 export async function verifyGitHubActionsOidc(options: {
   token: string;
   audience: string;
   repository: string;
   workflowPath: string;
+  allowedEventNames?: readonly string[];
 }): Promise<GitHubActionsClaims> {
   const parts = options.token.split(".");
   if (parts.length !== 3) throw new Error("Malformed GitHub Actions OIDC token");
@@ -115,7 +124,7 @@ export async function verifyGitHubActionsOidc(options: {
   if (claims.workflow_ref !== expectedWorkflowRef) {
     throw new Error("Unexpected GitHub Actions workflow claim");
   }
-  if (claims.event_name !== "schedule" && claims.event_name !== "workflow_dispatch") {
+  if (!isAllowedGitHubActionsEvent(claims.event_name, options.allowedEventNames)) {
     throw new Error("Unexpected GitHub Actions event claim");
   }
 

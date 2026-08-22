@@ -31,6 +31,7 @@ async function authorized(request: Request): Promise<boolean> {
       audience: OIDC_AUDIENCE,
       repository: REPOSITORY,
       workflowPath: WORKFLOW_PATH,
+      allowedEventNames: ["workflow_dispatch", "workflow_run"],
     });
     return true;
   } catch {
