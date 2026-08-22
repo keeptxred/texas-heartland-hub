@@ -1,3 +1,4 @@
 Deploy current main to Cloudflare production.
 Trigger production deployment convergence for keeptxred.com.
-Target main: 5027ddbd1d456ea6daef217aff05b5a2c0e27584
+Target main: e2b6a6ba4716b8b2aed4a2ec953e77eeb6218cf9
+Image recovery convergence requested: 2026-08-22T22:50Z
