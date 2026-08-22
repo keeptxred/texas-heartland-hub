@@ -74,12 +74,11 @@ export function ElectionLoading({
   return (
     <div
       role="status"
+      aria-label={label}
       aria-live="polite"
       aria-busy="true"
       className={className}
     >
-      <span className="sr-only">{label}</span>
-
       {variant === "metrics" ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: safeCount }, (_, index) => (
