@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 import re
 import subprocess
 
@@ -20,6 +21,12 @@ def tracked_files() -> list[str]:
     ]
 
 
+def first_party_asset_url(filename: str) -> str:
+    if filename.lower() == 'red-texas-icon.png':
+        return '/keep-tx-red-icon.svg'
+    return '/og/default.jpg'
+
+
 def replace_asset_urls(text: str) -> str:
     absolute = re.compile(
         rf'https://(?:www\.)?keeptxred\.com/{re.escape(ASSET_MARKER)}/assets-v1/[0-9a-f-]+/([A-Za-z0-9._-]+)',
@@ -31,14 +38,10 @@ def replace_asset_urls(text: str) -> str:
     )
 
     def abs_repl(match: re.Match[str]) -> str:
-        if match.group(1).lower() == 'red-texas-icon.png':
-            return 'https://keeptxred.com/keep-tx-red-icon.svg'
-        return 'https://keeptxred.com/og/default.jpg'
+        return 'https://keeptxred.com' + first_party_asset_url(match.group(1))
 
     def rel_repl(match: re.Match[str]) -> str:
-        if match.group(1).lower() == 'red-texas-icon.png':
-            return '/keep-tx-red-icon.svg'
-        return '/og/default.jpg'
+        return first_party_asset_url(match.group(1))
 
     return relative.sub(rel_repl, absolute.sub(abs_repl, text))
 
@@ -98,8 +101,8 @@ def neutralize_text(text: str) -> str:
 def clean() -> None:
     tracked = tracked_files()
 
-    # Hosted-asset JSON sidecars are metadata from the retired asset service,
-    # not image binaries. Remove only sidecars carrying the old marker/name.
+    # Preserve imported JSON modules but collapse retired hosted-asset metadata
+    # to the only field current callers consume: a first-party URL.
     for rel in tracked:
         if not rel.endswith('.asset.json'):
             continue
@@ -107,11 +110,25 @@ def clean() -> None:
         if not path.is_file():
             continue
         try:
-            lower = path.read_text(encoding='utf-8').lower()
+            raw = path.read_text(encoding='utf-8')
         except (UnicodeDecodeError, OSError):
             continue
-        if ASSET_MARKER.lower() in lower or VENDOR.lower() in lower:
-            path.unlink()
+        lower = raw.lower()
+        if ASSET_MARKER.lower() not in lower and VENDOR.lower() not in lower:
+            continue
+        try:
+            payload = json.loads(raw)
+        except json.JSONDecodeError:
+            payload = {}
+        filename = str(
+            payload.get('original_filename')
+            or payload.get('filename')
+            or path.name.removesuffix('.asset.json')
+        )
+        path.write_text(
+            json.dumps({'url': first_party_asset_url(filename)}, indent=2) + '\n',
+            encoding='utf-8',
+        )
 
     for rel in tracked:
         if rel in {'bun.lock', 'src/routeTree.gen.ts'}:
