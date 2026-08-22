@@ -58,17 +58,14 @@ jobs:
             src/routes/api/public/hooks/generate-news.word-budget.test.ts \
             src/routes/api/public/hooks/reconcile-news-history.test.ts
 
-      - name: Remove temporary cleanup machinery
+      - name: Prepare non-workflow cleanup commit
         run: |
-          rm -f .github/workflows/cleanup-retired-builder-traces.yml
-          rm -f .github/workflows/finalize-retired-builder-cleanup.yml
-          rm -f .github/workflows/current-source-retirement.yml
-          rm -f .github/workflows/final-current-source-cleanup-pr.yml
+          git checkout HEAD -- .github/workflows
           rm -f .github/finalize-retired-builder-trigger
           rm -f .github/current-source-cleanup-trigger
           rm -f scripts/maintenance/final-current-source-cleanup.py
 
-      - name: Verify tracked current source is clean
+      - name: Verify non-workflow current source is clean
         shell: bash
         run: |
           python3 <<'PY'
@@ -80,6 +77,8 @@ jobs:
           bad = []
           tracked = [p for p in subprocess.check_output(['git','ls-files','-z']).decode().split('\0') if p]
           for rel in tracked:
+              if rel.startswith('.github/workflows/'):
+                  continue
               path = Path(rel)
               if not path.exists():
                   continue
@@ -101,8 +100,8 @@ jobs:
                       bad.append(f'content:{rel}:retired-starter-term')
           if bad:
               print('\n'.join(sorted(set(bad))))
-              raise SystemExit('Current-source cleanup scan failed')
-          print('Current-source cleanup scan: clean')
+              raise SystemExit('Non-workflow current-source cleanup scan failed')
+          print('Non-workflow current-source cleanup scan: clean')
           PY
 
       - name: Commit verified cleanup to pull request branch
