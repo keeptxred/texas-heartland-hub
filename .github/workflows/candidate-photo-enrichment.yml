@@ -16,6 +16,7 @@ on:
       - "scripts/elections/apply-official-government-photo-findings-2026-08-21.mjs"
       - "scripts/elections/apply-official-federal-photo-findings-2026-08-21-wave2.mjs"
       - "scripts/elections/discover-candidate-photos-house-clerk.mjs"
+      - "scripts/elections/discover-candidate-photos-congress-gov.mjs"
       - "src/data/elections/2026/candidate-photo-assets.json"
 
 permissions:
@@ -53,6 +54,8 @@ jobs:
         run: node scripts/elections/apply-official-government-photo-findings-2026-08-21.mjs
       - name: Apply verified official federal portrait wave 2
         run: node scripts/elections/apply-official-federal-photo-findings-2026-08-21-wave2.mjs
+      - name: Discover Congress.gov member portraits
+        run: node scripts/elections/discover-candidate-photos-congress-gov.mjs
       - name: Discover U.S. House Clerk member portraits
         run: node scripts/elections/discover-candidate-photos-house-clerk.mjs
       - name: Discover directory candidate portraits
@@ -89,6 +92,7 @@ jobs:
             src/data/elections/2026/candidates.json
             artifacts/elections/candidate-photo-report.json
             artifacts/elections/candidate-photo-discovery-report.json
+            artifacts/elections/candidate-photo-congress-gov-report.json
             artifacts/elections/candidate-photo-house-clerk-report.json
             artifacts/elections/candidate-photo-search-provider-report.json
             artifacts/elections/candidate-photo-expanded-report.json
