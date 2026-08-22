@@ -12,6 +12,15 @@ export type SourceDiagnosticRow = {
   items_7d: number | null;
 };
 
+type SourceHealthViewRow = {
+  source_name: string;
+  category: string | null;
+  rss_url: string | null;
+  latest_item_at: string | null;
+  items_7d: number | null;
+  health_status: string | null;
+};
+
 export type SourceDiagnostics = {
   enabled: number;
   rssConfigured: number;
@@ -33,7 +42,10 @@ export const getContentSourceDiagnosticsFn = createServerFn({ method: "POST" })
         .select("source_name,category,rss_url,enabled")
         .eq("enabled", true)
         .order("source_name", { ascending: true }),
-      supabaseAdmin
+      // news_source_health is a production SQL view that predates the generated
+      // Supabase TypeScript view definitions. Keep this one view boundary
+      // explicit instead of weakening the typed client globally.
+      (supabaseAdmin as any)
         .from("news_source_health")
         .select("source_name,category,rss_url,latest_item_at,items_7d,health_status"),
     ]);
@@ -41,8 +53,9 @@ export const getContentSourceDiagnosticsFn = createServerFn({ method: "POST" })
     if (sourcesRes.error) return { ok: false, error: sourcesRes.error.message };
     if (healthRes.error) return { ok: false, error: healthRes.error.message };
 
+    const healthRows = (healthRes.data ?? []) as SourceHealthViewRow[];
     const healthByName = new Map(
-      (healthRes.data ?? []).map((row) => [String(row.source_name).trim().toLowerCase(), row]),
+      healthRows.map((row) => [String(row.source_name).trim().toLowerCase(), row]),
     );
 
     const rows: SourceDiagnosticRow[] = (sourcesRes.data ?? []).map((source) => {
