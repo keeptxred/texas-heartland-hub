@@ -1,309 +1,33 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { dedupeArticleBody } from "@/lib/article-dedupe";
-import { detectDiscoverCategory } from "@/lib/seo-headline";
-import { scoreDiscoverMatch, type HeadlineVariants } from "@/lib/ctr-score";
-import { getArticleImage } from "@/lib/fallback-images";
-import { enrichArticleRow } from "@/lib/content-quality";
-import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
-import { isDuplicateTitle, dedupeByTitle } from "@/lib/title-similarity";
-import { resolvePublishTimestamp } from "@/lib/article-slug-integrity";
-import { isSameEventRewrite } from "@/lib/article-canonical";
 import { articleMainWordCount } from "@/lib/article-length";
-import { scoreFeedItem, TEXAS_RELEVANCE_MIN } from "@/lib/viral-score";
+import { resolvePublishTimestamp } from "@/lib/article-slug-integrity";
+import { runCloudflareJson } from "@/lib/cloudflare-json-ai.server";
+import { enrichArticleRow } from "@/lib/content-quality";
+import {
+  editorialMinimumFor,
+  runEditorialRewrite,
+  type ArticleShape,
+} from "@/lib/editorial-pipeline";
+import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
 import { neutralizeFirstPersonTitle } from "@/lib/neutralize-headline";
-import { runEditorialRewrite } from "@/lib/editorial-pipeline";
 import { validatePoliticalAuthority } from "@/lib/political-entity-authority";
+import {
+  assessRewritePreflight,
+  assertRewriteableOrThrow,
+  toPersistedSnapshot,
+} from "@/lib/rewrite-preflight";
+import { resolveRewriteSource } from "@/lib/rewrite-source";
 
-// Reuses the existing Texas relevance scorer (title + description + source
-// entity signals) so a source labelled "USGS Earthquakes — Texas" cannot push
-// non-Texas events (Peru, California, etc.) into Texas-facing surfaces.
-// Items that score below the shared TEXAS_RELEVANCE_MIN floor are dropped
-// before they reach texas_news_feed and before native articles are minted,
-// which is what gates visibility on /happening-now and category feeds.
-function isTexasRelevantItem(it: Item): boolean {
-  const r = scoreFeedItem({
-    title: it.title ?? "",
-    source: it.source ?? "",
-    pub_date: it.pub_date,
-    description: it.description ?? "",
-  });
-  return r.texasRelevanceScore >= TEXAS_RELEVANCE_MIN;
-}
-
-// Evidence-driven length floors. Thin but legitimate primary-source updates
-// should become concise factual stories instead of being retried until an AI
-// pads them to an arbitrary category length. Rich packets still support deep
-// analysis. Keep these thresholds aligned with editorial-pipeline.ts.
-const MIN_WORDS_COMPACT = 650;
-const MIN_WORDS_STANDARD = 800;
-const MIN_WORDS_ANALYSIS = 1200;
-const COMPACT_SOURCE_MAX_CHARS = 4_500;
-const RICH_SOURCE_MIN_CHARS = 9_000;
-
-function minWordsForItem(it: Item, rw: Rewrite | null): number {
-  const cat = (rw?.category ?? it.category ?? categoryFor(it.source)).toLowerCase();
-  const evidenceChars = (it.description ?? "").trim().length;
-  if (evidenceChars < COMPACT_SOURCE_MAX_CHARS) return MIN_WORDS_COMPACT;
-  const analysisCategory = cat === "non-political" || cat === "business" || cat === "education" || cat === "sports";
-  if (analysisCategory && evidenceChars >= RICH_SOURCE_MIN_CHARS) return MIN_WORDS_ANALYSIS;
-  return MIN_WORDS_STANDARD;
-}
-
-// Image-bucket taxonomy. Kept in sync with CATEGORY_IMAGE_POOLS in
-// src/lib/fallback-images.ts. AI batch classifier tags each new article with
-// one of these so the render layer can pick a matching free stock photo.
-// Hard-coded official Texas RSS feeds. Preserved as a fallback (and always
-// merged with enabled content_sources rows) so ingestion keeps working even
-// if the Source Library is empty or the DB read fails.
-const HARDCODED_SOURCES: { name: string; url: string; category?: string }[] = [
-  { name: "Office of the Governor", url: "https://gov.texas.gov/news/rss" },
-  { name: "Texas Secretary of State", url: "https://www.sos.state.tx.us/rss/press.xml" },
-  { name: "Texas Register", url: "https://www.sos.state.tx.us/texreg/texreg.xml" },
-  // Non-Political feed group: human-interest, culture, parks, lifestyle, viral.
-  {
-    name: "Texas Parks & Wildlife",
-    url: "https://tpwd.texas.gov/newsmedia/releases/rss/",
-    category: "Non-Political",
-  },
-  { name: "Texas Monthly", url: "https://www.texasmonthly.com/feed/", category: "Non-Political" },
-  { name: "Texas Standard", url: "https://www.texasstandard.org/feed/", category: "Non-Political" },
-  // National outlets frequently publish Texas political stories that local-only
-  // feeds never carry. Google News supplies a stable RSS discovery layer while
-  // the Texas relevance gate below still rejects unrelated national coverage.
-  {
-    name: "Fox News — Texas (Google News)",
-    url: "https://news.google.com/rss/search?q=site%3Afoxnews.com+Texas+when%3A7d&hl=en-US&gl=US&ceid=US%3Aen",
-    category: "Politics",
-  },
-  {
-    name: "Breitbart — Texas (Google News)",
-    url: "https://news.google.com/rss/search?q=site%3Abreitbart.com+Texas+when%3A7d&hl=en-US&gl=US&ceid=US%3Aen",
-    category: "Politics",
-  },
-];
-
-type IngestSource = { name: string; url: string; category?: string };
-
-// One-time editorial recovery items are merged into each storage-only ingest
-// and deduped by canonical link. This guarantees a specifically requested
-// missed story reaches Content Opportunities even when database migrations
-// are not applied automatically by the hosting deployment.
-const EDITORIAL_BACKFILLS: Item[] = [
-  {
-    title:
-      "Joe Rogan warns liberals against trying to turn Texas blue, says it would wreck the state's delicate balance",
-    link: "https://www.foxnews.com/media/joe-rogan-warns-liberals-against-trying-turn-texas-blue-says-would-wreck-states-delicate-balance",
-    pub_date: "2026-07-28T00:00:00.000Z",
-    source: "Fox News",
-    category: "Politics",
-    description:
-      "Podcaster Joe Rogan discussed the political character of Austin and Texas during a conversation with wildlife television personality Forrest Galante. Rogan described Austin as a progressive city surrounded by strongly Republican parts of Texas and argued that the contrast creates a balance that benefits the city and the state. He said Austin progressives tend to be more reasonable than liberals he encountered in New York or Los Angeles and pushed back on stereotypes that portray Texas as culturally uniform or unsophisticated. Rogan, who moved from Los Angeles to Austin during the COVID-19 era and records his podcast in the area, warned activists who want to make Texas uniformly Democratic that doing so could undermine what makes the state attractive, including for newcomers. The discussion also touched on the phrase Keep Austin weird and surrounded, Austin's long history of Democratic municipal leadership, and the city's position as a liberal enclave inside a Republican-led state. Rogan's comments are relevant to the continuing debate over demographic change, migration, political identity, and Democratic efforts to become more competitive in statewide Texas elections.",
-  },
-  {
-    title: "Report: James Talarico filmed driving rental truck in 'Real Texan' campaign ad",
-    link: "https://www.breitbart.com/politics/2026/07/29/report-james-talarico-drives-enterprise-rental-truck-real-texan-campaign-ad/",
-    pub_date: "2026-07-29T00:00:00.000Z",
-    source: "Breitbart",
-    category: "Politics",
-    description:
-      "A July 29 Breitbart report concerns Texas Democratic politician James Talarico and a campaign advertisement presenting him driving a pickup truck. The report says the vehicle shown in the advertisement was an Enterprise rental rather than Talarico's own truck. The story focuses on political image-making, the authenticity of campaign advertising, and how candidates present their Texas identity to voters. Talarico is the Democratic nominee in the 2026 Texas United States Senate race, according to the official election records used by KeepTXRed's Election Central. His active statewide campaign makes the presentation and production choices in campaign advertising relevant to voters evaluating the candidates. The reported rental does not itself establish a violation of election law, but it creates a factual question about how the advertisement was staged and whether viewers understood the truck to be personally associated with the candidate. Because the advertisement targets Texas voters during an active statewide election, the report belongs in the Politics content-review queue. Editors can use the source report, official candidate records, and any campaign response when deciding whether to publish a full KeepTXRed article.",
-  },
-];
-
-// Merge hard-coded official sources with any enabled content_sources rows that
-// declare an rss_url. Dedupe by feed URL (case-insensitive). The Source Library
-// is additive — it never removes an official feed.
-async function loadSources(supabaseAdmin: {
-  from: (t: string) => {
-    select: (c: string) => {
-      eq: (
-        col: string,
-        val: unknown,
-      ) => {
-        not: (
-          col: string,
-          op: string,
-          val: unknown,
-        ) => Promise<{ data: unknown; error: { message: string } | null }>;
-      };
-    };
-  };
-}): Promise<{ sources: IngestSource[]; enabledDbCount: number }> {
-  const list: IngestSource[] = [...HARDCODED_SOURCES];
-  const seen = new Set(list.map((s) => s.url.toLowerCase()));
-  let enabledDbCount = 0;
-  try {
-    const { data, error } = await supabaseAdmin
-      .from("content_sources")
-      .select("source_name, rss_url, category, enabled")
-      .eq("enabled", true)
-      .not("rss_url", "is", null);
-    if (error) {
-      console.warn("[ingest-feeds] content_sources load failed:", error.message);
-    } else if (Array.isArray(data)) {
-      const rows = data as {
-        source_name: string;
-        rss_url: string | null;
-        category: string | null;
-      }[];
-      enabledDbCount = rows.length;
-      for (const r of rows) {
-        const url = (r.rss_url ?? "").trim();
-        if (!url) continue;
-        const key = url.toLowerCase();
-        if (seen.has(key)) continue;
-        seen.add(key);
-        list.push({ name: r.source_name, url, category: r.category ?? undefined });
-      }
-    }
-  } catch (e) {
-    console.warn("[ingest-feeds] content_sources load threw:", e);
-  }
-  return { sources: list, enabledDbCount };
-}
-
-function decode(s: string) {
-  return s
-    .replace(/<!\[CDATA\[(.*?)\]\]>/gs, "$1")
-    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
-    .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(parseInt(d, 10)))
-    .replace(/&nbsp;/g, " ")
-    .replace(/&(?:lsquo|rsquo);/g, "'")
-    .replace(/&(?:ldquo|rdquo);/g, '"')
-    .replace(/&(?:ndash|mdash);/g, "—")
-    .replace(/&hellip;/g, "…")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&apos;/g, "'")
-    .replace(/<[^>]+>/g, "")
-    .trim();
-}
-
-function pick(block: string, tag: string): string {
-  const m = block.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)</${tag}>`, "i"));
-  return m ? decode(m[1]) : "";
-}
-
-type Item = {
-  title: string;
-  link: string;
-  pub_date: string;
-  source: string;
-  description: string;
-  category?: string;
-};
-
-// ---------------------------------------------------------------------------
-// Texas Register significance gate.
-//
-// Every Texas Register record is still inserted into `texas_news_feed` and
-// stays visible on /happening-now. This helper only decides whether an item
-// deserves a native article, so routine agency notices (meetings, licensing
-// lists, procurement, corrections) never consume AI credits or become
-// low-value articles. Deterministic keyword matching only — no AI calls.
-// ---------------------------------------------------------------------------
-const REGISTER_SIGNIFICANT_RE =
-  /(tax(es|ation)?|property tax|election|voting|voter|candidate|campaign|redistrict|firearm|\bgun(s)?\b|weapon|constitutional carry|border security|immigration|energy|electricity|ercot|utilit(y|ies)|\boil\b|\bgas\b|pipeline|education|school|universit(y|ies)|curriculum|school choice|health ?care|medicaid|hospital|insurance|public health|business regulation|banking|financ(e|ial)|employment|wage(s)?|licens(ing|ure) rule|criminal|law enforcement|police|court(s)?|prison|public safety|constitutional|civil rights|religious liberty|free speech|emergency rule|disaster declaration|hurricane|flood|drought|wildfire|statewide emergency|environmental|water|transportation|infrastructure|housing|land ?use|land use|statewide|major|emergency|substantial|significant|material economic impact)/i;
-
-const REGISTER_ROUTINE_RE =
-  /(meeting notice|open meeting|advisory committee|licens(ing|e) list|disciplinary (list|action)|procurement|contract award|bid notice|request for (proposal|bid)|correction notice|miscellaneous notice|withdrawn rule|rule withdrawal|repeal|administrative update|housekeeping|appointment(s)?|calendar notice|public hearing notice)/i;
-
-export function isSignificantTexasRegisterItem(item: Item): boolean {
-  // Non-Register sources keep their existing behavior untouched.
-  if (!item.source.toLowerCase().includes("register")) return true;
-  const hay = `${item.title} ${item.description ?? ""}`.toLowerCase();
-  // Routine administrative filings are feed-only unless they also describe a
-  // meaningful statewide public-impact topic.
-  if (REGISTER_ROUTINE_RE.test(hay) && !REGISTER_SIGNIFICANT_RE.test(hay)) return false;
-  return REGISTER_SIGNIFICANT_RE.test(hay);
-}
-
-function slugify(s: string): string {
-  return s
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 70);
-}
-
-// Block daily puzzle / crossword / word-game filler that some lifestyle
-// feeds (Texas Monthly, etc.) publish every day. Matches variants like
-// "The Daily Crossword", "Daily Puzzle for ...", "Word Game", "Sudoku".
-export function isPuzzleTitle(title: string): boolean {
-  const t = title.toLowerCase();
-  return (
-    /\bcrossword\b/.test(t) ||
-    /\bsudoku\b/.test(t) ||
-    /\bword\s*(game|search|jumble|wrangler)\b/.test(t) ||
-    /\b(daily|weekly)\s+puzzle\b/.test(t) ||
-    /\bpuzzle\s+(for|of\s+the\s+day)\b/.test(t) ||
-    /\bmini\s+puzzle\b/.test(t) ||
-    // recurring daily-column filler (mirrors src/lib/low-value-titles.ts)
-    /\bword\s+wrangler\b/.test(t) ||
-    /\bhoroscope(s)?\b/.test(t) ||
-    /\bquiz\s+of\s+the\s+(day|week)\b/.test(t) ||
-    /\bcartoon\s+of\s+the\s+day\b/.test(t) ||
-    /\bnewsletter\b/.test(t)
-  );
-}
-
-function hashStr(s: string): string {
-  let h = 0;
-  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
-  return Math.abs(h).toString(36).slice(0, 6);
-}
-
-type ImageBucket =
-  "food" | "sports" | "politics" | "business" | "weather" | "technology" | "default";
-
-function deterministicImageBucket(title: string, dek: string): ImageBucket {
-  const text = `${title} ${dek}`.toLowerCase();
-  if (/\b(food|restaurant|recipe|barbecue|bbq)\b/.test(text)) return "food";
-  if (/\b(sport|football|baseball|basketball|soccer|team|game)\b/.test(text)) return "sports";
-  if (/\b(election|governor|legislature|senate|house|campaign|politic)\b/.test(text))
-    return "politics";
-  if (/\b(business|company|economy|jobs|market|tax)\b/.test(text)) return "business";
-  if (/\b(weather|storm|hurricane|tornado|flood|heat)\b/.test(text)) return "weather";
-  if (/\b(technology|tech|software|ai|energy|ercot|grid)\b/.test(text)) return "technology";
-  return "default";
-}
-
-async function classifyImageBuckets(
-  rows: { slug: string; title: string; dek: string }[],
-  _lovableApiKey: string,
-): Promise<Record<string, ImageBucket>> {
-  return Object.fromEntries(
-    rows.map((row) => [row.slug, deterministicImageBucket(row.title, row.dek)]),
-  );
-}
-
-async function rewriteHeadlinesBatch(
-  rows: { slug: string; title: string }[],
-  _lovableApiKey: string,
-): Promise<Record<string, string>> {
-  return Object.fromEntries(rows.map((row) => [row.slug, neutralizeFirstPersonTitle(row.title)]));
-}
-
-async function generateHeadlineVariantsBatch(
-  rows: { slug: string; title: string }[],
-  _lovableApiKey: string,
-): Promise<Record<string, HeadlineVariants>> {
-  return Object.fromEntries(rows.map((row) => [row.slug, { a: row.title, b: row.title }]));
-}
-
-async function contentFingerprint(it: Item): Promise<string> {
-  const normalized = [
-    it.link.trim().toLowerCase(),
-    it.title.trim().replace(/\s+/g, " ").toLowerCase(),
-    it.pub_date.slice(0, 10),
-    it.description.trim().replace(/\s+/g, " "),
-  ].join("\n");
-  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(normalized));
-  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
-}
+/**
+ * Compatibility module for the final feed-item publishing step.
+ *
+ * Feed discovery and storage live in the current ingest route. This module is
+ * intentionally limited to source extraction, deterministic preflight,
+ * rewrite-budget accounting, direct Cloudflare Workers AI generation,
+ * editorial validation, and the final guarded article insert. Keeping that
+ * boundary small prevents obsolete ingestion/provider code from becoming a
+ * second publication path.
+ */
 
 const ALLOWED_CATEGORIES = [
   "Politics",
@@ -316,17 +40,16 @@ const ALLOWED_CATEGORIES = [
   "Non-Political",
 ] as const;
 
-function categoryFor(source: string): string {
-  const s = source.toLowerCase();
-  if (s.includes("governor")) return "Politics";
-  if (s.includes("secretary")) return "Elections";
-  if (s.includes("register")) return "Laws";
-  if (s.includes("parks") || s.includes("monthly") || s.includes("standard"))
-    return "Non-Political";
-  return "Legislature";
-}
+type Item = {
+  title: string;
+  link: string;
+  pub_date: string;
+  source: string;
+  description: string;
+  category?: string;
+};
 
-type Rewrite = {
+type Rewrite = ArticleShape & {
   title: string;
   dek: string;
   keywords: string[];
@@ -346,117 +69,117 @@ type GeneratedArticleBody = {
   keyTakeaways?: string[];
 };
 
-function wordCount(text: string): number {
-  return text.trim().split(/\s+/).filter(Boolean).length;
-}
-
-// Small concurrency limiter used by the batch rewrite path. Cloudflare Workers
-// have a fixed wall-clock budget per request; firing `Promise.all` over
-// hundreds of 15–90s AI fetches was killing the whole invocation, which
-// showed up in logs as every rewrite ending in `no_response` (the fetch was
-// aborted before it ever reached the AI gateway). Capping concurrency lets
-// each rewrite complete and lets us log per-item outcomes.
-async function mapWithConcurrency<T, R>(
-  items: T[],
-  limit: number,
-  fn: (item: T, index: number) => Promise<R>,
-): Promise<R[]> {
-  const out: R[] = new Array(items.length);
-  let cursor = 0;
-  const workers = Array.from({ length: Math.max(1, Math.min(limit, items.length)) }, async () => {
-    while (true) {
-      const i = cursor++;
-      if (i >= items.length) return;
-      out[i] = await fn(items[i], i);
-    }
-  });
-  await Promise.all(workers);
-  return out;
-}
-
-function articleBodyText(body: GeneratedArticleBody): string {
-  const parts: string[] = [];
-  (body.intro ?? []).forEach((p) => parts.push(p));
-  (body.sections ?? []).forEach((s) => {
-    if (s.heading) parts.push(s.heading);
-    (s.paragraphs ?? []).forEach((p) => parts.push(p));
-    (s.bullets ?? []).forEach((p) => parts.push(p));
-  });
-  (body.faq ?? []).forEach((f) => {
-    if (f.q) parts.push(f.q);
-    if (f.a) parts.push(f.a);
-  });
-  (body.keyTakeaways ?? []).forEach((p) => parts.push(p));
-  return parts.join(" ");
-}
-
-const REWRITE_SYSTEM = `You are the Keep TX Red editorial engine. Rewrite a Texas news item from an official source into a fully ORIGINAL article for keeptxred.com.
-
-HARD RULES:
-- Extract only facts (who/what/when/where/why). Never copy sentences or phrasing from the source. No direct quote longer than 10 words.
-- Neutral, factual tone in Summary, Relevance, and Key Takeaways. Analysis is clearly labeled opinion and is optional.
-- Mobile-friendly paragraphs (2–4 sentences each).
-- Meta description (dek) MUST be <= 155 characters.
-- Title must be SEO-optimized, original, and not resemble the source headline.
-- 5–10 lowercase keywords, Texas-specific where possible.
-- EVIDENCE-DRIVEN LENGTH: compact single-source material should produce at least about 650 words of original MAIN STORY PROSE; standard source-backed news should reach about 800; rich analysis packets may require 1,200. Do NOT count Texas relevance, source attribution, FAQ, key takeaways, title, dek, or source lists. Never pad a thin release merely to reach a category target; use only source-grounded context, chronology, stakeholders, local impact, timeline, what changes next, and reader context.
-- TEXAS RELEVANCE IS REQUIRED — the "relevance" field must always name Texas or a specific Texas city/region and explain the local stake, even if the source is national.
-- Add a short original CONTEXT paragraph (history, prior action, comparable state precedent) inside the "summary" or as the first sentences of "relevance".
-- Include 5–8 additional article sections in "sections". Each section must have a clear heading and 2–4 substantial paragraphs. Do not use filler, generic slogans, or repeated paragraphs.
-- FAQ answers should be substantial enough to help readers, not one-line answers.
-- Output VALID JSON only matching the schema below.
-
-CATEGORY: Choose the best fit from: Politics, Elections, Laws, Legislature, Business, Sports, Education, Non-Political. Use "Non-Political" for human-interest, animals, viral, culture, festivals, weather, travel, lifestyle, entertainment, science, and parks/wildlife stories. Do NOT use Education as a fallback — only true school/academic policy.
-
-SCHEMA:
-{"title":"...","dek":"<=155 chars","keywords":["..."],"summary":"substantial opening section","relevance":"substantial Texas relevance section","analysis":"optional labeled editorial interpretation, or omit","sections":[{"heading":"...","paragraphs":["..."]}],"keyTakeaways":["3-5 short bullets"],"faq":[{"q":"...","a":"..."}],"category":"one of the allowed values"}`;
-
-function isRedditLink(link: string): boolean {
-  try {
-    const u = new URL(link);
-    return /(^|\.)reddit\.com$/i.test(u.hostname);
-  } catch {
-    return false;
-  }
-}
-
-async function fetchRedditSelftext(link: string): Promise<string | null> {
-  try {
-    const u = new URL(link);
-    const jsonUrl = `https://www.reddit.com${u.pathname.replace(/\/?$/, "")}.json`;
-    const r = await fetch(jsonUrl, {
-      headers: { "User-Agent": "KeepTXRed/1.0 (+https://keeptxred.com)" },
-      signal: AbortSignal.timeout(8000),
-    });
-    if (!r.ok) return null;
-    const data = (await r.json()) as Array<{
-      data?: { children?: Array<{ data?: { selftext?: string } }> };
-    }>;
-    const selftext = data?.[0]?.data?.children?.[0]?.data?.selftext ?? "";
-    const cleaned = selftext.replace(/\s+/g, " ").trim();
-    return cleaned.length > 0 ? cleaned : null;
-  } catch {
-    return null;
-  }
-}
-
 type RedditPostData = {
   selftext: string | null;
   externalUrl: string | null;
 };
 
-// One request covers both self-posts and link-posts: Reddit's JSON returns
-// selftext plus `url_overridden_by_dest` / `url` for the outbound link.
+const REWRITE_SYSTEM = `You are the Keep TX Red editorial engine. Rewrite a Texas news item into a fully original article for keeptxred.com.
+
+HARD RULES:
+- Use only facts supported by the supplied source packet. Never invent facts, quotes, polling, statistics, offices, relationships, or chronology.
+- Never copy source sentences. Paraphrase independently; keep any direct quote very short and source-attributed.
+- Neutral, factual tone in Summary, Relevance, and Key Takeaways. Analysis is optional and must be clearly separated from reported fact.
+- Title must be original, concrete, SEO-useful, and consistent with the article body.
+- dek must be 155 characters or fewer.
+- Produce 5-10 lowercase, Texas-relevant keywords.
+- Texas relevance is required and must identify the concrete Texas stake.
+- Use short web paragraphs and descriptive sections. Do not pad thin evidence.
+- Let the editorial validator's evidence-driven word floor control length.
+- Return valid JSON only.
+
+CATEGORY: Choose exactly one of Politics, Elections, Laws, Legislature, Business, Sports, Education, Non-Political. Use Non-Political for human-interest, wildlife, culture, festivals, weather, travel, lifestyle, entertainment, science, and parks. Use Education only for genuine school or academic policy.
+
+SCHEMA:
+{"brief":{"hasClearNewsEvent":true},"title":"...","dek":"...","keywords":["..."],"summary":"...","relevance":"...","analysis":"optional","sections":[{"heading":"...","paragraphs":["..."]}],"keyTakeaways":["..."],"faq":[{"q":"...","a":"..."}],"category":"..."}`;
+
+export function isPuzzleTitle(title: string): boolean {
+  const value = title.toLowerCase();
+  return (
+    /\bcrossword\b/.test(value) ||
+    /\bsudoku\b/.test(value) ||
+    /\bword\s*(game|search|jumble|wrangler)\b/.test(value) ||
+    /\b(daily|weekly)\s+puzzle\b/.test(value) ||
+    /\bpuzzle\s+(for|of\s+the\s+day)\b/.test(value) ||
+    /\bmini\s+puzzle\b/.test(value) ||
+    /\bhoroscope(s)?\b/.test(value) ||
+    /\bquiz\s+of\s+the\s+(day|week)\b/.test(value) ||
+    /\bcartoon\s+of\s+the\s+day\b/.test(value) ||
+    /\bnewsletter\b/.test(value)
+  );
+}
+
+function categoryFor(source: string): string {
+  const value = source.toLowerCase();
+  if (value.includes("governor")) return "Politics";
+  if (value.includes("secretary")) return "Elections";
+  if (value.includes("register")) return "Laws";
+  if (
+    value.includes("parks") ||
+    value.includes("monthly") ||
+    value.includes("standard") ||
+    value.includes("reddit")
+  ) {
+    return "Non-Political";
+  }
+  return "Legislature";
+}
+
+function wordCount(text: string): number {
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
+function slugify(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 70);
+}
+
+function hashString(value: string): string {
+  let hash = 0;
+  for (let index = 0; index < value.length; index += 1) {
+    hash = (hash * 31 + value.charCodeAt(index)) | 0;
+  }
+  return Math.abs(hash).toString(36).slice(0, 6);
+}
+
+function articleBodyText(body: GeneratedArticleBody): string {
+  const parts: string[] = [];
+  for (const paragraph of body.intro ?? []) parts.push(paragraph);
+  for (const section of body.sections ?? []) {
+    if (section.heading) parts.push(section.heading);
+    for (const paragraph of section.paragraphs ?? []) parts.push(paragraph);
+    for (const bullet of section.bullets ?? []) parts.push(bullet);
+  }
+  for (const entry of body.faq ?? []) {
+    if (entry.q) parts.push(entry.q);
+    if (entry.a) parts.push(entry.a);
+  }
+  for (const takeaway of body.keyTakeaways ?? []) parts.push(takeaway);
+  return parts.join(" ");
+}
+
+function isRedditLink(link: string): boolean {
+  try {
+    return /(^|\.)reddit\.com$/i.test(new URL(link).hostname);
+  } catch {
+    return false;
+  }
+}
+
 async function fetchRedditPostData(link: string): Promise<RedditPostData> {
   try {
-    const u = new URL(link);
-    const jsonUrl = `https://www.reddit.com${u.pathname.replace(/\/?$/, "")}.json`;
-    const r = await fetch(jsonUrl, {
+    const url = new URL(link);
+    const jsonUrl = `https://www.reddit.com${url.pathname.replace(/\/?$/, "")}.json`;
+    const response = await fetch(jsonUrl, {
       headers: { "User-Agent": "KeepTXRed/1.0 (+https://keeptxred.com)" },
-      signal: AbortSignal.timeout(8000),
+      signal: AbortSignal.timeout(8_000),
     });
-    if (!r.ok) return { selftext: null, externalUrl: null };
-    const data = (await r.json()) as Array<{
+    if (!response.ok) return { selftext: null, externalUrl: null };
+
+    const data = (await response.json()) as Array<{
       data?: {
         children?: Array<{
           data?: {
@@ -464,1025 +187,268 @@ async function fetchRedditPostData(link: string): Promise<RedditPostData> {
             url_overridden_by_dest?: string;
             url?: string;
             is_self?: boolean;
-            domain?: string;
           };
         }>;
       };
     }>;
     const post = data?.[0]?.data?.children?.[0]?.data ?? {};
-    const selftextRaw = post.selftext ?? "";
-    const selftext = selftextRaw.replace(/\s+/g, " ").trim() || null;
+    const selftext = (post.selftext ?? "").replace(/\s+/g, " ").trim() || null;
     const candidate = post.url_overridden_by_dest || post.url || "";
-    let externalUrl: string | null = null;
-    if (candidate && !post.is_self) {
-      try {
-        const cu = new URL(candidate);
-        // Skip self-referential Reddit URLs (comment permalinks, image hosts).
-        if (!/(^|\.)reddit\.com$/i.test(cu.hostname) && !/(^|\.)redd\.it$/i.test(cu.hostname)) {
-          externalUrl = cu.toString();
-        }
-      } catch {
-        externalUrl = null;
+    if (!candidate || post.is_self) return { selftext, externalUrl: null };
+
+    try {
+      const external = new URL(candidate);
+      if (/(^|\.)reddit\.com$/i.test(external.hostname) || /(^|\.)redd\.it$/i.test(external.hostname)) {
+        return { selftext, externalUrl: null };
       }
+      return { selftext, externalUrl: external.toString() };
+    } catch {
+      return { selftext, externalUrl: null };
     }
-    return { selftext, externalUrl };
   } catch {
     return { selftext: null, externalUrl: null };
   }
 }
 
-// Lightweight readable-text extraction for a linked article page. No JS
-// execution; we strip scripts/styles/nav chrome and collapse whitespace so the
-// AI rewrite has factual source content without invoking a heavy scraper.
 async function fetchLinkedArticleText(url: string): Promise<string | null> {
   try {
-    const r = await fetch(url, {
+    const response = await fetch(url, {
       headers: {
         "User-Agent": "KeepTXRed/1.0 (+https://keeptxred.com)",
         Accept: "text/html,application/xhtml+xml",
       },
       redirect: "follow",
-      signal: AbortSignal.timeout(10000),
+      signal: AbortSignal.timeout(10_000),
     });
-    if (!r.ok) return null;
-    const ct = r.headers.get("content-type") ?? "";
-    if (!/text\/html|application\/xhtml/i.test(ct)) return null;
-    const html = await r.text();
+    if (!response.ok) return null;
+    const contentType = response.headers.get("content-type") ?? "";
+    if (!/text\/html|application\/xhtml/i.test(contentType)) return null;
+
+    const html = await response.text();
     const stripped = html
       .replace(/<script[\s\S]*?<\/script>/gi, " ")
       .replace(/<style[\s\S]*?<\/style>/gi, " ")
       .replace(/<noscript[\s\S]*?<\/noscript>/gi, " ")
       .replace(/<(header|footer|nav|aside|form)[\s\S]*?<\/\1>/gi, " ");
-    // Prefer <article> body when present; fall back to full body text.
-    const articleMatch = stripped.match(/<article[\s\S]*?<\/article>/i);
-    const region = articleMatch ? articleMatch[0] : stripped;
+    const region = stripped.match(/<article[\s\S]*?<\/article>/i)?.[0] ?? stripped;
     const text = region
       .replace(/<[^>]+>/g, " ")
-      .replace(/&nbsp;/g, " ")
-      .replace(/&amp;/g, "&")
-      .replace(/&#39;|&apos;/g, "'")
-      .replace(/&quot;/g, '"')
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">")
+      .replace(/&nbsp;/gi, " ")
+      .replace(/&amp;/gi, "&")
+      .replace(/&#39;|&apos;/gi, "'")
+      .replace(/&quot;/gi, '"')
+      .replace(/&lt;/gi, "<")
+      .replace(/&gt;/gi, ">")
       .replace(/\s+/g, " ")
       .trim();
     if (!text) return null;
-    // Cap to keep the rewrite prompt bounded.
-    return text.length > 8000 ? text.slice(0, 8000) : text;
+    return text.length > 8_000 ? text.slice(0, 8_000) : text;
   } catch {
     return null;
   }
 }
 
-const rewriteFailureReasons = new WeakMap<Item, string>();
-
-function setRewriteFailure(it: Item, reason: string): void {
-  rewriteFailureReasons.set(it, `AI rewrite failed — ${reason}`);
+async function contentFingerprint(item: Item): Promise<string> {
+  const normalized = [
+    item.link.trim().toLowerCase(),
+    item.title.trim().replace(/\s+/g, " ").toLowerCase(),
+    item.pub_date.slice(0, 10),
+    item.description.trim().replace(/\s+/g, " "),
+  ].join("\n");
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(normalized));
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
-function getRewriteFailure(it: Item): string {
-  return rewriteFailureReasons.get(it) ?? "AI rewrite failed — unknown failure after AI generation";
-}
+async function rewriteItem(item: Item): Promise<{ article: Rewrite | null; failure: string | null }> {
+  const neutralized = neutralizeFirstPersonTitle(item.title);
+  if (neutralized && neutralized !== item.title) item.title = neutralized;
 
-async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | null> {
-  // Neutralize first-person / personal-experience headlines BEFORE the AI
-  // sees them so the model never echoes "I visited…" / "My parents…" back
-  // into the article title, prompt, or downstream Facebook caption.
-  const neutralized = neutralizeFirstPersonTitle(it.title);
-  if (neutralized && neutralized !== it.title) {
-    it.title = neutralized;
-  }
+  const user = `SOURCE: ${item.source}\nORIGINAL HEADLINE: ${item.title}\nSOURCE MATERIAL: ${item.description}\nLINK: ${item.link}\nDATE: ${item.pub_date}\n\nRewrite per the rules. Return JSON only.`;
+  let providerFailure: string | null = null;
 
-  // Route the AI call through the shared editorial pipeline. The pipeline
-  // appends the analyze-first / fact-extraction / relationship-validation
-  // addendum to REWRITE_SYSTEM, requires the model to emit a "brief" block
-  // before any article prose, validates the returned article, and retries
-  // once with a stricter prompt if validation fails. If the brief reports no
-  // clear news event, or validation fails twice, the pipeline returns null
-  // instead of a fabricated article.
-  const userMessage = `SOURCE: ${it.source}\nORIGINAL HEADLINE: ${it.title}\nORIGINAL SUMMARY: ${it.description}\nLINK: ${it.link}\nDATE: ${it.pub_date}\n\nRewrite per the rules. Return JSON only.`;
-
-  let gatewayFailureReason: string | null = null;
   const result = await runEditorialRewrite<Rewrite>(async (addendum, attempt) => {
-    gatewayFailureReason = null;
     try {
-      const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Lovable-API-Key": lovableApiKey },
-        body: JSON.stringify({
-          model: "google/gemini-3-flash-preview",
-          messages: [
-            { role: "system", content: REWRITE_SYSTEM + addendum },
-            { role: "user", content: userMessage },
-          ],
-          response_format: { type: "json_object" },
-          max_tokens: 9000,
-        }),
-        signal: AbortSignal.timeout(90000),
+      const generated = await runCloudflareJson<Record<string, unknown>>({
+        system: REWRITE_SYSTEM + addendum,
+        user,
+        maxTokens: 9_000,
+        maxAttempts: 1,
+        requestTimeoutMs: 90_000,
       });
-      if (!r.ok) {
-        gatewayFailureReason = `AI gateway HTTP ${r.status} during ${attempt}`;
-        return { raw: null };
-      }
-
-      let data: { choices?: { message?: { content?: string } }[] };
-      try {
-        data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
-      } catch {
-        gatewayFailureReason = `AI gateway returned invalid response JSON during ${attempt}`;
-        return { raw: null };
-      }
-
-      const raw = data.choices?.[0]?.message?.content ?? null;
-      if (!raw?.trim()) {
-        gatewayFailureReason = `AI gateway returned an empty response during ${attempt}`;
-        return { raw: null };
-      }
-      try {
-        JSON.parse(raw);
-      } catch {
-        gatewayFailureReason = `AI gateway returned invalid article JSON during ${attempt}`;
-      }
-      return { raw };
+      return { raw: JSON.stringify(generated.value) };
     } catch (error) {
-      const name = error instanceof Error ? error.name : "";
-      gatewayFailureReason = name === "TimeoutError" || name === "AbortError"
-        ? `AI gateway timed out during ${attempt}`
-        : `AI gateway request failed during ${attempt}: ${error instanceof Error ? error.message : "unknown error"}`;
+      providerFailure = `Cloudflare Workers AI failed during ${attempt}: ${error instanceof Error ? error.message : String(error)}`;
       return { raw: null };
     }
-  }, `${it.title}\n${it.description ?? ""}`);
+  }, `${item.title}\n${item.description}`);
 
-  const parsed = result.article;
-  if (!parsed) {
-    if (result.droppedReason) {
-      console.warn("[ingest-feeds] editorial pipeline dropped item", {
-        source: it.source,
-        link: it.link,
-        reason: result.droppedReason,
-        validation: result.validation.reasons,
-      });
-    }
-    const validationDetail = result.validation.reasons.length
-      ? result.validation.reasons.join(", ")
-      : result.droppedReason ?? "unknown editorial rejection";
-    setRewriteFailure(
-      it,
-      gatewayFailureReason ??
+  const article = result.article;
+  if (!article) {
+    const validation = result.validation.reasons.join(", ") || result.droppedReason || "unknown rejection";
+    return {
+      article: null,
+      failure:
+        providerFailure ||
         (result.droppedReason === "no_clear_news_event"
-          ? "editorial analysis found no clear news event"
-          : `editorial validation rejected the draft: ${validationDetail}`),
-    );
-    return null;
+          ? "Editorial analysis found no clear news event"
+          : `Editorial validation rejected the draft: ${validation}`),
+    };
   }
-  if (!parsed.title || !parsed.summary || !parsed.dek) {
-    setRewriteFailure(it, "editorial output was missing title, summary, or dek");
-    return null;
+
+  if (!article.title || !article.summary || !article.dek) {
+    return { article: null, failure: "Editorial output was missing title, summary, or dek" };
   }
-  if (!parsed.relevance || parsed.relevance.trim().length < 40) {
-    setRewriteFailure(it, "editorial output was missing a usable Texas relevance explanation");
-    return null;
+  if (!article.relevance || article.relevance.trim().length < 40) {
+    return { article: null, failure: "Editorial output was missing a usable Texas relevance explanation" };
   }
-  parsed.dek = parsed.dek.slice(0, 155);
-  parsed.keywords = (parsed.keywords ?? []).slice(0, 10).map((k) => String(k).toLowerCase());
-  parsed.keyTakeaways = (parsed.keyTakeaways ?? []).slice(0, 5);
-  parsed.sections = (parsed.sections ?? [])
-    .filter((s) => s?.heading && Array.isArray(s.paragraphs) && s.paragraphs.length > 0)
+
+  article.dek = article.dek.slice(0, 155);
+  article.keywords = (article.keywords ?? []).slice(0, 10).map((keyword) => String(keyword).toLowerCase());
+  article.keyTakeaways = (article.keyTakeaways ?? []).slice(0, 5);
+  article.sections = (article.sections ?? [])
+    .filter((section) => section?.heading && Array.isArray(section.paragraphs) && section.paragraphs.length > 0)
     .slice(0, 10);
-  return parsed;
+  return { article, failure: null };
 }
 
-function rewriteMainProseWordCount(rw: Rewrite): number {
-  const prose = [
-    rw.summary,
-    rw.analysis ?? "",
-    ...(rw.sections ?? []).flatMap((s) => s.paragraphs ?? []),
-  ].join(" ");
-  return wordCount(prose);
-}
-
-// Ask the model to expand an existing draft up to the required length. Feeds
-// like TPWD press releases are 100–200 words, so a single-shot rewrite rarely
-// clears the 2,000-word non-evergreen floor. This pass grows the draft
-// section-by-section using the same source facts.
-async function expandRewrite(
-  it: Item,
-  prior: Rewrite,
-  lovableApiKey: string,
-): Promise<Rewrite | null> {
-  // The shared editorial engine already performs one targeted repair. Do not
-  // spend a third paid call expanding a draft that passed evidence-driven
-  // validation; the scheduler should move to another candidate instead.
-  void it;
-  void lovableApiKey;
-  return prior;
-}
-
-// One draft and, only when needed, one expansion. A failed paid call is left
-// for a deliberate manual retry instead of being multiplied automatically.
-async function rewriteItemWithRetry(it: Item, lovableApiKey: string): Promise<Rewrite | null> {
-  let draft = await rewriteItem(it, lovableApiKey);
-  if (!draft) {
-    console.warn("[publishSingleFeedItem] rewrite failed", { source: it.source, link: it.link });
-    return null;
-  }
-  const target = minWordsForItem(it, draft);
-  // Only expand when the first pass is short AND we can add real Texas
-  // value. Expansion is skipped once the draft clears the tiered minimum,
-  // avoiding filler paragraphs written solely to hit a word count.
-  if (rewriteMainProseWordCount(draft) < target) {
-    const expanded = await expandRewrite(it, draft, lovableApiKey);
-    if (expanded) draft = expanded;
-  }
-  const finalWords = rewriteMainProseWordCount(draft);
-  if (finalWords < target) {
-    console.warn("[ingest-feeds] rewrite below tiered minimum, keeping best draft", {
-      source: it.source,
-      link: it.link,
-      words: finalWords,
-      target,
-    });
-  }
-  // Return the best draft we produced rather than dropping the item; a
-  // downstream row-level check enforces a hard floor so we never publish a
-  // near-empty article, but we no longer silently discard usable coverage.
-  return draft;
-}
-
-function buildArticleRow(it: Item, rw: Rewrite | null) {
-  // Second guard: never build a slug or published_at from an implausible date.
-  const publishIso = resolvePublishTimestamp(it.pub_date);
+function buildArticleRow(item: Item, rewrite: Rewrite) {
+  const publishIso = resolvePublishTimestamp(item.pub_date);
   const datePrefix = publishIso.slice(0, 10);
-  const baseTitle = rw?.title ?? it.title;
-  const descriptiveSlug = slugify(baseTitle).split("-").filter(Boolean).slice(0, 12).join("-");
-  const slug = `${datePrefix}-${descriptiveSlug}-${hashStr(it.link)}`;
-  const aiCat =
-    rw?.category && (ALLOWED_CATEGORIES as readonly string[]).includes(rw.category)
-      ? rw.category
+  const descriptiveSlug = slugify(rewrite.title).split("-").filter(Boolean).slice(0, 12).join("-");
+  const slug = `${datePrefix}-${descriptiveSlug}-${hashString(item.link)}`;
+  const aiCategory =
+    rewrite.category && (ALLOWED_CATEGORIES as readonly string[]).includes(rewrite.category)
+      ? rewrite.category
       : null;
-  const cat = aiCat ?? it.category ?? categoryFor(it.source);
+  const category = aiCategory ?? item.category ?? categoryFor(item.source);
+
   const sections: { heading: string; paragraphs: string[] }[] = [
+    { heading: "Texas relevance", paragraphs: [rewrite.relevance] },
+    ...(rewrite.sections ?? []).map((section) => ({
+      heading: section.heading,
+      paragraphs: section.paragraphs,
+    })),
+    ...(rewrite.analysis ? [{ heading: "Analysis", paragraphs: [rewrite.analysis] }] : []),
     {
-      heading: "Texas relevance",
+      heading: "Source attribution",
       paragraphs: [
-        rw?.relevance ??
-          `This update from the ${it.source} affects Texans and is being tracked by the Keep TX Red newsroom.`,
+        `Keep TX Red produced this report independently from source material published by ${item.source}. The original source is linked below for verification.`,
       ],
     },
   ];
-  for (const section of rw?.sections ?? []) {
-    if (section.heading && Array.isArray(section.paragraphs) && section.paragraphs.length > 0) {
-      sections.push({ heading: section.heading, paragraphs: section.paragraphs });
-    }
-  }
-  if (rw?.analysis) {
-    sections.push({ heading: "Analysis", paragraphs: [rw.analysis] });
-  }
-  sections.push({
-    heading: "Source attribution",
-    paragraphs: [
-      `This story was reported using a public release from the ${it.source}. Keep TX Red rewrote the coverage independently and links to the official statement for verification.`,
-    ],
-  });
 
   const bodyJson = dedupeArticleBody({
     updated: datePrefix,
-    intro: [rw?.summary ?? it.description ?? `${it.source} released a new update for Texans.`],
+    intro: [rewrite.summary],
     sections,
-    faq: rw?.faq ?? [],
-    sources: [{ label: `${it.source} — official release`, url: it.link }],
-    keyTakeaways:
-      rw?.keyTakeaways && rw.keyTakeaways.length > 0
-        ? rw.keyTakeaways
-        : [
-            `Source: ${it.source}.`,
-            "Keep TX Red rewrites every ingested story into original editorial coverage.",
-          ],
+    faq: rewrite.faq ?? [],
+    sources: [{ label: `${item.source} — source`, url: item.link }],
+    keyTakeaways: rewrite.keyTakeaways ?? [],
   });
 
   return {
     slug,
     internal_url: `/news/${slug}`,
     is_ingested: true,
-    category: cat,
-    title: baseTitle.slice(0, 200),
-    dek: (rw?.dek ?? (it.description || it.title)).slice(0, 155),
+    category,
+    title: rewrite.title.slice(0, 200),
+    dek: rewrite.dek.slice(0, 155),
     body: articleBodyText(bodyJson),
     author: "Keep TX Red Newsroom",
-    source_name: it.source,
-    source_url: it.link,
+    source_name: item.source,
+    source_url: item.link,
     published_at: publishIso,
     kind: "ingested",
     is_breaking: false,
     score: 0,
-    keywords: rw?.keywords ?? [],
+    keywords: rewrite.keywords ?? [],
     body_json: bodyJson,
   };
 }
 
-function parseFeed(xml: string, source: string): Item[] {
-  const items: Item[] = [];
-  const blocks = xml.match(/<(item|entry)[\s\S]*?<\/(item|entry)>/gi) || [];
-  for (const b of blocks) {
-    const title = pick(b, "title");
-    let link = pick(b, "link");
-    if (!link) {
-      const m = b.match(/<link[^>]*href=["']([^"']+)["']/i);
-      if (m) link = m[1];
-    }
-    const rawDate = pick(b, "pubDate") || pick(b, "updated") || pick(b, "published") || "";
-    const description = pick(b, "description") || pick(b, "summary") || pick(b, "content");
-    const ts = Date.parse(rawDate);
-    if (title && link) {
-      // Skip junk titles like "PDF format" / "HTML format" that some feeds
-      // (e.g. Texas Register) emit as separate items pointing to the same
-      // issue in a different file format. They aren't headlines.
-      const t = title.trim().toLowerCase();
-      if (/^(pdf|html|rss|xml|word|doc|docx|txt|text|epub)\s*(format|version)?$/.test(t)) {
-        continue;
-      }
-      // Skip daily puzzle / crossword / word-game filler that some lifestyle
-      // feeds (Texas Monthly, etc.) publish every day. They aren't news.
-      if (isPuzzleTitle(title)) continue;
-      items.push({
-        title: title.slice(0, 500),
-        link,
-        // Feeds sometimes emit wildly wrong pubDates (e.g. 2001 for a 2026
-        // story). Clamp implausible dates to ingestion time so they can never
-        // leak into published_at or the slug's date prefix.
-        pub_date: resolvePublishTimestamp(isNaN(ts) ? null : ts),
-        source,
-        description: description.slice(0, 1000),
-      });
-    }
-  }
-  return items;
-}
+async function resolveSourceText(row: {
+  link: string;
+  description: string | null;
+  extracted_body?: string | null;
+}): Promise<{ text: string; wordCount: number }> {
+  const cached = (row.extracted_body ?? "").trim();
+  if (cached) return { text: cached, wordCount: wordCount(cached) };
 
-export const Route = createFileRoute("/api/public/hooks/ingest-feeds")({
-  server: {
-    handlers: {
-      POST: handler,
-      GET: handler,
-    },
-  },
-});
-
-async function handler() {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
-  const { sources: SOURCES, enabledDbCount } = await loadSources(
-    supabaseAdmin as unknown as Parameters<typeof loadSources>[0],
-  );
-  console.log(
-    `[ingest-feeds] sources: ${SOURCES.length} total (hardcoded=${HARDCODED_SOURCES.length}, db_enabled_with_rss=${enabledDbCount})`,
-  );
-
-  const results = await Promise.all(
-    SOURCES.map(async (s) => {
-      try {
-        const res = await fetch(s.url, {
-          headers: {
-            "User-Agent": "KeepTXRedBot/1.0 (+https://keeptxred.com)",
-            Accept: "application/rss+xml, application/atom+xml, application/xml, text/xml, */*",
-          },
-          signal: AbortSignal.timeout(15000),
-        });
-        if (!res.ok) return { source: s.name, url: s.url, status: res.status, items: [] as Item[] };
-        const items = parseFeed(await res.text(), s.name)
-          .slice(0, 25)
-          .map((it) => ({ ...it, category: s.category }));
-        return { source: s.name, url: s.url, status: res.status, items };
-      } catch (e) {
-        return { source: s.name, url: s.url, status: 0, error: String(e), items: [] as Item[] };
-      }
-    }),
-  );
-
-  const allRaw = [...EDITORIAL_BACKFILLS, ...results.flatMap((r) => r.items)];
-  const preRelevanceCount = allRaw.length;
-  const all = allRaw.filter(isTexasRelevantItem);
-  const droppedNonTexas = preRelevanceCount - all.length;
-  if (droppedNonTexas > 0) {
-    console.log(
-      `[ingest-feeds] dropped ${droppedNonTexas} non-Texas items (relevance < ${TEXAS_RELEVANCE_MIN})`,
-    );
-  }
-  const diag = results.map(({ items, ...rest }) => ({ ...rest, count: items.length }));
-  const okSources = results.filter(
-    (r) =>
-      (r as { status?: number }).status &&
-      (r as { status: number }).status >= 200 &&
-      (r as { status: number }).status < 300,
-  ).length;
-  console.log(
-    `[ingest-feeds] fetched ${all.length} items from ${okSources}/${SOURCES.length} sources`,
-  );
-  if (all.length === 0) {
-    return new Response(JSON.stringify({ ok: true, inserted: 0, fetched: 0, diag }), {
-      headers: { "Content-Type": "application/json" },
+  if (isRedditLink(row.link)) {
+    const post = await fetchRedditPostData(row.link);
+    const linkedText = post.externalUrl ? await fetchLinkedArticleText(post.externalUrl) : null;
+    const resolved = resolveRewriteSource({
+      storedDescription: row.description,
+      redditSelftext: post.selftext,
+      linkedArticleText: linkedText,
+      linkedArticleUrl: post.externalUrl,
     });
+    return { text: resolved.text, wordCount: resolved.wordCount };
   }
 
-  // Editorial recovery rows are durable feed candidates, not published
-  // articles. Refresh their factual summaries on every ingest so a corrected
-  // or expanded recovery entry can pass the same Content Opportunities
-  // preflight as newly discovered stories. A plain ignore-duplicates upsert
-  // leaves the first short summary frozen forever and can make a verified row
-  // invisible under the default "ready" filter.
-  await Promise.all(
-    EDITORIAL_BACKFILLS.map(async ({ category: _category, link, ...fields }) => {
-      const { error } = await supabaseAdmin.from("texas_news_feed").update(fields).eq("link", link);
-      if (error) {
-        console.warn("[ingest-feeds] editorial recovery refresh failed", {
-          link,
-          error: error.message,
-        });
-      }
-    }),
-  );
-
-  // Dedupe by link against existing rows
-  const links = Array.from(new Set(all.map((i) => i.link)));
-  const { data: existing } = await supabaseAdmin
-    .from("texas_news_feed")
-    .select("link")
-    .in("link", links);
-  const have = new Set((existing ?? []).map((r: { link: string }) => r.link));
-  const fresh = all.filter((i) => !have.has(i.link));
-
-  let inserted = 0;
-  if (fresh.length > 0) {
-    // texas_news_feed has no `category` column — strip it before insert.
-    const feedRows = fresh.map(({ category: _c, ...rest }) => rest);
-    const { error, count } = await supabaseAdmin
-      .from("texas_news_feed")
-      .upsert(feedRows, { onConflict: "link", ignoreDuplicates: true, count: "exact" });
-    if (error) {
-      return new Response(JSON.stringify({ ok: false, error: error.message }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-    inserted = count ?? fresh.length;
-  }
-  console.log(
-    `[ingest-feeds] imported ${inserted} new items into texas_news_feed (fresh=${fresh.length})`,
-  );
-
-  // Ingestion is intentionally storage-only. AI generation is reserved for
-  // publishSingleFeedItem(), which is called by the explicit admin publish
-  // action after extraction and preflight. Do not add orphan/backfill rewrite
-  // work below this boundary: cron frequency must never determine AI spend.
-  return new Response(
-    JSON.stringify({
-      ok: true,
-      fetched: all.length,
-      candidates: fresh.length,
-      inserted,
-      nativeMinted: 0,
-      aiCalls: 0,
-      diag,
-    }),
-    { headers: { "Content-Type": "application/json" } },
-  );
-
-  /*
-   * Legacy automatic minting remains below temporarily for history clarity,
-   * but is unreachable by design. It will be deleted after the storage-only
-   * behavior has been deployed and observed.
-   */
-
-  // Mint a native Keep TX Red article for every freshly ingested feed item so
-  // Happening Now only ever links to internal /news/{slug} URLs.
-  let nativeMinted = 0;
-  // Feed ingestion reporting keeps using `fresh`; only article generation is
-  // narrowed to significant items so routine Texas Register notices stay
-  // feed-only instead of consuming AI rewrite attempts.
-  const articleEligibleFresh = fresh.filter(isSignificantTexasRegisterItem);
-  const freshRegister = fresh.filter((i) => i.source.toLowerCase().includes("register"));
-  const stageCounts = {
-    fresh: fresh.length,
-    registerArticleEligible: freshRegister.filter(isSignificantTexasRegisterItem).length,
-    registerFeedOnly: freshRegister.filter((i) => !isSignificantTexasRegisterItem(i)).length,
-    rewriteAttempted: 0,
-    rewriteSucceeded: 0,
-    rewriteFailed: 0,
-    droppedBelowFloor: 0,
-    dedupedInBatch: 0,
-    dedupedVsRecent: 0,
-    articlesUpserted: 0,
-    internalSlugsLinked: 0,
-  };
-  if (articleEligibleFresh.length > 0) {
-    const lovableApiKey = process.env.LOVABLE_API_KEY;
-    // Concurrency-limited so the Worker request budget can absorb large
-    // ingestion bursts (Google News catch-up windows can produce 100+ fresh
-    // items). Empirically 4 parallel Gemini calls complete comfortably inside
-    // the request budget; unbounded Promise.all caused every fetch to abort.
-    stageCounts.rewriteAttempted = lovableApiKey ? articleEligibleFresh.length : 0;
-    const rewrites: (Rewrite | null)[] = lovableApiKey
-      ? await mapWithConcurrency(articleEligibleFresh, 4, (it) =>
-          rewriteItemWithRetry(it, lovableApiKey!),
-        )
-      : articleEligibleFresh.map(() => null);
-    for (const r of rewrites) {
-      if (r) stageCounts.rewriteSucceeded++;
-      else stageCounts.rewriteFailed++;
-    }
-    // Skip items whose AI rewrite failed — never publish empty stub articles.
-    const paired = articleEligibleFresh
-      .map((it, i) => ({ it, rw: rewrites[i] }))
-      .filter((p): p is { it: Item; rw: Rewrite } => p.rw !== null);
-    const pairedRows = paired
-      .map(({ it, rw }) => ({ it, rw, row: buildArticleRow(it, rw) }))
-      .filter(({ it, rw, row }) => {
-        const target = minWordsForItem(it, rw);
-        const words = articleMainWordCount(row.body_json);
-        if (words < target) {
-          console.warn("[ingest-feeds] dropping article below tiered floor", {
-            slug: row.slug,
-            source: it.source,
-            words,
-            target,
-          });
-          stageCounts.droppedBelowFloor++;
-          return false;
-        }
-        return true;
-      });
-    const articleSourceBySlug = new Map(pairedRows.map(({ it, row }) => [row.slug, it]));
-    const articleRows = pairedRows
-      .map(({ row }) => row)
-      .filter((row) => {
-        const sourceItem = articleSourceBySlug.get(row.slug);
-        const validation = validatePoliticalAuthority({
-          headline: row.title,
-          body: `${row.dek} ${row.body} ${sourceItem?.description ?? ""}`,
-        });
-        if (!validation.valid) {
-          console.error("[ingest-feeds] political entity authority gate blocked article", {
-            slug: row.slug,
-            errors: validation.errors,
-          });
-        }
-        return validation.valid;
-      });
-    if (articleRows.length === 0) {
-      console.log("[ingest-feeds] batch produced 0 articles", stageCounts);
-      return new Response(
-        JSON.stringify({ ok: true, inserted, nativeMinted: 0, skipped: fresh.length, stageCounts }),
-        { headers: { "Content-Type": "application/json" } },
-      );
-    }
-
-    // ONE AI call classifies the whole batch into image buckets (cached in DB).
-    const imageMap = lovableApiKey
-      ? await classifyImageBuckets(
-          articleRows.map((r) => ({ slug: r.slug, title: r.title, dek: r.dek })),
-          lovableApiKey!,
-        )
-      : {};
-    // ONE AI call rewrites the batch's headlines for SEO/Discover (cached in DB).
-    const seoMap = lovableApiKey
-      ? await rewriteHeadlinesBatch(
-          articleRows.map((r) => ({ slug: r.slug, title: r.title })),
-          lovableApiKey!,
-        )
-      : {};
-    for (const row of articleRows) {
-      const seo = seoMap[row.slug] ?? null;
-      const headline = seo ?? row.title;
-      const discover = detectDiscoverCategory(`${headline} ${row.dek}`);
-      (row as { image_category?: string | null }).image_category = imageMap[row.slug] ?? null;
-      (row as { seo_headline?: string | null }).seo_headline = seo;
-      (row as { discover_category?: string | null }).discover_category =
-        discover === "other" ? null : discover;
-      (row as { seo_keywords?: string[] | null }).seo_keywords = row.keywords ?? null;
-    }
-
-    // ONE AI call generates A/B headline variants for the whole batch.
-    const variantMap = lovableApiKey
-      ? await generateHeadlineVariantsBatch(
-          articleRows.map((r) => ({
-            slug: r.slug,
-            title: (r as { seo_headline?: string | null }).seo_headline ?? r.title,
-          })),
-          lovableApiKey!,
-        )
-      : {};
-
-    // Compute CTR score deterministically for every row (0 AI calls).
-    for (const row of articleRows) {
-      const anyRow = row as Record<string, unknown>;
-      const variants =
-        variantMap[row.slug] ??
-        ({
-          a: (anyRow.seo_headline as string | null) ?? row.title,
-          b: row.title,
-        } as HeadlineVariants);
-      anyRow.headline_variants = variants;
-
-      const resolvedImageUrl = getArticleImage({
-        slug: row.slug,
-        image_url: (anyRow.image_url as string | null | undefined) ?? null,
-        image_category: (anyRow.image_category as string | null) ?? null,
-        category: row.category,
-        title: variants.a,
-        dek: row.dek,
-        keywords: row.keywords ?? null,
-      });
-      anyRow.ctr_score = scoreDiscoverMatch({
-        slug: row.slug,
-        title: row.title,
-        dek: row.dek,
-        seo_headline: (anyRow.seo_headline as string | null) ?? null,
-        discover_category: (anyRow.discover_category as string | null) ?? null,
-        image_category: (anyRow.image_category as string | null) ?? null,
-        image_url: (anyRow.image_url as string | null | undefined) ?? null,
-        category: row.category,
-        keywords: row.keywords ?? null,
-        seo_keywords: (anyRow.seo_keywords as string[] | null) ?? null,
-        resolvedImageUrl,
-      });
-    }
-
-    articleRows.forEach((r) => enrichArticleRow(r));
-
-    // Deduplicate: (1) collapse near-duplicate titles within this batch,
-    // (2) drop anything whose title matches an article published in the
-    // last 7 days. Same story, different wording must never appear twice.
-    const withinBatch = dedupeByTitle(articleRows as Array<{ title: string; slug: string }>);
-    stageCounts.dedupedInBatch = articleRows.length - withinBatch.length;
-    const sinceIso = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-    const { data: recent } = await supabaseAdmin
-      .from("daily_articles")
-      .select("title")
-      .gte("published_at", sinceIso);
-    const recentTitles = (recent ?? []).map((r: { title: string }) => r.title);
-    // Same-event rewrites from the last 7 days are blocked before insertion
-    // (same flood, same appointment, same game restated by another source),
-    // while materially new follow-up developments stay publishable.
-    const dedupedSlugs = new Set(
-      withinBatch
-        .filter((r) => !recentTitles.some((t) => isSameEventRewrite(t, r.title)))
-        .map((r) => r.slug),
-    );
-    stageCounts.dedupedVsRecent = withinBatch.length - dedupedSlugs.size;
-    const uniqueArticleRows = articleRows.filter((r) => dedupedSlugs.has(r.slug));
-    if (uniqueArticleRows.length === 0) {
-      console.log("[ingest-feeds] all articles deduped", stageCounts);
-      return new Response(
-        JSON.stringify({
-          ok: true,
-          inserted,
-          nativeMinted: 0,
-          skipped: fresh.length,
-          dedupedAll: true,
-          stageCounts,
-        }),
-        { headers: { "Content-Type": "application/json" } },
-      );
-    }
-
-    const { error: artErr, count: artCount } = await supabaseAdmin
-      .from("daily_articles")
-      .upsert(uniqueArticleRows, { onConflict: "slug", ignoreDuplicates: true, count: "exact" });
-    if (artErr) {
-      console.error("[ingest-feeds] daily_articles upsert failed", {
-        message: artErr?.message,
-        count: uniqueArticleRows.length,
-      });
-    }
-    if (!artErr) {
-      nativeMinted = artCount ?? uniqueArticleRows.length;
-      stageCounts.articlesUpserted = nativeMinted;
-      await Promise.allSettled(
-        uniqueArticleRows.map((row: { slug: string }) =>
-          generateFeaturedImageForSlugDirect(row.slug, true),
-        ),
-      );
-      // Write the internal slug back onto the feed row so cards can link to it.
-      const linkResults = await Promise.all(
-        uniqueArticleRows.map((row: { slug: string }) => {
-          const src = articleSourceBySlug.get(row.slug);
-          if (!src) return Promise.resolve({ ok: false });
-          return supabaseAdmin
-            .from("texas_news_feed")
-            .update({ internal_slug: row.slug })
-            .eq("link", src.link)
-            .then((r) => ({ ok: !r.error, error: r.error?.message }));
-        }),
-      );
-      stageCounts.internalSlugsLinked = linkResults.filter(
-        (r) => (r as { ok?: boolean }).ok,
-      ).length;
-      const linkErrors = linkResults.filter(
-        (r) => (r as { ok?: boolean }).ok === false && (r as { error?: string }).error,
-      );
-      if (linkErrors.length > 0) {
-        console.error("[ingest-feeds] internal_slug writeback errors", {
-          count: linkErrors.length,
-          sample: linkErrors.slice(0, 3),
-        });
-      }
-    }
-    console.log("[ingest-feeds] batch complete", stageCounts);
+  const stored = (row.description ?? "").trim();
+  if (wordCount(stored) >= 400 || !/^https?:\/\//i.test(row.link)) {
+    return { text: stored, wordCount: wordCount(stored) };
   }
 
-  // Backfill internal_slug for any older feed rows that don't have one yet.
-  const { data: orphans } = await supabaseAdmin
-    .from("texas_news_feed")
-    .select("id,title,link,source,description,pub_date")
-    .is("internal_slug", null)
-    .limit(25);
-  if (orphans?.length) {
-    const lovableApiKey = process.env.LOVABLE_API_KEY;
-    // Routine Texas Register orphans stay feed-only forever — filtering here
-    // stops them from re-consuming AI rewrite attempts on every backfill run.
-    const items: Item[] = orphans!
-      .map((row) => ({
-        title: row.title,
-        link: row.link,
-        source: row.source,
-        pub_date: row.pub_date,
-        description: row.description ?? "",
-      }))
-      .filter(isSignificantTexasRegisterItem);
-    const rewrites: (Rewrite | null)[] = lovableApiKey
-      ? await mapWithConcurrency(items, 4, (it) => rewriteItemWithRetry(it, lovableApiKey!))
-      : items.map(() => null);
-    console.log("[ingest-feeds] orphan backfill", {
-      candidates: items.length,
-      rewriteSucceeded: rewrites.filter(Boolean).length,
-      rewriteFailed: rewrites.filter((r) => !r).length,
-    });
-    // Only mint articles for orphans whose rewrite succeeded.
-    const paired = items
-      .map((it, i) => ({ it, rw: rewrites[i] }))
-      .filter((p): p is { it: Item; rw: Rewrite } => p.rw !== null);
-    const backPaired = paired
-      .map(({ it, rw }) => ({ it, rw, row: buildArticleRow(it, rw) }))
-      .filter(({ it, rw, row }) => {
-        const target = minWordsForItem(it, rw);
-        const words = articleMainWordCount(row.body_json);
-        if (words < target) {
-          console.warn("[ingest-feeds] backfill dropped article below tiered floor", {
-            slug: row.slug,
-            source: it.source,
-            words,
-            target,
-          });
-          return false;
-        }
-        return true;
-      });
-    const backRows = backPaired.map(({ row }) => row);
-    backRows.forEach((r) => enrichArticleRow(r));
-    if (backRows.length > 0) {
-      await supabaseAdmin
-        .from("daily_articles")
-        .upsert(backRows, { onConflict: "slug", ignoreDuplicates: true });
-      await Promise.allSettled(
-        backRows.map((row: { slug: string }) => generateFeaturedImageForSlugDirect(row.slug, true)),
-      );
-      await Promise.all(
-        backPaired.map(({ it, row }) =>
-          supabaseAdmin
-            .from("texas_news_feed")
-            .update({ internal_slug: row.slug })
-            .eq("link", it.link),
-        ),
-      );
-    }
+  const linked = await fetchLinkedArticleText(row.link);
+  if (linked && wordCount(linked) > wordCount(stored)) {
+    const text = stored ? `${stored}\n\n${linked}` : linked;
+    return { text, wordCount: wordCount(text) };
   }
-
-  // Canonical-URL dedupe: for any daily_articles rows sharing the same
-  // source_url, keep the most-recently-updated slug and drop the rest.
-  const dedupedCanonical = 0;
-  let dedupeSkippedReason: string | null = null;
-  try {
-    // Total daily_articles row count — used both to skip cleanup on empty-run
-    // scenarios and to enforce a % safety cap on how much a single ingest may
-    // delete. A prior version of this block wiped the whole table when the
-    // rewrite batch produced no rows AND canonical dedupe ran unchecked.
-    const { count: totalArticles } = await supabaseAdmin
-      .from("daily_articles")
-      .select("id", { count: "exact", head: true });
-    const totalCount = totalArticles ?? 0;
-
-    // Safety rule 3: if the table already has articles but THIS ingest run
-    // produced zero successful rewrites (native mint + backfill both silent),
-    // do not run destructive cleanup — an empty rewrite batch is not evidence
-    // that historical rows are duplicates.
-    if (totalCount > 0 && nativeMinted === 0) {
-      dedupeSkippedReason = "no successful rewrites in this run";
-    } else {
-      const { data: dupes } = await supabaseAdmin
-        .from("daily_articles")
-        .select("id, slug, source_url, published_at")
-        .not("source_url", "is", null)
-        .order("published_at", { ascending: false, nullsFirst: false })
-        .limit(1000);
-      if (dupes?.length) {
-        // Group by canonical source_url; keep the newest (list is already
-        // sorted desc by published_at), mark strictly older siblings for
-        // deletion. Rows without a source_url were excluded above.
-        const seen = new Set<string>();
-        const toDelete: string[] = [];
-        for (const row of dupes! as { id: string; slug: string; source_url: string | null }[]) {
-          const key = row.source_url;
-          if (!key) continue;
-          if (seen.has(key!)) toDelete.push(row.id);
-          else seen.add(key!);
-        }
-        if (toDelete.length > 0) {
-          // Never delete a published URL during ingestion. Older rows may
-          // already be indexed or linked externally; deleting them creates
-          // avoidable 404s. Source-level dedupe should happen before a new slug
-          // is published, or via an explicit persisted redirect.
-          dedupeSkippedReason = `preserved ${toDelete.length} published duplicate-source URL(s)`;
-          console.warn("[ingest-feeds] canonical dedupe preserved published URLs", {
-            candidates: toDelete.length,
-            total: totalCount,
-          });
-        }
-      }
-    }
-  } catch (e) {
-    console.error("canonical dedupe failed", e);
-  }
-
-  return new Response(
-    JSON.stringify({
-      ok: true,
-      fetched: all.length,
-      candidates: fresh.length,
-      inserted,
-      nativeMinted,
-      dedupedCanonical,
-      dedupeSkippedReason,
-      stageCounts,
-      diag,
-    }),
-    { headers: { "Content-Type": "application/json" } },
-  );
+  return { text: stored, wordCount: wordCount(stored) };
 }
 
 /**
- * Single-item publish path used by the Admin "Publish to Keep Texas Red"
- * button. Reuses the same rewrite → build → enrich → image pipeline as the
- * batch ingestion so category, article type, SEO and image logic remain the
- * single source of truth. Safe to call multiple times: if the feed row is
- * already linked to a daily_articles slug, returns that slug unchanged.
+ * Final guarded publication step used by multi-source publication and explicit
+ * admin publishing. Repeated calls are idempotent once a feed row is linked.
  */
 export async function publishSingleFeedItem(
   feedItemId: number,
 ): Promise<{ ok: boolean; slug?: string; error?: string; alreadyPublished?: boolean }> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data: row, error: rowErr } = await supabaseAdmin
+  const { data: row, error: rowError } = await supabaseAdmin
     .from("texas_news_feed")
     .select("id,title,link,source,description,pub_date,internal_slug,extracted_body,preflight_json")
     .eq("id", feedItemId)
     .maybeSingle();
-  if (rowErr || !row) {
-    return { ok: false, error: rowErr?.message ?? "Feed item not found" };
-  }
-  if (row.internal_slug) {
-    return { ok: true, slug: row.internal_slug, alreadyPublished: true };
-  }
-  if (isPuzzleTitle(row.title)) {
-    return { ok: false, error: "Puzzle / filler titles are blocked from publish." };
-  }
-  const lovableApiKey = process.env.LOVABLE_API_KEY;
-  if (!lovableApiKey) return { ok: false, error: "Missing LOVABLE_API_KEY" };
 
+  if (rowError || !row) return { ok: false, error: rowError?.message ?? "Feed item not found" };
+  if (row.internal_slug) return { ok: true, slug: row.internal_slug, alreadyPublished: true };
+  if (isPuzzleTitle(row.title)) return { ok: false, error: "Puzzle / filler titles are blocked from publish." };
+  if (!process.env.CLOUDFLARE_ACCOUNT_ID || !process.env.CLOUDFLARE_API_TOKEN) {
+    return { ok: false, error: "Cloudflare Workers AI is not configured" };
+  }
+
+  const resolved = await resolveSourceText(row);
   const item: Item = {
     title: row.title,
     link: row.link,
     source: row.source,
     pub_date: row.pub_date,
-    description: row.description ?? "",
+    description: resolved.text,
   };
 
-  // ------------------------------------------------------------------
-  // FULL SOURCE EXTRACTION FIRST — the preflight must see the real body,
-  // not the ~40-word RSS summary. Reuse a previously stored extracted body
-  // when we already paid to fetch it. Otherwise run extraction exactly once,
-  // cache it, and hand it to the preflight assessor.
-  // ------------------------------------------------------------------
-  const cachedBody =
-    typeof (row as { extracted_body?: string | null }).extracted_body === "string"
-      ? ((row as { extracted_body?: string | null }).extracted_body ?? "").trim()
-      : "";
-  let extractedBody: string = cachedBody;
-  let extractionFailureStage: "extraction" | "preflight" | "none" = "none";
-  let resolvedSourceWordCount: number | null = null;
-
-  if (isRedditLink(item.link)) {
-    // Resolve the exact Reddit source once so extraction, preflight and the AI
-    // rewrite all use and count the same text. Cached extraction remains authoritative.
-    let selftext: string | null = null;
-    let externalUrl: string | null = null;
-    let linkedText: string | null = null;
-    if (!cachedBody) {
-      const redditData = await fetchRedditPostData(item.link);
-      selftext = redditData.selftext;
-      externalUrl = redditData.externalUrl;
-      if (externalUrl) linkedText = await fetchLinkedArticleText(externalUrl);
-    }
-    const { resolveRewriteSource } = await import("@/lib/rewrite-source");
-    const resolvedSource = resolveRewriteSource({
-      cachedExtraction: cachedBody,
-      storedDescription: item.description,
-      redditSelftext: selftext,
-      linkedArticleText: linkedText,
-      linkedArticleUrl: externalUrl,
-    });
-    extractedBody = resolvedSource.text;
-    resolvedSourceWordCount = resolvedSource.wordCount;
-
-    if (!resolvedSource.meetsAbsoluteMinimum) {
-      extractionFailureStage = "extraction";
-      const { assessRewritePreflight: preflightAssess, toPersistedSnapshot } =
-        await import("@/lib/rewrite-preflight");
-      const blocked = preflightAssess({ title: item.title, description: resolvedSource.text, link: item.link });
-      await supabaseAdmin
-        .from("texas_news_feed")
-        .update({ preflight_json: toPersistedSnapshot(blocked, extractionFailureStage) } as never)
-        .eq("id", feedItemId);
-      return {
-        ok: false,
-        error: "This Reddit post does not contain enough text to generate a factual KeepTXRed article.",
-      };
-    }
-  } else if (!extractedBody) {
-    // Non-Reddit path: if the stored RSS description is short, run the same
-    // linked-article extraction we already use for Reddit link posts so a
-    // 40-word RSS summary is never treated as the full source.
-    const rssBody = item.description?.trim() ?? "";
-    const rssWords = wordCount(rssBody);
-    if (rssWords < 400 && item.link && /^https?:\/\//i.test(item.link)) {
-      const fetched = await fetchLinkedArticleText(item.link);
-      if (fetched && wordCount(fetched) > rssWords) {
-        extractedBody = rssBody ? `${rssBody}\n\n${fetched}` : fetched;
-      } else {
-        extractedBody = rssBody;
-      }
-    } else {
-      extractedBody = rssBody;
-    }
-  }
-
-  // The AI rewrite prompt now sees the full extracted body, not the RSS blurb.
-  if (extractedBody) item.description = extractedBody;
-
-  // Deterministic preflight — refuse to spend AI rewrite credits when the
-  // extracted source clearly cannot produce a factual article.
-  const {
-    assessRewritePreflight,
-    assertRewriteableOrThrow,
-    toPersistedSnapshot,
-    PreflightBlockedError,
-  } = await import("@/lib/rewrite-preflight");
   const preflight = assessRewritePreflight({
     title: item.title,
-    description: extractedBody, // ALWAYS the full extracted body, never the RSS blurb alone
+    description: item.description,
     link: item.link,
   });
-  console.log("[publishSingleFeedItem] preflight", {
-    feed_item_id: feedItemId,
-    rewriteable: preflight.rewriteable,
-    reason: preflight.reason,
-    source_word_count: preflight.sourceWordCount,
-    used_cached_extraction: cachedBody.length > 0,
-    extracted_body_words: resolvedSourceWordCount ?? wordCount(extractedBody),
-  });
-
-  // Persist the extraction + preflight snapshot so page loads and admin
-  // dashboards can render the reason without recomputing.
   await supabaseAdmin
     .from("texas_news_feed")
     .update({
-      extracted_body: extractedBody || null,
+      extracted_body: item.description || null,
       preflight_json: toPersistedSnapshot(preflight, preflight.rewriteable ? "none" : "preflight"),
     } as never)
     .eq("id", feedItemId);
 
   if (!preflight.rewriteable) {
-    return {
-      ok: false,
-      error: `Rewrite skipped before AI generation: ${preflight.message}`,
-    };
+    return { ok: false, error: `Rewrite skipped before AI generation: ${preflight.message}` };
   }
-
-  // Hard guard — no matter how we got here, refuse to call the paid rewrite
-  // function when preflight is not ok. Throws PreflightBlockedError so tests
-  // can prove the rewrite mock is never reached.
   assertRewriteableOrThrow(preflight);
 
   const fingerprint = await contentFingerprint(item);
-  // Generated database types are refreshed after the migration is applied.
+  // Generated database types can lag publication-cache migrations.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cacheClient = supabaseAdmin as any;
   const { data: cachedRow } = await cacheClient
@@ -1490,15 +456,16 @@ export async function publishSingleFeedItem(
     .select("result_json,status,failure_reason")
     .eq("content_fingerprint", fingerprint)
     .maybeSingle();
-  const cached = cachedRow as unknown as {
+
+  const cached = cachedRow as {
     result_json?: Rewrite | null;
     status?: string;
     failure_reason?: string | null;
   } | null;
-  let rw = cached?.status === "completed" && cached.result_json ? cached.result_json : null;
-  let rewriteFailureReason = cached?.failure_reason ?? null;
+  let rewrite = cached?.status === "completed" && cached.result_json ? cached.result_json : null;
+  let rewriteFailure = cached?.failure_reason ?? null;
 
-  if (!rw) {
+  if (!rewrite) {
     const configuredLimit = Number.parseInt(process.env.DAILY_AI_REWRITE_LIMIT ?? "8", 10);
     const dailyLimit = Number.isFinite(configuredLimit)
       ? Math.min(50, Math.max(1, configuredLimit))
@@ -1514,18 +481,13 @@ export async function publishSingleFeedItem(
     if (claimError) {
       return { ok: false, error: `Could not reserve AI rewrite budget: ${claimError.message}` };
     }
+
     const claim = claimData as unknown as string;
     if (claim === "budget_exhausted") {
-      return {
-        ok: false,
-        error: `Daily AI rewrite budget reached (${dailyLimit}). Try again after midnight UTC.`,
-      };
+      return { ok: false, error: `Daily AI rewrite budget reached (${dailyLimit}). Try again after midnight UTC.` };
     }
     if (claim === "in_progress") {
-      return {
-        ok: false,
-        error: "This source is already being rewritten. Try again in a few minutes.",
-      };
+      return { ok: false, error: "This source is already being rewritten. Try again in a few minutes." };
     }
     if (claim === "cached") {
       const { data: refreshedRow } = await cacheClient
@@ -1533,54 +495,44 @@ export async function publishSingleFeedItem(
         .select("result_json,failure_reason")
         .eq("content_fingerprint", fingerprint)
         .maybeSingle();
-      const refreshed = refreshedRow as unknown as {
-        result_json?: Rewrite | null;
-        failure_reason?: string | null;
-      } | null;
-      rw = refreshed?.result_json ?? null;
-      rewriteFailureReason = refreshed?.failure_reason ?? rewriteFailureReason;
+      rewrite = refreshedRow?.result_json ?? null;
+      rewriteFailure = refreshedRow?.failure_reason ?? rewriteFailure;
     } else {
-      rw = await rewriteItemWithRetry(item, lovableApiKey);
-      rewriteFailureReason = rw ? null : getRewriteFailure(item);
-      const cacheUpdate = rw
-        ? {
-            status: "completed",
-            result_json: rw,
-            failure_reason: null,
-            completed_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          }
-        : {
-            status: "failed",
-            result_json: null,
-            failure_reason: rewriteFailureReason ?? getRewriteFailure(item),
-            completed_at: null,
-            updated_at: new Date().toISOString(),
-          };
+      const generated = await rewriteItem(item);
+      rewrite = generated.article;
+      rewriteFailure = generated.failure;
       await cacheClient
         .from("ai_rewrite_cache")
-        .update(cacheUpdate as never)
+        .update(
+          rewrite
+            ? {
+                status: "completed",
+                result_json: rewrite,
+                failure_reason: null,
+                completed_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+              }
+            : {
+                status: "failed",
+                result_json: null,
+                failure_reason: rewriteFailure ?? "AI rewrite failed",
+                completed_at: null,
+                updated_at: new Date().toISOString(),
+              },
+        )
         .eq("content_fingerprint", fingerprint);
     }
   }
 
-  if (!rw) {
-    return {
-      ok: false,
-      error: rewriteFailureReason ?? getRewriteFailure(item),
-    };
-  }
-  void PreflightBlockedError; // keep type import referenced for downstream callers
+  if (!rewrite) return { ok: false, error: rewriteFailure ?? "AI rewrite failed" };
 
-  const articleRow = buildArticleRow(item, rw);
-  const target = minWordsForItem(item, rw);
+  const articleRow = buildArticleRow(item, rewrite);
+  const target = editorialMinimumFor(rewrite.category ?? categoryFor(item.source), item.description);
   const words = articleMainWordCount(articleRow.body_json);
   if (words < target) {
-    return {
-      ok: false,
-      error: `Rewrite below tiered minimum (${words}/${target} words). Try again.`,
-    };
+    return { ok: false, error: `Rewrite below tiered minimum (${words}/${target} words). Try again.` };
   }
+
   enrichArticleRow(articleRow);
   const entityValidation = validatePoliticalAuthority({
     headline: articleRow.title,
@@ -1593,18 +545,16 @@ export async function publishSingleFeedItem(
     };
   }
 
-  const { error: upsertErr } = await supabaseAdmin
+  const { error: upsertError } = await supabaseAdmin
     .from("daily_articles")
     .upsert([articleRow], { onConflict: "slug", ignoreDuplicates: true });
-  if (upsertErr) return { ok: false, error: upsertErr.message };
+  if (upsertError) return { ok: false, error: upsertError.message };
 
   await supabaseAdmin
     .from("texas_news_feed")
     .update({ internal_slug: articleRow.slug })
     .eq("id", feedItemId);
 
-  // Fire-and-forget image generation; UI already renders without it.
   void generateFeaturedImageForSlugDirect(articleRow.slug, true).catch(() => undefined);
-
   return { ok: true, slug: articleRow.slug };
 }
