@@ -124,14 +124,15 @@ export function extractCloudflareVisionOutput(result: unknown): { output: unknow
   return { output: result };
 }
 
-// Mistral occasionally follows the requested labels but wraps the label names
-// and colons in Markdown (for example **Matches:** Yes), or emits 1/0 and N/A.
+// Mistral occasionally follows the requested labels but changes presentation:
+// Markdown labels, 1/0 and N/A tokens, or `label=value` rather than `label: value`.
 // Normalize only that presentation layer before using the existing strict
 // parser. N/A is conservatively treated as a negative, never as approval.
 export function normalizeCloudflareVisionVerdictOutput(value: unknown): unknown {
   if (typeof value !== "string") return value;
   return value
     .replace(/\*\*\s*(Matches|Photorealistic|Reason)\s*:\s*\*\*/gi, "$1:")
+    .replace(/\b(Matches|Photorealistic|Reason)\s*=\s*/gi, "$1: ")
     .replace(/\bMatches\s*:\s*1\b/gi, "Matches: yes")
     .replace(/\bMatches\s*:\s*0\b/gi, "Matches: no")
     .replace(/\bPhotorealistic\s*:\s*1\b/gi, "Photorealistic: yes")
