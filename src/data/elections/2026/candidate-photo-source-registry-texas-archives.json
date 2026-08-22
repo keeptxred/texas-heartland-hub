@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "texashistory.unt.edu",
+    "sourceClass": "texas-history-digital-archive",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use The Portal to Texas History only to discover candidate photographs and their holding institutions. The Portal states that copyright status varies by item and collection partner; approve only after the individual item and contributing partner provide a compatible reuse basis, and preserve the persistent item URL plus holding-partner attribution.",
+    "searchHint": "site:texashistory.unt.edu candidate name Texas politician photograph",
+    "notes": "Verified August 2026. UNT's Portal to Texas History indexes millions of Texas archival items from hundreds of partner institutions. Portal policy explicitly requires item-level copyright review, so this source remains review-only."
+  },
+  {
+    "domain": "tsl.texas.gov",
+    "sourceClass": "texas-state-library-and-archives",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use Texas State Library and Archives Commission web works and collection records only after item-level rights review. TSLAC states that agency-created web works are generally not copyright protected, but collection items and contractor works may be protected; preserve the exact record URL, collection, creator, and any restrictions.",
+    "searchHint": "site:tsl.texas.gov candidate name portrait photograph Texas archives",
+    "notes": "Verified August 2026. TSLAC's Prints and Photographs Collection contains more than 750,000 items relating to Texas government, history, individuals, and events; rights vary by item."
+  },
+  {
+    "domain": "dp.la",
+    "sourceClass": "digital-public-library-image-index",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use DPLA to discover candidate images and standardized item rights statements, then verify the originating institution's record before approval. Favor DPLA items marked Unlimited Re-Use such as Public Domain Mark, CC0, CC BY, CC BY-SA, No Copyright-US, or No Known Copyright; never treat DPLA metadata alone as sufficient provenance.",
+    "searchHint": "site:dp.la candidate name Texas politician portrait",
+    "notes": "Verified August 2026. DPLA exposes standardized copyright-status categories and links back to contributing institutions, making it useful for finding reusable archival images without weakening item-level rights review."
+  }
+]
