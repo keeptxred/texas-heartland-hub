@@ -111,6 +111,11 @@ function NewsPage() {
     },
     [activeCat]
   );
+  const liveSlugSet = useMemo(() => new Set(filteredLive.map((article) => article.slug)), [filteredLive]);
+  const archiveArticles = useMemo(
+    () => filteredStatic.filter((article) => !liveSlugSet.has(article.slug)).slice(0, 30),
+    [filteredStatic, liveSlugSet],
+  );
 
   const liveImages = useMemo(
     () =>
@@ -124,9 +129,11 @@ function NewsPage() {
     [filteredLive]
   );
   const staticImages = useMemo(
-    () => assignUniqueImages(filteredStatic, (a) => a.slug, (a) => a.image, (a) => a.category ?? null),
-    [filteredStatic]
+    () => assignUniqueImages(archiveArticles, (a) => a.slug, (a) => a.image, (a) => a.category ?? null),
+    [archiveArticles]
   );
+
+  const hasResults = filteredLive.length > 0 || archiveArticles.length > 0;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-14">
@@ -183,9 +190,35 @@ function NewsPage() {
         ))}
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-        {filteredLive.length > 0
-          ? filteredLive.map((a: DailyArticle) => {
+      {!hasResults ? (
+        <div className="rounded-lg border-2 border-dashed border-border px-6 py-12 text-center">
+          <h2 className="font-display text-2xl tracking-tight">No coverage in this section yet</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Try another topic above or return to all newsroom coverage.
+          </p>
+          <button
+            type="button"
+            onClick={() => setActiveCat("All")}
+            className="mt-5 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+          >
+            Show all news
+          </button>
+        </div>
+      ) : null}
+
+      {filteredLive.length > 0 ? (
+        <section aria-labelledby="latest-news-heading">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-3 border-b border-border pb-3">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Current feed</p>
+              <h2 id="latest-news-heading" className="font-display text-3xl tracking-tight">Latest coverage</h2>
+            </div>
+            <span className="text-xs text-muted-foreground">
+              {filteredLive.length} current {filteredLive.length === 1 ? "story" : "stories"}
+            </span>
+          </div>
+          <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
+            {filteredLive.map((a: DailyArticle) => {
               const img = liveImages.get(a.slug) ?? resolveArticleImage(a);
               const { headline: title } = resolveDisplayHeadline(a);
               const isEvergreen = a.kind === "evergreen";
@@ -195,7 +228,7 @@ function NewsPage() {
                     <img src={img} alt={title} loading="lazy" className="size-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   </div>
                   <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-primary">{a.category}</span>
-                  <h2 className="font-serif text-lg font-bold leading-snug mt-1 group-hover:underline underline-offset-4">{title}</h2>
+                  <h3 className="font-serif text-lg font-bold leading-snug mt-1 group-hover:underline underline-offset-4">{title}</h3>
                   <p className="mt-2 text-sm text-muted-foreground line-clamp-3">{a.dek}</p>
                   <p className="mt-2 text-[11px] text-muted-foreground italic">
                     {a.source_name ? `Source: ${a.source_name}` : a.author} • {timeAgo(a.published_at)}
@@ -212,19 +245,42 @@ function NewsPage() {
                 );
               }
               return <article key={a.slug} className="group">{card}</article>;
-            })
-          : filteredStatic.slice(0, 30).map((a) => (
+            })}
+          </div>
+        </section>
+      ) : null}
+
+      {archiveArticles.length > 0 ? (
+        <section className={filteredLive.length > 0 ? "mt-16 border-t border-border pt-10" : ""} aria-labelledby="news-archive-heading">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
+                {filteredLive.length > 0 ? "Go deeper" : "KTR newsroom"}
+              </p>
+              <h2 id="news-archive-heading" className="font-display text-3xl tracking-tight">
+                {filteredLive.length > 0 ? "More reporting & explainers" : "Reporting & explainers"}
+              </h2>
+              <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+                Evergreen guides and recent KTR reporting remain available instead of disappearing when the live feed updates.
+              </p>
+            </div>
+            <span className="text-xs text-muted-foreground">Showing up to 30</span>
+          </div>
+          <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
+            {archiveArticles.map((a) => (
               <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group block cursor-pointer">
                 <div className="aspect-[4/3] overflow-hidden bg-muted mb-4">
                   <img src={staticImages.get(a.slug) ?? a.image} alt={a.title} loading="lazy" className="size-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
                 <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-primary">{a.category}</span>
-                <h2 className="font-serif text-lg font-bold leading-snug mt-1 group-hover:underline underline-offset-4">{a.title}</h2>
+                <h3 className="font-serif text-lg font-bold leading-snug mt-1 group-hover:underline underline-offset-4">{a.title}</h3>
                 <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{a.dek}</p>
                 <p className="mt-2 text-[11px] text-muted-foreground italic">{a.author} • {absoluteNewsDate(a.publishedAt)}</p>
               </Link>
             ))}
-      </div>
+          </div>
+        </section>
+      ) : null}
     </div>
   );
 }
