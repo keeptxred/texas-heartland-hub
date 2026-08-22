@@ -7,6 +7,14 @@ const REDIRECT_ALIASES = new Set([
   "/living-in-texas",
 ]);
 
+function expectCanonicalInternalLink(link: { readonly to: string; readonly label: string }) {
+  expect(link.to, `${link.label} must use an internal absolute path`).toMatch(/^\//);
+  expect(
+    REDIRECT_ALIASES.has(link.to),
+    `${link.label} must not point through redirect alias ${link.to}`,
+  ).toBe(false);
+}
+
 describe("site navigation", () => {
   it("keeps primary group ids and labels unique", () => {
     const ids = SITE_NAV_GROUPS.map((group) => group.id);
@@ -17,16 +25,15 @@ describe("site navigation", () => {
   });
 
   it("uses direct canonical destinations in global navigation", () => {
-    const primaryLinks = SITE_NAV_GROUPS.flatMap((group) => group.links);
-    const allLinks = [...primaryLinks, SHOP_LINK, ...ABOUT_LINKS, ...SHOP_POLICY_LINKS];
-
-    for (const link of allLinks) {
-      expect(link.to, `${link.label} must use an internal absolute path`).toMatch(/^\//);
-      expect(
-        REDIRECT_ALIASES.has(link.to),
-        `${link.label} must not point through redirect alias ${link.to}`,
-      ).toBe(false);
+    for (const group of SITE_NAV_GROUPS) {
+      for (const link of group.links) {
+        expectCanonicalInternalLink(link);
+      }
     }
+
+    expectCanonicalInternalLink(SHOP_LINK);
+    for (const link of ABOUT_LINKS) expectCanonicalInternalLink(link);
+    for (const link of SHOP_POLICY_LINKS) expectCanonicalInternalLink(link);
   });
 
   it("does not duplicate destinations within a navigation group", () => {
