@@ -22,7 +22,7 @@ export function ElectionLayout({
   description,
   children,
   canonicalUrl,
-  eyebrow = "Texas Election Central",
+  eyebrow = "Election coverage",
   lastUpdated,
   navigation,
   sidebar,
@@ -112,6 +112,20 @@ export function ElectionLayout({
           </div>
         </div>
 
+        <aside className="border-b border-border bg-muted/40" aria-label="Election Central editorial trust">
+          <div className="mx-auto max-w-7xl px-4 py-3 text-sm leading-6 text-muted-foreground sm:px-6 lg:px-8">
+            <strong className="text-foreground">Coverage &amp; sourcing:</strong> Election Central is maintained by the{" "}
+            <a href="/authors/elections-desk" className="font-semibold text-primary underline-offset-4 hover:underline">
+              Elections Desk
+            </a>
+            , an organizational editorial byline. Race, voting, poll, forecast, and result information is source-backed and governed by Keep TX Red&apos;s{" "}
+            <a href="/editorial-standards" className="font-semibold text-primary underline-offset-4 hover:underline">
+              Editorial Standards
+            </a>
+            .
+          </div>
+        </aside>
+
         {navigation && (
           <div className="border-b border-border bg-background">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">{navigation}</div>
@@ -133,7 +147,9 @@ export function ElectionLayout({
             <strong className="text-foreground">Election data notice:</strong> Election Central
             republishes source-backed public information. Polls are survey snapshots, forecasts are
             estimates available for selected races only, and election returns are unofficial until
-            certified. Confirm voting and ballot information with the responsible election authority.{" "}
+            certified. Before official reporting begins, a result count of 0 means no races are
+            reporting yet; Keep TX Red does not fill gaps with placeholder vote totals. Confirm voting
+            and ballot information with the responsible election authority.{" "}
             <a
               href="/elections/corrections"
               className="font-semibold text-primary underline-offset-4 hover:underline"

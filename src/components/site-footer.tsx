@@ -6,6 +6,16 @@ import { SocialLinks } from "@/components/social-links";
 import { TexasDefinedCrosslinks } from "@/components/texas-defined-crosslinks";
 import { ABOUT_LINKS, SHOP_LINK, SHOP_POLICY_LINKS, SITE_NAV_GROUPS } from "@/lib/site-navigation";
 
+const FOOTER_GROUP_IDS = new Set<string>(["news", "government"]);
+const FOOTER_LINK_LABELS = new Set<string>([
+  "Latest Texas News",
+  "Texas Politics",
+  "Texas Legislature",
+  "Track Texas Bills",
+  "Representatives",
+  "Texas Laws",
+]);
+
 export function SiteFooter() {
   return (
     <>
@@ -15,7 +25,7 @@ export function SiteFooter() {
       <TexasDefinedCrosslinks />
       <footer className="mt-16 bg-secondary text-secondary-foreground">
         <div className="mx-auto max-w-7xl px-4 py-14">
-          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-[1.45fr_repeat(5,1fr)]">
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr]">
             <div>
               <div className="mb-5 grid size-12 place-items-center rounded-full border border-white/20" aria-hidden>
                 <span className="font-display text-2xl leading-none text-accent">★</span>
@@ -41,22 +51,26 @@ export function SiteFooter() {
               </div>
             </div>
 
-            {SITE_NAV_GROUPS.map((group) => (
-              <nav key={group.id} aria-label={`${group.label} footer links`}>
-                <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.16em] text-accent">
-                  {group.label}
-                </h2>
-                <ul className="space-y-2 text-sm text-white/75">
-                  {group.links.map((link) => (
-                    <li key={link.to}>
-                      <Link to={link.to} className="hover:text-white">
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-            ))}
+            {SITE_NAV_GROUPS.map((group) => {
+              if (!FOOTER_GROUP_IDS.has(group.id)) return null;
+              const links = group.links.filter((link) => FOOTER_LINK_LABELS.has(link.label));
+              return (
+                <nav key={group.id} aria-label={`${group.label} footer links`}>
+                  <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.16em] text-accent">
+                    {group.label}
+                  </h2>
+                  <ul className="space-y-2 text-sm text-white/75">
+                    {links.map((link) => (
+                      <li key={link.to}>
+                        <Link to={link.to} className="hover:text-white">
+                          {link.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              );
+            })}
           </div>
 
           <SocialLinks variant="footer" />
@@ -84,7 +98,7 @@ export function SiteFooter() {
             <span className="normal-case tracking-normal">Independent commentary. Not authorized by any candidate or candidate&apos;s committee.</span>
             <br />
             <span className="normal-case tracking-normal">
-              Looking for the nonpolitical side of Texas?{" "}
+              TexasDefined is a nonpolitical sister publication from the same publisher, focused on Texas places, culture, travel, and practical guides.{" "}
               <a href="https://texasdefined.com" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-white">
                 Visit TexasDefined ↗
               </a>

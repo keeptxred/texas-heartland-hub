@@ -2,7 +2,12 @@ const SOCIAL_LINKS = [
   {
     name: "Facebook",
     href: "https://www.facebook.com/profile.php?id=61591363654407",
-    label: "Follow Keep Texas Red on Facebook",
+    label: "Follow Keep TX Red on Facebook",
+  },
+  {
+    name: "Instagram",
+    href: "https://www.instagram.com/keeptxreddotcom/",
+    label: "Follow Keep TX Red on Instagram",
   },
 ] as const;
 
