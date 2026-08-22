@@ -140,6 +140,11 @@ function ElectionForecastContent() {
     void forecasts.refetch();
   };
 
+  const hasFilters = Boolean(search.source || search.rating || search.officeLevel || search.cycle);
+  const clearFilters = () => {
+    updateSearch({ source: undefined, rating: undefined, officeLevel: undefined, cycle: undefined });
+  };
+
   return (
     <ElectionForecastListPage
       error={error}
@@ -147,20 +152,35 @@ function ElectionForecastContent() {
       onRetry={handleRetry}
     >
       <div className="space-y-6">
-        <ForecastListFilters
-          sourceId={search.source ?? null}
-          rating={search.rating ?? null}
-          officeLevel={search.officeLevel ?? null}
-          electionCycleId={electionCycleId}
-          sources={sourceOptions}
-          electionCycles={cycleOptions}
-          onSourceChange={(source) => updateSearch({ source: source ?? undefined })}
-          onRatingChange={(rating) => updateSearch({ rating: rating ?? undefined })}
-          onOfficeLevelChange={(officeLevel) =>
-            updateSearch({ officeLevel: officeLevel ?? undefined })
-          }
-          onElectionCycleChange={(cycle) => updateSearch({ cycle: cycle ?? undefined })}
-        />
+        <section aria-labelledby="forecast-filter-heading" className="rounded-xl border border-border bg-card p-5 shadow-sm">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Forecast directory</p>
+              <h2 id="forecast-filter-heading" className="mt-1 text-lg font-bold text-foreground">Filter published forecasts</h2>
+              <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">Narrow forecasts by source, rating, office level, or election cycle. Methodology and confidence remain visible on each result.</p>
+            </div>
+            {hasFilters ? (
+              <button type="button" onClick={clearFilters} className="text-sm font-semibold text-primary underline-offset-4 hover:underline">Clear all filters</button>
+            ) : null}
+          </div>
+          <div className="mt-5 border-t border-border pt-5">
+            <ForecastListFilters
+              sourceId={search.source ?? null}
+              rating={search.rating ?? null}
+              officeLevel={search.officeLevel ?? null}
+              electionCycleId={electionCycleId}
+              sources={sourceOptions}
+              electionCycles={cycleOptions}
+              onSourceChange={(source) => updateSearch({ source: source ?? undefined })}
+              onRatingChange={(rating) => updateSearch({ rating: rating ?? undefined })}
+              onOfficeLevelChange={(officeLevel) =>
+                updateSearch({ officeLevel: officeLevel ?? undefined })
+              }
+              onElectionCycleChange={(cycle) => updateSearch({ cycle: cycle ?? undefined })}
+            />
+          </div>
+        </section>
+
         {forecasts.isEmpty || launchForecasts.length === 0 ? (
           <ElectionEmptyState
             kind={search.rating || search.officeLevel ? "filters" : "forecasts"}
@@ -180,7 +200,7 @@ function ElectionForecastContent() {
 
               return (
                 <section key={coverage}>
-                  <h2 className="text-2xl font-bold tracking-tight text-slate-950">
+                  <h2 className="font-display text-3xl leading-none tracking-tight text-foreground">
                     {FORECAST_COVERAGE_CATEGORY_LABELS[coverage]}
                   </h2>
                   <div className="mt-5 grid gap-6 lg:grid-cols-2">

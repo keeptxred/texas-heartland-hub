@@ -57,15 +57,15 @@ export function RaceAuthoritySection({ race }: RaceAuthoritySectionProps) {
   return (
     <section aria-labelledby="race-authority-heading" className="space-y-6">
       <div>
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-700">
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
           Race authority record
         </p>
-        <h2 id="race-authority-heading" className="mt-2 text-2xl font-bold text-slate-950">
+        <h2 id="race-authority-heading" className="mt-2 text-2xl font-bold text-foreground">
           Dates, geography, and official sources
         </h2>
       </div>
 
-      <dl className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:grid-cols-2 lg:grid-cols-4">
+      <dl className="grid gap-4 rounded-2xl border border-border bg-card p-6 shadow-sm sm:grid-cols-2 lg:grid-cols-4">
         <RaceFact label="Registration deadline" value={formatDate(race.registrationDeadline)} />
         <RaceFact label="Early voting begins" value={formatDate(race.earlyVotingStart)} />
         <RaceFact label="Early voting ends" value={formatDate(race.earlyVotingEnd)} />
@@ -73,9 +73,9 @@ export function RaceAuthoritySection({ race }: RaceAuthoritySectionProps) {
       </dl>
 
       {race.counties.length > 0 ? (
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 className="text-xl font-bold text-slate-950">District and county geography</h3>
-          <p className="mt-2 leading-7 text-slate-600">
+        <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+          <h3 className="text-xl font-bold text-foreground">District and county geography</h3>
+          <p className="mt-2 leading-7 text-muted-foreground">
             District boundaries may include all or part of a county. Use an official county ballot
             lookup to confirm the contests assigned to a specific address.
           </p>
@@ -84,7 +84,7 @@ export function RaceAuthoritySection({ race }: RaceAuthoritySectionProps) {
               <a
                 key={county.id}
                 href={`/explore/county/${county.slug}`}
-                className="rounded-full border border-slate-300 px-3 py-1.5 text-sm font-semibold text-slate-700 hover:border-red-300 hover:text-red-700"
+                className="rounded-full border border-border bg-background px-3 py-1.5 text-sm font-semibold text-foreground transition-colors hover:border-primary/40 hover:text-primary"
               >
                 {county.name}
               </a>
@@ -94,7 +94,7 @@ export function RaceAuthoritySection({ race }: RaceAuthoritySectionProps) {
             <Link
               to="/elections/districts/$districtSlug"
               params={{ districtSlug: slug }}
-              className="mt-5 inline-flex font-semibold text-red-700 hover:underline"
+              className="mt-5 inline-flex font-semibold text-primary hover:underline"
             >
               View {race.districtName ?? "district"} authority page →
             </Link>
@@ -114,8 +114,8 @@ export function RaceAuthoritySection({ race }: RaceAuthoritySectionProps) {
 function RaceFact({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</dt>
-      <dd className="mt-1 font-bold text-slate-950">{value}</dd>
+      <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</dt>
+      <dd className="mt-1 font-bold text-foreground">{value}</dd>
     </div>
   );
 }

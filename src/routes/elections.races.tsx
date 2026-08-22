@@ -216,8 +216,22 @@ function ElectionRacesContent() {
     void races.refetch();
   };
 
+  const hasFilters = Boolean(
+    search.q ||
+      search.browse ||
+      search.area ||
+      officeLevel ||
+      electionType ||
+      partyScope ||
+      raceStatus ||
+      featuredOnly,
+  );
+
   const clearFilters = () => {
     updateSearch({
+      q: undefined,
+      browse: undefined,
+      area: undefined,
       officeLevel: undefined,
       electionType: undefined,
       partyScope: undefined,
@@ -238,22 +252,41 @@ function ElectionRacesContent() {
           totalSaved={research.candidateIds.length + research.raceIds.length}
           onClear={research.clear}
         />
+
         <section
           aria-labelledby="browse-ballot-heading"
-          className="rounded-xl border border-slate-200 bg-slate-50 p-4"
+          className="rounded-xl border border-border bg-card p-5 shadow-sm"
         >
-          <h2 id="browse-ballot-heading" className="text-lg font-bold text-slate-950">
-            Browse races
-          </h2>
-          <div className="mt-4 grid gap-4 md:grid-cols-3">
-            <label className="text-sm font-semibold text-slate-900">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Find a race</p>
+              <h2 id="browse-ballot-heading" className="mt-1 text-lg font-bold text-foreground">
+                Search and filter Texas races
+              </h2>
+              <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
+                Search by candidate or office, browse a county or district, or narrow the directory by race type and status.
+              </p>
+            </div>
+            {hasFilters ? (
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="text-sm font-semibold text-primary underline-offset-4 hover:underline"
+              >
+                Clear all filters
+              </button>
+            ) : null}
+          </div>
+
+          <div className="mt-5 grid gap-4 md:grid-cols-3">
+            <label className="text-sm font-semibold text-foreground">
               Candidate or office
               <input
                 type="search"
                 value={search.q ?? ""}
                 onChange={(event) => updateSearch({ q: event.target.value || undefined })}
                 placeholder="Search candidate or office"
-                className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-100"
+                className="mt-2 block w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
               />
             </label>
             <RaceFilterSelect
@@ -285,113 +318,100 @@ function ElectionRacesContent() {
               onChange={(value) => updateSearch({ area: value || undefined })}
             />
           </div>
-        </section>
-        <div className="grid max-w-2xl gap-4 sm:grid-cols-2">
-          {cycles.data && cycles.data.items.length > 0 ? (
-            <label className="block text-sm font-semibold text-slate-900">
-              Election cycle
-              <select
-                className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-100"
-                value={electionCycleId ?? ""}
-                onChange={(event) => handleCycleChange(event.target.value)}
-              >
-                {cycles.data.items.map((cycle) => (
-                  <option key={cycle.id} value={cycle.id}>
-                    {cycle.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          ) : null}
-          <RaceFilterSelect
-            label="Sort races"
-            value={sortBy}
-            options={RACE_SORT_OPTIONS}
-            includeAllOption={false}
-            onChange={(value) => {
-              const option = RACE_SORT_OPTIONS.find((item) => item.value === value);
-              if (option) {
-                updateSearch({ sort: option.value });
-              }
-            }}
-          />
-        </div>
 
-        <div
-          aria-label="Filter election races"
-          className="grid gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4 md:grid-cols-2 xl:grid-cols-5"
-        >
-          <RaceFilterSelect
-            label="Office level"
-            value={officeLevel ?? ""}
-            options={OFFICE_LEVELS.map((value) => ({
-              value,
-              label: OFFICE_LEVEL_LABELS[value],
-            }))}
-            onChange={(value) =>
-              updateSearch({
-                officeLevel: OFFICE_LEVELS.find((item) => item === value),
-              })
-            }
-          />
-          <RaceFilterSelect
-            label="Election type"
-            value={electionType ?? ""}
-            options={ELECTION_TYPES.map((value) => ({
-              value,
-              label: ELECTION_TYPE_LABELS[value],
-            }))}
-            onChange={(value) =>
-              updateSearch({
-                electionType: ELECTION_TYPES.find((item) => item === value),
-              })
-            }
-          />
-          <RaceFilterSelect
-            label="Party scope"
-            value={partyScope ?? ""}
-            options={PARTY_SCOPES.map((value) => ({
-              value,
-              label: PARTY_SCOPE_LABELS[value],
-            }))}
-            onChange={(value) =>
-              updateSearch({
-                partyScope: PARTY_SCOPES.find((item) => item === value),
-              })
-            }
-          />
-          <RaceFilterSelect
-            label="Race status"
-            value={raceStatus ?? ""}
-            options={RACE_STATUSES.map((value) => ({
-              value,
-              label: RACE_STATUS_LABELS[value],
-            }))}
-            onChange={(value) =>
-              updateSearch({
-                status: RACE_STATUSES.find((item) => item === value),
-              })
-            }
-          />
-          <div className="flex flex-col justify-end gap-3">
-            <label className="flex min-h-10 items-center gap-2 text-sm font-semibold text-slate-900">
-              <input
-                type="checkbox"
-                checked={featuredOnly}
-                onChange={(event) => updateSearch({ featured: event.target.checked || undefined })}
-                className="h-4 w-4 rounded border-slate-300 text-red-700 focus:ring-red-600"
-              />
-              Featured races only
-            </label>
-            <button
-              type="button"
-              onClick={clearFilters}
-              className="self-start text-sm font-semibold text-red-700 underline-offset-4 hover:underline"
-            >
-              Clear filters
-            </button>
+          <div className="mt-5 grid gap-4 border-t border-border pt-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+            {cycles.data && cycles.data.items.length > 0 ? (
+              <label className="block text-sm font-semibold text-foreground">
+                Election cycle
+                <select
+                  className="mt-2 block w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  value={electionCycleId ?? ""}
+                  onChange={(event) => handleCycleChange(event.target.value)}
+                >
+                  {cycles.data.items.map((cycle) => (
+                    <option key={cycle.id} value={cycle.id}>
+                      {cycle.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ) : null}
+            <RaceFilterSelect
+              label="Sort races"
+              value={sortBy}
+              options={RACE_SORT_OPTIONS}
+              includeAllOption={false}
+              onChange={(value) => {
+                const option = RACE_SORT_OPTIONS.find((item) => item.value === value);
+                if (option) {
+                  updateSearch({ sort: option.value });
+                }
+              }}
+            />
+            <RaceFilterSelect
+              label="Office level"
+              value={officeLevel ?? ""}
+              options={OFFICE_LEVELS.map((value) => ({
+                value,
+                label: OFFICE_LEVEL_LABELS[value],
+              }))}
+              onChange={(value) =>
+                updateSearch({
+                  officeLevel: OFFICE_LEVELS.find((item) => item === value),
+                })
+              }
+            />
+            <RaceFilterSelect
+              label="Election type"
+              value={electionType ?? ""}
+              options={ELECTION_TYPES.map((value) => ({
+                value,
+                label: ELECTION_TYPE_LABELS[value],
+              }))}
+              onChange={(value) =>
+                updateSearch({
+                  electionType: ELECTION_TYPES.find((item) => item === value),
+                })
+              }
+            />
+            <RaceFilterSelect
+              label="Party scope"
+              value={partyScope ?? ""}
+              options={PARTY_SCOPES.map((value) => ({
+                value,
+                label: PARTY_SCOPE_LABELS[value],
+              }))}
+              onChange={(value) =>
+                updateSearch({
+                  partyScope: PARTY_SCOPES.find((item) => item === value),
+                })
+              }
+            />
+            <RaceFilterSelect
+              label="Race status"
+              value={raceStatus ?? ""}
+              options={RACE_STATUSES.map((value) => ({
+                value,
+                label: RACE_STATUS_LABELS[value],
+              }))}
+              onChange={(value) =>
+                updateSearch({
+                  status: RACE_STATUSES.find((item) => item === value),
+                })
+              }
+            />
           </div>
-        </div>
+
+          <label className="mt-5 flex min-h-10 items-center gap-2 border-t border-border pt-5 text-sm font-semibold text-foreground">
+            <input
+              type="checkbox"
+              checked={featuredOnly}
+              onChange={(event) => updateSearch({ featured: event.target.checked || undefined })}
+              className="h-4 w-4 rounded border-input text-primary focus:ring-primary"
+            />
+            Featured races only
+          </label>
+        </section>
 
         {!electionCycleId || races.isEmpty || visibleRaces.length === 0 ? (
           <ElectionEmptyState kind={search.q || search.area ? "search" : "races"} />
@@ -402,7 +422,7 @@ function ElectionRacesContent() {
                 <button
                   type="button"
                   onClick={() => research.toggleRace(race.id)}
-                  className="text-sm font-semibold text-blue-800 underline-offset-4 hover:underline"
+                  className="text-sm font-semibold text-primary underline-offset-4 hover:underline"
                 >
                   {research.raceIds.includes(race.id)
                     ? "Remove from ballot research"
@@ -451,10 +471,10 @@ function RaceFilterSelect({
   includeAllOption = true,
 }: RaceFilterSelectProps) {
   return (
-    <label className="block text-sm font-semibold text-slate-900">
+    <label className="block text-sm font-semibold text-foreground">
       {label}
       <select
-        className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-100"
+        className="mt-2 block w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
         value={value}
         onChange={(event) => onChange(event.target.value)}
       >

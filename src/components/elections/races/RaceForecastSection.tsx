@@ -24,10 +24,10 @@ export function RaceForecastSection({ forecast }: RaceForecastSectionProps) {
   return (
     <section aria-labelledby="race-forecast-heading" className="space-y-5">
       <div>
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-700">Model outlook</p>
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Model outlook</p>
         <h2
           id="race-forecast-heading"
-          className="mt-2 text-2xl font-bold tracking-tight text-slate-950"
+          className="mt-2 font-display text-3xl leading-none tracking-tight text-foreground"
         >
           Race forecast
         </h2>
@@ -36,22 +36,22 @@ export function RaceForecastSection({ forecast }: RaceForecastSectionProps) {
       {!forecast ? (
         <ElectionEmptyState kind="forecasts" />
       ) : (
-        <article className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+        <article className="rounded-xl border border-border bg-card p-6 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <h3 className="text-xl font-bold tracking-tight text-slate-950">
+              <h3 className="text-xl font-bold tracking-tight text-foreground">
                 {forecast.source.sourceName}
               </h3>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-muted-foreground">
                 Updated {formatDateTime(forecast.updatedAt)}
                 {forecast.model.modelVersion ? ` · Model ${forecast.model.modelVersion}` : ""}
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <span className="rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-700">
+              <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
                 {FORECAST_RATING_LABELS[forecast.rating]}
               </span>
-              <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+              <span className="rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
                 {FORECAST_CONFIDENCE_LEVEL_LABELS[forecast.confidenceLevel]} confidence
               </span>
             </div>
@@ -64,14 +64,14 @@ export function RaceForecastSection({ forecast }: RaceForecastSectionProps) {
               return (
                 <div key={candidate.candidateId}>
                   <div className="flex items-center justify-between gap-3 text-sm">
-                    <span className="font-semibold text-slate-950">{candidate.candidateName}</span>
-                    <span className="font-mono font-bold text-slate-950">
+                    <span className="font-semibold text-foreground">{candidate.candidateName}</span>
+                    <span className="font-mono font-bold text-foreground">
                       {probability.toFixed(1)}%
                     </span>
                   </div>
-                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
+                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
                     <div
-                      className="h-full rounded-full bg-red-700"
+                      className="h-full rounded-full bg-primary"
                       style={{ width: `${probability}%` }}
                     />
                   </div>
@@ -81,23 +81,23 @@ export function RaceForecastSection({ forecast }: RaceForecastSectionProps) {
           </div>
 
           {forecast.projectedMargin != null ? (
-            <p className="mt-5 text-sm font-semibold text-slate-700">
+            <p className="mt-5 text-sm font-semibold text-muted-foreground">
               Projected margin: {forecast.projectedMargin > 0 ? "+" : ""}
               {forecast.projectedMargin.toFixed(1)} points
             </p>
           ) : null}
 
           {forecast.notes ? (
-            <p className="mt-5 text-sm leading-6 text-slate-600">{forecast.notes}</p>
+            <p className="mt-5 text-sm leading-6 text-muted-foreground">{forecast.notes}</p>
           ) : null}
 
           {forecast.model.methodologyUrl ? (
-            <div className="mt-6 border-t border-slate-200 pt-5">
+            <div className="mt-6 border-t border-border pt-5">
               <a
                 href={forecast.model.methodologyUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm font-semibold text-red-700 underline-offset-4 hover:underline"
+                className="text-sm font-semibold text-primary underline-offset-4 hover:underline"
               >
                 Review forecast methodology ↗
               </a>

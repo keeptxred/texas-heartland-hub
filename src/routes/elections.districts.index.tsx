@@ -126,22 +126,22 @@ function DistrictGroup({
   const districtNumbers = districts ?? Array.from({ length: count ?? 0 }, (_, index) => index + 1);
   return (
     <section>
-      <h2 className="text-2xl font-bold text-slate-950">{title}</h2>
+      <h2 className="text-2xl font-bold text-foreground">{title}</h2>
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
         {districtNumbers.map((number) => {
           const districtSlug = `${prefix}-${number}`;
           const race = raceForDistrict(jurisdictionType, number);
           return (
-            <div key={number} className="rounded-lg border border-slate-200 bg-white p-3">
+            <div key={number} className="rounded-lg border border-border bg-card p-3 shadow-sm">
               <Link
                 to="/elections/districts/$districtSlug"
                 params={{ districtSlug }}
                 aria-label={`Open District ${number} election page`}
-                className="relative z-10 block cursor-pointer font-semibold text-slate-800 pointer-events-auto hover:text-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2"
+                className="relative z-10 block cursor-pointer font-semibold text-foreground pointer-events-auto transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 District {number}
               </Link>
-              {race ? <a href={`/elections/races/${race.slug}`} className="mt-2 block text-xs font-bold text-red-700 hover:underline">2026 race →</a> : <span className="mt-2 block text-xs text-slate-500">No verified 2026 race linked</span>}
+              {race ? <a href={`/elections/races/${race.slug}`} className="mt-2 block text-xs font-bold text-primary hover:underline">2026 race →</a> : <span className="mt-2 block text-xs text-muted-foreground">No verified 2026 race linked</span>}
             </div>
           );
         })}

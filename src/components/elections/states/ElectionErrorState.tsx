@@ -88,7 +88,7 @@ const ERROR_PRESETS: Record<ElectionErrorKind, ElectionErrorPreset> = {
 const DEFAULT_SECONDARY_ACTIONS: readonly ElectionErrorAction[] = [
   {
     label: "Election Central home",
-    href: "/elections",
+    href: "/elections/2026",
     description: "Return to the main Texas election hub.",
   },
   {
@@ -105,8 +105,8 @@ const DEFAULT_SECONDARY_ACTIONS: readonly ElectionErrorAction[] = [
 
 function ElectionErrorActionControl({ action, primary = false }: { action: ElectionErrorAction; primary?: boolean }) {
   const className = primary
-    ? "inline-flex min-h-11 items-center justify-center rounded-lg bg-red-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-red-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2"
-    : "block rounded-lg border border-red-200 bg-white p-4 text-left transition hover:border-red-300 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2";
+    ? "inline-flex min-h-11 items-center justify-center rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+    : "block rounded-lg border border-border bg-card p-4 text-left transition hover:border-primary/40 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
 
   if (action.href) {
     return (
@@ -115,8 +115,8 @@ function ElectionErrorActionControl({ action, primary = false }: { action: Elect
           <>{action.label} →</>
         ) : (
           <>
-            <span className="text-sm font-semibold text-red-700">{action.label} →</span>
-            {action.description ? <span className="mt-1 block text-sm leading-5 text-slate-600">{action.description}</span> : null}
+            <span className="text-sm font-semibold text-primary">{action.label} →</span>
+            {action.description ? <span className="mt-1 block text-sm leading-5 text-muted-foreground">{action.description}</span> : null}
           </>
         )}
       </a>
@@ -129,8 +129,8 @@ function ElectionErrorActionControl({ action, primary = false }: { action: Elect
         <>{action.label} →</>
       ) : (
         <>
-          <span className="text-sm font-semibold text-red-700">{action.label} →</span>
-          {action.description ? <span className="mt-1 block text-sm leading-5 text-slate-600">{action.description}</span> : null}
+          <span className="text-sm font-semibold text-primary">{action.label} →</span>
+          {action.description ? <span className="mt-1 block text-sm leading-5 text-muted-foreground">{action.description}</span> : null}
         </>
       )}
     </button>
@@ -154,29 +154,29 @@ export function ElectionErrorState({
     <section
       role="alert"
       aria-live="assertive"
-      className={`rounded-xl border border-red-200 bg-red-50 ${compact ? "p-5" : "px-6 py-10 text-center"} ${className}`.trim()}
+      className={`rounded-xl border border-destructive/30 bg-destructive/5 ${compact ? "p-5" : "px-6 py-10 text-center"} ${className}`.trim()}
     >
       <div
         aria-hidden="true"
-        className={`${compact ? "h-10 w-10" : "mx-auto h-12 w-12"} flex items-center justify-center rounded-full bg-white text-xl font-bold text-red-700 shadow-sm ring-1 ring-red-200`}
+        className={`${compact ? "h-10 w-10" : "mx-auto h-12 w-12"} flex items-center justify-center rounded-full bg-card text-xl font-bold text-destructive shadow-sm ring-1 ring-destructive/20`}
       >
         {preset.symbol}
       </div>
 
       <div className={compact ? "mt-4" : "mt-5"}>
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-700">{preset.eyebrow}</p>
-        <h2 className={`${compact ? "text-xl" : "mx-auto max-w-2xl text-2xl"} mt-2 font-bold tracking-tight text-slate-950`}>
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-destructive">{preset.eyebrow}</p>
+        <h2 className={`${compact ? "text-xl" : "mx-auto max-w-2xl text-2xl"} mt-2 font-bold tracking-tight text-foreground`}>
           {title ?? preset.title}
         </h2>
-        <p className={`${compact ? "max-w-3xl" : "mx-auto max-w-2xl"} mt-3 text-sm leading-6 text-slate-700`}>
+        <p className={`${compact ? "max-w-3xl" : "mx-auto max-w-2xl"} mt-3 text-sm leading-6 text-muted-foreground`}>
           {message ?? preset.message}
         </p>
       </div>
 
       {showTechnicalMessage && technicalMessage ? (
-        <details className={`${compact ? "max-w-3xl" : "mx-auto max-w-2xl"} mt-5 rounded-lg border border-red-200 bg-white p-4 text-left`}>
-          <summary className="cursor-pointer text-sm font-semibold text-slate-800">Technical details</summary>
-          <p className="mt-2 break-words font-mono text-xs leading-5 text-slate-600">{technicalMessage}</p>
+        <details className={`${compact ? "max-w-3xl" : "mx-auto max-w-2xl"} mt-5 rounded-lg border border-border bg-card p-4 text-left`}>
+          <summary className="cursor-pointer text-sm font-semibold text-foreground">Technical details</summary>
+          <p className="mt-2 break-words font-mono text-xs leading-5 text-muted-foreground">{technicalMessage}</p>
         </details>
       ) : null}
 
@@ -189,7 +189,7 @@ export function ElectionErrorState({
       {secondaryActions.length > 0 ? (
         <nav
           aria-label="Election error recovery resources"
-          className={`${compact ? "mt-5" : "mx-auto mt-7 max-w-3xl"} border-t border-red-200 pt-5`}
+          className={`${compact ? "mt-5" : "mx-auto mt-7 max-w-3xl"} border-t border-destructive/20 pt-5`}
         >
           <ul className="grid gap-3 text-left sm:grid-cols-2">
             {secondaryActions.map((action) => (

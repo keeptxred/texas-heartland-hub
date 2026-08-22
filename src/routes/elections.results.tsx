@@ -109,6 +109,10 @@ function ElectionResultsContent() {
       replace: true,
     });
   };
+  const hasFilters = Boolean(search.officeLevel || search.reporting || search.certification || search.cycle);
+  const clearFilters = () => {
+    updateSearch({ officeLevel: undefined, reporting: undefined, certification: undefined, cycle: undefined });
+  };
 
   return (
     <ElectionResultsListPage
@@ -120,24 +124,39 @@ function ElectionResultsContent() {
       }}
     >
       <div className="space-y-8">
-        <ResultListFilters
-          officeLevel={search.officeLevel ?? null}
-          reportingStatus={search.reporting ?? null}
-          certificationStatus={search.certification ?? null}
-          electionCycleId={cycleId}
-          electionCycles={
-            cycles.data?.items.map((cycle) => ({
-              value: cycle.id,
-              label: cycle.name,
-            })) ?? []
-          }
-          onOfficeLevelChange={(value) => updateSearch({ officeLevel: value ?? undefined })}
-          onReportingStatusChange={(value) => updateSearch({ reporting: value ?? undefined })}
-          onCertificationStatusChange={(value) =>
-            updateSearch({ certification: value ?? undefined })
-          }
-          onElectionCycleChange={(value) => updateSearch({ cycle: value ?? undefined })}
-        />
+        <section aria-labelledby="results-filter-heading" className="rounded-xl border border-border bg-card p-5 shadow-sm">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Results directory</p>
+              <h2 id="results-filter-heading" className="mt-1 text-lg font-bold text-foreground">Filter published results</h2>
+              <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">Narrow election returns by office level, reporting state, certification status, or election cycle. Unofficial and certified totals remain clearly labeled.</p>
+            </div>
+            {hasFilters ? (
+              <button type="button" onClick={clearFilters} className="text-sm font-semibold text-primary underline-offset-4 hover:underline">Clear all filters</button>
+            ) : null}
+          </div>
+          <div className="mt-5 border-t border-border pt-5">
+            <ResultListFilters
+              officeLevel={search.officeLevel ?? null}
+              reportingStatus={search.reporting ?? null}
+              certificationStatus={search.certification ?? null}
+              electionCycleId={cycleId}
+              electionCycles={
+                cycles.data?.items.map((cycle) => ({
+                  value: cycle.id,
+                  label: cycle.name,
+                })) ?? []
+              }
+              onOfficeLevelChange={(value) => updateSearch({ officeLevel: value ?? undefined })}
+              onReportingStatusChange={(value) => updateSearch({ reporting: value ?? undefined })}
+              onCertificationStatusChange={(value) =>
+                updateSearch({ certification: value ?? undefined })
+              }
+              onElectionCycleChange={(value) => updateSearch({ cycle: value ?? undefined })}
+            />
+          </div>
+        </section>
+
         {results.isEmpty ? (
           <ElectionEmptyState kind="filters" />
         ) : (
@@ -150,7 +169,7 @@ function ElectionResultsContent() {
                 <section key={electionDate} aria-labelledby={`election-${electionDate}`}>
                   <h2
                     id={`election-${electionDate}`}
-                    className="text-2xl font-bold tracking-tight text-slate-950"
+                    className="font-display text-3xl leading-none tracking-tight text-foreground"
                   >
                     {formatElectionDate(electionDate)}
                   </h2>
@@ -181,7 +200,7 @@ function ResultGroup({
 }) {
   return (
     <section>
-      <h3 className="text-lg font-bold text-slate-900">{title}</h3>
+      <h3 className="text-lg font-bold text-foreground">{title}</h3>
       <div className="mt-4 grid gap-6 lg:grid-cols-2">
         {results.map((result) => (
           <ResultSummaryCard key={result.id} result={result} />

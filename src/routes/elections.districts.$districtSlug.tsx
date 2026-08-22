@@ -85,11 +85,11 @@ export const Route = createFileRoute("/elections/districts/$districtSlug")({
               { property: "og:url", content: canonicalUrl },
               { property: "og:type", content: "website" },
               { property: "og:site_name", content: "Keep TX Red" },
-      { property: "og:image", content: "https://keeptxred.com/images/elections/election-central-social.jpg" },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
-      { property: "og:image:alt", content: "2026 Texas Election Central" },
-      { name: "twitter:image", content: "https://keeptxred.com/images/elections/election-central-social.jpg" },
+              { property: "og:image", content: "https://keeptxred.com/images/elections/election-central-social.jpg" },
+              { property: "og:image:width", content: "1200" },
+              { property: "og:image:height", content: "630" },
+              { property: "og:image:alt", content: "2026 Texas Election Central" },
+              { name: "twitter:image", content: "https://keeptxred.com/images/elections/election-central-social.jpg" },
               { name: "twitter:card", content: "summary_large_image" },
             ]
           : []),
@@ -198,7 +198,7 @@ function TexasElectionDistrict() {
   if (!district) {
     return (
       <ElectionLayout title="Election district not found" description="Return to the district directory to choose a valid Texas election district." indexable={false}>
-        <a href="/elections/districts" className="font-semibold text-red-700">Browse Texas election districts</a>
+        <a href="/elections/districts" className="font-semibold text-primary">Browse Texas election districts</a>
       </ElectionLayout>
     );
   }
@@ -222,7 +222,7 @@ function TexasElectionDistrict() {
       indexable={Boolean(race)}
     >
       <div className="space-y-10">
-        <section className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:grid-cols-2 lg:grid-cols-4">
+        <section className="grid gap-4 rounded-2xl border border-border bg-card p-6 shadow-sm sm:grid-cols-2 lg:grid-cols-4">
           <DistrictFact label="District" value={district.name} />
           <DistrictFact label="Office level" value={district.officeLevel === "federal" ? "Federal" : "Texas state"} />
           <DistrictFact label="Election date" value={race ? formatElectionDate(race.electionDate) : "Not published"} />
@@ -230,10 +230,10 @@ function TexasElectionDistrict() {
         </section>
 
         <section aria-labelledby="district-race-heading">
-          <h2 id="district-race-heading" className="text-2xl font-bold text-slate-950">
+          <h2 id="district-race-heading" className="text-2xl font-bold text-foreground">
             2026 district race
           </h2>
-          <p className="mt-3 max-w-3xl leading-7 text-slate-600">
+          <p className="mt-3 max-w-3xl leading-7 text-muted-foreground">
             This page connects the official district geography to its verified 2026 race,
             candidate profiles, voting dates, forecasts, and results.
           </p>
@@ -241,14 +241,14 @@ function TexasElectionDistrict() {
             <Link
               to="/elections/races/$raceSlug"
               params={{ raceSlug: race.slug }}
-              className="mt-5 block rounded-xl border border-slate-200 bg-white p-6 shadow-sm hover:border-red-300"
+              className="mt-5 block rounded-xl border border-border bg-card p-6 shadow-sm transition-colors hover:border-primary/40"
             >
-              <h3 className="text-xl font-bold text-slate-950">{race.name}</h3>
-              <p className="mt-2 text-slate-600">
+              <h3 className="text-xl font-bold text-foreground">{race.name}</h3>
+              <p className="mt-2 text-muted-foreground">
                 {raceCandidates.length} verified candidate{raceCandidates.length === 1 ? "" : "s"} ·
                 Election Day {formatElectionDate(race.electionDate)}
               </p>
-              <span className="mt-4 inline-block font-semibold text-red-700">View race overview →</span>
+              <span className="mt-4 inline-block font-semibold text-primary">View race overview →</span>
             </Link>
           ) : (
             <p className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-5 text-amber-950">
@@ -259,7 +259,7 @@ function TexasElectionDistrict() {
 
         {raceCandidates.length ? (
           <section aria-labelledby="district-candidates-heading">
-            <h2 id="district-candidates-heading" className="text-2xl font-bold text-slate-950">
+            <h2 id="district-candidates-heading" className="text-2xl font-bold text-foreground">
               Verified candidates
             </h2>
             <div className="mt-5 grid gap-4 md:grid-cols-2">
@@ -268,13 +268,13 @@ function TexasElectionDistrict() {
                   key={candidate.id}
                   to="/elections/candidates/$candidateSlug"
                   params={{ candidateSlug: candidate.slug }}
-                  className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:border-red-300"
+                  className="rounded-xl border border-border bg-card p-5 shadow-sm transition-colors hover:border-primary/40"
                 >
-                  <h3 className="text-lg font-bold text-slate-950">{candidate.fullName}</h3>
-                  <p className="mt-1 text-sm font-semibold text-slate-600">
+                  <h3 className="text-lg font-bold text-foreground">{candidate.fullName}</h3>
+                  <p className="mt-1 text-sm font-semibold text-muted-foreground">
                     {candidate.partyLabel} · {candidate.status.replaceAll("_", " ")}
                   </p>
-                  <span className="mt-3 inline-block text-sm font-semibold text-red-700">
+                  <span className="mt-3 inline-block text-sm font-semibold text-primary">
                     View candidate profile →
                   </span>
                 </Link>
@@ -285,10 +285,10 @@ function TexasElectionDistrict() {
 
         {race?.counties.length ? (
           <section aria-labelledby="district-counties-heading">
-            <h2 id="district-counties-heading" className="text-2xl font-bold text-slate-950">
+            <h2 id="district-counties-heading" className="text-2xl font-bold text-foreground">
               Counties in this district
             </h2>
-            <p className="mt-3 leading-7 text-slate-600">
+            <p className="mt-3 leading-7 text-muted-foreground">
               District boundaries may include all or part of a county. Confirm your exact ballot
               with your county election office.
             </p>
@@ -297,7 +297,7 @@ function TexasElectionDistrict() {
                 <a
                   key={county.id}
                   href={`https://keeptxred.com/explore/county/${county.slug}`}
-                  className="rounded-full border border-slate-300 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 hover:border-red-300 hover:text-red-700"
+                  className="rounded-full border border-border bg-card px-3 py-1.5 text-sm font-semibold text-foreground transition-colors hover:border-primary/40 hover:text-primary"
                 >
                   {county.name}
                 </a>
@@ -306,11 +306,11 @@ function TexasElectionDistrict() {
           </section>
         ) : null}
 
-        <section aria-labelledby="district-authority-heading" className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
-          <h2 id="district-authority-heading" className="text-2xl font-bold text-slate-950">
+        <section aria-labelledby="district-authority-heading" className="rounded-2xl border border-border bg-muted/30 p-6">
+          <h2 id="district-authority-heading" className="text-2xl font-bold text-foreground">
             Official sources and district geography
           </h2>
-          <p className="mt-3 leading-7 text-slate-600">
+          <p className="mt-3 leading-7 text-muted-foreground">
             Race scope is verified against the Texas Secretary of State. District-to-county
             geography uses the U.S. Census Bureau TIGERweb legislative boundary service. County
             coverage does not replace an address-specific official sample ballot.
@@ -318,13 +318,13 @@ function TexasElectionDistrict() {
           <div className="mt-5 flex flex-wrap gap-3">
             {race ? (
               <>
-                <a href={race.source.sourceUrl} target="_blank" rel="noreferrer" className="font-semibold text-red-700 hover:underline">
+                <a href={race.source.sourceUrl} target="_blank" rel="noreferrer" className="font-semibold text-primary hover:underline">
                   Texas Secretary of State race source
                 </a>
-                {race.geographySource ? <a href={race.geographySource.sourceUrl} target="_blank" rel="noreferrer" className="font-semibold text-red-700 hover:underline">
+                {race.geographySource ? <a href={race.geographySource.sourceUrl} target="_blank" rel="noreferrer" className="font-semibold text-primary hover:underline">
                   Census district geography source
                 </a> : null}
-                {race.countyElectionLinkSource ? <a href={race.countyElectionLinkSource.sourceUrl} target="_blank" rel="noreferrer" className="font-semibold text-red-700 hover:underline">
+                {race.countyElectionLinkSource ? <a href={race.countyElectionLinkSource.sourceUrl} target="_blank" rel="noreferrer" className="font-semibold text-primary hover:underline">
                   Official county election directory
                 </a> : null}
               </>
@@ -335,7 +335,7 @@ function TexasElectionDistrict() {
         <RelatedAuthorityContent items={scoredRelated} title="Related bills, representatives, elections, and news" />
 
         <section aria-labelledby="district-resources-heading">
-          <h2 id="district-resources-heading" className="text-2xl font-bold text-slate-950">
+          <h2 id="district-resources-heading" className="text-2xl font-bold text-foreground">
             Related election resources
           </h2>
           <div className="mt-5 grid gap-4 md:grid-cols-2">
@@ -354,10 +354,10 @@ function TexasElectionDistrict() {
 
 function DistrictLink({ href, title, description }: { href: string; title: string; description: string }) {
   return (
-    <a href={href} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm hover:border-red-300">
-      <h2 className="text-xl font-bold text-slate-950">{title}</h2>
-      <p className="mt-2 leading-7 text-slate-600">{description}</p>
-      <span className="mt-4 inline-block font-semibold text-red-700">View coverage →</span>
+    <a href={href} className="rounded-xl border border-border bg-card p-6 shadow-sm transition-colors hover:border-primary/40">
+      <h2 className="text-xl font-bold text-foreground">{title}</h2>
+      <p className="mt-2 leading-7 text-muted-foreground">{description}</p>
+      <span className="mt-4 inline-block font-semibold text-primary">View coverage →</span>
     </a>
   );
 }
@@ -365,8 +365,8 @@ function DistrictLink({ href, title, description }: { href: string; title: strin
 function DistrictFact({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</dt>
-      <dd className="mt-1 font-bold text-slate-950">{value}</dd>
+      <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</dt>
+      <dd className="mt-1 font-bold text-foreground">{value}</dd>
     </div>
   );
 }

@@ -155,6 +155,19 @@ function ElectionCandidatesContent() {
         label: candidate.fullName,
         href: ELECTION_ROUTES.candidate(candidate.slug),
       })) ?? [];
+  const hasFilters = Boolean(
+    search.q || search.party || search.officeLevel || search.status || search.incumbency,
+  );
+
+  const clearFilters = () => {
+    updateSearch({
+      q: undefined,
+      party: undefined,
+      officeLevel: undefined,
+      status: undefined,
+      incumbency: undefined,
+    });
+  };
 
   return (
     <ElectionCandidateListPage
@@ -169,53 +182,80 @@ function ElectionCandidatesContent() {
           onClear={research.clear}
         />
         <CandidateComparison candidates={comparisonCandidates} onClear={() => setComparisonIds([])} />
-        <aside className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-          Select two to four published candidates below to compare their verified directory fields.
+
+        <section aria-labelledby="candidate-filter-heading" className="rounded-xl border border-border bg-card p-5 shadow-sm">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Candidate directory</p>
+              <h2 id="candidate-filter-heading" className="mt-1 text-lg font-bold text-foreground">
+                Search and compare published candidates
+              </h2>
+              <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
+                Search by candidate or office, then narrow the directory by party, office level, status, or incumbency.
+              </p>
+            </div>
+            {hasFilters ? (
+              <button type="button" onClick={clearFilters} className="text-sm font-semibold text-primary underline-offset-4 hover:underline">
+                Clear all filters
+              </button>
+            ) : null}
+          </div>
+
+          <div className="mt-5 grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(12rem,18rem)]">
+            <label className="block text-sm font-semibold text-foreground">
+              Search by candidate name or office
+              <input
+                type="search"
+                value={search.q ?? ""}
+                onChange={(event) => updateSearch({ q: event.target.value || undefined })}
+                placeholder="Candidate or office"
+                className="mt-2 block w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+              />
+            </label>
+            <label className="block text-sm font-semibold text-foreground">
+              Sort candidates
+              <select
+                className="mt-2 block w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                value={sortBy}
+                onChange={(event) => {
+                  const option = CANDIDATE_SORT_OPTIONS.find((item) => item.value === event.target.value);
+                  if (option) updateSearch({ sort: option.value });
+                }}
+              >
+                {CANDIDATE_SORT_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          <div className="mt-5 border-t border-border pt-5">
+            <CandidateListFilters
+              party={search.party ?? null}
+              officeLevel={search.officeLevel ?? null}
+              status={search.status ?? null}
+              incumbency={search.incumbency ?? null}
+              onPartyChange={(party) => updateSearch({ party: party ?? undefined })}
+              onOfficeLevelChange={(officeLevel) => updateSearch({ officeLevel: officeLevel ?? undefined })}
+              onStatusChange={(status) => updateSearch({ status: status ?? undefined })}
+              onIncumbencyChange={(incumbency) => updateSearch({ incumbency: incumbency ?? undefined })}
+            />
+          </div>
+        </section>
+
+        <aside className="rounded-xl border border-border bg-muted/30 p-4 text-sm leading-6 text-muted-foreground">
+          <strong className="text-foreground">Compare candidates:</strong> select two to four published candidates below to compare their verified directory fields side by side.
         </aside>
-        <label className="block max-w-xl text-sm font-semibold text-slate-900">
-          Search by candidate name or office
-          <input
-            type="search"
-            value={search.q ?? ""}
-            onChange={(event) => updateSearch({ q: event.target.value || undefined })}
-            placeholder="Candidate or office"
-            className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-100"
-          />
-        </label>
-        <label className="block max-w-xs text-sm font-semibold text-slate-900">
-          Sort candidates
-          <select
-            className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-100"
-            value={sortBy}
-            onChange={(event) => {
-              const option = CANDIDATE_SORT_OPTIONS.find((item) => item.value === event.target.value);
-              if (option) updateSearch({ sort: option.value });
-            }}
-          >
-            {CANDIDATE_SORT_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
-        <CandidateListFilters
-          party={search.party ?? null}
-          officeLevel={search.officeLevel ?? null}
-          status={search.status ?? null}
-          incumbency={search.incumbency ?? null}
-          onPartyChange={(party) => updateSearch({ party: party ?? undefined })}
-          onOfficeLevelChange={(officeLevel) => updateSearch({ officeLevel: officeLevel ?? undefined })}
-          onStatusChange={(status) => updateSearch({ status: status ?? undefined })}
-          onIncumbencyChange={(incumbency) => updateSearch({ incumbency: incumbency ?? undefined })}
-        />
+
         {candidates.isEmpty ? (
           <ElectionEmptyState kind="filters" />
         ) : (
           <div className="grid gap-6 lg:grid-cols-2">
             {candidates.data?.items.map((candidate) => (
               <div key={candidate.id} className="space-y-2">
-                <label className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800">
+                <label className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm font-semibold text-foreground">
                   <input
                     type="checkbox"
                     checked={comparisonIds.includes(candidate.id)}
@@ -227,13 +267,14 @@ function ElectionCandidatesContent() {
                           : current.filter((id) => id !== candidate.id),
                       )
                     }
+                    className="h-4 w-4 rounded border-input text-primary focus:ring-primary"
                   />
                   Compare {candidate.ballotName}
                 </label>
                 <button
                   type="button"
                   onClick={() => research.toggleCandidate(candidate.id)}
-                  className="text-sm font-semibold text-blue-800 underline-offset-4 hover:underline"
+                  className="text-sm font-semibold text-primary underline-offset-4 hover:underline"
                 >
                   {research.candidateIds.includes(candidate.id)
                     ? "Remove from ballot research"

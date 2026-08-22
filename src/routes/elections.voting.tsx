@@ -91,6 +91,12 @@ function VotingResearch() {
     actionLabel: "Official election calendar",
     actionHref: election.source,
   }));
+  const hasBallotFilters = Boolean(zip || county || district);
+  const clearBallotFilters = () => {
+    setZip("");
+    setCounty("");
+    setDistrict("");
+  };
 
   return (
     <ElectionLayout
@@ -104,10 +110,10 @@ function VotingResearch() {
 
         <TexasVoterIdReference />
 
-        <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm" aria-labelledby="voter-requirements-reference">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-700">What to verify before voting</p>
-          <h2 id="voter-requirements-reference" className="mt-2 text-2xl font-bold text-slate-950">Registration, ballot, identification and local voting details</h2>
-          <p className="mt-3 max-w-4xl leading-7 text-slate-600">Election Central does not decide an individual voter’s eligibility or ballot. Before voting, use official resources to verify your registration status and assigned ballot, the current identification or alternative-document rules that apply to you, voting locations and hours, and any mail-ballot requirements or deadlines.</p>
+        <section className="rounded-xl border border-border bg-card p-6 shadow-sm" aria-labelledby="voter-requirements-reference">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">What to verify before voting</p>
+          <h2 id="voter-requirements-reference" className="mt-2 font-display text-3xl leading-none tracking-tight text-foreground">Registration, ballot, identification and local voting details</h2>
+          <p className="mt-3 max-w-4xl leading-7 text-muted-foreground">Election Central does not decide an individual voter’s eligibility or ballot. Before voting, use official resources to verify your registration status and assigned ballot, the current identification or alternative-document rules that apply to you, voting locations and hours, and any mail-ballot requirements or deadlines.</p>
           <div className="mt-5 grid gap-4 sm:grid-cols-3">
             <OfficialLink href={MY_VOTER_PORTAL} label="Texas My Voter Portal" />
             <OfficialLink href={COUNTY_ELECTION_OFFICES} label="Texas county election offices" />
@@ -117,23 +123,32 @@ function VotingResearch() {
 
         <aside className="rounded-xl border border-amber-200 bg-amber-50 p-5 text-sm leading-6 text-amber-950">Election Central does not collect an address or determine an individual voter&apos;s ballot. ZIP results can overlap multiple districts. Always confirm with the official Texas voter portal or your county election office.</aside>
 
-        <section aria-labelledby="ballot-browse-heading" className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 id="ballot-browse-heading" className="text-xl font-bold text-slate-950">Browse published races</h2>
-          <div className="mt-5 grid gap-4 md:grid-cols-3">
-            <label className="text-sm font-semibold text-slate-900">
+        <section aria-labelledby="ballot-browse-heading" className="rounded-xl border border-border bg-card p-6 shadow-sm">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Ballot research</p>
+              <h2 id="ballot-browse-heading" className="mt-1 text-xl font-bold text-foreground">Browse published races</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">Use ZIP, county, or district as a browsing aid for Election Central records. This does not determine your official ballot.</p>
+            </div>
+            {hasBallotFilters ? (
+              <button type="button" onClick={clearBallotFilters} className="text-sm font-semibold text-primary underline-offset-4 hover:underline">Clear ballot filters</button>
+            ) : null}
+          </div>
+          <div className="mt-5 grid gap-4 border-t border-border pt-5 md:grid-cols-3">
+            <label className="text-sm font-semibold text-foreground">
               Texas ZIP code
-              <input inputMode="numeric" maxLength={5} pattern="[0-9]{5}" value={zip} onChange={(event) => setZip(event.target.value.replace(/\D/g, "").slice(0, 5))} placeholder="5-digit ZIP" className="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2" />
+              <input inputMode="numeric" maxLength={5} pattern="[0-9]{5}" value={zip} onChange={(event) => setZip(event.target.value.replace(/\D/g, "").slice(0, 5))} placeholder="5-digit ZIP" className="mt-2 block w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20" />
             </label>
             <Selection label="County" value={county} options={counties} onChange={setCounty} />
             <Selection label="Congressional or legislative district" value={district} options={districts} onChange={setDistrict} />
           </div>
-          {zip && !normalizedZip ? <p className="mt-3 text-sm font-semibold text-red-700">Enter a five-digit ZIP code.</p> : null}
+          {zip && !normalizedZip ? <p className="mt-3 text-sm font-semibold text-destructive">Enter a five-digit ZIP code.</p> : null}
           {normalizedZip || county || district ? (
             matches.length > 0 ? (
               <ul className="mt-6 grid gap-3 sm:grid-cols-2">
-                {matches.map((race) => <li key={race.id}><a href={ELECTION_ROUTES.race(race.slug)} className="block rounded-lg border border-slate-200 p-4 font-semibold text-red-700 hover:underline">{race.name}</a></li>)}
+                {matches.map((race) => <li key={race.id}><a href={ELECTION_ROUTES.race(race.slug)} className="block rounded-lg border border-border bg-muted/30 p-4 font-semibold text-primary transition hover:border-primary hover:bg-background hover:underline">{race.name}</a></li>)}
               </ul>
-            ) : <p className="mt-6 rounded-lg bg-slate-50 p-4 text-sm text-slate-700">No published Election Central races match this selection. Use the official links above to confirm your ballot.</p>
+            ) : <p className="mt-6 rounded-lg bg-muted/40 p-4 text-sm text-muted-foreground">No published Election Central races match this selection. Use the official links above to confirm your ballot.</p>
           ) : null}
         </section>
 
@@ -159,9 +174,9 @@ function electionDateStatus(date: string): VotingDateItem["status"] {
 
 function Selection({ label, value, options, onChange }: { label: string; value: string; options: readonly string[]; onChange: (value: string) => void }) {
   return (
-    <label className="text-sm font-semibold text-slate-900">
+    <label className="text-sm font-semibold text-foreground">
       {label}
-      <select value={value} onChange={(event) => onChange(event.target.value)} className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2">
+      <select value={value} onChange={(event) => onChange(event.target.value)} className="mt-2 block w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20">
         <option value="">All</option>
         {options.map((option) => <option key={option} value={option}>{option}</option>)}
       </select>
@@ -170,5 +185,5 @@ function Selection({ label, value, options, onChange }: { label: string; value: 
 }
 
 function OfficialLink({ href, label }: { href: string; label: string }) {
-  return <a className="rounded-xl border border-slate-200 bg-white p-6 font-semibold text-red-700 shadow-sm hover:underline" href={href} target="_blank" rel="noopener noreferrer">{label}</a>;
+  return <a className="rounded-xl border border-border bg-muted/30 p-5 font-semibold text-primary shadow-sm transition hover:border-primary hover:bg-background hover:underline" href={href} target="_blank" rel="noopener noreferrer">{label} ↗</a>;
 }
