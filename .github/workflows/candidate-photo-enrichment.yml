@@ -15,6 +15,7 @@ on:
       - "scripts/elections/apply-automation-verified-photo-findings.mjs"
       - "scripts/elections/apply-official-government-photo-findings-2026-08-21.mjs"
       - "scripts/elections/apply-official-federal-photo-findings-2026-08-21-wave2.mjs"
+      - "scripts/elections/apply-public-domain-congress-photo-findings-2026-08-21-wave3.mjs"
       - "scripts/elections/apply-official-judicial-photo-findings-2026-08-21-wave2.mjs"
       - "scripts/elections/discover-candidate-photo-sources.mjs"
       - "scripts/elections/discover-candidate-photos-house-clerk.mjs"
@@ -57,6 +58,8 @@ jobs:
         run: node scripts/elections/apply-official-government-photo-findings-2026-08-21.mjs
       - name: Apply verified official federal portrait wave 2
         run: node scripts/elections/apply-official-federal-photo-findings-2026-08-21-wave2.mjs
+      - name: Apply verified public-domain congressional portrait wave 3
+        run: node scripts/elections/apply-public-domain-congress-photo-findings-2026-08-21-wave3.mjs
       - name: Apply verified Texas appellate portrait wave 2
         run: node scripts/elections/apply-official-judicial-photo-findings-2026-08-21-wave2.mjs
       - name: Discover previously unseen candidate photo source domains
