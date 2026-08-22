@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-08-22T12:06:46.787Z",
+  "generatedAt": "2026-08-22T12:49:29.597Z",
   "candidateCount": 491,
-  "approvedPhotoCount": 226,
-  "missingPhotoCount": 265,
-  "manifestEntryCount": 226,
-  "coverage": 0.46028513238289204,
-  "coveragePercent": 46.03,
+  "approvedPhotoCount": 229,
+  "missingPhotoCount": 262,
+  "manifestEntryCount": 229,
+  "coverage": 0.4663951120162933,
+  "coveragePercent": 46.64,
   "targetCoverage": 0.85,
   "targetApprovedPhotoCount": 418,
   "targetMet": false,
@@ -90,20 +90,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-thomas-ray-garcia-democratic-race-2026-state-board-of-education-2",
-      "name": "THOMAS RAY GARCIA",
-      "raceId": "race-2026-state-board-of-education-2",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-victoria-hinojosa-republican-race-2026-state-board-of-education-2",
-      "name": "VICTORIA HINOJOSA",
-      "raceId": "race-2026-state-board-of-education-2",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-michelle-palmer-democratic-race-2026-state-board-of-education-6",
       "name": "MICHELLE PALMER",
       "raceId": "race-2026-state-board-of-education-6",
@@ -115,13 +101,6 @@
       "name": "MARGO JORDAN",
       "raceId": "race-2026-state-board-of-education-6",
       "party": "other",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-tiffany-perkinz-democratic-race-2026-state-board-of-education-7",
-      "name": "TIFFANY PERKINZ",
-      "raceId": "race-2026-state-board-of-education-7",
-      "party": "democratic",
       "priority": "standard"
     },
     {
