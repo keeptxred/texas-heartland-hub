@@ -70,7 +70,11 @@ export const SITE_NAV_GROUPS = [
   },
 ] as const;
 
-export const SHOP_LINK = { to: "/shop", label: "Shop" } as const;
+export const SHOP_LINK = {
+  to: "/shop",
+  label: "Shop",
+  search: { category: undefined, collection: undefined, q: undefined, sort: undefined },
+} as const;
 
 export const ABOUT_LINKS = [
   { to: "/about", label: "About Keep TX Red" },
