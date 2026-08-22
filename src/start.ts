@@ -42,7 +42,6 @@ const LEGACY_ELECTION_PATHS = new Map([
 const LEGACY_CONTENT_PATHS = new Map([
   ["/houston-news", "/houston"],
   ["/property-taxes", "/texas/property-taxes-2026"],
-  ["/favicon.ico", "/__l5e/assets-v1/44ccd7e8-589f-48c9-b255-0b52bb83c041/red-texas-icon.png"],
   ["/texas-news/tax-spending", "/texas-economy"],
   ["/texas-news/legislature", "/texas-legislature"],
   ["/texas-news/border", "/texas-border-security"],
@@ -200,8 +199,7 @@ const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
   const requestProto = forwardedProto || url.protocol.replace(":", "").toLowerCase();
   const canRedirect = request.method === "GET" || request.method === "HEAD";
   const excludedPath =
-    url.pathname.startsWith("/lovable/")
-    || url.pathname === "/email/unsubscribe"
+    url.pathname === "/email/unsubscribe"
     || url.pathname === "/api/public/hooks/health";
 
   if (canRedirect && !excludedPath) {
