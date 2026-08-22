@@ -33,15 +33,19 @@ jobs:
           bun-version: 1.3.14
 
       - name: Install dependencies
+        id: install
         run: bun install --frozen-lockfile
 
       - name: ESLint
+        id: lint
         run: bun run lint
 
       - name: Full Vitest suite
+        id: tests
         run: bun run test
 
       - name: Route generation and TypeScript
+        id: typecheck
         run: |
           set -euo pipefail
           bun run typecheck
@@ -49,22 +53,87 @@ jobs:
           grep -Fq "'/bills/texas/\$legislature/\$billType/\$billNumber/reference.json': typeof" src/routeTree.gen.ts
 
       - name: SEO validation
+        id: seo
         run: bun run seo:validate
 
       - name: Production build
+        id: build
         run: bun run build
 
       - name: Shared platform validation
+        id: shared_platform
         run: bun run shared:validate
 
       - name: Shared entity validation
+        id: shared_entities
         run: bun run shared:entities:validate
 
       - name: Publication boundary validation
+        id: publication
         run: bun run publication:validate
 
       - name: Election validation
+        id: elections
         run: bun run elections:validate
 
       - name: Legislature validation
+        id: legislature
         run: bun run legislature:validate
+
+      - name: Summarize required verification
+        if: always()
+        shell: bash
+        env:
+          INSTALL: ${{ steps.install.outcome }}
+          LINT: ${{ steps.lint.outcome }}
+          TESTS: ${{ steps.tests.outcome }}
+          TYPECHECK: ${{ steps.typecheck.outcome }}
+          SEO: ${{ steps.seo.outcome }}
+          BUILD: ${{ steps.build.outcome }}
+          SHARED_PLATFORM: ${{ steps.shared_platform.outcome }}
+          SHARED_ENTITIES: ${{ steps.shared_entities.outcome }}
+          PUBLICATION: ${{ steps.publication.outcome }}
+          ELECTIONS: ${{ steps.elections.outcome }}
+          LEGISLATURE: ${{ steps.legislature.outcome }}
+        run: |
+          {
+            echo '## KeepTXRed required verify result'
+            echo
+            echo '| Stage | Failure class | Outcome |'
+            echo '|---|---|---|'
+            echo "| Dependency install | DEPENDENCY / INSTALL | ${INSTALL:-not-run} |"
+            echo "| ESLint | LINT / STATIC ANALYSIS | ${LINT:-not-run} |"
+            echo "| Full Vitest suite | TESTS | ${TESTS:-not-run} |"
+            echo "| Route generation + TypeScript | TYPECHECK / ROUTES | ${TYPECHECK:-not-run} |"
+            echo "| SEO validation | SEO | ${SEO:-not-run} |"
+            echo "| Production build | BUILD | ${BUILD:-not-run} |"
+            echo "| Shared platform | PLATFORM | ${SHARED_PLATFORM:-not-run} |"
+            echo "| Shared entities | DATA / ENTITIES | ${SHARED_ENTITIES:-not-run} |"
+            echo "| Publication boundary | PUBLICATION SAFETY | ${PUBLICATION:-not-run} |"
+            echo "| Elections | ELECTIONS | ${ELECTIONS:-not-run} |"
+            echo "| Legislature | LEGISLATURE | ${LEGISLATURE:-not-run} |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [[ "$INSTALL" == failure ]]; then
+            echo '::error title=verify failure class: DEPENDENCY / INSTALL::Dependency installation failed.'
+          elif [[ "$LINT" == failure ]]; then
+            echo '::error title=verify failure class: LINT / STATIC ANALYSIS::ESLint failed.'
+          elif [[ "$TESTS" == failure ]]; then
+            echo '::error title=verify failure class: TESTS::The Vitest suite failed.'
+          elif [[ "$TYPECHECK" == failure ]]; then
+            echo '::error title=verify failure class: TYPECHECK / ROUTES::TypeScript or protected route generation failed.'
+          elif [[ "$SEO" == failure ]]; then
+            echo '::error title=verify failure class: SEO::SEO validation failed.'
+          elif [[ "$BUILD" == failure ]]; then
+            echo '::error title=verify failure class: BUILD::The production build failed.'
+          elif [[ "$SHARED_PLATFORM" == failure ]]; then
+            echo '::error title=verify failure class: PLATFORM::Shared platform validation failed.'
+          elif [[ "$SHARED_ENTITIES" == failure ]]; then
+            echo '::error title=verify failure class: DATA / ENTITIES::Shared entity validation failed.'
+          elif [[ "$PUBLICATION" == failure ]]; then
+            echo '::error title=verify failure class: PUBLICATION SAFETY::Publication boundary validation failed.'
+          elif [[ "$ELECTIONS" == failure ]]; then
+            echo '::error title=verify failure class: ELECTIONS::Election validation failed.'
+          elif [[ "$LEGISLATURE" == failure ]]; then
+            echo '::error title=verify failure class: LEGISLATURE::Legislature validation failed.'
+          fi
