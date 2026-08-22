@@ -27,11 +27,7 @@ on:
       - "scripts/elections/discover-candidate-photos-texas-archives.mjs"
       - "src/data/elections/2026/candidate-photo-assets.json"
       - "src/data/elections/2026/candidate-supreme-court-media.json"
-      - "src/data/elections/2026/candidate-photo-source-registry.json"
-      - "src/data/elections/2026/candidate-photo-source-registry-texas-archives.json"
-      - "src/data/elections/2026/candidate-photo-source-registry-wave6.json"
-      - "src/data/elections/2026/candidate-photo-source-registry-wave7.json"
-      - "src/data/elections/2026/candidate-photo-source-registry-wave8.json"
+      - "src/data/elections/2026/candidate-photo-source-registry*.json"
 
 permissions:
   actions: write
