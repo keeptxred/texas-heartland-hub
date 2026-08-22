@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: refresh-texas-tax-rates
@@ -39,7 +40,12 @@ jobs:
           assert text.count('"dataSource":"Texas Comptroller PTAD"') == 254, 'Not all counties were generated'
           print('Validated all 254 counties')
           PY
-      - name: Commit changed rates
+      - name: Publish changed rates as protected PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_TITLE: Refresh Texas property tax rates
+          PR_BODY: Automated Texas Comptroller PTAD refresh. All 254 counties were validated before this PR was opened; protected verify still gates merge and deployment.
+          COMMIT_MESSAGE: chore: refresh Texas property tax rates
         shell: bash
         run: |
           set -euo pipefail
@@ -54,13 +60,4 @@ jobs:
             echo "$unexpected" >&2
             exit 1
           fi
-          git fetch origin main
-          if [[ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]]; then
-            echo 'main advanced during generation; refusing to publish stale tax-rate data.' >&2
-            exit 1
-          fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add "$target"
-          git commit -m 'chore: refresh Texas property tax rates'
-          git push origin HEAD:main
+          bash scripts/ci/publish-automation-pr.sh texas-tax-rates "$target"
