@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "roxanne4texans.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Roxanne Lathan's official Texas House District 11 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude stock, event-only crowd shots without clear candidate identification, issue graphics, and third-party embeds.",
+    "searchHint": "site:roxanne4texans.com Roxanne Lathan Texas House District 11 portrait meet Roxanne",
+    "notes": "Verified August 22, 2026. The live site identifies Roxanne Lathan as running to be State Representative for Texas House District 11 and contains a current Meet Roxanne campaign biography."
+  },
+  {
+    "domain": "zackdunn.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Zack Dunn's official Texas House District 121 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude stock, issue graphics, endorsement images, and third-party embeds.",
+    "searchHint": "site:zackdunn.com Zack Dunn Texas House District 121 portrait meet Zack",
+    "notes": "Verified August 22, 2026. The live site identifies Zack Dunn as running in District 121 and includes a Meet Zack campaign biography; North East Bexar County Democrats also links zackdunn.com as his campaign site."
+  }
+]
