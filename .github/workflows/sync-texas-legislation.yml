@@ -19,7 +19,7 @@ jobs:
     timeout-minutes: 90
     env:
       # GitHub performs the FTP ingestion work, while database writes are proxied
-      # through the deployed Lovable server route. The short-lived GITHUB_TOKEN
+      # through the deployed Keep TX Red server route. The short-lived GITHUB_TOKEN
       # plus run id authenticate the exact workflow run, so no Supabase service
       # role key is stored in GitHub Actions.
       SUPABASE_URL: https://keeptxred.com/api/admin/legislation-sync-proxy
