@@ -12,6 +12,7 @@ on:
       - ".github/workflows/election-source-catalog.yml"
 
 permissions:
+  actions: write
   contents: write
   pull-requests: write
 
