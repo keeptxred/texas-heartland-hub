@@ -19,6 +19,7 @@ on:
       - "scripts/elections/apply-public-domain-congress-photo-findings-2026-08-22-wave4.mjs"
       - "scripts/elections/apply-verified-candidate-photo-findings-2026-08-22-wave6.mjs"
       - "scripts/elections/apply-verified-candidate-photo-findings-2026-08-22-wave8.mjs"
+      - "scripts/elections/apply-verified-candidate-photo-findings-2026-08-22-wave10.mjs"
       - "scripts/elections/apply-official-judicial-photo-findings-2026-08-21-wave2.mjs"
       - "scripts/elections/discover-candidate-photo-sources.mjs"
       - "scripts/elections/discover-candidate-photos-house-clerk.mjs"
@@ -36,7 +37,7 @@ permissions:
 
 concurrency:
   group: candidate-photo-enrichment
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   discover-and-apply-photos:
@@ -74,6 +75,8 @@ jobs:
         run: node scripts/elections/apply-verified-candidate-photo-findings-2026-08-22-wave6.mjs
       - name: Apply verified candidate portrait wave 8
         run: node scripts/elections/apply-verified-candidate-photo-findings-2026-08-22-wave8.mjs
+      - name: Apply verified SBOE portrait wave 10
+        run: node scripts/elections/apply-verified-candidate-photo-findings-2026-08-22-wave10.mjs
       - name: Apply verified Texas appellate portrait wave 2
         run: node scripts/elections/apply-official-judicial-photo-findings-2026-08-21-wave2.mjs
       - name: Discover previously unseen candidate photo source domains
