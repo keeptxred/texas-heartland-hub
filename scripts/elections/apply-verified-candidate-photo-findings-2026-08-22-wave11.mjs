@@ -30,6 +30,17 @@ const findings = [
     permissionBasis: "Campaign-event image is directly hosted and displayed by the official current Brandon Herrera for Congress website and is used for editorial candidate identification with attribution and a source link.",
     usageStatus: "approved",
     discoveryMethod: "official-campaign-homepage"
+  },
+  {
+    candidateId: "candidate-james-talarico-democratic-race-2026-us-senate",
+    imageUrl: "https://jamestalarico.com/wp-content/uploads/2025/09/t4tx-hero.webp",
+    sourceUrl: "https://jamestalarico.com/",
+    altText: "James Talarico, Democratic candidate for U.S. Senate in Texas, speaking to a crowd",
+    credit: "Talarico for Texas",
+    license: null,
+    permissionBasis: "Campaign-event hero image is directly hosted and displayed by the official current Talarico for Texas U.S. Senate campaign website and is used for editorial candidate identification with attribution and a source link.",
+    usageStatus: "approved",
+    discoveryMethod: "official-campaign-homepage"
   }
 ];
 
