@@ -7,9 +7,10 @@ const imageRoute = readFileSync(new URL("../routes/api/public/hooks/image-backlo
 const adsenseRoute = readFileSync(new URL("../routes/api/public/hooks/adsense-image-backfill.ts", import.meta.url), "utf8");
 
 describe("image recovery OIDC workflow event contract", () => {
-  it("authorizes the post-deploy workflow_run event for backlog recovery", () => {
+  it("authorizes the protected one-time push plus post-deploy and manual recovery events", () => {
     expect(imageWorkflow).toContain("workflow_run:");
-    expect(imageRoute).toContain('allowedEventNames: ["workflow_dispatch", "workflow_run"]');
+    expect(imageWorkflow).toContain("push:");
+    expect(imageRoute).toContain('allowedEventNames: ["push", "workflow_dispatch", "workflow_run"]');
   });
 
   it("authorizes schedule, manual dispatch, and post-deploy workflow_run for AdSense recovery", () => {
