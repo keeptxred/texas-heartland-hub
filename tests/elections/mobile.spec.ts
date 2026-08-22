@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page, type Response } from "@playwright/test";
 
 const STANDARD_HOMEPAGE_HEADING = /follow the decisions shaping texas/i;
 const ELECTION_HOMEPAGE_HEADING = /texas election central/i;
@@ -16,9 +16,20 @@ const ROUTES = [
   "/elections/methodology",
 ] as const;
 
+async function expectSuccessfulNavigation(response: Response | null, label: string) {
+  const status = response?.status() ?? 0;
+  if (response && status >= 400) {
+    const body = await response.text().catch(() => "<response body unavailable>");
+    console.error(
+      `[mobile-qa-http] ${label} status=${status} headers=${JSON.stringify(response.headers())} body=${JSON.stringify(body.slice(0, 2000))}`,
+    );
+  }
+  expect(status, `${label} returned an error status`).toBeLessThan(400);
+}
+
 test("homepage renders exactly one supported experience", async ({ page }) => {
   const response = await page.goto("/", { waitUntil: "domcontentloaded" });
-  expect(response?.status()).toBeLessThan(400);
+  await expectSuccessfulNavigation(response, "/");
 
   const standardHeading = page.getByRole("heading", { name: STANDARD_HOMEPAGE_HEADING });
   const electionHeading = page.getByRole("heading", { name: ELECTION_HOMEPAGE_HEADING });
@@ -49,7 +60,7 @@ for (const route of ROUTES) {
     });
 
     const response = await page.goto(route, { waitUntil: "domcontentloaded" });
-    expect(response?.status(), `${route} returned an error status`).toBeLessThan(400);
+    await expectSuccessfulNavigation(response, route);
     await expect(page.locator("h1").first()).toBeVisible();
     await expectNoHorizontalOverflow(page);
     expect(consoleErrors, `${route} logged browser errors`).toEqual([]);
