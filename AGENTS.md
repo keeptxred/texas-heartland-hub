@@ -1,14 +1,3 @@
-<!-- LOVABLE:BEGIN -->
-> [!IMPORTANT]
-> This project is connected to [Lovable](https://lovable.dev). Avoid rewriting
-> published git history — force pushing, or rebasing/amending/squashing commits
-> that are already pushed — as it rewrites history on Lovable's side and the
-> user will likely lose their project history.
->
-> Commits you push to the connected branch sync back to Lovable and show up in
-> the editor, so keep the branch in a working state.
-<!-- LOVABLE:END -->
-
 ## Repository coding and CI rules
 
 These rules apply to every human or AI coding agent working in this repository.
@@ -33,4 +22,4 @@ These rules apply to every human or AI coding agent working in this repository.
 18. Do not use a scheduled data-generation workflow as a general-purpose build/test pipeline. Validate the generated domain output there; let normal CI validate application code changes.
 19. Do not commit service-role keys, secret API keys, passwords, private tokens, or other credentials. Browser-exposed publishable identifiers/keys must be clearly intended for public client use; prefer deployment/environment configuration over adding new tracked `.env` values.
 20. Before creating a new workflow, search `.github/workflows` for an existing job with the same responsibility. If two workflows would execute substantially the same validation, consolidate them instead.
-21. GitHub `main` syncs to the Lovable project preview/editor but does not publish the native Lovable-hosted production snapshot. Do not treat a marker-file commit as a redeploy. When a merged change must go live on native Lovable hosting, explicitly publish/update the synced project first, then run production verification. Keep Lovable use limited to that publish operation unless no GitHub-based implementation path exists.
+21. A merged commit is not considered live until the configured production deployment has completed and production verification passes. Do not treat marker-file commits or branch synchronization as proof of deployment.
