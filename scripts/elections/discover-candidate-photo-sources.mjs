@@ -7,16 +7,19 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..")
 const CANDIDATES_PATH = path.join(ROOT, "src/data/elections/2026/candidates.json");
 const MANIFEST_PATH = path.join(ROOT, "src/data/elections/2026/candidate-photos.json");
 const REGISTRY_PATH = path.join(ROOT, "src/data/elections/2026/candidate-photo-source-registry.json");
+const REGISTRY_WAVE6_PATH = path.join(ROOT, "src/data/elections/2026/candidate-photo-source-registry-wave6.json");
 const REPORT_PATH = path.join(ROOT, "artifacts/elections/candidate-photo-source-discovery-report.json");
 const USER_AGENT = "KeepTXRedCandidatePhotoBot/2.0 (+https://keeptxred.com)";
 const MAX_CANDIDATES_PER_RUN = 36;
 const CONCURRENCY = 3;
 
-const [candidates, manifest, registry] = await Promise.all([
+const [candidates, manifest, baseRegistry, wave6Registry] = await Promise.all([
   readJson(CANDIDATES_PATH),
   readJson(MANIFEST_PATH),
   readJson(REGISTRY_PATH),
+  readJsonIfExists(REGISTRY_WAVE6_PATH, []),
 ]);
+const registry = [...baseRegistry, ...wave6Registry];
 
 const approved = new Set(
   manifest.filter((entry) => entry.usageStatus === "approved" && /^https:\/\//i.test(entry.imageUrl || ""))
@@ -205,3 +208,4 @@ async function runPool(items, concurrency, worker) {
 
 function dedupeBy(items, keyFn) { const seen = new Set(); return items.filter((item) => { const key = keyFn(item); if (seen.has(key)) return false; seen.add(key); return true; }); }
 async function readJson(filePath) { return JSON.parse(await readFile(filePath, "utf8")); }
+async function readJsonIfExists(filePath, fallback) { try { return await readJson(filePath); } catch (error) { if (error?.code === "ENOENT") return fallback; throw error; } }
