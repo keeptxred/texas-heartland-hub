@@ -36,6 +36,42 @@
     "notes": "Existing verified source for SBOE incumbents."
   },
   {
+    "domain": "lptexas.org",
+    "sourceClass": "official-state-party-candidate-slate",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-slate portraits on the official Libertarian Party of Texas candidates page with party attribution and a source link.",
+    "searchHint": "site:lptexas.org/candidates candidate name",
+    "notes": "Verified 2026 statewide, congressional, legislative, and county candidate slate with candidate portraits."
+  },
+  {
+    "domain": "txgreens.org",
+    "sourceClass": "official-state-party-candidate-slate",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use portraits on the official Green Party of Texas nominated-candidates page with party attribution and a source link.",
+    "searchHint": "site:txgreens.org 2026 nominated candidates candidate name",
+    "notes": "Existing verified source for Green Party nominees."
+  },
+  {
+    "domain": "texasgop.org",
+    "sourceClass": "official-state-party-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use the directory to locate official and campaign websites; do not automatically copy directory portrait assets without documenting image provenance or reuse basis.",
+    "searchHint": "site:texasgop.org/leadership-directory candidate name",
+    "notes": "Newly confirmed high-value directory containing portraits plus official and campaign links for Texas Republican federal, statewide, judicial, legislative, and SBOE officeholders."
+  },
+  {
+    "domain": "texasdemocrats.org",
+    "sourceClass": "official-state-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use candidate pages to locate official campaign sites and downstream image sources; do not auto-approve party-page images unless provenance is documented.",
+    "searchHint": "site:texasdemocrats.org/flashcards/2026 candidate name",
+    "notes": "Newly confirmed 2026 ballot/candidate directory; some current page content is incomplete or placeholder material, so it is source-discovery only."
+  },
+  {
     "domain": "history.house.gov",
     "sourceClass": "official-house-history-profile",
     "discoveryStatus": "review-only",
