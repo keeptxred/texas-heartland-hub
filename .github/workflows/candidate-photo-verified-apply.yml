@@ -1,0 +1,102 @@
+name: Apply verified candidate photos
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/candidate-photo-verified-apply.yml"
+      - "scripts/elections/merge-approved-candidate-photo-assets.mjs"
+      - "scripts/elections/apply-direct-web-photo-findings.mjs"
+      - "scripts/elections/apply-verified-photo-findings-2026-07-31.mjs"
+      - "scripts/elections/apply-automation-verified-photo-findings.mjs"
+      - "scripts/elections/apply-official-government-photo-findings-2026-08-21.mjs"
+      - "scripts/elections/apply-official-federal-photo-findings-2026-08-21-wave2.mjs"
+      - "scripts/elections/apply-public-domain-congress-photo-findings-2026-08-21-wave3.mjs"
+      - "scripts/elections/apply-public-domain-congress-photo-findings-2026-08-22-wave4.mjs"
+      - "scripts/elections/apply-verified-candidate-photo-findings-2026-08-22-wave6.mjs"
+      - "scripts/elections/apply-verified-candidate-photo-findings-2026-08-22-wave8.mjs"
+      - "scripts/elections/apply-verified-candidate-photo-findings-2026-08-22-wave10.mjs"
+      - "scripts/elections/apply-official-judicial-photo-findings-2026-08-21-wave2.mjs"
+      - "src/data/elections/2026/candidate-photo-assets.json"
+      - "src/data/elections/2026/candidate-supreme-court-media.json"
+
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: candidate-photo-verified-apply
+  cancel-in-progress: false
+
+jobs:
+  apply-verified-photos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Merge approved candidate photo assets
+        run: node scripts/elections/merge-approved-candidate-photo-assets.mjs
+      - name: Apply direct verified web findings
+        run: node scripts/elections/apply-direct-web-photo-findings.mjs
+      - name: Apply July 31 verified campaign findings
+        run: node scripts/elections/apply-verified-photo-findings-2026-07-31.mjs
+      - name: Apply automation-verified candidate-guide findings
+        run: node scripts/elections/apply-automation-verified-photo-findings.mjs
+      - name: Apply verified official government portraits
+        run: node scripts/elections/apply-official-government-photo-findings-2026-08-21.mjs
+      - name: Apply verified official federal portrait wave 2
+        run: node scripts/elections/apply-official-federal-photo-findings-2026-08-21-wave2.mjs
+      - name: Apply verified public-domain congressional portrait wave 3
+        run: node scripts/elections/apply-public-domain-congress-photo-findings-2026-08-21-wave3.mjs
+      - name: Apply verified public-domain congressional portrait wave 4
+        run: node scripts/elections/apply-public-domain-congress-photo-findings-2026-08-22-wave4.mjs
+      - name: Apply verified statewide and SBOE portrait wave 6
+        run: node scripts/elections/apply-verified-candidate-photo-findings-2026-08-22-wave6.mjs
+      - name: Apply verified candidate portrait wave 8
+        run: node scripts/elections/apply-verified-candidate-photo-findings-2026-08-22-wave8.mjs
+      - name: Apply verified SBOE portrait wave 10
+        run: node scripts/elections/apply-verified-candidate-photo-findings-2026-08-22-wave10.mjs
+      - name: Apply verified Texas appellate portrait wave 2
+        run: node scripts/elections/apply-official-judicial-photo-findings-2026-08-21-wave2.mjs
+      - name: Apply canonical verified-photo manifest
+        run: node scripts/elections/candidate-photo-enrichment.mjs --apply
+
+      - name: Publish verified candidate records as protected PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_TITLE: Apply verified candidate photos to canonical manifest
+          PR_BODY: Applies already verified candidate-photo assets and deterministic verified portrait waves to the canonical candidate manifest and candidate dataset. No discovery-only or review-only image is promoted. Existing provenance, rights, validation, protected verify, and deployment gates remain unchanged.
+          COMMIT_MESSAGE: Apply verified candidate photos to canonical manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          TRACKED=(
+            src/data/elections/2026/candidate-photos.json
+            src/data/elections/2026/candidates.json
+            artifacts/elections/candidate-photo-report.json
+          )
+          if git diff --quiet -- "${TRACKED[@]}"; then
+            echo "No verified candidate photo changes to publish."
+            exit 0
+          fi
+          changed="$(git status --short | awk '{print $2}')"
+          unexpected_files="$(grep -vE '^(src/data/elections/2026/(candidate-photos|candidates)\.json|artifacts/elections/candidate-photo-report\.json)$' <<<"$changed" || true)"
+          if [[ -n "$unexpected_files" ]]; then
+            echo "Refusing to publish files outside the verified candidate-photo allowlist:" >&2
+            echo "$unexpected_files" >&2
+            exit 1
+          fi
+          bash scripts/ci/publish-automation-pr.sh candidate-photo-verified-apply "${TRACKED[@]}"
