@@ -8,10 +8,6 @@ export default defineConfig({
   reporter: process.env.CI ? "github" : "list",
   use: {
     baseURL: "http://127.0.0.1:4173",
-    extraHTTPHeaders: {
-      "x-forwarded-host": "keeptxred.com",
-      "x-forwarded-proto": "https",
-    },
     viewport: { width: 390, height: 844 },
     deviceScaleFactor: 1,
     isMobile: true,
