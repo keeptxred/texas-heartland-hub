@@ -47,6 +47,13 @@ function audienceMatches(audience: string | string[] | undefined, expected: stri
   return Array.isArray(audience) && audience.includes(expected);
 }
 
+export function isAllowedGitHubActionsEvent(
+  eventName: string | undefined,
+  allowedEventNames: readonly string[] = DEFAULT_ALLOWED_EVENT_NAMES,
+): boolean {
+  return Boolean(eventName && allowedEventNames.includes(eventName));
+}
+
 export async function verifyGitHubActionsOidc(options: {
   token: string;
   audience: string;
@@ -117,8 +124,7 @@ export async function verifyGitHubActionsOidc(options: {
   if (claims.workflow_ref !== expectedWorkflowRef) {
     throw new Error("Unexpected GitHub Actions workflow claim");
   }
-  const allowedEventNames = options.allowedEventNames ?? DEFAULT_ALLOWED_EVENT_NAMES;
-  if (!claims.event_name || !allowedEventNames.includes(claims.event_name)) {
+  if (!isAllowedGitHubActionsEvent(claims.event_name, options.allowedEventNames)) {
     throw new Error("Unexpected GitHub Actions event claim");
   }
 
