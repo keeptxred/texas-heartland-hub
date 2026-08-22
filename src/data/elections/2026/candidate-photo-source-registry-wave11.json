@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "texastribune.org",
+    "sourceClass": "major-news-candidate-guide-with-campaign-photo-leads",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Tribune 2026 candidate guides to confirm candidate identity, race context, campaign contact information, and to locate images explicitly credited as campaign photos. A Tribune-hosted image may be promoted only when its item-level credit/provenance clearly identifies it as campaign-supplied or another independently reusable source; Tribune staff, wire-service, or unclear-origin imagery remains review-only.",
+    "searchHint": "site:texastribune.org/2026 Texas candidate guide campaign photo candidate name",
+    "notes": "Verified August 22, 2026 while researching uncovered statewide candidates. Current 2026 candidate guides identify campaign contacts and label some portraits as campaign photos, making them useful provenance leads without treating the publication itself as a blanket image license."
+  },
+  {
+    "domain": "sanantonioreport.org",
+    "sourceClass": "nonprofit-local-news-candidate-profile-directory",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use San Antonio Report 2026 candidate profile and party archive pages to confirm candidate identity, race context, biography, and discover original campaign or official sources. Do not reuse San Antonio Report staff, contributor, campaign, or third-party imagery unless the original image provenance and reuse permission are separately verified at item level.",
+    "searchHint": "site:sanantonioreport.org 2026 candidate Texas candidate name",
+    "notes": "Verified August 22, 2026 as a live candidate-profile source that includes statewide candidates such as Stephen Samuelson and other 2026 Texas races. Hosted imagery remains discovery/review-only."
+  }
+]

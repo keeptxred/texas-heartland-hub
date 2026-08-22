@@ -69,7 +69,20 @@ const enriched = candidates.map((candidate) => {
   };
 });
 
-const missing = enriched
+const coverageEligible = enriched.filter(isCoverageEligible);
+const excludedFromCoverage = enriched
+  .filter((candidate) => !isCoverageEligible(candidate))
+  .map((candidate) => ({
+    candidateId: candidate.id,
+    name: candidate.fullName,
+    raceId: candidate.primaryRaceId,
+    status: candidate.status ?? null,
+    filingStatus: candidate.filingStatus ?? null,
+    ballotAccessStatus: candidate.ballotAccessStatus ?? null,
+    reason: coverageExclusionReason(candidate),
+  }));
+
+const missing = coverageEligible
   .filter((candidate) => !candidate.imageUrl || candidate.imageRights?.usageStatus !== "approved")
   .map((candidate) => ({
     candidateId: candidate.id,
@@ -79,12 +92,14 @@ const missing = enriched
     priority: candidate.featured ? "featured" : candidate.primaryRaceId?.includes("governor") ? "statewide" : "standard",
   }));
 
-const approvedPhotoCount = enriched.length - missing.length;
-const targetApprovedPhotoCount = Math.ceil(candidates.length * TARGET_COVERAGE);
-const coverage = candidates.length ? approvedPhotoCount / candidates.length : 0;
+const approvedPhotoCount = coverageEligible.length - missing.length;
+const targetApprovedPhotoCount = Math.ceil(coverageEligible.length * TARGET_COVERAGE);
+const coverage = coverageEligible.length ? approvedPhotoCount / coverageEligible.length : 0;
 const report = {
   generatedAt: new Date().toISOString(),
   candidateCount: candidates.length,
+  eligibleCandidateCount: coverageEligible.length,
+  excludedCandidateCount: excludedFromCoverage.length,
   approvedPhotoCount,
   missingPhotoCount: missing.length,
   manifestEntryCount: manifest.length,
@@ -92,9 +107,11 @@ const report = {
   coveragePercent: Number((coverage * 100).toFixed(2)),
   targetCoverage: TARGET_COVERAGE,
   targetApprovedPhotoCount,
+  photosNeededForTarget: Math.max(0, targetApprovedPhotoCount - approvedPhotoCount),
   targetMet: approvedPhotoCount >= targetApprovedPhotoCount,
   errors,
   warnings,
+  excludedFromCoverage,
   missing,
 };
 
@@ -107,11 +124,26 @@ if (errors.length) {
 } else if (APPLY) {
   await writeFile(CANDIDATES_PATH, `${JSON.stringify(enriched, null, 2)}\n`);
   console.log(`Applied ${approved.length} approved candidate photo(s).`);
-  console.log(`Coverage: ${approvedPhotoCount}/${candidates.length} (${report.coveragePercent}%). Target: ${targetApprovedPhotoCount}.`);
+  console.log(`Coverage: ${approvedPhotoCount}/${coverageEligible.length} eligible candidates (${report.coveragePercent}%). Target: ${targetApprovedPhotoCount}.`);
+  if (excludedFromCoverage.length) console.log(`Excluded ${excludedFromCoverage.length} candidates from the coverage denominator using supported verified lifecycle fields.`);
 } else {
-  console.log(`Audit complete: ${approvedPhotoCount} approved, ${missing.length} missing.`);
+  console.log(`Audit complete: ${approvedPhotoCount} approved, ${missing.length} missing among ${coverageEligible.length} eligible candidates.`);
   console.log(`Coverage: ${report.coveragePercent}%. Target: ${targetApprovedPhotoCount} (${TARGET_COVERAGE * 100}%).`);
   console.log("Run with --apply to write approved manifest entries into candidates.json.");
+}
+
+function isCoverageEligible(candidate) {
+  if (["withdrawn", "disqualified"].includes(candidate.status)) return false;
+  if (["rejected", "withdrawn"].includes(candidate.filingStatus)) return false;
+  if (candidate.ballotAccessStatus === "removed") return false;
+  return true;
+}
+
+function coverageExclusionReason(candidate) {
+  if (["withdrawn", "disqualified"].includes(candidate.status)) return `status:${candidate.status}`;
+  if (["rejected", "withdrawn"].includes(candidate.filingStatus)) return `filingStatus:${candidate.filingStatus}`;
+  if (candidate.ballotAccessStatus === "removed") return "ballotAccessStatus:removed";
+  return "unknown";
 }
 
 async function readJson(filePath) {
