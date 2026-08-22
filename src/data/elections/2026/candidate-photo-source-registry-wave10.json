@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "dallasnews.com",
+    "sourceClass": "major-news-candidate-questionnaire-guide",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use Dallas Morning News 2026 candidate Q&A and voter-guide pages to confirm candidate identity, race context, candidate-supplied questionnaire material, and discover original campaign or official links. Do not reuse Dallas Morning News, staff, wire-service, campaign, or third-party hosted imagery unless the original image provenance and reuse permission are separately verified at item level.",
+    "searchHint": "site:dallasnews.com/projects/2026/dallas-texas-primary-election-voter-guide candidate name",
+    "notes": "Verified August 22, 2026 as a live 2026 Texas candidate Q&A/voter-guide source spanning congressional, legislative, judicial, county, and local races. Candidate questionnaire responses can provide identity and campaign-source leads; hosted imagery remains review-only."
+  },
+  {
+    "domain": "kut.org",
+    "sourceClass": "public-radio-election-guide",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use current KUT/Texas Newsroom election guides and candidate profiles to confirm candidate identity, race context, campaign names, and source leads. Do not reuse KUT, Texas Newsroom, staff, wire-service, or third-party photographs unless item-level provenance and reuse rights are separately verified.",
+    "searchHint": "site:kut.org 2026 Texas candidate voter guide candidate name",
+    "notes": "Verified August 22, 2026 as a current Texas primary and runoff guide source with candidate profiles across statewide, congressional, county, and local races, including Austin-area coverage."
+  },
+  {
+    "domain": "keranews.org",
+    "sourceClass": "public-radio-election-guide",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use current KERA/Texas Newsroom election coverage to identify candidates, races, original campaign links, and other primary sources. Do not reuse KERA, Texas Newsroom, staff, wire-service, or third-party imagery unless item-level provenance and reuse rights are separately verified.",
+    "searchHint": "site:keranews.org 2026 Texas election candidate voter guide",
+    "notes": "Verified August 22, 2026 as a current Texas election-guide source carrying Texas Newsroom coverage of 2026 primary and runoff races."
+  }
+]
