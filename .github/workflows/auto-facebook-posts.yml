@@ -49,16 +49,17 @@ jobs:
             local label="$1"
             local endpoint="$2"
             local output="$3"
+            local requested_mode="${4:-$mode}"
             local status
 
             status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
               --max-time 420 \
               -H 'accept: application/json' \
               -H "Authorization: Bearer ${oidc_token}" \
-              -H "X-KTR-Facebook-Mode: ${mode}" \
+              -H "X-KTR-Facebook-Mode: ${requested_mode}" \
               "$endpoint" || echo 000)
 
-            echo "${label} auto-facebook HTTP ${status} mode=${mode}"
+            echo "${label} auto-facebook HTTP ${status} mode=${requested_mode}"
             cat "$output" 2>/dev/null || true
             echo
 
@@ -90,10 +91,14 @@ jobs:
             "https://keeptxred.com/api/public/hooks/auto-facebook-post" \
             "/tmp/facebook-post-keeptxred.json"
 
+          # TexasDefined always goes through scheduled-mode safeguards, even on
+          # workflow_dispatch. A manual workflow run must never bypass its hard
+          # daily cap, minimum-gap logic, or randomized posting windows.
           run_page \
             "texasdefined" \
             "https://keeptxred.com/api/public/hooks/auto-facebook-post-texasdefined-smart" \
-            "/tmp/facebook-post-texasdefined.json"
+            "/tmp/facebook-post-texasdefined.json" \
+            "scheduled"
 
           if (( failures > 0 )); then
             exit 1

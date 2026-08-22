@@ -16,7 +16,8 @@ const SOCIAL_PLATFORM = "facebook_texasdefined";
 const GRAPH_VERSION = "v21.0";
 const MAX_DAILY_POSTS = 2;
 const MIN_GAP_MINUTES = 180;
-const MAX_METADATA_ATTEMPTS = 18;
+const ARTICLE_HISTORY_DAYS = 45;
+const MAX_METADATA_ATTEMPTS = 36;
 
 const TARGET_WINDOWS: ReadonlyArray<readonly [number, number]> = [
   [10 * 60, 12 * 60 + 30],
@@ -33,6 +34,37 @@ const FEATURED_STATIC_PATHS = new Set([
   "/texas-two-step",
   "/texas-vs-every-state",
 ]);
+
+const TRAFFIC_TERMS = [
+  "things",
+  "ways",
+  "best",
+  "must",
+  "before",
+  "reasons",
+  "mistakes",
+  "facts",
+  "know",
+  "bucket-list",
+  "bucket list",
+  "weekend",
+  "road-trip",
+  "road trip",
+  "day-trip",
+  "day trip",
+  "guide",
+  "places",
+  "visit",
+  "camping",
+  "state-fair",
+  "state fair",
+  "bluebonnet",
+  "small-town",
+  "small town",
+  "swimming-hole",
+  "swimming hole",
+  "texas-vs",
+] as const;
 
 type SitemapCandidate = {
   url: string;
@@ -174,11 +206,42 @@ function parseSitemap(xml: string): SitemapCandidate[] {
   return [...new Map(rows.map((row) => [row.url, row])).values()];
 }
 
+function trafficTextScore(value: string): number {
+  const normalized = value.toLowerCase().replace(/[_]+/g, "-");
+  let score = 0;
+  if (/\b(?:1[0-9]|2[0-9]|3[0-9]|4[0-9]|50)\b/.test(normalized.replace(/-/g, " "))) score += 28;
+  for (const term of TRAFFIC_TERMS) {
+    if (normalized.includes(term)) score += 8;
+  }
+  return score;
+}
+
+function candidateTrafficScore(candidate: SitemapCandidate): number {
+  let score = trafficTextScore(candidate.path);
+  if (candidate.path.startsWith("/article/")) score += 10;
+  if (FEATURED_STATIC_PATHS.has(candidate.path)) score += 18;
+  return score;
+}
+
+function metadataTrafficScore(candidate: SitemapCandidate, metadata: PageMetadata): number {
+  let score = candidateTrafficScore(candidate);
+  score += trafficTextScore(metadata.title) * 2;
+  score += Math.min(trafficTextScore(metadata.description), 24);
+  if (candidate.lastmod) {
+    const modified = Date.parse(candidate.lastmod);
+    if (Number.isFinite(modified)) {
+      const ageDays = Math.max(0, (Date.now() - modified) / 86_400_000);
+      score += Math.max(0, 14 - Math.floor(ageDays / 7));
+    }
+  }
+  return score;
+}
+
 async function loadMetadata(candidateUrl: string): Promise<PageMetadata | null> {
   const response = await fetch(candidateUrl, {
     headers: {
       accept: "text/html,application/xhtml+xml",
-      "user-agent": "TexasDefined-Facebook-Publisher/1.0",
+      "user-agent": "TexasDefined-Facebook-Publisher/1.1",
     },
   });
   if (!response.ok) return null;
@@ -206,7 +269,7 @@ async function loadMetadata(candidateUrl: string): Promise<PageMetadata | null> 
 }
 
 async function loadRecentQueue(db: any): Promise<{ rows: QueueRow[]; postedUrls: Set<string> }> {
-  const cutoff = new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString();
+  const cutoff = new Date(Date.now() - ARTICLE_HISTORY_DAYS * 24 * 60 * 60 * 1000).toISOString();
   const { data: rawRows, error } = await db
     .from("publishing_queue")
     .select("content_package_id,published_time")
@@ -214,7 +277,7 @@ async function loadRecentQueue(db: any): Promise<{ rows: QueueRow[]; postedUrls:
     .eq("status", "PUBLISHED")
     .gte("published_time", cutoff)
     .order("published_time", { ascending: false })
-    .limit(20);
+    .limit(250);
   if (error) throw new Error(error.message);
   const rows = (rawRows ?? []) as QueueRow[];
   const ids = [...new Set(rows.map((row) => row.content_package_id).filter(Boolean))];
@@ -276,6 +339,43 @@ function postingDecision(args: {
   return { shouldPost: true, reason: "TexasDefined randomized Facebook window is due", dateKey: clock.dateKey, postsToday, nextTargetMinute, targets };
 }
 
+function hardPostingGuard(args: {
+  now: Date;
+  recentRows: QueueRow[];
+  livePosts: FacebookPagePost[];
+}): { allowed: boolean; reason: string | null; postsToday: number; latestPublishedAt: string | null } {
+  const todayKey = centralClock(args.now).dateKey;
+  const dbTimes = args.recentRows
+    .map((row) => row.published_time)
+    .filter((value): value is string => Boolean(value) && centralDateKey(value as string) === todayKey);
+  const liveTimes = args.livePosts
+    .map((post) => post.created_time)
+    .filter((value): value is string => Boolean(value) && centralDateKey(value as string) === todayKey);
+
+  const postsToday = Math.max(dbTimes.length, liveTimes.length);
+  const latestTimestamp = [...dbTimes, ...liveTimes]
+    .map((value) => Date.parse(value))
+    .filter((value) => Number.isFinite(value))
+    .sort((a, b) => b - a)[0] ?? null;
+  const latestPublishedAt = latestTimestamp == null ? null : new Date(latestTimestamp).toISOString();
+
+  if (postsToday >= MAX_DAILY_POSTS) {
+    return { allowed: false, reason: "TexasDefined hard Facebook daily cap reached", postsToday, latestPublishedAt };
+  }
+  if (latestTimestamp != null) {
+    const gapMinutes = (args.now.getTime() - latestTimestamp) / 60_000;
+    if (gapMinutes < MIN_GAP_MINUTES) {
+      return {
+        allowed: false,
+        reason: `TexasDefined hard Facebook minimum gap is ${MIN_GAP_MINUTES} minutes`,
+        postsToday,
+        latestPublishedAt,
+      };
+    }
+  }
+  return { allowed: true, reason: null, postsToday, latestPublishedAt };
+}
+
 async function recordPublishedPost(db: any, metadata: PageMetadata, externalId: string | null): Promise<string | null> {
   let packageId: string | null = null;
   const { data: existing } = await db
@@ -321,17 +421,10 @@ async function recordPublishedPost(db: any, metadata: PageMetadata, externalId: 
 
 async function runAutoTexasDefinedFacebookPost(request: Request) {
   const token = bearerToken(request);
-  if (!token) {
-    return Response.json({ ok: false, error: "Missing GitHub Actions OIDC token" }, { status: 401 });
-  }
+  if (!token) return Response.json({ ok: false, error: "Missing GitHub Actions OIDC token" }, { status: 401 });
 
   try {
-    await verifyGitHubActionsOidc({
-      token,
-      audience: OIDC_AUDIENCE,
-      repository: REPOSITORY,
-      workflowPath: WORKFLOW_PATH,
-    });
+    await verifyGitHubActionsOidc({ token, audience: OIDC_AUDIENCE, repository: REPOSITORY, workflowPath: WORKFLOW_PATH });
   } catch (error) {
     return Response.json(
       {
@@ -347,6 +440,7 @@ async function runAutoTexasDefinedFacebookPost(request: Request) {
   const db = supabaseAdmin as any;
   const adminSeed = process.env.ADMIN_PASSCODE ?? "keeptxred";
   const mode = request.headers.get("x-ktr-facebook-mode")?.trim().toLowerCase() || "scheduled";
+  const now = new Date();
 
   let recentRows: QueueRow[] = [];
   let postedUrls = new Set<string>();
@@ -361,7 +455,7 @@ async function runAutoTexasDefinedFacebookPost(request: Request) {
     );
   }
 
-  const decision = postingDecision({ now: new Date(), seed: adminSeed, recentRows });
+  const decision = postingDecision({ now, seed: adminSeed, recentRows });
   if (mode !== "manual" && !decision.shouldPost) {
     return Response.json({
       ok: true,
@@ -380,9 +474,8 @@ async function runAutoTexasDefinedFacebookPost(request: Request) {
     .select("account_id,access_token,connection_status")
     .eq("platform", SOCIAL_PLATFORM)
     .maybeSingle();
-  if (connectionError) {
-    return Response.json({ ok: false, posted: false, error: connectionError.message }, { status: 500 });
-  }
+  if (connectionError) return Response.json({ ok: false, posted: false, error: connectionError.message }, { status: 500 });
+
   const connection = rawConnection as SocialConnectionRow | null;
   if (!connection || connection.connection_status !== "CONNECTED" || !connection.account_id || !connection.access_token) {
     return Response.json(
@@ -405,10 +498,24 @@ async function runAutoTexasDefinedFacebookPost(request: Request) {
     );
   }
 
+  const hardGuard = hardPostingGuard({ now, recentRows, livePosts });
+  if (!hardGuard.allowed) {
+    return Response.json({
+      ok: true,
+      posted: false,
+      hard_guard: true,
+      reason: hardGuard.reason,
+      posts_today: hardGuard.postsToday,
+      latest_published_at: hardGuard.latestPublishedAt,
+      minimum_gap_minutes: MIN_GAP_MINUTES,
+      max_daily_posts: MAX_DAILY_POSTS,
+    });
+  }
+
   let sitemapText: string;
   try {
     const sitemapResponse = await fetch(SITEMAP_URL, {
-      headers: { accept: "application/xml,text/xml", "user-agent": "TexasDefined-Facebook-Publisher/1.0" },
+      headers: { accept: "application/xml,text/xml", "user-agent": "TexasDefined-Facebook-Publisher/1.1" },
     });
     if (!sitemapResponse.ok) throw new Error(`HTTP ${sitemapResponse.status}`);
     sitemapText = await sitemapResponse.text();
@@ -423,6 +530,8 @@ async function runAutoTexasDefinedFacebookPost(request: Request) {
   const candidates = parseSitemap(sitemapText)
     .filter((candidate) => !postedUrls.has(candidate.url))
     .sort((a, b) => {
+      const trafficDelta = candidateTrafficScore(b) - candidateTrafficScore(a);
+      if (trafficDelta !== 0) return trafficDelta;
       const aDate = a.lastmod ? Date.parse(a.lastmod) : 0;
       const bDate = b.lastmod ? Date.parse(b.lastmod) : 0;
       const dateDelta = (Number.isFinite(bDate) ? bDate : 0) - (Number.isFinite(aDate) ? aDate : 0);
@@ -430,7 +539,7 @@ async function runAutoTexasDefinedFacebookPost(request: Request) {
       return hash32(`${adminSeed}:${dateKey}:${a.url}`) - hash32(`${adminSeed}:${dateKey}:${b.url}`);
     });
 
-  let selected: PageMetadata | null = null;
+  let selected: { metadata: PageMetadata; score: number } | null = null;
   let checked = 0;
   for (const candidate of candidates) {
     if (checked >= MAX_METADATA_ATTEMPTS) break;
@@ -446,8 +555,8 @@ async function runAutoTexasDefinedFacebookPost(request: Request) {
       facebookPostMatchesArticle(post, { title: metadata.title, url: metadata.url, alternateUrls: [candidate.url] }),
     );
     if (duplicate) continue;
-    selected = metadata;
-    break;
+    const score = metadataTrafficScore(candidate, metadata);
+    if (!selected || score > selected.score) selected = { metadata, score };
   }
 
   if (!selected) {
@@ -457,17 +566,19 @@ async function runAutoTexasDefinedFacebookPost(request: Request) {
       no_items: true,
       reason: "No unposted TexasDefined article with a Facebook-ready image was found",
       candidates_checked: checked,
-      posts_today: decision.postsToday,
+      article_history_days: ARTICLE_HISTORY_DAYS,
+      posts_today: hardGuard.postsToday,
     });
   }
 
-  const caption = [selected.title, selected.description, selected.url].filter(Boolean).join("\n\n");
+  const selectedMetadata = selected.metadata;
+  const caption = [selectedMetadata.title, selectedMetadata.description, selectedMetadata.url].filter(Boolean).join("\n\n");
   const graphUrl = `https://graph.facebook.com/${GRAPH_VERSION}/${encodeURIComponent(String(connection.account_id))}/photos`;
   const graphResponse = await fetch(graphUrl, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
-      url: selected.imageUrl,
+      url: selectedMetadata.imageUrl,
       caption,
       access_token: String(connection.access_token),
     }),
@@ -493,7 +604,7 @@ async function runAutoTexasDefinedFacebookPost(request: Request) {
   let packageId: string | null = null;
   let recordWarning: string | null = null;
   try {
-    packageId = await recordPublishedPost(db, selected, externalId);
+    packageId = await recordPublishedPost(db, selectedMetadata, externalId);
   } catch (error) {
     recordWarning = error instanceof Error ? error.message : String(error);
     console.error("[TexasDefined Facebook] post succeeded but history recording failed", recordWarning);
@@ -503,16 +614,23 @@ async function runAutoTexasDefinedFacebookPost(request: Request) {
     ok: true,
     posted: true,
     site: "TexasDefined",
-    title: selected.title,
-    article_url: selected.url,
+    title: selectedMetadata.title,
+    article_url: selectedMetadata.url,
+    selection_score: selected.score,
     external_id: externalId,
     post_url: externalId ? `https://www.facebook.com/${externalId}` : null,
     package_id: packageId,
     record_warning: recordWarning,
     posted_at: new Date().toISOString(),
     mode,
-    posts_today_before_post: decision.postsToday,
+    posts_today_before_post: hardGuard.postsToday,
     candidates_checked: checked,
+    article_selection_policy: {
+      traffic_drivers_first: true,
+      list_and_gateway_terms: TRAFFIC_TERMS,
+      url_cooldown_days: ARTICLE_HISTORY_DAYS,
+      live_facebook_duplicate_check: true,
+    },
   });
 }
 
