@@ -23,9 +23,9 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
     steps:
-      - name: Recover missing article images pending-first
+      - name: Recover missing and legacy article images pending-first
         shell: bash
         run: |
           set -euo pipefail
@@ -62,11 +62,13 @@ jobs:
             exit 1
           fi
           if [[ "$ready" -eq 0 ]]; then
-            echo 'IMAGE_BACKLOG_RECOVERY_SUCCESS ready=0; missing-image quality backlog already clean.'
+            echo 'IMAGE_BACKLOG_RECOVERY_SUCCESS ready=0; missing/legacy quality backlog already clean.'
             exit 0
           fi
 
-          max_per_run=30
+          # Bound each deployment-triggered pass so Cloudflare usage stays
+          # predictable while still draining the finite legacy placeholder cohort.
+          max_per_run=40
           mapfile -t slugs < <(jq -r --argjson max "$max_per_run" '.slugs[:$max][]' /tmp/image-backlog-dry.json)
           failures=0
           succeeded=0
