@@ -1,25 +1,22 @@
 #!/usr/bin/env node
-import { readFile, writeFile, mkdir } from "node:fs/promises";
+import { readFile, writeFile, mkdir, readdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const CANDIDATES_PATH = path.join(ROOT, "src/data/elections/2026/candidates.json");
 const MANIFEST_PATH = path.join(ROOT, "src/data/elections/2026/candidate-photos.json");
-const REGISTRY_PATH = path.join(ROOT, "src/data/elections/2026/candidate-photo-source-registry.json");
-const REGISTRY_WAVE6_PATH = path.join(ROOT, "src/data/elections/2026/candidate-photo-source-registry-wave6.json");
+const REGISTRY_DIR = path.join(ROOT, "src/data/elections/2026");
 const REPORT_PATH = path.join(ROOT, "artifacts/elections/candidate-photo-source-discovery-report.json");
 const USER_AGENT = "KeepTXRedCandidatePhotoBot/2.0 (+https://keeptxred.com)";
 const MAX_CANDIDATES_PER_RUN = 36;
 const CONCURRENCY = 3;
 
-const [candidates, manifest, baseRegistry, wave6Registry] = await Promise.all([
+const [candidates, manifest, registry] = await Promise.all([
   readJson(CANDIDATES_PATH),
   readJson(MANIFEST_PATH),
-  readJson(REGISTRY_PATH),
-  readJsonIfExists(REGISTRY_WAVE6_PATH, []),
+  loadSourceRegistries(REGISTRY_DIR),
 ]);
-const registry = [...baseRegistry, ...wave6Registry];
 
 const approved = new Set(
   manifest.filter((entry) => entry.usageStatus === "approved" && /^https:\/\//i.test(entry.imageUrl || ""))
@@ -74,6 +71,7 @@ await writeFile(REPORT_PATH, `${JSON.stringify({
   missingCandidateCount: candidates.length - approved.size,
   searchedCandidateCount: queue.length,
   knownSourceDomainCount: knownDomains.size,
+  loadedRegistryEntryCount: registry.length,
   newSourceCandidateCount: deduped.length,
   newDomainCount: domainSummary.size,
   newDomains: [...domainSummary.values()],
@@ -82,6 +80,7 @@ await writeFile(REPORT_PATH, `${JSON.stringify({
 }, null, 2)}\n`);
 
 console.log(`Source expansion searched ${queue.length} missing candidates and found ${domainSummary.size} previously unregistered domain(s).`);
+console.log(`Loaded ${registry.length} source entries from every candidate-photo-source-registry*.json file.`);
 console.log("New domains remain review-only until identity, provenance, and reuse rights are verified.");
 
 async function discoverSourceUrls(candidate) {
@@ -184,6 +183,14 @@ function isBlockedHost(host) {
     || /wikipedia\.org$|wikimedia\.org$/.test(host);
 }
 
+async function loadSourceRegistries(directory) {
+  const names = (await readdir(directory))
+    .filter((name) => /^candidate-photo-source-registry(?:-[a-z0-9-]+)?\.json$/i.test(name))
+    .sort();
+  const registries = await Promise.all(names.map((name) => readJson(path.join(directory, name))));
+  return registries.flatMap((entries) => Array.isArray(entries) ? entries : []);
+}
+
 function hostOf(value) { try { return new URL(value).hostname.toLowerCase().replace(/^www\./, ""); } catch { return null; } }
 function normalizeHost(value) { return String(value || "").toLowerCase().replace(/^https?:\/\//, "").replace(/^www\./, "").split("/")[0]; }
 
@@ -208,4 +215,3 @@ async function runPool(items, concurrency, worker) {
 
 function dedupeBy(items, keyFn) { const seen = new Set(); return items.filter((item) => { const key = keyFn(item); if (seen.has(key)) return false; seen.add(key); return true; }); }
 async function readJson(filePath) { return JSON.parse(await readFile(filePath, "utf8")); }
-async function readJsonIfExists(filePath, fallback) { try { return await readJson(filePath); } catch (error) { if (error?.code === "ENOENT") return fallback; throw error; } }
