@@ -88,14 +88,20 @@ async function discoverSourceUrls(candidate) {
     `${name} Texas ${race} official campaign biography portrait`,
     `${name} Texas candidate headshot media press kit ${race}`,
     `${name} Texas ${race} voter guide candidate profile`,
+    `${name} Texas ${race} official photo download press media kit`,
+    `${name} Texas ${race} public domain portrait`,
+    `${name} Texas ${race} Creative Commons photo`,
+    `${name} Texas ${race} government biography headshot`,
+    `${name} Texas ${race} archive portrait photo`,
+    `${name} Texas ${race} campaign photos media resources`,
   ];
   const urls = [];
   for (const query of queries) {
     const results = await duckDuckGoSearch(query);
     urls.push(...results);
-    if (urls.length >= 18) break;
+    if (urls.length >= 42) break;
   }
-  return [...new Set(urls)].slice(0, 18);
+  return [...new Set(urls)].slice(0, 42);
 }
 
 async function duckDuckGoSearch(query) {
@@ -143,6 +149,7 @@ function classifyDomain(host, url) {
   if (/\.gov$|\.tx\.us$|\.us$/.test(host)) return "official-government";
   if (/gop|republican|democrat|libertarian|greenparty|greens/.test(host)) return "official-or-political-party";
   if (/ballot|vote|election|voter|leagueofwomenvoters|lwv/.test(host)) return "voter-guide-or-election-directory";
+  if (/archive|museum|library|commons|flickr|photo|media/.test(host)) return "archive-or-image-repository";
   if (/law|attorney|university|college|school|isd|county|city/.test(host)) return "professional-or-institutional-biography";
   if (/news|tribune|times|post|chronicle|observer|standard|herald|reporter/.test(host)) return "news-or-editorial-source";
   if (/press|media|campaign|elect|vote|for(?:texas|tx|congress|house|senate|judge)/.test(`${host} ${url}`)) return "campaign-or-media-source";
@@ -154,10 +161,11 @@ function sourceRank(sourceClass) {
     "official-government": 0,
     "campaign-or-media-source": 1,
     "official-or-political-party": 2,
-    "voter-guide-or-election-directory": 3,
-    "professional-or-institutional-biography": 4,
-    "news-or-editorial-source": 5,
-    "unclassified-web-source": 6,
+    "archive-or-image-repository": 3,
+    "voter-guide-or-election-directory": 4,
+    "professional-or-institutional-biography": 5,
+    "news-or-editorial-source": 6,
+    "unclassified-web-source": 7,
   })[sourceClass] ?? 9;
 }
 
