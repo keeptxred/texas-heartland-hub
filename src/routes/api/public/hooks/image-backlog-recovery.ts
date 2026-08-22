@@ -39,6 +39,7 @@ async function authorized(request: Request): Promise<boolean> {
 }
 
 function isEligible(row: BacklogRow): boolean {
+  if (!row.published_at) return false;
   const status = (row.image_generation_status ?? "").trim().toLowerCase();
   if (status !== "pending" && status !== "failed") return false;
   if (row.featured_image_url?.trim()) return false;
@@ -89,13 +90,13 @@ async function post({ request }: { request: Request }) {
       pending: eligible.filter((row) => priority(row) === 0).length,
       failed: eligible.filter((row) => priority(row) === 1).length,
       slugs,
-      scope: "missing_quality_article_images_pending_first",
+      scope: "missing_published_quality_article_images_pending_first",
     });
   }
 
   if (!requestedSlug) return Response.json({ error: "Missing eligible slug" }, { status: 400 });
   if (!slugs.includes(requestedSlug)) {
-    return Response.json({ error: "Slug is not currently an eligible missing-image backlog item" }, { status: 409 });
+    return Response.json({ error: "Slug is not currently an eligible published missing-image backlog item" }, { status: 409 });
   }
 
   const generated = await generateFeaturedImageForSlugDirect(requestedSlug, true);
@@ -108,7 +109,7 @@ async function post({ request }: { request: Request }) {
     processed: 1,
     succeeded: result.ok ? 1 : 0,
     failed: result.ok ? 0 : 1,
-    scope: "missing_quality_article_images_pending_first",
+    scope: "missing_published_quality_article_images_pending_first",
     results: [result],
   }, { status: result.ok ? 200 : 422 });
 }
