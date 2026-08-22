@@ -18,6 +18,33 @@
     "notes": "Verified August 22, 2026. Vote-USA's current November 3, 2026 Texas general-election guide identifies Jordan Scott Hoffnagle as the Republican candidate for Texas House District 100 and links hoffnaglefortexas.org as the candidate website. TCTA independently lists the same candidate/race pairing."
   },
   {
+    "domain": "mostynfortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Ben Mostyn's official Texas House District 117 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude military photographs where Ben Mostyn cannot be unambiguously identified, logos, donation graphics, stock imagery, third-party embeds, and imagery whose context could imply military or Department of Defense endorsement.",
+    "searchHint": "site:mostynfortexas.com Ben Mostyn Texas House District 117 portrait about",
+    "notes": "Verified August 22, 2026. TCTA's current Texas House candidate directory identifies Ben Mostyn as the Republican candidate for District 117 and links mostynfortexas.com. The live site identifies itself as Mostyn for Texas, states State House District 117, and carries a Paid for by Mostyn for Texas disclaimer."
+  },
+  {
+    "domain": "melanie4texas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Melanie Medley-Thomas's official Texas House District 103 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, donation graphics, stock imagery, issue graphics, videos, and third-party embeds.",
+    "searchHint": "site:melanie4texas.com Melanie Medley-Thomas Texas House District 103 portrait about",
+    "notes": "Verified August 22, 2026. Vote-USA's current November 3, 2026 Texas general-election guide identifies Melanie Medley-Thomas as the Republican candidate for Texas House District 103 and links melanie4texas.com. TCTA and the Dallas County Republican Party independently confirm the candidate/race pairing."
+  },
+  {
+    "domain": "dallasgop.org",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Dallas County Republican Party candidate pages only to confirm candidate identity, district, biography context, and outbound official campaign-source links. Do not automatically reuse directory-hosted portraits or event imagery. Any candidate image must be independently traced to an official campaign, government, public-domain, or properly licensed originating source before approval.",
+    "searchHint": "site:dallasgop.org/meet-the-candidates 2026 Texas House candidate website",
+    "notes": "Discovered August 22, 2026. The current Meet the Candidates and event pages identify multiple Dallas County 2026 Texas House candidates, include candidate biographies and imagery, and expose campaign website links such as Bonnie Abadie's colorfulconservative.com. Useful as a source-discovery bridge, not as an automatic image-rights source."
+  },
+  {
     "domain": "theofficialfacetofaceprojectofcampaignvideosforvotereducation.com",
     "sourceClass": "candidate-directory",
     "discoveryStatus": "discovery-only",
