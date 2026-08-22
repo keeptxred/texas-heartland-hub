@@ -18,7 +18,8 @@ const ROUTES = [
 
 test("homepage renders exactly one supported experience", async ({ page }) => {
   const response = await page.goto("/", { waitUntil: "domcontentloaded" });
-  expect(response?.status()).toBeLessThan(400);
+  const diagnostic = await navigationDiagnostic(response);
+  expect(response?.status(), `homepage returned an error status${diagnostic}`).toBeLessThan(400);
 
   const standardHeading = page.getByRole("heading", { name: STANDARD_HOMEPAGE_HEADING });
   const electionHeading = page.getByRole("heading", { name: ELECTION_HOMEPAGE_HEADING });
@@ -49,7 +50,8 @@ for (const route of ROUTES) {
     });
 
     const response = await page.goto(route, { waitUntil: "domcontentloaded" });
-    expect(response?.status(), `${route} returned an error status`).toBeLessThan(400);
+    const diagnostic = await navigationDiagnostic(response);
+    expect(response?.status(), `${route} returned an error status${diagnostic}`).toBeLessThan(400);
     await expect(page.locator("h1").first()).toBeVisible();
     await expectNoHorizontalOverflow(page);
     expect(consoleErrors, `${route} logged browser errors`).toEqual([]);
@@ -71,6 +73,13 @@ test("polling and forecasts are sourced while result states remain honest", asyn
     timeout: 20_000,
   });
 });
+
+async function navigationDiagnostic(response: Awaited<ReturnType<Page["goto"]>>) {
+  if (!response || response.status() < 400) return "";
+  const headers = await response.allHeaders();
+  const body = await response.text().catch(() => "<unreadable response body>");
+  return `\nstatus: ${response.status()}\nheaders: ${JSON.stringify(headers)}\nbody: ${body.slice(0, 2000)}`;
+}
 
 async function expectNoHorizontalOverflow(page: Page) {
   const dimensions = await page.evaluate(() => ({
