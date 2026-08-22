@@ -69,7 +69,7 @@
     "autoApprove": false,
     "rightsRule": "Use only items whose DVIDS page explicitly marks the image Public Domain and whose caption clearly identifies the candidate; preserve photographer, agency, image-page attribution, and any DVIDS copyright restrictions.",
     "searchHint": "site:dvidshub.net/image candidate name Texas",
-    "notes": "Newly verified source class. DVIDS contains high-resolution public-domain military and federal-government event photography of Texas officeholders, including candidate-identifiable images. Prefer formal portraits when available; use DVIDS as a fallback/event-photo source after item-level review."
+    "notes": "DVIDS contains high-resolution public-domain military and federal-government event photography. Prefer formal portraits when available; use DVIDS as a fallback after item-level review."
   },
   {
     "domain": "texasgop.org",
@@ -78,7 +78,7 @@
     "autoApprove": false,
     "rightsRule": "Use the directory to locate official and campaign websites; do not automatically copy directory portrait assets without documenting image provenance or reuse basis.",
     "searchHint": "site:texasgop.org/leadership-directory candidate name",
-    "notes": "Newly confirmed high-value directory containing portraits plus official and campaign links for Texas Republican federal, statewide, judicial, legislative, and SBOE officeholders."
+    "notes": "High-value directory containing portraits plus official and campaign links for Texas Republican officeholders."
   },
   {
     "domain": "texasdemocrats.org",
@@ -87,7 +87,7 @@
     "autoApprove": false,
     "rightsRule": "Use candidate pages to locate official campaign sites and downstream image sources; do not auto-approve party-page images unless provenance is documented.",
     "searchHint": "site:texasdemocrats.org/flashcards/2026 candidate name",
-    "notes": "Newly confirmed 2026 ballot/candidate directory; some current page content is incomplete or placeholder material, so it is source-discovery only."
+    "notes": "Confirmed 2026 ballot/candidate directory; use for source discovery only."
   },
   {
     "domain": "history.house.gov",
@@ -96,7 +96,7 @@
     "autoApprove": false,
     "rightsRule": "Do not auto-approve merely because the page is governmental; many images are explicitly courtesy of the Member. Verify the linked rights/reproduction terms or obtain a stronger source.",
     "searchHint": "site:history.house.gov/People/Detail candidate name",
-    "notes": "Newly confirmed as a high-recall identity and portrait-discovery source, but reuse rights require item-level review."
+    "notes": "High-recall identity and portrait-discovery source, but reuse rights require item-level review."
   },
   {
     "domain": "harrisdemocrats.org",
@@ -105,7 +105,7 @@
     "autoApprove": false,
     "rightsRule": "Treat as candidate identification/source discovery unless the image provenance or editorial reuse basis is documented.",
     "searchHint": "site:harrisdemocrats.org/candidates candidate name",
-    "notes": "Newly confirmed live 2026 candidate slate with candidate images; useful for finding campaign links and downstream sources."
+    "notes": "Live 2026 candidate slate with candidate images; useful for finding campaign links and downstream sources."
   },
   {
     "domain": "ballotready.org",
@@ -124,5 +124,59 @@
     "rightsRule": "Do not use licensable assets unless KeepTXRed has a valid license for the specific image.",
     "searchHint": "candidate name Texas Reuters Connect",
     "notes": "Useful only as evidence that event photography exists; not a free image source."
+  },
+  {
+    "domain": "catalog.archives.gov",
+    "sourceClass": "official-federal-public-archive",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use only records whose item page clearly identifies the candidate and confirms public-domain/no-known-copyright-restrictions status or another compatible reuse basis. Preserve the National Archives record URL and creator attribution.",
+    "searchHint": "site:catalog.archives.gov candidate name portrait Texas",
+    "notes": "New source class: the U.S. National Archives catalog contains official federal portraits and event photography that can be reusable when the individual record supports it."
+  },
+  {
+    "domain": "loc.gov",
+    "sourceClass": "library-of-congress-image-archive",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Approve only when the Library of Congress item-level Rights & Access or rights advisory supports reuse. Preserve the item URL, collection/creator credit, and rights statement.",
+    "searchHint": "site:loc.gov/pictures candidate name Texas portrait",
+    "notes": "New source class for historical and public-domain candidate imagery; item-level rights vary and must be checked."
+  },
+  {
+    "domain": "si.edu",
+    "sourceClass": "smithsonian-open-access",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use only Smithsonian items explicitly marked Public Domain or CC0/Open Access on the item page; preserve Smithsonian collection and item attribution.",
+    "searchHint": "site:si.edu/object candidate name portrait Texas",
+    "notes": "New source class. Smithsonian Open Access can supply clearly rights-marked historical political portraits."
+  },
+  {
+    "domain": "picryl.com",
+    "sourceClass": "public-domain-archive-aggregator",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use PICRYL only to discover the originating NARA, DVIDS, Library of Congress, or other source record. Do not auto-approve the aggregator copy; verify rights and identity on the originating record whenever available.",
+    "searchHint": "site:picryl.com candidate name Texas politician portrait",
+    "notes": "New discovery source that indexes NARA, DVIDS, Library of Congress, and other public-domain collections; origin verification remains required."
+  },
+  {
+    "domain": "flickr.com",
+    "sourceClass": "licensed-user-image-repository",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Approve only after verifying the exact image's Creative Commons license permits the intended reuse, the image clearly depicts the candidate, and attribution requirements are preserved. Reject All Rights Reserved items.",
+    "searchHint": "site:flickr.com/photos candidate name Texas politician Creative Commons",
+    "notes": "New source class for candidate and public-event photos where the individual Flickr item carries a compatible Creative Commons license."
+  },
+  {
+    "domain": "openverse.org",
+    "sourceClass": "licensed-image-search-index",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Openverse to find candidate images, then verify identity, license, creator, and source on the originating item page before approval.",
+    "searchHint": "site:openverse.org candidate name Texas",
+    "notes": "New source-discovery index for Creative Commons and public-domain media; never treat index metadata alone as sufficient rights verification."
   }
 ]
