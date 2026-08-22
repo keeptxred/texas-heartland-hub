@@ -18,6 +18,34 @@ if [[ -z "${GITHUB_RUN_ID:-}" ]]; then
   exit 2
 fi
 
+repo="${GITHUB_REPOSITORY:?GITHUB_REPOSITORY is required}"
+verify_workflow='shared-vitest.yml'
+deploy_workflow='deploy-cloudflare-after-verify.yml'
+
+dispatch_and_watch_verify() {
+  local ref="$1"
+  local expected_sha="$2"
+  local before run_id
+
+  before="$(gh run list --repo "$repo" --workflow "$verify_workflow" --branch "$ref" --event workflow_dispatch --limit 1 --json databaseId --jq '.[0].databaseId // 0')"
+  gh workflow run "$verify_workflow" --ref "$ref" --repo "$repo"
+
+  run_id=''
+  for attempt in $(seq 1 60); do
+    run_id="$(gh run list --repo "$repo" --workflow "$verify_workflow" --branch "$ref" --event workflow_dispatch --limit 20 --json databaseId,headSha --jq ".[] | select(.headSha == \"$expected_sha\" and .databaseId > $before) | .databaseId" | head -n 1)"
+    [[ -n "$run_id" ]] && break
+    sleep 2
+  done
+
+  if [[ -z "$run_id" ]]; then
+    echo "::error title=Verification run not found::Could not resolve workflow_dispatch verify for $ref at $expected_sha."
+    return 1
+  fi
+
+  echo "Watching protected verify run $run_id for $expected_sha."
+  gh run watch "$run_id" --repo "$repo" --exit-status
+}
+
 git fetch origin main
 current="$(git rev-parse HEAD)"
 main="$(git rev-parse origin/main)"
@@ -39,6 +67,51 @@ fi
 
 git commit -m "$COMMIT_MESSAGE"
 git push origin "$branch"
-pr_url="$(gh pr create --base main --head "$branch" --title "$PR_TITLE" --body "$PR_BODY")"
+pr_url="$(gh pr create --repo "$repo" --base main --head "$branch" --title "$PR_TITLE" --body "$PR_BODY")"
 echo "Opened $pr_url"
-echo 'The existing protected verify check and trusted same-repository auto-merge workflow control the merge and deployment.'
+
+for cycle in 1 2 3; do
+  branch_sha="$(git rev-parse HEAD)"
+  dispatch_and_watch_verify "$branch" "$branch_sha"
+
+  git fetch origin main
+  if git merge-base --is-ancestor origin/main HEAD; then
+    echo 'Automation branch contains current main and passed protected verify.'
+    break
+  fi
+
+  if [[ "$cycle" -eq 3 ]]; then
+    echo "::error title=Main kept advancing::Refusing to merge an automation branch that could not be reconciled and reverified against current main after three cycles."
+    exit 1
+  fi
+
+  echo 'main advanced during verification; rebasing and reverifying.'
+  git rebase origin/main
+  git push --force-with-lease origin "$branch"
+done
+
+gh pr merge "$pr_url" --repo "$repo" --squash --delete-branch
+merged_sha="$(gh pr view "$pr_url" --repo "$repo" --json mergeCommit --jq '.mergeCommit.oid // empty')"
+if [[ -z "$merged_sha" ]]; then
+  echo '::error title=Merge SHA unavailable::Automation PR merged but GitHub did not return the merge commit SHA.'
+  exit 1
+fi
+
+git fetch origin main
+main_sha="$(git rev-parse origin/main)"
+if [[ "$main_sha" != "$merged_sha" ]]; then
+  echo "A newer main revision exists ($main_sha); automation PR merged as $merged_sha, so stale post-merge deployment is skipped."
+  exit 0
+fi
+
+dispatch_and_watch_verify main "$merged_sha"
+
+git fetch origin main
+main_sha="$(git rev-parse origin/main)"
+if [[ "$main_sha" != "$merged_sha" ]]; then
+  echo "A newer main revision exists ($main_sha); skipping stale deployment of verified $merged_sha."
+  exit 0
+fi
+
+gh workflow run "$deploy_workflow" --ref main --repo "$repo" -f verified_sha="$merged_sha"
+echo "Post-merge protected verify passed; dispatched Cloudflare deployment for exact current main revision $merged_sha."
