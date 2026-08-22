@@ -1,0 +1,65 @@
+[
+  {
+    "domain": "joemayesfortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Joe Mayes's official Texas House District 106 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, donation graphics, stock imagery, event flyers, third-party embeds, group photographs where Joe Mayes cannot be unambiguously identified, and imagery without item-level provenance.",
+    "searchHint": "site:joemayesfortexas.com Joe Mayes Texas House District 106 portrait about candidate",
+    "notes": "Verified August 22, 2026. TCTA's current Texas House candidate directory links joemayesfortexas.com for Joe Mayes in District 106. The live campaign site identifies Joe Mayes as the Democratic candidate for Texas House District 106 and carries campaign attribution."
+  },
+  {
+    "domain": "allisonmitchellfortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Allison Mitchell's official Texas House District 108 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, signs, merchandise, donation graphics, stock imagery, event flyers, third-party embeds, and group photographs where Allison Mitchell cannot be unambiguously identified.",
+    "searchHint": "site:allisonmitchellfortexas.com Allison Mitchell Texas House District 108 portrait about candidate",
+    "notes": "Verified August 22, 2026. The live campaign site states Allison Mitchell is running for Texas House District 108, and current Texas candidate directories independently confirm the candidate and race pairing."
+  },
+  {
+    "domain": "shellynickels.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Shelly Nickels's official Texas House District 122 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, donation graphics, stock imagery, event flyers, third-party embeds, and images that do not clearly identify Shelly Nickels.",
+    "searchHint": "site:shellynickels.com Shelly Nickels Texas House District 122 portrait about",
+    "notes": "Verified August 22, 2026. The live site identifies Dr. Shelly Nickels as the Democratic candidate for Texas House District 122, includes candidate-identifying photography, and carries a political-advertising payment disclaimer for the HD-122 campaign."
+  },
+  {
+    "domain": "voteadrianreyna.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Adrian Reyna's official Texas House District 125 campaign site when page context independently confirms Adrian Reyna and District 125 and the image is clearly attributable to the campaign. Exclude logos, donation graphics, stock imagery, event flyers, third-party embeds, and images without unambiguous candidate identity.",
+    "searchHint": "site:voteadrianreyna.com Adrian Reyna Texas House District 125 portrait about candidate",
+    "notes": "Verified August 22, 2026. Current Vote-USA and League of Women Voters election guides identify voteadrianreyna.com as Adrian Reyna's candidate website for Texas House District 125. Registry use remains subject to the existing candidate-page identity and image-validation gates."
+  },
+  {
+    "domain": "votewittliff.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Albert Wittliff's official Texas House District 129 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, donation graphics, stock imagery, event flyers, third-party embeds, and images where Albert Wittliff cannot be unambiguously identified.",
+    "searchHint": "site:votewittliff.com Albert Wittliff Texas House District 129 portrait about",
+    "notes": "Verified August 22, 2026. The live site identifies Albert Wittliff as a candidate for Texas House District 129 and carries a political-advertising payment disclaimer for Vote Wittliff TX129."
+  },
+  {
+    "domain": "brett4texas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Brett Robinson's official Texas House District 130 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, donation graphics, stock imagery, issue graphics, event flyers, third-party embeds, and images that do not clearly identify Brett Robinson.",
+    "searchHint": "site:brett4texas.com Brett Robinson Texas House District 130 portrait about candidate",
+    "notes": "Verified August 22, 2026. Community Impact's current 2026 Texas House District 130 candidate coverage identifies brett4texas.com as Brett Robinson's candidate website. Any image still must pass the repository's page-identity, portrait-quality, provenance, and image-validation checks."
+  },
+  {
+    "domain": "texashdcc.com",
+    "sourceClass": "party-campaign-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use the Texas House Democratic Campaign Committee site only to confirm candidate identity, district context, and outbound official campaign website links. Do not automatically reuse committee-hosted portraits, campaign graphics, screenshots, or other imagery. Any image lead must be independently traced to an official campaign, government, public-domain, or properly licensed originating source before approval.",
+    "searchHint": "site:texashdcc.com 2026 Texas House candidate campaign website",
+    "notes": "Discovered August 22, 2026. The current Texas HDCC candidate pages identify multiple 2026 Texas House candidates and provide campaign-source leads. This registry is intentionally discovery-only because image provenance and reuse rights vary by item."
+  }
+]
