@@ -32,6 +32,10 @@ jobs:
         with:
           bun-version: 1.3.14
 
+      - name: Validate protected-main workflow policy
+        id: main_write_policy
+        run: node scripts/ci/validate-protected-main-write-policy.mjs
+
       - name: Install dependencies
         id: install
         run: bun install --frozen-lockfile
@@ -84,6 +88,7 @@ jobs:
         if: always()
         shell: bash
         env:
+          MAIN_WRITE_POLICY: ${{ steps.main_write_policy.outcome }}
           INSTALL: ${{ steps.install.outcome }}
           LINT: ${{ steps.lint.outcome }}
           TESTS: ${{ steps.tests.outcome }}
@@ -101,6 +106,7 @@ jobs:
             echo
             echo '| Stage | Failure class | Outcome |'
             echo '|---|---|---|'
+            echo "| Protected-main workflow policy | DEFAULT-BRANCH SAFETY | ${MAIN_WRITE_POLICY:-not-run} |"
             echo "| Dependency install | DEPENDENCY / INSTALL | ${INSTALL:-not-run} |"
             echo "| ESLint | LINT / STATIC ANALYSIS | ${LINT:-not-run} |"
             echo "| Full Vitest suite | TESTS | ${TESTS:-not-run} |"
@@ -114,7 +120,9 @@ jobs:
             echo "| Legislature | LEGISLATURE | ${LEGISLATURE:-not-run} |"
           } >> "$GITHUB_STEP_SUMMARY"
 
-          if [[ "$INSTALL" == failure ]]; then
+          if [[ "$MAIN_WRITE_POLICY" == failure ]]; then
+            echo '::error title=verify failure class: DEFAULT-BRANCH SAFETY::A GitHub Actions workflow writes generated repository changes directly to protected main. Publish through a same-repository PR instead.'
+          elif [[ "$INSTALL" == failure ]]; then
             echo '::error title=verify failure class: DEPENDENCY / INSTALL::Dependency installation failed.'
           elif [[ "$LINT" == failure ]]; then
             echo '::error title=verify failure class: LINT / STATIC ANALYSIS::ESLint failed.'

@@ -4,7 +4,9 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: write
   contents: write
+  pull-requests: write
 
 concurrency:
   group: official-candidate-api-probe
@@ -40,37 +42,35 @@ jobs:
           path: /tmp/official-candidate-api-payload.json
           if-no-files-found: warn
           retention-days: 7
-      - name: Publish verified schema summary
+      - name: Publish verified schema summary as protected PR
         if: always()
         shell: bash
         env:
           CAPTURE_OUTCOME: ${{ steps.capture.outcome }}
+          GH_TOKEN: ${{ github.token }}
+          PR_TITLE: Record official candidate API schema
+          PR_BODY: Manual official-candidate API probe. The raw capture remains a short-lived workflow artifact; the verified schema summary must pass protected verify before merge and deployment.
+          COMMIT_MESSAGE: Record official candidate API schema
         run: |
+          set -euo pipefail
           if [[ "$CAPTURE_OUTCOME" != "success" ]]; then
             echo "Candidate API capture failed; refusing to publish a partial or stale schema."
             exit 1
           fi
-          if [[ ! -s src/data/elections/2026/candidate-api-schema.json ]]; then
+          target='src/data/elections/2026/candidate-api-schema.json'
+          if [[ ! -s "$target" ]]; then
             echo "Capture succeeded but produced no schema summary."
             exit 1
           fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/data/elections/2026/candidate-api-schema.json
-          if git diff --cached --quiet; then
+          if git diff --quiet -- "$target"; then
             echo "Candidate API schema is already current."
             exit 0
           fi
-          unexpected=$(git diff --cached --name-only | grep -v '^src/data/elections/2026/candidate-api-schema.json$' || true)
+          changed="$(git status --short | awk '{print $2}')"
+          unexpected="$(grep -v '^src/data/elections/2026/candidate-api-schema.json$' <<<"$changed" || true)"
           if [[ -n "$unexpected" ]]; then
             echo "Refusing to publish unexpected files:"
             echo "$unexpected"
             exit 1
           fi
-          git commit -m "Record official candidate API schema"
-          git fetch origin main
-          if [[ "$(git rev-parse HEAD^)" != "$(git rev-parse origin/main)" ]]; then
-            echo "Main advanced during candidate API probing; refusing stale schema publication."
-            exit 1
-          fi
-          git push origin HEAD:main
+          bash scripts/ci/publish-automation-pr.sh candidate-api-schema "$target"
