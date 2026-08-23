@@ -19,6 +19,17 @@ const findings = [
     permissionBasis: "Candidate-identifying image directly hosted on the official Michael Myers for HD 10 campaign website and used for editorial candidate identification with campaign attribution and a source link.",
     usageStatus: "approved",
     discoveryMethod: "official-campaign-profile"
+  },
+  {
+    candidateId: "candidate-danny-rosellini-republican-race-2026-texas-house-115",
+    imageUrl: "https://images.squarespace-cdn.com/content/v1/696c5e4530afef534dc64bc7/83061803-5675-4b6c-b21c-53c89a9f73f7/IMG_2111.jpeg",
+    sourceUrl: "https://www.rosellinifortx.com/",
+    altText: "Danny Rosellini, Republican candidate for Texas House District 115",
+    credit: "Rosellini for Texas campaign",
+    license: null,
+    permissionBasis: "Candidate-identifying image directly hosted in the 'Who I am' section of the official Rosellini for Texas campaign website and used for editorial candidate identification with campaign attribution and a source link.",
+    usageStatus: "approved",
+    discoveryMethod: "official-campaign-profile"
   }
 ];
 
