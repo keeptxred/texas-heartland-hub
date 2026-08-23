@@ -1,5 +1,23 @@
 [
   {
+    "domain": "mindybumgarner.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Official Mindy Bumgarner campaign imagery may be used for editorial candidate identification with campaign attribution and a source link after the existing identity, portrait-quality, HTTPS, and image validation gates pass.",
+    "searchHint": "Mindy Bumgarner Texas State Board of Education District 14 2026",
+    "notes": "Official campaign site verified August 23, 2026 and independently corroborated by TCTA's Texas Teachers Vote candidate directory."
+  },
+  {
+    "domain": "palmerfortexased.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Official Michelle Palmer campaign imagery may be used for editorial candidate identification with campaign attribution and a source link after the existing identity, portrait-quality, HTTPS, and image validation gates pass.",
+    "searchHint": "Michelle Palmer Texas State Board of Education District 6 2026",
+    "notes": "Official campaign site verified August 23, 2026 and independently corroborated by TCTA and Teach the Vote candidate profiles."
+  },
+  {
     "domain": "history.house.gov",
     "sourceClass": "official-government-congressional-biographical-directory",
     "discoveryStatus": "discovery-only",
