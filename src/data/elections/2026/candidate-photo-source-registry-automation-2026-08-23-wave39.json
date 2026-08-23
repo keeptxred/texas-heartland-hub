@@ -1,0 +1,65 @@
+[
+  {
+    "domain": "dcdp.squarespace.com",
+    "sourceClass": "official-county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use the Denton County Democratic Party 2026 candidate filing directory to corroborate candidate identity and race context and to discover downstream official campaign or candidate sources. Do not reuse directory-hosted images unless the exact item has separately verified provenance and reuse permission.",
+    "searchHint": "site:dcdp.squarespace.com/candidate-filing Texas 2026 candidate campaign website",
+    "notes": "Verified August 23, 2026. The Denton County Democratic Party 2026 candidate filing page lists current statewide and legislative candidates including Joe Mayes for Texas House District 106, Amy Taylor for State Board of Education District 14, Ray Stith for House District 57, Denise Wooten for District 63, Julie Evans for District 64, and Detrick DeBurr for District 65. Registered as a discovery bridge only."
+  },
+  {
+    "domain": "lubbockdemocrats.org",
+    "sourceClass": "official-county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use the official Lubbock County Democratic Party candidate directory to corroborate current candidate identity and discover linked campaign or candidate sources. Do not reuse party-hosted candidate images without separately documented item-level provenance and reuse permission.",
+    "searchHint": "site:lubbockdemocrats.org/candidates 2026 Texas candidate campaign",
+    "notes": "Verified August 23, 2026. The live 2026 candidate directory includes statewide nominees plus Riley Rodriquez for Texas Senate District 28, Malik Williams for Texas House District 83, and Margaret Durham for House District 84, all of whom are useful current-candidate discovery targets."
+  },
+  {
+    "domain": "nuecescountygop.com",
+    "sourceClass": "official-county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use the Nueces County Republican Party 2026 candidate directory to corroborate candidate identity, office, and linked official campaign sources. Do not reuse party-hosted images unless original provenance and item-level reuse permission are separately verified.",
+    "searchHint": "site:nuecescountygop.com/2026_republican_candidates Texas 2026 candidate campaign website",
+    "notes": "Verified August 23, 2026. The official county-party directory identifies and links 2026 Republican candidates including Eric Flores for U.S. House District 34, Michael Cloud for District 27, Victoria Hinojosa for State Board of Education District 2, Todd Hunter for Texas House District 32, and Denise Villalobos for District 34."
+  },
+  {
+    "domain": "collindemocrats.org",
+    "sourceClass": "official-county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Collin County Democratic Party candidate pages to corroborate candidate identity and discover linked campaign or candidate sources. Do not reuse directory-hosted portraits without separate item-level provenance and reuse verification.",
+    "searchHint": "site:collindemocrats.org 2026 Democratic primary candidates Texas House candidate bio",
+    "notes": "Verified August 23, 2026. The party's 2026 candidate directory includes current Texas House candidates Brittany Black, Sandeep Srivastava, Jordan Wheatley, Angie Carraway, and other legislative candidates, with candidate bio pages that can expose additional official-source leads."
+  },
+  {
+    "domain": "texastogether2026.com",
+    "sourceClass": "official-state-party-coordinated-campaign-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use the Texas Democratic Party's 2026 coordinated-campaign site to corroborate current Democratic challenger identity and discover downstream official candidate sources. Do not reuse coordinated-campaign imagery without separately verified item-level provenance and reuse permission.",
+    "searchHint": "site:texastogether2026.com Texas challengers 2026 candidate campaign",
+    "notes": "Verified August 23, 2026. Texas Together 2026 identifies itself as the Texas Democratic Party statewide coordinated campaign and publishes a current challenger directory covering federal and state races. Registered as a discovery bridge rather than an image-rights authority."
+  },
+  {
+    "domain": "northdallasgazette.com",
+    "sourceClass": "local-news-election-source",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use North Dallas Gazette election coverage only to corroborate candidate identity, race context, and discover named campaign or public-source leads. Do not reuse newsroom-hosted images unless the original image provenance and item-level reuse basis are independently verified.",
+    "searchHint": "site:northdallasgazette.com 2026 Texas candidate House Senate campaign",
+    "notes": "Verified August 23, 2026. Current North Texas election coverage identifies candidates and race context for congressional and state legislative contests, including Jordan Scott Hoffnagle in Texas House District 100."
+  },
+  {
+    "domain": "txroundtable.com",
+    "sourceClass": "texas-election-race-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use the Texas Business Roundtable election matrix only to corroborate current candidate and race pairings and generate follow-up searches for official, campaign, party, archive, or licensed portrait sources. Do not reuse site imagery without separately verified provenance and reuse permission.",
+    "searchHint": "site:txroundtable.com/elections 2026 Texas House Senate candidate",
+    "notes": "Verified August 23, 2026. The current elections matrix covers Texas legislative races and confirms many candidates still missing portraits in the canonical report, including Jordan Hoffnagle, Bonnie Abadie, Melanie Medley-Thomas, Joe Mayes, and Allison Mitchell. Registered as a discovery/corroboration source only."
+  }
+]
