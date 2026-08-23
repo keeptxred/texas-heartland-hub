@@ -13,7 +13,7 @@ describe("retired legacy Daily Texas News writer", () => {
     expect(source).toContain("aiCalls: 0");
     expect(source).toContain("inserted: 0");
     expect(source).not.toMatch(/\.from\(["']daily_articles["']\)/);
-    expect(source).not.toContain("ai.gateway.legacy-builder.dev");
+    expect(source).not.toContain("fetch(");
     expect(source).not.toContain("runCloudflareJson");
   });
 
