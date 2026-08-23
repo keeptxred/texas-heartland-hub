@@ -1,0 +1,96 @@
+[
+  {
+    "domain": "huffmanforhd1.com",
+    "sourceClass": "official-candidate-campaign-site",
+    "discoveryStatus": "verified-official-source",
+    "autoApprove": false,
+    "rightsRule": "Use the official campaign site as a high-confidence identity and source-trail authority. Approve a campaign-hosted portrait only after validating the exact asset URL and recording item-level editorial provenance and attribution.",
+    "searchHint": "site:huffmanforhd1.com Sean Huffman Texas House District 1 headshot portrait campaign",
+    "candidateIds": ["candidate-sean-huffman-democratic-race-2026-texas-house-1"],
+    "notes": "Verified August 23, 2026. The site identifies Sean Huffman as a Texas House District 1 candidate. Teach the Vote independently lists campaign@huffmanforhd1.com, corroborating the campaign domain."
+  },
+  {
+    "domain": "votejuniorezeonu.com",
+    "sourceClass": "official-candidate-campaign-site",
+    "discoveryStatus": "verified-official-source",
+    "autoApprove": false,
+    "rightsRule": "Use the official campaign site as a primary candidate identity and image-provenance source. Approve portraits only after validating the exact hosted asset and recording item-level editorial provenance and attribution.",
+    "searchHint": "site:votejuniorezeonu.com Junior Ezeonu 2026 headshot portrait",
+    "candidateIds": ["candidate-junior-ezeonu-democratic-race-2026-texas-house-101"],
+    "notes": "Verified August 23, 2026. The live campaign homepage identifies Junior Ezeonu as the Texas House District 101 candidate and exposes campaign-hosted images labeled '2026 headshot.jpeg' and 'IMG_2577 2.JPG'. The League of Women Voters guide independently lists this campaign website."
+  },
+  {
+    "domain": "palmerfortexased.com",
+    "sourceClass": "official-candidate-campaign-site",
+    "discoveryStatus": "verified-official-source",
+    "autoApprove": false,
+    "rightsRule": "Use the campaign domain to locate primary-source candidate portraits and official social links. Approve an image only after the exact asset URL, candidate identity, and item-level editorial provenance are independently validated and recorded.",
+    "searchHint": "site:palmerfortexased.com Michelle Palmer Texas State Board Education District 6 portrait",
+    "candidateIds": ["candidate-michelle-palmer-democratic-race-2026-state-board-of-education-6"],
+    "notes": "Verified August 23, 2026 from the 2026 League of Women Voters Texas voter guide and an Asian Texans for Justice candidate guide, both identifying Palmerfortexased.com as Michelle Palmer's SBOE District 6 campaign website."
+  },
+  {
+    "domain": "jennmackfortexas.com",
+    "sourceClass": "official-candidate-campaign-site",
+    "discoveryStatus": "verified-official-source",
+    "autoApprove": false,
+    "rightsRule": "Use the official campaign website as the preferred identity and portrait-source trail. Campaign-hosted photos require exact asset validation and documented item-level editorial provenance before approval.",
+    "searchHint": "site:jennmackfortexas.com Jenn Mack Raphoon Texas Governor 2026 portrait",
+    "candidateIds": ["candidate-jenn-mack-other-race-2026-governor"],
+    "notes": "Verified August 23, 2026. The live campaign website identifies Jenn Mack Raphoon as a 2026 Texas gubernatorial write-in candidate and publishes a candidate image plus campaign news."
+  },
+  {
+    "domain": "teachthevote.org",
+    "sourceClass": "texas-educator-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Teach the Vote to corroborate candidate identity, district, campaign contacts, and official campaign domains. Do not reuse hosted imagery unless original image provenance and item-level reuse permission are separately verified.",
+    "searchHint": "site:teachthevote.org/Candidates Texas 2026 candidate campaign website",
+    "notes": "Verified August 23, 2026. Current candidate pages expose race context and campaign contacts, including Sean Huffman's HD1 campaign email."
+  },
+  {
+    "domain": "tcta.org",
+    "sourceClass": "texas-teachers-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Classroom Teachers Association TexasTeachersVote candidate profiles to corroborate candidate identity and race and to follow campaign-source trails. Treat hosted images as review-only unless original provenance and item-level reuse rights are independently verified.",
+    "searchHint": "site:tcta.org/texasteachersvote/find-candidates 2026 Texas House candidate",
+    "notes": "Verified August 23, 2026. The TexasTeachersVote directory has candidate-specific pages and a broad 2026 Texas House candidate index, including Jordan Scott Hoffnagle."
+  },
+  {
+    "domain": "transparencyusa.org",
+    "sourceClass": "campaign-finance-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Transparency USA for candidate identity, active-election status, committee context, and outbound source discovery. Do not reuse hosted candidate images without independently establishing the exact original source and item-level reuse permission.",
+    "searchHint": "site:transparencyusa.org/tx/race Texas 2026 candidate campaign",
+    "notes": "Verified August 23, 2026. Current Texas race pages identify active general-election candidates and advancement status, including Sean Huffman and Chris Spencer in House District 1."
+  },
+  {
+    "domain": "secure.actblue.com",
+    "sourceClass": "candidate-fundraising-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use ActBlue's public candidate directory to identify Democratic candidate campaign websites and image leads only. Do not reuse ActBlue-hosted images; follow outbound campaign sites and verify item-level provenance there.",
+    "searchHint": "site:secure.actblue.com/directory/TX/candidate Texas 2026 candidate website",
+    "notes": "Verified August 23, 2026. The public Texas candidate directory exposes candidate images and outbound campaign websites across many state-house races, making it a useful bridge to campaign-owned sources."
+  },
+  {
+    "domain": "txelectionresults.com",
+    "sourceClass": "texas-election-results-aggregator",
+    "discoveryStatus": "corroboration-only",
+    "autoApprove": false,
+    "rightsRule": "Use current race pages only to corroborate candidate participation, advancement, and district context before searching primary sources. Do not use hosted imagery as an approved portrait source without independent provenance and rights verification.",
+    "searchHint": "site:txelectionresults.com 2026 Texas candidate district",
+    "notes": "Verified August 23, 2026. Current 2026 primary pages provide race-level candidate results and advancement context for many remaining portrait gaps, including House Districts 100-103."
+  },
+  {
+    "domain": "webservices.ethics.state.tx.us",
+    "sourceClass": "texas-ethics-campaign-filing-directory",
+    "discoveryStatus": "identity-corroboration",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Ethics Commission campaign-finance records to corroborate candidate identity, office sought, committee records, and naming variants. These records are not an image source; use them to improve exact-name and campaign-domain searches only.",
+    "searchHint": "site:webservices.ethics.state.tx.us candidate office sought Texas 2026",
+    "notes": "Verified August 23, 2026. Texas Ethics Commission office-sought records contain filing names and districts for candidates such as Michael Myers and Jordan Scott Hoffnagle."
+  }
+]
