@@ -52,6 +52,39 @@ const findings = [
     permissionBasis: "Candidate-identifying photograph directly hosted in the Who I am section of Danny Rosellini's official Texas House District 115 campaign website and used for editorial candidate identification with source attribution.",
     usageStatus: "approved",
     discoveryMethod: "official-campaign-profile"
+  },
+  {
+    candidateId: "candidate-josh-wallenstein-democratic-race-2026-texas-house-133",
+    imageUrl: "https://josh4texas.com/wp-content/uploads/2025/10/josh-wallenstein-hd133.png",
+    sourceUrl: "https://josh4texas.com/",
+    altText: "Josh Wallenstein, Democratic candidate for Texas House District 133",
+    credit: "Josh Wallenstein Campaign",
+    license: null,
+    permissionBasis: "Candidate-identifying campaign image directly hosted on Josh Wallenstein's official Texas House District 133 campaign homepage and used for editorial candidate identification with source attribution.",
+    usageStatus: "approved",
+    discoveryMethod: "official-campaign-profile"
+  },
+  {
+    candidateId: "candidate-mike-michna-republican-race-2026-texas-house-134",
+    imageUrl: "https://static.wixstatic.com/media/3d8262_643994a8723f485884e4328de1018b9d~mv2.png/v1/fill/w_190%2Ch_285%2Cal_c%2Cq_85%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/3d8262_643994a8723f485884e4328de1018b9d~mv2.png",
+    sourceUrl: "https://www.votemichna.com/",
+    altText: "Mike Michna, Republican candidate for Texas House District 134",
+    credit: "Mike Michna for Texas House District 134",
+    license: null,
+    permissionBasis: "Candidate-identifying image labeled me.png and directly hosted on Mike Michna's official Texas House District 134 campaign homepage, used for editorial candidate identification with source attribution.",
+    usageStatus: "approved",
+    discoveryMethod: "official-campaign-profile"
+  },
+  {
+    candidateId: "candidate-theodore-schramm-republican-race-2026-texas-house-136",
+    imageUrl: "https://static.wixstatic.com/media/1186c9_9389137e7c5f418fb508a95db1909290~mv2.jpeg/v1/crop/x_0%2Cy_70%2Cw_2777%2Ch_2133/fill/w_464%2Ch_354%2Cal_c%2Cq_80%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/IMG_4714.jpeg",
+    sourceUrl: "https://www.theodoretx.com/",
+    altText: "Theodore Schramm, Republican candidate for Texas House District 136",
+    credit: "Theodore Schramm campaign",
+    license: null,
+    permissionBasis: "Candidate-identifying photograph directly hosted beside Theodore Schramm's first-person candidate biography on his official Texas House District 136 campaign site and used for editorial candidate identification with source attribution.",
+    usageStatus: "approved",
+    discoveryMethod: "official-campaign-profile"
   }
 ];
 
