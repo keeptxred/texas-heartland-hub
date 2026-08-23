@@ -16,5 +16,14 @@
     "rightsRule": "Use ATPE Teach the Vote candidate profiles to confirm candidate identity and discover official campaign websites, contact information, and downstream sources. Do not copy portrait assets without a separately documented item-level reuse basis.",
     "searchHint": "site:teachthevote.atpe.org/Candidates candidate name Texas",
     "notes": "Verified August 2026: ATPE Teach the Vote publishes current Texas education-election candidate profiles and campaign website links, including State Board of Education candidates."
+  },
+  {
+    "domain": "dallasgop.org",
+    "sourceClass": "official-county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use the Dallas County Republican Party candidate directory to identify current candidates and follow links to their official campaign websites. Do not copy county-party portrait assets without a separately documented item-level reuse basis.",
+    "searchHint": "site:dallasgop.org/meet-the-candidates candidate name",
+    "notes": "Verified August 2026: the Dallas County Republican Party directory links directly to numerous current 2026 campaign sites, including Jordan Hoffnagle, Bonnie Abadie, Melanie Medley-Thomas, Stephen Stanley, Tim McDonough, and Danny Rosellini."
   }
 ]
