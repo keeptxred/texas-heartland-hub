@@ -145,10 +145,15 @@ jobs:
           if [[ "$STEP_OUTCOME" == 'success' ]]; then
             state='success'
             description='Dry run passed without Facebook posting or history writes'
+          elif [[ -s /tmp/facebook-post-texasdefined.json ]]; then
+            safe_error="$(jq -r '.error // empty' /tmp/facebook-post-texasdefined.json 2>/dev/null | tr '\n\r' ' ' | cut -c1-100)"
+            if [[ -n "$safe_error" ]]; then
+              description="Dry run failed: ${safe_error}"
+            fi
           fi
           payload="$(python3 - "$state" "$description" <<'PY'
           import json, sys
-          print(json.dumps({"state": sys.argv[1], "context": "texasdefined-facebook-dry-run", "description": sys.argv[2]}))
+          print(json.dumps({"state": sys.argv[1], "context": "texasdefined-facebook-dry-run", "description": sys.argv[2][:140]}))
           PY
           )"
           curl --fail-with-body --silent --show-error --request POST \
