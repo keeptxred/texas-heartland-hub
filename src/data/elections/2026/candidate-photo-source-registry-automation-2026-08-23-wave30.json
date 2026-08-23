@@ -16,5 +16,59 @@
     "rightsRule": "Use Grassroots America - We The People current endorsement pages to discover and corroborate candidate names, races, campaign activity, and outbound official-source leads. Do not reuse hosted endorsement imagery unless original provenance and item-level reuse permission are independently verified.",
     "searchHint": "site:gawtp.com 2026 Texas candidate endorsement House Senate",
     "notes": "Verified August 23, 2026. The live 2026 endorsement directory identifies active Texas legislative candidates, including Tim McDonough for HD 114, and can surface additional campaign leads. Registered as discovery-only because candidate-image provenance is not established at item level."
+  },
+  {
+    "domain": "mikemiller.netlify.app",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Mike Miller's 2026 Texas gubernatorial campaign website when the page context independently confirms Mike Miller, Governor of Texas, and his write-in candidacy. Exclude logos, stock imagery, issue graphics, social-media embeds, donation-platform images, group photographs without unambiguous candidate identification, and any image without item-level provenance. The registry crawler must still validate direct hosting, candidate identity, image type, and the existing minimum image-quality rules before approval.",
+    "searchHint": "site:mikemiller.netlify.app Mike Miller Texas Governor 2026 write-in portrait candidate photo about",
+    "notes": "Verified August 23, 2026. The live site identifies Mike Miller as a write-in candidate for Governor of Texas, states that he personally oversaw production of the campaign website, displays a candidate-identifying campaign image, and links to the American Solidarity Party. The American Solidarity Party independently lists Mike Miller as its current Texas gubernatorial candidate for November 3, 2026."
+  },
+  {
+    "domain": "jennmackforgovernor.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Jenn Mack Raphoon's official 2026 Texas gubernatorial campaign website when page context confirms Jenn Mack Raphoon and the Governor of Texas race and the image is clearly attributable to the campaign. Exclude logos, stock imagery, press-clipping thumbnails, third-party embeds, issue graphics, crowd or group photographs where the candidate cannot be unambiguously identified, and any image without item-level provenance. Preserve all existing image-rights and quality validation before approval.",
+    "searchHint": "site:jennmackforgovernor.com Jenn Mack Raphoon Texas Governor 2026 portrait candidate photo about",
+    "notes": "Verified August 23, 2026. The live campaign site identifies Jenn Mack Raphoon as an independent candidate for Texas Governor, includes an About page with candidate photography and a political-advertising disclaimer, and is consistent with her separately verified campaign domain already known to the repository."
+  },
+  {
+    "domain": "acacia.byredstone.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits directly hosted on Kevin McCormick's 2026 Texas Lieutenant Governor campaign site when page context confirms Kevin McCormick, the Green Party ticket, and the Lieutenant Governor race. Exclude generic site imagery, logos, third-party embeds, issue illustrations, and any image without unambiguous candidate identity and direct-hosting provenance. Preserve the repository's existing image-quality and rights validation before approval.",
+    "searchHint": "site:acacia.byredstone.com Kevin McCormick Texas Lieutenant Governor 2026 portrait candidate photo",
+    "notes": "Verified August 23, 2026. The live site explicitly identifies itself as political advertising for Kevin McCormick for Texas Lieutenant Governor and displays a candidate-identifying image. The Green Party of Texas independently lists Kevin McCormick as its 2026 Lieutenant Governor nominee and links to his campaign website."
+  },
+  {
+    "domain": "solidarity-party.org",
+    "sourceClass": "official-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use the American Solidarity Party candidate directory and candidate profile pages to corroborate candidate identity, current office sought, election date, party support, and outbound campaign links. Do not reuse party-hosted portraits or other images unless the exact originating image provenance and item-level reuse permission are independently verified. Prefer the candidate's own campaign site for any approved portrait when available.",
+    "searchHint": "site:solidarity-party.org/candidates Texas 2026 candidate campaign website portrait",
+    "notes": "Verified August 23, 2026. The American Solidarity Party maintains a current-candidate directory and a dedicated Mike Miller profile identifying him as a Texas gubernatorial candidate for November 3, 2026 and linking to his campaign website. Registered as a discovery bridge only, not an image-rights authority."
+  },
+  {
+    "domain": "politics1.com",
+    "sourceClass": "current-election-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Politics1 only to corroborate active 2026 Texas candidate names, offices, write-in status, incumbent context, and outbound campaign-site leads. Do not reuse Politics1-hosted images or infer image rights from inclusion in its directory. Any portrait must be traced to and independently verified at its original official or licensed source before approval.",
+    "searchHint": "site:politics1.com/tx.htm Texas 2026 candidate campaign site write-in governor house senate",
+    "notes": "Verified August 23, 2026. Politics1's Texas candidate guide was updated August 20, 2026 and lists active statewide and federal candidates, including the newly filed gubernatorial write-ins. It is useful for discovering campaign links and current candidate status but is not registered for automatic image approval."
+  },
+  {
+    "domain": "govbase.com",
+    "sourceClass": "current-election-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Govbase election pages only to corroborate current candidate identity, party, race context, and linked official webpages or social profiles. Do not reuse Govbase-hosted portraits or any other images unless the exact original provenance and item-level reuse permission are independently verified from the originating source.",
+    "searchHint": "site:govbase.com/tools/elections/tx 2026 Texas candidate Website Facebook X Ballotpedia",
+    "notes": "Verified August 23, 2026. Govbase publishes a current Texas November 3, 2026 candidate directory with outbound website and social links for several candidates, including Jenn Mack Raphoon and Mike Miller. Registered as a discovery bridge only, not an image-rights authority."
   }
 ]
