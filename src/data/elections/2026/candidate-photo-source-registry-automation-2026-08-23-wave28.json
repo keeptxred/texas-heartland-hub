@@ -1,0 +1,56 @@
+[
+  {
+    "domain": "andiefortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Andie Ho's official Texas House District 12 campaign website when the page context independently confirms Andie Ho and District 12 and the image is clearly attributable to the campaign. Exclude logos, yard-sign graphics, endorsement graphics, stock imagery, third-party embeds, crowd or group photographs where Andie Ho cannot be unambiguously identified, and any image without item-level provenance.",
+    "searchHint": "site:andiefortexas.com Andie Ho Texas House District 12 portrait meet Andie candidate photo",
+    "notes": "Verified August 23, 2026. The live campaign site contains current 2026 organizing events, identifies itself as Andie for Texas, lists campaign contact and volunteer activity, and is independently identified as Andie Ho's Texas House District 12 website by Asian American Politics; TCTA separately confirms Andie Ho as the Democratic candidate for District 12."
+  },
+  {
+    "domain": "poojafortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Pooja Sethi's official Texas House District 47 campaign website when page context confirms Pooja Sethi and District 47 and the image is clearly attributable to the campaign. Exclude endorsement logos, issue illustrations, stock imagery, third-party embeds, group photographs without unambiguous candidate identification, and any image without item-level provenance.",
+    "searchHint": "site:poojafortexas.com Pooja Sethi Texas House District 47 portrait about Pooja candidate photo",
+    "notes": "Verified August 23, 2026. The live website explicitly states that Pooja Sethi is running for Texas House District 47 and carries a political-advertising disclaimer paid for by the Pooja Sethi campaign. New American Leaders Action Fund and current election coverage independently identify Pooja Sethi as the District 47 candidate."
+  },
+  {
+    "domain": "montserratfortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Montserrat Garibay's official Texas House District 49 campaign website when page context confirms Montserrat Garibay and District 49 and the image is clearly attributable to the campaign. Exclude endorsement portraits, logos, issue graphics, stock imagery, third-party embeds, and group photographs without unambiguous candidate identification.",
+    "searchHint": "site:montserratfortexas.com Montserrat Garibay Texas House District 49 portrait about Montserrat candidate photo",
+    "notes": "Verified August 23, 2026. The current site identifies Montserrat Garibay as the nominee for Texas House District 49, contains a detailed campaign biography and campaign-hosted photographs, and carries a political-advertising disclaimer paid for by the Montserrat Garibay Campaign. Texas AFL-CIO independently confirms her as the 2026 District 49 candidate."
+  },
+  {
+    "domain": "multistate.us",
+    "sourceClass": "current-election-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use MultiState Elections candidate and Texas race pages only to corroborate current candidate identity, office/race context, incumbency, election history, and to discover outbound official-source leads. Do not reuse MultiState-hosted portraits or other images unless the exact original provenance and item-level reuse permission are independently verified from the originating source.",
+    "searchHint": "site:multistate.us/elections/candidate Texas 2026 candidate State House Senate election",
+    "notes": "Verified August 23, 2026. MultiState Elections publishes current 2026 Texas state legislative candidate profiles and a statewide race index, including candidates still missing portraits in the canonical report such as Michael Myers in House District 10 and Andie Ho in House District 12. This source is a discovery/corroboration bridge only; hosted imagery is not auto-approved."
+  },
+  {
+    "domain": "txelectionresults.com",
+    "sourceClass": "current-election-results-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Election Results race pages only to corroborate current 2026 primary candidate names, race context, and nomination results and to generate follow-up searches for official campaign, government, party, archive, or licensed portrait sources. Do not reuse images from this site unless original provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:txelectionresults.com/primaries/2026 Texas candidate House Senate SBOE 2026",
+    "notes": "Verified August 23, 2026. The 2026 primary results index covers Texas statewide and legislative races and confirms current candidate/race pairings, including Michael Myers in House District 10 and Andie Ho in House District 12. It is registered strictly as a discovery/corroboration source, not an image-rights authority."
+  },
+  {
+    "domain": "govbase.com",
+    "sourceClass": "current-election-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use GovBase election pages only to discover and corroborate current candidate names, race context, and outbound candidate profile or official-site links. Do not reuse GovBase-hosted portraits or other images unless the original image provenance and item-level reuse permission are independently verified from the originating source.",
+    "searchHint": "site:govbase.com/tools/elections/tx 2026 Texas candidate website Ballotpedia",
+    "notes": "Verified August 23, 2026. GovBase publishes a current Texas 2026 general-election directory with candidate profile, website, social, and Ballotpedia links across state and local races. It is useful as a discovery bridge for candidates lacking sources but is not an image-rights authority."
+  }
+]

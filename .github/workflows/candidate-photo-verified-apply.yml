@@ -22,6 +22,7 @@ on:
       - "src/data/elections/2026/candidate-filing-status-authority.json"
       - "src/data/elections/2026/candidate-photo-assets.json"
       - "src/data/elections/2026/candidate-supreme-court-media.json"
+      - "src/data/elections/2026/candidate-photo-source-registry*.json"
 
 permissions:
   actions: write
