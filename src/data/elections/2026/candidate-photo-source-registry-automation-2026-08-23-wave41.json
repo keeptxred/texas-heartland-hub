@@ -1,0 +1,47 @@
+[
+  {
+    "domain": "texacep.memberclicks.net",
+    "sourceClass": "texas-legislative-race-matrix-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Texas ACEP legislative race matrices to corroborate candidate names, districts, incumbency/open-seat context, and to seed exact candidate searches. Do not reuse any hosted image unless its original provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:texacep.memberclicks.net 2026 Texas races candidate House Senate",
+    "notes": "New source verified August 23, 2026. The current 2026 Texas Races Matrix includes Texas House candidate cohorts across many of the remaining portrait gaps, including Districts 1-12. Registered as a high-recall discovery bridge, not an image-rights authority."
+  },
+  {
+    "domain": "business.nacogdoches.org",
+    "sourceClass": "local-chamber-candidate-forum-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use local chamber candidate-forum pages to corroborate active candidacies and follow candidate or event source trails. Do not reuse chamber-hosted event imagery unless the exact photographer/campaign provenance and item-level reuse permission are independently established.",
+    "searchHint": "site:business.nacogdoches.org candidate forum Texas 2026 House Senate campaign",
+    "notes": "New source verified August 23, 2026. The Nacogdoches County Chamber published an August 7, 2026 candidate-forum notice naming current Texas Senate District 3 and Texas House District 11 candidates, including Roxanne Lathan and Joanne Shofner."
+  },
+  {
+    "domain": "ennistx.civicweb.net",
+    "sourceClass": "municipal-public-meeting-records",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use municipal meeting agendas and minutes only to corroborate candidate identity, local activity, and geographic context and to seed searches for official campaign sources. Treat any embedded imagery as non-reusable unless item-level provenance and rights are separately verified.",
+    "searchHint": "site:ennistx.civicweb.net 2026 candidate Texas House campaign",
+    "notes": "New source verified August 23, 2026. Ennis City Commission minutes record Michael Myers speaking regarding his Texas House District 10 campaign, providing a public-record identity and locality trail for further source discovery."
+  },
+  {
+    "domain": "midlothian.tx.us",
+    "sourceClass": "municipal-government-public-records",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use official municipal public records to corroborate candidate identity, campaign activity, and locality. Do not infer image rights from a government-hosted document; approve a portrait only when the exact image provenance and reuse basis are separately verified.",
+    "searchHint": "site:midlothian.tx.us 2026 candidate Texas House campaign",
+    "notes": "New source verified August 23, 2026. Midlothian City Council minutes identify Michael Myers as a Texas House District 10 candidate, giving an additional official-government trail for exact-name and campaign-source searches."
+  },
+  {
+    "domain": "elliscountytx.gov",
+    "sourceClass": "county-election-results-authority",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use official county election results to verify candidate participation, office, district, and naming variants before portrait discovery. County result documents are not image-rights sources; do not approve portraits from them without separate item-level provenance and rights verification.",
+    "searchHint": "site:elliscountytx.gov 2026 election candidate Texas House",
+    "notes": "New source verified August 23, 2026. Ellis County official canvass results identify Michael Myers in the 2026 Democratic primary for Texas House District 10 and can resolve exact candidate naming and ballot context for further image searches."
+  }
+]
