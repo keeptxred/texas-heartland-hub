@@ -70,5 +70,32 @@
     "rightsRule": "Use candidate profile pages to confirm identity, campaign context, and locate original campaign sources. Do not reuse Take Texas Back-hosted portrait assets unless their original provenance and reuse permission are independently verified at item level.",
     "searchHint": "site:taketexasback.com/candidate Texas candidate name 2026",
     "notes": "Verified August 22, 2026 through a Jenn Mack Raphoon candidate profile with a portrait. The hosted image remains review-only because the page does not establish a reusable license for the asset."
+  },
+  {
+    "domain": "dallasgop.org",
+    "sourceClass": "official-county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use official Dallas County Republican Party candidate profile pages to corroborate candidate identity, race context, and discover campaign-controlled websites or candidate-supplied portrait leads. Do not auto-approve Dallas GOP-hosted imagery unless item-level provenance establishes a reusable campaign or official source.",
+    "searchHint": "site:dallasgop.org candidate Texas House 2026 candidate name",
+    "notes": "Discovered and verified August 22, 2026. The live Meet the Candidates directory contains 2026 candidate profiles and images for multiple Dallas-area races, including Bonnie Abadie and Melanie Medley-Thomas."
+  },
+  {
+    "domain": "mobilize.us",
+    "sourceClass": "candidate-controlled-campaign-organizing-platform",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-specific Mobilize organization pages to locate campaign-controlled websites, event pages, social graphics, and original campaign source trails. Hosted images remain review-only unless candidate ownership or campaign-supplied provenance is established at item level.",
+    "searchHint": "site:mobilize.us candidate name Texas campaign 2026",
+    "notes": "Discovered August 22, 2026 while researching Allison Mitchell. Candidate-specific organizing pages can expose current campaign branding and source links even when search engines miss the campaign site's image assets."
+  },
+  {
+    "domain": "lonestarleft.com",
+    "sourceClass": "texas-candidate-interview-publication",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use candidate interview/profile pages to confirm identity and trace portraits back to original campaign sources. Do not reuse publication-hosted or Substack-proxied imagery without separately verifying the original image provenance and reuse basis.",
+    "searchHint": "site:lonestarleft.com meet the candidates Texas candidate 2026",
+    "notes": "Discovered August 22, 2026. Candidate interviews can expose higher-resolution campaign portraits and campaign context, but hosted imagery is not treated as licensed by default."
   }
 ]
