@@ -63,6 +63,28 @@ const findings = [
     permissionBasis: "Official Texas House member portrait used for informational candidate identification with government-source attribution.",
     usageStatus: "approved",
     discoveryMethod: "official-government-profile"
+  },
+  {
+    candidateId: "candidate-mary-elizabeth-klenz-democratic-race-2026-texas-house-17",
+    imageUrl: "https://static.showit.co/800/kqm7lbAZbqfqoEbAXg7G5g/shared/img_7573.jpg",
+    sourceUrl: "https://drklenzfortexas.com/",
+    altText: "Mary Elizabeth Klenz, Democratic candidate for Texas House District 17",
+    credit: "Dr. Mary Elizabeth Klenz campaign",
+    license: null,
+    permissionBasis: "Candidate portrait published directly on the official campaign homepage, which identifies Klenz as a candidate for Texas House District 17, and used for editorial candidate identification with attribution and a source link.",
+    usageStatus: "approved",
+    discoveryMethod: "official-campaign-profile"
+  },
+  {
+    candidateId: "candidate-valorie-barton-democratic-race-2026-texas-house-18",
+    imageUrl: "https://images.squarespace-cdn.com/content/v1/68e990c36cca4e25b49cbbef/9669e231-9b84-4c28-9f60-abfbbcc195dd/IMG_9792%2B-%2BValorie%2BBarton.jpeg",
+    sourceUrl: "https://www.valoriebarton.com/",
+    altText: "Valorie Barton, Democratic candidate for Texas House District 18",
+    credit: "Valorie Barton campaign",
+    license: null,
+    permissionBasis: "Candidate image published directly on the official campaign biography page for Texas House District 18 and used for editorial candidate identification with attribution and a source link.",
+    usageStatus: "approved",
+    discoveryMethod: "official-campaign-profile"
   }
 ];
 
