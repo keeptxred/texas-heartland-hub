@@ -9,6 +9,60 @@
     "notes": "Verified August 22, 2026. The live site identifies Roxanne Lathan as running to be State Representative for Texas House District 11 and contains a current Meet Roxanne campaign biography."
   },
   {
+    "domain": "hoffnaglefortexas.org",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Jordan Scott Hoffnagle's official Texas House District 100 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, issue graphics, stock imagery, and third-party embeds.",
+    "searchHint": "site:hoffnaglefortexas.org Jordan Scott Hoffnagle Texas House District 100 portrait candidate",
+    "notes": "Verified August 22, 2026 through Vote-USA's current November 3, 2026 Texas general-election candidate directory, which lists hoffnaglefortexas.org for Jordan Scott Hoffnagle in State Representative District 100."
+  },
+  {
+    "domain": "colorfulconservative.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Bonnie Abadie's official Texas House District 102 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, issue graphics, stock imagery, and third-party embeds.",
+    "searchHint": "site:colorfulconservative.com Bonnie Abadie Texas House District 102 portrait candidate",
+    "notes": "Verified August 22, 2026 through the Dallas County Republican Party's current candidate events and Vote-USA's November 3, 2026 Texas general-election directory, both of which identify colorfulconservative.com as Bonnie Abadie's campaign website."
+  },
+  {
+    "domain": "melanie4texas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Melanie Medley-Thomas's official Texas House District 103 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, endorsements, stock imagery, and third-party embeds.",
+    "searchHint": "site:melanie4texas.com Melanie Medley-Thomas Texas House District 103 portrait candidate",
+    "notes": "Verified August 22, 2026 through Vote-USA's current November 3, 2026 Texas general-election directory, which lists melanie4texas.com for Melanie Medley-Thomas in State Representative District 103; Dallas County Republican Party also identifies her as the current HD 103 candidate."
+  },
+  {
+    "domain": "mostynfortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Ben Mostyn's official Texas House District 117 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, issue graphics, stock imagery, and third-party embeds.",
+    "searchHint": "site:mostynfortexas.com Ben Mostyn Texas House District 117 portrait candidate",
+    "notes": "Verified August 22, 2026 through Vote-USA's current November 3, 2026 Texas general-election directory, which lists mostynfortexas.com for Ben Mostyn in State Representative District 117."
+  },
+  {
+    "domain": "jorgefortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Jorge Borrego's official Texas House District 118 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, issue graphics, stock imagery, and third-party embeds.",
+    "searchHint": "site:jorgefortexas.com Jorge Borrego Texas House District 118 portrait candidate",
+    "notes": "Verified August 22, 2026 through Vote-USA's current November 3, 2026 Texas general-election directory, which lists jorgefortexas.com for Jorge Borrego in State Representative District 118."
+  },
+  {
+    "domain": "kristianfortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Kristian Carranza's current Texas House District 118 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, issue graphics, stock imagery, and third-party embeds.",
+    "searchHint": "site:kristianfortexas.com Kristian Carranza Texas House District 118 portrait candidate",
+    "notes": "Verified August 22, 2026 through Vote-USA's current November 3, 2026 Texas general-election directory, which lists KRISTIANFORTEXAS.COM for Kristian Carranza in State Representative District 118."
+  },
+  {
     "domain": "zackdunn.com",
     "sourceClass": "official-campaign-site",
     "discoveryStatus": "active",
@@ -16,5 +70,68 @@
     "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Zack Dunn's official Texas House District 121 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude stock, issue graphics, endorsement images, and third-party embeds.",
     "searchHint": "site:zackdunn.com Zack Dunn Texas House District 121 portrait meet Zack",
     "notes": "Verified August 22, 2026. The live site identifies Zack Dunn as running in District 121 and includes a Meet Zack campaign biography; North East Bexar County Democrats also links zackdunn.com as his campaign site."
+  },
+  {
+    "domain": "shellynickels.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Shelly Nickels's official Texas House District 122 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, issue graphics, stock imagery, and third-party embeds.",
+    "searchHint": "site:shellynickels.com Shelly Nickels Texas House District 122 portrait candidate",
+    "notes": "Verified August 22, 2026 through Vote-USA's current November 3, 2026 Texas general-election directory, which lists shellynickels.com for Shelly Nickels in State Representative District 122."
+  },
+  {
+    "domain": "sylviasoto.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Sylvia Soto's official Texas House District 124 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, issue graphics, stock imagery, and third-party embeds.",
+    "searchHint": "site:sylviasoto.com Sylvia Soto Texas House District 124 portrait candidate",
+    "notes": "Verified August 22, 2026 through Vote-USA's current November 3, 2026 Texas general-election directory, which lists sylviasoto.com for Sylvia Soto in State Representative District 124."
+  },
+  {
+    "domain": "voteadrianreyna.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Adrian Reyna's official Texas House District 125 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, issue graphics, stock imagery, and third-party embeds.",
+    "searchHint": "site:voteadrianreyna.com Adrian Reyna Texas House District 125 portrait candidate",
+    "notes": "Verified August 22, 2026 through Vote-USA's current November 3, 2026 Texas general-election directory, which lists voteadrianreyna.com for Adrian Reyna in State Representative District 125."
+  },
+  {
+    "domain": "vote-usa.org",
+    "sourceClass": "current-election-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Vote-USA's current election pages to discover and corroborate candidate identity, ballot context, and candidate-provided official website links. Do not reuse Vote-USA-hosted images unless the exact image provenance and reuse permission are independently verified at item level.",
+    "searchHint": "site:vote-usa.org Election.aspx 2026 Texas candidate website",
+    "notes": "Verified August 22, 2026 as a current November 3, 2026 Texas general-election directory exposing official/candidate-provided website links across federal, statewide, State Board of Education, judicial, Texas Senate, and Texas House races."
+  },
+  {
+    "domain": "dallasgop.org",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Dallas County Republican Party candidate pages and current event listings to corroborate candidate identity and discover official campaign websites. Do not reuse Dallas GOP-hosted portraits unless original provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:dallasgop.org 2026 candidate campaign website Texas House",
+    "notes": "Verified August 22, 2026. Current candidate and event pages identify and link multiple 2026 Dallas County campaigns, including Bonnie Abadie, Melanie Medley-Thomas, Stephen Stanley, Tim McDonough, and Danny Rosellini."
+  },
+  {
+    "domain": "elliscountydemocraticparty.com",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Ellis County Democratic Party candidate pages to corroborate current race identity and discover campaign links for Ellis County candidates. Do not reuse hosted candidate images unless original provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:elliscountydemocraticparty.com/candidates 2026 candidate Texas House",
+    "notes": "Verified August 22, 2026. The current candidates page includes Michael Myers for Texas House District 10 and other 2026 candidates with candidate imagery and campaign context."
+  },
+  {
+    "domain": "whistlestopeasttx.us",
+    "sourceClass": "regional-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Whistlestop Tour for East Texas candidate profiles to discover current East Texas candidate pages, campaign links, and race context. Do not reuse hosted portraits unless original provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:whistlestopeasttx.us 2026 Texas candidate profile",
+    "notes": "Verified August 22, 2026 as a current regional candidate directory covering Texas Senate, State Board of Education, Texas House, congressional, and appellate races, including Michael Myers and Roxanne Lathan."
   }
 ]
