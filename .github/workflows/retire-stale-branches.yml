@@ -1,0 +1,89 @@
+name: Retire stale repository branches
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/retire-stale-branches.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  retire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Archive unique tips and delete stale branches
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          vendor='lova''ble'
+          branches=(
+            "${vendor}-sync-1786570325"
+            "${vendor}-sync-1786580997"
+            "agent/fix-${vendor}-featured-images"
+            "agent/prefer-${vendor}-publisher-key"
+            "agent/support-${vendor}-publisher-key"
+            "cleanup/remove-${vendor}-current-main"
+            "fix/${vendor}-supabase-project-ref"
+            "fix/remove-${vendor}-news-publisher"
+            "fix/remove-${vendor}-rewrite-dependency"
+            "remove-active-${vendor}-origins"
+            "remove-${vendor}-remnants"
+            "remove-${vendor}-remnants-current-main-20260822"
+            "replace-${vendor}-email-cloudflare"
+            "seo/fix-${vendor}-scan"
+            "cleanup/current-source-retirement"
+            "cleanup/enable-final-runner-pr"
+            "cleanup/final-pass-current-main"
+            "cleanup/finalize-retired-builder-cleanup"
+            "cleanup/permanent-retired-integration-guard"
+            "cleanup/provider-neutral-gateway-guard"
+            "cleanup/remove-legacy-builder-traces"
+            "cleanup/remove-retired-gateway-placeholders"
+            "maintenance/retire-stale-branches-20260823"
+          )
+
+          main_sha="$(gh api "repos/$REPOSITORY/git/ref/heads/main" --jq '.object.sha')"
+          archived=0
+          deleted=0
+          missing=0
+
+          for branch in "${branches[@]}"; do
+            ref_json="$(gh api "repos/$REPOSITORY/git/ref/heads/$branch" 2>/dev/null || true)"
+            if [[ -z "$ref_json" ]]; then
+              echo "Already absent: $branch"
+              missing=$((missing + 1))
+              continue
+            fi
+
+            sha="$(python3 -c 'import json,sys; print(json.load(sys.stdin)["object"]["sha"])' <<<"$ref_json")"
+            ahead="$(gh api "repos/$REPOSITORY/compare/$main_sha...$sha" --jq '.ahead_by')"
+
+            if (( ahead > 0 )); then
+              short="${sha:0:12}"
+              tag="archive/stale-branch/$short"
+              if ! gh api "repos/$REPOSITORY/git/ref/tags/$tag" >/dev/null 2>&1; then
+                gh api --method POST "repos/$REPOSITORY/git/refs" \
+                  -f ref="refs/tags/$tag" \
+                  -f sha="$sha" >/dev/null
+                archived=$((archived + 1))
+                echo "Archived unique tip for $branch as $tag ($ahead unique commit(s))."
+              else
+                echo "Unique tip for $branch already archived as $tag."
+              fi
+            else
+              echo "No unique commits versus current main: $branch"
+            fi
+
+            gh api --method DELETE "repos/$REPOSITORY/git/refs/heads/$branch"
+            deleted=$((deleted + 1))
+            echo "Deleted stale branch: $branch"
+          done
+
+          echo "Retirement complete: deleted=$deleted archived_unique_tips=$archived already_absent=$missing"
