@@ -106,9 +106,9 @@ for (const marker of [
 if (hasArticleWrite(disabledLegacyWriter)) {
   errors.push('Retired legacy Daily Texas News endpoint must never write daily_articles.');
 }
-for (const forbidden of ['ai.gateway.', 'runCloudflareJson']) {
+for (const forbidden of ['fetch(', 'runCloudflareJson', 'INTERNAL_AI_ORIGIN', 'KTR_AI_PROVIDER_READY']) {
   if (disabledLegacyWriter.includes(forbidden)) {
-    errors.push(`Retired legacy Daily Texas News endpoint still contains AI execution path: ${forbidden}`);
+    errors.push(`Retired legacy Daily Texas News endpoint still contains an execution path: ${forbidden}`);
   }
 }
 for (const marker of [
