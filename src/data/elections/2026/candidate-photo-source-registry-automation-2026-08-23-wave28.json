@@ -9,6 +9,24 @@
     "notes": "Verified August 23, 2026. The live campaign site contains current 2026 organizing events, identifies itself as Andie for Texas, lists campaign contact and volunteer activity, and is independently identified as Andie Ho's Texas House District 12 website by Asian American Politics; TCTA separately confirms Andie Ho as the Democratic candidate for District 12."
   },
   {
+    "domain": "poojafortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Pooja Sethi's official Texas House District 47 campaign website when page context confirms Pooja Sethi and District 47 and the image is clearly attributable to the campaign. Exclude endorsement logos, issue illustrations, stock imagery, third-party embeds, group photographs without unambiguous candidate identification, and any image without item-level provenance.",
+    "searchHint": "site:poojafortexas.com Pooja Sethi Texas House District 47 portrait about Pooja candidate photo",
+    "notes": "Verified August 23, 2026. The live website explicitly states that Pooja Sethi is running for Texas House District 47 and carries a political-advertising disclaimer paid for by the Pooja Sethi campaign. New American Leaders Action Fund and current election coverage independently identify Pooja Sethi as the District 47 candidate."
+  },
+  {
+    "domain": "montserratfortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Montserrat Garibay's official Texas House District 49 campaign website when page context confirms Montserrat Garibay and District 49 and the image is clearly attributable to the campaign. Exclude endorsement portraits, logos, issue graphics, stock imagery, third-party embeds, and group photographs without unambiguous candidate identification.",
+    "searchHint": "site:montserratfortexas.com Montserrat Garibay Texas House District 49 portrait about Montserrat candidate photo",
+    "notes": "Verified August 23, 2026. The current site identifies Montserrat Garibay as the nominee for Texas House District 49, contains a detailed campaign biography and campaign-hosted photographs, and carries a political-advertising disclaimer paid for by the Montserrat Garibay Campaign. Texas AFL-CIO independently confirms her as the 2026 District 49 candidate."
+  },
+  {
     "domain": "multistate.us",
     "sourceClass": "current-election-candidate-directory",
     "discoveryStatus": "discovery-only",
