@@ -1,20 +1,20 @@
 [
   {
-    "domain": "vote-usa.org",
-    "sourceClass": "current-ballot-candidate-directory",
+    "domain": "coppellchronicle.substack.com",
+    "sourceClass": "current-local-election-newsletter",
     "discoveryStatus": "discovery-only",
     "autoApprove": false,
-    "rightsRule": "Use Vote-USA current-election candidate listings only to discover and corroborate candidate/race pairings and outbound official campaign or government profile URLs. Do not reuse Vote-USA-hosted images unless original provenance and item-level reuse permission are independently verified from the originating source.",
-    "searchHint": "site:vote-usa.org 2026 Texas general election candidate campaign website",
-    "notes": "Verified August 23, 2026. The live November 3, 2026 Texas general-election directory exposes current candidate names, races, and many outbound official campaign or government URLs across congressional, statewide, legislative, and judicial contests. Registered strictly as a discovery bridge, not an image-rights authority."
+    "rightsRule": "Use Coppell Chronicle current-election coverage to corroborate candidate identity, filing context, district overlap, campaign activity, and discover official campaign leads. Do not reuse newsletter-hosted images unless original provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:coppellchronicle.substack.com 2026 Texas House candidate campaign Coppell",
+    "notes": "Verified August 23, 2026. Current 2026 Coppell-area election coverage identifies legislative candidates, local district context, and campaign status, including Danny Rosellini in Texas House District 115. Registered strictly as a discovery bridge, not an image-rights authority."
   },
   {
-    "domain": "dallasgop.org",
-    "sourceClass": "official-county-party-candidate-directory",
+    "domain": "gawtp.com",
+    "sourceClass": "current-endorsement-candidate-directory",
     "discoveryStatus": "discovery-only",
     "autoApprove": false,
-    "rightsRule": "Use Dallas County Republican Party candidate pages and event listings to corroborate current Dallas-area Republican candidate identity, district, campaign activity, and outbound official campaign URLs. Do not reuse Dallas GOP-hosted images unless original provenance and item-level reuse permission are independently verified.",
-    "searchHint": "site:dallasgop.org 2026 Texas House candidate Dallas campaign",
-    "notes": "Verified August 23, 2026. The official county party site publishes current candidate profiles and campaign/event links for Dallas-area races and is useful for discovering official campaign domains. Registered as discovery-only because image rights are not established at the item level."
+    "rightsRule": "Use Grassroots America - We The People current endorsement pages to discover and corroborate candidate names, races, campaign activity, and outbound official-source leads. Do not reuse hosted endorsement imagery unless original provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:gawtp.com 2026 Texas candidate endorsement House Senate",
+    "notes": "Verified August 23, 2026. The live 2026 endorsement directory identifies active Texas legislative candidates, including Tim McDonough for HD 114, and can surface additional campaign leads. Registered as discovery-only because candidate-image provenance is not established at item level."
   }
 ]
