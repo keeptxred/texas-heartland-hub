@@ -25,5 +25,77 @@
     "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Stefanie Bord's official Texas House District 126 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude endorsement logos, stock, issue, donation, and third-party imagery.",
     "searchHint": "site:stefaniebordfortexas.com Stefanie Bord Texas House District 126 portrait about Stefanie",
     "notes": "Verified August 22, 2026. The live site identifies Stefanie Bord as running for Texas House District 126 and carries a political-ad disclaimer paid for by Stefanie Bord for Texas 126."
+  },
+  {
+    "domain": "huffmanforhd1.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Sean Huffman's official Texas House District 1 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, issue graphics, stock imagery, and third-party embeds.",
+    "searchHint": "site:huffmanforhd1.com Sean Huffman Texas House District 1 portrait candidate",
+    "notes": "Verified August 22, 2026 through current TCTA and Teach the Vote candidate profiles identifying huffmanforhd1.com as Sean Huffman's campaign site for Texas House District 1."
+  },
+  {
+    "domain": "chrisspencer.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Chris Spencer's official Texas House District 1 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, issue graphics, stock imagery, and third-party embeds.",
+    "searchHint": "site:chrisspencer.com Chris Spencer Texas House District 1 portrait candidate",
+    "notes": "Verified August 22, 2026. The live site is the Chris Spencer for Texas House campaign site, and current 2026 election sources identify Spencer as the Republican candidate for Texas House District 1."
+  },
+  {
+    "domain": "allisonmitchellfortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Allison Mitchell's official Texas House District 108 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, issue graphics, stock imagery, and third-party embeds.",
+    "searchHint": "site:allisonmitchellfortexas.com Allison Mitchell Texas House District 108 portrait candidate",
+    "notes": "Verified August 22, 2026. The live campaign site identifies Allison Mitchell as running for Texas House District 108 and includes candidate and family photography with campaign attribution."
+  },
+  {
+    "domain": "willcampbellfortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Will Campbell's official Texas House District 109 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, issue graphics, stock imagery, and third-party embeds.",
+    "searchHint": "site:willcampbellfortexas.com Will Campbell Texas House District 109 portrait candidate",
+    "notes": "Verified August 22, 2026. The live site explicitly identifies itself as the official Will Campbell campaign website for Texas House District 109; Dallas County Republican Party and Vote-USA also corroborate the candidacy and campaign domain."
+  },
+  {
+    "domain": "zach4texas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Zach Herbert's official Texas House District 112 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, issue graphics, stock imagery, and third-party embeds.",
+    "searchHint": "site:zach4texas.com Zach Herbert Texas House District 112 portrait candidate",
+    "notes": "Verified August 22, 2026. The live site identifies Zach Herbert as running for the Texas House and carries a Zach Herbert for Texas campaign disclaimer; TCTA and Richardson Area Democrats also link zach4texas.com for the District 112 candidate."
+  },
+  {
+    "domain": "teachthevote.org",
+    "sourceClass": "education-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Teach the Vote candidate profiles to corroborate candidate identity and discover campaign contact information or official campaign links. Do not reuse Teach the Vote-hosted images unless original provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:teachthevote.org/Candidates 2026 Texas House candidate campaign",
+    "notes": "Verified August 22, 2026 as a current Texas educator candidate directory with 2026 race assignments and campaign contact information, including Sean Huffman."
+  },
+  {
+    "domain": "texashdcc.com",
+    "sourceClass": "state-party-campaign-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Texas House Democratic Campaign Committee pages to corroborate current Democratic Texas House candidates and discover campaign links. Do not reuse committee-hosted images unless original provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:texashdcc.com 2026 Texas House candidate campaign",
+    "notes": "Verified August 22, 2026 as a current Texas House Democratic campaign directory identifying active 2026 candidates including Allison Mitchell, Zach Herbert, Kristian Carranza, Chris Jimenez, Katie O'Brien Duzan, and Stephanie Guerrero Saenz."
+  },
+  {
+    "domain": "branch.vote",
+    "sourceClass": "nonpartisan-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Branch candidate pages to corroborate candidate identity, race assignment, and campaign context, and to discover official campaign links when present. Do not reuse Branch-hosted images unless original provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:branch.vote/races 2026 Texas candidate",
+    "notes": "Verified August 22, 2026 as a current candidate directory with 2026 Texas general-election race pages, including Texas House District 109 and Will Campbell."
   }
 ]
