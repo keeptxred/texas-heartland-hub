@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "legdir.capitol.texas.gov",
+    "sourceClass": "official-texas-legislative-photo-directory",
+    "discoveryStatus": "verified-source",
+    "autoApprove": false,
+    "rightsRule": "Use the official Texas Legislative Directory to identify current House and Senate members and locate names, photos, biographies, and the House/Senate photo browsers. Treat each image as an official-government lead, but preserve item-level identity, provenance, HTTPS, portrait-quality, and reuse-basis review before approval; do not infer blanket public-domain status from government hosting.",
+    "searchHint": "site:legdir.capitol.texas.gov candidate name Texas House Senate photo biography",
+    "notes": "Verified August 23, 2026. The Texas Legislative Directory explicitly provides current House and Senate member names, photos, biographies, and dedicated photo browsers. This is a new official-government discovery source for incumbent candidates whose canonical portrait is still missing."
+  },
+  {
+    "domain": "lrl.texas.gov",
+    "sourceClass": "official-texas-legislative-reference-archive",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use the Legislative Reference Library's Texas Legislators: Past & Present profiles to corroborate candidate identity, current or historical service, official House links, and indexed photograph holdings. Follow each photograph to its named holding source and verify the exact item-level reuse basis before approval; do not auto-approve archival photographs solely because the LRL indexes them.",
+    "searchHint": "site:lrl.texas.gov/legeLeaders/members candidate name Texas legislator photograph",
+    "notes": "Verified August 23, 2026. The official Legislative Reference Library database covers Texas legislators from 1846 to the present and exposes photograph citations plus source institutions, making it useful for finding current and historical candidate portraits without weakening item-level rights review."
+  },
+  {
+    "domain": "tlc.texas.gov",
+    "sourceClass": "official-texas-legislative-council-profile-source",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Legislative Council pages to corroborate current legislative officeholders and discover official profile photography. Approve an image only when the exact page/image can be matched to the canonical candidate and an item-level government or licensed reuse basis is documented; preserve source attribution.",
+    "searchHint": "site:tlc.texas.gov candidate name Texas legislature photo",
+    "notes": "Verified August 23, 2026. The Texas Legislative Council is a nonpartisan legislative agency and publishes current legislative leadership/member context with professional photographs. Added as a discovery bridge, not as a blanket image-rights grant."
+  }
+]
