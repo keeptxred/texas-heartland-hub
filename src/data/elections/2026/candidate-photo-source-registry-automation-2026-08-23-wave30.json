@@ -36,6 +36,15 @@
     "notes": "Verified August 23, 2026. The live campaign site identifies Jenn Mack Raphoon as an independent candidate for Texas Governor, includes an About page with candidate photography and a political-advertising disclaimer, and is consistent with her separately verified campaign domain already known to the repository."
   },
   {
+    "domain": "acacia.byredstone.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits directly hosted on Kevin McCormick's 2026 Texas Lieutenant Governor campaign site when page context confirms Kevin McCormick, the Green Party ticket, and the Lieutenant Governor race. Exclude generic site imagery, logos, third-party embeds, issue illustrations, and any image without unambiguous candidate identity and direct-hosting provenance. Preserve the repository's existing image-quality and rights validation before approval.",
+    "searchHint": "site:acacia.byredstone.com Kevin McCormick Texas Lieutenant Governor 2026 portrait candidate photo",
+    "notes": "Verified August 23, 2026. The live site explicitly identifies itself as political advertising for Kevin McCormick for Texas Lieutenant Governor and displays a candidate-identifying image. The Green Party of Texas independently lists Kevin McCormick as its 2026 Lieutenant Governor nominee and links to his campaign website."
+  },
+  {
     "domain": "solidarity-party.org",
     "sourceClass": "official-party-candidate-directory",
     "discoveryStatus": "discovery-only",
