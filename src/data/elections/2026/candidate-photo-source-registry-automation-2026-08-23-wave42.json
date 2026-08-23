@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "roxanne4texans.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "verified-source",
+    "autoApprove": false,
+    "rightsRule": "Official campaign pages may be used to identify candidate-hosted portraits, but each image still requires item-level identity, provenance, and editorial-use documentation before approval.",
+    "searchHint": "site:roxanne4texans.com Roxanne Lathan Texas House District 11 portrait",
+    "notes": "New official campaign source verified August 23, 2026. The site contains a directly hosted candidate portrait and campaign contact/disclaimer information confirming the campaign source."
+  },
+  {
+    "domain": "whistlestopeasttx.us",
+    "sourceClass": "multi-candidate-coordinating-profile-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use nominee profiles and outbound campaign links to discover current official candidate sites and naming variants. Do not reuse tour-hosted images unless exact image provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:whistlestopeasttx.us 2026 Texas candidate nominee profile campaign",
+    "notes": "New source verified August 23, 2026. The East Texas Whistlestop Tour maintains current nominee profiles and links candidates to their own campaign sources across congressional, Texas Senate, SBOE, judicial, and Texas House races."
+  },
+  {
+    "domain": "theofficialfacetofaceprojectofcampaignvideosforvotereducation.com",
+    "sourceClass": "candidate-video-profile-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use candidate profile/video pages as a discovery bridge for campaign names, offices, biographies, and outbound source trails. Do not approve hosted stills or video frames without independently verified provenance and reuse rights.",
+    "searchHint": "site:theofficialfacetofaceprojectofcampaignvideosforvotereducation.com Texas 2026 candidate House Senate",
+    "notes": "New source verified August 23, 2026. The Face to Face Project maintains district-organized candidate profiles including remaining Texas House portrait gaps such as Sean Huffman in District 1."
+  }
+]
