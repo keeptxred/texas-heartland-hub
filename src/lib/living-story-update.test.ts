@@ -38,11 +38,11 @@ describe("living story canonical updates", () => {
     expect(updater).not.toMatch(/\.update\(\{[\s\S]{0,500}internal_url:/);
   });
 
-  it("uses Cloudflare structured newsroom generation rather than legacy builder", () => {
+  it("uses Cloudflare structured newsroom generation directly", () => {
     expect(updater).toContain("runCloudflareJson<NewsroomDraft>");
     expect(updater).toContain("NEWSROOM_DRAFT_JSON_SCHEMA");
     expect(updater).toContain("validateNewsroomDraft");
-    expect(updater).not.toContain("legacy-builder.dev");
+    expect(updater).not.toContain("INTERNAL_AI_ORIGIN");
     expect(updater).not.toContain("KTR_AI_PROVIDER_READY");
   });
 
