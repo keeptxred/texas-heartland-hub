@@ -16,5 +16,59 @@
     "rightsRule": "Use North Texas Sun current-election and campaign-finance coverage only to corroborate candidate identity, race context, campaign activity, and discover outbound official-source leads. Do not reuse North Texas Sun-hosted images unless the original provenance and item-level reuse permission are independently verified.",
     "searchHint": "site:northtxsun.com 2026 Texas candidate campaign finance State Board Education House Senate",
     "notes": "Verified August 23, 2026. Recent 2026 coverage identifies active candidates and campaign-finance context, including State Board of Education District 14 candidate Mindy Bumgarner. This source is useful for current candidate discovery but is not authorized for automatic image approval."
+  },
+  {
+    "domain": "mindybumgarner.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Mindy Bumgarner's official State Board of Education District 14 campaign website when the page context independently confirms Mindy Bumgarner and District 14 and the image is clearly attributable to the campaign. Exclude logos, issue graphics, endorsement graphics, stock imagery, donor graphics, third-party embeds, crowd or group photographs where the candidate cannot be unambiguously identified, and any image without item-level provenance.",
+    "searchHint": "site:mindybumgarner.com Mindy Bumgarner Texas State Board of Education District 14 portrait candidate photo about",
+    "notes": "Verified August 23, 2026. The live site states that Mindy Bumgarner is running for Texas State Board of Education District 14, provides campaign contact information, and identifies itself as Mindy Bumgarner for State Board of Education D14. TCTA and Transparency USA independently confirm the 2026 District 14 candidacy."
+  },
+  {
+    "domain": "palmerfortexased.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Michelle Palmer's official State Board of Education District 6 campaign website when page context confirms Michelle Palmer and District 6 and the image is clearly attributable to the campaign. Exclude Facebook-hosted embeds, logos, stock imagery, issue graphics, group photographs without unambiguous candidate identification, and any image whose original provenance is not the campaign website itself.",
+    "searchHint": "site:palmerfortexased.com Michelle Palmer Texas State Board Education District 6 portrait candidate photo",
+    "notes": "Verified August 23, 2026 through TCTA and ATPE, both of which identify palmerfortexased.com as Michelle Palmer's campaign website and confirm her 2026 State Board of Education District 6 candidacy. The registry crawler must still enforce direct-hosting and item-level candidate-identification checks before approval."
+  },
+  {
+    "domain": "chrisspencer.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Chris Spencer's official Texas House campaign website when page context confirms Chris Spencer and Texas House District 1 and the image is clearly attributable to the campaign. Exclude logos, issue graphics, endorsement images, stock imagery, third-party embeds, group photographs without unambiguous candidate identification, and any image without item-level provenance.",
+    "searchHint": "site:chrisspencer.com Chris Spencer Texas House District 1 portrait about candidate photo",
+    "notes": "Verified August 23, 2026. The live campaign site identifies Chris Spencer as a conservative candidate for Texas House, contains biography and campaign-hosted imagery, and carries a political-advertising disclaimer paid for by the Chris Spencer Campaign. TCTA and 2026 election coverage independently confirm the District 1 race context."
+  },
+  {
+    "domain": "huffmanforhd1.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Sean Huffman's official Texas House District 1 campaign website when page context confirms Sean Huffman and District 1 and the image is clearly attributable to the campaign. Exclude social-media embeds, logos, stock imagery, issue graphics, group photographs without unambiguous candidate identification, and any image without item-level provenance.",
+    "searchHint": "site:huffmanforhd1.com Sean Huffman Texas House District 1 portrait candidate photo about",
+    "notes": "Verified August 23, 2026 through TCTA, BallotReady, and current East Texas campaign coverage, which identify huffmanforhd1.com as Sean Huffman's campaign website and confirm his 2026 Texas House District 1 candidacy. The registry crawler still must independently validate the live page and direct-hosted image before approval."
+  },
+  {
+    "domain": "ballotready.org",
+    "sourceClass": "current-election-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use BallotReady candidate pages only to corroborate candidate identity, current race context, and verified outbound campaign or social links. Do not reuse BallotReady-hosted portraits or other images unless the exact original provenance and item-level reuse permission are independently verified from the originating source.",
+    "searchHint": "site:ballotready.org/people Texas 2026 candidate verified webpages campaign website",
+    "notes": "Verified August 23, 2026. BallotReady maintains 2026 Texas candidate profiles with verified webpage links and candidate headshots. It is useful as a discovery bridge to official campaign and social sources but is not registered as an image-rights authority."
+  },
+  {
+    "domain": "transparencyusa.org",
+    "sourceClass": "current-election-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Transparency USA candidate and race pages only to corroborate current candidacy, office sought, party, ballot status, and campaign-finance context and to discover candidate committees or follow-up search leads. Do not reuse Transparency USA-hosted portraits or other images unless original provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:transparencyusa.org/tx/candidate Texas 2026 candidate campaign office sought",
+    "notes": "Verified August 23, 2026. Transparency USA publishes current 2026 Texas candidate and race pages, including on-ballot status for Michelle Palmer and Mindy Bumgarner. It is registered as a discovery and eligibility-corroboration bridge only, not an image-rights authority."
   }
 ]
