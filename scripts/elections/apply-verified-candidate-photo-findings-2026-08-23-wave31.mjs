@@ -30,6 +30,17 @@ const findings = [
     permissionBasis: "Candidate-identifying campaign image directly hosted on Bonnie Abadie's self-declared Texas House District 102 campaign page, which identifies the page as her temporary campaign site; used for editorial candidate identification with source attribution.",
     usageStatus: "approved",
     discoveryMethod: "official-candidate-campaign-page"
+  },
+  {
+    candidateId: "candidate-joe-mayes-democratic-race-2026-texas-house-106",
+    imageUrl: "https://run.imgix.net/fa692dcd-c53c-4dd2-b425-fe699e7542fc/058237e9-2db2-409d-9560-96323434897e/058237e9-2db2-409d-9560-96323434897e.jpg?auto=compress%2Cformat&bri=0&con=0&fit=fillmax&high=0&ixlib=js-3.8.0&q=75&rect=152%2C64%2C2547%2C2931&sat=0&shad=0&usm=0&w=2048",
+    sourceUrl: "https://www.joemayesfortexas.com/",
+    altText: "Joe Mayes, Democratic candidate for Texas House District 106",
+    credit: "Joe Mayes for Texas Campaign",
+    license: null,
+    permissionBasis: "Candidate-introduction portrait directly embedded in the Meet Joe section of the official Joe Mayes for Texas campaign homepage, immediately beside text identifying him as the Democratic candidate for Texas House District 106; used for editorial candidate identification with source attribution.",
+    usageStatus: "approved",
+    discoveryMethod: "official-campaign-introduction-photo"
   }
 ];
 
