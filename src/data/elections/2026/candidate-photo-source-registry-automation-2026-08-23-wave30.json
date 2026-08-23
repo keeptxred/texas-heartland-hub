@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "coppellchronicle.substack.com",
+    "sourceClass": "current-local-election-newsletter",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Coppell Chronicle current-election coverage to corroborate candidate identity, filing context, district overlap, campaign activity, and discover official campaign leads. Do not reuse newsletter-hosted images unless original provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:coppellchronicle.substack.com 2026 Texas House candidate campaign Coppell",
+    "notes": "Verified August 23, 2026. Current 2026 Coppell-area election coverage identifies legislative candidates, local district context, and campaign status, including Danny Rosellini in Texas House District 115. Registered strictly as a discovery bridge, not an image-rights authority."
+  },
+  {
+    "domain": "gawtp.com",
+    "sourceClass": "current-endorsement-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Grassroots America - We The People current endorsement pages to discover and corroborate candidate names, races, campaign activity, and outbound official-source leads. Do not reuse hosted endorsement imagery unless original provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:gawtp.com 2026 Texas candidate endorsement House Senate",
+    "notes": "Verified August 23, 2026. The live 2026 endorsement directory identifies active Texas legislative candidates, including Tim McDonough for HD 114, and can surface additional campaign leads. Registered as discovery-only because candidate-image provenance is not established at item level."
+  }
+]
