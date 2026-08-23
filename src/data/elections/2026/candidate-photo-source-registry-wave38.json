@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "elliscountydemocraticparty.com",
+    "sourceClass": "official-county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use the official county-party candidate directory to confirm local candidate identity and discover linked official campaign websites. Do not copy directory portrait assets without a separately documented item-level reuse basis.",
+    "searchHint": "site:elliscountydemocraticparty.com/candidates candidate name",
+    "notes": "Verified August 2026: the Ellis County Democratic Party candidate directory links directly to 2026 campaign websites, including Michael Myers for Texas House District 10, and exposes additional local and legislative candidate sources."
+  },
+  {
+    "domain": "teachthevote.atpe.org",
+    "sourceClass": "texas-education-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use ATPE Teach the Vote candidate profiles to confirm candidate identity and discover official campaign websites, contact information, and downstream sources. Do not copy portrait assets without a separately documented item-level reuse basis.",
+    "searchHint": "site:teachthevote.atpe.org/Candidates candidate name Texas",
+    "notes": "Verified August 2026: ATPE Teach the Vote publishes current Texas education-election candidate profiles and campaign website links, including State Board of Education candidates."
+  }
+]
