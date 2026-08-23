@@ -5,6 +5,11 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/retire-stale-branches.yml'
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+    paths:
+      - '.github/retire-stale-branches-trigger'
   workflow_dispatch:
 
 permissions:
@@ -23,8 +28,6 @@ jobs:
         run: |
           set -euo pipefail
 
-          # A second default-branch change intentionally retriggers this one-time job
-          # now that the workflow definition already exists on the default branch.
           vendor='lova''ble'
           branches=(
             "${vendor}-sync-1786570325"
