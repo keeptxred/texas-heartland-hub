@@ -56,6 +56,36 @@ jobs:
             -f activate_custom_domain=true \
             -f production_hostname=keeptxred.com
 
+      - name: Dispatch safe TexasDefined Facebook smokes when production is current
+        if: steps.gate.outputs.deploy == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MAIN_SHA: ${{ steps.gate.outputs.main_sha }}
+        run: |
+          set -euo pipefail
+
+          facebook_state="$(gh api "repos/${{ github.repository }}/commits/$MAIN_SHA/status" --jq '[.statuses[] | select(.context == "texasdefined-facebook-dry-run")][0].state // "missing"')"
+          comments_state="$(gh api "repos/${{ github.repository }}/commits/$MAIN_SHA/status" --jq '[.statuses[] | select(.context == "texasdefined-comment-signals-smoke")][0].state // "missing"')"
+
+          echo "texasdefined-facebook-dry-run=$facebook_state"
+          echo "texasdefined-comment-signals-smoke=$comments_state"
+
+          if [[ "$facebook_state" != 'success' ]]; then
+            gh workflow run auto-facebook-posts.yml \
+              --repo "${{ github.repository }}" \
+              --ref main \
+              -f texasdefined_dry_run=true
+            echo 'Dispatched TexasDefined non-destructive Facebook dry run against current production.'
+          fi
+
+          if [[ "$comments_state" != 'success' ]]; then
+            gh workflow run texasdefined-facebook-comment-signals.yml \
+              --repo "${{ github.repository }}" \
+              --ref main \
+              -f smoke_only=true
+            echo 'Dispatched TexasDefined read-only comment-signal smoke against current production.'
+          fi
+
       - name: Publish production-current status
         if: always() && steps.gate.outputs.main_sha != ''
         env:
