@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "rad.vote",
+    "sourceClass": "local-partisan-voter-guide",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Richardson Area Democrats election and endorsement pages to corroborate candidate identity, office, district, campaign activity, social handles, and outbound official campaign links. Do not reuse site-hosted candidate images unless the originating image source and item-level reuse basis are independently verified.",
+    "searchHint": "site:rad.vote 2026 Texas House candidate campaign website",
+    "notes": "Verified August 23, 2026. Current 2026 Richardson-area election coverage identifies candidates including Zach Herbert for Texas House District 112 and exposes official campaign-domain leads. Registered strictly as a source-discovery bridge, not an image-rights authority."
+  }
+]
