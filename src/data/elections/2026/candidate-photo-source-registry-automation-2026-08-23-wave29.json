@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "skyegarciafortexas.com",
+    "sourceClass": "candidate-campaign-link-bridge",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Skye Garcia's official Dallas County Clerk campaign site only as a discovery bridge for outbound links to other 2026 Dallas-area candidate campaign websites and to corroborate candidate/race pairings. Do not reuse images hosted on this site for other candidates unless the original image provenance and item-level reuse permission are independently verified from the originating candidate source.",
+    "searchHint": "site:skyegarciafortexas.com Texas House candidate 2026 campaign Dallas HD 102 109 113 114 115",
+    "notes": "Verified August 23, 2026. The live official Skye Garcia campaign site publishes an endorsement section linking directly to multiple current Dallas-area Texas House campaign websites, including Will Campbell, Stephen Stanley, Tim McDonough, and Danny Rosellini. Registered strictly as a discovery bridge, not an image-rights authority."
+  },
+  {
+    "domain": "northtxsun.com",
+    "sourceClass": "current-election-local-news-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use North Texas Sun current-election and campaign-finance coverage only to corroborate candidate identity, race context, campaign activity, and discover outbound official-source leads. Do not reuse North Texas Sun-hosted images unless the original provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:northtxsun.com 2026 Texas candidate campaign finance State Board Education House Senate",
+    "notes": "Verified August 23, 2026. Recent 2026 coverage identifies active candidates and campaign-finance context, including State Board of Education District 14 candidate Mindy Bumgarner. This source is useful for current candidate discovery but is not authorized for automatic image approval."
+  }
+]
