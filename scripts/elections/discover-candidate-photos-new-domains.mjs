@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { readFile, writeFile, mkdir } from "node:fs/promises";
+import { writeFile, mkdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -10,21 +10,29 @@ const manifest = JSON.parse(await readFile(manifestPath,"utf8"));
 const reportPath = path.join(ROOT,"artifacts/elections/candidate-photo-new-domains-report.json");
 const byId = new Map(manifest.map(x=>[x.candidateId,x]));
 const usedDomains = new Set(manifest.flatMap(x=>[host(x.sourceUrl),host(x.imageUrl)]).filter(Boolean));
-const newlyUsed = new Set();
+const newlySeen = new Set();
 const queue = candidates.filter(c=>byId.get(c.id)?.usageStatus!=="approved");
 const found=[]; const failures=[];
 
 await pool(queue,4,async c=>{
   const hit = await discover(c);
-  if(hit){byId.set(c.id,hit);found.push(hit);newlyUsed.add(host(hit.sourceUrl));}
+  if(hit){found.push(hit);newlySeen.add(host(hit.sourceUrl));}
   else failures.push({candidateId:c.id,name:c.fullName,raceId:c.primaryRaceId});
 });
 
-const merged=[...byId.values()].sort((a,b)=>a.candidateId.localeCompare(b.candidateId));
 await mkdir(path.dirname(reportPath),{recursive:true});
-await writeFile(manifestPath,JSON.stringify(merged,null,2)+"\n");
-await writeFile(reportPath,JSON.stringify({generatedAt:new Date().toISOString(),scanned:queue.length,discovered:found.length,initiallyBlockedDomains:[...usedDomains].sort(),newDomains:[...newlyUsed].sort(),found,failures},null,2)+"\n");
-console.log(`Unique-domain discovery added ${found.length} portraits from ${newlyUsed.size} previously unused domains.`);
+await writeFile(reportPath,JSON.stringify({
+  generatedAt:new Date().toISOString(),
+  purpose:"Discover previously unused candidate-photo source domains without auto-approving identity, provenance, or reuse rights.",
+  scanned:queue.length,
+  discoveredReviewLeadCount:found.length,
+  initiallyBlockedDomains:[...usedDomains].sort(),
+  newDomains:[...newlySeen].sort(),
+  found,
+  failures
+},null,2)+"\n");
+console.log(`Unique-domain discovery found ${found.length} review lead(s) from ${newlySeen.size} previously unused domain(s).`);
+console.log("No unique-domain discovery is auto-approved; identity, provenance, and reuse rights require verification first.");
 
 async function discover(c){
   const name=c.fullName.replace(/\s+/g," ").trim();
@@ -44,7 +52,7 @@ async function discover(c){
   const pages=[];
   for(const q of queries){
     for(const u of await search(q)){
-      const h=host(u); if(!h||usedDomains.has(h)||newlyUsed.has(h)||pages.includes(u))continue;
+      const h=host(u); if(!h||usedDomains.has(h)||newlySeen.has(h)||pages.includes(u))continue;
       pages.push(u); if(pages.length>=80)break;
     }
     if(pages.length>=80)break;
@@ -52,9 +60,22 @@ async function discover(c){
   for(const url of pages){
     const page=await fetchText(url); if(!page||!matches(page.text,c,race))continue;
     for(const img of extractImages(page.text,page.url)){
-      const ih=host(img); if(!ih||usedDomains.has(ih)||newlyUsed.has(ih))continue;
+      const ih=host(img); if(!ih||usedDomains.has(ih)||newlySeen.has(ih))continue;
       if(!portraitish(img,c)||!(await validImage(img)))continue;
-      return {candidateId:c.id,imageUrl:img,sourceUrl:page.url,altText:`Portrait of ${c.fullName}`,credit:host(page.url),license:null,permissionBasis:"Publicly published portrait used for editorial candidate identification with source attribution.",usageStatus:"approved",discoveredAt:new Date().toISOString(),discoveryMethod:"unique-domain-web-search",discoverySource:"previously-unused-domain"};
+      return {
+        candidateId:c.id,
+        imageUrl:img,
+        sourceUrl:page.url,
+        altText:`Portrait lead for ${c.fullName}`,
+        credit:host(page.url),
+        license:null,
+        permissionBasis:null,
+        usageStatus:"unknown",
+        reviewReason:"Previously unused domain discovery. Verify candidate identity, original provenance, and item-level reuse rights before approval.",
+        discoveredAt:new Date().toISOString(),
+        discoveryMethod:"unique-domain-web-search",
+        discoverySource:"previously-unused-domain"
+      };
     }
   }
   return null;
