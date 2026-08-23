@@ -88,5 +88,59 @@
     "rightsRule": "Use Texas Matters candidate guide entries to discover candidate-source links and corroborate race identity. Do not auto-approve guide-hosted imagery.",
     "searchHint": "site:texasmatters.org/guide candidate name Texas 2026",
     "notes": "Verified August 22, 2026 as a current Texas candidate guide that states its content is pulled from candidate websites. Discovery bridge only."
+  },
+  {
+    "domain": "freestonecountygop.org",
+    "sourceClass": "county-party-candidate-website-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use the Freestone County Republican Party candidate-website directory to locate official campaign sites and corroborate candidate identity. Do not auto-approve county-party-hosted imagery.",
+    "searchHint": "site:freestonecountygop.org/candidatewebsites candidate name 2026",
+    "notes": "Verified August 22, 2026 as a county-party-maintained directory of 2026 candidate campaign websites. Discovery bridge only."
+  },
+  {
+    "domain": "taylorcounty.gop",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Taylor County Republican Party candidate pages to discover official campaign websites, social profiles, and contact routes. Do not auto-approve county-party-hosted imagery unless provenance and reuse rights are separately documented.",
+    "searchHint": "site:taylorcounty.gop candidate name Texas 2026 campaign",
+    "notes": "Verified August 22, 2026 with 2026 Texas House candidate pages containing outbound campaign websites and candidate contact details. Discovery bridge only."
+  },
+  {
+    "domain": "elliscountydemocraticparty.com",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Ellis County Democratic Party candidate pages to locate official campaign websites and corroborate candidate identity. Do not auto-approve county-party-hosted imagery.",
+    "searchHint": "site:elliscountydemocraticparty.com/candidates candidate name Texas 2026",
+    "notes": "Verified August 22, 2026 as a county-party candidate directory containing campaign website links for state and federal candidates. Discovery bridge only."
+  },
+  {
+    "domain": "directory.runforsomething.net",
+    "sourceClass": "candidate-endorsement-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Run for Something candidate profiles to identify campaign websites, social links, and public candidate biographies. Do not auto-approve directory-hosted imagery.",
+    "searchHint": "site:directory.runforsomething.net/candidates/TX candidate name 2026",
+    "notes": "Verified August 22, 2026 as a current Texas candidate directory covering state and local races. Discovery bridge only."
+  },
+  {
+    "domain": "accountabilitymatterstexas.com",
+    "sourceClass": "candidate-questionnaire-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Accountability Matters Texas candidate questionnaire records to corroborate candidate identity and follow candidate-provided or official election links. Do not auto-approve site-hosted imagery.",
+    "searchHint": "site:accountabilitymatterstexas.com/2026 candidate name Texas",
+    "notes": "Verified August 22, 2026 as a current 2026 candidate questionnaire index linking to official candidate information. Discovery bridge only."
+  },
+  {
+    "domain": "webservices.ethics.state.tx.us",
+    "sourceClass": "official-government-campaign-finance-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Ethics Commission candidate and filer resources to corroborate candidate identity, office, and filing context and to locate downstream official records. Do not infer image reuse rights from campaign-finance records.",
+    "searchHint": "site:webservices.ethics.state.tx.us candidate name 2026 Texas",
+    "notes": "Official Texas Ethics Commission campaign-finance resource domain verified August 22, 2026. Discovery and identity corroboration only."
   }
 ]
