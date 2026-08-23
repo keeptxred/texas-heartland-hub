@@ -21,6 +21,17 @@ const findings = [
     discoveryMethod: "official-campaign-profile"
   },
   {
+    candidateId: "candidate-chris-spencer-republican-race-2026-texas-house-1",
+    imageUrl: "https://lirp.cdn-website.com/e481f125/dms3rep/multi/opt/chris-cutout-66f61142-1920w.png",
+    sourceUrl: "https://www.chrisspencer.com/",
+    altText: "Chris Spencer, Republican candidate for Texas House District 1",
+    credit: "Chris Spencer campaign",
+    license: null,
+    permissionBasis: "Candidate cutout image directly hosted on the official Chris Spencer campaign homepage, which identifies Spencer as a Texas House candidate and carries the campaign paid-for-by disclaimer; used for editorial candidate identification with attribution and a source link.",
+    usageStatus: "approved",
+    discoveryMethod: "official-campaign-profile"
+  },
+  {
     candidateId: "candidate-junior-ezeonu-democratic-race-2026-texas-house-101",
     imageUrl: "https://static.wixstatic.com/media/0a8871_b84abb8e458e4538b14306836c003da0~mv2.jpeg/v1/fill/w_980%2Ch_968%2Cal_c%2Cq_85%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/2026%20headshot.jpeg",
     sourceUrl: "https://www.votejuniorezeonu.com/",
