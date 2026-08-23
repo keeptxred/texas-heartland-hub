@@ -22,7 +22,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          # Temporary helper: touching this file intentionally re-dispatches both safe production smokes.
+          # Temporary helper: this touch re-runs both safe smokes after diagnostics are on main.
           gh workflow run auto-facebook-posts.yml \
             --repo "$GITHUB_REPOSITORY" \
             --ref main \
