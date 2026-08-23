@@ -13,6 +13,7 @@ on:
 permissions:
   contents: read
   actions: write
+  statuses: write
 
 concurrency:
   group: keeptxred-cloudflare-production-ensure
@@ -31,6 +32,7 @@ jobs:
           main_sha="$(gh api "repos/${{ github.repository }}/commits/main" --jq '.sha')"
           last_deployed_sha="$(gh api "repos/${{ github.repository }}/actions/workflows/deploy-cloudflare-production.yml/runs?status=success&per_page=20" --jq '.workflow_runs[0].head_sha // ""')"
 
+          echo "main_sha=$main_sha" >> "$GITHUB_OUTPUT"
           echo "main_sha=$main_sha"
           echo "last_deployed_sha=${last_deployed_sha:-none}"
 
@@ -53,3 +55,27 @@ jobs:
             --ref main \
             -f activate_custom_domain=true \
             -f production_hostname=keeptxred.com
+
+      - name: Publish production-current status
+        if: always() && steps.gate.outputs.main_sha != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MAIN_SHA: ${{ steps.gate.outputs.main_sha }}
+          DEPLOY_NEEDED: ${{ steps.gate.outputs.deploy }}
+        run: |
+          set -euo pipefail
+          if [[ "$DEPLOY_NEEDED" == 'false' ]]; then
+            state='success'
+            description='Cloudflare production matches current main'
+          else
+            state='pending'
+            description='Cloudflare production reconciliation dispatched'
+          fi
+
+          gh api --method POST \
+            "repos/${{ github.repository }}/statuses/$MAIN_SHA" \
+            -f state="$state" \
+            -f context='keeptxred-production-current' \
+            -f description="$description" >/dev/null
+
+          echo "Published keeptxred-production-current=$state for $MAIN_SHA"
