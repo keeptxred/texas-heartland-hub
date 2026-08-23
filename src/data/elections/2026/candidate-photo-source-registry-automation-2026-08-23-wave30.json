@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "vote-usa.org",
+    "sourceClass": "current-ballot-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Vote-USA current-election candidate listings only to discover and corroborate candidate/race pairings and outbound official campaign or government profile URLs. Do not reuse Vote-USA-hosted images unless original provenance and item-level reuse permission are independently verified from the originating source.",
+    "searchHint": "site:vote-usa.org 2026 Texas general election candidate campaign website",
+    "notes": "Verified August 23, 2026. The live November 3, 2026 Texas general-election directory exposes current candidate names, races, and many outbound official campaign or government URLs across congressional, statewide, legislative, and judicial contests. Registered strictly as a discovery bridge, not an image-rights authority."
+  },
+  {
+    "domain": "dallasgop.org",
+    "sourceClass": "official-county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Dallas County Republican Party candidate pages and event listings to corroborate current Dallas-area Republican candidate identity, district, campaign activity, and outbound official campaign URLs. Do not reuse Dallas GOP-hosted images unless original provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:dallasgop.org 2026 Texas House candidate Dallas campaign",
+    "notes": "Verified August 23, 2026. The official county party site publishes current candidate profiles and campaign/event links for Dallas-area races and is useful for discovering official campaign domains. Registered as discovery-only because image rights are not established at the item level."
+  }
+]
