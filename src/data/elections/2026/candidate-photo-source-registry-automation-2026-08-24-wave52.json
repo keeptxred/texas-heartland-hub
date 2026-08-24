@@ -1,0 +1,38 @@
+[
+  {
+    "domain": "huffmanforhd1.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Sean Huffman's verified official Texas House District 1 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Sean Huffman Texas House District 1 huffmanforhd1.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. The live site explicitly identifies Sean Huffman for Texas House District One and carries a political-advertisement paid-for notice for The Sean Huffman Campaign; Teach the Vote independently lists campaign@huffmanforhd1.com for the same candidate."
+  },
+  {
+    "domain": "votejuniorezeonu.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Junior Ezeonu's verified official Texas House District 101 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Junior Ezeonu Texas House District 101 votejuniorezeonu.com official campaign headshot",
+    "notes": "New candidate-controlled source verified August 24, 2026. The live site identifies Junior Ezeonu as running for Texas House District 101, displays a file explicitly labeled 2026 headshot.jpeg, and carries a Paid For by Junior Ezeonu Campaign disclaimer. The League of Women Voters Tarrant County guide independently lists votejuniorezeonu.com as his campaign website."
+  },
+  {
+    "domain": "michaelmyersforhd10.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Michael Myers's verified official Texas House District 10 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Michael Myers Texas House District 10 michaelmyersforhd10.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. The live site is branded Michael Myers for HD 10 and hosts campaign imagery; the Ellis County Democratic Party's current 2026 ballot candidate page independently links michaelmyersforhd10.com for Michael Myers."
+  },
+  {
+    "domain": "elliscountydemocraticparty.com",
+    "sourceClass": "official-county-party-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying images only from the Ellis County Democratic Party's current 2026 candidate directory when the directory explicitly identifies the candidate and office, the linked image independently validates, and no higher-confidence official campaign or government portrait is available. Preserve county-party attribution and exact source page; do not infer broader reuse rights.",
+    "searchHint": "site:elliscountydemocraticparty.com/candidates 2026 Texas candidate portrait Ellis County Democratic Party",
+    "notes": "New official county-party candidate directory verified August 24, 2026. The page states that it compiled candidates who will be on the 2026 Midterm ballot, includes candidate images and biographies, and links official campaign websites including Michael Myers for HD 10."
+  }
+]
