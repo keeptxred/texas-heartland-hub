@@ -1,0 +1,65 @@
+[
+  {
+    "domain": "huffmanforhd1.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Sean Huffman's official 2026 Texas House District 1 campaign website for editorial candidate identification with campaign attribution and a source link. The discovery script must independently verify the page matches the candidate and validate the image before approval.",
+    "searchHint": "Sean Huffman Texas House District 1 official campaign huffmanforhd1.com",
+    "notes": "Verified August 24, 2026 through the live campaign site and corroborated by TCTA and BallotReady. The site identifies Sean Huffman as a candidate for Texas House District 1 and hosts campaign imagery."
+  },
+  {
+    "domain": "chrisspencer.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Chris Spencer's official 2026 Texas House District 1 campaign website for editorial candidate identification with campaign attribution and a source link. The discovery script must independently verify the page matches the candidate and validate the image before approval.",
+    "searchHint": "Chris Spencer Texas House District 1 official campaign chrisspencer.com",
+    "notes": "Verified August 24, 2026. The live site explicitly identifies Chris Spencer as a candidate for Texas House and includes campaign-hosted candidate imagery."
+  },
+  {
+    "domain": "hoffnaglefortexas.org",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Jordan Hoffnagle's official 2026 Texas House District 100 campaign website for editorial candidate identification with campaign attribution and a source link. The discovery script must independently verify the page matches the candidate and validate the image before approval.",
+    "searchHint": "Jordan Scott Hoffnagle Texas House District 100 official campaign hoffnaglefortexas.org",
+    "notes": "Verified August 24, 2026. The campaign home and about pages explicitly identify Jordan Hoffnagle as the Republican candidate for Texas House District 100 and host candidate imagery."
+  },
+  {
+    "domain": "votejuniorezeonu.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Junior Ezeonu's official 2026 Texas House District 101 campaign website for editorial candidate identification with campaign attribution and a source link. The discovery script must independently verify the page matches the candidate and validate the image before approval.",
+    "searchHint": "Junior Ezeonu Texas House District 101 official campaign votejuniorezeonu.com",
+    "notes": "Verified August 24, 2026 through multiple current candidate guides and candidate interviews that identify votejuniorezeonu.com as Junior Ezeonu's official campaign website."
+  },
+  {
+    "domain": "willcampbellfortexas.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Will Campbell's official 2026 Texas House District 109 campaign website for editorial candidate identification with campaign attribution and a source link. The discovery script must independently verify the page matches the candidate and validate the image before approval.",
+    "searchHint": "Will Campbell Texas House District 109 official campaign willcampbellfortexas.com",
+    "notes": "Verified August 24, 2026. The live site explicitly labels itself the official Will Campbell for Texas House District 109 campaign and hosts multiple campaign images."
+  },
+  {
+    "domain": "snapcoalition.org",
+    "sourceClass": "current-election-candidate-questionnaire-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Scientist Network for Advancing Policy Texas Stance on Science candidate questionnaires only to corroborate current candidate identity, office, race context, and candidate-controlled statements and to discover follow-up official campaign or institutional sources. Do not reuse SNAP-hosted portraits or graphics unless original provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:snapcoalition.org/initiatives/stance-on-science/states/tx Texas 2026 candidate questionnaire campaign",
+    "notes": "New source discovered August 24, 2026. The live Texas questionnaire directory contains current 2026 candidate entries, including Jordan Hoffnagle, with dated candidate-submitted responses. Registered strictly as a discovery and corroboration bridge."
+  },
+  {
+    "domain": "federationforchildren.org",
+    "sourceClass": "candidate-research-document-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use American Federation for Children candidate research PDFs only as a lead to original candidate questionnaires, campaign websites, public records, and other cited primary sources. Do not reuse report-hosted portraits or document images unless exact original provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:federationforchildren.org Texas 2026 candidate research report campaign website questionnaire",
+    "notes": "New source discovered August 24, 2026. Candidate research reports can expose otherwise hard-to-find original questionnaire and campaign references, including Texas House candidates such as Zach Herbert. Registered only as a source-discovery bridge."
+  }
+]
