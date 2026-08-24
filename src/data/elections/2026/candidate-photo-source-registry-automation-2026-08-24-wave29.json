@@ -18,6 +18,15 @@
     "notes": "Verified August 24, 2026. The live site identifies Chris Spencer as a conservative candidate for Texas House, carries a political-advertising disclaimer paid for by the Chris Spencer Campaign, and directly hosts a clean candidate portrait. Current 2026 election coverage independently confirms Spencer as the Republican nominee for House District 1."
   },
   {
+    "domain": "votejuniorezeonu.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Junior Ezeonu's official Texas House District 101 campaign website when page context confirms Junior Ezeonu and HD101 and the image is clearly attributable to the campaign. Prefer explicitly labeled headshots. Exclude logos, issue graphics, unrelated event images, stock imagery, third-party embeds, and group photographs without unambiguous candidate identification.",
+    "searchHint": "site:votejuniorezeonu.com Junior Ezeonu Texas House District 101 headshot portrait candidate photo",
+    "notes": "Verified August 24, 2026. The live site identifies Junior Ezeonu as the Texas House District 101 candidate, carries a paid-for-by Junior Ezeonu Campaign disclaimer, and directly hosts an image explicitly labeled '2026 headshot.jpeg'. TCTA and ATPE independently identify this domain as his 2026 campaign website."
+  },
+  {
     "domain": "tcta.org",
     "sourceClass": "current-election-candidate-directory",
     "discoveryStatus": "discovery-only",
