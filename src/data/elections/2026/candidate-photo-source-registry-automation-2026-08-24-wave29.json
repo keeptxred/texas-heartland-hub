@@ -1,0 +1,38 @@
+[
+  {
+    "domain": "huffmanforhd1.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Sean Huffman's official Texas House District 1 campaign website when page context confirms Sean Huffman and HD1 and the image is clearly attributable to the campaign. Exclude logos, issue graphics, quotes, stock imagery, third-party embeds, group photographs without unambiguous candidate identification, and any image without item-level provenance.",
+    "searchHint": "site:huffmanforhd1.com Sean Huffman Texas House District 1 portrait candidate photo",
+    "notes": "Verified August 24, 2026. The live site identifies itself as Huffman for HD1, presents Sean Huffman as the candidate for Texas House District 1, and directly hosts a candidate-identifying campaign hero image. TCTA independently lists this domain as Sean Huffman's campaign website."
+  },
+  {
+    "domain": "chrisspencer.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Chris Spencer's official Texas House campaign website when page context confirms Chris Spencer and the Texas House campaign and the image is clearly attributable to the campaign. Exclude logos, issue graphics, stock imagery, third-party embeds, group photographs without unambiguous candidate identification, and any image without item-level provenance.",
+    "searchHint": "site:chrisspencer.com Chris Spencer Texas House District 1 portrait candidate photo",
+    "notes": "Verified August 24, 2026. The live site identifies Chris Spencer as a conservative candidate for Texas House, carries a political-advertising disclaimer paid for by the Chris Spencer Campaign, and directly hosts a clean candidate portrait. Current 2026 election coverage independently confirms Spencer as the Republican nominee for House District 1."
+  },
+  {
+    "domain": "tcta.org",
+    "sourceClass": "current-election-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Classroom Teachers Association TexasTeachersVote candidate pages only to corroborate current candidate identity, office and race context, and to discover outbound official campaign websites and social profiles. Do not reuse TCTA-hosted images unless the exact original provenance and item-level reuse permission are independently verified from the originating source.",
+    "searchHint": "site:tcta.org/texasteachersvote/find-candidates Texas 2026 candidate website House Senate State Board of Education",
+    "notes": "Verified August 24, 2026. TCTA maintains current 2026 Texas House and State Board of Education candidate directories with candidate-specific pages and outbound campaign website/social links. It is registered strictly as a discovery bridge, not an image-rights authority."
+  },
+  {
+    "domain": "ballotready.org",
+    "sourceClass": "current-election-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use BallotReady candidate profiles only to corroborate candidate identity and election context and to discover candidate-verified webpages and official profile links. Do not reuse BallotReady-hosted headshots or other images unless the original image provenance and item-level reuse permission are independently verified from the originating source.",
+    "searchHint": "site:ballotready.org/people Texas 2026 candidate verified webpages",
+    "notes": "Verified August 24, 2026. BallotReady publishes current Texas 2026 candidate profiles with a Verified Webpages section that can expose official campaign and social sources for candidates whose domains are not yet known. Hosted images remain discovery-only unless separately sourced and rights-verified."
+  }
+]
