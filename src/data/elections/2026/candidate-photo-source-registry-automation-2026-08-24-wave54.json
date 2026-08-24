@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "mindybumgarner.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Mindy Bumgarner's verified official Texas State Board of Education District 14 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Mindy Bumgarner Texas State Board of Education District 14 mindybumgarner.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. The live campaign site identifies Mindy Bumgarner as running for Texas State Board of Education District 14 and supplies campaign contact information; TCTA independently lists mindybumgarner.com as her campaign website, and official March 3, 2026 county primary results confirm her candidacy."
+  },
+  {
+    "domain": "palmerfortexased.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Michelle Palmer's verified Texas State Board of Education District 6 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Michelle Palmer Texas State Board of Education District 6 palmerfortexased.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. ATPE's current Teach the Vote profile lists palmerfortexased.com as Michelle Palmer's website and identifies her as running in the November 2026 SBOE District 6 election; current election tracking independently lists Palmer on the general-election ballot. The campaign domain is active but image approval remains subject to the repository's existing page and item-level validation checks."
+  }
+]
