@@ -1,4 +1,4 @@
-name: Dispatch TexasDefined Facebook production smokes
+name: Finalize TexasDefined Facebook production smokes
 
 on:
   push:
@@ -10,19 +10,53 @@ on:
 permissions:
   contents: read
   actions: write
+  statuses: read
 
 jobs:
   dispatch:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 20
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
-      - name: Dispatch trusted workflow dry runs
+      - name: Converge production, run safe smokes, and verify results
         shell: bash
         run: |
           set -euo pipefail
-          # Temporary helper: this touch re-runs both safe smokes after diagnostics are on main.
+
+          status_for() {
+            local sha="$1" context="$2"
+            gh api "repos/${GITHUB_REPOSITORY}/commits/${sha}/status" \
+              --jq "[.statuses[] | select(.context == \"${context}\")][0].state // \"missing\""
+          }
+
+          main_sha() {
+            gh api "repos/${GITHUB_REPOSITORY}/commits/main" --jq '.sha'
+          }
+
+          production_ready='false'
+          target_sha=''
+          for attempt in $(seq 1 30); do
+            target_sha="$(main_sha)"
+            production_state="$(status_for "$target_sha" 'keeptxred-production-current')"
+            echo "production attempt ${attempt}: main=${target_sha} state=${production_state}"
+            if [[ "$production_state" == 'success' ]]; then
+              production_ready='true'
+              break
+            fi
+
+            gh workflow run ensure-cloudflare-production-current.yml \
+              --repo "$GITHUB_REPOSITORY" \
+              --ref main
+            sleep 20
+          done
+
+          if [[ "$production_ready" != 'true' ]]; then
+            echo 'Current main did not reach Cloudflare production before the verification timeout.' >&2
+            exit 1
+          fi
+
+          echo "Production is current at ${target_sha}; dispatching non-destructive TexasDefined verifications."
           gh workflow run auto-facebook-posts.yml \
             --repo "$GITHUB_REPOSITORY" \
             --ref main \
@@ -31,4 +65,27 @@ jobs:
             --repo "$GITHUB_REPOSITORY" \
             --ref main \
             -f smoke_only=true
-          echo 'Dispatched trusted main-branch TexasDefined Facebook dry runs.'
+
+          for attempt in $(seq 1 40); do
+            latest_sha="$(main_sha)"
+            facebook_state="$(status_for "$latest_sha" 'texasdefined-facebook-dry-run')"
+            comments_state="$(status_for "$latest_sha" 'texasdefined-comment-signals-smoke')"
+            echo "smoke attempt ${attempt}: main=${latest_sha} facebook=${facebook_state} comments=${comments_state}"
+
+            if [[ "$facebook_state" == 'success' && "$comments_state" == 'success' ]]; then
+              echo 'Both TexasDefined production smokes passed.'
+              exit 0
+            fi
+
+            if [[ "$facebook_state" == 'failure' || "$comments_state" == 'failure' ]]; then
+              echo 'One or more TexasDefined production smokes failed.' >&2
+              gh api "repos/${GITHUB_REPOSITORY}/commits/${latest_sha}/status" \
+                --jq '.statuses[] | select(.context | startswith("texasdefined-facebook-dry-run") or startswith("texasdefined-comment-signals")) | [.context,.state,.description] | @tsv' >&2 || true
+              exit 1
+            fi
+
+            sleep 15
+          done
+
+          echo 'TexasDefined smoke verification timed out before both statuses became green.' >&2
+          exit 1
