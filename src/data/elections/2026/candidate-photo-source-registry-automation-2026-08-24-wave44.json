@@ -25,5 +25,14 @@
     "rightsRule": "Use Fair Shot Texas PAC candidate profiles only to corroborate candidate identity and race context and to follow outbound links to candidate websites or other original sources. Do not reuse Fair Shot Texas PAC-hosted portraits or graphics unless exact provenance and item-level reuse permission are independently verified.",
     "searchHint": "site:fairshottexaspac.org/candidate-database Texas House 2026 candidate website",
     "notes": "Verified August 24, 2026. Current candidate profiles include 2026 Texas House candidates such as Kristian Carranza and provide outbound campaign-site links. Registered as a source-discovery bridge, not an image-rights authority."
+  },
+  {
+    "domain": "cwa-tseu.org",
+    "sourceClass": "current-election-endorsement-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Texas State Employees Union CWA Local 6186 endorsement pages only to corroborate current 2026 candidate/race context and to discover the campaign websites explicitly listed for endorsed candidates. Do not reuse union-hosted images unless exact original provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:cwa-tseu.org/2026-endorsements Texas candidate campaign website House Senate",
+    "notes": "Verified August 24, 2026. The union's 2026 endorsements page directly lists campaign website URLs for multiple Texas candidates, including Kristian Carranza, Adrian Reyna, Pooja Sethi, Montserrat Garibay, Julio Salinas, Judith Zaffirini and others. This is a high-value outbound campaign-source bridge, not an image-rights authority."
   }
 ]
