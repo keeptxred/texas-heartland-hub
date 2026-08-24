@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "boldtexas2026.vote",
+    "sourceClass": "current-election-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Bold at the Ballot Box candidate-guide pages only to corroborate current 2026 Texas candidate identity and race context and to discover outbound official campaign websites or candidate-controlled sources. Do not reuse guide-hosted portraits or other images unless the original item provenance and reuse permission are independently verified.",
+    "searchHint": "site:boldtexas2026.vote Texas 2026 candidate guide campaign website statewide candidate",
+    "notes": "Verified August 24, 2026. The live statewide candidate guide lists current Texas candidates and directly exposes campaign website URLs for statewide races, making it useful as an outbound-source discovery bridge. It is not registered as an image-rights authority."
+  },
+  {
+    "domain": "texasaflcio.org",
+    "sourceClass": "current-election-endorsement-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Texas AFL-CIO 2026 endorsement and local labor-council pages to corroborate current nominee identity, office and race context and to generate follow-up searches for official campaign, government, union-member biography, or licensed portrait sources. Do not reuse Texas AFL-CIO-hosted images unless original provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:texasaflcio.org 2026 Texas candidate endorsement House Senate Congress candidate",
+    "notes": "Verified August 24, 2026. Texas AFL-CIO's July 21, 2026 general-election endorsement list covers statewide, congressional, Texas Senate and Texas House nominees and can corroborate many candidates still requiring source expansion. Registered strictly as a discovery/corroboration bridge."
+  },
+  {
+    "domain": "fairshottexaspac.org",
+    "sourceClass": "current-election-candidate-profile-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Fair Shot Texas PAC candidate profiles only to corroborate candidate identity and race context and to follow outbound links to candidate websites or other original sources. Do not reuse Fair Shot Texas PAC-hosted portraits or graphics unless exact provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:fairshottexaspac.org/candidate-database Texas House 2026 candidate website",
+    "notes": "Verified August 24, 2026. Current candidate profiles include 2026 Texas House candidates such as Kristian Carranza and provide outbound campaign-site links. Registered as a source-discovery bridge, not an image-rights authority."
+  }
+]
