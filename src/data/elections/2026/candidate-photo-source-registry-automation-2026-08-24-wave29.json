@@ -27,6 +27,15 @@
     "notes": "Verified August 24, 2026. The live site identifies Junior Ezeonu as the Texas House District 101 candidate, carries a paid-for-by Junior Ezeonu Campaign disclaimer, and directly hosts an image explicitly labeled '2026 headshot.jpeg'. TCTA and ATPE independently identify this domain as his 2026 campaign website."
   },
   {
+    "domain": "joemayesfortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Joe Mayes's official Texas House District 106 campaign website when page context confirms Joe Mayes and HD106 and the image is clearly attributable to the campaign. Prefer the site's introductory or biography portrait. Exclude logos, issue graphics, stock imagery, third-party embeds, and group photographs without unambiguous candidate identification.",
+    "searchHint": "site:joemayesfortexas.com Joe Mayes Texas House District 106 portrait introductory photo candidate",
+    "notes": "Verified August 24, 2026. The live campaign site identifies Joe Mayes as the Democratic candidate for Texas House District 106, directly hosts an introductory candidate photograph, and carries a political-advertising disclaimer paid for by the Joe Mayes for Texas Campaign. TCTA independently lists this domain as his campaign website."
+  },
+  {
     "domain": "tcta.org",
     "sourceClass": "current-election-candidate-directory",
     "discoveryStatus": "discovery-only",
