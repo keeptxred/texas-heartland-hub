@@ -26,6 +26,17 @@ const FEATURED_LAW_TOPICS: LawTopic[] = [
 
 const CHILD_SUPPORT_SLUG = "texas-child-support-guidelines-law";
 
+const LAW_AUTHORITY_LINKS = [
+  ["Texas Legislature", "/texas-legislature"],
+  ["Texas Bill Tracker", "/bills"],
+  ["2026 Election Central", "/elections/2026"],
+  ["Texas Voting", "/elections/voting"],
+  ["Texas Election Laws", "/news/texas-election-laws-explained"],
+  ["Texas Gun Laws", "/news/texas-gun-laws-explained"],
+  ["Texas Property Tax Laws", "/news/texas-property-tax-laws-explained"],
+  ["New Texas Laws for 2026", "/news/texas-new-laws-2026"],
+] as const;
+
 function ChildSupportPriorityGuide() {
   const guide = ALL_GUIDES[CHILD_SUPPORT_SLUG];
   if (!isSupportingGuideIndexable(guide)) return null;
@@ -60,6 +71,31 @@ function ChildSupportPriorityGuide() {
         </div>
       </div>
     </section>
+  );
+}
+
+function LawAuthorityDiscovery() {
+  return (
+    <nav className="border-y border-border bg-background" aria-label="Texas law authority resources">
+      <div className="mx-auto max-w-6xl px-4 py-8">
+        <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-primary">Texas law authority network</p>
+        <h2 className="mt-2 font-display text-2xl tracking-tight">Follow the law from statute to ballot</h2>
+        <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
+          These core hubs connect Texas statutes, current legislation, elections, voting rules and the major law guides Keep TX Red maintains. They are deliberately cross-linked so readers and search engines can move through the same source-backed authority graph.
+        </p>
+        <div className="mt-5 flex flex-wrap gap-x-5 gap-y-3 text-sm">
+          {LAW_AUTHORITY_LINKS.map(([label, href]) => (
+            <a
+              key={href}
+              href={href}
+              className="font-semibold text-foreground underline underline-offset-4 hover:text-primary"
+            >
+              {label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </nav>
   );
 }
 
@@ -122,6 +158,7 @@ export function LawGuideTopicGrid({ topic }: { topic: LawTopic }) {
   const topics = topic === "driving" ? FEATURED_LAW_TOPICS : [topic];
   return (
     <>
+      {topic === "driving" ? <LawAuthorityDiscovery /> : null}
       {topic === "driving" ? <ChildSupportPriorityGuide /> : null}
       {topics.map((item) => (
         <Fragment key={item}>
