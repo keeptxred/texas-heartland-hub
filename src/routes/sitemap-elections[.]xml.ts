@@ -15,6 +15,7 @@ const PRIORITY_ELECTION_PATHS = [
   "/elections/races",
   "/elections/statewide",
   "/elections/legislative",
+  "/elections/districts",
   "/elections/candidates",
   "/elections/polls",
   "/elections/forecast",
