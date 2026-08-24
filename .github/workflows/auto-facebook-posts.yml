@@ -35,6 +35,10 @@ jobs:
     env:
       TEXASDEFINED_DRY_RUN: ${{ (github.event_name == 'workflow_dispatch' && inputs.texasdefined_dry_run) || (github.event_name == 'schedule' && github.event.schedule == '*/5 * * * *') }}
       GH_TOKEN: ${{ github.token }}
+      # GitHub-hosted runners are intentionally challenged on browser-facing
+      # keeptxred.com dynamic paths. Machine hooks use the same deployed Worker
+      # directly while retaining strict GitHub Actions OIDC authorization.
+      AUTOMATION_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
     steps:
       - name: Check randomized Facebook schedules and post if due
         id: facebook
@@ -115,7 +119,7 @@ jobs:
           if [[ "$TEXASDEFINED_DRY_RUN" != "true" ]]; then
             run_page \
               "keeptxred" \
-              "https://keeptxred.com/api/public/hooks/auto-facebook-post" \
+              "${AUTOMATION_ORIGIN%/}/api/public/hooks/auto-facebook-post" \
               "/tmp/facebook-post-keeptxred.json"
           fi
 
@@ -124,7 +128,7 @@ jobs:
           # write publishing history.
           run_page \
             "texasdefined" \
-            "https://keeptxred.com/api/public/hooks/auto-facebook-post-texasdefined-smart" \
+            "${AUTOMATION_ORIGIN%/}/api/public/hooks/auto-facebook-post-texasdefined-smart" \
             "/tmp/facebook-post-texasdefined.json" \
             "scheduled" \
             "$TEXASDEFINED_DRY_RUN"

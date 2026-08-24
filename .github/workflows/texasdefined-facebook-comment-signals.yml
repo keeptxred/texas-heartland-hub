@@ -32,6 +32,10 @@ jobs:
     env:
       COMMENT_SIGNAL_SMOKE: ${{ (github.event_name == 'workflow_dispatch' && inputs.smoke_only) || (github.event_name == 'schedule' && github.event.schedule == '*/5 * * * *') }}
       GH_TOKEN: ${{ github.token }}
+      # GitHub-hosted runners are intentionally challenged on browser-facing
+      # keeptxred.com dynamic paths. This hook calls the same deployed Worker
+      # directly and remains protected by strict GitHub Actions OIDC validation.
+      AUTOMATION_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
     steps:
       - name: Request audience signals
         id: signals
@@ -52,7 +56,7 @@ jobs:
             --max-time 90 \
             -H 'accept: application/json' \
             -H "Authorization: Bearer ${oidc_token}" \
-            'https://keeptxred.com/api/public/hooks/texasdefined-facebook-comment-signals' || echo 000)"
+            "${AUTOMATION_ORIGIN%/}/api/public/hooks/texasdefined-facebook-comment-signals" || echo 000)"
           cat "$output" 2>/dev/null || true
           echo
           if [[ "$status" != '200' ]] || ! jq -e '.ok == true' "$output" >/dev/null 2>&1; then
