@@ -1,0 +1,65 @@
+[
+  {
+    "domain": "michaelmyersforhd10.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Michael Myers's verified official Texas House District 10 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Michael Myers Texas House District 10 michaelmyersforhd10.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. The live campaign site identifies Michael Myers's HD10 campaign, and the Ellis County Democratic Party's current 2026 candidate directory independently links michaelmyersforhd10.com as his campaign website."
+  },
+  {
+    "domain": "colorfulconservative.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Bonnie Abadie's verified Texas House District 102 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Bonnie Abadie Texas House District 102 colorfulconservative.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. Dallas County Republican Party event listings repeatedly identify colorfulconservative.com as Bonnie Abadie's campaign website for Texas House District 102."
+  },
+  {
+    "domain": "allisonmitchellfortexas.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Allison Mitchell's verified official Texas House District 108 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Allison Mitchell Texas House District 108 allisonmitchellfortexas.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. The campaign site identifies Allison Mitchell as running for Texas House District 108 and publishes a candidate biography with directly hosted candidate-identifying photography."
+  },
+  {
+    "domain": "stanleyfortexashouse.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Stephen Stanley's verified Texas House District 113 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Stephen Stanley Texas House District 113 stanleyfortexashouse.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. Dallas County Republican Party current candidate-event listings identify stanleyfortexashouse.com as Stephen Stanley's campaign website for House District 113."
+  },
+  {
+    "domain": "rosellinifortx.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Danny Rosellini's verified Texas House District 115 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Danny Rosellini Texas House District 115 rosellinifortx.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. Dallas County Republican Party current candidate-event listings identify rosellinifortx.com as Danny Rosellini's campaign website for House District 115."
+  },
+  {
+    "domain": "timforhouse.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Tim McDonough's verified Texas House District 114 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Tim McDonough Texas House District 114 timforhouse.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. TCTA's current candidate profile identifies timforhouse.com as Tim McDonough's website for Texas House District 114, and a current Dallas County candidate page independently links the same campaign domain."
+  },
+  {
+    "domain": "mostynfortexas.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Ben Mostyn's verified Texas House District 117 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Ben Mostyn Texas House District 117 mostynfortexas.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. The live site is paid for by Mostyn for Texas and identifies the campaign for State House District 117; current voter-guide sources independently identify Ben Mostyn as the 2026 Republican candidate for House District 117."
+  }
+]
