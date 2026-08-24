@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "hd126.stanstanart.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Stan Stanart's official Texas House District 126 campaign website when page context independently confirms Stan Stanart and District 126 and the image is clearly attributable to the campaign. Exclude endorsement portraits of other people, stock photography, logos, issue graphics, third-party embeds, and any image where Stan Stanart cannot be unambiguously identified.",
+    "searchHint": "site:hd126.stanstanart.com Stan Stanart Texas House District 126 portrait candidate photo",
+    "notes": "Verified August 23, 2026. The live site identifies Stan Stanart as the Republican candidate for Texas House District 126, describes his May 26 runoff win and November campaign, carries a paid political advertisement notice for the Stan Stanart Campaign, and directly hosts campaign imagery. This domain was not present in the repository's existing candidate-photo source registries at verification time."
+  }
+]
