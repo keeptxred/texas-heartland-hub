@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "margofortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs published by Margo Jordan's official Texas State Board of Education District 6 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, quote graphics, issue graphics, stock imagery, third-party embeds, donation widgets, and images that do not clearly identify Margo Jordan.",
+    "searchHint": "site:margofortexas.com Margo Jordan Texas State Board of Education District 6 portrait candidate",
+    "notes": "Verified August 24, 2026 from the live official campaign site, which identifies Margo Jordan as a write-in candidate for Texas State Board of Education District 6 and publishes candidate biography and campaign imagery."
+  },
+  {
+    "domain": "votejuniorezeonu.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs published by Junior Ezeonu's official Texas House District 101 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, issue graphics, endorsement graphics, stock imagery, third-party embeds, and images that do not clearly identify Junior Ezeonu.",
+    "searchHint": "site:votejuniorezeonu.com Junior Ezeonu Texas House District 101 portrait candidate",
+    "notes": "Re-verified August 24, 2026 from the live official campaign site. The homepage explicitly identifies Junior Ezeonu as the Texas House District 101 candidate, contains a 2026 candidate headshot and additional biography photography, and is independently linked by TCTA's 2026 candidate guide. This supersedes the earlier review-only source entry."
+  }
+]
