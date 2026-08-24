@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "txcd2.org",
+    "sourceClass": "local-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Congressional District 2 Democratic candidate directories only to corroborate current candidate identity, district, and campaign participation and to follow links to candidate-controlled campaign websites or official profiles. Do not reuse TXCD2-hosted portraits, logos, or other imagery unless original provenance and item-level reuse rights are independently verified.",
+    "searchHint": "site:txcd2.org/candidates 2026 Texas House candidate campaign website Harris County",
+    "notes": "New source bridge verified August 24, 2026. The current Democratic Candidates directory lists multiple 2026 state-legislative candidates and exposes direct Website links for candidates including Michelle Williams (HD 127), Desiree Klaus (HD 128), Stefanie Bord (HD 126), Tyler Smith (HD 138), Penny Morales Shaw (HD 148), and A'Yonna Kellum (HD 150). Registered for source discovery only; it is not an image-rights authority."
+  },
+  {
+    "domain": "fortbenddemocrat.com",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Fort Bend Democratic candidate and ballot-guide pages only to corroborate current candidate identity, office, and ballot context and to discover candidate-controlled campaign websites or official profiles. Do not reuse Fort Bend Democratic-hosted portraits, graphics, or other imagery unless original provenance and item-level reuse rights are independently verified.",
+    "searchHint": "site:fortbenddemocrat.com/candidates 2026 Texas candidate campaign website Fort Bend",
+    "notes": "New source bridge verified August 24, 2026. The live Democratic Candidates & Ballot Guide publishes current 2026 federal, state, and local candidate listings relevant to Fort Bend County. Registered as a discovery and corroboration source only, not an image-rights authority."
+  }
+]
