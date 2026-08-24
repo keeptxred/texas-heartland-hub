@@ -14,7 +14,18 @@ describe("canonicalHostRedirect", () => {
     );
   });
 
-  it("does not redirect the canonical apex", () => {
+  it("permanently redirects the HTTP apex to the HTTPS apex", () => {
+    const response = canonicalHostRedirect(
+      new Request("http://keeptxred.com/laws?utm_source=test"),
+    );
+
+    expect(response?.status).toBe(308);
+    expect(response?.headers.get("location")).toBe(
+      "https://keeptxred.com/laws?utm_source=test",
+    );
+  });
+
+  it("does not redirect the canonical HTTPS apex", () => {
     expect(canonicalHostRedirect(new Request("https://keeptxred.com/bills"))).toBeNull();
   });
 
