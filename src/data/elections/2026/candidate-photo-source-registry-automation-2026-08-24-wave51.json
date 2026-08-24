@@ -43,5 +43,50 @@
     "rightsRule": "Use candidate-identifying photography hosted on Sylvia Soto's verified Texas House District 124 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
     "searchHint": "Sylvia Soto Texas House District 124 sylviasoto.com official campaign portrait",
     "notes": "New candidate source verified August 24, 2026 through the current Vote-USA general-election listing, which links sylviasoto.com for Sylvia Soto in Texas House District 124; current election coverage independently confirms Soto as the Republican candidate in that district."
+  },
+  {
+    "domain": "stefaniebordfortexas.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Stefanie Bord's verified official Texas House District 126 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Stefanie Bord Texas House District 126 stefaniebordfortexas.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. The live site identifies Stefanie Bord as a candidate for Texas House District 126, supplies campaign contact information, and carries a paid political advertisement disclaimer. Vote-USA independently links the domain for the general-election candidate."
+  },
+  {
+    "domain": "hd126.stanstanart.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Stan Stanart's verified Texas House District 126 campaign subdomain for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Stan Stanart Texas House District 126 hd126.stanstanart.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. The live site identifies Stan Stanart as the Republican candidate for House District 126 and contains current November-election campaign material. Vote-USA independently links the same campaign subdomain."
+  },
+  {
+    "domain": "michelleforstaterep.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Michelle Williams's verified official Texas House District 127 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Michelle Williams Texas House District 127 michelleforstaterep.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. The live site explicitly says Michelle Williams is running for State Representative in House District 127, hosts candidate imagery, supplies campaign contact information, and carries a campaign paid-for disclaimer. Vote-USA independently links the domain."
+  },
+  {
+    "domain": "desireeklaustx.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Desiree Klaus's verified Texas House District 128 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Desiree Klaus Texas House District 128 desireeklaustx.com official campaign portrait",
+    "notes": "New candidate source discovered August 24, 2026 from the current Vote-USA general-election listing, which links desireeklaustx.com for Desiree Klaus in Texas House District 128. Treat candidate imagery as eligible for approval only after the registry discovery script independently validates the candidate page and image."
+  },
+  {
+    "domain": "tombutler.org",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Tom Butler's verified Texas House District 128 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Tom Butler Texas House District 128 tombutler.org official campaign portrait",
+    "notes": "New candidate source discovered August 24, 2026 from the current Vote-USA general-election listing, which links tombutler.org for Tom Butler in Texas House District 128. Current Houston-area primary coverage independently identifies Butler as a candidate and links a campaign website."
   }
 ]
