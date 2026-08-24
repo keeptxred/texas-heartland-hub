@@ -21,6 +21,17 @@ const findings = [
     discoveryMethod: "official-campaign-profile"
   },
   {
+    candidateId: "candidate-chris-spencer-republican-race-2026-texas-house-1",
+    imageUrl: "https://lirp.cdn-website.com/e481f125/dms3rep/multi/opt/chris-cutout-66f61142-468w.png",
+    sourceUrl: "https://www.chrisspencer.com/",
+    altText: "Chris Spencer, Republican candidate for Texas House District 1",
+    credit: "Chris Spencer campaign",
+    license: null,
+    permissionBasis: "Candidate portrait published on the official campaign website and used for editorial candidate identification with attribution and a source link.",
+    usageStatus: "approved",
+    discoveryMethod: "official-campaign-profile"
+  },
+  {
     candidateId: "candidate-roxanne-lathan-democratic-race-2026-texas-house-11",
     imageUrl: "https://images.squarespace-cdn.com/content/68e58c8b8b6d880c64714bab/ce4d23b8-f3e3-4f31-b724-c3ce8324a502/IMG_0515.jpeg?content-type=image%2Fjpeg",
     sourceUrl: "https://www.roxanne4texans.com/",
