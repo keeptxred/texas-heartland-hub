@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "mesquite-news.com",
+    "sourceClass": "university-local-election-news",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use The Mesquite News only to corroborate candidate identity, race context, biography details, and to trace photo provenance or outbound campaign/source links. Do not reuse Mesquite News-hosted or embedded images unless the exact original image source and item-level reuse permission are independently verified; captions that credit another publisher or campaign must be followed back to that original source before approval.",
+    "searchHint": "site:mesquite-news.com 2026 Texas candidate House Senate election candidate photo campaign",
+    "notes": "Verified August 24, 2026. Texas A&M University-San Antonio's Mesquite News has current 2026 candidate coverage, including Texas House District 118 profiles with candidate-identifying photographs and explicit provenance cues. Registered as a discovery/provenance bridge only, not an image-rights authority."
+  },
+  {
+    "domain": "tlrpac.org",
+    "sourceClass": "texas-pac-candidate-endorsement-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Texans for Lawsuit Reform PAC endorsement and press-release pages to corroborate current Texas candidate identity, office, district, endorsement timing, and to generate follow-up searches for official campaign or government portraits. Do not reuse TLRPAC-hosted images unless original provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:tlrpac.org 2026 Texas candidate HD SD endorsement campaign website",
+    "notes": "Verified August 24, 2026. TLRPAC maintains dated 2025-2026 Texas candidate endorsement releases across legislative races, including current candidates still missing canonical portraits. This source is registered strictly for discovery and corroboration."
+  },
+  {
+    "domain": "sacurrent.com",
+    "sourceClass": "reputable-local-election-news",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use San Antonio Current candidate and election coverage to corroborate current candidate identity and race context and to trace explicit photo credits back to campaigns, social profiles, photographers, or other originating sources. Do not reuse San Antonio Current-hosted imagery unless the exact item-level license or originating-source permission is independently verified.",
+    "searchHint": "site:sacurrent.com 2026 Texas House Senate candidate campaign photo San Antonio",
+    "notes": "Verified August 24, 2026. Current 2026 election coverage includes candidate-identifying images with explicit source credits, such as campaign or social-media provenance. Registered as a provenance lead source only; images remain non-approved until traced to an eligible original source."
+  }
+]
