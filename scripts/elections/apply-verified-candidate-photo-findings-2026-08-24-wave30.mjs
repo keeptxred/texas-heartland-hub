@@ -19,6 +19,17 @@ const findings = [
     permissionBasis: "Candidate-identifying portrait published on the official campaign biography page and used for editorial candidate identification with campaign attribution and an exact source link.",
     usageStatus: "approved",
     discoveryMethod: "official-campaign-profile"
+  },
+  {
+    candidateId: "candidate-ben-mostyn-republican-race-2026-texas-house-117",
+    imageUrl: "https://mostynfortexas.com/wp-content/uploads/2023/03/Benjamin-Mostyn-1N1A0972-a-Edited-1.png",
+    sourceUrl: "https://mostynfortexas.com/",
+    altText: "Ben Mostyn, Republican candidate for Texas House District 117",
+    credit: "Mostyn for Texas campaign",
+    license: null,
+    permissionBasis: "Candidate-identifying photograph hosted on the current official Mostyn for Texas campaign homepage and used for editorial candidate identification with campaign attribution and an exact source link.",
+    usageStatus: "approved",
+    discoveryMethod: "official-campaign-profile"
   }
 ];
 
