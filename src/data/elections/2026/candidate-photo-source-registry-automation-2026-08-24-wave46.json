@@ -25,5 +25,113 @@
     "rightsRule": "Use San Antonio Current candidate and election coverage to corroborate current candidate identity and race context and to trace explicit photo credits back to campaigns, social profiles, photographers, or other originating sources. Do not reuse San Antonio Current-hosted imagery unless the exact item-level license or originating-source permission is independently verified.",
     "searchHint": "site:sacurrent.com 2026 Texas House Senate candidate campaign photo San Antonio",
     "notes": "Verified August 24, 2026. Current 2026 election coverage includes candidate-identifying images with explicit source credits, such as campaign or social-media provenance. Registered as a provenance lead source only; images remain non-approved until traced to an eligible original source."
+  },
+  {
+    "domain": "michaelmyersforhd10.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Michael Myers' official 2026 Texas House District 10 campaign website for editorial candidate identification with campaign attribution and a source link. The discovery script must independently verify the page matches the candidate and validate the image before approval.",
+    "searchHint": "Michael Myers Texas House District 10 official campaign michaelmyersforhd10.com",
+    "notes": "Verified August 24, 2026 through the live campaign site linked by the Ellis County Democratic Party candidate directory."
+  },
+  {
+    "domain": "roxanne4texans.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Roxanne Lathan's official 2026 Texas House District 11 campaign website for editorial candidate identification with campaign attribution and a source link. The discovery script must independently verify the page matches the candidate and validate the image before approval.",
+    "searchHint": "Roxanne Lathan Texas House District 11 official campaign roxanne4texans.com",
+    "notes": "Verified August 24, 2026. The live site identifies Roxanne Lathan as the Texas House District 11 candidate and publishes campaign-hosted candidate imagery."
+  },
+  {
+    "domain": "zach4texas.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Zach Herbert's official 2026 Texas House District 112 campaign website for editorial candidate identification with campaign attribution and a source link. The discovery script must independently verify the page matches the candidate and validate the image before approval.",
+    "searchHint": "Zach Herbert Texas House District 112 official campaign zach4texas.com",
+    "notes": "Verified August 24, 2026 through the live campaign site and corroborated by TCTA and Richardson Area Democrats."
+  },
+  {
+    "domain": "zackdunn.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Zack Dunn's official 2026 Texas House District 121 campaign website for editorial candidate identification with campaign attribution and a source link. The discovery script must independently verify the page matches the candidate and validate the image before approval.",
+    "searchHint": "Zack Dunn Texas House District 121 official campaign zackdunn.com",
+    "notes": "Verified August 24, 2026 through the live campaign site and the North East Bexar County Democrats candidate directory."
+  },
+  {
+    "domain": "voteadrianreyna.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Adrian Reyna's official 2026 Texas House District 125 campaign website for editorial candidate identification with campaign attribution and a source link. The discovery script must independently verify the page matches the candidate and validate the image before approval.",
+    "searchHint": "Adrian Reyna Texas House District 125 official campaign voteadrianreyna.com",
+    "notes": "Verified August 24, 2026. The live campaign site identifies Adrian Reyna and his House District 125 campaign and hosts candidate imagery."
+  },
+  {
+    "domain": "childsfortexas.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Staci Childs' official 2026 Texas House District 131 campaign website for editorial candidate identification with campaign attribution and a source link. The discovery script must independently verify the page matches the candidate and validate the image before approval.",
+    "searchHint": "Staci Childs Texas House District 131 official campaign childsfortexas.com",
+    "notes": "Verified August 24, 2026. The live site carries the Childs For Texas paid-for-by disclaimer and candidate portraits for the House District 131 campaign."
+  },
+  {
+    "domain": "brett4texas.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Brett Robinson's official 2026 Texas House District 130 campaign website for editorial candidate identification with campaign attribution and a source link. The discovery script must independently verify the page matches the candidate and validate the image before approval.",
+    "searchHint": "Brett Robinson Texas House District 130 official campaign brett4texas.com",
+    "notes": "Verified August 24, 2026 through the live campaign site and TCTA's candidate directory."
+  },
+  {
+    "domain": "shellynickels.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Shelly Nickels' official 2026 Texas House District 122 campaign website for editorial candidate identification with campaign attribution and a source link. The discovery script must independently verify the page matches the candidate and validate the image before approval.",
+    "searchHint": "Shelly Nickels Texas House District 122 official campaign shellynickels.com",
+    "notes": "Verified August 24, 2026. The live site identifies Dr. Shelly Nickels as the Democratic candidate for House District 122 and includes campaign-hosted portraits with a paid political advertisement disclaimer."
+  },
+  {
+    "domain": "elliscountydemocraticparty.com",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use the Ellis County Democratic Party candidate directory only to corroborate current candidate identity and discover candidate-controlled campaign websites. Do not reuse party-hosted portraits unless original provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:elliscountydemocraticparty.com/candidates 2026 Texas candidate campaign website",
+    "notes": "New source bridge verified August 24, 2026. The current candidate directory links directly to candidate campaign sites, including Michael Myers for House District 10."
+  },
+  {
+    "domain": "nebcd.org",
+    "sourceClass": "county-party-endorsement-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use North East Bexar County Democrats' 2026 endorsement directory only to corroborate candidate identity and follow campaign-site links. Do not reuse NEBCD-hosted candidate portraits without independent provenance and item-level rights verification.",
+    "searchHint": "site:nebcd.org/endorsements 2026 Texas candidate campaign site",
+    "notes": "New source bridge verified August 24, 2026. The directory links directly to multiple current federal, Texas House, and judicial campaign sites."
+  },
+  {
+    "domain": "texashdcc.com",
+    "sourceClass": "state-party-campaign-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use the Texas House Democratic Campaign Committee site only to identify active target-race candidates and discover their candidate-controlled campaign sites. Do not reuse committee-hosted portraits without independent provenance and item-level rights verification.",
+    "searchHint": "site:texashdcc.com 2026 Texas House candidate campaign",
+    "notes": "New source bridge verified August 24, 2026. The site currently identifies multiple active 2026 Texas House campaigns including Allison Mitchell, Zack Dunn, Tyler Smith, Josh Wallenstein, and other missing-photo candidates."
+  },
+  {
+    "domain": "rad.vote",
+    "sourceClass": "local-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Richardson Area Democrats candidate directories only to corroborate current candidate identity and discover campaign-controlled websites or social profiles. Do not reuse directory-hosted portraits without independently verified provenance and item-level reuse rights.",
+    "searchHint": "site:rad.vote 2026 Texas candidate campaign website",
+    "notes": "New source bridge verified August 24, 2026. The current primary guide links directly to Zach Herbert's official campaign site and other candidate-controlled sources."
   }
 ]
