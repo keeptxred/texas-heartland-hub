@@ -88,5 +88,32 @@
     "rightsRule": "Use candidate-identifying photography hosted on Tom Butler's verified Texas House District 128 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
     "searchHint": "Tom Butler Texas House District 128 tombutler.org official campaign portrait",
     "notes": "New candidate source discovered August 24, 2026 from the current Vote-USA general-election listing, which links tombutler.org for Tom Butler in Texas House District 128. Current Houston-area primary coverage independently identifies Butler as a candidate and links a campaign website."
+  },
+  {
+    "domain": "voterickfortexas.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Ricardo 'Rick' Martinez's verified official Texas House District 125 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Ricardo Rick Martinez Texas House District 125 voterickfortexas.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. The live site explicitly identifies Ricardo 'Rick' Martinez as a candidate for Texas House District 125, includes campaign imagery and contact details, and current San Antonio candidate coverage independently links a campaign website for Martinez."
+  },
+  {
+    "domain": "votewittliff.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Albert Wittliff's verified official Texas House District 129 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Albert Wittliff Texas House District 129 votewittliff.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. The live site carries a Vote Wittliff TX129 paid political advertisement notice and identifies Albert Wittliff for Texas House District 129. TCTA independently lists votewittliff.com as his campaign website."
+  },
+  {
+    "domain": "bowenfortx.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Scott Bowen's verified official Texas House District 129 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Scott Bowen Texas House District 129 bowenfortx.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. The live site identifies Scott Bowen as running for HD 129, carries a Scott Bowen Campaign paid-for disclaimer, and Teach the Vote independently confirms he won the Republican primary and will be on the November 2026 general-election ballot."
   }
 ]
