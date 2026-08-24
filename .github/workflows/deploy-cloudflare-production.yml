@@ -275,46 +275,38 @@ jobs:
           print(f"Attached {result['hostname']} to {result['service']} in zone {result['zone_name']} after preview health passed.")
           PY
 
-      - name: Verify production database and AI health
+      - name: Verify promoted Worker health and production edge route
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.activate_custom_domain == true }}
         shell: bash
+        env:
+          PREVIEW_URL: ${{ steps.deploy.outputs.preview_url }}
         run: |
           set -euo pipefail
-          health_url="https://$PRODUCTION_HOSTNAME/api/public/hooks/health"
-          last_diagnostic='No production health response received.'
 
-          for attempt in $(seq 1 20); do
-            body="$(mktemp)"
-            code="$(curl --silent --show-error --location --max-time 15 \
-              --output "$body" --write-out '%{http_code}' "$health_url" || true)"
-            response="$(cat "$body")"
-            rm -f "$body"
-
-            if [[ "$code" == '200' ]]; then
-              if python3 - "$response" <<'PY'
+          # GitHub-hosted runner IPs are intentionally challenged by the production
+          # zone on dynamic/browser-facing paths. Verify the promoted Worker through
+          # its workers.dev origin, then verify that the production hostname is
+          # reachable through Cloudflare on a static path. The preceding Domains API
+          # step already requires the hostname to map to this exact Worker service.
+          health_url="${PREVIEW_URL%/}/api/public/hooks/health"
+          response="$(curl --retry 20 --retry-delay 3 --retry-all-errors \
+            --fail-with-body --silent --show-error "$health_url")"
+          python3 - "$response" <<'PY'
           import json, sys
-          try:
-              data = json.loads(sys.argv[1])
-          except Exception as exc:
-              raise SystemExit(f"invalid JSON: {exc}")
+          data = json.loads(sys.argv[1])
           failures = []
           if data.get("database") != "ok": failures.append("database is not ok")
           if data.get("ai_provider_ready") is not True: failures.append("AI provider is not ready")
-          if failures: raise SystemExit("; ".join(failures))
+          if failures:
+              raise SystemExit("Promoted Worker health verification failed: " + "; ".join(failures))
           print(json.dumps({"database": data.get("database"), "ai_provider_ready": data.get("ai_provider_ready")}))
           PY
-              then
-                echo "Production health passed on attempt $attempt."
-                exit 0
-              fi
-              last_diagnostic="HTTP 200 but production health payload was not ready"
-            else
-              last_diagnostic="HTTP ${code:-unknown} from production health endpoint"
-            fi
 
-            echo "Production health attempt $attempt/20 not ready: $last_diagnostic"
-            sleep 5
-          done
-
-          echo "Production health verification failed after propagation window: $last_diagnostic" >&2
-          exit 1
+          robots_url="https://$PRODUCTION_HOSTNAME/robots.txt"
+          robots_body="$(curl --retry 10 --retry-delay 3 --retry-all-errors \
+            --fail-with-body --silent --show-error "$robots_url")"
+          if [[ -z "$robots_body" ]]; then
+            echo "Production edge returned an empty robots.txt response." >&2
+            exit 1
+          fi
+          echo "Promoted Worker health passed and production edge route is reachable."
