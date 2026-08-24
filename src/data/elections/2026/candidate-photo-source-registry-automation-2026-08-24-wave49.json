@@ -1,0 +1,47 @@
+[
+  {
+    "domain": "texashdcc.com",
+    "sourceClass": "state-legislative-campaign-committee-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Texas House Democratic Campaign Committee target-race listings to corroborate candidate identity and district and to follow candidate-controlled links. Do not reuse committee-hosted portraits or graphics unless original provenance and item-level reuse rights are independently verified.",
+    "searchHint": "site:texashdcc.com Texas House target race candidate campaign 2026",
+    "notes": "New source bridge verified August 24, 2026. Current target-race listings identify candidates including Allison Mitchell, Jordan Wheatley, Brittany Black, Julio Salinas, Denise Wooten, Zack Dunn, Tyler Smith, and Josh Wallenstein. Registered for discovery and corroboration only."
+  },
+  {
+    "domain": "harrisdemocrats.org",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Harris County Democratic Party candidate listings to corroborate current candidate identity, office, and campaign participation and to follow candidate-controlled website/social links. Do not reuse party-hosted portraits or graphics unless provenance and item-level reuse rights are independently verified.",
+    "searchHint": "site:harrisdemocrats.org/candidates 2026 Texas House candidate website",
+    "notes": "New source bridge verified August 24, 2026. Current listings include Stefanie Bord, Desiree Klaus, Brett Robinson, Sara McGee, A'Yonna Kellum, appellate candidates, and other Harris County-area nominees."
+  },
+  {
+    "domain": "houston.com",
+    "sourceClass": "local-news-candidate-profile",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Houston.com candidate profiles to corroborate candidate identity and discover candidate-controlled websites or social profiles. Do not reuse Houston.com-hosted imagery unless the page explicitly documents candidate-supplied provenance or another independently verified reuse basis.",
+    "searchHint": "site:houston.com/news Texas House candidate 2026 campaign website",
+    "notes": "New local-profile source verified August 24, 2026. A current profile for Tyler Smith (HD 138) corroborates his candidacy and helps bridge to his candidate-controlled web presence."
+  },
+  {
+    "domain": "communityimpact.com",
+    "sourceClass": "candidate-supplied-local-news-profile",
+    "discoveryStatus": "review-required",
+    "autoApprove": false,
+    "rightsRule": "Use Community Impact candidate Q&A pages as a portrait lead only when the article explicitly states that photos were submitted by the respective candidates. Preserve the article as provenance, and require item-level verification that the selected image corresponds to the named candidate before approval.",
+    "searchHint": "site:communityimpact.com election 2026 Texas candidate photos submitted by respective candidates",
+    "notes": "Expanded source class verified August 24, 2026. The HD 150 candidate Q&A explicitly states that all photos were submitted by the respective candidates, making it a useful provenance lead for A'Yonna Kellum and similar races, but not an automatic approval source."
+  },
+  {
+    "domain": "vote-usa.org",
+    "sourceClass": "general-election-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Vote-USA general-election listings to corroborate ballot presence and discover candidate-controlled campaign websites. Do not treat Vote-USA-hosted portraits as reusable without independent item-level provenance and rights verification.",
+    "searchHint": "site:vote-usa.org 2026 Texas general election candidate website",
+    "notes": "New source bridge verified August 24, 2026. Current general-election listings expose campaign websites for candidates such as Stefanie Bord, Michelle Williams, Desiree Klaus, and other legislative nominees."
+  }
+]
