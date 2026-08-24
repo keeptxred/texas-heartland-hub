@@ -281,13 +281,40 @@ jobs:
         run: |
           set -euo pipefail
           health_url="https://$PRODUCTION_HOSTNAME/api/public/hooks/health"
-          response="$(curl --retry 10 --retry-delay 3 --retry-all-errors --fail-with-body --silent --show-error "$health_url")"
-          echo "$response"
-          python3 - "$response" <<'PY'
+          last_diagnostic='No production health response received.'
+
+          for attempt in $(seq 1 20); do
+            body="$(mktemp)"
+            code="$(curl --silent --show-error --location --max-time 15 \
+              --output "$body" --write-out '%{http_code}' "$health_url" || true)"
+            response="$(cat "$body")"
+            rm -f "$body"
+
+            if [[ "$code" == '200' ]]; then
+              if python3 - "$response" <<'PY'
           import json, sys
-          data = json.loads(sys.argv[1])
+          try:
+              data = json.loads(sys.argv[1])
+          except Exception as exc:
+              raise SystemExit(f"invalid JSON: {exc}")
           failures = []
           if data.get("database") != "ok": failures.append("database is not ok")
           if data.get("ai_provider_ready") is not True: failures.append("AI provider is not ready")
-          if failures: raise SystemExit("Production health verification failed: " + "; ".join(failures))
+          if failures: raise SystemExit("; ".join(failures))
+          print(json.dumps({"database": data.get("database"), "ai_provider_ready": data.get("ai_provider_ready")}))
           PY
+              then
+                echo "Production health passed on attempt $attempt."
+                exit 0
+              fi
+              last_diagnostic="HTTP 200 but production health payload was not ready"
+            else
+              last_diagnostic="HTTP ${code:-unknown} from production health endpoint"
+            fi
+
+            echo "Production health attempt $attempt/20 not ready: $last_diagnostic"
+            sleep 5
+          done
+
+          echo "Production health verification failed after propagation window: $last_diagnostic" >&2
+          exit 1
