@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "votemuse.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Fatima La'Juan Muse's verified official Texas House District 2 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Fatima La'Juan Muse Texas House District 2 votemuse.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. The live site identifies Muse as the candidate for Texas House District 2, contains current November 2026 election messaging, and carries a 'Paid for by Muse for TX HD 2' disclaimer. Vote-USA independently links votemuse.com for the general-election nominee."
+  },
+  {
+    "domain": "fncarr4tx.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Frank Carr's verified Texas House District 24 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer rights for unrelated or third-party imagery.",
+    "searchHint": "Frank Carr Texas House District 24 fncarr4tx.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. Teach the Vote and TCTA independently identify fncarr4tx.com as Frank Carr's campaign website and confirm he is the Democratic nominee for Texas House District 24 on the November 2026 general-election ballot."
+  },
+  {
+    "domain": "sites.google.com",
+    "sourceClass": "candidate-controlled-hosted-site",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use only the verified /view/allenforthepeople campaign path as a discovery bridge for Fantasha Allen. Do not auto-approve imagery from the shared sites.google.com host; any candidate portrait must be independently tied to the candidate-controlled campaign page and have item-level provenance and reuse basis documented before approval.",
+    "searchHint": "site:sites.google.com/view/allenforthepeople Fantasha Allen Texas House District 7 campaign",
+    "notes": "New campaign-source bridge verified August 24, 2026. The Allen for The People page identifies Fantasha Allen as running for Texas House District 7 and supplies campaign contact information. Because Google Sites is a shared hosting domain, this registry entry is deliberately discovery-only and cannot auto-approve hosted images."
+  }
+]
