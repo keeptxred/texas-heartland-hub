@@ -9,10 +9,13 @@ type ServerEntry = {
 };
 
 const CANONICAL_HOST = "keeptxred.com";
+const WWW_HOST = `www.${CANONICAL_HOST}`;
 
 export function canonicalHostRedirect(request: Request): Response | null {
   const url = new URL(request.url);
-  if (url.hostname !== `www.${CANONICAL_HOST}`) return null;
+  const isSiteHost = url.hostname === CANONICAL_HOST || url.hostname === WWW_HOST;
+  if (!isSiteHost) return null;
+  if (url.hostname === CANONICAL_HOST && url.protocol === "https:") return null;
 
   url.protocol = "https:";
   url.hostname = CANONICAL_HOST;
