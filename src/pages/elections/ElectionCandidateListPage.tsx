@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
+import candidatesSnapshot from "@/data/elections/2026/candidates.json";
 import { ElectionDirectoryTrustPanel } from "@/components/elections/ElectionDirectoryTrustPanel";
 import {
   ElectionEmptyState,
@@ -9,6 +10,15 @@ import {
   ElectionNavigation,
 } from "@/components/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
+
+const SSR_PRIORITY_CANDIDATES = candidatesSnapshot
+  .filter(
+    (candidate) =>
+      candidate.publicationStatus === "published" && candidate.verificationStatus === "verified",
+  )
+  .slice()
+  .sort((a, b) => a.fullName.localeCompare(b.fullName))
+  .slice(0, 12);
 
 export interface ElectionCandidateListPageProps {
   children?: ReactNode;
@@ -76,6 +86,39 @@ function CandidateDirectoryPrimer() {
           </Link>
         ))}
       </nav>
+
+      {SSR_PRIORITY_CANDIDATES.length > 0 ? (
+        <div className="mt-8 border-t border-border pt-6">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
+                Published &amp; verified profiles
+              </p>
+              <h3 className="mt-1 text-xl font-bold tracking-tight text-foreground">
+                Candidate profiles available now
+              </h3>
+            </div>
+            <Link
+              to="/elections/races"
+              className="text-sm font-semibold text-primary underline-offset-4 hover:underline"
+            >
+              Browse candidates by race →
+            </Link>
+          </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {SSR_PRIORITY_CANDIDATES.map((candidate) => (
+              <Link
+                key={candidate.id}
+                to="/elections/candidates/$candidateSlug"
+                params={{ candidateSlug: candidate.slug }}
+                className="rounded-lg border border-border bg-background px-4 py-3 font-semibold text-foreground hover:border-primary hover:text-primary"
+              >
+                {candidate.fullName}
+              </Link>
+            ))}
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }
@@ -114,8 +157,8 @@ export function ElectionCandidateListPage({
           {isLoading ? (
             <div className="space-y-4">
               <p className="text-sm leading-6 text-muted-foreground">
-                The interactive candidate cards are loading. The directory guide and election links above
-                remain available in the initial page response for readers and search crawlers.
+                The interactive candidate cards are loading. Published candidate links and election
+                navigation above are already available in the initial page response.
               </p>
               <ElectionLoading variant="cards" count={6} label="Loading Texas election candidates" />
             </div>
