@@ -17,6 +17,19 @@ export interface ElectionLayoutProps {
   indexable?: boolean;
 }
 
+const ELECTION_DISCOVERY_LINKS = [
+  ["2026 Election Central", "/elections/2026"],
+  ["Races", "/elections/races"],
+  ["Statewide", "/elections/statewide"],
+  ["Legislative", "/elections/legislative"],
+  ["Districts", "/elections/districts"],
+  ["Candidates", "/elections/candidates"],
+  ["Polls", "/elections/polls"],
+  ["Forecast", "/elections/forecast"],
+  ["Results", "/elections/results"],
+  ["Voting", "/elections/voting"],
+] as const;
+
 export function ElectionLayout({
   title,
   description,
@@ -39,6 +52,7 @@ export function ElectionLayout({
   const canonicalPath = canonicalUrl ? canonicalUrl.replace(/^https?:\/\/[^/]+/, "") || "/" : "";
   const normalized = pathname.length > 1 && pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
   const isCanonicalPage = Boolean(canonicalPath) && canonicalPath === normalized;
+  const isElectionPage = normalized === "/elections" || normalized.startsWith("/elections/");
   const defaultSchema = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -125,6 +139,22 @@ export function ElectionLayout({
             .
           </div>
         </aside>
+
+        {isElectionPage && (
+          <nav className="border-b border-border bg-background" aria-label="Election Central sections">
+            <div className="mx-auto flex max-w-7xl flex-wrap gap-x-5 gap-y-2 px-4 py-4 text-sm sm:px-6 lg:px-8">
+              {ELECTION_DISCOVERY_LINKS.map(([label, href]) => (
+                <a
+                  key={href}
+                  href={href}
+                  className="font-semibold text-foreground underline-offset-4 hover:text-primary hover:underline"
+                >
+                  {label}
+                </a>
+              ))}
+            </div>
+          </nav>
+        )}
 
         {navigation && (
           <div className="border-b border-border bg-background">
