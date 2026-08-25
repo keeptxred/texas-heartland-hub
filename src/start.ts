@@ -88,6 +88,7 @@ const BAD_YEAR_NEWS_REDIRECTS = new Map([
   ["live-2001-12-18-texas-secretary-of-state-announces-temporary-relocation-of-public-serv-mdazcr", "live-2025-12-18-texas-secretary-of-state-announces-temporary-relocation-of-public-serv-mdazcr"],
 ]);
 const CANONICAL_ORIGIN = "https://keeptxred.com";
+const DIRECT_WORKER_HOST = "keeptxred-site.freddy-coppola.workers.dev";
 
 const TRACKING_PARAMS = new Set([
   "fbclid",
@@ -198,9 +199,16 @@ const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
   const requestHost = (forwardedHost || url.host).toLowerCase();
   const requestProto = forwardedProto || url.protocol.replace(":", "").toLowerCase();
   const canRedirect = request.method === "GET" || request.method === "HEAD";
+  const isDirectAuthorityReference =
+    requestHost === DIRECT_WORKER_HOST
+    && (
+      url.pathname === "/elections/reference.json"
+      || /^\/bills\/texas\/\d+\/[a-zA-Z]+\/\d+\/reference\.json\/?$/.test(url.pathname)
+    );
   const excludedPath =
     url.pathname === "/email/unsubscribe"
-    || url.pathname === "/api/public/hooks/health";
+    || url.pathname === "/api/public/hooks/health"
+    || isDirectAuthorityReference;
 
   if (canRedirect && !excludedPath) {
     const target = buildCanonicalTarget(url);
