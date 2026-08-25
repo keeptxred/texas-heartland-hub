@@ -66,6 +66,11 @@ jobs:
             "cleanup-ktr-cloudflare-cutover-workflows"
             "cleanup-texasdefined-migration-infra"
             "cleanup/final-retired-housekeeping-20260825"
+            "agent/adsense-phase-22-retired-link-cleanup"
+            "agent/adsense-phase-38-retired-static-hard-404"
+            "seo/phase-4-redirect-canonical-cleanup"
+            "fix/property-tax-calculator-cleanup"
+            "cleanup/retire-four-superseded-branches-20260825"
           )
 
           main_sha="$(gh api "repos/$REPOSITORY/git/ref/heads/main" --jq '.object.sha')"
