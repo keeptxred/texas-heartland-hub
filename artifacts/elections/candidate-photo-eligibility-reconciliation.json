@@ -1,0 +1,215 @@
+{
+  "generatedAt": "2026-08-25T03:40:02.876Z",
+  "sourceName": "Texas Secretary of State — 2026 Independent Candidate Filings",
+  "sourceUrl": "https://www.sos.state.tx.us/elections/laws/independent-declarations-2026.shtml",
+  "sourceRetrievedAt": "2026-08-22T13:50:00Z",
+  "authorityCandidateParty": "independent",
+  "authorityEntryCount": 15,
+  "matchedCount": 13,
+  "unmatchedCount": 2,
+  "ambiguousCount": 0,
+  "changedFieldCount": 12,
+  "matched": [
+    {
+      "candidateId": "candidate-jade-simmons-independent-race-2026-us-senate",
+      "fullName": "JADE SIMMONS",
+      "raceId": "race-2026-us-senate",
+      "party": "independent",
+      "before": {
+        "filingStatus": "accepted",
+        "ballotAccessStatus": "qualified"
+      },
+      "after": {
+        "filingStatus": "rejected",
+        "ballotAccessStatus": "qualified"
+      }
+    },
+    {
+      "candidateId": "candidate-roy-morales-independent-race-2026-us-house-9",
+      "fullName": "ROY MORALES",
+      "raceId": "race-2026-us-house-9",
+      "party": "independent",
+      "before": {
+        "filingStatus": "accepted",
+        "ballotAccessStatus": "qualified"
+      },
+      "after": {
+        "filingStatus": "rejected",
+        "ballotAccessStatus": "qualified"
+      }
+    },
+    {
+      "candidateId": "candidate-valencia-williams-independent-race-2026-us-house-18",
+      "fullName": "VALENCIA WILLIAMS",
+      "raceId": "race-2026-us-house-18",
+      "party": "independent",
+      "before": {
+        "filingStatus": "accepted",
+        "ballotAccessStatus": "qualified"
+      },
+      "after": {
+        "filingStatus": "rejected",
+        "ballotAccessStatus": "qualified"
+      }
+    },
+    {
+      "candidateId": "candidate-gerard-anthony-villalobos-independent-race-2026-us-house-20",
+      "fullName": "GERARD ANTHONY VILLALOBOS",
+      "raceId": "race-2026-us-house-20",
+      "party": "independent",
+      "before": {
+        "filingStatus": "accepted",
+        "ballotAccessStatus": "qualified"
+      },
+      "after": {
+        "filingStatus": "rejected",
+        "ballotAccessStatus": "qualified"
+      }
+    },
+    {
+      "candidateId": "candidate-ben-mendoza-independent-race-2026-us-house-23",
+      "fullName": "BEN MENDOZA",
+      "raceId": "race-2026-us-house-23",
+      "party": "independent",
+      "before": {
+        "filingStatus": "accepted",
+        "ballotAccessStatus": "qualified"
+      },
+      "after": {
+        "filingStatus": "accepted",
+        "ballotAccessStatus": "qualified"
+      }
+    },
+    {
+      "candidateId": "candidate-scott-cubbler-independent-race-2026-us-house-38",
+      "fullName": "SCOTT CUBBLER",
+      "raceId": "race-2026-us-house-38",
+      "party": "independent",
+      "before": {
+        "filingStatus": "accepted",
+        "ballotAccessStatus": "qualified"
+      },
+      "after": {
+        "filingStatus": "rejected",
+        "ballotAccessStatus": "qualified"
+      }
+    },
+    {
+      "candidateId": "candidate-william-taggart-independent-race-2026-us-house-38",
+      "fullName": "WILLIAM TAGGART",
+      "raceId": "race-2026-us-house-38",
+      "party": "independent",
+      "before": {
+        "filingStatus": "accepted",
+        "ballotAccessStatus": "qualified"
+      },
+      "after": {
+        "filingStatus": "rejected",
+        "ballotAccessStatus": "qualified"
+      }
+    },
+    {
+      "candidateId": "candidate-sarah-bowman-cunningham-independent-race-2026-governor",
+      "fullName": "SARAH BOWMAN CUNNINGHAM",
+      "raceId": "race-2026-governor",
+      "party": "independent",
+      "before": {
+        "filingStatus": "accepted",
+        "ballotAccessStatus": "qualified"
+      },
+      "after": {
+        "filingStatus": "rejected",
+        "ballotAccessStatus": "qualified"
+      }
+    },
+    {
+      "candidateId": "candidate-demetra-jefferson-wysinger-independent-race-2026-governor",
+      "fullName": "DEMETRA JEFFERSON WYSINGER",
+      "raceId": "race-2026-governor",
+      "party": "independent",
+      "before": {
+        "filingStatus": "accepted",
+        "ballotAccessStatus": "qualified"
+      },
+      "after": {
+        "filingStatus": "rejected",
+        "ballotAccessStatus": "qualified"
+      }
+    },
+    {
+      "candidateId": "candidate-mike-collier-independent-race-2026-lieutenant-governor",
+      "fullName": "MIKE COLLIER",
+      "raceId": "race-2026-lieutenant-governor",
+      "party": "independent",
+      "before": {
+        "filingStatus": "accepted",
+        "ballotAccessStatus": "qualified"
+      },
+      "after": {
+        "filingStatus": "rejected",
+        "ballotAccessStatus": "qualified"
+      }
+    },
+    {
+      "candidateId": "candidate-steve-clugston-independent-race-2026-texas-senate-1",
+      "fullName": "STEVE CLUGSTON",
+      "raceId": "race-2026-texas-senate-1",
+      "party": "independent",
+      "before": {
+        "filingStatus": "accepted",
+        "ballotAccessStatus": "qualified"
+      },
+      "after": {
+        "filingStatus": "rejected",
+        "ballotAccessStatus": "qualified"
+      }
+    },
+    {
+      "candidateId": "candidate-l-d-howard-independent-race-2026-texas-house-124",
+      "fullName": "L.D. HOWARD",
+      "raceId": "race-2026-texas-house-124",
+      "party": "independent",
+      "before": {
+        "filingStatus": "accepted",
+        "ballotAccessStatus": "qualified"
+      },
+      "after": {
+        "filingStatus": "rejected",
+        "ballotAccessStatus": "qualified"
+      }
+    },
+    {
+      "candidateId": "candidate-lisa-emerson-independent-race-2026-texas-house-126",
+      "fullName": "LISA EMERSON",
+      "raceId": "race-2026-texas-house-126",
+      "party": "independent",
+      "before": {
+        "filingStatus": "accepted",
+        "ballotAccessStatus": "qualified"
+      },
+      "after": {
+        "filingStatus": "rejected",
+        "ballotAccessStatus": "qualified"
+      }
+    }
+  ],
+  "unmatched": [
+    {
+      "fullName": "Jason Wolff",
+      "raceId": "race-2026-criminal-district-attorney-bexar-county",
+      "filingStatus": "accepted",
+      "ballotAccessStatus": "qualified",
+      "expectedParty": "independent",
+      "issue": "No canonical candidate matched exact normalized name, race, and authoritative party scope."
+    },
+    {
+      "fullName": "Kirsta Melton",
+      "raceId": "race-2026-criminal-district-attorney-hays-county",
+      "filingStatus": "accepted",
+      "ballotAccessStatus": "qualified",
+      "expectedParty": "independent",
+      "issue": "No canonical candidate matched exact normalized name, race, and authoritative party scope."
+    }
+  ],
+  "ambiguous": []
+}
