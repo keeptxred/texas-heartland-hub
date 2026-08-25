@@ -43,5 +43,23 @@
     "rightsRule": "Use candidate-identifying photography hosted on Brett Robinson's verified official Texas House District 130 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
     "searchHint": "Brett Robinson Texas House District 130 brett4texas.com official campaign portrait",
     "notes": "New candidate-controlled source verified August 25, 2026. Brett4Texas identifies Brett Robinson as the Democratic candidate for State Representative District 130. Current 2026 election sources independently show Robinson advanced from the Democratic primary to the District 130 general election."
+  },
+  {
+    "domain": "hd126.stanstanart.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Stan Stanart's verified official Texas House District 126 campaign site for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Stan Stanart Texas House District 126 hd126.stanstanart.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 25, 2026. The site identifies Stan Stanart as the Republican candidate for House District 126, states his May 26 runoff victory, and includes a dedicated candidate biography. Current 2026 election sources independently show Stanart advanced to the general election."
+  },
+  {
+    "domain": "tombutler.org",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Tom Butler's verified official Texas House District 128 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Tom Butler Texas House District 128 tombutler.org official campaign portrait",
+    "notes": "New candidate-controlled source verified August 25, 2026. The campaign site identifies Tom Butler for House District 128 and includes a dedicated Meet Tom biography page. ATPE independently identifies Butler as the Republican nominee for the November 2026 District 128 general election."
   }
 ]
