@@ -62,7 +62,7 @@ describe("AdSense final-wave issue-guide readiness", () => {
 
   it("leaves no issue guide below the publication-readiness contract", () => {
     const failures = issueGuides
-      .filter((guide) => !isIssueGuideIndexable(guide))
+      .filter((guide): boolean => !isIssueGuideIndexable(guide))
       .map((guide) => `${guide.slug}:${issueGuideWordCount(guide)}w:${guide.sources.length}s`);
     expect(failures, failures.join("\n")).toEqual([]);
   });
