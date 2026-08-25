@@ -1,0 +1,47 @@
+[
+  {
+    "domain": "timforhouse.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Tim McDonough's official Texas House District 114 campaign website only after the exact page and image independently validate and clearly identify McDonough. Preserve campaign attribution and the exact source page. Do not approve campaign logos, endorsement graphics, issue graphics, group photos without an unambiguous subject, or unrelated decorative media as the canonical portrait.",
+    "searchHint": "site:timforhouse.com Tim McDonough Texas House District 114 portrait photo",
+    "notes": "New candidate-controlled source verified August 25, 2026. TCTA TexasTeachersVote identifies Tim McDonough as the Republican candidate for Texas House District 114 and links timforhouse.com as his website; the live campaign site carries a Paid for by Tim McDonough Campaign disclosure and a Meet Tim McDonough biography. Portrait extraction remains item-level review only until a specific image asset independently validates."
+  },
+  {
+    "domain": "mindybumgarner.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Mindy Bumgarner's official State Board of Education District 14 campaign website only after the exact page and image independently validate and clearly identify Bumgarner. Preserve campaign attribution and the exact source page. Do not approve campaign logos, issue graphics, endorsement graphics, decorative imagery, or event photos without an unambiguous candidate subject as the canonical portrait.",
+    "searchHint": "site:mindybumgarner.com Mindy Bumgarner State Board of Education District 14 portrait photo",
+    "notes": "New candidate-controlled source verified August 25, 2026. TCTA TexasTeachersVote identifies Mindy Bumgarner as the Republican candidate for State Board of Education District 14 and links mindybumgarner.com; the live site states that she is running for District 14 and provides campaign contact information. Portrait extraction remains item-level review only because the currently indexed campaign page exposes campaign graphics but no independently validated canonical headshot asset."
+  },
+  {
+    "domain": "melanie4texas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Melanie Medley-Thomas's official Texas House District 103 campaign website only after the exact page and image independently validate and clearly identify Medley-Thomas. Preserve campaign attribution and the exact source page. Do not approve campaign logos, issue graphics, endorsement graphics, group photos without an unambiguous subject, or unrelated decorative media as the canonical portrait.",
+    "searchHint": "site:melanie4texas.com Melanie Medley-Thomas Texas House District 103 portrait photo",
+    "notes": "New candidate-controlled source verified August 25, 2026. The live campaign site identifies Melanie Medley-Thomas for Texas House 103 and its About page displays a professional candidate photograph alongside her biography. The domain is also corroborated by current Dallas County Republican candidate coverage. Exact portrait extraction remains item-level review until the image asset independently validates."
+  },
+  {
+    "domain": "melvafortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Melva Perez's official Texas House District 119 campaign website only after the exact page and image independently validate and clearly identify Perez. Preserve campaign attribution and the exact source page. Do not approve campaign logos, issue graphics, endorsement graphics, group photos without an unambiguous subject, or unrelated decorative media as the canonical portrait.",
+    "searchHint": "site:melvafortexas.com Melva Perez Texas House District 119 portrait photo",
+    "notes": "New candidate-controlled source verified August 25, 2026. TCTA TexasTeachersVote identifies Melva Perez as the Republican candidate for Texas House District 119 and links melvafortexas.com as her website. BallotReady also lists verified candidate webpages for Perez. Exact portrait extraction remains item-level review only until the campaign page and image asset independently validate."
+  },
+  {
+    "domain": "crosstimbersgazette.com",
+    "sourceClass": "candidate-directory-discovery-bridge",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Cross Timbers Gazette election and candidate coverage to corroborate candidate identity, current race context, and candidate-controlled website or social links. Do not approve Gazette-hosted photography solely because it accompanies candidate coverage. Follow the candidate-controlled source or require explicit candidate-supplied provenance or a qualifying reuse license before approving any portrait.",
+    "searchHint": "site:crosstimbersgazette.com 2026 Texas candidate campaign website portrait",
+    "notes": "New discovery bridge found August 25, 2026 while researching unresolved State Board of Education candidates. Current and historical candidate coverage independently links Mindy Bumgarner's campaign domain and can expose additional candidate-controlled sources, but direct image approval remains prohibited without item-level provenance or licensing."
+  }
+]
