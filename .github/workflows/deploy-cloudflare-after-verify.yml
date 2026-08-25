@@ -178,19 +178,19 @@ jobs:
           print("workers.dev health passed")
           PY
 
-      - name: Verify production health and homepage
+      - name: Verify deployed Worker health and production homepage
         if: steps.revision.outputs.deploy == 'true'
         shell: bash
         run: |
           set -euo pipefail
           response="$(curl --retry 20 --retry-delay 3 --retry-all-errors --fail-with-body --silent --show-error \
-            "$PRODUCTION_URL/api/public/hooks/health")"
+            "$PREVIEW_URL/api/public/hooks/health")"
           python3 - "$response" <<'PY'
           import json, sys
           data = json.loads(sys.argv[1])
           if data.get("database") != "ok" or data.get("ai_provider_ready") is not True:
-              raise SystemExit(f"Production health failed: {data!r}")
-          print("Production database and AI health passed")
+              raise SystemExit(f"Deployed Worker health failed: {data!r}")
+          print("Deployed Worker database and AI health passed")
           PY
           curl --retry 10 --retry-delay 3 --retry-all-errors --fail --silent --show-error \
             -o /dev/null "$PRODUCTION_URL/"
