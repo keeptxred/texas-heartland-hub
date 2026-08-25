@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "jennmackforgovernor.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Jenn Mack Raphoon's official Texas governor campaign website only after the exact page and image independently validate and clearly identify Mack Raphoon. Preserve campaign attribution and the exact source page. Do not approve campaign logos, issue graphics, group photos without an unambiguous subject, or unrelated decorative media as the canonical portrait.",
+    "searchHint": "site:jennmackforgovernor.com Jenn Mack Raphoon Texas governor portrait photo",
+    "notes": "New candidate-controlled source verified August 25, 2026. The live site identifies Jenn Mack Raphoon as an Independent candidate for Governor of Texas, includes a candidate biography and candidate-identifying photography, and is independently corroborated by Texas Ethics Commission and Texas Secretary of State candidate records. Exact portrait approval remains item-level review only."
+  },
+  {
+    "domain": "palmerfortexased.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Michelle Palmer's official State Board of Education District 6 campaign website only after the exact page and image independently validate and clearly identify Palmer. Preserve campaign attribution and the exact source page. Do not approve campaign logos, issue graphics, group photos without an unambiguous subject, or unrelated decorative media as the canonical portrait.",
+    "searchHint": "site:palmerfortexased.com Michelle Palmer State Board of Education District 6 portrait photo",
+    "notes": "New candidate-controlled source verified August 25, 2026. TCTA, ATPE Teach the Vote, and current 2026 election references independently identify palmerfortexased.com as Michelle Palmer's campaign website for State Board of Education District 6. Exact portrait approval remains item-level review only."
+  }
+]
