@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "zach4texas.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Zach Herbert's verified official Texas House District 112 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Zach Herbert Texas House District 112 zach4texas.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. The live site identifies Zach Herbert as the candidate for Texas House District 112, carries the paid political advertisement for the Zach Herbert for Texas Campaign, and is independently corroborated by current campaign research linking Zach4texas.com to the HD112 campaign."
+  },
+  {
+    "domain": "stanleyfortexashouse.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Stephen Stanley's verified official Texas House District 113 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Stephen W. Stanley Texas House District 113 stanleyfortexashouse.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. The live site identifies Stephen Stanley as the Republican nominee for HD113, provides campaign contact information, and states that it is paid for by the Committee to Elect Stephen Stanley."
+  },
+  {
+    "domain": "rosellinifortx.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Danny Rosellini's verified official Texas House District 115 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Danny Rosellini Texas House District 115 rosellinifortx.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. The live campaign site identifies Danny Rosellini as a candidate for Texas House District 115, contains his campaign biography and district priorities, and publishes Rosellini for Texas campaign donation/contact information."
+  }
+]
