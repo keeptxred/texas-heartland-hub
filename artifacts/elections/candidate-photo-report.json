@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-08-25T06:57:10.533Z",
+  "generatedAt": "2026-08-25T17:52:12.351Z",
   "candidateCount": 491,
   "eligibleCandidateCount": 479,
   "excludedCandidateCount": 12,
-  "approvedPhotoCount": 269,
-  "missingPhotoCount": 210,
-  "manifestEntryCount": 269,
-  "coverage": 0.5615866388308977,
-  "coveragePercent": 56.16,
+  "approvedPhotoCount": 273,
+  "missingPhotoCount": 206,
+  "manifestEntryCount": 273,
+  "coverage": 0.569937369519833,
+  "coveragePercent": 56.99,
   "targetCoverage": 0.85,
   "targetApprovedPhotoCount": 408,
-  "photosNeededForTarget": 139,
+  "photosNeededForTarget": 135,
   "targetMet": false,
   "errors": [],
   "warnings": [],
@@ -224,13 +224,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-jorge-borrego-republican-race-2026-texas-house-118",
-      "name": "JORGE BORREGO",
-      "raceId": "race-2026-texas-house-118",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-melva-perez-republican-race-2026-texas-house-119",
       "name": "MELVA PEREZ",
       "raceId": "race-2026-texas-house-119",
@@ -252,23 +245,9 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-adrian-reyna-democratic-race-2026-texas-house-125",
-      "name": "ADRIAN REYNA",
-      "raceId": "race-2026-texas-house-125",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-ricardo-rick-martinez-republican-race-2026-texas-house-125",
       "name": "RICARDO 'RICK' MARTINEZ",
       "raceId": "race-2026-texas-house-125",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-stan-stanart-republican-race-2026-texas-house-126",
-      "name": "STAN STANART",
-      "raceId": "race-2026-texas-house-126",
       "party": "republican",
       "priority": "standard"
     },
@@ -297,13 +276,6 @@
       "candidateId": "candidate-albert-hunter-democratic-race-2026-texas-house-13",
       "name": "ALBERT HUNTER",
       "raceId": "race-2026-texas-house-13",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-brett-robinson-democratic-race-2026-texas-house-130",
-      "name": "BRETT ROBINSON",
-      "raceId": "race-2026-texas-house-130",
       "party": "democratic",
       "priority": "standard"
     },
