@@ -88,7 +88,7 @@ const BAD_YEAR_NEWS_REDIRECTS = new Map([
   ["live-2001-12-18-texas-secretary-of-state-announces-temporary-relocation-of-public-serv-mdazcr", "live-2025-12-18-texas-secretary-of-state-announces-temporary-relocation-of-public-serv-mdazcr"],
 ]);
 const CANONICAL_ORIGIN = "https://keeptxred.com";
-const DIRECT_WORKER_HOST = "keeptxred-site.keeptxred-api.workers.dev";
+const DIRECT_WORKER_HOST = "keeptxred-site.freddy-coppola.workers.dev";
 
 const TRACKING_PARAMS = new Set([
   "fbclid",
