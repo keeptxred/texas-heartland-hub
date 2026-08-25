@@ -8,9 +8,6 @@ on:
     # whether a randomized Central-time target is due.
     - cron: "0,30 12-23 * * *"
     - cron: "0,30 0-4 * * *"
-    # Temporary authorized production smoke. This schedule only performs the
-    # TexasDefined non-destructive dry run and skips the Keep TX Red publisher.
-    - cron: "*/5 * * * *"
   workflow_dispatch:
     inputs:
       texasdefined_dry_run:
@@ -33,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      TEXASDEFINED_DRY_RUN: ${{ (github.event_name == 'workflow_dispatch' && inputs.texasdefined_dry_run) || (github.event_name == 'schedule' && github.event.schedule == '*/5 * * * *') }}
+      TEXASDEFINED_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.texasdefined_dry_run }}
       GH_TOKEN: ${{ github.token }}
       # GitHub-hosted runners are intentionally challenged on browser-facing
       # keeptxred.com dynamic paths. Machine hooks use the same deployed Worker
