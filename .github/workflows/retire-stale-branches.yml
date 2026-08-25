@@ -55,6 +55,13 @@ jobs:
             "maintenance/retire-stale-branches-20260823"
             "ops/verify-current-production-1064"
             "ops/reconcile-production-1097"
+            "chore/router-warning-cleanup-20260822"
+            "chore/router-warning-cleanup-current-main"
+            "cleanup/facebook-production-smokes"
+            "cleanup/retire-facebook-remediation-ops"
+            "cleanup-ktr-cloudflare-cutover-workflows"
+            "cleanup-texasdefined-migration-infra"
+            "cleanup/final-retired-housekeeping-20260825"
           )
 
           main_sha="$(gh api "repos/$REPOSITORY/git/ref/heads/main" --jq '.object.sha')"
