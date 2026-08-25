@@ -1,5 +1,17 @@
 [
   {
+    "candidateId": "candidate-adrian-reyna-democratic-race-2026-texas-house-125",
+    "imageUrl": "https://npr.brightspotcdn.com/dims4/default/813a4a6/2147483647/strip/true/crop/806x461%2B0%2B0/resize/880x503%21/quality/90/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2Ffa%2F25%2F4248ee78495ababba5d9058fe62c%2Fimg-0685.jpeg",
+    "sourceUrl": "https://www.tpr.org/government-politics/2026-05-26/saisd-teacher-labor-activist-adrian-reyna-holds-commanding-early-lead-in-democratic-runoff-for-texas-house-district-125",
+    "altText": "Adrian Reyna, Democratic candidate for Texas House District 125",
+    "credit": "Reyna campaign, via Texas Public Radio",
+    "license": null,
+    "permissionBasis": "Texas Public Radio explicitly credits this candidate-identifying photograph to the Reyna campaign on its May 26, 2026 article identifying Adrian Reyna as the Democratic nominee for Texas House District 125. Used only for editorial candidate identification with campaign/newsroom attribution and an exact source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "candidate-supplied-newsroom-photo",
+    "discoveredAt": "2026-08-25T20:40:06.105Z"
+  },
+  {
     "candidateId": "candidate-aicha-davis-democratic-race-2026-texas-house-109",
     "imageUrl": "https://house.texas.gov/images/members/4465.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/109",
@@ -472,6 +484,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-08-22T12:06:46.090Z",
     "discoveryMethod": "verified-asset:official-court-portrait"
+  },
+  {
+    "candidateId": "candidate-brett-robinson-democratic-race-2026-texas-house-130",
+    "imageUrl": "https://assets.communityimpact.com/uploads/elections/candidates/brett-robinson.jpeg",
+    "sourceUrl": "https://communityimpact.com/houston/tomball-magnolia/election/2026/01/22/meet-the-democratic-primary-candidates-for-texas-house-district-130/",
+    "altText": "Brett Robinson, Democratic candidate for Texas House District 130",
+    "credit": "Brett Robinson campaign, via Community Impact",
+    "license": null,
+    "permissionBasis": "Community Impact's January 23, 2026 Texas House District 130 candidate Q&A explicitly states that all candidate photos were submitted by the respective candidates and identifies this image as Brett Robinson. Used only for editorial candidate identification with campaign/newsroom attribution and an exact source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "candidate-supplied-newsroom-photo",
+    "discoveredAt": "2026-08-25T20:40:06.191Z"
   },
   {
     "candidateId": "candidate-brett-w-ligon-republican-race-2026-texas-senate-4",
@@ -1568,6 +1592,18 @@
     "license": "CC BY-SA 4.0",
     "permissionBasis": null,
     "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-jorge-borrego-republican-race-2026-texas-house-118",
+    "imageUrl": "https://assets.communityimpact.com/uploads/elections/candidates/jorge-borrego.jpeg",
+    "sourceUrl": "https://communityimpact.com/san-antonio/election/qa-meet-the-candidates-running-for-texas-house-district-118-in-the-republican-primary/",
+    "altText": "Jorge Borrego, Republican candidate for Texas House District 118",
+    "credit": "Jorge Borrego campaign, via Community Impact",
+    "license": null,
+    "permissionBasis": "Community Impact's February 2, 2026 Texas House District 118 candidate Q&A explicitly states that all candidate photos were submitted by the respective candidates and identifies this image as Jorge Borrego. Used only for editorial candidate identification with campaign/newsroom attribution and an exact source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "candidate-supplied-newsroom-photo",
+    "discoveredAt": "2026-08-25T20:40:06.149Z"
   },
   {
     "candidateId": "candidate-jose-menendez-democratic-race-2026-texas-senate-26",
@@ -2732,6 +2768,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-stan-stanart-republican-race-2026-texas-house-126",
+    "imageUrl": "https://assets.communityimpact.com/uploads/elections/candidates/stan-stanart.png",
+    "sourceUrl": "https://communityimpact.com/spring-klein/election/qa-meet-the-republican-candidates-for-texas-house-of-representatives-district-126/",
+    "altText": "Stan Stanart, Republican candidate for Texas House District 126",
+    "credit": "Stan Stanart campaign, via Community Impact",
+    "license": null,
+    "permissionBasis": "Community Impact's January 26, 2026 Texas House District 126 candidate Q&A explicitly states that all candidate photos were submitted by the respective candidates and identifies this image as Stan Stanart. Used only for editorial candidate identification with campaign/newsroom attribution and an exact source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "candidate-supplied-newsroom-photo",
+    "discoveredAt": "2026-08-25T20:40:06.149Z"
+  },
+  {
     "candidateId": "candidate-stefanie-bord-democratic-race-2026-texas-house-126",
     "imageUrl": "https://images.squarespace-cdn.com/content/v1/68f10775ea87e2614c98b521/d5740126-ab7c-42cb-b293-c6b367a9bf62/sitting.jpg",
     "sourceUrl": "https://www.stefaniebordfortexas.com/",
@@ -3014,6 +3062,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:52:39.343Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-tyler-smith-democratic-race-2026-texas-house-138",
+    "imageUrl": "https://tylerfortx.com/wp-content/uploads/2026/08/PbWdp0QY-1024x683.jpeg",
+    "sourceUrl": "https://tylerfortx.com/",
+    "altText": "Tyler Smith, Democratic candidate for Texas House District 138",
+    "credit": "Tyler Smith campaign",
+    "license": null,
+    "permissionBasis": "Candidate-identifying photograph published on Tyler Smith's official campaign website, which identifies him as a Democratic candidate for State Representative, District 138. The photograph appears in the campaign's About Tyler section and is used only for editorial candidate identification with campaign attribution and an exact source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-website",
+    "discoveredAt": "2026-08-25T20:40:06.233Z"
   },
   {
     "candidateId": "candidate-v-alonzo-echavarria-garza-libertarian-race-2026-comptroller",
