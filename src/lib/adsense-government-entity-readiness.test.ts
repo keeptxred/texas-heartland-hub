@@ -33,7 +33,7 @@ describe("AdSense government entity indexability", () => {
   it("keeps every permanent government authority page above the readiness gate", () => {
     expect(expandedEntities).toHaveLength(15);
     const failures = expandedEntities
-      .filter((entity) => !isGovernmentEntityIndexable(entity))
+      .filter((entity): boolean => !isGovernmentEntityIndexable(entity))
       .map((entity) => `${entity.slug}: ${governmentEntityWordCount(entity)} words`);
     expect(failures, failures.join("\n")).toEqual([]);
   });
