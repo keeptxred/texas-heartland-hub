@@ -1228,6 +1228,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-helen-zhou-republican-race-2026-texas-house-137",
+    "imageUrl": "https://helenforstaterep.com/wp-content/uploads/elementor/thumbs/HelenZhouHeadshot_new-scaled-ri8heqpop4b3cte6rm9anrhfki8mlxn05phvos15vk.png",
+    "sourceUrl": "https://helenforstaterep.com/",
+    "altText": "Helen Zhou, Republican candidate for Texas House District 137",
+    "credit": "Helen Zhou Campaign",
+    "license": null,
+    "permissionBasis": "Candidate-identifying headshot published directly on Helen Zhou's official Texas House District 137 campaign homepage, which identifies her as the Republican candidate and carries the campaign's paid-political-advertising disclaimer. Used for editorial candidate identification with campaign attribution and an exact source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-08-25T06:57:10.402Z"
+  },
+  {
     "candidateId": "candidate-henry-cuellar-democratic-race-2026-us-house-28",
     "imageUrl": "https://www.congress.gov/img/member/116_rp_tx_28_cuellar_henry_200.jpg",
     "sourceUrl": "https://www.congress.gov/member/henry-cuellar/C001063",
@@ -2696,6 +2708,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-staci-childs-democratic-race-2026-texas-house-131",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/68d302944f2fe0433eb1197f/7e8f5d9a-e35d-4fde-9fd8-5b70593f4884/LANDING-NEW.png",
+    "sourceUrl": "https://www.childsfortexas.com/",
+    "altText": "Staci Childs, Democratic candidate for Texas House District 131",
+    "credit": "Childs For Texas campaign",
+    "license": null,
+    "permissionBasis": "Candidate-identifying portrait published on Staci Childs's official Texas House District 131 campaign homepage and used for editorial candidate identification with campaign attribution and an exact source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-08-25T06:57:10.224Z"
+  },
+  {
     "candidateId": "candidate-stan-gerdes-republican-race-2026-texas-house-17",
     "imageUrl": "https://house.texas.gov/images/members/4195.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/17",
@@ -3130,6 +3154,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:52:54.998Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-yvonne-davis-democratic-race-2026-texas-house-111",
+    "imageUrl": "https://house.texas.gov/images/members/2625.jpg?v=1",
+    "sourceUrl": "https://house.texas.gov/members/member-page/?district=111",
+    "altText": "Yvonne Davis, Democratic candidate for Texas House District 111",
+    "credit": "Texas House of Representatives",
+    "license": null,
+    "permissionBasis": "Official Texas House member portrait used for informational candidate identification with official-government source attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-government-member-directory",
+    "discoveredAt": "2026-08-25T06:57:10.224Z"
   },
   {
     "candidateId": "candidate-zach-herbert-democratic-race-2026-texas-house-112",
