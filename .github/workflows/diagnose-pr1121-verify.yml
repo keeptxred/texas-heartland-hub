@@ -26,8 +26,20 @@ jobs:
       - name: Build development bundle
         run: bun run build:dev
 
-      - name: TypeScript only
-        run: bunx tsc --noEmit
+      - name: Capture TypeScript diagnostics
+        id: tsc
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          bunx tsc --noEmit --pretty false 2>&1 | tee tsc-errors.txt
+
+      - name: Upload TypeScript diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr1121-tsc-diagnostics
+          path: tsc-errors.txt
+          if-no-files-found: error
 
       - name: Validate required generated routes
         run: |
@@ -35,3 +47,7 @@ jobs:
           grep -q 'path: "/contact"' src/routeTree.gen.ts
           grep -q 'path: "/issues"' src/routeTree.gen.ts
           grep -q 'path: "/news"' src/routeTree.gen.ts
+
+      - name: Fail if TypeScript failed
+        if: steps.tsc.outcome != 'success'
+        run: exit 1
