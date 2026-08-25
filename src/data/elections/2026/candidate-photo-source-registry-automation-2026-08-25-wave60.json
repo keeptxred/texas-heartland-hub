@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "zackdunn.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Zack Dunn's verified official Texas House District 121 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Zack Dunn Texas House District 121 zackdunn.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 25, 2026. The campaign homepage identifies Zack Dunn as running in Texas House District 121 and provides campaign contact information. TCTA's current 2026 Texas House candidate directory independently lists Zack Dunn as the Democratic District 121 candidate. No portrait is approved by this registry entry alone; image identity, provenance, and suitability still require item-level validation."
+  },
+  {
+    "domain": "zach4texas.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Zach Herbert's verified official Texas House District 112 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Zach Herbert Texas House District 112 zach4texas.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 25, 2026. The campaign site identifies Zach Herbert as running for the Texas House and carries a paid-political-advertising disclaimer for Zach Herbert for Texas Campaign. TCTA's current 2026 Texas House candidate directory independently lists Zach Herbert as the Democratic District 112 candidate. No portrait is approved by this registry entry alone; image identity, provenance, and suitability still require item-level validation."
+  }
+]
