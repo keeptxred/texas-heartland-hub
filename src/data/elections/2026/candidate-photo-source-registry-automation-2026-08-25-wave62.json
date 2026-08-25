@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "mindybumgarner.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying images from Mindy Bumgarner's official State Board of Education District 14 campaign website only when the exact page clearly identifies Mindy Bumgarner and the image itself can be verified as campaign-published. Require item-level review before approval; do not treat campaign logos, issue graphics, endorsements, or decorative imagery as candidate portraits.",
+    "searchHint": "site:mindybumgarner.com Mindy Bumgarner portrait photo State Board Education District 14",
+    "notes": "New official campaign domain verified August 25, 2026. The homepage explicitly states that Mindy Bumgarner is running for Texas State Board of Education District 14. Current crawl exposes campaign graphics but not a clearly retrievable candidate portrait, so this source remains review-required rather than auto-approved."
+  },
+  {
+    "domain": "voterickfortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying images from Ricardo 'Rick' Martinez's official Texas House District 125 campaign website only when the exact page identifies Martinez and the image can be fetched and visually verified. Require item-level review before approval; do not substitute maps, endorsement portraits, event photos, or community-service images unless they clearly identify the candidate.",
+    "searchHint": "site:voterickfortexas.com Rick Martinez Texas House District 125 portrait",
+    "notes": "New official campaign domain verified August 25, 2026. The homepage identifies Ricardo 'Rick' Martinez as a candidate for Texas House District 125 and exposes a candidate image hosted on static.wixstatic.com. The image endpoint failed retrieval during this run, so the domain is registered for future discovery but no portrait is approved from it yet."
+  }
+]
