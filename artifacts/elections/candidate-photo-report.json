@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-08-25T03:40:04.772Z",
+  "generatedAt": "2026-08-25T06:57:10.533Z",
   "candidateCount": 491,
   "eligibleCandidateCount": 479,
   "excludedCandidateCount": 12,
-  "approvedPhotoCount": 266,
-  "missingPhotoCount": 213,
-  "manifestEntryCount": 266,
-  "coverage": 0.5553235908141962,
-  "coveragePercent": 55.53,
+  "approvedPhotoCount": 269,
+  "missingPhotoCount": 210,
+  "manifestEntryCount": 269,
+  "coverage": 0.5615866388308977,
+  "coveragePercent": 56.16,
   "targetCoverage": 0.85,
   "targetApprovedPhotoCount": 408,
-  "photosNeededForTarget": 142,
+  "photosNeededForTarget": 139,
   "targetMet": false,
   "errors": [],
   "warnings": [],
@@ -210,13 +210,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-yvonne-davis-democratic-race-2026-texas-house-111",
-      "name": "YVONNE DAVIS",
-      "raceId": "race-2026-texas-house-111",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-tim-mcdonough-republican-race-2026-texas-house-114",
       "name": "TIM MCDONOUGH",
       "raceId": "race-2026-texas-house-114",
@@ -315,13 +308,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-staci-childs-democratic-race-2026-texas-house-131",
-      "name": "STACI CHILDS",
-      "raceId": "race-2026-texas-house-131",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-scott-whitmarsh-republican-race-2026-texas-house-131",
       "name": "SCOTT WHITMARSH",
       "raceId": "race-2026-texas-house-131",
@@ -339,13 +325,6 @@
       "candidateId": "candidate-liz-ramos-republican-race-2026-texas-house-135",
       "name": "LIZ RAMOS",
       "raceId": "race-2026-texas-house-135",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-helen-zhou-republican-race-2026-texas-house-137",
-      "name": "HELEN ZHOU",
-      "raceId": "race-2026-texas-house-137",
       "party": "republican",
       "priority": "standard"
     },
