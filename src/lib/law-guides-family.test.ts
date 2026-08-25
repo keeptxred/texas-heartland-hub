@@ -25,6 +25,8 @@ const EXPECTED = [
   "texas-custody-order-enforcement-law",
 ];
 
+const FAMILY_GUIDE_BASELINE = "2026-08-13";
+
 describe("Marriage & Family evergreen guide registry", () => {
   it("registers exactly twenty verified family-law guides", () => {
     const verified = lawGuidesForTopic("family").filter((guide) => guide.status === "verified");
@@ -33,8 +35,13 @@ describe("Marriage & Family evergreen guide registry", () => {
     expect(verified).toHaveLength(20);
 
     for (const meta of verified) {
+      const guide = ALL_GUIDES[meta.slug];
       expect(meta.canonicalPath).toBe(`/guides/${meta.slug}`);
-      expect(meta.lastVerified).toBe("2026-08-13");
+      expect(guide).toBeDefined();
+      if (!guide) throw new Error(`Missing public family-law guide for ${meta.slug}`);
+      expect(meta.lastVerified).toBe(guide.updated);
+      if (!meta.lastVerified) throw new Error(`Missing lastVerified for ${meta.slug}`);
+      expect(meta.lastVerified >= FAMILY_GUIDE_BASELINE).toBe(true);
       expect(meta.statutes?.length).toBeGreaterThan(0);
       expect(meta.sources?.some((source) => source.primary)).toBe(true);
       expect(validateLawGuideMeta(meta)).toEqual([]);
@@ -43,11 +50,17 @@ describe("Marriage & Family evergreen guide registry", () => {
   });
 
   it("keeps family-law registry and public guide content aligned", () => {
+    const registry = new Map(lawGuidesForTopic("family").map((meta) => [meta.slug, meta] as const));
+
     for (const slug of EXPECTED) {
       const guide = ALL_GUIDES[slug];
+      const meta = registry.get(slug);
       expect(guide).toBeDefined();
+      expect(meta).toBeDefined();
+      if (!guide || !meta) throw new Error(`Missing family-law registry/content pair for ${slug}`);
       expect(guide.slug).toBe(slug);
-      expect(guide.updated).toBe("2026-08-13");
+      expect(guide.updated).toBe(meta.lastVerified);
+      expect(guide.updated >= FAMILY_GUIDE_BASELINE).toBe(true);
       expect(guide.pillarHref).toBe("/laws");
       expect(guide.keyTakeaways.length).toBeGreaterThanOrEqual(4);
       expect(guide.sections.length).toBeGreaterThanOrEqual(4);
