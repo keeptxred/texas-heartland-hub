@@ -30,7 +30,7 @@ describe("AdSense final-wave issue-guide readiness", () => {
   it("adds the Texas Supreme Court opinion as a third source for the SB 14 guide", () => {
     const guide = issueGuides.find((candidate) => candidate.slug === "texas-medical-transition-minors-law");
     expect(guide).toBeDefined();
-    expect(isIssueGuideIndexable(guide)).toBe(true);
+    expect(isIssueGuideIndexable(guide!)).toBe(true);
     expect(guide!.sources.length).toBeGreaterThanOrEqual(3);
     expect(guide!.sources.some((source) => source.url.includes("txcourts.gov/media/1458813/230697.pdf"))).toBe(true);
   });
@@ -43,7 +43,7 @@ describe("AdSense final-wave issue-guide readiness", () => {
 
     for (const guide of [medical, bail, rural, local]) {
       expect(guide).toBeDefined();
-      expect(isIssueGuideIndexable(guide)).toBe(true);
+      expect(isIssueGuideIndexable(guide!)).toBe(true);
     }
 
     expect(medical!.sections.some((section) => section.heading.includes("Subchapter Y"))).toBe(true);
