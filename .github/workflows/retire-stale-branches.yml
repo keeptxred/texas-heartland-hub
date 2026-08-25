@@ -53,6 +53,8 @@ jobs:
             "cleanup/remove-legacy-builder-traces"
             "cleanup/remove-retired-gateway-placeholders"
             "maintenance/retire-stale-branches-20260823"
+            "ops/verify-current-production-1064"
+            "ops/reconcile-production-1097"
           )
 
           main_sha="$(gh api "repos/$REPOSITORY/git/ref/heads/main" --jq '.object.sha')"
