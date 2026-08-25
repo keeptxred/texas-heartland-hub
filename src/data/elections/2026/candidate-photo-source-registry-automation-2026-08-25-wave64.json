@@ -1,0 +1,38 @@
+[
+  {
+    "domain": "odusfortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Odus Evbagharu's official Texas House District 135 campaign website only after the exact page and image independently validate and clearly identify Evbagharu. Preserve campaign attribution and the exact source page. Do not approve campaign logos, endorsement graphics, event photos without a clear subject, or unrelated decorative imagery as candidate portraits.",
+    "searchHint": "site:odusfortexas.com Odus Evbagharu Texas House District 135 portrait photo",
+    "notes": "New candidate-controlled source verified August 25, 2026. The live site identifies Odus Evbagharu as a Texas House candidate, publishes a Meet Odus biography, and states that it is paid for by Odus Evbagharu for Texas. This source should remain item-level review only until a specific portrait asset is independently validated."
+  },
+  {
+    "domain": "lizramosfortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Liz Ramos's Texas House District 135 campaign website only after the exact page and image independently validate and clearly identify Ramos. Preserve campaign attribution and the exact source page. Do not infer reuse rights for logos, endorsement graphics, event photography, or decorative media.",
+    "searchHint": "site:lizramosfortexas.com Liz Ramos Texas House District 135 portrait photo",
+    "notes": "New candidate campaign domain independently corroborated August 25, 2026 by the Texas Classroom Teachers Association candidate directory and Vote-USA's current Texas House District 135 candidate comparison, both of which link lizramosfortexas.com for Liz Ramos. Portrait extraction remains review-required until the campaign page and exact image asset independently validate."
+  },
+  {
+    "domain": "bluevoterguide.org",
+    "sourceClass": "candidate-directory-discovery-bridge",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Blue Voter Guide only as a discovery bridge unless an exact image has independently documented candidate-supplied provenance or a reuse license that satisfies the candidate-photo rights gate. Do not approve hosted headshots solely because Blue Voter Guide displays them. Follow candidate-linked official websites or social profiles and validate the final portrait at the authoritative source whenever possible.",
+    "searchHint": "site:bluevoterguide.org Texas 2026 candidate campaign website portrait",
+    "notes": "New discovery source found August 25, 2026 while searching unresolved Texas candidate portraits. It can expose candidate profiles and candidate-linked sources, but no blanket image reuse permission has been established, so direct image approval is prohibited without item-level provenance or licensing."
+  },
+  {
+    "domain": "vote-usa.org",
+    "sourceClass": "candidate-directory-discovery-bridge",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Vote-USA as a discovery and corroboration source for candidate identity, office, and campaign website links. Do not approve Vote-USA-hosted candidate images unless item-level candidate-supplied provenance or a qualifying reuse license is independently established. Prefer the linked official campaign source for final portrait validation.",
+    "searchHint": "site:vote-usa.org 2026 Texas candidate campaign website portrait",
+    "notes": "New discovery bridge verified August 25, 2026. Its current Texas House District 135 comparison identifies Odus Evbagharu and Liz Ramos and exposes their campaign domains, making it useful for discovering authoritative candidate-controlled sources while preserving the existing image-rights gate."
+  }
+]
