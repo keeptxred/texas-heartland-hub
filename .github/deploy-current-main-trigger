@@ -3,3 +3,4 @@ Trigger production deployment convergence for keeptxred.com.
 Target main: 5d0b03bb30a37b83d67825ba1f44379aedd27b1e
 Production-current verification requested: 2026-08-25T04:22Z
 Final post-smoke-cleanup production reconciliation.
+Protected production deploy completed; final production-current status recheck requested: 2026-08-25T04:23Z
