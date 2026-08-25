@@ -178,11 +178,15 @@ jobs:
           print("workers.dev health passed")
           PY
 
-      - name: Verify deployed Worker health and production homepage
+      - name: Verify deployed Worker health and production edge route
         if: steps.revision.outputs.deploy == 'true'
         shell: bash
         run: |
           set -euo pipefail
+          # GitHub-hosted runners are intentionally challenged by the production
+          # zone on dynamic/browser-facing paths. Verify the deployed Worker through
+          # workers.dev, then prove the production hostname is reachable on a static
+          # Cloudflare edge path without weakening the zone's protections.
           response="$(curl --retry 20 --retry-delay 3 --retry-all-errors --fail-with-body --silent --show-error \
             "$PREVIEW_URL/api/public/hooks/health")"
           python3 - "$response" <<'PY'
@@ -192,9 +196,13 @@ jobs:
               raise SystemExit(f"Deployed Worker health failed: {data!r}")
           print("Deployed Worker database and AI health passed")
           PY
-          curl --retry 10 --retry-delay 3 --retry-all-errors --fail --silent --show-error \
-            -o /dev/null "$PRODUCTION_URL/"
-          echo "Production homepage reachable"
+          robots_body="$(curl --retry 10 --retry-delay 3 --retry-all-errors --fail-with-body --silent --show-error \
+            "$PRODUCTION_URL/robots.txt")"
+          if [[ -z "$robots_body" ]]; then
+            echo "Production edge returned an empty robots.txt response." >&2
+            exit 1
+          fi
+          echo "Deployed Worker health passed and production edge route is reachable"
 
       - name: Verify authority reference endpoints
         if: steps.revision.outputs.deploy == 'true'
@@ -248,8 +256,8 @@ jobs:
           PY
           }
 
-          verify_reference "$PRODUCTION_URL/elections/reference.json" election
-          verify_reference "$PRODUCTION_URL/bills/texas/89/sb/37/reference.json" bill
+          verify_reference "$PREVIEW_URL/elections/reference.json" election
+          verify_reference "$PREVIEW_URL/bills/texas/89/sb/37/reference.json" bill
 
       - name: Apply guarded one-time news history reconciliation
         if: steps.revision.outputs.deploy == 'true'
@@ -266,7 +274,7 @@ jobs:
             exit 1
           fi
 
-          endpoint="$PRODUCTION_URL/api/public/hooks/reconcile-news-history?days=30&limit=5000"
+          endpoint="$PREVIEW_URL/api/public/hooks/reconcile-news-history?days=30&limit=5000"
           dry_file="$(mktemp)"
           apply_file="$(mktemp)"
           pending_file="$(mktemp)"
@@ -364,7 +372,7 @@ jobs:
         run: |
           set -euo pipefail
           response="$(curl --retry 5 --retry-delay 2 --retry-all-errors --silent --show-error \
-            "$PRODUCTION_URL/api/public/payments/health")"
+            "$PREVIEW_URL/api/public/payments/health")"
           python3 - "$response" <<'PY'
           import json, sys
           data = json.loads(sys.argv[1])
