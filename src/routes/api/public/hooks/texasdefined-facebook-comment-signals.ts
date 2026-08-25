@@ -9,7 +9,7 @@ const GRAPH_VERSION = "v21.0";
 const LOOKBACK_DAYS = 14;
 const MIN_SIGNAL_COMMENTS = 3;
 
- type SocialConnectionRow = {
+type SocialConnectionRow = {
   account_id: string | null;
   access_token: string | null;
   connection_status: string | null;
@@ -219,6 +219,21 @@ async function run(request: Request) {
   const connection = data as SocialConnectionRow | null;
   if (!connection || connection.connection_status !== "CONNECTED" || !connection.account_id || !connection.access_token) {
     return Response.json({ ok: false, error: "TexasDefined Facebook Page is not connected" }, { status: 503 });
+  }
+
+  const smokeOnly = new URL(request.url).searchParams.get("smoke_only") === "true";
+  if (smokeOnly) {
+    return Response.json({
+      ok: true,
+      site: "TexasDefined",
+      smoke_only: true,
+      lookback_days: LOOKBACK_DAYS,
+      minimum_signal_comments: MIN_SIGNAL_COMMENTS,
+      posts_scanned: 0,
+      signals: [],
+      privacy: "Read-only smoke verified Worker transport, GitHub OIDC, and the connected TexasDefined Facebook configuration without reading comments or writing planning data.",
+      checked_at: new Date().toISOString(),
+    });
   }
 
   try {
