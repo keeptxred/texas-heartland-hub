@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "tylerfortx.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Tyler Smith's official Texas House District 138 campaign website only after the exact page and image independently validate and clearly identify Smith. Preserve campaign attribution and the exact source page. Do not approve campaign logos, endorsement graphics, issue graphics, group photos without an unambiguous subject, or unrelated decorative media as the canonical portrait.",
+    "searchHint": "site:tylerfortx.com Tyler Smith Texas House District 138 portrait photo",
+    "notes": "New candidate-controlled source verified August 25, 2026. The live site identifies Tyler Smith as a Democratic candidate for State Representative, District 138, and Progress Texas independently identifies tylerfortx.com as his campaign website. The site contains recent candidate photography; exact portrait approval remains item-level review only."
+  }
+]
