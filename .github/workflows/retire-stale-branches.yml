@@ -64,7 +64,7 @@ jobs:
             "cleanup/facebook-production-smokes"
             "cleanup/retire-facebook-remediation-ops"
             "cleanup-ktr-cloudflare-cutover-workflows"
-            "cleanup/texasdefined-migration-infra"
+            "cleanup-texasdefined-migration-infra"
             "cleanup/final-retired-housekeeping-20260825"
           )
 
