@@ -4,6 +4,7 @@ import { issueGuides } from "@/data/issue-guides";
 import { PRIORITY_ISSUE_GUIDE_SLUGS } from "@/data/issue-guide-priority-upgrades";
 import { WAVE2_ISSUE_GUIDE_SLUGS } from "@/data/issue-guide-wave2-upgrades";
 import { WAVE3_ISSUE_GUIDE_SLUGS } from "@/data/issue-guide-wave3-upgrades";
+import { WAVE4_ISSUE_GUIDE_SLUGS } from "@/data/issue-guide-wave4-upgrades";
 import { ALL_POLICY_TRACKERS, getAnyPolicyTracker } from "@/data/policy-trackers-all";
 import { PRIORITY_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-upgrades";
 import { POLITICAL_SEARCH_GUIDES } from "@/data/political-search-guides";
@@ -17,10 +18,15 @@ const policyRoute = fs.readFileSync(new URL("../routes/policy.$slug.tsx", import
 const referenceRoute = fs.readFileSync(new URL("../routes/texas-political-reference.$slug.tsx", import.meta.url), "utf8");
 
 describe("AdSense programmatic indexability", () => {
-  it("indexes only deliberately expanded issue guides and policy trackers while keeping thin collections quarantined", () => {
+  it("indexes every deliberately expanded issue guide while keeping other thin collections quarantined", () => {
     expect(
       issueGuides.filter(isIssueGuideIndexable).map((guide) => guide.slug).sort(),
-    ).toEqual([...PRIORITY_ISSUE_GUIDE_SLUGS, ...WAVE2_ISSUE_GUIDE_SLUGS, ...WAVE3_ISSUE_GUIDE_SLUGS].sort());
+    ).toEqual([
+      ...PRIORITY_ISSUE_GUIDE_SLUGS,
+      ...WAVE2_ISSUE_GUIDE_SLUGS,
+      ...WAVE3_ISSUE_GUIDE_SLUGS,
+      ...WAVE4_ISSUE_GUIDE_SLUGS,
+    ].sort());
     expect(
       ALL_POLICY_TRACKERS.filter(isPolicyTrackerIndexable).map((tracker) => tracker.slug).sort(),
     ).toEqual([...PRIORITY_INDEXABLE_POLICY_TRACKER_SLUGS].sort());
