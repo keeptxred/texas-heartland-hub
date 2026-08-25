@@ -95,14 +95,16 @@ jobs:
               kind=$(jq -r '.kind // "unknown"' "$output")
               title=$(jq -r '.title // ""' "$output")
               would_post=$(jq -r '.would_post // false' "$output")
-              echo "AUTO_FACEBOOK_DRY_RUN page=${label} kind=${kind} title=${title} would_post=${would_post}"
+              image_url=$(jq -r '.image_url // ""' "$output")
+              echo "AUTO_FACEBOOK_DRY_RUN page=${label} kind=${kind} title=${title} would_post=${would_post} image_url=${image_url}"
             elif jq -e '.posted == true' "$output" >/dev/null 2>&1; then
               slug=$(jq -r '.slug // ""' "$output")
               title=$(jq -r '.title // ""' "$output")
               kind=$(jq -r '.kind // "article"' "$output")
               article_url=$(jq -r '.article_url // ""' "$output")
               post_url=$(jq -r '.post_url // ""' "$output")
-              echo "AUTO_FACEBOOK_POST_SUCCESS page=${label} kind=${kind} slug=${slug} title=${title} article_url=${article_url} post_url=${post_url}"
+              image_url=$(jq -r '.image_url // ""' "$output")
+              echo "AUTO_FACEBOOK_POST_SUCCESS page=${label} kind=${kind} slug=${slug} title=${title} article_url=${article_url} post_url=${post_url} image_url=${image_url}"
             else
               reason=$(jq -r '.reason // "no eligible post"' "$output")
               next_target=$(jq -r '.next_target_local // ""' "$output")
@@ -120,12 +122,12 @@ jobs:
               "/tmp/facebook-post-keeptxred.json"
           fi
 
-          # TexasDefined always goes through scheduled-mode safeguards. Dry run
-          # evaluates those safeguards and candidate selection but cannot post or
-          # write publishing history.
+          # TexasDefined always goes through scheduled-mode safeguards and the
+          # image-required publisher. Dry run resolves the candidate and its image
+          # without posting or writing publication history.
           run_page \
             "texasdefined" \
-            "${AUTOMATION_ORIGIN%/}/api/public/hooks/auto-facebook-post-texasdefined-smart" \
+            "${AUTOMATION_ORIGIN%/}/api/public/hooks/auto-facebook-post-texasdefined-with-image" \
             "/tmp/facebook-post-texasdefined.json" \
             "scheduled" \
             "$TEXASDEFINED_DRY_RUN"
