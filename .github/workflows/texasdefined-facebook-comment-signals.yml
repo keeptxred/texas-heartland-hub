@@ -52,11 +52,15 @@ jobs:
 
           output='/tmp/texasdefined-comment-signals.json'
           rm -f "$output"
+          endpoint="${AUTOMATION_ORIGIN%/}/api/public/hooks/texasdefined-facebook-comment-signals"
+          if [[ "$COMMENT_SIGNAL_SMOKE" == "true" ]]; then
+            endpoint="${endpoint}?smoke_only=true"
+          fi
           status="$(curl -sS -X POST -o "$output" -w '%{http_code}' \
             --max-time 90 \
             -H 'accept: application/json' \
             -H "Authorization: Bearer ${oidc_token}" \
-            "${AUTOMATION_ORIGIN%/}/api/public/hooks/texasdefined-facebook-comment-signals" || echo 000)"
+            "$endpoint" || echo 000)"
           cat "$output" 2>/dev/null || true
           echo
           if [[ "$status" != '200' ]] || ! jq -e '.ok == true' "$output" >/dev/null 2>&1; then
@@ -68,8 +72,8 @@ jobs:
           echo "signal_count=$signal_count" >> "$GITHUB_OUTPUT"
 
           if [[ "$COMMENT_SIGNAL_SMOKE" == "true" ]]; then
-            jq -e '.site == "TexasDefined" and (.lookback_days | type == "number") and (.minimum_signal_comments | type == "number") and (.posts_scanned | type == "number") and (.signals | type == "array")' "$output" >/dev/null
-            echo "TexasDefined Facebook comment-signal production smoke passed with ${signal_count} qualifying theme(s); no GitHub planning issue was created or modified."
+            jq -e '.smoke_only == true and .site == "TexasDefined" and (.lookback_days | type == "number") and (.minimum_signal_comments | type == "number") and (.posts_scanned | type == "number") and (.signals | type == "array")' "$output" >/dev/null
+            echo "TexasDefined Facebook comment-signal read-only transport smoke passed; no comments were read and no GitHub planning issue was created or modified."
             exit 0
           fi
 
@@ -116,7 +120,7 @@ jobs:
 
           if [[ "$STEP_OUTCOME" == 'success' ]]; then
             state='success'
-            description='Comment-signal endpoint passed read-only production smoke'
+            description='Comment-signal endpoint passed read-only transport/OIDC/connection smoke'
             category='success'
           elif [[ -s /tmp/texasdefined-comment-signals.json ]]; then
             safe_error="$(jq -r '.error // empty' /tmp/texasdefined-comment-signals.json 2>/dev/null | tr '\n\r' ' ' | cut -c1-100)"
