@@ -1,0 +1,38 @@
+[
+  {
+    "domain": "palmerfortexased.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Michelle Palmer's official State Board of Education District 6 campaign website only after the exact page and image independently validate and clearly identify Palmer. Preserve campaign attribution and the exact source page. Do not approve campaign logos, endorsement graphics, issue graphics, group photos without an unambiguous subject, or unrelated decorative media as the canonical portrait.",
+    "searchHint": "site:palmerfortexased.com Michelle Palmer State Board of Education District 6 portrait photo",
+    "notes": "New candidate-controlled source verified August 25, 2026. TCTA TexasTeachersVote and ATPE Teach the Vote both identify Michelle Palmer as the Democratic candidate for State Board of Education District 6 and link palmerfortexased.com as her campaign website. Portrait extraction remains item-level review only until the exact image asset independently validates."
+  },
+  {
+    "domain": "hoffnaglefortexas.org",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Jordan Scott Hoffnagle's official Texas House District 100 campaign website only after the exact page and image independently validate and clearly identify Hoffnagle. Preserve campaign attribution and the exact source page. Do not approve campaign logos, endorsement graphics, issue graphics, group photos without an unambiguous subject, or unrelated decorative media as the canonical portrait.",
+    "searchHint": "site:hoffnaglefortexas.org Jordan Scott Hoffnagle Texas House District 100 portrait photo",
+    "notes": "New candidate-controlled source discovered August 25, 2026 from Vote-USA's current Texas general-election directory, which identifies Jordan Scott Hoffnagle as the Republican candidate for Texas House District 100 and links hoffnaglefortexas.org. Treat as discovery-active but require independent validation of the live campaign page and exact portrait asset before approval."
+  },
+  {
+    "domain": "zackdunn.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Zack Dunn's official Texas House District 121 campaign website only after the exact page and image independently validate and clearly identify Dunn. Preserve campaign attribution and the exact source page. Do not approve campaign logos, endorsement graphics, issue graphics, group photos without an unambiguous subject, or unrelated decorative media as the canonical portrait.",
+    "searchHint": "site:zackdunn.com Zack Dunn Texas House District 121 portrait photo",
+    "notes": "New candidate-controlled source verified August 25, 2026. Mission: Texas identifies Zack Dunn as the Democratic nominee for Texas House District 121 and gives zackdunn.com as his website; San Antonio Report's 2026 candidate profile independently lists a campaign website for Dunn. Exact portrait approval remains item-level review only."
+  },
+  {
+    "domain": "sanantonioreport.org",
+    "sourceClass": "candidate-directory-discovery-bridge",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use San Antonio Report election profiles to corroborate candidate identity, race context, biography, and candidate-controlled campaign links. Do not approve San Antonio Report-hosted photography solely because it accompanies a candidate profile. Follow the candidate-controlled source, or require explicit candidate-supplied provenance or a qualifying reuse license before approving any portrait.",
+    "searchHint": "site:sanantonioreport.org/profile 2026 candidate Texas House campaign website portrait",
+    "notes": "New discovery bridge registered August 25, 2026 after its 2026 Texas House District 121 profile surfaced Zack Dunn's campaign website and candidate biography. Useful for discovering Bexar-area candidate-controlled sources while preserving item-level image-rights review."
+  }
+]
