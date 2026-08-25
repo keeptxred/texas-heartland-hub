@@ -4,9 +4,6 @@ on:
   schedule:
     # Monday and Thursday mornings in Texas during daylight-saving season.
     - cron: '15 14 * * 1,4'
-    # Temporary read-only production smoke. It validates the endpoint but skips
-    # GitHub issue creation/update even when strong audience signals are found.
-    - cron: '*/5 * * * *'
   workflow_dispatch:
     inputs:
       smoke_only:
@@ -30,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      COMMENT_SIGNAL_SMOKE: ${{ (github.event_name == 'workflow_dispatch' && inputs.smoke_only) || (github.event_name == 'schedule' && github.event.schedule == '*/5 * * * *') }}
+      COMMENT_SIGNAL_SMOKE: ${{ github.event_name == 'workflow_dispatch' && inputs.smoke_only }}
       GH_TOKEN: ${{ github.token }}
       # GitHub-hosted runners are intentionally challenged on browser-facing
       # keeptxred.com dynamic paths. This hook calls the same deployed Worker
