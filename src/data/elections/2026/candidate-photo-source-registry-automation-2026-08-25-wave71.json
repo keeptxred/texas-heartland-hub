@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "mindybumgarner.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Mindy Bumgarner's official State Board of Education District 14 campaign website only after the exact page and image independently validate and clearly identify Bumgarner. Preserve campaign attribution and the exact source page. Do not approve campaign logos, endorsement graphics, issue graphics, group photos without an unambiguous subject, or unrelated decorative media as the canonical portrait.",
+    "searchHint": "site:mindybumgarner.com Mindy Bumgarner State Board of Education District 14 portrait photo",
+    "notes": "New candidate-controlled source verified August 25, 2026. The live site identifies Mindy Bumgarner as a Republican candidate for Texas State Board of Education District 14; TCTA independently links mindybumgarner.com as her campaign website, and BallotReady independently confirms her candidacy and verified campaign webpages. Exact portrait approval remains item-level review only."
+  },
+  {
+    "domain": "melanie4texas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Melanie Medley-Thomas's official Texas House District 103 campaign website only after the exact page and image independently validate and clearly identify Medley-Thomas. Preserve campaign attribution and the exact source page. Do not approve campaign logos, endorsement graphics, issue graphics, group photos without an unambiguous subject, or unrelated decorative media as the canonical portrait.",
+    "searchHint": "site:melanie4texas.com Melanie Medley-Thomas Texas House District 103 portrait photo",
+    "notes": "New candidate-controlled source verified August 25, 2026. The live campaign site identifies Melanie Medley-Thomas as running for Texas House District 103 and its About page includes candidate-identifying photography; TCTA independently identifies her as the Republican candidate for Representative, District 103. Exact portrait approval remains item-level review only."
+  }
+]
