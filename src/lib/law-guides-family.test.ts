@@ -40,6 +40,7 @@ describe("Marriage & Family evergreen guide registry", () => {
       expect(guide).toBeDefined();
       if (!guide) throw new Error(`Missing public family-law guide for ${meta.slug}`);
       expect(meta.lastVerified).toBe(guide.updated);
+      if (!meta.lastVerified) throw new Error(`Missing lastVerified for ${meta.slug}`);
       expect(meta.lastVerified >= FAMILY_GUIDE_BASELINE).toBe(true);
       expect(meta.statutes?.length).toBeGreaterThan(0);
       expect(meta.sources?.some((source) => source.primary)).toBe(true);
