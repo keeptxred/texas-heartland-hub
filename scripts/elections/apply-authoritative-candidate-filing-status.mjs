@@ -28,16 +28,23 @@ for (const entry of authority.entries ?? []) {
     throw new Error(`Unsupported ballotAccessStatus in authority registry: ${entry.ballotAccessStatus}`);
   }
 
+  const expectedParty = entry.party ?? authority.candidateParty ?? null;
   const matches = candidates.filter((candidate) =>
-    candidate.primaryRaceId === entry.raceId && normalize(candidate.fullName) === normalize(entry.fullName)
+    candidate.primaryRaceId === entry.raceId &&
+    normalize(candidate.fullName) === normalize(entry.fullName) &&
+    (!expectedParty || normalize(candidate.party) === normalize(expectedParty))
   );
 
   if (matches.length === 0) {
-    unmatched.push({ ...entry, issue: "No canonical candidate matched exact normalized name and race." });
+    unmatched.push({
+      ...entry,
+      expectedParty,
+      issue: "No canonical candidate matched exact normalized name, race, and authoritative party scope.",
+    });
     continue;
   }
   if (matches.length > 1) {
-    ambiguous.push({ ...entry, candidateIds: matches.map((candidate) => candidate.id) });
+    ambiguous.push({ ...entry, expectedParty, candidateIds: matches.map((candidate) => candidate.id) });
     continue;
   }
 
@@ -58,6 +65,7 @@ for (const entry of authority.entries ?? []) {
     candidateId: candidate.id,
     fullName: candidate.fullName,
     raceId: candidate.primaryRaceId,
+    party: candidate.party ?? null,
     before,
     after: {
       filingStatus: candidate.filingStatus ?? null,
@@ -73,6 +81,7 @@ await writeFile(REPORT_PATH, `${JSON.stringify({
   sourceName: authority.sourceName,
   sourceUrl: authority.sourceUrl,
   sourceRetrievedAt: authority.retrievedAt,
+  authorityCandidateParty: authority.candidateParty ?? null,
   authorityEntryCount: authority.entries?.length ?? 0,
   matchedCount: matched.length,
   unmatchedCount: unmatched.length,
