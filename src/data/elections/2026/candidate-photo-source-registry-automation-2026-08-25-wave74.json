@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "margojordan.com",
+    "sourceClass": "candidate-linked-official-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography from Margo Jordan's official personal/professional profile only after confirming the exact image clearly depicts Jordan and the profile remains attributable to the same person running for Texas State Board of Education District 6. Preserve exact source attribution. Do not auto-approve decorative images, group photos, or unrelated professional media.",
+    "searchHint": "site:margojordan.com Margo Jordan portrait photo",
+    "notes": "New candidate-linked source discovered August 25, 2026 while researching the current SBOE District 6 write-in candidate. Her campaign site margofortexas.com identifies her as Margo Jordan, CEO, U.S. Army veteran, and mother of five; margojordan.com contains a matching professional biography and candidate-identifying portrait. Exact portrait approval remains item-level review only."
+  },
+  {
+    "domain": "zackdunn.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Zack Dunn's official Texas House District 121 campaign website only after the exact image and campaign page independently validate. Preserve campaign attribution and source page. Do not auto-approve logos, issue graphics, event group photos, or unrelated decorative media.",
+    "searchHint": "site:zackdunn.com Zack Dunn Texas House 121 portrait photo",
+    "notes": "Verified again August 25, 2026. The live site identifies Zack Dunn as the District 121 candidate, is paid for by Dunn for Texas, and exposes a direct candidate portrait asset suitable for item-level editorial identification review."
+  },
+  {
+    "domain": "melvafortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Melva Rivera Perez's official Texas House District 119 campaign website only after the exact image and campaign page independently validate. Preserve campaign attribution and source page. Do not auto-approve logos, issue graphics, event group photos, or unrelated decorative media.",
+    "searchHint": "site:melvafortexas.com Melva Rivera Perez Texas House 119 portrait photo",
+    "notes": "Verified again August 25, 2026. The live campaign site identifies LTC Melva Perez (Ret.) as the Texas House District 119 candidate and exposes a direct candidate-identifying portrait asset."
+  }
+]
