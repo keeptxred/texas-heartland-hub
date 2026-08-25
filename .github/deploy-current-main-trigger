@@ -1,5 +1,5 @@
 Deploy current main to Cloudflare production.
 Trigger production deployment convergence for keeptxred.com.
-Target main: 087edf8dddb8b4a7af3db91ba1a228fa4ba5be2a
-Production-current verification requested: 2026-08-25T04:06Z
-Production deployment completed; dispatch safe TexasDefined Facebook transport smokes: 2026-08-25T04:09Z
+Target main: 5d0b03bb30a37b83d67825ba1f44379aedd27b1e
+Production-current verification requested: 2026-08-25T04:22Z
+Final post-smoke-cleanup production reconciliation.
