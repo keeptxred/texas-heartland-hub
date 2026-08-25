@@ -81,13 +81,14 @@ const BAD_YEAR_NEWS_REDIRECTS = new Map([
   ["live-2001-10-17-a-guide-to-texas-early-voting-secretary-jane-nelson-outlines-key-deadl-arwqgp", "live-2025-10-17-a-guide-to-texas-early-voting-secretary-jane-nelson-outlines-key-deadl-arwqgp"],
   ["live-2001-10-20-secretary-jane-nelson-enhances-texas-election-integrity-with-federal-d-3ocr9t", "live-2025-10-20-secretary-jane-nelson-enhances-texas-election-integrity-with-federal-d-3ocr9t"],
   ["live-2001-10-29-texas-voter-turnout-surges-with-half-a-million-early-ballots-recorded--irss2i", "live-2025-10-29-texas-voter-turnout-surges-with-half-a-million-early-ballots-recorded--irss2i"],
-  ["live-2001-10-30-texas-secretary-of-state-defends-constitutionality-of-state-primary-el-fcshc", "live-2025-10-30-texas-secretary-of-state-defends-constitutionality-of-state-primary-el-fcshc"],
+  ["live-2001-10-30-texas-secretary-of-state-defends-constitutionality-of-state-primary-el-fcshc", "live-2025-10-30-secretary-of-state-defends-constitutionality-of-state-primary-el-fcshc"],
   ["live-2001-10-31-voter-preparation-guide-for-the-texas-constitutional-amendment-electio-tgr8b3", "live-2025-10-31-voter-preparation-guide-for-the-texas-constitutional-amendment-electio-tgr8b3"],
   ["live-2001-11-06-texas-breaks-all-time-record-with-3-million-active-business-entities-a-qxu7on", "live-2025-11-06-texas-breaks-all-time-record-with-3-million-active-business-entities-a-qxu7on"],
   ["live-2001-11-25-harris-county-election-procedures-under-fire-after-texas-secretary-of--xfu59l", "live-2025-11-25-harris-county-election-procedures-under-fire-after-texas-secretary-of--xfu59l"],
   ["live-2001-12-18-texas-secretary-of-state-announces-temporary-relocation-of-public-serv-mdazcr", "live-2025-12-18-texas-secretary-of-state-announces-temporary-relocation-of-public-serv-mdazcr"],
 ]);
 const CANONICAL_ORIGIN = "https://keeptxred.com";
+const DIRECT_WORKER_HOST = "keeptxred-site.keeptxred-api.workers.dev";
 
 const TRACKING_PARAMS = new Set([
   "fbclid",
@@ -198,9 +199,16 @@ const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
   const requestHost = (forwardedHost || url.host).toLowerCase();
   const requestProto = forwardedProto || url.protocol.replace(":", "").toLowerCase();
   const canRedirect = request.method === "GET" || request.method === "HEAD";
+  const isDirectAuthorityReference =
+    requestHost === DIRECT_WORKER_HOST
+    && (
+      url.pathname === "/elections/reference.json"
+      || /^\/bills\/texas\/\d+\/[a-zA-Z]+\/\d+\/reference\.json\/?$/.test(url.pathname)
+    );
   const excludedPath =
     url.pathname === "/email/unsubscribe"
-    || url.pathname === "/api/public/hooks/health";
+    || url.pathname === "/api/public/hooks/health"
+    || isDirectAuthorityReference;
 
   if (canRedirect && !excludedPath) {
     const target = buildCanonicalTarget(url);
