@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { GOVERNMENT_ENTITIES, GOVERNMENT_REVIEWED_AT, governmentPath } from "@/lib/texas-government";
-import { upgradeGovernmentEntities } from "@/lib/government-entity-upgrades";
+import { getPublicationGovernmentEntities } from "@/lib/government-entity-publication";
 import { isGovernmentEntityIndexable } from "@/lib/government-entity-indexability";
 import { BASE_URL, renderUrlset, toIsoDate, xmlResponse } from "@/lib/sitemap-shared";
 
-const INDEXABLE_GOVERNMENT_ENTITIES = upgradeGovernmentEntities(GOVERNMENT_ENTITIES).filter(isGovernmentEntityIndexable);
+const INDEXABLE_GOVERNMENT_ENTITIES = getPublicationGovernmentEntities(GOVERNMENT_ENTITIES).filter(isGovernmentEntityIndexable);
 
 export const Route = createFileRoute("/sitemap-government.xml")({
   server: {
