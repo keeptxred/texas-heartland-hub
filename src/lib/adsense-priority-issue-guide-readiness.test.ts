@@ -3,6 +3,7 @@ import { issueGuides } from "@/data/issue-guides";
 import { PRIORITY_ISSUE_GUIDE_SLUGS } from "@/data/issue-guide-priority-upgrades";
 import { WAVE2_ISSUE_GUIDE_SLUGS } from "@/data/issue-guide-wave2-upgrades";
 import { WAVE3_ISSUE_GUIDE_SLUGS } from "@/data/issue-guide-wave3-upgrades";
+import { WAVE4_ISSUE_GUIDE_SLUGS } from "@/data/issue-guide-wave4-upgrades";
 import {
   isIssueGuideIndexable,
   issueGuideWordCount,
@@ -14,6 +15,7 @@ const deliberatePromotions = new Set([
   ...PRIORITY_ISSUE_GUIDE_SLUGS,
   ...WAVE2_ISSUE_GUIDE_SLUGS,
   ...WAVE3_ISSUE_GUIDE_SLUGS,
+  ...WAVE4_ISSUE_GUIDE_SLUGS,
 ]);
 
 describe("AdSense priority issue-guide readiness", () => {
@@ -34,13 +36,9 @@ describe("AdSense priority issue-guide readiness", () => {
     expect(failures, failures.join("\n")).toEqual([]);
   });
 
-  it("does not accidentally promote guides outside deliberate expansion cohorts", () => {
-    const promoted = issueGuides
-      .filter((guide) => !deliberatePromotions.has(guide.slug))
-      .filter(isIssueGuideIndexable)
-      .map((guide) => `${guide.slug}:${issueGuideWordCount(guide)}`);
-
-    expect(promoted).toEqual([]);
+  it("covers the complete current issue-guide registry through explicit expansion cohorts", () => {
+    expect(deliberatePromotions.size).toBe(issueGuides.length);
+    expect(issueGuides.filter((guide) => !deliberatePromotions.has(guide.slug)).map((guide) => guide.slug)).toEqual([]);
   });
 
   it("hydrates the same guide objects used by the public route", () => {
