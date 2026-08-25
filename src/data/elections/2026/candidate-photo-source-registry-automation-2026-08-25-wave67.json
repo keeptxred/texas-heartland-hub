@@ -1,0 +1,38 @@
+[
+  {
+    "domain": "hd126.stanstanart.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Stan Stanart's official Texas House District 126 campaign website only after the exact page and image independently validate and clearly identify Stanart. Preserve campaign attribution and the exact source page. Do not approve endorsement portraits, campaign logos, issue graphics, group photos without an unambiguous subject, or unrelated decorative imagery as the canonical portrait.",
+    "searchHint": "site:hd126.stanstanart.com Stan Stanart Texas House District 126 portrait photo",
+    "notes": "New candidate-controlled source verified August 25, 2026. The live site identifies Stan Stanart as the Republican candidate for Texas House District 126, states that he is running for the district, and exposes candidate biography/contact information. TCTA and VOTE411 independently corroborate the campaign website for Stanart. Portrait extraction remains item-level review only until the exact candidate image independently validates."
+  },
+  {
+    "domain": "jorgefortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Jorge Borrego's official Texas House District 118 campaign website only after the exact page and image independently validate and clearly identify Borrego. Preserve campaign attribution and the exact source page. Do not approve logos, campaign graphics, endorsement media, group photos without an unambiguous subject, or unrelated decorative imagery as the canonical portrait.",
+    "searchHint": "site:jorgefortexas.com Jorge Borrego Texas House District 118 portrait photo",
+    "notes": "New candidate-controlled source verified August 25, 2026. The live site identifies Jorge Borrego as the Republican candidate for Texas House District 118 and publishes a candidate biography. TCTA independently links jorgefortexas.com from Borrego's current 2026 candidate profile. Portrait extraction remains review-required until a specific image asset is independently validated."
+  },
+  {
+    "domain": "tombutler.org",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Tom Butler's official Texas House District 128 campaign website only after the exact page and image independently validate and clearly identify Butler. Preserve campaign attribution and the exact source page. Do not approve campaign logos, endorsement graphics, issue graphics, group photos without an unambiguous subject, or unrelated decorative media as the canonical portrait.",
+    "searchHint": "site:tombutler.org Tom Butler Texas House District 128 portrait photo",
+    "notes": "New candidate-controlled source discovered August 25, 2026 from Vote-USA's current Texas general-election candidate directory, which identifies Tom Butler as the Republican candidate for Texas House District 128 and links tombutler.org as his website. Treat the domain as discovery-active but do not approve any portrait until the live campaign page and exact image asset independently validate."
+  },
+  {
+    "domain": "communityimpact.com",
+    "sourceClass": "candidate-directory-discovery-bridge",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Community Impact election Q&A coverage to corroborate candidate identity, current race context, and candidate-controlled website links. Do not approve Community Impact-hosted candidate photography solely because it accompanies election coverage. Follow the linked official campaign source, or require explicit candidate-supplied provenance or a qualifying reuse license before approving any portrait.",
+    "searchHint": "site:communityimpact.com Texas 2026 candidate Q&A campaign website portrait",
+    "notes": "New discovery bridge registered August 25, 2026 after current Texas House District 126 candidate coverage independently identified Stan Stanart and his campaign website. Useful for discovering candidate-controlled domains and race context while preserving item-level image-rights review."
+  }
+]
