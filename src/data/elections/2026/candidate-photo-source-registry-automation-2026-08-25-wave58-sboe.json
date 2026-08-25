@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "mindybumgarner.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Mindy Bumgarner's verified official State Board of Education District 14 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Mindy Bumgarner State Board of Education District 14 mindybumgarner.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 25, 2026. The campaign homepage explicitly identifies Mindy Bumgarner as running for Texas State Board of Education District 14 and provides campaign contact information. TCTA independently links this domain as her campaign website, and current 2026 election sources identify her as the Republican District 14 candidate."
+  },
+  {
+    "domain": "palmerfortexased.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Michelle Palmer's verified official State Board of Education District 6 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Michelle Palmer State Board of Education District 6 palmerfortexased.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 25, 2026. ATPE Teach the Vote identifies Michelle Palmer as the 2026 Texas State Board of Education District 6 Democratic candidate and links palmerfortexased.com as her campaign website; TCTA also lists the same campaign domain in its 2026 candidate directory."
+  }
+]
