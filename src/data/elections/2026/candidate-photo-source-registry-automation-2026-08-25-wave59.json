@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "helenforstaterep.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Helen Zhou's verified official Texas House District 137 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Helen Zhou Texas House District 137 helenforstaterep.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 25, 2026. The homepage identifies Helen Zhou as the Republican candidate for State Representative, District 137, includes a paid-political-advertising disclaimer for the Helen Zhou Campaign, and publishes a named candidate headshot. TCTA independently links the same campaign domain for her District 137 candidacy."
+  },
+  {
+    "domain": "voteadrianreyna.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Adrian Reyna's verified official Texas House District 125 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Adrian Reyna Texas House District 125 voteadrianreyna.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 25, 2026. The campaign homepage identifies Adrian Reyna and District 125, while TCTA independently links voteadrianreyna.com for his 2026 Texas House District 125 candidacy. The homepage currently exposes a candidate-identifying campaign image, but this registry entry does not itself approve that graphic as the canonical portrait."
+  }
+]
