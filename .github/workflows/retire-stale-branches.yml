@@ -63,8 +63,7 @@ jobs:
           missing=0
 
           for branch in "${branches[@]}"; do
-            ref_json="$(gh api "repos/$REPOSITORY/git/ref/heads/$branch" 2>/dev/null || true)"
-            if [[ -z "$ref_json" ]]; then
+            if ! ref_json="$(gh api "repos/$REPOSITORY/git/ref/heads/$branch" 2>/dev/null)"; then
               echo "Already absent: $branch"
               missing=$((missing + 1))
               continue
