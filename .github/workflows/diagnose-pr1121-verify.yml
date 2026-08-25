@@ -33,21 +33,33 @@ jobs:
           set -o pipefail
           bunx tsc --noEmit --pretty false 2>&1 | tee tsc-errors.txt
 
-      - name: Upload TypeScript diagnostics
+      - name: Capture route diagnostics
+        id: routes
+        continue-on-error: true
+        run: |
+          : > route-status.txt
+          failed=0
+          for route in about contact issues news; do
+            if grep -q "path: \"/$route\"" src/routeTree.gen.ts; then
+              echo "$route=present" >> route-status.txt
+            else
+              echo "$route=MISSING" >> route-status.txt
+              failed=1
+            fi
+          done
+          exit "$failed"
+
+      - name: Upload diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: pr1121-tsc-diagnostics
-          path: tsc-errors.txt
+          name: pr1121-verify-diagnostics
+          path: |
+            tsc-errors.txt
+            route-status.txt
+            src/routeTree.gen.ts
           if-no-files-found: error
 
-      - name: Validate required generated routes
-        run: |
-          grep -q 'path: "/about"' src/routeTree.gen.ts
-          grep -q 'path: "/contact"' src/routeTree.gen.ts
-          grep -q 'path: "/issues"' src/routeTree.gen.ts
-          grep -q 'path: "/news"' src/routeTree.gen.ts
-
-      - name: Fail if TypeScript failed
-        if: steps.tsc.outcome != 'success'
+      - name: Fail if diagnostics failed
+        if: steps.tsc.outcome != 'success' || steps.routes.outcome != 'success'
         run: exit 1
