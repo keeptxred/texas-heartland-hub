@@ -25,5 +25,14 @@
     "rightsRule": "Use candidate-identifying photography hosted on Danny Rosellini's verified official Texas House District 115 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
     "searchHint": "Danny Rosellini Texas House District 115 rosellinifortx.com official campaign portrait",
     "notes": "New candidate-controlled source verified August 24, 2026. The live campaign site identifies Danny Rosellini as a candidate for Texas House District 115, contains his campaign biography and district priorities, and publishes Rosellini for Texas campaign donation/contact information."
+  },
+  {
+    "domain": "kristianfortexas.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Kristian Carranza's verified official Texas House District 118 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Kristian Carranza Texas House District 118 kristianfortexas.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. Current Texas Classroom Teachers Association candidate data lists https://kristianfortexas.com/ as Carranza's HD118 campaign website, and multiple current 2026 candidate/endorsement sources independently link the same domain to her campaign."
   }
 ]
