@@ -30,6 +30,17 @@ const findings = [
     permissionBasis: "Candidate-identifying portrait published by the Dallas County Republican Party on its current 2026 Meet the Candidates page, where Will Campbell is identified as the Republican candidate for Texas House District 109 and linked to his campaign website. Used only for editorial candidate identification with exact source attribution.",
     usageStatus: "approved",
     discoveryMethod: "official-county-party-candidate-directory"
+  },
+  {
+    candidateId: "candidate-stephen-w-stanley-republican-race-2026-texas-house-113",
+    imageUrl: "https://dallasgop.org/wp-content/uploads/2026/04/Stephen-Stanley-for-HD-113-1024x1024.jpg",
+    sourceUrl: "https://dallasgop.org/meet-the-candidates/",
+    altText: "Stephen W. Stanley, Republican candidate for Texas House District 113",
+    credit: "Dallas County Republican Party candidate directory",
+    license: null,
+    permissionBasis: "Candidate-identifying portrait published by the Dallas County Republican Party on its current 2026 Meet the Candidates page, where Stephen Stanley is identified as the Republican candidate for Texas House District 113 and linked to stanleyfortexashouse.com. Used only for editorial candidate identification with exact source attribution.",
+    usageStatus: "approved",
+    discoveryMethod: "official-county-party-candidate-directory"
   }
 ];
 
