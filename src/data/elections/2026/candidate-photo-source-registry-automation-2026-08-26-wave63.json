@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "bradbaileycampaign.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Brad Bailey's verified Texas House District 15 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Brad Bailey Texas House District 15 bradbaileycampaign.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 26, 2026. The campaign homepage identifies Brad Bailey as running for Texas House District 15, carries a paid-for-by Brad Bailey Campaign disclaimer, and publishes a candidate-identifying portrait suitable for the canonical candidate manifest with exact source provenance."
+  },
+  {
+    "domain": "bobbieclaytonforhd16.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Bobbie Clayton's verified Texas House District 16 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Bobbie Clayton Texas House District 16 bobbieclaytonforhd16.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 26, 2026. The campaign site identifies Bobbie Clayton as the HD16 candidate and publishes a candidate-identifying portrait in its campaign biography content suitable for the canonical candidate manifest with exact source provenance."
+  }
+]
