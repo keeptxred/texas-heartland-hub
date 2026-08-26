@@ -10,6 +10,12 @@ type ServerEntry = {
 
 const CANONICAL_HOST = "keeptxred.com";
 const WWW_HOST = `www.${CANONICAL_HOST}`;
+const CITY_MIGRATION_REDIRECTS: Readonly<Record<string, string>> = {
+  "/austin": "https://texasdefined.com/article/moving-to-austin-guide",
+  "/dallas-fort-worth": "https://texasdefined.com/article/moving-to-dallas-fort-worth-guide",
+  "/san-antonio": "https://texasdefined.com/article/moving-to-san-antonio-guide",
+  "/el-paso": "https://texasdefined.com/article/moving-to-el-paso-guide",
+};
 
 export function canonicalHostRedirect(request: Request): Response | null {
   const url = new URL(request.url);
@@ -21,6 +27,16 @@ export function canonicalHostRedirect(request: Request): Response | null {
   url.hostname = CANONICAL_HOST;
   url.port = "";
   return Response.redirect(url.toString(), 308);
+}
+
+export function cityMigrationRedirect(request: Request): Response | null {
+  const url = new URL(request.url);
+  const target = CITY_MIGRATION_REDIRECTS[url.pathname];
+  if (!target) return null;
+
+  const destination = new URL(target);
+  destination.search = url.search;
+  return Response.redirect(destination.toString(), 301);
 }
 
 let serverEntryPromise: Promise<ServerEntry> | undefined;
@@ -55,6 +71,9 @@ export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     const canonicalRedirect = canonicalHostRedirect(request);
     if (canonicalRedirect) return canonicalRedirect;
+
+    const cityRedirect = cityMigrationRedirect(request);
+    if (cityRedirect) return cityRedirect;
 
     try {
       installDirectAiFetch();
