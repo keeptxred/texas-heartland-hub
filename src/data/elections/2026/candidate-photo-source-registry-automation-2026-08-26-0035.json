@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "tombutler.org",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Tom Butler's verified Texas House District 128 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Tom Butler Texas House District 128 tombutler.org official campaign portrait",
+    "notes": "New candidate-controlled source verified August 26, 2026. The live site explicitly presents Tom Butler as the candidate for Texas House District 128, includes a Meet Tom biography and campaign-paid political content, and ATPE's current 2026 candidate profile independently confirms Butler as the Republican general-election candidate. No direct portrait asset was approved in this discovery pass because a stable candidate-hosted image URL was not independently validated."
+  },
+  {
+    "domain": "votewittliff.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Albert Wittliff's verified Texas House District 129 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Albert Wittliff Texas House District 129 votewittliff.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 26, 2026. The live site identifies itself as the Albert Wittliff campaign for Texas House District 129 and states that political advertising is paid for by Vote Wittliff TX129; current 2026 election sources independently identify Wittliff as the Democratic general-election candidate. The landing page currently exposes event imagery and campaign branding, so no portrait was invented or approved without a separately validated candidate-identifying asset."
+  },
+  {
+    "domain": "palmerfortexased.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Michelle Palmer's verified State Board of Education District 6 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Michelle Palmer State Board of Education District 6 palmerfortexased.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 26, 2026. ATPE's current 2026 profile links palmerfortexased.com as Michelle Palmer's campaign website and identifies her as the Democratic challenger for State Board of Education District 6; Transparency USA independently lists her on the November 3, 2026 ballot. The campaign site did not expose a stable portrait asset through the current discovery path, so no image was approved without independent URL validation."
+  }
+]
