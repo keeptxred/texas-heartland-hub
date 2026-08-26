@@ -46,3 +46,17 @@ jobs:
           ref: main
       - name: Verify live machine-readable authority resources
         run: python3 scripts/authority/smoke-production.py
+
+  city-migration-smoke:
+    if: ${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
+    steps:
+      - name: Check out current main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+      - name: Verify city migration redirects on deployed Worker
+        run: python3 scripts/authority/smoke-production.py --city-migration-only
