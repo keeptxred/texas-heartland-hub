@@ -1,29 +1,61 @@
 import { describe, expect, it } from "vitest";
 import { ALL_GUIDES } from "@/data/all-guides";
+import { ARTICLES } from "@/data/articles";
+import { issueGuides } from "@/data/issue-guides";
 import {
   KTR_DURABLE_FACEBOOK_GUIDES,
   durableGuideCanonicalUrl,
 } from "@/lib/facebook-durable-guides";
-import { DEFAULT_OG_IMAGE } from "@/lib/seo";
+import { isIssueGuideIndexable } from "@/lib/issue-guide-indexability";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 import { isSupportingGuideIndexable } from "@/lib/supporting-guide-indexability";
 
-describe("KTR durable Facebook guide pool", () => {
+function eligiblePillarArticles(now = new Date()) {
+  return ARTICLES.filter((article) => {
+    if (!article.pillar || !isStaticArticleIndexable(article)) return false;
+    if (!article.publishAt) return true;
+    const publishAt = Date.parse(article.publishAt);
+    return Number.isFinite(publishAt) && publishAt <= now.getTime();
+  });
+}
+
+describe("KTR durable Facebook content pool", () => {
   it("includes every production-indexable guide without an age cutoff", () => {
+    const candidateUrls = new Set(KTR_DURABLE_FACEBOOK_GUIDES.map((candidate) => candidate.url));
     const expected = Object.values(ALL_GUIDES).filter(isSupportingGuideIndexable);
-    expect(KTR_DURABLE_FACEBOOK_GUIDES).toHaveLength(expected.length);
-    expect(KTR_DURABLE_FACEBOOK_GUIDES.length).toBeGreaterThan(0);
-    expect(new Set(KTR_DURABLE_FACEBOOK_GUIDES.map((guide) => guide.slug))).toEqual(
-      new Set(expected.map((guide) => guide.slug)),
-    );
+    expect(expected.length).toBeGreaterThan(0);
+    for (const guide of expected) {
+      expect(candidateUrls.has(durableGuideCanonicalUrl(guide.slug))).toBe(true);
+    }
   });
 
-  it("uses canonical KTR URLs and a production-safe share image", () => {
-    for (const guide of KTR_DURABLE_FACEBOOK_GUIDES) {
-      expect(guide.url).toBe(durableGuideCanonicalUrl(guide.slug));
-      expect(guide.url).toMatch(/^https:\/\/keeptxred\.com\//);
-      expect(guide.image_url).toBe(DEFAULT_OG_IMAGE);
-      expect(guide.kind).toBe("evergreen-guide");
-      expect(guide.is_breaking).toBe(false);
+  it("includes published, indexable static pillar articles regardless of age", () => {
+    const candidateUrls = new Set(KTR_DURABLE_FACEBOOK_GUIDES.map((candidate) => candidate.url));
+    const expected = eligiblePillarArticles();
+    expect(expected.length).toBeGreaterThan(0);
+    for (const article of expected) {
+      expect(candidateUrls.has(`https://keeptxred.com/news/${encodeURIComponent(article.slug)}`)).toBe(true);
+    }
+  });
+
+  it("includes production-indexable issue guides regardless of age", () => {
+    const candidateUrls = new Set(KTR_DURABLE_FACEBOOK_GUIDES.map((candidate) => candidate.url));
+    const expected = issueGuides.filter(isIssueGuideIndexable);
+    expect(expected.length).toBeGreaterThan(0);
+    for (const guide of expected) {
+      expect(candidateUrls.has(`https://keeptxred.com/issues/${encodeURIComponent(guide.slug)}`)).toBe(true);
+    }
+  });
+
+  it("keeps only canonical KTR URLs and deduplicates overlapping registries", () => {
+    const urls = KTR_DURABLE_FACEBOOK_GUIDES.map((candidate) => candidate.url);
+    expect(urls.length).toBeGreaterThan(0);
+    expect(new Set(urls).size).toBe(urls.length);
+    for (const candidate of KTR_DURABLE_FACEBOOK_GUIDES) {
+      expect(candidate.url).toMatch(/^https:\/\/keeptxred\.com\//);
+      expect(candidate.image_url).toBeTruthy();
+      expect(candidate.kind).toBe("evergreen-guide");
+      expect(candidate.is_breaking).toBe(false);
     }
   });
 });
