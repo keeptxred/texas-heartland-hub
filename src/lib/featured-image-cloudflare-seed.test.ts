@@ -1,28 +1,24 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { buildFluxImageRequest } from "./featured-image-cloudflare";
 
 describe("buildFluxImageRequest", () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
+  it("uses only fields accepted by the live FLUX Workers AI schema", () => {
+    const request = buildFluxImageRequest("Texas preparedness supplies", "people");
 
-  it("includes an explicit supported FLUX seed", () => {
-    expect(buildFluxImageRequest("Texas preparedness supplies", "people", 424242)).toMatchObject({
+    expect(request).toMatchObject({
       steps: 8,
-      seed: 424242,
     });
+    expect(request.prompt).toContain("REAL CAMERA PHOTOGRAPH ONLY");
+    expect(request).not.toHaveProperty("seed");
+    expect(request).not.toHaveProperty("negative_prompt");
   });
 
-  it("varies the default seed between generation attempts", () => {
-    vi.spyOn(Math, "random")
-      .mockReturnValueOnce(0.1)
-      .mockReturnValueOnce(0.2);
+  it("keeps retry variation in prompt input rather than unsupported request fields", () => {
+    const first = buildFluxImageRequest("Texas preparedness supplies, first composition", "people");
+    const second = buildFluxImageRequest("Texas preparedness supplies, alternate composition", "people");
 
-    const first = buildFluxImageRequest("Texas preparedness supplies", "people");
-    const second = buildFluxImageRequest("Texas preparedness supplies", "people");
-
-    expect(first.seed).toBe(100000001);
-    expect(second.seed).toBe(200000001);
-    expect(first.seed).not.toBe(second.seed);
+    expect(first.prompt).not.toBe(second.prompt);
+    expect(Object.keys(first).sort()).toEqual(["prompt", "steps"]);
+    expect(Object.keys(second).sort()).toEqual(["prompt", "steps"]);
   });
 });
