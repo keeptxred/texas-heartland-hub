@@ -43,7 +43,7 @@ jobs:
             exit 1
           fi
 
-          endpoint='https://keeptxred.com/api/public/hooks/adsense-image-backfill'
+          endpoint='https://keeptxred-site.freddy-coppola.workers.dev/api/public/hooks/adsense-image-backfill'
           ready=-1
           for attempt in $(seq 1 6); do
             status=$(curl -sS -X POST -o /tmp/adsense-image-dry.json -w '%{http_code}' \
@@ -51,7 +51,7 @@ jobs:
               -H 'accept: application/json' \
               -H "Authorization: Bearer ${oidc_token}" \
               "${endpoint}?dry=1" || echo 000)
-            echo "production endpoint probe ${attempt}/6 HTTP ${status}"
+            echo "worker endpoint probe ${attempt}/6 HTTP ${status}"
             cat /tmp/adsense-image-dry.json 2>/dev/null || true
             echo
             if [[ "$status" == "200" ]] && jq -e '.ok == true and .dryRun == true' /tmp/adsense-image-dry.json >/dev/null 2>&1; then
@@ -62,7 +62,7 @@ jobs:
           done
 
           if [[ "$ready" -lt 0 ]]; then
-            echo 'Production AdSense image endpoint never became ready.' >&2
+            echo 'Direct Worker AdSense image endpoint never became ready.' >&2
             exit 1
           fi
           if [[ "$ready" -eq 0 ]]; then
