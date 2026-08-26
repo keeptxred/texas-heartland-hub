@@ -13,13 +13,14 @@ describe("featured image model routing", () => {
     expect(functionsSource).toContain("generateImageBytes(stronger, negativePrompt, imageModel)");
   });
 
-  it("uses FLUX native schema, a varying seed, and bounded negative constraints in the prompt", () => {
+  it("uses FLUX native schema and bounded negative constraints in the prompt", () => {
     expect(cloudflareSource).toContain("steps: 8");
-    expect(cloudflareSource).toContain("seed = Math.floor(Math.random() * 1_000_000_000) + 1");
     expect(cloudflareSource).toContain("buildFluxImageRequest(prompt, negativePrompt)");
     expect(cloudflareSource).toContain("buildFluxImagePrompt");
     expect(cloudflareSource).toContain("REAL CAMERA PHOTOGRAPH ONLY");
     expect(cloudflareSource).toContain("HARD EXCLUSIONS:");
+    expect(cloudflareSource).not.toMatch(/^\s*seed\s*[:,]/m);
+    expect(cloudflareSource).not.toContain("Math.random() * 1_000_000_000");
     expect(cloudflareSource).not.toContain("negative_prompt: negativePrompt");
     expect(cloudflareSource).not.toContain("dreamshaper-8-lcm");
   });
