@@ -50,6 +50,18 @@ export function buildFluxImagePrompt(prompt: string, negativePrompt: string): st
   return `${photographicLock} ${core} HARD EXCLUSIONS: ${exclusions}`.slice(0, 2048);
 }
 
+export function buildFluxImageRequest(
+  prompt: string,
+  negativePrompt: string,
+  seed = Math.floor(Math.random() * 1_000_000_000) + 1,
+): { prompt: string; steps: number; seed: number } {
+  return {
+    prompt: buildFluxImagePrompt(prompt, negativePrompt),
+    steps: 8,
+    seed,
+  };
+}
+
 export async function generateImageBytes(
   prompt: string,
   negativePrompt: string,
@@ -61,12 +73,11 @@ export async function generateImageBytes(
 
   // FLUX.1 Schnell uses its own compact Workers AI schema. Put negative
   // constraints into the prompt because the model does not accept the
-  // DreamShaper negative_prompt parameter. Do not send a seed: the current
-  // Workers AI REST schema rejects it as an unevaluated property.
-  const requestBody = {
-    prompt: buildFluxImagePrompt(prompt, negativePrompt),
-    steps: 8,
-  };
+  // DreamShaper negative_prompt parameter. Cloudflare's current FLUX REST
+  // contract supports seed; vary it per request so a rejected generation can
+  // produce a genuinely different composition on retry instead of repeatedly
+  // falling back to the same model-default image.
+  const requestBody = buildFluxImageRequest(prompt, negativePrompt);
 
   const res = await fetch(cloudflareEndpoint(accountId, model), {
     method: "POST",
