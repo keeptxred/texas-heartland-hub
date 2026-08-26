@@ -1,14 +1,14 @@
 import { parseVisionVerdict, type SubjectExtract } from "./featured-image-core";
 
-// FLUX has proven materially more reliable for documentary/photojournalistic
-// output than DreamShaper in the live KTR image pipeline. Use it as the default
-// for every category so a published article is not routinely stranded without
-// a featured image because the generator produced poster/cartoon artwork.
-export const CLOUDFLARE_IMAGE_MODEL = "@cf/black-forest-labs/flux-1-schnell";
+// FLUX.2 Klein 4B is the low-cost quality path for article photography. The
+// older Schnell model remains an API fallback so a partner-model outage or
+// account-level availability issue cannot strand the image pipeline.
+export const CLOUDFLARE_IMAGE_MODEL = "@cf/black-forest-labs/flux-2-klein-4b";
+export const CLOUDFLARE_IMAGE_FALLBACK_MODEL = "@cf/black-forest-labs/flux-1-schnell";
 export const CLOUDFLARE_CULTURE_IMAGE_MODEL = CLOUDFLARE_IMAGE_MODEL;
 export const CLOUDFLARE_VISION_MODEL = "@cf/mistralai/mistral-small-3.1-24b-instruct";
 
-export type CloudflareImageModel = typeof CLOUDFLARE_IMAGE_MODEL;
+export type CloudflareImageModel = typeof CLOUDFLARE_IMAGE_MODEL | typeof CLOUDFLARE_IMAGE_FALLBACK_MODEL;
 
 function cloudflareEndpoint(accountId: string, model: string): string {
   return `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(accountId)}/ai/run/${model}`;
@@ -29,14 +29,14 @@ function bytesToBase64(bytes: Uint8Array): string {
 }
 
 export function buildFluxImagePrompt(prompt: string, negativePrompt: string): string {
-  // FLUX.1 Schnell has a compact prompt budget. Keep the hard photographic
-  // constraints at the beginning and reserve explicit room for the exclusions
-  // at the end instead of letting a long article-specific prompt truncate them.
-  // This specifically targets the live failure cohort where otherwise relevant
-  // generations drifted into posters, infographics, text overlays, or vector art.
+  // Keep the documentary-photo lock first and reserve explicit room for the
+  // exclusions at the end. This targets the live failure cohort where otherwise
+  // relevant generations drifted into posters, infographics, generic symbols,
+  // text overlays, or vector art.
   const photographicLock = [
     "REAL CAMERA PHOTOGRAPH ONLY.",
-    "One coherent documentary photojournalism scene with natural lighting, lifelike materials, realistic optics and depth of field.",
+    "Create one coherent documentary photojournalism scene with natural lighting, lifelike materials, realistic optics and depth of field.",
+    "The concrete article subject must be visually obvious from physical objects, place, action, infrastructure, institution, sport, or event in the scene itself.",
     "No readable text, typography, poster, illustration, graphic design, vector art, iconography, collage, infographic, CGI, or synthetic promotional artwork.",
   ].join(" ");
   const essentialExclusions = negativePrompt
@@ -45,11 +45,14 @@ export function buildFluxImagePrompt(prompt: string, negativePrompt: string): st
     .filter(Boolean)
     .slice(0, 30)
     .join(", ");
-  const core = prompt.replace(/\s+/g, " ").trim().slice(0, 1380);
+  const core = prompt.replace(/\s+/g, " ").trim().slice(0, 1260);
   const exclusions = essentialExclusions.slice(0, 420);
-  return `${photographicLock} ${core} HARD EXCLUSIONS: ${exclusions}`.slice(0, 2048);
+  return `${photographicLock} EDITORIAL ASSIGNMENT: ${core} HARD EXCLUSIONS: ${exclusions}`.slice(0, 2048);
 }
 
+// Retain the proven Schnell request builder for the emergency fallback path.
+// The live REST endpoint rejected seed for this model, so only send accepted
+// fields even though some Cloudflare examples currently show a seed property.
 export function buildFluxImageRequest(
   prompt: string,
   negativePrompt: string,
@@ -58,6 +61,39 @@ export function buildFluxImageRequest(
     prompt: buildFluxImagePrompt(prompt, negativePrompt),
     steps: 8,
   };
+}
+
+export function buildFlux2ImageRequest(prompt: string, negativePrompt: string): FormData {
+  const form = new FormData();
+  form.append("prompt", buildFluxImagePrompt(prompt, negativePrompt));
+  form.append("guidance", "5.5");
+  form.append("width", "1024");
+  form.append("height", "768");
+  return form;
+}
+
+async function requestCloudflareImage(
+  accountId: string,
+  apiToken: string,
+  prompt: string,
+  negativePrompt: string,
+  model: CloudflareImageModel,
+): Promise<Response> {
+  if (model === CLOUDFLARE_IMAGE_MODEL) {
+    // FLUX.2 Klein uses multipart input even for prompt-only generation. Do not
+    // set Content-Type manually: fetch must add the multipart boundary.
+    return fetch(cloudflareEndpoint(accountId, model), {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiToken}` },
+      body: buildFlux2ImageRequest(prompt, negativePrompt),
+    });
+  }
+
+  return fetch(cloudflareEndpoint(accountId, model), {
+    method: "POST",
+    headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": "application/json" },
+    body: JSON.stringify(buildFluxImageRequest(prompt, negativePrompt)),
+  });
 }
 
 export async function generateImageBytes(
@@ -69,18 +105,16 @@ export async function generateImageBytes(
   const apiToken = process.env.CLOUDFLARE_API_TOKEN;
   if (!accountId || !apiToken) throw new Error("Missing Cloudflare Workers AI credentials: CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required");
 
-  // FLUX.1 Schnell uses its own compact Workers AI schema. Put negative
-  // constraints into the prompt because this model does not accept the
-  // DreamShaper negative_prompt parameter. The live Workers AI endpoint also
-  // rejects a seed property for this model, so keep the request to fields the
-  // deployed schema accepts and let retries vary through stronger prompt input.
-  const requestBody = buildFluxImageRequest(prompt, negativePrompt);
+  let activeModel = model;
+  let res = await requestCloudflareImage(accountId, apiToken, prompt, negativePrompt, activeModel);
 
-  const res = await fetch(cloudflareEndpoint(accountId, model), {
-    method: "POST",
-    headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": "application/json" },
-    body: JSON.stringify(requestBody),
-  });
+  // Fail safely if the newer partner model is temporarily unavailable. This is
+  // an API-availability fallback only; rejected image quality is still handled
+  // by the existing strict validator and retry loop.
+  if (!res.ok && activeModel === CLOUDFLARE_IMAGE_MODEL) {
+    activeModel = CLOUDFLARE_IMAGE_FALLBACK_MODEL;
+    res = await requestCloudflareImage(accountId, apiToken, prompt, negativePrompt, activeModel);
+  }
 
   if (!res.ok) {
     const raw = await res.text().catch(() => "");
@@ -91,7 +125,7 @@ export async function generateImageBytes(
     } catch {
       // Keep the raw error body.
     }
-    throw new Error(`Cloudflare Workers AI ${res.status}: ${String(detail).slice(0, 400)}`);
+    throw new Error(`Cloudflare Workers AI ${activeModel} ${res.status}: ${String(detail).slice(0, 400)}`);
   }
 
   const contentType = (res.headers.get("content-type") || "").toLowerCase();
