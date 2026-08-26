@@ -21,18 +21,23 @@ describe("weather preparedness image steering", () => {
     ).toBe("weather");
   });
 
-  it("depicts concrete household planning instead of inventing one dramatic weather event", () => {
+  it("uses an object-only multi-hazard preparedness inventory", () => {
     const prompt = buildImagePrompt(preparednessSubject);
-    expect(prompt).toContain("a believable Texas household actively preparing for multiple year-round hazards");
-    expect(prompt).toContain("weather radio");
+    expect(prompt).toContain("OBJECT-ONLY TEXAS PREPAREDNESS DOCUMENTARY PHOTOGRAPH");
+    expect(prompt).toContain("ZERO PEOPLE IN FRAME");
+    expect(prompt).toContain("battery-powered fan");
+    expect(prompt).toContain("outdoor faucet covers or pipe insulation");
+    expect(prompt).toContain("N95 masks");
+    expect(prompt).toContain("waterproof document pouch");
     expect(prompt).toContain("medication organizer");
-    expect(prompt).toContain("packed evacuation bag");
-    expect(prompt).toContain("do not invent one dramatic disaster as the main subject");
+    expect(prompt).toContain("pet carrier or leash");
+    expect(prompt).not.toContain("Anonymous household members may organize");
     expect(prompt).not.toContain("Depict the actual weather event affecting a recognizable Texas landscape");
   });
 
-  it("rejects the generic disaster motif that failed production validation", () => {
+  it("prioritizes people and failed disaster motifs in the compact negative prompt", () => {
     const negative = buildNegativeImagePrompt(preparednessSubject);
+    expect(negative.startsWith("people, person, family, adults, children, faces, hands, human figures, silhouettes")).toBe(true);
     expect(negative).toContain("family huddled in darkness");
     expect(negative).toContain("single dramatic storm");
     expect(negative).toContain("disaster movie scene");
@@ -49,6 +54,6 @@ describe("weather preparedness image steering", () => {
     };
     const prompt = buildImagePrompt(stormSubject);
     expect(prompt).toContain("Depict the actual weather event affecting a recognizable Texas landscape");
-    expect(prompt).not.toContain("household actively preparing for multiple year-round hazards");
+    expect(prompt).not.toContain("OBJECT-ONLY TEXAS PREPAREDNESS DOCUMENTARY PHOTOGRAPH");
   });
 });
