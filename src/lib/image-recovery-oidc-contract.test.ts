@@ -31,4 +31,15 @@ describe("image recovery OIDC workflow event contract", () => {
     expect(imageWorkflow).not.toContain("endpoint='https://keeptxred.com/api/public/hooks/image-backlog-recovery'");
     expect(adsenseWorkflow).not.toContain("endpoint='https://keeptxred.com/api/public/hooks/adsense-image-backfill'");
   });
+
+  it("refreshes the newsroom OIDC token for each long-running image request", () => {
+    expect(imageWorkflow).toContain("issue_oidc_token() {");
+    expect(imageWorkflow).toContain("for slug in \"${slugs[@]}\"; do");
+
+    const slugLoop = imageWorkflow.slice(imageWorkflow.indexOf('for slug in "${slugs[@]}"; do'));
+    expect(slugLoop).toContain("oidc_token=$(issue_oidc_token)");
+    expect(slugLoop.indexOf("oidc_token=$(issue_oidc_token)")).toBeLessThan(
+      slugLoop.indexOf('Authorization: Bearer ${oidc_token}'),
+    );
+  });
 });
