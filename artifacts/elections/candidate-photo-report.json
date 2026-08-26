@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-08-25T23:53:11.671Z",
+  "generatedAt": "2026-08-26T09:46:34.518Z",
   "candidateCount": 491,
   "eligibleCandidateCount": 479,
   "excludedCandidateCount": 12,
-  "approvedPhotoCount": 280,
-  "missingPhotoCount": 199,
-  "manifestEntryCount": 280,
-  "coverage": 0.5845511482254697,
-  "coveragePercent": 58.46,
+  "approvedPhotoCount": 286,
+  "missingPhotoCount": 193,
+  "manifestEntryCount": 286,
+  "coverage": 0.5970772442588727,
+  "coveragePercent": 59.71,
   "targetCoverage": 0.85,
   "targetApprovedPhotoCount": 408,
-  "photosNeededForTarget": 128,
+  "photosNeededForTarget": 122,
   "targetMet": false,
   "errors": [],
   "warnings": [],
@@ -203,31 +203,10 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-ricardo-rick-martinez-republican-race-2026-texas-house-125",
-      "name": "RICARDO 'RICK' MARTINEZ",
-      "raceId": "race-2026-texas-house-125",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-tom-butler-republican-race-2026-texas-house-128",
-      "name": "TOM BUTLER",
-      "raceId": "race-2026-texas-house-128",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-albert-wittliff-democratic-race-2026-texas-house-129",
       "name": "ALBERT WITTLIFF",
       "raceId": "race-2026-texas-house-129",
       "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-scott-bowen-republican-race-2026-texas-house-129",
-      "name": "SCOTT BOWEN",
-      "raceId": "race-2026-texas-house-129",
-      "party": "republican",
       "priority": "standard"
     },
     {
@@ -325,27 +304,6 @@
       "candidateId": "candidate-theodis-daniel-republican-race-2026-texas-house-147",
       "name": "THEODIS DANIEL",
       "raceId": "race-2026-texas-house-147",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-amanda-labrie-republican-race-2026-texas-house-148",
-      "name": "AMANDA LABRIE",
-      "raceId": "race-2026-texas-house-148",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-darlene-breaux-democratic-race-2026-texas-house-149",
-      "name": "DARLENE BREAUX",
-      "raceId": "race-2026-texas-house-149",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-dave-bennett-republican-race-2026-texas-house-149",
-      "name": "DAVE BENNETT",
-      "raceId": "race-2026-texas-house-149",
       "party": "republican",
       "priority": "standard"
     },
