@@ -178,6 +178,12 @@ jobs:
           print("workers.dev health passed")
           PY
 
+      - name: Verify city migration redirects on deployed Worker
+        if: steps.revision.outputs.deploy == 'true'
+        env:
+          SITE_URL: ${{ env.PREVIEW_URL }}
+        run: python3 scripts/authority/smoke-production.py --city-migration-only
+
       - name: Verify deployed Worker health and production edge route
         if: steps.revision.outputs.deploy == 'true'
         shell: bash
