@@ -14,6 +14,12 @@ permissions:
   contents: read
   id-token: write
 
+env:
+  # GitHub-hosted runners are challenged on browser-facing keeptxred.com API
+  # routes. Machine hooks use the same deployed Worker directly while retaining
+  # their existing OIDC and publication-safety authorization.
+  AUTOMATION_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -38,7 +44,7 @@ jobs:
             --max-time 360 \
             -H 'accept: application/json' \
             -H "Authorization: Bearer ${oidc_token}" \
-            'https://keeptxred.com/api/public/hooks/publish-overdue-gap' || echo 000)
+            "${AUTOMATION_ORIGIN%/}/api/public/hooks/publish-overdue-gap" || echo 000)
 
           echo "overdue-gap HTTP ${gap_status}"
           cat /tmp/overdue-gap.json 2>/dev/null || true
@@ -66,7 +72,7 @@ jobs:
             local status
             status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
               --max-time "$timeout" -H 'accept: application/json' \
-              "https://keeptxred.com/api/public/hooks/${endpoint}" || echo 000)
+              "${AUTOMATION_ORIGIN%/}/api/public/hooks/${endpoint}" || echo 000)
             echo "newsroom-${name} HTTP ${status}"
             cat "$output" 2>/dev/null || true
             echo
@@ -89,7 +95,7 @@ jobs:
               --max-time 240 \
               -H 'accept: application/json' \
               -H "Authorization: Bearer ${oidc_token}" \
-              'https://keeptxred.com/api/public/hooks/generate-newsroom?mode=publish' || echo 000)
+              "${AUTOMATION_ORIGIN%/}/api/public/hooks/generate-newsroom?mode=publish" || echo 000)
 
             echo "clustered-newsroom HTTP ${newsroom_status}"
             cat /tmp/newsroom-publish.json 2>/dev/null || true
@@ -114,7 +120,7 @@ jobs:
                 -H 'content-type: application/json' \
                 -H "Authorization: Bearer ${oidc_token}" \
                 --data "$finalize_payload" \
-                'https://keeptxred.com/api/public/hooks/finalize-newsroom-article' || echo 000)
+                "${AUTOMATION_ORIGIN%/}/api/public/hooks/finalize-newsroom-article" || echo 000)
 
               echo "clustered-newsroom-finalize HTTP ${finalize_status}"
               cat /tmp/newsroom-finalize.json 2>/dev/null || true
@@ -144,7 +150,7 @@ jobs:
           echo 'No quality-gated normal article published; invoking curated reserve safety net.'
           safety_status=$(curl -sS -X POST -o /tmp/safety-net.json -w '%{http_code}' \
             --max-time 95 -H 'accept: application/json' \
-            'https://keeptxred.com/api/public/hooks/publishing-safety-net' || echo 000)
+            "${AUTOMATION_ORIGIN%/}/api/public/hooks/publishing-safety-net" || echo 000)
           cat /tmp/safety-net.json 2>/dev/null || true
           echo
 
