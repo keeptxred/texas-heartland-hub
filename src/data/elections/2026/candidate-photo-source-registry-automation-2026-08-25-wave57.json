@@ -34,5 +34,23 @@
     "rightsRule": "Use candidate-identifying photography hosted on Scott Bowen's verified Texas House District 129 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
     "searchHint": "Scott Bowen Texas House District 129 bowenfortx.com official campaign portrait",
     "notes": "New candidate-controlled source verified August 25, 2026. The live site identifies Scott Bowen as the conservative candidate for Texas House District 129. Community Impact's current 2026 candidate Q&A independently identifies bowenfortx.com as his candidate website."
+  },
+  {
+    "domain": "palmerfortexased.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Michelle Palmer's verified State Board of Education District 6 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Michelle Palmer State Board of Education District 6 palmerfortexased.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 25, 2026. TCTA and ATPE's current 2026 candidate profiles independently identify palmerfortexased.com as Michelle Palmer's State Board of Education District 6 campaign website."
+  },
+  {
+    "domain": "margofortexas.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Margo Jordan's verified State Board of Education District 6 write-in campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Margo Jordan State Board of Education District 6 margofortexas.com official write-in campaign portrait",
+    "notes": "New candidate-controlled source verified August 25, 2026. The live site explicitly identifies Margo Jordan as running for the Texas State Board of Education and provides write-in instructions for District 6; her current LinkedIn campaign posts independently direct supporters to margofortexas.com."
   }
 ]
