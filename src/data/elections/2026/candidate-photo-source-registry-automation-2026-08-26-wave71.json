@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "prd.tecprd.ethicsefile.com",
+    "sourceClass": "official-state-campaign-finance-records",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Ethics Commission e-filing records only to verify candidate identity, office sought, committee/treasurer details, and campaign provenance before following candidate-controlled links or accepting a portrait from another source. These filings do not by themselves grant image reuse rights and must never auto-approve a photo.",
+    "searchHint": "Texas Ethics Commission campaign finance filing candidate office sought committee 2026 Texas",
+    "notes": "New authoritative discovery bridge verified August 26, 2026. A current Texas Ethics Commission electronic filing for Odus E. Evbagharu identifies him as seeking State Representative District 135 and provides campaign committee details. This source is valuable for candidate/office disambiguation and provenance checks when names are ambiguous, but remains discovery-only for imagery."
+  },
+  {
+    "domain": "appfiles.harrisvotes.com",
+    "sourceClass": "official-county-election-records",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Harris County Elections public result files only to verify ballot presence, party, district, and election-stage identity before matching a candidate to a portrait source. Election-result PDFs do not provide portrait reuse permission and must never auto-approve an image.",
+    "searchHint": "Harris County Elections 2026 candidate results Texas House district candidate name",
+    "notes": "New authoritative county-election discovery bridge verified August 26, 2026. Harris County's official March 3, 2026 Republican primary cumulative report confirms candidates including Inocensia Moreno in HD145. This source strengthens candidate eligibility and identity reconciliation for Harris County candidates while preserving separate item-level image-rights review."
+  }
+]
