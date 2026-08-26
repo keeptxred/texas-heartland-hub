@@ -96,6 +96,18 @@
     "discoveredAt": "2026-08-25T03:40:03.890Z"
   },
   {
+    "candidateId": "candidate-amanda-labrie-republican-race-2026-texas-house-148",
+    "imageUrl": "https://amandalabrie.com/wp-content/uploads/2025/10/Amanda-LaBrie-min.png",
+    "sourceUrl": "https://amandalabrie.com/",
+    "altText": "Amanda LaBrie, Republican candidate for Texas House District 148",
+    "credit": "Amanda LaBrie campaign",
+    "license": null,
+    "permissionBasis": "Candidate-identifying portrait published on Amanda LaBrie's official Texas House District 148 campaign website, which explicitly identifies Amanda Elizabeth LaBrie as the 2026 Republican candidate for HD 148. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-website",
+    "discoveredAt": "2026-08-26T08:48:52.630Z"
+  },
+  {
     "candidateId": "candidate-amy-taylor-democratic-race-2026-state-board-of-education-14",
     "imageUrl": "https://i0.wp.com/amytaylortexas.com/wp-content/uploads/2026/04/AmyTaylor-Headshot-Circle-1.webp?resize=1024%2C1024&ssl=1",
     "sourceUrl": "https://amytaylortexas.com/",
@@ -878,6 +890,18 @@
     "discoveredAt": "2026-08-25T03:40:03.802Z"
   },
   {
+    "candidateId": "candidate-darlene-breaux-democratic-race-2026-texas-house-149",
+    "imageUrl": "https://darlenebreaux.com/wp-content/uploads/2025/09/darlene-scaled.png",
+    "sourceUrl": "https://darlenebreaux.com/",
+    "altText": "Darlene Breaux, Democratic candidate for Texas House District 149",
+    "credit": "Darlene Breaux campaign",
+    "license": null,
+    "permissionBasis": "Candidate-identifying portrait published on Darlene Breaux's official Texas House District 149 campaign website, where she is explicitly identified as a candidate for Texas State Representative, House District 149. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-website",
+    "discoveredAt": "2026-08-26T08:48:52.631Z"
+  },
+  {
     "candidateId": "candidate-darren-hamilton-libertarian-race-2026-texas-house-57",
     "imageUrl": "https://assets.nationbuilder.com/lptexas/pages/8541/attachments/original/1777575645/darren-hamilton.png?1777575645=",
     "sourceUrl": "https://www.lptexas.org/candidates",
@@ -886,6 +910,18 @@
     "license": null,
     "permissionBasis": "Official party candidate-slate image used for editorial candidate identification with attribution and a link to the source page.",
     "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-dave-bennett-republican-race-2026-texas-house-149",
+    "imageUrl": "https://img1.wsimg.com/isteam/ip/9d4fae5e-e981-4c7c-ba88-f0fe61985f17/B1%20-%201500x500%20-%20v3%20-%20RL%20-%20Lone%20Star%20Strategic%20.png/%3A/",
+    "sourceUrl": "https://bennettforstaterep.com/",
+    "altText": "Dave Bennett, Republican candidate for Texas House District 149",
+    "credit": "Dave Bennett campaign",
+    "license": null,
+    "permissionBasis": "Candidate-identifying campaign image published on Dave Bennett's official Texas House District 149 campaign website, which names Bennett and identifies the office as Texas House District 149. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-website",
+    "discoveredAt": "2026-08-26T08:48:52.631Z"
   },
   {
     "candidateId": "candidate-david-lowe-republican-race-2026-texas-house-91",
@@ -2554,6 +2590,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-ricardo-rick-martinez-republican-race-2026-texas-house-125",
+    "imageUrl": "https://static.wixstatic.com/media/ebdf97_b91a46b8bf514576b5701db2c6cb43ba~mv2.jpg/v1/fill/w_640%2Ch_454%2Cal_c%2Cq_80%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/ebdf97_b91a46b8bf514576b5701db2c6cb43ba~mv2.jpg",
+    "sourceUrl": "https://www.voterickfortexas.com/",
+    "altText": "Ricardo 'Rick' Martinez, Republican candidate for Texas House District 125",
+    "credit": "Rick Martinez campaign",
+    "license": null,
+    "permissionBasis": "Candidate-identifying portrait published on Ricardo 'Rick' Martinez's official Texas House District 125 campaign website, which identifies Martinez as the HD 125 candidate and states that the site is paid for by the Rick Martinez campaign. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-website",
+    "discoveredAt": "2026-08-26T08:48:52.438Z"
+  },
+  {
     "candidateId": "candidate-richard-hayes-republican-race-2026-texas-house-57",
     "imageUrl": "https://house.texas.gov/images/members/4165.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/57",
@@ -2682,6 +2730,18 @@
     "license": null,
     "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
     "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-scott-bowen-republican-race-2026-texas-house-129",
+    "imageUrl": "https://bowenfortx.com/wp-content/uploads/2025/05/Scott-Bowen.jpg",
+    "sourceUrl": "https://bowenfortx.com/",
+    "altText": "Scott Bowen, Republican candidate for Texas House District 129",
+    "credit": "Scott Bowen Campaign",
+    "license": null,
+    "permissionBasis": "Candidate-identifying portrait published on Scott Bowen's official Texas House District 129 campaign website, which identifies Bowen as the HD 129 Republican candidate and is paid for by the Scott Bowen Campaign. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-website",
+    "discoveredAt": "2026-08-26T08:48:52.407Z"
   },
   {
     "candidateId": "candidate-sean-huffman-democratic-race-2026-texas-house-1",
