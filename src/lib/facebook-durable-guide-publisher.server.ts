@@ -13,7 +13,7 @@ import {
 } from "@/lib/facebook-page-history";
 import { quickPublishToFacebookFn } from "@/services/quickPublish.functions";
 
-const MAX_GUIDE_CANDIDATES = 160;
+const GUIDE_HISTORY_BATCH_SIZE = 50;
 const MAX_GUIDE_ATTEMPTS = 12;
 
 type PackageRow = {
@@ -37,36 +37,41 @@ function hash32(value: string): number {
 }
 
 async function loadAlreadyPostedGuideUrls(db: any, urls: string[]): Promise<Set<string>> {
-  if (urls.length === 0) return new Set();
+  const alreadyPosted = new Set<string>();
 
-  const { data: rawPackages, error: packageError } = await db
-    .from("content_packages")
-    .select("id,source_url")
-    .in("source_url", urls);
-  if (packageError) throw new Error(packageError.message);
+  for (let start = 0; start < urls.length; start += GUIDE_HISTORY_BATCH_SIZE) {
+    const urlBatch = urls.slice(start, start + GUIDE_HISTORY_BATCH_SIZE);
+    if (urlBatch.length === 0) continue;
 
-  const packages = (rawPackages ?? []) as PackageRow[];
-  const packageIds = packages.map((row) => row.id);
-  if (packageIds.length === 0) return new Set();
+    const { data: rawPackages, error: packageError } = await db
+      .from("content_packages")
+      .select("id,source_url")
+      .in("source_url", urlBatch);
+    if (packageError) throw new Error(packageError.message);
 
-  const { data: queueRows, error: queueError } = await db
-    .from("publishing_queue")
-    .select("content_package_id")
-    .in("content_package_id", packageIds)
-    .ilike("platform", "facebook")
-    .eq("status", "PUBLISHED");
-  if (queueError) throw new Error(queueError.message);
+    const packages = (rawPackages ?? []) as PackageRow[];
+    const packageIds = packages.map((row) => row.id);
+    if (packageIds.length === 0) continue;
 
-  const postedPackageIds = new Set<string>();
-  for (const row of queueRows ?? []) {
-    if (typeof row.content_package_id === "string") postedPackageIds.add(row.content_package_id);
+    const { data: queueRows, error: queueError } = await db
+      .from("publishing_queue")
+      .select("content_package_id")
+      .in("content_package_id", packageIds)
+      .ilike("platform", "facebook")
+      .eq("status", "PUBLISHED");
+    if (queueError) throw new Error(queueError.message);
+
+    const postedPackageIds = new Set<string>();
+    for (const row of queueRows ?? []) {
+      if (typeof row.content_package_id === "string") postedPackageIds.add(row.content_package_id);
+    }
+
+    for (const row of packages) {
+      if (postedPackageIds.has(row.id) && row.source_url) alreadyPosted.add(String(row.source_url));
+    }
   }
 
-  return new Set(
-    packages
-      .filter((row) => postedPackageIds.has(row.id) && row.source_url)
-      .map((row) => String(row.source_url)),
-  );
+  return alreadyPosted;
 }
 
 async function loadLiveFacebookPagePosts(db: any): Promise<FacebookPagePost[]> {
@@ -124,7 +129,7 @@ export async function publishDurableFacebookGuideFallback(args: {
   mode: string;
   fallbackReason: string;
 }): Promise<Response> {
-  const pool = KTR_DURABLE_FACEBOOK_GUIDES.slice(0, MAX_GUIDE_CANDIDATES);
+  const pool = KTR_DURABLE_FACEBOOK_GUIDES;
   if (pool.length === 0) {
     return Response.json({
       ok: true,
