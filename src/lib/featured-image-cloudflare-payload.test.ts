@@ -3,22 +3,23 @@ import { describe, expect, it } from "vitest";
 import { buildFluxImagePrompt, buildFluxImageRequest } from "./featured-image-cloudflare";
 
 describe("Cloudflare featured-image payload", () => {
-  it("uses FLUX with explicit anti-illustration prompt controls and a supported seed", () => {
+  it("uses FLUX with explicit anti-illustration prompt controls and supported request fields", () => {
     const source = fs.readFileSync(new URL("./featured-image-cloudflare.ts", import.meta.url), "utf8");
     const requestStart = source.indexOf("export function buildFluxImageRequest");
     const generateStart = source.indexOf("export async function generateImageBytes");
     const validatorStart = source.indexOf("export async function validateImageMatchesArticle");
     const requestSource = source.slice(requestStart, generateStart);
     const generateImageSource = source.slice(generateStart, validatorStart);
-    const request = buildFluxImageRequest("Texas preparedness supplies", "people, illustration", 424242);
+    const request = buildFluxImageRequest("Texas preparedness supplies", "people, illustration");
 
     expect(source).toContain('@cf/black-forest-labs/flux-1-schnell');
     expect(requestSource).toContain("buildFluxImagePrompt");
     expect(requestSource).toContain("steps: 8");
-    expect(requestSource).toMatch(/^\s*seed[,]?$/m);
-    expect(request.seed).toBe(424242);
+    expect(request).toEqual(expect.objectContaining({ steps: 8 }));
+    expect(request).not.toHaveProperty("seed");
     expect(generateImageSource).toContain("buildFluxImageRequest(prompt, negativePrompt)");
     expect(generateImageSource).not.toMatch(/\bnegative_prompt\s*:/);
+    expect(generateImageSource).not.toMatch(/\bseed\s*:/);
     expect(generateImageSource).not.toContain("dreamshaper-8-lcm");
     expect(generateImageSource).toContain('contentType.startsWith("image/")');
   });
