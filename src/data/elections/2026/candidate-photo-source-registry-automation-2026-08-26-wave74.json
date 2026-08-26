@@ -6,6 +6,24 @@
     "autoApprove": false,
     "rightsRule": "Use Texas Classroom Teachers Association candidate-profile photography only as a discovery lead unless the exact image has an explicit reusable license, candidate/campaign-supplied provenance with documented reuse permission, or another item-level permission basis. Do not infer reuse rights from appearance on a voter-guide profile. Preserve the exact profile URL, image URL, credit/provenance, candidate identity, and any license or permission statement before approval.",
     "searchHint": "site:tcta.org/texasteachersvote/find-candidates/texas-house-candidates 2026 candidate portrait Texas House",
-    "notes": "New discovery source verified August 26, 2026. TCTA's TexasTeachersVote candidate directory currently exposes dedicated 2026 candidate profiles for unresolved candidates including Julie Hunt (HD-141), Alexandria Nicole Butler (HD-146), and Kyle Harding (HD-139), with profile imagery and candidate-specific metadata. This adds a previously unused statewide association voter-guide bridge while keeping portrait approval item-level and rights-gated."
+    "notes": "New discovery source verified August 26, 2026. TCTA's TexasTeachersVote candidate directory currently exposes dedicated 2026 candidate profiles for unresolved candidates including Julie Hunt (HD-141), Alexandria Nicole Butler (HD-146), Kyle Harding (HD-139), Albert Wittliff (HD-129), Rhett Rosenquest Smith (HD-116), and Theodis Daniel (HD-147), with candidate-specific metadata and profile imagery on several pages. This adds a previously unused statewide association voter-guide bridge while keeping portrait approval item-level and rights-gated."
+  },
+  {
+    "domain": "theodisfortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Treat imagery on Theodis Daniel's official campaign site as candidate-identity and image-discovery evidence only unless an exact image is accompanied by an explicit reusable license, press/media permission, campaign-supplied reuse statement, or other documented item-level permission basis. Preserve the page URL, direct image URL, credit/provenance, and permission evidence before approval.",
+    "searchHint": "site:theodisfortexas.com Theodis Daniel portrait media photo",
+    "notes": "Official campaign site verified August 26, 2026 for unresolved Texas House District 147 Republican candidate Theodis Daniel. The site identifies Daniel, contains campaign biography material and gallery/media imagery, and provides an additional candidate-controlled discovery path. Rights remain item-level and are not inferred from campaign ownership."
+  },
+  {
+    "domain": "votewittliff.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Treat imagery on Albert Wittliff's official campaign site as candidate-identity and image-discovery evidence only unless an exact image is accompanied by an explicit reusable license, press/media permission, campaign-supplied reuse statement, or other documented item-level permission basis. Preserve the page URL, direct image URL, credit/provenance, and permission evidence before approval.",
+    "searchHint": "site:votewittliff.com Albert Wittliff portrait media photo",
+    "notes": "Official campaign domain surfaced from the current TCTA candidate profile and verified August 26, 2026 for unresolved Texas House District 129 Democratic candidate Albert Wittliff. This adds a candidate-controlled source for further portrait and media-kit discovery while retaining manual rights verification."
   }
 ]
