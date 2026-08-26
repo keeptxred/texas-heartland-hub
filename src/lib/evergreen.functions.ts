@@ -70,6 +70,16 @@ function isLegacyLiveSlug(slug: string): boolean {
   return String(slug ?? "").trim().toLowerCase().startsWith("live-");
 }
 
+export function isLegacyArticleAllowedInSitemap(
+  slug: string,
+  qualityFlags: string[] | null | undefined,
+): boolean {
+  if (!isLegacyLiveSlug(slug)) return true;
+  return (qualityFlags ?? []).some(
+    (flag) => String(flag).trim().toLowerCase() === "legacy_url_restored",
+  );
+}
+
 function client() {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_PUBLISHABLE_KEY;
@@ -261,7 +271,7 @@ export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
     const eligible = rows
       .filter((a) => {
         if (!a.body_json) return false;
-        if (isLegacyLiveSlug(a.slug)) return false;
+        if (!isLegacyArticleAllowedInSitemap(a.slug, a.quality_flags)) return false;
         if (!isSitemapEligibleSlug(a.slug, a.published_at)) return false;
         if (!isPublicArticleReady(a)) return false;
         const sanitized = sanitizeEvergreenBody(a.body_json, a.published_at);
