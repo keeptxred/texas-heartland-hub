@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "mindybumgarner.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Mindy Bumgarner's official State Board of Education District 14 campaign website only after the exact page and image independently validate and clearly identify Bumgarner. Preserve campaign attribution and the exact source page. Do not approve campaign logos, education-themed graphics, endorsement media, event flyers, group photos without an unambiguous subject, or unrelated decorative imagery as the canonical portrait.",
+    "searchHint": "site:mindybumgarner.com Mindy Bumgarner State Board of Education District 14 portrait photo",
+    "notes": "New candidate-controlled source verified August 25, 2026. The live site explicitly states that Mindy Bumgarner is running for Texas State Board of Education District 14 and provides campaign contact information; TCTA independently links mindybumgarner.com from Bumgarner's current candidate profile, and official March 3, 2026 primary results list Bumgarner for SBOE District 14. The currently crawlable campaign images are campaign graphics rather than a safe canonical portrait, so item-level portrait approval remains required."
+  },
+  {
+    "domain": "palmerfortexased.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Michelle Palmer's official State Board of Education District 6 campaign website only after the exact page and image independently validate and clearly identify Palmer. Preserve campaign attribution and the exact source page. Do not approve social embeds, campaign graphics, endorsement media, group photos without an unambiguous subject, or third-party editorial photography as the canonical portrait without a separate documented rights basis.",
+    "searchHint": "site:palmerfortexased.com Michelle Palmer State Board of Education District 6 portrait photo",
+    "notes": "New candidate-controlled source verified August 25, 2026. ATPE's current 2026 candidate profile identifies Michelle Palmer as the District 6 challenger and lists palmerfortexased.com as her website; TCTA independently lists the same campaign website and candidate social profiles. The site itself currently exposes very little crawlable image metadata, so portrait approval remains item-level review only. A Houston Chronicle headshot was discovered during research but was not approved because no reusable-rights basis was established."
+  }
+]
