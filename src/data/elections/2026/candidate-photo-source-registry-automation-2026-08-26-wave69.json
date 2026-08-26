@@ -1,0 +1,38 @@
+[
+  {
+    "domain": "tcta.org",
+    "sourceClass": "election-voter-guide",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use TCTA candidate-profile imagery only as a discovery bridge unless the exact portrait has a separately verified license, candidate-supplied provenance, or other documented editorial-use permission basis. Preserve the exact profile URL and do not infer reuse rights from page display alone.",
+    "searchHint": "site:tcta.org TexasTeachersVote 2026 candidate portrait Texas House",
+    "notes": "New discovery source verified August 26, 2026. TCTA's TexasTeachersVote directory has current candidate-specific profiles, including unresolved candidate Rhett Rosenquest Smith for Texas House District 116. Candidate identity and office are corroborated on the profile, but image reuse rights are not stated, so this source is discovery-only pending item-level rights verification."
+  },
+  {
+    "domain": "sanantonioreport.org",
+    "sourceClass": "reputable-news-candidate-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use San Antonio Report candidate-profile photography only when the exact image is candidate-supplied or another explicit editorial permission basis/license is documented at item level. Staff photography and generic newsroom assets are not auto-approved. Preserve exact article and image provenance.",
+    "searchHint": "site:sanantonioreport.org/profile 2026 candidate Texas House portrait",
+    "notes": "New discovery source verified August 26, 2026. The outlet maintains current candidate profile pages for Bexar-area races, including a dedicated Rhett Rosenquest Smith HD116 profile. The visible avatar is credited to San Antonio Report Staff, so it is not promoted to the canonical manifest without additional rights evidence."
+  },
+  {
+    "domain": "harrisdemocrats.org",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Harris County Democratic Party candidate-directory imagery only after the exact image URL, candidate identity, and candidate-supplied or otherwise documented editorial permission basis are verified. Party-directory display alone does not establish a reusable license.",
+    "searchHint": "site:harrisdemocrats.org/candidates 2026 Texas House candidate portrait",
+    "notes": "New county-party discovery source verified August 26, 2026. The current candidate directory identifies A'Yonna Kellum for Texas House District 150 and exposes candidate imagery, but item-level reuse rights are not stated; keep as an active discovery bridge until provenance is independently verified."
+  },
+  {
+    "domain": "expressnews.com",
+    "sourceClass": "reputable-news-voter-guide",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Express-News voter-guide pages to discover candidate websites, biographies, and candidate-supplied imagery. Do not auto-approve staff or wire photography; require candidate-supplied provenance or an explicit reusable license/permission basis for the exact image.",
+    "searchHint": "site:expressnews.com/projects/2026 Texas primary voter guide candidate campaign website",
+    "notes": "New discovery bridge verified August 26, 2026. The 2026 San Antonio/Bexar voter guide provides candidate-specific entries and campaign-website indicators. It confirms Rhett Rosenquest Smith lacks an active campaign website, making alternate authoritative discovery sources more valuable while preserving the repository's image-rights gate."
+  }
+]
