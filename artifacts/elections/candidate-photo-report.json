@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-08-25T20:40:06.361Z",
+  "generatedAt": "2026-08-25T23:53:11.671Z",
   "candidateCount": 491,
   "eligibleCandidateCount": 479,
   "excludedCandidateCount": 12,
-  "approvedPhotoCount": 274,
-  "missingPhotoCount": 205,
-  "manifestEntryCount": 274,
-  "coverage": 0.5720250521920668,
-  "coveragePercent": 57.2,
+  "approvedPhotoCount": 280,
+  "missingPhotoCount": 199,
+  "manifestEntryCount": 280,
+  "coverage": 0.5845511482254697,
+  "coveragePercent": 58.46,
   "targetCoverage": 0.85,
   "targetApprovedPhotoCount": 408,
-  "photosNeededForTarget": 134,
+  "photosNeededForTarget": 128,
   "targetMet": false,
   "errors": [],
   "warnings": [],
@@ -133,13 +133,6 @@
       "priority": "statewide"
     },
     {
-      "candidateId": "candidate-jenn-mack-other-race-2026-governor",
-      "name": "JENN MACK",
-      "raceId": "race-2026-governor",
-      "party": "other",
-      "priority": "statewide"
-    },
-    {
       "candidateId": "candidate-jinghpaw-majoishingra-other-race-2026-governor",
       "name": "JINGHPAW MAJOISHINGRA",
       "raceId": "race-2026-governor",
@@ -196,45 +189,10 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-jordan-scott-hoffnagle-republican-race-2026-texas-house-100",
-      "name": "JORDAN SCOTT HOFFNAGLE",
-      "raceId": "race-2026-texas-house-100",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-melanie-medley-thomas-republican-race-2026-texas-house-103",
-      "name": "MELANIE MEDLEY-THOMAS",
-      "raceId": "race-2026-texas-house-103",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-tim-mcdonough-republican-race-2026-texas-house-114",
-      "name": "TIM MCDONOUGH",
-      "raceId": "race-2026-texas-house-114",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-rhett-rosenquest-smith-republican-race-2026-texas-house-116",
       "name": "RHETT ROSENQUEST SMITH",
       "raceId": "race-2026-texas-house-116",
       "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-melva-perez-republican-race-2026-texas-house-119",
-      "name": "MELVA PEREZ",
-      "raceId": "race-2026-texas-house-119",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-zack-dunn-democratic-race-2026-texas-house-121",
-      "name": "ZACK DUNN",
-      "raceId": "race-2026-texas-house-121",
-      "party": "democratic",
       "priority": "standard"
     },
     {

@@ -1430,6 +1430,18 @@
     "usageStatus": "approved"
   },
   {
+    "candidateId": "candidate-jenn-mack-other-race-2026-governor",
+    "imageUrl": "https://taketexasback.com/wp-content/uploads/2025/10/Jen5-e1760106621892.jpg",
+    "sourceUrl": "https://taketexasback.com/pledged-candidates/jenn-mack-raphoon",
+    "altText": "Jenn Mack Raphoon, Independent candidate for Governor of Texas in 2026",
+    "credit": "Jenn Mack Raphoon / Texas First Pledge",
+    "license": null,
+    "permissionBasis": "Candidate-identifying portrait published on Jenn Mack Raphoon's signed Texas First Pledge candidate profile and used for editorial candidate identification with exact source attribution; the profile links her official campaign website and identifies her as the 2026 Independent candidate for Governor of Texas.",
+    "usageStatus": "approved",
+    "discoveryMethod": "candidate-linked-pledge-profile",
+    "discoveredAt": "2026-08-25T23:53:11.248Z"
+  },
+  {
     "candidateId": "candidate-jessi-cowart-libertarian-race-2026-texas-house-15",
     "imageUrl": "https://assets.nationbuilder.com/lptexas/pages/8541/attachments/original/1777575639/jessi-cowart.png?1777575639=",
     "sourceUrl": "https://www.lptexas.org/candidates",
@@ -1592,6 +1604,18 @@
     "license": "CC BY-SA 4.0",
     "permissionBasis": null,
     "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-jordan-scott-hoffnagle-republican-race-2026-texas-house-100",
+    "imageUrl": "https://dallasgop.org/wp-content/uploads/2026/06/Jordan-Hoffnagle.jpg",
+    "sourceUrl": "https://dallasgop.org/meet-the-candidates/",
+    "altText": "Jordan Hoffnagle, Republican candidate for Texas House District 100",
+    "credit": "Dallas County Republican Party candidate directory",
+    "license": null,
+    "permissionBasis": "Candidate-identifying portrait published by the Dallas County Republican Party on its current 2026 Meet the Candidates page, where Jordan Hoffnagle is identified as the Republican candidate for Texas House District 100 and linked to his campaign website. Used only for editorial candidate identification with exact source attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-county-party-candidate-directory",
+    "discoveredAt": "2026-08-25T23:53:11.291Z"
   },
   {
     "candidateId": "candidate-jorge-borrego-republican-race-2026-texas-house-118",
@@ -2104,6 +2128,30 @@
     "license": null,
     "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
     "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-melanie-medley-thomas-republican-race-2026-texas-house-103",
+    "imageUrl": "https://dallasgop.org/wp-content/uploads/2026/07/Melanie-Medley-Thomas-for-HD-103-843x1024.webp",
+    "sourceUrl": "https://dallasgop.org/meet-the-candidates/",
+    "altText": "Melanie Medley-Thomas, Republican candidate for Texas House District 103",
+    "credit": "Dallas County Republican Party candidate directory",
+    "license": null,
+    "permissionBasis": "Candidate-identifying portrait published by the Dallas County Republican Party on its current 2026 Meet the Candidates page, where Melanie Medley-Thomas is identified as the Republican candidate for Texas House District 103 and linked to melanie4texas.com. Used only for editorial candidate identification with exact source attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-county-party-candidate-directory",
+    "discoveredAt": "2026-08-25T23:53:11.291Z"
+  },
+  {
+    "candidateId": "candidate-melva-perez-republican-race-2026-texas-house-119",
+    "imageUrl": "https://img1.wsimg.com/isteam/ip/a99ce1c8-419e-4cd6-8f47-d9b57a3944cf/blob-b368fb0.png",
+    "sourceUrl": "https://melvafortexas.com/",
+    "altText": "Melva Rivera Perez, Republican candidate for Texas House District 119",
+    "credit": "Melva Rivera Perez for Texas campaign",
+    "license": null,
+    "permissionBasis": "Candidate-identifying campaign portrait hosted on Melva Rivera Perez's official Texas House District 119 campaign website, which identifies her as the candidate. Used only for editorial candidate identification with exact source attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-website",
+    "discoveredAt": "2026-08-25T23:53:11.333Z"
   },
   {
     "candidateId": "candidate-mica-arellano-republican-race-2026-state-board-of-education-5",
@@ -2982,6 +3030,18 @@
     "discoveredAt": "2026-08-22T12:43:00.000Z"
   },
   {
+    "candidateId": "candidate-tim-mcdonough-republican-race-2026-texas-house-114",
+    "imageUrl": "https://dallasgop.org/wp-content/uploads/2026/04/Tim-McDonough-for-HD-114-844x1024.jpg",
+    "sourceUrl": "https://dallasgop.org/meet-the-candidates/",
+    "altText": "Tim McDonough, Republican candidate for Texas House District 114",
+    "credit": "Dallas County Republican Party candidate directory",
+    "license": null,
+    "permissionBasis": "Candidate-identifying portrait published by the Dallas County Republican Party on its current 2026 Meet the Candidates page, where Tim McDonough is identified as the Republican candidate for Texas House District 114 and linked to timforhouse.com. Used only for editorial candidate identification with exact source attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-county-party-candidate-directory",
+    "discoveredAt": "2026-08-25T23:53:11.291Z"
+  },
+  {
     "candidateId": "candidate-todd-hunter-republican-race-2026-texas-house-32",
     "imageUrl": "https://house.texas.gov/images/members/3365.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/32",
@@ -3238,5 +3298,17 @@
     "usageStatus": "approved",
     "discoveryMethod": "official-campaign-biography",
     "discoveredAt": "2026-08-25T03:40:03.890Z"
+  },
+  {
+    "candidateId": "candidate-zack-dunn-democratic-race-2026-texas-house-121",
+    "imageUrl": "https://zackdunn.com/wp-content/uploads/2025/11/IMG_7665-731x1024.jpeg",
+    "sourceUrl": "https://zackdunn.com/",
+    "altText": "Zack Dunn, Democratic candidate for Texas House District 121",
+    "credit": "Dunn for Texas campaign",
+    "license": null,
+    "permissionBasis": "Candidate-identifying portrait hosted on Zack Dunn's official Texas House District 121 campaign website, which identifies Dunn as the candidate and is paid for by Dunn for Texas. Used only for editorial candidate identification with exact source attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-website",
+    "discoveredAt": "2026-08-25T23:53:11.333Z"
   }
 ]
