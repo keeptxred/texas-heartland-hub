@@ -99,7 +99,7 @@ export function buildImagePrompt(subject: SubjectExtract, extraGuidance = ""): s
     : "";
   const isWeatherPreparedness = subject.domain === "weather" && WEATHER_PREPAREDNESS_RE.test(`${subject.title} ${subject.firstParagraph}`);
   if (isWeatherPreparedness) {
-    return `${correction}${evidenceLock}REAL DOCUMENTARY PHOTOJOURNALISM PHOTOGRAPH ONLY, horizontal 16:9, captured with a physical 35mm camera, natural indoor daylight, realistic household textures, true photographic depth of field. Story: ${subject.title}. PRIMARY SUBJECT: a believable Texas household actively preparing for multiple year-round hazards before an emergency. Show a kitchen or dining table with ordinary preparedness items such as sealed water containers, shelf-stable food, flashlight, batteries, weather radio, first-aid supplies, medication organizer, pet carrier or leash, paper document folder, phone charger or power bank, and a packed evacuation bag. Anonymous household members may organize the supplies naturally, but no identifiable faces or staged fear. ${loc ? `Location context: ${loc}, Texas.` : "Believable Texas home setting."} The article is about planning across heat, freezes, hurricanes, tornadoes, wildfire smoke, floods, outages, evacuation, and communication; do not invent one dramatic disaster as the main subject. No storm spectacle, family huddled in darkness, disaster-movie scene, illustration, infographic, collage, poster, text overlay, readable checklist, watermark, logo, Texas-shaped symbol, or fabricated recognizable face.`.slice(0, 1800);
+    return `${correction}${evidenceLock}OBJECT-ONLY TEXAS PREPAREDNESS DOCUMENTARY PHOTOGRAPH. ZERO PEOPLE IN FRAME: no adults, children, faces, hands, silhouettes, or human figures. Horizontal 16:9, physical 35mm camera look, bright natural indoor daylight, realistic household textures and depth of field. Story: ${subject.title}. PRIMARY SUBJECT: a Texas household emergency-preparedness inventory arranged on a kitchen, dining, mudroom, or utility-room surface before any emergency. Clearly show multiple hazard-specific objects: sealed water jugs and a battery-powered fan for extreme heat and outages; outdoor faucet covers or pipe insulation for hard freezes; weather radio, flashlights, batteries and power bank for storms and outages; N95 masks for wildfire smoke; waterproof document pouch and packed evacuation bag for flood or hurricane evacuation; first-aid kit, medication organizer, pet carrier or leash, and shelf-stable food. ${loc ? `Location context: ${loc}, Texas.` : "Believable Texas home setting."} No storm scene, darkness, frightened family, people, survivalist fantasy, readable text, logos, maps, flags, state shapes, illustration, infographic, collage, poster, or graphic design.`.slice(0, 1800);
   }
   if (subject.domain === "legal") {
     return `${correction}${evidenceLock}Professional documentary photojournalism photograph, horizontal 16:9. Story: ${subject.title}. Photograph ${DOMAIN_STEER.legal}. Natural daylight or realistic courtroom lighting, 35mm camera, lifelike stone and wood, true photographic depth of field, realistic architecture, neutral news photography. PRIMARY SUBJECT: a believable real Texas courthouse or courtroom representing the judicial ruling. ${loc ? `Location context: ${loc}, Texas.` : "Texas setting."} Election-law context may appear only as subtle ordinary paperwork or voting materials in the background. Do not use a politician, Texas-shaped graphic, map, flagpole, capitol dome, campaign rally, podium, poster, illustration, vector art, cartoon, infographic, collage, text overlay, seal, logo, or symbolic state graphic.`.slice(0, 1800);
@@ -120,6 +120,11 @@ export function buildNegativeImagePrompt(subject: SubjectExtract, rejectedReason
     "split screen", "text", "headline", "caption", "watermark", "logo", "low detail", "plastic texture",
     "CGI", "concept art", "comic", "anime", "stylized", "surreal",
   ];
+  if (subject.domain === "weather" && WEATHER_PREPAREDNESS_RE.test(`${subject.title} ${subject.firstParagraph}`)) items.unshift(
+    "people", "person", "family", "adults", "children", "faces", "hands", "human figures", "silhouettes",
+    "family huddled in darkness", "generic disaster scene", "single dramatic storm", "disaster movie scene",
+    "storm spectacle", "survivalist fantasy", "Texas-shaped symbol",
+  );
   if (subject.evidenceGuidance) items.push(
     "fabricated recognizable face", "invented casualty", "invented damage", "invented crowd", "invented protest",
     "invented rally", "invented document text", "unsupported official seal", "unsupported numerical text",
@@ -135,10 +140,6 @@ export function buildNegativeImagePrompt(subject: SubjectExtract, rejectedReason
   if (subject.domain === "military" && MILITARY_HONORS_RE.test(`${subject.title} ${subject.firstParagraph}`)) items.push(
     "politician", "governor", "press conference", "capitol building", "government signing ceremony",
     "generic military base", "generic aircraft", "hangar", "unrelated combat", "generic troops",
-  );
-  if (subject.domain === "weather" && WEATHER_PREPAREDNESS_RE.test(`${subject.title} ${subject.firstParagraph}`)) items.push(
-    "generic disaster scene", "family huddled in darkness", "single dramatic storm", "disaster movie scene",
-    "storm spectacle", "readable checklist", "survivalist fantasy", "Texas-shaped symbol",
   );
   if (subject.domain === "culture") items.push(
     "event flyer", "advertisement", "promotional graphic", "event poster", "banner", "signboard",
