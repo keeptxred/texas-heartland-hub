@@ -260,6 +260,7 @@ def verify_city_migration() -> None:
         status, headers = fetch_without_redirect(probe_path)
         expected_location = f"{target}?{CITY_PROBE_QUERY}"
         location = headers.get("location")
+        print(f"City migration probe: {path} status={status} location={location!r}")
         if status != 301:
             raise SmokeFailure(f"{path} returned HTTP {status}, expected permanent 301")
         if location != expected_location:
@@ -270,10 +271,12 @@ def verify_city_migration() -> None:
 
     houston_path = f"/houston?{CITY_PROBE_QUERY}"
     status, headers = fetch_without_redirect(houston_path)
+    location = headers.get("location")
+    print(f"City migration probe: /houston status={status} location={location!r}")
     if status != 200:
         raise SmokeFailure(f"/houston returned HTTP {status}, expected 200 on KeepTXRed")
-    if headers.get("location"):
-        raise SmokeFailure(f"/houston unexpectedly redirects to {headers.get('location')!r}")
+    if location:
+        raise SmokeFailure(f"/houston unexpectedly redirects to {location!r}")
     print("Houston remains on KeepTXRed with HTTP 200")
 
 
