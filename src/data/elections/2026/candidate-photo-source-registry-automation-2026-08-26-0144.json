@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "amandalabrie.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Amanda LaBrie's verified Texas House District 148 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Amanda LaBrie Texas House District 148 amandalabrie.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 26, 2026. The live site explicitly identifies Amanda Elizabeth LaBrie as the 2026 Republican candidate for Texas House District 148, and TCTA independently links amandalabrie.com as her candidate website for the same office. The site exposes candidate imagery, but this registry entry does not approve a portrait until a stable candidate-hosted image URL is independently validated."
+  },
+  {
+    "domain": "darlenebreaux.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Darlene Breaux's verified Texas House District 149 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Darlene Breaux Texas House District 149 darlenebreaux.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 26, 2026. ATPE links darlenebreaux.com as Darlene Breaux's campaign website, and official Harris County runoff results plus current reporting confirm she won the Democratic runoff for Texas House District 149. The live campaign site is active and publishes campaign contact information and imagery; no portrait is approved solely from this registry entry without a separately validated direct asset."
+  },
+  {
+    "domain": "bennettforstaterep.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Dave Bennett's verified Texas House District 149 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Dave Bennett Texas House District 149 bennettforstaterep.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 26, 2026. TCTA's current candidate profile identifies Dave Bennett as the Republican candidate for Texas House District 149 and links bennettforstaterep.com as his website, along with candidate campaign social profiles. Register the domain for follow-on portrait discovery; do not approve a portrait until a stable candidate-identifying asset and source page independently validate."
+  }
+]
