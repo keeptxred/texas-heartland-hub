@@ -47,7 +47,7 @@ jobs:
             exit 1
           fi
 
-          endpoint='https://keeptxred.com/api/public/hooks/image-backlog-recovery'
+          endpoint='https://keeptxred-site.freddy-coppola.workers.dev/api/public/hooks/image-backlog-recovery'
           ready=-1
           for attempt in $(seq 1 8); do
             status=$(curl -sS -X POST -o /tmp/image-backlog-dry.json -w '%{http_code}' \
@@ -55,7 +55,7 @@ jobs:
               -H 'accept: application/json' \
               -H "Authorization: Bearer ${oidc_token}" \
               "${endpoint}?dry=1" || echo 000)
-            echo "production endpoint probe ${attempt}/8 HTTP ${status}"
+            echo "worker endpoint probe ${attempt}/8 HTTP ${status}"
             cat /tmp/image-backlog-dry.json 2>/dev/null || true
             echo
             if [[ "$status" == "200" ]] && jq -e '.ok == true and .dryRun == true' /tmp/image-backlog-dry.json >/dev/null 2>&1; then
@@ -66,7 +66,7 @@ jobs:
           done
 
           if [[ "$ready" -lt 0 ]]; then
-            echo 'Production image backlog endpoint never became ready.' >&2
+            echo 'Direct Worker image backlog endpoint never became ready.' >&2
             exit 1
           fi
           if [[ "$ready" -eq 0 ]]; then
