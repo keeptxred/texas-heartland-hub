@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "tcta.org",
+    "sourceClass": "teacher-association-candidate-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Classroom Teachers Association candidate-profile photography only as a discovery lead unless the exact image has an explicit reusable license, candidate/campaign-supplied provenance with documented reuse permission, or another item-level permission basis. Do not infer reuse rights from appearance on a voter-guide profile. Preserve the exact profile URL, image URL, credit/provenance, candidate identity, and any license or permission statement before approval.",
+    "searchHint": "site:tcta.org/texasteachersvote/find-candidates/texas-house-candidates 2026 candidate portrait Texas House",
+    "notes": "New discovery source verified August 26, 2026. TCTA's TexasTeachersVote candidate directory currently exposes dedicated 2026 candidate profiles for unresolved candidates including Julie Hunt (HD-141), Alexandria Nicole Butler (HD-146), and Kyle Harding (HD-139), with profile imagery and candidate-specific metadata. This adds a previously unused statewide association voter-guide bridge while keeping portrait approval item-level and rights-gated."
+  }
+]
