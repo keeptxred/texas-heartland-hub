@@ -17,6 +17,7 @@ export type SubjectExtract = {
 export type VisionVerdict = { matches: boolean; photorealistic: boolean; reason: string };
 
 const MILITARY_HONORS_RE = /\b(purple heart|medal of honor|military honor(?:s)?|military award(?:s)?|service member(?:s)?|servicemember(?:s)?|fallen (?:service member|servicemember|soldier|marine|airman|sailor|troop|hero)(?:s)?|memorial day|veterans day|veteran(?:s)?|remembrance|military remembrance|wounded warrior(?:s)?|combat wounded|killed in action|missing in action|pow|mia)\b/i;
+const WEATHER_PREPAREDNESS_RE = /\b(emergency plan|preparedness|prepared|checklist|emergency kit|go bag|family communication|shelter in place|evacuation plan|year-round)\b/i;
 
 const DOMAIN_KEYWORDS: Array<[Domain, RegExp]> = [
   ["wildlife", /\b(jellyfish|shark|whale|dolphin|bird|fish|species|wildlife|reef|coral|deer|coyote|snake|alligator|manatee|turtle|habitat|ecosystem|marine|hunting|hunter(?:s)?|fishing|angler(?:s)?)\b/i],
@@ -96,6 +97,10 @@ export function buildImagePrompt(subject: SubjectExtract, extraGuidance = ""): s
   const militaryHonorsLock = isMilitaryHonors
     ? "MILITARY HONORS OVERRIDE: This is an honors/remembrance story. Make the named medal, decoration, folded flag, memorial, or remembrance subject dominate the frame. Do not center a politician, government building, press event, generic military base, aircraft, hangar, unrelated combat scene, or generic troops. "
     : "";
+  const isWeatherPreparedness = subject.domain === "weather" && WEATHER_PREPAREDNESS_RE.test(`${subject.title} ${subject.firstParagraph}`);
+  if (isWeatherPreparedness) {
+    return `${correction}${evidenceLock}REAL DOCUMENTARY PHOTOJOURNALISM PHOTOGRAPH ONLY, horizontal 16:9, captured with a physical 35mm camera, natural indoor daylight, realistic household textures, true photographic depth of field. Story: ${subject.title}. PRIMARY SUBJECT: a believable Texas household actively preparing for multiple year-round hazards before an emergency. Show a kitchen or dining table with ordinary preparedness items such as sealed water containers, shelf-stable food, flashlight, batteries, weather radio, first-aid supplies, medication organizer, pet carrier or leash, paper document folder, phone charger or power bank, and a packed evacuation bag. Anonymous household members may organize the supplies naturally, but no identifiable faces or staged fear. ${loc ? `Location context: ${loc}, Texas.` : "Believable Texas home setting."} The article is about planning across heat, freezes, hurricanes, tornadoes, wildfire smoke, floods, outages, evacuation, and communication; do not invent one dramatic disaster as the main subject. No storm spectacle, family huddled in darkness, disaster-movie scene, illustration, infographic, collage, poster, text overlay, readable checklist, watermark, logo, Texas-shaped symbol, or fabricated recognizable face.`.slice(0, 1800);
+  }
   if (subject.domain === "legal") {
     return `${correction}${evidenceLock}Professional documentary photojournalism photograph, horizontal 16:9. Story: ${subject.title}. Photograph ${DOMAIN_STEER.legal}. Natural daylight or realistic courtroom lighting, 35mm camera, lifelike stone and wood, true photographic depth of field, realistic architecture, neutral news photography. PRIMARY SUBJECT: a believable real Texas courthouse or courtroom representing the judicial ruling. ${loc ? `Location context: ${loc}, Texas.` : "Texas setting."} Election-law context may appear only as subtle ordinary paperwork or voting materials in the background. Do not use a politician, Texas-shaped graphic, map, flagpole, capitol dome, campaign rally, podium, poster, illustration, vector art, cartoon, infographic, collage, text overlay, seal, logo, or symbolic state graphic.`.slice(0, 1800);
   }
@@ -130,6 +135,10 @@ export function buildNegativeImagePrompt(subject: SubjectExtract, rejectedReason
   if (subject.domain === "military" && MILITARY_HONORS_RE.test(`${subject.title} ${subject.firstParagraph}`)) items.push(
     "politician", "governor", "press conference", "capitol building", "government signing ceremony",
     "generic military base", "generic aircraft", "hangar", "unrelated combat", "generic troops",
+  );
+  if (subject.domain === "weather" && WEATHER_PREPAREDNESS_RE.test(`${subject.title} ${subject.firstParagraph}`)) items.push(
+    "generic disaster scene", "family huddled in darkness", "single dramatic storm", "disaster movie scene",
+    "storm spectacle", "readable checklist", "survivalist fantasy", "Texas-shaped symbol",
   );
   if (subject.domain === "culture") items.push(
     "event flyer", "advertisement", "promotional graphic", "event poster", "banner", "signboard",
