@@ -1,23 +1,37 @@
 #!/usr/bin/env python3
-"""Read-only production smoke checks for KeepTXRed machine-readable authority resources."""
+"""Read-only production smoke checks for KeepTXRed authority resources and guarded redirects."""
 
 from __future__ import annotations
 
+import argparse
 import json
+import os
 import sys
 import time
 import urllib.error
 import urllib.request
 from typing import Any
 
-SITE_URL = "https://keeptxred.com"
+SITE_URL = os.environ.get("SITE_URL", "https://keeptxred.com").rstrip("/")
 TIMEOUT_SECONDS = 30
 ATTEMPTS = 4
 RETRY_SECONDS = 3
+CITY_PROBE_QUERY = "utm_source=ktr-smoke&probe=city-migration"
+CITY_REDIRECTS = {
+    "/austin": "https://texasdefined.com/article/moving-to-austin-guide",
+    "/dallas-fort-worth": "https://texasdefined.com/article/moving-to-dallas-fort-worth-guide",
+    "/san-antonio": "https://texasdefined.com/article/moving-to-san-antonio-guide",
+    "/el-paso": "https://texasdefined.com/article/moving-to-el-paso-guide",
+}
 
 
 class SmokeFailure(RuntimeError):
     pass
+
+
+class NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):  # type: ignore[override]
+        return None
 
 
 def fetch(path: str) -> tuple[bytes, dict[str, str]]:
@@ -39,6 +53,34 @@ def fetch(path: str) -> tuple[bytes, dict[str, str]]:
             if attempt < ATTEMPTS:
                 time.sleep(RETRY_SECONDS)
     raise SmokeFailure(f"Unable to fetch {path}: {last_error}")
+
+
+def fetch_without_redirect(path: str) -> tuple[int, dict[str, str]]:
+    url = f"{SITE_URL}{path}"
+    opener = urllib.request.build_opener(NoRedirect())
+    last_error: Exception | None = None
+    for attempt in range(1, ATTEMPTS + 1):
+        try:
+            request = urllib.request.Request(
+                url,
+                headers={"User-Agent": "KeepTXRed-city-migration-smoke/1.0"},
+            )
+            try:
+                with opener.open(request, timeout=TIMEOUT_SECONDS) as response:
+                    return response.status, {
+                        key.lower(): value for key, value in response.headers.items()
+                    }
+            except urllib.error.HTTPError as exc:
+                if 300 <= exc.code < 400:
+                    return exc.code, {
+                        key.lower(): value for key, value in exc.headers.items()
+                    }
+                raise
+        except (urllib.error.URLError, TimeoutError) as exc:
+            last_error = exc
+            if attempt < ATTEMPTS:
+                time.sleep(RETRY_SECONDS)
+    raise SmokeFailure(f"Unable to fetch {path} without redirects: {last_error}")
 
 
 def fetch_json(path: str) -> tuple[dict[str, Any], dict[str, str]]:
@@ -212,8 +254,46 @@ def verify_manifest() -> None:
     print("Citation manifest advertises both authority JSON resource families")
 
 
+def verify_city_migration() -> None:
+    for path, target in CITY_REDIRECTS.items():
+        probe_path = f"{path}?{CITY_PROBE_QUERY}"
+        status, headers = fetch_without_redirect(probe_path)
+        expected_location = f"{target}?{CITY_PROBE_QUERY}"
+        location = headers.get("location")
+        if status != 301:
+            raise SmokeFailure(f"{path} returned HTTP {status}, expected permanent 301")
+        if location != expected_location:
+            raise SmokeFailure(
+                f"{path} redirected to {location!r}, expected {expected_location!r}"
+            )
+        print(f"City migration healthy: {path} -> {location}")
+
+    houston_path = f"/houston?{CITY_PROBE_QUERY}"
+    status, headers = fetch_without_redirect(houston_path)
+    if status != 200:
+        raise SmokeFailure(f"/houston returned HTTP {status}, expected 200 on KeepTXRed")
+    if headers.get("location"):
+        raise SmokeFailure(f"/houston unexpectedly redirects to {headers.get('location')!r}")
+    print("Houston remains on KeepTXRed with HTTP 200")
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--city-migration-only",
+        action="store_true",
+        help="Verify the retired city 301s and Houston retention without authority JSON checks.",
+    )
+    return parser.parse_args()
+
+
 def main() -> int:
+    args = parse_args()
     try:
+        if args.city_migration_only:
+            verify_city_migration()
+            print(f"City migration smoke passed against {SITE_URL}")
+            return 0
         verify_elections()
         verify_bill()
         verify_manifest()
