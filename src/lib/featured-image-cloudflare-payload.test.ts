@@ -1,18 +1,23 @@
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
-import { buildFluxImagePrompt } from "./featured-image-cloudflare";
+import { buildFluxImagePrompt, buildFluxImageRequest } from "./featured-image-cloudflare";
 
 describe("Cloudflare featured-image payload", () => {
-  it("uses FLUX with explicit anti-illustration prompt controls", () => {
+  it("uses FLUX with explicit anti-illustration prompt controls and a supported seed", () => {
     const source = fs.readFileSync(new URL("./featured-image-cloudflare.ts", import.meta.url), "utf8");
-    const start = source.indexOf("export async function generateImageBytes");
-    const end = source.indexOf("export async function validateImageMatchesArticle");
-    const generateImageSource = source.slice(start, end);
+    const requestStart = source.indexOf("export function buildFluxImageRequest");
+    const generateStart = source.indexOf("export async function generateImageBytes");
+    const validatorStart = source.indexOf("export async function validateImageMatchesArticle");
+    const requestSource = source.slice(requestStart, generateStart);
+    const generateImageSource = source.slice(generateStart, validatorStart);
+    const request = buildFluxImageRequest("Texas preparedness supplies", "people, illustration", 424242);
 
     expect(source).toContain('@cf/black-forest-labs/flux-1-schnell');
-    expect(generateImageSource).toContain("buildFluxImagePrompt");
-    expect(generateImageSource).toContain("steps: 8");
-    expect(generateImageSource).not.toMatch(/^\s*seed\s*[:,]/m);
+    expect(requestSource).toContain("buildFluxImagePrompt");
+    expect(requestSource).toContain("steps: 8");
+    expect(requestSource).toMatch(/^\s*seed[,]?$/m);
+    expect(request.seed).toBe(424242);
+    expect(generateImageSource).toContain("buildFluxImageRequest(prompt, negativePrompt)");
     expect(generateImageSource).not.toMatch(/\bnegative_prompt\s*:/);
     expect(generateImageSource).not.toContain("dreamshaper-8-lcm");
     expect(generateImageSource).toContain('contentType.startsWith("image/")');
