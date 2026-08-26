@@ -19,6 +19,17 @@ const findings = [
     permissionBasis: "Candidate-identifying portrait published on Janet Dudding's official Texas House District 14 campaign homepage, which identifies Dudding as the HD14 candidate and carries the campaign's paid-political-advertising disclaimer. Used only for editorial candidate identification with exact campaign attribution and source provenance.",
     usageStatus: "approved",
     discoveryMethod: "official-campaign-homepage"
+  },
+  {
+    candidateId: "candidate-odus-e-evbagharu-democratic-race-2026-texas-house-135",
+    imageUrl: "https://odusfortexas.com/wp-content/uploads/2025/09/odis9-1024x571.jpg",
+    sourceUrl: "https://odusfortexas.com/about/",
+    altText: "Odus E. Evbagharu, Democratic candidate for Texas House District 135",
+    credit: "Odus Evbagharu for Texas campaign",
+    license: null,
+    permissionBasis: "Candidate-identifying campaign photograph published on Odus Evbagharu's official Texas House District 135 campaign biography page, which identifies Evbagharu as running for the Texas House and carries the campaign's paid-for-by disclaimer. Used only for editorial candidate identification with exact campaign attribution and source provenance.",
+    usageStatus: "approved",
+    discoveryMethod: "official-campaign-biography"
   }
 ];
 
