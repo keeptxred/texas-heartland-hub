@@ -21,6 +21,11 @@ on:
 permissions:
   contents: read
 
+env:
+  # Browser-facing keeptxred.com challenges GitHub-hosted runners. Smoke the
+  # same deployed application through its machine-safe Worker origin instead.
+  AUTOMATION_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
+
 # Keep coverage reporting independent so schema failures cannot hide the story matrix.
 concurrency:
   group: live-newsroom-smoke-${{ github.run_id }}
@@ -36,7 +41,7 @@ jobs:
         run: |
           set -euo pipefail
           for attempt in 1 2 3 4 5 6; do
-            if curl -fsSL --max-time 30 https://keeptxred.com/api/public/newsroom-health -o /tmp/newsroom-health.json; then
+            if curl -fsSL --max-time 30 "${AUTOMATION_ORIGIN%/}/api/public/newsroom-health" -o /tmp/newsroom-health.json; then
               jq -r '
                 "Flyover audit: ingested=\(.flyoverIngestedCount // 0) routed-correctly=\(.flyoverRoutedCorrectlyCount // 0) published=\(.flyoverPublishedCount // 0) degraded=\(.degraded // false) routing-ready=\(.routingSchemaReady // true) td-ready=\(.texasDefinedChannelReady // false)",
                 (.schemaErrors[]? | "schema-error | \(.)"),
@@ -61,7 +66,8 @@ jobs:
       - name: Verify Cloudflare rewrite provider
         run: |
           node <<'NODE'
-          const url = 'https://keeptxred.com/api/public/hooks/health';
+          const baseUrl = process.env.AUTOMATION_ORIGIN.replace(/\/$/, '');
+          const url = `${baseUrl}/api/public/hooks/health`;
           const response = await fetch(url, { headers: { Accept: 'application/json', 'User-Agent': 'KeepTXRed-Newsroom-Smoke/1.0' } });
           const text = await response.text();
           if (!response.ok) throw new Error(`health returned HTTP ${response.status}: ${text.slice(0, 500)}`);
@@ -80,7 +86,7 @@ jobs:
         run: |
           set -euo pipefail
           curl --retry 6 --retry-delay 3 --retry-all-errors --fail-with-body --silent --show-error \
-            https://keeptxred.com/api/public/hooks/newsroom-generation-diagnostics \
+            "${AUTOMATION_ORIGIN%/}/api/public/hooks/newsroom-generation-diagnostics" \
             -o /tmp/newsroom-generation-diagnostics.json
           jq -e '.ok == true and .aiCalls == 0 and .writes == 0' /tmp/newsroom-generation-diagnostics.json >/dev/null
           jq -r '
@@ -90,6 +96,6 @@ jobs:
           ' /tmp/newsroom-generation-diagnostics.json
       - name: Check live ingestion and both publication sites
         env:
-          KTR_BASE_URL: https://keeptxred.com
+          KTR_BASE_URL: ${{ env.AUTOMATION_ORIGIN }}
           TEXASDEFINED_BASE_URL: https://texasdefined.com
         run: node scripts/news/smoke-live-newsroom.mjs
