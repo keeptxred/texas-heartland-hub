@@ -269,15 +269,21 @@ def verify_city_migration() -> None:
             )
         print(f"City migration healthy: {path} -> {location}")
 
+    # Houston is intentionally retained on KeepTXRed. The SEO middleware canonicalizes
+    # direct workers.dev page requests to the production host and strips utm_* tracking
+    # parameters, so the retention proof is an exact canonical 301 that never leaves KTR.
     houston_path = f"/houston?{CITY_PROBE_QUERY}"
     status, headers = fetch_without_redirect(houston_path)
     location = headers.get("location")
+    expected_location = "https://keeptxred.com/houston?probe=city-migration"
     print(f"City migration probe: /houston status={status} location={location!r}")
-    if status != 200:
-        raise SmokeFailure(f"/houston returned HTTP {status}, expected 200 on KeepTXRed")
-    if location:
-        raise SmokeFailure(f"/houston unexpectedly redirects to {location!r}")
-    print("Houston remains on KeepTXRed with HTTP 200")
+    if status != 301:
+        raise SmokeFailure(f"/houston returned HTTP {status}, expected canonical 301 on KeepTXRed")
+    if location != expected_location:
+        raise SmokeFailure(
+            f"/houston redirected to {location!r}, expected {expected_location!r}"
+        )
+    print(f"Houston remains on KeepTXRed: /houston -> {location}")
 
 
 def parse_args() -> argparse.Namespace:
