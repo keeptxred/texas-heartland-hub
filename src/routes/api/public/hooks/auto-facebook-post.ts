@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
+import { publishDurableFacebookGuideFallback } from "@/lib/facebook-durable-guide-publisher.server";
 import {
   rankFacebookCandidates,
   type RecentFacebookPost,
@@ -175,6 +176,15 @@ async function runAutoFacebookPost(request: Request) {
   }
 
   const mode = request.headers.get("x-ktr-facebook-mode")?.trim().toLowerCase() || "scheduled";
+  const durableFallback = (fallbackReason: string) =>
+    publishDurableFacebookGuideFallback({
+      db,
+      adminToken,
+      recentPosts,
+      mode,
+      fallbackReason,
+    });
+
   if (mode !== "manual") {
     const decision = facebookPostingDecision({
       now: new Date(),
@@ -219,12 +229,7 @@ async function runAutoFacebookPost(request: Request) {
   );
 
   if (articles.length === 0) {
-    return Response.json({
-      ok: true,
-      posted: false,
-      no_items: true,
-      reason: `No eligible articles newer than ${MAX_AUTO_FACEBOOK_ARTICLE_AGE_DAYS} days`,
-    });
+    return durableFallback(`No eligible articles newer than ${MAX_AUTO_FACEBOOK_ARTICLE_AGE_DAYS} days`);
   }
 
   const urls = articles.map(articleUrl);
@@ -265,7 +270,7 @@ async function runAutoFacebookPost(request: Request) {
 
   const databaseUniqueCandidates = articles.filter((row) => !alreadyPosted.has(articleUrl(row)));
   if (databaseUniqueCandidates.length === 0) {
-    return Response.json({ ok: true, posted: false, no_items: true, reason: "All eligible recent articles were already posted" });
+    return durableFallback("All eligible recent articles were already posted");
   }
 
   let livePagePosts: FacebookPagePost[] = [];
@@ -294,24 +299,12 @@ async function runAutoFacebookPost(request: Request) {
   const liveDuplicateCount = databaseUniqueCandidates.length - candidates.length;
 
   if (candidates.length === 0) {
-    return Response.json({
-      ok: true,
-      posted: false,
-      no_items: true,
-      reason: "All eligible recent articles were already found on the live Facebook Page",
-      live_duplicates_filtered: liveDuplicateCount,
-    });
+    return durableFallback("All eligible recent articles were already found on the live Facebook Page");
   }
 
   const ranked = rankFacebookCandidates(candidates, recentPosts);
   if (ranked.length === 0) {
-    return Response.json({
-      ok: true,
-      posted: false,
-      no_items: true,
-      reason: "Only routine or low-value government appointment stories remain",
-      live_duplicates_filtered: liveDuplicateCount,
-    });
+    return durableFallback("Only routine or low-value government appointment stories remain");
   }
 
   const attempts: Array<{
