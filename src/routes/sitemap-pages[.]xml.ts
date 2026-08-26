@@ -119,7 +119,7 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
 
 const STATIC_PATHS:string[]=[
   "/","/news","/happening-now","/keep-texas-red",
-  "/houston","/dallas-fort-worth","/san-antonio","/austin","/el-paso","/texas-sports",
+  "/houston","/texas-sports",
   "/texas-business","/texas-legislature","/texas-legislature/house",
   "/texas-legislature/senate","/texas-legislature/current-session","/texas-legislature/sessions",
   "/texas-legislature/votes","/texas-government","/texas-government/agencies","/districts",
