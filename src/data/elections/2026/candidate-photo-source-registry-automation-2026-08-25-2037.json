@@ -16,5 +16,23 @@
     "rightsRule": "Use candidate-identifying photography hosted on Michelle Palmer's official State Board of Education District 6 campaign website only after the exact page and image independently validate and clearly identify Palmer. Preserve campaign attribution and the exact source page. Do not approve social embeds, campaign graphics, endorsement media, group photos without an unambiguous subject, or third-party editorial photography as the canonical portrait without a separate documented rights basis.",
     "searchHint": "site:palmerfortexased.com Michelle Palmer State Board of Education District 6 portrait photo",
     "notes": "New candidate-controlled source verified August 25, 2026. ATPE's current 2026 candidate profile identifies Michelle Palmer as the District 6 challenger and lists palmerfortexased.com as her website; TCTA independently lists the same campaign website and candidate social profiles. The site itself currently exposes very little crawlable image metadata, so portrait approval remains item-level review only. A Houston Chronicle headshot was discovered during research but was not approved because no reusable-rights basis was established."
+  },
+  {
+    "domain": "willcampbellfortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Will Campbell's official Texas House District 109 campaign website only after the exact page and image independently validate and clearly identify Campbell. Preserve campaign attribution and the exact source page. Do not approve military group photos, campaign graphics, policy-page decorative images, or photos whose subject is ambiguous as the canonical portrait.",
+    "searchHint": "site:willcampbellfortexas.com Will Campbell Texas House District 109 portrait photo",
+    "notes": "New candidate-controlled source verified August 25, 2026. The live site identifies itself as Will Campbell's official Texas House District 109 campaign website and provides campaign contact information and a detailed candidate biography. Current election-reference pages independently list Campbell as the Republican general-election candidate for HD 109. The crawlable biography currently emphasizes deployment/group photography rather than a clearly isolated portrait, so item-level portrait approval remains required."
+  },
+  {
+    "domain": "colorfulconservative.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Bonnie Abadie's official Texas House District 102 campaign website only after the exact page and image independently validate and clearly identify Abadie. Preserve campaign attribution and the exact source page. Do not approve logos, event flyers, group photos without an unambiguous subject, or third-party images without a separate documented rights basis as the canonical portrait.",
+    "searchHint": "site:colorfulconservative.com Bonnie Abadie Texas House District 102 portrait photo",
+    "notes": "New candidate-controlled source verified August 25, 2026. Dallas County Republican Party current August 2026 event listings explicitly identify colorfulconservative.com as Bonnie Abadie's campaign website for Texas House District 102. Her earlier temporary campaign page on northdallasmartialarts.com also identifies Abadie as an HD 102 candidate and links her candidate social accounts. Item-level image validation and provenance remain required before portrait approval."
   }
 ]
