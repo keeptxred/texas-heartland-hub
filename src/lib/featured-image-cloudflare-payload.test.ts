@@ -1,25 +1,31 @@
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
-import { buildFluxImagePrompt, buildFluxImageRequest } from "./featured-image-cloudflare";
+import { buildFlux2ImageRequest, buildFluxImagePrompt, buildFluxImageRequest } from "./featured-image-cloudflare";
 
 describe("Cloudflare featured-image payload", () => {
-  it("uses FLUX with explicit anti-illustration prompt controls and supported request fields", () => {
+  it("uses FLUX 2 multipart generation with a supported Schnell fallback", () => {
     const source = fs.readFileSync(new URL("./featured-image-cloudflare.ts", import.meta.url), "utf8");
     const requestStart = source.indexOf("export function buildFluxImageRequest");
     const generateStart = source.indexOf("export async function generateImageBytes");
     const validatorStart = source.indexOf("export async function validateImageMatchesArticle");
     const requestSource = source.slice(requestStart, generateStart);
     const generateImageSource = source.slice(generateStart, validatorStart);
-    const request = buildFluxImageRequest("Texas preparedness supplies", "people, illustration");
+    const fallbackRequest = buildFluxImageRequest("Texas preparedness supplies", "people, illustration");
+    const qualityRequest = buildFlux2ImageRequest("Texas preparedness supplies", "people, illustration");
 
+    expect(source).toContain('@cf/black-forest-labs/flux-2-klein-4b');
     expect(source).toContain('@cf/black-forest-labs/flux-1-schnell');
     expect(requestSource).toContain("buildFluxImagePrompt");
-    expect(requestSource).toContain("steps: 8");
-    expect(request).toEqual(expect.objectContaining({ steps: 8 }));
-    expect(request).not.toHaveProperty("seed");
-    expect(generateImageSource).toContain("buildFluxImageRequest(prompt, negativePrompt)");
+    expect(requestSource).toContain('form.append("guidance", "5.5")');
+    expect(requestSource).toContain('form.append("width", "1024")');
+    expect(requestSource).toContain('form.append("height", "768")');
+    expect(qualityRequest.get("guidance")).toBe("5.5");
+    expect(qualityRequest.get("width")).toBe("1024");
+    expect(qualityRequest.get("height")).toBe("768");
+    expect(fallbackRequest).toEqual(expect.objectContaining({ steps: 8 }));
+    expect(fallbackRequest).not.toHaveProperty("seed");
+    expect(generateImageSource).toContain("CLOUDFLARE_IMAGE_FALLBACK_MODEL");
     expect(generateImageSource).not.toMatch(/\bnegative_prompt\s*:/);
-    expect(generateImageSource).not.toMatch(/\bseed\s*:/);
     expect(generateImageSource).not.toContain("dreamshaper-8-lcm");
     expect(generateImageSource).toContain('contentType.startsWith("image/")');
   });
@@ -32,6 +38,7 @@ describe("Cloudflare featured-image payload", () => {
     expect(prompt.length).toBeLessThanOrEqual(2048);
     expect(prompt).toMatch(/^REAL CAMERA PHOTOGRAPH ONLY\./);
     expect(prompt).toContain("No readable text");
+    expect(prompt).toContain("EDITORIAL ASSIGNMENT:");
     expect(prompt).toContain("HARD EXCLUSIONS:");
     expect(prompt).toContain("illustration");
     expect(prompt).toContain("graphic design");
