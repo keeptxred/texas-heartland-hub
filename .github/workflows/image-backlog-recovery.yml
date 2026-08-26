@@ -39,17 +39,22 @@ jobs:
           set -euo pipefail
 
           oidc_url="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-newsroom"
-          oidc_token=$(curl -fsS \
-            -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
-            "$oidc_url" | jq -r '.value // empty')
-          if [[ -z "$oidc_token" ]]; then
-            echo 'GitHub Actions did not issue the newsroom OIDC token.' >&2
-            exit 1
-          fi
+          issue_oidc_token() {
+            local token
+            token=$(curl -fsS \
+              -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+              "$oidc_url" | jq -r '.value // empty')
+            if [[ -z "$token" ]]; then
+              echo 'GitHub Actions did not issue the newsroom OIDC token.' >&2
+              return 1
+            fi
+            printf '%s' "$token"
+          }
 
           endpoint='https://keeptxred-site.freddy-coppola.workers.dev/api/public/hooks/image-backlog-recovery'
           ready=-1
           for attempt in $(seq 1 8); do
+            oidc_token=$(issue_oidc_token)
             status=$(curl -sS -X POST -o /tmp/image-backlog-dry.json -w '%{http_code}' \
               --max-time 45 \
               -H 'accept: application/json' \
@@ -83,6 +88,10 @@ jobs:
           processed=0
 
           for slug in "${slugs[@]}"; do
+            # GitHub OIDC tokens are intentionally short-lived. Long image
+            # generations can outlast a token, so mint a fresh token before
+            # every protected Worker request instead of reusing the probe token.
+            oidc_token=$(issue_oidc_token)
             encoded_slug=$(jq -rn --arg value "$slug" '$value|@uri')
             output="/tmp/image-backlog-${processed}.json"
             status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
