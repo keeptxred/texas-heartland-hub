@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { issueGuideBySlug, issueGuides } from "@/data/issue-guides";
 import { relatedPolicyTrackersForIssueGuide } from "@/lib/issue-policy-links";
+import { isPolicyTrackerIndexable } from "@/lib/policy-tracker-indexability";
 
 const WAVE2_SLUGS = [
   "texas-abortion-law-pro-life-policy",
@@ -22,13 +23,12 @@ describe("evergreen issue guides wave 2", () => {
     }
   });
 
-  it("connects new evergreen guides to current-status policy trackers where a matching tracker exists", () => {
-    const abortion = relatedPolicyTrackersForIssueGuide(issueGuideBySlug["texas-abortion-law-pro-life-policy"])
-      .map((tracker) => tracker.slug);
-    expect(abortion).toContain("life-abortion");
+  it("connects new evergreen guides only to current-status policy trackers that are indexable", () => {
+    const abortion = relatedPolicyTrackersForIssueGuide(issueGuideBySlug["texas-abortion-law-pro-life-policy"]);
+    expect(abortion.map((tracker) => tracker.slug)).toContain("life-abortion");
+    expect(abortion.every(isPolicyTrackerIndexable)).toBe(true);
 
-    const ruralHealthcare = relatedPolicyTrackersForIssueGuide(issueGuideBySlug["texas-rural-healthcare"])
-      .map((tracker) => tracker.slug);
-    expect(ruralHealthcare.length).toBeGreaterThan(0);
+    const ruralHealthcare = relatedPolicyTrackersForIssueGuide(issueGuideBySlug["texas-rural-healthcare"]);
+    expect(ruralHealthcare.every(isPolicyTrackerIndexable)).toBe(true);
   });
 });
