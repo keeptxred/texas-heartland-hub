@@ -35,17 +35,22 @@ jobs:
           set -euo pipefail
 
           oidc_url="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-newsroom"
-          oidc_token=$(curl -fsS \
-            -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
-            "$oidc_url" | jq -r '.value // empty')
-          if [[ -z "$oidc_token" ]]; then
-            echo 'GitHub Actions did not issue the newsroom OIDC token.' >&2
-            exit 1
-          fi
+          issue_oidc_token() {
+            local token
+            token=$(curl -fsS \
+              -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+              "$oidc_url" | jq -r '.value // empty')
+            if [[ -z "$token" ]]; then
+              echo 'GitHub Actions did not issue the newsroom OIDC token.' >&2
+              return 1
+            fi
+            printf '%s' "$token"
+          }
 
           endpoint='https://keeptxred-site.freddy-coppola.workers.dev/api/public/hooks/adsense-image-backfill'
           ready=-1
           for attempt in $(seq 1 6); do
+            oidc_token=$(issue_oidc_token)
             status=$(curl -sS -X POST -o /tmp/adsense-image-dry.json -w '%{http_code}' \
               --max-time 45 \
               -H 'accept: application/json' \
@@ -70,18 +75,22 @@ jobs:
             exit 0
           fi
 
-          # Keep Cloudflare AI spend bounded while aggressively clearing the
-          # finite missing-image backlog under the existing strict quality gate.
-          max_per_run=20
+          # Keep each shared-lock pass small enough to complete predictably even
+          # when strict image generation needs retries. Frequent scheduled passes
+          # will continue draining the finite AdSense-ready missing-image cohort.
+          max_per_run=5
           mapfile -t slugs < <(jq -r --argjson max "$max_per_run" '.slugs[:$max][]' /tmp/adsense-image-dry.json)
           failures=0
           processed=0
 
           for slug in "${slugs[@]}"; do
+            # Mint a fresh short-lived OIDC token for every protected Worker call
+            # so a slow prior image cannot make later requests fail authentication.
+            oidc_token=$(issue_oidc_token)
             encoded_slug=$(jq -rn --arg value "$slug" '$value|@uri')
             output="/tmp/adsense-image-${processed}.json"
             status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
-              --max-time 900 \
+              --max-time 600 \
               -H 'accept: application/json' \
               -H "Authorization: Bearer ${oidc_token}" \
               "${endpoint}?slug=${encoded_slug}" || echo 000)
