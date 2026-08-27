@@ -15,6 +15,7 @@ on:
       - 'scripts/elections/reconcile-statewide-candidate-moves.test.mjs'
 
 permissions:
+  actions: write
   contents: write
   pull-requests: write
 
@@ -151,6 +152,11 @@ jobs:
           else
             echo "Updated existing election refresh PR #$pr_number."
           fi
+
+          # GITHUB_TOKEN-authored PR events do not start follow-on workflows. Explicitly dispatch
+          # the required verify workflow on the generated branch so branch protection still governs merge.
+          gh workflow run shared-vitest.yml --ref "$refresh_branch"
+          echo "Dispatched required verify for $refresh_branch."
 
           # Let normal branch protection and the required verify check govern the merge.
           gh pr merge "$pr_number" --auto --squash
