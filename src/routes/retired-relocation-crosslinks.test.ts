@@ -2,10 +2,12 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const ACTIVE_RELOCATION_FILES = [
+  "dmv.tsx",
   "dmv.change-address.tsx",
   "dmv.driver-license.tsx",
   "dmv.real-id.tsx",
   "vehicles.new-residents.tsx",
+  "vehicles.registration.tsx",
 ] as const;
 
 const TEXASDEFINED_RELOCATION = "https://texasdefined.com/moving-to-texas";
