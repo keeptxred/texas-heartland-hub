@@ -9,8 +9,9 @@ on:
     paths:
       - '.github/workflows/statewide-election-audit.yml'
       - 'scripts/elections/audit-statewide.mjs'
-      - 'scripts/elections/scrape-official-candidates.mjs'
-      - 'scripts/elections/import-candidates.mjs'
+      - 'scripts/elections/scrape-official-candidates.ts'
+      - 'scripts/elections/import-candidates.ts'
+      - 'scripts/elections/reconcile-statewide-candidate-moves.mjs'
 
 permissions:
   contents: write
@@ -55,6 +56,8 @@ jobs:
           fi
           cp /tmp/official-candidates.json scripts/elections/import/official-candidates.json
           ELECTION_CANDIDATE_IMPORT=scripts/elections/import/official-candidates.json bun run elections:import:candidates
+          ELECTION_OFFICIAL_CANDIDATES=scripts/elections/import/official-candidates.json node scripts/elections/reconcile-statewide-candidate-moves.mjs
+          bun run elections:authority-registry
       - name: Record upstream candidate-source outage
         if: steps.candidate_scrape.outcome == 'failure'
         shell: bash
@@ -123,7 +126,9 @@ jobs:
             exit 1
           fi
 
-          # Validate again because main may have advanced since the original scrape.
+          # Re-run the source-specific audit and full election validation because main may have advanced.
+          ELECTION_OFFICIAL_CANDIDATES=scripts/elections/import/official-candidates.json bun scripts/elections/audit-statewide.mjs
+          git add artifacts/elections/statewide-race-audit.json
           bun run elections:validate
           if git diff --cached --quiet; then
             echo "Election data already matches current main."
@@ -140,7 +145,7 @@ jobs:
               --base main \
               --head "$refresh_branch" \
               --title "Refresh and audit statewide election candidates" \
-              --body $'Automated refresh from the official Texas qualified-candidate source.\n\nThe workflow scraped the source, imported the generated records, passed the statewide race audit, passed the full election validation, rebased the generated-data delta onto current main, and reran validation before opening this PR. Branch protection and required checks remain authoritative.')"
+              --body $'Automated refresh from the official Texas qualified-candidate source.\n\nThe workflow scraped the source, imported the generated records, reconciled authoritative statewide race moves, rebuilt the political authority registry, passed the statewide race audit, passed the full election validation, rebased the generated-data delta onto current main, and reran both the statewide audit and election validation before opening this PR. Branch protection and required checks remain authoritative.')"
             pr_number="${pr_url##*/}"
           else
             echo "Updated existing election refresh PR #$pr_number."
