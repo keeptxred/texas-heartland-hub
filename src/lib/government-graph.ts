@@ -3,6 +3,7 @@ import { LAW_TOPICS } from "@/data/law-topics";
 import { TEXAS_DATA_SETS } from "@/data/texas-data-catalog";
 import { ACCOUNTABILITY_DATA_SETS } from "@/data/accountability-data-catalog";
 import { AGENCY_AUTHORITY_PROFILES } from "@/data/agency-authority";
+import { isAgencyAuthorityIndexable } from "@/lib/agency-authority-indexability";
 import { isDataDetailIndexable } from "@/lib/data-detail-indexability";
 import { isLawTopicIndexable } from "@/lib/law-topic-indexability";
 import { isPolicyTrackerIndexable } from "@/lib/policy-tracker-indexability";
@@ -65,13 +66,15 @@ const DATA_NODES: GovernmentGraphNode[] = [...TEXAS_DATA_SETS, ...ACCOUNTABILITY
     keywords: inferredKeywords(dataset.slug.replace(/-/g, " "), dataset.title, dataset.dek, ...dataset.whatAvailable),
   }));
 
-const AGENCY_NODES: GovernmentGraphNode[] = AGENCY_AUTHORITY_PROFILES.map((agency) => ({
-  id: `agency:${agency.slug}`,
-  label: agency.shortName,
-  href: `/texas-government/agencies/${agency.slug}`,
-  kind: "government" as const,
-  keywords: agency.keywords,
-}));
+const AGENCY_NODES: GovernmentGraphNode[] = AGENCY_AUTHORITY_PROFILES
+  .filter(isAgencyAuthorityIndexable)
+  .map((agency) => ({
+    id: `agency:${agency.slug}`,
+    label: agency.shortName,
+    href: `/texas-government/agencies/${agency.slug}`,
+    kind: "government" as const,
+    keywords: agency.keywords,
+  }));
 
 export const GOVERNMENT_GRAPH_NODES: GovernmentGraphNode[] = [
   ...POLICY_NODES,
