@@ -7,11 +7,12 @@ import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 const route = fs.readFileSync(new URL("../routes/news.$slug.tsx", import.meta.url), "utf8");
 
 describe("static related article discovery", () => {
-  it("has indexable static metadata that still lacks an explicit substantive body", () => {
-    const fallbackOnly = ARTICLES.filter(
-      (article) => isPublished(article) && isStaticArticleIndexable(article) && !ARTICLE_BODIES[article.slug],
+  it("keeps every currently indexable published static article backed by an explicit body", () => {
+    const indexable = ARTICLES.filter(
+      (article) => isPublished(article) && isStaticArticleIndexable(article),
     );
-    expect(fallbackOnly.length).toBeGreaterThan(0);
+    expect(indexable.length).toBeGreaterThan(0);
+    expect(indexable.every((article) => Boolean(ARTICLE_BODIES[article.slug]))).toBe(true);
   });
 
   it("requires an explicit body before a static article can be related discovery", () => {
