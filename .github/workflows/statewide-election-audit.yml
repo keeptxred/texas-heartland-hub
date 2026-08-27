@@ -9,8 +9,9 @@ on:
     paths:
       - '.github/workflows/statewide-election-audit.yml'
       - 'scripts/elections/audit-statewide.mjs'
-      - 'scripts/elections/scrape-official-candidates.mjs'
-      - 'scripts/elections/import-candidates.mjs'
+      - 'scripts/elections/scrape-official-candidates.ts'
+      - 'scripts/elections/import-candidates.ts'
+      - 'scripts/elections/reconcile-statewide-candidate-moves.mjs'
 
 permissions:
   contents: write
@@ -55,6 +56,7 @@ jobs:
           fi
           cp /tmp/official-candidates.json scripts/elections/import/official-candidates.json
           ELECTION_CANDIDATE_IMPORT=scripts/elections/import/official-candidates.json bun run elections:import:candidates
+          ELECTION_OFFICIAL_CANDIDATES=scripts/elections/import/official-candidates.json node scripts/elections/reconcile-statewide-candidate-moves.mjs
       - name: Record upstream candidate-source outage
         if: steps.candidate_scrape.outcome == 'failure'
         shell: bash
@@ -140,7 +142,7 @@ jobs:
               --base main \
               --head "$refresh_branch" \
               --title "Refresh and audit statewide election candidates" \
-              --body $'Automated refresh from the official Texas qualified-candidate source.\n\nThe workflow scraped the source, imported the generated records, passed the statewide race audit, passed the full election validation, rebased the generated-data delta onto current main, and reran validation before opening this PR. Branch protection and required checks remain authoritative.')"
+              --body $'Automated refresh from the official Texas qualified-candidate source.\n\nThe workflow scraped the source, imported the generated records, reconciled authoritative statewide race moves, passed the statewide race audit, passed the full election validation, rebased the generated-data delta onto current main, and reran validation before opening this PR. Branch protection and required checks remain authoritative.')"
             pr_number="${pr_url##*/}"
           else
             echo "Updated existing election refresh PR #$pr_number."
