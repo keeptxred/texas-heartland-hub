@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { AlertTriangle, Compass, MapPinned, Waves } from "lucide-react";
 import { EntityGrid } from "@/components/explore/EntityGrid";
 import { Button } from "@/components/ui/button";
@@ -21,8 +21,6 @@ export const Route = createFileRoute("/explore/scenic-rivers")({
   },
   component: TexasScenicRiversPage,
 });
-
-const searchDefaults = { page: 1, pageSize: 24, sort: "relevance" as const };
 
 const faqItems = [
   {
@@ -84,9 +82,9 @@ function TexasScenicRiversPage() {
       <section className="border-b bg-muted/30">
         <div className="mx-auto max-w-6xl px-4 py-16 md:py-24">
           <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
-            <Link to="/explore" className="hover:text-primary hover:underline">
+            <a href="https://texasdefined.com/explore" className="hover:text-primary hover:underline">
               Explore Texas
-            </Link>{" "}
+            </a>{" "}
             / Texas scenic rivers
           </nav>
           <p className="mt-8 text-xs font-bold uppercase tracking-[0.25em] text-primary">
@@ -102,17 +100,14 @@ function TexasScenicRiversPage() {
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Button asChild>
-              <Link
-                to="/explore/search"
-                search={{ ...searchDefaults, activities: ["paddling"] }}
-              >
+              <a href="https://texasdefined.com/explore/search?activities=paddling">
                 <MapPinned /> Browse paddling destinations
-              </Link>
+              </a>
             </Button>
             <Button asChild variant="outline">
-              <Link to="/explore/trip-planner">
+              <a href="https://texasdefined.com/explore/trip-planner">
                 <Compass /> Build a Texas trip
-              </Link>
+              </a>
             </Button>
           </div>
         </div>
