@@ -41,7 +41,7 @@ const LEGACY_ELECTION_PATHS = new Map([
 ]);
 const LEGACY_CONTENT_PATHS = new Map([
   ["/houston-news", "/houston"],
-  ["/property-taxes", "/texas/property-taxes-2026"],
+  ["/property-taxes", "/news/texas-property-tax-guide"],
   ["/texas-news/tax-spending", "/texas-economy"],
   ["/texas-news/legislature", "/texas-legislature"],
   ["/texas-news/border", "/texas-border-security"],
