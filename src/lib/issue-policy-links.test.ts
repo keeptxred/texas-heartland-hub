@@ -5,6 +5,7 @@ import {
   relatedIssueGuidesForTracker,
   relatedPolicyTrackersForIssueGuide,
 } from "@/lib/issue-policy-links";
+import { isPolicyTrackerIndexable } from "@/lib/policy-tracker-indexability";
 
 describe("issue and policy reciprocal links", () => {
   it("connects the property-tax tracker to the broader property-tax issue guide", () => {
@@ -19,7 +20,7 @@ describe("issue and policy reciprocal links", () => {
     expect(relatedPolicyTrackersForIssueGuide(guide).map((tracker) => tracker.slug)).toContain("border-security");
   });
 
-  it("keeps generated related links bounded and duplicate-free", () => {
+  it("keeps generated related links bounded, duplicate-free, and indexable", () => {
     for (const tracker of ALL_POLICY_TRACKERS) {
       const guides = relatedIssueGuidesForTracker(tracker);
       expect(guides.length).toBeLessThanOrEqual(3);
@@ -30,6 +31,7 @@ describe("issue and policy reciprocal links", () => {
       const trackers = relatedPolicyTrackersForIssueGuide(guide);
       expect(trackers.length).toBeLessThanOrEqual(4);
       expect(new Set(trackers.map((tracker) => tracker.slug)).size).toBe(trackers.length);
+      expect(trackers.every(isPolicyTrackerIndexable)).toBe(true);
     }
   });
 });
