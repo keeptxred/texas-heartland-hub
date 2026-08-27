@@ -44,6 +44,7 @@ const categoryLinks: Record<PoliticalFigureCategory, Array<{ href: string; label
     { href: "/elections", label: "Texas Election Central" },
   ],
   "Texas judicial leaders": [
+    { href: "/texas-politics/texas-supreme-court-realignment", label: "Texas Supreme Court realignment" },
     { href: "/texas-government", label: "Texas Government" },
     { href: "/texas-law-policy", label: "Texas Law & Policy" },
   ],
