@@ -77,7 +77,7 @@ function TexasDriverLicensePage() {
             Applicants surrendering a valid, unexpired license from another U.S. state, U.S. territory, or Canada are generally exempt from the knowledge and driving skills exams. Texas also has specific reciprocity arrangements with France, Germany, South Korea, the United Arab Emirates, and Taiwan. The exemption depends on the license being valid and on surrender or other DPS conditions.
           </p>
           <p className="mt-4">
-            Coordinate the license transfer with your vehicle registration steps using the <a className="font-semibold text-primary hover:underline" href="/moving-to-texas-checklist">interactive moving checklist</a>, the <a className="font-semibold text-primary hover:underline" href="/moving-to-texas">Moving to Texas resource center</a>, and the <a className="font-semibold text-primary hover:underline" href="/find-my-dmv">vehicle registration estimator and office finder</a>.
+            Coordinate the license transfer with your vehicle registration steps using the <a className="font-semibold text-primary hover:underline" href="https://texasdefined.com/moving-to-texas">interactive Texas moving checklist</a>, the <a className="font-semibold text-primary hover:underline" href="https://texasdefined.com/moving-to-texas">TexasDefined Moving to Texas resource center</a>, and the <a className="font-semibold text-primary hover:underline" href="/find-my-dmv">vehicle registration estimator and office finder</a>.
           </p>
         </section>
 
