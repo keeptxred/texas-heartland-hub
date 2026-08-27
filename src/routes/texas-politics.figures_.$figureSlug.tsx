@@ -208,7 +208,7 @@ function PoliticalFigurePage() {
       <aside className="mt-12 rounded-2xl border bg-muted/30 p-6 md:p-8" aria-labelledby="figure-context">
         <h2 id="figure-context" className="text-2xl font-bold">Keep the biography connected to current Texas politics</h2>
         <p className="mt-3 leading-7 text-muted-foreground">Evergreen profiles explain career, offices, political coalitions and durable controversies. For current races, ballot status, polling and results, use Election Central. For the constitutional powers of a Texas office, use the Texas Government authority guides.</p>
-        <div className="mt-5 flex flex-wrap gap-3"><a href="/elections" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">Texas Election Central</a><a href="/texas-government" className="rounded-md border bg-card px-4 py-2 text-sm font-bold hover:border-primary">Texas Government</a></div>
+        <div className="mt-5 flex flex-wrap gap-3"><a href="/elections/2026" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">Texas Election Central</a><a href="/texas-government" className="rounded-md border bg-card px-4 py-2 text-sm font-bold hover:border-primary">Texas Government</a></div>
       </aside>
 
       <section className="mt-12" aria-labelledby="more-figures">
