@@ -11,6 +11,7 @@ import {
   type UrlEntry,
 } from "@/lib/sitemap-shared";
 import { ARTICLES, isPublished } from "@/data/articles";
+import { ARTICLE_BODIES } from "@/data/article-bodies";
 import { listSitemapArticles } from "@/lib/evergreen.functions";
 import { getProducts } from "@/lib/products.functions";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
@@ -52,7 +53,7 @@ export const Route = createFileRoute("/sitemap-images.xml")({
         };
 
         for (const a of ARTICLES.filter(
-          (a) => isPublished(a) && isStaticArticleIndexable(a),
+          (a) => isPublished(a) && isStaticArticleIndexable(a) && Boolean(ARTICLE_BODIES[a.slug]),
         )) {
           if (TOMBSTONED_ARTICLE_SLUGS.has(a.slug)) continue;
           push(
