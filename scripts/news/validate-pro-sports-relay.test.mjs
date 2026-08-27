@@ -7,7 +7,8 @@ const migration = fs.readFileSync('supabase/migrations/20260827202000_enable_rel
 test('Texas pro sports discovery uses the fixed relay', () => {
   expect(relay).toContain('"google-pro-sports"');
   for (const team of ['Dallas Mavericks', 'Dallas Cowboys', 'Texas Rangers', 'Houston Astros', 'Houston Texans', 'San Antonio Spurs']) {
-    expect(relay).toContain(team);
+    const encodedExactPhrase = `%22${team.replaceAll(' ', '+')}%22`;
+    expect(relay).toContain(encodedExactPhrase);
   }
   expect(migration).toContain('feed=google-pro-sports');
   expect(migration).toContain("enabled = true");
