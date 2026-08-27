@@ -90,10 +90,24 @@ function PoliticalFigurePage() {
       .map((link) => link.href.slice(FIGURE_PREFIX.length))
       .filter(Boolean),
   );
-  const peers = [
-    ...ALL_TEXAS_POLITICAL_FIGURES.filter((item) => item.slug !== figure.slug && linkedPeerSlugs.has(item.slug)),
-    ...ALL_TEXAS_POLITICAL_FIGURES.filter((item) => item.slug !== figure.slug && !linkedPeerSlugs.has(item.slug)),
-  ].slice(0, 4);
+  const linkedPeers = ALL_TEXAS_POLITICAL_FIGURES.filter(
+    (item) => item.slug !== figure.slug && linkedPeerSlugs.has(item.slug),
+  );
+  const sameCategoryPeers = figure.category
+    ? ALL_TEXAS_POLITICAL_FIGURES.filter(
+        (item) => item.slug !== figure.slug && item.category === figure.category && !linkedPeerSlugs.has(item.slug),
+      )
+    : [];
+  const sameKickerPeers = ALL_TEXAS_POLITICAL_FIGURES.filter(
+    (item) => item.slug !== figure.slug && item.kicker === figure.kicker && !linkedPeerSlugs.has(item.slug),
+  );
+  const broadFallbackPeers = ALL_TEXAS_POLITICAL_FIGURES.filter(
+    (item) => item.slug !== figure.slug && !linkedPeerSlugs.has(item.slug),
+  );
+  const peers = [...linkedPeers, ...sameCategoryPeers, ...sameKickerPeers, ...broadFallbackPeers]
+    .filter((item, index, items) => items.findIndex((candidate) => candidate.slug === item.slug) === index)
+    .slice(0, 4);
+  const moreFiguresHeading = figure.category ? `More ${figure.category.toLocaleLowerCase("en-US")}` : "More Texas political figures";
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
@@ -150,7 +164,8 @@ function PoliticalFigurePage() {
       </aside>
 
       <section className="mt-12" aria-labelledby="more-figures">
-        <h2 id="more-figures" className="text-2xl font-bold">More Texas political figures</h2>
+        <h2 id="more-figures" className="text-2xl font-bold">{moreFiguresHeading}</h2>
+        <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">Related profiles are prioritized first, followed by leaders from the same political or institutional category.</p>
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           {peers.map((peer) => <a key={peer.slug} href={`/texas-politics/figures/${peer.slug}`} className="rounded-xl border bg-card p-5 hover:border-primary"><p className="text-xs font-bold uppercase tracking-wide text-primary">{peer.kicker}</p><h3 className="mt-2 text-xl font-bold">{peer.name}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{peer.description}</p></a>)}
         </div>
