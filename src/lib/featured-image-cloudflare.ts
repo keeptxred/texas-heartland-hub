@@ -10,6 +10,27 @@ export const CLOUDFLARE_VISION_MODEL = "@cf/mistralai/mistral-small-3.1-24b-inst
 
 export type CloudflareImageModel = typeof CLOUDFLARE_IMAGE_MODEL | typeof CLOUDFLARE_IMAGE_FALLBACK_MODEL;
 
+type ImageGenerationProvenance = {
+  model: CloudflareImageModel;
+  usedFallback: boolean;
+};
+
+// Keep generation provenance attached to the exact in-memory byte object so the
+// strict validator can record which model produced an accepted or rejected
+// image without changing storage formats or weakening the generation API.
+const generatedImageProvenance = new WeakMap<Uint8Array, ImageGenerationProvenance>();
+
+function rememberGeneratedImage(bytes: Uint8Array, model: CloudflareImageModel, usedFallback: boolean): Uint8Array {
+  generatedImageProvenance.set(bytes, { model, usedFallback });
+  return bytes;
+}
+
+function generationProvenancePrefix(bytes: Uint8Array): string {
+  const provenance = generatedImageProvenance.get(bytes);
+  if (!provenance) return "";
+  return `[image-model=${provenance.model}; fallback=${provenance.usedFallback ? "yes" : "no"}] `;
+}
+
 function cloudflareEndpoint(accountId: string, model: string): string {
   return `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(accountId)}/ai/run/${model}`;
 }
@@ -106,6 +127,7 @@ export async function generateImageBytes(
   if (!accountId || !apiToken) throw new Error("Missing Cloudflare Workers AI credentials: CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required");
 
   let activeModel = model;
+  let usedFallback = false;
   let res = await requestCloudflareImage(accountId, apiToken, prompt, negativePrompt, activeModel);
 
   // Fail safely if the newer partner model is temporarily unavailable. This is
@@ -113,6 +135,7 @@ export async function generateImageBytes(
   // by the existing strict validator and retry loop.
   if (!res.ok && activeModel === CLOUDFLARE_IMAGE_MODEL) {
     activeModel = CLOUDFLARE_IMAGE_FALLBACK_MODEL;
+    usedFallback = true;
     res = await requestCloudflareImage(accountId, apiToken, prompt, negativePrompt, activeModel);
   }
 
@@ -132,7 +155,7 @@ export async function generateImageBytes(
   if (contentType.startsWith("image/") || contentType.includes("application/octet-stream")) {
     const buffer = await res.arrayBuffer();
     if (!buffer.byteLength) throw new Error("Cloudflare Workers AI returned an empty image body");
-    return new Uint8Array(buffer);
+    return rememberGeneratedImage(new Uint8Array(buffer), activeModel, usedFallback);
   }
 
   const raw = await res.text().catch(() => "");
@@ -141,7 +164,7 @@ export async function generateImageBytes(
   if (json.success === false) throw new Error(`Cloudflare Workers AI ${res.status}: ${json.errors?.[0]?.message || json.error?.message || raw}`.slice(0, 440));
   const b64 = (typeof json.result === "object" && json.result ? json.result.image : undefined) || json.image || (typeof json.result === "string" ? json.result : undefined);
   if (!b64) throw new Error("Cloudflare Workers AI returned no image data");
-  return base64ToBytes(b64);
+  return rememberGeneratedImage(base64ToBytes(b64), activeModel, usedFallback);
 }
 
 type VisionChatChoice = {
@@ -207,9 +230,10 @@ export function imageValidationDomainGuidance(subject: SubjectExtract): string {
 }
 
 export async function validateImageMatchesArticle(bytes: Uint8Array, subject: SubjectExtract): Promise<{ matches: boolean; reason: string }> {
+  const provenancePrefix = generationProvenancePrefix(bytes);
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
   const apiToken = process.env.CLOUDFLARE_API_TOKEN;
-  if (!accountId || !apiToken) return { matches: false, reason: "Cloudflare vision validator unavailable: missing credentials" };
+  if (!accountId || !apiToken) return { matches: false, reason: `${provenancePrefix}Cloudflare vision validator unavailable: missing credentials` };
   try {
     const image = `data:image/jpeg;base64,${bytesToBase64(bytes)}`;
     const domainGuidance = imageValidationDomainGuidance(subject);
@@ -251,8 +275,8 @@ export async function validateImageMatchesArticle(bytes: Uint8Array, subject: Su
 
     const raw = await res.text().catch(() => "");
     let json: { success?: boolean; result?: unknown; errors?: { message?: string }[] } = {};
-    try { json = raw ? JSON.parse(raw) : {}; } catch { return { matches: false, reason: `Cloudflare vision returned non-JSON HTTP payload ${res.status}` }; }
-    if (!res.ok || json.success === false) return { matches: false, reason: `Cloudflare vision HTTP ${res.status}: ${json.errors?.[0]?.message || raw.slice(0, 180)}` };
+    try { json = raw ? JSON.parse(raw) : {}; } catch { return { matches: false, reason: `${provenancePrefix}Cloudflare vision returned non-JSON HTTP payload ${res.status}` }; }
+    if (!res.ok || json.success === false) return { matches: false, reason: `${provenancePrefix}Cloudflare vision HTTP ${res.status}: ${json.errors?.[0]?.message || raw.slice(0, 180)}` };
 
     const { output, finishReason } = extractCloudflareVisionOutput(json.result);
     const normalizedOutput = normalizeCloudflareVisionVerdictOutput(output);
@@ -261,11 +285,12 @@ export async function validateImageMatchesArticle(bytes: Uint8Array, subject: Su
       const previewValue = typeof normalizedOutput === "string" ? normalizedOutput : output;
       const preview = typeof previewValue === "string" ? previewValue.replace(/\s+/g, " ").trim().slice(0, 220) : JSON.stringify(previewValue ?? "").slice(0, 220);
       const finish = finishReason ? ` (finish_reason=${finishReason})` : "";
-      return { matches: false, reason: `Cloudflare vision validator returned no parseable verdict${finish}${preview ? `: ${preview}` : ""}` };
+      return { matches: false, reason: `${provenancePrefix}Cloudflare vision validator returned no parseable verdict${finish}${preview ? `: ${preview}` : ""}` };
     }
     const ok = parsed.matches && parsed.photorealistic;
-    return { matches: ok, reason: String(parsed.reason || (ok ? "story match and photorealism passed" : "quality gate failed")).slice(0, 300) };
+    const reason = String(parsed.reason || (ok ? "story match and photorealism passed" : "quality gate failed"));
+    return { matches: ok, reason: `${provenancePrefix}${reason}`.slice(0, 300) };
   } catch (e) {
-    return { matches: false, reason: `Cloudflare vision validator error: ${(e as Error).message}` };
+    return { matches: false, reason: `${provenancePrefix}Cloudflare vision validator error: ${(e as Error).message}` };
   }
 }

@@ -25,6 +25,8 @@ describe("Cloudflare featured-image payload", () => {
     expect(fallbackRequest).toEqual(expect.objectContaining({ steps: 8 }));
     expect(fallbackRequest).not.toHaveProperty("seed");
     expect(generateImageSource).toContain("CLOUDFLARE_IMAGE_FALLBACK_MODEL");
+    expect(generateImageSource).toContain("usedFallback = true");
+    expect(generateImageSource).toContain("rememberGeneratedImage");
     expect(generateImageSource).not.toMatch(/\bnegative_prompt\s*:/);
     expect(generateImageSource).not.toContain("dreamshaper-8-lcm");
     expect(generateImageSource).toContain('contentType.startsWith("image/")');
@@ -45,13 +47,17 @@ describe("Cloudflare featured-image payload", () => {
     expect(prompt).toContain("logo");
   });
 
-  it("requests, normalizes, and parses a structured JSON verdict from Cloudflare vision", () => {
+  it("requests, normalizes, parses, and records model provenance for Cloudflare vision", () => {
     const runtime = fs.readFileSync(new URL("./featured-image-cloudflare.ts", import.meta.url), "utf8");
     const core = fs.readFileSync(new URL("./featured-image-core.ts", import.meta.url), "utf8");
     const start = runtime.indexOf("export async function validateImageMatchesArticle");
     const validatorSource = runtime.slice(start);
 
     expect(core).toContain("export function parseVisionVerdict");
+    expect(runtime).toContain("generatedImageProvenance");
+    expect(runtime).toContain("generationProvenancePrefix");
+    expect(runtime).toContain("image-model=");
+    expect(runtime).toContain("fallback=");
     expect(validatorSource).toContain("guided_json: verdictSchema");
     expect(validatorSource).toContain('matches: { type: "boolean" }');
     expect(validatorSource).toContain('photorealistic: { type: "boolean" }');
