@@ -13,34 +13,47 @@ permissions:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
-      - name: Fetch shared Visla clip page
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+      - name: Install dependencies and Chromium
         shell: bash
         run: |
           set -euo pipefail
-          # Probe revision 2: the workflow already exists on main, so merging this
-          # change triggers the push path and lets us inspect the public share page.
-          url='https://app.visla.us/clip/1540580154592547701'
-          curl -L --fail-with-body --silent --show-error --max-time 60 \
-            -A 'Mozilla/5.0' "$url" -o /tmp/visla.html
-          echo "bytes=$(wc -c </tmp/visla.html)"
-          python3 - <<'PY'
-          import html, re
-          text=open('/tmp/visla.html','r',encoding='utf-8',errors='ignore').read()
-          text=html.unescape(text).replace('\\u0026','&').replace('\\/','/')
-          urls=[]
-          for m in re.finditer(r'https://[^\"\'<>\\s]+', text):
-              u=m.group(0)
-              if '.mp4' in u.lower() or 'video' in u.lower() or 'media' in u.lower():
-                  urls.append(u)
-          seen=[]
-          for u in urls:
-              if u not in seen:
-                  seen.append(u)
-          print('candidate_count=', len(seen))
-          for u in seen[:30]:
-              print('CANDIDATE', u[:1000])
-          if not any('.mp4' in u.lower() for u in seen):
-              raise SystemExit('No direct MP4 URL found in Visla page HTML')
-          PY
+          bun install --frozen-lockfile
+          bunx playwright install --with-deps chromium
+      - name: Inspect shared Visla clip with Chromium
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat >/tmp/probe.mjs <<'JS'
+          import { chromium } from '@playwright/test';
+          const target = 'https://app.visla.us/clip/1540580154592547701';
+          const browser = await chromium.launch({ headless: true });
+          const page = await browser.newPage();
+          const candidates = new Set();
+          const record = (url, contentType = '') => {
+            const lower = String(url).toLowerCase();
+            const type = String(contentType).toLowerCase();
+            if (lower.includes('.mp4') || lower.includes('.m3u8') || type.startsWith('video/') || lower.includes('/video') || lower.includes('/media')) candidates.add(url);
+          };
+          page.on('response', (response) => record(response.url(), response.headers()['content-type'] || ''));
+          await page.goto(target, { waitUntil: 'domcontentloaded', timeout: 60000 });
+          await page.waitForTimeout(12000);
+          const dom = await page.evaluate(() => ({
+            videos: Array.from(document.querySelectorAll('video')).flatMap((v) => [v.currentSrc, v.src, ...Array.from(v.querySelectorAll('source')).map((s) => s.src)]).filter(Boolean),
+            links: Array.from(document.querySelectorAll('a')).map((a) => a.href).filter(Boolean),
+            body: document.body?.innerText?.slice(0, 4000) || '',
+          }));
+          for (const url of [...dom.videos, ...dom.links]) record(url);
+          console.log('PAGE_TEXT_START');
+          console.log(dom.body);
+          console.log('PAGE_TEXT_END');
+          console.log('VIDEO_ELEMENT_URLS', JSON.stringify(dom.videos));
+          console.log('CANDIDATE_COUNT', candidates.size);
+          for (const url of candidates) console.log('CANDIDATE', url);
+          await browser.close();
+          if (![...candidates].some((u) => /\.mp4(?:$|\?)/i.test(u))) process.exitCode = 2;
+          JS
+          node /tmp/probe.mjs
