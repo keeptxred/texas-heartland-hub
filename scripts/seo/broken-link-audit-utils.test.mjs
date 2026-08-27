@@ -14,9 +14,10 @@ describe('broken-link audit route semantics', () => {
     expect(route.test('/texas-politics/figures_/phil-gramm-texas-senator-fiscal-conservative')).toBe(false);
   });
 
-  it('keeps normal flat, index, pathless, and dynamic route conventions crawlable', () => {
+  it('keeps normal flat, index, pathless, grouped, and dynamic route conventions crawlable', () => {
     expect(routeRegexFromRouteName('tools.index.tsx').test('/tools')).toBe(true);
     expect(routeRegexFromRouteName('_layout.texas-news.$slug.tsx').test('/texas-news/example')).toBe(true);
+    expect(routeRegexFromRouteName('(marketing).about.tsx').test('/about')).toBe(true);
     expect(routeRegexFromRouteName('news.$slug.tsx').test('/news/example')).toBe(true);
   });
 
