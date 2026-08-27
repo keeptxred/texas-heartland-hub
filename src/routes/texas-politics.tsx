@@ -14,6 +14,7 @@ const SECTIONS = [
   { title: "Political Reference", description: "Races, redistricting, voter trends, policy questions, PACs, and campaign activity — 50 source-backed search guides.", href: "/texas-political-reference" },
   { title: "Political Figures", description: "Evergreen, source-backed profiles connecting major Texas political careers to the state's Republican realignment and governing institutions.", href: "/texas-politics/figures" },
   { title: "Republicans During Reconstruction", description: "The 1867 origins of the Texas GOP, Black political leadership, the Davis administration, and the Black-and-Tan versus Lily-White struggle.", href: "/texas-politics/reconstruction-republicans" },
+  { title: "Texas Supreme Court Realignment", description: "How statewide judicial elections, appointments and legal reform transformed Texas's highest civil court beginning in the late 1980s.", href: "/texas-politics/texas-supreme-court-realignment" },
   { title: "How Texas Became Republican", description: "A sourced timeline of Texas's shift from one-party Democratic rule to Republican statewide and legislative control.", href: "/texas-politics/how-texas-became-republican" },
   { title: "State Legislature", description: "Bills, special sessions, and the conservative caucus in Austin.", href: "/texas-legislature" },
   { title: "Governor & Leadership", description: "The Governor, Lt. Governor, AG, and statewide officeholders.", href: "/representatives" },
@@ -115,6 +116,9 @@ function TexasPoliticsPage() {
             </p>
             <p>
               The <a href="/texas-politics/reconstruction-republicans" className="font-semibold text-primary underline underline-offset-4">Texas Republicans During Reconstruction</a> guide reaches further back to the party's 1867 origins, the central role of Black voters and organizers, Edmund J. Davis's administration, and the later fight between Black-and-Tan and Lily-White Republicans. It keeps that nineteenth-century history distinct from the modern conservative coalition while showing the institutional continuity of the party organization.
+            </p>
+            <p>
+              The <a href="/texas-politics/texas-supreme-court-realignment" className="font-semibold text-primary underline underline-offset-4">Texas Supreme Court Realignment</a> guide explains another part of that transition: how judicial elections and appointments, tort-law politics and statewide partisan change turned the state's highest civil court into a durable Republican institution beginning in the late 1980s. It also separates the politics of selecting judges from the legal reasoning used to decide individual cases.
             </p>
             <p>
               Our <a href="/texas-politics/how-texas-became-republican" className="font-semibold text-primary underline underline-offset-4">How Texas Became Republican</a> guide connects those individual careers to the larger chronology, from the 1952 Shivercrat split and John Tower's 1961 Senate victory through the 1998 statewide sweep and the Republican takeover of the Texas House after the 2002 election.

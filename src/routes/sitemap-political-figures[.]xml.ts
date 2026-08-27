@@ -3,7 +3,7 @@ import type {} from "@tanstack/react-start";
 import { ALL_TEXAS_POLITICAL_FIGURES } from "@/data/texas-political-figures-all";
 import { BASE_URL, renderUrlset, toIsoDate, xmlResponse, type UrlEntry } from "@/lib/sitemap-shared";
 
-const LASTMOD = toIsoDate("2026-08-26T22:52:00-05:00");
+const LASTMOD = toIsoDate("2026-08-26T22:59:00-05:00");
 
 export const Route = createFileRoute("/sitemap-political-figures.xml")({
   server: {
@@ -13,6 +13,7 @@ export const Route = createFileRoute("/sitemap-political-figures.xml")({
           { loc: `${BASE_URL}/texas-politics/figures`, lastmod: LASTMOD },
           { loc: `${BASE_URL}/texas-politics/how-texas-became-republican`, lastmod: LASTMOD },
           { loc: `${BASE_URL}/texas-politics/reconstruction-republicans`, lastmod: LASTMOD },
+          { loc: `${BASE_URL}/texas-politics/texas-supreme-court-realignment`, lastmod: LASTMOD },
           ...ALL_TEXAS_POLITICAL_FIGURES.map((figure) => ({
             loc: `${BASE_URL}/texas-politics/figures/${figure.slug}`,
             lastmod: LASTMOD,
