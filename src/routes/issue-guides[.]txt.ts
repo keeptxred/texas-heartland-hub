@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { issueGuides } from "@/data/issue-guides";
+import { isIssueGuideIndexable } from "@/lib/issue-guide-indexability";
 import { BASE_URL } from "@/lib/sitemap-shared";
+
+const INDEXABLE_ISSUE_GUIDES = issueGuides.filter(isIssueGuideIndexable);
 
 function renderIssueGuideManifest() {
   return [
@@ -14,9 +17,9 @@ function renderIssueGuideManifest() {
     "",
     "Keep TX Red issue guides are broad evergreen, source-first explanations of durable Texas policy frameworks. They are distinct from narrower current-status policy trackers, transparent calculators, live news coverage, and explicitly labeled editorial positions in The Texas Case.",
     "",
-    `## Current issue guides (${issueGuides.length})`,
+    `## Current issue guides (${INDEXABLE_ISSUE_GUIDES.length})`,
     "",
-    ...issueGuides.map((guide) => `- ${BASE_URL}/issues/${guide.slug} — ${guide.title} — ${guide.category}`),
+    ...INDEXABLE_ISSUE_GUIDES.map((guide) => `- ${BASE_URL}/issues/${guide.slug} — ${guide.title} — ${guide.category}`),
     "",
     "## Authority layers",
     "",
