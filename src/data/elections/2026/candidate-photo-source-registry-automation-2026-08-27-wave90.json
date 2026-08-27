@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "mindybumgarner.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Mindy Bumgarner's official campaign site as a discovery source for candidate-supplied portraits and media. Do not approve or reuse any image without item-level provenance plus an explicit reusable-rights basis, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Mindy Bumgarner State Board of Education District 14 official campaign portrait media press",
+    "notes": "New source discovered August 27, 2026. TCTA's TexasTeachersVote candidate profile for Mindy Bumgarner identifies mindybumgarner.com as her campaign website and links her official campaign social profile. Keep discovery-only and preserve item-level rights review."
+  },
+  {
+    "domain": "palmerfortexased.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Michelle Palmer's official campaign site as a discovery source for candidate-supplied portraits and media. Do not approve or reuse any image without item-level provenance plus an explicit reusable-rights basis, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Michelle Palmer State Board of Education District 6 official campaign portrait media press",
+    "notes": "New source discovered August 27, 2026. ATPE Teach the Vote and TCTA TexasTeachersVote both identify palmerfortexased.com as Michelle Palmer's campaign website for SBOE District 6. Keep discovery-only and preserve item-level rights review."
+  },
+  {
+    "domain": "tcta.org",
+    "sourceClass": "candidate-voter-guide-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Classroom Teachers Association candidate profiles only as a discovery bridge to candidate identities, campaign websites, candidate-linked social profiles, and candidate-supplied material. TCTA-hosted images are not reusable by default; require item-level rights verification before any image approval.",
+    "searchHint": "site:tcta.org texasteachersvote Texas 2026 candidate official website portrait",
+    "notes": "New source class discovered August 27, 2026. TCTA's TexasTeachersVote directory currently exposes candidate-specific pages for missing-photo candidates including Rhett Rosenquest Smith, Scott Whitmarsh, Mindy Bumgarner, and Michelle Palmer, and often links official campaign websites/social profiles. Treat as discovery-only."
+  }
+]
