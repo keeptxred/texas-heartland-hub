@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ISSUE_CATEGORIES, getGuidesByCategory, issueGuides } from "@/data/issue-guides";
+import { isIssueGuideIndexable } from "@/lib/issue-guide-indexability";
 
 const SITE_URL = "https://keeptxred.com";
 const PAGE_URL = `${SITE_URL}/issues`;
+const INDEXABLE_ISSUE_GUIDES = issueGuides.filter((guide) => isIssueGuideIndexable(guide));
 
 export const Route = createFileRoute("/issues/")({
   head: () => ({
@@ -25,8 +27,8 @@ export const Route = createFileRoute("/issues/")({
         description: "Evergreen, source-first guides to major Texas policy issues, local government and government accountability.",
         mainEntity: {
           "@type": "ItemList",
-          numberOfItems: issueGuides.length,
-          itemListElement: issueGuides.map((guide, index) => ({
+          numberOfItems: INDEXABLE_ISSUE_GUIDES.length,
+          itemListElement: INDEXABLE_ISSUE_GUIDES.map((guide, index) => ({
             "@type": "ListItem",
             position: index + 1,
             name: guide.title,
@@ -96,7 +98,7 @@ function IssuesHub() {
 
       <div className="mt-12 space-y-14">
         {ISSUE_CATEGORIES.map((category) => {
-          const guides = getGuidesByCategory(category);
+          const guides = getGuidesByCategory(category).filter((guide) => isIssueGuideIndexable(guide));
           if (!guides.length) return null;
           return (
             <section key={category} aria-labelledby={category.replace(/\W+/g, "-").toLowerCase()}>
