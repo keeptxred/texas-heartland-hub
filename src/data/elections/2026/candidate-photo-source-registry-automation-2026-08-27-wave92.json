@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "harriscountygop.com",
+    "sourceClass": "county-party-official-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Harris County Republican Party pages as an official county-party identity and affiliation bridge for Harris County Republican candidates and party officers. Do not reuse site-hosted images by default; require item-level provenance plus an explicit reusable-rights basis, candidate/campaign permission, or another documented editorial permission basis before approving any portrait.",
+    "searchHint": "site:harriscountygop.com candidate name Texas House 2026 Harris County Republican",
+    "notes": "New source class verified August 27, 2026. The site directly identifies Julie Hunt as a Harris County GOP precinct chair and event organizer, providing an official party identity bridge for a currently missing candidate portrait. Treat imagery as discovery-only unless rights are separately verified."
+  },
+  {
+    "domain": "houstonvotersguide.org",
+    "sourceClass": "nonpartisan-local-voter-guide-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the League of Women Voters of Houston voter-guide pages to confirm candidate identity, office, party, ballot presence, and whether a candidate supplied responses or imagery. Do not reuse site-hosted images by default; require item-level provenance plus an explicit reusable-rights basis, candidate/campaign permission, or another documented editorial permission basis before approving any portrait.",
+    "searchHint": "site:houstonvotersguide.org candidate name 2026 Texas House voter guide",
+    "notes": "New source class verified August 27, 2026. The 2026 Houston voter guide has individual pages or election listings for currently missing candidates including Scott Whitmarsh, Kyle Harding, Julie Hunt, Laura Garcia DeLeon, Heidi Hall, Frank Salazar, David Flores, Inocensia Moreno, and Alexandria Nicole Butler. Several pages explicitly show no candidate response or no portrait, which is useful negative evidence that prevents repeated dead-end searches."
+  }
+]
