@@ -1,10 +1,10 @@
-import fs from "node:fs";
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { ACCOUNTABILITY_DATA_SETS } from "@/data/accountability-data-catalog";
 import { TEXAS_DATA_SETS } from "@/data/texas-data-catalog";
 import { isDataDetailIndexable } from "@/lib/data-detail-indexability";
 
-const read = (path: string) => fs.readFileSync(new URL(path, import.meta.url), "utf8");
+const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 const policyHub = read("../routes/policy.tsx");
 const policyManifest = read("../routes/policy-trackers[.]txt.ts");
 const lawHub = read("../routes/laws.topics.tsx");
