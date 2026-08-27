@@ -114,7 +114,7 @@ describe("static article indexability", () => {
     for (const source of [newsIndex, authorsIndex, authorProfile]) {
       expect(source).toContain("getDiscoverableStaticArticleSlugs");
       expect(source).toContain("isStaticArticleIndexable");
-      expect(source).toContain("discoverableStatic.has(article.slug)");
+      expect(source).toMatch(/discoverableStatic\.has\((?:article|a)\.slug\)/);
     }
   });
 
