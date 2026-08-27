@@ -11,9 +11,10 @@ const CASES = [
   ["laws.texas-election-laws-explained.tsx", "/laws/texas-election-laws-explained", "/news/texas-election-laws-explained"],
   ["laws.texas-new-laws-2026.tsx", "/laws/texas-new-laws-2026", "/news/texas-new-laws-2026"],
   ["laws.texas-constitution.tsx", "/laws/texas-constitution", "/laws"],
+  ["committees.tsx", "/committees", "/texas-legislature/committees"],
 ] as const;
 
-describe("legacy Texas law URL redirects", () => {
+describe("legacy authority URL redirects", () => {
   it.each(CASES)("preserves %s with a permanent canonical redirect", (file, legacyPath, targetPath) => {
     const source = readFileSync(resolve(HERE, file), "utf8");
     expect(source).toContain(`createFileRoute(\"${legacyPath}\")`);
