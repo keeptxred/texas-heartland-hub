@@ -1,6 +1,10 @@
 name: Publish fresh TexasDefined Reel
 
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-texasdefined-test-reel.yml'
   workflow_dispatch:
 
 permissions:
@@ -10,9 +14,10 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v5
+
       - name: Install media dependencies
         shell: bash
         run: |
@@ -21,90 +26,119 @@ jobs:
           sudo apt-get install -y ffmpeg fonts-dejavu-core
           ffmpeg -version | head -n 1
 
-      - name: Build a fresh TexasDefined Reel
+      - name: Download location imagery
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fL --retry 3 --retry-delay 2 \
+            'https://commons.wikimedia.org/wiki/Special:Redirect/file/Guadalupe_Mountains_National_Park_P1012846.jpg' \
+            -o guadalupe.jpg
+          curl -fL --retry 3 --retry-delay 2 \
+            'https://commons.wikimedia.org/wiki/Special:Redirect/file/Caddo_Lake_National_Wildlife_Refuge,_TX_(5169475257).jpg' \
+            -o caddo.jpg
+          curl -fL --retry 3 --retry-delay 2 \
+            'https://commons.wikimedia.org/wiki/Special:Redirect/file/Padre_Island_National_Seashore_PAIS2087.jpg' \
+            -o padre.jpg
+          file guadalupe.jpg caddo.jpg padre.jpg
+
+      - name: Build Reel with real Texas imagery
         shell: bash
         run: |
           set -euo pipefail
           BOLD='/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
           REG='/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
 
+          make_photo_scene() {
+            local input="$1" output="$2" duration="$3" title="$4" subtitle="$5"
+            ffmpeg -hide_banner -loglevel error -y -loop 1 -t "$duration" -i "$input" \
+              -vf "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,
+                   zoompan=z='min(zoom+0.00045,1.045)':d=$(python3 - <<PY
+print(int(float('$duration')*30))
+PY
+):s=1080x1920:fps=30,
+                   drawbox=x=60:y=1320:w=960:h=360:color=black@0.48:t=fill,
+                   drawtext=fontfile=${BOLD}:text='${title}':fontcolor=white:fontsize=82:x=100:y=1390,
+                   drawtext=fontfile=${REG}:text='${subtitle}':fontcolor=white:fontsize=46:x=100:y=1515" \
+              -an -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -r 30 "$output"
+          }
+
           ffmpeg -hide_banner -loglevel error -y \
-            -f lavfi -i "color=c=0x101820:s=1080x1920:r=30:d=4" \
-            -f lavfi -i "color=c=0x6b3f2a:s=1080x1920:r=30:d=5" \
-            -f lavfi -i "color=c=0x173b32:s=1080x1920:r=30:d=5" \
-            -f lavfi -i "color=c=0x0f5f7a:s=1080x1920:r=30:d=5" \
-            -f lavfi -i "color=c=0x181818:s=1080x1920:r=30:d=4" \
-            -f lavfi -i "color=c=0x070707:s=1080x1920:r=30:d=6" \
-            -f lavfi -i "sine=frequency=110:sample_rate=48000:duration=29" \
-            -f lavfi -i "sine=frequency=220:sample_rate=48000:duration=29" \
+            -loop 1 -t 3 -i guadalupe.jpg \
+            -loop 1 -t 3 -i caddo.jpg \
+            -loop 1 -t 3 -i padre.jpg \
             -filter_complex "
-              [0:v]noise=alls=7:allf=t+u,
-                drawbox=x='mod(t*210,1280)-200':y=1340:w=620:h=18:color=0xffffff@0.20:t=fill,
-                drawtext=fontfile=${BOLD}:text='3 TEXAS PLACES':fontcolor=white:fontsize=96:x=(w-text_w)/2:y=520,
-                drawtext=fontfile=${BOLD}:text='THAT DO NOT LOOK':fontcolor=0xf2c14e:fontsize=72:x=(w-text_w)/2:y=660,
-                drawtext=fontfile=${BOLD}:text='LIKE TEXAS':fontcolor=white:fontsize=104:x=(w-text_w)/2:y=770,
-                drawtext=fontfile=${REG}:text='Save this for your next Texas road trip':fontcolor=white@0.85:fontsize=42:x=(w-text_w)/2:y=1110[v0];
+              [0:v]scale=360:1920:force_original_aspect_ratio=increase,crop=360:1920[g];
+              [1:v]scale=360:1920:force_original_aspect_ratio=increase,crop=360:1920[c];
+              [2:v]scale=360:1920:force_original_aspect_ratio=increase,crop=360:1920[p];
+              [g][c][p]hstack=inputs=3[bg];
+              [bg]drawbox=x=70:y=600:w=940:h=500:color=black@0.58:t=fill,
+                  drawtext=fontfile=${BOLD}:text='TEXAS HAS MORE':fontcolor=white:fontsize=82:x=(w-text_w)/2:y=680,
+                  drawtext=fontfile=${BOLD}:text='VARIETY':fontcolor=0xf2c14e:fontsize=108:x=(w-text_w)/2:y=800,
+                  drawtext=fontfile=${BOLD}:text='THAN YOU THINK':fontcolor=white:fontsize=76:x=(w-text_w)/2:y=940[out]" \
+            -map '[out]' -an -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -r 30 hook.mp4
 
-              [1:v]noise=alls=5:allf=t+u,
-                drawtext=fontfile=${BOLD}:text='▲   ▲▲   ▲':fontcolor=0xf2c14e@0.25:fontsize=230:x=(w-text_w)/2:y=260,
-                drawtext=fontfile=${BOLD}:text='1':fontcolor=0xf2c14e:fontsize=180:x=90:y=170,
-                drawtext=fontfile=${BOLD}:text='GUADALUPE':fontcolor=white:fontsize=94:x=90:y=600,
-                drawtext=fontfile=${BOLD}:text='MOUNTAINS':fontcolor=white:fontsize=94:x=90:y=710,
-                drawtext=fontfile=${REG}:text='Desert cliffs and the highest point in Texas':fontcolor=white@0.90:fontsize=44:x=90:y=930,
-                drawtext=fontfile=${REG}:text='West Texas':fontcolor=0xf2c14e:fontsize=46:x=90:y=1040[v1];
+          make_photo_scene guadalupe.jpg guadalupe.mp4 5 'GUADALUPE MOUNTAINS' 'West Texas peaks and desert cliffs'
+          make_photo_scene caddo.jpg caddo.mp4 5 'CADDO LAKE' 'Cypress trees, bayous, and Spanish moss'
+          make_photo_scene padre.jpg padre.mp4 5 'PADRE ISLAND' 'Dunes, Gulf water, and open beach'
 
-              [2:v]noise=alls=6:allf=t+u,
-                drawtext=fontfile=${BOLD}:text='≈  ≈  ≈  ≈':fontcolor=0xa5d6c3@0.30:fontsize=180:x=(w-text_w)/2:y=270,
-                drawbox=x=110:y=210:w=18:h=510:color=0x8c6b4f@0.55:t=fill,
-                drawbox=x=250:y=150:w=16:h=590:color=0x8c6b4f@0.45:t=fill,
-                drawbox=x=860:y=170:w=18:h=560:color=0x8c6b4f@0.55:t=fill,
-                drawtext=fontfile=${BOLD}:text='2':fontcolor=0xa5d6c3:fontsize=180:x=90:y=170,
-                drawtext=fontfile=${BOLD}:text='CADDO LAKE':fontcolor=white:fontsize=100:x=90:y=650,
-                drawtext=fontfile=${REG}:text='Cypress trees. Spanish moss. Bayous.':fontcolor=white@0.92:fontsize=46:x=90:y=870,
-                drawtext=fontfile=${REG}:text='East Texas':fontcolor=0xa5d6c3:fontsize=46:x=90:y=990[v2];
+          ffmpeg -hide_banner -loglevel error -y \
+            -loop 1 -t 4 -i guadalupe.jpg \
+            -loop 1 -t 4 -i caddo.jpg \
+            -loop 1 -t 4 -i padre.jpg \
+            -filter_complex "
+              [0:v]scale=360:1920:force_original_aspect_ratio=increase,crop=360:1920[g];
+              [1:v]scale=360:1920:force_original_aspect_ratio=increase,crop=360:1920[c];
+              [2:v]scale=360:1920:force_original_aspect_ratio=increase,crop=360:1920[p];
+              [g][c][p]hstack=inputs=3[bg];
+              [bg]drawbox=x=85:y=640:w=910:h=430:color=black@0.62:t=fill,
+                  drawtext=fontfile=${BOLD}:text='TEXAS DOES NOT LOOK':fontcolor=white:fontsize=70:x=(w-text_w)/2:y=715,
+                  drawtext=fontfile=${BOLD}:text='THE SAME':fontcolor=0xf2c14e:fontsize=98:x=(w-text_w)/2:y=820,
+                  drawtext=fontfile=${BOLD}:text='EVERYWHERE':fontcolor=white:fontsize=84:x=(w-text_w)/2:y=945[out]" \
+            -map '[out]' -an -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -r 30 summary.mp4
 
-              [3:v]noise=alls=4:allf=t+u,
-                drawbox=x=0:y=250:w=1080:h=280:color=0x6ec5e9@0.25:t=fill,
-                drawbox=x=0:y=530:w=1080:h=250:color=0x1e88a8@0.30:t=fill,
-                drawbox=x=0:y=780:w=1080:h=210:color=0xf1d39a@0.35:t=fill,
-                drawtext=fontfile=${BOLD}:text='3':fontcolor=0xf1d39a:fontsize=180:x=90:y=170,
-                drawtext=fontfile=${BOLD}:text='PADRE ISLAND':fontcolor=white:fontsize=96:x=90:y=650,
-                drawtext=fontfile=${REG}:text='Dunes. Gulf water. Miles of open beach.':fontcolor=white@0.94:fontsize=44:x=90:y=870,
-                drawtext=fontfile=${REG}:text='Texas Gulf Coast':fontcolor=0xf1d39a:fontsize=46:x=90:y=990[v3];
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'color=c=0x080808:s=1080x1920:r=30:d=5' \
+            -vf "drawtext=fontfile=${BOLD}:text='TexasDefined.com':fontcolor=white:fontsize=78:x=(w-text_w)/2:y=780,
+                 drawtext=fontfile=${REG}:text='See more of Texas':fontcolor=0xf2c14e:fontsize=44:x=(w-text_w)/2:y=910" \
+            -an -c:v libx264 -preset medium -crf 18 -pix_fmt yuv420p -r 30 end.mp4
 
-              [4:v]noise=alls=6:allf=t+u,
-                drawbox=x='mod(t*260,1380)-300':y=1240:w=760:h=14:color=0xf2c14e@0.35:t=fill,
-                drawtext=fontfile=${BOLD}:text='TEXAS HAS RANGE':fontcolor=white:fontsize=102:x=(w-text_w)/2:y=620,
-                drawtext=fontfile=${REG}:text='Mountains. Wetlands. Beaches.':fontcolor=0xf2c14e:fontsize=52:x=(w-text_w)/2:y=800,
-                drawtext=fontfile=${REG}:text='And that is only the beginning.':fontcolor=white@0.88:fontsize=46:x=(w-text_w)/2:y=910[v4];
-
-              [5:v]drawtext=fontfile=${BOLD}:text='TEXASDEFINED.COM':fontcolor=white:fontsize=108:x=(w-text_w)/2:y=760,
-                drawtext=fontfile=${REG}:text='See more of Texas':fontcolor=0xf2c14e:fontsize=54:x=(w-text_w)/2:y=920,
-                drawbox=x=190:y=1080:w=700:h=6:color=0xf2c14e@0.85:t=fill[v5];
-
-              [v0][v1][v2][v3][v4][v5]concat=n=6:v=1:a=0[outv];
-              [6:a]volume=0.028[a0];
-              [7:a]volume=0.018[a1];
-              [a0][a1]amix=inputs=2:normalize=0,afade=t=in:st=0:d=1,afade=t=out:st=27:d=2[outa]
-            " \
-            -map '[outv]' -map '[outa]' \
-            -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -r 30 \
-            -c:a aac -b:a 128k -movflags +faststart \
-            texasdefined-fresh-reel.mp4
+          printf "file 'hook.mp4'\nfile 'guadalupe.mp4'\nfile 'caddo.mp4'\nfile 'padre.mp4'\nfile 'summary.mp4'\nfile 'end.mp4'\n" > concat.txt
+          ffmpeg -hide_banner -loglevel error -y -f concat -safe 0 -i concat.txt -c copy silent-video.mp4
+          ffmpeg -hide_banner -loglevel error -y -i silent-video.mp4 \
+            -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=48000 \
+            -shortest -c:v copy -c:a aac -b:a 128k -movflags +faststart texasdefined-fresh-reel.mp4
 
           test -s texasdefined-fresh-reel.mp4
           ffprobe -v error -show_entries format=duration,size -show_entries stream=codec_name,width,height -of default=nw=1 texasdefined-fresh-reel.mp4
 
+      - name: Render review contact sheet
+        shell: bash
+        run: |
+          set -euo pipefail
+          for spec in '1 hook' '5 guadalupe' '10 caddo' '15 padre' '21 summary' '25 end'; do
+            set -- $spec
+            ffmpeg -hide_banner -loglevel error -y -ss "$1" -i texasdefined-fresh-reel.mp4 -frames:v 1 -vf scale=270:480 "frame-$2.jpg"
+          done
+          ffmpeg -hide_banner -loglevel error -y \
+            -i frame-hook.jpg -i frame-guadalupe.jpg -i frame-caddo.jpg -i frame-padre.jpg -i frame-summary.jpg -i frame-end.jpg \
+            -filter_complex '[0:v][1:v][2:v]hstack=inputs=3[top];[3:v][4:v][5:v]hstack=inputs=3[bottom];[top][bottom]vstack=inputs=2[out]' \
+            -map '[out]' -q:v 5 review-contact-sheet.jpg
+          echo 'REVIEW_CONTACT_SHEET_BASE64_BEGIN'
+          base64 -w 0 review-contact-sheet.jpg
+          echo
+          echo 'REVIEW_CONTACT_SHEET_BASE64_END'
+
       - name: Publish fresh Reel to TexasDefined Facebook
+        if: github.event_name == 'workflow_dispatch'
         shell: bash
         run: |
           set -euo pipefail
           ENDPOINT='https://keeptxred-site.freddy-coppola.workers.dev/api/public/hooks/publish-texasdefined-reel'
-          TITLE='3 Texas Places That Do Not Look Like Texas'
-          DESCRIPTION='Texas can look completely different from one corner to the next. Guadalupe Mountains, Caddo Lake, and Padre Island are three reminders of just how much range the state has. Which one would you visit first? https://texasdefined.com #Texas #TexasTravel #TexasDefined #ExploreTexas'
+          TITLE='3 Texas Places People Do Not Expect'
+          DESCRIPTION='Texas can look completely different from one corner to the next. Guadalupe Mountains, Caddo Lake, and Padre Island show just how much variety the state has. Which one would you visit first? https://texasdefined.com #Texas #TexasTravel #TexasDefined #ExploreTexas Image sources: National Park Service and U.S. Fish & Wildlife Service via Wikimedia Commons.'
 
           OIDC_JSON=$(curl -fsSL -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-facebook")
-          OIDC_TOKEN=$(printf '%s' "$OIDC_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin)["value"])')
+          OIDC_TOKEN=$(printf '%s' "$OIDIDC_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin)["value"])')
           HTTP_CODE=$(curl -sS -o response.json -w '%{http_code}' \
             -X POST "$ENDPOINT" \
             -H "Authorization: Bearer $OIDC_TOKEN" \
@@ -120,6 +154,6 @@ jobs:
           data=json.load(open('response.json'))
           if data.get('ok') is not True or data.get('published') is not True:
               raise SystemExit(1)
-          print('TexasDefined fresh Reel published successfully.')
+          print('TexasDefined photo Reel published successfully.')
           print('Facebook video ID:', data.get('video_id'))
           PY
