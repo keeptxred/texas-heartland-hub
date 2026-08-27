@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-21T15:58:07.174Z",
+  "generatedAt": "2026-08-27T14:05:08.741Z",
   "authoritySources": [
     "Texas Secretary of State Qualified Candidate Listing",
     "Keep TX Red verified election race registry"
@@ -1580,6 +1580,26 @@
           "districtId": "district-texas-house-84",
           "districtName": "Texas House District 84",
           "districtNumber": "84"
+        }
+      ]
+    },
+    {
+      "id": "candidate-carlos-charlie-garza-republican-race-2026-state-board-of-education-13",
+      "aliases": [
+        "CARLOS (CHARLIE) GARZA",
+        "Carlos (charlie) Garza"
+      ],
+      "party": "republican",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-state-board-of-education-13",
+          "electionYear": 2026,
+          "office": "State Board of Education",
+          "officeLevel": "state",
+          "districtId": "district-state-board-of-education-13",
+          "districtName": "State Board of Education District 13",
+          "districtNumber": "13"
         }
       ]
     },
@@ -8658,26 +8678,6 @@
           "districtId": "district-texas-house-34",
           "districtName": "Texas House District 34",
           "districtNumber": "34"
-        }
-      ]
-    },
-    {
-      "id": "candidate-stephen-samuelson-other-race-2026-governor",
-      "aliases": [
-        "STEPHEN SAMUELSON",
-        "Stephen Samuelson"
-      ],
-      "party": "other",
-      "externalIds": {},
-      "contests": [
-        {
-          "raceId": "race-2026-governor",
-          "electionYear": 2026,
-          "office": "Governor",
-          "officeLevel": "state",
-          "districtId": null,
-          "districtName": null,
-          "districtNumber": null
         }
       ]
     },
