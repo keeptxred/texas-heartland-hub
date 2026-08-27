@@ -7,6 +7,7 @@ const read = (path: string) => fs.readFileSync(new URL(path, import.meta.url), "
 const hub = read("../routes/texas-political-reference.tsx");
 const trackerPage = read("../components/policy-tracker-page.tsx");
 const freshness = read("../routes/api/reference-freshness.ts");
+const manifest = read("../../public/texas-political-reference.txt");
 
 describe("political reference discovery quarantine", () => {
   it("has a real quarantined political-reference cohort", () => {
@@ -32,6 +33,13 @@ describe("political reference discovery quarantine", () => {
     for (const href of ["/elections/2026", "/texas-case", "/texas-case/facts", "/bills", "/laws", "/representatives"]) {
       expect(hub).toContain(href);
     }
+  });
+
+  it("keeps the static manifest hub-only while the detail cohort is quarantined", () => {
+    expect(manifest).toContain("Canonical hub: https://keeptxred.com/texas-political-reference");
+    expect(manifest).toContain("Individual political-reference detail pages are exposed through the public hub, schema, and sitemap only after they pass");
+    expect(manifest).not.toContain("maintains 50 permanent");
+    expect(manifest).not.toContain("https://keeptxred.com/texas-political-reference/{slug}");
   });
 
   it("keeps the full registry in the operational freshness queue", () => {
