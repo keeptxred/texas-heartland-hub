@@ -62,8 +62,6 @@ const DIRECT_SOURCES: Source[] = [
   { name: "City of Dallas News", url: "https://www.dallascitynews.net/", mode: "html-links", include: "^/20\\d{2}/" },
   { name: "Dallas Cowboys", url: "https://www.dallascowboys.com/rss/news", category: "Sports", mode: "rss" },
   { name: "Houston Texans", url: "https://www.houstontexans.com/rss/news", category: "Sports", mode: "rss" },
-  { name: "Dallas Mavericks", url: "https://www.mavs.com/news/", category: "Sports", mode: "html-links", include: "^/news/" },
-  { name: "San Antonio Spurs", url: "https://www.nba.com/spurs/news", category: "Sports", mode: "html-links", include: "^/spurs/news/" },
   { name: "Houston Astros", url: "https://www.mlb.com/astros/news", category: "Sports", mode: "html-links", include: "^/astros/news/" },
   { name: "Dallas Stars", url: "https://www.nhl.com/stars/news/", category: "Sports", mode: "html-links", include: "^/stars/news/" },
   { name: "Texas A&M Aggies", url: "https://12thman.com/news/", category: "Sports", mode: "html-links", include: "^/news/20\\d{2}/" },
