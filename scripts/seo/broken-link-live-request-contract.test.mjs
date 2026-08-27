@@ -16,4 +16,10 @@ describe('broken-link live request contract', () => {
     expect(source).toContain('item.sitemapFailure');
     expect(source).toContain('printBlockingLiveFailures(blockingLive)');
   });
+
+  it('does not classify the active governed guide route family as retired', () => {
+    const retiredPrefixBlock = source.match(/const RETIRED_PREFIXES = \[[\s\S]*?\];/)?.[0] ?? '';
+    expect(retiredPrefixBlock).not.toContain("'/guides'");
+    expect(source).toContain("const RETIRED_PREFIXES = [");
+  });
 });
