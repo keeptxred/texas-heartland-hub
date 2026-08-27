@@ -23,8 +23,9 @@ describe("AdSense source transparency indexability", () => {
     expect(sourceSitemap).not.toContain("/sources/${profile.slug}");
   });
 
-  it("counts the source sitemap as one indexable URL", () => {
-    expect(sitemapIndex).toContain('{ file: "sitemap-sources.xml", count: 1 }');
-    expect(sitemapIndex).not.toContain("SOURCE_AUTHORITY_PROFILES.length + 1");
+  it("keeps the one-URL source sitemap advertised without exposing thin profiles", () => {
+    expect(sitemapIndex).toContain('"sitemap-sources.xml"');
+    expect(sourceSitemap).toContain('{ loc: `${BASE_URL}/sources`, lastmod: SOURCE_AUTHORITY_LASTMOD }');
+    expect(sourceSitemap).not.toContain("SOURCE_AUTHORITY_PROFILES.length + 1");
   });
 });
