@@ -31,7 +31,7 @@ jobs:
       github.event_name == 'push' ||
       github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 45
     steps:
       - name: Recover missing and legacy article images pending-first
         shell: bash
@@ -79,9 +79,11 @@ jobs:
             exit 0
           fi
 
-          # Bound each pass so Cloudflare usage stays predictable while still
-          # draining the finite missing/legacy image cohort.
-          max_per_run=40
+          # Keep each lock-holding pass deliberately small. A single article can
+          # need multiple strict generation/validation attempts, so large batches
+          # can monopolize the shared recovery lock for hours and starve the
+          # AdSense-ready cohort. Repeated scheduled passes drain the queue safely.
+          max_per_run=5
           mapfile -t slugs < <(jq -r --argjson max "$max_per_run" '.slugs[:$max][]' /tmp/image-backlog-dry.json)
           failures=0
           succeeded=0
@@ -95,7 +97,7 @@ jobs:
             encoded_slug=$(jq -rn --arg value "$slug" '$value|@uri')
             output="/tmp/image-backlog-${processed}.json"
             status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
-              --max-time 900 \
+              --max-time 600 \
               -H 'accept: application/json' \
               -H "Authorization: Bearer ${oidc_token}" \
               "${endpoint}?slug=${encoded_slug}" || echo 000)
