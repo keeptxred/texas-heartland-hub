@@ -12,6 +12,7 @@ on:
       - 'scripts/elections/scrape-official-candidates.ts'
       - 'scripts/elections/import-candidates.ts'
       - 'scripts/elections/reconcile-statewide-candidate-moves.mjs'
+      - 'scripts/elections/reconcile-statewide-candidate-moves.test.mjs'
 
 permissions:
   contents: write
