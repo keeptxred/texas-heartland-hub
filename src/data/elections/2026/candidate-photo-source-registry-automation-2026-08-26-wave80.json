@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "mindybumgarner.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use this verified candidate-controlled campaign site to discover Mindy Bumgarner portrait assets and campaign attribution. Do not approve any image without item-level provenance plus a reusable license, explicit campaign/media permission, or another documented permission basis.",
+    "searchHint": "Mindy Bumgarner Texas State Board of Education District 14 mindybumgarner.com portrait",
+    "notes": "New candidate-controlled source verified August 26, 2026. The live site identifies Mindy Bumgarner as a Republican candidate for Texas State Board of Education District 14, and TCTA independently links this exact domain as her campaign website."
+  },
+  {
+    "domain": "willcampbellfortexas.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use this verified candidate-controlled campaign site to discover Will Campbell portrait assets and campaign attribution. Do not approve any image without item-level provenance plus a reusable license, explicit campaign/media permission, or another documented permission basis.",
+    "searchHint": "Will Campbell Texas House District 109 willcampbellfortexas.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 26, 2026. The live site explicitly identifies Will Campbell as a candidate for Texas House District 109 and labels itself the official campaign website; BallotReady independently lists a verified campaign website for the same candidate and office."
+  },
+  {
+    "domain": "stanleyfortexashouse.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use this verified candidate-controlled campaign site and its photo section to discover Stephen Stanley portrait assets and campaign attribution. Do not approve any image without item-level provenance plus a reusable license, explicit campaign/media permission, or another documented permission basis.",
+    "searchHint": "Stephen Stanley Texas House District 113 stanleyfortexashouse.com official campaign portrait photos",
+    "notes": "New candidate-controlled source verified August 26, 2026. The live site is paid for by the Committee to Elect Stephen Stanley, includes a dedicated photos section and campaign contact details, and identifies the campaign for State Representative."
+  }
+]
