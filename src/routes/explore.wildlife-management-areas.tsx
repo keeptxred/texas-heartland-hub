@@ -1,10 +1,9 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/explore/wildlife-management-areas")({
-  beforeLoad: () => {
+  beforeLoad: ({ location }) => {
     throw redirect({
-      to: "/explore/search",
-      search: { page: 1, pageSize: 24, sort: "relevance", q: "wildlife management area" },
+      href: `https://texasdefined.com/explore/wildlife-management-areas${location.searchStr || ""}`,
       statusCode: 301,
     });
   },
