@@ -2,6 +2,8 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const sitemapSource = readFileSync(new URL("../routes/sitemap-pages[.]xml.ts", import.meta.url), "utf8");
+const civicToolsHubSource = readFileSync(new URL("../routes/civic-tools.tsx", import.meta.url), "utf8");
+const policyToolsHubSource = readFileSync(new URL("../routes/tools/index.tsx", import.meta.url), "utf8");
 
 const tools = [
   {
@@ -54,5 +56,10 @@ describe("AdSense functional tool value contract", () => {
 
   it.each(tools)("keeps $path discoverable while its utility contract passes", ({ path }) => {
     expect(sitemapSource).toContain(`\"${path}\"`);
+  });
+
+  it("keeps civic and policy tool hubs mutually discoverable", () => {
+    expect(civicToolsHubSource).toContain('to="/tools"');
+    expect(policyToolsHubSource).toContain('to="/civic-tools"');
   });
 });
