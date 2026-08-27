@@ -106,13 +106,15 @@ describe("static article indexability", () => {
     expect(route).toContain("return { article: { ...article, noindex: true }, body, ctr: null }");
   });
 
-  it("removes retired static inventory from newsroom and author discovery", () => {
+  it("removes retired or fallback-only static inventory from newsroom and author discovery", () => {
     const newsIndex = fs.readFileSync(new URL("../routes/news.index.tsx", import.meta.url), "utf8");
     const authorsIndex = fs.readFileSync(new URL("../routes/authors.index.tsx", import.meta.url), "utf8");
     const authorProfile = fs.readFileSync(new URL("../routes/authors.$slug.tsx", import.meta.url), "utf8");
-    expect(newsIndex).toContain("isPublished(a) && isStaticArticleIndexable(a)");
-    expect(authorsIndex).toContain("isPublished(article) && isStaticArticleIndexable(article)");
-    expect(authorProfile).toContain("&& isStaticArticleIndexable(article)");
+    for (const source of [newsIndex, authorsIndex, authorProfile]) {
+      expect(source).toContain("getDiscoverableStaticArticleSlugs");
+      expect(source).toContain("isStaticArticleIndexable");
+      expect(source).not.toContain('from "@/data/article-bodies"');
+    }
   });
 
   it("does not affect non-news paths", () => {
