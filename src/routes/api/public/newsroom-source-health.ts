@@ -19,8 +19,17 @@ type FetchState = {
 };
 
 type TransportStatus = "healthy" | "quiet" | "broken" | "stale_check" | "never_checked";
+type MatchMode = "name" | "url" | null;
 
 const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
+
+function normalizeName(value: string) {
+  return value.trim().toLowerCase();
+}
+
+function normalizeUrl(value: string | null | undefined) {
+  return String(value ?? "").trim().replace(/\/$/, "");
+}
 
 export const Route = createFileRoute("/api/public/newsroom-source-health")({
   server: {
@@ -44,12 +53,19 @@ export const Route = createFileRoute("/api/public/newsroom-source-health")({
         }
 
         const now = Date.now();
-        const fetchByName = new Map(
-          ((fetchResult.data ?? []) as unknown as FetchState[]).map((row) => [row.source_name.trim().toLowerCase(), row] as const),
+        const fetchStates = (fetchResult.data ?? []) as unknown as FetchState[];
+        const fetchByName = new Map(fetchStates.map((row) => [normalizeName(row.source_name), row] as const));
+        const fetchByUrl = new Map(
+          fetchStates
+            .map((row) => [normalizeUrl(row.source_url), row] as const)
+            .filter(([url]) => Boolean(url)),
         );
 
         const rows = ((sourcesResult.data ?? []) as unknown as EnabledSource[]).map((source) => {
-          const fetch = fetchByName.get(source.source_name.trim().toLowerCase()) ?? null;
+          const byName = fetchByName.get(normalizeName(source.source_name)) ?? null;
+          const byUrl = fetchByUrl.get(normalizeUrl(source.rss_url)) ?? null;
+          const fetch = byName ?? byUrl;
+          const matchMode: MatchMode = byName ? "name" : byUrl ? "url" : null;
           let status: TransportStatus;
           if (!fetch) status = "never_checked";
           else {
@@ -64,6 +80,8 @@ export const Route = createFileRoute("/api/public/newsroom-source-health")({
             sourceUrl: source.rss_url,
             category: source.category,
             status,
+            matchMode,
+            fetchStateSourceName: fetch?.source_name ?? null,
             lastCheckedAt: fetch?.last_checked_at ?? null,
             lastStatus: fetch?.last_status ?? null,
             lastItemCount: fetch?.last_item_count ?? null,
