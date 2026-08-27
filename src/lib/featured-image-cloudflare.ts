@@ -1,14 +1,16 @@
 import { parseVisionVerdict, type SubjectExtract } from "./featured-image-core";
 
-// FLUX.2 Klein 4B is the low-cost quality path for article photography. The
-// older Schnell model remains an API fallback so a partner-model outage or
-// account-level availability issue cannot strand the image pipeline.
+// FLUX.2 Klein 4B remains the low-cost first-pass path for article photography.
+// Strict-validator rejections escalate to FLUX.2 Dev, which is the higher-fidelity
+// photorealistic path. Schnell remains an API-availability fallback for the cheap
+// first pass only so a Klein outage cannot strand the pipeline.
 export const CLOUDFLARE_IMAGE_MODEL = "@cf/black-forest-labs/flux-2-klein-4b";
+export const CLOUDFLARE_IMAGE_QUALITY_MODEL = "@cf/black-forest-labs/flux-2-dev";
 export const CLOUDFLARE_IMAGE_FALLBACK_MODEL = "@cf/black-forest-labs/flux-1-schnell";
 export const CLOUDFLARE_CULTURE_IMAGE_MODEL = CLOUDFLARE_IMAGE_MODEL;
 export const CLOUDFLARE_VISION_MODEL = "@cf/mistralai/mistral-small-3.1-24b-instruct";
 
-export type CloudflareImageModel = typeof CLOUDFLARE_IMAGE_MODEL | typeof CLOUDFLARE_IMAGE_FALLBACK_MODEL;
+export type CloudflareImageModel = typeof CLOUDFLARE_IMAGE_MODEL | typeof CLOUDFLARE_IMAGE_QUALITY_MODEL | typeof CLOUDFLARE_IMAGE_FALLBACK_MODEL;
 
 type ImageGenerationProvenance = {
   model: CloudflareImageModel;
@@ -84,13 +86,18 @@ export function buildFluxImageRequest(
   };
 }
 
-export function buildFlux2ImageRequest(prompt: string, negativePrompt: string): FormData {
+export function buildFlux2ImageRequest(prompt: string, negativePrompt: string, model: CloudflareImageModel = CLOUDFLARE_IMAGE_MODEL): FormData {
   const form = new FormData();
   form.append("prompt", buildFluxImagePrompt(prompt, negativePrompt));
   form.append("guidance", "5.5");
   form.append("width", "1024");
   form.append("height", "768");
+  if (model === CLOUDFLARE_IMAGE_QUALITY_MODEL) form.append("steps", "25");
   return form;
+}
+
+function isStrictValidatorRetry(prompt: string): boolean {
+  return /^Correction from rejected attempt:\s*Validator rejection\s+\d+:/i.test(prompt.trim());
 }
 
 async function requestCloudflareImage(
@@ -100,13 +107,13 @@ async function requestCloudflareImage(
   negativePrompt: string,
   model: CloudflareImageModel,
 ): Promise<Response> {
-  if (model === CLOUDFLARE_IMAGE_MODEL) {
-    // FLUX.2 Klein uses multipart input even for prompt-only generation. Do not
+  if (model === CLOUDFLARE_IMAGE_MODEL || model === CLOUDFLARE_IMAGE_QUALITY_MODEL) {
+    // FLUX.2 models use multipart input even for prompt-only generation. Do not
     // set Content-Type manually: fetch must add the multipart boundary.
     return fetch(cloudflareEndpoint(accountId, model), {
       method: "POST",
       headers: { Authorization: `Bearer ${apiToken}` },
-      body: buildFlux2ImageRequest(prompt, negativePrompt),
+      body: buildFlux2ImageRequest(prompt, negativePrompt, model),
     });
   }
 
@@ -126,13 +133,19 @@ export async function generateImageBytes(
   const apiToken = process.env.CLOUDFLARE_API_TOKEN;
   if (!accountId || !apiToken) throw new Error("Missing Cloudflare Workers AI credentials: CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required");
 
-  let activeModel = model;
+  // Preserve the inexpensive Klein first attempt. Once the strict validator has
+  // rejected an image, automatically spend the higher-quality FLUX.2 Dev call
+  // on the retry rather than repeatedly asking the same distilled model to fix
+  // a demonstrated photorealism/story-match failure.
+  let activeModel = model === CLOUDFLARE_IMAGE_MODEL && isStrictValidatorRetry(prompt)
+    ? CLOUDFLARE_IMAGE_QUALITY_MODEL
+    : model;
   let usedFallback = false;
   let res = await requestCloudflareImage(accountId, apiToken, prompt, negativePrompt, activeModel);
 
-  // Fail safely if the newer partner model is temporarily unavailable. This is
-  // an API-availability fallback only; rejected image quality is still handled
-  // by the existing strict validator and retry loop.
+  // Fail safely if the inexpensive primary model is temporarily unavailable.
+  // Quality-escalated FLUX.2 Dev requests do not silently downgrade to Schnell:
+  // a Dev API failure remains a failure so strict retries cannot lose quality.
   if (!res.ok && activeModel === CLOUDFLARE_IMAGE_MODEL) {
     activeModel = CLOUDFLARE_IMAGE_FALLBACK_MODEL;
     usedFallback = true;
