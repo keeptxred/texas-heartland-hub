@@ -287,6 +287,16 @@ async function loadSources(): Promise<{ sources: Source[]; skippedLegacyYoutube:
   return { sources: list, skippedLegacyYoutube };
 }
 
+function isRegionalListingNoise(item: Item, configuredSource: string): boolean {
+  if (configuredSource !== "Texas Panhandle and South Plains — Regional Discovery") return false;
+  if (item.source.trim().toLowerCase() !== "amarillo tribune") return false;
+  const normalizedDescription = decode(item.description).replace(/\s+/g, " ").trim().toLowerCase();
+  const expectedDescription = `${item.title} Amarillo Tribune`.replace(/\s+/g, " ").trim().toLowerCase();
+  if (normalizedDescription !== expectedDescription) return false;
+  const wordCount = item.title.trim().split(/\s+/).filter(Boolean).length;
+  return item.title.length <= 64 && wordCount >= 2 && wordCount <= 6 && !/[?!:]/.test(item.title);
+}
+
 function isTexasRelevant(item: Item, configuredSource: string): boolean {
   if (OFFICIAL_HYPERLOCAL_SOURCE_RE.test(configuredSource)) return true;
   const result = scoreFeedItem({ title: item.title, source: item.source, pub_date: item.pub_date, description: item.description });
@@ -329,6 +339,7 @@ async function handler() {
   const attributionGroups = new Map<string, string[]>();
   for (const result of results) {
     for (const item of result.items) {
+      if (isRegionalListingNoise(item, result.source)) continue;
       if (!isTexasRelevant(item, result.source)) continue;
       if (!unique.has(item.link)) {
         unique.set(item.link, { ...item, trend_source: result.source });
