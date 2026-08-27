@@ -6,6 +6,8 @@ const FEEDS: Record<string, string> = {
   "wfaa-local": "https://www.wfaa.com/feeds/syndication/rss/news/local",
   "kvue-local": "https://www.kvue.com/feeds/syndication/rss/news/local",
   "kens-local": "https://www.kens5.com/feeds/syndication/rss/news/local",
+  "kcen-local": "https://www.kcentv.com/feeds/syndication/rss/news/local",
+  "lmt-local": "https://www.lmtonline.com/default/feed/news-rss-1512.php",
   "google-executive-actions": "https://news.google.com/rss/search?q=%28site%3Agov.texas.gov+OR+%22Governor+Abbott%22+appointment+OR+%22Governor+Abbott%22+directs+OR+%22Governor+Abbott%22+grant%29+when%3A3d&hl=en-US&gl=US&ceid=US%3Aen",
   "google-attorney-general": "https://news.google.com/rss/search?q=%28%22Texas+Attorney+General%22+OR+site%3Atexasattorneygeneral.gov%29+when%3A7d&hl=en-US&gl=US&ceid=US%3Aen",
   "google-dps-wanted": "https://news.google.com/rss/search?q=%28site%3Adps.texas.gov+OR+%22Texas+10+Most+Wanted%22+OR+%22Texas+DPS%22+reward+OR+%22Texas+DPS%22+arrest%29+when%3A3d&hl=en-US&gl=US&ceid=US%3Aen",
