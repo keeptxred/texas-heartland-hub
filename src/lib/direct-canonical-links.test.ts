@@ -5,7 +5,24 @@ const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf
 
 const resourceHub = read("../shared/texas-platform/resource-hub.tsx");
 const governmentEntity = read("../routes/texas-government.$entitySlug.tsx");
+const policyTrackerPage = read("../components/policy-tracker-page.tsx");
 const electionErrorState = read("../components/elections/states/ElectionErrorState.tsx");
+
+const LEGACY_LAW_ALIASES = [
+  "/laws/texas-gun-laws-explained",
+  "/laws/texas-property-tax-laws-explained",
+  "/laws/texas-election-laws-explained",
+  "/laws/texas-new-laws-2026",
+  "/laws/texas-constitution",
+] as const;
+
+const CANONICAL_LAW_TARGETS = [
+  "/news/texas-gun-laws-explained",
+  "/news/texas-property-tax-laws-explained",
+  "/news/texas-election-laws-explained",
+  "/news/texas-new-laws-2026",
+  "/laws",
+] as const;
 
 describe("direct canonical UI links", () => {
   it("does not route resource-hub law links through legacy redirects", () => {
@@ -26,6 +43,19 @@ describe("direct canonical UI links", () => {
     ]) {
       expect(resourceHub).toContain(canonical);
     }
+  });
+
+  it("canonicalizes legacy law aliases before policy tracker links render", () => {
+    expect(policyTrackerPage).toContain("const href = canonicalPermanentHref(item.href)");
+    for (const legacy of LEGACY_LAW_ALIASES) expect(policyTrackerPage).toContain(`\"${legacy}\"`);
+    for (const canonical of CANONICAL_LAW_TARGETS) expect(policyTrackerPage).toContain(`\"${canonical}\"`);
+  });
+
+  it("canonicalizes government authority links before they render", () => {
+    expect(governmentEntity).toContain("const href = canonicalAuthorityHref(link.href)");
+    expect(governmentEntity).toContain("href={canonicalAuthorityHref(link.href)}");
+    for (const legacy of LEGACY_LAW_ALIASES) expect(governmentEntity).toContain(`\"${legacy}\"`);
+    for (const canonical of CANONICAL_LAW_TARGETS) expect(governmentEntity).toContain(`\"${canonical}\"`);
   });
 
   it("does not route government fallback navigation through /politics", () => {

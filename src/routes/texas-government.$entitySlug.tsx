@@ -8,6 +8,18 @@ import { isGovernmentEntityIndexable } from "@/lib/government-entity-indexabilit
 import { getPublicationGovernmentEntity } from "@/lib/government-entity-publication";
 import { GOVERNMENT_REVIEWED_AT, getGovernmentEntity, governmentJsonLd, governmentPath, SITE_URL, type GovernmentLink } from "@/lib/texas-government";
 
+const AUTHORITY_HREF_ALIASES: Record<string, string> = {
+  "/laws/texas-gun-laws-explained": "/news/texas-gun-laws-explained",
+  "/laws/texas-property-tax-laws-explained": "/news/texas-property-tax-laws-explained",
+  "/laws/texas-election-laws-explained": "/news/texas-election-laws-explained",
+  "/laws/texas-new-laws-2026": "/news/texas-new-laws-2026",
+  "/laws/texas-constitution": "/laws",
+};
+
+function canonicalAuthorityHref(href: string) {
+  return AUTHORITY_HREF_ALIASES[href] ?? href;
+}
+
 export const Route = createFileRoute("/texas-government/$entitySlug")({
   loader: async ({ params }) => {
     const baseEntity = getGovernmentEntity(params.entitySlug);
@@ -92,6 +104,6 @@ function GovernmentEntityPage() {
 }
 
 function AuthoritySection({ id, title, icon, children }: { id: string; title: string; icon: React.ReactNode; children: React.ReactNode }) { return <section id={id} className="scroll-mt-24 rounded-xl border bg-card p-6"><div className="flex items-center gap-3">{icon}<h2 className="text-2xl font-bold">{title}</h2></div><div className="mt-5">{children}</div></section>; }
-function LinkGrid({ links }: { links: GovernmentLink[] }) { return links.length ? <div className="grid gap-3 sm:grid-cols-2">{links.map((link: any) => <a key={`${link.href}-${link.label}`} href={link.href} className="rounded-lg border p-4 hover:border-primary"><p className="font-bold">{link.label}</p>{link.description && <p className="mt-1 text-sm leading-6 text-muted-foreground">{link.description}</p>}</a>)}</div> : <p className="text-muted-foreground">No directly related records are currently linked.</p>; }
-function AuthorityLink({ link }: { link: GovernmentLink }) { return <a href={link.href} className="text-sm font-bold text-primary hover:underline">{link.label}</a>; }
+function LinkGrid({ links }: { links: GovernmentLink[] }) { return links.length ? <div className="grid gap-3 sm:grid-cols-2">{links.map((link: any) => { const href = canonicalAuthorityHref(link.href); return <a key={`${href}-${link.label}`} href={href} className="rounded-lg border p-4 hover:border-primary"><p className="font-bold">{link.label}</p>{link.description && <p className="mt-1 text-sm leading-6 text-muted-foreground">{link.description}</p>}</a>; })}</div> : <p className="text-muted-foreground">No directly related records are currently linked.</p>; }
+function AuthorityLink({ link }: { link: GovernmentLink }) { return <a href={canonicalAuthorityHref(link.href)} className="text-sm font-bold text-primary hover:underline">{link.label}</a>; }
 function Info({ label, value }: { label: string; value: string }) { return <div className="flex items-start justify-between gap-4"><dt className="text-muted-foreground">{label}</dt><dd className="text-right font-semibold capitalize">{value}</dd></div>; }
