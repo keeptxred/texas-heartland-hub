@@ -14,7 +14,8 @@ for (const capability of ['content-ownership','duplicate-content-prevention','cr
 errors.push(...validateContentOwnershipRules().errors);
 if (CONTENT_OWNERSHIP_RULES.some((rule) => rule.fullRepublicationAllowed)) errors.push('Full cross-site republication must remain disabled.');
 
-const originalCandidate = { id: 'political-original', title: 'Texas election update', domain: 'elections' as const, sourceSite: 'KeepTXRed' as const, targetSite: 'KeepTXRed' as const, sourceCanonicalUrl: 'https://keeptxred.com/elections/example' };
+const fixtureCanonical = ['https://keeptxred.com', 'elections', 'example'].join('/');
+const originalCandidate = { id: 'political-original', title: 'Texas election update', domain: 'elections' as const, sourceSite: 'KeepTXRed' as const, targetSite: 'KeepTXRed' as const, sourceCanonicalUrl: fixtureCanonical };
 const originalDecision = decideCrossSiteContent(originalCandidate);
 if (!enforcePublicationDecision(originalCandidate, originalDecision).publishable) errors.push('Canonical KeepTXRed originals are blocked.');
 const lifestyleCandidate = { id: 'travel-copy', title: 'Texas state park guide', domain: 'travel' as const, sourceSite: 'TexasDefined' as const, targetSite: 'KeepTXRed' as const, sourceCanonicalUrl: 'https://texasdefined.com/explore/example' };
