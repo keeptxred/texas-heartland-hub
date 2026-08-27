@@ -6,6 +6,7 @@ const db = supabase as any;
 const SITEMAP_PAGE_SIZE = 1000;
 const SIMPLE_RESOLUTION_TYPES = new Set(['hr', 'sr']);
 const MIN_BILLS_PER_SITEMAP_SUBJECT = 3;
+const CATALOG_SEED_ACTION_CODE = 'tlo-filed-report-latest';
 
 type SitemapBill = Bill & {
   updated_at?: string | null;
@@ -44,6 +45,18 @@ function idSet(rows: any[] | null | undefined): Set<string> {
   return new Set((rows ?? []).map((row) => String(row.bill_id ?? '')).filter(Boolean));
 }
 
+function actionIdSet(
+  rows: Array<{ bill_id: string; action_code?: string | null }>,
+  predicate: (actionCode: string) => boolean,
+): Set<string> {
+  return new Set(
+    rows
+      .filter((row) => predicate(String(row.action_code ?? '').trim().toLowerCase()))
+      .map((row) => String(row.bill_id ?? ''))
+      .filter(Boolean),
+  );
+}
+
 function hasMeaningfulText(value: string | null | undefined, minimum = 80): boolean {
   return String(value ?? '').trim().length >= minimum;
 }
@@ -56,16 +69,18 @@ function isSitemapWorthySubjectSlug(slug: string): boolean {
 /**
  * Sitemaps are crawl invitations, not a complete database export. Keep every valid
  * bill route available, but explicitly advertise bills that have at least two
- * independent substance signals. Simple House/Senate resolutions are especially
- * numerous and commonly ceremonial, so they need stronger evidence before they
- * consume crawl attention. They remain accessible and can become sitemap-eligible
- * automatically when reporting, editorial enrichment, documents, subjects, or
- * other substantive evidence makes the page useful as a search landing page.
+ * independent substance signals. A single TLO filed-report seed action exists to
+ * make the complete catalog useful to visitors; it is not, by itself, evidence
+ * that a bill page is a worthwhile search landing page. Simple House/Senate
+ * resolutions are especially numerous and commonly ceremonial, so they need
+ * stronger evidence before they consume crawl attention.
  */
 function isSitemapWorthyBill(
   bill: SitemapBill,
   evidence: {
     actions: Set<string>;
+    catalogSeedActions: Set<string>;
+    substantiveActions: Set<string>;
     sponsors: Set<string>;
     documents: Set<string>;
     subjects: Set<string>;
@@ -73,6 +88,30 @@ function isSitemapWorthyBill(
     enrichments: Set<string>;
   },
 ): boolean {
+  const hasSubstantiveText =
+    hasMeaningfulText(bill.plain_language_summary)
+    || hasMeaningfulText(bill.summary)
+    || hasMeaningfulText(bill.description);
+  const hasIndependentEvidence =
+    evidence.substantiveActions.has(bill.id)
+    || evidence.documents.has(bill.id)
+    || evidence.subjects.has(bill.id)
+    || evidence.articles.has(bill.id)
+    || evidence.enrichments.has(bill.id)
+    || Boolean(bill.became_law)
+    || hasSubstantiveText
+    || Boolean(bill.analysis_url)
+    || Boolean(bill.fiscal_note_url);
+  const isCatalogSeedOnly =
+    evidence.catalogSeedActions.has(bill.id)
+    && !evidence.substantiveActions.has(bill.id);
+
+  // A filed-report seed, a visible sponsor, and a generic official Text.aspx link
+  // are enough to make a route useful in the on-site catalog, but not enough to
+  // invite Google to crawl it. The page becomes sitemap-eligible automatically
+  // as soon as a stronger independent signal arrives.
+  if (isCatalogSeedOnly && !hasIndependentEvidence) return false;
+
   let score = 0;
   if (evidence.actions.has(bill.id)) score += 1;
   if (evidence.sponsors.has(bill.id)) score += 1;
@@ -81,11 +120,7 @@ function isSitemapWorthyBill(
   if (evidence.articles.has(bill.id)) score += 2;
   if (evidence.enrichments.has(bill.id)) score += 2;
   if (bill.became_law) score += 2;
-  if (
-    hasMeaningfulText(bill.plain_language_summary)
-    || hasMeaningfulText(bill.summary)
-    || hasMeaningfulText(bill.description)
-  ) score += 1;
+  if (hasSubstantiveText) score += 1;
   if (bill.bill_text_url || bill.analysis_url || bill.fiscal_note_url) score += 1;
 
   const billType = String(bill.bill_type ?? '').trim().toLowerCase();
@@ -156,8 +191,8 @@ export async function billSitemapEntries(): Promise<UrlEntry[]> {
       .order('slug')
       .order('id')
       .range(from, to)),
-    fetchAllPages<{ bill_id: string }>((from, to) => db.from('bill_actions')
-      .select('bill_id')
+    fetchAllPages<{ bill_id: string; action_code?: string | null }>((from, to) => db.from('bill_actions')
+      .select('bill_id,action_code')
       .order('bill_id')
       .range(from, to)),
     fetchAllPages<{ bill_id: string }>((from, to) => db.from('bill_sponsors')
@@ -198,6 +233,8 @@ export async function billSitemapEntries(): Promise<UrlEntry[]> {
   );
   const evidence = {
     actions: idSet(actionRows),
+    catalogSeedActions: actionIdSet(actionRows, (code) => code === CATALOG_SEED_ACTION_CODE),
+    substantiveActions: actionIdSet(actionRows, (code) => code !== CATALOG_SEED_ACTION_CODE),
     sponsors: idSet(sponsorRows),
     documents: idSet(documentRows),
     subjects: idSet(subjectRelationshipRows),
