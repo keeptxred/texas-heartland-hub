@@ -43,34 +43,27 @@ jobs:
           REG='/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
 
           make_scene() {
-            input="$1"
-            output="$2"
-            duration="$3"
-            title="$4"
-            subtitle="$5"
-            frames=$(python3 -c "print(int(float('$duration') * 30))")
+            input="$1"; output="$2"; duration="$3"; title="$4"; subtitle="$5"
             ffmpeg -hide_banner -loglevel error -y -loop 1 -t "$duration" -i "$input" \
-              -vf "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,zoompan=z='min(zoom+0.00045,1.045)':d=${frames}:s=1080x1920:fps=30,drawbox=x=70:y=1320:w=880:h=300:color=black@0.52:t=fill,drawtext=fontfile=${BOLD}:text='${title}':fontcolor=white:fontsize=72:x=100:y=1380,drawtext=fontfile=${REG}:text='${subtitle}':fontcolor=white:fontsize=39:x=100:y=1500" \
-              -an -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -r 30 "$output"
+              -vf "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,drawbox=x=70:y=1320:w=880:h=300:color=black@0.52:t=fill,drawtext=fontfile=${BOLD}:text='${title}':fontcolor=white:fontsize=72:x=100:y=1380,drawtext=fontfile=${REG}:text='${subtitle}':fontcolor=white:fontsize=39:x=100:y=1500,fade=t=in:st=0:d=0.25,fade=t=out:st=$(python3 -c "print(max(0,float('$duration')-0.25))"):d=0.25" \
+              -an -c:v libx264 -preset veryfast -crf 20 -pix_fmt yuv420p -r 30 "$output"
           }
 
-          ffmpeg -hide_banner -loglevel error -y \
-            -loop 1 -t 3 -i guadalupe.jpg -loop 1 -t 3 -i caddo.jpg -loop 1 -t 3 -i padre.jpg \
+          ffmpeg -hide_banner -loglevel error -y -loop 1 -t 3 -i guadalupe.jpg -loop 1 -t 3 -i caddo.jpg -loop 1 -t 3 -i padre.jpg \
             -filter_complex "[0:v]scale=360:1920:force_original_aspect_ratio=increase,crop=360:1920[g];[1:v]scale=360:1920:force_original_aspect_ratio=increase,crop=360:1920[c];[2:v]scale=360:1920:force_original_aspect_ratio=increase,crop=360:1920[p];[g][c][p]hstack=inputs=3[bg];[bg]drawbox=x=95:y=650:w=890:h=420:color=black@0.62:t=fill,drawtext=fontfile=${BOLD}:text='TEXAS HAS MORE':fontcolor=white:fontsize=72:x=(w-text_w)/2:y=710,drawtext=fontfile=${BOLD}:text='VARIETY':fontcolor=0xf2c14e:fontsize=102:x=(w-text_w)/2:y=820,drawtext=fontfile=${BOLD}:text='THAN YOU THINK':fontcolor=white:fontsize=66:x=(w-text_w)/2:y=950[out]" \
-            -map '[out]' -an -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -r 30 hook.mp4
+            -map '[out]' -t 3 -an -c:v libx264 -preset veryfast -crf 20 -pix_fmt yuv420p -r 30 hook.mp4
 
           make_scene guadalupe.jpg guadalupe.mp4 5 'GUADALUPE MOUNTAINS' 'West Texas peaks and desert cliffs'
           make_scene caddo.jpg caddo.mp4 5 'CADDO LAKE' 'Cypress trees, bayous, and Spanish moss'
           make_scene padre.jpg padre.mp4 5 'PADRE ISLAND' 'Dunes, Gulf water, and open beach'
 
-          ffmpeg -hide_banner -loglevel error -y \
-            -loop 1 -t 4 -i guadalupe.jpg -loop 1 -t 4 -i caddo.jpg -loop 1 -t 4 -i padre.jpg \
+          ffmpeg -hide_banner -loglevel error -y -loop 1 -t 4 -i guadalupe.jpg -loop 1 -t 4 -i caddo.jpg -loop 1 -t 4 -i padre.jpg \
             -filter_complex "[0:v]scale=360:1920:force_original_aspect_ratio=increase,crop=360:1920[g];[1:v]scale=360:1920:force_original_aspect_ratio=increase,crop=360:1920[c];[2:v]scale=360:1920:force_original_aspect_ratio=increase,crop=360:1920[p];[g][c][p]hstack=inputs=3[bg];[bg]drawbox=x=100:y=660:w=880:h=420:color=black@0.64:t=fill,drawtext=fontfile=${BOLD}:text='TEXAS DOES NOT LOOK':fontcolor=white:fontsize=62:x=(w-text_w)/2:y=725,drawtext=fontfile=${BOLD}:text='THE SAME':fontcolor=0xf2c14e:fontsize=92:x=(w-text_w)/2:y=835,drawtext=fontfile=${BOLD}:text='EVERYWHERE':fontcolor=white:fontsize=76:x=(w-text_w)/2:y=960[out]" \
-            -map '[out]' -an -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -r 30 summary.mp4
+            -map '[out]' -t 4 -an -c:v libx264 -preset veryfast -crf 20 -pix_fmt yuv420p -r 30 summary.mp4
 
           ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'color=c=0x080808:s=1080x1920:r=30:d=5' \
             -vf "drawtext=fontfile=${BOLD}:text='TexasDefined.com':fontcolor=white:fontsize=72:x=(w-text_w)/2:y=800,drawtext=fontfile=${REG}:text='See more of Texas':fontcolor=0xf2c14e:fontsize=40:x=(w-text_w)/2:y=915" \
-            -an -c:v libx264 -preset medium -crf 18 -pix_fmt yuv420p -r 30 end.mp4
+            -an -c:v libx264 -preset veryfast -crf 18 -pix_fmt yuv420p -r 30 end.mp4
 
           printf "file 'hook.mp4'\nfile 'guadalupe.mp4'\nfile 'caddo.mp4'\nfile 'padre.mp4'\nfile 'summary.mp4'\nfile 'end.mp4'\n" > concat.txt
           ffmpeg -hide_banner -loglevel error -y -f concat -safe 0 -i concat.txt -c copy silent-video.mp4
@@ -87,8 +80,7 @@ jobs:
           ffmpeg -hide_banner -loglevel error -y -ss 15 -i texasdefined-fresh-reel.mp4 -frames:v 1 -vf scale=270:480 frame-padre.jpg
           ffmpeg -hide_banner -loglevel error -y -ss 21 -i texasdefined-fresh-reel.mp4 -frames:v 1 -vf scale=270:480 frame-summary.jpg
           ffmpeg -hide_banner -loglevel error -y -ss 25 -i texasdefined-fresh-reel.mp4 -frames:v 1 -vf scale=270:480 frame-end.jpg
-          ffmpeg -hide_banner -loglevel error -y -i frame-hook.jpg -i frame-guadalupe.jpg -i frame-caddo.jpg -i frame-padre.jpg -i frame-summary.jpg -i frame-end.jpg \
-            -filter_complex '[0:v][1:v][2:v]hstack=inputs=3[top];[3:v][4:v][5:v]hstack=inputs=3[bottom];[top][bottom]vstack=inputs=2[out]' -map '[out]' -q:v 5 review-contact-sheet.jpg
+          ffmpeg -hide_banner -loglevel error -y -i frame-hook.jpg -i frame-guadalupe.jpg -i frame-caddo.jpg -i frame-padre.jpg -i frame-summary.jpg -i frame-end.jpg -filter_complex '[0:v][1:v][2:v]hstack=inputs=3[top];[3:v][4:v][5:v]hstack=inputs=3[bottom];[top][bottom]vstack=inputs=2[out]' -map '[out]' -q:v 5 review-contact-sheet.jpg
 
       - name: Upload Reel preview
         uses: actions/upload-artifact@v4
