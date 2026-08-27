@@ -86,3 +86,7 @@ export const texasPoliticalFigureByName = (name: string) => {
   const canonicalName = TEXAS_REPUBLICAN_CONSERVATIVE_LEADER_SOURCE_ALIASES[name] ?? name;
   return byName.get(normalizedName(canonicalName));
 };
+
+export const TEXAS_REPUBLICAN_CONSERVATIVE_LEADERS: TexasPoliticalFigureRecord[] = TEXAS_REPUBLICAN_CONSERVATIVE_LEADER_TARGETS
+  .map((name) => texasPoliticalFigureByName(name))
+  .filter((figure): figure is TexasPoliticalFigureRecord => Boolean(figure));
