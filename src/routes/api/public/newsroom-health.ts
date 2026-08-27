@@ -5,6 +5,7 @@ type FeedRow = {
   title: string;
   description: string | null;
   source: string;
+  trend_source: string | null;
   pub_date: string | null;
   internal_slug: string | null;
   target_site: string | null;
@@ -83,13 +84,13 @@ export const Route = createFileRoute("/api/public/newsroom-health")({
         ]);
 
         let feedResult = await supabaseAdmin.from("texas_news_feed" as never)
-          .select("title,description,source,pub_date,internal_slug,target_site,target_section")
+          .select("title,description,source,trend_source,pub_date,internal_slug,target_site,target_section")
           .gte("pub_date", sevenDaysAgo).limit(1000);
         let routingSchemaReady = true;
         if (feedResult.error) {
           routingSchemaReady = false;
           feedResult = await supabaseAdmin.from("texas_news_feed" as never)
-            .select("title,description,source,pub_date,internal_slug")
+            .select("title,description,source,trend_source,pub_date,internal_slug")
             .gte("pub_date", sevenDaysAgo).limit(1000) as typeof feedResult;
         }
 
@@ -133,6 +134,7 @@ export const Route = createFileRoute("/api/public/newsroom-health")({
           title: String(row.title ?? ""),
           description: row.description ?? null,
           source: String(row.source ?? ""),
+          trend_source: row.trend_source ?? null,
           pub_date: row.pub_date ?? null,
           internal_slug: row.internal_slug ?? null,
           target_site: row.target_site ?? null,
@@ -142,7 +144,7 @@ export const Route = createFileRoute("/api/public/newsroom-health")({
         const latestTexasDefined = texasDefinedPublishedSample[0] ?? null;
         const feedBySource = new Map<string, FeedRow[]>();
         for (const row of feedRows) {
-          const key = String(row.source || "").trim().toLowerCase();
+          const key = String(row.trend_source || row.source || "").trim().toLowerCase();
           if (!key) continue;
           const list = feedBySource.get(key) ?? [];
           list.push(row);
