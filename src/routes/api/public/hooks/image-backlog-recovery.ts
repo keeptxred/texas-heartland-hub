@@ -17,6 +17,10 @@ type BacklogRow = {
   body_json: Parameters<typeof meetsArticleMainWordCount>[1];
 };
 
+type AdSensePriorityRow = {
+  slug: string;
+};
+
 function bearerToken(request: Request): string | null {
   const value = request.headers.get("authorization") ?? "";
   const match = value.match(/^Bearer\s+(.+)$/i);
@@ -77,7 +81,7 @@ async function post({ request }: { request: Request }) {
   const db = supabaseAdmin as any;
   const columns = "slug,published_at,featured_image_url,image_generation_status,kind,body_json";
 
-  const [missingResult, legacyResult] = await Promise.all([
+  const [missingResult, legacyResult, adsensePriorityResult] = await Promise.all([
     db
       .from("daily_articles")
       .select(columns)
@@ -92,9 +96,23 @@ async function post({ request }: { request: Request }) {
       .in("image_generation_status", ["pending", "failed", "ready"])
       .order("published_at", { ascending: false })
       .limit(250),
+    db
+      .from("adsense_cloud_article_readiness")
+      .select("slug")
+      .eq("adsense_ready", true)
+      .eq("image_ready", false)
+      .limit(250),
   ]);
   if (missingResult.error) return Response.json({ error: missingResult.error.message }, { status: 500 });
   if (legacyResult.error) return Response.json({ error: legacyResult.error.message }, { status: 500 });
+
+  // AdSense priority is an ordering enhancement only. If the audit view is
+  // temporarily unavailable, preserve the existing general recovery queue.
+  const adsensePrioritySlugs = new Set<string>(
+    adsensePriorityResult.error
+      ? []
+      : ((adsensePriorityResult.data ?? []) as AdSensePriorityRow[]).map((row) => row.slug).filter(Boolean),
+  );
 
   const merged = new Map<string, BacklogRow>();
   for (const row of [...(missingResult.data ?? []), ...(legacyResult.data ?? [])] as BacklogRow[]) {
@@ -104,6 +122,8 @@ async function post({ request }: { request: Request }) {
   const eligible = [...merged.values()]
     .filter(isEligible)
     .sort((a, b) => {
+      const byAdSensePriority = Number(adsensePrioritySlugs.has(b.slug)) - Number(adsensePrioritySlugs.has(a.slug));
+      if (byAdSensePriority) return byAdSensePriority;
       const byStatus = priority(a) - priority(b);
       if (byStatus) return byStatus;
       const aTime = a.published_at ? Date.parse(a.published_at) : 0;
@@ -113,6 +133,7 @@ async function post({ request }: { request: Request }) {
   const slugs = eligible.map((row) => row.slug);
   const missingCount = eligible.filter(isMissingImage).length;
   const legacyCount = eligible.filter((row) => isLegacyGeneratedNewsAsset(row.featured_image_url)).length;
+  const adsensePriorityCount = eligible.filter((row) => adsensePrioritySlugs.has(row.slug)).length;
 
   if (dryRun) {
     return Response.json({
@@ -121,8 +142,9 @@ async function post({ request }: { request: Request }) {
       ready: slugs.length,
       missing: missingCount,
       legacy: legacyCount,
+      adsensePriority: adsensePriorityCount,
       slugs,
-      scope: "missing_or_legacy_published_quality_article_images_pending_first",
+      scope: "adsense_ready_missing_first_then_missing_or_legacy_published_quality_article_images",
     });
   }
 
@@ -141,7 +163,7 @@ async function post({ request }: { request: Request }) {
     processed: 1,
     succeeded: result.ok ? 1 : 0,
     failed: result.ok ? 0 : 1,
-    scope: "missing_or_legacy_published_quality_article_images_pending_first",
+    scope: "adsense_ready_missing_first_then_missing_or_legacy_published_quality_article_images",
     results: [result],
   }, { status: result.ok ? 200 : 422 });
 }
