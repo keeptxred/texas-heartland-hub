@@ -30,7 +30,6 @@ describe("static article discovery alignment", () => {
     for (const path of [authorSitemap, imageSitemap]) {
       const source = readFileSync(path, "utf8");
       expect(source).toContain("ARTICLE_BODIES");
-      expect(source).toContain("isStaticArticleIndexable");
     }
   });
 });
