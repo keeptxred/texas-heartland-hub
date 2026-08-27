@@ -156,10 +156,10 @@ export const RESOURCE_HUB_CATEGORIES: ResourceHubCategory[] = [
     exploreHref: "/laws",
     links: [
       { label: "Texas Laws Hub", href: "/laws" },
-      { label: "Texas Gun Laws", href: "/laws/texas-gun-laws" },
-      { label: "Texas Property Tax Laws", href: "/laws/texas-property-tax-laws" },
-      { label: "Texas Election Laws", href: "/laws/texas-election-laws" },
-      { label: "New Texas Laws", href: "/laws/texas-new-laws-2026" },
+      { label: "Texas Gun Laws", href: "/news/texas-gun-laws-explained" },
+      { label: "Texas Property Tax Laws", href: "/news/texas-property-tax-laws-explained" },
+      { label: "Texas Election Laws", href: "/news/texas-election-laws-explained" },
+      { label: "New Texas Laws", href: "/news/texas-new-laws-2026" },
     ],
   },
   {
@@ -258,7 +258,7 @@ export const POPULAR_RESOURCES: ResourceHubLink[] = [
 
 export const TRENDING_RESOURCES: ResourceHubLink[] = [
   { label: "Texas Politics", href: "/texas-politics" },
-  { label: "New Texas Laws", href: "/laws/texas-new-laws-2026" },
+  { label: "New Texas Laws", href: "/news/texas-new-laws-2026" },
   { label: "Texas Legislature", href: "/texas-legislature" },
 ];
 
