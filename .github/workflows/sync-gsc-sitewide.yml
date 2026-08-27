@@ -1,0 +1,59 @@
+name: Sync sitewide Google Search Console data
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "20 12 * * *"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/sync-gsc-sitewide.yml"
+      - "scripts/seo/gsc-sitewide-utils.mjs"
+      - "scripts/seo/gsc-sitewide-utils.test.mjs"
+      - "scripts/seo/sync-gsc-sitewide.mjs"
+      - "src/lib/gsc-sitewide.ts"
+      - "src/routes/api/admin/gsc-sitewide-sync.ts"
+      - "supabase/migrations/*_gsc_sitewide_search_console.sql"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: gsc-sitewide-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-google-access:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON }}
+      GSC_SITE_URL: sc-domain:keeptxred.com
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Verify sitewide Search Console and URL Inspection access
+        run: node scripts/seo/sync-gsc-sitewide.mjs --dry-run
+
+  sync:
+    if: ${{ github.event_name != 'pull_request' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON }}
+      GSC_SITE_URL: sc-domain:keeptxred.com
+      GSC_SITEWIDE_SYNC_ENDPOINT: https://keeptxred.com/api/admin/gsc-sitewide-sync
+      GSC_INSPECTION_LIMIT: "200"
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Sync daily page metrics and rotating URL Inspection state
+        run: node scripts/seo/sync-gsc-sitewide.mjs
