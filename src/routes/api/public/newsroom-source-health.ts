@@ -22,6 +22,7 @@ type TransportStatus = "healthy" | "quiet" | "broken" | "stale_check" | "never_c
 type MatchMode = "name" | "url" | null;
 
 const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
+const ACTIVE_UNREGISTERED_LIMIT = 25;
 
 function normalizeName(value: string) {
   return value.trim().toLowerCase();
@@ -29,6 +30,19 @@ function normalizeName(value: string) {
 
 function normalizeUrl(value: string | null | undefined) {
   return String(value ?? "").trim().replace(/\/$/, "");
+}
+
+function classifyFetch(fetch: FetchState | null | undefined, now: number): TransportStatus {
+  if (!fetch) return "never_checked";
+  const checkedAt = Date.parse(fetch.last_checked_at);
+  if (!Number.isFinite(checkedAt) || checkedAt < now - TWO_HOURS_MS) return "stale_check";
+  if ((fetch.consecutive_failures ?? 0) >= 2 || !(fetch.last_status != null && fetch.last_status >= 200 && fetch.last_status < 300)) return "broken";
+  if ((fetch.last_item_count ?? 0) === 0) return "quiet";
+  return "healthy";
+}
+
+function blankStatusCounts(): Record<TransportStatus, number> {
+  return { healthy: 0, quiet: 0, broken: 0, stale_check: 0, never_checked: 0 };
 }
 
 export const Route = createFileRoute("/api/public/newsroom-source-health")({
@@ -53,6 +67,7 @@ export const Route = createFileRoute("/api/public/newsroom-source-health")({
         }
 
         const now = Date.now();
+        const enabledSources = (sourcesResult.data ?? []) as unknown as EnabledSource[];
         const fetchStates = (fetchResult.data ?? []) as unknown as FetchState[];
         const fetchByName = new Map(fetchStates.map((row) => [normalizeName(row.source_name), row] as const));
         const fetchByUrl = new Map(
@@ -61,20 +76,15 @@ export const Route = createFileRoute("/api/public/newsroom-source-health")({
             .filter(([url]) => Boolean(url)),
         );
 
-        const rows = ((sourcesResult.data ?? []) as unknown as EnabledSource[]).map((source) => {
+        const registryNames = new Set(enabledSources.map((source) => normalizeName(source.source_name)));
+        const registryUrls = new Set(enabledSources.map((source) => normalizeUrl(source.rss_url)).filter(Boolean));
+
+        const rows = enabledSources.map((source) => {
           const byName = fetchByName.get(normalizeName(source.source_name)) ?? null;
           const byUrl = fetchByUrl.get(normalizeUrl(source.rss_url)) ?? null;
           const fetch = byName ?? byUrl;
           const matchMode: MatchMode = byName ? "name" : byUrl ? "url" : null;
-          let status: TransportStatus;
-          if (!fetch) status = "never_checked";
-          else {
-            const checkedAt = Date.parse(fetch.last_checked_at);
-            if (!Number.isFinite(checkedAt) || checkedAt < now - TWO_HOURS_MS) status = "stale_check";
-            else if ((fetch.consecutive_failures ?? 0) >= 2 || !(fetch.last_status != null && fetch.last_status >= 200 && fetch.last_status < 300)) status = "broken";
-            else if ((fetch.last_item_count ?? 0) === 0) status = "quiet";
-            else status = "healthy";
-          }
+          const status = classifyFetch(fetch, now);
           return {
             sourceName: source.source_name,
             sourceUrl: source.rss_url,
@@ -95,12 +105,44 @@ export const Route = createFileRoute("/api/public/newsroom-source-health")({
         const statusCounts = rows.reduce<Record<TransportStatus, number>>((acc, row) => {
           acc[row.status] += 1;
           return acc;
-        }, { healthy: 0, quiet: 0, broken: 0, stale_check: 0, never_checked: 0 });
+        }, blankStatusCounts());
 
         const brokenSources = rows
           .filter((row) => row.status === "broken")
           .sort((a, b) => b.consecutiveFailures - a.consecutiveFailures)
           .slice(0, 25);
+
+        // DIRECT_SOURCES and other runtime-only fetch paths do not necessarily
+        // have content_sources rows. Surface only recently checked unmatched
+        // fetch states so active hard-coded sources are observable without
+        // resurrecting retired/stale source history in the public health view.
+        const activeUnregisteredSources = fetchStates
+          .filter((fetch) => {
+            const checkedAt = Date.parse(fetch.last_checked_at);
+            if (!Number.isFinite(checkedAt) || checkedAt < now - TWO_HOURS_MS) return false;
+            if (registryNames.has(normalizeName(fetch.source_name))) return false;
+            const url = normalizeUrl(fetch.source_url);
+            if (url && registryUrls.has(url)) return false;
+            return true;
+          })
+          .map((fetch) => ({
+            sourceName: fetch.source_name,
+            sourceUrl: fetch.source_url,
+            status: classifyFetch(fetch, now),
+            lastCheckedAt: fetch.last_checked_at,
+            lastStatus: fetch.last_status,
+            lastItemCount: fetch.last_item_count,
+            lastError: fetch.last_error,
+            lastSuccessAt: fetch.last_success_at,
+            consecutiveFailures: fetch.consecutive_failures,
+            consecutiveEmptyFetches: fetch.consecutive_empty,
+          }))
+          .sort((a, b) => a.sourceName.localeCompare(b.sourceName));
+
+        const activeUnregisteredStatusCounts = activeUnregisteredSources.reduce<Record<TransportStatus, number>>((acc, row) => {
+          acc[row.status] += 1;
+          return acc;
+        }, blankStatusCounts());
 
         return Response.json({
           ok: true,
@@ -108,6 +150,9 @@ export const Route = createFileRoute("/api/public/newsroom-source-health")({
           statusCounts,
           brokenSources,
           rows,
+          activeUnregisteredSourceCount: activeUnregisteredSources.length,
+          activeUnregisteredStatusCounts,
+          activeUnregisteredSources: activeUnregisteredSources.slice(0, ACTIVE_UNREGISTERED_LIMIT),
           checkedAt: new Date().toISOString(),
         }, { headers: { "Cache-Control": "no-store" } });
       },
