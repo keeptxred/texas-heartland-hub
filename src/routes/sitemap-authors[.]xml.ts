@@ -3,6 +3,7 @@ import type {} from "@tanstack/react-start";
 import { BASE_URL, renderUrlset, xmlResponse, toIsoDate, type UrlEntry } from "@/lib/sitemap-shared";
 import { AUTHORS, authorSlug, type Author } from "@/data/authors";
 import { ARTICLES, isPublished } from "@/data/articles";
+import { ARTICLE_BODIES } from "@/data/article-bodies";
 import { getPublishedAuthorArticles, type DailyArticle } from "@/lib/daily-news.functions";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 import { hasEnoughAuthorArticles, isCompleteAuthorProfile } from "@/lib/author-indexability";
@@ -16,6 +17,7 @@ function authorArticleRecords(author: Author, liveArticles: DailyArticle[]): Aut
     if (
       isPublished(article)
       && isStaticArticleIndexable(article)
+      && Boolean(ARTICLE_BODIES[article.slug])
       && authorSlug(article.author) === author.slug
       && article.publishedAt
     ) {
