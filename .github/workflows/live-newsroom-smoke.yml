@@ -41,7 +41,7 @@ jobs:
         run: |
           set -euo pipefail
           for attempt in 1 2 3 4 5 6; do
-            if curl -fsSL --max-time 30 "${AUTOMATION_ORIGIN%/}/api/public/newsroom-health" -o /tmp/newsroom-health.json; then
+            if curl -fsSL --max-time 30 -H 'User-Agent: KeepTXRed-Newsroom-Smoke/1.0' "${AUTOMATION_ORIGIN%/}/api/public/newsroom-health" -o /tmp/newsroom-health.json; then
               jq -r '
                 "Flyover audit: ingested=\(.flyoverIngestedCount // 0) routed-correctly=\(.flyoverRoutedCorrectlyCount // 0) published=\(.flyoverPublishedCount // 0) degraded=\(.degraded // false) routing-ready=\(.routingSchemaReady // true) td-ready=\(.texasDefinedChannelReady // false)",
                 (.schemaErrors[]? | "schema-error | \(.)"),
@@ -78,7 +78,7 @@ jobs:
           if (payload.direct_provider_only !== true) throw new Error('direct_provider_only is not true');
           if (typeof payload.rewrite_model !== 'string' || !payload.rewrite_model.startsWith('@cf/')) throw new Error(`rewrite_model is missing or not Cloudflare: ${payload.rewrite_model}`);
           if (payload.image_provider !== 'cloudflare-workers-ai') throw new Error(`unexpected image_provider=${payload.image_provider}`);
-          if (payload.image_validation_model !== '@cf/meta/llama-3.2-11b-vision-instruct') throw new Error(`unexpected image_validation_model=${payload.image_validation_model}`);
+          if (payload.image_validation_model !== '@cf/mistralai/mistral-small-3.1-24b-instruct') throw new Error(`unexpected image_validation_model=${payload.image_validation_model}`);
           console.log(`OK rewrite provider=${payload.rewrite_provider} model=${payload.rewrite_model} image=${payload.image_model} validator=${payload.image_validation_model}`);
           NODE
       - name: Report zero-AI newsroom generation eligibility
