@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "bayareademocraticmovement.org",
+    "sourceClass": "local-political-organization-candidate-event-page",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Bay Area Democratic Movement candidate event pages to corroborate current candidate identity, office, campaign participation, and discover downstream official campaign, event, or candidate-supplied media sources. Do not approve or reuse any hosted image without item-level provenance plus a reusable license, explicit permission, campaign/media authorization, or another documented editorial permission basis.",
+    "searchHint": "Bay Area Democratic Movement Albert Wittliff Texas House 129 candidate portrait campaign",
+    "notes": "New source discovered August 27, 2026. A current August 30, 2026 blockwalking event page names Albert Wittliff as the HD129 candidate and can bridge sparse candidate records to campaign-controlled events and media. Treat all hosted imagery as discovery-only unless rights are documented at item level."
+  },
+  {
+    "domain": "cclub.org",
+    "sourceClass": "local-political-club-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use C Club of Houston election newsletters and candidate endorsement lists to corroborate Houston-area candidate identity and discover linked candidate pages, campaign assets, or event media. Do not approve or reuse any C Club-hosted image without item-level provenance plus a reusable license, explicit permission, campaign/media authorization, or another documented editorial permission basis.",
+    "searchHint": "C Club Houston 2026 candidate Liz Ramos portrait campaign",
+    "notes": "New source discovered August 27, 2026. The February 2026 election newsletter lists Liz Ramos for HD135 and several other current Houston-area candidates, providing an additional local discovery bridge for candidates with sparse web footprints. It is not an automatic image-rights source."
+  },
+  {
+    "domain": "lakelander.com",
+    "sourceClass": "reputable-local-news-candidate-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use The Lakelander's election reporting to corroborate candidate identity, office, biography, and locate candidate-supplied or otherwise documented editorial portrait sources. Do not approve or reuse newsroom-hosted images without item-level provenance plus a reusable license, explicit permission, candidate-supplied status with an editorial permission basis, or another documented reuse basis.",
+    "searchHint": "The Lakelander Albert Hunter Texas House District 13 2026 candidate portrait",
+    "notes": "New source discovered August 27, 2026. Current local election coverage identifies Albert Hunter as the Democratic HD13 candidate and provides a useful local-news discovery path for an otherwise sparse candidate. Newsroom imagery remains discovery-only absent item-level rights documentation."
+  }
+]
