@@ -36,8 +36,8 @@ requireTokens("Roundup archetype", roundup, [
   "Texas Zoos Wildlife and Conservation — Google News",
   "Texas Libraries Museums and Community Grants — Google News",
   "Texas Awards Contests and Recognition — Google News",
-  "Texas Sports Recruiting and Commitments — Google News",
-  "Texas Sports Partnerships Records and Milestones — Google News",
+  "Texas Sports Recruiting and Partnerships — Google News",
+  "Texas Sports Records and Honors — Google News",
   "Texas Airports TSA and Travel — Google News",
   "Texas Local Oddities and Human Interest — Google News",
 ]);
