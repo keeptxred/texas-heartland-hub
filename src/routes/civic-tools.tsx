@@ -36,6 +36,18 @@ function CivicToolsHub() {
       <section className="mt-9 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {TOOLS.map((tool) => <a key={tool.href} href={tool.href} className="group rounded-xl border bg-card p-6 hover:border-primary hover:shadow-md"><h2 className="font-display text-2xl tracking-tight group-hover:text-primary">{tool.title}</h2><p className="mt-3 text-sm leading-6 text-muted-foreground">{tool.description}</p><span className="mt-5 inline-block text-sm font-semibold text-primary">Open tool →</span></a>)}
       </section>
+      <section className="mt-10 grid gap-5 rounded-xl border bg-muted/20 p-6 md:grid-cols-2" aria-labelledby="civic-tool-authority-bridge">
+        <div>
+          <h2 id="civic-tool-authority-bridge" className="font-display text-2xl tracking-tight text-foreground">Need policy math instead of a civic lookup?</h2>
+          <p className="mt-3 text-sm leading-7 text-muted-foreground">KTR's separate Policy Tools collection turns Texas budget, spending, and tax assumptions into transparent scenario calculations tied to permanent issue guides.</p>
+          <Link to="/tools" className="mt-4 inline-flex font-semibold text-primary hover:underline">Browse Texas Policy Tools →</Link>
+        </div>
+        <div>
+          <h2 className="font-display text-2xl tracking-tight text-foreground">Need the source-backed context?</h2>
+          <p className="mt-3 text-sm leading-7 text-muted-foreground">Use the Texas Issues library when the question requires statutes, agencies, enacted bills, official datasets, or a maintained policy explainer rather than an interactive lookup.</p>
+          <Link to="/issues" className="mt-4 inline-flex font-semibold text-primary hover:underline">Browse Texas issue guides →</Link>
+        </div>
+      </section>
       <section className="mt-10 rounded-xl border bg-muted/20 p-6 text-sm leading-7 text-muted-foreground"><strong className="text-foreground">How KTR tools work:</strong> they point to published KTR authority records and official sources; they do not create voter-specific legal advice, guess an address-specific ballot, invent missing government relationships, or assign unsupported ideology scores. For address-level representation, use the official lookup linked by <Link to="/find-representative" className="font-semibold text-primary underline">Find My Representative</Link>.</section>
     </main>
   );
