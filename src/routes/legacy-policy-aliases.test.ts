@@ -15,6 +15,7 @@ const CASES = [
   ["texas-school-board-powers.tsx", "/texas-school-board-powers", "/news/texas-school-board-powers"],
   ["why-texas-has-no-state-income-tax.tsx", "/why-texas-has-no-state-income-tax", "/news/why-texas-has-no-income-tax"],
   ["texas.property-taxes-2026.tsx", "/texas/property-taxes-2026", "/news/texas-property-tax-guide"],
+  ["texas-courts.tsx", "/texas-courts", "/texas-government"],
 ] as const;
 
 describe("legacy policy and law aliases", () => {
