@@ -1,7 +1,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { TEXAS_POLITICAL_FIGURES, texasPoliticalFigureBySlug } from "@/data/texas-political-figures";
+import { ALL_TEXAS_POLITICAL_FIGURES, texasPoliticalFigureBySlug } from "@/data/texas-political-figures-all";
 
 const SITE_URL = "https://keeptxred.com";
+const FIGURE_PREFIX = "/texas-politics/figures/";
 
 export const Route = createFileRoute("/texas-politics/figures_/$figureSlug")({
   beforeLoad: ({ params }) => {
@@ -35,6 +36,13 @@ export const Route = createFileRoute("/texas-politics/figures_/$figureSlug")({
           name: title,
           description: figure.description,
           url: canonical,
+          ...(figure.sources?.length ? {
+            citation: figure.sources.map((source) => ({
+              "@type": "CreativeWork",
+              name: source.label,
+              url: source.href,
+            })),
+          } : {}),
           mainEntity: {
             "@type": "Person",
             name: figure.name,
@@ -52,7 +60,17 @@ function PoliticalFigurePage() {
   const { figureSlug } = Route.useParams();
   const figure = texasPoliticalFigureBySlug(figureSlug);
   if (!figure) return null;
-  const peers = TEXAS_POLITICAL_FIGURES.filter((item) => item.slug !== figure.slug).slice(0, 4);
+
+  const linkedPeerSlugs = new Set(
+    figure.relatedLinks
+      .filter((link) => link.href.startsWith(FIGURE_PREFIX))
+      .map((link) => link.href.slice(FIGURE_PREFIX.length))
+      .filter(Boolean),
+  );
+  const peers = [
+    ...ALL_TEXAS_POLITICAL_FIGURES.filter((item) => item.slug !== figure.slug && linkedPeerSlugs.has(item.slug)),
+    ...ALL_TEXAS_POLITICAL_FIGURES.filter((item) => item.slug !== figure.slug && !linkedPeerSlugs.has(item.slug)),
+  ].slice(0, 4);
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
@@ -79,6 +97,20 @@ function PoliticalFigurePage() {
           </section>
         ))}
       </article>
+
+      {figure.sources?.length ? (
+        <section className="mt-12 rounded-2xl border bg-card p-6 md:p-8" aria-labelledby="profile-sources">
+          <h2 id="profile-sources" className="text-2xl font-bold">Sources and official records</h2>
+          <p className="mt-3 max-w-3xl leading-7 text-muted-foreground">Use these records and source materials to verify service dates, offices and the major historical events summarized above.</p>
+          <ul className="mt-5 space-y-3">
+            {figure.sources.map((source) => (
+              <li key={source.href}>
+                <a href={source.href} target="_blank" rel="noreferrer" className="font-semibold text-primary underline-offset-4 hover:underline">{source.label} ↗</a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <aside className="mt-12 rounded-2xl border bg-muted/30 p-6 md:p-8" aria-labelledby="figure-context">
         <h2 id="figure-context" className="text-2xl font-bold">Keep the biography connected to current Texas politics</h2>
