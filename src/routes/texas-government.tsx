@@ -9,12 +9,9 @@ const DESCRIPTION = "Explore Texas government offices, legislative institutions,
 export const Route = createFileRoute("/texas-government")({
   head: () => ({
     meta: [
-      { title: TITLE },
-      { name: "description", content: DESCRIPTION },
-      { property: "og:title", content: TITLE },
-      { property: "og:description", content: DESCRIPTION },
-      { property: "og:url", content: `${SITE_URL}/texas-government` },
-      { property: "og:type", content: "website" },
+      { title: TITLE }, { name: "description", content: DESCRIPTION },
+      { property: "og:title", content: TITLE }, { property: "og:description", content: DESCRIPTION },
+      { property: "og:url", content: `${SITE_URL}/texas-government` }, { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: `${SITE_URL}/texas-government` }],
@@ -37,7 +34,7 @@ function TexasGovernmentHub() {
         <div className="flex items-center gap-3 text-primary"><Landmark className="h-7 w-7"/><span className="text-sm font-bold uppercase tracking-[0.18em]">Texas government authority guides</span></div>
         <h1 className="mt-4 max-w-4xl text-4xl font-bold leading-tight md:text-6xl">Texas Government: Offices, Leaders, Powers and Elections</h1>
         <p className="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">Understand who runs Texas government, what the constitution allows each institution to do, what limits apply, how leaders are selected, and how offices connect to laws, bills, elections and representatives.</p>
-        <div className="mt-6 flex flex-wrap gap-3"><a href="/laws/texas-constitution" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">Read the Texas Constitution</a><a href="/elections/2026" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Texas Election Central</a><a href="/bills" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Track Texas bills</a><a href="/texas-government/agencies" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">State agency directory</a></div>
+        <div className="mt-6 flex flex-wrap gap-3"><a href="/laws" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">Read the Texas Constitution</a><a href="/elections/2026" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Texas Election Central</a><a href="/bills" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Track Texas bills</a><a href="/texas-government/agencies" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">State agency directory</a></div>
       </header>
 
       <section className="mt-8 rounded-2xl border border-primary/25 bg-primary/[0.04] p-6 md:p-8" aria-labelledby="texas-child-support-government">
