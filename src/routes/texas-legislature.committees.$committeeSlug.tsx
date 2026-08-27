@@ -16,6 +16,17 @@ const hasCanonicalBillFields = (bill: any) =>
 const safeCanonicalBillPath = (bill: any) =>
   hasCanonicalBillFields(bill) ? canonicalBillPath(bill) : null;
 
+const formatScheduleDate = (value: string | null | undefined) => {
+  if (!value) return '';
+  const date = new Date(`${value}T12:00:00`);
+  if (Number.isNaN(date.getTime())) return value;
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(date);
+};
+
 export const Route = createFileRoute('/texas-legislature/committees/$committeeSlug')({
   loader: async ({ params }) => {
     // committee_slug is unique only within legislature/session/chamber. Public
@@ -34,13 +45,20 @@ export const Route = createFileRoute('/texas-legislature/committees/$committeeSl
     if (error) throw error;
     if (!committee) throw notFound();
 
-    const [historyResult, relatedContentResult] = await Promise.allSettled([
+    const [historyResult, scheduleResult, relatedContentResult] = await Promise.allSettled([
       db
         .from('bill_committee_history')
         .select('*,bills(*)')
         .eq('committee_id', committee.id)
         .order('referred_date', { ascending: false })
         .limit(100),
+      db
+        .from('upcoming_legislative_schedule')
+        .select('*')
+        .eq('committee_id', committee.id)
+        .order('event_date', { ascending: true })
+        .order('bill_identifier', { ascending: true })
+        .limit(50),
       getRelatedAuthorityContent('committee', committee.committee_slug),
     ]);
 
@@ -61,6 +79,23 @@ export const Route = createFileRoute('/texas-legislature/committees/$committeeSl
       );
     }
 
+    let upcomingSchedule: any[] = [];
+    if (scheduleResult.status === 'fulfilled') {
+      if (scheduleResult.value.error) {
+        console.error(
+          `Committee schedule failed for ${committee.committee_slug}:`,
+          scheduleResult.value.error.message ?? scheduleResult.value.error,
+        );
+      } else {
+        upcomingSchedule = scheduleResult.value.data ?? [];
+      }
+    } else {
+      console.error(
+        `Committee schedule failed for ${committee.committee_slug}:`,
+        scheduleResult.reason,
+      );
+    }
+
     let relatedContent: Awaited<ReturnType<typeof getRelatedAuthorityContent>> = [];
     if (relatedContentResult.status === 'fulfilled') {
       relatedContent = relatedContentResult.value;
@@ -71,14 +106,14 @@ export const Route = createFileRoute('/texas-legislature/committees/$committeeSl
       );
     }
 
-    return { committee, history, relatedContent };
+    return { committee, history, upcomingSchedule, relatedContent };
   },
   head: ({ loaderData }) => {
     if (!loaderData) return {};
 
     const { committee, history } = loaderData;
     const canonical = `${SITE_URL}/texas-legislature/committees/${committee.committee_slug}`;
-    const description = `${committee.committee_name} authority page with referred Texas bills, legislative activity, and official source links.`;
+    const description = `${committee.committee_name} authority page with referred Texas bills, upcoming hearings, legislative activity, and official source links.`;
 
     const itemListElement = history.flatMap((item: any, index: number) => {
       const billPath = safeCanonicalBillPath(item.bills);
@@ -158,7 +193,7 @@ export const Route = createFileRoute('/texas-legislature/committees/$committeeSl
 });
 
 function CommitteePage() {
-  const { committee, history, relatedContent } = Route.useLoaderData();
+  const { committee, history, upcomingSchedule, relatedContent } = Route.useLoaderData();
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10">
@@ -186,6 +221,45 @@ function CommitteePage() {
       </header>
 
       <div className="mt-8 space-y-8">
+        {upcomingSchedule.length > 0 ? (
+          <section className="rounded-xl border bg-card p-6">
+            <h2 className="text-2xl font-bold">Upcoming hearings</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Scheduled activity from Texas Legislature Online. Hearing dates can change; use the official source for the latest notice.
+            </p>
+            <div className="mt-5 space-y-3">
+              {upcomingSchedule.map((item: any) => {
+                const billPath = safeCanonicalBillPath(item);
+                if (!billPath) return null;
+                return (
+                  <div key={item.id} className="rounded-lg border p-4">
+                    <div className="flex flex-wrap items-baseline justify-between gap-2">
+                      <a href={billPath} className="font-bold text-primary hover:underline">
+                        {item.bill_identifier}
+                      </a>
+                      <span className="text-sm font-medium">{formatScheduleDate(item.event_date)}</span>
+                    </div>
+                    <p className="mt-2">{item.bill_caption}</p>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      {item.title || item.current_status_label}
+                    </p>
+                    {item.source_url ? (
+                      <a
+                        className="mt-2 inline-block text-sm font-semibold text-primary hover:underline"
+                        href={item.source_url}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Official schedule notice →
+                      </a>
+                    ) : null}
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        ) : null}
+
         <section className="rounded-xl border bg-card p-6">
           <h2 className="text-2xl font-bold">Bills referred</h2>
           <div className="mt-5 space-y-3">
