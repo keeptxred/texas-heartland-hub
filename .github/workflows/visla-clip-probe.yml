@@ -19,6 +19,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # Probe revision 2: the workflow already exists on main, so merging this
+          # change triggers the push path and lets us inspect the public share page.
           url='https://app.visla.us/clip/1540580154592547701'
           curl -L --fail-with-body --silent --show-error --max-time 60 \
             -A 'Mozilla/5.0' "$url" -o /tmp/visla.html
