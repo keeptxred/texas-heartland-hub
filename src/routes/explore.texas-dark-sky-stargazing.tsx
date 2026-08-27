@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Binoculars, CalendarDays, Camera, MoonStar, ShieldCheck, TentTree } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { buildSeo } from "@/lib/seo";
@@ -111,8 +111,8 @@ function TexasDarkSkyStargazingGuide() {
               Find the right region, season, moon phase, campsite, and gear for a Texas night-sky trip—from Big Bend and the Davis Mountains to canyon country and the western Hill Country.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button asChild size="lg"><Link to="/explore/trip-planner">Plan a stargazing trip</Link></Button>
-              <Button asChild size="lg" variant="outline"><Link to="/explore/search" search={{ activities: ["camping"], page: 1, pageSize: 24, sort: "relevance" }}>Find camping</Link></Button>
+              <Button asChild size="lg"><a href="https://texasdefined.com/explore/trip-planner">Plan a stargazing trip</a></Button>
+              <Button asChild size="lg" variant="outline"><a href="https://texasdefined.com/explore/search?activities=camping">Find camping</a></Button>
             </div>
           </div>
           <img src="/images/explore/texas-dark-sky-stargazing-hero.svg" alt="Milky Way over a remote Texas desert campsite and mountains" width="1600" height="1000" className="w-full rounded-xl border border-white/15" />
@@ -123,7 +123,7 @@ function TexasDarkSkyStargazingGuide() {
         <section className="space-y-5 font-serif text-lg leading-8">
           <h2 className="font-display text-4xl">Why Texas is built for night-sky road trips</h2>
           <p>Texas offers something few states can match: enormous distances, dry western air, elevated mountain basins, open plains, and public lands where the horizon can remain dark for miles. The experience changes dramatically by region. West Texas offers the deepest darkness, while the Panhandle and western Hill Country provide more accessible alternatives for travelers starting near major cities.</p>
-          <p>The best trip is not simply the place with the darkest map color. It is the place where you can legally remain after sunset, safely park or camp, understand the weather, and pair nighttime viewing with worthwhile daytime stops. Use the <Link to="/explore/texas-scenic-drives" className="font-semibold text-primary hover:underline">Texas scenic drives guide</Link> to shape the route, then add parks, caverns, historic places, and communities through the <Link to="/explore/trip-planner" className="font-semibold text-primary hover:underline">Explore Texas trip planner</Link>.</p>
+          <p>The best trip is not simply the place with the darkest map color. It is the place where you can legally remain after sunset, safely park or camp, understand the weather, and pair nighttime viewing with worthwhile daytime stops. Use the <a href="https://texasdefined.com/explore/texas-scenic-drives" className="font-semibold text-primary hover:underline">Texas scenic drives guide</a> to shape the route, then add parks, caverns, historic places, and communities through the <a href="https://texasdefined.com/explore/trip-planner" className="font-semibold text-primary hover:underline">Explore Texas trip planner</a>.</p>
         </section>
 
         <section>
@@ -173,8 +173,8 @@ function TexasDarkSkyStargazingGuide() {
 
         <section className="space-y-5 font-serif text-lg leading-8">
           <h2 className="font-display text-4xl">Build a complete dark-sky weekend</h2>
-          <p>Anchor the trip with an overnight destination from the <Link to="/explore/texas-state-parks-guide" className="font-semibold text-primary hover:underline">Texas state parks guide</Link>. Add a daytime hike, a spring-fed stop, or one of the destinations in the <Link to="/explore/caverns" className="font-semibold text-primary hover:underline">Texas caverns guide</Link>. In West Texas, allow generous driving time and avoid stacking too many distant stops into one day.</p>
-          <p>Spring wildflowers can add daylight scenery, but the brightest bloom weekends may also increase traffic and campsite demand. The <Link to="/explore/texas-wildflower-seasons" className="font-semibold text-primary hover:underline">Texas wildflower seasons guide</Link> can help you decide whether to combine both experiences or schedule a quieter astronomy-focused trip.</p>
+          <p>Anchor the trip with an overnight destination from the <a href="https://texasdefined.com/explore/texas-state-parks-guide" className="font-semibold text-primary hover:underline">Texas state parks guide</a>. Add a daytime hike, a spring-fed stop, or one of the destinations in the <a href="https://texasdefined.com/explore/caverns" className="font-semibold text-primary hover:underline">Texas caverns guide</a>. In West Texas, allow generous driving time and avoid stacking too many distant stops into one day.</p>
+          <p>Spring wildflowers can add daylight scenery, but the brightest bloom weekends may also increase traffic and campsite demand. The <a href="https://texasdefined.com/explore/texas-wildflower-seasons" className="font-semibold text-primary hover:underline">Texas wildflower seasons guide</a> can help you decide whether to combine both experiences or schedule a quieter astronomy-focused trip.</p>
         </section>
 
         <section>
@@ -187,7 +187,7 @@ function TexasDarkSkyStargazingGuide() {
         <section className="rounded-xl border bg-muted/20 p-7 text-center">
           <h2 className="font-display text-3xl">Start building your Texas night-sky trip</h2>
           <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">Choose a legal overnight anchor, add nearby daytime stops, and verify moon, clouds, wind, access, and road conditions before departure.</p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3"><Button asChild><Link to="/explore/trip-planner">Open the trip planner</Link></Button><Button asChild variant="outline"><Link to="/explore/search" search={{ page: 1, pageSize: 24, sort: "relevance" }}>Browse destinations</Link></Button></div>
+          <div className="mt-6 flex flex-wrap justify-center gap-3"><Button asChild><a href="https://texasdefined.com/explore/trip-planner">Open the trip planner</a></Button><Button asChild variant="outline"><a href="https://texasdefined.com/explore/search">Browse destinations</a></Button></div>
         </section>
       </article>
     </main>
