@@ -58,6 +58,56 @@ describe("exact article authority entity links", () => {
     ]);
   });
 
+  it("uses election context to resolve a candidate/officeholder same-name collision", () => {
+    const officeholder = entity({
+      entityType: "legislator",
+      slug: "jane-smith",
+      name: "Jane Smith",
+      title: "Texas House District 10",
+    });
+    const candidate = entity({
+      entityType: "candidate",
+      slug: "jane-smith-for-senate",
+      name: "Jane Smith",
+      title: "U.S. Senate",
+    });
+
+    expect(pickExactArticleAuthorityLinks(
+      "Jane Smith discussed the committee proposal at the Capitol.",
+      [officeholder, candidate],
+    )[0]?.href).toBe("/representatives/jane-smith");
+
+    expect(pickExactArticleAuthorityLinks(
+      "Candidate Jane Smith launched her campaign ahead of the primary election.",
+      [officeholder, candidate],
+    )[0]?.href).toBe("/elections/candidates/jane-smith-for-senate");
+  });
+
+  it("requires election context before linking candidate or race entities", () => {
+    const candidate = entity({ entityType: "candidate", slug: "alex-carter", name: "Alex Carter" });
+    const race = entity({ entityType: "race", slug: "texas-senate-10", name: "Texas Senate District 10 Race" });
+
+    expect(pickExactArticleAuthorityLinks("Alex Carter spoke at a community meeting.", [candidate])).toEqual([]);
+    expect(pickExactArticleAuthorityLinks(
+      "Alex Carter entered the election campaign.",
+      [candidate],
+    )[0]?.href).toBe("/elections/candidates/alex-carter");
+    expect(pickExactArticleAuthorityLinks(
+      "The Texas Senate District 10 Race is on the November ballot.",
+      [race],
+    )[0]?.href).toBe("/elections/races/texas-senate-10");
+  });
+
+  it("skips ambiguous duplicate candidate names rather than guessing a profile", () => {
+    const first = entity({ entityType: "candidate", slug: "alex-lee-one", name: "Alex Lee" });
+    const second = entity({ entityType: "candidate", slug: "alex-lee-two", name: "Alex Lee" });
+
+    expect(pickExactArticleAuthorityLinks(
+      "Candidate Alex Lee is campaigning in the primary election.",
+      [first, second],
+    )).toEqual([]);
+  });
+
   it("rejects inactive, unverified, and source-less entities", () => {
     const inactive = entity({ entityType: "agency", slug: "inactive", name: "Texas Example Agency", active: false });
     const unverified = entity({ entityType: "agency", slug: "unverified", name: "Texas Other Agency", lastVerified: null });
