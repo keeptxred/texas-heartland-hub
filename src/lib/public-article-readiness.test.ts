@@ -3,6 +3,7 @@ import { isPublicArticleReady } from "@/lib/public-article-readiness";
 
 const base = {
   category: "Legislature",
+  discover_category: "Texas Politics",
   source_name: "Texas Legislature",
   source_url: "https://capitol.texas.gov/",
   published_at: "2026-08-19T12:00:00Z",
@@ -21,6 +22,16 @@ describe("public article readiness floor", () => {
 
   it("blocks Non-Political taxonomy until it is corrected", () => {
     expect(isPublicArticleReady({ ...base, category: "Non-Political" })).toBe(false);
+  });
+
+  it("blocks legacy TexasDefined culture and history classifications", () => {
+    expect(isPublicArticleReady({ ...base, category: "Texas News", discover_category: "Texas Culture" })).toBe(false);
+    expect(isPublicArticleReady({ ...base, category: "Texas News", discover_category: "Texas History" })).toBe(false);
+  });
+
+  it("keeps material political and business classifications eligible", () => {
+    expect(isPublicArticleReady({ ...base, discover_category: "Texas Government" })).toBe(true);
+    expect(isPublicArticleReady({ ...base, category: "Business", discover_category: "Texas Business" })).toBe(true);
   });
 
   it("blocks low-quality and source-less rows", () => {

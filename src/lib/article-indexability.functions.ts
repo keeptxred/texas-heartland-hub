@@ -33,7 +33,7 @@ export const getCloudArticleIndexability = createServerFn({ method: "GET" })
 
     const { data: row, error } = await supabase
       .from("daily_articles")
-      .select("category,source_name,source_url,published_at,content_quality_score,body_json,quality_flags")
+      .select("category,discover_category,source_name,source_url,published_at,content_quality_score,body_json,quality_flags")
       .eq("slug", data.slug)
       .maybeSingle();
 
