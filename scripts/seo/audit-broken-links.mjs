@@ -3,6 +3,11 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { isNavigationalPath, shouldScanRuntimeLinks } from './broken-link-scan-scope.mjs';
+import {
+  extractLinkCandidates,
+  normalizeInternalLink,
+  routeRegexFromRouteName,
+} from './broken-link-audit-utils.mjs';
 
 const ROOT = process.cwd();
 const ROUTES_ROOT = path.join(ROOT, 'src', 'routes');
@@ -55,51 +60,17 @@ async function collectPublicAssetPaths() {
 }
 
 function routeRegexFromFile(file) {
-  let name = path.relative(ROUTES_ROOT, file).replace(/\\/g, '/').replace(/\.(tsx?|jsx?)$/, '');
-  if (name === '__root') return null;
-
-  // TanStack supports both flat route names (`news.$slug.tsx`) and nested route
-  // directories. `[.]` represents a literal dot in a public path segment, so
-  // protect it while splitting flat-route dots into URL segments.
-  const literalDot = '__KTR_LITERAL_DOT__';
-  const parts = name
-    .split('/')
-    .flatMap((segment) => segment.replace(/\[\.\]/g, literalDot).split('.'))
-    .map((part) => part.replaceAll(literalDot, '.'));
-  if (parts.at(-1) === 'index') parts.pop();
-
-  const route = '/' + parts
-    .map((part) => part.startsWith('$') ? '[^/]+' : part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
-    .join('/');
-  return new RegExp(`^${route === '/' ? '/' : route}/?$`);
+  const name = path.relative(ROUTES_ROOT, file).replace(/\\/g, '/');
+  return routeRegexFromRouteName(name);
 }
 
 function normalizeInternal(raw) {
-  if (!raw || raw.startsWith('#') || raw.startsWith('mailto:') || raw.startsWith('tel:') || raw.startsWith('javascript:')) return null;
-  // Route-template literals such as /elections/races/$raceSlug are source-code
-  // patterns, not user-facing links. They are validated by route/type checks.
-  if (raw.includes('${') || raw.includes('{') || raw.includes('}') || raw.includes('$')) return null;
-  try {
-    const url = new URL(raw, SITE);
-    if (!['keeptxred.com', 'www.keeptxred.com'].includes(url.hostname)) return null;
-    const pathname = url.pathname.replace(/\/{2,}/g, '/') || '/';
-    return isNavigationalPath(pathname) ? pathname : null;
-  } catch {
-    return null;
-  }
+  const pathname = normalizeInternalLink(raw, SITE);
+  return pathname && isNavigationalPath(pathname) ? pathname : null;
 }
 
 function extractLinks(text) {
-  const found = new Set();
-  const patterns = [
-    /(?:href|to|url|canonical|loc)\s*[:=]\s*["'`]([^"'`]+)["'`]/gi,
-    /\]\((https?:\/\/keeptxred\.com[^)\s]*|\/[^)\s]*)\)/gi,
-    /https?:\/\/(?:www\.)?keeptxred\.com\/[A-Za-z0-9_?&=/%#.-]*/gi,
-  ];
-  for (const pattern of patterns) {
-    for (const match of text.matchAll(pattern)) found.add(match[1] || match[0]);
-  }
-  return [...found];
+  return extractLinkCandidates(text);
 }
 
 async function staticAudit() {
@@ -107,29 +78,41 @@ async function staticAudit() {
   const routeRegexes = routeFiles.map(routeRegexFromFile).filter(Boolean);
   const publicAssetPaths = await collectPublicAssetPaths();
   const findings = [];
+
   for (const root of SCAN_ROOTS) {
     const absolute = path.join(ROOT, root);
     try { await fs.access(absolute); } catch { continue; }
+
     for (const file of await walk(absolute)) {
       if (!shouldScanRuntimeLinks(file)) continue;
       const text = await fs.readFile(file, 'utf8');
       const lines = text.split(/\r?\n/);
+
       lines.forEach((line, index) => {
         for (const raw of extractLinks(line)) {
           const pathname = normalizeInternal(raw);
           if (!pathname || IGNORE_PREFIXES.some((prefix) => pathname.startsWith(prefix))) continue;
+
           const retired = RETIRED_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(prefix + '/'));
           const matched = routeRegexes.some((regex) => regex.test(pathname));
-          const publicAsset = publicAssetPaths.has(decodeURIComponent(pathname));
-          if (retired || (!matched && !publicAsset)) findings.push({
-            type: retired ? 'retired-internal-link' : 'unmatched-internal-route',
-            severity: retired ? 'migration-debt' : 'blocking',
-            file: path.relative(ROOT, file), line: index + 1, raw, pathname,
-          });
+          let publicAsset = false;
+          try { publicAsset = publicAssetPaths.has(decodeURIComponent(pathname)); } catch { publicAsset = false; }
+
+          if (retired || (!matched && !publicAsset)) {
+            findings.push({
+              type: retired ? 'retired-internal-link' : 'unmatched-internal-route',
+              severity: retired ? 'migration-debt' : 'blocking',
+              file: path.relative(ROOT, file),
+              line: index + 1,
+              raw,
+              pathname,
+            });
+          }
         }
       });
     }
   }
+
   return findings;
 }
 
@@ -159,7 +142,7 @@ async function fetchText(url) {
 }
 
 function xmlLocs(xml) {
-  return [...xml.matchAll(/<loc>(.*?)<\/loc>/gi)].map((m) => m[1].replace(/&amp;/g, '&'));
+  return [...xml.matchAll(/<loc>(.*?)<\/loc>/gi)].map((match) => match[1].replace(/&amp;/g, '&'));
 }
 
 async function collectSitemapUrls(url, seen = new Set()) {
@@ -183,11 +166,13 @@ async function liveAudit() {
   const entries = await collectSitemapUrls(sitemap);
   const failures = [];
   const pages = entries.filter((entry) => typeof entry === 'string');
+
   failures.push(...entries.filter((entry) => typeof entry !== 'string').map((entry) => ({
     type: entry.sitemapFailure ? 'sitemap-http-error' : 'sitemap-request-error',
     severity: 'blocking',
     ...entry,
   })));
+
   let cursor = 0;
   const workers = Array.from({ length: 8 }, async () => {
     while (cursor < pages.length) {
@@ -196,7 +181,9 @@ async function liveAudit() {
         const { response, text, attempts } = await fetchText(url);
         if (!response.ok) failures.push({ type: 'page-http-error', severity: 'blocking', url, status: response.status, attempts });
         if (/text\/html/i.test(response.headers.get('content-type') || '')) {
-          const links = extractLinks(text).map((raw) => ({ raw, pathname: normalizeInternal(raw) })).filter((x) => x.pathname);
+          const links = extractLinks(text)
+            .map((raw) => ({ raw, pathname: normalizeInternal(raw) }))
+            .filter((item) => item.pathname);
           for (const link of links) {
             if (RETIRED_PREFIXES.some((prefix) => link.pathname === prefix || link.pathname.startsWith(prefix + '/'))) {
               failures.push({ type: 'live-retired-link', severity: 'migration-debt', source: url, ...link });
@@ -208,6 +195,7 @@ async function liveAudit() {
       }
     }
   });
+
   await Promise.all(workers);
   return { pagesChecked: pages.length, failures };
 }
@@ -229,8 +217,11 @@ const blockingStatic = staticFindings.filter((item) => item.severity === 'blocki
 const migrationStatic = staticFindings.filter((item) => item.severity === 'migration-debt');
 const blockingLive = live.failures.filter((item) => item.severity === 'blocking');
 const migrationLive = live.failures.filter((item) => item.severity === 'migration-debt');
+
 const report = {
-  generatedAt: new Date().toISOString(), site: SITE, liveEnabled: LIVE,
+  generatedAt: new Date().toISOString(),
+  site: SITE,
+  liveEnabled: LIVE,
   summary: {
     staticFindings: staticFindings.length,
     blockingStaticFindings: blockingStatic.length,
@@ -243,6 +234,7 @@ const report = {
   staticFindings,
   liveFailures: live.failures,
 };
+
 await fs.mkdir(path.join(ROOT, 'artifacts'), { recursive: true });
 await fs.writeFile(path.join(ROOT, 'artifacts', 'broken-link-audit.json'), JSON.stringify(report, null, 2) + '\n');
 console.log(JSON.stringify(report.summary, null, 2));
