@@ -1,0 +1,74 @@
+[
+  {
+    "domain": "kedt.org",
+    "sourceClass": "public-media-candidate-statement-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use KEDT's 2026 candidate-statement and local-election pages to corroborate candidate identity, office, and discover candidate-submitted statements, linked campaign pages, interviews, or downstream portrait sources. Do not approve or reuse KEDT-hosted images without item-level provenance plus a reusable license, explicit permission, candidate-supplied status with an editorial permission basis, or another documented reuse basis.",
+    "searchHint": "KEDT 2026 Texas candidate statement Gabe Lozano Marroquin portrait campaign",
+    "notes": "New source discovered August 27, 2026. KEDT maintains current candidate-statement pages for Nueces County races, including missing candidate Gabriel 'Gabe' Lozano Marroquin for Texas House District 32 and other 2026 candidates. Treat newsroom imagery as discovery-only unless rights are documented at item level."
+  },
+  {
+    "domain": "houstoncvpe.org",
+    "sourceClass": "local-civic-organization-candidate-endorsement-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Community Voices for Public Education candidate endorsement pages to corroborate current Houston-area candidate identity and discover linked campaign, social, event, or candidate-supplied media sources. Do not approve or reuse organization-hosted images without item-level provenance plus a reusable license, explicit permission, candidate-supplied status with an editorial permission basis, or another documented reuse basis.",
+    "searchHint": "Houston CVPE 2026 Michelle Palmer candidate portrait campaign",
+    "notes": "New source discovered August 27, 2026. CVPE's August 2026 endorsements identify missing-photo candidate Michelle Palmer for SBOE District 6 and other current candidates, providing an additional local discovery bridge. Hosted imagery is not automatically reusable."
+  },
+  {
+    "domain": "gcaflcio.org",
+    "sourceClass": "regional-labor-candidate-endorsement-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Gulf Coast Area Labor Federation endorsement pages to corroborate current Gulf Coast candidate identity, office, and campaign activity and to discover downstream official campaign, union-event, or candidate-supplied media sources. Do not approve or reuse organization-hosted images without item-level provenance plus a reusable license, explicit permission, candidate-supplied status with an editorial permission basis, or another documented reuse basis.",
+    "searchHint": "Texas Gulf Coast Area Labor Federation 2026 Michelle Palmer candidate portrait campaign",
+    "notes": "New source discovered August 27, 2026. The federation's current 2026 endorsement list includes Michelle Palmer for SBOE District 6 and many Houston-area legislative candidates, making it useful for candidate-to-campaign discovery. It is not an automatic image-rights source."
+  },
+  {
+    "domain": "wacobridge.org",
+    "sourceClass": "reputable-local-news-election-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use The Waco Bridge's current election guides and candidate coverage to corroborate Central Texas candidate identity, office, and ballot participation and to discover downstream official campaign or candidate-supplied portrait sources. Do not approve or reuse newsroom-hosted images without item-level provenance plus a reusable license, explicit permission, candidate-supplied status with an editorial permission basis, or another documented reuse basis.",
+    "searchHint": "Waco Bridge 2026 Albert Hunter Texas House 13 candidate portrait campaign",
+    "notes": "New source discovered August 27, 2026. Current McLennan County election coverage lists missing-photo candidate Albert Hunter for Texas House District 13 and Mindy Bumgarner for SBOE District 14, providing a useful local-news discovery path. Newsroom imagery remains discovery-only absent item-level rights documentation."
+  },
+  {
+    "domain": "multistate.us",
+    "sourceClass": "election-race-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use MultiState Elections race pages to corroborate current candidate participation, district, party, and election stage and to discover downstream official campaign or public-record sources for sparse candidates. Do not approve or reuse any MultiState-hosted image without item-level provenance plus a reusable license, explicit permission, or another documented editorial permission basis.",
+    "searchHint": "MultiState Texas 2026 House District candidate official campaign portrait",
+    "notes": "New source discovered August 27, 2026. Current district pages confirm missing-photo candidates including Albert Hunter, Liz Ramos, and Kyle Harding as general-election candidates and can bridge sparse records to additional source discovery. It is a discovery source, not an automatic image-rights source."
+  },
+  {
+    "domain": "rosafortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Oscar Rosa's official Texas House District 35 campaign website to verify candidate identity, office, and discover candidate-supplied portraits, campaign media, or press materials. Do not approve or reuse any image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Oscar Rosa Texas House District 35 official campaign portrait press media",
+    "notes": "New source discovered August 27, 2026. The site identifies Oscar Rosa as the District 35 candidate and is campaign-controlled, making it a strong path to candidate-supplied media. Treat imagery as discovery-only until item-level reuse rights are established."
+  },
+  {
+    "domain": "teresafortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Teresa Johnson-Hernandez's official Texas House District 42 campaign website to verify candidate identity, office, and discover candidate-supplied portraits, campaign media, or press materials. Do not approve or reuse any image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Teresa Johnson-Hernandez Texas House District 42 official campaign portrait press media",
+    "notes": "New source discovered August 27, 2026. TCTA links this site as the candidate's website for House District 42. Treat campaign imagery as discovery-only unless item-level reuse rights are documented."
+  },
+  {
+    "domain": "gcdptx.org",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Galveston County Democratic Party candidate directories to corroborate current candidate identity, office, and local party participation and to discover downstream official campaign, event, or candidate-supplied media sources. Do not approve or reuse party-hosted images without item-level provenance plus a reusable license, explicit permission, candidate-supplied status with an editorial permission basis, or another documented reuse basis.",
+    "searchHint": "Galveston County Democratic Party 2026 Frank Carr Texas House 24 candidate portrait campaign",
+    "notes": "New source discovered August 27, 2026. The current state-legislative candidate directory includes missing-photo candidate Frank N. Carr for House District 24 and other local candidates. The page explicitly says its candidate material is informational and not authorized by candidate committees, so hosted imagery remains discovery-only absent separate rights documentation."
+  }
+]
