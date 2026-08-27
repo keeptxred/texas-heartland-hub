@@ -19,12 +19,15 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
-      - name: Install browser dependencies
+      - name: Install browser and media dependencies
         shell: bash
         run: |
           set -euo pipefail
           bun install --frozen-lockfile
           bunx playwright install --with-deps chromium
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          ffmpeg -version | head -n 1
 
       - name: Resolve and download the approved Visla test Reel
         shell: bash
@@ -68,13 +71,7 @@ jobs:
           VIDEO_URL="$(cat .visla-video-url)"
           VIDEO_TYPE="$(cat .visla-video-type)"
           if [[ "$VIDEO_URL" == *".m3u8"* || "$VIDEO_URL" == *"m3u8"* || "$VIDEO_TYPE" == *"mpegURL"* || "$VIDEO_TYPE" == *"mpegurl"* ]]; then
-            FFMPEG_BIN="$(find "$HOME/.cache/ms-playwright" -type f \( -name 'ffmpeg' -o -name 'ffmpeg-linux' \) -print -quit)"
-            if [[ -z "$FFMPEG_BIN" ]]; then
-              echo 'Playwright FFmpeg binary was not found.' >&2
-              exit 1
-            fi
-            chmod +x "$FFMPEG_BIN"
-            "$FFMPEG_BIN" -hide_banner -loglevel error -y -i "$VIDEO_URL" -c copy texasdefined-test-reel.mp4
+            ffmpeg -hide_banner -loglevel error -y -i "$VIDEO_URL" -c copy texasdefined-test-reel.mp4
           else
             curl -L --fail-with-body --silent --show-error --max-time 180 "$VIDEO_URL" -o texasdefined-test-reel.mp4
           fi
