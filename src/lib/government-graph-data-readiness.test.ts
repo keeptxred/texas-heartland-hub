@@ -19,13 +19,14 @@ describe("government graph detail readiness", () => {
     expect(heldOut.length).toBeGreaterThan(0);
   });
 
-  it("only exposes indexable data detail pages through the news reference graph", () => {
+  it("exposes exactly the data detail pages that pass the page readiness gate", () => {
     const bySlug = new Map(allDataSets.map((dataset) => [dataset.slug, dataset]));
     const dataNodes = GOVERNMENT_GRAPH_NODES.filter(
       (node) => node.kind === "data" && node.href.startsWith("/data/"),
     );
-    expect(dataNodes.length).toBeGreaterThan(0);
+    const indexableDataSets = allDataSets.filter(isDataDetailIndexable);
 
+    expect(dataNodes).toHaveLength(indexableDataSets.length);
     for (const node of dataNodes) {
       const dataset = bySlug.get(node.href.slice("/data/".length));
       expect(dataset, `missing dataset for graph node ${node.href}`).toBeTruthy();
