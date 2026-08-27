@@ -3,13 +3,32 @@ import { TEXAS_POLITICAL_FIGURES } from "@/data/texas-political-figures";
 import { POLITICAL_FIGURE_HEROES } from "@/data/texas-political-figure-heroes";
 
 const ALLOWED_LICENSES = new Set(["Public domain", "CC BY-SA 4.0"]);
+const AUDITED_EXTENDED_HERO_SLUGS = [
+  "allan-shivers-texas-shivercrats-realignment",
+  "john-connally-texas-governor-party-switch",
+  "john-tower-texas-senator-republican-breakthrough",
+  "kay-bailey-hutchison-texas-senator",
+  "dick-armey-texas-house-majority-leader",
+  "tom-delay-texas-house-majority-leader",
+  "ron-paul-texas-libertarian-conservative",
+  "kevin-brady-texas-ways-means-chair",
+  "jeb-hensarling-texas-financial-services-chair",
+] as const;
 
 describe("Texas political figure hero rights", () => {
   it("covers every original evergreen political figure with one vetted hero", () => {
-    expect(Object.keys(POLITICAL_FIGURE_HEROES)).toHaveLength(TEXAS_POLITICAL_FIGURES.length);
     for (const figure of TEXAS_POLITICAL_FIGURES) {
       expect(POLITICAL_FIGURE_HEROES[figure.slug], figure.slug).toBeDefined();
     }
+  });
+
+  it("preserves the audited extended rights-vetted cohort", () => {
+    for (const slug of AUDITED_EXTENDED_HERO_SLUGS) {
+      expect(POLITICAL_FIGURE_HEROES[slug], slug).toBeDefined();
+    }
+    expect(Object.keys(POLITICAL_FIGURE_HEROES).length).toBeGreaterThanOrEqual(
+      TEXAS_POLITICAL_FIGURES.length + AUDITED_EXTENDED_HERO_SLUGS.length,
+    );
   });
 
   it("keeps item-level Wikimedia provenance, attribution, and approved licenses", () => {
