@@ -1,9 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
-  Link,
   createRootRouteWithContext,
-  useLocation,
   useRouter,
   HeadContent,
   Scripts,
@@ -16,12 +14,6 @@ import { SiteFooter } from "../components/site-footer";
 import { SiteNotFound } from "../components/site-not-found";
 import { ArticleSourceTransparencyPanel } from "../components/article-source-transparency";
 import { organizationJsonLd } from "../lib/seo";
-import { exploreDestinations } from "../data/explore/all-destinations";
-import { isPublicCavernDestination, relatedCaverns } from "../lib/explore/cavern-discovery";
-import {
-  buildCavernBreadcrumbSchema,
-  buildRelatedCavernItemListSchema,
-} from "../lib/explore/cavern-structured-data";
 
 const ADSENSE_CLIENT = "ca-pub-1891256141359926";
 const ADSENSE_SCRIPT = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`;
@@ -136,72 +128,6 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
-function CavernGuideTrail() {
-  const location = useLocation();
-  const slug = location.pathname.match(/^\/explore\/([^/]+)\/?$/)?.[1];
-  if (!slug || slug === "caverns" || slug === "search" || slug === "trip-planner") return null;
-
-  const cavern = exploreDestinations.find(
-    (destination) => destination.slug === slug && isPublicCavernDestination(destination),
-  );
-  if (!cavern) return null;
-
-  const recommendations = relatedCaverns(cavern, exploreDestinations, 3);
-  const breadcrumbSchema = buildCavernBreadcrumbSchema(cavern);
-  const relatedSchema = buildRelatedCavernItemListSchema(cavern, recommendations);
-  const structuredData = [breadcrumbSchema, relatedSchema].filter(Boolean);
-
-  return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
-        }}
-      />
-      <aside className="border-y bg-muted/30" aria-label="Texas cavern guide navigation">
-        <div className="mx-auto max-w-6xl px-4 py-6">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
-                Texas caverns
-              </p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Compare this destination with other guided cave tours, visitor policies, and
-                underground attractions across Texas.
-              </p>
-            </div>
-            <Link
-              to="/explore/caverns"
-              className="shrink-0 text-sm font-semibold text-primary hover:underline"
-            >
-              Explore all Texas caverns and caves
-            </Link>
-          </div>
-
-          {recommendations.length > 0 && (
-            <div className="mt-5 grid gap-3 sm:grid-cols-3">
-              {recommendations.map((related) => (
-                <Link
-                  key={related.slug}
-                  to="/explore/$slug"
-                  params={{ slug: related.slug }}
-                  className="rounded-lg border bg-background p-4 transition-colors hover:border-primary hover:bg-primary/5"
-                >
-                  <span className="block font-semibold">{related.name}</span>
-                  <span className="mt-1 block text-sm text-muted-foreground">
-                    {[related.city, related.region].filter(Boolean).join(", ")}
-                  </span>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-      </aside>
-    </>
-  );
-}
-
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
@@ -212,7 +138,6 @@ function RootComponent() {
         <main className="flex-1">
           <Outlet />
           <ArticleSourceTransparencyPanel />
-          <CavernGuideTrail />
         </main>
         <SiteFooter />
       </div>
