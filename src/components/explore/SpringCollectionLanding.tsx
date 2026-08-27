@@ -1,11 +1,8 @@
-import { Link } from "@tanstack/react-router";
 import { Droplets, MapPinned, ShieldCheck } from "lucide-react";
 import { EntityGrid } from "@/components/explore/EntityGrid";
 import { Button } from "@/components/ui/button";
 import type { MajorSpringDiscoveryCollection } from "@/data/explore/collections.major-springs";
 import type { ExploreEntity } from "@/types/explore/public";
-
-const searchDefaults = { page: 1, pageSize: 24, sort: "relevance" as const };
 
 export function SpringCollectionLanding({
   collection,
@@ -45,9 +42,9 @@ export function SpringCollectionLanding({
       <section className="border-b bg-muted/30">
         <div className="mx-auto max-w-6xl px-4 py-16 md:py-24">
           <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
-            <Link to="/explore" className="hover:text-primary hover:underline">
+            <a href="https://texasdefined.com/explore" className="hover:text-primary hover:underline">
               Explore Texas
-            </Link>{" "}
+            </a>{" "}
             / {collection.title}
           </nav>
           <p className="mt-8 text-xs font-bold uppercase tracking-[0.25em] text-primary">
@@ -61,12 +58,12 @@ export function SpringCollectionLanding({
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Button asChild>
-              <Link to="/explore/search" search={{ ...searchDefaults, q: "Texas springs" }}>
+              <a href="https://texasdefined.com/explore/search?q=Texas%20springs">
                 <MapPinned /> Browse spring destinations
-              </Link>
+              </a>
             </Button>
             <Button asChild variant="outline">
-              <Link to="/explore/trip-planner">Plan a Texas trip</Link>
+              <a href="https://texasdefined.com/explore/trip-planner">Plan a Texas trip</a>
             </Button>
           </div>
         </div>
