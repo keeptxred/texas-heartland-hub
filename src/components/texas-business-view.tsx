@@ -187,7 +187,7 @@ export function TexasBusinessView({ topic }: { topic: string }) {
       <section className="mt-16 border-t border-border pt-10">
         <h2 className="font-sans text-2xl font-semibold tracking-tight text-foreground">More from Keep Texas Red</h2>
         <ul className="mt-4 grid sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
-          <li><Link to="/texas-news" className="text-primary hover:underline">Texas News →</Link></li>
+          <li><Link to="/news" className="text-primary hover:underline">Texas News →</Link></li>
           <li><Link to="/texas-politics" className="text-primary hover:underline">Texas Politics →</Link></li>
           <li><Link to="/houston" className="text-primary hover:underline">Houston News →</Link></li>
           <li><Link to="/texas-sports" className="text-primary hover:underline">Texas Sports →</Link></li>

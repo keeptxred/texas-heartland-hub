@@ -145,7 +145,7 @@ export function TexasNewsView({
             return (
               <Link
                 key={s.id}
-                to={active ? "/texas-news" : "/texas-news/$topic"}
+                to={active ? "/news" : "/texas-news/$topic"}
                 params={active ? undefined : { topic: s.id }}
                 className={`group block border-2 p-5 transition-colors ${
                   active
@@ -179,7 +179,7 @@ export function TexasNewsView({
             </p>
           </div>
           {activeSection && (
-            <Link to="/texas-news" className="text-sm text-primary hover:underline">
+            <Link to="/news" className="text-sm text-primary hover:underline">
               Show all Texas news →
             </Link>
           )}
@@ -193,7 +193,7 @@ export function TexasNewsView({
                   : "No articles currently available in this topic. Browse related Texas coverage."}
               </p>
               <Link
-                to={topic === "sports" ? "/texas-sports" : "/texas-news"}
+                to={topic === "sports" ? "/texas-sports" : "/news"}
                 className="mt-3 inline-block text-sm text-primary hover:underline"
               >
                 {topic === "sports" ? "Browse Texas Sports →" : "← Back to all Texas news"}
