@@ -2,15 +2,15 @@ import { describe, expect, it } from "vitest";
 import { getGovernmentGraphLinks } from "@/lib/government-graph";
 
 describe("Government Graph matching", () => {
-  it("connects property-tax reporting to permanent policy and data references", () => {
+  it("connects property-tax reporting to durable hubs without leaking quarantined details", () => {
     const links = getGovernmentGraphLinks(
-      "Texas property tax appraisal values and homestead exemptions are driving a new debate over local tax burdens and appraisal districts.",
+      "Texas property tax data, appraisal values and homestead exemptions are driving a new debate over local tax burdens and appraisal districts.",
       8,
     );
     const hrefs = links.map((link) => link.href);
 
-    expect(hrefs.some((href) => href.startsWith("/policy/"))).toBe(true);
-    expect(hrefs.some((href) => href.startsWith("/data/") || href.startsWith("/laws/topic/"))).toBe(true);
+    expect(hrefs).toContain("/data");
+    expect(hrefs).not.toContain("/data/property-tax");
   });
 
   it("connects election reporting to Election Central", () => {
@@ -22,22 +22,28 @@ describe("Government Graph matching", () => {
     expect(links.some((link) => link.href === "/elections/2026")).toBe(true);
   });
 
-  it("connects procurement reporting to Texas Contract Watch", () => {
+  it("connects procurement reporting to durable government/data hubs while Contract Watch is quarantined", () => {
     const links = getGovernmentGraphLinks(
-      "A state agency awarded a procurement contract to a vendor after a competitive solicitation and later amended the contract value.",
+      "A state agency awarded a procurement contract and published contract data after a competitive solicitation and later amendment.",
       8,
     );
+    const hrefs = links.map((link) => link.href);
 
-    expect(links.some((link) => link.href === "/data/contracts")).toBe(true);
+    expect(hrefs).toContain("/data");
+    expect(hrefs).toContain("/texas-government/agencies");
+    expect(hrefs).not.toContain("/data/contracts");
   });
 
-  it("connects agency rulemaking reporting to Texas Rule Watch", () => {
+  it("connects agency rulemaking reporting to durable government/data hubs while Rule Watch is quarantined", () => {
     const links = getGovernmentGraphLinks(
-      "The agency published a proposed rule with a public comment deadline before adoption and an eventual effective date.",
+      "The state agency published proposed rule data with a public comment deadline before adoption and an eventual effective date.",
       8,
     );
+    const hrefs = links.map((link) => link.href);
 
-    expect(links.some((link) => link.href === "/data/rules")).toBe(true);
+    expect(hrefs).toContain("/data");
+    expect(hrefs).toContain("/texas-government/agencies");
+    expect(hrefs).not.toContain("/data/rules");
   });
 
   it("honors exclusions so pages do not recommend duplicate destinations", () => {
