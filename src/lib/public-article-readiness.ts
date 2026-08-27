@@ -2,6 +2,7 @@ import { hasSeoDuplicateFlag } from "@/lib/article-canonical";
 
 export type PublicArticleCandidate = {
   category?: string | null;
+  discover_category?: string | null;
   source_name?: string | null;
   source_url?: string | null;
   published_at?: string | null;
@@ -15,6 +16,19 @@ type BodyShape = {
   sources?: unknown;
 };
 
+/**
+ * KeepTXRed's durable editorial boundary is politics, government, hard news,
+ * material business developments, and Texas sports. Lifestyle/culture/history
+ * coverage belongs on TexasDefined. These legacy Discover labels are explicit
+ * enough to block without headline heuristics, which keeps the public gate
+ * deterministic and prevents restored lifestyle URLs from leaking back into
+ * KTR discovery surfaces.
+ */
+const TEXASDEFINED_DISCOVER_CATEGORIES = new Set([
+  "texas culture",
+  "texas history",
+]);
+
 function sourceReferenceCount(bodyJson: unknown): number {
   if (!bodyJson || typeof bodyJson !== "object") return 0;
   const sources = (bodyJson as BodyShape).sources;
@@ -27,9 +41,14 @@ function validDate(value: unknown): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
+function isTexasDefinedDiscoverCategory(value: string | null | undefined): boolean {
+  return TEXASDEFINED_DISCOVER_CATEGORIES.has((value ?? "").trim().toLowerCase());
+}
+
 export function isPublicArticleReady(article: PublicArticleCandidate): boolean {
   if (hasSeoDuplicateFlag(article.quality_flags)) return false;
   if ((article.category ?? "").trim().toLowerCase() === "non-political") return false;
+  if (isTexasDefinedDiscoverCategory(article.discover_category)) return false;
   if ((article.content_quality_score ?? 0) < 60) return false;
 
   const sourceRefs = sourceReferenceCount(article.body_json);
