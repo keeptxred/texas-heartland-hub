@@ -130,6 +130,16 @@ WITH (security_invoker = true)
 AS
 SELECT
   h.*,
+  -- Keep recommended_action in its existing position so CREATE OR REPLACE VIEW
+  -- remains backward-compatible; append fetch telemetry after it.
+  CASE
+    WHEN f.source_name IS NULL THEN 'wait_for_or_trigger_fetch'
+    WHEN f.last_checked_at < now() - interval '2 hours' THEN 'check_ingestion_cron'
+    WHEN coalesce(f.consecutive_failures, 0) >= 2 THEN 'repair_or_replace_source'
+    WHEN f.last_status BETWEEN 200 AND 299 AND f.last_item_count = 0 THEN 'monitor_quiet_feed'
+    WHEN h.coverage_rate_7d < 10 AND h.items_7d >= 5 THEN 'review_relevance_or_routing'
+    ELSE 'none'
+  END AS recommended_action,
   f.last_checked_at AS fetch_checked_at,
   f.last_status AS fetch_status,
   f.last_item_count AS fetch_item_count,
@@ -144,15 +154,7 @@ SELECT
     WHEN f.last_status BETWEEN 200 AND 299 AND f.last_item_count = 0 THEN 'quiet'
     WHEN f.last_status BETWEEN 200 AND 299 AND f.last_item_count > 0 THEN 'healthy'
     ELSE 'degraded'
-  END AS fetch_health_status,
-  CASE
-    WHEN f.source_name IS NULL THEN 'wait_for_or_trigger_fetch'
-    WHEN f.last_checked_at < now() - interval '2 hours' THEN 'check_ingestion_cron'
-    WHEN coalesce(f.consecutive_failures, 0) >= 2 THEN 'repair_or_replace_source'
-    WHEN f.last_status BETWEEN 200 AND 299 AND f.last_item_count = 0 THEN 'monitor_quiet_feed'
-    WHEN h.coverage_rate_7d < 10 AND h.items_7d >= 5 THEN 'review_relevance_or_routing'
-    ELSE 'none'
-  END AS recommended_action
+  END AS fetch_health_status
 FROM public.news_source_health h
 LEFT JOIN public.news_source_fetch_state f
   ON lower(f.source_name) = lower(h.source_name)
