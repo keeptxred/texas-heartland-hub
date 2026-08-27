@@ -50,12 +50,11 @@ jobs:
 
           make_photo_scene() {
             local input="$1" output="$2" duration="$3" title="$4" subtitle="$5"
+            local frames
+            frames=$(python3 -c "print(int(float('$duration') * 30))")
             ffmpeg -hide_banner -loglevel error -y -loop 1 -t "$duration" -i "$input" \
               -vf "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,
-                   zoompan=z='min(zoom+0.00045,1.045)':d=$(python3 - <<PY
-print(int(float('$duration')*30))
-PY
-):s=1080x1920:fps=30,
+                   zoompan=z='min(zoom+0.00045,1.045)':d=${frames}:s=1080x1920:fps=30,
                    drawbox=x=60:y=1320:w=960:h=360:color=black@0.48:t=fill,
                    drawtext=fontfile=${BOLD}:text='${title}':fontcolor=white:fontsize=82:x=100:y=1390,
                    drawtext=fontfile=${REG}:text='${subtitle}':fontcolor=white:fontsize=46:x=100:y=1515" \
@@ -138,7 +137,7 @@ PY
           DESCRIPTION='Texas can look completely different from one corner to the next. Guadalupe Mountains, Caddo Lake, and Padre Island show just how much variety the state has. Which one would you visit first? https://texasdefined.com #Texas #TexasTravel #TexasDefined #ExploreTexas Image sources: National Park Service and U.S. Fish & Wildlife Service via Wikimedia Commons.'
 
           OIDC_JSON=$(curl -fsSL -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-facebook")
-          OIDC_TOKEN=$(printf '%s' "$OIDIDC_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin)["value"])')
+          OIDC_TOKEN=$(printf '%s' "$OIDC_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin)["value"])')
           HTTP_CODE=$(curl -sS -o response.json -w '%{http_code}' \
             -X POST "$ENDPOINT" \
             -H "Authorization: Bearer $OIDC_TOKEN" \
