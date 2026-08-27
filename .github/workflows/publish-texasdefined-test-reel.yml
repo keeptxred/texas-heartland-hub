@@ -45,7 +45,7 @@ jobs:
           make_scene() {
             input="$1"; output="$2"; duration="$3"; title="$4"; subtitle="$5"; title_size="$6"
             ffmpeg -hide_banner -loglevel error -y -loop 1 -t "$duration" -i "$input" \
-              -vf "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,drawbox=x=90:y=1290:w=900:h=330:color=black@0.55:t=fill,drawtext=fontfile=${BOLD}:text='${title}':fontcolor=white:fontsize=${title_size}:x=(w-text_w)/2:y=1360,drawtext=fontfile=${REG}:text='${subtitle}':fontcolor=white:fontsize=36:x=(w-text_w)/2:y=1490,fade=t=in:st=0:d=0.2,fade=t=out:st=$(python3 -c "print(max(0,float('$duration')-0.2))"):d=0.2" \
+              -vf "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,drawbox=x=90:y=1290:w=900:h=330:color=black@0.55:t=fill,drawtext=fontfile=${BOLD}:text='${title}':fontcolor=white:fontsize=${title_size}:x=(w-text_w)/2:y=1360,drawtext=fontfile=${REG}:text='${subtitle}':fontcolor=white:fontsize=36:x=(w-text_w)/2:y=1490" \
               -an -c:v libx264 -preset veryfast -crf 20 -pix_fmt yuv420p -r 30 "$output"
           }
 
@@ -61,7 +61,7 @@ jobs:
             -vf "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,drawbox=x=110:y=610:w=860:h=540:color=black@0.60:t=fill,drawtext=fontfile=${BOLD}:text='TEXAS DOES NOT LOOK':fontcolor=white:fontsize=54:x=(w-text_w)/2:y=700,drawtext=fontfile=${BOLD}:text='THE SAME':fontcolor=0xf2c14e:fontsize=88:x=(w-text_w)/2:y=835,drawtext=fontfile=${BOLD}:text='EVERYWHERE':fontcolor=white:fontsize=70:x=(w-text_w)/2:y=985" \
             -an -c:v libx264 -preset veryfast -crf 20 -pix_fmt yuv420p -r 30 summary.mp4
 
-          ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'color=c=0x080808:s=1080x1920:r=30:d=5' \
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'color=c=0x080808:s=1080x1920:r=30:d=3' \
             -vf "drawtext=fontfile=${BOLD}:text='TexasDefined.com':fontcolor=white:fontsize=72:x=(w-text_w)/2:y=800,drawtext=fontfile=${REG}:text='See more of Texas':fontcolor=0xf2c14e:fontsize=40:x=(w-text_w)/2:y=915" \
             -an -c:v libx264 -preset veryfast -crf 18 -pix_fmt yuv420p -r 30 end.mp4
 
@@ -79,8 +79,8 @@ jobs:
           ffmpeg -hide_banner -loglevel error -y -ss 5 -i texasdefined-fresh-reel.mp4 -frames:v 1 -vf scale=270:480 frame-guadalupe.jpg
           ffmpeg -hide_banner -loglevel error -y -ss 10 -i texasdefined-fresh-reel.mp4 -frames:v 1 -vf scale=270:480 frame-caddo.jpg
           ffmpeg -hide_banner -loglevel error -y -ss 15 -i texasdefined-fresh-reel.mp4 -frames:v 1 -vf scale=270:480 frame-padre.jpg
-          ffmpeg -hide_banner -loglevel error -y -ss 21 -i texasdefined-fresh-reel.mp4 -frames:v 1 -vf scale=270:480 frame-summary.jpg
-          ffmpeg -hide_banner -loglevel error -y -ss 25 -i texasdefined-fresh-reel.mp4 -frames:v 1 -vf scale=270:480 frame-end.jpg
+          ffmpeg -hide_banner -loglevel error -y -ss 20 -i texasdefined-fresh-reel.mp4 -frames:v 1 -vf scale=270:480 frame-summary.jpg
+          ffmpeg -hide_banner -loglevel error -y -ss 23 -i texasdefined-fresh-reel.mp4 -frames:v 1 -vf scale=270:480 frame-end.jpg
           ffmpeg -hide_banner -loglevel error -y -i frame-hook.jpg -i frame-guadalupe.jpg -i frame-caddo.jpg -i frame-padre.jpg -i frame-summary.jpg -i frame-end.jpg -filter_complex '[0:v][1:v][2:v]hstack=inputs=3[top];[3:v][4:v][5:v]hstack=inputs=3[bottom];[top][bottom]vstack=inputs=2[out]' -map '[out]' -q:v 5 review-contact-sheet.jpg
 
       - name: Upload Reel preview
