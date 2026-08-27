@@ -37,4 +37,24 @@ describe("article source authority", () => {
       { label: "Texas Secretary of State", url: "https://www.sos.state.tx.us/elections/" },
     ]);
   });
+
+  it("routes migrated calculator links directly to TexasDefined before rendering", () => {
+    const body = dedupeArticleBody({
+      intro: ["Use the [Texas Mortgage Calculator](/tools/mortgage-calculator?price=350000) before choosing a home."],
+      sections: [
+        {
+          heading: "Compare costs",
+          paragraphs: [
+            "Estimate taxes with the [Texas Property Tax Calculator](/tools/property-tax-calculator#estimate), but keep the [Texas budget tool](/tools/texas-budget-headroom) on Keep TX Red.",
+          ],
+        },
+      ],
+      faq: [],
+      sources: [],
+    });
+
+    expect(body.intro?.[0]).toContain("https://texasdefined.com/texas-mortgage-calculator?price=350000");
+    expect(body.sections?.[0]?.paragraphs?.[0]).toContain("https://texasdefined.com/decide/property-taxes#estimate");
+    expect(body.sections?.[0]?.paragraphs?.[0]).toContain("/tools/texas-budget-headroom");
+  });
 });
