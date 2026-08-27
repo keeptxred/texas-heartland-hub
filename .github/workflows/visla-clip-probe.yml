@@ -1,0 +1,44 @@
+name: Visla clip probe
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/visla-clip-probe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Fetch shared Visla clip page
+        shell: bash
+        run: |
+          set -euo pipefail
+          url='https://app.visla.us/clip/1540580154592547701'
+          curl -L --fail-with-body --silent --show-error --max-time 60 \
+            -A 'Mozilla/5.0' "$url" -o /tmp/visla.html
+          echo "bytes=$(wc -c </tmp/visla.html)"
+          python3 - <<'PY'
+          import html, re
+          text=open('/tmp/visla.html','r',encoding='utf-8',errors='ignore').read()
+          text=html.unescape(text).replace('\\u0026','&').replace('\\/','/')
+          urls=[]
+          for m in re.finditer(r'https://[^\"\'<>\\s]+', text):
+              u=m.group(0)
+              if '.mp4' in u.lower() or 'video' in u.lower() or 'media' in u.lower():
+                  urls.append(u)
+          seen=[]
+          for u in urls:
+              if u not in seen:
+                  seen.append(u)
+          print('candidate_count=', len(seen))
+          for u in seen[:30]:
+              print('CANDIDATE', u[:1000])
+          if not any('.mp4' in u.lower() for u in seen):
+              raise SystemExit('No direct MP4 URL found in Visla page HTML')
+          PY
