@@ -8,6 +8,7 @@ import {
   xmlResponse,
 } from "@/lib/sitemap-shared";
 import { ARTICLES, isPublished } from "@/data/articles";
+import { ARTICLE_BODIES } from "@/data/article-bodies";
 import { listSitemapArticles } from "@/lib/evergreen.functions";
 import { getProducts } from "@/lib/products.functions";
 import { AUTHORS, authorSlug } from "@/data/authors";
@@ -27,6 +28,7 @@ export const Route = createFileRoute("/sitemap.xml")({
         const localArticles = ARTICLES.filter((article) =>
           isPublished(article)
           && isStaticArticleIndexable(article)
+          && Boolean(ARTICLE_BODIES[article.slug])
           && isArticleSlugDateConsistent(article.slug, article.publishedAt),
         );
         let cloudArticles: Array<{
