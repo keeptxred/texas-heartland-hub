@@ -12,6 +12,7 @@ type Item = {
   source: string;
   description: string;
 };
+type IngestRow = Item & { trend_source: string };
 
 type SourceMode = "rss" | "tpwd-html" | "texas-standard-html" | "html-links";
 type Source = {
@@ -81,6 +82,7 @@ const VERIFIED_YOUTUBE = new Map<string, string>([
 const TRANSIENT_STATUS = new Set([408, 425, 429, 500, 502, 503, 504]);
 const GOOGLE_NEWS_RE = /^https:\/\/news\.google\.com\/rss\/search/i;
 const GOOGLE_FEEDS_PER_RUN = 10;
+const OFFICIAL_HYPERLOCAL_SOURCE_RE = /— CivicEngage$/i;
 const TEXAS_LOCATION_RE = /\b(texas|tx|amarillo|austin|beaumont|brownsville|college station|corpus christi|dallas|del rio|eagle pass|el paso|fort worth|galveston|harlingen|hereford|houston|killeen|laredo|longview|lubbock|mcallen|midland|odessa|san angelo|san antonio|temple|texarkana|tyler|victoria|waco|webb county|bexar county|harris county|tarrant county|travis county|denton county|collin county|rio grande valley|panhandle)\b/i;
 const HTML_NAV_RE = /\b(home|about|contact|privacy|terms|advertise|subscribe|newsletter|weather|watch live|shop|careers|login|sign in|search|facebook|instagram|youtube|twitter|x)\b/i;
 
@@ -293,7 +295,11 @@ async function loadSources(): Promise<{ sources: Source[]; skippedLegacyYoutube:
   return { sources: list, skippedLegacyYoutube };
 }
 
-function isTexasRelevant(item: Item): boolean {
+function isTexasRelevant(item: Item, configuredSource: string): boolean {
+  // Official municipal CivicEngage feeds are explicitly allowlisted Texas primary sources.
+  // Their agenda titles are often generic ("Regular Meeting") and should not be discarded
+  // merely because the city/state name lives in the configured feed identity, not the title.
+  if (OFFICIAL_HYPERLOCAL_SOURCE_RE.test(configuredSource)) return true;
   const result = scoreFeedItem({ title: item.title, source: item.source, pub_date: item.pub_date, description: item.description });
   return result.texasRelevanceScore >= TEXAS_RELEVANCE_MIN;
 }
@@ -330,11 +336,17 @@ async function handler() {
   const directResults = await mapWithConcurrency(direct, 8, fetchSource);
   const googleResults = await mapWithConcurrency(google, 4, fetchSource);
   const results = [...directResults, ...googleResults];
-  const unique = new Map<string, Item>();
+  const unique = new Map<string, IngestRow>();
+  const attributionGroups = new Map<string, string[]>();
   for (const result of results) {
     for (const item of result.items) {
-      if (!isTexasRelevant(item)) continue;
-      if (!unique.has(item.link)) unique.set(item.link, item);
+      if (!isTexasRelevant(item, result.source)) continue;
+      if (!unique.has(item.link)) {
+        unique.set(item.link, { ...item, trend_source: result.source });
+        const links = attributionGroups.get(result.source) ?? [];
+        links.push(item.link);
+        attributionGroups.set(result.source, links);
+      }
     }
   }
   const rows = [...unique.values()];
@@ -343,6 +355,17 @@ async function handler() {
     const { count, error } = await supabaseAdmin.from("texas_news_feed").upsert(rows, { onConflict: "link", ignoreDuplicates: true, count: "exact" });
     if (error) return Response.json({ ok: false, error: error.message }, { status: 500 });
     inserted = count ?? 0;
+
+    // Existing rows may predate attribution. Backfill only a missing trend_source;
+    // never overwrite an earlier configured-source attribution.
+    await Promise.all([...attributionGroups.entries()].map(async ([trendSource, links]) => {
+      const { error: attributionError } = await supabaseAdmin
+        .from("texas_news_feed")
+        .update({ trend_source: trendSource })
+        .in("link", links)
+        .is("trend_source", null);
+      if (attributionError) console.warn("[ingest-feeds] trend_source backfill failed", trendSource, attributionError.message);
+    }));
   }
   const diag = results.map(({ items, ...rest }) => ({ ...rest, count: items.length }));
   return Response.json({
