@@ -19,6 +19,7 @@ export const SITE_NAV_GROUPS = [
     description: "Texas politics, the Legislature, bills, officials, laws, and civic resources.",
     links: [
       { to: "/texas-politics", label: "Texas Politics", description: "State government, campaigns, officials, and policy." },
+      { to: "/texas-government", label: "Texas Government", description: "Offices, leaders, constitutional powers, agencies, and highest courts." },
       { to: "/texas-legislature", label: "Texas Legislature", description: "Sessions, chambers, committees, and lawmakers." },
       { to: "/bills", label: "Track Texas Bills", description: "Search legislation, sponsors, actions, and documents." },
       { to: "/representatives", label: "Representatives", description: "Browse Texas lawmakers and public officials." },
