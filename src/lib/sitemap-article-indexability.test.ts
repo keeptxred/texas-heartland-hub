@@ -8,8 +8,8 @@ const evergreenSitemap = join(ROOT, "src/routes/sitemap-evergreen[.]xml.ts");
 const newsSitemap = join(ROOT, "src/routes/sitemap-news[.]xml.ts");
 
 describe("article sitemap indexability alignment", () => {
-  it("does not advertise static fallback articles without substantive bodies", () => {
-    for (const path of [sitemapIndex, evergreenSitemap, newsSitemap]) {
+  it("does not publish static fallback articles without substantive bodies", () => {
+    for (const path of [evergreenSitemap, newsSitemap]) {
       const source = readFileSync(path, "utf8");
       expect(source).toContain('from "@/data/article-bodies"');
       expect(source).toContain("ARTICLE_BODIES");
@@ -23,8 +23,10 @@ describe("article sitemap indexability alignment", () => {
     expect(news).toContain("hasSubstantiveStaticBody(a.slug)");
   });
 
-  it("uses the same body requirement when computing sitemap index counts", () => {
+  it("keeps both guarded article sitemaps advertised by the deterministic root index", () => {
     const index = readFileSync(sitemapIndex, "utf8");
-    expect(index).toContain("Boolean(ARTICLE_BODIES[article.slug])");
+    expect(index).toContain('"sitemap-evergreen.xml"');
+    expect(index).toContain('"sitemap-news.xml"');
+    expect(index).not.toContain("ARTICLE_BODIES");
   });
 });
