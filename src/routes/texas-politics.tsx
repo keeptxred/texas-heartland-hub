@@ -14,6 +14,7 @@ const SECTIONS = [
   { title: "Political Reference", description: "Races, redistricting, voter trends, policy questions, PACs, and campaign activity — 50 source-backed search guides.", href: "/texas-political-reference" },
   { title: "Political Figures", description: "Evergreen, source-backed profiles connecting major Texas political careers to the state's Republican realignment and governing institutions.", href: "/texas-politics/figures" },
   { title: "How Texas Became Republican", description: "A sourced timeline of Texas's shift from one-party Democratic rule to Republican statewide and legislative control.", href: "/texas-politics/how-texas-became-republican" },
+  { title: "Reconstruction Republicans", description: "The first Texas Republican era: Unionists, Black political leaders, the Davis administration, and the party's post-Reconstruction survival.", href: "/texas-politics/reconstruction-republicans" },
   { title: "State Legislature", description: "Bills, special sessions, and the conservative caucus in Austin.", href: "/texas-legislature" },
   { title: "Governor & Leadership", description: "The Governor, Lt. Governor, AG, and statewide officeholders.", href: "/representatives" },
   { title: "Voting & Policy", description: "Voter ID, registration, election integrity, and ballot access.", href: "/elections/voting" },
@@ -110,10 +111,13 @@ function TexasPoliticsPage() {
               Our <a href="/texas-political-reference" className="font-semibold text-primary underline underline-offset-4">Texas Political Reference</a> answers the high-intent questions behind the daily headlines — current races, map changes, voter trends, policy disputes, campaign finance, PACs, and public grassroots events — with dated status and source links.
             </p>
             <p>
-              The <a href="/texas-politics/figures" className="font-semibold text-primary underline underline-offset-4">Texas Political Figures</a> library supplies the historical people layer: source-backed evergreen profiles of governors, senators, speakers, congressional leaders and other figures who shaped Texas's partisan realignment and conservative governing institutions.
+              The <a href="/texas-politics/figures" className="font-semibold text-primary underline underline-offset-4">Texas Political Figures</a> library supplies the historical people layer: source-backed evergreen profiles of governors, senators, speakers, congressional leaders and other figures who shaped Texas's partisan realignment and governing institutions.
             </p>
             <p>
-              Our <a href="/texas-politics/how-texas-became-republican" className="font-semibold text-primary underline underline-offset-4">How Texas Became Republican</a> guide connects those individual careers to the larger chronology, from the 1952 Shivercrat split and John Tower's 1961 Senate victory through the 1998 statewide sweep and the Republican takeover of the Texas House after the 2002 election.
+              The <a href="/texas-politics/reconstruction-republicans" className="font-semibold text-primary underline underline-offset-4">Texas Republicans During Reconstruction</a> guide goes back to the party's 1867 origins, when Unionists and newly enfranchised Black Texans built the state's first Republican organization. It covers the Edmund J. Davis government, Black political leadership, the collapse of Republican state control in 1874, and the later Black-and-Tan versus Lily-White struggle.
+            </p>
+            <p>
+              Our <a href="/texas-politics/how-texas-became-republican" className="font-semibold text-primary underline underline-offset-4">How Texas Became Republican</a> guide then follows the separate modern realignment, from the 1952 Shivercrat split and John Tower's 1961 Senate victory through the 1998 statewide sweep and the Republican takeover of the Texas House after the 2002 election.
             </p>
           </div>
         </section>
