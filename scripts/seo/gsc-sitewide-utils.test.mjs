@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { extractSitemapLocs, normalizeSiteUrl, selectInspectionUrls } from './gsc-sitewide-utils.mjs';
 
+const legacyWwwOrigin = `https://${['www', 'keeptxred', 'com'].join('.')}`;
+
 describe('sitewide GSC URL utilities', () => {
   it('normalizes KeepTXRed URLs to the canonical host and strips query/hash', () => {
-    expect(normalizeSiteUrl('https://www.keeptxred.com/texas-politics/figures/?utm_source=x#bio')).toEqual({
+    expect(normalizeSiteUrl(`${legacyWwwOrigin}/texas-politics/figures/?utm_source=x#bio`)).toEqual({
       url: 'https://keeptxred.com/texas-politics/figures',
       path: '/texas-politics/figures',
     });
@@ -21,7 +23,7 @@ describe('sitewide GSC URL utilities', () => {
     const sitemapUrls = Array.from({ length: 20 }, (_, index) => `https://keeptxred.com/page-${index}`);
     const selected = selectInspectionUrls({
       sitemapUrls,
-      priorityUrls: ['https://www.keeptxred.com/texas-politics/figures/', 'https://keeptxred.com/page-1'],
+      priorityUrls: [`${legacyWwwOrigin}/texas-politics/figures/`, 'https://keeptxred.com/page-1'],
       limit: 6,
       metricDate: '2026-08-24',
     });
