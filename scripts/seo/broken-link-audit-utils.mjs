@@ -54,7 +54,10 @@ export function extractLinkCandidates(text) {
   const patterns = [
     /\b(?:href|to|url|canonical|loc)\s*[:=]\s*["'`]([^"'`]+)["'`]/gi,
     /\]\((https?:\/\/keeptxred\.com[^)\s]*|\/[^)\s]*)\)/gi,
-    /https?:\/\/(?:www\.)?keeptxred\.com\/[A-Za-z0-9_?&=/%#.-]*/gi,
+    // Include template markers so normalizeInternalLink can reject the whole
+    // source pattern instead of auditing a truncated prefix such as
+    // /bills/texas/ from /bills/texas/{legislature}/....
+    /https?:\/\/(?:www\.)?keeptxred\.com\/[A-Za-z0-9_?&=/%#.{\}$-]*/gi,
   ];
   for (const pattern of patterns) {
     for (const match of text.matchAll(pattern)) found.add(match[1] || match[0]);
