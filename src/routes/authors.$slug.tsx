@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { AUTHORS, EDITORIAL_BYLINE_DISCLOSURE, authorSlug, type Author } from "@/data/authors";
 import { ARTICLES, isPublished } from "@/data/articles";
 import { getPublishedAuthorArticles, type DailyArticle } from "@/lib/daily-news.functions";
+import { getDiscoverableStaticArticleSlugs } from "@/lib/static-article-discovery.functions";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 import { hasEnoughAuthorArticles, isCompleteAuthorProfile } from "@/lib/author-indexability";
 import {
@@ -16,14 +17,16 @@ export const isIndexableAuthor = isCompleteAuthorProfile;
 type AuthorLoaderData = {
   author: Author;
   liveArticles: DailyArticle[];
+  discoverableStaticSlugs: string[];
   hasEnoughPublishedArticles: boolean;
 };
 
-function staticBylineSlugs(author: Author): string[] {
+function staticBylineSlugs(author: Author, discoverableStatic: ReadonlySet<string>): string[] {
   return ARTICLES.filter(
     (article) =>
       isPublished(article)
       && isStaticArticleIndexable(article)
+      && discoverableStatic.has(article.slug)
       && authorSlug(article.author) === author.slug,
   ).map((article) => article.slug);
 }
@@ -32,17 +35,22 @@ export const Route = createFileRoute("/authors/$slug")({
   loader: async ({ params }): Promise<AuthorLoaderData> => {
     const author = AUTHORS.find((candidate) => candidate.slug === params.slug);
     if (!isCompleteAuthorProfile(author)) throw notFound();
-    const { articles } = await getPublishedAuthorArticles();
+    const [{ articles }, discoverableStaticSlugs] = await Promise.all([
+      getPublishedAuthorArticles(),
+      getDiscoverableStaticArticleSlugs(),
+    ]);
+    const discoverableStatic = new Set(discoverableStaticSlugs);
     const allLiveArticles = articles.filter(
       (article) => article.slug && authorSlug(article.author) === author.slug,
     );
     const publishedSlugs = [
-      ...staticBylineSlugs(author),
+      ...staticBylineSlugs(author, discoverableStatic),
       ...allLiveArticles.map((article) => article.slug),
     ];
     return {
       author,
       liveArticles: allLiveArticles.slice(0, 12),
+      discoverableStaticSlugs,
       hasEnoughPublishedArticles: hasEnoughAuthorArticles(publishedSlugs),
     };
   },
@@ -140,12 +148,14 @@ type ProfileArticle = {
 };
 
 function AuthorPage() {
-  const { author, liveArticles } = Route.useLoaderData() as AuthorLoaderData;
+  const { author, liveArticles, discoverableStaticSlugs } = Route.useLoaderData() as AuthorLoaderData;
+  const discoverableStatic = new Set(discoverableStaticSlugs);
 
   const staticArticles: ProfileArticle[] = ARTICLES.filter(
     (article) =>
       isPublished(article)
       && isStaticArticleIndexable(article)
+      && discoverableStatic.has(article.slug)
       && authorSlug(article.author) === author.slug,
   ).map((article) => ({
     slug: article.slug,
