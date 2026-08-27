@@ -58,6 +58,7 @@ const [
   sitemapIndex,
   findMyRaces,
   districtLookup,
+  legislatureHub,
 ] = await Promise.all([
   read("src/routes/index.tsx"),
   read("src/routes/elections.tsx"),
@@ -73,6 +74,7 @@ const [
   read("src/routes/sitemap[.]xml.ts"),
   read("src/routes/find-representative.tsx"),
   read("src/routes/api.elections.district-lookup.ts"),
+  read("src/routes/texas-legislature.index.tsx"),
 ]);
 
 requireText(home, "ELECTION_FEATURE_FLAGS.homepagePromotion", "Homepage is not wired to the election feature flag.");
@@ -182,6 +184,17 @@ requireText(
   "SITE_NAV_GROUPS.map",
   "Site footer does not render the shared navigation groups.",
 );
+for (const crawlBridge of [
+  'to="/elections/2026"',
+  'to="/elections/candidates"',
+  'to="/elections/legislative"',
+]) {
+  requireText(
+    legislatureHub,
+    crawlBridge,
+    `Indexed Texas Legislature hub is missing Election Central crawl bridge: ${crawlBridge}.`,
+  );
+}
 for (const redirectSource of [
   '["/election", "/elections/2026"]',
   '["/election-central", "/elections/2026"]',
