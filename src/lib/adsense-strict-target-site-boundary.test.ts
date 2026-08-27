@@ -5,6 +5,8 @@ const gaps = readFileSync("supabase/migrations/20260819185000_adsense_strict_ktr
 const cluster = readFileSync("src/routes/api/public/hooks/cluster-newsroom-stories.ts", "utf8");
 const overdue = readFileSync("src/routes/api/public/hooks/publish-overdue-gap.ts", "utf8");
 const historical = readFileSync("src/lib/historical-event-reconciliation.ts", "utf8");
+const root = readFileSync("src/routes/__root.tsx", "utf8");
+const explore = readFileSync("src/routes/explore.tsx", "utf8");
 
 describe("strict KeepTXRed target-site boundary", () => {
   it("scopes the operational coverage-gap view to KTR", () => {
@@ -24,5 +26,12 @@ describe("strict KeepTXRed target-site boundary", () => {
   it("excludes review, TD, and null routing from historical reconciliation", () => {
     expect(historical).toContain('.filter((row) => row.target_site === "keeptxred")');
     expect(historical).not.toContain('!row.target_site || row.target_site === "keeptxred"');
+  });
+
+  it("keeps Explore on TexasDefined and out of the global KTR shell", () => {
+    expect(explore).toContain("https://texasdefined.com");
+    expect(explore).toContain("statusCode: 301");
+    expect(root).not.toContain('../data/explore/');
+    expect(root).not.toContain("CavernGuideTrail");
   });
 });
