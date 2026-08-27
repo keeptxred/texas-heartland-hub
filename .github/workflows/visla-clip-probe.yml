@@ -1,9 +1,11 @@
 name: Visla clip probe
 
 on:
-  pull_request:
+  push:
     branches: [main]
-    types: [opened, synchronize, reopened]
+    paths:
+      - '.github/workflows/visla-clip-probe.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
