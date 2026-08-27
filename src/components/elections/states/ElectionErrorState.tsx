@@ -93,7 +93,7 @@ const DEFAULT_SECONDARY_ACTIONS: readonly ElectionErrorAction[] = [
   },
   {
     label: "Texas election laws",
-    href: "/laws/texas-election-laws-explained",
+    href: "/laws/topic/election-law",
     description: "Review voter registration, voting, and election-law guidance.",
   },
   {
