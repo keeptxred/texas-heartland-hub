@@ -35,7 +35,7 @@ export const POLITICAL_FIGURE_AUTHORITY_SOURCES: Record<string, PoliticalFigureA
   ],
   "phil-gramm-texas-senator-fiscal-conservative": [
     { href: "https://www.senate.gov/states/TX/timeline.shtml", label: "U.S. Senate — Texas Senate timeline" },
-    { href: "https://cemetery.tspb.texas.gov/pub/user_form.asp?pers_id=11248", label: "Texas State Cemetery — William Philip Gramm biography" },
+    { href: "https://cemetery.texas.gov/locate-a-plot/plotholder/william-philip-gramm", label: "Texas State Cemetery — William Philip Gramm biography" },
   ],
   "rick-perry-texas-governor-energy-legacy": [
     { href: "https://www.energy.gov/person/rick-perry", label: "U.S. Department of Energy — Rick Perry biography" },
