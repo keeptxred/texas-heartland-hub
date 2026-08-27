@@ -10,10 +10,13 @@ export type PoliticalFigureCategory =
   | "Reconstruction and early GOP leaders"
   | "Party organizers and conservative activists";
 
+type PoliticalFigureSource = { href: string; label: string };
+
 export type ExtendedTexasPoliticalFigure = TexasPoliticalFigure & {
   category: PoliticalFigureCategory;
   seoKeywords: string[];
   relatedFigureSlugs?: string[];
+  sources: PoliticalFigureSource[];
 };
 
 type FigureInput = {
@@ -32,6 +35,7 @@ type FigureInput = {
   officeLabel?: string;
   relatedFigureSlugs?: string[];
   seoKeywords?: string[];
+  sources?: PoliticalFigureSource[];
 };
 
 const categoryLinks: Record<PoliticalFigureCategory, Array<{ href: string; label: string }>> = {
@@ -70,6 +74,41 @@ const categoryLinks: Record<PoliticalFigureCategory, Array<{ href: string; label
   ],
 };
 
+const categorySources: Record<PoliticalFigureCategory, PoliticalFigureSource[]> = {
+  "Statewide executive leaders": [
+    { href: "https://www.sos.state.tx.us/elections/voter/elected.shtml", label: "Texas Secretary of State — statewide elected officials" },
+    { href: "https://www.lrl.texas.gov/legeLeaders/CEO/index.cfm", label: "Texas Legislative Reference Library — chief elected officials" },
+  ],
+  "U.S. senators": [
+    { href: "https://www.senate.gov/states/TX/senators.htm", label: "U.S. Senate — all Texas senators" },
+    { href: "https://www.senate.gov/states/TX/timeline.shtml", label: "U.S. Senate — Texas Senate timeline" },
+  ],
+  "Texas judicial leaders": [
+    { href: "https://www.txcourts.gov/supreme/about-the-court/justices/", label: "Supreme Court of Texas — justices" },
+    { href: "https://texascourthistory.org/", label: "Texas Supreme Court Historical Society" },
+  ],
+  "Current U.S. representatives": [
+    { href: "https://www.house.gov/representatives", label: "U.S. House — directory of representatives" },
+    { href: "https://www.lrl.texas.gov/legeLeaders/CEO/index.cfm", label: "Texas Legislative Reference Library — Texas members of Congress" },
+  ],
+  "Historical U.S. House leaders": [
+    { href: "https://history.house.gov/People/Search/", label: "U.S. House History, Art & Archives — people search" },
+    { href: "https://www.tshaonline.org/handbook/entries/republican-party", label: "Handbook of Texas — Republican Party" },
+  ],
+  "Texas legislative leaders": [
+    { href: "https://www.lrl.texas.gov/legeLeaders/members/lrlhome.cfm", label: "Texas Legislative Reference Library — legislators past and present" },
+    { href: "https://www.lrl.texas.gov/legeLeaders/index.cfm", label: "Texas Legislative Reference Library — legislators and leaders" },
+  ],
+  "Reconstruction and early GOP leaders": [
+    { href: "https://www.tshaonline.org/handbook/entries/republican-party", label: "Handbook of Texas — Republican Party" },
+    { href: "https://www.tshaonline.org/handbook/entries/reconstruction", label: "Handbook of Texas — Reconstruction" },
+  ],
+  "Party organizers and conservative activists": [
+    { href: "https://www.tshaonline.org/handbook/entries/republican-party", label: "Handbook of Texas — Republican Party" },
+    { href: "https://www.tshaonline.org/handbook/entries/political-parties", label: "Handbook of Texas — Political Parties" },
+  ],
+};
+
 const categoryContext: Record<PoliticalFigureCategory, string> = {
   "Statewide executive leaders": "Statewide executive power in Texas is divided among separately elected officials, so the office, the Legislature and the broader Republican coalition all matter when evaluating a leader's record.",
   "U.S. senators": "Texas senators operate simultaneously as statewide elected officials, federal lawmakers and national party figures, making both their Texas coalition and their work in Washington relevant.",
@@ -87,6 +126,9 @@ export function createPoliticalFigure(input: FigureInput): ExtendedTexasPolitica
     ...categoryLinks[input.category],
     { href: "/texas-politics/figures", label: "Texas Political Figures" },
   ].filter((link, index, links) => links.findIndex((candidate) => candidate.href === link.href) === index);
+  const sources = [...(input.sources ?? []), ...categorySources[input.category]].filter(
+    (source, index, list) => list.findIndex((candidate) => candidate.href === source.href) === index,
+  );
 
   return {
     slug: input.slug,
@@ -98,6 +140,7 @@ export function createPoliticalFigure(input: FigureInput): ExtendedTexasPolitica
     texasRole: input.texasRole,
     seoKeywords: Array.from(new Set([input.name, input.texasRole, "Texas politics", "Texas Republican history", ...(input.seoKeywords ?? [])])),
     relatedFigureSlugs: input.relatedFigureSlugs,
+    sources,
     sections: [
       { heading: `${input.name}: career and Texas role`, body: input.career },
       { heading: `Why ${input.name} matters`, body: input.impact },
