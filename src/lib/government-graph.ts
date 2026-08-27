@@ -3,6 +3,7 @@ import { LAW_TOPICS } from "@/data/law-topics";
 import { TEXAS_DATA_SETS } from "@/data/texas-data-catalog";
 import { ACCOUNTABILITY_DATA_SETS } from "@/data/accountability-data-catalog";
 import { AGENCY_AUTHORITY_PROFILES } from "@/data/agency-authority";
+import { isDataDetailIndexable } from "@/lib/data-detail-indexability";
 
 export type GovernmentGraphNode = {
   id: string;
@@ -48,13 +49,15 @@ const LAW_NODES: GovernmentGraphNode[] = LAW_TOPICS.map((topic) => ({
   keywords: inferredKeywords(topic.slug.replace(/-/g, " "), topic.title, topic.dek, ...topic.keyRules),
 }));
 
-const DATA_NODES: GovernmentGraphNode[] = [...TEXAS_DATA_SETS, ...ACCOUNTABILITY_DATA_SETS].map((dataset) => ({
-  id: `data:${dataset.slug}`,
-  label: dataset.title,
-  href: `/data/${dataset.slug}`,
-  kind: "data" as const,
-  keywords: inferredKeywords(dataset.slug.replace(/-/g, " "), dataset.title, dataset.dek, ...dataset.whatAvailable),
-}));
+const DATA_NODES: GovernmentGraphNode[] = [...TEXAS_DATA_SETS, ...ACCOUNTABILITY_DATA_SETS]
+  .filter(isDataDetailIndexable)
+  .map((dataset) => ({
+    id: `data:${dataset.slug}`,
+    label: dataset.title,
+    href: `/data/${dataset.slug}`,
+    kind: "data" as const,
+    keywords: inferredKeywords(dataset.slug.replace(/-/g, " "), dataset.title, dataset.dek, ...dataset.whatAvailable),
+  }));
 
 const AGENCY_NODES: GovernmentGraphNode[] = AGENCY_AUTHORITY_PROFILES.map((agency) => ({
   id: `agency:${agency.slug}`,
