@@ -8,6 +8,7 @@ import { WAVE4_ISSUE_GUIDE_SLUGS } from "@/data/issue-guide-wave4-upgrades";
 import { ALL_POLICY_TRACKERS, getAnyPolicyTracker } from "@/data/policy-trackers-all";
 import { PRIORITY_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-upgrades";
 import { WAVE2_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave2-upgrades";
+import { WAVE3_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave3-upgrades";
 import { POLITICAL_SEARCH_GUIDES } from "@/data/political-search-guides";
 import { isIssueGuideIndexable } from "@/lib/issue-guide-indexability";
 import { isPolicyTrackerIndexable } from "@/lib/policy-tracker-indexability";
@@ -21,6 +22,7 @@ const referenceRoute = fs.readFileSync(new URL("../routes/texas-political-refere
 const EXPECTED_INDEXABLE_POLICY_TRACKER_SLUGS = [
   ...PRIORITY_INDEXABLE_POLICY_TRACKER_SLUGS,
   ...WAVE2_INDEXABLE_POLICY_TRACKER_SLUGS,
+  ...WAVE3_INDEXABLE_POLICY_TRACKER_SLUGS,
   "social-media-viewpoint-moderation",
 ];
 
