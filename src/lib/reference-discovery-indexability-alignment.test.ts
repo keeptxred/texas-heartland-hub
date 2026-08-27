@@ -8,6 +8,7 @@ const read = (path: string) => fs.readFileSync(new URL(path, import.meta.url), "
 const policyHub = read("../routes/policy.tsx");
 const policyManifest = read("../routes/policy-trackers[.]txt.ts");
 const lawHub = read("../routes/laws.topics.tsx");
+const lawFinder = read("../routes/civic-tools.texas-law-finder.tsx");
 const dataHub = read("../routes/data.tsx");
 const agencyHub = read("../routes/texas-government.agencies.tsx");
 const graph = read("./government-graph.ts");
@@ -40,6 +41,12 @@ describe("reference discovery indexability alignment", () => {
     expect(agencyHub).toContain("ALL_AGENCY_PROFILES.filter(isAgencyAuthorityIndexable)");
     expect(agencyHub).toContain("INDEXABLE_AGENCY_PROFILES.map");
     expect(agencyHub).toContain("numberOfItems: INDEXABLE_AGENCY_PROFILES.length");
+  });
+
+  it("keeps Texas Law Finder results inside the indexable law-topic cohort", () => {
+    expect(lawFinder).toContain("const INDEXABLE_LAW_TOPICS = LAW_TOPICS.filter(isLawTopicIndexable)");
+    expect(lawFinder).toContain("return INDEXABLE_LAW_TOPICS.map");
+    expect(lawFinder).not.toContain("return LAW_TOPICS.map");
   });
 
   it("filters all detail-node families in the news reference graph", () => {
