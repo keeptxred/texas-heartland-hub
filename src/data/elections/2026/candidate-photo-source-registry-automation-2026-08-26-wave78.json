@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "votewittliff.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Treat imagery on Albert Wittliff's official campaign site as candidate-identity and image-discovery evidence only unless the exact image carries an explicit reusable license, press/media permission, campaign-supplied reuse statement, or another documented item-level permission basis. Preserve the page URL, direct image URL, credit/provenance, and permission evidence before approval.",
+    "searchHint": "site:votewittliff.com Albert Wittliff portrait media photo Texas House District 129",
+    "notes": "Official campaign domain verified August 26, 2026 for unresolved Texas House District 129 Democratic candidate Albert Wittliff. TCTA's Texas Teachers Vote candidate profile links to this campaign website, and the campaign site identifies itself as Albert Wittliff for State Rep., Texas House District 129. The site states all rights reserved, so no image reuse rights are inferred and auto-approval remains disabled."
+  },
+  {
+    "domain": "scottforhd15.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Treat imagery on Moniqua' S. Scott's official campaign site as candidate-identity and image-discovery evidence only unless the exact image carries an explicit reusable license, press/media permission, campaign-supplied reuse statement, or another documented item-level permission basis. Preserve the page URL, direct image URL, credit/provenance, and permission evidence before approval.",
+    "searchHint": "site:scottforhd15.com Moniqua Scott portrait media photo Texas House District 15",
+    "notes": "Official campaign domain verified August 26, 2026 for unresolved Texas House District 15 Democratic nominee Moniqua' S. Scott. The site identifies Scott, describes her candidacy for Texas House District 15, and includes the political-advertising attribution 'Paid By Moniqua’ S. Scott.' This adds a candidate-controlled portrait-discovery path; no reuse rights are inferred from campaign ownership."
+  },
+  {
+    "domain": "david4texas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Treat imagery on David Flores's official campaign site as candidate-identity and image-discovery evidence only unless the exact image carries an explicit reusable license, press/media permission, campaign-supplied reuse statement, or another documented item-level permission basis. Preserve the page URL, direct image URL, credit/provenance, and permission evidence before approval.",
+    "searchHint": "site:david4texas.com David Flores portrait media photo Texas House District 144",
+    "notes": "Official campaign domain verified August 26, 2026 for unresolved Texas House District 144 Republican candidate David Flores. The site publishes a campaign announcement identifying Flores as a candidate for Texas House District 144 and provides campaign contact information. This adds a candidate-controlled portrait-discovery path while retaining item-level rights verification and disabled auto-approval."
+  }
+]
