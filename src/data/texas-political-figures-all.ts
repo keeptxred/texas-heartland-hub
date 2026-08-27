@@ -1,6 +1,7 @@
 import type { TexasPoliticalFigure } from "@/data/texas-political-figures";
 import { TEXAS_POLITICAL_FIGURES as ESTABLISHED_FIGURES } from "@/data/texas-political-figures";
 import { ADDITIONAL_TEXAS_POLITICAL_FIGURES as CURATED_EXPANDED_FIGURES } from "@/data/texas-political-figures-expanded";
+import { MORE_TEXAS_POLITICAL_FIGURES } from "@/data/texas-political-figures-expanded-2";
 import {
   TEXAS_POLITICAL_FIGURES as TARGET_FIGURES,
   TEXAS_REPUBLICAN_CONSERVATIVE_LEADERS,
@@ -21,6 +22,7 @@ export type TexasPoliticalFigurePage = TexasPoliticalFigure & {
 const preferredFigures: TexasPoliticalFigurePage[] = [
   ...ESTABLISHED_FIGURES,
   ...CURATED_EXPANDED_FIGURES,
+  ...MORE_TEXAS_POLITICAL_FIGURES,
 ];
 const preferredNames = new Set(preferredFigures.map((figure) => figure.name.toLocaleLowerCase("en-US")));
 
