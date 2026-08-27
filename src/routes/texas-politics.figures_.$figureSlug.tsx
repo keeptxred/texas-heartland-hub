@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { TEXAS_POLITICAL_FIGURES, texasPoliticalFigureBySlug } from "@/data/texas-political-figures-all";
+import { TEXAS_POLITICAL_FIGURES, texasPoliticalFigureBySlug, type TexasPoliticalFigureRecord } from "@/data/texas-political-figures-all";
 
 const SITE_URL = "https://keeptxred.com";
 const categoryAnchor = (category?: string) => category?.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") ?? "";
@@ -72,15 +72,15 @@ export const Route = createFileRoute("/texas-politics/figures_/$figureSlug")({
 
 function PoliticalFigurePage() {
   const { figureSlug } = Route.useParams();
-  const figure = texasPoliticalFigureBySlug(figureSlug);
+  const figure = texasPoliticalFigureBySlug(figureSlug) as TexasPoliticalFigureRecord | undefined;
   if (!figure) return null;
 
   const explicitPeers = (figure.relatedFigureSlugs ?? [])
-    .map((slug) => texasPoliticalFigureBySlug(slug))
-    .filter((item): item is NonNullable<typeof item> => Boolean(item) && item.slug !== figure.slug);
-  const categoryPeers = TEXAS_POLITICAL_FIGURES.filter((item) => item.slug !== figure.slug && item.category === figure.category);
-  const fallbackPeers = TEXAS_POLITICAL_FIGURES.filter((item) => item.slug !== figure.slug);
-  const peers = [...explicitPeers, ...categoryPeers, ...fallbackPeers]
+    .map((slug) => texasPoliticalFigureBySlug(slug) as TexasPoliticalFigureRecord | undefined)
+    .filter((item): item is TexasPoliticalFigureRecord => item !== undefined && item.slug !== figure.slug);
+  const categoryPeers: TexasPoliticalFigureRecord[] = TEXAS_POLITICAL_FIGURES.filter((item) => item.slug !== figure.slug && item.category === figure.category);
+  const fallbackPeers: TexasPoliticalFigureRecord[] = TEXAS_POLITICAL_FIGURES.filter((item) => item.slug !== figure.slug);
+  const peers: TexasPoliticalFigureRecord[] = [...explicitPeers, ...categoryPeers, ...fallbackPeers]
     .filter((item, index, items) => items.findIndex((candidate) => candidate.slug === item.slug) === index)
     .slice(0, 6);
   const categoryHref = figure.category ? `/texas-politics/figures#${categoryAnchor(figure.category)}` : "/texas-politics/figures";
