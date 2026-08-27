@@ -40,6 +40,13 @@ jobs:
         id: retired_integration
         run: node scripts/ci/validate-retired-integration-traces.mjs
 
+      - name: Validate workflow YAML
+        id: workflow_yaml
+        shell: bash
+        run: |
+          set -euo pipefail
+          ruby -e "require 'yaml'; Dir['.github/workflows/*.{yml,yaml}'].sort.each { |file| YAML.parse_file(file); puts \"validated #{file}\" }"
+
       - name: Install dependencies
         id: install
         run: bun install --frozen-lockfile
@@ -94,6 +101,7 @@ jobs:
         env:
           MAIN_WRITE_POLICY: ${{ steps.main_write_policy.outcome }}
           RETIRED_INTEGRATION: ${{ steps.retired_integration.outcome }}
+          WORKFLOW_YAML: ${{ steps.workflow_yaml.outcome }}
           INSTALL: ${{ steps.install.outcome }}
           LINT: ${{ steps.lint.outcome }}
           TESTS: ${{ steps.tests.outcome }}
@@ -113,6 +121,7 @@ jobs:
             echo '|---|---|---|'
             echo "| Protected-main workflow policy | DEFAULT-BRANCH SAFETY | ${MAIN_WRITE_POLICY:-not-run} |"
             echo "| Retired integration trace guard | RETIRED INTEGRATION | ${RETIRED_INTEGRATION:-not-run} |"
+            echo "| Workflow YAML syntax | WORKFLOW SYNTAX | ${WORKFLOW_YAML:-not-run} |"
             echo "| Dependency install | DEPENDENCY / INSTALL | ${INSTALL:-not-run} |"
             echo "| ESLint | LINT / STATIC ANALYSIS | ${LINT:-not-run} |"
             echo "| Full Vitest suite | TESTS | ${TESTS:-not-run} |"
@@ -130,6 +139,8 @@ jobs:
             echo '::error title=verify failure class: DEFAULT-BRANCH SAFETY::A GitHub Actions workflow writes generated repository changes directly to protected main. Publish through a same-repository PR instead.'
           elif [[ "$RETIRED_INTEGRATION" == failure ]]; then
             echo '::error title=verify failure class: RETIRED INTEGRATION::A retired external integration trace was reintroduced into tracked current source.'
+          elif [[ "$WORKFLOW_YAML" == failure ]]; then
+            echo '::error title=verify failure class: WORKFLOW SYNTAX::One or more GitHub Actions workflow YAML files are malformed.'
           elif [[ "$INSTALL" == failure ]]; then
             echo '::error title=verify failure class: DEPENDENCY / INSTALL::Dependency installation failed.'
           elif [[ "$LINT" == failure ]]; then
