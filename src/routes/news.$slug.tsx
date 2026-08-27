@@ -68,11 +68,14 @@ export const Route = createFileRoute("/news/$slug")({
     const article = ARTICLES.find((a) => a.slug === params.slug);
     if (article && isStaticArticleIndexable(article)) {
       if (!isPublished(article)) throw notFound();
-      const rawBody = ARTICLE_BODIES[params.slug] ?? buildDefaultBody(article);
+      const explicitBody = ARTICLE_BODIES[params.slug];
+      const rawBody = explicitBody ?? buildDefaultBody(article);
       const body = dedupeArticleBody(rawBody) as ArticleBody;
       const renderedArticle: RenderedArticle = {
         ...article,
-        noindex: !isStaticArticleIndexable(article),
+        // Preserve the retired-content guard and keep generated fallback bodies
+        // out of search until they have explicit, substantive article content.
+        noindex: !isStaticArticleIndexable(article) || !explicitBody,
       };
       return { article: renderedArticle, body, ctr: null };
     }
@@ -386,7 +389,7 @@ function ArticlePage() {
       ) : null}
 
       <p className="mt-4 text-[11px] uppercase tracking-[0.2em] text-muted-foreground border-l-2 border-primary/40 pl-3 leading-5">
-        Editorial disclaimer: Opinions and analysis on Keep TX Red are editorial content — not statements of fact. See our <Link to="/editorial-standards" className="text-primary hover:underline">editorial standards</Link>.
+        Reporting is based on the sources and public records cited or linked in this article. Opinion and analysis are labeled and follow our <Link to="/editorial-standards" className="text-primary hover:underline">editorial standards</Link>.
       </p>
 
       <div className="aspect-[16/9] overflow-hidden bg-muted my-8 md:my-10 border-2 border-foreground/10">
@@ -506,15 +509,6 @@ function ArticlePage() {
           </Link>
         </div>
       ) : null}
-
-      <div className="mx-auto max-w-2xl mt-8 border-l-4 border-primary bg-muted/40 p-5">
-        <p className="font-serif text-[17px] leading-8">
-          <Link to="/keep-texas-red" className="text-primary font-semibold underline underline-offset-2 hover:no-underline">
-            Read more about Keep Texas Red →
-          </Link>
-          <span className="text-muted-foreground"> Our full guide to what Keep Texas Red means and why Texans support it.</span>
-        </p>
-      </div>
 
       {related.length > 0 ? (
         <section className="mt-14 pt-8 border-t-2 border-foreground">
