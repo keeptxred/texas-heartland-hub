@@ -37,7 +37,8 @@ jobs:
       - name: Validate sitewide Search Console scripts without credentials
         run: |
           node --check scripts/seo/sync-gsc-sitewide.mjs
-          node --test scripts/seo/gsc-sitewide-utils.test.mjs
+          node --check scripts/seo/gsc-sitewide-utils.mjs
+          node --check scripts/seo/gsc-sitewide-utils.test.mjs
 
   sync:
     if: ${{ github.event_name != 'pull_request' }}
