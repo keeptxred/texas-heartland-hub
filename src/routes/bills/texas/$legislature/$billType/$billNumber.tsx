@@ -11,6 +11,31 @@ import { BillHearingsAndVotes } from '@/components/bills/BillHearingsAndVotes';
 import { RelatedBillsSection } from '@/components/bills/RelatedBillsSection';
 import { OfficialBillTextViewer } from '@/components/legislature/OfficialBillTextViewer';
 
+const hasMeaningfulText = (value?: string | null, minimum = 80) =>
+  String(value ?? '').trim().length >= minimum;
+
+const hasSubstantiveBillEvidence = (loaderData: any) => {
+  const { bill, actions = [], committees = [], documents = [], subjects = [], articles = [] } = loaderData;
+  const hasSubstantiveAction = actions.some((action: any) => {
+    const code = String(action.action_code ?? '').toLowerCase();
+    return code !== 'tlo-filed-report-latest' && code !== 'tlo-rss-meeting' && code !== 'tlo-rss-calendar';
+  });
+
+  return Boolean(
+    bill.became_law
+      || documents.length
+      || committees.length
+      || subjects.length
+      || articles.length
+      || hasSubstantiveAction
+      || bill.analysis_url
+      || bill.fiscal_note_url
+      || hasMeaningfulText(bill.plain_language_summary)
+      || hasMeaningfulText(bill.summary)
+      || hasMeaningfulText(bill.description),
+  );
+};
+
 export const Route = createFileRoute('/bills/texas/$legislature/$billType/$billNumber')({
   loader: async ({ params }) => {
     const legislature = Number(params.legislature);
@@ -40,14 +65,16 @@ export const Route = createFileRoute('/bills/texas/$legislature/$billType/$billN
     const canonical = `${SITE_URL}${canonicalBillPath(bill)}`;
     const title = `${bill.bill_identifier} Texas Legislature: Status, Sponsors and History | KeepTXRed`;
     const description = `Track Texas ${bill.bill_identifier}, including its current status, sponsors, committee history, legislative actions, bill text and related Texas news.`;
+    const indexable = hasSubstantiveBillEvidence(loaderData);
     return {
       meta: [
         { title }, { name: 'description', content: description },
+        ...(!indexable ? [{ name: 'robots', content: 'noindex,follow' }, { name: 'googlebot', content: 'noindex,follow' }] : []),
         { property: 'og:title', content: title }, { property: 'og:description', content: description },
         { property: 'og:url', content: canonical }, { property: 'og:type', content: 'article' },
       ],
       links: [{ rel: 'canonical', href: canonical }],
-      scripts: [{ type: 'application/ld+json', children: JSON.stringify(billJsonLd(bill, sponsors, actions)).replace(/</g, '\\u003c') }],
+      scripts: [{ type: 'application/ld+json', children: JSON.stringify(billJsonLd(bill, sponsors, actions)).replace(/</g, '\u003c') }],
     };
   },
   component: BillPage,
