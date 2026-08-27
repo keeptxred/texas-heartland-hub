@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { issueGuideBySlug, issueGuides } from "@/data/issue-guides";
 import { ALL_POLICY_TRACKERS } from "@/data/policy-trackers-all";
+import { isIssueGuideIndexable } from "@/lib/issue-guide-indexability";
 import {
   relatedIssueGuidesForTracker,
   relatedPolicyTrackersForIssueGuide,
@@ -25,6 +26,7 @@ describe("issue and policy reciprocal links", () => {
       const guides = relatedIssueGuidesForTracker(tracker);
       expect(guides.length).toBeLessThanOrEqual(3);
       expect(new Set(guides.map((guide) => guide.slug)).size).toBe(guides.length);
+      expect(guides.every(isIssueGuideIndexable)).toBe(true);
     }
 
     for (const guide of issueGuides) {
