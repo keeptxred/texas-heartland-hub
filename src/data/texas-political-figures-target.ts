@@ -59,10 +59,18 @@ for (const figure of establishedWithMetadata) {
   // Prefer the already-published substantive profile when the 100-name target overlaps it.
   byName.set(normalizedName(figure.name), figure);
 }
+for (const figure of [...byName.values()]) {
+  for (const alias of figure.aliases ?? []) {
+    const aliasKey = normalizedName(alias);
+    if (!byName.has(aliasKey)) byName.set(aliasKey, figure);
+  }
+}
 
 export const TEXAS_POLITICAL_FIGURES: TexasPoliticalFigureRecord[] = [
   ...establishedWithMetadata,
-  ...additions.filter((figure) => !ESTABLISHED_FIGURES.some((existing) => normalizedName(existing.name) === normalizedName(figure.name))),
+  ...additions
+    .filter((figure) => !ESTABLISHED_FIGURES.some((existing) => normalizedName(existing.name) === normalizedName(figure.name)))
+    .map((figure) => ({ ...figure, aliases: PROFILE_ALIASES[figure.name] })),
 ];
 
 export const texasPoliticalFigureBySlug = (slug: string) => TEXAS_POLITICAL_FIGURES.find((figure) => figure.slug === slug);
