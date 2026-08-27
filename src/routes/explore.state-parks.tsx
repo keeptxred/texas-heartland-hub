@@ -1,10 +1,9 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/explore/state-parks")({
-  beforeLoad: () => {
+  beforeLoad: ({ location }) => {
     throw redirect({
-      to: "/explore/search",
-      search: { page: 1, pageSize: 24, sort: "relevance", types: ["state_park"] },
+      href: `https://texasdefined.com/explore/state-parks${location.searchStr || ""}`,
       statusCode: 301,
     });
   },
