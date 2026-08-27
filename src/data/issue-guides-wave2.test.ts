@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { issueGuideBySlug, issueGuides } from "@/data/issue-guides";
-import { relatedPolicyTrackersForIssueGuide } from "@/lib/issue-policy-links";
+import { ALL_POLICY_TRACKERS } from "@/data/policy-trackers-all";
+import {
+  relatedPolicyTrackersForIssueGuide,
+  scorePolicyTrackerForIssueGuide,
+} from "@/lib/issue-policy-links";
+import { isPolicyTrackerIndexable } from "@/lib/policy-tracker-indexability";
 
 const WAVE2_SLUGS = [
   "texas-abortion-law-pro-life-policy",
@@ -22,13 +27,25 @@ describe("evergreen issue guides wave 2", () => {
     }
   });
 
-  it("connects new evergreen guides to current-status policy trackers where a matching tracker exists", () => {
+  it("connects only indexable current-status policy trackers while preserving semantic matches", () => {
     const abortion = relatedPolicyTrackersForIssueGuide(issueGuideBySlug["texas-abortion-law-pro-life-policy"])
       .map((tracker) => tracker.slug);
     expect(abortion).toContain("life-abortion");
 
-    const ruralHealthcare = relatedPolicyTrackersForIssueGuide(issueGuideBySlug["texas-rural-healthcare"])
-      .map((tracker) => tracker.slug);
-    expect(ruralHealthcare.length).toBeGreaterThan(0);
+    const ruralGuide = issueGuideBySlug["texas-rural-healthcare"];
+    const ruralSemanticMatches = ALL_POLICY_TRACKERS
+      .map((tracker) => ({ tracker, score: scorePolicyTrackerForIssueGuide(ruralGuide, tracker) }))
+      .filter(({ score }) => score >= 3);
+    const ruralPublicMatches = relatedPolicyTrackersForIssueGuide(ruralGuide);
+
+    expect(ruralSemanticMatches.length).toBeGreaterThan(0);
+    expect(ruralPublicMatches.every((tracker) => isPolicyTrackerIndexable(tracker))).toBe(true);
+    expect(ruralPublicMatches.map((tracker) => tracker.slug)).toEqual(
+      ruralSemanticMatches
+        .filter(({ tracker }) => isPolicyTrackerIndexable(tracker))
+        .sort((a, b) => b.score - a.score || a.tracker.title.localeCompare(b.tracker.title))
+        .slice(0, 4)
+        .map(({ tracker }) => tracker.slug),
+    );
   });
 });

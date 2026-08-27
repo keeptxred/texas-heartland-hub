@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { issueGuideBySlug } from "@/data/issue-guides";
+import { isIssueGuideIndexable } from "@/lib/issue-guide-indexability";
 import { matchArticleIssueGuides } from "./article-issue-guides";
 
 describe("matchArticleIssueGuides", () => {
@@ -68,5 +70,21 @@ describe("matchArticleIssueGuides", () => {
       category: "Politics",
     }, 2);
     expect(matches).toHaveLength(2);
+  });
+
+  it("never routes an article to a quarantined issue guide", () => {
+    const samples = [
+      "ERCOT power grid border security school choice property tax election law",
+      "Texas water rural hospital state income tax federal preemption gun law",
+      "DEI SB 17 gender-affirming care parental rights oil and gas",
+    ];
+
+    for (const title of samples) {
+      for (const match of matchArticleIssueGuides({ title, category: "Politics" })) {
+        const guide = issueGuideBySlug[match.slug];
+        expect(guide).toBeDefined();
+        expect(isIssueGuideIndexable(guide)).toBe(true);
+      }
+    }
   });
 });
