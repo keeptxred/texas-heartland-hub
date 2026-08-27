@@ -7,14 +7,19 @@ const OIDC_AUDIENCE = "keeptxred-newsroom";
 const REPOSITORY = "keeptxred/texas-heartland-hub";
 const WORKFLOW_PATH = ".github/workflows/adsense-image-backfill.yml";
 const FACEBOOK_FRESHNESS_DAYS = 4;
+const ADSENSE_BACKLOG_LIMIT = 100;
 
-type RecentArticleRow = {
+type RecoveryArticleRow = {
   slug: string;
   published_at: string;
   featured_image_url: string | null;
   image_generation_status: string | null;
   kind: string | null;
   body_json: Parameters<typeof meetsArticleMainWordCount>[1];
+};
+
+type ReadinessRow = {
+  slug: string;
 };
 
 function bearerToken(request: Request): string | null {
@@ -40,12 +45,16 @@ async function authorized(request: Request): Promise<boolean> {
   }
 }
 
-function needsImageRecovery(row: RecentArticleRow): boolean {
+function substantiveAndNotGenerating(row: RecoveryArticleRow): boolean {
   const status = (row.image_generation_status ?? "").trim().toLowerCase();
-  if (status === "generating") return false;
+  return status !== "generating" && meetsArticleMainWordCount(row.kind, row.body_json);
+}
+
+function needsFreshImageRecovery(row: RecoveryArticleRow): boolean {
+  if (!substantiveAndNotGenerating(row)) return false;
+  const status = (row.image_generation_status ?? "").trim().toLowerCase();
   const hasImage = Boolean(row.featured_image_url?.trim());
-  if (hasImage && status !== "failed") return false;
-  return meetsArticleMainWordCount(row.kind, row.body_json);
+  return !hasImage || status === "failed";
 }
 
 async function post({ request }: { request: Request }) {
@@ -56,21 +65,59 @@ async function post({ request }: { request: Request }) {
   const dryRun = url.searchParams.get("dry") === "1";
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  // Generated Supabase types can lag internal image status fields.
+  // Generated Supabase types can lag internal image status fields and audit views.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabaseAdmin as any;
   const cutoff = new Date(Date.now() - FACEBOOK_FRESHNESS_DAYS * 24 * 60 * 60 * 1000).toISOString();
+  const articleSelect = "slug,published_at,featured_image_url,image_generation_status,kind,body_json";
 
-  const { data: recentRows, error } = await db
-    .from("daily_articles")
-    .select("slug,published_at,featured_image_url,image_generation_status,kind,body_json")
-    .gte("published_at", cutoff)
-    .order("published_at", { ascending: false })
-    .limit(100);
-  if (error) return Response.json({ error: error.message }, { status: 500 });
+  const [{ data: recentRows, error: recentError }, { data: readinessRows, error: readinessError }] = await Promise.all([
+    db
+      .from("daily_articles")
+      .select(articleSelect)
+      .gte("published_at", cutoff)
+      .order("published_at", { ascending: false })
+      .limit(100),
+    db
+      .from("adsense_cloud_article_readiness")
+      .select("slug")
+      .eq("adsense_ready", true)
+      .eq("image_ready", false)
+      .order("published_at", { ascending: false })
+      .limit(ADSENSE_BACKLOG_LIMIT),
+  ]);
+  if (recentError) return Response.json({ error: recentError.message }, { status: 500 });
+  if (readinessError) return Response.json({ error: readinessError.message }, { status: 500 });
 
-  const eligible = ((recentRows ?? []) as RecentArticleRow[]).filter(needsImageRecovery);
-  const slugs = eligible.map((row) => row.slug);
+  const backlogSlugs = ((readinessRows ?? []) as ReadinessRow[])
+    .map((row) => row.slug?.trim())
+    .filter((slug): slug is string => Boolean(slug));
+
+  let backlogArticleRows: RecoveryArticleRow[] = [];
+  if (backlogSlugs.length > 0) {
+    const { data, error } = await db
+      .from("daily_articles")
+      .select(articleSelect)
+      .in("slug", backlogSlugs)
+      .order("published_at", { ascending: false })
+      .limit(ADSENSE_BACKLOG_LIMIT);
+    if (error) return Response.json({ error: error.message }, { status: 500 });
+    backlogArticleRows = (data ?? []) as RecoveryArticleRow[];
+  }
+
+  const eligibleBySlug = new Map<string, RecoveryArticleRow>();
+  for (const row of (recentRows ?? []) as RecoveryArticleRow[]) {
+    if (needsFreshImageRecovery(row)) eligibleBySlug.set(row.slug, row);
+  }
+  for (const row of backlogArticleRows) {
+    // The readiness view already established that the article is KTR-safe and
+    // its image state is incomplete. Keep the substantive article-length gate
+    // here so older thin rows can never become eligible just because the view
+    // later changes independently.
+    if (substantiveAndNotGenerating(row)) eligibleBySlug.set(row.slug, row);
+  }
+
+  const slugs = [...eligibleBySlug.keys()];
   if (dryRun) {
     return Response.json({
       ok: true,
@@ -78,7 +125,8 @@ async function post({ request }: { request: Request }) {
       ready: slugs.length,
       slugs,
       freshness_days: FACEBOOK_FRESHNESS_DAYS,
-      scope: "fresh_quality_articles",
+      adsense_backlog_candidates: backlogSlugs.length,
+      scope: "fresh_quality_plus_adsense_backlog",
     });
   }
 
@@ -86,7 +134,7 @@ async function post({ request }: { request: Request }) {
     return Response.json({ error: "Missing eligible slug" }, { status: 400 });
   }
   if (!slugs.includes(requestedSlug)) {
-    return Response.json({ error: "Slug is not currently a fresh quality article needing image recovery" }, { status: 409 });
+    return Response.json({ error: "Slug is not currently eligible for image recovery" }, { status: 409 });
   }
 
   // Force a verified regeneration so URL, alt text and ready status converge
@@ -102,7 +150,7 @@ async function post({ request }: { request: Request }) {
     processed: 1,
     succeeded: result.ok ? 1 : 0,
     failed: result.ok ? 0 : 1,
-    scope: "fresh_quality_articles",
+    scope: "fresh_quality_plus_adsense_backlog",
     results: [result],
   }, { status: result.ok ? 200 : 422 });
 }
