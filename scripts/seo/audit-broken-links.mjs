@@ -19,7 +19,7 @@ const TEXT_EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.mjs', '.cjs', '.json', 
 const RETIRED_PREFIXES = [
   '/explore', '/texas-living', '/living-in-texas', '/moving-to-texas',
   '/moving-to-texas-checklist', '/texas-resources', '/texas-data',
-  '/events', '/guides', '/food-bbq',
+  '/events', '/food-bbq',
 ];
 const IGNORE_PREFIXES = ['/api/', '/admin', '/auth/', '/assets/', '/favicon', '/robots.txt', '/sitemap'];
 const MAX_FETCH_ATTEMPTS = 3;
