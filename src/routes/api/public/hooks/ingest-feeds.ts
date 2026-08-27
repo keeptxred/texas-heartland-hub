@@ -74,7 +74,7 @@ const VERIFIED_YOUTUBE = new Map<string, string>([
 ]);
 
 const TRANSIENT_STATUS = new Set([408, 425, 429, 500, 502, 503, 504]);
-const GOOGLE_NEWS_RE = /^https:\/\/news\.google\.com\/rss\/search/i;
+const GOOGLE_NEWS_RE = /^(?:https:\/\/news\.google\.com\/rss\/search|https:\/\/ftkznprjljkhymknvhye\.supabase\.co\/functions\/v1\/ktr-rss-relay\?feed=google-)/i;
 const GOOGLE_FEEDS_PER_RUN = 10;
 const OFFICIAL_HYPERLOCAL_SOURCE_RE = /— CivicEngage$/i;
 const TEXAS_LOCATION_RE = /\b(texas|tx|amarillo|austin|beaumont|brownsville|college station|corpus christi|dallas|del rio|eagle pass|el paso|fort worth|galveston|harlingen|hereford|houston|killeen|laredo|longview|lubbock|mcallen|midland|odessa|san angelo|san antonio|temple|texarkana|tyler|victoria|waco|webb county|bexar county|harris county|tarrant county|travis county|denton county|collin county|rio grande valley|panhandle)\b/i;
