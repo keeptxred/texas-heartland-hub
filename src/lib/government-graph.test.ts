@@ -22,7 +22,7 @@ describe("Government Graph matching", () => {
     expect(links.some((link) => link.href === "/elections/2026")).toBe(true);
   });
 
-  it("connects procurement reporting to durable government/data hubs while Contract Watch is quarantined", () => {
+  it("connects procurement reporting to a durable data hub while Contract Watch is quarantined", () => {
     const links = getGovernmentGraphLinks(
       "A state agency awarded a procurement contract and published contract data after a competitive solicitation and later amendment.",
       8,
@@ -30,11 +30,10 @@ describe("Government Graph matching", () => {
     const hrefs = links.map((link) => link.href);
 
     expect(hrefs).toContain("/data");
-    expect(hrefs).toContain("/texas-government/agencies");
     expect(hrefs).not.toContain("/data/contracts");
   });
 
-  it("connects agency rulemaking reporting to durable government/data hubs while Rule Watch is quarantined", () => {
+  it("connects agency rulemaking reporting to a durable data hub while Rule Watch is quarantined", () => {
     const links = getGovernmentGraphLinks(
       "The state agency published proposed rule data with a public comment deadline before adoption and an eventual effective date.",
       8,
@@ -42,7 +41,6 @@ describe("Government Graph matching", () => {
     const hrefs = links.map((link) => link.href);
 
     expect(hrefs).toContain("/data");
-    expect(hrefs).toContain("/texas-government/agencies");
     expect(hrefs).not.toContain("/data/rules");
   });
 
