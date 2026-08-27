@@ -25,6 +25,28 @@ describe("Cloudflare vision verdict normalization", () => {
     });
   });
 
+  it("accepts the compact positive production verdict without broadly accepting unlabeled prose", () => {
+    const normalized = normalizeCloudflareVisionVerdictOutput(
+      "matches, photorealistic, A punter in a football uniform is kicking a football in a stadium setting.",
+    );
+    expect(parseVisionVerdict(normalized)).toEqual({
+      matches: true,
+      photorealistic: true,
+      reason: "A punter in a football uniform is kicking a football in a stadium setting.",
+    });
+  });
+
+  it("keeps contradictory compact verdict prose rejected", () => {
+    const mismatch = normalizeCloudflareVisionVerdictOutput(
+      "matches, photorealistic, The scene does not match the article subject.",
+    );
+    const nonPhoto = normalizeCloudflareVisionVerdictOutput(
+      "matches, photorealistic, The image is not photorealistic and looks like an illustration.",
+    );
+    expect(parseVisionVerdict(mismatch)).toMatchObject({ matches: false });
+    expect(parseVisionVerdict(nonPhoto)).toMatchObject({ photorealistic: false });
+  });
+
   it("converts numeric and N/A labels into a conservative parseable rejection", () => {
     const normalized = normalizeCloudflareVisionVerdictOutput(
       "Matches: 0 Photorealistic: N/A Reason: The image is not an adequate editorial photograph for this story.",
