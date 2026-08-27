@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "votewittliff.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Albert Wittliff's official Texas House District 129 campaign website to verify candidate identity, office, and discover candidate-supplied portraits, campaign media, press materials, or linked official social profiles. Do not approve or reuse any image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Albert Wittliff Texas House District 129 official campaign portrait press media",
+    "notes": "New source discovered August 27, 2026. TCTA's current candidate page links votewittliff.com as Albert Wittliff's website, and current election sources show him as the Democratic nominee for Texas House District 129. Treat imagery as discovery-only until item-level reuse rights are documented."
+  },
+  {
+    "domain": "lizramosfortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Liz Ramos's official Texas House District 135 campaign website to verify candidate identity, office, and discover candidate-supplied portraits, campaign media, press materials, or linked official social profiles. Do not approve or reuse any image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Liz Ramos Texas House District 135 official campaign portrait press media",
+    "notes": "New source discovered August 27, 2026. TCTA's current candidate page links lizramosfortexas.com as Liz Ramos's website, and current election sources show her as the Republican nominee for Texas House District 135. Treat imagery as discovery-only until item-level reuse rights are documented."
+  }
+]
