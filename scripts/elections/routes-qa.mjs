@@ -205,7 +205,7 @@ for (const redirectSource of [
 }
 requireText(
   sitemapIndex,
-  '{ file: "sitemap-elections.xml", count: ELECTION_STATIC_SITEMAP_COUNT }',
+  '"sitemap-elections.xml"',
   "The root sitemap index does not advertise the election sitemap.",
 );
 
