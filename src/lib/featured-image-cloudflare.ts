@@ -167,11 +167,22 @@ export function extractCloudflareVisionOutput(result: unknown): { output: unknow
 }
 
 // Mistral occasionally follows the requested labels but changes presentation:
-// Markdown labels, 1/0 and N/A tokens, or `label=value` rather than `label: value`.
-// Normalize only that presentation layer before using the existing strict
-// parser. N/A is conservatively treated as a negative, never as approval.
+// Markdown labels, 1/0 and N/A tokens, `label=value`, or a compact positive
+// `matches, photorealistic, reason` form. Normalize only those known formats
+// before using the existing strict parser. N/A and contradictory compact prose
+// remain conservative rejections, never approvals.
 export function normalizeCloudflareVisionVerdictOutput(value: unknown): unknown {
   if (typeof value !== "string") return value;
+
+  const compactPositive = value.trim().match(/^matches\s*,\s*photorealistic\s*,\s*(.+)$/is);
+  if (compactPositive) {
+    const reason = compactPositive[1].replace(/\s+/g, " ").trim();
+    const contradiction = /\b(?:does\s+not\s+match|doesn't\s+match|not\s+(?:a\s+)?match|mismatch(?:es|ed)?|not\s+photorealistic|non[-\s]?photorealistic|fails?\s+(?:the\s+)?(?:match|photorealism))\b/i;
+    if (reason && !contradiction.test(reason)) {
+      return { matches: true, photorealistic: true, reason };
+    }
+  }
+
   return value
     .replace(/\*\*\s*(Matches|Photorealistic|Reason)\s*:\s*\*\*/gi, "$1:")
     .replace(/\b(Matches|Photorealistic|Reason)\s*=\s*/gi, "$1: ")
