@@ -27,7 +27,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cat >/tmp/probe.mjs <<'JS'
+          cat >.visla-probe.mjs <<'JS'
           import { chromium } from '@playwright/test';
           const target = 'https://app.visla.us/clip/1540580154592547701';
           const browser = await chromium.launch({ headless: true });
@@ -56,4 +56,4 @@ jobs:
           await browser.close();
           if (![...candidates].some((u) => /\.mp4(?:$|\?)/i.test(u))) process.exitCode = 2;
           JS
-          node /tmp/probe.mjs
+          node .visla-probe.mjs
