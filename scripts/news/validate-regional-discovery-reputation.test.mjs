@@ -2,7 +2,7 @@ import { expect, test } from 'vitest';
 import fs from 'node:fs';
 
 const migration = fs.readFileSync(
-  'supabase/migrations/20260827204500_set_regional_discovery_reputation.sql',
+  'supabase/migrations/20260827205500_set_regional_discovery_reputation.sql',
   'utf8',
 );
 
