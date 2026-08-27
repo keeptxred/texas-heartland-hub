@@ -13,6 +13,7 @@ const SECTIONS = [
   { title: "Texas Data Center", description: "Official-source maps for taxes, state spending, election results, demographics, energy, water, and public-safety data.", href: "/data" },
   { title: "Political Reference", description: "Races, redistricting, voter trends, policy questions, PACs, and campaign activity — 50 source-backed search guides.", href: "/texas-political-reference" },
   { title: "Political Figures", description: "Evergreen, source-backed profiles connecting major Texas political careers to the state's Republican realignment and governing institutions.", href: "/texas-politics/figures" },
+  { title: "How Texas Became Republican", description: "A sourced timeline of Texas's shift from one-party Democratic rule to Republican statewide and legislative control.", href: "/texas-politics/how-texas-became-republican" },
   { title: "State Legislature", description: "Bills, special sessions, and the conservative caucus in Austin.", href: "/texas-legislature" },
   { title: "Governor & Leadership", description: "The Governor, Lt. Governor, AG, and statewide officeholders.", href: "/representatives" },
   { title: "Voting & Policy", description: "Voter ID, registration, election integrity, and ballot access.", href: "/elections/voting" },
@@ -110,6 +111,9 @@ function TexasPoliticsPage() {
             </p>
             <p>
               The <a href="/texas-politics/figures" className="font-semibold text-primary underline underline-offset-4">Texas Political Figures</a> library supplies the historical people layer: source-backed evergreen profiles of governors, senators, speakers, congressional leaders and other figures who shaped Texas's partisan realignment and conservative governing institutions.
+            </p>
+            <p>
+              Our <a href="/texas-politics/how-texas-became-republican" className="font-semibold text-primary underline underline-offset-4">How Texas Became Republican</a> guide connects those individual careers to the larger chronology, from the 1952 Shivercrat split and John Tower's 1961 Senate victory through the 1998 statewide sweep and the Republican takeover of the Texas House after the 2002 election.
             </p>
           </div>
         </section>
