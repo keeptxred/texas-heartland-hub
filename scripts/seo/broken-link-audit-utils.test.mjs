@@ -37,4 +37,11 @@ describe('broken-link audit route semantics', () => {
     expect(links).toContain('/laws');
     expect(links).toContain('/policy');
   });
+
+  it('captures absolute template URLs whole so they are rejected instead of truncated', () => {
+    const links = extractLinkCandidates('"machineResourcePattern": "https://keeptxred.com/bills/texas/{legislature}/{bill-type}/{bill-number}/reference.json"');
+    expect(links).toContain('https://keeptxred.com/bills/texas/{legislature}/{bill-type}/{bill-number}/reference.json');
+    expect(links).not.toContain('https://keeptxred.com/bills/texas/');
+    expect(normalizeInternalLink(links[0], SITE)).toBeNull();
+  });
 });
