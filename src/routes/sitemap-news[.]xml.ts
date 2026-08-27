@@ -9,10 +9,15 @@ import {
   isArticleSlugDateConsistent,
 } from "@/lib/sitemap-shared";
 import { ARTICLES, isPublished } from "@/data/articles";
+import { ARTICLE_BODIES } from "@/data/article-bodies";
 import { listSitemapArticles } from "@/lib/evergreen.functions";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 
 const WINDOW_MS = 48 * 60 * 60 * 1000;
+
+function hasSubstantiveStaticBody(slug: string): boolean {
+  return Boolean(ARTICLE_BODIES[slug]);
+}
 
 /** Google News sitemap — only articles from the last 48 hours. */
 export const Route = createFileRoute("/sitemap-news.xml")({
@@ -25,7 +30,11 @@ export const Route = createFileRoute("/sitemap-news.xml")({
         type NewsItem = { loc: string; title: string; pubDate: string };
         const items: NewsItem[] = [];
 
-        for (const a of ARTICLES.filter((a) => isPublished(a) && isStaticArticleIndexable(a))) {
+        for (const a of ARTICLES.filter((a) =>
+          isPublished(a)
+          && isStaticArticleIndexable(a)
+          && hasSubstantiveStaticBody(a.slug),
+        )) {
           const t = new Date(a.publishedAt).getTime();
           if (isNaN(t) || t < cutoff || !isArticleSlugDateConsistent(a.slug, a.publishedAt)) continue;
           items.push({
