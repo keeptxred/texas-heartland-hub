@@ -11,7 +11,6 @@ type GitHubActionsClaims = {
   nbf?: number;
   repository?: string;
   ref?: string;
-  sha?: string;
   workflow_ref?: string;
   event_name?: string;
   [key: string]: unknown;
@@ -61,9 +60,6 @@ export async function verifyGitHubActionsOidc(options: {
   repository: string;
   workflowPath: string;
   allowedEventNames?: readonly string[];
-  allowedRefs?: readonly string[];
-  allowedWorkflowRefs?: readonly string[];
-  allowedShas?: readonly string[];
 }): Promise<GitHubActionsClaims> {
   const parts = options.token.split(".");
   if (parts.length !== 3) throw new Error("Malformed GitHub Actions OIDC token");
@@ -120,19 +116,13 @@ export async function verifyGitHubActionsOidc(options: {
   if (claims.repository !== options.repository) {
     throw new Error("Unexpected GitHub Actions repository claim");
   }
-
-  const allowedRefs = options.allowedRefs ?? ["refs/heads/main"];
-  if (!claims.ref || !allowedRefs.includes(claims.ref)) {
-    throw new Error("Unexpected GitHub Actions ref claim");
+  if (claims.ref !== "refs/heads/main") {
+    throw new Error("GitHub Actions caller is not running from main");
   }
 
   const expectedWorkflowRef = `${options.repository}/${options.workflowPath}@refs/heads/main`;
-  const allowedWorkflowRefs = options.allowedWorkflowRefs ?? [expectedWorkflowRef];
-  if (!claims.workflow_ref || !allowedWorkflowRefs.includes(claims.workflow_ref)) {
+  if (claims.workflow_ref !== expectedWorkflowRef) {
     throw new Error("Unexpected GitHub Actions workflow claim");
-  }
-  if (options.allowedShas && (!claims.sha || !options.allowedShas.includes(claims.sha))) {
-    throw new Error("Unexpected GitHub Actions SHA claim");
   }
   if (!isAllowedGitHubActionsEvent(claims.event_name, options.allowedEventNames)) {
     throw new Error("Unexpected GitHub Actions event claim");
