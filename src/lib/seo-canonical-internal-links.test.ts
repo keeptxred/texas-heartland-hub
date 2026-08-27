@@ -6,6 +6,8 @@ const sourceFiles = [
   "src/components/site-footer.tsx",
   "src/components/sports-coverage-placeholder.tsx",
   "src/components/city-page.tsx",
+  "src/components/texas-news-view.tsx",
+  "src/components/texas-business-view.tsx",
   "src/routes/texas-sports.index.tsx",
   "src/routes/texas-government.tsx",
   "src/routes/texas-government.$entitySlug.tsx",
@@ -49,6 +51,12 @@ describe("canonical internal links", () => {
         expect(source, `${file} must not contain redirecting internal link ${alias}`).not.toContain(alias);
       }
     }
+  });
+
+  it("keeps Texas news topic canonicals pointed at the final newsroom URL", () => {
+    const topicRoute = readFileSync("src/routes/texas-news.$topic.tsx", "utf8");
+    expect(topicRoute).toContain('const canonical = "https://keeptxred.com/news"');
+    expect(topicRoute).not.toContain('const canonical = "https://keeptxred.com/texas-news"');
   });
 
   it("keeps key Search Console pages self-canonical", () => {
