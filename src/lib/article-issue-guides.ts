@@ -1,3 +1,6 @@
+import { issueGuideBySlug } from "@/data/issue-guides";
+import { isIssueGuideIndexable } from "@/lib/issue-guide-indexability";
+
 export type ArticleIssueMatchInput = {
   title: string;
   dek?: string | null;
@@ -133,8 +136,13 @@ export function matchArticleIssueGuides(input: ArticleIssueMatchInput, limit = 3
 
     return { slug: rule.slug, score, reasons };
   })
-    // A category match alone is never enough to create an issue link.
-    .filter((match) => match.score >= 2 && match.reasons.some((reason) => !reason.startsWith("category:")))
+    .filter((match) => {
+      const guide = issueGuideBySlug[match.slug];
+      return Boolean(guide)
+        && isIssueGuideIndexable(guide)
+        && match.score >= 2
+        && match.reasons.some((reason) => !reason.startsWith("category:"));
+    })
     .sort((a, b) => b.score - a.score || a.slug.localeCompare(b.slug))
     .slice(0, Math.min(3, limit));
 }

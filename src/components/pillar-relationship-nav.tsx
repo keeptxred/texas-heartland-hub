@@ -4,6 +4,7 @@ import {
   type ContentPillarSlug,
 } from "@/lib/content-pillars";
 import { issueGuideBySlug, type IssueGuide } from "@/data/issue-guides";
+import { isIssueGuideIndexable } from "@/lib/issue-guide-indexability";
 
 const PILLAR_ISSUE_GUIDES: Partial<Record<ContentPillarSlug, readonly string[]>> = {
   "texas-politics-government": [
@@ -52,7 +53,7 @@ export function PillarRelationshipNav({ pillarSlug }: { pillarSlug: ContentPilla
   const related = getRelatedContentPillars(pillarSlug);
   const issueGuides = (PILLAR_ISSUE_GUIDES[pillarSlug] ?? [])
     .map((slug) => issueGuideBySlug[slug])
-    .filter((guide): guide is IssueGuide => Boolean(guide));
+    .filter((guide): guide is IssueGuide => Boolean(guide) && isIssueGuideIndexable(guide));
 
   return (
     <section className="mt-10 max-w-4xl border-t border-border pt-6" aria-labelledby={`${pillarSlug}-coverage-map`}>

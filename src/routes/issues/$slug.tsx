@@ -216,7 +216,7 @@ function IssueGuidePage() {
             <div className="mt-4 space-y-4">
               {guide.relatedSlugs.map((relatedSlug) => {
                 const related = issueGuideBySlug[relatedSlug];
-                if (!related) return null;
+                if (!related || !isIssueGuideIndexable(related)) return null;
                 return (
                   <a key={relatedSlug} href={`/issues/${relatedSlug}`} className="block border-b pb-4 last:border-0 last:pb-0">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-primary">{related.category}</span>
