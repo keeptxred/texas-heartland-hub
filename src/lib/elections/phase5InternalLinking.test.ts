@@ -26,4 +26,10 @@ describe("phase 5 election discovery links", () => {
     expect(candidateLinks).toContain("/elections/districts/");
     expect(candidateLinks).toContain('eyebrow: "Election district"');
   });
+
+  it("connects matching live candidate pages to evergreen political biographies", () => {
+    expect(candidateLinks).toContain("politicalFigureProfilePathByName");
+    expect(candidateLinks).toContain('eyebrow: "Evergreen profile"');
+    expect(candidateLinks).toContain("politicalProfileHref");
+  });
 });
