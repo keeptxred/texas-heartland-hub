@@ -1,0 +1,121 @@
+name: Publish TexasDefined test Reel
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-texasdefined-test-reel.yml'
+      - 'src/routes/api/public/hooks/publish-texasdefined-reel.ts'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+      - name: Install browser dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          bun install --frozen-lockfile
+          bunx playwright install --with-deps chromium
+
+      - name: Resolve and download the approved Visla test Reel
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat >.visla-download.mjs <<'JS'
+          import { chromium } from '@playwright/test';
+          import { writeFile } from 'node:fs/promises';
+
+          const target = 'https://app.visla.us/clip/1540580154592547701';
+          const browser = await chromium.launch({ headless: true });
+          const page = await browser.newPage();
+          const candidates = [];
+          const add = (url, contentType = '') => {
+            if (!url || String(url).startsWith('blob:')) return;
+            const lower = String(url).toLowerCase();
+            const type = String(contentType).toLowerCase();
+            if (lower.includes('.mp4') || lower.includes('.m3u8') || type.startsWith('video/')) {
+              if (!candidates.some((entry) => entry.url === url)) candidates.push({ url, contentType });
+            }
+          };
+          page.on('response', (response) => add(response.url(), response.headers()['content-type'] || ''));
+          await page.goto(target, { waitUntil: 'domcontentloaded', timeout: 60000 });
+          await page.waitForTimeout(5000);
+          await page.evaluate(async () => {
+            for (const video of document.querySelectorAll('video')) {
+              try { video.muted = true; await video.play(); } catch {}
+            }
+          });
+          await page.waitForTimeout(12000);
+          const urls = await page.evaluate(() => Array.from(document.querySelectorAll('video')).flatMap((video) => [video.currentSrc, video.src, ...Array.from(video.querySelectorAll('source')).map((source) => source.src)]).filter(Boolean));
+          for (const url of urls) add(url);
+          await browser.close();
+          const preferred = candidates.find((entry) => /\.mp4(?:$|\?)/i.test(entry.url)) ?? candidates.find((entry) => /\.m3u8(?:$|\?)/i.test(entry.url)) ?? candidates[0];
+          if (!preferred) throw new Error('Visla did not expose a downloadable video URL to the browser session.');
+          await writeFile('.visla-video-url', preferred.url, 'utf8');
+          console.log(`Resolved Visla media (${preferred.contentType || 'unknown content type'}).`);
+          JS
+          node .visla-download.mjs
+          VIDEO_URL="$(cat .visla-video-url)"
+          if [[ "$VIDEO_URL" == *".m3u8"* || "$VIDEO_URL" == *"m3u8"* ]]; then
+            ffmpeg -hide_banner -loglevel error -y -i "$VIDEO_URL" -c copy texasdefined-test-reel.mp4
+          else
+            curl -L --fail-with-body --silent --show-error --max-time 180 "$VIDEO_URL" -o texasdefined-test-reel.mp4
+          fi
+          test -s texasdefined-test-reel.mp4
+          BYTES=$(wc -c < texasdefined-test-reel.mp4)
+          echo "Downloaded Reel bytes: $BYTES"
+          if (( BYTES > 104857600 )); then
+            echo 'Resolved Reel exceeds the 100 MB publisher limit.' >&2
+            exit 1
+          fi
+
+      - name: Publish approved test Reel to TexasDefined Facebook
+        shell: bash
+        run: |
+          set -euo pipefail
+          ENDPOINT='https://keeptxred-site.freddy-coppola.workers.dev/api/public/hooks/publish-texasdefined-reel'
+          TITLE='3 Things Outsiders Get Wrong About Texas'
+          DESCRIPTION='Think you know Texas? 🤠 Here are three things outsiders often get wrong about the Lone Star State. What misconception do you hear most? https://texasdefined.com #Texas #TexasFacts #TexasDefined'
+
+          for attempt in $(seq 1 24); do
+            OIDC_JSON=$(curl -fsSL -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-facebook")
+            OIDC_TOKEN=$(printf '%s' "$OIDC_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin)["value"])')
+            HTTP_CODE=$(curl -sS -o response.json -w '%{http_code}' \
+              -X POST "$ENDPOINT" \
+              -H "Authorization: Bearer $OIDC_TOKEN" \
+              -F 'confirmation=PUBLISH TEXASDEFINED REEL' \
+              -F "title=$TITLE" \
+              -F "description=$DESCRIPTION" \
+              -F 'video=@texasdefined-test-reel.mp4;type=video/mp4') || HTTP_CODE=000
+            cat response.json 2>/dev/null || true
+            echo
+            if [[ "$HTTP_CODE" == "200" ]] && python3 - <<'PY'
+          import json
+          try:
+              data=json.load(open('response.json'))
+          except Exception:
+              raise SystemExit(1)
+          raise SystemExit(0 if data.get('ok') is True and data.get('published') is True else 1)
+          PY
+            then
+              echo 'TexasDefined test Reel published successfully.'
+              exit 0
+            fi
+            if [[ "$HTTP_CODE" =~ ^(400|403|422)$ ]]; then
+              echo "Non-retryable publisher response: HTTP $HTTP_CODE" >&2
+              exit 1
+            fi
+            echo "Publisher not ready or transient failure (HTTP $HTTP_CODE), attempt $attempt/24; retrying in 20s..."
+            sleep 20
+          done
+          echo 'Reel was not confirmed published after retry window.' >&2
+          exit 1

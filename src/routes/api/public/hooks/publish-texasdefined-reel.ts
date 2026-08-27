@@ -7,10 +7,43 @@ import {
   validateReelFile,
   type ReelSource,
 } from "@/lib/facebook-reels";
+import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
+
+const OIDC_AUDIENCE = "keeptxred-facebook";
+const OIDC_REPOSITORY = "keeptxred/texas-heartland-hub";
+const OIDC_WORKFLOW_PATH = ".github/workflows/publish-texasdefined-test-reel.yml";
 
 function authOk(token: string): boolean {
   const expected = process.env.ADMIN_PASSCODE ?? "keeptxred";
   return token === expected;
+}
+
+function bearerToken(request: Request): string | null {
+  const value = request.headers.get("authorization") ?? "";
+  const match = value.match(/^Bearer\s+(.+)$/i);
+  return match?.[1]?.trim() || null;
+}
+
+async function requestIsAuthorized(request: Request, parsedToken: string): Promise<boolean> {
+  if (authOk(parsedToken)) return true;
+  const oidcToken = bearerToken(request);
+  if (!oidcToken) return false;
+  try {
+    await verifyGitHubActionsOidc({
+      token: oidcToken,
+      audience: OIDC_AUDIENCE,
+      repository: OIDC_REPOSITORY,
+      workflowPath: OIDC_WORKFLOW_PATH,
+      allowedEventNames: ["push", "workflow_dispatch"],
+    });
+    return true;
+  } catch (error) {
+    console.error(
+      "[publish-texasdefined-reel] GitHub Actions OIDC verification failed",
+      error instanceof Error ? error.message : String(error),
+    );
+    return false;
+  }
 }
 
 type ParsedRequest = {
@@ -72,7 +105,7 @@ async function publishTexasDefinedReel(request: Request): Promise<Response> {
     );
   }
 
-  if (!authOk(parsed.token)) {
+  if (!(await requestIsAuthorized(request, parsed.token))) {
     return Response.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
   if (parsed.confirmation !== TEXASDEFINED_REEL_CONFIRMATION) {
