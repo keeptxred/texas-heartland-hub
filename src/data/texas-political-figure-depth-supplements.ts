@@ -1,5 +1,20 @@
 import type { TexasPoliticalFigure } from "@/data/texas-political-figures";
 
+const SECTION_EXPANSIONS: Record<string, Record<string, string>> = {
+  "john-cornyn-texas-senator-profile": {
+    "Why the profile belongs on KeepTXRed": " That structure also gives readers a stable place to understand the offices and institutional roles behind future headlines instead of repeatedly reconstructing his biography from breaking-news coverage."
+  },
+  "greg-abbott-texas-governor-profile": {
+    "Election as the 48th governor": " His victory also extended the Republican hold on an office the party had controlled continuously since George W. Bush defeated Ann Richards in 1994, placing Abbott inside a longer era of statewide GOP dominance."
+  },
+  "ken-paxton-texas-attorney-general-profile": {
+    "Power inside Republican politics": " Because the attorney general is elected independently of the governor, that political base can also give the officeholder room to pursue priorities, alliances and intraparty conflicts that do not always mirror the governor's agenda."
+  },
+  "phil-gramm-texas-senator-fiscal-conservative": {
+    "U.S. senator from Texas": " His Senate tenure therefore linked Texas's changing partisan identity to national fights over taxation, spending, financial regulation and the size of the federal government."
+  }
+};
+
 const SUPPLEMENTAL_SECTIONS: Record<string, TexasPoliticalFigure["sections"]> = {
   "ronald-reagan-texas-conservative-legacy": [
     {
@@ -64,7 +79,14 @@ const SUPPLEMENTAL_SECTIONS: Record<string, TexasPoliticalFigure["sections"]> = 
 };
 
 export function withPoliticalFigureDepthSupplements(figure: TexasPoliticalFigure): TexasPoliticalFigure {
+  const expansions = SECTION_EXPANSIONS[figure.slug];
+  const sections = expansions
+    ? figure.sections.map((section) => ({
+        ...section,
+        body: expansions[section.heading] ? `${section.body}${expansions[section.heading]}` : section.body
+      }))
+    : figure.sections;
   const additions = SUPPLEMENTAL_SECTIONS[figure.slug];
-  if (!additions?.length) return figure;
-  return { ...figure, sections: [...figure.sections, ...additions] };
+  if (!additions?.length) return sections === figure.sections ? figure : { ...figure, sections };
+  return { ...figure, sections: [...sections, ...additions] };
 }
