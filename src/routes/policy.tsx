@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
 import { ALL_POLICY_TRACKERS } from "@/data/policy-trackers-all";
 import { buildSeo, SITE_URL, webPageJsonLd } from "@/lib/seo";
 
@@ -29,6 +30,18 @@ export const Route = createFileRoute("/policy")({
 });
 
 function PolicyHub() {
+  const [query, setQuery] = useState("");
+  const normalizedQuery = query.trim().toLowerCase();
+  const visibleTrackers = useMemo(() => {
+    if (!normalizedQuery) return ALL_POLICY_TRACKERS;
+    return ALL_POLICY_TRACKERS.filter((tracker) =>
+      [tracker.shortTitle, tracker.title, tracker.description, ...tracker.keywords]
+        .join(" ")
+        .toLowerCase()
+        .includes(normalizedQuery),
+    );
+  }, [normalizedQuery]);
+
   return (
     <main className="bg-background">
       <section className="border-b bg-secondary text-secondary-foreground">
@@ -46,16 +59,45 @@ function PolicyHub() {
       </section>
 
       <section className="mx-auto max-w-[1180px] px-6 py-12">
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {ALL_POLICY_TRACKERS.map((tracker) => (
-            <a key={tracker.slug} href={`/policy/${tracker.slug}`} className="group flex h-full flex-col rounded-xl border bg-card p-6 transition hover:border-primary hover:shadow-md">
-              <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-primary">Permanent tracker</p>
-              <h2 className="mt-2 font-display text-2xl leading-tight tracking-tight group-hover:text-primary">{tracker.shortTitle}</h2>
-              <p className="mt-3 flex-1 text-sm leading-6 text-muted-foreground">{tracker.description}</p>
-              <div className="mt-5 flex items-center justify-between gap-3 text-xs"><span className="font-bold text-primary">Open tracker →</span><span className="text-muted-foreground">Reviewed {tracker.updated}</span></div>
-            </a>
-          ))}
+        <div className="mb-8 rounded-xl border bg-card p-5 md:flex md:items-end md:justify-between md:gap-6">
+          <div className="flex-1">
+            <label htmlFor="policy-tracker-search" className="text-xs font-extrabold uppercase tracking-[0.18em] text-primary">Find a policy tracker</label>
+            <input
+              id="policy-tracker-search"
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search taxes, border, privacy, schools, energy…"
+              className="mt-2 w-full rounded-lg border bg-background px-4 py-3 text-base outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+              autoComplete="off"
+            />
+          </div>
+          <div className="mt-3 flex items-center justify-between gap-4 text-sm text-muted-foreground md:mt-0 md:justify-end">
+            <span aria-live="polite">Showing {visibleTrackers.length} of {ALL_POLICY_TRACKERS.length} trackers</span>
+            {query ? (
+              <button type="button" onClick={() => setQuery("")} className="font-semibold text-primary hover:underline">Clear</button>
+            ) : null}
+          </div>
         </div>
+
+        {visibleTrackers.length > 0 ? (
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {visibleTrackers.map((tracker) => (
+              <a key={tracker.slug} href={`/policy/${tracker.slug}`} className="group flex h-full flex-col rounded-xl border bg-card p-6 transition hover:border-primary hover:shadow-md">
+                <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-primary">Permanent tracker</p>
+                <h2 className="mt-2 font-display text-2xl leading-tight tracking-tight group-hover:text-primary">{tracker.shortTitle}</h2>
+                <p className="mt-3 flex-1 text-sm leading-6 text-muted-foreground">{tracker.description}</p>
+                <div className="mt-5 flex items-center justify-between gap-3 text-xs"><span className="font-bold text-primary">Open tracker →</span><span className="text-muted-foreground">Reviewed {tracker.updated}</span></div>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-xl border border-dashed bg-muted/20 p-8 text-center">
+            <h2 className="font-display text-2xl">No matching policy tracker</h2>
+            <p className="mt-2 text-sm text-muted-foreground">Try a broader term such as taxes, elections, education, privacy, energy, border, or health.</p>
+            <button type="button" onClick={() => setQuery("")} className="mt-4 font-semibold text-primary hover:underline">Show all trackers</button>
+          </div>
+        )}
       </section>
 
       <section className="border-t bg-muted/25">

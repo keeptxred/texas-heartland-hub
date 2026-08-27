@@ -14,6 +14,7 @@ import { POLICY_TRACKERS_WAVE13 } from "@/data/policy-trackers-wave13";
 import { POLICY_TRACKERS_WAVE14 } from "@/data/policy-trackers-wave14";
 import { POLICY_TRACKERS_WAVE15 } from "@/data/policy-trackers-wave15";
 import { POLICY_TRACKERS_WAVE16 } from "@/data/policy-trackers-wave16";
+import { POLICY_TRACKERS_WAVE17 } from "@/data/policy-trackers-wave17";
 import { POLICY_TRACKER_UPGRADES } from "@/data/policy-tracker-upgrades";
 
 const BASE_POLICY_TRACKERS = [
@@ -33,6 +34,7 @@ const BASE_POLICY_TRACKERS = [
   ...POLICY_TRACKERS_WAVE14,
   ...POLICY_TRACKERS_WAVE15,
   ...POLICY_TRACKERS_WAVE16,
+  ...POLICY_TRACKERS_WAVE17,
 ];
 
 export const ALL_POLICY_TRACKERS = BASE_POLICY_TRACKERS.map(

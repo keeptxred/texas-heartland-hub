@@ -17,6 +17,11 @@ const issueRoute = fs.readFileSync(new URL("../routes/issues/$slug.tsx", import.
 const policyRoute = fs.readFileSync(new URL("../routes/policy.$slug.tsx", import.meta.url), "utf8");
 const referenceRoute = fs.readFileSync(new URL("../routes/texas-political-reference.$slug.tsx", import.meta.url), "utf8");
 
+const EXPECTED_INDEXABLE_POLICY_TRACKER_SLUGS = [
+  ...PRIORITY_INDEXABLE_POLICY_TRACKER_SLUGS,
+  "social-media-viewpoint-moderation",
+];
+
 describe("AdSense programmatic indexability", () => {
   it("indexes every deliberately expanded issue guide while keeping other thin collections quarantined", () => {
     expect(
@@ -29,7 +34,7 @@ describe("AdSense programmatic indexability", () => {
     ].sort());
     expect(
       ALL_POLICY_TRACKERS.filter(isPolicyTrackerIndexable).map((tracker) => tracker.slug).sort(),
-    ).toEqual([...PRIORITY_INDEXABLE_POLICY_TRACKER_SLUGS].sort());
+    ).toEqual([...EXPECTED_INDEXABLE_POLICY_TRACKER_SLUGS].sort());
     expect(POLITICAL_SEARCH_GUIDES.filter(isPoliticalReferenceIndexable)).toHaveLength(0);
   });
 
