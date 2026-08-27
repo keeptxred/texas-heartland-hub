@@ -72,7 +72,7 @@ export const EXTRA_AGENCY_AUTHORITY_PROFILES: AgencyAuthorityProfile[] = [
     ],
     related: [
       { label: "Texas Government Agency Directory", href: "/texas-government/agencies" },
-      { label: "Texas Water", href: "/texas-water" },
+      { label: "Texas Water", href: "/issues/texas-water-policy" },
       { label: "Texas Laws", href: "/laws" }
     ],
     keywords: ["TPWD", "Texas Parks and Wildlife", "state parks", "hunting", "fishing", "wildlife", "game wardens", "boating", "conservation"]
