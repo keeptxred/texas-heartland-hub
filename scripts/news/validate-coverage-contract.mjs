@@ -4,9 +4,11 @@ const scorerPath = "src/lib/viral-score.ts";
 const sourceMigrationPath = "supabase/migrations/20260805142000_expand_texas_news_coverage.sql";
 const hyperlocalMigrationPath = "supabase/migrations/20260811043000_hyperlocal_primary_source_discovery.sql";
 const telemetryMigrationPath = "supabase/migrations/20260819215000_hyperlocal_source_health_and_geography_current.sql";
+const attributionMigrationPath = "supabase/migrations/20260827003000_news_source_attribution_health.sql";
 const gapMigrationPath = "supabase/migrations/20260805145500_add_news_coverage_gap_view.sql";
 const healthMigrationPath = "supabase/migrations/20260805153500_add_news_source_health_view.sql";
 const healthEndpointPath = "src/routes/api/public/newsroom-health.ts";
+const ingestPath = "src/routes/api/public/hooks/ingest-feeds.ts";
 const smokePath = "scripts/news/smoke-live-newsroom.mjs";
 
 const requiredFiles = [
@@ -14,9 +16,11 @@ const requiredFiles = [
   sourceMigrationPath,
   hyperlocalMigrationPath,
   telemetryMigrationPath,
+  attributionMigrationPath,
   gapMigrationPath,
   healthMigrationPath,
   healthEndpointPath,
+  ingestPath,
   smokePath,
 ];
 for (const file of requiredFiles) {
@@ -27,9 +31,11 @@ const scorer = fs.readFileSync(scorerPath, "utf8");
 const sources = fs.readFileSync(sourceMigrationPath, "utf8");
 const hyperlocalSources = fs.readFileSync(hyperlocalMigrationPath, "utf8");
 const telemetry = fs.readFileSync(telemetryMigrationPath, "utf8");
+const attribution = fs.readFileSync(attributionMigrationPath, "utf8");
 const gaps = fs.readFileSync(gapMigrationPath, "utf8");
 const health = fs.readFileSync(healthMigrationPath, "utf8");
 const healthEndpoint = fs.readFileSync(healthEndpointPath, "utf8");
+const ingest = fs.readFileSync(ingestPath, "utf8");
 const smoke = fs.readFileSync(smokePath, "utf8");
 
 const configuredSources = [
@@ -67,8 +73,6 @@ for (const token of ["Primary-source", "Hyperlocal", "public-health", "human-int
   if (!hyperlocalSources.includes(token)) throw new Error(`Hyperlocal discovery contract missing: ${token}`);
 }
 
-// Verify stable scoring primitives here. Behavioral routing rules belong in
-// viral-score.test.ts, which the workflow runs immediately after this contract check.
 for (const token of [
   "SEO_ARTICLE",
   "SOURCE_REPUTATION_FLOOR",
@@ -121,6 +125,27 @@ if (telemetry.includes("'Texas City','Galveston County','Gulf Coast','texas city
 }
 
 for (const token of [
+  "coalesce(nullif(btrim(trend_source), ''), source)",
+  "attribution_source",
+  "configured discovery-feed attribution",
+]) {
+  if (!attribution.includes(token)) throw new Error(`Source-attribution migration contract missing: ${token}`);
+}
+for (const token of [
+  "trend_source: result.source",
+  "OFFICIAL_HYPERLOCAL_SOURCE_RE",
+  "trend_source backfill failed",
+]) {
+  if (!ingest.includes(token)) throw new Error(`Ingestion attribution contract missing: ${token}`);
+}
+for (const token of [
+  "trend_source",
+  "row.trend_source || row.source",
+]) {
+  if (!healthEndpoint.includes(token)) throw new Error(`Newsroom health attribution contract missing: ${token}`);
+}
+
+for (const token of [
   "databaseViewsReady",
   "coverageGapCount",
   "sourceStatusCounts",
@@ -135,4 +160,4 @@ for (const token of ["/admin/coverage-gaps", "/api/public/newsroom-health", "/ap
   if (!smoke.includes(token)) throw new Error(`Live newsroom smoke contract missing: ${token}`);
 }
 
-console.log(`Newsroom coverage contract valid: ${configuredSources.length} statewide discovery sources + ${hyperlocalRequiredSources.length} hyperlocal sources, scoring, gap reporting, source health, deterministic geography telemetry, server aggregation, and live smoke monitoring.`);
+console.log(`Newsroom coverage contract valid: ${configuredSources.length} statewide discovery sources + ${hyperlocalRequiredSources.length} hyperlocal sources, configured-feed attribution, scoring, gap reporting, source health, deterministic geography telemetry, server aggregation, and live smoke monitoring.`);
