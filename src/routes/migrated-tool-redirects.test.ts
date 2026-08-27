@@ -16,7 +16,7 @@ const CASES = [
   ["texas-home-ownership-cost-calculator.tsx", "/texas-home-ownership-cost-calculator", "https://texasdefined.com/texas-homeownership-cost-calculator"],
   ["texas-mortgage-qualification-calculator.tsx", "/texas-mortgage-qualification-calculator", "https://texasdefined.com/texas-home-affordability-calculator"],
   ["texas-heloc-calculator.tsx", "/texas-heloc-calculator", "https://texasdefined.com/texas-home-equity-calculator"],
-  ["moving-checklist.tsx", "/moving-checklist", "https://texasdefined.com/moving-to-texas-checklist"],
+  ["moving-checklist.tsx", "/moving-checklist", "https://texasdefined.com/moving-to-texas"],
 ] as const;
 
 describe("migrated TexasDefined tool redirects", () => {
