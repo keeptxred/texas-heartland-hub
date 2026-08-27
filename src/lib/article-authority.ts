@@ -3,6 +3,7 @@ import {
   isPrimaryOrOfficialSource,
   sourceAuthorityLabel,
 } from "@/data/source-authority";
+import { pickExactArticleAuthorityLinks } from "@/lib/article-authority-entity-links";
 
 export type AuthorityInternalLink = { label: string; href: string };
 
@@ -58,12 +59,42 @@ function uniqueSources(input: BodySource[]): BodySource[] {
   return out;
 }
 
+function bodyContextText(body: AuthorityBody): string {
+  const parts: string[] = [];
+  for (const paragraph of body.intro ?? []) parts.push(paragraph);
+  for (const section of body.sections ?? []) {
+    if (section.heading) parts.push(section.heading);
+    for (const paragraph of section.paragraphs ?? []) parts.push(paragraph);
+    for (const bullet of section.bullets ?? []) parts.push(bullet);
+  }
+  for (const faq of body.faq ?? []) {
+    if (faq.q) parts.push(faq.q);
+    if (faq.a) parts.push(faq.a);
+  }
+  for (const takeaway of body.keyTakeaways ?? []) parts.push(takeaway);
+  return parts.join(" ");
+}
+
+function uniqueInternalLinks(input: readonly AuthorityInternalLink[]): AuthorityInternalLink[] {
+  const seen = new Set<string>();
+  const out: AuthorityInternalLink[] = [];
+  for (const link of input) {
+    const href = link.href?.trim();
+    const label = link.label?.trim();
+    if (!href || !label || href === "/news" || seen.has(href)) continue;
+    seen.add(href);
+    out.push({ label, href });
+  }
+  return out;
+}
+
 export function applyGeneratedNewsAuthority(input: AuthorityInput): AuthorityEnrichmentResult {
   if (input.kind !== "news" || !input.bodyJson || typeof input.bodyJson !== "object" || Array.isArray(input.bodyJson)) {
     return { bodyJson: input.bodyJson, flags: [] };
   }
 
   const body = { ...(input.bodyJson as AuthorityBody) };
+  const contextualAuthorityLinks = pickExactArticleAuthorityLinks(bodyContextText(body));
   const sections = Array.isArray(body.sections) ? [...body.sections] : [];
   const existingSources = Array.isArray(body.sources) ? uniqueSources(body.sources) : [];
 
@@ -126,9 +157,11 @@ export function applyGeneratedNewsAuthority(input: AuthorityInput): AuthorityEnr
     });
   }
 
-  const relatedLinks = (input.internalLinks ?? [])
-    .filter((link) => link.href && link.label && link.href !== "/news")
-    .slice(0, 4)
+  const relatedLinks = uniqueInternalLinks([
+    ...contextualAuthorityLinks,
+    ...(input.internalLinks ?? []),
+  ])
+    .slice(0, 5)
     .map((link) => `[${link.label}](${link.href})`);
   if (relatedLinks.length > 0 && !hasHeading(sections, "Related Keep TX Red Resources")) {
     sections.push({
@@ -144,6 +177,7 @@ export function applyGeneratedNewsAuthority(input: AuthorityInput): AuthorityEnr
     model: sourceCount > 1 ? "aggregated" : "single-source-rewrite",
     sourceCount,
     primarySourceCount,
+    contextualAuthorityLinkCount: contextualAuthorityLinks.length,
     transparentAggregation: true,
     originalReportingClaimed: false,
   };
