@@ -6,6 +6,7 @@ const ACTIVE_RELOCATION_FILES = [
   "dmv.change-address.tsx",
   "dmv.driver-license.tsx",
   "dmv.real-id.tsx",
+  "dmv.texas-dmv-vs-dps.tsx",
   "vehicles.new-residents.tsx",
   "vehicles.registration.tsx",
 ] as const;

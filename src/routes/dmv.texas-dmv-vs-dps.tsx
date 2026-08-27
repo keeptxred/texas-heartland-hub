@@ -161,7 +161,7 @@ function TexasDmvVsDpsPage() {
             <li>Schedule and complete the Texas driver-license transaction with DPS.</li>
           </ol>
           <p className="mt-5 leading-relaxed">
-            The site’s <a href="/moving-to-texas" className="font-semibold text-primary underline underline-offset-4">Moving to Texas resource center</a> and <a href="/moving-to-texas-checklist" className="font-semibold text-primary underline underline-offset-4">interactive moving checklist</a> organize these steps with the rest of a Texas relocation.
+            The <a href="https://texasdefined.com/moving-to-texas" className="font-semibold text-primary underline underline-offset-4" rel="noreferrer">TexasDefined Moving to Texas guide and checklist</a> organize these steps with the rest of a Texas relocation.
           </p>
         </section>
 
