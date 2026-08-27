@@ -68,9 +68,7 @@ const DIRECT_SOURCES: Source[] = [
   { name: "Texas Rangers", url: "https://www.mlb.com/rangers/news", category: "Sports", mode: "html-links", include: "^/rangers/news/" },
   { name: "Houston Astros", url: "https://www.mlb.com/astros/news", category: "Sports", mode: "html-links", include: "^/astros/news/" },
   { name: "Dallas Stars", url: "https://www.nhl.com/stars/news/", category: "Sports", mode: "html-links", include: "^/stars/news/" },
-  { name: "Texas Longhorns", url: "https://texaslonghorns.com/news/", category: "Sports", mode: "html-links", include: "^/news/20\\d{2}/" },
   { name: "Texas A&M Aggies", url: "https://12thman.com/news/", category: "Sports", mode: "html-links", include: "^/news/20\\d{2}/" },
-  { name: "Texas Tech Athletics", url: "https://texastech.com/news/", category: "Sports", mode: "html-links", include: "^/news/20\\d{2}/" },
   { name: "National Hurricane Center", url: "https://www.nhc.noaa.gov/index-at.xml", category: "Weather", mode: "rss" },
 ];
 
@@ -368,6 +366,7 @@ async function handler() {
     }));
   }
   const diag = results.map(({ items, ...rest }) => ({ ...rest, count: items.length }));
+  const successfulResults = results.filter((result) => result.status >= 200 && result.status < 300);
   return Response.json({
     ok: true,
     fetched: rows.length,
@@ -380,8 +379,9 @@ async function handler() {
     googleNewsSourcesConfigured: allGoogle.length,
     googleNewsSourcesChecked: google.length,
     skippedLegacyYoutube,
-    healthySources: results.filter((result) => result.status >= 200 && result.status < 300 && result.items.length > 0).length,
-    failedSources: results.filter((result) => !(result.status >= 200 && result.status < 300) || result.items.length === 0).length,
+    healthySources: successfulResults.filter((result) => result.items.length > 0).length,
+    quietSources: successfulResults.filter((result) => result.items.length === 0).length,
+    failedSources: results.filter((result) => !(result.status >= 200 && result.status < 300)).length,
     diag,
   });
 }
