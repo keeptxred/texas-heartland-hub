@@ -23,13 +23,14 @@ describe("fresh article image recovery", () => {
     expect(workflow).toContain("audience=keeptxred-newsroom");
   });
 
-  it("recovers every fresh substantive article instead of only the AdSense subset", () => {
+  it("preserves fresh substantive recovery and unions the older AdSense-ready image backlog", () => {
     expect(route).toContain('.from("daily_articles")');
     expect(route).toContain("FACEBOOK_FRESHNESS_DAYS = 4");
     expect(route).toContain("meetsArticleMainWordCount(row.kind, row.body_json)");
-    expect(route).toContain('scope: "fresh_quality_articles"');
-    expect(route).not.toContain('.from("adsense_cloud_article_readiness")');
-    expect(route).not.toContain('.eq("adsense_ready", true)');
+    expect(route).toContain('.from("adsense_cloud_article_readiness")');
+    expect(route).toContain('.eq("adsense_ready", true)');
+    expect(route).toContain('.eq("image_ready", false)');
+    expect(route).toContain('scope: "fresh_quality_plus_adsense_backlog"');
   });
 
   it("repairs one exact eligible slug with verified overwrite semantics", () => {
