@@ -7,7 +7,7 @@ import {
   policyTrackerWordCount,
 } from "@/lib/policy-tracker-indexability";
 
-const EXPECTED = [
+const UPGRADED_EXPECTED = [
   "property-taxes",
   "border-security",
   "energy-ercot",
@@ -15,12 +15,17 @@ const EXPECTED = [
   "life-abortion",
 ] as const;
 
+const EXPECTED_INDEXABLE = [
+  ...UPGRADED_EXPECTED,
+  "social-media-viewpoint-moderation",
+] as const;
+
 describe("priority policy tracker readiness", () => {
   it("keeps the upgrade manifest explicit", () => {
-    expect([...PRIORITY_INDEXABLE_POLICY_TRACKER_SLUGS].sort()).toEqual([...EXPECTED].sort());
+    expect([...PRIORITY_INDEXABLE_POLICY_TRACKER_SLUGS].sort()).toEqual([...UPGRADED_EXPECTED].sort());
   });
 
-  it.each(EXPECTED)("%s genuinely clears the canonical tracker gate", (slug) => {
+  it.each(EXPECTED_INDEXABLE)("%s genuinely clears the canonical tracker gate", (slug) => {
     const tracker = ALL_POLICY_TRACKERS.find((item) => item.slug === slug);
     expect(tracker).toBeDefined();
     expect(policyTrackerWordCount(tracker!)).toBeGreaterThanOrEqual(MIN_POLICY_TRACKER_WORDS);
@@ -31,11 +36,11 @@ describe("priority policy tracker readiness", () => {
     expect(isPolicyTrackerIndexable(tracker)).toBe(true);
   });
 
-  it("makes only the intentionally upgraded policy cohort indexable", () => {
+  it("makes only the intentionally expanded policy cohort indexable", () => {
     const ready = ALL_POLICY_TRACKERS
       .filter(isPolicyTrackerIndexable)
       .map((tracker) => tracker.slug)
       .sort();
-    expect(ready).toEqual([...EXPECTED].sort());
+    expect(ready).toEqual([...EXPECTED_INDEXABLE].sort());
   });
 });
