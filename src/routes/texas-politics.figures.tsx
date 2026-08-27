@@ -2,8 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ALL_TEXAS_POLITICAL_FIGURES } from "@/data/texas-political-figures-all";
 
 const SITE_URL = "https://keeptxred.com";
-const TITLE = "Texas Political Figures: Leaders, Careers & Conservative Legacy | KeepTXRed";
-const DESCRIPTION = "Evergreen profiles of major Texas conservative and Republican political figures, with career history, institutional context, controversies, authoritative sources and links to live election coverage.";
+const TITLE = "Texas Political Figures: Leaders, Careers & Political History | KeepTXRed";
+const DESCRIPTION = "Evergreen, source-backed profiles of major figures who shaped Texas Republican, conservative and institutional political history, from Reconstruction through the modern era.";
 
 export const Route = createFileRoute("/texas-politics/figures")({
   head: () => ({
@@ -43,9 +43,14 @@ function TexasPoliticalFiguresHub() {
       <nav className="mb-6 text-sm text-muted-foreground" aria-label="Breadcrumb"><Link to="/">Home</Link> / <Link to="/texas-politics">Texas Politics</Link> / Political Figures</nav>
       <header className="rounded-2xl border bg-card p-6 md:p-10">
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Evergreen Texas political history</p>
-        <h1 className="mt-4 max-w-5xl text-4xl font-bold leading-tight md:text-6xl">Texas Political Figures: Careers, Power and Conservative Legacy</h1>
-        <p className="mt-5 max-w-4xl text-lg leading-8 text-muted-foreground">These are not thin campaign bios. Each profile explains how the person rose, what office they held, what institutional power they actually exercised, the durable arguments around their record, and how their career fits the larger transformation of Texas politics. New historical profiles include source links so readers can verify the underlying record.</p>
-        <div className="mt-6 flex flex-wrap gap-3"><a href="/texas-politics/how-texas-became-republican" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">How Texas became Republican</a><a href="/elections" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Current elections</a><a href="/texas-government" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Government powers</a><a href="/texas-law-policy" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Texas law & policy</a></div>
+        <h1 className="mt-4 max-w-5xl text-4xl font-bold leading-tight md:text-6xl">Texas Political Figures: Careers, Power and Political Legacy</h1>
+        <p className="mt-5 max-w-4xl text-lg leading-8 text-muted-foreground">These are not thin campaign bios. Each profile explains how the person rose, what office they held, what institutional power they actually exercised, the durable arguments around their record, and how their career fits the larger transformation of Texas politics. Historical profiles include source links so readers can verify the underlying record.</p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <a href="/texas-politics/how-texas-became-republican" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">How Texas became Republican</a>
+          <a href="/texas-politics/reconstruction-republicans" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Reconstruction Republicans</a>
+          <a href="/elections" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Current elections</a>
+          <a href="/texas-government" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Government powers</a>
+        </div>
       </header>
 
       <section className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3" aria-label="Texas political figure profiles">
