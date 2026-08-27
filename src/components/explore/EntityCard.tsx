@@ -1,14 +1,30 @@
-import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import type { ExploreEntityCard as Entity } from "@/types/explore/public";
 
+function destinationHref(entity: Entity) {
+  switch (entity.entityType) {
+    case "state_park":
+      return `https://texasdefined.com/explore/state-park/${entity.slug}`;
+    case "lake":
+      return `https://texasdefined.com/explore/lake/${entity.slug}`;
+    case "river":
+      return `https://texasdefined.com/explore/river/${entity.slug}`;
+    case "cavern":
+      return `https://texasdefined.com/explore/cavern/${entity.slug}`;
+    default:
+      return `/explore/${entity.slug}`;
+  }
+}
+
 export function ExploreEntityCard({ entity }: { entity: Entity }) {
+  const href = destinationHref(entity);
+
   return (
     <Card className="group h-full overflow-hidden transition-shadow hover:shadow-md">
       {entity.heroImageUrl && (
-        <Link to="/explore/$slug" params={{ slug: entity.slug }} tabIndex={-1} aria-hidden="true">
+        <a href={href} tabIndex={-1} aria-hidden="true">
           <img
             src={entity.heroImageUrl}
             alt={entity.heroImageAlt || entity.name}
@@ -17,7 +33,7 @@ export function ExploreEntityCard({ entity }: { entity: Entity }) {
             loading="lazy"
             className="aspect-[8/5] w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
           />
-        </Link>
+        </a>
       )}
       <CardContent className="flex h-full flex-col p-5">
         <div className="flex flex-wrap gap-2">
@@ -27,13 +43,9 @@ export function ExploreEntityCard({ entity }: { entity: Entity }) {
           )}
         </div>
         <h3 className="mt-3 font-display text-2xl leading-tight">
-          <Link
-            to="/explore/$slug"
-            params={{ slug: entity.slug }}
-            className="hover:text-primary focus-visible:outline-2"
-          >
+          <a href={href} className="hover:text-primary focus-visible:outline-2">
             {entity.name}
-          </Link>
+          </a>
         </h3>
         {(entity.city || entity.county || entity.region) && (
           <p className="mt-1 text-sm text-muted-foreground">
@@ -54,14 +66,13 @@ export function ExploreEntityCard({ entity }: { entity: Entity }) {
             </Badge>
           ))}
         </div>
-        <Link
-          to="/explore/$slug"
-          params={{ slug: entity.slug }}
+        <a
+          href={href}
           className="mt-5 inline-flex items-center gap-2 self-start font-semibold text-primary hover:underline"
           aria-label={`View visitor guide for ${entity.name}`}
         >
           View destination guide <ArrowRight className="size-4" aria-hidden="true" />
-        </Link>
+        </a>
       </CardContent>
     </Card>
   );
