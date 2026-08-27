@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound, redirect } from '@tanstack/react-router';
 import { CalendarDays, ExternalLink, Landmark, Scale, Users } from 'lucide-react';
 import { billJsonLd, canonicalBillPath, getBill, SITE_URL } from '@/lib/bills';
+import { hasMeaningfulBillText, isScheduleBillActionCode, isSubstantiveBillActionCode } from '@/lib/bill-indexability';
 import { getPublicBillRelations } from '@/lib/public-bill-relations';
 import { getRelatedAuthorityContent } from '@/lib/authority-relationships';
 import { getRelatedBills } from '@/lib/related-bills';
@@ -11,15 +12,9 @@ import { BillHearingsAndVotes } from '@/components/bills/BillHearingsAndVotes';
 import { RelatedBillsSection } from '@/components/bills/RelatedBillsSection';
 import { OfficialBillTextViewer } from '@/components/legislature/OfficialBillTextViewer';
 
-const hasMeaningfulText = (value?: string | null, minimum = 80) =>
-  String(value ?? '').trim().length >= minimum;
-
 const hasSubstantiveBillEvidence = (loaderData: any) => {
   const { bill, actions = [], committees = [], documents = [], subjects = [], articles = [] } = loaderData;
-  const hasSubstantiveAction = actions.some((action: any) => {
-    const code = String(action.action_code ?? '').toLowerCase();
-    return code !== 'tlo-filed-report-latest' && code !== 'tlo-rss-meeting' && code !== 'tlo-rss-calendar';
-  });
+  const hasSubstantiveAction = actions.some((action: any) => isSubstantiveBillActionCode(action.action_code));
 
   return Boolean(
     bill.became_law
@@ -30,9 +25,9 @@ const hasSubstantiveBillEvidence = (loaderData: any) => {
       || hasSubstantiveAction
       || bill.analysis_url
       || bill.fiscal_note_url
-      || hasMeaningfulText(bill.plain_language_summary)
-      || hasMeaningfulText(bill.summary)
-      || hasMeaningfulText(bill.description),
+      || hasMeaningfulBillText(bill.plain_language_summary)
+      || hasMeaningfulBillText(bill.summary)
+      || hasMeaningfulBillText(bill.description),
   );
 };
 
@@ -62,6 +57,7 @@ export const Route = createFileRoute('/bills/texas/$legislature/$billType/$billN
   head: ({ loaderData }) => {
     if (!loaderData) return {};
     const { bill, sponsors, actions } = loaderData;
+    const legalActions = actions.filter((action: any) => !isScheduleBillActionCode(action.action_code));
     const canonical = `${SITE_URL}${canonicalBillPath(bill)}`;
     const title = `${bill.bill_identifier} Texas Legislature: Status, Sponsors and History | KeepTXRed`;
     const description = `Track Texas ${bill.bill_identifier}, including its current status, sponsors, committee history, legislative actions, bill text and related Texas news.`;
@@ -74,7 +70,7 @@ export const Route = createFileRoute('/bills/texas/$legislature/$billType/$billN
         { property: 'og:url', content: canonical }, { property: 'og:type', content: 'article' },
       ],
       links: [{ rel: 'canonical', href: canonical }],
-      scripts: [{ type: 'application/ld+json', children: JSON.stringify(billJsonLd(bill, sponsors, actions)).replace(/</g, '\u003c') }],
+      scripts: [{ type: 'application/ld+json', children: JSON.stringify(billJsonLd(bill, sponsors, legalActions)).replace(/</g, '\\u003c') }],
     };
   },
   component: BillPage,
@@ -92,7 +88,8 @@ function BillPage() {
   const groupedSponsors = sponsors.reduce((groups: Record<string, any[]>, sponsor: any) => {
     (groups[sponsor.sponsor_role] ||= []).push(sponsor); return groups;
   }, {});
-  const latestAction = actions[0];
+  const legalActions = actions.filter((action: any) => !isScheduleBillActionCode(action.action_code));
+  const latestAction = legalActions[0];
   const summary = bill.plain_language_summary || bill.summary || bill.description || bill.caption;
   const fallbackDocumentLinks = [
     bill.bill_text_url ? { href: bill.bill_text_url, label: 'Current bill text' } : null,
@@ -134,16 +131,9 @@ function BillPage() {
 
           <BillHearingsAndVotes activities={committees} />
 
-          <section className="scroll-mt-24 rounded-xl border bg-card p-6" id="timeline"><div className="flex items-center gap-3"><CalendarDays className="h-6 w-6 text-primary"/><h2 className="text-2xl font-bold">Legislative timeline</h2></div>{actions.length ? <ol className="mt-6 space-y-0">{actions.map((action: any, index: number) => <li key={action.id} className="relative border-l-2 border-border pb-6 pl-6 last:pb-0"><span className={`absolute -left-[7px] top-1 h-3 w-3 rounded-full ${index === 0 ? 'bg-primary' : 'bg-muted-foreground'}`}/><time className="text-sm font-semibold text-primary">{formatDate(action.action_date)}</time><p className="mt-1 font-medium">{action.action_text}</p><p className="mt-1 text-sm text-muted-foreground">{[action.chamber, action.normalized_status, action.legislative_committees?.committee_name].filter(Boolean).join(' · ')}</p>{action.source_url && <a href={action.source_url} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1 text-sm text-primary hover:underline">Official record <ExternalLink className="h-3.5 w-3.5"/></a>}</li>)}</ol> : <p className="mt-4 text-muted-foreground">No dated legislative actions are available yet. Newly filed measures can appear before their first action is posted.</p>}</section>
+          <section className="scroll-mt-24 rounded-xl border bg-card p-6" id="timeline"><div className="flex items-center gap-3"><CalendarDays className="h-6 w-6 text-primary"/><h2 className="text-2xl font-bold">Legislative timeline</h2></div>{legalActions.length ? <ol className="mt-6 space-y-0">{legalActions.map((action: any, index: number) => <li key={action.id} className="relative border-l-2 border-border pb-6 pl-6 last:pb-0"><span className={`absolute -left-[7px] top-1 h-3 w-3 rounded-full ${index === 0 ? 'bg-primary' : 'bg-muted-foreground'}`}/><time className="text-sm font-semibold text-primary">{formatDate(action.action_date)}</time><p className="mt-1 font-medium">{action.action_text}</p><p className="mt-1 text-sm text-muted-foreground">{[action.chamber, action.normalized_status, action.legislative_committees?.committee_name].filter(Boolean).join(' · ')}</p>{action.source_url && <a href={action.source_url} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1 text-sm text-primary hover:underline">Official record <ExternalLink className="h-3.5 w-3.5"/></a>}</li>)}</ol> : <p className="mt-4 text-muted-foreground">No dated legislative actions are available yet. Newly filed measures can appear before their first action is posted.</p>}</section>
 
-          <OfficialBillTextViewer
-            billIdentifier={bill.bill_identifier}
-            sessionCode={bill.session_code}
-            billType={bill.bill_type}
-            billNumber={bill.bill_number}
-            currentTextUrl={bill.bill_text_url}
-            documents={documents}
-          />
+          <OfficialBillTextViewer billIdentifier={bill.bill_identifier} sessionCode={bill.session_code} billType={bill.bill_type} billNumber={bill.bill_number} currentTextUrl={bill.bill_text_url} documents={documents} />
           <RelatedBillsSection bills={relatedBills} />
           <section className="scroll-mt-24 rounded-xl border bg-card p-6" id="articles"><h2 className="text-2xl font-bold">Related articles</h2>{articles.length ? <div className="mt-5 grid gap-4 sm:grid-cols-2">{articles.map((article: any) => <a key={article.id} href={`/news/${article.slug}`} className="rounded-lg border p-4 hover:border-primary"><h3 className="font-bold leading-snug">{article.title}</h3>{article.excerpt && <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{article.excerpt}</p>}<p className="mt-3 text-xs font-semibold uppercase text-primary">{article.relationship_type}</p></a>)}</div> : <p className="mt-4 text-muted-foreground">KeepTXRed has not linked a related article to this bill yet. The legislative record above remains available independently of news coverage.</p>}</section>
           <RelatedAuthorityContent items={relatedContent} />
