@@ -4,6 +4,8 @@ import { POLITICAL_FIGURE_HEROES } from "@/data/texas-political-figure-heroes";
 
 const ALLOWED_LICENSES = new Set(["Public domain", "CC BY-SA 4.0"]);
 const AUDITED_EXTENDED_HERO_SLUGS = [
+  "allan-shivers-texas-shivercrats-realignment",
+  "john-connally-texas-governor-party-switch",
   "john-tower-texas-senator-republican-breakthrough",
   "kay-bailey-hutchison-texas-senator",
   "dick-armey-texas-house-majority-leader",
@@ -20,7 +22,7 @@ describe("Texas political figure hero rights", () => {
     }
   });
 
-  it("preserves the audited extended federal-portrait cohort", () => {
+  it("preserves the audited extended rights-vetted cohort", () => {
     for (const slug of AUDITED_EXTENDED_HERO_SLUGS) {
       expect(POLITICAL_FIGURE_HEROES[slug], slug).toBeDefined();
     }
