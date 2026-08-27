@@ -53,7 +53,8 @@ describe("fresh article image recovery", () => {
     expect(workflow).toContain('workflows: ["Deploy verified KeepTXRed to Cloudflare"]');
     expect(workflow).toContain("github.event_name == 'schedule'");
     expect(workflow).toContain("github.event.workflow_run.conclusion == 'success'");
-    expect(workflow).toContain("max_per_run=20");
+    expect(workflow).toContain("max_per_run=5");
+    expect(workflow).not.toContain("max_per_run=20");
     expect(workflow).toContain("dry=1");
     expect(workflow).toContain(".slugs[:$max][]");
     expect(workflow).toContain('"${endpoint}?slug=${encoded_slug}"');
