@@ -111,3 +111,26 @@ GRANT EXECUTE ON FUNCTION public.sync_coverage_gap_alerts(integer, integer, inte
 
 COMMENT ON FUNCTION public.sync_coverage_gap_alerts(integer, integer, integer) IS
   'Upserts a capped set of high-priority overdue newsroom coverage alerts and resolves alerts whose gaps are no longer outstanding. Does not publish content.';
+
+-- Keep alerting independent of application deploys. The existing overdue-gap
+-- publisher still owns publication; this hourly DB job only maintains alerts.
+DO $$
+DECLARE
+  existing_job bigint;
+BEGIN
+  SELECT jobid INTO existing_job
+  FROM cron.job
+  WHERE jobname = 'newsroom-coverage-gap-alerts-hourly'
+  LIMIT 1;
+
+  IF existing_job IS NOT NULL THEN
+    PERFORM cron.unschedule(existing_job);
+  END IF;
+
+  PERFORM cron.schedule(
+    'newsroom-coverage-gap-alerts-hourly',
+    '23 * * * *',
+    $cron$SELECT public.sync_coverage_gap_alerts(80, 10, 10);$cron$
+  );
+END;
+$$;
