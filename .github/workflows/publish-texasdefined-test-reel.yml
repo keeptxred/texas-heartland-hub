@@ -1,11 +1,10 @@
-name: Publish TexasDefined test Reel
+name: Publish fresh TexasDefined Reel
 
 on:
   push:
     branches: [main]
     paths:
       - '.github/workflows/publish-texasdefined-test-reel.yml'
-      - 'src/routes/api/public/hooks/publish-texasdefined-reel.ts'
   workflow_dispatch:
 
 permissions:
@@ -15,112 +14,116 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
-      - uses: oven-sh/setup-bun@v2
-      - name: Install browser and media dependencies
+      - name: Install media dependencies
         shell: bash
         run: |
           set -euo pipefail
-          bun install --frozen-lockfile
-          bunx playwright install --with-deps chromium
           sudo apt-get update
-          sudo apt-get install -y ffmpeg
+          sudo apt-get install -y ffmpeg fonts-dejavu-core
           ffmpeg -version | head -n 1
 
-      - name: Resolve and download the approved Visla test Reel
+      - name: Build a fresh TexasDefined Reel
         shell: bash
         run: |
           set -euo pipefail
-          cat >.visla-download.mjs <<'JS'
-          import { chromium } from '@playwright/test';
-          import { writeFile } from 'node:fs/promises';
+          BOLD='/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
+          REG='/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
 
-          const target = 'https://app.visla.us/clip/1540580154592547701';
-          const browser = await chromium.launch({ headless: true });
-          const page = await browser.newPage();
-          const candidates = [];
-          const add = (url, contentType = '') => {
-            if (!url || String(url).startsWith('blob:')) return;
-            const lower = String(url).toLowerCase();
-            const type = String(contentType).toLowerCase();
-            if (lower.includes('.mp4') || lower.includes('.m3u8') || type.startsWith('video/') || type.includes('mpegurl')) {
-              if (!candidates.some((entry) => entry.url === url)) candidates.push({ url, contentType });
-            }
-          };
-          page.on('response', (response) => add(response.url(), response.headers()['content-type'] || ''));
-          await page.goto(target, { waitUntil: 'domcontentloaded', timeout: 60000 });
-          await page.waitForTimeout(5000);
-          await page.evaluate(async () => {
-            for (const video of document.querySelectorAll('video')) {
-              try { video.muted = true; await video.play(); } catch {}
-            }
-          });
-          await page.waitForTimeout(12000);
-          const urls = await page.evaluate(() => Array.from(document.querySelectorAll('video')).flatMap((video) => [video.currentSrc, video.src, ...Array.from(video.querySelectorAll('source')).map((source) => source.src)]).filter(Boolean));
-          for (const url of urls) add(url);
-          await browser.close();
-          const preferred = candidates.find((entry) => /\.mp4(?:$|\?)/i.test(entry.url)) ?? candidates.find((entry) => /\.m3u8(?:$|\?)/i.test(entry.url) || String(entry.contentType).toLowerCase().includes('mpegurl')) ?? candidates[0];
-          if (!preferred) throw new Error('Visla did not expose a downloadable video URL to the browser session.');
-          await writeFile('.visla-video-url', preferred.url, 'utf8');
-          await writeFile('.visla-video-type', preferred.contentType || '', 'utf8');
-          console.log(`Resolved Visla media (${preferred.contentType || 'unknown content type'}).`);
-          JS
-          node .visla-download.mjs
-          VIDEO_URL="$(cat .visla-video-url)"
-          VIDEO_TYPE="$(cat .visla-video-type)"
-          if [[ "$VIDEO_URL" == *".m3u8"* || "$VIDEO_URL" == *"m3u8"* || "$VIDEO_TYPE" == *"mpegURL"* || "$VIDEO_TYPE" == *"mpegurl"* ]]; then
-            ffmpeg -hide_banner -loglevel error -y -i "$VIDEO_URL" -c copy texasdefined-test-reel.mp4
-          else
-            curl -L --fail-with-body --silent --show-error --max-time 180 "$VIDEO_URL" -o texasdefined-test-reel.mp4
-          fi
-          test -s texasdefined-test-reel.mp4
-          BYTES=$(wc -c < texasdefined-test-reel.mp4)
-          echo "Downloaded Reel bytes: $BYTES"
-          if (( BYTES > 104857600 )); then
-            echo 'Resolved Reel exceeds the 100 MB publisher limit.' >&2
-            exit 1
-          fi
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i "color=c=0x101820:s=1080x1920:r=30:d=4" \
+            -f lavfi -i "color=c=0x6b3f2a:s=1080x1920:r=30:d=5" \
+            -f lavfi -i "color=c=0x173b32:s=1080x1920:r=30:d=5" \
+            -f lavfi -i "color=c=0x0f5f7a:s=1080x1920:r=30:d=5" \
+            -f lavfi -i "color=c=0x181818:s=1080x1920:r=30:d=4" \
+            -f lavfi -i "color=c=0x070707:s=1080x1920:r=30:d=6" \
+            -f lavfi -i "sine=frequency=110:sample_rate=48000:duration=29" \
+            -f lavfi -i "sine=frequency=220:sample_rate=48000:duration=29" \
+            -filter_complex "
+              [0:v]noise=alls=7:allf=t+u,
+                drawbox=x='mod(t*210,1280)-200':y=1340:w=620:h=18:color=0xffffff@0.20:t=fill,
+                drawtext=fontfile=${BOLD}:text='3 TEXAS PLACES':fontcolor=white:fontsize=96:x=(w-text_w)/2:y=520,
+                drawtext=fontfile=${BOLD}:text='THAT DO NOT LOOK':fontcolor=0xf2c14e:fontsize=72:x=(w-text_w)/2:y=660,
+                drawtext=fontfile=${BOLD}:text='LIKE TEXAS':fontcolor=white:fontsize=104:x=(w-text_w)/2:y=770,
+                drawtext=fontfile=${REG}:text='Save this for your next Texas road trip':fontcolor=white@0.85:fontsize=42:x=(w-text_w)/2:y=1110[v0];
 
-      - name: Publish approved test Reel to TexasDefined Facebook
+              [1:v]noise=alls=5:allf=t+u,
+                drawtext=fontfile=${BOLD}:text='▲   ▲▲   ▲':fontcolor=0xf2c14e@0.25:fontsize=230:x=(w-text_w)/2:y=260,
+                drawtext=fontfile=${BOLD}:text='1':fontcolor=0xf2c14e:fontsize=180:x=90:y=170,
+                drawtext=fontfile=${BOLD}:text='GUADALUPE':fontcolor=white:fontsize=94:x=90:y=600,
+                drawtext=fontfile=${BOLD}:text='MOUNTAINS':fontcolor=white:fontsize=94:x=90:y=710,
+                drawtext=fontfile=${REG}:text='Desert cliffs and the highest point in Texas':fontcolor=white@0.90:fontsize=44:x=90:y=930,
+                drawtext=fontfile=${REG}:text='West Texas':fontcolor=0xf2c14e:fontsize=46:x=90:y=1040[v1];
+
+              [2:v]noise=alls=6:allf=t+u,
+                drawtext=fontfile=${BOLD}:text='≈  ≈  ≈  ≈':fontcolor=0xa5d6c3@0.30:fontsize=180:x=(w-text_w)/2:y=270,
+                drawbox=x=110:y=210:w=18:h=510:color=0x8c6b4f@0.55:t=fill,
+                drawbox=x=250:y=150:w=16:h=590:color=0x8c6b4f@0.45:t=fill,
+                drawbox=x=860:y=170:w=18:h=560:color=0x8c6b4f@0.55:t=fill,
+                drawtext=fontfile=${BOLD}:text='2':fontcolor=0xa5d6c3:fontsize=180:x=90:y=170,
+                drawtext=fontfile=${BOLD}:text='CADDO LAKE':fontcolor=white:fontsize=100:x=90:y=650,
+                drawtext=fontfile=${REG}:text='Cypress trees. Spanish moss. Bayous.':fontcolor=white@0.92:fontsize=46:x=90:y=870,
+                drawtext=fontfile=${REG}:text='East Texas':fontcolor=0xa5d6c3:fontsize=46:x=90:y=990[v2];
+
+              [3:v]noise=alls=4:allf=t+u,
+                drawbox=x=0:y=250:w=1080:h=280:color=0x6ec5e9@0.25:t=fill,
+                drawbox=x=0:y=530:w=1080:h=250:color=0x1e88a8@0.30:t=fill,
+                drawbox=x=0:y=780:w=1080:h=210:color=0xf1d39a@0.35:t=fill,
+                drawtext=fontfile=${BOLD}:text='3':fontcolor=0xf1d39a:fontsize=180:x=90:y=170,
+                drawtext=fontfile=${BOLD}:text='PADRE ISLAND':fontcolor=white:fontsize=96:x=90:y=650,
+                drawtext=fontfile=${REG}:text='Dunes. Gulf water. Miles of open beach.':fontcolor=white@0.94:fontsize=44:x=90:y=870,
+                drawtext=fontfile=${REG}:text='Texas Gulf Coast':fontcolor=0xf1d39a:fontsize=46:x=90:y=990[v3];
+
+              [4:v]noise=alls=6:allf=t+u,
+                drawbox=x='mod(t*260,1380)-300':y=1240:w=760:h=14:color=0xf2c14e@0.35:t=fill,
+                drawtext=fontfile=${BOLD}:text='TEXAS HAS RANGE':fontcolor=white:fontsize=102:x=(w-text_w)/2:y=620,
+                drawtext=fontfile=${REG}:text='Mountains. Wetlands. Beaches.':fontcolor=0xf2c14e:fontsize=52:x=(w-text_w)/2:y=800,
+                drawtext=fontfile=${REG}:text='And that is only the beginning.':fontcolor=white@0.88:fontsize=46:x=(w-text_w)/2:y=910[v4];
+
+              [5:v]drawtext=fontfile=${BOLD}:text='TEXASDEFINED.COM':fontcolor=white:fontsize=108:x=(w-text_w)/2:y=760,
+                drawtext=fontfile=${REG}:text='See more of Texas':fontcolor=0xf2c14e:fontsize=54:x=(w-text_w)/2:y=920,
+                drawbox=x=190:y=1080:w=700:h=6:color=0xf2c14e@0.85:t=fill[v5];
+
+              [v0][v1][v2][v3][v4][v5]concat=n=6:v=1:a=0[outv];
+              [6:a]volume=0.028[a0];
+              [7:a]volume=0.018[a1];
+              [a0][a1]amix=inputs=2:normalize=0,afade=t=in:st=0:d=1,afade=t=out:st=27:d=2[outa]
+            " \
+            -map '[outv]' -map '[outa]' \
+            -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -r 30 \
+            -c:a aac -b:a 128k -movflags +faststart \
+            texasdefined-fresh-reel.mp4
+
+          test -s texasdefined-fresh-reel.mp4
+          ffprobe -v error -show_entries format=duration,size -show_entries stream=codec_name,width,height -of default=nw=1 texasdefined-fresh-reel.mp4
+
+      - name: Publish fresh Reel to TexasDefined Facebook
         shell: bash
         run: |
           set -euo pipefail
           ENDPOINT='https://keeptxred-site.freddy-coppola.workers.dev/api/public/hooks/publish-texasdefined-reel'
-          TITLE='3 Things Outsiders Get Wrong About Texas'
-          DESCRIPTION='Think you know Texas? 🤠 Here are three things outsiders often get wrong about the Lone Star State. What misconception do you hear most? https://texasdefined.com #Texas #TexasFacts #TexasDefined'
+          TITLE='3 Texas Places That Do Not Look Like Texas'
+          DESCRIPTION='Texas can look completely different from one corner to the next. Guadalupe Mountains, Caddo Lake, and Padre Island are three reminders of just how much range the state has. Which one would you visit first? https://texasdefined.com #Texas #TexasTravel #TexasDefined #ExploreTexas'
 
-          for attempt in $(seq 1 24); do
-            OIDC_JSON=$(curl -fsSL -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-facebook")
-            OIDC_TOKEN=$(printf '%s' "$OIDC_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin)["value"])')
-            HTTP_CODE=$(curl -sS -o response.json -w '%{http_code}' \
-              -X POST "$ENDPOINT" \
-              -H "Authorization: Bearer $OIDC_TOKEN" \
-              -F 'confirmation=PUBLISH TEXASDEFINED REEL' \
-              -F "title=$TITLE" \
-              -F "description=$DESCRIPTION" \
-              -F 'video=@texasdefined-test-reel.mp4;type=video/mp4') || HTTP_CODE=000
-            cat response.json 2>/dev/null || true
-            echo
-            if [[ "$HTTP_CODE" == "200" ]] && python3 - <<'PY'
+          OIDC_JSON=$(curl -fsSL -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-facebook")
+          OIDC_TOKEN=$(printf '%s' "$OIDC_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin)["value"])')
+          HTTP_CODE=$(curl -sS -o response.json -w '%{http_code}' \
+            -X POST "$ENDPOINT" \
+            -H "Authorization: Bearer $OIDC_TOKEN" \
+            -F 'confirmation=PUBLISH TEXASDEFINED REEL' \
+            -F "title=$TITLE" \
+            -F "description=$DESCRIPTION" \
+            -F 'video=@texasdefined-fresh-reel.mp4;type=video/mp4') || HTTP_CODE=000
+          cat response.json 2>/dev/null || true
+          echo
+          python3 - <<'PY'
           import json
-          try:
-              data=json.load(open('response.json'))
-          except Exception:
+          data=json.load(open('response.json'))
+          if data.get('ok') is not True or data.get('published') is not True:
               raise SystemExit(1)
-          raise SystemExit(0 if data.get('ok') is True and data.get('published') is True else 1)
+          print('TexasDefined fresh Reel published successfully.')
+          print('Facebook video ID:', data.get('video_id'))
           PY
-            then
-              echo 'TexasDefined test Reel published successfully.'
-              exit 0
-            fi
-            if [[ "$HTTP_CODE" =~ ^(400|403|422)$ ]]; then
-              echo "Non-retryable publisher response: HTTP $HTTP_CODE" >&2
-              exit 1
-            fi
-            echo "Publisher not ready or transient failure (HTTP $HTTP_CODE), attempt $attempt/24; retrying in 20s..."
-            sleep 20
-          done
-          echo 'Reel was not confirmed published after retry window.' >&2
-          exit 1
+          test "$HTTP_CODE" = "200"
