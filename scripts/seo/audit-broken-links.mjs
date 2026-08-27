@@ -3,6 +3,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { isNavigationalPath, shouldScanRuntimeLinks } from './broken-link-scan-scope.mjs';
+import { normalizeRoutePart } from './broken-link-route-utils.mjs';
 
 const ROOT = process.cwd();
 const ROUTES_ROOT = path.join(ROOT, 'src', 'routes');
@@ -60,12 +61,16 @@ function routeRegexFromFile(file) {
 
   // TanStack supports both flat route names (`news.$slug.tsx`) and nested route
   // directories. `[.]` represents a literal dot in a public path segment, so
-  // protect it while splitting flat-route dots into URL segments.
+  // protect it while splitting flat-route dots into URL segments. Route groups,
+  // pathless layout prefixes, and trailing non-nesting underscores do not add
+  // literal public pathname segments.
   const literalDot = '__KTR_LITERAL_DOT__';
   const parts = name
     .split('/')
     .flatMap((segment) => segment.replace(/\[\.\]/g, literalDot).split('.'))
-    .map((part) => part.replaceAll(literalDot, '.'));
+    .map((part) => part.replaceAll(literalDot, '.'))
+    .map(normalizeRoutePart)
+    .filter(Boolean);
   if (parts.at(-1) === 'index') parts.pop();
 
   const route = '/' + parts
