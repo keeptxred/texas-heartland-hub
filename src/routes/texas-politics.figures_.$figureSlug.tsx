@@ -1,5 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ALL_TEXAS_POLITICAL_FIGURES, texasPoliticalFigureBySlug } from "@/data/texas-political-figures-all";
+import {
+  ALL_TEXAS_POLITICAL_FIGURES,
+  texasPoliticalFigureByName,
+  texasPoliticalFigureBySlug,
+  type TexasPoliticalFigurePage,
+} from "@/data/texas-political-figures-all";
 import { politicalFigureHeroBySlug } from "@/data/texas-political-figure-heroes";
 import { politicalFigureAuthoritySourcesBySlug } from "@/data/texas-political-figure-authority-sources";
 
@@ -13,6 +18,31 @@ function sourcesForFigure(figure: { slug: string; sources?: SourceLink[] }): Sou
   return combined.filter((source, index) => combined.findIndex((candidate) => candidate.href === source.href) === index);
 }
 
+function targetMetadataForFigure(figure: TexasPoliticalFigurePage) {
+  return texasPoliticalFigureByName(figure.name);
+}
+
+function aliasesForFigure(figure: TexasPoliticalFigurePage): string[] {
+  const target = targetMetadataForFigure(figure);
+  return Array.from(new Set([...(target?.aliases ?? []), ...(figure.aliases ?? [])]));
+}
+
+function categoryForFigure(figure: TexasPoliticalFigurePage) {
+  return figure.category ?? targetMetadataForFigure(figure)?.category;
+}
+
+function relatedFigureSlugsForFigure(figure: TexasPoliticalFigurePage): string[] {
+  const target = targetMetadataForFigure(figure);
+  return Array.from(new Set([
+    ...(target?.relatedFigureSlugs ?? []),
+    ...(figure.relatedFigureSlugs ?? []),
+    ...figure.relatedLinks
+      .filter((link) => link.href.startsWith(FIGURE_PREFIX))
+      .map((link) => link.href.slice(FIGURE_PREFIX.length))
+      .filter(Boolean),
+  ]));
+}
+
 export const Route = createFileRoute("/texas-politics/figures_/$figureSlug")({
   beforeLoad: ({ params }) => {
     if (!texasPoliticalFigureBySlug(params.figureSlug)) throw notFound();
@@ -22,6 +52,7 @@ export const Route = createFileRoute("/texas-politics/figures_/$figureSlug")({
     if (!figure) return { meta: [{ name: "robots", content: "noindex, follow" }] };
     const hero = politicalFigureHeroBySlug(figure.slug);
     const sources = sourcesForFigure(figure);
+    const aliases = aliasesForFigure(figure);
     const canonical = `${SITE_URL}/texas-politics/figures/${figure.slug}`;
     const title = `${figure.name}: Texas Political Profile & Legacy | KeepTXRed`;
     return {
@@ -47,31 +78,47 @@ export const Route = createFileRoute("/texas-politics/figures_/$figureSlug")({
         ] : []),
       ],
       links: [{ rel: "canonical", href: canonical }],
-      scripts: [{
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "ProfilePage",
-          name: title,
-          description: figure.description,
-          url: canonical,
-          ...(hero ? { image: hero.src } : {}),
-          ...(sources.length ? {
-            citation: sources.map((source) => ({
-              "@type": "CreativeWork",
-              name: source.label,
-              url: source.href,
-            })),
-          } : {}),
-          mainEntity: {
-            "@type": "Person",
-            name: figure.name,
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            name: title,
             description: figure.description,
+            url: canonical,
             ...(hero ? { image: hero.src } : {}),
-          },
-          isPartOf: { "@type": "WebSite", name: "KeepTXRed", url: SITE_URL },
-        }).replace(/</g, "\\u003c"),
-      }],
+            ...(sources.length ? {
+              citation: sources.map((source) => ({
+                "@type": "CreativeWork",
+                name: source.label,
+                url: source.href,
+              })),
+            } : {}),
+            mainEntity: {
+              "@type": "Person",
+              name: figure.name,
+              ...(aliases.length ? { alternateName: aliases } : {}),
+              description: figure.description,
+              ...(hero ? { image: hero.src } : {}),
+            },
+            isPartOf: { "@type": "WebSite", name: "KeepTXRed", url: SITE_URL },
+          }).replace(/</g, "\\u003c"),
+        },
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+              { "@type": "ListItem", position: 2, name: "Texas Politics", item: `${SITE_URL}/texas-politics` },
+              { "@type": "ListItem", position: 3, name: "Political Figures", item: `${SITE_URL}/texas-politics/figures` },
+              { "@type": "ListItem", position: 4, name: figure.name, item: canonical },
+            ],
+          }).replace(/</g, "\\u003c"),
+        },
+      ],
     };
   },
   component: PoliticalFigurePage,
@@ -83,19 +130,15 @@ function PoliticalFigurePage() {
   if (!figure) return null;
   const hero = politicalFigureHeroBySlug(figure.slug);
   const sources = sourcesForFigure(figure);
+  const category = categoryForFigure(figure);
 
-  const linkedPeerSlugs = new Set(
-    figure.relatedLinks
-      .filter((link) => link.href.startsWith(FIGURE_PREFIX))
-      .map((link) => link.href.slice(FIGURE_PREFIX.length))
-      .filter(Boolean),
-  );
+  const linkedPeerSlugs = new Set(relatedFigureSlugsForFigure(figure));
   const linkedPeers = ALL_TEXAS_POLITICAL_FIGURES.filter(
     (item) => item.slug !== figure.slug && linkedPeerSlugs.has(item.slug),
   );
-  const sameCategoryPeers = figure.category
+  const sameCategoryPeers = category
     ? ALL_TEXAS_POLITICAL_FIGURES.filter(
-        (item) => item.slug !== figure.slug && item.category === figure.category && !linkedPeerSlugs.has(item.slug),
+        (item) => item.slug !== figure.slug && categoryForFigure(item) === category && !linkedPeerSlugs.has(item.slug),
       )
     : [];
   const sameKickerPeers = ALL_TEXAS_POLITICAL_FIGURES.filter(
@@ -107,7 +150,7 @@ function PoliticalFigurePage() {
   const peers = [...linkedPeers, ...sameCategoryPeers, ...sameKickerPeers, ...broadFallbackPeers]
     .filter((item, index, items) => items.findIndex((candidate) => candidate.slug === item.slug) === index)
     .slice(0, 4);
-  const moreFiguresHeading = figure.category ? `More ${figure.category.toLocaleLowerCase("en-US")}` : "More Texas political figures";
+  const moreFiguresHeading = category ? `More ${category.toLocaleLowerCase("en-US")}` : "More Texas political figures";
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
