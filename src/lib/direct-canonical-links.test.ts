@@ -5,6 +5,7 @@ const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf
 
 const resourceHub = read("../shared/texas-platform/resource-hub.tsx");
 const governmentEntity = read("../routes/texas-government.$entitySlug.tsx");
+const electionErrorState = read("../components/elections/states/ElectionErrorState.tsx");
 
 describe("direct canonical UI links", () => {
   it("does not route resource-hub law links through legacy redirects", () => {
@@ -30,5 +31,10 @@ describe("direct canonical UI links", () => {
   it("does not route government fallback navigation through /politics", () => {
     expect(governmentEntity).not.toContain('href="/politics"');
     expect(governmentEntity).toContain('href="/texas-politics"');
+  });
+
+  it("does not route election recovery through the legacy election-law alias", () => {
+    expect(electionErrorState).not.toContain('href: "/laws/texas-election-laws-explained"');
+    expect(electionErrorState).toContain('href: "/news/texas-election-laws-explained"');
   });
 });
