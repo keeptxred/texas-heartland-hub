@@ -31,8 +31,8 @@ jobs:
         run: |
           set -euo pipefail
           curl -fL --retry 3 --retry-delay 2 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Guadalupe_Mountains_National_Park_P1012846.jpg' -o guadalupe.jpg
-          curl -fL --retry 3 --retry-delay 2 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Caddo_Lake_National_Wildlife_Refuge,_TX_(5169475257).jpg' -o caddo.jpg
-          curl -fL --retry 3 --retry-delay 2 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Padre_Island_National_Seashore_PAIS2087.jpg' -o padre.jpg
+          curl -fL --retry 3 --retry-delay 2 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Caddo_Lake-_Cypress.jpg' -o caddo.jpg
+          curl -fL --retry 3 --retry-delay 2 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Padre_Island_National_Seashore,_beach,_Kleberg_Co,_TX%3B_1_Nov_2022.jpg' -o padre.jpg
           file guadalupe.jpg caddo.jpg padre.jpg
 
       - name: Build real-photo Reel
@@ -43,24 +43,27 @@ jobs:
           REG='/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
 
           make_scene() {
-            input="$1"; output="$2"; duration="$3"; title="$4"; subtitle="$5"
+            input="$1"; output="$2"; duration="$3"; title="$4"; subtitle="$5"; title_size="$6"
             ffmpeg -hide_banner -loglevel error -y -loop 1 -t "$duration" -i "$input" \
-              -vf "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,drawbox=x=70:y=1320:w=880:h=300:color=black@0.52:t=fill,drawtext=fontfile=${BOLD}:text='${title}':fontcolor=white:fontsize=72:x=100:y=1380,drawtext=fontfile=${REG}:text='${subtitle}':fontcolor=white:fontsize=39:x=100:y=1500,fade=t=in:st=0:d=0.25,fade=t=out:st=$(python3 -c "print(max(0,float('$duration')-0.25))"):d=0.25" \
+              -vf "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,drawbox=x=90:y=1290:w=900:h=330:color=black@0.55:t=fill,drawtext=fontfile=${BOLD}:text='${title}':fontcolor=white:fontsize=${title_size}:x=(w-text_w)/2:y=1360,drawtext=fontfile=${REG}:text='${subtitle}':fontcolor=white:fontsize=36:x=(w-text_w)/2:y=1490,fade=t=in:st=0:d=0.2,fade=t=out:st=$(python3 -c "print(max(0,float('$duration')-0.2))"):d=0.2" \
               -an -c:v libx264 -preset veryfast -crf 20 -pix_fmt yuv420p -r 30 "$output"
           }
 
-          ffmpeg -hide_banner -loglevel error -y -loop 1 -t 3 -i guadalupe.jpg -loop 1 -t 3 -i caddo.jpg -loop 1 -t 3 -i padre.jpg \
-            -filter_complex "[0:v]scale=360:1920:force_original_aspect_ratio=increase,crop=360:1920[g];[1:v]scale=360:1920:force_original_aspect_ratio=increase,crop=360:1920[c];[2:v]scale=360:1920:force_original_aspect_ratio=increase,crop=360:1920[p];[g][c][p]hstack=inputs=3[bg];[bg]drawbox=x=95:y=650:w=890:h=420:color=black@0.62:t=fill,drawtext=fontfile=${BOLD}:text='TEXAS HAS MORE':fontcolor=white:fontsize=72:x=(w-text_w)/2:y=710,drawtext=fontfile=${BOLD}:text='VARIETY':fontcolor=0xf2c14e:fontsize=102:x=(w-text_w)/2:y=820,drawtext=fontfile=${BOLD}:text='THAN YOU THINK':fontcolor=white:fontsize=66:x=(w-text_w)/2:y=950[out]" \
-            -map '[out]' -t 3 -an -c:v libx264 -preset veryfast -crf 20 -pix_fmt yuv420p -r 30 hook.mp4
+          # Hook: one full scenic frame, not a narrow strip collage.
+          ffmpeg -hide_banner -loglevel error -y -loop 1 -t 3 -i guadalupe.jpg \
+            -vf "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,drawbox=x=110:y=600:w=860:h=520:color=black@0.58:t=fill,drawtext=fontfile=${BOLD}:text='TEXAS HAS MORE':fontcolor=white:fontsize=68:x=(w-text_w)/2:y=685,drawtext=fontfile=${BOLD}:text='VARIETY':fontcolor=0xf2c14e:fontsize=98:x=(w-text_w)/2:y=815,drawtext=fontfile=${BOLD}:text='THAN YOU THINK':fontcolor=white:fontsize=62:x=(w-text_w)/2:y=965" \
+            -an -c:v libx264 -preset veryfast -crf 20 -pix_fmt yuv420p -r 30 hook.mp4
 
-          make_scene guadalupe.jpg guadalupe.mp4 5 'GUADALUPE MOUNTAINS' 'West Texas peaks and desert cliffs'
-          make_scene caddo.jpg caddo.mp4 5 'CADDO LAKE' 'Cypress trees, bayous, and Spanish moss'
-          make_scene padre.jpg padre.mp4 5 'PADRE ISLAND' 'Dunes, Gulf water, and open beach'
+          make_scene guadalupe.jpg guadalupe.mp4 5 'GUADALUPE MOUNTAINS' 'West Texas peaks and desert cliffs' 52
+          make_scene caddo.jpg caddo.mp4 5 'CADDO LAKE' 'Cypress trees, bayous, and Spanish moss' 68
+          make_scene padre.jpg padre.mp4 5 'PADRE ISLAND' 'Dunes, Gulf water, and open beach' 68
 
-          ffmpeg -hide_banner -loglevel error -y -loop 1 -t 4 -i guadalupe.jpg -loop 1 -t 4 -i caddo.jpg -loop 1 -t 4 -i padre.jpg \
-            -filter_complex "[0:v]scale=360:1920:force_original_aspect_ratio=increase,crop=360:1920[g];[1:v]scale=360:1920:force_original_aspect_ratio=increase,crop=360:1920[c];[2:v]scale=360:1920:force_original_aspect_ratio=increase,crop=360:1920[p];[g][c][p]hstack=inputs=3[bg];[bg]drawbox=x=100:y=660:w=880:h=420:color=black@0.64:t=fill,drawtext=fontfile=${BOLD}:text='TEXAS DOES NOT LOOK':fontcolor=white:fontsize=62:x=(w-text_w)/2:y=725,drawtext=fontfile=${BOLD}:text='THE SAME':fontcolor=0xf2c14e:fontsize=92:x=(w-text_w)/2:y=835,drawtext=fontfile=${BOLD}:text='EVERYWHERE':fontcolor=white:fontsize=76:x=(w-text_w)/2:y=960[out]" \
-            -map '[out]' -t 4 -an -c:v libx264 -preset veryfast -crf 20 -pix_fmt yuv420p -r 30 summary.mp4
+          # Summary: one full scenic coastal frame so imagery stays readable.
+          ffmpeg -hide_banner -loglevel error -y -loop 1 -t 4 -i padre.jpg \
+            -vf "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,drawbox=x=110:y=610:w=860:h=540:color=black@0.60:t=fill,drawtext=fontfile=${BOLD}:text='TEXAS DOES NOT LOOK':fontcolor=white:fontsize=54:x=(w-text_w)/2:y=700,drawtext=fontfile=${BOLD}:text='THE SAME':fontcolor=0xf2c14e:fontsize=88:x=(w-text_w)/2:y=835,drawtext=fontfile=${BOLD}:text='EVERYWHERE':fontcolor=white:fontsize=70:x=(w-text_w)/2:y=985" \
+            -an -c:v libx264 -preset veryfast -crf 20 -pix_fmt yuv420p -r 30 summary.mp4
 
+          # Frozen end card with generous safe margins.
           ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'color=c=0x080808:s=1080x1920:r=30:d=5' \
             -vf "drawtext=fontfile=${BOLD}:text='TexasDefined.com':fontcolor=white:fontsize=72:x=(w-text_w)/2:y=800,drawtext=fontfile=${REG}:text='See more of Texas':fontcolor=0xf2c14e:fontsize=40:x=(w-text_w)/2:y=915" \
             -an -c:v libx264 -preset veryfast -crf 18 -pix_fmt yuv420p -r 30 end.mp4
@@ -99,7 +102,7 @@ jobs:
           set -euo pipefail
           ENDPOINT='https://keeptxred-site.freddy-coppola.workers.dev/api/public/hooks/publish-texasdefined-reel'
           TITLE='3 Texas Places People Do Not Expect'
-          DESCRIPTION='Texas can look completely different from one corner to the next. Guadalupe Mountains, Caddo Lake, and Padre Island show just how much variety the state has. Which one would you visit first? https://texasdefined.com #Texas #TexasTravel #TexasDefined #ExploreTexas Image sources: National Park Service and U.S. Fish & Wildlife Service via Wikimedia Commons.'
+          DESCRIPTION='Texas can look completely different from one corner to the next. Guadalupe Mountains, Caddo Lake, and Padre Island show just how much variety the state has. Which one would you visit first? https://texasdefined.com #Texas #TexasTravel #TexasDefined #ExploreTexas Image credits: Guadalupe Mountains and Padre Island imagery via U.S. government/Wikimedia Commons; Caddo Lake photo by Jay Carriker via Wikimedia Commons.'
           OIDC_JSON=$(curl -fsSL -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-facebook")
           OIDC_TOKEN=$(printf '%s' "$OIDC_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin)["value"])')
           HTTP_CODE=$(curl -sS -o response.json -w '%{http_code}' -X POST "$ENDPOINT" -H "Authorization: Bearer $OIDC_TOKEN" -F 'confirmation=PUBLISH TEXASDEFINED REEL' -F "title=$TITLE" -F "description=$DESCRIPTION" -F 'video=@texasdefined-fresh-reel.mp4;type=video/mp4') || HTTP_CODE=000
