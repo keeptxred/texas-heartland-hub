@@ -5,6 +5,7 @@
 // government / military sources.
 
 import { applyReviewedStaticArticleBodyUpgrade } from "@/lib/static-article-body-upgrade-router";
+import { canonicalizeMigratedToolMarkdownLinks } from "@/lib/migrated-tool-canonical";
 
 export type Section = {
   heading?: string;
@@ -108,7 +109,7 @@ function dedupeParagraphs(paragraphs: string[], seenPara: Set<string>, seenSent:
   const out: string[] = [];
   for (const raw of paragraphs) {
     for (const repaired of repairParagraphStructure(raw ?? "")) {
-      const p = repaired.trim();
+      const p = canonicalizeMigratedToolMarkdownLinks(repaired).trim();
       if (!p) continue;
       const key = norm(p);
       if (key.length >= 30 && seenPara.has(key)) continue;
