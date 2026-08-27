@@ -1,6 +1,7 @@
 import { issueGuides, type IssueGuide } from "@/data/issue-guides";
 import { ALL_POLICY_TRACKERS } from "@/data/policy-trackers-all";
 import type { PolicyTracker } from "@/data/policy-trackers";
+import { isPolicyTrackerIndexable } from "@/lib/policy-tracker-indexability";
 
 const STOP_WORDS = new Set([
   "texas",
@@ -97,6 +98,7 @@ export function scorePolicyTrackerForIssueGuide(guide: IssueGuide, tracker: Poli
 
 export function relatedPolicyTrackersForIssueGuide(guide: IssueGuide, limit = 4) {
   return ALL_POLICY_TRACKERS
+    .filter(isPolicyTrackerIndexable)
     .map((tracker) => ({ tracker, score: scorePolicyTrackerForIssueGuide(guide, tracker) }))
     .filter(({ score }) => score >= 3)
     .sort((a, b) => b.score - a.score || a.tracker.title.localeCompare(b.tracker.title))
