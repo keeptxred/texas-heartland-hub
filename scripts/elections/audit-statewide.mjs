@@ -90,8 +90,13 @@ for (const row of officialRows) {
 
 const officialKeys = new Set(officialStatewide.map((row) => row.key));
 for (const [key, candidateId] of generatedIdentity) {
-  if (!officialKeys.has(key)) {
-    warnings.push(`Generated statewide candidate is not in the current official extract: ${candidateId} (${key}).`);
+  if (officialKeys.has(key)) continue;
+  const candidate = candidateById.get(candidateId);
+  const message = `Generated statewide candidate is not in the current official extract: ${candidateId} (${key}).`;
+  if (isOfficialCandidateListing(candidate)) {
+    errors.push(message);
+  } else {
+    warnings.push(message);
   }
 }
 
@@ -146,6 +151,16 @@ if (errors.length) {
 console.log(
   `Statewide race audit passed: ${statewideRaces.length} races, ${officialStatewide.length} official candidates, ${generatedIdentity.size} generated candidates.`,
 );
+
+function isOfficialCandidateListing(candidate) {
+  if (!candidate) return false;
+  const sourceType = clean(candidate.source?.sourceType ?? candidate.sourceType).toLowerCase();
+  const sourceUrl = clean(candidate.source?.sourceUrl ?? candidate.sourceUrl).toLowerCase();
+  return (
+    sourceType === "official_candidate_listing" ||
+    sourceUrl.includes("goelect.txelections.civixapps.com/ivis-cbp-ui/candidate-information")
+  );
+}
 
 function isStatewideRaceId(raceId) {
   return /^(race-2026-(governor|lieutenant-governor|attorney-general|comptroller|land-commissioner|agriculture-commissioner|railroad-commissioner|texas-supreme-court|court-of-criminal-appeals))/.test(
