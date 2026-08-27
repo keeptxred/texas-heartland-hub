@@ -30,11 +30,11 @@ begin
     or (has_ambiguous_team_alias and has_sports_context)
     or haystack ~ '(nfl|nba|mlb|nhl|mls|wnba|college football|high school football|\mfootball\M|\mbaseball\M|\mbasketball\M|\mhockey\M|\msoccer\M|\mgolf\M|\mvolleyball\M|\msoftball\M|swimming and diving|track and field|cross country|\mtennis\M|heisman|season opener|athletics|athlete|championship|playoff|roster|injured list|trade deadline|contract extension|recruiting|nil deal)';
 
-  is_hard_news := haystack ~ '(election|vot(e|er|ing)|ballot|candidate|campaign|runoff|legislature|legislation|house bill|senate bill|governor|\mgov\.?\M|attorney general|ken paxton|paxton|james talarico|talarico|secretary of state|court|judge|lawsuit|ruling|appeal|police|sheriff|dps|crime|shooting|killed|homicide|fentanyl|public safety|emergency|disaster|hurricane|tornado|flood|wildfire|\mfire\M|fire chief|drought|school district|\misd\M|school board|superintendent|tea |texas education agency|city council|county commissioners|mayor|zoning|annexation|transportation commission|speed limit|drainage improvement|water conservation|property tax|appraisal|tax rate|budget|ercot|grid|utility|regulation|regulatory|border security|operation lone star|public health|hospital|outbreak|deed fraud|extradition|federal authorities)';
+  is_hard_news := haystack ~ '(election|vot(e|er|ing)|ballot|candidate|campaign|runoff|legislature|legislation|house bill|senate bill|governor|\mgov\M\.?|attorney general|ken paxton|paxton|james talarico|talarico|secretary of state|court|judge|lawsuit|ruling|appeal|police|sheriff|dps|crime|shooting|killed|homicide|fentanyl|public safety|emergency|disaster|hurricane|tornado|flood|wildfire|\mfire\M|fire chief|drought|school district|\misd\M|school board|superintendent|tea |texas education agency|city council|county commissioners|mayor|zoning|annexation|transportation commission|speed limit|drainage improvement|water conservation|property tax|appraisal|tax rate|budget|ercot|grid|utility|regulation|regulatory|border security|operation lone star|public health|hospital|outbreak|deed fraud|extradition|federal authorities)';
 
   is_lifestyle := haystack ~ '(restaurant|barbecue|bbq|coffee shop|coffee chain|bakery|chef|food hall|dining|brewery|taproom|festival|concert|fair|music venue|entertainment venue|arcade|collectibles|action park|sportsplex|theme park|water park|zoo|aquarium|travel|tourism|road trip|attraction|museum|historic site|texas history|on this day|anniversary|state park|national park|nature center|public park|park trail|undeveloped parks|trail|camping|hiking|lake|reservoir|river|fishing|wildlife|alligator|bat experience|small town|human interest|community feature|best of texas|ranking|opening soon|grand opening|new location|retail opening)';
 
-  is_material_business := haystack ~ '(layoff|bankruptcy|acquisition|acquire|merger|headquarters|corporate campus|factory|manufacturing plant|data center|billion-dollar|million-dollar investment|major investment|\binvestment\b|jobs created|job gains|job cuts|workforce reduction|workforce grant|employer|earnings|ipo|public funding|tax incentive|economic development|redevelopment|antitrust|regulatory action|corporate expansion|plans expansion|\bexpands?\b|\blease[sd]?\b|facility expansion)'
+  is_material_business := haystack ~ '(layoff|bankruptcy|acquisition|acquire|merger|headquarters|corporate campus|factory|manufacturing plant|data center|billion-dollar|million-dollar investment|major investment|\minvestment\M|jobs created|job gains|job cuts|workforce reduction|workforce grant|employer|earnings|ipo|public funding|tax incentive|economic development|redevelopment|antitrust|regulatory action|corporate expansion|plans expansion|\mexpands?\M|\mlease[sd]?\M|facility expansion)'
     and not is_lifestyle;
 
   if is_sports then
@@ -44,7 +44,7 @@ begin
     new.target_site := 'keeptxred';
     new.target_section := case
       when haystack ~ '(election|vot(e|er|ing)|ballot|candidate|campaign|runoff)' then 'Elections'
-      when haystack ~ '(legislature|legislation|house bill|senate bill|governor|\mgov\.?\M|attorney general|ken paxton|paxton|james talarico|talarico|secretary of state|court|judge|lawsuit|ruling|appeal)' then 'Politics'
+      when haystack ~ '(legislature|legislation|house bill|senate bill|governor|\mgov\M\.?|attorney general|ken paxton|paxton|james talarico|talarico|secretary of state|court|judge|lawsuit|ruling|appeal)' then 'Politics'
       when is_material_business then 'Business'
       else 'Texas News'
     end;
