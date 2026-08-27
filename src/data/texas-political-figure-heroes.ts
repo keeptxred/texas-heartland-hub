@@ -77,6 +77,55 @@ export const POLITICAL_FIGURE_HEROES: Record<string, PoliticalFigureHero> = {
     sourcePage: "https://commons.wikimedia.org/wiki/File:Rick_Perry_official_portrait.jpg",
     license: "Public domain",
   },
+  "john-tower-texas-senator-republican-breakthrough": {
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/John_Tower.jpg?width=1200",
+    alt: "Official congressional portrait of Texas Senator John Tower",
+    credit: "U.S. Congress · Public domain · Wikimedia Commons",
+    sourcePage: "https://commons.wikimedia.org/wiki/File:John_Tower.jpg",
+    license: "Public domain",
+  },
+  "kay-bailey-hutchison-texas-senator": {
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Kay_Bailey_Hutchison%2C_official_photo.jpg?width=1200",
+    alt: "Official U.S. Senate portrait of Kay Bailey Hutchison",
+    credit: "U.S. Senate · Public domain · Wikimedia Commons",
+    sourcePage: "https://commons.wikimedia.org/wiki/File:Kay_Bailey_Hutchison,_official_photo.jpg",
+    license: "Public domain",
+  },
+  "dick-armey-texas-house-majority-leader": {
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Dick_Armey%2C_official_105th_Congress_photo.jpg?width=1200",
+    alt: "Official congressional portrait of Texas Representative Dick Armey",
+    credit: "U.S. Congress · Public domain · Wikimedia Commons",
+    sourcePage: "https://commons.wikimedia.org/wiki/File:Dick_Armey,_official_105th_Congress_photo.jpg",
+    license: "Public domain",
+  },
+  "tom-delay-texas-house-majority-leader": {
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Tom_Delay.png?width=1200",
+    alt: "Official congressional portrait of Texas Representative Tom DeLay",
+    credit: "U.S. Congress · Public domain · Wikimedia Commons",
+    sourcePage: "https://commons.wikimedia.org/wiki/File:Tom_Delay.png",
+    license: "Public domain",
+  },
+  "ron-paul-texas-libertarian-conservative": {
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Ron_Paul%2C_official_Congressional_photo_portrait%2C_2007.jpg?width=1200",
+    alt: "Official 2007 congressional portrait of Texas Representative Ron Paul",
+    credit: "U.S. Congress · Public domain · Wikimedia Commons",
+    sourcePage: "https://commons.wikimedia.org/wiki/File:Ron_Paul,_official_Congressional_photo_portrait,_2007.jpg",
+    license: "Public domain",
+  },
+  "kevin-brady-texas-ways-means-chair": {
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Official_Congressional_portrait_of_Congressman_Kevin_Brady.jpg?width=1200",
+    alt: "Official congressional portrait of Texas Representative Kevin Brady",
+    credit: "U.S. House of Representatives · Public domain · Wikimedia Commons",
+    sourcePage: "https://commons.wikimedia.org/wiki/File:Official_Congressional_portrait_of_Congressman_Kevin_Brady.jpg",
+    license: "Public domain",
+  },
+  "jeb-hensarling-texas-financial-services-chair": {
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Jeb_Hensarling.jpg?width=1200",
+    alt: "Official congressional portrait of Texas Representative Jeb Hensarling",
+    credit: "U.S. House of Representatives · Public domain · Wikimedia Commons",
+    sourcePage: "https://commons.wikimedia.org/wiki/File:Jeb_Hensarling.jpg",
+    license: "Public domain",
+  },
 };
 
 export const politicalFigureHeroBySlug = (slug: string) => POLITICAL_FIGURE_HEROES[slug];
