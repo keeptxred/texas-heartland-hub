@@ -4,9 +4,11 @@ import { describe, expect, it } from 'vitest';
 const source = readFileSync(new URL('./audit-broken-links.mjs', import.meta.url), 'utf8');
 
 describe('broken-link live request contract', () => {
-  it('uses a browser-compatible request identity without suppressing HTTP failures', () => {
-    expect(source).toContain("Chrome/151.0.0.0 Safari/537.36 KeepTXRed-Link-Audit/1.2");
+  it('uses a clean browser request identity without suppressing HTTP failures', () => {
+    expect(source).toContain("Chrome/151.0.0.0 Safari/537.36'");
+    expect(source).not.toContain('KeepTXRed-Link-Audit');
     expect(source).toContain("accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'");
+    expect(source).toContain("'accept-language': 'en-US,en;q=0.9'");
     expect(source).toContain("if (!response.ok) return [{ url, sitemapFailure: response.status, attempts }]");
     expect(source).toContain("severity: 'blocking'");
     expect(source).not.toContain('response.status === 403');
