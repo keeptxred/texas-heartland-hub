@@ -10,6 +10,10 @@ const forbidden = [
   ['lova', 'ble.dev'].join(''),
   ['lova', 'ble.app'].join(''),
   ['lova', 'ble-api-key'].join(''),
+  ['indexing', '.googleapis.com'].join(''),
+  ['www.googleapis.com/auth/', 'indexing'].join(''),
+  ['submit-google-', 'job-url'].join(''),
+  ['google-job-', 'posting-urls'].join(''),
 ];
 
 const tracked = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8' })
