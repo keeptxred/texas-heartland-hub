@@ -5,10 +5,6 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/publish-texasdefined-test-reel.yml'
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/publish-texasdefined-test-reel.yml'
   workflow_dispatch:
 
 permissions:
@@ -66,7 +62,6 @@ PY
               -an -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -r 30 "$output"
           }
 
-          # Hook: three real Texas places on screen at once.
           ffmpeg -hide_banner -loglevel error -y \
             -loop 1 -t 3 -i guadalupe.jpg \
             -loop 1 -t 3 -i caddo.jpg \
@@ -86,7 +81,6 @@ PY
           make_photo_scene caddo.jpg caddo.mp4 5 'CADDO LAKE' 'Cypress trees, bayous, and Spanish moss'
           make_photo_scene padre.jpg padre.mp4 5 'PADRE ISLAND' 'Dunes, Gulf water, and open beach'
 
-          # Summary repeats all three real images so the point is visual, not just textual.
           ffmpeg -hide_banner -loglevel error -y \
             -loop 1 -t 4 -i guadalupe.jpg \
             -loop 1 -t 4 -i caddo.jpg \
@@ -102,7 +96,6 @@ PY
                   drawtext=fontfile=${BOLD}:text='EVERYWHERE':fontcolor=white:fontsize=84:x=(w-text_w)/2:y=945[out]" \
             -map '[out]' -an -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -r 30 summary.mp4
 
-          # Clean frozen end card. Intentionally small enough for generous Reel safe margins.
           ffmpeg -hide_banner -loglevel error -y \
             -f lavfi -i 'color=c=0x080808:s=1080x1920:r=30:d=5' \
             -vf "drawtext=fontfile=${BOLD}:text='TexasDefined.com':fontcolor=white:fontsize=78:x=(w-text_w)/2:y=780,
@@ -111,8 +104,6 @@ PY
 
           printf "file 'hook.mp4'\nfile 'guadalupe.mp4'\nfile 'caddo.mp4'\nfile 'padre.mp4'\nfile 'summary.mp4'\nfile 'end.mp4'\n" > concat.txt
           ffmpeg -hide_banner -loglevel error -y -f concat -safe 0 -i concat.txt -c copy silent-video.mp4
-
-          # Add a silent AAC track for predictable Facebook compatibility; no robotic narration or fake music.
           ffmpeg -hide_banner -loglevel error -y -i silent-video.mp4 \
             -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=48000 \
             -shortest -c:v copy -c:a aac -b:a 128k -movflags +faststart texasdefined-fresh-reel.mp4
@@ -138,7 +129,7 @@ PY
           echo 'REVIEW_CONTACT_SHEET_BASE64_END'
 
       - name: Publish fresh Reel to TexasDefined Facebook
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'workflow_dispatch'
         shell: bash
         run: |
           set -euo pipefail
@@ -147,7 +138,7 @@ PY
           DESCRIPTION='Texas can look completely different from one corner to the next. Guadalupe Mountains, Caddo Lake, and Padre Island show just how much variety the state has. Which one would you visit first? https://texasdefined.com #Texas #TexasTravel #TexasDefined #ExploreTexas Image sources: National Park Service and U.S. Fish & Wildlife Service via Wikimedia Commons.'
 
           OIDC_JSON=$(curl -fsSL -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-facebook")
-          OIDC_TOKEN=$(printf '%s' "$OIDC_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin)["value"])')
+          OIDC_TOKEN=$(printf '%s' "$OIDIDC_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin)["value"])')
           HTTP_CODE=$(curl -sS -o response.json -w '%{http_code}' \
             -X POST "$ENDPOINT" \
             -H "Authorization: Bearer $OIDC_TOKEN" \
