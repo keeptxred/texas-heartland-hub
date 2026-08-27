@@ -23,6 +23,10 @@ const RETIRED_PREFIXES = [
 ];
 const IGNORE_PREFIXES = ['/api/', '/admin', '/auth/', '/assets/', '/favicon', '/robots.txt', '/sitemap'];
 const MAX_FETCH_ATTEMPTS = 3;
+const AUDIT_REQUEST_HEADERS = {
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 KeepTXRed-Link-Audit/1.2',
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+};
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -125,7 +129,7 @@ async function fetchText(url) {
       const response = await fetch(url, {
         redirect: 'follow',
         signal: controller.signal,
-        headers: { 'user-agent': 'KeepTXRed-Link-Audit/1.1' },
+        headers: AUDIT_REQUEST_HEADERS,
       });
       const text = await response.text();
       if (response.status < 500 || attempt === MAX_FETCH_ATTEMPTS) return { response, text, attempts: attempt };
@@ -211,6 +215,15 @@ function printBlockingStaticFindings(findings) {
   for (const item of findings) console.log(`- ${item.file}:${item.line} ${item.pathname} (${item.raw})`);
 }
 
+function printBlockingLiveFailures(failures) {
+  if (!failures.length) return;
+  console.log('\nBlocking live failures:');
+  for (const item of failures) {
+    const detail = item.status ?? item.sitemapFailure ?? item.error ?? item.sitemapRequestError ?? '';
+    console.log(`- ${item.type}: ${item.url || item.source || ''} ${detail}`.trim());
+  }
+}
+
 const staticFindings = await staticAudit();
 const live = LIVE ? await liveAudit() : { pagesChecked: 0, failures: [] };
 const blockingStatic = staticFindings.filter((item) => item.severity === 'blocking');
@@ -239,4 +252,5 @@ await fs.mkdir(path.join(ROOT, 'artifacts'), { recursive: true });
 await fs.writeFile(path.join(ROOT, 'artifacts', 'broken-link-audit.json'), JSON.stringify(report, null, 2) + '\n');
 console.log(JSON.stringify(report.summary, null, 2));
 printBlockingStaticFindings(blockingStatic);
+printBlockingLiveFailures(blockingLive);
 if (blockingStatic.length || blockingLive.length) process.exitCode = 1;
