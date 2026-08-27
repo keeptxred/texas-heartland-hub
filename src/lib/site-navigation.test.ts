@@ -52,4 +52,10 @@ describe("site navigation", () => {
     expect(elections?.href).toBe("/elections/2026");
     expect(elections?.links.some((link) => link.to === "/elections/2026")).toBe(true);
   });
+
+  it("keeps the Texas Government authority hub globally discoverable", () => {
+    const government = SITE_NAV_GROUPS.find((group) => group.id === "government");
+
+    expect(government?.links.some((link) => link.to === "/texas-government")).toBe(true);
+  });
 });
