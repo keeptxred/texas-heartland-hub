@@ -12,6 +12,9 @@ const CASES = [
   ["texas-energy-policy.tsx", "/texas-energy-policy", "/texas-energy"],
   ["ercot-texas-power-grid.tsx", "/ercot-texas-power-grid", "/issues/ercot-grid-reliability"],
   ["texas-water.tsx", "/texas-water", "/issues/texas-water-policy"],
+  ["texas-school-board-powers.tsx", "/texas-school-board-powers", "/news/texas-school-board-powers"],
+  ["why-texas-has-no-state-income-tax.tsx", "/why-texas-has-no-state-income-tax", "/news/why-texas-has-no-income-tax"],
+  ["texas.property-taxes-2026.tsx", "/texas/property-taxes-2026", "/news/texas-property-tax-guide"],
 ] as const;
 
 describe("legacy policy and law aliases", () => {
