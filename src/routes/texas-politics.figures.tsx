@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ALL_TEXAS_POLITICAL_FIGURES } from "@/data/texas-political-figures-all";
+import { politicalFigureHeroBySlug } from "@/data/texas-political-figure-heroes";
 
 const SITE_URL = "https://keeptxred.com";
 const TITLE = "Texas Political Figures: Leaders, Careers & Conservative Legacy | KeepTXRed";
@@ -26,11 +27,15 @@ export const Route = createFileRoute("/texas-politics/figures")({
         name: TITLE,
         description: DESCRIPTION,
         url: `${SITE_URL}/texas-politics/figures`,
-        hasPart: ALL_TEXAS_POLITICAL_FIGURES.map((figure) => ({
-          "@type": "ProfilePage",
-          name: figure.name,
-          url: `${SITE_URL}/texas-politics/figures/${figure.slug}`,
-        })),
+        hasPart: ALL_TEXAS_POLITICAL_FIGURES.map((figure) => {
+          const hero = politicalFigureHeroBySlug(figure.slug);
+          return {
+            "@type": "ProfilePage",
+            name: figure.name,
+            url: `${SITE_URL}/texas-politics/figures/${figure.slug}`,
+            ...(hero ? { image: hero.src } : {}),
+          };
+        }),
       }).replace(/</g, "\\u003c"),
     }],
   }),
@@ -49,15 +54,21 @@ function TexasPoliticalFiguresHub() {
       </header>
 
       <section className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3" aria-label="Texas political figure profiles">
-        {ALL_TEXAS_POLITICAL_FIGURES.map((figure) => (
-          <a key={figure.slug} href={`/texas-politics/figures/${figure.slug}`} className="group rounded-xl border bg-card p-6 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-sm">
-            <p className="text-xs font-bold uppercase tracking-[0.14em] text-primary">{figure.kicker}</p>
-            <h2 className="mt-3 text-2xl font-bold group-hover:text-primary">{figure.name}</h2>
-            <p className="mt-2 text-sm font-semibold">{figure.texasRole}</p>
-            <p className="mt-3 text-sm leading-6 text-muted-foreground">{figure.description}</p>
-            <span className="mt-5 inline-flex text-sm font-bold text-primary">Read full profile →</span>
-          </a>
-        ))}
+        {ALL_TEXAS_POLITICAL_FIGURES.map((figure) => {
+          const hero = politicalFigureHeroBySlug(figure.slug);
+          return (
+            <a key={figure.slug} href={`/texas-politics/figures/${figure.slug}`} className="group overflow-hidden rounded-xl border bg-card transition hover:-translate-y-0.5 hover:border-primary hover:shadow-sm">
+              {hero ? <img src={hero.src} alt={hero.alt} className="h-52 w-full object-cover object-top" loading="lazy" /> : null}
+              <div className="p-6">
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-primary">{figure.kicker}</p>
+                <h2 className="mt-3 text-2xl font-bold group-hover:text-primary">{figure.name}</h2>
+                <p className="mt-2 text-sm font-semibold">{figure.texasRole}</p>
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">{figure.description}</p>
+                <span className="mt-5 inline-flex text-sm font-bold text-primary">Read full profile →</span>
+              </div>
+            </a>
+          );
+        })}
       </section>
 
       <section className="mt-12 rounded-2xl border bg-muted/30 p-6 md:p-8">
