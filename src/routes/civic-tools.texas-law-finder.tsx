@@ -1,10 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { LAW_TOPICS } from "@/data/law-topics";
+import { isLawTopicIndexable } from "@/lib/law-topic-indexability";
 import { buildSeo } from "@/lib/seo";
 
 const EXAMPLES = ["property tax protest", "can I carry a gun", "self defense", "public records request", "parents and school records", "eminent domain", "voter ID", "agency rules"];
 const STOP = new Set(["texas", "what", "when", "where", "which", "with", "that", "this", "from", "have", "does", "about", "there", "their", "would", "could", "should"]);
+const INDEXABLE_LAW_TOPICS = LAW_TOPICS.filter(isLawTopicIndexable);
 
 function words(value: string) {
   return value.toLowerCase().split(/[^a-z0-9]+/g).filter((word) => word.length >= 3 && !STOP.has(word));
@@ -37,7 +39,7 @@ function TexasLawFinder() {
   const [query, setQuery] = useState("");
   const results = useMemo(() => {
     if (query.trim().length < 3) return [];
-    return LAW_TOPICS.map((topic) => ({ topic, score: scoreTopic(query, topic) }))
+    return INDEXABLE_LAW_TOPICS.map((topic) => ({ topic, score: scoreTopic(query, topic) }))
       .filter(({ score }) => score > 0)
       .sort((a, b) => b.score - a.score || a.topic.title.localeCompare(b.topic.title))
       .slice(0, 8);
