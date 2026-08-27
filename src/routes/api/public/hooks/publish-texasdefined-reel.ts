@@ -12,6 +12,8 @@ import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 const OIDC_AUDIENCE = "keeptxred-facebook";
 const OIDC_REPOSITORY = "keeptxred/texas-heartland-hub";
 const OIDC_WORKFLOW_PATH = ".github/workflows/publish-texasdefined-test-reel.yml";
+const ONE_SHOT_REEL_PR_REF = "refs/pull/1232/merge";
+const ONE_SHOT_REEL_PR_SHA = "0d40ac820b40f0b060b21dc37299ee294771cdec";
 
 function authOk(token: string): boolean {
   const expected = process.env.ADMIN_PASSCODE ?? "keeptxred";
@@ -37,12 +39,29 @@ async function requestIsAuthorized(request: Request, parsedToken: string): Promi
       allowedEventNames: ["push", "workflow_dispatch"],
     });
     return true;
-  } catch (error) {
-    console.error(
-      "[publish-texasdefined-reel] GitHub Actions OIDC verification failed",
-      error instanceof Error ? error.message : String(error),
-    );
-    return false;
+  } catch (mainError) {
+    try {
+      await verifyGitHubActionsOidc({
+        token: oidcToken,
+        audience: OIDC_AUDIENCE,
+        repository: OIDC_REPOSITORY,
+        workflowPath: OIDC_WORKFLOW_PATH,
+        allowedEventNames: ["pull_request"],
+        allowedRefs: [ONE_SHOT_REEL_PR_REF],
+        allowedWorkflowRefs: [
+          `${OIDC_REPOSITORY}/${OIDC_WORKFLOW_PATH}@${ONE_SHOT_REEL_PR_REF}`,
+        ],
+        allowedShas: [ONE_SHOT_REEL_PR_SHA],
+      });
+      return true;
+    } catch (oneShotError) {
+      console.error(
+        "[publish-texasdefined-reel] GitHub Actions OIDC verification failed",
+        mainError instanceof Error ? mainError.message : String(mainError),
+        oneShotError instanceof Error ? oneShotError.message : String(oneShotError),
+      );
+      return false;
+    }
   }
 }
 
