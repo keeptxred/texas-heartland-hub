@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-08-26T17:20:38.488Z",
+  "generatedAt": "2026-08-27T16:53:29.894Z",
   "candidateCount": 491,
   "eligibleCandidateCount": 479,
   "excludedCandidateCount": 12,
-  "approvedPhotoCount": 290,
-  "missingPhotoCount": 189,
-  "manifestEntryCount": 290,
-  "coverage": 0.605427974947808,
-  "coveragePercent": 60.54,
+  "approvedPhotoCount": 291,
+  "missingPhotoCount": 188,
+  "manifestEntryCount": 291,
+  "coverage": 0.6075156576200418,
+  "coveragePercent": 60.75,
   "targetCoverage": 0.85,
   "targetApprovedPhotoCount": 408,
-  "photosNeededForTarget": 118,
+  "photosNeededForTarget": 117,
   "targetMet": false,
   "errors": [],
   "warnings": [],
@@ -147,13 +147,6 @@
       "priority": "statewide"
     },
     {
-      "candidateId": "candidate-stephen-samuelson-other-race-2026-governor",
-      "name": "STEPHEN SAMUELSON",
-      "raceId": "race-2026-governor",
-      "party": "other",
-      "priority": "statewide"
-    },
-    {
       "candidateId": "candidate-arturo-espinosa-other-race-2026-lieutenant-governor",
       "name": "ARTURO ESPINOSA",
       "raceId": "race-2026-lieutenant-governor",
@@ -166,6 +159,13 @@
       "raceId": "race-2026-lieutenant-governor",
       "party": "other",
       "priority": "statewide"
+    },
+    {
+      "candidateId": "candidate-carlos-charlie-garza-republican-race-2026-state-board-of-education-13",
+      "name": "CARLOS (CHARLIE) GARZA",
+      "raceId": "race-2026-state-board-of-education-13",
+      "party": "republican",
+      "priority": "standard"
     },
     {
       "candidateId": "candidate-mindy-bumgarner-republican-race-2026-state-board-of-education-14",
@@ -325,13 +325,6 @@
       "candidateId": "candidate-fatima-la-juan-muse-democratic-race-2026-texas-house-2",
       "name": "FATIMA LA'JUAN MUSE",
       "raceId": "race-2026-texas-house-2",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-matthias-jonah-early-democratic-race-2026-texas-house-20",
-      "name": "MATTHIAS-JONAH EARLY",
-      "raceId": "race-2026-texas-house-20",
       "party": "democratic",
       "priority": "standard"
     },
