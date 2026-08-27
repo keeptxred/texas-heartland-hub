@@ -1,6 +1,7 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import {
   ALL_TEXAS_POLITICAL_FIGURES,
+  POLITICAL_FIGURE_LEGACY_SLUG_REDIRECTS,
   texasPoliticalFigureByName,
   texasPoliticalFigureBySlug,
   type TexasPoliticalFigurePage,
@@ -45,6 +46,10 @@ function relatedFigureSlugsForFigure(figure: TexasPoliticalFigurePage): string[]
 
 export const Route = createFileRoute("/texas-politics/figures_/$figureSlug")({
   beforeLoad: ({ params }) => {
+    const canonicalSlug = POLITICAL_FIGURE_LEGACY_SLUG_REDIRECTS[params.figureSlug];
+    if (canonicalSlug) {
+      throw redirect({ href: `${SITE_URL}/texas-politics/figures/${canonicalSlug}`, statusCode: 301 });
+    }
     if (!texasPoliticalFigureBySlug(params.figureSlug)) throw notFound();
   },
   head: ({ params }) => {
