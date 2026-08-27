@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
 import { AUTHORS, authorSlug } from "@/data/authors";
 import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions";
+import { getDiscoverableStaticArticleSlugs } from "@/lib/static-article-discovery.functions";
 import { filterByCategorySlug, CATEGORY_NAME_TO_SLUG, type CategoryName } from "@/lib/articles-by-category";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 import border from "@/assets/border.jpg";
@@ -27,7 +28,13 @@ export const Route = createFileRoute("/news/")({
     ],
     links: [{ rel: "canonical", href: "https://keeptxred.com/news" }],
   }),
-  loader: () => getDailyArticles(),
+  loader: async () => {
+    const [daily, discoverableStaticSlugs] = await Promise.all([
+      getDailyArticles(),
+      getDiscoverableStaticArticleSlugs(),
+    ]);
+    return { ...daily, discoverableStaticSlugs };
+  },
   component: NewsPage,
 });
 
@@ -83,8 +90,12 @@ function timeAgo(iso: string): string {
 }
 
 function NewsPage() {
-  const { articles } = Route.useLoaderData();
+  const { articles, discoverableStaticSlugs } = Route.useLoaderData();
   const [activeCat, setActiveCat] = useState<(typeof CATS)[number]>("All");
+  const discoverableStatic = useMemo(
+    () => new Set(discoverableStaticSlugs),
+    [discoverableStaticSlugs],
+  );
 
   const activeAuthors = useMemo(() => {
     const slugs = new Set<string>();
@@ -92,10 +103,14 @@ function NewsPage() {
       if (article.slug && article.author) slugs.add(authorSlug(article.author));
     }
     for (const article of ARTICLES) {
-      if (isPublished(article) && isStaticArticleIndexable(article)) slugs.add(authorSlug(article.author));
+      if (
+        isPublished(article)
+        && isStaticArticleIndexable(article)
+        && discoverableStatic.has(article.slug)
+      ) slugs.add(authorSlug(article.author));
     }
     return AUTHORS.filter((author) => slugs.has(author.slug));
-  }, [articles]);
+  }, [articles, discoverableStatic]);
 
   const filteredLive = useMemo(
     () =>
@@ -106,10 +121,14 @@ function NewsPage() {
   );
   const filteredStatic = useMemo(
     () => {
-      const live = ARTICLES.filter((a) => isPublished(a) && isStaticArticleIndexable(a)).sort(sortByDateDesc);
+      const live = ARTICLES.filter((a) =>
+        isPublished(a)
+        && isStaticArticleIndexable(a)
+        && discoverableStatic.has(a.slug),
+      ).sort(sortByDateDesc);
       return activeCat === "All" ? live : filterByCategorySlug(live, catToSlug(activeCat));
     },
-    [activeCat]
+    [activeCat, discoverableStatic]
   );
   const liveSlugSet = useMemo(() => new Set(filteredLive.map((article) => article.slug)), [filteredLive]);
   const archiveArticles = useMemo(
