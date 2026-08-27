@@ -3,7 +3,7 @@ import type {} from "@tanstack/react-start";
 import { ALL_TEXAS_POLITICAL_FIGURES } from "@/data/texas-political-figures-all";
 import { BASE_URL, renderUrlset, toIsoDate, xmlResponse, type UrlEntry } from "@/lib/sitemap-shared";
 
-const LASTMOD = toIsoDate("2026-08-26T21:45:00-05:00");
+const LASTMOD = toIsoDate("2026-08-26T22:30:00-05:00");
 
 export const Route = createFileRoute("/sitemap-political-figures.xml")({
   server: {
