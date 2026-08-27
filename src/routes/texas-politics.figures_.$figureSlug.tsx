@@ -36,7 +36,13 @@ export const Route = createFileRoute("/texas-politics/figures_/$figureSlug")({
           name: title,
           description: figure.description,
           url: canonical,
-          ...(figure.sources?.length ? { citation: figure.sources.map((source) => source.href) } : {}),
+          ...(figure.sources?.length ? {
+            citation: figure.sources.map((source) => ({
+              "@type": "CreativeWork",
+              name: source.label,
+              url: source.href,
+            })),
+          } : {}),
           mainEntity: {
             "@type": "Person",
             name: figure.name,
@@ -94,8 +100,8 @@ function PoliticalFigurePage() {
 
       {figure.sources?.length ? (
         <section className="mt-12 rounded-2xl border bg-card p-6 md:p-8" aria-labelledby="profile-sources">
-          <h2 id="profile-sources" className="text-2xl font-bold">Primary and institutional sources</h2>
-          <p className="mt-3 max-w-3xl leading-7 text-muted-foreground">Use these authoritative records to verify service dates, offices and the major historical events summarized above.</p>
+          <h2 id="profile-sources" className="text-2xl font-bold">Sources and official records</h2>
+          <p className="mt-3 max-w-3xl leading-7 text-muted-foreground">Use these records and source materials to verify service dates, offices and the major historical events summarized above.</p>
           <ul className="mt-5 space-y-3">
             {figure.sources.map((source) => (
               <li key={source.href}>
