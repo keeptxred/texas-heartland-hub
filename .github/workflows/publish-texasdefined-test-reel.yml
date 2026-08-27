@@ -42,7 +42,7 @@ jobs:
             if (!url || String(url).startsWith('blob:')) return;
             const lower = String(url).toLowerCase();
             const type = String(contentType).toLowerCase();
-            if (lower.includes('.mp4') || lower.includes('.m3u8') || type.startsWith('video/')) {
+            if (lower.includes('.mp4') || lower.includes('.m3u8') || type.startsWith('video/') || type.includes('mpegurl')) {
               if (!candidates.some((entry) => entry.url === url)) candidates.push({ url, contentType });
             }
           };
@@ -58,15 +58,23 @@ jobs:
           const urls = await page.evaluate(() => Array.from(document.querySelectorAll('video')).flatMap((video) => [video.currentSrc, video.src, ...Array.from(video.querySelectorAll('source')).map((source) => source.src)]).filter(Boolean));
           for (const url of urls) add(url);
           await browser.close();
-          const preferred = candidates.find((entry) => /\.mp4(?:$|\?)/i.test(entry.url)) ?? candidates.find((entry) => /\.m3u8(?:$|\?)/i.test(entry.url)) ?? candidates[0];
+          const preferred = candidates.find((entry) => /\.mp4(?:$|\?)/i.test(entry.url)) ?? candidates.find((entry) => /\.m3u8(?:$|\?)/i.test(entry.url) || String(entry.contentType).toLowerCase().includes('mpegurl')) ?? candidates[0];
           if (!preferred) throw new Error('Visla did not expose a downloadable video URL to the browser session.');
           await writeFile('.visla-video-url', preferred.url, 'utf8');
+          await writeFile('.visla-video-type', preferred.contentType || '', 'utf8');
           console.log(`Resolved Visla media (${preferred.contentType || 'unknown content type'}).`);
           JS
           node .visla-download.mjs
           VIDEO_URL="$(cat .visla-video-url)"
-          if [[ "$VIDEO_URL" == *".m3u8"* || "$VIDEO_URL" == *"m3u8"* ]]; then
-            ffmpeg -hide_banner -loglevel error -y -i "$VIDEO_URL" -c copy texasdefined-test-reel.mp4
+          VIDEO_TYPE="$(cat .visla-video-type)"
+          if [[ "$VIDEO_URL" == *".m3u8"* || "$VIDEO_URL" == *"m3u8"* || "$VIDEO_TYPE" == *"mpegURL"* || "$VIDEO_TYPE" == *"mpegurl"* ]]; then
+            FFMPEG_BIN="$(find "$HOME/.cache/ms-playwright" -type f \( -name 'ffmpeg' -o -name 'ffmpeg-linux' \) -print -quit)"
+            if [[ -z "$FFMPEG_BIN" ]]; then
+              echo 'Playwright FFmpeg binary was not found.' >&2
+              exit 1
+            fi
+            chmod +x "$FFMPEG_BIN"
+            "$FFMPEG_BIN" -hide_banner -loglevel error -y -i "$VIDEO_URL" -c copy texasdefined-test-reel.mp4
           else
             curl -L --fail-with-body --silent --show-error --max-time 180 "$VIDEO_URL" -o texasdefined-test-reel.mp4
           fi
