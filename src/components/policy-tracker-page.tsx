@@ -14,6 +14,11 @@ const PERMANENT_HREF_ALIASES: Record<string, string> = {
   "/texas-case/facts/gun-rights": "/texas-case/facts/gun-rights-over-gun-control",
   "/texas-case/protecting-unborn-life": "/texas-case/protect-unborn-life",
   "/texas-case/facts/protecting-unborn-life": "/texas-case/facts/protect-unborn-life",
+  "/laws/texas-gun-laws-explained": "/news/texas-gun-laws-explained",
+  "/laws/texas-property-tax-laws-explained": "/news/texas-property-tax-laws-explained",
+  "/laws/texas-election-laws-explained": "/news/texas-election-laws-explained",
+  "/laws/texas-new-laws-2026": "/news/texas-new-laws-2026",
+  "/laws/texas-constitution": "/laws",
 };
 
 function canonicalPermanentHref(href: string) {
