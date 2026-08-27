@@ -68,7 +68,9 @@ for (const figure of [...byName.values()]) {
 
 export const TEXAS_POLITICAL_FIGURES: TexasPoliticalFigureRecord[] = [
   ...establishedWithMetadata,
-  ...additions.filter((figure) => !ESTABLISHED_FIGURES.some((existing) => normalizedName(existing.name) === normalizedName(figure.name))),
+  ...additions
+    .filter((figure) => !ESTABLISHED_FIGURES.some((existing) => normalizedName(existing.name) === normalizedName(figure.name)))
+    .map((figure) => ({ ...figure, aliases: PROFILE_ALIASES[figure.name] })),
 ];
 
 export const texasPoliticalFigureBySlug = (slug: string) => TEXAS_POLITICAL_FIGURES.find((figure) => figure.slug === slug);
