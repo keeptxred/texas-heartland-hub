@@ -28,14 +28,14 @@ describe("issue and policy reciprocal links", () => {
       const guides = relatedIssueGuidesForTracker(tracker);
       expect(guides.length).toBeLessThanOrEqual(3);
       expect(new Set(guides.map((guide) => guide.slug)).size).toBe(guides.length);
-      expect(guides.every(isIssueGuideIndexable)).toBe(true);
+      expect(guides.every((guide) => isIssueGuideIndexable(guide))).toBe(true);
     }
 
     for (const guide of issueGuides) {
       const trackers = relatedPolicyTrackersForIssueGuide(guide);
       expect(trackers.length).toBeLessThanOrEqual(4);
       expect(new Set(trackers.map((tracker) => tracker.slug)).size).toBe(trackers.length);
-      expect(trackers.every(isPolicyTrackerIndexable)).toBe(true);
+      expect(trackers.every((tracker) => isPolicyTrackerIndexable(tracker))).toBe(true);
     }
   });
 });

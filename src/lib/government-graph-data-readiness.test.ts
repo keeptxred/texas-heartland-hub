@@ -20,15 +20,14 @@ describe("government graph detail readiness", () => {
   });
 
   it("exposes exactly the data detail pages that pass the page readiness gate", () => {
-    const bySlug = new Map(allDataSets.map((dataset) => [dataset.slug, dataset] as const));
     const dataNodes = GOVERNMENT_GRAPH_NODES.filter(
       (node) => node.kind === "data" && node.href.startsWith("/data/"),
     );
-    const indexableDataSets = allDataSets.filter(isDataDetailIndexable);
+    const indexableDataSets = allDataSets.filter((dataset) => isDataDetailIndexable(dataset));
 
     expect(dataNodes).toHaveLength(indexableDataSets.length);
     for (const node of dataNodes) {
-      const dataset = bySlug.get(node.href.slice("/data/".length));
+      const dataset = allDataSets.find((item) => item.slug === node.href.slice("/data/".length));
       if (!dataset) throw new Error(`missing dataset for graph node ${node.href}`);
       expect(isDataDetailIndexable(dataset), `noindex data page leaked into graph: ${node.href}`).toBe(true);
     }
@@ -50,26 +49,21 @@ describe("government graph detail readiness", () => {
   });
 
   it("keeps every graph policy, law-topic, data-detail, and agency node aligned with page indexability", () => {
-    const policyBySlug = new Map(POLICY_TRACKERS.map((item) => [item.slug, item] as const));
-    const lawBySlug = new Map(LAW_TOPICS.map((item) => [item.slug, item] as const));
-    const dataBySlug = new Map(allDataSets.map((item) => [item.slug, item] as const));
-    const agencyBySlug = new Map(AGENCY_AUTHORITY_PROFILES.map((item) => [item.slug, item] as const));
-
     for (const node of GOVERNMENT_GRAPH_NODES) {
       if (node.href.startsWith("/policy/")) {
-        const tracker = policyBySlug.get(node.href.slice(8));
+        const tracker = POLICY_TRACKERS.find((item) => item.slug === node.href.slice(8));
         if (!tracker) throw new Error(`missing policy tracker for graph node ${node.href}`);
         expect(isPolicyTrackerIndexable(tracker), `noindex policy leaked: ${node.href}`).toBe(true);
       } else if (node.href.startsWith("/laws/topic/")) {
-        const topic = lawBySlug.get(node.href.slice(12));
+        const topic = LAW_TOPICS.find((item) => item.slug === node.href.slice(12));
         if (!topic) throw new Error(`missing law topic for graph node ${node.href}`);
         expect(isLawTopicIndexable(topic), `noindex law topic leaked: ${node.href}`).toBe(true);
       } else if (node.href.startsWith("/data/")) {
-        const dataset = dataBySlug.get(node.href.slice(6));
+        const dataset = allDataSets.find((item) => item.slug === node.href.slice(6));
         if (!dataset) throw new Error(`missing dataset for graph node ${node.href}`);
         expect(isDataDetailIndexable(dataset), `noindex data page leaked: ${node.href}`).toBe(true);
       } else if (node.href.startsWith("/texas-government/agencies/")) {
-        const agency = agencyBySlug.get(node.href.slice(27));
+        const agency = AGENCY_AUTHORITY_PROFILES.find((item) => item.slug === node.href.slice(27));
         if (!agency) throw new Error(`missing agency for graph node ${node.href}`);
         expect(isAgencyAuthorityIndexable(agency), `noindex agency leaked: ${node.href}`).toBe(true);
       }

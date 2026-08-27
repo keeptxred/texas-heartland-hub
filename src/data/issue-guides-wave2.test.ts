@@ -32,9 +32,9 @@ describe("evergreen issue guides wave 2", () => {
 
     const abortion = relatedPolicyTrackersForIssueGuide(abortionGuide);
     expect(abortion.map((tracker) => tracker.slug)).toContain("life-abortion");
-    expect(abortion.every(isPolicyTrackerIndexable)).toBe(true);
+    expect(abortion.every((tracker) => isPolicyTrackerIndexable(tracker))).toBe(true);
 
     const ruralHealthcare = relatedPolicyTrackersForIssueGuide(ruralHealthcareGuide);
-    expect(ruralHealthcare.every(isPolicyTrackerIndexable)).toBe(true);
+    expect(ruralHealthcare.every((tracker) => isPolicyTrackerIndexable(tracker))).toBe(true);
   });
 });

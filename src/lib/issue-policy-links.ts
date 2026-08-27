@@ -78,7 +78,7 @@ export function scoreIssueGuideForTracker(tracker: PolicyTracker, guide: IssueGu
 
 export function relatedIssueGuidesForTracker(tracker: PolicyTracker, limit = 3) {
   return issueGuides
-    .filter(isIssueGuideIndexable)
+    .filter((guide) => isIssueGuideIndexable(guide))
     .map((guide) => ({ guide, score: scoreIssueGuideForTracker(tracker, guide) }))
     .filter(({ score }) => score >= 3)
     .sort((a, b) => b.score - a.score || a.guide.title.localeCompare(b.guide.title))
@@ -100,7 +100,7 @@ export function scorePolicyTrackerForIssueGuide(guide: IssueGuide, tracker: Poli
 
 export function relatedPolicyTrackersForIssueGuide(guide: IssueGuide, limit = 4) {
   return ALL_POLICY_TRACKERS
-    .filter(isPolicyTrackerIndexable)
+    .filter((tracker) => isPolicyTrackerIndexable(tracker))
     .map((tracker) => ({ tracker, score: scorePolicyTrackerForIssueGuide(guide, tracker) }))
     .filter(({ score }) => score >= 3)
     .sort((a, b) => b.score - a.score || a.tracker.title.localeCompare(b.tracker.title))
