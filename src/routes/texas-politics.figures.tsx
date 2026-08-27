@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { TEXAS_POLITICAL_FIGURES } from "@/data/texas-political-figures";
+import { ALL_TEXAS_POLITICAL_FIGURES } from "@/data/texas-political-figures-all";
 
 const SITE_URL = "https://keeptxred.com";
 const TITLE = "Texas Political Figures: Leaders, Careers & Conservative Legacy | KeepTXRed";
-const DESCRIPTION = "Evergreen profiles of major Texas conservative and Republican political figures, with career history, institutional context, controversies and links to live election coverage.";
+const DESCRIPTION = "Evergreen profiles of major Texas conservative and Republican political figures, with career history, institutional context, controversies, authoritative sources and links to live election coverage.";
 
 export const Route = createFileRoute("/texas-politics/figures")({
   head: () => ({
@@ -26,7 +26,7 @@ export const Route = createFileRoute("/texas-politics/figures")({
         name: TITLE,
         description: DESCRIPTION,
         url: `${SITE_URL}/texas-politics/figures`,
-        hasPart: TEXAS_POLITICAL_FIGURES.map((figure) => ({
+        hasPart: ALL_TEXAS_POLITICAL_FIGURES.map((figure) => ({
           "@type": "ProfilePage",
           name: figure.name,
           url: `${SITE_URL}/texas-politics/figures/${figure.slug}`,
@@ -44,12 +44,12 @@ function TexasPoliticalFiguresHub() {
       <header className="rounded-2xl border bg-card p-6 md:p-10">
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Evergreen Texas political history</p>
         <h1 className="mt-4 max-w-5xl text-4xl font-bold leading-tight md:text-6xl">Texas Political Figures: Careers, Power and Conservative Legacy</h1>
-        <p className="mt-5 max-w-4xl text-lg leading-8 text-muted-foreground">These are not thin campaign bios. Each profile explains how the person rose, what office they held, what institutional power they actually exercised, the durable arguments around their record, and how their career fits the larger transformation of Texas politics.</p>
+        <p className="mt-5 max-w-4xl text-lg leading-8 text-muted-foreground">These are not thin campaign bios. Each profile explains how the person rose, what office they held, what institutional power they actually exercised, the durable arguments around their record, and how their career fits the larger transformation of Texas politics. New historical profiles include source links so readers can verify the underlying record.</p>
         <div className="mt-6 flex flex-wrap gap-3"><a href="/elections" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">Current elections</a><a href="/texas-government" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Government powers</a><a href="/texas-law-policy" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Texas law & policy</a></div>
       </header>
 
       <section className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3" aria-label="Texas political figure profiles">
-        {TEXAS_POLITICAL_FIGURES.map((figure) => (
+        {ALL_TEXAS_POLITICAL_FIGURES.map((figure) => (
           <a key={figure.slug} href={`/texas-politics/figures/${figure.slug}`} className="group rounded-xl border bg-card p-6 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-sm">
             <p className="text-xs font-bold uppercase tracking-[0.14em] text-primary">{figure.kicker}</p>
             <h2 className="mt-3 text-2xl font-bold group-hover:text-primary">{figure.name}</h2>
