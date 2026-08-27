@@ -1,10 +1,11 @@
 // Client-safe low-value / filler headline detector for admin surfaces.
 // Mirrors isPuzzleTitle() from ingest-feeds.ts (server-only module) and
-// adds a few known daily-filler variants that slip past ingestion but
-// should never rank as editorial opportunities.
+// adds known filler/navigation variants that should never rank as editorial
+// opportunities. Keep utility-page rules intentionally narrow so legitimate
+// headlines containing words such as "map" or "cameras" still pass.
 export function isLowValueTitle(title: string | null | undefined): boolean {
   if (!title) return true;
-  const t = title.toLowerCase();
+  const t = title.toLowerCase().trim();
   return (
     // puzzle / word-game filler (mirrors isPuzzleTitle)
     /\bcrossword\b/.test(t) ||
@@ -23,6 +24,15 @@ export function isLowValueTitle(title: string | null | undefined): boolean {
     /\btribcast\b/.test(t) ||
     /\bpodcast\s*(episode)?\b/.test(t) ||
     /\bvideo:\s*/.test(t) ||
-    /\bwatch:\s*/.test(t)
+    /\bwatch:\s*/.test(t) ||
+    // Government/search-index utility pages observed in primary-source feeds.
+    // Exact/boilerplate matches only; real news headlines remain eligible.
+    /^(map|cameras?|incidents?)$/.test(t) ||
+    /^file viewing information$/.test(t) ||
+    /^contracting opportunities$/.test(t) ||
+    /^workforce policy letters?\s*&\s*guidance$/.test(t) ||
+    /^workbook:\s*bidder'?s list$/.test(t) ||
+    /^texas transportation commission$/.test(t) ||
+    /^-\s*texas workforce commission$/.test(t)
   );
 }
