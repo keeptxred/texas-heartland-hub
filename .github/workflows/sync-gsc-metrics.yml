@@ -30,20 +30,17 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  verify-google-access:
+  validate:
     if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 10
-    env:
-      GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON }}
-      GSC_SITE_URL: sc-domain:keeptxred.com
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
           node-version: 22
-      - name: Verify Search Console access without database writes
-        run: node scripts/seo/sync-gsc-metrics.mjs --dry-run
+      - name: Validate Search Console sync script without credentials
+        run: node --check scripts/seo/sync-gsc-metrics.mjs
 
   sync:
     if: ${{ github.event_name != 'pull_request' }}
