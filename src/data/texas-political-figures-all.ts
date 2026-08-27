@@ -1,5 +1,6 @@
 import type { TexasPoliticalFigure } from "@/data/texas-political-figures";
 import { TEXAS_POLITICAL_FIGURES as ESTABLISHED_FIGURES } from "@/data/texas-political-figures";
+import { withPoliticalFigureDepthSupplements } from "@/data/texas-political-figure-depth-supplements";
 import { ADDITIONAL_TEXAS_POLITICAL_FIGURES as CURATED_EXPANDED_FIGURES } from "@/data/texas-political-figures-expanded";
 import { MORE_TEXAS_POLITICAL_FIGURES } from "@/data/texas-political-figures-expanded-2";
 import {
@@ -19,8 +20,10 @@ export type TexasPoliticalFigurePage = TexasPoliticalFigure & {
   aliases?: string[];
 };
 
+const establishedFigures = ESTABLISHED_FIGURES.map(withPoliticalFigureDepthSupplements);
+
 const preferredFigures: TexasPoliticalFigurePage[] = [
-  ...ESTABLISHED_FIGURES,
+  ...establishedFigures,
   ...CURATED_EXPANDED_FIGURES,
   ...MORE_TEXAS_POLITICAL_FIGURES,
 ];
