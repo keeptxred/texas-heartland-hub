@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import type { PolicyTracker } from "@/data/policy-trackers";
 import { POLITICAL_SEARCH_GUIDES } from "@/data/political-search-guides";
 import { relatedIssueGuidesForTracker } from "@/lib/issue-policy-links";
+import { isPoliticalReferenceIndexable } from "@/lib/political-reference-indexability";
 import { buildSeo, SITE_URL } from "@/lib/seo";
 import { texasDefinedPolicyHandoffFor } from "@/lib/texasdefined-policy-handoffs";
 
@@ -22,6 +23,7 @@ function canonicalPermanentHref(href: string) {
 function relatedGuides(tracker: PolicyTracker) {
   const keywords = tracker.keywords.map((keyword) => keyword.toLowerCase());
   return POLITICAL_SEARCH_GUIDES
+    .filter(isPoliticalReferenceIndexable)
     .map((guide) => {
       const text = `${guide.searchQuery} ${guide.title} ${guide.dek} ${guide.quickAnswer}`.toLowerCase();
       const score = keywords.reduce((total, keyword) => total + (text.includes(keyword) ? (keyword.includes(" ") ? 3 : 1) : 0), 0);

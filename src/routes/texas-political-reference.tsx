@@ -2,15 +2,16 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   POLITICAL_SEARCH_GUIDES,
   POLITICAL_SEARCH_GUIDE_CATEGORY_LABELS,
-  getPoliticalSearchGuidesByCategory,
   type PoliticalSearchGuideCategory,
 } from "@/data/political-search-guides";
+import { isPoliticalReferenceIndexable } from "@/lib/political-reference-indexability";
 import { buildSeo, SITE_URL, webPageJsonLd } from "@/lib/seo";
 
 const TITLE = "Texas Political Reference | Races, Maps, Voter Trends & Policy";
 const DESCRIPTION = "Keep TX Red's permanent reference library for high-profile Texas races, redistricting, voter trends, policy questions, campaign finance, PACs, grassroots events, and political search topics.";
 const CATEGORY_ORDER: PoliticalSearchGuideCategory[] = ["races", "redistricting", "demographics", "issues", "grassroots"];
 const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
+const INDEXABLE_POLITICAL_SEARCH_GUIDES = POLITICAL_SEARCH_GUIDES.filter(isPoliticalReferenceIndexable);
 
 export const Route = createFileRoute("/texas-political-reference")({
   head: () => {
@@ -19,8 +20,8 @@ export const Route = createFileRoute("/texas-political-reference")({
       "@context": "https://schema.org",
       "@type": "ItemList",
       name: "Texas Political Reference",
-      numberOfItems: POLITICAL_SEARCH_GUIDES.length,
-      itemListElement: POLITICAL_SEARCH_GUIDES.map((guide, index) => ({
+      numberOfItems: INDEXABLE_POLITICAL_SEARCH_GUIDES.length,
+      itemListElement: INDEXABLE_POLITICAL_SEARCH_GUIDES.map((guide, index) => ({
         "@type": "ListItem",
         position: index + 1,
         name: guide.title,
@@ -46,8 +47,8 @@ function TexasPoliticalReferenceHub() {
         <div className="mx-auto max-w-[1180px] px-6 py-16 md:py-20">
           <p className="text-xs font-extrabold uppercase tracking-[0.25em] text-primary">Keep TX Red Reference Desk</p>
           <h1 className="mt-4 max-w-5xl font-display text-5xl leading-none tracking-tight md:text-7xl">Texas Political Reference</h1>
-          <p className="mt-6 max-w-3xl text-lg leading-8 text-white/80 md:text-xl">Fifty durable answers to the Texas political questions people are actively searching—from Senate races and redistricting to voter trends, property taxes, gun law, PAC money, and grassroots events.</p>
-          <p className="mt-5 max-w-3xl text-sm leading-7 text-white/65">These are reference pages, not candidate endorsements or race predictions. Each page gives a quick answer, dated status, key facts, context, what to watch next, and links to the primary record wherever one exists.</p>
+          <p className="mt-6 max-w-3xl text-lg leading-8 text-white/80 md:text-xl">Permanent Texas political reference, connected to verified election, government, legal and evidence layers.</p>
+          <p className="mt-5 max-w-3xl text-sm leading-7 text-white/65">Reference detail guides appear here only after they meet KTR's source, depth and freshness standards. Use Election Central and the permanent authority libraries below while additional reference guides remain under review.</p>
         </div>
       </section>
 
@@ -71,12 +72,13 @@ function TexasPoliticalReferenceHub() {
         </div>
       </section>
 
-      {CATEGORY_ORDER.map((category) => {
-        const guides = getPoliticalSearchGuidesByCategory(category);
+      {INDEXABLE_POLITICAL_SEARCH_GUIDES.length > 0 ? CATEGORY_ORDER.map((category) => {
+        const guides = INDEXABLE_POLITICAL_SEARCH_GUIDES.filter((guide) => guide.category === category);
+        if (guides.length === 0) return null;
         return (
           <section key={category} className="mx-auto max-w-[1180px] px-6 py-10 first:pt-4">
             <div className="mb-6 border-b pb-4">
-              <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-primary">10 search guides</p>
+              <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-primary">Published reference guides</p>
               <h2 className="mt-2 font-display text-4xl tracking-tight">{POLITICAL_SEARCH_GUIDE_CATEGORY_LABELS[category]}</h2>
             </div>
             <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
@@ -94,7 +96,15 @@ function TexasPoliticalReferenceHub() {
             </div>
           </section>
         );
-      })}
+      }) : (
+        <section className="mx-auto max-w-[1180px] px-6 py-10">
+          <div className="rounded-xl border bg-muted/20 p-6">
+            <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-primary">Reference review in progress</p>
+            <h2 className="mt-2 font-display text-3xl tracking-tight">Detail guides are being held to the publication gate</h2>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">No political-reference detail guide currently clears the full indexability standard. KTR keeps those URLs out of public discovery until their source depth, factual context and current-status coverage are strong enough for search.</p>
+          </div>
+        </section>
+      )}
 
       <section className="mt-8 border-t bg-muted/25">
         <div className="mx-auto max-w-[1180px] px-6 py-14 md:flex md:items-center md:justify-between md:gap-10">
