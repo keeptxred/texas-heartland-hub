@@ -70,5 +70,14 @@
     "rightsRule": "Use this verified candidate-controlled campaign site to discover Bonnie Abadie portrait assets and campaign attribution. Do not approve any image without item-level provenance plus a reusable license, explicit campaign/media permission, or another documented permission basis.",
     "searchHint": "Bonnie Abadie Texas House District 102 colorfulconservative.com official campaign portrait",
     "notes": "New candidate-controlled source verified August 26, 2026. Dallas County Republican Party event listings identify colorfulconservative.com as Bonnie Abadie's campaign website for Texas House District 102, and a candidate-controlled temporary campaign page separately identifies her candidacy."
+  },
+  {
+    "domain": "votematthiasearly.com",
+    "sourceClass": "official-campaign-press-kit",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying headshots explicitly offered by the official Matthias Early campaign as downloadable assets in its Press Kit for media and press. Preserve exact campaign attribution and source-page provenance; do not infer permission for unrelated campaign imagery.",
+    "searchHint": "Matthias Early Texas House District 20 votematthiasearly.com press kit headshot",
+    "notes": "Verified August 26, 2026. The official campaign press page identifies Matthias Early as the Democratic nominee for Texas House District 20 and explicitly offers portrait and close-up headshots as downloadable assets for media and press. Exact portrait provenance is recorded in the wave 80 verified-findings script."
   }
 ]
