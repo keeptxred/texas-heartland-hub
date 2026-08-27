@@ -22,6 +22,7 @@ type TransportStatus = "healthy" | "quiet" | "broken" | "stale_check" | "never_c
 type MatchMode = "name" | "url" | null;
 
 const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
+const LATEST_INGESTION_COHORT_MS = 15 * 60 * 1000;
 const ACTIVE_UNREGISTERED_LIMIT = 25;
 
 function normalizeName(value: string) {
@@ -113,13 +114,19 @@ export const Route = createFileRoute("/api/public/newsroom-source-health")({
           .slice(0, 25);
 
         // DIRECT_SOURCES and other runtime-only fetch paths do not necessarily
-        // have content_sources rows. Surface only recently checked unmatched
-        // fetch states so active hard-coded sources are observable without
-        // resurrecting retired/stale source history in the public health view.
+        // have content_sources rows. Surface unmatched rows only from the newest
+        // ingestion cohort. That makes live hard-coded sources observable while
+        // immediately excluding retired source history even if it is <2h old.
+        const latestCheckedAt = fetchStates.reduce((latest, fetch) => {
+          const checkedAt = Date.parse(fetch.last_checked_at);
+          return Number.isFinite(checkedAt) ? Math.max(latest, checkedAt) : latest;
+        }, 0);
+        const activeCohortCutoff = Math.max(now - TWO_HOURS_MS, latestCheckedAt - LATEST_INGESTION_COHORT_MS);
+
         const activeUnregisteredSources = fetchStates
           .filter((fetch) => {
             const checkedAt = Date.parse(fetch.last_checked_at);
-            if (!Number.isFinite(checkedAt) || checkedAt < now - TWO_HOURS_MS) return false;
+            if (!Number.isFinite(checkedAt) || checkedAt < activeCohortCutoff) return false;
             if (registryNames.has(normalizeName(fetch.source_name))) return false;
             const url = normalizeUrl(fetch.source_url);
             if (url && registryUrls.has(url)) return false;
@@ -149,10 +156,10 @@ export const Route = createFileRoute("/api/public/newsroom-source-health")({
           sourceCount: rows.length,
           statusCounts,
           brokenSources,
-          rows,
           activeUnregisteredSourceCount: activeUnregisteredSources.length,
           activeUnregisteredStatusCounts,
           activeUnregisteredSources: activeUnregisteredSources.slice(0, ACTIVE_UNREGISTERED_LIMIT),
+          rows,
           checkedAt: new Date().toISOString(),
         }, { headers: { "Cache-Control": "no-store" } });
       },
