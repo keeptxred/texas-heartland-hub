@@ -2,6 +2,7 @@ import { expect, test } from 'vitest';
 import fs from 'node:fs';
 
 const migration = fs.readFileSync('supabase/migrations/20260827214500_add_flyover_aug10_reconciliation_ledger.sql', 'utf8');
+const safetyView = fs.readFileSync('supabase/migrations/20260827214600_add_flyover_aug10_safety_view.sql', 'utf8');
 const endpoint = fs.readFileSync('src/routes/api/public/flyover-aug10-health.ts', 'utf8');
 
 const keys = [
@@ -19,11 +20,21 @@ test('Aug. 10 Flyover reconciliation uses a stable 23-key ledger', () => {
   expect(migration).toContain('do not force it onto a Texas site');
 });
 
-test('public Flyover health endpoint reports ledger dispositions without publishing', () => {
-  expect(endpoint).toContain('flyover_aug10_reconciliation');
+test('review-ready Flyover rows remain publication-held and correctly routed', () => {
+  expect(safetyView).toContain("r.disposition='review_ready'");
+  expect(safetyView).toContain('f.target_site=r.expected_site');
+  expect(safetyView).toContain('ready_for_rewrite');
+  expect(safetyView).toContain('auto_publish_eligible');
+  expect(safetyView).toContain('f.internal_slug is null');
+  expect(safetyView).toContain('publication_hold_safe');
+});
+
+test('public Flyover health endpoint reports ledger and safety state without publishing', () => {
+  expect(endpoint).toContain('flyover_aug10_reconciliation_health');
   expect(endpoint).toContain('benchmarkSize: 23');
   expect(endpoint).toContain('reviewReady');
   expect(endpoint).toContain('sourceNeeded');
   expect(endpoint).toContain('outOfScope');
+  expect(endpoint).toContain('unsafeStoryKeys');
   expect(endpoint).not.toContain('daily_articles').and.not.toContain('insert(').and.not.toContain('upsert(');
 });
