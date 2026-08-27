@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { applyGeneratedNewsAuthority } from "@/lib/article-authority";
+import { STATIC_AUTHORITY_ENTITIES } from "@/lib/authority-entity-registry";
+import { authorityEntityPath } from "@/lib/authority-entity-paths";
 
 describe("generated news authority enrichment", () => {
   it("makes a one-source rewrite transparent without claiming original reporting", () => {
@@ -56,6 +58,32 @@ describe("generated news authority enrichment", () => {
     expect(result.flags).not.toContain("single_source_aggregation");
     expect(body.authority.primarySourceCount).toBe(1);
     expect(body.sources[0].label).toBe("County Elections Office — primary / official source");
+  });
+
+  it("adds exact verified authority entities ahead of generic internal resources", () => {
+    const entity = STATIC_AUTHORITY_ENTITIES.find(
+      (candidate) => candidate.entityType === "legislator" && candidate.active && candidate.lastVerified && candidate.sourceOfTruth?.url,
+    );
+    expect(entity).toBeTruthy();
+    if (!entity) return;
+
+    const result = applyGeneratedNewsAuthority({
+      kind: "news",
+      internalLinks: [{ label: "Texas Bills", href: "/bills" }],
+      bodyJson: {
+        intro: [`${entity.name} discussed the proposal at the Capitol.`],
+        sections: [],
+        sources: [],
+      },
+    });
+    const body = result.bodyJson as {
+      sections: Array<{ heading?: string; paragraphs?: string[] }>;
+      authority: Record<string, unknown>;
+    };
+    const related = body.sections.find((section) => section.heading === "Related Keep TX Red Resources");
+    expect(related?.paragraphs?.[0]).toContain(authorityEntityPath(entity.entityType, entity.slug));
+    expect(related?.paragraphs?.join(" ")).toContain("/bills");
+    expect(body.authority.contextualAuthorityLinkCount).toBeGreaterThanOrEqual(1);
   });
 
   it("does not alter non-news content", () => {
