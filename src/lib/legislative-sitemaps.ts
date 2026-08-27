@@ -1,12 +1,16 @@
 import { supabase } from '@/integrations/supabase/client';
 import { canonicalBillPath, type Bill } from '@/lib/bills';
+import {
+  CATALOG_SEED_ACTION_CODE,
+  hasMeaningfulBillText,
+  isSubstantiveBillActionCode,
+} from '@/lib/bill-indexability';
 import { absUrl, toIsoDate, type UrlEntry } from '@/lib/sitemap-shared';
 
 const db = supabase as any;
 const SITEMAP_PAGE_SIZE = 1000;
 const SIMPLE_RESOLUTION_TYPES = new Set(['hr', 'sr']);
 const MIN_BILLS_PER_SITEMAP_SUBJECT = 3;
-const CATALOG_SEED_ACTION_CODE = 'tlo-filed-report-latest';
 
 type SitemapBill = Bill & {
   updated_at?: string | null;
@@ -57,10 +61,6 @@ function actionIdSet(
   );
 }
 
-function hasMeaningfulText(value: string | null | undefined, minimum = 80): boolean {
-  return String(value ?? '').trim().length >= minimum;
-}
-
 function isSitemapWorthySubjectSlug(slug: string): boolean {
   const taxonomyCodeCount = (String(slug ?? '').match(/-[a-z][0-9a-z]{4}(?=-|$)/gi) ?? []).length;
   return taxonomyCodeCount <= 1;
@@ -70,10 +70,9 @@ function isSitemapWorthySubjectSlug(slug: string): boolean {
  * Sitemaps are crawl invitations, not a complete database export. Keep every valid
  * bill route available, but explicitly advertise bills that have at least two
  * independent substance signals. A single TLO filed-report seed action exists to
- * make the complete catalog useful to visitors; it is not, by itself, evidence
- * that a bill page is a worthwhile search landing page. Simple House/Senate
- * resolutions are especially numerous and commonly ceremonial, so they need
- * stronger evidence before they consume crawl attention.
+ * make the complete catalog useful to visitors; meeting/calendar notices are also
+ * schedule data rather than legal history. Neither is, by itself, evidence that a
+ * bill page is a worthwhile search landing page.
  */
 function isSitemapWorthyBill(
   bill: SitemapBill,
@@ -89,9 +88,9 @@ function isSitemapWorthyBill(
   },
 ): boolean {
   const hasSubstantiveText =
-    hasMeaningfulText(bill.plain_language_summary)
-    || hasMeaningfulText(bill.summary)
-    || hasMeaningfulText(bill.description);
+    hasMeaningfulBillText(bill.plain_language_summary)
+    || hasMeaningfulBillText(bill.summary)
+    || hasMeaningfulBillText(bill.description);
   const hasIndependentEvidence =
     evidence.substantiveActions.has(bill.id)
     || evidence.documents.has(bill.id)
@@ -106,10 +105,6 @@ function isSitemapWorthyBill(
     evidence.catalogSeedActions.has(bill.id)
     && !evidence.substantiveActions.has(bill.id);
 
-  // A filed-report seed, a visible sponsor, and a generic official Text.aspx link
-  // are enough to make a route useful in the on-site catalog, but not enough to
-  // invite Google to crawl it. The page becomes sitemap-eligible automatically
-  // as soon as a stronger independent signal arrives.
   if (isCatalogSeedOnly && !hasIndependentEvidence) return false;
 
   let score = 0;
@@ -167,9 +162,6 @@ function hierarchyEntries(bills: SitemapBill[]): UrlEntry[] {
 }
 
 export async function billSitemapEntries(): Promise<UrlEntry[]> {
-  // PostgREST installations commonly cap a single response at 1,000 rows even
-  // when a larger .limit() is requested. Page every evidence source explicitly
-  // so sitemap eligibility cannot silently depend on an API row cap.
   const [
     billRows,
     subjectRows,
@@ -234,7 +226,7 @@ export async function billSitemapEntries(): Promise<UrlEntry[]> {
   const evidence = {
     actions: idSet(actionRows),
     catalogSeedActions: actionIdSet(actionRows, (code) => code === CATALOG_SEED_ACTION_CODE),
-    substantiveActions: actionIdSet(actionRows, (code) => code !== CATALOG_SEED_ACTION_CODE),
+    substantiveActions: actionIdSet(actionRows, isSubstantiveBillActionCode),
     sponsors: idSet(sponsorRows),
     documents: idSet(documentRows),
     subjects: idSet(subjectRelationshipRows),
@@ -279,10 +271,6 @@ export async function sessionSitemapEntries(): Promise<UrlEntry[]> {
   const { data, error } = await db.from('legislative_sessions').select('legislature_number,session_code,updated_at').order('legislature_number', { ascending: false }).limit(500);
   if (error) throw error;
   const rows = (data ?? []) as Array<{ legislature_number: number; session_code: string; updated_at?: string | null }>;
-
-  // The shared Legislature hub, current-session page, and sessions index live in
-  // sitemap-pages.xml. Keep this child sitemap focused on session detail pages so
-  // canonical URLs are never duplicated across the sitemap set.
   return rows.map((item) => ({
     loc: absUrl(`/texas-legislature/sessions/${item.legislature_number}${String(item.session_code).toLowerCase()}`),
     lastmod: toIsoDate(item.updated_at) || undefined,
