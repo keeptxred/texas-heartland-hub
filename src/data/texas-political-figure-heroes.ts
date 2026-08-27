@@ -28,4 +28,10 @@ export const POLITICAL_FIGURE_HEROES: Record<string, PoliticalFigureHero> = {
   "jeb-hensarling-texas-financial-services-chair": { src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Jeb_Hensarling.jpg?width=1200", alt: "Official congressional portrait of Texas Representative Jeb Hensarling", credit: "U.S. House of Representatives · Public domain · Wikimedia Commons", sourcePage: "https://commons.wikimedia.org/wiki/File:Jeb_Hensarling.jpg", license: "Public domain" },
 };
 
-export const politicalFigureHeroBySlug = (slug: string) => POLITICAL_FIGURE_HEROES[slug];
+const firstPartyHeroUrl = (src: string) =>
+  `https://keeptxred.com/political-figure-image?src=${encodeURIComponent(src)}`;
+
+export const politicalFigureHeroBySlug = (slug: string): PoliticalFigureHero | undefined => {
+  const hero = POLITICAL_FIGURE_HEROES[slug];
+  return hero ? { ...hero, src: firstPartyHeroUrl(hero.src) } : undefined;
+};
