@@ -11,7 +11,7 @@ export function routeRegexFromRouteName(routeName) {
   if (parts.at(-1) === 'index') parts.pop();
 
   const publicParts = parts
-    .filter((part) => part && !part.startsWith('_'))
+    .filter((part) => part && !part.startsWith('_') && !/^\(.+\)$/.test(part))
     .map((part) => part.endsWith('_') ? part.slice(0, -1) : part)
     .filter(Boolean);
 
