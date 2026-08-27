@@ -88,7 +88,7 @@ function PolicyToolsHub() {
         ))}
       </section>
 
-      <section className="mt-12 grid gap-6 border-t pt-8 md:grid-cols-2">
+      <section className="mt-12 grid gap-6 border-t pt-8 md:grid-cols-3">
         <div>
           <h2 className="font-display text-3xl tracking-tight">How KTR builds tools</h2>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">
@@ -101,6 +101,13 @@ function PolicyToolsHub() {
             Start with the permanent Texas Issues library for statutes, agencies, enacted bills, primary sources and related explainers before treating any calculator output as a policy conclusion.
           </p>
           <Link to="/issues" className="mt-4 inline-block font-semibold text-primary hover:underline">Browse Texas issue guides →</Link>
+        </div>
+        <div>
+          <h2 className="font-display text-3xl tracking-tight">Need a civic lookup instead?</h2>
+          <p className="mt-3 text-sm leading-6 text-muted-foreground">
+            Texas Civic Tools route questions to government authority, relevant laws and bills, representatives, voting resources, and legislator comparisons without mixing those lookup tasks into fiscal calculators.
+          </p>
+          <Link to="/civic-tools" className="mt-4 inline-block font-semibold text-primary hover:underline">Browse Texas Civic Tools →</Link>
         </div>
       </section>
     </main>
