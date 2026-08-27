@@ -46,13 +46,14 @@ begin
     );
   else
     -- Undo only this guard's prior false-positive quarantine on legitimate,
-    -- unlinked team rows. Normal scorer/routing can then classify them.
+    -- unlinked team rows. viral_score is NOT NULL, so keep it at zero while
+    -- clearing viral_scored_at to return the row to the safe scorer queue.
     if coalesce((new.viral_signals->>'source_contamination')::boolean, false) is true
        and new.internal_slug is null
     then
       new.viral_scored_at := null;
       new.classification_confidence := null;
-      new.viral_score := null;
+      new.viral_score := 0;
       new.ready_for_rewrite := false;
       new.viral_signals := (coalesce(new.viral_signals, '{}'::jsonb)
         - 'source_contamination'
