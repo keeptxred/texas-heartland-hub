@@ -46,16 +46,19 @@ describe("unified policy tracker registry", () => {
     expect(new Set(slugs).size).toBe(slugs.length);
   });
 
-  it("is the source of truth for the policy hub, readiness-filtered sitemap, and text manifest", () => {
+  it("is the source of truth for readiness-filtered hub, sitemap, and text-manifest discovery", () => {
     const hubSource = readFileSync(new URL("../routes/policy.tsx", import.meta.url), "utf8");
     const sitemapSource = readFileSync(new URL("../routes/sitemap-pages[.]xml.ts", import.meta.url), "utf8");
     const manifestSource = readFileSync(new URL("../routes/policy-trackers[.]txt.ts", import.meta.url), "utf8");
 
     expect(hubSource).toContain('import { ALL_POLICY_TRACKERS } from "@/data/policy-trackers-all"');
+    expect(hubSource).toContain("const INDEXABLE_POLICY_TRACKERS = ALL_POLICY_TRACKERS.filter(isPolicyTrackerIndexable)");
     expect(sitemapSource).toContain('import { ALL_POLICY_TRACKERS } from "@/data/policy-trackers-all"');
     expect(sitemapSource).toContain("const INDEXABLE_POLICY_TRACKERS = ALL_POLICY_TRACKERS.filter(isPolicyTrackerIndexable)");
     expect(sitemapSource).toContain("...INDEXABLE_POLICY_TRACKERS.map((tracker)=>`/policy/${tracker.slug}`)");
     expect(manifestSource).toContain('import { ALL_POLICY_TRACKERS } from "@/data/policy-trackers-all"');
-    expect(manifestSource).toContain("...ALL_POLICY_TRACKERS.map((tracker) =>");
+    expect(manifestSource).toContain("const INDEXABLE_POLICY_TRACKERS = ALL_POLICY_TRACKERS.filter(isPolicyTrackerIndexable)");
+    expect(manifestSource).toContain("...INDEXABLE_POLICY_TRACKERS.map((tracker) =>");
+    expect(manifestSource).not.toContain("...ALL_POLICY_TRACKERS.map((tracker) =>");
   });
 });

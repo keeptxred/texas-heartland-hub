@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { ALL_POLICY_TRACKERS } from "@/data/policy-trackers-all";
+import { isPolicyTrackerIndexable } from "@/lib/policy-tracker-indexability";
 import { buildSeo, SITE_URL, webPageJsonLd } from "@/lib/seo";
 
 const TITLE = "Texas Policy Trackers | Taxes, Border, Energy, Elections & More";
 const DESCRIPTION = "Keep TX Red's permanent Texas policy trackers connect the daily news to laws, agencies, bills, official data, editorial positions, and the questions that keep shaping Texas.";
+const INDEXABLE_POLICY_TRACKERS = ALL_POLICY_TRACKERS.filter(isPolicyTrackerIndexable);
 
 const AUTHORITY_LAYERS = [
   { href: "/issues", eyebrow: "Evergreen context", title: "Issue Guides", text: "Broad, source-first explanations of the durable Texas policy framework behind recurring headlines." },
@@ -22,7 +24,7 @@ export const Route = createFileRoute("/policy")({
       links: seo.links,
       scripts: [
         { type: "application/ld+json", children: JSON.stringify(webPageJsonLd({ name: TITLE, description: DESCRIPTION, path: "/policy", type: "CollectionPage" })) },
-        { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "ItemList", name: "Texas Policy Trackers", numberOfItems: ALL_POLICY_TRACKERS.length, itemListElement: ALL_POLICY_TRACKERS.map((tracker, index) => ({ "@type": "ListItem", position: index + 1, name: tracker.title, url: `${SITE_URL}/policy/${tracker.slug}` })) }) },
+        { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "ItemList", name: "Texas Policy Trackers", numberOfItems: INDEXABLE_POLICY_TRACKERS.length, itemListElement: INDEXABLE_POLICY_TRACKERS.map((tracker, index) => ({ "@type": "ListItem", position: index + 1, name: tracker.title, url: `${SITE_URL}/policy/${tracker.slug}` })) }) },
       ],
     };
   },
@@ -33,8 +35,8 @@ function PolicyHub() {
   const [query, setQuery] = useState("");
   const normalizedQuery = query.trim().toLowerCase();
   const visibleTrackers = useMemo(() => {
-    if (!normalizedQuery) return ALL_POLICY_TRACKERS;
-    return ALL_POLICY_TRACKERS.filter((tracker) =>
+    if (!normalizedQuery) return INDEXABLE_POLICY_TRACKERS;
+    return INDEXABLE_POLICY_TRACKERS.filter((tracker) =>
       [tracker.shortTitle, tracker.title, tracker.description, ...tracker.keywords]
         .join(" ")
         .toLowerCase()
@@ -73,7 +75,7 @@ function PolicyHub() {
             />
           </div>
           <div className="mt-3 flex items-center justify-between gap-4 text-sm text-muted-foreground md:mt-0 md:justify-end">
-            <span aria-live="polite">Showing {visibleTrackers.length} of {ALL_POLICY_TRACKERS.length} trackers</span>
+            <span aria-live="polite">Showing {visibleTrackers.length} of {INDEXABLE_POLICY_TRACKERS.length} trackers</span>
             {query ? (
               <button type="button" onClick={() => setQuery("")} className="font-semibold text-primary hover:underline">Clear</button>
             ) : null}

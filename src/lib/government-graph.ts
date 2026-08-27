@@ -3,6 +3,10 @@ import { LAW_TOPICS } from "@/data/law-topics";
 import { TEXAS_DATA_SETS } from "@/data/texas-data-catalog";
 import { ACCOUNTABILITY_DATA_SETS } from "@/data/accountability-data-catalog";
 import { AGENCY_AUTHORITY_PROFILES } from "@/data/agency-authority";
+import { isAgencyAuthorityIndexable } from "@/lib/agency-authority-indexability";
+import { isDataDetailIndexable } from "@/lib/data-detail-indexability";
+import { isLawTopicIndexable } from "@/lib/law-topic-indexability";
+import { isPolicyTrackerIndexable } from "@/lib/policy-tracker-indexability";
 
 export type GovernmentGraphNode = {
   id: string;
@@ -26,13 +30,15 @@ const CORE_NODES: GovernmentGraphNode[] = [
   { id: "political-reference", label: "Texas Political Reference", href: "/texas-political-reference", kind: "reference", keywords: ["race", "redistricting", "demographic", "polling", "PAC", "campaign finance", "voter trend", "grassroots"] },
 ];
 
-const POLICY_NODES: GovernmentGraphNode[] = POLICY_TRACKERS.map((tracker) => ({
-  id: `policy:${tracker.slug}`,
-  label: tracker.shortTitle,
-  href: `/policy/${tracker.slug}`,
-  kind: "policy" as const,
-  keywords: tracker.keywords,
-}));
+const POLICY_NODES: GovernmentGraphNode[] = POLICY_TRACKERS
+  .filter(isPolicyTrackerIndexable)
+  .map((tracker) => ({
+    id: `policy:${tracker.slug}`,
+    label: tracker.shortTitle,
+    href: `/policy/${tracker.slug}`,
+    kind: "policy" as const,
+    keywords: tracker.keywords,
+  }));
 
 const STOPWORDS = new Set(["texas", "explained", "data", "law", "laws", "and", "the", "for", "with", "from", "into", "state", "official"]);
 function inferredKeywords(...values: string[]): string[] {
@@ -40,29 +46,35 @@ function inferredKeywords(...values: string[]): string[] {
   return [...new Set(phrases.filter((word) => word.length >= 4 && !STOPWORDS.has(word)))].slice(0, 18);
 }
 
-const LAW_NODES: GovernmentGraphNode[] = LAW_TOPICS.map((topic) => ({
-  id: `law:${topic.slug}`,
-  label: topic.title,
-  href: `/laws/topic/${topic.slug}`,
-  kind: "law" as const,
-  keywords: inferredKeywords(topic.slug.replace(/-/g, " "), topic.title, topic.dek, ...topic.keyRules),
-}));
+const LAW_NODES: GovernmentGraphNode[] = LAW_TOPICS
+  .filter(isLawTopicIndexable)
+  .map((topic) => ({
+    id: `law:${topic.slug}`,
+    label: topic.title,
+    href: `/laws/topic/${topic.slug}`,
+    kind: "law" as const,
+    keywords: inferredKeywords(topic.slug.replace(/-/g, " "), topic.title, topic.dek, ...topic.keyRules),
+  }));
 
-const DATA_NODES: GovernmentGraphNode[] = [...TEXAS_DATA_SETS, ...ACCOUNTABILITY_DATA_SETS].map((dataset) => ({
-  id: `data:${dataset.slug}`,
-  label: dataset.title,
-  href: `/data/${dataset.slug}`,
-  kind: "data" as const,
-  keywords: inferredKeywords(dataset.slug.replace(/-/g, " "), dataset.title, dataset.dek, ...dataset.whatAvailable),
-}));
+const DATA_NODES: GovernmentGraphNode[] = [...TEXAS_DATA_SETS, ...ACCOUNTABILITY_DATA_SETS]
+  .filter(isDataDetailIndexable)
+  .map((dataset) => ({
+    id: `data:${dataset.slug}`,
+    label: dataset.title,
+    href: `/data/${dataset.slug}`,
+    kind: "data" as const,
+    keywords: inferredKeywords(dataset.slug.replace(/-/g, " "), dataset.title, dataset.dek, ...dataset.whatAvailable),
+  }));
 
-const AGENCY_NODES: GovernmentGraphNode[] = AGENCY_AUTHORITY_PROFILES.map((agency) => ({
-  id: `agency:${agency.slug}`,
-  label: agency.shortName,
-  href: `/texas-government/agencies/${agency.slug}`,
-  kind: "government" as const,
-  keywords: agency.keywords,
-}));
+const AGENCY_NODES: GovernmentGraphNode[] = AGENCY_AUTHORITY_PROFILES
+  .filter(isAgencyAuthorityIndexable)
+  .map((agency) => ({
+    id: `agency:${agency.slug}`,
+    label: agency.shortName,
+    href: `/texas-government/agencies/${agency.slug}`,
+    kind: "government" as const,
+    keywords: agency.keywords,
+  }));
 
 export const GOVERNMENT_GRAPH_NODES: GovernmentGraphNode[] = [
   ...POLICY_NODES,
