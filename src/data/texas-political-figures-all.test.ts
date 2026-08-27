@@ -5,6 +5,7 @@ import {
   TEXAS_REPUBLICAN_CONSERVATIVE_LEADER_TARGETS,
   texasPoliticalFigureByName,
 } from "./texas-political-figures-all";
+import { politicalFigureAuthoritySourcesBySlug } from "./texas-political-figure-authority-sources";
 
 describe("Texas political figure authority collection", () => {
   it("covers all 100 requested Republican and conservative leaders", () => {
@@ -29,6 +30,23 @@ describe("Texas political figure authority collection", () => {
       ).toBeGreaterThanOrEqual(900);
       expect(figure.relatedLinks.length, `${figure.name} related links`).toBeGreaterThanOrEqual(2);
       expect(figure.relatedLinks.some((link) => link.href.startsWith("/")), `${figure.name} internal links`).toBe(true);
+    }
+  });
+
+  it("keeps every requested profile connected to authoritative source material", () => {
+    for (const requestedName of TEXAS_REPUBLICAN_CONSERVATIVE_LEADER_TARGETS) {
+      const target = texasPoliticalFigureByName(requestedName);
+      expect(target, `${requestedName} target record`).toBeDefined();
+      const figure = TEXAS_POLITICAL_FIGURES.find((item) => item.name === target?.name);
+      expect(figure, `${requestedName} canonical profile`).toBeDefined();
+      if (!figure) continue;
+
+      const sources = [...(figure.sources ?? []), ...politicalFigureAuthoritySourcesBySlug(figure.slug)];
+      expect(sources.length, `${figure.name} source count`).toBeGreaterThanOrEqual(1);
+      for (const source of sources) {
+        expect(source.href, `${figure.name} source URL`).toMatch(/^https:\/\//);
+        expect(source.label.trim().length, `${figure.name} source label`).toBeGreaterThan(10);
+      }
     }
   });
 

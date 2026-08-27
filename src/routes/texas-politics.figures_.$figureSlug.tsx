@@ -150,7 +150,7 @@ function PoliticalFigurePage() {
   const peers = [...linkedPeers, ...sameCategoryPeers, ...sameKickerPeers, ...broadFallbackPeers]
     .filter((item, index, items) => items.findIndex((candidate) => candidate.slug === item.slug) === index)
     .slice(0, 4);
-  const moreFiguresHeading = category ? `More ${category.toLocaleLowerCase("en-US")}` : "More Texas political figures";
+  const moreFiguresHeading = category ? `More from ${category}` : "More Texas political figures";
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
@@ -188,8 +188,8 @@ function PoliticalFigurePage() {
 
       {sources.length ? (
         <section className="mt-12 rounded-2xl border bg-card p-6 md:p-8" aria-labelledby="profile-sources">
-          <h2 id="profile-sources" className="text-2xl font-bold">Sources and official records</h2>
-          <p className="mt-3 max-w-3xl leading-7 text-muted-foreground">Use these records and source materials to verify service dates, offices and the major historical events summarized above.</p>
+          <h2 id="profile-sources" className="text-2xl font-bold">Institutional sources and records</h2>
+          <p className="mt-3 max-w-3xl leading-7 text-muted-foreground">These official and institutional references provide rosters, service history and political context for the profile. When a figure has profile-specific source material, those links are included alongside the broader institutional records.</p>
           <ul className="mt-5 space-y-3">
             {sources.map((source) => (
               <li key={source.href}>
