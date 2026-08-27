@@ -1,4 +1,5 @@
 name: Verify original political profiles production
+# This workflow is intentionally self-watched so any verifier refinement rechecks live production after merge.
 
 on:
   pull_request:
