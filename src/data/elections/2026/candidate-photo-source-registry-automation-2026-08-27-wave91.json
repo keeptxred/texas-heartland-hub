@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "houstonchronicle.com",
+    "sourceClass": "reputable-news-voter-guide-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Houston Chronicle election voter-guide profiles as a discovery bridge to candidate identities, campaign websites, and candidate-linked public profiles. Do not reuse Chronicle-hosted images by default; require item-level provenance plus an explicit reusable-rights basis, candidate/campaign permission, or another documented editorial permission basis before approving any image.",
+    "searchHint": "site:houstonchronicle.com/projects/2026 candidate name Texas primary voter guide campaign website",
+    "notes": "New source class verified August 27, 2026. The Chronicle's 2026 Texas Primary Voter Guide covers more than 350 candidates and exposes campaign-website links when available while explicitly noting when candidates such as Scott Whitmarsh, Kyle Harding, Laura Garcia DeLeon, Julie Hunt, Heidi Hall, Inocensia Moreno, and Alexandria Nicole Butler do not appear to have campaign sites. Treat as discovery-only and preserve item-level rights review."
+  }
+]
