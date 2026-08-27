@@ -1,6 +1,19 @@
 -- Attribute newsroom health to the configured discovery feed when available,
 -- while preserving the actual publisher in texas_news_feed.source.
 
+-- Historical direct/first-party rows already carry the configured source name in
+-- `source`. Backfill those exact matches without guessing attribution for rows
+-- discovered through aggregators such as Google News.
+UPDATE public.texas_news_feed f
+SET trend_source = f.source
+WHERE (f.trend_source IS NULL OR btrim(f.trend_source) = '')
+  AND EXISTS (
+    SELECT 1
+    FROM public.content_sources c
+    WHERE c.enabled = true
+      AND lower(c.source_name) = lower(f.source)
+  );
+
 CREATE OR REPLACE VIEW public.news_source_health
 WITH (security_invoker = true)
 AS
