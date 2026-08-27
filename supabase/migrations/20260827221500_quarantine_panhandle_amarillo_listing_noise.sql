@@ -22,5 +22,5 @@ where trend_source = 'Texas Panhandle and South Plains — Regional Discovery'
   and length(title) <= 64
   and title !~ '[?!:]'
   and array_length(regexp_split_to_array(btrim(title), '\s+'), 1) between 2 and 6
-  and lower(regexp_replace(coalesce(description, ''), '\s+', ' ', 'g')) =
-      lower(regexp_replace(title || ' Amarillo Tribune', '\s+', ' ', 'g'));
+  and lower(btrim(regexp_replace(regexp_replace(coalesce(description, ''), '&nbsp;', ' ', 'gi'), '\s+', ' ', 'g'))) =
+      lower(btrim(regexp_replace(title || ' Amarillo Tribune', '\s+', ' ', 'g')));
