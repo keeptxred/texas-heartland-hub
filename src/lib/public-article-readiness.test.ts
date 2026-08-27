@@ -39,6 +39,43 @@ describe("public article readiness floor", () => {
     expect(isPublicArticleReady({ ...base, source_url: null, body_json: { updated: base.published_at, sources: [] } })).toBe(false);
   });
 
+  it("blocks Reddit-only and Google-News-only provenance", () => {
+    expect(isPublicArticleReady({
+      ...base,
+      source_name: "r/austin",
+      source_url: "https://www.reddit.com/r/Austin/comments/example",
+      body_json: {
+        updated: base.published_at,
+        sources: [{ label: "r/austin", url: "https://www.reddit.com/r/Austin/comments/example" }],
+      },
+    })).toBe(false);
+
+    expect(isPublicArticleReady({
+      ...base,
+      source_name: "Texas Food Stories (Google News)",
+      source_url: "https://news.google.com/rss/articles/example",
+      body_json: {
+        updated: base.published_at,
+        sources: [{ label: "Texas Food Stories (Google News)", url: "https://news.google.com/rss/articles/example" }],
+      },
+    })).toBe(false);
+  });
+
+  it("allows a discovery link when primary or independent provenance is also present", () => {
+    expect(isPublicArticleReady({
+      ...base,
+      source_name: "r/austin",
+      source_url: "https://www.reddit.com/r/Austin/comments/example",
+      body_json: {
+        updated: base.published_at,
+        sources: [
+          { label: "r/austin", url: "https://www.reddit.com/r/Austin/comments/example" },
+          { label: "Austin Police Department", url: "https://www.austintexas.gov/department/police" },
+        ],
+      },
+    })).toBe(true);
+  });
+
   it("blocks false multi-source labeling", () => {
     expect(isPublicArticleReady({
       ...base,
