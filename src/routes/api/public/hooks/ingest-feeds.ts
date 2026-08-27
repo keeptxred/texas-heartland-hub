@@ -290,7 +290,7 @@ async function loadSources(): Promise<{ sources: Source[]; skippedLegacyYoutube:
 function isRegionalListingNoise(item: Item, configuredSource: string): boolean {
   if (configuredSource !== "Texas Panhandle and South Plains — Regional Discovery") return false;
   if (item.source.trim().toLowerCase() !== "amarillo tribune") return false;
-  const normalizedDescription = item.description.replace(/\s+/g, " ").trim().toLowerCase();
+  const normalizedDescription = decode(item.description).replace(/\s+/g, " ").trim().toLowerCase();
   const expectedDescription = `${item.title} Amarillo Tribune`.replace(/\s+/g, " ").trim().toLowerCase();
   if (normalizedDescription !== expectedDescription) return false;
   const wordCount = item.title.trim().split(/\s+/).filter(Boolean).length;
