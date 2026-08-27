@@ -43,5 +43,32 @@
     "rightsRule": "Use MultiState Elections race pages to corroborate current candidate participation, district, party, and election stage and to discover downstream official campaign or public-record sources for sparse candidates. Do not approve or reuse any MultiState-hosted image without item-level provenance plus a reusable license, explicit permission, or another documented editorial permission basis.",
     "searchHint": "MultiState Texas 2026 House District candidate official campaign portrait",
     "notes": "New source discovered August 27, 2026. Current district pages confirm missing-photo candidates including Albert Hunter, Liz Ramos, and Kyle Harding as general-election candidates and can bridge sparse records to additional source discovery. It is a discovery source, not an automatic image-rights source."
+  },
+  {
+    "domain": "rosafortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Oscar Rosa's official Texas House District 35 campaign website to verify candidate identity, office, and discover candidate-supplied portraits, campaign media, or press materials. Do not approve or reuse any image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Oscar Rosa Texas House District 35 official campaign portrait press media",
+    "notes": "New source discovered August 27, 2026. The site identifies Oscar Rosa as the District 35 candidate and is campaign-controlled, making it a strong path to candidate-supplied media. Treat imagery as discovery-only until item-level reuse rights are established."
+  },
+  {
+    "domain": "teresafortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Teresa Johnson-Hernandez's official Texas House District 42 campaign website to verify candidate identity, office, and discover candidate-supplied portraits, campaign media, or press materials. Do not approve or reuse any image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Teresa Johnson-Hernandez Texas House District 42 official campaign portrait press media",
+    "notes": "New source discovered August 27, 2026. TCTA links this site as the candidate's website for House District 42. Treat campaign imagery as discovery-only unless item-level reuse rights are documented."
+  },
+  {
+    "domain": "gcdptx.org",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Galveston County Democratic Party candidate directories to corroborate current candidate identity, office, and local party participation and to discover downstream official campaign, event, or candidate-supplied media sources. Do not approve or reuse party-hosted images without item-level provenance plus a reusable license, explicit permission, candidate-supplied status with an editorial permission basis, or another documented reuse basis.",
+    "searchHint": "Galveston County Democratic Party 2026 Frank Carr Texas House 24 candidate portrait campaign",
+    "notes": "New source discovered August 27, 2026. The current state-legislative candidate directory includes missing-photo candidate Frank N. Carr for House District 24 and other local candidates. The page explicitly says its candidate material is informational and not authorized by candidate committees, so hosted imagery remains discovery-only absent separate rights documentation."
   }
 ]
