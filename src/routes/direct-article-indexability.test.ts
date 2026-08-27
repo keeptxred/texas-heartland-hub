@@ -9,9 +9,13 @@ describe("direct article static indexability", () => {
     expect(source).toContain("noindex: !isStaticArticleIndexable(article)");
   });
 
-  it("does not use retired static articles as related content", () => {
-    expect(source).toContain("x.category === ever.category && isPublished(x) && isStaticArticleIndexable(x)");
-    expect(source).toContain("x.slug !== a.slug && isPublished(x) && isStaticArticleIndexable(x)");
-    expect(source).toContain("isPublished(a as Article) && isStaticArticleIndexable(a as Article)");
+  it("does not use retired or fallback-only static articles as related content", () => {
+    expect(source).toContain("function isStaticArticleDiscoverableForRelated(article: Article)");
+    expect(source).toContain(
+      "isPublished(article) && isStaticArticleIndexable(article) && Boolean(ARTICLE_BODIES[article.slug])",
+    );
+    expect(source).toContain("x.category === ever.category && isStaticArticleDiscoverableForRelated(x)");
+    expect(source).toContain("x.slug !== a.slug && isStaticArticleDiscoverableForRelated(x)");
+    expect(source).toContain("Boolean(a) && isStaticArticleDiscoverableForRelated(a as Article)");
   });
 });
