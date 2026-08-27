@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { ALL_POLICY_TRACKERS } from "@/data/policy-trackers-all";
+import { isPolicyTrackerIndexable } from "@/lib/policy-tracker-indexability";
 import { BASE_URL } from "@/lib/sitemap-shared";
+
+const INDEXABLE_POLICY_TRACKERS = ALL_POLICY_TRACKERS.filter(isPolicyTrackerIndexable);
 
 function renderPolicyTrackerManifest() {
   return [
@@ -12,9 +15,9 @@ function renderPolicyTrackerManifest() {
     "",
     "Keep TX Red policy trackers are permanent factual and institutional pages underneath daily news and separate from KTR's explicitly labeled editorial positions in The Texas Case. Each tracker identifies controlling law or authority, current status, official sources, relevant KTR reference pages, and changes readers should watch.",
     "",
-    `## Current trackers (${ALL_POLICY_TRACKERS.length})`,
+    `## Current trackers (${INDEXABLE_POLICY_TRACKERS.length})`,
     "",
-    ...ALL_POLICY_TRACKERS.map((tracker) => `- ${BASE_URL}/policy/${tracker.slug} — ${tracker.title} — reviewed ${tracker.updated}`),
+    ...INDEXABLE_POLICY_TRACKERS.map((tracker) => `- ${BASE_URL}/policy/${tracker.slug} — ${tracker.title} — reviewed ${tracker.updated}`),
     "",
     "## Editorial / factual separation",
     "",
