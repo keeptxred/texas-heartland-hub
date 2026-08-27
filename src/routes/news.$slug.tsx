@@ -59,6 +59,10 @@ function isSpecificFaq(faq: { q: string; a: string }) {
   return !GENERIC_FAQ_PATTERNS.some((pattern) => pattern.test(`${question} ${answer}`));
 }
 
+function isStaticArticleDiscoverableForRelated(article: Article): boolean {
+  return isPublished(article) && isStaticArticleIndexable(article) && Boolean(ARTICLE_BODIES[article.slug]);
+}
+
 export const Route = createFileRoute("/news/$slug")({
   loader: async ({ params }): Promise<{
     article: RenderedArticle;
@@ -140,7 +144,7 @@ export const Route = createFileRoute("/news/$slug")({
       faq: ever.body.faq,
       sources: ever.body.sources,
       related: ARTICLES.filter(
-        (x) => x.category === ever.category && isPublished(x) && isStaticArticleIndexable(x),
+        (x) => x.category === ever.category && isStaticArticleDiscoverableForRelated(x),
       ).sort(sortByDateDesc).slice(0, 3).map((x) => x.slug),
       cta: { label: "Browse the Newsroom", href: "/news" },
       keyTakeaways: ever.body.keyTakeaways,
@@ -294,7 +298,7 @@ function _buildDefaultBody(a: Article): ArticleBody {
       { label: "Texas Secretary of State", url: "https://www.sos.state.tx.us/" },
     ],
     related: ARTICLES.filter(
-      (x) => x.category === a.category && x.slug !== a.slug && isPublished(x) && isStaticArticleIndexable(x),
+      (x) => x.category === a.category && x.slug !== a.slug && isStaticArticleDiscoverableForRelated(x),
     )
       .sort(sortByDateDesc)
       .slice(0, 3)
@@ -312,9 +316,7 @@ function ArticlePage() {
 
   const related = body.related
     .map((slug) => ARTICLES.find((a) => a.slug === slug))
-    .filter(
-      (a): a is Article => Boolean(a) && isPublished(a as Article) && isStaticArticleIndexable(a as Article),
-    );
+    .filter((a): a is Article => Boolean(a) && isStaticArticleDiscoverableForRelated(a as Article));
 
   const wordCount =
     body.intro.join(" ").split(/\s+/).length +
