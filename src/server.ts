@@ -10,6 +10,7 @@ type ServerEntry = {
 
 const CANONICAL_HOST = "keeptxred.com";
 const WWW_HOST = `www.${CANONICAL_HOST}`;
+const ADS_TXT = "google.com, pub-1891256141359926, DIRECT, f08c47fec0942fa0\n";
 const CITY_MIGRATION_REDIRECTS: Readonly<Record<string, string>> = {
   "/austin": "https://texasdefined.com/article/moving-to-austin-guide",
   "/dallas-fort-worth": "https://texasdefined.com/article/moving-to-dallas-fort-worth-guide",
@@ -27,6 +28,26 @@ export function canonicalHostRedirect(request: Request): Response | null {
   url.hostname = CANONICAL_HOST;
   url.port = "";
   return Response.redirect(url.toString(), 308);
+}
+
+export function adsTxtResponse(request: Request): Response | null {
+  const url = new URL(request.url);
+  if (url.pathname !== "/ads.txt") return null;
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    return new Response("Method not allowed", {
+      status: 405,
+      headers: { Allow: "GET, HEAD" },
+    });
+  }
+
+  return new Response(request.method === "HEAD" ? null : ADS_TXT, {
+    status: 200,
+    headers: {
+      "Cache-Control": "public, max-age=300, s-maxage=300",
+      "Content-Type": "text/plain; charset=utf-8",
+      "X-Content-Type-Options": "nosniff",
+    },
+  });
 }
 
 export function cityMigrationRedirect(request: Request): Response | null {
@@ -71,6 +92,9 @@ export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     const canonicalRedirect = canonicalHostRedirect(request);
     if (canonicalRedirect) return canonicalRedirect;
+
+    const adsTxt = adsTxtResponse(request);
+    if (adsTxt) return adsTxt;
 
     const cityRedirect = cityMigrationRedirect(request);
     if (cityRedirect) return cityRedirect;
