@@ -73,9 +73,9 @@ export const Route = createFileRoute("/news/$slug")({
       const body = dedupeArticleBody(rawBody) as ArticleBody;
       const renderedArticle: RenderedArticle = {
         ...article,
-        // A generated fallback is useful for preserving a known URL, but it is
-        // not sufficient original value for search or AdSense review.
-        noindex: !explicitBody,
+        // Preserve the retired-content guard and keep generated fallback bodies
+        // out of search until they have explicit, substantive article content.
+        noindex: !isStaticArticleIndexable(article) || !explicitBody,
       };
       return { article: renderedArticle, body, ctr: null };
     }
