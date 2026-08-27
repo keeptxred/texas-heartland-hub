@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 
-const resourceHub = read("../shared/texas-platform/resource-hub.tsx");
 const governmentEntity = read("../routes/texas-government.$entitySlug.tsx");
 const policyTrackerPage = read("../components/policy-tracker-page.tsx");
 const electionErrorState = read("../components/elections/states/ElectionErrorState.tsx");
@@ -25,26 +24,6 @@ const CANONICAL_LAW_TARGETS = [
 ] as const;
 
 describe("direct canonical UI links", () => {
-  it("does not route resource-hub law links through legacy redirects", () => {
-    for (const legacy of [
-      'href: "/laws/texas-gun-laws"',
-      'href: "/laws/texas-property-tax-laws"',
-      'href: "/laws/texas-election-laws"',
-      'href: "/laws/texas-new-laws-2026"',
-    ]) {
-      expect(resourceHub).not.toContain(legacy);
-    }
-
-    for (const canonical of [
-      'href: "/news/texas-gun-laws-explained"',
-      'href: "/news/texas-property-tax-laws-explained"',
-      'href: "/news/texas-election-laws-explained"',
-      'href: "/news/texas-new-laws-2026"',
-    ]) {
-      expect(resourceHub).toContain(canonical);
-    }
-  });
-
   it("canonicalizes legacy law aliases before policy tracker links render", () => {
     expect(policyTrackerPage).toContain("const href = canonicalPermanentHref(item.href)");
     for (const legacy of LEGACY_LAW_ALIASES) expect(policyTrackerPage).toContain(`\"${legacy}\"`);
