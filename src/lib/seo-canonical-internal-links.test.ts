@@ -63,4 +63,14 @@ describe("canonical internal links", () => {
       ).toBe(true);
     }
   });
+
+  it("keeps the Texas politics parent as a canonical-free layout", () => {
+    const layout = readFileSync("src/routes/texas-politics.tsx", "utf8");
+    const index = readFileSync("src/routes/texas-politics.index.tsx", "utf8");
+
+    expect(layout).toContain("<Outlet />");
+    expect(layout).not.toContain('rel: "canonical"');
+    expect(index).toContain('rel: "canonical", href: canonical');
+    expect(index).toContain('createFileRoute("/texas-politics/")');
+  });
 });
