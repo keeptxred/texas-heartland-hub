@@ -28,8 +28,9 @@ describe("AdSense author profile indexability", () => {
     expect(authorSitemap).toContain("hasEnoughAuthorArticles(records.map((record) => record.slug))");
   });
 
-  it("advertises the author sitemap only when an author meets the same unique-slug threshold", () => {
-    expect(sitemapIndex).toContain("const authorArticleSlugs = new Map<string, Set<string>>()");
-    expect(sitemapIndex).toContain("hasEnoughAuthorArticles(authorArticleSlugs.get(author.slug) ?? [])");
+  it("keeps the author sitemap advertised while enforcing the threshold inside the child sitemap", () => {
+    expect(sitemapIndex).toContain('"sitemap-authors.xml"');
+    expect(authorSitemap).toContain("hasEnoughAuthorArticles(records.map((record) => record.slug))");
+    expect(authorSitemap).not.toContain("records.length > 0");
   });
 });
