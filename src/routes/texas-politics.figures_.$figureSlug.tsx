@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ALL_TEXAS_POLITICAL_FIGURES, texasPoliticalFigureBySlug } from "@/data/texas-political-figures-all";
+import { politicalFigureHeroBySlug } from "@/data/texas-political-figure-heroes";
 
 const SITE_URL = "https://keeptxred.com";
 const FIGURE_PREFIX = "/texas-politics/figures/";
@@ -11,6 +12,7 @@ export const Route = createFileRoute("/texas-politics/figures_/$figureSlug")({
   head: ({ params }) => {
     const figure = texasPoliticalFigureBySlug(params.figureSlug);
     if (!figure) return { meta: [{ name: "robots", content: "noindex, follow" }] };
+    const hero = politicalFigureHeroBySlug(figure.slug);
     const canonical = `${SITE_URL}/texas-politics/figures/${figure.slug}`;
     const title = `${figure.name}: Texas Political Profile & Legacy | KeepTXRed`;
     return {
@@ -23,9 +25,17 @@ export const Route = createFileRoute("/texas-politics/figures_/$figureSlug")({
         { property: "og:url", content: canonical },
         { property: "og:type", content: "profile" },
         { property: "og:site_name", content: "Keep TX Red" },
+        ...(hero ? [
+          { property: "og:image", content: hero.src },
+          { property: "og:image:alt", content: hero.alt },
+        ] : []),
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:title", content: title },
         { name: "twitter:description", content: figure.description },
+        ...(hero ? [
+          { name: "twitter:image", content: hero.src },
+          { name: "twitter:image:alt", content: hero.alt },
+        ] : []),
       ],
       links: [{ rel: "canonical", href: canonical }],
       scripts: [{
@@ -36,6 +46,7 @@ export const Route = createFileRoute("/texas-politics/figures_/$figureSlug")({
           name: title,
           description: figure.description,
           url: canonical,
+          ...(hero ? { image: hero.src } : {}),
           ...(figure.sources?.length ? {
             citation: figure.sources.map((source) => ({
               "@type": "CreativeWork",
@@ -47,6 +58,7 @@ export const Route = createFileRoute("/texas-politics/figures_/$figureSlug")({
             "@type": "Person",
             name: figure.name,
             description: figure.description,
+            ...(hero ? { image: hero.src } : {}),
           },
           isPartOf: { "@type": "WebSite", name: "KeepTXRed", url: SITE_URL },
         }).replace(/</g, "\\u003c"),
@@ -60,6 +72,7 @@ function PoliticalFigurePage() {
   const { figureSlug } = Route.useParams();
   const figure = texasPoliticalFigureBySlug(figureSlug);
   if (!figure) return null;
+  const hero = politicalFigureHeroBySlug(figure.slug);
 
   const linkedPeerSlugs = new Set(
     figure.relatedLinks
@@ -84,6 +97,14 @@ function PoliticalFigurePage() {
         <p className="mt-4 text-lg font-semibold">{figure.texasRole}</p>
         <p className="mt-1 text-sm text-muted-foreground">{figure.years}</p>
         <p className="mt-6 max-w-3xl text-lg leading-8 text-muted-foreground">{figure.description}</p>
+        {hero ? (
+          <figure className="mt-7 overflow-hidden rounded-xl border bg-muted/20">
+            <img src={hero.src} alt={hero.alt} className="max-h-[560px] w-full object-contain" loading="eager" fetchPriority="high" />
+            <figcaption className="border-t px-4 py-3 text-xs leading-5 text-muted-foreground">
+              {hero.alt}. <a href={hero.sourcePage} target="_blank" rel="noreferrer" className="font-semibold text-primary underline-offset-4 hover:underline">{hero.credit} ↗</a>
+            </figcaption>
+          </figure>
+        ) : null}
         <div className="mt-6 flex flex-wrap gap-3">
           {figure.relatedLinks.map((link) => <a key={link.href} href={link.href} className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">{link.label}</a>)}
         </div>
