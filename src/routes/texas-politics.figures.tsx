@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { TEXAS_POLITICAL_FIGURES, TEXAS_REPUBLICAN_CONSERVATIVE_LEADER_TARGETS } from "@/data/texas-political-figures-all";
+import { TEXAS_REPUBLICAN_CONSERVATIVE_LEADERS, TEXAS_REPUBLICAN_CONSERVATIVE_LEADER_TARGETS } from "@/data/texas-political-figures-all";
 import type { PoliticalFigureCategory } from "@/data/texas-political-figure-builder";
 
 const SITE_URL = "https://keeptxred.com";
@@ -52,9 +52,9 @@ export const Route = createFileRoute("/texas-politics/figures")({
           {
             "@type": "ItemList",
             "@id": `${SITE_URL}/texas-politics/figures#list`,
-            name: "Texas Republican and conservative political figure profiles",
-            numberOfItems: TEXAS_POLITICAL_FIGURES.length,
-            itemListElement: TEXAS_POLITICAL_FIGURES.map((figure, index) => ({
+            name: "100 Texas Republican and conservative leader profiles",
+            numberOfItems: TEXAS_REPUBLICAN_CONSERVATIVE_LEADERS.length,
+            itemListElement: TEXAS_REPUBLICAN_CONSERVATIVE_LEADERS.map((figure, index) => ({
               "@type": "ListItem",
               position: index + 1,
               name: figure.name,
@@ -79,16 +79,16 @@ export const Route = createFileRoute("/texas-politics/figures")({
 function TexasPoliticalFiguresHub() {
   const grouped = CATEGORY_ORDER.map((category) => ({
     category,
-    figures: TEXAS_POLITICAL_FIGURES.filter((figure) => figure.category === category),
+    figures: TEXAS_REPUBLICAN_CONSERVATIVE_LEADERS.filter((figure) => figure.category === category),
   })).filter((group) => group.figures.length > 0);
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <main id="top" className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <nav className="mb-6 text-sm text-muted-foreground" aria-label="Breadcrumb"><Link to="/">Home</Link> / <Link to="/texas-politics">Texas Politics</Link> / Political Figures</nav>
       <header className="rounded-2xl border bg-card p-6 md:p-10">
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Texas Republican and conservative political history</p>
         <h1 className="mt-4 max-w-5xl text-4xl font-bold leading-tight md:text-6xl">100 Texas Republican & Conservative Leaders</h1>
-        <p className="mt-5 max-w-4xl text-lg leading-8 text-muted-foreground">The core collection covers all {TEXAS_REPUBLICAN_CONSERVATIVE_LEADER_TARGETS.length} leaders in the historical list—from Reconstruction-era Black Republican pioneers and early party builders to governors, judges, congressional leaders and today's Texas lawmakers. Existing KeepTXRed authority profiles remain in the collection where they add closely related context.</p>
+        <p className="mt-5 max-w-4xl text-lg leading-8 text-muted-foreground">This authority collection covers all {TEXAS_REPUBLICAN_CONSERVATIVE_LEADER_TARGETS.length} leaders in the historical list—from Reconstruction-era Black Republican pioneers and early party builders to governors, judges, congressional leaders and today's Texas lawmakers.</p>
         <p className="mt-4 max-w-4xl leading-7 text-muted-foreground">These are evergreen authority pages, not thin campaign bios. Each profile separates durable career history and institutional power from changing committee assignments, candidacy status, polling and other live election details.</p>
         <div className="mt-6 flex flex-wrap gap-3"><a href="/elections" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">Current elections</a><a href="/texas-government" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Government powers</a><a href="/texas-legislature" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Texas Legislature</a><a href="/texas-law-policy" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Texas law & policy</a></div>
       </header>
