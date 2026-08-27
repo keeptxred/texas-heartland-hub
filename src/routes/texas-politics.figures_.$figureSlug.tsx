@@ -1,9 +1,17 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ALL_TEXAS_POLITICAL_FIGURES, texasPoliticalFigureBySlug } from "@/data/texas-political-figures-all";
 import { politicalFigureHeroBySlug } from "@/data/texas-political-figure-heroes";
+import { politicalFigureAuthoritySourcesBySlug } from "@/data/texas-political-figure-authority-sources";
 
 const SITE_URL = "https://keeptxred.com";
 const FIGURE_PREFIX = "/texas-politics/figures/";
+
+type SourceLink = { href: string; label: string };
+
+function sourcesForFigure(figure: { slug: string; sources?: SourceLink[] }): SourceLink[] {
+  const combined = [...(figure.sources ?? []), ...politicalFigureAuthoritySourcesBySlug(figure.slug)];
+  return combined.filter((source, index) => combined.findIndex((candidate) => candidate.href === source.href) === index);
+}
 
 export const Route = createFileRoute("/texas-politics/figures_/$figureSlug")({
   beforeLoad: ({ params }) => {
@@ -13,6 +21,7 @@ export const Route = createFileRoute("/texas-politics/figures_/$figureSlug")({
     const figure = texasPoliticalFigureBySlug(params.figureSlug);
     if (!figure) return { meta: [{ name: "robots", content: "noindex, follow" }] };
     const hero = politicalFigureHeroBySlug(figure.slug);
+    const sources = sourcesForFigure(figure);
     const canonical = `${SITE_URL}/texas-politics/figures/${figure.slug}`;
     const title = `${figure.name}: Texas Political Profile & Legacy | KeepTXRed`;
     return {
@@ -47,8 +56,8 @@ export const Route = createFileRoute("/texas-politics/figures_/$figureSlug")({
           description: figure.description,
           url: canonical,
           ...(hero ? { image: hero.src } : {}),
-          ...(figure.sources?.length ? {
-            citation: figure.sources.map((source) => ({
+          ...(sources.length ? {
+            citation: sources.map((source) => ({
               "@type": "CreativeWork",
               name: source.label,
               url: source.href,
@@ -73,6 +82,7 @@ function PoliticalFigurePage() {
   const figure = texasPoliticalFigureBySlug(figureSlug);
   if (!figure) return null;
   const hero = politicalFigureHeroBySlug(figure.slug);
+  const sources = sourcesForFigure(figure);
 
   const linkedPeerSlugs = new Set(
     figure.relatedLinks
@@ -119,12 +129,12 @@ function PoliticalFigurePage() {
         ))}
       </article>
 
-      {figure.sources?.length ? (
+      {sources.length ? (
         <section className="mt-12 rounded-2xl border bg-card p-6 md:p-8" aria-labelledby="profile-sources">
           <h2 id="profile-sources" className="text-2xl font-bold">Sources and official records</h2>
           <p className="mt-3 max-w-3xl leading-7 text-muted-foreground">Use these records and source materials to verify service dates, offices and the major historical events summarized above.</p>
           <ul className="mt-5 space-y-3">
-            {figure.sources.map((source) => (
+            {sources.map((source) => (
               <li key={source.href}>
                 <a href={source.href} target="_blank" rel="noreferrer" className="font-semibold text-primary underline-offset-4 hover:underline">{source.label} ↗</a>
               </li>
