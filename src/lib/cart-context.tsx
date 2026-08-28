@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { Product, ProductVariant } from "@/lib/products.functions";
+import { parseProductVariantOptions } from "@/lib/product-variant-options";
 
 export const ETSY_CHECKOUT_STORAGE_KEY = "keeptxred:etsy-checkout-items:v1";
 export const CART_STORAGE_KEY = "keeptxred:cart-items:v1";
@@ -79,7 +80,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       qty <= 0 ? prev.filter((i) => i.key !== key) : prev.map((i) => (i.key === key ? { ...i, qty } : i)),
     );
 
-  const remove: CartContextValue["remove"] = (key) =>
+  const remove = (key: string) =>
     setItems((prev) => prev.filter((i) => i.key !== key));
 
   const checkout = () => {
@@ -120,12 +121,8 @@ export function useCart() {
   return ctx;
 }
 
-// Helper: derive size from a variant title like "Red / XL" or "Black / M"
 export function parseVariantSize(title: string | undefined): string | null {
-  if (!title) return null;
-  const parts = title.split("/").map((s) => s.trim()).filter(Boolean);
-  if (parts.length < 2) return null;
-  return parts[parts.length - 1];
+  return parseProductVariantOptions(title).size;
 }
 
 export function buildAddPayload(
