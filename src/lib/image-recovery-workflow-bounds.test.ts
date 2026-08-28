@@ -12,7 +12,7 @@ describe("image recovery workflow bounds", () => {
     }
   });
 
-  it("bounds each lock-holding pass to one article and ten minutes per article", () => {
+  it("bounds ordinary lock-holding passes to one article and ten minutes per article", () => {
     for (const source of [backlogWorkflow, adsenseWorkflow]) {
       expect(source).toContain("max_per_run=1");
       expect(source).toContain("--max-time 600");
@@ -23,7 +23,13 @@ describe("image recovery workflow bounds", () => {
     }
   });
 
-  it("stagger schedules and avoids unbounded five-minute AI retry loops", () => {
+  it("caps the explicit force-marker repair cohort at four articles", () => {
+    expect(backlogWorkflow).toContain('if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then');
+    expect(backlogWorkflow).toContain("max_per_run=4");
+    expect(adsenseWorkflow).not.toContain("max_per_run=4");
+  });
+
+  it("staggers schedules and avoids unbounded five-minute AI retry loops", () => {
     expect(backlogWorkflow).toContain("45 2,10,18 * * *");
     expect(adsenseWorkflow).toContain("45 6,14,22 * * *");
     for (const source of [backlogWorkflow, adsenseWorkflow]) {
