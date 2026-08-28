@@ -8,8 +8,8 @@ on:
   schedule:
     - cron: '45 2,10,18 * * *'
   # The marker path provides an explicit, bounded production-repair mechanism.
-  # A marker push may repair up to four intentionally re-queued rows in one
-  # diagnostic pass; ordinary scheduled and manual runs remain one article.
+  # A marker push must name one to four exact slugs so an emergency repair can
+  # never spend the bounded batch on unrelated newer backlog rows.
   push:
     branches: [main]
     paths:
@@ -32,6 +32,8 @@ jobs:
     steps:
       - name: Recover missing and legacy article images pending-first
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
 
@@ -77,14 +79,31 @@ jobs:
           fi
 
           # One article per ordinary pass bounds worst-case generation to the
-          # existing initial image plus three validator-steered retries. The
-          # explicit force-marker push is capped at four rows for one-time
-          # production repairs such as a failed diagnostic cohort.
+          # existing initial image plus three validator-steered retries.
           max_per_run=1
           if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
             max_per_run=4
+            marker_b64=$(gh api "repos/${GITHUB_REPOSITORY}/contents/.github/force-image-backlog-recovery?ref=${GITHUB_SHA}" --jq '.content')
+            printf '%s' "$marker_b64" | base64 --decode > /tmp/image-recovery-marker
+            mapfile -t slugs < <(sed -n 's/^slug:[[:space:]]*//p' /tmp/image-recovery-marker | sed '/^[[:space:]]*$/d' | awk '!seen[$0]++' | head -n "$max_per_run")
+            if [[ "${#slugs[@]}" -lt 1 ]]; then
+              echo 'Force-marker push must name at least one exact slug using slug:<value>.' >&2
+              exit 1
+            fi
+            if [[ "${#slugs[@]}" -gt "$max_per_run" ]]; then
+              echo "Force-marker push exceeds the ${max_per_run}-article safety cap." >&2
+              exit 1
+            fi
+            for slug in "${slugs[@]}"; do
+              if ! jq -e --arg slug "$slug" '.slugs | index($slug) != null' /tmp/image-backlog-dry.json >/dev/null; then
+                echo "Target slug is not currently eligible for image recovery: ${slug}" >&2
+                exit 1
+              fi
+            done
+          else
+            mapfile -t slugs < <(jq -r --argjson max "$max_per_run" '.slugs[:$max][]' /tmp/image-backlog-dry.json)
           fi
-          mapfile -t slugs < <(jq -r --argjson max "$max_per_run" '.slugs[:$max][]' /tmp/image-backlog-dry.json)
+
           failures=0
           succeeded=0
           processed=0
@@ -113,7 +132,7 @@ jobs:
           done
 
           echo "IMAGE_BACKLOG_RECOVERY_TOTAL ready_at_start=${ready} processed=${processed} succeeded=${succeeded} failures=${failures}"
-          if [[ "$processed" -gt 0 && "$succeeded" -eq 0 ]]; then
-            echo 'No image passed the existing production quality gate; retaining failures for diagnosis.' >&2
+          if [[ "$failures" -gt 0 ]]; then
+            echo 'At least one requested image failed the existing production quality gate; retaining failures for diagnosis.' >&2
             exit 1
           fi
