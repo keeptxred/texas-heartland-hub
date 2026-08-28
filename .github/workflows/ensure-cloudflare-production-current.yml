@@ -20,7 +20,7 @@ permissions:
 
 concurrency:
   group: keeptxred-cloudflare-production-ensure
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   ensure:
@@ -46,7 +46,9 @@ jobs:
             attempts=36
           fi
 
-          verify_state=''
+          verify_success='false'
+          verify_active='false'
+          verify_terminal='false'
           for attempt in $(seq 1 "$attempts"); do
             current_main="$(gh api "repos/$REPOSITORY/commits/main" --jq '.sha')"
             if [[ "$current_main" != "$main_sha" ]]; then
@@ -56,31 +58,47 @@ jobs:
               exit 0
             fi
 
-            verify_state="$(gh api \
+            verify_json="$(gh api \
               -H 'Accept: application/vnd.github+json' \
-              "repos/$REPOSITORY/commits/$main_sha/check-runs?per_page=100" \
-              --jq '[.check_runs[] | select(.name == "verify")] | sort_by(.started_at // .created_at) | last | (.conclusion // .status // "")')"
+              "repos/$REPOSITORY/actions/workflows/shared-vitest.yml/runs?branch=main&per_page=100")"
+            read -r verify_success verify_active verify_terminal < <(python3 - "$verify_json" "$main_sha" <<'PY'
+          import json, sys
 
-            if [[ "$verify_state" == 'success' ]]; then
+          data = json.loads(sys.argv[1])
+          target_sha = sys.argv[2]
+          rows = [
+              row for row in data.get('workflow_runs', [])
+              if row.get('head_sha') == target_sha
+          ]
+          success = any(
+              row.get('status') == 'completed' and row.get('conclusion') == 'success'
+              for row in rows
+          )
+          active = any(row.get('status') != 'completed' for row in rows)
+          terminal = bool(rows) and not success and not active
+          print(
+              'true' if success else 'false',
+              'true' if active else 'false',
+              'true' if terminal else 'false',
+          )
+          PY
+            )
+
+            if [[ "$verify_success" == 'true' ]]; then
+              echo "Exact current main $main_sha has a successful Repository test and build health run."
               break
-            fi
-            if [[ "$verify_state" == 'failure' || "$verify_state" == 'cancelled' || "$verify_state" == 'timed_out' || "$verify_state" == 'action_required' || "$verify_state" == 'stale' ]]; then
-              echo "deploy=false" >> "$GITHUB_OUTPUT"
-              echo "verified=false" >> "$GITHUB_OUTPUT"
-              echo "Current main $main_sha has terminal verify state '$verify_state'; production will not be changed."
-              exit 0
             fi
 
             if [[ "$attempt" -lt "$attempts" ]]; then
-              echo "Waiting for verify on current main $main_sha (state=${verify_state:-not-created}, attempt $attempt/$attempts)."
+              echo "Waiting for a successful exact-SHA repository verification on $main_sha (active=$verify_active terminal_only=$verify_terminal, attempt $attempt/$attempts)."
               sleep 10
             fi
           done
 
-          if [[ "$verify_state" != 'success' ]]; then
+          if [[ "$verify_success" != 'true' ]]; then
             echo "deploy=false" >> "$GITHUB_OUTPUT"
             echo "verified=false" >> "$GITHUB_OUTPUT"
-            echo "Current main $main_sha is not verified yet (state=${verify_state:-not-created}); production will not be changed."
+            echo "Current main $main_sha has no successful exact-SHA Repository test and build health run; production will not be changed."
             exit 0
           fi
 
