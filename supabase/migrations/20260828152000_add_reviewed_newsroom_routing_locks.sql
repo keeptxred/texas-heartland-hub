@@ -44,7 +44,7 @@ with mapped as (
       when lower(title) ~ '(kaylee hottle|school for the deaf.*scholarship)' then 'Texas Life'
       when lower(title) ~ '(counties ranked.*born|born in the state)' then 'Texas Life'
       when lower(title) ~ '(old eds plano|eds.*implod)' then 'Texas Life'
-      when lower(title) ~ '(don nelson|jonah bride)' then 'Sports'
+      when lower(title) ~ '(don nelson|jonah bride|quinnen williams|tate taylor)' then 'Sports'
       when lower(title) ~ '(casey.*pak-a-sak|texas stadium|sushi.*doordash)' then 'Business'
       when lower(title) ~ '(bastrop.*council)' then 'Politics'
       else 'Texas News'
