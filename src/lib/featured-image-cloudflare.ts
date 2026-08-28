@@ -63,7 +63,14 @@ export function buildFluxImagePrompt(prompt: string, negativePrompt: string): st
     "The concrete article subject must be visually obvious from physical objects, place, action, infrastructure, institution, sport, or event in the scene itself.",
     "No readable text, typography, poster, illustration, graphic design, vector art, iconography, collage, infographic, CGI, or synthetic promotional artwork.",
   ].join(" ");
-  const essentialExclusions = negativePrompt
+  // buildNegativeImagePrompt appends validator prose as a final
+  // `rejected visual motif:` item. FLUX.2 accepts only one prompt field, so
+  // forwarding that prose—even under HARD EXCLUSIONS—can visually prime the
+  // model with the exact rejected politician/cartoon/graphic composition.
+  // Keep the stable categorical exclusions, but never echo the validator's
+  // free-form description back into generation.
+  const safeNegativePrompt = negativePrompt.replace(/(?:^|,\s*)rejected visual motif:.*$/is, "").trim();
+  const essentialExclusions = safeNegativePrompt
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean)
