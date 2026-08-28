@@ -139,10 +139,14 @@ for (const token of [
   if (!ingest.includes(token)) throw new Error(`Ingestion attribution contract missing: ${token}`);
 }
 for (const token of [
-  "trend_source",
-  "row.trend_source || row.source",
+  "news_source_fetch_state",
+  "fetchByName",
+  "fetchByUrl",
+  "classifyFetch",
+  "flyover_aug10_reconciliation",
+  "flyoverDispositionCounts",
 ]) {
-  if (!healthEndpoint.includes(token)) throw new Error(`Newsroom health attribution contract missing: ${token}`);
+  if (!healthEndpoint.includes(token)) throw new Error(`Authoritative newsroom health contract missing: ${token}`);
 }
 
 for (const token of [
@@ -160,4 +164,4 @@ for (const token of ["/admin/coverage-gaps", "/api/public/newsroom-health", "/ap
   if (!smoke.includes(token)) throw new Error(`Live newsroom smoke contract missing: ${token}`);
 }
 
-console.log(`Newsroom coverage contract valid: ${configuredSources.length} statewide discovery sources + ${hyperlocalRequiredSources.length} hyperlocal sources, configured-feed attribution, scoring, gap reporting, source health, deterministic geography telemetry, server aggregation, and live smoke monitoring.`);
+console.log(`Newsroom coverage contract valid: ${configuredSources.length} statewide discovery sources + ${hyperlocalRequiredSources.length} hyperlocal sources, configured-feed attribution, scoring, gap reporting, authoritative Flyover reconciliation, fetch-state source health, deterministic geography telemetry, server aggregation, and live smoke monitoring.`);
