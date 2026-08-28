@@ -5,6 +5,17 @@ on:
     workflows: ["Deploy verified KeepTXRed to Cloudflare"]
     types: [completed]
     branches: [main]
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/geo-readiness-production-smoke.yml"
+      - ".github/workflows/deploy-cloudflare-after-verify.yml"
+      - "src/routes/robots[.]txt.ts"
+      - "src/routes/sitemap[.]xml.ts"
+      - "src/routes/sitemap-*.ts"
+      - "src/lib/sitemap-shared.ts"
+  schedule:
+    - cron: "17 12 * * *"
   workflow_dispatch:
 
 permissions:
@@ -17,7 +28,7 @@ concurrency:
 jobs:
   verify:
     if: >-
-      github.event_name == 'workflow_dispatch' ||
+      github.event_name != 'workflow_run' ||
       github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 8
