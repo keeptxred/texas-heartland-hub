@@ -12,13 +12,23 @@ describe("image recovery workflow bounds", () => {
     }
   });
 
-  it("bounds each lock-holding pass to five articles and ten minutes per article", () => {
+  it("bounds each lock-holding pass to one article and ten minutes per article", () => {
     for (const source of [backlogWorkflow, adsenseWorkflow]) {
-      expect(source).toContain("max_per_run=5");
+      expect(source).toContain("max_per_run=1");
       expect(source).toContain("--max-time 600");
+      expect(source).not.toContain("max_per_run=5");
       expect(source).not.toContain("max_per_run=20");
       expect(source).not.toContain("max_per_run=40");
       expect(source).not.toContain("--max-time 900");
+    }
+  });
+
+  it("stagger schedules and avoids unbounded five-minute AI retry loops", () => {
+    expect(backlogWorkflow).toContain("45 2,10,18 * * *");
+    expect(adsenseWorkflow).toContain("45 6,14,22 * * *");
+    for (const source of [backlogWorkflow, adsenseWorkflow]) {
+      expect(source).not.toContain("*/5 * * * *");
+      expect(source).not.toContain('workflows: ["Deploy verified KeepTXRed to Cloudflare"]');
     }
   });
 
