@@ -1,13 +1,12 @@
 name: KeepTXRed Image Backlog Recovery
 
 on:
-  workflow_run:
-    workflows: ["Repository test and build health", "Deploy verified KeepTXRed to Cloudflare"]
-    types: [completed]
-    branches: [main]
   workflow_dispatch:
+  # Keep background image repair inside the Workers AI free-neuron budget.
+  # This pass is staggered from both the newsroom publisher and AdSense image
+  # recovery so a persistent failure cannot trigger an unbounded retry storm.
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '45 2,10,18 * * *'
   push:
     branches: [main]
     paths:
@@ -25,11 +24,6 @@ concurrency:
 
 jobs:
   recover:
-    if: >-
-      github.event_name == 'workflow_dispatch' ||
-      github.event_name == 'schedule' ||
-      github.event_name == 'push' ||
-      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -79,11 +73,10 @@ jobs:
             exit 0
           fi
 
-          # Keep each lock-holding pass deliberately small. A single article can
-          # need multiple strict generation/validation attempts, so large batches
-          # can monopolize the shared recovery lock for hours and starve the
-          # AdSense-ready cohort. Repeated scheduled passes drain the queue safely.
-          max_per_run=5
+          # One article per pass bounds worst-case generation to the existing
+          # initial image plus three validator-steered retries. Repeated staggered
+          # passes still drain the queue while reserving neurons for fresh news.
+          max_per_run=1
           mapfile -t slugs < <(jq -r --argjson max "$max_per_run" '.slugs[:$max][]' /tmp/image-backlog-dry.json)
           failures=0
           succeeded=0
