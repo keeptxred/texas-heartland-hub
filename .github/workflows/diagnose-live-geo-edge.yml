@@ -36,18 +36,31 @@ jobs:
             echo
           done
 
-      - name: Inspect live Election Central HTML and headers
+      - name: Compare live Election Central responses by user agent
         shell: bash
         run: |
           set -euo pipefail
-          url="https://keeptxred.com/elections/2026?diag=$(date +%s%N)"
-          curl --silent --show-error --location --fail-with-body \
-            -A 'Mozilla/5.0 (compatible; KTR-GEO-Diagnostic/1.0)' \
-            -D /tmp/election-headers.txt "$url" -o /tmp/election.html
-          grep -Ei '^(HTTP/|date:|age:|cache-control:|cf-cache-status:|cf-ray:|content-type:|server:|vary:)' /tmp/election-headers.txt || true
-          echo '--- h1 tags ---'
-          grep -Eio '<h1[^>]*>[^<]+' /tmp/election.html | head -n 5 || true
-          echo '--- expected H1 literal ---'
-          grep -F '2026 Texas Election Central: Races, Candidates, Polls & Results' /tmp/election.html | head -n 3 || true
-          echo '--- JSON-LD type signals ---'
-          grep -Eo 'NewsMediaOrganization|Organization|FAQPage' /tmp/election.html | sort | uniq -c || true
+          base='https://keeptxred.com/elections/2026'
+          for ua in \
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36' \
+            'Googlebot/2.1 (+http://www.google.com/bot.html)' \
+            'OAI-SearchBot/1.0; +https://openai.com/searchbot' \
+            'GPTBot/1.4 (+https://openai.com/gptbot)' \
+            'ClaudeBot/1.0; +https://anthropic.com/claudebot'; do
+            echo "===== ELECTION UA: $ua ====="
+            rm -f /tmp/election-headers.txt /tmp/election.html
+            status="$(curl --silent --show-error --location \
+              -A "$ua" -D /tmp/election-headers.txt "$base" -o /tmp/election.html \
+              -w '%{http_code}')"
+            echo "status=$status"
+            grep -Ei '^(HTTP/|date:|age:|cache-control:|cf-cache-status:|cf-ray:|content-type:|server:|vary:)' /tmp/election-headers.txt || true
+            echo '--- h1 tags ---'
+            grep -Eio '<h1[^>]*>[^<]+' /tmp/election.html | head -n 5 || true
+            echo '--- expected H1 literal count ---'
+            grep -Fo '2026 Texas Election Central: Races, Candidates, Polls & Results' /tmp/election.html | wc -l || true
+            echo '--- JSON-LD type signals ---'
+            grep -Eo 'NewsMediaOrganization|Organization|FAQPage' /tmp/election.html | sort | uniq -c || true
+            echo '--- challenge markers ---'
+            grep -Eio 'Just a moment|cf-chl|challenge-platform|Attention Required' /tmp/election.html | head -n 10 || true
+            echo
+          done
