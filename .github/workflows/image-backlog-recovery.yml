@@ -7,6 +7,9 @@ on:
   # recovery so a persistent failure cannot trigger an unbounded retry storm.
   schedule:
     - cron: '45 2,10,18 * * *'
+  # The marker path provides an explicit, bounded production-repair mechanism.
+  # A marker push may repair up to four intentionally re-queued rows in one
+  # diagnostic pass; ordinary scheduled and manual runs remain one article.
   push:
     branches: [main]
     paths:
@@ -73,10 +76,14 @@ jobs:
             exit 0
           fi
 
-          # One article per pass bounds worst-case generation to the existing
-          # initial image plus three validator-steered retries. Repeated staggered
-          # passes still drain the queue while reserving neurons for fresh news.
+          # One article per ordinary pass bounds worst-case generation to the
+          # existing initial image plus three validator-steered retries. The
+          # explicit force-marker push is capped at four rows for one-time
+          # production repairs such as a failed diagnostic cohort.
           max_per_run=1
+          if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
+            max_per_run=4
+          fi
           mapfile -t slugs < <(jq -r --argjson max "$max_per_run" '.slugs[:$max][]' /tmp/image-backlog-dry.json)
           failures=0
           succeeded=0
