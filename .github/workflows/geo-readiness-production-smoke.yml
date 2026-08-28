@@ -2,10 +2,8 @@ name: Verify production GEO discovery
 
 on:
   workflow_run:
-    workflows: ["Deploy verified KeepTXRed to Cloudflare"]
+    workflows: ["Deploy KeepTXRed to Cloudflare Workers"]
     types: [completed]
-    branches: [main]
-  push:
     branches: [main]
   schedule:
     - cron: "17 12 * * *"
@@ -20,6 +18,7 @@ concurrency:
 
 jobs:
   verify:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     env:
