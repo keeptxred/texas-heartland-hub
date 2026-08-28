@@ -20,6 +20,11 @@ export function isLowValueTitle(title: string | null | undefined): boolean {
     /\bquiz\s+of\s+the\s+(day|week)\b/.test(t) ||
     /\bcartoon\s+of\s+the\s+day\b/.test(t) ||
     /\bnewsletter\b/.test(t) ||
+    // Individual obituary/death-notice listings are not newsroom stories.
+    // Keep this narrow: reporting about an obituary remains eligible unless
+    // the headline itself is an obituary/death-notice landing page.
+    /\bobituary\b/.test(t) ||
+    /^death notice\b/.test(t) ||
     // podcast/video episode landing pages are not written source articles
     /\btribcast\b/.test(t) ||
     /\bpodcast\s*(episode)?\b/.test(t) ||
