@@ -30,7 +30,7 @@ const ELECTION_DISCOVERY_LINKS = [
   ["Voting", "/elections/voting"],
 ] as const;
 
-const ELECTION_CENTRAL_H1 = "2026 Texas Election Central: Races, Candidates, Polls & Results";
+const ELECTION_CENTRAL_TITLE = "2026 Texas Election Central: Races, Candidates, Polls & Results";
 
 export function ElectionLayout({
   title,
@@ -55,11 +55,12 @@ export function ElectionLayout({
   const normalized = pathname.length > 1 && pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
   const isCanonicalPage = Boolean(canonicalPath) && canonicalPath === normalized;
   const isElectionPage = normalized === "/elections" || normalized.startsWith("/elections/");
-  const heading = title === "Texas Election Central" ? ELECTION_CENTRAL_H1 : title;
+  const isElectionCentralPage = isCanonicalPage && normalized === "/elections/2026";
+  const pageTitle = isElectionCentralPage ? ELECTION_CENTRAL_TITLE : title;
   const defaultSchema = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: title,
+    name: pageTitle,
     description,
     url: canonicalUrl,
     inLanguage: "en-US",
@@ -80,27 +81,34 @@ export function ElectionLayout({
       name: "Texas elections",
     },
   };
+  const resolvedSchema = schema
+    ? isElectionCentralPage
+      ? Array.isArray(schema)
+        ? schema.map((entry) => ({ ...entry, name: pageTitle }))
+        : { ...schema, name: pageTitle }
+      : schema
+    : defaultSchema;
 
   return (
     <>
       <Helmet>
-        <title>{`${title} | KeepTXRed`}</title>
+        <title>{`${pageTitle} | KeepTXRed`}</title>
         <meta name="description" content={description} />
         <meta
           name="robots"
           content={indexable ? "index, follow, max-image-preview:large" : "noindex, follow"}
         />
-        <meta property="og:title" content={title} />
+        <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={description} />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Keep TX Red" />
         <meta property="og:locale" content="en_US" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={title} />
+        <meta name="twitter:title" content={pageTitle} />
         <meta name="twitter:description" content={description} />
         {indexable && isCanonicalPage && <link rel="canonical" href={canonicalUrl} />}
         {indexable && isCanonicalPage && <meta property="og:url" content={canonicalUrl} />}
-        <script type="application/ld+json">{JSON.stringify(schema ?? defaultSchema)}</script>
+        <script type="application/ld+json">{JSON.stringify(resolvedSchema)}</script>
       </Helmet>
 
       <section className="min-h-screen bg-muted/20 text-foreground">
@@ -112,7 +120,7 @@ export function ElectionLayout({
                   {eyebrow}
                 </p>
                 <h1 className="mt-2 font-display text-4xl leading-none tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-                  {heading}
+                  {pageTitle}
                 </h1>
                 <p className="mt-4 max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg">
                   {description}
