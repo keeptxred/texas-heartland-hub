@@ -56,7 +56,12 @@ export function ElectionLayout({
   const isCanonicalPage = Boolean(canonicalPath) && canonicalPath === normalized;
   const isElectionPage = normalized === "/elections" || normalized.startsWith("/elections/");
   const isElectionCentralPage = isCanonicalPage && normalized === "/elections/2026";
-  const pageTitle = isElectionCentralPage ? ELECTION_CENTRAL_TITLE : title;
+  // ElectionHomePage is also embedded by the seasonal homepage takeover. Its
+  // public heading must not depend on router/canonical state, because SSR and
+  // embedded rendering can observe different host paths. The canonical/og:url
+  // gates above remain path-specific; only the content title is deterministic.
+  const usesElectionCentralTitle = isElectionCentralPage || title === "Texas Election Central";
+  const pageTitle = usesElectionCentralTitle ? ELECTION_CENTRAL_TITLE : title;
   const defaultSchema = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -82,7 +87,7 @@ export function ElectionLayout({
     },
   };
   const resolvedSchema = schema
-    ? isElectionCentralPage
+    ? usesElectionCentralTitle
       ? Array.isArray(schema)
         ? schema.map((entry) => ({ ...entry, name: pageTitle }))
         : { ...schema, name: pageTitle }
