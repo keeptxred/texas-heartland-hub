@@ -196,6 +196,47 @@ jobs:
           if failures: raise SystemExit("Preview health verification failed: " + "; ".join(failures))
           PY
 
+      - name: Verify preview GEO content before production promotion
+        shell: bash
+        env:
+          PREVIEW_URL: ${{ steps.deploy.outputs.preview_url }}
+        run: |
+          set -euo pipefail
+          election_body="$(mktemp)"
+          home_body="$(mktemp)"
+          trap 'rm -f "$election_body" "$home_body"' EXIT
+
+          curl --retry 20 --retry-delay 3 --retry-all-errors \
+            --fail-with-body --silent --show-error \
+            "${PREVIEW_URL%/}/elections/2026" -o "$election_body"
+          curl --retry 20 --retry-delay 3 --retry-all-errors \
+            --fail-with-body --silent --show-error \
+            "${PREVIEW_URL%/}/" -o "$home_body"
+
+          python3 - "$election_body" "$home_body" <<'PY'
+          import pathlib
+          import re
+          import sys
+
+          election = pathlib.Path(sys.argv[1]).read_text(encoding="utf-8", errors="replace")
+          home = pathlib.Path(sys.argv[2]).read_text(encoding="utf-8", errors="replace")
+
+          strong_h1 = "2026 Texas Election Central: Races, Candidates, Polls & Results"
+          if strong_h1 not in election:
+              h1s = re.findall(r"<h1\b[^>]*>(.*?)</h1>", election, flags=re.I | re.S)
+              simplified = [re.sub(r"<[^>]+>", "", value).strip() for value in h1s]
+              raise SystemExit(f"Preview election HTML is missing the strengthened H1; observed h1={simplified!r}")
+
+          for marker in ('"Organization"', '"NewsMediaOrganization"'):
+              if marker not in election:
+                  raise SystemExit(f"Preview election HTML is missing JSON-LD marker {marker}")
+
+          if '"FAQPage"' not in home:
+              raise SystemExit("Preview home HTML is missing FAQPage JSON-LD")
+
+          print("Preview GEO gate passed: strengthened election H1, Organization/NewsMediaOrganization JSON-LD, and home FAQPage JSON-LD are present before production promotion.")
+          PY
+
       - name: Promote tested Worker to production custom domain
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.activate_custom_domain == true }}
         shell: bash
