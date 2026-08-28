@@ -16,16 +16,25 @@ describe("GEO readiness follow-up", () => {
     expect(source).toContain("organizationJsonLd()");
   });
 
-  it("uses a descriptive Election Central H1 without changing the metadata title", () => {
+  it("uses one deterministic Election Central title across H1, metadata, and schema", () => {
     const source = readFileSync(electionLayoutPath, "utf8");
 
     expect(source).toContain(
-      'const ELECTION_CENTRAL_H1 = "2026 Texas Election Central: Races, Candidates, Polls & Results";',
+      'const ELECTION_CENTRAL_TITLE = "2026 Texas Election Central: Races, Candidates, Polls & Results";',
     );
     expect(source).toContain(
+      'const isElectionCentralPage = isCanonicalPage && normalized === "/elections/2026";',
+    );
+    expect(source).toContain(
+      "const pageTitle = isElectionCentralPage ? ELECTION_CENTRAL_TITLE : title;",
+    );
+    expect(source).toContain("name: pageTitle");
+    expect(source).toContain("<title>{`${pageTitle} | KeepTXRed`}</title>");
+    expect(source).toContain('<meta property="og:title" content={pageTitle} />');
+    expect(source).toContain('<meta name="twitter:title" content={pageTitle} />');
+    expect(source).toContain("{pageTitle}");
+    expect(source).not.toContain(
       'const heading = title === "Texas Election Central" ? ELECTION_CENTRAL_H1 : title;',
     );
-    expect(source).toContain("{heading}");
-    expect(source).toContain("<title>{`${title} | KeepTXRed`}</title>");
   });
 });
