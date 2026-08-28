@@ -3,7 +3,7 @@ import fs from 'node:fs';
 
 const lowValue = fs.readFileSync('src/lib/low-value-titles.ts', 'utf8');
 const baseMigration = fs.readFileSync('supabase/migrations/20260828144500_guard_newsroom_route_quality.sql', 'utf8');
-const finalMigration = fs.readFileSync('supabase/migrations/20260828150000_finalize_newsroom_sports_quality_guard.sql', 'utf8');
+const finalMigration = fs.readFileSync('supabase/migrations/20260828151000_finalize_trusted_sports_and_rangers_news_routing.sql', 'utf8');
 
 describe('newsroom route quality guard', () => {
   test('filters obituary and death-notice listings', () => {
@@ -15,14 +15,20 @@ describe('newsroom route quality guard', () => {
   test('uses word-bounded sports league tokens so inflation cannot match nfl', () => {
     expect(finalMigration).toContain("\\m(nfl|nba|mlb|nhl|mls|wnba)\\M");
     expect(finalMigration).toContain('Sports route lacked a real sports signal');
-    expect(finalMigration).toContain('is_law_enforcement_rangers');
   });
 
-  test('trusts sports publishers while preserving the Rangers law-enforcement veto', () => {
-    for (const token of ['is_known_sports_source', '\\msports\\M|athletics', 'texas rangers|houston astros|houston texans', 'department of public safety', 'series|rubber match']) {
+  test('trusts dedicated sports publishers and feeds', () => {
+    for (const token of ['is_known_sports_source', '\\msports\\M|athletics', 'texags', 'burnt orange nation', 'blogging the boys']) {
       expect(finalMigration).toContain(token);
     }
     expect(finalMigration).toContain("new.target_section := 'Sports'");
+  });
+
+  test('routes Texas Rangers law-enforcement stories to KTR Texas News', () => {
+    expect(finalMigration).toContain('is_law_enforcement_rangers');
+    expect(finalMigration).toContain('department of public safety');
+    expect(finalMigration).toContain("new.target_section := 'Texas News'");
+    expect(finalMigration).toContain('Texas Rangers law-enforcement story routed to Texas News');
   });
 
   test('routes deterministic lifestyle/community classes to TexasDefined', () => {
