@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { parseProductVariantOptions } from "@/lib/product-variant-options";
 
 const PRINTIFY_BASE = "https://api.printify.com/v1";
 
@@ -59,18 +60,18 @@ function variantIdFromSrc(src: string): number | null {
 function imagesForVariant(
   variantId: number,
   images: PrintifyImage[],
-  colorByVariantId: Map<number, string>,
+  visualOptionByVariantId: Map<number, string>,
 ): PrintifyImage[] {
   const exactMatches = images.filter((image) => variantIdFromSrc(image.src) === variantId);
   if (exactMatches.length > 0) return exactMatches;
 
-  const desiredColor = colorByVariantId.get(variantId);
-  if (desiredColor) {
-    const colorMatches = images.filter((image) => {
+  const desiredOption = visualOptionByVariantId.get(variantId);
+  if (desiredOption) {
+    const optionMatches = images.filter((image) => {
       const mockupVariantId = variantIdFromSrc(image.src);
-      return mockupVariantId != null && colorByVariantId.get(mockupVariantId) === desiredColor;
+      return mockupVariantId != null && visualOptionByVariantId.get(mockupVariantId) === desiredOption;
     });
-    if (colorMatches.length > 0) return colorMatches;
+    if (optionMatches.length > 0) return optionMatches;
   }
 
   return images.filter((image) => (image.variant_ids ?? []).includes(variantId));
@@ -79,7 +80,7 @@ function imagesForVariant(
 function extractColors(variants: PrintifyVariant[]): string[] {
   const colors = new Set<string>();
   for (const variant of variants) {
-    const color = variant.title?.split("/")[0]?.trim();
+    const { color } = parseProductVariantOptions(variant.title);
     if (color) colors.add(color);
   }
   return Array.from(colors);
@@ -104,18 +105,21 @@ function buildVariants(
   image: string | null;
   images: string[];
   color: string;
+  size?: string;
   is_enabled: boolean;
 }> {
-  const colorByVariantId = new Map<number, string>();
+  const visualOptionByVariantId = new Map<number, string>();
   for (const variant of variants) {
-    const color = variant.title?.split("/")[0]?.trim();
-    if (color) colorByVariantId.set(variant.id, color);
+    const parsed = parseProductVariantOptions(variant.title);
+    const visualOption = parsed.color ?? parsed.size;
+    if (visualOption) visualOptionByVariantId.set(variant.id, visualOption);
   }
 
   return variants
     .filter((variant) => variant.is_enabled && variant.title)
     .map((variant) => {
-      const matches = imagesForVariant(variant.id, images, colorByVariantId);
+      const parsed = parseProductVariantOptions(variant.title);
+      const matches = imagesForVariant(variant.id, images, visualOptionByVariantId);
       const variantImages = matches.map((image) => image.src);
       return {
         id: variant.id,
@@ -123,7 +127,8 @@ function buildVariants(
         price: Math.round(variant.price) / 100,
         image: variantImages[0] ?? null,
         images: variantImages,
-        color: variant.title!.split("/")[0]?.trim() ?? "",
+        color: parsed.color ?? "",
+        ...(parsed.size ? { size: parsed.size } : {}),
         is_enabled: variant.is_enabled,
       };
     });
