@@ -1,12 +1,12 @@
 import { parseVisionVerdict, type SubjectExtract } from "./featured-image-core";
 
-// FLUX.2 Klein 4B is the quota-safe production path for article photography,
-// including strict-validator retries. FLUX.2 Dev remains available only when a
-// caller explicitly requests it; recurring generation must not auto-escalate to
-// a model whose per-image neuron cost can exceed the free daily allocation.
-// Schnell remains an API-availability fallback for the cheap Klein path.
+// FLUX.2 Klein 4B remains the quota-safe production path for article photography.
+// The enhanced-quality Klein 9B model is reserved for only the final strict-
+// validator retry, bounding worst-case image cost while giving repeatedly rejected
+// scenes one materially stronger generation attempt. Schnell remains an API-
+// availability fallback for the cheap first-pass/retry path.
 export const CLOUDFLARE_IMAGE_MODEL = "@cf/black-forest-labs/flux-2-klein-4b";
-export const CLOUDFLARE_IMAGE_QUALITY_MODEL = "@cf/black-forest-labs/flux-2-dev";
+export const CLOUDFLARE_IMAGE_QUALITY_MODEL = "@cf/black-forest-labs/flux-2-klein-9b";
 export const CLOUDFLARE_IMAGE_FALLBACK_MODEL = "@cf/black-forest-labs/flux-1-schnell";
 export const CLOUDFLARE_CULTURE_IMAGE_MODEL = CLOUDFLARE_IMAGE_MODEL;
 export const CLOUDFLARE_VISION_MODEL = "@cf/mistralai/mistral-small-3.1-24b-instruct";
@@ -87,14 +87,17 @@ export function buildFluxImageRequest(
   };
 }
 
-export function buildFlux2ImageRequest(prompt: string, negativePrompt: string, model: CloudflareImageModel = CLOUDFLARE_IMAGE_MODEL): FormData {
+export function buildFlux2ImageRequest(prompt: string, negativePrompt: string, _model: CloudflareImageModel = CLOUDFLARE_IMAGE_MODEL): FormData {
   const form = new FormData();
   form.append("prompt", buildFluxImagePrompt(prompt, negativePrompt));
   form.append("guidance", "5.5");
   form.append("width", "1024");
   form.append("height", "768");
-  if (model === CLOUDFLARE_IMAGE_QUALITY_MODEL) form.append("steps", "25");
   return form;
+}
+
+function isFinalStrictValidatorRetry(prompt: string): boolean {
+  return /^Correction from rejected attempt:\s*Validator rejection\s+3:/i.test(prompt.trim());
 }
 
 async function requestCloudflareImage(
@@ -105,8 +108,8 @@ async function requestCloudflareImage(
   model: CloudflareImageModel,
 ): Promise<Response> {
   if (model === CLOUDFLARE_IMAGE_MODEL || model === CLOUDFLARE_IMAGE_QUALITY_MODEL) {
-    // FLUX.2 models use multipart input even for prompt-only generation. Do not
-    // set Content-Type manually: fetch must add the multipart boundary.
+    // FLUX.2 Klein models use multipart input even for prompt-only generation.
+    // Do not set Content-Type manually: fetch must add the multipart boundary.
     return fetch(cloudflareEndpoint(accountId, model), {
       method: "POST",
       headers: { Authorization: `Bearer ${apiToken}` },
@@ -130,15 +133,17 @@ export async function generateImageBytes(
   const apiToken = process.env.CLOUDFLARE_API_TOKEN;
   if (!accountId || !apiToken) throw new Error("Missing Cloudflare Workers AI credentials: CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required");
 
-  // Keep strict-validator retries on the same quota-safe model. The validator
-  // still requires topical relevance and photorealism; a failed retry remains a
-  // failure rather than automatically consuming a multi-thousand-neuron Dev call.
-  let activeModel = model;
+  // Keep the initial generation and first two strict-validator retries on cheap
+  // Klein 4B. Only the final validator-steered retry is allowed to use enhanced-
+  // quality Klein 9B, so recurring generation cannot multiply the expensive call.
+  let activeModel = model === CLOUDFLARE_IMAGE_MODEL && isFinalStrictValidatorRetry(prompt)
+    ? CLOUDFLARE_IMAGE_QUALITY_MODEL
+    : model;
   let usedFallback = false;
   let res = await requestCloudflareImage(accountId, apiToken, prompt, negativePrompt, activeModel);
 
   // Fail safely if the inexpensive primary model is temporarily unavailable.
-  // Explicit FLUX.2 Dev requests do not silently downgrade to Schnell.
+  // Quality-escalated Klein 9B requests do not silently downgrade to Schnell.
   if (!res.ok && activeModel === CLOUDFLARE_IMAGE_MODEL) {
     activeModel = CLOUDFLARE_IMAGE_FALLBACK_MODEL;
     usedFallback = true;
