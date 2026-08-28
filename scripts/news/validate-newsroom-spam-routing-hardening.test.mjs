@@ -4,6 +4,7 @@ import fs from 'node:fs';
 const lowValue = fs.readFileSync('src/lib/low-value-titles.ts', 'utf8');
 const migration = fs.readFileSync('supabase/migrations/20260828223500_harden_newsroom_spam_and_local_routing.sql', 'utf8');
 const refinement = fs.readFileSync('supabase/migrations/20260828224500_refine_newsroom_spam_national_filter.sql', 'utf8');
+const finalRouting = fs.readFileSync('supabase/migrations/20260828225500_expand_final_newsroom_routing.sql', 'utf8');
 
 test('low-value detector blocks affiliate sports spam without blocking official team viewing guides broadly', () => {
   for (const token of [
@@ -14,9 +15,7 @@ test('low-value detector blocks affiliate sports spam without blocking official 
     'prediction,?',
     '^our next',
     '^power outage maps?',
-  ]) {
-    expect(lowValue).toContain(token);
-  }
+  ]) expect(lowValue).toContain(token);
   expect(lowValue).not.toContain('how to watch.*live stream\\b');
 });
 
@@ -32,9 +31,7 @@ test('final newsroom guard preserves narrow route precedence and review quaranti
     'high schools? in texas',
     'routing_locked_site',
     'auto_publish_eligible',
-  ]) {
-    expect(migration).toContain(token);
-  }
+  ]) expect(migration).toContain(token);
   expect(migration).toContain("new.target_site := 'keeptxred'");
   expect(migration).toContain("new.target_site := 'texasdefined'");
   expect(migration).toContain("new.target_site := 'review'");
@@ -46,4 +43,26 @@ test('refinement catches unicode-stream source contamination and ignores feed-na
   expect(refinement).toContain("body_text !~ '(texas|corpus christi|nueces|kingsville|coastal bend)'");
   expect(refinement).toContain("'source_contamination', true");
   expect(refinement).toContain("'national_syndication_noise', true");
+});
+
+test('v3 resolves only deterministic expanded-source routes and preserves review locks', () => {
+  for (const token of [
+    'guard_final_newsroom_quality_v3',
+    'zzzzzzzzzz_guard_final_newsroom_quality_v3',
+    'check out [0-9]+ trending .* stories',
+    'unidentified katrina victims',
+    'bastrop officials.*retreat.*house hearing',
+    'texas lawmakers?.*txdot',
+    'international bridge toll rates',
+    'unauthorized agencies accessed.*flock',
+    'credit union relocates',
+    'homegoods.*now open',
+    'luxury ranch for sale',
+    "locked boolean := coalesce((new.viral_signals->>'routing_lock')::boolean, false)",
+  ]) expect(finalRouting).toContain(token);
+  expect(finalRouting).toContain("new.target_section := 'Sports'");
+  expect(finalRouting).toContain("new.target_section := 'Politics'");
+  expect(finalRouting).toContain("new.target_section := 'Texas News'");
+  expect(finalRouting).toContain("new.target_section := 'Business'");
+  expect(finalRouting).toContain("new.target_section := 'Texas Life'");
 });
