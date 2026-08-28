@@ -85,15 +85,16 @@ jobs:
             max_per_run=4
             marker_b64=$(gh api "repos/${GITHUB_REPOSITORY}/contents/.github/force-image-backlog-recovery?ref=${GITHUB_SHA}" --jq '.content')
             printf '%s' "$marker_b64" | base64 --decode > /tmp/image-recovery-marker
-            mapfile -t slugs < <(sed -n 's/^slug:[[:space:]]*//p' /tmp/image-recovery-marker | sed '/^[[:space:]]*$/d' | awk '!seen[$0]++' | head -n "$max_per_run")
-            if [[ "${#slugs[@]}" -lt 1 ]]; then
+            mapfile -t marker_slugs < <(sed -n 's/^slug:[[:space:]]*//p' /tmp/image-recovery-marker | sed '/^[[:space:]]*$/d' | awk '!seen[$0]++')
+            if [[ "${#marker_slugs[@]}" -lt 1 ]]; then
               echo 'Force-marker push must name at least one exact slug using slug:<value>.' >&2
               exit 1
             fi
-            if [[ "${#slugs[@]}" -gt "$max_per_run" ]]; then
+            if [[ "${#marker_slugs[@]}" -gt "$max_per_run" ]]; then
               echo "Force-marker push exceeds the ${max_per_run}-article safety cap." >&2
               exit 1
             fi
+            slugs=("${marker_slugs[@]}")
             for slug in "${slugs[@]}"; do
               if ! jq -e --arg slug "$slug" '.slugs | index($slug) != null' /tmp/image-backlog-dry.json >/dev/null; then
                 echo "Target slug is not currently eligible for image recovery: ${slug}" >&2
