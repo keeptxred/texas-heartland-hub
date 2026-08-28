@@ -5,10 +5,19 @@ import { BASE_URL } from "@/lib/sitemap-shared";
 const GOOGLE_MERCHANT_AGENTS = ["Googlebot", "Googlebot-Image", "Storebot-Google"] as const;
 const AI_DISCOVERY_AGENTS = [
   "OAI-SearchBot",
+  "GPTBot",
   "ChatGPT-User",
+  "ClaudeBot",
+  "Claude-Web",
+  "anthropic-ai",
   "PerplexityBot",
   "Perplexity-User",
   "Google-Extended",
+  "Applebot-Extended",
+  "Amazonbot",
+  "Meta-ExternalAgent",
+  "CCBot",
+  "Bytespider",
 ] as const;
 
 /** Dynamic robots.txt. This is the single robots policy for Keep TX Red.
@@ -24,7 +33,8 @@ export const Route = createFileRoute("/robots.txt")({
           // Merchant Center explicitly requires Googlebot and Googlebot-Image.
           // Storebot-Google is included for Google Shopping product analysis.
           // AI/search discovery agents are explicitly named so OpenAI,
-          // Perplexity, and Gemini/Google controls are unambiguous.
+          // Anthropic/Claude, Perplexity, Gemini/Google, Apple, Amazon,
+          // Meta, Common Crawl, and ByteDance controls are unambiguous.
           // Keep all named agents consecutive with `*` so this remains ONE
           // shared rules group instead of allowing a specific bot to bypass
           // the common Disallow rules below.

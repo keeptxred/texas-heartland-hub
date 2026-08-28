@@ -12,6 +12,33 @@ import { buildSeo, organizationJsonLd, SITE_URL, webPageJsonLd, websiteJsonLd } 
 const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
 const EMPTY_SHOP_SEARCH = { category: undefined, collection: undefined, q: undefined, sort: undefined } as const;
 
+const HOMEPAGE_FAQS = [
+  {
+    question: "What does Keep TX Red cover?",
+    answer: "Keep TX Red covers Texas news, elections, the Legislature, bills, public officials, government accountability, business, sports, and major policy debates affecting Texans.",
+  },
+  {
+    question: "Is Keep TX Red news, commentary, or both?",
+    answer: "Both. Keep TX Red publishes source-backed reporting and reference pages as well as clearly labeled commentary. The Texas Case section contains the site's permanent editorial positions, while factual reference resources preserve source and methodology context.",
+  },
+  {
+    question: "Where can I follow the 2026 Texas elections?",
+    answer: "Election Central brings together verified Texas races, candidates, polling, forecasts, voting information, and sourced results. It also links to methodology and official voting resources.",
+  },
+  {
+    question: "How does Keep TX Red source government and election information?",
+    answer: "Reference pages prioritize official Texas records, election authorities, legislative sources, government agencies, and other attributable primary sources. Keep TX Red separates sourced facts from forecasts, model output, and editorial conclusions.",
+  },
+  {
+    question: "How can I find my Texas representatives or track a bill?",
+    answer: "Use the Representatives and Find Your Representative resources for elected officials, and the Texas Bill Tracker for legislation, actions, sponsors, committees, and official documents.",
+  },
+  {
+    question: "How can I request a correction or send Keep TX Red a tip?",
+    answer: "Use the Contact page to send questions, tips, or correction requests. Keep TX Red's Editorial Standards explain the site's sourcing, accuracy, corrections, and AI-use practices.",
+  },
+] as const;
+
 const DISCOVERY_PRIORITY_GROUPS = [
   {
     title: "News & analysis",
@@ -39,6 +66,21 @@ const DISCOVERY_PRIORITY_GROUPS = [
   },
 ] as const;
 
+function homepageFaqJsonLd() {
+  return {
+    "@type": "FAQPage",
+    "@id": `${SITE_URL}/#faq`,
+    mainEntity: HOMEPAGE_FAQS.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  };
+}
+
 function homepageHead() {
   const electionTakeover = ELECTION_FEATURE_FLAGS.homepagePromotion;
   const title = electionTakeover
@@ -59,6 +101,7 @@ function homepageHead() {
           { ...organizationJsonLd(), "@context": undefined },
           { ...websiteJsonLd(), "@context": undefined },
           { ...webPageJsonLd({ name: title, description, path: "/", image: { url: heroFlag, caption: "Keep TX Red", alt: "Keep TX Red Texas politics and election coverage" } }), "@context": undefined, url: `${SITE_URL}/` },
+          homepageFaqJsonLd(),
         ],
       }),
     }],
@@ -123,6 +166,31 @@ function DiscoveryPriorityLinks() {
   );
 }
 
+function HomepageFaqs() {
+  return (
+    <section className="border-t bg-muted/30" aria-labelledby="keep-tx-red-faq">
+      <div className="mx-auto max-w-[1200px] px-6 py-14 sm:py-16">
+        <div className="max-w-3xl">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Keep TX Red FAQ</p>
+          <h2 id="keep-tx-red-faq" className="mt-2 font-display text-3xl sm:text-4xl">Questions about Keep TX Red</h2>
+          <p className="mt-3 leading-7 text-muted-foreground">A quick guide to what KTR covers, how its reference material is sourced, and where to find election, government, and correction resources.</p>
+        </div>
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
+          {HOMEPAGE_FAQS.map((item) => (
+            <article key={item.question} className="rounded-xl border bg-card p-5">
+              <h3 className="text-lg font-semibold text-foreground">{item.question}</h3>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.answer}</p>
+            </article>
+          ))}
+        </div>
+        <p className="mt-7 text-sm text-muted-foreground">
+          Need more detail? <Link to="/editorial-standards" className="font-semibold text-primary hover:underline">Read the Editorial Standards</Link> or <Link to="/contact" className="font-semibold text-primary hover:underline">contact Keep TX Red</Link>.
+        </p>
+      </div>
+    </section>
+  );
+}
+
 function Index() {
   const { articles } = Route.useLoaderData() as { articles: DailyArticle[] };
 
@@ -132,6 +200,7 @@ function Index() {
         <BreakingStrip articles={articles} />
         <ElectionRepositoryProvider><ElectionHomePage /></ElectionRepositoryProvider>
         <DiscoveryPriorityLinks />
+        <HomepageFaqs />
       </>
     );
   }
@@ -185,6 +254,8 @@ function PoliticalHomepage() {
       </div></section>
 
       <section className="mx-auto grid max-w-[1200px] gap-8 px-6 py-16 md:grid-cols-[1fr_0.8fr] md:items-center"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Support independent coverage</p><h2 className="mt-2 font-display text-4xl">Stay informed and support the newsroom</h2><p className="mt-4 max-w-2xl text-muted-foreground">Subscribe for important Texas updates and visit the Keep TX Red shop. Store purchases support independent reporting and platform operations.</p><div className="mt-6"><Link to="/shop" search={EMPTY_SHOP_SEARCH} className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Visit the shop</Link></div></div><NewsletterSignup /></section>
+
+      <HomepageFaqs />
     </main>
   );
 }

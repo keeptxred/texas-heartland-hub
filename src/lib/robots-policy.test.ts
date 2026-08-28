@@ -21,14 +21,23 @@ describe("robots policy", () => {
     expect(source).toContain('"Allow: /"');
   });
 
-  it("explicitly names AI discovery and user-fetch crawlers in the shared group", () => {
+  it("explicitly names AI discovery, training, and user-fetch crawlers in the shared group", () => {
     const source = readFileSync(dynamicRobotsPath, "utf8");
     for (const agent of [
       "OAI-SearchBot",
+      "GPTBot",
       "ChatGPT-User",
+      "ClaudeBot",
+      "Claude-Web",
+      "anthropic-ai",
       "PerplexityBot",
       "Perplexity-User",
       "Google-Extended",
+      "Applebot-Extended",
+      "Amazonbot",
+      "Meta-ExternalAgent",
+      "CCBot",
+      "Bytespider",
     ]) {
       expect(source).toContain(`"${agent}"`);
     }
