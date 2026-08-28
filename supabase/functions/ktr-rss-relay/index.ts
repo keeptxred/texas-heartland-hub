@@ -26,6 +26,7 @@ const FEEDS: Record<string, string> = {
   "google-pro-sports": "https://news.google.com/rss/search?q=%28%22Dallas+Mavericks%22+OR+%22Dallas+Cowboys%22+OR+%22Texas+Rangers%22+OR+%22Houston+Astros%22+OR+%22Houston+Texans%22+OR+%22San+Antonio+Spurs%22%29+when%3A2d&hl=en-US&gl=US&ceid=US%3Aen",
   "google-airports-travel": "https://news.google.com/rss/search?q=%28Texas+airport+TSA+OR+DFW+TSA+OR+Houston+airport+TSA+OR+Texas+airport+award+OR+Texas+airport+new+route%29+when%3A5d&hl=en-US&gl=US&ceid=US%3Aen",
   "google-local-oddities": "https://news.google.com/rss/search?q=%28Texas+robot+sidewalk+OR+Texas+unusual+city+project+OR+Texas+local+oddity+OR+Texas+community+milestone+OR+Texas+unique+tradition%29+when%3A5d&hl=en-US&gl=US&ceid=US%3Aen",
+  "google-human-interest-camera": "https://news.google.com/rss/search?q=Texas+%22caught+on+camera%22+when%3A3d&hl=en-US&gl=US&ceid=US%3Aen",
   "google-primary-governor": "https://news.google.com/rss/search?q=site%3Agov.texas.gov%2Fnews+when%3A3d&hl=en-US&gl=US&ceid=US%3Aen",
   "google-primary-attorney-general": "https://news.google.com/rss/search?q=site%3Atexasattorneygeneral.gov%2Fnews+when%3A3d&hl=en-US&gl=US&ceid=US%3Aen",
   "google-primary-dps": "https://news.google.com/rss/search?q=site%3Adps.texas.gov%2Fnews+when%3A3d&hl=en-US&gl=US&ceid=US%3Aen",
