@@ -127,9 +127,12 @@ jobs:
               echo
 
               if [[ "$finalize_status" != "200" ]] || ! jq -e '.ok == true' /tmp/newsroom-finalize.json >/dev/null 2>&1; then
-                echo "CLUSTERED_NEWSROOM_FINALIZE_WARNING slug=${slug} HTTP=${finalize_status}; article remains published."
-              elif ! jq -e '.image.ok == true' /tmp/newsroom-finalize.json >/dev/null 2>&1; then
-                echo "CLUSTERED_NEWSROOM_IMAGE_WARNING slug=${slug}; article remains published and image can be remediated separately."
+                echo "CLUSTERED_NEWSROOM_FINALIZE_FAILED slug=${slug} HTTP=${finalize_status}; article remains published for safe recovery, but this run is not a production pass." >&2
+                exit 1
+              fi
+              if ! jq -e '.image.ok == true' /tmp/newsroom-finalize.json >/dev/null 2>&1; then
+                echo "CLUSTERED_NEWSROOM_IMAGE_FAILED slug=${slug}; article remains published for safe recovery, but this run is not a production pass." >&2
+                exit 1
               fi
 
               echo "DAILY_NEWS_PUBLISH_SUCCESS clustered_slug=${slug} sources=${source_count} primary=${primary_count} ai_calls=${ai_calls} repair=${repair}"
