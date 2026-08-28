@@ -30,6 +30,8 @@ const ELECTION_DISCOVERY_LINKS = [
   ["Voting", "/elections/voting"],
 ] as const;
 
+const ELECTION_CENTRAL_H1 = "2026 Texas Election Central: Races, Candidates, Polls & Results";
+
 export function ElectionLayout({
   title,
   description,
@@ -53,6 +55,7 @@ export function ElectionLayout({
   const normalized = pathname.length > 1 && pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
   const isCanonicalPage = Boolean(canonicalPath) && canonicalPath === normalized;
   const isElectionPage = normalized === "/elections" || normalized.startsWith("/elections/");
+  const heading = title === "Texas Election Central" ? ELECTION_CENTRAL_H1 : title;
   const defaultSchema = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -109,7 +112,7 @@ export function ElectionLayout({
                   {eyebrow}
                 </p>
                 <h1 className="mt-2 font-display text-4xl leading-none tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-                  {title}
+                  {heading}
                 </h1>
                 <p className="mt-4 max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg">
                   {description}
