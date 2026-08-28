@@ -229,7 +229,11 @@ jobs:
 
           for attempt in $(seq 1 120); do
             run_json="$(gh api "repos/$REPOSITORY/actions/runs/$RUN_ID")"
-            status="$(python3 - "$run_json" -c 'import json,sys; print(json.loads(sys.argv[1]).get("status") or "")' 2>/dev/null || true)"
+            status="$(python3 - "$run_json" <<'PY'
+          import json, sys
+          print(json.loads(sys.argv[1]).get('status') or '')
+          PY
+            )"
             conclusion="$(python3 - "$run_json" <<'PY'
           import json, sys
           print(json.loads(sys.argv[1]).get('conclusion') or '')
