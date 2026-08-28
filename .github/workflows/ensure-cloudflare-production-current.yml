@@ -3,6 +3,8 @@ name: Ensure Cloudflare Production Matches Main
 on:
   schedule:
     - cron: '*/5 * * * *'
+  push:
+    branches: [main]
   pull_request:
     types: [opened, synchronize, reopened]
     branches: [main]
@@ -13,6 +15,7 @@ on:
 permissions:
   contents: read
   actions: write
+  checks: read
   statuses: write
 
 concurrency:
@@ -22,60 +25,368 @@ concurrency:
 jobs:
   ensure:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - name: Compare production deploy SHA with main
+      - name: Resolve verified current main and production state
         id: gate
         env:
           GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          REPOSITORY: ${{ github.repository }}
+        shell: bash
         run: |
           set -euo pipefail
-          main_sha="$(gh api "repos/${{ github.repository }}/commits/main" --jq '.sha')"
-          last_deployed_sha="$(gh api "repos/${{ github.repository }}/actions/workflows/deploy-cloudflare-production.yml/runs?status=success&per_page=20" --jq '.workflow_runs[0].head_sha // ""')"
 
+          main_sha="$(gh api "repos/$REPOSITORY/commits/main" --jq '.sha')"
           echo "main_sha=$main_sha" >> "$GITHUB_OUTPUT"
           echo "main_sha=$main_sha"
-          echo "last_deployed_sha=${last_deployed_sha:-none}"
 
-          if [[ "$main_sha" == "$last_deployed_sha" ]]; then
-            echo "deploy=false" >> "$GITHUB_OUTPUT"
-            echo "Production already matches main; no deployment needed."
-          else
-            echo "deploy=true" >> "$GITHUB_OUTPUT"
-            echo "Production is behind main; dispatching deployment."
+          attempts=1
+          if [[ "$EVENT_NAME" == 'push' ]]; then
+            attempts=36
           fi
 
-      - name: Dispatch production Cloudflare workflow
+          verify_state=''
+          for attempt in $(seq 1 "$attempts"); do
+            current_main="$(gh api "repos/$REPOSITORY/commits/main" --jq '.sha')"
+            if [[ "$current_main" != "$main_sha" ]]; then
+              echo "deploy=false" >> "$GITHUB_OUTPUT"
+              echo "verified=false" >> "$GITHUB_OUTPUT"
+              echo "Main advanced from $main_sha to $current_main while waiting for verification; a newer reconciliation run will handle it."
+              exit 0
+            fi
+
+            verify_state="$(gh api \
+              -H 'Accept: application/vnd.github+json' \
+              "repos/$REPOSITORY/commits/$main_sha/check-runs?per_page=100" \
+              --jq '[.check_runs[] | select(.name == "verify")] | sort_by(.started_at // .created_at) | last | (.conclusion // .status // "")')"
+
+            if [[ "$verify_state" == 'success' ]]; then
+              break
+            fi
+            if [[ "$verify_state" == 'failure' || "$verify_state" == 'cancelled' || "$verify_state" == 'timed_out' || "$verify_state" == 'action_required' || "$verify_state" == 'stale' ]]; then
+              echo "deploy=false" >> "$GITHUB_OUTPUT"
+              echo "verified=false" >> "$GITHUB_OUTPUT"
+              echo "Current main $main_sha has terminal verify state '$verify_state'; production will not be changed."
+              exit 0
+            fi
+
+            if [[ "$attempt" -lt "$attempts" ]]; then
+              echo "Waiting for verify on current main $main_sha (state=${verify_state:-not-created}, attempt $attempt/$attempts)."
+              sleep 10
+            fi
+          done
+
+          if [[ "$verify_state" != 'success' ]]; then
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            echo "verified=false" >> "$GITHUB_OUTPUT"
+            echo "Current main $main_sha is not verified yet (state=${verify_state:-not-created}); production will not be changed."
+            exit 0
+          fi
+
+          echo "verified=true" >> "$GITHUB_OUTPUT"
+
+          status_json="$(gh api "repos/$REPOSITORY/commits/$main_sha/status")"
+          production_state="$(python3 - "$status_json" <<'PY'
+          import json, sys
+          data = json.loads(sys.argv[1])
+          for row in data.get('statuses', []):
+              if row.get('context') == 'keeptxred-production-current':
+                  print(row.get('state') or '')
+                  break
+          else:
+              print('')
+          PY
+          )"
+          production_target="$(python3 - "$status_json" <<'PY'
+          import json, sys
+          data = json.loads(sys.argv[1])
+          for row in data.get('statuses', []):
+              if row.get('context') == 'keeptxred-production-current':
+                  print(row.get('target_url') or '')
+                  break
+          else:
+              print('')
+          PY
+          )"
+
+          echo "production_state=${production_state:-none}"
+          if [[ "$production_state" == 'success' ]]; then
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            echo "Production is already recorded as current for verified main $main_sha."
+            exit 0
+          fi
+
+          if [[ "$production_state" == 'pending' && "$production_target" =~ /actions/runs/([0-9]+) ]]; then
+            existing_run_id="${BASH_REMATCH[1]}"
+            existing_json="$(gh api "repos/$REPOSITORY/actions/runs/$existing_run_id" || true)"
+            existing_head="$(python3 - "$existing_json" <<'PY'
+          import json, sys
+          try:
+              print(json.loads(sys.argv[1]).get('head_sha') or '')
+          except Exception:
+              print('')
+          PY
+            )"
+            existing_status="$(python3 - "$existing_json" <<'PY'
+          import json, sys
+          try:
+              print(json.loads(sys.argv[1]).get('status') or '')
+          except Exception:
+              print('')
+          PY
+            )"
+            if [[ "$existing_head" == "$main_sha" && "$existing_status" != 'completed' && -n "$existing_status" ]]; then
+              echo "deploy=false" >> "$GITHUB_OUTPUT"
+              echo "existing_run_id=$existing_run_id" >> "$GITHUB_OUTPUT"
+              echo "A custom-domain deployment for current main is already $existing_status (run $existing_run_id)."
+              exit 0
+            fi
+          fi
+
+          echo "deploy=true" >> "$GITHUB_OUTPUT"
+          echo "Verified main $main_sha is not recorded as current in production; deployment is required."
+
+      - name: Dispatch exact verified main to production custom domain
+        id: dispatch
         if: steps.gate.outputs.deploy == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          MAIN_SHA: ${{ steps.gate.outputs.main_sha }}
+        shell: bash
         run: |
           set -euo pipefail
+
+          current_main="$(gh api "repos/$REPOSITORY/commits/main" --jq '.sha')"
+          if [[ "$current_main" != "$MAIN_SHA" ]]; then
+            echo "Current main advanced to $current_main before deployment dispatch; refusing stale production deployment."
+            exit 0
+          fi
+
+          before_id="$(gh api "repos/$REPOSITORY/actions/workflows/deploy-cloudflare-production.yml/runs?event=workflow_dispatch&per_page=1" --jq '.workflow_runs[0].id // 0')"
+
           gh workflow run deploy-cloudflare-production.yml \
-            --repo "${{ github.repository }}" \
+            --repo "$REPOSITORY" \
             --ref main \
             -f activate_custom_domain=true \
             -f production_hostname=keeptxred.com
 
-      - name: Publish production-current status
-        if: always() && steps.gate.outputs.main_sha != ''
-        env:
-          GH_TOKEN: ${{ github.token }}
-          MAIN_SHA: ${{ steps.gate.outputs.main_sha }}
-          DEPLOY_NEEDED: ${{ steps.gate.outputs.deploy }}
-        run: |
-          set -euo pipefail
-          if [[ "$DEPLOY_NEEDED" == 'false' ]]; then
-            state='success'
-            description='Cloudflare production matches current main'
-          else
-            state='pending'
-            description='Cloudflare production reconciliation dispatched'
+          run_id=''
+          run_sha=''
+          run_url=''
+          for attempt in $(seq 1 30); do
+            runs_json="$(gh api "repos/$REPOSITORY/actions/workflows/deploy-cloudflare-production.yml/runs?event=workflow_dispatch&per_page=10")"
+            read -r run_id run_sha run_url < <(python3 - "$runs_json" "$before_id" <<'PY'
+          import json, sys
+          data = json.loads(sys.argv[1])
+          before = int(sys.argv[2])
+          for row in data.get('workflow_runs', []):
+              if int(row.get('id') or 0) > before:
+                  print(row.get('id') or '', row.get('head_sha') or '', row.get('html_url') or '')
+                  break
+          PY
+            )
+            if [[ -n "$run_id" ]]; then
+              break
+            fi
+            sleep 2
+          done
+
+          if [[ -z "$run_id" ]]; then
+            echo "The production workflow dispatch was accepted but no new run could be resolved." >&2
+            exit 1
+          fi
+
+          if [[ "$run_sha" != "$MAIN_SHA" ]]; then
+            echo "Dispatched production run $run_id resolved to $run_sha instead of verified $MAIN_SHA; cancelling before deployment." >&2
+            gh api --method POST "repos/$REPOSITORY/actions/runs/$run_id/cancel" >/dev/null || true
+            exit 1
           fi
 
           gh api --method POST \
-            "repos/${{ github.repository }}/statuses/$MAIN_SHA" \
-            -f state="$state" \
+            "repos/$REPOSITORY/statuses/$MAIN_SHA" \
+            -f state='pending' \
             -f context='keeptxred-production-current' \
-            -f description="$description" >/dev/null
+            -f description='Verified custom-domain deployment in progress' \
+            -f target_url="$run_url" >/dev/null
 
-          echo "Published keeptxred-production-current=$state for $MAIN_SHA"
+          echo "run_id=$run_id" >> "$GITHUB_OUTPUT"
+          echo "run_url=$run_url" >> "$GITHUB_OUTPUT"
+          echo "Dispatched verified production run $run_id for $MAIN_SHA."
+
+      - name: Wait for verified custom-domain deployment
+        id: deployment
+        if: steps.dispatch.outputs.run_id != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          MAIN_SHA: ${{ steps.gate.outputs.main_sha }}
+          RUN_ID: ${{ steps.dispatch.outputs.run_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          for attempt in $(seq 1 120); do
+            run_json="$(gh api "repos/$REPOSITORY/actions/runs/$RUN_ID")"
+            status="$(python3 - "$run_json" <<'PY'
+          import json, sys
+          print(json.loads(sys.argv[1]).get('status') or '')
+          PY
+            )"
+            conclusion="$(python3 - "$run_json" <<'PY'
+          import json, sys
+          print(json.loads(sys.argv[1]).get('conclusion') or '')
+          PY
+            )"
+
+            current_main="$(gh api "repos/$REPOSITORY/commits/main" --jq '.sha')"
+            if [[ "$current_main" != "$MAIN_SHA" && "$status" != 'completed' ]]; then
+              echo "Main advanced to $current_main while run $RUN_ID was still $status; cancelling stale deployment." >&2
+              gh api --method POST "repos/$REPOSITORY/actions/runs/$RUN_ID/cancel" >/dev/null || true
+              exit 1
+            fi
+
+            if [[ "$status" == 'completed' ]]; then
+              if [[ "$conclusion" != 'success' ]]; then
+                echo "Verified production run $RUN_ID completed with conclusion '$conclusion'." >&2
+                exit 1
+              fi
+              echo "success=true" >> "$GITHUB_OUTPUT"
+              echo "Verified custom-domain deployment $RUN_ID completed successfully."
+              exit 0
+            fi
+
+            sleep 5
+          done
+
+          echo "Timed out waiting for verified production run $RUN_ID." >&2
+          exit 1
+
+      - name: Verify live GEO discovery endpoints
+        if: steps.deployment.outputs.success == 'true'
+        env:
+          SITE_URL: https://keeptxred.com
+        shell: bash
+        run: |
+          set -euo pipefail
+          robots="$(mktemp)"
+          sitemap_headers="$(mktemp)"
+          sitemap_body="$(mktemp)"
+          trap 'rm -f "$robots" "$sitemap_headers" "$sitemap_body"' EXIT
+
+          curl --location --retry 10 --retry-delay 3 --retry-all-errors \
+            --connect-timeout 10 --max-time 60 \
+            --fail-with-body --silent --show-error \
+            -o "$robots" "$SITE_URL/robots.txt"
+
+          python3 - "$robots" <<'PY'
+          import pathlib, sys
+          text = pathlib.Path(sys.argv[1]).read_text(encoding='utf-8')
+          required = {
+              'OAI-SearchBot', 'GPTBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-Web',
+              'anthropic-ai', 'PerplexityBot', 'Perplexity-User', 'Google-Extended',
+              'Applebot-Extended', 'Amazonbot', 'Meta-ExternalAgent', 'CCBot', 'Bytespider',
+          }
+          blocks = {}
+          agents = []
+          rules = []
+          def flush():
+              if agents:
+                  for agent in agents:
+                      blocks.setdefault(agent.lower(), []).extend(rules)
+          for raw in text.splitlines() + ['']:
+              line = raw.strip()
+              if not line or line.startswith('#'):
+                  flush(); agents = []; rules = []
+                  continue
+              key, sep, value = line.partition(':')
+              if not sep:
+                  continue
+              key = key.strip().lower(); value = value.strip()
+              if key == 'user-agent':
+                  if rules:
+                      flush(); agents = []; rules = []
+                  agents.append(value)
+              elif key in {'allow', 'disallow'} and agents:
+                  rules.append((key, value))
+          missing = []
+          for agent in sorted(required):
+              agent_rules = blocks.get(agent.lower())
+              if not agent_rules:
+                  missing.append(agent)
+                  continue
+              if ('disallow', '/') in agent_rules:
+                  raise SystemExit(f'{agent} is blocked at the root')
+              if ('allow', '/') not in agent_rules:
+                  raise SystemExit(f'{agent} lacks explicit Allow: /')
+          if missing:
+              raise SystemExit('Missing AI crawler groups: ' + ', '.join(missing))
+          expected = 'Sitemap: https://keeptxred.com/sitemap.xml'
+          if expected not in text:
+              raise SystemExit(f'robots.txt is missing {expected}')
+          print('Live robots.txt permits all required AI discovery crawlers.')
+          PY
+
+          curl --location --retry 10 --retry-delay 3 --retry-all-errors \
+            --connect-timeout 10 --max-time 60 \
+            --fail-with-body --silent --show-error \
+            -D "$sitemap_headers" -o "$sitemap_body" "$SITE_URL/sitemap.xml"
+
+          python3 - "$sitemap_headers" "$sitemap_body" <<'PY'
+          import pathlib, sys, xml.etree.ElementTree as ET
+          headers = pathlib.Path(sys.argv[1]).read_text(encoding='utf-8').lower()
+          if 'content-type: application/xml' not in headers and 'content-type: text/xml' not in headers:
+              raise SystemExit('sitemap.xml did not return an XML content type')
+          root = ET.parse(sys.argv[2]).getroot()
+          if not root.tag.endswith('sitemapindex'):
+              raise SystemExit(f'Expected sitemapindex root, got {root.tag!r}')
+          ns = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+          locations = [n.text.strip() for n in root.findall('sm:sitemap/sm:loc', ns) if n.text]
+          required = {
+              'https://keeptxred.com/sitemap-pages.xml',
+              'https://keeptxred.com/sitemap-news.xml',
+              'https://keeptxred.com/sitemap-evergreen.xml',
+              'https://keeptxred.com/sitemap-elections.xml',
+          }
+          missing = sorted(required.difference(locations))
+          if missing:
+              raise SystemExit('Missing required child sitemaps: ' + ', '.join(missing))
+          print(f'Live sitemap index is valid with {len(locations)} child sitemaps.')
+          PY
+
+      - name: Publish production-current success
+        if: steps.deployment.outputs.success == 'true' && success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          MAIN_SHA: ${{ steps.gate.outputs.main_sha }}
+          RUN_URL: ${{ steps.dispatch.outputs.run_url }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api --method POST \
+            "repos/$REPOSITORY/statuses/$MAIN_SHA" \
+            -f state='success' \
+            -f context='keeptxred-production-current' \
+            -f description='Verified Cloudflare custom-domain production is current' \
+            -f target_url="$RUN_URL" >/dev/null
+          echo "Published keeptxred-production-current=success for $MAIN_SHA"
+
+      - name: Publish production-current failure
+        if: failure() && steps.gate.outputs.main_sha != '' && steps.dispatch.outputs.run_id != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          MAIN_SHA: ${{ steps.gate.outputs.main_sha }}
+          RUN_URL: ${{ steps.dispatch.outputs.run_url }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api --method POST \
+            "repos/$REPOSITORY/statuses/$MAIN_SHA" \
+            -f state='failure' \
+            -f context='keeptxred-production-current' \
+            -f description='Verified custom-domain deployment or GEO smoke failed' \
+            -f target_url="$RUN_URL" >/dev/null
+          echo "Published keeptxred-production-current=failure for $MAIN_SHA"
