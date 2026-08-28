@@ -58,25 +58,12 @@ jobs:
               exit 0
             fi
 
-            # Bound the response before local parsing. This avoids pushing the
-            # repository's full Actions history through the runner argv limit.
             verify_json="$(gh api \
               -H 'Accept: application/vnd.github+json' \
               "repos/$REPOSITORY/actions/workflows/shared-vitest.yml/runs?branch=main&per_page=100" \
               --jq '{workflow_runs: [.workflow_runs[] | {head_sha, status, conclusion}]}')"
-            read -r verify_success verify_active verify_terminal < <(
-              printf '%s' "$verify_json" | python3 -c '
-import json, sys
-
-data = json.load(sys.stdin)
-target_sha = sys.argv[1]
-rows = [row for row in data.get("workflow_runs", []) if row.get("head_sha") == target_sha]
-success = any(row.get("status") == "completed" and row.get("conclusion") == "success" for row in rows)
-active = any(row.get("status") != "completed" for row in rows)
-terminal = bool(rows) and not success and not active
-print("true" if success else "false", "true" if active else "false", "true" if terminal else "false")
-' "$main_sha"
-            )
+            verify_state="$(printf '%s' "$verify_json" | jq -r --arg sha "$main_sha" '[.workflow_runs[] | select(.head_sha == $sha)] as $rows | [(any($rows[]; .status == "completed" and .conclusion == "success")), (any($rows[]; .status != "completed")), (($rows | length) > 0 and (any($rows[]; .status == "completed" and .conclusion == "success") | not) and (any($rows[]; .status != "completed") | not))] | map(tostring) | @tsv')"
+            IFS=$'\t' read -r verify_success verify_active verify_terminal <<< "$verify_state"
 
             if [[ "$verify_success" == 'true' ]]; then
               echo "Exact current main $main_sha has a successful Repository test and build health run."
