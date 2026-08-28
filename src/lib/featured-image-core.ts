@@ -18,6 +18,8 @@ export type VisionVerdict = { matches: boolean; photorealistic: boolean; reason:
 
 const MILITARY_HONORS_RE = /\b(purple heart|medal of honor|military honor(?:s)?|military award(?:s)?|service member(?:s)?|servicemember(?:s)?|fallen (?:service member|servicemember|soldier|marine|airman|sailor|troop|hero)(?:s)?|memorial day|veterans day|veteran(?:s)?|remembrance|military remembrance|wounded warrior(?:s)?|combat wounded|killed in action|missing in action|pow|mia)\b/i;
 const WEATHER_PREPAREDNESS_RE = /\b(emergency plan|preparedness|prepared|checklist|emergency kit|go bag|family communication|shelter in place|evacuation plan|year-round)\b/i;
+const SENSITIVE_VIOLENCE_RE = /\b(shooting|shot|gunfire|road rage|killed|dead|death|fatal|murder|homicide|victim|suspect|attack|assault)\b/i;
+const DATA_CENTER_POLICY_RE = /\b(data center(?:s)?|data-center(?:s)?|server farm(?:s)?|hyperscale)\b/i;
 
 const DOMAIN_KEYWORDS: Array<[Domain, RegExp]> = [
   ["wildlife", /\b(jellyfish|shark|whale|dolphin|bird|fish|species|wildlife|reef|coral|deer|coyote|snake|alligator|manatee|turtle|habitat|ecosystem|marine|hunting|hunter(?:s)?|fishing|angler(?:s)?)\b/i],
@@ -93,6 +95,7 @@ export function buildImagePrompt(subject: SubjectExtract, extraGuidance = ""): s
   const loc = subject.locations.slice(0, 2).join(", ");
   const correction = extraGuidance ? `Correction from rejected attempt: ${extraGuidance}. ` : "";
   const evidenceLock = subject.evidenceGuidance ? `EVIDENCE CONSTRAINTS: ${subject.evidenceGuidance} ` : "";
+  const storyText = `${subject.title} ${subject.firstParagraph} ${subject.concreteSubject}`;
   const isMilitaryHonors = subject.domain === "military" && MILITARY_HONORS_RE.test(`${subject.title} ${subject.firstParagraph}`);
   const militaryHonorsLock = isMilitaryHonors
     ? "MILITARY HONORS OVERRIDE: This is an honors/remembrance story. Make the named medal, decoration, folded flag, memorial, or remembrance subject dominate the frame. Do not center a politician, government building, press event, generic military base, aircraft, hangar, unrelated combat scene, or generic troops. "
@@ -100,6 +103,12 @@ export function buildImagePrompt(subject: SubjectExtract, extraGuidance = ""): s
   const isWeatherPreparedness = subject.domain === "weather" && WEATHER_PREPAREDNESS_RE.test(`${subject.title} ${subject.firstParagraph}`);
   if (isWeatherPreparedness) {
     return `${correction}${evidenceLock}OBJECT-ONLY TEXAS PREPAREDNESS DOCUMENTARY PHOTOGRAPH. ZERO PEOPLE IN FRAME: no adults, children, faces, hands, silhouettes, or human figures. Horizontal 16:9, physical 35mm camera look, bright natural indoor daylight, realistic household textures and depth of field. Story: ${subject.title}. PRIMARY SUBJECT: a Texas household emergency-preparedness inventory arranged on a kitchen, dining, mudroom, or utility-room surface before any emergency. Clearly show multiple hazard-specific objects: sealed water jugs and a battery-powered fan for extreme heat and outages; outdoor faucet covers or pipe insulation for hard freezes; weather radio, flashlights, batteries and power bank for storms and outages; N95 masks for wildfire smoke; waterproof document pouch and packed evacuation bag for flood or hurricane evacuation; first-aid kit, medication organizer, pet carrier or leash, and shelf-stable food. ${loc ? `Location context: ${loc}, Texas.` : "Believable Texas home setting."} No storm scene, darkness, frightened family, people, survivalist fantasy, readable text, logos, maps, flags, state shapes, illustration, infographic, collage, poster, or graphic design.`.slice(0, 1800);
+  }
+  if (SENSITIVE_VIOLENCE_RE.test(storyText)) {
+    return `${correction}${evidenceLock}NON-GRAPHIC REAL NEWS PHOTOGRAPH ONLY. Horizontal 16:9 documentary photojournalism captured with a physical camera, natural daylight, realistic roadway textures and depth of field. Story context: ${subject.title}. PRIMARY SUBJECT: the real-world Texas location and traffic aftermath relevant to the report, such as an empty interstate lane, overpass, shoulder, lane-closure cones, traffic-control vehicles, or distant generic law-enforcement vehicles where appropriate. ${loc ? `Location context: ${loc}, Texas.` : "Believable Texas roadway setting."} ZERO PEOPLE and ZERO VIOLENCE IN FRAME: no victim, suspect, body, blood, injury, weapon, firearm, gun, muzzle flash, confrontation, crash victim, reenactment, speech bubble, dramatic action, or identifiable person. The image must look like a restrained local-news location photograph, not a reconstruction of the crime. No illustration, cartoon, vector art, poster, collage, infographic, typography, readable signage, logo, or sensational imagery.`.slice(0, 1800);
+  }
+  if (subject.domain === "energy" && DATA_CENTER_POLICY_RE.test(storyText)) {
+    return `${correction}${evidenceLock}INFRASTRUCTURE-ONLY REAL NEWS PHOTOGRAPH. ZERO PEOPLE IN FRAME. Horizontal 16:9 documentary photojournalism captured with a physical camera, natural daylight, realistic industrial materials, optics and depth of field. Story context: ${subject.title}. PRIMARY SUBJECT: a believable Texas data-center campus or large server-facility exterior with cooling equipment, utility substation, transmission lines, transformers, fenced industrial grounds, or electrical infrastructure clearly visible. ${loc ? `Location context: ${loc}, Texas.` : "Believable Texas industrial setting."} Represent the policy action only through the infrastructure under review; do not depict a governor, politician, public official, press conference, podium, government signing, identifiable face, protest, or invented readable document. No people, portraits, illustration, cartoon, vector art, poster, collage, infographic, typography, readable signs, logos, flags, or state-shaped graphics.`.slice(0, 1800);
   }
   if (subject.domain === "legal") {
     return `${correction}${evidenceLock}Professional documentary photojournalism photograph, horizontal 16:9. Story: ${subject.title}. Photograph ${DOMAIN_STEER.legal}. Natural daylight or realistic courtroom lighting, 35mm camera, lifelike stone and wood, true photographic depth of field, realistic architecture, neutral news photography. PRIMARY SUBJECT: a believable real Texas courthouse or courtroom representing the judicial ruling. ${loc ? `Location context: ${loc}, Texas.` : "Texas setting."} Election-law context may appear only as subtle ordinary paperwork or voting materials in the background. Do not use a politician, Texas-shaped graphic, map, flagpole, capitol dome, campaign rally, podium, poster, illustration, vector art, cartoon, infographic, collage, text overlay, seal, logo, or symbolic state graphic.`.slice(0, 1800);
@@ -120,10 +129,20 @@ export function buildNegativeImagePrompt(subject: SubjectExtract, rejectedReason
     "split screen", "text", "headline", "caption", "watermark", "logo", "low detail", "plastic texture",
     "CGI", "concept art", "comic", "anime", "stylized", "surreal",
   ];
+  const storyText = `${subject.title} ${subject.firstParagraph} ${subject.concreteSubject}`;
   if (subject.domain === "weather" && WEATHER_PREPAREDNESS_RE.test(`${subject.title} ${subject.firstParagraph}`)) items.unshift(
     "people", "person", "family", "adults", "children", "faces", "hands", "human figures", "silhouettes",
     "family huddled in darkness", "generic disaster scene", "single dramatic storm", "disaster movie scene",
     "storm spectacle", "survivalist fantasy", "Texas-shaped symbol",
+  );
+  if (SENSITIVE_VIOLENCE_RE.test(storyText)) items.unshift(
+    "people", "person", "faces", "hands", "victim", "suspect", "body", "blood", "injury", "weapon", "firearm",
+    "gun", "muzzle flash", "shooting", "confrontation", "reenactment", "speech bubble", "crime reconstruction",
+    "sensational violence", "dramatic crash victim",
+  );
+  if (subject.domain === "energy" && DATA_CENTER_POLICY_RE.test(storyText)) items.unshift(
+    "people", "person", "politician", "governor", "public official", "portrait", "identifiable face", "press conference",
+    "podium", "government signing", "protest", "readable document", "campaign imagery",
   );
   if (subject.evidenceGuidance) items.push(
     "fabricated recognizable face", "invented casualty", "invented damage", "invented crowd", "invented protest",
