@@ -58,35 +58,12 @@ jobs:
               exit 0
             fi
 
-            # Keep only the three fields used by the verifier. Passing the full
-            # workflow-run payload can exceed the runner's argv size once the
-            # repository has enough Actions history.
             verify_json="$(gh api \
               -H 'Accept: application/vnd.github+json' \
               "repos/$REPOSITORY/actions/workflows/shared-vitest.yml/runs?branch=main&per_page=100" \
               --jq '{workflow_runs: [.workflow_runs[] | {head_sha, status, conclusion}]}')"
-            read -r verify_success verify_active verify_terminal < <(python3 - "$verify_json" "$main_sha" <<'PY'
-          import json, sys
-
-          data = json.loads(sys.argv[1])
-          target_sha = sys.argv[2]
-          rows = [
-              row for row in data.get('workflow_runs', [])
-              if row.get('head_sha') == target_sha
-          ]
-          success = any(
-              row.get('status') == 'completed' and row.get('conclusion') == 'success'
-              for row in rows
-          )
-          active = any(row.get('status') != 'completed' for row in rows)
-          terminal = bool(rows) and not success and not active
-          print(
-              'true' if success else 'false',
-              'true' if active else 'false',
-              'true' if terminal else 'false',
-          )
-          PY
-            )
+            verify_state="$(printf '%s' "$verify_json" | jq -r --arg sha "$main_sha" '[.workflow_runs[] | select(.head_sha == $sha)] as $rows | [(any($rows[]; .status == "completed" and .conclusion == "success")), (any($rows[]; .status != "completed")), (($rows | length) > 0 and (any($rows[]; .status == "completed" and .conclusion == "success") | not) and (any($rows[]; .status != "completed") | not))] | map(tostring) | @tsv')"
+            IFS=$'\t' read -r verify_success verify_active verify_terminal <<< "$verify_state"
 
             if [[ "$verify_success" == 'true' ]]; then
               echo "Exact current main $main_sha has a successful Repository test and build health run."
@@ -108,29 +85,8 @@ jobs:
 
           echo "verified=true" >> "$GITHUB_OUTPUT"
 
-          status_json="$(gh api "repos/$REPOSITORY/commits/$main_sha/status")"
-          production_state="$(python3 - "$status_json" <<'PY'
-          import json, sys
-          data = json.loads(sys.argv[1])
-          for row in data.get('statuses', []):
-              if row.get('context') == 'keeptxred-production-current':
-                  print(row.get('state') or '')
-                  break
-          else:
-              print('')
-          PY
-          )"
-          production_target="$(python3 - "$status_json" <<'PY'
-          import json, sys
-          data = json.loads(sys.argv[1])
-          for row in data.get('statuses', []):
-              if row.get('context') == 'keeptxred-production-current':
-                  print(row.get('target_url') or '')
-                  break
-          else:
-              print('')
-          PY
-          )"
+          production_state="$(gh api "repos/$REPOSITORY/commits/$main_sha/status" --jq '[.statuses[] | select(.context == "keeptxred-production-current")][0].state // ""')"
+          production_target="$(gh api "repos/$REPOSITORY/commits/$main_sha/status" --jq '[.statuses[] | select(.context == "keeptxred-production-current")][0].target_url // ""')"
 
           echo "production_state=${production_state:-none}"
           if [[ "$production_state" == 'success' ]]; then
@@ -141,23 +97,8 @@ jobs:
 
           if [[ "$production_state" == 'pending' && "$production_target" =~ /actions/runs/([0-9]+) ]]; then
             existing_run_id="${BASH_REMATCH[1]}"
-            existing_json="$(gh api "repos/$REPOSITORY/actions/runs/$existing_run_id" || true)"
-            existing_head="$(python3 - "$existing_json" <<'PY'
-          import json, sys
-          try:
-              print(json.loads(sys.argv[1]).get('head_sha') or '')
-          except Exception:
-              print('')
-          PY
-            )"
-            existing_status="$(python3 - "$existing_json" <<'PY'
-          import json, sys
-          try:
-              print(json.loads(sys.argv[1]).get('status') or '')
-          except Exception:
-              print('')
-          PY
-            )"
+            existing_head="$(gh api "repos/$REPOSITORY/actions/runs/$existing_run_id" --jq '.head_sha // ""' 2>/dev/null || true)"
+            existing_status="$(gh api "repos/$REPOSITORY/actions/runs/$existing_run_id" --jq '.status // ""' 2>/dev/null || true)"
             if [[ "$existing_head" == "$main_sha" && "$existing_status" != 'completed' && -n "$existing_status" ]]; then
               echo "deploy=false" >> "$GITHUB_OUTPUT"
               echo "existing_run_id=$existing_run_id" >> "$GITHUB_OUTPUT"
@@ -198,18 +139,12 @@ jobs:
           run_sha=''
           run_url=''
           for attempt in $(seq 1 30); do
-            runs_json="$(gh api "repos/$REPOSITORY/actions/workflows/deploy-cloudflare-production.yml/runs?event=workflow_dispatch&per_page=10")"
-            read -r run_id run_sha run_url < <(python3 - "$runs_json" "$before_id" <<'PY'
-          import json, sys
-          data = json.loads(sys.argv[1])
-          before = int(sys.argv[2])
-          for row in data.get('workflow_runs', []):
-              if int(row.get('id') or 0) > before:
-                  print(row.get('id') or '', row.get('head_sha') or '', row.get('html_url') or '')
-                  break
-          PY
-            )
-            if [[ -n "$run_id" ]]; then
+            run_record="$(gh api \
+              "repos/$REPOSITORY/actions/workflows/deploy-cloudflare-production.yml/runs?event=workflow_dispatch&per_page=10" \
+              --jq ".workflow_runs[] | select(.id > $before_id) | [.id, .head_sha, .html_url] | @tsv" \
+              | head -n 1)"
+            if [[ -n "$run_record" ]]; then
+              IFS=$'\t' read -r run_id run_sha run_url <<< "$run_record"
               break
             fi
             sleep 2
@@ -250,17 +185,8 @@ jobs:
           set -euo pipefail
 
           for attempt in $(seq 1 120); do
-            run_json="$(gh api "repos/$REPOSITORY/actions/runs/$RUN_ID")"
-            status="$(python3 - "$run_json" <<'PY'
-          import json, sys
-          print(json.loads(sys.argv[1]).get('status') or '')
-          PY
-            )"
-            conclusion="$(python3 - "$run_json" <<'PY'
-          import json, sys
-          print(json.loads(sys.argv[1]).get('conclusion') or '')
-          PY
-            )"
+            status="$(gh api "repos/$REPOSITORY/actions/runs/$RUN_ID" --jq '.status // ""')"
+            conclusion="$(gh api "repos/$REPOSITORY/actions/runs/$RUN_ID" --jq '.conclusion // ""')"
 
             current_main="$(gh api "repos/$REPOSITORY/commits/main" --jq '.sha')"
             if [[ "$current_main" != "$MAIN_SHA" && "$status" != 'completed' ]]; then
