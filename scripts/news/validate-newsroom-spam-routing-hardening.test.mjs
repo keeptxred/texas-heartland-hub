@@ -3,6 +3,7 @@ import fs from 'node:fs';
 
 const lowValue = fs.readFileSync('src/lib/low-value-titles.ts', 'utf8');
 const migration = fs.readFileSync('supabase/migrations/20260828223500_harden_newsroom_spam_and_local_routing.sql', 'utf8');
+const refinement = fs.readFileSync('supabase/migrations/20260828224500_refine_newsroom_spam_national_filter.sql', 'utf8');
 
 test('low-value detector blocks affiliate sports spam without blocking official team viewing guides broadly', () => {
   for (const token of [
@@ -37,4 +38,12 @@ test('final newsroom guard preserves narrow route precedence and review quaranti
   expect(migration).toContain("new.target_site := 'keeptxred'");
   expect(migration).toContain("new.target_site := 'texasdefined'");
   expect(migration).toContain("new.target_site := 'review'");
+});
+
+test('refinement catches unicode-stream source contamination and ignores feed-name geography for national syndication', () => {
+  expect(refinement).toContain("lower(coalesce(new.source, '')) = 'air and space museum'");
+  expect(refinement).toContain('body_text');
+  expect(refinement).toContain("body_text !~ '(texas|corpus christi|nueces|kingsville|coastal bend)'");
+  expect(refinement).toContain("'source_contamination', true");
+  expect(refinement).toContain("'national_syndication_noise', true");
 });
