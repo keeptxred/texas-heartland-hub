@@ -14,6 +14,14 @@ on:
     branches: [main]
     paths:
       - '.github/force-image-backlog-recovery'
+  # Temporary one-time production diagnostic trigger. The connector merge path
+  # starts protected main verification through workflow_dispatch rather than a
+  # push event, so run the exact marker cohort after that verified current-main
+  # check succeeds. This trigger is removed immediately after the repair pass.
+  workflow_run:
+    workflows: ["Repository test and build health"]
+    types: [completed]
+    branches: [main]
 
 permissions:
   contents: read
@@ -27,6 +35,11 @@ concurrency:
 
 jobs:
   recover:
+    if: >-
+      github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main' &&
+       github.event.workflow_run.event == 'workflow_dispatch')
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -34,8 +47,17 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
+          TARGET_REF: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
         run: |
           set -euo pipefail
+
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_run" ]]; then
+            current_main=$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/main" --jq '.object.sha')
+            if [[ "${TARGET_REF}" != "${current_main}" ]]; then
+              echo "Verified workflow SHA ${TARGET_REF} is no longer current main (${current_main}); skipping stale one-time recovery."
+              exit 0
+            fi
+          fi
 
           oidc_url="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-newsroom"
           issue_oidc_token() {
@@ -81,17 +103,17 @@ jobs:
           # One article per ordinary pass bounds worst-case generation to the
           # existing initial image plus three validator-steered retries.
           max_per_run=1
-          if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
+          if [[ "${GITHUB_EVENT_NAME}" == "push" || "${GITHUB_EVENT_NAME}" == "workflow_run" ]]; then
             max_per_run=4
-            marker_b64=$(gh api "repos/${GITHUB_REPOSITORY}/contents/.github/force-image-backlog-recovery?ref=${GITHUB_SHA}" --jq '.content')
+            marker_b64=$(gh api "repos/${GITHUB_REPOSITORY}/contents/.github/force-image-backlog-recovery?ref=${TARGET_REF}" --jq '.content')
             printf '%s' "$marker_b64" | base64 --decode > /tmp/image-recovery-marker
             mapfile -t marker_slugs < <(sed -n 's/^slug:[[:space:]]*//p' /tmp/image-recovery-marker | sed '/^[[:space:]]*$/d' | awk '!seen[$0]++')
             if [[ "${#marker_slugs[@]}" -lt 1 ]]; then
-              echo 'Force-marker push must name at least one exact slug using slug:<value>.' >&2
+              echo 'Force marker must name at least one exact slug using slug:<value>.' >&2
               exit 1
             fi
             if [[ "${#marker_slugs[@]}" -gt "$max_per_run" ]]; then
-              echo "Force-marker push exceeds the ${max_per_run}-article safety cap." >&2
+              echo "Force marker exceeds the ${max_per_run}-article safety cap." >&2
               exit 1
             fi
             slugs=("${marker_slugs[@]}")
