@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 const contact = readFileSync("src/routes/contact.tsx", "utf8");
 const about = readFileSync("src/routes/about.tsx", "utf8");
 const navigation = readFileSync("src/lib/site-navigation.ts", "utf8");
+const productOffer = readFileSync("src/routes/product-offer.$productId.$variantId.tsx", "utf8");
 
 describe("Merchant trust and transparency contract", () => {
   it("uses real contact channels instead of a client-only success acknowledgement", () => {
@@ -23,5 +24,10 @@ describe("Merchant trust and transparency contract", () => {
 
   it("keeps store identity information visible from shop policy navigation", () => {
     expect(navigation).toContain('{ to: "/about", label: "Store & Business Info" }');
+  });
+
+  it("keeps Merchant offer landing pages inside the cart provider", () => {
+    expect(productOffer).toContain("<CartProvider>");
+    expect(productOffer).toContain("<ProductOfferPage />");
   });
 });
