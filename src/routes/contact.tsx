@@ -86,7 +86,7 @@ function ContactPage() {
           <div className="rounded-xl border border-border bg-card p-6">
             <h2 id="contact-options-heading" className="font-display text-2xl tracking-tight">Choose the Right Contact</h2>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              These addresses are monitored for the purposes shown below. We no longer display an on-page form that only acknowledges a message locally; contacting us by email ensures your message actually reaches the appropriate inbox.
+              These addresses are monitored for the purposes shown below. Emailing the appropriate address sends your message directly to the inbox responsible for that request.
             </p>
           </div>
 
