@@ -26,6 +26,111 @@ jobs:
       SITE_URL: https://keeptxred.com
 
     steps:
+      - name: Inspect raw live election and schema signals
+        shell: bash
+        run: |
+          set -euo pipefail
+          election_headers="$(mktemp)"
+          election_body="$(mktemp)"
+          home_headers="$(mktemp)"
+          home_body="$(mktemp)"
+          trap 'rm -f "$election_headers" "$election_body" "$home_headers" "$home_body"' EXIT
+
+          fetch_page() {
+            local url="$1"
+            local headers="$2"
+            local body="$3"
+            curl --location --retry 5 --retry-delay 2 --retry-all-errors \
+              --connect-timeout 10 --max-time 60 \
+              --silent --show-error \
+              -D "$headers" -o "$body" -w '%{http_code}' "$url"
+          }
+
+          election_status="$(fetch_page "$SITE_URL/elections/2026" "$election_headers" "$election_body")"
+          home_status="$(fetch_page "$SITE_URL/" "$home_headers" "$home_body")"
+
+          echo "Election page HTTP status: $election_status"
+          grep -Ei '^(cache-control|cf-cache-status|age|content-type|server):' "$election_headers" || true
+          echo "Home page HTTP status: $home_status"
+          grep -Ei '^(cache-control|cf-cache-status|age|content-type|server):' "$home_headers" || true
+
+          # Browser-facing HTML can be challenged for GitHub-hosted runner IPs. Keep
+          # this diagnostic additive: when raw HTML is reachable, enforce the GEO
+          # signals; otherwise report the edge status while the existing robots and
+          # sitemap production gates remain strict below.
+          if [[ "$election_status" != "200" || "$home_status" != "200" ]]; then
+            echo "Raw browser-facing HTML was not directly reachable from this GitHub runner; page-level GEO assertions were not evaluated."
+            exit 0
+          fi
+
+          python3 - "$election_body" "$home_body" <<'PY'
+          import pathlib
+          import re
+          import sys
+
+          election = pathlib.Path(sys.argv[1]).read_text(encoding="utf-8", errors="replace")
+          home = pathlib.Path(sys.argv[2]).read_text(encoding="utf-8", errors="replace")
+
+          strong_h1 = "2026 Texas Election Central: Races, Candidates, Polls & Results"
+          if strong_h1 not in election:
+              h1s = re.findall(r"<h1\b[^>]*>(.*?)</h1>", election, flags=re.I | re.S)
+              simplified = [re.sub(r"<[^>]+>", "", value).strip() for value in h1s]
+              raise SystemExit(f"Live election HTML is missing the strengthened H1; observed h1={simplified!r}")
+
+          for marker in ('"Organization"', '"NewsMediaOrganization"'):
+              if marker not in election:
+                  raise SystemExit(f"Live election HTML is missing JSON-LD marker {marker}")
+
+          if '"FAQPage"' not in home:
+              raise SystemExit("Live home HTML is missing FAQPage JSON-LD")
+
+          print("Raw live HTML contains the strengthened election H1, Organization/NewsMediaOrganization JSON-LD, and home FAQPage JSON-LD.")
+          PY
+
+      - name: Verify XML sitemap index
+        shell: bash
+        run: |
+          set -euo pipefail
+          headers="$(mktemp)"
+          body="$(mktemp)"
+          trap 'rm -f "$headers" "$body"' EXIT
+
+          curl --location --retry 10 --retry-delay 3 --retry-all-errors \
+            --connect-timeout 10 --max-time 60 \
+            --fail-with-body --silent --show-error \
+            -D "$headers" -o "$body" "$SITE_URL/sitemap.xml"
+
+          python3 - "$headers" "$body" <<'PY'
+          import pathlib
+          import sys
+          import xml.etree.ElementTree as ET
+
+          headers = pathlib.Path(sys.argv[1]).read_text(encoding="utf-8").lower()
+          body_path = pathlib.Path(sys.argv[2])
+          if "content-type: application/xml" not in headers and "content-type: text/xml" not in headers:
+              raise SystemExit("Production sitemap.xml did not return an XML content type")
+
+          root = ET.parse(body_path).getroot()
+          if not root.tag.endswith("sitemapindex"):
+              raise SystemExit(f"Expected sitemapindex root, got {root.tag!r}")
+
+          ns = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+          locations = [node.text.strip() for node in root.findall("sm:sitemap/sm:loc", ns) if node.text]
+          required = {
+              "https://keeptxred.com/sitemap-pages.xml",
+              "https://keeptxred.com/sitemap-news.xml",
+              "https://keeptxred.com/sitemap-evergreen.xml",
+              "https://keeptxred.com/sitemap-elections.xml",
+          }
+          missing = sorted(required.difference(locations))
+          if missing:
+              raise SystemExit(f"Production sitemap index is missing required child sitemaps: {', '.join(missing)}")
+          if len(locations) < 4:
+              raise SystemExit("Production sitemap index contains too few child sitemaps")
+
+          print(f"Production sitemap.xml is valid and advertises {len(locations)} child sitemaps.")
+          PY
+
       - name: Verify robots policy for AI discovery crawlers
         shell: bash
         run: |
@@ -107,48 +212,4 @@ jobs:
               raise SystemExit(f"robots.txt is missing canonical sitemap declaration: {sitemap}")
 
           print("Production robots.txt explicitly permits all required AI discovery crawlers and declares the sitemap.")
-          PY
-
-      - name: Verify XML sitemap index
-        shell: bash
-        run: |
-          set -euo pipefail
-          headers="$(mktemp)"
-          body="$(mktemp)"
-          trap 'rm -f "$headers" "$body"' EXIT
-
-          curl --location --retry 10 --retry-delay 3 --retry-all-errors \
-            --connect-timeout 10 --max-time 60 \
-            --fail-with-body --silent --show-error \
-            -D "$headers" -o "$body" "$SITE_URL/sitemap.xml"
-
-          python3 - "$headers" "$body" <<'PY'
-          import pathlib
-          import sys
-          import xml.etree.ElementTree as ET
-
-          headers = pathlib.Path(sys.argv[1]).read_text(encoding="utf-8").lower()
-          body_path = pathlib.Path(sys.argv[2])
-          if "content-type: application/xml" not in headers and "content-type: text/xml" not in headers:
-              raise SystemExit("Production sitemap.xml did not return an XML content type")
-
-          root = ET.parse(body_path).getroot()
-          if not root.tag.endswith("sitemapindex"):
-              raise SystemExit(f"Expected sitemapindex root, got {root.tag!r}")
-
-          ns = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
-          locations = [node.text.strip() for node in root.findall("sm:sitemap/sm:loc", ns) if node.text]
-          required = {
-              "https://keeptxred.com/sitemap-pages.xml",
-              "https://keeptxred.com/sitemap-news.xml",
-              "https://keeptxred.com/sitemap-evergreen.xml",
-              "https://keeptxred.com/sitemap-elections.xml",
-          }
-          missing = sorted(required.difference(locations))
-          if missing:
-              raise SystemExit(f"Production sitemap index is missing required child sitemaps: {', '.join(missing)}")
-          if len(locations) < 4:
-              raise SystemExit("Production sitemap index contains too few child sitemaps")
-
-          print(f"Production sitemap.xml is valid and advertises {len(locations)} child sitemaps.")
           PY
