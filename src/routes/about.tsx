@@ -10,7 +10,7 @@ export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
       { title: "About Keep TX Red | Texas News & Standards" },
-      { name: "description", content: "About Keep TX Red — Texas news, commentary, government accountability, common-sense analysis, editorial standards, sourcing, corrections, and contact information." },
+      { name: "description", content: "About Keep TX Red — Texas news, commentary, government accountability, common-sense analysis, editorial standards, sourcing, corrections, store information, and contact information." },
       { property: "og:title", content: "About Keep TX Red | Texas News & Standards" },
       { property: "og:description", content: "Texas news, commentary, government accountability, common-sense analysis, and the standards behind Keep TX Red." },
       { property: "og:type", content: "website" },
@@ -25,9 +25,16 @@ export const Route = createFileRoute("/about")({
         "@context": "https://schema.org",
         "@type": "AboutPage",
         name: "About Keep TX Red",
-        description: "Keep TX Red delivers Texas news, commentary, government accountability, and common-sense analysis.",
+        description: "Keep TX Red delivers Texas news, commentary, government accountability, common-sense analysis, and a direct-to-consumer branded merchandise shop.",
         url: PAGE_URL,
         isPartOf: { "@type": "WebSite", name: "Keep TX Red", url: SITE_URL },
+        about: {
+          "@type": "Organization",
+          name: "Keep TX Red",
+          url: SITE_URL,
+          email: "admin@keeptxred.com",
+          description: "Independent Texas news and analysis publication with a branded merchandise storefront on keeptxred.com.",
+        },
       }),
     }],
   }),
@@ -82,6 +89,22 @@ function AboutPage() {
           <p className="mt-3 text-muted-foreground">Keep TX Red is reader-supported and ad-supported. It is not authorized by any candidate or candidate&apos;s committee. We do not accept money from campaigns or political action committees in exchange for editorial coverage.</p>
         </section>
 
+        <section id="store-business-information" className="rounded-xl border border-border bg-secondary/30 p-6">
+          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-primary">Store &amp; Business Information</span>
+          <h2 className="mt-2 font-display text-3xl tracking-tight">How the Keep TX Red Shop Works</h2>
+          <p className="mt-3 text-muted-foreground">Keep TX Red operates the branded merchandise storefront at <strong className="text-foreground">keeptxred.com/shop</strong> alongside this publication. Products offered there are ordinary retail merchandise purchases; they are not political donations or campaign contributions.</p>
+          <p className="mt-3 text-muted-foreground">Most merchandise is made to order after checkout and is manufactured and fulfilled by third-party print-on-demand production partners. Keep TX Red provides the storefront and customer-support relationship for orders placed on keeptxred.com. Card payments are processed securely through Stripe.</p>
+          <p className="mt-3 text-muted-foreground">For order questions, damaged or incorrect products, delivery issues, or refund requests, contact <a href="mailto:admin@keeptxred.com" className="text-primary underline">admin@keeptxred.com</a>. Our public customer-service location is Texas, United States. We currently ship merchandise only to U.S. addresses.</p>
+          <p className="mt-3 text-muted-foreground">Keep TX Red is not a government entity, political party, campaign, candidate organization, or political action committee, and the shop does not imply endorsement by the State of Texas or any public office.</p>
+          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
+            <a href="/shipping-policy" className="text-primary underline underline-offset-4">Shipping Policy</a>
+            <a href="/return-refund-policy" className="text-primary underline underline-offset-4">Return &amp; Refund Policy</a>
+            <a href="/terms-of-service" className="text-primary underline underline-offset-4">Terms of Service</a>
+            <a href="/privacy" className="text-primary underline underline-offset-4">Privacy Policy</a>
+            <a href="/contact" className="text-primary underline underline-offset-4">Customer Support</a>
+          </div>
+        </section>
+
         <section>
           <h2 className="font-display text-3xl tracking-tight">Nonpolitical Texas Resources</h2>
           <p className="mt-3 text-muted-foreground">TexasDefined is a nonpolitical sister publication from the same publisher. It covers Texas travel, relocation, food, events, culture, property-tax planning, household calculators, county and city directories, and other lifestyle resources separately from Keep TX Red&apos;s political and public-affairs coverage.</p>
@@ -90,7 +113,7 @@ function AboutPage() {
 
         <section>
           <h2 className="font-display text-3xl tracking-tight">Contact</h2>
-          <p className="mt-3 text-muted-foreground">General inquiries, tips, and corrections: <a href="mailto:admin@keeptxred.com" className="text-primary underline">admin@keeptxred.com</a>. Additional contact options are available on the <a href="/contact" className="text-primary underline">Contact page</a>.</p>
+          <p className="mt-3 text-muted-foreground">General inquiries, tips, corrections, and shop support: <a href="mailto:admin@keeptxred.com" className="text-primary underline">admin@keeptxred.com</a>. Additional contact options are available on the <a href="/contact" className="text-primary underline">Contact page</a>.</p>
         </section>
 
         <div className="border-l-4 border-primary bg-muted/40 p-5"><a href="/keep-texas-red" className="font-semibold text-primary hover:underline">Read what “Keep Texas Red” means →</a></div>

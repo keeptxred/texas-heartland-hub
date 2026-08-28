@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
 import { PageExpansion } from "@/components/page-expansion";
 import { SocialLinks } from "@/components/social-links";
 import { SITE_URL } from "@/lib/seo";
@@ -27,7 +26,6 @@ export const Route = createFileRoute("/contact")({
 });
 
 function ContactPage() {
-  const [sent, setSent] = useState(false);
   return (
     <main className="mx-auto max-w-3xl px-4 py-14">
       <nav aria-label="Breadcrumb" className="mb-8 text-sm text-muted-foreground">
@@ -42,7 +40,7 @@ function ContactPage() {
         <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-primary">★ Get In Touch</span>
         <h1 className="mt-1 font-display text-5xl tracking-tight md:text-6xl">Contact Keep TX Red</h1>
         <p className="mt-3 max-w-2xl text-muted-foreground">
-          Order support, tips, corrections, story ideas, privacy requests, or general feedback — we read everything.
+          Order support, tips, corrections, story ideas, privacy requests, or general feedback. Email is our primary customer-service and newsroom contact channel.
         </p>
       </div>
 
@@ -51,16 +49,23 @@ function ContactPage() {
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
           For damaged, defective, misprinted, incorrect, delayed, or missing orders, email <a href="mailto:admin@keeptxred.com" className="text-primary underline underline-offset-4">admin@keeptxred.com</a>. Include your order number, a description of the issue, and clear photographs when applicable.
         </p>
+        <a
+          href="mailto:admin@keeptxred.com?subject=Keep%20TX%20Red%20Order%20Support"
+          className="mt-5 inline-flex items-center justify-center rounded-md bg-primary px-5 py-3 font-display text-sm uppercase tracking-[0.15em] text-primary-foreground hover:bg-primary/90"
+        >
+          Email Order Support
+        </a>
         <div className="mt-4 flex flex-wrap gap-3 text-sm font-semibold">
           <Link to="/return-refund-policy" className="text-primary underline underline-offset-4">Return &amp; Refund Policy</Link>
           <Link to="/shipping-policy" className="text-primary underline underline-offset-4">Shipping Policy</Link>
+          <Link to="/about" className="text-primary underline underline-offset-4">Store &amp; Business Information</Link>
         </div>
       </section>
 
       <div className="grid gap-10 md:grid-cols-3">
         <aside className="space-y-6 text-sm md:col-span-1">
           <div>
-            <h2 className="mb-2 font-display text-xs uppercase tracking-[0.25em] text-primary">Order Support & General</h2>
+            <h2 className="mb-2 font-display text-xs uppercase tracking-[0.25em] text-primary">Order Support &amp; General</h2>
             <a href="mailto:admin@keeptxred.com" className="text-muted-foreground hover:text-primary">admin@keeptxred.com</a>
           </div>
           <div>
@@ -72,55 +77,46 @@ function ContactPage() {
             <a href="mailto:corrections@keeptxred.com" className="text-muted-foreground hover:text-primary">corrections@keeptxred.com</a>
           </div>
           <div>
-            <h2 className="mb-2 font-display text-xs uppercase tracking-[0.25em] text-primary">Mail</h2>
-            <p className="text-muted-foreground">Keep TX Red<br />Austin, Texas</p>
+            <h2 className="mb-2 font-display text-xs uppercase tracking-[0.25em] text-primary">Customer-Service Region</h2>
+            <p className="text-muted-foreground">Texas, United States</p>
           </div>
         </aside>
 
-        <form
-          className="space-y-5 md:col-span-2"
-          onSubmit={(e) => {
-            e.preventDefault();
-            setSent(true);
-          }}
-        >
-          {sent ? (
-            <div className="border-2 border-primary bg-primary/5 p-6" role="status">
-              <h2 className="font-display text-2xl tracking-tight">Message received.</h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Thanks for writing. We&apos;ll be in touch if a response is warranted. Texas strong. ★
-              </p>
+        <section className="space-y-5 md:col-span-2" aria-labelledby="contact-options-heading">
+          <div className="rounded-xl border border-border bg-card p-6">
+            <h2 id="contact-options-heading" className="font-display text-2xl tracking-tight">Choose the Right Contact</h2>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              These addresses are monitored for the purposes shown below. Emailing the appropriate address sends your message directly to the inbox responsible for that request.
+            </p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <ContactCard
+              title="Orders & General"
+              email="admin@keeptxred.com"
+              description="Order status, damaged products, refunds, privacy requests, business questions, and general inquiries."
+            />
+            <ContactCard
+              title="News Tips"
+              email="tips@keeptxred.com"
+              description="Documents, meeting notices, public records, story leads, and time-sensitive Texas news tips."
+            />
+            <ContactCard
+              title="Corrections"
+              email="corrections@keeptxred.com"
+              description="Send the article URL and the specific factual statement you believe should be corrected."
+            />
+            <div className="rounded-xl border border-border p-5">
+              <h3 className="font-display text-lg">Store Policies</h3>
+              <p className="mt-2 text-sm text-muted-foreground">Review production, shipping, returns, refunds, privacy, and terms before or after ordering.</p>
+              <div className="mt-3 flex flex-col gap-2 text-sm font-semibold">
+                <Link to="/shipping-policy" className="text-primary underline underline-offset-4">Shipping Policy</Link>
+                <Link to="/return-refund-policy" className="text-primary underline underline-offset-4">Return &amp; Refund Policy</Link>
+                <Link to="/terms-of-service" className="text-primary underline underline-offset-4">Terms of Service</Link>
+              </div>
             </div>
-          ) : (
-            <>
-              <div className="grid gap-5 sm:grid-cols-2">
-                <Field label="Name" name="name" required />
-                <Field label="Email" name="email" type="email" required />
-              </div>
-              <Field label="Order number (optional)" name="orderNumber" />
-              <Field label="Subject" name="subject" required />
-              <div>
-                <label htmlFor="contact-message" className="mb-2 block text-[10px] font-bold uppercase tracking-[0.25em] text-foreground">Message</label>
-                <textarea
-                  id="contact-message"
-                  name="message"
-                  required
-                  rows={7}
-                  className="w-full border border-border bg-background p-3 font-serif text-sm focus:border-primary focus:outline-none"
-                />
-              </div>
-              <button
-                type="submit"
-                className="bg-primary px-7 py-3 font-display text-sm uppercase tracking-[0.2em] text-primary-foreground hover:bg-primary/90"
-              >
-                Send Message ★
-              </button>
-              <p className="text-xs text-muted-foreground">
-                By submitting you agree to our <Link to="/privacy" className="text-primary underline">privacy policy</Link>.
-              </p>
-            </>
-          )}
-        </form>
+          </div>
+        </section>
       </div>
 
       <PageExpansion
@@ -144,7 +140,7 @@ function ContactPage() {
         related={[
           { to: "/return-refund-policy", label: "Return and refund policy" },
           { to: "/shipping-policy", label: "Shipping policy" },
-          { to: "/about", label: "About Keep TX Red" },
+          { to: "/about", label: "About and store information" },
           { to: "/editorial-standards", label: "Editorial standards and corrections policy" },
           { to: "/privacy", label: "Privacy policy" },
         ]}
@@ -154,18 +150,12 @@ function ContactPage() {
   );
 }
 
-function Field({ label, name, type = "text", required = false }: { label: string; name: string; type?: string; required?: boolean }) {
-  const id = `contact-${name}`;
+function ContactCard({ title, email, description }: { title: string; email: string; description: string }) {
   return (
-    <div>
-      <label htmlFor={id} className="mb-2 block text-[10px] font-bold uppercase tracking-[0.25em] text-foreground">{label}</label>
-      <input
-        id={id}
-        type={type}
-        name={name}
-        required={required}
-        className="w-full border border-border bg-background p-3 font-serif text-sm focus:border-primary focus:outline-none"
-      />
+    <div className="rounded-xl border border-border p-5">
+      <h3 className="font-display text-lg">{title}</h3>
+      <p className="mt-2 text-sm text-muted-foreground">{description}</p>
+      <a href={`mailto:${email}`} className="mt-3 inline-block text-sm font-semibold text-primary underline underline-offset-4">{email}</a>
     </div>
   );
 }
