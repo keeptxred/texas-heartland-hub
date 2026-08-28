@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { SITE_URL } from "@/lib/seo";
 import { getProducts, type Product, type ProductVariant } from "@/lib/products.functions";
-import { buildAddPayload, parseVariantSize, useCart } from "@/lib/cart-context";
+import { CartProvider, buildAddPayload, parseVariantSize, useCart } from "@/lib/cart-context";
 import { seoAlt, seoDescription, seoTitle } from "@/lib/shop-seo";
 
 const productsQuery = queryOptions({
@@ -100,8 +100,16 @@ export const Route = createFileRoute("/product-offer/$productId/$variantId")({
       <button onClick={reset} className="text-primary font-semibold hover:underline">Try again</button>
     </div>
   ),
-  component: ProductOfferPage,
+  component: ProductOfferRoute,
 });
+
+function ProductOfferRoute() {
+  return (
+    <CartProvider>
+      <ProductOfferPage />
+    </CartProvider>
+  );
+}
 
 function ProductOfferPage() {
   const { productId, variantId } = Route.useParams();

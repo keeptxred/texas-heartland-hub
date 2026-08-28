@@ -11,7 +11,8 @@ const BRAND = "Keep TX Red";
 const TITLE_LIMIT = 150;
 const DESCRIPTION_LIMIT = 5000;
 const STANDARD_SHIPPING_PRICE_USD = 6.99;
-const FREE_SHIPPING_THRESHOLD_USD = 35;
+// Checkout grants free shipping only when the subtotal is greater than $35.
+const FREE_SHIPPING_THRESHOLD_USD = 35.01;
 
 type VariantOption = {
   name: "Color" | "Size";
