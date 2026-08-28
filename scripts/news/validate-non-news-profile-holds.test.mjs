@@ -10,7 +10,7 @@ test('non-news profile hold is narrow and preserves real recruiting news', () =>
     "src ~ '247sports'",
     'wide receiver',
     'commits?',
-    'source profile card',
+    'player profile card',
     "'low_value_title', true",
     "'auto_publish_eligible', false",
     "'routing_lock', true",
