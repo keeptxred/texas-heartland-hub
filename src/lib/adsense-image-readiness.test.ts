@@ -47,13 +47,12 @@ describe("fresh article image recovery", () => {
     expect(migration).toContain("BEFORE INSERT OR UPDATE OF featured_image_url");
   });
 
-  it("retries a bounded batch on the temporary recovery cadence and after verified deployments", () => {
-    expect(workflow).toContain('cron: "*/5 * * * *"');
-    expect(workflow).toContain("workflow_run:");
-    expect(workflow).toContain('workflows: ["Deploy verified KeepTXRed to Cloudflare"]');
-    expect(workflow).toContain("github.event_name == 'schedule'");
-    expect(workflow).toContain("github.event.workflow_run.conclusion == 'success'");
-    expect(workflow).toContain("max_per_run=5");
+  it("uses a staggered quota-safe recovery cadence without deploy-triggered retry storms", () => {
+    expect(workflow).toContain('cron: "45 6,14,22 * * *"');
+    expect(workflow).not.toContain("workflow_run:");
+    expect(workflow).toContain("workflow_dispatch:");
+    expect(workflow).toContain("max_per_run=1");
+    expect(workflow).not.toContain("max_per_run=5");
     expect(workflow).not.toContain("max_per_run=20");
     expect(workflow).toContain("dry=1");
     expect(workflow).toContain(".slugs[:$max][]");

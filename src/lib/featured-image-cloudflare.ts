@@ -1,9 +1,10 @@
 import { parseVisionVerdict, type SubjectExtract } from "./featured-image-core";
 
-// FLUX.2 Klein 4B remains the low-cost first-pass path for article photography.
-// Strict-validator rejections escalate to FLUX.2 Dev, which is the higher-fidelity
-// photorealistic path. Schnell remains an API-availability fallback for the cheap
-// first pass only so a Klein outage cannot strand the pipeline.
+// FLUX.2 Klein 4B is the quota-safe production path for article photography,
+// including strict-validator retries. FLUX.2 Dev remains available only when a
+// caller explicitly requests it; recurring generation must not auto-escalate to
+// a model whose per-image neuron cost can exceed the free daily allocation.
+// Schnell remains an API-availability fallback for the cheap Klein path.
 export const CLOUDFLARE_IMAGE_MODEL = "@cf/black-forest-labs/flux-2-klein-4b";
 export const CLOUDFLARE_IMAGE_QUALITY_MODEL = "@cf/black-forest-labs/flux-2-dev";
 export const CLOUDFLARE_IMAGE_FALLBACK_MODEL = "@cf/black-forest-labs/flux-1-schnell";
@@ -96,10 +97,6 @@ export function buildFlux2ImageRequest(prompt: string, negativePrompt: string, m
   return form;
 }
 
-function isStrictValidatorRetry(prompt: string): boolean {
-  return /^Correction from rejected attempt:\s*Validator rejection\s+\d+:/i.test(prompt.trim());
-}
-
 async function requestCloudflareImage(
   accountId: string,
   apiToken: string,
@@ -133,19 +130,15 @@ export async function generateImageBytes(
   const apiToken = process.env.CLOUDFLARE_API_TOKEN;
   if (!accountId || !apiToken) throw new Error("Missing Cloudflare Workers AI credentials: CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required");
 
-  // Preserve the inexpensive Klein first attempt. Once the strict validator has
-  // rejected an image, automatically spend the higher-quality FLUX.2 Dev call
-  // on the retry rather than repeatedly asking the same distilled model to fix
-  // a demonstrated photorealism/story-match failure.
-  let activeModel = model === CLOUDFLARE_IMAGE_MODEL && isStrictValidatorRetry(prompt)
-    ? CLOUDFLARE_IMAGE_QUALITY_MODEL
-    : model;
+  // Keep strict-validator retries on the same quota-safe model. The validator
+  // still requires topical relevance and photorealism; a failed retry remains a
+  // failure rather than automatically consuming a multi-thousand-neuron Dev call.
+  let activeModel = model;
   let usedFallback = false;
   let res = await requestCloudflareImage(accountId, apiToken, prompt, negativePrompt, activeModel);
 
   // Fail safely if the inexpensive primary model is temporarily unavailable.
-  // Quality-escalated FLUX.2 Dev requests do not silently downgrade to Schnell:
-  // a Dev API failure remains a failure so strict retries cannot lose quality.
+  // Explicit FLUX.2 Dev requests do not silently downgrade to Schnell.
   if (!res.ok && activeModel === CLOUDFLARE_IMAGE_MODEL) {
     activeModel = CLOUDFLARE_IMAGE_FALLBACK_MODEL;
     usedFallback = true;

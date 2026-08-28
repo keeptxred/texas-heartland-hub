@@ -8,16 +8,18 @@ const adsenseRoute = readFileSync(new URL("../routes/api/public/hooks/adsense-im
 const DIRECT_WORKER_ORIGIN = "https://keeptxred-site.freddy-coppola.workers.dev";
 
 describe("image recovery OIDC workflow event contract", () => {
-  it("authorizes scheduled, protected push, post-deploy, and manual recovery events", () => {
-    expect(imageWorkflow).toContain("workflow_run:");
+  it("keeps general recovery on scheduled, protected marker-push, and manual events only", () => {
     expect(imageWorkflow).toContain("schedule:");
     expect(imageWorkflow).toContain("push:");
+    expect(imageWorkflow).toContain("workflow_dispatch:");
+    expect(imageWorkflow).not.toContain("workflow_run:");
     expect(imageRoute).toContain('allowedEventNames: ["push", "schedule", "workflow_dispatch", "workflow_run"]');
   });
 
-  it("authorizes schedule, manual dispatch, and post-deploy workflow_run for AdSense recovery", () => {
+  it("keeps AdSense recovery on schedule and manual dispatch without post-deploy retry storms", () => {
     expect(adsenseWorkflow).toContain("schedule:");
-    expect(adsenseWorkflow).toContain("workflow_run:");
+    expect(adsenseWorkflow).toContain("workflow_dispatch:");
+    expect(adsenseWorkflow).not.toContain("workflow_run:");
     expect(adsenseRoute).toContain('allowedEventNames: ["schedule", "workflow_dispatch", "workflow_run"]');
   });
 

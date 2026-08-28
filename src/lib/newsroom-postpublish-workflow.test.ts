@@ -13,9 +13,16 @@ describe("clustered newsroom post-publish workflow", () => {
     );
   });
 
-  it("keeps a successful article published if finalization or image generation fails", () => {
-    expect(workflow).toContain("CLUSTERED_NEWSROOM_FINALIZE_WARNING");
-    expect(workflow).toContain("CLUSTERED_NEWSROOM_IMAGE_WARNING");
-    expect(workflow).toContain("article remains published");
+  it("preserves the published article but fails the production run when finalization or hero generation fails", () => {
+    expect(workflow).toContain("CLUSTERED_NEWSROOM_FINALIZE_FAILED");
+    expect(workflow).toContain("CLUSTERED_NEWSROOM_IMAGE_FAILED");
+    expect(workflow).toContain("article remains published for safe recovery, but this run is not a production pass");
+    expect(workflow).not.toContain("CLUSTERED_NEWSROOM_FINALIZE_WARNING");
+    expect(workflow).not.toContain("CLUSTERED_NEWSROOM_IMAGE_WARNING");
+
+    const finalizeFailure = workflow.indexOf("CLUSTERED_NEWSROOM_FINALIZE_FAILED");
+    const imageFailure = workflow.indexOf("CLUSTERED_NEWSROOM_IMAGE_FAILED");
+    expect(workflow.slice(finalizeFailure, finalizeFailure + 300)).toContain("exit 1");
+    expect(workflow.slice(imageFailure, imageFailure + 300)).toContain("exit 1");
   });
 });
