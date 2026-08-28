@@ -1,0 +1,53 @@
+name: Diagnose live GEO edge
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/diagnose-live-geo-edge.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Compare live robots responses by user agent
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='https://keeptxred.com/robots.txt'
+          for ua in \
+            'curl/8.5.0' \
+            'Amazonbot/0.1 (+https://developer.amazon.com/support/amazonbot)' \
+            'GPTBot/1.4 (+https://openai.com/gptbot)' \
+            'OAI-SearchBot/1.0; +https://openai.com/searchbot' \
+            'ClaudeBot/1.0; +https://anthropic.com/claudebot'; do
+            echo "===== ROBOTS UA: $ua ====="
+            nonce="$(date +%s%N)"
+            curl --silent --show-error --location --fail-with-body \
+              -A "$ua" -D /tmp/headers.txt "$base?diag=$nonce" -o /tmp/body.txt
+            grep -Ei '^(HTTP/|date:|age:|cache-control:|cf-cache-status:|cf-ray:|content-type:|server:|vary:)' /tmp/headers.txt || true
+            echo '--- body ---'
+            cat /tmp/body.txt
+            echo
+          done
+
+      - name: Inspect live Election Central HTML and headers
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://keeptxred.com/elections/2026?diag=$(date +%s%N)"
+          curl --silent --show-error --location --fail-with-body \
+            -A 'Mozilla/5.0 (compatible; KTR-GEO-Diagnostic/1.0)' \
+            -D /tmp/election-headers.txt "$url" -o /tmp/election.html
+          grep -Ei '^(HTTP/|date:|age:|cache-control:|cf-cache-status:|cf-ray:|content-type:|server:|vary:)' /tmp/election-headers.txt || true
+          echo '--- h1 tags ---'
+          grep -Eio '<h1[^>]*>[^<]+' /tmp/election.html | head -n 5 || true
+          echo '--- expected H1 literal ---'
+          grep -F '2026 Texas Election Central: Races, Candidates, Polls & Results' /tmp/election.html | head -n 3 || true
+          echo '--- JSON-LD type signals ---'
+          grep -Eo 'NewsMediaOrganization|Organization|FAQPage' /tmp/election.html | sort | uniq -c || true
