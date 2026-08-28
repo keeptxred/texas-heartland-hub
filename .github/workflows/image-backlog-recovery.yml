@@ -10,7 +10,7 @@ on:
     # Temporary one-time diagnostic window for the exact two-row failed-image
     # cohort. This remains inside the already-authorized schedule trigger and is
     # removed immediately after the production repair is verified.
-    - cron: '30 15 28 8 *'
+    - cron: '30 22 28 8 *'
   # The marker path provides an explicit, bounded production-repair mechanism.
   # A marker push must name one to four exact slugs so an emergency repair can
   # never spend the bounded batch on unrelated newer backlog rows.
@@ -110,7 +110,7 @@ jobs:
           max_per_run=1
           if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
             load_exact_marker_slugs
-          elif [[ "${GITHUB_EVENT_NAME}" == "schedule" && "${EVENT_SCHEDULE}" == "30 15 28 8 *" ]]; then
+          elif [[ "${GITHUB_EVENT_NAME}" == "schedule" && "${EVENT_SCHEDULE}" == "30 22 28 8 *" ]]; then
             # The dated diagnostic schedule uses the exact same marker, cap,
             # eligibility checks, strict validator, and OIDC-protected Worker.
             load_exact_marker_slugs
