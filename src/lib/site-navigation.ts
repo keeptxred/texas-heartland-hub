@@ -85,6 +85,7 @@ export const ABOUT_LINKS = [
 ] as const;
 
 export const SHOP_POLICY_LINKS = [
+  { to: "/about", label: "Store & Business Info" },
   { to: "/return-refund-policy", label: "Returns & Refunds" },
   { to: "/shipping-policy", label: "Shipping Policy" },
   { to: "/privacy", label: "Privacy Policy" },
