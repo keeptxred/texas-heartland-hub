@@ -23,10 +23,19 @@ describe("image recovery workflow bounds", () => {
     }
   });
 
-  it("caps the explicit force-marker repair cohort at four articles", () => {
+  it("caps force-marker repair at four exact eligible slugs", () => {
     expect(backlogWorkflow).toContain('if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then');
     expect(backlogWorkflow).toContain("max_per_run=4");
+    expect(backlogWorkflow).toContain("force-image-backlog-recovery?ref=${GITHUB_SHA}");
+    expect(backlogWorkflow).toContain("slug:[[:space:]]*");
+    expect(backlogWorkflow).toContain("Target slug is not currently eligible for image recovery");
     expect(adsenseWorkflow).not.toContain("max_per_run=4");
+  });
+
+  it("fails closed when any requested recovery image fails", () => {
+    expect(backlogWorkflow).toContain('if [[ "$failures" -gt 0 ]]; then');
+    expect(backlogWorkflow).toContain("At least one requested image failed the existing production quality gate");
+    expect(backlogWorkflow).not.toContain('if [[ "$processed" -gt 0 && "$succeeded" -eq 0 ]]; then');
   });
 
   it("staggers schedules and avoids unbounded five-minute AI retry loops", () => {
