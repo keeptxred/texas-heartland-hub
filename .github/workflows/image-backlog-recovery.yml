@@ -7,6 +7,10 @@ on:
   # recovery so a persistent failure cannot trigger an unbounded retry storm.
   schedule:
     - cron: '45 2,10,18 * * *'
+    # Temporary one-time diagnostic window for the exact two-row failed-image
+    # cohort. This remains inside the already-authorized schedule trigger and is
+    # removed immediately after the production repair is verified.
+    - cron: '30 15 28 8 *'
   # The marker path provides an explicit, bounded production-repair mechanism.
   # A marker push must name one to four exact slugs so an emergency repair can
   # never spend the bounded batch on unrelated newer backlog rows.
@@ -34,6 +38,7 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
+          EVENT_SCHEDULE: ${{ github.event.schedule || '' }}
         run: |
           set -euo pipefail
 
@@ -78,20 +83,17 @@ jobs:
             exit 0
           fi
 
-          # One article per ordinary pass bounds worst-case generation to the
-          # existing initial image plus three validator-steered retries.
-          max_per_run=1
-          if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
+          load_exact_marker_slugs() {
             max_per_run=4
             marker_b64=$(gh api "repos/${GITHUB_REPOSITORY}/contents/.github/force-image-backlog-recovery?ref=${GITHUB_SHA}" --jq '.content')
             printf '%s' "$marker_b64" | base64 --decode > /tmp/image-recovery-marker
             mapfile -t marker_slugs < <(sed -n 's/^slug:[[:space:]]*//p' /tmp/image-recovery-marker | sed '/^[[:space:]]*$/d' | awk '!seen[$0]++')
             if [[ "${#marker_slugs[@]}" -lt 1 ]]; then
-              echo 'Force-marker push must name at least one exact slug using slug:<value>.' >&2
+              echo 'Force-marker repair must name at least one exact slug using slug:<value>.' >&2
               exit 1
             fi
             if [[ "${#marker_slugs[@]}" -gt "$max_per_run" ]]; then
-              echo "Force-marker push exceeds the ${max_per_run}-article safety cap." >&2
+              echo "Force-marker repair exceeds the ${max_per_run}-article safety cap." >&2
               exit 1
             fi
             slugs=("${marker_slugs[@]}")
@@ -101,6 +103,17 @@ jobs:
                 exit 1
               fi
             done
+          }
+
+          # One article per ordinary pass bounds worst-case generation to the
+          # existing initial image plus three validator-steered retries.
+          max_per_run=1
+          if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
+            load_exact_marker_slugs
+          elif [[ "${GITHUB_EVENT_NAME}" == "schedule" && "${EVENT_SCHEDULE}" == "30 15 28 8 *" ]]; then
+            # The dated diagnostic schedule uses the exact same marker, cap,
+            # eligibility checks, strict validator, and OIDC-protected Worker.
+            load_exact_marker_slugs
           else
             mapfile -t slugs < <(jq -r --argjson max "$max_per_run" '.slugs[:$max][]' /tmp/image-backlog-dry.json)
           fi
