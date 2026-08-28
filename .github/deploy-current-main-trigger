@@ -1,5 +1,5 @@
 Deploy current main to Cloudflare production.
 Trigger production deployment convergence for keeptxred.com.
-Target main: 4bd77bb4c404a8b291fff819537f9480def35f65
-Production-current verification requested: 2026-08-28T10:56-05:00
-Reason: deploy sensitive-news image prompt hardening before exact two-row recovery retry.
+Target main: ddc26f6fbcc2974a7d53026d4548f81e5f753428
+Production-current verification requested: 2026-08-28T18:25-05:00
+Reason: verify merged pre-promotion GEO gate and live AI discovery policy on exact current main.
