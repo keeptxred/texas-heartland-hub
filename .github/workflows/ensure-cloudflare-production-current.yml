@@ -58,9 +58,13 @@ jobs:
               exit 0
             fi
 
+            # Keep only the three fields used by the verifier. Passing the full
+            # workflow-run payload can exceed the runner's argv size once the
+            # repository has enough Actions history.
             verify_json="$(gh api \
               -H 'Accept: application/vnd.github+json' \
-              "repos/$REPOSITORY/actions/workflows/shared-vitest.yml/runs?branch=main&per_page=100")"
+              "repos/$REPOSITORY/actions/workflows/shared-vitest.yml/runs?branch=main&per_page=100" \
+              --jq '{workflow_runs: [.workflow_runs[] | {head_sha, status, conclusion}]}')"
             read -r verify_success verify_active verify_terminal < <(python3 - "$verify_json" "$main_sha" <<'PY'
           import json, sys
 
