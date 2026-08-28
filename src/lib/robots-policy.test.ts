@@ -34,8 +34,10 @@ describe("robots policy", () => {
       "Perplexity-User",
       "Google-Extended",
       "Applebot-Extended",
-      "Bytespider",
+      "Amazonbot",
       "Meta-ExternalAgent",
+      "CCBot",
+      "Bytespider",
     ]) {
       expect(source).toContain(`"${agent}"`);
     }
