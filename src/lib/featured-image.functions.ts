@@ -23,6 +23,8 @@ export { buildImagePrompt, buildNegativeImagePrompt, inferDomain, parseVisionVer
 export type { Domain, SubjectExtract, VisionVerdict } from "./featured-image-core";
 
 const BUCKET = "article-images";
+const SENSITIVE_IMAGE_SUBJECT_RE = /\b(shooting|shot|gunfire|road rage|killed|dead|death|fatal|murder|homicide|victim|suspect|attack|assault)\b/i;
+const DATA_CENTER_IMAGE_SUBJECT_RE = /\b(data center(?:s)?|data-center(?:s)?|server farm(?:s)?|hyperscale)\b/i;
 
 type ArticleRow = {
   slug: string;
@@ -123,6 +125,28 @@ export function buildAltText(a: { title: string; category?: string | null }): st
   return `Editorial news photograph for Keep TX Red article: ${a.title}${a.category ? ` — ${a.category}` : ""}`;
 }
 
+export function buildGenerationSafeSubject(subject: SubjectExtract): SubjectExtract {
+  const storyText = `${subject.title} ${subject.firstParagraph} ${subject.concreteSubject}`;
+  const location = subject.locations[0]?.trim();
+  if (SENSITIVE_IMAGE_SUBJECT_RE.test(storyText)) {
+    return {
+      ...subject,
+      title: `${location ? `${location} ` : "Texas "}roadway incident location`.trim(),
+      firstParagraph: "",
+      concreteSubject: "A restrained local-news location photograph of the real Texas roadway or interstate setting connected to the reported incident, using empty travel lanes, shoulder, overpass, traffic-control equipment, or distant generic emergency vehicles as appropriate. No people or reenactment.",
+    };
+  }
+  if (subject.domain === "energy" && DATA_CENTER_IMAGE_SUBJECT_RE.test(storyText)) {
+    return {
+      ...subject,
+      title: "Texas data center infrastructure policy review",
+      firstParagraph: "",
+      concreteSubject: "A real Texas data-center campus or large server-facility exterior with cooling equipment, utility substation, transmission lines, transformers, fenced industrial grounds, or electrical infrastructure clearly visible.",
+    };
+  }
+  return subject;
+}
+
 async function serviceClient() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   return supabaseAdmin;
@@ -190,13 +214,14 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
   }
 
   const subject = extractImageSubject(row, grounding);
+  const generationSubject = buildGenerationSafeSubject(subject);
   const previousFailure = row.image_generation_status === "failed" && row.image_validation_note?.trim()
     ? row.image_validation_note.trim().slice(0, 600)
     : "";
   const initialCorrection = previousFailure
-    ? `A prior production attempt was rejected by the strict validator: ${previousFailure}. Start with a completely different real-world photographic composition that directly depicts the article's concrete action, place, institution, infrastructure, sport, or event without inventing a recognizable person.`
+    ? "A prior production attempt failed visual quality. Discard that composition entirely and start from a new physical-camera news photograph of the concrete real-world subject."
     : "";
-  const prompt = buildImagePrompt(subject, initialCorrection);
+  const prompt = buildImagePrompt(generationSubject, initialCorrection);
   const alt = buildAltText(row);
   const filename = `${sanitizeFilename(row.slug)}.jpg`;
   await supabase.from("daily_articles").update({ image_generation_status: "generating", image_prompt: prompt }).eq("slug", row.slug);
@@ -209,8 +234,8 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
     let usedPrompt = prompt;
 
     for (let attempt = 1; !verdict.matches && attempt <= 3; attempt += 1) {
-      const correction = `Validator rejection ${attempt}: ${verdict.reason}. Generate a completely new physical-camera news photograph. The next composition must make the exact concrete story subject obvious from the scene itself, not from text or symbols. Use a different camera position, subject arrangement, and real-world setting from the rejected attempt. No illustration, graphic design, typography, poster, collage, symbolic Texas shape, generic skyline, or generic institutional placeholder. Do not fabricate a recognizable named person's face.`;
-      const stronger = buildImagePrompt(subject, correction);
+      const correction = `Retry ${attempt}. Discard the rejected composition completely. Generate a new physical-camera news photograph whose concrete real-world subject is obvious from the scene itself. Change the camera position, subject arrangement, and setting. Use no text, symbols, illustration, graphic design, poster, collage, generic skyline, or generic institutional placeholder. Do not fabricate a recognizable named person's face.`;
+      const stronger = buildImagePrompt(generationSubject, correction);
       usedPrompt = stronger;
       negativePrompt = buildNegativeImagePrompt(subject, verdict.reason);
       bytes = await generateImageBytes(stronger, negativePrompt, imageModel);
