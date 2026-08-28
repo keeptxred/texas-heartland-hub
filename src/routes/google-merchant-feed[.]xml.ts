@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { merchantImageUrl } from "@/lib/merchant-image-url";
+import { parseProductVariantOptions } from "@/lib/product-variant-options";
 import { getProducts, type Product, type ProductVariant } from "@/lib/products.functions";
 import { BASE_URL } from "@/lib/sitemap-shared";
 import { seoDescription, seoTitle } from "@/lib/shop-seo";
@@ -97,46 +98,21 @@ function productCategory(product: Product): { category?: string; apparel: boolea
   return { apparel: false };
 }
 
-function variantSize(variant: ProductVariant, apparel: boolean): string | undefined {
-  const title = variant.title.trim();
-  if (!title) return undefined;
-
-  const parts = title.split(/\s*\/\s*|\s*\|\s*|\s+-\s+/).map((part) => part.trim()).filter(Boolean);
-  const knownSize = parts.find((part) =>
-    /^(?:XXS|XS|S|M|L|XL|2XL|XXL|3XL|XXXL|4XL|XXXXL|5XL|6XL|OS|OSFA|OSFM|ONE\s*SIZE|ONE\s*SIZE\s*FITS\s*(?:ALL|MOST)|\d+(?:\.\d+)?\s*(?:in|inch|inches|cm|oz)?|\d+(?:\.\d+)?\s*[x×]\s*\d+(?:\.\d+)?)$/i.test(part),
-  );
-  if (knownSize) return knownSize;
-
-  if (apparel && parts.length >= 2) return parts[parts.length - 1];
-  return undefined;
+function variantAttributes(variant: ProductVariant): { color?: string; size?: string } {
+  const parsed = parseProductVariantOptions(variant.title, variant.color);
+  return {
+    ...(parsed.color ? { color: parsed.color } : {}),
+    ...(parsed.size ? { size: parsed.size } : {}),
+  };
 }
 
 function itemTitle(product: Product, variant?: ProductVariant): string {
   const title = seoTitle(product);
   if (!variant) return limitText(plainText(title), TITLE_LIMIT);
-  const { apparel } = productCategory(product);
-  const options = [variant.color, variantSize(variant, apparel)].filter(Boolean);
+  const attrs = variantAttributes(variant);
+  const options = [attrs.color, attrs.size].filter(Boolean);
   const withOptions = options.length ? `${title} - ${options.join(" / ")}` : title;
   return limitText(plainText(withOptions), TITLE_LIMIT);
-}
-
-function variantAttributes(
-  product: Product,
-  variant: ProductVariant,
-  apparel: boolean,
-): { color?: string; size?: string } {
-  const rawColor = variant.color?.trim() || undefined;
-  const parsedSize = variantSize(variant, apparel);
-  const haystack = [product.title, ...(product.tags ?? [])].join(" ").toLowerCase();
-  const optionLooksLikeDimensions = rawColor != null &&
-    /\d+(?:\.\d+)?\s*(?:in|inch|inches|cm|["″])?\s*[x×]\s*\d+(?:\.\d+)?/i.test(rawColor);
-  const dimensionFirstProduct = /\b(sticker|decal|poster|print|canvas)\b/.test(haystack);
-
-  if (!apparel && dimensionFirstProduct && optionLooksLikeDimensions) {
-    return { size: rawColor };
-  }
-
-  return { color: rawColor, size: parsedSize };
 }
 
 function variantOptionNames(
@@ -147,7 +123,7 @@ function variantOptionNames(
   if (variants.length <= 1) return [];
 
   const rows = variants.map((variant) => {
-    const attrs = variantAttributes(product, variant, apparel);
+    const attrs = variantAttributes(variant);
     return { Color: attrs.color, Size: attrs.size };
   });
   const candidates: Array<Array<VariantOption["name"]>> = [
@@ -199,7 +175,7 @@ function merchantItems(product: Product): MerchantItem[] {
   return enabledVariants.flatMap((variant) => {
     const imageLink = merchantImageUrl(variant.image || variant.images?.[0] || product.image);
     const price = Number(variant.price || product.price);
-    const attrs = variantAttributes(product, variant, apparel);
+    const attrs = variantAttributes(variant);
     const color = attrs.color || (product.colors?.length === 1 ? product.colors[0]?.trim() : undefined);
     const size = attrs.size;
     if (!imageLink || !Number.isFinite(price) || price <= 0 || !description) return [];
