@@ -23,15 +23,18 @@ describe("image backlog recovery publication boundary", () => {
     expect(source).toContain("adsense_ready_missing_first_then_missing_or_legacy_published_quality_article_images");
   });
 
-  it("returns only stale missing-image generation leases to the guarded failed backlog", () => {
-    const source = fs.readFileSync(new URL("../routes/api/public/hooks/image-backlog-recovery.ts", import.meta.url), "utf8");
+  it("returns only stale missing-image generation leases through the registered image writer", () => {
+    const routeSource = fs.readFileSync(new URL("../routes/api/public/hooks/image-backlog-recovery.ts", import.meta.url), "utf8");
+    const writerSource = fs.readFileSync(new URL("./featured-image.functions.ts", import.meta.url), "utf8");
 
-    expect(source).toContain("const STALE_GENERATION_LEASE_MS = 20 * 60 * 1000;");
-    expect(source).toContain('.eq("image_generation_status", "generating")');
-    expect(source).toContain('.is("featured_image_url", null)');
-    expect(source).toContain('.not("published_at", "is", null)');
-    expect(source).toContain('.lt("updated_at", staleBefore)');
-    expect(source).toContain('image_generation_status: "failed"');
-    expect(source).toContain("Image generation lease expired before completion; returned to guarded recovery backlog.");
+    expect(routeSource).toContain("resetStaleFeaturedImageGenerationLeasesDirect");
+    expect(routeSource).not.toContain('.update({\n      image_generation_status: "failed"');
+    expect(writerSource).toContain("const STALE_GENERATION_LEASE_MS = 20 * 60 * 1000;");
+    expect(writerSource).toContain('.eq("image_generation_status", "generating")');
+    expect(writerSource).toContain('.is("featured_image_url", null)');
+    expect(writerSource).toContain('.not("published_at", "is", null)');
+    expect(writerSource).toContain('.lt("updated_at", staleBefore)');
+    expect(writerSource).toContain('image_generation_status: "failed"');
+    expect(writerSource).toContain("Image generation lease expired before completion; returned to guarded recovery backlog.");
   });
 });
