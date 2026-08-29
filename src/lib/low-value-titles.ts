@@ -33,6 +33,8 @@ export function isLowValueTitle(title: string | null | undefined): boolean {
     // Sports affiliate/spam pages are not newsroom stories. Keep official
     // team viewing guides eligible by targeting the observed affiliate forms.
     /\blive@?streams?\b/.test(t) ||
+    /^\[?watchlive\]?/.test(t) ||
+    /\blive\s+tv\s+coverage\b/.test(t) ||
     /\bwhere to watch,?\s*stream info,?\s*tv channel\b/.test(t) ||
     /\bhow to watch\b.*\blive stream info\b/.test(t) ||
     /\bodds,?\s*spread,?\s*(and\s*)?totals?\b/.test(t) ||
@@ -40,6 +42,7 @@ export function isLowValueTitle(title: string | null | undefined): boolean {
     // Publisher self-promotion / utility pages.
     /^our next\b.*\bmeetup\b/.test(t) ||
     /^power outage maps?\b.*\bcheck for outages\b/.test(t) ||
+    /^build a button!?$/.test(t) ||
     // Government/search-index utility pages observed in primary-source feeds.
     // Exact/boilerplate matches only; real news headlines remain eligible.
     /^(map|cameras?|incidents?)$/.test(t) ||
