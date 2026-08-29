@@ -11,5 +11,7 @@ test('manual source enrichment stays bounded and non-publishing', () => {
   expect(hook).toContain('publishes: 0');
   expect(hook).not.toContain('.from("daily_articles")');
   expect(hook).not.toContain('publishSingleFeedItem');
-  expect(hook).not.toContain('generate');
+  expect(hook).not.toContain('/generate-newsroom');
+  expect(hook).not.toContain('generateContent(');
+  expect(hook).not.toContain('createAndPublish');
 });
