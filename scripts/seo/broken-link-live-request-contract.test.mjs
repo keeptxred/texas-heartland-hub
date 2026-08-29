@@ -34,14 +34,9 @@ describe('broken-link live request contract', () => {
     expect(retiredPrefixBlock).toContain("'/explore'");
   });
 
-  it('exempts only the exact retained KTR-only Explore guides from migration debt', () => {
-    const activeBlock = source.match(/const ACTIVE_LEGACY_PATHS = new Set\(\[[\s\S]*?\]\);/)?.[0] ?? '';
-    expect(activeBlock).toContain("'/explore/scenic-rivers'");
-    expect(activeBlock).toContain("'/explore/texas-dark-sky-stargazing'");
-    expect(activeBlock).toContain("'/explore/major-springs'");
-    expect(activeBlock).not.toContain("'/explore/search'");
-    expect(activeBlock).not.toContain("'/explore/trip-planner'");
-    expect(source).toContain('if (ACTIVE_LEGACY_PATHS.has(pathname)) return false');
+  it('treats every KeepTXRed Explore path as retired migration debt', () => {
+    expect(source).not.toContain('ACTIVE_LEGACY_PATHS');
+    expect(source).toContain("pathname === prefix || pathname.startsWith(prefix + '/')");
     expect(source).toContain('const retired = isRetiredPath(pathname)');
     expect(source).toContain('if (isRetiredPath(link.pathname))');
   });
