@@ -11,20 +11,14 @@ import { WAVE8_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave
 import { WAVE9_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave9-upgrades";
 import { WAVE10_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave10-upgrades";
 import { WAVE11_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave11-upgrades";
+import { WAVE12_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave12-upgrades";
 import {
   MIN_POLICY_TRACKER_WORDS,
   isPolicyTrackerIndexable,
   policyTrackerWordCount,
 } from "@/lib/policy-tracker-indexability";
 
-const UPGRADED_EXPECTED = [
-  "property-taxes",
-  "border-security",
-  "energy-ercot",
-  "gun-rights",
-  "life-abortion",
-] as const;
-
+const UPGRADED_EXPECTED = ["property-taxes", "border-security", "energy-ercot", "gun-rights", "life-abortion"] as const;
 const WAVE2_EXPECTED = ["parental-rights", "election-integrity", "bitcoin-reserve", "central-bank-digital-currency"] as const;
 const WAVE3_EXPECTED = ["medical-freedom", "esg-energy-boycotts", "agriculture-family-farms"] as const;
 const WAVE4_EXPECTED = ["religious-liberty", "state-federal-power", "right-to-work"] as const;
@@ -35,6 +29,7 @@ const WAVE8_EXPECTED = ["regulatory-reform-treo", "career-technical-workforce", 
 const WAVE9_EXPECTED = ["local-preemption-regulatory-consistency", "minor-gender-transition-medical-law"] as const;
 const WAVE10_EXPECTED = ["school-library-materials", "school-safety-security", "violent-offense-bail"] as const;
 const WAVE11_EXPECTED = ["data-centers-large-loads", "constitutional-tax-protections", "critical-minerals-rare-earths"] as const;
+const WAVE12_EXPECTED = ["homeschool-autonomy", "faith-based-child-welfare", "tanf-work-participation"] as const;
 
 const EXPECTED_INDEXABLE = [
   ...UPGRADED_EXPECTED,
@@ -48,6 +43,7 @@ const EXPECTED_INDEXABLE = [
   ...WAVE9_EXPECTED,
   ...WAVE10_EXPECTED,
   ...WAVE11_EXPECTED,
+  ...WAVE12_EXPECTED,
   "social-media-viewpoint-moderation",
 ] as const;
 
@@ -64,6 +60,7 @@ describe("priority policy tracker readiness", () => {
     expect([...WAVE9_INDEXABLE_POLICY_TRACKER_SLUGS].sort()).toEqual([...WAVE9_EXPECTED].sort());
     expect([...WAVE10_INDEXABLE_POLICY_TRACKER_SLUGS].sort()).toEqual([...WAVE10_EXPECTED].sort());
     expect([...WAVE11_INDEXABLE_POLICY_TRACKER_SLUGS].sort()).toEqual([...WAVE11_EXPECTED].sort());
+    expect([...WAVE12_INDEXABLE_POLICY_TRACKER_SLUGS].sort()).toEqual([...WAVE12_EXPECTED].sort());
   });
 
   it.each(EXPECTED_INDEXABLE)("%s genuinely clears the canonical tracker gate", (slug) => {
