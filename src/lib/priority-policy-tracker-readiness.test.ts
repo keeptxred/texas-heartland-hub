@@ -15,6 +15,7 @@ import { WAVE12_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wav
 import { WAVE13_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave13-upgrades";
 import { WAVE14_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave14-upgrades";
 import { WAVE15_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave15-upgrades";
+import { WAVE16_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave16-upgrades";
 import { MIN_POLICY_TRACKER_WORDS, isPolicyTrackerIndexable, policyTrackerWordCount } from "@/lib/policy-tracker-indexability";
 
 const UPGRADED_EXPECTED = ["property-taxes", "border-security", "energy-ercot", "gun-rights", "life-abortion"] as const;
@@ -32,6 +33,7 @@ const WAVE12_EXPECTED = ["homeschool-autonomy", "faith-based-child-welfare", "ta
 const WAVE13_EXPECTED = ["assisted-suicide", "charter-schools", "consumable-hemp-cannabis"] as const;
 const WAVE14_EXPECTED = ["consumer-data-privacy", "online-age-verification", "app-store-parental-controls"] as const;
 const WAVE15_EXPECTED = ["ai-governance", "data-brokers", "biometric-privacy"] as const;
+const WAVE16_EXPECTED = ["scope-act-online-minors", "texas-cyber-command"] as const;
 
 const EXPECTED_INDEXABLE = [
   ...UPGRADED_EXPECTED,
@@ -49,6 +51,7 @@ const EXPECTED_INDEXABLE = [
   ...WAVE13_EXPECTED,
   ...WAVE14_EXPECTED,
   ...WAVE15_EXPECTED,
+  ...WAVE16_EXPECTED,
   "social-media-viewpoint-moderation",
 ] as const;
 
@@ -69,6 +72,8 @@ describe("priority policy tracker readiness", () => {
     expect([...WAVE13_INDEXABLE_POLICY_TRACKER_SLUGS].sort()).toEqual([...WAVE13_EXPECTED].sort());
     expect([...WAVE14_INDEXABLE_POLICY_TRACKER_SLUGS].sort()).toEqual([...WAVE14_EXPECTED].sort());
     expect([...WAVE15_INDEXABLE_POLICY_TRACKER_SLUGS].sort()).toEqual([...WAVE15_EXPECTED].sort());
+    expect([...WAVE16_INDEXABLE_POLICY_TRACKER_SLUGS].sort()).toEqual([...WAVE16_EXPECTED].sort());
+    expect(WAVE16_INDEXABLE_POLICY_TRACKER_SLUGS).not.toContain("genetic-data-privacy");
   });
 
   it.each(EXPECTED_INDEXABLE)("%s genuinely clears the canonical tracker gate", (slug) => {
@@ -85,5 +90,6 @@ describe("priority policy tracker readiness", () => {
   it("makes only the intentionally expanded policy cohort indexable", () => {
     const ready = ALL_POLICY_TRACKERS.filter(isPolicyTrackerIndexable).map((tracker) => tracker.slug).sort();
     expect(ready).toEqual([...EXPECTED_INDEXABLE].sort());
+    expect(ready).not.toContain("genetic-data-privacy");
   });
 });
