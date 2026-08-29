@@ -6,6 +6,8 @@ from __future__ import annotations
 import argparse
 import json
 import os
+from pathlib import Path
+import subprocess
 import sys
 import time
 import urllib.error
@@ -286,12 +288,29 @@ def verify_city_migration() -> None:
     print(f"Houston remains on KeepTXRed: /houston -> {location}")
 
 
+def verify_political_profiles() -> None:
+    script = Path(__file__).with_name("verify-political-profiles-production.py")
+    completed = subprocess.run(
+        [sys.executable, str(script)],
+        check=False,
+        env=os.environ.copy(),
+    )
+    if completed.returncode != 0:
+        raise SmokeFailure(
+            "Original political-profile production smoke failed on the deployed Worker"
+        )
+    print(f"Political profile production smoke passed against {SITE_URL}")
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--city-migration-only",
         action="store_true",
-        help="Verify the retired city 301s and Houston retention without authority JSON checks.",
+        help=(
+            "Run the deployed-Worker critical browser-route guard used by production deployment: "
+            "retired city redirects, Houston retention, and original political profiles."
+        ),
     )
     return parser.parse_args()
 
@@ -301,7 +320,8 @@ def main() -> int:
     try:
         if args.city_migration_only:
             verify_city_migration()
-            print(f"City migration smoke passed against {SITE_URL}")
+            verify_political_profiles()
+            print(f"Deployment-critical browser-route smoke passed against {SITE_URL}")
             return 0
         verify_elections()
         verify_bill()
