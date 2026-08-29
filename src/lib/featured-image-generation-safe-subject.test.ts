@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { buildGenerationSafeSubject } from "./featured-image.functions";
-import { buildImagePrompt, buildNegativeImagePrompt, type SubjectExtract } from "./featured-image-core";
+import { buildGenerationOnlyImagePrompt, buildGenerationSafeSubject } from "./featured-image.functions";
+import { buildNegativeImagePrompt, type SubjectExtract } from "./featured-image-core";
 
 describe("buildGenerationSafeSubject", () => {
   it("removes violent incident language from both positive and negative generation inputs while preserving the truthful roadway setting", () => {
@@ -14,13 +14,13 @@ describe("buildGenerationSafeSubject", () => {
     };
 
     const safe = buildGenerationSafeSubject(subject);
-    const prompt = buildImagePrompt(safe, "Use a completely new physical-camera composition");
+    const prompt = buildGenerationOnlyImagePrompt(safe, "Use a completely new physical-camera composition");
     const negative = buildNegativeImagePrompt(safe, "Rejected image showed a gun and target illustration");
 
-    expect(safe.title).toBe("Fort Worth roadway incident location");
+    expect(safe.title).toBe("Fort Worth interstate roadway infrastructure");
     expect(`${safe.title} ${safe.firstParagraph} ${safe.concreteSubject}`).not.toMatch(/shoot|road rage|gun|dead|victim|reenactment/i);
     expect(prompt).toContain("roadway");
-    expect(prompt).not.toMatch(/shoot|road rage|gun|dead|victim/i);
+    expect(prompt).not.toMatch(/shoot|road rage|gun|dead|victim|illustration|cartoon|poster|graphic design|speech bubble/i);
     expect(negative.replace(/rejected visual motif:.*$/i, "")).not.toMatch(/shoot|road rage|gun|dead|victim/i);
   });
 
@@ -35,14 +35,14 @@ describe("buildGenerationSafeSubject", () => {
     };
 
     const safe = buildGenerationSafeSubject(subject);
-    const prompt = buildImagePrompt(safe, "Use a completely new physical-camera composition");
+    const prompt = buildGenerationOnlyImagePrompt(safe, "Use a completely new physical-camera composition");
     const negative = buildNegativeImagePrompt(safe, "Rejected image showed Gov. Abbott at a podium");
 
     expect(safe.domain).toBe("general");
-    expect(safe.title).toBe("Texas data center infrastructure policy review");
+    expect(safe.title).toBe("Texas data-center and electrical infrastructure");
     expect(`${safe.title} ${safe.firstParagraph} ${safe.concreteSubject}`).not.toMatch(/abbott|governor|politician|podium/i);
     expect(prompt).toContain("data-center");
-    expect(prompt).not.toMatch(/abbott|governor|politician|podium/i);
+    expect(prompt).not.toMatch(/abbott|governor|politician|podium|illustration|cartoon|poster|graphic design/i);
     expect(negative.replace(/rejected visual motif:.*$/i, "")).not.toMatch(/abbott|governor|politician|podium/i);
   });
 });

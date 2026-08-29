@@ -131,21 +131,35 @@ export function buildGenerationSafeSubject(subject: SubjectExtract): SubjectExtr
   if (SENSITIVE_IMAGE_SUBJECT_RE.test(storyText)) {
     return {
       ...subject,
-      title: `${location ? `${location} ` : "Texas "}roadway incident location`.trim(),
+      title: `${location ? `${location} ` : "Texas "}interstate roadway infrastructure`.trim(),
       firstParagraph: "",
-      concreteSubject: "A restrained local-news location photograph of the real Texas roadway or interstate setting connected to the reported incident, using empty travel lanes, shoulder, overpass, traffic-control equipment, or distant generic emergency vehicles as appropriate.",
+      concreteSubject: `An empty section of ${location ? `interstate roadway in ${location}` : "Texas interstate roadway"} in daylight, with asphalt travel lanes, concrete overpass, shoulder, guardrails, lane markings, and roadside traffic equipment clearly visible.`,
     };
   }
   if (subject.domain === "energy" && DATA_CENTER_IMAGE_SUBJECT_RE.test(storyText)) {
     return {
       ...subject,
       domain: "general",
-      title: "Texas data center infrastructure policy review",
+      title: "Texas data-center and electrical infrastructure",
       firstParagraph: "",
-      concreteSubject: "A real Texas data-center campus or large server-facility exterior with cooling equipment, utility substation, transmission lines, transformers, fenced industrial grounds, or electrical infrastructure clearly visible.",
+      concreteSubject: "The exterior of a large Texas server facility in daylight, with cooling equipment, a utility substation, transmission lines, transformers, fenced industrial grounds, and electrical infrastructure clearly visible.",
     };
   }
   return subject;
+}
+
+export function buildGenerationOnlyImagePrompt(subject: SubjectExtract, extraGuidance = ""): string {
+  const location = subject.locations.slice(0, 2).join(", ");
+  const correction = extraGuidance ? `Correction from rejected attempt: ${extraGuidance}. ` : "";
+  return [
+    correction,
+    "Physical-camera editorial news photograph, horizontal 16:9.",
+    "Unstaged documentary photojournalism in natural daylight with true-to-life materials, realistic optics, and photographic depth of field.",
+    `Assignment: ${subject.title}.`,
+    `Primary physical scene: ${subject.concreteSubject}`,
+    location ? `Texas location context: ${location}.` : "Texas location context.",
+    "Fill the frame with the named physical infrastructure and ordinary environmental details in one coherent real-world scene.",
+  ].join(" ").replace(/\s+/g, " ").trim().slice(0, 1800);
 }
 
 async function serviceClient() {
@@ -216,13 +230,17 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
 
   const subject = extractImageSubject(row, grounding);
   const generationSubject = buildGenerationSafeSubject(subject);
+  const usesGenerationOnlyPrompt = generationSubject !== subject;
+  const makeGenerationPrompt = (guidance = "") => usesGenerationOnlyPrompt
+    ? buildGenerationOnlyImagePrompt(generationSubject, guidance)
+    : buildImagePrompt(generationSubject, guidance);
   const previousFailure = row.image_generation_status === "failed" && row.image_validation_note?.trim()
     ? row.image_validation_note.trim().slice(0, 600)
     : "";
   const initialCorrection = previousFailure
-    ? "A prior production attempt failed visual quality. Discard that composition entirely and start from a new physical-camera news photograph of the concrete real-world subject."
+    ? "Discard the prior composition entirely and start from a new physical-camera viewpoint centered on the concrete real-world subject."
     : "";
-  const prompt = buildImagePrompt(generationSubject, initialCorrection);
+  const prompt = makeGenerationPrompt(initialCorrection);
   const alt = buildAltText(row);
   const filename = `${sanitizeFilename(row.slug)}.jpg`;
   await supabase.from("daily_articles").update({ image_generation_status: "generating", image_prompt: prompt }).eq("slug", row.slug);
@@ -239,8 +257,8 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
     let usedPrompt = prompt;
 
     for (let attempt = 1; !verdict.matches && attempt <= 3; attempt += 1) {
-      const correction = `Retry ${attempt}. Discard the rejected composition completely. Generate a new physical-camera news photograph whose concrete real-world subject is obvious from the scene itself. Change the camera position, subject arrangement, and setting. Use no text, symbols, illustration, graphic design, poster, collage, generic skyline, or generic institutional placeholder. Do not fabricate a recognizable named person's face.`;
-      const stronger = buildImagePrompt(generationSubject, correction);
+      const correction = `Retry ${attempt}. Discard the prior composition completely. Create a new physical-camera news photograph from a different camera position, with the concrete physical subject filling the frame in a believable real-world setting.`;
+      const stronger = makeGenerationPrompt(correction);
       usedPrompt = stronger;
       negativePrompt = buildNegativeImagePrompt(generationSubject, verdict.reason);
       bytes = await generateImageBytes(stronger, negativePrompt, imageModel);

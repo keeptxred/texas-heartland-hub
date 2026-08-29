@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildFluxImagePrompt } from "./featured-image-cloudflare";
+import { buildFlux2ImageRequest, buildFluxImagePrompt } from "./featured-image-cloudflare";
 
 describe("FLUX validator-feedback sanitization", () => {
   it("keeps categorical exclusions but strips free-form rejected visual motif prose", () => {
@@ -14,12 +14,15 @@ describe("FLUX validator-feedback sanitization", () => {
     expect(finalPrompt).not.toContain("stylized data center");
   });
 
-  it("leaves ordinary categorical negative prompts intact", () => {
-    const finalPrompt = buildFluxImagePrompt(
+  it("keeps categorical negative prompts out of the single-field FLUX.2 request", () => {
+    const form = buildFlux2ImageRequest(
       "A real Fort Worth interstate location photograph.",
       "people, victim, weapon, illustration, cartoon, poster, text",
     );
+    const finalPrompt = String(form.get("prompt"));
 
-    expect(finalPrompt).toContain("people, victim, weapon, illustration, cartoon, poster, text");
+    expect(finalPrompt).toContain("A real Fort Worth interstate location photograph.");
+    expect(finalPrompt).not.toContain("HARD EXCLUSIONS");
+    expect(finalPrompt).not.toMatch(/people, victim|weapon|illustration|cartoon|poster/i);
   });
 });
