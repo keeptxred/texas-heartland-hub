@@ -2,7 +2,7 @@ import { expect, test } from 'vitest';
 import fs from 'node:fs';
 
 const migration = fs.readFileSync(
-  'supabase/migrations/20260828230500_quarantine_pro_sports_utility_pages.sql',
+  'supabase/migrations/20260828230237_quarantine_pro_sports_utility_pages.sql',
   'utf8',
 );
 

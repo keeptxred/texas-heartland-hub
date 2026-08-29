@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest';
 import fs from 'node:fs';
 
-const migration = fs.readFileSync('supabase/migrations/20260827222000_sync_flyover_ledger_alerts.sql', 'utf8');
+const migration = fs.readFileSync('supabase/migrations/20260827221413_sync_flyover_ledger_alerts.sql', 'utf8');
 
 test('Flyover alerts derive from the durable ledger and preserve publication holds', () => {
   expect(migration).toContain("count(*) filter (where disposition='review_ready')");

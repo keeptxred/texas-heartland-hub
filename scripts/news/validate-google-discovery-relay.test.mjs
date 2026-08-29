@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest';
 import fs from 'node:fs';
 
-const migration = fs.readFileSync('supabase/migrations/20260827194000_route_all_google_discovery_through_relay.sql', 'utf8');
+const migration = fs.readFileSync('supabase/migrations/20260827192829_route_all_google_discovery_through_relay.sql', 'utf8');
 const relay = fs.readFileSync('supabase/functions/ktr-rss-relay/index.ts', 'utf8');
 
 const feedKeys = [
