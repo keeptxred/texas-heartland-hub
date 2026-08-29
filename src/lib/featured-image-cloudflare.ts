@@ -18,6 +18,9 @@ type ImageGenerationProvenance = {
   usedFallback: boolean;
 };
 
+// Keep generation provenance attached to the exact in-memory byte object so the
+// strict validator can record which model produced an accepted or rejected
+// image without changing storage formats or weakening the generation API.
 const generatedImageProvenance = new WeakMap<Uint8Array, ImageGenerationProvenance>();
 
 function rememberGeneratedImage(bytes: Uint8Array, model: CloudflareImageModel, usedFallback: boolean): Uint8Array {
@@ -50,12 +53,22 @@ function bytesToBase64(bytes: Uint8Array): string {
 }
 
 export function buildFluxImagePrompt(prompt: string, negativePrompt: string): string {
+  // Keep the documentary-photo lock first and reserve explicit room for the
+  // exclusions at the end. This targets the live failure cohort where otherwise
+  // relevant generations drifted into posters, infographics, generic symbols,
+  // text overlays, or vector art.
   const photographicLock = [
     "REAL CAMERA PHOTOGRAPH ONLY.",
     "Create one coherent documentary photojournalism scene with natural lighting, lifelike materials, realistic optics and depth of field.",
     "The concrete article subject must be visually obvious from physical objects, place, action, infrastructure, institution, sport, or event in the scene itself.",
     "No readable text, typography, poster, illustration, graphic design, vector art, iconography, collage, infographic, CGI, or synthetic promotional artwork.",
   ].join(" ");
+  // buildNegativeImagePrompt appends validator prose as a final
+  // `rejected visual motif:` item. FLUX.2 accepts only one prompt field, so
+  // forwarding that prose—even under HARD EXCLUSIONS—can visually prime the
+  // model with the exact rejected politician/cartoon/graphic composition.
+  // Keep the stable categorical exclusions, but never echo the validator's
+  // free-form description back into generation.
   const safeNegativePrompt = negativePrompt.replace(/(?:^|,\s*)rejected visual motif:.*$/is, "").trim();
   const essentialExclusions = safeNegativePrompt
     .split(",")
@@ -68,6 +81,9 @@ export function buildFluxImagePrompt(prompt: string, negativePrompt: string): st
   return `${photographicLock} EDITORIAL ASSIGNMENT: ${core} HARD EXCLUSIONS: ${exclusions}`.slice(0, 2048);
 }
 
+// Retain the proven Schnell request builder for the emergency fallback path.
+// The live REST endpoint rejected seed for this model, so only send accepted
+// fields even though some Cloudflare examples currently show a seed property.
 export function buildFluxImageRequest(
   prompt: string,
   negativePrompt: string,
@@ -100,6 +116,8 @@ async function requestCloudflareImage(
   model: CloudflareImageModel,
 ): Promise<Response> {
   if (model === CLOUDFLARE_IMAGE_MODEL || model === CLOUDFLARE_IMAGE_QUALITY_MODEL) {
+    // FLUX.2 Klein models use multipart input even for prompt-only generation.
+    // Do not set Content-Type manually: fetch must add the multipart boundary.
     return fetch(cloudflareEndpoint(accountId, model), {
       method: "POST",
       headers: { Authorization: `Bearer ${apiToken}` },
@@ -123,12 +141,17 @@ export async function generateImageBytes(
   const apiToken = process.env.CLOUDFLARE_API_TOKEN;
   if (!accountId || !apiToken) throw new Error("Missing Cloudflare Workers AI credentials: CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required");
 
+  // Keep the initial generation and first two strict-validator retries on cheap
+  // Klein 4B. Only the final validator-steered retry is allowed to use enhanced-
+  // quality Klein 9B, so recurring generation cannot multiply the expensive call.
   let activeModel = model === CLOUDFLARE_IMAGE_MODEL && isFinalStrictValidatorRetry(prompt)
     ? CLOUDFLARE_IMAGE_QUALITY_MODEL
     : model;
   let usedFallback = false;
   let res = await requestCloudflareImage(accountId, apiToken, prompt, negativePrompt, activeModel);
 
+  // Fail safely if the inexpensive primary model is temporarily unavailable.
+  // Quality-escalated Klein 9B requests do not silently downgrade to Schnell.
   if (!res.ok && activeModel === CLOUDFLARE_IMAGE_MODEL) {
     activeModel = CLOUDFLARE_IMAGE_FALLBACK_MODEL;
     usedFallback = true;
@@ -185,6 +208,11 @@ export function extractCloudflareVisionOutput(result: unknown): { output: unknow
   return { output: result };
 }
 
+// Mistral occasionally follows the requested labels but changes presentation:
+// Markdown labels, 1/0 and N/A tokens, `label=value`, or a compact positive
+// `matches, photorealistic, reason` form. Normalize only those known formats
+// before using the existing strict parser. N/A and contradictory compact prose
+// remain conservative rejections, never approvals.
 export function normalizeCloudflareVisionVerdictOutput(value: unknown): unknown {
   if (typeof value !== "string") return value;
 
