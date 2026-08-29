@@ -81,6 +81,21 @@ export function buildFluxImagePrompt(prompt: string, negativePrompt: string): st
   return `${photographicLock} EDITORIAL ASSIGNMENT: ${core} HARD EXCLUSIONS: ${exclusions}`.slice(0, 2048);
 }
 
+export function buildFlux2ImagePrompt(prompt: string): string {
+  // Cloudflare's FLUX.2 Klein schema exposes one prompt field and no separate
+  // negative-prompt field. Production retries proved that appending forbidden
+  // motif nouns to that field can prime the model to reproduce those motifs.
+  // Keep FLUX.2 affirmative-only; the strict vision validator remains the
+  // fail-closed authority after every generation.
+  const photographicLock = [
+    "Create a physical-camera editorial news photograph.",
+    "Show one coherent documentary photojournalism scene with natural lighting, true-to-life materials, realistic optics, and photographic depth of field.",
+    "Make the concrete physical article subject visually dominant through the real place, infrastructure, institution, sport, or event in the frame.",
+  ].join(" ");
+  const core = prompt.replace(/\s+/g, " ").trim().slice(0, 1550);
+  return `${photographicLock} EDITORIAL ASSIGNMENT: ${core}`.slice(0, 2048);
+}
+
 // Retain the proven Schnell request builder for the emergency fallback path.
 // The live REST endpoint rejected seed for this model, so only send accepted
 // fields even though some Cloudflare examples currently show a seed property.
@@ -94,9 +109,9 @@ export function buildFluxImageRequest(
   };
 }
 
-export function buildFlux2ImageRequest(prompt: string, negativePrompt: string, _model: CloudflareImageModel = CLOUDFLARE_IMAGE_MODEL): FormData {
+export function buildFlux2ImageRequest(prompt: string, _negativePrompt: string, _model: CloudflareImageModel = CLOUDFLARE_IMAGE_MODEL): FormData {
   const form = new FormData();
-  form.append("prompt", buildFluxImagePrompt(prompt, negativePrompt));
+  form.append("prompt", buildFlux2ImagePrompt(prompt));
   form.append("guidance", "5.5");
   form.append("width", "1024");
   form.append("height", "768");

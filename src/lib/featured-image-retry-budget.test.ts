@@ -14,8 +14,8 @@ describe("featured image retry budget", () => {
     expect(source).toContain("buildNegativeImagePrompt(generationSubject, verdict.reason)");
     expect(source).not.toContain("buildNegativeImagePrompt(subject, previousFailure)");
     expect(source).not.toContain("buildNegativeImagePrompt(subject, verdict.reason)");
-    expect(source).toContain("A prior production attempt failed visual quality");
-    expect(source).toContain("Discard the rejected composition completely");
+    expect(source).toContain("Discard the prior composition entirely");
+    expect(source).toContain("Discard the prior composition completely");
     expect(source).not.toContain("A prior production attempt was rejected by the strict validator: ${previousFailure}");
     expect(source).not.toContain("Validator rejection ${attempt}: ${verdict.reason}");
   });
