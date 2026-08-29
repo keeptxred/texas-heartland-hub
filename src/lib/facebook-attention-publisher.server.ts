@@ -32,6 +32,26 @@ function normalize(value: string): string {
   return value.toLowerCase().replace(/https?:\/\/\S+/g, " ").replace(/[^a-z0-9]+/g, " ").trim();
 }
 
+function campaignContent(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80) || "attention-post";
+}
+
+export function ktrFacebookAttentionTrafficUrl(post: KtrFacebookAttentionPost): string | null {
+  if (!post.trafficPath) return null;
+  const url = new URL(`${SITE_URL}${post.trafficPath}`);
+  url.searchParams.set("utm_source", "facebook");
+  url.searchParams.set("utm_medium", "social");
+  url.searchParams.set("utm_campaign", "ktr_attention");
+  url.searchParams.set("utm_content", campaignContent(post.title));
+  return url.toString();
+}
+
+export function formatKtrFacebookPublishedAttentionMessage(post: KtrFacebookAttentionPost): string {
+  const trafficUrl = ktrFacebookAttentionTrafficUrl(post);
+  if (!trafficUrl) return post.message;
+  return `${post.message}\n\nRead more on Keep TX Red:\n${trafficUrl}`;
+}
+
 export function shouldUseKtrFacebookAttentionSlot(postsToday: number): boolean {
   return ATTENTION_TEXT_SLOTS.has(postsToday);
 }
@@ -169,7 +189,8 @@ export async function publishKtrFacebookAttentionPost(args: {
   });
   if (!post) return null;
 
-  const message = formatKtrFacebookAttentionMessage(post);
+  const message = formatKtrFacebookPublishedAttentionMessage(post);
+  const trafficUrl = ktrFacebookAttentionTrafficUrl(post);
   const graphUrl = `https://graph.facebook.com/${GRAPH_VERSION}/${encodeURIComponent(String(connection.account_id))}/feed`;
   const graphResponse = await fetch(graphUrl, {
     method: "POST",
@@ -214,7 +235,7 @@ export async function publishKtrFacebookAttentionPost(args: {
     title: post.title,
     category: post.category,
     article_url: null,
-    traffic_url: post.trafficPath ? `${SITE_URL}${post.trafficPath}` : null,
+    traffic_url: trafficUrl,
     external_id: externalId,
     post_url: externalId ? `https://www.facebook.com/${externalId}` : null,
     package_id: packageId,
