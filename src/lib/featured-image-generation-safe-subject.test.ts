@@ -4,7 +4,7 @@ import { buildGenerationSafeSubject } from "./featured-image.functions";
 import { buildImagePrompt, buildNegativeImagePrompt, type SubjectExtract } from "./featured-image-core";
 
 describe("buildGenerationSafeSubject", () => {
-  it("removes violent incident language from both positive and negative generation inputs while preserving the truthful roadway setting", () => {
+  it("removes violent story language from the positive generation subject while preserving rejected motifs only as negative constraints", () => {
     const subject: SubjectExtract = {
       title: "Deadly I-20 road rage shooting in Fort Worth leaves woman dead",
       firstParagraph: "A woman was shot during a road rage incident on Interstate 20 in Fort Worth.",
@@ -22,10 +22,11 @@ describe("buildGenerationSafeSubject", () => {
     expect(`${safe.title} ${safe.firstParagraph} ${safe.concreteSubject}`).not.toMatch(/shoot|road rage|gun|dead|victim|incident|reenactment/i);
     expect(prompt).toContain("roadway");
     expect(prompt).not.toMatch(/shoot|road rage|gun|dead|victim|incident/i);
-    expect(negative.replace(/rejected visual motif:.*$/i, "")).not.toMatch(/shoot|road rage|gun|dead|victim/i);
+    expect(negative).toContain("rejected visual motif: Rejected image showed a gun and target illustration");
+    expect(negative.replace(/rejected visual motif:.*$/i, "")).not.toContain("gun");
   });
 
-  it("keeps data-center generation focused on physical infrastructure without policy or politician terms", () => {
+  it("keeps data-center generation focused on physical infrastructure while retaining rejected political imagery only as a negative constraint", () => {
     const subject: SubjectExtract = {
       title: "Gov. Abbott orders pause on data center approvals",
       firstParagraph: "The governor ordered a pause while Texas reviews grid impacts from large data centers.",
@@ -44,6 +45,7 @@ describe("buildGenerationSafeSubject", () => {
     expect(`${safe.title} ${safe.firstParagraph} ${safe.concreteSubject}`).not.toMatch(/abbott|governor|politician|podium|policy|review|approval|pause/i);
     expect(prompt).toContain("data-center");
     expect(prompt).not.toMatch(/abbott|governor|politician|podium|policy|review|approval|pause/i);
+    expect(negative).toContain("rejected visual motif: Rejected image showed Gov. Abbott at a podium");
     expect(negative.replace(/rejected visual motif:.*$/i, "")).not.toMatch(/abbott|governor|politician|podium/i);
   });
 
