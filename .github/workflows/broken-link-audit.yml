@@ -1,6 +1,7 @@
 name: Broken link audit
 
 # Run the full audit before audit-code changes merge and again after relevant main merges.
+# Zero-debt policy: retired internal links are no longer report-only once the migration backlog is cleared.
 on:
   workflow_dispatch:
   schedule:
@@ -52,7 +53,7 @@ jobs:
           const out = process.env.GITHUB_STEP_SUMMARY;
           fs.appendFileSync(out, '# KeepTXRed broken-link audit\n\n');
           fs.appendFileSync(out, `- Blocking static findings: **${report.summary.blockingStaticFindings}**\n`);
-          fs.appendFileSync(out, `- Known migration-link findings: **${report.summary.migrationStaticFindings + report.summary.migrationLiveFindings}**\n`);
+          fs.appendFileSync(out, `- Migration-link findings: **${report.summary.migrationStaticFindings + report.summary.migrationLiveFindings}**\n`);
           fs.appendFileSync(out, `- Live pages checked: **${report.summary.livePagesChecked}**\n`);
           fs.appendFileSync(out, `- Blocking live failures: **${report.summary.blockingLiveFailures}**\n`);
           fs.appendFileSync(out, `- Canonical site: **${report.site}**\n`);
@@ -60,6 +61,7 @@ jobs:
           const actionable = [...report.staticFindings, ...report.liveFailures].filter((item) => item.severity === 'blocking');
           const migration = [...report.staticFindings, ...report.liveFailures].filter((item) => item.severity === 'migration-debt');
           console.log(`Blocking static findings: ${report.summary.blockingStaticFindings}`);
+          console.log(`Migration-link findings: ${report.summary.migrationStaticFindings + report.summary.migrationLiveFindings}`);
           console.log(`Blocking live failures: ${report.summary.blockingLiveFailures}`);
           if (actionable.length) {
             console.log('Actionable findings:');
@@ -72,7 +74,7 @@ jobs:
             }
           }
           if (migration.length) {
-            fs.appendFileSync(out, '\n## Known migration debt (non-blocking)\n\n');
+            fs.appendFileSync(out, '\n## Migration debt (must be zero)\n\n');
             for (const item of migration.slice(0, 50)) {
               fs.appendFileSync(out, `- \`${item.type}\`: ${item.file || item.source || item.url || ''}${item.line ? `:${item.line}` : ''} ${item.pathname || item.raw || ''}\n`);
             }
@@ -84,11 +86,11 @@ jobs:
           name: broken-link-audit
           path: artifacts/broken-link-audit.json
           retention-days: 14
-      - name: Enforce actionable findings only
+      - name: Enforce zero broken-link debt
         if: always()
         run: |
           node - <<'NODE'
           const fs = require('fs');
           const report = JSON.parse(fs.readFileSync('artifacts/broken-link-audit.json', 'utf8'));
-          if (report.summary.blockingStaticFindings || report.summary.blockingLiveFailures) process.exit(1);
+          if (report.summary.staticFindings || report.summary.liveFailures) process.exit(1);
           NODE
