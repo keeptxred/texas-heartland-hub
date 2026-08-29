@@ -6,10 +6,12 @@ test('newsroom source health endpoint distinguishes transport states and reconci
   for (const required of [
     'healthy',
     'quiet',
+    'degraded',
     'broken',
     'stale_check',
     'never_checked',
     'consecutiveFailures',
+    'degradedSources',
     'brokenSources',
     'fetchByName',
     'fetchByUrl',
@@ -29,6 +31,8 @@ test('newsroom source health endpoint distinguishes transport states and reconci
   }
   expect(text).toContain('const fetch = byName ?? byUrl');
   expect(text).toContain('checkedAt < now - TWO_HOURS_MS');
+  expect(text).toContain('(fetch.consecutive_failures ?? 0) >= 2');
+  expect(text).toContain('if (!successful) return "degraded"');
   expect(text).toContain('Math.max(now - TWO_HOURS_MS, latestCheckedAt - LATEST_INGESTION_COHORT_MS)');
   expect(text).toContain('checkedAt < activeCohortCutoff');
   expect(text).toContain('activeUnregisteredSources.slice(0, ACTIVE_UNREGISTERED_LIMIT)');
