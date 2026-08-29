@@ -48,6 +48,10 @@ export function isLowValueTitle(title: string | null | undefined): boolean {
     /^workforce policy letters?\s*&\s*guidance$/.test(t) ||
     /^workbook:\s*bidder'?s list$/.test(t) ||
     /^texas transportation commission$/.test(t) ||
-    /^-\s*texas workforce commission$/.test(t)
+    /^-\s*texas workforce commission$/.test(t) ||
+    // Static Texas Education Agency/reporting landing pages that can surface
+    // through primary-source Google discovery but are not newsroom stories.
+    /^tea$/.test(t) ||
+    /^(?:\d{4}-\d{2}\s+)?texas performance reporting system\s*\(tprs\)$/.test(t)
   );
 }
