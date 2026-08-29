@@ -11,7 +11,7 @@ import {
   type SubjectExtract,
   type VisionVerdict,
 } from "./featured-image-core";
-import { CLOUDFLARE_CULTURE_IMAGE_MODEL, generateImageBytes, validateImageMatchesArticle } from "./featured-image-cloudflare";
+import { CLOUDFLARE_CULTURE_IMAGE_MODEL, CLOUDFLARE_IMAGE_FALLBACK_MODEL, generateImageBytes, validateImageMatchesArticle } from "./featured-image-cloudflare";
 import {
   buildMultiSourceImageGrounding,
   extractSelectedImageLead,
@@ -131,16 +131,16 @@ export function buildGenerationSafeSubject(subject: SubjectExtract): SubjectExtr
   if (SENSITIVE_IMAGE_SUBJECT_RE.test(storyText)) {
     return {
       ...subject,
-      title: `${location ? `${location} ` : "Texas "}roadway incident location`.trim(),
+      title: `${location ? `${location} ` : "Texas "}interstate roadway exterior`.trim(),
       firstParagraph: "",
-      concreteSubject: "A restrained local-news location photograph of the real Texas roadway or interstate setting connected to the reported incident, using empty travel lanes, shoulder, overpass, traffic-control equipment, or distant generic emergency vehicles as appropriate.",
+      concreteSubject: "A restrained local-news location photograph of the real Texas roadway or interstate setting, using empty travel lanes, shoulder, overpass, traffic-control equipment, or distant generic emergency vehicles as appropriate.",
     };
   }
   if (subject.domain === "energy" && DATA_CENTER_IMAGE_SUBJECT_RE.test(storyText)) {
     return {
       ...subject,
       domain: "general",
-      title: "Texas data center infrastructure policy review",
+      title: "Texas data center exterior and electrical infrastructure",
       firstParagraph: "",
       concreteSubject: "A real Texas data-center campus or large server-facility exterior with cooling equipment, utility substation, transmission lines, transformers, fenced industrial grounds, or electrical infrastructure clearly visible.",
     };
@@ -233,7 +233,16 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
     // FLUX as "negative" text can prime the exact gun/politician/cartoon motifs the
     // strict validator rejected, because FLUX.2 receives one combined prompt field.
     let negativePrompt = buildNegativeImagePrompt(generationSubject, previousFailure);
-    const imageModel = subject.domain === "culture" ? CLOUDFLARE_CULTURE_IMAGE_MODEL : undefined;
+    // Sanitized subjects are the small cohort for which repeated Klein generations
+    // reproduced the same poster/cartoon failure mode. Use the already-supported
+    // Schnell path for model diversity rather than spending a fourth Klein attempt
+    // on the same visual prior. The original factual subject still goes through the
+    // unchanged strict vision validator before anything can be stored.
+    const imageModel = subject.domain === "culture"
+      ? CLOUDFLARE_CULTURE_IMAGE_MODEL
+      : generationSubject !== subject
+        ? CLOUDFLARE_IMAGE_FALLBACK_MODEL
+        : undefined;
     let bytes = await generateImageBytes(prompt, negativePrompt, imageModel);
     let verdict = await validateImageMatchesArticle(bytes, subject);
     let usedPrompt = prompt;
