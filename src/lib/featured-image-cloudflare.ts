@@ -104,7 +104,8 @@ export function buildFlux2ImageRequest(prompt: string, negativePrompt: string, _
 }
 
 function isFinalStrictValidatorRetry(prompt: string): boolean {
-  return /^Correction from rejected attempt:\s*Validator rejection\s+3:/i.test(prompt.trim());
+  const normalized = prompt.trim();
+  return /^Correction from rejected attempt:\s*(?:Validator rejection\s+3:|Retry\s+3\.)/i.test(normalized);
 }
 
 async function requestCloudflareImage(
