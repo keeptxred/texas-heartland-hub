@@ -5,7 +5,10 @@ import {
   formatKtrFacebookAttentionMessage,
   selectKtrFacebookAttentionPost,
 } from "@/lib/facebook-attention-posts";
-import { shouldUseKtrFacebookAttentionSlot } from "@/lib/facebook-attention-publisher.server";
+import {
+  selectKtrFacebookAttentionPostForSlot,
+  shouldUseKtrFacebookAttentionSlot,
+} from "@/lib/facebook-attention-publisher.server";
 
 const STATIC_TRAFFIC_PATHS = new Set([
   "/texas-politics",
@@ -73,6 +76,43 @@ describe("KTR Facebook attention posts", () => {
     });
     expect(skipped).not.toBeNull();
     expect(skipped?.title).not.toBe(first?.title);
+  });
+
+  it("uses the earlier attention slot for reach and the later one for traffic", () => {
+    const reach = selectKtrFacebookAttentionPostForSlot({
+      seed: "test-seed",
+      dateKey: "2026-08-29",
+      slot: 1,
+      recentMessages: [],
+    });
+    const traffic = selectKtrFacebookAttentionPostForSlot({
+      seed: "test-seed",
+      dateKey: "2026-08-29",
+      slot: 3,
+      recentMessages: [],
+    });
+    expect(reach).not.toBeNull();
+    expect(reach?.trafficPath).toBeUndefined();
+    expect(traffic).not.toBeNull();
+    expect(traffic?.trafficPath).toBeTruthy();
+  });
+
+  it("does not immediately reuse the same traffic destination", () => {
+    const first = selectKtrFacebookAttentionPostForSlot({
+      seed: "traffic-seed",
+      dateKey: "2026-08-29",
+      slot: 3,
+      recentMessages: [],
+    });
+    expect(first?.trafficPath).toBeTruthy();
+    const next = selectKtrFacebookAttentionPostForSlot({
+      seed: "traffic-seed",
+      dateKey: "2026-08-29",
+      slot: 3,
+      recentMessages: first ? [formatKtrFacebookAttentionMessage(first)] : [],
+    });
+    expect(next).not.toBeNull();
+    expect(next?.trafficPath).not.toBe(first?.trafficPath);
   });
 
   it("reserves only the second and fourth daily KTR slots for attention posts", () => {
