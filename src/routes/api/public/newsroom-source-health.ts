@@ -18,7 +18,7 @@ type FetchState = {
   consecutive_empty: number;
 };
 
-type TransportStatus = "healthy" | "quiet" | "broken" | "stale_check" | "never_checked";
+type TransportStatus = "healthy" | "quiet" | "degraded" | "broken" | "stale_check" | "never_checked";
 type MatchMode = "name" | "url" | null;
 
 const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
@@ -37,13 +37,15 @@ function classifyFetch(fetch: FetchState | null | undefined, now: number): Trans
   if (!fetch) return "never_checked";
   const checkedAt = Date.parse(fetch.last_checked_at);
   if (!Number.isFinite(checkedAt) || checkedAt < now - TWO_HOURS_MS) return "stale_check";
-  if ((fetch.consecutive_failures ?? 0) >= 2 || !(fetch.last_status != null && fetch.last_status >= 200 && fetch.last_status < 300)) return "broken";
+  const successful = fetch.last_status != null && fetch.last_status >= 200 && fetch.last_status < 300;
+  if ((fetch.consecutive_failures ?? 0) >= 2) return "broken";
+  if (!successful) return "degraded";
   if ((fetch.last_item_count ?? 0) === 0) return "quiet";
   return "healthy";
 }
 
 function blankStatusCounts(): Record<TransportStatus, number> {
-  return { healthy: 0, quiet: 0, broken: 0, stale_check: 0, never_checked: 0 };
+  return { healthy: 0, quiet: 0, degraded: 0, broken: 0, stale_check: 0, never_checked: 0 };
 }
 
 export const Route = createFileRoute("/api/public/newsroom-source-health")({
@@ -108,6 +110,11 @@ export const Route = createFileRoute("/api/public/newsroom-source-health")({
           return acc;
         }, blankStatusCounts());
 
+        const degradedSources = rows
+          .filter((row) => row.status === "degraded")
+          .sort((a, b) => b.consecutiveFailures - a.consecutiveFailures)
+          .slice(0, 25);
+
         const brokenSources = rows
           .filter((row) => row.status === "broken")
           .sort((a, b) => b.consecutiveFailures - a.consecutiveFailures)
@@ -155,6 +162,7 @@ export const Route = createFileRoute("/api/public/newsroom-source-health")({
           ok: true,
           sourceCount: rows.length,
           statusCounts,
+          degradedSources,
           brokenSources,
           activeUnregisteredSourceCount: activeUnregisteredSources.length,
           activeUnregisteredStatusCounts,
