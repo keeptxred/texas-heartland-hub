@@ -18,6 +18,7 @@ import { WAVE9_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave
 import { WAVE10_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave10-upgrades";
 import { WAVE11_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave11-upgrades";
 import { WAVE12_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave12-upgrades";
+import { WAVE13_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave13-upgrades";
 import { POLITICAL_SEARCH_GUIDES } from "@/data/political-search-guides";
 import { isIssueGuideIndexable } from "@/lib/issue-guide-indexability";
 import { isPolicyTrackerIndexable } from "@/lib/policy-tracker-indexability";
@@ -41,6 +42,7 @@ const EXPECTED_INDEXABLE_POLICY_TRACKER_SLUGS = [
   ...WAVE10_INDEXABLE_POLICY_TRACKER_SLUGS,
   ...WAVE11_INDEXABLE_POLICY_TRACKER_SLUGS,
   ...WAVE12_INDEXABLE_POLICY_TRACKER_SLUGS,
+  ...WAVE13_INDEXABLE_POLICY_TRACKER_SLUGS,
   "social-media-viewpoint-moderation",
 ];
 
