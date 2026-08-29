@@ -1,4 +1,5 @@
 import {
+  KTR_FACEBOOK_ATTENTION_POSTS,
   formatKtrFacebookAttentionMessage,
   selectKtrFacebookAttentionPost,
   type KtrFacebookAttentionPost,
@@ -18,8 +19,53 @@ type SocialConnectionRow = {
   connection_status: string | null;
 };
 
+function hash32(value: string): number {
+  let hash = 0x811c9dc5;
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return hash >>> 0;
+}
+
+function normalize(value: string): string {
+  return value.toLowerCase().replace(/https?:\/\/\S+/g, " ").replace(/[^a-z0-9]+/g, " ").trim();
+}
+
 export function shouldUseKtrFacebookAttentionSlot(postsToday: number): boolean {
   return ATTENTION_TEXT_SLOTS.has(postsToday);
+}
+
+export function selectKtrFacebookAttentionPostForSlot(args: {
+  seed: string;
+  dateKey: string;
+  slot: number;
+  recentMessages: readonly string[];
+}): KtrFacebookAttentionPost | null {
+  const preferredPool = KTR_FACEBOOK_ATTENTION_POSTS.filter((post) =>
+    args.slot === 1 ? !post.trafficPath : args.slot === 3 ? Boolean(post.trafficPath) : true,
+  );
+  const recentNormalized = new Set(args.recentMessages.map(normalize).filter(Boolean));
+  const start = preferredPool.length
+    ? hash32(`${args.seed}:${args.dateKey}:${args.slot}:ktr-attention-mode`) % preferredPool.length
+    : 0;
+
+  for (let offset = 0; offset < preferredPool.length; offset += 1) {
+    const candidate = preferredPool[(start + offset) % preferredPool.length];
+    const formatted = formatKtrFacebookAttentionMessage(candidate);
+    if (recentNormalized.has(normalize(formatted)) || recentNormalized.has(normalize(candidate.message))) continue;
+    if (
+      candidate.trafficPath &&
+      args.recentMessages.some((message) => message.includes(`${SITE_URL}${candidate.trafficPath}`))
+    ) {
+      continue;
+    }
+    return candidate;
+  }
+
+  // If a preferred pool is exhausted by live-page duplicate history, fall back
+  // to the general selector rather than losing an otherwise valid scheduled slot.
+  return selectKtrFacebookAttentionPost(args);
 }
 
 async function loadFacebookConnection(db: any): Promise<SocialConnectionRow> {
@@ -115,7 +161,7 @@ export async function publishKtrFacebookAttentionPost(args: {
     );
   }
 
-  const post = selectKtrFacebookAttentionPost({
+  const post = selectKtrFacebookAttentionPostForSlot({
     seed: args.seed,
     dateKey: args.dateKey,
     slot: args.slot,
@@ -175,6 +221,7 @@ export async function publishKtrFacebookAttentionPost(args: {
     record_warning: recordWarning,
     posted_at: new Date().toISOString(),
     mode: args.mode,
+    attention_mode: args.slot === 1 ? "reach" : args.slot === 3 ? "traffic" : "mixed",
     content_mix: { article_or_guide_slots: 3, attention_slots: 2 },
   });
 }
