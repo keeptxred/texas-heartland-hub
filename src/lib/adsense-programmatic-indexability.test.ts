@@ -21,6 +21,7 @@ import { WAVE12_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wav
 import { WAVE13_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave13-upgrades";
 import { WAVE14_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave14-upgrades";
 import { WAVE15_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave15-upgrades";
+import { WAVE16_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave16-upgrades";
 import { POLITICAL_SEARCH_GUIDES } from "@/data/political-search-guides";
 import { isIssueGuideIndexable } from "@/lib/issue-guide-indexability";
 import { isPolicyTrackerIndexable } from "@/lib/policy-tracker-indexability";
@@ -47,6 +48,7 @@ const EXPECTED_INDEXABLE_POLICY_TRACKER_SLUGS = [
   ...WAVE13_INDEXABLE_POLICY_TRACKER_SLUGS,
   ...WAVE14_INDEXABLE_POLICY_TRACKER_SLUGS,
   ...WAVE15_INDEXABLE_POLICY_TRACKER_SLUGS,
+  ...WAVE16_INDEXABLE_POLICY_TRACKER_SLUGS,
   "social-media-viewpoint-moderation",
 ];
 
@@ -58,9 +60,9 @@ describe("AdSense programmatic indexability", () => {
       ...WAVE3_ISSUE_GUIDE_SLUGS,
       ...WAVE4_ISSUE_GUIDE_SLUGS,
     ].sort());
-    expect(ALL_POLICY_TRACKERS.filter(isPolicyTrackerIndexable).map((tracker) => tracker.slug).sort()).toEqual([
-      ...EXPECTED_INDEXABLE_POLICY_TRACKER_SLUGS,
-    ].sort());
+    const readyPolicy = ALL_POLICY_TRACKERS.filter(isPolicyTrackerIndexable).map((tracker) => tracker.slug).sort();
+    expect(readyPolicy).toEqual([...EXPECTED_INDEXABLE_POLICY_TRACKER_SLUGS].sort());
+    expect(readyPolicy).not.toContain("genetic-data-privacy");
     expect(POLITICAL_SEARCH_GUIDES.filter(isPoliticalReferenceIndexable)).toHaveLength(0);
   });
 
