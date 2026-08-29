@@ -2,15 +2,19 @@ name: KeepTXRed Image Backlog Recovery
 
 on:
   workflow_dispatch:
+  # Protected-main merges are performed by repository automation, so a marker
+  # commit may not emit a second push-triggered workflow. Listen to the required
+  # repository verification as a fallback, but execute only for an explicit
+  # [run-image-backlog] sentinel in the verified commit message.
+  workflow_run:
+    workflows: ["Repository test and build health"]
+    types: [completed]
+    branches: [main]
   # Keep background image repair inside the Workers AI free-neuron budget.
   # This pass is staggered from both the newsroom publisher and AdSense image
   # recovery so a persistent failure cannot trigger an unbounded retry storm.
   schedule:
     - cron: '45 2,10,18 * * *'
-    # Temporary one-time diagnostic window for the exact two-row failed-image
-    # cohort. This remains inside the already-authorized schedule trigger and is
-    # removed immediately after the production repair is verified.
-    - cron: '30 22 28 8 *'
   # The marker path provides an explicit, bounded production-repair mechanism.
   # A marker push must name one to four exact slugs so an emergency repair can
   # never spend the bounded batch on unrelated newer backlog rows.
@@ -31,6 +35,10 @@ concurrency:
 
 jobs:
   recover:
+    if: >-
+      github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       contains(github.event.workflow_run.head_commit.message, '[run-image-backlog]'))
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -38,7 +46,7 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-          EVENT_SCHEDULE: ${{ github.event.schedule || '' }}
+          MARKER_REF: ${{ github.event.workflow_run.head_sha || github.sha }}
         run: |
           set -euo pipefail
 
@@ -85,7 +93,7 @@ jobs:
 
           load_exact_marker_slugs() {
             max_per_run=4
-            marker_b64=$(gh api "repos/${GITHUB_REPOSITORY}/contents/.github/force-image-backlog-recovery?ref=${GITHUB_SHA}" --jq '.content')
+            marker_b64=$(gh api "repos/${GITHUB_REPOSITORY}/contents/.github/force-image-backlog-recovery?ref=${MARKER_REF}" --jq '.content')
             printf '%s' "$marker_b64" | base64 --decode > /tmp/image-recovery-marker
             mapfile -t marker_slugs < <(sed -n 's/^slug:[[:space:]]*//p' /tmp/image-recovery-marker | sed '/^[[:space:]]*$/d' | awk '!seen[$0]++')
             if [[ "${#marker_slugs[@]}" -lt 1 ]]; then
@@ -105,17 +113,26 @@ jobs:
             done
           }
 
-          # One article per ordinary pass bounds worst-case generation to the
-          # existing initial image plus three validator-steered retries.
+          # Ordinary background passes remain capped at one article, but rotate
+          # across the missing-image cohort so one strict-validator hard failure
+          # can never monopolize every scheduled run. Once missing images are
+          # cleared, the same rotation naturally advances through legacy assets.
           max_per_run=1
-          if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
-            load_exact_marker_slugs
-          elif [[ "${GITHUB_EVENT_NAME}" == "schedule" && "${EVENT_SCHEDULE}" == "30 22 28 8 *" ]]; then
-            # The dated diagnostic schedule uses the exact same marker, cap,
-            # eligibility checks, strict validator, and OIDC-protected Worker.
+          if [[ "${GITHUB_EVENT_NAME}" == "push" || "${GITHUB_EVENT_NAME}" == "workflow_run" ]]; then
             load_exact_marker_slugs
           else
-            mapfile -t slugs < <(jq -r --argjson max "$max_per_run" '.slugs[:$max][]' /tmp/image-backlog-dry.json)
+            missing=$(jq -r '.missing // 0' /tmp/image-backlog-dry.json)
+            candidate_count="$ready"
+            if [[ "$missing" -gt 0 ]]; then
+              candidate_count="$missing"
+            fi
+            if [[ "$candidate_count" -lt 1 ]]; then
+              echo 'No eligible image-recovery candidates remain.'
+              exit 0
+            fi
+            rotation=$(( (GITHUB_RUN_NUMBER - 1) % candidate_count ))
+            mapfile -t slugs < <(jq -r --argjson offset "$rotation" --argjson max "$max_per_run" '.slugs[$offset:($offset + $max)][]' /tmp/image-backlog-dry.json)
+            echo "IMAGE_BACKLOG_RECOVERY_ROTATION candidate_count=${candidate_count} offset=${rotation} slug=${slugs[0]:-none}"
           fi
 
           failures=0
