@@ -32,6 +32,7 @@ import { POLICY_TRACKER_WAVE13_UPGRADES } from "@/data/policy-tracker-wave13-upg
 import { POLICY_TRACKER_WAVE14_UPGRADES } from "@/data/policy-tracker-wave14-upgrades";
 import { POLICY_TRACKER_WAVE15_UPGRADES } from "@/data/policy-tracker-wave15-upgrades";
 import { POLICY_TRACKER_WAVE16_UPGRADES } from "@/data/policy-tracker-wave16-upgrades";
+import { POLICY_TRACKER_WAVE18_READY } from "@/data/policy-tracker-wave18-ready";
 
 const BASE_POLICY_TRACKERS = [
   ...POLICY_TRACKERS,
@@ -54,25 +55,26 @@ const BASE_POLICY_TRACKERS = [
 ];
 
 export const ALL_POLICY_TRACKERS = BASE_POLICY_TRACKERS.map(
-  (tracker) => tracker.slug === GENETIC_DATA_PRIVACY_UPGRADE.slug
-    ? GENETIC_DATA_PRIVACY_UPGRADE
-    : POLICY_TRACKER_WAVE16_UPGRADES[tracker.slug]
-    ?? POLICY_TRACKER_WAVE15_UPGRADES[tracker.slug]
-    ?? POLICY_TRACKER_WAVE14_UPGRADES[tracker.slug]
-    ?? POLICY_TRACKER_WAVE13_UPGRADES[tracker.slug]
-    ?? POLICY_TRACKER_WAVE12_UPGRADES[tracker.slug]
-    ?? POLICY_TRACKER_WAVE11_UPGRADES[tracker.slug]
-    ?? POLICY_TRACKER_WAVE10_UPGRADES[tracker.slug]
-    ?? POLICY_TRACKER_WAVE9_UPGRADES[tracker.slug]
-    ?? POLICY_TRACKER_WAVE8_UPGRADES[tracker.slug]
-    ?? POLICY_TRACKER_WAVE7_UPGRADES[tracker.slug]
-    ?? POLICY_TRACKER_WAVE6_UPGRADES[tracker.slug]
-    ?? POLICY_TRACKER_WAVE5_UPGRADES[tracker.slug]
-    ?? POLICY_TRACKER_WAVE4_UPGRADES[tracker.slug]
-    ?? POLICY_TRACKER_WAVE3_UPGRADES[tracker.slug]
-    ?? POLICY_TRACKER_WAVE2_UPGRADES[tracker.slug]
-    ?? POLICY_TRACKER_UPGRADES[tracker.slug]
-    ?? tracker,
+  (tracker) => POLICY_TRACKER_WAVE18_READY[tracker.slug]
+    ?? (tracker.slug === GENETIC_DATA_PRIVACY_UPGRADE.slug
+      ? GENETIC_DATA_PRIVACY_UPGRADE
+      : POLICY_TRACKER_WAVE16_UPGRADES[tracker.slug]
+      ?? POLICY_TRACKER_WAVE15_UPGRADES[tracker.slug]
+      ?? POLICY_TRACKER_WAVE14_UPGRADES[tracker.slug]
+      ?? POLICY_TRACKER_WAVE13_UPGRADES[tracker.slug]
+      ?? POLICY_TRACKER_WAVE12_UPGRADES[tracker.slug]
+      ?? POLICY_TRACKER_WAVE11_UPGRADES[tracker.slug]
+      ?? POLICY_TRACKER_WAVE10_UPGRADES[tracker.slug]
+      ?? POLICY_TRACKER_WAVE9_UPGRADES[tracker.slug]
+      ?? POLICY_TRACKER_WAVE8_UPGRADES[tracker.slug]
+      ?? POLICY_TRACKER_WAVE7_UPGRADES[tracker.slug]
+      ?? POLICY_TRACKER_WAVE6_UPGRADES[tracker.slug]
+      ?? POLICY_TRACKER_WAVE5_UPGRADES[tracker.slug]
+      ?? POLICY_TRACKER_WAVE4_UPGRADES[tracker.slug]
+      ?? POLICY_TRACKER_WAVE3_UPGRADES[tracker.slug]
+      ?? POLICY_TRACKER_WAVE2_UPGRADES[tracker.slug]
+      ?? POLICY_TRACKER_UPGRADES[tracker.slug]
+      ?? tracker),
 );
 
 export const ALL_POLICY_TRACKER_SLUGS = ALL_POLICY_TRACKERS.map((tracker) => tracker.slug);
