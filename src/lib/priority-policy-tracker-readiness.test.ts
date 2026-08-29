@@ -13,11 +13,8 @@ import { WAVE10_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wav
 import { WAVE11_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave11-upgrades";
 import { WAVE12_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave12-upgrades";
 import { WAVE13_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave13-upgrades";
-import {
-  MIN_POLICY_TRACKER_WORDS,
-  isPolicyTrackerIndexable,
-  policyTrackerWordCount,
-} from "@/lib/policy-tracker-indexability";
+import { WAVE14_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave14-upgrades";
+import { MIN_POLICY_TRACKER_WORDS, isPolicyTrackerIndexable, policyTrackerWordCount } from "@/lib/policy-tracker-indexability";
 
 const UPGRADED_EXPECTED = ["property-taxes", "border-security", "energy-ercot", "gun-rights", "life-abortion"] as const;
 const WAVE2_EXPECTED = ["parental-rights", "election-integrity", "bitcoin-reserve", "central-bank-digital-currency"] as const;
@@ -32,6 +29,7 @@ const WAVE10_EXPECTED = ["school-library-materials", "school-safety-security", "
 const WAVE11_EXPECTED = ["data-centers-large-loads", "constitutional-tax-protections", "critical-minerals-rare-earths"] as const;
 const WAVE12_EXPECTED = ["homeschool-autonomy", "faith-based-child-welfare", "tanf-work-participation"] as const;
 const WAVE13_EXPECTED = ["assisted-suicide", "charter-schools", "consumable-hemp-cannabis"] as const;
+const WAVE14_EXPECTED = ["consumer-data-privacy", "online-age-verification", "app-store-parental-controls"] as const;
 
 const EXPECTED_INDEXABLE = [
   ...UPGRADED_EXPECTED,
@@ -47,6 +45,7 @@ const EXPECTED_INDEXABLE = [
   ...WAVE11_EXPECTED,
   ...WAVE12_EXPECTED,
   ...WAVE13_EXPECTED,
+  ...WAVE14_EXPECTED,
   "social-media-viewpoint-moderation",
 ] as const;
 
@@ -65,6 +64,7 @@ describe("priority policy tracker readiness", () => {
     expect([...WAVE11_INDEXABLE_POLICY_TRACKER_SLUGS].sort()).toEqual([...WAVE11_EXPECTED].sort());
     expect([...WAVE12_INDEXABLE_POLICY_TRACKER_SLUGS].sort()).toEqual([...WAVE12_EXPECTED].sort());
     expect([...WAVE13_INDEXABLE_POLICY_TRACKER_SLUGS].sort()).toEqual([...WAVE13_EXPECTED].sort());
+    expect([...WAVE14_INDEXABLE_POLICY_TRACKER_SLUGS].sort()).toEqual([...WAVE14_EXPECTED].sort());
   });
 
   it.each(EXPECTED_INDEXABLE)("%s genuinely clears the canonical tracker gate", (slug) => {
