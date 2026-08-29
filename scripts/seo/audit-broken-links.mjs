@@ -24,11 +24,6 @@ const RETIRED_PREFIXES = [
   '/moving-to-texas-checklist', '/texas-resources', '/texas-data',
   '/events', '/food-bbq',
 ];
-const ACTIVE_LEGACY_PATHS = new Set([
-  '/explore/scenic-rivers',
-  '/explore/texas-dark-sky-stargazing',
-  '/explore/major-springs',
-]);
 const IGNORE_PREFIXES = ['/api/', '/admin', '/auth/', '/assets/', '/favicon', '/robots.txt', '/sitemap'];
 const MAX_FETCH_ATTEMPTS = 3;
 const AUDIT_REQUEST_HEADERS = {
@@ -88,7 +83,6 @@ function extractLinks(text) {
 }
 
 function isRetiredPath(pathname) {
-  if (ACTIVE_LEGACY_PATHS.has(pathname)) return false;
   return RETIRED_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(prefix + '/'));
 }
 
