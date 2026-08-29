@@ -32,14 +32,24 @@ describe("image recovery workflow bounds", () => {
     expect(adsenseWorkflow).not.toContain("max_per_run=4");
   });
 
+  it("rotates ordinary recovery across the current missing-image cohort without increasing the quota", () => {
+    expect(backlogWorkflow).toContain('missing=$(jq -r \'.missing // 0\' /tmp/image-backlog-dry.json)');
+    expect(backlogWorkflow).toContain('rotation=$(( (GITHUB_RUN_NUMBER - 1) % candidate_count ))');
+    expect(backlogWorkflow).toContain('.slugs[$offset:($offset + $max)][]');
+    expect(backlogWorkflow).toContain("IMAGE_BACKLOG_RECOVERY_ROTATION");
+    expect(backlogWorkflow).toContain("max_per_run=1");
+  });
+
   it("fails closed when any requested recovery image fails", () => {
     expect(backlogWorkflow).toContain('if [[ "$failures" -gt 0 ]]; then');
     expect(backlogWorkflow).toContain("At least one requested image failed the existing production quality gate");
     expect(backlogWorkflow).not.toContain('if [[ "$processed" -gt 0 && "$succeeded" -eq 0 ]]; then');
   });
 
-  it("staggers schedules and avoids unbounded five-minute AI retry loops", () => {
+  it("staggers schedules and avoids unbounded or expired diagnostic AI retry loops", () => {
     expect(backlogWorkflow).toContain("45 2,10,18 * * *");
+    expect(backlogWorkflow).not.toContain("30 22 28 8 *");
+    expect(backlogWorkflow).not.toContain("EVENT_SCHEDULE");
     expect(adsenseWorkflow).toContain("45 6,14,22 * * *");
     for (const source of [backlogWorkflow, adsenseWorkflow]) {
       expect(source).not.toContain("*/5 * * * *");
