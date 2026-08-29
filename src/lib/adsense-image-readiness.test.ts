@@ -33,6 +33,16 @@ describe("fresh article image recovery", () => {
     expect(route).toContain('scope: "fresh_quality_plus_adsense_backlog"');
   });
 
+  it("rotates failed rows instead of letting one validator rejection starve the queue", () => {
+    expect(route).toContain("updated_at: string");
+    expect(route).toContain('const articleSelect = "slug,published_at,updated_at,featured_image_url,image_generation_status,kind,body_json"');
+    expect(route).toContain("function imageRecoveryPriority(row: RecoveryArticleRow)");
+    expect(route).toContain('const failed = status === "failed" ? 1 : 0');
+    expect(route).toContain("updatedAt");
+    expect(route).toContain("export function orderImageRecoveryRows");
+    expect(route).toContain("orderImageRecoveryRows([...eligibleBySlug.values()]).map((row) => row.slug)");
+  });
+
   it("repairs one exact eligible slug with verified overwrite semantics", () => {
     expect(route).toContain('const requestedSlug = (url.searchParams.get("slug") ?? "").trim()');
     expect(route).toContain("if (!slugs.includes(requestedSlug))");
