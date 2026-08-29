@@ -6,6 +6,7 @@ import { WAVE2_ISSUE_GUIDE_SLUGS } from "@/data/issue-guide-wave2-upgrades";
 import { WAVE3_ISSUE_GUIDE_SLUGS } from "@/data/issue-guide-wave3-upgrades";
 import { WAVE4_ISSUE_GUIDE_SLUGS } from "@/data/issue-guide-wave4-upgrades";
 import { ALL_POLICY_TRACKERS, getAnyPolicyTracker } from "@/data/policy-trackers-all";
+import { GENETIC_DATA_PRIVACY_INDEXABLE_SLUG } from "@/data/policy-tracker-genetic-privacy-upgrade";
 import { PRIORITY_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-upgrades";
 import { WAVE2_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave2-upgrades";
 import { WAVE3_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave3-upgrades";
@@ -21,6 +22,7 @@ import { WAVE12_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wav
 import { WAVE13_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave13-upgrades";
 import { WAVE14_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave14-upgrades";
 import { WAVE15_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave15-upgrades";
+import { WAVE16_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave16-upgrades";
 import { POLITICAL_SEARCH_GUIDES } from "@/data/political-search-guides";
 import { isIssueGuideIndexable } from "@/lib/issue-guide-indexability";
 import { isPolicyTrackerIndexable } from "@/lib/policy-tracker-indexability";
@@ -47,6 +49,8 @@ const EXPECTED_INDEXABLE_POLICY_TRACKER_SLUGS = [
   ...WAVE13_INDEXABLE_POLICY_TRACKER_SLUGS,
   ...WAVE14_INDEXABLE_POLICY_TRACKER_SLUGS,
   ...WAVE15_INDEXABLE_POLICY_TRACKER_SLUGS,
+  ...WAVE16_INDEXABLE_POLICY_TRACKER_SLUGS,
+  GENETIC_DATA_PRIVACY_INDEXABLE_SLUG,
   "social-media-viewpoint-moderation",
 ];
 
@@ -58,9 +62,8 @@ describe("AdSense programmatic indexability", () => {
       ...WAVE3_ISSUE_GUIDE_SLUGS,
       ...WAVE4_ISSUE_GUIDE_SLUGS,
     ].sort());
-    expect(ALL_POLICY_TRACKERS.filter(isPolicyTrackerIndexable).map((tracker) => tracker.slug).sort()).toEqual([
-      ...EXPECTED_INDEXABLE_POLICY_TRACKER_SLUGS,
-    ].sort());
+    const readyPolicy = ALL_POLICY_TRACKERS.filter(isPolicyTrackerIndexable).map((tracker) => tracker.slug).sort();
+    expect(readyPolicy).toEqual([...EXPECTED_INDEXABLE_POLICY_TRACKER_SLUGS].sort());
     expect(POLITICAL_SEARCH_GUIDES.filter(isPoliticalReferenceIndexable)).toHaveLength(0);
   });
 
