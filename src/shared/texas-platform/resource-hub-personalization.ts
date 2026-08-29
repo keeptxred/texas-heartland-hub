@@ -1,4 +1,9 @@
-import type { ResourceHubLink } from './resource-hub';
+export type ResourceHubOwner = 'shared' | 'keeptxred' | 'texasdefined';
+
+export type ResourceHubLink = {
+  label: string;
+  href: string;
+};
 
 export type ResourceView = ResourceHubLink & {
   count: number;
