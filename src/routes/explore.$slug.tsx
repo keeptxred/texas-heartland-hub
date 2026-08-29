@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
+import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import {
   Accessibility,
   Compass,
@@ -18,6 +18,11 @@ import { getExploreEntity, getExploreSlugTarget } from "@/services/explore/publi
 import { buildSeo } from "@/lib/seo";
 import { geographyPath } from "@/lib/explore/geography-pages";
 import type { ExploreEntity } from "@/types/explore/public";
+
+const TEXAS_DEFINED_ORIGIN = "https://texasdefined.com";
+const TEXAS_DEFINED_EXPLORE = "https://texasdefined.com/explore";
+const TEXAS_DEFINED_SEARCH = "https://texasdefined.com/explore/search";
+const TEXAS_DEFINED_TRIP_PLANNER = "https://texasdefined.com/explore/trip-planner";
 
 export const Route = createFileRoute("/explore/$slug")({
   loader: async ({ params }) => {
@@ -48,6 +53,21 @@ export const Route = createFileRoute("/explore/$slug")({
 });
 
 const searchDefaults = { page: 1, pageSize: 24, sort: "relevance" as const };
+
+function texasDefinedGeographyHref(kind: "county" | "region", name: string) {
+  return `${TEXAS_DEFINED_ORIGIN}${geographyPath(kind, name)}`;
+}
+
+function texasDefinedSearchHref(filters: { activities?: string[]; types?: string[] } = {}) {
+  const params = new URLSearchParams({
+    page: String(searchDefaults.page),
+    pageSize: String(searchDefaults.pageSize),
+    sort: searchDefaults.sort,
+  });
+  for (const activity of filters.activities ?? []) params.append("activities", activity);
+  for (const type of filters.types ?? []) params.append("types", type);
+  return `${TEXAS_DEFINED_SEARCH}?${params.toString()}`;
+}
 
 function JsonValue({ value }: { value: unknown }) {
   if (value == null) return null;
@@ -147,14 +167,14 @@ function ExploreEntityPage() {
         ? {
             "@type": "AdministrativeArea",
             name: `${entity.county} County, Texas`,
-            url: `https://keeptxred.com${geographyPath("county", entity.county)}`,
+            url: texasDefinedGeographyHref("county", entity.county),
           }
         : null,
       entity.region
         ? {
             "@type": "Place",
             name: `${entity.region}, Texas`,
-            url: `https://keeptxred.com${geographyPath("region", entity.region)}`,
+            url: texasDefinedGeographyHref("region", entity.region),
           }
         : null,
     ].filter(Boolean),
@@ -173,15 +193,15 @@ function ExploreEntityPage() {
         "@type": "ListItem",
         position: 1,
         name: "Explore Texas",
-        item: "https://keeptxred.com/explore",
+        item: TEXAS_DEFINED_EXPLORE,
       },
       {
         "@type": "ListItem",
         position: 2,
         name: entity.region || "Texas destinations",
         item: entity.region
-          ? `https://keeptxred.com${geographyPath("region", entity.region)}`
-          : "https://keeptxred.com/explore/search",
+          ? texasDefinedGeographyHref("region", entity.region)
+          : TEXAS_DEFINED_SEARCH,
       },
       {
         "@type": "ListItem",
@@ -231,14 +251,14 @@ function ExploreEntityPage() {
       )}
       <article className="mx-auto max-w-6xl px-4 py-12">
         <nav aria-label="Breadcrumb" className="flex flex-wrap gap-1 text-sm text-muted-foreground">
-          <Link to="/explore" className="hover:underline">
+          <a href={TEXAS_DEFINED_EXPLORE} className="hover:underline">
             Explore Texas
-          </Link>
+          </a>
           <span>/</span>
           {entity.region ? (
-            <Link to={geographyPath("region", entity.region)} className="hover:underline">
+            <a href={texasDefinedGeographyHref("region", entity.region)} className="hover:underline">
               {entity.region}
-            </Link>
+            </a>
           ) : (
             <span>{entity.entityType.replaceAll("_", " ")}</span>
           )}
@@ -255,20 +275,20 @@ function ExploreEntityPage() {
                 <MapPin className="size-5" aria-hidden="true" />
                 {entity.city && <span>{entity.city}</span>}
                 {entity.county && (
-                  <Link
-                    to={geographyPath("county", entity.county)}
+                  <a
+                    href={texasDefinedGeographyHref("county", entity.county)}
                     className="hover:text-primary hover:underline"
                   >
                     {entity.county} County
-                  </Link>
+                  </a>
                 )}
                 {entity.region && (
-                  <Link
-                    to={geographyPath("region", entity.region)}
+                  <a
+                    href={texasDefinedGeographyHref("region", entity.region)}
                     className="hover:text-primary hover:underline"
                   >
                     {entity.region}
-                  </Link>
+                  </a>
                 )}
               </p>
             )}
@@ -311,10 +331,9 @@ function ExploreEntityPage() {
                 </p>
                 <div className="mt-5 grid gap-3 sm:grid-cols-2">
                   {entity.activities.map((activity) => (
-                    <Link
+                    <a
                       key={activity}
-                      to="/explore/search"
-                      search={{ ...searchDefaults, activities: [activity] }}
+                      href={texasDefinedSearchHref({ activities: [activity] })}
                       className="group rounded-lg border p-4 transition-colors hover:border-primary hover:bg-primary/5"
                     >
                       <span className="font-semibold capitalize group-hover:text-primary">
@@ -323,7 +342,7 @@ function ExploreEntityPage() {
                       <span className="mt-1 block text-sm text-muted-foreground">
                         Find more places for {activity} in Texas
                       </span>
-                    </Link>
+                    </a>
                   ))}
                 </div>
               </section>
@@ -437,10 +456,10 @@ function ExploreEntityPage() {
               <h2 className="font-semibold">Plan your visit</h2>
               <div className="mt-4 grid gap-2">
                 <Button asChild>
-                  <Link to="/explore/trip-planner" search={{ destination: entity.slug }}>
+                  <a href={`${TEXAS_DEFINED_TRIP_PLANNER}?destination=${encodeURIComponent(entity.slug)}`}>
                     <RouteIcon />
                     Add to a trip
-                  </Link>
+                  </a>
                 </Button>
                 <Button variant="outline" onClick={() => window.print()}>
                   <Printer />
@@ -460,35 +479,33 @@ function ExploreEntityPage() {
               <h2 className="font-semibold">Explore more</h2>
               <div className="mt-3 grid gap-2 text-sm">
                 {entity.region && (
-                  <Link
-                    to={geographyPath("region", entity.region)}
+                  <a
+                    href={texasDefinedGeographyHref("region", entity.region)}
                     className="rounded-md px-3 py-2 hover:bg-muted hover:text-primary"
                   >
                     More destinations in {entity.region}
-                  </Link>
+                  </a>
                 )}
                 {entity.county && (
-                  <Link
-                    to={geographyPath("county", entity.county)}
+                  <a
+                    href={texasDefinedGeographyHref("county", entity.county)}
                     className="rounded-md px-3 py-2 hover:bg-muted hover:text-primary"
                   >
                     Explore {entity.county} County
-                  </Link>
+                  </a>
                 )}
-                <Link
-                  to="/explore/search"
-                  search={{ ...searchDefaults, types: [entity.entityType] }}
+                <a
+                  href={texasDefinedSearchHref({ types: [entity.entityType] })}
                   className="rounded-md px-3 py-2 capitalize hover:bg-muted hover:text-primary"
                 >
                   More Texas {pluralType(entity.entityType)}
-                </Link>
-                <Link
-                  to="/explore/search"
-                  search={searchDefaults}
+                </a>
+                <a
+                  href={texasDefinedSearchHref()}
                   className="rounded-md px-3 py-2 hover:bg-muted hover:text-primary"
                 >
                   Browse all Texas destinations
-                </Link>
+                </a>
               </div>
             </div>
 
