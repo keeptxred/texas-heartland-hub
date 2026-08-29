@@ -3,7 +3,8 @@ import { extractSitemapLocs, normalizeSiteUrl, selectInspectionUrls } from './gs
 
 const credentialsJson = process.env.GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON;
 const siteUrl = process.env.GSC_SITE_URL || 'sc-domain:keeptxred.com';
-const syncEndpoint = process.env.GSC_SITEWIDE_SYNC_ENDPOINT || 'https://keeptxred.com/api/admin/gsc-sitewide-sync';
+const fetchOrigin = process.env.GSC_SITEWIDE_FETCH_ORIGIN || 'https://keeptxred-site.freddy-coppola.workers.dev';
+const syncEndpoint = process.env.GSC_SITEWIDE_SYNC_ENDPOINT || `${fetchOrigin}/api/admin/gsc-sitewide-sync`;
 const githubToken = process.env.GITHUB_TOKEN || '';
 const githubRunId = process.env.GITHUB_RUN_ID || '';
 const githubRepository = process.env.GITHUB_REPOSITORY || '';
@@ -21,6 +22,16 @@ const metricDate = metricDateValue.toISOString().slice(0, 10);
 
 function base64url(value) {
   return Buffer.from(value).toString('base64url');
+}
+
+function fetchTransportUrl(canonicalUrl) {
+  const canonical = new URL(canonicalUrl);
+  if (!['keeptxred.com', 'www.keeptxred.com'].includes(canonical.hostname.toLowerCase())) return canonical.href;
+  const transport = new URL(fetchOrigin);
+  transport.pathname = canonical.pathname;
+  transport.search = canonical.search;
+  transport.hash = '';
+  return transport.href;
 }
 
 async function getAccessToken() {
@@ -104,7 +115,7 @@ async function fetchSitemapUrls() {
     visitedSitemaps.add(item.url);
     let response;
     try {
-      response = await fetch(item.url, { headers: { 'User-Agent': 'KeepTXRed-GSC-Sitewide-Sync/1.0' } });
+      response = await fetch(fetchTransportUrl(item.url), { headers: { 'User-Agent': 'KeepTXRed-GSC-Sitewide-Sync/1.0' } });
     } catch (error) {
       console.warn(`Unable to fetch sitemap ${item.url}: ${error instanceof Error ? error.message : String(error)}`);
       continue;
@@ -235,6 +246,8 @@ console.log(JSON.stringify({
   dryRun: false,
   siteUrl,
   metricDate,
+  fetchOrigin,
+  syncEndpointOrigin: new URL(syncEndpoint).origin,
   pageMetricRows: metrics.length,
   metricsStored,
   sitemapCount,
