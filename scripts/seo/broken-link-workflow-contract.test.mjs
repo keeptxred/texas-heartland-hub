@@ -19,7 +19,8 @@ describe('broken-link audit workflow contract', () => {
     expect(workflow).toContain('cancel-in-progress: true');
   });
 
-  it('continues to fail on actionable static or live findings', () => {
-    expect(workflow).toContain('if (report.summary.blockingStaticFindings || report.summary.blockingLiveFailures) process.exit(1)');
+  it('fails on any static or live broken-link debt', () => {
+    expect(workflow).toContain('if (report.summary.staticFindings || report.summary.liveFailures) process.exit(1)');
+    expect(workflow).toContain('Migration debt (must be zero)');
   });
 });
