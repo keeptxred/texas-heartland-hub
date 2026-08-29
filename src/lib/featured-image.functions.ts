@@ -133,12 +133,13 @@ export function buildGenerationSafeSubject(subject: SubjectExtract): SubjectExtr
       ...subject,
       title: `${location ? `${location} ` : "Texas "}roadway incident location`.trim(),
       firstParagraph: "",
-      concreteSubject: "A restrained local-news location photograph of the real Texas roadway or interstate setting connected to the reported incident, using empty travel lanes, shoulder, overpass, traffic-control equipment, or distant generic emergency vehicles as appropriate. No people or reenactment.",
+      concreteSubject: "A restrained local-news location photograph of the real Texas roadway or interstate setting connected to the reported incident, using empty travel lanes, shoulder, overpass, traffic-control equipment, or distant generic emergency vehicles as appropriate.",
     };
   }
   if (subject.domain === "energy" && DATA_CENTER_IMAGE_SUBJECT_RE.test(storyText)) {
     return {
       ...subject,
+      domain: "general",
       title: "Texas data center infrastructure policy review",
       firstParagraph: "",
       concreteSubject: "A real Texas data-center campus or large server-facility exterior with cooling equipment, utility substation, transmission lines, transformers, fenced industrial grounds, or electrical infrastructure clearly visible.",
@@ -227,7 +228,11 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
   await supabase.from("daily_articles").update({ image_generation_status: "generating", image_prompt: prompt }).eq("slug", row.slug);
 
   try {
-    let negativePrompt = buildNegativeImagePrompt(subject, previousFailure);
+    // Generate from the sanitized visual subject as well as validating against the
+    // original factual subject. Passing original story-specific forbidden nouns to
+    // FLUX as "negative" text can prime the exact gun/politician/cartoon motifs the
+    // strict validator rejected, because FLUX.2 receives one combined prompt field.
+    let negativePrompt = buildNegativeImagePrompt(generationSubject, previousFailure);
     const imageModel = subject.domain === "culture" ? CLOUDFLARE_CULTURE_IMAGE_MODEL : undefined;
     let bytes = await generateImageBytes(prompt, negativePrompt, imageModel);
     let verdict = await validateImageMatchesArticle(bytes, subject);
@@ -237,7 +242,7 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
       const correction = `Retry ${attempt}. Discard the rejected composition completely. Generate a new physical-camera news photograph whose concrete real-world subject is obvious from the scene itself. Change the camera position, subject arrangement, and setting. Use no text, symbols, illustration, graphic design, poster, collage, generic skyline, or generic institutional placeholder. Do not fabricate a recognizable named person's face.`;
       const stronger = buildImagePrompt(generationSubject, correction);
       usedPrompt = stronger;
-      negativePrompt = buildNegativeImagePrompt(subject, verdict.reason);
+      negativePrompt = buildNegativeImagePrompt(generationSubject, verdict.reason);
       bytes = await generateImageBytes(stronger, negativePrompt, imageModel);
       verdict = await validateImageMatchesArticle(bytes, subject);
     }
