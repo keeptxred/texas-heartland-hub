@@ -1,22 +1,31 @@
 name: Broken link audit
 
-# Verification touch: rerun the full broken-link audit from current main after merge.
+# Run the full audit before audit-code changes merge and again after relevant main merges.
 # Zero-debt policy: retired internal links are no longer report-only once the migration backlog is cleared.
 on:
   workflow_dispatch:
   schedule:
     - cron: '17 11 * * 1'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/broken-link-audit.yml'
+      - 'scripts/seo/audit-broken-links.mjs'
+      - 'scripts/seo/broken-link-audit-utils.mjs'
+      - 'scripts/seo/broken-link-scan-scope.mjs'
   push:
     branches: [main]
     paths:
       - '.github/workflows/broken-link-audit.yml'
       - 'scripts/seo/audit-broken-links.mjs'
+      - 'scripts/seo/broken-link-audit-utils.mjs'
+      - 'scripts/seo/broken-link-scan-scope.mjs'
 
 permissions:
   contents: read
 
 concurrency:
-  group: broken-link-audit
+  group: broken-link-audit-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
