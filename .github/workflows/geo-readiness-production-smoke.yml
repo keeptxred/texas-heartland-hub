@@ -23,6 +23,7 @@ jobs:
     timeout-minutes: 8
     env:
       SITE_URL: https://keeptxred.com
+      FETCH_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
 
     steps:
       - name: Inspect raw live election and schema signals
@@ -36,30 +37,27 @@ jobs:
           trap 'rm -f "$election_headers" "$election_body" "$home_headers" "$home_body"' EXIT
 
           fetch_page() {
-            local url="$1"
+            local path="$1"
             local headers="$2"
             local body="$3"
             curl --location --retry 5 --retry-delay 2 --retry-all-errors \
               --connect-timeout 10 --max-time 60 \
               --silent --show-error \
-              -D "$headers" -o "$body" -w '%{http_code}' "$url"
+              -H 'X-Forwarded-Host: keeptxred.com' \
+              -D "$headers" -o "$body" -w '%{http_code}' "${FETCH_ORIGIN%/}$path"
           }
 
-          election_status="$(fetch_page "$SITE_URL/elections/2026" "$election_headers" "$election_body")"
-          home_status="$(fetch_page "$SITE_URL/" "$home_headers" "$home_body")"
+          election_status="$(fetch_page "/elections/2026" "$election_headers" "$election_body")"
+          home_status="$(fetch_page "/" "$home_headers" "$home_body")"
 
           echo "Election page HTTP status: $election_status"
           grep -Ei '^(cache-control|cf-cache-status|age|content-type|server):' "$election_headers" || true
           echo "Home page HTTP status: $home_status"
           grep -Ei '^(cache-control|cf-cache-status|age|content-type|server):' "$home_headers" || true
 
-          # Browser-facing HTML can be challenged for GitHub-hosted runner IPs. Keep
-          # this diagnostic additive: when raw HTML is reachable, enforce the GEO
-          # signals; otherwise report the edge status while the existing robots and
-          # sitemap production gates remain strict below.
           if [[ "$election_status" != "200" || "$home_status" != "200" ]]; then
-            echo "Raw browser-facing HTML was not directly reachable from this GitHub runner; page-level GEO assertions were not evaluated."
-            exit 0
+            echo "Deployed Worker did not return HTTP 200 for the required HTML GEO checks." >&2
+            exit 1
           fi
 
           python3 - "$election_body" "$home_body" <<'PY'
@@ -97,7 +95,8 @@ jobs:
           curl --location --retry 10 --retry-delay 3 --retry-all-errors \
             --connect-timeout 10 --max-time 60 \
             --fail-with-body --silent --show-error \
-            -D "$headers" -o "$body" "$SITE_URL/sitemap.xml"
+            -H 'X-Forwarded-Host: keeptxred.com' \
+            -D "$headers" -o "$body" "${FETCH_ORIGIN%/}/sitemap.xml"
 
           python3 - "$headers" "$body" <<'PY'
           import pathlib
@@ -139,7 +138,8 @@ jobs:
           curl --location --retry 10 --retry-delay 3 --retry-all-errors \
             --connect-timeout 10 --max-time 60 \
             --fail-with-body --silent --show-error \
-            -o "$body" "$SITE_URL/robots.txt"
+            -H 'X-Forwarded-Host: keeptxred.com' \
+            -o "$body" "${FETCH_ORIGIN%/}/robots.txt"
 
           python3 - "$body" <<'PY'
           import pathlib
