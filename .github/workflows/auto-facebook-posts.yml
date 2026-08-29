@@ -118,7 +118,7 @@ jobs:
           if [[ "$TEXASDEFINED_DRY_RUN" != "true" ]]; then
             run_page \
               "keeptxred" \
-              "${AUTOMATION_ORIGIN%/}/api/public/hooks/auto-facebook-post" \
+              "${AUTOMATION_ORIGIN%/}/api/public/hooks/auto-facebook-post-smart" \
               "/tmp/facebook-post-keeptxred.json"
           fi
 
