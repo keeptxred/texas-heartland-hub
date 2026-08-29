@@ -3,6 +3,7 @@ import { ALL_POLICY_TRACKERS } from "@/data/policy-trackers-all";
 import { PRIORITY_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-upgrades";
 import { WAVE2_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave2-upgrades";
 import { WAVE3_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave3-upgrades";
+import { WAVE4_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave4-upgrades";
 import {
   MIN_POLICY_TRACKER_WORDS,
   isPolicyTrackerIndexable,
@@ -30,10 +31,17 @@ const WAVE3_EXPECTED = [
   "agriculture-family-farms",
 ] as const;
 
+const WAVE4_EXPECTED = [
+  "religious-liberty",
+  "state-federal-power",
+  "right-to-work",
+] as const;
+
 const EXPECTED_INDEXABLE = [
   ...UPGRADED_EXPECTED,
   ...WAVE2_EXPECTED,
   ...WAVE3_EXPECTED,
+  ...WAVE4_EXPECTED,
   "social-media-viewpoint-moderation",
 ] as const;
 
@@ -42,6 +50,7 @@ describe("priority policy tracker readiness", () => {
     expect([...PRIORITY_INDEXABLE_POLICY_TRACKER_SLUGS].sort()).toEqual([...UPGRADED_EXPECTED].sort());
     expect([...WAVE2_INDEXABLE_POLICY_TRACKER_SLUGS].sort()).toEqual([...WAVE2_EXPECTED].sort());
     expect([...WAVE3_INDEXABLE_POLICY_TRACKER_SLUGS].sort()).toEqual([...WAVE3_EXPECTED].sort());
+    expect([...WAVE4_INDEXABLE_POLICY_TRACKER_SLUGS].sort()).toEqual([...WAVE4_EXPECTED].sort());
   });
 
   it.each(EXPECTED_INDEXABLE)("%s genuinely clears the canonical tracker gate", (slug) => {

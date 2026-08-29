@@ -18,6 +18,7 @@ import { POLICY_TRACKERS_WAVE17 } from "@/data/policy-trackers-wave17";
 import { POLICY_TRACKER_UPGRADES } from "@/data/policy-tracker-upgrades";
 import { POLICY_TRACKER_WAVE2_UPGRADES } from "@/data/policy-tracker-wave2-upgrades";
 import { POLICY_TRACKER_WAVE3_UPGRADES } from "@/data/policy-tracker-wave3-upgrades";
+import { POLICY_TRACKER_WAVE4_UPGRADES } from "@/data/policy-tracker-wave4-upgrades";
 
 const BASE_POLICY_TRACKERS = [
   ...POLICY_TRACKERS,
@@ -40,7 +41,8 @@ const BASE_POLICY_TRACKERS = [
 ];
 
 export const ALL_POLICY_TRACKERS = BASE_POLICY_TRACKERS.map(
-  (tracker) => POLICY_TRACKER_WAVE3_UPGRADES[tracker.slug]
+  (tracker) => POLICY_TRACKER_WAVE4_UPGRADES[tracker.slug]
+    ?? POLICY_TRACKER_WAVE3_UPGRADES[tracker.slug]
     ?? POLICY_TRACKER_WAVE2_UPGRADES[tracker.slug]
     ?? POLICY_TRACKER_UPGRADES[tracker.slug]
     ?? tracker,
