@@ -1,6 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
-const ALLOWED = new Set(["backfill", "normalize", "sync", "catalog"]);
+const ALLOWED = new Set(["backfill", "normalize", "sync", "catalog", "enrich"]);
 
 Deno.serve(async (request) => {
   if (request.method !== "POST") {
@@ -40,7 +40,13 @@ Deno.serve(async (request) => {
       ? "normalize-tlo-bill-sponsors"
       : action === "catalog"
         ? "tlo-filed-catalog-sync"
-        : "tlo-rss-bill-sync";
+        : action === "enrich"
+          ? "tlo-seed-bill-enrichment"
+          : "tlo-rss-bill-sync";
+
+  const safeBillIds = Array.isArray(body.bill_ids)
+    ? body.bill_ids.filter((value: any) => typeof value === "string" && /^[0-9a-f-]{36}$/i.test(value)).slice(0, 20)
+    : [];
 
   const downstreamBody = action === "catalog"
     ? {
@@ -48,7 +54,13 @@ Deno.serve(async (request) => {
         session: typeof body.session === "string" ? body.session : "89R",
         dry_run: body.dry_run !== false,
       }
-    : { source: "tlo-bill-sync-trigger" };
+    : action === "enrich"
+      ? {
+          source: "tlo-bill-sync-trigger",
+          limit: Math.max(1, Math.min(Number(body.limit) || 10, 20)),
+          bill_ids: safeBillIds,
+        }
+      : { source: "tlo-bill-sync-trigger" };
 
   const response = await fetch(`${base}/functions/v1/${slug}`, {
     method: "POST",
