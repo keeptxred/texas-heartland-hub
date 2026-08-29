@@ -7,10 +7,6 @@ on:
   # recovery so a persistent failure cannot trigger an unbounded retry storm.
   schedule:
     - cron: '45 2,10,18 * * *'
-    # Temporary one-time diagnostic window for the exact two-row failed-image
-    # cohort. This remains inside the already-authorized schedule trigger and is
-    # removed immediately after the production repair is verified.
-    - cron: '30 22 28 8 *'
   # The marker path provides an explicit, bounded production-repair mechanism.
   # A marker push must name one to four exact slugs so an emergency repair can
   # never spend the bounded batch on unrelated newer backlog rows.
@@ -38,7 +34,6 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-          EVENT_SCHEDULE: ${{ github.event.schedule || '' }}
         run: |
           set -euo pipefail
 
@@ -105,17 +100,26 @@ jobs:
             done
           }
 
-          # One article per ordinary pass bounds worst-case generation to the
-          # existing initial image plus three validator-steered retries.
+          # Ordinary background passes remain capped at one article, but rotate
+          # across the missing-image cohort so one strict-validator hard failure
+          # can never monopolize every scheduled run. Once missing images are
+          # cleared, the same rotation naturally advances through legacy assets.
           max_per_run=1
           if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
             load_exact_marker_slugs
-          elif [[ "${GITHUB_EVENT_NAME}" == "schedule" && "${EVENT_SCHEDULE}" == "30 22 28 8 *" ]]; then
-            # The dated diagnostic schedule uses the exact same marker, cap,
-            # eligibility checks, strict validator, and OIDC-protected Worker.
-            load_exact_marker_slugs
           else
-            mapfile -t slugs < <(jq -r --argjson max "$max_per_run" '.slugs[:$max][]' /tmp/image-backlog-dry.json)
+            missing=$(jq -r '.missing // 0' /tmp/image-backlog-dry.json)
+            candidate_count="$ready"
+            if [[ "$missing" -gt 0 ]]; then
+              candidate_count="$missing"
+            fi
+            if [[ "$candidate_count" -lt 1 ]]; then
+              echo 'No eligible image-recovery candidates remain.'
+              exit 0
+            fi
+            rotation=$(( (GITHUB_RUN_NUMBER - 1) % candidate_count ))
+            mapfile -t slugs < <(jq -r --argjson offset "$rotation" --argjson max "$max_per_run" '.slugs[$offset:($offset + $max)][]' /tmp/image-backlog-dry.json)
+            echo "IMAGE_BACKLOG_RECOVERY_ROTATION candidate_count=${candidate_count} offset=${rotation} slug=${slugs[0]:-none}"
           fi
 
           failures=0
