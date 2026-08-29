@@ -18,6 +18,7 @@ import { WAVE14_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wav
 import { WAVE15_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave15-upgrades";
 import { WAVE16_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave16-upgrades";
 import { WAVE18_READY_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave18-ready";
+import { WAVE19_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave19-upgrades";
 import { MIN_POLICY_TRACKER_WORDS, isPolicyTrackerIndexable, policyTrackerWordCount } from "@/lib/policy-tracker-indexability";
 
 const UPGRADED_EXPECTED = ["property-taxes", "border-security", "energy-ercot", "gun-rights", "life-abortion"] as const;
@@ -37,6 +38,7 @@ const WAVE14_EXPECTED = ["consumer-data-privacy", "online-age-verification", "ap
 const WAVE15_EXPECTED = ["ai-governance", "data-brokers", "biometric-privacy"] as const;
 const WAVE16_EXPECTED = ["scope-act-online-minors", "texas-cyber-command"] as const;
 const WAVE18_EXPECTED = ["public-education", "school-choice", "water"] as const;
+const WAVE19_EXPECTED = ["housing", "immigration", "elections"] as const;
 
 const EXPECTED_INDEXABLE = [
   ...UPGRADED_EXPECTED,
@@ -57,6 +59,7 @@ const EXPECTED_INDEXABLE = [
   ...WAVE16_EXPECTED,
   GENETIC_DATA_PRIVACY_INDEXABLE_SLUG,
   ...WAVE18_EXPECTED,
+  ...WAVE19_EXPECTED,
   "social-media-viewpoint-moderation",
 ] as const;
 
@@ -79,6 +82,7 @@ describe("priority policy tracker readiness", () => {
     expect([...WAVE15_INDEXABLE_POLICY_TRACKER_SLUGS].sort()).toEqual([...WAVE15_EXPECTED].sort());
     expect([...WAVE16_INDEXABLE_POLICY_TRACKER_SLUGS].sort()).toEqual([...WAVE16_EXPECTED].sort());
     expect([...WAVE18_READY_POLICY_TRACKER_SLUGS].sort()).toEqual([...WAVE18_EXPECTED].sort());
+    expect([...WAVE19_INDEXABLE_POLICY_TRACKER_SLUGS].sort()).toEqual([...WAVE19_EXPECTED].sort());
   });
 
   it.each(EXPECTED_INDEXABLE)("%s genuinely clears the canonical tracker gate", (slug) => {
