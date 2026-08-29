@@ -4,6 +4,7 @@ import {
   TEXAS_SENATE_MEMBERS,
   representativeSlug,
 } from '@/data/representatives';
+import { publicBillPath } from '@/lib/bill-public-path';
 
 const db = supabase as any;
 export const SITE_URL = 'https://keeptxred.com';
@@ -114,8 +115,6 @@ function resolveSponsorIdentity(sponsor: any) {
     if (chamberMatches.length === 1) match = chamberMatches[0];
   }
 
-  // TLO sometimes assigns the originating bill chamber to cross-chamber sponsors.
-  // When the surname is unique statewide, trust the unique directory match instead.
   if (!match && allMatches.length === 1) match = allMatches[0];
   if (!match) return sponsor;
 
@@ -128,8 +127,9 @@ function resolveSponsorIdentity(sponsor: any) {
   };
 }
 
-export const canonicalBillPath = (bill: Pick<Bill, 'legislature_number' | 'bill_type' | 'bill_number'>) =>
-  `/bills/texas/${bill.legislature_number}/${bill.bill_type.toLowerCase()}/${Number(bill.bill_number)}`;
+export const canonicalBillPath = (
+  bill: Pick<Bill, 'legislature_number' | 'bill_type' | 'bill_number'> & Partial<Pick<Bill, 'session_code'>>,
+) => publicBillPath(bill);
 
 export const normalizeBillType = (value: string) => value.trim().toLowerCase();
 export const normalizeStatus = (value: string) => value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -182,25 +182,17 @@ export async function getBillFilterOptions() {
 }
 
 export async function getBill(legislature: number, billType: string, billNumber: number) {
-  // Public bill URLs intentionally omit session_code. The same bill identifier can
-  // exist in regular and special sessions, so maybeSingle() can throw when both are
-  // present. Prefer the regular-session record when it exists; otherwise use the
-  // most recently active matching record.
   const { data, error } = await db
     .from('bills')
     .select('*')
     .eq('legislature_number', legislature)
+    .eq('session_code', 'R')
     .eq('bill_type', normalizeBillType(billType))
     .eq('bill_number', billNumber)
     .eq('is_active', true)
-    .order('last_action_date', { ascending: false, nullsFirst: false })
-    .order('session_code', { ascending: true })
-    .limit(25);
+    .maybeSingle();
   if (error) throw error;
-
-  const rows = (data ?? []) as Bill[];
-  if (rows.length === 0) return null;
-  return rows.find((bill) => String(bill.session_code).toUpperCase() === 'R') ?? rows[0] ?? null;
+  return (data as Bill | null) ?? null;
 }
 
 export type BillEditorialEnrichment = {
@@ -214,7 +206,6 @@ export type BillEditorialEnrichment = {
   reviewed_at?: string | null;
 };
 
-// Only approved editorial enrichments are ever exposed on public bill pages.
 export async function getBillEditorialEnrichment(billId: string) {
   const { data, error } = await db
     .from('bill_editorial_enrichments')
@@ -270,7 +261,7 @@ export async function getRepresentativeLegislation(sponsorSlug: string) {
 
   const { data, error } = await db
     .from('bill_sponsors')
-    .select('id,sponsor_name,sponsor_slug,sponsor_role,chamber,party,district,bills(id,legislature_number,bill_type,bill_number,bill_identifier,caption,current_status_label,last_action_date,became_law)')
+    .select('id,sponsor_name,sponsor_slug,sponsor_role,chamber,party,district,bills(id,legislature_number,session_code,bill_type,bill_number,bill_identifier,caption,current_status_label,last_action_date,became_law)')
     .in('sponsor_slug', [...possibleSlugs])
     .order('date_added', { ascending: false })
     .limit(100);
