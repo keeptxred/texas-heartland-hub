@@ -29,6 +29,9 @@ jobs:
           node-version: 22
       - name: Audit repository and production site
         id: audit
+        env:
+          AUDIT_SITE_URL: https://keeptxred.com
+          AUDIT_FETCH_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
         run: node scripts/seo/audit-broken-links.mjs --live
         continue-on-error: true
       - name: Publish audit summary
@@ -42,7 +45,9 @@ jobs:
           fs.appendFileSync(out, `- Blocking static findings: **${report.summary.blockingStaticFindings}**\n`);
           fs.appendFileSync(out, `- Known migration-link findings: **${report.summary.migrationStaticFindings + report.summary.migrationLiveFindings}**\n`);
           fs.appendFileSync(out, `- Live pages checked: **${report.summary.livePagesChecked}**\n`);
-          fs.appendFileSync(out, `- Blocking live failures: **${report.summary.blockingLiveFailures}**\n\n`);
+          fs.appendFileSync(out, `- Blocking live failures: **${report.summary.blockingLiveFailures}**\n`);
+          fs.appendFileSync(out, `- Canonical site: **${report.site}**\n`);
+          fs.appendFileSync(out, `- Live fetch origin: **${report.liveFetchOrigin}**\n\n`);
           const actionable = [...report.staticFindings, ...report.liveFailures].filter((item) => item.severity === 'blocking');
           const migration = [...report.staticFindings, ...report.liveFailures].filter((item) => item.severity === 'migration-debt');
           console.log(`Blocking static findings: ${report.summary.blockingStaticFindings}`);

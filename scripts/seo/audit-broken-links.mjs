@@ -13,6 +13,9 @@ const ROOT = process.cwd();
 const ROUTES_ROOT = path.join(ROOT, 'src', 'routes');
 const PUBLIC_ROOT = path.join(ROOT, 'public');
 const SITE = process.env.AUDIT_SITE_URL || 'https://keeptxred.com';
+const LIVE_FETCH_ORIGIN = process.env.AUDIT_FETCH_ORIGIN || SITE;
+const SITE_ORIGIN = new URL(SITE).origin;
+const FETCH_ORIGIN = new URL(LIVE_FETCH_ORIGIN).origin;
 const LIVE = process.argv.includes('--live');
 const SCAN_ROOTS = ['src', 'public', 'scripts', 'supabase'];
 const TEXT_EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.mjs', '.cjs', '.json', '.md', '.html', '.sql', '.txt']);
@@ -79,6 +82,12 @@ function extractLinks(text) {
   return extractLinkCandidates(text);
 }
 
+function auditFetchUrl(canonicalUrl) {
+  const target = new URL(canonicalUrl, SITE);
+  if (target.origin !== SITE_ORIGIN || FETCH_ORIGIN === SITE_ORIGIN) return target.href;
+  return new URL(`${target.pathname}${target.search}`, `${FETCH_ORIGIN}/`).href;
+}
+
 async function staticAudit() {
   const routeFiles = await walk(ROUTES_ROOT);
   const routeRegexes = routeFiles.map(routeRegexFromFile).filter(Boolean);
@@ -123,18 +132,19 @@ async function staticAudit() {
 }
 
 async function fetchText(url) {
+  const requestUrl = auditFetchUrl(url);
   let lastError;
   for (let attempt = 1; attempt <= MAX_FETCH_ATTEMPTS; attempt += 1) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 20000);
     try {
-      const response = await fetch(url, {
+      const response = await fetch(requestUrl, {
         redirect: 'follow',
         signal: controller.signal,
         headers: AUDIT_REQUEST_HEADERS,
       });
       const text = await response.text();
-      if (response.status < 500 || attempt === MAX_FETCH_ATTEMPTS) return { response, text, attempts: attempt };
+      if (response.status < 500 || attempt === MAX_FETCH_ATTEMPTS) return { response, text, attempts: attempt, requestUrl };
       lastError = new Error(`HTTP ${response.status}`);
     } catch (error) {
       lastError = error;
@@ -236,6 +246,7 @@ const migrationLive = live.failures.filter((item) => item.severity === 'migratio
 const report = {
   generatedAt: new Date().toISOString(),
   site: SITE,
+  liveFetchOrigin: FETCH_ORIGIN,
   liveEnabled: LIVE,
   summary: {
     staticFindings: staticFindings.length,
