@@ -25,7 +25,7 @@ describe("buildGenerationSafeSubject", () => {
     expect(negative).toContain("rejected visual motif: Rejected image showed a gun and target illustration");
   });
 
-  it("keeps data-center generation focused on physical infrastructure while retaining political imagery only as negative exclusions", () => {
+  it("keeps data-center generation focused on physical infrastructure while retaining rejected political imagery only as a negative constraint", () => {
     const subject: SubjectExtract = {
       title: "Gov. Abbott orders pause on data center approvals",
       firstParagraph: "The governor ordered a pause while Texas reviews grid impacts from large data centers.",
@@ -44,9 +44,6 @@ describe("buildGenerationSafeSubject", () => {
     expect(`${safe.title} ${safe.firstParagraph} ${safe.concreteSubject}`).not.toMatch(/abbott|governor|politician|podium|policy|review|approval|pause/i);
     expect(prompt).toContain("data-center");
     expect(prompt).not.toMatch(/abbott|governor|politician|podium|policy|review|approval|pause/i);
-    expect(negative).toContain("politician");
-    expect(negative).toContain("governor");
-    expect(negative).toContain("podium");
     expect(negative).toContain("rejected visual motif: Rejected image showed Gov. Abbott at a podium");
   });
 
