@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
 import { isLegacyGeneratedNewsAsset } from "@/lib/facebook-image-readiness";
-import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
+import {
+  generateFeaturedImageForSlugDirect,
+  resetStaleFeaturedImageGenerationLeasesDirect,
+} from "@/lib/featured-image.functions";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 
 const OIDC_AUDIENCE = "keeptxred-newsroom";
@@ -75,6 +78,10 @@ async function post({ request }: { request: Request }) {
   const requestedSlug = (url.searchParams.get("slug") ?? "").trim();
   const dryRun = url.searchParams.get("dry") === "1";
 
+  const staleResetResult = await resetStaleFeaturedImageGenerationLeasesDirect();
+  if (staleResetResult.error) return Response.json({ error: staleResetResult.error }, { status: 500 });
+  const staleReset = staleResetResult.reset;
+
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   // Generated database types can lag internal image-recovery fields.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -143,6 +150,7 @@ async function post({ request }: { request: Request }) {
       missing: missingCount,
       legacy: legacyCount,
       adsensePriority: adsensePriorityCount,
+      staleReset,
       slugs,
       scope: "adsense_ready_missing_first_then_missing_or_legacy_published_quality_article_images",
     });
@@ -163,6 +171,7 @@ async function post({ request }: { request: Request }) {
     processed: 1,
     succeeded: result.ok ? 1 : 0,
     failed: result.ok ? 0 : 1,
+    staleReset,
     scope: "adsense_ready_missing_first_then_missing_or_legacy_published_quality_article_images",
     results: [result],
   }, { status: result.ok ? 200 : 422 });

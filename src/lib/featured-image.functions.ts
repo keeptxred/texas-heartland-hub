@@ -23,6 +23,7 @@ export { buildImagePrompt, buildNegativeImagePrompt, inferDomain, parseVisionVer
 export type { Domain, SubjectExtract, VisionVerdict } from "./featured-image-core";
 
 const BUCKET = "article-images";
+const STALE_GENERATION_LEASE_MS = 20 * 60 * 1000;
 const SENSITIVE_IMAGE_SUBJECT_RE = /\b(shooting|shot|gunfire|road rage|killed|dead|death|fatal|murder|homicide|victim|suspect|attack|assault)\b/i;
 const DATA_CENTER_IMAGE_SUBJECT_RE = /\b(data center(?:s)?|data-center(?:s)?|server farm(?:s)?|hyperscale)\b/i;
 
@@ -165,6 +166,30 @@ export function buildGenerationOnlyImagePrompt(subject: SubjectExtract, extraGui
 async function serviceClient() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   return supabaseAdmin;
+}
+
+export async function resetStaleFeaturedImageGenerationLeasesDirect(): Promise<{ reset: number; error?: string }> {
+  const supabase = await serviceClient();
+  const staleBefore = new Date(Date.now() - STALE_GENERATION_LEASE_MS).toISOString();
+  // Generated Supabase types can lag internal image-generation audit fields.
+  // Keep this maintenance write inside the existing registered image writer and
+  // narrowly limit it to published rows with no stored image that have remained
+  // in `generating` beyond twice the guarded workflow request timeout.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const db = supabase as any;
+  const { data, error } = await db
+    .from("daily_articles")
+    .update({
+      image_generation_status: "failed",
+      image_validation_note: "Image generation lease expired before completion; returned to guarded recovery backlog.",
+    })
+    .is("featured_image_url", null)
+    .eq("image_generation_status", "generating")
+    .not("published_at", "is", null)
+    .lt("updated_at", staleBefore)
+    .select("slug");
+  if (error) return { reset: 0, error: error.message };
+  return { reset: data?.length ?? 0 };
 }
 
 async function loadMultiSourceImageGrounding(db: any, slug: string): Promise<MultiSourceImageGrounding | null> {
