@@ -9,6 +9,7 @@ describe("featured-image quota-safe quality retries", () => {
     expect(source).toContain('CLOUDFLARE_IMAGE_QUALITY_MODEL = "@cf/black-forest-labs/flux-2-klein-9b"');
     expect(source).toContain("function isFinalStrictValidatorRetry(prompt: string)");
     expect(source).toContain("Validator rejection\\s+3:");
+    expect(source).toContain("Retry\\s+3\\.");
     expect(source).toContain("model === CLOUDFLARE_IMAGE_MODEL && isFinalStrictValidatorRetry(prompt)");
     expect(source).toContain("? CLOUDFLARE_IMAGE_QUALITY_MODEL");
     expect(source).not.toContain('@cf/black-forest-labs/flux-2-dev');
