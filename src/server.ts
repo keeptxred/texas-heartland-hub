@@ -11,6 +11,7 @@ type ServerEntry = {
 const CANONICAL_HOST = "keeptxred.com";
 const WWW_HOST = `www.${CANONICAL_HOST}`;
 const ADS_TXT = "google.com, pub-1891256141359926, DIRECT, f08c47fec0942fa0\n";
+const TEXAS_DEFINED_ORIGIN = "https://texasdefined.com";
 const CITY_MIGRATION_REDIRECTS: Readonly<Record<string, string>> = {
   "/austin": "https://texasdefined.com/article/moving-to-austin-guide",
   "/dallas-fort-worth": "https://texasdefined.com/article/moving-to-dallas-fort-worth-guide",
@@ -60,6 +61,16 @@ export function cityMigrationRedirect(request: Request): Response | null {
   return Response.redirect(destination.toString(), 301);
 }
 
+export function exploreMigrationRedirect(request: Request): Response | null {
+  const url = new URL(request.url);
+  if (url.pathname !== "/explore" && !url.pathname.startsWith("/explore/")) return null;
+
+  const destination = new URL(TEXAS_DEFINED_ORIGIN);
+  destination.pathname = url.pathname;
+  destination.search = url.search;
+  return Response.redirect(destination.toString(), 301);
+}
+
 let serverEntryPromise: Promise<ServerEntry> | undefined;
 
 async function getServerEntry(): Promise<ServerEntry> {
@@ -98,6 +109,9 @@ export default {
 
     const cityRedirect = cityMigrationRedirect(request);
     if (cityRedirect) return cityRedirect;
+
+    const exploreRedirect = exploreMigrationRedirect(request);
+    if (exploreRedirect) return exploreRedirect;
 
     try {
       installDirectAiFetch();
