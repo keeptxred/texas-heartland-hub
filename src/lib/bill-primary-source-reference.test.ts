@@ -90,4 +90,25 @@ describe('buildBillPrimarySourceReference', () => {
       'https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=SB1',
     );
   });
+
+  it('keeps called-session canonical and TLO URLs in the same session', () => {
+    const payload = buildBillPrimarySourceReference(
+      {
+        legislature_number: 89,
+        session_code: '2',
+        bill_type: 'hb',
+        bill_number: 8,
+        bill_identifier: 'HB 8',
+        caption: 'Called-session test bill',
+      },
+      [],
+      [],
+    );
+
+    expect(payload.canonicalUrl).toBe('https://keeptxred.com/bills/texas/89/2/hb/8');
+    expect(payload.officialBillUrl).toBe(
+      'https://capitol.texas.gov/BillLookup/History.aspx?LegSess=892&Bill=HB8',
+    );
+    expect(payload.session).toBe('2');
+  });
 });
