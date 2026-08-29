@@ -20,13 +20,13 @@ describe("retired KeepTXRed spring collection routes", () => {
     expect(source).not.toContain("SpringCollectionLanding");
   });
 
-  it("keeps the remaining KTR-only spring collection from hopping through retired KTR Explore tools", () => {
-    const source = readFileSync(resolve(HERE, "../components/explore/SpringCollectionLanding.tsx"), "utf8");
-    expect(source).toContain("https://texasdefined.com/explore");
-    expect(source).toContain("https://texasdefined.com/explore/search?q=Texas%20springs");
-    expect(source).toContain("https://texasdefined.com/explore/trip-planner");
-    expect(source).not.toContain('to="/explore"');
-    expect(source).not.toContain('to="/explore/search"');
-    expect(source).not.toContain('to="/explore/trip-planner"');
+  it("routes the former Major Springs collection directly to TexasDefined", () => {
+    const source = readFileSync(resolve(HERE, "explore.major-springs.tsx"), "utf8");
+    expect(source).toContain('createFileRoute("/explore/major-springs")');
+    expect(source).toContain("https://texasdefined.com/explore/major-springs");
+    expect(source).toContain("location.searchStr");
+    expect(source).toContain("statusCode: 301");
+    expect(source).not.toContain("buildSeo");
+    expect(source).not.toContain("SpringCollectionLanding");
   });
 });
