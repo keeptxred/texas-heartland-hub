@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest';
 import fs from 'node:fs';
 
-const sql = fs.readFileSync('supabase/migrations/20260827195500_expand_discovery_site_routing_vocabulary.sql', 'utf8').toLowerCase();
+const sql = fs.readFileSync('supabase/migrations/20260827195351_expand_discovery_site_routing_vocabulary.sql', 'utf8').toLowerCase();
 
 test('expanded discovery routing keeps explicit KTR, TexasDefined, and review boundaries', () => {
   for (const token of [
