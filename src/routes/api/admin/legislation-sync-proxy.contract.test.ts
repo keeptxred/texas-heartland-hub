@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const workflow = readFileSync(new URL("../../../../../.github/workflows/sync-texas-legislation.yml", import.meta.url), "utf8");
+const workflow = readFileSync(new URL("../../../../.github/workflows/sync-texas-legislation.yml", import.meta.url), "utf8");
 const proxy = readFileSync(new URL("./legislation-sync-proxy.$.ts", import.meta.url), "utf8");
 
 const WORKER_PROXY = "https://keeptxred-site.freddy-coppola.workers.dev/api/admin/legislation-sync-proxy";
