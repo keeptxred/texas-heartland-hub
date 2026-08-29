@@ -14,14 +14,35 @@ describe('broken-link live request contract', () => {
     expect(source).not.toContain('response.status === 403');
   });
 
+  it('keeps canonical identity separate from the verified live fetch origin', () => {
+    expect(source).toContain("const SITE = process.env.AUDIT_SITE_URL || 'https://keeptxred.com'");
+    expect(source).toContain('const LIVE_FETCH_ORIGIN = process.env.AUDIT_FETCH_ORIGIN || SITE');
+    expect(source).toContain('function auditFetchUrl(canonicalUrl)');
+    expect(source).toContain('const requestUrl = auditFetchUrl(url)');
+    expect(source).toContain('site: SITE');
+    expect(source).toContain('liveFetchOrigin: FETCH_ORIGIN');
+  });
+
   it('prints the concrete sitemap status when live checks fail', () => {
     expect(source).toContain('item.sitemapFailure');
     expect(source).toContain('printBlockingLiveFailures(blockingLive)');
   });
 
-  it('does not classify the active governed guide route family as retired', () => {
+  it('does not classify active governed route families as retired', () => {
     const retiredPrefixBlock = source.match(/const RETIRED_PREFIXES = \[[\s\S]*?\];/)?.[0] ?? '';
     expect(retiredPrefixBlock).not.toContain("'/guides'");
-    expect(source).toContain("const RETIRED_PREFIXES = [");
+    expect(retiredPrefixBlock).toContain("'/explore'");
+  });
+
+  it('exempts only the exact retained KTR-only Explore guides from migration debt', () => {
+    const activeBlock = source.match(/const ACTIVE_LEGACY_PATHS = new Set\(\[[\s\S]*?\]\);/)?.[0] ?? '';
+    expect(activeBlock).toContain("'/explore/scenic-rivers'");
+    expect(activeBlock).toContain("'/explore/texas-dark-sky-stargazing'");
+    expect(activeBlock).toContain("'/explore/major-springs'");
+    expect(activeBlock).not.toContain("'/explore/search'");
+    expect(activeBlock).not.toContain("'/explore/trip-planner'");
+    expect(source).toContain('if (ACTIVE_LEGACY_PATHS.has(pathname)) return false');
+    expect(source).toContain('const retired = isRetiredPath(pathname)');
+    expect(source).toContain('if (isRetiredPath(link.pathname))');
   });
 });
