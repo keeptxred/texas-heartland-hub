@@ -50,4 +50,11 @@ describe("GSC canonical override regressions", () => {
     expect(staticPaths).toContain('"/authors"');
     expect(staticPaths).toContain('"/keep-texas-red"');
   });
+
+  it("gives the Keep Texas Red brand pillar a sitewide footer authority link", () => {
+    const navigation = source("src/lib/site-navigation.ts");
+    const footer = source("src/components/site-footer.tsx");
+    expect(navigation).toContain('{ to: "/keep-texas-red", label: "What Keep Texas Red Means" }');
+    expect(footer).toContain("ABOUT_LINKS.map");
+  });
 });
