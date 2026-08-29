@@ -13,7 +13,7 @@ import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 const OIDC_AUDIENCE = "keeptxred-facebook";
 const REPOSITORY = "keeptxred/texas-heartland-hub";
 const WORKFLOW_PATH = ".github/workflows/auto-facebook-posts.yml";
-const ARTICLE_ENDPOINT = "https://keeptxred.com/api/public/hooks/auto-facebook-post";
+const ARTICLE_ENDPOINT = "https://keeptxred-site.freddy-coppola.workers.dev/api/public/hooks/auto-facebook-post";
 const DIVERSITY_WINDOW_HOURS = 30;
 
 type RecentQueueRow = {
