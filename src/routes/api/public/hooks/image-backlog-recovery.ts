@@ -1,13 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
 import { isLegacyGeneratedNewsAsset } from "@/lib/facebook-image-readiness";
-import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
+import { generateFeaturedImageForSlugDirect, resetStaleFeaturedImageGenerationLeasesDirect } from "@/lib/featured-image.functions";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 
 const OIDC_AUDIENCE = "keeptxred-newsroom";
 const REPOSITORY = "keeptxred/texas-heartland-hub";
 const WORKFLOW_PATH = ".github/workflows/image-backlog-recovery.yml";
-const STALE_GENERATION_LEASE_MS = 20 * 60 * 1000;
 
 type BacklogRow = {
   slug: string;
@@ -82,26 +81,13 @@ async function post({ request }: { request: Request }) {
   const db = supabaseAdmin as any;
   const columns = "slug,published_at,featured_image_url,image_generation_status,kind,body_json";
 
-  // The caller gives each generation request a ten-minute hard timeout. If the
-  // request disappears before the generator can finalize its status, the row
-  // would otherwise remain excluded from recovery forever. Treat a missing-image
-  // `generating` row older than twice that request window as an expired lease and
-  // return it to the same guarded `failed` backlog. Current in-flight work remains
-  // untouched, and normal published/quality eligibility is still enforced below.
-  const staleBefore = new Date(Date.now() - STALE_GENERATION_LEASE_MS).toISOString();
-  const staleResetResult = await db
-    .from("daily_articles")
-    .update({
-      image_generation_status: "failed",
-      image_validation_note: "Image generation lease expired before completion; returned to guarded recovery backlog.",
-    })
-    .is("featured_image_url", null)
-    .eq("image_generation_status", "generating")
-    .not("published_at", "is", null)
-    .lt("updated_at", staleBefore)
-    .select("slug");
-  if (staleResetResult.error) return Response.json({ error: staleResetResult.error.message }, { status: 500 });
-  const staleReset = (staleResetResult.data ?? []).length;
+  // Keep all daily_articles mutations inside the registered featured-image
+  // writer. The helper resets only published missing-image generation leases
+  // older than twice the workflow request cap; normal quality eligibility below
+  // still decides whether any reset row may be processed.
+  const staleResetResult = await resetStaleFeaturedImageGenerationLeasesDirect();
+  if (staleResetResult.error) return Response.json({ error: staleResetResult.error }, { status: 500 });
+  const staleReset = staleResetResult.reset;
 
   const [missingResult, legacyResult, adsensePriorityResult] = await Promise.all([
     db
@@ -128,8 +114,6 @@ async function post({ request }: { request: Request }) {
   if (missingResult.error) return Response.json({ error: missingResult.error.message }, { status: 500 });
   if (legacyResult.error) return Response.json({ error: legacyResult.error.message }, { status: 500 });
 
-  // AdSense priority is an ordering enhancement only. If the audit view is
-  // temporarily unavailable, preserve the existing general recovery queue.
   const adsensePrioritySlugs = new Set<string>(
     adsensePriorityResult.error
       ? []
