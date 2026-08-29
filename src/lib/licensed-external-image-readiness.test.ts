@@ -12,23 +12,24 @@ const migration = fs.readFileSync(
 describe("licensed external image readiness reconciliation", () => {
   it("is narrowly scoped to the two restored Wikimedia-backed historical URLs", () => {
     expect(migration).toContain(
-      "live-2026-07-08-new-omakase-concept-ichika-debuts-in-plano-dining-scene-pd6r0q",
+      "WHERE slug = 'live-2026-07-08-new-omakase-concept-ichika-debuts-in-plano-dining-scene-pd6r0q'",
     );
     expect(migration).toContain(
-      "live-2026-07-02-suburban-expansion-trends-transform-texas-economic-landscape-roszfh",
+      "WHERE slug = 'live-2026-07-02-suburban-expansion-trends-transform-texas-economic-landscape-roszfh'",
     );
-    expect(migration).toContain("BULK_ARTICLE_MAINTENANCE");
+    expect(migration.match(/UPDATE public\.daily_articles/g)?.length).toBe(2);
+    expect(migration).not.toContain("WHERE slug IN");
   });
 
   it("requires the existing asset, alt text, and explicit Commons license evidence", () => {
-    expect(migration).toContain("featured_image_url");
-    expect(migration).toContain("image_alt_text");
-    expect(migration).toContain("Wikimedia Commons");
-    expect(migration).toContain("CC0|CC BY|public domain");
+    expect(migration.match(/featured_image_url/g)?.length).toBe(2);
+    expect(migration.match(/image_alt_text/g)?.length).toBe(2);
+    expect(migration.match(/Wikimedia Commons/g)?.length).toBeGreaterThanOrEqual(2);
+    expect(migration.match(/CC0\|CC BY\|public domain/g)?.length).toBe(2);
   });
 
   it("only reconciles readiness status and never replaces the vetted image asset", () => {
-    expect(migration).toContain("image_generation_status = 'ready'");
+    expect(migration.match(/image_generation_status = 'ready'/g)?.length).toBe(2);
     expect(migration).not.toMatch(/SET[\s\S]*featured_image_url\s*=/i);
     expect(migration).not.toMatch(/SET[\s\S]*image_alt_text\s*=/i);
   });
