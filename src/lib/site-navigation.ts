@@ -79,6 +79,7 @@ export const SHOP_LINK = {
 
 export const ABOUT_LINKS = [
   { to: "/about", label: "About Keep TX Red" },
+  { to: "/keep-texas-red", label: "What Keep Texas Red Means" },
   { to: "/editorial-standards", label: "Editorial Standards" },
   { to: "/authors", label: "Newsroom Desks" },
   { to: "/contact", label: "Contact Us" },
