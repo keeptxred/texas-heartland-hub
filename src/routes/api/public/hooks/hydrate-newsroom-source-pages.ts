@@ -82,7 +82,7 @@ async function handler({ request }: { request: Request }) {
     const body = row.link ? await fetchReadableNewsroomSource(row.link) : null;
     if (!body) return { feedItemId: row.id, fetched: true, updated: false, chars: 0, reason: "no_readable_body" };
     const existing = (row.extracted_body ?? "").trim();
-    if (body.length <= existing.length + 100 && existing.length >= 4_000) {
+    if (body.length <= existing.length + 100) {
       return { feedItemId: row.id, fetched: true, updated: false, chars: existing.length, reason: "existing_body_is_equivalent_or_better" };
     }
     const { error: updateError } = await newsroomDb
@@ -90,10 +90,29 @@ async function handler({ request }: { request: Request }) {
       .update({ extracted_body: body })
       .eq("id", row.id);
     if (updateError) {
-      return { feedItemId: row.id, fetched: true, updated: false, chars: 0, reason: `update_failed:${updateError.message}` };
+      return { feedItemId: row.id, fetched: true, updated: false, chars: existing.length, reason: `update_failed:${updateError.message}` };
     }
     return { feedItemId: row.id, fetched: true, updated: true, chars: body.length };
   });
+
+  if (results.length) {
+    const attemptedAt = new Date().toISOString();
+    const stateRows = results.map((result) => ({
+      feed_item_id: result.feedItemId,
+      last_attempt_at: attemptedAt,
+      last_success_at: result.reason === "no_readable_body" || result.reason?.startsWith("update_failed:") ? null : attemptedAt,
+      last_result: result.reason === "no_readable_body"
+        ? "no_readable_body"
+        : result.reason?.startsWith("update_failed:")
+          ? "update_failed"
+          : "success",
+      chars: result.chars,
+    }));
+    const { error: stateError } = await newsroomDb
+      .from("newsroom_source_page_fetch_state")
+      .upsert(stateRows, { onConflict: "feed_item_id" });
+    if (stateError) console.warn("[newsroom-hydration] source-page fetch state write failed", stateError.message);
+  }
 
   const resultById = new Map(results.map((result) => [result.feedItemId, result]));
   const responseRows: HydrationResult[] = feedIds.map((id) => {
