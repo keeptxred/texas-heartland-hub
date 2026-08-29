@@ -5,6 +5,7 @@ const lowValue = fs.readFileSync('src/lib/low-value-titles.ts', 'utf8');
 const baseMigration = fs.readFileSync('supabase/migrations/20260828144500_guard_newsroom_route_quality.sql', 'utf8');
 const finalMigration = fs.readFileSync('supabase/migrations/20260828151000_finalize_trusted_sports_and_rangers_news_routing.sql', 'utf8');
 const educationUtilityMigration = fs.readFileSync('supabase/migrations/20260829152500_filter_education_utility_pages.sql', 'utf8');
+const educationUtilityLockMigration = fs.readFileSync('supabase/migrations/20260829153500_lock_education_utility_routing.sql', 'utf8');
 
 describe('newsroom route quality guard', () => {
   test('filters obituary and death-notice listings', () => {
@@ -20,6 +21,15 @@ describe('newsroom route quality guard', () => {
     expect(educationUtilityMigration).toContain("internal_slug is null");
     expect(educationUtilityMigration).toContain("texasdefined_slug is null");
     expect(educationUtilityMigration).toContain("auto_publish_eligible");
+  });
+
+  test('locks static education utility pages out of stale SEO routing', () => {
+    expect(educationUtilityLockMigration).toContain('routing_type = null');
+    expect(educationUtilityLockMigration).toContain("'routing_lock', true");
+    expect(educationUtilityLockMigration).toContain("'routing_locked_site', 'review'");
+    expect(educationUtilityLockMigration).toContain("'routing_locked_section', 'Unclassified'");
+    expect(educationUtilityLockMigration).toContain('internal_slug is null');
+    expect(educationUtilityLockMigration).toContain('texasdefined_slug is null');
   });
 
   test('uses word-bounded sports league tokens so inflation cannot match nfl', () => {
