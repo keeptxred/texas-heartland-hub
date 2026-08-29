@@ -19,11 +19,37 @@ const UPGRADED_EXPECTED = [
   "gun-rights",
   "life-abortion",
 ] as const;
-const WAVE2_EXPECTED = ["parental-rights", "election-integrity", "bitcoin-reserve", "central-bank-digital-currency"] as const;
-const WAVE3_EXPECTED = ["medical-freedom", "esg-energy-boycotts", "agriculture-family-farms"] as const;
-const WAVE4_EXPECTED = ["religious-liberty", "state-federal-power", "right-to-work"] as const;
-const WAVE5_EXPECTED = ["womens-sports", "campus-free-speech", "advanced-nuclear-energy"] as const;
-const WAVE6_EXPECTED = ["higher-education-dei", "foreign-adversary-property", "china-investment-restrictions"] as const;
+
+const WAVE2_EXPECTED = [
+  "parental-rights",
+  "election-integrity",
+  "bitcoin-reserve",
+  "central-bank-digital-currency",
+] as const;
+
+const WAVE3_EXPECTED = [
+  "medical-freedom",
+  "esg-energy-boycotts",
+  "agriculture-family-farms",
+] as const;
+
+const WAVE4_EXPECTED = [
+  "religious-liberty",
+  "state-federal-power",
+  "right-to-work",
+] as const;
+
+const WAVE5_EXPECTED = [
+  "womens-sports",
+  "campus-free-speech",
+  "advanced-nuclear-energy",
+] as const;
+
+const WAVE6_EXPECTED = [
+  "higher-education-dei",
+  "foreign-adversary-property",
+  "china-investment-restrictions",
+] as const;
 
 const EXPECTED_INDEXABLE = [
   ...UPGRADED_EXPECTED,
@@ -57,7 +83,10 @@ describe("priority policy tracker readiness", () => {
   });
 
   it("makes only the intentionally expanded policy cohort indexable", () => {
-    const ready = ALL_POLICY_TRACKERS.filter(isPolicyTrackerIndexable).map((tracker) => tracker.slug).sort();
+    const ready = ALL_POLICY_TRACKERS
+      .filter(isPolicyTrackerIndexable)
+      .map((tracker) => tracker.slug)
+      .sort();
     expect(ready).toEqual([...EXPECTED_INDEXABLE].sort());
   });
 });
