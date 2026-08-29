@@ -24,6 +24,11 @@ const RETIRED_PREFIXES = [
   '/moving-to-texas-checklist', '/texas-resources', '/texas-data',
   '/events', '/food-bbq',
 ];
+const ACTIVE_LEGACY_PATHS = new Set([
+  '/explore/scenic-rivers',
+  '/explore/texas-dark-sky-stargazing',
+  '/explore/major-springs',
+]);
 const IGNORE_PREFIXES = ['/api/', '/admin', '/auth/', '/assets/', '/favicon', '/robots.txt', '/sitemap'];
 const MAX_FETCH_ATTEMPTS = 3;
 const AUDIT_REQUEST_HEADERS = {
@@ -82,6 +87,11 @@ function extractLinks(text) {
   return extractLinkCandidates(text);
 }
 
+function isRetiredPath(pathname) {
+  if (ACTIVE_LEGACY_PATHS.has(pathname)) return false;
+  return RETIRED_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(prefix + '/'));
+}
+
 function auditFetchUrl(canonicalUrl) {
   const target = new URL(canonicalUrl, SITE);
   if (target.origin !== SITE_ORIGIN || FETCH_ORIGIN === SITE_ORIGIN) return target.href;
@@ -108,7 +118,7 @@ async function staticAudit() {
           const pathname = normalizeInternal(raw);
           if (!pathname || IGNORE_PREFIXES.some((prefix) => pathname.startsWith(prefix))) continue;
 
-          const retired = RETIRED_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(prefix + '/'));
+          const retired = isRetiredPath(pathname);
           const matched = routeRegexes.some((regex) => regex.test(pathname));
           let publicAsset = false;
           try { publicAsset = publicAssetPaths.has(decodeURIComponent(pathname)); } catch { publicAsset = false; }
@@ -201,7 +211,7 @@ async function liveAudit() {
             .map((raw) => ({ raw, pathname: normalizeInternal(raw) }))
             .filter((item) => item.pathname);
           for (const link of links) {
-            if (RETIRED_PREFIXES.some((prefix) => link.pathname === prefix || link.pathname.startsWith(prefix + '/'))) {
+            if (isRetiredPath(link.pathname)) {
               failures.push({ type: 'live-retired-link', severity: 'migration-debt', source: url, ...link });
             }
           }
