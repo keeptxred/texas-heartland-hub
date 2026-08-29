@@ -7,6 +7,7 @@ import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 const OIDC_AUDIENCE = "keeptxred-newsroom";
 const REPOSITORY = "keeptxred/texas-heartland-hub";
 const WORKFLOW_PATH = ".github/workflows/image-backlog-recovery.yml";
+const STALE_GENERATION_LEASE_MS = 20 * 60 * 1000;
 
 type BacklogRow = {
   slug: string;
@@ -81,6 +82,27 @@ async function post({ request }: { request: Request }) {
   const db = supabaseAdmin as any;
   const columns = "slug,published_at,featured_image_url,image_generation_status,kind,body_json";
 
+  // The caller gives each generation request a ten-minute hard timeout. If the
+  // request disappears before the generator can finalize its status, the row
+  // would otherwise remain excluded from recovery forever. Treat a missing-image
+  // `generating` row older than twice that request window as an expired lease and
+  // return it to the same guarded `failed` backlog. Current in-flight work remains
+  // untouched, and normal published/quality eligibility is still enforced below.
+  const staleBefore = new Date(Date.now() - STALE_GENERATION_LEASE_MS).toISOString();
+  const staleResetResult = await db
+    .from("daily_articles")
+    .update({
+      image_generation_status: "failed",
+      image_validation_note: "Image generation lease expired before completion; returned to guarded recovery backlog.",
+    })
+    .is("featured_image_url", null)
+    .eq("image_generation_status", "generating")
+    .not("published_at", "is", null)
+    .lt("updated_at", staleBefore)
+    .select("slug");
+  if (staleResetResult.error) return Response.json({ error: staleResetResult.error.message }, { status: 500 });
+  const staleReset = (staleResetResult.data ?? []).length;
+
   const [missingResult, legacyResult, adsensePriorityResult] = await Promise.all([
     db
       .from("daily_articles")
@@ -143,6 +165,7 @@ async function post({ request }: { request: Request }) {
       missing: missingCount,
       legacy: legacyCount,
       adsensePriority: adsensePriorityCount,
+      staleReset,
       slugs,
       scope: "adsense_ready_missing_first_then_missing_or_legacy_published_quality_article_images",
     });
@@ -163,6 +186,7 @@ async function post({ request }: { request: Request }) {
     processed: 1,
     succeeded: result.ok ? 1 : 0,
     failed: result.ok ? 0 : 1,
+    staleReset,
     scope: "adsense_ready_missing_first_then_missing_or_legacy_published_quality_article_images",
     results: [result],
   }, { status: result.ok ? 200 : 422 });
