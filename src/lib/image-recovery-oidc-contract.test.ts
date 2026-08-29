@@ -8,11 +8,15 @@ const adsenseRoute = readFileSync(new URL("../routes/api/public/hooks/adsense-im
 const DIRECT_WORKER_ORIGIN = "https://keeptxred-site.freddy-coppola.workers.dev";
 
 describe("image recovery OIDC workflow event contract", () => {
-  it("keeps general recovery on scheduled, protected marker-push, and manual events only", () => {
+  it("keeps general recovery on bounded scheduled, marker, manual, and verified-marker fallback events", () => {
     expect(imageWorkflow).toContain("schedule:");
     expect(imageWorkflow).toContain("push:");
     expect(imageWorkflow).toContain("workflow_dispatch:");
-    expect(imageWorkflow).not.toContain("workflow_run:");
+    expect(imageWorkflow).toContain("workflow_run:");
+    expect(imageWorkflow).toContain('workflows: ["Repository test and build health"]');
+    expect(imageWorkflow).toContain("github.event.workflow_run.conclusion == 'success'");
+    expect(imageWorkflow).toContain("contains(github.event.workflow_run.head_commit.message, '[run-image-backlog]')");
+    expect(imageWorkflow).toContain("MARKER_REF: ${{ github.event.workflow_run.head_sha || github.sha }}");
     expect(imageRoute).toContain('allowedEventNames: ["push", "schedule", "workflow_dispatch", "workflow_run"]');
   });
 
