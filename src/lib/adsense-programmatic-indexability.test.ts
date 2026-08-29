@@ -16,6 +16,7 @@ import { WAVE7_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave
 import { WAVE8_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave8-upgrades";
 import { WAVE9_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave9-upgrades";
 import { WAVE10_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave10-upgrades";
+import { WAVE11_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-wave11-upgrades";
 import { POLITICAL_SEARCH_GUIDES } from "@/data/political-search-guides";
 import { isIssueGuideIndexable } from "@/lib/issue-guide-indexability";
 import { isPolicyTrackerIndexable } from "@/lib/policy-tracker-indexability";
@@ -37,22 +38,21 @@ const EXPECTED_INDEXABLE_POLICY_TRACKER_SLUGS = [
   ...WAVE8_INDEXABLE_POLICY_TRACKER_SLUGS,
   ...WAVE9_INDEXABLE_POLICY_TRACKER_SLUGS,
   ...WAVE10_INDEXABLE_POLICY_TRACKER_SLUGS,
+  ...WAVE11_INDEXABLE_POLICY_TRACKER_SLUGS,
   "social-media-viewpoint-moderation",
 ];
 
 describe("AdSense programmatic indexability", () => {
   it("indexes every deliberately expanded issue guide while keeping other thin collections quarantined", () => {
-    expect(
-      issueGuides.filter(isIssueGuideIndexable).map((guide) => guide.slug).sort(),
-    ).toEqual([
+    expect(issueGuides.filter(isIssueGuideIndexable).map((guide) => guide.slug).sort()).toEqual([
       ...PRIORITY_ISSUE_GUIDE_SLUGS,
       ...WAVE2_ISSUE_GUIDE_SLUGS,
       ...WAVE3_ISSUE_GUIDE_SLUGS,
       ...WAVE4_ISSUE_GUIDE_SLUGS,
     ].sort());
-    expect(
-      ALL_POLICY_TRACKERS.filter(isPolicyTrackerIndexable).map((tracker) => tracker.slug).sort(),
-    ).toEqual([...EXPECTED_INDEXABLE_POLICY_TRACKER_SLUGS].sort());
+    expect(ALL_POLICY_TRACKERS.filter(isPolicyTrackerIndexable).map((tracker) => tracker.slug).sort()).toEqual([
+      ...EXPECTED_INDEXABLE_POLICY_TRACKER_SLUGS,
+    ].sort());
     expect(POLITICAL_SEARCH_GUIDES.filter(isPoliticalReferenceIndexable)).toHaveLength(0);
   });
 
