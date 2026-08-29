@@ -20,6 +20,7 @@ const MILITARY_HONORS_RE = /\b(purple heart|medal of honor|military honor(?:s)?|
 const WEATHER_PREPAREDNESS_RE = /\b(emergency plan|preparedness|prepared|checklist|emergency kit|go bag|family communication|shelter in place|evacuation plan|year-round)\b/i;
 const SENSITIVE_VIOLENCE_RE = /\b(shooting|shot|gunfire|road rage|killed|dead|death|fatal|murder|homicide|victim|suspect|attack|assault)\b/i;
 const DATA_CENTER_POLICY_RE = /\b(data center(?:s)?|data-center(?:s)?|server farm(?:s)?|hyperscale)\b/i;
+const POLITICAL_IDENTITY_RE = /\b(?:texas\s+)?(?:republican|democratic|democrat|gop)\s+(?:party|coalition|identity|platform)\b|\b(?:party|coalition|identity|platform)\s+(?:of\s+)?(?:texas\s+)?(?:republican|democrat|gop)\b/i;
 
 const DOMAIN_KEYWORDS: Array<[Domain, RegExp]> = [
   ["wildlife", /\b(jellyfish|shark|whale|dolphin|bird|fish|species|wildlife|reef|coral|deer|coyote|snake|alligator|manatee|turtle|habitat|ecosystem|marine|hunting|hunter(?:s)?|fishing|angler(?:s)?)\b/i],
@@ -51,6 +52,12 @@ function matchedDomains(text: string): Set<Domain> {
 }
 
 function chooseVisualDomain(text: string): Domain {
+  // Party-identity coverage is inherently political even when the reporting
+  // discusses cultural or social issues. Keep that narrow signal ahead of the
+  // generic visual-domain priority so "cultural" cannot turn a GOP/Democratic
+  // identity story into a festival or heritage image assignment.
+  if (POLITICAL_IDENTITY_RE.test(text)) return "politics";
+
   const matches = matchedDomains(text);
   if (matches.size === 0) return "general";
 
@@ -116,6 +123,9 @@ export function buildImagePrompt(subject: SubjectExtract, extraGuidance = ""): s
   if (subject.domain === "sports") {
     return `${correction}${evidenceLock}REAL SPORTS PHOTOJOURNALISM PHOTOGRAPH ONLY, horizontal 16:9, captured with a physical professional camera, natural stadium or outdoor daylight, realistic motion blur where appropriate, authentic grass/dirt/track/course textures, true photographic depth of field, lifelike anatomy and equipment. Story: ${subject.title}. PRIMARY SUBJECT: ${subject.concreteSubject}. Depict ${DOMAIN_STEER.sports}. Match the exact sport in the story: cross-country coverage must show believable distance runners on a real course or meet setting; punting coverage must show a believable football punter or special-teams practice/action on a real field. ${loc ? `Location context: ${loc}, Texas.` : "Believable Texas collegiate athletics setting."} Use anonymous athletes with no readable school logos, jersey text, sponsor marks, or identifiable faces. The frame must look like an ordinary newspaper sports photograph, never concept art or promotional artwork. No illustration, cartoon, digital painting, vector art, poster, collage, typography, readable signage, mascot, logo, trophy graphic, symbolic state shape, or invented named athlete likeness.`.slice(0, 1800);
   }
+  if (subject.domain === "politics" && POLITICAL_IDENTITY_RE.test(storyText)) {
+    return `${correction}${evidenceLock}REAL POLITICAL NEWS PHOTOGRAPH ONLY, horizontal 16:9, candid documentary photojournalism captured with a physical 35mm camera, natural indoor daylight, realistic skin tones, ordinary room materials, true photographic depth of field. Story: ${subject.title}. PRIMARY SUBJECT: an anonymous Texas grassroots political-organizing or primary-election setting that represents party identity without inventing a historical event: adults seen from a respectful distance in an ordinary county meeting room or civic hall with folding chairs, a check-in table, notebooks, and neutral election-meeting infrastructure. ${loc ? `Location context: ${loc}, Texas.` : "Believable Texas civic setting."} No recognizable politician or named-person likeness, campaign rally spectacle, podium portrait, giant flag, party logo, campaign sign, readable slogan, readable text, fabricated banner, poster, illustration, cartoon, vector art, infographic, collage, or promotional graphic.`.slice(0, 1800);
+  }
   if (subject.domain === "culture") {
     return `${correction}${evidenceLock}REAL DOCUMENTARY PHOTOGRAPH ONLY, horizontal 16:9, candid Texas event photojournalism captured with a physical 35mm camera, natural daylight, realistic lens depth, real materials, real food and real venue architecture. Story: ${subject.title}. PRIMARY SUBJECT: ${subject.concreteSubject}. Depict ${DOMAIN_STEER.culture}. ${loc ? `Location context: ${loc}, Texas.` : "Believable Texas setting."} For a festival move or planned event, prefer a believable outdoor venue, festival-ground preparation, food-vendor setup, tables, tents, or ordinary event infrastructure rather than inventing a packed crowd. The image must look like an unedited newspaper photograph, not promotional artwork. Absolutely no event flyer, advertisement, poster, banner, signboard, mascot, giant novelty object, typography, readable words, title text, logo, vector shapes, illustration, painting, cartoon, collage, or graphic design.`.slice(0, 1800);
   }
@@ -143,6 +153,10 @@ export function buildNegativeImagePrompt(subject: SubjectExtract, rejectedReason
   if (subject.domain === "energy" && DATA_CENTER_POLICY_RE.test(storyText)) items.unshift(
     "people", "person", "politician", "governor", "public official", "portrait", "identifiable face", "press conference",
     "podium", "government signing", "protest", "readable document", "campaign imagery",
+  );
+  if (subject.domain === "politics" && POLITICAL_IDENTITY_RE.test(storyText)) items.unshift(
+    "recognizable politician", "named-person likeness", "politician portrait", "campaign rally spectacle", "podium portrait",
+    "giant flag", "party logo", "campaign sign", "readable slogan", "fabricated banner", "generic flag-only symbolism",
   );
   if (subject.evidenceGuidance) items.push(
     "fabricated recognizable face", "invented casualty", "invented damage", "invented crowd", "invented protest",
