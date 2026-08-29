@@ -66,14 +66,6 @@ function isSitemapWorthySubjectSlug(slug: string): boolean {
   return taxonomyCodeCount <= 1;
 }
 
-/**
- * Sitemaps are crawl invitations, not a complete database export. Keep every valid
- * bill route available, but explicitly advertise bills that have at least two
- * independent substance signals. A single TLO filed-report seed action exists to
- * make the complete catalog useful to visitors; meeting/calendar notices are also
- * schedule data rather than legal history. Neither is, by itself, evidence that a
- * bill page is a worthwhile search landing page.
- */
 function isSitemapWorthyBill(
   bill: SitemapBill,
   evidence: {
@@ -173,7 +165,7 @@ export async function billSitemapEntries(): Promise<UrlEntry[]> {
     enrichmentRows,
   ] = await Promise.all([
     fetchAllPages<SitemapBill>((from, to) => db.from('bills')
-      .select('id,legislature_number,bill_type,bill_number,last_action_date,updated_at,summary,description,plain_language_summary,became_law,bill_text_url,analysis_url,fiscal_note_url')
+      .select('id,legislature_number,session_code,bill_type,bill_number,last_action_date,updated_at,summary,description,plain_language_summary,became_law,bill_text_url,analysis_url,fiscal_note_url')
       .eq('is_active', true)
       .order('legislature_number', { ascending: false })
       .order('id')

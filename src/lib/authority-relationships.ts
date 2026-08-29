@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { canonicalBillPath } from '@/lib/bills';
+import { publicBillPath } from '@/lib/bill-public-path';
 import {
   isAuthorityEntityType,
   type AuthorityEntityType,
@@ -94,7 +94,7 @@ export async function getRelatedAuthorityContent(
       ? db
           .from('bills')
           .select(
-            'id,legislature_number,bill_type,bill_number,bill_identifier,caption,current_status_label',
+            'id,legislature_number,session_code,bill_type,bill_number,bill_identifier,caption,current_status_label',
           )
           .in('id', billIds)
       : { data: [] },
@@ -122,7 +122,7 @@ export async function getRelatedAuthorityContent(
         score: row.score,
         title: `${bill.bill_identifier}: ${bill.caption}`,
         description: bill.current_status_label,
-        href: canonicalBillPath(bill),
+        href: publicBillPath(bill),
       }];
     }
     if (row.target_type === 'article') {

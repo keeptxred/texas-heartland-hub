@@ -13,6 +13,7 @@ export type BillSubjectBill = Pick<
   Bill,
   | 'id'
   | 'legislature_number'
+  | 'session_code'
   | 'bill_type'
   | 'bill_number'
   | 'bill_identifier'
@@ -40,7 +41,7 @@ export async function getBillsForSubject(
   const { data, error } = await db
     .from('bill_subject_relationships')
     .select(
-      'bills(id,legislature_number,bill_type,bill_number,bill_identifier,caption,current_status_label,last_action_date,became_law,is_active)',
+      'bills(id,legislature_number,session_code,bill_type,bill_number,bill_identifier,caption,current_status_label,last_action_date,became_law,is_active)',
     )
     .eq('subject_id', subjectId)
     .eq('review_status', 'approved')
