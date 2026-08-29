@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
-  POLICY_TRACKER_WAVE18_UPGRADES,
-  WAVE18_INDEXABLE_POLICY_TRACKER_SLUGS,
-} from "@/data/policy-tracker-wave18-upgrades";
+  POLICY_TRACKER_WAVE18_READY,
+  WAVE18_READY_POLICY_TRACKER_SLUGS,
+} from "@/data/policy-tracker-wave18-ready";
 import {
   MIN_POLICY_TRACKER_WORDS,
   isPolicyTrackerIndexable,
@@ -13,11 +13,11 @@ const EXPECTED = ["public-education", "school-choice", "water"] as const;
 
 describe("wave 18 policy tracker readiness", () => {
   it("keeps the publication cohort explicit", () => {
-    expect([...WAVE18_INDEXABLE_POLICY_TRACKER_SLUGS].sort()).toEqual([...EXPECTED].sort());
+    expect([...WAVE18_READY_POLICY_TRACKER_SLUGS].sort()).toEqual([...EXPECTED].sort());
   });
 
   it.each(EXPECTED)("%s genuinely clears the unchanged canonical tracker gate", (slug) => {
-    const tracker = POLICY_TRACKER_WAVE18_UPGRADES[slug];
+    const tracker = POLICY_TRACKER_WAVE18_READY[slug];
     expect(tracker).toBeDefined();
     expect(policyTrackerWordCount(tracker)).toBeGreaterThanOrEqual(MIN_POLICY_TRACKER_WORDS);
     expect(tracker.sources.filter((source) => source.primary).length).toBeGreaterThanOrEqual(3);
