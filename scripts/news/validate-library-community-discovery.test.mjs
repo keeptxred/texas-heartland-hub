@@ -1,6 +1,5 @@
-import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import test from 'node:test';
+import { expect, test } from 'vitest';
 
 const relay = fs.readFileSync('supabase/functions/ktr-rss-relay/index.ts', 'utf8');
 const migration = fs.readFileSync(
@@ -11,18 +10,18 @@ const migration = fs.readFileSync(
 test('library and museum discovery query is broad enough for grants, gifts, expansions, and exhibits', () => {
   const marker = '"google-libraries-museums"';
   const start = relay.indexOf(marker);
-  assert.ok(start >= 0, 'missing google-libraries-museums relay feed');
+  expect(start).toBeGreaterThanOrEqual(0);
   const line = relay.slice(start, relay.indexOf('\n', start));
   for (const term of ['library', 'museum', 'community+foundation', 'grant', 'donation', 'gift', 'expansion', 'exhibit']) {
-    assert.ok(line.includes(term), `missing library/community discovery term: ${term}`);
+    expect(line).toContain(term);
   }
-  assert.ok(!line.includes('library+%22million%22+grant'), 'old million-only library grant restriction returned');
+  expect(line).not.toContain('library+%22million%22+grant');
 });
 
 test('Texas State Library direct feed is first-party and review-only', () => {
-  assert.ok(migration.includes("'Texas State Library — Library Developments'"));
-  assert.ok(migration.includes("'https://www.tsl.texas.gov/ld/librarydevelopments/?feed=rss2'"));
-  assert.match(migration, /source_reputation_score\s*=\s*60/);
-  assert.match(migration, /below 65 automatic-source threshold/);
-  assert.ok(!/source_reputation_score\s*=\s*(?:6[5-9]|[7-9]\d|100)\b/.test(migration));
+  expect(migration).toContain("'Texas State Library — Library Developments'");
+  expect(migration).toContain("'https://www.tsl.texas.gov/ld/librarydevelopments/?feed=rss2'");
+  expect(migration).toMatch(/source_reputation_score\s*=\s*60/);
+  expect(migration).toMatch(/below 65 automatic-source threshold/);
+  expect(migration).not.toMatch(/source_reputation_score\s*=\s*(?:6[5-9]|[7-9]\d|100)\b/);
 });
