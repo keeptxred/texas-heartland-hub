@@ -1,8 +1,9 @@
--- Add direct first-party feeds for two high-value Texas government sources.
--- These URLs are non-Google RSS feeds, so ingest-feeds.ts checks them every run
--- instead of placing them in the rotating Google News supplemental window.
--- Existing Texas relevance, source reputation, clustering, fact verification,
--- publication readiness, and publication safeguards remain unchanged.
+-- Restore direct first-party Texas government feeds that were stranded by a
+-- duplicate migration-version collision on 20260827194000.
+--
+-- This migration is intentionally idempotent. It restores the original source
+-- definitions without changing publication, relevance, source-quality,
+-- clustering, verification, or editorial safeguards.
 
 WITH sources(platform, source_name, source_url, rss_url, category, notes, enabled) AS (
   VALUES
@@ -32,11 +33,17 @@ WHERE NOT EXISTS (
   SELECT 1
   FROM public.content_sources existing
   WHERE lower(existing.rss_url) = lower(s.rss_url)
+     OR existing.source_name = s.source_name
 );
 
-UPDATE public.content_sources
-SET enabled = true
-WHERE source_name IN (
-  'Texas Attorney General — Direct News Releases',
-  'Texas DPS — Direct Most Wanted RSS'
-);
+UPDATE public.content_sources AS existing
+SET
+  platform = s.platform,
+  source_url = s.source_url,
+  rss_url = s.rss_url,
+  category = s.category,
+  notes = s.notes,
+  enabled = true,
+  updated_at = now()
+FROM sources s
+WHERE existing.source_name = s.source_name;

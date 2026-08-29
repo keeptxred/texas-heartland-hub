@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest';
 import fs from 'node:fs';
 
-const migration = fs.readFileSync('supabase/migrations/20260827220500_route_clear_review_queue_topics.sql', 'utf8');
+const migration = fs.readFileSync('supabase/migrations/20260827214203_route_clear_review_queue_topics.sql', 'utf8');
 
 test('clear business topics route to KTR Business', () => {
   for (const term of ['nyse texas', 'txse', 'stock exchange', 'financially struggling']) {

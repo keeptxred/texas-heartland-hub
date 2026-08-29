@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest';
 import fs from 'node:fs';
 
-const migration = fs.readFileSync('supabase/migrations/20260828230500_hold_non_news_event_and_player_profiles.sql', 'utf8');
+const migration = fs.readFileSync('supabase/migrations/20260828224500_hold_non_news_event_and_player_profiles.sql', 'utf8');
 
 test('non-news profile hold is narrow and preserves real recruiting news', () => {
   for (const token of [
