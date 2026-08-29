@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import { describe, expect, it } from "vitest";
 import { buildGenerationSafeSubject } from "./featured-image.functions";
 import { buildImagePrompt, buildNegativeImagePrompt, type SubjectExtract } from "./featured-image-core";
@@ -17,14 +18,14 @@ describe("buildGenerationSafeSubject", () => {
     const prompt = buildImagePrompt(safe, "Use a completely new physical-camera composition");
     const negative = buildNegativeImagePrompt(safe, "Rejected image showed a gun and target illustration");
 
-    expect(safe.title).toBe("Fort Worth roadway incident location");
-    expect(`${safe.title} ${safe.firstParagraph} ${safe.concreteSubject}`).not.toMatch(/shoot|road rage|gun|dead|victim|reenactment/i);
+    expect(safe.title).toBe("Fort Worth interstate roadway exterior");
+    expect(`${safe.title} ${safe.firstParagraph} ${safe.concreteSubject}`).not.toMatch(/shoot|road rage|gun|dead|victim|incident|reenactment/i);
     expect(prompt).toContain("roadway");
-    expect(prompt).not.toMatch(/shoot|road rage|gun|dead|victim/i);
+    expect(prompt).not.toMatch(/shoot|road rage|gun|dead|victim|incident/i);
     expect(negative.replace(/rejected visual motif:.*$/i, "")).not.toMatch(/shoot|road rage|gun|dead|victim/i);
   });
 
-  it("keeps data-center generation focused on infrastructure without putting politician terms into generation inputs", () => {
+  it("keeps data-center generation focused on physical infrastructure without policy or politician terms", () => {
     const subject: SubjectExtract = {
       title: "Gov. Abbott orders pause on data center approvals",
       firstParagraph: "The governor ordered a pause while Texas reviews grid impacts from large data centers.",
@@ -39,10 +40,18 @@ describe("buildGenerationSafeSubject", () => {
     const negative = buildNegativeImagePrompt(safe, "Rejected image showed Gov. Abbott at a podium");
 
     expect(safe.domain).toBe("general");
-    expect(safe.title).toBe("Texas data center infrastructure policy review");
-    expect(`${safe.title} ${safe.firstParagraph} ${safe.concreteSubject}`).not.toMatch(/abbott|governor|politician|podium/i);
+    expect(safe.title).toBe("Texas data center exterior and electrical infrastructure");
+    expect(`${safe.title} ${safe.firstParagraph} ${safe.concreteSubject}`).not.toMatch(/abbott|governor|politician|podium|policy|review|approval|pause/i);
     expect(prompt).toContain("data-center");
-    expect(prompt).not.toMatch(/abbott|governor|politician|podium/i);
+    expect(prompt).not.toMatch(/abbott|governor|politician|podium|policy|review|approval|pause/i);
     expect(negative.replace(/rejected visual motif:.*$/i, "")).not.toMatch(/abbott|governor|politician|podium/i);
+  });
+
+  it("uses the existing Schnell path only for sanitized hard-failure subjects while retaining strict validation", () => {
+    const source = fs.readFileSync(new URL("./featured-image.functions.ts", import.meta.url), "utf8");
+    expect(source).toContain("generationSubject !== subject");
+    expect(source).toContain("CLOUDFLARE_IMAGE_FALLBACK_MODEL");
+    expect(source).toContain("validateImageMatchesArticle(bytes, subject)");
+    expect(source).toContain("attempt <= 3");
   });
 });
