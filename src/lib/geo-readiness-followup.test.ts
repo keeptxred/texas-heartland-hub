@@ -26,8 +26,12 @@ describe("GEO readiness follow-up", () => {
       'const isElectionCentralPage = isCanonicalPage && normalized === "/elections/2026";',
     );
     expect(source).toContain(
-      "const pageTitle = isElectionCentralPage ? ELECTION_CENTRAL_TITLE : title;",
+      'const usesElectionCentralTitle = isElectionCentralPage || title === "Texas Election Central";',
     );
+    expect(source).toContain(
+      "const pageTitle = usesElectionCentralTitle ? ELECTION_CENTRAL_TITLE : title;",
+    );
+    expect(source).toContain("? usesElectionCentralTitle");
     expect(source).toContain("name: pageTitle");
     expect(source).toContain("<title>{`${pageTitle} | KeepTXRed`}</title>");
     expect(source).toContain('<meta property="og:title" content={pageTitle} />');
