@@ -6,6 +6,8 @@ import {
   selectKtrFacebookAttentionPost,
 } from "@/lib/facebook-attention-posts";
 import {
+  formatKtrFacebookPublishedAttentionMessage,
+  ktrFacebookAttentionTrafficUrl,
   selectKtrFacebookAttentionPostForSlot,
   shouldUseKtrFacebookAttentionSlot,
 } from "@/lib/facebook-attention-publisher.server";
@@ -55,6 +57,24 @@ describe("KTR Facebook attention posts", () => {
       } else {
         expect(STATIC_TRAFFIC_PATHS.has(post.trafficPath), `${post.title}: ${post.trafficPath}`).toBe(true);
       }
+    }
+  });
+
+  it("adds campaign attribution only to traffic posts", () => {
+    const linked = KTR_FACEBOOK_ATTENTION_POSTS.find((post) => post.trafficPath);
+    const unlinked = KTR_FACEBOOK_ATTENTION_POSTS.find((post) => !post.trafficPath);
+    expect(linked).toBeTruthy();
+    expect(unlinked).toBeTruthy();
+
+    const trafficUrl = linked ? ktrFacebookAttentionTrafficUrl(linked) : null;
+    expect(trafficUrl).toContain("utm_source=facebook");
+    expect(trafficUrl).toContain("utm_medium=social");
+    expect(trafficUrl).toContain("utm_campaign=ktr_attention");
+    expect(trafficUrl).toContain("utm_content=");
+    if (linked) expect(formatKtrFacebookPublishedAttentionMessage(linked)).toContain(trafficUrl as string);
+    if (unlinked) {
+      expect(ktrFacebookAttentionTrafficUrl(unlinked)).toBeNull();
+      expect(formatKtrFacebookPublishedAttentionMessage(unlinked)).toBe(unlinked.message);
     }
   });
 
@@ -109,7 +129,7 @@ describe("KTR Facebook attention posts", () => {
       seed: "traffic-seed",
       dateKey: "2026-08-29",
       slot: 3,
-      recentMessages: first ? [formatKtrFacebookAttentionMessage(first)] : [],
+      recentMessages: first ? [formatKtrFacebookPublishedAttentionMessage(first)] : [],
     });
     expect(next).not.toBeNull();
     expect(next?.trafficPath).not.toBe(first?.trafficPath);
