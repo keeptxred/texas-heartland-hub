@@ -1,10 +1,17 @@
 import { describe, expect, it } from "vitest";
+import { issueGuides } from "@/data/issue-guides";
 import {
   KTR_FACEBOOK_ATTENTION_POSTS,
   formatKtrFacebookAttentionMessage,
   selectKtrFacebookAttentionPost,
 } from "@/lib/facebook-attention-posts";
 import { shouldUseKtrFacebookAttentionSlot } from "@/lib/facebook-attention-publisher.server";
+
+const STATIC_TRAFFIC_PATHS = new Set([
+  "/texas-politics",
+  "/texas-government",
+  "/texas-political-figures",
+]);
 
 describe("KTR Facebook attention posts", () => {
   it("keeps a deep enough rotation for social publishing", () => {
@@ -33,6 +40,18 @@ describe("KTR Facebook attention posts", () => {
 
     for (const post of unlinked.slice(0, 10)) {
       expect(formatKtrFacebookAttentionMessage(post)).toBe(post.message);
+    }
+  });
+
+  it("only links issue prompts to existing issue-guide slugs", () => {
+    const issuePaths = new Set(issueGuides.map((guide) => `/issues/${guide.slug}`));
+    for (const post of KTR_FACEBOOK_ATTENTION_POSTS) {
+      if (!post.trafficPath) continue;
+      if (post.trafficPath.startsWith("/issues/")) {
+        expect(issuePaths.has(post.trafficPath), `${post.title}: ${post.trafficPath}`).toBe(true);
+      } else {
+        expect(STATIC_TRAFFIC_PATHS.has(post.trafficPath), `${post.title}: ${post.trafficPath}`).toBe(true);
+      }
     }
   });
 
