@@ -13,6 +13,10 @@ const CANDIDATE_LIMIT = 500;
 // the work at the highest-scored candidate sources first.
 const SOURCE_PAGE_FETCH_LIMIT = 40;
 const SOURCE_PAGE_CONCURRENCY = 4;
+// A blocked or already-short page must not consume one of the same 40 fetch
+// slots every 15-minute packet cycle. Explicit targeted hydration can still be
+// used at any time, but automatic retries cool down for six hours.
+const SOURCE_PAGE_RETRY_COOLDOWN_MS = 6 * 60 * 60 * 1000;
 
 type CandidateRow = {
   cluster_id: string;
@@ -32,6 +36,13 @@ type FeedPacketRow = {
   description: string | null;
   extracted_body: string | null;
   source_reputation_score: number | null;
+};
+type SourcePageFetchStateRow = {
+  feed_item_id: number;
+  last_attempt_at: string;
+  last_success_at: string | null;
+  last_result: string;
+  chars: number;
 };
 
 async function mapWithConcurrency<T, R>(items: readonly T[], limit: number, fn: (item: T) => Promise<R>): Promise<R[]> {
@@ -65,7 +76,7 @@ async function handler() {
     .limit(CANDIDATE_LIMIT);
   if (candidateError) return Response.json({ ok: false, error: candidateError.message }, { status: 500 });
   const candidates = (candidateData ?? []) as CandidateRow[];
-  if (!candidates.length) return Response.json({ ok: true, built: 0, sourceItems: 0, sourcePagesFetched: 0, sourcePagesUpdated: 0, aiCalls: 0 });
+  if (!candidates.length) return Response.json({ ok: true, built: 0, sourceItems: 0, sourcePagesFetched: 0, sourcePagesUpdated: 0, sourcePagesCoolingDown: 0, aiCalls: 0 });
 
   const clusterIds = candidates.map((candidate) => candidate.cluster_id);
   const [{ data: clusterData, error: clusterError }, { data: membershipData, error: membershipError }] = await Promise.all([
@@ -88,6 +99,22 @@ async function handler() {
     feeds = (feedData ?? []) as FeedPacketRow[];
   }
 
+  const sourcePageStateById = new Map<number, SourcePageFetchStateRow>();
+  if (feedIds.length) {
+    const { data: stateData, error: stateError } = await newsroomDb
+      .from("newsroom_source_page_fetch_state")
+      .select("feed_item_id,last_attempt_at,last_success_at,last_result,chars")
+      .in("feed_item_id", feedIds);
+    // Stay backward-compatible if application code reaches production before
+    // the migration. Cooldown is an optimization/safety valve, not a reason to
+    // block packet construction.
+    if (stateError) {
+      console.warn("[newsroom-packets] source-page fetch state read failed", stateError.message);
+    } else {
+      for (const row of (stateData ?? []) as SourcePageFetchStateRow[]) sourcePageStateById.set(row.feed_item_id, row);
+    }
+  }
+
   const candidateScoreByCluster = new Map(candidates.map((candidate) => [candidate.cluster_id, candidate.editorial_score]));
   const priorityByFeedId = new Map<number, number>();
   for (const membership of memberships) {
@@ -95,8 +122,18 @@ async function handler() {
     priorityByFeedId.set(membership.feed_item_id, Math.max(priorityByFeedId.get(membership.feed_item_id) ?? 0, score));
   }
 
-  const sourcePageTargets = feeds
-    .filter((feed) => shouldFetchNewsroomSourcePage({ url: feed.link, extractedBody: feed.extracted_body }))
+  const sourcePageCandidates = feeds
+    .filter((feed) => shouldFetchNewsroomSourcePage({ url: feed.link, extractedBody: feed.extracted_body }));
+  const cooldownCutoff = Date.now() - SOURCE_PAGE_RETRY_COOLDOWN_MS;
+  const sourcePagesCoolingDown = sourcePageCandidates.filter((feed) => {
+    const state = sourcePageStateById.get(feed.id);
+    return Boolean(state && Number.isFinite(Date.parse(state.last_attempt_at)) && Date.parse(state.last_attempt_at) > cooldownCutoff);
+  }).length;
+  const sourcePageTargets = sourcePageCandidates
+    .filter((feed) => {
+      const state = sourcePageStateById.get(feed.id);
+      return !state || !Number.isFinite(Date.parse(state.last_attempt_at)) || Date.parse(state.last_attempt_at) <= cooldownCutoff;
+    })
     .sort((a, b) => (priorityByFeedId.get(b.id) ?? 0) - (priorityByFeedId.get(a.id) ?? 0)
       || Number(Boolean(b.source_reputation_score)) - Number(Boolean(a.source_reputation_score))
       || a.id - b.id)
@@ -110,21 +147,49 @@ async function handler() {
   let sourcePagesUpdated = 0;
   let sourcePageCharsWritten = 0;
   const enrichedById = new Map<number, string>();
+  const fetchOutcomeById = new Map<number, "success" | "no_readable_body" | "update_failed">();
   for (const result of sourcePageResults) {
-    if (!result.body) continue;
+    if (!result.body) {
+      fetchOutcomeById.set(result.feed.id, "no_readable_body");
+      continue;
+    }
     const existing = (result.feed.extracted_body ?? "").trim();
-    if (result.body.length <= existing.length + 100 && existing.length >= 4_000) continue;
+    if (result.body.length <= existing.length + 100) {
+      fetchOutcomeById.set(result.feed.id, "success");
+      continue;
+    }
     const { error: updateError } = await newsroomDb
       .from("texas_news_feed")
       .update({ extracted_body: result.body })
       .eq("id", result.feed.id);
     if (updateError) {
       console.warn("[newsroom-packets] source-page cache update failed", { feedItemId: result.feed.id, error: updateError.message });
+      fetchOutcomeById.set(result.feed.id, "update_failed");
       continue;
     }
+    fetchOutcomeById.set(result.feed.id, "success");
     enrichedById.set(result.feed.id, result.body);
     sourcePagesUpdated++;
     sourcePageCharsWritten += result.body.length;
+  }
+
+  if (sourcePageResults.length) {
+    const attemptedAt = new Date().toISOString();
+    const stateRows = sourcePageResults.map((result) => {
+      const prior = sourcePageStateById.get(result.feed.id);
+      const outcome = fetchOutcomeById.get(result.feed.id) ?? "no_readable_body";
+      return {
+        feed_item_id: result.feed.id,
+        last_attempt_at: attemptedAt,
+        last_success_at: result.body ? attemptedAt : (prior?.last_success_at ?? null),
+        last_result: outcome,
+        chars: Math.max((result.feed.extracted_body ?? "").trim().length, result.body?.length ?? 0),
+      };
+    });
+    const { error: stateUpsertError } = await newsroomDb
+      .from("newsroom_source_page_fetch_state")
+      .upsert(stateRows, { onConflict: "feed_item_id" });
+    if (stateUpsertError) console.warn("[newsroom-packets] source-page fetch state write failed", stateUpsertError.message);
   }
 
   if (enrichedById.size) {
@@ -192,6 +257,7 @@ async function handler() {
     sourcePagesFetched: sourcePageTargets.length,
     sourcePagesUpdated,
     sourcePageCharsWritten,
+    sourcePagesCoolingDown,
     aiCalls: 0,
   });
 }
