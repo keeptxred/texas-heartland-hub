@@ -12,6 +12,7 @@ const ADSENSE_BACKLOG_LIMIT = 100;
 type RecoveryArticleRow = {
   slug: string;
   published_at: string;
+  updated_at: string;
   featured_image_url: string | null;
   image_generation_status: string | null;
   kind: string | null;
@@ -57,6 +58,28 @@ function needsFreshImageRecovery(row: RecoveryArticleRow): boolean {
   return !hasImage || status === "failed";
 }
 
+function imageRecoveryPriority(row: RecoveryArticleRow): [number, number, number] {
+  const status = (row.image_generation_status ?? "").trim().toLowerCase();
+  const failed = status === "failed" ? 1 : 0;
+  const updatedAt = Number.isFinite(Date.parse(row.updated_at)) ? Date.parse(row.updated_at) : 0;
+  const publishedAt = Number.isFinite(Date.parse(row.published_at)) ? Date.parse(row.published_at) : 0;
+  // Give never-failed/incomplete rows one opportunity before retrying failures.
+  // Within the same state, rotate the least recently touched row to the front so
+  // one strict-validator failure cannot permanently starve the rest of the queue.
+  return [failed, updatedAt, -publishedAt];
+}
+
+export function orderImageRecoveryRows(rows: RecoveryArticleRow[]): RecoveryArticleRow[] {
+  return [...rows].sort((a, b) => {
+    const aPriority = imageRecoveryPriority(a);
+    const bPriority = imageRecoveryPriority(b);
+    return aPriority[0] - bPriority[0]
+      || aPriority[1] - bPriority[1]
+      || aPriority[2] - bPriority[2]
+      || a.slug.localeCompare(b.slug);
+  });
+}
+
 async function post({ request }: { request: Request }) {
   if (!(await authorized(request))) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -69,7 +92,7 @@ async function post({ request }: { request: Request }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabaseAdmin as any;
   const cutoff = new Date(Date.now() - FACEBOOK_FRESHNESS_DAYS * 24 * 60 * 60 * 1000).toISOString();
-  const articleSelect = "slug,published_at,featured_image_url,image_generation_status,kind,body_json";
+  const articleSelect = "slug,published_at,updated_at,featured_image_url,image_generation_status,kind,body_json";
 
   const [{ data: recentRows, error: recentError }, { data: readinessRows, error: readinessError }] = await Promise.all([
     db
@@ -117,7 +140,7 @@ async function post({ request }: { request: Request }) {
     if (substantiveAndNotGenerating(row)) eligibleBySlug.set(row.slug, row);
   }
 
-  const slugs = [...eligibleBySlug.keys()];
+  const slugs = orderImageRecoveryRows([...eligibleBySlug.values()]).map((row) => row.slug);
   if (dryRun) {
     return Response.json({
       ok: true,
