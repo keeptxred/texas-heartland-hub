@@ -15,6 +15,7 @@ on:
       - 'src/lib/multi-source-publish.ts'
       - 'src/lib/ingest-feeds-legacy.ts'
       - 'scripts/news/smoke-live-newsroom.mjs'
+      - 'scripts/news/worker-origin-canonical-fetch.mjs'
       - 'supabase/migrations/**'
       - '.github/workflows/live-newsroom-smoke.yml'
 
@@ -41,7 +42,11 @@ jobs:
         run: |
           set -euo pipefail
           for attempt in 1 2 3 4 5 6; do
-            if curl -fsSL --max-time 30 -H 'User-Agent: KeepTXRed-Newsroom-Smoke/1.0' "${AUTOMATION_ORIGIN%/}/api/public/newsroom-health" -o /tmp/newsroom-health.json; then
+            if curl -fsSL --max-time 30 \
+              -H 'User-Agent: KeepTXRed-Newsroom-Smoke/1.0' \
+              -H 'X-Forwarded-Host: keeptxred.com' \
+              "${AUTOMATION_ORIGIN%/}/api/public/newsroom-health" \
+              -o /tmp/newsroom-health.json; then
               jq -r '
                 "Flyover audit: ingested=\(.flyoverIngestedCount // 0) routed-correctly=\(.flyoverRoutedCorrectlyCount // 0) published=\(.flyoverPublishedCount // 0) degraded=\(.degraded // false) routing-ready=\(.routingSchemaReady // true) td-ready=\(.texasDefinedChannelReady // false)",
                 (.schemaErrors[]? | "schema-error | \(.)"),
@@ -68,7 +73,7 @@ jobs:
           node <<'NODE'
           const baseUrl = process.env.AUTOMATION_ORIGIN.replace(/\/$/, '');
           const url = `${baseUrl}/api/public/hooks/health`;
-          const response = await fetch(url, { headers: { Accept: 'application/json', 'User-Agent': 'KeepTXRed-Newsroom-Smoke/1.0' } });
+          const response = await fetch(url, { headers: { Accept: 'application/json', 'User-Agent': 'KeepTXRed-Newsroom-Smoke/1.0', 'X-Forwarded-Host': 'keeptxred.com' } });
           const text = await response.text();
           if (!response.ok) throw new Error(`health returned HTTP ${response.status}: ${text.slice(0, 500)}`);
           const payload = JSON.parse(text);
@@ -86,6 +91,7 @@ jobs:
         run: |
           set -euo pipefail
           curl --retry 6 --retry-delay 3 --retry-all-errors --fail-with-body --silent --show-error \
+            -H 'X-Forwarded-Host: keeptxred.com' \
             "${AUTOMATION_ORIGIN%/}/api/public/hooks/newsroom-generation-diagnostics" \
             -o /tmp/newsroom-generation-diagnostics.json
           jq -e '.ok == true and .aiCalls == 0 and .writes == 0' /tmp/newsroom-generation-diagnostics.json >/dev/null
@@ -98,4 +104,4 @@ jobs:
         env:
           KTR_BASE_URL: ${{ env.AUTOMATION_ORIGIN }}
           TEXASDEFINED_BASE_URL: https://texasdefined.com
-        run: node scripts/news/smoke-live-newsroom.mjs
+        run: node --import ./scripts/news/worker-origin-canonical-fetch.mjs scripts/news/smoke-live-newsroom.mjs
