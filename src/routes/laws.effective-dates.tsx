@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { CitationTrustPanel } from '@/components/authority/CitationTrustPanel';
+import { publicBillPath } from '@/lib/bill-public-path';
 
 const SITE_URL = 'https://keeptxred.com';
 const CANONICAL = `${SITE_URL}/laws/effective-dates`;
@@ -94,9 +95,17 @@ function EffectiveDatesTracker() {
 }
 
 function BillLink({ bill }: { bill: string }) {
-  const match = /^(HB|SB)\s+(\d+)/.exec(bill);
-  if (!match) return null;
-  const type = match[1].toLowerCase();
-  const number = Number(match[2]);
-  return <a href={`/bills/texas/89/${type}/${number}`} className="mt-3 inline-block text-sm font-semibold text-primary hover:underline">Open KeepTXRed bill record →</a>;
+  const billMatch = /^(HB|SB)\s+(\d+)/.exec(bill);
+  if (!billMatch) return null;
+  const legislatureMatch = /(\d+)(?:st|nd|rd|th) Legislature/i.exec(bill);
+  const calledSessionMatch = /(\d+)(?:st|nd|rd|th) Called Session/i.exec(bill);
+  const legislature = legislatureMatch ? Number(legislatureMatch[1]) : 89;
+  const sessionCode = calledSessionMatch ? calledSessionMatch[1] : 'R';
+  const href = publicBillPath({
+    legislature_number: legislature,
+    session_code: sessionCode,
+    bill_type: billMatch[1],
+    bill_number: Number(billMatch[2]),
+  });
+  return <a href={href} className="mt-3 inline-block text-sm font-semibold text-primary hover:underline">Open KeepTXRed bill record →</a>;
 }
