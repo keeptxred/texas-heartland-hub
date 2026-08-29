@@ -24,12 +24,19 @@ describe("image recovery workflow bounds", () => {
   });
 
   it("caps force-marker repair at four exact eligible slugs", () => {
-    expect(backlogWorkflow).toContain('if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then');
+    expect(backlogWorkflow).toContain('if [[ "${GITHUB_EVENT_NAME}" == "push" || "${GITHUB_EVENT_NAME}" == "workflow_run" ]]; then');
     expect(backlogWorkflow).toContain("max_per_run=4");
-    expect(backlogWorkflow).toContain("force-image-backlog-recovery?ref=${GITHUB_SHA}");
+    expect(backlogWorkflow).toContain("force-image-backlog-recovery?ref=${MARKER_REF}");
     expect(backlogWorkflow).toContain("slug:[[:space:]]*");
     expect(backlogWorkflow).toContain("Target slug is not currently eligible for image recovery");
     expect(adsenseWorkflow).not.toContain("max_per_run=4");
+  });
+
+  it("uses verified-main workflow completion only for explicit marker sentinel commits", () => {
+    expect(backlogWorkflow).toContain('workflows: ["Repository test and build health"]');
+    expect(backlogWorkflow).toContain("github.event.workflow_run.conclusion == 'success'");
+    expect(backlogWorkflow).toContain("contains(github.event.workflow_run.head_commit.message, '[run-image-backlog]')");
+    expect(backlogWorkflow).toContain("MARKER_REF: ${{ github.event.workflow_run.head_sha || github.sha }}");
   });
 
   it("rotates ordinary recovery across the current missing-image cohort without increasing the quota", () => {
