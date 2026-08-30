@@ -7,5 +7,14 @@
     "rightsRule": "Use BallotReady candidate profiles only as a discovery bridge to verified candidate identities, official campaign webpages, candidate-linked profiles, and portrait leads. BallotReady-hosted images are not reusable by default; require item-level identity, provenance, and a documented reusable-rights or editorial-permission basis before approval.",
     "searchHint": "site:ballotready.org/people Texas 2026 candidate verified webpages official campaign portrait",
     "notes": "New discovery source verified August 30, 2026. Current BallotReady 2026 Texas candidate profiles expose verified campaign webpages and headshot leads for missing-photo candidates including Angela Heli Rodriguez Prilliman, Adam Bauman, Justin Early, Leticia Gutierrez, and Rhonda Hart. Discovery-only."
+  },
+  {
+    "domain": "teachthevote.atpe.org",
+    "sourceClass": "candidate-voter-guide-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use ATPE Teach the Vote candidate profiles only as a discovery bridge to candidate identities, campaign contact information, official candidate links, survey material, and portrait leads. Do not reuse ATPE-hosted images by default; require item-level identity, provenance, and a documented reusable-rights or editorial-permission basis before approval.",
+    "searchHint": "site:teachthevote.atpe.org/Candidates Texas 2026 candidate official website portrait",
+    "notes": "New discovery source verified August 30, 2026. Current ATPE Teach the Vote profiles cover 2026 Texas legislative candidates, including missing-photo candidates such as Liz Ramos, and can corroborate ballot status, candidate contact details, and outbound official sources. Discovery-only."
   }
 ]
