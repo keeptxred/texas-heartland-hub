@@ -1,5 +1,17 @@
 [
   {
+    "candidateId": "candidate-a-yonna-kellum-democratic-race-2026-texas-house-150",
+    "imageUrl": "https://beta2.communityimpact.com/uploads/images/qa/171623_2721.jpg",
+    "sourceUrl": "https://communityimpact.com/houston/spring-klein/election/2026/01/29/qa-meet-the-democratic-candidates-for-the-house-district-150-race/",
+    "altText": "A'Yonna Kellum, Democratic candidate for Texas House District 150",
+    "credit": "A'Yonna Kellum campaign, via Community Impact",
+    "license": null,
+    "permissionBasis": "Community Impact's 2026 Texas House District 150 candidate Q&A explicitly states that all candidate photos were submitted by the respective candidates. This candidate-specific image appears with A'Yonna Kellum's profile and is used only for editorial candidate identification with candidate/newsroom attribution and an exact source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "candidate-supplied-newsroom-photo",
+    "discoveredAt": "2026-08-30T17:20:00.000Z"
+  },
+  {
     "candidateId": "candidate-adrian-reyna-democratic-race-2026-texas-house-125",
     "imageUrl": "https://npr.brightspotcdn.com/dims4/default/813a4a6/2147483647/strip/true/crop/806x461%2B0%2B0/resize/880x503%21/quality/90/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2Ffa%2F25%2F4248ee78495ababba5d9058fe62c%2Fimg-0685.jpeg",
     "sourceUrl": "https://www.tpr.org/government-politics/2026-05-26/saisd-teacher-labor-activist-adrian-reyna-holds-commanding-early-lead-in-democratic-runoff-for-texas-house-district-125",
@@ -48,6 +60,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-albert-wittliff-democratic-race-2026-texas-house-129",
+    "imageUrl": "https://static.wixstatic.com/media/3dda84_450c93d8d0b544448a35ab6a9431b598~mv2.jpg/v1/fill/w_640%2Ch_480%2Cal_c%2Cq_80%2Cenc_auto/3dda84_450c93d8d0b544448a35ab6a9431b598~mv2.jpg",
+    "sourceUrl": "https://www.votewittliff.com/home1",
+    "altText": "Albert Wittliff, Democratic candidate for Texas House District 129",
+    "credit": "Albert Wittliff for Texas House District 129 campaign",
+    "license": null,
+    "permissionBasis": "Candidate-identifying photograph is published directly on Albert Wittliff's official campaign home page in the Meet Albert biography section. The page identifies Albert Wittliff as running for Texas House District 129, and TCTA independently links the same official campaign domain to the 2026 HD129 candidate. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-biography",
+    "discoveredAt": "2026-08-30T17:43:00.000Z"
+  },
+  {
     "candidateId": "candidate-alex-mcmenemy-green-race-2026-us-house-38",
     "imageUrl": "https://assets.nationbuilder.com/gptx/pages/5955/attachments/original/1768313717/1a2e2914-7c7a-4edf-9b93-451ad78f23dc.jpg?1768313717=",
     "sourceUrl": "https://www.txgreens.org/2026_nominated_candidates",
@@ -58,6 +82,18 @@
     "usageStatus": "approved",
     "discoveryMethod": "official-state-party-candidate-slate",
     "discoveredAt": "2026-08-22T12:06:46.662Z"
+  },
+  {
+    "candidateId": "candidate-alexandria-nicole-butler-republican-race-2026-texas-house-146",
+    "imageUrl": "https://alexandriabutlercampaign.org/wp-content/uploads/2025/04/Butler-post-800x533-1.jpg",
+    "sourceUrl": "https://alexandriabutlercampaign.org/",
+    "altText": "Alexandria Nicole Butler, Republican candidate for Texas House District 146",
+    "credit": "Alex Butler campaign",
+    "license": null,
+    "permissionBasis": "Candidate-identifying image is published directly on Alexandria Butler's campaign website beside the campaign biography naming Alexandria Butler. The Harris County GOP 2026 candidate directory identifies this campaign domain for Alexandria Nicole Butler in Texas House District 146. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-profile",
+    "discoveredAt": "2026-08-30T17:28:00.000Z"
   },
   {
     "candidateId": "candidate-alfred-molison-jr-green-race-2026-agriculture-commissioner",
@@ -106,6 +142,18 @@
     "usageStatus": "approved",
     "discoveryMethod": "official-campaign-website",
     "discoveredAt": "2026-08-26T09:46:34.294Z"
+  },
+  {
+    "candidateId": "candidate-amelia-rabroker-democratic-race-2026-texas-house-55",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/68dd66c9495e086feae30b48/be89976a-69ca-4b5b-88aa-2c82fde2211a/DSC_3803.jpg",
+    "sourceUrl": "https://www.ameliafortexas.com/",
+    "altText": "Amelia Rabroker, Democratic candidate for Texas House District 55",
+    "credit": "Amelia for Texas campaign",
+    "license": null,
+    "permissionBasis": "Amelia Rabroker's official campaign homepage identifies her as running for House District 55 and publishes a candidate-specific image with the alt text 'Amelia Rabroker is running to be the Texas State House District 55 representative.' Used only for editorial candidate identification with exact official-campaign attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-08-30T18:18:00.000Z"
   },
   {
     "candidateId": "candidate-amy-taylor-democratic-race-2026-state-board-of-education-14",
@@ -178,6 +226,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:52:43.936Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-angie-carraway-democratic-race-2026-texas-house-89",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/6967d9112db7e61e6fcfe424/88a739ca-2dc5-4416-8bb7-7b55e26b3c23/hero-angie-web.jpg?format=1000w",
+    "sourceUrl": "https://www.citizensforcarraway.com/",
+    "altText": "Angie Carraway, Democratic candidate for Texas House District 89",
+    "credit": "Citizens for Carraway campaign",
+    "license": null,
+    "permissionBasis": "Angie Carraway's official campaign homepage identifies her as running for Texas House District 89 and publishes this candidate-specific portrait with alt text 'Angie Carraway, Democratic candidate for Texas House District 89'. Used only for editorial candidate identification with exact official-campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-08-30T18:42:00.000Z"
   },
   {
     "candidateId": "candidate-angie-chen-button-republican-race-2026-texas-house-112",
@@ -262,6 +322,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-armin-mizani-republican-race-2026-texas-house-98",
+    "imageUrl": "https://beta2.communityimpact.com/uploads/images/qa/172889_2842.jpg",
+    "sourceUrl": "https://communityimpact.com/dallas-fort-worth/grapevine-colleyville-southlake/election/2026/02/12/qa-meet-the-republican-primary-candidates-for-texas-house-district-98/",
+    "altText": "Armin Mizani, Republican candidate for Texas House District 98",
+    "credit": "Armin Mizani campaign / Community Impact",
+    "license": null,
+    "permissionBasis": "Community Impact's February 13, 2026 Texas House District 98 candidate Q&A identifies Armin Mizani as an HD98 Republican candidate and explicitly states that the photos were submitted by the candidates. The candidate-specific Armin Mizani image is embedded directly with his Q&A entry. Used only for editorial candidate identification with exact article attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "candidate-supplied-newsroom-photo",
+    "discoveredAt": "2026-08-30T18:15:00.000Z"
+  },
+  {
     "candidateId": "candidate-arshia-papari-green-race-2026-texas-house-49",
     "imageUrl": "https://assets.nationbuilder.com/gptx/pages/5955/attachments/original/1769540626/square_2.jpg?1769540626=",
     "sourceUrl": "https://www.txgreens.org/2026_nominated_candidates",
@@ -282,6 +354,18 @@
     "license": null,
     "permissionBasis": "Official party candidate-slate image used for editorial candidate identification with attribution and a link to the source page.",
     "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-ashley-bean-thornton-democratic-race-2026-texas-house-56",
+    "imageUrl": "https://ashleybeanthornton.com/wp-content/uploads/2026/05/number-1-2-934x1024.jpg",
+    "sourceUrl": "https://ashleybeanthornton.com/abt-bio-page/",
+    "altText": "Ashley Bean Thornton, Democratic candidate for Texas House District 56",
+    "credit": "Thornton for Texas Campaign",
+    "license": null,
+    "permissionBasis": "Ashley Bean Thornton's official campaign biography page identifies her campaign for Texas House District 56 and publishes this candidate-specific image directly below the 'Who is Ashley Bean Thornton?' biography heading. Used only for editorial candidate identification with exact official-campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-biography",
+    "discoveredAt": "2026-08-30T18:38:00.000Z"
   },
   {
     "candidateId": "candidate-audra-riley-democratic-race-2026-court-of-criminal-appeals-place-4",
@@ -376,6 +460,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-08-22T12:06:46.089Z",
     "discoveryMethod": "verified-asset:campaign-event"
+  },
+  {
+    "candidateId": "candidate-beth-llewellyn-mclaughlin-democratic-race-2026-texas-house-97",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/6938770b1b9b992db7673d80/948640b6-bc6a-4bf8-b06c-f182e204d464/unnamed.jpg?format=2500w",
+    "sourceUrl": "https://www.bethfor97.com/",
+    "altText": "Beth Llewellyn McLaughlin, Democratic candidate for Texas House District 97",
+    "credit": "Beth Llewellyn McLaughlin campaign",
+    "license": null,
+    "permissionBasis": "Beth Llewellyn McLaughlin's official campaign homepage identifies her as the Democratic candidate for Texas House District 97 and publishes this candidate-specific portrait as a campaign image. Used only for editorial candidate identification with exact official-campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-08-30T18:22:00.000Z"
   },
   {
     "candidateId": "candidate-beth-van-duyne-republican-race-2026-us-house-24",
@@ -582,6 +678,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-brittany-black-democratic-race-2026-texas-house-61",
+    "imageUrl": "https://beta2.communityimpact.com/uploads/images/qa/173486_2902.jpg",
+    "sourceUrl": "https://communityimpact.com/dallas-fort-worth/mckinney/election/2026/02/18/qa-meet-the-candidates-running-the-texas-house-district-61-democratic-primary-race/",
+    "altText": "Brittany Black, Democratic candidate for Texas House District 61",
+    "credit": "Brittany Black campaign / Community Impact",
+    "license": null,
+    "permissionBasis": "Community Impact's February 18, 2026 Texas House District 61 Democratic primary Q&A identifies Brittany Black and explicitly states that the candidate photos were submitted by the candidates. The candidate-specific Brittany Black image is embedded directly with her Q&A entry. Used only for editorial candidate identification with exact article attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "candidate-supplied-newsroom-photo",
+    "discoveredAt": "2026-08-30T18:22:00.000Z"
+  },
+  {
     "candidateId": "candidate-brooks-landgraf-republican-race-2026-texas-house-81",
     "imageUrl": "https://house.texas.gov/images/members/3040.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/81",
@@ -678,6 +786,30 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-cate-brennan-democratic-race-2026-texas-house-98",
+    "imageUrl": "https://cdn.durable.co/blocks/2fK5122NPsoOYS9oQ0P7jbml8H4YLXAMK1isltmeBHQMi9CiTfHlQlAmzLbscTL7.png",
+    "sourceUrl": "https://brennanforhd98.com/",
+    "altText": "Cate Brennan, Democratic candidate for Texas House District 98",
+    "credit": "Cate Brennan for Texas House District 98 campaign",
+    "license": null,
+    "permissionBasis": "Cate Brennan's official campaign homepage identifies her as a Texas House District 98 candidate and publishes a candidate-specific image labeled 'Cate Brennan, HD98'. Used only for editorial candidate identification with exact official-campaign source attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-08-30T18:18:00.000Z"
+  },
+  {
+    "candidateId": "candidate-cecilia-castellano-democratic-race-2026-texas-house-80",
+    "imageUrl": "https://cecilia4texas.com/wp-content/uploads/2023/08/Cecilia-Castellano-6.jpg",
+    "sourceUrl": "https://cecilia4texas.com/",
+    "altText": "Cecilia Castellano, Democratic candidate for Texas House District 80",
+    "credit": "Cecilia Castellano for Texas House District 80 campaign",
+    "license": null,
+    "permissionBasis": "Cecilia Castellano's official campaign homepage identifies her as a Democratic candidate for Texas House District 80 and publishes this candidate-specific portrait in its campaign imagery. Used only for editorial candidate identification with exact official-campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-08-30T18:30:00.000Z"
+  },
+  {
     "candidateId": "candidate-chari-kelly-democratic-race-2026-texas-supreme-court-place-2",
     "imageUrl": "https://txcourts.gov/media/1445093/kelly-1.jpg",
     "sourceUrl": "https://txcourts.gov/3rdcoa/about-the-court/justices/justice-chari-l-kelly/",
@@ -748,6 +880,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:53:37.776Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-chris-oldham-democratic-race-2026-texas-house-58",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/692f8a33068b2303fa76e803/41705e38-a97e-4ac8-b8e9-9683e63e3481/P1030503.JPG",
+    "sourceUrl": "https://www.oldham4texas.com/",
+    "altText": "Chris Oldham, Democratic candidate for Texas House District 58",
+    "credit": "Oldham for Texas Campaign",
+    "license": null,
+    "permissionBasis": "Chris Oldham's official campaign homepage identifies him as the Democratic candidate for Texas House District 58 and publishes this image directly with the alt text 'Photo of Chris Oldham'. Used only for editorial candidate identification with exact official-campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-08-30T18:26:00.000Z"
   },
   {
     "candidateId": "candidate-chris-royal-libertarian-race-2026-us-house-34",
@@ -892,6 +1036,18 @@
     "discoveredAt": "2026-08-22T12:06:46.429Z"
   },
   {
+    "candidateId": "candidate-cullin-knutson-democratic-race-2026-texas-house-86",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/691b38500ad6874b244eddef/dc4e5c03-b06b-4e41-a680-ebfba0823868/_1064628.jpg",
+    "sourceUrl": "https://www.cullinfortexas.com/",
+    "altText": "Cullin Knutson, Democratic candidate for Texas House District 86",
+    "credit": "Cullin for Texas campaign",
+    "license": null,
+    "permissionBasis": "Cullin Knutson's official campaign homepage identifies him as running to represent Texas House District 86 and publishes this candidate-specific portrait at the top of the page with descriptive alt text identifying the pictured candidate. Used only for editorial candidate identification with exact official-campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-08-30T18:30:00.000Z"
+  },
+  {
     "candidateId": "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
     "imageUrl": "https://www.senate.texas.gov/_assets/photos/LtGov_Patrick_2021.jpg",
     "sourceUrl": "https://www.senate.texas.gov/ltgov.php?lang=en",
@@ -972,6 +1128,18 @@
     "discoveredAt": "2026-08-26T09:46:34.294Z"
   },
   {
+    "candidateId": "candidate-david-flores-republican-race-2026-texas-house-144",
+    "imageUrl": "https://img1.wsimg.com/isteam/ip/38ca4c8b-3b7a-4d65-a9e7-f26f927e4a5d/Copy%20of%20David%20Flores.png",
+    "sourceUrl": "https://david4texas.com/about",
+    "altText": "David Flores, Republican candidate for Texas House District 144",
+    "credit": "David Flores for Texas campaign",
+    "license": null,
+    "permissionBasis": "Candidate-identifying campaign image is hosted directly by David Flores's official campaign website. The campaign site identifies David Flores as a candidate for Texas House District 144, and the Harris County GOP and TCTA candidate directories independently link david4texas.com to the same 2026 HD144 candidate. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-profile",
+    "discoveredAt": "2026-08-30T17:35:00.000Z"
+  },
+  {
     "candidateId": "candidate-david-lowe-republican-race-2026-texas-house-91",
     "imageUrl": "https://house.texas.gov/images/members/4643.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/91",
@@ -1006,6 +1174,18 @@
     "usageStatus": "approved"
   },
   {
+    "candidateId": "candidate-dawn-richardson-democratic-race-2026-texas-house-54",
+    "imageUrl": "https://static.wixstatic.com/media/76eb86_0dca96a374b241d4812a4aae72b4858f~mv2.png/v1/fill/w_489,h_489,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/76eb86_0dca96a374b241d4812a4aae72b4858f~mv2.png",
+    "sourceUrl": "https://www.dawn4texas.org/",
+    "altText": "Dawn Richardson, Democratic candidate for Texas House District 54",
+    "credit": "Committee to Elect Dawn Richardson campaign",
+    "license": null,
+    "permissionBasis": "Dawn Richardson's official campaign homepage identifies her as running for Texas Representative House District 54 and publishes the candidate-specific image named 'dawn new pic.png'. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-08-30T18:18:00.000Z"
+  },
+  {
     "candidateId": "candidate-denise-villalobos-republican-race-2026-texas-house-34",
     "imageUrl": "https://house.texas.gov/images/members/4770.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/34",
@@ -1016,6 +1196,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:53:05.663Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-denise-wooten-democratic-race-2026-texas-house-63",
+    "imageUrl": "https://static.wixstatic.com/media/a4b169_40dc6c9ba7d14fe2aaeedceadcbe15f9~mv2.jpeg/v1/crop/x_0,y_314,w_1170,h_525/fill/w_1002,h_450,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/Image.jpeg",
+    "sourceUrl": "https://www.wooten-for-texas.com/",
+    "altText": "H. Denise Wooten, Democratic candidate for Texas House District 63",
+    "credit": "H. Denise Wooten for Texas House District 63 campaign",
+    "license": null,
+    "permissionBasis": "H. Denise Wooten's official campaign homepage identifies her as running for Texas State Representative House District 63 and publishes a candidate-specific campaign portrait. Used only for editorial candidate identification with exact official-campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-08-30T18:22:00.000Z"
   },
   {
     "candidateId": "candidate-dennis-paul-republican-race-2026-texas-senate-11",
@@ -1040,6 +1232,30 @@
     "usageStatus": "approved",
     "discoveryMethod": "official-campaign-profile-via-party-directory-bridge",
     "discoveredAt": "2026-08-24T12:55:00.000Z"
+  },
+  {
+    "candidateId": "candidate-diana-loya-democratic-race-2026-texas-house-87",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/69431f12e39f331cd774bf65/93a5f94d-9052-40ae-a4bb-c2617584a4fd/1000040062.jpg",
+    "sourceUrl": "https://www.dianaloyahd87.com/",
+    "altText": "Diana Loya, Democratic candidate for Texas House District 87",
+    "credit": "Diana Loya for Texas House District 87 campaign",
+    "license": null,
+    "permissionBasis": "Diana Loya's official campaign homepage identifies her as running for State Representative for House District 87 and publishes this candidate-specific image in the Meet Diana section immediately following her biography. Used only for editorial candidate identification with exact official-campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-biography",
+    "discoveredAt": "2026-08-30T18:38:00.000Z"
+  },
+  {
+    "candidateId": "candidate-diana-luna-democratic-race-2026-texas-house-71",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/6942dc176f71f32f0f754bfc/5b1a55e6-41e0-457a-898a-584986f4c44c/edited%2Bheadshot%2B%2B-%2BDiana%2BLuna.jpg",
+    "sourceUrl": "https://www.dianalunafortexas.com/",
+    "altText": "Diana Luna, Democratic candidate for Texas House District 71",
+    "credit": "Diana Luna for House District 71 campaign",
+    "license": null,
+    "permissionBasis": "Diana Luna's official campaign homepage identifies her as running for Texas House District 71 and publishes the candidate-specific image named 'edited headshot - Diana Luna.jpg' in the Meet Diana section. Used only for editorial candidate identification with exact official-campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-biography",
+    "discoveredAt": "2026-08-30T18:35:00.000Z"
   },
   {
     "candidateId": "candidate-diego-bernal-democratic-race-2026-texas-house-123",
@@ -1134,6 +1350,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:53:26.968Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-elizabeth-eliz-markowitz-democratic-race-2026-texas-house-26",
+    "imageUrl": "https://static.wixstatic.com/media/d850b9_6fb7ade0b64846e3b9a21faf582c1c33~mv2.png/v1/crop/x_0,y_0,w_946,h_412/fill/w_932,h_412,al_c,q_90,enc_avif,quality_auto/IMG_5992%203_edited.png",
+    "sourceUrl": "https://www.eliz4tx.com/",
+    "altText": "Elizabeth Eliz Markowitz, Democratic candidate for Texas House District 26",
+    "credit": "Eliz Markowitz for Texas HD 26 campaign",
+    "license": null,
+    "permissionBasis": "Eliz Markowitz's official campaign homepage identifies her campaign for Texas House District 26 and publishes the candidate-specific image named 'IMG_5992 3_edited.png' prominently on the campaign page. Used only for editorial candidate identification with exact official-campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-08-30T18:42:00.000Z"
   },
   {
     "candidateId": "candidate-elizabeth-liz-campos-democratic-race-2026-texas-house-119",
@@ -1254,6 +1482,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:52:47.281Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-george-flint-republican-race-2026-texas-house-70",
+    "imageUrl": "https://texansforflint.com/images/headshot.png",
+    "sourceUrl": "https://texansforflint.com/",
+    "altText": "George Flint, Republican candidate for Texas House District 70",
+    "credit": "George Flint Campaign for HD 70",
+    "license": null,
+    "permissionBasis": "George Flint's official campaign homepage identifies him as a candidate for Texas House District 70 and publishes a candidate-specific headshot directly beside that identification. Used only for editorial candidate identification with exact official-campaign attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-08-30T18:18:00.000Z"
   },
   {
     "candidateId": "candidate-gina-hinojosa-democratic-race-2026-governor",
@@ -1408,6 +1648,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-jacqueline-jacky-hernandez-democratic-race-2026-texas-house-21",
+    "imageUrl": "https://i.imgur.com/7NnZwe9.jpeg",
+    "sourceUrl": "https://votejacky21.com/about",
+    "altText": "Jacqueline Jacky Hernandez, Democratic candidate for Texas House District 21",
+    "credit": "Jacqueline Jacky Hernandez for Texas House District 21 campaign",
+    "license": null,
+    "permissionBasis": "Candidate-identifying headshot published directly on Jacqueline 'Jacky' Hernandez's official Texas House District 21 campaign biography page, where the campaign identifies her by name and states that she is running for State Representative. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-biography",
+    "discoveredAt": "2026-08-30T17:20:00.000Z"
+  },
+  {
     "candidateId": "candidate-jake-ellzey-republican-race-2026-us-house-6",
     "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Jake_Ellzey_Official_Portrait_-_117th_Congress_%28cropped%29.jpg",
     "sourceUrl": "https://commons.wikimedia.org/wiki/File:Jake_Ellzey_Official_Portrait_-_117th_Congress_(cropped).jpg",
@@ -1548,6 +1800,18 @@
     "usageStatus": "approved",
     "discoveryMethod": "candidate-linked-pledge-profile",
     "discoveredAt": "2026-08-25T23:53:11.248Z"
+  },
+  {
+    "candidateId": "candidate-jennifer-jj-dominguez-democratic-race-2026-texas-house-31",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/691a70dc279b972b0aa1a263/2a5e0888-0944-4487-9e78-541cac7583f9/JJ_Photo--1.jpg",
+    "sourceUrl": "https://www.jjdominguez4tx.com/",
+    "altText": "Jennifer JJ Dominguez, Democratic candidate for Texas House District 31",
+    "credit": "JJ Dominguez4TX campaign",
+    "license": null,
+    "permissionBasis": "Jennifer 'JJ' Dominguez's official campaign homepage identifies her District 31 candidacy and publishes the candidate-specific image 'JJ_Photo--1.jpg' immediately before the ABOUT JJ biography section, with descriptive alt text showing her at a podium. Used only for editorial candidate identification with exact official-campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-biography",
+    "discoveredAt": "2026-08-30T18:42:00.000Z"
   },
   {
     "candidateId": "candidate-jessi-cowart-libertarian-race-2026-texas-house-15",
@@ -1798,6 +2062,18 @@
     "discoveredAt": "2026-08-22T12:06:46.662Z"
   },
   {
+    "candidateId": "candidate-julie-evans-democratic-race-2026-texas-house-64",
+    "imageUrl": "https://assets.communityimpact.com/uploads/elections/candidates/julie-evans.jpeg",
+    "sourceUrl": "https://communityimpact.com/denton/election/qa-meet-the-democratic-primary-candidates-for-texas-house-district-64/",
+    "altText": "Julie Evans, Democratic candidate for Texas House District 64",
+    "credit": "Julie Evans campaign / Community Impact",
+    "license": null,
+    "permissionBasis": "Community Impact's February 13, 2026 Texas House District 64 candidate Q&A identifies Julie Evans as a Democratic HD64 candidate and states that the candidate photos are courtesy of the candidates/Community Impact. The page exposes the candidate-specific Julie Evans image asset. Used only for editorial candidate identification with exact article attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "candidate-supplied-newsroom-photo",
+    "discoveredAt": "2026-08-30T18:12:00.000Z"
+  },
+  {
     "candidateId": "candidate-julie-pickren-republican-race-2026-state-board-of-education-7",
     "imageUrl": "https://sboe.texas.gov/sites/default/files/2023-j-pickren-sboe7.jpg",
     "sourceUrl": "https://sboe.texas.gov/state-board-of-education/sboe-board-members/sboe-member-district-7",
@@ -1822,6 +2098,18 @@
     "discoveredAt": "2026-08-25T03:40:03.624Z"
   },
   {
+    "candidateId": "candidate-karen-reeder-democratic-race-2026-texas-house-29",
+    "imageUrl": "https://votereederxp.com/images/karen-photo.png",
+    "sourceUrl": "https://votereederxp.com/about.html",
+    "altText": "Karen Reeder, Democratic candidate for Texas House District 29",
+    "credit": "Karen Reeder for Texas House District 29 campaign",
+    "license": null,
+    "permissionBasis": "Candidate-identifying portrait is published directly on Karen Reeder's official campaign biography page, which labels the image path as images/karen-photo.png, identifies Karen Reeder as running for Texas House District 29 in the 2026 election, and states that the site is paid for by Karen Reeder for Texas House District 29. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-biography",
+    "discoveredAt": "2026-08-30T17:59:00.000Z"
+  },
+  {
     "candidateId": "candidate-kason-huddleston-republican-race-2026-state-board-of-education-9",
     "imageUrl": "https://images.squarespace-cdn.com/content/v1/68dc133a82d9d77b237c29c0/d49c04b5-d087-44ba-b3c7-43160ad05ed7/Dad%2Bheadshot.png",
     "sourceUrl": "https://huddlestonfortexas.com/",
@@ -1832,6 +2120,18 @@
     "usageStatus": "approved",
     "discoveryMethod": "official-campaign-profile",
     "discoveredAt": "2026-08-22T12:06:46.539Z"
+  },
+  {
+    "candidateId": "candidate-katie-o-brien-duzan-democratic-race-2026-texas-house-94",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/6901306b9dd4073c760bd3f9/2bca5101-f25d-47c5-8af9-d57ea00ada45/Tasha%2BN_23-02-07_0791.JPG",
+    "sourceUrl": "https://www.katiefor94.com/",
+    "altText": "Katie O'Brien Duzan, Democratic candidate for Texas House District 94",
+    "credit": "Katie for Texas campaign",
+    "license": null,
+    "permissionBasis": "Katie O'Brien Duzan's official campaign homepage identifies her as the Democratic nominee for Texas House District 94 and publishes her campaign headshot prominently at the top of the page. Used only for editorial candidate identification with exact official-campaign attribution.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-08-30T18:18:00.000Z"
   },
   {
     "candidateId": "candidate-katrina-pierson-republican-race-2026-texas-house-33",
@@ -1966,6 +2266,18 @@
     "discoveryMethod": "verified-official-texas-senate-member-portrait"
   },
   {
+    "candidateId": "candidate-krissy-guess-democratic-race-2026-texas-house-60",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/697916c7fa777e755b7bce96/7a9e0e37-7d83-48cb-9b0a-cc3ec905c694/Campaign%2BPhoto%2B2.jpg",
+    "sourceUrl": "https://www.krissyguessfortx.com/",
+    "altText": "Krissy Guess, Democratic candidate for Texas House District 60",
+    "credit": "Krissy Guess for Texas campaign",
+    "license": null,
+    "permissionBasis": "Krissy Guess's official campaign site identifies her as running in Texas House District 60 and publishes the candidate-specific asset named 'Campaign Photo 2.jpg' within the Meet Krissy section. Used only for editorial candidate identification with exact official-campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-biography",
+    "discoveredAt": "2026-08-30T18:26:00.000Z"
+  },
+  {
     "candidateId": "candidate-kristen-hawkins-democratic-race-2026-texas-supreme-court-place-7",
     "imageUrl": "https://judgehawkins.com/wp-content/uploads/2024/02/Judge-Kristen-Hawkins-127-HR-scaled.jpg",
     "sourceUrl": "https://judgehawkins.com/about/",
@@ -2038,6 +2350,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-leigh-wambsganss-republican-race-2026-texas-senate-9",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Leigh_Wambsganss_%2853804969676%29.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Leigh_Wambsganss_(53804969676).jpg",
+    "altText": "Leigh Wambsganss, Republican candidate for Texas Senate District 9",
+    "credit": "Gage Skidmore via Wikimedia Commons",
+    "license": "CC BY-SA 2.0",
+    "permissionBasis": "Wikimedia Commons file page documents the photograph as CC BY-SA 2.0, originally published by photographer Gage Skidmore on Flickr and license-verified by FlickreviewR; the file description identifies Leigh Wambsganss as the subject.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-cc-by-sa-2.0",
+    "discoveredAt": "2026-08-30T16:46:00.000Z"
+  },
+  {
     "candidateId": "candidate-linda-garcia-democratic-race-2026-texas-house-107",
     "imageUrl": "https://house.texas.gov/images/members/4485.jpg?v=3",
     "sourceUrl": "https://house.texas.gov/members/107",
@@ -2048,6 +2372,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:52:25.890Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-liz-ramos-republican-race-2026-texas-house-135",
+    "imageUrl": "https://storage.mlcdn.com/account_image/1376546/Ml0DfonkYQ8l8gLIJr3n0SPkHHc6o9gnkl7uoyho.jpg",
+    "sourceUrl": "https://lizramosfortexas.com/",
+    "altText": "Liz Ramos, Republican candidate for Texas House District 135",
+    "credit": "Liz Ramos for Texas campaign",
+    "license": null,
+    "permissionBasis": "Candidate-identifying headshot is published directly at the start of the About Liz Ramos section on the official Liz Ramos campaign website, which explicitly identifies her as the Republican candidate for Texas House District 135. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-biography",
+    "discoveredAt": "2026-08-30T17:30:00.000Z"
   },
   {
     "candidateId": "candidate-lizzie-pannill-fletcher-democratic-race-2026-us-house-7",
@@ -2286,6 +2622,18 @@
     "discoveredAt": "2026-08-25T23:53:11.333Z"
   },
   {
+    "candidateId": "candidate-merrie-fox-democratic-race-2026-texas-house-73",
+    "imageUrl": "https://static.wixstatic.com/media/606466_0837bcce139b4c4b8d291d9d3b760c08~mv2.jpg/v1/fill/w_443,h_451,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/Fox%20web%20pic_HomePageTop_edited.jpg",
+    "sourceUrl": "https://www.foxfortexas.com/",
+    "altText": "Merrie Fox, Democratic candidate for Texas House District 73",
+    "credit": "Merrie Fox for Texas House District 73 campaign",
+    "license": null,
+    "permissionBasis": "Merrie Fox's official campaign homepage identifies her as running for Texas House District 73 and publishes the candidate-specific image 'Fox web pic_HomePageTop_edited.jpg' immediately above that campaign identification. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-08-30T18:18:00.000Z"
+  },
+  {
     "candidateId": "candidate-mica-arellano-republican-race-2026-state-board-of-education-5",
     "imageUrl": "https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https%3A//assets.cdn.filesafe.space/ggxeWPIAhnIsXRqvLmwz/media/69f5774d8831cb2c6c9d2582.png",
     "sourceUrl": "https://micatx.com/",
@@ -2332,6 +2680,18 @@
     "usageStatus": "approved",
     "discoveryMethod": "official-campaign-profile-via-party-directory-bridge",
     "discoveredAt": "2026-08-24T12:55:00.000Z"
+  },
+  {
+    "candidateId": "candidate-michelle-winder-democratic-race-2026-texas-house-99",
+    "imageUrl": "https://michellforhd99.com/wp-content/uploads/2026/03/image-e1773457012451.webp",
+    "sourceUrl": "https://michellforhd99.com/about-us/",
+    "altText": "Michelle Winder, Democratic candidate for Texas House District 99",
+    "credit": "Michelle Winder campaign",
+    "license": null,
+    "permissionBasis": "Michelle Winder's official campaign biography identifies her as a candidate for Texas House District 99 and publishes this candidate-specific image directly in the Meet Michelle biography section. Used only for editorial candidate identification with exact official-campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-biography",
+    "discoveredAt": "2026-08-30T18:42:00.000Z"
   },
   {
     "candidateId": "candidate-mihaela-elizabeth-plesa-democratic-race-2026-texas-house-70",
@@ -2404,6 +2764,18 @@
     "usageStatus": "approved",
     "discoveryMethod": "official-us-house-downloadable-photo",
     "discoveredAt": "2026-08-22T12:06:46.375Z"
+  },
+  {
+    "candidateId": "candidate-moniqua-s-scott-democratic-race-2026-texas-house-15",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/68e6f12b33e3341b28415264/faef0d88-a67e-4874-ae74-22afdbf60ee6/M-83.jpg",
+    "sourceUrl": "https://www.scottforhd15.com/",
+    "altText": "Moniqua S. Scott, Democratic candidate for Texas House District 15",
+    "credit": "Moniqua S. Scott for Texas House District 15 campaign",
+    "license": null,
+    "permissionBasis": "Candidate-specific image is published on Moniqua S. Scott's official Texas House District 15 campaign homepage immediately following the campaign's Meet Moniqua biography, which identifies her and her HD15 candidacy. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-biography",
+    "discoveredAt": "2026-08-30T17:28:00.000Z"
   },
   {
     "candidateId": "candidate-montserrat-garibay-democratic-race-2026-texas-house-49",
@@ -2592,6 +2964,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-pete-flores-republican-race-2026-texas-senate-24",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Pete_Flores.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Pete_Flores.jpg",
+    "altText": "Pete Flores, Republican candidate for Texas Senate District 24",
+    "credit": "The Trey Blocker Show via Wikimedia Commons",
+    "license": "CC BY 3.0",
+    "permissionBasis": "Wikimedia Commons file page documents the image as Creative Commons Attribution 3.0 Unported, sourced from a CC-licensed 2019 video and identifying the subject as Texas State Senator Pete Flores.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-cc-by-3.0",
+    "discoveredAt": "2026-08-30T16:46:00.000Z"
+  },
+  {
     "candidateId": "candidate-pete-sessions-republican-race-2026-us-house-17",
     "imageUrl": "https://sessions.house.gov/index.cfm?File_id=544C8E78-63A9-4FE3-8D3E-2BE6533EF0D0&a=Files.Serve",
     "sourceUrl": "https://sessions.house.gov/about",
@@ -2672,6 +3056,30 @@
     "usageStatus": "approved",
     "discoveryMethod": "official-us-house-biography",
     "discoveredAt": "2026-08-22T12:06:46.375Z"
+  },
+  {
+    "candidateId": "candidate-ray-callas-republican-race-2026-texas-house-21",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/68a8a06803c3f043bcfd5e70/abd42aab-81e3-49a8-9144-a447d2924ed1/Untitled%2Bdesign%2B%281%29.png",
+    "sourceUrl": "https://www.raycallasfortexas.com/",
+    "altText": "Ray Callas, Republican candidate for Texas House District 21",
+    "credit": "Ray Callas for Texas campaign",
+    "license": null,
+    "permissionBasis": "Candidate-identifying portrait published directly on Ray Callas's official Texas House District 21 campaign homepage beside the campaign biography identifying him as Dr. Ray Callas for Texas House District 21. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-profile",
+    "discoveredAt": "2026-08-30T17:24:00.000Z"
+  },
+  {
+    "candidateId": "candidate-ray-stith-democratic-race-2026-texas-house-57",
+    "imageUrl": "https://static.wixstatic.com/media/7e85cb_032d0955b1754f0d9895fbcb391c22f5~mv2.png/v1/fill/w_490,h_562,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/7e85cb_032d0955b1754f0d9895fbcb391c22f5~mv2.png",
+    "sourceUrl": "https://www.raystithfortx57.com/",
+    "altText": "Ray Stith, Democratic candidate for Texas House District 57",
+    "credit": "Ray Stith Campaign",
+    "license": null,
+    "permissionBasis": "Ray Stith's official campaign homepage identifies him as running to represent District 57 in the Texas House and publishes a candidate-specific image labeled 'IMG_20251125_143808_edited_edited.png' immediately above the campaign identification. TCTA independently links the same campaign domain to Ray Stith's District 57 candidacy. Used only for editorial candidate identification with exact official-campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-08-30T18:33:00.000Z"
   },
   {
     "candidateId": "candidate-rhetta-andrews-bowers-democratic-race-2026-texas-house-113",
@@ -3290,6 +3698,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:52:28.621Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-trever-nehls-republican-race-2026-us-house-22",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flickr_-_The_U.S._Army_-_Turban_presentation.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Flickr_-_The_U.S._Army_-_Turban_presentation.jpg",
+    "altText": "Trever Nehls during U.S. Army service in Afghanistan",
+    "credit": "U.S. Air Force Staff Sgt. Brian Ferguson via Wikimedia Commons",
+    "license": "Public domain — U.S. federal government work",
+    "permissionBasis": "Wikimedia Commons identifies the photograph as a U.S. Air Force work in the public domain and explicitly identifies Maj. Trever Nehls as the subject; the candidate's military identity is independently corroborated by current coverage of his Texas 22nd District candidacy.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-public-domain-us-military",
+    "discoveredAt": "2026-08-30T16:54:00.000Z"
   },
   {
     "candidateId": "candidate-trey-martinez-fischer-democratic-race-2026-texas-house-116",
