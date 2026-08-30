@@ -116,7 +116,7 @@ function TexasSupremeCourtRealignmentPage() {
           <a href="/texas-politics/how-texas-became-republican" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">Texas Republican realignment</a>
           <a href="/texas-politics/figures" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Political figures</a>
           <a href="/texas-government" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Texas Government</a>
-          <a href="/texas-law-policy" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Texas law & policy</a>
+          <a href="/laws" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Texas law & policy</a>
         </div>
       </header>
 
