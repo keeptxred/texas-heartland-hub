@@ -11,10 +11,19 @@ import {
   fetchRecentFacebookPagePosts,
   type FacebookPagePost,
 } from "@/lib/facebook-page-history";
+import {
+  buildArticleFallbackImagePrompt,
+  detectImageContentType,
+  extensionForImageContentType,
+  generateOpenAiImageBytes,
+  OPENAI_IMAGE_FALLBACK_MODEL,
+} from "@/lib/openai-image-fallback.server";
+import { DEFAULT_OG_IMAGE, SITE_URL } from "@/lib/seo";
 import { quickPublishToFacebookFn } from "@/services/quickPublish.functions";
 
 const GUIDE_HISTORY_BATCH_SIZE = 50;
 const MAX_GUIDE_ATTEMPTS = 12;
+const GENERATED_IMAGE_BUCKET = "article-images";
 
 type PackageRow = {
   id: string;
@@ -34,6 +43,10 @@ function hash32(value: string): number {
     hash = Math.imul(hash, 0x01000193);
   }
   return hash >>> 0;
+}
+
+function safeFileStem(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 72) || "guide";
 }
 
 async function loadAlreadyPostedGuideUrls(db: any, urls: string[]): Promise<Set<string>> {
@@ -109,8 +122,6 @@ function orderDurableGuides(
     recentTopicCounts.set(topic, (recentTopicCounts.get(topic) ?? 0) + 1);
   }
 
-  // Content age is intentionally absent from this score. These are durable,
-  // production-indexable guides whose usefulness is not tied to publish date.
   const seed = new Date().toISOString().slice(0, 10);
   return [...guides].sort((left, right) => {
     const leftTopic = classifyFacebookTopic(left);
@@ -120,6 +131,29 @@ function orderDurableGuides(
     if (leftScore !== rightScore) return rightScore - leftScore;
     return hash32(`${seed}:${left.slug}`) - hash32(`${seed}:${right.slug}`);
   });
+}
+
+async function contextualGuideImage(db: any, guide: DurableFacebookGuideCandidate): Promise<string> {
+  // Preserve a real/specific guide image. Only replace the generic site-wide fallback.
+  if (guide.image_url && guide.image_url !== DEFAULT_OG_IMAGE) return guide.image_url;
+
+  const prompt = buildArticleFallbackImagePrompt({
+    title: guide.title,
+    category: guide.category,
+    existingPrompt: `Evergreen Keep TX Red guide. The image must clearly represent the guide topic and must not look like a generic site-wide fallback. Canonical destination: ${guide.url}`,
+  });
+  const bytes = await generateOpenAiImageBytes(prompt);
+  const contentType = detectImageContentType(bytes);
+  const extension = extensionForImageContentType(contentType);
+  const fingerprint = hash32(`${guide.slug}:${guide.title}`).toString(16).padStart(8, "0");
+  const filename = `facebook-guide-${safeFileStem(guide.slug)}-${fingerprint}.${extension}`;
+  const { error } = await db.storage.from(GENERATED_IMAGE_BUCKET).upload(filename, bytes, {
+    contentType,
+    cacheControl: "public, max-age=31536000, immutable",
+    upsert: true,
+  });
+  if (error) throw new Error(`OpenAI durable-guide image storage failed: ${error.message}`);
+  return `${SITE_URL}/api/public/article-image/${filename}`;
 }
 
 export async function publishDurableFacebookGuideFallback(args: {
@@ -202,6 +236,18 @@ export async function publishDurableFacebookGuideFallback(args: {
   const attempts: Array<{ slug: string; ok: boolean; error?: string }> = [];
 
   for (const guide of ordered.slice(0, MAX_GUIDE_ATTEMPTS)) {
+    let assetUrl: string;
+    try {
+      assetUrl = await contextualGuideImage(args.db, guide);
+    } catch (error) {
+      attempts.push({
+        slug: guide.slug,
+        ok: false,
+        error: `Contextual image generation failed: ${error instanceof Error ? error.message : String(error)}`,
+      });
+      continue;
+    }
+
     const result = await quickPublishToFacebookFn({
       data: {
         token: args.adminToken,
@@ -210,7 +256,7 @@ export async function publishDurableFacebookGuideFallback(args: {
         source_url: guide.url,
         feed_item_id: null,
         caption: guide.title,
-        asset_url: guide.image_url,
+        asset_url: assetUrl,
         slug: null,
       },
     });
@@ -224,6 +270,10 @@ export async function publishDurableFacebookGuideFallback(args: {
         slug: guide.slug,
         title: guide.title,
         article_url: guide.url,
+        image_url: assetUrl,
+        image_provider: guide.image_url && guide.image_url !== DEFAULT_OG_IMAGE ? "specific-existing-image" : "openai",
+        image_model: guide.image_url && guide.image_url !== DEFAULT_OG_IMAGE ? null : OPENAI_IMAGE_FALLBACK_MODEL,
+        generic_fallback_used: false,
         topic: classifyFacebookTopic(guide),
         external_id: result.external_id,
         post_url: result.post_url,
@@ -254,8 +304,9 @@ export async function publishDurableFacebookGuideFallback(args: {
     {
       ok: false,
       posted: false,
-      error: "No durable guide passed Facebook publishing checks",
+      error: "No durable guide passed contextual-image generation and Facebook publishing checks",
       fallback_reason: args.fallbackReason,
+      generic_fallback_used: false,
       attempts,
     },
     { status: 422 },
