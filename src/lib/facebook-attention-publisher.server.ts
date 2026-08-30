@@ -8,17 +8,35 @@ import {
   fetchRecentFacebookPagePosts,
   type FacebookPagePost,
 } from "@/lib/facebook-page-history";
+import {
+  buildFacebookPostImagePrompt,
+  detectImageContentType,
+  extensionForImageContentType,
+  generateOpenAiImageBytes,
+  OPENAI_IMAGE_FALLBACK_MODEL,
+} from "@/lib/openai-image-fallback.server";
 
 const GRAPH_VERSION = "v21.0";
 const SITE_URL = "https://keeptxred.com";
 const ATTENTION_SLOTS = new Set([1, 3]);
 const MAX_FACEBOOK_IMAGE_BYTES = 12 * 1024 * 1024;
-export const KTR_FACEBOOK_ATTENTION_IMAGE_URL = `${SITE_URL}/og/default.jpg`;
+const GENERATED_IMAGE_BUCKET = "article-images";
+
+// Attention/engagement posts intentionally use the simple post-text prompt.
+// There is no generic default.jpg or stock-image fallback on this path.
+export const KTR_FACEBOOK_ATTENTION_IMAGE_MODE = "openai-post-text" as const;
 
 type SocialConnectionRow = {
   account_id: string | null;
   access_token: string | null;
   connection_status: string | null;
+};
+
+type GeneratedAttentionImage = {
+  bytes: Uint8Array;
+  contentType: "image/png" | "image/jpeg" | "image/webp";
+  filename: string;
+  publicUrl: string;
 };
 
 function hash32(value: string): number {
@@ -36,6 +54,12 @@ function normalize(value: string): string {
 
 function campaignContent(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80) || "attention-post";
+}
+
+function imageStem(post: KtrFacebookAttentionPost, dateKey: string, slot: number): string {
+  const title = campaignContent(post.title).slice(0, 48);
+  const fingerprint = hash32(`${dateKey}:${slot}:${post.message}`).toString(16).padStart(8, "0");
+  return `facebook-attention-${dateKey}-${slot}-${title}-${fingerprint}`.slice(0, 120);
 }
 
 export function ktrFacebookAttentionTrafficUrl(post: KtrFacebookAttentionPost): string | null {
@@ -85,8 +109,6 @@ export function selectKtrFacebookAttentionPostForSlot(args: {
     return candidate;
   }
 
-  // If a preferred pool is exhausted by live-page duplicate history, fall back
-  // to the general selector rather than losing an otherwise valid scheduled slot.
   return selectKtrFacebookAttentionPost(args);
 }
 
@@ -118,42 +140,48 @@ async function loadLiveFacebookPosts(connection: SocialConnectionRow): Promise<F
   });
 }
 
-async function loadRequiredAttentionImage(): Promise<{ bytes: ArrayBuffer; contentType: string }> {
-  const response = await fetch(KTR_FACEBOOK_ATTENTION_IMAGE_URL, {
-    redirect: "follow",
-    headers: {
-      accept: "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
-      "user-agent": "KeepTXRed-FacebookPublisher/1.0",
-    },
-  });
-  const contentType = response.headers.get("content-type")?.split(";", 1)[0]?.trim() ?? "";
-  const contentLength = Number(response.headers.get("content-length") ?? "0");
-  if (!response.ok || !contentType.startsWith("image/")) {
-    throw new Error(`Required Facebook attention image is unavailable (HTTP ${response.status})`);
-  }
-  if (Number.isFinite(contentLength) && contentLength > MAX_FACEBOOK_IMAGE_BYTES) {
-    throw new Error("Required Facebook attention image is too large");
-  }
-  const bytes = await response.arrayBuffer();
+async function generateAndStoreAttentionImage(args: {
+  db: any;
+  post: KtrFacebookAttentionPost;
+  postText: string;
+  dateKey: string;
+  slot: number;
+}): Promise<GeneratedAttentionImage> {
+  const prompt = buildFacebookPostImagePrompt(args.postText);
+  const bytes = await generateOpenAiImageBytes(prompt);
   if (bytes.byteLength === 0 || bytes.byteLength > MAX_FACEBOOK_IMAGE_BYTES) {
-    throw new Error("Required Facebook attention image is empty or too large");
+    throw new Error("OpenAI Facebook image is empty or exceeds Facebook size limits");
   }
-  return { bytes, contentType };
+
+  const contentType = detectImageContentType(bytes);
+  const extension = extensionForImageContentType(contentType);
+  const filename = `${imageStem(args.post, args.dateKey, args.slot)}.${extension}`;
+  const { error: uploadError } = await args.db.storage.from(GENERATED_IMAGE_BUCKET).upload(filename, bytes, {
+    contentType,
+    cacheControl: "public, max-age=31536000, immutable",
+    upsert: true,
+  });
+  if (uploadError) throw new Error(`OpenAI Facebook image storage failed: ${uploadError.message}`);
+
+  return {
+    bytes,
+    contentType,
+    filename,
+    publicUrl: `${SITE_URL}/api/public/article-image/${filename}`,
+  };
 }
 
 async function recordAttentionPost(
   db: any,
   post: KtrFacebookAttentionPost,
   message: string,
+  assetUrl: string,
   externalId: string | null,
 ): Promise<string> {
   const { data: inserted, error } = await db
     .from("content_packages")
     .insert({
       source_title: post.title,
-      // Keep this null even when the social copy contains a KTR URL. Otherwise
-      // the article/durable-guide history could incorrectly treat the linked
-      // destination itself as having already received its dedicated post.
       source_url: null,
       category: post.category,
       facebook_hook: message,
@@ -161,7 +189,7 @@ async function recordAttentionPost(
       facebook_cta: null,
       status: "PUBLISHED",
       asset_type: "IMAGE",
-      asset_url: KTR_FACEBOOK_ATTENTION_IMAGE_URL,
+      asset_url: assetUrl,
       workflow_status: "PUBLISHED",
     })
     .select("id")
@@ -175,8 +203,8 @@ async function recordAttentionPost(
     status: "PUBLISHED",
     published_time: new Date().toISOString(),
     notes: externalId
-      ? `Facebook post ${externalId}; kind=attention-post; asset=image`
-      : "KeepTXRed Facebook post; kind=attention-post; asset=image",
+      ? `Facebook post ${externalId}; kind=attention-post; asset=openai-generated-image; model=${OPENAI_IMAGE_FALLBACK_MODEL}`
+      : `KeepTXRed Facebook post; kind=attention-post; asset=openai-generated-image; model=${OPENAI_IMAGE_FALLBACK_MODEL}`,
   });
   if (queueError) throw new Error(queueError.message);
   return packageId;
@@ -217,17 +245,25 @@ export async function publishKtrFacebookAttentionPost(args: {
   const message = formatKtrFacebookPublishedAttentionMessage(post);
   const trafficUrl = ktrFacebookAttentionTrafficUrl(post);
 
-  let image: { bytes: ArrayBuffer; contentType: string };
+  let image: GeneratedAttentionImage;
   try {
-    image = await loadRequiredAttentionImage();
+    image = await generateAndStoreAttentionImage({
+      db: args.db,
+      post,
+      postText: message,
+      dateKey: args.dateKey,
+      slot: args.slot,
+    });
   } catch (error) {
     return Response.json(
       {
         ok: false,
         posted: false,
-        error: "Facebook attention post blocked because its required image was unavailable",
+        error: "Facebook attention post blocked because OpenAI image generation or storage failed",
         detail: error instanceof Error ? error.message : String(error),
-        image_url: KTR_FACEBOOK_ATTENTION_IMAGE_URL,
+        image_provider: "openai",
+        image_model: OPENAI_IMAGE_FALLBACK_MODEL,
+        generic_fallback_used: false,
       },
       { status: 503 },
     );
@@ -236,7 +272,7 @@ export async function publishKtrFacebookAttentionPost(args: {
   const graphUrl = `https://graph.facebook.com/${GRAPH_VERSION}/${encodeURIComponent(String(connection.account_id))}/photos`;
   const body = new FormData();
   body.set("access_token", String(connection.access_token));
-  body.set("source", new Blob([image.bytes], { type: image.contentType }), "keep-tx-red-attention.jpg");
+  body.set("source", new Blob([image.bytes], { type: image.contentType }), image.filename);
   body.set("caption", message);
 
   const graphResponse = await fetch(graphUrl, {
@@ -257,6 +293,7 @@ export async function publishKtrFacebookAttentionPost(args: {
         posted: false,
         error: graphJson.error?.message ?? `Facebook Graph API returned HTTP ${graphResponse.status}`,
         requires_connection: graphResponse.status === 401 || graphResponse.status === 403,
+        image_url: image.publicUrl,
       },
       { status: 502 },
     );
@@ -265,7 +302,7 @@ export async function publishKtrFacebookAttentionPost(args: {
   let packageId: string | null = null;
   let recordWarning: string | null = null;
   try {
-    packageId = await recordAttentionPost(args.db, post, message, externalId);
+    packageId = await recordAttentionPost(args.db, post, message, image.publicUrl, externalId);
   } catch (error) {
     recordWarning = error instanceof Error ? error.message : String(error);
     console.error("[KeepTXRed Facebook] attention post succeeded but history recording failed", recordWarning);
@@ -280,7 +317,10 @@ export async function publishKtrFacebookAttentionPost(args: {
     category: post.category,
     article_url: null,
     traffic_url: trafficUrl,
-    image_url: KTR_FACEBOOK_ATTENTION_IMAGE_URL,
+    image_url: image.publicUrl,
+    image_provider: "openai",
+    image_model: OPENAI_IMAGE_FALLBACK_MODEL,
+    generic_fallback_used: false,
     external_id: externalId,
     post_url: externalId ? `https://www.facebook.com/${externalId}` : null,
     package_id: packageId,
