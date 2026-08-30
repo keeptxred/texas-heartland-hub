@@ -7,6 +7,7 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const source = readFileSync(resolve(HERE, "sitemap[.]xml.ts"), "utf8");
 
 const advertised = [
+  "sitemap-priority.xml",
   "sitemap-pages.xml",
   "sitemap-sources.xml",
   "sitemap-news.xml",
