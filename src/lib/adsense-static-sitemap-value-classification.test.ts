@@ -23,6 +23,10 @@ const VALUE_CLASSES = {
     "/issues/texas-government-accountability-handbook", "/issues/texas-local-government-handbook",
     "/texas-politics/texas-constitutional-history", "/texas-politics/texas-election-history",
     "/texas-politics/texas-redistricting-history", "/texas-politics/voting-rights-history",
+    "/texas-government/texas-government-history", "/texas-government/texas-legislature-history",
+    "/texas-government/governor-history", "/texas-government/lieutenant-governor-history",
+    "/texas-government/speaker-of-the-house-history", "/texas-government/texas-supreme-court-history",
+    "/texas-government/court-of-criminal-appeals-history", "/texas-government/judicial-selection-elections",
   ],
   trustOrCommerce: [
     "/about", "/contact", "/privacy", "/terms-of-service", "/shipping-policy", "/return-refund-policy", "/editorial-standards",
@@ -63,6 +67,14 @@ describe("AdSense static sitemap value classification", () => {
       "/texas-politics/texas-election-history",
       "/texas-politics/texas-redistricting-history",
       "/texas-politics/voting-rights-history",
+      "/texas-government/texas-government-history",
+      "/texas-government/texas-legislature-history",
+      "/texas-government/governor-history",
+      "/texas-government/lieutenant-governor-history",
+      "/texas-government/speaker-of-the-house-history",
+      "/texas-government/texas-supreme-court-history",
+      "/texas-government/court-of-criminal-appeals-history",
+      "/texas-government/judicial-selection-elections",
     ]));
   });
 
