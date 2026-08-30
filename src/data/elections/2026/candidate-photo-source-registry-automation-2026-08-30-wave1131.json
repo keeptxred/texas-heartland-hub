@@ -1,0 +1,47 @@
+[
+  {
+    "domain": "hallforhd19.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Kelly Hall's official Texas House District 19 campaign website to verify candidate identity and current campaign-controlled biography context and to discover candidate-specific portrait assets. Do not approve or reuse any site image without item-level provenance plus an explicit reusable license, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Kelly Hall Texas House District 19 official campaign portrait media",
+    "notes": "New source discovered August 30, 2026. The current site identifies Kelly Hall as the Democratic nominee for Texas House District 19 and exposes a candidate-specific image with alt text identifying him as the District 19 candidate. Treat all imagery as discovery-only until the exact asset and use basis are verified."
+  },
+  {
+    "domain": "crystalsedillo.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Crystal Sedillo's official Texas House District 30 campaign website to verify candidate identity, office, biography, and discover candidate-specific portrait or media assets. Do not approve or reuse any site image without item-level provenance plus an explicit reusable license, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Crystal Sedillo Texas House District 30 official campaign portrait media",
+    "notes": "New source discovered August 30, 2026. The campaign site identifies Crystal Sedillo, District 30, and campaign-controlled biography content. TCTA independently links the same domain to the current District 30 candidate. Imagery remains discovery-only absent item-level rights verification."
+  },
+  {
+    "domain": "votemuse.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Dr. Fatima La'Juan Muse's current official Texas House District 2 campaign website to verify candidate identity and office and to discover candidate-supplied portrait or media assets. Do not approve or reuse any site image without item-level provenance plus an explicit reusable license, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Fatima La'Juan Muse Texas House District 2 official campaign portrait media",
+    "notes": "New current campaign domain discovered August 30, 2026. The site identifies Dr. Fatima La'Juan Muse as a District 2 candidate and current general-election campaign; Vote-USA and BallotReady independently connect the candidate to this campaign identity. Treat images as discovery-only until exact-asset rights are verified."
+  },
+  {
+    "domain": "theodisfortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Theodis Daniel's official Texas House District 147 campaign website and gallery to verify candidate identity, office, campaign-controlled biography, and discover candidate-specific portrait or media assets. Do not approve or reuse any site image without item-level provenance plus an explicit reusable license, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Theodis Daniel Texas House District 147 official campaign portrait gallery media",
+    "notes": "New source discovered August 30, 2026. The campaign site identifies Theodis Daniel for Texas State Representative HD 147 and includes a campaign gallery; Harris County GOP independently lists the same campaign domain for the District 147 candidate. Images remain discovery-only until exact-asset rights are verified."
+  },
+  {
+    "domain": "vote-usa.org",
+    "sourceClass": "election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Vote-USA 2026 Texas election pages as a discovery bridge to corroborate candidate/race context and locate downstream official campaign websites and candidate-specific profiles. Do not approve or reuse Vote-USA-hosted images without item-level provenance plus an explicit reusable license, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Vote-USA Texas 2026 candidate official campaign website portrait",
+    "notes": "New source discovered August 30, 2026. The current Texas general-election page exposes candidate campaign links for many sparse races, including Fatima La'Juan Muse, making it useful for source expansion. It is discovery-only and cannot establish image rights or authoritative eligibility by itself."
+  }
+]
