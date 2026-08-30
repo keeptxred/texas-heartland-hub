@@ -11,6 +11,13 @@ const DISALLOWED_PRIORITY_PATHS = new Set([
   "/fact-checks",
   "/fact-checks/federal",
   "/fact-checks/state",
+  "/bills/texas/89/hb/1404",
+  "/bills/texas/89/hb/1942",
+  "/bills/texas/89/hb/2746",
+  "/bills/texas/89/hb/3435",
+  "/bills/texas/89/hb/3913",
+  "/news/democrat-viral-tweet-falsely-claims-texas-congressional-map-eliminates-black-and-latino-majority-districts",
+  "/news/texas-lawmakers-propose-expanding-death-penalty-to-cover-abortion-after-fetal-heartbeat",
 ]);
 
 function isDisallowedPriorityPath(path: string) {
