@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const MANIFEST_PATH = path.join(ROOT, "src/data/elections/2026/candidate-photos.json");
 const CANDIDATES_PATH = path.join(ROOT, "src/data/elections/2026/candidates.json");
+const USER_AGENT = "KeepTXRedCandidatePhotoBot/1.0 (+https://keeptxred.com)";
 
 const findings = [
   ["candidate-bryan-hughes-republican-race-2026-texas-senate-1", "BRYAN HUGHES", 1, "https://senate.texas.gov/members/d01/img/Hughes_86-0702D-030-web.jpg"],
@@ -40,6 +41,7 @@ const candidateIds = new Set(candidates.map((candidate) => candidate.id));
 const byId = new Map(manifest.map((entry) => [entry.candidateId, entry]));
 let applied = 0;
 let preserved = 0;
+let skippedUnavailable = 0;
 
 for (const finding of findings) {
   if (!candidateIds.has(finding.candidateId)) {
@@ -50,13 +52,18 @@ for (const finding of findings) {
     preserved += 1;
     continue;
   }
+  if (!(await validateImage(finding.imageUrl))) {
+    console.warn(`Skipping unavailable Senate portrait for ${finding.candidateId}: ${finding.imageUrl}`);
+    skippedUnavailable += 1;
+    continue;
+  }
   byId.set(finding.candidateId, finding);
   applied += 1;
 }
 
 const output = [...byId.values()].sort((a, b) => a.candidateId.localeCompare(b.candidateId));
 await writeFile(MANIFEST_PATH, `${JSON.stringify(output, null, 2)}\n`);
-console.log(`Applied ${applied} verified Texas Senate member portrait replacement(s); preserved ${preserved} existing non-generic approved portrait(s).`);
+console.log(`Applied ${applied} verified Texas Senate member portrait replacement(s); preserved ${preserved} existing non-generic approved portrait(s); skipped ${skippedUnavailable} unavailable image(s).`);
 
 function isKnownSenateGeneric(value) {
   try {
@@ -64,6 +71,26 @@ function isKnownSenateGeneric(value) {
     return parsed.hostname.toLowerCase() === "senate.texas.gov" && parsed.pathname.toLowerCase() === "/_assets/img/og_image.jpg";
   } catch {
     return true;
+  }
+}
+
+async function validateImage(url) {
+  try {
+    const response = await fetch(url, {
+      redirect: "follow",
+      signal: AbortSignal.timeout(12000),
+      headers: {
+        "user-agent": USER_AGENT,
+        accept: "image/*,*/*;q=0.8",
+        range: "bytes=0-65535",
+      },
+    });
+    if (!response.ok && response.status !== 206) return false;
+    const type = response.headers.get("content-type") ?? "";
+    const length = Number(response.headers.get("content-length") ?? 0);
+    return type.startsWith("image/") && (!length || length >= 8000);
+  } catch {
+    return false;
   }
 }
 
