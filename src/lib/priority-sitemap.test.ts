@@ -4,6 +4,13 @@ import { getPrioritySitemapPaths, MAX_SEARCH_CONSOLE_PRIORITY_URLS } from "./pri
 
 const paths = getPrioritySitemapPaths();
 const sourcePaths = priorityUrls.map((value) => new URL(value).pathname.replace(/\/+$/, "") || "/");
+const KNOWN_NOINDEX_PRIORITY_BILLS = [
+  "/bills/texas/89/hb/1404",
+  "/bills/texas/89/hb/1942",
+  "/bills/texas/89/hb/2746",
+  "/bills/texas/89/hb/3435",
+  "/bills/texas/89/hb/3913",
+] as const;
 
 describe("priority sitemap inventory", () => {
   it("keeps the Search Console priority feed intentionally small and unique", () => {
@@ -28,6 +35,7 @@ describe("priority sitemap inventory", () => {
     expect(paths).not.toContain("/elections/polls/methodology");
     expect(paths).not.toContain("/bills/capital-punishment");
     expect(paths).not.toContain("/texas-legislature/cross-party-scorecard");
+    for (const path of KNOWN_NOINDEX_PRIORITY_BILLS) expect(paths).not.toContain(path);
   });
 
   it("uses the canonical bill detail route contract", () => {
@@ -49,6 +57,11 @@ describe("priority sitemap inventory", () => {
       "/texas-legislature/current-session",
       "/bills",
       "/laws",
+      "/register-to-vote",
+      "/representatives",
+      "/data",
+      "/texas-economy",
+      "/laws/constitutional-amendments",
       "/policy",
       "/texas-politics",
       "/texas-government",
