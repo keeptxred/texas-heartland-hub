@@ -20,7 +20,7 @@
   {
     "domain": "tcta.org",
     "sourceClass": "candidate-voter-guide-directory",
-    "discoveryStatus": "active",
+    "discoveryStatus": "discovery-only",
     "autoApprove": false,
     "rightsRule": "Use Texas Classroom Teachers Association candidate profiles only as a discovery bridge to candidate identities, campaign websites, candidate-linked social profiles, and candidate-supplied material. TCTA-hosted images are not reusable by default; require item-level rights verification before any image approval.",
     "searchHint": "site:tcta.org texasteachersvote Texas 2026 candidate official website portrait",
