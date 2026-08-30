@@ -12,6 +12,7 @@ on:
       - "scripts/elections/apply-authoritative-candidate-filing-status.mjs"
       - "scripts/elections/candidate-photo-enrichment.mjs"
       - "scripts/elections/remove-generic-candidate-photo-entries.mjs"
+      - "scripts/elections/apply-official-senate-photo-replacements-2026-08-30.mjs"
       - "scripts/elections/merge-approved-candidate-photo-assets.mjs"
       - "scripts/elections/apply-direct-web-photo-findings.mjs"
       - "scripts/elections/apply-verified-photo-findings-2026-07-31.mjs"
@@ -91,6 +92,8 @@ jobs:
         run: node scripts/elections/apply-official-judicial-photo-findings-2026-08-21-wave2.mjs
       - name: Remove known generic and placeholder candidate images before discovery
         run: node scripts/elections/remove-generic-candidate-photo-entries.mjs
+      - name: Apply verified Texas Senate member portrait replacements
+        run: node scripts/elections/apply-official-senate-photo-replacements-2026-08-30.mjs
       - name: Discover portraits from verified source registries
         run: node scripts/elections/discover-candidate-photos-source-registries.mjs
       - name: Discover previously unseen candidate photo source domains
