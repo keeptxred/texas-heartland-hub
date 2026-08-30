@@ -10,12 +10,16 @@ import { BASE_URL, xmlEscape, xmlResponse } from "@/lib/sitemap-shared";
  * data fetching and may return an empty but valid urlset when they have no
  * eligible entries. Bulk district, representative, and bill-detail sitemaps
  * remain intentionally unadvertised to protect crawl budget.
+ *
+ * sitemap-priority.xml is a derivative discovery feed: every URL it advertises
+ * must also be canonically owned by one of the primary child sitemaps.
  */
 const ADVERTISED_SITEMAPS = [
   "sitemap-pages.xml",
   "sitemap-sources.xml",
   "sitemap-news.xml",
   "sitemap-evergreen.xml",
+  "sitemap-priority.xml",
   "sitemap-elections.xml",
   "sitemap-government.xml",
   "sitemap-political-figures.xml",

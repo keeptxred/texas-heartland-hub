@@ -7,8 +7,10 @@
  *  - duplicate canonical ownership across primary URL sitemaps
  *  - obvious duplicate news clusters (same story fingerprint) in the long-term article sitemap
  *
- * Google News and image sitemaps are derivative discovery feeds: their page
- * <loc> values may intentionally repeat canonical URLs owned by a primary sitemap.
+ * Google News, image, and the curated Search Console priority sitemap are
+ * discovery overlays: their page <loc> values may intentionally repeat
+ * canonical URLs owned elsewhere. Every priority-sitemap URL is therefore
+ * live-checked rather than treated as a second canonical owner.
  *
  * Usage: node scripts/seo/validate-indexability.mjs [--base http://localhost:8080]
  * Live checks are skipped (with a warning) when the base URL is unreachable.
@@ -19,7 +21,9 @@ const baseArg = process.argv.indexOf("--base");
 const BASE = baseArg > -1 ? process.argv[baseArg + 1] : process.env.SEO_BASE || "http://localhost:8080";
 const CANONICAL_HOST = "https://keeptxred.com";
 const SAMPLE = Number(process.env.SEO_SAMPLE || 60);
-const DERIVATIVE_SITEMAPS = new Set(["/sitemap-news.xml", "/sitemap-images.xml"]);
+const PRIORITY_SITEMAP = "/sitemap-priority.xml";
+const MAX_PRIORITY_URLS = 30;
+const DERIVATIVE_SITEMAPS = new Set(["/sitemap-news.xml", "/sitemap-images.xml", PRIORITY_SITEMAP]);
 const DISALLOWED = [/\?/, /#/, /^\/admin/, /^\/api\//, /^\/cart/, /^\/shop\/checkout/, /^\/preview\//, /^\/hubs/, /^\/email\//];
 const INDEXABLE_PRIORITY_PATHS = [
   "/contact-legislators",
@@ -84,9 +88,17 @@ for (const child of childSitemaps) {
 }
 
 const primary = all.filter((entry) => !DERIVATIVE_SITEMAPS.has(entry.sitemap));
+const priorityUrls = all.filter((entry) => entry.sitemap === PRIORITY_SITEMAP).map((entry) => entry.loc);
 
-// 1. duplicate canonical ownership across primary URL sitemaps. Google News and
-// image sitemaps intentionally repeat page URLs and are excluded from ownership.
+if (priorityUrls.length > MAX_PRIORITY_URLS) {
+  errors.push(`${PRIORITY_SITEMAP} lists ${priorityUrls.length} URLs; maximum is ${MAX_PRIORITY_URLS}.`);
+}
+if (new Set(priorityUrls).size !== priorityUrls.length) {
+  errors.push(`${PRIORITY_SITEMAP} contains duplicate URLs.`);
+}
+
+// 1. duplicate canonical ownership across primary URL sitemaps. Discovery
+// overlays intentionally repeat page URLs and are excluded from ownership.
 const seen = new Map();
 for (const { sitemap, loc } of primary) {
   if (seen.has(loc)) errors.push(`Duplicate primary sitemap URL ${loc} (${seen.get(loc)} and ${sitemap})`);
@@ -134,14 +146,15 @@ for (const { loc } of all.filter((entry) => entry.sitemap === "/sitemap-evergree
   }
 }
 
-// 5. live status / canonical / robots on a sample plus every static page URL.
-// Sample unique canonical page URLs so the same article is not fetched twice
-// merely because it also appears in a derivative sitemap.
+// 5. live status / canonical / robots on every static page, every curated
+// priority URL, and a sample of the remaining primary URLs. The Set keeps
+// overlap between the priority feed and primary sitemaps from double-fetching.
 const pageUrls = primary.filter((entry) => entry.sitemap === "/sitemap-pages.xml").map((e) => e.loc);
 const otherPrimaryUrls = [...new Set(
   primary.filter((entry) => entry.sitemap !== "/sitemap-pages.xml").map((e) => e.loc),
 )];
-const sample = [...pageUrls, ...otherPrimaryUrls.sort(() => Math.random() - 0.5).slice(0, SAMPLE)];
+const randomPrimarySample = otherPrimaryUrls.sort(() => Math.random() - 0.5).slice(0, SAMPLE);
+const sample = [...new Set([...pageUrls, ...priorityUrls, ...randomPrimarySample])];
 
 for (const loc of sample) {
   const path = loc.slice(CANONICAL_HOST.length) || "/";
@@ -189,7 +202,7 @@ for (const alias of REDIRECT_ALIASES) {
   }
 }
 
-console.log(`[seo:indexability] ${all.length} sitemap entries (${primary.length} primary) across ${childSitemaps.length} sitemaps; ${sample.length} live-checked.`);
+console.log(`[seo:indexability] ${all.length} sitemap entries (${primary.length} primary, ${priorityUrls.length} priority) across ${childSitemaps.length} sitemaps; ${sample.length} live-checked.`);
 for (const warning of warnings) console.warn(`  warn: ${warning}`);
 if (errors.length) {
   console.error(`[seo:indexability] FAILED with ${errors.length} error(s):`);

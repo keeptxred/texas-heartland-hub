@@ -38,19 +38,31 @@ export const Route = createFileRoute('/texas-legislature/votes')({
       .not('vote_date', 'is', null)
       .order('vote_date', { ascending: false })
       .limit(250);
-    if (voteError) throw voteError;
+
+    if (voteError) {
+      console.error('[legislature-votes] committee-history query failed', voteError);
+      return { votes: [] as VoteActivity[], bills: [] as BillSummary[], dataUnavailable: true };
+    }
+
     const votes = (voteRows ?? []) as VoteActivity[];
     const billIds = [...new Set(votes.map((vote) => vote.bill_id))];
     let bills: BillSummary[] = [];
+
     if (billIds.length) {
       const { data: billRows, error: billError } = await db
         .from('bills')
         .select('id,bill_identifier,legislature_number,session_code,bill_type,bill_number,caption,current_status_label')
         .in('id', billIds);
-      if (billError) throw billError;
+
+      if (billError) {
+        console.error('[legislature-votes] bill lookup failed', billError);
+        return { votes, bills: [] as BillSummary[], dataUnavailable: true };
+      }
+
       bills = (billRows ?? []) as BillSummary[];
     }
-    return { votes, bills };
+
+    return { votes, bills, dataUnavailable: false };
   },
   head: () => ({
     meta: [
@@ -67,7 +79,7 @@ export const Route = createFileRoute('/texas-legislature/votes')({
 });
 
 function LegislativeVoteReference() {
-  const { votes, bills } = Route.useLoaderData();
+  const { votes, bills, dataUnavailable } = Route.useLoaderData();
   const billById = new Map(bills.map((bill) => [bill.id, bill] as const));
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
@@ -78,6 +90,11 @@ function LegislativeVoteReference() {
         <p className="mt-4 max-w-4xl text-lg leading-8 text-muted-foreground">This reference exposes committee vote dates already present in official committee-history records and connects them to the related bill and committee. A vote date confirms recorded committee vote activity; it does not establish a member-by-member position or vote margin unless the linked official record supplies one.</p>
       </header>
       <aside className="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-5 text-sm leading-6 text-amber-950">KeepTXRed intentionally does not calculate yea/nay totals from a date-only record. Open the official committee source for the actual motion, tally or member positions when those details are published.</aside>
+      {dataUnavailable ? (
+        <aside className="mt-4 rounded-xl border bg-muted/40 p-5 text-sm leading-6 text-muted-foreground">
+          Live normalized vote records are temporarily unavailable. The page remains available as a reference to the official Texas Legislature Online source while the data feed recovers.
+        </aside>
+      ) : null}
       <section className="mt-8" aria-labelledby="committee-vote-activity">
         <div className="flex items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-wide text-primary">Latest available records</p><h2 id="committee-vote-activity" className="mt-2 text-3xl font-bold">Committee vote activity</h2></div><p className="text-sm text-muted-foreground">Showing up to 250 recorded vote-date entries</p></div>
         <div className="mt-5 divide-y rounded-xl border bg-card">
