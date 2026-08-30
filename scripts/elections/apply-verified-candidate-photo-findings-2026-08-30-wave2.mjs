@@ -44,6 +44,30 @@ const findings = [
     usageStatus: "approved",
     discoveryMethod: "official-campaign-profile",
     discoveredAt: "2026-08-30T17:24:00.000Z"
+  },
+  {
+    candidateId: "candidate-moniqua-s-scott-democratic-race-2026-texas-house-15",
+    imageUrl: "https://images.squarespace-cdn.com/content/v1/68e6f12b33e3341b28415264/faef0d88-a67e-4874-ae74-22afdbf60ee6/M-83.jpg",
+    sourceUrl: "https://www.scottforhd15.com/",
+    altText: "Moniqua S. Scott, Democratic candidate for Texas House District 15",
+    credit: "Moniqua S. Scott for Texas House District 15 campaign",
+    license: null,
+    permissionBasis: "Candidate-specific image is published on Moniqua S. Scott's official Texas House District 15 campaign homepage immediately following the campaign's Meet Moniqua biography, which identifies her and her HD15 candidacy. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    usageStatus: "approved",
+    discoveryMethod: "official-campaign-biography",
+    discoveredAt: "2026-08-30T17:28:00.000Z"
+  },
+  {
+    candidateId: "candidate-alexandria-nicole-butler-republican-race-2026-texas-house-146",
+    imageUrl: "https://alexandriabutlercampaign.org/wp-content/uploads/2025/04/Butler-post-800x533-1.jpg",
+    sourceUrl: "https://alexandriabutlercampaign.org/",
+    altText: "Alexandria Nicole Butler, Republican candidate for Texas House District 146",
+    credit: "Alex Butler campaign",
+    license: null,
+    permissionBasis: "Candidate-identifying image is published directly on Alexandria Butler's campaign website beside the campaign biography naming Alexandria Butler. The Harris County GOP 2026 candidate directory identifies this campaign domain for Alexandria Nicole Butler in Texas House District 146. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    usageStatus: "approved",
+    discoveryMethod: "official-campaign-profile",
+    discoveredAt: "2026-08-30T17:28:00.000Z"
   }
 ];
 
