@@ -9,6 +9,12 @@ const HUB = HUBS.find((h) => h.slug === "texas-politics")!;
 const SECTIONS = [
   { title: "Elections", description: "Primaries, runoffs, and the races shaping the next Texas Legislature.", href: "/elections/2026" },
   { title: "Republic of Texas Government", description: "The presidency, Congress, 1836 Constitution, capitals, diplomacy, public finance, annexation and transition from independent republic to state government.", href: "/texas-politics/republic-of-texas-government-history" },
+  { title: "Democratic Dominance, 1876–1952", description: "How one-party Democratic control, primary politics and suffrage restrictions shaped Texas after Reconstruction.", href: "/texas-politics/texas-democratic-dominance-1876-1952" },
+  { title: "Populist & Progressive Texas", description: "Farm revolt, railroad regulation, political reform and the contradictions of Progressive-era election change.", href: "/texas-politics/texas-populist-progressive-era" },
+  { title: "The Ferguson Era", description: "Jim Ferguson's rise and impeachment, Ma Ferguson's governorships, patronage and factional one-party politics.", href: "/texas-politics/ferguson-era-texas-politics" },
+  { title: "Texas White Primary History", description: "The Nixon cases, Grovey, Smith v. Allwright and the constitutional fight over racial exclusion from decisive primaries.", href: "/texas-politics/texas-white-primary-history" },
+  { title: "Texas New Deal Politics", description: "FDR, federal relief, conservative Democratic resistance and the ideological split that preceded partisan realignment.", href: "/texas-politics/texas-new-deal-politics" },
+  { title: "Texas Civil Rights Era Politics", description: "Voting-rights expansion, Lyndon Johnson, federal civil-rights laws and the breakdown of the old one-party system.", href: "/texas-politics/texas-civil-rights-era-politics" },
   { title: "Texas Election History", description: "How Texas moved from one-party primary dominance to two-party competition, Republican statewide control, modern turnout patterns and Election Central.", href: "/texas-politics/texas-election-history" },
   { title: "Texas Constitutional History", description: "The Republic and state constitutions from 1836 through the Constitution of 1876, the plural executive, amendment system and failed 1974 rewrite.", href: "/texas-politics/texas-constitutional-history" },
   { title: "Texas Voting Rights History", description: "Poll taxes, white primaries, women's suffrage, the Voting Rights Act, federal litigation and the changing legal framework for Texas voters.", href: "/texas-politics/voting-rights-history" },
@@ -43,9 +49,9 @@ export const Route = createFileRoute("/texas-politics/")({
     return {
       meta: [
         { title: "Texas Politics — Elections, Government & Political History" },
-        { name: "description", content: "Coverage of Texas elections, Republic and state-formation history, constitutional history, redistricting, voting rights, legislative districts, government, policy trackers, Texas law guides, official data sources, and political developments." },
+        { name: "description", content: "Coverage of Texas elections, Republic and state-formation history, political eras, constitutional history, redistricting, voting rights, legislative districts, government, policy trackers, Texas law guides, official data sources, and political developments." },
         { property: "og:title", content: "Texas Politics — Keep TX Red" },
-        { property: "og:description", content: "Texas elections, Republic and state-formation history, constitutional history, redistricting, voting rights, districts, government, legislative updates, policy trackers, law guides, official data, and political developments." },
+        { property: "og:description", content: "Texas elections, Republic and state-formation history, political eras, constitutional history, redistricting, voting rights, districts, government, legislative updates, policy trackers, law guides, official data, and political developments." },
         { property: "og:url", content: canonical },
         { property: "og:type", content: "website" },
         ...(topic ? [{ name: "robots", content: "noindex,follow" }] : []),
@@ -125,6 +131,9 @@ function TexasPoliticsPage() {
             </p>
             <p>
               KTR's <a href="/texas-politics/republic-of-texas-government-history" className="font-semibold text-primary underline underline-offset-4">Republic of Texas Government</a> authority cluster goes back to the institutional starting point: the 1836 presidency and Congress, the founding constitution, the capital fight, foreign recognition, national debt, annexation and the 1845–1846 transition from a sovereign republic to a state inside the United States.
+            </p>
+            <p>
+              The <a href="/texas-politics/texas-democratic-dominance-1876-1952" className="font-semibold text-primary underline underline-offset-4">Texas Political Eras</a> sequence fills the long bridge from the 1876 constitutional reset to modern realignment: Democratic dominance, Populist and Progressive insurgencies, Ferguson-era factional politics, the white-primary court fight, New Deal divisions and the civil-rights transformation of the electorate.
             </p>
             <p>
               KTR's <a href="/texas-politics/texas-constitutional-history" className="font-semibold text-primary underline underline-offset-4">Texas Constitutional History</a> explains why that power is divided in the first place: the sequence from the Republic constitution through the 1845, 1861, 1866, 1869 and 1876 charters, the post-Reconstruction reaction against concentrated authority, the plural executive and the amendment system voters still use today.
