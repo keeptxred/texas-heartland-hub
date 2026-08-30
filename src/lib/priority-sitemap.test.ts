@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   PRIORITY_SITEMAP_PATHS,
@@ -27,6 +28,10 @@ const requiredPriorityPaths = [
   "/news/texas-new-laws-2026",
 ] as const;
 
+const tracker = JSON.parse(
+  readFileSync("src/data/search-console-priority-urls.json", "utf8"),
+) as { siteUrl: string; maxUrls: number; urls: string[] };
+
 describe("priority sitemap crawl-budget contract", () => {
   it("stays intentionally small", () => {
     expect(PRIORITY_SITEMAP_PATHS.length).toBeGreaterThanOrEqual(20);
@@ -44,6 +49,14 @@ describe("priority sitemap crawl-budget contract", () => {
     for (const path of requiredPriorityPaths) {
       expect(PRIORITY_SITEMAP_PATHS).toContain(path);
     }
+  });
+
+  it("keeps the repository Search Console priority inventory in lockstep", () => {
+    const expected = PRIORITY_SITEMAP_PATHS.map((path) =>
+      path === "/" ? `${tracker.siteUrl}/` : `${tracker.siteUrl}${path}`,
+    );
+    expect(tracker.maxUrls).toBeGreaterThanOrEqual(expected.length);
+    expect(tracker.urls).toEqual(expected);
   });
 
   it("rejects low-value or unresolved inventory shapes", () => {
