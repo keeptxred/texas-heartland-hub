@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "juliedahlberg.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Julie Dahlberg's official Texas Senate District 21 campaign website as a discovery source for candidate portraits and campaign media. Do not approve or reuse any image without item-level identity, provenance, and a documented reusable-rights or editorial-permission basis.",
+    "searchHint": "Julie Dahlberg Texas Senate District 21 official campaign portrait media press",
+    "notes": "New source verified August 30, 2026. The campaign site identifies Dahlberg's 2026 Texas Senate District 21 candidacy, and TCTA independently links this domain from its candidate profile. Keep discovery-only until item-level rights are documented."
+  },
+  {
+    "domain": "leighfortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Leigh Wambsganss's official Texas Senate campaign website as a discovery source for candidate portraits, campaign media, and identity corroboration. Campaign-hosted images are not reusable by default; require item-level rights documentation before approval.",
+    "searchHint": "Leigh Wambsganss Texas Senate District 9 official campaign portrait media press",
+    "notes": "New source verified August 30, 2026. The site identifies Leigh Wambsganss and her Texas Senate campaign. A separately licensed Wikimedia Commons photograph is used for canonical portrait approval; this campaign domain remains discovery-only."
+  },
+  {
+    "domain": "medinademocrats.org",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use the Medina County Democrats candidate directory as a discovery bridge to verified local and legislative candidate identities, biographies, campaign links, and portrait leads. Do not reuse directory-hosted images without item-level provenance and documented rights or editorial permission.",
+    "searchHint": "site:medinademocrats.org 2026 Joe Paz Herrera Texas Senate District 24 candidate portrait campaign",
+    "notes": "New discovery source verified August 30, 2026. The current county-party site identifies Joe Paz Herrera as the Texas Senate District 24 candidate and displays a candidate-specific image. Discovery-only pending rights verification."
+  }
+]
