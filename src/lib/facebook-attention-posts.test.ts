@@ -6,6 +6,7 @@ import {
   selectKtrFacebookAttentionPost,
 } from "@/lib/facebook-attention-posts";
 import {
+  KTR_FACEBOOK_ATTENTION_IMAGE_URL,
   formatKtrFacebookPublishedAttentionMessage,
   ktrFacebookAttentionTrafficUrl,
   selectKtrFacebookAttentionPostForSlot,
@@ -21,6 +22,11 @@ const STATIC_TRAFFIC_PATHS = new Set([
 describe("KTR Facebook attention posts", () => {
   it("keeps a deep enough rotation for social publishing", () => {
     expect(KTR_FACEBOOK_ATTENTION_POSTS.length).toBeGreaterThanOrEqual(125);
+  });
+
+  it("requires an HTTPS image for every attention post", () => {
+    expect(KTR_FACEBOOK_ATTENTION_IMAGE_URL).toMatch(/^https:\/\//);
+    expect(KTR_FACEBOOK_ATTENTION_IMAGE_URL).toBe("https://keeptxred.com/og/default.jpg");
   });
 
   it("does not contain duplicate titles or messages", () => {
