@@ -78,6 +78,18 @@ const layers = [
   },
 ] as const;
 
+const municipalAuthorityLinks = [
+  ["Municipal government history", "/texas-government/texas-municipal-government-history"],
+  ["Home-rule vs. general-law cities", "/texas-government/home-rule-general-law-cities-history"],
+  ["Mayors and city councils", "/texas-government/mayor-city-council-history"],
+  ["City manager government", "/texas-government/city-manager-government-history"],
+  ["Municipal courts", "/texas-government/texas-municipal-courts-history"],
+  ["Special districts", "/texas-government/texas-special-district-government-history"],
+  ["Municipal elections and representation", "/texas-government/municipal-elections-representation-history"],
+  ["Municipal taxes, budgets and debt", "/texas-government/municipal-finance-tax-debt-history"],
+  ["State-local preemption tracker", "/policy/local-preemption-regulatory-consistency"],
+] as const;
+
 const sourceStarts = [
   ["Texas Constitution and Statutes", "https://statutes.capitol.texas.gov/"],
   ["Texas Comptroller — Special Purpose Districts", "https://comptroller.texas.gov/transparency/local/special-purpose.php"],
@@ -101,7 +113,7 @@ export const Route = createFileRoute("/issues/texas-local-government-handbook")(
     scripts: [{ type: "application/ld+json", children: JSON.stringify({
       "@context": "https://schema.org", "@type": "Article", headline: "Texas Local Government Handbook",
       description: "A source-first guide to the overlapping governments that control local taxes, services, infrastructure, schools and regulation in Texas.",
-      mainEntityOfPage: PAGE_URL, datePublished: "2026-08-22", dateModified: "2026-08-22",
+      mainEntityOfPage: PAGE_URL, datePublished: "2026-08-22", dateModified: "2026-08-30",
       author: { "@type": "Organization", name: "Keep TX Red", url: SITE_URL }, publisher: { "@type": "Organization", name: "Keep TX Red", url: SITE_URL },
     }) }],
   }),
@@ -133,6 +145,13 @@ function TexasLocalGovernmentHandbook() {
           </section>
         ))}
       </div>
+
+      <section className="mt-14 border-t pt-8">
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Municipal authority library</p>
+        <h2 className="mt-2 font-display text-3xl tracking-tight">Go deeper on Texas city government</h2>
+        <p className="mt-3 max-w-3xl leading-7 text-muted-foreground">These evergreen authority guides add the constitutional, historical and institutional layer behind the practical handbook. Use them to identify where municipal power came from, who exercises it and where state law can override it.</p>
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{municipalAuthorityLinks.map(([label, href]) => <a key={href} href={href} className="border p-4 font-semibold text-primary hover:border-primary">{label} →</a>)}</div>
+      </section>
 
       <section className="mt-14 border-t pt-8">
         <h2 className="font-display text-3xl tracking-tight">Primary-source starting points</h2>
