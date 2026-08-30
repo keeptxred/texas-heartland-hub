@@ -21,6 +21,7 @@ const PRIORITY_ELECTION_PATHS = [
   "/elections/forecast",
   "/elections/results",
   "/elections/voting",
+  "/elections/methodology",
 ] as const;
 
 export const Route = createFileRoute("/sitemap-elections.xml")({
