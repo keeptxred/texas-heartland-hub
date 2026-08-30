@@ -16,14 +16,13 @@ const WORKFLOW_PATH = ".github/workflows/auto-facebook-posts.yml";
 const ARTICLE_ENDPOINT = "https://keeptxred-site.freddy-coppola.workers.dev/api/public/hooks/auto-facebook-post";
 const DIVERSITY_WINDOW_HOURS = 30;
 
-type RecentQueueRow = {
-  content_package_id: string;
-  published_time: string | null;
-};
-
-type RecentPackageRow = {
-  id: string;
-  source_title: string;
+type RecentQueueRow = { content_package_id: string; published_time: string | null };
+type RecentPackageRow = { id: string; source_title: string };
+type ChatGptImagePayload = {
+  title?: string;
+  message?: string;
+  image_base64?: string;
+  content_type?: string;
 };
 
 function bearerToken(request: Request): string | null {
@@ -46,9 +45,7 @@ async function loadRecentFacebookPosts(db: any): Promise<RecentFacebookPost[]> {
 
   const queueRows = (rawQueueRows ?? []) as RecentQueueRow[];
   const packageIds = [...new Set(queueRows.map((row) => row.content_package_id).filter(Boolean))];
-  if (packageIds.length === 0) {
-    return queueRows.map((row) => ({ title: "Facebook post", published_at: row.published_time }));
-  }
+  if (packageIds.length === 0) return queueRows.map((row) => ({ title: "Facebook post", published_at: row.published_time }));
 
   const { data: rawPackages, error: packageError } = await db
     .from("content_packages")
@@ -56,60 +53,36 @@ async function loadRecentFacebookPosts(db: any): Promise<RecentFacebookPost[]> {
     .in("id", packageIds);
   if (packageError) throw new Error(packageError.message);
 
-  const titleByPackage = new Map<string, string>(
-    ((rawPackages ?? []) as RecentPackageRow[]).map((row) => [row.id, row.source_title]),
-  );
-  return queueRows.map((row) => ({
-    title: titleByPackage.get(row.content_package_id) ?? "Facebook post",
-    published_at: row.published_time,
-  }));
+  const titleByPackage = new Map<string, string>(((rawPackages ?? []) as RecentPackageRow[]).map((row) => [row.id, row.source_title]));
+  return queueRows.map((row) => ({ title: titleByPackage.get(row.content_package_id) ?? "Facebook post", published_at: row.published_time }));
 }
 
 async function forwardArticlePost(token: string): Promise<Response> {
   const response = await fetch(ARTICLE_ENDPOINT, {
     method: "POST",
-    headers: {
-      accept: "application/json",
-      Authorization: `Bearer ${token}`,
-      "X-KTR-Facebook-Mode": "manual",
-    },
+    headers: { accept: "application/json", Authorization: `Bearer ${token}`, "X-KTR-Facebook-Mode": "manual" },
   });
   const text = await response.text();
-  return new Response(text, {
-    status: response.status,
-    headers: { "content-type": response.headers.get("content-type") ?? "application/json" },
-  });
+  return new Response(text, { status: response.status, headers: { "content-type": response.headers.get("content-type") ?? "application/json" } });
 }
 
 async function runSmartKtrFacebookPost(request: Request): Promise<Response> {
   const token = bearerToken(request);
-  if (!token) {
-    return Response.json({ ok: false, error: "Missing GitHub Actions OIDC token" }, { status: 401 });
-  }
+  if (!token) return Response.json({ ok: false, error: "Missing GitHub Actions OIDC token" }, { status: 401 });
 
   try {
-    await verifyGitHubActionsOidc({
-      token,
-      audience: OIDC_AUDIENCE,
-      repository: REPOSITORY,
-      workflowPath: WORKFLOW_PATH,
-    });
+    await verifyGitHubActionsOidc({ token, audience: OIDC_AUDIENCE, repository: REPOSITORY, workflowPath: WORKFLOW_PATH });
   } catch (error) {
-    return Response.json(
-      {
-        ok: false,
-        error: "GitHub Actions OIDC verification failed",
-        detail: error instanceof Error ? error.message : String(error),
-      },
-      { status: 403 },
-    );
+    return Response.json({ ok: false, error: "GitHub Actions OIDC verification failed", detail: error instanceof Error ? error.message : String(error) }, { status: 403 });
   }
 
   const mode = request.headers.get("x-ktr-facebook-mode")?.trim().toLowerCase() || "scheduled";
-  // Manual workflow dispatch retains the existing article/guide behavior. The
-  // attention mix is only used by scheduled runs so manual publication remains
-  // predictable for operators.
   if (mode === "manual") return forwardArticlePost(token);
+
+  let chatGptPayload: ChatGptImagePayload | null = null;
+  if ((request.headers.get("content-type") ?? "").toLowerCase().includes("application/json")) {
+    chatGptPayload = (await request.json().catch(() => null)) as ChatGptImagePayload | null;
+  }
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const db = supabaseAdmin as any;
@@ -119,22 +92,10 @@ async function runSmartKtrFacebookPost(request: Request): Promise<Response> {
   try {
     recentPosts = await loadRecentFacebookPosts(db);
   } catch (error) {
-    return Response.json(
-      {
-        ok: false,
-        posted: false,
-        error: "Failed to load recent Facebook history",
-        detail: error instanceof Error ? error.message : String(error),
-      },
-      { status: 500 },
-    );
+    return Response.json({ ok: false, posted: false, error: "Failed to load recent Facebook history", detail: error instanceof Error ? error.message : String(error) }, { status: 500 });
   }
 
-  const decision = facebookPostingDecision({
-    now: new Date(),
-    seed,
-    recentPosts,
-  });
+  const decision = facebookPostingDecision({ now: new Date(), seed, recentPosts });
   if (!decision.shouldPost) {
     return Response.json({
       ok: true,
@@ -150,26 +111,28 @@ async function runSmartKtrFacebookPost(request: Request): Promise<Response> {
   }
 
   if (shouldUseKtrFacebookAttentionSlot(decision.postsToday)) {
+    const suppliedImage = chatGptPayload?.title && chatGptPayload?.message && chatGptPayload?.image_base64 && chatGptPayload?.content_type
+      ? {
+          title: chatGptPayload.title,
+          message: chatGptPayload.message,
+          imageBase64: chatGptPayload.image_base64,
+          contentType: chatGptPayload.content_type,
+        }
+      : null;
     const attentionResponse = await publishKtrFacebookAttentionPost({
       db,
       seed,
       dateKey: decision.dateKey,
       slot: decision.postsToday,
       mode,
+      suppliedImage,
     });
     if (attentionResponse) return attentionResponse;
   }
 
-  // Article slots keep the existing ranked recent-article publisher and its
-  // production-indexable durable-guide fallback. Forward as manual so the
-  // inner endpoint does not apply the schedule a second time.
   return forwardArticlePost(token);
 }
 
 export const Route = createFileRoute("/api/public/hooks/auto-facebook-post-smart")({
-  server: {
-    handlers: {
-      POST: async ({ request }) => runSmartKtrFacebookPost(request),
-    },
-  },
+  server: { handlers: { POST: async ({ request }) => runSmartKtrFacebookPost(request) } },
 });
