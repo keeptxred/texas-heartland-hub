@@ -1,0 +1,38 @@
+[
+  {
+    "domain": "raycallasfortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Ray Callas's official campaign website and press pages as discovery sources for candidate-supplied portraits and campaign media. Do not approve or reuse any image without item-level provenance plus an explicit reusable-rights basis, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Ray Callas Texas House District 21 official campaign portrait press media",
+    "notes": "New source discovered August 30, 2026. TCTA identifies raycallasfortexas.com as Ray Callas's campaign website, and the campaign maintains a dedicated press section. Keep discovery-only unless an individual image has documented reuse permission or candidate-supplied newsroom provenance."
+  },
+  {
+    "domain": "lizramosfortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Liz Ramos's official campaign website as a discovery source for candidate-supplied portraits and media. Do not approve or reuse any image without item-level provenance plus an explicit reusable-rights basis, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Liz Ramos Texas House District 135 official campaign portrait media press",
+    "notes": "New source discovered August 30, 2026 from the Harris County GOP 2026 candidate directory for the currently missing-photo HD135 candidate. Keep discovery-only and preserve item-level rights review."
+  },
+  {
+    "domain": "david4texas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use David Flores's official campaign website as a discovery source for candidate-supplied portraits and media. Do not approve or reuse any image without item-level provenance plus an explicit reusable-rights basis, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "David Flores Texas House District 144 official campaign portrait media press",
+    "notes": "New source discovered August 30, 2026 from the Harris County GOP 2026 candidate directory for the currently missing-photo HD144 candidate. Keep discovery-only and preserve item-level rights review."
+  },
+  {
+    "domain": "alexandriabutlercampaign.org",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Alexandria Nicole Butler's official campaign website as a discovery source for candidate-supplied portraits and media. Do not approve or reuse any image without item-level provenance plus an explicit reusable-rights basis, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Alexandria Nicole Butler Texas House District 146 official campaign portrait media press",
+    "notes": "New source discovered August 30, 2026 from the Harris County GOP 2026 candidate directory for the currently missing-photo HD146 candidate. Keep discovery-only and preserve item-level rights review."
+  }
+]
