@@ -1,6 +1,24 @@
-import type { GovernmentHistoryAuthorityPage as GovernmentHistoryPageData } from "@/data/texas-government-history-authority";
+import type { GovernmentHistoryAuthorityPage as GovernmentHistoryPageData, GovernmentHistoryLink } from "@/data/texas-government-history-authority";
 
 const SITE_URL = "https://keeptxred.com";
+const POLICING_COMPARISON_LINK: GovernmentHistoryLink = {
+  href: "/news/texas-policing-agencies-compared",
+  label: "Texas policing agencies compared",
+  description: "Compare city police, sheriffs, constables, DPS, Texas Rangers, school police, university police and specialized Texas peace officers.",
+};
+
+const POLICING_RELATED_SLUGS = new Set([
+  "texas-county-government-history",
+  "texas-county-sheriff-history",
+  "justice-of-the-peace-and-constable-history",
+]);
+
+export function getGovernmentHistoryRelatedLinks(page: GovernmentHistoryPageData) {
+  if (!POLICING_RELATED_SLUGS.has(page.slug) || page.relatedLinks.some((link) => link.href === POLICING_COMPARISON_LINK.href)) {
+    return page.relatedLinks;
+  }
+  return [...page.relatedLinks, POLICING_COMPARISON_LINK];
+}
 
 export function governmentHistoryAuthorityHead(page: GovernmentHistoryPageData) {
   const canonical = `${SITE_URL}/texas-government/${page.slug}`;
@@ -69,6 +87,8 @@ export function governmentHistoryAuthorityHead(page: GovernmentHistoryPageData) 
 }
 
 export function GovernmentHistoryAuthorityPage({ page }: { page: GovernmentHistoryPageData }) {
+  const relatedLinks = getGovernmentHistoryRelatedLinks(page);
+
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
       <nav className="mb-6 text-sm text-muted-foreground" aria-label="Breadcrumb">
@@ -110,7 +130,7 @@ export function GovernmentHistoryAuthorityPage({ page }: { page: GovernmentHisto
 
       <section className="mt-12" aria-labelledby={`${page.slug}-related`}>
         <h2 id={`${page.slug}-related`} className="text-3xl font-bold">Continue through the Texas government authority network</h2>
-        <div className="mt-6 grid gap-4 md:grid-cols-2">{page.relatedLinks.map((link) => <a key={link.href} href={link.href} className="rounded-xl border bg-card p-5 transition-colors hover:border-primary"><h3 className="font-bold text-primary">{link.label} →</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{link.description}</p></a>)}</div>
+        <div className="mt-6 grid gap-4 md:grid-cols-2">{relatedLinks.map((link) => <a key={link.href} href={link.href} className="rounded-xl border bg-card p-5 transition-colors hover:border-primary"><h3 className="font-bold text-primary">{link.label} →</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{link.description}</p></a>)}</div>
       </section>
 
       <section className="mt-12 rounded-2xl border bg-muted/20 p-6 md:p-8" aria-labelledby={`${page.slug}-faq`}>
