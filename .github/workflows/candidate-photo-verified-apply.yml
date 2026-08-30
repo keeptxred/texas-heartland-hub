@@ -9,6 +9,8 @@ on:
       - ".github/workflows/candidate-photo-verified-apply.yml"
       - "scripts/elections/apply-authoritative-candidate-filing-status.mjs"
       - "scripts/elections/candidate-photo-enrichment.mjs"
+      - "scripts/elections/remove-generic-candidate-photo-entries.mjs"
+      - "scripts/elections/apply-official-senate-photo-replacements-2026-08-30.mjs"
       - "scripts/elections/merge-approved-candidate-photo-assets.mjs"
       - "scripts/elections/apply-direct-web-photo-findings.mjs"
       - "scripts/elections/apply-verified-photo-findings-2026-07-31.mjs"
@@ -79,6 +81,10 @@ jobs:
           done
       - name: Apply verified Texas appellate portrait wave 2
         run: node scripts/elections/apply-official-judicial-photo-findings-2026-08-21-wave2.mjs
+      - name: Remove known generic and placeholder candidate images
+        run: node scripts/elections/remove-generic-candidate-photo-entries.mjs
+      - name: Apply verified Texas Senate member portrait replacements
+        run: node scripts/elections/apply-official-senate-photo-replacements-2026-08-30.mjs
       - name: Apply canonical verified-photo manifest
         run: node scripts/elections/candidate-photo-enrichment.mjs --apply
 
@@ -86,7 +92,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PR_TITLE: Apply verified candidate photos to canonical manifest
-          PR_BODY: Applies authoritative candidate filing-status reconciliation and already verified candidate-photo assets/waves to the canonical candidate dataset. Rejected or withdrawn filings remain in the dataset but are excluded from photo-coverage math only through supported lifecycle fields. No discovery-only or review-only image is promoted. Existing provenance, rights, validation, protected verify, and deployment gates remain unchanged.
+          PR_BODY: Applies authoritative candidate filing-status reconciliation and already verified candidate-photo assets/waves to the canonical candidate dataset. Rejected or withdrawn filings remain in the dataset but are excluded from photo-coverage math only through supported lifecycle fields. Known generic and placeholder images are removed before coverage is calculated, and verified Texas Senate member portraits replace the historical generic Senate social image when the official image validates at runtime. No discovery-only or review-only image is promoted. Existing provenance, rights, validation, protected verify, and deployment gates remain unchanged.
           COMMIT_MESSAGE: Apply verified candidate photos and filing status
         shell: bash
         run: |
@@ -95,6 +101,7 @@ jobs:
             src/data/elections/2026/candidate-photos.json
             src/data/elections/2026/candidates.json
             artifacts/elections/candidate-photo-report.json
+            artifacts/elections/candidate-photo-generic-image-audit.json
             artifacts/elections/candidate-photo-eligibility-reconciliation.json
           )
           if git diff --quiet -- "${TRACKED[@]}"; then
@@ -102,7 +109,7 @@ jobs:
             exit 0
           fi
           changed="$(git status --short | awk '{print $2}')"
-          unexpected_files="$(grep -vE '^(src/data/elections/2026/(candidate-photos|candidates)\.json|artifacts/elections/candidate-photo-(report|eligibility-reconciliation)\.json)$' <<<"$changed" || true)"
+          unexpected_files="$(grep -vE '^(src/data/elections/2026/(candidate-photos|candidates)\.json|artifacts/elections/candidate-photo-(report|generic-image-audit|eligibility-reconciliation)\.json)$' <<<"$changed" || true)"
           if [[ -n "$unexpected_files" ]]; then
             echo "Refusing to publish files outside the verified candidate-photo allowlist:" >&2
             echo "$unexpected_files" >&2
