@@ -52,6 +52,17 @@ const findings = [
     permissionBasis: "Wikimedia Commons identifies the subject as Bobby Pulido and licenses the cropped portrait under Creative Commons Attribution 4.0 International; the file is extracted from a Flickr image whose reusable Creative Commons license was independently reviewed on Commons.",
     usageStatus: "approved",
     discoveryMethod: "wikimedia-verified-cc-by-candidate-photo"
+  },
+  {
+    candidateId: "candidate-frederick-d-haynes-iii-democratic-race-2026-us-house-30",
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Frederick_Haynes_III_at_Calvary_Baptist_Church_%28cropped%29.png",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:Frederick_Haynes_III_at_Calvary_Baptist_Church_(cropped).png",
+    altText: "Portrait of Frederick D. Haynes III",
+    credit: "Calvary Baptist Church Jamaica, NY via Wikimedia Commons",
+    license: "CC BY 3.0",
+    permissionBasis: "Wikimedia Commons identifies the subject as Frederick Haynes III and licenses this cropped image under Creative Commons Attribution 3.0 Unported, derived from a pre-August-2025 YouTube upload released under the Creative Commons license option.",
+    usageStatus: "approved",
+    discoveryMethod: "wikimedia-verified-cc-by-candidate-photo"
   }
 ];
 
