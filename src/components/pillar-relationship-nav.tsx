@@ -48,12 +48,29 @@ const PILLAR_ISSUE_GUIDES: Partial<Record<ContentPillarSlug, readonly string[]>>
   ],
 };
 
+type FeaturedArticle = {
+  href: string;
+  title: string;
+  dek: string;
+};
+
+export const PILLAR_FEATURED_ARTICLES: Partial<Record<ContentPillarSlug, readonly FeaturedArticle[]>> = {
+  "texas-law-enforcement-public-safety": [
+    {
+      href: "/news/texas-policing-agencies-compared",
+      title: "Texas Policing Agencies Compared",
+      dek: "Police, sheriffs, constables, DPS, Texas Rangers, ISD police, university police and game wardens—who they work for, where they operate and how their authority differs.",
+    },
+  ],
+};
+
 export function PillarRelationshipNav({ pillarSlug }: { pillarSlug: ContentPillarSlug }) {
   const pillar = getContentPillar(pillarSlug);
   const related = getRelatedContentPillars(pillarSlug);
   const issueGuides = (PILLAR_ISSUE_GUIDES[pillarSlug] ?? [])
     .map((slug) => issueGuideBySlug[slug])
     .filter((guide): guide is IssueGuide => Boolean(guide) && isIssueGuideIndexable(guide));
+  const featuredArticles = PILLAR_FEATURED_ARTICLES[pillarSlug] ?? [];
 
   return (
     <section className="mt-10 max-w-4xl border-t border-border pt-6" aria-labelledby={`${pillarSlug}-coverage-map`}>
@@ -71,10 +88,16 @@ export function PillarRelationshipNav({ pillarSlug }: { pillarSlug: ContentPilla
         </ul>
       </div>
 
-      {issueGuides.length > 0 ? (
+      {issueGuides.length > 0 || featuredArticles.length > 0 ? (
         <nav className="mt-5" aria-label={`Issue guides for ${pillar.title}`}>
           <h3 className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">Issue guides & explainers</h3>
           <div className="mt-2 grid gap-2 sm:grid-cols-2">
+            {featuredArticles.map((article) => (
+              <a key={article.href} href={article.href} className="border border-border bg-muted/20 px-3 py-3 transition hover:border-primary">
+                <span className="block text-sm font-semibold text-primary">{article.title} →</span>
+                <span className="mt-1 block text-xs leading-5 text-muted-foreground">{article.dek}</span>
+              </a>
+            ))}
             {issueGuides.map((guide) => (
               <a key={guide.slug} href={`/issues/${guide.slug}`} className="border border-border bg-muted/20 px-3 py-3 transition hover:border-primary">
                 <span className="block text-sm font-semibold text-primary">{guide.title} →</span>
