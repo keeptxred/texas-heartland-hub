@@ -32,6 +32,18 @@ const findings = [
     usageStatus: "approved",
     discoveryMethod: "official-campaign-biography",
     discoveredAt: "2026-08-30T17:20:00.000Z"
+  },
+  {
+    candidateId: "candidate-ray-callas-republican-race-2026-texas-house-21",
+    imageUrl: "https://images.squarespace-cdn.com/content/v1/68a8a06803c3f043bcfd5e70/abd42aab-81e3-49a8-9144-a447d2924ed1/Untitled%2Bdesign%2B%281%29.png",
+    sourceUrl: "https://www.raycallasfortexas.com/",
+    altText: "Ray Callas, Republican candidate for Texas House District 21",
+    credit: "Ray Callas for Texas campaign",
+    license: null,
+    permissionBasis: "Candidate-identifying portrait published directly on Ray Callas's official Texas House District 21 campaign homepage beside the campaign biography identifying him as Dr. Ray Callas for Texas House District 21. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    usageStatus: "approved",
+    discoveryMethod: "official-campaign-profile",
+    discoveredAt: "2026-08-30T17:24:00.000Z"
   }
 ];
 
