@@ -27,6 +27,10 @@ const VALUE_CLASSES = {
     "/texas-government/governor-history", "/texas-government/lieutenant-governor-history",
     "/texas-government/speaker-of-the-house-history", "/texas-government/texas-supreme-court-history",
     "/texas-government/court-of-criminal-appeals-history", "/texas-government/judicial-selection-elections",
+    "/texas-government/texas-county-government-history", "/texas-government/commissioners-court-history",
+    "/texas-government/county-judge-history", "/texas-government/county-commissioner-history",
+    "/texas-government/county-sheriff-history", "/texas-government/county-district-clerk-history",
+    "/texas-government/tax-assessor-collector-history", "/texas-government/justice-of-the-peace-constable-history",
   ],
   trustOrCommerce: [
     "/about", "/contact", "/privacy", "/terms-of-service", "/shipping-policy", "/return-refund-policy", "/editorial-standards",
@@ -75,6 +79,14 @@ describe("AdSense static sitemap value classification", () => {
       "/texas-government/texas-supreme-court-history",
       "/texas-government/court-of-criminal-appeals-history",
       "/texas-government/judicial-selection-elections",
+      "/texas-government/texas-county-government-history",
+      "/texas-government/commissioners-court-history",
+      "/texas-government/county-judge-history",
+      "/texas-government/county-commissioner-history",
+      "/texas-government/county-sheriff-history",
+      "/texas-government/county-district-clerk-history",
+      "/texas-government/tax-assessor-collector-history",
+      "/texas-government/justice-of-the-peace-constable-history",
     ]));
   });
 
