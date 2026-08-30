@@ -1,5 +1,17 @@
 [
   {
+    "candidateId": "candidate-a-yonna-kellum-democratic-race-2026-texas-house-150",
+    "imageUrl": "https://beta2.communityimpact.com/uploads/images/qa/171623_2721.jpg",
+    "sourceUrl": "https://communityimpact.com/houston/spring-klein/election/2026/01/29/qa-meet-the-democratic-candidates-for-the-house-district-150-race/",
+    "altText": "A'Yonna Kellum, Democratic candidate for Texas House District 150",
+    "credit": "A'Yonna Kellum campaign, via Community Impact",
+    "license": null,
+    "permissionBasis": "Community Impact's 2026 Texas House District 150 candidate Q&A explicitly states that all candidate photos were submitted by the respective candidates. This candidate-specific image appears with A'Yonna Kellum's profile and is used only for editorial candidate identification with candidate/newsroom attribution and an exact source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "candidate-supplied-newsroom-photo",
+    "discoveredAt": "2026-08-30T17:20:00.000Z"
+  },
+  {
     "candidateId": "candidate-adrian-reyna-democratic-race-2026-texas-house-125",
     "imageUrl": "https://npr.brightspotcdn.com/dims4/default/813a4a6/2147483647/strip/true/crop/806x461%2B0%2B0/resize/880x503%21/quality/90/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2Ffa%2F25%2F4248ee78495ababba5d9058fe62c%2Fimg-0685.jpeg",
     "sourceUrl": "https://www.tpr.org/government-politics/2026-05-26/saisd-teacher-labor-activist-adrian-reyna-holds-commanding-early-lead-in-democratic-runoff-for-texas-house-district-125",
@@ -58,6 +70,18 @@
     "usageStatus": "approved",
     "discoveryMethod": "official-state-party-candidate-slate",
     "discoveredAt": "2026-08-22T12:06:46.662Z"
+  },
+  {
+    "candidateId": "candidate-alexandria-nicole-butler-republican-race-2026-texas-house-146",
+    "imageUrl": "https://alexandriabutlercampaign.org/wp-content/uploads/2025/04/Butler-post-800x533-1.jpg",
+    "sourceUrl": "https://alexandriabutlercampaign.org/",
+    "altText": "Alexandria Nicole Butler, Republican candidate for Texas House District 146",
+    "credit": "Alex Butler campaign",
+    "license": null,
+    "permissionBasis": "Candidate-identifying image is published directly on Alexandria Butler's campaign website beside the campaign biography naming Alexandria Butler. The Harris County GOP 2026 candidate directory identifies this campaign domain for Alexandria Nicole Butler in Texas House District 146. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-profile",
+    "discoveredAt": "2026-08-30T17:28:00.000Z"
   },
   {
     "candidateId": "candidate-alfred-molison-jr-green-race-2026-agriculture-commissioner",
@@ -972,6 +996,18 @@
     "discoveredAt": "2026-08-26T09:46:34.294Z"
   },
   {
+    "candidateId": "candidate-david-flores-republican-race-2026-texas-house-144",
+    "imageUrl": "https://img1.wsimg.com/isteam/ip/38ca4c8b-3b7a-4d65-a9e7-f26f927e4a5d/Copy%20of%20David%20Flores.png",
+    "sourceUrl": "https://david4texas.com/about",
+    "altText": "David Flores, Republican candidate for Texas House District 144",
+    "credit": "David Flores for Texas campaign",
+    "license": null,
+    "permissionBasis": "Candidate-identifying campaign image is hosted directly by David Flores's official campaign website. The campaign site identifies David Flores as a candidate for Texas House District 144, and the Harris County GOP and TCTA candidate directories independently link david4texas.com to the same 2026 HD144 candidate. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-profile",
+    "discoveredAt": "2026-08-30T17:35:00.000Z"
+  },
+  {
     "candidateId": "candidate-david-lowe-republican-race-2026-texas-house-91",
     "imageUrl": "https://house.texas.gov/images/members/4643.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/91",
@@ -1406,6 +1442,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:53:11.175Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-jacqueline-jacky-hernandez-democratic-race-2026-texas-house-21",
+    "imageUrl": "https://i.imgur.com/7NnZwe9.jpeg",
+    "sourceUrl": "https://votejacky21.com/about",
+    "altText": "Jacqueline Jacky Hernandez, Democratic candidate for Texas House District 21",
+    "credit": "Jacqueline Jacky Hernandez for Texas House District 21 campaign",
+    "license": null,
+    "permissionBasis": "Candidate-identifying headshot published directly on Jacqueline 'Jacky' Hernandez's official Texas House District 21 campaign biography page, where the campaign identifies her by name and states that she is running for State Representative. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-biography",
+    "discoveredAt": "2026-08-30T17:20:00.000Z"
   },
   {
     "candidateId": "candidate-jake-ellzey-republican-race-2026-us-house-6",
@@ -2038,6 +2086,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-leigh-wambsganss-republican-race-2026-texas-senate-9",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Leigh_Wambsganss_%2853804969676%29.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Leigh_Wambsganss_(53804969676).jpg",
+    "altText": "Leigh Wambsganss, Republican candidate for Texas Senate District 9",
+    "credit": "Gage Skidmore via Wikimedia Commons",
+    "license": "CC BY-SA 2.0",
+    "permissionBasis": "Wikimedia Commons file page documents the photograph as CC BY-SA 2.0, originally published by photographer Gage Skidmore on Flickr and license-verified by FlickreviewR; the file description identifies Leigh Wambsganss as the subject.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-cc-by-sa-2.0",
+    "discoveredAt": "2026-08-30T16:46:00.000Z"
+  },
+  {
     "candidateId": "candidate-linda-garcia-democratic-race-2026-texas-house-107",
     "imageUrl": "https://house.texas.gov/images/members/4485.jpg?v=3",
     "sourceUrl": "https://house.texas.gov/members/107",
@@ -2048,6 +2108,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:52:25.890Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-liz-ramos-republican-race-2026-texas-house-135",
+    "imageUrl": "https://storage.mlcdn.com/account_image/1376546/Ml0DfonkYQ8l8gLIJr3n0SPkHHc6o9gnkl7uoyho.jpg",
+    "sourceUrl": "https://lizramosfortexas.com/",
+    "altText": "Liz Ramos, Republican candidate for Texas House District 135",
+    "credit": "Liz Ramos for Texas campaign",
+    "license": null,
+    "permissionBasis": "Candidate-identifying headshot is published directly at the start of the About Liz Ramos section on the official Liz Ramos campaign website, which explicitly identifies her as the Republican candidate for Texas House District 135. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-biography",
+    "discoveredAt": "2026-08-30T17:30:00.000Z"
   },
   {
     "candidateId": "candidate-lizzie-pannill-fletcher-democratic-race-2026-us-house-7",
@@ -2406,6 +2478,18 @@
     "discoveredAt": "2026-08-22T12:06:46.375Z"
   },
   {
+    "candidateId": "candidate-moniqua-s-scott-democratic-race-2026-texas-house-15",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/68e6f12b33e3341b28415264/faef0d88-a67e-4874-ae74-22afdbf60ee6/M-83.jpg",
+    "sourceUrl": "https://www.scottforhd15.com/",
+    "altText": "Moniqua S. Scott, Democratic candidate for Texas House District 15",
+    "credit": "Moniqua S. Scott for Texas House District 15 campaign",
+    "license": null,
+    "permissionBasis": "Candidate-specific image is published on Moniqua S. Scott's official Texas House District 15 campaign homepage immediately following the campaign's Meet Moniqua biography, which identifies her and her HD15 candidacy. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-biography",
+    "discoveredAt": "2026-08-30T17:28:00.000Z"
+  },
+  {
     "candidateId": "candidate-montserrat-garibay-democratic-race-2026-texas-house-49",
     "imageUrl": "https://images.squarespace-cdn.com/content/v1/68ed224f5e7bd548437f5a86/833a753d-65c5-45f1-af79-30c96d746d44/MONTSERRAT%2B%281%29.png",
     "sourceUrl": "https://www.montserratfortexas.com/",
@@ -2592,6 +2676,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-pete-flores-republican-race-2026-texas-senate-24",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Pete_Flores.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Pete_Flores.jpg",
+    "altText": "Pete Flores, Republican candidate for Texas Senate District 24",
+    "credit": "The Trey Blocker Show via Wikimedia Commons",
+    "license": "CC BY 3.0",
+    "permissionBasis": "Wikimedia Commons file page documents the image as Creative Commons Attribution 3.0 Unported, sourced from a CC-licensed 2019 video and identifying the subject as Texas State Senator Pete Flores.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-cc-by-3.0",
+    "discoveredAt": "2026-08-30T16:46:00.000Z"
+  },
+  {
     "candidateId": "candidate-pete-sessions-republican-race-2026-us-house-17",
     "imageUrl": "https://sessions.house.gov/index.cfm?File_id=544C8E78-63A9-4FE3-8D3E-2BE6533EF0D0&a=Files.Serve",
     "sourceUrl": "https://sessions.house.gov/about",
@@ -2672,6 +2768,18 @@
     "usageStatus": "approved",
     "discoveryMethod": "official-us-house-biography",
     "discoveredAt": "2026-08-22T12:06:46.375Z"
+  },
+  {
+    "candidateId": "candidate-ray-callas-republican-race-2026-texas-house-21",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/68a8a06803c3f043bcfd5e70/abd42aab-81e3-49a8-9144-a447d2924ed1/Untitled%2Bdesign%2B%281%29.png",
+    "sourceUrl": "https://www.raycallasfortexas.com/",
+    "altText": "Ray Callas, Republican candidate for Texas House District 21",
+    "credit": "Ray Callas for Texas campaign",
+    "license": null,
+    "permissionBasis": "Candidate-identifying portrait published directly on Ray Callas's official Texas House District 21 campaign homepage beside the campaign biography identifying him as Dr. Ray Callas for Texas House District 21. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-profile",
+    "discoveredAt": "2026-08-30T17:24:00.000Z"
   },
   {
     "candidateId": "candidate-rhetta-andrews-bowers-democratic-race-2026-texas-house-113",
@@ -3290,6 +3398,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:52:28.621Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-trever-nehls-republican-race-2026-us-house-22",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flickr_-_The_U.S._Army_-_Turban_presentation.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Flickr_-_The_U.S._Army_-_Turban_presentation.jpg",
+    "altText": "Trever Nehls during U.S. Army service in Afghanistan",
+    "credit": "U.S. Air Force Staff Sgt. Brian Ferguson via Wikimedia Commons",
+    "license": "Public domain — U.S. federal government work",
+    "permissionBasis": "Wikimedia Commons identifies the photograph as a U.S. Air Force work in the public domain and explicitly identifies Maj. Trever Nehls as the subject; the candidate's military identity is independently corroborated by current coverage of his Texas 22nd District candidacy.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-public-domain-us-military",
+    "discoveredAt": "2026-08-30T16:54:00.000Z"
   },
   {
     "candidateId": "candidate-trey-martinez-fischer-democratic-race-2026-texas-house-116",
