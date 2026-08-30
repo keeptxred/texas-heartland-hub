@@ -46,9 +46,10 @@ for (const entry of manifest) {
     });
   }
   if (entry.usageStatus === "approved" && isKnownGenericImage(entry.imageUrl)) {
-    errors.push({
+    warnings.push({
       candidateId: entry.candidateId,
-      issue: `Approved photo resolves to a known generic or placeholder image: ${entry.imageUrl}`,
+      imageUrl: entry.imageUrl,
+      issue: "Approved manifest entry is a known generic or placeholder image. It is excluded from coverage and will be removed by the cleanup step.",
     });
     continue;
   }
@@ -143,7 +144,7 @@ if (errors.length) {
   process.exitCode = 1;
 } else if (APPLY) {
   await writeFile(CANDIDATES_PATH, `${JSON.stringify(enriched, null, 2)}\n`);
-  console.log(`Applied ${approved.length} approved candidate photo(s).`);
+  console.log(`Applied ${approved.length} approved non-generic candidate photo(s).`);
   console.log(`Coverage: ${approvedPhotoCount}/${coverageEligible.length} eligible candidates (${report.coveragePercent}%). Target: ${targetApprovedPhotoCount}.`);
   if (excludedFromCoverage.length) console.log(`Excluded ${excludedFromCoverage.length} candidates from the coverage denominator using supported verified lifecycle fields.`);
 } else {
