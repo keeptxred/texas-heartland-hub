@@ -80,7 +80,7 @@ const SECTIONS: {
     intent: "For residents who want to understand the major statutes.",
     description:
       "The bills that decide how Texans carry, how homeowners pay, how voters cast a ballot, and what the state can do at the border. Each guide is written in plain English with citations to the actual code.",
-    hubHref: "/texas-laws",
+    hubHref: "/laws/topics",
     articleSlugs: [
       "texas-gun-laws-explained",
       "texas-property-tax-laws-explained",
@@ -123,7 +123,7 @@ const SECTIONS: {
 const INTRO_FAQ = [
   {
     q: "How are laws actually created in Texas?",
-    a: "The Texas Legislature meets in regular session for 140 days every odd-numbered year. A bill must pass both the House and Senate in identical form and be signed by the governor (or become law without signature) to take effect — most on September 1 following the session.",
+    a: "The Texas Legislature meets in regular session for 140 days every odd-numbered year. A bill must pass both the House and Senate in identical form and be signed (or become law without signature) to take effect — most on September 1 following the session.",
   },
   {
     q: "What is the difference between a Texas statute, a regulation, and a local rule?",
