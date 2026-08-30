@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Building2, Gavel, Landmark, Scale } from "lucide-react";
 import { StatewideOfficePowersComparison } from "@/components/government/StatewideOfficePowersComparison";
+import { GOVERNMENT_HISTORY_AUTHORITY_PAGES } from "@/data/texas-government-history-authority";
 import { GOVERNMENT_ENTITIES, governmentHubJsonLd, governmentPath, SITE_URL } from "@/lib/texas-government";
 
 const TITLE = "Texas Government: Offices, Leaders, Powers and Elections | KeepTXRed";
@@ -36,6 +37,23 @@ function TexasGovernmentHub() {
         <p className="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">Understand who runs Texas government, what the constitution allows each institution to do, what limits apply, how leaders are selected, and how offices connect to laws, bills, elections and representatives.</p>
         <div className="mt-6 flex flex-wrap gap-3"><a href="/laws" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">Read the Texas Constitution</a><a href="/elections/2026" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Texas Election Central</a><a href="/bills" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Track Texas bills</a><a href="/texas-government/agencies" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">State agency directory</a></div>
       </header>
+
+      <section className="mt-10" aria-labelledby="government-history-authority">
+        <div className="max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">How Texas institutions got their power</p>
+          <h2 id="government-history-authority" className="mt-2 text-3xl font-bold md:text-4xl">Texas government and judiciary history</h2>
+          <p className="mt-3 leading-7 text-muted-foreground">Connect today's officeholders and court powers to the constitutional changes, legislative rules, elections and partisan transitions that produced them. These guides are built from Texas constitutional, legislative, archival and judicial sources.</p>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {GOVERNMENT_HISTORY_AUTHORITY_PAGES.map((page) => (
+            <a key={page.slug} href={`/texas-government/${page.slug}`} className="rounded-xl border bg-card p-5 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-sm">
+              <h3 className="font-bold text-primary">{page.title}</h3>
+              <p className="mt-2 line-clamp-4 text-sm leading-6 text-muted-foreground">{page.description}</p>
+              <span className="mt-4 inline-flex text-sm font-bold text-primary">Read history guide →</span>
+            </a>
+          ))}
+        </div>
+      </section>
 
       <section className="mt-8 rounded-2xl border border-primary/25 bg-primary/[0.04] p-6 md:p-8" aria-labelledby="texas-child-support-government">
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Texas families & government</p>
