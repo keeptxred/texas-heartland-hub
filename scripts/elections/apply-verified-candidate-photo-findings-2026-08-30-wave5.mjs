@@ -20,6 +20,18 @@ const findings = [
     usageStatus: "approved",
     discoveryMethod: "candidate-supplied-newsroom-photo",
     discoveredAt: "2026-08-30T18:12:00.000Z"
+  },
+  {
+    candidateId: "candidate-armin-mizani-republican-race-2026-texas-house-98",
+    imageUrl: "https://beta2.communityimpact.com/uploads/images/qa/172889_2842.jpg",
+    sourceUrl: "https://communityimpact.com/dallas-fort-worth/grapevine-colleyville-southlake/election/2026/02/12/qa-meet-the-republican-primary-candidates-for-texas-house-district-98/",
+    altText: "Armin Mizani, Republican candidate for Texas House District 98",
+    credit: "Armin Mizani campaign / Community Impact",
+    license: null,
+    permissionBasis: "Community Impact's February 13, 2026 Texas House District 98 candidate Q&A identifies Armin Mizani as an HD98 Republican candidate and explicitly states that the photos were submitted by the candidates. The candidate-specific Armin Mizani image is embedded directly with his Q&A entry. Used only for editorial candidate identification with exact article attribution and source link.",
+    usageStatus: "approved",
+    discoveryMethod: "candidate-supplied-newsroom-photo",
+    discoveredAt: "2026-08-30T18:15:00.000Z"
   }
 ];
 
@@ -34,4 +46,4 @@ await writeFile(
   manifestPath,
   JSON.stringify([...byId.values()].sort((a, b) => a.candidateId.localeCompare(b.candidateId)), null, 2) + "\n"
 );
-console.log(`Applied ${applied} verified candidate portrait from August 30 wave 5.`);
+console.log(`Applied ${applied} verified candidate portraits from August 30 wave 5.`);
