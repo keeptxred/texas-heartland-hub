@@ -11,6 +11,7 @@ on:
       - ".github/workflows/candidate-photo-enrichment.yml"
       - "scripts/elections/apply-authoritative-candidate-filing-status.mjs"
       - "scripts/elections/candidate-photo-enrichment.mjs"
+      - "scripts/elections/remove-generic-candidate-photo-entries.mjs"
       - "scripts/elections/merge-approved-candidate-photo-assets.mjs"
       - "scripts/elections/apply-direct-web-photo-findings.mjs"
       - "scripts/elections/apply-verified-photo-findings-2026-07-31.mjs"
@@ -27,6 +28,7 @@ on:
       - "scripts/elections/discover-candidate-photos-congress-gov.mjs"
       - "scripts/elections/discover-candidate-photos-tcta.mjs"
       - "scripts/elections/discover-candidate-photos-texas-archives.mjs"
+      - "scripts/elections/discover-candidate-photos-directories.mjs"
       - "src/data/elections/2026/candidate-filing-status-authority.json"
       - "src/data/elections/2026/candidate-photo-assets.json"
       - "src/data/elections/2026/candidate-supreme-court-media.json"
@@ -87,6 +89,8 @@ jobs:
           done
       - name: Apply verified Texas appellate portrait wave 2
         run: node scripts/elections/apply-official-judicial-photo-findings-2026-08-21-wave2.mjs
+      - name: Remove known generic and placeholder candidate images before discovery
+        run: node scripts/elections/remove-generic-candidate-photo-entries.mjs
       - name: Discover portraits from verified source registries
         run: node scripts/elections/discover-candidate-photos-source-registries.mjs
       - name: Discover previously unseen candidate photo source domains
@@ -121,6 +125,8 @@ jobs:
         run: node scripts/elections/discover-candidate-photos-new-domains.mjs
       - name: Discover second-wave portraits from unused campaign and local domains
         run: node scripts/elections/discover-candidate-photos-new-domains-wave2.mjs
+      - name: Remove generic images introduced by any discovery source
+        run: node scripts/elections/remove-generic-candidate-photo-entries.mjs
       - name: Apply approved candidate photos
         run: node scripts/elections/candidate-photo-enrichment.mjs --apply
 
@@ -128,7 +134,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PR_TITLE: Discover and apply verified candidate photos
-          PR_BODY: Automated candidate-photo enrichment from approved, verified, official, public-domain, registry-driven, and review-queued sources. Authoritative rejected or withdrawn filings remain in canonical data but are excluded from coverage only through supported lifecycle fields. Existing source verification and candidate-photo validation are unchanged; protected verify gates merge and deployment.
+          PR_BODY: Automated candidate-photo enrichment from approved, verified, official, public-domain, registry-driven, and review-queued sources. Authoritative rejected or withdrawn filings remain in canonical data but are excluded from coverage only through supported lifecycle fields. Known generic and placeholder images are rejected before coverage is calculated. Existing source verification and candidate-photo validation are unchanged; protected verify gates merge and deployment.
           COMMIT_MESSAGE: Discover and apply candidate photos from expanded sources
         shell: bash
         run: |
@@ -137,6 +143,7 @@ jobs:
             src/data/elections/2026/candidate-photos.json
             src/data/elections/2026/candidates.json
             artifacts/elections/candidate-photo-report.json
+            artifacts/elections/candidate-photo-generic-image-audit.json
             artifacts/elections/candidate-photo-eligibility-reconciliation.json
             artifacts/elections/candidate-photo-discovery-report.json
             artifacts/elections/candidate-photo-source-discovery-report.json
