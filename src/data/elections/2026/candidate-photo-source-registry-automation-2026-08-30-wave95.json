@@ -38,7 +38,7 @@
   {
     "domain": "ivoterguide.com",
     "sourceClass": "candidate-voter-guide-directory",
-    "discoveryStatus": "active",
+    "discoveryStatus": "discovery-only",
     "autoApprove": false,
     "rightsRule": "Use iVoterGuide candidate and race pages only as a discovery bridge to candidate identities, campaign links, official profiles, and portrait leads. Do not treat iVoterGuide-hosted images as reusable by default; require item-level provenance and rights verification before approval.",
     "searchHint": "site:ivoterguide.com 2026 Texas candidate portrait official website",
@@ -47,7 +47,7 @@
   {
     "domain": "vote-usa.org",
     "sourceClass": "candidate-voter-guide-directory",
-    "discoveryStatus": "active",
+    "discoveryStatus": "discovery-only",
     "autoApprove": false,
     "rightsRule": "Use Vote-USA election and candidate pages as a discovery bridge to candidate identities, campaign websites, official profiles, and portrait leads. Do not reuse Vote-USA-hosted images by default; require item-level provenance and a documented rights or editorial-permission basis before approval.",
     "searchHint": "site:vote-usa.org Texas 2026 candidate portrait official website",
