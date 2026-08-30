@@ -3,7 +3,8 @@ import { ContentPillarView } from "@/components/content-pillar-view";
 import { SupportingGuideGrid } from "@/components/supporting-guide-grid";
 import { EvergreenAuthorityReference } from "@/components/authority/EvergreenAuthorityReference";
 
-const SECTIONS = [
+export const LAW_ENFORCEMENT_SECTIONS = [
+  { title: "Texas Policing Agencies Compared", description: "Compare city police, sheriffs, constables, DPS, Texas Rangers, ISD police, university police, game wardens, and other Texas peace officers.", href: "/news/texas-policing-agencies-compared" },
   { title: "Public-Safety Agencies & Authority", description: "Start with the state and local institutions responsible for DPS, Highway Patrol, Texas Rangers, licensing, and public-safety authority.", href: "/texas-government" },
   { title: "Texas Laws", description: "Criminal law, public-safety statutes, enforcement authority, and legal changes.", href: "/laws" },
   { title: "Texas Legislature", description: "Bills, committees, hearings, and votes affecting law enforcement and public safety.", href: "/texas-legislature" },
@@ -32,7 +33,7 @@ function TexasLawEnforcementPage() {
     <>
       <ContentPillarView
         hubSlug="texas-law-enforcement"
-        sections={SECTIONS}
+        sections={LAW_ENFORCEMENT_SECTIONS}
         feedSection="law-enforcement"
         heading="Public Safety Across Texas"
         paragraphs={[
