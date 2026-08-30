@@ -21,6 +21,8 @@ const VALUE_CLASSES = {
     "/texas-legislature/current-session", "/texas-legislature/votes", "/register-to-vote", "/contact-legislators", "/county-elections",
     "/laws/constitutional-amendments", "/laws/effective-dates", "/glossary", "/citation-guide", "/issues/texas-policy-handbook",
     "/issues/texas-government-accountability-handbook", "/issues/texas-local-government-handbook",
+    "/texas-politics/texas-constitutional-history", "/texas-politics/texas-election-history",
+    "/texas-politics/texas-redistricting-history", "/texas-politics/voting-rights-history",
   ],
   trustOrCommerce: [
     "/about", "/contact", "/privacy", "/terms-of-service", "/shipping-policy", "/return-refund-policy", "/editorial-standards",
@@ -57,6 +59,10 @@ describe("AdSense static sitemap value classification", () => {
       "/issues/texas-policy-handbook",
       "/issues/texas-government-accountability-handbook",
       "/issues/texas-local-government-handbook",
+      "/texas-politics/texas-constitutional-history",
+      "/texas-politics/texas-election-history",
+      "/texas-politics/texas-redistricting-history",
+      "/texas-politics/voting-rights-history",
     ]));
   });
 
