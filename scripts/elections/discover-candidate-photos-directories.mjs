@@ -14,6 +14,10 @@ const TEXAS_HOUSE_DIRECTORY_URLS = [
   "https://house.texas.gov/members",
   "https://www.lrl.texas.gov/legeLeaders/CEO/ceoAll.cfm",
 ];
+const CURRENT_HOUSE_OFFICEHOLDER_PROFILE_OVERRIDES = new Map([
+  ["candidate-david-cook-republican-race-2026-texas-senate-22", "https://house.texas.gov/members/3960/biography"],
+  ["candidate-trent-ashby-republican-race-2026-texas-senate-3", "https://house.texas.gov/members/2330/biography"],
+]);
 
 const [candidates, manifest] = await Promise.all([readJson(CANDIDATES_PATH), readJson(MANIFEST_PATH)]);
 const texasHouseMemberUrls = await loadTexasHouseMemberUrls();
@@ -43,6 +47,10 @@ function directorySources(candidate) {
   const raceId = candidate.primaryRaceId ?? "";
   const house = raceId.match(/texas-house-(\d+)$/);
   const senate = raceId.match(/texas-senate-(\d+)$/);
+  const currentHouseOfficeholderUrl = CURRENT_HOUSE_OFFICEHOLDER_PROFILE_OVERRIDES.get(candidate.id);
+  if (currentHouseOfficeholderUrl) {
+    sources.push({ kind: "texas-house", url: currentHouseOfficeholderUrl });
+  }
   if (candidate.incumbencyType === "incumbent" && house) {
     const currentMemberUrl = texasHouseMemberUrls.get(house[1]);
     if (currentMemberUrl) {
