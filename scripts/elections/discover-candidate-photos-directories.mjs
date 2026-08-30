@@ -10,8 +10,13 @@ const USER_AGENT = "KeepTXRedCandidatePhotoBot/1.0 (+https://keeptxred.com)";
 const KNOWN_GENERIC_URLS = new Set([
   "https://senate.texas.gov/_assets/img/og_image.jpg",
 ]);
+const TEXAS_HOUSE_DIRECTORY_URLS = [
+  "https://house.texas.gov/members",
+  "https://www.lrl.texas.gov/legeLeaders/CEO/ceoAll.cfm",
+];
 
 const [candidates, manifest] = await Promise.all([readJson(CANDIDATES_PATH), readJson(MANIFEST_PATH)]);
+const texasHouseMemberUrls = await loadTexasHouseMemberUrls();
 const byId = new Map(manifest.map((entry) => [entry.candidateId, entry]));
 let added = 0;
 
@@ -39,6 +44,11 @@ function directorySources(candidate) {
   const house = raceId.match(/texas-house-(\d+)$/);
   const senate = raceId.match(/texas-senate-(\d+)$/);
   if (candidate.incumbencyType === "incumbent" && house) {
+    const currentMemberUrl = texasHouseMemberUrls.get(house[1]);
+    if (currentMemberUrl) {
+      sources.push({ kind: "texas-house", url: currentMemberUrl });
+    }
+    // Keep the legacy district route as a fallback while the House transitions URLs.
     sources.push({ kind: "texas-house", url: `https://house.texas.gov/members/member-page/?district=${house[1]}` });
   }
   if (candidate.incumbencyType === "incumbent" && senate) {
@@ -59,7 +69,7 @@ async function discover(candidate, source) {
   const response = await safeFetch(source.url);
   if (!response?.ok || !(response.headers.get("content-type") ?? "").includes("text/html")) return null;
   const html = await response.text();
-  if (source.kind === "ballotpedia" && !pageMatchesCandidate(html, candidate)) return null;
+  if ((source.kind === "ballotpedia" || source.kind.startsWith("texas-")) && !pageMatchesCandidate(html, candidate)) return null;
   const images = extractImages(html, response.url || source.url, source.kind);
   for (const image of images) {
     if (isKnownGenericImage(image.url)) continue;
@@ -133,6 +143,40 @@ function isKnownGenericImage(value) {
     return /(?:^|\/)(?:placeholder|default-avatar|default-profile|default-user|no-photo|no_image|no-image)(?:[._/-]|$)/i.test(pathname);
   } catch {
     return true;
+  }
+}
+
+async function loadTexasHouseMemberUrls() {
+  const byDistrict = new Map();
+  for (const directoryUrl of TEXAS_HOUSE_DIRECTORY_URLS) {
+    const response = await safeFetch(directoryUrl);
+    if (!response?.ok || !(response.headers.get("content-type") ?? "").includes("text/html")) continue;
+    const html = await response.text();
+    collectTexasHouseMemberUrls(html, response.url || directoryUrl, byDistrict);
+  }
+  return byDistrict;
+}
+
+function collectTexasHouseMemberUrls(html, baseUrl, byDistrict) {
+  const memberPattern = /(?:https?:\/\/(?:www\.)?house\.texas\.gov)?\/members\/(\d+)(?:\/biography)?/gi;
+  for (const match of html.matchAll(memberPattern)) {
+    const memberId = match[1];
+    const index = match.index ?? 0;
+    const before = stripHtml(html.slice(Math.max(0, index - 1400), index));
+    const after = stripHtml(html.slice(index, Math.min(html.length, index + 1400)));
+    const candidates = [];
+    for (const districtMatch of before.matchAll(/(?:House\s+)?District\s+(\d{1,3})/gi)) {
+      candidates.push({ district: districtMatch[1], distance: before.length - (districtMatch.index ?? 0) });
+    }
+    for (const districtMatch of after.matchAll(/(?:House\s+)?District\s+(\d{1,3})/gi)) {
+      candidates.push({ district: districtMatch[1], distance: districtMatch.index ?? 0 });
+    }
+    candidates.sort((a, b) => a.distance - b.distance);
+    const district = candidates[0]?.district;
+    if (!district || byDistrict.has(district)) continue;
+    try {
+      byDistrict.set(district, new URL(`/members/${memberId}/biography`, baseUrl).toString());
+    } catch {}
   }
 }
 
