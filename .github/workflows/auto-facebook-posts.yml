@@ -2,24 +2,13 @@ name: Auto Facebook Posts
 
 on:
   schedule:
-    # Lightweight checks every 30 minutes across the Texas waking/evening day.
-    # Keep TX Red can publish up to five randomized posts per day and
-    # TexasDefined can publish up to two. Each site decides independently
-    # whether a randomized Central-time target is due.
     - cron: "0,30 12-23 * * *"
     - cron: "0,30 0-4 * * *"
   workflow_dispatch:
-    inputs:
-      texasdefined_dry_run:
-        description: Preview the TexasDefined candidate without posting or recording it
-        required: false
-        default: false
-        type: boolean
 
 permissions:
   contents: read
   id-token: write
-  statuses: write
 
 concurrency:
   group: keeptxred-auto-facebook
@@ -30,16 +19,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     env:
-      TEXASDEFINED_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.texasdefined_dry_run }}
-      GH_TOKEN: ${{ github.token }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      # GitHub-hosted runners are intentionally challenged on browser-facing
-      # keeptxred.com dynamic paths. Machine hooks use the same deployed Worker
-      # directly while retaining strict GitHub Actions OIDC authorization.
       AUTOMATION_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
     steps:
-      - name: Check randomized Facebook schedules and post if due
-        id: facebook
+      - name: Check KeepTXRed Facebook schedule and post if due
         shell: bash
         run: |
           set -euo pipefail
@@ -48,7 +31,6 @@ jobs:
           oidc_token=$(curl -fsS \
             -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
             "$oidc_url" | jq -r '.value // empty')
-
           if [[ -z "$oidc_token" ]]; then
             echo 'GitHub Actions did not issue the Facebook OIDC token.' >&2
             exit 1
@@ -59,28 +41,30 @@ jobs:
             mode="manual"
           fi
 
-          failures=0
+          endpoint="${AUTOMATION_ORIGIN%/}/api/public/hooks/auto-facebook-post-smart"
+          output="/tmp/facebook-post-keeptxred.json"
+          status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
+            --max-time 420 \
+            -H 'accept: application/json' \
+            -H "Authorization: Bearer ${oidc_token}" \
+            -H "X-KTR-Facebook-Mode: ${mode}" \
+            "$endpoint" || echo 000)
 
-          generate_openai_attention_image() {
-            local endpoint="$1"
-            local output="$2"
-            local title prompt openai_payload openai_status image_b64 publish_payload publish_status
+          if [[ "$status" != "200" ]] || ! jq -e '.ok == true' "$output" >/dev/null 2>&1; then
+            cat "$output" 2>/dev/null || true
+            exit 1
+          fi
 
+          if jq -e '.image_required == true' "$output" >/dev/null 2>&1; then
             title=$(jq -r '.title // empty' "$output")
             prompt=$(jq -r '.image_prompt // empty' "$output")
-            if [[ -z "$title" || -z "$prompt" ]]; then
-              echo 'Attention post requested an image without a usable title/prompt.' >&2
-              return 1
-            fi
-            if [[ -z "${OPENAI_API_KEY:-}" ]]; then
-              echo 'OPENAI_API_KEY is required for automated Facebook attention images.' >&2
-              return 1
+            if [[ -z "$title" || -z "$prompt" || -z "${OPENAI_API_KEY:-}" ]]; then
+              echo 'OpenAI attention-image generation is missing a title, prompt, or OPENAI_API_KEY.' >&2
+              exit 1
             fi
 
-            openai_payload=$(jq -n \
-              --arg prompt "$prompt" \
+            openai_payload=$(jq -n --arg prompt "$prompt" \
               '{model:"gpt-image-2",prompt:$prompt,size:"1536x1024",quality:"medium",output_format:"png"}')
-
             openai_status=$(curl -sS -X POST \
               -o /tmp/ktr-openai-image.json \
               -w '%{http_code}' \
@@ -89,24 +73,21 @@ jobs:
               -H 'Content-Type: application/json' \
               --data "$openai_payload" \
               'https://api.openai.com/v1/images/generations' || echo 000)
-
             if [[ "$openai_status" != "200" ]]; then
-              echo "OpenAI image generation failed with HTTP ${openai_status}." >&2
-              jq -r '.error.message // "No OpenAI error detail"' /tmp/ktr-openai-image.json 2>/dev/null >&2 || true
-              return 1
+              jq -r '.error.message // "OpenAI image generation failed"' /tmp/ktr-openai-image.json 2>/dev/null >&2 || true
+              exit 1
             fi
 
             image_b64=$(jq -r '.data[0].b64_json // empty' /tmp/ktr-openai-image.json)
             if [[ -z "$image_b64" ]]; then
-              echo 'OpenAI image generation returned no image bytes.' >&2
-              return 1
+              echo 'OpenAI returned no image bytes.' >&2
+              exit 1
             fi
 
             publish_payload=$(jq -n \
               --arg title "$title" \
               --arg image "$image_b64" \
               '{attention_title:$title,image_base64:$image,image_mime:"image/png",image_provider:"openai:gpt-image-2"}')
-
             publish_status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
               --max-time 420 \
               -H 'accept: application/json' \
@@ -115,142 +96,10 @@ jobs:
               -H 'X-KTR-Facebook-Mode: scheduled' \
               --data "$publish_payload" \
               "$endpoint" || echo 000)
-
             if [[ "$publish_status" != "200" ]] || ! jq -e '.ok == true and .posted == true and .image_generated_by_openai == true' "$output" >/dev/null 2>&1; then
-              echo "OpenAI image handoff or Facebook publication failed with HTTP ${publish_status}." >&2
               cat "$output" >&2 || true
-              return 1
-            fi
-            rm -f /tmp/ktr-openai-image.json
-          }
-
-          run_page() {
-            local label="$1"
-            local endpoint="$2"
-            local output="$3"
-            local requested_mode="${4:-$mode}"
-            local dry_run="${5:-false}"
-            local status
-            local -a extra_headers=()
-
-            if [[ "$dry_run" == "true" ]]; then
-              extra_headers+=( -H 'X-KTR-Facebook-Dry-Run: true' )
-            fi
-
-            status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
-              --max-time 420 \
-              -H 'accept: application/json' \
-              -H "Authorization: Bearer ${oidc_token}" \
-              -H "X-KTR-Facebook-Mode: ${requested_mode}" \
-              "${extra_headers[@]}" \
-              "$endpoint" || echo 000)
-
-            echo "${label} auto-facebook HTTP ${status} mode=${requested_mode} dry_run=${dry_run}"
-
-            if [[ "$status" != "200" ]] || ! jq -e '.ok == true' "$output" >/dev/null 2>&1; then
-              cat "$output" 2>/dev/null || true
-              echo "AUTO_FACEBOOK_POST_FAILED page=${label}" >&2
-              failures=$((failures + 1))
-              return
-            fi
-
-            if [[ "$label" == "keeptxred" ]] && jq -e '.image_required == true' "$output" >/dev/null 2>&1; then
-              echo "AUTO_FACEBOOK_IMAGE_REQUIRED page=keeptxred title=$(jq -r '.title // ""' "$output")"
-              if ! generate_openai_attention_image "$endpoint" "$output"; then
-                failures=$((failures + 1))
-                return
-              fi
-            fi
-
-            cat "$output" 2>/dev/null || true
-            echo
-
-            if jq -e '.dry_run == true' "$output" >/dev/null 2>&1; then
-              kind=$(jq -r '.kind // "unknown"' "$output")
-              title=$(jq -r '.title // ""' "$output")
-              would_post=$(jq -r '.would_post // false' "$output")
-              image_url=$(jq -r '.image_url // ""' "$output")
-              echo "AUTO_FACEBOOK_DRY_RUN page=${label} kind=${kind} title=${title} would_post=${would_post} image_url=${image_url}"
-            elif jq -e '.posted == true' "$output" >/dev/null 2>&1; then
-              slug=$(jq -r '.slug // ""' "$output")
-              title=$(jq -r '.title // ""' "$output")
-              kind=$(jq -r '.kind // "article"' "$output")
-              article_url=$(jq -r '.article_url // ""' "$output")
-              post_url=$(jq -r '.post_url // ""' "$output")
-              image_url=$(jq -r '.image_url // ""' "$output")
-              image_provider=$(jq -r '.image_provider // ""' "$output")
-              echo "AUTO_FACEBOOK_POST_SUCCESS page=${label} kind=${kind} slug=${slug} title=${title} article_url=${article_url} post_url=${post_url} image_url=${image_url} image_provider=${image_provider}"
-            else
-              reason=$(jq -r '.reason // "no eligible post"' "$output")
-              next_target=$(jq -r '.next_target_local // ""' "$output")
-              posts_today=$(jq -r '.posts_today // ""' "$output")
-              echo "AUTO_FACEBOOK_POST_NOOP page=${label} reason=${reason} next_target=${next_target} posts_today=${posts_today}"
-            fi
-          }
-
-          # A TexasDefined dry run is intentionally isolated: it never invokes
-          # the Keep TX Red publisher and therefore cannot create an unrelated post.
-          if [[ "$TEXASDEFINED_DRY_RUN" != "true" ]]; then
-            run_page \
-              "keeptxred" \
-              "${AUTOMATION_ORIGIN%/}/api/public/hooks/auto-facebook-post-smart" \
-              "/tmp/facebook-post-keeptxred.json"
-          fi
-
-          # TexasDefined always goes through scheduled-mode safeguards and the
-          # image-required publisher. Dry run resolves the candidate and its image
-          # without posting or writing publication history.
-          run_page \
-            "texasdefined" \
-            "${AUTOMATION_ORIGIN%/}/api/public/hooks/auto-facebook-post-texasdefined-with-image" \
-            "/tmp/facebook-post-texasdefined.json" \
-            "scheduled" \
-            "$TEXASDEFINED_DRY_RUN"
-
-          if (( failures > 0 )); then
-            exit 1
-          fi
-
-      - name: Publish TexasDefined dry-run smoke status
-        if: always() && env.TEXASDEFINED_DRY_RUN == 'true'
-        shell: bash
-        env:
-          STEP_OUTCOME: ${{ steps.facebook.outcome }}
-        run: |
-          set -euo pipefail
-          state='failure'
-          description='TexasDefined non-destructive Facebook dry-run smoke failed'
-          diagnostic_context=''
-          if [[ "$STEP_OUTCOME" == 'success' ]]; then
-            state='success'
-            description='Dry run passed without Facebook posting or history writes'
-          elif [[ -s /tmp/facebook-post-texasdefined.json ]]; then
-            safe_error="$(jq -r '.error // empty' /tmp/facebook-post-texasdefined.json 2>/dev/null | tr '\n\r' ' ' | cut -c1-100)"
-            if [[ -n "$safe_error" ]]; then
-              description="Dry run failed: ${safe_error}"
-              case "$safe_error" in
-                *OIDC*) diagnostic_context='texasdefined-facebook-dry-run-oidc' ;;
-                *"not connected"*) diagnostic_context='texasdefined-facebook-dry-run-connection' ;;
-                *"duplicate verification failed"*) diagnostic_context='texasdefined-facebook-dry-run-graph' ;;
-                *) diagnostic_context='texasdefined-facebook-dry-run-other' ;;
-              esac
+              exit 1
             fi
           fi
-          publish_status() {
-            local context="$1"
-            payload="$(python3 - "$state" "$context" "$description" <<'PY'
-          import json, sys
-          print(json.dumps({"state": sys.argv[1], "context": sys.argv[2], "description": sys.argv[3][:140]}))
-          PY
-          )"
-            curl --fail-with-body --silent --show-error --request POST \
-              --header "Authorization: Bearer $GH_TOKEN" \
-              --header 'Accept: application/vnd.github+json' \
-              --header 'X-GitHub-Api-Version: 2022-11-28' \
-              "https://api.github.com/repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
-              --data "$payload" >/dev/null
-          }
-          publish_status 'texasdefined-facebook-dry-run'
-          if [[ -n "$diagnostic_context" ]]; then
-            publish_status "$diagnostic_context"
-          fi
+
+          cat "$output"
