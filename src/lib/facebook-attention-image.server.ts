@@ -5,8 +5,16 @@ const BUCKET = "article-images";
 const MAX_FACEBOOK_IMAGE_BYTES = 12 * 1024 * 1024;
 const ALLOWED_CONTENT_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
+type AllowedImageContentType = "image/jpeg" | "image/png" | "image/webp";
+
 function sanitize(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 72) || "attention-post";
+}
+
+function imageExtension(contentType: AllowedImageContentType): "jpg" | "png" | "webp" {
+  if (contentType === "image/png") return "png";
+  if (contentType === "image/webp") return "webp";
+  return "jpg";
 }
 
 function base64ToBytes(value: string): Uint8Array {
@@ -30,18 +38,24 @@ export function buildKtrFacebookAttentionImagePrompt(postText: string): string {
   ].join("\n");
 }
 
-export function ktrFacebookAttentionImageFilename(post: KtrFacebookAttentionPost): string {
-  return `facebook-attention-${sanitize(post.title)}.jpg`;
+export function ktrFacebookAttentionImageFilename(
+  post: KtrFacebookAttentionPost,
+  contentType: AllowedImageContentType,
+): string {
+  return `facebook-attention-${sanitize(post.title)}.${imageExtension(contentType)}`;
 }
 
-export function ktrFacebookAttentionImageUrl(post: KtrFacebookAttentionPost): string {
-  return `${SITE_URL}/api/public/article-image/${ktrFacebookAttentionImageFilename(post)}`;
+export function ktrFacebookAttentionImageUrl(
+  post: KtrFacebookAttentionPost,
+  contentType: AllowedImageContentType,
+): string {
+  return `${SITE_URL}/api/public/article-image/${ktrFacebookAttentionImageFilename(post, contentType)}`;
 }
 
 export function decodeSuppliedKtrFacebookAttentionImage(args: {
   base64: string;
   contentType: string;
-}): { bytes: Uint8Array; contentType: "image/jpeg" | "image/png" | "image/webp" } {
+}): { bytes: Uint8Array; contentType: AllowedImageContentType } {
   const contentType = args.contentType.toLowerCase().split(";", 1)[0].trim();
   if (!ALLOWED_CONTENT_TYPES.has(contentType)) {
     throw new Error(`Unsupported OpenAI image content type: ${contentType || "missing"}`);
@@ -50,7 +64,7 @@ export function decodeSuppliedKtrFacebookAttentionImage(args: {
   if (bytes.byteLength === 0 || bytes.byteLength > MAX_FACEBOOK_IMAGE_BYTES) {
     throw new Error("OpenAI-generated Facebook image is empty or too large");
   }
-  return { bytes, contentType: contentType as "image/jpeg" | "image/png" | "image/webp" };
+  return { bytes, contentType: contentType as AllowedImageContentType };
 }
 
 export async function storeSuppliedKtrFacebookAttentionImage(args: {
@@ -58,11 +72,11 @@ export async function storeSuppliedKtrFacebookAttentionImage(args: {
   post: KtrFacebookAttentionPost;
   base64: string;
   contentType: string;
-}): Promise<{ bytes: Uint8Array; contentType: "image/jpeg" | "image/png" | "image/webp"; url: string; prompt: string }> {
+}): Promise<{ bytes: Uint8Array; contentType: AllowedImageContentType; url: string; prompt: string }> {
   const prompt = buildKtrFacebookAttentionImagePrompt(args.post.message);
   const decoded = decodeSuppliedKtrFacebookAttentionImage({ base64: args.base64, contentType: args.contentType });
-  const filename = ktrFacebookAttentionImageFilename(args.post);
-  const url = ktrFacebookAttentionImageUrl(args.post);
+  const filename = ktrFacebookAttentionImageFilename(args.post, decoded.contentType);
+  const url = ktrFacebookAttentionImageUrl(args.post, decoded.contentType);
   const upload = await args.db.storage.from(BUCKET).upload(filename, decoded.bytes, {
     contentType: decoded.contentType,
     cacheControl: "public, max-age=31536000, immutable",
