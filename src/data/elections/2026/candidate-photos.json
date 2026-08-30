@@ -2918,6 +2918,18 @@
     "discoveredAt": "2026-08-22T12:06:46.262Z"
   },
   {
+    "candidateId": "candidate-orlando-lopez-democratic-race-2026-texas-house-33",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/6918fe6e12ef476e38603f3e/ac20fb34-e9b1-4b54-bd7f-3eebdfe1d6a6/733756980_122137121661134540_1525171046319516611_n.jpg",
+    "sourceUrl": "https://www.lopezfortxhd33.com/about",
+    "altText": "Orlando Lopez, Democratic candidate for Texas House District 33",
+    "credit": "Lopez for Texas House District 33 campaign",
+    "license": null,
+    "permissionBasis": "Orlando Lopez's official campaign biography identifies him as the candidate for Texas House District 33 and publishes this candidate-specific photograph directly beneath the 'Meet Our Candidate: Orlando Lopez' heading. Used only for editorial candidate identification with exact official-campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-biography",
+    "discoveredAt": "2026-08-30T20:45:00.000Z"
+  },
+  {
     "candidateId": "candidate-oscar-longoria-democratic-race-2026-texas-house-35",
     "imageUrl": "https://house.texas.gov/images/members/2485.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/35",
@@ -3426,6 +3438,18 @@
     "usageStatus": "approved",
     "discoveryMethod": "official-campaign-profile-via-party-directory-bridge",
     "discoveredAt": "2026-08-24T12:55:00.000Z"
+  },
+  {
+    "candidateId": "candidate-stephanie-guerrero-saenz-democratic-race-2026-texas-house-34",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/69ef82a23ef5e90e064855a0/d368380a-b174-4f69-b079-a110095d294a/DSC_5978%2B%282%29.jpg",
+    "sourceUrl": "https://www.stephanie4texas.com/",
+    "altText": "Stephanie Guerrero Sáenz, Democratic candidate for Texas House District 34",
+    "credit": "Stephanie Guerrero Sáenz for HD 34 campaign",
+    "license": null,
+    "permissionBasis": "Stephanie Guerrero Sáenz's official campaign homepage identifies her as the candidate for Texas House District 34 and publishes this candidate-specific photograph immediately before the Meet Stephanie biography section. Used only for editorial candidate identification with exact official-campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-biography",
+    "discoveredAt": "2026-08-30T20:42:00.000Z"
   },
   {
     "candidateId": "candidate-stephen-w-stanley-republican-race-2026-texas-house-113",
