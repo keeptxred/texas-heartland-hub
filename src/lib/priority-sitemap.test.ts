@@ -11,6 +11,10 @@ const KNOWN_NOINDEX_PRIORITY_BILLS = [
   "/bills/texas/89/hb/3435",
   "/bills/texas/89/hb/3913",
 ] as const;
+const UNOWNED_PRIORITY_NEWS = [
+  "/news/democrat-viral-tweet-falsely-claims-texas-congressional-map-eliminates-black-and-latino-majority-districts",
+  "/news/texas-lawmakers-propose-expanding-death-penalty-to-cover-abortion-after-fetal-heartbeat",
+] as const;
 
 describe("priority sitemap inventory", () => {
   it("keeps the Search Console priority feed intentionally small and unique", () => {
@@ -36,6 +40,7 @@ describe("priority sitemap inventory", () => {
     expect(paths).not.toContain("/bills/capital-punishment");
     expect(paths).not.toContain("/texas-legislature/cross-party-scorecard");
     for (const path of KNOWN_NOINDEX_PRIORITY_BILLS) expect(paths).not.toContain(path);
+    for (const path of UNOWNED_PRIORITY_NEWS) expect(paths).not.toContain(path);
   });
 
   it("uses the canonical bill detail route contract", () => {
@@ -62,6 +67,8 @@ describe("priority sitemap inventory", () => {
       "/data",
       "/texas-economy",
       "/laws/constitutional-amendments",
+      "/laws/effective-dates",
+      "/laws/topics",
       "/policy",
       "/texas-politics",
       "/texas-government",
