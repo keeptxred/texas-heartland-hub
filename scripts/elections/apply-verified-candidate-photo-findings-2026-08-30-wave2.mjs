@@ -68,6 +68,18 @@ const findings = [
     usageStatus: "approved",
     discoveryMethod: "official-campaign-profile",
     discoveredAt: "2026-08-30T17:28:00.000Z"
+  },
+  {
+    candidateId: "candidate-liz-ramos-republican-race-2026-texas-house-135",
+    imageUrl: "https://storage.mlcdn.com/account_image/1376546/Ml0DfonkYQ8l8gLIJr3n0SPkHHc6o9gnkl7uoyho.jpg",
+    sourceUrl: "https://lizramosfortexas.com/",
+    altText: "Liz Ramos, Republican candidate for Texas House District 135",
+    credit: "Liz Ramos for Texas campaign",
+    license: null,
+    permissionBasis: "Candidate-identifying headshot is published directly at the start of the About Liz Ramos section on the official Liz Ramos campaign website, which explicitly identifies her as the Republican candidate for Texas House District 135. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    usageStatus: "approved",
+    discoveryMethod: "official-campaign-biography",
+    discoveredAt: "2026-08-30T17:30:00.000Z"
   }
 ];
 
