@@ -19,6 +19,7 @@ const candidateById = new Map(candidates.map((candidate) => [candidate.id, candi
 const errors = [];
 const warnings = [];
 const approved = [];
+const approvedByImageUrl = new Map();
 
 for (const entry of manifest) {
   const candidate = candidateById.get(entry.candidateId);
@@ -44,17 +45,36 @@ for (const entry of manifest) {
       issue: "Approved photos require a license or documented permission basis.",
     });
   }
+  if (entry.usageStatus === "approved" && isKnownGenericImage(entry.imageUrl)) {
+    errors.push({
+      candidateId: entry.candidateId,
+      issue: `Approved photo resolves to a known generic or placeholder image: ${entry.imageUrl}`,
+    });
+    continue;
+  }
   if (entry.usageStatus !== "approved") {
     warnings.push({ candidateId: entry.candidateId, issue: "Photo will not be displayed publicly." });
   } else {
     approved.push(entry.candidateId);
+    const sameUrl = approvedByImageUrl.get(entry.imageUrl) ?? [];
+    sameUrl.push(entry.candidateId);
+    approvedByImageUrl.set(entry.imageUrl, sameUrl);
   }
+}
+
+for (const [imageUrl, candidateIds] of approvedByImageUrl) {
+  if (candidateIds.length < 2) continue;
+  warnings.push({
+    candidateIds,
+    imageUrl,
+    issue: "Approved image URL is shared by multiple candidate records; verify that this is intentional and not a generic asset.",
+  });
 }
 
 const manifestByCandidateId = new Map(manifest.map((entry) => [entry.candidateId, entry]));
 const enriched = candidates.map((candidate) => {
   const entry = manifestByCandidateId.get(candidate.id);
-  if (!entry || entry.usageStatus !== "approved") return candidate;
+  if (!entry || entry.usageStatus !== "approved" || isKnownGenericImage(entry.imageUrl)) return clearKnownGenericCandidateImage(candidate);
   return {
     ...candidate,
     imageUrl: entry.imageUrl,
@@ -83,7 +103,7 @@ const excludedFromCoverage = enriched
   }));
 
 const missing = coverageEligible
-  .filter((candidate) => !candidate.imageUrl || candidate.imageRights?.usageStatus !== "approved")
+  .filter((candidate) => !candidate.imageUrl || candidate.imageRights?.usageStatus !== "approved" || isKnownGenericImage(candidate.imageUrl))
   .map((candidate) => ({
     candidateId: candidate.id,
     name: candidate.fullName,
@@ -130,6 +150,31 @@ if (errors.length) {
   console.log(`Audit complete: ${approvedPhotoCount} approved, ${missing.length} missing among ${coverageEligible.length} eligible candidates.`);
   console.log(`Coverage: ${report.coveragePercent}%. Target: ${targetApprovedPhotoCount} (${TARGET_COVERAGE * 100}%).`);
   console.log("Run with --apply to write approved manifest entries into candidates.json.");
+}
+
+function isKnownGenericImage(value) {
+  if (!value) return false;
+  let parsed;
+  try {
+    parsed = new URL(value);
+  } catch {
+    return true;
+  }
+  const host = parsed.hostname.toLowerCase();
+  const pathname = parsed.pathname.toLowerCase();
+  if (host === "senate.texas.gov" && pathname === "/_assets/img/og_image.jpg") return true;
+  if (/(?:^|\/)(?:placeholder|default-avatar|default-profile|default-user|no-photo|no_image|no-image)(?:[._/-]|$)/i.test(pathname)) return true;
+  if (/\/(?:logo|favicon|seal)(?:[._/-]|$)/i.test(pathname)) return true;
+  return false;
+}
+
+function clearKnownGenericCandidateImage(candidate) {
+  if (!isKnownGenericImage(candidate.imageUrl)) return candidate;
+  const next = { ...candidate };
+  delete next.imageUrl;
+  delete next.imageAltText;
+  delete next.imageRights;
+  return next;
 }
 
 function isCoverageEligible(candidate) {
