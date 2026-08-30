@@ -123,7 +123,7 @@ const SECTIONS: {
 const INTRO_FAQ = [
   {
     q: "How are laws actually created in Texas?",
-    a: "The Texas Legislature meets in regular session for 140 days every odd-numbered year. A bill must pass both the House and Senate in identical form and be signed (or become law without signature) to take effect — most on September 1 following the session.",
+    a: "The Texas Legislature meets in regular session for 140 days every odd-numbered year. A bill must pass both the House and Senate in identical form and be signed by the governor (or become law without signature) to take effect — most on September 1 following the session.",
   },
   {
     q: "What is the difference between a Texas statute, a regulation, and a local rule?",
