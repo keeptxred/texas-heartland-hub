@@ -3,10 +3,12 @@ import { HUBS } from "@/data/hubs";
 import { HubView } from "@/components/hub-view";
 import { AgedFeedSection } from "@/components/aged-feed-section";
 import { PillarRelationshipNav } from "@/components/pillar-relationship-nav";
+import { TEXAS_REPUBLIC_GOVERNMENT_AUTHORITY_PAGES } from "@/data/texas-republic-government-authority";
 
 const HUB = HUBS.find((h) => h.slug === "texas-politics")!;
 const SECTIONS = [
   { title: "Elections", description: "Primaries, runoffs, and the races shaping the next Texas Legislature.", href: "/elections/2026" },
+  { title: "Republic of Texas Government", description: "The presidency, Congress, 1836 Constitution, capitals, diplomacy, public finance, annexation and transition from independent republic to state government.", href: "/texas-politics/republic-of-texas-government-history" },
   { title: "Texas Election History", description: "How Texas moved from one-party primary dominance to two-party competition, Republican statewide control, modern turnout patterns and Election Central.", href: "/texas-politics/texas-election-history" },
   { title: "Texas Constitutional History", description: "The Republic and state constitutions from 1836 through the Constitution of 1876, the plural executive, amendment system and failed 1974 rewrite.", href: "/texas-politics/texas-constitutional-history" },
   { title: "Texas Voting Rights History", description: "Poll taxes, white primaries, women's suffrage, the Voting Rights Act, federal litigation and the changing legal framework for Texas voters.", href: "/texas-politics/voting-rights-history" },
@@ -40,10 +42,10 @@ export const Route = createFileRoute("/texas-politics/")({
     const canonical = "https://keeptxred.com/texas-politics";
     return {
       meta: [
-        { title: "Texas Politics — Elections, Legislature & Government News" },
-        { name: "description", content: "Coverage of Texas elections, political and constitutional history, redistricting, voting rights, legislative districts, government, policy trackers, Texas law guides, official data sources, and political developments." },
+        { title: "Texas Politics — Elections, Government & Political History" },
+        { name: "description", content: "Coverage of Texas elections, Republic and state-formation history, constitutional history, redistricting, voting rights, legislative districts, government, policy trackers, Texas law guides, official data sources, and political developments." },
         { property: "og:title", content: "Texas Politics — Keep TX Red" },
-        { property: "og:description", content: "Texas elections, political history, redistricting, voting rights, districts, government, legislative updates, policy trackers, law guides, official data, and political developments." },
+        { property: "og:description", content: "Texas elections, Republic and state-formation history, constitutional history, redistricting, voting rights, districts, government, legislative updates, policy trackers, law guides, official data, and political developments." },
         { property: "og:url", content: canonical },
         { property: "og:type", content: "website" },
         ...(topic ? [{ name: "robots", content: "noindex,follow" }] : []),
@@ -88,6 +90,24 @@ function TexasPoliticsPage() {
             })}
           </div>
         </section>
+
+        <section className="mt-10 rounded-2xl border border-primary/20 bg-primary/[0.03] p-6 md:p-8" aria-labelledby="republic-government-authority">
+          <div className="max-w-4xl">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Republic and state formation</p>
+            <h2 id="republic-government-authority" className="mt-2 font-display text-3xl tracking-tight md:text-4xl">How independent Texas built a government and became a state</h2>
+            <p className="mt-3 leading-7 text-muted-foreground">Follow the Republic of Texas as a functioning national government: its presidency, Congress, 1836 Constitution, changing capitals, foreign diplomacy, debt and currency, annexation and the institutional handoff from President Anson Jones to Governor J. Pinckney Henderson.</p>
+          </div>
+          <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {TEXAS_REPUBLIC_GOVERNMENT_AUTHORITY_PAGES.map((page) => (
+              <a key={page.slug} href={`/texas-politics/${page.slug}`} className="rounded-xl border bg-card p-5 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-sm">
+                <h3 className="font-bold text-primary">{page.title}</h3>
+                <p className="mt-2 line-clamp-4 text-sm leading-6 text-muted-foreground">{page.description}</p>
+                <span className="mt-4 inline-flex text-sm font-bold text-primary">Read authority guide →</span>
+              </a>
+            ))}
+          </div>
+        </section>
+
         <section className="mt-10 max-w-3xl">
           <h2 className="font-display text-2xl tracking-tight mb-3">The Map of Texas Politics</h2>
           <div className="space-y-4 font-serif text-base text-foreground/90 leading-relaxed">
@@ -102,6 +122,9 @@ function TexasPoliticsPage() {
               Senate and controls what bills reach the floor), the Attorney General, and the Speaker
               of the House. Understanding what each office can and can't do explains why some
               Republican priorities pass in a single session while others stall for years.
+            </p>
+            <p>
+              KTR's <a href="/texas-politics/republic-of-texas-government-history" className="font-semibold text-primary underline underline-offset-4">Republic of Texas Government</a> authority cluster goes back to the institutional starting point: the 1836 presidency and Congress, the founding constitution, the capital fight, foreign recognition, national debt, annexation and the 1845–1846 transition from a sovereign republic to a state inside the United States.
             </p>
             <p>
               KTR's <a href="/texas-politics/texas-constitutional-history" className="font-semibold text-primary underline underline-offset-4">Texas Constitutional History</a> explains why that power is divided in the first place: the sequence from the Republic constitution through the 1845, 1861, 1866, 1869 and 1876 charters, the post-Reconstruction reaction against concentrated authority, the plural executive and the amendment system voters still use today.
