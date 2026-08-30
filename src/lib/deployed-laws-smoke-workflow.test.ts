@@ -4,8 +4,9 @@ import { describe, expect, it } from "vitest";
 const workflow = readFileSync(".github/workflows/verify-laws-after-deploy.yml", "utf8");
 
 describe("deployed laws route smoke workflow", () => {
-  it("runs after the verified Cloudflare deployment and checks the Worker origin", () => {
-    expect(workflow).toContain('workflows: ["Deploy verified KeepTXRed to Cloudflare"]');
+  it("runs after either production Cloudflare deployment workflow and checks the Worker origin", () => {
+    expect(workflow).toContain('"Deploy verified KeepTXRed to Cloudflare"');
+    expect(workflow).toContain('"Deploy KeepTXRed to Cloudflare Workers"');
     expect(workflow).toContain("github.event.workflow_run.conclusion == 'success'");
     expect(workflow).toContain("https://keeptxred-site.freddy-coppola.workers.dev");
   });
