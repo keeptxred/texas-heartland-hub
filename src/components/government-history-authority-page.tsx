@@ -9,8 +9,8 @@ const POLICING_COMPARISON_LINK: GovernmentHistoryLink = {
 
 const POLICING_RELATED_SLUGS = new Set([
   "texas-county-government-history",
-  "texas-county-sheriff-history",
-  "justice-of-the-peace-and-constable-history",
+  "county-sheriff-history",
+  "justice-of-the-peace-constable-history",
 ]);
 
 export function getGovernmentHistoryRelatedLinks(page: GovernmentHistoryPageData) {
