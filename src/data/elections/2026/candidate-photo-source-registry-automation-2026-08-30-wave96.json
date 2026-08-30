@@ -16,5 +16,32 @@
     "rightsRule": "Use ATPE Teach the Vote candidate profiles only as a discovery bridge to candidate identities, campaign contact information, official candidate links, survey material, and portrait leads. Do not reuse ATPE-hosted images by default; require item-level identity, provenance, and a documented reusable-rights or editorial-permission basis before approval.",
     "searchHint": "site:teachthevote.atpe.org/Candidates Texas 2026 candidate official website portrait",
     "notes": "New discovery source verified August 30, 2026. Current ATPE Teach the Vote profiles cover 2026 Texas legislative candidates, including missing-photo candidates such as Liz Ramos, and can corroborate ballot status, candidate contact details, and outbound official sources. Discovery-only."
+  },
+  {
+    "domain": "margofortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Margo Jordan's official 2026 State Board of Education campaign website as a discovery and identity-verification source. Do not approve or reuse an image without item-level provenance and a documented reusable-rights or editorial-permission basis.",
+    "searchHint": "Margo Jordan Texas SBOE District 6 official campaign portrait media press",
+    "notes": "New source verified August 30, 2026. The site identifies Margo Jordan as a current Texas State Board of Education candidate. Discovery-only except where an individual candidate-controlled image is separately verified."
+  },
+  {
+    "domain": "margojordan.com",
+    "sourceClass": "candidate-controlled-official-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Margo Jordan's candidate-controlled personal biography as a candidate-linked official profile for identity and portrait discovery. Individual images require exact provenance and an explicit documented editorial-use basis; no general reuse license is inferred from the site.",
+    "searchHint": "site:margojordan.com Margo Jordan portrait biography",
+    "notes": "New candidate-linked official profile verified August 30, 2026 and cross-verified to the same Margo Jordan identified by MargoForTexas.com and a current August 2026 candidate interview."
+  },
+  {
+    "domain": "sanantonioreport.org",
+    "sourceClass": "reputable-news-candidate-profile",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use San Antonio Report 2026 candidate-profile pages as candidate identity and portrait leads only. Do not reuse staff or publication-owned images unless the individual image is explicitly candidate-supplied, licensed, public-domain, or otherwise has a documented permission basis.",
+    "searchHint": "site:sanantonioreport.org/profile 2026 Texas candidate",
+    "notes": "New discovery source reviewed August 30, 2026. It has candidate-specific profiles and portraits, including Rhett Rosenquest Smith, but publication-owned staff images remain discovery-only absent item-level reuse permission."
   }
 ]
