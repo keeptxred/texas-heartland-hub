@@ -106,7 +106,6 @@ export function GovernmentHistoryAuthorityPage({ page }: { page: GovernmentHisto
           <a href="/texas-government" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">Texas government hub</a>
           <a href="/texas-legislature" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Texas Legislature</a>
           <a href="/elections/2026" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Election Central</a>
-          <a href="/texas-courts" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Texas courts</a>
         </div>
       </header>
 
