@@ -80,6 +80,18 @@ const findings = [
     usageStatus: "approved",
     discoveryMethod: "official-campaign-biography",
     discoveredAt: "2026-08-30T17:30:00.000Z"
+  },
+  {
+    candidateId: "candidate-david-flores-republican-race-2026-texas-house-144",
+    imageUrl: "https://img1.wsimg.com/isteam/ip/38ca4c8b-3b7a-4d65-a9e7-f26f927e4a5d/Copy%20of%20David%20Flores.png",
+    sourceUrl: "https://david4texas.com/about",
+    altText: "David Flores, Republican candidate for Texas House District 144",
+    credit: "David Flores for Texas campaign",
+    license: null,
+    permissionBasis: "Candidate-identifying campaign image is hosted directly by David Flores's official campaign website. The campaign site identifies David Flores as a candidate for Texas House District 144, and the Harris County GOP and TCTA candidate directories independently link david4texas.com to the same 2026 HD144 candidate. Used only for editorial candidate identification with exact campaign attribution and source link.",
+    usageStatus: "approved",
+    discoveryMethod: "official-campaign-profile",
+    discoveredAt: "2026-08-30T17:35:00.000Z"
   }
 ];
 
