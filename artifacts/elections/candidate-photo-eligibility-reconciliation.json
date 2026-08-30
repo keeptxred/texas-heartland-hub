@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-30T16:12:02.208Z",
+  "generatedAt": "2026-08-30T17:51:48.476Z",
   "sourceName": "Texas Secretary of State — 2026 Independent Candidate Filings",
   "sourceUrl": "https://www.sos.state.tx.us/elections/laws/independent-declarations-2026.shtml",
   "sourceRetrievedAt": "2026-08-22T13:50:00Z",
@@ -8,7 +8,7 @@
   "matchedCount": 13,
   "unmatchedCount": 2,
   "ambiguousCount": 0,
-  "changedFieldCount": 12,
+  "changedFieldCount": 0,
   "matched": [
     {
       "candidateId": "candidate-jade-simmons-independent-race-2026-us-senate",
@@ -16,7 +16,7 @@
       "raceId": "race-2026-us-senate",
       "party": "independent",
       "before": {
-        "filingStatus": "accepted",
+        "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
       },
       "after": {
@@ -30,7 +30,7 @@
       "raceId": "race-2026-us-house-9",
       "party": "independent",
       "before": {
-        "filingStatus": "accepted",
+        "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
       },
       "after": {
@@ -44,7 +44,7 @@
       "raceId": "race-2026-us-house-18",
       "party": "independent",
       "before": {
-        "filingStatus": "accepted",
+        "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
       },
       "after": {
@@ -58,7 +58,7 @@
       "raceId": "race-2026-us-house-20",
       "party": "independent",
       "before": {
-        "filingStatus": "accepted",
+        "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
       },
       "after": {
@@ -86,7 +86,7 @@
       "raceId": "race-2026-us-house-38",
       "party": "independent",
       "before": {
-        "filingStatus": "accepted",
+        "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
       },
       "after": {
@@ -100,7 +100,7 @@
       "raceId": "race-2026-us-house-38",
       "party": "independent",
       "before": {
-        "filingStatus": "accepted",
+        "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
       },
       "after": {
@@ -114,7 +114,7 @@
       "raceId": "race-2026-governor",
       "party": "independent",
       "before": {
-        "filingStatus": "accepted",
+        "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
       },
       "after": {
@@ -128,7 +128,7 @@
       "raceId": "race-2026-governor",
       "party": "independent",
       "before": {
-        "filingStatus": "accepted",
+        "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
       },
       "after": {
@@ -142,7 +142,7 @@
       "raceId": "race-2026-lieutenant-governor",
       "party": "independent",
       "before": {
-        "filingStatus": "accepted",
+        "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
       },
       "after": {
@@ -156,7 +156,7 @@
       "raceId": "race-2026-texas-senate-1",
       "party": "independent",
       "before": {
-        "filingStatus": "accepted",
+        "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
       },
       "after": {
@@ -170,7 +170,7 @@
       "raceId": "race-2026-texas-house-124",
       "party": "independent",
       "before": {
-        "filingStatus": "accepted",
+        "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
       },
       "after": {
@@ -184,7 +184,7 @@
       "raceId": "race-2026-texas-house-126",
       "party": "independent",
       "before": {
-        "filingStatus": "accepted",
+        "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
       },
       "after": {
