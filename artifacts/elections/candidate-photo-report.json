@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-08-30T16:12:06.388Z",
+  "generatedAt": "2026-08-30T17:16:48.167Z",
   "candidateCount": 491,
   "eligibleCandidateCount": 479,
   "excludedCandidateCount": 12,
-  "approvedPhotoCount": 297,
-  "missingPhotoCount": 182,
-  "manifestEntryCount": 297,
-  "coverage": 0.6200417536534447,
-  "coveragePercent": 62,
+  "approvedPhotoCount": 300,
+  "missingPhotoCount": 179,
+  "manifestEntryCount": 300,
+  "coverage": 0.6263048016701461,
+  "coveragePercent": 62.63,
   "targetCoverage": 0.85,
   "targetApprovedPhotoCount": 408,
-  "photosNeededForTarget": 111,
+  "photosNeededForTarget": 108,
   "targetMet": false,
   "errors": [],
   "warnings": [],
@@ -987,13 +987,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-pete-flores-republican-race-2026-texas-senate-24",
-      "name": "PETE FLORES",
-      "raceId": "race-2026-texas-senate-24",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-riley-rodriquez-democratic-race-2026-texas-senate-28",
       "name": "RILEY RODRIQUEZ",
       "raceId": "race-2026-texas-senate-28",
@@ -1033,13 +1026,6 @@
       "name": "PAUL THOMASSON",
       "raceId": "race-2026-texas-senate-5",
       "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-leigh-wambsganss-republican-race-2026-texas-senate-9",
-      "name": "LEIGH WAMBSGANSS",
-      "raceId": "race-2026-texas-senate-9",
-      "party": "republican",
       "priority": "standard"
     },
     {
@@ -1152,13 +1138,6 @@
       "name": "MARQUETTE GREENE-SCOTT",
       "raceId": "race-2026-us-house-22",
       "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-trever-nehls-republican-race-2026-us-house-22",
-      "name": "TREVER NEHLS",
-      "raceId": "race-2026-us-house-22",
-      "party": "republican",
       "priority": "standard"
     },
     {

@@ -2038,6 +2038,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-leigh-wambsganss-republican-race-2026-texas-senate-9",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Leigh_Wambsganss_%2853804969676%29.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Leigh_Wambsganss_(53804969676).jpg",
+    "altText": "Leigh Wambsganss, Republican candidate for Texas Senate District 9",
+    "credit": "Gage Skidmore via Wikimedia Commons",
+    "license": "CC BY-SA 2.0",
+    "permissionBasis": "Wikimedia Commons file page documents the photograph as CC BY-SA 2.0, originally published by photographer Gage Skidmore on Flickr and license-verified by FlickreviewR; the file description identifies Leigh Wambsganss as the subject.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-cc-by-sa-2.0",
+    "discoveredAt": "2026-08-30T16:46:00.000Z"
+  },
+  {
     "candidateId": "candidate-linda-garcia-democratic-race-2026-texas-house-107",
     "imageUrl": "https://house.texas.gov/images/members/4485.jpg?v=3",
     "sourceUrl": "https://house.texas.gov/members/107",
@@ -2590,6 +2602,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:52:53.770Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-pete-flores-republican-race-2026-texas-senate-24",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Pete_Flores.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Pete_Flores.jpg",
+    "altText": "Pete Flores, Republican candidate for Texas Senate District 24",
+    "credit": "The Trey Blocker Show via Wikimedia Commons",
+    "license": "CC BY 3.0",
+    "permissionBasis": "Wikimedia Commons file page documents the image as Creative Commons Attribution 3.0 Unported, sourced from a CC-licensed 2019 video and identifying the subject as Texas State Senator Pete Flores.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-cc-by-3.0",
+    "discoveredAt": "2026-08-30T16:46:00.000Z"
   },
   {
     "candidateId": "candidate-pete-sessions-republican-race-2026-us-house-17",
@@ -3290,6 +3314,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:52:28.621Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-trever-nehls-republican-race-2026-us-house-22",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flickr_-_The_U.S._Army_-_Turban_presentation.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Flickr_-_The_U.S._Army_-_Turban_presentation.jpg",
+    "altText": "Trever Nehls during U.S. Army service in Afghanistan",
+    "credit": "U.S. Air Force Staff Sgt. Brian Ferguson via Wikimedia Commons",
+    "license": "Public domain — U.S. federal government work",
+    "permissionBasis": "Wikimedia Commons identifies the photograph as a U.S. Air Force work in the public domain and explicitly identifies Maj. Trever Nehls as the subject; the candidate's military identity is independently corroborated by current coverage of his Texas 22nd District candidacy.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-public-domain-us-military",
+    "discoveredAt": "2026-08-30T16:54:00.000Z"
   },
   {
     "candidateId": "candidate-trey-martinez-fischer-democratic-race-2026-texas-house-116",
