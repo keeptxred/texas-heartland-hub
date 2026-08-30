@@ -1,14 +1,5 @@
 [
   {
-    "domain": "votemuse.com",
-    "sourceClass": "official-campaign-website",
-    "discoveryStatus": "active",
-    "autoApprove": false,
-    "rightsRule": "Use Dr. Fatima La'Juan Muse's official campaign site as a discovery source for candidate-supplied portraits and media. Do not approve or reuse any image without item-level provenance plus an explicit reusable-rights basis, campaign/media permission, or another documented editorial permission basis.",
-    "searchHint": "Fatima La'Juan Muse Texas House District 2 official campaign portrait media press VoteMuse",
-    "notes": "New source independently verified August 30, 2026. The current VoteMuse site identifies Dr. Fatima La'Juan Muse as the candidate for Texas House District 2, matching the currently missing canonical candidate. Treat imagery as discovery-only until item-level rights are verified."
-  },
-  {
     "domain": "votejacky21.com",
     "sourceClass": "official-campaign-website",
     "discoveryStatus": "active",
