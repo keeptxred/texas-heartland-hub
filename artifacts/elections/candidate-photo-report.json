@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-08-30T16:12:06.388Z",
+  "generatedAt": "2026-08-30T17:50:59.257Z",
   "candidateCount": 491,
   "eligibleCandidateCount": 479,
   "excludedCandidateCount": 12,
-  "approvedPhotoCount": 297,
-  "missingPhotoCount": 182,
-  "manifestEntryCount": 297,
-  "coverage": 0.6200417536534447,
-  "coveragePercent": 62,
+  "approvedPhotoCount": 308,
+  "missingPhotoCount": 171,
+  "manifestEntryCount": 308,
+  "coverage": 0.6430062630480167,
+  "coveragePercent": 64.3,
   "targetCoverage": 0.85,
   "targetApprovedPhotoCount": 408,
-  "photosNeededForTarget": 111,
+  "photosNeededForTarget": 100,
   "targetMet": false,
   "errors": [],
   "warnings": [],
@@ -203,13 +203,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-albert-wittliff-democratic-race-2026-texas-house-129",
-      "name": "ALBERT WITTLIFF",
-      "raceId": "race-2026-texas-house-129",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-albert-hunter-democratic-race-2026-texas-house-13",
       "name": "ALBERT HUNTER",
       "raceId": "race-2026-texas-house-13",
@@ -220,13 +213,6 @@
       "candidateId": "candidate-scott-whitmarsh-republican-race-2026-texas-house-131",
       "name": "SCOTT WHITMARSH",
       "raceId": "race-2026-texas-house-131",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-liz-ramos-republican-race-2026-texas-house-135",
-      "name": "LIZ RAMOS",
-      "raceId": "race-2026-texas-house-135",
       "party": "republican",
       "priority": "standard"
     },
@@ -266,23 +252,9 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-david-flores-republican-race-2026-texas-house-144",
-      "name": "DAVID FLORES",
-      "raceId": "race-2026-texas-house-144",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-inocensia-moreno-republican-race-2026-texas-house-145",
       "name": "INOCENSIA MORENO",
       "raceId": "race-2026-texas-house-145",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-alexandria-nicole-butler-republican-race-2026-texas-house-146",
-      "name": "ALEXANDRIA NICOLE BUTLER",
-      "raceId": "race-2026-texas-house-146",
       "party": "republican",
       "priority": "standard"
     },
@@ -291,20 +263,6 @@
       "name": "THEODIS DANIEL",
       "raceId": "race-2026-texas-house-147",
       "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-moniqua-s-scott-democratic-race-2026-texas-house-15",
-      "name": "MONIQUA' S. SCOTT",
-      "raceId": "race-2026-texas-house-15",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-a-yonna-kellum-democratic-race-2026-texas-house-150",
-      "name": "A'YONNA KELLUM",
-      "raceId": "race-2026-texas-house-150",
-      "party": "democratic",
       "priority": "standard"
     },
     {
@@ -326,20 +284,6 @@
       "name": "FATIMA LA'JUAN MUSE",
       "raceId": "race-2026-texas-house-2",
       "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-jacqueline-jacky-hernandez-democratic-race-2026-texas-house-21",
-      "name": "JACQUELINE \"JACKY\" HERNANDEZ",
-      "raceId": "race-2026-texas-house-21",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-ray-callas-republican-race-2026-texas-house-21",
-      "name": "RAY CALLAS",
-      "raceId": "race-2026-texas-house-21",
-      "party": "republican",
       "priority": "standard"
     },
     {
@@ -987,13 +931,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-pete-flores-republican-race-2026-texas-senate-24",
-      "name": "PETE FLORES",
-      "raceId": "race-2026-texas-senate-24",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-riley-rodriquez-democratic-race-2026-texas-senate-28",
       "name": "RILEY RODRIQUEZ",
       "raceId": "race-2026-texas-senate-28",
@@ -1033,13 +970,6 @@
       "name": "PAUL THOMASSON",
       "raceId": "race-2026-texas-senate-5",
       "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-leigh-wambsganss-republican-race-2026-texas-senate-9",
-      "name": "LEIGH WAMBSGANSS",
-      "raceId": "race-2026-texas-senate-9",
-      "party": "republican",
       "priority": "standard"
     },
     {
@@ -1152,13 +1082,6 @@
       "name": "MARQUETTE GREENE-SCOTT",
       "raceId": "race-2026-us-house-22",
       "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-trever-nehls-republican-race-2026-us-house-22",
-      "name": "TREVER NEHLS",
-      "raceId": "race-2026-us-house-22",
-      "party": "republican",
       "priority": "standard"
     },
     {
