@@ -6,7 +6,11 @@ import {
   selectKtrFacebookAttentionPost,
 } from "@/lib/facebook-attention-posts";
 import {
-  KTR_FACEBOOK_ATTENTION_IMAGE_URL,
+  buildKtrFacebookAttentionImagePrompt,
+  ktrFacebookAttentionImageFilename,
+  ktrFacebookAttentionImageUrl,
+} from "@/lib/facebook-attention-image.server";
+import {
   formatKtrFacebookPublishedAttentionMessage,
   ktrFacebookAttentionTrafficUrl,
   selectKtrFacebookAttentionPostForSlot,
@@ -24,9 +28,19 @@ describe("KTR Facebook attention posts", () => {
     expect(KTR_FACEBOOK_ATTENTION_POSTS.length).toBeGreaterThanOrEqual(125);
   });
 
-  it("requires an HTTPS image for every attention post", () => {
-    expect(KTR_FACEBOOK_ATTENTION_IMAGE_URL).toMatch(/^https:\/\//);
-    expect(KTR_FACEBOOK_ATTENTION_IMAGE_URL).toBe("https://keeptxred.com/og/default.jpg");
+  it("builds the requested post-specific image prompt instead of a generic fallback", () => {
+    const post = KTR_FACEBOOK_ATTENTION_POSTS.find((item) => item.title === "Youth sports");
+    expect(post).toBeTruthy();
+    if (!post) return;
+    const prompt = buildKtrFacebookAttentionImagePrompt(post.message);
+    expect(prompt.startsWith(`Generate an image for this Facebook post.\n${post.message}`)).toBe(true);
+    expect(prompt).toContain("magazine-ready social graphic");
+    expect(prompt).toContain("Do not use a generic Texas background");
+    expect(ktrFacebookAttentionImageFilename(post)).toBe("facebook-attention-youth-sports.jpg");
+    expect(ktrFacebookAttentionImageUrl(post)).toBe(
+      "https://keeptxred.com/api/public/article-image/facebook-attention-youth-sports.jpg",
+    );
+    expect(ktrFacebookAttentionImageUrl(post)).not.toContain("/og/default.jpg");
   });
 
   it("does not contain duplicate titles or messages", () => {
