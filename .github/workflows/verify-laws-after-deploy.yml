@@ -2,7 +2,9 @@ name: Verify deployed laws routes
 
 on:
   workflow_run:
-    workflows: ["Deploy verified KeepTXRed to Cloudflare"]
+    workflows:
+      - "Deploy verified KeepTXRed to Cloudflare"
+      - "Deploy KeepTXRed to Cloudflare Workers"
     types: [completed]
     branches: [main]
   workflow_dispatch:
