@@ -3,23 +3,15 @@ name: Auto Facebook Posts
 on:
   schedule:
     # Lightweight checks every 30 minutes across the Texas waking/evening day.
-    # Keep TX Red can publish up to five randomized posts per day and
-    # TexasDefined can publish up to two. Each site decides independently
-    # whether a randomized Central-time target is due.
+    # Keep TX Red can publish up to five randomized posts per day. TexasDefined
+    # now owns its Facebook engagement schedule in keeptxred/TexasDefined.
     - cron: "0,30 12-23 * * *"
     - cron: "0,30 0-4 * * *"
   workflow_dispatch:
-    inputs:
-      texasdefined_dry_run:
-        description: Preview the TexasDefined candidate without posting or recording it
-        required: false
-        default: false
-        type: boolean
 
 permissions:
   contents: read
   id-token: write
-  statuses: write
 
 concurrency:
   group: keeptxred-auto-facebook
@@ -30,15 +22,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      TEXASDEFINED_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.texasdefined_dry_run }}
-      GH_TOKEN: ${{ github.token }}
       # GitHub-hosted runners are intentionally challenged on browser-facing
       # keeptxred.com dynamic paths. Machine hooks use the same deployed Worker
       # directly while retaining strict GitHub Actions OIDC authorization.
       AUTOMATION_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
     steps:
-      - name: Check randomized Facebook schedules and post if due
-        id: facebook
+      - name: Check randomized Keep TX Red Facebook schedule and post if due
         shell: bash
         run: |
           set -euo pipefail
@@ -58,124 +47,34 @@ jobs:
             mode="manual"
           fi
 
-          failures=0
+          output="/tmp/facebook-post-keeptxred.json"
+          status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
+            --max-time 420 \
+            -H 'accept: application/json' \
+            -H "Authorization: Bearer ${oidc_token}" \
+            -H "X-KTR-Facebook-Mode: ${mode}" \
+            "${AUTOMATION_ORIGIN%/}/api/public/hooks/auto-facebook-post-smart" || echo 000)
 
-          run_page() {
-            local label="$1"
-            local endpoint="$2"
-            local output="$3"
-            local requested_mode="${4:-$mode}"
-            local dry_run="${5:-false}"
-            local status
-            local -a extra_headers=()
+          echo "keeptxred auto-facebook HTTP ${status} mode=${mode}"
+          cat "$output" 2>/dev/null || true
+          echo
 
-            if [[ "$dry_run" == "true" ]]; then
-              extra_headers+=( -H 'X-KTR-Facebook-Dry-Run: true' )
-            fi
-
-            status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
-              --max-time 420 \
-              -H 'accept: application/json' \
-              -H "Authorization: Bearer ${oidc_token}" \
-              -H "X-KTR-Facebook-Mode: ${requested_mode}" \
-              "${extra_headers[@]}" \
-              "$endpoint" || echo 000)
-
-            echo "${label} auto-facebook HTTP ${status} mode=${requested_mode} dry_run=${dry_run}"
-            cat "$output" 2>/dev/null || true
-            echo
-
-            if [[ "$status" != "200" ]] || ! jq -e '.ok == true' "$output" >/dev/null 2>&1; then
-              echo "AUTO_FACEBOOK_POST_FAILED page=${label}" >&2
-              failures=$((failures + 1))
-              return
-            fi
-
-            if jq -e '.dry_run == true' "$output" >/dev/null 2>&1; then
-              kind=$(jq -r '.kind // "unknown"' "$output")
-              title=$(jq -r '.title // ""' "$output")
-              would_post=$(jq -r '.would_post // false' "$output")
-              image_url=$(jq -r '.image_url // ""' "$output")
-              echo "AUTO_FACEBOOK_DRY_RUN page=${label} kind=${kind} title=${title} would_post=${would_post} image_url=${image_url}"
-            elif jq -e '.posted == true' "$output" >/dev/null 2>&1; then
-              slug=$(jq -r '.slug // ""' "$output")
-              title=$(jq -r '.title // ""' "$output")
-              kind=$(jq -r '.kind // "article"' "$output")
-              article_url=$(jq -r '.article_url // ""' "$output")
-              post_url=$(jq -r '.post_url // ""' "$output")
-              image_url=$(jq -r '.image_url // ""' "$output")
-              echo "AUTO_FACEBOOK_POST_SUCCESS page=${label} kind=${kind} slug=${slug} title=${title} article_url=${article_url} post_url=${post_url} image_url=${image_url}"
-            else
-              reason=$(jq -r '.reason // "no eligible post"' "$output")
-              next_target=$(jq -r '.next_target_local // ""' "$output")
-              posts_today=$(jq -r '.posts_today // ""' "$output")
-              echo "AUTO_FACEBOOK_POST_NOOP page=${label} reason=${reason} next_target=${next_target} posts_today=${posts_today}"
-            fi
-          }
-
-          # A TexasDefined dry run is intentionally isolated: it never invokes
-          # the Keep TX Red publisher and therefore cannot create an unrelated post.
-          if [[ "$TEXASDEFINED_DRY_RUN" != "true" ]]; then
-            run_page \
-              "keeptxred" \
-              "${AUTOMATION_ORIGIN%/}/api/public/hooks/auto-facebook-post-smart" \
-              "/tmp/facebook-post-keeptxred.json"
-          fi
-
-          # TexasDefined always goes through scheduled-mode safeguards and the
-          # image-required publisher. Dry run resolves the candidate and its image
-          # without posting or writing publication history.
-          run_page \
-            "texasdefined" \
-            "${AUTOMATION_ORIGIN%/}/api/public/hooks/auto-facebook-post-texasdefined-with-image" \
-            "/tmp/facebook-post-texasdefined.json" \
-            "scheduled" \
-            "$TEXASDEFINED_DRY_RUN"
-
-          if (( failures > 0 )); then
+          if [[ "$status" != "200" ]] || ! jq -e '.ok == true' "$output" >/dev/null 2>&1; then
+            echo "AUTO_FACEBOOK_POST_FAILED page=keeptxred" >&2
             exit 1
           fi
 
-      - name: Publish TexasDefined dry-run smoke status
-        if: always() && env.TEXASDEFINED_DRY_RUN == 'true'
-        shell: bash
-        env:
-          STEP_OUTCOME: ${{ steps.facebook.outcome }}
-        run: |
-          set -euo pipefail
-          state='failure'
-          description='TexasDefined non-destructive Facebook dry-run smoke failed'
-          diagnostic_context=''
-          if [[ "$STEP_OUTCOME" == 'success' ]]; then
-            state='success'
-            description='Dry run passed without Facebook posting or history writes'
-          elif [[ -s /tmp/facebook-post-texasdefined.json ]]; then
-            safe_error="$(jq -r '.error // empty' /tmp/facebook-post-texasdefined.json 2>/dev/null | tr '\n\r' ' ' | cut -c1-100)"
-            if [[ -n "$safe_error" ]]; then
-              description="Dry run failed: ${safe_error}"
-              case "$safe_error" in
-                *OIDC*) diagnostic_context='texasdefined-facebook-dry-run-oidc' ;;
-                *"not connected"*) diagnostic_context='texasdefined-facebook-dry-run-connection' ;;
-                *"duplicate verification failed"*) diagnostic_context='texasdefined-facebook-dry-run-graph' ;;
-                *) diagnostic_context='texasdefined-facebook-dry-run-other' ;;
-              esac
-            fi
-          fi
-          publish_status() {
-            local context="$1"
-            payload="$(python3 - "$state" "$context" "$description" <<'PY'
-          import json, sys
-          print(json.dumps({"state": sys.argv[1], "context": sys.argv[2], "description": sys.argv[3][:140]}))
-          PY
-          )"
-            curl --fail-with-body --silent --show-error --request POST \
-              --header "Authorization: Bearer $GH_TOKEN" \
-              --header 'Accept: application/vnd.github+json' \
-              --header 'X-GitHub-Api-Version: 2022-11-28' \
-              "https://api.github.com/repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
-              --data "$payload" >/dev/null
-          }
-          publish_status 'texasdefined-facebook-dry-run'
-          if [[ -n "$diagnostic_context" ]]; then
-            publish_status "$diagnostic_context"
+          if jq -e '.posted == true' "$output" >/dev/null 2>&1; then
+            slug=$(jq -r '.slug // ""' "$output")
+            title=$(jq -r '.title // ""' "$output")
+            kind=$(jq -r '.kind // "article"' "$output")
+            article_url=$(jq -r '.article_url // ""' "$output")
+            post_url=$(jq -r '.post_url // ""' "$output")
+            image_url=$(jq -r '.image_url // ""' "$output")
+            echo "AUTO_FACEBOOK_POST_SUCCESS page=keeptxred kind=${kind} slug=${slug} title=${title} article_url=${article_url} post_url=${post_url} image_url=${image_url}"
+          else
+            reason=$(jq -r '.reason // "no eligible post"' "$output")
+            next_target=$(jq -r '.next_target_local // ""' "$output")
+            posts_today=$(jq -r '.posts_today // ""' "$output")
+            echo "AUTO_FACEBOOK_POST_NOOP page=keeptxred reason=${reason} next_target=${next_target} posts_today=${posts_today}"
           fi
