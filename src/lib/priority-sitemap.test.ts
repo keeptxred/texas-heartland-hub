@@ -11,6 +11,9 @@ const requiredPriorityPaths = [
   "/texas-politics",
   "/texas-legislature",
   "/bills",
+  "/data",
+  "/policy",
+  "/texas-economy",
   "/elections/2026",
   "/elections/candidates",
   "/elections/statewide",
@@ -37,7 +40,7 @@ describe("priority sitemap crawl-budget contract", () => {
     }
   });
 
-  it("keeps the core law, government and election crawl spine present", () => {
+  it("keeps the core law, government, policy and election crawl spine present", () => {
     for (const path of requiredPriorityPaths) {
       expect(PRIORITY_SITEMAP_PATHS).toContain(path);
     }
