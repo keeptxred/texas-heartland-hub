@@ -39,6 +39,7 @@ const AGENCY_REFRESH = toIsoDate("2026-08-19T07:40:00-05:00");
 const CIVIC_TOOLS_REFRESH = toIsoDate("2026-08-19T08:00:00-05:00");
 const POLITICAL_HISTORY_REFRESH = toIsoDate("2026-08-30T00:00:00-05:00");
 const GOVERNMENT_HISTORY_REFRESH = toIsoDate("2026-08-30T00:00:00-05:00");
+const LOCAL_GOVERNMENT_AUTHORITY_REFRESH = toIsoDate("2026-08-30T08:00:00-05:00");
 const SPORTS_SITEMAP_LEAGUES = ["nfl", "mlb", "nba", "nhl", "mls", "nwsl", "wnba", "cfb"] as const;
 const SPORTS_SITEMAP_TOPICS = ["football", "baseball", "basketball", "hockey", "soccer", "college", "recruiting", "nil", "business-policy", "stadiums", "motorsports", "postseason", "transactions", "injuries", "rivalries"] as const;
 const INDEXABLE_GUIDES = Object.values(ALL_GUIDES).filter(isSupportingGuideIndexable);
@@ -74,7 +75,7 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/texas-legislature/current-session": CITATION_MAGNET_REFRESH,
   "/texas-legislature/sessions": toIsoDate("2026-08-07T00:00:00-05:00"),
   "/texas-legislature/votes": CITATION_MAGNET_REFRESH,
-  "/texas-government": GOVERNMENT_HISTORY_REFRESH,
+  "/texas-government": LOCAL_GOVERNMENT_AUTHORITY_REFRESH,
   "/texas-government/agencies": AGENCY_REFRESH,
   "/texas-government/texas-government-history": GOVERNMENT_HISTORY_REFRESH,
   "/texas-government/texas-legislature-history": GOVERNMENT_HISTORY_REFRESH,
@@ -84,6 +85,14 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/texas-government/texas-supreme-court-history": GOVERNMENT_HISTORY_REFRESH,
   "/texas-government/court-of-criminal-appeals-history": GOVERNMENT_HISTORY_REFRESH,
   "/texas-government/judicial-selection-elections": GOVERNMENT_HISTORY_REFRESH,
+  "/texas-government/texas-county-government-history": LOCAL_GOVERNMENT_AUTHORITY_REFRESH,
+  "/texas-government/commissioners-court-history": LOCAL_GOVERNMENT_AUTHORITY_REFRESH,
+  "/texas-government/county-judge-history": LOCAL_GOVERNMENT_AUTHORITY_REFRESH,
+  "/texas-government/county-commissioner-history": LOCAL_GOVERNMENT_AUTHORITY_REFRESH,
+  "/texas-government/county-sheriff-history": LOCAL_GOVERNMENT_AUTHORITY_REFRESH,
+  "/texas-government/county-district-clerk-history": LOCAL_GOVERNMENT_AUTHORITY_REFRESH,
+  "/texas-government/tax-assessor-collector-history": LOCAL_GOVERNMENT_AUTHORITY_REFRESH,
+  "/texas-government/justice-of-the-peace-constable-history": LOCAL_GOVERNMENT_AUTHORITY_REFRESH,
   "/districts": DISTRICT_REFRESH,
   "/laws": LAW_DATA_REFRESH,
   "/laws/topics": LAW_DATA_REFRESH,
@@ -140,7 +149,11 @@ const STATIC_PATHS:string[]=[
   "/texas-government/texas-government-history","/texas-government/texas-legislature-history",
   "/texas-government/governor-history","/texas-government/lieutenant-governor-history",
   "/texas-government/speaker-of-the-house-history","/texas-government/texas-supreme-court-history",
-  "/texas-government/court-of-criminal-appeals-history","/texas-government/judicial-selection-elections","/districts",
+  "/texas-government/court-of-criminal-appeals-history","/texas-government/judicial-selection-elections",
+  "/texas-government/texas-county-government-history","/texas-government/commissioners-court-history",
+  "/texas-government/county-judge-history","/texas-government/county-commissioner-history",
+  "/texas-government/county-sheriff-history","/texas-government/county-district-clerk-history",
+  "/texas-government/tax-assessor-collector-history","/texas-government/justice-of-the-peace-constable-history","/districts",
   "/about","/representatives","/register-to-vote","/contact-legislators",
   "/get-involved","/county-elections","/laws","/laws/topics","/laws/constitutional-amendments","/laws/effective-dates","/data",
   "/civic-tools","/civic-tools/government-authority-finder","/civic-tools/texas-law-finder","/civic-tools/bill-finder","/civic-tools/compare-legislators",
