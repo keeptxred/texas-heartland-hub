@@ -18,8 +18,8 @@ const voting = readFileSync(new URL("../routes/elections.voting.tsx", import.met
 const voterId = readFileSync(new URL("../components/elections/voting/TexasVoterIdReference.tsx", import.meta.url), "utf8");
 const districts = readFileSync(new URL("../routes/elections.districts.index.tsx", import.meta.url), "utf8");
 const votes = readFileSync(new URL("../routes/texas-legislature.votes.tsx", import.meta.url), "utf8");
-const amendments = readFileSync(new URL("../routes/laws_.constitutional-amendments.tsx", import.meta.url), "utf8");
-const effectiveDates = readFileSync(new URL("../routes/laws_.effective-dates.tsx", import.meta.url), "utf8");
+const amendments = readFileSync(new URL("../routes/laws.constitutional-amendments.tsx", import.meta.url), "utf8");
+const effectiveDates = readFileSync(new URL("../routes/laws.effective-dates.tsx", import.meta.url), "utf8");
 const billRelationships = readFileSync(new URL("../components/bills/BillEditorialExplanation.tsx", import.meta.url), "utf8");
 const raceRelationships = readFileSync(new URL("../components/elections/races/RaceRelationshipMap.tsx", import.meta.url), "utf8");
 
