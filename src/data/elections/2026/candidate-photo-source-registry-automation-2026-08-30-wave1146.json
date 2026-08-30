@@ -25,5 +25,32 @@
     "rightsRule": "Use the Medina County Democrats candidate directory as a discovery bridge to verified local and legislative candidate identities, biographies, campaign links, and portrait leads. Do not reuse directory-hosted images without item-level provenance and documented rights or editorial permission.",
     "searchHint": "site:medinademocrats.org 2026 Joe Paz Herrera Texas Senate District 24 candidate portrait campaign",
     "notes": "New discovery source verified August 30, 2026. The current county-party site identifies Joe Paz Herrera as the Texas Senate District 24 candidate and displays a candidate-specific image. Discovery-only pending rights verification."
+  },
+  {
+    "domain": "caitlinrourk.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Caitlin Rourk's official Texas 10th Congressional District campaign website as a discovery source for candidate portraits and campaign media. Do not approve or reuse campaign-hosted images without item-level provenance and a documented reusable-rights or editorial-permission basis.",
+    "searchHint": "Caitlin Rourk Texas 10 official campaign portrait press media",
+    "notes": "New source verified August 30, 2026. The live site identifies Rourk as the Democratic nominee for TX-10, includes candidate-specific imagery and a biography, and is independently linked from BallotReady. Discovery-only pending item-level rights review."
+  },
+  {
+    "domain": "helifortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Angela Heli Rodriguez Prilliman's official TX-12 campaign website as a discovery source for candidate portraits and campaign media. Do not approve or reuse campaign-hosted images without item-level provenance and a documented reusable-rights or editorial-permission basis.",
+    "searchHint": "Angela Heli Rodriguez Prilliman TX-12 official campaign portrait media press",
+    "notes": "New source verified August 30, 2026. The campaign biography identifies Angela ‘Heli’ Rodriguez Prilliman as a 2026 candidate for Texas' 12th Congressional District and hosts candidate-specific photographs. Discovery-only pending item-level rights review."
+  },
+  {
+    "domain": "drkristinhook.org",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Kristin Hook's official TX-21 campaign website as a discovery source for candidate portraits, biography imagery, and campaign media. Do not approve or reuse campaign-hosted images without item-level provenance and a documented reusable-rights or editorial-permission basis.",
+    "searchHint": "Kristin Hook Texas 21 official campaign portrait press media",
+    "notes": "New source verified August 30, 2026. The current site identifies Dr. Kristin Hook's campaign for Texas' 21st Congressional District and is independently corroborated by BallotReady and San Antonio Report candidate pages. Discovery-only pending item-level rights review."
   }
 ]
