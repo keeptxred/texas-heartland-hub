@@ -1,0 +1,116 @@
+name: Verify deployed laws routes
+
+on:
+  workflow_run:
+    workflows: ["Deploy verified KeepTXRed to Cloudflare"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: keeptxred-laws-runtime-smoke
+  cancel-in-progress: true
+
+jobs:
+  verify-laws:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
+    steps:
+      - name: Verify deployed law route ownership, H1s, and canonicals
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import re
+          import subprocess
+          from html.parser import HTMLParser
+          import os
+
+          site_url = os.environ["SITE_URL"].rstrip("/")
+          parent_h1 = "Texas Laws Explained:"
+          checks = [
+              ("/laws", parent_h1, "https://keeptxred.com/laws", False, False),
+              ("/laws/constitutional-amendments", "Texas Constitutional Amendments Tracker", "https://keeptxred.com/laws/constitutional-amendments", True, True),
+              ("/laws/effective-dates", "Texas Laws Taking Effect in 2026", "https://keeptxred.com/laws/effective-dates", True, True),
+              ("/laws/topics", "Texas Law Library", "https://keeptxred.com/laws/topics", True, True),
+              ("/laws/topic/property-tax-law", "Texas Property Tax Law Explained", "https://keeptxred.com/laws/topic/property-tax-law", True, True),
+          ]
+
+          def normalize(value: str) -> str:
+              return re.sub(r"\s+", " ", value).strip()
+
+          class PageParser(HTMLParser):
+              def __init__(self):
+                  super().__init__(convert_charrefs=True)
+                  self.h1_depth = 0
+                  self.h1_parts = []
+                  self.canonicals = []
+
+              def handle_starttag(self, tag, attrs):
+                  tag = tag.lower()
+                  if tag == "h1":
+                      self.h1_depth += 1
+                  if tag == "link":
+                      values = dict(attrs)
+                      rel = {part.lower() for part in (values.get("rel") or "").split()}
+                      href = values.get("href")
+                      if "canonical" in rel and href:
+                          self.canonicals.append(href)
+
+              def handle_endtag(self, tag):
+                  if tag.lower() == "h1" and self.h1_depth:
+                      self.h1_depth -= 1
+
+              def handle_data(self, data):
+                  if self.h1_depth:
+                      self.h1_parts.append(data)
+
+          failures = []
+          for path, expected_h1, expected_canonical, exact_h1, forbid_parent in checks:
+              url = f"{site_url}{path}"
+              result = subprocess.run(
+                  [
+                      "curl", "--location", "--retry", "12", "--retry-delay", "2", "--retry-all-errors",
+                      "--connect-timeout", "10", "--max-time", "60", "--fail-with-body", "--silent", "--show-error",
+                      "-H", "cache-control: no-cache", "-H", "pragma: no-cache", url,
+                  ],
+                  capture_output=True,
+                  text=True,
+              )
+              if result.returncode != 0:
+                  failures.append(f"{path}: fetch failed ({result.stderr.strip() or result.returncode})")
+                  continue
+
+              parser = PageParser()
+              parser.feed(result.stdout)
+              h1 = normalize(" ".join(parser.h1_parts))
+              canonicals = [normalize(value) for value in parser.canonicals]
+
+              if not h1:
+                  failures.append(f"{path}: missing H1")
+              elif exact_h1 and h1 != expected_h1:
+                  failures.append(f"{path}: expected H1 {expected_h1!r}, got {h1!r}")
+              elif not exact_h1 and expected_h1 not in h1:
+                  failures.append(f"{path}: expected H1 containing {expected_h1!r}, got {h1!r}")
+
+              if forbid_parent and parent_h1 in h1:
+                  failures.append(f"{path}: child route is still rendering the /laws parent H1 ({h1!r})")
+
+              if canonicals != [expected_canonical]:
+                  failures.append(f"{path}: expected one canonical {expected_canonical!r}, got {canonicals!r}")
+
+              print(f"{path}: h1={h1!r} canonical={canonicals!r}")
+
+          if failures:
+              raise SystemExit("Deployed laws route smoke failed:\n- " + "\n- ".join(failures))
+
+          print(f"Deployed laws route smoke passed for {len(checks)} routes on {site_url}.")
+          PY
