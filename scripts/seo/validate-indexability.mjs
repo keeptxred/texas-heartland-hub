@@ -7,8 +7,10 @@
  *  - duplicate canonical ownership across primary URL sitemaps
  *  - obvious duplicate news clusters (same story fingerprint) in the long-term article sitemap
  *
- * Google News and image sitemaps are derivative discovery feeds: their page
- * <loc> values may intentionally repeat canonical URLs owned by a primary sitemap.
+ * Google News, image, and curated priority sitemaps are derivative discovery
+ * feeds: their page <loc> values may intentionally repeat canonical URLs owned
+ * by a primary sitemap. They still participate in host/path/status/canonical
+ * validation below; they are excluded only from duplicate primary ownership.
  *
  * Usage: node scripts/seo/validate-indexability.mjs [--base http://localhost:8080]
  * Live checks are skipped (with a warning) when the base URL is unreachable.
@@ -19,7 +21,11 @@ const baseArg = process.argv.indexOf("--base");
 const BASE = baseArg > -1 ? process.argv[baseArg + 1] : process.env.SEO_BASE || "http://localhost:8080";
 const CANONICAL_HOST = "https://keeptxred.com";
 const SAMPLE = Number(process.env.SEO_SAMPLE || 60);
-const DERIVATIVE_SITEMAPS = new Set(["/sitemap-news.xml", "/sitemap-images.xml"]);
+const DERIVATIVE_SITEMAPS = new Set([
+  "/sitemap-news.xml",
+  "/sitemap-images.xml",
+  "/sitemap-priority.xml",
+]);
 const DISALLOWED = [/\?/, /#/, /^\/admin/, /^\/api\//, /^\/cart/, /^\/shop\/checkout/, /^\/preview\//, /^\/hubs/, /^\/email\//];
 const INDEXABLE_PRIORITY_PATHS = [
   "/contact-legislators",
@@ -85,8 +91,9 @@ for (const child of childSitemaps) {
 
 const primary = all.filter((entry) => !DERIVATIVE_SITEMAPS.has(entry.sitemap));
 
-// 1. duplicate canonical ownership across primary URL sitemaps. Google News and
-// image sitemaps intentionally repeat page URLs and are excluded from ownership.
+// 1. duplicate canonical ownership across primary URL sitemaps. Derivative
+// discovery sitemaps intentionally repeat canonical page URLs and are excluded
+// from ownership while remaining subject to all other checks below.
 const seen = new Map();
 for (const { sitemap, loc } of primary) {
   if (seen.has(loc)) errors.push(`Duplicate primary sitemap URL ${loc} (${seen.get(loc)} and ${sitemap})`);
