@@ -5,6 +5,10 @@ import {
   type KtrFacebookAttentionPost,
 } from "@/lib/facebook-attention-posts";
 import {
+  buildKtrFacebookChatGptImagePrompt,
+  storeSuppliedChatGptAttentionImage,
+} from "@/lib/facebook-attention-chatgpt-image.server";
+import {
   fetchRecentFacebookPagePosts,
   type FacebookPagePost,
 } from "@/lib/facebook-page-history";
@@ -12,8 +16,6 @@ import {
 const GRAPH_VERSION = "v21.0";
 const SITE_URL = "https://keeptxred.com";
 const ATTENTION_SLOTS = new Set([1, 3]);
-const MAX_FACEBOOK_IMAGE_BYTES = 12 * 1024 * 1024;
-export const KTR_FACEBOOK_ATTENTION_IMAGE_URL = `${SITE_URL}/og/default.jpg`;
 
 type SocialConnectionRow = {
   account_id: string | null;
@@ -76,17 +78,9 @@ export function selectKtrFacebookAttentionPostForSlot(args: {
     const candidate = preferredPool[(start + offset) % preferredPool.length];
     const formatted = formatKtrFacebookAttentionMessage(candidate);
     if (recentNormalized.has(normalize(formatted)) || recentNormalized.has(normalize(candidate.message))) continue;
-    if (
-      candidate.trafficPath &&
-      args.recentMessages.some((message) => message.includes(`${SITE_URL}${candidate.trafficPath}`))
-    ) {
-      continue;
-    }
+    if (candidate.trafficPath && args.recentMessages.some((message) => message.includes(`${SITE_URL}${candidate.trafficPath}`))) continue;
     return candidate;
   }
-
-  // If a preferred pool is exhausted by live-page duplicate history, fall back
-  // to the general selector rather than losing an otherwise valid scheduled slot.
   return selectKtrFacebookAttentionPost(args);
 }
 
@@ -96,15 +90,9 @@ async function loadFacebookConnection(db: any): Promise<SocialConnectionRow> {
     .select("account_id,access_token,connection_status")
     .ilike("platform", "facebook")
     .maybeSingle();
-
   if (error) throw new Error(error.message);
   const connection = rawConnection as SocialConnectionRow | null;
-  if (
-    !connection ||
-    connection.connection_status !== "CONNECTED" ||
-    !connection.account_id ||
-    !connection.access_token
-  ) {
+  if (!connection || connection.connection_status !== "CONNECTED" || !connection.account_id || !connection.access_token) {
     throw new Error("Facebook Page connection is unavailable");
   }
   return connection;
@@ -118,27 +106,26 @@ async function loadLiveFacebookPosts(connection: SocialConnectionRow): Promise<F
   });
 }
 
-async function loadRequiredAttentionImage(): Promise<{ bytes: ArrayBuffer; contentType: string }> {
-  const response = await fetch(KTR_FACEBOOK_ATTENTION_IMAGE_URL, {
-    redirect: "follow",
-    headers: {
-      accept: "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
-      "user-agent": "KeepTXRed-FacebookPublisher/1.0",
-    },
+export async function prepareKtrFacebookAttentionPost(args: {
+  db: any;
+  seed: string;
+  dateKey: string;
+  slot: number;
+}): Promise<{ post: KtrFacebookAttentionPost; prompt: string; message: string } | null> {
+  const connection = await loadFacebookConnection(args.db);
+  const livePosts = await loadLiveFacebookPosts(connection);
+  const post = selectKtrFacebookAttentionPostForSlot({
+    seed: args.seed,
+    dateKey: args.dateKey,
+    slot: args.slot,
+    recentMessages: livePosts.map((item) => item.message ?? ""),
   });
-  const contentType = response.headers.get("content-type")?.split(";", 1)[0]?.trim() ?? "";
-  const contentLength = Number(response.headers.get("content-length") ?? "0");
-  if (!response.ok || !contentType.startsWith("image/")) {
-    throw new Error(`Required Facebook attention image is unavailable (HTTP ${response.status})`);
-  }
-  if (Number.isFinite(contentLength) && contentLength > MAX_FACEBOOK_IMAGE_BYTES) {
-    throw new Error("Required Facebook attention image is too large");
-  }
-  const bytes = await response.arrayBuffer();
-  if (bytes.byteLength === 0 || bytes.byteLength > MAX_FACEBOOK_IMAGE_BYTES) {
-    throw new Error("Required Facebook attention image is empty or too large");
-  }
-  return { bytes, contentType };
+  if (!post) return null;
+  return {
+    post,
+    message: formatKtrFacebookPublishedAttentionMessage(post),
+    prompt: buildKtrFacebookChatGptImagePrompt(post.message),
+  };
 }
 
 async function recordAttentionPost(
@@ -146,14 +133,12 @@ async function recordAttentionPost(
   post: KtrFacebookAttentionPost,
   message: string,
   externalId: string | null,
+  assetUrl: string,
 ): Promise<string> {
   const { data: inserted, error } = await db
     .from("content_packages")
     .insert({
       source_title: post.title,
-      // Keep this null even when the social copy contains a KTR URL. Otherwise
-      // the article/durable-guide history could incorrectly treat the linked
-      // destination itself as having already received its dedicated post.
       source_url: null,
       category: post.category,
       facebook_hook: message,
@@ -161,7 +146,7 @@ async function recordAttentionPost(
       facebook_cta: null,
       status: "PUBLISHED",
       asset_type: "IMAGE",
-      asset_url: KTR_FACEBOOK_ATTENTION_IMAGE_URL,
+      asset_url: assetUrl,
       workflow_status: "PUBLISHED",
     })
     .select("id")
@@ -175,8 +160,8 @@ async function recordAttentionPost(
     status: "PUBLISHED",
     published_time: new Date().toISOString(),
     notes: externalId
-      ? `Facebook post ${externalId}; kind=attention-post; asset=image`
-      : "KeepTXRed Facebook post; kind=attention-post; asset=image",
+      ? `Facebook post ${externalId}; kind=attention-post; asset=chatgpt-image`
+      : "KeepTXRed Facebook post; kind=attention-post; asset=chatgpt-image",
   });
   if (queueError) throw new Error(queueError.message);
   return packageId;
@@ -188,6 +173,7 @@ export async function publishKtrFacebookAttentionPost(args: {
   dateKey: string;
   slot: number;
   mode: string;
+  suppliedImage?: { title: string; message: string; imageBase64: string; contentType: string } | null;
 }): Promise<Response | null> {
   let connection: SocialConnectionRow;
   let livePosts: FacebookPagePost[];
@@ -195,15 +181,7 @@ export async function publishKtrFacebookAttentionPost(args: {
     connection = await loadFacebookConnection(args.db);
     livePosts = await loadLiveFacebookPosts(connection);
   } catch (error) {
-    return Response.json(
-      {
-        ok: false,
-        posted: false,
-        error: "Facebook attention post stopped because Page verification failed",
-        detail: error instanceof Error ? error.message : String(error),
-      },
-      { status: 503 },
-    );
+    return Response.json({ ok: false, posted: false, error: "Facebook attention post stopped because Page verification failed", detail: error instanceof Error ? error.message : String(error) }, { status: 503 });
   }
 
   const post = selectKtrFacebookAttentionPostForSlot({
@@ -214,58 +192,54 @@ export async function publishKtrFacebookAttentionPost(args: {
   });
   if (!post) return null;
 
-  const message = formatKtrFacebookPublishedAttentionMessage(post);
-  const trafficUrl = ktrFacebookAttentionTrafficUrl(post);
-
-  let image: { bytes: ArrayBuffer; contentType: string };
-  try {
-    image = await loadRequiredAttentionImage();
-  } catch (error) {
-    return Response.json(
-      {
-        ok: false,
-        posted: false,
-        error: "Facebook attention post blocked because its required image was unavailable",
-        detail: error instanceof Error ? error.message : String(error),
-        image_url: KTR_FACEBOOK_ATTENTION_IMAGE_URL,
-      },
-      { status: 503 },
-    );
+  if (!args.suppliedImage) {
+    return Response.json({
+      ok: true,
+      posted: false,
+      requires_chatgpt_image: true,
+      kind: "attention-post",
+      title: post.title,
+      message: post.message,
+      image_prompt: buildKtrFacebookChatGptImagePrompt(post.message),
+      reason: "This attention post requires an image generated by ChatGPT before publication",
+    });
   }
 
+  if (args.suppliedImage.title !== post.title || normalize(args.suppliedImage.message) !== normalize(post.message)) {
+    return Response.json({ ok: false, posted: false, error: "Supplied ChatGPT image does not match the currently selected attention post" }, { status: 409 });
+  }
+
+  let image: Awaited<ReturnType<typeof storeSuppliedChatGptAttentionImage>>;
+  try {
+    image = await storeSuppliedChatGptAttentionImage({
+      db: args.db,
+      post,
+      imageBase64: args.suppliedImage.imageBase64,
+      contentType: args.suppliedImage.contentType,
+    });
+  } catch (error) {
+    return Response.json({ ok: false, posted: false, error: "Facebook attention post blocked because the ChatGPT image was invalid or could not be stored", detail: error instanceof Error ? error.message : String(error) }, { status: 422 });
+  }
+
+  const message = formatKtrFacebookPublishedAttentionMessage(post);
+  const trafficUrl = ktrFacebookAttentionTrafficUrl(post);
   const graphUrl = `https://graph.facebook.com/${GRAPH_VERSION}/${encodeURIComponent(String(connection.account_id))}/photos`;
   const body = new FormData();
   body.set("access_token", String(connection.access_token));
   body.set("source", new Blob([image.bytes], { type: image.contentType }), "keep-tx-red-attention.jpg");
   body.set("caption", message);
 
-  const graphResponse = await fetch(graphUrl, {
-    method: "POST",
-    body,
-  });
-  const graphJson = (await graphResponse.json().catch(() => ({}))) as {
-    id?: string;
-    post_id?: string;
-    error?: { message?: string };
-  };
-
+  const graphResponse = await fetch(graphUrl, { method: "POST", body });
+  const graphJson = (await graphResponse.json().catch(() => ({}))) as { id?: string; post_id?: string; error?: { message?: string } };
   const externalId = graphJson.post_id ?? graphJson.id ?? null;
   if (!graphResponse.ok || !externalId) {
-    return Response.json(
-      {
-        ok: false,
-        posted: false,
-        error: graphJson.error?.message ?? `Facebook Graph API returned HTTP ${graphResponse.status}`,
-        requires_connection: graphResponse.status === 401 || graphResponse.status === 403,
-      },
-      { status: 502 },
-    );
+    return Response.json({ ok: false, posted: false, error: graphJson.error?.message ?? `Facebook Graph API returned HTTP ${graphResponse.status}`, requires_connection: graphResponse.status === 401 || graphResponse.status === 403 }, { status: 502 });
   }
 
   let packageId: string | null = null;
   let recordWarning: string | null = null;
   try {
-    packageId = await recordAttentionPost(args.db, post, message, externalId);
+    packageId = await recordAttentionPost(args.db, post, message, externalId, image.url);
   } catch (error) {
     recordWarning = error instanceof Error ? error.message : String(error);
     console.error("[KeepTXRed Facebook] attention post succeeded but history recording failed", recordWarning);
@@ -280,7 +254,8 @@ export async function publishKtrFacebookAttentionPost(args: {
     category: post.category,
     article_url: null,
     traffic_url: trafficUrl,
-    image_url: KTR_FACEBOOK_ATTENTION_IMAGE_URL,
+    image_url: image.url,
+    image_source: "chatgpt-supplied",
     external_id: externalId,
     post_url: externalId ? `https://www.facebook.com/${externalId}` : null,
     package_id: packageId,
