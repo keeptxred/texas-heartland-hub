@@ -34,5 +34,59 @@
     "rightsRule": "Use Alexandria Nicole Butler's official campaign website as a discovery source for candidate-supplied portraits and media. Do not approve or reuse any image without item-level provenance plus an explicit reusable-rights basis, campaign/media permission, or another documented editorial permission basis.",
     "searchHint": "Alexandria Nicole Butler Texas House District 146 official campaign portrait media press",
     "notes": "New source discovered August 30, 2026 from the Harris County GOP 2026 candidate directory for the currently missing-photo HD146 candidate. Keep discovery-only and preserve item-level rights review."
+  },
+  {
+    "domain": "votereederxp.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Karen Reeder's official HD29 campaign website as a discovery source for candidate portraits and campaign media. Do not approve or reuse any image without item-level provenance plus an explicit reusable-rights basis, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Karen Reeder Texas House District 29 official campaign portrait media press",
+    "notes": "New source discovered August 30, 2026. The site identifies Karen Reeder as the HD29 candidate and hosts candidate imagery. Keep discovery-only and preserve item-level rights review."
+  },
+  {
+    "domain": "sandyfortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Sandy Ibanez's official HD28 campaign website as a discovery source for candidate portraits and campaign media. Do not approve or reuse any image without item-level provenance plus an explicit reusable-rights basis, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Sandy Ibanez Texas House District 28 official campaign portrait media press",
+    "notes": "New source discovered August 30, 2026 and independently linked by TCTA. Keep discovery-only and preserve item-level rights review."
+  },
+  {
+    "domain": "stephanie4texas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Stephanie Guerrero Saenz's official HD34 campaign website as a discovery source for candidate portraits and campaign media. Do not approve or reuse any image without item-level provenance plus an explicit reusable-rights basis, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Stephanie Guerrero Saenz Texas House District 34 official campaign portrait media press",
+    "notes": "New source discovered August 30, 2026. The site identifies the campaign committee and current HD34 candidacy. Keep discovery-only and preserve item-level rights review."
+  },
+  {
+    "domain": "crystalsedillo.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Crystal Sedillo's official HD30 campaign website as a discovery source for candidate portraits and campaign media. Do not approve or reuse any image without item-level provenance plus an explicit reusable-rights basis, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Crystal Sedillo Texas House District 30 official campaign portrait media press",
+    "notes": "New source discovered August 30, 2026 and independently linked by TCTA. Keep discovery-only and preserve item-level rights review."
+  },
+  {
+    "domain": "jjdominguez4tx.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Jennifer JJ Dominguez's official HD31 campaign website as a discovery source for candidate portraits and campaign media. Do not approve or reuse any image without item-level provenance plus an explicit reusable-rights basis, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Jennifer JJ Dominguez Texas House District 31 official campaign portrait media press",
+    "notes": "New source discovered August 30, 2026 and independently linked by TCTA. Keep discovery-only and preserve item-level rights review."
+  },
+  {
+    "domain": "hallforhd19.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Kelly Hall's official HD19 campaign website as a discovery source for candidate portraits and campaign media. Do not approve or reuse any image without item-level provenance plus an explicit reusable-rights basis, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Kelly Hall Texas House District 19 official campaign portrait media press",
+    "notes": "New source discovered August 30, 2026 and linked by TCTA. Keep discovery-only and preserve item-level rights review. Hall's separate Round Rock mayoral eligibility dispute must not be conflated with his Texas House candidacy status; eligibility changes require authoritative election-source reconciliation."
   }
 ]
