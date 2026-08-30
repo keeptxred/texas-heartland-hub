@@ -32,6 +32,18 @@ const findings = [
     usageStatus: "approved",
     discoveryMethod: "wikimedia-verified-cc-by-sa-2.0",
     discoveredAt: "2026-08-30T16:46:00.000Z"
+  },
+  {
+    candidateId: "candidate-trever-nehls-republican-race-2026-us-house-22",
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flickr_-_The_U.S._Army_-_Turban_presentation.jpg",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:Flickr_-_The_U.S._Army_-_Turban_presentation.jpg",
+    altText: "Trever Nehls during U.S. Army service in Afghanistan",
+    credit: "U.S. Air Force Staff Sgt. Brian Ferguson via Wikimedia Commons",
+    license: "Public domain — U.S. federal government work",
+    permissionBasis: "Wikimedia Commons identifies the photograph as a U.S. Air Force work in the public domain and explicitly identifies Maj. Trever Nehls as the subject; the candidate's military identity is independently corroborated by current coverage of his Texas 22nd District candidacy.",
+    usageStatus: "approved",
+    discoveryMethod: "wikimedia-verified-public-domain-us-military",
+    discoveredAt: "2026-08-30T16:54:00.000Z"
   }
 ];
 
