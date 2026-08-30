@@ -40,6 +40,7 @@ const CIVIC_TOOLS_REFRESH = toIsoDate("2026-08-19T08:00:00-05:00");
 const POLITICAL_HISTORY_REFRESH = toIsoDate("2026-08-30T00:00:00-05:00");
 const GOVERNMENT_HISTORY_REFRESH = toIsoDate("2026-08-30T00:00:00-05:00");
 const LOCAL_GOVERNMENT_AUTHORITY_REFRESH = toIsoDate("2026-08-30T08:00:00-05:00");
+const MUNICIPAL_GOVERNMENT_AUTHORITY_REFRESH = toIsoDate("2026-08-30T09:00:00-05:00");
 const SPORTS_SITEMAP_LEAGUES = ["nfl", "mlb", "nba", "nhl", "mls", "nwsl", "wnba", "cfb"] as const;
 const SPORTS_SITEMAP_TOPICS = ["football", "baseball", "basketball", "hockey", "soccer", "college", "recruiting", "nil", "business-policy", "stadiums", "motorsports", "postseason", "transactions", "injuries", "rivalries"] as const;
 const INDEXABLE_GUIDES = Object.values(ALL_GUIDES).filter(isSupportingGuideIndexable);
@@ -75,7 +76,7 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/texas-legislature/current-session": CITATION_MAGNET_REFRESH,
   "/texas-legislature/sessions": toIsoDate("2026-08-07T00:00:00-05:00"),
   "/texas-legislature/votes": CITATION_MAGNET_REFRESH,
-  "/texas-government": LOCAL_GOVERNMENT_AUTHORITY_REFRESH,
+  "/texas-government": MUNICIPAL_GOVERNMENT_AUTHORITY_REFRESH,
   "/texas-government/agencies": AGENCY_REFRESH,
   "/texas-government/texas-government-history": GOVERNMENT_HISTORY_REFRESH,
   "/texas-government/texas-legislature-history": GOVERNMENT_HISTORY_REFRESH,
@@ -93,6 +94,14 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/texas-government/county-district-clerk-history": LOCAL_GOVERNMENT_AUTHORITY_REFRESH,
   "/texas-government/tax-assessor-collector-history": LOCAL_GOVERNMENT_AUTHORITY_REFRESH,
   "/texas-government/justice-of-the-peace-constable-history": LOCAL_GOVERNMENT_AUTHORITY_REFRESH,
+  "/texas-government/texas-municipal-government-history": MUNICIPAL_GOVERNMENT_AUTHORITY_REFRESH,
+  "/texas-government/home-rule-general-law-cities-history": MUNICIPAL_GOVERNMENT_AUTHORITY_REFRESH,
+  "/texas-government/mayor-city-council-history": MUNICIPAL_GOVERNMENT_AUTHORITY_REFRESH,
+  "/texas-government/city-manager-government-history": MUNICIPAL_GOVERNMENT_AUTHORITY_REFRESH,
+  "/texas-government/texas-municipal-courts-history": MUNICIPAL_GOVERNMENT_AUTHORITY_REFRESH,
+  "/texas-government/texas-special-district-government-history": MUNICIPAL_GOVERNMENT_AUTHORITY_REFRESH,
+  "/texas-government/municipal-elections-representation-history": MUNICIPAL_GOVERNMENT_AUTHORITY_REFRESH,
+  "/texas-government/municipal-finance-tax-debt-history": MUNICIPAL_GOVERNMENT_AUTHORITY_REFRESH,
   "/districts": DISTRICT_REFRESH,
   "/laws": LAW_DATA_REFRESH,
   "/laws/topics": LAW_DATA_REFRESH,
@@ -153,7 +162,11 @@ const STATIC_PATHS:string[]=[
   "/texas-government/texas-county-government-history","/texas-government/commissioners-court-history",
   "/texas-government/county-judge-history","/texas-government/county-commissioner-history",
   "/texas-government/county-sheriff-history","/texas-government/county-district-clerk-history",
-  "/texas-government/tax-assessor-collector-history","/texas-government/justice-of-the-peace-constable-history","/districts",
+  "/texas-government/tax-assessor-collector-history","/texas-government/justice-of-the-peace-constable-history",
+  "/texas-government/texas-municipal-government-history","/texas-government/home-rule-general-law-cities-history",
+  "/texas-government/mayor-city-council-history","/texas-government/city-manager-government-history",
+  "/texas-government/texas-municipal-courts-history","/texas-government/texas-special-district-government-history",
+  "/texas-government/municipal-elections-representation-history","/texas-government/municipal-finance-tax-debt-history","/districts",
   "/about","/representatives","/register-to-vote","/contact-legislators",
   "/get-involved","/county-elections","/laws","/laws/topics","/laws/constitutional-amendments","/laws/effective-dates","/data",
   "/civic-tools","/civic-tools/government-authority-finder","/civic-tools/texas-law-finder","/civic-tools/bill-finder","/civic-tools/compare-legislators",

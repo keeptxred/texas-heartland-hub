@@ -31,6 +31,10 @@ const VALUE_CLASSES = {
     "/texas-government/county-judge-history", "/texas-government/county-commissioner-history",
     "/texas-government/county-sheriff-history", "/texas-government/county-district-clerk-history",
     "/texas-government/tax-assessor-collector-history", "/texas-government/justice-of-the-peace-constable-history",
+    "/texas-government/texas-municipal-government-history", "/texas-government/home-rule-general-law-cities-history",
+    "/texas-government/mayor-city-council-history", "/texas-government/city-manager-government-history",
+    "/texas-government/texas-municipal-courts-history", "/texas-government/texas-special-district-government-history",
+    "/texas-government/municipal-elections-representation-history", "/texas-government/municipal-finance-tax-debt-history",
   ],
   trustOrCommerce: [
     "/about", "/contact", "/privacy", "/terms-of-service", "/shipping-policy", "/return-refund-policy", "/editorial-standards",
@@ -87,6 +91,14 @@ describe("AdSense static sitemap value classification", () => {
       "/texas-government/county-district-clerk-history",
       "/texas-government/tax-assessor-collector-history",
       "/texas-government/justice-of-the-peace-constable-history",
+      "/texas-government/texas-municipal-government-history",
+      "/texas-government/home-rule-general-law-cities-history",
+      "/texas-government/mayor-city-council-history",
+      "/texas-government/city-manager-government-history",
+      "/texas-government/texas-municipal-courts-history",
+      "/texas-government/texas-special-district-government-history",
+      "/texas-government/municipal-elections-representation-history",
+      "/texas-government/municipal-finance-tax-debt-history",
     ]));
   });
 

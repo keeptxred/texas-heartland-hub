@@ -3,10 +3,11 @@ import { Building2, Gavel, Landmark, Scale } from "lucide-react";
 import { StatewideOfficePowersComparison } from "@/components/government/StatewideOfficePowersComparison";
 import { GOVERNMENT_HISTORY_AUTHORITY_PAGES } from "@/data/texas-government-history-authority";
 import { TEXAS_LOCAL_GOVERNMENT_AUTHORITY_PAGES } from "@/data/texas-local-government-authority";
+import { TEXAS_MUNICIPAL_GOVERNMENT_AUTHORITY_PAGES } from "@/data/texas-municipal-government-authority";
 import { GOVERNMENT_ENTITIES, governmentHubJsonLd, governmentPath, SITE_URL } from "@/lib/texas-government";
 
 const TITLE = "Texas Government: Offices, Leaders, Powers and Elections | KeepTXRed";
-const DESCRIPTION = "Explore Texas government offices, legislative institutions, statewide boards, highest courts and county-government authority, including powers, limits, elections and history.";
+const DESCRIPTION = "Explore Texas government offices, legislative institutions, highest courts, county authority and municipal government, including powers, limits, elections and history.";
 
 export const Route = createFileRoute("/texas-government")({
   head: () => ({
@@ -35,7 +36,7 @@ function TexasGovernmentHub() {
       <header className="rounded-2xl border bg-card p-6 md:p-10">
         <div className="flex items-center gap-3 text-primary"><Landmark className="h-7 w-7"/><span className="text-sm font-bold uppercase tracking-[0.18em]">Texas government authority guides</span></div>
         <h1 className="mt-4 max-w-4xl text-4xl font-bold leading-tight md:text-6xl">Texas Government: Offices, Leaders, Powers and Elections</h1>
-        <p className="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">Understand who runs Texas government, what the constitution allows each institution to do, what limits apply, how leaders are selected, and how state and county offices connect to laws, elections and public accountability.</p>
+        <p className="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">Understand who runs Texas government, what the constitution allows each institution to do, what limits apply, how leaders are selected, and how state, county and municipal offices connect to laws, elections and public accountability.</p>
         <div className="mt-6 flex flex-wrap gap-3"><a href="/laws" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">Read the Texas Constitution</a><a href="/elections/2026" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Texas Election Central</a><a href="/bills" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Track Texas bills</a><a href="/texas-government/agencies" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">State agency directory</a></div>
       </header>
 
@@ -74,6 +75,24 @@ function TexasGovernmentHub() {
         </div>
       </section>
 
+      <section className="mt-12 rounded-2xl border border-primary/20 bg-primary/[0.03] p-6 md:p-8" aria-labelledby="municipal-government-authority">
+        <div className="max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Cities, charters and local institutions</p>
+          <h2 id="municipal-government-authority" className="mt-2 text-3xl font-bold md:text-4xl">How Texas municipal government gets and uses power</h2>
+          <p className="mt-3 leading-7 text-muted-foreground">Texas cities operate under a different legal model from counties. These source-backed guides explain home-rule and general-law authority, mayors and councils, city managers, municipal courts, special districts, local elections and the taxes, budgets and debt that turn city policy into government action.</p>
+          <div className="mt-5 flex flex-wrap gap-3"><a href="/issues/texas-local-government-handbook" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">Local government handbook</a><a href="/policy/local-preemption-regulatory-consistency" className="rounded-md border bg-card px-4 py-2 text-sm font-bold hover:border-primary">State-local preemption tracker</a><a href="/elections/2026" className="rounded-md border bg-card px-4 py-2 text-sm font-bold hover:border-primary">Election Central</a></div>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {TEXAS_MUNICIPAL_GOVERNMENT_AUTHORITY_PAGES.map((page) => (
+            <a key={page.slug} href={`/texas-government/${page.slug}`} className="rounded-xl border bg-card p-5 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-sm">
+              <h3 className="font-bold text-primary">{page.title}</h3>
+              <p className="mt-2 line-clamp-4 text-sm leading-6 text-muted-foreground">{page.description}</p>
+              <span className="mt-4 inline-flex text-sm font-bold text-primary">Read municipal authority guide →</span>
+            </a>
+          ))}
+        </div>
+      </section>
+
       <section className="mt-8 rounded-2xl border border-primary/25 bg-primary/[0.04] p-6 md:p-8" aria-labelledby="texas-child-support-government">
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Texas families & government</p>
         <div className="mt-3 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
@@ -99,7 +118,7 @@ function TexasGovernmentHub() {
 
       <StatewideOfficePowersComparison />
 
-      <section className="mt-12 rounded-2xl border bg-muted/30 p-6 md:p-8"><h2 className="text-2xl font-bold">How Texas government power is divided</h2><div className="mt-5 grid gap-6 md:grid-cols-3"><div><h3 className="font-bold">Executive</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">Texas divides executive authority among independently elected constitutional officers, appointed officials, boards and commissions rather than concentrating all power in the governor.</p></div><div><h3 className="font-bold">Legislative</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">The House and Senate must agree on legislation. The governor may sign or veto bills, while courts may review enacted laws.</p></div><div><h3 className="font-bold">Judicial and local</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">Texas has separate highest courts for civil and criminal cases, while counties divide local authority among commissioners courts and independently elected county and precinct officers.</p></div></div></section>
+      <section className="mt-12 rounded-2xl border bg-muted/30 p-6 md:p-8"><h2 className="text-2xl font-bold">How Texas government power is divided</h2><div className="mt-5 grid gap-6 md:grid-cols-3"><div><h3 className="font-bold">Executive</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">Texas divides executive authority among independently elected constitutional officers, appointed officials, boards and commissions rather than concentrating all power in the governor.</p></div><div><h3 className="font-bold">Legislative</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">The House and Senate must agree on legislation. The governor may sign or veto bills, while courts may review enacted laws.</p></div><div><h3 className="font-bold">Judicial and local</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">Texas has separate highest courts for civil and criminal cases, while counties divide local authority among commissioners courts and independently elected county and precinct officers, and municipalities exercise city powers through statutory or home-rule structures.</p></div></div></section>
     </div>
   );
 }
