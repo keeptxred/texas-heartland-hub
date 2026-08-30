@@ -8,6 +8,7 @@ const DATA_DIR = path.join(ROOT, "src/data/elections/2026");
 const CANDIDATES_PATH = path.join(DATA_DIR, "candidates.json");
 const MANIFEST_PATH = path.join(DATA_DIR, "candidate-photos.json");
 const REPORT_PATH = path.join(ROOT, "artifacts/elections/candidate-photo-source-registry-report.json");
+const REVIEW_QUEUE_PATH = path.join(ROOT, "artifacts/elections/candidate-photo-review-queue.json");
 const USER_AGENT = "KeepTXRedCandidatePhotoBot/2.0 (+https://keeptxred.com)";
 const MAX_PAGES_PER_SOURCE = 8;
 const CONCURRENCY = 4;
@@ -21,13 +22,17 @@ const [candidates, manifest, registries] = await Promise.all([
 const byId = new Map(manifest.map((entry) => [entry.candidateId, entry]));
 const missingCandidates = candidates.filter((candidate) => byId.get(candidate.id)?.usageStatus !== "approved");
 const candidateByNormalizedName = new Map(missingCandidates.map((candidate) => [normalize(candidate.fullName), candidate]));
-const sources = registries
-  .filter((entry) => entry?.discoveryStatus === "active" && entry?.autoApprove === true && entry?.domain)
+const resolvedActiveSources = registries
+  .filter((entry) => entry?.discoveryStatus === "active" && entry?.domain)
   .map((entry) => ({ ...entry, candidate: resolveCandidate(entry, candidateByNormalizedName) }))
   .filter((entry) => entry.candidate && byId.get(entry.candidate.id)?.usageStatus !== "approved");
+const sources = resolvedActiveSources.filter((entry) => entry.autoApprove === true);
+const reviewSources = resolvedActiveSources.filter((entry) => entry.autoApprove !== true);
 
 const discoveries = [];
 const failures = [];
+const reviewLeads = [];
+const reviewFailures = [];
 
 await runPool(sources, CONCURRENCY, async (source) => {
   try {
@@ -43,19 +48,59 @@ await runPool(sources, CONCURRENCY, async (source) => {
   }
 });
 
+// Discovery-only registries are intentionally not allowed to mutate the public
+// manifest. Crawl them into an explicit review queue so newly discovered source
+// domains actually feed item-level provenance/rights review instead of being inert.
+await runPool(reviewSources, CONCURRENCY, async (source) => {
+  try {
+    const result = await discoverFromRegistrySource(source);
+    if (!result) {
+      reviewFailures.push({ candidateId: source.candidate.id, domain: source.domain, reason: "No validated portrait lead found on discovery-only source." });
+      return;
+    }
+    reviewLeads.push({
+      candidateId: source.candidate.id,
+      candidateName: source.candidate.fullName,
+      raceId: source.candidate.primaryRaceId,
+      domain: source.domain,
+      sourceClass: source.sourceClass ?? null,
+      imageUrl: result.imageUrl,
+      sourceUrl: result.sourceUrl,
+      rightsRule: source.rightsRule ?? null,
+      reviewStatus: "item-level-rights-review-required",
+      approvalBlocked: true,
+      discoveredAt: new Date().toISOString(),
+      discoveryMethod: "discovery-only-source-registry",
+    });
+  } catch (error) {
+    reviewFailures.push({ candidateId: source.candidate.id, domain: source.domain, reason: String(error?.message ?? error) });
+  }
+});
+
 const merged = [...byId.values()].sort((a, b) => a.candidateId.localeCompare(b.candidateId));
+const queued = dedupeBy(reviewLeads, (item) => `${item.candidateId}|${item.imageUrl}`)
+  .sort((a, b) => a.candidateId.localeCompare(b.candidateId) || a.imageUrl.localeCompare(b.imageUrl));
 await writeFile(MANIFEST_PATH, `${JSON.stringify(merged, null, 2)}\n`);
 await mkdir(path.dirname(REPORT_PATH), { recursive: true });
+await writeFile(REVIEW_QUEUE_PATH, `${JSON.stringify({
+  generatedAt: new Date().toISOString(),
+  reviewLeadCount: queued.length,
+  leads: queued,
+}, null, 2)}\n`);
 await writeFile(REPORT_PATH, `${JSON.stringify({
   generatedAt: new Date().toISOString(),
   registryEntryCount: registries.length,
   activeAutoApproveSourceCount: sources.length,
+  activeDiscoveryOnlySourceCount: reviewSources.length,
   discoveredPhotoCount: discoveries.length,
+  reviewLeadCount: queued.length,
   discoveries,
   failures,
+  reviewFailures,
 }, null, 2)}\n`);
 
 console.log(`Registry-driven discovery applied ${discoveries.length} verified candidate portrait(s) from ${sources.length} active approved source(s).`);
+console.log(`Queued ${queued.length} portrait lead(s) from ${reviewSources.length} discovery-only source(s) for item-level rights review.`);
 
 async function discoverFromRegistrySource(source) {
   const host = normalizeHost(source.domain);
