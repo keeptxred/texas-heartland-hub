@@ -12,6 +12,7 @@ import { BASE_URL, xmlEscape, xmlResponse } from "@/lib/sitemap-shared";
  * remain intentionally unadvertised to protect crawl budget.
  */
 const ADVERTISED_SITEMAPS = [
+  "sitemap-priority.xml",
   "sitemap-pages.xml",
   "sitemap-sources.xml",
   "sitemap-news.xml",
