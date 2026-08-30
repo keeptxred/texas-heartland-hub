@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-08-30T19:19:09.472Z",
+  "generatedAt": "2026-08-30T20:35:29.991Z",
   "candidateCount": 491,
   "eligibleCandidateCount": 479,
   "excludedCandidateCount": 12,
-  "approvedPhotoCount": 332,
-  "missingPhotoCount": 147,
-  "manifestEntryCount": 332,
-  "coverage": 0.6931106471816284,
-  "coveragePercent": 69.31,
+  "approvedPhotoCount": 334,
+  "missingPhotoCount": 145,
+  "manifestEntryCount": 334,
+  "coverage": 0.697286012526096,
+  "coveragePercent": 69.73,
   "targetCoverage": 0.85,
   "targetApprovedPhotoCount": 408,
-  "photosNeededForTarget": 76,
+  "photosNeededForTarget": 74,
   "targetMet": false,
   "errors": [],
   "warnings": [],
@@ -308,24 +308,10 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-max-alalibo-republican-race-2026-texas-house-27",
-      "name": "MAX ALALIBO",
-      "raceId": "race-2026-texas-house-27",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-sandy-ibanez-democratic-race-2026-texas-house-28",
       "name": "SANDY IBANEZ",
       "raceId": "race-2026-texas-house-28",
       "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-kristen-plaisance-republican-race-2026-texas-house-3",
-      "name": "KRISTEN PLAISANCE",
-      "raceId": "race-2026-texas-house-3",
-      "party": "republican",
       "priority": "standard"
     },
     {

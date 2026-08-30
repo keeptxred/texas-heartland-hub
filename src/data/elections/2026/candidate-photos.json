@@ -2290,6 +2290,18 @@
     "discoveryMethod": "verified-asset:campaign-judge-portrait"
   },
   {
+    "candidateId": "candidate-kristen-plaisance-republican-race-2026-texas-house-3",
+    "imageUrl": "https://kristenplaisance.com/wp-content/uploads/2025/11/KMT_5238-5-X-7-scaled.jpg",
+    "sourceUrl": "https://kristenplaisance.com/about-kristen-plaisance/",
+    "altText": "Kristen Plaisance, Republican candidate for Texas House District 3",
+    "credit": "Kristen Plaisance Campaign",
+    "license": null,
+    "permissionBasis": "Kristen Plaisance's official campaign biography identifies her as running for Texas House District 3 and publishes this candidate-specific image with the page description 'Portrait of Kristen Plaisance'. Used only for editorial candidate identification with exact official-campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-biography",
+    "discoveredAt": "2026-08-30T20:25:00.000Z"
+  },
+  {
     "candidateId": "candidate-kristian-carranza-democratic-race-2026-texas-house-118",
     "imageUrl": "https://kristianfortexas.com/wp-content/uploads/kristian-carranza-06.jpg",
     "sourceUrl": "https://kristianfortexas.com/",
@@ -2586,6 +2598,18 @@
     "usageStatus": "approved",
     "discoveryMethod": "official-campaign-press-kit",
     "discoveredAt": "2026-08-27T16:53:29.760Z"
+  },
+  {
+    "candidateId": "candidate-max-alalibo-republican-race-2026-texas-house-27",
+    "imageUrl": "https://maxwellalalibo71us.com/wp-content/uploads/2026/04/Max1-1.png",
+    "sourceUrl": "https://maxwellalalibo71us.com/",
+    "altText": "Max Alalibo, Republican candidate for Texas House District 27",
+    "credit": "Max-Alalibo for Texas House District 27 campaign",
+    "license": null,
+    "permissionBasis": "Max Alalibo's official campaign homepage identifies him as a candidate for Texas House District 27 and publishes the candidate-specific image 'Max1 (1)' in the campaign's Meet Max section. Used only for editorial candidate identification with exact official-campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-08-30T20:25:00.000Z"
   },
   {
     "candidateId": "candidate-mayes-middleton-republican-race-2026-attorney-general",
