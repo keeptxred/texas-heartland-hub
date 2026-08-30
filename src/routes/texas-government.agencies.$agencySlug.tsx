@@ -5,6 +5,7 @@ import { upgradeAgencyAuthorityProfile } from "@/data/agency-authority-upgrades"
 import { getAgencyAuthoritySupplement } from "@/data/agency-authority-supplements";
 import { buildSeo, SITE_URL } from "@/lib/seo";
 import { isAgencyAuthorityIndexable } from "@/lib/agency-authority-indexability";
+import { getAgencyRelatedAuthorityLinks } from "@/lib/agency-related-authority";
 
 export const Route = createFileRoute("/texas-government/agencies/$agencySlug")({
   loader: ({ params }) => {
@@ -71,6 +72,7 @@ export const Route = createFileRoute("/texas-government/agencies/$agencySlug")({
 function AgencyAuthorityPage() {
   const profile = Route.useLoaderData();
   const supplements = getAgencyAuthoritySupplement(profile.slug);
+  const relatedLinks = getAgencyRelatedAuthorityLinks(profile.slug, profile.related);
   return (
     <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
       <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
@@ -119,7 +121,7 @@ function AgencyAuthorityPage() {
 
       <section className="mt-10 rounded-xl border p-6">
         <h2 className="font-display text-2xl tracking-tight">Related KTR authority pages</h2>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">{profile.related.map((item) => <a key={item.href} href={item.href} className="rounded-lg border p-4 text-sm font-semibold text-primary hover:border-primary">{item.label} →</a>)}</div>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">{relatedLinks.map((item) => <a key={item.href} href={item.href} className="rounded-lg border p-4 text-sm font-semibold text-primary hover:border-primary">{item.label} →</a>)}</div>
       </section>
 
       <section className="mt-10 border-t pt-8">
