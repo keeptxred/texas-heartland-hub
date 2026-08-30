@@ -1,0 +1,38 @@
+[
+  {
+    "domain": "lizramosfortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Liz Ramos's official campaign website as a discovery source for candidate-supplied portraits and media. Do not approve or reuse an image without item-level provenance and a documented reusable-rights or editorial-permission basis.",
+    "searchHint": "Liz Ramos Texas House 135 official campaign portrait media press",
+    "notes": "Verified August 30, 2026 through the Harris County GOP 2026 candidate directory, which lists lizramosfortexas.com for Liz Ramos. Keep discovery-only until an individual image has a documented permission basis."
+  },
+  {
+    "domain": "david4texas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use David Flores's official campaign website as a discovery source for candidate-supplied portraits and media. Do not approve or reuse an image without item-level provenance and a documented reusable-rights or editorial-permission basis.",
+    "searchHint": "David Flores Texas House 144 official campaign portrait media press",
+    "notes": "Verified August 30, 2026 through the Harris County GOP 2026 candidate directory, which lists david4texas.com for David Flores. Keep discovery-only until an individual image has a documented permission basis."
+  },
+  {
+    "domain": "alexandriabutlercampaign.org",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Alexandria Nicole Butler's official campaign website as a discovery source for candidate-supplied portraits and media. Do not approve or reuse an image without item-level provenance and a documented reusable-rights or editorial-permission basis.",
+    "searchHint": "Alexandria Nicole Butler Texas House 146 official campaign portrait media press",
+    "notes": "Verified August 30, 2026 through the Harris County GOP 2026 candidate directory, which lists alexandriabutlercampaign.org for Alexandria Nicole Butler. Keep discovery-only until an individual image has a documented permission basis."
+  },
+  {
+    "domain": "ivoterguide.com",
+    "sourceClass": "candidate-voter-guide-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use iVoterGuide candidate and race pages only as a discovery bridge to candidate identities, campaign links, official profiles, and portrait leads. Do not treat iVoterGuide-hosted images as reusable by default; require item-level provenance and rights verification before approval.",
+    "searchHint": "site:ivoterguide.com 2026 Texas candidate portrait official website",
+    "notes": "New discovery source verified August 30, 2026. Current 2026 Texas pages expose portraits and candidate-specific profiles for missing-photo candidates including Rhett Rosenquest Smith, Michelle Palmer, Mindy Bumgarner, and others. Discovery-only."
+  }
+]
