@@ -20,6 +20,18 @@ const findings = [
     usageStatus: "approved",
     discoveryMethod: "official-campaign-biography",
     discoveredAt: "2026-08-30T20:42:00.000Z"
+  },
+  {
+    candidateId: "candidate-orlando-lopez-democratic-race-2026-texas-house-33",
+    imageUrl: "https://images.squarespace-cdn.com/content/v1/6918fe6e12ef476e38603f3e/ac20fb34-e9b1-4b54-bd7f-3eebdfe1d6a6/733756980_122137121661134540_1525171046319516611_n.jpg",
+    sourceUrl: "https://www.lopezfortxhd33.com/about",
+    altText: "Orlando Lopez, Democratic candidate for Texas House District 33",
+    credit: "Lopez for Texas House District 33 campaign",
+    license: null,
+    permissionBasis: "Orlando Lopez's official campaign biography identifies him as the candidate for Texas House District 33 and publishes this candidate-specific photograph directly beneath the 'Meet Our Candidate: Orlando Lopez' heading. Used only for editorial candidate identification with exact official-campaign attribution and source link.",
+    usageStatus: "approved",
+    discoveryMethod: "official-campaign-biography",
+    discoveredAt: "2026-08-30T20:45:00.000Z"
   }
 ];
 
@@ -34,4 +46,4 @@ await writeFile(
   manifestPath,
   JSON.stringify([...byId.values()].sort((a, b) => a.candidateId.localeCompare(b.candidateId)), null, 2) + "\n"
 );
-console.log(`Applied ${applied} verified candidate portrait from August 30 wave 14.`);
+console.log(`Applied ${applied} verified candidate portraits from August 30 wave 14.`);
