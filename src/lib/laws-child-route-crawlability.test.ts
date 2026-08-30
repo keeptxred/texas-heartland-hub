@@ -33,7 +33,9 @@ describe("Texas law child-route crawlability", () => {
   it("preserves the public URLs and unique page bodies", () => {
     for (const entry of routes) {
       const source = readFileSync(entry.file, "utf8");
-      expect(source).toContain(`createFileRoute('${entry.route}')`);
+      expect(source).toMatch(
+        new RegExp(`createFileRoute\\([\\"']${entry.route.replaceAll("/", "\\/")}[\\"']\\)`),
+      );
       expect(source).toContain(entry.heading);
     }
   });
