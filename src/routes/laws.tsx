@@ -80,7 +80,7 @@ const SECTIONS: {
     intent: "For residents who want to understand the major statutes.",
     description:
       "The bills that decide how Texans carry, how homeowners pay, how voters cast a ballot, and what the state can do at the border. Each guide is written in plain English with citations to the actual code.",
-    hubHref: "/texas-laws",
+    hubHref: "/laws/topics",
     articleSlugs: [
       "texas-gun-laws-explained",
       "texas-property-tax-laws-explained",
