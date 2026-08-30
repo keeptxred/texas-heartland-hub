@@ -403,15 +403,15 @@
   },
   {
     "candidateId": "candidate-bob-hall-republican-race-2026-texas-senate-2",
-    "imageUrl": "https://senate.texas.gov/_assets/img/og_image.jpg",
+    "imageUrl": "https://senate.texas.gov/members/d02/img/headshot.jpg",
     "sourceUrl": "https://senate.texas.gov/member.php?d=2",
-    "altText": "Portrait of BOB HALL",
+    "altText": "Official Texas Senate portrait of BOB HALL",
     "credit": "Texas State Senate",
     "license": null,
     "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
     "usageStatus": "approved",
-    "discoveredAt": "2026-07-30T22:53:39.415Z",
-    "discoveryMethod": "directory-source-validation"
+    "discoveredAt": "2026-08-30T15:00:00.000Z",
+    "discoveryMethod": "verified-official-texas-senate-member-portrait"
   },
   {
     "candidateId": "candidate-bobbie-clayton-democratic-race-2026-texas-house-16",
@@ -424,6 +424,18 @@
     "usageStatus": "approved",
     "discoveryMethod": "official-campaign-biography",
     "discoveredAt": "2026-08-26T17:20:38.356Z"
+  },
+  {
+    "candidateId": "candidate-bobby-pulido-democratic-race-2026-us-house-15",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Bobby_Pulido_%28CROPPED%29.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bobby_Pulido_(CROPPED).jpg",
+    "altText": "Portrait of Bobby Pulido",
+    "credit": "Kim-bodia via Wikimedia Commons",
+    "license": "CC BY 4.0",
+    "permissionBasis": "Wikimedia Commons identifies the subject as Bobby Pulido and licenses the cropped portrait under Creative Commons Attribution 4.0 International; the file is extracted from a Flickr image whose reusable Creative Commons license was independently reviewed on Commons.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-cc-by-candidate-photo",
+    "discoveredAt": "2026-08-30T16:12:04.939Z"
   },
   {
     "candidateId": "candidate-bonnie-abadie-republican-race-2026-texas-house-102",
@@ -439,15 +451,15 @@
   },
   {
     "candidateId": "candidate-borris-l-miles-democratic-race-2026-texas-senate-13",
-    "imageUrl": "https://senate.texas.gov/_assets/img/og_image.jpg",
+    "imageUrl": "https://senate.texas.gov/members/d13/img/Sen-Miles-2025-Headshot-web.jpg",
     "sourceUrl": "https://senate.texas.gov/member.php?d=13",
-    "altText": "Portrait of BORRIS L. MILES",
+    "altText": "Official Texas Senate portrait of BORRIS L. MILES",
     "credit": "Texas State Senate",
     "license": null,
     "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
     "usageStatus": "approved",
-    "discoveredAt": "2026-07-30T22:53:38.446Z",
-    "discoveryMethod": "directory-source-validation"
+    "discoveredAt": "2026-08-30T15:00:00.000Z",
+    "discoveryMethod": "verified-official-texas-senate-member-portrait"
   },
   {
     "candidateId": "candidate-brad-bailey-republican-race-2026-texas-house-15",
@@ -535,15 +547,15 @@
   },
   {
     "candidateId": "candidate-brett-w-ligon-republican-race-2026-texas-senate-4",
-    "imageUrl": "https://senate.texas.gov/_assets/img/og_image.jpg",
+    "imageUrl": "https://senate.texas.gov/members/d04/img/Ligon_Brett_Headshot_web.jpg",
     "sourceUrl": "https://senate.texas.gov/member.php?d=4",
-    "altText": "Portrait of BRETT W. LIGON",
+    "altText": "Official Texas Senate portrait of BRETT W. LIGON",
     "credit": "Texas State Senate",
     "license": null,
     "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
     "usageStatus": "approved",
-    "discoveredAt": "2026-07-30T22:53:40.403Z",
-    "discoveryMethod": "directory-source-validation"
+    "discoveredAt": "2026-08-30T15:00:00.000Z",
+    "discoveryMethod": "verified-official-texas-senate-member-portrait"
   },
   {
     "candidateId": "candidate-brian-babin-republican-race-2026-us-house-36",
@@ -583,15 +595,15 @@
   },
   {
     "candidateId": "candidate-bryan-hughes-republican-race-2026-texas-senate-1",
-    "imageUrl": "https://senate.texas.gov/_assets/img/og_image.jpg",
+    "imageUrl": "https://senate.texas.gov/members/d01/img/Hughes_86-0702D-030-web.jpg",
     "sourceUrl": "https://senate.texas.gov/member.php?d=1",
-    "altText": "Portrait of BRYAN HUGHES",
+    "altText": "Official Texas Senate portrait of BRYAN HUGHES",
     "credit": "Texas State Senate",
     "license": null,
     "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
     "usageStatus": "approved",
-    "discoveredAt": "2026-07-30T22:53:38.109Z",
-    "discoveryMethod": "directory-source-validation"
+    "discoveredAt": "2026-08-30T15:00:00.000Z",
+    "discoveryMethod": "verified-official-texas-senate-member-portrait"
   },
   {
     "candidateId": "candidate-candy-noble-republican-race-2026-texas-house-89",
@@ -703,27 +715,27 @@
   },
   {
     "candidateId": "candidate-charles-perry-republican-race-2026-texas-senate-28",
-    "imageUrl": "https://senate.texas.gov/_assets/img/og_image.jpg",
+    "imageUrl": "https://senate.texas.gov/members/d28/img/Perry-Headshot-2019.jpg",
     "sourceUrl": "https://senate.texas.gov/member.php?d=28",
-    "altText": "Portrait of CHARLES PERRY",
+    "altText": "Official Texas Senate portrait of CHARLES PERRY",
     "credit": "Texas State Senate",
     "license": null,
     "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
     "usageStatus": "approved",
-    "discoveredAt": "2026-07-30T22:53:39.970Z",
-    "discoveryMethod": "directory-source-validation"
+    "discoveredAt": "2026-08-30T15:00:00.000Z",
+    "discoveryMethod": "verified-official-texas-senate-member-portrait"
   },
   {
     "candidateId": "candidate-charles-schwertner-republican-race-2026-texas-senate-5",
-    "imageUrl": "https://senate.texas.gov/_assets/img/og_image.jpg",
+    "imageUrl": "https://senate.texas.gov/members/d05/img/headshot.jpg",
     "sourceUrl": "https://senate.texas.gov/member.php?d=5",
-    "altText": "Portrait of CHARLES SCHWERTNER",
+    "altText": "Official Texas Senate portrait of CHARLES SCHWERTNER",
     "credit": "Texas State Senate",
     "license": null,
     "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
     "usageStatus": "approved",
-    "discoveredAt": "2026-07-30T22:53:40.613Z",
-    "discoveryMethod": "directory-source-validation"
+    "discoveredAt": "2026-08-30T15:00:00.000Z",
+    "discoveryMethod": "verified-official-texas-senate-member-portrait"
   },
   {
     "candidateId": "candidate-charlie-geren-republican-race-2026-texas-house-99",
@@ -758,6 +770,18 @@
     "usageStatus": "approved",
     "discoveryMethod": "official-campaign-profile",
     "discoveredAt": "2026-08-25T03:40:03.624Z"
+  },
+  {
+    "candidateId": "candidate-christian-dashaun-menefee-democratic-race-2026-us-house-18",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Christian_Menefee%2C_official_portrait_%28119th_Congress%29.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Christian_Menefee,_official_portrait_(119th_Congress).jpg",
+    "altText": "Official congressional portrait of U.S. Representative Christian D. Menefee of Texas",
+    "credit": "U.S. House of Representatives via Wikimedia Commons",
+    "license": "Public domain — U.S. Congress",
+    "permissionBasis": "Wikimedia Commons identifies this as Christian Menefee's official 119th Congress portrait, sourced from the Biographical Directory of the United States Congress and authored by the U.S. House of Representatives, and marks the image as public domain.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-public-domain-us-congress",
+    "discoveredAt": "2026-08-30T16:12:04.939Z"
   },
   {
     "candidateId": "candidate-christian-manuel-democratic-race-2026-texas-house-22",
@@ -1194,6 +1218,18 @@
     "usageStatus": "approved",
     "discoveryMethod": "official-state-party-candidate-slate",
     "discoveredAt": "2026-08-22T12:06:46.662Z"
+  },
+  {
+    "candidateId": "candidate-frederick-d-haynes-iii-democratic-race-2026-us-house-30",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Frederick_Haynes_III_at_Calvary_Baptist_Church_%28cropped%29.png",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Frederick_Haynes_III_at_Calvary_Baptist_Church_(cropped).png",
+    "altText": "Portrait of Frederick D. Haynes III",
+    "credit": "Calvary Baptist Church Jamaica, NY via Wikimedia Commons",
+    "license": "CC BY 3.0",
+    "permissionBasis": "Wikimedia Commons identifies the subject as Frederick Haynes III and licenses this cropped image under Creative Commons Attribution 3.0 Unported, derived from a pre-August-2025 YouTube upload released under the Creative Commons license option.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-cc-by-candidate-photo",
+    "discoveredAt": "2026-08-30T16:12:04.939Z"
   },
   {
     "candidateId": "candidate-gary-gates-republican-race-2026-texas-house-28",
@@ -1703,15 +1739,15 @@
   },
   {
     "candidateId": "candidate-jose-menendez-democratic-race-2026-texas-senate-26",
-    "imageUrl": "https://senate.texas.gov/_assets/img/og_image.jpg",
+    "imageUrl": "https://senate.texas.gov/members/d26/img/headshot.jpg",
     "sourceUrl": "https://senate.texas.gov/member.php?d=26",
-    "altText": "Portrait of JOSE MENENDEZ",
+    "altText": "Official Texas Senate portrait of JOSE MENENDEZ",
     "credit": "Texas State Senate",
     "license": null,
     "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
     "usageStatus": "approved",
-    "discoveredAt": "2026-07-30T22:53:39.831Z",
-    "discoveryMethod": "directory-source-validation"
+    "discoveredAt": "2026-08-30T15:00:00.000Z",
+    "discoveryMethod": "verified-official-texas-senate-member-portrait"
   },
   {
     "candidateId": "candidate-josey-garcia-democratic-race-2026-texas-house-124",
@@ -1739,15 +1775,15 @@
   },
   {
     "candidateId": "candidate-judith-zaffirini-democratic-race-2026-texas-senate-21",
-    "imageUrl": "https://senate.texas.gov/_assets/img/og_image.jpg",
+    "imageUrl": "https://senate.texas.gov/members/d21/img/Zaffirini_2017.jpg",
     "sourceUrl": "https://senate.texas.gov/member.php?d=21",
-    "altText": "Portrait of JUDITH ZAFFIRINI",
+    "altText": "Official Texas Senate portrait of JUDITH ZAFFIRINI",
     "credit": "Texas State Senate",
     "license": null,
     "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
     "usageStatus": "approved",
-    "discoveredAt": "2026-07-30T22:53:39.545Z",
-    "discoveryMethod": "directory-source-validation"
+    "discoveredAt": "2026-08-30T15:00:00.000Z",
+    "discoveryMethod": "verified-official-texas-senate-member-portrait"
   },
   {
     "candidateId": "candidate-julian-villarreal-green-race-2026-texas-senate-26",
@@ -1919,15 +1955,15 @@
   },
   {
     "candidateId": "candidate-kevin-sparks-republican-race-2026-texas-senate-31",
-    "imageUrl": "https://senate.texas.gov/_assets/img/og_image.jpg",
+    "imageUrl": "https://senate.texas.gov/members/d31/img/Sparks_88-0063D-012-web.jpg",
     "sourceUrl": "https://senate.texas.gov/member.php?d=31",
-    "altText": "Portrait of KEVIN SPARKS",
+    "altText": "Official Texas Senate portrait of KEVIN SPARKS",
     "credit": "Texas State Senate",
     "license": null,
     "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
     "usageStatus": "approved",
-    "discoveredAt": "2026-07-30T22:53:40.201Z",
-    "discoveryMethod": "directory-source-validation"
+    "discoveredAt": "2026-08-30T15:00:00.000Z",
+    "discoveryMethod": "verified-official-texas-senate-member-portrait"
   },
   {
     "candidateId": "candidate-kristen-hawkins-democratic-race-2026-texas-supreme-court-place-7",
@@ -2027,15 +2063,15 @@
   },
   {
     "candidateId": "candidate-lois-w-kolkhorst-republican-race-2026-texas-senate-18",
-    "imageUrl": "https://senate.texas.gov/_assets/img/og_image.jpg",
+    "imageUrl": "https://senate.texas.gov/members/d18/img/LWK-headshot-2026-web.jpg",
     "sourceUrl": "https://senate.texas.gov/member.php?d=18",
-    "altText": "Portrait of LOIS W. KOLKHORST",
+    "altText": "Official Texas Senate portrait of LOIS W. KOLKHORST",
     "credit": "Texas State Senate",
     "license": null,
     "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
     "usageStatus": "approved",
-    "discoveredAt": "2026-07-30T22:53:38.761Z",
-    "discoveryMethod": "directory-source-validation"
+    "discoveredAt": "2026-08-30T15:00:00.000Z",
+    "discoveryMethod": "verified-official-texas-senate-member-portrait"
   },
   {
     "candidateId": "candidate-maggie-ellis-democratic-race-2026-texas-supreme-court-place-1",
@@ -2118,6 +2154,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:52:41.580Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-mark-teixeira-republican-race-2026-us-house-21",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Mark_Teixeira_allison_portrait_8_31_09.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Mark_Teixeira_allison_portrait_8_31_09.jpg",
+    "altText": "Portrait of Mark Teixeira",
+    "credit": "Keith Allison via Wikimedia Commons",
+    "license": "CC BY-SA 2.0",
+    "permissionBasis": "Wikimedia Commons identifies the subject as Mark Teixeira and records that the Flickr-sourced portrait was confirmed under the Creative Commons Attribution-ShareAlike 2.0 Generic license.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-cc-by-sa-candidate-photo",
+    "discoveredAt": "2026-08-30T16:12:04.894Z"
   },
   {
     "candidateId": "candidate-marlon-duran-green-race-2026-us-house-28",
@@ -2544,18 +2592,6 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
-    "candidateId": "candidate-pete-flores-republican-race-2026-texas-senate-24",
-    "imageUrl": "https://senate.texas.gov/_assets/img/og_image.jpg",
-    "sourceUrl": "https://senate.texas.gov/member.php?d=24",
-    "altText": "Portrait of PETE FLORES",
-    "credit": "Texas State Senate",
-    "license": null,
-    "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
-    "usageStatus": "approved",
-    "discoveredAt": "2026-07-30T22:53:39.718Z",
-    "discoveryMethod": "directory-source-validation"
-  },
-  {
     "candidateId": "candidate-pete-sessions-republican-race-2026-us-house-17",
     "imageUrl": "https://sessions.house.gov/index.cfm?File_id=544C8E78-63A9-4FE3-8D3E-2BE6533EF0D0&a=Files.Serve",
     "sourceUrl": "https://sessions.house.gov/about",
@@ -2699,15 +2735,15 @@
   },
   {
     "candidateId": "candidate-roland-gutierrez-democratic-race-2026-texas-senate-19",
-    "imageUrl": "https://senate.texas.gov/_assets/img/og_image.jpg",
+    "imageUrl": "https://senate.texas.gov/members/d19/img/Gutierrez_87-0522D-016-Web.jpg",
     "sourceUrl": "https://senate.texas.gov/member.php?d=19",
-    "altText": "Portrait of ROLAND GUTIERREZ",
+    "altText": "Official Texas Senate portrait of ROLAND GUTIERREZ",
     "credit": "Texas State Senate",
     "license": null,
     "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
     "usageStatus": "approved",
-    "discoveredAt": "2026-07-30T22:53:39.088Z",
-    "discoveryMethod": "directory-source-validation"
+    "discoveredAt": "2026-08-30T15:00:00.000Z",
+    "discoveryMethod": "verified-official-texas-senate-member-portrait"
   },
   {
     "candidateId": "candidate-ron-reynolds-democratic-race-2026-texas-house-27",
@@ -2972,6 +3008,18 @@
     "discoveredAt": "2026-08-25T03:40:03.802Z"
   },
   {
+    "candidateId": "candidate-steve-toth-republican-race-2026-us-house-2",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/SteveToth--CongressCampaignAnnouce--GraceWoodlands--SpringTX--sm2--15July2025.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:SteveToth--CongressCampaignAnnouce--GraceWoodlands--SpringTX--sm2--15July2025.jpg",
+    "altText": "Steve Toth announcing his campaign for Texas's 2nd Congressional District",
+    "credit": "LiwenAristodemos via Wikimedia Commons",
+    "license": "CC0 1.0 Universal",
+    "permissionBasis": "Wikimedia Commons identifies Steve Toth in this July 15, 2025 congressional-campaign photograph and records the photographer/copyright holder's CC0 1.0 public-domain dedication.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-cc0-candidate-photo",
+    "discoveredAt": "2026-08-30T16:12:04.939Z"
+  },
+  {
     "candidateId": "candidate-suleman-lalani-democratic-race-2026-texas-house-76",
     "imageUrl": "https://house.texas.gov/images/members/4285.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/76",
@@ -3006,6 +3054,18 @@
     "usageStatus": "approved",
     "discoveryMethod": "official-campaign-profile",
     "discoveredAt": "2026-08-25T03:40:04.241Z"
+  },
+  {
+    "candidateId": "candidate-tano-e-tijerina-republican-race-2026-us-house-28",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Tano_Tijerina.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Tano_Tijerina.jpg",
+    "altText": "Portrait of Tano Tijerina",
+    "credit": "E. R. Softwood via Wikimedia Commons",
+    "license": "CC BY-SA 4.0",
+    "permissionBasis": "Wikimedia Commons identifies the subject as Tano Tijerina and licenses the portrait under Creative Commons Attribution-ShareAlike 4.0 International.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-cc-by-sa-candidate-photo",
+    "discoveredAt": "2026-08-30T16:12:04.939Z"
   },
   {
     "candidateId": "candidate-taylor-rehmet-democratic-race-2026-texas-senate-9",
@@ -3406,6 +3466,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:52:54.998Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-yolanda-r-prince-democratic-race-2026-us-house-1",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Yolanda_Prince.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Yolanda_Prince.jpg",
+    "altText": "Portrait of Yolanda R. Prince, Democratic nominee for Texas's 1st Congressional District",
+    "credit": "WikiBunny2K1 via Wikimedia Commons",
+    "license": "CC0 1.0 Universal",
+    "permissionBasis": "Wikimedia Commons identifies the subject as Yolanda Prince and states the photograph was taken May 7, 2026 before an East Texas Now interview during her TX-1 campaign; the photographer and copyright holder released the work under the CC0 1.0 public-domain dedication.",
+    "usageStatus": "approved",
+    "discoveryMethod": "wikimedia-verified-cc0-candidate-photo",
+    "discoveredAt": "2026-08-30T16:12:04.983Z"
   },
   {
     "candidateId": "candidate-yvonne-davis-democratic-race-2026-texas-house-111",
