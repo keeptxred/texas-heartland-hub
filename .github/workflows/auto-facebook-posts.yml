@@ -28,10 +28,11 @@ concurrency:
 jobs:
   post:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     env:
       TEXASDEFINED_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.texasdefined_dry_run }}
       GH_TOKEN: ${{ github.token }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       # GitHub-hosted runners are intentionally challenged on browser-facing
       # keeptxred.com dynamic paths. Machine hooks use the same deployed Worker
       # directly while retaining strict GitHub Actions OIDC authorization.
@@ -60,6 +61,69 @@ jobs:
 
           failures=0
 
+          generate_openai_attention_image() {
+            local endpoint="$1"
+            local output="$2"
+            local title prompt openai_payload openai_status image_b64 publish_payload publish_status
+
+            title=$(jq -r '.title // empty' "$output")
+            prompt=$(jq -r '.image_prompt // empty' "$output")
+            if [[ -z "$title" || -z "$prompt" ]]; then
+              echo 'Attention post requested an image without a usable title/prompt.' >&2
+              return 1
+            fi
+            if [[ -z "${OPENAI_API_KEY:-}" ]]; then
+              echo 'OPENAI_API_KEY is required for automated Facebook attention images.' >&2
+              return 1
+            fi
+
+            openai_payload=$(jq -n \
+              --arg prompt "$prompt" \
+              '{model:"gpt-image-2",prompt:$prompt,size:"1536x1024",quality:"medium",output_format:"png"}')
+
+            openai_status=$(curl -sS -X POST \
+              -o /tmp/ktr-openai-image.json \
+              -w '%{http_code}' \
+              --max-time 420 \
+              -H "Authorization: Bearer ${OPENAI_API_KEY}" \
+              -H 'Content-Type: application/json' \
+              --data "$openai_payload" \
+              'https://api.openai.com/v1/images/generations' || echo 000)
+
+            if [[ "$openai_status" != "200" ]]; then
+              echo "OpenAI image generation failed with HTTP ${openai_status}." >&2
+              jq -r '.error.message // "No OpenAI error detail"' /tmp/ktr-openai-image.json 2>/dev/null >&2 || true
+              return 1
+            fi
+
+            image_b64=$(jq -r '.data[0].b64_json // empty' /tmp/ktr-openai-image.json)
+            if [[ -z "$image_b64" ]]; then
+              echo 'OpenAI image generation returned no image bytes.' >&2
+              return 1
+            fi
+
+            publish_payload=$(jq -n \
+              --arg title "$title" \
+              --arg image "$image_b64" \
+              '{attention_title:$title,image_base64:$image,image_mime:"image/png",image_provider:"openai:gpt-image-2"}')
+
+            publish_status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
+              --max-time 420 \
+              -H 'accept: application/json' \
+              -H 'Content-Type: application/json' \
+              -H "Authorization: Bearer ${oidc_token}" \
+              -H 'X-KTR-Facebook-Mode: scheduled' \
+              --data "$publish_payload" \
+              "$endpoint" || echo 000)
+
+            if [[ "$publish_status" != "200" ]] || ! jq -e '.ok == true and .posted == true and .image_generated_by_openai == true' "$output" >/dev/null 2>&1; then
+              echo "OpenAI image handoff or Facebook publication failed with HTTP ${publish_status}." >&2
+              cat "$output" >&2 || true
+              return 1
+            fi
+            rm -f /tmp/ktr-openai-image.json
+          }
+
           run_page() {
             local label="$1"
             local endpoint="$2"
@@ -82,14 +146,24 @@ jobs:
               "$endpoint" || echo 000)
 
             echo "${label} auto-facebook HTTP ${status} mode=${requested_mode} dry_run=${dry_run}"
-            cat "$output" 2>/dev/null || true
-            echo
 
             if [[ "$status" != "200" ]] || ! jq -e '.ok == true' "$output" >/dev/null 2>&1; then
+              cat "$output" 2>/dev/null || true
               echo "AUTO_FACEBOOK_POST_FAILED page=${label}" >&2
               failures=$((failures + 1))
               return
             fi
+
+            if [[ "$label" == "keeptxred" ]] && jq -e '.image_required == true' "$output" >/dev/null 2>&1; then
+              echo "AUTO_FACEBOOK_IMAGE_REQUIRED page=keeptxred title=$(jq -r '.title // ""' "$output")"
+              if ! generate_openai_attention_image "$endpoint" "$output"; then
+                failures=$((failures + 1))
+                return
+              fi
+            fi
+
+            cat "$output" 2>/dev/null || true
+            echo
 
             if jq -e '.dry_run == true' "$output" >/dev/null 2>&1; then
               kind=$(jq -r '.kind // "unknown"' "$output")
@@ -104,7 +178,8 @@ jobs:
               article_url=$(jq -r '.article_url // ""' "$output")
               post_url=$(jq -r '.post_url // ""' "$output")
               image_url=$(jq -r '.image_url // ""' "$output")
-              echo "AUTO_FACEBOOK_POST_SUCCESS page=${label} kind=${kind} slug=${slug} title=${title} article_url=${article_url} post_url=${post_url} image_url=${image_url}"
+              image_provider=$(jq -r '.image_provider // ""' "$output")
+              echo "AUTO_FACEBOOK_POST_SUCCESS page=${label} kind=${kind} slug=${slug} title=${title} article_url=${article_url} post_url=${post_url} image_url=${image_url} image_provider=${image_provider}"
             else
               reason=$(jq -r '.reason // "no eligible post"' "$output")
               next_target=$(jq -r '.next_target_local // ""' "$output")
