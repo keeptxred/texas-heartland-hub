@@ -13,6 +13,13 @@ import {
 } from "./featured-image-core";
 import { CLOUDFLARE_CULTURE_IMAGE_MODEL, generateImageBytes, validateImageMatchesArticle } from "./featured-image-cloudflare";
 import {
+  buildArticleFallbackImagePrompt,
+  detectImageContentType,
+  extensionForImageContentType,
+  generateOpenAiImageBytes,
+  OPENAI_IMAGE_FALLBACK_MODEL,
+} from "./openai-image-fallback.server";
+import {
   buildMultiSourceImageGrounding,
   extractSelectedImageLead,
   type MultiSourceImageFact,
@@ -240,8 +247,6 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
   const supabase = await serviceClient();
   if (!opts.overwrite && row.featured_image_url) return { ok: true, url: row.featured_image_url, alt: buildAltText(row) };
 
-  // Multi-source stories must derive their visual subject from durable verified facts.
-  // The service types intentionally lag these newsroom tables, so the runtime client is narrowed here.
   const grounding = await loadMultiSourceImageGrounding(supabase as any, row.slug);
   if (grounding?.mode === "hold_image") {
     const note = `multisource-image-hold: no safe verified visual fact; excluded_conflicts=${grounding.excludedConflictCount}`;
@@ -267,33 +272,67 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
     : "";
   const prompt = makeGenerationPrompt(initialCorrection);
   const alt = buildAltText(row);
-  const filename = `${sanitizeFilename(row.slug)}.jpg`;
   await supabase.from("daily_articles").update({ image_generation_status: "generating", image_prompt: prompt }).eq("slug", row.slug);
 
   try {
-    // Generate from the sanitized visual subject as well as validating against the
-    // original factual subject. Passing original story-specific forbidden nouns to
-    // FLUX as "negative" text can prime the exact gun/politician/cartoon motifs the
-    // strict validator rejected, because FLUX.2 receives one combined prompt field.
-    let negativePrompt = buildNegativeImagePrompt(generationSubject, previousFailure);
-    const imageModel = subject.domain === "culture" ? CLOUDFLARE_CULTURE_IMAGE_MODEL : undefined;
-    let bytes = await generateImageBytes(prompt, negativePrompt, imageModel);
-    let verdict = await validateImageMatchesArticle(bytes, subject);
+    let bytes: Uint8Array | null = null;
+    let verdict: { matches: boolean; reason: string } = { matches: false, reason: "Cloudflare generation not attempted" };
     let usedPrompt = prompt;
+    let provider = "cloudflare";
+    let cloudflareFailure = "";
 
-    for (let attempt = 1; !verdict.matches && attempt <= 3; attempt += 1) {
-      const correction = `Retry ${attempt}. Discard the prior composition completely. Create a new physical-camera news photograph from a different camera position, with the concrete physical subject filling the frame in a believable real-world setting.`;
-      const stronger = makeGenerationPrompt(correction);
-      usedPrompt = stronger;
-      negativePrompt = buildNegativeImagePrompt(generationSubject, verdict.reason);
-      bytes = await generateImageBytes(stronger, negativePrompt, imageModel);
+    try {
+      let negativePrompt = buildNegativeImagePrompt(generationSubject, previousFailure);
+      const imageModel = subject.domain === "culture" ? CLOUDFLARE_CULTURE_IMAGE_MODEL : undefined;
+      bytes = await generateImageBytes(prompt, negativePrompt, imageModel);
       verdict = await validateImageMatchesArticle(bytes, subject);
+
+      for (let attempt = 1; !verdict.matches && attempt <= 3; attempt += 1) {
+        const correction = `Retry ${attempt}. Discard the prior composition completely. Create a new physical-camera news photograph from a different camera position, with the concrete physical subject filling the frame in a believable real-world setting.`;
+        const stronger = makeGenerationPrompt(correction);
+        usedPrompt = stronger;
+        negativePrompt = buildNegativeImagePrompt(generationSubject, verdict.reason);
+        bytes = await generateImageBytes(stronger, negativePrompt, imageModel);
+        verdict = await validateImageMatchesArticle(bytes, subject);
+      }
+
+      if (!verdict.matches) cloudflareFailure = `strict validation rejected Cloudflare image: ${verdict.reason}`;
+    } catch (error) {
+      cloudflareFailure = error instanceof Error ? error.message : String(error);
+      bytes = null;
+      verdict = { matches: false, reason: cloudflareFailure };
     }
 
-    if (!verdict.matches) throw new Error(`Generated image failed Cloudflare story-match/photorealism validation: ${verdict.reason}`);
+    if (!bytes || !verdict.matches) {
+      const contextExcerpt = firstParagraph(row.body_json) || bodyJsonText(row.body_json).slice(0, 700);
+      for (let attempt = 1; attempt <= 2; attempt += 1) {
+        const correction = attempt === 1
+          ? `The primary image pipeline could not produce an acceptable story match. ${cloudflareFailure || verdict.reason}`
+          : `The prior OpenAI fallback was rejected by the story-match validator. ${verdict.reason}. Start over with a materially different composition centered on the article's concrete subject.`;
+        const openAiPrompt = buildArticleFallbackImagePrompt({
+          title: row.seo_headline?.trim() || row.title,
+          dek: row.dek,
+          category: row.category || row.discover_category,
+          region: row.affected_regions?.slice(0, 2).join(", ") || null,
+          excerpt: contextExcerpt,
+          existingPrompt: `${makeGenerationPrompt(correction)} ${subject.evidenceGuidance ?? ""}`.trim(),
+        });
+        usedPrompt = openAiPrompt;
+        provider = `openai:${OPENAI_IMAGE_FALLBACK_MODEL}`;
+        bytes = await generateOpenAiImageBytes(openAiPrompt);
+        verdict = await validateImageMatchesArticle(bytes, subject);
+        if (verdict.matches) break;
+      }
+    }
 
+    if (!bytes || !verdict.matches) {
+      throw new Error(`Generated image failed all contextual AI attempts and strict story-match validation: ${verdict.reason}`);
+    }
+
+    const contentType = detectImageContentType(bytes);
+    const filename = `${sanitizeFilename(row.slug)}.${extensionForImageContentType(contentType)}`;
     const { error: upErr } = await supabase.storage.from(BUCKET).upload(filename, bytes, {
-      contentType: "image/jpeg",
+      contentType,
       cacheControl: "public, max-age=31536000, immutable",
       upsert: true,
     });
@@ -305,7 +344,7 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
       image_alt_text: alt,
       image_generation_status: "ready",
       image_prompt: usedPrompt,
-      image_validation_note: `${grounding ? `multisource-${grounding.mode}; ` : ""}cloudflare-vision ok: ${verdict.reason}`,
+      image_validation_note: `${grounding ? `multisource-${grounding.mode}; ` : ""}${provider}; strict-vision ok: ${verdict.reason}`,
     }).eq("slug", row.slug);
     return { ok: true, url, alt };
   } catch (err) {
