@@ -62,6 +62,16 @@ export const PILLAR_FEATURED_ARTICLES: Partial<Record<ContentPillarSlug, readonl
       dek: "Military rule, readmission, Black political participation, the 1869 Constitution and the governmental conflict that led directly to the Constitution of 1876.",
     },
     {
+      href: "/texas-politics/democratic-restoration-texas-1874-1900",
+      title: "Democratic Restoration, 1874–1900",
+      dek: "How the Coke transition, Constitution of 1876, agrarian unrest and opposition parties produced the long one-party Democratic order.",
+    },
+    {
+      href: "/texas-politics/texas-progressive-era-politics",
+      title: "Progressive Era Texas Politics",
+      dek: "Regulation, primaries, prohibition, women's suffrage, voting restrictions and reform politics from the 1890s through the 1920s.",
+    },
+    {
       href: "/texas-politics/texas-secession-convention-1861",
       title: "Texas Secession Convention of 1861",
       dek: "How the convention, statewide referendum and conflict with Governor Sam Houston moved Texas from the Union into Confederate government.",
