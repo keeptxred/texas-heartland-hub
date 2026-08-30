@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-08-30T20:35:29.991Z",
+  "generatedAt": "2026-08-30T20:51:43.282Z",
   "candidateCount": 491,
   "eligibleCandidateCount": 479,
   "excludedCandidateCount": 12,
-  "approvedPhotoCount": 334,
-  "missingPhotoCount": 145,
-  "manifestEntryCount": 334,
-  "coverage": 0.697286012526096,
-  "coveragePercent": 69.73,
+  "approvedPhotoCount": 337,
+  "missingPhotoCount": 142,
+  "manifestEntryCount": 337,
+  "coverage": 0.7035490605427975,
+  "coveragePercent": 70.35,
   "targetCoverage": 0.85,
   "targetApprovedPhotoCount": 408,
-  "photosNeededForTarget": 74,
+  "photosNeededForTarget": 71,
   "targetMet": false,
   "errors": [],
   "warnings": [],
@@ -182,13 +182,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-margo-jordan-other-race-2026-state-board-of-education-6",
-      "name": "MARGO JORDAN",
-      "raceId": "race-2026-state-board-of-education-6",
-      "party": "other",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-rhett-rosenquest-smith-republican-race-2026-texas-house-116",
       "name": "RHETT ROSENQUEST SMITH",
       "raceId": "race-2026-texas-house-116",
@@ -325,20 +318,6 @@
       "candidateId": "candidate-gabriel-gabe-lozano-marroquin-democratic-race-2026-texas-house-32",
       "name": "GABRIEL \"GABE\" LOZANO MARROQUIN",
       "raceId": "race-2026-texas-house-32",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-orlando-lopez-democratic-race-2026-texas-house-33",
-      "name": "ORLANDO LOPEZ",
-      "raceId": "race-2026-texas-house-33",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-stephanie-guerrero-saenz-democratic-race-2026-texas-house-34",
-      "name": "STEPHANIE GUERRERO SAENZ",
-      "raceId": "race-2026-texas-house-34",
       "party": "democratic",
       "priority": "standard"
     },
