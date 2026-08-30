@@ -4,6 +4,8 @@ import re
 import subprocess
 from html.parser import HTMLParser
 
+from verify_deployed_priority_sitemap import verify_priority_sitemap
+
 SITE_URL = os.environ.get("SITE_URL", "https://keeptxred-site.freddy-coppola.workers.dev").rstrip("/")
 PARENT_H1 = "Texas Laws Explained:"
 CHECKS = [
@@ -94,6 +96,10 @@ def main() -> int:
         raise SystemExit("Deployed laws route smoke failed:\n- " + "\n- ".join(failures))
 
     print(f"Deployed laws route smoke passed for {len(CHECKS)} routes on {SITE_URL}.")
+    try:
+        verify_priority_sitemap(SITE_URL)
+    except RuntimeError as exc:
+        raise SystemExit(str(exc)) from exc
     return 0
 
 
