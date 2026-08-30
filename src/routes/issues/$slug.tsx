@@ -74,6 +74,17 @@ const GUIDE_TOOL_LINKS: Record<string, Array<{ label: string; href: string }>> =
   ],
 };
 
+const GUIDE_AUTHORITY_LINKS: Record<string, Array<{ label: string; href: string }>> = {
+  "texas-local-government-handbook": [
+    { label: "Texas county government history", href: "/texas-government/texas-county-government-history" },
+    { label: "Commissioners court history and powers", href: "/texas-government/commissioners-court-history" },
+    { label: "Texas county judge", href: "/texas-government/county-judge-history" },
+    { label: "Texas county sheriff", href: "/texas-government/county-sheriff-history" },
+    { label: "County and district clerks", href: "/texas-government/county-district-clerk-history" },
+    { label: "Justices of the peace and constables", href: "/texas-government/justice-of-the-peace-constable-history" },
+  ],
+};
+
 export const Route = createFileRoute("/issues/$slug")({
   loader: ({ params }): IssueGuide => {
     const guide = issueGuideBySlug[params.slug];
@@ -137,6 +148,7 @@ function IssueGuidePage() {
   const slug = guide.slug;
   const toolLinks = [...(guide.toolLinks ?? []), ...(GUIDE_TOOL_LINKS[slug] ?? [])]
     .filter((link, index, links) => links.findIndex((candidate) => candidate.href === link.href) === index);
+  const authorityLinks = GUIDE_AUTHORITY_LINKS[slug] ?? [];
   const hubLinks = CATEGORY_HUBS[guide.category] ?? [];
   const policyTrackers = relatedPolicyTrackersForIssueGuide(guide);
 
@@ -195,6 +207,20 @@ function IssueGuidePage() {
         </article>
 
         <aside className="space-y-7 lg:sticky lg:top-24 lg:self-start">
+          {authorityLinks.length ? (
+            <section className="border border-primary/30 bg-primary/5 p-5">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-primary">Institutional authority layer</p>
+              <h2 className="mt-1 font-display text-2xl tracking-tight">Local government authority</h2>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">Go deeper on the constitutional history, legal boundaries and election structure of Texas county and precinct offices.</p>
+              <div className="mt-4 space-y-3">
+                {authorityLinks.map((link) => (
+                  <a key={link.href} href={link.href} className="block border-b pb-3 text-sm font-semibold last:border-0 last:pb-0 hover:text-primary">{link.label} →</a>
+                ))}
+              </div>
+              <a href="/texas-government" className="mt-4 inline-block text-sm font-semibold text-primary hover:underline">Texas government authority hub →</a>
+            </section>
+          ) : null}
+
           {policyTrackers.length ? (
             <section className="border border-primary/30 bg-primary/5 p-5">
               <p className="text-[10px] font-bold uppercase tracking-wider text-primary">Current-status layer</p>
