@@ -24,6 +24,7 @@ on:
       - "scripts/elections/apply-verified-candidate-photo-findings-*.mjs"
       - "scripts/elections/apply-official-judicial-photo-findings-2026-08-21-wave2.mjs"
       - "scripts/elections/discover-candidate-photo-sources.mjs"
+      - "scripts/elections/discover-candidate-photo-sources-fast.mjs"
       - "scripts/elections/discover-candidate-photos-source-registries.mjs"
       - "scripts/elections/discover-candidate-photos-house-clerk.mjs"
       - "scripts/elections/discover-candidate-photos-congress-gov.mjs"
@@ -97,7 +98,7 @@ jobs:
       - name: Discover portraits from verified source registries
         run: node scripts/elections/discover-candidate-photos-source-registries.mjs
       - name: Discover previously unseen candidate photo source domains
-        run: node scripts/elections/discover-candidate-photo-sources.mjs
+        run: node scripts/elections/discover-candidate-photo-sources-fast.mjs
       - name: Discover Congress.gov member portraits
         run: node scripts/elections/discover-candidate-photos-congress-gov.mjs
       - name: Discover U.S. House Clerk member portraits
