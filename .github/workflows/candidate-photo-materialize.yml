@@ -1,0 +1,131 @@
+name: Candidate photo verified materialization
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/candidate-photo-materialize.yml"
+      - "scripts/elections/apply-authoritative-candidate-filing-status.mjs"
+      - "scripts/elections/candidate-photo-enrichment.mjs"
+      - "scripts/elections/remove-generic-candidate-photo-entries.mjs"
+      - "scripts/elections/apply-official-senate-photo-replacements-2026-08-30.mjs"
+      - "scripts/elections/merge-approved-candidate-photo-assets.mjs"
+      - "scripts/elections/apply-direct-web-photo-findings.mjs"
+      - "scripts/elections/apply-verified-photo-findings-2026-07-31.mjs"
+      - "scripts/elections/apply-automation-verified-photo-findings.mjs"
+      - "scripts/elections/apply-official-government-photo-findings-2026-08-21.mjs"
+      - "scripts/elections/apply-official-federal-photo-findings-2026-08-21-wave2.mjs"
+      - "scripts/elections/apply-public-domain-congress-photo-findings-2026-08-21-wave3.mjs"
+      - "scripts/elections/apply-public-domain-congress-photo-findings-2026-08-22-wave4.mjs"
+      - "scripts/elections/apply-verified-candidate-photo-findings-*.mjs"
+      - "scripts/elections/apply-official-judicial-photo-findings-2026-08-21-wave2.mjs"
+      - "src/data/elections/2026/candidate-filing-status-authority.json"
+      - "src/data/elections/2026/candidate-photo-assets.json"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: candidate-photo-verified-materialization
+  cancel-in-progress: true
+
+jobs:
+  materialize-verified-photos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out current main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Reconcile authoritative candidate filing status
+        run: node scripts/elections/apply-authoritative-candidate-filing-status.mjs
+
+      - name: Merge approved candidate photo assets
+        run: node scripts/elections/merge-approved-candidate-photo-assets.mjs
+
+      - name: Apply direct verified web findings
+        run: node scripts/elections/apply-direct-web-photo-findings.mjs
+
+      - name: Apply July 31 verified campaign findings
+        run: node scripts/elections/apply-verified-photo-findings-2026-07-31.mjs
+
+      - name: Apply automation-verified candidate-guide findings
+        run: node scripts/elections/apply-automation-verified-photo-findings.mjs
+
+      - name: Apply verified official government portraits
+        run: node scripts/elections/apply-official-government-photo-findings-2026-08-21.mjs
+
+      - name: Apply verified official federal portrait wave 2
+        run: node scripts/elections/apply-official-federal-photo-findings-2026-08-21-wave2.mjs
+
+      - name: Apply verified public-domain congressional portrait wave 3
+        run: node scripts/elections/apply-public-domain-congress-photo-findings-2026-08-21-wave3.mjs
+
+      - name: Apply verified public-domain congressional portrait wave 4
+        run: node scripts/elections/apply-public-domain-congress-photo-findings-2026-08-22-wave4.mjs
+
+      - name: Apply all verified candidate portrait waves
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          scripts=(scripts/elections/apply-verified-candidate-photo-findings-*.mjs)
+          for script in "${scripts[@]}"; do
+            echo "Applying $script"
+            node "$script"
+          done
+
+      - name: Apply verified Texas appellate portrait wave 2
+        run: node scripts/elections/apply-official-judicial-photo-findings-2026-08-21-wave2.mjs
+
+      - name: Remove known generic and placeholder candidate images
+        run: node scripts/elections/remove-generic-candidate-photo-entries.mjs
+
+      - name: Apply verified Texas Senate member portrait replacements
+        run: node scripts/elections/apply-official-senate-photo-replacements-2026-08-30.mjs
+
+      - name: Re-run generic cleanup after replacements
+        run: node scripts/elections/remove-generic-candidate-photo-entries.mjs
+
+      - name: Materialize approved photos and regenerate live coverage report
+        run: node scripts/elections/candidate-photo-enrichment.mjs --apply
+
+      - name: Publish verified materialization as protected PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_TITLE: Materialize verified candidate photos
+          PR_BODY: Fast-path materialization of already verified candidate portraits and authoritative candidate eligibility state. This workflow performs no broad web discovery and does not relax source, identity, rights, generic-image, lifecycle, branch-protection, or publication safeguards. Generated candidate records and coverage artifacts still merge only through the protected verify gate.
+          COMMIT_MESSAGE: Materialize verified candidate photos and coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          TRACKED=(
+            src/data/elections/2026/candidate-photos.json
+            src/data/elections/2026/candidates.json
+            artifacts/elections/candidate-photo-report.json
+            artifacts/elections/candidate-photo-generic-image-audit.json
+            artifacts/elections/candidate-photo-eligibility-reconciliation.json
+          )
+          if git diff --quiet -- "${TRACKED[@]}"; then
+            echo "No verified candidate-photo changes to publish."
+            exit 0
+          fi
+          changed="$(git status --short | awk '{print $2}')"
+          unexpected_files="$(grep -vE '^(src/data/elections/2026/(candidate-photos|candidates)\.json|artifacts/elections/candidate-photo-(report|generic-image-audit|eligibility-reconciliation)\.json)$' <<<"$changed" || true)"
+          if [[ -n "$unexpected_files" ]]; then
+            echo "Refusing to publish files outside the verified candidate-photo allowlist:" >&2
+            echo "$unexpected_files" >&2
+            exit 1
+          fi
+          bash scripts/ci/publish-automation-pr.sh candidate-photo-verified-materialization "${TRACKED[@]}"
