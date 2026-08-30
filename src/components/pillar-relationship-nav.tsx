@@ -55,6 +55,18 @@ type FeaturedArticle = {
 };
 
 export const PILLAR_FEATURED_ARTICLES: Partial<Record<ContentPillarSlug, readonly FeaturedArticle[]>> = {
+  "texas-politics-government": [
+    {
+      href: "/texas-politics/texas-reconstruction-government",
+      title: "Texas Reconstruction Government",
+      dek: "Military rule, readmission, Black political participation, the 1869 Constitution and the governmental conflict that led directly to the Constitution of 1876.",
+    },
+    {
+      href: "/texas-politics/texas-secession-convention-1861",
+      title: "Texas Secession Convention of 1861",
+      dek: "How the convention, statewide referendum and conflict with Governor Sam Houston moved Texas from the Union into Confederate government.",
+    },
+  ],
   "texas-law-enforcement-public-safety": [
     {
       href: "/news/texas-policing-agencies-compared",
