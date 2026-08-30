@@ -18,7 +18,7 @@ import {
   extensionForImageContentType,
   generateOpenAiImageBytes,
   OPENAI_IMAGE_FALLBACK_MODEL,
-} from "./openai-image-fallback.server";
+} from "./openai-image-fallback";
 import {
   buildMultiSourceImageGrounding,
   extractSelectedImageLead,
