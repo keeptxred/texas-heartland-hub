@@ -6,7 +6,10 @@ import {
   selectKtrFacebookAttentionPost,
 } from "@/lib/facebook-attention-posts";
 import {
-  KTR_FACEBOOK_ATTENTION_IMAGE_URL,
+  buildKtrFacebookAttentionImagePrompt,
+  decodeSuppliedKtrFacebookAttentionImage,
+} from "@/lib/facebook-attention-image.server";
+import {
   formatKtrFacebookPublishedAttentionMessage,
   ktrFacebookAttentionTrafficUrl,
   selectKtrFacebookAttentionPostForSlot,
@@ -24,9 +27,21 @@ describe("KTR Facebook attention posts", () => {
     expect(KTR_FACEBOOK_ATTENTION_POSTS.length).toBeGreaterThanOrEqual(125);
   });
 
-  it("requires an HTTPS image for every attention post", () => {
-    expect(KTR_FACEBOOK_ATTENTION_IMAGE_URL).toMatch(/^https:\/\//);
-    expect(KTR_FACEBOOK_ATTENTION_IMAGE_URL).toBe("https://keeptxred.com/og/default.jpg");
+  it("builds the exact ChatGPT-style image instruction from the post text", () => {
+    const postText = "What should youth sports teach first: winning, discipline, teamwork, resilience, or something else?";
+    const prompt = buildKtrFacebookAttentionImagePrompt(postText);
+    expect(prompt.startsWith(`Generate an image for this Facebook post.\n${postText}`)).toBe(true);
+    expect(prompt).toContain("magazine-ready social graphic");
+    expect(prompt).toContain("Do not use a generic Texas background");
+    expect(prompt).not.toContain("og/default.jpg");
+  });
+
+  it("accepts only real raster image payloads from the ChatGPT/OpenAI job", () => {
+    const encoded = btoa("fake-image-bytes-for-contract-test");
+    const decoded = decodeSuppliedKtrFacebookAttentionImage({ base64: encoded, contentType: "image/png" });
+    expect(decoded.contentType).toBe("image/png");
+    expect(decoded.bytes.byteLength).toBeGreaterThan(0);
+    expect(() => decodeSuppliedKtrFacebookAttentionImage({ base64: encoded, contentType: "image/svg+xml" })).toThrow();
   });
 
   it("does not contain duplicate titles or messages", () => {
