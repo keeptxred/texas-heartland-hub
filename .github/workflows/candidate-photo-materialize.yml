@@ -2,6 +2,13 @@ name: Candidate photo verified materialization
 
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows:
+      - Repository test and build health
+    types:
+      - completed
+    branches:
+      - main
   push:
     branches:
       - main
@@ -34,6 +41,7 @@ concurrency:
 
 jobs:
   materialize-verified-photos:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
