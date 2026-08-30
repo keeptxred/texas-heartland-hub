@@ -13,6 +13,7 @@ const sourceFiles = [
   "src/routes/texas-government.$entitySlug.tsx",
   "src/routes/texas-politics.figures.tsx",
   "src/routes/texas-politics.figures_.$figureSlug.tsx",
+  "src/routes/texas-politics.how-texas-became-republican.tsx",
   "src/routes/texas-politics.texas-supreme-court-realignment.tsx",
   "src/lib/elections/internalLinks.ts",
   "src/data/search-console-priority-urls.json",
