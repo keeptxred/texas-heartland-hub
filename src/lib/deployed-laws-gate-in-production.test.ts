@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 
 const deployWorkflow = readFileSync(".github/workflows/deploy-cloudflare-after-verify.yml", "utf8");
 const smokeScript = readFileSync("scripts/seo/verify-deployed-laws-routes.py", "utf8");
+const prioritySmoke = readFileSync("scripts/seo/verify_deployed_priority_sitemap.py", "utf8");
 
 describe("deployed law routes production gate", () => {
   it("runs the law-route smoke inside the verified Cloudflare deployment", () => {
@@ -45,5 +46,19 @@ describe("deployed law routes production gate", () => {
     expect(smokeScript).toContain("child route is still rendering the /laws parent H1");
     expect(smokeScript).toContain("https://keeptxred.com/laws/topic/property-tax-law");
     expect(smokeScript).toContain("cache-control: no-cache");
+  });
+
+  it("makes the priority sitemap and all 30 priority URLs part of the same hard deploy gate", () => {
+    expect(smokeScript).toContain("from verify_deployed_priority_sitemap import verify_priority_sitemap");
+    expect(smokeScript).toContain("verify_priority_sitemap(SITE_URL)");
+    expect(prioritySmoke).toContain('PRIORITY_SOURCE = Path("src/data/search-console-priority-sitemap-urls.json")');
+    expect(prioritySmoke).toContain('/sitemap-priority.xml');
+    expect(prioritySmoke).toContain("len(expected) != 30");
+    expect(prioritySmoke).toContain("returned HTTP {status}, expected direct 200 with no redirect");
+    expect(prioritySmoke).toContain("X-Robots-Tag contains noindex");
+    expect(prioritySmoke).toContain("robots meta contains noindex");
+    expect(prioritySmoke).toContain("expected one canonical");
+    expect(prioritySmoke).toContain("observed != expected");
+    expect(prioritySmoke).toContain("--max-redirs");
   });
 });
