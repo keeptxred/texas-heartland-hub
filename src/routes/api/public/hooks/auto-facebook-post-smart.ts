@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   publishKtrFacebookAttentionPost,
   shouldUseKtrFacebookAttentionSlot,
+  type SuppliedKtrFacebookAttentionImage,
 } from "@/lib/facebook-attention-publisher.server";
 import type { RecentFacebookPost } from "@/lib/facebook-editorial-selection";
 import {
@@ -15,6 +16,7 @@ const REPOSITORY = "keeptxred/texas-heartland-hub";
 const WORKFLOW_PATH = ".github/workflows/auto-facebook-posts.yml";
 const ARTICLE_ENDPOINT = "https://keeptxred-site.freddy-coppola.workers.dev/api/public/hooks/auto-facebook-post";
 const DIVERSITY_WINDOW_HOURS = 30;
+const MAX_IMAGE_BASE64_CHARS = 18 * 1024 * 1024;
 
 type RecentQueueRow = {
   content_package_id: string;
@@ -30,6 +32,29 @@ function bearerToken(request: Request): string | null {
   const value = request.headers.get("authorization") ?? "";
   const match = value.match(/^Bearer\s+(.+)$/i);
   return match?.[1]?.trim() || null;
+}
+
+async function parseSuppliedAttentionImage(request: Request): Promise<SuppliedKtrFacebookAttentionImage | null> {
+  const contentType = request.headers.get("content-type")?.toLowerCase() ?? "";
+  if (!contentType.includes("application/json")) return null;
+  const raw = await request.json().catch(() => null) as {
+    attention_title?: unknown;
+    image_base64?: unknown;
+    image_mime?: unknown;
+    image_provider?: unknown;
+  } | null;
+  if (!raw || typeof raw.attention_title !== "string" || typeof raw.image_base64 !== "string" || typeof raw.image_mime !== "string") {
+    return null;
+  }
+  if (!raw.attention_title.trim() || !raw.image_base64.trim() || raw.image_base64.length > MAX_IMAGE_BASE64_CHARS) {
+    return null;
+  }
+  return {
+    title: raw.attention_title.trim(),
+    base64: raw.image_base64,
+    contentType: raw.image_mime.trim(),
+    provider: typeof raw.image_provider === "string" ? raw.image_provider.trim().slice(0, 100) : null,
+  };
 }
 
 async function loadRecentFacebookPosts(db: any): Promise<RecentFacebookPost[]> {
@@ -106,11 +131,9 @@ async function runSmartKtrFacebookPost(request: Request): Promise<Response> {
   }
 
   const mode = request.headers.get("x-ktr-facebook-mode")?.trim().toLowerCase() || "scheduled";
-  // Manual workflow dispatch retains the existing article/guide behavior. The
-  // attention mix is only used by scheduled runs so manual publication remains
-  // predictable for operators.
   if (mode === "manual") return forwardArticlePost(token);
 
+  const suppliedImage = await parseSuppliedAttentionImage(request);
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const db = supabaseAdmin as any;
   const seed = process.env.ADMIN_PASSCODE ?? "keeptxred";
@@ -156,13 +179,11 @@ async function runSmartKtrFacebookPost(request: Request): Promise<Response> {
       dateKey: decision.dateKey,
       slot: decision.postsToday,
       mode,
+      suppliedImage,
     });
     if (attentionResponse) return attentionResponse;
   }
 
-  // Article slots keep the existing ranked recent-article publisher and its
-  // production-indexable durable-guide fallback. Forward as manual so the
-  // inner endpoint does not apply the schedule a second time.
   return forwardArticlePost(token);
 }
 
