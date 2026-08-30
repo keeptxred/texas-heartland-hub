@@ -38,6 +38,7 @@ const DISTRICT_REFRESH = toIsoDate("2026-08-19T07:35:00-05:00");
 const AGENCY_REFRESH = toIsoDate("2026-08-19T07:40:00-05:00");
 const CIVIC_TOOLS_REFRESH = toIsoDate("2026-08-19T08:00:00-05:00");
 const POLITICAL_HISTORY_REFRESH = toIsoDate("2026-08-30T00:00:00-05:00");
+const GOVERNMENT_HISTORY_REFRESH = toIsoDate("2026-08-30T00:00:00-05:00");
 const SPORTS_SITEMAP_LEAGUES = ["nfl", "mlb", "nba", "nhl", "mls", "nwsl", "wnba", "cfb"] as const;
 const SPORTS_SITEMAP_TOPICS = ["football", "baseball", "basketball", "hockey", "soccer", "college", "recruiting", "nil", "business-policy", "stadiums", "motorsports", "postseason", "transactions", "injuries", "rivalries"] as const;
 const INDEXABLE_GUIDES = Object.values(ALL_GUIDES).filter(isSupportingGuideIndexable);
@@ -73,8 +74,16 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/texas-legislature/current-session": CITATION_MAGNET_REFRESH,
   "/texas-legislature/sessions": toIsoDate("2026-08-07T00:00:00-05:00"),
   "/texas-legislature/votes": CITATION_MAGNET_REFRESH,
-  "/texas-government": CITATION_MAGNET_REFRESH,
+  "/texas-government": GOVERNMENT_HISTORY_REFRESH,
   "/texas-government/agencies": AGENCY_REFRESH,
+  "/texas-government/texas-government-history": GOVERNMENT_HISTORY_REFRESH,
+  "/texas-government/texas-legislature-history": GOVERNMENT_HISTORY_REFRESH,
+  "/texas-government/governor-history": GOVERNMENT_HISTORY_REFRESH,
+  "/texas-government/lieutenant-governor-history": GOVERNMENT_HISTORY_REFRESH,
+  "/texas-government/speaker-of-the-house-history": GOVERNMENT_HISTORY_REFRESH,
+  "/texas-government/texas-supreme-court-history": GOVERNMENT_HISTORY_REFRESH,
+  "/texas-government/court-of-criminal-appeals-history": GOVERNMENT_HISTORY_REFRESH,
+  "/texas-government/judicial-selection-elections": GOVERNMENT_HISTORY_REFRESH,
   "/districts": DISTRICT_REFRESH,
   "/laws": LAW_DATA_REFRESH,
   "/laws/topics": LAW_DATA_REFRESH,
@@ -127,7 +136,11 @@ const STATIC_PATHS:string[]=[
   "/houston","/texas-sports",
   "/texas-business","/texas-legislature","/texas-legislature/house",
   "/texas-legislature/senate","/texas-legislature/current-session","/texas-legislature/sessions",
-  "/texas-legislature/votes","/texas-government","/texas-government/agencies","/districts",
+  "/texas-legislature/votes","/texas-government","/texas-government/agencies",
+  "/texas-government/texas-government-history","/texas-government/texas-legislature-history",
+  "/texas-government/governor-history","/texas-government/lieutenant-governor-history",
+  "/texas-government/speaker-of-the-house-history","/texas-government/texas-supreme-court-history",
+  "/texas-government/court-of-criminal-appeals-history","/texas-government/judicial-selection-elections","/districts",
   "/about","/representatives","/register-to-vote","/contact-legislators",
   "/get-involved","/county-elections","/laws","/laws/topics","/laws/constitutional-amendments","/laws/effective-dates","/data",
   "/civic-tools","/civic-tools/government-authority-finder","/civic-tools/texas-law-finder","/civic-tools/bill-finder","/civic-tools/compare-legislators",
