@@ -1,0 +1,65 @@
+[
+  {
+    "domain": "scottforhd15.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Moniqua' Scott's official HD15 campaign website as a discovery source for candidate portraits and campaign media. Do not approve or reuse any image without item-level provenance plus an explicit reusable-rights basis, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Moniqua Scott Texas House District 15 official campaign portrait media press",
+    "notes": "New source discovered August 30, 2026 and independently linked from TCTA/BallotReady. The campaign site identifies Moniqua' Scott and HD15 and hosts candidate imagery. Keep discovery-only and preserve item-level rights review."
+  },
+  {
+    "domain": "theodisfortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Theodis Daniel's official HD147 campaign website as a discovery source for candidate portraits and campaign media. Do not approve or reuse any image without item-level provenance plus an explicit reusable-rights basis, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Theodis Daniel Texas House District 147 official campaign portrait media press",
+    "notes": "New source discovered August 30, 2026 from the Harris County GOP 2026 candidate directory and independently supported by BallotReady. Keep discovery-only and preserve item-level rights review."
+  },
+  {
+    "domain": "flip150.org",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use A'Yonna Kellum's official HD150 campaign website as a discovery source for candidate portraits and campaign media. Do not approve or reuse any image without item-level provenance plus an explicit reusable-rights basis, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "A'Yonna Kellum Texas House District 150 official campaign portrait media press",
+    "notes": "New source discovered August 30, 2026. The site identifies A'Yonna Kellum as the candidate for Texas House District 150. Keep discovery-only and preserve item-level rights review."
+  },
+  {
+    "domain": "fatimamuse.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Fatima La'Juan Muse's official campaign website as a discovery source for candidate portraits and campaign media. Do not approve or reuse any image without item-level provenance plus an explicit reusable-rights basis, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Fatima La'Juan Muse Texas House District 2 official campaign portrait media press",
+    "notes": "New source discovered August 30, 2026. The campaign site identifies Dr. Fatima La'Juan Muse as a candidate for Texas House District 2 and includes an Around the District photo area. Keep discovery-only and preserve item-level rights review."
+  },
+  {
+    "domain": "votemuse.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Fatima La'Juan Muse's current Vote Muse campaign website as a discovery source for candidate portraits and campaign media. Do not approve or reuse any image without item-level provenance plus an explicit reusable-rights basis, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Fatima La'Juan Muse Texas House District 2 Vote Muse portrait media press",
+    "notes": "New source discovered August 30, 2026. This current campaign domain presents Muse's November 2026 candidacy and complements fatimamuse.com. Keep discovery-only and preserve item-level rights review."
+  },
+  {
+    "domain": "kristenplaisance.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Kristen Plaisance's official HD3 campaign website as a discovery source for candidate portraits and campaign media. Do not approve or reuse any image without item-level provenance plus an explicit reusable-rights basis, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Kristen Plaisance Texas House District 3 official campaign portrait media press",
+    "notes": "New source discovered August 30, 2026. The campaign about page includes candidate-specific portraits and identifies the current HD3 race. Keep discovery-only and preserve item-level rights review."
+  },
+  {
+    "domain": "maxwellalalibo71us.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Max Alalibo's official HD27 campaign website as a discovery source for candidate portraits and campaign media. Do not approve or reuse any image without item-level provenance plus an explicit reusable-rights basis, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Max Alalibo Texas House District 27 official campaign portrait media press",
+    "notes": "New source discovered August 30, 2026. The site identifies Max Alalibo as the candidate for Texas House District 27 and is paid for by the candidate committee. Keep discovery-only and preserve item-level rights review."
+  }
+]
