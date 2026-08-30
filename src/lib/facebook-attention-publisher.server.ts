@@ -5,6 +5,9 @@ import {
   type KtrFacebookAttentionPost,
 } from "@/lib/facebook-attention-posts";
 import {
+  resolveKtrFacebookAttentionImage,
+} from "@/lib/facebook-attention-image.server";
+import {
   fetchRecentFacebookPagePosts,
   type FacebookPagePost,
 } from "@/lib/facebook-page-history";
@@ -12,8 +15,6 @@ import {
 const GRAPH_VERSION = "v21.0";
 const SITE_URL = "https://keeptxred.com";
 const ATTENTION_SLOTS = new Set([1, 3]);
-const MAX_FACEBOOK_IMAGE_BYTES = 12 * 1024 * 1024;
-export const KTR_FACEBOOK_ATTENTION_IMAGE_URL = `${SITE_URL}/og/default.jpg`;
 
 type SocialConnectionRow = {
   account_id: string | null;
@@ -85,8 +86,6 @@ export function selectKtrFacebookAttentionPostForSlot(args: {
     return candidate;
   }
 
-  // If a preferred pool is exhausted by live-page duplicate history, fall back
-  // to the general selector rather than losing an otherwise valid scheduled slot.
   return selectKtrFacebookAttentionPost(args);
 }
 
@@ -118,42 +117,17 @@ async function loadLiveFacebookPosts(connection: SocialConnectionRow): Promise<F
   });
 }
 
-async function loadRequiredAttentionImage(): Promise<{ bytes: ArrayBuffer; contentType: string }> {
-  const response = await fetch(KTR_FACEBOOK_ATTENTION_IMAGE_URL, {
-    redirect: "follow",
-    headers: {
-      accept: "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
-      "user-agent": "KeepTXRed-FacebookPublisher/1.0",
-    },
-  });
-  const contentType = response.headers.get("content-type")?.split(";", 1)[0]?.trim() ?? "";
-  const contentLength = Number(response.headers.get("content-length") ?? "0");
-  if (!response.ok || !contentType.startsWith("image/")) {
-    throw new Error(`Required Facebook attention image is unavailable (HTTP ${response.status})`);
-  }
-  if (Number.isFinite(contentLength) && contentLength > MAX_FACEBOOK_IMAGE_BYTES) {
-    throw new Error("Required Facebook attention image is too large");
-  }
-  const bytes = await response.arrayBuffer();
-  if (bytes.byteLength === 0 || bytes.byteLength > MAX_FACEBOOK_IMAGE_BYTES) {
-    throw new Error("Required Facebook attention image is empty or too large");
-  }
-  return { bytes, contentType };
-}
-
 async function recordAttentionPost(
   db: any,
   post: KtrFacebookAttentionPost,
   message: string,
   externalId: string | null,
+  assetUrl: string,
 ): Promise<string> {
   const { data: inserted, error } = await db
     .from("content_packages")
     .insert({
       source_title: post.title,
-      // Keep this null even when the social copy contains a KTR URL. Otherwise
-      // the article/durable-guide history could incorrectly treat the linked
-      // destination itself as having already received its dedicated post.
       source_url: null,
       category: post.category,
       facebook_hook: message,
@@ -161,7 +135,7 @@ async function recordAttentionPost(
       facebook_cta: null,
       status: "PUBLISHED",
       asset_type: "IMAGE",
-      asset_url: KTR_FACEBOOK_ATTENTION_IMAGE_URL,
+      asset_url: assetUrl,
       workflow_status: "PUBLISHED",
     })
     .select("id")
@@ -175,8 +149,8 @@ async function recordAttentionPost(
     status: "PUBLISHED",
     published_time: new Date().toISOString(),
     notes: externalId
-      ? `Facebook post ${externalId}; kind=attention-post; asset=image`
-      : "KeepTXRed Facebook post; kind=attention-post; asset=image",
+      ? `Facebook post ${externalId}; kind=attention-post; asset=generated-topic-image`
+      : "KeepTXRed Facebook post; kind=attention-post; asset=generated-topic-image",
   });
   if (queueError) throw new Error(queueError.message);
   return packageId;
@@ -217,17 +191,16 @@ export async function publishKtrFacebookAttentionPost(args: {
   const message = formatKtrFacebookPublishedAttentionMessage(post);
   const trafficUrl = ktrFacebookAttentionTrafficUrl(post);
 
-  let image: { bytes: ArrayBuffer; contentType: string };
+  let image: Awaited<ReturnType<typeof resolveKtrFacebookAttentionImage>>;
   try {
-    image = await loadRequiredAttentionImage();
+    image = await resolveKtrFacebookAttentionImage({ db: args.db, post });
   } catch (error) {
     return Response.json(
       {
         ok: false,
         posted: false,
-        error: "Facebook attention post blocked because its required image was unavailable",
+        error: "Facebook attention post blocked because its topic-specific image could not be generated",
         detail: error instanceof Error ? error.message : String(error),
-        image_url: KTR_FACEBOOK_ATTENTION_IMAGE_URL,
       },
       { status: 503 },
     );
@@ -265,7 +238,7 @@ export async function publishKtrFacebookAttentionPost(args: {
   let packageId: string | null = null;
   let recordWarning: string | null = null;
   try {
-    packageId = await recordAttentionPost(args.db, post, message, externalId);
+    packageId = await recordAttentionPost(args.db, post, message, externalId, image.url);
   } catch (error) {
     recordWarning = error instanceof Error ? error.message : String(error);
     console.error("[KeepTXRed Facebook] attention post succeeded but history recording failed", recordWarning);
@@ -280,7 +253,9 @@ export async function publishKtrFacebookAttentionPost(args: {
     category: post.category,
     article_url: null,
     traffic_url: trafficUrl,
-    image_url: KTR_FACEBOOK_ATTENTION_IMAGE_URL,
+    image_url: image.url,
+    image_generated: image.generated,
+    image_prompt: image.prompt,
     external_id: externalId,
     post_url: externalId ? `https://www.facebook.com/${externalId}` : null,
     package_id: packageId,
