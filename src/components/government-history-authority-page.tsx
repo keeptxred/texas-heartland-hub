@@ -11,6 +11,7 @@ const POLICING_RELATED_SLUGS = new Set([
   "texas-county-government-history",
   "county-sheriff-history",
   "justice-of-the-peace-constable-history",
+  "texas-municipal-government-history",
 ]);
 
 export function getGovernmentHistoryRelatedLinks(page: GovernmentHistoryPageData) {
