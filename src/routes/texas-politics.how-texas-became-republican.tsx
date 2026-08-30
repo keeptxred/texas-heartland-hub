@@ -110,7 +110,7 @@ function TexasRepublicanRealignmentPage() {
         <div className="mt-6 flex flex-wrap gap-3">
           <a href="/texas-politics/figures" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">Political figure profiles</a>
           <a href="/texas-government" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Texas Government</a>
-          <a href="/elections" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Current elections</a>
+          <a href="/elections/2026" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Current elections</a>
         </div>
       </header>
 
