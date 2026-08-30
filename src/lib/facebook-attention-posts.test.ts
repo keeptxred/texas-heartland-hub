@@ -5,8 +5,8 @@ import {
   formatKtrFacebookAttentionMessage,
   selectKtrFacebookAttentionPost,
 } from "@/lib/facebook-attention-posts";
+import { buildKtrFacebookChatGptImagePrompt } from "@/lib/facebook-attention-chatgpt-image.server";
 import {
-  KTR_FACEBOOK_ATTENTION_IMAGE_URL,
   formatKtrFacebookPublishedAttentionMessage,
   ktrFacebookAttentionTrafficUrl,
   selectKtrFacebookAttentionPostForSlot,
@@ -24,9 +24,13 @@ describe("KTR Facebook attention posts", () => {
     expect(KTR_FACEBOOK_ATTENTION_POSTS.length).toBeGreaterThanOrEqual(125);
   });
 
-  it("requires an HTTPS image for every attention post", () => {
-    expect(KTR_FACEBOOK_ATTENTION_IMAGE_URL).toMatch(/^https:\/\//);
-    expect(KTR_FACEBOOK_ATTENTION_IMAGE_URL).toBe("https://keeptxred.com/og/default.jpg");
+  it("builds the requested ChatGPT image prompt and forbids the generic fallback", () => {
+    const text = "What should youth sports teach first: winning, discipline, teamwork, resilience, or something else?";
+    const prompt = buildKtrFacebookChatGptImagePrompt(text);
+    expect(prompt).toContain(`Generate an image for this Facebook post.\n${text}`);
+    expect(prompt).toContain("magazine-ready");
+    expect(prompt).toContain("generic Keep TX Red fallback");
+    expect(prompt).not.toContain("/og/default.jpg");
   });
 
   it("does not contain duplicate titles or messages", () => {
@@ -85,12 +89,7 @@ describe("KTR Facebook attention posts", () => {
   });
 
   it("selects deterministically and skips an exact recent post", () => {
-    const args = {
-      seed: "test-seed",
-      dateKey: "2026-08-29",
-      slot: 1,
-      recentMessages: [] as string[],
-    };
+    const args = { seed: "test-seed", dateKey: "2026-08-29", slot: 1, recentMessages: [] as string[] };
     const first = selectKtrFacebookAttentionPost(args);
     const again = selectKtrFacebookAttentionPost(args);
     expect(first).not.toBeNull();
@@ -105,18 +104,8 @@ describe("KTR Facebook attention posts", () => {
   });
 
   it("uses the earlier attention slot for reach and the later one for traffic", () => {
-    const reach = selectKtrFacebookAttentionPostForSlot({
-      seed: "test-seed",
-      dateKey: "2026-08-29",
-      slot: 1,
-      recentMessages: [],
-    });
-    const traffic = selectKtrFacebookAttentionPostForSlot({
-      seed: "test-seed",
-      dateKey: "2026-08-29",
-      slot: 3,
-      recentMessages: [],
-    });
+    const reach = selectKtrFacebookAttentionPostForSlot({ seed: "test-seed", dateKey: "2026-08-29", slot: 1, recentMessages: [] });
+    const traffic = selectKtrFacebookAttentionPostForSlot({ seed: "test-seed", dateKey: "2026-08-29", slot: 3, recentMessages: [] });
     expect(reach).not.toBeNull();
     expect(reach?.trafficPath).toBeUndefined();
     expect(traffic).not.toBeNull();
@@ -124,12 +113,7 @@ describe("KTR Facebook attention posts", () => {
   });
 
   it("does not immediately reuse the same traffic destination", () => {
-    const first = selectKtrFacebookAttentionPostForSlot({
-      seed: "traffic-seed",
-      dateKey: "2026-08-29",
-      slot: 3,
-      recentMessages: [],
-    });
+    const first = selectKtrFacebookAttentionPostForSlot({ seed: "traffic-seed", dateKey: "2026-08-29", slot: 3, recentMessages: [] });
     expect(first?.trafficPath).toBeTruthy();
     const next = selectKtrFacebookAttentionPostForSlot({
       seed: "traffic-seed",
