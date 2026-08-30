@@ -37,6 +37,7 @@ const LAW_DATA_REFRESH = toIsoDate("2026-08-19T07:15:00-05:00");
 const DISTRICT_REFRESH = toIsoDate("2026-08-19T07:35:00-05:00");
 const AGENCY_REFRESH = toIsoDate("2026-08-19T07:40:00-05:00");
 const CIVIC_TOOLS_REFRESH = toIsoDate("2026-08-19T08:00:00-05:00");
+const POLITICAL_HISTORY_REFRESH = toIsoDate("2026-08-30T00:00:00-05:00");
 const SPORTS_SITEMAP_LEAGUES = ["nfl", "mlb", "nba", "nhl", "mls", "nwsl", "wnba", "cfb"] as const;
 const SPORTS_SITEMAP_TOPICS = ["football", "baseball", "basketball", "hockey", "soccer", "college", "recruiting", "nil", "business-policy", "stadiums", "motorsports", "postseason", "transactions", "injuries", "rivalries"] as const;
 const INDEXABLE_GUIDES = Object.values(ALL_GUIDES).filter(isSupportingGuideIndexable);
@@ -95,7 +96,11 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/tools/texas-tax-structure-comparison": ISSUE_GUIDE_REFRESH,
   "/tools/texas-rainy-day-fund": ISSUE_GUIDE_REFRESH,
   "/tools/texas-budget-headroom": ISSUE_GUIDE_REFRESH,
-  "/texas-politics": POLICY_REFRESH,
+  "/texas-politics": POLITICAL_HISTORY_REFRESH,
+  "/texas-politics/texas-constitutional-history": POLITICAL_HISTORY_REFRESH,
+  "/texas-politics/texas-election-history": POLITICAL_HISTORY_REFRESH,
+  "/texas-politics/voting-rights-history": POLITICAL_HISTORY_REFRESH,
+  "/texas-politics/texas-redistricting-history": POLITICAL_HISTORY_REFRESH,
   "/texas-political-reference": POLITICAL_REFERENCE_REFRESH,
   "/policy": POLICY_REFRESH,
   "/texas-economy": GUIDE_LASTMOD,
@@ -128,7 +133,7 @@ const STATIC_PATHS:string[]=[
   "/civic-tools","/civic-tools/government-authority-finder","/civic-tools/texas-law-finder","/civic-tools/bill-finder","/civic-tools/compare-legislators",
   "/contact","/privacy","/terms-of-service",
   "/shipping-policy","/return-refund-policy","/glossary","/editorial-standards","/citation-guide",
-  "/topics","/issues","/issues/texas-policy-handbook","/issues/texas-government-accountability-handbook","/issues/texas-local-government-handbook","/tools","/tools/texas-spending-growth-cap","/tools/texas-tax-structure-comparison","/tools/texas-rainy-day-fund","/tools/texas-budget-headroom","/texas-politics","/texas-political-reference","/policy","/texas-economy","/texas-border-security","/texas-energy",
+  "/topics","/issues","/issues/texas-policy-handbook","/issues/texas-government-accountability-handbook","/issues/texas-local-government-handbook","/tools","/tools/texas-spending-growth-cap","/tools/texas-tax-structure-comparison","/tools/texas-rainy-day-fund","/tools/texas-budget-headroom","/texas-politics","/texas-politics/texas-constitutional-history","/texas-politics/texas-election-history","/texas-politics/voting-rights-history","/texas-politics/texas-redistricting-history","/texas-political-reference","/policy","/texas-economy","/texas-border-security","/texas-energy",
   "/texas-agriculture","/texas-veterans","/texas-law-enforcement","/texas-case","/texas-case/facts",
   "/authors","/shop",
 ];

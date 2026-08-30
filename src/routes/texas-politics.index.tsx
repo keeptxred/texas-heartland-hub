@@ -7,6 +7,10 @@ import { PillarRelationshipNav } from "@/components/pillar-relationship-nav";
 const HUB = HUBS.find((h) => h.slug === "texas-politics")!;
 const SECTIONS = [
   { title: "Elections", description: "Primaries, runoffs, and the races shaping the next Texas Legislature.", href: "/elections/2026" },
+  { title: "Texas Election History", description: "How Texas moved from one-party primary dominance to two-party competition, Republican statewide control, modern turnout patterns and Election Central.", href: "/texas-politics/texas-election-history" },
+  { title: "Texas Constitutional History", description: "The Republic and state constitutions from 1836 through the Constitution of 1876, the plural executive, amendment system and failed 1974 rewrite.", href: "/texas-politics/texas-constitutional-history" },
+  { title: "Texas Voting Rights History", description: "Poll taxes, white primaries, women's suffrage, the Voting Rights Act, federal litigation and the changing legal framework for Texas voters.", href: "/texas-politics/voting-rights-history" },
+  { title: "Texas Redistricting History", description: "Census-driven maps, one-person-one-vote, the Legislative Redistricting Board, Voting Rights Act litigation and the 2003 mid-decade redraw.", href: "/texas-politics/texas-redistricting-history" },
   { title: "Legislative Districts", description: "Permanent authority pages for all 150 Texas House districts and 31 Texas Senate districts, independent of the current officeholder.", href: "/districts" },
   { title: "Policy Trackers", description: "Permanent trackers for taxes, border security, education, energy, elections, crime, water, housing, healthcare, and the state budget.", href: "/policy" },
   { title: "Texas Law Library", description: "Plain-English guides to the statutes behind property taxes, gun rights, elections, parental rights, open records, property rights, and agency power.", href: "/laws" },
@@ -37,9 +41,9 @@ export const Route = createFileRoute("/texas-politics/")({
     return {
       meta: [
         { title: "Texas Politics — Elections, Legislature & Government News" },
-        { name: "description", content: "Coverage of Texas elections, legislative districts, government, legislative updates, policy trackers, Texas law guides, official data sources, and political developments from Austin to the precinct." },
+        { name: "description", content: "Coverage of Texas elections, political and constitutional history, redistricting, voting rights, legislative districts, government, policy trackers, Texas law guides, official data sources, and political developments." },
         { property: "og:title", content: "Texas Politics — Keep TX Red" },
-        { property: "og:description", content: "Texas elections, districts, government, legislative updates, policy trackers, law guides, official data, and political developments." },
+        { property: "og:description", content: "Texas elections, political history, redistricting, voting rights, districts, government, legislative updates, policy trackers, law guides, official data, and political developments." },
         { property: "og:url", content: canonical },
         { property: "og:type", content: "website" },
         ...(topic ? [{ name: "robots", content: "noindex,follow" }] : []),
@@ -98,6 +102,18 @@ function TexasPoliticsPage() {
               Senate and controls what bills reach the floor), the Attorney General, and the Speaker
               of the House. Understanding what each office can and can't do explains why some
               Republican priorities pass in a single session while others stall for years.
+            </p>
+            <p>
+              KTR's <a href="/texas-politics/texas-constitutional-history" className="font-semibold text-primary underline underline-offset-4">Texas Constitutional History</a> explains why that power is divided in the first place: the sequence from the Republic constitution through the 1845, 1861, 1866, 1869 and 1876 charters, the post-Reconstruction reaction against concentrated authority, the plural executive and the amendment system voters still use today.
+            </p>
+            <p>
+              The <a href="/texas-politics/texas-election-history" className="font-semibold text-primary underline underline-offset-4">Texas Election History</a> guide supplies the electoral chronology beneath Election Central, from the era when the Democratic primary usually decided statewide office through presidential ticket-splitting, Republican breakthroughs, the 1998 statewide sweep and the 2002 Texas House takeover.
+            </p>
+            <p>
+              Our <a href="/texas-politics/voting-rights-history" className="font-semibold text-primary underline underline-offset-4">Texas Voting Rights History</a> keeps the legal history distinct from present partisan disputes: poll taxes, white-primary litigation, women's suffrage, federal voting-rights law, language access and the post-2013 preclearance framework are sourced and explained as institutional changes.
+            </p>
+            <p>
+              The <a href="/texas-politics/texas-redistricting-history" className="font-semibold text-primary underline underline-offset-4">Texas Redistricting History</a> guide connects census-driven population change to political geography, the Legislative Redistricting Board, federal voting-rights constraints, the 2003 mid-decade congressional redraw and the map cycles behind today's races.
             </p>
             <p>
               KTR's <a href="/districts" className="font-semibold text-primary underline underline-offset-4">Texas Legislative Districts</a> give every state House and Senate seat a permanent identity. Candidate pages can come and go with election cycles and representatives can change, but the district page remains stable and reconnects the seat to the new officeholder, bills, committees, campaign-finance records, election history, and official map sources.
