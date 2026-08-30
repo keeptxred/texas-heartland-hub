@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "lonestarleft.com",
+    "sourceClass": "candidate-election-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Lone Star Left's 2026 Texas ballot directory only as a discovery bridge to candidate identities, official campaign websites, and candidate-linked social profiles. Do not treat Lone Star Left-hosted imagery as reusable; require item-level provenance and a documented reusable-rights or editorial-permission basis before approving any portrait.",
+    "searchHint": "Rhett Rosenquest Smith Texas House District 116 2026 official campaign website social profile Lone Star Left",
+    "notes": "Fresh source expansion from the August 30, 2026 run. Lone Star Left's current 2026 state-ballot directory lists Rhett Rosenquest Smith in HD116 and exposes campaign-link fields for many Texas House candidates. This source is discovery-only and must never auto-approve imagery."
+  },
+  {
+    "domain": "plaindocket.com",
+    "sourceClass": "candidate-election-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use PlainDocket candidate and race pages only as a discovery bridge to ballot identity, Texas Ethics Commission filing links, official office/race context, and downstream candidate sources. Do not reuse PlainDocket-hosted images by default; require item-level identity, provenance, and documented rights before approval.",
+    "searchHint": "Laura Garcia DeLeon Texas House District 140 2026 PlainDocket official filing campaign portrait",
+    "notes": "Fresh source expansion from the August 30, 2026 run. PlainDocket currently has a candidate-specific page for Laura Garcia DeLeon and 2026 Texas House race pages that connect candidates to official Texas Ethics Commission filings. Discovery-only; no image rights are inferred."
+  }
+]
