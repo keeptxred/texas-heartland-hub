@@ -7,5 +7,50 @@
     "rightsRule": "Use Patriots in Action Texas candidate profiles and interview listings only as a discovery bridge to corroborate candidate identity, race, campaign links, Ballotpedia links, interviews, and downstream official portrait sources. Do not approve or reuse Patriots in Action-hosted images without item-level provenance plus an explicit reusable license, candidate-supplied attribution, campaign/media permission, or another documented editorial permission basis.",
     "searchHint": "site:patriotsinaction.com/tx/candidates Texas 2026 candidate interview official campaign portrait",
     "notes": "New source discovered August 31, 2026 while expanding unresolved Texas House candidate coverage. The Texas candidate directory currently includes candidate-specific entries such as Frank Salazar for House District 143 with an interview and Ballotpedia link. Treat all hosted imagery as discovery-only unless item-level rights are independently documented."
+  },
+  {
+    "domain": "harriscountygop.com",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the Harris County Republican Party 2026 candidate roster to corroborate current candidate identity, office, campaign website, campaign contact information, and downstream official portrait sources. Do not approve or reuse any party-page or linked image without item-level provenance plus explicit reusable rights, candidate/campaign permission, or another documented editorial permission basis.",
+    "searchHint": "Harris County GOP 2026 candidate roster Texas House official campaign portrait",
+    "notes": "Discovered August 31, 2026. The live HCRP roster identifies multiple current missing-photo candidates and their campaign domains or campaign contact details, including Scott Whitmarsh (HD131), Kyle Harding (HD139), Laura Garcia DeLeon (HD140), Julie Hunt (HD141), Heidi Hall (HD142), Frank Salazar (HD143), David Flores (HD144), Inocensia Moreno (HD145), Alexandria Nicole Butler (HD146), and Theodis Daniel (HD147). Treat this as a discovery bridge, not an automatic image-rights source."
+  },
+  {
+    "domain": "ballotready.org",
+    "sourceClass": "election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use BallotReady candidate profiles to corroborate candidate identity, office, verified campaign/social links, and discover candidate-specific headshots. Do not approve BallotReady-hosted imagery without item-level provenance plus a reusable license, explicit permission, candidate-supplied provenance, or another documented editorial permission basis.",
+    "searchHint": "BallotReady Texas 2026 candidate headshot verified webpages",
+    "notes": "Confirmed August 31, 2026. Current profiles expose candidate-specific headshots and verified downstream webpages for missing-photo candidates such as Crystal Sedillo (HD30). Headshots remain discovery-only absent item-level rights evidence."
+  },
+  {
+    "domain": "assets.civicengine.com",
+    "sourceClass": "candidate-directory-image-cdn",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Treat CivicEngine-hosted candidate headshots surfaced by BallotReady as image-discovery leads only. Never infer reuse rights from the CDN URL itself. Require candidate identity verification and item-level reusable rights, candidate-supplied provenance, explicit permission, or another documented editorial permission basis before approval.",
+    "searchHint": "assets.civicengine.com candidate headshot Texas BallotReady",
+    "notes": "Discovered August 31, 2026 through current BallotReady profiles. Exact candidate-specific asset URLs can be extracted from the linked headshot element, but CDN hosting alone is not a rights basis."
+  },
+  {
+    "domain": "crystalsedillo.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Crystal Sedillo's official Texas House District 30 campaign website to verify candidate identity, office, biography, and discover campaign-controlled portrait or media assets. Do not approve or reuse any site image without exact item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Crystal Sedillo Texas House District 30 official campaign portrait media",
+    "notes": "Discovered August 31, 2026. The site identifies Crystal Sedillo as running for Texas House District 30 and contains a candidate biography; pair it with candidate-specific image discovery rather than generic Open Graph assets."
+  },
+  {
+    "domain": "votemuse.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Dr. Fatima La'Juan Muse's current Texas House District 2 campaign website to verify candidate identity, office, biography, and discover campaign-controlled portrait or media assets. Do not approve or reuse any site image without exact item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Fatima La'Juan Muse Texas House District 2 official campaign portrait media",
+    "notes": "Discovered August 31, 2026. The current campaign site identifies Muse as the HD2 candidate and provides current campaign-controlled content. Treat imagery as discovery-only until item-level rights are established."
   }
 ]
