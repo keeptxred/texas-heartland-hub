@@ -1,0 +1,38 @@
+[
+  {
+    "domain": "crystalsedillo.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Crystal Sedillo's official Texas House District 30 campaign website to verify candidate identity, office, biography, and discover candidate-supplied portrait or media assets. Do not approve or reuse any image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Crystal Sedillo Texas House District 30 official campaign portrait media",
+    "notes": "Discovered August 31, 2026. The site identifies Crystal Sedillo as the District 30 candidate and contains a campaign-controlled biography. Treat imagery as discovery-only until item-level provenance and a documented permission basis are established."
+  },
+  {
+    "domain": "theodisfortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Theodis Daniel's official Texas House District 147 campaign website to verify candidate identity, office, biography, and discover candidate-supplied portrait or media assets. Do not approve or reuse any image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Theodis Daniel Texas House District 147 official campaign portrait media",
+    "notes": "Discovered August 31, 2026. The campaign site identifies Theodis Daniel as the Texas House District 147 candidate and publishes campaign-controlled biography and candidate imagery. Treat imagery as discovery-only until item-level provenance and a documented permission basis are established."
+  },
+  {
+    "domain": "votemuse.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Dr. Fatima La'Juan Muse's current official Texas House District 2 campaign website to verify candidate identity, office, biography, and discover candidate-supplied portrait or media assets. Do not approve or reuse any image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Fatima La'Juan Muse Texas House District 2 official campaign portrait media",
+    "notes": "Discovered August 31, 2026 as a current campaign domain. The site identifies Muse as a candidate for Texas House District 2 and contains campaign-controlled biography and issue pages. Treat imagery as discovery-only until item-level provenance and a documented permission basis are established."
+  },
+  {
+    "domain": "snapcoalition.org",
+    "sourceClass": "candidate-submitted-policy-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Scientist Network for Advancing Policy candidate response pages to corroborate current candidate identity and discover downstream official campaign or candidate-supplied media sources. Do not approve or reuse SNAP-hosted images without item-level provenance plus a reusable license, explicit candidate/media permission, or another documented editorial permission basis.",
+    "searchHint": "SNAP coalition Texas 2026 candidate portrait official campaign",
+    "notes": "Discovered August 31, 2026. Current candidate-submitted response pages exist for Crystal Sedillo and Fatima La'Juan Muse and can serve as identity/source-discovery bridges, but are not automatic image-rights sources."
+  }
+]
