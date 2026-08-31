@@ -16,5 +16,50 @@
     "rightsRule": "Use Transparency USA Texas candidate and race pages to corroborate current office sought, party, election stage, and campaign-finance identity, and to discover downstream official committee or campaign sources. Do not approve or reuse Transparency USA-hosted images without item-level provenance plus an explicit reusable license, campaign/media permission, or another documented editorial permission basis.",
     "searchHint": "Transparency USA Texas 2026 candidate campaign office sought official portrait",
     "notes": "New source discovered August 30, 2026. Current race pages identify active/on-ballot candidates such as Crystal Sedillo and Kelly Hall and candidate pages can bridge sparse candidates to campaign-finance records. Treat as corroboration/discovery only; authoritative eligibility changes still require election-authority reconciliation."
+  },
+  {
+    "domain": "crystalsedillo.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Crystal Sedillo's official campaign website to verify candidate identity, Texas House District 30 candidacy, and discover candidate-controlled portrait/media assets. Do not approve or reuse any image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Crystal Sedillo Texas House District 30 official campaign portrait media",
+    "notes": "Discovered August 30, 2026. The site identifies Crystal Sedillo as running in District 30 and contains a campaign-controlled Meet Crystal biography. Treat imagery as discovery-only until an exact candidate-specific asset and permission basis are documented."
+  },
+  {
+    "domain": "hallforhd19.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Kelly Hall's official Texas House District 19 campaign website to verify candidate identity and discover candidate-controlled portraits or media assets. Do not approve or reuse campaign-site images without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Kelly Hall Texas House District 19 official campaign portrait media",
+    "notes": "Discovered August 30, 2026. The campaign biography explicitly identifies Kelly Hall as the Democratic nominee for Texas House District 19 and presents a candidate portrait. Treat the image as discovery-only until its exact asset URL and a documented permission basis are retained."
+  },
+  {
+    "domain": "votemuse.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Dr. Fatima La'Juan Muse's current official campaign website to verify candidate identity, Texas House District 2 candidacy, and discover candidate-controlled portrait/media assets. Do not approve or reuse any image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Fatima La'Juan Muse Texas House District 2 official campaign portrait media",
+    "notes": "Discovered August 30, 2026 as the current campaign surface paid for by Muse for TX HD 2. This supplements previously known campaign-domain discovery sources. Treat imagery as discovery-only absent item-level rights documentation."
+  },
+  {
+    "domain": "theodisfortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Theodis Daniel's official Texas House District 147 campaign website to verify candidate identity and discover candidate-controlled portrait or media assets. Do not approve or reuse campaign-site images without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Theodis Daniel Texas House District 147 official campaign portrait media",
+    "notes": "Discovered August 30, 2026 through a current 2026 Texas general-election voter directory linking the candidate to this campaign domain. Treat imagery as discovery-only until the exact candidate asset and permission basis are verified."
+  },
+  {
+    "domain": "tcta.org",
+    "sourceClass": "professional-association-candidate-guide",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Classroom Teachers Association TexasTeachersVote candidate profiles to corroborate candidate identity, office, campaign links, and discover downstream official portrait sources. Do not approve or reuse TCTA-hosted images without item-level provenance plus a documented reusable license, explicit permission, candidate-supplied attribution, or another editorial permission basis.",
+    "searchHint": "site:tcta.org TexasTeachersVote 2026 Texas House candidate portrait official website",
+    "notes": "Discovered August 30, 2026. Current candidate pages identify Crystal Sedillo for District 30 and Fatima La'Juan Muse for District 2 and can expose official campaign/social links. Treat as a discovery bridge rather than an automatic image-rights source."
   }
 ]
