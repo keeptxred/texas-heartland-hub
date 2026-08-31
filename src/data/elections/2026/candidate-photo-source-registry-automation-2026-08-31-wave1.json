@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "patriotsinaction.com",
+    "sourceClass": "candidate-interview-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Patriots in Action Texas candidate profiles and interview listings only as a discovery bridge to corroborate candidate identity, race, campaign links, Ballotpedia links, interviews, and downstream official portrait sources. Do not approve or reuse Patriots in Action-hosted images without item-level provenance plus an explicit reusable license, candidate-supplied attribution, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "site:patriotsinaction.com/tx/candidates Texas 2026 candidate interview official campaign portrait",
+    "notes": "New source discovered August 31, 2026 while expanding unresolved Texas House candidate coverage. The Texas candidate directory currently includes candidate-specific entries such as Frank Salazar for House District 143 with an interview and Ballotpedia link. Treat all hosted imagery as discovery-only unless item-level rights are independently documented."
+  }
+]
