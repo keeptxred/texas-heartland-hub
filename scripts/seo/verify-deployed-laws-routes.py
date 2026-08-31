@@ -21,6 +21,17 @@ def normalize(value: str) -> str:
     return re.sub(r"\s+", " ", value).strip()
 
 
+def github_error(title: str, message: str) -> None:
+    if os.environ.get("GITHUB_ACTIONS") != "true":
+        return
+    escaped = (
+        message.replace("%", "%25")
+        .replace("\r", "%0D")
+        .replace("\n", "%0A")
+    )
+    print(f"::error title={title}::{escaped}", flush=True)
+
+
 class PageParser(HTMLParser):
     def __init__(self):
         super().__init__(convert_charrefs=True)
@@ -93,6 +104,8 @@ def main() -> int:
         print(f"{path}: h1={h1!r} canonical={canonicals!r}")
 
     if failures:
+        for failure in failures:
+            github_error("Deployed laws route smoke failed", failure)
         raise SystemExit("Deployed laws route smoke failed:\n- " + "\n- ".join(failures))
 
     print(f"Deployed laws route smoke passed for {len(CHECKS)} routes on {SITE_URL}.")
