@@ -48,6 +48,19 @@ describe("deployed law routes production gate", () => {
     expect(smokeScript).toContain("cache-control: no-cache");
   });
 
+  it("probes the freshly deployed Worker without following its canonical-host redirect", () => {
+    expect(smokeScript).toContain('CANONICAL_HOST = "keeptxred.com"');
+    expect(smokeScript).toContain('"-H", f"x-forwarded-host: {CANONICAL_HOST}"');
+    expect(smokeScript).toContain('"-H", "x-forwarded-proto: https"');
+    expect(smokeScript).toContain('"--max-redirs", "0"');
+    expect(smokeScript).not.toContain('"--location"');
+
+    expect(prioritySmoke).toContain('CANONICAL_HOST = "keeptxred.com"');
+    expect(prioritySmoke).toContain('"-H", f"x-forwarded-host: {CANONICAL_HOST}"');
+    expect(prioritySmoke).toContain('"-H", "x-forwarded-proto: https"');
+    expect(prioritySmoke).toContain('"--max-redirs", "0"');
+  });
+
   it("keeps exact GitHub annotations for route and priority failures", () => {
     expect(smokeScript).toContain('github_error("Deployed laws route smoke failed", failure)');
     expect(smokeScript).toContain('os.environ.get("GITHUB_ACTIONS") != "true"');
