@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-08-21T15:58:22.669Z",
+  "updatedAt": "2026-08-31T17:43:37.914Z",
   "conclusion": "success",
-  "runId": "32500290298",
+  "runId": "33420945246",
   "runAttempt": "1",
-  "triggerCommit": "7324c7d341e0dcc35bde1a581fba01f312d30b5c",
-  "runUrl": "https://github.com/keeptxred/texas-heartland-hub/actions/runs/32500290298",
+  "triggerCommit": "1a5d12ef9a63671071f869131471654243c150e3",
+  "runUrl": "https://github.com/keeptxred/texas-heartland-hub/actions/runs/33420945246",
   "validationSummary": "$ node scripts/elections/validate-enums.mjs && node scripts/elections/validate.mjs && node scripts/elections/validate-sources.mjs && node scripts/elections/validate-political-authority-registry.mjs && bun run elections:validate:forecast\nElection enum validation passed.\nElection data validation passed (1 cycle, 227 races, 491 candidates, 8 polls, 5 forecasts, 0 results, 13 sources).\nElection source validation passed: 13 canonical source(s).\nPolitical authority registry validation passed (491 candidates).\n$ node scripts/elections/validate-forecast-pipeline.mjs\nForecast pipeline validation passed: 5 forecast(s), 5 polling average(s), 5 eligible race(s).",
-  "qaSummary": "$ node scripts/elections/qa.mjs && bun run elections:routes:qa && bun run elections:sitemap:qa && bun run elections:readiness\nElection launch QA passed: 227 races, 491 candidates, 8 polls, 5 forecasts, 0 results, 739 generated routes.\n$ node scripts/elections/routes-qa.mjs\nElection route QA passed: 26 route files and gated homepage integration verified.\n$ node scripts/elections/sitemap-qa.mjs\nElection sitemap QA passed: 947 unique canonical URLs (12 static, 731 record pages, 204 district pages).\n$ node scripts/elections/launch-readiness.mjs\nWrote src/data/elections/2026/readiness.json.\nElection Central readiness: READY; 227 races, 491 candidates, 227/227 races with at least one candidate, 227/227 launch-covered races, 219/219 geography-covered races, 5/5 polling-eligible races forecasted.\nHomepage takeover remains disabled."
+  "qaSummary": "$ node scripts/elections/qa.mjs && bun run elections:routes:qa && bun run elections:sitemap:qa && bun run elections:readiness\nElection launch QA passed: 227 races, 491 candidates, 8 polls, 5 forecasts, 0 results, 739 generated routes.\n$ node scripts/elections/routes-qa.mjs\nElection route QA passed: 26 route files and shared navigation integration verified.\n$ node scripts/elections/sitemap-qa.mjs\nElection sitemap QA passed: 947 unique canonical URLs (12 static, 731 record pages, 204 district pages).\n$ node scripts/elections/launch-readiness.mjs\nWrote src/data/elections/2026/readiness.json.\nElection Central readiness: READY; 227 races, 491 candidates, 227/227 races with at least one candidate, 227/227 launch-covered races, 219/219 geography-covered races, 5/5 polling-eligible races forecasted.\nHomepage takeover remains disabled."
 }
