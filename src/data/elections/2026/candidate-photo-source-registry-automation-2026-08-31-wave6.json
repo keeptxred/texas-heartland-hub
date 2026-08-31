@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "prlog.org",
+    "sourceClass": "campaign-press-release-media",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use campaign-authored or campaign-representative press releases only when the release itself identifies the candidate and office/campaign, provides campaign/media contact or attribution, and exposes a candidate-specific photo in an explicit press Photos/Media section. Never auto-approve the domain globally; each image still requires item-level identity, exact source URL, and a documented narrow editorial permission basis or reusable license.",
+    "searchHint": "candidate campaign press release Photos media contact portrait PRLog Texas 2026",
+    "notes": "New source class discovered August 31, 2026 while resolving Theodis Daniel. A campaign statement distributed by Noble Marketing for Theodis Daniel contains an explicit campaign media contact and numbered Photos section with candidate-specific images. Treat every other PRLog item as discovery-only until the same item-level provenance and campaign-media context is verified."
+  },
+  {
+    "domain": "jejunemagazine.com",
+    "sourceClass": "candidate-interview-publication",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use first-person candidate interviews to corroborate identity, office, official campaign links, and discover portrait leads. Do not reuse publication-hosted images without explicit candidate-supplied attribution, a reusable license, direct permission, or another documented editorial permission basis at item level.",
+    "searchHint": "Texas 2026 candidate interview campaign portrait official website",
+    "notes": "New discovery source found August 31, 2026 through a June 29, 2026 first-person interview with Crystal Sedillo that links her official campaign site and campaign social profiles and includes several candidate images. Images remain discovery-only because the article does not state their reuse terms or candidate-supplied status."
+  },
+  {
+    "domain": "snapcoalition.org",
+    "sourceClass": "candidate-submitted-policy-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-submitted public-policy profiles to corroborate current candidacy and follow official candidate links or image leads. Do not approve any hosted image without item-level provenance and explicit reusable rights, candidate/media permission, or another documented editorial permission basis.",
+    "searchHint": "Texas candidate submitted policy profile portrait 2026",
+    "notes": "New source discovered August 31, 2026 through Scientist Network for Advancing Policy's current Crystal Sedillo HD-30 response, submitted August 16, 2026. Useful as a current candidate-linked discovery bridge, not an automatic image-rights source."
+  }
+]
