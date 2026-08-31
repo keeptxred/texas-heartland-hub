@@ -1,5 +1,41 @@
 [
   {
+    "domain": "psychologytoday.com",
+    "sourceClass": "candidate-linked-professional-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-linked verified professional profiles to corroborate identity and discover candidate-specific headshots only when the profile clearly identifies the same person. Do not approve or reuse any hosted image without exact asset provenance plus explicit reusable rights, profile-owner permission, or another documented editorial permission basis.",
+    "searchHint": "Texas 2026 candidate professional profile headshot Psychology Today",
+    "notes": "New source class discovered August 31, 2026 while researching Fatima La'Juan Muse (Texas House District 2). Psychology Today exposes a verified professional profile with repeated candidate-specific headshots for Dr. Muse. Discovery-only because the hosted image reuse terms were not established at item level."
+  },
+  {
+    "domain": "tx3dnews.com",
+    "sourceClass": "candidate-profile-newsroom",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use TX3DNews candidate profile pages to discover candidate-specific portraits and downstream campaign sources. Approve an image only when the individual item has candidate-supplied attribution, a reusable license, explicit permission, or another documented editorial permission basis; otherwise retain discovery-only status.",
+    "searchHint": "site:tx3dnews.com elections candidate Texas House 2026 profile portrait",
+    "notes": "New newsroom candidate-profile source discovered August 31, 2026. Its Meet the Candidates directory includes candidate-specific portraits and profiles, including Dr. Fatima La'Juan Muse. No hosted image is auto-approved."
+  },
+  {
+    "domain": "theofficialfacetofaceprojectofcampaignvideosforvotereducation.com",
+    "sourceClass": "voter-education-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Face to Face Project candidate pages as a voter-education discovery bridge for current candidate identity, campaign links, videos, and candidate-specific imagery. Do not approve or reuse any hosted image without exact item-level provenance plus a reusable license, candidate-supplied attribution, explicit permission, or another documented editorial permission basis.",
+    "searchHint": "Face to Face Project Texas 2026 state house candidate portrait campaign",
+    "notes": "New voter-education source discovered August 31, 2026 while researching still-missing Texas House candidates. The directory includes current 2026 candidate entries such as Fatima La'Juan Muse and can lead to campaign-controlled media, but its own image rights are not assumed."
+  },
+  {
+    "domain": "hallforrr.com",
+    "sourceClass": "candidate-controlled-current-office-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Kelly Hall's candidate-controlled Round Rock mayoral campaign site only as a same-person identity and portrait discovery source. Because it concerns a different office than Texas House District 19, require cross-candidate identity verification and exact item-level image provenance before any reuse; do not infer current House eligibility from this site.",
+    "searchHint": "Kelly Hall Round Rock mayor official campaign portrait Texas House District 19 same person",
+    "notes": "New candidate-controlled cross-office source discovered August 31, 2026. The site contains a candidate-specific Kelly Hall biography portrait and contact information matching the HD19 campaign identity, but it does not resolve the separate House nomination/eligibility question and therefore remains discovery-only."
+  },
+  {
     "domain": "mindybumgarner.com",
     "sourceClass": "official-campaign-website",
     "discoveryStatus": "active",
