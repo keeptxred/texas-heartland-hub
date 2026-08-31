@@ -30,6 +30,7 @@ const hash=(value:string)=>{let h=2166136261;for(let i=0;i<value.length;i++){h^=
 const normalizeName=(value:string)=>value.toLowerCase().replace(/\b(committee|on)\b/g," ").replace(/[^a-z0-9]+/g," ").replace(/\s+/g," ").trim();
 const same=(a:any,b:any)=>(a??null)===(b??null);
 const sameJson=(a:any,b:any)=>JSON.stringify(a??{})===JSON.stringify(b??{});
+const errorText=(error:any)=>error instanceof Error?error.message:(typeof error?.message==="string"?error.message:JSON.stringify(error));
 
 function refs(text:string):BillRef[]{
   const decoded=safeDecode(text),sessionMatch=decoded.match(SESSION_RE),session=sessionMatch?{legislature:Number(sessionMatch[1]),sessionCode:sessionMatch[2].toUpperCase()}:null,out=new Map<string,BillRef>();
@@ -70,19 +71,33 @@ Deno.serve(async(request)=>{
     if(feed.kind==="passed"){text=`TLO bills-passed update: ${item.title}`;status="passed";}
     if(feed.kind==="calendar"){text=`Scheduled on ${feed.chamber==="senate"?"Senate":"House"} calendar: ${item.title}`;status="scheduled-for-calendar";}
     if(feed.kind==="meeting"){text=`Scheduled for ${feed.chamber==="senate"?"Senate":"House"} committee hearing: ${item.title}`;status="scheduled-for-hearing";}
+    const sourceUrl=item.link||feed.url,actionCode=`tlo-rss-${feed.kind}`;
     const identity={bill_id:bill.id,action_date:date,action_sequence:hash(`${feed.key}|${item.link}|${bill.id}`),action_text:text.slice(0,1000)};
-    const desired={chamber:feed.chamber,action_code:`tlo-rss-${feed.kind}`,normalized_status:status,committee_id:committeeId,source_url:item.link||feed.url};
-    const{data:existing,error:findError}=await db.from("bill_actions").select("id,chamber,action_code,normalized_status,committee_id,source_url").eq("bill_id",identity.bill_id).eq("action_date",identity.action_date).eq("action_sequence",identity.action_sequence).eq("action_text",identity.action_text).limit(1).maybeSingle();
+    const desired={chamber:feed.chamber,action_code:actionCode,normalized_status:status,committee_id:committeeId,source_url:sourceUrl};
+    const{data:existing,error:findError}=await db.from("bill_actions")
+      .select("id,action_date,action_sequence,action_text,chamber,action_code,normalized_status,committee_id,source_url")
+      .eq("bill_id",bill.id).eq("source_url",sourceUrl).eq("action_code",actionCode).eq("action_sequence",identity.action_sequence).limit(1).maybeSingle();
     if(findError)throw findError;
     freshBillIds.add(bill.id);
-    if(!existing){
-      const{data,error}=await db.from("bill_actions").insert({...identity,...desired,updated_at:now}).select("id").single();if(error)throw error;
-      stats.actions_inserted++;stats.actions_upserted++;return data?.id||null;
+    if(existing){
+      const classificationLocked=existing.normalized_status==="interim-oversight"||String(existing.action_text||"").startsWith("Interim oversight hearing reference:");
+      const patch:any={};
+      if(!same(existing.chamber,desired.chamber))patch.chamber=desired.chamber;
+      if(!same(existing.committee_id,desired.committee_id))patch.committee_id=desired.committee_id;
+      if(!classificationLocked){
+        if(!same(existing.action_date,identity.action_date))patch.action_date=identity.action_date;
+        if(!same(existing.action_text,identity.action_text))patch.action_text=identity.action_text;
+        if(!same(existing.normalized_status,desired.normalized_status))patch.normalized_status=desired.normalized_status;
+      }
+      if(Object.keys(patch).length){const{error}=await db.from("bill_actions").update({...patch,updated_at:now}).eq("id",existing.id);if(error)throw error;stats.actions_updated++;stats.actions_upserted++;}
+      else stats.actions_existing++;
+      return existing.id;
     }
-    const changed=!same(existing.chamber,desired.chamber)||!same(existing.action_code,desired.action_code)||!same(existing.normalized_status,desired.normalized_status)||!same(existing.committee_id,desired.committee_id)||!same(existing.source_url,desired.source_url);
-    if(changed){const{error}=await db.from("bill_actions").update({...desired,updated_at:now}).eq("id",existing.id);if(error)throw error;stats.actions_updated++;stats.actions_upserted++;}
-    else stats.actions_existing++;
-    return existing.id;
+    const{data:exact,error:exactError}=await db.from("bill_actions").select("id").eq("bill_id",identity.bill_id).eq("action_date",identity.action_date).eq("action_sequence",identity.action_sequence).eq("action_text",identity.action_text).limit(1).maybeSingle();
+    if(exactError)throw exactError;
+    if(exact?.id){stats.actions_existing++;return exact.id;}
+    const{data,error}=await db.from("bill_actions").insert({...identity,...desired,updated_at:now}).select("id").single();if(error)throw error;
+    stats.actions_inserted++;stats.actions_upserted++;return data?.id||null;
   }
 
   async function upsertOpportunity(bill:any,feed:Feed,item:Item,date:string,actionId:string|null){
@@ -113,14 +128,14 @@ Deno.serve(async(request)=>{
   try{
     for(const tuple of FEEDS){
       const feed:Feed={key:tuple[0],url:tuple[1],kind:tuple[2],chamber:tuple[3],documentType:tuple[4]};
-      let response;try{response=await getText(feed.url,25000);}catch(error){warnings.push(`${feed.key}: ${error instanceof Error?error.message:String(error)}`);stats.feeds[feed.key]={status:0,items:0};continue;}
+      let response;try{response=await getText(feed.url,25000);}catch(error){warnings.push(`${feed.key}: ${errorText(error)}`);stats.feeds[feed.key]={status:0,items:0};continue;}
       if(!response.ok){warnings.push(`${feed.key}: HTTP ${response.status}`);stats.feeds[feed.key]={status:response.status,items:0};continue;}
       const items=parse(response.text);stats.items+=items.length;stats.feeds[feed.key]={status:200,items:items.length,matched_items:0};
       for(const item of items){
         let context=`${item.title}\n${item.description}\n${item.link}\n${item.raw}`,billRefs=refs(context);
         if((feed.kind==="meeting"||feed.kind==="calendar")&&billRefs.length===0&&item.link&&/capitol\.texas\.gov/i.test(item.link)){
           try{const linked=await getText(item.link,12000);if(linked.ok&&linked.text){stats.linked_pages_fetched++;context+=`\n${linked.text}`;billRefs=refs(context);}}
-          catch(error){warnings.push(`${feed.key} linked page: ${error instanceof Error?error.message:String(error)}`);}
+          catch(error){warnings.push(`${feed.key} linked page: ${errorText(error)}`);}
         }
         if(!billRefs.length)continue;stats.feeds[feed.key].matched_items++;
         const date=eventDate(`${item.title} ${item.description}`,item.pubDate),unique=new Map(billRefs.map((ref)=>[`${ref.legislature||""}:${ref.sessionCode||""}:${ref.billType}:${ref.billNumber}`,ref]));
@@ -146,7 +161,7 @@ Deno.serve(async(request)=>{
     await db.from("legislative_sync_runs").update({completed_at:new Date().toISOString(),status:warnings.length?"completed_with_warnings":"completed",records_seen:stats.items,records_changed:changed,cursor_after:stats,errors:warnings}).eq("id",run.id);
     return Response.json({ok:true,run_id:run.id,stats,warnings,samples});
   }catch(error){
-    const message=error instanceof Error?error.message:String(error);warnings.push(message);
+    const message=errorText(error);warnings.push(message);
     await db.from("legislative_sync_runs").update({completed_at:new Date().toISOString(),status:"failed",records_seen:stats.items,cursor_after:stats,errors:warnings}).eq("id",run.id);
     return Response.json({ok:false,error:message,stats,warnings,samples},{status:500});
   }
