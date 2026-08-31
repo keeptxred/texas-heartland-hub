@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-08-30T20:58:01.277Z",
+  "generatedAt": "2026-08-31T05:42:48.648Z",
   "candidateCount": 491,
   "eligibleCandidateCount": 479,
   "excludedCandidateCount": 12,
-  "approvedPhotoCount": 338,
-  "missingPhotoCount": 141,
-  "manifestEntryCount": 338,
-  "coverage": 0.7056367432150313,
-  "coveragePercent": 70.56,
+  "approvedPhotoCount": 339,
+  "missingPhotoCount": 140,
+  "manifestEntryCount": 339,
+  "coverage": 0.7077244258872651,
+  "coveragePercent": 70.77,
   "targetCoverage": 0.85,
   "targetApprovedPhotoCount": 408,
-  "photosNeededForTarget": 70,
+  "photosNeededForTarget": 69,
   "targetMet": false,
   "errors": [],
   "warnings": [],
@@ -326,13 +326,6 @@
       "name": "OZIEL 'OZZIE' OCHOA, JR",
       "raceId": "race-2026-texas-house-37",
       "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-janie-lopez-republican-race-2026-texas-house-37",
-      "name": "JANIE LOPEZ",
-      "raceId": "race-2026-texas-house-37",
-      "party": "republican",
       "priority": "standard"
     },
     {
