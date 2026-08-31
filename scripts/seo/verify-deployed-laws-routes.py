@@ -7,6 +7,7 @@ from html.parser import HTMLParser
 from verify_deployed_priority_sitemap import verify_priority_sitemap
 
 SITE_URL = os.environ.get("SITE_URL", "https://keeptxred-site.freddy-coppola.workers.dev").rstrip("/")
+CANONICAL_HOST = "keeptxred.com"
 PARENT_H1 = "Texas Laws Explained:"
 CHECKS = [
     ("/laws", PARENT_H1, "https://keeptxred.com/laws", False, False),
@@ -62,8 +63,11 @@ class PageParser(HTMLParser):
 def fetch(url: str) -> str:
     result = subprocess.run(
         [
-            "curl", "--location", "--retry", "12", "--retry-delay", "2", "--retry-all-errors",
-            "--connect-timeout", "10", "--max-time", "60", "--fail-with-body", "--silent", "--show-error",
+            "curl", "--retry", "12", "--retry-delay", "2", "--retry-all-errors",
+            "--connect-timeout", "10", "--max-time", "60", "--max-redirs", "0",
+            "--fail-with-body", "--silent", "--show-error",
+            "-H", f"x-forwarded-host: {CANONICAL_HOST}",
+            "-H", "x-forwarded-proto: https",
             "-H", "cache-control: no-cache", "-H", "pragma: no-cache", url,
         ],
         capture_output=True,
