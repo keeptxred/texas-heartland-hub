@@ -1720,6 +1720,18 @@
     "discoveredAt": "2026-08-26T17:20:38.320Z"
   },
   {
+    "candidateId": "candidate-janie-lopez-republican-race-2026-texas-house-37",
+    "imageUrl": "https://www.texaspolicy.com/wp-content/uploads/2023/04/Janie-Lopez.jpg",
+    "sourceUrl": "https://www.texaspolicy.com/about/people/the-honorable-janie-lopez",
+    "altText": "Janie Lopez, Republican candidate for Texas House District 37",
+    "credit": "Texas Public Policy Foundation / Janie Lopez headshot",
+    "license": null,
+    "permissionBasis": "Texas Public Policy Foundation's Janie Lopez profile identifies her as the Texas House District 37 representative and explicitly provides this candidate-specific image through a 'Download Headshot' link. Used narrowly for editorial candidate identification with exact source attribution and source link; no broader reuse license is asserted.",
+    "usageStatus": "approved",
+    "discoveryMethod": "institutional-profile-download-headshot",
+    "discoveredAt": "2026-08-30T23:39:00.000Z"
+  },
+  {
     "candidateId": "candidate-janis-holt-republican-race-2026-texas-house-18",
     "imageUrl": "https://house.texas.gov/images/members/4535.jpg?v=2",
     "sourceUrl": "https://house.texas.gov/members/18",
