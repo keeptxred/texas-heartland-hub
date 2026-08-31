@@ -25,5 +25,23 @@
     "rightsRule": "Use candidate-submitted public-policy profiles to corroborate current candidacy and follow official candidate links or image leads. Do not approve any hosted image without item-level provenance and explicit reusable rights, candidate/media permission, or another documented editorial permission basis.",
     "searchHint": "Texas candidate submitted policy profile portrait 2026",
     "notes": "New source discovered August 31, 2026 through Scientist Network for Advancing Policy's current Crystal Sedillo HD-30 response, submitted August 16, 2026. Useful as a current candidate-linked discovery bridge, not an automatic image-rights source."
+  },
+  {
+    "domain": "callthemap.com",
+    "sourceClass": "current-election-race-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Call the Map's current Texas legislative race pages only to corroborate candidate/race identity and discover downstream official profiles or candidate-linked portrait sources. Do not approve or reuse any hosted image without item-level provenance plus explicit reusable rights, candidate/campaign permission, candidate-supplied provenance, or another documented editorial permission basis.",
+    "searchHint": "Call the Map Texas House candidate portrait official campaign 2026",
+    "notes": "Discovered August 31, 2026 while researching still-missing Texas House candidates. Current race pages identify named general-election fields, including Rhett Rosenquest Smith (HD116), Scott Whitmarsh (HD131), Laura Garcia DeLeon (HD140), Julie Hunt (HD141), Heidi Hall (HD142), and Frank Salazar (HD143). Treat as a current-race discovery bridge, not an automatic image-rights source."
+  },
+  {
+    "domain": "govexperts.com",
+    "sourceClass": "election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use GovExperts' Texas 2026 election candidate directory to corroborate candidate/race identity and discover downstream official campaign, government, party, or public-record portrait sources. Do not approve or reuse any hosted image without item-level provenance plus explicit reusable rights, candidate/campaign permission, candidate-supplied provenance, or another documented editorial permission basis.",
+    "searchHint": "GovExperts Texas 2026 candidate official campaign portrait",
+    "notes": "Discovered August 31, 2026 while researching the current missing-photo set. The directory lists current Texas House candidates across multiple districts, including candidates with sparse web footprints. Treat as a discovery bridge only; no hosted image or rights conclusion is inferred."
   }
 ]
