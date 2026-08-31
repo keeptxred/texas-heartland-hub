@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "goodparty.org",
+    "sourceClass": "candidate-and-officeholder-profile-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use GoodParty.org candidate and officeholder profiles only to corroborate candidate identity, office, candidacy/current-office context, and discover downstream official profiles or candidate-specific image leads. Do not approve or reuse GoodParty-hosted or CivicEngine-hosted images without item-level provenance plus explicit reusable rights, candidate/campaign permission, a candidate-supplied newsroom basis, or another documented editorial permission basis.",
+    "searchHint": "site:goodparty.org/people Texas candidate name 2026",
+    "notes": "New source discovered August 31, 2026 while researching the current missing-photo set. GoodParty profiles publish candidate/officeholder identity, office context, current candidacy history, and candidate-specific headshot assets when available. Verified on the current Senfronia Thompson Texas House District 141 profile, which also links election/candidate context. Treat the domain strictly as a discovery bridge because the site marks its content All Rights Reserved and individual image provenance is not established by the directory itself."
+  }
+]
