@@ -19,6 +19,7 @@ type BillRef={billType:string;billNumber:number;legislature?:number;sessionCode?
 const HEADERS={"User-Agent":"Mozilla/5.0 (compatible; KeepTXRedBot/1.9; +https://keeptxred.com)",Accept:"application/rss+xml,application/xml,text/xml,text/html,*/*"};
 const BILL_RE=/\b(HB|SB|HJR|SJR|HCR|SCR|HR|SR)\s*(?:NO\.?\s*)?(\d{1,5})\b/gi;
 const SESSION_RE=/(?:LegSess|Legislature|Session)[=:\s%22'\"]*(\d{2})(R|\d+)\b/i;
+const TLO_SESSION_RE=/(?:\/tlodocs\/|[?&]LegSess=)(\d{2})(R|\d+)(?:\/|&|$)/i;
 
 const decode=(value:string)=>value.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/gi,"$1").replace(/&amp;/gi,"&").replace(/&quot;/gi,'"').replace(/&#39;|&apos;/gi,"'").replace(/&lt;/gi,"<").replace(/&gt;/gi,">").replace(/<[^>]+>/g," ").replace(/\s+/g," ").trim();
 const pick=(block:string,tag:string)=>decode(block.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`,`i`))?.[1]||"");
@@ -33,7 +34,7 @@ const sameJson=(a:any,b:any)=>JSON.stringify(a??{})===JSON.stringify(b??{});
 const errorText=(error:any)=>error instanceof Error?error.message:(typeof error?.message==="string"?error.message:JSON.stringify(error));
 
 function refs(text:string):BillRef[]{
-  const decoded=safeDecode(text),sessionMatch=decoded.match(SESSION_RE),session=sessionMatch?{legislature:Number(sessionMatch[1]),sessionCode:sessionMatch[2].toUpperCase()}:null,out=new Map<string,BillRef>();
+  const decoded=safeDecode(text),sessionMatch=decoded.match(SESSION_RE)||decoded.match(TLO_SESSION_RE),session=sessionMatch?{legislature:Number(sessionMatch[1]),sessionCode:sessionMatch[2].toUpperCase()}:null,out=new Map<string,BillRef>();
   for(const match of decoded.matchAll(BILL_RE)){const ref={billType:match[1].toLowerCase(),billNumber:Number(match[2]),...(session||{})};out.set(`${ref.legislature||""}:${ref.sessionCode||""}:${ref.billType}:${ref.billNumber}`,ref);}
   for(const match of decoded.matchAll(/(?:Bill|bill)=((?:HB|SB|HJR|SJR|HCR|SCR|HR|SR)\d{1,5})/gi)){const parts=match[1].match(/^([A-Z]+)(\d+)$/i);if(parts){const ref={billType:parts[1].toLowerCase(),billNumber:Number(parts[2]),...(session||{})};out.set(`${ref.legislature||""}:${ref.sessionCode||""}:${ref.billType}:${ref.billNumber}`,ref);}}
   return [...out.values()];
