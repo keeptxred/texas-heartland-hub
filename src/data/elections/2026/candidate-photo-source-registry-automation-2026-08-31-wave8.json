@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "davefortx149.com",
+    "sourceClass": "candidate-linked-campaign-photo-gallery",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the Committee to Elect Dave Romero campaign photo gallery only as a discovery/corroboration bridge for candidate identity and event imagery involving other 2026 candidates. Do not approve or reuse any hosted image without item-level provenance plus explicit reusable rights, candidate/campaign permission, candidate-supplied newsroom attribution, or another documented editorial permission basis.",
+    "searchHint": "site:davefortx149.com/photos Texas 2026 candidate Michelle Palmer photo campaign event",
+    "notes": "New source discovered August 31, 2026 while researching the current missing-photo set. The January 22, 2026 gallery entry explicitly names Michelle Palmer (State Board of Education District 6) among photographed candidates, alongside other current candidates. Treat all gallery imagery as discovery-only unless item-level rights and candidate identity are separately verified."
+  }
+]
