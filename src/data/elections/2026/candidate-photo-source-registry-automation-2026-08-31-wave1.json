@@ -52,5 +52,23 @@
     "rightsRule": "Use Dr. Fatima La'Juan Muse's current Texas House District 2 campaign website to verify candidate identity, office, biography, and discover campaign-controlled portrait or media assets. Do not approve or reuse any site image without exact item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
     "searchHint": "Fatima La'Juan Muse Texas House District 2 official campaign portrait media",
     "notes": "Discovered August 31, 2026. The current campaign site identifies Muse as the HD2 candidate and provides current campaign-controlled content. Treat imagery as discovery-only until item-level rights are established."
+  },
+  {
+    "domain": "theodisfortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Theodis Daniel's official Texas House District 147 campaign website to verify candidate identity, office, biography, and discover candidate-controlled portrait or media assets. Do not approve or reuse any site image without exact item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Theodis Daniel Texas House District 147 official campaign portrait media",
+    "notes": "Discovered August 31, 2026 from the Harris County GOP 2026 candidate roster, which maps Theodis Daniel in HD147 to theodisfortexas.com. Treat all imagery as discovery-only until item-level rights are established."
+  },
+  {
+    "domain": "tx3dnews.com",
+    "sourceClass": "reputable-local-news-candidate-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use TX3DNews candidate-profile pages to corroborate candidate identity and discover candidate-specific portraits or downstream official campaign sources. Do not approve or reuse hosted imagery unless the article or image metadata establishes candidate-supplied media, a reusable license, explicit permission, or another documented editorial permission basis.",
+    "searchHint": "TX3DNews Meet the Candidates Texas House 2026 portrait campaign",
+    "notes": "Discovered August 31, 2026. The current Meet the Candidates directory carries candidate-specific profiles and portraits including Dr. Fatima La'Juan Muse. Treat hosted imagery as discovery-only unless item-level provenance and permission are established."
   }
 ]
