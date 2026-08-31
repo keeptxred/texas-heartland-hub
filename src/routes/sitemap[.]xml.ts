@@ -24,6 +24,7 @@ const ADVERTISED_SITEMAPS = [
   "sitemap-government.xml",
   "sitemap-political-figures.xml",
   "sitemap-political-geography.xml",
+  "sitemap-party-representation.xml",
   "sitemap-legislature.xml",
   "sitemap-committees.xml",
   "sitemap-authors.xml",
