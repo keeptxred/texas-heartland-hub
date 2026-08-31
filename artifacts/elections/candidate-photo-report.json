@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-08-31T08:52:00.668Z",
+  "generatedAt": "2026-08-31T21:53:58.518Z",
   "candidateCount": 491,
   "eligibleCandidateCount": 479,
   "excludedCandidateCount": 12,
-  "approvedPhotoCount": 340,
-  "missingPhotoCount": 139,
-  "manifestEntryCount": 340,
-  "coverage": 0.7098121085594989,
-  "coveragePercent": 70.98,
+  "approvedPhotoCount": 342,
+  "missingPhotoCount": 137,
+  "manifestEntryCount": 342,
+  "coverage": 0.7139874739039666,
+  "coveragePercent": 71.4,
   "targetCoverage": 0.85,
   "targetApprovedPhotoCount": 408,
-  "photosNeededForTarget": 68,
+  "photosNeededForTarget": 66,
   "targetMet": false,
   "errors": [],
   "warnings": [],
@@ -252,13 +252,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-theodis-daniel-republican-race-2026-texas-house-147",
-      "name": "THEODIS DANIEL",
-      "raceId": "race-2026-texas-house-147",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-tom-luck-democratic-race-2026-texas-house-19",
       "name": "TOM LUCK",
       "raceId": "race-2026-texas-house-19",
@@ -312,13 +305,6 @@
       "name": "OSCAR ROSA",
       "raceId": "race-2026-texas-house-35",
       "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-oziel-ozzie-ochoa-jr-democratic-race-2026-texas-house-37",
-      "name": "OZIEL 'OZZIE' OCHOA, JR",
-      "raceId": "race-2026-texas-house-37",
-      "party": "democratic",
       "priority": "standard"
     },
     {
