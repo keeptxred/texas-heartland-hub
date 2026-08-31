@@ -33,6 +33,17 @@ class IndexabilityParser(HTMLParser):
                 self.robots.append((values.get("content") or "").strip().lower())
 
 
+def _github_error(message: str) -> None:
+    if os.environ.get("GITHUB_ACTIONS") != "true":
+        return
+    escaped = (
+        message.replace("%", "%25")
+        .replace("\r", "%0D")
+        .replace("\n", "%0A")
+    )
+    print(f"::error title=Deployed priority sitemap/indexability smoke failed::{escaped}", flush=True)
+
+
 def _curl(url: str) -> tuple[int, str, str]:
     with tempfile.NamedTemporaryFile() as header_file, tempfile.NamedTemporaryFile() as body_file:
         result = subprocess.run(
@@ -147,6 +158,8 @@ def verify_priority_sitemap(site_url: str | None = None) -> None:
         print(f"priority {path}: status={status} canonical={parser.canonicals!r} robots={parser.robots!r}")
 
     if failures:
+        for failure in failures:
+            _github_error(failure)
         raise RuntimeError("Deployed priority sitemap/indexability smoke failed:\n- " + "\n- ".join(failures))
 
     print(f"Deployed priority sitemap smoke passed for {len(expected)} canonical URLs on {worker_origin}.")

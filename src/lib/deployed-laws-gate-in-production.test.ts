@@ -48,6 +48,14 @@ describe("deployed law routes production gate", () => {
     expect(smokeScript).toContain("cache-control: no-cache");
   });
 
+  it("keeps exact GitHub annotations for route and priority failures", () => {
+    expect(smokeScript).toContain('github_error("Deployed laws route smoke failed", failure)');
+    expect(smokeScript).toContain('os.environ.get("GITHUB_ACTIONS") != "true"');
+    expect(prioritySmoke).toContain("::error title=Deployed priority sitemap/indexability smoke failed::");
+    expect(prioritySmoke).toContain("for failure in failures:");
+    expect(prioritySmoke).toContain("_github_error(failure)");
+  });
+
   it("makes the priority sitemap and all 30 priority URLs part of the same hard deploy gate", () => {
     expect(smokeScript).toContain("from verify_deployed_priority_sitemap import verify_priority_sitemap");
     expect(smokeScript).toContain("verify_priority_sitemap(SITE_URL)");
