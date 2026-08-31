@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-08-30T20:58:01.277Z",
+  "generatedAt": "2026-08-31T08:52:00.668Z",
   "candidateCount": 491,
   "eligibleCandidateCount": 479,
   "excludedCandidateCount": 12,
-  "approvedPhotoCount": 338,
-  "missingPhotoCount": 141,
-  "manifestEntryCount": 338,
-  "coverage": 0.7056367432150313,
-  "coveragePercent": 70.56,
+  "approvedPhotoCount": 340,
+  "missingPhotoCount": 139,
+  "manifestEntryCount": 340,
+  "coverage": 0.7098121085594989,
+  "coveragePercent": 70.98,
   "targetCoverage": 0.85,
   "targetApprovedPhotoCount": 408,
-  "photosNeededForTarget": 70,
+  "photosNeededForTarget": 68,
   "targetMet": false,
   "errors": [],
   "warnings": [],
@@ -259,13 +259,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-kelly-hall-democratic-race-2026-texas-house-19",
-      "name": "KELLY HALL",
-      "raceId": "race-2026-texas-house-19",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-tom-luck-democratic-race-2026-texas-house-19",
       "name": "TOM LUCK",
       "raceId": "race-2026-texas-house-19",
@@ -326,13 +319,6 @@
       "name": "OZIEL 'OZZIE' OCHOA, JR",
       "raceId": "race-2026-texas-house-37",
       "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-janie-lopez-republican-race-2026-texas-house-37",
-      "name": "JANIE LOPEZ",
-      "raceId": "race-2026-texas-house-37",
-      "party": "republican",
       "priority": "standard"
     },
     {
