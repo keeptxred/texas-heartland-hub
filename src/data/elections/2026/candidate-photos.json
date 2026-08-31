@@ -1720,6 +1720,18 @@
     "discoveredAt": "2026-08-26T17:20:38.320Z"
   },
   {
+    "candidateId": "candidate-janie-lopez-republican-race-2026-texas-house-37",
+    "imageUrl": "https://www.texaspolicy.com/wp-content/uploads/2023/04/Janie-Lopez.jpg",
+    "sourceUrl": "https://www.texaspolicy.com/about/people/the-honorable-janie-lopez",
+    "altText": "Janie Lopez, Republican candidate for Texas House District 37",
+    "credit": "Texas Public Policy Foundation / Janie Lopez headshot",
+    "license": null,
+    "permissionBasis": "Texas Public Policy Foundation's Janie Lopez profile identifies her as the Texas House District 37 representative and explicitly provides this candidate-specific image through a 'Download Headshot' link. Used narrowly for editorial candidate identification with exact source attribution and source link; no broader reuse license is asserted.",
+    "usageStatus": "approved",
+    "discoveryMethod": "institutional-profile-download-headshot",
+    "discoveredAt": "2026-08-30T23:39:00.000Z"
+  },
+  {
     "candidateId": "candidate-janis-holt-republican-race-2026-texas-house-18",
     "imageUrl": "https://house.texas.gov/images/members/4535.jpg?v=2",
     "sourceUrl": "https://house.texas.gov/members/18",
@@ -2192,6 +2204,18 @@
     "usageStatus": "approved",
     "discoveryMethod": "wikimedia-verified-public-domain-us-congress",
     "discoveredAt": "2026-08-22T12:06:46.429Z"
+  },
+  {
+    "candidateId": "candidate-kelly-hall-democratic-race-2026-texas-house-19",
+    "imageUrl": "https://assets.communityimpact.com/uploads/elections/candidates/kelly-hall-6694.jpeg",
+    "sourceUrl": "https://communityimpact.com/round-rock/election/qa-meet-the-candidates-for-round-rock-mayor/",
+    "altText": "Kelly Hall, Democratic nominee for Texas House District 19",
+    "credit": "Kelly Hall campaign, via Community Impact",
+    "license": null,
+    "permissionBasis": "Community Impact's March 20, 2026 Round Rock mayor candidate Q&A explicitly states that all photos were submitted by the respective candidates. The candidate-specific Kelly Hall portrait is attached directly to his profile, and the profile itself states that he won the HD19 primary. Used only for editorial candidate identification with candidate/newsroom attribution and exact source link; this image approval does not resolve or change the separate House eligibility/lifecycle question.",
+    "usageStatus": "approved",
+    "discoveryMethod": "candidate-supplied-newsroom-photo-cross-office-identity-verified",
+    "discoveredAt": "2026-08-31T07:38:00.000Z"
   },
   {
     "candidateId": "candidate-ken-king-republican-race-2026-texas-house-88",
