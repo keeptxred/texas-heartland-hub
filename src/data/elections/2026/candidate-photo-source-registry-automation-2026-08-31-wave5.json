@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "crystalsedillo.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Crystal Sedillo's official campaign website to verify her Texas House District 30 candidacy and discover candidate-specific portrait or biography assets. Do not approve or reuse any image without exact item-level provenance plus an explicit reusable license, campaign/media permission, candidate-supplied newsroom basis, or another documented narrow editorial-identification basis.",
+    "searchHint": "Crystal Sedillo Texas House District 30 official campaign portrait biography media",
+    "notes": "Discovered August 31, 2026 from the current missing-photo set. The site identifies Crystal Sedillo as running for Texas House District 30 and contains a campaign-controlled Meet Crystal biography. Treat all imagery as discovery-only until the exact portrait asset and item-level use basis are verified."
+  },
+  {
+    "domain": "votemuse.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Dr. Fatima La'Juan Muse's current official campaign website to verify her Texas House District 2 candidacy and discover candidate-specific portrait, biography, press, or media assets. Do not approve or reuse any image without exact item-level provenance plus an explicit reusable license, campaign/media permission, candidate-supplied newsroom basis, or another documented narrow editorial-identification basis.",
+    "searchHint": "Fatima La'Juan Muse Texas House District 2 official campaign portrait biography media",
+    "notes": "Discovered August 31, 2026 as a current campaign domain distinct from previously registered fatimamuse.com. The site is paid for by Muse for TX HD 2 and identifies Muse as the District 2 candidate. Treat imagery as discovery-only until item-level rights and exact asset provenance are established."
+  },
+  {
+    "domain": "tcta.org",
+    "sourceClass": "education-association-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Classroom Teachers Association TexasTeachersVote candidate pages to corroborate candidate identity, office sought, official website/social links, and to discover downstream portrait sources. TCTA-hosted candidate images are discovery-only unless item-level provenance and a documented reusable or narrow editorial permission basis are established. Prefer the linked official campaign or candidate-controlled source when available.",
+    "searchHint": "site:tcta.org/texasteachersvote Texas House candidate portrait official website",
+    "notes": "Discovered August 31, 2026 while researching current missing candidates. TCTA candidate pages currently identify candidates including Crystal Sedillo (HD30) and Fatima La'Juan Muse (HD2) and expose candidate images plus official-link fields. This is a discovery bridge, not an automatic image-rights source."
+  }
+]
