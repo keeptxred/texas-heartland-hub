@@ -34,5 +34,32 @@
     "rightsRule": "Use Kelly Hall's candidate-controlled Round Rock mayoral campaign site only as a same-person identity and portrait discovery source. Because it concerns a different office than Texas House District 19, require cross-candidate identity verification and exact item-level image provenance before any reuse; do not infer current House eligibility from this site.",
     "searchHint": "Kelly Hall Round Rock mayor official campaign portrait Texas House District 19 same person",
     "notes": "New candidate-controlled cross-office source discovered August 31, 2026. The site contains a candidate-specific Kelly Hall biography portrait and contact information matching the HD19 campaign identity, but it does not resolve the separate House nomination/eligibility question and therefore remains discovery-only."
+  },
+  {
+    "domain": "mindybumgarner.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Mindy Bumgarner's official State Board of Education District 14 campaign website to verify candidate identity, office, campaign-controlled biography, and discover candidate-supplied portrait or media assets. Do not approve or reuse any image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Mindy Bumgarner State Board of Education District 14 official campaign portrait media",
+    "notes": "Discovered August 31, 2026. The site identifies Mindy Bumgarner as running for Texas State Board of Education District 14. Current rendered imagery includes campaign graphics and logos, so no image is auto-approved; candidate-specific portrait discovery must reject graphics, logos, and other non-portrait assets."
+  },
+  {
+    "domain": "palmerfortexased.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Michelle Palmer's official Texas State Board of Education District 6 campaign website, corroborated by the Texas Classroom Teachers Association candidate directory, to verify candidate identity, office, and discover candidate-supplied portrait or media assets. Do not approve or reuse any image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Michelle Palmer State Board of Education District 6 official campaign portrait media",
+    "notes": "Discovered August 31, 2026 via TCTA's current 2026 candidate profile, which links palmerfortexased.com as Michelle Palmer's campaign website. Discovery-only until an individual portrait has verified provenance and rights basis."
+  },
+  {
+    "domain": "tcta.org",
+    "sourceClass": "teacher-association-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Classroom Teachers Association TexasTeachersVote candidate profiles to corroborate 2026 candidate identity, party, office, campaign websites, and social links, and to discover downstream official portrait sources. Do not approve or reuse TCTA-hosted images without item-level provenance plus a reusable license, explicit permission, candidate-supplied editorial basis, or another documented permission basis.",
+    "searchHint": "site:tcta.org/texasteachersvote 2026 Texas candidate official website portrait",
+    "notes": "Expanded August 31, 2026 after current TCTA profiles confirmed Mindy Bumgarner for SBOE District 14 and Michelle Palmer for SBOE District 6 and exposed their campaign links. Treat TCTA as a discovery bridge, not an automatic image-rights source."
   }
 ]
