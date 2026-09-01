@@ -43,5 +43,14 @@
     "rightsRule": "Use GovExperts' Texas 2026 election candidate directory to corroborate candidate/race identity and discover downstream official campaign, government, party, or public-record portrait sources. Do not approve or reuse any hosted image without item-level provenance plus explicit reusable rights, candidate/campaign permission, candidate-supplied provenance, or another documented editorial permission basis.",
     "searchHint": "GovExperts Texas 2026 candidate official campaign portrait",
     "notes": "Discovered August 31, 2026 while researching the current missing-photo set. The directory lists current Texas House candidates across multiple districts, including candidates with sparse web footprints. Treat as a discovery bridge only; no hosted image or rights conclusion is inferred."
+  },
+  {
+    "domain": "tx3dnews.com",
+    "sourceClass": "candidate-supplied-newsroom-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use TX3DNews candidate profiles only when the page explicitly identifies the candidate and office and item-level image provenance is documented. A portrait may be approved only when the exact profile explicitly states that the image was submitted or supplied by the candidate/campaign, or another documented reusable/editorial permission basis exists. Do not treat ordinary TX3DNews-hosted images, graphics, logos, or generic newsroom assets as reusable by default.",
+    "searchHint": "site:tx3dnews.com candidate profile Texas 2026 campaign headshot submitted by campaign",
+    "notes": "New source class discovered August 31, 2026. TX3DNews states that its Meet the Candidates profiles are based on information submitted directly by candidates or campaigns. Individual profiles can provide stronger item-level provenance; Dr. Fatima La'Juan Muse's August 24, 2026 profile labels the exact portrait as a campaign headshot and states 'Photo: Submitted by the campaign.' Keep auto-approval disabled and require that same item-level provenance standard for every candidate image."
   }
 ]
