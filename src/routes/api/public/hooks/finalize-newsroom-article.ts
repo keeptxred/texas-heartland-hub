@@ -3,6 +3,7 @@ import { scoreQuality } from "@/lib/content-quality";
 import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 import { normalizeNewsroomWhyThisMatters } from "@/lib/newsroom-postpublish";
+import { duplicateParagraphOccurrences } from "@/lib/public-article-readiness";
 import {
   assessArticleSourceIntegrity,
   sourceReferencesFromBodyJson,
@@ -96,6 +97,9 @@ async function post({ request }: { request: Request }) {
   const sourceIntegrityFlags = sourceIntegrity.falseMultiSourceClaim
     ? ["seo_false_multisource", "seo_noindex"]
     : [];
+  const repetitionFlags = duplicateParagraphOccurrences(normalized.bodyJson) > 2
+    ? ["seo_low_value_commodity", "internal_repetition"]
+    : [];
 
   const image = await generateFeaturedImageForSlugDirect(slug, false);
   const quality = scoreQuality({
@@ -113,6 +117,7 @@ async function post({ request }: { request: Request }) {
     ...existingNonScoreFlags(article.quality_flags),
     ...quality.flags,
     ...sourceIntegrityFlags,
+    ...repetitionFlags,
   ])];
   const { error: qualityUpdateError } = await db
     .from("daily_articles")
@@ -131,6 +136,7 @@ async function post({ request }: { request: Request }) {
     contentQualityScore: quality.score,
     qualityFlags: qualityFlags.length > 0 ? qualityFlags : null,
     sourceIntegrity,
+    duplicateParagraphOccurrences: duplicateParagraphOccurrences(normalized.bodyJson),
   });
 }
 
