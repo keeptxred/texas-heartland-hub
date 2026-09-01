@@ -76,7 +76,7 @@ function AboutPage() {
 
         <section>
           <h2 className="font-display text-3xl tracking-tight">AI Disclosure</h2>
-          <p className="mt-3 text-muted-foreground">Keep TX Red may use AI tools to help organize, summarize, or draft material based on public information. AI-assisted work is reviewed before publication and is held to the same sourcing, accuracy, and corrections standards as other content.</p>
+          <p className="mt-3 text-muted-foreground">Keep TX Red may use AI tools to help organize, summarize, classify, research, or draft material based on public information. AI-assisted material is subject to the same sourcing, structure, evidence, publication, and corrections standards as other content. Automated validation is not represented as human editorial review; where a page has received manual editorial review, that review is tracked separately.</p>
         </section>
 
         <section>
