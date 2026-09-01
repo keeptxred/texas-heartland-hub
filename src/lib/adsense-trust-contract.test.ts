@@ -57,6 +57,18 @@ describe("AdSense document integration", () => {
     }
   });
 
+  it("keeps thin election detail records ad-free while preserving monetizable election hubs", () => {
+    expect(rootSource).toContain("ADSENSE_EXCLUDED_DETAIL_PATH_PREFIXES");
+    for (const path of [
+      "/elections/candidates/",
+      "/elections/districts/",
+      "/elections/races/",
+    ]) {
+      expect(rootSource).toContain(`\"${path}\"`);
+    }
+    expect(rootSource).toContain("d.some(function(prefix){return p.indexOf(prefix)===0;})");
+  });
+
   it("injects the AdSense network script only after eligibility checks pass", () => {
     expect(rootSource).toContain("if(excluded||noindex)return");
     expect(rootSource).toContain("document.createElement('script')");
