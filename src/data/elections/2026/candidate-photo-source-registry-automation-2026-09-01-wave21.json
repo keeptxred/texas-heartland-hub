@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "termlimits.com",
+    "sourceClass": "candidate-pledge-organization-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use U.S. Term Limits candidate pledge announcements and candidate-specific profile pages to corroborate current candidate identity, office sought, and discover downstream official campaign or candidate-linked portrait sources. Do not approve or reuse termlimits.com-hosted imagery without item-level provenance plus an explicit reusable license, candidate/media permission, or another documented narrow editorial-identification basis.",
+    "searchHint": "site:termlimits.com Texas 2026 candidate name district pledge portrait",
+    "notes": "New source discovered September 1, 2026 while researching Eric Norman, Democratic candidate for Texas House District 44. U.S. Term Limits published an April 29, 2026 candidate-specific pledge announcement identifying Norman as a 2026 Texas House District 44 candidate. Treat the domain as a discovery bridge only unless image rights are established item by item."
+  }
+]
