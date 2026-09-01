@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "gprepublicans.com",
+    "sourceClass": "local-party-club-leadership-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Grand Prairie Republican Club leadership pages to corroborate candidate identity and discover downstream campaign, party, or official portrait sources. Do not approve or reuse club-hosted imagery without item-level provenance plus an explicit reusable license, candidate/campaign permission, or another documented editorial permission basis.",
+    "searchHint": "site:gprepublicans.com candidate name Texas election portrait",
+    "notes": "New source discovered September 1, 2026 while researching Carlos 'Charlie' Garza. The club leadership page identifies Charlie Garza and exposes a candidate-specific image lead, but hosted imagery remains discovery-only until exact provenance and reuse rights are verified."
+  },
+  {
+    "domain": "ballotverifier.tarrantcountytx.gov",
+    "sourceClass": "county-government-candidate-ballot-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Tarrant County's official Ballot Verifier candidate and contest pages to verify candidate identity, historical ballot participation, office context, and discover downstream official sources. Do not infer portrait reuse rights from government hosting alone; approve an image only when item-level provenance and a reusable license, public-domain basis, or other documented permission basis are established.",
+    "searchHint": "site:ballotverifier.tarrantcountytx.gov candidate name",
+    "notes": "New candidate-photo discovery source identified September 1, 2026. It has an official Tarrant County candidate page for Carlos 'Charlie' Garza and is useful as an identity/ballot-history bridge, but it is not an automatic portrait-rights source."
+  }
+]
