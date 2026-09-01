@@ -35,7 +35,7 @@ const RECOVERY_LINKS = [
 
 export function SiteNotFound() {
   return (
-    <section className="bg-muted/20 px-4 py-16 sm:px-6 sm:py-20" aria-labelledby="not-found-title">
+    <section data-adsense-ineligible="true" className="bg-muted/20 px-4 py-16 sm:px-6 sm:py-20" aria-labelledby="not-found-title">
       <div className="mx-auto max-w-5xl">
         <div className="max-w-2xl">
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-primary">404 · Page not found</p>
