@@ -21,6 +21,13 @@ const CITY_MIGRATION_REDIRECTS: Readonly<Record<string, string>> = {
 
 export function canonicalHostRedirect(request: Request): Response | null {
   const url = new URL(request.url);
+
+  // Google explicitly crawls ads.txt over both HTTP and HTTPS and may begin at
+  // either the apex or www host. Keep this machine-readable file out of the
+  // normal canonical-host redirect path so every KTR hostname the Worker owns
+  // can answer it directly with HTTP 200.
+  if (url.pathname === "/ads.txt") return null;
+
   const isSiteHost = url.hostname === CANONICAL_HOST || url.hostname === WWW_HOST;
   if (!isSiteHost) return null;
   if (url.hostname === CANONICAL_HOST && url.protocol === "https:") return null;

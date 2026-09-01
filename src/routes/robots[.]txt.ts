@@ -2,7 +2,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { BASE_URL } from "@/lib/sitemap-shared";
 
-const GOOGLE_MERCHANT_AGENTS = ["Googlebot", "Googlebot-Image", "Storebot-Google"] as const;
+const GOOGLE_MERCHANT_AGENTS = [
+  "Googlebot",
+  "Googlebot-Image",
+  "Storebot-Google",
+  "Mediapartners-Google",
+  "AdsBot-Google",
+] as const;
 const AI_DISCOVERY_AGENTS = [
   "OAI-SearchBot",
   "GPTBot",
@@ -21,9 +27,9 @@ const AI_DISCOVERY_AGENTS = [
 ] as const;
 
 /** Dynamic robots.txt. This is the single robots policy for Keep TX Red.
- *  Public search, merchant, and AI-discovery crawlers share the same rule
- *  group as the wildcard so explicit allowlisting never bypasses the common
- *  private/operational crawl boundaries. */
+ *  Public search, merchant, AdSense, and AI-discovery crawlers share the same
+ *  rule group as the wildcard so explicit allowlisting never bypasses the
+ *  common private/operational crawl boundaries. */
 export const Route = createFileRoute("/robots.txt")({
   server: {
     handlers: {
@@ -32,6 +38,7 @@ export const Route = createFileRoute("/robots.txt")({
           "# Keep TX Red — public pages are crawlable; private, operational, checkout, and low-value query states are excluded for every crawler.",
           // Merchant Center explicitly requires Googlebot and Googlebot-Image.
           // Storebot-Google is included for Google Shopping product analysis.
+          // Mediapartners-Google and AdsBot-Google make AdSense access explicit.
           // AI/search discovery agents are explicitly named so OpenAI,
           // Anthropic/Claude, Perplexity, Gemini/Google, Apple, Amazon,
           // Meta, Common Crawl, and ByteDance controls are unambiguous.
@@ -41,6 +48,9 @@ export const Route = createFileRoute("/robots.txt")({
           ...GOOGLE_MERCHANT_AGENTS.map((agent) => `User-agent: ${agent}`),
           ...AI_DISCOVERY_AGENTS.map((agent) => `User-agent: ${agent}`),
           "User-agent: *",
+          // Google AdSense specifically recommends an explicit Allow when a
+          // site has path-based Disallow rules that could otherwise be broad.
+          "Allow: /ads.txt",
           "Allow: /",
           "Disallow: /api/",
           "Disallow: /admin",

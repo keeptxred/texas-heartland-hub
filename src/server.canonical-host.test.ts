@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest";
 
-import { canonicalHostRedirect, cityMigrationRedirect } from "./server";
+import { adsTxtResponse, canonicalHostRedirect, cityMigrationRedirect } from "./server";
+
+const WWW_HOST = "www.keeptxred.com";
+const ADS_TXT_URLS = [
+  "http://keeptxred.com/ads.txt",
+  "https://keeptxred.com/ads.txt",
+  `http://${WWW_HOST}/ads.txt`,
+  `https://${WWW_HOST}/ads.txt`,
+] as const;
 
 describe("canonicalHostRedirect", () => {
   it("permanently redirects www to the HTTPS apex while preserving path and query", () => {
@@ -33,6 +41,33 @@ describe("canonicalHostRedirect", () => {
     expect(
       canonicalHostRedirect(new Request("https://preview.example.workers.dev/elections/2026")),
     ).toBeNull();
+  });
+
+  it("never canonical-redirects ads.txt so HTTP, HTTPS, apex, and www can answer directly", () => {
+    for (const url of ADS_TXT_URLS) {
+      expect(canonicalHostRedirect(new Request(url))).toBeNull();
+    }
+  });
+});
+
+describe("adsTxtResponse", () => {
+  const expected = "google.com, pub-1891256141359926, DIRECT, f08c47fec0942fa0\n";
+
+  it.each(ADS_TXT_URLS)("returns the exact AdSense declaration with HTTP 200 for %s", async (url) => {
+    const response = adsTxtResponse(new Request(url));
+
+    expect(response?.status).toBe(200);
+    expect(response?.headers.get("content-type")).toBe("text/plain; charset=utf-8");
+    expect(await response?.text()).toBe(expected);
+  });
+
+  it("supports HEAD without returning a body", async () => {
+    const response = adsTxtResponse(
+      new Request("https://keeptxred.com/ads.txt", { method: "HEAD" }),
+    );
+
+    expect(response?.status).toBe(200);
+    expect(await response?.text()).toBe("");
   });
 });
 
