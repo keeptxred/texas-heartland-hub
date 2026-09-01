@@ -1,0 +1,38 @@
+[
+  {
+    "domain": "crystalsedillo.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Crystal Sedillo's official campaign website to verify candidate identity, Texas House District 30 candidacy, campaign-controlled biography content, and discover candidate-specific portrait/media assets. Do not approve or reuse any site image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Crystal Sedillo Texas House District 30 official campaign portrait media",
+    "notes": "Discovered September 1, 2026. The campaign homepage identifies Crystal Sedillo, District 30, and includes a Meet Crystal biography. The site is a strong candidate-controlled discovery source, but no reusable image license was located during this run."
+  },
+  {
+    "domain": "jejunemagazine.com",
+    "sourceClass": "candidate-interview-newsroom",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Jejune Magazine candidate interview pages to corroborate candidate identity and discover candidate-specific interview imagery and downstream campaign links. Do not approve or reuse a Jejune-hosted image unless the specific image is documented as candidate-supplied, licensed for reuse, explicitly permitted, or otherwise has a documented editorial permission basis.",
+    "searchHint": "Jejune Magazine Crystal Sedillo Texas House District 30 candidate interview image",
+    "notes": "Discovered September 1, 2026. Jejune's June 29, 2026 Crystal Sedillo interview identifies her as a Texas House District 30 candidate, links her official campaign website and social profiles, and publishes multiple candidate-specific images. The page does not disclose reusable image rights, so treat imagery as discovery-only unless item-level permission is established."
+  },
+  {
+    "domain": "theedinburgadvocate.com",
+    "sourceClass": "local-news-candidate-announcement",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use The Edinburg Advocate candidate-announcement and election-reporting pages to verify candidate identity, campaign announcements, race context, and discover candidate-specific imagery or downstream campaign sources. Do not approve or reuse any image without item-level provenance plus a documented candidate-supplied basis, reusable license, explicit permission, or another documented editorial permission basis.",
+    "searchHint": "site:theedinburgadvocate.com 2026 Texas House candidate portrait campaign announcement",
+    "notes": "Discovered September 1, 2026 while researching Texas House District 40. The November 15, 2025 Celeste Cabrera-Huff filing announcement identifies her as a District 40 candidate and states that candidates may submit first campaign announcements. The page includes an image, but it does not explicitly document that the image itself was candidate-supplied, so imagery remains discovery-only."
+  },
+  {
+    "domain": "branch.vote",
+    "sourceClass": "election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Branch candidate pages to corroborate current race participation, candidate identity, campaign websites, and discover candidate-specific portraits or downstream official sources. Do not approve or reuse Branch-hosted images without item-level provenance plus a reusable license, explicit permission, candidate-supplied documentation, or another documented editorial permission basis.",
+    "searchHint": "Branch Texas 2026 candidate profile official campaign portrait",
+    "notes": "Discovered September 1, 2026 while researching Texas House District 40. Branch has a current Celeste Cabrera-Huff profile with a candidate photo and links to celestefortexas.com. Treat Branch imagery as discovery-only absent item-level rights documentation."
+  }
+]
