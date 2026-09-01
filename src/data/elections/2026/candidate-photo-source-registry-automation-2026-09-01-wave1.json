@@ -16,5 +16,41 @@
     "rightsRule": "Use Tarrant County's official Ballot Verifier candidate and contest pages to verify candidate identity, historical ballot participation, office context, and discover downstream official sources. Do not infer portrait reuse rights from government hosting alone; approve an image only when item-level provenance and a reusable license, public-domain basis, or other documented permission basis are established.",
     "searchHint": "site:ballotverifier.tarrantcountytx.gov candidate name",
     "notes": "New candidate-photo discovery source identified September 1, 2026. It has an official Tarrant County candidate page for Carlos 'Charlie' Garza and is useful as an identity/ballot-history bridge, but it is not an automatic portrait-rights source."
+  },
+  {
+    "domain": "tcta.org",
+    "sourceClass": "teacher-association-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Classroom Teachers Association TexasTeachersVote candidate pages to verify candidate identity, office sought, linked official campaign website/social profiles, and discover candidate-specific headshots. Do not approve or reuse any TCTA-hosted image without item-level provenance plus explicit reusable rights, candidate/media permission, or another documented editorial permission basis.",
+    "searchHint": "site:tcta.org TexasTeachersVote 2026 Texas candidate headshot",
+    "notes": "Discovered September 1, 2026 while enriching current missing-photo candidates. Current pages exist for Rhett Rosenquest Smith (Texas House District 116), Mindy Bumgarner (State Board of Education District 14), and Crystal Sedillo (Texas House District 30), and link candidate campaign sites where available. Discovery bridge only unless item-level rights are established."
+  },
+  {
+    "domain": "crystalsedillo.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Crystal Sedillo's official Texas House District 30 campaign website to verify candidate identity, candidacy, biography, and discover candidate-supplied portraits or media assets. Do not approve or reuse any site image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Crystal Sedillo Texas House District 30 official campaign portrait media",
+    "notes": "Discovered September 1, 2026. The campaign site identifies Crystal Sedillo as running for Texas House District 30. Images remain discovery-only absent item-level reuse support."
+  },
+  {
+    "domain": "mindybumgarner.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Mindy Bumgarner's official State Board of Education District 14 campaign website to verify candidate identity, office sought, biography, and discover candidate-supplied portraits or media assets. Do not approve or reuse any site image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Mindy Bumgarner State Board of Education District 14 official campaign portrait media",
+    "notes": "Discovered September 1, 2026 and corroborated by TCTA TexasTeachersVote and Cross Timbers Gazette coverage linking MindyBumgarner.com. Images remain discovery-only until item-level rights are established."
+  },
+  {
+    "domain": "sanantonioreport.org",
+    "sourceClass": "reputable-news-candidate-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use San Antonio Report candidate profile pages to corroborate candidate identity and discover profile imagery or downstream official sources. Do not approve or reuse newsroom-hosted images without candidate-supplied provenance, an explicit reusable license, newsroom/media permission, or another documented editorial permission basis.",
+    "searchHint": "site:sanantonioreport.org/profile 2026 Texas candidate portrait",
+    "notes": "Discovered September 1, 2026 while researching Rhett Rosenquest Smith. The profile identifies him as the Republican candidate for Texas House District 116 and displays an avatar photo credited to San Antonio Report Staff. Treat the image as discovery-only absent item-level reuse permission."
   }
 ]
