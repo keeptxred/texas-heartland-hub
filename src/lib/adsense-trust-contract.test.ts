@@ -59,9 +59,10 @@ describe("AdSense document integration", () => {
     }
   });
 
-  it("keeps thin election detail records ad-free while preserving monetizable election hubs", () => {
+  it("keeps newsroom and thin election detail records ad-free while preserving monetizable hubs", () => {
     expect(rootSource).toContain("ADSENSE_EXCLUDED_DETAIL_PATH_PREFIXES");
     for (const path of [
+      "/news/",
       "/elections/candidates/",
       "/elections/districts/",
       "/elections/races/",

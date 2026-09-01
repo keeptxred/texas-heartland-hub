@@ -30,6 +30,7 @@ const ADSENSE_EXCLUDED_PATH_PREFIXES = [
   "/contact",
 ] as const;
 const ADSENSE_EXCLUDED_DETAIL_PATH_PREFIXES = [
+  "/news/",
   "/elections/candidates/",
   "/elections/districts/",
   "/elections/races/",
