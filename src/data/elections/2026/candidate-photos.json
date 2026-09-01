@@ -1484,6 +1484,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-gary-groves-republican-race-2026-texas-house-41",
+    "imageUrl": "https://img1.wsimg.com/isteam/ip/ee2951a2-9b5e-4066-ac2d-cc2266e50e6d/GOP%20Oath.jpg/%3A/cr%3Dt%3A18.91%25%2Cl%3A0%25%2Cw%3A100%25%2Ch%3A50%25/rs%3Dw%3A600%2Ch%3A300%2Ccg%3Atrue",
+    "sourceUrl": "https://garyfortexas.com/f/another-day-on-the-trail",
+    "altText": "Gary Groves, Republican candidate for Texas House District 41",
+    "credit": "Gary Groves Campaign",
+    "license": null,
+    "permissionBasis": "Gary Groves's official campaign biography identifies him as the Texas House District 41 candidate and publishes this candidate-specific photograph in the Meet Gary Groves biography section. Used only for editorial candidate identification with exact official-campaign attribution and source link.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-biography",
+    "discoveredAt": "2026-09-01T12:44:00.000Z"
+  },
+  {
     "candidateId": "candidate-gene-wu-democratic-race-2026-texas-house-137",
     "imageUrl": "https://house.texas.gov/images/members/2865.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/137",
@@ -2108,6 +2120,18 @@
     "usageStatus": "approved",
     "discoveryMethod": "official-government-profile",
     "discoveredAt": "2026-08-22T12:06:46.153Z"
+  },
+  {
+    "candidateId": "candidate-julio-salinas-democratic-race-2026-texas-house-41",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/68deb6f10abc8463a124e6c3/cfd458ec-28bf-422b-a3de-92cc9745938b/IMG_0059.jpg",
+    "sourceUrl": "https://www.julioforrgv.com/meetjulio",
+    "altText": "Julio Salinas, Democratic candidate for Texas House District 41",
+    "credit": "Julio Salinas for Texas House District 41 campaign",
+    "license": null,
+    "permissionBasis": "Julio Salinas's official campaign biography identifies him as running for Texas House District 41 and publishes this candidate-specific photograph directly in the biography page immediately before the Meet Julio Salinas section. The image is used only for editorial candidate identification with exact official-campaign attribution and source link; no broader reuse license is asserted.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-biography",
+    "discoveredAt": "2026-09-01T09:42:00.000Z"
   },
   {
     "candidateId": "candidate-junior-ezeonu-democratic-race-2026-texas-house-101",
