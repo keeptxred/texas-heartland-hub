@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
-  publishKtrFacebookAttentionPost,
+  prepareKtrFacebookAttentionPost,
   shouldUseKtrFacebookAttentionSlot,
 } from "@/lib/facebook-attention-publisher.server";
 import type { RecentFacebookPost } from "@/lib/facebook-editorial-selection";
@@ -150,7 +150,7 @@ async function runSmartKtrFacebookPost(request: Request): Promise<Response> {
   }
 
   if (shouldUseKtrFacebookAttentionSlot(decision.postsToday)) {
-    const attentionResponse = await publishKtrFacebookAttentionPost({
+    const attentionResponse = await prepareKtrFacebookAttentionPost({
       db,
       seed,
       dateKey: decision.dateKey,

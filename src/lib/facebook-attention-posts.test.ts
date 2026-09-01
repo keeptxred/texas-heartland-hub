@@ -6,8 +6,9 @@ import {
   selectKtrFacebookAttentionPost,
 } from "@/lib/facebook-attention-posts";
 import {
-  KTR_FACEBOOK_ATTENTION_IMAGE_URL,
+  findKtrFacebookAttentionPostBySourceId,
   formatKtrFacebookPublishedAttentionMessage,
+  ktrFacebookAttentionSourcePostId,
   ktrFacebookAttentionTrafficUrl,
   selectKtrFacebookAttentionPostForSlot,
   shouldUseKtrFacebookAttentionSlot,
@@ -24,9 +25,14 @@ describe("KTR Facebook attention posts", () => {
     expect(KTR_FACEBOOK_ATTENTION_POSTS.length).toBeGreaterThanOrEqual(125);
   });
 
-  it("requires an HTTPS image for every attention post", () => {
-    expect(KTR_FACEBOOK_ATTENTION_IMAGE_URL).toMatch(/^https:\/\//);
-    expect(KTR_FACEBOOK_ATTENTION_IMAGE_URL).toBe("https://keeptxred.com/og/default.jpg");
+  it("uses stable generated-image source IDs instead of a generic attention image", () => {
+    const ids = KTR_FACEBOOK_ATTENTION_POSTS.map(ktrFacebookAttentionSourcePostId);
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const [index, id] of ids.entries()) {
+      expect(id).toMatch(/^ktr-attention-[a-z0-9]+(?:-[a-z0-9]+)*$/);
+      expect(findKtrFacebookAttentionPostBySourceId(id)?.title).toBe(KTR_FACEBOOK_ATTENTION_POSTS[index].title);
+    }
+    expect(findKtrFacebookAttentionPostBySourceId("ktr-attention-not-real")).toBeNull();
   });
 
   it("does not contain duplicate titles or messages", () => {

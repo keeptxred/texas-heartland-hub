@@ -4,7 +4,7 @@ on:
   schedule:
     # Lightweight checks every 30 minutes across the Texas waking/evening day.
     # Keep TX Red can publish up to five randomized posts per day. TexasDefined
-    # now owns its Facebook engagement schedule in keeptxred/TexasDefined.
+    # owns its separate Facebook engagement schedule in keeptxred/TexasDefined.
     - cron: "0,30 12-23 * * *"
     - cron: "0,30 0-4 * * *"
   workflow_dispatch:
@@ -20,17 +20,20 @@ concurrency:
 jobs:
   post:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     env:
       # GitHub-hosted runners are intentionally challenged on browser-facing
-      # keeptxred.com dynamic paths. Machine hooks use the same deployed Worker
+      # keeptxred.com dynamic paths. Machine hooks use the deployed Worker
       # directly while retaining strict GitHub Actions OIDC authorization.
       AUTOMATION_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     steps:
-      - name: Check randomized Keep TX Red Facebook schedule and post if due
+      - name: Check randomized Keep TX Red Facebook schedule
+        id: decision
         shell: bash
         run: |
           set -euo pipefail
+          mkdir -p /tmp/ktrfb
 
           oidc_url="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-facebook"
           oidc_token=$(curl -fsS \
@@ -47,7 +50,7 @@ jobs:
             mode="manual"
           fi
 
-          output="/tmp/facebook-post-keeptxred.json"
+          output="/tmp/ktrfb/decision.json"
           status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
             --max-time 420 \
             -H 'accept: application/json' \
@@ -64,6 +67,37 @@ jobs:
             exit 1
           fi
 
+          echo "attention_generate=false" >> "$GITHUB_OUTPUT"
+
+          if jq -e '.image_generation_required == true' "$output" >/dev/null 2>&1; then
+            source_post_id=$(jq -r '.source_post_id // empty' "$output")
+            if [[ -z "$source_post_id" ]]; then
+              echo 'KTR attention preparation returned no source_post_id.' >&2
+              exit 1
+            fi
+
+            python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          data = json.loads(Path('/tmp/ktrfb/decision.json').read_text(encoding='utf-8'))
+          post_text = data.get('post_text')
+          if not isinstance(post_text, str) or not post_text:
+              raise SystemExit('KTR attention preparation returned no exact post text')
+          Path('/tmp/ktrfb/post.txt').write_text(post_text, encoding='utf-8')
+          PY
+
+            if [[ ! -s /tmp/ktrfb/post.txt ]]; then
+              echo 'Exact KTR Facebook post text is missing; image generation is blocked.' >&2
+              exit 1
+            fi
+
+            echo "attention_generate=true" >> "$GITHUB_OUTPUT"
+            echo "source_post_id=$source_post_id" >> "$GITHUB_OUTPUT"
+            echo "KTR attention post requires a generated image: ${source_post_id}"
+            exit 0
+          fi
+
           if jq -e '.posted == true' "$output" >/dev/null 2>&1; then
             slug=$(jq -r '.slug // ""' "$output")
             title=$(jq -r '.title // ""' "$output")
@@ -77,4 +111,168 @@ jobs:
             next_target=$(jq -r '.next_target_local // ""' "$output")
             posts_today=$(jq -r '.posts_today // ""' "$output")
             echo "AUTO_FACEBOOK_POST_NOOP page=keeptxred reason=${reason} next_target=${next_target} posts_today=${posts_today}"
+          fi
+
+      - name: Generate image from exact KTR Facebook post text
+        id: image
+        if: steps.decision.outputs.attention_generate == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${OPENAI_API_KEY:-}" ]]; then
+            echo 'OPENAI_API_KEY is missing from the Keep TX Red repository secrets.' >&2
+            exit 1
+          fi
+          if [[ ! -s /tmp/ktrfb/post.txt ]]; then
+            echo 'Exact KTR Facebook post text is missing; image generation is blocked.' >&2
+            exit 1
+          fi
+
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          post_text = Path('/tmp/ktrfb/post.txt').read_text(encoding='utf-8')
+          if not post_text:
+              raise SystemExit('Exact KTR Facebook post text is empty')
+          prompt = 'Generate an image for this Facebook post.\n\n' + post_text
+          Path('/tmp/ktrfb/openai-request.json').write_text(
+              json.dumps({
+                  'model': 'gpt-image-2',
+                  'prompt': prompt,
+                  'size': '1536x1024',
+              }, ensure_ascii=False),
+              encoding='utf-8',
+          )
+          Path('/tmp/ktrfb/prompt.txt').write_text(prompt, encoding='utf-8')
+          PY
+
+          status=$(curl -sS -o /tmp/ktrfb/openai-response.json -w '%{http_code}' \
+            --max-time 900 \
+            -X POST 'https://api.openai.com/v1/images/generations' \
+            -H "Authorization: Bearer ${OPENAI_API_KEY}" \
+            -H 'Content-Type: application/json' \
+            --data-binary @/tmp/ktrfb/openai-request.json || echo 000)
+
+          if [[ "$status" != "200" ]]; then
+            echo "OpenAI image generation failed with HTTP ${status}." >&2
+            jq -r '.error.message // "No OpenAI error detail returned"' /tmp/ktrfb/openai-response.json 2>/dev/null >&2 || true
+            exit 1
+          fi
+
+          image_b64=$(jq -r '.data[0].b64_json // empty' /tmp/ktrfb/openai-response.json)
+          if [[ -z "$image_b64" ]]; then
+            echo 'OpenAI returned no image; Facebook publishing is blocked.' >&2
+            exit 1
+          fi
+
+          printf '%s' "$image_b64" | base64 --decode > /tmp/ktrfb/generated-image.png
+          if [[ ! -s /tmp/ktrfb/generated-image.png ]]; then
+            echo 'Generated image is empty; Facebook publishing is blocked.' >&2
+            exit 1
+          fi
+
+          mime_type=$(file --brief --mime-type /tmp/ktrfb/generated-image.png)
+          if [[ "$mime_type" != "image/png" ]]; then
+            echo "Generated asset has invalid MIME type: $mime_type" >&2
+            exit 1
+          fi
+
+          image_sha256=$(sha256sum /tmp/ktrfb/generated-image.png | awk '{print $1}')
+          echo "$image_sha256" > /tmp/ktrfb/image.sha256
+          echo "mime_type=$mime_type" >> "$GITHUB_OUTPUT"
+          echo "image_sha256=$image_sha256" >> "$GITHUB_OUTPUT"
+
+          IMAGE_SHA256="$image_sha256" SOURCE_POST_ID="${{ steps.decision.outputs.source_post_id }}" python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          metadata = {
+              'source_post_id': os.environ['SOURCE_POST_ID'],
+              'post_text': Path('/tmp/ktrfb/post.txt').read_text(encoding='utf-8'),
+              'image_prompt': Path('/tmp/ktrfb/prompt.txt').read_text(encoding='utf-8'),
+              'model': 'gpt-image-2',
+              'image_sha256': os.environ['IMAGE_SHA256'],
+          }
+          Path('/tmp/ktrfb/metadata.json').write_text(json.dumps(metadata, ensure_ascii=False, indent=2), encoding='utf-8')
+          PY
+
+      - name: Store generated KTR Facebook image
+        id: store
+        if: steps.decision.outputs.attention_generate == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ktr-facebook-${{ github.run_id }}-${{ steps.decision.outputs.source_post_id }}
+          path: |
+            /tmp/ktrfb/generated-image.png
+            /tmp/ktrfb/image.sha256
+            /tmp/ktrfb/metadata.json
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+
+      - name: Publish exact generated KTR image to Facebook
+        if: steps.decision.outputs.attention_generate == 'true'
+        shell: bash
+        env:
+          MIME_TYPE: ${{ steps.image.outputs.mime_type }}
+          IMAGE_SHA256: ${{ steps.image.outputs.image_sha256 }}
+          SOURCE_POST_ID: ${{ steps.decision.outputs.source_post_id }}
+          ARTIFACT_URL: ${{ steps.store.outputs.artifact-url }}
+        run: |
+          set -euo pipefail
+          if [[ ! -s /tmp/ktrfb/generated-image.png || ! -s /tmp/ktrfb/post.txt ]]; then
+            echo 'Stored image or exact post text is missing; Facebook publishing is blocked.' >&2
+            exit 1
+          fi
+
+          current_sha=$(sha256sum /tmp/ktrfb/generated-image.png | awk '{print $1}')
+          if [[ "$current_sha" != "$IMAGE_SHA256" ]]; then
+            echo 'Generated image changed after storage; Facebook publishing is blocked.' >&2
+            exit 1
+          fi
+          if [[ -z "$ARTIFACT_URL" ]]; then
+            echo 'GitHub did not return an artifact storage URL; Facebook publishing is blocked.' >&2
+            exit 1
+          fi
+
+          oidc_url="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-facebook"
+          oidc_token=$(curl -fsS \
+            -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+            "$oidc_url" | jq -r '.value // empty')
+          if [[ -z "$oidc_token" ]]; then
+            echo 'GitHub Actions did not issue the Facebook OIDC token for generated-image publishing.' >&2
+            exit 1
+          fi
+
+          run_url="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          status=$(curl -sS -o /tmp/ktrfb/facebook-response.json -w '%{http_code}' \
+            --max-time 420 \
+            -X POST \
+            -H 'accept: application/json' \
+            -H "Authorization: Bearer ${oidc_token}" \
+            -F "post_text=</tmp/ktrfb/post.txt" \
+            -F "image=@/tmp/ktrfb/generated-image.png;type=${MIME_TYPE}" \
+            -F "image_sha256=${IMAGE_SHA256}" \
+            -F "source_post_id=${SOURCE_POST_ID}" \
+            -F "artifact_url=${ARTIFACT_URL}" \
+            -F "github_run_url=${run_url}" \
+            "${AUTOMATION_ORIGIN%/}/api/public/hooks/publish-ktr-generated-attention-image" || echo 000)
+
+          cat /tmp/ktrfb/facebook-response.json 2>/dev/null || true
+          echo
+          if [[ "$status" != "200" ]] || ! jq -e '.ok == true' /tmp/ktrfb/facebook-response.json >/dev/null 2>&1; then
+            echo "KTR generated-image Facebook publish failed with HTTP ${status}; no fallback will be attempted." >&2
+            exit 1
+          fi
+
+          if jq -e '.posted == true' /tmp/ktrfb/facebook-response.json >/dev/null 2>&1; then
+            post_url=$(jq -r '.post_url // empty' /tmp/ktrfb/facebook-response.json)
+            echo "AUTO_FACEBOOK_POST_SUCCESS page=keeptxred kind=attention-post source_post_id=${SOURCE_POST_ID} post_url=${post_url} image_sha256=${IMAGE_SHA256}"
+          elif jq -e '.duplicate == true' /tmp/ktrfb/facebook-response.json >/dev/null 2>&1; then
+            echo 'Exact KTR attention post is already present on the Facebook Page; duplicate publish skipped.'
+          else
+            echo 'Generated-image publisher returned success without a post or duplicate confirmation; failing closed.' >&2
+            exit 1
           fi
