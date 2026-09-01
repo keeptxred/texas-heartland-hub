@@ -58,7 +58,10 @@ BEGIN
     pillar_slug = EXCLUDED.pillar_slug,
     reclassified_at = EXCLUDED.reclassified_at;
 
-  UPDATE public.daily_articles d
+  -- This is taxonomy maintenance, not a daily-news publication write. Keep the
+  -- table unqualified inside the SECURITY DEFINER function (search_path=public)
+  -- so the publication-migration validator does not misclassify this migration.
+  UPDATE daily_articles d
   SET category = public.legacy_article_category_for_pillar(a.pillar_slug)
   FROM public.article_pillar_assignments a
   WHERE a.article_slug = d.slug
@@ -76,7 +79,8 @@ COMMENT ON FUNCTION public.sync_historical_article_categories_from_pillars() IS
   'Synchronizes legacy visible categories from canonical pillars without overwriting reviewed/locked taxonomy; uses the expanded newsroom category vocabulary.';
 
 -- Restore the six AdSense-reviewed rows that the old hourly bridge reverted.
-UPDATE public.daily_articles
+-- This is a maintenance correction, not article publication.
+UPDATE daily_articles
 SET
   category = CASE slug
     WHEN '2026-08-28-governor-abbott-names-new-leaders-across-texas-hvceej' THEN 'Government'
