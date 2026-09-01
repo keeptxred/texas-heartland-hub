@@ -7,6 +7,8 @@ const adSlotSource = fs.readFileSync(new URL("../components/ad-slot.tsx", import
 const siteNotFoundSource = fs.readFileSync(new URL("../components/site-not-found.tsx", import.meta.url), "utf8");
 const authorsIndexSource = fs.readFileSync(new URL("../routes/authors.index.tsx", import.meta.url), "utf8");
 const authorProfileSource = fs.readFileSync(new URL("../routes/authors.$slug.tsx", import.meta.url), "utf8");
+const aboutSource = fs.readFileSync(new URL("../routes/about.tsx", import.meta.url), "utf8");
+const brandIdentitySource = fs.readFileSync(new URL("../components/brand-identity.tsx", import.meta.url), "utf8");
 
 describe("publisher identity trust contract", () => {
   it("discloses that desk and bureau names are organizational editorial bylines", () => {
@@ -28,6 +30,13 @@ describe("publisher identity trust contract", () => {
       expect(author?.bio.join(" ")).toMatch(/does not represent a claimed physical/i);
     }
   });
+
+  it("does not claim automated validation is human editorial review", () => {
+    expect(aboutSource).not.toContain("AI-assisted work is reviewed before publication");
+    expect(aboutSource).toContain("Automated validation is not represented as human editorial review");
+    expect(brandIdentitySource).not.toContain("verified before publication");
+    expect(brandIdentitySource).toContain("publication-quality checks");
+  });
 });
 
 describe("AdSense document integration", () => {
@@ -43,26 +52,31 @@ describe("AdSense document integration", () => {
     expect(rootSource).toContain("noindex");
   });
 
-  it("excludes administrative, transactional, authentication, and trust-policy paths", () => {
+  it("excludes administrative, transactional, commerce, trust, publisher-directory, and newsroom paths", () => {
     for (const path of [
       "/admin",
       "/api",
       "/auth",
-      "/shop/checkout",
+      "/shop",
+      "/product-offer",
       "/privacy",
       "/terms-of-service",
       "/return-refund-policy",
       "/shipping-policy",
       "/contact",
+      "/about",
+      "/editorial-standards",
+      "/authors",
+      "/sources",
+      "/news",
     ]) {
       expect(rootSource).toContain(`\"${path}\"`);
     }
   });
 
-  it("keeps newsroom and thin election detail records ad-free while preserving monetizable hubs", () => {
+  it("keeps thin election detail records ad-free while preserving monetizable election hubs", () => {
     expect(rootSource).toContain("ADSENSE_EXCLUDED_DETAIL_PATH_PREFIXES");
     for (const path of [
-      "/news/",
       "/elections/candidates/",
       "/elections/districts/",
       "/elections/races/",

@@ -21,8 +21,8 @@ export function BrandIdentity({ variant = "default" }: { variant?: "default" | "
         </p>
         <p className="mt-3 text-sm text-muted-foreground leading-relaxed max-w-3xl">
           We are a news publication — not a political action committee, campaign, or candidate organization. Our editors and
-          contributors produce daily reporting, commentary, and explainers focused on Texas government, elections, the economy,
-          the border, energy, and statewide developments, sourced from primary Texas records and verified before publication.
+          contributors publish reporting, commentary, and explainers focused on Texas government, elections, the economy,
+          the border, energy, and statewide developments, with source attribution and publication-quality checks appropriate to the material.
         </p>
       </div>
     </section>
