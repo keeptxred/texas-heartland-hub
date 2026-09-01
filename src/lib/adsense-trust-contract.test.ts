@@ -49,12 +49,13 @@ describe("AdSense document integration", () => {
     expect(rootSource).toContain("noindex");
   });
 
-  it("excludes administrative, transactional, authentication, trust, publisher-directory, and newsroom paths", () => {
+  it("excludes administrative, transactional, commerce, trust, publisher-directory, and newsroom paths", () => {
     for (const path of [
       "/admin",
       "/api",
       "/auth",
-      "/shop/checkout",
+      "/shop",
+      "/product-offer",
       "/privacy",
       "/terms-of-service",
       "/return-refund-policy",
