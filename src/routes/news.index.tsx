@@ -160,7 +160,7 @@ function NewsPage() {
         <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-primary">★ Newsroom</span>
         <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Texas Political News</h1>
         <p className="mt-3 text-muted-foreground max-w-2xl">
-          Independent conservative reporting on Texas politics, elections, government, law, the legislature, border security, energy, education, and tax policy. Updated every morning at 2:00 AM Central.
+          Independent conservative coverage of Texas politics, elections, government, law, the legislature, border security, energy, education, and tax policy, with source links and permanent reference context where available.
         </p>
         <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
           <Link to="/authors" className="text-primary hover:underline">Meet our authors &amp; desks →</Link>
