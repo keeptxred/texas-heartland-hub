@@ -32,9 +32,9 @@ const ADSENSE_EXCLUDED_PATH_PREFIXES = [
   "/editorial-standards",
   "/authors",
   "/sources",
+  "/news",
 ] as const;
 const ADSENSE_EXCLUDED_DETAIL_PATH_PREFIXES = [
-  "/news/",
   "/elections/candidates/",
   "/elections/districts/",
   "/elections/races/",
