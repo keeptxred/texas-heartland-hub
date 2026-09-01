@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "dlcc.org",
+    "sourceClass": "party-committee-candidate-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Democratic Legislative Campaign Committee candidate profile pages to corroborate current state-legislative candidate identity, district, campaign status, and discover downstream official campaign or candidate-supplied media sources. Do not approve or reuse DLCC-hosted imagery without item-level provenance plus an explicit reusable license, candidate/media permission, candidate-supplied newsroom basis, or another documented narrow editorial-identification basis.",
+    "searchHint": "site:dlcc.org/candidates Texas candidate name district official campaign portrait",
+    "notes": "New source class discovered September 1, 2026 while researching Julio Salinas (Texas House District 41). DLCC maintains current candidate profiles that can corroborate office and identity and bridge to stronger first-party portrait sources. Registered as discovery-only; it is not an automatic image-rights authority."
+  }
+]
