@@ -70,5 +70,50 @@
     "rightsRule": "Use TX3DNews candidate-profile pages to corroborate candidate identity and discover candidate-specific portraits or downstream official campaign sources. Do not approve or reuse hosted imagery unless the article or image metadata establishes candidate-supplied media, a reusable license, explicit permission, or another documented editorial permission basis.",
     "searchHint": "TX3DNews Meet the Candidates Texas House 2026 portrait campaign",
     "notes": "Discovered August 31, 2026. The current Meet the Candidates directory carries candidate-specific profiles and portraits including Dr. Fatima La'Juan Muse. Treat hosted imagery as discovery-only unless item-level provenance and permission are established."
+  },
+  {
+    "domain": "mindybumgarner.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Mindy Bumgarner's official Texas State Board of Education District 14 campaign website to verify candidate identity, office, campaign-controlled biography, official social links, and discover candidate-supplied portrait or media assets. Do not approve or reuse any image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Mindy Bumgarner Texas State Board of Education District 14 official campaign portrait media",
+    "notes": "Discovered August 31, 2026. The site identifies Mindy Bumgarner as the District 14 candidate and links the campaign's official Facebook profile. The currently indexed homepage imagery is campaign graphics/logo material rather than a verified portrait, so all images remain discovery-only until item-level candidate-specific portrait provenance is established."
+  },
+  {
+    "domain": "tcta.org",
+    "sourceClass": "teacher-association-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Classroom Teachers Association candidate pages to corroborate candidate identity, office sought, official website/social links, and discover candidate-specific portraits or downstream official sources. Do not approve or reuse TCTA-hosted images without item-level provenance plus a reusable license, explicit permission, candidate-supplied status, or another documented editorial permission basis.",
+    "searchHint": "site:tcta.org Texas 2026 candidate portrait official website Texas House State Board Education",
+    "notes": "Discovered August 31, 2026 as a high-yield candidate directory. Current pages exist for unresolved candidates including Rhett Rosenquest Smith (Texas House District 116), Scott Whitmarsh (Texas House District 131), and Mindy Bumgarner (SBOE District 14), and expose candidate identity plus official links. Treat hosted imagery as discovery-only unless rights are established at item level."
+  },
+  {
+    "domain": "hcgop.v-web.com",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the Harris County Republican Party 2026 candidate directory to corroborate current candidate identity, district, campaign websites, campaign email addresses, and phone contacts, and to discover downstream official portrait sources. Do not approve or reuse any party-hosted image without item-level provenance plus explicit reusable rights, candidate/campaign permission, or another documented editorial permission basis.",
+    "searchHint": "Harris County GOP 2026 candidates Texas House campaign website portrait",
+    "notes": "Discovered August 31, 2026. The directory is especially useful for unresolved Harris County Texas House candidates and currently lists Scott Whitmarsh (HD131), Kyle Harding (HD139), Laura Garcia DeLeon (HD140), Julie Hunt (HD141), Heidi Hall (HD142), Frank Salazar (HD143), David Flores (HD144), and Inocensia Moreno (HD145), with campaign contact or website data where available."
+  },
+  {
+    "domain": "houstonvotersguide.org",
+    "sourceClass": "league-of-women-voters-voter-guide",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the League of Women Voters of Houston voter guide to corroborate candidate participation, office, district, and party status and to discover downstream official candidate sources. Do not approve or reuse guide-hosted imagery without item-level provenance plus a reusable license, explicit permission, candidate-supplied status, or another documented editorial permission basis.",
+    "searchHint": "Houston Voters Guide 2026 candidate Texas House official campaign portrait",
+    "notes": "Discovered August 31, 2026. The current guide corroborates multiple unresolved Harris County general-election candidates including Scott Whitmarsh, Kyle Harding, Laura Garcia DeLeon, Julie Hunt, Heidi Hall, Frank Salazar, David Flores, and Inocensia Moreno. It is an eligibility/identity and downstream-discovery source, not an automatic image-rights source."
+  },
+  {
+    "domain": "crosstimbersgazette.com",
+    "sourceClass": "local-news-candidate-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Cross Timbers Gazette candidate announcements and profiles to corroborate candidate identity, office, campaign statements, and official campaign websites, and to discover candidate-supplied media when explicitly identified as such. Do not approve or reuse newsroom images without item-level provenance plus a documented candidate-supplied status, reusable license, explicit permission, or another editorial permission basis.",
+    "searchHint": "Cross Timbers Gazette 2026 Texas candidate portrait campaign website",
+    "notes": "Discovered August 31, 2026 through its September 2, 2025 Mindy Bumgarner SBOE District 14 candidacy announcement, which links MindyBumgarner.com. Treat images as discovery-only unless the article or asset establishes candidate-supplied or otherwise reusable provenance."
   }
 ]
