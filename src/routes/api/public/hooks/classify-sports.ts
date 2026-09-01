@@ -55,7 +55,7 @@ async function handler() {
   const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   const { data, error } = await supabaseAdmin
     .from("daily_articles")
-    .select("slug,title,dek,body,category,kind,discover_category,teams,keywords,seo_keywords,published_at")
+    .select("slug,title,dek,body,category,kind,discover_category,teams,keywords,seo_keywords,published_at,quality_flags")
     .gte("published_at", since)
     .order("published_at", { ascending: false })
     .limit(500);
@@ -66,6 +66,31 @@ async function handler() {
   let teamTagged = 0;
   const changes: Array<{ slug: string; action: "classified" | "cleaned"; kind: string; teams: string[] }> = [];
   for (const row of data ?? []) {
+    const flags = Array.isArray(row.quality_flags) ? row.quality_flags : [];
+    const normalizedCategory = (row.category ?? "").trim().toLowerCase();
+    const lockedNonSports = flags.includes("taxonomy_locked")
+      && Boolean(normalizedCategory)
+      && !GENERIC_OR_SPORTS_CATEGORIES.has(normalizedCategory);
+
+    if (lockedNonSports) {
+      if (!hasSportsMetadata(row)) continue;
+      const restoredKind = flags.includes("evergreen_authority")
+        ? "evergreen"
+        : (/^sports-/i.test(row.kind ?? "") ? "news" : (row.kind ?? "news"));
+      const update = {
+        kind: restoredKind,
+        category: row.category,
+        discover_category: null,
+        teams: [] as string[],
+        keywords: cleanedKeywords(row.keywords),
+      };
+      const { error: updateError } = await supabaseAdmin.from("daily_articles").update(update).eq("slug", row.slug);
+      if (updateError) continue;
+      cleaned++;
+      changes.push({ slug: row.slug, action: "cleaned", kind: restoredKind, teams: [] });
+      continue;
+    }
+
     const text = editorialIdentityText(row);
     const classification = classifySportsText(text);
     const texasNamed = /\btexas\b/i.test(text);
