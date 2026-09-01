@@ -34,8 +34,12 @@ describe("public article readiness floor", () => {
     expect(isPublicArticleReady({ ...base, category: "Business", discover_category: "Texas Business" })).toBe(true);
   });
 
-  it("blocks low-quality and source-less rows", () => {
-    expect(isPublicArticleReady({ ...base, content_quality_score: 59 })).toBe(false);
+  it("blocks content below the AdSense review floor and allows the boundary score", () => {
+    expect(isPublicArticleReady({ ...base, content_quality_score: 64 })).toBe(false);
+    expect(isPublicArticleReady({ ...base, content_quality_score: 65 })).toBe(true);
+  });
+
+  it("blocks source-less rows", () => {
     expect(isPublicArticleReady({ ...base, source_url: null, body_json: { updated: base.published_at, sources: [] } })).toBe(false);
   });
 

@@ -29,7 +29,12 @@ const ADSENSE_EXCLUDED_PATH_PREFIXES = [
   "/shipping-policy",
   "/contact",
 ] as const;
-const ADSENSE_BOOTSTRAP = `(function(){var p=location.pathname;var x=${JSON.stringify(ADSENSE_EXCLUDED_PATH_PREFIXES)};var excluded=x.some(function(prefix){return p===prefix||p.indexOf(prefix+'/')===0;});var noindex=Array.prototype.some.call(document.querySelectorAll('meta[name="robots"]'),function(m){return /(?:^|[,\\s])noindex(?:$|[,\\s])/i.test(m.content||'');});if(excluded||noindex)return;var s=document.createElement('script');s.async=true;s.crossOrigin='anonymous';s.src='${ADSENSE_SCRIPT}';s.setAttribute('data-adsense-gated','true');document.head.appendChild(s);}());`;
+const ADSENSE_EXCLUDED_DETAIL_PATH_PREFIXES = [
+  "/elections/candidates/",
+  "/elections/districts/",
+  "/elections/races/",
+] as const;
+const ADSENSE_BOOTSTRAP = `(function(){var p=location.pathname;var x=${JSON.stringify(ADSENSE_EXCLUDED_PATH_PREFIXES)};var d=${JSON.stringify(ADSENSE_EXCLUDED_DETAIL_PATH_PREFIXES)};var excluded=x.some(function(prefix){return p===prefix||p.indexOf(prefix+'/')===0;})||d.some(function(prefix){return p.indexOf(prefix)===0;});var noindex=Array.prototype.some.call(document.querySelectorAll('meta[name="robots"]'),function(m){return /(?:^|[,\\s])noindex(?:$|[,\\s])/i.test(m.content||'');});if(excluded||noindex)return;var s=document.createElement('script');s.async=true;s.crossOrigin='anonymous';s.src='${ADSENSE_SCRIPT}';s.setAttribute('data-adsense-gated','true');document.head.appendChild(s);}());`;
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);

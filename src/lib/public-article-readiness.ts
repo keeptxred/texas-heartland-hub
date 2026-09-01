@@ -33,6 +33,9 @@ const TEXASDEFINED_DISCOVER_CATEGORIES = new Set([
   "texas history",
 ]);
 
+/** Conservative public/indexability floor while preparing for AdSense review. */
+const MIN_PUBLIC_CONTENT_QUALITY_SCORE = 65;
+
 /**
  * Discovery/UGC hosts can help editors find a story, but they are not sufficient
  * provenance for an indexable KeepTXRed article on their own. In particular,
@@ -96,7 +99,7 @@ export function isPublicArticleReady(article: PublicArticleCandidate): boolean {
   if (hasSeoDuplicateFlag(article.quality_flags)) return false;
   if ((article.category ?? "").trim().toLowerCase() === "non-political") return false;
   if (isTexasDefinedDiscoverCategory(article.discover_category)) return false;
-  if ((article.content_quality_score ?? 0) < 60) return false;
+  if ((article.content_quality_score ?? 0) < MIN_PUBLIC_CONTENT_QUALITY_SCORE) return false;
 
   const sourceRefs = sourceReferenceCount(article.body_json);
   if (!article.source_url && sourceRefs === 0) return false;

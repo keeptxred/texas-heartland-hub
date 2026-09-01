@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { AUTHORS, EDITORIAL_BYLINE_DISCLOSURE } from "@/data/authors";
 
 const rootSource = fs.readFileSync(new URL("../routes/__root.tsx", import.meta.url), "utf8");
+const adSlotSource = fs.readFileSync(new URL("../components/ad-slot.tsx", import.meta.url), "utf8");
 const authorsIndexSource = fs.readFileSync(new URL("../routes/authors.index.tsx", import.meta.url), "utf8");
 const authorProfileSource = fs.readFileSync(new URL("../routes/authors.$slug.tsx", import.meta.url), "utf8");
 
@@ -55,6 +56,23 @@ describe("AdSense document integration", () => {
     ]) {
       expect(rootSource).toContain(`\"${path}\"`);
     }
+  });
+
+  it("keeps thin election detail records ad-free while preserving monetizable election hubs", () => {
+    expect(rootSource).toContain("ADSENSE_EXCLUDED_DETAIL_PATH_PREFIXES");
+    for (const path of [
+      "/elections/candidates/",
+      "/elections/districts/",
+      "/elections/races/",
+    ]) {
+      expect(rootSource).toContain(`\"${path}\"`);
+    }
+    expect(rootSource).toContain("d.some(function(prefix){return p.indexOf(prefix)===0;})");
+  });
+
+  it("does not expose unfinished ad-placeholder copy to readers or reviewers", () => {
+    expect(adSlotSource).not.toContain("Ad Placeholder");
+    expect(adSlotSource).toContain("return null");
   });
 
   it("injects the AdSense network script only after eligibility checks pass", () => {
