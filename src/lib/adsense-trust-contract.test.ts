@@ -49,7 +49,7 @@ describe("AdSense document integration", () => {
     expect(rootSource).toContain("noindex");
   });
 
-  it("excludes administrative, transactional, authentication, trust, and publisher-directory paths", () => {
+  it("excludes administrative, transactional, authentication, trust, publisher-directory, and newsroom paths", () => {
     for (const path of [
       "/admin",
       "/api",
@@ -64,15 +64,15 @@ describe("AdSense document integration", () => {
       "/editorial-standards",
       "/authors",
       "/sources",
+      "/news",
     ]) {
       expect(rootSource).toContain(`\"${path}\"`);
     }
   });
 
-  it("keeps newsroom and thin election detail records ad-free while preserving monetizable hubs", () => {
+  it("keeps thin election detail records ad-free while preserving monetizable election hubs", () => {
     expect(rootSource).toContain("ADSENSE_EXCLUDED_DETAIL_PATH_PREFIXES");
     for (const path of [
-      "/news/",
       "/elections/candidates/",
       "/elections/districts/",
       "/elections/races/",
