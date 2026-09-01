@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isPublicArticleReady } from "@/lib/public-article-readiness";
+import { duplicateParagraphOccurrences, isPublicArticleReady } from "@/lib/public-article-readiness";
 
 const base = {
   category: "Legislature",
@@ -37,6 +37,29 @@ describe("public article readiness floor", () => {
   it("blocks content below the AdSense review floor and allows the boundary score", () => {
     expect(isPublicArticleReady({ ...base, content_quality_score: 64 })).toBe(false);
     expect(isPublicArticleReady({ ...base, content_quality_score: 65 })).toBe(true);
+  });
+
+  it("blocks machine-like internal paragraph repetition", () => {
+    const repeated = "This substantive paragraph is intentionally long enough to represent a real article paragraph and is duplicated several times to model machine generated filler during an AdSense quality review.";
+    const body_json = {
+      ...base.body_json,
+      sections: [
+        { heading: "One", paragraphs: [repeated, repeated, repeated] },
+        { heading: "Two", paragraphs: [repeated] },
+      ],
+    };
+    expect(duplicateParagraphOccurrences(body_json)).toBe(3);
+    expect(isPublicArticleReady({ ...base, body_json })).toBe(false);
+  });
+
+  it("does not penalize one accidental repeated substantive paragraph", () => {
+    const repeated = "This substantive paragraph is intentionally long enough to represent a real article paragraph and appears twice without turning the whole article into repetitive filler.";
+    const body_json = {
+      ...base.body_json,
+      sections: [{ heading: "One", paragraphs: [repeated, repeated] }],
+    };
+    expect(duplicateParagraphOccurrences(body_json)).toBe(1);
+    expect(isPublicArticleReady({ ...base, body_json })).toBe(true);
   });
 
   it("blocks source-less rows", () => {

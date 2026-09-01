@@ -15,9 +15,14 @@ type SourceShape = {
   url?: unknown;
 };
 
+type SectionShape = {
+  paragraphs?: unknown;
+};
+
 type BodyShape = {
   updated?: unknown;
   sources?: unknown;
+  sections?: unknown;
 };
 
 /**
@@ -35,6 +40,8 @@ const TEXASDEFINED_DISCOVER_CATEGORIES = new Set([
 
 /** Conservative public/indexability floor while preparing for AdSense review. */
 const MIN_PUBLIC_CONTENT_QUALITY_SCORE = 65;
+const MIN_REPETITION_PARAGRAPH_CHARS = 120;
+const MAX_DUPLICATE_PARAGRAPH_OCCURRENCES = 2;
 
 /**
  * Discovery/UGC hosts can help editors find a story, but they are not sufficient
@@ -85,6 +92,33 @@ function sourceReferenceCount(bodyJson: unknown): number {
   return Array.isArray(sources) ? sources.length : 0;
 }
 
+function normalizedParagraph(value: unknown): string {
+  if (typeof value !== "string") return "";
+  return value.trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+export function duplicateParagraphOccurrences(bodyJson: unknown): number {
+  if (!bodyJson || typeof bodyJson !== "object") return 0;
+  const sections = (bodyJson as BodyShape).sections;
+  if (!Array.isArray(sections)) return 0;
+
+  const counts = new Map<string, number>();
+  for (const section of sections) {
+    if (!section || typeof section !== "object") continue;
+    const paragraphs = (section as SectionShape).paragraphs;
+    if (!Array.isArray(paragraphs)) continue;
+    for (const paragraph of paragraphs) {
+      const normalized = normalizedParagraph(paragraph);
+      if (normalized.length < MIN_REPETITION_PARAGRAPH_CHARS) continue;
+      counts.set(normalized, (counts.get(normalized) ?? 0) + 1);
+    }
+  }
+
+  let duplicates = 0;
+  for (const count of counts.values()) duplicates += Math.max(0, count - 1);
+  return duplicates;
+}
+
 function validDate(value: unknown): number | null {
   if (typeof value !== "string" || !value.trim()) return null;
   const parsed = Date.parse(value);
@@ -100,6 +134,7 @@ export function isPublicArticleReady(article: PublicArticleCandidate): boolean {
   if ((article.category ?? "").trim().toLowerCase() === "non-political") return false;
   if (isTexasDefinedDiscoverCategory(article.discover_category)) return false;
   if ((article.content_quality_score ?? 0) < MIN_PUBLIC_CONTENT_QUALITY_SCORE) return false;
+  if (duplicateParagraphOccurrences(article.body_json) > MAX_DUPLICATE_PARAGRAPH_OCCURRENCES) return false;
 
   const sourceRefs = sourceReferenceCount(article.body_json);
   if (!article.source_url && sourceRefs === 0) return false;
