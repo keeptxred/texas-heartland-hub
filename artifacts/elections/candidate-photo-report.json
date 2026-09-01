@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-08-31T08:52:00.668Z",
+  "generatedAt": "2026-09-01T03:45:40.639Z",
   "candidateCount": 491,
   "eligibleCandidateCount": 479,
   "excludedCandidateCount": 12,
-  "approvedPhotoCount": 340,
-  "missingPhotoCount": 139,
-  "manifestEntryCount": 340,
-  "coverage": 0.7098121085594989,
-  "coveragePercent": 70.98,
+  "approvedPhotoCount": 343,
+  "missingPhotoCount": 136,
+  "manifestEntryCount": 343,
+  "coverage": 0.7160751565762005,
+  "coveragePercent": 71.61,
   "targetCoverage": 0.85,
   "targetApprovedPhotoCount": 408,
-  "photosNeededForTarget": 68,
+  "photosNeededForTarget": 65,
   "targetMet": false,
   "errors": [],
   "warnings": [],
@@ -252,23 +252,9 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-theodis-daniel-republican-race-2026-texas-house-147",
-      "name": "THEODIS DANIEL",
-      "raceId": "race-2026-texas-house-147",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-tom-luck-democratic-race-2026-texas-house-19",
       "name": "TOM LUCK",
       "raceId": "race-2026-texas-house-19",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-fatima-la-juan-muse-democratic-race-2026-texas-house-2",
-      "name": "FATIMA LA'JUAN MUSE",
-      "raceId": "race-2026-texas-house-2",
       "party": "democratic",
       "priority": "standard"
     },
@@ -312,13 +298,6 @@
       "name": "OSCAR ROSA",
       "raceId": "race-2026-texas-house-35",
       "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-oziel-ozzie-ochoa-jr-democratic-race-2026-texas-house-37",
-      "name": "OZIEL 'OZZIE' OCHOA, JR",
-      "raceId": "race-2026-texas-house-37",
-      "party": "democratic",
       "priority": "standard"
     },
     {

@@ -1448,6 +1448,18 @@
     "discoveredAt": "2026-08-22T12:06:46.662Z"
   },
   {
+    "candidateId": "candidate-fatima-la-juan-muse-democratic-race-2026-texas-house-2",
+    "imageUrl": "https://i0.wp.com/tx3dnews.com/wp-content/uploads/2026/08/fatima-headshot.webp?ssl=1&w=1110",
+    "sourceUrl": "https://tx3dnews.com/candidate-profile-fatima-lajuan-muse-texas-hd2/",
+    "altText": "Campaign headshot of Dr. Fatima La'Juan Muse, Democratic candidate for Texas House District 2",
+    "credit": "Dr. Fatima La'Juan Muse campaign via TX3DNews",
+    "license": null,
+    "permissionBasis": "TX3DNews's August 24, 2026 candidate profile identifies Dr. Fatima La'Juan Muse as the Democratic candidate for Texas House District 2, labels this exact image as a campaign headshot, and states 'Photo: Submitted by the campaign.' The page further states that the candidate-submitted information was provided to TX3DNews for its 2025–2026 election coverage. Used only for narrow editorial candidate identification with exact newsroom attribution and source link; no broader reuse license is asserted.",
+    "usageStatus": "approved",
+    "discoveryMethod": "candidate-supplied-newsroom-profile",
+    "discoveredAt": "2026-08-31T22:45:00.000-05:00"
+  },
+  {
     "candidateId": "candidate-frederick-d-haynes-iii-democratic-race-2026-us-house-30",
     "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Frederick_Haynes_III_at_Calvary_Baptist_Church_%28cropped%29.png",
     "sourceUrl": "https://commons.wikimedia.org/wiki/File:Frederick_Haynes_III_at_Calvary_Baptist_Church_(cropped).png",
@@ -2978,6 +2990,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-oziel-ozzie-ochoa-jr-democratic-race-2026-texas-house-37",
+    "imageUrl": "https://static.wixstatic.com/media/99076a_b3ff6e870234429ea80dc5260936d2df~mv2.jpg/v1/crop/x_90%2Cy_0%2Cw_1821%2Ch_1766/fill/w_528%2Ch_499%2Cal_c%2Cq_80%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/006A0806_edited_edited.jpg",
+    "sourceUrl": "https://www.ochoafortx37.com/meet-ozzie",
+    "altText": "Oziel Ozzie Ochoa Jr., Democratic candidate for Texas House District 37",
+    "credit": "Ochoa for Texas House District 37 campaign",
+    "license": null,
+    "permissionBasis": "Oziel 'Ozzie' Ochoa Jr.'s official campaign biography identifies him as running for Texas House District 37 and publishes this candidate-specific photograph directly within the Meet Ozzie biography, immediately before the section describing his Rio Grande Valley background. Used only for editorial candidate identification with exact official-campaign attribution and source link; no broader reuse license is asserted.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-biography",
+    "discoveredAt": "2026-08-31T10:32:00.000Z"
+  },
+  {
     "candidateId": "candidate-pat-curry-republican-race-2026-texas-house-56",
     "imageUrl": "https://house.texas.gov/images/members/4415.jpg?v=2",
     "sourceUrl": "https://house.texas.gov/members/56",
@@ -3640,6 +3664,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:52:24.552Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-theodis-daniel-republican-race-2026-texas-house-147",
+    "imageUrl": "https://www.prlog.org/13108374-theodis-daniel-united-states-navy-veteran.jpg",
+    "sourceUrl": "https://www.prlog.org/13108374-statement-from-the-campaign-of-theodis-daniel-republican-for-us-congress-tx-18.html",
+    "altText": "Theodis Daniel, Republican candidate for Texas House District 147",
+    "credit": "Theodis Daniel campaign / Noble Marketing press materials via PRLog",
+    "license": null,
+    "permissionBasis": "The candidate campaign's October 31, 2025 press release identifies Theodis Daniel, provides a campaign media contact, and explicitly publishes a numbered Photos section including this candidate-specific portrait labeled 'Theodis Daniel United States Navy Veteran'. The same candidate now campaigns at theodisfortexas.com for Texas House District 147. Used narrowly for editorial candidate identification with exact campaign-press attribution and source link; no broader reuse license is asserted.",
+    "usageStatus": "approved",
+    "discoveryMethod": "campaign-press-release-media",
+    "discoveredAt": "2026-08-31T12:48:00.000Z"
   },
   {
     "candidateId": "candidate-theodore-schramm-republican-race-2026-texas-house-136",
