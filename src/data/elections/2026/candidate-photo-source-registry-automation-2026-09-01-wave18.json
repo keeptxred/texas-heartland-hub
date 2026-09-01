@@ -18,13 +18,31 @@
     "notes": "Discovered September 1, 2026. The official campaign site identifies Bumgarner as running for SBOE District 14. Two directly inspected campaign-hosted images were a campaign education graphic and campaign logo, not candidate portraits, and were explicitly rejected from portrait use."
   },
   {
+    "domain": "garyfortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Gary Groves's official Texas House District 41 campaign website to verify candidate identity, office, biography, and discover candidate-specific portrait/media assets. Do not auto-approve any page image; distinguish candidate portraits from endorsement graphics, event photos, logos, campaign signs, and social-share art, and require item-level provenance plus a documented editorial-identification or reusable-rights basis before use.",
+    "searchHint": "Gary Groves Texas House District 41 official campaign portrait media",
+    "notes": "Discovered September 1, 2026 through the current TCTA candidate profile, which links garyfortexas.com as Groves's campaign site. The campaign site contains a current candidate biography and candidate imagery, making it a high-value discovery target, but no image was promoted without item-level rights verification."
+  },
+  {
+    "domain": "teresafortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Teresa Johnson-Hernandez's official Texas House District 42 campaign website to verify candidate identity, office, biography, and discover candidate-specific portrait/media assets. Do not auto-approve any imagery; require candidate-specific item-level provenance and a documented editorial-identification basis, explicit campaign/media permission, reusable license, or another supported rights basis before use.",
+    "searchHint": "Teresa Johnson-Hernandez Texas House District 42 official campaign portrait media",
+    "notes": "Discovered September 1, 2026 through the current TCTA candidate profile, which identifies her as the Republican candidate for House District 42 and links teresafortexas.com as the campaign website. Treat all imagery as discovery-only until item-level rights are established."
+  },
+  {
     "domain": "tcta.org",
     "sourceClass": "texas-education-candidate-directory",
     "discoveryStatus": "active",
     "autoApprove": false,
     "rightsRule": "Use Texas Classroom Teachers Association TexasTeachersVote candidate pages to corroborate candidate identity, office, campaign websites, social profiles, and discover candidate-specific imagery. Do not reuse TCTA-hosted imagery without item-level provenance plus a reusable license, explicit permission, candidate-supplied attribution, or another documented editorial permission basis.",
     "searchHint": "site:tcta.org TexasTeachersVote 2026 candidate portrait official campaign",
-    "notes": "Discovered September 1, 2026 as a broad current candidate directory. It exposes dedicated profiles for unresolved candidates including Michelle Palmer, Mindy Bumgarner, and Rhett Rosenquest Smith and links downstream campaign/social sources. Treat as a discovery bridge unless image rights are established at item level."
+    "notes": "Discovered September 1, 2026 as a broad current candidate directory. It exposes dedicated profiles for unresolved candidates including Michelle Palmer, Mindy Bumgarner, Rhett Rosenquest Smith, Gary Groves, and Teresa Johnson-Hernandez and links downstream campaign/social sources. Treat as a discovery bridge unless image rights are established at item level."
   },
   {
     "domain": "transparencyusa.org",
@@ -33,6 +51,6 @@
     "autoApprove": false,
     "rightsRule": "Use Transparency USA candidate and race pages to corroborate current office sought, party, ballot status signals, candidate committee identity, and discover downstream official campaign sources. Do not reuse hosted imagery without item-level provenance plus a reusable license, explicit permission, candidate-supplied attribution, or another documented editorial permission basis.",
     "searchHint": "site:transparencyusa.org Texas 2026 candidate official campaign portrait",
-    "notes": "Discovered September 1, 2026. Current pages corroborate 2026 candidacies including Michelle Palmer, Mindy Bumgarner, and Rhett Rosenquest Smith. This is a discovery/corroboration source, not an automatic image-rights source and not a substitute for authoritative filing status."
+    "notes": "Discovered September 1, 2026. Current pages corroborate 2026 candidacies including Michelle Palmer, Mindy Bumgarner, Rhett Rosenquest Smith, and Gary Groves. This is a discovery/corroboration source, not an automatic image-rights source and not a substitute for authoritative filing status."
   }
 ]
