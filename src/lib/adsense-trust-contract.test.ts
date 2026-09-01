@@ -7,6 +7,7 @@ const adSlotSource = fs.readFileSync(new URL("../components/ad-slot.tsx", import
 const siteNotFoundSource = fs.readFileSync(new URL("../components/site-not-found.tsx", import.meta.url), "utf8");
 const authorsIndexSource = fs.readFileSync(new URL("../routes/authors.index.tsx", import.meta.url), "utf8");
 const authorProfileSource = fs.readFileSync(new URL("../routes/authors.$slug.tsx", import.meta.url), "utf8");
+const aboutSource = fs.readFileSync(new URL("../routes/about.tsx", import.meta.url), "utf8");
 
 describe("publisher identity trust contract", () => {
   it("discloses that desk and bureau names are organizational editorial bylines", () => {
@@ -27,6 +28,11 @@ describe("publisher identity trust contract", () => {
       const author = AUTHORS.find((candidate) => candidate.slug === slug);
       expect(author?.bio.join(" ")).toMatch(/does not represent a claimed physical/i);
     }
+  });
+
+  it("does not claim automated validation is human editorial review", () => {
+    expect(aboutSource).not.toContain("AI-assisted work is reviewed before publication");
+    expect(aboutSource).toContain("Automated validation is not represented as human editorial review");
   });
 });
 
