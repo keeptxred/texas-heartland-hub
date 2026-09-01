@@ -49,7 +49,7 @@ describe("AdSense document integration", () => {
     expect(rootSource).toContain("noindex");
   });
 
-  it("excludes administrative, transactional, authentication, and trust-policy paths", () => {
+  it("excludes administrative, transactional, authentication, trust, and publisher-directory paths", () => {
     for (const path of [
       "/admin",
       "/api",
@@ -60,6 +60,10 @@ describe("AdSense document integration", () => {
       "/return-refund-policy",
       "/shipping-policy",
       "/contact",
+      "/about",
+      "/editorial-standards",
+      "/authors",
+      "/sources",
     ]) {
       expect(rootSource).toContain(`\"${path}\"`);
     }
