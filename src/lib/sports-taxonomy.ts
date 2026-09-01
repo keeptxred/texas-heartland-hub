@@ -32,6 +32,8 @@ const TEXAS_AM_BRANCH_CAMPUS = /\b(?:texas a&m[-–— ](?:texarkana|corpus chri
 const STRONG_SPORTS_POLICY_CONTEXT = /\b(sports betting|sportsbook|stadium financing|athletic spending|college athlete compensation)\b/i;
 const GENERIC_SPORTS_CONTEXT = /\b(sports?|athletics)\b/i;
 const INCIDENTAL_MEDIA_TICKET_CONTEXT = /\b(anchor|journalis(?:m|t|ts)|reporting|news station|station)\b[\s\S]{0,180}\b(?:complimentary|free)?\s*tickets?\b|\b(?:complimentary|free)?\s*tickets?\b[\s\S]{0,180}\b(anchor|journalis(?:m|t|ts)|reporting|news station|station)\b/i;
+const RANGERS_LAW_ENFORCEMENT_CONTEXT = /\b(law enforcement|police|sheriff|constable|dps|department of public safety|state police|trooper|criminal investigation|investigator|public safety|game warden|peace officer)\b/i;
+const RANGERS_BASEBALL_CONTEXT = /\b(baseball|mlb|major league baseball|pitcher|home run|homer|bullpen|inning|innings|al west|american league|ballpark|world series|lineup|batting|de[gG]rom)\b/i;
 const SAFE_STANDALONE_TOPICS = new Set<SportsTopicSlug>(["football", "baseball", "basketball", "hockey", "soccer", "college", "nil", "motorsports", "postseason"]);
 
 function includesPhrase(text: string, phrase: string): boolean {
@@ -41,7 +43,10 @@ function includesPhrase(text: string, phrase: string): boolean {
 function filterTeamMentions(text: string, slugs: string[]): string[] {
   return slugs.filter((slug) => {
     const team = TEAM_BY_SLUG[slug];
-    if (!team || team.kind !== "college") return true;
+    if (!team || team.kind !== "college") {
+      if (slug === "rangers" && RANGERS_LAW_ENFORCEMENT_CONTEXT.test(text) && !RANGERS_BASEBALL_CONTEXT.test(text)) return false;
+      return true;
+    }
     if (slug === "texas-am" && TEXAS_AM_BRANCH_CAMPUS.test(text)) return false;
     return COLLEGE_SPORTS_CONTEXT.test(text);
   });
