@@ -1,0 +1,38 @@
+[
+  {
+    "domain": "palmerfortexased.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Michelle Palmer's official State Board of Education District 6 campaign website to verify candidate identity, office, biography, and discover candidate-supplied portrait or media assets. Do not auto-approve imagery; require item-level provenance and a documented editorial-identification basis, explicit campaign/media permission, reusable license, or another supported rights basis before use.",
+    "searchHint": "Michelle Palmer Texas State Board of Education District 6 official campaign portrait media",
+    "notes": "Discovered September 1, 2026. ATPE and TCTA both link palmerfortexased.com as Michelle Palmer's campaign website for the 2026 SBOE District 6 race. The site is a strong identity and downstream media-discovery source, but no campaign-hosted portrait with a documented reuse basis was confirmed in this pass."
+  },
+  {
+    "domain": "mindybumgarner.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Mindy Bumgarner's official State Board of Education District 14 campaign website to verify candidate identity, office, biography, and discover candidate-supplied portrait or media assets. Reject campaign logos, education-themed graphics, Open Graph art, and other non-candidate imagery; require item-level portrait provenance and a documented editorial-identification basis, explicit campaign/media permission, reusable license, or another supported rights basis before use.",
+    "searchHint": "Mindy Bumgarner Texas State Board of Education District 14 official campaign portrait media",
+    "notes": "Discovered September 1, 2026. The official campaign site identifies Bumgarner as running for SBOE District 14. Two directly inspected campaign-hosted images were a campaign education graphic and campaign logo, not candidate portraits, and were explicitly rejected from portrait use."
+  },
+  {
+    "domain": "tcta.org",
+    "sourceClass": "texas-education-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Classroom Teachers Association TexasTeachersVote candidate pages to corroborate candidate identity, office, campaign websites, social profiles, and discover candidate-specific imagery. Do not reuse TCTA-hosted imagery without item-level provenance plus a reusable license, explicit permission, candidate-supplied attribution, or another documented editorial permission basis.",
+    "searchHint": "site:tcta.org TexasTeachersVote 2026 candidate portrait official campaign",
+    "notes": "Discovered September 1, 2026 as a broad current candidate directory. It exposes dedicated profiles for unresolved candidates including Michelle Palmer, Mindy Bumgarner, and Rhett Rosenquest Smith and links downstream campaign/social sources. Treat as a discovery bridge unless image rights are established at item level."
+  },
+  {
+    "domain": "transparencyusa.org",
+    "sourceClass": "campaign-finance-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Transparency USA candidate and race pages to corroborate current office sought, party, ballot status signals, candidate committee identity, and discover downstream official campaign sources. Do not reuse hosted imagery without item-level provenance plus a reusable license, explicit permission, candidate-supplied attribution, or another documented editorial permission basis.",
+    "searchHint": "site:transparencyusa.org Texas 2026 candidate official campaign portrait",
+    "notes": "Discovered September 1, 2026. Current pages corroborate 2026 candidacies including Michelle Palmer, Mindy Bumgarner, and Rhett Rosenquest Smith. This is a discovery/corroboration source, not an automatic image-rights source and not a substitute for authoritative filing status."
+  }
+]
