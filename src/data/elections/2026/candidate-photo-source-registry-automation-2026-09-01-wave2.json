@@ -1,0 +1,47 @@
+[
+  {
+    "domain": "votemuse.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Dr. Fatima La'Juan Muse's official Texas House District 2 campaign website to verify candidate identity, candidacy, biography, and discover candidate-supplied portraits or campaign media. Do not approve or reuse any site image without item-level provenance plus explicit reusable rights, candidate/campaign permission, media permission, or another documented editorial permission basis.",
+    "searchHint": "Fatima La'Juan Muse Texas House District 2 official campaign portrait media",
+    "notes": "New current official campaign source discovered September 1, 2026. The site is paid for by Muse for TX HD 2 and identifies Fatima La'Juan Muse as the District 2 candidate. It contains candidate and district photo surfaces useful for item-level portrait discovery, but remains discovery-only until provenance and reuse basis are established."
+  },
+  {
+    "domain": "ivoterguide.com",
+    "sourceClass": "election-voter-guide-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use iVoterGuide race and candidate pages to corroborate current candidate identity, party, office sought, and discover downstream official campaign or candidate-linked portrait sources. Do not approve or reuse iVoterGuide-hosted images without item-level provenance plus a reusable license, candidate/media permission, or another documented editorial permission basis.",
+    "searchHint": "site:ivoterguide.com Texas 2026 candidate portrait",
+    "notes": "New discovery source identified September 1, 2026 while researching missing-photo candidates. Current general-election pages expose candidate-specific portrait leads for Rhett Rosenquest Smith, Fatima La'Juan Muse, Mindy Bumgarner, Crystal Sedillo, and many other Texas candidates. Treat hosted imagery as discovery-only absent item-level rights."
+  },
+  {
+    "domain": "vote-usa.org",
+    "sourceClass": "election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Vote-USA Texas election and candidate pages to corroborate candidate identity, office, linked campaign websites, and discover candidate-specific portrait leads. Do not approve or reuse Vote-USA-hosted images without item-level provenance plus an explicit reusable license, candidate/media permission, or another documented editorial permission basis.",
+    "searchHint": "site:vote-usa.org 2026 Texas candidate campaign portrait",
+    "notes": "New discovery source identified September 1, 2026. Current Texas general-election pages list candidates such as Mindy Bumgarner and link official campaign websites while displaying candidate image leads. Use as a discovery bridge only unless image rights are separately established."
+  },
+  {
+    "domain": "tx3dnews.com",
+    "sourceClass": "local-news-candidate-profile-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use TX3DNews candidate profile pages to corroborate candidate identity, biography, district, and discover candidate-supplied or downstream official portrait sources. Do not approve or reuse newsroom-hosted imagery without candidate-supplied provenance, a reusable license, newsroom/media permission, or another documented editorial permission basis.",
+    "searchHint": "site:tx3dnews.com/elections Texas candidate portrait 2026",
+    "notes": "New discovery source identified September 1, 2026. Its current candidate directory includes Fatima La'Juan Muse, Angie Carraway, Brittany Black, Sandeep Srivastava and other Texas candidates with candidate-specific image leads. Treat newsroom imagery as discovery-only until item-level provenance and permission basis are verified."
+  },
+  {
+    "domain": "bluevoterguide.org",
+    "sourceClass": "endorsement-voter-guide-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Blue Voter Guide Texas endorsement and candidate-list pages to corroborate candidate identity, district, and discover downstream official campaign, endorser, or candidate-linked portrait sources. Do not approve or reuse Blue Voter Guide-hosted imagery without item-level provenance plus a reusable license, candidate/media permission, or another documented editorial permission basis.",
+    "searchHint": "site:bluevoterguide.org Texas 2026 candidate portrait",
+    "notes": "New discovery bridge identified September 1, 2026. Current Texas endorsement pages expose candidate-specific image leads for Crystal Sedillo, Fatima La'Juan Muse, JJ Dominguez, Orlando Lopez, Stephanie Saenz, Oziel Ochoa Jr., and others. Hosted images remain discovery-only absent item-level rights."
+  }
+]
