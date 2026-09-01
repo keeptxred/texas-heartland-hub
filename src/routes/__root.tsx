@@ -28,6 +28,10 @@ const ADSENSE_EXCLUDED_PATH_PREFIXES = [
   "/return-refund-policy",
   "/shipping-policy",
   "/contact",
+  "/about",
+  "/editorial-standards",
+  "/authors",
+  "/sources",
 ] as const;
 const ADSENSE_EXCLUDED_DETAIL_PATH_PREFIXES = [
   "/news/",
