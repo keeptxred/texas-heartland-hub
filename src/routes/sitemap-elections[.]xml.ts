@@ -21,6 +21,9 @@ const PRIORITY_ELECTION_PATHS = [
   "/elections/forecast",
   "/elections/results",
   "/elections/voting",
+  "/elections/voting/polling-hours",
+  "/elections/voting/voter-registration-card",
+  "/elections/voting/polling-place",
   "/elections/methodology",
 ] as const;
 
