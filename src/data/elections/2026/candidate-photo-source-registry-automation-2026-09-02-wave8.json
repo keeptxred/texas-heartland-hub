@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "thegreenpapers.com",
+    "sourceClass": "election-status-and-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use The Green Papers current Texas election pages to corroborate candidate identity, office, general-election or write-in context, primary history, and to discover downstream official campaign, party, government, candidate-controlled social, or other authoritative portrait sources. Do not approve or reuse any The Green Papers-hosted candidate image without item-level provenance plus an explicit reusable license, candidate/campaign or publisher permission, or another documented editorial permission basis. Never use this directory by itself to override authoritative election lifecycle status.",
+    "searchHint": "site:thegreenpapers.com/G26/TX Texas 2026 candidate campaign portrait",
+    "notes": "Discovered September 2, 2026 during fresh source expansion for unresolved candidate-photo coverage. The current Texas 2026 general-election page provides race-aware candidate status and write-in context, including Arturo Espinosa and Stephen Samuelson, and exposes candidate-image and downstream-source leads. Treat it strictly as a discovery/corroboration bridge; item-level identity, provenance, rights, and authoritative eligibility checks remain required before any portrait is approved."
+  }
+]
