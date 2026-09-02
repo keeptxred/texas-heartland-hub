@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 
 const texasNews = readFileSync(new URL("../components/texas-news-view.tsx", import.meta.url), "utf8");
 const texasBusiness = readFileSync(new URL("../components/texas-business-view.tsx", import.meta.url), "utf8");
+const happeningNow = readFileSync(new URL("../routes/happening-now.tsx", import.meta.url), "utf8");
 const siteNavigation = readFileSync(new URL("./site-navigation.ts", import.meta.url), "utf8");
 const llms = readFileSync(new URL("../../public/llms.txt", import.meta.url), "utf8");
 const sportsRoute = readFileSync(new URL("../routes/texas-sports.tsx", import.meta.url), "utf8");
@@ -13,6 +14,8 @@ describe("KTR impression-recovery search focus", () => {
       expect(source).not.toContain('to="/texas-sports"');
     }
     expect(texasNews).not.toContain('id: "sports"');
+    expect(happeningNow).toContain('return kind === "news"');
+    expect(happeningNow).not.toContain('kind?.startsWith("sports-")');
   });
 
   it("preserves legacy sports URLs for users while explicitly removing them from indexing", () => {
