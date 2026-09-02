@@ -57,6 +57,16 @@ const GENERIC_VISIBLE_CONTENT = [
   /more information will be added as it becomes available/i,
 ];
 
+const PUBLIC_ARTICLE_KINDS = new Set([
+  "evergreen",
+  "ingested",
+  "news",
+  "sports-nfl",
+  "sports-mlb",
+  "sports-nba",
+  "sports-cfb",
+]);
+
 /**
  * `live-` slugs belong to the original provisional/rapid-publish pipeline that
  * preceded the site's current publication-quality gates. Search Console showed
@@ -154,13 +164,22 @@ export const getEvergreenBySlug = createServerFn({ method: "GET" })
     const fallback = getChatNewsFallbackBySlug(data.slug) as EvergreenArticle | null;
     const supabase = client();
     if (!supabase) return fallback;
-    const { data: row, error } = await supabase
+
+    // Use the same array-mode PostgREST response shape as the working newsroom
+    // list loader. Object-mode `.maybeSingle()` made a valid production article
+    // disappear behind a 404 even though the same row was visible in `/news`.
+    // Slugs are unique in production, so one ordered/limited row is sufficient.
+    const { data: rows, error } = await supabase
       .from("daily_articles")
       .select("slug,category,title,dek,author,source_name,source_url,image_url,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,seo_keywords,ctr_score,headline_variants,published_at,keywords,body_json,kind")
       .eq("slug", data.slug)
-      .in("kind", ["evergreen", "ingested", "news", "sports-nfl", "sports-mlb", "sports-nba", "sports-cfb"])
-      .maybeSingle();
-    if (error || !row) return fallback;
+      .limit(1);
+    if (error) {
+      console.error("getEvergreenBySlug lookup failed", { slug: data.slug, code: error.code });
+      return fallback;
+    }
+    const row = rows?.[0] ?? null;
+    if (!row || !PUBLIC_ARTICLE_KINDS.has(row.kind)) return fallback;
     const rawBody = (row as { body_json?: EvergreenBody | null }).body_json ?? null;
     if (!rawBody) return fallback;
     const body = sanitizeEvergreenBody(rawBody, row.published_at);
