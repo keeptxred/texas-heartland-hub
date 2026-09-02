@@ -1,6 +1,7 @@
 import { applyStaticArticleBodyUpgrade } from "@/lib/static-article-body-upgrades";
 import { applyNoIncomeTaxArticleUpgrade } from "@/lib/static-no-income-tax-upgrade";
 import { applyVotingGuide2026Upgrade } from "@/lib/static-voting-guide-upgrade";
+import { applyGunLawsCurrentUpgrade } from "@/lib/static-gun-laws-current-upgrade";
 
 type UpgradeCandidate = {
   editorNote?: string;
@@ -31,6 +32,9 @@ function isCurrentLegacyHomesteadExplainer(body: UpgradeCandidate): boolean {
  * intentional rewrite is never silently replaced.
  */
 export function applyReviewedStaticArticleBodyUpgrade<T extends UpgradeCandidate>(body: T): T {
+  const gunLawsUpgrade = applyGunLawsCurrentUpgrade(body);
+  if (gunLawsUpgrade !== body) return gunLawsUpgrade;
+
   const votingGuideUpgrade = applyVotingGuide2026Upgrade(body);
   if (votingGuideUpgrade !== body) return votingGuideUpgrade;
 
