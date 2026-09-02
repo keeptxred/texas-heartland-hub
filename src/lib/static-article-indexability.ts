@@ -18,12 +18,13 @@ const RETIRED_DISPLAY_CATEGORIES = new Set([
   "Culture & Identity",
 ]);
 
-export function isStaticArticleIndexable(
-  article: Pick<Article, "slug" | "pillar" | "contentCategory" | "category">,
-): boolean {
+type StaticArticleIndexabilityCandidate = Pick<Article, "slug" | "pillar" | "contentCategory">
+  & Partial<Pick<Article, "category">>;
+
+export function isStaticArticleIndexable(article: StaticArticleIndexabilityCandidate): boolean {
   if (isExplicitlyRetiredStaticSlug(article.slug)) return false;
   if (article.contentCategory && RETIRED_CONTENT_CATEGORIES.has(article.contentCategory)) return false;
-  if (RETIRED_DISPLAY_CATEGORIES.has(article.category)) return false;
+  if (article.category && RETIRED_DISPLAY_CATEGORIES.has(article.category)) return false;
   return true;
 }
 
