@@ -1388,6 +1388,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-eric-norman-democratic-race-2026-texas-house-44",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/65b92e0117af005a6907acd1/78132d41-5957-4105-8efe-38452fa79e8a/Eric_for_Texas_44_Jacket.jpg",
+    "sourceUrl": "https://www.ericfortx.com/",
+    "altText": "Eric Norman, Democratic candidate for Texas House District 44",
+    "credit": "Eric for Texas 44 campaign",
+    "license": null,
+    "permissionBasis": "Eric Norman's official campaign homepage identifies him as running for Texas House District 44 and directly publishes this candidate-specific headshot in the Meet Eric Norman biography section. BallotReady independently links ericfortx.com as Eric Norman's verified campaign website. Used only for editorial candidate identification with exact official-campaign attribution and source link; no broader reuse license is asserted.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-biography",
+    "discoveredAt": "2026-09-02T15:40:00.000Z"
+  },
+  {
     "candidateId": "candidate-erica-gillum-democratic-race-2026-texas-senate-18",
     "imageUrl": "https://images.squarespace-cdn.com/content/v1/696fd99c4b85ae156690a39f/1768937885488-WG1PG41SM5BQNDSQXW21/IMG_2368%2B%281%29%2B%281%29%2B-%2BERICA%2BGILLUM.jpg",
     "sourceUrl": "https://www.gillumfortexas.com/",
@@ -2814,6 +2826,18 @@
     "discoveredAt": "2026-08-25T03:40:03.802Z"
   },
   {
+    "candidateId": "candidate-mike-miller-other-race-2026-governor",
+    "imageUrl": "https://i.imgur.com/6P84PtO.jpeg",
+    "sourceUrl": "https://mikemiller.netlify.app/",
+    "altText": "Mike Miller, American Solidarity Party write-in candidate for Texas Governor",
+    "credit": "Mike Miller for Texas Governor campaign",
+    "license": null,
+    "permissionBasis": "Mike Miller's official campaign website identifies him as the American Solidarity Party write-in candidate for Texas Governor, publishes this candidate-specific portrait with alt text identifying Mike Miller as the candidate, and states that Miller personally oversaw production of the campaign website. The same candidacy and candidate portrait are independently corroborated by the American Solidarity Party's official candidate profile. Used only for narrow editorial candidate identification with exact campaign attribution and source link; no broader reuse license is asserted.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-09-02T18:45:00.000Z"
+  },
+  {
     "candidateId": "candidate-mike-olcott-republican-race-2026-texas-house-60",
     "imageUrl": "https://house.texas.gov/images/members/4705.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/60",
@@ -3640,6 +3664,18 @@
     "license": null,
     "permissionBasis": "Official party candidate-slate image used for editorial candidate identification with attribution and a link to the source page.",
     "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-teresa-johnson-hernandez-republican-race-2026-texas-house-42",
+    "imageUrl": "https://teresafortexas.com/wp-content/uploads/2025/07/teresa-real-image.jpg",
+    "sourceUrl": "https://teresafortexas.com/",
+    "altText": "Teresa Johnson-Hernandez, Republican candidate for Texas House District 42",
+    "credit": "Dr. Teresa Johnson-Hernandez for Texas State Representative campaign",
+    "license": null,
+    "permissionBasis": "Dr. Teresa Johnson-Hernandez's official campaign homepage identifies her as the candidate for Texas House District 42 and directly publishes this candidate-specific photograph from the campaign-controlled teresafortexas.com domain alongside the campaign biography and candidacy context. Used only for editorial candidate identification with exact official-campaign attribution and source link; no broader reuse license is asserted.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-09-02T11:37:00.000Z"
   },
   {
     "candidateId": "candidate-terri-leo-wilson-republican-race-2026-texas-house-23",

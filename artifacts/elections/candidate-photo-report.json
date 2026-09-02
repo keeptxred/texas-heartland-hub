@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-09-01T23:18:28.393Z",
+  "generatedAt": "2026-09-02T18:56:19.778Z",
   "candidateCount": 491,
   "eligibleCandidateCount": 479,
   "excludedCandidateCount": 12,
-  "approvedPhotoCount": 345,
-  "missingPhotoCount": 134,
-  "manifestEntryCount": 345,
-  "coverage": 0.7202505219206681,
-  "coveragePercent": 72.03,
+  "approvedPhotoCount": 348,
+  "missingPhotoCount": 131,
+  "manifestEntryCount": 348,
+  "coverage": 0.7265135699373695,
+  "coveragePercent": 72.65,
   "targetCoverage": 0.85,
   "targetApprovedPhotoCount": 408,
-  "photosNeededForTarget": 63,
+  "photosNeededForTarget": 60,
   "targetMet": false,
   "errors": [],
   "warnings": [],
@@ -135,13 +135,6 @@
     {
       "candidateId": "candidate-jinghpaw-majoishingra-other-race-2026-governor",
       "name": "JINGHPAW MAJOISHINGRA",
-      "raceId": "race-2026-governor",
-      "party": "other",
-      "priority": "statewide"
-    },
-    {
-      "candidateId": "candidate-mike-miller-other-race-2026-governor",
-      "name": "MIKE MILLER",
       "raceId": "race-2026-governor",
       "party": "other",
       "priority": "statewide"
@@ -322,23 +315,9 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-teresa-johnson-hernandez-republican-race-2026-texas-house-42",
-      "name": "TERESA JOHNSON-HERNANDEZ",
-      "raceId": "race-2026-texas-house-42",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-jeffrey-t-jackson-democratic-race-2026-texas-house-43",
       "name": "JEFFREY T JACKSON",
       "raceId": "race-2026-texas-house-43",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-eric-norman-democratic-race-2026-texas-house-44",
-      "name": "ERIC NORMAN",
-      "raceId": "race-2026-texas-house-44",
       "party": "democratic",
       "priority": "standard"
     },
