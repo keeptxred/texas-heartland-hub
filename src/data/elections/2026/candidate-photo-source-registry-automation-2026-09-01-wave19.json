@@ -7,5 +7,23 @@
     "rightsRule": "Use Democratic Legislative Campaign Committee candidate profile pages to corroborate current state-legislative candidate identity, district, campaign status, and discover downstream official campaign or candidate-supplied media sources. Do not approve or reuse DLCC-hosted imagery without item-level provenance plus an explicit reusable license, candidate/media permission, candidate-supplied newsroom basis, or another documented narrow editorial-identification basis.",
     "searchHint": "site:dlcc.org/candidates Texas candidate name district official campaign portrait",
     "notes": "New source class discovered September 1, 2026 while researching Julio Salinas (Texas House District 41). DLCC maintains current candidate profiles that can corroborate office and identity and bridge to stronger first-party portrait sources. Registered as discovery-only; it is not an automatic image-rights authority."
+  },
+  {
+    "domain": "bosquechc.org",
+    "sourceClass": "public-institutional-biography-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the Bosque County Historical Commission site to corroborate Albert Hunter's current public-service identity and discover candidate-linked institutional biography or portrait sources. Do not approve or reuse any image solely because it appears on this site; require candidate-specific item-level provenance plus an explicit reusable license, institutional/media permission, or another documented editorial-identification basis before use.",
+    "searchHint": "site:bosquechc.org Albert Hunter Meridian Texas portrait biography",
+    "notes": "Discovered September 1, 2026 while enriching the current Texas House District 13 missing-photo candidate. The commission's current appointee roster identifies Albert Hunter of Meridian as a Bosque County Historical Commission appointee, providing an additional public-institutional identity and downstream-discovery bridge."
+  },
+  {
+    "domain": "kxxv.com",
+    "sourceClass": "reputable-local-news-candidate-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use KXXV/25 News candidate profiles to corroborate candidate identity, office, quotations, and locate candidate-supplied or newsroom-cleared portrait assets. Do not approve newsroom photography by default; require item-level evidence that an image was candidate-supplied, explicitly cleared for media/editorial reuse, properly licensed, or otherwise supported by a documented editorial-identification permission basis before use.",
+    "searchHint": "site:kxxv.com Albert Hunter Texas House District 13 candidate portrait",
+    "notes": "Discovered September 1, 2026. KXXV's District 13 candidate profile identifies Albert Hunter as the retired educator and Democratic candidate in the race and provides a useful candidate-profile source for further portrait provenance research."
   }
 ]
