@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { CitationTrustPanel } from "@/components/authority/CitationTrustPanel";
 import { ElectionLayout, ElectionNavigation, VotingDates, type VotingDateItem } from "@/components/elections";
 import { TexasVoterIdReference } from "@/components/elections/voting/TexasVoterIdReference";
@@ -14,6 +14,11 @@ const WHO_REPRESENTS_ME = "https://wrm.capitol.texas.gov/home";
 const calendar2026 = TEXAS_ELECTIONS.filter((election) => election.date.startsWith("2026-"));
 const calendarSource = calendar2026.find((election) => election.source)?.source;
 const calendarVerified = calendar2026.map((election) => election.lastUpdated).sort().at(-1) ?? "Verification pending";
+const votingLogistics = [
+  { to: "/elections/voting/polling-hours", title: "What time do Texas polls open?", description: "Election Day hours, how early-voting schedules differ, and where to verify current local hours." },
+  { to: "/elections/voting/voter-registration-card", title: "Do I need my voter registration card?", description: "When the certificate is not required, when it can be supporting ID, and what Texas voter-ID rules actually say." },
+  { to: "/elections/voting/polling-place", title: "Where is my Texas polling place?", description: "Use the official voter portal and understand early-voting locations, vote centers, and precinct assignments." },
+] as const;
 
 export const Route = createFileRoute("/elections/voting")({
   head: () => ({
@@ -109,6 +114,21 @@ function VotingResearch() {
         <VotingDates dates={votingDates} title="2026 Texas election dates" description="Statewide primary, runoff and general-election dates from the centralized Texas election calendar. Local and special elections may use additional dates." />
 
         <TexasVoterIdReference />
+
+        <section className="rounded-xl border border-border bg-card p-6 shadow-sm" aria-labelledby="voting-logistics-heading">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Fast answers for voting logistics</p>
+          <h2 id="voting-logistics-heading" className="mt-2 font-display text-3xl leading-none tracking-tight text-foreground">The questions voters need answered before they leave home</h2>
+          <p className="mt-3 max-w-4xl leading-7 text-muted-foreground">These focused guides give the statewide rule first, explain where county practice can differ, and link directly to the Texas Secretary of State or local election authority for voter-specific confirmation.</p>
+          <div className="mt-5 grid gap-4 md:grid-cols-3">
+            {votingLogistics.map((item) => (
+              <Link key={item.to} to={item.to} className="group rounded-xl border border-border bg-muted/30 p-5 transition hover:border-primary hover:bg-background">
+                <h3 className="font-display text-2xl leading-tight text-foreground transition-colors group-hover:text-primary">{item.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">{item.description}</p>
+                <span className="mt-5 inline-block text-sm font-semibold text-primary">Open answer →</span>
+              </Link>
+            ))}
+          </div>
+        </section>
 
         <section className="rounded-xl border border-border bg-card p-6 shadow-sm" aria-labelledby="voter-requirements-reference">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">What to verify before voting</p>
