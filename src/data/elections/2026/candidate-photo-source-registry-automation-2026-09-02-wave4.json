@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "gillespiedems.org",
+    "sourceClass": "official-county-party-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the official Gillespie County Democratic Party candidate, voter-guide, and event pages to corroborate current 2026 candidate identity, office sought, campaign website links, and candidate appearances, and to discover downstream candidate-controlled portrait sources. Do not approve or reuse any county-party-hosted photograph or page asset without item-level provenance plus explicit reusable rights, candidate/campaign permission, or another documented editorial permission basis.",
+    "searchHint": "site:gillespiedems.org 2026 Texas candidate campaign website portrait",
+    "notes": "Discovered September 2, 2026 during fresh source expansion for uncovered candidates. The current General Election candidate page links official campaigns for multiple still-uncovered candidates, including Tom Luck (HD 19), Benjamin Flores (Land Commissioner), Clayton Tucker (Agriculture Commissioner), Okey Anyiam (CCA Place 3), Audra Riley (CCA Place 4), Holly Taylor (CCA Place 9), and others. The site also publishes current candidate-event imagery, but all hosted images remain discovery-only until item-level rights/provenance is verified."
+  },
+  {
+    "domain": "mobilize.us",
+    "sourceClass": "party-hosted-candidate-event-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use current Mobilize event pages hosted by identifiable party or campaign organizations to corroborate candidate identity, race, campaign website, event organizer, and candidate-linked portrait leads. Do not reuse Mobilize-hosted event or candidate images unless the exact asset has candidate-supplied provenance, an explicit reusable license, organizer/campaign permission, or another documented editorial permission basis.",
+    "searchHint": "site:mobilize.us Texas 2026 candidate meet and greet campaign website",
+    "notes": "Discovered September 2, 2026 while researching Tom Luck, an uncovered Texas House District 19 candidate. A current Kendall County Democratic Party event identifies Tom Luck as the HD 19 candidate, links his campaign context, and exposes a candidate-event image lead. Treat all hosted imagery as discovery-only unless item-level permission/provenance is established."
+  }
+]
