@@ -26,20 +26,29 @@ type BodyShape = {
 };
 
 /**
- * KeepTXRed's durable editorial boundary is politics, government, hard news,
- * material business developments, and Texas sports. Lifestyle/culture/history
- * coverage belongs on TexasDefined. These legacy Discover labels are explicit
- * enough to block without headline heuristics, which keeps the public gate
- * deterministic and prevents restored lifestyle URLs from leaking back into
- * KTR discovery surfaces.
+ * KeepTXRed's durable editorial boundary is Texas politics, elections,
+ * government, law, public policy, hard news, and material business/economic
+ * developments. Lifestyle, culture/history, and routine sports coverage belong
+ * on TexasDefined or other dedicated products. Keep the public/indexability gate
+ * deterministic so off-topic legacy rows cannot leak back into KTR discovery.
  */
 const TEXASDEFINED_DISCOVER_CATEGORIES = new Set([
   "texas culture",
   "texas history",
 ]);
 
-/** Conservative public/indexability floor while preparing for AdSense review. */
-const MIN_PUBLIC_CONTENT_QUALITY_SCORE = 65;
+const RETIRED_KTR_DISPLAY_CATEGORIES = new Set([
+  "sports",
+  "sports culture",
+  "culture & identity",
+]);
+
+/**
+ * Public search should receive the strongest material, not every publishable row.
+ * Raising this floor is intentionally stricter than the internal publication
+ * threshold while Search Console visibility is in recovery.
+ */
+const MIN_PUBLIC_CONTENT_QUALITY_SCORE = 70;
 const MIN_REPETITION_PARAGRAPH_CHARS = 120;
 const MAX_DUPLICATE_PARAGRAPH_OCCURRENCES = 2;
 
@@ -129,9 +138,14 @@ function isTexasDefinedDiscoverCategory(value: string | null | undefined): boole
   return TEXASDEFINED_DISCOVER_CATEGORIES.has((value ?? "").trim().toLowerCase());
 }
 
+function isRetiredKtrCategory(value: string | null | undefined): boolean {
+  return RETIRED_KTR_DISPLAY_CATEGORIES.has((value ?? "").trim().toLowerCase());
+}
+
 export function isPublicArticleReady(article: PublicArticleCandidate): boolean {
   if (hasSeoDuplicateFlag(article.quality_flags)) return false;
   if ((article.category ?? "").trim().toLowerCase() === "non-political") return false;
+  if (isRetiredKtrCategory(article.category)) return false;
   if (isTexasDefinedDiscoverCategory(article.discover_category)) return false;
   if ((article.content_quality_score ?? 0) < MIN_PUBLIC_CONTENT_QUALITY_SCORE) return false;
   if (duplicateParagraphOccurrences(article.body_json) > MAX_DUPLICATE_PARAGRAPH_OCCURRENCES) return false;
