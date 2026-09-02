@@ -50,8 +50,9 @@ describe("deployed law routes production gate", () => {
 
   it("probes the freshly deployed Worker without following its canonical-host redirect", () => {
     expect(smokeScript).toContain('CANONICAL_HOST = "keeptxred.com"');
-    expect(smokeScript).toContain('"-H", f"x-forwarded-host: {CANONICAL_HOST}"');
-    expect(smokeScript).toContain('"-H", "x-forwarded-proto: https"');
+    expect(smokeScript).toContain('"-H", f"host: {CANONICAL_HOST}"');
+    expect(smokeScript).not.toContain('"-H", f"x-forwarded-host: {CANONICAL_HOST}"');
+    expect(smokeScript).not.toContain('"-H", "x-forwarded-proto: https"');
     expect(smokeScript).toContain('"--max-redirs", "0"');
     expect(smokeScript).not.toContain('"--location"');
 
