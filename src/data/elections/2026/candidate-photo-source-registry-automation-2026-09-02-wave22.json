@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "drcisnerosfortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Dr. Laura Cisneros's official Texas House District 38 campaign website to verify candidate identity, office, biography, and discover candidate-supplied portrait or media assets. Do not auto-approve imagery; reject stock imagery, logos, generic campaign art, social-share graphics, and other non-candidate assets. Require candidate-specific item-level provenance plus a documented editorial-identification basis, explicit campaign/media permission, reusable license, or another supported rights basis before use.",
+    "searchHint": "Laura Cisneros Texas House District 38 official campaign portrait media kit",
+    "notes": "Discovered September 2, 2026 during unresolved-candidate research. The campaign homepage explicitly identifies Dr. Laura Cisneros as running for Texas House District 38 and places candidate-specific campaign imagery beside the Meet Dr. Laura Cisneros biography. The same page also contains unrelated stock imagery, so every asset remains item-level review only."
+  }
+]
