@@ -29,7 +29,7 @@ export async function getPublicBillRelations(billId: string) {
     }
   };
 
-  const [subjectRows, articleRows] = await Promise.all([
+  const [subjectRows, articleRelationshipRows] = await Promise.all([
     safe('subjects', () =>
       db
         .from('bill_subject_relationships')
@@ -37,10 +37,10 @@ export async function getPublicBillRelations(billId: string) {
         .eq('bill_id', billId)
         .eq('review_status', 'approved'),
     ),
-    safe('articles', () =>
+    safe('article relationships', () =>
       db
         .from('bill_article_relationships')
-        .select('relationship_type,confidence,is_manual,daily_articles(id,title,slug,dek,published_at,image_url)')
+        .select('article_id,relationship_type,confidence,is_manual')
         .eq('bill_id', billId)
         .eq('review_status', 'approved')
         .order('is_manual', { ascending: false })
@@ -48,6 +48,23 @@ export async function getPublicBillRelations(billId: string) {
         .limit(8),
     ),
   ]);
+
+  const articleIds = [...new Set(
+    articleRelationshipRows
+      .map((row: any) => String(row.article_id ?? '').trim())
+      .filter(Boolean),
+  )];
+
+  const articleRows = articleIds.length
+    ? await safe('articles', () =>
+        db
+          .from('daily_articles')
+          .select('id,title,slug,dek,published_at,image_url')
+          .in('id', articleIds),
+      )
+    : [];
+
+  const articleById = new Map(articleRows.map((article: any) => [String(article.id), article]));
 
   const sponsors = (base.sponsors ?? []).map((sponsor: any) => {
     const slug = String(sponsor.sponsor_slug ?? '').trim();
@@ -59,16 +76,17 @@ export async function getPublicBillRelations(billId: string) {
     ...base,
     sponsors,
     subjects: subjectRows.map((row: any) => row.bill_subjects).filter(Boolean),
-    articles: articleRows
-      .map((row: any) =>
-        row.daily_articles
+    articles: articleRelationshipRows
+      .map((row: any) => {
+        const article = articleById.get(String(row.article_id));
+        return article
           ? {
-              ...row.daily_articles,
-              excerpt: row.daily_articles.dek,
+              ...article,
+              excerpt: article.dek,
               relationship_type: row.relationship_type,
             }
-          : null,
-      )
+          : null;
+      })
       .filter((row: any) => row?.id),
   };
 }
