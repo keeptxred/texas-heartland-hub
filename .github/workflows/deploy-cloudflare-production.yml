@@ -208,9 +208,11 @@ jobs:
 
           curl --retry 20 --retry-delay 3 --retry-all-errors \
             --fail-with-body --silent --show-error \
+            -H "x-keeptxred-deployment-smoke: canonical" \
             "${PREVIEW_URL%/}/elections/2026" -o "$election_body"
           curl --retry 20 --retry-delay 3 --retry-all-errors \
             --fail-with-body --silent --show-error \
+            -H "x-keeptxred-deployment-smoke: canonical" \
             "${PREVIEW_URL%/}/" -o "$home_body"
 
           python3 - "$election_body" "$home_body" <<'PY'
