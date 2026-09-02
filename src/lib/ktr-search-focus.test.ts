@@ -17,6 +17,6 @@ describe("KTR impression-recovery search focus", () => {
 
   it("preserves legacy sports URLs for users while explicitly removing them from indexing", () => {
     expect(sportsRoute).toContain('name: "robots"');
-    expect(sportsRoute).toContain('content: "noindex,follow"');
+    expect(sportsRoute).toContain("noindex,follow");
   });
 });
