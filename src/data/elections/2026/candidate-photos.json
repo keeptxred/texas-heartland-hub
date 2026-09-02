@@ -2826,6 +2826,18 @@
     "discoveredAt": "2026-08-25T03:40:03.802Z"
   },
   {
+    "candidateId": "candidate-mike-miller-other-race-2026-governor",
+    "imageUrl": "https://i.imgur.com/6P84PtO.jpeg",
+    "sourceUrl": "https://mikemiller.netlify.app/",
+    "altText": "Mike Miller, American Solidarity Party write-in candidate for Texas Governor",
+    "credit": "Mike Miller for Texas Governor campaign",
+    "license": null,
+    "permissionBasis": "Mike Miller's official campaign website identifies him as the American Solidarity Party write-in candidate for Texas Governor, publishes this candidate-specific portrait with alt text identifying Mike Miller as the candidate, and states that Miller personally oversaw production of the campaign website. The same candidacy and candidate portrait are independently corroborated by the American Solidarity Party's official candidate profile. Used only for narrow editorial candidate identification with exact campaign attribution and source link; no broader reuse license is asserted.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-09-02T18:45:00.000Z"
+  },
+  {
     "candidateId": "candidate-mike-olcott-republican-race-2026-texas-house-60",
     "imageUrl": "https://house.texas.gov/images/members/4705.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/60",
