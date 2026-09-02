@@ -25,6 +25,9 @@ const staticPaths = [
   "/elections/methodology",
   "/elections/corrections",
   "/elections/voting",
+  "/elections/voting/polling-hours",
+  "/elections/voting/voter-registration-card",
+  "/elections/voting/polling-place",
 ];
 const expected = new Set(staticPaths);
 addPublic(races, "/elections/races/");
