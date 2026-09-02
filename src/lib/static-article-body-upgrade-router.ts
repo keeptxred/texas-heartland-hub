@@ -7,8 +7,13 @@ type UpgradeCandidate = {
   updated?: string;
   editorNote?: string;
   intro?: string[];
-  sections?: Array<{ heading?: string; paragraphs?: string[]; bullets?: string[] }>;
-  faq?: Array<{ q?: string }>;
+  sections?: Array<{
+    heading?: string;
+    paragraphs?: string[];
+    bullets?: string[];
+    [key: string]: unknown;
+  }>;
+  faq?: Array<{ q?: string; a?: string }>;
   sources?: Array<{ label?: string; url?: string }>;
   [key: string]: unknown;
 };
@@ -34,16 +39,16 @@ function isCurrentLegacyHomesteadExplainer(body: UpgradeCandidate): boolean {
  * intentional rewrite is never silently replaced.
  */
 export function applyReviewedStaticArticleBodyUpgrade<T extends UpgradeCandidate>(body: T): T {
-  const gunLawsUpgrade = applyGunLawsCurrentUpgrade(body);
+  const gunLawsUpgrade = applyGunLawsCurrentUpgrade<T>(body);
   if (gunLawsUpgrade !== body) return gunLawsUpgrade;
 
-  const votingGuideUpgrade = applyVotingGuide2026Upgrade(body);
+  const votingGuideUpgrade = applyVotingGuide2026Upgrade<T>(body);
   if (votingGuideUpgrade !== body) return votingGuideUpgrade;
 
-  const noIncomeTaxUpgrade = applyNoIncomeTaxArticleUpgrade(body);
+  const noIncomeTaxUpgrade = applyNoIncomeTaxArticleUpgrade<T>(body);
   if (noIncomeTaxUpgrade !== body) return noIncomeTaxUpgrade;
 
-  if (!isCurrentLegacyHomesteadExplainer(body)) return applyStaticArticleBodyUpgrade(body);
+  if (!isCurrentLegacyHomesteadExplainer(body)) return applyStaticArticleBodyUpgrade<T>(body);
 
   const normalizedLegacyShape = {
     ...body,
@@ -51,5 +56,5 @@ export function applyReviewedStaticArticleBodyUpgrade<T extends UpgradeCandidate
     intro: [ORIGINAL_HOMESTEAD_INTRO_FINGERPRINT, ...(body.intro ?? [])],
   } as T;
 
-  return applyStaticArticleBodyUpgrade(normalizedLegacyShape);
+  return applyStaticArticleBodyUpgrade<T>(normalizedLegacyShape);
 }
