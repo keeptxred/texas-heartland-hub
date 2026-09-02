@@ -4,10 +4,12 @@ import { applyVotingGuide2026Upgrade } from "@/lib/static-voting-guide-upgrade";
 import { applyGunLawsCurrentUpgrade } from "@/lib/static-gun-laws-current-upgrade";
 
 type UpgradeCandidate = {
+  updated?: string;
   editorNote?: string;
   intro?: string[];
   sections?: Array<{ heading?: string; paragraphs?: string[]; bullets?: string[] }>;
   faq?: Array<{ q?: string }>;
+  sources?: Array<{ label?: string; url?: string }>;
   [key: string]: unknown;
 };
 
