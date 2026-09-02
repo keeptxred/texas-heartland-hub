@@ -3,12 +3,56 @@ import type { IssueGuide } from "@/data/issue-guides";
 type IssueSection = IssueGuide["sections"][number];
 type IssueSource = IssueGuide["sources"][number];
 
+type ParagraphReplacement = {
+  includes: string;
+  replacement: string;
+};
+
 type CurrentPatch = {
   sections: IssueSection[];
   sources: IssueSource[];
+  replaceParagraphs?: ParagraphReplacement[];
 };
 
 const CURRENT_WAVE4_PATCHES: Record<string, CurrentPatch> = {
+  "texas-gun-laws": {
+    replaceParagraphs: [
+      {
+        includes: "Federal law sets the floor: 18 to purchase a long gun from an FFL, 21 to purchase a handgun from an FFL.",
+        replacement: "Federal age rules depend on who is transferring the firearm. ATF states that a federal firearms licensee generally may not transfer a handgun to a person under 21 or a long gun to a person under 18. An unlicensed same-state transfer is different: federal law generally allows an otherwise eligible person age 18 to 20 to acquire a handgun from an unlicensed resident of the same state. State law, prohibited-person rules, and other transfer restrictions still apply.",
+      },
+      {
+        includes: "constitutional carry and the License to Carry both require you to be 21",
+        replacement: "Texas statutes still contain age-21 language for general handgun carry and LTC eligibility, but current enforcement is affected by federal court rulings. Texas DPS says it no longer denies an otherwise eligible License to Carry application solely because the applicant is 18 to 20. The Texas State Law Library likewise explains that Texas may not prosecute an 18-to-20-year-old for permitless carry based solely on age. Purchase rules are separate from carry rules, so eligibility to carry does not by itself make an under-21 buyer eligible to purchase a handgun from an FFL.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Age rules need a statute-plus-current-enforcement explanation",
+        body: [
+          "A reader looking only at the age numbers printed in older Texas statutory summaries can miss the effect of federal litigation. For 2026 coverage, KTR uses the current Texas DPS position and the Texas State Law Library's explanation alongside the statute: otherwise eligible 18-to-20-year-olds are not denied an LTC solely because of age, and Texas may not prosecute that age group for permitless carry based solely on age.",
+          "Federal purchase law is a separate question. ATF distinguishes licensed-dealer transfers from qualifying same-state unlicensed transfers. An FFL generally may not transfer a handgun to someone under 21, while ATF states that an otherwise eligible 18-to-20-year-old may acquire a handgun from an unlicensed resident of the same state."
+        ]
+      }
+    ],
+    sources: [
+      {
+        label: "Texas DPS — License to Carry Eligibility FAQs",
+        url: "https://www.dps.texas.gov/section/handgun-licensing/faq/eligibility-faqs",
+        note: "DPS states that it no longer denies otherwise eligible LTC applications solely because an applicant is 18 to 20."
+      },
+      {
+        label: "Texas State Law Library — Permitless Carry FAQ",
+        url: "https://www.sll.texas.gov/faqs/permitless-carry-guns/",
+        note: "Current Texas legal-reference explanation of the federal court ruling affecting enforcement of the statutory age restriction."
+      },
+      {
+        label: "ATF — Minimum Age for Gun Sales and Transfers",
+        url: "https://www.atf.gov/resource-center/infographics/minimum-age-gun-sales-and-transfers",
+        note: "Official federal guidance distinguishing FFL age limits from unlicensed transfers."
+      }
+    ]
+  },
   "texas-medical-transition-minors-law": {
     sections: [
       {
@@ -96,9 +140,20 @@ const CURRENT_WAVE4_PATCHES: Record<string, CurrentPatch> = {
 export function applyWave4CurrentPatch(guide: IssueGuide): IssueGuide {
   const patch = CURRENT_WAVE4_PATCHES[guide.slug];
   if (!patch) return guide;
+
+  const patchedSections = patch.replaceParagraphs?.length
+    ? guide.sections.map((section) => ({
+        ...section,
+        body: section.body.map((paragraph) => {
+          const replacement = patch.replaceParagraphs?.find((item) => paragraph.includes(item.includes));
+          return replacement?.replacement ?? paragraph;
+        }),
+      }))
+    : guide.sections;
+
   return {
     ...guide,
-    sections: [...guide.sections, ...patch.sections],
+    sections: [...patchedSections, ...patch.sections],
     sources: [...guide.sources, ...patch.sources],
   };
 }
