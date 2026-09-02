@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-09-01T23:18:28.393Z",
+  "generatedAt": "2026-09-02T16:43:46.556Z",
   "candidateCount": 491,
   "eligibleCandidateCount": 479,
   "excludedCandidateCount": 12,
-  "approvedPhotoCount": 345,
-  "missingPhotoCount": 134,
-  "manifestEntryCount": 345,
-  "coverage": 0.7202505219206681,
-  "coveragePercent": 72.03,
+  "approvedPhotoCount": 347,
+  "missingPhotoCount": 132,
+  "manifestEntryCount": 347,
+  "coverage": 0.7244258872651357,
+  "coveragePercent": 72.44,
   "targetCoverage": 0.85,
   "targetApprovedPhotoCount": 408,
-  "photosNeededForTarget": 63,
+  "photosNeededForTarget": 61,
   "targetMet": false,
   "errors": [],
   "warnings": [],
@@ -322,23 +322,9 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-teresa-johnson-hernandez-republican-race-2026-texas-house-42",
-      "name": "TERESA JOHNSON-HERNANDEZ",
-      "raceId": "race-2026-texas-house-42",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-jeffrey-t-jackson-democratic-race-2026-texas-house-43",
       "name": "JEFFREY T JACKSON",
       "raceId": "race-2026-texas-house-43",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-eric-norman-democratic-race-2026-texas-house-44",
-      "name": "ERIC NORMAN",
-      "raceId": "race-2026-texas-house-44",
       "party": "democratic",
       "priority": "standard"
     },
