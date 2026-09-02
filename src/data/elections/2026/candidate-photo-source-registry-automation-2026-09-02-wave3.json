@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "outsmartmagazine.com",
+    "sourceClass": "reputable-local-news-candidate-profile",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use OutSmart Magazine candidate profiles to corroborate candidate identity, biography, prior campaign history, and outbound official campaign links. Do not reuse OutSmart-hosted portraits or article imagery unless item-level provenance plus a documented reusable license, candidate/campaign-supplied permission, or another valid editorial permission basis is established.",
+    "searchHint": "site:outsmartmagazine.com Texas candidate profile campaign 2026",
+    "notes": "New source discovered September 2, 2026 while researching current State Board of Education District 6 candidate Michelle Palmer. OutSmart's September 14, 2020 candidate profile links Palmer's official campaign domain and provides a candidate-specific biographical source trail. Historical profile imagery remains discovery-only unless its originating rights are independently verified."
+  }
+]
