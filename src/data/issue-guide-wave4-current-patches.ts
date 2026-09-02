@@ -142,13 +142,16 @@ export function applyWave4CurrentPatch(guide: IssueGuide): IssueGuide {
   if (!patch) return guide;
 
   const patchedSections = patch.replaceParagraphs?.length
-    ? guide.sections.map((section) => ({
-        ...section,
-        body: section.body.map((paragraph) => {
-          const replacement = patch.replaceParagraphs?.find((item) => paragraph.includes(item.includes));
-          return replacement?.replacement ?? paragraph;
-        }),
-      }))
+    ? guide.sections.map((section) => {
+        if (!Array.isArray(section.body)) return section;
+        return {
+          ...section,
+          body: section.body.map((paragraph) => {
+            const replacement = patch.replaceParagraphs?.find((item) => paragraph.includes(item.includes));
+            return replacement?.replacement ?? paragraph;
+          }),
+        };
+      })
     : guide.sections;
 
   return {
