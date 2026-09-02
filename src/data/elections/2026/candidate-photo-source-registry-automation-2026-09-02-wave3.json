@@ -7,5 +7,14 @@
     "rightsRule": "Use OutSmart Magazine candidate profiles to corroborate candidate identity, biography, prior campaign history, and outbound official campaign links. Do not reuse OutSmart-hosted portraits or article imagery unless item-level provenance plus a documented reusable license, candidate/campaign-supplied permission, or another valid editorial permission basis is established.",
     "searchHint": "site:outsmartmagazine.com Texas candidate profile campaign 2026",
     "notes": "New source discovered September 2, 2026 while researching current State Board of Education District 6 candidate Michelle Palmer. OutSmart's September 14, 2020 candidate profile links Palmer's official campaign domain and provides a candidate-specific biographical source trail. Historical profile imagery remains discovery-only unless its originating rights are independently verified."
+  },
+  {
+    "domain": "tfn.org",
+    "sourceClass": "nonprofit-election-candidate-archive",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Freedom Network candidate archive pages only to corroborate historical candidate identity, prior public-office service, archived campaign domains, and to discover downstream candidate-controlled or public-record portrait sources. Do not reuse TFN-hosted photography without item-level provenance plus an explicit reusable license, candidate/media permission, or another documented editorial permission basis.",
+    "searchHint": "site:tfn.org Texas candidate name State Board of Education portrait campaign website",
+    "notes": "Discovered September 2, 2026 while investigating unresolved 2026 State Board of Education candidates. TFN maintains archived SBOE candidate announcement/profile pages, including a candidate-specific Carlos 'Charlie' Garza portrait and historical campaign-domain references. Treat the site as a discovery bridge only; historical identity must be cross-verified against current 2026 election sources before use, and TFN-hosted images remain non-approved absent item-level rights provenance."
   }
 ]
