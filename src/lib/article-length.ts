@@ -1,7 +1,10 @@
 import type { ArticleBodyShape } from "@/lib/article-dedupe";
 
 export const NON_EVERGREEN_MIN_MAIN_WORDS = 2000;
-export const EVERGREEN_MIN_MAIN_WORDS = 5000;
+// Three thousand substantive main-body words remains a strong evergreen floor
+// without turning well-sourced, editorially reviewed long-form explainers into
+// 404s solely because they do not reach an arbitrary 5,000-word threshold.
+export const EVERGREEN_MIN_MAIN_WORDS = 3000;
 export const SPORTS_BREAKING_MIN_MAIN_WORDS = 800;
 export const SPORTS_ANALYSIS_MIN_MAIN_WORDS = 1200;
 export const SPORTS_MIN_MAIN_WORDS = SPORTS_ANALYSIS_MIN_MAIN_WORDS;
