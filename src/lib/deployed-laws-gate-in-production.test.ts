@@ -57,8 +57,9 @@ describe("deployed law routes production gate", () => {
     expect(smokeScript).not.toContain('"--location"');
 
     expect(prioritySmoke).toContain('CANONICAL_HOST = "keeptxred.com"');
-    expect(prioritySmoke).toContain('"-H", f"x-forwarded-host: {CANONICAL_HOST}"');
-    expect(prioritySmoke).toContain('"-H", "x-forwarded-proto: https"');
+    expect(prioritySmoke).toContain('"-H", f"host: {CANONICAL_HOST}"');
+    expect(prioritySmoke).not.toContain('"-H", f"x-forwarded-host: {CANONICAL_HOST}"');
+    expect(prioritySmoke).not.toContain('"-H", "x-forwarded-proto: https"');
     expect(prioritySmoke).toContain('"--max-redirs", "0"');
   });
 
