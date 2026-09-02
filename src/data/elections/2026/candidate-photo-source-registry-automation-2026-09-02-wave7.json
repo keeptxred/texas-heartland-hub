@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "election2026.net",
+    "sourceClass": "current-election-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Election2026 current Texas candidate pages only to corroborate candidate identity, office, party or write-in/general-election context, and to discover downstream official campaign, candidate-controlled social, government, party, or other authoritative portrait sources. Do not approve or reuse any Election2026-hosted image or page asset without item-level provenance plus an explicit reusable license, candidate/campaign or publisher permission, or another documented editorial permission basis. Do not use Election2026 to override authoritative election lifecycle status.",
+    "searchHint": "site:election2026.net/texas-2026 Texas 2026 candidate campaign website portrait",
+    "notes": "Discovered September 2, 2026 during fresh source expansion for unresolved candidate-photo coverage. The Texas 2026 page is refreshed weekly and currently lists 111 declared candidates, including still-uncovered statewide candidates Edward Giles, Jinghpaw Majoishingra, and Mike Miller for Governor. The site states that its candidate field is compiled from Ballotpedia. Treat it as a current candidate/race discovery bridge only; all portrait use remains subject to independent item-level identity, provenance, and rights verification."
+  }
+]
