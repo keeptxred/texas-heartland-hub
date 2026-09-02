@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "tcta.org",
+    "sourceClass": "candidate-voter-guide-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Classroom Teachers Association Texas Teachers Vote candidate pages to verify candidate identity, office, official campaign website, and candidate social links. Treat TCTA-hosted or embedded images as discovery-only unless item-level provenance plus explicit reusable rights, candidate/media permission, or another documented editorial permission basis is established.",
+    "searchHint": "site:tcta.org Texas Teachers Vote 2026 candidate portrait official website Texas House",
+    "notes": "New source expanded September 2, 2026. TCTA's Crystal Sedillo page identifies her as the Democratic candidate for Texas House District 30 and links directly to crystalsedillo.com plus her campaign Facebook profile. This provides a strong bridge from the canonical candidate to candidate-controlled sources without asserting image reuse rights."
+  },
+  {
+    "domain": "jejunemagazine.com",
+    "sourceClass": "reputable-candidate-interview",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate interview pages to corroborate identity, office, campaign website, campaign social accounts, and discover candidate-specific imagery. Do not approve or reuse any interview image unless the individual asset has candidate-supplied provenance, an explicit reusable license, publication permission, or another documented editorial permission basis.",
+    "searchHint": "site:jejunemagazine.com 2026 Texas candidate interview portrait",
+    "notes": "New source expanded September 2, 2026. Jejune's June 29, 2026 Crystal Sedillo interview identifies her as running for Texas House District 30, links crystalsedillo.com and @crystalfortx, and publishes multiple candidate-specific photographs. Images remain discovery-only because the article does not itself establish candidate-supplied provenance or a reusable license."
+  },
+  {
+    "domain": "transparencyusa.org",
+    "sourceClass": "campaign-finance-election-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Transparency USA race and candidate pages to corroborate current race participation, campaign-finance identity, and active/on-ballot status, and as a bridge to downstream official candidate or committee records. Do not approve or reuse hosted candidate imagery without item-level provenance and a reusable-rights or documented editorial permission basis.",
+    "searchHint": "site:transparencyusa.org/tx/race 2026 Texas House candidate",
+    "notes": "New source expanded September 2, 2026. Current 2026 race pages list Crystal Sedillo in House District 30 and Albert Hunter in House District 13 as active general-election candidates. Use as corroboration/discovery only; authoritative eligibility reconciliation must continue to rely on supported official election sources."
+  }
+]
