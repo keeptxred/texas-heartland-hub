@@ -3642,6 +3642,18 @@
     "usageStatus": "approved"
   },
   {
+    "candidateId": "candidate-teresa-johnson-hernandez-republican-race-2026-texas-house-42",
+    "imageUrl": "https://teresafortexas.com/wp-content/uploads/2025/07/teresa-real-image.jpg",
+    "sourceUrl": "https://teresafortexas.com/",
+    "altText": "Teresa Johnson-Hernandez, Republican candidate for Texas House District 42",
+    "credit": "Dr. Teresa Johnson-Hernandez for Texas State Representative campaign",
+    "license": null,
+    "permissionBasis": "Dr. Teresa Johnson-Hernandez's official campaign homepage identifies her as the candidate for Texas House District 42 and directly publishes this candidate-specific photograph from the campaign-controlled teresafortexas.com domain alongside the campaign biography and candidacy context. Used only for editorial candidate identification with exact official-campaign attribution and source link; no broader reuse license is asserted.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-09-02T11:37:00.000Z"
+  },
+  {
     "candidateId": "candidate-terri-leo-wilson-republican-race-2026-texas-house-23",
     "imageUrl": "https://house.texas.gov/images/members/4290.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/23",
