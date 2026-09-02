@@ -9,11 +9,21 @@ const RETIRED_CONTENT_CATEGORIES = new Set([
   "history",
   "culture",
   "lifestyle",
+  "sports",
 ]);
 
-export function isStaticArticleIndexable(article: Pick<Article, "slug" | "pillar" | "contentCategory">): boolean {
+const RETIRED_DISPLAY_CATEGORIES = new Set([
+  "Sports",
+  "Sports Culture",
+  "Culture & Identity",
+]);
+
+export function isStaticArticleIndexable(
+  article: Pick<Article, "slug" | "pillar" | "contentCategory" | "category">,
+): boolean {
   if (isExplicitlyRetiredStaticSlug(article.slug)) return false;
   if (article.contentCategory && RETIRED_CONTENT_CATEGORIES.has(article.contentCategory)) return false;
+  if (RETIRED_DISPLAY_CATEGORIES.has(article.category)) return false;
   return true;
 }
 
