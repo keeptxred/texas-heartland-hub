@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 const URL_SELF = "https://keeptxred.com/about-keep-texas-red";
 const TITLE = "About Keep Texas Red | Texas Politics, Elections & News";
 const DESC =
-  "Keep Texas Red delivers Texas news, commentary, government accountability, and common-sense analysis backed by elections, legislation, and civic resources.";
+  "Keep Texas Red delivers Texas political news, commentary, government accountability, and common-sense analysis backed by elections, legislation, law, policy, and civic resources.";
 const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
 
 export const Route = createFileRoute("/about-keep-texas-red")({
@@ -57,7 +57,7 @@ export const Route = createFileRoute("/about-keep-texas-red")({
               name: "What is Keep Texas Red?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "Keep Texas Red is an independent Texas publication delivering Texas news, commentary, government accountability, and common-sense analysis.",
+                text: "Keep Texas Red is an independent Texas publication focused on Texas politics, elections, government accountability, law, policy, business, the economy, and clearly labeled commentary.",
               },
             },
             {
@@ -65,7 +65,7 @@ export const Route = createFileRoute("/about-keep-texas-red")({
               name: "What resources does Keep Texas Red provide?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "Keep Texas Red provides election coverage, candidate and race pages, bill and legislative tracking, representative profiles, voter resources, political analysis, and daily Texas news.",
+                text: "Keep Texas Red provides election coverage, candidate and race pages, bill and legislative tracking, representative profiles, voter resources, law and policy guides, political analysis, and daily Texas public-affairs reporting.",
               },
             },
             {
@@ -98,17 +98,17 @@ function AboutKeepTexasRed() {
       </h1>
       <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
         <strong>Keep Texas Red</strong>, also known as <strong>Keep TX Red</strong> and <strong>KeepTXRed</strong>,
-        delivers Texas news, commentary, government accountability, and common-sense analysis, backed by
-        reporting and reference resources on the decisions, elections, officials, legislation, and public debates shaping Texas.
+        delivers Texas political news, commentary, government accountability, and common-sense analysis, backed by
+        reporting and reference resources on the decisions, elections, officials, legislation, laws, and policy debates shaping Texas.
       </p>
 
       <section className="mt-12">
         <h2 className="text-2xl font-semibold text-foreground">What we cover</h2>
         <p className="mt-3 leading-relaxed text-muted-foreground">
           Our reporting and reference pages help readers follow Texas government from campaigns and
-          election results through legislative action and implementation. We also cover statewide news,
-          the Texas economy, major businesses, regional developments, and Texas sports when those stories
-          matter to readers across the state.
+          election results through legislative action and implementation. Our indexed editorial focus is
+          Texas politics, elections, government, law, public policy, government accountability, and material
+          business and economic developments that affect Texans statewide.
         </p>
         <ul className="mt-4 list-disc space-y-2 pl-6 text-muted-foreground">
           <li><Link to="/texas-politics" className="text-primary hover:underline">Texas politics</Link> and government accountability.</li>
@@ -116,7 +116,8 @@ function AboutKeepTexasRed() {
           <li><Link to="/bills" search={EMPTY_BILLS_SEARCH} className="text-primary hover:underline">Texas bill tracking</Link> and legislative documents.</li>
           <li><Link to="/texas-legislature" className="text-primary hover:underline">Texas Legislature</Link> coverage and session information.</li>
           <li><Link to="/representatives" className="text-primary hover:underline">Public-official profiles</Link> and representative lookup resources.</li>
-          <li><Link to="/news" className="text-primary hover:underline">Texas news</Link>, business, regional coverage, and major statewide developments.</li>
+          <li><Link to="/laws" className="text-primary hover:underline">Texas law and policy guides</Link> with source-first context.</li>
+          <li><Link to="/news" className="text-primary hover:underline">Texas public-affairs news</Link>, business, economic policy, and major statewide developments.</li>
         </ul>
       </section>
 
