@@ -6,6 +6,7 @@ import { isSitemapEligibleSlug } from "@/lib/article-slug-integrity";
 import { selectCanonicalArticles } from "@/lib/article-canonical";
 import { isPublicArticleReady } from "@/lib/public-article-readiness";
 import { getChatNewsFallbackBySlug } from "@/lib/chat-news-fallback";
+import { POLICING_COMPARISON_FALLBACK } from "@/data/policing-comparison-fallback";
 
 export type EvergreenSection = {
   heading: string;
@@ -161,7 +162,9 @@ function sanitizeEvergreenBody(body: EvergreenBody, publishedAt: string): Evergr
 export const getEvergreenBySlug = createServerFn({ method: "GET" })
   .validator((d) => z.object({ slug: z.string().min(1).max(120) }).parse(d))
   .handler(async ({ data }): Promise<EvergreenArticle | null> => {
-    const fallback = getChatNewsFallbackBySlug(data.slug) as EvergreenArticle | null;
+    const fallback = data.slug === POLICING_COMPARISON_FALLBACK.slug
+      ? (POLICING_COMPARISON_FALLBACK as unknown as EvergreenArticle)
+      : (getChatNewsFallbackBySlug(data.slug) as EvergreenArticle | null);
     const supabase = client();
     if (!supabase) return fallback;
 
