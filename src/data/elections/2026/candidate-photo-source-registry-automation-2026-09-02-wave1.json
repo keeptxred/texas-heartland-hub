@@ -25,5 +25,32 @@
     "rightsRule": "Use Transparency USA race and candidate pages to corroborate current race participation, campaign-finance identity, and active/on-ballot status, and as a bridge to downstream official candidate or committee records. Do not approve or reuse hosted candidate imagery without item-level provenance and a reusable-rights or documented editorial permission basis.",
     "searchHint": "site:transparencyusa.org/tx/race 2026 Texas House candidate",
     "notes": "New source expanded September 2, 2026. Current 2026 race pages list Crystal Sedillo in House District 30 and Albert Hunter in House District 13 as active general-election candidates. Use as corroboration/discovery only; authoritative eligibility reconciliation must continue to rely on supported official election sources."
+  },
+  {
+    "domain": "teachthevote.org",
+    "sourceClass": "education-association-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use current Teach the Vote / ATPE candidate profiles to confirm candidate identity, district, ballot context, candidate-supplied survey responses, contact information, and outbound official campaign website links. Do not reuse Teach the Vote-hosted images or other profile imagery without item-level provenance plus a documented reusable license, candidate/campaign permission, or another valid editorial permission basis.",
+    "searchHint": "site:teachthevote.org/Candidates 2026 Texas candidate district campaign website",
+    "notes": "Discovered September 2, 2026 while researching uncovered 2026 Texas House candidates. Frank Carr's current District 24 profile identifies him as the Democratic general-election candidate, links fncarr4tx.com, and contains candidate-submitted 2026 survey responses. Use as a candidate/race-aware bridge to official campaign and candidate-supplied sources, not as an automatic portrait-rights source."
+  },
+  {
+    "domain": "plaindocket.com",
+    "sourceClass": "election-candidate-record-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use current PlainDocket ballot and candidate pages to corroborate candidate identity, office, general-election ballot context, campaign-finance links, and downstream official public-record sources. Do not reuse PlainDocket-hosted images or other page assets without item-level provenance plus a documented reusable license, explicit permission, or another valid editorial permission basis.",
+    "searchHint": "site:plaindocket.com/ballot/candidate Texas 2026 candidate district official filing",
+    "notes": "Discovered September 2, 2026 while researching uncovered House District 140 and 141 candidates. Current candidate pages for Laura Garcia DeLeon and Julie Hunt identify their November 3, 2026 general-election races and link official Texas Ethics Commission/public-record lookups. Useful for identity, filing, and downstream source discovery only."
+  },
+  {
+    "domain": "snapcoalition.org",
+    "sourceClass": "candidate-submitted-policy-questionnaire",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use current Scientist Network for Advancing Policy candidate questionnaire pages to corroborate candidate identity, party, district, submission date, and candidate-submitted responses, and to discover candidate-linked official sources. Do not reuse any SNAP-hosted image or page asset without item-level provenance plus explicit reusable rights, candidate/campaign permission, or another documented editorial permission basis.",
+    "searchHint": "site:snapcoalition.org/initiatives/stance-on-science/candidates/tx 2026 Texas candidate district",
+    "notes": "Discovered September 2, 2026 while researching Crystal Sedillo, whose current Texas HD-30 questionnaire is marked submitted August 16, 2026. Valuable as a candidate-submitted identity/source bridge but not an automatic portrait-rights source."
   }
 ]
