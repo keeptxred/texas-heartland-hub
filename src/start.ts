@@ -89,6 +89,7 @@ const BAD_YEAR_NEWS_REDIRECTS = new Map([
 ]);
 const CANONICAL_ORIGIN = "https://keeptxred.com";
 const DIRECT_WORKER_HOST = "keeptxred-site.freddy-coppola.workers.dev";
+const DEPLOYMENT_SMOKE_HEADER = "x-keeptxred-deployment-smoke";
 
 const TRACKING_PARAMS = new Set([
   "fbclid",
@@ -194,13 +195,17 @@ function hasNoindexState(url: URL): boolean {
 
 const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
   const url = new URL(request.url);
+  const directHost = url.host.toLowerCase();
+  const isDirectDeploymentSmoke =
+    directHost === DIRECT_WORKER_HOST
+    && request.headers.get(DEPLOYMENT_SMOKE_HEADER)?.trim().toLowerCase() === "canonical";
   const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
   const forwardedProto = request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim().toLowerCase();
-  const requestHost = (forwardedHost || url.host).toLowerCase();
+  const requestHost = isDirectDeploymentSmoke ? "keeptxred.com" : (forwardedHost || directHost).toLowerCase();
   const requestProto = forwardedProto || url.protocol.replace(":", "").toLowerCase();
   const canRedirect = request.method === "GET" || request.method === "HEAD";
   const isDirectAuthorityReference =
-    requestHost === DIRECT_WORKER_HOST
+    directHost === DIRECT_WORKER_HOST
     && (
       url.pathname === "/elections/reference.json"
       || /^\/bills\/texas\/\d+\/[a-zA-Z]+\/\d+\/reference\.json\/?$/.test(url.pathname)

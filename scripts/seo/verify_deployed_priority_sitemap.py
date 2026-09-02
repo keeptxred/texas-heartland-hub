@@ -9,7 +9,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 SITE_ORIGIN = "https://keeptxred.com"
-CANONICAL_HOST = "keeptxred.com"
+DEPLOYMENT_SMOKE_HEADER = "x-keeptxred-deployment-smoke: canonical"
 DEFAULT_WORKER_ORIGIN = "https://keeptxred-site.freddy-coppola.workers.dev"
 PRIORITY_SOURCE = Path("src/data/search-console-priority-sitemap-urls.json")
 SITEMAP_NAMESPACE = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
@@ -58,7 +58,7 @@ def _curl(url: str) -> tuple[int, str, str]:
                 "--max-redirs", "0",
                 "--silent",
                 "--show-error",
-                "-H", f"host: {CANONICAL_HOST}",
+                "-H", DEPLOYMENT_SMOKE_HEADER,
                 "-H", "cache-control: no-cache",
                 "-H", "pragma: no-cache",
                 "-D", header_file.name,

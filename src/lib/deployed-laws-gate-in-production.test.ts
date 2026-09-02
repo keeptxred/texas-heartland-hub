@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 const deployWorkflow = readFileSync(".github/workflows/deploy-cloudflare-after-verify.yml", "utf8");
 const smokeScript = readFileSync("scripts/seo/verify-deployed-laws-routes.py", "utf8");
 const prioritySmoke = readFileSync("scripts/seo/verify_deployed_priority_sitemap.py", "utf8");
+const startServer = readFileSync("src/start.ts", "utf8");
 
 describe("deployed law routes production gate", () => {
   it("runs the law-route smoke inside the verified Cloudflare deployment", () => {
@@ -48,19 +49,22 @@ describe("deployed law routes production gate", () => {
     expect(smokeScript).toContain("cache-control: no-cache");
   });
 
-  it("probes the freshly deployed Worker without following its canonical-host redirect", () => {
-    expect(smokeScript).toContain('CANONICAL_HOST = "keeptxred.com"');
-    expect(smokeScript).toContain('"-H", f"host: {CANONICAL_HOST}"');
-    expect(smokeScript).not.toContain('"-H", f"x-forwarded-host: {CANONICAL_HOST}"');
-    expect(smokeScript).not.toContain('"-H", "x-forwarded-proto: https"');
-    expect(smokeScript).toContain('"--max-redirs", "0"');
+  it("probes the freshly deployed Worker without a Cloudflare-rejected Host override", () => {
+    for (const probe of [smokeScript, prioritySmoke]) {
+      expect(probe).toContain('DEPLOYMENT_SMOKE_HEADER = "x-keeptxred-deployment-smoke: canonical"');
+      expect(probe).toContain('"-H", DEPLOYMENT_SMOKE_HEADER');
+      expect(probe).not.toContain('f"host: {CANONICAL_HOST}"');
+      expect(probe).not.toContain('"-H", f"x-forwarded-host: {CANONICAL_HOST}"');
+      expect(probe).not.toContain('"-H", "x-forwarded-proto: https"');
+      expect(probe).toContain('"--max-redirs", "0"');
+    }
     expect(smokeScript).not.toContain('"--location"');
 
-    expect(prioritySmoke).toContain('CANONICAL_HOST = "keeptxred.com"');
-    expect(prioritySmoke).toContain('"-H", f"host: {CANONICAL_HOST}"');
-    expect(prioritySmoke).not.toContain('"-H", f"x-forwarded-host: {CANONICAL_HOST}"');
-    expect(prioritySmoke).not.toContain('"-H", "x-forwarded-proto: https"');
-    expect(prioritySmoke).toContain('"--max-redirs", "0"');
+    expect(startServer).toContain('const DEPLOYMENT_SMOKE_HEADER = "x-keeptxred-deployment-smoke";');
+    expect(startServer).toContain("directHost === DIRECT_WORKER_HOST");
+    expect(startServer).toContain('request.headers.get(DEPLOYMENT_SMOKE_HEADER)?.trim().toLowerCase() === "canonical"');
+    expect(startServer).toContain('const requestHost = isDirectDeploymentSmoke ? "keeptxred.com" : (forwardedHost || directHost).toLowerCase();');
+    expect(startServer).toContain("const isDirectAuthorityReference =\n    directHost === DIRECT_WORKER_HOST");
   });
 
   it("keeps exact GitHub annotations for route and priority failures", () => {
