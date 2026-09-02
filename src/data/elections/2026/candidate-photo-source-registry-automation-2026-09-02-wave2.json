@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "bexargop.org",
+    "sourceClass": "county-party-general-election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the Republican Party of Bexar County general-election candidate directory to corroborate current candidate identity and race assignment and to discover candidate-specific portraits and downstream official campaign contacts. Do not approve or reuse BexarGOP-hosted imagery unless item-level provenance and a reusable license, explicit permission, candidate-supplied newsroom basis, or another documented editorial permission basis is independently established.",
+    "searchHint": "site:bexargop.org 2026 candidate Texas House Bexar portrait campaign",
+    "notes": "Discovered September 2, 2026 while researching missing Texas House District 116 candidate Rhett Rosenquest Smith. The current Bexar County Republican general-election candidate directory explicitly identifies Rhett Rosenquest Smith as the Republican candidate for Texas House District 116 and displays a candidate-specific image, alongside other 2026 Bexar County Republican candidates. Registered as a discovery/corroboration bridge only; the page does not establish item-level reuse rights for the hosted image."
+  }
+]
