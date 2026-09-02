@@ -1,0 +1,76 @@
+name: Verify policing comparison live
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - Deploy KeepTXRed to Cloudflare Workers
+      - Deploy verified KeepTXRed to Cloudflare
+    types: [completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: policing-comparison-live-smoke
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify live article and dedicated hero
+        env:
+          SITE_URL: https://keeptxred.com
+          ARTICLE_PATH: /news/texas-policing-agencies-compared
+          HERO_PATH: /images/news/texas-policing-agencies-compared.jpg
+        shell: bash
+        run: |
+          set -euo pipefail
+          stamp="${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          article="$(mktemp)"
+          hero="$(mktemp)"
+          headers="$(mktemp)"
+          trap 'rm -f "$article" "$hero" "$headers"' EXIT
+
+          status="$(curl --location --retry 5 --retry-delay 2 --retry-all-errors \
+            --connect-timeout 10 --max-time 60 --silent --show-error \
+            -o "$article" -w '%{http_code}' \
+            "$SITE_URL$ARTICLE_PATH?ktr_live_smoke=$stamp")"
+          if [[ "$status" != '200' ]]; then
+            echo "Expected policing comparison HTTP 200, got $status" >&2
+            cat "$article" >&2 || true
+            exit 1
+          fi
+
+          grep -Fq 'Texas Law Enforcement' "$article" || {
+            echo 'Live article HTML is missing the expected Texas Law Enforcement headline.' >&2
+            exit 1
+          }
+          grep -Fq "$HERO_PATH" "$article" || {
+            echo "Live article HTML does not reference the dedicated policing hero: $HERO_PATH" >&2
+            exit 1
+          }
+
+          hero_status="$(curl --location --retry 5 --retry-delay 2 --retry-all-errors \
+            --connect-timeout 10 --max-time 60 --silent --show-error \
+            -D "$headers" -o "$hero" -w '%{http_code}' \
+            "$SITE_URL$HERO_PATH?ktr_live_smoke=$stamp")"
+          if [[ "$hero_status" != '200' ]]; then
+            echo "Expected policing hero HTTP 200, got $hero_status" >&2
+            exit 1
+          fi
+          grep -Eiq '^content-type: image/(jpeg|jpg)' "$headers" || {
+            echo 'Policing hero did not return a JPEG content type.' >&2
+            cat "$headers" >&2
+            exit 1
+          }
+          bytes="$(wc -c < "$hero" | tr -d ' ')"
+          if (( bytes < 200000 )); then
+            echo "Policing hero is unexpectedly small: ${bytes} bytes" >&2
+            exit 1
+          fi
+
+          echo "Live policing comparison verified: HTTP 200, dedicated hero referenced, JPEG ${bytes} bytes."
