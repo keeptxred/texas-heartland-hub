@@ -15,6 +15,13 @@ const base = {
   quality_flags: [] as string[],
 };
 
+function bodyWithMainWords(words: number) {
+  return {
+    ...base.body_json,
+    intro: [Array.from({ length: words }, () => "word").join(" ")],
+  };
+}
+
 describe("public article readiness floor", () => {
   it("allows a sourced, substantive, non-quarantined article", () => {
     expect(isPublicArticleReady(base)).toBe(true);
@@ -46,6 +53,19 @@ describe("public article readiness floor", () => {
   it("blocks content below the impression-recovery quality floor and allows the boundary score", () => {
     expect(isPublicArticleReady({ ...base, content_quality_score: 69 })).toBe(false);
     expect(isPublicArticleReady({ ...base, content_quality_score: 70 })).toBe(true);
+  });
+
+  it("keeps restored legacy URLs out of public discovery below 500 substantive words", () => {
+    expect(isPublicArticleReady({
+      ...base,
+      quality_flags: ["legacy_url_restored"],
+      body_json: bodyWithMainWords(499),
+    })).toBe(false);
+    expect(isPublicArticleReady({
+      ...base,
+      quality_flags: ["legacy_url_restored"],
+      body_json: bodyWithMainWords(500),
+    })).toBe(true);
   });
 
   it("blocks machine-like internal paragraph repetition", () => {

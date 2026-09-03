@@ -1,4 +1,5 @@
 import { hasSeoDuplicateFlag } from "@/lib/article-canonical";
+import { articleMainWordCount } from "@/lib/article-length";
 
 export type PublicArticleCandidate = {
   category?: string | null;
@@ -52,6 +53,7 @@ const RETIRED_KTR_DISPLAY_CATEGORIES = new Set([
  * threshold while Search Console visibility is in recovery.
  */
 const MIN_PUBLIC_CONTENT_QUALITY_SCORE = 70;
+const RESTORED_LEGACY_MIN_MAIN_WORDS = 500;
 const MIN_REPETITION_PARAGRAPH_CHARS = 120;
 const MAX_DUPLICATE_PARAGRAPH_OCCURRENCES = 2;
 
@@ -147,6 +149,7 @@ function isRetiredKtrCategory(value: string | null | undefined): boolean {
 
 export function isPublicArticleReady(article: PublicArticleCandidate): boolean {
   if (hasSeoDuplicateFlag(article.quality_flags)) return false;
+  if ((article.quality_flags ?? []).includes("legacy_url_restored") && articleMainWordCount(article.body_json as never) < RESTORED_LEGACY_MIN_MAIN_WORDS) return false;
   if ((article.category ?? "").trim().toLowerCase() === "non-political") return false;
   if (isRetiredKtrCategory(article.category)) return false;
   if (isTexasDefinedDiscoverCategory(article.discover_category)) return false;
