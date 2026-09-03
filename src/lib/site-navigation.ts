@@ -3,13 +3,12 @@ export const SITE_NAV_GROUPS = [
     id: "news",
     label: "News",
     href: "/news",
-    description: "The latest statewide coverage, fast-moving updates, business, economy, and sports.",
+    description: "The latest statewide political, government, business, and economic coverage.",
     links: [
       { to: "/news", label: "Latest Texas News", description: "Breaking news and statewide reporting." },
       { to: "/happening-now", label: "Happening Now", description: "Fast-moving stories and developing updates." },
       { to: "/texas-economy", label: "Texas Economy", description: "Jobs, taxes, growth, regulation, and statewide economic trends." },
       { to: "/texas-business", label: "Texas Business", description: "Companies, employers, investment, and the Texas business climate." },
-      { to: "/texas-sports", label: "Texas Sports", description: "Teams, college sports, schedules, and major events." },
     ],
   },
   {

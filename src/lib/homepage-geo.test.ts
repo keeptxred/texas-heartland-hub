@@ -23,14 +23,13 @@ describe("homepage GEO signals", () => {
     expect(source).toContain("How can I request a correction or send Keep TX Red a tip?");
   });
 
-  it("keeps the FAQ visible when Election Central owns the homepage", () => {
+  it("keeps the homepage distinct while prominently promoting Election Central", () => {
     const source = homepageSource();
-    const electionBranch = source.slice(
-      source.indexOf("if (ELECTION_FEATURE_FLAGS.homepagePromotion)"),
-      source.indexOf("return <PoliticalHomepage />"),
-    );
 
-    expect(electionBranch).toContain("<ElectionHomePage />");
-    expect(electionBranch).toContain("<HomepageFaqs />");
+    expect(source).toContain("<ElectionSeasonSpotlight />");
+    expect(source).toContain('to="/elections/2026"');
+    expect(source).toContain("<HomepageFaqs />");
+    expect(source).not.toContain("<ElectionHomePage");
+    expect(source).toContain("Keep TX Red | Texas Politics, Elections & Government Accountability");
   });
 });

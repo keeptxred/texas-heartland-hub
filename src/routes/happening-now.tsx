@@ -21,7 +21,7 @@ function timeAgo(iso: string) {
 }
 
 function isRollingNewsKind(kind?: string | null) {
-  return kind === "news" || Boolean(kind?.startsWith("sports-"));
+  return kind === "news";
 }
 
 export const Route = createFileRoute("/happening-now")({
@@ -31,7 +31,7 @@ export const Route = createFileRoute("/happening-now")({
       {
         name: "description",
         content:
-          "Happening Now on Keep TX Red: the newest publish-ready Texas news, politics, elections, business, economy, and sports stories in one rolling feed.",
+          "Happening Now on Keep TX Red: the newest publish-ready Texas politics, elections, government, law, business, and economic-policy stories in one rolling feed.",
       },
       { property: "og:title", content: "Happening Now — Keep TX Red" },
       {
@@ -66,7 +66,7 @@ export const Route = createFileRoute("/happening-now")({
               url: "https://keeptxred.com/happening-now",
               name: "Happening Now — Latest Texas News",
               description:
-                "A rolling feed of the newest publish-ready Keep TX Red reporting across Texas news, politics, elections, business, economy, and sports.",
+                "A rolling feed of the newest publish-ready Keep TX Red reporting across Texas politics, elections, government, law, business, and economic policy.",
               isPartOf: { "@id": "https://keeptxred.com/#org" },
             },
           ],
