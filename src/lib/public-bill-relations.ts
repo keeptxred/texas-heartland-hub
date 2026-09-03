@@ -64,7 +64,9 @@ export async function getPublicBillRelations(billId: string) {
       )
     : [];
 
-  const articleById = new Map(articleRows.map((article: any) => [String(article.id), article]));
+  const articleById = new Map<string, any>(
+    articleRows.map((article: any) => [String(article.id), article] as [string, any]),
+  );
 
   const sponsors = (base.sponsors ?? []).map((sponsor: any) => {
     const slug = String(sponsor.sponsor_slug ?? '').trim();
