@@ -5,6 +5,7 @@ const deployWorkflow = readFileSync(".github/workflows/deploy-cloudflare-after-v
 const smokeScript = readFileSync("scripts/seo/verify-deployed-laws-routes.py", "utf8");
 const prioritySmoke = readFileSync("scripts/seo/verify_deployed_priority_sitemap.py", "utf8");
 const startServer = readFileSync("src/start.ts", "utf8");
+const workerServer = readFileSync("src/server.ts", "utf8");
 
 describe("deployed law routes production gate", () => {
   it("runs the law-route smoke inside the verified Cloudflare deployment", () => {
@@ -65,6 +66,20 @@ describe("deployed law routes production gate", () => {
     expect(startServer).toContain('request.headers.get(DEPLOYMENT_SMOKE_HEADER)?.trim().toLowerCase() === "canonical"');
     expect(startServer).toContain('const requestHost = isDirectDeploymentSmoke ? "keeptxred.com" : (forwardedHost || directHost).toLowerCase();');
     expect(startServer).toContain("const isDirectAuthorityReference =\n    directHost === DIRECT_WORKER_HOST");
+  });
+
+  it("canonicalizes only the direct Worker deployment smoke request before SSR", () => {
+    expect(workerServer).toContain('const DIRECT_WORKER_HOST = "keeptxred-site.freddy-coppola.workers.dev";');
+    expect(workerServer).toContain('const DEPLOYMENT_SMOKE_HEADER = "x-keeptxred-deployment-smoke";');
+    expect(workerServer).toContain('request.method === "GET" || request.method === "HEAD"');
+    expect(workerServer).toContain("url.host.toLowerCase() === DIRECT_WORKER_HOST");
+    expect(workerServer).toContain('request.headers.get(DEPLOYMENT_SMOKE_HEADER)?.trim().toLowerCase() === "canonical"');
+    expect(workerServer).toContain('url.protocol = "https:";');
+    expect(workerServer).toContain("url.host = CANONICAL_HOST;");
+    expect(workerServer).toContain("const appRequest = canonicalizeDeploymentSmokeRequest(request);");
+    expect(workerServer).toContain("const canonicalRedirect = canonicalHostRedirect(appRequest);");
+    expect(workerServer).toContain("const response = await handler.fetch(appRequest, env, ctx);");
+    expect(workerServer).not.toContain("const appRequest = canonicalizeDeploymentSmokeRequest(new Request");
   });
 
   it("keeps exact GitHub annotations for route and priority failures", () => {

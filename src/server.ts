@@ -10,6 +10,8 @@ type ServerEntry = {
 
 const CANONICAL_HOST = "keeptxred.com";
 const WWW_HOST = `www.${CANONICAL_HOST}`;
+const DIRECT_WORKER_HOST = "keeptxred-site.freddy-coppola.workers.dev";
+const DEPLOYMENT_SMOKE_HEADER = "x-keeptxred-deployment-smoke";
 const ADS_TXT = "google.com, pub-1891256141359926, DIRECT, f08c47fec0942fa0\n";
 const TEXAS_DEFINED_ORIGIN = "https://texasdefined.com";
 const CITY_MIGRATION_REDIRECTS: Readonly<Record<string, string>> = {
@@ -18,6 +20,26 @@ const CITY_MIGRATION_REDIRECTS: Readonly<Record<string, string>> = {
   "/san-antonio": "https://texasdefined.com/article/moving-to-san-antonio-guide",
   "/el-paso": "https://texasdefined.com/article/moving-to-el-paso-guide",
 };
+
+export function canonicalizeDeploymentSmokeRequest(request: Request): Request {
+  const url = new URL(request.url);
+  const canSmoke = request.method === "GET" || request.method === "HEAD";
+  const isDirectDeploymentSmoke =
+    canSmoke
+    && url.host.toLowerCase() === DIRECT_WORKER_HOST
+    && request.headers.get(DEPLOYMENT_SMOKE_HEADER)?.trim().toLowerCase() === "canonical";
+
+  if (!isDirectDeploymentSmoke) return request;
+
+  url.protocol = "https:";
+  url.host = CANONICAL_HOST;
+  return new Request(url.toString(), {
+    method: request.method,
+    headers: request.headers,
+    redirect: request.redirect,
+    signal: request.signal,
+  });
+}
 
 export function canonicalHostRedirect(request: Request): Response | null {
   const url = new URL(request.url);
@@ -108,22 +130,24 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
 
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
-    const canonicalRedirect = canonicalHostRedirect(request);
+    const appRequest = canonicalizeDeploymentSmokeRequest(request);
+
+    const canonicalRedirect = canonicalHostRedirect(appRequest);
     if (canonicalRedirect) return canonicalRedirect;
 
-    const adsTxt = adsTxtResponse(request);
+    const adsTxt = adsTxtResponse(appRequest);
     if (adsTxt) return adsTxt;
 
-    const cityRedirect = cityMigrationRedirect(request);
+    const cityRedirect = cityMigrationRedirect(appRequest);
     if (cityRedirect) return cityRedirect;
 
-    const exploreRedirect = exploreMigrationRedirect(request);
+    const exploreRedirect = exploreMigrationRedirect(appRequest);
     if (exploreRedirect) return exploreRedirect;
 
     try {
       installDirectAiFetch();
       const handler = await getServerEntry();
-      const response = await handler.fetch(request, env, ctx);
+      const response = await handler.fetch(appRequest, env, ctx);
       return await normalizeCatastrophicSsrResponse(response);
     } catch (error) {
       console.error(error);
