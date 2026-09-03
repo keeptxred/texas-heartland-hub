@@ -184,11 +184,29 @@ jobs:
         run: |
           set -euo pipefail
 
-          for attempt in $(seq 1 120); do
-            status="$(gh api "repos/$REPOSITORY/actions/runs/$RUN_ID" --jq '.status // ""')"
-            conclusion="$(gh api "repos/$REPOSITORY/actions/runs/$RUN_ID" --jq '.conclusion // ""')"
+          gh_api_retry() {
+            local output rc attempt
+            for attempt in $(seq 1 5); do
+              if output="$(gh api "$@" 2>&1)"; then
+                printf '%s' "$output"
+                return 0
+              fi
+              rc=$?
+              printf '%s\n' "$output" >&2
+              if [[ "$attempt" -eq 5 ]]; then
+                return "$rc"
+              fi
+              echo "Transient GitHub API failure while polling production state; retrying ($attempt/5)." >&2
+              sleep $((attempt * 2))
+            done
+          }
 
-            current_main="$(gh api "repos/$REPOSITORY/commits/main" --jq '.sha')"
+          for attempt in $(seq 1 120); do
+            run_json="$(gh_api_retry "repos/$REPOSITORY/actions/runs/$RUN_ID")"
+            status="$(printf '%s' "$run_json" | jq -r '.status // ""')"
+            conclusion="$(printf '%s' "$run_json" | jq -r '.conclusion // ""')"
+
+            current_main="$(gh_api_retry "repos/$REPOSITORY/commits/main" --jq '.sha')"
             if [[ "$current_main" != "$MAIN_SHA" && "$status" != 'completed' ]]; then
               echo "Main advanced to $current_main while run $RUN_ID was still $status; cancelling stale deployment." >&2
               gh api --method POST "repos/$REPOSITORY/actions/runs/$RUN_ID/cancel" >/dev/null || true
