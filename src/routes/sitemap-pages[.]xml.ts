@@ -12,7 +12,7 @@ import { TEXAS_DATA_SETS } from "@/data/texas-data-catalog";
 import { ACCOUNTABILITY_DATA_SETS } from "@/data/accountability-data-catalog";
 import { AGENCY_AUTHORITY_PROFILES } from "@/data/agency-authority";
 import { issueGuides } from "@/data/issue-guides";
-import { isIssueGuideIndexable } from "@/lib/issue-guide-indexability";
+import { isIssueGuideIndexable, issueGuideContentLastModified } from "@/lib/issue-guide-indexability";
 import { isPolicyTrackerIndexable } from "@/lib/policy-tracker-indexability";
 import { isPoliticalReferenceIndexable } from "@/lib/political-reference-indexability";
 import { isLawTopicIndexable } from "@/lib/law-topic-indexability";
@@ -57,7 +57,7 @@ const POLICY_TRACKER_LASTMOD = Object.fromEntries(INDEXABLE_POLICY_TRACKERS.map(
 const LAW_TOPIC_LASTMOD = Object.fromEntries(INDEXABLE_LAW_TOPICS.map((topic) => [`/laws/topic/${topic.slug}`, toIsoDate(`${topic.updated}T12:00:00-05:00`)]));
 const DATA_SET_LASTMOD = Object.fromEntries(INDEXABLE_DATA_SETS.map((dataset) => [`/data/${dataset.slug}`, toIsoDate(`${dataset.updated}T12:00:00-05:00`)]));
 const AGENCY_LASTMOD = Object.fromEntries(INDEXABLE_AGENCY_AUTHORITY_PROFILES.map((agency) => [`/texas-government/agencies/${agency.slug}`, toIsoDate(`${agency.reviewed}T12:00:00-05:00`)]));
-const ISSUE_GUIDE_LASTMOD = Object.fromEntries(INDEXABLE_ISSUE_GUIDES.map((guide) => [`/issues/${guide.slug}`, ISSUE_GUIDE_REFRESH]));
+const ISSUE_GUIDE_LASTMOD = Object.fromEntries(INDEXABLE_ISSUE_GUIDES.map((guide) => [`/issues/${guide.slug}`, toIsoDate(issueGuideContentLastModified(guide))]));
 
 const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/news": toIsoDate("2026-08-07T00:00:00-05:00"),
