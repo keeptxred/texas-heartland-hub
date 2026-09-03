@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { adsTxtResponse, canonicalHostRedirect, cityMigrationRedirect } from "./server";
+import {
+  adsTxtResponse,
+  canonicalHostRedirect,
+  cityMigrationRedirect,
+  normalizeCanonicalHref,
+} from "./server";
 
 const WWW_HOST = "www.keeptxred.com";
 const ADS_TXT_URLS = [
@@ -47,6 +52,39 @@ describe("canonicalHostRedirect", () => {
     for (const url of ADS_TXT_URLS) {
       expect(canonicalHostRedirect(new Request(url))).toBeNull();
     }
+  });
+});
+
+describe("normalizeCanonicalHref", () => {
+  it("removes trailing slashes from non-root KeepTXRed canonicals", () => {
+    expect(normalizeCanonicalHref("https://keeptxred.com/laws/")).toBe(
+      "https://keeptxred.com/laws",
+    );
+    expect(
+      normalizeCanonicalHref("https://keeptxred.com/laws/topic/property-tax-law/"),
+    ).toBe("https://keeptxred.com/laws/topic/property-tax-law");
+  });
+
+  it("preserves the canonical root and already slashless paths", () => {
+    expect(normalizeCanonicalHref("https://keeptxred.com/")).toBe("https://keeptxred.com/");
+    expect(normalizeCanonicalHref("https://keeptxred.com/laws/topics")).toBe(
+      "https://keeptxred.com/laws/topics",
+    );
+  });
+
+  it("does not rewrite another origin or a non-HTTPS URL", () => {
+    expect(normalizeCanonicalHref("https://texasdefined.com/laws/")).toBe(
+      "https://texasdefined.com/laws/",
+    );
+    expect(normalizeCanonicalHref("http://keeptxred.com/laws/")).toBe(
+      "http://keeptxred.com/laws/",
+    );
+  });
+
+  it("preserves query and fragment data while normalizing the pathname", () => {
+    expect(normalizeCanonicalHref("https://keeptxred.com/laws/?view=all#top")).toBe(
+      "https://keeptxred.com/laws?view=all#top",
+    );
   });
 });
 

@@ -8,6 +8,20 @@ type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
 };
 
+type HtmlRewriterElement = {
+  getAttribute: (name: string) => string | null;
+  setAttribute: (name: string, value: string) => void;
+};
+
+type HtmlRewriterConstructor = new () => {
+  on: (
+    selector: string,
+    handlers: { element: (element: HtmlRewriterElement) => void },
+  ) => {
+    transform: (response: Response) => Response;
+  };
+};
+
 const CANONICAL_HOST = "keeptxred.com";
 const WWW_HOST = `www.${CANONICAL_HOST}`;
 const DIRECT_WORKER_HOST = "keeptxred-site.freddy-coppola.workers.dev";
@@ -58,6 +72,46 @@ export function canonicalHostRedirect(request: Request): Response | null {
   url.hostname = CANONICAL_HOST;
   url.port = "";
   return Response.redirect(url.toString(), 308);
+}
+
+export function normalizeCanonicalHref(href: string): string {
+  const value = href.trim();
+  if (!value) return href;
+
+  try {
+    const url = new URL(value);
+    const isCanonicalOrigin =
+      url.protocol === "https:" && url.hostname.toLowerCase() === CANONICAL_HOST && url.port === "";
+    if (!isCanonicalOrigin || url.pathname === "/" || !url.pathname.endsWith("/")) {
+      return href;
+    }
+
+    url.pathname = url.pathname.replace(/\/+$/, "");
+    return url.toString();
+  } catch {
+    return href;
+  }
+}
+
+export function normalizeCanonicalLinksInHtml(response: Response): Response {
+  if (response.status < 200 || response.status >= 300 || !response.body) return response;
+  const contentType = response.headers.get("content-type") ?? "";
+  if (!contentType.toLowerCase().includes("text/html")) return response;
+
+  const Rewriter = (globalThis as typeof globalThis & { HTMLRewriter?: HtmlRewriterConstructor })
+    .HTMLRewriter;
+  if (!Rewriter) return response;
+
+  return new Rewriter()
+    .on('link[rel="canonical"]', {
+      element(element) {
+        const href = element.getAttribute("href");
+        if (!href) return;
+        const normalized = normalizeCanonicalHref(href);
+        if (normalized !== href) element.setAttribute("href", normalized);
+      },
+    })
+    .transform(response);
 }
 
 export function adsTxtResponse(request: Request): Response | null {
@@ -148,7 +202,8 @@ export default {
       installDirectAiFetch();
       const handler = await getServerEntry();
       const response = await handler.fetch(appRequest, env, ctx);
-      return await normalizeCatastrophicSsrResponse(response);
+      const normalizedResponse = await normalizeCatastrophicSsrResponse(response);
+      return normalizeCanonicalLinksInHtml(normalizedResponse);
     } catch (error) {
       console.error(error);
       return new Response(renderErrorPage(), {
