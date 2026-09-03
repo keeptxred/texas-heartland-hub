@@ -171,14 +171,16 @@ export const Route = createFileRoute("/news/$slug")({
     const authorPath = `/authors/${authorSlug(article.author)}`;
     const authorUrl = `${SITE_URL}${authorPath}`;
     const articleFaq = body.faq.filter(isSpecificFaq);
+    const articleImageWidth = 1280;
+    const articleImageHeight = article.slug === "texas-policing-agencies-compared" ? 672 : 720;
     const seo = buildSeo({
       title: article.title,
       description: article.dek,
       path,
       image: article.image,
       imageAlt: article.title,
-      imageWidth: 1280,
-      imageHeight: 720,
+      imageWidth: articleImageWidth,
+      imageHeight: articleImageHeight,
       type: "article",
       publishedTime: published,
       modifiedTime: modified,
@@ -188,8 +190,8 @@ export const Route = createFileRoute("/news/$slug")({
     });
     const articleImage = imageObjectJsonLd({
       url: seo.image,
-      width: 1280,
-      height: 720,
+      width: articleImageWidth,
+      height: articleImageHeight,
       caption: article.title,
       alt: article.title,
       representativeOfPage: true,
