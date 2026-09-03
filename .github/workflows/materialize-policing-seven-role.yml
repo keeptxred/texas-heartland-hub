@@ -5,7 +5,7 @@ on:
     branches:
       - fix/policing-full-seven-role-hero-20260903
     paths:
-      - ".tmp/policing-seven-role-q75/**"
+      - ".tmp/policing-seven-role-q55/**"
       - ".github/workflows/materialize-policing-seven-role.yml"
   workflow_dispatch:
 
@@ -25,17 +25,17 @@ jobs:
         run: |
           set -euo pipefail
 
-          expected_parts=17
-          found_parts="$(find .tmp/policing-seven-role-q75 -maxdepth 1 -name 'part*.b64' 2>/dev/null | wc -l | tr -d ' ')"
+          expected_parts=13
+          found_parts="$(find .tmp/policing-seven-role-q55 -maxdepth 1 -name 'part*.b64' 2>/dev/null | wc -l | tr -d ' ')"
           if [[ "$found_parts" != "$expected_parts" ]]; then
             echo "Waiting for all $expected_parts chunks; found $found_parts."
             exit 0
           fi
 
-          cat .tmp/policing-seven-role-q75/part*.b64 > /tmp/policing-seven-role.b64
+          cat .tmp/policing-seven-role-q55/part*.b64 > /tmp/policing-seven-role.b64
           base64 -d /tmp/policing-seven-role.b64 > /tmp/policing-seven-role.webp
 
-          echo "4af20d641d8feb70a2a4486daf08a21354db374d064dcb8e71edfbade769dfd6  /tmp/policing-seven-role.webp" | sha256sum -c -
+          echo "3c5661372494dd2779a043e0509d314502931c04f40ce2694671ea14011208b3  /tmp/policing-seven-role.webp" | sha256sum -c -
 
           python3 -m pip install --disable-pip-version-check pillow
           python3 - <<'PY'
@@ -46,11 +46,11 @@ jobs:
           print(src.size, src.format)
           PY
 
-          out='public/images/news/texas-policing-agencies-compared-seven-role-4af20d641d8f.webp'
+          out='public/images/news/texas-policing-agencies-compared-seven-role-3c5661372494.webp'
           cp /tmp/policing-seven-role.webp "$out"
-          test "$(wc -c < "$out")" -gt 140000
+          test "$(wc -c < "$out")" -gt 110000
 
-          rm -rf .tmp/policing-seven-role .tmp/policing-seven-role-q75
+          rm -rf .tmp/policing-seven-role .tmp/policing-seven-role-q75 .tmp/policing-seven-role-q55
           rm -f .github/workflows/materialize-policing-seven-role.yml
 
           git config user.name 'github-actions[bot]'
