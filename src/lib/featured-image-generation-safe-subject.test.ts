@@ -46,7 +46,7 @@ describe("buildGenerationSafeSubject", () => {
     expect(negative.replace(/rejected visual motif:.*$/i, "")).not.toMatch(/abbott|governor|politician|podium/i);
   });
 
-  it("steers Texas Register and state-rulemaking stories to a physical records-desk photograph instead of publication graphics", () => {
+  it("removes abstract civic cues from Texas Register generation while keeping a literal records-desk photograph", () => {
     const subject: SubjectExtract = {
       title: "Texas Register July 3 Edition: New State Agency Rules and Rulemaking Updates Released",
       firstParagraph: "The July 3 Texas Register records proposed and adopted state-agency rules and public notices.",
@@ -60,12 +60,13 @@ describe("buildGenerationSafeSubject", () => {
     const prompt = buildGenerationOnlyImagePrompt(safe, "Discard the prior graphic composition entirely");
 
     expect(safe.domain).toBe("general");
-    expect(safe.title).toBe("Texas administrative rulemaking records desk");
+    expect(safe.title).toBe("Office desk with printed binders and paper files");
     expect(safe.firstParagraph).toBe("");
-    expect(safe.concreteSubject).toMatch(/records desk|administrative-rule binders|rulemaking pages|bound public-record volumes/i);
-    expect(`${safe.title} ${safe.firstParagraph} ${safe.concreteSubject}`).not.toMatch(/texas register|july 3|governor|capitol|flag/i);
+    expect(safe.locations).toEqual([]);
+    expect(safe.concreteSubject).toMatch(/office desk|ring binders|printed pages|paper stacks|tabbed folders|bound volumes/i);
+    expect(`${safe.title} ${safe.firstParagraph} ${safe.concreteSubject}`).not.toMatch(/texas|register|government|administrative|rulemaking|state agency|july 3/i);
     expect(prompt).toContain("Physical-camera editorial news photograph");
-    expect(prompt).toContain("administrative rulemaking records desk");
-    expect(prompt).not.toMatch(/texas register|vector|illustration|poster|graphic design|text overlay/i);
+    expect(prompt).toContain("Office desk with printed binders and paper files");
+    expect(prompt).not.toMatch(/texas|register|government|administrative|rulemaking|state agency|vector|illustration|poster|graphic design|text overlay/i);
   });
 });
