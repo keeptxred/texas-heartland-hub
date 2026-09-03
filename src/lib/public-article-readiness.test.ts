@@ -24,9 +24,12 @@ describe("public article readiness floor", () => {
     expect(isPublicArticleReady({ ...base, category: "Non-Political" })).toBe(false);
   });
 
-  it("blocks legacy TexasDefined culture and history classifications", () => {
+  it("blocks TexasDefined and retired discovery classifications even when the display category is generic", () => {
     expect(isPublicArticleReady({ ...base, category: "Texas News", discover_category: "Texas Culture" })).toBe(false);
     expect(isPublicArticleReady({ ...base, category: "Texas News", discover_category: "Texas History" })).toBe(false);
+    expect(isPublicArticleReady({ ...base, category: "Texas News", discover_category: "Sports" })).toBe(false);
+    expect(isPublicArticleReady({ ...base, category: "Texas News", discover_category: "Sports Culture" })).toBe(false);
+    expect(isPublicArticleReady({ ...base, category: "Texas News", discover_category: "Culture & Identity" })).toBe(false);
   });
 
   it("blocks off-topic sports and culture display categories from KTR search discovery", () => {
