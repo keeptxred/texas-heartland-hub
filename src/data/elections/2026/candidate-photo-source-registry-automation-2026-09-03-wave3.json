@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "haysvotes.org",
+    "sourceClass": "local-election-candidate-guide-and-campaign-bridge",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use current HaysVotes.org Texas Midterm 2026 race and candidate pages to corroborate candidate identity, office sought, current general-election field, and linked candidate websites, and to discover downstream official campaign or candidate-controlled portrait sources. Do not approve or reuse HaysVotes-hosted imagery without item-level provenance plus an explicit reusable license, candidate/campaign permission, candidate-supplied editorial basis, or another documented permission basis. Reject generic graphics, logos, social-share images, placeholders, default avatars, and non-candidate imagery.",
+    "searchHint": "site:haysvotes.org Texas 2026 candidate district campaign website portrait",
+    "notes": "New source discovered September 3, 2026 while researching still-missing Texas House candidates. The current Texas House District 45 page identifies Republican nominee Tennyson G. Moreno alongside Erin Zwiener and links candidate websites. Treat HaysVotes as a discovery and corroboration bridge only; no hosted image is auto-approved."
+  }
+]
