@@ -1,0 +1,39 @@
+name: Fix policing hero native ratio
+
+on:
+  push:
+    branches:
+      - fix/policing-hero-no-crop-20260903
+    paths:
+      - ".github/workflows/fix-policing-hero-ratio.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Preserve full seven-role hero width
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('src/routes/news.$slug.tsx')
+          text = path.read_text()
+          old = '''      <div className="aspect-[16/9] overflow-hidden bg-muted my-8 md:my-10 border-2 border-foreground/10">\n        <img src={article.image} alt={article.title} className="size-full object-cover" width={1280} height={720} />\n      </div>'''
+          new = '''      <div className={`${article.slug === "texas-policing-agencies-compared" ? "aspect-[40/21]" : "aspect-[16/9]"} overflow-hidden bg-muted my-8 md:my-10 border-2 border-foreground/10`}>\n        <img\n          src={article.image}\n          alt={article.title}\n          className={`size-full ${article.slug === "texas-policing-agencies-compared" ? "object-contain" : "object-cover"}`}\n          width={1280}\n          height={article.slug === "texas-policing-agencies-compared" ? 672 : 720}\n        />\n      </div>'''
+          if old not in text:
+              raise SystemExit('Expected hero markup not found; refusing broad edit')
+          path.write_text(text.replace(old, new, 1))
+          PY
+          rm -f .github/workflows/fix-policing-hero-ratio.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Preserve full policing hero width'
+          git push origin HEAD
