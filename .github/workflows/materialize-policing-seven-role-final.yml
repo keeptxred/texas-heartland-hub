@@ -1,0 +1,55 @@
+name: Materialize final seven-role policing hero
+
+on:
+  push:
+    branches:
+      - fix/policing-seven-role-production-20260903
+    paths:
+      - ".github/workflows/materialize-policing-seven-role-final.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Materialize verified seven-role hero
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected_parts=5
+          found_parts="$(find .tmp/policing-seven-role-final -maxdepth 1 -name 'part*.b64' | wc -l | tr -d ' ')"
+          test "$found_parts" = "$expected_parts"
+
+          cat .tmp/policing-seven-role-final/part*.b64 > /tmp/policing-seven-role.b64
+          base64 -d /tmp/policing-seven-role.b64 > /tmp/policing-seven-role.webp
+          echo "0c284fef115ecc633eeae984a79fbbacac6e80f2f0a3526c3a1a5c8e6396814a  /tmp/policing-seven-role.webp" | sha256sum -c -
+
+          python3 -m pip install --disable-pip-version-check pillow
+          python3 - <<'PY'
+          from PIL import Image
+          p = '/tmp/policing-seven-role.webp'
+          im = Image.open(p)
+          assert im.size == (1280, 672), im.size
+          assert im.format == 'WEBP', im.format
+          print(im.size, im.format)
+          PY
+
+          out='public/images/news/texas-policing-agencies-compared-seven-role-0c284fef115e.webp'
+          cp /tmp/policing-seven-role.webp "$out"
+          test "$(wc -c < "$out")" -eq 59616
+
+          rm -rf .tmp/policing-seven-role-final
+          rm -f .github/workflows/materialize-policing-seven-role-final.yml
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Add exact seven-role policing comparison hero'
+          git push origin HEAD
