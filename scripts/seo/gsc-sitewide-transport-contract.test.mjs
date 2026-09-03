@@ -23,10 +23,11 @@ describe('sitewide GSC transport contract', () => {
     expect(endpoint).toContain('url.hostname === "keeptxred.com"');
   });
 
-  it('does not broaden the protected write endpoint beyond scheduled or explicit manual runs', () => {
-    expect(endpoint).toContain('["schedule", "workflow_dispatch"].includes');
+  it('keeps the protected write endpoint limited to the canonical workflow on active main runs', () => {
+    expect(endpoint).toContain('["schedule", "workflow_dispatch", "push"].includes');
     expect(endpoint).toContain('run?.head_branch !== "main"');
     expect(endpoint).toContain('run?.path !== EXPECTED_WORKFLOW');
-    expect(endpoint).not.toContain('["schedule", "workflow_dispatch", "push"]');
+    expect(endpoint).toContain('["queued", "in_progress"].includes');
+    expect(endpoint).not.toContain('"pull_request"');
   });
 });
