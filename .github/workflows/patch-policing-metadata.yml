@@ -1,0 +1,51 @@
+name: Patch policing image metadata
+
+on:
+  push:
+    branches: [fix/policing-seven-role-production-20260903]
+    paths: [.github/workflows/patch-policing-metadata.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Patch metadata and dimensions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path('src/lib/seo.ts')
+          s = p.read_text()
+          a = 'image.endsWith(".png") ? "image/png" : "image/jpeg"'
+          b = 'image.endsWith(".png") ? "image/png" : image.endsWith(".webp") ? "image/webp" : "image/jpeg"'
+          assert a in s
+          p.write_text(s.replace(a, b, 1))
+
+          p = Path('src/routes/news.$slug.tsx')
+          s = p.read_text()
+          marker = '    const articleFaq = body.faq.filter(isSpecificFaq);\n'
+          assert marker in s
+          s = s.replace(marker, marker + '    const articleImageWidth = 1280;\n    const articleImageHeight = article.slug === "texas-policing-agencies-compared" ? 672 : 720;\n', 1)
+          a = '      imageWidth: 1280,\n      imageHeight: 720,'
+          b = '      imageWidth: articleImageWidth,\n      imageHeight: articleImageHeight,'
+          assert a in s
+          s = s.replace(a, b, 1)
+          a = '      width: 1280,\n      height: 720,'
+          b = '      width: articleImageWidth,\n      height: articleImageHeight,'
+          assert a in s
+          p.write_text(s.replace(a, b, 1))
+          PY
+          rm .github/workflows/patch-policing-metadata.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Align policing WebP metadata and dimensions'
+          git push origin HEAD
