@@ -58,8 +58,15 @@ for (const file of files) {
   if (isBulkArticleMaintenance) {
     const explicitDatedScope = /WHERE[\s\S]*?(?:[a-z_]+\.)?slug\s*=\s*'20\d{2}-\d{2}-\d{2}-[a-z0-9-]+'/i.test(sql);
     const guardedLegacyScope = /category\s*=\s*'Non-Political'/i.test(sql) && /quality_flags/i.test(sql) && /target_site/i.test(sql);
-    const safelyScoped = isUpdate && !isInsert && /WHERE/i.test(sql) && (explicitDatedScope || guardedLegacyScope);
-    if (!safelyScoped) errors.push('BULK_ARTICLE_MAINTENANCE must be update-only and narrowly scoped by an explicit dated slug or a guarded legacy category/quality/site-boundary predicate');
+    const guardedRestoredThinScope =
+      /legacy_url_restored/i.test(sql) &&
+      /legacy_thin_content/i.test(sql) &&
+      /SET\s+quality_flags\s*=/i.test(sql) &&
+      /FROM\s+legacy_word_counts\s+wc/i.test(sql) &&
+      /WHERE\s+d\.slug\s*=\s*wc\.slug/i.test(sql) &&
+      /wc\.words\s*<\s*500/i.test(sql);
+    const safelyScoped = isUpdate && !isInsert && /WHERE/i.test(sql) && (explicitDatedScope || guardedLegacyScope || guardedRestoredThinScope);
+    if (!safelyScoped) errors.push('BULK_ARTICLE_MAINTENANCE must be update-only and narrowly scoped by an explicit dated slug, a guarded legacy category/quality/site-boundary predicate, or the restored-legacy <500-word quarantine contract');
   }
 
   const contentOnlyRemediation = isBulkCategoryReclassification || isBulkContentStructureRemediation || isBulkArticleMaintenance;
