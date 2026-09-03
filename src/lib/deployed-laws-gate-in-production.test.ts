@@ -83,12 +83,15 @@ describe("deployed law routes production gate", () => {
   });
 
   it("normalizes canonical HTML output before the deploy verifier reads it", () => {
-    expect(workerServer).toContain('link[rel="canonical"]');
+    expect(workerServer).toContain('link[rel~="canonical"]');
+    expect(workerServer).toContain("typeof HTMLRewriter === \"function\"");
+    expect(workerServer).not.toContain("globalThis as typeof globalThis");
+    expect(workerServer).toContain("normalizeCanonicalLinksInHtmlText(html)");
     expect(workerServer).toContain("const normalized = normalizeCanonicalHref(href);");
     expect(workerServer).toContain(
       "const normalizedResponse = await normalizeCatastrophicSsrResponse(response);",
     );
-    expect(workerServer).toContain("return normalizeCanonicalLinksInHtml(normalizedResponse);");
+    expect(workerServer).toContain("return await normalizeCanonicalLinksInHtml(normalizedResponse);");
   });
 
   it("keeps exact GitHub annotations for route and priority failures", () => {
