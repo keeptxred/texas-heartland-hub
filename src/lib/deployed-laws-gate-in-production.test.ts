@@ -82,6 +82,15 @@ describe("deployed law routes production gate", () => {
     expect(workerServer).not.toContain("const appRequest = canonicalizeDeploymentSmokeRequest(new Request");
   });
 
+  it("normalizes canonical HTML output before the deploy verifier reads it", () => {
+    expect(workerServer).toContain('link[rel="canonical"]');
+    expect(workerServer).toContain("const normalized = normalizeCanonicalHref(href);");
+    expect(workerServer).toContain(
+      "const normalizedResponse = await normalizeCatastrophicSsrResponse(response);",
+    );
+    expect(workerServer).toContain("return normalizeCanonicalLinksInHtml(normalizedResponse);");
+  });
+
   it("keeps exact GitHub annotations for route and priority failures", () => {
     expect(smokeScript).toContain('github_error("Deployed laws route smoke failed", failure)');
     expect(smokeScript).toContain('os.environ.get("GITHUB_ACTIONS") != "true"');
