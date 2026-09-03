@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "voteyourviews.org",
+    "sourceClass": "election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use VoteYourViews 2026 Texas candidate and race pages to corroborate current candidate identity, office, campaign website links, and discover downstream official candidate portrait sources. Do not approve or reuse VoteYourViews-hosted images without item-level provenance plus a reusable license, explicit permission, candidate-supplied attribution, or another documented editorial permission basis.",
+    "searchHint": "site:voteyourviews.org Texas 2026 candidate campaign website portrait",
+    "notes": "New discovery source identified September 3, 2026 while researching unresolved Texas House candidates. Current candidate pages expose office/race context and campaign-site links and can bridge to official sources; hosted imagery remains discovery-only absent item-level rights documentation."
+  },
+  {
+    "domain": "votetexasvalues.org",
+    "sourceClass": "election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use VoteTexasValues Texas Midterm 2026 race pages only to corroborate candidate identity and discover downstream official campaign sources. Do not approve or reuse hosted imagery without item-level provenance plus a reusable license, explicit permission, candidate-supplied attribution, or another documented editorial permission basis.",
+    "searchHint": "site:votetexasvalues.org Texas 2026 candidate campaign portrait",
+    "notes": "New discovery bridge identified September 3, 2026. The site publishes current Texas race/candidate summaries and campaign links; treat all hosted images as discovery-only unless rights are established independently."
+  }
+]
