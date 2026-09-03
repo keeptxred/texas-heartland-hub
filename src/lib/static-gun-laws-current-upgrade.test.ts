@@ -1,9 +1,21 @@
 import { describe, expect, it } from "vitest";
 import { applyGunLawsCurrentUpgrade } from "@/lib/static-gun-laws-current-upgrade";
 
+type GunLawUpgradeFixture = {
+  updated: string;
+  sections: Array<{
+    heading: string;
+    paragraphs: string[];
+  }>;
+  sources: Array<{
+    label?: string;
+    url?: string;
+  }>;
+};
+
 describe("current Texas gun-law static upgrade", () => {
   it("replaces superseded age guidance and adds current official sources", () => {
-    const body = {
+    const body: GunLawUpgradeFixture = {
       updated: "2026-07-15",
       sections: [
         {
