@@ -166,7 +166,7 @@ export function buildSeo(input: SeoInput) {
     { property: "og:image", content: image },
     { property: "og:image:secure_url", content: image },
     { property: "og:image:alt", content: imageAlt },
-    { property: "og:image:type", content: image.endsWith(".png") ? "image/png" : "image/jpeg" },
+    { property: "og:image:type", content: image.endsWith(".png") ? "image/png" : image.endsWith(".webp") ? "image/webp" : "image/jpeg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },

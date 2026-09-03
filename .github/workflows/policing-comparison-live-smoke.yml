@@ -28,9 +28,10 @@ jobs:
         env:
           SITE_URL: https://keeptxred.com
           ARTICLE_PATH: /news/texas-policing-agencies-compared
-          HERO_PATH: /images/news/texas-policing-agencies-compared-full-c089e1bb.jpg
+          HERO_PATH: /images/news/texas-policing-agencies-compared-seven-role-0c284fef115e.webp
+          WRONG_HASHED_HERO_PATH: /images/news/texas-policing-agencies-compared-full-c089e1bb.jpg
           OLD_HERO_PATH: /images/news/texas-policing-agencies-compared.jpg
-          REPO_HERO: public/images/news/texas-policing-agencies-compared-full-c089e1bb.jpg
+          REPO_HERO: public/images/news/texas-policing-agencies-compared-seven-role-0c284fef115e.webp
         shell: bash
         run: |
           set -euo pipefail
@@ -60,13 +61,30 @@ jobs:
             exit 1
           }
           grep -Fq "$HERO_PATH" "$article" || {
-            echo "Live article HTML does not reference the cache-safe policing hero: $HERO_PATH" >&2
+            echo "Live article HTML does not reference the seven-role policing hero: $HERO_PATH" >&2
             exit 1
           }
+          if grep -Fq "$WRONG_HASHED_HERO_PATH" "$article"; then
+            echo "Live article HTML still references the wrong four-role hashed hero: $WRONG_HASHED_HERO_PATH" >&2
+            exit 1
+          fi
           if grep -Fq "$OLD_HERO_PATH" "$article"; then
             echo "Live article HTML still references the retired policing hero path: $OLD_HERO_PATH" >&2
             exit 1
           fi
+
+          og_line="$(grep -oE '<meta[^>]+property="og:image"[^>]*>' "$article" | head -n 1 || true)"
+          twitter_line="$(grep -oE '<meta[^>]+name="twitter:image"[^>]*>' "$article" | head -n 1 || true)"
+          [[ "$og_line" == *"$HERO_PATH"* ]] || {
+            echo 'Open Graph image metadata does not use the seven-role hero.' >&2
+            echo "$og_line" >&2
+            exit 1
+          }
+          [[ "$twitter_line" == *"$HERO_PATH"* ]] || {
+            echo 'Twitter image metadata does not use the seven-role hero.' >&2
+            echo "$twitter_line" >&2
+            exit 1
+          }
 
           hero_status="$(curl --location --retry 5 --retry-delay 2 --retry-all-errors \
             --connect-timeout 10 --max-time 60 --silent --show-error \
@@ -76,14 +94,14 @@ jobs:
             echo "Expected policing hero HTTP 200, got $hero_status" >&2
             exit 1
           fi
-          grep -Eiq '^content-type: image/(jpeg|jpg)' "$headers" || {
-            echo 'Policing hero did not return a JPEG content type.' >&2
+          grep -Eiq '^content-type: image/webp' "$headers" || {
+            echo 'Policing hero did not return a WebP content type.' >&2
             cat "$headers" >&2
             exit 1
           }
 
           if ! cmp --silent "$REPO_HERO" "$hero"; then
-            echo 'Live policing hero bytes do not match the repository-approved asset.' >&2
+            echo 'Live policing hero bytes do not match the repository-approved seven-role asset.' >&2
             echo "repo sha256: $(sha256sum "$REPO_HERO" | awk '{print $1}')" >&2
             echo "live sha256: $(sha256sum "$hero" | awk '{print $1}')" >&2
             exit 1
@@ -91,4 +109,6 @@ jobs:
 
           bytes="$(wc -c < "$hero" | tr -d ' ')"
           digest="$(sha256sum "$hero" | awk '{print $1}')"
-          echo "Live policing comparison verified: HTTP 200, cache-safe hero referenced, exact bytes match (${bytes} bytes, sha256 ${digest})."
+          test "$bytes" -eq 59616
+          test "$digest" = '0c284fef115ecc633eeae984a79fbbacac6e80f2f0a3526c3a1a5c8e6396814a'
+          echo "Live policing comparison verified: HTTP 200, seven-role hero and social metadata referenced, exact bytes match (${bytes} bytes, sha256 ${digest})."
