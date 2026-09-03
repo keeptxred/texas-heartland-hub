@@ -25,7 +25,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          expected_parts=16
+          expected_parts=31
           found_parts="$(find .tmp/policing-seven-role -maxdepth 1 -name 'part*.b64' 2>/dev/null | wc -l | tr -d ' ')"
           if [[ "$found_parts" != "$expected_parts" ]]; then
             echo "Waiting for all $expected_parts chunks; found $found_parts."
@@ -35,20 +35,20 @@ jobs:
           cat .tmp/policing-seven-role/part*.b64 > /tmp/policing-seven-role.b64
           base64 -d /tmp/policing-seven-role.b64 > /tmp/policing-seven-role.webp
 
-          echo "658780376a4295782a8c509289c2ed91c60606aa1ace3fabcf9addee4edf6150  /tmp/policing-seven-role.webp" | sha256sum -c -
+          echo "c0de7dd89be839ee3bd000f3224e8b8d149c67edc712500833d445792b1fa236  /tmp/policing-seven-role.webp" | sha256sum -c -
 
           python3 -m pip install --disable-pip-version-check pillow
           python3 - <<'PY'
           from PIL import Image
           src = Image.open('/tmp/policing-seven-role.webp')
-          assert src.size == (1731, 909), src.size
+          assert src.size == (1280, 672), src.size
           assert src.format == 'WEBP', src.format
           print(src.size, src.format)
           PY
 
-          out='public/images/news/texas-policing-agencies-compared-seven-role-658780376a42.webp'
+          out='public/images/news/texas-policing-agencies-compared-seven-role-c0de7dd89be8.webp'
           cp /tmp/policing-seven-role.webp "$out"
-          test "$(wc -c < "$out")" -gt 550000
+          test "$(wc -c < "$out")" -gt 250000
 
           rm -rf .tmp/policing-seven-role
           rm -f .github/workflows/materialize-policing-seven-role.yml
