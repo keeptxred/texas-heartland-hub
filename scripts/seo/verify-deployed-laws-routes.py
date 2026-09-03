@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
+import json
 import os
 import re
 import subprocess
 from html.parser import HTMLParser
+from pathlib import Path
 
 from verify_deployed_priority_sitemap import verify_priority_sitemap
 
 SITE_URL = os.environ.get("SITE_URL", "https://keeptxred-site.freddy-coppola.workers.dev").rstrip("/")
 DEPLOYMENT_SMOKE_HEADER = "x-keeptxred-deployment-smoke: canonical"
+DEPLOYMENT_SMOKE_REPORT = os.environ.get("DEPLOYMENT_SMOKE_REPORT")
 PARENT_H1 = "Texas Laws Explained:"
 CHECKS = [
     ("/laws", PARENT_H1, "https://keeptxred.com/laws", False, False),
@@ -31,6 +34,14 @@ def github_error(title: str, message: str) -> None:
         .replace("\n", "%0A")
     )
     print(f"::error title={title}::{escaped}", flush=True)
+
+
+def write_report(report: dict) -> None:
+    if not DEPLOYMENT_SMOKE_REPORT:
+        return
+    path = Path(DEPLOYMENT_SMOKE_REPORT)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
 class PageParser(HTMLParser):
@@ -79,17 +90,43 @@ def fetch(url: str) -> str:
 
 def main() -> int:
     failures: list[str] = []
+    report = {
+        "site_url": SITE_URL,
+        "routes": [],
+        "route_failures": failures,
+        "priority_sitemap": {"status": "not_run", "error": None},
+    }
+    write_report(report)
+
     for path, expected_h1, expected_canonical, exact_h1, forbid_parent in CHECKS:
+        observation = {
+            "path": path,
+            "expected_h1": expected_h1,
+            "expected_h1_mode": "exact" if exact_h1 else "contains",
+            "expected_canonical": expected_canonical,
+            "fetch": "pending",
+            "fetch_error": None,
+            "h1": None,
+            "canonicals": [],
+        }
+        report["routes"].append(observation)
         try:
             body = fetch(f"{SITE_URL}{path}")
+            observation["fetch"] = "ok"
         except RuntimeError as exc:
-            failures.append(f"{path}: fetch failed ({exc})")
+            message = f"{path}: fetch failed ({exc})"
+            observation["fetch"] = "failed"
+            observation["fetch_error"] = str(exc)
+            failures.append(message)
+            write_report(report)
             continue
 
         parser = PageParser()
         parser.feed(body)
         h1 = normalize(" ".join(parser.h1_parts))
         canonicals = [normalize(value) for value in parser.canonicals]
+        observation["h1"] = h1
+        observation["canonicals"] = canonicals
 
         if not h1:
             failures.append(f"{path}: missing H1")
@@ -105,8 +142,10 @@ def main() -> int:
             failures.append(f"{path}: expected one canonical {expected_canonical!r}, got {canonicals!r}")
 
         print(f"{path}: h1={h1!r} canonical={canonicals!r}")
+        write_report(report)
 
     if failures:
+        write_report(report)
         for failure in failures:
             github_error("Deployed laws route smoke failed", failure)
         raise SystemExit("Deployed laws route smoke failed:\n- " + "\n- ".join(failures))
@@ -114,8 +153,13 @@ def main() -> int:
     print(f"Deployed laws route smoke passed for {len(CHECKS)} routes on {SITE_URL}.")
     try:
         verify_priority_sitemap(SITE_URL)
+        report["priority_sitemap"] = {"status": "passed", "error": None}
     except RuntimeError as exc:
+        report["priority_sitemap"] = {"status": "failed", "error": str(exc)}
+        write_report(report)
         raise SystemExit(str(exc)) from exc
+
+    write_report(report)
     return 0
 
 
