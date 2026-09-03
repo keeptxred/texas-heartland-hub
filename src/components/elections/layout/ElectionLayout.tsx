@@ -32,6 +32,40 @@ const ELECTION_DISCOVERY_LINKS = [
 
 const ELECTION_CENTRAL_TITLE = "2026 Texas Election Central: Races, Candidates, Polls & Results";
 
+// TanStack route heads and react-helmet-async are both included in SSR output.
+// These election leaves already own their canonical in the route head, so the
+// shared layout must not emit the same canonical a second time. Nested index
+// pages that intentionally omit a parent-route canonical (notably /polls)
+// continue to let the layout own their self-canonical.
+const ROUTE_HEAD_CANONICAL_PATHS = new Set([
+  "/elections/2026",
+  "/elections/voting",
+  "/elections/races",
+  "/elections/statewide",
+  "/elections/legislative",
+  "/elections/districts",
+  "/elections/candidates",
+  "/elections/methodology",
+  "/elections/results",
+  "/elections/forecast",
+  "/elections/corrections",
+]);
+
+const ROUTE_HEAD_CANONICAL_PREFIXES = [
+  "/elections/candidates/",
+  "/elections/districts/",
+  "/elections/polls/",
+  "/elections/results/",
+  "/elections/forecast/",
+  "/elections/races/",
+] as const;
+
+export function electionRouteHeadOwnsCanonical(pathname: string): boolean {
+  const normalized = pathname.length > 1 && pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
+  return ROUTE_HEAD_CANONICAL_PATHS.has(normalized)
+    || ROUTE_HEAD_CANONICAL_PREFIXES.some((prefix) => normalized.startsWith(prefix));
+}
+
 export function ElectionLayout({
   title,
   description,
@@ -54,6 +88,7 @@ export function ElectionLayout({
   const canonicalPath = canonicalUrl ? canonicalUrl.replace(/^https?:\/\/[^/]+/, "") || "/" : "";
   const normalized = pathname.length > 1 && pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
   const isCanonicalPage = Boolean(canonicalPath) && canonicalPath === normalized;
+  const layoutOwnsCanonical = isCanonicalPage && !electionRouteHeadOwnsCanonical(normalized);
   const isElectionPage = normalized === "/elections" || normalized.startsWith("/elections/");
   const isElectionCentralPage = isCanonicalPage && normalized === "/elections/2026";
   // ElectionHomePage is also embedded by the seasonal homepage takeover. Its
@@ -111,7 +146,7 @@ export function ElectionLayout({
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={pageTitle} />
         <meta name="twitter:description" content={description} />
-        {indexable && isCanonicalPage && <link rel="canonical" href={canonicalUrl} />}
+        {indexable && layoutOwnsCanonical && <link rel="canonical" href={canonicalUrl} />}
         {indexable && isCanonicalPage && <meta property="og:url" content={canonicalUrl} />}
         <script type="application/ld+json">{JSON.stringify(resolvedSchema)}</script>
       </Helmet>
