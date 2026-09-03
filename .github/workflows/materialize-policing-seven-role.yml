@@ -5,7 +5,7 @@ on:
     branches:
       - fix/policing-full-seven-role-hero-20260903
     paths:
-      - ".tmp/policing-seven-role/**"
+      - ".tmp/policing-seven-role-q75/**"
       - ".github/workflows/materialize-policing-seven-role.yml"
   workflow_dispatch:
 
@@ -25,17 +25,17 @@ jobs:
         run: |
           set -euo pipefail
 
-          expected_parts=31
-          found_parts="$(find .tmp/policing-seven-role -maxdepth 1 -name 'part*.b64' 2>/dev/null | wc -l | tr -d ' ')"
+          expected_parts=17
+          found_parts="$(find .tmp/policing-seven-role-q75 -maxdepth 1 -name 'part*.b64' 2>/dev/null | wc -l | tr -d ' ')"
           if [[ "$found_parts" != "$expected_parts" ]]; then
             echo "Waiting for all $expected_parts chunks; found $found_parts."
             exit 0
           fi
 
-          cat .tmp/policing-seven-role/part*.b64 > /tmp/policing-seven-role.b64
+          cat .tmp/policing-seven-role-q75/part*.b64 > /tmp/policing-seven-role.b64
           base64 -d /tmp/policing-seven-role.b64 > /tmp/policing-seven-role.webp
 
-          echo "c0de7dd89be839ee3bd000f3224e8b8d149c67edc712500833d445792b1fa236  /tmp/policing-seven-role.webp" | sha256sum -c -
+          echo "4af20d641d8feb70a2a4486daf08a21354db374d064dcb8e71edfbade769dfd6  /tmp/policing-seven-role.webp" | sha256sum -c -
 
           python3 -m pip install --disable-pip-version-check pillow
           python3 - <<'PY'
@@ -46,11 +46,11 @@ jobs:
           print(src.size, src.format)
           PY
 
-          out='public/images/news/texas-policing-agencies-compared-seven-role-c0de7dd89be8.webp'
+          out='public/images/news/texas-policing-agencies-compared-seven-role-4af20d641d8f.webp'
           cp /tmp/policing-seven-role.webp "$out"
-          test "$(wc -c < "$out")" -gt 250000
+          test "$(wc -c < "$out")" -gt 140000
 
-          rm -rf .tmp/policing-seven-role
+          rm -rf .tmp/policing-seven-role .tmp/policing-seven-role-q75
           rm -f .github/workflows/materialize-policing-seven-role.yml
 
           git config user.name 'github-actions[bot]'
