@@ -26,6 +26,7 @@ const BUCKET = "article-images";
 const STALE_GENERATION_LEASE_MS = 20 * 60 * 1000;
 const SENSITIVE_IMAGE_SUBJECT_RE = /\b(shooting|shot|gunfire|road rage|killed|dead|death|fatal|murder|homicide|victim|suspect|attack|assault)\b/i;
 const DATA_CENTER_IMAGE_SUBJECT_RE = /\b(data center(?:s)?|data-center(?:s)?|server farm(?:s)?|hyperscale)\b/i;
+const ADMINISTRATIVE_RULEMAKING_IMAGE_SUBJECT_RE = /\b(texas register|state agency rules?|rulemaking|proposed rules?|adopted rules?|administrative rules?)\b/i;
 
 type ArticleRow = {
   slug: string;
@@ -129,6 +130,15 @@ export function buildAltText(a: { title: string; category?: string | null }): st
 export function buildGenerationSafeSubject(subject: SubjectExtract): SubjectExtract {
   const storyText = `${subject.title} ${subject.firstParagraph} ${subject.concreteSubject}`;
   const location = subject.locations[0]?.trim();
+  if (ADMINISTRATIVE_RULEMAKING_IMAGE_SUBJECT_RE.test(storyText)) {
+    return {
+      ...subject,
+      domain: "general",
+      title: "Texas administrative rulemaking records desk",
+      firstParagraph: "",
+      concreteSubject: "A real Texas state-government records desk in daylight with open printed administrative-rule binders, loose rulemaking pages angled away from the camera, tabbed folders, binder clips, pens, and shelves of bound public-record volumes in the background. The page surfaces are softly out of focus, emphasizing paper texture, binders, desk materials, and physical depth rather than readable page content.",
+    };
+  }
   if (SENSITIVE_IMAGE_SUBJECT_RE.test(storyText)) {
     return {
       ...subject,
