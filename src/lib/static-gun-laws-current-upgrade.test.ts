@@ -3,6 +3,7 @@ import { applyGunLawsCurrentUpgrade } from "@/lib/static-gun-laws-current-upgrad
 
 type GunLawUpgradeFixture = {
   updated: string;
+  intro: string[];
   sections: Array<{
     heading: string;
     paragraphs: string[];
@@ -17,6 +18,9 @@ describe("current Texas gun-law static upgrade", () => {
   it("replaces superseded age guidance and adds current official sources", () => {
     const body: GunLawUpgradeFixture = {
       updated: "2026-07-15",
+      intro: [
+        "House Bill 1927 — Texas' 'constitutional carry' law — took effect September 1, 2021, allowing eligible Texans 21 and older to carry a handgun in most public places without a state-issued License to Carry (LTC).",
+      ],
       sections: [
         {
           heading: "Age rules",
@@ -30,10 +34,13 @@ describe("current Texas gun-law static upgrade", () => {
     };
 
     const upgraded = applyGunLawsCurrentUpgrade(body);
+    const introText = upgraded.intro?.join(" ") ?? "";
     const text = upgraded.sections?.flatMap((section) => section.paragraphs ?? []).join(" ") ?? "";
 
     expect(upgraded).not.toBe(body);
     expect(upgraded.updated).toBe("2026-09-02");
+    expect(introText).toContain("18-to-20-year-olds");
+    expect(introText).not.toContain("eligible Texans 21 and older");
     expect(text).toContain("18 to 20");
     expect(text).toContain("unlicensed resident of the same state");
     expect(text).not.toContain("private handgun sales to those under 21 are federally prohibited");
