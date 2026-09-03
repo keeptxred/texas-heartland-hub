@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { resolveArticleImage } from "./seo-headline";
 
-const ORIGINAL_POLICING_HERO = "/images/news/texas-policing-agencies-compared-original-67c1f261.jpg";
+const POLICING_HERO = "/images/news/texas-policing-agencies-compared-full-c089e1bb.jpg";
 
 describe("policing comparison hero image", () => {
-  it("keeps the original uploaded hero even when stale image metadata is present", () => {
+  it("keeps the dedicated cache-safe hero even when stale image metadata is present", () => {
     expect(resolveArticleImage({
       slug: "texas-policing-agencies-compared",
       title: "Texas Law Enforcement: Who does what?",
@@ -12,6 +12,6 @@ describe("policing comparison hero image", () => {
       featured_image_url: "/images/fallback/politics.jpg",
       image_category: "politics",
       category: "Government",
-    })).toBe(ORIGINAL_POLICING_HERO);
+    })).toBe(POLICING_HERO);
   });
 });
