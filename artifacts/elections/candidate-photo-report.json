@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-09-02T18:42:36.454Z",
+  "generatedAt": "2026-09-03T00:15:46.514Z",
   "candidateCount": 491,
   "eligibleCandidateCount": 479,
   "excludedCandidateCount": 12,
-  "approvedPhotoCount": 347,
-  "missingPhotoCount": 132,
-  "manifestEntryCount": 347,
-  "coverage": 0.7244258872651357,
-  "coveragePercent": 72.44,
+  "approvedPhotoCount": 349,
+  "missingPhotoCount": 130,
+  "manifestEntryCount": 349,
+  "coverage": 0.7286012526096033,
+  "coveragePercent": 72.86,
   "targetCoverage": 0.85,
   "targetApprovedPhotoCount": 408,
-  "photosNeededForTarget": 61,
+  "photosNeededForTarget": 59,
   "targetMet": false,
   "errors": [],
   "warnings": [],
@@ -135,13 +135,6 @@
     {
       "candidateId": "candidate-jinghpaw-majoishingra-other-race-2026-governor",
       "name": "JINGHPAW MAJOISHINGRA",
-      "raceId": "race-2026-governor",
-      "party": "other",
-      "priority": "statewide"
-    },
-    {
-      "candidateId": "candidate-mike-miller-other-race-2026-governor",
-      "name": "MIKE MILLER",
       "raceId": "race-2026-governor",
       "party": "other",
       "priority": "statewide"
@@ -332,13 +325,6 @@
       "candidateId": "candidate-tennyson-g-moreno-republican-race-2026-texas-house-45",
       "name": "TENNYSON G. MORENO",
       "raceId": "race-2026-texas-house-45",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-jennifer-mushtaler-republican-race-2026-texas-house-47",
-      "name": "JENNIFER MUSHTALER",
-      "raceId": "race-2026-texas-house-47",
       "party": "republican",
       "priority": "standard"
     },
