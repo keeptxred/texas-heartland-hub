@@ -1,0 +1,40 @@
+name: Materialize seven-role hero final
+on:
+  push:
+    branches: [fix/policing-seven-role-clean-20260903]
+    paths:
+      - public/images/news/texas-policing-agencies-compared-seven-role-20f25a9df4d6.webp.b64
+      - .github/workflows/materialize-seven-role-hero-final.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Decode exact hero
+        shell: bash
+        run: |
+          set -euo pipefail
+          src='public/images/news/texas-policing-agencies-compared-seven-role-20f25a9df4d6.webp.b64'
+          out='public/images/news/texas-policing-agencies-compared-seven-role-20f25a9df4d6.webp'
+          base64 -d "$src" > "$out"
+          test "$(wc -c < "$out")" -eq 45216
+          echo '20f25a9df4d6e53372ecef9567d188c8ecbb78c1ce057f738e95da1d634be362  public/images/news/texas-policing-agencies-compared-seven-role-20f25a9df4d6.webp' | sha256sum -c -
+          python3 -m pip install --disable-pip-version-check pillow >/dev/null
+          python3 - <<'PY'
+          from PIL import Image
+          p='public/images/news/texas-policing-agencies-compared-seven-role-20f25a9df4d6.webp'
+          im=Image.open(p)
+          assert im.size == (800, 420), im.size
+          assert im.format == 'WEBP', im.format
+          PY
+          rm -f "$src" .github/workflows/materialize-seven-role-hero-final.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Add exact seven-role policing hero'
+          git push origin HEAD
