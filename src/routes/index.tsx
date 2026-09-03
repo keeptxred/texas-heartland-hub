@@ -133,7 +133,7 @@ function ElectionSeasonSpotlight() {
       <div className="mx-auto grid max-w-[1200px] gap-6 px-6 py-8 md:grid-cols-[1fr_auto] md:items-center">
         <div>
           <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-primary">2026 election season</p>
-          <h2 id="election-central-spotlight" className="mt-2 font-display text-3xl tracking-tight">Election Central is KTR's dedicated election authority hub</h2>
+          <h2 id="election-central-spotlight" className="mt-2 font-display text-3xl tracking-tight">Election Central is KTR's dedicated election authority destination</h2>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">Follow Texas races, candidate profiles, polls, forecasts, voting logistics, methodology, district pages, and sourced results from one canonical destination.</p>
         </div>
         <div className="flex flex-wrap gap-3 md:justify-end">
