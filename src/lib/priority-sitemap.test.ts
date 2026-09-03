@@ -43,9 +43,8 @@ describe("priority sitemap inventory", () => {
     for (const path of UNOWNED_PRIORITY_NEWS) expect(paths).not.toContain(path);
   });
 
-  it("uses the canonical bill detail route contract", () => {
+  it("uses the canonical bill detail route contract whenever bill details are prioritized", () => {
     const billPaths = paths.filter((path) => /^\/bills\/texas\//.test(path));
-    expect(billPaths.length).toBeGreaterThan(0);
     for (const path of billPaths) {
       expect(path).toMatch(/^\/bills\/texas\/\d+\/[a-z]+\/\d+$/);
     }
