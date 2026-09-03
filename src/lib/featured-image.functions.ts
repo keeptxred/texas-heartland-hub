@@ -134,9 +134,10 @@ export function buildGenerationSafeSubject(subject: SubjectExtract): SubjectExtr
     return {
       ...subject,
       domain: "general",
-      title: "Texas administrative rulemaking records desk",
+      title: "Office desk with printed binders and paper files",
       firstParagraph: "",
-      concreteSubject: "A real Texas state-government records desk in daylight with open printed administrative-rule binders, loose rulemaking pages angled away from the camera, tabbed folders, binder clips, pens, and shelves of bound public-record volumes in the background. The page surfaces are softly out of focus, emphasizing paper texture, binders, desk materials, and physical depth rather than readable page content.",
+      locations: [],
+      concreteSubject: "A close documentary photograph of an ordinary office desk in daylight with several thick ring binders opened to dense printed pages angled away from the camera, loose paper stacks, tabbed folders, binder clips, pens, and shelves of bound volumes behind the desk. Focus on paper texture, binder hardware, the desk surface, soft natural shadows, and shallow photographic depth of field.",
     };
   }
   if (SENSITIVE_IMAGE_SUBJECT_RE.test(storyText)) {
@@ -168,9 +169,9 @@ export function buildGenerationOnlyImagePrompt(subject: SubjectExtract, extraGui
     "Unstaged documentary photojournalism in natural daylight with true-to-life materials, realistic optics, and photographic depth of field.",
     `Assignment: ${subject.title}.`,
     `Primary physical scene: ${subject.concreteSubject}`,
-    location ? `Texas location context: ${location}.` : "Texas location context.",
-    "Fill the frame with the named physical infrastructure and ordinary environmental details in one coherent real-world scene.",
-  ].join(" ").replace(/\s+/g, " ").trim().slice(0, 1800);
+    location ? `Texas location context: ${location}.` : "",
+    "Fill the frame with the named physical objects and ordinary environmental details in one coherent real-world scene.",
+  ].filter(Boolean).join(" ").replace(/\s+/g, " ").trim().slice(0, 1800);
 }
 
 async function serviceClient() {
