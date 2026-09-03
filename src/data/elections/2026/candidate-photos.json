@@ -1862,6 +1862,18 @@
     "discoveredAt": "2026-08-30T18:42:00.000Z"
   },
   {
+    "candidateId": "candidate-jennifer-mushtaler-republican-race-2026-texas-house-47",
+    "imageUrl": "https://static.wixstatic.com/media/7fd3aa_42a89a6d337f448c861b5586626363ff~mv2.png/v1/fill/w_1272,h_604,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/Profile.png",
+    "sourceUrl": "https://www.drjenfortexas.com/",
+    "altText": "Jennifer Mushtaler, Republican candidate for Texas House District 47",
+    "credit": "Jennifer Mushtaler campaign / Dr. Jen for Texas",
+    "license": null,
+    "permissionBasis": "Jennifer Mushtaler's official campaign homepage identifies her as the Texas House District 47 candidate and publishes this candidate-specific image in the campaign hero with the alt text 'Dr Jennifer'. The image is used only for editorial candidate identification with exact official-campaign attribution and source link; no broader reuse license is asserted.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-09-02T23:34:00.000Z"
+  },
+  {
     "candidateId": "candidate-jessi-cowart-libertarian-race-2026-texas-house-15",
     "imageUrl": "https://assets.nationbuilder.com/lptexas/pages/8541/attachments/original/1777575639/jessi-cowart.png?1777575639=",
     "sourceUrl": "https://www.lptexas.org/candidates",
@@ -2824,6 +2836,18 @@
     "usageStatus": "approved",
     "discoveryMethod": "official-campaign-profile",
     "discoveredAt": "2026-08-25T03:40:03.802Z"
+  },
+  {
+    "candidateId": "candidate-mike-miller-other-race-2026-governor",
+    "imageUrl": "https://i.imgur.com/6P84PtO.jpeg",
+    "sourceUrl": "https://mikemiller.netlify.app/",
+    "altText": "Mike Miller, American Solidarity Party write-in candidate for Texas Governor",
+    "credit": "Mike Miller for Texas Governor campaign",
+    "license": null,
+    "permissionBasis": "Mike Miller's official campaign website identifies him as the American Solidarity Party write-in candidate for Texas Governor, publishes this candidate-specific portrait with alt text identifying Mike Miller as the candidate, and states that Miller personally oversaw production of the campaign website. The same candidacy and candidate portrait are independently corroborated by the American Solidarity Party's official candidate profile. Used only for narrow editorial candidate identification with exact campaign attribution and source link; no broader reuse license is asserted.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-09-02T18:45:00.000Z"
   },
   {
     "candidateId": "candidate-mike-olcott-republican-race-2026-texas-house-60",
