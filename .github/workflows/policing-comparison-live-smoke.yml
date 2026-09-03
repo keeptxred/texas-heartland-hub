@@ -21,11 +21,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Verify live article and dedicated hero
+      - name: Check out deployed asset source
+        uses: actions/checkout@v5
+
+      - name: Verify live article and exact dedicated hero bytes
         env:
           SITE_URL: https://keeptxred.com
           ARTICLE_PATH: /news/texas-policing-agencies-compared
-          HERO_PATH: /images/news/texas-policing-agencies-compared.jpg
+          HERO_PATH: /images/news/texas-policing-agencies-compared-full-c089e1bb.jpg
+          OLD_HERO_PATH: /images/news/texas-policing-agencies-compared.jpg
+          REPO_HERO: public/images/news/texas-policing-agencies-compared-full-c089e1bb.jpg
         shell: bash
         run: |
           set -euo pipefail
@@ -34,6 +39,11 @@ jobs:
           hero="$(mktemp)"
           headers="$(mktemp)"
           trap 'rm -f "$article" "$hero" "$headers"' EXIT
+
+          test -s "$REPO_HERO" || {
+            echo "Expected repository hero is missing: $REPO_HERO" >&2
+            exit 1
+          }
 
           status="$(curl --location --retry 5 --retry-delay 2 --retry-all-errors \
             --connect-timeout 10 --max-time 60 --silent --show-error \
@@ -50,9 +60,13 @@ jobs:
             exit 1
           }
           grep -Fq "$HERO_PATH" "$article" || {
-            echo "Live article HTML does not reference the dedicated policing hero: $HERO_PATH" >&2
+            echo "Live article HTML does not reference the cache-safe policing hero: $HERO_PATH" >&2
             exit 1
           }
+          if grep -Fq "$OLD_HERO_PATH" "$article"; then
+            echo "Live article HTML still references the retired policing hero path: $OLD_HERO_PATH" >&2
+            exit 1
+          fi
 
           hero_status="$(curl --location --retry 5 --retry-delay 2 --retry-all-errors \
             --connect-timeout 10 --max-time 60 --silent --show-error \
@@ -67,10 +81,14 @@ jobs:
             cat "$headers" >&2
             exit 1
           }
-          bytes="$(wc -c < "$hero" | tr -d ' ')"
-          if (( bytes < 200000 )); then
-            echo "Policing hero is unexpectedly small: ${bytes} bytes" >&2
+
+          if ! cmp --silent "$REPO_HERO" "$hero"; then
+            echo 'Live policing hero bytes do not match the repository-approved asset.' >&2
+            echo "repo sha256: $(sha256sum "$REPO_HERO" | awk '{print $1}')" >&2
+            echo "live sha256: $(sha256sum "$hero" | awk '{print $1}')" >&2
             exit 1
           fi
 
-          echo "Live policing comparison verified: HTTP 200, dedicated hero referenced, JPEG ${bytes} bytes."
+          bytes="$(wc -c < "$hero" | tr -d ' ')"
+          digest="$(sha256sum "$hero" | awk '{print $1}')"
+          echo "Live policing comparison verified: HTTP 200, cache-safe hero referenced, exact bytes match (${bytes} bytes, sha256 ${digest})."
