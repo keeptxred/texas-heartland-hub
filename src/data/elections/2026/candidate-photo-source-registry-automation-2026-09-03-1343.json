@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "mindybumgarner.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Mindy Bumgarner's official State Board of Education District 14 campaign website to verify candidate identity, office, biography, and discover candidate-specific portrait or media assets. Do not approve or reuse any image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis. Reject logos, campaign graphics, social-share images, endorsement graphics, and other non-portrait assets.",
+    "searchHint": "Mindy Bumgarner State Board of Education District 14 official campaign portrait media",
+    "notes": "Discovered September 3, 2026. The candidate-controlled site identifies Mindy Bumgarner as running for Texas State Board of Education District 14; TCTA and current election sources independently corroborate the race and campaign website. The current page prominently exposes campaign graphics, so all imagery remains discovery-only until an exact candidate-specific portrait and item-level permission basis are verified."
+  },
+  {
+    "domain": "crystalsedillo.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Crystal Sedillo's official Texas House District 30 campaign website to verify candidate identity, office, biography, and discover candidate-specific portrait or media assets. Do not approve or reuse any image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis. Reject logos, campaign graphics, social-share images, stock imagery, and other non-portrait assets.",
+    "searchHint": "Crystal Sedillo Texas House District 30 official campaign portrait media",
+    "notes": "Discovered September 3, 2026. TCTA links crystalsedillo.com as Crystal Sedillo's current District 30 campaign website, and the site contains a candidate-controlled Meet Crystal biography. No image is auto-approved by this registry entry; any portrait must still be tied to the candidate at item level and pass the existing rights and generic-image gates."
+  },
+  {
+    "domain": "drcisnerosfortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Dr. Laura Cisneros's official Texas House District 38 campaign website to verify candidate identity, office, biography, and discover candidate-specific portrait or media assets. Do not approve or reuse any image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis. Reject stock photos, logos, campaign graphics, social-share images, and other non-candidate imagery.",
+    "searchHint": "Laura Cisneros Texas House District 38 official campaign portrait media",
+    "notes": "Discovered September 3, 2026. The campaign-controlled site identifies Dr. Laura Cisneros as the HD-38 candidate and includes a Meet Dr. Laura Cisneros biography with nearby candidate-hosted image assets while also using unrelated stock imagery elsewhere. This domain is therefore discovery-only and requires exact asset-level verification before any portrait approval."
+  }
+]
