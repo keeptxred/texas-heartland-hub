@@ -23,6 +23,12 @@ import { isAgencyAuthorityIndexable } from "@/lib/agency-authority-indexability"
 
 const GUIDE_LASTMOD = toIsoDate("2026-08-09T00:00:00-05:00");
 const ISSUE_GUIDE_REFRESH = toIsoDate("2026-08-19T13:15:00-05:00");
+const ISSUES_HUB_REFRESH = toIsoDate("2026-08-27T20:21:48Z");
+const TOOLS_HUB_REFRESH = toIsoDate("2026-08-27T12:57:29Z");
+const SPENDING_GROWTH_CAP_REFRESH = toIsoDate("2026-08-19T20:37:09Z");
+const TAX_STRUCTURE_COMPARISON_REFRESH = toIsoDate("2026-08-19T20:37:09Z");
+const RAINY_DAY_FUND_REFRESH = toIsoDate("2026-08-19T22:13:49Z");
+const BUDGET_HEADROOM_REFRESH = toIsoDate("2026-08-19T22:28:36Z");
 const HANDBOOK_REFRESH = toIsoDate("2026-08-22T10:11:00-05:00");
 const ACCOUNTABILITY_HANDBOOK_REFRESH = toIsoDate("2026-08-22T11:00:00-05:00");
 const LOCAL_GOVERNMENT_HANDBOOK_REFRESH = toIsoDate("2026-08-22T11:25:00-05:00");
@@ -110,15 +116,15 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/civic-tools/bill-finder": CIVIC_TOOLS_REFRESH,
   "/civic-tools/compare-legislators": CIVIC_TOOLS_REFRESH,
   "/topics": GUIDE_LASTMOD,
-  "/issues": ISSUE_GUIDE_REFRESH,
+  "/issues": ISSUES_HUB_REFRESH,
   "/issues/texas-policy-handbook": HANDBOOK_REFRESH,
   "/issues/texas-government-accountability-handbook": ACCOUNTABILITY_HANDBOOK_REFRESH,
   "/issues/texas-local-government-handbook": LOCAL_GOVERNMENT_HANDBOOK_REFRESH,
-  "/tools": ISSUE_GUIDE_REFRESH,
-  "/tools/texas-spending-growth-cap": ISSUE_GUIDE_REFRESH,
-  "/tools/texas-tax-structure-comparison": ISSUE_GUIDE_REFRESH,
-  "/tools/texas-rainy-day-fund": ISSUE_GUIDE_REFRESH,
-  "/tools/texas-budget-headroom": ISSUE_GUIDE_REFRESH,
+  "/tools": TOOLS_HUB_REFRESH,
+  "/tools/texas-spending-growth-cap": SPENDING_GROWTH_CAP_REFRESH,
+  "/tools/texas-tax-structure-comparison": TAX_STRUCTURE_COMPARISON_REFRESH,
+  "/tools/texas-rainy-day-fund": RAINY_DAY_FUND_REFRESH,
+  "/tools/texas-budget-headroom": BUDGET_HEADROOM_REFRESH,
   "/texas-politics": POLITICAL_HISTORY_REFRESH,
   "/texas-politics/texas-constitutional-history": POLITICAL_HISTORY_REFRESH,
   "/texas-politics/texas-election-history": POLITICAL_HISTORY_REFRESH,
