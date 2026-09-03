@@ -50,6 +50,19 @@ describe("deployed law routes production gate", () => {
     expect(smokeScript).toContain("cache-control: no-cache");
   });
 
+  it("hard-gates the HB 1056 related article in freshly deployed HTML", () => {
+    expect(smokeScript).toContain('HB1056_PATH = "/bills/texas/89/hb/1056"');
+    expect(smokeScript).toContain('HB1056_CANONICAL = "https://keeptxred.com/bills/texas/89/hb/1056"');
+    expect(smokeScript).toContain('HB1056_ARTICLE_PATH = "/news/texas-gold-silver-legal-tender-hb-1056"');
+    expect(smokeScript).toContain('HB1056_ARTICLE_TITLE = "Texas Gold and Silver Legal Tender Law Takes Effect Sept. 1"');
+    expect(smokeScript).toContain("KeepTXRed has not linked a related article to this bill yet.");
+    expect(smokeScript).toContain('if anchor["href"] == HB1056_ARTICLE_PATH');
+    expect(smokeScript).toContain('HB1056_ARTICLE_TITLE in anchor["text"]');
+    expect(smokeScript).toContain('hb_observation["missing_article_fallback_found"]');
+    expect(smokeScript).toContain("stale missing-related-article fallback is still rendered");
+    expect(smokeScript).toContain("plus the HB 1056 related article");
+  });
+
   it("probes the freshly deployed Worker without a Cloudflare-rejected Host override", () => {
     for (const probe of [smokeScript, prioritySmoke]) {
       expect(probe).toContain('DEPLOYMENT_SMOKE_HEADER = "x-keeptxred-deployment-smoke: canonical"');

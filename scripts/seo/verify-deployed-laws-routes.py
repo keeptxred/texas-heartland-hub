@@ -12,6 +12,11 @@ SITE_URL = os.environ.get("SITE_URL", "https://keeptxred-site.freddy-coppola.wor
 DEPLOYMENT_SMOKE_HEADER = "x-keeptxred-deployment-smoke: canonical"
 DEPLOYMENT_SMOKE_REPORT = os.environ.get("DEPLOYMENT_SMOKE_REPORT")
 PARENT_H1 = "Texas Laws Explained:"
+HB1056_PATH = "/bills/texas/89/hb/1056"
+HB1056_CANONICAL = "https://keeptxred.com/bills/texas/89/hb/1056"
+HB1056_ARTICLE_PATH = "/news/texas-gold-silver-legal-tender-hb-1056"
+HB1056_ARTICLE_TITLE = "Texas Gold and Silver Legal Tender Law Takes Effect Sept. 1"
+HB1056_MISSING_ARTICLE_FALLBACK = "KeepTXRed has not linked a related article to this bill yet."
 CHECKS = [
     ("/laws", PARENT_H1, "https://keeptxred.com/laws", False, False),
     ("/laws/constitutional-amendments", "Texas Constitutional Amendments Tracker", "https://keeptxred.com/laws/constitutional-amendments", True, True),
@@ -50,6 +55,11 @@ class PageParser(HTMLParser):
         self.h1_depth = 0
         self.h1_parts: list[str] = []
         self.canonicals: list[str] = []
+        self.anchor_depth = 0
+        self.anchor_href: str | None = None
+        self.anchor_parts: list[str] = []
+        self.anchors: list[dict[str, str]] = []
+        self.text_parts: list[str] = []
 
     def handle_starttag(self, tag, attrs):
         tag = tag.lower()
@@ -61,14 +71,33 @@ class PageParser(HTMLParser):
             href = values.get("href")
             if "canonical" in rel and href:
                 self.canonicals.append(href)
+        if tag == "a":
+            if self.anchor_depth == 0:
+                values = dict(attrs)
+                self.anchor_href = values.get("href")
+                self.anchor_parts = []
+            self.anchor_depth += 1
 
     def handle_endtag(self, tag):
-        if tag.lower() == "h1" and self.h1_depth:
+        tag = tag.lower()
+        if tag == "h1" and self.h1_depth:
             self.h1_depth -= 1
+        if tag == "a" and self.anchor_depth:
+            self.anchor_depth -= 1
+            if self.anchor_depth == 0:
+                self.anchors.append({
+                    "href": normalize(self.anchor_href or ""),
+                    "text": normalize(" ".join(self.anchor_parts)),
+                })
+                self.anchor_href = None
+                self.anchor_parts = []
 
     def handle_data(self, data):
+        self.text_parts.append(data)
         if self.h1_depth:
             self.h1_parts.append(data)
+        if self.anchor_depth:
+            self.anchor_parts.append(data)
 
 
 def fetch(url: str) -> str:
@@ -94,6 +123,15 @@ def main() -> int:
         "site_url": SITE_URL,
         "routes": [],
         "route_failures": failures,
+        "hb1056_relationship": {
+            "path": HB1056_PATH,
+            "fetch": "pending",
+            "fetch_error": None,
+            "canonicals": [],
+            "article_link_found": False,
+            "article_title_found": False,
+            "missing_article_fallback_found": False,
+        },
         "priority_sitemap": {"status": "not_run", "error": None},
     }
     write_report(report)
@@ -144,13 +182,61 @@ def main() -> int:
         print(f"{path}: h1={h1!r} canonical={canonicals!r}")
         write_report(report)
 
+    hb_observation = report["hb1056_relationship"]
+    try:
+        hb_body = fetch(f"{SITE_URL}{HB1056_PATH}")
+        hb_observation["fetch"] = "ok"
+        hb_parser = PageParser()
+        hb_parser.feed(hb_body)
+        hb_canonicals = [normalize(value) for value in hb_parser.canonicals]
+        hb_observation["canonicals"] = hb_canonicals
+        matching_links = [
+            anchor for anchor in hb_parser.anchors
+            if anchor["href"] == HB1056_ARTICLE_PATH
+        ]
+        visible_text = normalize(" ".join(hb_parser.text_parts))
+        hb_observation["article_link_found"] = bool(matching_links)
+        hb_observation["article_title_found"] = any(
+            HB1056_ARTICLE_TITLE in anchor["text"] for anchor in matching_links
+        )
+        hb_observation["missing_article_fallback_found"] = HB1056_MISSING_ARTICLE_FALLBACK in visible_text
+
+        if hb_canonicals != [HB1056_CANONICAL]:
+            failures.append(
+                f"{HB1056_PATH}: expected one canonical {HB1056_CANONICAL!r}, got {hb_canonicals!r}"
+            )
+        if not hb_observation["article_link_found"]:
+            failures.append(
+                f"{HB1056_PATH}: missing related article link {HB1056_ARTICLE_PATH!r}"
+            )
+        elif not hb_observation["article_title_found"]:
+            failures.append(
+                f"{HB1056_PATH}: related article link is present but title {HB1056_ARTICLE_TITLE!r} is not rendered inside it"
+            )
+        if hb_observation["missing_article_fallback_found"]:
+            failures.append(
+                f"{HB1056_PATH}: stale missing-related-article fallback is still rendered"
+            )
+
+        print(
+            f"{HB1056_PATH}: canonical={hb_canonicals!r} "
+            f"article_link={hb_observation['article_link_found']} "
+            f"article_title={hb_observation['article_title_found']} "
+            f"fallback={hb_observation['missing_article_fallback_found']}"
+        )
+    except RuntimeError as exc:
+        hb_observation["fetch"] = "failed"
+        hb_observation["fetch_error"] = str(exc)
+        failures.append(f"{HB1056_PATH}: fetch failed ({exc})")
+    write_report(report)
+
     if failures:
         write_report(report)
         for failure in failures:
             github_error("Deployed laws route smoke failed", failure)
         raise SystemExit("Deployed laws route smoke failed:\n- " + "\n- ".join(failures))
 
-    print(f"Deployed laws route smoke passed for {len(CHECKS)} routes on {SITE_URL}.")
+    print(f"Deployed laws route smoke passed for {len(CHECKS)} routes plus the HB 1056 related article on {SITE_URL}.")
     try:
         verify_priority_sitemap(SITE_URL)
         report["priority_sitemap"] = {"status": "passed", "error": None}
