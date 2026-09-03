@@ -6,7 +6,7 @@ const sitemapSource = readFileSync(new URL("../routes/sitemap-pages[.]xml.ts", i
 const VALUE_CLASSES = {
   collectionOrNavigation: [
     "/", "/news", "/happening-now", "/keep-texas-red",
-    "/houston", "/texas-sports", "/texas-business",
+    "/houston", "/texas-business",
     "/texas-legislature", "/texas-legislature/house", "/texas-legislature/senate", "/texas-legislature/sessions",
     "/texas-government", "/texas-government/agencies", "/districts", "/representatives",
     "/get-involved", "/laws", "/laws/topics", "/data", "/civic-tools", "/topics", "/issues", "/tools",
