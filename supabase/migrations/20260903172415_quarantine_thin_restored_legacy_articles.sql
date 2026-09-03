@@ -1,3 +1,4 @@
+-- BULK_ARTICLE_MAINTENANCE
 -- Keep restored historical URLs accessible, but do not proactively expose thin
 -- restorations to search or AdSense until they have at least 500 substantive
 -- main-body words. This data migration uses the existing legacy_thin_content
