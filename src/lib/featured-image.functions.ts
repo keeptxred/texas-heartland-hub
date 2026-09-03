@@ -134,10 +134,10 @@ export function buildGenerationSafeSubject(subject: SubjectExtract): SubjectExtr
     return {
       ...subject,
       domain: "general",
-      title: "Office desk with printed binders and paper files",
+      title: "Public records reading-room reference volume",
       firstParagraph: "",
       locations: [],
-      concreteSubject: "A close documentary photograph of an ordinary office desk in daylight with several thick ring binders opened to dense printed pages angled away from the camera, loose paper stacks, tabbed folders, binder clips, pens, and shelves of bound volumes behind the desk. Focus on paper texture, binder hardware, the desk surface, soft natural shadows, and shallow photographic depth of field.",
+      concreteSubject: "A close DSLR photograph of one adult hand turning a thick cream-colored page in a heavy clothbound reference volume at a plain wooden public-records reading-room desk. Printed lines on the page are deliberately out of focus and unreadable. A metal binder clip and a capped pen rest beside the volume, while shelves of matching hardbound reference volumes fall softly out of focus in the background. Natural window light, visible skin texture, paper fibers, wood grain, realistic lens blur, and an unposed documentary camera angle.",
     };
   }
   if (SENSITIVE_IMAGE_SUBJECT_RE.test(storyText)) {
