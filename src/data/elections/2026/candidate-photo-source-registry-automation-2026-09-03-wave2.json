@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "usmcmin.com",
+    "sourceClass": "candidate-scorecard-profile-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use current RESOLUTE Citizen Scorecard candidate pages only to corroborate candidate identity, office, campaign context, and discover downstream official campaign, government, party, or candidate-controlled portrait sources. Do not approve or reuse any scorecard-hosted image without item-level provenance plus an explicit reusable license, candidate/campaign permission, candidate-supplied newsroom basis, or another documented editorial permission basis. Reject logos, generic scorecard graphics, social-share images, placeholders, default avatars, and non-candidate imagery.",
+    "searchHint": "site:usmcmin.com/candidates/tx Texas 2026 candidate name district campaign portrait",
+    "notes": "Discovered September 3, 2026 during unresolved-candidate source expansion. Current Texas candidate profiles expose 2026 race context and can bridge sparse candidates to official or candidate-controlled sources. Registered discovery-only; no hosted image is approved by this source entry."
+  }
+]
