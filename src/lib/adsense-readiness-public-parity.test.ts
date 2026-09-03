@@ -2,7 +2,7 @@ import fs from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const migration = fs.readFileSync(
-  new URL("../../supabase/migrations/20260903121500_align_adsense_readiness_with_public_indexability.sql", import.meta.url),
+  new URL("../../supabase/migrations/20260903153800_block_retired_discovery_taxonomy_from_adsense_readiness.sql", import.meta.url),
   "utf8",
 );
 const publicGate = fs.readFileSync(
@@ -25,8 +25,15 @@ describe("AdSense readiness/public-indexability parity", () => {
     for (const category of ["non-political", "sports", "sports culture", "culture & identity"]) {
       expect(migration).toContain(`'${category}'`);
     }
-    for (const discoverCategory of ["texas culture", "texas history"]) {
+    for (const discoverCategory of [
+      "texas culture",
+      "texas history",
+      "sports",
+      "sports culture",
+      "culture & identity",
+    ]) {
       expect(migration).toContain(`'${discoverCategory}'`);
+      expect(publicGate).toContain(`\"${discoverCategory}\"`);
     }
     expect(migration).toContain("retired_ktr_taxonomy");
     expect(migration).toContain("texasdefined_discovery_taxonomy");
