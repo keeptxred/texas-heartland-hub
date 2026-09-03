@@ -190,7 +190,7 @@ export function TexasBusinessView({ topic }: { topic: string }) {
           <li><Link to="/news" className="text-primary hover:underline">Texas News →</Link></li>
           <li><Link to="/texas-politics" className="text-primary hover:underline">Texas Politics →</Link></li>
           <li><Link to="/houston" className="text-primary hover:underline">Houston News →</Link></li>
-          <li><Link to="/texas-sports" className="text-primary hover:underline">Texas Sports →</Link></li>
+          <li><Link to="/laws" className="text-primary hover:underline">Texas Laws →</Link></li>
           <li><Link to="/elections/2026" className="text-primary hover:underline">Election Central →</Link></li>
           <li><Link to="/bills" search={EMPTY_BILLS_SEARCH} className="text-primary hover:underline">Texas Bills →</Link></li>
         </ul>
