@@ -45,4 +45,27 @@ describe("buildGenerationSafeSubject", () => {
     expect(prompt).not.toMatch(/abbott|governor|politician|podium|illustration|cartoon|poster|graphic design/i);
     expect(negative.replace(/rejected visual motif:.*$/i, "")).not.toMatch(/abbott|governor|politician|podium/i);
   });
+
+  it("steers Texas Register and state-rulemaking stories to a physical records-desk photograph instead of publication graphics", () => {
+    const subject: SubjectExtract = {
+      title: "Texas Register July 3 Edition: New State Agency Rules and Rulemaking Updates Released",
+      firstParagraph: "The July 3 Texas Register records proposed and adopted state-agency rules and public notices.",
+      entities: ["Texas Register", "Texas"],
+      locations: ["Texas"],
+      domain: "politics",
+      concreteSubject: "The Texas Register published proposed and adopted state agency rules for July 3, 2026.",
+    };
+
+    const safe = buildGenerationSafeSubject(subject);
+    const prompt = buildGenerationOnlyImagePrompt(safe, "Discard the prior graphic composition entirely");
+
+    expect(safe.domain).toBe("general");
+    expect(safe.title).toBe("Texas administrative rulemaking records desk");
+    expect(safe.firstParagraph).toBe("");
+    expect(safe.concreteSubject).toMatch(/records desk|administrative-rule binders|rulemaking pages|bound public-record volumes/i);
+    expect(`${safe.title} ${safe.firstParagraph} ${safe.concreteSubject}`).not.toMatch(/texas register|july 3|governor|capitol|flag/i);
+    expect(prompt).toContain("Physical-camera editorial news photograph");
+    expect(prompt).toContain("administrative rulemaking records desk");
+    expect(prompt).not.toMatch(/texas register|vector|illustration|poster|graphic design|text overlay/i);
+  });
 });
