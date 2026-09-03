@@ -11,6 +11,24 @@ export const EDITORIAL_BYLINE_DISCLOSURE =
 
 export const AUTHORS: Author[] = [
   {
+    slug: "keep-tx-red-newsroom",
+    name: "Keep TX Red Newsroom",
+    role: "General Texas news & public-affairs desk",
+    beats: ["Texas government", "Statewide news", "Public policy", "Government accountability"],
+    bio: [
+      "Keep TX Red Newsroom is the publication's organizational byline for source-grounded Texas news and public-affairs reporting that spans multiple policy beats or is not assigned to a narrower subject-matter desk. It identifies an editorial workflow, not an individual reporter.",
+    ],
+  },
+  {
+    slug: "keep-tx-red-editorial-staff",
+    name: "Keep TX Red Editorial Staff",
+    role: "Cross-desk editorial byline",
+    beats: ["Texas politics", "Government", "Public policy", "Explanatory reporting"],
+    bio: [
+      "Keep TX Red Editorial Staff is an organizational byline for publication-wide explanatory and editorial work produced across Keep TX Red coverage areas. The name identifies the publication's editorial process and does not represent a named individual author.",
+    ],
+  },
+  {
     slug: "staff-reporter",
     name: "Staff Reporter",
     role: "General assignment editorial byline",
@@ -149,11 +167,17 @@ export const AUTHORS: Author[] = [
   },
 ];
 
+const AUTHOR_SLUG_ALIASES: Readonly<Record<string, string>> = {
+  "keep-tx-red-civics-desk": "civics-desk",
+  "keep-tx-red-elections-desk": "elections-desk",
+};
+
 export function authorSlug(name: string): string {
-  return name
+  const normalized = name
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+  return AUTHOR_SLUG_ALIASES[normalized] ?? normalized;
 }
 
 export function getAuthor(name: string): Author | undefined {
