@@ -6,11 +6,12 @@ const script = readFileSync(new URL('./sync-gsc-sitewide.mjs', import.meta.url),
 const endpoint = readFileSync(new URL('../../src/routes/api/admin/gsc-sitewide-sync.ts', import.meta.url), 'utf8');
 
 const WORKER_ORIGIN = 'https://keeptxred-site.freddy-coppola.workers.dev';
+const PRODUCTION_ORIGIN = 'https://keeptxred.com';
 
 describe('sitewide GSC transport contract', () => {
-  it('uses the deployed Worker origin for GitHub-runner sitemap and write transport', () => {
+  it('uses the Worker origin for sitemap transport and production for protected writes', () => {
     expect(workflow).toContain(`GSC_SITEWIDE_FETCH_ORIGIN: ${WORKER_ORIGIN}`);
-    expect(workflow).toContain(`GSC_SITEWIDE_SYNC_ENDPOINT: ${WORKER_ORIGIN}/api/admin/gsc-sitewide-sync`);
+    expect(workflow).toContain(`GSC_SITEWIDE_SYNC_ENDPOINT: ${PRODUCTION_ORIGIN}/api/admin/gsc-sitewide-sync`);
     expect(script).toContain(`process.env.GSC_SITEWIDE_FETCH_ORIGIN || '${WORKER_ORIGIN}'`);
     expect(script).toContain("response = await fetch(fetchTransportUrl(item.url)");
   });
