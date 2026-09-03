@@ -62,7 +62,7 @@ jobs:
       GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON }}
       GSC_SITE_URL: sc-domain:keeptxred.com
       GSC_SITEWIDE_FETCH_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
-      GSC_SITEWIDE_SYNC_ENDPOINT: https://keeptxred.com/api/admin/gsc-sitewide-sync
+      GSC_SITEWIDE_SYNC_ENDPOINT: https://keeptxred-site.freddy-coppola.workers.dev/api/admin/gsc-sitewide-sync
       GSC_INSPECTION_LIMIT: "200"
       GITHUB_TOKEN: ${{ github.token }}
     steps:
