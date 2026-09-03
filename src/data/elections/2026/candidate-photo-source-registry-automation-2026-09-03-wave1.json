@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "mentalhealthnow.us",
+    "sourceClass": "candidate-self-submitted-photo-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Mental Health Now candidate map/submission rows to discover candidate-specific images explicitly supplied through the site's optional candidate photo-upload field. Approve a portrait only when the current canonical candidate identity and office match the exact structured submission row, the image URL is directly tied to that row, and source attribution plus the narrow editorial-identification basis are retained. Reject unrelated or ambiguous submissions, logos, generic graphics, placeholders, default avatars, and third-party imagery; do not infer broader reuse rights from submission alone.",
+    "searchHint": "site:mentalhealthnow.us/candidatemap Texas 2026 candidate name photo",
+    "notes": "Discovered September 3, 2026 during active unresolved-candidate source expansion. The public candidate-map data exposes structured candidacy metadata and an explicit '(Optional) Upload Your Photo for Our Website' field containing direct candidate-submitted image URLs. Registered as a discovery/provenance source only; no image is auto-approved without exact candidate, race, and item-level linkage verification."
+  }
+]
