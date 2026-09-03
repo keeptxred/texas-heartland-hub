@@ -35,6 +35,9 @@ type BodyShape = {
 const TEXASDEFINED_DISCOVER_CATEGORIES = new Set([
   "texas culture",
   "texas history",
+  "sports",
+  "sports culture",
+  "culture & identity",
 ]);
 
 const RETIRED_KTR_DISPLAY_CATEGORIES = new Set([
