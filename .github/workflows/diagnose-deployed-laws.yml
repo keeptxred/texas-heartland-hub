@@ -1,0 +1,40 @@
+name: Diagnose deployed laws smoke
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Probe deployed law routes and priority sitemap
+        id: smoke
+        continue-on-error: true
+        env:
+          SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
+          DEPLOYMENT_SMOKE_REPORT: deployed-laws-smoke-report.json
+        run: python3 scripts/seo/verify-deployed-laws-routes.py
+
+      - name: Upload deployed laws smoke report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployed-laws-smoke-report
+          path: deployed-laws-smoke-report.json
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Preserve hard failure
+        if: always() && steps.smoke.outcome != 'success'
+        run: |
+          echo "Deployed laws smoke failed; see deployed-laws-smoke-report artifact." >&2
+          exit 1
