@@ -112,7 +112,7 @@ export function toImageInput(article: ArticleLike): ArticleImageInput {
 function resolveSubjectImage(article: ArticleLike): string | null {
   const slug = article.slug.trim().toLowerCase();
   if (slug === "texas-policing-agencies-compared") {
-    return "/images/news/texas-policing-agencies-compared-full-c089e1bb.jpg";
+    return "/images/news/texas-policing-agencies-compared-seven-role-0c284fef115e.webp";
   }
 
   const subject = `${article.slug} ${article.title} ${article.seo_headline ?? ""}`.toLowerCase();
