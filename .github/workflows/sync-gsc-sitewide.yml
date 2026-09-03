@@ -43,7 +43,7 @@ jobs:
           node --check scripts/seo/gsc-sitewide-transport-contract.test.mjs
 
   sync:
-    if: ${{ github.event_name != 'pull_request' }}
+    if: ${{ github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'ops/gsc-sitewide-one-shot-20260903') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
