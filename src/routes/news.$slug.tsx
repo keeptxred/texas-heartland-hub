@@ -396,8 +396,14 @@ function ArticlePage() {
         Reporting is based on the sources and public records cited or linked in this article. Opinion and analysis are labeled and follow our <Link to="/editorial-standards" className="text-primary hover:underline">editorial standards</Link>.
       </p>
 
-      <div className="aspect-[16/9] overflow-hidden bg-muted my-8 md:my-10 border-2 border-foreground/10">
-        <img src={article.image} alt={article.title} className="size-full object-cover" width={1280} height={720} />
+      <div className={`${article.slug === "texas-policing-agencies-compared" ? "aspect-[40/21]" : "aspect-[16/9]"} overflow-hidden bg-muted my-8 md:my-10 border-2 border-foreground/10`}>
+        <img
+          src={article.image}
+          alt={article.title}
+          className={`size-full ${article.slug === "texas-policing-agencies-compared" ? "object-contain" : "object-cover"}`}
+          width={1280}
+          height={article.slug === "texas-policing-agencies-compared" ? 672 : 720}
+        />
       </div>
 
       <div className="prose prose-neutral mx-auto max-w-2xl prose-a:font-medium prose-a:text-primary prose-a:underline prose-a:underline-offset-2 prose-blockquote:my-8 prose-blockquote:border-l-4 prose-blockquote:pl-5 prose-blockquote:font-serif prose-blockquote:text-lg prose-blockquote:leading-8 prose-li:my-1.5">
