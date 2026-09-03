@@ -8,6 +8,8 @@ type UpgradeCandidate = {
   [key: string]: unknown;
 };
 
+const INTRO_AGE_FINGERPRINT =
+  "allowing eligible Texans 21 and older to carry a handgun in most public places without a state-issued License to Carry (LTC).";
 const FFL_AGE_FINGERPRINT =
   "Federal law sets the floor: 18 to purchase a long gun from an FFL, 21 to purchase a handgun from an FFL.";
 const CARRY_AGE_FINGERPRINT =
@@ -29,13 +31,18 @@ const CURRENT_SOURCES = [
 ] as const;
 
 function isLegacyGunLawBody(body: UpgradeCandidate): boolean {
-  return Boolean(
-    body.sections?.some((section) =>
-      section.paragraphs?.some((paragraph) =>
-        paragraph.includes(FFL_AGE_FINGERPRINT) || paragraph.includes(CARRY_AGE_FINGERPRINT),
-      ),
+  const hasLegacyIntro = body.intro?.some((paragraph) => paragraph.includes(INTRO_AGE_FINGERPRINT));
+  const hasLegacySection = body.sections?.some((section) =>
+    section.paragraphs?.some((paragraph) =>
+      paragraph.includes(FFL_AGE_FINGERPRINT) || paragraph.includes(CARRY_AGE_FINGERPRINT),
     ),
   );
+  return Boolean(hasLegacyIntro || hasLegacySection);
+}
+
+function replaceIntroParagraph(paragraph: string): string {
+  if (!paragraph.includes(INTRO_AGE_FINGERPRINT)) return paragraph;
+  return "House Bill 1927 — Texas' 'constitutional carry' law — took effect September 1, 2021, creating permitless handgun carry for people who otherwise meet Texas eligibility requirements. Texas statutes still contain general age-21 language, but a federal court ruling prevents Texas from prosecuting otherwise eligible 18-to-20-year-olds for permitless carry based solely on age. Purchase and transfer rules are separate from carry rules.";
 }
 
 function replaceParagraph(paragraph: string): string {
@@ -56,6 +63,7 @@ function replaceParagraph(paragraph: string): string {
 export function applyGunLawsCurrentUpgrade<T extends UpgradeCandidate>(body: T): T {
   if (!isLegacyGunLawBody(body)) return body;
 
+  const intro = body.intro?.map(replaceIntroParagraph);
   const sections = body.sections?.map((section) => ({
     ...section,
     paragraphs: section.paragraphs?.map(replaceParagraph),
@@ -73,6 +81,7 @@ export function applyGunLawsCurrentUpgrade<T extends UpgradeCandidate>(body: T):
     updated: "2026-09-02",
     editorNote:
       "Reviewed September 2, 2026. Age-related carry and purchase guidance was updated to reflect current Texas DPS enforcement after federal court rulings and ATF guidance distinguishing licensed-dealer transfers from qualifying same-state unlicensed transfers. Firearm law changes quickly; readers should confirm current rules with the cited official sources.",
+    intro,
     sections,
     sources,
   } as T;
