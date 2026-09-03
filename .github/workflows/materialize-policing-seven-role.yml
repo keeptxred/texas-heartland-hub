@@ -25,7 +25,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          expected_parts=4
+          expected_parts=11
           found_parts="$(find .tmp/policing-seven-role -maxdepth 1 -name 'part*.b64' 2>/dev/null | wc -l | tr -d ' ')"
           if [[ "$found_parts" != "$expected_parts" ]]; then
             echo "Waiting for all $expected_parts chunks; found $found_parts."
