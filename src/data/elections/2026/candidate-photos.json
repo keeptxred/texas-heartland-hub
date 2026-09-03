@@ -2790,6 +2790,18 @@
     "discoveredAt": "2026-08-25T03:40:04.064Z"
   },
   {
+    "candidateId": "candidate-michelle-palmer-democratic-race-2026-state-board-of-education-6",
+    "imageUrl": "https://outsmartmag.s3.us-east-2.amazonaws.com/wp-content/uploads/2020/09/19151141/high-res-headshot-red-1024x683.jpg",
+    "sourceUrl": "https://www.outsmartmagazine.com/2020/09/michelle-palmer-advocates-for-texas-students/",
+    "altText": "Michelle Palmer, Democratic candidate for Texas State Board of Education District 6",
+    "credit": "Michelle Palmer courtesy photo via OutSmart Magazine",
+    "license": null,
+    "permissionBasis": "OutSmart Magazine's September 14, 2020 candidate profile explicitly identifies Michelle Palmer as a Texas State Board of Education District 6 candidate and captions this exact candidate-specific headshot as 'Michelle Palmer (courtesy photo)'. ATPE's current 2026 candidate profile independently identifies Palmer as the Democratic challenger for State Board of Education District 6 and links her current campaign website. Used only for editorial candidate identification with exact source attribution and source link; no broader reuse license is asserted.",
+    "usageStatus": "approved",
+    "discoveryMethod": "reputable-news-candidate-courtesy-photo",
+    "discoveredAt": "2026-09-03T12:47:00.000Z"
+  },
+  {
     "candidateId": "candidate-michelle-williams-democratic-race-2026-texas-house-127",
     "imageUrl": "https://michelleforstaterep.com/wp-content/uploads/elementor/thumbs/MWilliams_20180127_BH4A2887edited-scaled-rqnc6csi6mmedr9ffq4jun3ldm7qwczobwnrjwt8gg.webp",
     "sourceUrl": "https://michelleforstaterep.com/",
@@ -3048,6 +3060,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:53:06.181Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-oscar-rosa-republican-race-2026-texas-house-35",
+    "imageUrl": "https://img1.wsimg.com/isteam/ip/895c72a3-8ce4-4888-8748-546eabdc28df/Oscar%20Rosa%20Banner%2001b.png/%3A/",
+    "sourceUrl": "https://rosafortexas.com/",
+    "altText": "Oscar Rosa, Republican candidate for Texas House District 35",
+    "credit": "Oscar Rosa for District 35 campaign",
+    "license": null,
+    "permissionBasis": "Oscar Rosa's official campaign homepage identifies him as the candidate for Texas House District 35 and directly publishes this candidate-specific campaign image containing a clear photographic portrait of Rosa alongside his name and District 35 campaign identification. TCTA independently lists his District 35 candidacy and official candidate social profile. Used only for editorial candidate identification with exact official-campaign attribution and source link; no broader reuse license is asserted.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-homepage",
+    "discoveredAt": "2026-09-03T11:40:00.000Z"
   },
   {
     "candidateId": "candidate-oziel-ozzie-ochoa-jr-democratic-race-2026-texas-house-37",
@@ -3676,6 +3700,18 @@
     "license": null,
     "permissionBasis": "Official party candidate-slate image used for editorial candidate identification with attribution and a link to the source page.",
     "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-tennyson-g-moreno-republican-race-2026-texas-house-45",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/64cb140d6b0cc07452e1c354/631aa5be-14a7-4d3a-a346-ec5a9065a286/image2.jpeg",
+    "sourceUrl": "https://www.tennysonmoreno.com/",
+    "altText": "Tennyson G. Moreno, Republican candidate for Texas House District 45",
+    "credit": "Tennyson Moreno Campaign",
+    "license": null,
+    "permissionBasis": "Tennyson Moreno's official campaign homepage identifies him as running for Texas House District 45 and directly publishes this candidate-specific photograph in the Meet Tennyson Moreno biography section. The campaign footer states the site is paid for by the Tennyson Moreno Campaign, and TCTA independently links tennysonmoreno.com as his District 45 campaign website. Used only for editorial candidate identification with exact official-campaign attribution and source link; no broader reuse license is asserted.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-biography",
+    "discoveredAt": "2026-09-03T10:55:00.000Z"
   },
   {
     "candidateId": "candidate-teresa-johnson-hernandez-republican-race-2026-texas-house-42",
