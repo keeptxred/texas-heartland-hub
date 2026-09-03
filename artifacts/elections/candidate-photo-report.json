@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-09-03T04:37:58.716Z",
+  "generatedAt": "2026-09-03T12:57:08.447Z",
   "candidateCount": 491,
   "eligibleCandidateCount": 479,
   "excludedCandidateCount": 12,
-  "approvedPhotoCount": 349,
-  "missingPhotoCount": 130,
-  "manifestEntryCount": 349,
-  "coverage": 0.7286012526096033,
-  "coveragePercent": 72.86,
+  "approvedPhotoCount": 352,
+  "missingPhotoCount": 127,
+  "manifestEntryCount": 352,
+  "coverage": 0.7348643006263048,
+  "coveragePercent": 73.49,
   "targetCoverage": 0.85,
   "targetApprovedPhotoCount": 408,
-  "photosNeededForTarget": 59,
+  "photosNeededForTarget": 56,
   "targetMet": false,
   "errors": [],
   "warnings": [],
@@ -168,13 +168,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-michelle-palmer-democratic-race-2026-state-board-of-education-6",
-      "name": "MICHELLE PALMER",
-      "raceId": "race-2026-state-board-of-education-6",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-rhett-rosenquest-smith-republican-race-2026-texas-house-116",
       "name": "RHETT ROSENQUEST SMITH",
       "raceId": "race-2026-texas-house-116",
@@ -287,13 +280,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-oscar-rosa-republican-race-2026-texas-house-35",
-      "name": "OSCAR ROSA",
-      "raceId": "race-2026-texas-house-35",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-laura-e-cisneros-republican-race-2026-texas-house-38",
       "name": "LAURA E. CISNEROS",
       "raceId": "race-2026-texas-house-38",
@@ -319,13 +305,6 @@
       "name": "JEFFREY T JACKSON",
       "raceId": "race-2026-texas-house-43",
       "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-tennyson-g-moreno-republican-race-2026-texas-house-45",
-      "name": "TENNYSON G. MORENO",
-      "raceId": "race-2026-texas-house-45",
-      "party": "republican",
       "priority": "standard"
     },
     {
