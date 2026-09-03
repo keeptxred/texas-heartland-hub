@@ -29,7 +29,11 @@ import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 import { visibleArticleDates } from "@/lib/article-visible-dates";
 
 type StructuredArticleBody = ArticleBody & { entities?: EvergreenBody["entities"] };
-type RenderedArticle = Omit<Article, "category"> & { category: CategoryName; noindex?: boolean };
+type RenderedArticle = Omit<Article, "category"> & {
+  category: CategoryName;
+  noindex?: boolean;
+  imageAlt?: string;
+};
 
 const GENERIC_FAQ_PATTERNS = [
   /where can i read more/i,
@@ -113,11 +117,12 @@ export const Route = createFileRoute("/news/$slug")({
     if (!meetsArticleMainWordCount(ever.kind, ever.body)) throw notFound();
     const { noindex } = await getCloudArticleIndexability({ data: { slug: params.slug } });
     const cat = normalizeCategoryName(ever.category);
+    const displayTitle = (ever.seo_headline ?? "").trim() || ever.title;
     const synth: RenderedArticle = {
       slug: ever.slug,
       category: cat,
       noindex,
-      title: (ever.seo_headline ?? "").trim() || ever.title,
+      title: displayTitle,
       dek: ever.dek,
       author: ever.author,
       date: new Date(ever.published_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
@@ -136,6 +141,7 @@ export const Route = createFileRoute("/news/$slug")({
         featured_image_url: ever.featured_image_url,
         image_alt_text: ever.image_alt_text,
       }),
+      imageAlt: (ever.image_alt_text ?? "").trim() || displayTitle,
     };
     const rawBody: StructuredArticleBody = {
       updated: ever.body.updated,
@@ -173,12 +179,13 @@ export const Route = createFileRoute("/news/$slug")({
     const articleFaq = body.faq.filter(isSpecificFaq);
     const articleImageWidth = 1280;
     const articleImageHeight = article.slug === "texas-policing-agencies-compared" ? 672 : 720;
+    const imageAlt = article.imageAlt ?? article.title;
     const seo = buildSeo({
       title: article.title,
       description: article.dek,
       path,
       image: article.image,
-      imageAlt: article.title,
+      imageAlt,
       imageWidth: articleImageWidth,
       imageHeight: articleImageHeight,
       type: "article",
@@ -193,7 +200,7 @@ export const Route = createFileRoute("/news/$slug")({
       width: articleImageWidth,
       height: articleImageHeight,
       caption: article.title,
-      alt: article.title,
+      alt: imageAlt,
       representativeOfPage: true,
     });
     return {
@@ -348,6 +355,7 @@ function ArticlePage() {
     : null;
   const author = getAuthor(article.author);
   const authorHref = author ? `/authors/${author.slug}` : `/authors/${authorSlug(article.author)}`;
+  const imageAlt = article.imageAlt ?? article.title;
 
   return (
     <article className="mx-auto max-w-4xl px-4 sm:px-6 py-10 sm:py-14">
@@ -399,7 +407,7 @@ function ArticlePage() {
       <div className={`${article.slug === "texas-policing-agencies-compared" ? "aspect-[40/21]" : "aspect-[16/9]"} overflow-hidden bg-muted my-8 md:my-10 border-2 border-foreground/10`}>
         <img
           src={article.image}
-          alt={article.title}
+          alt={imageAlt}
           className={`size-full ${article.slug === "texas-policing-agencies-compared" ? "object-contain" : "object-cover"}`}
           width={1280}
           height={article.slug === "texas-policing-agencies-compared" ? 672 : 720}
