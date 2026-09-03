@@ -1,20 +1,29 @@
 [
   {
-    "domain": "mentalhealthnow.us",
-    "sourceClass": "candidate-self-submitted-photo-directory",
+    "domain": "tcta.org",
+    "sourceClass": "education-association-candidate-directory",
     "discoveryStatus": "active",
     "autoApprove": false,
-    "rightsRule": "Use Mental Health Now candidate map/submission rows to discover candidate-specific images explicitly supplied through the site's optional candidate photo-upload field. Approve a portrait only when the current canonical candidate identity and office match the exact structured submission row, the image URL is directly tied to that row, and source attribution plus the narrow editorial-identification basis are retained. Reject unrelated or ambiguous submissions, logos, generic graphics, placeholders, default avatars, and third-party imagery; do not infer broader reuse rights from submission alone.",
-    "searchHint": "site:mentalhealthnow.us/candidatemap Texas 2026 candidate name photo",
-    "notes": "Discovered September 3, 2026 during active unresolved-candidate source expansion. The public candidate-map data exposes structured candidacy metadata and an explicit '(Optional) Upload Your Photo for Our Website' field containing direct candidate-submitted image URLs. Registered as a discovery/provenance source only; no image is auto-approved without exact candidate, race, and item-level linkage verification."
+    "rightsRule": "Use Texas Classroom Teachers Association candidate-profile pages to corroborate current candidate identity, office sought, campaign links, and discover candidate-specific portrait sources. Do not approve or reuse any TCTA-hosted image without item-level provenance plus a reusable license, candidate-supplied media basis, explicit permission, or another documented editorial permission basis.",
+    "searchHint": "site:tcta.org texasteachersvote candidate portrait Texas 2026",
+    "notes": "New discovery source added September 3, 2026. TCTA's TexasTeachersVote directory publishes current candidate-specific pages, including profiles for Rhett Rosenquest Smith and Scott Whitmarsh, and can expose downstream campaign links. Treat TCTA imagery as discovery-only unless item-level rights are independently established."
   },
   {
-    "domain": "boerne-area-democrats.com",
-    "sourceClass": "local-party-candidate-event-directory",
+    "domain": "ivoterguide.com",
+    "sourceClass": "election-voter-guide-candidate-directory",
     "discoveryStatus": "active",
     "autoApprove": false,
-    "rightsRule": "Use current Boerne Area Democrats candidate-event and organization pages to corroborate candidate identity, office sought, local party sponsorship, and downstream official campaign links or candidate-event portrait leads. Do not approve or reuse any Boerne Area Democrats-hosted photograph or page asset without item-level provenance plus explicit reusable rights, candidate/campaign permission, organizer permission, or another documented editorial permission basis.",
-    "searchHint": "site:boerne-area-democrats.com Texas 2026 candidate event campaign portrait",
-    "notes": "Discovered September 3, 2026 during fresh source expansion for still-uncovered Texas House District 19 candidate Tom Luck. The current Boerne Area Democrats homepage identifies Tom Luck as its September 10, 2026 guest speaker and explicitly labels him a TX HD 19 candidate. This is a new local-party discovery bridge for candidate identity, event context, and downstream portrait sourcing; hosted imagery remains discovery-only unless item-level rights and provenance are established."
+    "rightsRule": "Use iVoterGuide candidate-profile and election-guide pages to corroborate candidate identity, office sought, campaign links, and discover candidate-linked portrait sources. Do not approve or reuse any iVoterGuide-hosted image without item-level provenance plus a reusable license, candidate-supplied media basis, explicit permission, or another documented editorial permission basis.",
+    "searchHint": "site:ivoterguide.com Texas 2026 candidate portrait",
+    "notes": "New discovery source added September 3, 2026. Current 2026 Texas profiles include candidates still missing from the canonical photo report and may provide campaign/profile links useful for downstream discovery. Discovery-only by default."
+  },
+  {
+    "domain": "vote-usa.org",
+    "sourceClass": "election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Vote-USA election and candidate pages to corroborate current ballot participation, candidate websites, and discover downstream official portrait sources. Do not approve or reuse any Vote-USA-hosted image without item-level provenance plus a reusable license, explicit permission, candidate-supplied basis, or another documented editorial permission basis.",
+    "searchHint": "site:vote-usa.org Texas 2026 candidate official website portrait",
+    "notes": "New discovery source added September 3, 2026. The 2026 Texas general-election pages expose campaign websites for candidates such as Mindy Bumgarner and can serve as a bridge to official campaign media. Discovery-only by default."
   }
 ]
