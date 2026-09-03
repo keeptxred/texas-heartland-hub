@@ -5,6 +5,8 @@ import {
   canonicalHostRedirect,
   cityMigrationRedirect,
   normalizeCanonicalHref,
+  normalizeCanonicalLinksInHtml,
+  normalizeCanonicalLinksInHtmlText,
 } from "./server";
 
 const WWW_HOST = "www.keeptxred.com";
@@ -85,6 +87,78 @@ describe("normalizeCanonicalHref", () => {
     expect(normalizeCanonicalHref("https://keeptxred.com/laws/?view=all#top")).toBe(
       "https://keeptxred.com/laws?view=all#top",
     );
+  });
+});
+
+describe("normalizeCanonicalLinksInHtmlText", () => {
+  it("rewrites only KeepTXRed canonical link hrefs and supports link attribute reordering", () => {
+    const input = [
+      "<html><head>",
+      '<link rel="canonical" href="https://keeptxred.com/laws/">',
+      '<link href="https://keeptxred.com/laws/topics/" rel="alternate canonical">',
+      '<link rel="canonical" href="https://texasdefined.com/laws/">',
+      '<link rel="stylesheet" href="https://keeptxred.com/assets/app.css/">',
+      "</head></html>",
+    ].join("");
+
+    const output = normalizeCanonicalLinksInHtmlText(input);
+
+    expect(output).toContain('<link rel="canonical" href="https://keeptxred.com/laws">');
+    expect(output).toContain(
+      '<link href="https://keeptxred.com/laws/topics" rel="alternate canonical">',
+    );
+    expect(output).toContain(
+      '<link rel="canonical" href="https://texasdefined.com/laws/">',
+    );
+    expect(output).toContain(
+      '<link rel="stylesheet" href="https://keeptxred.com/assets/app.css/">',
+    );
+  });
+
+  it("keeps the root canonical slash", () => {
+    expect(
+      normalizeCanonicalLinksInHtmlText(
+        '<link rel="canonical" href="https://keeptxred.com/">',
+      ),
+    ).toBe('<link rel="canonical" href="https://keeptxred.com/">');
+  });
+});
+
+describe("normalizeCanonicalLinksInHtml", () => {
+  it("guarantees slashless canonical markup in the actual HTML response body", async () => {
+    const response = new Response(
+      '<!doctype html><html><head><link rel="canonical" href="https://keeptxred.com/laws/topic/property-tax-law/"></head><body><h1>Property Tax Law</h1></body></html>',
+      {
+        status: 200,
+        headers: {
+          "content-type": "text/html; charset=utf-8",
+          "content-length": "999",
+          "x-test-header": "preserved",
+        },
+      },
+    );
+
+    const normalized = await normalizeCanonicalLinksInHtml(response);
+    const html = await normalized.text();
+
+    expect(html).toContain(
+      '<link rel="canonical" href="https://keeptxred.com/laws/topic/property-tax-law">',
+    );
+    expect(html).not.toContain("property-tax-law/\"");
+    expect(normalized.status).toBe(200);
+    expect(normalized.headers.get("x-test-header")).toBe("preserved");
+  });
+
+  it("leaves non-HTML responses untouched", async () => {
+    const response = new Response('{"ok":true}', {
+      status: 200,
+      headers: { "content-type": "application/json" },
+    });
+
+    const normalized = await normalizeCanonicalLinksInHtml(response);
+
+    expect(normalized).toBe(response);
+    expect(await normalized.text()).toBe('{"ok":true}');
   });
 });
 
