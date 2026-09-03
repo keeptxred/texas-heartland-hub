@@ -22,6 +22,8 @@ type HtmlRewriterConstructor = new () => {
   };
 };
 
+declare const HTMLRewriter: HtmlRewriterConstructor;
+
 const CANONICAL_HOST = "keeptxred.com";
 const WWW_HOST = `www.${CANONICAL_HOST}`;
 const DIRECT_WORKER_HOST = "keeptxred-site.freddy-coppola.workers.dev";
@@ -93,25 +95,60 @@ export function normalizeCanonicalHref(href: string): string {
   }
 }
 
-export function normalizeCanonicalLinksInHtml(response: Response): Response {
+export function normalizeCanonicalLinksInHtmlText(html: string): string {
+  return html.replace(/<link\b[^>]*>/gi, (tag) => {
+    const relMatch = tag.match(/\brel\s*=\s*(["'])([^"']*)\1/i);
+    const relTokens = relMatch?.[2]?.trim().toLowerCase().split(/\s+/) ?? [];
+    if (!relTokens.includes("canonical")) return tag;
+
+    return tag.replace(/\bhref\s*=\s*(["'])([^"']*)\1/i, (hrefAttribute, quote: string, href: string) => {
+      const normalized = normalizeCanonicalHref(href);
+      return normalized === href ? hrefAttribute : `href=${quote}${normalized}${quote}`;
+    });
+  });
+}
+
+function cloudflareHtmlRewriter(): HtmlRewriterConstructor | undefined {
+  // Cloudflare documents HTMLRewriter as a runtime global (`new HTMLRewriter()`),
+  // not as an optional property lookup on globalThis. `typeof` keeps non-Worker
+  // runtimes safe while ensuring the production binding is actually exercised.
+  return typeof HTMLRewriter === "function" ? HTMLRewriter : undefined;
+}
+
+function responseWithHtml(response: Response, html: string): Response {
+  const headers = new Headers(response.headers);
+  headers.delete("content-length");
+  return new Response(html, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
+export async function normalizeCanonicalLinksInHtml(response: Response): Promise<Response> {
   if (response.status < 200 || response.status >= 300 || !response.body) return response;
   const contentType = response.headers.get("content-type") ?? "";
   if (!contentType.toLowerCase().includes("text/html")) return response;
 
-  const Rewriter = (globalThis as typeof globalThis & { HTMLRewriter?: HtmlRewriterConstructor })
-    .HTMLRewriter;
-  if (!Rewriter) return response;
+  const Rewriter = cloudflareHtmlRewriter();
+  if (Rewriter) {
+    return new Rewriter()
+      .on('link[rel~="canonical"]', {
+        element(element) {
+          const href = element.getAttribute("href");
+          if (!href) return;
+          const normalized = normalizeCanonicalHref(href);
+          if (normalized !== href) element.setAttribute("href", normalized);
+        },
+      })
+      .transform(response);
+  }
 
-  return new Rewriter()
-    .on('link[rel="canonical"]', {
-      element(element) {
-        const href = element.getAttribute("href");
-        if (!href) return;
-        const normalized = normalizeCanonicalHref(href);
-        if (normalized !== href) element.setAttribute("href", normalized);
-      },
-    })
-    .transform(response);
+  // Deterministic fallback for runtimes that do not provide Cloudflare's
+  // HTMLRewriter. This is also what makes the exact response-body contract
+  // testable in Vitest instead of relying on source-string assertions alone.
+  const html = await response.text();
+  return responseWithHtml(response, normalizeCanonicalLinksInHtmlText(html));
 }
 
 export function adsTxtResponse(request: Request): Response | null {
@@ -171,7 +208,7 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
   if (!contentType.includes("application/json")) return response;
 
   const body = await response.clone().text();
-  if (!body.includes('"unhandled":true') || !body.includes('"message":"HTTPError"')) {
+  if (!body.includes('\"unhandled\":true') || !body.includes('\"message\":\"HTTPError\"')) {
     return response;
   }
 
@@ -203,7 +240,7 @@ export default {
       const handler = await getServerEntry();
       const response = await handler.fetch(appRequest, env, ctx);
       const normalizedResponse = await normalizeCatastrophicSsrResponse(response);
-      return normalizeCanonicalLinksInHtml(normalizedResponse);
+      return await normalizeCanonicalLinksInHtml(normalizedResponse);
     } catch (error) {
       console.error(error);
       return new Response(renderErrorPage(), {
