@@ -10,9 +10,9 @@ export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
       { title: "About Keep TX Red | Texas News & Standards" },
-      { name: "description", content: "About Keep TX Red — Texas news, commentary, government accountability, common-sense analysis, editorial standards, sourcing, corrections, store information, and contact information." },
+      { name: "description", content: "About Keep TX Red — Texas political news, commentary, government accountability, common-sense analysis, editorial standards, sourcing, corrections, store information, and contact information." },
       { property: "og:title", content: "About Keep TX Red | Texas News & Standards" },
-      { property: "og:description", content: "Texas news, commentary, government accountability, common-sense analysis, and the standards behind Keep TX Red." },
+      { property: "og:description", content: "Texas political news, commentary, government accountability, common-sense analysis, and the standards behind Keep TX Red." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: PAGE_URL },
       { property: "og:image", content: SITE_URL + heroImg.url },
@@ -25,7 +25,7 @@ export const Route = createFileRoute("/about")({
         "@context": "https://schema.org",
         "@type": "AboutPage",
         name: "About Keep TX Red",
-        description: "Keep TX Red delivers Texas news, commentary, government accountability, common-sense analysis, and a direct-to-consumer branded merchandise shop.",
+        description: "Keep TX Red delivers Texas political news, commentary, government accountability, common-sense analysis, and a direct-to-consumer branded merchandise shop.",
         url: PAGE_URL,
         isPartOf: { "@type": "WebSite", name: "Keep TX Red", url: SITE_URL },
         about: {
@@ -33,7 +33,7 @@ export const Route = createFileRoute("/about")({
           name: "Keep TX Red",
           url: SITE_URL,
           email: "admin@keeptxred.com",
-          description: "Independent Texas news and analysis publication with a branded merchandise storefront on keeptxred.com.",
+          description: "Independent Texas political news and analysis publication with a branded merchandise storefront on keeptxred.com.",
         },
       }),
     }],
@@ -50,7 +50,7 @@ function AboutPage() {
       <div className="mt-10 space-y-8 text-base leading-relaxed">
         <section>
           <h2 className="font-display text-3xl tracking-tight">Mission</h2>
-          <p className="mt-3 text-lg"><strong>Keep TX Red delivers Texas news, commentary, government accountability, and common-sense analysis.</strong></p>
+          <p className="mt-3 text-lg"><strong>Keep TX Red delivers Texas political news, commentary, government accountability, and common-sense analysis.</strong></p>
           <p className="mt-3 text-muted-foreground">We cover politics, elections, legislation, public officials, policy debates, and major statewide developments with an emphasis on clear context, primary sources, and the decisions that affect Texans.</p>
           <p className="mt-3 text-muted-foreground">We are not a political action committee, campaign, or candidate organization. We do not raise money for candidates or coordinate with campaigns. Our work is informational and explanatory.</p>
         </section>
@@ -63,8 +63,8 @@ function AboutPage() {
             <li>Texas elections, candidates, voting, polling, forecasts, and results</li>
             <li>The Texas Legislature, committees, bills, votes, and special sessions</li>
             <li>Statewide officials, agencies, ethics, investigations, and government accountability</li>
-            <li>Border policy, energy, education, regulation, taxes, and the Texas economy</li>
-            <li>Major statewide breaking news, Texas business, and Texas sports</li>
+            <li>Texas law, courts, border policy, energy, education, regulation, taxes, and public policy</li>
+            <li>Major statewide political news, Texas business, and economic developments with public-policy significance</li>
           </ul>
         </section>
 
@@ -107,7 +107,7 @@ function AboutPage() {
 
         <section>
           <h2 className="font-display text-3xl tracking-tight">Nonpolitical Texas Resources</h2>
-          <p className="mt-3 text-muted-foreground">TexasDefined is a nonpolitical sister publication from the same publisher. It covers Texas travel, relocation, food, events, culture, property-tax planning, household calculators, county and city directories, and other lifestyle resources separately from Keep TX Red&apos;s political and public-affairs coverage.</p>
+          <p className="mt-3 text-muted-foreground">TexasDefined is a nonpolitical sister publication from the same publisher. It covers Texas travel, relocation, food, events, culture, sports and fan culture, property-tax planning, household calculators, county and city directories, and other lifestyle resources separately from Keep TX Red&apos;s political and public-affairs coverage.</p>
           <p className="mt-3"><a href="https://texasdefined.com" target="_blank" rel="noopener noreferrer" className="text-primary underline">Visit TexasDefined</a>.</p>
         </section>
 

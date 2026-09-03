@@ -5,8 +5,6 @@ import { assignUniqueImages } from "@/lib/dedupe-images";
 import { AdSlot } from "@/components/ad-slot";
 import { NewsletterSignup } from "@/components/newsletter-signup";
 import { ELECTION_FEATURE_FLAGS } from "@/lib/elections";
-import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
-import { ElectionHomePage } from "@/pages/elections";
 import { buildSeo, organizationJsonLd, SITE_URL, webPageJsonLd, websiteJsonLd } from "@/lib/seo";
 
 const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
@@ -15,7 +13,7 @@ const EMPTY_SHOP_SEARCH = { category: undefined, collection: undefined, q: undef
 const HOMEPAGE_FAQS = [
   {
     question: "What does Keep TX Red cover?",
-    answer: "Keep TX Red covers Texas news, elections, the Legislature, bills, public officials, government accountability, business, sports, and major policy debates affecting Texans.",
+    answer: "Keep TX Red covers Texas news, elections, the Legislature, bills, public officials, government accountability, business and the economy, and major policy debates affecting Texans.",
   },
   {
     question: "Is Keep TX Red news, commentary, or both?",
@@ -82,13 +80,8 @@ function homepageFaqJsonLd() {
 }
 
 function homepageHead() {
-  const electionTakeover = ELECTION_FEATURE_FLAGS.homepagePromotion;
-  const title = electionTakeover
-    ? "Texas Election Central 2026 | Races, Candidates, Polls & Voting"
-    : "Keep TX Red | Texas News, Commentary & Government Accountability";
-  const description = electionTakeover
-    ? "Follow verified Texas 2026 election races, candidates, polling, forecasts, results, and voting information from Keep TX Red Election Central."
-    : "Texas news, commentary, government accountability, common-sense analysis, legislative tracking, and permanent editorial positions from Keep TX Red.";
+  const title = "Keep TX Red | Texas Politics, Elections & Government Accountability";
+  const description = "Texas political news, elections, government accountability, legislative tracking, law and policy guides, business and economic context, and clearly labeled commentary from Keep TX Red.";
   const seo = buildSeo({ title, description, path: "/", image: heroFlag, imageAlt: "Keep TX Red Texas politics and election coverage", type: "website" });
   return {
     meta: seo.meta,
@@ -132,6 +125,26 @@ function BreakingStrip({ articles }: { articles: DailyArticle[] }) {
   );
 }
 
+function ElectionSeasonSpotlight() {
+  if (!ELECTION_FEATURE_FLAGS.homepagePromotion) return null;
+
+  return (
+    <section className="border-b bg-primary/5" aria-labelledby="election-central-spotlight">
+      <div className="mx-auto grid max-w-[1200px] gap-6 px-6 py-8 md:grid-cols-[1fr_auto] md:items-center">
+        <div>
+          <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-primary">2026 election season</p>
+          <h2 id="election-central-spotlight" className="mt-2 font-display text-3xl tracking-tight">Election Central is KTR's dedicated election authority destination</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">Follow Texas races, candidate profiles, polls, forecasts, voting logistics, methodology, district pages, and sourced results from one canonical destination.</p>
+        </div>
+        <div className="flex flex-wrap gap-3 md:justify-end">
+          <Link to="/elections/2026" className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Open Election Central →</Link>
+          <Link to="/elections/voting" className="rounded-md border bg-background px-5 py-3 text-sm font-semibold">Voting guide</Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function DiscoveryPriorityLinks() {
   return (
     <section className="border-t bg-background" aria-labelledby="keep-tx-red-discovery-priority">
@@ -139,7 +152,7 @@ function DiscoveryPriorityLinks() {
         <div className="max-w-3xl">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">More from Keep TX Red</p>
           <h2 id="keep-tx-red-discovery-priority" className="mt-2 font-display text-3xl sm:text-4xl">Find the part of KTR you need</h2>
-          <p className="mt-3 leading-7 text-muted-foreground">Election Central is the homepage focus during election season. These deeper destinations add context and reference material without repeating the primary navigation.</p>
+          <p className="mt-3 leading-7 text-muted-foreground">Election Central remains the dedicated election destination while the homepage preserves KTR's broader identity across politics, government, law, policy, business, and the Texas economy.</p>
         </div>
 
         <div className="mt-9 grid gap-8 lg:grid-cols-3">
@@ -192,19 +205,6 @@ function HomepageFaqs() {
 }
 
 function Index() {
-  const { articles } = Route.useLoaderData() as { articles: DailyArticle[] };
-
-  if (ELECTION_FEATURE_FLAGS.homepagePromotion) {
-    return (
-      <>
-        <BreakingStrip articles={articles} />
-        <ElectionRepositoryProvider><ElectionHomePage /></ElectionRepositoryProvider>
-        <DiscoveryPriorityLinks />
-        <HomepageFaqs />
-      </>
-    );
-  }
-
   return <PoliticalHomepage />;
 }
 
@@ -219,9 +219,9 @@ function PoliticalHomepage() {
       <section className="border-b bg-secondary text-secondary-foreground">
         <div className="mx-auto grid max-w-[1200px] gap-10 px-6 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-primary">Texas news. Commentary. Verified facts. Clear context.</p>
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-primary">Texas politics. Elections. Government. Verified facts. Clear context.</p>
             <h1 className="mt-4 max-w-4xl font-display text-5xl leading-none tracking-tight sm:text-6xl">Follow the decisions shaping Texas</h1>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/80">Keep TX Red covers Texas news, elections, bills, public officials and government accountability — and makes the common-sense case for the principles we believe Texas should defend.</p>
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/80">Keep TX Red covers Texas politics, elections, bills, public officials, government accountability, law, policy, business and the economy — and makes the common-sense case for the principles we believe Texas should defend.</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/elections/2026" className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Election Central</Link>
               <a href="/texas-case" className="rounded-md border border-white/25 px-5 py-3 text-sm font-semibold">The Texas Case</a>
@@ -238,10 +238,11 @@ function PoliticalHomepage() {
         </div>
       </section>
 
+      <ElectionSeasonSpotlight />
       <BreakingStrip articles={valid} />
 
       <section className="mx-auto max-w-[1200px] px-6 py-16">
-        <div className="flex items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Latest coverage</p><h2 className="mt-2 font-display text-4xl">Texas News</h2></div><Link to="/news" className="text-sm font-semibold text-primary hover:underline">View all news →</Link></div>
+        <div className="flex items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Latest coverage</p><h2 className="mt-2 font-display text-4xl">Texas political news</h2></div><Link to="/news" className="text-sm font-semibold text-primary hover:underline">View all news →</Link></div>
         {latest.length === 0 ? <p className="mt-8 text-muted-foreground">New coverage is being prepared.</p> : <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">{latest.map((article, index) => <Link key={article.slug} to="/news/$slug" params={{ slug: article.slug }} className="group block"><div className="aspect-[16/10] overflow-hidden rounded-lg bg-muted"><img src={images.get(article.slug) ?? heroFlag} alt="" width={640} height={400} loading={index === 0 ? "eager" : "lazy"} className="size-full object-cover transition-transform group-hover:scale-[1.02]" /></div><p className="mt-4 text-xs font-semibold uppercase tracking-wider text-primary">{article.category ?? "Texas News"}</p><h3 className="mt-1 text-lg font-semibold leading-snug group-hover:text-primary">{article.title}</h3></Link>)}</div>}
         <AdSlot placement="banner" />
       </section>
@@ -252,6 +253,8 @@ function PoliticalHomepage() {
         <Link to="/bills" search={EMPTY_BILLS_SEARCH} className="rounded-xl border bg-card p-5 hover:shadow-md"><h3 className="font-semibold">Bills</h3><p className="mt-2 text-sm text-muted-foreground">Search and follow Texas legislation, actions, sponsors, and documents.</p><span className="mt-4 block text-sm font-semibold text-primary">Open →</span></Link>
         <a href="/texas-case" className="rounded-xl border bg-card p-5 hover:shadow-md"><h3 className="font-semibold">The Texas Case</h3><p className="mt-2 text-sm text-muted-foreground">Permanent KTR editorial positions backed by laws, data, and primary records.</p><span className="mt-4 block text-sm font-semibold text-primary">Open →</span></a>
       </div></section>
+
+      <DiscoveryPriorityLinks />
 
       <section className="mx-auto grid max-w-[1200px] gap-8 px-6 py-16 md:grid-cols-[1fr_0.8fr] md:items-center"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Support independent coverage</p><h2 className="mt-2 font-display text-4xl">Stay informed and support the newsroom</h2><p className="mt-4 max-w-2xl text-muted-foreground">Subscribe for important Texas updates and visit the Keep TX Red shop. Store purchases support independent reporting and platform operations.</p><div className="mt-6"><Link to="/shop" search={EMPTY_SHOP_SEARCH} className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Visit the shop</Link></div></div><NewsletterSignup /></section>
 

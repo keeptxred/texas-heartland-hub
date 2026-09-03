@@ -29,14 +29,20 @@ describe("public article readiness floor", () => {
     expect(isPublicArticleReady({ ...base, category: "Texas News", discover_category: "Texas History" })).toBe(false);
   });
 
+  it("blocks off-topic sports and culture display categories from KTR search discovery", () => {
+    expect(isPublicArticleReady({ ...base, category: "Sports" })).toBe(false);
+    expect(isPublicArticleReady({ ...base, category: "Sports Culture" })).toBe(false);
+    expect(isPublicArticleReady({ ...base, category: "Culture & Identity" })).toBe(false);
+  });
+
   it("keeps material political and business classifications eligible", () => {
     expect(isPublicArticleReady({ ...base, discover_category: "Texas Government" })).toBe(true);
     expect(isPublicArticleReady({ ...base, category: "Business", discover_category: "Texas Business" })).toBe(true);
   });
 
-  it("blocks content below the AdSense review floor and allows the boundary score", () => {
-    expect(isPublicArticleReady({ ...base, content_quality_score: 64 })).toBe(false);
-    expect(isPublicArticleReady({ ...base, content_quality_score: 65 })).toBe(true);
+  it("blocks content below the impression-recovery quality floor and allows the boundary score", () => {
+    expect(isPublicArticleReady({ ...base, content_quality_score: 69 })).toBe(false);
+    expect(isPublicArticleReady({ ...base, content_quality_score: 70 })).toBe(true);
   });
 
   it("blocks machine-like internal paragraph repetition", () => {
