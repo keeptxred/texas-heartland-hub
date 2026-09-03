@@ -113,26 +113,34 @@ jobs:
             done
           }
 
-          # Ordinary background passes remain capped at one article, but rotate
-          # across the missing-image cohort so one strict-validator hard failure
-          # can never monopolize every scheduled run. Once missing images are
-          # cleared, the same rotation naturally advances through legacy assets.
+          # Ordinary background passes remain capped at one article. When the
+          # audit reports an AdSense-ready article blocked only by its image,
+          # take the first priority slug (the Worker sorts those first). Once
+          # that queue is empty, rotate across missing images so one strict-
+          # validator failure cannot monopolize every scheduled run. After
+          # missing images are cleared, the same rotation advances legacy assets.
           max_per_run=1
           if [[ "${GITHUB_EVENT_NAME}" == "push" || "${GITHUB_EVENT_NAME}" == "workflow_run" ]]; then
             load_exact_marker_slugs
           else
-            missing=$(jq -r '.missing // 0' /tmp/image-backlog-dry.json)
-            candidate_count="$ready"
-            if [[ "$missing" -gt 0 ]]; then
-              candidate_count="$missing"
+            adsense_priority=$(jq -r '.adsensePriority // 0' /tmp/image-backlog-dry.json)
+            if [[ "$adsense_priority" -gt 0 ]]; then
+              mapfile -t slugs < <(jq -r --argjson max "$max_per_run" '.slugs[0:$max][]' /tmp/image-backlog-dry.json)
+              echo "IMAGE_BACKLOG_RECOVERY_ADSENSE_PRIORITY count=${adsense_priority} slug=${slugs[0]:-none}"
+            else
+              missing=$(jq -r '.missing // 0' /tmp/image-backlog-dry.json)
+              candidate_count="$ready"
+              if [[ "$missing" -gt 0 ]]; then
+                candidate_count="$missing"
+              fi
+              if [[ "$candidate_count" -lt 1 ]]; then
+                echo 'No eligible image-recovery candidates remain.'
+                exit 0
+              fi
+              rotation=$(( (GITHUB_RUN_NUMBER - 1) % candidate_count ))
+              mapfile -t slugs < <(jq -r --argjson offset "$rotation" --argjson max "$max_per_run" '.slugs[$offset:($offset + $max)][]' /tmp/image-backlog-dry.json)
+              echo "IMAGE_BACKLOG_RECOVERY_ROTATION candidate_count=${candidate_count} offset=${rotation} slug=${slugs[0]:-none}"
             fi
-            if [[ "$candidate_count" -lt 1 ]]; then
-              echo 'No eligible image-recovery candidates remain.'
-              exit 0
-            fi
-            rotation=$(( (GITHUB_RUN_NUMBER - 1) % candidate_count ))
-            mapfile -t slugs < <(jq -r --argjson offset "$rotation" --argjson max "$max_per_run" '.slugs[$offset:($offset + $max)][]' /tmp/image-backlog-dry.json)
-            echo "IMAGE_BACKLOG_RECOVERY_ROTATION candidate_count=${candidate_count} offset=${rotation} slug=${slugs[0]:-none}"
           fi
 
           failures=0
