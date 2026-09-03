@@ -39,7 +39,7 @@ async function verifyGithubRun(request: Request): Promise<GithubRunVerification>
   if (run?.repository?.full_name !== EXPECTED_REPOSITORY) return { ok: false, reason: "run-repository-mismatch" };
   if (run?.path !== EXPECTED_WORKFLOW) return { ok: false, reason: "workflow-path-mismatch" };
   if (run?.head_branch !== "main") return { ok: false, reason: "branch-mismatch" };
-  if (!["schedule", "workflow_dispatch"].includes(String(run?.event || ""))) return { ok: false, reason: "event-not-allowed" };
+  if (!["schedule", "workflow_dispatch", "push"].includes(String(run?.event || ""))) return { ok: false, reason: "event-not-allowed" };
   if (!["queued", "in_progress"].includes(String(run?.status || ""))) return { ok: false, reason: `run-not-active-${String(run?.status || "unknown")}` };
   return { ok: true };
 }
