@@ -9,6 +9,7 @@ const githubToken = process.env.GITHUB_TOKEN || '';
 const githubRunId = process.env.GITHUB_RUN_ID || '';
 const githubRepository = process.env.GITHUB_REPOSITORY || '';
 const inspectionLimit = Math.max(1, Math.min(500, Number(process.env.GSC_INSPECTION_LIMIT || 200)));
+const metricLookbackDays = Math.max(1, Math.min(90, Number(process.env.GSC_SITEWIDE_LOOKBACK_DAYS || 28)));
 const dryRun = process.argv.includes('--dry-run');
 
 if (!credentialsJson) throw new Error('GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON is required');
@@ -16,9 +17,12 @@ const credentials = JSON.parse(credentialsJson);
 if (!credentials.client_email || !credentials.private_key) throw new Error('Search Console service-account credentials are incomplete');
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-const metricDateValue = new Date();
-metricDateValue.setUTCDate(metricDateValue.getUTCDate() - 3);
-const metricDate = metricDateValue.toISOString().slice(0, 10);
+const metricEndDateValue = new Date();
+metricEndDateValue.setUTCDate(metricEndDateValue.getUTCDate() - 3);
+const metricStartDateValue = new Date(metricEndDateValue);
+metricStartDateValue.setUTCDate(metricStartDateValue.getUTCDate() - (metricLookbackDays - 1));
+const metricDate = metricEndDateValue.toISOString().slice(0, 10);
+const metricStartDate = metricStartDateValue.toISOString().slice(0, 10);
 
 function base64url(value) {
   return Buffer.from(value).toString('base64url');
@@ -59,13 +63,13 @@ async function getAccessToken() {
   return accessToken;
 }
 
-async function fetchDailyPageMetrics(accessToken) {
+async function fetchPageMetrics(accessToken) {
   const rows = [];
   for (let startRow = 0; ; startRow += 25000) {
     const response = await fetch(`https://searchconsole.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ startDate: metricDate, endDate: metricDate, dimensions: ['page'], rowLimit: 25000, startRow, dataState: 'final' }),
+      body: JSON.stringify({ startDate: metricStartDate, endDate: metricDate, dimensions: ['date', 'page'], rowLimit: 25000, startRow, dataState: 'final' }),
     });
     if (!response.ok) throw new Error(`Search Console page query failed: ${response.status} ${await response.text()}`);
     const payload = await response.json();
@@ -76,13 +80,16 @@ async function fetchDailyPageMetrics(accessToken) {
 
   const aggregated = new Map();
   for (const row of rows) {
-    const normalized = normalizeSiteUrl(row?.keys?.[0]);
+    const rowDate = typeof row?.keys?.[0] === 'string' ? row.keys[0] : '';
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(rowDate)) continue;
+    const normalized = normalizeSiteUrl(row?.keys?.[1]);
     if (!normalized) continue;
     const impressions = Math.max(0, Number(row.impressions || 0));
     const clicks = Math.max(0, Number(row.clicks || 0));
     const position = Number.isFinite(Number(row.position)) ? Number(row.position) : null;
-    const current = aggregated.get(normalized.url) || {
-      metricDate, ...normalized, impressions: 0, clicks: 0, positionWeighted: 0, positionWeight: 0,
+    const aggregateKey = `${rowDate}\u0000${normalized.url}`;
+    const current = aggregated.get(aggregateKey) || {
+      metricDate: rowDate, ...normalized, impressions: 0, clicks: 0, positionWeighted: 0, positionWeight: 0,
     };
     current.impressions += impressions;
     current.clicks += clicks;
@@ -90,7 +97,7 @@ async function fetchDailyPageMetrics(accessToken) {
       current.positionWeighted += position * impressions;
       current.positionWeight += impressions;
     }
-    aggregated.set(normalized.url, current);
+    aggregated.set(aggregateKey, current);
   }
 
   return [...aggregated.values()].map((row) => ({
@@ -207,12 +214,12 @@ async function writeBatch(payload) {
 }
 
 const accessToken = await getAccessToken();
-const metrics = await fetchDailyPageMetrics(accessToken);
-metrics.sort((a, b) => b.impressions - a.impressions || b.clicks - a.clicks || a.url.localeCompare(b.url));
+const metrics = await fetchPageMetrics(accessToken);
+metrics.sort((a, b) => b.metricDate.localeCompare(a.metricDate) || b.impressions - a.impressions || b.clicks - a.clicks || a.url.localeCompare(b.url));
 
 if (dryRun) {
   const inspection = await inspectUrl(accessToken, 'https://keeptxred.com/texas-politics');
-  console.log(JSON.stringify({ dryRun: true, siteUrl, metricDate, pageMetricRows: metrics.length, topMetricSample: metrics.slice(0, 5), urlInspectionAccess: inspection ? 'ok' : 'empty', inspectionVerdict: inspection?.verdict ?? null }, null, 2));
+  console.log(JSON.stringify({ dryRun: true, siteUrl, metricStartDate, metricDate, metricLookbackDays, pageMetricRows: metrics.length, topMetricSample: metrics.slice(0, 5), urlInspectionAccess: inspection ? 'ok' : 'empty', inspectionVerdict: inspection?.verdict ?? null }, null, 2));
   process.exit(0);
 }
 
@@ -226,7 +233,8 @@ const builtInPriority = [
   'https://keeptxred.com/elections/2026',
   'https://keeptxred.com/elections/candidates',
 ];
-const priorityUrls = [...builtInPriority, ...metrics.map((row) => row.url)];
+const latestMetricUrls = metrics.filter((row) => row.metricDate === metricDate).map((row) => row.url);
+const priorityUrls = [...builtInPriority, ...latestMetricUrls];
 const inspectionUrls = selectInspectionUrls({ sitemapUrls, priorityUrls, limit: inspectionLimit, metricDate });
 const inspections = await inspectUrls(accessToken, inspectionUrls);
 
@@ -245,7 +253,9 @@ for (let index = 0; index < inspections.length; index += 100) {
 console.log(JSON.stringify({
   dryRun: false,
   siteUrl,
+  metricStartDate,
   metricDate,
+  metricLookbackDays,
   fetchOrigin,
   syncEndpointOrigin: new URL(syncEndpoint).origin,
   pageMetricRows: metrics.length,
