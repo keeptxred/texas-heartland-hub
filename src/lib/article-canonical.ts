@@ -36,6 +36,7 @@ export const SEO_DUPLICATE_FLAGS = [
   "source_integrity_failure",
   "seo_off_topic",
   "site_boundary_violation",
+  "gsc_zero_impression_hold_2026_09_03",
 ] as const;
 
 export function hasSeoDuplicateFlag(flags: string[] | null | undefined): boolean {
