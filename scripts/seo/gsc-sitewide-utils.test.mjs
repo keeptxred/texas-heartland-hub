@@ -32,4 +32,21 @@ describe('sitewide GSC URL utilities', () => {
     expect(selected[1]).toBe('https://keeptxred.com/page-1');
     expect(new Set(selected).size).toBe(selected.length);
   });
+
+  it('spreads non-priority inspection slots across top-level route families', () => {
+    const sitemapUrls = [
+      ...Array.from({ length: 12 }, (_, index) => `https://keeptxred.com/texas-politics/figures/person-${index}`),
+      ...Array.from({ length: 12 }, (_, index) => `https://keeptxred.com/elections/race-${index}`),
+      ...Array.from({ length: 12 }, (_, index) => `https://keeptxred.com/bills/bill-${index}`),
+    ];
+    const selected = selectInspectionUrls({
+      sitemapUrls,
+      priorityUrls: [],
+      limit: 9,
+      metricDate: '2026-09-01',
+    });
+    const topLevelFamilies = new Set(selected.map((url) => new URL(url).pathname.split('/').filter(Boolean)[0]));
+    expect(selected).toHaveLength(9);
+    expect(topLevelFamilies).toEqual(new Set(['bills', 'elections', 'texas-politics']));
+  });
 });
