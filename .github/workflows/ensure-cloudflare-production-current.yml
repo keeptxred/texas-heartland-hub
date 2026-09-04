@@ -229,6 +229,18 @@ jobs:
           echo "Timed out waiting for verified production run $RUN_ID." >&2
           exit 1
 
+      - name: Check out exact deployed revision for authority smoke
+        if: steps.deployment.outputs.success == 'true'
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ steps.gate.outputs.main_sha }}
+
+      - name: Verify political geography authority on deployed Worker
+        if: steps.deployment.outputs.success == 'true'
+        env:
+          SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
+        run: python3 scripts/authority/verify-political-geography-production.py
+
       - name: Verify live GEO discovery endpoints
         if: steps.deployment.outputs.success == 'true'
         env:
