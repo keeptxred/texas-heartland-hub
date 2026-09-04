@@ -5,7 +5,7 @@ import { TEXAS_DATA_SETS } from "@/data/texas-data-catalog";
 import { isDataDetailIndexable } from "@/lib/data-detail-indexability";
 
 const read = (path: string) => fs.readFileSync(new URL(path, import.meta.url), "utf8");
-const policyHub = read("../routes/policy.tsx");
+const policyHub = read("../routes/policy.index.tsx");
 const policyManifest = read("../routes/policy-trackers[.]txt.ts");
 const lawHub = read("../routes/laws_.topics.tsx");
 const dataHub = read("../routes/data.tsx");
