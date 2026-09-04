@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "transparencyusa.org",
+    "sourceClass": "election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Transparency USA Texas 2026 race and candidate pages to corroborate current candidate identity, office, election stage, and ballot status and to discover downstream official campaign or candidate-profile sources. Do not approve or reuse Transparency USA-hosted images without item-level provenance plus a reusable license, explicit permission, candidate-supplied attribution, or another documented editorial permission basis.",
+    "searchHint": "site:transparencyusa.org Texas 2026 candidate race campaign portrait",
+    "notes": "New discovery bridge confirmed September 4, 2026. Current Texas 2026 race pages identify active general-election candidates including Crystal Sedillo in House District 30 and Laura Garcia DeLeon in House District 140. Treat directory-hosted imagery as discovery-only unless item-level rights are established."
+  },
+  {
+    "domain": "ivoterguide.com",
+    "sourceClass": "election-voter-guide-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use iVoterGuide Texas 2026 voter-guide pages to corroborate candidate identity, race, and current general-election participation and to discover candidate-specific portraits and downstream official campaign sources. Do not approve or reuse iVoterGuide-hosted images without item-level provenance plus a reusable license, explicit permission, candidate-supplied attribution, or another documented editorial permission basis.",
+    "searchHint": "site:ivoterguide.com 2026 Texas candidate campaign portrait",
+    "notes": "New discovery bridge confirmed September 4, 2026. Current Texas general-election voter-guide pages expose named candidate image slots for multiple candidates still missing from the canonical photo report, including Kyle Harding, Laura Garcia DeLeon, Julie Hunt, and Heidi Hall. Treat hosted imagery as discovery-only unless item-level rights are established."
+  }
+]
