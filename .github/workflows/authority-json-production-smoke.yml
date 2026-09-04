@@ -12,6 +12,14 @@ on:
       - 'src/routes/bills/texas/**'
       - 'src/lib/bill-primary-source-reference.ts'
       - 'public/citation-magnets.json'
+      - 'src/data/texas-political-geography-authority.ts'
+      - 'src/routes/texas-politics.texas-political-geography-history.tsx'
+      - 'src/routes/texas-politics.texas-urban-suburban-rural-politics-history.tsx'
+      - 'src/routes/texas-politics.south-texas-rio-grande-valley-political-history.tsx'
+      - 'src/routes/texas-politics.texas-metro-regional-realignment-history.tsx'
+      - 'src/routes/texas-politics.index.tsx'
+      - 'src/routes/sitemap-political-geography[.]xml.ts'
+      - 'src/routes/sitemap[.]xml.ts'
   workflow_run:
     workflows:
       - Deploy verified KeepTXRed to Cloudflare
@@ -34,7 +42,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v5
       - name: Validate production smoke scripts
-        run: python3 -m py_compile scripts/authority/smoke-production.py scripts/authority/verify-political-profiles-production.py
+        run: python3 -m py_compile scripts/authority/smoke-production.py scripts/authority/verify-political-profiles-production.py scripts/authority/verify-political-geography-production.py
 
   smoke:
     if: ${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success') }}
@@ -75,3 +83,17 @@ jobs:
           ref: main
       - name: Verify original political profiles on deployed Worker
         run: python3 scripts/authority/verify-political-profiles-production.py
+
+  political-geography-smoke:
+    if: ${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
+    steps:
+      - name: Check out current main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+      - name: Verify political geography authority routes and sitemap ownership
+        run: python3 scripts/authority/verify-political-geography-production.py
