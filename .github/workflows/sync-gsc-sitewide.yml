@@ -1,4 +1,5 @@
 name: Sync sitewide Google Search Console data
+# Refresh marker: verify the hardened post-merge ingestion path on 2026-09-04.
 
 on:
   workflow_dispatch:
