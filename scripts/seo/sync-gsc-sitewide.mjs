@@ -56,7 +56,7 @@ async function getAccessToken() {
   const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ grant_type: 'urn:ietf:params:oauth-grant-type:jwt-bearer', assertion }),
+    body: new URLSearchParams({ grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion }),
   });
   if (!tokenResponse.ok) throw new Error(`Google OAuth failed: ${tokenResponse.status} ${await tokenResponse.text()}`);
   const { access_token: accessToken } = await tokenResponse.json();
@@ -116,6 +116,7 @@ async function fetchSitemapUrls() {
   const queue = [{ url: 'https://keeptxred.com/sitemap.xml', depth: 0 }];
   const visitedSitemaps = new Set();
   const pageUrls = new Set();
+
   while (queue.length > 0 && visitedSitemaps.size < 100) {
     const item = queue.shift();
     if (!item || visitedSitemaps.has(item.url) || item.depth > 2) continue;
