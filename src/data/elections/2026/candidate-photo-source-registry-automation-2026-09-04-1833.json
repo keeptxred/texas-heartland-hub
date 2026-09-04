@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "crystalsedillo.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Crystal Sedillo's official Texas House District 30 campaign website to verify candidate identity, office, campaign-controlled biography content, and discover candidate-supplied portrait or media assets. Do not approve or reuse any site image without item-level provenance plus explicit reusable rights, campaign/media permission, candidate-supplied newsroom terms, or another documented editorial permission basis.",
+    "searchHint": "site:crystalsedillo.com Crystal Sedillo Texas House District 30 portrait media",
+    "notes": "Discovered September 4, 2026 while enriching the current missing-photo queue. The campaign homepage identifies Crystal Sedillo as running for Texas House District 30 and contains a campaign-controlled Meet Crystal biography. Treat all imagery as discovery-only until a candidate-specific asset URL and item-level reuse basis are established."
+  }
+]
