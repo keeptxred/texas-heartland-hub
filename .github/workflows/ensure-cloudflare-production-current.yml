@@ -25,7 +25,7 @@ concurrency:
 jobs:
   ensure:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - name: Resolve verified current main and production state
         id: gate
@@ -231,17 +231,47 @@ jobs:
           echo "Timed out waiting for verified production run $RUN_ID." >&2
           exit 1
 
-      - name: Check out exact deployed revision for authority smoke
+      - name: Check out exact deployed revision for production smoke
         if: ${{ steps.deployment.outputs.success == 'true' || steps.gate.outputs.production_current == 'true' }}
         uses: actions/checkout@v5
         with:
           ref: ${{ steps.gate.outputs.main_sha }}
+
+      - name: Verify live machine-readable authority resources
+        if: ${{ steps.deployment.outputs.success == 'true' || steps.gate.outputs.production_current == 'true' }}
+        env:
+          SITE_URL: https://keeptxred.com
+        run: python3 scripts/authority/smoke-production.py
+
+      - name: Verify live city migration redirects
+        if: ${{ steps.deployment.outputs.success == 'true' || steps.gate.outputs.production_current == 'true' }}
+        env:
+          SITE_URL: https://keeptxred.com
+        run: python3 scripts/authority/smoke-production.py --city-migration-only
+
+      - name: Verify original political profiles on production
+        if: ${{ steps.deployment.outputs.success == 'true' || steps.gate.outputs.production_current == 'true' }}
+        env:
+          SITE_URL: https://keeptxred.com
+        run: python3 scripts/authority/verify-political-profiles-production.py
 
       - name: Verify political geography authority on deployed Worker
         if: ${{ steps.deployment.outputs.success == 'true' || steps.gate.outputs.production_current == 'true' }}
         env:
           SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
         run: python3 scripts/authority/verify-political-geography-production.py
+
+      - name: Verify live policing comparison contract
+        if: ${{ steps.deployment.outputs.success == 'true' || steps.gate.outputs.production_current == 'true' }}
+        env:
+          SITE_URL: https://keeptxred.com
+        run: python3 scripts/production/verify-policing-comparison-live.py
+
+      - name: Verify live AdSense ads.txt
+        if: ${{ steps.deployment.outputs.success == 'true' || steps.gate.outputs.production_current == 'true' }}
+        env:
+          SITE_URL: https://keeptxred.com
+        run: python3 scripts/production/verify-adsense-ads-txt.py
 
       - name: Verify live GEO discovery endpoints
         if: ${{ steps.deployment.outputs.success == 'true' || steps.gate.outputs.production_current == 'true' }}
@@ -349,9 +379,9 @@ jobs:
             "repos/$REPOSITORY/statuses/$MAIN_SHA" \
             -f state='success' \
             -f context='keeptxred-production-current' \
-            -f description='Verified Cloudflare production and authority smoke are current' \
+            -f description='Verified production plus authority, policing, AdSense, and discovery smokes are current' \
             -f target_url="$ENSURE_RUN_URL" >/dev/null
-          echo "Published keeptxred-production-current=success for $MAIN_SHA after authority and discovery validation"
+          echo "Published keeptxred-production-current=success for $MAIN_SHA after full production smoke validation"
 
       - name: Publish production-current failure
         if: ${{ failure() && steps.gate.outputs.main_sha != '' && (steps.dispatch.outputs.run_id != '' || steps.gate.outputs.production_current == 'true') }}
@@ -367,6 +397,6 @@ jobs:
             "repos/$REPOSITORY/statuses/$MAIN_SHA" \
             -f state='failure' \
             -f context='keeptxred-production-current' \
-            -f description='Verified custom-domain production or authority/GEO smoke failed' \
+            -f description='Verified production or required live smoke failed' \
             -f target_url="$ENSURE_RUN_URL" >/dev/null
           echo "Published keeptxred-production-current=failure for $MAIN_SHA"
