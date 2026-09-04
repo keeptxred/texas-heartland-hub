@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "plaindocket.com",
+    "sourceClass": "election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use PlainDocket candidate pages to corroborate current ballot identity, office sought, campaign-finance context, and downstream official filing or campaign links. Do not approve or reuse PlainDocket-hosted imagery without item-level candidate identity, provenance, and an explicit reusable license, candidate/campaign-supplied basis, or another documented editorial permission basis.",
+    "searchHint": "PlainDocket Texas 2026 candidate portrait campaign website official filing",
+    "notes": "New discovery bridge verified September 4, 2026 while researching current missing-photo candidates including Laura Garcia DeLeon (Texas House District 140). Treat directory imagery as discovery-only unless exact-image rights are separately established."
+  },
+  {
+    "domain": "txelectionresults.com",
+    "sourceClass": "election-results-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Election Results candidate and race pages to corroborate current 2026 primary/general-election participation and discover downstream official campaign, party, county, or state election sources. Do not approve or reuse site-hosted imagery without item-level provenance plus an explicit reusable license, candidate/campaign-supplied basis, or another documented editorial permission basis.",
+    "searchHint": "Texas Election Results 2026 candidate official campaign portrait",
+    "notes": "New discovery bridge verified September 4, 2026. Current 2026 race pages expose otherwise sparse candidates including Rhett Rosenquest Smith, Kyle Harding, Laura Garcia DeLeon, Julie Hunt, Heidi Hall, Frank Salazar, David Flores, and Inocensia Moreno. Discovery-only; no hosted image is auto-approved."
+  },
+  {
+    "domain": "callthemap.com",
+    "sourceClass": "election-race-forecast-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Call the Map race pages only to corroborate current named general-election fields and discover downstream official candidate or race sources. Forecast text and any hosted imagery are not portrait-rights evidence. Do not approve or reuse images without separate item-level provenance and a documented reusable license, candidate/campaign-supplied basis, or another valid editorial permission basis.",
+    "searchHint": "Call the Map Texas House 2026 candidate campaign portrait official website",
+    "notes": "New discovery bridge verified September 4, 2026 while researching current missing-photo candidates in Texas House Districts 116 and 140. Treat all imagery as discovery-only."
+  }
+]
