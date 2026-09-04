@@ -25,7 +25,7 @@ describe('sitewide GSC transport contract', () => {
 
   it('backfills finalized daily page history with date and page dimensions', () => {
     expect(workflow).toContain('GSC_SITEWIDE_LOOKBACK_DAYS: "90"');
-    expect(script).toContain('GSC_SITEWIDE_LOOKBACK_DAYS || 90');
+    expect(script).toContain('GSC_SITEWIDE_LOOKBACK_DAYS || 28');
     expect(script).toContain("dimensions: ['date', 'page']");
     expect(script).toContain('startDate: metricStartDate');
     expect(script).toContain('endDate: metricDate');
