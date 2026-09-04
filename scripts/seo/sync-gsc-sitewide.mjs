@@ -9,7 +9,7 @@ const githubToken = process.env.GITHUB_TOKEN || '';
 const githubRunId = process.env.GITHUB_RUN_ID || '';
 const githubRepository = process.env.GITHUB_REPOSITORY || '';
 const inspectionLimit = Math.max(1, Math.min(500, Number(process.env.GSC_INSPECTION_LIMIT || 200)));
-const metricLookbackDays = Math.max(1, Math.min(90, Number(process.env.GSC_SITEWIDE_LOOKBACK_DAYS || 90)));
+const metricLookbackDays = Math.max(1, Math.min(90, Number(process.env.GSC_SITEWIDE_LOOKBACK_DAYS || 28)));
 const dryRun = process.argv.includes('--dry-run');
 
 if (!credentialsJson) throw new Error('GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON is required');
@@ -55,7 +55,7 @@ async function getAccessToken() {
   const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ grant_type: 'urn:ietf:params:oauth2:jwt-bearer', assertion }),
+    body: new URLSearchParams({ grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion }),
   });
   if (!tokenResponse.ok) throw new Error(`Google OAuth failed: ${tokenResponse.status} ${await tokenResponse.text()}`);
   const { access_token: accessToken } = await tokenResponse.json();
