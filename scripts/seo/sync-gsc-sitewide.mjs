@@ -8,6 +8,7 @@ const syncEndpoint = process.env.GSC_SITEWIDE_SYNC_ENDPOINT || `${fetchOrigin}/a
 const githubToken = process.env.GITHUB_TOKEN || '';
 const githubRunId = process.env.GITHUB_RUN_ID || '';
 const githubRepository = process.env.GITHUB_REPOSITORY || '';
+const githubEventName = process.env.GITHUB_EVENT_NAME || '';
 const inspectionLimit = Math.max(1, Math.min(500, Number(process.env.GSC_INSPECTION_LIMIT || 200)));
 const metricLookbackDays = Math.max(1, Math.min(90, Number(process.env.GSC_SITEWIDE_LOOKBACK_DAYS || 28)));
 const dryRun = process.argv.includes('--dry-run');
@@ -174,19 +175,31 @@ async function inspectUrl(accessToken, url) {
     headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ inspectionUrl: url, siteUrl, languageCode: 'en-US' }),
   });
-  if (!response.ok) throw new Error(`URL Inspection failed for ${url}: ${response.status} ${await response.text()}`);
-  return normalizeInspection(url, await response.json());
+  if (!response.ok) {
+    const body = await response.text();
+    if (response.status === 429) return { quotaExhausted: true, row: null, url };
+    throw new Error(`URL Inspection failed for ${url}: ${response.status} ${body}`);
+  }
+  return { quotaExhausted: false, row: normalizeInspection(url, await response.json()), url };
 }
 
 async function inspectUrls(accessToken, urls) {
   const results = [];
+  let quotaExhausted = false;
   for (let index = 0; index < urls.length; index += 5) {
     const chunk = urls.slice(index, index + 5);
     const chunkResults = await Promise.all(chunk.map((url) => inspectUrl(accessToken, url)));
-    results.push(...chunkResults.filter(Boolean));
+    for (const item of chunkResults) {
+      if (item.row) results.push(item.row);
+      if (item.quotaExhausted) quotaExhausted = true;
+    }
+    if (quotaExhausted) {
+      console.warn(`Google URL Inspection quota exhausted after ${results.length} successful inspections; preserving metrics and partial inspection results.`);
+      break;
+    }
     if (index + 5 < urls.length) await sleep(1000);
   }
-  return results;
+  return { results, quotaExhausted };
 }
 
 async function writeBatch(payload) {
@@ -218,12 +231,18 @@ const metrics = await fetchPageMetrics(accessToken);
 metrics.sort((a, b) => b.metricDate.localeCompare(a.metricDate) || b.impressions - a.impressions || b.clicks - a.clicks || a.url.localeCompare(b.url));
 
 if (dryRun) {
-  const inspection = await inspectUrl(accessToken, 'https://keeptxred.com/texas-politics');
-  console.log(JSON.stringify({ dryRun: true, siteUrl, metricStartDate, metricDate, metricLookbackDays, pageMetricRows: metrics.length, topMetricSample: metrics.slice(0, 5), urlInspectionAccess: inspection ? 'ok' : 'empty', inspectionVerdict: inspection?.verdict ?? null }, null, 2));
+  const inspectionResult = await inspectUrl(accessToken, 'https://keeptxred.com/texas-politics');
+  console.log(JSON.stringify({ dryRun: true, siteUrl, metricStartDate, metricDate, metricLookbackDays, pageMetricRows: metrics.length, topMetricSample: metrics.slice(0, 5), urlInspectionAccess: inspectionResult.quotaExhausted ? 'quota-exhausted' : inspectionResult.row ? 'ok' : 'empty', inspectionVerdict: inspectionResult.row?.verdict ?? null }, null, 2));
   process.exit(0);
 }
 
 if (!githubToken || !githubRunId || !githubRepository) throw new Error('GitHub Actions identity is required for write mode');
+
+let metricsStored = 0;
+for (let index = 0; index < metrics.length; index += 500) {
+  const result = await writeBatch({ metrics: metrics.slice(index, index + 500), inspections: [] });
+  metricsStored += Number(result.metricsStored || 0);
+}
 
 const { pageUrls: sitemapUrls, sitemapCount } = await fetchSitemapUrls();
 const builtInPriority = [
@@ -235,14 +254,14 @@ const builtInPriority = [
 ];
 const latestMetricUrls = metrics.filter((row) => row.metricDate === metricDate).map((row) => row.url);
 const priorityUrls = [...builtInPriority, ...latestMetricUrls];
-const inspectionUrls = selectInspectionUrls({ sitemapUrls, priorityUrls, limit: inspectionLimit, metricDate });
-const inspections = await inspectUrls(accessToken, inspectionUrls);
-
-let metricsStored = 0;
-for (let index = 0; index < metrics.length; index += 500) {
-  const result = await writeBatch({ metrics: metrics.slice(index, index + 500), inspections: [] });
-  metricsStored += Number(result.metricsStored || 0);
-}
+const inspectionEnabled = githubEventName !== 'push';
+const inspectionUrls = inspectionEnabled
+  ? selectInspectionUrls({ sitemapUrls, priorityUrls, limit: inspectionLimit, metricDate })
+  : [];
+const inspectionBatch = inspectionEnabled
+  ? await inspectUrls(accessToken, inspectionUrls)
+  : { results: [], quotaExhausted: false };
+const inspections = inspectionBatch.results;
 
 let inspectionsStored = 0;
 for (let index = 0; index < inspections.length; index += 100) {
@@ -263,6 +282,8 @@ console.log(JSON.stringify({
   sitemapCount,
   sitemapUrls: sitemapUrls.length,
   inspectionLimit,
+  inspectionEnabled,
+  inspectionQuotaExhausted: inspectionBatch.quotaExhausted,
   inspectionsRequested: inspectionUrls.length,
   inspectionsStored,
   indexedVerdicts: inspections.reduce((counts, row) => {
