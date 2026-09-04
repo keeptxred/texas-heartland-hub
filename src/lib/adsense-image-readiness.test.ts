@@ -71,4 +71,12 @@ describe("fresh article image recovery", () => {
     expect(workflow).not.toContain("for offset in 0 2 4");
     expect(workflow).not.toContain("push:");
   });
+
+  it("treats a verified production quality rejection as a deferred retry, not broken infrastructure", () => {
+    expect(workflow).toContain('elif [[ "$status" == "422" ]]');
+    expect(workflow).toContain("ADSENSE_IMAGE_BACKFILL_DEFERRED");
+    expect(workflow).toContain("quality gate rejection retained for bounded retry");
+    expect(workflow).toContain('if [[ "$failures" -gt 0 ]]');
+    expect(workflow).toContain("exit 1");
+  });
 });
