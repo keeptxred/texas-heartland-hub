@@ -37,6 +37,15 @@ export function extractSitemapLocs(xml) {
   return locations;
 }
 
+function topLevelPathBucket(url) {
+  try {
+    const segment = new URL(url).pathname.split('/').filter(Boolean)[0];
+    return segment || '~root';
+  } catch {
+    return '~invalid';
+  }
+}
+
 export function selectInspectionUrls({ sitemapUrls, priorityUrls, limit, metricDate }) {
   const cappedLimit = Math.max(1, Math.min(500, Number(limit) || 200));
   const priority = [];
@@ -60,10 +69,43 @@ export function selectInspectionUrls({ sitemapUrls, priorityUrls, limit, metricD
 
   const dateMs = Date.parse(`${metricDate}T00:00:00Z`);
   const dayNumber = Number.isFinite(dateMs) ? Math.floor(dateMs / 86_400_000) : 0;
-  const start = (dayNumber * slots) % remaining.length;
-  const rotated = [];
-  for (let index = 0; index < Math.min(slots, remaining.length); index += 1) {
-    rotated.push(remaining[(start + index) % remaining.length]);
+
+  // Avoid taking one large lexicographic slice of the sitemap. That can make a
+  // daily 200-URL inspection sample overwhelmingly represent a single route
+  // family (for example /texas-politics/figures). Group by top-level path,
+  // rotate each group daily, and round-robin across groups so each snapshot is
+  // useful for sitewide indexing decisions while remaining deterministic.
+  const buckets = new Map();
+  for (const url of remaining) {
+    const key = topLevelPathBucket(url);
+    if (!buckets.has(key)) buckets.set(key, []);
+    buckets.get(key).push(url);
   }
+
+  const bucketKeys = [...buckets.keys()].sort();
+  const bucketStart = bucketKeys.length > 0 ? dayNumber % bucketKeys.length : 0;
+  const rotatedKeys = bucketKeys.map((_, index) => bucketKeys[(bucketStart + index) % bucketKeys.length]);
+  const queues = new Map();
+  for (const key of rotatedKeys) {
+    const values = buckets.get(key) ?? [];
+    const start = values.length > 0 ? dayNumber % values.length : 0;
+    queues.set(key, values.map((_, index) => values[(start + index) % values.length]));
+  }
+
+  const rotated = [];
+  let cursor = 0;
+  while (rotated.length < Math.min(slots, remaining.length)) {
+    let added = false;
+    for (const key of rotatedKeys) {
+      const queue = queues.get(key) ?? [];
+      if (cursor >= queue.length) continue;
+      rotated.push(queue[cursor]);
+      added = true;
+      if (rotated.length >= Math.min(slots, remaining.length)) break;
+    }
+    if (!added) break;
+    cursor += 1;
+  }
+
   return [...priority, ...rotated];
 }
