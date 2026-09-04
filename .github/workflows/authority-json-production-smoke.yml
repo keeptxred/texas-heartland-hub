@@ -2,8 +2,7 @@ name: Authority JSON Production Smoke
 
 on:
   pull_request:
-    branches:
-      - main
+    branches: [main]
     paths:
       - '.github/workflows/authority-json-production-smoke.yml'
       - 'scripts/authority/**'
@@ -18,24 +17,26 @@ on:
       - 'src/routes/texas-politics.south-texas-rio-grande-valley-political-history.tsx'
       - 'src/routes/texas-politics.texas-metro-regional-realignment-history.tsx'
       - 'src/routes/texas-politics.index.tsx'
-      - 'src/routes/sitemap-political-geography[.]xml.ts'
-      - 'src/routes/sitemap[.]xml.ts'
+      - 'src/routes/sitemap-political-geography*'
+      - 'src/routes/sitemap*'
   workflow_run:
     workflows:
-      - Deploy verified KeepTXRed to Cloudflare
-      - Deploy KeepTXRed to Cloudflare Workers
-    types:
-      - completed
-  workflow_dispatch:
+      - 'Deploy verified KeepTXRed to Cloudflare'
+      - 'Deploy KeepTXRed to Cloudflare Workers'
+    types: [completed]
+  workflow_dispatch: {}
   schedule:
     - cron: '17 13 * * *'
 
 permissions:
   contents: read
 
+env:
+  SITE_URL: https://keeptxred.com
+
 jobs:
   validate-script:
-    if: ${{ github.event_name == 'pull_request' }}
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 4
     steps:
@@ -45,7 +46,7 @@ jobs:
         run: python3 -m py_compile scripts/authority/smoke-production.py scripts/authority/verify-political-profiles-production.py scripts/authority/verify-political-geography-production.py
 
   smoke:
-    if: ${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success') }}
+    if: github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -57,39 +58,33 @@ jobs:
         run: python3 scripts/authority/smoke-production.py
 
   city-migration-smoke:
-    if: ${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success') }}
+    if: github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     timeout-minutes: 8
-    env:
-      SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
     steps:
       - name: Check out current main
         uses: actions/checkout@v5
         with:
           ref: main
-      - name: Verify city migration redirects on deployed Worker
+      - name: Verify city migration redirects on production
         run: python3 scripts/authority/smoke-production.py --city-migration-only
 
   political-profile-smoke:
-    if: ${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success') }}
+    if: github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     timeout-minutes: 8
-    env:
-      SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
     steps:
       - name: Check out current main
         uses: actions/checkout@v5
         with:
           ref: main
-      - name: Verify original political profiles on deployed Worker
+      - name: Verify original political profiles on production
         run: python3 scripts/authority/verify-political-profiles-production.py
 
   political-geography-smoke:
-    if: ${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success') }}
+    if: github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     timeout-minutes: 8
-    env:
-      SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
     steps:
       - name: Check out current main
         uses: actions/checkout@v5
