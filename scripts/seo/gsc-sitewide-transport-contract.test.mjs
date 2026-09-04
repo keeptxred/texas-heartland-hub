@@ -23,6 +23,14 @@ describe('sitewide GSC transport contract', () => {
     expect(endpoint).toContain('url.hostname === "keeptxred.com"');
   });
 
+  it('backfills finalized daily page history with date and page dimensions', () => {
+    expect(script).toContain('GSC_SITEWIDE_LOOKBACK_DAYS || 28');
+    expect(script).toContain("dimensions: ['date', 'page']");
+    expect(script).toContain('startDate: metricStartDate');
+    expect(script).toContain('endDate: metricDate');
+    expect(script).toContain('metrics.slice(index, index + 500)');
+  });
+
   it('keeps the protected write endpoint limited to the canonical workflow on active main runs', () => {
     expect(endpoint).toContain('["schedule", "workflow_dispatch", "push"].includes');
     expect(endpoint).toContain('run?.head_branch !== "main"');
