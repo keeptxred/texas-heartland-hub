@@ -47,7 +47,7 @@ describe("unified policy tracker registry", () => {
   });
 
   it("is the source of truth for readiness-filtered hub, sitemap, and text-manifest discovery", () => {
-    const hubSource = readFileSync(new URL("../routes/policy.tsx", import.meta.url), "utf8");
+    const hubSource = readFileSync(new URL("../routes/policy.index.tsx", import.meta.url), "utf8");
     const sitemapSource = readFileSync(new URL("../routes/sitemap-pages[.]xml.ts", import.meta.url), "utf8");
     const manifestSource = readFileSync(new URL("../routes/policy-trackers[.]txt.ts", import.meta.url), "utf8");
 

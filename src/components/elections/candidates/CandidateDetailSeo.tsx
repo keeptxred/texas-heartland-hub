@@ -100,7 +100,6 @@ export function CandidateDetailSeo({ candidate, race }: CandidateDetailSeoProps)
       <title>{metadata.title}</title>
       <meta name="description" content={metadata.description} />
       <meta name="robots" content={metadata.robots} />
-      <link rel="canonical" href={metadata.canonicalUrl} />
       <meta property="og:type" content={metadata.openGraph.type} />
       <meta property="og:title" content={metadata.openGraph.title} />
       <meta property="og:description" content={metadata.openGraph.description} />
