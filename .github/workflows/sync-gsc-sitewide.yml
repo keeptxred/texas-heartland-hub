@@ -1,5 +1,7 @@
 name: Sync sitewide Google Search Console data
 
+# Protected auto-merges explicitly dispatch this workflow after main verification
+# when a relevant GSC file changes; the push trigger remains for non-bot merges.
 on:
   workflow_dispatch:
   schedule:
