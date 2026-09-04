@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "plaindocket.com",
+    "sourceClass": "nonpartisan-election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use PlainDocket candidate pages only to corroborate current candidate identity, office, official filing references, campaign-controlled statements, and downstream official campaign/source links. Do not approve or reuse PlainDocket-hosted imagery without item-level provenance plus a reusable license, explicit permission, candidate-supplied newsroom terms, or another documented editorial permission basis.",
+    "searchHint": "site:plaindocket.com/ballot/candidate Texas 2026 candidate official campaign portrait",
+    "notes": "Discovered September 4, 2026 while enriching current missing-photo candidates. Current Texas 2026 candidate pages exist for candidates including Frank Salazar (House District 143) and Laura Garcia DeLeon (House District 140) and provide race identity plus official filing/campaign references. Treat this as a discovery bridge only, not an image-rights source."
+  },
+  {
+    "domain": "voteyourviews.org",
+    "sourceClass": "nonpartisan-election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use VoteYourViews candidate and race pages to corroborate current ballot participation and discover linked official campaign websites or candidate profiles. Do not approve or reuse VoteYourViews-hosted images without item-level provenance plus a reusable license, explicit permission, candidate-supplied terms, or another documented editorial permission basis.",
+    "searchHint": "site:voteyourviews.org/candidates Texas 2026 candidate campaign website portrait",
+    "notes": "Discovered September 4, 2026 while enriching current missing-photo candidates. Current candidate pages include Inocensia Moreno (House District 145) and Crystal Sedillo (House District 30) and expose downstream campaign links. Treat directory imagery as discovery-only unless item-level rights are independently established."
+  }
+]
