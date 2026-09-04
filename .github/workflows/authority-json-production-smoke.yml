@@ -26,6 +26,7 @@ on:
       - Deploy KeepTXRed to Cloudflare Workers
     types:
       - completed
+  status:
   workflow_dispatch:
   schedule:
     - cron: '17 13 * * *'
@@ -45,55 +46,55 @@ jobs:
         run: python3 -m py_compile scripts/authority/smoke-production.py scripts/authority/verify-political-profiles-production.py scripts/authority/verify-political-geography-production.py
 
   smoke:
-    if: ${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success') }}
+    if: ${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success') && (github.event_name != 'status' || (github.event.context == 'keeptxred-production-current' && github.event.state == 'success')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
-      - name: Check out current main
+      - name: Check out deployed revision
         uses: actions/checkout@v5
         with:
-          ref: main
+          ref: ${{ github.event_name == 'status' && github.event.sha || github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || 'main' }}
       - name: Verify live machine-readable authority resources
         run: python3 scripts/authority/smoke-production.py
 
   city-migration-smoke:
-    if: ${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success') }}
+    if: ${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success') && (github.event_name != 'status' || (github.event.context == 'keeptxred-production-current' && github.event.state == 'success')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     env:
       SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
     steps:
-      - name: Check out current main
+      - name: Check out deployed revision
         uses: actions/checkout@v5
         with:
-          ref: main
+          ref: ${{ github.event_name == 'status' && github.event.sha || github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || 'main' }}
       - name: Verify city migration redirects on deployed Worker
         run: python3 scripts/authority/smoke-production.py --city-migration-only
 
   political-profile-smoke:
-    if: ${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success') }}
+    if: ${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success') && (github.event_name != 'status' || (github.event.context == 'keeptxred-production-current' && github.event.state == 'success')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     env:
       SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
     steps:
-      - name: Check out current main
+      - name: Check out deployed revision
         uses: actions/checkout@v5
         with:
-          ref: main
+          ref: ${{ github.event_name == 'status' && github.event.sha || github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || 'main' }}
       - name: Verify original political profiles on deployed Worker
         run: python3 scripts/authority/verify-political-profiles-production.py
 
   political-geography-smoke:
-    if: ${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success') }}
+    if: ${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success') && (github.event_name != 'status' || (github.event.context == 'keeptxred-production-current' && github.event.state == 'success')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     env:
       SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
     steps:
-      - name: Check out current main
+      - name: Check out deployed revision
         uses: actions/checkout@v5
         with:
-          ref: main
+          ref: ${{ github.event_name == 'status' && github.event.sha || github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || 'main' }}
       - name: Verify political geography authority routes and sitemap ownership
         run: python3 scripts/authority/verify-political-geography-production.py
