@@ -41,6 +41,9 @@ jobs:
             printf '%s' "$token"
           }
 
+          # Authenticated recovery intentionally uses the direct Worker origin.
+          # The public hostname can challenge non-browser OIDC POSTs; a regression
+          # test protects this transport choice separately from public canonical URLs.
           endpoint='https://keeptxred-site.freddy-coppola.workers.dev/api/public/hooks/adsense-image-backfill'
           ready=-1
           for attempt in $(seq 1 6); do
@@ -75,6 +78,8 @@ jobs:
           max_per_run=1
           mapfile -t slugs < <(jq -r --argjson max "$max_per_run" '.slugs[:$max][]' /tmp/adsense-image-dry.json)
           failures=0
+          deferred=0
+          succeeded=0
           processed=0
 
           for slug in "${slugs[@]}"; do
@@ -92,18 +97,34 @@ jobs:
             cat "$output" 2>/dev/null || true
             echo
             processed=$((processed + 1))
-            if [[ "$status" != "200" ]] || ! jq -e '.ok == true and .failed == 0' "$output" >/dev/null 2>&1; then
+
+            if [[ "$status" == "200" ]] && jq -e '.ok == true and .failed == 0' "$output" >/dev/null 2>&1; then
+              succeeded=$((succeeded + 1))
+            elif [[ "$status" == "422" ]] && jq -e '.ok == false and (.failed // 0) > 0' "$output" >/dev/null 2>&1; then
+              # A 422 here means the image safety/story-match gate worked as
+              # designed. Keep the article queued for a later bounded retry,
+              # but do not turn a correctly rejected image into an infrastructure
+              # failure that leaves a permanently red scheduled workflow.
+              deferred=$((deferred + 1))
+              echo "ADSENSE_IMAGE_BACKFILL_DEFERRED slug=${slug}; generated image rejected by production quality gate"
+            else
+              # Authentication, endpoint, response-contract, timeout and other
+              # unexpected failures remain hard failures so CI still surfaces
+              # genuine recovery-system breakage.
               failures=$((failures + 1))
             fi
           done
 
+          echo "ADSENSE_IMAGE_BACKFILL_TOTAL ready_at_start=${ready} processed=${processed} succeeded=${succeeded} deferred=${deferred} failures=${failures}"
           if [[ "$failures" -gt 0 ]]; then
             echo "ADSENSE_IMAGE_BACKFILL_PARTIAL processed=${processed} failures=${failures} ready_at_start=${ready}" >&2
             exit 1
           fi
 
-          remaining=$((ready - processed))
-          if [[ "$remaining" -gt 0 ]]; then
+          remaining=$((ready - succeeded))
+          if [[ "$deferred" -gt 0 ]]; then
+            echo "ADSENSE_IMAGE_BACKFILL_SUCCESS deferred=${deferred} remaining_for_next_run=${remaining}; quality gate rejection retained for bounded retry"
+          elif [[ "$remaining" -gt 0 ]]; then
             echo "ADSENSE_IMAGE_BACKFILL_SUCCESS processed=${processed} remaining_for_next_run=${remaining}"
           else
             echo "ADSENSE_IMAGE_BACKFILL_SUCCESS processed=${processed} remaining=0"
