@@ -251,6 +251,15 @@ const builtInPriority = [
   'https://keeptxred.com/texas-politics/figures',
   'https://keeptxred.com/elections/2026',
   'https://keeptxred.com/elections/candidates',
+  // Keep the controlled zero-impression cohort observable after noindex removes
+  // these URLs from sitemap rotation. This is inspection-only and does not
+  // advertise the held pages back to search engines.
+  'https://keeptxred.com/news/2026-08-13-how-texas-county-government-works',
+  'https://keeptxred.com/news/2026-08-14-texas-data-centers-under-scrutiny-after-gov-abbott-s-order-sh190y',
+  'https://keeptxred.com/news/2026-08-14-texas-public-information-act-request-guide',
+  'https://keeptxred.com/news/2026-08-15-ercot-says-governor-s-data-center-audit-could-take-months-to-complete',
+  'https://keeptxred.com/news/2026-08-19-minnesota-sues-gov-abbott-as-ice-agent-charged-in-shooting-faces-possible-releas',
+  'https://keeptxred.com/news/2026-08-20-texas-families-ask-supreme-court-to-review-state-law-requiring-ten-commandments-',
 ];
 const latestMetricUrls = metrics.filter((row) => row.metricDate === metricDate).map((row) => row.url);
 const priorityUrls = [...builtInPriority, ...latestMetricUrls];
