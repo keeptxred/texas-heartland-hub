@@ -6,6 +6,14 @@ const script = readFileSync(new URL('./sync-gsc-sitewide.mjs', import.meta.url),
 const endpoint = readFileSync(new URL('../../src/routes/api/admin/gsc-sitewide-sync.ts', import.meta.url), 'utf8');
 
 const WORKER_ORIGIN = 'https://keeptxred-site.freddy-coppola.workers.dev';
+const HOLD_MONITOR_URLS = [
+  'https://keeptxred.com/news/2026-08-13-how-texas-county-government-works',
+  'https://keeptxred.com/news/2026-08-14-texas-data-centers-under-scrutiny-after-gov-abbott-s-order-sh190y',
+  'https://keeptxred.com/news/2026-08-14-texas-public-information-act-request-guide',
+  'https://keeptxred.com/news/2026-08-15-ercot-says-governor-s-data-center-audit-could-take-months-to-complete',
+  'https://keeptxred.com/news/2026-08-19-minnesota-sues-gov-abbott-as-ice-agent-charged-in-shooting-faces-possible-releas',
+  'https://keeptxred.com/news/2026-08-20-texas-families-ask-supreme-court-to-review-state-law-requiring-ten-commandments-',
+];
 
 describe('sitewide GSC transport contract', () => {
   it('uses the direct Worker origin for sitemap transport and protected writes', () => {
@@ -21,6 +29,11 @@ describe('sitewide GSC transport contract', () => {
     expect(script).toContain("const queue = [{ url: 'https://keeptxred.com/sitemap.xml', depth: 0 }]");
     expect(script).toContain("'https://keeptxred.com/texas-politics/figures'");
     expect(endpoint).toContain('url.hostname === "keeptxred.com"');
+  });
+
+  it('keeps the controlled zero-impression hold observable after sitemap removal', () => {
+    for (const url of HOLD_MONITOR_URLS) expect(script).toContain(`'${url}'`);
+    expect(script).toContain('const priorityUrls = [...builtInPriority, ...latestMetricUrls]');
   });
 
   it('backfills finalized daily page history with date and page dimensions', () => {
