@@ -6,6 +6,7 @@ const script = readFileSync(new URL('./sync-gsc-sitewide.mjs', import.meta.url),
 const endpoint = readFileSync(new URL('../../src/routes/api/admin/gsc-sitewide-sync.ts', import.meta.url), 'utf8');
 
 const WORKER_ORIGIN = 'https://keeptxred-site.freddy-coppola.workers.dev';
+const HB1056_MONITOR_URL = 'https://keeptxred.com/news/texas-gold-silver-legal-tender-hb-1056';
 const HOLD_MONITOR_URLS = [
   'https://keeptxred.com/news/2026-08-13-how-texas-county-government-works',
   'https://keeptxred.com/news/2026-08-14-texas-data-centers-under-scrutiny-after-gov-abbott-s-order-sh190y',
@@ -29,6 +30,12 @@ describe('sitewide GSC transport contract', () => {
     expect(script).toContain("const queue = [{ url: 'https://keeptxred.com/sitemap.xml', depth: 0 }]");
     expect(script).toContain("'https://keeptxred.com/texas-politics/figures'");
     expect(endpoint).toContain('url.hostname === "keeptxred.com"');
+  });
+
+  it('keeps the HB 1056 unknown-to-Google article in inspection-only priority', () => {
+    expect(script).toContain(`'${HB1056_MONITOR_URL}'`);
+    expect(script.indexOf(HB1056_MONITOR_URL)).toBeLessThan(script.indexOf('const latestMetricUrls'));
+    expect(script).toContain('const priorityUrls = [...builtInPriority, ...latestMetricUrls]');
   });
 
   it('keeps the controlled zero-impression hold observable after sitemap removal', () => {

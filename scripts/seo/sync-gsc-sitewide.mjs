@@ -251,6 +251,9 @@ const builtInPriority = [
   'https://keeptxred.com/texas-politics/figures',
   'https://keeptxred.com/elections/2026',
   'https://keeptxred.com/elections/candidates',
+  // HB 1056 returned "URL is unknown to Google" on 2026-09-03. Keep this
+  // inspection-only URL observable until Search Console reports discovery.
+  'https://keeptxred.com/news/texas-gold-silver-legal-tender-hb-1056',
   // Keep the controlled zero-impression cohort observable after noindex removes
   // these URLs from sitemap rotation. This is inspection-only and does not
   // advertise the held pages back to search engines.
