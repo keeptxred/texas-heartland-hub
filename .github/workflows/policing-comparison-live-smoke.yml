@@ -56,25 +56,29 @@ jobs:
             exit 1
           fi
 
-          grep -Fq 'Texas Law Enforcement' "$article" || {
+          # Some production HTML responses contain bytes that make GNU grep apply
+          # binary-file heuristics even though the expected SSR metadata is present.
+          # Force text mode so the smoke validates the actual markup instead of
+          # failing because grep suppresses matching output for a binary-classified file.
+          grep -aFq 'Texas Law Enforcement' "$article" || {
             echo 'Live article HTML is missing the expected Texas Law Enforcement headline.' >&2
             exit 1
           }
-          grep -Fq "$HERO_PATH" "$article" || {
+          grep -aFq "$HERO_PATH" "$article" || {
             echo "Live article HTML does not reference the seven-role policing hero: $HERO_PATH" >&2
             exit 1
           }
-          if grep -Fq "$WRONG_HASHED_HERO_PATH" "$article"; then
+          if grep -aFq "$WRONG_HASHED_HERO_PATH" "$article"; then
             echo "Live article HTML still references the wrong four-role hashed hero: $WRONG_HASHED_HERO_PATH" >&2
             exit 1
           fi
-          if grep -Fq "$OLD_HERO_PATH" "$article"; then
+          if grep -aFq "$OLD_HERO_PATH" "$article"; then
             echo "Live article HTML still references the retired policing hero path: $OLD_HERO_PATH" >&2
             exit 1
           fi
 
-          og_line="$(grep -oE '<meta[^>]+property="og:image"[^>]*>' "$article" | head -n 1 || true)"
-          twitter_line="$(grep -oE '<meta[^>]+name="twitter:image"[^>]*>' "$article" | head -n 1 || true)"
+          og_line="$(grep -aoE '<meta[^>]+property="og:image"[^>]*>' "$article" | head -n 1 || true)"
+          twitter_line="$(grep -aoE '<meta[^>]+name="twitter:image"[^>]*>' "$article" | head -n 1 || true)"
           [[ "$og_line" == *"$HERO_PATH"* ]] || {
             echo 'Open Graph image metadata does not use the seven-role hero.' >&2
             echo "$og_line" >&2
