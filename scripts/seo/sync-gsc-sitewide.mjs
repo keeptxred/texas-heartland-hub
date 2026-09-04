@@ -56,7 +56,7 @@ async function getAccessToken() {
   const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion }),
+    body: new URLSearchParams({ grant_type: 'urn:ietf:params:oauth-grant-type:jwt-bearer', assertion }),
   });
   if (!tokenResponse.ok) throw new Error(`Google OAuth failed: ${tokenResponse.status} ${await tokenResponse.text()}`);
   const { access_token: accessToken } = await tokenResponse.json();
@@ -116,7 +116,6 @@ async function fetchSitemapUrls() {
   const queue = [{ url: 'https://keeptxred.com/sitemap.xml', depth: 0 }];
   const visitedSitemaps = new Set();
   const pageUrls = new Set();
-
   while (queue.length > 0 && visitedSitemaps.size < 100) {
     const item = queue.shift();
     if (!item || visitedSitemaps.has(item.url) || item.depth > 2) continue;
@@ -251,6 +250,15 @@ const builtInPriority = [
   'https://keeptxred.com/texas-politics/figures',
   'https://keeptxred.com/elections/2026',
   'https://keeptxred.com/elections/candidates',
+  // Keep the controlled zero-impression cohort observable after noindex removes
+  // these URLs from sitemap rotation. This is inspection-only and does not
+  // advertise the held pages back to search engines.
+  'https://keeptxred.com/news/2026-08-13-how-texas-county-government-works',
+  'https://keeptxred.com/news/2026-08-14-texas-data-centers-under-scrutiny-after-gov-abbott-s-order-sh190y',
+  'https://keeptxred.com/news/2026-08-14-texas-public-information-act-request-guide',
+  'https://keeptxred.com/news/2026-08-15-ercot-says-governor-s-data-center-audit-could-take-months-to-complete',
+  'https://keeptxred.com/news/2026-08-19-minnesota-sues-gov-abbott-as-ice-agent-charged-in-shooting-faces-possible-releas',
+  'https://keeptxred.com/news/2026-08-20-texas-families-ask-supreme-court-to-review-state-law-requiring-ten-commandments-',
 ];
 const latestMetricUrls = metrics.filter((row) => row.metricDate === metricDate).map((row) => row.url);
 const priorityUrls = [...builtInPriority, ...latestMetricUrls];
