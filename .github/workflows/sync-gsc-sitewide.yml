@@ -1,5 +1,4 @@
 name: Sync sitewide Google Search Console data
-# Refresh marker: verify the hardened post-merge ingestion path on 2026-09-04.
 
 on:
   workflow_dispatch:
@@ -64,6 +63,7 @@ jobs:
       GSC_SITE_URL: sc-domain:keeptxred.com
       GSC_SITEWIDE_FETCH_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
       GSC_SITEWIDE_SYNC_ENDPOINT: https://keeptxred-site.freddy-coppola.workers.dev/api/admin/gsc-sitewide-sync
+      GSC_SITEWIDE_LOOKBACK_DAYS: "28"
       GSC_INSPECTION_LIMIT: "200"
       GITHUB_TOKEN: ${{ github.token }}
     steps:
@@ -71,5 +71,5 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 22
-      - name: Sync daily page metrics and rotating URL Inspection state
+      - name: Backfill finalized page metrics and rotate URL Inspection coverage
         run: node scripts/seo/sync-gsc-sitewide.mjs
