@@ -32,6 +32,18 @@ describe('sitewide GSC transport contract', () => {
     expect(script).toContain('metrics.slice(index, index + 500)');
   });
 
+  it('persists page metrics before optional URL Inspection work', () => {
+    expect(script.indexOf('let metricsStored = 0')).toBeLessThan(script.indexOf('const { pageUrls: sitemapUrls, sitemapCount }'));
+    expect(script.indexOf('let metricsStored = 0')).toBeLessThan(script.indexOf('const inspectionBatch = inspectionEnabled'));
+  });
+
+  it('does not burn URL Inspection quota on push-triggered syncs and degrades gracefully on 429', () => {
+    expect(script).toContain("const inspectionEnabled = githubEventName !== 'push'");
+    expect(script).toContain('if (response.status === 429) return { quotaExhausted: true');
+    expect(script).toContain('preserving metrics and partial inspection results');
+    expect(script).toContain('inspectionQuotaExhausted: inspectionBatch.quotaExhausted');
+  });
+
   it('keeps the protected write endpoint limited to the canonical workflow on active main runs', () => {
     expect(endpoint).toContain('["schedule", "workflow_dispatch", "push"].includes');
     expect(endpoint).toContain('run?.head_branch !== "main"');
