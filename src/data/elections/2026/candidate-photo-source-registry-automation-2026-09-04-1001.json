@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "voteyourviews.org",
+    "sourceClass": "nonpartisan-election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use VoteYourViews candidate and race pages only to corroborate current candidate identity, office sought, campaign links, and discover downstream official portrait sources. Do not approve or reuse VoteYourViews-hosted images without item-level provenance plus a reusable license, candidate-supplied media basis, explicit permission, or another documented editorial permission basis.",
+    "searchHint": "site:voteyourviews.org Texas 2026 candidate portrait campaign website",
+    "notes": "Discovered September 4, 2026 while researching current missing-photo candidates. Current Texas 2026 race pages expose candidate portraits and campaign links, including Crystal Sedillo in House District 30. Treat all hosted imagery as discovery-only unless item-level provenance and rights are independently established."
+  },
+  {
+    "domain": "bluevoterguide.org",
+    "sourceClass": "candidate-endorsement-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Blue Voter Guide pages only as a discovery bridge to candidate identities, campaign/profile links, and portrait leads. Do not treat endorsement status as evidence about image rights. Do not approve or reuse any hosted image without item-level provenance plus a reusable license, candidate-supplied media basis, explicit permission, or another documented editorial permission basis.",
+    "searchHint": "site:bluevoterguide.org Texas 2026 candidate portrait official campaign",
+    "notes": "Discovered September 4, 2026. Current Texas pages expose portrait leads for multiple candidates still relevant to the canonical discovery graph, including Crystal Sedillo and other state-house candidates. Discovery-only; political endorsement content is not used for candidate evaluation or image-rights inference."
+  },
+  {
+    "domain": "gawtp.com",
+    "sourceClass": "political-organization-candidate-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Grassroots America candidate pages only to corroborate candidate identity and discover downstream official campaign or candidate-linked portrait sources. Endorsement content does not establish image rights. Do not approve or reuse hosted images without item-level provenance plus a reusable license, candidate-supplied media basis, explicit permission, or another documented editorial permission basis.",
+    "searchHint": "site:gawtp.com 2026 Texas candidate portrait official campaign",
+    "notes": "Discovered September 4, 2026 while researching Mindy Bumgarner. The organization publishes a candidate-specific image and office reference for the 2026 State Board of Education race, making it a useful discovery bridge only."
+  }
+]
