@@ -87,11 +87,13 @@ jobs:
 
           production_state="$(gh api "repos/$REPOSITORY/commits/$main_sha/status" --jq '[.statuses[] | select(.context == "keeptxred-production-current")][0].state // ""')"
           production_target="$(gh api "repos/$REPOSITORY/commits/$main_sha/status" --jq '[.statuses[] | select(.context == "keeptxred-production-current")][0].target_url // ""')"
+          echo "production_target=$production_target" >> "$GITHUB_OUTPUT"
 
           echo "production_state=${production_state:-none}"
           if [[ "$production_state" == 'success' ]]; then
             echo "deploy=false" >> "$GITHUB_OUTPUT"
-            echo "Production is already recorded as current for verified main $main_sha."
+            echo "production_current=true" >> "$GITHUB_OUTPUT"
+            echo "Production is already recorded as current for verified main $main_sha; revalidating authority and discovery gates."
             exit 0
           fi
 
@@ -230,19 +232,19 @@ jobs:
           exit 1
 
       - name: Check out exact deployed revision for authority smoke
-        if: steps.deployment.outputs.success == 'true'
+        if: ${{ steps.deployment.outputs.success == 'true' || steps.gate.outputs.production_current == 'true' }}
         uses: actions/checkout@v5
         with:
           ref: ${{ steps.gate.outputs.main_sha }}
 
       - name: Verify political geography authority on deployed Worker
-        if: steps.deployment.outputs.success == 'true'
+        if: ${{ steps.deployment.outputs.success == 'true' || steps.gate.outputs.production_current == 'true' }}
         env:
           SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
         run: python3 scripts/authority/verify-political-geography-production.py
 
       - name: Verify live GEO discovery endpoints
-        if: steps.deployment.outputs.success == 'true'
+        if: ${{ steps.deployment.outputs.success == 'true' || steps.gate.outputs.production_current == 'true' }}
         env:
           SITE_URL: https://keeptxred.com
         shell: bash
@@ -334,12 +336,12 @@ jobs:
           PY
 
       - name: Publish production-current success
-        if: steps.deployment.outputs.success == 'true' && success()
+        if: ${{ success() && (steps.deployment.outputs.success == 'true' || steps.gate.outputs.production_current == 'true') }}
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
           MAIN_SHA: ${{ steps.gate.outputs.main_sha }}
-          RUN_URL: ${{ steps.dispatch.outputs.run_url }}
+          ENSURE_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         shell: bash
         run: |
           set -euo pipefail
@@ -347,17 +349,17 @@ jobs:
             "repos/$REPOSITORY/statuses/$MAIN_SHA" \
             -f state='success' \
             -f context='keeptxred-production-current' \
-            -f description='Verified Cloudflare custom-domain production is current' \
-            -f target_url="$RUN_URL" >/dev/null
-          echo "Published keeptxred-production-current=success for $MAIN_SHA"
+            -f description='Verified Cloudflare production and authority smoke are current' \
+            -f target_url="$ENSURE_RUN_URL" >/dev/null
+          echo "Published keeptxred-production-current=success for $MAIN_SHA after authority and discovery validation"
 
       - name: Publish production-current failure
-        if: failure() && steps.gate.outputs.main_sha != '' && steps.dispatch.outputs.run_id != ''
+        if: ${{ failure() && steps.gate.outputs.main_sha != '' && (steps.dispatch.outputs.run_id != '' || steps.gate.outputs.production_current == 'true') }}
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
           MAIN_SHA: ${{ steps.gate.outputs.main_sha }}
-          RUN_URL: ${{ steps.dispatch.outputs.run_url }}
+          ENSURE_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         shell: bash
         run: |
           set -euo pipefail
@@ -365,6 +367,6 @@ jobs:
             "repos/$REPOSITORY/statuses/$MAIN_SHA" \
             -f state='failure' \
             -f context='keeptxred-production-current' \
-            -f description='Verified custom-domain deployment or GEO smoke failed' \
-            -f target_url="$RUN_URL" >/dev/null
+            -f description='Verified custom-domain production or authority/GEO smoke failed' \
+            -f target_url="$ENSURE_RUN_URL" >/dev/null
           echo "Published keeptxred-production-current=failure for $MAIN_SHA"
