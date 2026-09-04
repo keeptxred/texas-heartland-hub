@@ -34,5 +34,23 @@
     "rightsRule": "Use VoteYourViews Texas race pages to corroborate candidate identity and current race participation and to discover campaign websites or downstream portrait sources. Do not approve or reuse VoteYourViews-hosted images without item-level provenance plus a reusable license, explicit permission, candidate-supplied media basis, or another documented editorial permission basis.",
     "searchHint": "VoteYourViews Texas 2026 candidate campaign website portrait",
     "notes": "New discovery bridge confirmed September 4, 2026. Current Texas race pages show candidate portraits and campaign-site links, including Crystal Sedillo in House District 30. Treat directory-hosted imagery as discovery-only unless item-level rights are established."
+  },
+  {
+    "domain": "tcta.org",
+    "sourceClass": "education-association-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Classroom Teachers Association candidate pages to corroborate current candidate identity, office, campaign links, social links, and discover candidate-specific portraits. Do not approve or reuse TCTA-hosted images without item-level provenance plus a reusable license, explicit permission, candidate-supplied attribution, or another documented editorial permission basis.",
+    "searchHint": "site:tcta.org texasteachersvote 2026 Texas candidate portrait campaign website",
+    "notes": "New discovery bridge confirmed September 4, 2026. Current candidate pages include named portrait surfaces for missing-photo candidates such as Rhett Rosenquest Smith and Scott Whitmarsh. Treat hosted imagery as discovery-only absent item-level reuse rights."
+  },
+  {
+    "domain": "votetexasvalues.org",
+    "sourceClass": "election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use VoteTexasValues race and candidate pages to corroborate current ballot participation, candidate identity, campaign website links, and discover downstream official profiles or candidate-supplied portrait sources. Do not approve or reuse VoteTexasValues-hosted images without item-level provenance plus a reusable license, explicit permission, candidate-supplied attribution, or another documented editorial permission basis.",
+    "searchHint": "site:votetexasvalues.org 2026 Texas House candidate campaign website portrait",
+    "notes": "New discovery bridge confirmed September 4, 2026. Current race pages expose candidate-specific images and campaign-site links for some candidates. Treat hosted imagery as discovery-only unless item-level rights are established."
   }
 ]
