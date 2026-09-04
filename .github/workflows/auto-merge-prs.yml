@@ -111,3 +111,23 @@ jobs:
 
           gh workflow run deploy-cloudflare-after-verify.yml --ref main --repo "$REPOSITORY" -f verified_sha="$merged_sha"
           echo "Main verification passed; dispatched Cloudflare deployment for exact verified revision $merged_sha."
+
+          if grep -qxF '.github/workflows/sync-gsc-metrics.yml' <<<"$changed_files" || \
+             grep -qxF 'scripts/seo/sync-gsc-metrics.mjs' <<<"$changed_files" || \
+             grep -qxF 'src/lib/gsc.ts' <<<"$changed_files" || \
+             grep -qxF 'src/routes/api/admin/gsc-sync.ts' <<<"$changed_files"; then
+            gh workflow run sync-gsc-metrics.yml --ref main --repo "$REPOSITORY"
+            echo "Dispatched current-main article Search Console metric sync."
+          fi
+
+          if grep -qxF '.github/workflows/sync-gsc-sitewide.yml' <<<"$changed_files" || \
+             grep -qxF 'scripts/seo/gsc-sitewide-utils.mjs' <<<"$changed_files" || \
+             grep -qxF 'scripts/seo/gsc-sitewide-utils.test.mjs' <<<"$changed_files" || \
+             grep -qxF 'scripts/seo/gsc-sitewide-transport-contract.test.mjs' <<<"$changed_files" || \
+             grep -qxF 'scripts/seo/sync-gsc-sitewide.mjs' <<<"$changed_files" || \
+             grep -qxF 'src/lib/gsc-sitewide.ts' <<<"$changed_files" || \
+             grep -qxF 'src/routes/api/admin/gsc-sitewide-sync.ts' <<<"$changed_files" || \
+             grep -Eq '^supabase/migrations/.*_gsc_sitewide_search_console[.]sql$' <<<"$changed_files"; then
+            gh workflow run sync-gsc-sitewide.yml --ref main --repo "$REPOSITORY"
+            echo "Dispatched current-main sitewide Search Console metric and inspection sync."
+          fi

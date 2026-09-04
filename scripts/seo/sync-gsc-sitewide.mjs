@@ -183,7 +183,7 @@ async function inspectUrls(accessToken, urls) {
 }
 
 async function writeBatch(payload) {
-  const retryDelaysMs = [0, 5000, 15000, 30000];
+  const retryDelaysMs = [0, 10000, 20000, 30000, 45000, 60000];
   let lastFailure = '';
   for (let attempt = 0; attempt < retryDelaysMs.length; attempt += 1) {
     const delay = retryDelaysMs[attempt];
