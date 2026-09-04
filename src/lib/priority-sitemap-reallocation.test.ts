@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { getPrioritySitemapPaths, MAX_SEARCH_CONSOLE_PRIORITY_URLS } from "@/lib/priority-sitemap";
 
-const UPDATED_ISSUE_GUIDES = [
+const PRIORITY_ISSUE_PATHS = [
+  "/issues",
   "/issues/texas-gun-laws",
   "/issues/texas-medical-transition-minors-law",
   "/issues/texas-bail-criminal-justice",
   "/issues/texas-rural-healthcare",
-  "/issues/texas-local-preemption-home-rule",
 ] as const;
 
 const RETIRED_ZERO_SIGNAL_BILLS = [
@@ -24,9 +24,9 @@ describe("Search Console priority sitemap authority allocation", () => {
     expect(new Set(paths).size).toBe(MAX_SEARCH_CONSOLE_PRIORITY_URLS);
   });
 
-  it("prioritizes the five September 3 current-law issue guides", () => {
+  it("prioritizes the uncrawled Issues hub before spending all five slots on child guides", () => {
     const paths = getPrioritySitemapPaths();
-    for (const path of UPDATED_ISSUE_GUIDES) expect(paths).toContain(path);
+    for (const path of PRIORITY_ISSUE_PATHS) expect(paths).toContain(path);
   });
 
   it("does not spend priority slots on the five zero-crawl bill details", () => {
