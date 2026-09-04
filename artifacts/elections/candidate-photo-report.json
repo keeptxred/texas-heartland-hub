@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-09-04T01:43:33.217Z",
+  "generatedAt": "2026-09-04T14:21:54.368Z",
   "candidateCount": 491,
   "eligibleCandidateCount": 479,
   "excludedCandidateCount": 12,
-  "approvedPhotoCount": 352,
-  "missingPhotoCount": 127,
-  "manifestEntryCount": 352,
-  "coverage": 0.7348643006263048,
-  "coveragePercent": 73.49,
+  "approvedPhotoCount": 353,
+  "missingPhotoCount": 126,
+  "manifestEntryCount": 353,
+  "coverage": 0.7369519832985386,
+  "coveragePercent": 73.7,
   "targetCoverage": 0.85,
   "targetApprovedPhotoCount": 408,
-  "photosNeededForTarget": 56,
+  "photosNeededForTarget": 55,
   "targetMet": false,
   "errors": [],
   "warnings": [],
@@ -326,13 +326,6 @@
       "name": "SAMANTHA LOPEZ-RESENDEZ",
       "raceId": "race-2026-texas-house-50",
       "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-howard-olsen-republican-race-2026-texas-house-50",
-      "name": "HOWARD OLSEN",
-      "raceId": "race-2026-texas-house-50",
-      "party": "republican",
       "priority": "standard"
     },
     {
