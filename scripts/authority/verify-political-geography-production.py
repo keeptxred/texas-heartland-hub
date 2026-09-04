@@ -26,7 +26,7 @@ ROUTES = {
     "/texas-politics/texas-urban-suburban-rural-politics-history":
         "Urban, Suburban and Rural Texas Politics: How the Divide Developed",
     "/texas-politics/south-texas-rio-grande-valley-political-history":
-        "South Texas and Rio Grande Valley Political History: Machines, Voting Rights and Realignment",
+        "South Texas and Rio Grande Valley Political History",
     "/texas-politics/texas-metro-regional-realignment-history":
         "Texas Metro and Regional Realignment: Dallas, Houston, Austin, San Antonio and Beyond",
 }
