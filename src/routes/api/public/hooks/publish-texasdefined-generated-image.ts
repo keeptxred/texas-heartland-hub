@@ -325,6 +325,15 @@ async function publishTexasDefinedGeneratedImage(request: Request): Promise<Resp
     );
   }
 
+  const pageId = String(connection.account_id);
+  const postIdMatch = graphJson.post_id?.match(/^(\d+)_(\d+)$/) ?? null;
+  const postUrl =
+    postIdMatch && postIdMatch[1] === pageId
+      ? `https://www.facebook.com/permalink.php?story_fbid=${encodeURIComponent(postIdMatch[2])}&id=${encodeURIComponent(pageId)}`
+      : graphJson.id && /^\d+$/.test(graphJson.id)
+        ? `https://www.facebook.com/photo/?fbid=${encodeURIComponent(graphJson.id)}`
+        : null;
+
   let packageId: string | null = null;
   let recordWarning: string | null = null;
   try {
@@ -349,7 +358,9 @@ async function publishTexasDefinedGeneratedImage(request: Request): Promise<Resp
     kind: "engagement",
     source_post_id: sourcePostId,
     external_id: externalId,
-    post_url: `https://www.facebook.com/${externalId}`,
+    facebook_post_id: graphJson.post_id ?? null,
+    facebook_photo_id: graphJson.id ?? null,
+    post_url: postUrl,
     package_id: packageId,
     record_warning: recordWarning,
     image_sha256: actualSha,

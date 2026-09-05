@@ -56,6 +56,22 @@ describe("TexasDefined generated-image Facebook receiver contract", () => {
     }
   });
 
+  it("returns a real Facebook Page permalink instead of treating a compound Graph post ID as a path", () => {
+    for (const marker of [
+      "const postIdMatch = graphJson.post_id?.match(/^(\\d+)_(\\d+)$/) ?? null",
+      "postIdMatch && postIdMatch[1] === pageId",
+      "https://www.facebook.com/permalink.php?story_fbid=",
+      "&id=${encodeURIComponent(pageId)}",
+      "https://www.facebook.com/photo/?fbid=",
+      "facebook_post_id: graphJson.post_id ?? null",
+      "facebook_photo_id: graphJson.id ?? null",
+      "post_url: postUrl",
+    ]) {
+      expect(source).toContain(marker);
+    }
+    expect(source).not.toContain("post_url: `https://www.facebook.com/${externalId}`");
+  });
+
   it("keeps fallback publishing disabled", () => {
     expect(source).toContain("text_only_fallback: false");
     expect(source).toContain("generic_fallback: false");
