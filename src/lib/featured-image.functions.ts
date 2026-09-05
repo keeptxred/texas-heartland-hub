@@ -285,8 +285,6 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
   const supabase = await serviceClient();
   if (!opts.overwrite && row.featured_image_url) return { ok: true, url: row.featured_image_url, alt: buildAltText(row) };
 
-  // Multi-source stories must derive their visual subject from durable verified facts.
-  // The service types intentionally lag these newsroom tables, so the runtime client is narrowed here.
   const grounding = await loadMultiSourceImageGrounding(supabase as any, row.slug);
   if (grounding?.mode === "hold_image") {
     const note = `multisource-image-hold: no safe verified visual fact; excluded_conflicts=${grounding.excludedConflictCount}`;
@@ -316,10 +314,6 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
   await supabase.from("daily_articles").update({ image_generation_status: "generating", image_prompt: prompt }).eq("slug", row.slug);
 
   try {
-    // Generate from the sanitized visual subject as well as validating against the
-    // original factual subject. Passing original story-specific forbidden nouns to
-    // FLUX as "negative" text can prime the exact gun/politician/cartoon motifs the
-    // strict validator rejected, because FLUX.2 receives one combined prompt field.
     let negativePrompt = buildNegativeImagePrompt(generationSubject, previousFailure);
     const imageModel = subject.domain === "culture" ? CLOUDFLARE_CULTURE_IMAGE_MODEL : undefined;
     let bytes = await generateImageBytes(prompt, negativePrompt, imageModel);
@@ -391,3 +385,16 @@ export const regenerateFeaturedImage = createServerFn({ method: "POST" })
     if (error || !row) return { ok: false as const, error: "Article not found" };
     return generateAndStore(row as ArticleRow, { overwrite: true });
   });
+
+export async function backfillBatch(limit = 5, overwrite = false): Promise<{ processed: number; ok: number; failed: number; results: { slug: string; ok: boolean; error?: string }[] }> {
+  const supabase = await serviceClient();
+  let q = supabase.from("daily_articles").select(SELECT_COLS).neq("image_generation_status", "generating").in("kind", ["evergreen", "ingested", "news", "sports-nfl", "sports-mlb", "sports-nba"]).order("published_at", { ascending: false }).limit(limit);
+  if (!overwrite) q = q.is("featured_image_url", null).in("image_generation_status", ["pending", "failed"]);
+  const { data: rows } = await q;
+  const results: { slug: string; ok: boolean; error?: string }[] = [];
+  for (const row of (rows ?? []) as ArticleRow[]) {
+    const r = await generateAndStore(row, { overwrite });
+    results.push({ slug: row.slug, ok: r.ok, error: r.ok ? undefined : r.error });
+  }
+  return { processed: results.length, ok: results.filter((r) => r.ok).length, failed: results.filter((r) => !r.ok).length, results };
+}
