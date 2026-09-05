@@ -5,6 +5,16 @@ import { getLegislatureBillDirectory } from '@/lib/bill-hierarchy';
 const EMPTY_BILLS_SEARCH = { q: '', status: '', legislature: 0, chamber: '', billType: '', page: 1 } as const;
 const billTypeLabel = (value: string) => value.toUpperCase();
 const chamberLabel = (value: string) => value === 'house' ? 'Texas House' : value === 'senate' ? 'Texas Senate' : 'Joint measures';
+const billSessionLabel = (legislature: number, sessionCode?: string | null) => {
+  const code = String(sessionCode || 'R').trim().toUpperCase() || 'R';
+  if (code === 'R') return `${legislature}(R) · Regular Session`;
+  if (/^\d+$/.test(code)) {
+    const number = Number(code);
+    const suffix = number % 100 >= 11 && number % 100 <= 13 ? 'th' : number % 10 === 1 ? 'st' : number % 10 === 2 ? 'nd' : number % 10 === 3 ? 'rd' : 'th';
+    return `${legislature}(${code}) · ${number}${suffix} Called Session`;
+  }
+  return `${legislature}(${code}) · Session ${code}`;
+};
 
 export const Route = createFileRoute('/bills/texas/$legislature/')({
   loader: async ({ params }) => {
@@ -18,7 +28,7 @@ export const Route = createFileRoute('/bills/texas/$legislature/')({
     const { legislature, totalCount, billTypes, lastActionDate } = loaderData;
     const url = `${SITE_URL}/bills/texas/${legislature}`;
     const title = `${legislature}th Texas Legislature Bills | Keep TX Red`;
-    const description = `Browse ${totalCount.toLocaleString()} bills from the ${legislature}th Texas Legislature by bill type, chamber, status and official legislative history.`;
+    const description = `Browse ${totalCount.toLocaleString()} bills from the ${legislature}th Texas Legislature by bill type, chamber, status, session and official legislative history.`;
     return {
       meta: [
         { title },
@@ -78,6 +88,9 @@ function LegislatureBillHub() {
         <p className="mt-4 max-w-3xl text-lg text-muted-foreground">
           Browse {totalCount.toLocaleString()} House, Senate and joint measures from the {legislature}th Legislature. Choose a bill type to move directly into the official bill inventory.
         </p>
+        <p className="mt-3 max-w-3xl text-sm text-muted-foreground">
+          This directory can include the regular session and called sessions. Every bill card is labeled with its session, such as {legislature}(R), {legislature}(1), or {legislature}(2), so reused bill numbers remain distinguishable.
+        </p>
       </header>
 
       <section className="mt-10">
@@ -104,7 +117,7 @@ function LegislatureBillHub() {
         <div className="flex items-end justify-between gap-4">
           <div>
             <h2 className="text-2xl font-bold">Recently updated bills</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Direct links into the latest activity from this Legislature.</p>
+            <p className="mt-1 text-sm text-muted-foreground">Direct links into the latest activity from this Legislature, with session identity shown on every bill.</p>
           </div>
           <Link to="/bills" search={{ q: '', status: '', legislature, chamber: '', billType: '', page: 1 }} className="text-sm font-semibold text-primary hover:underline">Search this Legislature →</Link>
         </div>
@@ -114,6 +127,7 @@ function LegislatureBillHub() {
               <a href={canonicalBillPath(bill)} className="text-xl font-bold text-primary hover:underline">{bill.bill_identifier}</a>
               <p className="mt-2 font-medium leading-snug">{bill.caption}</p>
               <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                <span className="font-semibold text-foreground/80">{billSessionLabel(bill.legislature_number, bill.session_code)}</span>
                 <span>{chamberLabel(bill.chamber)}</span>
                 <span>{bill.current_status_label}</span>
                 {bill.last_action_date ? <span>Updated {new Date(`${bill.last_action_date}T12:00:00`).toLocaleDateString()}</span> : null}
