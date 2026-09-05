@@ -71,3 +71,5 @@ await writeFile(
   JSON.stringify([...byId.values()].sort((a, b) => a.candidateId.localeCompare(b.candidateId)), null, 2) + "\n"
 );
 console.log(`Applied ${applied} verified official campaign portrait(s).`);
+
+// Replay marker: re-run the protected canonical candidate-photo enrichment pipeline from current main.
