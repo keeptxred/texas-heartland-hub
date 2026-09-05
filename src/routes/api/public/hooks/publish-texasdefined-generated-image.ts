@@ -327,12 +327,34 @@ async function publishTexasDefinedGeneratedImage(request: Request): Promise<Resp
 
   const pageId = String(connection.account_id);
   const postIdMatch = graphJson.post_id?.match(/^(\d+)_(\d+)$/) ?? null;
-  const postUrl =
+  const constructedPostUrl =
     postIdMatch && postIdMatch[1] === pageId
       ? `https://www.facebook.com/permalink.php?story_fbid=${encodeURIComponent(postIdMatch[2])}&id=${encodeURIComponent(pageId)}`
       : graphJson.id && /^\d+$/.test(graphJson.id)
         ? `https://www.facebook.com/photo/?fbid=${encodeURIComponent(graphJson.id)}`
         : null;
+  let postUrl = constructedPostUrl;
+  let postUrlSource = constructedPostUrl ? "constructed_fallback" : "unavailable";
+
+  if (graphJson.post_id) {
+    try {
+      const refreshedPosts = await fetchRecentFacebookPagePosts({
+        pageId,
+        pageToken: String(connection.access_token),
+        limit: 25,
+      });
+      const publishedPost = refreshedPosts.find((post) => post.id === graphJson.post_id);
+      if (publishedPost?.permalink_url) {
+        postUrl = publishedPost.permalink_url;
+        postUrlSource = "meta_permalink_url";
+      }
+    } catch (error) {
+      console.warn(
+        "[TexasDefined Facebook] post succeeded but canonical permalink lookup failed; using constructed fallback",
+        error instanceof Error ? error.message : String(error),
+      );
+    }
+  }
 
   let packageId: string | null = null;
   let recordWarning: string | null = null;
@@ -361,6 +383,7 @@ async function publishTexasDefinedGeneratedImage(request: Request): Promise<Resp
     facebook_post_id: graphJson.post_id ?? null,
     facebook_photo_id: graphJson.id ?? null,
     post_url: postUrl,
+    post_url_source: postUrlSource,
     package_id: packageId,
     record_warning: recordWarning,
     image_sha256: actualSha,

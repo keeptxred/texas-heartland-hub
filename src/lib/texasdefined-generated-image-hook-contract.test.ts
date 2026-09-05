@@ -56,16 +56,22 @@ describe("TexasDefined generated-image Facebook receiver contract", () => {
     }
   });
 
-  it("returns a real Facebook Page permalink instead of treating a compound Graph post ID as a path", () => {
+  it("prefers Meta's canonical permalink and keeps a safe constructed fallback", () => {
     for (const marker of [
       "const postIdMatch = graphJson.post_id?.match(/^(\\d+)_(\\d+)$/) ?? null",
       "postIdMatch && postIdMatch[1] === pageId",
       "https://www.facebook.com/permalink.php?story_fbid=",
       "&id=${encodeURIComponent(pageId)}",
       "https://www.facebook.com/photo/?fbid=",
+      "const refreshedPosts = await fetchRecentFacebookPagePosts({",
+      "const publishedPost = refreshedPosts.find((post) => post.id === graphJson.post_id)",
+      "publishedPost?.permalink_url",
+      'postUrlSource = "meta_permalink_url"',
+      'postUrlSource = constructedPostUrl ? "constructed_fallback" : "unavailable"',
       "facebook_post_id: graphJson.post_id ?? null",
       "facebook_photo_id: graphJson.id ?? null",
       "post_url: postUrl",
+      "post_url_source: postUrlSource",
     ]) {
       expect(source).toContain(marker);
     }
