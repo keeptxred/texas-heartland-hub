@@ -35,6 +35,17 @@ describe("TexasDefined generated-image Facebook receiver contract", () => {
     }
   });
 
+  it("requires the exact TexasDefined.com attribution assertion", () => {
+    for (const marker of [
+      'const TEXASDEFINED_IMAGE_ATTRIBUTION = "Brought to you by your friends at TexasDefined.com"',
+      'const attributionValue = form.get("attribution")',
+      'attributionValue.trim() !== TEXASDEFINED_IMAGE_ATTRIBUTION',
+      'error: "Exact TexasDefined image attribution is required"',
+    ]) {
+      expect(source).toContain(marker);
+    }
+  });
+
   it("requires a real source post ID instead of falling back to unknown", () => {
     expect(source).toContain("SOURCE_POST_ID_PATTERN");
     expect(source).toContain('error: "Valid TexasDefined source post ID is required"');
