@@ -55,6 +55,8 @@ jobs:
         run: node scripts/legislature/validate-bill-session-labels.mjs
       - name: Validate bill lifecycle dates
         run: node scripts/legislature/validate-bill-lifecycle-dates.mjs
+      - name: Validate structured bill effective dates
+        run: node scripts/legislature/validate-structured-effective-dates.mjs
       - name: Validate bill analysis summaries
         run: node scripts/legislature/validate-bill-analysis-summary.mjs
       - name: Validate bill fiscal impact display
