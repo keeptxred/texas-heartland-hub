@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-09-05T16:04:35.820Z",
+  "generatedAt": "2026-09-05T18:18:11.398Z",
   "candidateCount": 491,
   "eligibleCandidateCount": 479,
   "excludedCandidateCount": 12,
-  "approvedPhotoCount": 355,
-  "missingPhotoCount": 124,
-  "manifestEntryCount": 355,
-  "coverage": 0.7411273486430062,
-  "coveragePercent": 74.11,
+  "approvedPhotoCount": 359,
+  "missingPhotoCount": 120,
+  "manifestEntryCount": 359,
+  "coverage": 0.7494780793319415,
+  "coveragePercent": 74.95,
   "targetCoverage": 0.85,
   "targetApprovedPhotoCount": 408,
-  "photosNeededForTarget": 53,
+  "photosNeededForTarget": 49,
   "targetMet": false,
   "errors": [],
   "warnings": [],
@@ -329,13 +329,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-kathryn-hartmann-democratic-race-2026-texas-house-53",
-      "name": "KATHRYN HARTMANN",
-      "raceId": "race-2026-texas-house-53",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-andrew-turner-democratic-race-2026-texas-house-59",
       "name": "ANDREW TURNER",
       "raceId": "race-2026-texas-house-59",
@@ -364,30 +357,9 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-sandeep-srivastava-democratic-race-2026-texas-house-66",
-      "name": "SANDEEP SRIVASTAVA",
-      "raceId": "race-2026-texas-house-66",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-jordan-wheatley-democratic-race-2026-texas-house-67",
-      "name": "JORDAN WHEATLEY",
-      "raceId": "race-2026-texas-house-67",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-jasmine-henderson-democratic-race-2026-texas-house-68",
       "name": "JASMINE HENDERSON",
       "raceId": "race-2026-texas-house-68",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-leilani-barnett-democratic-race-2026-texas-house-69",
-      "name": "LEILANI BARNETT",
-      "raceId": "race-2026-texas-house-69",
       "party": "democratic",
       "priority": "standard"
     },
