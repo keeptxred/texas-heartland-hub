@@ -28,6 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     env:
+      GH_TOKEN: ${{ github.token }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       AUTOMATION_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
       MARKER_REF: ${{ github.event.workflow_run.head_sha || github.sha }}
@@ -38,6 +39,22 @@ jobs:
           set -euo pipefail
           if [[ -z "${OPENAI_API_KEY:-}" ]]; then
             echo 'OPENAI_API_KEY is missing.' >&2
+            exit 1
+          fi
+
+          endpoint="${AUTOMATION_ORIGIN%/}/api/public/hooks/openai-article-image-recovery"
+          route_ready=0
+          for attempt in $(seq 1 12); do
+            probe_status=$(curl -sS -o /tmp/openai-article-probe.json -w '%{http_code}' --max-time 30 -X POST "$endpoint" || echo 000)
+            echo "OpenAI article recovery endpoint probe ${attempt}/12 HTTP ${probe_status}"
+            if [[ "$probe_status" == "401" ]]; then
+              route_ready=1
+              break
+            fi
+            sleep 15
+          done
+          if [[ "$route_ready" != "1" ]]; then
+            echo 'Deployed OpenAI article-image recovery endpoint never became ready.' >&2
             exit 1
           fi
 
@@ -67,13 +84,8 @@ jobs:
                 ;;
             esac
 
-            mkdir -p "/tmp/openai-article/${slug}"
             work="/tmp/openai-article/${slug}"
-            PROMPT="$prompt" python3 - <<'PY'
-          import json, os
-          from pathlib import Path
-          Path(os.environ['work'] if 'work' in os.environ else '/tmp').mkdir(parents=True, exist_ok=True)
-          PY
+            mkdir -p "$work"
             jq -n --arg prompt "$prompt" '{model:"gpt-image-2",prompt:$prompt,size:"1536x1024"}' > "$work/request.json"
             status=$(curl -sS -o "$work/response.json" -w '%{http_code}' \
               --max-time 900 \
@@ -125,7 +137,7 @@ jobs:
               -F "slug=${slug}" \
               -F "image=@${work}/generated.jpg;type=image/jpeg" \
               -F "image_sha256=${image_sha256}" \
-              "${AUTOMATION_ORIGIN%/}/api/public/hooks/openai-article-image-recovery" || echo 000)
+              "$endpoint" || echo 000)
             echo "openai article image slug=${slug} HTTP ${upload_status}"
             cat "$result" 2>/dev/null || true
             echo
