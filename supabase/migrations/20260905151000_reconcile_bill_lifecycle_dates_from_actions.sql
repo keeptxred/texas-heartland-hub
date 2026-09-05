@@ -81,8 +81,17 @@ security definer
 set search_path = public
 as $$
 begin
-  perform public.refresh_bill_lifecycle_dates_from_actions(coalesce(new.bill_id, old.bill_id));
-  return coalesce(new, old);
+  if tg_op = 'DELETE' then
+    perform public.refresh_bill_lifecycle_dates_from_actions(old.bill_id);
+    return old;
+  end if;
+
+  if tg_op = 'UPDATE' and old.bill_id is distinct from new.bill_id then
+    perform public.refresh_bill_lifecycle_dates_from_actions(old.bill_id);
+  end if;
+
+  perform public.refresh_bill_lifecycle_dates_from_actions(new.bill_id);
+  return new;
 end;
 $$;
 
@@ -91,7 +100,7 @@ grant execute on function public.trg_refresh_bill_lifecycle_dates_from_actions()
 
 drop trigger if exists refresh_bill_lifecycle_dates_after_action on public.bill_actions;
 create trigger refresh_bill_lifecycle_dates_after_action
-after insert or update of action_date, action_text or delete
+after insert or update or delete
 on public.bill_actions
 for each row
 execute function public.trg_refresh_bill_lifecycle_dates_from_actions();
