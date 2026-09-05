@@ -9,8 +9,8 @@ async function getAdmin(): Promise<LooseClient> {
 }
 
 function authOk(token: string | null | undefined): boolean {
-  const expected = process.env.ADMIN_PASSCODE ?? 'keeptxred';
-  return typeof token === 'string' && token.length > 0 && token === expected;
+  const expected = process.env.ADMIN_PASSCODE;
+  return Boolean(expected && token && token === expected);
 }
 
 const ListInput = z.object({
