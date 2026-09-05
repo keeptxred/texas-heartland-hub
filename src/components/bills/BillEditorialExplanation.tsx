@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ExternalLink, Info, Landmark, Scale } from 'lucide-react';
 import { CitationTrustPanel } from '@/components/authority/CitationTrustPanel';
+import { BillEffectiveDates } from '@/components/bills/BillEffectiveDates';
 import { supabase } from '@/integrations/supabase/client';
 import { getLatestBillFiscalImpact } from '@/lib/bill-fiscal-impact';
 import { getBillEditorialEnrichment, type BillEditorialEnrichment } from '@/lib/bills';
@@ -69,6 +70,8 @@ export function BillEditorialExplanation({ billId }: { billId: string }) {
         lastVerified={bill.last_synced_at ? `Legislative record synchronized ${formatTimestamp(bill.last_synced_at)}${bill.last_action_date ? `; latest recorded official action ${formatDate(bill.last_action_date)}` : ''}.` : bill.last_action_date ? `Latest recorded official action ${formatDate(bill.last_action_date)}; synchronization timestamp unavailable.` : 'Official record available; synchronization timestamp pending.'}
         title={`${bill.bill_identifier} sources, status methodology and verification`}
       /> : null}
+
+      <BillEffectiveDates billId={billId} />
 
       {bill ? <section className="scroll-mt-24 rounded-xl border bg-card p-6" id="law-agency-relationships">
         <div className="flex items-center gap-3"><Scale className="h-6 w-6 text-primary"/><h2 className="text-2xl font-bold">Bill → law → agency context</h2></div>
