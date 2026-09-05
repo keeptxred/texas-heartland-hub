@@ -160,6 +160,40 @@ export function buildGenerationSafeSubject(subject: SubjectExtract): SubjectExtr
   return subject;
 }
 
+function buildRepeatedFailureRecoverySubject(row: ArticleRow, subject: SubjectExtract): SubjectExtract {
+  if (row.slug === "2026-09-04-denton-191-turtles-shipment") {
+    return {
+      ...subject,
+      domain: "general",
+      title: "Denton wildlife shipment inspection",
+      firstParagraph: "",
+      locations: ["Denton, Texas"],
+      concreteSubject: "A documentary photograph inside a Texas parcel-shipping inspection workspace showing rows of ventilated reptile transport carriers, taped cardboard shipping cartons, a digital parcel scale, nitrile gloves, inspection paperwork with all writing unreadable, and clean examination tables. No animals in distress, no injured animals, no people, no police action, and no dramatic staging. The scene should clearly read as a wildlife-shipment inspection in Denton, Texas.",
+    };
+  }
+  if (row.slug === "2026-09-04-texas-food-insecurity-one-in-five") {
+    return {
+      ...subject,
+      domain: "general",
+      title: "Texas food bank distribution warehouse",
+      firstParagraph: "",
+      locations: ["Texas"],
+      concreteSubject: "A busy but orderly Texas food bank warehouse in daylight with long pallet racks of canned goods and boxed staples, volunteers sorting groceries into identical family food boxes, rolling carts, produce crates, and a clearly visible distribution staging area. Focus on the scale of food-bank demand and logistics, not on posed sadness or a single person. Documentary photojournalism with ordinary warehouse details and no readable logos.",
+    };
+  }
+  if (row.slug === "2026-09-04-fort-worth-kindergartner-school-safety") {
+    return {
+      ...subject,
+      domain: "general",
+      title: "Fort Worth elementary school perimeter security",
+      firstParagraph: "",
+      locations: ["Fort Worth, Texas"],
+      concreteSubject: "A documentary photograph of an elementary-school perimeter entrance in Fort Worth, Texas during daylight: closed pedestrian gate, school fence, visitor-entry intercom, exterior security camera, crosswalk markings, yellow school bus in the background, and the main school entrance beyond the fence. No children, no identifiable student, no staged reenactment, and no readable school name. The physical security boundary should be the unmistakable subject of the frame.",
+    };
+  }
+  return subject;
+}
+
 export function buildGenerationOnlyImagePrompt(subject: SubjectExtract, extraGuidance = ""): string {
   const location = subject.locations.slice(0, 2).join(", ");
   const correction = extraGuidance ? `Correction from rejected attempt: ${extraGuidance}. ` : "";
@@ -265,7 +299,7 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
   }
 
   const subject = extractImageSubject(row, grounding);
-  const generationSubject = buildGenerationSafeSubject(subject);
+  const generationSubject = buildRepeatedFailureRecoverySubject(row, buildGenerationSafeSubject(subject));
   const usesGenerationOnlyPrompt = generationSubject !== subject;
   const makeGenerationPrompt = (guidance = "") => usesGenerationOnlyPrompt
     ? buildGenerationOnlyImagePrompt(generationSubject, guidance)
@@ -357,16 +391,3 @@ export const regenerateFeaturedImage = createServerFn({ method: "POST" })
     if (error || !row) return { ok: false as const, error: "Article not found" };
     return generateAndStore(row as ArticleRow, { overwrite: true });
   });
-
-export async function backfillBatch(limit = 5, overwrite = false): Promise<{ processed: number; ok: number; failed: number; results: { slug: string; ok: boolean; error?: string }[] }> {
-  const supabase = await serviceClient();
-  let q = supabase.from("daily_articles").select(SELECT_COLS).neq("image_generation_status", "generating").in("kind", ["evergreen", "ingested", "news", "sports-nfl", "sports-mlb", "sports-nba"]).order("published_at", { ascending: false }).limit(limit);
-  if (!overwrite) q = q.is("featured_image_url", null).in("image_generation_status", ["pending", "failed"]);
-  const { data: rows } = await q;
-  const results: { slug: string; ok: boolean; error?: string }[] = [];
-  for (const row of (rows ?? []) as ArticleRow[]) {
-    const r = await generateAndStore(row, { overwrite });
-    results.push({ slug: row.slug, ok: r.ok, error: r.ok ? undefined : r.error });
-  }
-  return { processed: results.length, ok: results.filter((r) => r.ok).length, failed: results.filter((r) => !r.ok).length, results };
-}
