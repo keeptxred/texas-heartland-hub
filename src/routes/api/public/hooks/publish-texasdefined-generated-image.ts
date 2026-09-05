@@ -13,6 +13,7 @@ const GRAPH_VERSION = "v21.0";
 const MAX_FACEBOOK_IMAGE_BYTES = 12 * 1024 * 1024;
 const MAX_POST_TEXT_CHARS = 2_000;
 const TEXASDEFINED_GITHUB_PATH = "/keeptxred/TexasDefined";
+const TEXASDEFINED_IMAGE_ATTRIBUTION = "Brought to you by your friends at TexasDefined.com";
 const SOURCE_POST_ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)+$/;
 
 type SocialConnectionRow = {
@@ -185,6 +186,7 @@ async function publishTexasDefinedGeneratedImage(request: Request): Promise<Resp
   const imageValue = form.get("image");
   const expectedShaValue = form.get("image_sha256");
   const sourcePostIdValue = form.get("source_post_id");
+  const attributionValue = form.get("attribution");
   const artifactUrlValue = form.get("artifact_url");
   const runUrlValue = form.get("github_run_url");
 
@@ -213,6 +215,9 @@ async function publishTexasDefinedGeneratedImage(request: Request): Promise<Resp
     !SOURCE_POST_ID_PATTERN.test(sourcePostIdValue)
   ) {
     return Response.json({ ok: false, posted: false, error: "Valid TexasDefined source post ID is required" }, { status: 400 });
+  }
+  if (typeof attributionValue !== "string" || attributionValue.trim() !== TEXASDEFINED_IMAGE_ATTRIBUTION) {
+    return Response.json({ ok: false, posted: false, error: "Exact TexasDefined image attribution is required" }, { status: 400 });
   }
 
   const provenance = parseTexasDefinedGitHubProvenance(artifactUrlValue, runUrlValue);
