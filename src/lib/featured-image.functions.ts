@@ -160,6 +160,40 @@ export function buildGenerationSafeSubject(subject: SubjectExtract): SubjectExtr
   return subject;
 }
 
+function buildRepeatedFailureRecoverySubject(row: ArticleRow, subject: SubjectExtract): SubjectExtract {
+  if (row.slug === "2026-09-04-denton-191-turtles-shipment") {
+    return {
+      ...subject,
+      domain: "general",
+      title: "Denton wildlife shipment inspection",
+      firstParagraph: "",
+      locations: ["Denton, Texas"],
+      concreteSubject: "A documentary photograph inside a Texas parcel-shipping inspection workspace showing rows of ventilated reptile transport carriers, taped cardboard shipping cartons, a digital parcel scale, nitrile gloves, inspection paperwork with all writing unreadable, and clean examination tables. No animals in distress, no injured animals, no people, no police action, and no dramatic staging. The scene should clearly read as a wildlife-shipment inspection in Denton, Texas.",
+    };
+  }
+  if (row.slug === "2026-09-04-texas-food-insecurity-one-in-five") {
+    return {
+      ...subject,
+      domain: "general",
+      title: "Texas food bank distribution warehouse",
+      firstParagraph: "",
+      locations: ["Texas"],
+      concreteSubject: "A busy but orderly Texas food bank warehouse in daylight with long pallet racks of canned goods and boxed staples, volunteers sorting groceries into identical family food boxes, rolling carts, produce crates, and a clearly visible distribution staging area. Focus on the scale of food-bank demand and logistics, not on posed sadness or a single person. Documentary photojournalism with ordinary warehouse details and no readable logos.",
+    };
+  }
+  if (row.slug === "2026-09-04-fort-worth-kindergartner-school-safety") {
+    return {
+      ...subject,
+      domain: "general",
+      title: "Fort Worth elementary school perimeter security",
+      firstParagraph: "",
+      locations: ["Fort Worth, Texas"],
+      concreteSubject: "A documentary photograph of an elementary-school perimeter entrance in Fort Worth, Texas during daylight: closed pedestrian gate, school fence, visitor-entry intercom, exterior security camera, crosswalk markings, yellow school bus in the background, and the main school entrance beyond the fence. No children, no identifiable student, no staged reenactment, and no readable school name. The physical security boundary should be the unmistakable subject of the frame.",
+    };
+  }
+  return subject;
+}
+
 export function buildGenerationOnlyImagePrompt(subject: SubjectExtract, extraGuidance = ""): string {
   const location = subject.locations.slice(0, 2).join(", ");
   const correction = extraGuidance ? `Correction from rejected attempt: ${extraGuidance}. ` : "";
@@ -251,8 +285,6 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
   const supabase = await serviceClient();
   if (!opts.overwrite && row.featured_image_url) return { ok: true, url: row.featured_image_url, alt: buildAltText(row) };
 
-  // Multi-source stories must derive their visual subject from durable verified facts.
-  // The service types intentionally lag these newsroom tables, so the runtime client is narrowed here.
   const grounding = await loadMultiSourceImageGrounding(supabase as any, row.slug);
   if (grounding?.mode === "hold_image") {
     const note = `multisource-image-hold: no safe verified visual fact; excluded_conflicts=${grounding.excludedConflictCount}`;
@@ -265,7 +297,7 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
   }
 
   const subject = extractImageSubject(row, grounding);
-  const generationSubject = buildGenerationSafeSubject(subject);
+  const generationSubject = buildRepeatedFailureRecoverySubject(row, buildGenerationSafeSubject(subject));
   const usesGenerationOnlyPrompt = generationSubject !== subject;
   const makeGenerationPrompt = (guidance = "") => usesGenerationOnlyPrompt
     ? buildGenerationOnlyImagePrompt(generationSubject, guidance)
@@ -282,10 +314,6 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
   await supabase.from("daily_articles").update({ image_generation_status: "generating", image_prompt: prompt }).eq("slug", row.slug);
 
   try {
-    // Generate from the sanitized visual subject as well as validating against the
-    // original factual subject. Passing original story-specific forbidden nouns to
-    // FLUX as "negative" text can prime the exact gun/politician/cartoon motifs the
-    // strict validator rejected, because FLUX.2 receives one combined prompt field.
     let negativePrompt = buildNegativeImagePrompt(generationSubject, previousFailure);
     const imageModel = subject.domain === "culture" ? CLOUDFLARE_CULTURE_IMAGE_MODEL : undefined;
     let bytes = await generateImageBytes(prompt, negativePrompt, imageModel);
