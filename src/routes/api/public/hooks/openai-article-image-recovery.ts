@@ -83,8 +83,7 @@ async function recover(request: Request): Promise<Response> {
   }
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const db = supabaseAdmin as any;
-  const { data: row, error: rowError } = await db
+  const { data: row, error: rowError } = await supabaseAdmin
     .from("daily_articles")
     .select("slug,title,category,featured_image_url,published_at")
     .eq("slug", slugValue)
@@ -99,9 +98,10 @@ async function recover(request: Request): Promise<Response> {
   const bytes = new Uint8Array(bytesBuffer);
   const verdict = await validateImageMatchesArticle(bytes, SUBJECTS[slugValue]);
   if (!verdict.matches) {
-    const note = `openai-gpt-image-2 rejected by cloudflare-vision: ${verdict.reason}`.slice(0, 1000);
-    await db.from("daily_articles").update({ image_generation_status: "failed", image_validation_note: note }).eq("slug", slugValue);
-    return Response.json({ ok: false, error: note }, { status: 422 });
+    return Response.json({
+      ok: false,
+      error: `openai-gpt-image-2 rejected by cloudflare-vision: ${verdict.reason}`.slice(0, 1000),
+    }, { status: 422 });
   }
 
   const filename = `${slugValue}.jpg`;
@@ -114,17 +114,14 @@ async function recover(request: Request): Promise<Response> {
 
   const url = `/api/public/article-image/${filename}`;
   const alt = `Editorial news photograph for Keep TX Red article: ${row.title}${row.category ? ` — ${row.category}` : ""}`;
-  const { error: updateError } = await db.from("daily_articles").update({
-    featured_image_url: url,
-    image_url: url,
-    image_alt_text: alt,
-    image_generation_status: "ready",
-    image_prompt: "OpenAI gpt-image-2 bounded recovery after repeated Cloudflare generation-style failures",
-    image_validation_note: `openai-gpt-image-2; cloudflare-vision ok: ${verdict.reason}`.slice(0, 1000),
-  }).eq("slug", slugValue);
-  if (updateError) return Response.json({ ok: false, error: updateError.message }, { status: 500 });
-
-  return Response.json({ ok: true, slug: slugValue, url, image_sha256: actualSha, validation: verdict.reason });
+  return Response.json({
+    ok: true,
+    slug: slugValue,
+    url,
+    alt,
+    image_sha256: actualSha,
+    validation: verdict.reason,
+  });
 }
 
 export const Route = createFileRoute("/api/public/hooks/openai-article-image-recovery")({
