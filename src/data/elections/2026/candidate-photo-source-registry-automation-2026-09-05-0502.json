@@ -1,0 +1,38 @@
+[
+  {
+    "domain": "mindybumgarner.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Mindy Bumgarner's official Texas State Board of Education District 14 campaign website to verify candidate identity, office, and discover candidate-supplied portraits or media. Do not approve or reuse any image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Mindy Bumgarner Texas State Board of Education District 14 official campaign portrait media",
+    "notes": "Discovered September 5, 2026. The site identifies Mindy Bumgarner as a candidate for Texas State Board of Education District 14 and provides campaign-controlled biography/media surfaces. Treat imagery as discovery-only unless item-level rights are established."
+  },
+  {
+    "domain": "tcta.org",
+    "sourceClass": "professional-association-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Classroom Teachers Association candidate pages to corroborate candidate identity, office, and locate downstream campaign or candidate-linked portrait sources. Do not approve or reuse TCTA-hosted images without item-level provenance plus a reusable license, explicit permission, candidate-supplied status with a documented narrow editorial-identification basis, or another supported reuse basis.",
+    "searchHint": "site:tcta.org Texas 2026 candidate portrait",
+    "notes": "Discovered September 5, 2026 while researching missing candidates. Current candidate pages exist for Scott Whitmarsh (House District 131) and Rhett Rosenquest Smith (House District 116) and display candidate-specific imagery. Use as a discovery/corroboration bridge only until image provenance and rights are established."
+  },
+  {
+    "domain": "houstonvotersguide.org",
+    "sourceClass": "nonpartisan-voter-guide-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the League of Women Voters of Houston voter guide to corroborate ballot participation and discover downstream candidate, campaign, and public-record portrait sources. Do not approve or reuse voter-guide-hosted images without item-level provenance plus a reusable license, explicit permission, candidate-supplied status with a documented narrow editorial-identification basis, or another supported reuse basis.",
+    "searchHint": "site:houstonvotersguide.org Texas 2026 candidate portrait campaign",
+    "notes": "Discovered September 5, 2026. The current guide lists multiple still-missing House candidates, including Scott Whitmarsh, Kyle Harding, Laura Garcia DeLeon, Julie Hunt, Heidi Hall, Frank Salazar, David Flores, and Inocensia Moreno. Treat it as a ballot/candidate discovery bridge rather than an automatic image-rights source."
+  },
+  {
+    "domain": "votetexasvalues.org",
+    "sourceClass": "election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use VoteTexasValues candidate/race pages to corroborate candidate identity, office, and discover downstream campaign websites or candidate-linked profile sources. Do not approve or reuse directory-hosted images without item-level provenance plus a reusable license, explicit permission, candidate-supplied status with a documented narrow editorial-identification basis, or another supported reuse basis.",
+    "searchHint": "site:votetexasvalues.org Texas 2026 candidate campaign portrait",
+    "notes": "Discovered September 5, 2026. Current race pages identify missing candidates including Scott Whitmarsh and Rhett Rosenquest Smith and expose campaign-link surfaces. Use for discovery and corroboration only; generic graphics and directory-hosted images remain ineligible absent item-level rights."
+  }
+]
