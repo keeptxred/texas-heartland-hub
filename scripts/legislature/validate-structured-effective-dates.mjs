@@ -6,6 +6,7 @@ const expansion = await readFile(new URL('../../supabase/migrations/202609051745
 const permissions = await readFile(new URL('../../supabase/migrations/20260905175500_lock_structured_effective_date_permissions.sql', import.meta.url), 'utf8');
 const reviewedComplex = await readFile(new URL('../../supabase/migrations/20260905181000_add_reviewed_complex_effective_dates.sql', import.meta.url), 'utf8');
 const followup = await readFile(new URL('../../supabase/migrations/20260905184500_add_followup_complex_effective_dates.sql', import.meta.url), 'utf8');
+const statewideFollowup = await readFile(new URL('../../supabase/migrations/20260905185500_add_statewide_followup_effective_dates.sql', import.meta.url), 'utf8');
 const component = await readFile(new URL('../../src/components/bills/BillEffectiveDates.tsx', import.meta.url), 'utf8');
 const explanation = await readFile(new URL('../../src/components/bills/BillEditorialExplanation.tsx', import.meta.url), 'utf8');
 
@@ -48,6 +49,12 @@ for (const identifier of ['HB 3810', 'SB 1738', 'SB 1786', 'SB 2361']) {
 if (!/date '2025-08-19'/.test(followup) || !/date '2025-08-20'/.test(followup)) throw new Error('HB 3810 derived 60th/61st-day dates must remain encoded.');
 if (!/Sections 7 and 8'.*date '2025-09-01'/s.test(followup)) throw new Error('SB 1786 delayed sections must remain encoded.');
 if (!/Section 7\(b\)\(1\)'.*date '2025-05-27'/s.test(followup)) throw new Error('SB 2361 immediate section must remain encoded.');
+
+for (const identifier of ['HB 4488', 'HB 5033']) {
+  if (!statewideFollowup.includes(`'${identifier}'`)) throw new Error(`Statewide follow-up effective-date coverage is missing ${identifier}.`);
+}
+if (!/Sections 13 through 15'.*date '2025-09-01'/s.test(statewideFollowup)) throw new Error('HB 4488 delayed statutory sections must remain encoded.');
+if (!/HB 5033'.*'conditional'.*'pending'/s.test(statewideFollowup)) throw new Error('HB 5033 federal-trigger provision must remain conditional and pending.');
 
 if (!/revoke all on table public\.bill_effective_date_provisions from anon, authenticated/i.test(permissions)) throw new Error('Public roles must not retain broad table privileges.');
 if (!/grant select on table public\.bill_effective_date_provisions to anon, authenticated/i.test(permissions)) throw new Error('Public roles must retain read-only effective-date access.');
