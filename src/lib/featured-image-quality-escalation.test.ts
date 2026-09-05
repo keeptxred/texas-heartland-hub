@@ -23,8 +23,7 @@ describe("featured-image quota-safe quality retries", () => {
     const generateSource = source.slice(generateStart, validatorStart);
 
     expect(generateSource).toContain("if (!res.ok && activeModel === CLOUDFLARE_IMAGE_MODEL)");
-    expect(generateSource).toContain("CLOUDFLARE_IMAGE_FALLBACK_MODEL");
-    expect(generateSource).toContain("CLOUDFLARE_IMAGE_QUALITY_MODEL");
-    expect(generateSource).toContain("Quality-escalated Klein 9B requests do not silently downgrade to Schnell");
+    expect(generateSource).toContain("activeModel = CLOUDFLARE_IMAGE_FALLBACK_MODEL");
+    expect(generateSource).not.toContain("activeModel === CLOUDFLARE_IMAGE_QUALITY_MODEL");
   });
 });

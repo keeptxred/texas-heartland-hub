@@ -18,9 +18,6 @@ type ImageGenerationProvenance = {
   usedFallback: boolean;
 };
 
-// Keep generation provenance attached to the exact in-memory byte object so the
-// strict validator can record which model produced an accepted or rejected
-// image without changing storage formats or weakening the generation API.
 const generatedImageProvenance = new WeakMap<Uint8Array, ImageGenerationProvenance>();
 
 function rememberGeneratedImage(bytes: Uint8Array, model: CloudflareImageModel, usedFallback: boolean): Uint8Array {
@@ -53,22 +50,12 @@ function bytesToBase64(bytes: Uint8Array): string {
 }
 
 export function buildFluxImagePrompt(prompt: string, negativePrompt: string): string {
-  // Keep the documentary-photo lock first and reserve explicit room for the
-  // exclusions at the end. This targets the live failure cohort where otherwise
-  // relevant generations drifted into posters, infographics, generic symbols,
-  // text overlays, or vector art.
   const photographicLock = [
     "REAL CAMERA PHOTOGRAPH ONLY.",
     "Create one coherent documentary photojournalism scene with natural lighting, lifelike materials, realistic optics and depth of field.",
     "The concrete article subject must be visually obvious from physical objects, place, action, infrastructure, institution, sport, or event in the scene itself.",
     "No readable text, typography, poster, illustration, graphic design, vector art, iconography, collage, infographic, CGI, or synthetic promotional artwork.",
   ].join(" ");
-  // buildNegativeImagePrompt appends validator prose as a final
-  // `rejected visual motif:` item. FLUX.2 accepts only one prompt field, so
-  // forwarding that prose—even under HARD EXCLUSIONS—can visually prime the
-  // model with the exact rejected politician/cartoon/graphic composition.
-  // Keep the stable categorical exclusions, but never echo the validator's
-  // free-form description back into generation.
   const safeNegativePrompt = negativePrompt.replace(/(?:^|,\s*)rejected visual motif:.*$/is, "").trim();
   const essentialExclusions = safeNegativePrompt
     .split(",")
@@ -82,11 +69,6 @@ export function buildFluxImagePrompt(prompt: string, negativePrompt: string): st
 }
 
 export function buildFlux2ImagePrompt(prompt: string): string {
-  // Cloudflare's FLUX.2 Klein schema exposes one prompt field and no separate
-  // negative-prompt field. Production retries proved that appending forbidden
-  // motif nouns to that field can prime the model to reproduce those motifs.
-  // Keep FLUX.2 affirmative-only; the strict vision validator remains the
-  // fail-closed authority after every generation.
   const photographicLock = [
     "Create a physical-camera editorial news photograph.",
     "Show one coherent documentary photojournalism scene with natural lighting, true-to-life materials, realistic optics, and photographic depth of field.",
@@ -96,9 +78,6 @@ export function buildFlux2ImagePrompt(prompt: string): string {
   return `${photographicLock} EDITORIAL ASSIGNMENT: ${core}`.slice(0, 2048);
 }
 
-// Retain the proven Schnell request builder for the emergency fallback path.
-// The live REST endpoint rejected seed for this model, so only send accepted
-// fields even though some Cloudflare examples currently show a seed property.
 export function buildFluxImageRequest(
   prompt: string,
   negativePrompt: string,
@@ -131,8 +110,6 @@ async function requestCloudflareImage(
   model: CloudflareImageModel,
 ): Promise<Response> {
   if (model === CLOUDFLARE_IMAGE_MODEL || model === CLOUDFLARE_IMAGE_QUALITY_MODEL) {
-    // FLUX.2 Klein models use multipart input even for prompt-only generation.
-    // Do not set Content-Type manually: fetch must add the multipart boundary.
     return fetch(cloudflareEndpoint(accountId, model), {
       method: "POST",
       headers: { Authorization: `Bearer ${apiToken}` },
@@ -156,17 +133,12 @@ export async function generateImageBytes(
   const apiToken = process.env.CLOUDFLARE_API_TOKEN;
   if (!accountId || !apiToken) throw new Error("Missing Cloudflare Workers AI credentials: CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required");
 
-  // Keep the initial generation and first two strict-validator retries on cheap
-  // Klein 4B. Only the final validator-steered retry is allowed to use enhanced-
-  // quality Klein 9B, so recurring generation cannot multiply the expensive call.
   let activeModel = model === CLOUDFLARE_IMAGE_MODEL && isFinalStrictValidatorRetry(prompt)
     ? CLOUDFLARE_IMAGE_QUALITY_MODEL
     : model;
   let usedFallback = false;
   let res = await requestCloudflareImage(accountId, apiToken, prompt, negativePrompt, activeModel);
 
-  // Fail safely if the inexpensive primary model is temporarily unavailable.
-  // Quality-escalated Klein 9B requests do not silently downgrade to Schnell.
   if (!res.ok && activeModel === CLOUDFLARE_IMAGE_MODEL) {
     activeModel = CLOUDFLARE_IMAGE_FALLBACK_MODEL;
     usedFallback = true;
@@ -180,7 +152,6 @@ export async function generateImageBytes(
       const json = raw ? JSON.parse(raw) as { errors?: { message?: string }[]; error?: { message?: string } } : {};
       detail = json.errors?.[0]?.message || json.error?.message || detail;
     } catch {
-      // Keep the raw error body.
     }
     throw new Error(`Cloudflare Workers AI ${activeModel} ${res.status}: ${String(detail).slice(0, 400)}`);
   }
@@ -223,11 +194,6 @@ export function extractCloudflareVisionOutput(result: unknown): { output: unknow
   return { output: result };
 }
 
-// Mistral occasionally follows the requested labels but changes presentation:
-// Markdown labels, 1/0 and N/A tokens, `label=value`, or a compact positive
-// `matches, photorealistic, reason` form. Normalize only those known formats
-// before using the existing strict parser. N/A and contradictory compact prose
-// remain conservative rejections, never approvals.
 export function normalizeCloudflareVisionVerdictOutput(value: unknown): unknown {
   if (typeof value !== "string") return value;
 
@@ -260,7 +226,7 @@ export function imageValidationDomainGuidance(subject: SubjectExtract): string {
   if (subject.domain === "sports") {
     return "For sports schedules, watch lists, roster stories, previews, honors, and results, do NOT require a recognizable likeness of a named athlete, exact team uniform or logo, exact game, exact date, or exact venue. A believable photorealistic anonymous athlete or athletes performing the exact sport and relevant action in an appropriate real field, track, course, stadium, or practice setting IS a valid representative editorial match. The depicted sport and action must fit the story. Reject unrelated sports, generic non-athletic scenes, readable logos or invented named-player likenesses, posters, illustrations, cartoons, and promotional graphics.";
   }
-  return "A valid match must depict the concrete real-world subject or setting, not generic symbolism.";
+  return "A valid match must depict the concrete real-world subject or setting, not generic symbolism. Do not require visible city names, landmarks, logos, signage, or other geographic proof merely because the article names a location; a believable representative local scene is sufficient when its physical subject matches the assignment. Continue to reject images that omit the assignment's defining physical objects or activity.";
 }
 
 export async function validateImageMatchesArticle(bytes: Uint8Array, subject: SubjectExtract): Promise<{ matches: boolean; reason: string }> {
