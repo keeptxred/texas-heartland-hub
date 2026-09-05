@@ -10,8 +10,8 @@ permissions:
   actions: read
 
 concurrency:
-  group: verify-texasdefined-image-receiver-production-${{ github.ref }}
-  cancel-in-progress: true
+  group: verify-texasdefined-image-receiver-production-${{ github.sha }}
+  cancel-in-progress: false
 
 jobs:
   verify:
