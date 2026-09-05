@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "secure.actblue.com",
+    "sourceClass": "candidate-linked-fundraising-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use ActBlue's public candidate directory only to corroborate candidate identity, office, campaign linkage, and discover downstream official campaign websites or candidate-specific portrait leads. Do not approve or reuse ActBlue-hosted imagery without item-level provenance plus an explicit reusable license, documented candidate-supplied status with a narrow editorial-identification basis, explicit permission, or another supported reuse basis. Reject fundraising graphics, logos, social-share images, placeholders, default avatars, and non-candidate imagery.",
+    "searchHint": "site:secure.actblue.com/directory/TX candidate name 2026 portrait campaign website",
+    "notes": "Discovered September 5, 2026 while researching missing Texas House portraits. The public Texas candidate directory exposes current office/cycle associations, campaign-site links, and candidate-image leads for multiple 2026 candidates including Jasmine Henderson and Cathy Broadrick. Registered strictly as a discovery bridge; ActBlue-hosted images are not automatically approved."
+  }
+]
