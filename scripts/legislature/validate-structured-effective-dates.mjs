@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 const migration = await readFile(new URL('../../supabase/migrations/20260905173000_structured_bill_effective_dates.sql', import.meta.url), 'utf8');
 const expansion = await readFile(new URL('../../supabase/migrations/20260905174500_expand_structured_effective_date_coverage.sql', import.meta.url), 'utf8');
 const permissions = await readFile(new URL('../../supabase/migrations/20260905175500_lock_structured_effective_date_permissions.sql', import.meta.url), 'utf8');
+const reviewedComplex = await readFile(new URL('../../supabase/migrations/20260905181000_add_reviewed_complex_effective_dates.sql', import.meta.url), 'utf8');
 const component = await readFile(new URL('../../src/components/bills/BillEffectiveDates.tsx', import.meta.url), 'utf8');
 const explanation = await readFile(new URL('../../src/components/bills/BillEditorialExplanation.tsx', import.meta.url), 'utf8');
 
@@ -33,6 +34,12 @@ for (const identifier of ['HB 247', 'HB 1399', 'HB 2508', 'SB 467', 'SB 2155']) 
 }
 if (!/when 'HB 9' then date '2026-01-01'/.test(expansion)) throw new Error('HB 9 satisfied-condition effective date must remain repaired.');
 if (!/when 'SB 5' then date '2025-12-01'/.test(expansion)) throw new Error('SB 5 satisfied-condition effective date must remain repaired.');
+
+for (const identifier of ['HB 140', 'HB 2789', 'HB 2844', 'SB 293', 'SB 1150']) {
+  if (!reviewedComplex.includes(`'${identifier}'`)) throw new Error(`Reviewed complex effective-date coverage is missing ${identifier}.`);
+}
+if (!/date '2026-07-01'/.test(reviewedComplex)) throw new Error('HB 2844 July 1, 2026 general effective date must remain encoded.');
+if (!/date '2027-09-01'/.test(reviewedComplex)) throw new Error('SB 1150 delayed September 1, 2027 provision must remain encoded.');
 
 if (!/revoke all on table public\.bill_effective_date_provisions from anon, authenticated/i.test(permissions)) throw new Error('Public roles must not retain broad table privileges.');
 if (!/grant select on table public\.bill_effective_date_provisions to anon, authenticated/i.test(permissions)) throw new Error('Public roles must retain read-only effective-date access.');
