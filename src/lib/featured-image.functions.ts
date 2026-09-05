@@ -168,7 +168,7 @@ function buildRepeatedFailureRecoverySubject(row: ArticleRow, subject: SubjectEx
       title: "Denton wildlife shipment inspection",
       firstParagraph: "",
       locations: ["Denton, Texas"],
-      concreteSubject: "A real handheld DSLR documentary photograph inside an ordinary Texas parcel-shipping inspection workspace. Show a slightly cluttered examination table with scuffed cardboard shipping cartons, ventilated reptile transport carriers, a used digital parcel scale, disposable nitrile gloves, packing tape, paper labels turned away or unreadable, and inspection paperwork with writing out of focus. Include natural fluorescent-plus-window lighting, subtle sensor grain, imperfect shadows, minor wear on table surfaces, realistic cardboard fibers, plastic scratches, and uneven object spacing. The frame must look like an unposed local-news photograph made with a physical camera, never CGI, 3D render, miniature, illustration, product mockup, or perfectly staged studio scene. No animals in distress, no injured animals, no people, no police action, and no dramatic staging.",
+      concreteSubject: "A real handheld DSLR documentary photograph inside an ordinary Texas parcel-shipping inspection workspace. Show a slightly cluttered examination table with scuffed cardboard shipping cartons, ventilated reptile transport carriers, a used digital parcel scale, disposable nitrile gloves, packing tape, paper labels turned away or unreadable, and inspection paperwork with writing out of focus. Include natural fluorescent-plus-window lighting, subtle sensor grain, imperfect shadows, minor wear on table surfaces, realistic cardboard fibers, plastic scratches, and uneven object spacing. The frame should read as an unposed local-news photograph made with a physical camera, with true material texture, small asymmetries, ordinary wear, natural optical depth, and believable environmental clutter. Keep the animals calm and safely contained, with the workspace empty of people and the inspection routine understated.",
     };
   }
   if (row.slug === "2026-09-04-texas-food-insecurity-one-in-five") {
@@ -178,7 +178,7 @@ function buildRepeatedFailureRecoverySubject(row: ArticleRow, subject: SubjectEx
       title: "Texas food bank grocery packing line",
       firstParagraph: "",
       locations: ["Texas"],
-      concreteSubject: "A real documentary photograph taken inside a busy Texas food bank grocery-packing area. The foreground and middle of the frame must be dominated by unmistakable food-bank objects: open family food boxes being filled, rows of canned vegetables and soup, bags of rice or beans, boxed pasta and cereal, fresh produce crates, rolling warehouse carts, and pallet racks of groceries. Show several anonymous adult volunteers from the side or back actively sorting groceries into boxes with ordinary gloves and casual work clothes; no posed faces and no readable logos. Use natural warehouse lighting, realistic skin and cardboard texture, shelf clutter, imperfect box alignment, scuffed concrete floor, ordinary shadows, and true 35mm depth of field. The image must immediately read as food-bank distribution work, not a generic warehouse, grocery store, pantry shelf, staged donation still life, illustration, CGI, or promotional photo.",
+      concreteSubject: "A real documentary photograph taken inside a busy Texas food bank grocery-packing area. The foreground and middle of the frame must be dominated by unmistakable food-bank objects: open family food boxes being filled, rows of canned vegetables and soup, bags of rice or beans, boxed pasta and cereal, fresh produce crates, rolling warehouse carts, and pallet racks of groceries. Show several anonymous adult volunteers from the side or back actively sorting groceries into boxes with ordinary gloves and casual work clothes; faces remain incidental and package branding unreadable. Use natural warehouse lighting, realistic skin and cardboard texture, shelf clutter, imperfect box alignment, scuffed concrete floor, ordinary shadows, and true 35mm depth of field. The image should immediately read as ordinary food-bank distribution work observed by a local-news photographer, with active packing and grocery inventory unmistakable throughout the frame.",
     };
   }
   if (row.slug === "2026-09-04-fort-worth-kindergartner-school-safety") {
@@ -188,7 +188,7 @@ function buildRepeatedFailureRecoverySubject(row: ArticleRow, subject: SubjectEx
       title: "Fort Worth elementary school perimeter security",
       firstParagraph: "",
       locations: ["Fort Worth, Texas"],
-      concreteSubject: "A documentary photograph of an elementary-school perimeter entrance in Fort Worth, Texas during daylight: closed pedestrian gate, school fence, visitor-entry intercom, exterior security camera, crosswalk markings, yellow school bus in the background, and the main school entrance beyond the fence. No children, no identifiable student, no staged reenactment, and no readable school name. The physical security boundary should be the unmistakable subject of the frame.",
+      concreteSubject: "A documentary photograph of an elementary-school perimeter entrance in Fort Worth, Texas during daylight: closed pedestrian gate, school fence, visitor-entry intercom, exterior security camera, crosswalk markings, yellow school bus in the background, and the main school entrance beyond the fence. The entrance is empty, student identities are absent, school-name lettering is unreadable, and the physical security boundary is the unmistakable subject of the frame.",
     };
   }
   return subject;
@@ -201,7 +201,7 @@ export function buildGenerationOnlyImagePrompt(subject: SubjectExtract, extraGui
     correction,
     "Physical-camera editorial news photograph, horizontal 16:9.",
     "Unstaged documentary photojournalism in natural daylight with true-to-life materials, realistic optics, photographic depth of field, small real-world imperfections, and ordinary environmental wear.",
-    "Absolutely no CGI, 3D rendering, digital illustration, miniature look, plastic-looking surfaces, showroom staging, perfect symmetry, or product-mockup composition.",
+    "Use believable camera texture, natural shadows, small asymmetries, ordinary surface wear, uneven object spacing, realistic materials, and true optical depth throughout the frame.",
     `Assignment: ${subject.title}.`,
     `Primary physical scene: ${subject.concreteSubject}`,
     location ? `Texas location context: ${location}.` : "",
