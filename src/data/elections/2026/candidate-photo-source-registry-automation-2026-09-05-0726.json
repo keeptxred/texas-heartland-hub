@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "samanthafortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Samantha Lopez-Resendez's official Texas House District 50 campaign website to verify candidate identity, office, campaign-controlled biography content, and discover candidate-specific portrait or media assets. Do not approve or reuse any site image without item-level provenance plus an explicit reusable license, campaign/media permission, candidate-supplied status with a documented narrow editorial-identification basis, or another documented reuse basis. Reject logos, social-share images, default avatars, placeholders, and other non-candidate imagery.",
+    "searchHint": "site:samanthafortexas.com Samantha Lopez-Resendez Texas House District 50 portrait media",
+    "notes": "Discovered September 5, 2026 while researching the live missing-photo list. The current campaign site identifies Samantha Lopez-Resendez, describes her Texas House District 50 candidacy, is marked Paid For By Samantha Lopez-Resendez For Texas, and exposes campaign-controlled biography/media content. Treat all imagery as discovery-only until exact asset provenance and item-level reuse/editorial permission are documented."
+  }
+]
