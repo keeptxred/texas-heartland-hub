@@ -1,7 +1,9 @@
 name: Verify TexasDefined image receiver production
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Repository test and build health"]
+    types: [completed]
     branches: [main]
   workflow_dispatch:
 
@@ -10,23 +12,28 @@ permissions:
   actions: read
 
 concurrency:
-  group: verify-texasdefined-image-receiver-production-${{ github.sha }}
+  group: verify-texasdefined-image-receiver-production-${{ github.event.workflow_run.head_sha || github.sha }}
   cancel-in-progress: false
 
 jobs:
   verify:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       (github.event.workflow_run.event == 'push' ||
+        github.event.workflow_run.event == 'workflow_dispatch'))
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
       RECEIVER_URL: https://keeptxred-site.freddy-coppola.workers.dev/api/public/hooks/publish-texasdefined-generated-image
     steps:
       - name: Wait for matching Cloudflare production deployment
-        if: github.event_name == 'push'
+        if: github.event_name == 'workflow_run'
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
-          EXPECTED_SHA: ${{ github.sha }}
+          EXPECTED_SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
           set -euo pipefail
           api="https://api.github.com/repos/${REPOSITORY}/actions/workflows/deploy-cloudflare-after-verify.yml/runs?branch=main&event=workflow_dispatch&per_page=30"
