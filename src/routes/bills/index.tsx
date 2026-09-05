@@ -30,6 +30,17 @@ function paginationPages(current: number, total: number): number[] {
     .sort((a, b) => a - b);
 }
 
+const billSessionLabel = (legislature: number, sessionCode?: string | null) => {
+  const code = String(sessionCode || 'R').trim().toUpperCase() || 'R';
+  if (code === 'R') return `${legislature}(R) · Regular Session`;
+  if (/^\d+$/.test(code)) {
+    const number = Number(code);
+    const suffix = number % 100 >= 11 && number % 100 <= 13 ? 'th' : number % 10 === 1 ? 'st' : number % 10 === 2 ? 'nd' : number % 10 === 3 ? 'rd' : 'th';
+    return `${legislature}(${code}) · ${number}${suffix} Called Session`;
+  }
+  return `${legislature}(${code}) · Session ${code}`;
+};
+
 export const Route = createFileRoute('/bills/')({
   validateSearch: (search: Record<string, unknown>): BillSearch => ({
     q: typeof search.q === 'string' ? search.q.slice(0, 100) : '',
@@ -83,7 +94,7 @@ export const Route = createFileRoute('/bills/')({
     const title = !filtered && search.page > 1
       ? `Texas Bills and Legislation — Page ${search.page} | KeepTXRed`
       : 'Texas Bills and Legislation | KeepTXRed';
-    const description = 'Search and track Texas bills, sponsors, committees, legislative actions, current status, official documents and related Texas news.';
+    const description = 'Search and track Texas bills, sponsors, committees, legislative actions, current status, official documents, session identity and related Texas news.';
 
     return {
       meta: [
@@ -96,7 +107,7 @@ export const Route = createFileRoute('/bills/')({
             : 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1',
         },
         { property: 'og:title', content: title },
-        { property: 'og:description', content: 'Track Texas legislation by bill number, status, sponsor, committee and subject.' },
+        { property: 'og:description', content: 'Track Texas legislation by bill number, session, status, sponsor, committee and subject.' },
         { property: 'og:url', content: canonical },
       ],
       links: [{ rel: 'canonical', href: canonical }],
@@ -141,13 +152,14 @@ function BillsPage() {
         <p className="text-sm font-bold uppercase tracking-[0.18em] text-primary">Texas Legislature</p>
         <h1 className="mt-2 text-4xl font-bold tracking-tight md:text-5xl">Texas Bills and Legislation</h1>
         <p className="mt-4 max-w-3xl text-lg text-muted-foreground">Search Texas House and Senate bills, see their current status, sponsors, committee history, official timeline, documents and related reporting.</p>
+        <p className="mt-3 max-w-3xl text-sm text-muted-foreground">Texas can reuse bill numbers in called sessions. Results identify the session as 89(R), 89(1), 89(2), and so on, and each link points to that session’s canonical bill record.</p>
         <form className="mt-7 space-y-3" action="/bills" method="get">
           <div className="flex flex-col gap-3 sm:flex-row">
             <label className="relative flex-1"><span className="sr-only">Search Texas bills</span><Search className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground"/><input name="q" defaultValue={search.q} placeholder="Search HB 1, caption or subject" className="h-12 w-full rounded-md border bg-background pl-10 pr-4"/></label>
             <button className="h-12 rounded-md bg-primary px-6 font-semibold text-primary-foreground">Search bills</button>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
-            <label><span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">Legislature</span><select name="legislature" defaultValue={search.legislature || ''} className="h-11 w-full rounded-md border bg-background px-3"><option value="">All legislatures</option>{legislatures.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
+            <label><span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">Legislature</span><select name="legislature" defaultValue={search.legislature || ''} className="h-11 w-full rounded-md border bg-background px-3"><option value="">All legislatures</option>{legislatures.map((item) => <option key={item.value} value={item.value}>{item.label.replace(/\s+·\s+.+$/, '')}</option>)}</select></label>
             <label><span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">Chamber</span><select name="chamber" defaultValue={search.chamber} className="h-11 w-full rounded-md border bg-background px-3"><option value="">All chambers</option>{chambers.map((value) => <option key={value} value={value}>{chamberLabel(value)}</option>)}</select></label>
             <label><span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">Bill type</span><select name="billType" defaultValue={search.billType} className="h-11 w-full rounded-md border bg-background px-3"><option value="">All bill types</option>{billTypes.map((value) => <option key={value} value={value}>{billTypeLabel(value)}</option>)}</select></label>
           </div>
@@ -165,7 +177,7 @@ function BillsPage() {
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Bill directory</p>
               <h2 id="browse-legislature-heading" className="mt-1 text-2xl font-bold">Browse by Legislature</h2>
-              <p className="mt-2 max-w-3xl text-sm text-muted-foreground">Open a Legislature to browse its House, Senate and joint measures by bill type before drilling into individual bill histories.</p>
+              <p className="mt-2 max-w-3xl text-sm text-muted-foreground">Open a Legislature to browse its House, Senate and joint measures by bill type before drilling into individual bill histories. Regular and called sessions are labeled on each bill result.</p>
             </div>
           </div>
           <div className="mt-5 flex flex-wrap gap-3">
@@ -176,7 +188,7 @@ function BillsPage() {
                 params={{ legislature: String(item.value) }}
                 className="rounded-lg border bg-card px-4 py-3 font-semibold transition hover:border-primary hover:text-primary"
               >
-                {item.label}
+                {item.label.replace(/\s+·\s+.+$/, '')}
               </Link>
             ))}
           </div>
@@ -192,7 +204,7 @@ function BillsPage() {
             {hasFilters && <Link to="/bills" search={{ q: '', status: '', legislature: 0, chamber: '', billType: '', page: 1 }} className="rounded-full border border-dashed px-3 py-1.5 text-sm hover:border-primary">Clear filters</Link>}
           </div>
         </div>
-        {bills.length ? <div className="mt-6 grid gap-4 lg:grid-cols-2">{bills.map((bill: any) => <article key={bill.id} className="rounded-xl border bg-card p-5 transition hover:border-primary"><div className="flex items-start justify-between gap-4"><div><a href={canonicalBillPath(bill)} className="text-xl font-bold text-primary hover:underline">{bill.bill_identifier}</a><p className="mt-2 font-medium leading-snug">{bill.caption}</p></div><span className="shrink-0 rounded-full bg-muted px-3 py-1 text-xs font-semibold">{bill.current_status_label}</span></div><div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground"><span>{bill.chamber === 'house' ? 'Texas House' : bill.chamber === 'senate' ? 'Texas Senate' : 'Joint'}</span><span>{bill.legislature_number}th Legislature</span><span>{bill.bill_type.toUpperCase()}</span>{bill.last_action_date && <span>Updated {new Date(`${bill.last_action_date}T12:00:00`).toLocaleDateString()}</span>}</div></article>)}</div> : <div className="mt-6 rounded-xl border border-dashed p-10 text-center"><h3 className="font-semibold">No matching bills</h3><p className="mt-2 text-sm text-muted-foreground">Clear one or more filters or try a broader bill number or caption search.</p></div>}
+        {bills.length ? <div className="mt-6 grid gap-4 lg:grid-cols-2">{bills.map((bill: any) => <article key={bill.id} className="rounded-xl border bg-card p-5 transition hover:border-primary"><div className="flex items-start justify-between gap-4"><div><a href={canonicalBillPath(bill)} className="text-xl font-bold text-primary hover:underline">{bill.bill_identifier}</a><p className="mt-2 font-medium leading-snug">{bill.caption}</p></div><span className="shrink-0 rounded-full bg-muted px-3 py-1 text-xs font-semibold">{bill.current_status_label}</span></div><div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground"><span>{bill.chamber === 'house' ? 'Texas House' : bill.chamber === 'senate' ? 'Texas Senate' : 'Joint'}</span><span className="font-semibold text-foreground/80">{billSessionLabel(bill.legislature_number, bill.session_code)}</span><span>{bill.bill_type.toUpperCase()}</span>{bill.last_action_date && <span>Updated {new Date(`${bill.last_action_date}T12:00:00`).toLocaleDateString()}</span>}</div></article>)}</div> : <div className="mt-6 rounded-xl border border-dashed p-10 text-center"><h3 className="font-semibold">No matching bills</h3><p className="mt-2 text-sm text-muted-foreground">Clear one or more filters or try a broader bill number or caption search.</p></div>}
         {pages > 1 && (
           <nav className="mt-8 flex flex-wrap items-center justify-center gap-2" aria-label="Bill results pages">
             {search.page > 1 ? <Link to="/bills" search={{ ...search, page: search.page - 1 }} className="rounded-md border px-4 py-2">Previous</Link> : <span className="rounded-md border px-4 py-2 opacity-50">Previous</span>}
