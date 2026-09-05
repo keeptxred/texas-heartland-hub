@@ -38,10 +38,10 @@ jobs:
               -H 'Accept: application/vnd.github+json' \
               "$api")"
 
-            match="$(python3 - "$EXPECTED_SHA" <<'PY' <<<"$runs_json"
-          import json, sys
+            match="$(RUNS_JSON="$runs_json" python3 - "$EXPECTED_SHA" <<'PY'
+          import json, os, sys
           expected = sys.argv[1]
-          data = json.load(sys.stdin)
+          data = json.loads(os.environ['RUNS_JSON'])
           for run in data.get('workflow_runs', []):
               if run.get('head_sha') == expected:
                   print(f"{run.get('status','')}|{run.get('conclusion') or ''}|{run.get('html_url','')}")
