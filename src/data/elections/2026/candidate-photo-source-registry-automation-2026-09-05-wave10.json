@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "naswtx.org",
+    "sourceClass": "public-professional-association-member-biography",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use National Association of Social Workers Texas member spotlight and leadership pages to corroborate a candidate's public professional identity and discover candidate-specific portrait leads or downstream official profiles. Do not approve or reuse NASW Texas-hosted imagery without item-level provenance plus an explicit reusable license, candidate/member-supplied status with a documented narrow editorial-identification basis, explicit permission, or another supported reuse basis. Reject organization logos, event graphics, placeholders, default avatars, and unrelated member imagery.",
+    "searchHint": "site:naswtx.org candidate name Texas member spotlight portrait",
+    "notes": "Discovered September 5, 2026 while researching Fantasha Allen, Democratic candidate for Texas House District 7. NASW Texas published an August 2026 Member Spotlight naming Fantasha Allen and separately lists her in current East Texas chapter leadership. Registered only as a candidate-linked public institutional biography/discovery bridge; hosted imagery is not automatically approved."
+  },
+  {
+    "domain": "dentondemocrats.org",
+    "sourceClass": "county-party-current-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Denton County Democratic Party current candidate pages and filing directories to corroborate Democratic candidate identity, district, local party context, and discover downstream official campaign or candidate-linked portrait sources. Do not approve or reuse party-hosted imagery without item-level provenance plus an explicit reusable license, candidate-supplied status with a documented narrow editorial-identification basis, explicit permission, or another supported reuse basis. Reject party logos, endorsement graphics, social-share images, placeholders, and non-candidate imagery.",
+    "searchHint": "site:dentondemocrats.org 2026 candidate Texas House portrait campaign website",
+    "notes": "Discovered September 5, 2026 while researching Detrick DeBurr and other missing Denton County legislative portraits. The current 2026 candidate filing directory identifies Detrick DeBurr for State Representative District 65 and other local/state candidates. Registered as a discovery/corroboration bridge only."
+  },
+  {
+    "domain": "gametimegiving.com",
+    "sourceClass": "candidate-linked-public-professional-biography",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Game Time Giving's public leadership biography for Detrick DeBurr only to corroborate identity and discover a candidate-specific professional portrait lead or downstream candidate-controlled source. Do not approve or reuse the hosted portrait without item-level provenance plus an explicit reusable license, documented candidate-supplied status with a narrow editorial-identification basis, explicit permission, or another supported reuse basis. Reject company logos, product imagery, stock imagery, and other non-candidate assets.",
+    "searchHint": "site:gametimegiving.com Detrick DeBurr CEO portrait",
+    "notes": "Discovered September 5, 2026 while researching the current missing portrait for Detrick DeBurr, Democratic candidate for Texas House District 65. The company's public leadership page identifies Detrick DeBurr as Co-Founder/CEO and displays a candidate-specific professional portrait. Registered as discovery-only because the site's publication of the portrait does not by itself establish reuse permission."
+  }
+]
