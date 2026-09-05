@@ -59,3 +59,5 @@ jobs:
         run: node scripts/legislature/validate-bill-source-agencies.mjs
       - name: Validate bill witness summaries
         run: node scripts/legislature/validate-bill-witness-summary.mjs
+      - name: Validate legislative admin authentication
+        run: node scripts/legislature/validate-admin-passcode-fail-closed.mjs
