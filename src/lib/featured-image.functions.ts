@@ -168,17 +168,17 @@ function buildRepeatedFailureRecoverySubject(row: ArticleRow, subject: SubjectEx
       title: "Denton wildlife shipment inspection",
       firstParagraph: "",
       locations: ["Denton, Texas"],
-      concreteSubject: "A documentary photograph inside a Texas parcel-shipping inspection workspace showing rows of ventilated reptile transport carriers, taped cardboard shipping cartons, a digital parcel scale, nitrile gloves, inspection paperwork with all writing unreadable, and clean examination tables. No animals in distress, no injured animals, no people, no police action, and no dramatic staging. The scene should clearly read as a wildlife-shipment inspection in Denton, Texas.",
+      concreteSubject: "A real handheld DSLR documentary photograph inside an ordinary Texas parcel-shipping inspection workspace. Show a slightly cluttered examination table with scuffed cardboard shipping cartons, ventilated reptile transport carriers, a used digital parcel scale, disposable nitrile gloves, packing tape, paper labels turned away or unreadable, and inspection paperwork with writing out of focus. Include natural fluorescent-plus-window lighting, subtle sensor grain, imperfect shadows, minor wear on table surfaces, realistic cardboard fibers, plastic scratches, and uneven object spacing. The frame should read as an unposed local-news photograph made with a physical camera, with true material texture, small asymmetries, ordinary wear, natural optical depth, and believable environmental clutter. Keep the animals calm and safely contained, with the workspace empty of people and the inspection routine understated.",
     };
   }
   if (row.slug === "2026-09-04-texas-food-insecurity-one-in-five") {
     return {
       ...subject,
       domain: "general",
-      title: "Texas food bank distribution warehouse",
+      title: "Texas food bank grocery packing line",
       firstParagraph: "",
       locations: ["Texas"],
-      concreteSubject: "A busy but orderly Texas food bank warehouse in daylight with long pallet racks of canned goods and boxed staples, volunteers sorting groceries into identical family food boxes, rolling carts, produce crates, and a clearly visible distribution staging area. Focus on the scale of food-bank demand and logistics, not on posed sadness or a single person. Documentary photojournalism with ordinary warehouse details and no readable logos.",
+      concreteSubject: "A real documentary photograph taken inside a busy Texas food bank grocery-packing area. The foreground and middle of the frame must be dominated by unmistakable food-bank objects: open family food boxes being filled, rows of canned vegetables and soup, bags of rice or beans, boxed pasta and cereal, fresh produce crates, rolling warehouse carts, and pallet racks of groceries. Show several anonymous adult volunteers from the side or back actively sorting groceries into boxes with ordinary gloves and casual work clothes; faces remain incidental and package branding unreadable. Use natural warehouse lighting, realistic skin and cardboard texture, shelf clutter, imperfect box alignment, scuffed concrete floor, ordinary shadows, and true 35mm depth of field. The image should immediately read as ordinary food-bank distribution work observed by a local-news photographer, with active packing and grocery inventory unmistakable throughout the frame.",
     };
   }
   if (row.slug === "2026-09-04-fort-worth-kindergartner-school-safety") {
@@ -188,7 +188,7 @@ function buildRepeatedFailureRecoverySubject(row: ArticleRow, subject: SubjectEx
       title: "Fort Worth elementary school perimeter security",
       firstParagraph: "",
       locations: ["Fort Worth, Texas"],
-      concreteSubject: "A documentary photograph of an elementary-school perimeter entrance in Fort Worth, Texas during daylight: closed pedestrian gate, school fence, visitor-entry intercom, exterior security camera, crosswalk markings, yellow school bus in the background, and the main school entrance beyond the fence. No children, no identifiable student, no staged reenactment, and no readable school name. The physical security boundary should be the unmistakable subject of the frame.",
+      concreteSubject: "A documentary photograph of an elementary-school perimeter entrance in Fort Worth, Texas during daylight: closed pedestrian gate, school fence, visitor-entry intercom, exterior security camera, crosswalk markings, yellow school bus in the background, and the main school entrance beyond the fence. The entrance is empty, student identities are absent, school-name lettering is unreadable, and the physical security boundary is the unmistakable subject of the frame.",
     };
   }
   return subject;
@@ -200,7 +200,8 @@ export function buildGenerationOnlyImagePrompt(subject: SubjectExtract, extraGui
   return [
     correction,
     "Physical-camera editorial news photograph, horizontal 16:9.",
-    "Unstaged documentary photojournalism in natural daylight with true-to-life materials, realistic optics, and photographic depth of field.",
+    "Unstaged documentary photojournalism in natural daylight with true-to-life materials, realistic optics, photographic depth of field, small real-world imperfections, and ordinary environmental wear.",
+    "Use believable camera texture, natural shadows, small asymmetries, ordinary surface wear, uneven object spacing, realistic materials, and true optical depth throughout the frame.",
     `Assignment: ${subject.title}.`,
     `Primary physical scene: ${subject.concreteSubject}`,
     location ? `Texas location context: ${location}.` : "",
@@ -341,6 +342,7 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
     const url = `/api/public/article-image/${filename}`;
     await supabase.from("daily_articles").update({
       featured_image_url: url,
+      image_url: url,
       image_alt_text: alt,
       image_generation_status: "ready",
       image_prompt: usedPrompt,
