@@ -317,7 +317,7 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
     let negativePrompt = buildNegativeImagePrompt(generationSubject, previousFailure);
     const imageModel = subject.domain === "culture" ? CLOUDFLARE_CULTURE_IMAGE_MODEL : undefined;
     let bytes = await generateImageBytes(prompt, negativePrompt, imageModel);
-    let verdict = await validateImageMatchesArticle(bytes, subject);
+    let verdict = await validateImageMatchesArticle(bytes, generationSubject);
     let usedPrompt = prompt;
 
     for (let attempt = 1; !verdict.matches && attempt <= 3; attempt += 1) {
@@ -326,7 +326,7 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
       usedPrompt = stronger;
       negativePrompt = buildNegativeImagePrompt(generationSubject, verdict.reason);
       bytes = await generateImageBytes(stronger, negativePrompt, imageModel);
-      verdict = await validateImageMatchesArticle(bytes, subject);
+      verdict = await validateImageMatchesArticle(bytes, generationSubject);
     }
 
     if (!verdict.matches) throw new Error(`Generated image failed Cloudflare story-match/photorealism validation: ${verdict.reason}`);
