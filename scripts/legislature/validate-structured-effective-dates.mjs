@@ -2,6 +2,8 @@
 import { readFile } from 'node:fs/promises';
 
 const migration = await readFile(new URL('../../supabase/migrations/20260905173000_structured_bill_effective_dates.sql', import.meta.url), 'utf8');
+const expansion = await readFile(new URL('../../supabase/migrations/20260905174500_expand_structured_effective_date_coverage.sql', import.meta.url), 'utf8');
+const permissions = await readFile(new URL('../../supabase/migrations/20260905175500_lock_structured_effective_date_permissions.sql', import.meta.url), 'utf8');
 const component = await readFile(new URL('../../src/components/bills/BillEffectiveDates.tsx', import.meta.url), 'utf8');
 const explanation = await readFile(new URL('../../src/components/bills/BillEditorialExplanation.tsx', import.meta.url), 'utf8');
 
@@ -25,6 +27,16 @@ const requiredMigrationPatterns = [
 for (const pattern of requiredMigrationPatterns) {
   if (!pattern.test(migration)) throw new Error(`Structured effective-date migration is missing ${pattern}`);
 }
+
+for (const identifier of ['HB 247', 'HB 1399', 'HB 2508', 'SB 467', 'SB 2155']) {
+  if (!expansion.includes(`'${identifier}'`)) throw new Error(`Structured effective-date expansion is missing ${identifier}.`);
+}
+if (!/when 'HB 9' then date '2026-01-01'/.test(expansion)) throw new Error('HB 9 satisfied-condition effective date must remain repaired.');
+if (!/when 'SB 5' then date '2025-12-01'/.test(expansion)) throw new Error('SB 5 satisfied-condition effective date must remain repaired.');
+
+if (!/revoke all on table public\.bill_effective_date_provisions from anon, authenticated/i.test(permissions)) throw new Error('Public roles must not retain broad table privileges.');
+if (!/grant select on table public\.bill_effective_date_provisions to anon, authenticated/i.test(permissions)) throw new Error('Public roles must retain read-only effective-date access.');
+if (/grant\s+(insert|update|delete).*anon/i.test(permissions) || /grant\s+(insert|update|delete).*authenticated/i.test(permissions)) throw new Error('Public roles must never receive structured effective-date write privileges.');
 
 if (!/from\('bill_effective_date_provisions'\)/.test(component)) throw new Error('Public effective-date component must query the structured table.');
 if (!/Effective-date schedule/.test(component)) throw new Error('Public effective-date component must render an explicit schedule heading.');
