@@ -1,0 +1,154 @@
+name: KeepTXRed OpenAI Article Image Recovery
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Repository test and build health"]
+    types: [completed]
+    branches: [main]
+  push:
+    branches: [main]
+    paths:
+      - '.github/force-openai-article-image-recovery'
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: openai-article-image-recovery
+  cancel-in-progress: false
+
+jobs:
+  recover:
+    if: >-
+      github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       contains(github.event.workflow_run.head_commit.message, '[run-openai-article-image]'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      AUTOMATION_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
+      MARKER_REF: ${{ github.event.workflow_run.head_sha || github.sha }}
+    steps:
+      - name: Recover exact repeatedly rejected article heroes
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${OPENAI_API_KEY:-}" ]]; then
+            echo 'OPENAI_API_KEY is missing.' >&2
+            exit 1
+          fi
+
+          endpoint="${AUTOMATION_ORIGIN%/}/api/public/hooks/openai-article-image-recovery"
+          route_ready=0
+          for attempt in $(seq 1 12); do
+            probe_status=$(curl -sS -o /tmp/openai-article-probe.json -w '%{http_code}' --max-time 30 -X POST "$endpoint" || echo 000)
+            echo "OpenAI article recovery endpoint probe ${attempt}/12 HTTP ${probe_status}"
+            if [[ "$probe_status" == "401" ]]; then
+              route_ready=1
+              break
+            fi
+            sleep 15
+          done
+          if [[ "$route_ready" != "1" ]]; then
+            echo 'Deployed OpenAI article-image recovery endpoint never became ready.' >&2
+            exit 1
+          fi
+
+          marker_b64=$(gh api "repos/${GITHUB_REPOSITORY}/contents/.github/force-openai-article-image-recovery?ref=${MARKER_REF}" --jq '.content')
+          printf '%s' "$marker_b64" | base64 --decode > /tmp/openai-article-image-marker
+          mapfile -t slugs < <(sed -n 's/^slug:[[:space:]]*//p' /tmp/openai-article-image-marker | sed '/^[[:space:]]*$/d' | awk '!seen[$0]++')
+          if [[ "${#slugs[@]}" -lt 1 || "${#slugs[@]}" -gt 2 ]]; then
+            echo 'Bounded OpenAI recovery requires one or two exact slugs.' >&2
+            exit 1
+          fi
+
+          python3 -m pip install --quiet pillow
+          failures=0
+          succeeded=0
+
+          for slug in "${slugs[@]}"; do
+            case "$slug" in
+              2026-09-04-denton-191-turtles-shipment)
+                prompt='Physical-camera editorial news photograph, horizontal 3:2. Inside an ordinary Texas parcel-shipping inspection workspace in Denton, a slightly cluttered examination table holds scuffed cardboard shipping cartons, ventilated reptile transport carriers, a used digital parcel scale, disposable nitrile gloves, packing tape, and paperwork with writing softly out of focus. Natural mixed fluorescent and window light, visible cardboard fibers, scratched plastic, imperfect shadows, uneven object spacing, realistic lens depth, subtle camera grain, and ordinary workspace wear. The scene feels spontaneous and observed by a local newspaper photographer.'
+                ;;
+              2026-09-04-texas-food-insecurity-one-in-five)
+                prompt='Physical-camera documentary news photograph, horizontal 3:2. Inside a busy Texas food-bank grocery packing area, open family food boxes are actively being filled with canned vegetables, soup, rice, beans, boxed pasta, cereal, and fresh produce. Rolling warehouse carts and long pallet racks of groceries fill the middle distance. Several anonymous adult volunteers are photographed naturally from the side or back while sorting groceries in ordinary work clothes and gloves. Natural warehouse lighting, realistic skin and cardboard texture, shelf clutter, imperfect box alignment, scuffed concrete floor, ordinary shadows, true photographic depth of field, and subtle camera grain.'
+                ;;
+              *)
+                echo "Slug is outside the bounded recovery allow-list: ${slug}" >&2
+                exit 1
+                ;;
+            esac
+
+            work="/tmp/openai-article/${slug}"
+            mkdir -p "$work"
+            jq -n --arg prompt "$prompt" '{model:"gpt-image-2",prompt:$prompt,size:"1536x1024"}' > "$work/request.json"
+            status=$(curl -sS -o "$work/response.json" -w '%{http_code}' \
+              --max-time 900 \
+              -X POST 'https://api.openai.com/v1/images/generations' \
+              -H "Authorization: Bearer ${OPENAI_API_KEY}" \
+              -H 'Content-Type: application/json' \
+              --data-binary @"$work/request.json" || echo 000)
+            if [[ "$status" != "200" ]]; then
+              echo "OpenAI generation failed for ${slug} HTTP ${status}" >&2
+              jq -r '.error.message // "No OpenAI error detail returned"' "$work/response.json" 2>/dev/null >&2 || true
+              failures=$((failures + 1))
+              continue
+            fi
+
+            image_b64=$(jq -r '.data[0].b64_json // empty' "$work/response.json")
+            if [[ -z "$image_b64" ]]; then
+              echo "OpenAI returned no image for ${slug}" >&2
+              failures=$((failures + 1))
+              continue
+            fi
+            printf '%s' "$image_b64" | base64 --decode > "$work/generated.png"
+
+            INPUT="$work/generated.png" OUTPUT="$work/generated.jpg" python3 - <<'PY'
+          import os
+          from PIL import Image
+          image = Image.open(os.environ['INPUT']).convert('RGB')
+          image.save(os.environ['OUTPUT'], format='JPEG', quality=93, optimize=True)
+          PY
+            if [[ ! -s "$work/generated.jpg" ]]; then
+              echo "JPEG conversion failed for ${slug}" >&2
+              failures=$((failures + 1))
+              continue
+            fi
+
+            image_sha256=$(sha256sum "$work/generated.jpg" | awk '{print $1}')
+            oidc_url="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-newsroom"
+            oidc_token=$(curl -fsS -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" "$oidc_url" | jq -r '.value // empty')
+            if [[ -z "$oidc_token" ]]; then
+              echo 'GitHub Actions did not issue the newsroom OIDC token.' >&2
+              exit 1
+            fi
+
+            result="$work/store.json"
+            upload_status=$(curl -sS -o "$result" -w '%{http_code}' \
+              --max-time 420 \
+              -X POST \
+              -H 'accept: application/json' \
+              -H "Authorization: Bearer ${oidc_token}" \
+              -F "slug=${slug}" \
+              -F "image=@${work}/generated.jpg;type=image/jpeg" \
+              -F "image_sha256=${image_sha256}" \
+              "$endpoint" || echo 000)
+            echo "openai article image slug=${slug} HTTP ${upload_status}"
+            cat "$result" 2>/dev/null || true
+            echo
+            if [[ "$upload_status" == "200" ]] && jq -e '.ok == true' "$result" >/dev/null 2>&1; then
+              succeeded=$((succeeded + 1))
+            else
+              failures=$((failures + 1))
+            fi
+          done
+
+          echo "OPENAI_ARTICLE_IMAGE_RECOVERY_TOTAL processed=${#slugs[@]} succeeded=${succeeded} failures=${failures}"
+          if [[ "$failures" -gt 0 ]]; then
+            exit 1
+          fi
