@@ -65,6 +65,13 @@ const PUBLIC_ARTICLE_KINDS = new Set([
   "sports-mlb",
   "sports-nba",
   "sports-cfb",
+  "sports-nhl",
+  "sports-mls",
+  "sports-nwsl",
+  "sports-wnba",
+  "sports-general",
+  "sports-policy",
+  "sports-motorsports",
 ]);
 
 /**
@@ -277,7 +284,7 @@ export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
       const { data, error } = await supabase
         .from("daily_articles")
         .select("slug,title,category,source_name,source_url,published_at,updated_at,image_url,kind,body_json,quality_flags,content_quality_score")
-        .in("kind", ["evergreen", "ingested", "news", "sports-nfl", "sports-mlb", "sports-nba", "sports-cfb"])
+        .in("kind", ["evergreen", "ingested", "news", "sports-nfl", "sports-mlb", "sports-nba", "sports-cfb", "sports-nhl", "sports-mls", "sports-nwsl", "sports-wnba", "sports-general", "sports-policy", "sports-motorsports"])
         .order("published_at", { ascending: false })
         .order("slug", { ascending: true })
         .range(from, from + SITEMAP_ARTICLE_PAGE_SIZE - 1);
