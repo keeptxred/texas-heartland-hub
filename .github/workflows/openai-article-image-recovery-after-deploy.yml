@@ -1,0 +1,33 @@
+name: Trigger OpenAI Article Image Recovery After Deploy
+
+on:
+  workflow_run:
+    workflows: ["Deploy verified KeepTXRed to Cloudflare"]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  dispatch:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      contains(github.event.workflow_run.head_commit.message, '[run-openai-article-image]')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch bounded OpenAI article-image recovery
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERIFIED_SHA: ${{ github.event.workflow_run.head_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          main_sha="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/main" --jq '.object.sha')"
+          if [[ "$VERIFIED_SHA" != "$main_sha" ]]; then
+            echo "Verified deployed SHA $VERIFIED_SHA is no longer current main ($main_sha); refusing stale recovery dispatch."
+            exit 0
+          fi
+          gh workflow run openai-article-image-recovery.yml --ref main
+          echo "Dispatched bounded OpenAI article-image recovery from deployed main $VERIFIED_SHA"
