@@ -882,6 +882,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-chris-jimenez-democratic-race-2026-texas-house-52",
+    "imageUrl": "https://run.imgix.net/a568c529-7b55-4b2d-bb76-91c780efdce5/7ceb5c1e-3f74-4909-9fd7-b9d27bdb17c4/7ceb5c1e-3f74-4909-9fd7-b9d27bdb17c4.jpg?auto=compress%2Cformat&bri=0&con=0&fit=fillmax&high=0&ixlib=js-3.8.0&q=75&rect=0%2C0%2C1104%2C632&sat=0&shad=0&usm=0&w=2048",
+    "sourceUrl": "https://www.chrisjimenezforhd52.com/meetchris",
+    "altText": "Chris Jimenez, Democratic candidate for Texas House District 52",
+    "credit": "Chris Jimenez for Texas House District 52 campaign",
+    "license": null,
+    "permissionBasis": "Chris Jimenez's official campaign biography identifies him as a candidate for Texas House District 52 and directly publishes this candidate-specific image as the 'Introductory photo' within the Meet Chris biography. The campaign site is explicitly paid for by Chris Jimenez for Texas House District 52 and separately states that use of photographs in uniform does not imply Department of the Navy or Department of Defense endorsement. Used only for narrow editorial candidate identification with exact official-campaign attribution and source link; no broader reuse license is asserted.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-biography",
+    "discoveredAt": "2026-09-05T05:08:00.000Z"
+  },
+  {
     "candidateId": "candidate-chris-oldham-democratic-race-2026-texas-house-58",
     "imageUrl": "https://images.squarespace-cdn.com/content/v1/692f8a33068b2303fa76e803/41705e38-a97e-4ac8-b8e9-9683e63e3481/P1030503.JPG",
     "sourceUrl": "https://www.oldham4texas.com/",
@@ -3404,6 +3416,18 @@
     "usageStatus": "approved",
     "discoveredAt": "2026-07-30T22:53:36.043Z",
     "discoveryMethod": "directory-source-validation"
+  },
+  {
+    "candidateId": "candidate-samantha-lopez-resendez-democratic-race-2026-texas-house-50",
+    "imageUrl": "https://samanthafortexas.com/hero-image.jpeg",
+    "sourceUrl": "https://samanthafortexas.com/",
+    "altText": "Samantha Lopez-Resendez, Democratic candidate for Texas House District 50",
+    "credit": "Samantha Lopez-Resendez for Texas campaign",
+    "license": null,
+    "permissionBasis": "Samantha Lopez-Resendez's official campaign website identifies her as running for Texas House District 50, is paid for by Samantha Lopez-Resendez For Texas, and publishes this candidate-specific portrait in the campaign's Meet Samantha biography area with an image link labeled 'Samantha for Texas'. Used only for narrow editorial candidate identification with exact campaign attribution and source link; no broader reuse license is asserted.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-biography",
+    "discoveredAt": "2026-09-05T13:49:00.000Z"
   },
   {
     "candidateId": "candidate-sandy-ibanez-democratic-race-2026-texas-house-28",
