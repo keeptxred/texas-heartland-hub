@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "mckinneydemocrats.org",
+    "sourceClass": "local-political-organization-candidate-endorsement-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use McKinney Area Democratic Club candidate endorsement pages only to corroborate current candidate identity, office, local endorsement context, and to discover downstream official campaign websites or candidate-linked portrait sources. Do not approve or reuse McKinney Area Democratic Club-hosted imagery without item-level provenance plus an explicit reusable license, campaign/media permission, candidate-supplied status with a documented narrow editorial-identification basis, or another supported reuse basis. Reject logos, endorsement graphics, social-share images, default avatars, placeholders, and other non-candidate imagery.",
+    "searchHint": "site:mckinneydemocrats.org 2026 Texas candidate endorsement portrait campaign website",
+    "notes": "Discovered September 5, 2026 while researching missing Texas House candidate portraits. The organization publishes current 2026 candidate endorsement pages with named candidates and portrait leads, including Sandeep Srivastava and Jordan Wheatley. Registered as a discovery bridge only; hosted imagery is not an automatic rights source."
+  }
+]
