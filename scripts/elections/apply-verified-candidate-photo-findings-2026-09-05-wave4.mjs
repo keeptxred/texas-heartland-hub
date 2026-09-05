@@ -73,3 +73,4 @@ await writeFile(
 console.log(`Applied ${applied} verified official campaign portrait(s).`);
 
 // Replay marker: re-run the protected canonical candidate-photo enrichment pipeline from current main.
+// Current-main replay marker: September 5, 2026 after source-expansion merge #1975.
