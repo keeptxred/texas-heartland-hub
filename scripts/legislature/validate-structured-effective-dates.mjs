@@ -7,6 +7,7 @@ const permissions = await readFile(new URL('../../supabase/migrations/2026090517
 const reviewedComplex = await readFile(new URL('../../supabase/migrations/20260905181000_add_reviewed_complex_effective_dates.sql', import.meta.url), 'utf8');
 const followup = await readFile(new URL('../../supabase/migrations/20260905184500_add_followup_complex_effective_dates.sql', import.meta.url), 'utf8');
 const statewideFollowup = await readFile(new URL('../../supabase/migrations/20260905185500_add_statewide_followup_effective_dates.sql', import.meta.url), 'utf8');
+const finalStatewide = await readFile(new URL('../../supabase/migrations/20260905191500_add_final_statewide_effective_dates.sql', import.meta.url), 'utf8');
 const component = await readFile(new URL('../../src/components/bills/BillEffectiveDates.tsx', import.meta.url), 'utf8');
 const explanation = await readFile(new URL('../../src/components/bills/BillEditorialExplanation.tsx', import.meta.url), 'utf8');
 
@@ -55,6 +56,14 @@ for (const identifier of ['HB 4488', 'HB 5033']) {
 }
 if (!/Sections 13 through 15'.*date '2025-09-01'/s.test(statewideFollowup)) throw new Error('HB 4488 delayed statutory sections must remain encoded.');
 if (!/HB 5033'.*'conditional'.*'pending'/s.test(statewideFollowup)) throw new Error('HB 5033 federal-trigger provision must remain conditional and pending.');
+
+for (const identifier of ['HB 3250', 'HB 3689', 'SB 1036', 'SB 22']) {
+  if (!finalStatewide.includes(`'${identifier}'`)) throw new Error(`Final statewide effective-date coverage is missing ${identifier}.`);
+}
+if (!/HB 3250'.*date '2025-06-20'.*HB 3250'.*date '2025-09-01'/s.test(finalStatewide)) throw new Error('HB 3250 immediate/general split must remain encoded.');
+if (!/HB 3689'.*date '2027-09-01'/s.test(finalStatewide)) throw new Error('HB 3689 delayed 2027 provisions must remain encoded.');
+if (!/SB 1036'.*date '2026-09-01'/s.test(finalStatewide)) throw new Error('SB 1036 delayed registration provisions must remain encoded.');
+if (!/SB 22'.*'no_effect'.*null.*2035/s.test(finalStatewide) || !/SB 22'.*date '2035-09-01'/s.test(finalStatewide)) throw new Error('SB 22 2035 sunset transition must remain encoded without violating no_effect shape.');
 
 if (!/revoke all on table public\.bill_effective_date_provisions from anon, authenticated/i.test(permissions)) throw new Error('Public roles must not retain broad table privileges.');
 if (!/grant select on table public\.bill_effective_date_provisions to anon, authenticated/i.test(permissions)) throw new Error('Public roles must retain read-only effective-date access.');
