@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-26T11:46:49.542Z",
+  "generatedAt": "2026-09-05T13:52:13.553Z",
   "totals": {
     "races": 227,
     "candidates": 491,
@@ -70,7 +70,7 @@
         "candidate-gina-hinojosa-democratic-race-2026-governor",
         "candidate-pat-dixon-libertarian-race-2026-governor"
       ],
-      "matchedCandidateCount": 10,
+      "matchedCandidateCount": 9,
       "matchedCandidateIds": [
         "candidate-gina-hinojosa-democratic-race-2026-governor",
         "candidate-demetra-jefferson-wysinger-independent-race-2026-governor",
@@ -80,7 +80,6 @@
         "candidate-jenn-mack-other-race-2026-governor",
         "candidate-jinghpaw-majoishingra-other-race-2026-governor",
         "candidate-mike-miller-other-race-2026-governor",
-        "candidate-stephen-samuelson-other-race-2026-governor",
         "candidate-greg-abbott-republican-race-2026-governor"
       ],
       "republicanCandidateId": "candidate-greg-abbott-republican-race-2026-governor",
