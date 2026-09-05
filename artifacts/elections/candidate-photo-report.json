@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-09-05T00:06:14.147Z",
+  "generatedAt": "2026-09-05T12:42:56.713Z",
   "candidateCount": 491,
   "eligibleCandidateCount": 479,
   "excludedCandidateCount": 12,
-  "approvedPhotoCount": 353,
-  "missingPhotoCount": 126,
-  "manifestEntryCount": 353,
-  "coverage": 0.7369519832985386,
-  "coveragePercent": 73.7,
+  "approvedPhotoCount": 354,
+  "missingPhotoCount": 125,
+  "manifestEntryCount": 354,
+  "coverage": 0.7390396659707724,
+  "coveragePercent": 73.9,
   "targetCoverage": 0.85,
   "targetApprovedPhotoCount": 408,
-  "photosNeededForTarget": 55,
+  "photosNeededForTarget": 54,
   "targetMet": false,
   "errors": [],
   "warnings": [],
@@ -333,13 +333,6 @@
       "name": "JESSICA MARTINEZ",
       "raceId": "race-2026-texas-house-51",
       "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-chris-jimenez-democratic-race-2026-texas-house-52",
-      "name": "CHRIS JIMENEZ",
-      "raceId": "race-2026-texas-house-52",
-      "party": "democratic",
       "priority": "standard"
     },
     {
