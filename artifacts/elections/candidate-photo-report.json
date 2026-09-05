@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-09-05T00:06:14.147Z",
+  "generatedAt": "2026-09-05T16:12:50.248Z",
   "candidateCount": 491,
   "eligibleCandidateCount": 479,
   "excludedCandidateCount": 12,
-  "approvedPhotoCount": 353,
-  "missingPhotoCount": 126,
-  "manifestEntryCount": 353,
-  "coverage": 0.7369519832985386,
-  "coveragePercent": 73.7,
+  "approvedPhotoCount": 355,
+  "missingPhotoCount": 124,
+  "manifestEntryCount": 355,
+  "coverage": 0.7411273486430062,
+  "coveragePercent": 74.11,
   "targetCoverage": 0.85,
   "targetApprovedPhotoCount": 408,
-  "photosNeededForTarget": 55,
+  "photosNeededForTarget": 53,
   "targetMet": false,
   "errors": [],
   "warnings": [],
@@ -322,24 +322,10 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-samantha-lopez-resendez-democratic-race-2026-texas-house-50",
-      "name": "SAMANTHA LOPEZ-RESENDEZ",
-      "raceId": "race-2026-texas-house-50",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-jessica-martinez-republican-race-2026-texas-house-51",
       "name": "JESSICA MARTINEZ",
       "raceId": "race-2026-texas-house-51",
       "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-chris-jimenez-democratic-race-2026-texas-house-52",
-      "name": "CHRIS JIMENEZ",
-      "raceId": "race-2026-texas-house-52",
-      "party": "democratic",
       "priority": "standard"
     },
     {
