@@ -164,7 +164,7 @@ function billIdentity(xml, sourceUrl, session) {
 function normalizeStatus(actions) {
   const text = actions.map((a) => a.action_text).join(' | ').toLowerCase();
   const rules = [
-    ['vetoed', 'Vetoed', /veto/], ['signed', 'Signed by governor', /signed by the governor|governor signed/],
+    ['vetoed', 'Vetoed', /vetoed by the governor/], ['signed', 'Signed by governor', /signed by the governor|governor signed/],
     ['became-law', 'Became law', /effective|became law|filed without signature/], ['sent-to-governor', 'Sent to governor', /sent to the governor/],
     ['passed-senate', 'Passed Senate', /passed senate/], ['passed-house', 'Passed House', /passed house/],
     ['in-committee', 'In committee', /referred to|committee/],
