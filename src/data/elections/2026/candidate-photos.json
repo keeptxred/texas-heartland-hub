@@ -204,6 +204,18 @@
     "discoveredAt": "2026-08-25T03:40:04.285Z"
   },
   {
+    "candidateId": "candidate-andrew-turner-democratic-race-2026-texas-house-59",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/68eecab6436a303c7c97c3f1/e9f333b4-fd36-4423-826b-47606ae9b92d/Screenshot%2B2025-12-27%2B013922.png",
+    "sourceUrl": "https://www.turnerforstatehouse.com/",
+    "altText": "Andrew Turner, Democratic candidate for Texas House District 59",
+    "credit": "Andrew Turner for Texas HD 59 campaign",
+    "license": null,
+    "permissionBasis": "Andrew Turner's official Texas House District 59 campaign website identifies him as the candidate and directly publishes this candidate-specific portrait on the campaign-controlled site. Used only for narrow editorial candidate identification with exact campaign attribution and source link; no broader reuse license is asserted.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-site-portrait",
+    "discoveredAt": "2026-09-05T18:41:00.000Z"
+  },
+  {
     "candidateId": "candidate-andy-hopper-republican-race-2026-texas-house-64",
     "imageUrl": "https://house.texas.gov/images/members/4555.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/64",
