@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound, redirect } from '@tanstack/react-route
 import { CalendarDays, ExternalLink, Landmark, Scale, Users } from 'lucide-react';
 import { billJsonLd, canonicalBillPath, getBill, getBillEditorialEnrichment, SITE_URL } from '@/lib/bills';
 import { getBillEffectiveDateProvisions } from '@/lib/bill-effective-date-provisions';
+import { publicBillSessionLabel } from '@/lib/bill-public-path';
 import { hasMeaningfulBillText, isScheduleBillActionCode, isSubstantiveBillActionCode } from '@/lib/bill-indexability';
 import { getPublicBillRelations } from '@/lib/public-bill-relations';
 import { getRelatedAuthorityContent } from '@/lib/authority-relationships';
@@ -107,7 +108,7 @@ function BillPage() {
       <header className="rounded-2xl border bg-card p-6 md:p-10">
         <div className="flex flex-wrap items-center gap-3"><span className="rounded-full bg-primary px-3 py-1 text-sm font-bold text-primary-foreground">{bill.bill_identifier}</span><span className="rounded-full border px-3 py-1 text-sm font-semibold">{bill.current_status_label}</span>{bill.became_law && <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-green-900">Became law</span>}</div>
         <h1 className="mt-5 text-3xl font-bold leading-tight md:text-5xl">{bill.caption}</h1>
-        <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground"><span>{bill.legislature_number}th Texas Legislature · Session {bill.session_code}</span><span>{bill.chamber === 'house' ? 'Texas House' : bill.chamber === 'senate' ? 'Texas Senate' : 'Joint resolution'}</span>{bill.last_action_date && <span>Last action {formatDate(bill.last_action_date)}</span>}</div>
+        <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground"><span>{publicBillSessionLabel(bill.legislature_number, bill.session_code)}</span><span>{bill.chamber === 'house' ? 'Texas House' : bill.chamber === 'senate' ? 'Texas Senate' : 'Joint resolution'}</span>{bill.last_action_date && <span>Last action {formatDate(bill.last_action_date)}</span>}</div>
       </header>
 
       <nav aria-label="Bill sections" className="sticky top-0 z-20 mt-4 overflow-x-auto rounded-xl border bg-background/95 p-2 shadow-sm backdrop-blur">
