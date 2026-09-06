@@ -3704,6 +3704,18 @@
     "discoveredAt": "2026-08-30T20:42:00.000Z"
   },
   {
+    "candidateId": "candidate-stephen-samuelson-other-race-2026-lieutenant-governor",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/593f5909d482e9b762b70759/c1b7318a-2196-4579-b5ee-34acfecf86ca/ssamuelson.png",
+    "sourceUrl": "https://www.amarillopioneer.com/2026-primary-voter-guide/ssamuelson",
+    "altText": "Stephen Samuelson, 2026 Texas Lieutenant Governor write-in candidate",
+    "credit": "Stephen Samuelson campaign via The Amarillo Pioneer",
+    "license": null,
+    "permissionBasis": "The Amarillo Pioneer's 2026 candidate questionnaire identifies the exact candidate image as 'Samuelson/Photo via campaign' and publishes the candidate's complete submitted questionnaire. A September 1, 2026 Amarillo Pioneer election update independently confirms Stephen Samuelson as an accepted Texas Lieutenant Governor write-in candidate. Used only for narrow editorial candidate identification with exact campaign/newsroom attribution and source link; no broader reuse license is asserted.",
+    "usageStatus": "approved",
+    "discoveryMethod": "candidate-submitted-voter-guide-campaign-photo",
+    "discoveredAt": "2026-09-05T21:27:00.000-05:00"
+  },
+  {
     "candidateId": "candidate-stephen-w-stanley-republican-race-2026-texas-house-113",
     "imageUrl": "https://stanleyfortexashouse.com/wp-content/uploads/2024/08/stephen2.jpg",
     "sourceUrl": "https://stanleyfortexashouse.com/?page_id=150",
