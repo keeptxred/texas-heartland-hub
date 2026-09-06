@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "traviscountygop-refresh.squarespace.com",
+    "sourceClass": "local-party-current-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use the Travis County Republican Party current candidate directory only to corroborate candidate identity, office, campaign linkage, and discover downstream official campaign websites or candidate-specific portrait leads. Do not approve or reuse directory-hosted imagery without item-level candidate provenance plus an explicit reusable license, documented candidate-supplied status with a narrow editorial-identification basis, explicit permission, or another supported reuse basis. Reject logos, social-share graphics, endorsement graphics, event images, placeholders, default avatars, group photos, and other non-candidate imagery.",
+    "searchHint": "site:traviscountygop-refresh.squarespace.com/candidates candidate name Texas 2026 official campaign portrait",
+    "notes": "Discovered September 6, 2026 while researching missing 2026 Texas House portraits. The current Travis County Republican Party candidate directory lists candidates including Jessica Martinez for Texas House District 51 and exposes candidate-image/campaign discovery leads. Registered strictly as a discovery bridge; hosted imagery is not automatically approved."
+  }
+]
