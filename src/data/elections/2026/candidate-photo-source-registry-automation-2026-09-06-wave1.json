@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "fannindemocraticwomen.com",
+    "sourceClass": "local-party-candidate-event-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Fannin County Democratic Women candidate-event and local-party pages only to corroborate candidate identity, office, local campaign activity, and discover downstream official campaign or candidate-controlled sources. Do not approve or reuse site-hosted imagery without item-level candidate identity, provenance, and an explicit reusable license, documented candidate-supplied narrow editorial-identification basis, explicit permission, or another supported reuse basis. Reject event graphics, logos, group photos without unambiguous candidate identification, social-share images, placeholders, stock imagery, and non-candidate assets.",
+    "searchHint": "site:fannindemocraticwomen.com 2026 Texas candidate House Senate portrait campaign",
+    "notes": "Discovered September 6, 2026 while researching unresolved Texas House District 62 portrait coverage. The public local-party blog identifies Catherine Thorne as the 2026 Democratic candidate for Texas House District 62 and links candidate-event activity, making it useful as a race-aware discovery bridge. Registered strictly as discovery-only; no hosted image is approved by this entry."
+  },
+  {
+    "domain": "olneyenterprise.com",
+    "sourceClass": "local-news-candidate-profile",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Olney Enterprise candidate profiles to corroborate candidate identity, office, campaign context, and discover candidate-supplied or upstream official portrait sources. Do not approve or reuse newsroom-hosted imagery unless the exact item is explicitly credited as candidate-supplied, carries a reusable license, has explicit permission, or is otherwise traceable to a supported reuse basis. Reject generic story art, logos, social-share images, group shots without unambiguous identity, placeholders, and non-candidate imagery.",
+    "searchHint": "site:olneyenterprise.com 2026 Texas candidate House Senate portrait campaign",
+    "notes": "Discovered September 6, 2026 while researching unresolved Texas House District 68 portrait coverage. Olney Enterprise publishes a current candidate-specific Jasmine Henderson profile with a true portrait, but the visible public metadata does not establish image reuse rights, so the source remains discovery-only pending item-level provenance and permission verification."
+  }
+]
