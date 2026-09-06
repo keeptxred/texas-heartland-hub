@@ -3,6 +3,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+// Replay marker 2026-09-06 17:31 CT: re-run enrichment from current main after BallotReady source expansion.
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const manifestPath = path.join(ROOT, "src/data/elections/2026/candidate-photos.json");
 const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
