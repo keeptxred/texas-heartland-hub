@@ -11,15 +11,15 @@ type Editorial = BillEditorialEnrichment;
 type BillAuthorityRecord = {
   bill_identifier: string;
   current_status_label: string;
-  last_action_date: string | null;
-  signed_date: string | null;
-  effective_date: string | null;
+  last_action_date?: string | null;
+  signed_date?: string | null;
+  effective_date?: string | null;
   became_law: boolean;
-  source_url: string | null;
-  bill_text_url: string | null;
-  analysis_url: string | null;
-  fiscal_note_url: string | null;
-  last_synced_at: string | null;
+  source_url?: string | null;
+  bill_text_url?: string | null;
+  analysis_url?: string | null;
+  fiscal_note_url?: string | null;
+  last_synced_at?: string | null;
 };
 
 type BillEditorialExplanationProps = {
