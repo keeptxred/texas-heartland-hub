@@ -18,4 +18,9 @@ for (const [file, tokens] of checks) {
   }
 }
 
-console.log('Bill session labeling validation passed.');
+const hb1056Migration = fs.readFileSync('supabase/migrations/20260906220000_add_hb1056_structured_effective_dates.sql', 'utf8');
+for (const token of ["bill_number = 1056", "date '2026-09-01'", "date '2027-05-01'", 'Section 2116.101', 'electronic transactional currency framework']) {
+  if (!hb1056Migration.includes(token)) throw new Error(`HB 1056 structured effective-date migration is missing: ${token}`);
+}
+
+console.log('Bill session labeling and HB 1056 closure validation passed.');
