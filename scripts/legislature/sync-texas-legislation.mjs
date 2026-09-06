@@ -64,7 +64,7 @@ function normalizeActionText(part) {
     const effectiveDate = formatMdy(isoDate(comment));
     if (effectiveDate) return `Effective on ${effectiveDate}`;
   }
-  return [description, comment].filter(Boolean).join(' ').trim();
+  return description;
 }
 
 async function request(url, init = {}) {
