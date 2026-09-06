@@ -50,9 +50,13 @@ const importerRequired = [
   'formatMdy(isoDate(comment))',
   'Effective on ${effectiveDate}',
   'action_text: normalizeActionText(part)',
+  "['vetoed', 'Vetoed', /vetoed by the governor/]",
 ];
 for (const token of importerRequired) {
-  if (!importer.includes(token)) throw new Error(`TLO action-comment parsing is missing safeguard: ${token}`);
+  if (!importer.includes(token)) throw new Error(`TLO importer is missing required safeguard: ${token}`);
+}
+if (importer.includes("['vetoed', 'Vetoed', /veto/]")) {
+  throw new Error('TLO importer must not classify any generic occurrence of veto as a whole-bill veto.');
 }
 
 const commentFixRequired = [
@@ -77,12 +81,6 @@ const lineItemRequired = [
 ];
 for (const token of lineItemRequired) {
   if (!lineItemFix.includes(token)) throw new Error(`Line-item veto lifecycle normalization is missing safeguard: ${token}`);
-}
-
-if (!/\['vetoed', 'Vetoed', \/veto\//.test(importer)) {
-  console.log('TLO importer already avoids the historical generic /veto/ classifier; database guard remains authoritative.');
-} else {
-  console.log('TLO importer still contains the historical generic /veto/ classifier; database line-item-veto guard prevents final-state regression.');
 }
 
 console.log('Bill lifecycle date, TLO action-comment, filed-without-signature, and line-item-veto reconciliation validation passed.');
