@@ -1,7 +1,8 @@
 import { createFileRoute, Link, notFound, redirect } from '@tanstack/react-router';
 import { CalendarDays, ExternalLink, Landmark, Scale, Users } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { SITE_URL } from '@/lib/bills';
+import { getBillEditorialEnrichment, SITE_URL } from '@/lib/bills';
+import { getBillEffectiveDateProvisions } from '@/lib/bill-effective-date-provisions';
 import { publicBillPath, normalizePublicBillSessionCode } from '@/lib/bill-public-path';
 import { hasMeaningfulBillText, isScheduleBillActionCode, isSubstantiveBillActionCode } from '@/lib/bill-indexability';
 import { getPublicBillRelations } from '@/lib/public-bill-relations';
@@ -101,21 +102,24 @@ export const Route = createFileRoute('/bills/texas/$legislature/$session/$billTy
     if (error) throw error;
     if (!bill) throw notFound();
 
-    const [relations, relatedContent, relatedBills] = await Promise.all([
+    const [relations, relatedContent, relatedBills, editorial, effectiveDates] = await Promise.all([
       getPublicBillRelations(bill.id),
       getRelatedAuthorityContent('bill', bill.id).catch(() => []),
       getRelatedBills(bill.id, bill.legislature_number).catch(() => []),
+      getBillEditorialEnrichment(bill.id),
+      getBillEffectiveDateProvisions(bill.id),
     ]);
-    return { bill, ...relations, relatedContent, relatedBills };
+    return { bill, ...relations, relatedContent, relatedBills, editorial, effectiveDates };
   },
   head: ({ loaderData }) => {
     if (!loaderData) return {};
-    const { bill, sponsors, actions } = loaderData;
+    const { bill, sponsors, actions, editorial } = loaderData;
     const legalActions = actions.filter((action: any) => !isScheduleBillActionCode(action.action_code));
     const canonical = `${SITE_URL}${publicBillPath(bill)}`;
     const title = `${bill.bill_identifier} — Texas Legislature Session ${bill.session_code} | KeepTXRed`;
     const description = `Track Texas ${bill.bill_identifier} in the ${bill.legislature_number}th Legislature, Session ${bill.session_code}, including status, sponsors, committee history, legislative actions and official sources.`;
     const indexable = hasSubstantiveBillEvidence(loaderData);
+    const metadataBill = editorial?.plain_language_summary ? { ...bill, plain_language_summary: editorial.plain_language_summary } : bill;
     return {
       meta: [
         { title },
@@ -127,7 +131,7 @@ export const Route = createFileRoute('/bills/texas/$legislature/$session/$billTy
         { property: 'og:type', content: 'article' },
       ],
       links: [{ rel: 'canonical', href: canonical }],
-      scripts: [{ type: 'application/ld+json', children: JSON.stringify(calledSessionJsonLd(bill, sponsors, legalActions)).replace(/</g, '\\u003c') }],
+      scripts: [{ type: 'application/ld+json', children: JSON.stringify(calledSessionJsonLd(metadataBill, sponsors, legalActions)).replace(/</g, '\\u003c') }],
     };
   },
   component: CalledSessionBillPage,
@@ -136,7 +140,7 @@ export const Route = createFileRoute('/bills/texas/$legislature/$session/$billTy
 const formatDate = (value?: string | null) => value ? new Date(`${value}T12:00:00`).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : null;
 
 function CalledSessionBillPage() {
-  const { bill, sponsors, actions, committees, documents, subjects, articles, relatedContent, relatedBills } = Route.useLoaderData();
+  const { bill, sponsors, actions, committees, documents, subjects, articles, relatedContent, relatedBills, editorial, effectiveDates } = Route.useLoaderData();
   const legalActions = actions.filter((action: any) => !isScheduleBillActionCode(action.action_code));
   const latestAction = legalActions[0];
   const summary = bill.plain_language_summary || bill.summary || bill.description || bill.caption;
@@ -159,7 +163,7 @@ function CalledSessionBillPage() {
       <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)]">
         <div className="space-y-8">
           <section className="rounded-xl border bg-card p-6"><h2 className="text-2xl font-bold">Bill overview</h2><p className="mt-4 text-lg leading-8">{summary}</p>{subjects.length ? <div className="mt-5 flex flex-wrap gap-2">{subjects.map((subject: any) => <a key={subject.id} href={`/bills/subject/${subject.slug}`} className="rounded-full border px-3 py-1 text-sm">{subject.name}</a>)}</div> : null}</section>
-          <BillEditorialExplanation billId={bill.id} />
+          <BillEditorialExplanation billId={bill.id} initialItem={editorial} initialBill={bill} initialDocuments={documents} initialEffectiveDates={effectiveDates} />
           <section className="rounded-xl border bg-card p-6"><div className="flex items-center gap-3"><Scale className="h-6 w-6 text-primary" /><h2 className="text-2xl font-bold">Current status</h2></div><p className="mt-4 text-xl font-semibold">{bill.current_status_label}</p>{latestAction ? <div className="mt-4 rounded-lg bg-muted/50 p-4"><p className="font-medium">{latestAction.action_text}</p><p className="mt-1 text-sm text-muted-foreground">{formatDate(latestAction.action_date)}</p></div> : null}</section>
           <section className="rounded-xl border bg-card p-6"><div className="flex items-center gap-3"><Users className="h-6 w-6 text-primary" /><h2 className="text-2xl font-bold">Sponsors</h2></div>{sponsors.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">{sponsors.map((person: any) => person.sponsor_slug ? <a key={person.id} href={`/representatives/${person.sponsor_slug}`} className="rounded-lg border p-4 hover:border-primary"><strong>{person.sponsor_name}</strong><span className="mt-1 block text-sm text-muted-foreground">{[person.sponsor_role, person.party, person.district].filter(Boolean).join(' · ')}</span></a> : <div key={person.id} className="rounded-lg border p-4"><strong>{person.sponsor_name}</strong></div>)}</div> : <p className="mt-4 text-muted-foreground">No sponsor is currently matched to this record.</p>}</section>
           <section className="rounded-xl border bg-card p-6"><div className="flex items-center gap-3"><Landmark className="h-6 w-6 text-primary" /><h2 className="text-2xl font-bold">Committee history</h2></div>{committees.length ? <ol className="mt-5 space-y-4">{committees.map((item: any) => <li key={item.id} className="border-l-2 border-primary pl-4"><p className="font-semibold">{item.committee_name || item.legislative_committees?.committee_name}</p><p className="text-sm text-muted-foreground">{item.action_description || item.action_type || 'Committee activity recorded'}</p></li>)}</ol> : <p className="mt-4 text-muted-foreground">No committee history is currently recorded.</p>}</section>

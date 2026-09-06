@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound, redirect } from '@tanstack/react-router';
 import { CalendarDays, ExternalLink, Landmark, Scale, Users } from 'lucide-react';
-import { billJsonLd, canonicalBillPath, getBill, SITE_URL } from '@/lib/bills';
+import { billJsonLd, canonicalBillPath, getBill, getBillEditorialEnrichment, SITE_URL } from '@/lib/bills';
+import { getBillEffectiveDateProvisions } from '@/lib/bill-effective-date-provisions';
 import { hasMeaningfulBillText, isScheduleBillActionCode, isSubstantiveBillActionCode } from '@/lib/bill-indexability';
 import { getPublicBillRelations } from '@/lib/public-bill-relations';
 import { getRelatedAuthorityContent } from '@/lib/authority-relationships';
@@ -41,7 +42,7 @@ export const Route = createFileRoute('/bills/texas/$legislature/$billType/$billN
     if (params.billType !== billType || params.billNumber !== String(billNumber)) throw redirect({ href: normalizedPath, statusCode: 301 });
     const bill = await getBill(legislature, billType, billNumber);
     if (!bill) throw notFound();
-    const [relations, relatedContent, relatedBills] = await Promise.all([
+    const [relations, relatedContent, relatedBills, editorial, effectiveDates] = await Promise.all([
       getPublicBillRelations(bill.id),
       getRelatedAuthorityContent('bill', bill.id).catch((error: any) => {
         console.error(`getRelatedAuthorityContent failed for bill ${bill.id}:`, error?.message ?? error);
@@ -51,17 +52,20 @@ export const Route = createFileRoute('/bills/texas/$legislature/$billType/$billN
         console.error(`getRelatedBills failed for bill ${bill.id}:`, error?.message ?? error);
         return [];
       }),
+      getBillEditorialEnrichment(bill.id),
+      getBillEffectiveDateProvisions(bill.id),
     ]);
-    return { bill, ...relations, relatedContent, relatedBills };
+    return { bill, ...relations, relatedContent, relatedBills, editorial, effectiveDates };
   },
   head: ({ loaderData }) => {
     if (!loaderData) return {};
-    const { bill, sponsors, actions } = loaderData;
+    const { bill, sponsors, actions, editorial } = loaderData;
     const legalActions = actions.filter((action: any) => !isScheduleBillActionCode(action.action_code));
     const canonical = `${SITE_URL}${canonicalBillPath(bill)}`;
     const title = `${bill.bill_identifier} Texas Legislature: Status, Sponsors and History | KeepTXRed`;
     const description = `Track Texas ${bill.bill_identifier}, including its current status, sponsors, committee history, legislative actions, bill text and related Texas news.`;
     const indexable = hasSubstantiveBillEvidence(loaderData);
+    const metadataBill = editorial?.plain_language_summary ? { ...bill, plain_language_summary: editorial.plain_language_summary } : bill;
     return {
       meta: [
         { title }, { name: 'description', content: description },
@@ -70,7 +74,7 @@ export const Route = createFileRoute('/bills/texas/$legislature/$billType/$billN
         { property: 'og:url', content: canonical }, { property: 'og:type', content: 'article' },
       ],
       links: [{ rel: 'canonical', href: canonical }],
-      scripts: [{ type: 'application/ld+json', children: JSON.stringify(billJsonLd(bill, sponsors, legalActions)).replace(/</g, '\\u003c') }],
+      scripts: [{ type: 'application/ld+json', children: JSON.stringify(billJsonLd(metadataBill, sponsors, legalActions)).replace(/</g, '\\u003c') }],
     };
   },
   component: BillPage,
@@ -84,7 +88,7 @@ const sectionLinks = [
 ] as const;
 
 function BillPage() {
-  const { bill, sponsors, actions, committees, documents, subjects, articles, relatedContent, relatedBills } = Route.useLoaderData();
+  const { bill, sponsors, actions, committees, documents, subjects, articles, relatedContent, relatedBills, editorial, effectiveDates } = Route.useLoaderData();
   const groupedSponsors = sponsors.reduce((groups: Record<string, any[]>, sponsor: any) => {
     (groups[sponsor.sponsor_role] ||= []).push(sponsor); return groups;
   }, {});
@@ -116,7 +120,7 @@ function BillPage() {
         <main className="space-y-8">
           <section className="scroll-mt-24 rounded-xl border bg-card p-6" id="overview"><h2 className="text-2xl font-bold">Bill overview</h2><p className="mt-4 text-lg leading-8">{summary}</p>{bill.description && bill.description !== summary && <p className="mt-4 text-muted-foreground">{bill.description}</p>}{subjects.length > 0 && <div className="mt-5 flex flex-wrap gap-2">{subjects.map((subject: any) => <a key={subject.id} href={`/bills/subject/${subject.slug}`} className="rounded-full border px-3 py-1 text-sm hover:border-primary">{subject.name}</a>)}</div>}</section>
 
-          <BillEditorialExplanation billId={bill.id} />
+          <BillEditorialExplanation billId={bill.id} initialItem={editorial} initialBill={bill} initialDocuments={documents} initialEffectiveDates={effectiveDates} />
 
           <section className="scroll-mt-24 rounded-xl border bg-card p-6" id="status"><div className="flex items-center gap-3"><Scale className="h-6 w-6 text-primary"/><h2 className="text-2xl font-bold">Current status</h2></div><p className="mt-4 text-xl font-semibold">{bill.current_status_label}</p><p className="mt-2 text-muted-foreground">{bill.current_status_description || latestAction?.action_text || 'No newer official action is currently available for this bill.'}</p>{latestAction && <div className="mt-4 rounded-lg bg-muted/50 p-4"><p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Latest official action</p><p className="mt-1 font-medium">{latestAction.action_text}</p><p className="mt-1 text-sm text-muted-foreground">{formatDate(latestAction.action_date)}{latestAction.chamber ? ` · ${latestAction.chamber}` : ''}</p></div>}</section>
 

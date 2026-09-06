@@ -9,8 +9,12 @@ const followup = await readFile(new URL('../../supabase/migrations/2026090518450
 const statewideFollowup = await readFile(new URL('../../supabase/migrations/20260905185500_add_statewide_followup_effective_dates.sql', import.meta.url), 'utf8');
 const finalStatewide = await readFile(new URL('../../supabase/migrations/20260905191500_add_final_statewide_effective_dates.sql', import.meta.url), 'utf8');
 const localClosure = await readFile(new URL('../../supabase/migrations/20260905192500_close_local_district_effective_dates.sql', import.meta.url), 'utf8');
+const calledSession = await readFile(new URL('../../supabase/migrations/20260906033000_reconcile_second_called_session_effective_dates.sql', import.meta.url), 'utf8');
+const effectiveDateLoader = await readFile(new URL('../../src/lib/bill-effective-date-provisions.ts', import.meta.url), 'utf8');
 const component = await readFile(new URL('../../src/components/bills/BillEffectiveDates.tsx', import.meta.url), 'utf8');
 const explanation = await readFile(new URL('../../src/components/bills/BillEditorialExplanation.tsx', import.meta.url), 'utf8');
+const regularRoute = await readFile(new URL('../../src/routes/bills/texas/$legislature/$billType/$billNumber.tsx', import.meta.url), 'utf8');
+const calledRoute = await readFile(new URL('../../src/routes/bills/texas/$legislature/$session/$billType/$billNumber.tsx', import.meta.url), 'utf8');
 
 const requiredMigrationPatterns = [
   /create table if not exists public\.bill_effective_date_provisions/i,
@@ -53,14 +57,36 @@ if (!/date '2025-09-01'/.test(localClosure)) throw new Error('Local district Act
 if ((localClosure.match(/'no_effect'/g) ?? []).length < 10) throw new Error('Each local district bill must preserve its failed eminent-domain authorization as no_effect.');
 if ((localClosure.match(/'failed'/g) ?? []).length < 10) throw new Error('Each local district two-thirds condition must remain marked failed.');
 
+for (const identifier of ['HB 4','HB 7','HB 18','HB 20','HB 25','HB 26','HB 192','SB 8','SB 11','SB 12','SB 16','SB 54']) {
+  if (!calledSession.includes(`'${identifier}'`)) throw new Error(`Second Called Session lifecycle repair is missing ${identifier}.`);
+}
+if (!/session_code = '2'/.test(calledSession)) throw new Error('Second Called Session lifecycle repair must remain session-scoped.');
+if (!/date '2025-12-04'/.test(calledSession)) throw new Error('Second Called Session 91st-day effective date must remain December 4, 2025.');
+if (!/HB 8/.test(calledSession) || !/Section 4\.020/.test(calledSession) || !/date '2026-09-01'/.test(calledSession)) throw new Error('HB 8 staged effective-date schedule must remain encoded.');
+if (!/HB 16/.test(calledSession) || !/date '2025-09-17'/.test(calledSession) || !/date '2029-01-01'/.test(calledSession)) throw new Error('HB 16 staged schedule must retain its immediate and final delayed dates.');
+if (!/Article 11A/.test(calledSession) || !/'no_effect'/.test(calledSession) || !/'failed'/.test(calledSession)) throw new Error('HB 16 Article 11A must remain an explicit failed/no-effect provision.');
+if (!/SB 16/.test(calledSession) || !/Section 51\.901\(g\), Government Code/.test(calledSession) || !/date '2026-01-01'/.test(calledSession)) throw new Error('SB 16 delayed recording provision must remain encoded.');
+
 if (!/revoke all on table public\.bill_effective_date_provisions from anon, authenticated/i.test(permissions)) throw new Error('Public roles must not retain broad table privileges.');
 if (!/grant select on table public\.bill_effective_date_provisions to anon, authenticated/i.test(permissions)) throw new Error('Public roles must retain read-only effective-date access.');
 if (/grant\s+(insert|update|delete).*anon/i.test(permissions) || /grant\s+(insert|update|delete).*authenticated/i.test(permissions)) throw new Error('Public roles must never receive structured effective-date write privileges.');
 
-if (!/from\('bill_effective_date_provisions'\)/.test(component)) throw new Error('Public effective-date component must query the structured table.');
+if (!/from\('bill_effective_date_provisions'\)/.test(effectiveDateLoader)) throw new Error('Bill effective-date loader must query the structured table.');
+if (!/from\('bill_effective_date_provisions'\)/.test(component)) throw new Error('Public effective-date component must retain its client fallback query.');
+if (!/initialRows/.test(component)) throw new Error('Public effective-date component must accept server-loaded initial rows.');
 if (!/Effective-date schedule/.test(component)) throw new Error('Public effective-date component must render an explicit schedule heading.');
 if (!/Condition status/.test(component)) throw new Error('Conditional provisions must expose their verification status.');
 if (!/Official effective-date source/.test(component)) throw new Error('Structured dates must retain an official source link.');
 if (!/BillEffectiveDates/.test(explanation)) throw new Error('Bill editorial surface must render structured effective dates.');
+if (!/initialItem/.test(explanation) || !/initialBill/.test(explanation) || !/initialEffectiveDates/.test(explanation)) throw new Error('Bill editorial surface must accept server-loaded editorial, bill, and effective-date data.');
+if (!/initialRows=\{initialEffectiveDates\}/.test(explanation)) throw new Error('Bill editorial surface must hydrate the effective-date component from route data.');
+
+for (const [label, route] of [['regular', regularRoute], ['called', calledRoute]]) {
+  if (!/getBillEditorialEnrichment/.test(route)) throw new Error(`${label} bill route must preload approved editorial enrichment.`);
+  if (!/getBillEffectiveDateProvisions/.test(route)) throw new Error(`${label} bill route must preload structured effective dates.`);
+  if (!/initialItem=\{editorial\}/.test(route)) throw new Error(`${label} bill route must server-render the reviewed editorial explanation.`);
+  if (!/initialEffectiveDates=\{effectiveDates\}/.test(route)) throw new Error(`${label} bill route must server-render the structured effective-date schedule.`);
+  if (!/editorial\?\.plain_language_summary/.test(route)) throw new Error(`${label} bill route must expose the reviewed summary to bill JSON-LD.`);
+}
 
 console.log('Structured bill effective-date validation passed.');
