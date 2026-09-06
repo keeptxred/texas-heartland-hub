@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-09-06T00:57:39.066Z",
+  "generatedAt": "2026-09-06T02:30:12.403Z",
   "candidateCount": 491,
   "eligibleCandidateCount": 479,
   "excludedCandidateCount": 12,
-  "approvedPhotoCount": 360,
-  "missingPhotoCount": 119,
-  "manifestEntryCount": 360,
-  "coverage": 0.7515657620041754,
-  "coveragePercent": 75.16,
+  "approvedPhotoCount": 361,
+  "missingPhotoCount": 118,
+  "manifestEntryCount": 361,
+  "coverage": 0.7536534446764092,
+  "coveragePercent": 75.37,
   "targetCoverage": 0.85,
   "targetApprovedPhotoCount": 408,
-  "photosNeededForTarget": 48,
+  "photosNeededForTarget": 47,
   "targetMet": false,
   "errors": [],
   "warnings": [],
@@ -142,13 +142,6 @@
     {
       "candidateId": "candidate-arturo-espinosa-other-race-2026-lieutenant-governor",
       "name": "ARTURO ESPINOSA",
-      "raceId": "race-2026-lieutenant-governor",
-      "party": "other",
-      "priority": "statewide"
-    },
-    {
-      "candidateId": "candidate-stephen-samuelson-other-race-2026-lieutenant-governor",
-      "name": "STEPHEN SAMUELSON",
       "raceId": "race-2026-lieutenant-governor",
       "party": "other",
       "priority": "statewide"
