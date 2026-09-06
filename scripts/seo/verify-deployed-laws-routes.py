@@ -133,6 +133,7 @@ def main() -> int:
             "missing_article_fallback_found": False,
         },
         "priority_sitemap": {"status": "not_run", "error": None},
+        "bills_platform": {"status": "not_run", "error": None},
     }
     write_report(report)
 
@@ -244,6 +245,23 @@ def main() -> int:
         report["priority_sitemap"] = {"status": "failed", "error": str(exc)}
         write_report(report)
         raise SystemExit(str(exc)) from exc
+
+    bills_smoke = Path(__file__).resolve().parents[1] / "legislature" / "verify-deployed-bills-platform.py"
+    bills_result = subprocess.run(
+        ["python3", str(bills_smoke)],
+        env={**os.environ, "SITE_URL": SITE_URL},
+        capture_output=True,
+        text=True,
+    )
+    if bills_result.stdout:
+        print(bills_result.stdout, end="" if bills_result.stdout.endswith("\n") else "\n")
+    if bills_result.returncode != 0:
+        error = bills_result.stderr.strip() or f"Texas Bills smoke exited {bills_result.returncode}"
+        report["bills_platform"] = {"status": "failed", "error": error}
+        write_report(report)
+        github_error("Deployed Texas Bills smoke failed", error)
+        raise SystemExit(error)
+    report["bills_platform"] = {"status": "passed", "error": None}
 
     write_report(report)
     return 0
