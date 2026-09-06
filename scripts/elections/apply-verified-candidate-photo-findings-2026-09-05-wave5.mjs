@@ -35,3 +35,5 @@ await writeFile(
   JSON.stringify([...byId.values()].sort((a, b) => a.candidateId.localeCompare(b.candidateId)), null, 2) + "\n"
 );
 console.log(`Applied ${applied} verified official campaign portrait(s).`);
+
+// Current-main replay marker: September 6, 2026 after source registry wave 1 merge #2013.
