@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-09-05T19:09:17.634Z",
+  "generatedAt": "2026-09-06T00:57:39.066Z",
   "candidateCount": 491,
   "eligibleCandidateCount": 479,
   "excludedCandidateCount": 12,
-  "approvedPhotoCount": 359,
-  "missingPhotoCount": 120,
-  "manifestEntryCount": 359,
-  "coverage": 0.7494780793319415,
-  "coveragePercent": 74.95,
+  "approvedPhotoCount": 360,
+  "missingPhotoCount": 119,
+  "manifestEntryCount": 360,
+  "coverage": 0.7515657620041754,
+  "coveragePercent": 75.16,
   "targetCoverage": 0.85,
   "targetApprovedPhotoCount": 408,
-  "photosNeededForTarget": 49,
+  "photosNeededForTarget": 48,
   "targetMet": false,
   "errors": [],
   "warnings": [],
@@ -326,13 +326,6 @@
       "name": "JESSICA MARTINEZ",
       "raceId": "race-2026-texas-house-51",
       "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-andrew-turner-democratic-race-2026-texas-house-59",
-      "name": "ANDREW TURNER",
-      "raceId": "race-2026-texas-house-59",
-      "party": "democratic",
       "priority": "standard"
     },
     {
