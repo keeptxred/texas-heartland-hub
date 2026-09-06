@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "broadrickfortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use the official Cathy Broadrick for Texas campaign website to corroborate candidate identity and discover candidate-specific portrait assets. Approve only after item-level verification that the exact asset depicts Cathy Broadrick and is directly published on the campaign-controlled site, with exact source attribution and a documented narrow editorial-identification basis or another supported reuse basis. Reject logos, campaign graphics, social-share images, placeholders, group photos, and other non-candidate imagery.",
+    "searchHint": "site:broadrickfortexas.com Cathy Broadrick portrait headshot Texas House 82",
+    "notes": "Discovered September 6, 2026 while researching the current missing-photo queue. The official campaign homepage identifies Cathy Broadrick as the Texas House District 82 candidate and visibly publishes a candidate-specific portrait. Registered for item-level follow-up; no asset is auto-approved by this registry entry alone."
+  }
+]
