@@ -4,6 +4,7 @@ import { CitationTrustPanel } from '@/components/authority/CitationTrustPanel';
 import { BillEffectiveDates } from '@/components/bills/BillEffectiveDates';
 import { supabase } from '@/integrations/supabase/client';
 import { getLatestBillFiscalImpact } from '@/lib/bill-fiscal-impact';
+import type { BillEffectiveDateProvision } from '@/lib/bill-effective-date-provisions';
 import { getBillEditorialEnrichment, type BillEditorialEnrichment } from '@/lib/bills';
 
 type Editorial = BillEditorialEnrichment;
@@ -20,14 +21,30 @@ type BillAuthorityRecord = {
   fiscal_note_url: string | null;
   last_synced_at: string | null;
 };
+
+type BillEditorialExplanationProps = {
+  billId: string;
+  initialItem?: Editorial | null;
+  initialBill?: BillAuthorityRecord | null;
+  initialDocuments?: any[];
+  initialEffectiveDates?: BillEffectiveDateProvision[];
+};
+
 const db = supabase as any;
 
-export function BillEditorialExplanation({ billId }: { billId: string }) {
-  const [item, setItem] = useState<Editorial | null>(null);
-  const [bill, setBill] = useState<BillAuthorityRecord | null>(null);
-  const [documents, setDocuments] = useState<any[]>([]);
+export function BillEditorialExplanation({ billId, initialItem, initialBill, initialDocuments, initialEffectiveDates }: BillEditorialExplanationProps) {
+  const [item, setItem] = useState<Editorial | null>(initialItem ?? null);
+  const [bill, setBill] = useState<BillAuthorityRecord | null>(initialBill ?? null);
+  const [documents, setDocuments] = useState<any[]>(initialDocuments ?? []);
 
   useEffect(() => {
+    if (initialItem !== undefined && initialBill !== undefined && initialDocuments !== undefined) {
+      setItem(initialItem);
+      setBill(initialBill);
+      setDocuments(initialDocuments);
+      return;
+    }
+
     let active = true;
     Promise.all([
       getBillEditorialEnrichment(billId),
@@ -40,7 +57,7 @@ export function BillEditorialExplanation({ billId }: { billId: string }) {
       if (!documentResult.error && documentResult.data) setDocuments(documentResult.data);
     }).catch((error) => console.error(`Bill authority reference failed for ${billId}:`, error));
     return () => { active = false; };
-  }, [billId]);
+  }, [billId, initialItem, initialBill, initialDocuments]);
 
   const fiscalImpact = useMemo(() => getLatestBillFiscalImpact(documents), [documents]);
   const verifiedAgencyContext = fiscalImpact?.verifiedSourceAgencies ?? [];
@@ -71,7 +88,7 @@ export function BillEditorialExplanation({ billId }: { billId: string }) {
         title={`${bill.bill_identifier} sources, status methodology and verification`}
       /> : null}
 
-      <BillEffectiveDates billId={billId} />
+      <BillEffectiveDates billId={billId} initialRows={initialEffectiveDates} />
 
       {bill ? <section className="scroll-mt-24 rounded-xl border bg-card p-6" id="law-agency-relationships">
         <div className="flex items-center gap-3"><Scale className="h-6 w-6 text-primary"/><h2 className="text-2xl font-bold">Bill → law → agency context</h2></div>
