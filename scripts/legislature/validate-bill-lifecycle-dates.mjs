@@ -3,6 +3,7 @@ import fs from 'node:fs';
 const migration = fs.readFileSync('supabase/migrations/20260905151000_reconcile_bill_lifecycle_dates_from_actions.sql', 'utf8');
 const statusFix = fs.readFileSync('supabase/migrations/20260905190500_normalize_filed_without_signature_status.sql', 'utf8');
 const commentFix = fs.readFileSync('supabase/migrations/20260906042500_normalize_tlo_effective_action_comments.sql', 'utf8');
+const lineItemFix = fs.readFileSync('supabase/migrations/20260906192000_handle_line_item_veto_lifecycle.sql', 'utf8');
 const importer = fs.readFileSync('scripts/legislature/sync-texas-legislation.mjs', 'utf8');
 
 const required = [
@@ -64,4 +65,24 @@ for (const token of commentFixRequired) {
   if (!commentFix.includes(token)) throw new Error(`TLO dotted effective-action backfill is missing safeguard: ${token}`);
 }
 
-console.log('Bill lifecycle date, TLO action-comment, and filed-without-signature reconciliation validation passed.');
+const lineItemRequired = [
+  'Signed by the Governor(?:/line item veto)?',
+  'line_item_veto',
+  'preserve_line_item_veto_lifecycle',
+  'bills_preserve_line_item_veto_lifecycle',
+  "new.current_status_code := 'effective'",
+  'new.vetoed_date := null',
+  "bill_identifier = 'HB 500'",
+  'revoke all on function public.preserve_line_item_veto_lifecycle() from public, anon, authenticated',
+];
+for (const token of lineItemRequired) {
+  if (!lineItemFix.includes(token)) throw new Error(`Line-item veto lifecycle normalization is missing safeguard: ${token}`);
+}
+
+if (!/\['vetoed', 'Vetoed', \/veto\//.test(importer)) {
+  console.log('TLO importer already avoids the historical generic /veto/ classifier; database guard remains authoritative.');
+} else {
+  console.log('TLO importer still contains the historical generic /veto/ classifier; database line-item-veto guard prevents final-state regression.');
+}
+
+console.log('Bill lifecycle date, TLO action-comment, filed-without-signature, and line-item-veto reconciliation validation passed.');
