@@ -4,6 +4,7 @@ const migration = fs.readFileSync('supabase/migrations/20260905151000_reconcile_
 const statusFix = fs.readFileSync('supabase/migrations/20260905190500_normalize_filed_without_signature_status.sql', 'utf8');
 const commentFix = fs.readFileSync('supabase/migrations/20260906042500_normalize_tlo_effective_action_comments.sql', 'utf8');
 const lineItemFix = fs.readFileSync('supabase/migrations/20260906192000_handle_line_item_veto_lifecycle.sql', 'utf8');
+const temporalStatusFix = fs.readFileSync('supabase/migrations/20260906194000_normalize_temporal_bill_effective_status.sql', 'utf8');
 const importer = fs.readFileSync('scripts/legislature/sync-texas-legislation.mjs', 'utf8');
 
 const required = [
@@ -83,4 +84,23 @@ for (const token of lineItemRequired) {
   if (!lineItemFix.includes(token)) throw new Error(`Line-item veto lifecycle normalization is missing safeguard: ${token}`);
 }
 
-console.log('Bill lifecycle date, TLO action-comment, filed-without-signature, and line-item-veto reconciliation validation passed.');
+const temporalStatusRequired = [
+  'preserve_temporal_bill_effective_status',
+  'bills_preserve_temporal_effective_status',
+  'refresh_bill_effective_statuses',
+  'effective_date <= current_date',
+  'effective_date > current_date',
+  "current_status_code in ('signed','became-law')",
+  "new.current_status_code := 'effective'",
+  "new.current_status_code := 'signed'",
+  'refresh-bill-effective-statuses',
+  "'15 6 * * *'",
+  'select public.refresh_bill_effective_statuses();',
+  'revoke all on function public.preserve_temporal_bill_effective_status() from public, anon, authenticated',
+  'revoke all on function public.refresh_bill_effective_statuses() from public, anon, authenticated',
+];
+for (const token of temporalStatusRequired) {
+  if (!temporalStatusFix.includes(token)) throw new Error(`Temporal bill effective-status normalization is missing safeguard: ${token}`);
+}
+
+console.log('Bill lifecycle date, TLO action-comment, filed-without-signature, line-item-veto, and temporal effective-status reconciliation validation passed.');
