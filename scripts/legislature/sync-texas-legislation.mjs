@@ -51,6 +51,21 @@ const isoDate = (text) => {
   const date = new Date(text); return Number.isNaN(date.getTime()) ? null : date.toISOString().slice(0, 10);
 };
 const hash = (text) => createHash('sha256').update(text).digest('hex');
+const formatMdy = (iso) => {
+  if (!iso) return null;
+  const [year, month, day] = iso.split('-').map(Number);
+  return `${month}/${day}/${year}`;
+};
+function normalizeActionText(part) {
+  const description = value(part, ['actionDescription', 'description', 'actionText']);
+  const comment = value(part, ['actionComment', 'comment', 'comments', 'actionRemarks', 'remarks', 'remark']);
+  if (!description) return decode(part.replace(/<[^>]+>/g, ' '));
+  if (comment && /^Effective on(?:\s*\.)+\s*$/i.test(description)) {
+    const effectiveDate = formatMdy(isoDate(comment));
+    if (effectiveDate) return `Effective on ${effectiveDate}`;
+  }
+  return [description, comment].filter(Boolean).join(' ').trim();
+}
 
 async function request(url, init = {}) {
   const response = await fetch(url, init);
@@ -162,7 +177,7 @@ function parseBill(xml, sourceUrl, session) {
   const actions = actionBlocks.map((part, index) => ({
     action_date: isoDate(value(part, ['actionDate', 'date'])), action_sequence: index,
     chamber: value(part, ['chamber', 'actionChamber'])?.toLowerCase() || null,
-    action_code: value(part, ['actionCode', 'code']), action_text: value(part, ['actionDescription', 'description', 'actionText']) || decode(part.replace(/<[^>]+>/g, ' ')),
+    action_code: value(part, ['actionCode', 'code']), action_text: normalizeActionText(part),
     source_url: sourceUrl,
   })).filter((a) => a.action_date && a.action_text);
   const status = normalizeStatus(actions);
