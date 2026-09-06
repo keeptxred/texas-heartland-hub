@@ -35,7 +35,7 @@ permissions:
 
 concurrency:
   group: candidate-photo-verified-apply
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   apply-verified-photos:
@@ -89,6 +89,19 @@ jobs:
         run: node scripts/elections/apply-official-senate-photo-replacements-2026-08-30.mjs
       - name: Apply canonical verified-photo manifest
         run: node scripts/elections/candidate-photo-enrichment.mjs --apply
+
+      - name: Close superseded candidate-photo materialization PRs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh pr list --repo "${GITHUB_REPOSITORY}" --state open --limit 100 --json number,headRefName --jq '.[] | select(.headRefName | startswith("automation/candidate-photo-verified-apply-")) | .number' \
+            | while read -r pr_number; do
+                [[ -z "$pr_number" ]] && continue
+                echo "Closing superseded candidate-photo materialization PR #$pr_number before publishing run ${GITHUB_RUN_ID}."
+                gh pr close "$pr_number" --repo "${GITHUB_REPOSITORY}" --comment "Superseded by newer candidate-photo materialization run ${GITHUB_RUN_ID} from current main. Closing the stale generated PR instead of stacking duplicate materialization branches." || true
+              done
 
       - name: Publish verified candidate records as protected PR
         env:
