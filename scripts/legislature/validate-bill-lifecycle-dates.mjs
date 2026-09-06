@@ -2,6 +2,8 @@ import fs from 'node:fs';
 
 const migration = fs.readFileSync('supabase/migrations/20260905151000_reconcile_bill_lifecycle_dates_from_actions.sql', 'utf8');
 const statusFix = fs.readFileSync('supabase/migrations/20260905190500_normalize_filed_without_signature_status.sql', 'utf8');
+const commentFix = fs.readFileSync('supabase/migrations/20260906042500_normalize_tlo_effective_action_comments.sql', 'utf8');
+const importer = fs.readFileSync('scripts/legislature/sync-texas-legislation.mjs', 'utf8');
 
 const required = [
   'tlo_explicit_effective_date',
@@ -40,4 +42,26 @@ for (const token of statusRequired) {
   if (!statusFix.includes(token)) throw new Error(`Filed-without-signature normalization is missing safeguard: ${token}`);
 }
 
-console.log('Bill lifecycle date and filed-without-signature reconciliation validation passed.');
+const importerRequired = [
+  'function normalizeActionText(part)',
+  "'actionComment'",
+  "'comment'",
+  'formatMdy(isoDate(comment))',
+  'Effective on ${effectiveDate}',
+  'action_text: normalizeActionText(part)',
+];
+for (const token of importerRequired) {
+  if (!importer.includes(token)) throw new Error(`TLO action-comment parsing is missing safeguard: ${token}`);
+}
+
+const commentFixRequired = [
+  "bill_number = 2963",
+  "date '2026-09-01'",
+  "action_text = 'Effective on ' || to_char(b.effective_date, 'FMMM/FMDD/YYYY')",
+  "a.action_text ~* '^Effective on\\s*(\\.\\s*)+$'",
+];
+for (const token of commentFixRequired) {
+  if (!commentFix.includes(token)) throw new Error(`TLO dotted effective-action backfill is missing safeguard: ${token}`);
+}
+
+console.log('Bill lifecycle date, TLO action-comment, and filed-without-signature reconciliation validation passed.');
