@@ -3,7 +3,7 @@ import { CalendarDays, ExternalLink, Landmark, Scale, Users } from 'lucide-react
 import { supabase } from '@/integrations/supabase/client';
 import { getBillEditorialEnrichment, SITE_URL } from '@/lib/bills';
 import { getBillEffectiveDateProvisions } from '@/lib/bill-effective-date-provisions';
-import { publicBillPath, normalizePublicBillSessionCode } from '@/lib/bill-public-path';
+import { publicBillPath, normalizePublicBillSessionCode, publicBillSessionLabel } from '@/lib/bill-public-path';
 import { hasMeaningfulBillText, isScheduleBillActionCode, isSubstantiveBillActionCode } from '@/lib/bill-indexability';
 import { getPublicBillRelations } from '@/lib/public-bill-relations';
 import { getRelatedAuthorityContent } from '@/lib/authority-relationships';
@@ -37,6 +37,7 @@ const hasSubstantiveBillEvidence = (loaderData: any) => {
 
 function calledSessionJsonLd(bill: any, sponsors: any[], actions: any[]) {
   const url = `${SITE_URL}${publicBillPath(bill)}`;
+  const sessionLabel = publicBillSessionLabel(bill.legislature_number, bill.session_code);
   return {
     '@context': 'https://schema.org',
     '@graph': [
@@ -44,7 +45,7 @@ function calledSessionJsonLd(bill: any, sponsors: any[], actions: any[]) {
         '@type': 'WebPage',
         '@id': `${url}#webpage`,
         url,
-        name: `${bill.bill_identifier} — ${bill.legislature_number}th Legislature Session ${bill.session_code}`,
+        name: `${bill.bill_identifier} — ${sessionLabel}`,
         description: bill.plain_language_summary || bill.summary || bill.caption,
         dateModified: bill.last_synced_at || bill.last_action_date || undefined,
         mainEntity: { '@id': `${url}#legislation` },
@@ -67,7 +68,7 @@ function calledSessionJsonLd(bill: any, sponsors: any[], actions: any[]) {
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
           { '@type': 'ListItem', position: 2, name: 'Texas Bills', item: `${SITE_URL}/bills` },
-          { '@type': 'ListItem', position: 3, name: `${bill.legislature_number}th Legislature Session ${bill.session_code}`, item: `${SITE_URL}/texas-legislature/sessions/${bill.legislature_number}${String(bill.session_code).toLowerCase()}` },
+          { '@type': 'ListItem', position: 3, name: sessionLabel, item: `${SITE_URL}/texas-legislature/sessions/${bill.legislature_number}${String(bill.session_code).toLowerCase()}` },
           { '@type': 'ListItem', position: 4, name: bill.bill_identifier, item: url },
         ],
       },
@@ -116,8 +117,9 @@ export const Route = createFileRoute('/bills/texas/$legislature/$session/$billTy
     const { bill, sponsors, actions, editorial } = loaderData;
     const legalActions = actions.filter((action: any) => !isScheduleBillActionCode(action.action_code));
     const canonical = `${SITE_URL}${publicBillPath(bill)}`;
-    const title = `${bill.bill_identifier} — Texas Legislature Session ${bill.session_code} | KeepTXRed`;
-    const description = `Track Texas ${bill.bill_identifier} in the ${bill.legislature_number}th Legislature, Session ${bill.session_code}, including status, sponsors, committee history, legislative actions and official sources.`;
+    const sessionLabel = publicBillSessionLabel(bill.legislature_number, bill.session_code);
+    const title = `${bill.bill_identifier} — ${sessionLabel} | KeepTXRed`;
+    const description = `Track Texas ${bill.bill_identifier} in the ${sessionLabel}, including status, sponsors, committee history, legislative actions and official sources.`;
     const indexable = hasSubstantiveBillEvidence(loaderData);
     const metadataBill = editorial?.plain_language_summary ? { ...bill, plain_language_summary: editorial.plain_language_summary } : bill;
     return {
@@ -144,6 +146,7 @@ function CalledSessionBillPage() {
   const legalActions = actions.filter((action: any) => !isScheduleBillActionCode(action.action_code));
   const latestAction = legalActions[0];
   const summary = bill.plain_language_summary || bill.summary || bill.description || bill.caption;
+  const sessionLabel = publicBillSessionLabel(bill.legislature_number, bill.session_code);
   const fallbackDocumentLinks = [
     bill.bill_text_url ? { href: bill.bill_text_url, label: 'Current bill text' } : null,
     bill.analysis_url ? { href: bill.analysis_url, label: 'Bill analysis' } : null,
@@ -152,11 +155,11 @@ function CalledSessionBillPage() {
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <nav className="mb-5 text-sm text-muted-foreground" aria-label="Breadcrumb"><Link to="/">Home</Link> / <a href="/bills">Bills</a> / <a href={`/texas-legislature/sessions/${bill.legislature_number}${String(bill.session_code).toLowerCase()}`}>Session {bill.session_code}</a> / {bill.bill_identifier}</nav>
+      <nav className="mb-5 text-sm text-muted-foreground" aria-label="Breadcrumb"><Link to="/">Home</Link> / <a href="/bills">Bills</a> / <a href={`/texas-legislature/sessions/${bill.legislature_number}${String(bill.session_code).toLowerCase()}`}>{sessionLabel}</a> / {bill.bill_identifier}</nav>
       <header className="rounded-2xl border bg-card p-6 md:p-10">
         <div className="flex flex-wrap items-center gap-3"><span className="rounded-full bg-primary px-3 py-1 text-sm font-bold text-primary-foreground">{bill.bill_identifier}</span><span className="rounded-full border px-3 py-1 text-sm font-semibold">{bill.current_status_label}</span>{bill.became_law && <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-green-900">Became law</span>}</div>
         <h1 className="mt-5 text-3xl font-bold leading-tight md:text-5xl">{bill.caption}</h1>
-        <p className="mt-4 text-sm font-semibold text-primary">{bill.legislature_number}th Texas Legislature · Called Session {bill.session_code}</p>
+        <p className="mt-4 text-sm font-semibold text-primary">{sessionLabel}</p>
         {bill.last_action_date ? <p className="mt-2 text-sm text-muted-foreground">Last legal action {formatDate(bill.last_action_date)}</p> : null}
       </header>
 
