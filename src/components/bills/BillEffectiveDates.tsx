@@ -1,25 +1,19 @@
 import { useEffect, useState } from 'react';
 import { CalendarDays, ExternalLink } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-
-type EffectiveDateProvision = {
-  id: string;
-  sequence: number;
-  provision_scope: string;
-  effect_kind: 'effective' | 'conditional' | 'no_effect';
-  effective_date: string | null;
-  condition_text: string | null;
-  condition_status: 'not_applicable' | 'pending' | 'satisfied' | 'failed' | 'unknown';
-  source_url: string;
-  source_note: string | null;
-};
+import type { BillEffectiveDateProvision } from '@/lib/bill-effective-date-provisions';
 
 const db = supabase as any;
 
-export function BillEffectiveDates({ billId }: { billId: string }) {
-  const [rows, setRows] = useState<EffectiveDateProvision[]>([]);
+export function BillEffectiveDates({ billId, initialRows }: { billId: string; initialRows?: BillEffectiveDateProvision[] }) {
+  const [rows, setRows] = useState<BillEffectiveDateProvision[]>(initialRows ?? []);
 
   useEffect(() => {
+    if (initialRows !== undefined) {
+      setRows(initialRows);
+      return;
+    }
+
     let active = true;
     db.from('bill_effective_date_provisions')
       .select('id,sequence,provision_scope,effect_kind,effective_date,condition_text,condition_status,source_url,source_note')
@@ -31,11 +25,11 @@ export function BillEffectiveDates({ billId }: { billId: string }) {
           console.error(`Structured effective dates failed for bill ${billId}:`, error.message ?? error);
           return;
         }
-        setRows((data ?? []) as EffectiveDateProvision[]);
+        setRows((data ?? []) as BillEffectiveDateProvision[]);
       })
       .catch((error: any) => console.error(`Structured effective dates threw for bill ${billId}:`, error?.message ?? error));
     return () => { active = false; };
-  }, [billId]);
+  }, [billId, initialRows]);
 
   if (!rows.length) return null;
 
@@ -64,13 +58,13 @@ export function BillEffectiveDates({ billId }: { billId: string }) {
   );
 }
 
-function effectLabel(kind: EffectiveDateProvision['effect_kind']) {
+function effectLabel(kind: BillEffectiveDateProvision['effect_kind']) {
   if (kind === 'conditional') return 'Conditional provision';
   if (kind === 'no_effect') return 'No-effect provision';
   return 'Effective provision';
 }
 
-function conditionLabel(status: EffectiveDateProvision['condition_status']) {
+function conditionLabel(status: BillEffectiveDateProvision['condition_status']) {
   if (status === 'satisfied') return 'Satisfied';
   if (status === 'failed') return 'Failed';
   if (status === 'pending') return 'Not yet satisfied';
