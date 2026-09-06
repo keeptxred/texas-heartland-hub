@@ -1840,6 +1840,18 @@
     "discoveryMethod": "directory-source-validation"
   },
   {
+    "candidateId": "candidate-jasmine-henderson-democratic-race-2026-texas-house-68",
+    "imageUrl": "https://img1.wsimg.com/isteam/ip/95e0fee8-005a-4d67-aa31-041281eda568/DSC02025.jpeg/:/rs=h:1000,cg:true,m",
+    "sourceUrl": "https://hendersonforhd68.com/",
+    "altText": "Jasmine Henderson, Democratic candidate for Texas House District 68",
+    "credit": "Jasmine Henderson for House District 68 campaign",
+    "license": null,
+    "permissionBasis": "Jasmine Henderson's official Texas House District 68 campaign website identifies her as the candidate and directly publishes this candidate-specific portrait on the campaign-controlled site. Used only for narrow editorial candidate identification with exact campaign attribution and source link; no broader reuse license is asserted.",
+    "usageStatus": "approved",
+    "discoveryMethod": "official-campaign-site-portrait",
+    "discoveredAt": "2026-09-06T20:41:00.000Z"
+  },
+  {
     "candidateId": "candidate-jay-dean-republican-race-2026-texas-house-7",
     "imageUrl": "https://house.texas.gov/images/members/3515.jpg?v=1",
     "sourceUrl": "https://house.texas.gov/members/7",
