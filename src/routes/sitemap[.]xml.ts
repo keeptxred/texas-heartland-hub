@@ -8,11 +8,8 @@ import { BASE_URL, xmlEscape, xmlResponse } from "@/lib/sitemap-shared";
  * The root sitemap must remain available even when optional database, catalog,
  * or byline services are cold or unavailable. Child sitemap routes own their
  * data fetching and may return an empty but valid urlset when they have no
- * eligible entries. Bulk district, representative, bill-detail, and product
- * detail sitemaps remain intentionally unadvertised to protect crawl budget.
- * Product URLs remain available to users and the product sitemap route remains
- * available for explicit use; it is simply not promoted from the root index
- * while Keep TX Red rebuilds topical search authority.
+ * eligible entries. Bulk district, representative, and bill-detail sitemaps
+ * remain intentionally unadvertised to protect crawl budget.
  *
  * sitemap-priority.xml is a derivative discovery feed: every URL it advertises
  * must also be canonically owned by one of the primary child sitemaps.
@@ -31,6 +28,7 @@ const ADVERTISED_SITEMAPS = [
   "sitemap-legislature.xml",
   "sitemap-committees.xml",
   "sitemap-authors.xml",
+  "sitemap-products.xml",
   "sitemap-images.xml",
 ] as const;
 
