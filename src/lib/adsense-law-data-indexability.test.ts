@@ -17,11 +17,16 @@ describe("AdSense law/data detail indexability", () => {
     expect(LAW_TOPICS.filter(isLawTopicIndexable)).toEqual([]);
   });
 
-  it("keeps current underdeveloped data details out of the indexable cohort", () => {
+  it("keeps underdeveloped data details out while allowing readiness-qualified details in", () => {
     const datasets = [...TEXAS_DATA_SETS, ...ACCOUNTABILITY_DATA_SETS];
+    const indexableDatasets = datasets.filter(isDataDetailIndexable);
+    const underdevelopedDatasets = datasets.filter((dataset) => !isDataDetailIndexable(dataset));
+
     expect(MIN_DATA_DETAIL_WORDS).toBe(700);
     expect(datasets.length).toBeGreaterThan(0);
-    expect(datasets.filter(isDataDetailIndexable)).toEqual([]);
+    expect(indexableDatasets.some((dataset) => dataset.slug === "border-security")).toBe(true);
+    expect(underdevelopedDatasets.length).toBeGreaterThan(0);
+    expect(indexableDatasets.length).toBeLessThan(datasets.length);
   });
 
   it("uses readiness for direct-route robots metadata", () => {

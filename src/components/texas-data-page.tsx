@@ -4,6 +4,7 @@ import { PropertyTaxDataPanel } from "@/components/property-tax-data-panel";
 import { StateBudgetDataPanel } from "@/components/state-budget-data-panel";
 import { ElectionTurnoutHistoryPanel } from "@/components/election-turnout-history-panel";
 import { ErcotEnergyMetricsPanel } from "@/components/ercot-energy-metrics-panel";
+import { BorderSecuritySpendingPanel } from "@/components/border-security-spending-panel";
 import { buildSeo, SITE_URL } from "@/lib/seo";
 
 export function texasDataHead(dataset: TexasDataSet) {
@@ -30,6 +31,7 @@ export function TexasDataPage({ dataset }: { dataset: TexasDataSet }) {
     {dataset.slug === "state-budget-spending" ? <StateBudgetDataPanel /> : null}
     {dataset.slug === "elections-results" ? <ElectionTurnoutHistoryPanel /> : null}
     {dataset.slug === "energy-grid" ? <ErcotEnergyMetricsPanel /> : null}
+    {dataset.slug === "border-security" ? <BorderSecuritySpendingPanel /> : null}
 
     <section className="mt-10"><h2 className="border-b pb-2 font-display text-3xl tracking-tight">What the official data can show</h2><ul className="mt-5 space-y-3 text-base leading-7">{dataset.whatAvailable.map((item) => <li key={item} className="flex gap-3"><span className="font-bold text-primary">•</span><span>{item}</span></li>)}</ul></section>
 
