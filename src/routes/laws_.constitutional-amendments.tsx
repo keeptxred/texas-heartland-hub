@@ -75,15 +75,15 @@ function ConstitutionalAmendmentsTracker() {
 
       <header className="mt-6 border-b pb-8">
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Texas constitutional amendment authority</p>
-        <h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">Texas Constitutional Amendments: 2026 Ballot Status & Process</h1>
+        <h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">Texas Constitutional Amendments Tracker</h1>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-muted-foreground">
-          A maintained, source-backed reference for whether statewide constitutional amendments are on the current Texas ballot, how the Legislature proposes them, what voters must approve, and where to verify the official ballot language.
+          A maintained, source-backed reference for the 2026 statewide ballot status, how the Legislature proposes constitutional amendments, what voters must approve, and where to verify official ballot language.
         </p>
       </header>
 
       <section className="mt-8 rounded-2xl border bg-card p-6" aria-labelledby="current-amendment-status">
         <p className="text-xs font-bold uppercase tracking-wide text-primary">Current status · verified September 6, 2026</p>
-        <h2 id="current-amendment-status" className="mt-2 text-3xl font-bold">No statewide constitutional-amendment slate is listed for the November 3, 2026 general election</h2>
+        <h2 id="current-amendment-status" className="mt-2 text-3xl font-bold">No statewide constitutional-amendment slate is currently listed for the November 3, 2026 general election</h2>
         <p className="mt-4 leading-7 text-muted-foreground">
           The Texas Secretary of State’s current 2026 November General Election materials include the statewide ballot certification, candidate order and sample-ballot resources. As of this verification date, those statewide materials do not publish a constitutional-amendment proposition slate. That is different from saying there are no propositions anywhere in Texas: counties, cities, school districts and other political subdivisions may place local measures before their voters.
         </p>
