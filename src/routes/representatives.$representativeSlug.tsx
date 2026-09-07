@@ -9,6 +9,7 @@ import { canonicalBillPath, getRepresentativeLegislation, SITE_URL } from "@/lib
 import { getRelatedAuthorityContent } from "@/lib/authority-relationships";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 import { RelatedAuthorityContent } from "@/components/authority/RelatedAuthorityContent";
+import { RepresentativeLegislativeIntelligence } from "@/components/representative-legislative-intelligence";
 
 export const Route = createFileRoute("/representatives/$representativeSlug")({
   loader: async ({ params }) => {
@@ -222,6 +223,7 @@ function RepresentativeProfile() {
               "Education",
               "Committees",
               "Elections",
+              "Activity",
               "Legislation",
               "Finance",
               "District",
@@ -314,6 +316,12 @@ function RepresentativeProfile() {
               </a>
             )}
           </section>
+
+          <RepresentativeLegislativeIntelligence
+            name={name}
+            bills={bills}
+            relatedContent={relatedContent}
+          />
 
           <section className="rounded-xl border bg-card p-6">
             <span id="legislation" className="scroll-mt-24" />
