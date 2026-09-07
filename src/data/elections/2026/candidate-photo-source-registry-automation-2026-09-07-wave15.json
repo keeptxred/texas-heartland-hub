@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "dallasgop.org",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Dallas County Republican Party 2026 candidate pages to corroborate candidate identity, office, district, campaign website and candidate-linked profile information, and to discover downstream official campaign or candidate-specific portrait sources. Do not approve or reuse a Dallas GOP-hosted image unless item-level provenance and reuse rights are independently documented. Reject logos, party graphics, social-share images, event graphics, placeholders, default avatars, and non-candidate imagery.",
+    "searchHint": "site:dallasgop.org/meet-the-candidates 2026 Texas candidate portrait campaign website",
+    "notes": "Discovered September 7, 2026 during active source expansion. The Dallas County Republican Party Meet the Candidates directory identifies 2026 candidates including Carlos (Charlie) Garza for State Board of Education District 13 and links candidate-specific information. Added as a discovery and corroboration source only; no hosted image receives automatic approval."
+  },
+  {
+    "domain": "gprepublicans.com",
+    "sourceClass": "candidate-linked-political-organization-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Grand Prairie Republican Club leadership pages to corroborate Carlos (Charlie) Garza's identity and public organizational role and to discover downstream candidate-specific portrait or official campaign sources. Do not approve or reuse organization-hosted imagery without item-level provenance and a supported reuse basis. Reject logos, social-share images, event graphics, placeholders, default avatars, and images of other people.",
+    "searchHint": "site:gprepublicans.com Carlos Charlie Garza portrait leadership State Board Education",
+    "notes": "Discovered September 7, 2026 while researching the missing Carlos (Charlie) Garza State Board of Education District 13 portrait. The club leadership page identifies Charlie Garza as president and displays candidate-related imagery, but the source is discovery-only until item-level image rights are established."
+  },
+  {
+    "domain": "dallasnews.com",
+    "sourceClass": "reputable-news-voter-guide",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Dallas Morning News voter-guide candidate pages to corroborate candidate identity, historical candidacy, campaign links, and to discover candidate-supplied portrait leads. A news-hosted portrait may be approved only when the item itself documents candidate-supplied provenance or another supported editorial permission basis; do not infer reuse rights from publication alone. Reject staff photos without permission, generic graphics, logos, placeholders, default avatars, and unrelated imagery.",
+    "searchHint": "site:dallasnews.com/voter-guide Texas candidate headshot campaign supplied portrait",
+    "notes": "Discovered/confirmed September 7, 2026 during current missing-photo research. The voter guide contains a historical Mindy Bumgarner candidate headshot and campaign links. The portrait is not auto-approved because the current page does not by itself establish a reusable rights basis."
+  }
+]
