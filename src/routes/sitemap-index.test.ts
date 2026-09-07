@@ -15,10 +15,11 @@ const advertised = [
   "sitemap-elections.xml",
   "sitemap-government.xml",
   "sitemap-political-figures.xml",
+  "sitemap-political-geography.xml",
+  "sitemap-party-representation.xml",
   "sitemap-legislature.xml",
   "sitemap-committees.xml",
   "sitemap-authors.xml",
-  "sitemap-products.xml",
   "sitemap-images.xml",
 ] as const;
 
@@ -40,11 +41,12 @@ describe("root sitemap availability contract", () => {
     }
   });
 
-  it("keeps bulk crawl-budget sitemaps out of the advertised index", () => {
+  it("keeps bulk and low-priority crawl-budget sitemaps out of the advertised index", () => {
     for (const suppressed of [
       "sitemap-districts.xml",
       "sitemap-representatives.xml",
       "sitemap-bills.xml",
+      "sitemap-products.xml",
     ]) {
       expect(source).not.toContain(`\"${suppressed}\"`);
     }
