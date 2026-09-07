@@ -60,7 +60,30 @@ for (const forecast of forecasts) {
   }
 }
 
-const generatedDiagnostics = (diagnostics.polledRaces ?? []).filter(
+const diagnosticEntries = diagnostics.polledRaces ?? [];
+for (const entry of diagnosticEntries) {
+  if (!raceById.has(entry.raceId)) {
+    errors.push(`Forecast diagnostics reference unknown race ${entry.raceId}.`);
+  }
+
+  const matchedCandidateIds = entry.matchedCandidateIds ?? [];
+  if (entry.matchedCandidateCount !== matchedCandidateIds.length) {
+    errors.push(
+      `Forecast diagnostics for ${entry.raceId} report ${entry.matchedCandidateCount ?? "missing"} matched candidate(s), but list ${matchedCandidateIds.length}.`,
+    );
+  }
+
+  for (const candidateId of matchedCandidateIds) {
+    const candidate = candidateById.get(candidateId);
+    if (!candidate) {
+      errors.push(`Forecast diagnostics for ${entry.raceId} reference unknown matched candidate ${candidateId}.`);
+    } else if (!candidate.raceIds?.includes(entry.raceId)) {
+      errors.push(`Forecast diagnostics candidate ${candidateId} is not linked to ${entry.raceId}.`);
+    }
+  }
+}
+
+const generatedDiagnostics = diagnosticEntries.filter(
   (entry) => entry.outcome === "generated",
 );
 if (diagnostics.totals?.generated !== generatedDiagnostics.length) {
