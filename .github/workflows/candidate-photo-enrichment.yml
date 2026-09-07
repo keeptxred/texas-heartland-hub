@@ -124,23 +124,122 @@ jobs:
             exit "$code"
           fi
       - name: Discover alternate search-provider candidate portraits
-        run: node scripts/elections/discover-candidate-photos-search-providers.mjs
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=30s 4m node scripts/elections/discover-candidate-photos-search-providers.mjs
+          code=$?
+          set -e
+          if [[ "$code" -eq 124 || "$code" -eq 137 || "$code" -eq 143 ]]; then
+            echo "::warning title=Search-provider discovery budget reached::Continuing after the 4-minute optional discovery budget."
+          elif [[ "$code" -ne 0 ]]; then
+            exit "$code"
+          fi
       - name: Discover expanded voter-guide and public-directory portraits
-        run: node scripts/elections/discover-candidate-photos-expanded.mjs
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=30s 12m node scripts/elections/discover-candidate-photos-expanded.mjs
+          code=$?
+          set -e
+          if [[ "$code" -eq 124 || "$code" -eq 137 || "$code" -eq 143 ]]; then
+            echo "::warning title=Expanded voter-guide discovery budget reached::Continuing after the 12-minute optional discovery budget."
+          elif [[ "$code" -ne 0 ]]; then
+            exit "$code"
+          fi
       - name: Discover race-aware multi-engine portraits
-        run: node scripts/elections/discover-candidate-photos-race-aware.mjs
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=30s 4m node scripts/elections/discover-candidate-photos-race-aware.mjs
+          code=$?
+          set -e
+          if [[ "$code" -eq 124 || "$code" -eq 137 || "$code" -eq 143 ]]; then
+            echo "::warning title=Race-aware discovery budget reached::Continuing after the 4-minute optional discovery budget."
+          elif [[ "$code" -ne 0 ]]; then
+            exit "$code"
+          fi
       - name: Discover county media finance and professional portraits
-        run: node scripts/elections/discover-candidate-photos-source-wave.mjs
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=30s 5m node scripts/elections/discover-candidate-photos-source-wave.mjs
+          code=$?
+          set -e
+          if [[ "$code" -eq 124 || "$code" -eq 137 || "$code" -eq 143 ]]; then
+            echo "::warning title=County/professional discovery budget reached::Continuing after the 5-minute optional discovery budget."
+          elif [[ "$code" -ne 0 ]]; then
+            exit "$code"
+          fi
       - name: Discover deep-web document image and archived portraits
-        run: node scripts/elections/discover-candidate-photos-deep-web.mjs
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=30s 4m node scripts/elections/discover-candidate-photos-deep-web.mjs
+          code=$?
+          set -e
+          if [[ "$code" -eq 124 || "$code" -eq 137 || "$code" -eq 143 ]]; then
+            echo "::warning title=Deep-web discovery budget reached::Continuing after the 4-minute optional discovery budget."
+          elif [[ "$code" -ne 0 ]]; then
+            exit "$code"
+          fi
       - name: Discover local public-record and biography portraits
-        run: node scripts/elections/discover-candidate-photos-local-records.mjs
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=30s 4m node scripts/elections/discover-candidate-photos-local-records.mjs
+          code=$?
+          set -e
+          if [[ "$code" -eq 124 || "$code" -eq 137 || "$code" -eq 143 ]]; then
+            echo "::warning title=Local-record discovery budget reached::Continuing after the 4-minute optional discovery budget."
+          elif [[ "$code" -ne 0 ]]; then
+            exit "$code"
+          fi
       - name: Discover verified Wikidata and Wikimedia Commons portraits
-        run: node scripts/elections/discover-candidate-photos-wikimedia.mjs
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=30s 4m node scripts/elections/discover-candidate-photos-wikimedia.mjs
+          code=$?
+          set -e
+          if [[ "$code" -eq 124 || "$code" -eq 137 || "$code" -eq 143 ]]; then
+            echo "::warning title=Wikimedia discovery budget reached::Continuing after the 4-minute optional discovery budget."
+          elif [[ "$code" -ne 0 ]]; then
+            exit "$code"
+          fi
       - name: Discover portraits from previously unused domains only
-        run: node scripts/elections/discover-candidate-photos-new-domains.mjs
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=30s 3m node scripts/elections/discover-candidate-photos-new-domains.mjs
+          code=$?
+          set -e
+          if [[ "$code" -eq 124 || "$code" -eq 137 || "$code" -eq 143 ]]; then
+            echo "::warning title=Unused-domain discovery budget reached::Continuing after the 3-minute optional discovery budget."
+          elif [[ "$code" -ne 0 ]]; then
+            exit "$code"
+          fi
       - name: Discover second-wave portraits from unused campaign and local domains
-        run: node scripts/elections/discover-candidate-photos-new-domains-wave2.mjs
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=30s 3m node scripts/elections/discover-candidate-photos-new-domains-wave2.mjs
+          code=$?
+          set -e
+          if [[ "$code" -eq 124 || "$code" -eq 137 || "$code" -eq 143 ]]; then
+            echo "::warning title=Second-wave unused-domain discovery budget reached::Continuing after the 3-minute optional discovery budget."
+          elif [[ "$code" -ne 0 ]]; then
+            exit "$code"
+          fi
       - name: Remove generic images introduced by any discovery source
         run: node scripts/elections/remove-generic-candidate-photo-entries.mjs
       - name: Apply approved candidate photos
