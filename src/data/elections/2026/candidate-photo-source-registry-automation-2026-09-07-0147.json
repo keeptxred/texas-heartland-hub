@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "texascandidatetracker.com",
+    "sourceClass": "independent-statewide-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Candidate Tracker only to corroborate current Texas candidate identity, office, filing/ballot context, and discover outbound official campaign or public-source links. Do not approve or reuse tracker-hosted imagery without item-level provenance plus an explicit reusable license, documented candidate-supplied media with a narrow editorial-identification basis, explicit permission, or another supported reuse basis. Reject logos, generic election graphics, social-share images, placeholders, default avatars, no-photo assets, and non-candidate imagery.",
+    "searchHint": "site:texascandidatetracker.com 2026 Texas candidate name district campaign website portrait",
+    "notes": "Discovered September 7, 2026 during live missing-portrait research. Texas Candidate Tracker describes itself as an independent, nonpartisan research utility covering statewide, U.S. House, Texas Senate, Texas House, State Board of Education, county, and special-election candidates, and states that listings and links are compiled from official filings, TEC/FEC records, candidate pages, news, and public statements. Its current directory pages expose candidate/status/link fields useful for downstream official-source discovery. Registered strictly as a discovery bridge; tracker-hosted imagery is not automatically approved."
+  }
+]
