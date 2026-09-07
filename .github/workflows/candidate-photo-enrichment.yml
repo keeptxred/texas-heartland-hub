@@ -111,7 +111,18 @@ jobs:
       - name: Discover directory candidate portraits
         run: node scripts/elections/discover-candidate-photos-directories.mjs
       - name: Discover linked and public-source candidate portraits
-        run: node scripts/elections/discover-candidate-photos.mjs
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=30s 12m node scripts/elections/discover-candidate-photos.mjs
+          code=$?
+          set -e
+          if [[ "$code" -eq 124 || "$code" -eq 137 || "$code" -eq 143 ]]; then
+            echo "::warning title=Broad candidate-photo discovery budget reached::Continuing with the remaining specialized discovery passes after the 12-minute broad-search budget."
+          elif [[ "$code" -ne 0 ]]; then
+            exit "$code"
+          fi
       - name: Discover alternate search-provider candidate portraits
         run: node scripts/elections/discover-candidate-photos-search-providers.mjs
       - name: Discover expanded voter-guide and public-directory portraits
