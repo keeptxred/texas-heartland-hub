@@ -18,6 +18,17 @@
     { "fullName": "L.D. Howard", "raceId": "race-2026-texas-house-124", "filingStatus": "rejected" },
     { "fullName": "Lisa Emerson", "raceId": "race-2026-texas-house-126", "filingStatus": "rejected" },
     { "fullName": "Jason Wolff", "raceId": "race-2026-criminal-district-attorney-bexar-county", "filingStatus": "accepted", "ballotAccessStatus": "qualified" },
-    { "fullName": "Kirsta Melton", "raceId": "race-2026-criminal-district-attorney-hays-county", "filingStatus": "accepted", "ballotAccessStatus": "qualified" }
+    { "fullName": "Kirsta Melton", "raceId": "race-2026-criminal-district-attorney-hays-county", "filingStatus": "accepted", "ballotAccessStatus": "qualified" },
+    {
+      "fullName": "CARLOS (CHARLIE) GARZA",
+      "raceId": "race-2026-state-board-of-education-13",
+      "party": "republican",
+      "ballotAccessStatus": "removed",
+      "sourceName": "Republican Party of Texas — 2026 Primary Ballot Filing; Tarrant County — 2026 Republican Primary Results",
+      "sourceUrl": "https://texasgop.org/wp-content/uploads/2025/12/Republican-Primary-Ballot-Filing-2026-Publish-25.pdf",
+      "secondarySourceUrl": "https://www.tarrantcountytx.gov/content/dam/main/elections/2026/pm26/reports/cumulative_rep_PM26_03032026_7pm.pdf",
+      "evidence": "The Republican Party of Texas filing list identifies April Williams Moore for State Board of Education District 13, and Tarrant County's March 3, 2026 Republican primary results show April Williams Moore as the sole District 13 Republican candidate. Carlos (Charlie) Garza does not appear on the 2026 Republican primary ballot for this race. This entry records ballot-access removal only and does not assert a rejected or withdrawn filing status.",
+      "retrievedAt": "2026-09-07T17:21:00Z"
+    }
   ]
 }

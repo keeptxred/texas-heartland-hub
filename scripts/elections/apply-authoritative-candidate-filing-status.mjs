@@ -21,7 +21,10 @@ const ambiguous = [];
 let changed = 0;
 
 for (const entry of authority.entries ?? []) {
-  if (!validFilingStatuses.has(entry.filingStatus)) {
+  if (!entry.filingStatus && !entry.ballotAccessStatus) {
+    throw new Error(`Authority entry for ${entry.fullName} must provide filingStatus and/or ballotAccessStatus.`);
+  }
+  if (entry.filingStatus && !validFilingStatuses.has(entry.filingStatus)) {
     throw new Error(`Unsupported filingStatus in authority registry: ${entry.filingStatus}`);
   }
   if (entry.ballotAccessStatus && !validBallotAccessStatuses.has(entry.ballotAccessStatus)) {
@@ -53,7 +56,7 @@ for (const entry of authority.entries ?? []) {
     filingStatus: candidate.filingStatus ?? null,
     ballotAccessStatus: candidate.ballotAccessStatus ?? null,
   };
-  if (candidate.filingStatus !== entry.filingStatus) {
+  if (entry.filingStatus && candidate.filingStatus !== entry.filingStatus) {
     candidate.filingStatus = entry.filingStatus;
     changed += 1;
   }
@@ -66,6 +69,10 @@ for (const entry of authority.entries ?? []) {
     fullName: candidate.fullName,
     raceId: candidate.primaryRaceId,
     party: candidate.party ?? null,
+    authoritySourceName: entry.sourceName ?? authority.sourceName ?? null,
+    authoritySourceUrl: entry.sourceUrl ?? authority.sourceUrl ?? null,
+    authoritySecondarySourceUrl: entry.secondarySourceUrl ?? null,
+    evidence: entry.evidence ?? null,
     before,
     after: {
       filingStatus: candidate.filingStatus ?? null,
