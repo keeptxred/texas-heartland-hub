@@ -8,7 +8,8 @@ const source = readFileSync(resolve(HERE, "../routes/laws_.constitutional-amendm
 
 describe("Texas constitutional amendment authority page", () => {
   it("uses the canonical apex and a current verified date", () => {
-    expect(source).toContain("https://keeptxred.com/laws/constitutional-amendments");
+    expect(source).toContain("const SITE_URL = 'https://keeptxred.com'");
+    expect(source).toContain("const CANONICAL = `${SITE_URL}/laws/constitutional-amendments`");
     expect(source).toContain("verified September 6, 2026");
     expect(source).toContain("dateModified: '2026-09-06'");
   });
