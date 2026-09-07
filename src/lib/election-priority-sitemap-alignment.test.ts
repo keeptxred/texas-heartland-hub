@@ -15,21 +15,31 @@ function primaryElectionPaths() {
   return [...match[1].matchAll(/"([^"\n]+)"/g)].map((item) => item[1]);
 }
 
+function priorityElectionPaths() {
+  return priorityUrls
+    .map((url) => new URL(url).pathname.replace(/\/+$/, "") || "/")
+    .filter((path) => path.startsWith("/elections/"));
+}
+
 describe("priority election sitemap ownership", () => {
   it("gives every priority election URL primary ownership in sitemap-elections.xml", () => {
     const primary = new Set(primaryElectionPaths());
-    const priorityElectionPaths = priorityUrls
-      .map((url) => new URL(url).pathname.replace(/\/+$/, "") || "/")
-      .filter((path) => path.startsWith("/elections/"));
+    const priority = priorityElectionPaths();
 
-    expect(priorityElectionPaths.length).toBeGreaterThan(0);
-    for (const path of priorityElectionPaths) {
+    expect(priority.length).toBeGreaterThan(0);
+    for (const path of priority) {
       expect(primary.has(path), `${path} is in the derivative priority sitemap but not sitemap-elections.xml`).toBe(true);
     }
   });
 
   it("keeps the redirecting legacy election root out of the primary election sitemap", () => {
     expect(primaryElectionPaths()).not.toContain("/elections");
+  });
+
+  it("spends the scarce priority-overlay slot on the still-unindexed forecast page", () => {
+    const priority = priorityElectionPaths();
+    expect(priority).toContain("/elections/forecast");
+    expect(priority).not.toContain("/elections/methodology");
   });
 
   it("keeps methodology explicitly in the primary election crawl queue", () => {
