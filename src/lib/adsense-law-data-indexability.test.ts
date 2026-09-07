@@ -11,10 +11,15 @@ const lawRoute = fs.readFileSync(new URL("../routes/laws.topic.$slug.tsx", impor
 const dataRoute = fs.readFileSync(new URL("../routes/data.$slug.tsx", import.meta.url), "utf8");
 
 describe("AdSense law/data detail indexability", () => {
-  it("keeps current underdeveloped law topics out of the indexable cohort", () => {
+  it("keeps underdeveloped law topics out while allowing readiness-qualified topics in", () => {
+    const indexableTopics = LAW_TOPICS.filter(isLawTopicIndexable);
+    const underdevelopedTopics = LAW_TOPICS.filter((topic) => !isLawTopicIndexable(topic));
+
     expect(MIN_LAW_TOPIC_WORDS).toBe(700);
     expect(LAW_TOPICS.length).toBeGreaterThan(0);
-    expect(LAW_TOPICS.filter(isLawTopicIndexable)).toEqual([]);
+    expect(indexableTopics.some((topic) => topic.slug === "property-tax-law")).toBe(true);
+    expect(underdevelopedTopics.length).toBeGreaterThan(0);
+    expect(indexableTopics.length).toBeLessThan(LAW_TOPICS.length);
   });
 
   it("keeps underdeveloped data details out while allowing readiness-qualified details in", () => {
