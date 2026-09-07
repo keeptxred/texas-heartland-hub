@@ -55,7 +55,7 @@ describe("priority sitemap inventory", () => {
       "/",
       "/elections/2026",
       "/elections/candidates",
-      "/elections/methodology",
+      "/elections/forecast",
       "/texas-legislature",
       "/texas-legislature/votes",
       "/texas-legislature/current-session",
