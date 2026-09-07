@@ -42,7 +42,7 @@ function ConstitutionalAmendmentsTracker() {
       <nav className="text-sm text-muted-foreground" aria-label="Breadcrumb"><Link to="/">Home</Link> / <Link to="/laws">Texas Laws</Link> / Constitutional Amendments</nav>
       <header className="mt-6 border-b pb-8">
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Texas Constitution · statewide ballot reference</p>
-        <h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">Texas Constitutional Amendments: 2026 Status & How the Process Works</h1>
+        <h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">Texas Constitutional Amendments Tracker</h1>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-muted-foreground">A maintained reference for the current statewide amendment-ballot status, how the Texas Legislature sends proposed constitutional changes to voters, when approved amendments take effect, and where to verify official ballot language and historical results.</p>
       </header>
 
