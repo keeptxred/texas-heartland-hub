@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { ALL_GUIDES } from "@/data/all-guides";
+import { GUIDE_MEDIA } from "@/data/guide-media";
 import { isLawGuideIndexable, lawGuidesForTopic, validateLawGuideMeta } from "@/lib/law-guides";
+import { isSupportingGuideIndexable, supportingGuideWordCount } from "@/lib/supporting-guide-indexability";
 
 const EXPECTED = [
   "texas-criminal-trespass-law",
@@ -15,6 +17,9 @@ const EXPECTED = [
   "texas-failure-to-identify-law",
 ];
 
+const expectedUpdated = (slug: string) =>
+  slug === "texas-failure-to-identify-law" ? "2026-09-07" : "2026-08-13";
+
 describe("Everyday Criminal Law evergreen guide registry", () => {
   it("registers exactly ten newly verified criminal-law guides", () => {
     const verified = lawGuidesForTopic("criminal").filter((guide) => guide.status === "verified");
@@ -24,7 +29,7 @@ describe("Everyday Criminal Law evergreen guide registry", () => {
 
     for (const meta of verified) {
       expect(meta.canonicalPath).toBe(`/guides/${meta.slug}`);
-      expect(meta.lastVerified).toBe("2026-08-13");
+      expect(meta.lastVerified).toBe(expectedUpdated(meta.slug));
       expect(meta.statutes?.length).toBeGreaterThan(0);
       expect(meta.sources?.some((source) => source.primary)).toBe(true);
       expect(validateLawGuideMeta(meta)).toEqual([]);
@@ -37,7 +42,7 @@ describe("Everyday Criminal Law evergreen guide registry", () => {
       const guide = ALL_GUIDES[slug];
       expect(guide).toBeDefined();
       expect(guide.slug).toBe(slug);
-      expect(guide.updated).toBe("2026-08-13");
+      expect(guide.updated).toBe(expectedUpdated(slug));
       expect(guide.pillarHref).toBe("/laws");
       expect(guide.keyTakeaways.length).toBeGreaterThanOrEqual(4);
       expect(guide.sections.length).toBeGreaterThanOrEqual(4);
@@ -64,5 +69,22 @@ describe("Everyday Criminal Law evergreen guide registry", () => {
     expect(theftText).toContain("SB 1300");
     expect(identificationText).toContain("lawfully arrested");
     expect(identificationText).toContain("motor-vehicle");
+  });
+
+  it("makes the police-identification guide search-ready, indexable and illustrated", () => {
+    const guide = ALL_GUIDES["texas-failure-to-identify-law"];
+    const meta = lawGuidesForTopic("criminal").find((item) => item.slug === guide.slug);
+    const media = GUIDE_MEDIA[guide.slug];
+
+    expect(guide.title).toContain("Show ID to Police in Texas");
+    expect(supportingGuideWordCount(guide)).toBeGreaterThanOrEqual(1200);
+    expect(isSupportingGuideIndexable(guide)).toBe(true);
+    expect(meta?.statutes).toContain("Texas Transportation Code § 521.025");
+    expect(guide.sources.some((source) => source.url.includes("artSec=521.025"))).toBe(true);
+    expect(guide.related.some((item) => item.href === "/laws")).toBe(true);
+    expect(guide.related.some((item) => item.href === "/texas-law-enforcement")).toBe(true);
+    expect(guide.related.some((item) => item.href === "/news/texas-policing-agencies-compared")).toBe(true);
+    expect(media?.hero?.src).toContain("images.pexels.com");
+    expect(media?.inline?.length).toBeGreaterThanOrEqual(1);
   });
 });

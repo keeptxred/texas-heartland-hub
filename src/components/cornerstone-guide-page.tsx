@@ -1,6 +1,8 @@
+import { Fragment } from "react";
 import { Link } from "@tanstack/react-router";
 import { LawDisclaimer, LawQuickAnswer, LawStatuteCard } from "@/components/laws/law-guide-ui";
 import type { CornerstoneGuide } from "@/data/cornerstone-guides";
+import { GUIDE_MEDIA, type GuidePhoto } from "@/data/guide-media";
 import { ARTICLES } from "@/data/articles";
 import { LAW_TOPICS, getLawGuideMeta, isLawGuideIndexable } from "@/lib/law-guides";
 import {
@@ -19,11 +21,56 @@ function isRelatedGuideLinkPublic(href: string): boolean {
   return !article || isStaticArticleIndexable(article);
 }
 
+function GuidePhotoFigure({ photo, priority = false }: { photo: GuidePhoto; priority?: boolean }) {
+  return (
+    <figure className="my-8 overflow-hidden rounded-xl border bg-card">
+      <img
+        src={photo.src}
+        alt={photo.alt}
+        loading={priority ? "eager" : "lazy"}
+        decoding="async"
+        className="aspect-[16/9] w-full object-cover"
+      />
+      <figcaption className="space-y-1 px-4 py-3 text-xs leading-5 text-muted-foreground">
+        <p>{photo.caption}</p>
+        <p>
+          Photo:{" "}
+          <a
+            href={photo.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-foreground underline underline-offset-4 hover:text-primary"
+          >
+            {photo.credit}
+          </a>
+          {photo.licenseUrl ? (
+            <>
+              {" · "}
+              <a
+                href={photo.licenseUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-4 hover:text-primary"
+              >
+                license
+              </a>
+            </>
+          ) : null}
+        </p>
+      </figcaption>
+    </figure>
+  );
+}
+
 export function cornerstoneGuideHead(guide: CornerstoneGuide) {
   const lawMeta = getLawGuideMeta(guide.slug);
+  const media = GUIDE_MEDIA[guide.slug];
   const url = lawMeta ? lawGuideCanonicalUrl(guide.slug) : `${SITE_URL}/guides/${guide.slug}`;
   const title = lawMeta ? lawGuideSeoTitle(guide.title) : guide.title;
   const description = lawMeta ? lawGuideMetaDescription(guide.dek) : guide.dek;
+  const articleImages = [media?.hero?.src, ...(media?.inline ?? []).map((photo) => photo.src)].filter(
+    (value): value is string => Boolean(value),
+  );
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -38,6 +85,7 @@ export function cornerstoneGuideHead(guide: CornerstoneGuide) {
       "@type": "Thing",
       name: lawMeta ? LAW_TOPICS[lawMeta.topic].label : guide.pillarLabel,
     },
+    ...(articleImages.length ? { image: articleImages } : {}),
     inLanguage: "en-US",
   };
   const faqJsonLd = {
@@ -70,6 +118,15 @@ export function cornerstoneGuideHead(guide: CornerstoneGuide) {
       { property: "og:description", content: description },
       { property: "og:url", content: url },
       { property: "og:type", content: "article" },
+      { name: "twitter:card", content: media?.hero ? "summary_large_image" : "summary" },
+      ...(media?.hero
+        ? [
+            { property: "og:image", content: media.hero.src },
+            { property: "og:image:alt", content: media.hero.alt },
+            { name: "twitter:image", content: media.hero.src },
+            { name: "twitter:image:alt", content: media.hero.alt },
+          ]
+        : []),
       {
         name: "robots",
         content:
@@ -88,6 +145,7 @@ export function cornerstoneGuideHead(guide: CornerstoneGuide) {
 
 export function CornerstoneGuidePage({ guide }: { guide: CornerstoneGuide }) {
   const lawMeta = getLawGuideMeta(guide.slug);
+  const media = GUIDE_MEDIA[guide.slug];
   const wordCount = [
     ...guide.intro,
     ...guide.sections.flatMap((section) => [...(section.paragraphs ?? []), ...(section.bullets ?? [])]),
@@ -163,6 +221,8 @@ export function CornerstoneGuidePage({ guide }: { guide: CornerstoneGuide }) {
         <span>About {readingMinutes} min read</span>
       </div>
 
+      {media?.hero ? <GuidePhotoFigure photo={media.hero} priority /> : null}
+
       {lawMeta ? (
         <div className="mt-8 space-y-5">
           <LawQuickAnswer
@@ -190,30 +250,36 @@ export function CornerstoneGuidePage({ guide }: { guide: CornerstoneGuide }) {
         ))}
       </div>
 
-      {guide.sections.map((section) => (
-        <section key={section.heading} className="mt-10">
-          <h2 className="font-display text-3xl tracking-tight border-b border-border pb-2">
-            {section.heading}
-          </h2>
-          {section.paragraphs?.length ? (
-            <div className="mt-4 space-y-5 font-serif text-base md:text-[17px] leading-8 text-foreground/95">
-              {section.paragraphs.map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
-            </div>
-          ) : null}
-          {section.bullets?.length ? (
-            <ul className="mt-4 space-y-3 text-base leading-7">
-              {section.bullets.map((item) => (
-                <li key={item} className="flex gap-3">
-                  <span className="text-primary font-bold">•</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          ) : null}
-        </section>
-      ))}
+      {guide.sections.map((section, sectionIndex) => {
+        const inlinePhoto = media?.inline?.find((photo) => photo.afterSection === sectionIndex + 1);
+        return (
+          <Fragment key={section.heading}>
+            <section className="mt-10">
+              <h2 className="font-display text-3xl tracking-tight border-b border-border pb-2">
+                {section.heading}
+              </h2>
+              {section.paragraphs?.length ? (
+                <div className="mt-4 space-y-5 font-serif text-base md:text-[17px] leading-8 text-foreground/95">
+                  {section.paragraphs.map((paragraph) => (
+                    <p key={paragraph}>{paragraph}</p>
+                  ))}
+                </div>
+              ) : null}
+              {section.bullets?.length ? (
+                <ul className="mt-4 space-y-3 text-base leading-7">
+                  {section.bullets.map((item) => (
+                    <li key={item} className="flex gap-3">
+                      <span className="text-primary font-bold">•</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </section>
+            {inlinePhoto ? <GuidePhotoFigure photo={inlinePhoto} /> : null}
+          </Fragment>
+        );
+      })}
 
       <section className="mt-12">
         <h2 className="font-display text-3xl tracking-tight border-b border-border pb-2">

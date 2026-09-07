@@ -13,7 +13,8 @@ export const CRIMINAL_BATCH9_LAW_GUIDES: readonly LawGuideMeta[] = Object.values
   statutes: guide.sources
     .filter((source) =>
       source.label.includes("Texas Penal Code") ||
-      source.label.includes("Texas Code of Criminal Procedure"),
+      source.label.includes("Texas Code of Criminal Procedure") ||
+      source.label.includes("Texas Transportation Code"),
     )
     .map((source) => source.label),
   sources: guide.sources.map((source) => ({ ...source, primary: isPrimaryAuthority(source.url) })),
