@@ -8,6 +8,7 @@ import { GUN_CARRY_LAW_TOPIC } from "@/data/law-topic-gun-carry-authority";
 import { SELF_DEFENSE_USE_OF_FORCE_LAW_TOPIC } from "@/data/law-topic-self-defense-authority";
 import { PARENTAL_RIGHTS_EDUCATION_LAW_TOPIC } from "@/data/law-topic-parental-rights-education-authority";
 import { EMINENT_DOMAIN_PROPERTY_RIGHTS_LAW_TOPIC } from "@/data/law-topic-eminent-domain-authority";
+import { ABORTION_LAW_TOPIC } from "@/data/law-topic-abortion-authority";
 
 export const LAW_TOPIC_AUTHORITIES: readonly LawTopic[] = [
   PROPERTY_TAX_LAW_TOPIC,
@@ -19,6 +20,7 @@ export const LAW_TOPIC_AUTHORITIES: readonly LawTopic[] = [
   SELF_DEFENSE_USE_OF_FORCE_LAW_TOPIC,
   PARENTAL_RIGHTS_EDUCATION_LAW_TOPIC,
   EMINENT_DOMAIN_PROPERTY_RIGHTS_LAW_TOPIC,
+  ABORTION_LAW_TOPIC,
 ];
 
 export const LAW_TOPIC_AUTHORITY_BY_SLUG = new Map(
