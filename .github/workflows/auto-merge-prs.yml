@@ -103,6 +103,11 @@ jobs:
             echo "Dispatched current-main broken-link audit verification."
           fi
 
+          if grep -Eq '^(\.github/workflows/candidate-photo-enrichment\.yml|scripts/elections/.*(candidate-photo|photo-findings|senate-photo|filing-status).*|src/data/elections/2026/(candidate-photo-source-registry.*\.json|candidate-photo-assets\.json|candidate-supreme-court-media\.json|candidate-filing-status-authority\.json))$' <<<"$changed_files"; then
+            gh workflow run candidate-photo-enrichment.yml --ref main --repo "$REPOSITORY"
+            echo "Dispatched current-main candidate photo enrichment after protected verification."
+          fi
+
           main_sha="$(gh api "repos/$REPOSITORY/git/ref/heads/main" --jq '.object.sha')"
           if [[ "$main_sha" != "$merged_sha" ]]; then
             echo "A newer main revision exists ($main_sha); skipping stale deployment of $merged_sha."
