@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { LAW_TOPICS } from "@/data/law-topics";
 import { TEXAS_DATA_SETS } from "@/data/texas-data-catalog";
 import { ACCOUNTABILITY_DATA_SETS } from "@/data/accountability-data-catalog";
-import { isLawTopicIndexable, MIN_LAW_TOPIC_WORDS } from "@/lib/law-topic-indexability";
+import { isLawTopicIndexable, lawTopicWordCount, MIN_LAW_TOPIC_WORDS } from "@/lib/law-topic-indexability";
 import { isDataDetailIndexable, MIN_DATA_DETAIL_WORDS } from "@/lib/data-detail-indexability";
 
 const sitemap = fs.readFileSync(new URL("../routes/sitemap-pages[.]xml.ts", import.meta.url), "utf8");
@@ -11,15 +11,28 @@ const lawRoute = fs.readFileSync(new URL("../routes/laws.topic.$slug.tsx", impor
 const dataRoute = fs.readFileSync(new URL("../routes/data.$slug.tsx", import.meta.url), "utf8");
 
 describe("AdSense law/data detail indexability", () => {
-  it("keeps underdeveloped law topics out while allowing readiness-qualified topics in", () => {
+  it("allows the mature canonical law cohort while still rejecting a deliberately thin topic", () => {
     const indexableTopics = LAW_TOPICS.filter(isLawTopicIndexable);
-    const underdevelopedTopics = LAW_TOPICS.filter((topic) => !isLawTopicIndexable(topic));
+    const deliberatelyThinTopic = {
+      ...LAW_TOPICS[0],
+      slug: "thin-law-topic-fixture",
+      title: "Thin law topic fixture",
+      dek: "Intentionally incomplete fixture used to prove the canonical readiness gate still rejects thin legal content.",
+      quickAnswer: "This intentionally short answer does not satisfy the minimum depth required for an indexable Texas law authority page.",
+      appliesTo: ["Regression testing"],
+      framework: ["Thin fixture."],
+      keyRules: ["Thin fixture."],
+      questions: [],
+      sources: [],
+      related: [],
+    };
 
     expect(MIN_LAW_TOPIC_WORDS).toBe(700);
     expect(LAW_TOPICS.length).toBeGreaterThan(0);
     expect(indexableTopics.some((topic) => topic.slug === "property-tax-law")).toBe(true);
-    expect(underdevelopedTopics.length).toBeGreaterThan(0);
-    expect(indexableTopics.length).toBeLessThan(LAW_TOPICS.length);
+    expect(indexableTopics).toHaveLength(LAW_TOPICS.length);
+    expect(lawTopicWordCount(deliberatelyThinTopic)).toBeLessThan(MIN_LAW_TOPIC_WORDS);
+    expect(isLawTopicIndexable(deliberatelyThinTopic)).toBe(false);
   });
 
   it("keeps underdeveloped data details out while allowing readiness-qualified details in", () => {
