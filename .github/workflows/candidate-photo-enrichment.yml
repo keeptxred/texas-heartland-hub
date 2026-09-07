@@ -1,4 +1,5 @@
 name: Candidate photo enrichment
+# Trigger refresh: September 7, 2026 current-main source expansion replay.
 
 on:
   workflow_dispatch:
