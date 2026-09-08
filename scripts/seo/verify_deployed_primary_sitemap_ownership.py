@@ -22,6 +22,47 @@ SUPPRESSED_BULK_SITEMAPS = {
     f"{SITE_ORIGIN}/sitemap-bills.xml",
 }
 
+DMV_EVERGREEN_PATHS = {
+    "/dmv",
+    "/dmv/cdl",
+    "/dmv/cdl-classes",
+    "/dmv/cdl-endorsements",
+    "/dmv/change-address",
+    "/dmv/dps-appointments",
+    "/dmv/driver-license",
+    "/dmv/driver-license-documents",
+    "/dmv/driver-license-renewal",
+    "/dmv/forms-downloads",
+    "/dmv/identification-card",
+    "/dmv/license-status",
+    "/dmv/real-id",
+    "/dmv/replace-lost-license",
+    "/dmv/texas-dmv-vs-dps",
+    "/vehicles/auto-insurance-requirements",
+    "/vehicles/bonded-titles",
+    "/vehicles/buying-a-car",
+    "/vehicles/buying-selling",
+    "/vehicles/commercial-fleet-irp",
+    "/vehicles/disabled-parking",
+    "/vehicles/duplicate-titles",
+    "/vehicles/farm-antique-specialty",
+    "/vehicles/financial-responsibility",
+    "/vehicles/inspections",
+    "/vehicles/inspections-emissions",
+    "/vehicles/liens-duplicate-corrected-titles",
+    "/vehicles/new-residents",
+    "/vehicles/personalized-plates",
+    "/vehicles/plates",
+    "/vehicles/private-party-sales",
+    "/vehicles/registration",
+    "/vehicles/registration-fees-taxes",
+    "/vehicles/renewal",
+    "/vehicles/salvage-rebuilt-titles",
+    "/vehicles/selling-a-car",
+    "/vehicles/temporary-tags",
+    "/vehicles/title-transfer",
+}
+
 EXPECTED_PRIMARY_OWNER = {
     f"{SITE_ORIGIN}/find-representative": f"{SITE_ORIGIN}/sitemap-elections.xml",
     f"{SITE_ORIGIN}/bills": f"{SITE_ORIGIN}/sitemap-legislature.xml",
@@ -31,6 +72,10 @@ EXPECTED_PRIMARY_OWNER = {
     f"{SITE_ORIGIN}/laws": f"{SITE_ORIGIN}/sitemap-pages.xml",
     f"{SITE_ORIGIN}/texas-legislature": f"{SITE_ORIGIN}/sitemap-pages.xml",
     f"{SITE_ORIGIN}/elections/2026": f"{SITE_ORIGIN}/sitemap-elections.xml",
+    **{
+        f"{SITE_ORIGIN}{path}": f"{SITE_ORIGIN}/sitemap-dmv.xml"
+        for path in DMV_EVERGREEN_PATHS
+    },
 }
 
 
