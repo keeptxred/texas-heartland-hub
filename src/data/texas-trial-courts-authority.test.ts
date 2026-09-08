@@ -56,9 +56,10 @@ describe("Texas trial courts authority guide", () => {
     expect(sources).toContain("HB00016F");
   });
 
-  it("wires an indexable canonical route into the government sitemap", () => {
+  it("wires an indexable canonical route into the judiciary cluster and government sitemap", () => {
     const route = readFileSync("src/routes/texas-government.texas-trial-courts.tsx", "utf8");
     const component = readFileSync("src/components/texas-trial-courts-authority-page.tsx", "utf8");
+    const courtsHub = readFileSync("src/components/texas-courts-authority-page.tsx", "utf8");
     const sitemap = readFileSync("src/routes/sitemap-government[.]xml.ts", "utf8");
 
     expect(route).toContain(routePath);
@@ -66,6 +67,7 @@ describe("Texas trial courts authority guide", () => {
     expect(component).toContain('name: "robots", content: "index, follow, max-image-preview:large"');
     expect(component).toContain("FAQPage");
     expect(component).toContain("Texas Judicial Directory");
+    expect(courtsHub).toContain(routePath);
     expect(sitemap).toContain(routePath);
   });
 });
