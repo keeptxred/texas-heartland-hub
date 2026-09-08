@@ -34,7 +34,7 @@ describe("Texas judicial selection expanded authority", () => {
     expect(JUDICIAL_SELECTION_TIMELINE.length).toBeGreaterThanOrEqual(12);
     const years = JUDICIAL_SELECTION_TIMELINE.map((item) => item.year).join(" ");
     expect(years).toContain("1836");
-    expect(years).toContain("1850");
+    expect(years).toContain("1851");
     expect(years).toContain("1869");
     expect(years).toContain("1876");
     expect(years).toContain("2019");
