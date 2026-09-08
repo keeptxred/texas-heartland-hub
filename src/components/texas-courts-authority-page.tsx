@@ -93,6 +93,7 @@ export function TexasCourtsAuthorityPage() {
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <a href="#court-directory" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">All 15 appellate courts</a>
+          <Link to="/texas-government/texas-trial-courts" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Texas trial courts</Link>
           <a href="#appeal-paths" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Where appeals go</a>
           <a href="#history" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Appellate history</a>
           <Link to="/texas-government/judicial-selection-elections" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">How judges are chosen</Link>
@@ -282,6 +283,7 @@ export function TexasCourtsAuthorityPage() {
         <SectionHeading eyebrow="Continue the authority cluster" title="Related Texas judiciary guides" />
         <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {[
+            ["Texas trial courts", "District, county, probate, justice, municipal and Business Court jurisdiction, common case starts and appeal routes.", "/texas-government/texas-trial-courts"],
             ["Supreme Court history", "Institutional history, current court, justices, landmark cases, and historical roster.", "/texas-government/texas-supreme-court-history"],
             ["Court of Criminal Appeals history", "Texas's separate criminal high court, current bench, cases, and presiding-judge lineage.", "/texas-government/court-of-criminal-appeals-history"],
             ["Judicial selection and elections", "How Texas chooses judges, fills vacancies, sets qualifications, and debates reform.", "/texas-government/judicial-selection-elections"],
