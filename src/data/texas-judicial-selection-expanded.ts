@@ -90,17 +90,17 @@ export const JUDICIAL_SELECTION_TIMELINE = [
   {
     year: "1836",
     title: "The Republic begins with an appointment model",
-    text: "The Republic of Texas did not begin with today's statewide judicial ballot. Its Supreme Court structure used a chief justice selected through the Republic's political institutions and district judges serving in the appellate structure.",
+    text: "The Republic of Texas did not begin with today's statewide judicial ballot. Congress appointed the Supreme Court chief justice, while district judges served as associate justices in the Republic's appellate structure.",
   },
   {
     year: "1845",
-    title: "Statehood creates another judicial-selection system",
-    text: "The first state constitution reorganized the judiciary after annexation, continuing the pattern of constitutional redesign rather than establishing one permanent method of judicial selection.",
+    title: "Statehood keeps Supreme Court selection appointive",
+    text: "Under the first state constitution, the governor appointed Supreme Court justices. That appointive period lasted until election of the justices transferred to voters in 1851.",
   },
   {
-    year: "1850",
-    title: "Texas moves major judgeships toward popular election",
-    text: "A constitutional amendment moved Supreme Court and district judges toward direct popular election, making voter selection a central feature of the state judiciary before the Civil War.",
+    year: "1851",
+    title: "Supreme Court election transfers to Texas voters",
+    text: "Texas moved the Supreme Court from gubernatorial appointment to direct popular election, making voter selection a central feature of the state judiciary before the Civil War.",
   },
   {
     year: "1866",
@@ -125,7 +125,7 @@ export const JUDICIAL_SELECTION_TIMELINE = [
   {
     year: "1995",
     title: "Judicial Campaign Fairness Act regulates campaign finance",
-    text: "Texas enacted campaign-finance rules specifically aimed at judicial races, reflecting long-running concern about the relationship between elected judges, campaign fundraising, and public confidence.",
+    text: "Texas enacted judicial-specific campaign-finance restrictions, including contribution rules, reflecting long-running concern about the relationship between elected judges, campaign fundraising, and public confidence.",
   },
   {
     year: "2017–2020",
@@ -224,5 +224,6 @@ export const JUDICIAL_SELECTION_SOURCES = [
   { href: "https://www.txcourts.gov/tcjs/reports/", label: "Texas Commission on Judicial Selection: Reports" },
   { href: "https://www.txcourts.gov/media/1450219/201230_tcjs-final-report_compressed.pdf", label: "Texas Commission on Judicial Selection: 2020 Final Report" },
   { href: "https://www.sos.state.tx.us/elections/laws/advisory2020-29.shtml", label: "Texas Secretary of State: elimination of straight-party voting" },
+  { href: "https://www.ethics.state.tx.us/resources/judicial/FairActJudicial.php", label: "Texas Ethics Commission: Judicial Campaign Fairness Act Guidelines" },
   { href: "https://lrl.texas.gov/committees/reportDisplay.cfm?passSearchParams=&subject=Judicial+selection&subjectID=4246", label: "Legislative Reference Library: judicial-selection studies" },
 ] as const;
