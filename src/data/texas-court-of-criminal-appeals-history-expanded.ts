@@ -216,5 +216,6 @@ export const CCA_SOURCES = [
   { href: "https://www.tshaonline.org/handbook/entries/texas-court-of-criminal-appeals", label: "Handbook of Texas: Texas Court of Criminal Appeals" },
   { href: "https://cemetery.texas.gov/locate-a-plot/plotholder/sharon-keller", label: "Texas State Cemetery: Sharon Keller biography" },
   { href: "https://www.texasbar.com/AM/Template.cfm?ContentID=9806&Section=Texas_Legal_Legends&Template=%2FCM%2FHTMLDisplay.cfm", label: "State Bar of Texas: Morris L. Overstreet legal legend" },
+  { href: "https://www.wichita.edu/academics/fairmount_las/whatshappening/2023hof/Sturns.php", label: "Wichita State University: Louis E. Sturns biography" },
   { href: "https://texashistory.unt.edu/ark:/67531/metapth1760437/m1/479/", label: "Texas Almanac archive: Court of Criminal Appeals presiding-judge history" },
 ] as const;
