@@ -24,6 +24,7 @@ const SAMPLE = Number(process.env.SEO_SAMPLE || 60);
 const PRIORITY_SITEMAP = "/sitemap-priority.xml";
 const MAX_PRIORITY_URLS = 30;
 const DERIVATIVE_SITEMAPS = new Set(["/sitemap-news.xml", "/sitemap-images.xml", PRIORITY_SITEMAP]);
+const ALWAYS_LIVE_CHECK_SITEMAPS = new Set(["/sitemap-pages.xml", "/sitemap-dmv.xml"]);
 const DISALLOWED = [/\?/, /#/, /^\/admin/, /^\/api\//, /^\/cart/, /^\/shop\/checkout/, /^\/preview\//, /^\/hubs/, /^\/email\//];
 const INDEXABLE_PRIORITY_PATHS = [
   "/contact-legislators",
@@ -31,6 +32,7 @@ const INDEXABLE_PRIORITY_PATHS = [
   "/laws",
   "/bills",
   "/texas-legislature",
+  "/dmv",
 ];
 const REDIRECT_ALIASES = [
   "/candidate-guides",
@@ -146,15 +148,17 @@ for (const { loc } of all.filter((entry) => entry.sitemap === "/sitemap-evergree
   }
 }
 
-// 5. live status / canonical / robots on every static page, every curated
+// 5. live status / canonical / robots on every static/DMV page, every curated
 // priority URL, and a sample of the remaining primary URLs. The Set keeps
-// overlap between the priority feed and primary sitemaps from double-fetching.
-const pageUrls = primary.filter((entry) => entry.sitemap === "/sitemap-pages.xml").map((e) => e.loc);
+// overlap between discovery feeds and primary sitemaps from double-fetching.
+const alwaysLiveCheckedUrls = primary
+  .filter((entry) => ALWAYS_LIVE_CHECK_SITEMAPS.has(entry.sitemap))
+  .map((entry) => entry.loc);
 const otherPrimaryUrls = [...new Set(
-  primary.filter((entry) => entry.sitemap !== "/sitemap-pages.xml").map((e) => e.loc),
+  primary.filter((entry) => !ALWAYS_LIVE_CHECK_SITEMAPS.has(entry.sitemap)).map((entry) => entry.loc),
 )];
 const randomPrimarySample = otherPrimaryUrls.sort(() => Math.random() - 0.5).slice(0, SAMPLE);
-const sample = [...new Set([...pageUrls, ...priorityUrls, ...randomPrimarySample])];
+const sample = [...new Set([...alwaysLiveCheckedUrls, ...priorityUrls, ...randomPrimarySample])];
 
 for (const loc of sample) {
   const path = loc.slice(CANONICAL_HOST.length) || "/";
