@@ -10,7 +10,7 @@ export type SupremeCourtSeat = {
   entries: SupremeCourtRosterEntry[];
 };
 
-export const SUPREME_COURT_REVIEWED = "2026-09-07";
+export const SUPREME_COURT_REVIEWED = "2026-09-08";
 
 export const CURRENT_JUSTICES: SupremeCourtRosterEntry[] = [
   { name: "James D. “Jimmy” Blacklock", service: "Chief Justice · January 2025–present", selection: "Appointed chief justice by Gov. Greg Abbott in 2025; previously appointed to Place 2 in 2018 and elected in 2018 and 2024.", note: "28th Chief Justice of the Supreme Court of Texas." },
@@ -54,7 +54,8 @@ export const LANDMARK_CASES = [
 export const HISTORIC_FIRSTS = [
   { title: "1925 special all-woman court", detail: "Chief Justice Hortense Ward and Justices Ruth V. Brazzil and Hattie L. Henenberg formed a special Supreme Court to hear one case when the regular justices were disqualified." },
   { title: "Ruby Kless Sondock", detail: "Appointed in 1982 to Place 6, she became the first woman to serve on the regular Supreme Court of Texas after the 1925 special court." },
-  { title: "Raul A. Gonzalez", detail: "Appointed to Place 4 in 1984, Gonzalez became a landmark figure in Hispanic representation on the Texas judiciary." },
+  { title: "Raul A. Gonzalez", detail: "Appointed to Place 4 in 1984, Gonzalez became the first Hispanic justice to serve on the Supreme Court of Texas and later the first Hispanic elected to statewide office in Texas." },
+  { title: "Rose Spector", detail: "Elected in 1992 and serving from 1993 through 1998, Spector became the first woman elected to the Supreme Court of Texas." },
   { title: "Wallace B. Jefferson", detail: "Appointed in 2001 and named chief justice in 2004, Jefferson became the Court’s first Black justice and first Black chief justice." },
   { title: "Eva M. Guzman", detail: "Appointed in 2009, Guzman became the first Hispanic woman to serve on the Court." },
   { title: "Nathan L. Hecht", detail: "Hecht served from 1989 through 2024 and became the longest-serving member in the Court’s history." },
@@ -225,7 +226,7 @@ export const MODERN_SEATS: SupremeCourtSeat[] = [
       { name: "W. St. John Garwood", service: "January 1948–December 1958", selection: "Appointed by Gov. Beauford Jester; later elected." },
       { name: "Robert W. Hamilton", service: "January 1959–December 1970", selection: "Elected in 1958 and 1964." },
       { name: "James G. Denton", service: "January 1971–June 1982", selection: "Elected in 1970 and 1976; died in office." },
-      { name: "Ruby Kless Sondock", service: "June 1982–December 1983", selection: "Appointed by Gov. Bill Clements to Denton’s vacancy; returned to district court after the term." },
+      { name: "Ruby Kless Sondock", service: "June 1982–December 1982", selection: "Appointed by Gov. Bill Clements to Denton’s vacancy; completed Denton’s term and returned to district court." },
       { name: "William W. Kilgarlin", service: "January 1983–December 1988", selection: "Elected in 1982; defeated in 1988." },
       { name: "Nathan L. Hecht", service: "January 1989–October 2013", selection: "Elected in 1988 and repeatedly re-elected; later appointed chief justice." },
       { name: "Jeffrey V. Brown", service: "October 2013–September 2019", selection: "Appointed in 2013; elected in 2014 and 2018; left for the federal district court." },
@@ -289,5 +290,6 @@ export const SUPREME_COURT_SOURCES = [
   { href: "https://statutes.capitol.texas.gov/Docs/CN/pdf/CN.5.pdf", label: "Texas Constitution, Article V" },
   { href: "https://www.txcourts.gov/supreme/about-the-court/court-history/all-woman-supreme-court.aspx", label: "Supreme Court of Texas — 1925 All-Woman Supreme Court" },
   { href: "https://www.txcourts.gov/supreme/about-the-court/court-history/the-semicolon-court/", label: "Supreme Court of Texas — the Semicolon Court" },
+  { href: "https://findingaids.lib.uh.edu/repositories/2/resources/70/", label: "University of Houston Libraries — Judge Ruby Kless Sondock collection" },
   { href: "https://gov.texas.gov/news/post/governor-abbott-appoints-hawkins-as-justice-of-the-supreme-court-of-texas", label: "Office of the Governor — Kyle Hawkins appointment" },
 ] as const;
