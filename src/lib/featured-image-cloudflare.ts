@@ -229,68 +229,116 @@ export function imageValidationDomainGuidance(subject: SubjectExtract): string {
   return "A valid match must depict the concrete real-world subject or setting, not generic symbolism. Do not require visible city names, landmarks, logos, signage, or other geographic proof merely because the article names a location; a believable representative local scene is sufficient when its physical subject matches the assignment. Continue to reject images that omit the assignment's defining physical objects or activity.";
 }
 
+const VISION_VALIDATION_ATTEMPTS = 2;
+const VISION_REQUEST_TIMEOUT_MS = 45_000;
+
+function isRetryableVisionStatus(status: number): boolean {
+  return status === 408 || status === 409 || status === 425 || status === 429 || status >= 500;
+}
+
+function visionFailurePreview(value: unknown): string {
+  if (typeof value === "string") return value.replace(/\s+/g, " ").trim().slice(0, 220);
+  try {
+    return JSON.stringify(value ?? "").slice(0, 220);
+  } catch {
+    return "unserializable validator output";
+  }
+}
+
 export async function validateImageMatchesArticle(bytes: Uint8Array, subject: SubjectExtract): Promise<{ matches: boolean; reason: string }> {
   const provenancePrefix = generationProvenancePrefix(bytes);
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
   const apiToken = process.env.CLOUDFLARE_API_TOKEN;
   if (!accountId || !apiToken) return { matches: false, reason: `${provenancePrefix}Cloudflare vision validator unavailable: missing credentials` };
-  try {
-    const image = `data:image/jpeg;base64,${bytesToBase64(bytes)}`;
-    const domainGuidance = imageValidationDomainGuidance(subject);
-    const validationPrompt = [
-      `Article title: "${subject.title}"`,
-      `Article domain: ${subject.domain}`,
-      `Primary visual subject: ${subject.concreteSubject}`,
-      "Evaluate the supplied image as an editorial photograph.",
-      domainGuidance,
-      "Judge whether the image is a truthful representative editorial visual for the article topic. Do not require it to prove that it was captured at the exact historical event described in the article.",
-      "photorealistic=false for illustration, vector art, cartoon, poster, icon, graphic design, collage, or synthetic placeholder imagery.",
-      "Return only matches, photorealistic, and reason.",
-    ].join("\n");
 
-    const verdictSchema = {
-      type: "object",
-      properties: {
-        matches: { type: "boolean" },
-        photorealistic: { type: "boolean" },
-        reason: { type: "string" },
-      },
-      required: ["matches", "photorealistic", "reason"],
-    };
+  const image = `data:image/jpeg;base64,${bytesToBase64(bytes)}`;
+  const domainGuidance = imageValidationDomainGuidance(subject);
+  const validationPrompt = [
+    `Article title: "${subject.title}"`,
+    `Article domain: ${subject.domain}`,
+    `Primary visual subject: ${subject.concreteSubject}`,
+    "Evaluate the supplied image as an editorial photograph.",
+    domainGuidance,
+    "Judge whether the image is a truthful representative editorial visual for the article topic. Do not require it to prove that it was captured at the exact historical event described in the article.",
+    "photorealistic=false for illustration, vector art, cartoon, poster, icon, graphic design, collage, or synthetic placeholder imagery.",
+    "Return exactly one JSON object with boolean matches, boolean photorealistic, and string reason. No Markdown or surrounding prose.",
+  ].join("\n");
 
-    const res = await fetch(cloudflareEndpoint(accountId, CLOUDFLARE_VISION_MODEL), {
-      method: "POST",
-      headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        messages: [
-          { role: "system", content: "You are a strict editorial-photo quality reviewer. Judge topical relevance and photorealism, not whether a generated editorial image proves an exact historical moment. Return only the requested verdict." },
-          { role: "user", content: validationPrompt },
-        ],
-        image,
-        guided_json: verdictSchema,
-        max_tokens: 256,
-        temperature: 0,
-      }),
-    });
+  const verdictSchema = {
+    type: "object",
+    properties: {
+      matches: { type: "boolean" },
+      photorealistic: { type: "boolean" },
+      reason: { type: "string" },
+    },
+    required: ["matches", "photorealistic", "reason"],
+  };
 
-    const raw = await res.text().catch(() => "");
-    let json: { success?: boolean; result?: unknown; errors?: { message?: string }[] } = {};
-    try { json = raw ? JSON.parse(raw) : {}; } catch { return { matches: false, reason: `${provenancePrefix}Cloudflare vision returned non-JSON HTTP payload ${res.status}` }; }
-    if (!res.ok || json.success === false) return { matches: false, reason: `${provenancePrefix}Cloudflare vision HTTP ${res.status}: ${json.errors?.[0]?.message || raw.slice(0, 180)}` };
+  let lastFailure = "Cloudflare vision validator returned no verdict";
 
-    const { output, finishReason } = extractCloudflareVisionOutput(json.result);
-    const normalizedOutput = normalizeCloudflareVisionVerdictOutput(output);
-    const parsed = parseVisionVerdict(normalizedOutput);
-    if (!parsed) {
-      const previewValue = typeof normalizedOutput === "string" ? normalizedOutput : output;
-      const preview = typeof previewValue === "string" ? previewValue.replace(/\s+/g, " ").trim().slice(0, 220) : JSON.stringify(previewValue ?? "").slice(0, 220);
+  for (let attempt = 1; attempt <= VISION_VALIDATION_ATTEMPTS; attempt += 1) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), VISION_REQUEST_TIMEOUT_MS);
+    try {
+      const res = await fetch(cloudflareEndpoint(accountId, CLOUDFLARE_VISION_MODEL), {
+        method: "POST",
+        headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [
+            { role: "system", content: "You are a strict editorial-photo quality reviewer. Judge topical relevance and photorealism, not whether a generated image proves an exact historical moment. Return only the requested JSON verdict." },
+            { role: "user", content: attempt === 1 ? validationPrompt : `${validationPrompt}\nThis is a validator retry because the prior response was unavailable or malformed. Follow the JSON format exactly.` },
+          ],
+          image,
+          guided_json: verdictSchema,
+          max_tokens: attempt === 1 ? 256 : 384,
+          temperature: 0,
+        }),
+        signal: controller.signal,
+      });
+
+      const raw = await res.text().catch(() => "");
+      let json: { success?: boolean; result?: unknown; errors?: { message?: string }[] } = {};
+      try {
+        json = raw ? JSON.parse(raw) : {};
+      } catch {
+        lastFailure = `Cloudflare vision returned non-JSON HTTP payload ${res.status}${raw ? `: ${raw.slice(0, 180)}` : ""}`;
+        if (attempt < VISION_VALIDATION_ATTEMPTS) continue;
+        break;
+      }
+
+      if (!res.ok || json.success === false) {
+        lastFailure = `Cloudflare vision HTTP ${res.status}: ${json.errors?.[0]?.message || raw.slice(0, 180) || "empty response"}`;
+        if (attempt < VISION_VALIDATION_ATTEMPTS && isRetryableVisionStatus(res.status)) continue;
+        return { matches: false, reason: `${provenancePrefix}${lastFailure}`.slice(0, 360) };
+      }
+
+      const { output, finishReason } = extractCloudflareVisionOutput(json.result);
+      const normalizedOutput = normalizeCloudflareVisionVerdictOutput(output);
+      const parsed = parseVisionVerdict(normalizedOutput);
+      if (parsed) {
+        const ok = parsed.matches && parsed.photorealistic;
+        const reason = String(parsed.reason || (ok ? "story match and photorealism passed" : "quality gate failed"));
+        return { matches: ok, reason: `${provenancePrefix}${reason}`.slice(0, 300) };
+      }
+
+      const preview = visionFailurePreview(typeof normalizedOutput === "string" ? normalizedOutput : output);
       const finish = finishReason ? ` (finish_reason=${finishReason})` : "";
-      return { matches: false, reason: `${provenancePrefix}Cloudflare vision validator returned no parseable verdict${finish}${preview ? `: ${preview}` : ""}` };
+      lastFailure = `Cloudflare vision validator returned no parseable verdict${finish}${preview ? `: ${preview}` : ""}`;
+      if (attempt < VISION_VALIDATION_ATTEMPTS) continue;
+    } catch (e) {
+      const error = e as Error;
+      const timedOut = error?.name === "AbortError";
+      lastFailure = timedOut
+        ? `Cloudflare vision validator timed out after ${VISION_REQUEST_TIMEOUT_MS}ms`
+        : `Cloudflare vision validator error: ${error?.message || String(e)}`;
+      if (attempt < VISION_VALIDATION_ATTEMPTS) continue;
+    } finally {
+      clearTimeout(timeout);
     }
-    const ok = parsed.matches && parsed.photorealistic;
-    const reason = String(parsed.reason || (ok ? "story match and photorealism passed" : "quality gate failed"));
-    return { matches: ok, reason: `${provenancePrefix}${reason}`.slice(0, 300) };
-  } catch (e) {
-    return { matches: false, reason: `${provenancePrefix}Cloudflare vision validator error: ${(e as Error).message}` };
   }
+
+  return {
+    matches: false,
+    reason: `${provenancePrefix}${lastFailure} after ${VISION_VALIDATION_ATTEMPTS} attempts`.slice(0, 360),
+  };
 }
