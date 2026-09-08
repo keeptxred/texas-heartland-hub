@@ -132,7 +132,7 @@ export const TEXAS_TRIAL_COURT_APPEAL_NOTES = [
   },
   {
     title: "Justice and municipal appeals can be different",
-    text: "Justice courts and most municipal courts are not courts of record, so their appeals commonly involve a new trial at the county level. Municipal courts of record use record-based appellate review instead.",
+    text: "Justice courts and most municipal courts are not courts of record, so their appeals commonly proceed by trial de novo — a new trial at the county level. Municipal courts of record use record-based appellate review instead.",
   },
   {
     title: "Specialized courts can have specialized paths",
