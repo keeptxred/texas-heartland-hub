@@ -285,12 +285,12 @@ export async function validateImageMatchesArticle(bytes: Uint8Array, subject: Su
         headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: [
-            { role: "system", content: "You are a strict editorial-photo quality reviewer. Judge topical relevance and photorealism, not whether a generated image proves an exact historical moment. Return only the requested JSON verdict." },
+            { role: "system", content: "You are a strict editorial-photo quality reviewer. Judge topical relevance and photorealism, not whether a generated editorial image proves an exact historical moment. Return only the requested JSON verdict." },
             { role: "user", content: attempt === 1 ? validationPrompt : `${validationPrompt}\nThis is a validator retry because the prior response was unavailable or malformed. Follow the JSON format exactly.` },
           ],
           image,
           guided_json: verdictSchema,
-          max_tokens: attempt === 1 ? 256 : 384,
+          max_tokens: 256,
           temperature: 0,
         }),
         signal: controller.signal,
