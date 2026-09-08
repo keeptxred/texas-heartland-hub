@@ -57,6 +57,31 @@ function TexasGovernmentHub() {
         </div>
       </section>
 
+      <section className="mt-12 rounded-2xl border border-primary/25 bg-primary/[0.04] p-6 md:p-8" aria-labelledby="judicial-accountability-authority">
+        <div className="max-w-5xl">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Courts, selection and accountability</p>
+          <h2 id="judicial-accountability-authority" className="mt-2 text-3xl font-bold md:text-4xl">How Texas courts are structured — and how judges are held accountable</h2>
+          <p className="mt-3 leading-7 text-muted-foreground">Texas judicial power is split across trial courts, 15 Courts of Appeals and separate civil and criminal courts of last resort. Judges reach the bench through several election and appointment systems, while the State Commission on Judicial Conduct investigates misconduct and administers discipline. These guides keep court structure, judicial selection and judicial discipline separate so each process is described accurately.</p>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          <a href="/texas-courts" className="rounded-xl border bg-card p-5 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-sm">
+            <h3 className="font-bold text-primary">Texas courts authority hub</h3>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">All 15 Courts of Appeals, the two high courts, appeal paths, court history and official court links.</p>
+            <span className="mt-4 inline-flex text-sm font-bold text-primary">Explore Texas courts →</span>
+          </a>
+          <a href="/texas-government/judicial-selection-elections" className="rounded-xl border bg-card p-5 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-sm">
+            <h3 className="font-bold text-primary">How Texas chooses judges</h3>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">Partisan elections, vacancy appointments, qualifications, court-by-court terms and reform history.</p>
+            <span className="mt-4 inline-flex text-sm font-bold text-primary">Read judicial selection guide →</span>
+          </a>
+          <a href="/texas-government/state-commission-on-judicial-conduct" className="rounded-xl border bg-card p-5 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-sm">
+            <h3 className="font-bold text-primary">State Commission on Judicial Conduct</h3>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">Who can be investigated, how complaints are filed, discipline, confidentiality, review rights and the 2025 reforms.</p>
+            <span className="mt-4 inline-flex text-sm font-bold text-primary">Read judicial accountability guide →</span>
+          </a>
+        </div>
+      </section>
+
       <section className="mt-12 rounded-2xl border border-primary/20 bg-primary/[0.03] p-6 md:p-8" aria-labelledby="county-government-authority">
         <div className="max-w-4xl">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">County and precinct authority</p>
