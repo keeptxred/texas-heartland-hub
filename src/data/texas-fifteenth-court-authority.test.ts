@@ -61,7 +61,8 @@ describe("Fifteenth Court of Appeals authority guide", () => {
     const sitemap = readFileSync("src/routes/sitemap-government[.]xml.ts", "utf8");
 
     expect(route).toContain(routePath);
-    expect(component).toContain(`https://keeptxred.com${routePath}`);
+    expect(component).toContain('const SITE_URL = "https://keeptxred.com";');
+    expect(component).toContain('const CANONICAL = `${SITE_URL}/texas-government/fifteenth-court-of-appeals`;');
     expect(component).toContain("FAQPage");
     expect(businessCourtRoute).toContain(routePath);
     expect(sitemap).toContain(routePath);
