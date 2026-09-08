@@ -1,7 +1,7 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { TexasCourtsAuthorityPage, texasCourtsAuthorityHead } from "@/components/texas-courts-authority-page";
 
 export const Route = createFileRoute("/texas-courts")({
-  beforeLoad: ({ location }) => {
-    throw redirect({ href: `/texas-government${location.searchStr || ""}`, statusCode: 301 });
-  },
+  head: texasCourtsAuthorityHead,
+  component: TexasCourtsAuthorityPage,
 });
