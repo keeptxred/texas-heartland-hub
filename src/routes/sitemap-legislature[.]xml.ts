@@ -1,6 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router';
 import type {} from '@tanstack/react-start';
 import { sessionSitemapEntries } from '@/lib/legislative-sitemaps';
-import { renderUrlset, xmlResponse } from '@/lib/sitemap-shared';
+import { absUrl, renderUrlset, xmlResponse } from '@/lib/sitemap-shared';
 
-export const Route = createFileRoute('/sitemap-legislature.xml')({ server: { handlers: { GET: async () => xmlResponse(renderUrlset(await sessionSitemapEntries())) } } });
+export const Route = createFileRoute('/sitemap-legislature.xml')({ server: { handlers: { GET: async () => xmlResponse(renderUrlset([
+  { loc: absUrl('/bills') },
+  ...(await sessionSitemapEntries()),
+])) } } });
