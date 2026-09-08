@@ -8,7 +8,7 @@ declare
   old_data jsonb := to_jsonb(old);
   ignored text;
 begin
-  foreach ignored in array tg_argv loop
+  foreach ignored in array coalesce(tg_argv, array[]::text[]) loop
     new_data := new_data - ignored;
     old_data := old_data - ignored;
   end loop;
