@@ -54,6 +54,7 @@ async function handler() {
   const feedRows = (feedData ?? []) as FeedRouteRow[];
 
   const feedById = new Map<number, FeedRouteRow>(feedRows.map((row) => [row.id, row]));
+  const observedAtByFeedId = new Map<number, string>(normalizedRows.map((row) => [row.feed_item_id, row.observed_at]));
   const clusterable = normalizedRows
     .filter((row) => feedById.get(row.feed_item_id)?.target_site === "keeptxred")
     .map((row) => ({
@@ -65,29 +66,42 @@ async function handler() {
     }));
 
   const clusters = clusterNewsFeedItems(clusterable);
-  const now = new Date().toISOString();
   const clusterRows = clusters.map((cluster) => {
     const members = cluster.memberFeedItemIds
       .map((id) => feedById.get(id))
       .filter((row): row is FeedRouteRow => Boolean(row));
     const sourceCount = countDistinctNewsSources(members);
     const primarySourceCount = countDistinctPrimaryNewsSources(members);
+    const lastSeenAt = cluster.memberFeedItemIds.reduce<string | null>((latest, feedItemId) => {
+      const observedAt = observedAtByFeedId.get(feedItemId);
+      if (!observedAt) return latest;
+      if (!latest || Date.parse(observedAt) > Date.parse(latest)) return observedAt;
+      return latest;
+    }, null);
     return {
       cluster_key: `deterministic-v${CLUSTER_VERSION}:${cluster.anchorFeedItemId}`,
       canonical_subject: cluster.canonicalSubject,
       source_count: sourceCount,
       primary_source_count: primarySourceCount,
       confidence: cluster.confidence,
-      last_seen_at: now,
+      last_seen_at: lastSeenAt ?? new Date().toISOString(),
     };
   });
 
-  const { data: savedData, error: clusterError } = await newsroomDb
-    .from("news_story_clusters")
-    .upsert(clusterRows, { onConflict: "cluster_key" })
-    .select("id,cluster_key");
-  if (clusterError) return Response.json({ ok: false, error: clusterError.message }, { status: 500 });
-  const savedClusters = (savedData ?? []) as SavedClusterRow[];
+  let savedClusters: SavedClusterRow[] = [];
+  if (clusterRows.length) {
+    const { error: clusterError } = await newsroomDb
+      .from("news_story_clusters")
+      .upsert(clusterRows, { onConflict: "cluster_key" });
+    if (clusterError) return Response.json({ ok: false, error: clusterError.message }, { status: 500 });
+
+    const { data: savedData, error: savedError } = await newsroomDb
+      .from("news_story_clusters")
+      .select("id,cluster_key")
+      .in("cluster_key", clusterRows.map((row) => row.cluster_key));
+    if (savedError) return Response.json({ ok: false, error: savedError.message }, { status: 500 });
+    savedClusters = (savedData ?? []) as SavedClusterRow[];
+  }
 
   const idByKey = new Map<string, string>(savedClusters.map((row) => [row.cluster_key, row.id]));
   const memberships = clusters.flatMap((cluster) => {
