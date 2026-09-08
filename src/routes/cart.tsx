@@ -1,8 +1,28 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CartProvider, useCart } from "@/lib/cart-context";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo } from "react";
+import {
+  CartProvider,
+  buildAddPayload,
+  parseVariantSize,
+  useCart,
+} from "@/lib/cart-context";
+import { getProducts, type Product, type ProductVariant } from "@/lib/products.functions";
 import { SITE_URL } from "@/lib/seo";
 
+type CartSearch = {
+  id?: string;
+};
+
+type MerchantSelection = {
+  product: Product;
+  variant: ProductVariant | null;
+};
+
 export const Route = createFileRoute("/cart")({
+  validateSearch: (search: Record<string, unknown>): CartSearch => ({
+    id: typeof search.id === "string" && search.id.trim() ? search.id.trim() : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Shopping Cart — Keep Texas Red" },
@@ -17,6 +37,19 @@ export const Route = createFileRoute("/cart")({
   component: CartRoute,
 });
 
+function merchantSelection(products: Product[], id: string): MerchantSelection | null {
+  for (const product of products) {
+    const enabledVariants = (product.variants ?? []).filter((variant) => variant.is_enabled !== false);
+    if (enabledVariants.length === 0 && product.id === id) {
+      return { product, variant: null };
+    }
+
+    const variant = enabledVariants.find((item) => `${product.id}-${item.id}` === id);
+    if (variant) return { product, variant };
+  }
+  return null;
+}
+
 function CartRoute() {
   return (
     <CartProvider>
@@ -26,13 +59,58 @@ function CartRoute() {
 }
 
 function CartPage() {
-  const { items, count, subtotal, updateQty, remove, checkout } = useCart();
+  const search = Route.useSearch();
+  const merchantId = search.id;
+  const { items, count, subtotal, isReady, addItem, updateQty, remove, checkout } = useCart();
+  const productQuery = useQuery({
+    queryKey: ["products", "merchant-cart", merchantId],
+    queryFn: () => getProducts(),
+    enabled: Boolean(merchantId),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const requestedSelection = useMemo(() => {
+    if (!merchantId || !productQuery.data || productQuery.data.isFallback) return null;
+    return merchantSelection(productQuery.data.products, merchantId);
+  }, [merchantId, productQuery.data]);
+
+  const requestedItemAlreadyInCart = useMemo(() => {
+    if (!requestedSelection) return false;
+    const variantId = requestedSelection.variant?.id ?? null;
+    return items.some(
+      (item) => item.productId === requestedSelection.product.id && (item.variantId ?? null) === variantId,
+    );
+  }, [items, requestedSelection]);
+
+  useEffect(() => {
+    if (!isReady || !requestedSelection || requestedItemAlreadyInCart) return;
+
+    const { product, variant } = requestedSelection;
+    const image = variant?.image || variant?.images?.[0] || product.image;
+    const price = Number(variant?.price || product.price);
+    const color = variant?.color?.trim() || (product.colors?.length === 1 ? product.colors[0]?.trim() || null : null);
+    const size = variant ? variant.size || parseVariantSize(variant.title) : null;
+
+    addItem(buildAddPayload(product, {
+      color,
+      size,
+      image,
+      price,
+      qty: 1,
+      variant,
+    }));
+  }, [addItem, isReady, requestedItemAlreadyInCart, requestedSelection]);
+
   const currency = items[0]?.currency ?? "USD";
   const formatMoney = (value: number, itemCurrency = currency) =>
     new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: itemCurrency,
     }).format(value);
+
+  const merchantLoading = Boolean(merchantId) && (productQuery.isLoading || !isReady);
+  const merchantUnavailable = Boolean(merchantId) && productQuery.data?.isFallback;
+  const merchantNotFound = Boolean(merchantId) && productQuery.isSuccess && !productQuery.data.isFallback && !requestedSelection;
 
   return (
     <main className="min-h-screen bg-background">
@@ -49,6 +127,22 @@ function CartPage() {
       </section>
 
       <section className="mx-auto max-w-[1100px] px-6 py-10">
+        {merchantLoading && (
+          <div className="mb-6 rounded-xl border border-border bg-card px-4 py-3 text-sm text-muted-foreground">
+            Adding the selected product to your cart…
+          </div>
+        )}
+        {merchantUnavailable && (
+          <div className="mb-6 rounded-xl border border-destructive/40 bg-destructive/5 px-4 py-3 text-sm">
+            The product catalog is temporarily unavailable. Please try again shortly.
+          </div>
+        )}
+        {merchantNotFound && (
+          <div className="mb-6 rounded-xl border border-destructive/40 bg-destructive/5 px-4 py-3 text-sm">
+            That product option is no longer available. Browse the shop for current options.
+          </div>
+        )}
+
         {items.length === 0 ? (
           <div className="rounded-2xl border border-border bg-card p-10 text-center">
             <div className="mb-3 text-4xl">🛍</div>

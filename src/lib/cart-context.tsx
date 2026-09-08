@@ -25,6 +25,7 @@ type CartContextValue = {
   count: number;
   subtotal: number;
   isOpen: boolean;
+  isReady: boolean;
   open: () => void;
   close: () => void;
   addItem: (input: Omit<CartItem, "key" | "qty"> & { qty?: number }) => void;
@@ -103,6 +104,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       count,
       subtotal,
       isOpen,
+      isReady: hasLoadedStoredCart,
       open: () => setOpen(true),
       close: () => setOpen(false),
       addItem,
@@ -110,7 +112,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       remove,
       checkout,
     };
-  }, [items, isOpen]);
+  }, [items, isOpen, hasLoadedStoredCart]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

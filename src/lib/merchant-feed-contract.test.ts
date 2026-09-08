@@ -6,6 +6,7 @@ import {
 } from "@/lib/checkout.functions";
 
 const feed = readFileSync("src/routes/google-merchant-feed[.]xml.ts", "utf8");
+const cart = readFileSync("src/routes/cart.tsx", "utf8");
 const robots = readFileSync("src/routes/robots[.]txt.ts", "utf8");
 
 describe("Google Merchant feed contract", () => {
@@ -29,6 +30,12 @@ describe("Google Merchant feed contract", () => {
   it("routes catalog images through the Merchant image URL normalizer", () => {
     expect(feed).toContain("merchantImageUrl(product.image)");
     expect(feed).toContain("merchantImageUrl(variant.image || variant.images?.[0] || product.image)");
+  });
+
+  it("supports Google's required account-level {id} cart template", () => {
+    expect(cart).toContain('id: typeof search.id === "string"');
+    expect(cart).toContain('`${product.id}-${item.id}` === id');
+    expect(cart).toContain("addItem(buildAddPayload(product");
   });
 
   it("keeps the first-party Merchant image endpoint crawlable", () => {
