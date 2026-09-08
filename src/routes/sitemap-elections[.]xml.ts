@@ -25,6 +25,7 @@ const PRIORITY_ELECTION_PATHS = [
   "/elections/voting/voter-registration-card",
   "/elections/voting/polling-place",
   "/elections/methodology",
+  "/find-representative",
 ] as const;
 
 export const Route = createFileRoute("/sitemap-elections.xml")({
