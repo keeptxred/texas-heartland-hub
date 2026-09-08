@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
+import { TEXAS_BUSINESS_COURT_REVIEWED } from "@/data/texas-business-court-authority";
 import { TEXAS_COURTS_REVIEWED } from "@/data/texas-courts-authority";
 import { SCJC_REVIEWED } from "@/data/texas-judicial-conduct-authority";
 import { GOVERNMENT_ENTITIES, GOVERNMENT_REVIEWED_AT, governmentPath } from "@/lib/texas-government";
@@ -15,6 +16,7 @@ export const Route = createFileRoute("/sitemap-government.xml")({
       GET: async () => xmlResponse(renderUrlset([
         { loc: `${BASE_URL}/texas-government`, lastmod: toIsoDate(GOVERNMENT_REVIEWED_AT) },
         { loc: `${BASE_URL}/texas-courts`, lastmod: toIsoDate(TEXAS_COURTS_REVIEWED) },
+        { loc: `${BASE_URL}/texas-government/texas-business-court`, lastmod: toIsoDate(TEXAS_BUSINESS_COURT_REVIEWED) },
         { loc: `${BASE_URL}/texas-government/state-commission-on-judicial-conduct`, lastmod: toIsoDate(SCJC_REVIEWED) },
         ...INDEXABLE_GOVERNMENT_ENTITIES.map((entity) => ({
           loc: `${BASE_URL}${governmentPath(entity.slug)}`,
