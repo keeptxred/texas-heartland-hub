@@ -1,0 +1,33 @@
+name: Verify primary sitemap ownership after deploy
+
+on:
+  workflow_run:
+    workflows: ["Deploy verified KeepTXRed to Cloudflare"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: keeptxred-primary-sitemap-ownership
+  cancel-in-progress: false
+
+jobs:
+  verify-primary-sitemap-ownership:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout deployed revision
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || 'main' }}
+
+      - name: Verify deployed primary sitemap ownership
+        env:
+          SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
+        run: python3 scripts/seo/verify-deployed-primary-sitemap-ownership.py
