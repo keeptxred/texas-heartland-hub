@@ -121,7 +121,8 @@ def fetch_xml(site_url: str, path: str, expected_root: str, loc_path: str, failu
     return locs
 
 
-def verify(site_url: str) -> None:
+def verify_primary_sitemap_ownership(site_url: str | None = None) -> None:
+    site_url = (site_url or os.environ.get("SITE_URL") or DEFAULT_SITE_URL).rstrip("/")
     failures: list[str] = []
     advertised = fetch_xml(
         site_url,
@@ -143,11 +144,7 @@ def verify(site_url: str) -> None:
         if required not in advertised:
             failures.append(f"/sitemap.xml: missing required primary child sitemap {required}")
 
-    primary_children = [
-        child
-        for child in advertised
-        if child not in DERIVATIVE_SITEMAPS
-    ]
+    primary_children = [child for child in advertised if child not in DERIVATIVE_SITEMAPS]
     ownership: dict[str, list[str]] = {url: [] for url in EXPECTED_PRIMARY_OWNER}
 
     for child_url in primary_children:
@@ -155,13 +152,7 @@ def verify(site_url: str) -> None:
             failures.append(f"/sitemap.xml: non-canonical child sitemap URL {child_url}")
             continue
         child_path = child_url[len(SITE_ORIGIN):]
-        locs = fetch_xml(
-            site_url,
-            child_path,
-            "urlset",
-            "sm:url/sm:loc",
-            failures,
-        )
+        locs = fetch_xml(site_url, child_path, "urlset", "sm:url/sm:loc", failures)
         for canonical_url in ownership:
             if canonical_url in locs:
                 ownership[canonical_url].append(child_url)
@@ -176,9 +167,8 @@ def verify(site_url: str) -> None:
     if failures:
         for failure in failures:
             github_error(failure)
-        raise SystemExit(
-            "Deployed primary sitemap ownership smoke failed:\n- "
-            + "\n- ".join(failures)
+        raise RuntimeError(
+            "Deployed primary sitemap ownership smoke failed:\n- " + "\n- ".join(failures)
         )
 
     print(
@@ -190,4 +180,4 @@ def verify(site_url: str) -> None:
 
 
 if __name__ == "__main__":
-    verify((os.environ.get("SITE_URL") or DEFAULT_SITE_URL).rstrip("/"))
+    verify_primary_sitemap_ownership()

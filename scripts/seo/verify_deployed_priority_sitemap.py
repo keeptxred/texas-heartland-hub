@@ -8,6 +8,8 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlsplit
 
+from verify_deployed_primary_sitemap_ownership import verify_primary_sitemap_ownership
+
 SITE_ORIGIN = "https://keeptxred.com"
 DEPLOYMENT_SMOKE_HEADER = "x-keeptxred-deployment-smoke: canonical"
 DEFAULT_WORKER_ORIGIN = "https://keeptxred-site.freddy-coppola.workers.dev"
@@ -164,6 +166,7 @@ def verify_priority_sitemap(site_url: str | None = None) -> None:
             _github_error(failure)
         raise RuntimeError("Deployed priority sitemap/indexability smoke failed:\n- " + "\n- ".join(failures))
 
+    verify_primary_sitemap_ownership(worker_origin)
     print(f"Deployed priority sitemap smoke passed for {len(expected)} canonical URLs on {worker_origin}.")
 
 
