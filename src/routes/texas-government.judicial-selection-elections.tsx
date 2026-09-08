@@ -1,6 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { GovernmentHistoryAuthorityPage, governmentHistoryAuthorityHead } from "@/components/government-history-authority-page";
-import { TEXAS_JUDICIAL_SELECTION_HISTORY } from "@/data/texas-government-history-authority";
+import {
+  TexasJudicialSelectionHistoryPage,
+  texasJudicialSelectionHistoryHead,
+} from "@/components/texas-judicial-selection-history-page";
 
-export const Route = createFileRoute("/texas-government/judicial-selection-elections")({ head: () => governmentHistoryAuthorityHead(TEXAS_JUDICIAL_SELECTION_HISTORY), component: Page });
-function Page() { return <GovernmentHistoryAuthorityPage page={TEXAS_JUDICIAL_SELECTION_HISTORY} />; }
+export const Route = createFileRoute("/texas-government/judicial-selection-elections")({
+  head: texasJudicialSelectionHistoryHead,
+  component: TexasJudicialSelectionHistoryPage,
+});
