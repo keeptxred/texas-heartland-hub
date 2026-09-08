@@ -22,7 +22,23 @@ type FeedRouteRow = {
   target_site: string | null;
 };
 
+type ExistingClusterRow = {
+  id: string;
+  cluster_key: string;
+  canonical_subject: string;
+  source_count: number;
+  primary_source_count: number;
+  confidence: number;
+  last_seen_at: string;
+};
+
 type SavedClusterRow = { id: string; cluster_key: string };
+
+function sameInstant(left: string, right: string): boolean {
+  const leftMs = Date.parse(left);
+  const rightMs = Date.parse(right);
+  return Number.isFinite(leftMs) && Number.isFinite(rightMs) ? leftMs === rightMs : left === right;
+}
 
 async function handler() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -54,6 +70,7 @@ async function handler() {
   const feedRows = (feedData ?? []) as FeedRouteRow[];
 
   const feedById = new Map<number, FeedRouteRow>(feedRows.map((row) => [row.id, row]));
+  const observedAtByFeedId = new Map<number, string>(normalizedRows.map((row) => [row.feed_item_id, row.observed_at]));
   const clusterable = normalizedRows
     .filter((row) => feedById.get(row.feed_item_id)?.target_site === "keeptxred")
     .map((row) => ({
@@ -65,29 +82,67 @@ async function handler() {
     }));
 
   const clusters = clusterNewsFeedItems(clusterable);
-  const now = new Date().toISOString();
   const clusterRows = clusters.map((cluster) => {
     const members = cluster.memberFeedItemIds
       .map((id) => feedById.get(id))
       .filter((row): row is FeedRouteRow => Boolean(row));
     const sourceCount = countDistinctNewsSources(members);
     const primarySourceCount = countDistinctPrimaryNewsSources(members);
+    const lastSeenAt = cluster.memberFeedItemIds.reduce<string | null>((latest, feedItemId) => {
+      const observedAt = observedAtByFeedId.get(feedItemId);
+      if (!observedAt) return latest;
+      if (!latest || Date.parse(observedAt) > Date.parse(latest)) return observedAt;
+      return latest;
+    }, null);
     return {
       cluster_key: `deterministic-v${CLUSTER_VERSION}:${cluster.anchorFeedItemId}`,
       canonical_subject: cluster.canonicalSubject,
       source_count: sourceCount,
       primary_source_count: primarySourceCount,
       confidence: cluster.confidence,
-      last_seen_at: now,
+      last_seen_at: lastSeenAt ?? new Date().toISOString(),
     };
   });
 
-  const { data: savedData, error: clusterError } = await newsroomDb
-    .from("news_story_clusters")
-    .upsert(clusterRows, { onConflict: "cluster_key" })
-    .select("id,cluster_key");
-  if (clusterError) return Response.json({ ok: false, error: clusterError.message }, { status: 500 });
-  const savedClusters = (savedData ?? []) as SavedClusterRow[];
+  let savedClusters: SavedClusterRow[] = [];
+  if (clusterRows.length) {
+    const clusterKeys = clusterRows.map((row) => row.cluster_key);
+    const { data: existingData, error: existingError } = await newsroomDb
+      .from("news_story_clusters")
+      .select("id,cluster_key,canonical_subject,source_count,primary_source_count,confidence,last_seen_at")
+      .in("cluster_key", clusterKeys);
+    if (existingError) return Response.json({ ok: false, error: existingError.message }, { status: 500 });
+
+    const existingClusters = (existingData ?? []) as ExistingClusterRow[];
+    const existingByKey = new Map(existingClusters.map((row) => [row.cluster_key, row]));
+    const changedRows = clusterRows.filter((row) => {
+      const prior = existingByKey.get(row.cluster_key);
+      return !prior
+        || prior.canonical_subject !== row.canonical_subject
+        || Number(prior.source_count) !== row.source_count
+        || Number(prior.primary_source_count) !== row.primary_source_count
+        || Number(prior.confidence) !== Number(row.confidence)
+        || !sameInstant(prior.last_seen_at, row.last_seen_at);
+    });
+
+    const changedSaved: SavedClusterRow[] = [];
+    if (changedRows.length) {
+      const { data: savedData, error: clusterError } = await newsroomDb
+        .from("news_story_clusters")
+        .upsert(changedRows, { onConflict: "cluster_key" })
+        .select("id,cluster_key");
+      if (clusterError) return Response.json({ ok: false, error: clusterError.message }, { status: 500 });
+      changedSaved.push(...((savedData ?? []) as SavedClusterRow[]));
+    }
+
+    const changedByKey = new Map(changedSaved.map((row) => [row.cluster_key, row]));
+    savedClusters = clusterRows.flatMap((row) => {
+      const changed = changedByKey.get(row.cluster_key);
+      if (changed) return [changed];
+      const existing = existingByKey.get(row.cluster_key);
+      return existing ? [{ id: existing.id, cluster_key: existing.cluster_key }] : [];
+    });
+  }
 
   const idByKey = new Map<string, string>(savedClusters.map((row) => [row.cluster_key, row.id]));
   const memberships = clusters.flatMap((cluster) => {
@@ -95,13 +150,13 @@ async function handler() {
     if (!clusterId) return [];
     return cluster.memberFeedItemIds.map((feedItemId) => {
       const feed = feedById.get(feedItemId);
-      const isPrimarySource = isPrimaryNewsSource(feed?.source, feed?.link);
+      const primary = isPrimaryNewsSource(feed?.source, feed?.link);
       return {
         cluster_id: clusterId,
         feed_item_id: feedItemId,
-        relationship_type: isPrimarySource ? "primary" : "supporting",
+        relationship_type: primary ? "primary" : "supporting",
         weight: 1,
-        is_primary_source: isPrimarySource,
+        is_primary_source: primary,
         source_name: feed?.source ?? null,
         source_url: feed?.link ?? null,
       };
