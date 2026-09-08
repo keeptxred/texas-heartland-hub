@@ -22,7 +22,23 @@ type FeedRouteRow = {
   target_site: string | null;
 };
 
+type ExistingClusterRow = {
+  id: string;
+  cluster_key: string;
+  canonical_subject: string;
+  source_count: number;
+  primary_source_count: number;
+  confidence: number;
+  last_seen_at: string;
+};
+
 type SavedClusterRow = { id: string; cluster_key: string };
+
+function sameInstant(left: string, right: string): boolean {
+  const leftMs = Date.parse(left);
+  const rightMs = Date.parse(right);
+  return Number.isFinite(leftMs) && Number.isFinite(rightMs) ? leftMs === rightMs : left === right;
+}
 
 async function handler() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -90,17 +106,42 @@ async function handler() {
 
   let savedClusters: SavedClusterRow[] = [];
   if (clusterRows.length) {
-    const { error: clusterError } = await newsroomDb
+    const clusterKeys = clusterRows.map((row) => row.cluster_key);
+    const { data: existingData, error: existingError } = await newsroomDb
       .from("news_story_clusters")
-      .upsert(clusterRows, { onConflict: "cluster_key" });
-    if (clusterError) return Response.json({ ok: false, error: clusterError.message }, { status: 500 });
+      .select("id,cluster_key,canonical_subject,source_count,primary_source_count,confidence,last_seen_at")
+      .in("cluster_key", clusterKeys);
+    if (existingError) return Response.json({ ok: false, error: existingError.message }, { status: 500 });
 
-    const { data: savedData, error: savedError } = await newsroomDb
-      .from("news_story_clusters")
-      .select("id,cluster_key")
-      .in("cluster_key", clusterRows.map((row) => row.cluster_key));
-    if (savedError) return Response.json({ ok: false, error: savedError.message }, { status: 500 });
-    savedClusters = (savedData ?? []) as SavedClusterRow[];
+    const existingClusters = (existingData ?? []) as ExistingClusterRow[];
+    const existingByKey = new Map(existingClusters.map((row) => [row.cluster_key, row]));
+    const changedRows = clusterRows.filter((row) => {
+      const prior = existingByKey.get(row.cluster_key);
+      return !prior
+        || prior.canonical_subject !== row.canonical_subject
+        || Number(prior.source_count) !== row.source_count
+        || Number(prior.primary_source_count) !== row.primary_source_count
+        || Number(prior.confidence) !== Number(row.confidence)
+        || !sameInstant(prior.last_seen_at, row.last_seen_at);
+    });
+
+    const changedSaved: SavedClusterRow[] = [];
+    if (changedRows.length) {
+      const { data: savedData, error: clusterError } = await newsroomDb
+        .from("news_story_clusters")
+        .upsert(changedRows, { onConflict: "cluster_key" })
+        .select("id,cluster_key");
+      if (clusterError) return Response.json({ ok: false, error: clusterError.message }, { status: 500 });
+      changedSaved.push(...((savedData ?? []) as SavedClusterRow[]));
+    }
+
+    const changedByKey = new Map(changedSaved.map((row) => [row.cluster_key, row]));
+    savedClusters = clusterRows.flatMap((row) => {
+      const changed = changedByKey.get(row.cluster_key);
+      if (changed) return [changed];
+      const existing = existingByKey.get(row.cluster_key);
+      return existing ? [{ id: existing.id, cluster_key: existing.cluster_key }] : [];
+    });
   }
 
   const idByKey = new Map<string, string>(savedClusters.map((row) => [row.cluster_key, row.id]));
@@ -109,13 +150,13 @@ async function handler() {
     if (!clusterId) return [];
     return cluster.memberFeedItemIds.map((feedItemId) => {
       const feed = feedById.get(feedItemId);
-      const isPrimarySource = isPrimaryNewsSource(feed?.source, feed?.link);
+      const primary = isPrimaryNewsSource(feed?.source, feed?.link);
       return {
         cluster_id: clusterId,
         feed_item_id: feedItemId,
-        relationship_type: isPrimarySource ? "primary" : "supporting",
+        relationship_type: primary ? "primary" : "supporting",
         weight: 1,
-        is_primary_source: isPrimarySource,
+        is_primary_source: primary,
         source_name: feed?.source ?? null,
         source_url: feed?.link ?? null,
       };
