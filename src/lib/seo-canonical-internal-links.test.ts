@@ -28,8 +28,6 @@ const redirectAliases = [
   'texasNews: "/texas-news"',
   'to="/texas-law-policy"',
   'href="/texas-law-policy"',
-  'to="/texas-courts"',
-  'href="/texas-courts"',
   'to="/elections"',
   'href="/elections"',
   'livingInTexas: "/living-in-texas"',
@@ -58,6 +56,17 @@ describe("canonical internal links", () => {
         expect(source, `${file} must not contain redirecting internal link ${alias}`).not.toContain(alias);
       }
     }
+  });
+
+  it("keeps the new Texas courts hub self-canonical and non-redirecting", () => {
+    const route = readFileSync("src/routes/texas-courts.tsx", "utf8");
+    const page = readFileSync("src/components/texas-courts-authority-page.tsx", "utf8");
+
+    expect(route).toContain('createFileRoute("/texas-courts")');
+    expect(route).toContain("TexasCourtsAuthorityPage");
+    expect(route).not.toContain("redirect(");
+    expect(page).toContain('const CANONICAL = `${SITE_URL}/texas-courts`');
+    expect(page).toContain('rel: "canonical", href: CANONICAL');
   });
 
   it("keeps Texas news topic canonicals pointed at the final newsroom URL", () => {
