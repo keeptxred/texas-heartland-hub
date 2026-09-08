@@ -210,6 +210,7 @@ export function TexasCourtsAuthorityPage() {
         </div>
         <div className="mt-5 flex flex-wrap gap-3">
           <a href="https://www.txcourts.gov/15thcoa/" target="_blank" rel="noreferrer" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Official Fifteenth Court ↗</a>
+          <Link to="/texas-government/texas-business-court" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Texas Business Court</Link>
           <Link to="/texas-government/judicial-selection-elections" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Texas judicial elections</Link>
         </div>
       </section>
@@ -284,6 +285,7 @@ export function TexasCourtsAuthorityPage() {
             ["Supreme Court history", "Institutional history, current court, justices, landmark cases, and historical roster.", "/texas-government/texas-supreme-court-history"],
             ["Court of Criminal Appeals history", "Texas's separate criminal high court, current bench, cases, and presiding-judge lineage.", "/texas-government/court-of-criminal-appeals-history"],
             ["Judicial selection and elections", "How Texas chooses judges, fills vacancies, sets qualifications, and debates reform.", "/texas-government/judicial-selection-elections"],
+            ["Texas Business Court", "Current divisions, appointed judges, jurisdiction, exclusions and appeals to the Fifteenth Court.", "/texas-government/texas-business-court"],
             ["Texas Government", "Current offices, institutions, authority pages, and official government resources.", "/texas-government"],
             ["2026 Election Central", "Current statewide and district judicial election coverage.", "/elections/2026"],
             ["Texas constitutional history", "How successive constitutions redesigned the judiciary and state government.", "/texas-politics/texas-constitutional-history"],
