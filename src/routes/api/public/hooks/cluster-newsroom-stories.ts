@@ -33,11 +33,36 @@ type ExistingClusterRow = {
 };
 
 type SavedClusterRow = { id: string; cluster_key: string };
+type MembershipWriteRow = {
+  cluster_id: string;
+  feed_item_id: number;
+  relationship_type: string;
+  weight: number;
+  is_primary_source: boolean;
+  source_name: string | null;
+  source_url: string | null;
+};
+type ExistingMembershipRow = MembershipWriteRow;
 
 function sameInstant(left: string, right: string): boolean {
   const leftMs = Date.parse(left);
   const rightMs = Date.parse(right);
   return Number.isFinite(leftMs) && Number.isFinite(rightMs) ? leftMs === rightMs : left === right;
+}
+
+function membershipKey(row: Pick<MembershipWriteRow, "cluster_id" | "feed_item_id">): string {
+  return `${row.cluster_id}:${row.feed_item_id}`;
+}
+
+function sameMembership(left: MembershipWriteRow, right: ExistingMembershipRow | undefined): boolean {
+  if (!right) return false;
+  return left.cluster_id === right.cluster_id
+    && left.feed_item_id === right.feed_item_id
+    && left.relationship_type === right.relationship_type
+    && Number(left.weight) === Number(right.weight)
+    && left.is_primary_source === right.is_primary_source
+    && left.source_name === right.source_name
+    && left.source_url === right.source_url;
 }
 
 async function handler() {
@@ -59,7 +84,7 @@ async function handler() {
 
   const feedIds = normalizedRows.map((row) => row.feed_item_id);
   if (!feedIds.length) {
-    return Response.json({ ok: true, scanned: 0, clusters: 0, multiSourceClusters: 0, memberships: 0, aiCalls: 0 });
+    return Response.json({ ok: true, scanned: 0, clusters: 0, clusterWrites: 0, multiSourceClusters: 0, memberships: 0, membershipWrites: 0, membershipUnchanged: 0, aiCalls: 0 });
   }
 
   const { data: feedData, error: feedError } = await newsroomDb
@@ -105,6 +130,7 @@ async function handler() {
   });
 
   let savedClusters: SavedClusterRow[] = [];
+  let clusterWrites = 0;
   if (clusterRows.length) {
     const clusterKeys = clusterRows.map((row) => row.cluster_key);
     const { data: existingData, error: existingError } = await newsroomDb
@@ -124,6 +150,7 @@ async function handler() {
         || Number(prior.confidence) !== Number(row.confidence)
         || !sameInstant(prior.last_seen_at, row.last_seen_at);
     });
+    clusterWrites = changedRows.length;
 
     const changedSaved: SavedClusterRow[] = [];
     if (changedRows.length) {
@@ -145,7 +172,7 @@ async function handler() {
   }
 
   const idByKey = new Map<string, string>(savedClusters.map((row) => [row.cluster_key, row.id]));
-  const memberships = clusters.flatMap((cluster) => {
+  const memberships: MembershipWriteRow[] = clusters.flatMap((cluster) => {
     const clusterId = idByKey.get(`deterministic-v${CLUSTER_VERSION}:${cluster.anchorFeedItemId}`);
     if (!clusterId) return [];
     return cluster.memberFeedItemIds.map((feedItemId) => {
@@ -163,11 +190,24 @@ async function handler() {
     });
   });
 
+  let membershipWrites = 0;
   if (memberships.length) {
-    const { error: membershipError } = await newsroomDb
+    const membershipClusterIds = [...new Set(memberships.map((row) => row.cluster_id))];
+    const { data: existingMembershipData, error: existingMembershipError } = await newsroomDb
       .from("news_story_cluster_items")
-      .upsert(memberships, { onConflict: "cluster_id,feed_item_id" });
-    if (membershipError) return Response.json({ ok: false, error: membershipError.message }, { status: 500 });
+      .select("cluster_id,feed_item_id,relationship_type,weight,is_primary_source,source_name,source_url")
+      .in("cluster_id", membershipClusterIds);
+    if (existingMembershipError) return Response.json({ ok: false, error: existingMembershipError.message }, { status: 500 });
+    const existingMemberships = (existingMembershipData ?? []) as ExistingMembershipRow[];
+    const existingMembershipByKey = new Map(existingMemberships.map((row) => [membershipKey(row), row]));
+    const membershipsToWrite = memberships.filter((row) => !sameMembership(row, existingMembershipByKey.get(membershipKey(row))));
+    membershipWrites = membershipsToWrite.length;
+    if (membershipsToWrite.length) {
+      const { error: membershipError } = await newsroomDb
+        .from("news_story_cluster_items")
+        .upsert(membershipsToWrite, { onConflict: "cluster_id,feed_item_id" });
+      if (membershipError) return Response.json({ ok: false, error: membershipError.message }, { status: 500 });
+    }
   }
 
   const multiSourceClusters = clusterRows.filter((row) => row.source_count > 1).length;
@@ -177,8 +217,12 @@ async function handler() {
     ok: true,
     scanned: clusterable.length,
     clusters: clusters.length,
+    clusterWrites,
+    unchangedClusters: clusterRows.length - clusterWrites,
     multiSourceClusters,
     memberships: memberships.length,
+    membershipWrites,
+    membershipUnchanged: memberships.length - membershipWrites,
     primarySourceItems,
     distinctPrimarySources,
     clusterVersion: CLUSTER_VERSION,
