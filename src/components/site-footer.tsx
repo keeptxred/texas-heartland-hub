@@ -61,10 +61,21 @@ export function SiteFooter() {
                   </h2>
                   <ul className="space-y-2 text-sm text-white/75">
                     {links.map((link) => (
-                      <li key={link.to}>
-                        <Link to={link.to} className="hover:text-white">
-                          {link.label}
-                        </Link>
+                      <li key={"href" in link ? link.href : link.to}>
+                        {"href" in link ? (
+                          <a
+                            href={link.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:text-white"
+                          >
+                            {link.label} ↗
+                          </a>
+                        ) : (
+                          <Link to={link.to} className="hover:text-white">
+                            {link.label}
+                          </Link>
+                        )}
                       </li>
                     ))}
                   </ul>
