@@ -80,7 +80,7 @@ export function SiteHeader() {
           {SITE_NAV_GROUPS.map((group) => {
             const active =
               (group.href ? isPathActive(pathname, group.href) : false) ||
-              group.links.some((link) => isPathActive(pathname, link.to));
+              group.links.some((link) => "to" in link && isPathActive(pathname, link.to));
 
             return (
               <DropdownMenu.Root key={group.id}>
@@ -107,14 +107,26 @@ export function SiteHeader() {
                     </div>
                     <div className="mt-1 border-t border-border pt-1">
                       {group.links.map((link) => (
-                        <DropdownMenu.Item key={link.to} asChild>
-                          <Link
-                            to={link.to}
-                            className="block rounded-md px-3 py-2.5 outline-none transition-colors hover:bg-muted focus:bg-muted"
-                          >
-                            <span className="block text-sm font-semibold">{link.label}</span>
-                            <span className="mt-0.5 block text-xs leading-5 text-muted-foreground">{link.description}</span>
-                          </Link>
+                        <DropdownMenu.Item key={"href" in link ? link.href : link.to} asChild>
+                          {"href" in link ? (
+                            <a
+                              href={link.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block rounded-md px-3 py-2.5 outline-none transition-colors hover:bg-muted focus:bg-muted"
+                            >
+                              <span className="block text-sm font-semibold">{link.label} ↗</span>
+                              <span className="mt-0.5 block text-xs leading-5 text-muted-foreground">{link.description}</span>
+                            </a>
+                          ) : (
+                            <Link
+                              to={link.to}
+                              className="block rounded-md px-3 py-2.5 outline-none transition-colors hover:bg-muted focus:bg-muted"
+                            >
+                              <span className="block text-sm font-semibold">{link.label}</span>
+                              <span className="mt-0.5 block text-xs leading-5 text-muted-foreground">{link.description}</span>
+                            </Link>
+                          )}
                         </DropdownMenu.Item>
                       ))}
                     </div>
@@ -170,17 +182,30 @@ export function SiteHeader() {
                 )}
                 <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 border-t border-white/10 pt-2">
                   {group.links
-                    .filter((link) => link.to !== group.href)
-                    .map((link) => (
-                      <Link
-                        key={link.to}
-                        to={link.to}
-                        onClick={() => setOpen(false)}
-                        className="rounded py-2 text-xs font-medium leading-5 text-white/70 hover:text-white"
-                      >
-                        {link.label}
-                      </Link>
-                    ))}
+                    .filter((link) => !("to" in link) || link.to !== group.href)
+                    .map((link) =>
+                      "href" in link ? (
+                        <a
+                          key={link.href}
+                          href={link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setOpen(false)}
+                          className="rounded py-2 text-xs font-medium leading-5 text-white/70 hover:text-white"
+                        >
+                          {link.label} ↗
+                        </a>
+                      ) : (
+                        <Link
+                          key={link.to}
+                          to={link.to}
+                          onClick={() => setOpen(false)}
+                          className="rounded py-2 text-xs font-medium leading-5 text-white/70 hover:text-white"
+                        >
+                          {link.label}
+                        </Link>
+                      ),
+                    )}
                 </div>
               </section>
             ))}
