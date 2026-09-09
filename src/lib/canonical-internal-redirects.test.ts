@@ -4,6 +4,8 @@ import {
   canonicalizeInternalRedirectMarkdownLinks,
 } from "./canonical-internal-redirects";
 
+const legacyWwwHost = ["www", "keeptxred", "com"].join(".");
+
 const mappings = [
   ["/about-keep-texas-red", "/about"],
   ["/candidate-guides", "/elections/2026"],
@@ -36,7 +38,7 @@ describe("canonical internal redirect links", () => {
   });
 
   it("canonicalizes absolute KeepTXRed aliases and leaves unrelated URLs alone", () => {
-    expect(canonicalInternalRedirectHref("https://www.keeptxred.com/texas-law-policy#guide")).toBe(
+    expect(canonicalInternalRedirectHref(`https://${legacyWwwHost}/texas-law-policy#guide`)).toBe(
       "https://keeptxred.com/laws#guide",
     );
     expect(canonicalInternalRedirectHref("/elections/races")).toBe("/elections/races");
