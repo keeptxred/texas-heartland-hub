@@ -340,7 +340,7 @@ function TexasElectionDistrict() {
           </h2>
           <div className="mt-5 grid gap-4 md:grid-cols-2">
             <DistrictLink href="/register-to-vote" title="Register to vote" description="Review Texas voter-registration requirements and deadlines." />
-            <DistrictLink href="/voting-locations" title="Voting locations" description="Find official local voting-location resources." />
+            <DistrictLink href="/elections/voting" title="Voting locations" description="Find official local voting-location resources." />
             <DistrictLink href="/find-representative" title="Find your representatives" description="Look up the officials connected to your address." />
             <DistrictLink href="/county-elections" title="County elections" description="Open county election offices, ballot resources, and local guidance." />
             <DistrictLink href={`/elections/forecast?officeLevel=${district.officeLevel}`} title="Forecasts" description="Review available ratings and probabilities for covered races." />

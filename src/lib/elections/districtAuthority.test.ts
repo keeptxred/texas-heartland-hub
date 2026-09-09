@@ -27,7 +27,7 @@ describe("election district authority template", () => {
   it("cross-links district authority resources", () => {
     for (const path of [
       "/register-to-vote",
-      "/voting-locations",
+      "/elections/voting",
       "/find-representative",
       "/county-elections",
     ]) {
