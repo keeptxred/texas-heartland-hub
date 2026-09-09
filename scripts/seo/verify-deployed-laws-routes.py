@@ -133,6 +133,7 @@ def main() -> int:
             "missing_article_fallback_found": False,
         },
         "priority_sitemap": {"status": "not_run", "error": None},
+        "fifteenth_court": {"status": "not_run", "error": None},
         "bills_platform": {"status": "not_run", "error": None},
     }
     write_report(report)
@@ -245,6 +246,23 @@ def main() -> int:
         report["priority_sitemap"] = {"status": "failed", "error": str(exc)}
         write_report(report)
         raise SystemExit(str(exc)) from exc
+
+    fifteenth_smoke = Path(__file__).resolve().parents[1] / "authority" / "verify-deployed-fifteenth-court.py"
+    fifteenth_result = subprocess.run(
+        ["python3", str(fifteenth_smoke)],
+        env={**os.environ, "SITE_URL": SITE_URL},
+        capture_output=True,
+        text=True,
+    )
+    if fifteenth_result.stdout:
+        print(fifteenth_result.stdout, end="" if fifteenth_result.stdout.endswith("\n") else "\n")
+    if fifteenth_result.returncode != 0:
+        error = fifteenth_result.stderr.strip() or f"Fifteenth Court authority smoke exited {fifteenth_result.returncode}"
+        report["fifteenth_court"] = {"status": "failed", "error": error}
+        write_report(report)
+        github_error("Deployed Fifteenth Court authority smoke failed", error)
+        raise SystemExit(error)
+    report["fifteenth_court"] = {"status": "passed", "error": None}
 
     bills_smoke = Path(__file__).resolve().parents[1] / "legislature" / "verify-deployed-bills-platform.py"
     bills_result = subprocess.run(
