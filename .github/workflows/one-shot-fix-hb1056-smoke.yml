@@ -1,0 +1,60 @@
+name: One-shot fix HB1056 deploy smoke title
+
+on:
+  push:
+    branches:
+      - fix/hb1056-deploy-smoke-title-20260909
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/hb1056-deploy-smoke-title-20260909
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Replace stale HB1056 title contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          old = 'Texas Gold and Silver Legal Tender Law Takes Effect Sept. 1'
+          new = 'Texas Gold and Silver Legal Tender Law: What HB 1056 Does Sept. 1'
+          paths = [
+              Path('scripts/seo/verify-deployed-laws-routes.py'),
+              Path('src/lib/deployed-laws-gate-in-production.test.ts'),
+          ]
+          for path in paths:
+              text = path.read_text(encoding='utf-8')
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{path}: expected exactly one stale title, found {count}')
+              path.write_text(text.replace(old, new), encoding='utf-8')
+              print(f'updated {path}')
+          PY
+      - name: Validate focused deploy gate
+        run: |
+          set -euo pipefail
+          python3 -m py_compile scripts/seo/verify-deployed-laws-routes.py
+          bunx vitest run src/lib/deployed-laws-gate-in-production.test.ts
+      - name: Commit fix and remove one-shot workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm .github/workflows/one-shot-fix-hb1056-smoke.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add scripts/seo/verify-deployed-laws-routes.py src/lib/deployed-laws-gate-in-production.test.ts .github/workflows/one-shot-fix-hb1056-smoke.yml
+          git commit -m 'Fix stale HB1056 deploy smoke title'
+          git push origin HEAD:fix/hb1056-deploy-smoke-title-20260909
