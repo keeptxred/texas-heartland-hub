@@ -1,20 +1,24 @@
 {
-  "generatedAt": "2026-09-06T21:20:36.617Z",
+  "generatedAt": "2026-09-09T04:46:49.473Z",
   "sourceName": "Texas Secretary of State — 2026 Independent Candidate Filings",
   "sourceUrl": "https://www.sos.state.tx.us/elections/laws/independent-declarations-2026.shtml",
   "sourceRetrievedAt": "2026-08-22T13:50:00Z",
   "authorityCandidateParty": "independent",
-  "authorityEntryCount": 15,
-  "matchedCount": 13,
+  "authorityEntryCount": 16,
+  "matchedCount": 14,
   "unmatchedCount": 2,
   "ambiguousCount": 0,
-  "changedFieldCount": 0,
+  "changedFieldCount": 1,
   "matched": [
     {
       "candidateId": "candidate-jade-simmons-independent-race-2026-us-senate",
       "fullName": "JADE SIMMONS",
       "raceId": "race-2026-us-senate",
       "party": "independent",
+      "authoritySourceName": "Texas Secretary of State — 2026 Independent Candidate Filings",
+      "authoritySourceUrl": "https://www.sos.state.tx.us/elections/laws/independent-declarations-2026.shtml",
+      "authoritySecondarySourceUrl": null,
+      "evidence": null,
       "before": {
         "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
@@ -29,6 +33,10 @@
       "fullName": "ROY MORALES",
       "raceId": "race-2026-us-house-9",
       "party": "independent",
+      "authoritySourceName": "Texas Secretary of State — 2026 Independent Candidate Filings",
+      "authoritySourceUrl": "https://www.sos.state.tx.us/elections/laws/independent-declarations-2026.shtml",
+      "authoritySecondarySourceUrl": null,
+      "evidence": null,
       "before": {
         "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
@@ -43,6 +51,10 @@
       "fullName": "VALENCIA WILLIAMS",
       "raceId": "race-2026-us-house-18",
       "party": "independent",
+      "authoritySourceName": "Texas Secretary of State — 2026 Independent Candidate Filings",
+      "authoritySourceUrl": "https://www.sos.state.tx.us/elections/laws/independent-declarations-2026.shtml",
+      "authoritySecondarySourceUrl": null,
+      "evidence": null,
       "before": {
         "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
@@ -57,6 +69,10 @@
       "fullName": "GERARD ANTHONY VILLALOBOS",
       "raceId": "race-2026-us-house-20",
       "party": "independent",
+      "authoritySourceName": "Texas Secretary of State — 2026 Independent Candidate Filings",
+      "authoritySourceUrl": "https://www.sos.state.tx.us/elections/laws/independent-declarations-2026.shtml",
+      "authoritySecondarySourceUrl": null,
+      "evidence": null,
       "before": {
         "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
@@ -71,6 +87,10 @@
       "fullName": "BEN MENDOZA",
       "raceId": "race-2026-us-house-23",
       "party": "independent",
+      "authoritySourceName": "Texas Secretary of State — 2026 Independent Candidate Filings",
+      "authoritySourceUrl": "https://www.sos.state.tx.us/elections/laws/independent-declarations-2026.shtml",
+      "authoritySecondarySourceUrl": null,
+      "evidence": null,
       "before": {
         "filingStatus": "accepted",
         "ballotAccessStatus": "qualified"
@@ -85,6 +105,10 @@
       "fullName": "SCOTT CUBBLER",
       "raceId": "race-2026-us-house-38",
       "party": "independent",
+      "authoritySourceName": "Texas Secretary of State — 2026 Independent Candidate Filings",
+      "authoritySourceUrl": "https://www.sos.state.tx.us/elections/laws/independent-declarations-2026.shtml",
+      "authoritySecondarySourceUrl": null,
+      "evidence": null,
       "before": {
         "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
@@ -99,6 +123,10 @@
       "fullName": "WILLIAM TAGGART",
       "raceId": "race-2026-us-house-38",
       "party": "independent",
+      "authoritySourceName": "Texas Secretary of State — 2026 Independent Candidate Filings",
+      "authoritySourceUrl": "https://www.sos.state.tx.us/elections/laws/independent-declarations-2026.shtml",
+      "authoritySecondarySourceUrl": null,
+      "evidence": null,
       "before": {
         "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
@@ -113,6 +141,10 @@
       "fullName": "SARAH BOWMAN CUNNINGHAM",
       "raceId": "race-2026-governor",
       "party": "independent",
+      "authoritySourceName": "Texas Secretary of State — 2026 Independent Candidate Filings",
+      "authoritySourceUrl": "https://www.sos.state.tx.us/elections/laws/independent-declarations-2026.shtml",
+      "authoritySecondarySourceUrl": null,
+      "evidence": null,
       "before": {
         "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
@@ -127,6 +159,10 @@
       "fullName": "DEMETRA JEFFERSON WYSINGER",
       "raceId": "race-2026-governor",
       "party": "independent",
+      "authoritySourceName": "Texas Secretary of State — 2026 Independent Candidate Filings",
+      "authoritySourceUrl": "https://www.sos.state.tx.us/elections/laws/independent-declarations-2026.shtml",
+      "authoritySecondarySourceUrl": null,
+      "evidence": null,
       "before": {
         "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
@@ -141,6 +177,10 @@
       "fullName": "MIKE COLLIER",
       "raceId": "race-2026-lieutenant-governor",
       "party": "independent",
+      "authoritySourceName": "Texas Secretary of State — 2026 Independent Candidate Filings",
+      "authoritySourceUrl": "https://www.sos.state.tx.us/elections/laws/independent-declarations-2026.shtml",
+      "authoritySecondarySourceUrl": null,
+      "evidence": null,
       "before": {
         "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
@@ -155,6 +195,10 @@
       "fullName": "STEVE CLUGSTON",
       "raceId": "race-2026-texas-senate-1",
       "party": "independent",
+      "authoritySourceName": "Texas Secretary of State — 2026 Independent Candidate Filings",
+      "authoritySourceUrl": "https://www.sos.state.tx.us/elections/laws/independent-declarations-2026.shtml",
+      "authoritySecondarySourceUrl": null,
+      "evidence": null,
       "before": {
         "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
@@ -169,6 +213,10 @@
       "fullName": "L.D. HOWARD",
       "raceId": "race-2026-texas-house-124",
       "party": "independent",
+      "authoritySourceName": "Texas Secretary of State — 2026 Independent Candidate Filings",
+      "authoritySourceUrl": "https://www.sos.state.tx.us/elections/laws/independent-declarations-2026.shtml",
+      "authoritySecondarySourceUrl": null,
+      "evidence": null,
       "before": {
         "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
@@ -183,6 +231,10 @@
       "fullName": "LISA EMERSON",
       "raceId": "race-2026-texas-house-126",
       "party": "independent",
+      "authoritySourceName": "Texas Secretary of State — 2026 Independent Candidate Filings",
+      "authoritySourceUrl": "https://www.sos.state.tx.us/elections/laws/independent-declarations-2026.shtml",
+      "authoritySecondarySourceUrl": null,
+      "evidence": null,
       "before": {
         "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
@@ -190,6 +242,24 @@
       "after": {
         "filingStatus": "rejected",
         "ballotAccessStatus": "qualified"
+      }
+    },
+    {
+      "candidateId": "candidate-carlos-charlie-garza-republican-race-2026-state-board-of-education-13",
+      "fullName": "CARLOS (CHARLIE) GARZA",
+      "raceId": "race-2026-state-board-of-education-13",
+      "party": "republican",
+      "authoritySourceName": "Republican Party of Texas — 2026 Primary Ballot Filing; Tarrant County — 2026 Republican Primary Results",
+      "authoritySourceUrl": "https://texasgop.org/wp-content/uploads/2025/12/Republican-Primary-Ballot-Filing-2026-Publish-25.pdf",
+      "authoritySecondarySourceUrl": "https://www.tarrantcountytx.gov/content/dam/main/elections/2026/pm26/reports/cumulative_rep_PM26_03032026_7pm.pdf",
+      "evidence": "The Republican Party of Texas filing list identifies April Williams Moore for State Board of Education District 13, and Tarrant County's March 3, 2026 Republican primary results show April Williams Moore as the sole District 13 Republican candidate. Carlos (Charlie) Garza does not appear on the 2026 Republican primary ballot for this race. This entry records ballot-access removal only and does not assert a rejected or withdrawn filing status.",
+      "before": {
+        "filingStatus": "accepted",
+        "ballotAccessStatus": "qualified"
+      },
+      "after": {
+        "filingStatus": "accepted",
+        "ballotAccessStatus": "removed"
       }
     }
   ],
