@@ -4,7 +4,7 @@ import { GOVERNMENT_ENTITIES } from "@/lib/texas-government";
 import { getPublicationGovernmentEntities } from "@/lib/government-entity-publication";
 import { governmentEntityWordCount, isGovernmentEntityIndexable, MIN_GOVERNMENT_ENTITY_WORDS } from "@/lib/government-entity-indexability";
 
-const routeSource = fs.readFileSync(new URL("../routes/texas-government.$entitySlug.tsx", import.meta.url), "utf8");
+const routeSource = fs.readFileSync(new URL("../routes/texas-government_.$entitySlug.tsx", import.meta.url), "utf8");
 const sitemapSource = fs.readFileSync(new URL("../routes/sitemap-government[.]xml.ts", import.meta.url), "utf8");
 const expandedEntities = getPublicationGovernmentEntities(GOVERNMENT_ENTITIES);
 
