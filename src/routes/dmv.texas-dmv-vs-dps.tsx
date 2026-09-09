@@ -123,7 +123,7 @@ function TexasDmvVsDpsPage() {
             <li>Temporary registration services</li>
           </ul>
           <p className="mt-5 leading-relaxed">
-            Use the existing <a href="/find-my-dmv" className="font-semibold text-primary underline underline-offset-4">Texas vehicle registration estimator and office finder</a> to estimate common fees and locate the appropriate office for your county.
+            Use the existing <a href="https://texasdefined.com/find-my-dmv" className="font-semibold text-primary underline underline-offset-4">Texas vehicle registration estimator and office finder</a> to estimate common fees and locate the appropriate office for your county.
           </p>
         </section>
 
@@ -210,7 +210,7 @@ function TexasDmvVsDpsPage() {
         <aside className="mt-12 rounded-xl border bg-muted/30 p-6">
           <h2 className="text-2xl font-bold">Continue with Texas driver and vehicle services</h2>
           <p className="mt-3 text-muted-foreground">
-            Return to the <a href="/dmv" className="font-semibold text-primary underline underline-offset-4">Texas DMV & Driver Services hub</a> for current and upcoming guides, or use the <a href="/find-my-dmv" className="font-semibold text-primary underline underline-offset-4">office finder and registration estimator</a> for a vehicle transaction.
+            Return to the <a href="/dmv" className="font-semibold text-primary underline underline-offset-4">Texas DMV & Driver Services hub</a> for current and upcoming guides, or use the <a href="https://texasdefined.com/find-my-dmv" className="font-semibold text-primary underline underline-offset-4">office finder and registration estimator</a> for a vehicle transaction.
           </p>
         </aside>
 
