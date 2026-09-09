@@ -19,6 +19,34 @@ type FeedNormalizationRow = {
   created_at: string;
 };
 
+type PriorNormalizationRow = ExistingNormalization & {
+  normalized_title: string;
+  normalized_description: string;
+  content_fingerprint: string | null;
+  duplicate_of_feed_item_id: number | null;
+  duplicate_reason: string | null;
+  dedupe_confidence: number | null;
+  normalization_version: number;
+};
+
+type DesiredNormalizationRow = PriorNormalizationRow;
+
+function sameNormalization(left: DesiredNormalizationRow, right: PriorNormalizationRow | undefined): boolean {
+  if (!right) return false;
+  return left.feed_item_id === right.feed_item_id
+    && left.normalized_title === right.normalized_title
+    && left.normalized_description === right.normalized_description
+    && left.canonical_url === right.canonical_url
+    && left.source_key === right.source_key
+    && left.title_fingerprint === right.title_fingerprint
+    && left.content_fingerprint === right.content_fingerprint
+    && left.duplicate_of_feed_item_id === right.duplicate_of_feed_item_id
+    && left.duplicate_reason === right.duplicate_reason
+    && left.dedupe_confidence === right.dedupe_confidence
+    && left.observed_at === right.observed_at
+    && left.normalization_version === right.normalization_version;
+}
+
 async function handler() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   // The committed generated Database type intentionally trails recent feed columns and newsroom migrations.
@@ -35,9 +63,8 @@ async function handler() {
       .limit(FEED_LIMIT),
     newsroomDb
       .from("news_feed_normalization")
-      .select("feed_item_id,canonical_url,source_key,title_fingerprint,observed_at")
+      .select("feed_item_id,normalized_title,normalized_description,canonical_url,source_key,title_fingerprint,content_fingerprint,duplicate_of_feed_item_id,duplicate_reason,dedupe_confidence,observed_at,normalization_version")
       .gte("observed_at", since)
-      .is("duplicate_of_feed_item_id", null)
       .order("observed_at", { ascending: true })
       .limit(5000),
   ]);
@@ -45,15 +72,24 @@ async function handler() {
   if (feedError) return Response.json({ ok: false, error: feedError.message }, { status: 500 });
   if (priorError) return Response.json({ ok: false, error: priorError.message }, { status: 500 });
   const feedRows = (feedData ?? []) as FeedNormalizationRow[];
-  const priorRows = (priorData ?? []) as ExistingNormalization[];
+  const priorRows = (priorData ?? []) as PriorNormalizationRow[];
+  const priorByFeedItemId = new Map(priorRows.map((row) => [row.feed_item_id, row]));
 
-  const canonicalRows: ExistingNormalization[] = [...priorRows];
-  const normalized = [...feedRows]
+  const canonicalRows: ExistingNormalization[] = priorRows
+    .filter((row) => row.duplicate_of_feed_item_id === null)
+    .map((row) => ({
+      feed_item_id: row.feed_item_id,
+      canonical_url: row.canonical_url,
+      source_key: row.source_key,
+      title_fingerprint: row.title_fingerprint,
+      observed_at: row.observed_at,
+    }));
+  const normalized: DesiredNormalizationRow[] = [...feedRows]
     .sort((a, b) => Date.parse(a.pub_date ?? a.created_at) - Date.parse(b.pub_date ?? b.created_at) || a.id - b.id)
     .map((row) => {
       const item = normalizeNewsFeedItem(row);
       const duplicate = findDeterministicDuplicate(item, canonicalRows);
-      const output = {
+      const output: DesiredNormalizationRow = {
         feed_item_id: item.feedItemId,
         normalized_title: item.normalizedTitle,
         normalized_description: item.normalizedDescription,
@@ -66,7 +102,6 @@ async function handler() {
         dedupe_confidence: duplicate?.confidence ?? null,
         observed_at: item.observedAt,
         normalization_version: NORMALIZATION_VERSION,
-        normalized_at: new Date().toISOString(),
       };
       if (!duplicate) {
         canonicalRows.push({
@@ -80,10 +115,14 @@ async function handler() {
       return output;
     });
 
-  if (normalized.length) {
+  const normalizedAt = new Date().toISOString();
+  const rowsToWrite = normalized
+    .filter((row) => !sameNormalization(row, priorByFeedItemId.get(row.feed_item_id)))
+    .map((row) => ({ ...row, normalized_at: normalizedAt }));
+  if (rowsToWrite.length) {
     const { error: upsertError } = await newsroomDb
       .from("news_feed_normalization")
-      .upsert(normalized, { onConflict: "feed_item_id" });
+      .upsert(rowsToWrite, { onConflict: "feed_item_id" });
     if (upsertError) return Response.json({ ok: false, error: upsertError.message }, { status: 500 });
   }
 
@@ -98,6 +137,8 @@ async function handler() {
     ok: true,
     scanned: feedRows.length,
     normalized: normalized.length,
+    written: rowsToWrite.length,
+    unchanged: normalized.length - rowsToWrite.length,
     unique: normalized.length - duplicates.length,
     duplicates: duplicates.length,
     duplicateReasons: byReason,
