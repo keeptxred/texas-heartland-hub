@@ -10,12 +10,20 @@ import {
 import { politicalFigureAuthoritySourcesBySlug } from "./texas-political-figure-authority-sources";
 
 const redirectAliases = new Set([
-  "/texas-news",
-  "/elections",
-  "/texas-law-policy",
-  "/texas-laws",
+  "/about-keep-texas-red",
+  "/candidate-guides",
   "/laws-to-know",
   "/legislative-updates",
+  "/texas-laws",
+  "/texas-law-policy",
+  "/texas-news",
+  "/elections",
+  "/voting-locations",
+  "/living-in-texas",
+  "/moving-to-texas",
+  "/texas-living",
+  "/explore",
+  "/tax-calculator",
 ]);
 
 describe("Texas political figure authority collection", () => {
