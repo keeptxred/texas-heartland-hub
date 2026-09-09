@@ -91,6 +91,19 @@ jobs:
 
           echo "production_state=${production_state:-none}"
           if [[ "$production_state" == 'success' ]]; then
+            court_html="$(curl --retry 8 --retry-delay 2 --retry-all-errors --connect-timeout 10 --max-time 60 --fail-with-body --silent --show-error \
+              -H 'x-keeptxred-deployment-smoke: canonical' \
+              -H 'cache-control: no-cache' \
+              'https://keeptxred-site.freddy-coppola.workers.dev/texas-government/fifteenth-court-of-appeals')"
+            expected_h1='Texas Fifteenth Court of Appeals: The Statewide Court That Changed the Appellate Map'
+            expected_canonical='https://keeptxred.com/texas-government/fifteenth-court-of-appeals'
+            canonical_count="$(printf '%s' "$court_html" | grep -Fo "rel=\"canonical\" href=\"$expected_canonical\"" | wc -l | tr -d ' ')"
+            if ! printf '%s' "$court_html" | grep -Fq "$expected_h1" || [[ "$canonical_count" != '1' ]]; then
+              echo "Recorded production-current status disagrees with the live Fifteenth Court smoke; redeployment is required."
+              echo "deploy=true" >> "$GITHUB_OUTPUT"
+              echo "production_current=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
             echo "deploy=false" >> "$GITHUB_OUTPUT"
             echo "production_current=true" >> "$GITHUB_OUTPUT"
             echo "Production is already recorded as current for verified main $main_sha; revalidating authority and discovery gates."
