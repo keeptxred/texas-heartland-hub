@@ -43,7 +43,7 @@ function VehicleRegistrationRenewalPage() {
           <div className="mt-8 flex flex-wrap gap-3">
             <a href="https://txt.texas.gov/dmv/vehicle-registration-renewal" target="_blank" rel="noreferrer" className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90">Renew with TxT</a>
             <a href="/vehicles/registration" className="rounded-md border px-5 py-3 text-sm font-semibold hover:bg-muted">Registration guide</a>
-            <a href="/find-my-dmv" className="rounded-md border px-5 py-3 text-sm font-semibold hover:bg-muted">Find a county office</a>
+            <a href="https://texasdefined.com/find-my-dmv" className="rounded-md border px-5 py-3 text-sm font-semibold hover:bg-muted">Find a county office</a>
           </div>
         </div>
       </section>
