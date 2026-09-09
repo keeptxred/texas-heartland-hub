@@ -24,7 +24,7 @@ const chapters = [
     ],
     links: [
       ["Texas economy and no income tax", "/issues/texas-economy-no-income-tax"],
-      ["Property-tax protest guide", "/texas-property-tax-protest-guide"],
+      ["Property-tax protest guide", "https://texasdefined.com/do/property-tax-protest"],
       ["Texas tax structure tool", "/tools/texas-tax-structure-comparison"],
     ],
   },
@@ -84,7 +84,7 @@ const chapters = [
     ],
     links: [
       ["Texas election law", "/issues/texas-election-law"],
-      ["Election Central", "/elections"],
+      ["Election Central", "/elections/2026"],
       ["Register to vote", "/register-to-vote"],
     ],
   },
