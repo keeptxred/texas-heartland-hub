@@ -35,6 +35,7 @@ import { POLICY_TRACKER_WAVE16_UPGRADES } from "@/data/policy-tracker-wave16-upg
 import { POLICY_TRACKER_WAVE18_READY } from "@/data/policy-tracker-wave18-ready";
 import { POLICY_TRACKER_WAVE19_UPGRADES } from "@/data/policy-tracker-wave19-upgrades";
 import { POLICY_TRACKER_WAVE20_UPGRADES } from "@/data/policy-tracker-wave20-upgrades";
+import { POLICY_TRACKER_WAVE21_UPGRADE } from "@/data/policy-tracker-wave21-upgrade";
 
 const BASE_POLICY_TRACKERS = [
   ...POLICY_TRACKERS,
@@ -57,7 +58,9 @@ const BASE_POLICY_TRACKERS = [
 ];
 
 export const ALL_POLICY_TRACKERS = BASE_POLICY_TRACKERS.map(
-  (tracker) => POLICY_TRACKER_WAVE20_UPGRADES[tracker.slug]
+  (tracker) => tracker.slug === POLICY_TRACKER_WAVE21_UPGRADE.slug
+    ? POLICY_TRACKER_WAVE21_UPGRADE
+    : POLICY_TRACKER_WAVE20_UPGRADES[tracker.slug]
     ?? POLICY_TRACKER_WAVE19_UPGRADES[tracker.slug]
     ?? POLICY_TRACKER_WAVE18_READY[tracker.slug]
     ?? (tracker.slug === GENETIC_DATA_PRIVACY_UPGRADE.slug
