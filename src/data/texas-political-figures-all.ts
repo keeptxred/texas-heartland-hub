@@ -4,6 +4,7 @@ import { withPoliticalFigureDepthSupplements } from "@/data/texas-political-figu
 import { ADDITIONAL_TEXAS_POLITICAL_FIGURES as CURATED_EXPANDED_FIGURES } from "@/data/texas-political-figures-expanded";
 import { MORE_TEXAS_POLITICAL_FIGURES } from "@/data/texas-political-figures-expanded-2";
 import { RECONSTRUCTION_TEXAS_POLITICAL_FIGURES } from "@/data/texas-political-figures-reconstruction";
+import { canonicalInternalRedirectHref } from "@/lib/canonical-internal-redirects";
 import {
   TEXAS_POLITICAL_FIGURES as TARGET_FIGURES,
   TEXAS_REPUBLICAN_CONSERVATIVE_LEADERS,
@@ -21,26 +22,9 @@ export type TexasPoliticalFigurePage = TexasPoliticalFigure & {
   aliases?: string[];
 };
 
-const canonicalRelatedHref = (href: string) => {
-  switch (href) {
-    case "/texas-news":
-      return "/news";
-    case "/elections":
-      return "/elections/2026";
-    case "/texas-law-policy":
-    case "/texas-laws":
-    case "/laws-to-know":
-      return "/laws";
-    case "/legislative-updates":
-      return "/bills";
-    default:
-      return href;
-  }
-};
-
 const canonicalizeFigureRelatedLinks = (figure: TexasPoliticalFigurePage): TexasPoliticalFigurePage => ({
   ...figure,
-  relatedLinks: figure.relatedLinks.map((link) => ({ ...link, href: canonicalRelatedHref(link.href) })),
+  relatedLinks: figure.relatedLinks.map((link) => ({ ...link, href: canonicalInternalRedirectHref(link.href) })),
 });
 
 const establishedFigures = ESTABLISHED_FIGURES.map(withPoliticalFigureDepthSupplements);
