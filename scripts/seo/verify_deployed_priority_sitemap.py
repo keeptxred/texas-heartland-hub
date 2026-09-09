@@ -15,6 +15,9 @@ DEPLOYMENT_SMOKE_HEADER = "x-keeptxred-deployment-smoke: canonical"
 DEFAULT_WORKER_ORIGIN = "https://keeptxred-site.freddy-coppola.workers.dev"
 PRIORITY_SOURCE = Path("src/data/search-console-priority-sitemap-urls.json")
 SITEMAP_NAMESPACE = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+LEGACY_ABOUT_PATH = "/about-keep-texas-red"
+LEGACY_ABOUT_TARGET = f"{SITE_ORIGIN}/about"
+LEGACY_ABOUT_PROBE_QUERY = "probe=brand-about-consolidation"
 
 
 class IndexabilityParser(HTMLParser):
@@ -160,6 +163,21 @@ def verify_priority_sitemap(site_url: str | None = None) -> None:
             failures.append(f"{path}: robots meta contains noindex ({parser.robots!r})")
 
         print(f"priority {path}: status={status} canonical={parser.canonicals!r} robots={parser.robots!r}")
+
+    legacy_probe = f"{LEGACY_ABOUT_PATH}?{LEGACY_ABOUT_PROBE_QUERY}"
+    try:
+        status, headers, _body = _curl(f"{worker_origin}{legacy_probe}")
+        locations = _header_values(headers, "location")
+        expected_location = f"{LEGACY_ABOUT_TARGET}?{LEGACY_ABOUT_PROBE_QUERY}"
+        if status != 301:
+            failures.append(f"{LEGACY_ABOUT_PATH}: returned HTTP {status}, expected permanent 301")
+        if locations != [expected_location]:
+            failures.append(
+                f"{LEGACY_ABOUT_PATH}: expected redirect location {expected_location!r}, got {locations!r}"
+            )
+        print(f"legacy {LEGACY_ABOUT_PATH}: status={status} location={locations!r}")
+    except RuntimeError as exc:
+        failures.append(f"{LEGACY_ABOUT_PATH}: redirect fetch failed ({exc})")
 
     if failures:
         for failure in failures:
