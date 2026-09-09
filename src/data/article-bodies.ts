@@ -1847,7 +1847,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       "appraisal-protest-playbook",
       "county-appraisal-districts-explained",
     ],
-    cta: { label: "Estimate Your Bill", href: "/tax-calculator" },
+    cta: { label: "Estimate Your Bill", href: "https://texasdefined.com/decide/property-taxes" },
   },
 
   "homestead-exemption-explained": {
@@ -1910,7 +1910,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       "appraisal-protest-playbook",
       "county-appraisal-districts-explained",
     ],
-    cta: { label: "Calculate Your Savings", href: "/tax-calculator" },
+    cta: { label: "Calculate Your Savings", href: "https://texasdefined.com/decide/property-taxes" },
   },
 
   "how-a-bill-becomes-texas-law": {
@@ -2020,7 +2020,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       "texas-voter-registration-guide",
       "voter-id-surge",
     ],
-    cta: { label: "Find Your Polling Place", href: "/voting-locations" },
+    cta: { label: "Find Your Polling Place", href: "/elections/voting" },
   },
 
   "beginners-guide-texas-elections": {
@@ -2260,7 +2260,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       "texas-property-tax-guide",
       "homestead-exemption-explained",
     ],
-    cta: { label: "Estimate Your Bill", href: "/tax-calculator" },
+    cta: { label: "Estimate Your Bill", href: "https://texasdefined.com/decide/property-taxes" },
   },
 
   "what-local-governments-control": {
@@ -2309,7 +2309,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       "texas-property-tax-guide",
       "county-appraisal-districts-explained",
     ],
-    cta: { label: "See What Your County Charges", href: "/tax-calculator" },
+    cta: { label: "See What Your County Charges", href: "https://texasdefined.com/decide/property-taxes" },
   },
 
   "texas-border-geography-101": {
@@ -2396,7 +2396,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     related: ["texas-school-board-powers", "school-choice-esa-guide", "isd-tax-burdens"],
-    cta: { label: "See School Tax Burdens by County", href: "/tax-calculator" },
+    cta: { label: "See School Tax Burdens by County", href: "https://texasdefined.com/decide/property-taxes" },
   },
 
   "texas-political-terminology": {
@@ -2482,7 +2482,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     related: ["what-local-governments-control", "texas-property-tax-guide"],
-    cta: { label: "Calculate Your County Tax", href: "/tax-calculator" },
+    cta: { label: "Calculate Your County Tax", href: "https://texasdefined.com/decide/property-taxes" },
   },
 
   "texas-water-rights-explained": {
@@ -2560,7 +2560,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       { label: "Texas Constitution", url: "https://statutes.capitol.texas.gov/?link=CN" },
     ],
     related: ["how-a-bill-becomes-texas-law", "texas-political-terminology"],
-    cta: { label: "See This Year's Propositions", href: "/elections" },
+    cta: { label: "See This Year's Propositions", href: "/elections/2026" },
   },
 
   "texas-open-meetings-public-info": {
@@ -2714,7 +2714,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       "what-local-governments-control",
       "how-texas-counties-spend",
     ],
-    cta: { label: "Estimate Your Property Tax", href: "/tax-calculator" },
+    cta: { label: "Estimate Your Property Tax", href: "https://texasdefined.com/decide/property-taxes" },
   },
   "texas-attorney-general-powers": {
     updated: "2026-06-29",
@@ -3293,7 +3293,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       "primary-vs-general-election",
       "beginners-guide-texas-elections",
     ],
-    cta: { label: "Find Your Polling Place", href: "/voting-locations" },
+    cta: { label: "Find Your Polling Place", href: "/elections/voting" },
   },
 
   "speaker-special-session": {
@@ -3449,7 +3449,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       "homestead-exemption-explained",
       "speaker-special-session",
     ],
-    cta: { label: "Estimate Your Savings", href: "/tax-calculator" },
+    cta: { label: "Estimate Your Savings", href: "https://texasdefined.com/decide/property-taxes" },
     keyTakeaways: [
       "Largest single tax cut in Texas history at $18 billion.",
       "Combines rate compression, higher homestead exemption, and new caps.",
@@ -3685,7 +3685,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     related: ["school-choice-esa-guide", "voter-id-surge", "primary-vs-general-election"],
-    cta: { label: "Find Your Ballot", href: "/voting-locations" },
+    cta: { label: "Find Your Ballot", href: "/elections/voting" },
     keyTakeaways: [
       "87 Texas ISDs have organized parental-rights candidate slates for May.",
       "School boards control curriculum, budget, superintendent, and tax rate.",
@@ -3769,7 +3769,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       "property-tax-relief-package",
       "appraisal-protest-playbook",
     ],
-    cta: { label: "Estimate Your Bill", href: "/tax-calculator" },
+    cta: { label: "Estimate Your Bill", href: "https://texasdefined.com/decide/property-taxes" },
     keyTakeaways: [
       "Fast-growing suburban counties top the ISD tax burden list.",
       "Fort Bend, Denton, Collin, and Williamson lead the state.",
@@ -4107,7 +4107,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       "homestead-exemption-explained",
       "county-appraisal-districts-explained",
     ],
-    cta: { label: "Estimate Your Bill", href: "/tax-calculator" },
+    cta: { label: "Estimate Your Bill", href: "https://texasdefined.com/decide/property-taxes" },
     keyTakeaways: [
       "Protest deadline is May 15 or 30 days after your notice.",
       "Equal-and-uniform is often the strongest argument in built-out neighborhoods.",
@@ -4567,7 +4567,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       "county-appraisal-districts-explained",
       "texas-new-laws-2026",
     ],
-    cta: { label: "Estimate Your Bill With Our Calculator", href: "/tax-calculator" },
+    cta: { label: "Estimate Your Bill With Our Calculator", href: "https://texasdefined.com/decide/property-taxes" },
     keyTakeaways: [
       "The homestead exemption is $140,000 for school purposes as of 2025's constitutional amendment.",
       "Homestead values are capped at 10% annual growth regardless of market appreciation.",
@@ -4895,7 +4895,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       "school-choice-esa-guide",
       "legislative-updates",
     ],
-    cta: { label: "Track Bills In Our Legislative Hub", href: "/legislative-updates" },
+    cta: { label: "Track Bills In Our Legislative Hub", href: "/bills" },
     keyTakeaways: [
       "The homestead exemption rose to $140,000 for the 2026 tax year via 2025 constitutional amendment.",
       "The Texas ESA program begins at scale for 2026-27, prioritizing low-income and disabled students.",

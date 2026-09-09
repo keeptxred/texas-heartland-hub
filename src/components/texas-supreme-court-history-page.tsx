@@ -372,7 +372,7 @@ export function TexasSupremeCourtHistoryPage() {
           {[
             ["Texas Government", "Current offices, powers, leaders, and official sources.", "/texas-government"],
             ["Texas Courts", "How the state judiciary is structured below the Supreme Court.", "/texas-courts"],
-            ["Court of Criminal Appeals history", "The separate court of last resort for criminal cases.", "/texas-government/texas-court-of-criminal-appeals-history"],
+            ["Court of Criminal Appeals history", "The separate court of last resort for criminal cases.", "/texas-government/court-of-criminal-appeals-history"],
             ["Texas Supreme Court realignment", "How Republican candidates transformed statewide Supreme Court elections.", "/texas-politics/texas-supreme-court-realignment"],
             ["Texas constitutional history", "The charters that repeatedly redesigned state government.", "/texas-politics/texas-constitutional-history"],
             ["2026 Election Central", "Current statewide judicial and other Texas election coverage.", "/elections/2026"],

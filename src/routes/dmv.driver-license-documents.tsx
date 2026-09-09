@@ -119,7 +119,7 @@ function DriverLicenseDocumentsPage() {
             New residents surrendering an out-of-state driver license should bring evidence of current Texas registration and insurance for each vehicle they own. A person who owns no vehicle signs a statement confirming that fact.
           </p>
           <p className="mt-4">
-            Complete the vehicle step through a county tax assessor-collector office, not a DPS driver license office. Use the <a className="font-semibold text-primary hover:underline" href="/find-my-dmv">registration estimator and office finder</a> and review <a className="font-semibold text-primary hover:underline" href="/dmv/texas-dmv-vs-dps">which Texas agency handles each transaction</a>.
+            Complete the vehicle step through a county tax assessor-collector office, not a DPS driver license office. Use the <a className="font-semibold text-primary hover:underline" href="https://texasdefined.com/find-my-dmv">registration estimator and office finder</a> and review <a className="font-semibold text-primary hover:underline" href="/dmv/texas-dmv-vs-dps">which Texas agency handles each transaction</a>.
           </p>
         </section>
 

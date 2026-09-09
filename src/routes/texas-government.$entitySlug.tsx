@@ -7,6 +7,10 @@ import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 import { isGovernmentEntityIndexable } from "@/lib/government-entity-indexability";
 import { getPublicationGovernmentEntity } from "@/lib/government-entity-publication";
 import { GOVERNMENT_REVIEWED_AT, getGovernmentEntity, governmentJsonLd, governmentPath, SITE_URL, type GovernmentLink } from "@/lib/texas-government";
+import {
+  TexasFifteenthCourtAuthorityPage,
+  texasFifteenthCourtAuthorityHead,
+} from "@/components/texas-fifteenth-court-authority-page";
 
 const AUTHORITY_HREF_ALIASES: Record<string, string> = {
   "/laws/texas-gun-laws-explained": "/news/texas-gun-laws-explained",
@@ -40,7 +44,10 @@ export const Route = createFileRoute("/texas-government/$entitySlug")({
     const scoredRelated = await getRelatedAuthorityContent("government", entity.slug, 12).catch(() => []);
     return { entity, relatedEntities, news, scoredRelated };
   },
-  head: ({ loaderData }) => {
+  head: ({ loaderData, params }) => {
+    if (params.entitySlug === "fifteenth-court-of-appeals") {
+      return texasFifteenthCourtAuthorityHead();
+    }
     if (!loaderData) return { meta: [{ name: "robots", content: "noindex,follow" }] };
     const { entity } = loaderData;
     const canonical = `${SITE_URL}${governmentPath(entity.slug)}`;
@@ -61,8 +68,18 @@ export const Route = createFileRoute("/texas-government/$entitySlug")({
       scripts: [{ type: "application/ld+json", children: JSON.stringify(governmentJsonLd(entity)).replace(/</g, "\\u003c") }],
     };
   },
-  component: GovernmentEntityPage,
+  component: GovernmentEntityRoutePage,
 });
+
+function GovernmentEntityRoutePage() {
+  const { entitySlug } = Route.useParams();
+
+  if (entitySlug === "fifteenth-court-of-appeals") {
+    return <TexasFifteenthCourtAuthorityPage />;
+  }
+
+  return <GovernmentEntityPage />;
+}
 
 function GovernmentEntityPage() {
   const { entity, relatedEntities, news, scoredRelated } = Route.useLoaderData();
