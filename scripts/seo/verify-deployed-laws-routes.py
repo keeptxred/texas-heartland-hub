@@ -15,7 +15,6 @@ PARENT_H1 = "Texas Laws Explained:"
 HB1056_PATH = "/bills/texas/89/hb/1056"
 HB1056_CANONICAL = "https://keeptxred.com/bills/texas/89/hb/1056"
 HB1056_ARTICLE_PATH = "/news/texas-gold-silver-legal-tender-hb-1056"
-HB1056_ARTICLE_TITLE = "Texas Gold and Silver Legal Tender Law Takes Effect Sept. 1"
 HB1056_MISSING_ARTICLE_FALLBACK = "KeepTXRed has not linked a related article to this bill yet."
 CHECKS = [
     ("/laws", PARENT_H1, "https://keeptxred.com/laws", False, False),
@@ -129,7 +128,10 @@ def main() -> int:
             "fetch_error": None,
             "canonicals": [],
             "article_link_found": False,
-            "article_title_found": False,
+            "article_page_fetch": "pending",
+            "article_page_fetch_error": None,
+            "article_page_h1": None,
+            "article_title_matches_article_h1": False,
             "missing_article_fallback_found": False,
         },
         "priority_sitemap": {"status": "not_run", "error": None},
@@ -198,10 +200,26 @@ def main() -> int:
         ]
         visible_text = normalize(" ".join(hb_parser.text_parts))
         hb_observation["article_link_found"] = bool(matching_links)
-        hb_observation["article_title_found"] = any(
-            HB1056_ARTICLE_TITLE in anchor["text"] for anchor in matching_links
-        )
         hb_observation["missing_article_fallback_found"] = HB1056_MISSING_ARTICLE_FALLBACK in visible_text
+
+        article_h1 = ""
+        try:
+            article_body = fetch(f"{SITE_URL}{HB1056_ARTICLE_PATH}")
+            hb_observation["article_page_fetch"] = "ok"
+            article_parser = PageParser()
+            article_parser.feed(article_body)
+            article_h1 = normalize(" ".join(article_parser.h1_parts))
+            hb_observation["article_page_h1"] = article_h1
+            if not article_h1:
+                failures.append(f"{HB1056_ARTICLE_PATH}: missing H1")
+        except RuntimeError as exc:
+            hb_observation["article_page_fetch"] = "failed"
+            hb_observation["article_page_fetch_error"] = str(exc)
+            failures.append(f"{HB1056_ARTICLE_PATH}: fetch failed ({exc})")
+
+        hb_observation["article_title_matches_article_h1"] = bool(article_h1) and any(
+            article_h1 in anchor["text"] for anchor in matching_links
+        )
 
         if hb_canonicals != [HB1056_CANONICAL]:
             failures.append(
@@ -211,9 +229,9 @@ def main() -> int:
             failures.append(
                 f"{HB1056_PATH}: missing related article link {HB1056_ARTICLE_PATH!r}"
             )
-        elif not hb_observation["article_title_found"]:
+        elif article_h1 and not hb_observation["article_title_matches_article_h1"]:
             failures.append(
-                f"{HB1056_PATH}: related article link is present but title {HB1056_ARTICLE_TITLE!r} is not rendered inside it"
+                f"{HB1056_PATH}: related article link is present but deployed article H1 {article_h1!r} is not rendered inside it"
             )
         if hb_observation["missing_article_fallback_found"]:
             failures.append(
@@ -223,7 +241,8 @@ def main() -> int:
         print(
             f"{HB1056_PATH}: canonical={hb_canonicals!r} "
             f"article_link={hb_observation['article_link_found']} "
-            f"article_title={hb_observation['article_title_found']} "
+            f"article_h1={article_h1!r} "
+            f"article_title_matches={hb_observation['article_title_matches_article_h1']} "
             f"fallback={hb_observation['missing_article_fallback_found']}"
         )
     except RuntimeError as exc:
