@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-09-06T21:20:41.588Z",
+  "generatedAt": "2026-09-09T00:14:51.914Z",
   "candidateCount": 491,
-  "eligibleCandidateCount": 479,
-  "excludedCandidateCount": 12,
+  "eligibleCandidateCount": 478,
+  "excludedCandidateCount": 13,
   "approvedPhotoCount": 363,
-  "missingPhotoCount": 116,
+  "missingPhotoCount": 115,
   "manifestEntryCount": 363,
-  "coverage": 0.7578288100208769,
-  "coveragePercent": 75.78,
+  "coverage": 0.7594142259414226,
+  "coveragePercent": 75.94,
   "targetCoverage": 0.85,
-  "targetApprovedPhotoCount": 408,
-  "photosNeededForTarget": 45,
+  "targetApprovedPhotoCount": 407,
+  "photosNeededForTarget": 44,
   "targetMet": false,
   "errors": [],
   "warnings": [],
@@ -41,6 +41,15 @@
       "filingStatus": "rejected",
       "ballotAccessStatus": "qualified",
       "reason": "filingStatus:rejected"
+    },
+    {
+      "candidateId": "candidate-carlos-charlie-garza-republican-race-2026-state-board-of-education-13",
+      "name": "CARLOS (CHARLIE) GARZA",
+      "raceId": "race-2026-state-board-of-education-13",
+      "status": "nominee",
+      "filingStatus": "accepted",
+      "ballotAccessStatus": "removed",
+      "reason": "ballotAccessStatus:removed"
     },
     {
       "candidateId": "candidate-l-d-howard-independent-race-2026-texas-house-124",
@@ -145,13 +154,6 @@
       "raceId": "race-2026-lieutenant-governor",
       "party": "other",
       "priority": "statewide"
-    },
-    {
-      "candidateId": "candidate-carlos-charlie-garza-republican-race-2026-state-board-of-education-13",
-      "name": "CARLOS (CHARLIE) GARZA",
-      "raceId": "race-2026-state-board-of-education-13",
-      "party": "republican",
-      "priority": "standard"
     },
     {
       "candidateId": "candidate-mindy-bumgarner-republican-race-2026-state-board-of-education-14",
