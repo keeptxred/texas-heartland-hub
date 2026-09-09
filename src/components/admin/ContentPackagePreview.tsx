@@ -71,8 +71,8 @@ export function buildPackage(item: SourceItem): ContentPackage {
       ),
       internalLinks: [
         { label: "Happening Now", href: "/happening-now" },
-        { label: "Texas News", href: "/texas-news" },
-        { label: "Elections", href: "/elections" },
+        { label: "Texas News", href: "/news" },
+        { label: "Elections", href: "/elections/2026" },
         { label: "Laws", href: "/laws" },
       ],
     },
