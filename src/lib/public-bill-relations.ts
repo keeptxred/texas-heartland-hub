@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { findRepresentativeBySlug } from '@/data/representatives';
 import { getBillRelations } from '@/lib/bills';
+import { resolvePublicArticleDisplayTitle } from '@/lib/public-article-display-title';
 
 const db = supabase as any;
 
@@ -59,7 +60,7 @@ export async function getPublicBillRelations(billId: string) {
     ? await safe('articles', () =>
         db
           .from('daily_articles')
-          .select('id,title,slug,dek,published_at,image_url')
+          .select('id,title,seo_headline,slug,dek,published_at,image_url')
           .in('id', articleIds),
       )
     : [];
@@ -84,6 +85,7 @@ export async function getPublicBillRelations(billId: string) {
         return article
           ? {
               ...article,
+              title: resolvePublicArticleDisplayTitle(article),
               excerpt: article.dek,
               relationship_type: row.relationship_type,
             }
