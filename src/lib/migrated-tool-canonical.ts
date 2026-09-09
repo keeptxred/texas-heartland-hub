@@ -10,6 +10,7 @@ const MIGRATED_TOOL_CANONICALS: Record<string, string> = {
   "/texas-home-ownership-cost-calculator": "https://texasdefined.com/texas-homeownership-cost-calculator",
   "/texas-mortgage-qualification-calculator": "https://texasdefined.com/texas-home-affordability-calculator",
   "/texas-heloc-calculator": "https://texasdefined.com/texas-home-equity-calculator",
+  "/texas-moving-cost-calculator": "https://texasdefined.com/texas-moving-cost-calculator",
   "/moving-checklist": "https://texasdefined.com/moving-to-texas",
 };
 
