@@ -132,7 +132,7 @@ const checks = [
     ],
   },
   {
-    file: 'src/routes/texas-government.$entitySlug.tsx',
+    file: 'src/routes/texas-government_.$entitySlug.tsx',
     required: [
       'href={`/news/${article.slug}`}',
     ],
@@ -171,7 +171,7 @@ if (!legislativeSitemaps.includes('session_code')) {
 for (const file of [
   'src/lib/authority-relationships.ts',
   'src/routes/representatives.$representativeSlug.tsx',
-  'src/routes/texas-government.$entitySlug.tsx',
+  'src/routes/texas-government_.$entitySlug.tsx',
 ]) {
   const source = await readFile(file, 'utf8');
   if (source.includes('/article/${article.slug}') || source.includes("article: '/article/'")) {
