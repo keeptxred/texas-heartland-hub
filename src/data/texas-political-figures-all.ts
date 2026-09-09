@@ -21,6 +21,28 @@ export type TexasPoliticalFigurePage = TexasPoliticalFigure & {
   aliases?: string[];
 };
 
+const canonicalRelatedHref = (href: string) => {
+  switch (href) {
+    case "/texas-news":
+      return "/news";
+    case "/elections":
+      return "/elections/2026";
+    case "/texas-law-policy":
+    case "/texas-laws":
+    case "/laws-to-know":
+      return "/laws";
+    case "/legislative-updates":
+      return "/bills";
+    default:
+      return href;
+  }
+};
+
+const canonicalizeFigureRelatedLinks = (figure: TexasPoliticalFigurePage): TexasPoliticalFigurePage => ({
+  ...figure,
+  relatedLinks: figure.relatedLinks.map((link) => ({ ...link, href: canonicalRelatedHref(link.href) })),
+});
+
 const establishedFigures = ESTABLISHED_FIGURES.map(withPoliticalFigureDepthSupplements);
 
 const preferredFigures: TexasPoliticalFigurePage[] = [
@@ -28,7 +50,7 @@ const preferredFigures: TexasPoliticalFigurePage[] = [
   ...CURATED_EXPANDED_FIGURES,
   ...MORE_TEXAS_POLITICAL_FIGURES,
   ...RECONSTRUCTION_TEXAS_POLITICAL_FIGURES,
-];
+].map(canonicalizeFigureRelatedLinks);
 
 const normalizedIdentity = (value: string) => value.toLocaleLowerCase("en-US").replace(/[^a-z0-9]+/g, " ").trim();
 const identityKeys = (figure: Pick<TexasPoliticalFigurePage, "name" | "aliases">) =>
@@ -50,7 +72,7 @@ const preferredFigureForTarget = (figure: TexasPoliticalFigurePage) => {
 };
 
 const targetFigureMatches = TARGET_FIGURES.map((figure) => ({
-  figure,
+  figure: canonicalizeFigureRelatedLinks(figure),
   preferred: preferredFigureForTarget(figure),
 }));
 
