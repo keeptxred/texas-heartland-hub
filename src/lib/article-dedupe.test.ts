@@ -57,4 +57,39 @@ describe("article source authority", () => {
     expect(body.sections?.[0]?.paragraphs?.[0]).toContain("https://texasdefined.com/decide/property-taxes#estimate");
     expect(body.sections?.[0]?.paragraphs?.[0]).toContain("/tools/texas-budget-headroom");
   });
+
+  it("routes retired KeepTXRed aliases directly to canonical destinations before rendering", () => {
+    const body = dedupeArticleBody({
+      intro: [
+        "Start with [Texas News](/texas-news) and [Election Central](/elections/?cycle=2026#top).",
+      ],
+      sections: [
+        {
+          heading: "Follow the Legislature",
+          paragraphs: [
+            "Use [Legislative Updates](/legislative-updates) and [Texas Law & Policy](https://www.keeptxred.com/texas-law-policy#guide), while keeping [Election Races](/elections/races) unchanged.",
+          ],
+          bullets: ["Read [Texas Laws](/texas-laws) before the next session."],
+        },
+      ],
+      keyTakeaways: ["The [laws guide](/laws-to-know) is now consolidated."],
+      faq: [
+        {
+          q: "Where is the [election hub](/elections)?",
+          a: "Use [Election Central](/elections) for the current cycle.",
+        },
+      ],
+      sources: [],
+    });
+
+    expect(body.intro?.[0]).toContain("[Texas News](/news)");
+    expect(body.intro?.[0]).toContain("[Election Central](/elections/2026?cycle=2026#top)");
+    expect(body.sections?.[0]?.paragraphs?.[0]).toContain("[Legislative Updates](/bills)");
+    expect(body.sections?.[0]?.paragraphs?.[0]).toContain("https://keeptxred.com/laws#guide");
+    expect(body.sections?.[0]?.paragraphs?.[0]).toContain("[Election Races](/elections/races)");
+    expect(body.sections?.[0]?.bullets?.[0]).toContain("[Texas Laws](/laws)");
+    expect(body.keyTakeaways?.[0]).toContain("[laws guide](/laws)");
+    expect(body.faq?.[0]?.q).toContain("[election hub](/elections/2026)");
+    expect(body.faq?.[0]?.a).toContain("[Election Central](/elections/2026)");
+  });
 });
