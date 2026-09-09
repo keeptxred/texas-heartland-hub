@@ -414,13 +414,16 @@ export function ContentOpportunityPanel() {
   useEffect(() => {
     let active = true;
     (async () => {
-      const [feedRes, articleRes, pkgRes] = await Promise.all([
+      const since = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
+      const [feedRes, articleRes, pkgRes, normalizationRes] = await Promise.all([
         supabase
           .from("texas_news_feed")
           .select("id,title,source,pub_date,internal_slug,link,description,extracted_body,preflight_json")
+          .gte("pub_date", since)
           .order("pub_date", { ascending: false })
-          // Keep a full recent catch-up window visible. A 150-row cap hid
-          // requested backfills after large multi-source refreshes.
+          // Keep the review queue bounded to the same canonical 14-day newsroom window.
+          // Source history remains in texas_news_feed; deterministic duplicates are hidden below
+          // using news_feed_normalization rather than deleted.
           .limit(500),
         supabase
           .from("daily_articles")
@@ -432,9 +435,20 @@ export function ContentOpportunityPanel() {
           .from("content_packages")
           .select("source_url,source_title")
           .eq("workflow_status", "PUBLISHED"),
+        supabase
+          .from("news_feed_normalization")
+          .select("feed_item_id,duplicate_of_feed_item_id")
+          .gte("observed_at", since)
+          .not("duplicate_of_feed_item_id", "is", null)
+          .limit(5000),
       ]);
       if (!active) return;
-      const rawFeed = (feedRes.data ?? []) as FeedItem[];
+      const duplicateFeedIds = new Set<number>(
+        ((normalizationRes.data ?? []) as Array<{ feed_item_id: number; duplicate_of_feed_item_id: number | null }>).map(
+          (row) => row.feed_item_id,
+        ),
+      );
+      const rawFeed = ((feedRes.data ?? []) as FeedItem[]).filter((item) => !duplicateFeedIds.has(item.id));
       const rawArticles = (articleRes.data ?? []) as Array<{
         slug: string;
         title: string;
