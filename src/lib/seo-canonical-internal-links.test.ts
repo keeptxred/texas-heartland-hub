@@ -12,7 +12,7 @@ const sourceFiles = [
   "src/components/admin/ContentPackagePreview.tsx",
   "src/routes/texas-sports.index.tsx",
   "src/routes/texas-government.tsx",
-  "src/routes/texas-government.$entitySlug.tsx",
+  "src/routes/texas-government_.$entitySlug.tsx",
   "src/routes/texas-politics.figures.tsx",
   "src/routes/texas-politics.figures_.$figureSlug.tsx",
   "src/routes/texas-politics.how-texas-became-republican.tsx",
