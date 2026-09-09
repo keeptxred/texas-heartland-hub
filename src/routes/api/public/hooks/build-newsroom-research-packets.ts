@@ -44,6 +44,31 @@ type SourcePageFetchStateRow = {
   last_result: string;
   chars: number;
 };
+type ExistingPacketRow = {
+  cluster_id: string;
+  packet_version: number;
+  packet_json: unknown;
+  source_count: number;
+  primary_source_count: number;
+};
+
+type PacketWriteRow = ExistingPacketRow;
+
+function stableJson(value: unknown): string {
+  if (value === null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map(stableJson).join(",")}]`;
+  const record = value as Record<string, unknown>;
+  return `{${Object.keys(record).sort().map((key) => `${JSON.stringify(key)}:${stableJson(record[key])}`).join(",")}}`;
+}
+
+function samePacket(left: PacketWriteRow, right: ExistingPacketRow | undefined): boolean {
+  if (!right) return false;
+  return left.cluster_id === right.cluster_id
+    && left.packet_version === right.packet_version
+    && left.source_count === right.source_count
+    && left.primary_source_count === right.primary_source_count
+    && stableJson(left.packet_json) === stableJson(right.packet_json);
+}
 
 async function mapWithConcurrency<T, R>(items: readonly T[], limit: number, fn: (item: T) => Promise<R>): Promise<R[]> {
   const output: R[] = new Array(items.length);
@@ -76,17 +101,25 @@ async function handler() {
     .limit(CANDIDATE_LIMIT);
   if (candidateError) return Response.json({ ok: false, error: candidateError.message }, { status: 500 });
   const candidates = (candidateData ?? []) as CandidateRow[];
-  if (!candidates.length) return Response.json({ ok: true, built: 0, sourceItems: 0, sourcePagesFetched: 0, sourcePagesUpdated: 0, sourcePagesCoolingDown: 0, aiCalls: 0 });
+  if (!candidates.length) return Response.json({ ok: true, built: 0, written: 0, unchanged: 0, sourceItems: 0, sourcePagesFetched: 0, sourcePagesUpdated: 0, sourcePagesCoolingDown: 0, aiCalls: 0 });
 
   const clusterIds = candidates.map((candidate) => candidate.cluster_id);
-  const [{ data: clusterData, error: clusterError }, { data: membershipData, error: membershipError }] = await Promise.all([
+  const [
+    { data: clusterData, error: clusterError },
+    { data: membershipData, error: membershipError },
+    { data: existingPacketData, error: existingPacketError },
+  ] = await Promise.all([
     newsroomDb.from("news_story_clusters").select("id,canonical_subject,pillar_slug").in("id", clusterIds),
     newsroomDb.from("news_story_cluster_items").select("cluster_id,feed_item_id,is_primary_source").in("cluster_id", clusterIds),
+    newsroomDb.from("news_research_packets").select("cluster_id,packet_version,packet_json,source_count,primary_source_count").in("cluster_id", clusterIds),
   ]);
   if (clusterError) return Response.json({ ok: false, error: clusterError.message }, { status: 500 });
   if (membershipError) return Response.json({ ok: false, error: membershipError.message }, { status: 500 });
+  if (existingPacketError) return Response.json({ ok: false, error: existingPacketError.message }, { status: 500 });
   const clusters = (clusterData ?? []) as ClusterRow[];
   const memberships = (membershipData ?? []) as MembershipRow[];
+  const existingPackets = (existingPacketData ?? []) as ExistingPacketRow[];
+  const existingPacketByCluster = new Map(existingPackets.map((packet) => [packet.cluster_id, packet]));
 
   const feedIds = [...new Set(memberships.map((row) => row.feed_item_id))];
   let feeds: FeedPacketRow[] = [];
@@ -205,7 +238,7 @@ async function handler() {
     membershipsByCluster.set(membership.cluster_id, [...(membershipsByCluster.get(membership.cluster_id) ?? []), membership]);
   }
 
-  const packets = candidates.flatMap((candidate) => {
+  const packets: PacketWriteRow[] = candidates.flatMap((candidate) => {
     const cluster = clusterById.get(candidate.cluster_id);
     if (!cluster) return [];
     const members = membershipsByCluster.get(candidate.cluster_id) ?? [];
@@ -238,20 +271,25 @@ async function handler() {
       packet_json: packet,
       source_count: packet.sources.length,
       primary_source_count: packet.sources.filter((source) => source.isPrimarySource).length,
-      built_at: new Date().toISOString(),
     }];
   });
 
-  if (packets.length) {
+  const builtAt = new Date().toISOString();
+  const packetsToWrite = packets
+    .filter((packet) => !samePacket(packet, existingPacketByCluster.get(packet.cluster_id)))
+    .map((packet) => ({ ...packet, built_at: builtAt }));
+  if (packetsToWrite.length) {
     const { error: upsertError } = await newsroomDb
       .from("news_research_packets")
-      .upsert(packets, { onConflict: "cluster_id" });
+      .upsert(packetsToWrite, { onConflict: "cluster_id" });
     if (upsertError) return Response.json({ ok: false, error: upsertError.message }, { status: 500 });
   }
 
   return Response.json({
     ok: true,
     built: packets.length,
+    written: packetsToWrite.length,
+    unchanged: packets.length - packetsToWrite.length,
     sourceItems: packets.reduce((sum, packet) => sum + packet.source_count, 0),
     primarySourceItems: packets.reduce((sum, packet) => sum + packet.primary_source_count, 0),
     sourcePagesFetched: sourcePageTargets.length,
