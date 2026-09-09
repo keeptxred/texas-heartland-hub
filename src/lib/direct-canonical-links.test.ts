@@ -48,6 +48,15 @@ describe("direct canonical UI links", () => {
     expect(governmentEntity).toContain('href="/texas-politics"');
   });
 
+  it("keeps government entity UI punctuation valid UTF-8", () => {
+    expect(governmentEntity).not.toContain("â¢");
+    expect(governmentEntity).not.toContain("â");
+    expect(governmentEntity).not.toContain("Â·");
+    expect(governmentEntity).toContain("• {item}");
+    expect(governmentEntity).toContain("coverage →");
+    expect(governmentEntity).toContain("{related.branch} · {related.entityType}");
+  });
+
   it("does not route election recovery through the legacy election-law alias", () => {
     expect(electionErrorState).not.toContain('href: "/laws/texas-election-laws-explained"');
     expect(electionErrorState).toContain('href: "/news/texas-election-laws-explained"');
