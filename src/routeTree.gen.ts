@@ -182,6 +182,7 @@ import { Route as TexasLegislatureCurrentSessionRouteImport } from './routes/tex
 import { Route as TexasLegislatureCommitteesRouteImport } from './routes/texas-legislature.committees'
 import { Route as TexasGovernmentAgenciesRouteImport } from './routes/texas-government.agencies'
 import { Route as TexasGovernmentEntitySlugRouteImport } from './routes/texas-government.$entitySlug'
+import { Route as TexasGovernmentFifteenthCourtOfAppealsRouteImport } from './routes/texas-government.fifteenth-court-of-appeals'
 import { Route as TexasDataDatasetSlugRouteImport } from './routes/texas-data.$datasetSlug'
 import { Route as TexasCaseFactsRouteImport } from './routes/texas-case.facts'
 import { Route as TexasCaseSlugRouteImport } from './routes/texas-case.$slug'
@@ -1354,6 +1355,12 @@ const TexasGovernmentEntitySlugRoute =
   TexasGovernmentEntitySlugRouteImport.update({
     id: '/$entitySlug',
     path: '/$entitySlug',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentFifteenthCourtOfAppealsRoute =
+  TexasGovernmentFifteenthCourtOfAppealsRouteImport.update({
+    id: '/fifteenth-court-of-appeals',
+    path: '/fifteenth-court-of-appeals',
     getParentRoute: () => TexasGovernmentRoute,
   } as any)
 const TexasDataDatasetSlugRoute = TexasDataDatasetSlugRouteImport.update({
@@ -9394,11 +9401,14 @@ const TexasGovernmentAgenciesRouteWithChildren =
 interface TexasGovernmentRouteChildren {
   TexasGovernmentEntitySlugRoute: typeof TexasGovernmentEntitySlugRoute
   TexasGovernmentAgenciesRoute: typeof TexasGovernmentAgenciesRouteWithChildren
+  TexasGovernmentFifteenthCourtOfAppealsRoute: typeof TexasGovernmentFifteenthCourtOfAppealsRoute
 }
 
 const TexasGovernmentRouteChildren: TexasGovernmentRouteChildren = {
   TexasGovernmentEntitySlugRoute: TexasGovernmentEntitySlugRoute,
   TexasGovernmentAgenciesRoute: TexasGovernmentAgenciesRouteWithChildren,
+  TexasGovernmentFifteenthCourtOfAppealsRoute:
+    TexasGovernmentFifteenthCourtOfAppealsRoute,
 }
 
 const TexasGovernmentRouteWithChildren = TexasGovernmentRoute._addFileChildren(
