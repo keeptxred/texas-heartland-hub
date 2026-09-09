@@ -6,6 +6,19 @@ type RepresentativeBill = Pick<
   "id" | "bill_identifier" | "current_status_label" | "last_action_date" | "became_law"
 >;
 
+function isRepresentativeBill(value: unknown): value is RepresentativeBill {
+  if (!value || typeof value !== "object") return false;
+
+  const bill = value as Record<string, unknown>;
+  return (
+    typeof bill.id === "string" &&
+    typeof bill.bill_identifier === "string" &&
+    typeof bill.current_status_label === "string" &&
+    (typeof bill.last_action_date === "string" || bill.last_action_date === null) &&
+    typeof bill.became_law === "boolean"
+  );
+}
+
 export type RepresentativeLegislativeActivity = {
   billCount: number;
   becameLawCount: number;
@@ -44,10 +57,10 @@ export function RepresentativeLegislativeIntelligence({
   relatedContent,
 }: {
   name: string;
-  bills: RepresentativeBill[];
+  bills: unknown[];
   relatedContent: RelatedAuthorityItem[];
 }) {
-  const activity = summarizeRepresentativeLegislativeActivity(bills);
+  const activity = summarizeRepresentativeLegislativeActivity(bills.filter(isRepresentativeBill));
   const policyTopics = [
     ...new Map(
       relatedContent
