@@ -23,6 +23,60 @@ jobs:
           SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
           DEPLOYMENT_SMOKE_REPORT: /tmp/deployed-laws-smoke-report.json
         run: python3 scripts/seo/verify-deployed-laws-routes.py
+      - name: Show matching HB 1056 anchor text
+        if: always()
+        run: |
+          python3 - <<'PY'
+          from html.parser import HTMLParser
+          from urllib.request import Request, urlopen
+
+          TARGET = "/news/texas-gold-silver-legal-tender-hb-1056"
+
+          class AnchorParser(HTMLParser):
+              def __init__(self):
+                  super().__init__(convert_charrefs=True)
+                  self.depth = 0
+                  self.href = None
+                  self.parts = []
+                  self.matches = []
+
+              def handle_starttag(self, tag, attrs):
+                  if tag.lower() != "a":
+                      return
+                  if self.depth == 0:
+                      self.href = dict(attrs).get("href")
+                      self.parts = []
+                  self.depth += 1
+
+              def handle_data(self, data):
+                  if self.depth:
+                      self.parts.append(data)
+
+              def handle_endtag(self, tag):
+                  if tag.lower() != "a" or not self.depth:
+                      return
+                  self.depth -= 1
+                  if self.depth == 0:
+                      text = " ".join(" ".join(self.parts).split())
+                      if self.href == TARGET:
+                          self.matches.append(text)
+                      self.href = None
+                      self.parts = []
+
+          req = Request(
+              "https://keeptxred-site.freddy-coppola.workers.dev/bills/texas/89/hb/1056",
+              headers={
+                  "User-Agent": "KeepTXRed-HB1056-Diagnostic/1.0",
+                  "x-keeptxred-deployment-smoke": "canonical",
+                  "Cache-Control": "no-cache",
+              },
+          )
+          with urlopen(req, timeout=30) as response:
+              body = response.read().decode("utf-8", errors="replace")
+          parser = AnchorParser()
+          parser.feed(body)
+          print("HB1056 matching anchor texts:", parser.matches)
+          PY
       - name: Show structured smoke report
         if: always()
         run: |
