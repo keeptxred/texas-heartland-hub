@@ -42,8 +42,8 @@ jobs:
                   '"/texas-government/court-of-criminal-appeals-history"',
               ),
               Path("src/routes/vehicles.new-residents.tsx"): (
-                  'href="/texas-moving-cost-calculator"',
-                  'href="https://texasdefined.com/texas-moving-cost-calculator"',
+                  '"/texas-moving-cost-calculator"',
+                  '"https://texasdefined.com/texas-moving-cost-calculator"',
               ),
               Path("src/lib/elections/districtAuthority.test.ts"): (
                   '"/voting-locations"',
