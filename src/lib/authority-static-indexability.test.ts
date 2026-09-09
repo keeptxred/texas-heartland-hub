@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 const files = [
   "../components/city-page.tsx",
-  "../routes/texas-government.$entitySlug.tsx",
+  "../routes/texas-government_.$entitySlug.tsx",
   "../routes/representatives.$representativeSlug.tsx",
 ] as const;
 
