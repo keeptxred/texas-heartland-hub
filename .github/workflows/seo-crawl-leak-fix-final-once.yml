@@ -1,0 +1,134 @@
+name: One-shot final crawl leak source sweep
+
+on:
+  push:
+    branches:
+      - seo/public-crawl-leaks-20260909-b2
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Canonicalize remaining emitted legacy routes
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          mappings = {
+              "/find-my-dmv": "https://texasdefined.com/find-my-dmv",
+              "/voting-locations": "/elections/voting",
+              "/texas-government/texas-court-of-criminal-appeals-history": "/texas-government/court-of-criminal-appeals-history",
+              "/texas-moving-cost-calculator": "https://texasdefined.com/texas-moving-cost-calculator",
+          }
+          alias_files = {
+              "/find-my-dmv": Path("src/routes/find-my-dmv.tsx"),
+              "/voting-locations": Path("src/routes/voting-locations.tsx"),
+              "/texas-government/texas-court-of-criminal-appeals-history": Path("src/routes/texas-government.texas-court-of-criminal-appeals-history.tsx"),
+              "/texas-moving-cost-calculator": Path("src/routes/texas-moving-cost-calculator.tsx"),
+          }
+
+          changed = []
+          swept_roots = [Path("src/routes"), Path("src/components"), Path("src/pages")]
+          for root in swept_roots:
+              for path in root.rglob("*.tsx"):
+                  text = path.read_text()
+                  updated = text
+                  for old, new in mappings.items():
+                      if path == alias_files[old]:
+                          continue
+                      updated = updated.replace(f'"{old}"', f'"{new}"')
+                      updated = updated.replace(f"'{old}'", f"'{new}'")
+                  if updated != text:
+                      path.write_text(updated)
+                      changed.append(str(path))
+
+          article_bodies = Path("src/data/article-bodies.ts")
+          text = article_bodies.read_text()
+          cta_re = re.compile(r'(cta:\s*\{[^{}]*?href:\s*)(["\'])([^"\']+)(\2)([^{}]*?\})')
+          cta_changes = []
+
+          def canonicalize_cta(match):
+              href = match.group(3)
+              canonical = mappings.get(href)
+              if not canonical:
+                  # Other known KeepTXRed redirect aliases already owned by the shared canonical helper.
+                  canonical = {
+                      "/about-keep-texas-red": "/about",
+                      "/candidate-guides": "/elections/2026",
+                      "/laws-to-know": "/laws",
+                      "/legislative-updates": "/bills",
+                      "/texas-laws": "/laws",
+                      "/texas-law-policy": "/laws",
+                      "/texas-news": "/news",
+                      "/elections": "/elections/2026",
+                      "/texas-property-tax-protest-guide": "https://texasdefined.com/do/property-tax-protest",
+                      "/living-in-texas": "https://texasdefined.com/texas-living",
+                      "/moving-to-texas": "https://texasdefined.com/moving-to-texas",
+                      "/texas-living": "https://texasdefined.com/texas-living",
+                      "/explore": "https://texasdefined.com/explore",
+                      "/tax-calculator": "https://texasdefined.com/decide/property-taxes",
+                  }.get(href)
+              if not canonical:
+                  return match.group(0)
+              cta_changes.append((href, canonical))
+              return f'{match.group(1)}{match.group(2)}{canonical}{match.group(4)}{match.group(5)}'
+
+          updated = cta_re.sub(canonicalize_cta, text)
+          if updated != text:
+              article_bodies.write_text(updated)
+              changed.append(str(article_bodies))
+
+          # No target legacy literals may remain in public TSX source except their owning redirect route.
+          remaining = []
+          for root in swept_roots:
+              for path in root.rglob("*.tsx"):
+                  text = path.read_text()
+                  for old in mappings:
+                      if path == alias_files[old]:
+                          continue
+                      if f'"{old}"' in text or f"'{old}'" in text:
+                          remaining.append(f"{path}: {old}")
+          if remaining:
+              raise SystemExit("Remaining legacy route literals:\n" + "\n".join(remaining))
+
+          print("Changed files:")
+          for path in changed:
+              print(f"  {path}")
+          print("Canonicalized CTA aliases:")
+          for old, new in cta_changes:
+              print(f"  {old} -> {new}")
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run targeted canonicalization tests
+        run: bunx vitest run src/lib/elections/districtAuthority.test.ts src/lib/canonical-internal-redirects.test.ts src/lib/migrated-tool-canonical.test.ts
+
+      - name: Run SEO validation
+        run: bun run seo:validate
+
+      - name: Commit final sweep and remove one-shot workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/seo-crawl-leak-fix-final-once.yml
+          git add src
+          git diff --cached --check
+          if git diff --cached --quiet; then
+            echo "No source changes after removing temporary workflow"
+            git commit -m "Remove final crawl leak sweep workflow"
+          else
+            git commit -m "Finish canonical public link sweep"
+          fi
+          git push origin HEAD:seo/public-crawl-leaks-20260909-b2
