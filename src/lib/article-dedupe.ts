@@ -5,6 +5,7 @@
 // government / military sources.
 
 import { applyReviewedStaticArticleBodyUpgrade } from "@/lib/static-article-body-upgrade-router";
+import { canonicalizeInternalRedirectMarkdownLinks } from "@/lib/canonical-internal-redirects";
 import { canonicalizeMigratedToolMarkdownLinks } from "@/lib/migrated-tool-canonical";
 
 export type Section = {
@@ -42,6 +43,10 @@ const splitSentences = (p: string) =>
   p.split(/(?<=[.!?])\s+(?=[A-Z0-9"'\u201c])/).map((s) => s.trim()).filter(Boolean);
 
 const wordCount = (value: string) => value.trim().split(/\s+/).filter(Boolean).length;
+
+function canonicalizeArticleMarkdownLinks(value: string) {
+  return canonicalizeInternalRedirectMarkdownLinks(canonicalizeMigratedToolMarkdownLinks(value));
+}
 
 /**
  * Published database rows can predate the editorial readability gate or arrive
@@ -109,7 +114,7 @@ function dedupeParagraphs(paragraphs: string[], seenPara: Set<string>, seenSent:
   const out: string[] = [];
   for (const raw of paragraphs) {
     for (const repaired of repairParagraphStructure(raw ?? "")) {
-      const p = canonicalizeMigratedToolMarkdownLinks(repaired).trim();
+      const p = canonicalizeArticleMarkdownLinks(repaired).trim();
       if (!p) continue;
       const key = norm(p);
       if (key.length >= 30 && seenPara.has(key)) continue;
@@ -125,7 +130,7 @@ function dedupeParagraphs(paragraphs: string[], seenPara: Set<string>, seenSent:
 function dedupeList(items: string[], seen: Set<string>): string[] {
   const out: string[] = [];
   for (const raw of items) {
-    const v = (raw ?? "").trim();
+    const v = canonicalizeArticleMarkdownLinks(raw ?? "").trim();
     if (!v) continue;
     const key = norm(v);
     if (!key) continue;
@@ -222,11 +227,11 @@ export function dedupeArticleBody<T extends ArticleBodyShape>(body: T): T {
     faq = [];
     for (const f of sourceBody.faq) {
       if (!f) continue;
-      const q = (f.q ?? "").trim();
+      const q = canonicalizeArticleMarkdownLinks(f.q ?? "").trim();
       const qKey = norm(q);
       if (!qKey || seenQ.has(qKey)) continue;
       seenQ.add(qKey);
-      const a = (f.a ?? "").trim();
+      const a = canonicalizeArticleMarkdownLinks(f.a ?? "").trim();
       faq.push({ q, a });
     }
   }

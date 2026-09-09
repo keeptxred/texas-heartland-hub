@@ -4,6 +4,7 @@ import { withPoliticalFigureDepthSupplements } from "@/data/texas-political-figu
 import { ADDITIONAL_TEXAS_POLITICAL_FIGURES as CURATED_EXPANDED_FIGURES } from "@/data/texas-political-figures-expanded";
 import { MORE_TEXAS_POLITICAL_FIGURES } from "@/data/texas-political-figures-expanded-2";
 import { RECONSTRUCTION_TEXAS_POLITICAL_FIGURES } from "@/data/texas-political-figures-reconstruction";
+import { canonicalInternalRedirectHref } from "@/lib/canonical-internal-redirects";
 import {
   TEXAS_POLITICAL_FIGURES as TARGET_FIGURES,
   TEXAS_REPUBLICAN_CONSERVATIVE_LEADERS,
@@ -21,6 +22,11 @@ export type TexasPoliticalFigurePage = TexasPoliticalFigure & {
   aliases?: string[];
 };
 
+const canonicalizeFigureRelatedLinks = (figure: TexasPoliticalFigurePage): TexasPoliticalFigurePage => ({
+  ...figure,
+  relatedLinks: figure.relatedLinks.map((link) => ({ ...link, href: canonicalInternalRedirectHref(link.href) })),
+});
+
 const establishedFigures = ESTABLISHED_FIGURES.map(withPoliticalFigureDepthSupplements);
 
 const preferredFigures: TexasPoliticalFigurePage[] = [
@@ -28,7 +34,7 @@ const preferredFigures: TexasPoliticalFigurePage[] = [
   ...CURATED_EXPANDED_FIGURES,
   ...MORE_TEXAS_POLITICAL_FIGURES,
   ...RECONSTRUCTION_TEXAS_POLITICAL_FIGURES,
-];
+].map(canonicalizeFigureRelatedLinks);
 
 const normalizedIdentity = (value: string) => value.toLocaleLowerCase("en-US").replace(/[^a-z0-9]+/g, " ").trim();
 const identityKeys = (figure: Pick<TexasPoliticalFigurePage, "name" | "aliases">) =>
@@ -50,7 +56,7 @@ const preferredFigureForTarget = (figure: TexasPoliticalFigurePage) => {
 };
 
 const targetFigureMatches = TARGET_FIGURES.map((figure) => ({
-  figure,
+  figure: canonicalizeFigureRelatedLinks(figure),
   preferred: preferredFigureForTarget(figure),
 }));
 

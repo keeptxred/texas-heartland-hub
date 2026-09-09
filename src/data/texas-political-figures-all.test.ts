@@ -9,6 +9,23 @@ import {
 } from "./texas-political-figures-all";
 import { politicalFigureAuthoritySourcesBySlug } from "./texas-political-figure-authority-sources";
 
+const redirectAliases = new Set([
+  "/about-keep-texas-red",
+  "/candidate-guides",
+  "/laws-to-know",
+  "/legislative-updates",
+  "/texas-laws",
+  "/texas-law-policy",
+  "/texas-news",
+  "/elections",
+  "/voting-locations",
+  "/living-in-texas",
+  "/moving-to-texas",
+  "/texas-living",
+  "/explore",
+  "/tax-calculator",
+]);
+
 describe("Texas political figure authority collection", () => {
   it("covers all 100 requested Republican and conservative leaders", () => {
     expect(TEXAS_REPUBLICAN_CONSERVATIVE_LEADER_TARGETS).toHaveLength(100);
@@ -32,6 +49,14 @@ describe("Texas political figure authority collection", () => {
       ).toBeGreaterThanOrEqual(900);
       expect(figure.relatedLinks.length, `${figure.name} related links`).toBeGreaterThanOrEqual(2);
       expect(figure.relatedLinks.some((link) => link.href.startsWith("/")), `${figure.name} internal links`).toBe(true);
+    }
+  });
+
+  it("keeps every canonical profile related link off redirect aliases", () => {
+    for (const figure of TEXAS_POLITICAL_FIGURES) {
+      for (const link of figure.relatedLinks) {
+        expect(redirectAliases.has(link.href), `${figure.name} links through ${link.href}`).toBe(false);
+      }
     }
   });
 
