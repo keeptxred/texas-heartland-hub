@@ -10,6 +10,9 @@ type CandidateRow = {
   editorial_score: number;
   status: string;
   created_at: string;
+  recommended_format: string | null;
+  selection_reason: string | null;
+  rejection_reason: string | null;
 };
 
 type ClusterRow = {
@@ -18,6 +21,7 @@ type ClusterRow = {
   source_count: number;
   primary_source_count: number;
   status: string;
+  cluster_type: string;
 };
 
 type MembershipRow = {
@@ -35,20 +39,20 @@ async function handler() {
 
   const { data: candidateData, error: candidateError } = await newsroomDb
     .from("news_publish_candidates")
-    .select("id,cluster_id,editorial_score,status,created_at")
+    .select("id,cluster_id,editorial_score,status,created_at,recommended_format,selection_reason,rejection_reason")
     .in("status", ["PENDING", "HELD"])
     .gte("created_at", since)
     .order("editorial_score", { ascending: false })
     .limit(CANDIDATE_LIMIT);
   if (candidateError) return Response.json({ ok: false, error: candidateError.message }, { status: 500 });
   const candidates = (candidateData ?? []) as CandidateRow[];
-  if (!candidates.length) return Response.json({ ok: true, decided: 0, decisions: {}, aiCalls: 0 });
+  if (!candidates.length) return Response.json({ ok: true, decided: 0, decisions: {}, candidateWrites: 0, clusterWrites: 0, aiCalls: 0 });
 
   const clusterIds = candidates.map((candidate) => candidate.cluster_id);
   const [{ data: clusterData, error: clusterError }, { data: membershipData, error: membershipError }] = await Promise.all([
     newsroomDb
       .from("news_story_clusters")
-      .select("id,canonical_subject,source_count,primary_source_count,status")
+      .select("id,canonical_subject,source_count,primary_source_count,status,cluster_type")
       .in("id", clusterIds),
     newsroomDb
       .from("news_story_cluster_items")
@@ -86,20 +90,37 @@ async function handler() {
     selection_reason: result.decision === "SKIP" ? null : result.reason,
     rejection_reason: result.decision === "SKIP" ? result.reason : null,
   }));
-  const { error: updateError } = await newsroomDb
-    .from("news_publish_candidates")
-    .upsert(candidateUpdates, { onConflict: "id" });
-  if (updateError) return Response.json({ ok: false, error: updateError.message }, { status: 500 });
+  const candidateUpdatesToWrite = candidateUpdates.filter((update) => {
+    const prior = candidates.find((candidate) => candidate.id === update.id);
+    return !prior
+      || prior.cluster_id !== update.cluster_id
+      || Number(prior.editorial_score) !== Number(update.editorial_score)
+      || prior.recommended_format !== update.recommended_format
+      || prior.selection_reason !== update.selection_reason
+      || prior.rejection_reason !== update.rejection_reason;
+  });
+  if (candidateUpdatesToWrite.length) {
+    const { error: updateError } = await newsroomDb
+      .from("news_publish_candidates")
+      .upsert(candidateUpdatesToWrite, { onConflict: "id" });
+    if (updateError) return Response.json({ ok: false, error: updateError.message }, { status: 500 });
+  }
 
   const clusterUpdates = results.flatMap(({ candidate, cluster, result }) => cluster ? [{
     id: candidate.cluster_id,
     canonical_subject: cluster.canonical_subject,
     cluster_type: result.decision,
   }] : []);
-  if (clusterUpdates.length) {
+  const clusterUpdatesToWrite = clusterUpdates.filter((update) => {
+    const prior = clusterById.get(update.id);
+    return !prior
+      || prior.canonical_subject !== update.canonical_subject
+      || prior.cluster_type !== update.cluster_type;
+  });
+  if (clusterUpdatesToWrite.length) {
     const { error: clusterUpdateError } = await newsroomDb
       .from("news_story_clusters")
-      .upsert(clusterUpdates, { onConflict: "id" });
+      .upsert(clusterUpdatesToWrite, { onConflict: "id" });
     if (clusterUpdateError) return Response.json({ ok: false, error: clusterUpdateError.message }, { status: 500 });
   }
 
@@ -108,7 +129,16 @@ async function handler() {
     return counts;
   }, {});
 
-  return Response.json({ ok: true, decided: results.length, decisions, aiCalls: 0 });
+  return Response.json({
+    ok: true,
+    decided: results.length,
+    decisions,
+    candidateWrites: candidateUpdatesToWrite.length,
+    unchangedCandidates: candidateUpdates.length - candidateUpdatesToWrite.length,
+    clusterWrites: clusterUpdatesToWrite.length,
+    unchangedClusters: clusterUpdates.length - clusterUpdatesToWrite.length,
+    aiCalls: 0,
+  });
 }
 
 export const Route = createFileRoute("/api/public/hooks/decide-newsroom-packages")({

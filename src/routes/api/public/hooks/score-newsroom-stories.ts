@@ -13,9 +13,13 @@ type ClusterRow = {
   primary_source_count: number;
   first_seen_at: string;
   last_seen_at: string;
+  score: number;
+  score_breakdown: unknown;
+  pillar_slug: string | null;
 };
 
 type MembershipRow = { cluster_id: string; feed_item_id: number; is_primary_source: boolean };
+type ExistingCandidateRow = { cluster_id: string; editorial_score: number; score_breakdown: unknown };
 type FeedScoreRow = {
   id: number;
   source: string | null;
@@ -34,6 +38,13 @@ function maxNumber(values: Array<number | null | undefined>, fallback = 0): numb
   return finite.length ? Math.max(...finite) : fallback;
 }
 
+function stableJson(value: unknown): string {
+  if (value === null || typeof value !== "object") return JSON.stringify(value) ?? "undefined";
+  if (Array.isArray(value)) return `[${value.map(stableJson).join(",")}]`;
+  const record = value as Record<string, unknown>;
+  return `{${Object.keys(record).sort().map((key) => `${JSON.stringify(key)}:${stableJson(record[key])}`).join(",")}}`;
+}
+
 async function handler() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   // New newsroom tables and recent feed columns intentionally lead the generated Database type.
@@ -43,22 +54,34 @@ async function handler() {
 
   const { data: clusterData, error: clusterError } = await newsroomDb
     .from("news_story_clusters")
-    .select("id,canonical_subject,status,source_count,primary_source_count,first_seen_at,last_seen_at")
+    .select("id,canonical_subject,status,source_count,primary_source_count,first_seen_at,last_seen_at,score,score_breakdown,pillar_slug")
     .in("status", ["DISCOVERED", "READY"])
     .gte("last_seen_at", since)
     .order("last_seen_at", { ascending: false })
     .limit(CLUSTER_LIMIT);
   if (clusterError) return Response.json({ ok: false, error: clusterError.message }, { status: 500 });
   const clusters = (clusterData ?? []) as ClusterRow[];
-  if (!clusters.length) return Response.json({ ok: true, scored: 0, candidates: 0, aiCalls: 0, quotaEnforced: false });
+  if (!clusters.length) return Response.json({ ok: true, scored: 0, candidates: 0, clusterWrites: 0, candidateWrites: 0, aiCalls: 0, quotaEnforced: false });
 
   const clusterIds = clusters.map((cluster) => cluster.id);
-  const { data: membershipData, error: membershipError } = await newsroomDb
-    .from("news_story_cluster_items")
-    .select("cluster_id,feed_item_id,is_primary_source")
-    .in("cluster_id", clusterIds);
+  const [
+    { data: membershipData, error: membershipError },
+    { data: existingCandidateData, error: existingCandidateError },
+  ] = await Promise.all([
+    newsroomDb
+      .from("news_story_cluster_items")
+      .select("cluster_id,feed_item_id,is_primary_source")
+      .in("cluster_id", clusterIds),
+    newsroomDb
+      .from("news_publish_candidates")
+      .select("cluster_id,editorial_score,score_breakdown")
+      .in("cluster_id", clusterIds),
+  ]);
   if (membershipError) return Response.json({ ok: false, error: membershipError.message }, { status: 500 });
+  if (existingCandidateError) return Response.json({ ok: false, error: existingCandidateError.message }, { status: 500 });
   const memberships = (membershipData ?? []) as MembershipRow[];
+  const existingCandidates = (existingCandidateData ?? []) as ExistingCandidateRow[];
+  const existingCandidateByCluster = new Map(existingCandidates.map((candidate) => [candidate.cluster_id, candidate]));
 
   const feedIds = [...new Set(memberships.map((row) => row.feed_item_id))];
   let feedRows: FeedScoreRow[] = [];
@@ -139,10 +162,21 @@ async function handler() {
       status: "READY",
     };
   });
-  const { error: updateError } = await newsroomDb
-    .from("news_story_clusters")
-    .upsert(clusterUpdates, { onConflict: "id" });
-  if (updateError) return Response.json({ ok: false, error: updateError.message }, { status: 500 });
+  const clusterById = new Map(clusters.map((cluster) => [cluster.id, cluster]));
+  const clusterUpdatesToWrite = clusterUpdates.filter((update) => {
+    const prior = clusterById.get(update.id);
+    return !prior
+      || Number(prior.score) !== Number(update.score)
+      || stableJson(prior.score_breakdown) !== stableJson(update.score_breakdown)
+      || prior.pillar_slug !== update.pillar_slug
+      || prior.status !== update.status;
+  });
+  if (clusterUpdatesToWrite.length) {
+    const { error: updateError } = await newsroomDb
+      .from("news_story_clusters")
+      .upsert(clusterUpdatesToWrite, { onConflict: "id" });
+    if (updateError) return Response.json({ ok: false, error: updateError.message }, { status: 500 });
+  }
 
   const candidates = scored.map(({ cluster, score }) => {
     const selection = selectionByCluster.get(cluster.id)!;
@@ -162,15 +196,27 @@ async function handler() {
       },
     };
   });
-  const { error: candidateError } = await newsroomDb
-    .from("news_publish_candidates")
-    .upsert(candidates, { onConflict: "cluster_id" });
-  if (candidateError) return Response.json({ ok: false, error: candidateError.message }, { status: 500 });
+  const candidatesToWrite = candidates.filter((candidate) => {
+    const prior = existingCandidateByCluster.get(candidate.cluster_id);
+    return !prior
+      || Number(prior.editorial_score) !== Number(candidate.editorial_score)
+      || stableJson(prior.score_breakdown) !== stableJson(candidate.score_breakdown);
+  });
+  if (candidatesToWrite.length) {
+    const { error: candidateError } = await newsroomDb
+      .from("news_publish_candidates")
+      .upsert(candidatesToWrite, { onConflict: "cluster_id" });
+    if (candidateError) return Response.json({ ok: false, error: candidateError.message }, { status: 500 });
+  }
 
   return Response.json({
     ok: true,
     scored: scored.length,
     candidates: candidates.length,
+    clusterWrites: clusterUpdatesToWrite.length,
+    unchangedClusters: clusterUpdates.length - clusterUpdatesToWrite.length,
+    candidateWrites: candidatesToWrite.length,
+    unchangedCandidates: candidates.length - candidatesToWrite.length,
     topScore: Math.max(0, ...ranked.map((row) => row.selectionScore)),
     urgent: ranked.filter((row) => row.selectionTier === "urgent").length,
     highPriority: ranked.filter((row) => row.selectionTier === "high").length,
