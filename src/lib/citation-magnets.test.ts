@@ -84,11 +84,33 @@ describe("citation magnet discovery and extraction contracts", () => {
     expect(voterId).toContain("Seven acceptable photo IDs");
     expect(districts).toContain("2026 race →");
     expect(votes).toContain("does not establish a member-by-member position or vote margin");
-    expect(amendments).toContain("No statewide constitutional-amendment slate is currently listed");
+    expect(amendments).toContain("No statewide constitutional-amendment slate is currently published");
     expect(effectiveDates).toContain("September 1, 2026");
     expect(billRelationships).toContain("Bill → law → agency context");
     expect(billRelationships).toContain("does not by itself prove that the agency administers the resulting law");
     expect(raceRelationships).toContain("Election → candidate → district");
+  });
+
+  it("keeps the constitutional amendment reference fresh, source-rich, and connected", () => {
+    expect(amendments).toContain("verified September 7, 2026");
+    expect(amendments).toContain("Article XVII of the Texas Constitution");
+    expect(amendments).toContain("adopted 16 of the 17 proposed amendments");
+    expect(amendments).toContain("When does an approved Texas constitutional amendment take effect?");
+    expect(amendments).toContain("Texas constitutional amendment FAQ");
+    for (const path of ["/laws/effective-dates", "/laws/topics", "/elections/2026", "/elections/voting", "/texas-legislature", "/bills"]) {
+      expect(amendments).toContain(`to=\"${path}\"`);
+    }
+    for (const officialSource of [
+      "advisory2026-21-november-3-election-law-calendar.shtml",
+      "CN.17.pdf",
+      "constitutional-amendment-elections.shtml",
+      "canvasdt.shtml",
+      "analyses25.pdf",
+      "062525.shtml",
+      "December52025/The%20Governor/The%20Governor.html",
+    ]) {
+      expect(amendments).toContain(officialSource);
+    }
   });
 
   it("retains explicit no-inference guardrails", () => {
