@@ -6,6 +6,9 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
  */
 export const Route = createFileRoute("/about-keep-texas-red")({
   beforeLoad: ({ location }) => {
-    throw redirect({ href: `/about${location.searchStr || ""}`, statusCode: 301 });
+    throw redirect({
+      href: `https://keeptxred.com/about${location.searchStr || ""}`,
+      statusCode: 301,
+    });
   },
 });
