@@ -12,6 +12,25 @@ const productsQuery = queryOptions({
   staleTime: 5 * 60 * 1000,
 });
 
+/**
+ * Printify stores every mockup against a variant.  Keep the complete, unique
+ * set here so the page, structured data, and merchant crawlers all receive
+ * the same product gallery rather than only the selected variant's hero.
+ */
+function productImageUrls(product: Product): string[] {
+  return Array.from(
+    new Set(
+      [
+        product.image,
+        ...(product.variants ?? []).flatMap((variant) => [
+          variant.image,
+          ...(variant.images ?? []),
+        ]),
+      ].filter((image): image is string => Boolean(image?.trim())),
+    ),
+  ).slice(0, 10);
+}
+
 export const Route = createFileRoute("/shop/$productId")({
   loader: async ({ context, params }) => {
     const data = await context.queryClient.ensureQueryData(productsQuery);
@@ -33,6 +52,24 @@ export const Route = createFileRoute("/shop/$productId")({
     const title = `${displayTitle} | Keep Texas Red Shop`;
     const description = seoDescription(p);
     const url = `${SITE_URL}/shop/${p.id}`;
+    const images = productImageUrls(p);
+    const productSchema = {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: displayTitle,
+      description,
+      image: images,
+      url,
+      brand: { "@type": "Brand", name: "Keep Texas Red" },
+      offers: {
+        "@type": "Offer",
+        price: p.price.toFixed(2),
+        priceCurrency: p.currency || "USD",
+        availability: "https://schema.org/InStock",
+        itemCondition: "https://schema.org/NewCondition",
+        url,
+      },
+    };
     return {
       meta: [
         { title },
@@ -41,13 +78,14 @@ export const Route = createFileRoute("/shop/$productId")({
         { property: "og:description", content: description },
         { property: "og:type", content: "product" },
         { property: "og:url", content: url },
-        ...(p.image ? [{ property: "og:image", content: p.image }] : []),
+        ...images.map((image) => ({ property: "og:image", content: image })),
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:title", content: displayTitle },
         { name: "twitter:description", content: description },
         ...(p.image ? [{ name: "twitter:image", content: p.image }] : []),
       ],
       links: [{ rel: "canonical", href: url }],
+      scripts: [{ type: "application/ld+json", children: JSON.stringify(productSchema) }],
     };
   },
   notFoundComponent: () => (
@@ -175,6 +213,9 @@ function ProductPage() {
     getProductImage(product, selectedVariant) ||
     (selectedColor && colorToImage.get(selectedColor)) ||
     product.image;
+  const galleryImages = productImageUrls(product);
+  const [selectedGalleryImage, setSelectedGalleryImage] = useState<string | null>(null);
+  const activeImage = selectedGalleryImage ?? displayImage;
 
   const unitPrice = selectedVariant?.price ?? product.price;
 
@@ -206,13 +247,31 @@ function ProductPage() {
       </section>
 
       <section className="mx-auto max-w-[1200px] px-6 pb-16 grid gap-10 md:grid-cols-2">
-        <div className="bg-muted rounded-2xl overflow-hidden aspect-square">
-          <img
-            key={`${selectedColor ?? "default"}-${displayImage}`}
-            src={displayImage}
-            alt={seoAlt(product, selectedColor)}
-            className="h-full w-full object-cover"
-          />
+        <div className="space-y-3">
+          <div className="bg-muted rounded-2xl overflow-hidden aspect-square">
+            <img
+              key={`${selectedColor ?? "default"}-${activeImage}`}
+              src={activeImage}
+              alt={seoAlt(product, selectedColor)}
+              className="h-full w-full object-cover"
+            />
+          </div>
+          {galleryImages.length > 1 && (
+            <div className="grid grid-cols-5 gap-2" aria-label="Product image gallery">
+              {galleryImages.map((image, index) => (
+                <button
+                  key={image}
+                  type="button"
+                  onClick={() => setSelectedGalleryImage(image)}
+                  aria-label={`View product image ${index + 1}`}
+                  aria-pressed={activeImage === image}
+                  className={`aspect-square overflow-hidden rounded-lg border-2 bg-muted ${activeImage === image ? "border-primary" : "border-transparent hover:border-primary/50"}`}
+                >
+                  <img src={image} alt="" className="h-full w-full object-cover" loading="lazy" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col">
@@ -329,7 +388,7 @@ function ProductPage() {
             "@type": "Product",
             name: displayTitle,
             description: seoDescription(product),
-            image: displayImage,
+            image: galleryImages,
             url: `${SITE_URL}/shop/${product.id}`,
             brand: { "@type": "Brand", name: "Keep Texas Red" },
             offers: {
