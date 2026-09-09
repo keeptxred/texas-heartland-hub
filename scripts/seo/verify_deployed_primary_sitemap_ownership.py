@@ -72,6 +72,7 @@ EXPECTED_PRIMARY_OWNER = {
     f"{SITE_ORIGIN}/laws": f"{SITE_ORIGIN}/sitemap-pages.xml",
     f"{SITE_ORIGIN}/texas-legislature": f"{SITE_ORIGIN}/sitemap-pages.xml",
     f"{SITE_ORIGIN}/elections/2026": f"{SITE_ORIGIN}/sitemap-elections.xml",
+    f"{SITE_ORIGIN}/texas-government/fifteenth-court-of-appeals": f"{SITE_ORIGIN}/sitemap-government.xml",
     **{
         f"{SITE_ORIGIN}{path}": f"{SITE_ORIGIN}/sitemap-dmv.xml"
         for path in DMV_EVERGREEN_PATHS
