@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-09T09:45:46.137Z",
+  "generatedAt": "2026-09-09T21:41:59.192Z",
   "sourceName": "Texas Secretary of State — 2026 Independent Candidate Filings",
   "sourceUrl": "https://www.sos.state.tx.us/elections/laws/independent-declarations-2026.shtml",
   "sourceRetrievedAt": "2026-08-22T13:50:00Z",
@@ -8,7 +8,7 @@
   "matchedCount": 14,
   "unmatchedCount": 2,
   "ambiguousCount": 0,
-  "changedFieldCount": 1,
+  "changedFieldCount": 0,
   "matched": [
     {
       "candidateId": "candidate-jade-simmons-independent-race-2026-us-senate",
@@ -255,7 +255,7 @@
       "evidence": "The Republican Party of Texas filing list identifies April Williams Moore for State Board of Education District 13, and Tarrant County's March 3, 2026 Republican primary results show April Williams Moore as the sole District 13 Republican candidate. Carlos (Charlie) Garza does not appear on the 2026 Republican primary ballot for this race. This entry records ballot-access removal only and does not assert a rejected or withdrawn filing status.",
       "before": {
         "filingStatus": "accepted",
-        "ballotAccessStatus": "qualified"
+        "ballotAccessStatus": "removed"
       },
       "after": {
         "filingStatus": "accepted",
