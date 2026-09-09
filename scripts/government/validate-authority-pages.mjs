@@ -23,7 +23,7 @@ const expectedSlugs = [
 const requiredFiles = [
   "src/lib/texas-government.ts",
   "src/routes/texas-government.tsx",
-  "src/routes/texas-government.$entitySlug.tsx",
+  "src/routes/texas-government_.$entitySlug.tsx",
   "src/routes/sitemap-government[.]xml.ts",
 ];
 const requiredSections = [
@@ -49,7 +49,7 @@ for (const file of requiredFiles) {
 }
 
 const dataSource = await readFile(path.join(ROOT, "src/lib/texas-government.ts"), "utf8");
-const detailSource = await readFile(path.join(ROOT, "src/routes/texas-government.$entitySlug.tsx"), "utf8");
+const detailSource = await readFile(path.join(ROOT, "src/routes/texas-government_.$entitySlug.tsx"), "utf8");
 const hubSource = await readFile(path.join(ROOT, "src/routes/texas-government.tsx"), "utf8");
 const sitemapSource = await readFile(path.join(ROOT, "src/routes/sitemap-government[.]xml.ts"), "utf8");
 const sitemapIndex = await readFile(path.join(ROOT, "src/routes/sitemap[.]xml.ts"), "utf8");
