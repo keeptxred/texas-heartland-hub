@@ -16,6 +16,7 @@ const CASES = [
   ["/texas-home-ownership-cost-calculator", "https://texasdefined.com/texas-homeownership-cost-calculator"],
   ["/texas-mortgage-qualification-calculator", "https://texasdefined.com/texas-home-affordability-calculator"],
   ["/texas-heloc-calculator", "https://texasdefined.com/texas-home-equity-calculator"],
+  ["/texas-moving-cost-calculator", "https://texasdefined.com/texas-moving-cost-calculator"],
   ["/moving-checklist", "https://texasdefined.com/moving-to-texas"],
 ] as const;
 
@@ -27,6 +28,8 @@ describe("migrated tool canonical links", () => {
   it("preserves query strings and hashes", () => {
     expect(canonicalMigratedToolHref("/tools/mortgage-calculator?price=350000#payment"))
       .toBe("https://texasdefined.com/texas-mortgage-calculator?price=350000#payment");
+    expect(canonicalMigratedToolHref("/texas-moving-cost-calculator?distance=800#estimate"))
+      .toBe("https://texasdefined.com/texas-moving-cost-calculator?distance=800#estimate");
   });
 
   it("leaves active KTR and unrelated external destinations unchanged", () => {
@@ -36,9 +39,9 @@ describe("migrated tool canonical links", () => {
   });
 
   it("rewrites migrated markdown destinations without changing labels or active links", () => {
-    const text = "Compare the [mortgage tool](/tools/mortgage-calculator) and [budget tool](/tools/texas-budget-headroom).";
+    const text = "Compare the [mortgage tool](/tools/mortgage-calculator), [moving cost tool](/texas-moving-cost-calculator), and [budget tool](/tools/texas-budget-headroom).";
     expect(canonicalizeMigratedToolMarkdownLinks(text)).toBe(
-      "Compare the [mortgage tool](https://texasdefined.com/texas-mortgage-calculator) and [budget tool](/tools/texas-budget-headroom).",
+      "Compare the [mortgage tool](https://texasdefined.com/texas-mortgage-calculator), [moving cost tool](https://texasdefined.com/texas-moving-cost-calculator), and [budget tool](/tools/texas-budget-headroom).",
     );
   });
 });
