@@ -10,6 +10,7 @@ const ARTICLE_XVII_URL = 'https://statutes.capitol.texas.gov/SOTWDocs/CN/pdf/CN.
 const TLC_2025_ANALYSIS_URL = 'https://tlc.texas.gov/docs/amendments/analyses25.pdf';
 const LAST_BALLOT_URL = 'https://www.sos.state.tx.us/about/newsreleases/2025/062525.shtml';
 const LAST_CANVASS_URL = 'https://www.sos.state.tx.us/texreg/archive/December52025/The%20Governor/The%20Governor.html';
+const EMPTY_BILLS_SEARCH = { q: '', status: '', legislature: 0, chamber: '', billType: '', page: 1 } as const;
 
 export const Route = createFileRoute('/laws/constitutional-amendments')({
   head: () => ({
@@ -98,7 +99,7 @@ function ConstitutionalAmendmentsTracker() {
         </div>
         <div className="mt-5 flex flex-wrap gap-4">
           <Link to="/texas-legislature" className="font-semibold text-primary hover:underline">How the Texas Legislature works →</Link>
-          <Link to="/bills" className="font-semibold text-primary hover:underline">Track Texas bills →</Link>
+          <Link to="/bills" search={EMPTY_BILLS_SEARCH} className="font-semibold text-primary hover:underline">Track Texas bills →</Link>
           <Link to="/laws/topics" className="font-semibold text-primary hover:underline">Browse the Texas law library →</Link>
         </div>
       </section>
