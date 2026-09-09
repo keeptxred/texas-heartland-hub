@@ -15,7 +15,7 @@ PARENT_H1 = "Texas Laws Explained:"
 HB1056_PATH = "/bills/texas/89/hb/1056"
 HB1056_CANONICAL = "https://keeptxred.com/bills/texas/89/hb/1056"
 HB1056_ARTICLE_PATH = "/news/texas-gold-silver-legal-tender-hb-1056"
-HB1056_ARTICLE_TITLE = "Texas Gold and Silver Legal Tender Law Takes Effect Sept. 1"
+HB1056_ARTICLE_TITLE = "Texas Gold and Silver Legal Tender Law: What HB 1056 Does Sept. 1"
 HB1056_MISSING_ARTICLE_FALLBACK = "KeepTXRed has not linked a related article to this bill yet."
 CHECKS = [
     ("/laws", PARENT_H1, "https://keeptxred.com/laws", False, False),
