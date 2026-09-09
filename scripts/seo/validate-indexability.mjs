@@ -35,6 +35,7 @@ const INDEXABLE_PRIORITY_PATHS = [
   "/dmv",
 ];
 const REDIRECT_ALIASES = [
+  "/about-keep-texas-red",
   "/candidate-guides",
   "/laws-to-know",
   "/legislative-updates",
