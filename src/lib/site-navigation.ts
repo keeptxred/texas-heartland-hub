@@ -59,13 +59,13 @@ export const SITE_NAV_GROUPS = [
     id: "regions",
     label: "Regions",
     href: null,
-    description: "Regional Texas coverage organized around the state's largest population centers.",
+    description: "Houston coverage stays on KTR; migrated regional guides open directly on TexasDefined.",
     links: [
       { to: "/houston", label: "Houston", description: "Houston-area government, politics, business, and public policy." },
-      { to: "/dallas-fort-worth", label: "Dallas–Fort Worth", description: "North Texas government, growth, elections, and policy." },
-      { to: "/san-antonio", label: "San Antonio", description: "San Antonio and South-Central Texas coverage." },
-      { to: "/austin", label: "Austin", description: "Austin-area government plus the state-capitol region." },
-      { to: "/el-paso", label: "El Paso", description: "El Paso, border-region government, and public policy." },
+      { href: "https://texasdefined.com/article/moving-to-dallas-fort-worth-guide", label: "Dallas–Fort Worth", description: "TexasDefined guide to Dallas–Fort Worth and North Texas." },
+      { href: "https://texasdefined.com/article/moving-to-san-antonio-guide", label: "San Antonio", description: "TexasDefined guide to San Antonio and South-Central Texas." },
+      { href: "https://texasdefined.com/article/moving-to-austin-guide", label: "Austin", description: "TexasDefined guide to Austin and Central Texas." },
+      { href: "https://texasdefined.com/article/moving-to-el-paso-guide", label: "El Paso", description: "TexasDefined guide to El Paso and Far West Texas." },
     ],
   },
 ] as const;
