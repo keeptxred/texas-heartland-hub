@@ -8,7 +8,7 @@ on:
       - '.github/workflows/diagnose-content-opportunity-vitest.yml'
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   diagnose:
@@ -21,26 +21,16 @@ jobs:
         with:
           bun-version: 1.3.14
       - run: bun install --frozen-lockfile
-      - name: Capture concise failing test output
+      - name: Print concise failing test output
         shell: bash
         run: |
           set +e
           bun run test > /tmp/vitest.log 2>&1
           code=$?
           set -e
-          mkdir -p diagnostics
-          {
-            echo "exit_code=${code}"
-            echo '--- failure lines ---'
-            grep -nE 'FAIL|AssertionError|expected|Received|Test Files|Tests ' /tmp/vitest.log | tail -n 120 || true
-            echo '--- tail ---'
-            tail -n 220 /tmp/vitest.log
-          } > diagnostics/content-opportunity-vitest.log
-          rm .github/workflows/diagnose-content-opportunity-vitest.yml
-      - name: Commit diagnostic evidence
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add diagnostics/content-opportunity-vitest.log .github/workflows/diagnose-content-opportunity-vitest.yml
-          git commit -m 'Capture Content Opportunities Vitest failure'
-          git push origin HEAD:fix/content-opportunity-canonical-queue
+          echo "exit_code=${code}"
+          echo '--- failure lines ---'
+          grep -nE 'FAIL|AssertionError|expected|Received|Test Files|Tests ' /tmp/vitest.log | tail -n 160 || true
+          echo '--- tail ---'
+          tail -n 260 /tmp/vitest.log
+          exit "$code"
