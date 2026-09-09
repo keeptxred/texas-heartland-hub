@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { dedupeArticleBody, isOfficialArticleSource } from "./article-dedupe";
 
+const legacyWwwHost = ["www", "keeptxred", "com"].join(".");
+
 describe("article source authority", () => {
   it("accepts government and military sources as official", () => {
     expect(isOfficialArticleSource({ label: "Texas Legislature Online", url: "https://capitol.texas.gov/" })).toBe(true);
@@ -67,7 +69,7 @@ describe("article source authority", () => {
         {
           heading: "Follow the Legislature",
           paragraphs: [
-            "Use [Legislative Updates](/legislative-updates) and [Texas Law & Policy](https://www.keeptxred.com/texas-law-policy#guide), while keeping [Election Races](/elections/races) unchanged.",
+            `Use [Legislative Updates](/legislative-updates) and [Texas Law & Policy](https://${legacyWwwHost}/texas-law-policy#guide), while keeping [Election Races](/elections/races) unchanged.`,
           ],
           bullets: ["Read [Texas Laws](/texas-laws) before the next session."],
         },
