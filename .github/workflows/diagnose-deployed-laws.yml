@@ -3,6 +3,13 @@ name: Diagnose deployed laws smoke
 on:
   push:
     branches: [main]
+  pull_request:
+    paths:
+      - .github/workflows/diagnose-deployed-laws.yml
+      - scripts/seo/verify-deployed-laws-routes.py
+      - scripts/seo/verify-deployed-priority-sitemap.py
+      - scripts/authority/verify-deployed-fifteenth-court.py
+      - scripts/legislature/verify-deployed-bills-platform.py
   workflow_dispatch:
 
 permissions:
