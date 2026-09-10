@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { quickPublishToFacebook } from "@/services/quickPublish";
 import { regenerateFeaturedImage } from "@/lib/featured-image.functions";
 import { ignoreChatGptArticle } from "@/lib/chatgpt-admin.functions";
-import { isLegacyGeneratedNewsAsset } from "@/lib/facebook-image-readiness";
+import { assessAdminArticleImage } from "@/lib/admin-article-image-readiness";
 import { EyeOff, Facebook, Image as ImageIcon } from "lucide-react";
 
 const IGNORE_FLAG = "chatgpt-admin-ignored";
@@ -114,13 +114,20 @@ export function ChatGptAutoArticlesPanel() {
   }
 
   async function postToFacebook(article: ChatGptArticle) {
-    if (isLegacyGeneratedNewsAsset(article.featured_image_url)) {
+    const imageReadiness = assessAdminArticleImage(
+      article.featured_image_url,
+      article.image_generation_status,
+    );
+    if (imageReadiness.needsImage) {
       setPostState((current) => ({
         ...current,
         [article.id]: {
           status: "error",
-          message:
-            "Regenerate a real editorial image before posting this legacy placeholder to Facebook.",
+          message: imageReadiness.failed
+            ? "Retry image generation successfully before posting this failed image to Facebook."
+            : imageReadiness.legacyPlaceholder
+              ? "Regenerate a real editorial image before posting this legacy placeholder to Facebook."
+              : "Generate a validated editorial image before posting this article to Facebook.",
         },
       }));
       return;
@@ -232,11 +239,16 @@ export function ChatGptAutoArticlesPanel() {
           {articles.map((article) => {
             const state = postState[article.id] ?? { status: "idle" as const };
             const isPosting = state.status === "posting";
-            const isLegacyPlaceholder = isLegacyGeneratedNewsAsset(article.featured_image_url);
+            const imageReadiness = assessAdminArticleImage(
+              article.featured_image_url,
+              article.image_generation_status,
+            );
+            const isLegacyPlaceholder = imageReadiness.legacyPlaceholder;
+            const imageFailed = imageReadiness.failed;
             const isLegacyMetadata = !article.author;
             const isRegenerating = regenerating[article.id] ?? false;
             const isIgnoring = ignoring[article.id] ?? false;
-            const needsImage = !article.featured_image_url || isLegacyPlaceholder;
+            const needsImage = imageReadiness.needsImage;
 
             return (
               <li key={article.id} className="py-4">
@@ -255,13 +267,13 @@ export function ChatGptAutoArticlesPanel() {
                         <span className="text-[10px] font-bold uppercase tracking-widest text-destructive">
                           Legacy Placeholder
                         </span>
+                      ) : imageFailed ? (
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-destructive">
+                          Img Failed
+                        </span>
                       ) : article.featured_image_url ? (
                         <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-emerald-600">
                           <ImageIcon size={12} /> AI Image
-                        </span>
-                      ) : article.image_generation_status === "failed" ? (
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-destructive">
-                          Img Failed
                         </span>
                       ) : (
                         <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
@@ -320,7 +332,9 @@ export function ChatGptAutoArticlesPanel() {
                           ? "Generating…"
                           : isLegacyPlaceholder
                             ? "Regenerate Real Image"
-                            : "Generate Image"}
+                            : imageFailed
+                              ? "Retry Image"
+                              : "Generate Image"}
                       </button>
                     ) : null}
                     <button
