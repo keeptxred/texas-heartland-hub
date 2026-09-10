@@ -89,7 +89,7 @@ describe("Texas State Commission on Judicial Conduct authority", () => {
   it("wires the canonical route into the government hub and sitemap", () => {
     const route = readFileSync("src/routes/texas-government.state-commission-on-judicial-conduct.tsx", "utf8");
     const component = readFileSync("src/components/texas-judicial-conduct-authority-page.tsx", "utf8");
-    const hub = readFileSync("src/routes/texas-government.tsx", "utf8");
+    const hub = readFileSync("src/routes/texas-government.index.tsx", "utf8");
     const sitemap = readFileSync("src/routes/sitemap-government[.]xml.ts", "utf8");
     const path = "/texas-government/state-commission-on-judicial-conduct";
 
