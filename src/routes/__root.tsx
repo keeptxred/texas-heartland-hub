@@ -41,6 +41,7 @@ const ADSENSE_EXCLUDED_DETAIL_PATH_PREFIXES = [
   "/elections/races/",
 ] as const;
 const ADSENSE_BOOTSTRAP = `(function(){function load(){var p=location.pathname;var x=${JSON.stringify(ADSENSE_EXCLUDED_PATH_PREFIXES)};var d=${JSON.stringify(ADSENSE_EXCLUDED_DETAIL_PATH_PREFIXES)};var excluded=x.some(function(prefix){return p===prefix||p.indexOf(prefix+'/')===0;})||d.some(function(prefix){return p.indexOf(prefix)===0;});var noindex=Array.prototype.some.call(document.querySelectorAll('meta[name="robots"]'),function(m){return /(?:^|[,\\s])noindex(?:$|[,\\s])/i.test(m.content||'');});var ineligible=document.querySelector('[data-adsense-ineligible="true"]');if(excluded||noindex||ineligible)return;var s=document.createElement('script');s.async=true;s.crossOrigin='anonymous';s.src='${ADSENSE_SCRIPT}';s.setAttribute('data-adsense-gated','true');document.head.appendChild(s);}if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',load,{once:true});}else{load();}}());`;
+const INFOLINKS_BOOTSTRAP = `(function(){var h=location.hostname;if(h!=="keeptxred.com"&&h!=="www.keeptxred.com")return;var infolinks_pid=3446723;var infolinks_wsid=0;window.infolinks_pid=infolinks_pid;window.infolinks_wsid=infolinks_wsid;var s=document.createElement("script");s.async=true;s.src="https://resources.infolinks.com/js/infolinks_main.js";s.setAttribute("data-infolinks-gated","true");document.body.appendChild(s);}());`;
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
@@ -146,12 +147,7 @@ function RootShell({ children }: { children: ReactNode }) {
         </noscript>
         {children}
         <Scripts />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: "var infolinks_pid = 3446723; var infolinks_wsid = 0;",
-          }}
-        />
-        <script src="https://resources.infolinks.com/js/infolinks_main.js" />
+        <script dangerouslySetInnerHTML={{ __html: INFOLINKS_BOOTSTRAP }} />
       </body>
     </html>
   );

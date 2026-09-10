@@ -104,3 +104,17 @@ describe("AdSense document integration", () => {
     expect(rootSource).toContain("data-adsense-gated");
   });
 });
+
+describe("Infolinks document integration", () => {
+  it("keeps the publisher id and Infolinks network URL in the document integration", () => {
+    expect(rootSource).toContain("3446723");
+    expect(rootSource).toContain("https://resources.infolinks.com/js/infolinks_main.js");
+  });
+
+  it("loads Infolinks only on canonical production hosts", () => {
+    expect(rootSource).toContain("INFOLINKS_BOOTSTRAP");
+    expect(rootSource).toContain('h!==\"keeptxred.com\"&&h!==\"www.keeptxred.com\"');
+    expect(rootSource).toContain("data-infolinks-gated");
+    expect(rootSource).not.toContain('<script src="https://resources.infolinks.com/js/infolinks_main.js" />');
+  });
+});
