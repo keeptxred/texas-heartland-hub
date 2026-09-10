@@ -11,6 +11,7 @@ on:
       - "src/pages/elections/**"
       - "src/routes/elections*"
       - "src/routes/index.tsx"
+      - "src/routes/__root.tsx"
       - "tests/elections/**"
       - "playwright.elections.config.ts"
       - "vite.config.ts"
