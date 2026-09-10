@@ -1,0 +1,74 @@
+name: Apply failed-image admin readiness fix
+
+on:
+  push:
+    branches:
+      - fix/admin-failed-image-readiness
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/admin-failed-image-readiness
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Apply guarded admin image-readiness patch
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          path = Path('src/components/admin/ChatGptAutoArticlesPanel.tsx')
+          text = path.read_text()
+
+          replacements = [
+              (
+                  'import { isLegacyGeneratedNewsAsset } from "@/lib/facebook-image-readiness";\n',
+                  'import { assessAdminArticleImage } from "@/lib/admin-article-image-readiness";\n',
+              ),
+              (
+                  '''  async function postToFacebook(article: ChatGptArticle) {\n    if (isLegacyGeneratedNewsAsset(article.featured_image_url)) {\n      setPostState((current) => ({\n        ...current,\n        [article.id]: {\n          status: "error",\n          message:\n            "Regenerate a real editorial image before posting this legacy placeholder to Facebook.",\n        },\n      }));\n      return;\n    }\n''',
+                  '''  async function postToFacebook(article: ChatGptArticle) {\n    const imageReadiness = assessAdminArticleImage(\n      article.featured_image_url,\n      article.image_generation_status,\n    );\n    if (imageReadiness.needsImage) {\n      setPostState((current) => ({\n        ...current,\n        [article.id]: {\n          status: "error",\n          message: imageReadiness.failed\n            ? "Retry image generation successfully before posting this failed image to Facebook."\n            : imageReadiness.legacyPlaceholder\n              ? "Regenerate a real editorial image before posting this legacy placeholder to Facebook."\n              : "Generate a validated editorial image before posting this article to Facebook.",\n        },\n      }));\n      return;\n    }\n''',
+              ),
+              (
+                  '''            const isPosting = state.status === "posting";\n            const isLegacyPlaceholder = isLegacyGeneratedNewsAsset(article.featured_image_url);\n            const isLegacyMetadata = !article.author;\n            const isRegenerating = regenerating[article.id] ?? false;\n            const isIgnoring = ignoring[article.id] ?? false;\n            const needsImage = !article.featured_image_url || isLegacyPlaceholder;\n''',
+                  '''            const isPosting = state.status === "posting";\n            const imageReadiness = assessAdminArticleImage(\n              article.featured_image_url,\n              article.image_generation_status,\n            );\n            const isLegacyPlaceholder = imageReadiness.legacyPlaceholder;\n            const imageFailed = imageReadiness.failed;\n            const isLegacyMetadata = !article.author;\n            const isRegenerating = regenerating[article.id] ?? false;\n            const isIgnoring = ignoring[article.id] ?? false;\n            const needsImage = imageReadiness.needsImage;\n''',
+              ),
+              (
+                  '''                      {isLegacyPlaceholder ? (\n                        <span className="text-[10px] font-bold uppercase tracking-widest text-destructive">\n                          Legacy Placeholder\n                        </span>\n                      ) : article.featured_image_url ? (\n                        <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-emerald-600">\n                          <ImageIcon size={12} /> AI Image\n                        </span>\n                      ) : article.image_generation_status === "failed" ? (\n                        <span className="text-[10px] font-bold uppercase tracking-widest text-destructive">\n                          Img Failed\n                        </span>\n                      ) : (\n''',
+                  '''                      {isLegacyPlaceholder ? (\n                        <span className="text-[10px] font-bold uppercase tracking-widest text-destructive">\n                          Legacy Placeholder\n                        </span>\n                      ) : imageFailed ? (\n                        <span className="text-[10px] font-bold uppercase tracking-widest text-destructive">\n                          Img Failed\n                        </span>\n                      ) : article.featured_image_url ? (\n                        <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-emerald-600">\n                          <ImageIcon size={12} /> AI Image\n                        </span>\n                      ) : (\n''',
+              ),
+              (
+                  '''                        {isRegenerating\n                          ? "Generating…"\n                          : isLegacyPlaceholder\n                            ? "Regenerate Real Image"\n                            : "Generate Image"}\n''',
+                  '''                        {isRegenerating\n                          ? "Generating…"\n                          : isLegacyPlaceholder\n                            ? "Regenerate Real Image"\n                            : imageFailed\n                              ? "Retry Image"\n                              : "Generate Image"}\n''',
+              ),
+          ]
+
+          for old, new in replacements:
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'Expected exactly one guarded replacement, found {count}: {old[:80]!r}')
+              text = text.replace(old, new, 1)
+
+          path.write_text(text)
+          PY
+      - name: Run focused regression tests
+        run: npx vitest run src/lib/admin-article-image-readiness.test.ts src/lib/facebook-image-readiness.test.ts
+      - name: Remove one-time workflow and commit patch
+        run: |
+          git rm .github/workflows/apply-admin-failed-image-readiness-fix.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/components/admin/ChatGptAutoArticlesPanel.tsx src/lib/admin-article-image-readiness.ts src/lib/admin-article-image-readiness.test.ts
+          git commit -m 'Fix failed-image admin retry and Facebook gating'
+          git push origin HEAD:fix/admin-failed-image-readiness
