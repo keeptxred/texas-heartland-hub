@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 
-const governmentHub = read("../routes/texas-government.tsx");
+const governmentHub = read("../routes/texas-government.index.tsx");
 const governmentEntity = read("../routes/texas-government.$entitySlug.tsx");
 const policyTrackerPage = read("../components/policy-tracker-page.tsx");
 const electionErrorState = read("../components/elections/states/ElectionErrorState.tsx");
