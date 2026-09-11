@@ -79,6 +79,7 @@ describe("Cloudflare featured-image payload", () => {
     expect(runtime).toContain("the exact date");
     expect(runtime).toContain("policy-impact setting");
     expect(validatorSource).toContain("Do not require it to prove that it was captured at the exact historical event");
-    expect(validatorSource).toContain("Judge topical relevance and photorealism, not whether a generated editorial image proves an exact historical moment");
+    expect(validatorSource).toContain("Judge primary-subject relevance and photorealism, not loose topical association or whether a generated editorial image proves an exact historical moment");
+    expect(validatorSource).toContain("Apply the primary-subject rule strictly before considering broad topical association");
   });
 });
