@@ -1,6 +1,8 @@
 name: Audit All News Articles Live
 
 on:
+  schedule:
+    - cron: '47 11 * * 1'
   pull_request:
     branches: [main]
     paths:
