@@ -10,13 +10,17 @@ describe("sports category policy", () => {
     expect(sportsCategoryFor("sports-general", [])).toBe("Sports");
   });
 
-  it("repairs stale non-sports categories once a row is strongly classified as sports", () => {
-    expect(resolveSportsCategory("Elections", "sports-cfb", ["cfb"])).toBe("College Sports");
-    expect(resolveSportsCategory("Texas News", "sports-general", [])).toBe("Sports");
-    expect(resolveSportsCategory("Politics", "sports-policy", [])).toBe("Sports Business & Policy");
+  it("repairs stale non-sports categories when the article's primary identity is sports", () => {
+    expect(resolveSportsCategory("Elections", "sports-cfb", ["cfb"], false, "Texas A&M dominates Missouri State in season opener")).toBe("College Sports");
+    expect(resolveSportsCategory("Texas News", "sports-general", [], false, "Texas colleges announce cross country schedules")).toBe("Sports");
   });
 
-  it("preserves an intentional non-sports category only when taxonomy is locked", () => {
-    expect(resolveSportsCategory("Politics", "sports-cfb", ["cfb"], true)).toBe("Politics");
+  it("preserves civic categorization when politics or elections are genuinely the primary angle", () => {
+    expect(resolveSportsCategory("Elections", "sports-nba", ["nba"], false, "San Antonio council pushes back on mayor bid to revisit Spurs arena funding and ballot questions")).toBe("Elections");
+    expect(resolveSportsCategory("Politics", "sports-policy", [], false, "Ted Cruz college sports bill moves to the September Senate calendar")).toBe("Politics");
+  });
+
+  it("preserves an intentional non-sports category when taxonomy is locked", () => {
+    expect(resolveSportsCategory("Politics", "sports-cfb", ["cfb"], true, "Texas A&M football season opener")).toBe("Politics");
   });
 });
