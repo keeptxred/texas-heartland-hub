@@ -3,13 +3,13 @@ import { createFileRoute } from "@tanstack/react-router";
 const MANUAL_KIMMEL_TALARICO_IMAGE =
   "2026-09-11-jimmy-kimmel-won-t-air-james-talarico-interview-due-to-fcc-threats.webp";
 
-function decodeBase64(value: string): Uint8Array {
+function decodeBase64(value: string): ArrayBuffer {
   const binary = atob(value);
   const bytes = new Uint8Array(binary.length);
   for (let index = 0; index < binary.length; index += 1) {
     bytes[index] = binary.charCodeAt(index);
   }
-  return bytes;
+  return bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
 }
 
 // Public passthrough for AI-generated article featured images stored in the
