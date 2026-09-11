@@ -10,7 +10,7 @@ describe("article fallback image classification", () => {
   });
 
   it("still recognizes AI as a standalone technology keyword", () => {
-    expect(resolveImageCategory({ category: null, title: "Texas companies expand AI investment" })).toBe("technology");
+    expect(resolveImageCategory({ category: null, title: "AI tools arrive in Texas" })).toBe("technology");
   });
 
   it("prefers an explicit site category over heuristic headline keywords", () => {
