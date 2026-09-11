@@ -216,17 +216,25 @@ export function normalizeCloudflareVisionVerdictOutput(value: unknown): unknown 
     .replace(/\bPhotorealistic\s*:\s*N\/?A\b/gi, "Photorealistic: no");
 }
 
+const PRIMARY_SUBJECT_RULE = "PRIMARY-SUBJECT RULE: the image must show the headline's main person/entity OR the exact action, object, activity, infrastructure, institution, or event the story is actually about. Mere association by school, team, city, state, venue, category, logo, crowd, band, mascot, skyline, flag, or generic instrument is not enough when it omits the article's defining subject or activity.";
+
 export function imageValidationDomainGuidance(subject: SubjectExtract): string {
   if (subject.domain === "legal") {
-    return "For a court-ruling story, a believable photorealistic courthouse exterior or courtroom interior IS a valid direct story match; it does not need to literally visualize the abstract legal wording. Reject maps, state outlines, politicians, capitol scenes, election graphics, cartoons, and illustrations.";
+    return `${PRIMARY_SUBJECT_RULE} For a court-ruling story, a believable photorealistic courthouse exterior or courtroom interior IS a valid direct story match when the court process itself is the defining subject; it does not need to literally visualize abstract legal wording. When the dispute centers on a concrete object or practice (for example a Ten Commandments display), prefer that object/practice over a generic courthouse or school. Reject maps, state outlines, unrelated politicians, generic capitol scenes, election graphics, cartoons, and illustrations.`;
   }
   if (subject.domain === "politics") {
-    return "For politics or public-policy stories, do NOT require a recognizable likeness of a named politician, the exact date, the exact venue, a specific broadcast or interview, a press conference, or any other historically exact scene. A believable photorealistic Texas government or policy-impact setting that directly represents one or more concrete issues in the story IS a valid direct story match. Prefer anonymous or non-identifiable people. Reject unrelated generic government imagery, fabricated readable text or logos, and recognizable faces presented as the named politician unless independently verified.";
+    return `${PRIMARY_SUBJECT_RULE} For politics or public-policy stories, do NOT require a recognizable likeness of a named politician, the exact date, the exact venue, a specific broadcast or interview, a press conference, or any other historically exact scene. A believable photorealistic government setting or policy-impact setting is valid only when it directly depicts the concrete policy target or action in the story. Prefer anonymous or non-identifiable people. Reject unrelated generic government imagery, location-only skylines, fabricated readable text or logos, and recognizable faces presented as the named politician unless independently verified.`;
   }
   if (subject.domain === "sports") {
-    return "For sports schedules, watch lists, roster stories, previews, honors, and results, do NOT require a recognizable likeness of a named athlete, exact team uniform or logo, exact game, exact date, or exact venue. A believable photorealistic anonymous athlete or athletes performing the exact sport and relevant action in an appropriate real field, track, course, stadium, or practice setting IS a valid representative editorial match. The depicted sport and action must fit the story. Reject unrelated sports, generic non-athletic scenes, readable logos or invented named-player likenesses, posters, illustrations, cartoons, and promotional graphics.";
+    return `${PRIMARY_SUBJECT_RULE} For sports schedules, watch lists, roster stories, previews, honors, and results, do NOT require a recognizable likeness of a named athlete, exact team uniform or logo, exact game, exact date, or exact venue. A believable photorealistic anonymous athlete or athletes performing the exact sport and relevant action in an appropriate real field, track, course, stadium, or practice setting IS a valid representative editorial match. For a game result, preview, roster, schedule, or player-performance story, the sport/action itself must be visible: a marching band, crowd, mascot, cheerleaders, stadium exterior, or empty/stadium-only scene does NOT pass merely because it is associated with the same team or school. Reject unrelated sports, generic non-athletic scenes, readable logos or invented named-player likenesses, posters, illustrations, cartoons, and promotional graphics.`;
   }
-  return "A valid match must depict the concrete real-world subject or setting, not generic symbolism. Do not require visible city names, landmarks, logos, signage, or other geographic proof merely because the article names a location; a believable representative local scene is sufficient when its physical subject matches the assignment. Continue to reject images that omit the assignment's defining physical objects or activity.";
+  if (subject.domain === "culture") {
+    return `${PRIMARY_SUBJECT_RULE} For named musicians, artists, festivals, restaurants, or cultural events, prefer a verified reusable image of the named subject when available. If it is unavailable, the representative image must depict the exact cultural activity, medium, cuisine, or event type. A generic city skyline, state flag, instrument, product-only close-up for an event story, or unrelated venue does not pass solely by association.`;
+  }
+  if (subject.domain === "weather") {
+    return `${PRIMARY_SUBJECT_RULE} For current storms, use current official storm imagery or a truthful representative weather scene. For seasonal outlooks, climate probabilities, or El Nino-driven risk stories, prefer the relevant current official outlook/climate graphic or phenomenon; a dramatic image of a named historical disaster does not pass merely because it is also a hurricane.`;
+  }
+  return `${PRIMARY_SUBJECT_RULE} A valid match must depict the concrete real-world subject or setting, not generic symbolism. Do not require visible city names, landmarks, logos, signage, or other geographic proof merely because the article names a location; a believable representative local scene is sufficient only when its physical subject matches the assignment. Continue to reject images that omit the assignment's defining physical objects or activity.`;
 }
 
 const VISION_VALIDATION_ATTEMPTS = 2;
@@ -259,6 +267,7 @@ export async function validateImageMatchesArticle(bytes: Uint8Array, subject: Su
     `Primary visual subject: ${subject.concreteSubject}`,
     "Evaluate the supplied image as an editorial photograph.",
     domainGuidance,
+    "Apply the primary-subject rule strictly before considering broad topical association. A high-quality image that is merely related to the team, school, city, state, industry, or category must fail if the defining subject/action is absent.",
     "Judge whether the image is a truthful representative editorial visual for the article topic. Do not require it to prove that it was captured at the exact historical event described in the article.",
     "photorealistic=false for illustration, vector art, cartoon, poster, icon, graphic design, collage, or synthetic placeholder imagery.",
     "Return exactly one JSON object with boolean matches, boolean photorealistic, and string reason. No Markdown or surrounding prose.",
@@ -285,7 +294,7 @@ export async function validateImageMatchesArticle(bytes: Uint8Array, subject: Su
         headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: [
-            { role: "system", content: "You are a strict editorial-photo quality reviewer. Judge topical relevance and photorealism, not whether a generated editorial image proves an exact historical moment. Return only the requested JSON verdict." },
+            { role: "system", content: "You are a strict editorial-photo quality reviewer. Judge primary-subject relevance and photorealism, not loose topical association or whether a generated editorial image proves an exact historical moment. Return only the requested JSON verdict." },
             { role: "user", content: attempt === 1 ? validationPrompt : `${validationPrompt}\nThis is a validator retry because the prior response was unavailable or malformed. Follow the JSON format exactly.` },
           ],
           image,
