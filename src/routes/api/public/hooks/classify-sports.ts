@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { classifySportsText, sportsKindForText, SPORTS_TOPIC_SLUGS } from "@/lib/sports-taxonomy";
-import { LEAGUE_META } from "@/lib/texas-teams";
+import { resolveSportsCategory } from "@/lib/sports-category-policy";
 
 const GENERIC_OR_SPORTS_CATEGORIES = new Set([
   "",
@@ -18,19 +18,6 @@ const GENERIC_OR_SPORTS_CATEGORIES = new Set([
   "sports business & policy",
 ]);
 const SPORTS_TOPIC_KEYWORDS = new Set<string>(SPORTS_TOPIC_SLUGS);
-
-function categoryFor(kind: string | null, leagues: string[]): string {
-  if (kind === "sports-policy") return "Sports Business & Policy";
-  if (kind === "sports-motorsports") return "Motorsports";
-  if (leagues.length === 1 && leagues[0] in LEAGUE_META) return leagues[0] === "cfb" ? "College Sports" : LEAGUE_META[leagues[0] as keyof typeof LEAGUE_META].name;
-  return "Sports";
-}
-
-function resolvedCategory(existing: string | null | undefined, kind: string, leagues: string[]): string {
-  const normalized = (existing ?? "").trim().toLowerCase();
-  if (normalized && !GENERIC_OR_SPORTS_CATEGORIES.has(normalized)) return existing!.trim();
-  return categoryFor(kind, leagues);
-}
 
 function cleanedKeywords(keywords: string[] | null | undefined): string[] {
   return (keywords ?? []).filter((keyword) => !SPORTS_TOPIC_KEYWORDS.has(keyword.toLowerCase()));
@@ -123,7 +110,7 @@ async function handler() {
     const keywords = Array.from(new Set([...cleanedKeywords(row.keywords), ...topics])).slice(0, 24);
     const update = {
       kind,
-      category: resolvedCategory(row.category, kind, classification.leagues),
+      category: resolveSportsCategory(row.category, kind, classification.leagues, flags.includes("taxonomy_locked")),
       discover_category: "Sports",
       teams,
       keywords,
