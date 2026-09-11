@@ -27,7 +27,16 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PR_URL: ${{ github.event.pull_request.html_url }}
-        run: gh pr merge --auto --squash "$PR_URL"
+        shell: bash
+        run: |
+          set -euo pipefail
+          auto_merge_enabled="$(gh pr view "$PR_URL" --json autoMergeRequest --jq '.autoMergeRequest != null')"
+          if [[ "$auto_merge_enabled" == "true" ]]; then
+            echo "Auto-merge is already enabled for $PR_URL; continuing with post-merge verification orchestration."
+          else
+            gh pr merge --auto --squash "$PR_URL"
+            echo "Auto-merge enabled for $PR_URL."
+          fi
 
       - name: Wait for merge, verify main, and dispatch exact verified deploy
         env:
