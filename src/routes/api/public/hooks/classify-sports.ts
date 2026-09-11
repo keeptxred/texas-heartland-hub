@@ -110,7 +110,7 @@ async function handler() {
     const keywords = Array.from(new Set([...cleanedKeywords(row.keywords), ...topics])).slice(0, 24);
     const update = {
       kind,
-      category: resolveSportsCategory(row.category, kind, classification.leagues, flags.includes("taxonomy_locked")),
+      category: resolveSportsCategory(row.category, kind, classification.leagues, flags.includes("taxonomy_locked"), text),
       discover_category: "Sports",
       teams,
       keywords,
