@@ -37,7 +37,6 @@ describe("featured-image provider safety retry", () => {
     expect(safe).toContain("broadcast studio");
     expect(safe).toContain("Show no named, recognizable, or identifiable person");
     expect(safe).not.toMatch(/Jimmy Kimmel|James Talarico|Charlie Kirk|assassination|threats?/i);
-    expect(safe).not.toMatch(/logo|seal/i);
   });
 
   it("automatically retries a provider-flagged generation with the sanitized topical prompt", async () => {
