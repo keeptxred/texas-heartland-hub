@@ -1,17 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CONTENT_PILLARS, getRelatedContentPillars } from "@/lib/content-pillars";
+import { buildSeo, SITE_URL } from "@/lib/seo";
 
-export const Route = createFileRoute("/topics")({
-  head: () => ({
-    meta: [
-      { title: "Texas Coverage Topics — Keep TX Red Content Pillars" },
-      { name: "description", content: "Browse Keep TX Red's core Texas coverage pillars: politics, elections, border security, energy, economy and small business, agriculture, veterans, law enforcement, and the Legislature." },
-      { property: "og:title", content: "Texas Coverage Topics — Keep TX Red" },
-      { property: "og:description", content: "The core topics Keep TX Red covers consistently across breaking news and evergreen guides." },
-      { property: "og:url", content: "https://keeptxred.com/topics" },
-      { property: "og:type", content: "website" },
-    ],
-    links: [{ rel: "canonical", href: "https://keeptxred.com/topics" }],
+const TOPICS_TITLE = "Texas Coverage Topics & Content Pillars";
+const TOPICS_DESCRIPTION =
+  "Browse Keep TX Red's core Texas coverage pillars: politics, elections, border security, energy, economy and small business, agriculture, veterans, law enforcement, and the Legislature.";
+
+export function topicsHead() {
+  const seo = buildSeo({
+    title: TOPICS_TITLE,
+    description: TOPICS_DESCRIPTION,
+    path: "/topics",
+    type: "website",
+    imageAlt: "Keep TX Red Texas coverage topics",
+  });
+
+  return {
+    meta: seo.meta,
+    links: seo.links,
     scripts: [
       {
         type: "application/ld+json",
@@ -20,15 +26,15 @@ export const Route = createFileRoute("/topics")({
           "@graph": [
             {
               "@type": "CollectionPage",
-              "@id": "https://keeptxred.com/topics#page",
-              url: "https://keeptxred.com/topics",
+              "@id": `${SITE_URL}/topics#page`,
+              url: `${SITE_URL}/topics`,
               name: "Keep TX Red Texas Coverage Topics",
               description: "The canonical topic map for Keep TX Red's Texas politics, elections, government, law, economy, energy, border, agriculture, veterans, and public-safety coverage.",
               about: CONTENT_PILLARS.map((pillar) => ({
                 "@type": "Thing",
-                "@id": `https://keeptxred.com${pillar.href}#topic`,
+                "@id": `${SITE_URL}${pillar.href}#topic`,
                 name: pillar.title,
-                url: `https://keeptxred.com${pillar.href}`,
+                url: `${SITE_URL}${pillar.href}`,
                 description: pillar.description,
               })),
             },
@@ -39,14 +45,18 @@ export const Route = createFileRoute("/topics")({
                 "@type": "ListItem",
                 position: index + 1,
                 name: pillar.title,
-                url: `https://keeptxred.com${pillar.href}`,
+                url: `${SITE_URL}${pillar.href}`,
               })),
             },
           ],
         }),
       },
     ],
-  }),
+  };
+}
+
+export const Route = createFileRoute("/topics")({
+  head: topicsHead,
   component: TopicsPage,
 });
 
