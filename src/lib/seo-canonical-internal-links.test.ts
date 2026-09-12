@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { texasEconomyHead } from "@/routes/texas-economy";
 
 const sourceFiles = [
   "src/components/site-header.tsx",
@@ -50,7 +51,6 @@ const redirectAliases = [
 const canonicalRouteChecks = [
   ["src/routes/shop.index.tsx", "https://keeptxred.com/shop"],
   ["src/routes/texas-sports.index.tsx", "https://keeptxred.com/texas-sports"],
-  ["src/routes/texas-economy.tsx", "https://keeptxred.com/texas-economy"],
 ] as const;
 
 describe("canonical internal links", () => {
@@ -91,6 +91,11 @@ describe("canonical internal links", () => {
         `${file} must declare ${canonical} as canonical`,
       ).toBe(true);
     }
+
+    expect(texasEconomyHead().links).toContainEqual({
+      rel: "canonical",
+      href: "https://keeptxred.com/texas-economy",
+    });
   });
 
   it("keeps the Texas politics parent as a canonical-free layout", () => {

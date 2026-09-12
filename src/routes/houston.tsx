@@ -1,43 +1,38 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { getArticlesByCategory } from "@/lib/category-feed.functions";
+import { buildSeo, SITE_URL } from "@/lib/seo";
 
-const URL = "https://keeptxred.com/houston";
-const TITLE = "Houston News, Politics & Business | Keep TX Red";
+const URL = `${SITE_URL}/houston`;
+const TITLE = "Houston News, Politics & Business";
 const DESCRIPTION =
   "Houston-area news on local government, elections, business, public safety, energy, courts, and state policy affecting Harris County and the Gulf Coast.";
 
-export const Route = createFileRoute("/houston")({
-  loader: () =>
-    getArticlesByCategory({
-      data: { region: "houston", limit: 18, order: "newest" },
-    }),
-  head: () => ({
-    meta: [
-      { title: TITLE },
-      { name: "description", content: DESCRIPTION },
-      { property: "og:title", content: TITLE },
-      { property: "og:description", content: DESCRIPTION },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: URL },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: TITLE },
-      { name: "twitter:description", content: DESCRIPTION },
-    ],
-    links: [{ rel: "canonical", href: URL }],
+export function houstonHead() {
+  const seo = buildSeo({
+    title: TITLE,
+    description: DESCRIPTION,
+    path: "/houston",
+    type: "website",
+    imageAlt: "Keep TX Red Houston news coverage",
+  });
+
+  return {
+    meta: seo.meta,
+    links: seo.links,
     scripts: [
       {
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "CollectionPage",
-          name: TITLE,
+          name: "Houston News, Politics & Business | Keep TX Red",
           description: DESCRIPTION,
           url: URL,
           about: [
             { "@type": "City", name: "Houston" },
             { "@type": "AdministrativeArea", name: "Harris County" },
           ],
-          isPartOf: { "@type": "WebSite", name: "Keep TX Red", url: "https://keeptxred.com/" },
+          isPartOf: { "@type": "WebSite", name: "Keep TX Red", url: `${SITE_URL}/` },
         }),
       },
       {
@@ -46,13 +41,21 @@ export const Route = createFileRoute("/houston")({
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
           itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "https://keeptxred.com/" },
+            { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
             { "@type": "ListItem", position: 2, name: "Houston", item: URL },
           ],
         }),
       },
     ],
-  }),
+  };
+}
+
+export const Route = createFileRoute("/houston")({
+  loader: () =>
+    getArticlesByCategory({
+      data: { region: "houston", limit: 18, order: "newest" },
+    }),
+  head: houstonHead,
   component: HoustonPage,
 });
 
