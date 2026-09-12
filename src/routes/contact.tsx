@@ -1,27 +1,28 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageExpansion } from "@/components/page-expansion";
 import { SocialLinks } from "@/components/social-links";
-import { SITE_URL } from "@/lib/seo";
+import { buildSeo } from "@/lib/seo";
 
-const title = "Contact Keep TX Red | Newsroom & Order Support";
-const description = "Contact Keep TX Red for shop order support, news tips, corrections, story ideas, privacy requests, or general feedback.";
-const canonical = `${SITE_URL}/contact`;
+const CONTACT_TITLE = "Contact: Newsroom & Order Support";
+const CONTACT_DESCRIPTION = "Contact Keep TX Red for shop order support, news tips, corrections, story ideas, privacy requests, or general feedback.";
+
+export function contactHead() {
+  const seo = buildSeo({
+    title: CONTACT_TITLE,
+    description: CONTACT_DESCRIPTION,
+    path: "/contact",
+    type: "website",
+    imageAlt: "Contact Keep TX Red",
+  });
+
+  return {
+    meta: seo.meta,
+    links: seo.links,
+  };
+}
 
 export const Route = createFileRoute("/contact")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: canonical },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: title },
-      { name: "twitter:description", content: description },
-    ],
-    links: [{ rel: "canonical", href: canonical }],
-  }),
+  head: contactHead,
   component: ContactPage,
 });
 

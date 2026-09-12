@@ -2,23 +2,25 @@ import { createFileRoute } from "@tanstack/react-router";
 import heroImg from "@/assets/about-hero.png.asset.json";
 import { SocialLinks } from "@/components/social-links";
 import { BrandIdentity } from "@/components/brand-identity";
+import { buildSeo, SITE_URL } from "@/lib/seo";
 
-const SITE_URL = "https://keeptxred.com";
 const PAGE_URL = `${SITE_URL}/about`;
+const ABOUT_TITLE = "About: Texas News & Editorial Standards | Keep TX Red";
+const ABOUT_DESCRIPTION = "About Keep TX Red — Texas political news, commentary, government accountability, editorial standards, sourcing, corrections, store information, and contact information.";
 
-export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: [
-      { title: "About Keep TX Red | Texas News & Standards" },
-      { name: "description", content: "About Keep TX Red — Texas political news, commentary, government accountability, common-sense analysis, editorial standards, sourcing, corrections, store information, and contact information." },
-      { property: "og:title", content: "About Keep TX Red | Texas News & Standards" },
-      { property: "og:description", content: "Texas political news, commentary, government accountability, common-sense analysis, and the standards behind Keep TX Red." },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: PAGE_URL },
-      { property: "og:image", content: SITE_URL + heroImg.url },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: PAGE_URL }],
+export function aboutHead() {
+  const seo = buildSeo({
+    title: ABOUT_TITLE,
+    description: ABOUT_DESCRIPTION,
+    path: "/about",
+    type: "website",
+    image: heroImg.url,
+    imageAlt: "Keep TX Red banner",
+  });
+
+  return {
+    meta: seo.meta,
+    links: seo.links,
     scripts: [{
       type: "application/ld+json",
       children: JSON.stringify({
@@ -37,7 +39,11 @@ export const Route = createFileRoute("/about")({
         },
       }),
     }],
-  }),
+  };
+}
+
+export const Route = createFileRoute("/about")({
+  head: aboutHead,
   component: AboutPage,
 });
 
