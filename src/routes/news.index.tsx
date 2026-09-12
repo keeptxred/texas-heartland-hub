@@ -16,18 +16,24 @@ import classroom from "@/assets/article-classroom.jpg";
 import { assignUniqueImages } from "@/lib/dedupe-images";
 import { resolveArticleImage } from "@/lib/seo-headline";
 import { resolveDisplayHeadline } from "@/lib/ctr-score";
+import { buildSeo } from "@/lib/seo";
+
+const NEWS_TITLE = "Texas Political News";
+const NEWS_DESCRIPTION =
+  "Conservative news from Austin to the border — politics, elections, government, laws, legislature, energy, education, and tax policy from the Lone Star State.";
+
+export function newsHead() {
+  return buildSeo({
+    title: NEWS_TITLE,
+    description: NEWS_DESCRIPTION,
+    path: "/news",
+    type: "website",
+    imageAlt: "Keep TX Red Texas political news coverage",
+  });
+}
 
 export const Route = createFileRoute("/news/")({
-  head: () => ({
-    meta: [
-      { title: "Texas Political News — Keep TX Red" },
-      { name: "description", content: "Conservative news from Austin to the border — politics, elections, government, laws, legislature, energy, education, and tax policy from the Lone Star State." },
-      { property: "og:title", content: "Texas Political News — Keep TX Red" },
-      { property: "og:description", content: "Conservative reporting on Texas politics, elections, legislation, government, law, and policy." },
-      { property: "og:url", content: "/news" },
-    ],
-    links: [{ rel: "canonical", href: "https://keeptxred.com/news" }],
-  }),
+  head: newsHead,
   loader: async () => {
     const [daily, discoverableStaticSlugs] = await Promise.all([
       getDailyArticles(),
