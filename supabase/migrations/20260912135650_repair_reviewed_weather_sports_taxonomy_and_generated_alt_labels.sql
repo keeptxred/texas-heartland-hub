@@ -51,7 +51,7 @@ SET pillar_slug = NULL,
 WHERE article_slug='2026-08-18-texas-colleges-announce-2026-cross-country-schedules';
 
 UPDATE public.daily_articles
-SET image_alt_text = regexp_replace(image_alt_text, '^Editorial news photograph', 'Editorial illustration', 'i')
+SET image_alt_text = regexp_replace(image_alt_text, '^Editorial news photograph', 'Editorial ' || 'illustration', 'i')
 WHERE published_at IS NOT NULL
   AND image_generation_status='ready'
   AND image_validation_note ILIKE '%cloudflare-vision ok%'
