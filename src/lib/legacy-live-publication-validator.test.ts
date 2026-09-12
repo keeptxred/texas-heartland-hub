@@ -26,6 +26,7 @@ describe("legacy live URL publication validation", () => {
     expect(migration).toContain("UPDATE public.daily_articles");
     expect(migration).toContain("quality_flags = array_remove");
     expect(migration).toContain("'missing_image' = ANY");
+    expect(migration).toContain("UPDATE OF featured_image_url, quality_flags");
     expect(validator).toContain("BULK_IMAGE_FIELD_MAINTENANCE");
     expect(validator).toContain("clear stale missing_image flags");
   });
