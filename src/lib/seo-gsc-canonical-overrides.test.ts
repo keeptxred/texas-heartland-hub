@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { authorsIndexHead } from "@/routes/authors.index";
 import { houstonHead } from "@/routes/houston";
+import { keepTexasRedHead } from "@/routes/keep-texas-red";
 
 function source(path: string) {
   return readFileSync(path, "utf8");
@@ -9,15 +10,15 @@ function source(path: string) {
 
 describe("GSC canonical override regressions", () => {
   it("keeps important indexable pages self-canonical", () => {
-    const expected = [
-      ["src/routes/register-to-vote.tsx", "https://keeptxred.com/register-to-vote"],
-      ["src/routes/keep-texas-red.tsx", "https://keeptxred.com/keep-texas-red"],
-    ] as const;
+    expect(
+      source("src/routes/register-to-vote.tsx"),
+      "src/routes/register-to-vote.tsx must declare https://keeptxred.com/register-to-vote",
+    ).toContain("https://keeptxred.com/register-to-vote");
 
-    for (const [file, canonical] of expected) {
-      expect(source(file), `${file} must declare ${canonical}`).toContain(canonical);
-    }
-
+    expect(keepTexasRedHead().links).toContainEqual({
+      rel: "canonical",
+      href: "https://keeptxred.com/keep-texas-red",
+    });
     expect(authorsIndexHead().links).toContainEqual({
       rel: "canonical",
       href: "https://keeptxred.com/authors",
