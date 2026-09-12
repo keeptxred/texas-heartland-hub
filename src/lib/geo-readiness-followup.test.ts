@@ -16,7 +16,7 @@ describe("GEO readiness follow-up", () => {
     expect(source).toContain("organizationJsonLd()");
   });
 
-  it("uses one deterministic Election Central title across H1, metadata, and schema", () => {
+  it("uses one deterministic Election Central identity without duplicating route-owned metadata", () => {
     const source = readFileSync(electionLayoutPath, "utf8");
 
     expect(source).toContain(
@@ -31,12 +31,17 @@ describe("GEO readiness follow-up", () => {
     expect(source).toContain(
       "const pageTitle = usesElectionCentralTitle ? ELECTION_CENTRAL_TITLE : title;",
     );
+    expect(source).toContain("const documentTitle = formatElectionTitle(pageTitle);");
+    expect(source).toContain("const layoutOwnsMetadata = isElectionPage && !electionRouteHeadOwnsMetadata(normalized);");
     expect(source).toContain("? usesElectionCentralTitle");
     expect(source).toContain("name: pageTitle");
-    expect(source).toContain("<title>{`${pageTitle} | KeepTXRed`}</title>");
-    expect(source).toContain('<meta property="og:title" content={pageTitle} />');
-    expect(source).toContain('<meta name="twitter:title" content={pageTitle} />');
+    expect(source).toContain("<title>{documentTitle}</title>");
+    expect(source).toContain('<meta property="og:title" content={documentTitle} />');
+    expect(source).toContain('<meta name="twitter:title" content={documentTitle} />');
+    expect(source).toContain("{layoutOwnsMetadata && (");
+    expect(source).toContain("{isCanonicalPage && (");
     expect(source).toContain("{pageTitle}");
+    expect(source).not.toContain("| KeepTXRed");
     expect(source).not.toContain(
       'const heading = title === "Texas Election Central" ? ELECTION_CENTRAL_H1 : title;',
     );
