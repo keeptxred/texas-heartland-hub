@@ -23,6 +23,7 @@ import {
   useResultByRace,
 } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
+import { formatElectionTitle } from "@/lib/elections/seo";
 import { getFeaturedCandidateProfile } from "@/lib/elections/featuredCandidateProfiles";
 import { findCandidateStoredSlug, candidateSeoSlug } from "@/lib/elections/seoSlugs";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
@@ -98,9 +99,9 @@ export const Route = createFileRoute("/elections/candidates_/$candidateSlug")({
       record.imageRights.usageStatus === "approved"
         ? record.imageUrl
         : featuredProfile?.imageUrl ?? null;
-    const title = indexable
-      ? `${recordName} | KeepTXRed Election Central`
-      : "Election candidate not found | KeepTXRed";
+    const title = formatElectionTitle(
+      indexable ? `${recordName} Election Central` : "Election candidate not found",
+    );
 
     return {
       meta: [

@@ -3,8 +3,10 @@ import racesSnapshot from "@/data/elections/2026/races.json";
 import { CitationTrustPanel } from "@/components/authority/CitationTrustPanel";
 import { ElectionLayout, ElectionNavigation } from "@/components/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
+import { formatElectionTitle } from "@/lib/elections/seo";
 
 const URL = "https://keeptxred.com/elections/districts";
+const PAGE_TITLE = formatElectionTitle("Texas Election Districts & 2026 Race Lookup");
 const WHO_REPRESENTS_ME = "https://wrm.capitol.texas.gov/home";
 const REDISTRICTING = "https://redistricting.capitol.texas.gov/";
 const TEXAS_SENATE_DISTRICTS = [1, 2, 3, 4, 5, 9, 11, 13, 18, 19, 21, 22, 24, 26, 28, 31] as const;
@@ -20,14 +22,14 @@ function raceForDistrict(jurisdictionType: string, districtNumber: number): Veri
 export const Route = createFileRoute("/elections/districts/")({
   head: () => ({
     meta: [
-      { title: "Texas Election Districts & 2026 Race Lookup | Congressional, House & Senate" },
+      { title: PAGE_TITLE },
       {
         name: "description",
         content:
           "Find Texas congressional, Texas House, and Texas Senate district pages and jump directly to published, verified 2026 race records when available.",
       },
       { name: "robots", content: "index, follow, max-image-preview:large" },
-      { property: "og:title", content: "Texas Election Districts & 2026 Race Lookup" },
+      { property: "og:title", content: PAGE_TITLE },
       {
         property: "og:description",
         content: "Browse Texas congressional and legislative districts and their verified 2026 race records.",

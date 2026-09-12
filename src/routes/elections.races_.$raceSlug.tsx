@@ -25,6 +25,7 @@ import {
   useResultByRace,
 } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
+import { formatElectionTitle } from "@/lib/elections/seo";
 import { findRaceStoredSlug, raceSeoSlug } from "@/lib/elections/seoSlugs";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { electionSlugs, isElectionSlug } from "@/types/elections";
@@ -72,9 +73,9 @@ export const Route = createFileRoute("/elections/races_/$raceSlug")({
           : record
             ? `Follow verified candidates, election dates, polling, forecasts, results, district geography, and official sources for ${recordName}.`
             : "View verified details for this Texas election race.";
-    const title = indexable
-      ? `${recordName} | KeepTXRed Election Central`
-      : "Election race not found | KeepTXRed";
+    const title = formatElectionTitle(
+      indexable ? `${recordName} Election Central` : "Election race not found",
+    );
 
     return {
       meta: [

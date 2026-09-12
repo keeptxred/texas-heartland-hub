@@ -3,6 +3,7 @@ import { ElectionLayout, ElectionNavigation } from "@/components/elections";
 import candidates from "@/data/elections/2026/candidates.json";
 import races from "@/data/elections/2026/races.json";
 import { ELECTION_ROUTES } from "@/lib/elections";
+import { formatElectionTitle } from "@/lib/elections/seo";
 import { RelatedAuthorityContent } from "@/components/authority/RelatedAuthorityContent";
 import { getRelatedAuthorityContent } from "@/lib/authority-relationships";
 
@@ -67,9 +68,10 @@ export const Route = createFileRoute("/elections/districts/$districtSlug")({
       : [];
     const canonicalUrl = `https://keeptxred.com/elections/districts/${params.districtSlug}`;
     const indexable = Boolean(district && race);
-    const title = district
-      ? `2026 ${district.name} Election | Candidates & Results`
+    const pageName = district
+      ? `2026 ${district.name} Election`
       : "Texas Election District Not Found";
+    const title = formatElectionTitle(pageName);
     const description = district
       ? `Follow the 2026 ${district.name} election, candidates, polling, forecast, and results.`
       : "The requested Texas election district URL is invalid.";
@@ -106,7 +108,7 @@ export const Route = createFileRoute("/elections/districts/$districtSlug")({
                     "@type": "CollectionPage",
                     "@id": `${canonicalUrl}#webpage`,
                     url: canonicalUrl,
-                    name: title,
+                    name: pageName,
                     description,
                     inLanguage: "en-US",
                     isPartOf: {
