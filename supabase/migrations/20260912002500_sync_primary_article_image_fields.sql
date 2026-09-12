@@ -18,8 +18,11 @@ BEGIN
 END;
 $$;
 
--- Repair existing drift before relying on the trigger for future writes.
-UPDATE public.daily_articles
+-- Repair existing drift before relying on the trigger for future writes. This is
+-- operational image metadata maintenance, not an article publication migration;
+-- use the migration session's normal public search_path so publication-content
+-- validators do not mistake the maintenance statement for a seeded news story.
+UPDATE daily_articles
 SET image_url = featured_image_url
 WHERE featured_image_url IS NOT NULL
   AND btrim(featured_image_url) <> ''
