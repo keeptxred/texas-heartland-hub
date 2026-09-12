@@ -1,0 +1,34 @@
+name: One-shot live Etsy Halloween SEO update
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - src/routes/api/public/ops/etsy-halloween-seo-20260911.ts
+      - .github/workflows/etsy-halloween-seo-live-once.yml
+
+jobs:
+  invoke-live-operation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Wait for production route and invoke once
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://keeptxred.com/api/public/ops/etsy-halloween-seo-20260911"
+          for attempt in $(seq 1 40); do
+            echo "Attempt $attempt"
+            response_file="$(mktemp)"
+            code="$(curl -sS -o "$response_file" -w '%{http_code}' "$url" || true)"
+            cat "$response_file" || true
+            echo
+            if [ "$code" = "200" ]; then
+              grep -q '"ok":true' "$response_file"
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "Production operation did not complete in time" >&2
+          exit 1
