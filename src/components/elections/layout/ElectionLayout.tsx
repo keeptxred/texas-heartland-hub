@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Helmet } from "react-helmet-async";
 import { useRouterState } from "@tanstack/react-router";
+import { formatElectionTitle } from "@/lib/elections/seo";
 
 export interface ElectionLayoutProps {
   title: string;
@@ -33,10 +34,10 @@ const ELECTION_DISCOVERY_LINKS = [
 const ELECTION_CENTRAL_TITLE = "2026 Texas Election Central: Races, Candidates, Polls & Results";
 
 // TanStack route heads and react-helmet-async are both included in SSR output.
-// These election leaves already own their canonical in the route head, so the
-// shared layout must not emit the same canonical a second time. Nested index
-// pages that intentionally omit a parent-route canonical (notably /polls)
-// continue to let the layout own their self-canonical.
+// Most Election Central leaves own their canonical and their full metadata in
+// route head(). /elections/polls is the deliberate exception: its parent route
+// owns metadata but omits a canonical so poll detail pages do not inherit the
+// wrong URL; the layout owns only the polls-index canonical on that exact path.
 const ROUTE_HEAD_CANONICAL_PATHS = new Set([
   "/elections/2026",
   "/elections/voting",
@@ -60,9 +61,24 @@ const ROUTE_HEAD_CANONICAL_PREFIXES = [
   "/elections/races/",
 ] as const;
 
+const ROUTE_HEAD_METADATA_PATHS = new Set([
+  ...ROUTE_HEAD_CANONICAL_PATHS,
+  "/elections/polls",
+]);
+
+function normalizeElectionPathname(pathname: string): string {
+  return pathname.length > 1 && pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
+}
+
 export function electionRouteHeadOwnsCanonical(pathname: string): boolean {
-  const normalized = pathname.length > 1 && pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
+  const normalized = normalizeElectionPathname(pathname);
   return ROUTE_HEAD_CANONICAL_PATHS.has(normalized)
+    || ROUTE_HEAD_CANONICAL_PREFIXES.some((prefix) => normalized.startsWith(prefix));
+}
+
+export function electionRouteHeadOwnsMetadata(pathname: string): boolean {
+  const normalized = normalizeElectionPathname(pathname);
+  return ROUTE_HEAD_METADATA_PATHS.has(normalized)
     || ROUTE_HEAD_CANONICAL_PREFIXES.some((prefix) => normalized.startsWith(prefix));
 }
 
@@ -80,23 +96,22 @@ export function ElectionLayout({
   fullWidth = false,
   indexable = true,
 }: ElectionLayoutProps) {
-  // This layout is also embedded on non-election pages (e.g. the homepage
-  // election takeover). Only emit canonical/og:url when the visitor is
-  // actually on the canonical URL, otherwise the host page gets a second,
-  // conflicting canonical.
+  // This layout is also reusable outside a canonical Election Central route.
+  // Never let an embedded election surface overwrite the host page's title,
+  // robots, social metadata, canonical, or WebPage schema.
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const canonicalPath = canonicalUrl ? canonicalUrl.replace(/^https?:\/\/[^/]+/, "") || "/" : "";
-  const normalized = pathname.length > 1 && pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
+  const normalized = normalizeElectionPathname(pathname);
   const isCanonicalPage = Boolean(canonicalPath) && canonicalPath === normalized;
-  const layoutOwnsCanonical = isCanonicalPage && !electionRouteHeadOwnsCanonical(normalized);
   const isElectionPage = normalized === "/elections" || normalized.startsWith("/elections/");
+  const layoutOwnsMetadata = isElectionPage && !electionRouteHeadOwnsMetadata(normalized);
+  const layoutOwnsCanonical = isCanonicalPage && !electionRouteHeadOwnsCanonical(normalized);
   const isElectionCentralPage = isCanonicalPage && normalized === "/elections/2026";
-  // ElectionHomePage is also embedded by the seasonal homepage takeover. Its
-  // public heading must not depend on router/canonical state, because SSR and
-  // embedded rendering can observe different host paths. Canonical/og:url
-  // emission remains path-gated above; only the content identity is stable.
+  // Keep the public heading stable when ElectionHomePage is reused, while SEO
+  // emission is independently gated by route ownership above.
   const usesElectionCentralTitle = isElectionCentralPage || title === "Texas Election Central";
   const pageTitle = usesElectionCentralTitle ? ELECTION_CENTRAL_TITLE : title;
+  const documentTitle = formatElectionTitle(pageTitle);
   const defaultSchema = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -132,23 +147,29 @@ export function ElectionLayout({
   return (
     <>
       <Helmet>
-        <title>{`${pageTitle} | KeepTXRed`}</title>
-        <meta name="description" content={description} />
-        <meta
-          name="robots"
-          content={indexable ? "index, follow, max-image-preview:large" : "noindex, follow"}
-        />
-        <meta property="og:title" content={pageTitle} />
-        <meta property="og:description" content={description} />
-        <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="Keep TX Red" />
-        <meta property="og:locale" content="en_US" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={pageTitle} />
-        <meta name="twitter:description" content={description} />
+        {layoutOwnsMetadata && (
+          <>
+            <title>{documentTitle}</title>
+            <meta name="description" content={description} />
+            <meta
+              name="robots"
+              content={indexable ? "index, follow, max-image-preview:large" : "noindex, follow"}
+            />
+            <meta property="og:title" content={documentTitle} />
+            <meta property="og:description" content={description} />
+            <meta property="og:type" content="website" />
+            <meta property="og:site_name" content="Keep TX Red" />
+            <meta property="og:locale" content="en_US" />
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta name="twitter:title" content={documentTitle} />
+            <meta name="twitter:description" content={description} />
+            {indexable && isCanonicalPage && <meta property="og:url" content={canonicalUrl} />}
+          </>
+        )}
         {indexable && layoutOwnsCanonical && <link rel="canonical" href={canonicalUrl} />}
-        {indexable && isCanonicalPage && <meta property="og:url" content={canonicalUrl} />}
-        <script type="application/ld+json">{JSON.stringify(resolvedSchema)}</script>
+        {isCanonicalPage && (
+          <script type="application/ld+json">{JSON.stringify(resolvedSchema)}</script>
+        )}
       </Helmet>
 
       <section className="min-h-screen bg-muted/20 text-foreground">
