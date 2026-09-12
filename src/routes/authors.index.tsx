@@ -4,6 +4,23 @@ import { ARTICLES, isPublished } from "@/data/articles";
 import { getPublishedAuthorArticles } from "@/lib/daily-news.functions";
 import { getDiscoverableStaticArticleSlugs } from "@/lib/static-article-discovery.functions";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
+import { buildSeo } from "@/lib/seo";
+
+const AUTHORS_TITLE = "Editorial Bylines & Desks";
+const AUTHORS_DESCRIPTION =
+  "How Keep TX Red identifies subject-matter editorial bylines for Texas politics, elections, government, energy, education, border, tax, and policy coverage.";
+
+export function authorsIndexHead() {
+  const seo = buildSeo({
+    title: AUTHORS_TITLE,
+    description: AUTHORS_DESCRIPTION,
+    path: "/authors",
+    type: "website",
+    imageAlt: "Keep TX Red editorial bylines and desks",
+  });
+
+  return { meta: seo.meta, links: seo.links };
+}
 
 export const Route = createFileRoute("/authors/")({
   loader: async () => {
@@ -28,17 +45,7 @@ export const Route = createFileRoute("/authors/")({
 
     return { activeSlugs: [...activeSlugs] };
   },
-  head: () => ({
-    meta: [
-      { title: "Editorial Bylines & Desks — Keep TX Red" },
-      { name: "description", content: "How Keep TX Red identifies subject-matter editorial bylines for Texas politics, elections, government, energy, education, border, tax, and policy coverage." },
-      { property: "og:title", content: "Editorial Bylines & Desks — Keep TX Red" },
-      { property: "og:description", content: "How Keep TX Red identifies subject-matter editorial bylines and coverage desks." },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://keeptxred.com/authors" },
-    ],
-    links: [{ rel: "canonical", href: "https://keeptxred.com/authors" }],
-  }),
+  head: authorsIndexHead,
   component: AuthorsIndex,
 });
 

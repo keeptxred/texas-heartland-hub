@@ -1,18 +1,25 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SOURCE_AUTHORITY_PROFILES } from "@/data/source-authority";
+import { buildSeo } from "@/lib/seo";
+
+const SOURCES_TITLE = "Sources & Primary Records";
+const SOURCES_DESCRIPTION =
+  "See how Keep TX Red classifies and uses Texas government records, official system data, reporting sources, and commentary sources in aggregated stories.";
+
+export function sourcesIndexHead() {
+  const seo = buildSeo({
+    title: SOURCES_TITLE,
+    description: SOURCES_DESCRIPTION,
+    path: "/sources",
+    type: "website",
+    imageAlt: "Keep TX Red sources and primary records",
+  });
+
+  return { meta: seo.meta, links: seo.links };
+}
 
 export const Route = createFileRoute("/sources/")({
-  head: () => ({
-    meta: [
-      { title: "Sources & Primary Records — Keep TX Red" },
-      { name: "description", content: "See how Keep TX Red classifies and uses Texas government records, official system data, reporting sources, and commentary sources in aggregated stories." },
-      { property: "og:title", content: "Sources & Primary Records — Keep TX Red" },
-      { property: "og:description", content: "How Keep TX Red classifies and uses the sources behind its Texas news aggregation." },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://keeptxred.com/sources" },
-    ],
-    links: [{ rel: "canonical", href: "https://keeptxred.com/sources" }],
-  }),
+  head: sourcesIndexHead,
   component: SourcesIndex,
 });
 
