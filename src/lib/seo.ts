@@ -113,10 +113,13 @@ function truncateAtWordBoundary(value: string, maxLength: number): string {
 }
 
 function clampTitle(value: string): string {
-  const title = value.trim();
+  const title = value.trim().replace(/\s+/g, " ");
   const separator = " | ";
   const suffix = `${separator}${SITE_NAME}`;
-  if (title.endsWith(SITE_NAME)) return truncateAtWordBoundary(title, 60);
+  const prefix = `${SITE_NAME}${separator}`;
+  if (title === SITE_NAME || title.startsWith(prefix) || title.endsWith(suffix)) {
+    return truncateAtWordBoundary(title, 60);
+  }
   if (`${title}${suffix}`.length <= 60) return `${title}${suffix}`;
   const available = 60 - suffix.length;
   const shortened = truncateAtWordBoundary(title, available);
