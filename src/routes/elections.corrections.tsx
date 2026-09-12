@@ -5,14 +5,14 @@ import { ELECTION_ROUTES } from "@/lib/elections";
 export const Route = createFileRoute("/elections/corrections")({
   head: () => ({
     meta: [
-      { title: "Election Central Corrections | KeepTXRed" },
+      { title: "Election Central Corrections | Keep TX Red" },
       {
         name: "description",
         content:
-          "Report a factual issue and review the KeepTXRed Election Central correction process.",
+          "Report a factual issue and review the Keep TX Red Election Central correction process.",
       },
       { name: "robots", content: "index, follow, max-image-preview:large" },
-      { property: "og:title", content: "Election Central Corrections | KeepTXRed" },
+      { property: "og:title", content: "Election Central Corrections | Keep TX Red" },
       { property: "og:url", content: "https://keeptxred.com/elections/corrections" },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Keep TX Red" },
