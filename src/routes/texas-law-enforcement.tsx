@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ContentPillarView } from "@/components/content-pillar-view";
 import { SupportingGuideGrid } from "@/components/supporting-guide-grid";
 import { EvergreenAuthorityReference } from "@/components/authority/EvergreenAuthorityReference";
+import { buildSeo } from "@/lib/seo";
 
 export const LAW_ENFORCEMENT_SECTIONS = [
   { title: "Texas Policing Agencies Compared", description: "Compare city police, sheriffs, constables, DPS, Texas Rangers, ISD police, university police, game wardens, and other Texas peace officers.", href: "/news/texas-policing-agencies-compared" },
@@ -12,19 +13,22 @@ export const LAW_ENFORCEMENT_SECTIONS = [
 ];
 
 const VERIFIED = "Reviewed against the cited official institutional sources on August 11, 2026.";
+const LAW_ENFORCEMENT_TITLE = "Texas Law Enforcement, DPS & Public Safety";
+const LAW_ENFORCEMENT_DESCRIPTION =
+  "Texas law enforcement and public safety coverage: police, sheriffs, DPS, criminal justice, emergency response, enforcement actions, legislation, and public-safety policy.";
+
+export function texasLawEnforcementHead() {
+  return buildSeo({
+    title: LAW_ENFORCEMENT_TITLE,
+    description: LAW_ENFORCEMENT_DESCRIPTION,
+    path: "/texas-law-enforcement",
+    type: "website",
+    imageAlt: "Keep TX Red Texas law enforcement and public safety coverage",
+  });
+}
 
 export const Route = createFileRoute("/texas-law-enforcement")({
-  head: () => ({
-    meta: [
-      { title: "Texas Law Enforcement & Public Safety — Police, DPS & Policy" },
-      { name: "description", content: "Texas law enforcement and public safety coverage: police, sheriffs, DPS, criminal justice, emergency response, enforcement actions, legislation, and public-safety policy." },
-      { property: "og:title", content: "Texas Law Enforcement & Public Safety — Keep TX Red" },
-      { property: "og:description", content: "Texas police, sheriffs, DPS, criminal justice, emergency response, and public-safety policy." },
-      { property: "og:url", content: "https://keeptxred.com/texas-law-enforcement" },
-      { property: "og:type", content: "website" },
-    ],
-    links: [{ rel: "canonical", href: "https://keeptxred.com/texas-law-enforcement" }],
-  }),
+  head: texasLawEnforcementHead,
   component: TexasLawEnforcementPage,
 });
 
