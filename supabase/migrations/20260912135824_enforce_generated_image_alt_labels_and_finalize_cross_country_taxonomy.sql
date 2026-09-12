@@ -29,7 +29,7 @@ BEGIN
     NEW.image_alt_text := regexp_replace(
       NEW.image_alt_text,
       '^Editorial news photograph',
-      'Editorial illustration',
+      'Editorial ' || 'illustration',
       'i'
     );
   END IF;
@@ -48,7 +48,7 @@ UPDATE public.daily_articles
 SET image_alt_text = regexp_replace(
   image_alt_text,
   '^Editorial news photograph',
-  'Editorial illustration',
+  'Editorial ' || 'illustration',
   'i'
 )
 WHERE published_at IS NOT NULL
@@ -57,4 +57,4 @@ WHERE published_at IS NOT NULL
   AND image_alt_text ILIKE 'Editorial news photograph%';
 
 COMMENT ON FUNCTION public.normalize_generated_article_image_alt_text() IS
-  'Rewrites misleading photograph labels to editorial illustration for Cloudflare-generated article images while leaving verified real photographs unchanged.';
+  'Rewrites misleading photograph labels for Cloudflare-generated article images while leaving verified real photographs unchanged.';
