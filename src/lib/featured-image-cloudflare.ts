@@ -16,19 +16,26 @@ export type CloudflareImageModel = typeof CLOUDFLARE_IMAGE_MODEL | typeof CLOUDF
 type ImageGenerationProvenance = {
   model: CloudflareImageModel;
   usedFallback: boolean;
+  usedSafetyRetry: boolean;
 };
 
 const generatedImageProvenance = new WeakMap<Uint8Array, ImageGenerationProvenance>();
 
-function rememberGeneratedImage(bytes: Uint8Array, model: CloudflareImageModel, usedFallback: boolean): Uint8Array {
-  generatedImageProvenance.set(bytes, { model, usedFallback });
+function rememberGeneratedImage(
+  bytes: Uint8Array,
+  model: CloudflareImageModel,
+  usedFallback: boolean,
+  usedSafetyRetry = false,
+): Uint8Array {
+  generatedImageProvenance.set(bytes, { model, usedFallback, usedSafetyRetry });
   return bytes;
 }
 
 function generationProvenancePrefix(bytes: Uint8Array): string {
   const provenance = generatedImageProvenance.get(bytes);
   if (!provenance) return "";
-  return `[image-model=${provenance.model}; fallback=${provenance.usedFallback ? "yes" : "no"}] `;
+  const safety = provenance.usedSafetyRetry ? "; safety-retry=yes" : "";
+  return `[image-model=${provenance.model}; fallback=${provenance.usedFallback ? "yes" : "no"}${safety}] `;
 }
 
 function cloudflareEndpoint(accountId: string, model: string): string {
@@ -124,6 +131,80 @@ async function requestCloudflareImage(
   });
 }
 
+type CloudflareImageFailure = { status: number; detail: string };
+
+async function readCloudflareImageFailure(res: Response): Promise<CloudflareImageFailure> {
+  const raw = await res.text().catch(() => "");
+  let detail = raw || `HTTP ${res.status}`;
+  try {
+    const json = raw ? JSON.parse(raw) as { errors?: { message?: string }[]; error?: { message?: string } } : {};
+    detail = json.errors?.[0]?.message || json.error?.message || detail;
+  } catch {
+  }
+  return { status: res.status, detail: String(detail).slice(0, 400) };
+}
+
+function cloudflareImageFailureError(model: CloudflareImageModel, failure: CloudflareImageFailure): Error {
+  return new Error(`Cloudflare Workers AI ${model} ${failure.status}: ${failure.detail}`);
+}
+
+export function isCloudflareImageSafetyRejection(status: number, detail: string): boolean {
+  if (![400, 403, 422].includes(status)) return false;
+  return /\b(?:output has been flagged|input has been flagged|flagged|content[- ]?filter(?:ed|ing)?|moderation|safety filter|unsafe|policy violation|blocked for policy)\b/i.test(detail);
+}
+
+function safetyRetryScene(prompt: string): string {
+  const text = prompt.toLowerCase();
+  if (/\b(broadcast|interview|television|tv|fcc|federal communications commission|radio|newsroom|media|studio)\b/.test(text)) {
+    return "An empty professional broadcast studio and control-room area with camera tripods, microphones, studio lights, audio controls, cables, and blank neutral monitor screens. No people, program branding, logos, seals, or readable text.";
+  }
+  if (/\b(election|campaign|candidate|convention|vote|voter|ballot|polling)\b/.test(text)) {
+    return "An empty Texas civic-event or election-administration setting with rows of chairs, a check-in table, generic microphone stands, sealed document boxes, and ordinary administrative equipment. No people, campaign branding, party logos, signs, flags, or readable text.";
+  }
+  if (/\b(court|courthouse|judge|lawsuit|ruling|appeal|legal|supreme court)\b/.test(text)) {
+    return "A quiet Texas courthouse interior with counsel tables, paper case folders turned away from camera, wooden benches, and an empty judicial bench. No people, seals, logos, or readable text.";
+  }
+  if (/\b(football|basketball|baseball|soccer|hockey|nfl|nba|mlb|mls|athlete|sports?)\b/.test(text)) {
+    return "A real Texas athletic practice setting showing the named sport through equipment, field or court markings, and distant anonymous participants whose faces are not identifiable. No team logos, player likenesses, uniforms with readable marks, or text.";
+  }
+  if (/\b(hurricane|storm|tornado|flood|weather|rain|drought|freeze|heat)\b/.test(text)) {
+    return "A truthful Texas weather-documentation scene with storm clouds, rain, drainage or weather-monitoring equipment over a real landscape. No people, disaster reenactment, logos, maps, or readable text.";
+  }
+  if (/\b(school|classroom|student|teacher|university|college|education|isd)\b/.test(text)) {
+    return "An empty Texas school or university setting with a classroom, hallway, campus entrance, desks, books, and ordinary educational equipment. No students, staff, school logos, signs, or readable text.";
+  }
+  if (/\b(data center|server farm|ercot|electric|grid|energy|pipeline|refinery|oil|gas)\b/.test(text)) {
+    return "A Texas infrastructure scene with utility equipment, transformers, transmission lines, industrial cooling equipment, fenced facilities, and realistic service roads. No people, company logos, signs, or readable text.";
+  }
+  if (/\b(company|business|economy|jobs|budget|spending|finance|market|factory|workplace)\b/.test(text)) {
+    return "A real Texas workplace or institutional office setting with desks, folders, computers with blank screens, filing materials, and ordinary operational equipment. No people, company branding, logos, or readable text.";
+  }
+  if (/\b(border|immigration|rio grande|migrant|asylum)\b/.test(text)) {
+    return "A neutral Texas border landscape showing the Rio Grande, roadway, fencing or inspection infrastructure from a documentary distance. No people, confrontation, agency logos, flags, or readable text.";
+  }
+  if (/\b(wildlife|animal|bird|fish|turtle|deer|snake|alligator|species|habitat)\b/.test(text)) {
+    return "A real Texas wildlife or habitat scene centered on the named animal or natural environment, photographed at documentary distance with no people, logos, signs, or readable text.";
+  }
+  if (/\b(road|roadway|traffic|interstate|highway|bridge|transit|transportation)\b/.test(text)) {
+    return "An empty Texas transportation scene with roadway lanes, shoulder, overpass or bridge infrastructure, traffic-control equipment, and realistic daylight conditions. No people, vehicle branding, signs with readable text, or staged incident.";
+  }
+  return "A neutral Texas institutional or workplace setting directly tied to the article through physical equipment, infrastructure, documents, or environment. Keep the scene empty of people and free of logos, seals, flags, branded graphics, and readable text.";
+}
+
+export function buildImageSafetyRetryPrompt(prompt: string): string {
+  const scene = safetyRetryScene(prompt);
+  return [
+    "PROVIDER-SAFETY REFRAME.",
+    "Create a physical-camera editorial news photograph of a neutral, non-confrontational real-world setting.",
+    "Show no named, recognizable, or identifiable person and do not recreate a specific historical confrontation or incident.",
+    "Represent the article only through relevant physical setting, equipment, infrastructure, documents, sport, weather, or environment.",
+    scene,
+    "Natural documentary lighting, realistic materials, believable perspective and depth of field. No illustration, collage, infographic, typography, watermark, or promotional artwork.",
+  ].join(" ").replace(/\s+/g, " ").trim().slice(0, 1800);
+}
+
+const SAFETY_RETRY_NEGATIVE_PROMPT = "recognizable person, public figure likeness, readable text, logos, seals, branded graphics, illustration, poster, collage, infographic, watermark";
+
 export async function generateImageBytes(
   prompt: string,
   negativePrompt: string,
@@ -136,31 +217,58 @@ export async function generateImageBytes(
   let activeModel = model === CLOUDFLARE_IMAGE_MODEL && isFinalStrictValidatorRetry(prompt)
     ? CLOUDFLARE_IMAGE_QUALITY_MODEL
     : model;
+  let activePrompt = prompt;
+  let activeNegativePrompt = negativePrompt;
   let usedFallback = false;
-  let res = await requestCloudflareImage(accountId, apiToken, prompt, negativePrompt, activeModel);
+  let usedSafetyRetry = false;
 
-  if (!res.ok && activeModel === CLOUDFLARE_IMAGE_MODEL) {
+  const runSafetyRetry = async (): Promise<Response> => {
+    usedSafetyRetry = true;
+    usedFallback = false;
+    activeModel = CLOUDFLARE_IMAGE_MODEL;
+    activePrompt = buildImageSafetyRetryPrompt(prompt);
+    activeNegativePrompt = SAFETY_RETRY_NEGATIVE_PROMPT;
+
+    let retry = await requestCloudflareImage(accountId, apiToken, activePrompt, activeNegativePrompt, activeModel);
+    if (retry.ok) return retry;
+    const retryFailure = await readCloudflareImageFailure(retry);
+
     activeModel = CLOUDFLARE_IMAGE_FALLBACK_MODEL;
     usedFallback = true;
-    res = await requestCloudflareImage(accountId, apiToken, prompt, negativePrompt, activeModel);
-  }
+    retry = await requestCloudflareImage(accountId, apiToken, activePrompt, activeNegativePrompt, activeModel);
+    if (retry.ok) return retry;
+    const fallbackFailure = await readCloudflareImageFailure(retry);
+    throw cloudflareImageFailureError(activeModel, fallbackFailure.status ? fallbackFailure : retryFailure);
+  };
+
+  let res = await requestCloudflareImage(accountId, apiToken, activePrompt, activeNegativePrompt, activeModel);
 
   if (!res.ok) {
-    const raw = await res.text().catch(() => "");
-    let detail = raw || `HTTP ${res.status}`;
-    try {
-      const json = raw ? JSON.parse(raw) as { errors?: { message?: string }[]; error?: { message?: string } } : {};
-      detail = json.errors?.[0]?.message || json.error?.message || detail;
-    } catch {
+    let failure = await readCloudflareImageFailure(res);
+    if (isCloudflareImageSafetyRejection(failure.status, failure.detail)) {
+      res = await runSafetyRetry();
+    } else if (activeModel === CLOUDFLARE_IMAGE_MODEL) {
+      activeModel = CLOUDFLARE_IMAGE_FALLBACK_MODEL;
+      usedFallback = true;
+      res = await requestCloudflareImage(accountId, apiToken, activePrompt, activeNegativePrompt, activeModel);
+      if (!res.ok) {
+        failure = await readCloudflareImageFailure(res);
+        if (isCloudflareImageSafetyRejection(failure.status, failure.detail)) {
+          res = await runSafetyRetry();
+        } else {
+          throw cloudflareImageFailureError(activeModel, failure);
+        }
+      }
+    } else {
+      throw cloudflareImageFailureError(activeModel, failure);
     }
-    throw new Error(`Cloudflare Workers AI ${activeModel} ${res.status}: ${String(detail).slice(0, 400)}`);
   }
 
   const contentType = (res.headers.get("content-type") || "").toLowerCase();
   if (contentType.startsWith("image/") || contentType.includes("application/octet-stream")) {
     const buffer = await res.arrayBuffer();
     if (!buffer.byteLength) throw new Error("Cloudflare Workers AI returned an empty image body");
-    return rememberGeneratedImage(new Uint8Array(buffer), activeModel, usedFallback);
+    return rememberGeneratedImage(new Uint8Array(buffer), activeModel, usedFallback, usedSafetyRetry);
   }
 
   const raw = await res.text().catch(() => "");
@@ -169,7 +277,7 @@ export async function generateImageBytes(
   if (json.success === false) throw new Error(`Cloudflare Workers AI ${res.status}: ${json.errors?.[0]?.message || json.error?.message || raw}`.slice(0, 440));
   const b64 = (typeof json.result === "object" && json.result ? json.result.image : undefined) || json.image || (typeof json.result === "string" ? json.result : undefined);
   if (!b64) throw new Error("Cloudflare Workers AI returned no image data");
-  return rememberGeneratedImage(base64ToBytes(b64), activeModel, usedFallback);
+  return rememberGeneratedImage(base64ToBytes(b64), activeModel, usedFallback, usedSafetyRetry);
 }
 
 type VisionChatChoice = {
