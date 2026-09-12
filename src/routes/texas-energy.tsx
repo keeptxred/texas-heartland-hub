@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ContentPillarView } from "@/components/content-pillar-view";
 import { EvergreenAuthorityReference } from "@/components/authority/EvergreenAuthorityReference";
+import { buildSeo } from "@/lib/seo";
 
 const SECTIONS = [
   { title: "Permian Basin", description: "Oil and gas production, infrastructure, jobs, and policy in West Texas.", href: "/news/permian-energy" },
@@ -10,19 +11,21 @@ const SECTIONS = [
 ];
 
 const VERIFIED = "Reviewed against the cited official institutional sources on August 11, 2026.";
+const TEXAS_ENERGY_TITLE = "Texas Energy: ERCOT, Oil & Permian Basin";
+const TEXAS_ENERGY_DESCRIPTION = "Texas energy coverage spanning oil and gas, the Permian Basin, ERCOT, the electric grid, pipelines, refineries, LNG, regulation, and legislation.";
+
+export function texasEnergyHead() {
+  return buildSeo({
+    title: TEXAS_ENERGY_TITLE,
+    description: TEXAS_ENERGY_DESCRIPTION,
+    path: "/texas-energy",
+    type: "website",
+    imageAlt: "Keep TX Red Texas energy coverage",
+  });
+}
 
 export const Route = createFileRoute("/texas-energy")({
-  head: () => ({
-    meta: [
-      { title: "Texas Energy & Oil — ERCOT, Permian Basin & Energy Policy" },
-      { name: "description", content: "Texas energy coverage spanning oil and gas, the Permian Basin, ERCOT, the electric grid, pipelines, refineries, LNG, regulation, and legislation." },
-      { property: "og:title", content: "Texas Energy & Oil — Keep TX Red" },
-      { property: "og:description", content: "Oil and gas, ERCOT, the Permian Basin, electricity reliability, and Texas energy policy." },
-      { property: "og:url", content: "https://keeptxred.com/texas-energy" },
-      { property: "og:type", content: "website" },
-    ],
-    links: [{ rel: "canonical", href: "https://keeptxred.com/texas-energy" }],
-  }),
+  head: texasEnergyHead,
   component: TexasEnergyPage,
 });
 
