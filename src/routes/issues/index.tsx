@@ -1,22 +1,25 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ISSUE_CATEGORIES, getGuidesByCategory, issueGuides } from "@/data/issue-guides";
 import { isIssueGuideIndexable } from "@/lib/issue-guide-indexability";
+import { buildSeo, SITE_URL } from "@/lib/seo";
 
-const SITE_URL = "https://keeptxred.com";
 const PAGE_URL = `${SITE_URL}/issues`;
+const ISSUES_TITLE = "Texas Issues & Policy Guides";
+const ISSUES_DESCRIPTION = "Source-first Keep TX Red guides to Texas energy, border security, taxes, education, constitutional rights, elections, healthcare, rural policy, local government and accountability.";
 const INDEXABLE_ISSUE_GUIDES = issueGuides.filter((guide) => isIssueGuideIndexable(guide));
 
-export const Route = createFileRoute("/issues/")({
-  head: () => ({
-    meta: [
-      { title: "Texas Issues & Policy Guides | Keep TX Red" },
-      { name: "description", content: "Source-first Keep TX Red guides to Texas energy, border security, taxes, education, constitutional rights, elections, healthcare, rural policy, local government and accountability." },
-      { property: "og:title", content: "Texas Issues & Policy Guides | Keep TX Red" },
-      { property: "og:description", content: "Evergreen Texas policy, local-government and accountability explainers built around statutes, bills, agencies, records and primary sources." },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: PAGE_URL },
-    ],
-    links: [{ rel: "canonical", href: PAGE_URL }],
+export function issuesHead() {
+  const seo = buildSeo({
+    title: ISSUES_TITLE,
+    description: ISSUES_DESCRIPTION,
+    path: "/issues",
+    type: "website",
+    imageAlt: "Keep TX Red Texas issues and policy guides",
+  });
+
+  return {
+    meta: seo.meta,
+    links: seo.links,
     scripts: [{
       type: "application/ld+json",
       children: JSON.stringify({
@@ -37,7 +40,11 @@ export const Route = createFileRoute("/issues/")({
         },
       }),
     }],
-  }),
+  };
+}
+
+export const Route = createFileRoute("/issues/")({
+  head: issuesHead,
   component: IssuesHub,
 });
 
