@@ -43,7 +43,7 @@ const policies = [
   },
 ] as const;
 
-describe("legal policy shared SEO", () => {
+describe("legal policy shared SEO metadata", () => {
   for (const policy of policies) {
     it(`${policy.name} uses the canonical shared metadata contract`, () => {
       const head = policy.head();
