@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ContentPillarView } from "@/components/content-pillar-view";
 import { SupportingGuideGrid } from "@/components/supporting-guide-grid";
 import { EvergreenAuthorityReference } from "@/components/authority/EvergreenAuthorityReference";
+import { buildSeo } from "@/lib/seo";
 
 const SECTIONS = [
   { title: "Essential Agriculture Guide", description: "Start here: agencies, financing, water, land, rural infrastructure, and the policy system affecting Texas producers.", href: "/guides/texas-agriculture-rural-guide" },
@@ -12,19 +13,22 @@ const SECTIONS = [
 ];
 
 const VERIFIED = "Reviewed against the cited official institutional sources on August 11, 2026.";
+const TEXAS_AGRICULTURE_TITLE = "Texas Agriculture, Farms & Rural Policy";
+const TEXAS_AGRICULTURE_DESCRIPTION =
+  "Texas agriculture and rural coverage: farmers, ranchers, livestock, crops, drought, water, rural communities, the agricultural economy, and state policy.";
+
+export function texasAgricultureHead() {
+  return buildSeo({
+    title: TEXAS_AGRICULTURE_TITLE,
+    description: TEXAS_AGRICULTURE_DESCRIPTION,
+    path: "/texas-agriculture",
+    type: "website",
+    imageAlt: "Keep TX Red Texas agriculture and rural policy coverage",
+  });
+}
 
 export const Route = createFileRoute("/texas-agriculture")({
-  head: () => ({
-    meta: [
-      { title: "Texas Agriculture & Rural Texas — Farms, Ranches & Policy" },
-      { name: "description", content: "Texas agriculture and rural coverage: farmers, ranchers, livestock, crops, drought, water, rural communities, the agricultural economy, and state policy." },
-      { property: "og:title", content: "Texas Agriculture & Rural Texas — Keep TX Red" },
-      { property: "og:description", content: "Farmers, ranchers, rural communities, water, livestock, crops, and Texas agricultural policy." },
-      { property: "og:url", content: "https://keeptxred.com/texas-agriculture" },
-      { property: "og:type", content: "website" },
-    ],
-    links: [{ rel: "canonical", href: "https://keeptxred.com/texas-agriculture" }],
-  }),
+  head: texasAgricultureHead,
   component: TexasAgriculturePage,
 });
 

@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ContentPillarView } from "@/components/content-pillar-view";
 import { SupportingGuideGrid } from "@/components/supporting-guide-grid";
 import { EvergreenAuthorityReference } from "@/components/authority/EvergreenAuthorityReference";
+import { buildSeo } from "@/lib/seo";
 
 const OPERATION_LONE_STAR_SOURCE = "https://gov.texas.gov/operationlonestar";
 
@@ -13,19 +14,22 @@ const SECTIONS = [
 ];
 
 const VERIFIED = "Reviewed against the cited official institutional sources on August 11, 2026.";
+const TEXAS_BORDER_TITLE = "Texas Border Security & Immigration Policy";
+const TEXAS_BORDER_DESCRIPTION =
+  "Texas border security and immigration coverage: Operation Lone Star, enforcement, ports of entry, state-federal authority, legislation, and developing news.";
+
+export function texasBorderSecurityHead() {
+  return buildSeo({
+    title: TEXAS_BORDER_TITLE,
+    description: TEXAS_BORDER_DESCRIPTION,
+    path: "/texas-border-security",
+    type: "website",
+    imageAlt: "Keep TX Red Texas border security and immigration policy coverage",
+  });
+}
 
 export const Route = createFileRoute("/texas-border-security")({
-  head: () => ({
-    meta: [
-      { title: "Texas Border & Immigration — Security, Enforcement & Policy" },
-      { name: "description", content: "Texas border security and immigration coverage: Operation Lone Star, enforcement, ports of entry, state-federal authority, legislation, and developing news." },
-      { property: "og:title", content: "Texas Border & Immigration — Keep TX Red" },
-      { property: "og:description", content: "Texas border security, immigration enforcement, Operation Lone Star, and state-federal policy." },
-      { property: "og:url", content: "https://keeptxred.com/texas-border-security" },
-      { property: "og:type", content: "website" },
-    ],
-    links: [{ rel: "canonical", href: "https://keeptxred.com/texas-border-security" }],
-  }),
+  head: texasBorderSecurityHead,
   component: TexasBorderSecurityPage,
 });
 

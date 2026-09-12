@@ -2,13 +2,16 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { isLowValueTitle } from "@/lib/low-value-titles";
-import { PUBLISHER_LOGO } from "@/lib/seo";
+import { buildSeo, PUBLISHER_LOGO } from "@/lib/seo";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
 import { isPublicArticleReady, type PublicArticleCandidate } from "@/lib/public-article-readiness";
 
 const MAX_VISIBLE_STORIES = 24;
 const FETCH_CANDIDATES = 72;
 const REFRESH_MS = 60_000;
+const HAPPENING_NOW_TITLE = "Happening Now — Latest Texas News";
+const HAPPENING_NOW_DESCRIPTION =
+  "Happening Now on Keep TX Red: the newest publish-ready Texas politics, elections, government, law, business, and economic-policy stories in one rolling feed.";
 
 function timeAgo(iso: string) {
   const timestamp = Date.parse(iso);
@@ -24,23 +27,18 @@ function isRollingNewsKind(kind?: string | null) {
   return kind === "news";
 }
 
-export const Route = createFileRoute("/happening-now")({
-  head: () => ({
-    meta: [
-      { title: "Happening Now — Latest Texas News | Keep TX Red" },
-      {
-        name: "description",
-        content:
-          "Happening Now on Keep TX Red: the newest publish-ready Texas politics, elections, government, law, business, and economic-policy stories in one rolling feed.",
-      },
-      { property: "og:title", content: "Happening Now — Keep TX Red" },
-      {
-        property: "og:description",
-        content: "The newest Keep TX Red stories, automatically refreshed as new reporting is published.",
-      },
-      { property: "og:url", content: "https://keeptxred.com/happening-now" },
-    ],
-    links: [{ rel: "canonical", href: "https://keeptxred.com/happening-now" }],
+export function happeningNowHead() {
+  const seo = buildSeo({
+    title: HAPPENING_NOW_TITLE,
+    description: HAPPENING_NOW_DESCRIPTION,
+    path: "/happening-now",
+    type: "website",
+    imageAlt: "Keep TX Red latest Texas news",
+  });
+
+  return {
+    meta: seo.meta,
+    links: seo.links,
     scripts: [
       {
         type: "application/ld+json",
@@ -73,7 +71,11 @@ export const Route = createFileRoute("/happening-now")({
         }),
       },
     ],
-  }),
+  };
+}
+
+export const Route = createFileRoute("/happening-now")({
+  head: happeningNowHead,
   component: HappeningNowPage,
 });
 
