@@ -69,13 +69,18 @@ describe("Election Central route title contract", () => {
 
     for (const answer of answers) {
       const head = buildVotingAnswerHead(answer, `/elections/voting/${answer.slug}`);
-      const documentTitle = head.meta.find((item) => "title" in item)?.title;
-      const ogTitle = head.meta.find(
+      const documentTitleItem = head.meta.find((item) => "title" in item);
+      const ogTitleItem = head.meta.find(
         (item) => "property" in item && item.property === "og:title",
-      )?.content;
-      const twitterTitle = head.meta.find(
+      );
+      const twitterTitleItem = head.meta.find(
         (item) => "name" in item && item.name === "twitter:title",
-      )?.content;
+      );
+      const documentTitle =
+        documentTitleItem && "title" in documentTitleItem ? documentTitleItem.title : undefined;
+      const ogTitle = ogTitleItem && "content" in ogTitleItem ? ogTitleItem.content : undefined;
+      const twitterTitle =
+        twitterTitleItem && "content" in twitterTitleItem ? twitterTitleItem.content : undefined;
 
       expect(documentTitle).toBeTruthy();
       expect(documentTitle?.length).toBeLessThanOrEqual(60);
