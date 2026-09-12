@@ -1,7 +1,13 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import {
+  POLLING_HOURS_ANSWER,
+  POLLING_PLACE_ANSWER,
+  VOTER_REGISTRATION_CARD_ANSWER,
+} from "@/data/election-voting-answers";
 import { formatElectionTitle } from "@/lib/elections/seo";
+import { buildVotingAnswerHead } from "@/lib/elections/voting-answer-seo";
 
 const titleContractRoutes = [
   "elections.candidates_.$candidateSlug.tsx",
@@ -51,6 +57,32 @@ describe("Election Central route title contract", () => {
     const dynamicRoutes = titleContractRoutes.slice(0, 5);
     for (const fileName of dynamicRoutes) {
       expect(sourceFor(fileName)).not.toContain("KeepTXRed");
+    }
+  });
+
+  it("normalizes all focused voting-answer document and social titles", () => {
+    const answers = [
+      POLLING_HOURS_ANSWER,
+      VOTER_REGISTRATION_CARD_ANSWER,
+      POLLING_PLACE_ANSWER,
+    ] as const;
+
+    for (const answer of answers) {
+      const head = buildVotingAnswerHead(answer, `/elections/voting/${answer.slug}`);
+      const documentTitle = head.meta.find((item) => "title" in item)?.title;
+      const ogTitle = head.meta.find(
+        (item) => "property" in item && item.property === "og:title",
+      )?.content;
+      const twitterTitle = head.meta.find(
+        (item) => "name" in item && item.name === "twitter:title",
+      )?.content;
+
+      expect(documentTitle).toBeTruthy();
+      expect(documentTitle?.length).toBeLessThanOrEqual(60);
+      expect(documentTitle).toMatch(/Keep TX Red$/);
+      expect(documentTitle).not.toContain("KeepTXRed");
+      expect(ogTitle).toBe(documentTitle);
+      expect(twitterTitle).toBe(documentTitle);
     }
   });
 });
