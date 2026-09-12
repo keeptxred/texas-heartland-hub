@@ -1,20 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ElectionLayout, ElectionNavigation } from "@/components/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
+import { formatElectionTitle } from "@/lib/elections/seo";
 
 const URL = "https://keeptxred.com/elections/legislative";
+const PAGE_TITLE = formatElectionTitle("2026 Texas Legislative Elections");
 
 export const Route = createFileRoute("/elections/legislative")({
   head: () => ({
     meta: [
-      { title: "2026 Texas Legislative Elections | House & Senate Races" },
+      { title: PAGE_TITLE },
       {
         name: "description",
         content:
           "Track 2026 Texas House and Texas Senate election races, legislative candidates, district contests, forecasts, and results.",
       },
       { name: "robots", content: "index, follow, max-image-preview:large" },
-      { property: "og:title", content: "2026 Texas Legislative Elections" },
+      { property: "og:title", content: PAGE_TITLE },
       {
         property: "og:description",
         content: "Browse Texas House and Senate races, candidates, forecasts, and results by legislative district.",

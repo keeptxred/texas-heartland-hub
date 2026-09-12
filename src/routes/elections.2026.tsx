@@ -3,11 +3,14 @@ import candidatesSnapshot from "@/data/elections/2026/candidates.json";
 import racesSnapshot from "@/data/elections/2026/races.json";
 import { ElectionMasterReference } from "@/components/elections/ElectionMasterReference";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
+import { formatElectionTitle } from "@/lib/elections/seo";
 import { ElectionHomePage } from "@/pages/elections";
 
 const ELECTION_CENTRAL_URL = "https://keeptxred.com/elections/2026";
-const ELECTION_CENTRAL_TITLE =
-  "2026 Texas Election Central | Races, Candidates, Polls & Results";
+const ELECTION_CENTRAL_NAME = "2026 Texas Election Central";
+const ELECTION_CENTRAL_TITLE = formatElectionTitle(
+  "2026 Texas Election Central: Races & Results",
+);
 const ELECTION_CENTRAL_DESCRIPTION =
   "Track verified 2026 Texas election races, candidate profiles, polls, forecasts, results, key dates, and voting information in Keep TX Red Election Central.";
 
@@ -58,7 +61,7 @@ const electionCentralSchema = {
   "@type": "CollectionPage",
   "@id": `${ELECTION_CENTRAL_URL}#webpage`,
   url: ELECTION_CENTRAL_URL,
-  name: ELECTION_CENTRAL_TITLE,
+  name: ELECTION_CENTRAL_NAME,
   description: ELECTION_CENTRAL_DESCRIPTION,
   inLanguage: "en-US",
   isPartOf: {

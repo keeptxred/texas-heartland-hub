@@ -5,8 +5,10 @@ import { CitationTrustPanel } from "@/components/authority/CitationTrustPanel";
 import { ElectionLayout, ElectionNavigation } from "@/components/elections";
 import { TEXAS_ELECTIONS } from "@/lib/election-calendar";
 import { ELECTION_ROUTES } from "@/lib/elections";
+import { formatElectionTitle } from "@/lib/elections/seo";
 
 const URL = "https://keeptxred.com/elections/statewide";
+const PAGE_TITLE = formatElectionTitle("2026 Texas Statewide Elections");
 const STATEWIDE_RACES = [
   { slug: "2026-us-senate", name: "U.S. Senate" },
   { slug: "2026-governor", name: "Governor" },
@@ -41,10 +43,10 @@ const calendarVerified = calendar2026.map((item) => item.lastUpdated).sort().at(
 export const Route = createFileRoute("/elections/statewide")({
   head: () => ({
     meta: [
-      { title: "2026 Texas Statewide Elections | Candidates, Polls & Results" },
+      { title: PAGE_TITLE },
       { name: "description", content: "Track verified 2026 Texas statewide election races and candidates for offices elected across Texas, with links to polling, forecasts and results." },
       { name: "robots", content: "index, follow, max-image-preview:large" },
-      { property: "og:title", content: "2026 Texas Statewide Elections" },
+      { property: "og:title", content: PAGE_TITLE },
       { property: "og:description", content: "Browse verified statewide Texas races and their verified candidate profiles." },
       { property: "og:url", content: URL },
       { property: "og:type", content: "website" },
