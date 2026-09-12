@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { texasEconomyHead } from "@/routes/texas-economy";
+import { texasPoliticsHead } from "@/routes/texas-politics.index";
 
 const sourceFiles = [
   "src/components/site-header.tsx",
@@ -98,13 +99,16 @@ describe("canonical internal links", () => {
     });
   });
 
-  it("keeps the Texas politics parent as a canonical-free layout", () => {
+  it("keeps the Texas politics parent as a canonical-free layout and the index self-canonical", () => {
     const layout = readFileSync("src/routes/texas-politics.tsx", "utf8");
     const index = readFileSync("src/routes/texas-politics.index.tsx", "utf8");
 
     expect(layout).toContain("<Outlet />");
     expect(layout).not.toContain('rel: "canonical"');
-    expect(index).toContain('rel: "canonical", href: canonical');
     expect(index).toContain('createFileRoute("/texas-politics/")');
+    expect(texasPoliticsHead().links).toContainEqual({
+      rel: "canonical",
+      href: "https://keeptxred.com/texas-politics",
+    });
   });
 });
