@@ -1,0 +1,80 @@
+name: One-shot Election Central metadata branding codemod
+
+on:
+  push:
+    branches:
+      - fix/election-static-route-branding
+    paths:
+      - .github/workflows/election-static-branding-codemod.yml
+
+permissions:
+  contents: write
+
+jobs:
+  codemod:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+        with:
+          ref: fix/election-static-route-branding
+          fetch-depth: 0
+
+      - name: Normalize static Election Central metadata branding
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          replacements = {
+              "src/routes/elections.races.tsx": {
+                  "Texas Election Races | KeepTXRed Election Central": "Texas Election Races | Keep TX Red Election Central",
+              },
+              "src/routes/elections.polls.tsx": {
+                  "Texas Election Polls | KeepTXRed Election Central": "Texas Election Polls | Keep TX Red Election Central",
+              },
+              "src/routes/elections.results.tsx": {
+                  "Texas Election Results | KeepTXRed Election Central": "Texas Election Results | Keep TX Red Election Central",
+              },
+              "src/routes/elections.forecast.tsx": {
+                  "Texas Election Forecasts | KeepTXRed Election Central": "Texas Election Forecasts | Keep TX Red Election Central",
+              },
+              "src/routes/elections.candidates.tsx": {
+                  "Texas Election Candidates | KeepTXRed Election Central": "Texas Election Candidates | Keep TX Red Election Central",
+                  "KeepTXRed Election Central Texas candidate directory": "Keep TX Red Election Central Texas candidate directory",
+              },
+              "src/routes/elections.voting.tsx": {
+                  "Texas Voting Dates, Voter ID, Ballot Research & Official Resources | KeepTXRed": "Texas Voting Dates, Voter ID, Ballot Research & Official Resources | Keep TX Red",
+                  "Texas Voting Dates, Voter ID & Ballot Research | KeepTXRed Election Central": "Texas Voting Dates, Voter ID & Ballot Research | Keep TX Red Election Central",
+              },
+          }
+
+          for file_name, file_replacements in replacements.items():
+              path = Path(file_name)
+              text = path.read_text()
+              original = text
+              for old, new in file_replacements.items():
+                  if old not in text:
+                      raise SystemExit(f"expected metadata literal missing in {file_name}: {old}")
+                  text = text.replace(old, new)
+              if text == original:
+                  raise SystemExit(f"no metadata branding change applied to {file_name}")
+              path.write_text(text)
+          PY
+
+      - name: Remove one-shot workflow and commit result
+        shell: bash
+        run: |
+          rm .github/workflows/election-static-branding-codemod.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/routes/elections.races.tsx \
+                  src/routes/elections.polls.tsx \
+                  src/routes/elections.results.tsx \
+                  src/routes/elections.forecast.tsx \
+                  src/routes/elections.candidates.tsx \
+                  src/routes/elections.voting.tsx \
+                  .github/workflows/election-static-branding-codemod.yml
+          git diff --cached --check
+          git commit -m "Normalize static Election Central metadata branding"
+          git push origin HEAD:fix/election-static-route-branding
