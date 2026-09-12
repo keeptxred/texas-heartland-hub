@@ -3,13 +3,15 @@ import { CitationTrustPanel } from '@/components/authority/CitationTrustPanel';
 import { AGENCY_AUTHORITY_PROFILES } from '@/data/agency-authority';
 import { EXTRA_AGENCY_AUTHORITY_PROFILES } from '@/data/agency-authority-extra';
 import { isAgencyAuthorityIndexable } from '@/lib/agency-authority-indexability';
+import { buildSeo, SITE_URL } from '@/lib/seo';
 
-const SITE_URL = 'https://keeptxred.com';
 const CANONICAL = `${SITE_URL}/texas-government/agencies`;
 const TEXAS_GOV_DIRECTORY = 'https://www.texas.gov/texas-state-agencies-departments/';
 const TSL_DIRECTORY = 'https://www.tsl.texas.gov/apps/lrs/agencies/index.html';
 const ALL_AGENCY_PROFILES = [...AGENCY_AUTHORITY_PROFILES, ...EXTRA_AGENCY_AUTHORITY_PROFILES];
 const INDEXABLE_AGENCY_PROFILES = ALL_AGENCY_PROFILES.filter(isAgencyAuthorityIndexable);
+const AGENCY_DIRECTORY_TITLE = 'Texas State Agency Directory & Profiles';
+const AGENCY_DIRECTORY_DESCRIPTION = 'Find official Texas state agency directories and KTR authority profiles explaining what major agencies control, what they do not control, their programs, oversight and primary sources.';
 
 const SERVICE_AREAS = [
   'Agriculture', 'Business', 'Driver services', 'Education', 'Employment',
@@ -25,17 +27,18 @@ const VERIFIED_ENTRY_POINTS = [
   { name: 'Texas Department of Agriculture (TDA)', href: 'https://www.texasagriculture.gov/', use: 'Agriculture programs, licensing, consumer protection and rural/economic programs.' },
 ] as const;
 
-export const Route = createFileRoute('/texas-government/agencies')({
-  head: () => ({
-    meta: [
-      { title: 'Texas State Agency Directory & Authority Profiles | Keep TX Red' },
-      { name: 'description', content: 'Find official Texas state agency directories and KTR authority profiles explaining what major agencies control, what they do not control, their programs, oversight and primary sources.' },
-      { name: 'robots', content: 'index, follow, max-image-preview:large' },
-      { property: 'og:title', content: 'Texas State Agency Directory & Authority Profiles' },
-      { property: 'og:url', content: CANONICAL },
-      { property: 'og:type', content: 'website' },
-    ],
-    links: [{ rel: 'canonical', href: CANONICAL }],
+export function texasAgencyDirectoryHead() {
+  const seo = buildSeo({
+    title: AGENCY_DIRECTORY_TITLE,
+    description: AGENCY_DIRECTORY_DESCRIPTION,
+    path: '/texas-government/agencies',
+    type: 'website',
+    imageAlt: 'Keep TX Red Texas state agency directory and authority profiles',
+  });
+
+  return {
+    meta: seo.meta,
+    links: seo.links,
     scripts: [{ type: 'application/ld+json', children: JSON.stringify({
       '@context': 'https://schema.org',
       '@type': 'CollectionPage',
@@ -52,7 +55,11 @@ export const Route = createFileRoute('/texas-government/agencies')({
         })),
       },
     }).replace(/</g, '\\u003c') }],
-  }),
+  };
+}
+
+export const Route = createFileRoute('/texas-government/agencies')({
+  head: texasAgencyDirectoryHead,
   component: TexasAgencyDirectory,
 });
 
