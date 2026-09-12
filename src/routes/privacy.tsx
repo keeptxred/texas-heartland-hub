@@ -1,26 +1,27 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { LegalPage } from "@/components/legal-page";
-import { SITE_URL } from "@/lib/seo";
+import { buildSeo } from "@/lib/seo";
 
-const title = "Privacy Policy | Keep TX Red";
-const description = "How KeepTXRed.com collects, uses, shares, and protects information from readers, tool users, and shop customers.";
-const canonical = `${SITE_URL}/privacy`;
+const PRIVACY_TITLE = "Privacy Policy";
+const PRIVACY_DESCRIPTION = "How KeepTXRed.com collects, uses, shares, and protects information from readers, tool users, and shop customers.";
+
+export function privacyHead() {
+  const seo = buildSeo({
+    title: PRIVACY_TITLE,
+    description: PRIVACY_DESCRIPTION,
+    path: "/privacy",
+    type: "website",
+    imageAlt: "Keep TX Red Privacy Policy",
+  });
+
+  return {
+    meta: seo.meta,
+    links: seo.links,
+  };
+}
 
 export const Route = createFileRoute("/privacy")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: canonical },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: title },
-      { name: "twitter:description", content: description },
-    ],
-    links: [{ rel: "canonical", href: canonical }],
-  }),
+  head: privacyHead,
   component: PrivacyPage,
 });
 
