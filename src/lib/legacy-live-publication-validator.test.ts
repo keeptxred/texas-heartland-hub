@@ -24,8 +24,10 @@ describe("legacy live URL publication validation", () => {
 
     expect(migration).toContain("-- BULK_IMAGE_FIELD_MAINTENANCE");
     expect(migration).toContain("UPDATE public.daily_articles");
+    expect(migration).toContain("quality_flags = array_remove");
+    expect(migration).toContain("'missing_image' = ANY");
     expect(validator).toContain("BULK_IMAGE_FIELD_MAINTENANCE");
-    expect(validator).toContain("synchronize image_url from featured_image_url");
+    expect(validator).toContain("clear stale missing_image flags");
   });
 
   it("links the restored article from the agriculture pillar", () => {
