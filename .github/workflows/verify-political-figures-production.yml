@@ -1,0 +1,91 @@
+name: Verify political figures in production
+
+on:
+  workflow_run:
+    workflows: ["Deploy verified KeepTXRed to Cloudflare"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: keeptxred-political-figures-production-smoke
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PREVIEW_URL: https://keeptxred-site.freddy-coppola.workers.dev
+      PRODUCTION_URL: https://keeptxred.com
+
+    steps:
+      - name: Verify representative Political Figures routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import html as html_lib
+          import re
+          import subprocess
+          import tempfile
+
+          preview = "https://keeptxred-site.freddy-coppola.workers.dev"
+          production = "https://keeptxred.com"
+          profiles = [
+              ("/texas-politics/figures/don-huffines-texas-comptroller-profile", "Don Huffines", "comptroller.texas.gov"),
+              ("/texas-politics/figures/debra-lehrmann-texas-supreme-court-justice", "Debra Lehrmann", "txcourts.gov"),
+              ("/texas-politics/figures/kevin-yeary-texas-court-criminal-appeals-judge", "Kevin Yeary", "txcourts.gov"),
+              ("/texas-politics/figures/gina-parker-texas-court-criminal-appeals-judge", "Gina G. Parker", "txcourts.gov"),
+              ("/texas-politics/figures/sharon-keller-texas-court-criminal-appeals-presiding-judge", "Sharon Keller", "txcourts.gov"),
+          ]
+
+          for path, expected_h1, source_domain in profiles:
+              with tempfile.NamedTemporaryFile() as body:
+                  subprocess.run(
+                      [
+                          "curl",
+                          "--retry", "10",
+                          "--retry-delay", "3",
+                          "--retry-all-errors",
+                          "--fail-with-body",
+                          "--silent",
+                          "--show-error",
+                          "--max-time", "30",
+                          "-A", "KeepTXRed-production-smoke/1.0",
+                          "-o", body.name,
+                          f"{preview}{path}",
+                      ],
+                      check=True,
+                  )
+                  body.seek(0)
+                  page = body.read().decode("utf-8", errors="replace")
+
+              h1_match = re.search(r"<h1\\b[^>]*>(.*?)</h1>", page, flags=re.I | re.S)
+              if not h1_match:
+                  raise SystemExit(f"{path}: missing H1")
+              h1_text = re.sub(r"<[^>]+>", " ", h1_match.group(1))
+              h1_text = html_lib.unescape(re.sub(r"\\s+", " ", h1_text)).strip()
+              if expected_h1.lower() not in h1_text.lower():
+                  raise SystemExit(f"{path}: unexpected H1 {h1_text!r}; expected {expected_h1!r}")
+
+              canonical = f"{production}{path}"
+              link_tags = re.findall(r"<link\\b[^>]*>", page, flags=re.I)
+              canonical_ok = any(
+                  re.search(r"\\brel=[\"'][^\"']*canonical[^\"']*[\"']", tag, flags=re.I)
+                  and re.search(rf"\\bhref=[\"']{re.escape(canonical)}[\"']", tag, flags=re.I)
+                  for tag in link_tags
+              )
+              if not canonical_ok:
+                  raise SystemExit(f"{path}: missing expected canonical {canonical}")
+
+              if source_domain.lower() not in page.lower():
+                  raise SystemExit(f"{path}: missing official source domain {source_domain}")
+
+              print(f"PASS {path} | H1={h1_text!r} | canonical={canonical} | source={source_domain}")
+          PY
