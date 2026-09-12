@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { SITE_URL } from '@/lib/seo';
+import { buildSeo, SITE_URL } from '@/lib/seo';
 
 const URL = `${SITE_URL}/citation-guide`;
+const CITATION_TITLE = 'Texas Reference Citation Guide';
+const CITATION_DESCRIPTION = 'Citation guidance for Keep TX Red election, legislative, law and Texas government reference pages, including canonical URLs, official-source rules and machine-readable resources.';
 const REFERENCE_GROUPS = [
   {
     title: 'Elections',
@@ -33,17 +35,18 @@ const REFERENCE_GROUPS = [
   },
 ] as const;
 
-export const Route = createFileRoute('/citation-guide')({
-  head: () => ({
-    meta: [
-      { title: 'How to Cite Keep TX Red References & Data' },
-      { name: 'description', content: 'Citation guidance for Keep TX Red election, legislative, law and Texas government reference pages, including canonical URLs, official-source rules and machine-readable resources.' },
-      { property: 'og:title', content: 'How to Cite Keep TX Red References & Data' },
-      { property: 'og:description', content: 'Canonical citation guidance and machine-readable reference resources from Keep TX Red.' },
-      { property: 'og:url', content: URL },
-      { property: 'og:type', content: 'website' },
-    ],
-    links: [{ rel: 'canonical', href: URL }],
+export function citationGuideHead() {
+  const seo = buildSeo({
+    title: CITATION_TITLE,
+    description: CITATION_DESCRIPTION,
+    path: '/citation-guide',
+    type: 'website',
+    imageAlt: 'Keep TX Red Texas reference citation guide',
+  });
+
+  return {
+    meta: seo.meta,
+    links: seo.links,
     scripts: [{
       type: 'application/ld+json',
       children: JSON.stringify({
@@ -60,7 +63,11 @@ export const Route = createFileRoute('/citation-guide')({
         ],
       }),
     }],
-  }),
+  };
+}
+
+export const Route = createFileRoute('/citation-guide')({
+  head: citationGuideHead,
   component: CitationGuidePage,
 });
 
