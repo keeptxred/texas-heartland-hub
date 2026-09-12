@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
 import { CitationTrustPanel } from "@/components/authority/CitationTrustPanel";
+import { buildSeo, SITE_URL } from "@/lib/seo";
 
 type Term = { term: string; definition: string; seeAlso?: { label: string; href: string }[] };
 
@@ -9,6 +10,9 @@ const LRL_SESSIONS = "https://lrl.texas.gov/sessions/sessionyears.cfm";
 const COMPTROLLER_PROPERTY_TAX = "https://comptroller.texas.gov/taxes/property-tax/basics.php";
 const COMPTROLLER_EXEMPTIONS = "https://comptroller.texas.gov/taxes/property-tax/exemptions/";
 const TEA_SCHOOL_FINANCE = "https://tea.texas.gov/about-tea/state-funding/state-funding-manuals/school-finance-topics-one-page-descriptions";
+const GLOSSARY_TITLE = "Texas Political Glossary";
+const GLOSSARY_DESCRIPTION =
+  "Plain-English definitions of Texas political terms: special session, sunset review, recapture, ERCOT, homestead exemption, and more.";
 
 const TERMS: Term[] = [
   {
@@ -147,24 +151,18 @@ const TERMS: Term[] = [
   },
 ];
 
-export const Route = createFileRoute("/glossary")({
-  head: () => ({
-    meta: [
-      { title: "Texas Political Glossary — Keep TX Red" },
-      {
-        name: "description",
-        content:
-          "Plain-English definitions of Texas political terms: special session, sunset review, recapture, ERCOT, homestead exemption, and more.",
-      },
-      { name: "robots", content: "index,follow,max-image-preview:large,max-snippet:-1" },
-      { property: "og:title", content: "Texas Political Glossary — Keep TX Red" },
-      {
-        property: "og:description",
-        content: "Definitions of the most common Texas political and policy terms.",
-      },
-      { property: "og:url", content: "/glossary" },
-    ],
-    links: [{ rel: "canonical", href: "https://keeptxred.com/glossary" }],
+export function glossaryHead() {
+  const seo = buildSeo({
+    title: GLOSSARY_TITLE,
+    description: GLOSSARY_DESCRIPTION,
+    path: "/glossary",
+    type: "website",
+    imageAlt: "Keep TX Red Texas Political Glossary",
+  });
+
+  return {
+    meta: seo.meta,
+    links: seo.links,
     scripts: [
       {
         type: "application/ld+json",
@@ -172,7 +170,7 @@ export const Route = createFileRoute("/glossary")({
           "@context": "https://schema.org",
           "@type": "DefinedTermSet",
           name: "Texas Political Glossary",
-          url: "https://keeptxred.com/glossary",
+          url: `${SITE_URL}/glossary`,
           dateModified: "2026-08-20",
           isBasedOn: [TLC_GLOSSARY, LRL_SESSIONS, COMPTROLLER_PROPERTY_TAX, COMPTROLLER_EXEMPTIONS, TEA_SCHOOL_FINANCE],
           hasDefinedTerm: TERMS.map((t) => ({
@@ -183,7 +181,11 @@ export const Route = createFileRoute("/glossary")({
         }),
       },
     ],
-  }),
+  };
+}
+
+export const Route = createFileRoute("/glossary")({
+  head: glossaryHead,
   component: GlossaryPage,
 });
 
