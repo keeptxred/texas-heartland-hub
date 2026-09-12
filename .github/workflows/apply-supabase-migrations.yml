@@ -44,7 +44,7 @@ jobs:
         with:
           version: latest
 
-      - name: Select direct database or linked-project transport
+      - name: Select direct database, linked-project, or read-only parity transport
         id: transport
         shell: bash
         run: |
@@ -62,16 +62,19 @@ jobs:
             exit 0
           fi
 
-          echo 'No Supabase migration transport is configured.' >&2
-          echo 'Preferred fix: add repository secret SUPABASE_DB_URL using the Supabase Session Pooler URI from Project > Connect.' >&2
-          echo 'This direct database path does not require SUPABASE_ACCESS_TOKEN.' >&2
-          exit 1
+          # No write credential is available. Do not pretend to apply migrations.
+          # Enter fail-closed parity mode instead: deployment may continue only
+          # when every repository migration version is already recorded in
+          # production through the read-only verifier RPC.
+          echo 'mode=readonly-verify' >> "$GITHUB_OUTPUT"
+          echo 'No Supabase write transport configured; using fail-closed read-only migration parity verification.'
 
       - name: Link production project for legacy transport
         if: steps.transport.outputs.mode == 'linked'
         run: supabase link --project-ref "$SUPABASE_PROJECT_REF" --password "$SUPABASE_DB_PASSWORD"
 
       - name: Preview pending production migrations
+        if: steps.transport.outputs.mode != 'readonly-verify'
         shell: bash
         run: |
           set -euo pipefail
@@ -82,7 +85,7 @@ jobs:
           fi
 
       - name: Apply pending production migrations
-        if: github.event_name != 'workflow_dispatch' || inputs.dry_run_only != true
+        if: steps.transport.outputs.mode != 'readonly-verify' && (github.event_name != 'workflow_dispatch' || inputs.dry_run_only != true)
         shell: bash
         run: |
           set -euo pipefail
@@ -92,8 +95,8 @@ jobs:
             supabase db push --linked --password "$SUPABASE_DB_PASSWORD" --include-all
           fi
 
-      - name: Verify migration state
-        if: github.event_name != 'workflow_dispatch' || inputs.dry_run_only != true
+      - name: Verify migration state through write transport
+        if: steps.transport.outputs.mode != 'readonly-verify' && (github.event_name != 'workflow_dispatch' || inputs.dry_run_only != true)
         shell: bash
         run: |
           set -euo pipefail
@@ -102,3 +105,68 @@ jobs:
           else
             supabase migration list --linked --password "$SUPABASE_DB_PASSWORD"
           fi
+
+      - name: Verify already-applied production parity without write credentials
+        if: steps.transport.outputs.mode == 'readonly-verify'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          public_url="$(sed -n 's/^SUPABASE_URL="\([^"]*\)".*/\1/p' .env.production | head -n 1)"
+          public_key="$(sed -n 's/^SUPABASE_PUBLISHABLE_KEY="\([^"]*\)".*/\1/p' .env.production | head -n 1)"
+          if [[ -z "$public_url" || -z "$public_key" ]]; then
+            echo '::error title=Supabase parity configuration missing::Committed public Supabase URL/publishable key were not found in .env.production.'
+            exit 1
+          fi
+
+          versions_file="$(mktemp)"
+          response_file="$(mktemp)"
+          find supabase/migrations -maxdepth 1 -type f -name '*.sql' -printf '%f\n' \
+            | sed -E 's/^([0-9]{14})_.*/\1/' \
+            | grep -E '^[0-9]{14}$' \
+            | sort -u > "$versions_file"
+
+          if [[ ! -s "$versions_file" ]]; then
+            echo '::error title=No repository migrations found::Cannot establish production parity.'
+            exit 1
+          fi
+
+          payload="$(python3 - "$versions_file" <<'PY'
+import json
+import sys
+versions = [line.strip() for line in open(sys.argv[1], encoding='utf-8') if line.strip()]
+print(json.dumps({'expected_versions': versions}, separators=(',', ':')))
+PY
+)"
+
+          http_code="$(curl --silent --show-error \
+            --output "$response_file" \
+            --write-out '%{http_code}' \
+            --request POST \
+            "$public_url/rest/v1/rpc/verify_repo_migrations" \
+            --header "apikey: $public_key" \
+            --header "Authorization: Bearer $public_key" \
+            --header 'Content-Type: application/json' \
+            --data "$payload")"
+
+          if [[ "$http_code" -lt 200 || "$http_code" -ge 300 ]]; then
+            echo "::error title=Supabase parity RPC failed::Read-only verifier returned HTTP $http_code."
+            cat "$response_file" >&2
+            exit 1
+          fi
+
+          python3 - "$versions_file" "$response_file" <<'PY'
+import json
+import sys
+expected = {line.strip() for line in open(sys.argv[1], encoding='utf-8') if line.strip()}
+with open(sys.argv[2], encoding='utf-8') as fh:
+    rows = json.load(fh)
+if not isinstance(rows, list):
+    raise SystemExit('Supabase parity RPC returned an unexpected payload.')
+applied = {str(row.get('version')) for row in rows if row.get('applied') is True}
+missing = sorted(expected - applied)
+if missing:
+    print('::error title=Pending Supabase migrations::Repository migration versions are not recorded in production: ' + ', '.join(missing))
+    raise SystemExit(1)
+print(f'Read-only production parity passed: {len(expected)} repository migration versions are already applied.')
+PY
