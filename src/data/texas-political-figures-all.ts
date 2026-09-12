@@ -12,6 +12,7 @@ import {
   TEXAS_REPUBLICAN_CONSERVATIVE_LEADER_TARGETS,
   texasPoliticalFigureByName,
 } from "./texas-political-figures-target";
+import { TEXAS_POLITICAL_FIGURES_STATEWIDE_OFFICIAL } from "./texas-political-figures-statewide-official";
 import type { PoliticalFigureCategory } from "./texas-political-figure-builder";
 
 export type TexasPoliticalFigurePage = TexasPoliticalFigure & {
@@ -34,6 +35,7 @@ const preferredFigures: TexasPoliticalFigurePage[] = [
   ...CURATED_EXPANDED_FIGURES,
   ...MORE_TEXAS_POLITICAL_FIGURES,
   ...RECONSTRUCTION_TEXAS_POLITICAL_FIGURES,
+  ...TEXAS_POLITICAL_FIGURES_STATEWIDE_OFFICIAL,
 ].map(canonicalizeFigureRelatedLinks);
 
 const normalizedIdentity = (value: string) => value.toLocaleLowerCase("en-US").replace(/[^a-z0-9]+/g, " ").trim();
