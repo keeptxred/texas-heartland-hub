@@ -1,6 +1,8 @@
 name: Verify political figures in production
 
 on:
+  push:
+    branches: [main]
   workflow_run:
     workflows: ["Deploy verified KeepTXRed to Cloudflare"]
     types: [completed]
@@ -16,6 +18,7 @@ concurrency:
 jobs:
   verify:
     if: >-
+      github.event_name == 'push' ||
       github.event_name == 'workflow_dispatch' ||
       github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
