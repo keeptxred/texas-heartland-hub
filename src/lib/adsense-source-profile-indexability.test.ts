@@ -1,15 +1,23 @@
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
+import { sourcesIndexHead } from "@/routes/sources.index";
 
 const profileRoute = fs.readFileSync(new URL("../routes/sources.$slug.tsx", import.meta.url), "utf8");
 const sourceSitemap = fs.readFileSync(new URL("../routes/sitemap-sources[.]xml.ts", import.meta.url), "utf8");
 const sitemapIndex = fs.readFileSync(new URL("../routes/sitemap[.]xml.ts", import.meta.url), "utf8");
-const sourceHub = fs.readFileSync(new URL("../routes/sources.index.tsx", import.meta.url), "utf8");
 
 describe("AdSense source transparency indexability", () => {
   it("keeps the substantive source hub indexable", () => {
-    expect(sourceHub).toContain('canonical", href: "https://keeptxred.com/sources"');
-    expect(sourceHub).not.toContain('name: "robots", content: "noindex');
+    const head = sourcesIndexHead();
+
+    expect(head.links).toContainEqual({
+      rel: "canonical",
+      href: "https://keeptxred.com/sources",
+    });
+    expect(head.meta).toContainEqual({
+      name: "robots",
+      content: "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1",
+    });
   });
 
   it("keeps individual thin source profiles accessible but noindex", () => {
