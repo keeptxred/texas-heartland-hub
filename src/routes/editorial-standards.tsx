@@ -1,15 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { buildSeo } from "@/lib/seo";
+
+const EDITORIAL_STANDARDS_TITLE = "Editorial Standards";
+const EDITORIAL_STANDARDS_DESCRIPTION =
+  "How Keep TX Red verifies, attributes, analyzes, and adds original Texas political-intelligence context to news, elections, legislation, and public records.";
+
+export function editorialStandardsHead() {
+  const seo = buildSeo({
+    title: EDITORIAL_STANDARDS_TITLE,
+    description: EDITORIAL_STANDARDS_DESCRIPTION,
+    path: "/editorial-standards",
+    type: "website",
+    imageAlt: "Keep TX Red editorial standards",
+  });
+  return { meta: seo.meta, links: seo.links };
+}
 
 export const Route = createFileRoute("/editorial-standards")({
-  head: () => ({
-    meta: [
-      { title: "Editorial Standards — Keep TX Red" },
-      { name: "description", content: "How Keep TX Red verifies, attributes, analyzes, and adds original Texas political-intelligence context to news, elections, legislation, and public records." },
-      { property: "og:title", content: "Editorial Standards — Keep TX Red" },
-      { property: "og:description", content: "How Keep TX Red verifies, attributes, analyzes, and adds original Texas political-intelligence context to news, elections, legislation, and public records." },
-    ],
-    links: [{ rel: "canonical", href: "https://keeptxred.com/editorial-standards" }],
-  }),
+  head: editorialStandardsHead,
   component: EditorialStandardsPage,
 });
 
