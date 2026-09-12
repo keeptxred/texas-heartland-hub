@@ -16,14 +16,17 @@ describe("featured-image quota-safe quality retries", () => {
     expect(source).not.toContain('form.append("steps", "25")');
   });
 
-  it("falls back only from cheap Klein 4B to Schnell on provider failure", () => {
+  it("uses Schnell only as the cheap provider fallback and drops safety retries back to Klein 4B", () => {
     const source = fs.readFileSync(new URL("./featured-image-cloudflare.ts", import.meta.url), "utf8");
     const generateStart = source.indexOf("export async function generateImageBytes");
     const validatorStart = source.indexOf("export function extractCloudflareVisionOutput");
     const generateSource = source.slice(generateStart, validatorStart);
 
-    expect(generateSource).toContain("if (!res.ok && activeModel === CLOUDFLARE_IMAGE_MODEL)");
+    expect(generateSource).toContain("else if (activeModel === CLOUDFLARE_IMAGE_MODEL)");
     expect(generateSource).toContain("activeModel = CLOUDFLARE_IMAGE_FALLBACK_MODEL");
+    expect(generateSource).toContain("activeModel = CLOUDFLARE_IMAGE_MODEL");
+    expect(generateSource).toContain("buildImageSafetyRetryPrompt(prompt)");
+    expect(generateSource).toContain("isCloudflareImageSafetyRejection");
     expect(generateSource).not.toContain("activeModel === CLOUDFLARE_IMAGE_QUALITY_MODEL");
   });
 });
