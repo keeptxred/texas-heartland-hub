@@ -1,7 +1,9 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
+import { buildSeo, SITE_URL } from "@/lib/seo";
 
-const SITE_URL = "https://keeptxred.com";
 const PAGE_URL = `${SITE_URL}/tools`;
+const POLICY_TOOLS_TITLE = "Texas Policy Tools & Calculators";
+const POLICY_TOOLS_DESCRIPTION = "Use Keep TX Red's Texas fiscal-policy calculators and scenario tools, with source context and links to permanent issue guides.";
 
 const POLICY_TOOLS = [
   {
@@ -34,17 +36,18 @@ const POLICY_TOOLS = [
   },
 ] as const;
 
-export const Route = createFileRoute("/tools/")({
-  head: () => ({
-    meta: [
-      { title: "Texas Policy Tools & Calculators | Keep TX Red" },
-      { name: "description", content: "Use Keep TX Red's Texas fiscal-policy calculators and scenario tools, with source context and links to permanent issue guides." },
-      { property: "og:title", content: "Texas Policy Tools & Calculators | Keep TX Red" },
-      { property: "og:description", content: "Texas fiscal-policy calculators and scenario explorers connected to KTR's source-first issue guides." },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: PAGE_URL },
-    ],
-    links: [{ rel: "canonical", href: PAGE_URL }],
+export function policyToolsHead() {
+  const seo = buildSeo({
+    title: POLICY_TOOLS_TITLE,
+    description: POLICY_TOOLS_DESCRIPTION,
+    path: "/tools",
+    type: "website",
+    imageAlt: "Keep TX Red Texas policy tools and calculators",
+  });
+
+  return {
+    meta: seo.meta,
+    links: seo.links,
     scripts: [{
       type: "application/ld+json",
       children: JSON.stringify({
@@ -56,7 +59,11 @@ export const Route = createFileRoute("/tools/")({
         hasPart: POLICY_TOOLS.map((tool) => ({ "@type": "WebApplication", name: tool.title, url: `${SITE_URL}${tool.href}` })),
       }),
     }],
-  }),
+  };
+}
+
+export const Route = createFileRoute("/tools/")({
+  head: policyToolsHead,
   component: PolicyToolsHub,
 });
 
