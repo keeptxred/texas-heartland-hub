@@ -10,8 +10,8 @@ let failed = false;
 
 for (const file of files) {
   const sql = fs.readFileSync(file, 'utf8');
-  const isInsert = /INSERT\s+INTO\s+public\.daily_articles/i.test(sql);
-  const isUpdate = /UPDATE\s+public\.daily_articles/i.test(sql);
+  const isInsert = /INSERT\s+INTO\s+(?:public\.)?daily_articles/i.test(sql);
+  const isUpdate = /UPDATE\s+(?:public\.)?daily_articles/i.test(sql);
   if (!isInsert && !isUpdate) continue;
 
   const errors = [];
@@ -19,6 +19,7 @@ for (const file of files) {
   const isBulkCategoryReclassification = /^\s*--\s*BULK_CATEGORY_RECLASSIFICATION\s*$/im.test(sql);
   const isBulkContentStructureRemediation = /^\s*--\s*BULK_CONTENT_STRUCTURE_REMEDIATION\s*$/im.test(sql);
   const isBulkArticleMaintenance = /^\s*--\s*BULK_ARTICLE_MAINTENANCE\s*$/im.test(sql);
+  const isBulkImageFieldMaintenance = /^\s*--\s*BULK_IMAGE_FIELD_MAINTENANCE\s*$/im.test(sql);
 
   if (isInsert) {
     if (!/SELECT\s+slug\s*,\s*'\/news\/'\s*\|\|\s*slug/i.test(sql)) {
@@ -69,7 +70,18 @@ for (const file of files) {
     if (!safelyScoped) errors.push('BULK_ARTICLE_MAINTENANCE must be update-only and narrowly scoped by an explicit dated slug, a guarded legacy category/quality/site-boundary predicate, or the restored-legacy <500-word quarantine contract');
   }
 
-  const contentOnlyRemediation = isBulkCategoryReclassification || isBulkContentStructureRemediation || isBulkArticleMaintenance;
+  if (isBulkImageFieldMaintenance) {
+    const safelyScoped =
+      isUpdate &&
+      !isInsert &&
+      /SET\s+image_url\s*=\s*featured_image_url/i.test(sql) &&
+      /featured_image_url\s+IS\s+NOT\s+NULL/i.test(sql) &&
+      /btrim\s*\(\s*featured_image_url\s*\)\s*<>\s*''/i.test(sql) &&
+      /image_url\s+IS\s+DISTINCT\s+FROM\s+featured_image_url/i.test(sql);
+    if (!safelyScoped) errors.push('BULK_IMAGE_FIELD_MAINTENANCE must be update-only, synchronize image_url from featured_image_url, and use non-empty/distinct-value guards');
+  }
+
+  const contentOnlyRemediation = isBulkCategoryReclassification || isBulkContentStructureRemediation || isBulkArticleMaintenance || isBulkImageFieldMaintenance;
   if (!contentOnlyRemediation && (!/featured_image_url/i.test(sql) || !/image_alt_text/i.test(sql))) {
     errors.push('published article image changes must include featured_image_url and image_alt_text');
   }
@@ -84,7 +96,7 @@ for (const file of files) {
   const dollarSlugs = [...sql.matchAll(/SELECT\s+\$slug\$((?:live-)?(?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)\$slug\$\s*::\s*text\s+slug\b/gi)].map((match) => match[1]);
   const whereSlugs = [...sql.matchAll(/WHERE\s+(?:[a-z_]+\.)?slug\s*=\s*'((?:live-)?(?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)'/gi)].map((match) => match[1]);
   const slugs = [...valuesSlugs, ...selectSlugs, ...dollarSlugs, ...whereSlugs];
-  if (!slugs.length && !isBulkImageRemediation && !isBulkCategoryReclassification && !isBulkContentStructureRemediation && !isBulkArticleMaintenance) errors.push('could not find any dated article slugs in the publication input');
+  if (!slugs.length && !isBulkImageRemediation && !isBulkCategoryReclassification && !isBulkContentStructureRemediation && !isBulkArticleMaintenance && !isBulkImageFieldMaintenance) errors.push('could not find any dated article slugs in the publication input');
   if (new Set(slugs).size !== slugs.length) errors.push('duplicate article slug found in migration');
 
   if (errors.length) {
@@ -92,7 +104,7 @@ for (const file of files) {
     console.error(`\n${file}: INVALID`);
     for (const error of errors) console.error(`  - ${error}`);
   } else {
-    const detail = isBulkImageRemediation ? 'bulk image remediation' : isBulkCategoryReclassification ? 'bulk category reclassification' : isBulkContentStructureRemediation ? 'bulk content structure remediation' : isBulkArticleMaintenance ? 'scoped article maintenance' : `${slugs.length} article slug${slugs.length === 1 ? '' : 's'}`;
+    const detail = isBulkImageRemediation ? 'bulk image remediation' : isBulkCategoryReclassification ? 'bulk category reclassification' : isBulkContentStructureRemediation ? 'bulk content structure remediation' : isBulkArticleMaintenance ? 'scoped article maintenance' : isBulkImageFieldMaintenance ? 'bulk image field maintenance' : `${slugs.length} article slug${slugs.length === 1 ? '' : 's'}`;
     console.log(`${file}: valid (${detail})`);
   }
 }
