@@ -34,17 +34,20 @@ jobs:
       # Backward-compatible fallback for a linked-project workflow.
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+
+      # Final fail-closed fallback: this credential cannot apply migrations.
+      # It can only call a service-role-only RPC that verifies the production
+      # migration ledger. A missing migration still fails this job and blocks
+      # the downstream Cloudflare deployment.
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       SUPABASE_PROJECT_REF: ftkznprjljkhymknvhye
+      MIGRATION_VERIFY_BASELINE: '20260911034655'
     steps:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
-      - uses: supabase/setup-cli@v1
-        with:
-          version: latest
-
-      - name: Select direct database or linked-project transport
+      - name: Select migration transport
         id: transport
         shell: bash
         run: |
@@ -62,10 +65,20 @@ jobs:
             exit 0
           fi
 
-          echo 'No Supabase migration transport is configured.' >&2
-          echo 'Preferred fix: add repository secret SUPABASE_DB_URL using the Supabase Session Pooler URI from Project > Connect.' >&2
-          echo 'This direct database path does not require SUPABASE_ACCESS_TOKEN.' >&2
+          if [[ -n "${SUPABASE_SERVICE_ROLE_KEY:-}" ]]; then
+            echo 'mode=verify-only' >> "$GITHUB_OUTPUT"
+            echo 'No write transport is configured; using fail-closed production-ledger verification.'
+            exit 0
+          fi
+
+          echo 'No usable Supabase migration or verification credential is configured.' >&2
+          echo 'Configure SUPABASE_DB_URL (preferred), linked-project credentials, or SUPABASE_SERVICE_ROLE_KEY for read-only ledger verification.' >&2
           exit 1
+
+      - uses: supabase/setup-cli@v1
+        if: steps.transport.outputs.mode != 'verify-only'
+        with:
+          version: latest
 
       - name: Link production project for legacy transport
         if: steps.transport.outputs.mode == 'linked'
@@ -75,21 +88,47 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [[ "${{ steps.transport.outputs.mode }}" == 'db-url' ]]; then
+          mode='${{ steps.transport.outputs.mode }}'
+
+          if [[ "$mode" == 'db-url' ]]; then
             supabase db push --db-url "$SUPABASE_DB_URL" --include-all --dry-run
-          else
-            supabase db push --linked --password "$SUPABASE_DB_PASSWORD" --include-all --dry-run
+            exit 0
           fi
+
+          if [[ "$mode" == 'linked' ]]; then
+            supabase db push --linked --password "$SUPABASE_DB_PASSWORD" --include-all --dry-run
+            exit 0
+          fi
+
+          mapfile -t expected_versions < <(
+            find supabase/migrations -maxdepth 1 -type f -name '*.sql' -printf '%f\n' \
+              | sed -nE 's/^([0-9]{14})_.+\.sql$/\1/p' \
+              | sort -u \
+              | awk -v baseline="$MIGRATION_VERIFY_BASELINE" '$0 > baseline'
+          )
+
+          if (( ${#expected_versions[@]} == 0 )); then
+            echo "No repository migrations newer than verification baseline $MIGRATION_VERIFY_BASELINE."
+            exit 0
+          fi
+
+          printf 'Repository migrations requiring production-ledger verification:\n'
+          printf '  %s\n' "${expected_versions[@]}"
+          echo 'Verify-only mode cannot apply pending SQL; the final verification step remains fail-closed.'
 
       - name: Apply pending production migrations
         if: github.event_name != 'workflow_dispatch' || inputs.dry_run_only != true
         shell: bash
         run: |
           set -euo pipefail
-          if [[ "${{ steps.transport.outputs.mode }}" == 'db-url' ]]; then
+          mode='${{ steps.transport.outputs.mode }}'
+
+          if [[ "$mode" == 'db-url' ]]; then
             supabase db push --db-url "$SUPABASE_DB_URL" --include-all
-          else
+          elif [[ "$mode" == 'linked' ]]; then
             supabase db push --linked --password "$SUPABASE_DB_PASSWORD" --include-all
+          else
+            echo 'Verify-only mode: no database writes are attempted.'
           fi
 
       - name: Verify migration state
@@ -97,8 +136,54 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [[ "${{ steps.transport.outputs.mode }}" == 'db-url' ]]; then
+          mode='${{ steps.transport.outputs.mode }}'
+
+          if [[ "$mode" == 'db-url' ]]; then
             supabase migration list --db-url "$SUPABASE_DB_URL"
-          else
-            supabase migration list --linked --password "$SUPABASE_DB_PASSWORD"
+            exit 0
           fi
+
+          if [[ "$mode" == 'linked' ]]; then
+            supabase migration list --linked --password "$SUPABASE_DB_PASSWORD"
+            exit 0
+          fi
+
+          mapfile -t expected_versions < <(
+            find supabase/migrations -maxdepth 1 -type f -name '*.sql' -printf '%f\n' \
+              | sed -nE 's/^([0-9]{14})_.+\.sql$/\1/p' \
+              | sort -u \
+              | awk -v baseline="$MIGRATION_VERIFY_BASELINE" '$0 > baseline'
+          )
+
+          if (( ${#expected_versions[@]} == 0 )); then
+            echo "No repository migrations newer than verification baseline $MIGRATION_VERIFY_BASELINE."
+            exit 0
+          fi
+
+          versions_json="$(printf '%s\n' "${expected_versions[@]}" | jq -Rsc 'split("\n") | map(select(length > 0))')"
+          payload="$(jq -cn --argjson versions "$versions_json" '{expected_versions: $versions}')"
+          endpoint="https://${SUPABASE_PROJECT_REF}.supabase.co/rest/v1/rpc/verify_repo_migrations"
+
+          response="$(curl --fail-with-body --silent --show-error \
+            -X POST \
+            -H 'Content-Type: application/json' \
+            -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+            --data "$payload" \
+            "$endpoint")"
+
+          jq -e 'type == "array"' <<<"$response" >/dev/null
+          returned_count="$(jq 'length' <<<"$response")"
+          expected_count="${#expected_versions[@]}"
+          if [[ "$returned_count" -ne "$expected_count" ]]; then
+            echo "::error::Migration verifier returned $returned_count rows for $expected_count expected versions."
+            exit 1
+          fi
+
+          missing="$(jq -r '[.[] | select(.applied != true) | .version] | join(",")' <<<"$response")"
+          if [[ -n "$missing" ]]; then
+            echo "::error::Production migration ledger is missing repository migration(s): $missing"
+            exit 1
+          fi
+
+          echo "Verified $expected_count repository migration(s) in the production ledger; Cloudflare deploy may proceed."
