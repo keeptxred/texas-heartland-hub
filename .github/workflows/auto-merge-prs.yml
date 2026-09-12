@@ -21,7 +21,7 @@ jobs:
       github.event.pull_request.draft == false &&
       github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 55
     steps:
       - name: Enable auto-merge
         env:
@@ -38,7 +38,7 @@ jobs:
             echo "Auto-merge enabled for $PR_URL."
           fi
 
-      - name: Wait for merge, verify main, and dispatch exact verified deploy
+      - name: Wait for merge, verify main, gate migrations, and dispatch exact verified deploy
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -119,12 +119,44 @@ jobs:
 
           main_sha="$(gh api "repos/$REPOSITORY/git/ref/heads/main" --jq '.object.sha')"
           if [[ "$main_sha" != "$merged_sha" ]]; then
+            echo "A newer main revision exists ($main_sha); skipping stale migration/deployment orchestration for $merged_sha."
+            exit 0
+          fi
+
+          if grep -Eq '^(supabase/migrations/|\.github/workflows/apply-supabase-migrations\.yml$)' <<<"$changed_files"; then
+            migration_run_id="$(gh run list --repo "$REPOSITORY" --workflow apply-supabase-migrations.yml --branch main --limit 20 --json databaseId,headSha,event --jq ".[] | select(.headSha == \"$merged_sha\" and (.event == \"push\" or .event == \"workflow_dispatch\")) | .databaseId" | head -n 1)"
+
+            if [[ -z "$migration_run_id" ]]; then
+              before_migration_run_id="$(gh run list --repo "$REPOSITORY" --workflow apply-supabase-migrations.yml --branch main --event workflow_dispatch --limit 1 --json databaseId --jq '.[0].databaseId // 0')"
+              gh workflow run apply-supabase-migrations.yml --ref main --repo "$REPOSITORY"
+              echo "Database-affecting changes detected; dispatched production Supabase migration gate for $merged_sha."
+
+              for attempt in $(seq 1 60); do
+                migration_run_id="$(gh run list --repo "$REPOSITORY" --workflow apply-supabase-migrations.yml --branch main --event workflow_dispatch --limit 20 --json databaseId,headSha --jq ".[] | select(.headSha == \"$merged_sha\" and .databaseId > $before_migration_run_id) | .databaseId" | head -n 1)"
+                [[ -n "$migration_run_id" ]] && break
+                sleep 2
+              done
+            else
+              echo "Using existing Supabase migration run $migration_run_id for exact revision $merged_sha."
+            fi
+
+            if [[ -z "$migration_run_id" ]]; then
+              echo "::error title=Supabase migration run not found::Could not resolve a migration workflow run for $merged_sha."
+              exit 1
+            fi
+
+            gh run watch "$migration_run_id" --repo "$REPOSITORY" --exit-status
+            echo "Supabase migration gate passed for exact revision $merged_sha."
+          fi
+
+          main_sha="$(gh api "repos/$REPOSITORY/git/ref/heads/main" --jq '.object.sha')"
+          if [[ "$main_sha" != "$merged_sha" ]]; then
             echo "A newer main revision exists ($main_sha); skipping stale deployment of $merged_sha."
             exit 0
           fi
 
           gh workflow run deploy-cloudflare-after-verify.yml --ref main --repo "$REPOSITORY" -f verified_sha="$merged_sha"
-          echo "Main verification passed; dispatched Cloudflare deployment for exact verified revision $merged_sha."
+          echo "Main verification and required migration gates passed; dispatched Cloudflare deployment for exact verified revision $merged_sha."
 
           if grep -qxF '.github/workflows/sync-gsc-metrics.yml' <<<"$changed_files" || \
              grep -qxF 'scripts/seo/sync-gsc-metrics.mjs' <<<"$changed_files" || \
