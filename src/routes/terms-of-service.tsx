@@ -1,26 +1,27 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { LegalPage } from "@/components/legal-page";
-import { SITE_URL } from "@/lib/seo";
+import { buildSeo } from "@/lib/seo";
 
-const title = "Terms of Service | Keep TX Red";
-const description = "Terms governing use of KeepTXRed.com, its editorial content, calculators, shop, checkout, and made-to-order merchandise.";
-const canonical = `${SITE_URL}/terms-of-service`;
+const TERMS_TITLE = "Terms of Service";
+const TERMS_DESCRIPTION = "Terms governing use of KeepTXRed.com, its editorial content, calculators, shop, checkout, and made-to-order merchandise.";
+
+export function termsOfServiceHead() {
+  const seo = buildSeo({
+    title: TERMS_TITLE,
+    description: TERMS_DESCRIPTION,
+    path: "/terms-of-service",
+    type: "website",
+    imageAlt: "Keep TX Red Terms of Service",
+  });
+
+  return {
+    meta: seo.meta,
+    links: seo.links,
+  };
+}
 
 export const Route = createFileRoute("/terms-of-service")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: canonical },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: title },
-      { name: "twitter:description", content: description },
-    ],
-    links: [{ rel: "canonical", href: canonical }],
-  }),
+  head: termsOfServiceHead,
   component: TermsOfServicePage,
 });
 
