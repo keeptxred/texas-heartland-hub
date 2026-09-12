@@ -1,12 +1,13 @@
-import { SITE_URL } from "@/lib/seo";
+import { buildSeo, SITE_URL } from "@/lib/seo";
 import { lawGuideCanonicalPath } from "@/lib/law-guides";
 
-const SITE_SUFFIX = " | Keep TX Red";
-
 export function lawGuideSeoTitle(title: string): string {
-  const normalized = title.trim();
-  if (!normalized) return `Texas Laws Explained${SITE_SUFFIX}`;
-  return `${normalized}${SITE_SUFFIX}`;
+  const normalized = title.trim() || "Texas Laws Explained";
+  return buildSeo({
+    title: normalized,
+    description: "Texas law guide.",
+    path: "/laws",
+  }).title;
 }
 
 export function lawGuideMetaDescription(description: string): string {
