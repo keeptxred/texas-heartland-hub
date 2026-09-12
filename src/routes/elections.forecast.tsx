@@ -36,7 +36,7 @@ export const Route = createFileRoute("/elections/forecast")({
   validateSearch: parseForecastListSearch,
   head: () => ({
     meta: [
-      { title: "Texas Election Forecasts | KeepTXRed Election Central" },
+      { title: "Texas Election Forecasts | Keep TX Red Election Central" },
       {
         name: "description",
         content:
@@ -44,7 +44,7 @@ export const Route = createFileRoute("/elections/forecast")({
       },
       {
         property: "og:title",
-        content: "Texas Election Forecasts | KeepTXRed Election Central",
+        content: "Texas Election Forecasts | Keep TX Red Election Central",
       },
       { property: "og:url", content: "https://keeptxred.com/elections/forecast" },
       { property: "og:type", content: "website" },

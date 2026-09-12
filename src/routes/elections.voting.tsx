@@ -23,10 +23,10 @@ const votingLogistics = [
 export const Route = createFileRoute("/elections/voting")({
   head: () => ({
     meta: [
-      { title: "Texas Voting Dates, Voter ID, Ballot Research & Official Resources | KeepTXRed" },
+      { title: "Texas Voting Dates, Voter ID, Ballot Research & Official Resources | Keep TX Red" },
       { name: "description", content: "Review the 2026 Texas election calendar, current voter-ID categories, browse published races by ZIP, county or district, and continue to official Texas voter resources." },
       { name: "robots", content: "index, follow, max-image-preview:large" },
-      { property: "og:title", content: "Texas Voting Dates, Voter ID & Ballot Research | KeepTXRed Election Central" },
+      { property: "og:title", content: "Texas Voting Dates, Voter ID & Ballot Research | Keep TX Red Election Central" },
       { property: "og:url", content: "https://keeptxred.com/elections/voting" },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Keep TX Red" },
