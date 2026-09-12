@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { buildElectionCollectionSchema, buildElectionSeo } from "./seo";
+import {
+  buildElectionCollectionSchema,
+  buildElectionSeo,
+  formatElectionTitle,
+} from "./seo";
 import { buildElectionSitemapEntries, ELECTION_STATIC_SITEMAP_COUNT } from "./sitemap";
 import { ELECTION_PRIMARY_NAV_ROUTES, ELECTION_ROUTES } from "./routes";
 
@@ -11,9 +15,28 @@ describe("Election Central metadata and sitemap", () => {
         pathname: "/elections/polls?race=test",
       }),
     ).toMatchObject({
+      title: "Texas Election Polls | Keep TX Red",
       canonicalUrl: "https://keeptxred.com/elections/polls",
       robots: "index,follow",
+      openGraph: { siteName: "Keep TX Red" },
     });
+  });
+
+  it("does not duplicate Election Central branding", () => {
+    expect(formatElectionTitle("Keep TX Red | Texas Elections")).toBe(
+      "Keep TX Red | Texas Elections",
+    );
+    expect(formatElectionTitle("Texas Elections | Keep TX Red")).toBe(
+      "Texas Elections | Keep TX Red",
+    );
+  });
+
+  it("clamps long Election Central titles at a word boundary", () => {
+    expect(
+      formatElectionTitle(
+        "2026 Texas Congressional District 35 Democratic General Election Candidate Comparison",
+      ),
+    ).toBe("2026 Texas Congressional District 35 | Keep TX Red");
   });
 
   it("creates CollectionPage and ItemList structured data without fake records", () => {
