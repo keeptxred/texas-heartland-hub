@@ -12,6 +12,22 @@ describe("legacy live URL publication validation", () => {
     expect(validator).toContain("could not find any dated article slugs in the publication input");
   });
 
+  it("keeps unqualified daily_articles updates inside the publication guard", () => {
+    expect(validator).toContain("UPDATE\\s+(?:public\\.)?daily_articles");
+  });
+
+  it("allows only explicitly scoped image field synchronization maintenance", () => {
+    const migration = readFileSync(
+      "supabase/migrations/20260912002500_sync_primary_article_image_fields.sql",
+      "utf8",
+    );
+
+    expect(migration).toContain("-- BULK_IMAGE_FIELD_MAINTENANCE");
+    expect(migration).toContain("UPDATE public.daily_articles");
+    expect(validator).toContain("BULK_IMAGE_FIELD_MAINTENANCE");
+    expect(validator).toContain("synchronize image_url from featured_image_url");
+  });
+
   it("links the restored article from the agriculture pillar", () => {
     const route = readFileSync("src/routes/texas-agriculture.tsx", "utf8");
 
