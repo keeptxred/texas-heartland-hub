@@ -19,13 +19,18 @@ END;
 $$;
 
 -- BULK_IMAGE_FIELD_MAINTENANCE
--- Repair existing drift before relying on the trigger for future writes. This is
--- operational image metadata maintenance, not an article publication migration.
+-- Repair existing canonical/legacy URL drift and stale missing-image flags before
+-- relying on the trigger for future writes. This is operational image metadata
+-- maintenance, not an article publication migration.
 UPDATE public.daily_articles
-SET image_url = featured_image_url
+SET image_url = featured_image_url,
+    quality_flags = array_remove(coalesce(quality_flags, ARRAY[]::text[]), 'missing_image')
 WHERE featured_image_url IS NOT NULL
   AND btrim(featured_image_url) <> ''
-  AND image_url IS DISTINCT FROM featured_image_url;
+  AND (
+    image_url IS DISTINCT FROM featured_image_url
+    OR 'missing_image' = ANY(coalesce(quality_flags, ARRAY[]::text[]))
+  );
 
 COMMENT ON FUNCTION public.clear_missing_image_when_ready() IS
   'Clears missing_image and synchronizes legacy image_url to the canonical featured_image_url whenever a featured image is attached or replaced.';
