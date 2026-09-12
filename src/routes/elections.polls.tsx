@@ -18,7 +18,7 @@ import {
 export const Route = createFileRoute("/elections/polls")({
   head: () => ({
     meta: [
-      { title: "Texas Election Polls | KeepTXRed Election Central" },
+      { title: "Texas Election Polls | Keep TX Red Election Central" },
       {
         name: "description",
         content:
@@ -26,7 +26,7 @@ export const Route = createFileRoute("/elections/polls")({
       },
       {
         property: "og:title",
-        content: "Texas Election Polls | KeepTXRed Election Central",
+        content: "Texas Election Polls | Keep TX Red Election Central",
       },
       { property: "og:url", content: "https://keeptxred.com/elections/polls" },
       { property: "og:type", content: "website" },

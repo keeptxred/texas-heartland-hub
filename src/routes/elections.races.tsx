@@ -82,7 +82,7 @@ export const Route = createFileRoute("/elections/races")({
   validateSearch: parseRaceListSearch,
   head: () => ({
     meta: [
-      { title: "Texas Election Races | KeepTXRed Election Central" },
+      { title: "Texas Election Races | Keep TX Red Election Central" },
       {
         name: "description",
         content:
@@ -90,7 +90,7 @@ export const Route = createFileRoute("/elections/races")({
       },
       {
         property: "og:title",
-        content: "Texas Election Races | KeepTXRed Election Central",
+        content: "Texas Election Races | Keep TX Red Election Central",
       },
       {
         property: "og:description",

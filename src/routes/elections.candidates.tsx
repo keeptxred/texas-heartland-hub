@@ -64,7 +64,7 @@ export const Route = createFileRoute("/elections/candidates")({
   validateSearch: parseCandidateListSearch,
   head: () => ({
     meta: [
-      { title: "Texas Election Candidates | KeepTXRed Election Central" },
+      { title: "Texas Election Candidates | Keep TX Red Election Central" },
       {
         name: "description",
         content:
@@ -72,7 +72,7 @@ export const Route = createFileRoute("/elections/candidates")({
       },
       {
         property: "og:title",
-        content: "Texas Election Candidates | KeepTXRed Election Central",
+        content: "Texas Election Candidates | Keep TX Red Election Central",
       },
       {
         property: "og:description",
@@ -86,12 +86,12 @@ export const Route = createFileRoute("/elections/candidates")({
       { property: "og:image:height", content: "630" },
       {
         property: "og:image:alt",
-        content: "KeepTXRed Election Central Texas candidate directory",
+        content: "Keep TX Red Election Central Texas candidate directory",
       },
       { name: "twitter:card", content: "summary_large_image" },
       {
         name: "twitter:title",
-        content: "Texas Election Candidates | KeepTXRed Election Central",
+        content: "Texas Election Candidates | Keep TX Red Election Central",
       },
       {
         name: "twitter:description",

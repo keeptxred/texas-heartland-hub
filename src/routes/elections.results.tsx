@@ -35,7 +35,7 @@ export const Route = createFileRoute("/elections/results")({
   validateSearch: parseResultSearch,
   head: () => ({
     meta: [
-      { title: "Texas Election Results | KeepTXRed Election Central" },
+      { title: "Texas Election Results | Keep TX Red Election Central" },
       {
         name: "description",
         content:
@@ -43,7 +43,7 @@ export const Route = createFileRoute("/elections/results")({
       },
       {
         property: "og:title",
-        content: "Texas Election Results | KeepTXRed Election Central",
+        content: "Texas Election Results | Keep TX Red Election Central",
       },
       { property: "og:url", content: "https://keeptxred.com/elections/results" },
       { property: "og:type", content: "website" },
