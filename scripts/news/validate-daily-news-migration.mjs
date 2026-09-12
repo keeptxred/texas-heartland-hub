@@ -74,11 +74,12 @@ for (const file of files) {
     const safelyScoped =
       isUpdate &&
       !isInsert &&
-      /SET\s+image_url\s*=\s*featured_image_url/i.test(sql) &&
+      /SET\s+image_url\s*=\s*featured_image_url[\s\S]*?quality_flags\s*=\s*array_remove/i.test(sql) &&
+      /array_remove\s*\([\s\S]*?quality_flags[\s\S]*?'missing_image'/i.test(sql) &&
       /featured_image_url\s+IS\s+NOT\s+NULL/i.test(sql) &&
       /btrim\s*\(\s*featured_image_url\s*\)\s*<>\s*''/i.test(sql) &&
-      /image_url\s+IS\s+DISTINCT\s+FROM\s+featured_image_url/i.test(sql);
-    if (!safelyScoped) errors.push('BULK_IMAGE_FIELD_MAINTENANCE must be update-only, synchronize image_url from featured_image_url, and use non-empty/distinct-value guards');
+      /image_url\s+IS\s+DISTINCT\s+FROM\s+featured_image_url[\s\S]*?\bOR\b[\s\S]*?'missing_image'\s*=\s*ANY/i.test(sql);
+    if (!safelyScoped) errors.push('BULK_IMAGE_FIELD_MAINTENANCE must be update-only, synchronize image_url from featured_image_url, clear stale missing_image flags, and use non-empty/drift-or-flag guards');
   }
 
   const contentOnlyRemediation = isBulkCategoryReclassification || isBulkContentStructureRemediation || isBulkArticleMaintenance || isBulkImageFieldMaintenance;
