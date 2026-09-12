@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ContentPillarView } from "@/components/content-pillar-view";
 import { SupportingGuideGrid } from "@/components/supporting-guide-grid";
 import { EvergreenAuthorityReference } from "@/components/authority/EvergreenAuthorityReference";
+import { buildSeo } from "@/lib/seo";
 
 const SECTIONS = [
   { title: "Veterans Services & Agencies", description: "Start with the state and federal institutions responsible for veteran services, benefits, employment, education, and military families.", href: "/texas-government" },
@@ -11,19 +12,22 @@ const SECTIONS = [
 ];
 
 const VERIFIED = "Reviewed against the cited official institutional sources on August 11, 2026.";
+const TEXAS_VETERANS_TITLE = "Texas Veterans & Military Benefits & Policy";
+const TEXAS_VETERANS_DESCRIPTION =
+  "Texas veterans and military coverage: service members, bases, benefits, honors, deployments, military families, and policy affecting Texans who served.";
+
+export function texasVeteransHead() {
+  return buildSeo({
+    title: TEXAS_VETERANS_TITLE,
+    description: TEXAS_VETERANS_DESCRIPTION,
+    path: "/texas-veterans",
+    type: "website",
+    imageAlt: "Keep TX Red Texas veterans and military coverage",
+  });
+}
 
 export const Route = createFileRoute("/texas-veterans")({
-  head: () => ({
-    meta: [
-      { title: "Texas Veterans & Military — Benefits, Bases, Honors & Policy" },
-      { name: "description", content: "Texas veterans and military coverage: service members, bases, benefits, honors, deployments, military families, and policy affecting Texans who served." },
-      { property: "og:title", content: "Texas Veterans & Military — Keep TX Red" },
-      { property: "og:description", content: "Texas veterans, service members, military installations, benefits, honors, and policy." },
-      { property: "og:url", content: "https://keeptxred.com/texas-veterans" },
-      { property: "og:type", content: "website" },
-    ],
-    links: [{ rel: "canonical", href: "https://keeptxred.com/texas-veterans" }],
-  }),
+  head: texasVeteransHead,
   component: TexasVeteransPage,
 });
 
