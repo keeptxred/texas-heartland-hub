@@ -1,0 +1,175 @@
+name: One-shot Etsy Halloween SEO update
+
+on:
+  push:
+    branches:
+      - ops/etsy-halloween-seo-2026-09-11
+    paths:
+      - .github/workflows/etsy-halloween-seo-once.yml
+
+jobs:
+  update-halloween-listings:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PRINTIFY_API_TOKEN: ${{ secrets.PRINTIFY_API_TOKEN }}
+      PRINTIFY_SHOP_ID: ${{ secrets.PRINTIFY_SHOP_ID }}
+    steps:
+      - name: Validate Printify credentials are configured
+        shell: bash
+        run: |
+          test -n "$PRINTIFY_API_TOKEN"
+          test -n "$PRINTIFY_SHOP_ID"
+
+      - name: Update titles and tags, then republish to Etsy
+        shell: bash
+        run: |
+          node <<'NODE'
+          const token = process.env.PRINTIFY_API_TOKEN;
+          const requestedShop = process.env.PRINTIFY_SHOP_ID;
+          const base = 'https://api.printify.com/v1';
+          const headers = {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          };
+
+          const updates = [
+            {
+              id: '6a6ec7148aec8d3bec05f72d',
+              title: 'Spooky Rodeo Shirt, Skeleton Cowboy Halloween Tee, Western Halloween Shirt, Haunted Rodeo Graphic Tee',
+              tags: [
+                'spooky rodeo shirt',
+                'skeleton cowboy',
+                'western halloween',
+                'cowboy halloween',
+                'haunted rodeo',
+                'spooky cowboy tee',
+                'western spooky tee',
+                'halloween rodeo',
+                'cowboy skeleton',
+                'rodeo halloween',
+                'country halloween',
+                'western graphic tee',
+                'halloween shirt',
+              ],
+            },
+            {
+              id: '6a6ec4637bc8ae47f60a6bd1',
+              title: 'Haunted Range Cowboy Shirt, Ghost Rider Skeleton Tee, Western Halloween Shirt, Spooky Cowboy Graphic Tee',
+              tags: [
+                'haunted range',
+                'ghost rider shirt',
+                'skeleton cowboy',
+                'western halloween',
+                'cowboy halloween',
+                'spooky cowboy tee',
+                'spooky western',
+                'ghost cowboy shirt',
+                'haunted cowboy',
+                'country halloween',
+                'western graphic tee',
+                'vintage halloween',
+                'halloween shirt',
+              ],
+            },
+            {
+              id: '6a6ec5c07bc8ae47f60a6d72',
+              title: 'Funny Tombstone Halloween Shirt, Skeleton Cowboy Tee, Western Halloween Graphic, Spooky Rodeo Shirt, Here Lies Jim',
+              tags: [
+                'tombstone shirt',
+                'graveyard shirt',
+                'halloween humor',
+                'funny halloween tee',
+                'spooky cemetery',
+                'cemetery shirt',
+                'vintage halloween',
+                'graveyard halloween',
+                'tombstone halloween',
+                'funny spooky shirt',
+                'western halloween',
+                'skeleton cowboy',
+                'here lies jim',
+              ],
+            },
+            {
+              id: '6a6ebef1b7f859f871032dd3',
+              title: 'Farm Halloween Shirt, Skeleton Farmer Tractor Tee, Spooky Country Graphic, Fright Farm Halloween Tee',
+              tags: [
+                'farm halloween',
+                'spooky farm shirt',
+                'country halloween',
+                'fright farm tee',
+                'farm halloween tee',
+                'rustic halloween',
+                'country spooky tee',
+                'fall farm shirt',
+                'tractor halloween',
+                'skeleton farmer',
+                'pumpkin patch tee',
+                'vintage halloween',
+                'halloween shirt',
+              ],
+            },
+          ];
+
+          async function json(url, options = {}) {
+            const res = await fetch(url, { ...options, headers: { ...headers, ...(options.headers || {}) } });
+            const text = await res.text();
+            let body = null;
+            try { body = text ? JSON.parse(text) : null; } catch { body = text; }
+            if (!res.ok) throw new Error(`${options.method || 'GET'} ${url} -> ${res.status}: ${String(text).slice(0, 500)}`);
+            return body;
+          }
+
+          async function resolveShopId() {
+            if (/^\d+$/.test(requestedShop)) return requestedShop;
+            const shops = await json(`${base}/shops.json`);
+            const wanted = requestedShop.toLowerCase();
+            const match = shops.find((shop) => String(shop.title || '').toLowerCase().includes(wanted)) || shops[0];
+            if (!match) throw new Error('No Printify shop found');
+            return String(match.id);
+          }
+
+          async function main() {
+            const shopId = await resolveShopId();
+            console.log(`Using Printify shop ${shopId}`);
+
+            for (const item of updates) {
+              const before = await json(`${base}/shops/${shopId}/products/${item.id}.json`);
+              console.log(`Before ${item.id}: ${before.title}`);
+
+              await json(`${base}/shops/${shopId}/products/${item.id}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ title: item.title, tags: item.tags }),
+              });
+
+              await json(`${base}/shops/${shopId}/products/${item.id}/publish.json`, {
+                method: 'POST',
+                body: JSON.stringify({
+                  title: true,
+                  description: false,
+                  images: false,
+                  variants: false,
+                  tags: true,
+                  keyFeatures: false,
+                  shipping_template: false,
+                }),
+              });
+
+              const after = await json(`${base}/shops/${shopId}/products/${item.id}.json`);
+              if (after.title !== item.title) {
+                throw new Error(`Printify title verification failed for ${item.id}`);
+              }
+              const actualTags = new Set(after.tags || []);
+              for (const tag of item.tags) {
+                if (!actualTags.has(tag)) throw new Error(`Printify tag verification failed for ${item.id}: ${tag}`);
+              }
+              console.log(`Updated ${item.id}: ${after.title}`);
+            }
+          }
+
+          main().catch((error) => {
+            console.error(error);
+            process.exit(1);
+          });
+          NODE
