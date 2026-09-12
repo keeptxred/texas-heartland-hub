@@ -1,3 +1,4 @@
+-- BULK_CATEGORY_RECLASSIFICATION
 CREATE OR REPLACE FUNCTION public.sync_historical_article_categories_from_pillars()
 RETURNS integer
 LANGUAGE plpgsql
