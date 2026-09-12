@@ -8,6 +8,7 @@ import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 const OIDC_AUDIENCE = "keeptxred-facebook";
 const REPOSITORY = "keeptxred/TexasDefined";
 const WORKFLOW_PATH = ".github/workflows/auto-facebook-engagement.yml";
+const ONE_TIME_WORKFLOW_PATH = ".github/workflows/one-time-weird-town-facebook.yml";
 const SOCIAL_PLATFORM = "facebook_texasdefined";
 const GRAPH_VERSION = "v21.0";
 const MAX_FACEBOOK_IMAGE_BYTES = 12 * 1024 * 1024;
@@ -15,6 +16,17 @@ const MAX_POST_TEXT_CHARS = 2_000;
 const TEXASDEFINED_GITHUB_PATH = "/keeptxred/TexasDefined";
 const TEXASDEFINED_IMAGE_ATTRIBUTION = "Brought to you by your friends at TexasDefined.com";
 const SOURCE_POST_ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)+$/;
+
+const ONE_TIME_ARTICLE_URL =
+  "https://texasdefined.com/article/weirdest-town-names-in-texas-and-how-they-got-them";
+const ONE_TIME_IMAGE_URL =
+  "https://texasdefined.com/images/social/weird-texas-town-names-facebook-2026-09-12.png";
+const ONE_TIME_SOURCE_POST_ID = "weird-texas-town-names-20260912";
+const ONE_TIME_POST_TEXT = `20 Weird Texas Town Names That Sound Made Up—but Aren’t
+
+From Cut and Shoot and Dime Box to Bug Tussle, Nameless and Uncertain, Texas has place names that sound like punch lines. Their real stories involve post offices, cattle, dry creeks, railroads, family names—and a healthy amount of folklore.
+
+${ONE_TIME_ARTICLE_URL}`;
 
 type SocialConnectionRow = {
   account_id: string | null;
@@ -26,6 +38,14 @@ type GitHubPublishProvenance = {
   artifactUrl: string;
   runUrl: string;
   runId: string;
+};
+
+type FacebookPublishResult = {
+  externalId: string;
+  postId: string | null;
+  photoId: string | null;
+  postUrl: string | null;
+  postUrlSource: string;
 };
 
 function bearerToken(request: Request): string | null {
@@ -83,6 +103,12 @@ async function sha256Hex(bytes: ArrayBuffer): Promise<string> {
   return Array.from(new Uint8Array(digest), (value) => value.toString(16).padStart(2, "0")).join("");
 }
 
+function isPng(bytes: ArrayBuffer): boolean {
+  const view = new Uint8Array(bytes);
+  const signature = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
+  return view.length >= signature.length && signature.every((value, index) => view[index] === value);
+}
+
 async function loadConnection(db: any): Promise<SocialConnectionRow> {
   const { data, error } = await db
     .from("social_connections")
@@ -137,6 +163,233 @@ async function recordPublishedPost(args: {
   return packageId;
 }
 
+async function resolveFacebookPostUrl(args: {
+  pageId: string;
+  pageToken: string;
+  graphPostId?: string;
+  graphPhotoId?: string;
+}): Promise<{ postUrl: string | null; postUrlSource: string }> {
+  const postIdMatch = args.graphPostId?.match(/^(\d+)_(\d+)$/) ?? null;
+  const constructedPostUrl =
+    postIdMatch && postIdMatch[1] === args.pageId
+      ? `https://www.facebook.com/permalink.php?story_fbid=${encodeURIComponent(postIdMatch[2])}&id=${encodeURIComponent(args.pageId)}`
+      : args.graphPhotoId && /^\d+$/.test(args.graphPhotoId)
+        ? `https://www.facebook.com/photo/?fbid=${encodeURIComponent(args.graphPhotoId)}`
+        : null;
+  let postUrl = constructedPostUrl;
+  let postUrlSource = constructedPostUrl ? "constructed_fallback" : "unavailable";
+
+  if (args.graphPostId) {
+    try {
+      const refreshedPosts = await fetchRecentFacebookPagePosts({
+        pageId: args.pageId,
+        pageToken: args.pageToken,
+        limit: 25,
+      });
+      const publishedPost = refreshedPosts.find((post) => post.id === args.graphPostId);
+      if (publishedPost?.permalink_url) {
+        postUrl = publishedPost.permalink_url;
+        postUrlSource = "meta_permalink_url";
+      }
+    } catch (error) {
+      console.warn(
+        "[TexasDefined Facebook] post succeeded but canonical permalink lookup failed; using constructed fallback",
+        error instanceof Error ? error.message : String(error),
+      );
+    }
+  }
+
+  return { postUrl, postUrlSource };
+}
+
+async function publishFacebookImage(args: {
+  connection: SocialConnectionRow;
+  bytes: ArrayBuffer;
+  postText: string;
+  filename: string;
+}): Promise<FacebookPublishResult> {
+  const pageId = String(args.connection.account_id);
+  const pageToken = String(args.connection.access_token);
+  const graphUrl = `https://graph.facebook.com/${GRAPH_VERSION}/${encodeURIComponent(pageId)}/photos`;
+  const body = new FormData();
+  body.set("access_token", pageToken);
+  body.set("caption", args.postText);
+  body.set("source", new Blob([args.bytes], { type: "image/png" }), args.filename);
+
+  const graphResponse = await fetch(graphUrl, { method: "POST", body });
+  const graphJson = (await graphResponse.json().catch(() => ({}))) as {
+    id?: string;
+    post_id?: string;
+    error?: { message?: string };
+  };
+  const externalId = graphJson.post_id ?? graphJson.id ?? null;
+  if (!graphResponse.ok || !externalId) {
+    throw new Error(graphJson.error?.message ?? `Facebook Graph API returned HTTP ${graphResponse.status}`);
+  }
+
+  const { postUrl, postUrlSource } = await resolveFacebookPostUrl({
+    pageId,
+    pageToken,
+    graphPostId: graphJson.post_id,
+    graphPhotoId: graphJson.id,
+  });
+
+  return {
+    externalId,
+    postId: graphJson.post_id ?? null,
+    photoId: graphJson.id ?? null,
+    postUrl,
+    postUrlSource,
+  };
+}
+
+async function publishOneTimeWeirdTownArticle(runId: string): Promise<Response> {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const db = supabaseAdmin as any;
+
+  let connection: SocialConnectionRow;
+  try {
+    connection = await loadConnection(db);
+  } catch (error) {
+    return Response.json(
+      {
+        ok: false,
+        posted: false,
+        error: error instanceof Error ? error.message : String(error),
+        requires_connection: true,
+      },
+      { status: 503 },
+    );
+  }
+
+  try {
+    const livePosts = await fetchRecentFacebookPagePosts({
+      pageId: String(connection.account_id),
+      pageToken: String(connection.access_token),
+      limit: 100,
+    });
+    const normalizedCandidate = normalizeFacebookHeadline(ONE_TIME_POST_TEXT);
+    if (
+      normalizedCandidate &&
+      livePosts.some((post) => normalizeFacebookHeadline(post.message ?? "") === normalizedCandidate)
+    ) {
+      const duplicate = livePosts.find(
+        (post) => normalizeFacebookHeadline(post.message ?? "") === normalizedCandidate,
+      );
+      return Response.json({
+        ok: true,
+        posted: false,
+        duplicate: true,
+        reason: "Exact weird-town article post is already present on the TexasDefined Facebook Page",
+        source_post_id: ONE_TIME_SOURCE_POST_ID,
+        article_url: ONE_TIME_ARTICLE_URL,
+        post_url: duplicate?.permalink_url ?? null,
+        github_run_id: runId,
+      });
+    }
+  } catch (error) {
+    return Response.json(
+      {
+        ok: false,
+        posted: false,
+        error: "TexasDefined Facebook duplicate verification failed",
+        detail: error instanceof Error ? error.message : String(error),
+      },
+      { status: 502 },
+    );
+  }
+
+  let bytes: ArrayBuffer;
+  try {
+    const imageResponse = await fetch(ONE_TIME_IMAGE_URL, {
+      headers: { accept: "image/png,image/*;q=0.8,*/*;q=0.1" },
+      cache: "no-store",
+    });
+    if (!imageResponse.ok) throw new Error(`Approved image returned HTTP ${imageResponse.status}`);
+    bytes = await imageResponse.arrayBuffer();
+    if (bytes.byteLength <= 0 || bytes.byteLength > MAX_FACEBOOK_IMAGE_BYTES || !isPng(bytes)) {
+      throw new Error("Approved weird-town image is empty, too large, or no longer a PNG");
+    }
+  } catch (error) {
+    return Response.json(
+      {
+        ok: false,
+        posted: false,
+        error: "Approved TexasDefined weird-town image could not be loaded",
+        detail: error instanceof Error ? error.message : String(error),
+        image_url: ONE_TIME_IMAGE_URL,
+      },
+      { status: 502 },
+    );
+  }
+
+  const actualSha = await sha256Hex(bytes);
+  let published: FacebookPublishResult;
+  try {
+    published = await publishFacebookImage({
+      connection,
+      bytes,
+      postText: ONE_TIME_POST_TEXT,
+      filename: "weird-texas-town-names-facebook-2026-09-12.png",
+    });
+  } catch (error) {
+    return Response.json(
+      {
+        ok: false,
+        posted: false,
+        error: error instanceof Error ? error.message : String(error),
+        source_post_id: ONE_TIME_SOURCE_POST_ID,
+        article_url: ONE_TIME_ARTICLE_URL,
+        image_url: ONE_TIME_IMAGE_URL,
+        image_sha256: actualSha,
+        github_run_id: runId,
+      },
+      { status: 502 },
+    );
+  }
+
+  const runUrl = `https://github.com/${REPOSITORY}/actions/runs/${runId}`;
+  let packageId: string | null = null;
+  let recordWarning: string | null = null;
+  try {
+    packageId = await recordPublishedPost({
+      db,
+      postText: ONE_TIME_POST_TEXT,
+      sourcePostId: ONE_TIME_SOURCE_POST_ID,
+      imageSha256: actualSha,
+      artifactUrl: ONE_TIME_IMAGE_URL,
+      runUrl,
+      externalId: published.externalId,
+    });
+  } catch (error) {
+    recordWarning = error instanceof Error ? error.message : String(error);
+    console.error("[TexasDefined Facebook] weird-town post succeeded but history recording failed", recordWarning);
+  }
+
+  return Response.json({
+    ok: true,
+    posted: true,
+    site: "TexasDefined",
+    kind: "article",
+    source_post_id: ONE_TIME_SOURCE_POST_ID,
+    article_url: ONE_TIME_ARTICLE_URL,
+    external_id: published.externalId,
+    facebook_post_id: published.postId,
+    facebook_photo_id: published.photoId,
+    post_url: published.postUrl,
+    post_url_source: published.postUrlSource,
+    package_id: packageId,
+    record_warning: recordWarning,
+    image_sha256: actualSha,
+    image_storage_url: ONE_TIME_IMAGE_URL,
+    github_run_url: runUrl,
+    github_run_id: runId,
+    text_only_fallback: false,
+    generic_fallback: false,
+    posted_at: new Date().toISOString(),
+  });
+}
+
 async function publishTexasDefinedGeneratedImage(request: Request): Promise<Response> {
   const token = bearerToken(request);
   if (!token) {
@@ -156,15 +409,30 @@ async function publishTexasDefinedGeneratedImage(request: Request): Promise<Resp
     }
     oidcRunId = claims.run_id;
   } catch (error) {
-    return Response.json(
-      {
-        ok: false,
-        posted: false,
-        error: "GitHub Actions OIDC verification failed",
-        detail: error instanceof Error ? error.message : String(error),
-      },
-      { status: 403 },
-    );
+    try {
+      const oneTimeClaims = await verifyGitHubActionsOidc({
+        token,
+        audience: OIDC_AUDIENCE,
+        repository: REPOSITORY,
+        workflowPath: ONE_TIME_WORKFLOW_PATH,
+        allowedEventNames: ["push"],
+      });
+      if (typeof oneTimeClaims.run_id !== "string" || !/^\d+$/.test(oneTimeClaims.run_id)) {
+        throw new Error("One-time GitHub Actions OIDC token is missing a valid run ID");
+      }
+      return publishOneTimeWeirdTownArticle(oneTimeClaims.run_id);
+    } catch (oneTimeError) {
+      return Response.json(
+        {
+          ok: false,
+          posted: false,
+          error: "GitHub Actions OIDC verification failed",
+          detail: error instanceof Error ? error.message : String(error),
+          one_time_detail: oneTimeError instanceof Error ? oneTimeError.message : String(oneTimeError),
+        },
+        { status: 403 },
+      );
+    }
   }
 
   let form: FormData;
@@ -302,26 +570,21 @@ async function publishTexasDefinedGeneratedImage(request: Request): Promise<Resp
     );
   }
 
-  const graphUrl = `https://graph.facebook.com/${GRAPH_VERSION}/${encodeURIComponent(String(connection.account_id))}/photos`;
-  const body = new FormData();
-  body.set("access_token", String(connection.access_token));
-  body.set("caption", postText);
-  body.set("source", new Blob([bytes], { type: "image/png" }), imageValue.name);
-
-  const graphResponse = await fetch(graphUrl, { method: "POST", body });
-  const graphJson = (await graphResponse.json().catch(() => ({}))) as {
-    id?: string;
-    post_id?: string;
-    error?: { message?: string };
-  };
-  const externalId = graphJson.post_id ?? graphJson.id ?? null;
-  if (!graphResponse.ok || !externalId) {
+  let published: FacebookPublishResult;
+  try {
+    published = await publishFacebookImage({
+      connection,
+      bytes,
+      postText,
+      filename: imageValue.name,
+    });
+  } catch (error) {
     return Response.json(
       {
         ok: false,
         posted: false,
-        error: graphJson.error?.message ?? `Facebook Graph API returned HTTP ${graphResponse.status}`,
-        requires_connection: graphResponse.status === 401 || graphResponse.status === 403,
+        error: error instanceof Error ? error.message : String(error),
+        requires_connection: false,
         source_post_id: sourcePostId,
         image_sha256: actualSha,
         github_run_id: provenance.runId,
@@ -331,6 +594,10 @@ async function publishTexasDefinedGeneratedImage(request: Request): Promise<Resp
   }
 
   const pageId = String(connection.account_id);
+  const graphJson = {
+    post_id: published.postId ?? undefined,
+    id: published.photoId ?? undefined,
+  };
   const postIdMatch = graphJson.post_id?.match(/^(\d+)_(\d+)$/) ?? null;
   const constructedPostUrl =
     postIdMatch && postIdMatch[1] === pageId
@@ -361,6 +628,11 @@ async function publishTexasDefinedGeneratedImage(request: Request): Promise<Resp
     }
   }
 
+  if (published.postUrl) {
+    postUrl = published.postUrl;
+    postUrlSource = published.postUrlSource;
+  }
+
   let packageId: string | null = null;
   let recordWarning: string | null = null;
   try {
@@ -371,7 +643,7 @@ async function publishTexasDefinedGeneratedImage(request: Request): Promise<Resp
       imageSha256: actualSha,
       artifactUrl,
       runUrl,
-      externalId,
+      externalId: published.externalId,
     });
   } catch (error) {
     recordWarning = error instanceof Error ? error.message : String(error);
@@ -384,7 +656,7 @@ async function publishTexasDefinedGeneratedImage(request: Request): Promise<Resp
     site: "TexasDefined",
     kind: "engagement",
     source_post_id: sourcePostId,
-    external_id: externalId,
+    external_id: published.externalId,
     facebook_post_id: graphJson.post_id ?? null,
     facebook_photo_id: graphJson.id ?? null,
     post_url: postUrl,
