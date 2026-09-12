@@ -2,7 +2,10 @@ name: Verify TexasDefined image receiver production
 
 on:
   workflow_run:
-    workflows: ["Repository test and build health"]
+    workflows:
+      - "Repository test and build health"
+      - "Deploy verified KeepTXRed to Cloudflare"
+      - "Deploy KeepTXRed to Cloudflare Workers"
     types: [completed]
     branches: [main]
   workflow_dispatch:
@@ -28,7 +31,9 @@ jobs:
       RECEIVER_URL: https://keeptxred-site.freddy-coppola.workers.dev/api/public/hooks/publish-texasdefined-generated-image
     steps:
       - name: Wait for matching Cloudflare production deployment
-        if: github.event_name == 'workflow_run'
+        if: >-
+          github.event_name == 'workflow_run' &&
+          github.event.workflow_run.name == 'Repository test and build health'
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
