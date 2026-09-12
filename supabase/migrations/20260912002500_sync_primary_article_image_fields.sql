@@ -18,6 +18,16 @@ BEGIN
 END;
 $$;
 
+-- A later quality-only write must not be able to reintroduce `missing_image`
+-- after a valid featured image is already attached. Recreate the existing trigger
+-- so it also runs whenever quality_flags is explicitly updated.
+DROP TRIGGER IF EXISTS trg_clear_missing_image_when_ready ON public.daily_articles;
+CREATE TRIGGER trg_clear_missing_image_when_ready
+BEFORE INSERT OR UPDATE OF featured_image_url, quality_flags
+ON public.daily_articles
+FOR EACH ROW
+EXECUTE FUNCTION public.clear_missing_image_when_ready();
+
 -- BULK_IMAGE_FIELD_MAINTENANCE
 -- Repair existing canonical/legacy URL drift and stale missing-image flags before
 -- relying on the trigger for future writes. This is operational image metadata
@@ -33,4 +43,4 @@ WHERE featured_image_url IS NOT NULL
   );
 
 COMMENT ON FUNCTION public.clear_missing_image_when_ready() IS
-  'Clears missing_image and synchronizes legacy image_url to the canonical featured_image_url whenever a featured image is attached or replaced.';
+  'Clears missing_image and synchronizes legacy image_url to the canonical featured_image_url whenever a featured image is attached or image-quality flags are updated.';
