@@ -4,6 +4,7 @@ import { HubView } from "@/components/hub-view";
 import { AgedFeedSection } from "@/components/aged-feed-section";
 import { PillarRelationshipNav } from "@/components/pillar-relationship-nav";
 import { TEXAS_REPUBLIC_GOVERNMENT_AUTHORITY_PAGES } from "@/data/texas-republic-government-authority";
+import { buildSeo } from "@/lib/seo";
 
 const HUB = HUBS.find((h) => h.slug === "texas-politics")!;
 const SECTIONS = [
@@ -47,25 +48,26 @@ const POLITICS_TOPICS = [
   { id: "governor-leadership", label: "Governor & Leadership" },
   { id: "voting-policy", label: "Voting & Policy" },
 ];
+const POLITICS_TITLE = "Texas Politics, Elections & Political History";
+const POLITICS_DESCRIPTION = "Coverage of Texas elections, political geography, Republic and state-formation history, political eras, constitutional history, redistricting, voting rights, legislative districts, government, policy trackers, Texas law guides, official data sources, and political developments.";
+
+export function texasPoliticsHead(topic = "") {
+  return buildSeo({
+    title: POLITICS_TITLE,
+    description: POLITICS_DESCRIPTION,
+    path: "/texas-politics",
+    type: "website",
+    imageAlt: "Keep TX Red Texas politics, elections, and political history coverage",
+    noindex: Boolean(topic.trim()),
+  });
+}
 
 export const Route = createFileRoute("/texas-politics/")({
   validateSearch: (search: Record<string, unknown>): { topic?: string } =>
     typeof search.topic === "string" && search.topic ? { topic: search.topic } : {},
   head: ({ match }) => {
     const topic = (match.search as { topic?: string } | undefined)?.topic ?? "";
-    const canonical = "https://keeptxred.com/texas-politics";
-    return {
-      meta: [
-        { title: "Texas Politics — Elections, Government & Political History" },
-        { name: "description", content: "Coverage of Texas elections, political geography, Republic and state-formation history, political eras, constitutional history, redistricting, voting rights, legislative districts, government, policy trackers, Texas law guides, official data sources, and political developments." },
-        { property: "og:title", content: "Texas Politics — Keep TX Red" },
-        { property: "og:description", content: "Texas elections, political geography, Republic and state-formation history, political eras, constitutional history, redistricting, voting rights, districts, government, policy trackers, law guides, official data, and political developments." },
-        { property: "og:url", content: canonical },
-        { property: "og:type", content: "website" },
-        ...(topic ? [{ name: "robots", content: "noindex,follow" }] : []),
-      ],
-      links: [{ rel: "canonical", href: canonical }],
-    };
+    return texasPoliticsHead(topic);
   },
   component: TexasPoliticsPage,
 });

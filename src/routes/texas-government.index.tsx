@@ -4,22 +4,30 @@ import { StatewideOfficePowersComparison } from "@/components/government/Statewi
 import { GOVERNMENT_HISTORY_AUTHORITY_PAGES } from "@/data/texas-government-history-authority";
 import { TEXAS_LOCAL_GOVERNMENT_AUTHORITY_PAGES } from "@/data/texas-local-government-authority";
 import { TEXAS_MUNICIPAL_GOVERNMENT_AUTHORITY_PAGES } from "@/data/texas-municipal-government-authority";
-import { GOVERNMENT_ENTITIES, governmentHubJsonLd, governmentPath, SITE_URL } from "@/lib/texas-government";
+import { GOVERNMENT_ENTITIES, governmentHubJsonLd, governmentPath } from "@/lib/texas-government";
+import { buildSeo } from "@/lib/seo";
 
-const TITLE = "Texas Government: Offices, Leaders, Powers and Elections | KeepTXRed";
+const TITLE = "Texas Government: Offices, Powers & Elections";
 const DESCRIPTION = "Explore Texas government offices, legislative institutions, highest courts, county authority and municipal government, including powers, limits, elections and history.";
 
-export const Route = createFileRoute("/texas-government/")({
-  head: () => ({
-    meta: [
-      { title: TITLE }, { name: "description", content: DESCRIPTION },
-      { property: "og:title", content: TITLE }, { property: "og:description", content: DESCRIPTION },
-      { property: "og:url", content: `${SITE_URL}/texas-government` }, { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: `${SITE_URL}/texas-government` }],
+export function texasGovernmentHead() {
+  const seo = buildSeo({
+    title: TITLE,
+    description: DESCRIPTION,
+    path: "/texas-government",
+    type: "website",
+    imageAlt: "Keep TX Red Texas government offices, powers, and elections",
+  });
+
+  return {
+    meta: seo.meta,
+    links: seo.links,
     scripts: [{ type: "application/ld+json", children: JSON.stringify(governmentHubJsonLd()).replace(/</g, "\\u003c") }],
-  }),
+  };
+}
+
+export const Route = createFileRoute("/texas-government/")({
+  head: texasGovernmentHead,
   component: TexasGovernmentHub,
 });
 
