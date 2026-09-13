@@ -59,8 +59,7 @@ function firstParagraph(bodyJson: unknown): string {
 export function hasHeroVisualReadinessProvenance(note: string | null | undefined): boolean {
   const value = (note ?? "").trim().toLowerCase();
   return value.includes("cloudflare-vision ok:")
-    || value.startsWith("authoritative-image-exempt:")
-    || value.startsWith("verified-shared-hero:");
+    || value.startsWith("authoritative-image-exempt:");
 }
 
 export function isAuthoritativeOfficialGraphic(value: string | null | undefined): boolean {
