@@ -27,7 +27,12 @@ export const KEEP_TX_RED_OWNED_SOURCE_NAMES = new Set([
 ]);
 
 function normalizeSource(source: string | null | undefined): string {
-  return String(source ?? "").trim().toLowerCase();
+  return String(source ?? "")
+    .normalize("NFKC")
+    .replace(/[\u2010-\u2015\u2212]/g, "-")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
 }
 
 function matchesOwnedSourceName(
@@ -35,12 +40,15 @@ function matchesOwnedSourceName(
   ownedNames: Set<string>,
 ): boolean {
   return [...ownedNames].some((name) => {
-    const owned = name.toLowerCase();
-    return (
-      normalized === owned ||
-      normalized.startsWith(`${owned} —`) ||
-      normalized.startsWith(`${owned} -`)
-    );
+    const owned = normalizeSource(name);
+    if (normalized === owned) return true;
+    if (!normalized.startsWith(owned)) return false;
+
+    // Discovery feeds commonly append provider labels with an em/en dash,
+    // hyphen, pipe, or colon. Normalize Unicode dashes above, then require a
+    // real separator so similarly prefixed unrelated source names do not match.
+    const suffix = normalized.slice(owned.length);
+    return /^\s*(?:-|\||:)\s*\S/.test(suffix);
   });
 }
 
