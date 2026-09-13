@@ -1,29 +1,36 @@
-name: One-time delete stale weird-town branches
+name: Finalize stale weird-town branch cleanup
 
 on:
-  workflow_run:
-    workflows:
-      - Repository test and build health
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/one-time-delete-weird-town-stale-refs.yml'
     types:
-      - completed
+      - opened
+      - reopened
+      - synchronize
 
 permissions:
   contents: write
+  pull-requests: read
 
 jobs:
-  delete-stale-refs:
-    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main'
+  finalize-stale-refs:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'cleanup/finalize-weird-town-ref-cleanup-20260913'
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 15
     env:
       GH_TOKEN: ${{ github.token }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      CURRENT_BRANCH: cleanup/finalize-weird-town-ref-cleanup-20260913
     steps:
-      - name: Delete stale weird-town branch refs
+      - name: Delete old refs and remove this cleanup branch after merge
         shell: bash
         run: |
           set -euo pipefail
 
-          branches=(
+          old_branches=(
             'cleanup/remove-weird-town-one-time-publisher'
             'fix/one-time-td-weird-town-facebook-20260912'
             'fix/one-time-td-weird-town-facebook-v2'
@@ -33,8 +40,10 @@ jobs:
             'cleanup/workflow-run-delete-weird-town-stale-refs-20260913'
           )
 
-          for branch in "${branches[@]}"; do
-            api_url="https://api.github.com/repos/${GITHUB_REPOSITORY}/git/refs/heads/${branch}"
+          delete_ref() {
+            local branch="$1"
+            local api_url="https://api.github.com/repos/${GITHUB_REPOSITORY}/git/refs/heads/${branch}"
+            local status
             status=$(curl -sS -o /tmp/delete-ref-response.json -w '%{http_code}' \
               -X DELETE \
               -H "Authorization: Bearer ${GH_TOKEN}" \
@@ -46,15 +55,18 @@ jobs:
               404|422) echo "Already absent or already removed: ${branch}" ;;
               *) cat /tmp/delete-ref-response.json >&2 || true; echo "Failed deleting ${branch}: HTTP ${status}" >&2; exit 1 ;;
             esac
+          }
+
+          for branch in "${old_branches[@]}"; do
+            delete_ref "$branch"
           done
 
-          for branch in "${branches[@]}"; do
-            api_url="https://api.github.com/repos/${GITHUB_REPOSITORY}/git/ref/heads/${branch}"
+          for branch in "${old_branches[@]}"; do
             status=$(curl -sS -o /tmp/verify-ref-response.json -w '%{http_code}' \
               -H "Authorization: Bearer ${GH_TOKEN}" \
               -H 'Accept: application/vnd.github+json' \
               -H 'X-GitHub-Api-Version: 2022-11-28' \
-              "$api_url")
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/git/ref/heads/${branch}")
             if [[ "$status" != "404" ]]; then
               cat /tmp/verify-ref-response.json >&2 || true
               echo "Branch still exists after deletion attempt: ${branch} (HTTP ${status})" >&2
@@ -62,4 +74,36 @@ jobs:
             fi
           done
 
-          echo "All stale weird-town branch refs are absent."
+          echo 'Old stale refs are gone. Waiting only for this cleanup PR to merge.'
+          merged=false
+          for _ in $(seq 1 180); do
+            merged_at=$(curl -fsS \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H 'Accept: application/vnd.github+json' \
+              -H 'X-GitHub-Api-Version: 2022-11-28' \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" | jq -r '.merged_at // empty')
+            if [[ -n "$merged_at" ]]; then
+              merged=true
+              break
+            fi
+            sleep 5
+          done
+
+          if [[ "$merged" != true ]]; then
+            echo 'Cleanup PR did not merge during this run; old stale refs are still confirmed absent.'
+            exit 0
+          fi
+
+          delete_ref "$CURRENT_BRANCH"
+          status=$(curl -sS -o /tmp/self-verify.json -w '%{http_code}' \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'Accept: application/vnd.github+json' \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/git/ref/heads/${CURRENT_BRANCH}")
+          if [[ "$status" != "404" ]]; then
+            cat /tmp/self-verify.json >&2 || true
+            echo "Cleanup branch still exists after merged-PR deletion: HTTP ${status}" >&2
+            exit 1
+          fi
+
+          echo 'All stale weird-town refs, including the final cleanup branch, are absent.'
