@@ -31,6 +31,30 @@ describe("legacy live URL publication validation", () => {
     expect(validator).toContain("clear stale missing_image flags");
   });
 
+  it("allows only governed-ready image alt-label maintenance without hero replacement", () => {
+    const legacyCorrection = readFileSync(
+      "supabase/migrations/20260913210333_correct_validated_photo_alt_labels.sql",
+      "utf8",
+    );
+    const neutralNormalization = readFileSync(
+      "supabase/migrations/20260913210709_normalize_validated_image_alt_labels.sql",
+      "utf8",
+    );
+
+    for (const migration of [legacyCorrection, neutralNormalization]) {
+      expect(migration).toContain("-- BULK_IMAGE_ALT_LABEL_MAINTENANCE");
+      expect(migration).toContain("UPDATE public.daily_articles");
+      expect(migration).toContain("SET image_alt_text = regexp_replace");
+      expect(migration).toContain("image_generation_status = 'ready'");
+      expect(migration).toContain("cloudflare-vision ok:");
+      expect(migration).toContain("stored-cloudflare-vision-v[0-9]+");
+      expect(migration).not.toMatch(/SET[\s\S]{0,400}?featured_image_url\s*=/i);
+    }
+    expect(neutralNormalization).toContain("'Editorial image'");
+    expect(validator).toContain("BULK_IMAGE_ALT_LABEL_MAINTENANCE");
+    expect(validator).toContain("must not replace featured_image_url");
+  });
+
   it("links the restored article from the agriculture pillar", () => {
     const route = readFileSync("src/routes/texas-agriculture.tsx", "utf8");
 
