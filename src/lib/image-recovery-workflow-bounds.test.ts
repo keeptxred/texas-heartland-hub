@@ -35,8 +35,11 @@ describe("image recovery workflow bounds", () => {
   it("uses verified-main workflow completion only for explicit marker sentinel commits", () => {
     expect(backlogWorkflow).toContain('workflows: ["Repository test and build health"]');
     expect(backlogWorkflow).toContain("github.event.workflow_run.conclusion == 'success'");
-    expect(backlogWorkflow).toContain("contains(github.event.workflow_run.head_commit.message, '[run-image-backlog]')");
+    expect(backlogWorkflow).not.toContain("contains(github.event.workflow_run.head_commit.message, '[run-image-backlog]')");
     expect(backlogWorkflow).toContain("MARKER_REF: ${{ github.event.workflow_run.head_sha || github.sha }}");
+    expect(backlogWorkflow).toContain('verified_message=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${MARKER_REF}" --jq \'.commit.message\')');
+    expect(backlogWorkflow).toContain('if [[ "$verified_message" != *"[run-image-backlog]"* ]]; then');
+    expect(backlogWorkflow).toContain("IMAGE_BACKLOG_RECOVERY_SKIP no [run-image-backlog] sentinel");
   });
 
   it("prioritizes AdSense-ready missing-image blockers before ordinary rotation without increasing quota", () => {

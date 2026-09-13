@@ -15,8 +15,10 @@ describe("image recovery OIDC workflow event contract", () => {
     expect(imageWorkflow).toContain("workflow_run:");
     expect(imageWorkflow).toContain('workflows: ["Repository test and build health"]');
     expect(imageWorkflow).toContain("github.event.workflow_run.conclusion == 'success'");
-    expect(imageWorkflow).toContain("contains(github.event.workflow_run.head_commit.message, '[run-image-backlog]')");
+    expect(imageWorkflow).not.toContain("contains(github.event.workflow_run.head_commit.message, '[run-image-backlog]')");
     expect(imageWorkflow).toContain("MARKER_REF: ${{ github.event.workflow_run.head_sha || github.sha }}");
+    expect(imageWorkflow).toContain('verified_message=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${MARKER_REF}" --jq \'.commit.message\')');
+    expect(imageWorkflow).toContain('if [[ "$verified_message" != *"[run-image-backlog]"* ]]; then');
     expect(imageRoute).toContain('allowedEventNames: ["push", "schedule", "workflow_dispatch", "workflow_run"]');
   });
 
