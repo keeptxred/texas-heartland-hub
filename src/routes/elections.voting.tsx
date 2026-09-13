@@ -6,11 +6,13 @@ import { TexasVoterIdReference } from "@/components/elections/voting/TexasVoterI
 import { useElectionRaces } from "@/hooks/elections";
 import { TEXAS_ELECTIONS, formatElectionDate } from "@/lib/election-calendar";
 import { ELECTION_ROUTES } from "@/lib/elections";
+import { formatElectionTitle } from "@/lib/elections/seo";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 
 const MY_VOTER_PORTAL = "https://goelect.txelections.civixapps.com/ivis-mvp-ui/";
 const COUNTY_ELECTION_OFFICES = "https://www.sos.state.tx.us/elections/voter/county.shtml";
 const WHO_REPRESENTS_ME = "https://wrm.capitol.texas.gov/home";
+const VOTING_TITLE = formatElectionTitle("Texas Voting Dates, Voter ID & Ballot Research");
 const calendar2026 = TEXAS_ELECTIONS.filter((election) => election.date.startsWith("2026-"));
 const calendarSource = calendar2026.find((election) => election.source)?.source;
 const calendarVerified = calendar2026.map((election) => election.lastUpdated).sort().at(-1) ?? "Verification pending";
@@ -23,10 +25,10 @@ const votingLogistics = [
 export const Route = createFileRoute("/elections/voting")({
   head: () => ({
     meta: [
-      { title: "Texas Voting Dates, Voter ID, Ballot Research & Official Resources | Keep TX Red" },
+      { title: VOTING_TITLE },
       { name: "description", content: "Review the 2026 Texas election calendar, current voter-ID categories, browse published races by ZIP, county or district, and continue to official Texas voter resources." },
       { name: "robots", content: "index, follow, max-image-preview:large" },
-      { property: "og:title", content: "Texas Voting Dates, Voter ID & Ballot Research | Keep TX Red Election Central" },
+      { property: "og:title", content: VOTING_TITLE },
       { property: "og:url", content: "https://keeptxred.com/elections/voting" },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Keep TX Red" },

@@ -9,6 +9,7 @@ import {
 } from "@/components/elections";
 import { useElectionResult } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
+import { formatElectionTitle } from "@/lib/elections/seo";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { electionSlugs, isElectionSlug } from "@/types/elections";
 
@@ -42,9 +43,9 @@ export const Route = createFileRoute("/elections/results/$resultSlug")({
       record && "description" in record && typeof record.description === "string" && record.description
         ? record.description
         : "Review published Texas election vote totals, reporting, winner, certification, and source information.";
-    const title = indexable
-      ? `${recordName} | KeepTXRed Election Central`
-      : "Election result not found | KeepTXRed";
+    const title = formatElectionTitle(
+      indexable ? `${recordName} Election Central` : "Election result not found",
+    );
 
     return {
       meta: [
