@@ -3,6 +3,7 @@ import {
   buildHeroReadinessSubject,
   hasHeroVisualReadinessProvenance,
   isAuthoritativeOfficialGraphic,
+  isHeroReadinessQuarantined,
   resolveAuditableHeroUrl,
   type ArticleHeroReadinessRow,
 } from "@/lib/article-hero-readiness";
@@ -15,6 +16,7 @@ const REPOSITORY = "keeptxred/texas-heartland-hub";
 const WORKFLOW_PATH = ".github/workflows/article-hero-readiness-audit.yml";
 const MAX_IMAGE_BYTES = 15 * 1024 * 1024;
 const FETCH_TIMEOUT_MS = 45_000;
+const IMAGE_FETCH_USER_AGENT = "KeepTXRed/1.0 (+https://keeptxred.com; editorial image readiness audit)";
 
 type AuditRow = ArticleHeroReadinessRow & {
   published_at: string | null;
@@ -51,6 +53,7 @@ function targetUrl(row: AuditRow): string {
 
 function isEligible(row: AuditRow): boolean {
   if (!row.published_at || !targetUrl(row)) return false;
+  if (isHeroReadinessQuarantined(row)) return false;
   if (row.image_candidate_url?.trim()) return true;
   return (row.image_generation_status ?? "").trim().toLowerCase() === "ready"
     && !hasHeroVisualReadinessProvenance(row.image_validation_note);
@@ -94,7 +97,10 @@ async function fetchHeroBytes(value: string, requestUrl: string): Promise<{ byte
   try {
     const response = await fetch(resolved, {
       redirect: "follow",
-      headers: { Accept: "image/avif,image/webp,image/png,image/jpeg,image/*;q=0.8" },
+      headers: {
+        Accept: "image/avif,image/webp,image/png,image/jpeg,image/*;q=0.8",
+        "User-Agent": IMAGE_FETCH_USER_AGENT,
+      },
       signal: controller.signal,
     });
     if (!response.ok) throw new Error(`Hero fetch HTTP ${response.status}`);
@@ -233,7 +239,7 @@ async function post({ request }: { request: Request }) {
   const url = new URL(request.url);
   const requestedSlug = (url.searchParams.get("slug") ?? "").trim();
   const dryRun = url.searchParams.get("dry") === "1";
-  const repair = url.searchParams.get("repair") !== "0";
+  const repair = url.searchParams.get("repair") === "1";
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   // Generated database types intentionally lag the internal readiness-audit fields.
