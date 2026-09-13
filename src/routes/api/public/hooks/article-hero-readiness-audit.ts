@@ -66,7 +66,12 @@ function isEligible(row: AuditRow): boolean {
   if (!row.published_at || !targetUrl(row)) return false;
   if (isHeroReadinessQuarantined(row)) return false;
   if (row.image_candidate_url?.trim()) return true;
-  return (row.image_generation_status ?? "").trim().toLowerCase() === "ready"
+
+  // Historical rows can still carry a canonical hero even after an earlier
+  // generation/validator attempt marked the row failed. Those images must not
+  // escape the governed stored-hero audit merely because their status is failed.
+  const status = (row.image_generation_status ?? "").trim().toLowerCase();
+  return (status === "ready" || status === "failed")
     && !hasHeroVisualReadinessProvenance(row.image_validation_note);
 }
 
