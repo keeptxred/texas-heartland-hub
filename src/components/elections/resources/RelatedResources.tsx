@@ -16,7 +16,7 @@ export interface RelatedResourcesProps {
 export function RelatedResources({
   resources,
   title = "Helpful election resources",
-  description = "Use these KeepTXRed guides and tools to prepare for the next Texas election.",
+  description = "Use these Keep TX Red guides and tools to prepare for the next Texas election.",
   className = "",
   compact = false,
 }: RelatedResourcesProps) {
@@ -28,7 +28,7 @@ export function RelatedResources({
       className={`rounded-xl border border-border bg-card p-6 shadow-sm ${className}`.trim()}
     >
       <div>
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">KeepTXRed guides</p>
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Keep TX Red guides</p>
         <h2 id="related-election-resources" className="mt-2 font-display text-3xl leading-none tracking-tight text-foreground">
           {title}
         </h2>

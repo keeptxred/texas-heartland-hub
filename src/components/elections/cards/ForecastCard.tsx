@@ -138,7 +138,7 @@ export function ForecastCard({
 
       {relatedLinks.length > 0 && (
         <nav aria-label="Related forecast resources" className="mt-5 rounded-lg bg-muted/40 p-4">
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">Related KeepTXRed resources</p>
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">Related Keep TX Red resources</p>
           <ul className="mt-3 space-y-2">
             {relatedLinks.map((link) => (
               <li key={`${link.href}-${link.label}`}>

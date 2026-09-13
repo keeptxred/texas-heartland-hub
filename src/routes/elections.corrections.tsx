@@ -48,7 +48,7 @@ function ElectionCorrectionsPage() {
             href="/contact"
             className="mt-4 inline-flex rounded-lg bg-red-700 px-4 py-2.5 font-semibold text-white hover:bg-red-600"
           >
-            Contact KeepTXRed
+            Contact Keep TX Red
           </a>
         </section>
         <section>

@@ -43,7 +43,7 @@ export function ElectionPollListPage({
       <div className="space-y-8">
         <header className="max-w-3xl">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
-            KeepTXRed Election Central
+            Keep TX Red Election Central
           </p>
           <h2 className="mt-3 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
             Texas election polls
@@ -72,9 +72,9 @@ export function ElectionPollListPage({
               Texas polling source network
             </h2>
             <p className="mt-3 leading-7 text-muted-foreground">
-              KeepTXRed reviews original pollster releases and cross-checks major public indexes,
+              Keep TX Red reviews original pollster releases and cross-checks major public indexes,
               including RealClearPolling. Aggregator pages help identify missing polls; their
-              averages are not copied into the KeepTXRed average. Every poll shown below links to
+              averages are not copied into the Keep TX Red average. Every poll shown below links to
               its original topline or methodology source.
             </p>
           </div>

@@ -53,7 +53,7 @@ function CandidateDirectoryPrimer() {
       </h2>
       <div className="mt-4 max-w-4xl space-y-4 text-sm leading-7 text-muted-foreground sm:text-base">
         <p>
-          KeepTXRed Election Central organizes published Texas candidate records around the election
+          Keep TX Red Election Central organizes published Texas candidate records around the election
           races in which those candidates appear. Candidate profiles are connected to statewide,
           congressional, Texas House, Texas Senate, county, and local race pages so readers can move
           from a candidate name to the office, district, filing status, party, incumbency status, and
@@ -140,7 +140,7 @@ export function ElectionCandidateListPage({
       <div className="space-y-8">
         <header className="max-w-3xl">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
-            KeepTXRed Election Central
+            Keep TX Red Election Central
           </p>
           <h2 className="mt-3 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
             Texas election candidates

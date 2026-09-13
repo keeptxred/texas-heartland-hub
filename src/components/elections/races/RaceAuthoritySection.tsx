@@ -104,7 +104,7 @@ export function RaceAuthoritySection({ race }: RaceAuthoritySectionProps) {
 
       <CitationTrustPanel
         sources={sources}
-        methodology="KeepTXRed publishes this race from verified election records, keeps district geography separate from address-specific ballot assignment, and normalizes recurring election dates and status fields across race pages. Polling, forecasts, and editorial analysis are displayed in separate sections and are not treated as primary-source race facts."
+        methodology="Keep TX Red publishes this race from verified election records, keeps district geography separate from address-specific ballot assignment, and normalizes recurring election dates and status fields across race pages. Polling, forecasts, and editorial analysis are displayed in separate sections and are not treated as primary-source race facts."
         lastVerified={`${formatDate((race.lastCheckedAt ?? "").slice(0, 10))}. Freshness status: ${race.freshnessStatus}.`}
       />
     </section>

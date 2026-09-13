@@ -33,7 +33,7 @@ export function ElectionDirectoryTrustPanel({ kind }: { kind: ElectionDirectoryK
     <CitationTrustPanel
       sources={[
         { name: 'Texas Secretary of State — Elections', url: 'https://www.sos.state.tx.us/elections/', note: 'Primary statewide election administration and official election-resource entry point.' },
-        { name: 'KeepTXRed Election Central methodology', url: 'https://keeptxred.com/elections/methodology', note: 'Normalization, verification, polling and publication rules used by Election Central.' },
+        { name: 'Keep TX Red Election Central methodology', url: 'https://keeptxred.com/elections/methodology', note: 'Normalization, verification, polling and publication rules used by Election Central.' },
       ]}
       methodology={METHODOLOGY[kind]}
       lastVerified={lastVerified}

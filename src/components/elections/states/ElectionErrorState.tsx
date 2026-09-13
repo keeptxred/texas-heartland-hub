@@ -99,7 +99,7 @@ const DEFAULT_SECONDARY_ACTIONS: readonly ElectionErrorAction[] = [
   {
     label: "Register to vote",
     href: "/register-to-vote",
-    description: "Use the KeepTXRed voter registration guide.",
+    description: "Use the Keep TX Red voter registration guide.",
   },
 ];
 

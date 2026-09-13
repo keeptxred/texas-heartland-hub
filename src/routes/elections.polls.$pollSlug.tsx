@@ -108,7 +108,7 @@ function ElectionPollDetailRoute() {
     <ElectionRepositoryProvider>
       <ElectionLayout
         title="Texas Election Poll"
-        description="Verified poll details from KeepTXRed Election Central."
+        description="Verified poll details from Keep TX Red Election Central."
         indexable={indexable}
         canonicalUrl={indexable ? `https://keeptxred.com/elections/polls/${pollSlug}` : undefined}
         navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.polls} />}

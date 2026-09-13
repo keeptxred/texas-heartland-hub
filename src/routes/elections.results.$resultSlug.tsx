@@ -118,7 +118,7 @@ function ElectionResultDetailRoute() {
     <ElectionRepositoryProvider>
       <ElectionLayout
         title="Texas Election Result"
-        description="Published result details from KeepTXRed Election Central."
+        description="Published result details from Keep TX Red Election Central."
         indexable={indexable}
         canonicalUrl={indexable ? `https://keeptxred.com/elections/results/${resultSlug}` : undefined}
         navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.results} />}

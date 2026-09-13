@@ -18,10 +18,10 @@ export interface ElectionFreshnessConfig {
 
 export const ELECTION_CENTRAL_CONFIG = {
   brand: {
-    name: "KeepTXRed Election Central",
+    name: "Keep TX Red Election Central",
     shortName: "Election Central",
     description:
-      "Texas election races, candidates, polling, forecasts, voting information, and results from KeepTXRed.",
+      "Texas election races, candidates, polling, forecasts, voting information, and results from Keep TX Red.",
     siteUrl: "https://keeptxred.com",
     defaultSocialImage: "/images/elections/election-central-social.jpg",
   },

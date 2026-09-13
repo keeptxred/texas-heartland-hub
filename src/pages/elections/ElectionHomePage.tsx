@@ -277,7 +277,7 @@ export function ElectionHomePage() {
         <RelatedResources
           resources={VERIFIED_RESOURCES}
           title="Popular Texas election resources"
-          description="Use these KeepTXRed guides alongside the source-backed race, candidate, poll, forecast, and results directories."
+          description="Use these Keep TX Red guides alongside the source-backed race, candidate, poll, forecast, and results directories."
         />
 
         <section aria-labelledby="election-central-start">

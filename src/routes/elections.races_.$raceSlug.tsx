@@ -161,7 +161,7 @@ function ElectionRaceDetailRoute() {
     <ElectionRepositoryProvider>
       <ElectionLayout
         title="Texas Election Race"
-        description="Verified race details from KeepTXRed Election Central."
+        description="Verified race details from Keep TX Red Election Central."
         indexable={indexable}
         canonicalUrl={indexable ? `https://keeptxred.com/elections/races/${canonicalSlug}` : undefined}
         navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.races} />}

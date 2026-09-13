@@ -33,7 +33,7 @@ export function ElectionResultsListPage({
       <div className="space-y-8">
         <header className="max-w-3xl">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
-            KeepTXRed Election Central
+            Keep TX Red Election Central
           </p>
           <h2 className="mt-3 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
             Texas election results

@@ -47,7 +47,7 @@ export function TexasVoterIdReference() {
       <CitationTrustPanel
         className="mt-8"
         sources={[{ name: 'VoteTexas — Identification Requirements for Voting', url: VOTER_ID_URL, note: 'Official Texas Secretary of State voter-ID guidance.' }]}
-        methodology="KeepTXRed reproduces the current high-level ID categories from VoteTexas for orientation and deliberately sends exception, expiration, disability-exemption and provisional-ballot questions back to the official guidance rather than shortening those rules into voter-specific legal advice."
+        methodology="Keep TX Red reproduces the current high-level ID categories from VoteTexas for orientation and deliberately sends exception, expiration, disability-exemption and provisional-ballot questions back to the official guidance rather than shortening those rules into voter-specific legal advice."
         lastVerified="August 11, 2026"
         title="Voter-ID source and verification"
       />

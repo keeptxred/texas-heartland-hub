@@ -36,7 +36,7 @@ export const TEXAS_POLLING_REFERENCE_SOURCES: readonly PollingReferenceSource[] 
     url: "https://keeptxred.com/elections/methodology",
     role: "primary",
     description:
-      "KeepTXRed publishes a poll only after checking the original topline or methodology release.",
+      "Keep TX Red publishes a poll only after checking the original topline or methodology release.",
   },
 ] as const;
 

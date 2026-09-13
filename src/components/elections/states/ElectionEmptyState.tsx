@@ -130,7 +130,7 @@ export const ELECTION_EMPTY_STATE_PRESETS: Record<ElectionEmptyStateKind, Electi
       {
         label: "Return to editorial dashboard",
         href: "/admin",
-        description: "Manage the broader KeepTXRed publishing workflow.",
+        description: "Manage the broader Keep TX Red publishing workflow.",
       },
     ],
   },

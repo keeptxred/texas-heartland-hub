@@ -60,7 +60,7 @@ function Page() {
             Poll discovery includes original pollster releases, university polling archives, and
             major public aggregators such as RealClearPolling. Aggregators are treated as discovery
             and coverage-audit sources—not as substitutes for an original topline, questionnaire,
-            or methodology statement. A poll enters the KeepTXRed dataset only after its reported
+            or methodology statement. A poll enters the Keep TX Red dataset only after its reported
             figures and field information can be traced to a source record.
           </p>
           <p className="mt-2">

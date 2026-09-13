@@ -212,7 +212,7 @@ function ElectionCandidateDetailRoute() {
     <ElectionRepositoryProvider>
       <ElectionLayout
         title="Texas Election Candidate"
-        description="Verified candidate details from KeepTXRed Election Central."
+        description="Verified candidate details from Keep TX Red Election Central."
         indexable={indexable}
         canonicalUrl={
           indexable ? `https://keeptxred.com/elections/candidates/${canonicalSlug}` : undefined
