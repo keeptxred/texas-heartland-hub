@@ -10,6 +10,9 @@ export type PublicArticleCandidate = {
   content_quality_score?: number | null;
   body_json?: unknown;
   quality_flags?: string[] | null;
+  image_url?: string | null;
+  featured_image_url?: string | null;
+  image_generation_status?: string | null;
 };
 
 type SourceShape = {
@@ -56,6 +59,7 @@ const MIN_PUBLIC_CONTENT_QUALITY_SCORE = 70;
 const RESTORED_LEGACY_MIN_MAIN_WORDS = 500;
 const MIN_REPETITION_PARAGRAPH_CHARS = 120;
 const MAX_DUPLICATE_PARAGRAPH_OCCURRENCES = 2;
+const BRANDED_IMAGE_FALLBACK_RE = /(?:^|\/)og\/default\.jpg(?:[?#].*)?$/i;
 
 /**
  * Discovery/UGC hosts can help editors find a story, but they are not sufficient
@@ -147,6 +151,26 @@ function isRetiredKtrCategory(value: string | null | undefined): boolean {
   return RETIRED_KTR_DISPLAY_CATEGORIES.has((value ?? "").trim().toLowerCase());
 }
 
+/**
+ * Image readiness is enforced only when a caller actually loaded image fields.
+ * That keeps this shared predicate backward compatible for non-display joins,
+ * while public article feeds/indexability can fail closed on missing, failed, or
+ * deliberately neutral branded fallback imagery.
+ */
+export function hasGovernedPublicArticleImage(article: PublicArticleCandidate): boolean {
+  const hasImageUrl = Object.prototype.hasOwnProperty.call(article, "image_url");
+  const hasFeatured = Object.prototype.hasOwnProperty.call(article, "featured_image_url");
+  const hasStatus = Object.prototype.hasOwnProperty.call(article, "image_generation_status");
+  if (!hasImageUrl && !hasFeatured && !hasStatus) return true;
+
+  const featured = (article.featured_image_url ?? "").trim();
+  const legacy = (article.image_url ?? "").trim();
+  const canonical = featured || legacy;
+  if (!canonical || BRANDED_IMAGE_FALLBACK_RE.test(canonical)) return false;
+  if (hasStatus && (article.image_generation_status ?? "").trim().toLowerCase() !== "ready") return false;
+  return true;
+}
+
 export function isPublicArticleReady(article: PublicArticleCandidate): boolean {
   if (hasSeoDuplicateFlag(article.quality_flags)) return false;
   if ((article.quality_flags ?? []).includes("legacy_url_restored") && articleMainWordCount(article.body_json as never) < RESTORED_LEGACY_MIN_MAIN_WORDS) return false;
@@ -155,6 +179,7 @@ export function isPublicArticleReady(article: PublicArticleCandidate): boolean {
   if (isTexasDefinedDiscoverCategory(article.discover_category)) return false;
   if ((article.content_quality_score ?? 0) < MIN_PUBLIC_CONTENT_QUALITY_SCORE) return false;
   if (duplicateParagraphOccurrences(article.body_json) > MAX_DUPLICATE_PARAGRAPH_OCCURRENCES) return false;
+  if (!hasGovernedPublicArticleImage(article)) return false;
 
   const sourceRefs = sourceReferenceCount(article.body_json);
   if (!article.source_url && sourceRefs === 0) return false;
