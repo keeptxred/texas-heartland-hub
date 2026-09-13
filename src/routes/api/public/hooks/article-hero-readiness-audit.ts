@@ -17,7 +17,8 @@ const WORKFLOW_PATH = ".github/workflows/article-hero-readiness-audit.yml";
 const MAX_IMAGE_BYTES = 15 * 1024 * 1024;
 const FETCH_TIMEOUT_MS = 45_000;
 const IMAGE_FETCH_USER_AGENT = "KeepTXRed/1.0 (+https://keeptxred.com; editorial image readiness audit)";
-const STORED_HERO_POLICY_VERSION = "v2";
+const STORED_HERO_POLICY_VERSION = "v3";
+const DATA_CENTER_STORY_RE = /\b(data center(?:s)?|data-center(?:s)?|server farm(?:s)?|hyperscale)\b/i;
 
 type AuditRow = ArticleHeroReadinessRow & {
   published_at: string | null;
@@ -60,16 +61,15 @@ function isEligible(row: AuditRow): boolean {
     && !hasHeroVisualReadinessProvenance(row.image_validation_note);
 }
 
-function isStrictDataCenterStory(row: AuditRow): boolean {
-  return buildHeroReadinessSubject(row).title === "Texas data-center and electrical infrastructure";
+function isDataCenterStory(row: AuditRow): boolean {
+  return DATA_CENTER_STORY_RE.test(`${row.title} ${row.dek ?? ""}`);
 }
 
 function riskPriority(row: AuditRow): number {
-  // The original production defect was a generic building on a data-center
-  // story. Keep that physical-subject class ahead of the broad historical
-  // backlog while v1 quarantines are rechecked under the representative-photo
-  // v2 policy.
-  if (isStrictDataCenterStory(row)) return 0;
+  // Keep data-center coverage at the front because the original production
+  // defect was metadata-correct but visually unreadable facility photography.
+  // v2 rejects are deliberately rechecked under the entity-aware v3 policy.
+  if (isDataCenterStory(row)) return 0;
   if (row.image_candidate_url?.trim()) return 1;
   const note = (row.image_validation_note ?? "").toLowerCase();
   if (note.includes("primary-subject remediation")) return 2;
@@ -271,7 +271,7 @@ async function post({ request }: { request: Request }) {
       slugs: queue.map((row) => row.slug),
       primarySubjectRemediations: queue.filter((row) => (row.image_validation_note ?? "").toLowerCase().includes("primary-subject remediation")).length,
       candidates: queue.filter((row) => Boolean(row.image_candidate_url?.trim())).length,
-      strictDataCenterStories: queue.filter(isStrictDataCenterStory).length,
+      dataCenterStories: queue.filter(isDataCenterStory).length,
       storedHeroPolicy: STORED_HERO_POLICY_VERSION,
       scope: "all_published_hero_candidates_without_visual_readiness_provenance",
     });
@@ -290,7 +290,15 @@ async function post({ request }: { request: Request }) {
 
     const fetched = await fetchHeroBytes(candidate, request.url);
     const subject = buildHeroReadinessSubject(row);
-    const verdict = await validateStoredHeroMatchesArticle(fetched.bytes, fetched.contentType, subject);
+    const verdict = await validateStoredHeroMatchesArticle(
+      fetched.bytes,
+      fetched.contentType,
+      subject,
+      {
+        candidateUrl: candidate,
+        candidateAltText: row.image_candidate_alt_text?.trim() || row.image_alt_text?.trim() || null,
+      },
+    );
     if (verdict.matches) {
       const result = await acceptValidatedHero(db, row, candidate, verdict.reason);
       return Response.json({ ok: true, slug: row.slug, candidate, finalUrl: fetched.finalUrl, validation: verdict.reason, ...result });
