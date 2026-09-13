@@ -6,6 +6,7 @@ on:
     paths:
       - 'supabase/migrations/**'
       - '.github/workflows/apply-supabase-migrations.yml'
+      - 'scripts/verify-supabase-migration-parity.sh'
   workflow_dispatch:
     inputs:
       dry_run_only:
@@ -40,11 +41,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: supabase/setup-cli@v1
-        with:
-          version: latest
-
-      - name: Select direct database or linked-project transport
+      - name: Select migration transport or read-only parity verification
         id: transport
         shell: bash
         run: |
@@ -62,10 +59,14 @@ jobs:
             exit 0
           fi
 
-          echo 'No Supabase migration transport is configured.' >&2
-          echo 'Preferred fix: add repository secret SUPABASE_DB_URL using the Supabase Session Pooler URI from Project > Connect.' >&2
-          echo 'This direct database path does not require SUPABASE_ACCESS_TOKEN.' >&2
-          exit 1
+          echo 'mode=verify-only' >> "$GITHUB_OUTPUT"
+          echo 'No database write transport is configured; using the public read-only migration ledger verifier.'
+          echo 'This mode succeeds only when every repository migration is already present in production.'
+
+      - uses: supabase/setup-cli@v1
+        if: steps.transport.outputs.mode != 'verify-only'
+        with:
+          version: latest
 
       - name: Link production project for legacy transport
         if: steps.transport.outputs.mode == 'linked'
@@ -75,10 +76,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [[ "${{ steps.transport.outputs.mode }}" == 'db-url' ]]; then
+          mode='${{ steps.transport.outputs.mode }}'
+          if [[ "$mode" == 'db-url' ]]; then
             supabase db push --db-url "$SUPABASE_DB_URL" --include-all --dry-run
-          else
+          elif [[ "$mode" == 'linked' ]]; then
             supabase db push --linked --password "$SUPABASE_DB_PASSWORD" --include-all --dry-run
+          else
+            bash scripts/verify-supabase-migration-parity.sh
           fi
 
       - name: Apply pending production migrations
@@ -86,10 +90,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [[ "${{ steps.transport.outputs.mode }}" == 'db-url' ]]; then
+          mode='${{ steps.transport.outputs.mode }}'
+          if [[ "$mode" == 'db-url' ]]; then
             supabase db push --db-url "$SUPABASE_DB_URL" --include-all
-          else
+          elif [[ "$mode" == 'linked' ]]; then
             supabase db push --linked --password "$SUPABASE_DB_PASSWORD" --include-all
+          else
+            echo 'Read-only parity is already exact; no database write is required.'
           fi
 
       - name: Verify migration state
@@ -97,8 +104,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [[ "${{ steps.transport.outputs.mode }}" == 'db-url' ]]; then
+          mode='${{ steps.transport.outputs.mode }}'
+          if [[ "$mode" == 'db-url' ]]; then
             supabase migration list --db-url "$SUPABASE_DB_URL"
-          else
+          elif [[ "$mode" == 'linked' ]]; then
             supabase migration list --linked --password "$SUPABASE_DB_PASSWORD"
+          else
+            bash scripts/verify-supabase-migration-parity.sh
           fi
