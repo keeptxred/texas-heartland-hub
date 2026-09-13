@@ -15,6 +15,7 @@ const OIDC_AUDIENCE = "keeptxred-newsroom";
 const REPOSITORY = "keeptxred/texas-heartland-hub";
 const WORKFLOW_PATH = ".github/workflows/article-hero-readiness-audit.yml";
 const MAX_IMAGE_BYTES = 15 * 1024 * 1024;
+const COMMONS_AUDIT_WIDTH = 1600;
 const FETCH_TIMEOUT_MS = 45_000;
 const SOURCE_METADATA_TIMEOUT_MS = 15_000;
 const IMAGE_FETCH_USER_AGENT = "KeepTXRed/1.0 (+https://keeptxred.com; editorial image readiness audit)";
@@ -26,6 +27,13 @@ type AuditRow = ArticleHeroReadinessRow & {
   updated_at: string | null;
   image_validation_history: unknown;
   quality_flags: string[] | null;
+};
+
+type CommonsAuditInfo = {
+  sourceMetadata: string | null;
+  auditImageUrl: string | null;
+  originalByteSize: number | null;
+  originalMime: string | null;
 };
 
 function bearerToken(request: Request): string | null {
@@ -139,16 +147,19 @@ export function commonsFileTitle(value: string): string | null {
   }
 }
 
-async function fetchCommonsSourceMetadata(value: string): Promise<string | null> {
+async function fetchCommonsAuditInfo(value: string): Promise<CommonsAuditInfo> {
   const title = commonsFileTitle(value);
-  if (!title) return null;
+  if (!title) {
+    return { sourceMetadata: null, auditImageUrl: null, originalByteSize: null, originalMime: null };
+  }
 
   const endpoint = new URL("https://commons.wikimedia.org/w/api.php");
   endpoint.searchParams.set("action", "query");
   endpoint.searchParams.set("format", "json");
   endpoint.searchParams.set("formatversion", "2");
   endpoint.searchParams.set("prop", "imageinfo");
-  endpoint.searchParams.set("iiprop", "extmetadata");
+  endpoint.searchParams.set("iiprop", "extmetadata|url|size|mime");
+  endpoint.searchParams.set("iiurlwidth", String(COMMONS_AUDIT_WIDTH));
   endpoint.searchParams.set("titles", title);
 
   const controller = new AbortController();
@@ -158,19 +169,25 @@ async function fetchCommonsSourceMetadata(value: string): Promise<string | null>
       headers: { Accept: "application/json", "User-Agent": IMAGE_FETCH_USER_AGENT },
       signal: controller.signal,
     });
-    if (!response.ok) return null;
+    if (!response.ok) {
+      return { sourceMetadata: null, auditImageUrl: null, originalByteSize: null, originalMime: null };
+    }
     const payload = await response.json() as {
       query?: {
         pages?: Array<{
           title?: string;
           imageinfo?: Array<{
             extmetadata?: Record<string, { value?: string }>;
+            thumburl?: string;
+            size?: number;
+            mime?: string;
           }>;
         }>;
       };
     };
     const page = payload.query?.pages?.[0];
-    const metadata = page?.imageinfo?.[0]?.extmetadata ?? {};
+    const imageInfo = page?.imageinfo?.[0];
+    const metadata = imageInfo?.extmetadata ?? {};
     const parts = [
       page?.title ? `File: ${page.title.replace(/^File:/i, "").trim()}` : "",
       metadata.ObjectName?.value ? `Object: ${cleanMetadata(metadata.ObjectName.value)}` : "",
@@ -178,9 +195,14 @@ async function fetchCommonsSourceMetadata(value: string): Promise<string | null>
       metadata.Categories?.value ? `Categories: ${cleanMetadata(metadata.Categories.value)}` : "",
     ].filter(Boolean);
     const combined = parts.join(" | ").replace(/\s+/g, " ").trim();
-    return combined ? combined.slice(0, 1400) : null;
+    return {
+      sourceMetadata: combined ? combined.slice(0, 1400) : null,
+      auditImageUrl: imageInfo?.thumburl?.trim() || null,
+      originalByteSize: Number.isFinite(imageInfo?.size) ? Number(imageInfo?.size) : null,
+      originalMime: imageInfo?.mime?.trim().toLowerCase() || null,
+    };
   } catch {
-    return null;
+    return { sourceMetadata: null, auditImageUrl: null, originalByteSize: null, originalMime: null };
   } finally {
     clearTimeout(timeout);
   }
@@ -376,10 +398,9 @@ async function post({ request }: { request: Request }) {
       return Response.json({ ok: true, slug: row.slug, candidate, ...result });
     }
 
-    const [fetched, sourceMetadata] = await Promise.all([
-      fetchHeroBytes(candidate, request.url),
-      fetchCommonsSourceMetadata(candidate),
-    ]);
+    const commonsAudit = await fetchCommonsAuditInfo(candidate);
+    const auditImageUrl = commonsAudit.auditImageUrl || candidate;
+    const fetched = await fetchHeroBytes(auditImageUrl, request.url);
     const subject = buildHeroReadinessSubject(row);
     const verdict = await validateStoredHeroMatchesArticle(
       fetched.bytes,
@@ -388,16 +409,39 @@ async function post({ request }: { request: Request }) {
       {
         candidateUrl: candidate,
         candidateAltText: row.image_candidate_alt_text?.trim() || row.image_alt_text?.trim() || null,
-        sourceMetadata,
+        sourceMetadata: commonsAudit.sourceMetadata,
       },
     );
+    const auditDerivativeUsed = auditImageUrl !== candidate;
     if (verdict.matches) {
       const result = await acceptValidatedHero(db, row, candidate, verdict.reason);
-      return Response.json({ ok: true, slug: row.slug, candidate, finalUrl: fetched.finalUrl, sourceMetadataUsed: Boolean(sourceMetadata), validation: verdict.reason, ...result });
+      return Response.json({
+        ok: true,
+        slug: row.slug,
+        candidate,
+        finalUrl: fetched.finalUrl,
+        auditDerivativeUsed,
+        sourceOriginalBytes: commonsAudit.originalByteSize,
+        sourceOriginalMime: commonsAudit.originalMime,
+        sourceMetadataUsed: Boolean(commonsAudit.sourceMetadata),
+        validation: verdict.reason,
+        ...result,
+      });
     }
 
     const result = await rejectHero(db, row, candidate, verdict.reason, repair);
-    return Response.json({ ok: true, slug: row.slug, candidate, finalUrl: fetched.finalUrl, sourceMetadataUsed: Boolean(sourceMetadata), validation: verdict.reason, ...result });
+    return Response.json({
+      ok: true,
+      slug: row.slug,
+      candidate,
+      finalUrl: fetched.finalUrl,
+      auditDerivativeUsed,
+      sourceOriginalBytes: commonsAudit.originalByteSize,
+      sourceOriginalMime: commonsAudit.originalMime,
+      sourceMetadataUsed: Boolean(commonsAudit.sourceMetadata),
+      validation: verdict.reason,
+      ...result,
+    });
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error);
     try {
