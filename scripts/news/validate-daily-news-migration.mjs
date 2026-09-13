@@ -20,6 +20,7 @@ for (const file of files) {
   const isBulkContentStructureRemediation = /^\s*--\s*BULK_CONTENT_STRUCTURE_REMEDIATION\s*$/im.test(sql);
   const isBulkArticleMaintenance = /^\s*--\s*BULK_ARTICLE_MAINTENANCE\s*$/im.test(sql);
   const isBulkImageFieldMaintenance = /^\s*--\s*BULK_IMAGE_FIELD_MAINTENANCE\s*$/im.test(sql);
+  const isBulkImageAltLabelMaintenance = /^\s*--\s*BULK_IMAGE_ALT_LABEL_MAINTENANCE\s*$/im.test(sql);
 
   if (isInsert) {
     if (!/SELECT\s+slug\s*,\s*'\/news\/'\s*\|\|\s*slug/i.test(sql)) {
@@ -82,7 +83,23 @@ for (const file of files) {
     if (!safelyScoped) errors.push('BULK_IMAGE_FIELD_MAINTENANCE must be update-only, synchronize image_url from featured_image_url, clear stale missing_image flags, and use non-empty/drift-or-flag guards');
   }
 
-  const contentOnlyRemediation = isBulkCategoryReclassification || isBulkContentStructureRemediation || isBulkArticleMaintenance || isBulkImageFieldMaintenance;
+  if (isBulkImageAltLabelMaintenance) {
+    const allowedTarget = /'Editorial (?:news photograph|image)'/i.test(sql);
+    const safelyScoped =
+      isUpdate &&
+      !isInsert &&
+      /SET\s+image_alt_text\s*=\s*regexp_replace/i.test(sql) &&
+      /image_generation_status\s*=\s*'ready'/i.test(sql) &&
+      /image_validation_note/i.test(sql) &&
+      /cloudflare-vision\s+ok:/i.test(sql) &&
+      /stored-cloudflare-vision-v\[0-9\]/i.test(sql) &&
+      /image_alt_text[\s\S]*?ILIKE\s*'Editorial illustration%'/i.test(sql) &&
+      allowedTarget &&
+      !/SET[\s\S]{0,400}?featured_image_url\s*=/i.test(sql);
+    if (!safelyScoped) errors.push('BULK_IMAGE_ALT_LABEL_MAINTENANCE must be update-only, change only governed-ready image_alt_text medium labels to an allowed editorial label, require Cloudflare visual-readiness provenance, and must not replace featured_image_url');
+  }
+
+  const contentOnlyRemediation = isBulkCategoryReclassification || isBulkContentStructureRemediation || isBulkArticleMaintenance || isBulkImageFieldMaintenance || isBulkImageAltLabelMaintenance;
   if (!contentOnlyRemediation && (!/featured_image_url/i.test(sql) || !/image_alt_text/i.test(sql))) {
     errors.push('published article image changes must include featured_image_url and image_alt_text');
   }
@@ -90,14 +107,14 @@ for (const file of files) {
   const imageRefs = [...sql.matchAll(/(?:https:\/\/|\/images\/news\/)[^'$\s)]+/gi)].map((match) => match[0]);
   if (imageRefs.some((ref) => /\.svg(?:\b|\?|#|&)/i.test(ref))) errors.push('SVG hero images are not allowed for published news; use a real raster photograph or photorealistic editorial image');
   if (/image\/svg\+xml/i.test(sql)) errors.push('SVG image content types are not allowed for published news');
-  if (/(?:editorial\s+illustration|vector\s+illustration|generic\s+illustration|placeholder\s+image)/i.test(sql)) errors.push('placeholder/vector/illustration hero imagery is not allowed for published news');
+  if (!isBulkImageAltLabelMaintenance && /(?:editorial\s+illustration|vector\s+illustration|generic\s+illustration|placeholder\s+image)/i.test(sql)) errors.push('placeholder/vector/illustration hero imagery is not allowed for published news');
 
   const valuesSlugs = [...sql.matchAll(/\('((?:live-)?(?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)'\s*,/g)].map((match) => match[1]);
   const selectSlugs = [...sql.matchAll(/SELECT\s+'((?:live-)?(?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)'\s*::\s*text\s+slug\b/gi)].map((match) => match[1]);
   const dollarSlugs = [...sql.matchAll(/SELECT\s+\$slug\$((?:live-)?(?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)\$slug\$\s*::\s*text\s+slug\b/gi)].map((match) => match[1]);
   const whereSlugs = [...sql.matchAll(/WHERE\s+(?:[a-z_]+\.)?slug\s*=\s*'((?:live-)?(?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)'/gi)].map((match) => match[1]);
   const slugs = [...valuesSlugs, ...selectSlugs, ...dollarSlugs, ...whereSlugs];
-  if (!slugs.length && !isBulkImageRemediation && !isBulkCategoryReclassification && !isBulkContentStructureRemediation && !isBulkArticleMaintenance && !isBulkImageFieldMaintenance) errors.push('could not find any dated article slugs in the publication input');
+  if (!slugs.length && !isBulkImageRemediation && !isBulkCategoryReclassification && !isBulkContentStructureRemediation && !isBulkArticleMaintenance && !isBulkImageFieldMaintenance && !isBulkImageAltLabelMaintenance) errors.push('could not find any dated article slugs in the publication input');
   if (new Set(slugs).size !== slugs.length) errors.push('duplicate article slug found in migration');
 
   if (errors.length) {
@@ -105,7 +122,7 @@ for (const file of files) {
     console.error(`\n${file}: INVALID`);
     for (const error of errors) console.error(`  - ${error}`);
   } else {
-    const detail = isBulkImageRemediation ? 'bulk image remediation' : isBulkCategoryReclassification ? 'bulk category reclassification' : isBulkContentStructureRemediation ? 'bulk content structure remediation' : isBulkArticleMaintenance ? 'scoped article maintenance' : isBulkImageFieldMaintenance ? 'bulk image field maintenance' : `${slugs.length} article slug${slugs.length === 1 ? '' : 's'}`;
+    const detail = isBulkImageRemediation ? 'bulk image remediation' : isBulkCategoryReclassification ? 'bulk category reclassification' : isBulkContentStructureRemediation ? 'bulk content structure remediation' : isBulkArticleMaintenance ? 'scoped article maintenance' : isBulkImageFieldMaintenance ? 'bulk image field maintenance' : isBulkImageAltLabelMaintenance ? 'bulk image alt-label maintenance' : `${slugs.length} article slug${slugs.length === 1 ? '' : 's'}`;
     console.log(`${file}: valid (${detail})`);
   }
 }
