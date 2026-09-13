@@ -6,6 +6,12 @@ import { parseVisionVerdict, type SubjectExtract } from "./featured-image-core";
 
 const VALIDATION_ATTEMPTS = 2;
 const REQUEST_TIMEOUT_MS = 45_000;
+const DATA_CENTER_RE = /\b(data center(?:s)?|data-center(?:s)?|server farm(?:s)?|hyperscale)\b/i;
+
+export type StoredHeroIdentityHint = {
+  candidateUrl?: string | null;
+  candidateAltText?: string | null;
+};
 
 function endpoint(accountId: string): string {
   return `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(accountId)}/ai/run/${CLOUDFLARE_VISION_MODEL}`;
@@ -41,10 +47,14 @@ function normalizeMime(value: string | null | undefined): string {
   return "image/jpeg";
 }
 
-function isStrictDataCenterSubject(subject: SubjectExtract): boolean {
-  return subject.title === "Texas data-center and electrical infrastructure"
-    || /\bdata[- ]center\b/i.test(subject.title)
-      && /plain brick|industrial cooling equipment|server campus|electrical substation/i.test(subject.concreteSubject);
+function isDataCenterSubject(subject: SubjectExtract): boolean {
+  return DATA_CENTER_RE.test(`${subject.title} ${subject.concreteSubject}`);
+}
+
+function identityHintText(hint: StoredHeroIdentityHint | undefined): string {
+  const alt = hint?.candidateAltText?.replace(/\s+/g, " ").trim();
+  if (!alt) return "";
+  return `Trusted editorial identity hint for the visible subject: ${alt.slice(0, 420)}`;
 }
 
 /**
@@ -53,18 +63,16 @@ function isStrictDataCenterSubject(subject: SubjectExtract): boolean {
  * venue, product, institution, or affected infrastructure can be a strong hero
  * even when a camera cannot literally show an abstract vote, appointment,
  * investigation, roster decision, score, controversy, or policy change.
- *
- * Data-center coverage remains intentionally stricter because a generic boxy
- * building was the original failure mode: visible infrastructure must prove the
- * physical subject from the pixels themselves.
  */
 export function storedHeroEditorialGuidance(subject: SubjectExtract): string {
-  if (isStrictDataCenterSubject(subject)) {
+  if (isDataCenterSubject(subject)) {
     return [
-      "STRICT DATA-CENTER STORED-HERO RULE:",
-      "The image must visibly read as data-center or electrical-infrastructure photography from the pixels themselves.",
-      "Require concrete cues such as industrial cooling equipment, server-facility structures, substations, transformers, transmission equipment, generator or utility infrastructure, or a clearly visible server-hall context.",
-      "A plain brick, office-like, residential-looking, warehouse-like, or windowless building exterior with no visible data-center infrastructure must fail even if metadata, filename, caption, or editor knowledge identifies it as a data center.",
+      "DATA-CENTER STORED-HERO RULE:",
+      "There are two valid editorial paths.",
+      "PATH A — CENTRAL ENTITY: a real photograph of a central named person, agency, institution, company, regulator, venue, or other concrete entity that the headline/story is materially about can pass without also showing server equipment. A portrait, operator-at-work scene, headquarters, or other truthful entity photo must still visibly be the kind of subject the identity hint claims it is.",
+      "PATH B — PHYSICAL INFRASTRUCTURE: a facility or infrastructure photograph used to represent the data center itself must visibly read as data-center, server, cooling, grid, or electrical infrastructure from the pixels. Look for industrial cooling equipment, server-facility structures, substations, transformers, transmission equipment, generator or utility infrastructure, or clearly visible server-hall context.",
+      "A plain brick, office-like, residential-looking, warehouse-like, or windowless building exterior with no visible data-center infrastructure must fail under PATH B even if metadata, filename, caption, or editor knowledge identifies it as a data center.",
+      "Editorial identity metadata may confirm the exact identity of an already-visible person, agency, institution, team, company, or facility, but it cannot turn the wrong visual type or a generic scene into a match.",
     ].join(" ");
   }
 
@@ -73,6 +81,7 @@ export function storedHeroEditorialGuidance(subject: SubjectExtract): string {
       "STORED SPORTS PHOTO RULE:",
       "A real archive photograph is a direct representative match when it clearly depicts the named team or athlete, or unmistakably depicts the exact sport in a truthful team/game/practice context central to the story.",
       "Do not require the exact historical game, exact score, exact roster decision, exact date, or exact play to be visible.",
+      "A trusted identity hint may confirm which team or athlete is visibly present, but the image must still visibly show the relevant sport, athlete, team context, or game/practice setting.",
       "Reject unrelated sports, stadium-only or crowd-only association when the sport itself is absent, and generic stock scenes with no meaningful connection to the named team, athlete, or sport.",
     ].join(" ");
   }
@@ -82,6 +91,7 @@ export function storedHeroEditorialGuidance(subject: SubjectExtract): string {
       "STORED CIVIC PHOTO RULE:",
       "A real photograph of the named policymaker, court, public agency, governing institution, official venue, or concrete policy target is a direct representative match.",
       "Do not require an invisible appointment, vote, investigation, lawsuit, budget action, tax change, hearing outcome, or policy decision to be literally visible in the frame.",
+      "A trusted identity hint may confirm the exact identity of an otherwise visually plausible official person, agency, institution, or venue.",
       "Reject unrelated capitol/courthouse/government stock imagery when neither the named institution, person, place, nor concrete policy target is actually represented.",
     ].join(" ");
   }
@@ -91,6 +101,7 @@ export function storedHeroEditorialGuidance(subject: SubjectExtract): string {
       "STORED CULTURE PHOTO RULE:",
       "A real photograph of the named artist, performer, restaurant, festival, venue, cultural object, or exact activity is a direct representative match.",
       "It need not document the exact moment described in the article.",
+      "A trusted identity hint may confirm the exact identity of a visibly plausible artist, performer, restaurant, venue, or cultural subject.",
       "Reject generic city skylines, unrelated venues, instruments, food, or crowd scenes that omit the named or defining cultural subject.",
     ].join(" ");
   }
@@ -108,6 +119,7 @@ export function storedHeroEditorialGuidance(subject: SubjectExtract): string {
     "STORED EDITORIAL PHOTO RULE:",
     "A real archive photograph is a direct representative match when it clearly depicts a named person, organization, agency, institution, team, venue, product, animal, infrastructure, place, or other concrete entity that is central to the article.",
     "A camera does not need to literally visualize an abstract appointment, vote, budget change, tax action, investigation, ranking, delay, dispute, controversy, statistic, business decision, or other invisible action when the central real-world entity or physical subject is truthfully shown.",
+    "A trusted identity hint may confirm the exact identity of a visibly plausible central entity, but it cannot make generic symbolism or the wrong visual type pass.",
     "Reject loose topical association, generic symbolism, unrelated buildings, generic stock scenes, or location-only imagery when the article's central concrete entity or physical subject is absent.",
   ].join(" ");
 }
@@ -123,6 +135,7 @@ export async function validateStoredHeroMatchesArticle(
   bytes: Uint8Array,
   contentType: string | null | undefined,
   subject: SubjectExtract,
+  identityHint?: StoredHeroIdentityHint,
 ): Promise<{ matches: boolean; reason: string }> {
   const mime = normalizeMime(contentType);
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
@@ -133,18 +146,20 @@ export async function validateStoredHeroMatchesArticle(
 
   const image = `data:${mime};base64,${bytesToBase64(bytes)}`;
   const guidance = storedHeroEditorialGuidance(subject);
+  const identity = identityHintText(identityHint);
   const prompt = [
     `Article title: "${subject.title}"`,
     `Article domain: ${subject.domain}`,
     `Primary visual subject: ${subject.concreteSubject}`,
+    identity,
     "Evaluate the supplied STORED editorial photograph, not a newly generated illustration.",
     guidance,
     "Treat a clearly visible central named entity or concrete physical subject as primary-subject evidence even when the headline also describes an abstract action that cannot be photographed directly.",
-    "Filename, source metadata, hidden captions, and editor knowledge do not count as visual evidence for what appears in the frame.",
+    "The trusted editorial identity hint may be used only to resolve WHO or WHAT an already-visible plausible subject is. It cannot substitute for visible semantic fit, and it cannot make a generic building, generic room, unrelated person, unrelated sport, or wrong physical subject pass.",
     "Judge whether the image is a truthful representative editorial visual for the article. Do not require proof that it was captured at the exact historical event unless the story itself is specifically about a unique visual incident and the image claims to depict that incident.",
     "photorealistic=false for illustration, vector art, cartoon, poster, icon, graphic design, collage, infographic, or synthetic placeholder imagery unless the governed article policy explicitly allows editorial illustration. For ordinary news photography, require a real or convincingly photographic scene.",
     "Return exactly one JSON object with boolean matches, boolean photorealistic, and string reason. No Markdown or surrounding prose.",
-  ].join("\n");
+  ].filter(Boolean).join("\n");
 
   const schema = {
     type: "object",
@@ -168,7 +183,7 @@ export async function validateStoredHeroMatchesArticle(
           messages: [
             {
               role: "system",
-              content: "You are an editorial-photo quality reviewer. For stored archive photography, accept truthful representative photos of the article's central real entity or concrete subject without demanding a literal depiction of an invisible decision. Apply any explicitly strict subject rule in the user prompt. Return only the requested JSON verdict.",
+              content: "You are an editorial-photo quality reviewer. For stored archive photography, accept truthful representative photos of the article's central real entity or concrete subject without demanding a literal depiction of an invisible decision. A supplied editorial identity hint may confirm the exact identity of an already-visible plausible subject, but may never substitute for visible semantic fit. Apply any explicitly strict physical-subject rule in the user prompt. Return only the requested JSON verdict.",
             },
             {
               role: "user",
