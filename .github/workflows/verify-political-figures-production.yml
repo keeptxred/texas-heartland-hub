@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
+      PREVIEW_URL: https://keeptxred-site.freddy-coppola.workers.dev
       PRODUCTION_URL: https://keeptxred.com
 
     steps:
@@ -55,37 +56,53 @@ jobs:
               --fail-with-body --silent --show-error \
               -H "Authorization: Bearer $GH_TOKEN" \
               -H "Accept: application/vnd.github+json" \
-              "https://api.github.com/repos/$REPOSITORY/actions/workflows/deploy-cloudflare-after-verify.yml/runs?branch=main&head_sha=$TARGET_SHA&per_page=10")"
+              "https://api.github.com/repos/$REPOSITORY/actions/runs?head_sha=$TARGET_SHA&per_page=100")"
 
-            read -r status conclusion < <(python3 - "$runs_json" <<'PY'
+            read -r successful active matching statuses < <(python3 - "$runs_json" <<'PY'
           import json, sys
           data = json.loads(sys.argv[1])
-          runs = data.get("workflow_runs") or []
-          if not runs:
-              print("missing missing")
-          else:
-              run = runs[0]
-              print(run.get("status") or "missing", run.get("conclusion") or "pending")
+          runs = [
+              run for run in (data.get("workflow_runs") or [])
+              if run.get("name") == "Deploy verified KeepTXRed to Cloudflare"
+          ]
+          successful = any(
+              run.get("status") == "completed" and run.get("conclusion") == "success"
+              for run in runs
+          )
+          active = any(run.get("status") in {"queued", "in_progress", "waiting", "requested", "pending"} for run in runs)
+          states = ",".join(
+              f'{run.get("status") or "missing"}:{run.get("conclusion") or "pending"}'
+              for run in runs[:10]
+          ) or "none"
+          print(str(successful).lower(), str(active).lower(), len(runs), states)
           PY
             )
 
-            if [[ "$status" == "completed" && "$conclusion" == "success" ]]; then
+            if [[ "$successful" == "true" ]]; then
               echo "run_smoke=true" >> "$GITHUB_OUTPUT"
               echo "Verified Cloudflare deployment completed for $TARGET_SHA."
               exit 0
             fi
 
-            if [[ "$status" == "completed" && "$conclusion" != "success" ]]; then
-              echo "Cloudflare deployment for $TARGET_SHA completed with conclusion '$conclusion'." >&2
-              exit 1
-            fi
-
-            echo "Waiting for Cloudflare deployment of $TARGET_SHA (attempt $attempt/90; status=$status)."
+            echo "Waiting for a successful Cloudflare deployment of $TARGET_SHA (attempt $attempt/90; matching=$matching; active=$active; states=$statuses)."
             sleep 10
           done
 
-          echo "Timed out waiting for verified Cloudflare deployment of $TARGET_SHA." >&2
+          echo "Timed out waiting for a successful verified Cloudflare deployment of $TARGET_SHA." >&2
           exit 1
+
+      - name: Verify production hostname edge
+        if: steps.gate.outputs.run_smoke == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --retry 10 --retry-delay 3 --retry-all-errors \
+            --fail-with-body --silent --show-error --max-time 30 \
+            -A 'KeepTXRed-production-smoke/3.0' \
+            -o /tmp/keeptxred-robots.txt \
+            "$PRODUCTION_URL/robots.txt"
+          test -s /tmp/keeptxred-robots.txt
+          echo "PASS production edge $PRODUCTION_URL/robots.txt"
 
       - name: Checkout verified revision
         if: steps.gate.outputs.run_smoke == 'true'
@@ -112,6 +129,7 @@ jobs:
           cat > .political-figures-production-smoke.mjs <<'JS'
           import { chromium } from "@playwright/test";
 
+          const preview = process.env.PREVIEW_URL ?? "https://keeptxred-site.freddy-coppola.workers.dev";
           const production = process.env.PRODUCTION_URL ?? "https://keeptxred.com";
           const profiles = [
             ["/texas-politics/figures/don-huffines-texas-comptroller-profile", "Don Huffines", "comptroller.texas.gov"],
@@ -124,21 +142,21 @@ jobs:
           const browser = await chromium.launch({ channel: "chrome", headless: true });
           try {
             const context = await browser.newContext({
-              userAgent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/152 Safari/537.36 KeepTXRed-production-smoke/2.0",
+              userAgent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/152 Safari/537.36 KeepTXRed-production-smoke/3.0",
             });
 
             for (const [path, expectedName, sourceDomain] of profiles) {
               const page = await context.newPage();
-              const url = `${production}${path}`;
+              const url = `${preview}${path}`;
               const response = await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60_000 });
               if (!response || !response.ok()) {
-                throw new Error(`${path}: expected HTTP 2xx, received ${response?.status() ?? "no response"}`);
+                throw new Error(`${path}: expected deployed Worker HTTP 2xx, received ${response?.status() ?? "no response"}`);
               }
 
               await page.waitForLoadState("networkidle", { timeout: 15_000 }).catch(() => {});
               const title = await page.title();
               if (/just a moment|attention required|verify you are human/i.test(title)) {
-                throw new Error(`${path}: production edge returned a browser challenge instead of the page (title=${JSON.stringify(title)})`);
+                throw new Error(`${path}: deployed Worker returned a browser challenge instead of the page (title=${JSON.stringify(title)})`);
               }
 
               const h1 = page.locator("h1").first();
@@ -165,7 +183,7 @@ jobs:
                 throw new Error(`${path}: missing rendered official source link for ${sourceDomain}`);
               }
 
-              console.log(`PASS ${path} | HTTP=${response.status()} | H1=${JSON.stringify(h1Text)} | canonical=${canonical} | source=${sourceDomain}`);
+              console.log(`PASS ${path} | WorkerHTTP=${response.status()} | H1=${JSON.stringify(h1Text)} | canonical=${canonical} | source=${sourceDomain}`);
               await page.close();
             }
           } finally {
