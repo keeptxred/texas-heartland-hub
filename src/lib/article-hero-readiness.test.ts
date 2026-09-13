@@ -122,6 +122,10 @@ describe("article hero visual readiness", () => {
     const requestUrl = "https://keeptxred-site.freddy-coppola.workers.dev/api/public/hooks/article-hero-readiness-audit";
     expect(resolveAuditableHeroUrl("/api/public/article-image/example.jpg", requestUrl)?.hostname).toContain("workers.dev");
     expect(resolveAuditableHeroUrl("https://commons.wikimedia.org/wiki/Special:Redirect/file/example.jpg", requestUrl)?.hostname).toBe("commons.wikimedia.org");
+    expect(resolveAuditableHeroUrl("https://upload.wikimedia.org/wikipedia/commons/a/ab/example.jpg", requestUrl)?.hostname).toBe("upload.wikimedia.org");
+    expect(resolveAuditableHeroUrl("https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/example.jpg/1600px-example.jpg", requestUrl)?.hostname).toBe("thumb.wikimedia.org");
+    expect(resolveAuditableHeroUrl("https://meta.wikimedia.org/wiki/example", requestUrl)).toBeNull();
+    expect(resolveAuditableHeroUrl("https://evil.thumb.wikimedia.org.example.com/example.jpg", requestUrl)).toBeNull();
     expect(resolveAuditableHeroUrl("https://example.com/hotlinked.jpg", requestUrl)).toBeNull();
     expect(resolveAuditableHeroUrl("http://commons.wikimedia.org/example.jpg", requestUrl)).toBeNull();
   });

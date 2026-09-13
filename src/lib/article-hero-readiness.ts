@@ -5,6 +5,7 @@ const DATA_CENTER_SUBJECT_RE = /\b(data center(?:s)?|data-center(?:s)?|server fa
 const AUDITABLE_EXTERNAL_HOSTS = new Set([
   "commons.wikimedia.org",
   "upload.wikimedia.org",
+  "thumb.wikimedia.org",
   "raw.githubusercontent.com",
   "keeptxred.com",
   "www.keeptxred.com",
