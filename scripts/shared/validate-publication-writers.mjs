@@ -52,6 +52,10 @@ const maintenanceWriters = new Map([
     'src/routes/api/public/hooks/finalize-newsroom-article.ts',
     ['body_json', 'normalizeNewsroomWhyThisMatters', 'generateFeaturedImageForSlugDirect'],
   ],
+  [
+    'src/routes/api/public/hooks/article-hero-readiness-audit.ts',
+    ['image_candidate_url', 'image_validation_history', 'validateStoredHeroMatchesArticle'],
+  ],
 ]);
 const allowedWriterSet = new Set([...writers, ...maintenanceWriters.keys()]);
 const sharedWriters = new Set([
