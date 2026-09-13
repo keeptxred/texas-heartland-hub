@@ -5,7 +5,7 @@ describe("image backlog recovery publication boundary", () => {
   it("keeps recovery published-only and quality-gated while including blocked legacy assets", () => {
     const source = fs.readFileSync(new URL("../routes/api/public/hooks/image-backlog-recovery.ts", import.meta.url), "utf8");
     const eligibleStart = source.indexOf("function isEligible");
-    const eligibleEnd = source.indexOf("function priority");
+    const eligibleEnd = source.indexOf("function isAlreadyRecovered");
     const eligibleSource = source.slice(eligibleStart, eligibleEnd);
 
     expect(eligibleSource).toContain("if (!row.published_at) return false;");
@@ -20,7 +20,25 @@ describe("image backlog recovery publication boundary", () => {
     expect(source).toContain('.eq("image_ready", false)');
     expect(source).toContain("byAdSensePriority");
     expect(source).toContain("adsensePriorityResult.error");
-    expect(source).toContain("adsense_ready_missing_first_then_missing_or_legacy_published_quality_article_images");
+    expect(source).toContain("RECOVERY_SCOPE");
+  });
+
+  it("makes force-marker retries idempotent only for governed-ready published heroes", () => {
+    const source = fs.readFileSync(new URL("../routes/api/public/hooks/image-backlog-recovery.ts", import.meta.url), "utf8");
+    const recoveredStart = source.indexOf("function isAlreadyRecovered");
+    const recoveredEnd = source.indexOf("function priority");
+    const recoveredSource = source.slice(recoveredStart, recoveredEnd);
+
+    expect(recoveredSource).toContain("if (!row?.published_at) return false;");
+    expect(recoveredSource).toContain("meetsArticleMainWordCount");
+    expect(recoveredSource).toContain("isLegacyGeneratedNewsAsset(imageUrl)");
+    expect(recoveredSource).toContain('!== "ready"');
+    expect(recoveredSource).toContain("hasHeroVisualReadinessProvenance(row.image_validation_note)");
+    expect(source).toContain('reason: "already-ready"');
+    expect(source).toContain("processed: 0");
+    expect(source).toContain("skipped: 1");
+    expect(source).toContain('.eq("slug", requestedSlug)');
+    expect(source).toContain("Slug is not currently an eligible published image-recovery backlog item");
   });
 
   it("returns only stale published missing-image generation leases through the registered image writer", () => {

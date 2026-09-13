@@ -23,12 +23,16 @@ describe("image recovery workflow bounds", () => {
     }
   });
 
-  it("caps force-marker repair at four exact eligible slugs", () => {
+  it("caps force-marker repair at four exact slugs and permits safe partial-batch retries", () => {
     expect(backlogWorkflow).toContain('if [[ "${GITHUB_EVENT_NAME}" == "push" || "${GITHUB_EVENT_NAME}" == "workflow_run" ]]; then');
     expect(backlogWorkflow).toContain("max_per_run=4");
     expect(backlogWorkflow).toContain("force-image-backlog-recovery?ref=${MARKER_REF}");
     expect(backlogWorkflow).toContain("slug:[[:space:]]*");
-    expect(backlogWorkflow).toContain("Target slug is not currently eligible for image recovery");
+    expect(backlogWorkflow).toContain('slugs=("${marker_slugs[@]}")');
+    expect(backlogWorkflow).toContain("idempotent success");
+    expect(backlogWorkflow).not.toContain("Target slug is not currently eligible for image recovery");
+    expect(backlogWorkflow).toContain("skipped=0");
+    expect(backlogWorkflow).toContain(".skipped == 1");
     expect(adsenseWorkflow).not.toContain("max_per_run=4");
   });
 

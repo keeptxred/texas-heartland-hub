@@ -114,13 +114,12 @@ jobs:
               echo "Force-marker repair exceeds the ${max_per_run}-article safety cap." >&2
               exit 1
             fi
+            # Keep the exact marker set intact on retries. The protected Worker
+            # endpoint treats a previously recovered, governed-ready slug as an
+            # idempotent success, while typos/unpublished/non-governed rows still
+            # fail closed with 409. This lets a partially successful four-item
+            # batch resume without regenerating the rows that already passed.
             slugs=("${marker_slugs[@]}")
-            for slug in "${slugs[@]}"; do
-              if ! jq -e --arg slug "$slug" '.slugs | index($slug) != null' /tmp/image-backlog-dry.json >/dev/null; then
-                echo "Target slug is not currently eligible for image recovery: ${slug}" >&2
-                exit 1
-              fi
-            done
           }
 
           # Ordinary background passes remain capped at one article. When the
@@ -155,6 +154,7 @@ jobs:
 
           failures=0
           succeeded=0
+          skipped=0
           processed=0
 
           for slug in "${slugs[@]}"; do
@@ -175,12 +175,15 @@ jobs:
             processed=$((processed + 1))
             if [[ "$status" == "200" ]] && jq -e '.ok == true and .failed == 0' "$output" >/dev/null 2>&1; then
               succeeded=$((succeeded + 1))
+              if jq -e '.skipped == 1' "$output" >/dev/null 2>&1; then
+                skipped=$((skipped + 1))
+              fi
             else
               failures=$((failures + 1))
             fi
           done
 
-          echo "IMAGE_BACKLOG_RECOVERY_TOTAL ready_at_start=${ready} processed=${processed} succeeded=${succeeded} failures=${failures}"
+          echo "IMAGE_BACKLOG_RECOVERY_TOTAL ready_at_start=${ready} processed=${processed} succeeded=${succeeded} skipped=${skipped} failures=${failures}"
           if [[ "$failures" -gt 0 ]]; then
             echo 'At least one requested image failed the existing production quality gate; retaining failures for diagnosis.' >&2
             exit 1
