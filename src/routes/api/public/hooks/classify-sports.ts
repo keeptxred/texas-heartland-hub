@@ -1,6 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { classifySportsText, sportsKindForText, SPORTS_TOPIC_SLUGS } from "@/lib/sports-taxonomy";
-import { resolveSportsCategory } from "@/lib/sports-category-policy";
+import {
+  applySportsTaxonomyAutoLock,
+  clearSportsTaxonomyAutoLock,
+  resolveSportsCategory,
+} from "@/lib/sports-category-policy";
 
 const GENERIC_OR_SPORTS_CATEGORIES = new Set([
   "",
@@ -70,6 +74,7 @@ async function handler() {
         discover_category: null,
         teams: [] as string[],
         keywords: cleanedKeywords(row.keywords),
+        quality_flags: clearSportsTaxonomyAutoLock(flags),
       };
       const { error: updateError } = await supabaseAdmin.from("daily_articles").update(update).eq("slug", row.slug);
       if (updateError) continue;
@@ -96,6 +101,7 @@ async function handler() {
         discover_category: null,
         teams: [] as string[],
         keywords: cleanedKeywords(row.keywords),
+        quality_flags: clearSportsTaxonomyAutoLock(flags),
       };
       const { error: updateError } = await supabaseAdmin.from("daily_articles").update(update).eq("slug", row.slug);
       if (updateError) continue;
@@ -108,12 +114,14 @@ async function handler() {
     const teams = classification.teams;
     const topics = classification.topics.filter((topic) => topic !== "latest" && topic !== "trending");
     const keywords = Array.from(new Set([...cleanedKeywords(row.keywords), ...topics])).slice(0, 24);
+    const resolvedCategory = resolveSportsCategory(row.category, kind, classification.leagues, flags.includes("taxonomy_locked"), text);
     const update = {
       kind,
-      category: resolveSportsCategory(row.category, kind, classification.leagues, flags.includes("taxonomy_locked"), text),
+      category: resolvedCategory,
       discover_category: "Sports",
       teams,
       keywords,
+      quality_flags: applySportsTaxonomyAutoLock(flags, resolvedCategory),
     };
     const { error: updateError } = await supabaseAdmin.from("daily_articles").update(update).eq("slug", row.slug);
     if (updateError) continue;
