@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { duplicateParagraphOccurrences, isPublicArticleReady } from "@/lib/public-article-readiness";
+import {
+  duplicateParagraphOccurrences,
+  hasGovernedPublicArticleImage,
+  isPublicArticleReady,
+} from "@/lib/public-article-readiness";
 
 const base = {
   category: "Legislature",
@@ -25,6 +29,18 @@ function bodyWithMainWords(words: number) {
 describe("public article readiness floor", () => {
   it("allows a sourced, substantive, non-quarantined article", () => {
     expect(isPublicArticleReady(base)).toBe(true);
+  });
+
+  it("requires governed image state when image fields were loaded", () => {
+    expect(hasGovernedPublicArticleImage({
+      ...base,
+      image_url: "/api/public/article-image/example.jpg",
+      featured_image_url: "/api/public/article-image/example.jpg",
+      image_generation_status: "ready",
+    })).toBe(true);
+    expect(isPublicArticleReady({ ...base, image_url: null, featured_image_url: null, image_generation_status: "pending" })).toBe(false);
+    expect(isPublicArticleReady({ ...base, image_url: "/story.jpg", featured_image_url: "/story.jpg", image_generation_status: "failed" })).toBe(false);
+    expect(isPublicArticleReady({ ...base, image_url: "/og/default.jpg", featured_image_url: "/og/default.jpg", image_generation_status: "ready" })).toBe(false);
   });
 
   it("blocks Non-Political taxonomy until it is corrected", () => {

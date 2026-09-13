@@ -12,6 +12,9 @@ const readyRow = {
     sources: [{ label: "Texas Legislature", url: "https://capitol.texas.gov/" }],
   },
   quality_flags: [] as string[],
+  image_url: "/api/public/article-image/legislature-example.jpg",
+  featured_image_url: "/api/public/article-image/legislature-example.jpg",
+  image_generation_status: "ready",
 };
 
 describe("shouldNoindexCloudArticle", () => {
@@ -36,5 +39,11 @@ describe("shouldNoindexCloudArticle", () => {
     expect(shouldNoindexCloudArticle({ ...readyRow, category: "Non-Political" }, true)).toBe(true);
     expect(shouldNoindexCloudArticle({ ...readyRow, content_quality_score: 59 }, true)).toBe(true);
     expect(shouldNoindexCloudArticle({ ...readyRow, source_url: null, body_json: { updated: readyRow.published_at, sources: [] } }, true)).toBe(true);
+  });
+
+  it("noindexes missing, failed, and branded-fallback article images", () => {
+    expect(shouldNoindexCloudArticle({ ...readyRow, featured_image_url: null, image_url: null }, true)).toBe(true);
+    expect(shouldNoindexCloudArticle({ ...readyRow, image_generation_status: "failed" }, true)).toBe(true);
+    expect(shouldNoindexCloudArticle({ ...readyRow, featured_image_url: "/og/default.jpg", image_url: "/og/default.jpg" }, true)).toBe(true);
   });
 });
