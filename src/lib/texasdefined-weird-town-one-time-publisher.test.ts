@@ -44,4 +44,19 @@ describe("one-time TexasDefined weird-town Facebook publisher", () => {
       expect(source).toContain(marker);
     }
   });
+
+  it("uses the proven public-URL Facebook photo upload after validating the approved PNG", () => {
+    for (const marker of [
+      'headers: { "content-type": "application/json" }',
+      "url: IMAGE_URL",
+      "caption: POST_TEXT",
+      "access_token: pageToken",
+      "const imageSha256 = await sha256Hex(bytes)",
+      "facebook_error_code",
+    ]) {
+      expect(source).toContain(marker);
+    }
+    expect(source).not.toContain('body.set("source"');
+    expect(source).not.toContain("new Blob([bytes]");
+  });
 });
