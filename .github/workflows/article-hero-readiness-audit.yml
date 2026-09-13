@@ -52,21 +52,30 @@ jobs:
             printf '%s' "$token"
           }
 
-          ready=-1
-          for attempt in $(seq 1 12); do
+          probe_queue() {
+            local output="$1"
+            local oidc_token status
             oidc_token=$(issue_oidc_token)
-            status=$(curl -sS -X POST -o /tmp/hero-readiness-dry.json -w '%{http_code}' \
+            status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
               --max-time 60 \
               -H 'accept: application/json' \
               -H "Authorization: Bearer ${oidc_token}" \
               "${endpoint}?dry=1" || echo 000)
-            echo "hero-readiness probe ${attempt}/12 HTTP ${status}"
-            cat /tmp/hero-readiness-dry.json 2>/dev/null || true
-            echo
-            if [[ "$status" == "200" ]] && jq -e '.ok == true and .dryRun == true' /tmp/hero-readiness-dry.json >/dev/null 2>&1; then
+            [[ "$status" == "200" ]] && jq -e '.ok == true and .dryRun == true' "$output" >/dev/null 2>&1
+          }
+
+          ready=-1
+          for attempt in $(seq 1 12); do
+            if probe_queue /tmp/hero-readiness-dry.json; then
               ready=$(jq -r '.ready // 0' /tmp/hero-readiness-dry.json)
+              echo "hero-readiness probe ${attempt}/12 HTTP 200"
+              cat /tmp/hero-readiness-dry.json
+              echo
               break
             fi
+            echo "hero-readiness probe ${attempt}/12 not ready"
+            cat /tmp/hero-readiness-dry.json 2>/dev/null || true
+            echo
             sleep 20
           done
 
@@ -75,7 +84,7 @@ jobs:
             exit 1
           fi
           if [[ "$ready" -eq 0 ]]; then
-            echo 'ARTICLE_HERO_READINESS_SUCCESS ready=0; every published hero has governed provenance.'
+            echo 'ARTICLE_HERO_READINESS_SUCCESS ready=0; every published hero has governed provenance or has already been quarantined for image recovery.'
             exit 0
           fi
 
@@ -101,10 +110,10 @@ jobs:
             encoded_slug=$(jq -rn --arg value "$slug" '$value|@uri')
             output="/tmp/hero-readiness-${processed}.json"
             status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
-              --max-time 600 \
+              --max-time 180 \
               -H 'accept: application/json' \
               -H "Authorization: Bearer ${oidc_token}" \
-              "${endpoint}?slug=${encoded_slug}&repair=1" || echo 000)
+              "${endpoint}?slug=${encoded_slug}&repair=0" || echo 000)
             echo "hero slug=${slug} HTTP ${status}"
             cat "$output" 2>/dev/null || true
             echo
@@ -123,8 +132,20 @@ jobs:
             fi
           done
 
-          echo "ARTICLE_HERO_READINESS_TOTAL ready_at_start=${ready} processed=${processed} accepted=${accepted} repaired=${repaired} quarantined=${quarantined} failures=${failures}"
+          ready_end=-1
+          if probe_queue /tmp/hero-readiness-final.json; then
+            ready_end=$(jq -r '.ready // -1' /tmp/hero-readiness-final.json)
+          fi
+          echo "ARTICLE_HERO_READINESS_TOTAL ready_at_start=${ready} ready_at_end=${ready_end} processed=${processed} accepted=${accepted} repaired=${repaired} quarantined=${quarantined} failures=${failures}"
           if [[ "$failures" -gt 0 ]]; then
             echo 'One or more audit requests failed at the endpoint level; successful rows remain committed and the next hourly pass will continue.' >&2
+            exit 1
+          fi
+          if [[ "$ready_end" -lt 0 ]]; then
+            echo 'Final hero-readiness convergence probe failed.' >&2
+            exit 1
+          fi
+          if [[ "$ready_end" -ge "$ready" ]]; then
+            echo 'Hero-readiness queue did not shrink; failing to prevent a silent retry loop.' >&2
             exit 1
           fi

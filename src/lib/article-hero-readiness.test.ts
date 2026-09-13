@@ -3,6 +3,7 @@ import {
   buildHeroReadinessSubject,
   hasHeroVisualReadinessProvenance,
   isAuthoritativeOfficialGraphic,
+  isHeroReadinessQuarantined,
   resolveAuditableHeroUrl,
 } from "./article-hero-readiness";
 
@@ -19,6 +20,22 @@ describe("article hero visual readiness", () => {
     expect(hasHeroVisualReadinessProvenance("authoritative-image-exempt: official NHC forecast graphic")).toBe(true);
     expect(hasHeroVisualReadinessProvenance("verified-shared-hero: reused validated infrastructure hero")).toBe(false);
     expect(hasHeroVisualReadinessProvenance("verified-shared-hero: cloudflare-vision ok: reused validated infrastructure hero")).toBe(true);
+  });
+
+  it("recognizes rejected heroes already handed off to image recovery", () => {
+    expect(isHeroReadinessQuarantined({
+      image_candidate_url: "https://commons.wikimedia.org/wiki/Special:Redirect/file/example.jpg",
+      image_generation_status: "failed",
+      image_validation_note: "stored-cloudflare-vision rejected: Hero fetch HTTP 403",
+      quality_flags: ["image_requires_visual_validation"],
+    })).toBe(true);
+
+    expect(isHeroReadinessQuarantined({
+      image_candidate_url: "https://commons.wikimedia.org/wiki/Special:Redirect/file/example.jpg",
+      image_generation_status: "ready",
+      image_validation_note: "Primary-subject remediation: awaiting first governed audit",
+      quality_flags: [],
+    })).toBe(false);
   });
 
   it("exempts only tightly scoped authoritative NOAA graphics", () => {
