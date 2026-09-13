@@ -1,8 +1,6 @@
 import {
   CLOUDFLARE_VISION_MODEL,
-  imageValidationDomainGuidance,
   normalizeCloudflareVisionVerdictOutput,
-  validateImageMatchesArticle,
 } from "./featured-image-cloudflare";
 import { parseVisionVerdict, type SubjectExtract } from "./featured-image-core";
 
@@ -39,15 +37,87 @@ function extractOutput(result: unknown): { output: unknown; finishReason?: strin
 
 function normalizeMime(value: string | null | undefined): string {
   const mime = (value ?? "").split(";", 1)[0].trim().toLowerCase();
-  if (mime === "image/png" || mime === "image/webp" || mime === "image/gif") return mime;
+  if (mime === "image/png" || mime === "image/webp" || mime === "image/gif" || mime === "image/jpeg") return mime;
   return "image/jpeg";
 }
 
+function isStrictDataCenterSubject(subject: SubjectExtract): boolean {
+  return subject.title === "Texas data-center and electrical infrastructure"
+    || /\bdata[- ]center\b/i.test(subject.title)
+      && /plain brick|industrial cooling equipment|server campus|electrical substation/i.test(subject.concreteSubject);
+}
+
 /**
- * Validate an already-stored hero with the same primary-subject guidance used
- * by generated-image validation. JPEGs use the existing production validator
- * directly. Other raster formats use the same Cloudflare vision model and
- * guidance while preserving the actual data-URI MIME type.
+ * Stored editorial photography is governed differently from newly generated
+ * imagery. A truthful archive photo of the exact named team, person, agency,
+ * venue, product, institution, or affected infrastructure can be a strong hero
+ * even when a camera cannot literally show an abstract vote, appointment,
+ * investigation, roster decision, score, controversy, or policy change.
+ *
+ * Data-center coverage remains intentionally stricter because a generic boxy
+ * building was the original failure mode: visible infrastructure must prove the
+ * physical subject from the pixels themselves.
+ */
+export function storedHeroEditorialGuidance(subject: SubjectExtract): string {
+  if (isStrictDataCenterSubject(subject)) {
+    return [
+      "STRICT DATA-CENTER STORED-HERO RULE:",
+      "The image must visibly read as data-center or electrical-infrastructure photography from the pixels themselves.",
+      "Require concrete cues such as industrial cooling equipment, server-facility structures, substations, transformers, transmission equipment, generator or utility infrastructure, or a clearly visible server-hall context.",
+      "A plain brick, office-like, residential-looking, warehouse-like, or windowless building exterior with no visible data-center infrastructure must fail even if metadata, filename, caption, or editor knowledge identifies it as a data center.",
+    ].join(" ");
+  }
+
+  if (subject.domain === "sports") {
+    return [
+      "STORED SPORTS PHOTO RULE:",
+      "A real archive photograph is a direct representative match when it clearly depicts the named team or athlete, or unmistakably depicts the exact sport in a truthful team/game/practice context central to the story.",
+      "Do not require the exact historical game, exact score, exact roster decision, exact date, or exact play to be visible.",
+      "Reject unrelated sports, stadium-only or crowd-only association when the sport itself is absent, and generic stock scenes with no meaningful connection to the named team, athlete, or sport.",
+    ].join(" ");
+  }
+
+  if (subject.domain === "politics" || subject.domain === "legal") {
+    return [
+      "STORED CIVIC PHOTO RULE:",
+      "A real photograph of the named policymaker, court, public agency, governing institution, official venue, or concrete policy target is a direct representative match.",
+      "Do not require an invisible appointment, vote, investigation, lawsuit, budget action, tax change, hearing outcome, or policy decision to be literally visible in the frame.",
+      "Reject unrelated capitol/courthouse/government stock imagery when neither the named institution, person, place, nor concrete policy target is actually represented.",
+    ].join(" ");
+  }
+
+  if (subject.domain === "culture") {
+    return [
+      "STORED CULTURE PHOTO RULE:",
+      "A real photograph of the named artist, performer, restaurant, festival, venue, cultural object, or exact activity is a direct representative match.",
+      "It need not document the exact moment described in the article.",
+      "Reject generic city skylines, unrelated venues, instruments, food, or crowd scenes that omit the named or defining cultural subject.",
+    ].join(" ");
+  }
+
+  if (subject.domain === "weather") {
+    return [
+      "STORED WEATHER PHOTO RULE:",
+      "A current official weather graphic or a truthful photograph of the described weather phenomenon, impact, or affected physical environment is a representative match.",
+      "Do not require the exact timestamp or exact event location when the physical phenomenon clearly matches.",
+      "Reject dramatic historical-disaster imagery presented as current conditions when it is not representative of the story.",
+    ].join(" ");
+  }
+
+  return [
+    "STORED EDITORIAL PHOTO RULE:",
+    "A real archive photograph is a direct representative match when it clearly depicts a named person, organization, agency, institution, team, venue, product, animal, infrastructure, place, or other concrete entity that is central to the article.",
+    "A camera does not need to literally visualize an abstract appointment, vote, budget change, tax action, investigation, ranking, delay, dispute, controversy, statistic, business decision, or other invisible action when the central real-world entity or physical subject is truthfully shown.",
+    "Reject loose topical association, generic symbolism, unrelated buildings, generic stock scenes, or location-only imagery when the article's central concrete entity or physical subject is absent.",
+  ].join(" ");
+}
+
+/**
+ * Validate an already-stored hero through a stored-photo-specific editorial
+ * policy. This deliberately does not reuse the stricter generated-image gate:
+ * generated scenes must synthesize the assignment itself, while licensed or
+ * public-domain archive photography may truthfully represent the central real
+ * entity without recreating an invisible decision or exact historical moment.
  */
 export async function validateStoredHeroMatchesArticle(
   bytes: Uint8Array,
@@ -55,8 +125,6 @@ export async function validateStoredHeroMatchesArticle(
   subject: SubjectExtract,
 ): Promise<{ matches: boolean; reason: string }> {
   const mime = normalizeMime(contentType);
-  if (mime === "image/jpeg") return validateImageMatchesArticle(bytes, subject);
-
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
   const apiToken = process.env.CLOUDFLARE_API_TOKEN;
   if (!accountId || !apiToken) {
@@ -64,17 +132,17 @@ export async function validateStoredHeroMatchesArticle(
   }
 
   const image = `data:${mime};base64,${bytesToBase64(bytes)}`;
-  const guidance = imageValidationDomainGuidance(subject);
+  const guidance = storedHeroEditorialGuidance(subject);
   const prompt = [
     `Article title: "${subject.title}"`,
     `Article domain: ${subject.domain}`,
     `Primary visual subject: ${subject.concreteSubject}`,
-    "Evaluate the supplied stored hero as an editorial image.",
+    "Evaluate the supplied STORED editorial photograph, not a newly generated illustration.",
     guidance,
-    "Apply the primary-subject rule strictly before considering broad topical association.",
-    "The defining subject or activity must be visually understandable from the pixels themselves; filename, source metadata, hidden captions, and editor knowledge do not count as visual evidence.",
-    "Judge whether the image is a truthful representative editorial visual for the article topic. Do not require proof that it was captured at the exact historical event.",
-    "photorealistic=false for illustration, vector art, cartoon, poster, icon, graphic design, collage, or synthetic placeholder imagery unless the article's governed hero policy explicitly calls for an editorial illustration. For ordinary news photography, require a real or convincingly photographic scene.",
+    "Treat a clearly visible central named entity or concrete physical subject as primary-subject evidence even when the headline also describes an abstract action that cannot be photographed directly.",
+    "Filename, source metadata, hidden captions, and editor knowledge do not count as visual evidence for what appears in the frame.",
+    "Judge whether the image is a truthful representative editorial visual for the article. Do not require proof that it was captured at the exact historical event unless the story itself is specifically about a unique visual incident and the image claims to depict that incident.",
+    "photorealistic=false for illustration, vector art, cartoon, poster, icon, graphic design, collage, infographic, or synthetic placeholder imagery unless the governed article policy explicitly allows editorial illustration. For ordinary news photography, require a real or convincingly photographic scene.",
     "Return exactly one JSON object with boolean matches, boolean photorealistic, and string reason. No Markdown or surrounding prose.",
   ].join("\n");
 
@@ -100,7 +168,7 @@ export async function validateStoredHeroMatchesArticle(
           messages: [
             {
               role: "system",
-              content: "You are a strict editorial-image quality reviewer. Judge primary-subject relevance and whether a reasonable reader can understand the defining visual subject from the image itself. Return only the requested JSON verdict.",
+              content: "You are an editorial-photo quality reviewer. For stored archive photography, accept truthful representative photos of the article's central real entity or concrete subject without demanding a literal depiction of an invisible decision. Apply any explicitly strict subject rule in the user prompt. Return only the requested JSON verdict.",
             },
             {
               role: "user",
