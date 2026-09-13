@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
   # Protected-main merges are performed by repository automation, so a marker
   # commit may not emit a second push-triggered workflow. Listen to the required
-  # repository verification as a fallback, but execute only for an explicit
-  # [run-image-backlog] sentinel in the verified commit message.
+  # repository verification as a fallback. For workflow_run events, resolve the
+  # verified commit message through the commits API before doing any recovery.
   workflow_run:
     workflows: ["Repository test and build health"]
     types: [completed]
@@ -37,8 +37,7 @@ jobs:
   recover:
     if: >-
       github.event_name != 'workflow_run' ||
-      (github.event.workflow_run.conclusion == 'success' &&
-       contains(github.event.workflow_run.head_commit.message, '[run-image-backlog]'))
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -49,6 +48,17 @@ jobs:
           MARKER_REF: ${{ github.event.workflow_run.head_sha || github.sha }}
         run: |
           set -euo pipefail
+
+          # workflow_run payloads do not reliably expose head_commit.message.
+          # Resolve the exact verified commit instead, and keep ordinary
+          # verification completions as a no-op unless the sentinel is present.
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_run" ]]; then
+            verified_message=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${MARKER_REF}" --jq '.commit.message')
+            if [[ "$verified_message" != *"[run-image-backlog]"* ]]; then
+              echo "IMAGE_BACKLOG_RECOVERY_SKIP no [run-image-backlog] sentinel on verified commit ${MARKER_REF}."
+              exit 0
+            fi
+          fi
 
           oidc_url="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-newsroom"
           issue_oidc_token() {
