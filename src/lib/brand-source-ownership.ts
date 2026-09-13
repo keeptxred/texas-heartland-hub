@@ -1,7 +1,9 @@
 export const TEXAS_DEFINED_OWNED_SOURCE_NAMES = new Set([
   "Texas Universities and Campus Life",
   "Texas Hospitals, Health and Rankings",
+  "Texas Hospitals and Health",
   "Moving to Texas and Relocation",
+  "Moving to Texas and Demographics",
   "Texas Culture and Attractions",
   "Texas Sports and Fan Culture",
 ]);
