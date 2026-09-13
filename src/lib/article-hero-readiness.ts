@@ -60,6 +60,7 @@ function firstParagraph(bodyJson: unknown): string {
 export function hasHeroVisualReadinessProvenance(note: string | null | undefined): boolean {
   const value = (note ?? "").trim().toLowerCase();
   return value.includes("cloudflare-vision ok:")
+    || value.includes("cloudflare-vision-v2 ok:")
     || value.startsWith("authoritative-image-exempt:");
 }
 
@@ -71,7 +72,7 @@ export function isHeroReadinessQuarantined(row: Pick<ArticleHeroReadinessRow,
   const note = (row.image_validation_note ?? "").trim().toLowerCase();
   return Boolean(candidate)
     && status === "failed"
-    && note.startsWith("stored-cloudflare-vision rejected:")
+    && note.startsWith("stored-cloudflare-vision-v2 rejected:")
     && (row.quality_flags ?? []).includes("image_requires_visual_validation");
 }
 
