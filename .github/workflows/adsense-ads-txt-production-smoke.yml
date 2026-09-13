@@ -12,6 +12,7 @@ on:
   workflow_run:
     workflows:
       - Deploy verified KeepTXRed to Cloudflare
+      - Deploy KeepTXRed to Cloudflare Workers
     types: [completed]
   workflow_dispatch:
 
