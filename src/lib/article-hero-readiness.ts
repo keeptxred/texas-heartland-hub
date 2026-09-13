@@ -57,10 +57,23 @@ function firstParagraph(bodyJson: unknown): string {
   return "";
 }
 
+function normalizeReadinessDomain(
+  row: ArticleHeroReadinessRow,
+  inferred: SubjectExtract["domain"],
+): SubjectExtract["domain"] {
+  const category = (row.category ?? "").trim().toLowerCase();
+  if (["sports", "nfl", "nba", "mlb", "mls", "wnba", "nhl", "college sports"].includes(category)) return "sports";
+  if (category === "weather") return "weather";
+  if (["politics", "government", "elections", "local government"].includes(category)) return "politics";
+  if (["legal", "courts", "court"].includes(category)) return "legal";
+  return inferred;
+}
+
 export function hasHeroVisualReadinessProvenance(note: string | null | undefined): boolean {
   const value = (note ?? "").trim().toLowerCase();
   return value.includes("cloudflare-vision ok:")
     || value.includes("cloudflare-vision-v2 ok:")
+    || value.includes("cloudflare-vision-v3 ok:")
     || value.startsWith("authoritative-image-exempt:");
 }
 
@@ -72,7 +85,7 @@ export function isHeroReadinessQuarantined(row: Pick<ArticleHeroReadinessRow,
   const note = (row.image_validation_note ?? "").trim().toLowerCase();
   return Boolean(candidate)
     && status === "failed"
-    && note.startsWith("stored-cloudflare-vision-v2 rejected:")
+    && note.startsWith("stored-cloudflare-vision-v3 rejected:")
     && (row.quality_flags ?? []).includes("image_requires_visual_validation");
 }
 
@@ -111,17 +124,19 @@ export function buildHeroReadinessSubject(row: ArticleHeroReadinessRow): Subject
   const entities = extractEntities(fullText);
   const locations = [...(row.affected_regions ?? []), ...entities.filter((entity) => /houston|dallas|austin|san antonio|fort worth|el paso|rio grande|texas/i.test(entity))]
     .filter((value, index, all) => Boolean(value) && all.indexOf(value) === index);
-  const domain = inferArticleImageDomain(`${title} ${row.dek ?? ""}`, fullText);
+  const inferredDomain = inferArticleImageDomain(`${title} ${row.dek ?? ""}`, fullText);
+  const domain = normalizeReadinessDomain(row, inferredDomain);
   const storyText = `${title} ${row.dek ?? ""} ${intro}`;
 
   if (DATA_CENTER_SUBJECT_RE.test(storyText)) {
+    const baseSubject = `${title}. ${intro}`.trim();
     return {
-      title: "Texas data-center and electrical infrastructure",
-      firstParagraph: "",
+      title,
+      firstParagraph: intro,
       entities,
       locations,
-      domain: "general",
-      concreteSubject: "A visibly recognizable Texas data-center facility or server campus. The frame must show concrete data-center infrastructure such as industrial cooling equipment, server-facility structures, electrical substations, transformers, transmission equipment, generator or utility infrastructure, or clearly visible server-hall context. The subject must be understandable from visible image content alone. A plain brick, office, residential-looking, or windowless building exterior with no visible data-center infrastructure does not qualify even when a filename, caption, source page, or metadata identifies the building as a data center.",
+      domain,
+      concreteSubject: `${baseSubject} This is a data-center story. A stored editorial photo can be a truthful direct match in either of two ways: it can clearly depict a central named person, agency, institution, company, team, venue, or other concrete entity that the story is materially about, or it can visibly depict the data-center, grid, power, cooling, server, or utility infrastructure itself. When a facility or building is being used as visual evidence of a data center, the frame must show concrete cues such as industrial cooling equipment, server-facility structures, electrical substations, transformers, transmission equipment, generator or utility infrastructure, or clearly visible server-hall context. A plain brick, office-like, residential-looking, warehouse-like, or windowless building exterior with no visible data-center infrastructure does not qualify merely because a filename, caption, source page, or metadata identifies it as a data center.`.trim(),
     };
   }
 
