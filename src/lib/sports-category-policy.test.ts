@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { resolveSportsCategory, sportsCategoryFor } from "@/lib/sports-category-policy";
+import {
+  applySportsTaxonomyAutoLock,
+  clearSportsTaxonomyAutoLock,
+  resolveSportsCategory,
+  sportsCategoryFor,
+} from "@/lib/sports-category-policy";
 
 describe("sports category policy", () => {
   it("maps strong sports classifications to the sports taxonomy", () => {
@@ -22,5 +27,24 @@ describe("sports category policy", () => {
 
   it("preserves an intentional non-sports category when taxonomy is locked", () => {
     expect(resolveSportsCategory("Politics", "sports-cfb", ["cfb"], true, "Texas A&M football season opener")).toBe("Politics");
+  });
+
+  it("auto-locks resolved sports categories against the legacy pillar bridge", () => {
+    expect(applySportsTaxonomyAutoLock(["weak_dek"], "College Sports")).toEqual([
+      "weak_dek",
+      "taxonomy_locked",
+      "sports_taxonomy_auto_locked",
+    ]);
+    expect(applySportsTaxonomyAutoLock([], "Elections")).toEqual([]);
+  });
+
+  it("removes only an auto-created taxonomy lock during sports cleanup", () => {
+    expect(clearSportsTaxonomyAutoLock([
+      "weak_dek",
+      "taxonomy_locked",
+      "sports_taxonomy_auto_locked",
+    ])).toEqual(["weak_dek"]);
+    expect(clearSportsTaxonomyAutoLock(["taxonomy_locked", "editor_reviewed"]))
+      .toEqual(["taxonomy_locked", "editor_reviewed"]);
   });
 });
