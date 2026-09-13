@@ -14,19 +14,27 @@ describe("article hero visual readiness", () => {
     )).toBe(false);
   });
 
-  it("accepts only actual visual-validation provenance or the narrow official-graphic exemption", () => {
+  it("accepts actual visual-validation provenance across stored-photo policy versions", () => {
     expect(hasHeroVisualReadinessProvenance("cloudflare-vision ok: direct story match")).toBe(true);
     expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision ok: direct story match")).toBe(true);
+    expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v2 ok: representative archive photo passed")).toBe(true);
     expect(hasHeroVisualReadinessProvenance("authoritative-image-exempt: official NHC forecast graphic")).toBe(true);
     expect(hasHeroVisualReadinessProvenance("verified-shared-hero: reused validated infrastructure hero")).toBe(false);
     expect(hasHeroVisualReadinessProvenance("verified-shared-hero: cloudflare-vision ok: reused validated infrastructure hero")).toBe(true);
   });
 
-  it("recognizes rejected heroes already handed off to image recovery", () => {
+  it("rechecks v1 rejects once under v2 and quarantines only v2 rejects", () => {
     expect(isHeroReadinessQuarantined({
       image_candidate_url: "https://commons.wikimedia.org/wiki/Special:Redirect/file/example.jpg",
       image_generation_status: "failed",
-      image_validation_note: "stored-cloudflare-vision rejected: Hero fetch HTTP 403",
+      image_validation_note: "stored-cloudflare-vision rejected: exact-action rule rejected the archive photo",
+      quality_flags: ["image_requires_visual_validation"],
+    })).toBe(false);
+
+    expect(isHeroReadinessQuarantined({
+      image_candidate_url: "https://commons.wikimedia.org/wiki/Special:Redirect/file/example.jpg",
+      image_generation_status: "failed",
+      image_validation_note: "stored-cloudflare-vision-v2 rejected: representative-photo rule still failed",
       quality_flags: ["image_requires_visual_validation"],
     })).toBe(true);
 

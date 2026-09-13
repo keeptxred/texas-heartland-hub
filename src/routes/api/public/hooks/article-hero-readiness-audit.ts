@@ -17,6 +17,7 @@ const WORKFLOW_PATH = ".github/workflows/article-hero-readiness-audit.yml";
 const MAX_IMAGE_BYTES = 15 * 1024 * 1024;
 const FETCH_TIMEOUT_MS = 45_000;
 const IMAGE_FETCH_USER_AGENT = "KeepTXRed/1.0 (+https://keeptxred.com; editorial image readiness audit)";
+const STORED_HERO_POLICY_VERSION = "v2";
 
 type AuditRow = ArticleHeroReadinessRow & {
   published_at: string | null;
@@ -59,13 +60,22 @@ function isEligible(row: AuditRow): boolean {
     && !hasHeroVisualReadinessProvenance(row.image_validation_note);
 }
 
+function isStrictDataCenterStory(row: AuditRow): boolean {
+  return buildHeroReadinessSubject(row).title === "Texas data-center and electrical infrastructure";
+}
+
 function riskPriority(row: AuditRow): number {
-  if (row.image_candidate_url?.trim()) return 0;
+  // The original production defect was a generic building on a data-center
+  // story. Keep that physical-subject class ahead of the broad historical
+  // backlog while v1 quarantines are rechecked under the representative-photo
+  // v2 policy.
+  if (isStrictDataCenterStory(row)) return 0;
+  if (row.image_candidate_url?.trim()) return 1;
   const note = (row.image_validation_note ?? "").toLowerCase();
-  if (note.includes("primary-subject remediation")) return 1;
-  if (/^https?:\/\//i.test(targetUrl(row))) return 2;
-  if (note.includes("reviewed")) return 3;
-  return 4;
+  if (note.includes("primary-subject remediation")) return 2;
+  if (/^https?:\/\//i.test(targetUrl(row))) return 3;
+  if (note.includes("reviewed")) return 4;
+  return 5;
 }
 
 function cleanFlags(flags: string[] | null | undefined, add?: string): string[] {
@@ -182,7 +192,7 @@ async function acceptAuthoritativeGraphic(db: any, row: AuditRow, candidate: str
 
 async function acceptValidatedHero(db: any, row: AuditRow, candidate: string, reason: string) {
   const alt = row.image_candidate_alt_text?.trim() || row.image_alt_text?.trim() || `Editorial image for Keep TX Red article: ${row.title}`;
-  const note = `stored-cloudflare-vision ok: ${reason}`.slice(0, 1000);
+  const note = `stored-cloudflare-vision-${STORED_HERO_POLICY_VERSION} ok: ${reason}`.slice(0, 1000);
   const { error } = await db.from("daily_articles").update({
     featured_image_url: candidate,
     image_url: candidate,
@@ -201,7 +211,7 @@ async function rejectHero(db: any, row: AuditRow, candidate: string, reason: str
   const previousHeroIsTrusted = Boolean(row.featured_image_url?.trim())
     && Boolean(row.image_candidate_url?.trim())
     && hasHeroVisualReadinessProvenance(row.image_validation_note);
-  const note = `stored-cloudflare-vision rejected: ${reason}`.slice(0, 1000);
+  const note = `stored-cloudflare-vision-${STORED_HERO_POLICY_VERSION} rejected: ${reason}`.slice(0, 1000);
 
   if (previousHeroIsTrusted) {
     const { error } = await db.from("daily_articles").update({
@@ -261,6 +271,8 @@ async function post({ request }: { request: Request }) {
       slugs: queue.map((row) => row.slug),
       primarySubjectRemediations: queue.filter((row) => (row.image_validation_note ?? "").toLowerCase().includes("primary-subject remediation")).length,
       candidates: queue.filter((row) => Boolean(row.image_candidate_url?.trim())).length,
+      strictDataCenterStories: queue.filter(isStrictDataCenterStory).length,
+      storedHeroPolicy: STORED_HERO_POLICY_VERSION,
       scope: "all_published_hero_candidates_without_visual_readiness_provenance",
     });
   }
