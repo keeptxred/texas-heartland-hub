@@ -1,7 +1,12 @@
-// Per project rule: no page may display the same image twice.
-// This helper assigns a unique image to each item in a list. When the chosen
-// image is already used on the same page, it swaps in the next available
-// fallback from `pool`. Cheap, render-time only — no image regeneration.
+// Preserve article-image relevance ahead of visual variety.
+//
+// This helper still assigns deterministic fallback images when an item has no
+// image at all, but it MUST NOT replace an editorially selected/canonical image
+// merely because the same image already appears elsewhere on the page. Two
+// related stories can legitimately share one exact storm graphic, venue photo,
+// court exhibit, or other primary-subject image. Replacing the second instance
+// with generic category stock creates a more serious editorial error than the
+// duplicate itself.
 
 import {
   CATEGORY_IMAGE_POOLS,
@@ -24,13 +29,16 @@ function hashIndex(key: string, mod: number): number {
 }
 
 /**
- * Returns a Map of key -> unique image URL for the given list of items.
- * Duplicates are swapped for the next unused image in `pool`. If the pool is
- * exhausted, the original image is kept (fail-open, never blocks render).
+ * Returns a Map of key -> image URL for the given list of items.
  *
- * `getHash` is optional. When provided, the scanner dedupes by hash instead of
- * URL — so two different URL strings that point to the same underlying file
- * (same `image_hash` in the CMS) are still treated as duplicates.
+ * Editorial/canonical images are immutable here: if `getImage()` returns a
+ * non-empty URL, that exact URL is preserved even when another item already
+ * uses it. Only image-less items may receive/rotate through a fallback pool.
+ * This prevents a relevant image from being silently replaced by unrelated
+ * stock solely to satisfy page-level uniqueness.
+ *
+ * `getHash` is optional. When provided, it is still used to keep fallback-only
+ * items from accidentally reusing an image that is already visible.
  */
 export function assignUniqueImages<T>(
   items: T[],
@@ -67,11 +75,15 @@ export function assignUniqueImages<T>(
   for (const item of items) {
     const key = getKey(item);
     const pool = poolFor(item);
-    const initial = getImage(item) || pool[hashIndex(key, pool.length)];
+    const suppliedImage = (getImage(item) ?? "").trim();
+    const initial = suppliedImage || pool[hashIndex(key, pool.length)];
     const initialHash = (getHash?.(item) ?? null) || fingerprint(initial);
     let pick = initial;
     let pickHash = initialHash;
-    if (usedUrls.has(pick) || usedHashes.has(pickHash)) {
+
+    // Never swap an explicit/canonical image for stock. Duplicate exact-subject
+    // imagery is preferable to a unique but misleading image.
+    if (!suppliedImage && (usedUrls.has(pick) || usedHashes.has(pickHash))) {
       const start = hashIndex(key, pool.length);
       let found = false;
       for (let i = 0; i < pool.length; i++) {
@@ -85,7 +97,7 @@ export function assignUniqueImages<T>(
         }
       }
       if (!found) {
-        pick = initial; // pool exhausted; keep original rather than blank
+        pick = initial; // pool exhausted; keep deterministic fallback rather than blank
         pickHash = initialHash;
       }
     }
