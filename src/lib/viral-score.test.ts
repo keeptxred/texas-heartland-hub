@@ -3,7 +3,7 @@ import { classifySourceReputation, scoreFeedItem } from "@/lib/viral-score";
 
 const fresh = () => new Date().toISOString();
 
-const cases = [
+const keepTxRedCases = [
   {
     title: "Abbott activates Panhandle wildfire resources",
     source: "Office of the Governor",
@@ -13,11 +13,6 @@ const cases = [
     title: "Professors sue A&M over teaching limits",
     source: "Texas Universities — Google News",
     description: "Four professors filed a First Amendment lawsuit challenging Texas A&M System teaching restrictions.",
-  },
-  {
-    title: "Houston Methodist tops Texas hospital rankings",
-    source: "Texas Hospitals and Health — Google News",
-    description: "Houston Methodist Hospital ranked first in Texas, with UT Southwestern and Baylor University Medical Center also recognized.",
   },
   {
     title: "Tarrant County considers reduction in Election Day polling locations",
@@ -33,6 +28,14 @@ const cases = [
     title: "Texas awards healthcare workforce training grant",
     source: "Texas Business and Workforce — Google News",
     description: "A Skills Development Fund grant will train healthcare workers at rural Texas hospitals in the Permian Basin.",
+  },
+];
+
+const texasDefinedCases = [
+  {
+    title: "Houston Methodist tops Texas hospital rankings",
+    source: "Texas Hospitals and Health — Google News",
+    description: "Houston Methodist Hospital ranked first in Texas, with UT Southwestern and Baylor University Medical Center also recognized.",
   },
   {
     title: "Texas is top Gen Z moving destination",
@@ -52,28 +55,36 @@ const cases = [
 ];
 
 describe("Texas statewide coverage scoring", () => {
-  it.each(cases)("keeps $title eligible for a native article", (item) => {
+  it.each(keepTxRedCases)("keeps $title eligible for a native KeepTXRed article", (item) => {
     const result = scoreFeedItem({ ...item, pub_date: fresh() });
     expect(result.texasRelevanceScore).toBeGreaterThanOrEqual(50);
     expect(result.sourceReputationScore).toBeGreaterThanOrEqual(55);
     expect(result.routingType).toBe("SEO_ARTICLE");
   });
 
-  it("does not reject a relevant story merely because it is non-political", () => {
+  it.each(texasDefinedCases)("routes $title away from KeepTXRed native publishing", (item) => {
+    const result = scoreFeedItem({ ...item, pub_date: fresh() });
+    expect(result.texasRelevanceScore).toBe(0);
+    expect(result.sourceReputationScore).toBe(0);
+    expect(result.editorialValueScore).toBe(0);
+    expect(result.routingType).toBe("FACEBOOK_ONLY");
+  });
+
+  it("keeps nonpartisan public-affairs stories eligible", () => {
     const result = scoreFeedItem({
-      title: "Houston Methodist tops Texas hospital rankings",
-      source: "Texas Hospitals and Health — Google News",
-      description: "U.S. News evaluated hospitals across Texas.",
+      title: "Texas awards healthcare workforce training grant",
+      source: "Texas Workforce Commission",
+      description: "A statewide Skills Development Fund grant will train healthcare workers at rural Texas hospitals.",
       pub_date: fresh(),
     });
-    expect(result.signals.category).toBe("Non-Political");
+    expect(result.texasRelevanceScore).toBeGreaterThanOrEqual(50);
     expect(result.routingType).toBe("SEO_ARTICLE");
   });
 
-  it("recognizes configured Texas discovery feeds", () => {
+  it("recognizes configured KeepTXRed discovery feeds", () => {
     expect(classifySourceReputation("Texas Universities — Google News").score).toBeGreaterThanOrEqual(55);
-    expect(classifySourceReputation("Texas Hospitals and Health — Google News").score).toBeGreaterThanOrEqual(55);
-    expect(classifySourceReputation("Moving to Texas and Demographics — Google News").score).toBeGreaterThanOrEqual(55);
+    expect(classifySourceReputation("Texas Local Government — Google News").score).toBeGreaterThanOrEqual(55);
+    expect(classifySourceReputation("Texas Courts and Civil Rights — Google News").score).toBeGreaterThanOrEqual(55);
   });
 
   it("recognizes direct institutional and local-government sources", () => {
