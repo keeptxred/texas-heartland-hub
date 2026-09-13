@@ -185,9 +185,14 @@ export function scoreFeedItem(item: {
   if (texas >= 20) confidence += 0.25;
   confidence = Math.min(1, Number(confidence.toFixed(2)));
 
-  const ownedByTexasDefined = isTexasDefinedOwnedSource(source);
+  const ownedByTexasDefined = isTexasDefinedOwnedSource(source) || category === "Sports";
   const rep = ownedByTexasDefined
-    ? classifySourceReputation(source)
+    ? {
+        score: 0,
+        reason: category === "Sports"
+          ? "Sports coverage belongs to TexasDefined"
+          : "TexasDefined-owned source blocked from KeepTXRed publication",
+      }
     : item.source_reputation_score != null
       ? { score: item.source_reputation_score, reason: item.source_reputation_reason || "From content_sources" }
       : classifySourceReputation(source);
