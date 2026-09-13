@@ -11,8 +11,8 @@ if [[ ! -f "$ENV_FILE" ]]; then
 fi
 
 # These values are intentionally public frontend configuration. Do not use a
-# service-role key here: this verifier is designed to prove migration ledger
-# parity without granting GitHub Actions database write access.
+# service-role key here: this verifier proves migration ledger parity without
+# granting GitHub Actions database write access.
 set -a
 # shellcheck disable=SC1090
 source "$ENV_FILE"
@@ -75,23 +75,19 @@ if jq -e --argjson expected "$versions_json" '
   exit 0
 fi
 
-missing="$(jq -r --argjson expected "$versions_json" '
-  . as $actual
-  | $expected[]
-  | select(any($actual[]; .version == . and .applied == true) | not)
-' "$response_file" 2>/dev/null || true)"
-
-# The expression above is intentionally followed by a simpler set check so the
-# failure output stays useful even if PostgREST returns rows in a different order.
 missing="$(jq -nr --argjson expected "$versions_json" --slurpfile actual "$response_file" '
-  [$actual[0][] | select(.applied == true) | .version] as $applied
+  $actual[0] as $rows
   | $expected[]
-  | select(($applied | index(.)) == null)
+  | . as $version
+  | select(($rows | any(.version == $version and .applied == true)) | not)
+  | $version
 ' 2>/dev/null || true)"
 
 if [[ -n "$missing" ]]; then
   echo 'Supabase migration parity check found repository migrations absent from production:' >&2
-  printf '  %s\n' $missing >&2
+  while IFS= read -r version; do
+    [[ -n "$version" ]] && printf '  %s\n' "$version" >&2
+  done <<< "$missing"
 else
   echo 'Supabase migration parity check failed because production returned an incomplete or inconsistent migration ledger.' >&2
 fi
