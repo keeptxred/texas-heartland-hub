@@ -71,6 +71,8 @@ jobs:
             "seo/phase-4-redirect-canonical-cleanup"
             "fix/property-tax-calculator-cleanup"
             "cleanup/retire-four-superseded-branches-20260825"
+            "cleanup/remove-one-time-stale-ref-workflow-20260913"
+            "maintenance/retire-final-weird-town-cleanup-20260913"
           )
 
           main_sha="$(gh api "repos/$REPOSITORY/git/ref/heads/main" --jq '.object.sha')"
