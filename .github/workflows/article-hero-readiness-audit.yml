@@ -13,6 +13,7 @@ on:
   push:
     branches: [main]
     paths:
+      - '.github/workflows/article-hero-readiness-audit.yml'
       - '.github/force-article-hero-readiness-audit'
 
 permissions:
@@ -80,7 +81,7 @@ jobs:
 
           max_per_run=4
           if [[ "${GITHUB_EVENT_NAME}" == "workflow_run" || "${GITHUB_EVENT_NAME}" == "workflow_dispatch" || "${GITHUB_EVENT_NAME}" == "push" ]]; then
-            max_per_run=6
+            max_per_run=12
           fi
           if [[ "$ready" -lt "$max_per_run" ]]; then
             max_per_run="$ready"
