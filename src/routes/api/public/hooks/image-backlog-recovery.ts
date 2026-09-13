@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
+import { hasHeroVisualReadinessProvenance } from "@/lib/article-hero-readiness";
 import { isLegacyGeneratedNewsAsset } from "@/lib/facebook-image-readiness";
 import {
   generateFeaturedImageForSlugDirect,
@@ -10,12 +11,14 @@ import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 const OIDC_AUDIENCE = "keeptxred-newsroom";
 const REPOSITORY = "keeptxred/texas-heartland-hub";
 const WORKFLOW_PATH = ".github/workflows/image-backlog-recovery.yml";
+const RECOVERY_SCOPE = "adsense_ready_missing_first_then_missing_or_legacy_published_quality_article_images";
 
 type BacklogRow = {
   slug: string;
   published_at: string | null;
   featured_image_url: string | null;
   image_generation_status: string | null;
+  image_validation_note: string | null;
   kind: string | null;
   body_json: Parameters<typeof meetsArticleMainWordCount>[1];
 };
@@ -64,6 +67,15 @@ function isEligible(row: BacklogRow): boolean {
   return status === "pending" || status === "failed" || status === "ready";
 }
 
+function isAlreadyRecovered(row: BacklogRow | null | undefined): boolean {
+  if (!row?.published_at) return false;
+  if (!meetsArticleMainWordCount(row.kind, row.body_json)) return false;
+  const imageUrl = row.featured_image_url?.trim();
+  if (!imageUrl || isLegacyGeneratedNewsAsset(imageUrl)) return false;
+  if ((row.image_generation_status ?? "").trim().toLowerCase() !== "ready") return false;
+  return hasHeroVisualReadinessProvenance(row.image_validation_note);
+}
+
 function priority(row: BacklogRow): number {
   const status = (row.image_generation_status ?? "").trim().toLowerCase();
   if (isMissingImage(row)) return status === "pending" ? 0 : 1;
@@ -86,7 +98,7 @@ async function post({ request }: { request: Request }) {
   // Generated database types can lag internal image-recovery fields.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabaseAdmin as any;
-  const columns = "slug,published_at,featured_image_url,image_generation_status,kind,body_json";
+  const columns = "slug,published_at,featured_image_url,image_generation_status,image_validation_note,kind,body_json";
 
   const [missingResult, legacyResult, adsensePriorityResult] = await Promise.all([
     db
@@ -152,12 +164,40 @@ async function post({ request }: { request: Request }) {
       adsensePriority: adsensePriorityCount,
       staleReset,
       slugs,
-      scope: "adsense_ready_missing_first_then_missing_or_legacy_published_quality_article_images",
+      scope: RECOVERY_SCOPE,
     });
   }
 
   if (!requestedSlug) return Response.json({ error: "Missing eligible slug" }, { status: 400 });
   if (!slugs.includes(requestedSlug)) {
+    const requestedResult = await db
+      .from("daily_articles")
+      .select(columns)
+      .eq("slug", requestedSlug)
+      .maybeSingle();
+    if (requestedResult.error) return Response.json({ error: requestedResult.error.message }, { status: 500 });
+
+    const requestedRow = requestedResult.data as BacklogRow | null;
+    if (isAlreadyRecovered(requestedRow)) {
+      const result = {
+        slug: requestedSlug,
+        ok: true as const,
+        skipped: true as const,
+        reason: "already-ready" as const,
+        url: requestedRow?.featured_image_url ?? null,
+      };
+      return Response.json({
+        ok: true,
+        processed: 0,
+        succeeded: 0,
+        failed: 0,
+        skipped: 1,
+        staleReset,
+        scope: RECOVERY_SCOPE,
+        results: [result],
+      });
+    }
+
     return Response.json({ error: "Slug is not currently an eligible published image-recovery backlog item" }, { status: 409 });
   }
 
@@ -171,8 +211,9 @@ async function post({ request }: { request: Request }) {
     processed: 1,
     succeeded: result.ok ? 1 : 0,
     failed: result.ok ? 0 : 1,
+    skipped: 0,
     staleReset,
-    scope: "adsense_ready_missing_first_then_missing_or_legacy_published_quality_article_images",
+    scope: RECOVERY_SCOPE,
     results: [result],
   }, { status: result.ok ? 200 : 422 });
 }
