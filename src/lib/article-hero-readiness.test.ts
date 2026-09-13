@@ -18,12 +18,13 @@ describe("article hero visual readiness", () => {
     expect(hasHeroVisualReadinessProvenance("cloudflare-vision ok: direct story match")).toBe(true);
     expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision ok: direct story match")).toBe(true);
     expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v2 ok: representative archive photo passed")).toBe(true);
+    expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v3 ok: entity-aware archive photo passed")).toBe(true);
     expect(hasHeroVisualReadinessProvenance("authoritative-image-exempt: official NHC forecast graphic")).toBe(true);
     expect(hasHeroVisualReadinessProvenance("verified-shared-hero: reused validated infrastructure hero")).toBe(false);
     expect(hasHeroVisualReadinessProvenance("verified-shared-hero: cloudflare-vision ok: reused validated infrastructure hero")).toBe(true);
   });
 
-  it("rechecks v1 rejects once under v2 and quarantines only v2 rejects", () => {
+  it("rechecks v1 and v2 rejects once under v3 and quarantines only v3 rejects", () => {
     expect(isHeroReadinessQuarantined({
       image_candidate_url: "https://commons.wikimedia.org/wiki/Special:Redirect/file/example.jpg",
       image_generation_status: "failed",
@@ -34,7 +35,14 @@ describe("article hero visual readiness", () => {
     expect(isHeroReadinessQuarantined({
       image_candidate_url: "https://commons.wikimedia.org/wiki/Special:Redirect/file/example.jpg",
       image_generation_status: "failed",
-      image_validation_note: "stored-cloudflare-vision-v2 rejected: representative-photo rule still failed",
+      image_validation_note: "stored-cloudflare-vision-v2 rejected: data-center override rejected the central entity",
+      quality_flags: ["image_requires_visual_validation"],
+    })).toBe(false);
+
+    expect(isHeroReadinessQuarantined({
+      image_candidate_url: "https://commons.wikimedia.org/wiki/Special:Redirect/file/example.jpg",
+      image_generation_status: "failed",
+      image_validation_note: "stored-cloudflare-vision-v3 rejected: entity-aware rule still failed",
       quality_flags: ["image_requires_visual_validation"],
     })).toBe(true);
 
@@ -52,20 +60,48 @@ describe("article hero visual readiness", () => {
     expect(isAuthoritativeOfficialGraphic("https://commons.wikimedia.org/wiki/Special:Redirect/file/Henson_Data_Center_Dallas.jpg")).toBe(false);
   });
 
-  it("requires data-center infrastructure to be visually recognizable without metadata", () => {
+  it("keeps the actual headline while applying the data-center visual-readiness rule", () => {
     const subject = buildHeroReadinessSubject({
       slug: "2026-08-27-gov-abbott-orders-pause-on-data-center-approvals",
       title: "Gov. Abbott orders pause on data center approvals",
+      category: "Politics",
       dek: "Texas pauses approvals while regulators review energy and water use.",
       affected_regions: ["Texas"],
       body_json: { intro: ["The pause applies to large data-center projects seeking grid connections."] },
     });
 
-    expect(subject.title).toBe("Texas data-center and electrical infrastructure");
+    expect(subject.title).toBe("Gov. Abbott orders pause on data center approvals");
+    expect(subject.domain).toBe("politics");
+    expect(subject.concreteSubject).toContain("central named person");
     expect(subject.concreteSubject).toContain("industrial cooling equipment");
-    expect(subject.concreteSubject).toContain("visible image content alone");
     expect(subject.concreteSubject).toContain("plain brick");
-    expect(subject.concreteSubject).toContain("does not qualify");
+    expect(subject.concreteSubject).toContain("does not qualify merely because");
+  });
+
+  it("does not erase a central named person just because the story mentions a data center", () => {
+    const subject = buildHeroReadinessSubject({
+      slug: "2026-08-07-charley-crockett-data-center-social-media-dispute",
+      title: "Charley Crockett’s Texas Data-Center Post Sets Off a Social-Media Dispute",
+      category: "Texas News",
+      dek: "The singer's post triggered a debate over data centers.",
+      affected_regions: ["Texas"],
+      body_json: { intro: ["Charley Crockett became the central figure in the dispute after publishing the post."] },
+    });
+
+    expect(subject.title).toContain("Charley Crockett");
+    expect(subject.concreteSubject).toContain("central named person");
+    expect(subject.concreteSubject).toContain("data-center story");
+  });
+
+  it("uses explicit sports taxonomy over noisy text-domain inference", () => {
+    const subject = buildHeroReadinessSubject({
+      slug: "2026-09-06-texas-a-m-dominates-missouri-state-in-season-opener",
+      title: "Texas A&M Dominates Missouri State in Season Opener",
+      category: "Sports",
+      dek: "Texas A&M opened the season with a football win.",
+      body_json: { intro: ["The Aggies controlled the football game from the opening quarter."] },
+    });
+    expect(subject.domain).toBe("sports");
   });
 
   it("requires ordinary story subjects to read from the pixels rather than hidden metadata", () => {
