@@ -23,6 +23,7 @@ export type ArticleHeroReadinessRow = {
   image_alt_text?: string | null;
   image_generation_status?: string | null;
   image_validation_note?: string | null;
+  quality_flags?: string[] | null;
   body_json?: unknown;
 };
 
@@ -60,6 +61,18 @@ export function hasHeroVisualReadinessProvenance(note: string | null | undefined
   const value = (note ?? "").trim().toLowerCase();
   return value.includes("cloudflare-vision ok:")
     || value.startsWith("authoritative-image-exempt:");
+}
+
+export function isHeroReadinessQuarantined(row: Pick<ArticleHeroReadinessRow,
+  "image_candidate_url" | "image_generation_status" | "image_validation_note" | "quality_flags"
+>): boolean {
+  const candidate = row.image_candidate_url?.trim();
+  const status = (row.image_generation_status ?? "").trim().toLowerCase();
+  const note = (row.image_validation_note ?? "").trim().toLowerCase();
+  return Boolean(candidate)
+    && status === "failed"
+    && note.startsWith("stored-cloudflare-vision rejected:")
+    && (row.quality_flags ?? []).includes("image_requires_visual_validation");
 }
 
 export function isAuthoritativeOfficialGraphic(value: string | null | undefined): boolean {
