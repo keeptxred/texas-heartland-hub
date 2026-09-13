@@ -38,6 +38,9 @@ jobs:
             exit 0
           fi
 
+          runs_file="$(mktemp)"
+          trap 'rm -f "$runs_file"' EXIT
+
           for attempt in $(seq 1 90); do
             main_sha="$(curl --retry 3 --retry-delay 2 --retry-all-errors \
               --fail-with-body --silent --show-error \
@@ -52,15 +55,17 @@ jobs:
               exit 0
             fi
 
-            runs_json="$(curl --retry 3 --retry-delay 2 --retry-all-errors \
+            curl --retry 3 --retry-delay 2 --retry-all-errors \
               --fail-with-body --silent --show-error \
               -H "Authorization: Bearer $GH_TOKEN" \
               -H "Accept: application/vnd.github+json" \
-              "https://api.github.com/repos/$REPOSITORY/actions/runs?head_sha=$TARGET_SHA&per_page=100")"
+              -o "$runs_file" \
+              "https://api.github.com/repos/$REPOSITORY/actions/runs?head_sha=$TARGET_SHA&per_page=100"
 
-            read -r successful active matching statuses < <(python3 - "$runs_json" <<'PY'
+            read -r successful active matching statuses < <(python3 - "$runs_file" <<'PY'
           import json, sys
-          data = json.loads(sys.argv[1])
+          with open(sys.argv[1], encoding="utf-8") as handle:
+              data = json.load(handle)
           runs = [
               run for run in (data.get("workflow_runs") or [])
               if run.get("name") == "Deploy verified KeepTXRed to Cloudflare"
