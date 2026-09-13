@@ -28,6 +28,7 @@ jobs:
             'fix/one-time-td-weird-town-facebook-v2'
             'fix/weird-town-facebook-url-upload'
             'cleanup/delete-weird-town-stale-refs-20260913'
+            'cleanup/retrigger-delete-weird-town-stale-refs-20260913'
           )
 
           for branch in "${branches[@]}"; do
@@ -60,3 +61,5 @@ jobs:
           done
 
           echo "All stale weird-town branch refs are absent."
+
+# Retrigger after workflow registration on main.
