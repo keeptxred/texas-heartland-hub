@@ -9,7 +9,7 @@ const results: EntitySearchResult[] = [
     title: 'Tax Calculator',
     summary: 'Estimate Texas property taxes for a home.',
     route: '/tax-calculator',
-    sites: ['keeptxred'],
+    sites: ['texasdefined'],
     topics: ['home-property'],
     journeys: ['buying-home'],
     score: 80,
@@ -31,7 +31,7 @@ const results: EntitySearchResult[] = [
     title: 'Mortgage Calculator',
     summary: 'Estimate a Texas mortgage payment.',
     route: '/texas-mortgage-calculator',
-    sites: ['keeptxred'],
+    sites: ['texasdefined'],
     topics: ['home-property'],
     journeys: ['buying-home'],
     score: 60,
@@ -57,6 +57,11 @@ describe('shared search filters', () => {
       'calculator:tax',
       'calculator:mortgage',
     ]);
+  });
+
+  it('keeps migrated calculators TexasDefined-only in shared search fixtures', () => {
+    const calculators = results.filter((result) => result.type === 'calculator');
+    expect(calculators.every((result) => result.sites.length === 1 && result.sites[0] === 'texasdefined')).toBe(true);
   });
 
   it('provides visitor-facing singular labels for every result card type', () => {
