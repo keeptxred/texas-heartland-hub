@@ -1,3 +1,4 @@
+-- BULK_IMAGE_ALT_LABEL_MAINTENANCE
 -- Cloudflare image generation is governed as physical-camera editorial photography,
 -- and stored-hero v4 only accepts photorealistic images. The prior trigger rewrote
 -- those validated photos from "Editorial news photograph" to "Editorial illustration",
