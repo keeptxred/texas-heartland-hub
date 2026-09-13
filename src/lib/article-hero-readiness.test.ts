@@ -13,11 +13,12 @@ describe("article hero visual readiness", () => {
     )).toBe(false);
   });
 
-  it("accepts only governed visual-validation provenance markers", () => {
+  it("accepts only actual visual-validation provenance or the narrow official-graphic exemption", () => {
     expect(hasHeroVisualReadinessProvenance("cloudflare-vision ok: direct story match")).toBe(true);
     expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision ok: direct story match")).toBe(true);
     expect(hasHeroVisualReadinessProvenance("authoritative-image-exempt: official NHC forecast graphic")).toBe(true);
-    expect(hasHeroVisualReadinessProvenance("verified-shared-hero: reused validated infrastructure hero")).toBe(true);
+    expect(hasHeroVisualReadinessProvenance("verified-shared-hero: reused validated infrastructure hero")).toBe(false);
+    expect(hasHeroVisualReadinessProvenance("verified-shared-hero: cloudflare-vision ok: reused validated infrastructure hero")).toBe(true);
   });
 
   it("exempts only tightly scoped authoritative NOAA graphics", () => {
