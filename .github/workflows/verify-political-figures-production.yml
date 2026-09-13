@@ -18,7 +18,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      PREVIEW_URL: https://keeptxred-site.freddy-coppola.workers.dev
       PRODUCTION_URL: https://keeptxred.com
 
     steps:
@@ -103,7 +102,7 @@ jobs:
           set -euo pipefail
           curl --retry 10 --retry-delay 3 --retry-all-errors \
             --fail-with-body --silent --show-error --max-time 30 \
-            -A 'KeepTXRed-production-smoke/3.0' \
+            -A 'KeepTXRed-production-smoke/4.0' \
             -o /tmp/keeptxred-robots.txt \
             "$PRODUCTION_URL/robots.txt"
           test -s /tmp/keeptxred-robots.txt
@@ -125,7 +124,7 @@ jobs:
         if: steps.gate.outputs.run_smoke == 'true'
         run: bun install --frozen-lockfile
 
-      - name: Verify representative Political Figures routes in Chrome
+      - name: Verify representative Political Figures routes on production in Chrome
         if: steps.gate.outputs.run_smoke == 'true'
         shell: bash
         run: |
@@ -134,7 +133,6 @@ jobs:
           cat > .political-figures-production-smoke.mjs <<'JS'
           import { chromium } from "@playwright/test";
 
-          const preview = process.env.PREVIEW_URL ?? "https://keeptxred-site.freddy-coppola.workers.dev";
           const production = process.env.PRODUCTION_URL ?? "https://keeptxred.com";
           const profiles = [
             ["/texas-politics/figures/don-huffines-texas-comptroller-profile", "Don Huffines", "comptroller.texas.gov"],
@@ -147,21 +145,26 @@ jobs:
           const browser = await chromium.launch({ channel: "chrome", headless: true });
           try {
             const context = await browser.newContext({
-              userAgent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/152 Safari/537.36 KeepTXRed-production-smoke/3.0",
+              userAgent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/152 Safari/537.36 KeepTXRed-production-smoke/4.0",
             });
 
             for (const [path, expectedName, sourceDomain] of profiles) {
               const page = await context.newPage();
-              const url = `${preview}${path}`;
+              const url = `${production}${path}`;
               const response = await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60_000 });
               if (!response || !response.ok()) {
-                throw new Error(`${path}: expected deployed Worker HTTP 2xx, received ${response?.status() ?? "no response"}`);
+                throw new Error(`${path}: expected production HTTP 2xx, received ${response?.status() ?? "no response"}`);
+              }
+
+              const finalUrl = new URL(page.url());
+              if (finalUrl.hostname !== "keeptxred.com") {
+                throw new Error(`${path}: production navigation ended on unexpected hostname ${finalUrl.hostname}`);
               }
 
               await page.waitForLoadState("networkidle", { timeout: 15_000 }).catch(() => {});
               const title = await page.title();
               if (/just a moment|attention required|verify you are human/i.test(title)) {
-                throw new Error(`${path}: deployed Worker returned a browser challenge instead of the page (title=${JSON.stringify(title)})`);
+                throw new Error(`${path}: production hostname returned a browser challenge instead of the page (title=${JSON.stringify(title)})`);
               }
 
               const h1 = page.locator("h1").first();
@@ -188,7 +191,7 @@ jobs:
                 throw new Error(`${path}: missing rendered official source link for ${sourceDomain}`);
               }
 
-              console.log(`PASS ${path} | WorkerHTTP=${response.status()} | H1=${JSON.stringify(h1Text)} | canonical=${canonical} | source=${sourceDomain}`);
+              console.log(`PASS ${url} | ProductionHTTP=${response.status()} | H1=${JSON.stringify(h1Text)} | canonical=${canonical} | source=${sourceDomain}`);
               await page.close();
             }
           } finally {
