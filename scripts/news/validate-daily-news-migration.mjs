@@ -84,6 +84,7 @@ for (const file of files) {
   }
 
   if (isBulkImageAltLabelMaintenance) {
+    const allowedTarget = /'Editorial (?:news photograph|image)'/i.test(sql);
     const safelyScoped =
       isUpdate &&
       !isInsert &&
@@ -93,10 +94,9 @@ for (const file of files) {
       /cloudflare-vision\s+ok:/i.test(sql) &&
       /stored-cloudflare-vision-v\[0-9\]/i.test(sql) &&
       /image_alt_text[\s\S]*?ILIKE\s*'Editorial illustration%'/i.test(sql) &&
-      /image_alt_text[\s\S]*?ILIKE\s*'Editorial news photograph%'/i.test(sql) &&
-      /'Editorial image'/i.test(sql) &&
+      allowedTarget &&
       !/SET[\s\S]{0,400}?featured_image_url\s*=/i.test(sql);
-    if (!safelyScoped) errors.push('BULK_IMAGE_ALT_LABEL_MAINTENANCE must be update-only, change only governed-ready image_alt_text medium labels, require Cloudflare visual-readiness provenance, and must not replace featured_image_url');
+    if (!safelyScoped) errors.push('BULK_IMAGE_ALT_LABEL_MAINTENANCE must be update-only, change only governed-ready image_alt_text medium labels to an allowed editorial label, require Cloudflare visual-readiness provenance, and must not replace featured_image_url');
   }
 
   const contentOnlyRemediation = isBulkCategoryReclassification || isBulkContentStructureRemediation || isBulkArticleMaintenance || isBulkImageFieldMaintenance || isBulkImageAltLabelMaintenance;
