@@ -28,11 +28,25 @@ function normalizeSource(source: string | null | undefined): string {
   return String(source ?? "").trim().toLowerCase();
 }
 
+function matchesOwnedSourceName(
+  normalized: string,
+  ownedNames: Set<string>,
+): boolean {
+  return [...ownedNames].some((name) => {
+    const owned = name.toLowerCase();
+    return (
+      normalized === owned ||
+      normalized.startsWith(`${owned} —`) ||
+      normalized.startsWith(`${owned} -`)
+    );
+  });
+}
+
 export function isKeepTxRedOwnedSource(source: string | null | undefined): boolean {
   const normalized = normalizeSource(source);
   if (!normalized) return false;
 
-  if ([...KEEP_TX_RED_OWNED_SOURCE_NAMES].some((name) => name.toLowerCase() === normalized)) {
+  if (matchesOwnedSourceName(normalized, KEEP_TX_RED_OWNED_SOURCE_NAMES)) {
     return true;
   }
 
@@ -53,9 +67,7 @@ export function isTexasDefinedOwnedSource(source: string | null | undefined): bo
   const normalized = normalizeSource(source);
   if (!normalized) return false;
 
-  return [...TEXAS_DEFINED_OWNED_SOURCE_NAMES].some(
-    (name) => name.toLowerCase() === normalized,
-  );
+  return matchesOwnedSourceName(normalized, TEXAS_DEFINED_OWNED_SOURCE_NAMES);
 }
 
 export function isTexasDefinedOwnedSourceRecord(
@@ -66,8 +78,10 @@ export function isTexasDefinedOwnedSourceRecord(
   // metadata. Do not let a legacy `TexasDefined-owned` note block publication.
   if (isKeepTxRedOwnedSource(source)) return false;
 
+  const normalizedNotes = String(notes ?? "").trim().toLowerCase();
   return (
     isTexasDefinedOwnedSource(source) ||
-    String(notes ?? "").toLowerCase().includes("texasdefined-owned")
+    normalizedNotes.includes("texasdefined-owned") ||
+    normalizedNotes.startsWith("texasdefined:")
   );
 }

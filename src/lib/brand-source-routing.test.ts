@@ -8,10 +8,11 @@ import {
 import { qualifiesForAutoRewrite, scoreFeedItem } from "./viral-score";
 
 describe("TexasDefined source ownership", () => {
-  it("recognizes exact source names and ownership notes", () => {
+  it("recognizes exact source names, suffixed discovery names, and ownership notes", () => {
     for (const source of TEXAS_DEFINED_OWNED_SOURCE_NAMES) {
       expect(isTexasDefinedOwnedSource(source)).toBe(true);
       expect(isTexasDefinedOwnedSource(source.toUpperCase())).toBe(true);
+      expect(isTexasDefinedOwnedSource(`${source} — Google News`)).toBe(true);
     }
 
     expect(isTexasDefinedOwnedSource("Texas Tribune")).toBe(false);
@@ -19,6 +20,12 @@ describe("TexasDefined source ownership", () => {
       isTexasDefinedOwnedSourceRecord(
         "Other Feed",
         "TexasDefined-owned lifestyle source",
+      ),
+    ).toBe(true);
+    expect(
+      isTexasDefinedOwnedSourceRecord(
+        "Another Feed",
+        "TexasDefined: lifestyle discovery source",
       ),
     ).toBe(true);
     expect(
@@ -68,5 +75,25 @@ describe("TexasDefined source ownership", () => {
       expect(result.routingType).toBe("FACEBOOK_ONLY");
       expect(qualifiesForAutoRewrite(result)).toBe(false);
     }
+  });
+
+  it("routes sports coverage to TexasDefined even when a general outlet supplied it", () => {
+    const result = scoreFeedItem({
+      title: "Dallas Cowboys announce roster move before Sunday game",
+      description: "The Cowboys made a football roster change in Dallas, Texas.",
+      source: "WFAA Dallas",
+      pub_date: new Date().toISOString(),
+      has_video: true,
+      source_reputation_score: 100,
+      source_reputation_reason: "Major local outlet",
+    });
+
+    expect(result.signals.category).toBe("Sports");
+    expect(result.texasRelevanceScore).toBe(0);
+    expect(result.editorialValueScore).toBe(0);
+    expect(result.sourceReputationScore).toBe(0);
+    expect(result.sourceReputationReason).toContain("Sports coverage belongs to TexasDefined");
+    expect(result.routingType).toBe("FACEBOOK_ONLY");
+    expect(qualifiesForAutoRewrite(result)).toBe(false);
   });
 });
