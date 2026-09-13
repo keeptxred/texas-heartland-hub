@@ -72,8 +72,7 @@ function normalizeReadinessDomain(
 export function hasHeroVisualReadinessProvenance(note: string | null | undefined): boolean {
   const value = (note ?? "").trim().toLowerCase();
   return value.includes("cloudflare-vision ok:")
-    || value.includes("cloudflare-vision-v2 ok:")
-    || value.includes("cloudflare-vision-v3 ok:")
+    || /cloudflare-vision-v\d+\s+ok:/.test(value)
     || value.startsWith("authoritative-image-exempt:");
 }
 
@@ -85,7 +84,7 @@ export function isHeroReadinessQuarantined(row: Pick<ArticleHeroReadinessRow,
   const note = (row.image_validation_note ?? "").trim().toLowerCase();
   return Boolean(candidate)
     && status === "failed"
-    && note.startsWith("stored-cloudflare-vision-v3 rejected:")
+    && note.startsWith("stored-cloudflare-vision-v4 rejected:")
     && (row.quality_flags ?? []).includes("image_requires_visual_validation");
 }
 

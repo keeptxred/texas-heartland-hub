@@ -19,30 +19,31 @@ describe("article hero visual readiness", () => {
     expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision ok: direct story match")).toBe(true);
     expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v2 ok: representative archive photo passed")).toBe(true);
     expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v3 ok: entity-aware archive photo passed")).toBe(true);
+    expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v4 ok: source-grounded archive photo passed")).toBe(true);
+    expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v19 ok: future version passed")).toBe(true);
     expect(hasHeroVisualReadinessProvenance("authoritative-image-exempt: official NHC forecast graphic")).toBe(true);
     expect(hasHeroVisualReadinessProvenance("verified-shared-hero: reused validated infrastructure hero")).toBe(false);
     expect(hasHeroVisualReadinessProvenance("verified-shared-hero: cloudflare-vision ok: reused validated infrastructure hero")).toBe(true);
   });
 
-  it("rechecks v1 and v2 rejects once under v3 and quarantines only v3 rejects", () => {
-    expect(isHeroReadinessQuarantined({
-      image_candidate_url: "https://commons.wikimedia.org/wiki/Special:Redirect/file/example.jpg",
-      image_generation_status: "failed",
-      image_validation_note: "stored-cloudflare-vision rejected: exact-action rule rejected the archive photo",
-      quality_flags: ["image_requires_visual_validation"],
-    })).toBe(false);
+  it("rechecks older rejects under v4 and quarantines only v4 rejects", () => {
+    for (const note of [
+      "stored-cloudflare-vision rejected: exact-action rule rejected the archive photo",
+      "stored-cloudflare-vision-v2 rejected: data-center override rejected the central entity",
+      "stored-cloudflare-vision-v3 rejected: source identity was not available",
+    ]) {
+      expect(isHeroReadinessQuarantined({
+        image_candidate_url: "https://commons.wikimedia.org/wiki/Special:Redirect/file/example.jpg",
+        image_generation_status: "failed",
+        image_validation_note: note,
+        quality_flags: ["image_requires_visual_validation"],
+      })).toBe(false);
+    }
 
     expect(isHeroReadinessQuarantined({
       image_candidate_url: "https://commons.wikimedia.org/wiki/Special:Redirect/file/example.jpg",
       image_generation_status: "failed",
-      image_validation_note: "stored-cloudflare-vision-v2 rejected: data-center override rejected the central entity",
-      quality_flags: ["image_requires_visual_validation"],
-    })).toBe(false);
-
-    expect(isHeroReadinessQuarantined({
-      image_candidate_url: "https://commons.wikimedia.org/wiki/Special:Redirect/file/example.jpg",
-      image_generation_status: "failed",
-      image_validation_note: "stored-cloudflare-vision-v3 rejected: entity-aware rule still failed",
+      image_validation_note: "stored-cloudflare-vision-v4 rejected: source-grounded rule still failed",
       quality_flags: ["image_requires_visual_validation"],
     })).toBe(true);
 

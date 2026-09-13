@@ -16,8 +16,9 @@ const REPOSITORY = "keeptxred/texas-heartland-hub";
 const WORKFLOW_PATH = ".github/workflows/article-hero-readiness-audit.yml";
 const MAX_IMAGE_BYTES = 15 * 1024 * 1024;
 const FETCH_TIMEOUT_MS = 45_000;
+const SOURCE_METADATA_TIMEOUT_MS = 15_000;
 const IMAGE_FETCH_USER_AGENT = "KeepTXRed/1.0 (+https://keeptxred.com; editorial image readiness audit)";
-const STORED_HERO_POLICY_VERSION = "v3";
+const STORED_HERO_POLICY_VERSION = "v4";
 const DATA_CENTER_STORY_RE = /\b(data center(?:s)?|data-center(?:s)?|server farm(?:s)?|hyperscale)\b/i;
 
 type AuditRow = ArticleHeroReadinessRow & {
@@ -68,7 +69,8 @@ function isDataCenterStory(row: AuditRow): boolean {
 function riskPriority(row: AuditRow): number {
   // Keep data-center coverage at the front because the original production
   // defect was metadata-correct but visually unreadable facility photography.
-  // v2 rejects are deliberately rechecked under the entity-aware v3 policy.
+  // Prior policy rejects are deliberately rechecked when a new policy version
+  // fixes a demonstrated false-negative class.
   if (isDataCenterStory(row)) return 0;
   if (row.image_candidate_url?.trim()) return 1;
   const note = (row.image_validation_note ?? "").toLowerCase();
@@ -96,6 +98,92 @@ function appendHistory(row: AuditRow, event: string, url: string, note: string):
       note: note.slice(0, 1000),
     },
   ];
+}
+
+function cleanMetadata(value: string): string {
+  return value
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#0*39;|&apos;/gi, "'")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+export function commonsFileTitle(value: string): string | null {
+  try {
+    const url = new URL(value);
+    const host = url.hostname.toLowerCase();
+    const path = decodeURIComponent(url.pathname);
+    if (host === "commons.wikimedia.org") {
+      const redirectPrefix = "/wiki/Special:Redirect/file/";
+      if (path.startsWith(redirectPrefix)) {
+        const name = path.slice(redirectPrefix.length).trim();
+        return name ? `File:${name}` : null;
+      }
+      const filePrefix = "/wiki/File:";
+      if (path.startsWith(filePrefix)) {
+        const name = path.slice(filePrefix.length).trim();
+        return name ? `File:${name}` : null;
+      }
+    }
+    if (host === "upload.wikimedia.org") {
+      const name = path.split("/").filter(Boolean).pop()?.trim();
+      return name ? `File:${name}` : null;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+async function fetchCommonsSourceMetadata(value: string): Promise<string | null> {
+  const title = commonsFileTitle(value);
+  if (!title) return null;
+
+  const endpoint = new URL("https://commons.wikimedia.org/w/api.php");
+  endpoint.searchParams.set("action", "query");
+  endpoint.searchParams.set("format", "json");
+  endpoint.searchParams.set("formatversion", "2");
+  endpoint.searchParams.set("prop", "imageinfo");
+  endpoint.searchParams.set("iiprop", "extmetadata");
+  endpoint.searchParams.set("titles", title);
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), SOURCE_METADATA_TIMEOUT_MS);
+  try {
+    const response = await fetch(endpoint, {
+      headers: { Accept: "application/json", "User-Agent": IMAGE_FETCH_USER_AGENT },
+      signal: controller.signal,
+    });
+    if (!response.ok) return null;
+    const payload = await response.json() as {
+      query?: {
+        pages?: Array<{
+          title?: string;
+          imageinfo?: Array<{
+            extmetadata?: Record<string, { value?: string }>;
+          }>;
+        }>;
+      };
+    };
+    const page = payload.query?.pages?.[0];
+    const metadata = page?.imageinfo?.[0]?.extmetadata ?? {};
+    const parts = [
+      page?.title ? `File: ${page.title.replace(/^File:/i, "").trim()}` : "",
+      metadata.ObjectName?.value ? `Object: ${cleanMetadata(metadata.ObjectName.value)}` : "",
+      metadata.ImageDescription?.value ? `Description: ${cleanMetadata(metadata.ImageDescription.value)}` : "",
+      metadata.Categories?.value ? `Categories: ${cleanMetadata(metadata.Categories.value)}` : "",
+    ].filter(Boolean);
+    const combined = parts.join(" | ").replace(/\s+/g, " ").trim();
+    return combined ? combined.slice(0, 1400) : null;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 async function fetchHeroBytes(value: string, requestUrl: string): Promise<{ bytes: Uint8Array; contentType: string; finalUrl: string }> {
@@ -288,7 +376,10 @@ async function post({ request }: { request: Request }) {
       return Response.json({ ok: true, slug: row.slug, candidate, ...result });
     }
 
-    const fetched = await fetchHeroBytes(candidate, request.url);
+    const [fetched, sourceMetadata] = await Promise.all([
+      fetchHeroBytes(candidate, request.url),
+      fetchCommonsSourceMetadata(candidate),
+    ]);
     const subject = buildHeroReadinessSubject(row);
     const verdict = await validateStoredHeroMatchesArticle(
       fetched.bytes,
@@ -297,15 +388,16 @@ async function post({ request }: { request: Request }) {
       {
         candidateUrl: candidate,
         candidateAltText: row.image_candidate_alt_text?.trim() || row.image_alt_text?.trim() || null,
+        sourceMetadata,
       },
     );
     if (verdict.matches) {
       const result = await acceptValidatedHero(db, row, candidate, verdict.reason);
-      return Response.json({ ok: true, slug: row.slug, candidate, finalUrl: fetched.finalUrl, validation: verdict.reason, ...result });
+      return Response.json({ ok: true, slug: row.slug, candidate, finalUrl: fetched.finalUrl, sourceMetadataUsed: Boolean(sourceMetadata), validation: verdict.reason, ...result });
     }
 
     const result = await rejectHero(db, row, candidate, verdict.reason, repair);
-    return Response.json({ ok: true, slug: row.slug, candidate, finalUrl: fetched.finalUrl, validation: verdict.reason, ...result });
+    return Response.json({ ok: true, slug: row.slug, candidate, finalUrl: fetched.finalUrl, sourceMetadataUsed: Boolean(sourceMetadata), validation: verdict.reason, ...result });
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error);
     try {
