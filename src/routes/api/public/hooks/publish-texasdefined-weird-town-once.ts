@@ -213,19 +213,23 @@ async function publishOnce(request: Request): Promise<Response> {
   const imageSha256 = await sha256Hex(bytes);
   const pageId = String(connection.account_id);
   const pageToken = String(connection.access_token);
-  const body = new FormData();
-  body.set("access_token", pageToken);
-  body.set("caption", POST_TEXT);
-  body.set("source", new Blob([bytes], { type: "image/png" }), "weird-texas-town-names-facebook-2026-09-12.png");
 
   const graphResponse = await fetch(
     `https://graph.facebook.com/${GRAPH_VERSION}/${encodeURIComponent(pageId)}/photos`,
-    { method: "POST", body },
+    {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        url: IMAGE_URL,
+        caption: POST_TEXT,
+        access_token: pageToken,
+      }),
+    },
   );
   const graphJson = (await graphResponse.json().catch(() => ({}))) as {
     id?: string;
     post_id?: string;
-    error?: { message?: string };
+    error?: { message?: string; type?: string; code?: number; error_subcode?: number; fbtrace_id?: string };
   };
   const externalId = graphJson.post_id ?? graphJson.id ?? null;
   if (!graphResponse.ok || !externalId) {
@@ -234,7 +238,12 @@ async function publishOnce(request: Request): Promise<Response> {
         ok: false,
         posted: false,
         error: graphJson.error?.message ?? `Facebook Graph API returned HTTP ${graphResponse.status}`,
+        facebook_error_type: graphJson.error?.type ?? null,
+        facebook_error_code: graphJson.error?.code ?? null,
+        facebook_error_subcode: graphJson.error?.error_subcode ?? null,
+        facebook_trace_id: graphJson.error?.fbtrace_id ?? null,
         source_post_id: SOURCE_POST_ID,
+        image_url: IMAGE_URL,
         image_sha256: imageSha256,
         github_run_id: runId,
       },
