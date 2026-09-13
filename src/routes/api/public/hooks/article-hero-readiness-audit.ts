@@ -1,0 +1,302 @@
+import { createFileRoute } from "@tanstack/react-router";
+import {
+  buildHeroReadinessSubject,
+  hasHeroVisualReadinessProvenance,
+  isAuthoritativeOfficialGraphic,
+  resolveAuditableHeroUrl,
+  type ArticleHeroReadinessRow,
+} from "@/lib/article-hero-readiness";
+import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
+import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
+import { validateStoredHeroMatchesArticle } from "@/lib/stored-hero-vision";
+
+const OIDC_AUDIENCE = "keeptxred-newsroom";
+const REPOSITORY = "keeptxred/texas-heartland-hub";
+const WORKFLOW_PATH = ".github/workflows/article-hero-readiness-audit.yml";
+const MAX_IMAGE_BYTES = 15 * 1024 * 1024;
+const FETCH_TIMEOUT_MS = 45_000;
+
+type AuditRow = ArticleHeroReadinessRow & {
+  published_at: string | null;
+  updated_at: string | null;
+  image_validation_history: unknown;
+  quality_flags: string[] | null;
+};
+
+function bearerToken(request: Request): string | null {
+  const match = (request.headers.get("authorization") ?? "").match(/^Bearer\s+(.+)$/i);
+  return match?.[1]?.trim() || null;
+}
+
+async function authorized(request: Request): Promise<boolean> {
+  const token = bearerToken(request);
+  if (!token) return false;
+  try {
+    await verifyGitHubActionsOidc({
+      token,
+      audience: OIDC_AUDIENCE,
+      repository: REPOSITORY,
+      workflowPath: WORKFLOW_PATH,
+      allowedEventNames: ["push", "schedule", "workflow_dispatch", "workflow_run"],
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function targetUrl(row: AuditRow): string {
+  return row.image_candidate_url?.trim() || row.featured_image_url?.trim() || "";
+}
+
+function isEligible(row: AuditRow): boolean {
+  if (!row.published_at || !targetUrl(row)) return false;
+  if (row.image_candidate_url?.trim()) return true;
+  return (row.image_generation_status ?? "").trim().toLowerCase() === "ready"
+    && !hasHeroVisualReadinessProvenance(row.image_validation_note);
+}
+
+function riskPriority(row: AuditRow): number {
+  if (row.image_candidate_url?.trim()) return 0;
+  const note = (row.image_validation_note ?? "").toLowerCase();
+  if (note.includes("primary-subject remediation")) return 1;
+  if (/^https?:\/\//i.test(targetUrl(row))) return 2;
+  if (note.includes("reviewed")) return 3;
+  return 4;
+}
+
+function cleanFlags(flags: string[] | null | undefined, add?: string): string[] {
+  const values = new Set((flags ?? []).filter(Boolean));
+  values.delete("image_requires_visual_validation");
+  if (add) values.add(add);
+  return [...values];
+}
+
+function appendHistory(row: AuditRow, event: string, url: string, note: string): unknown[] {
+  const current = Array.isArray(row.image_validation_history) ? row.image_validation_history : [];
+  return [
+    ...current,
+    {
+      at: new Date().toISOString(),
+      event,
+      url,
+      note: note.slice(0, 1000),
+    },
+  ];
+}
+
+async function fetchHeroBytes(value: string, requestUrl: string): Promise<{ bytes: Uint8Array; contentType: string; finalUrl: string }> {
+  const resolved = resolveAuditableHeroUrl(value, requestUrl);
+  if (!resolved) throw new Error("Hero URL is outside the guarded automatic-audit host policy");
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  try {
+    const response = await fetch(resolved, {
+      redirect: "follow",
+      headers: { Accept: "image/avif,image/webp,image/png,image/jpeg,image/*;q=0.8" },
+      signal: controller.signal,
+    });
+    if (!response.ok) throw new Error(`Hero fetch HTTP ${response.status}`);
+    if (!resolveAuditableHeroUrl(response.url || resolved.toString(), requestUrl)) {
+      throw new Error("Hero redirect left the guarded automatic-audit host policy");
+    }
+
+    const contentType = (response.headers.get("content-type") || "").split(";", 1)[0].trim().toLowerCase();
+    if (!contentType.startsWith("image/") || contentType === "image/svg+xml") {
+      throw new Error(`Hero fetch returned unsupported content type: ${contentType || "unknown"}`);
+    }
+    const declaredLength = Number(response.headers.get("content-length") || 0);
+    if (declaredLength > MAX_IMAGE_BYTES) throw new Error("Hero image exceeds automatic-audit size limit");
+
+    const buffer = await response.arrayBuffer();
+    if (!buffer.byteLength) throw new Error("Hero fetch returned an empty image body");
+    if (buffer.byteLength > MAX_IMAGE_BYTES) throw new Error("Hero image exceeds automatic-audit size limit");
+    return { bytes: new Uint8Array(buffer), contentType, finalUrl: response.url || resolved.toString() };
+  } catch (error) {
+    if ((error as Error)?.name === "AbortError") throw new Error(`Hero fetch timed out after ${FETCH_TIMEOUT_MS}ms`);
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function loadQueue(db: any): Promise<AuditRow[]> {
+  const columns = [
+    "slug",
+    "title",
+    "dek",
+    "category",
+    "affected_regions",
+    "seo_headline",
+    "featured_image_url",
+    "image_candidate_url",
+    "image_candidate_alt_text",
+    "image_alt_text",
+    "image_generation_status",
+    "image_validation_note",
+    "image_validation_history",
+    "quality_flags",
+    "body_json",
+    "published_at",
+    "updated_at",
+  ].join(",");
+  const { data, error } = await db
+    .from("daily_articles")
+    .select(columns)
+    .not("published_at", "is", null)
+    .order("updated_at", { ascending: false })
+    .limit(500);
+  if (error) throw new Error(error.message);
+  return (data ?? [])
+    .filter((row: AuditRow) => isEligible(row))
+    .sort((a: AuditRow, b: AuditRow) => {
+      const risk = riskPriority(a) - riskPriority(b);
+      if (risk) return risk;
+      return Date.parse(b.published_at ?? "") - Date.parse(a.published_at ?? "");
+    });
+}
+
+async function acceptAuthoritativeGraphic(db: any, row: AuditRow, candidate: string) {
+  const note = "authoritative-image-exempt: official NOAA/NHC storm or hurricane outlook graphic recognized by the guarded government-source host/path policy; exact authoritative graphic may bypass photorealism validation.";
+  const alt = row.image_candidate_alt_text?.trim() || row.image_alt_text?.trim() || `Official source graphic for ${row.title}`;
+  const { error } = await db.from("daily_articles").update({
+    featured_image_url: candidate,
+    image_url: candidate,
+    image_alt_text: alt,
+    image_generation_status: "ready",
+    image_validation_note: note,
+    image_candidate_url: null,
+    image_candidate_alt_text: null,
+    quality_flags: cleanFlags(row.quality_flags),
+  }).eq("slug", row.slug);
+  if (error) throw new Error(error.message);
+  return { accepted: true as const, exempt: true as const, note };
+}
+
+async function acceptValidatedHero(db: any, row: AuditRow, candidate: string, reason: string) {
+  const alt = row.image_candidate_alt_text?.trim() || row.image_alt_text?.trim() || `Editorial image for Keep TX Red article: ${row.title}`;
+  const note = `stored-cloudflare-vision ok: ${reason}`.slice(0, 1000);
+  const { error } = await db.from("daily_articles").update({
+    featured_image_url: candidate,
+    image_url: candidate,
+    image_alt_text: alt,
+    image_generation_status: "ready",
+    image_validation_note: note,
+    image_candidate_url: null,
+    image_candidate_alt_text: null,
+    quality_flags: cleanFlags(row.quality_flags),
+  }).eq("slug", row.slug);
+  if (error) throw new Error(error.message);
+  return { accepted: true as const, exempt: false as const, note };
+}
+
+async function rejectHero(db: any, row: AuditRow, candidate: string, reason: string, repair: boolean) {
+  const previousHeroIsTrusted = Boolean(row.featured_image_url?.trim())
+    && Boolean(row.image_candidate_url?.trim())
+    && hasHeroVisualReadinessProvenance(row.image_validation_note);
+  const note = `stored-cloudflare-vision rejected: ${reason}`.slice(0, 1000);
+
+  if (previousHeroIsTrusted) {
+    const { error } = await db.from("daily_articles").update({
+      image_candidate_url: null,
+      image_candidate_alt_text: null,
+      image_validation_history: appendHistory(row, "candidate_rejected", candidate, note),
+      quality_flags: cleanFlags(row.quality_flags),
+    }).eq("slug", row.slug);
+    if (error) throw new Error(error.message);
+    return { accepted: false as const, retainedPreviousHero: true as const, repaired: false as const, note };
+  }
+
+  const flags = cleanFlags(row.quality_flags, "image_requires_visual_validation");
+  const { error } = await db.from("daily_articles").update({
+    featured_image_url: null,
+    image_url: row.featured_image_url === candidate ? null : undefined,
+    image_alt_text: null,
+    image_candidate_url: candidate,
+    image_candidate_alt_text: row.image_candidate_alt_text?.trim() || row.image_alt_text?.trim() || null,
+    image_generation_status: "failed",
+    image_validation_note: note,
+    quality_flags: flags,
+  }).eq("slug", row.slug);
+  if (error) throw new Error(error.message);
+
+  if (!repair) return { accepted: false as const, retainedPreviousHero: false as const, repaired: false as const, note };
+  const generated = await generateFeaturedImageForSlugDirect(row.slug, true);
+  return generated.ok
+    ? { accepted: false as const, retainedPreviousHero: false as const, repaired: true as const, replacementUrl: generated.url, note }
+    : { accepted: false as const, retainedPreviousHero: false as const, repaired: false as const, repairError: generated.error, note };
+}
+
+async function post({ request }: { request: Request }) {
+  if (!(await authorized(request))) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  const url = new URL(request.url);
+  const requestedSlug = (url.searchParams.get("slug") ?? "").trim();
+  const dryRun = url.searchParams.get("dry") === "1";
+  const repair = url.searchParams.get("repair") !== "0";
+
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  // Generated database types intentionally lag the internal readiness-audit fields.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const db = supabaseAdmin as any;
+
+  let queue: AuditRow[];
+  try {
+    queue = await loadQueue(db);
+  } catch (error) {
+    return Response.json({ error: error instanceof Error ? error.message : String(error) }, { status: 500 });
+  }
+
+  if (dryRun) {
+    return Response.json({
+      ok: true,
+      dryRun: true,
+      ready: queue.length,
+      slugs: queue.map((row) => row.slug),
+      primarySubjectRemediations: queue.filter((row) => (row.image_validation_note ?? "").toLowerCase().includes("primary-subject remediation")).length,
+      candidates: queue.filter((row) => Boolean(row.image_candidate_url?.trim())).length,
+      scope: "all_published_hero_candidates_without_visual_readiness_provenance",
+    });
+  }
+
+  if (!requestedSlug) return Response.json({ error: "Missing eligible slug" }, { status: 400 });
+  const row = queue.find((item) => item.slug === requestedSlug);
+  if (!row) return Response.json({ error: "Slug is not currently in the hero-readiness audit queue" }, { status: 409 });
+
+  const candidate = targetUrl(row);
+  try {
+    if (isAuthoritativeOfficialGraphic(candidate)) {
+      const result = await acceptAuthoritativeGraphic(db, row, candidate);
+      return Response.json({ ok: true, slug: row.slug, candidate, ...result });
+    }
+
+    const fetched = await fetchHeroBytes(candidate, request.url);
+    const subject = buildHeroReadinessSubject(row);
+    const verdict = await validateStoredHeroMatchesArticle(fetched.bytes, fetched.contentType, subject);
+    if (verdict.matches) {
+      const result = await acceptValidatedHero(db, row, candidate, verdict.reason);
+      return Response.json({ ok: true, slug: row.slug, candidate, finalUrl: fetched.finalUrl, validation: verdict.reason, ...result });
+    }
+
+    const result = await rejectHero(db, row, candidate, verdict.reason, repair);
+    return Response.json({ ok: true, slug: row.slug, candidate, finalUrl: fetched.finalUrl, validation: verdict.reason, ...result });
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error);
+    try {
+      const result = await rejectHero(db, row, candidate, reason, repair);
+      return Response.json({ ok: true, slug: row.slug, candidate, validation: reason, fetchOrValidationError: true, ...result });
+    } catch (repairError) {
+      return Response.json({
+        ok: false,
+        slug: row.slug,
+        candidate,
+        error: reason,
+        repairError: repairError instanceof Error ? repairError.message : String(repairError),
+      }, { status: 500 });
+    }
+  }
+}
+
+export const Route = createFileRoute("/api/public/hooks/article-hero-readiness-audit")({
+  server: { handlers: { POST: post } },
+});
