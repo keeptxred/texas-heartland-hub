@@ -34,6 +34,12 @@ describe("stored hero Wikimedia audit derivatives", () => {
     expect(readiness).toContain('"commons.wikimedia.org"');
   });
 
+  it("audits historical failed rows that still expose an ungoverned canonical hero", () => {
+    expect(route).toContain('return (status === "ready" || status === "failed")');
+    expect(route).toContain("!hasHeroVisualReadinessProvenance(row.image_validation_note)");
+    expect(route).toContain("Historical rows can still carry a canonical hero");
+  });
+
   it("does not let Commons metadata weaken the strict data-center visual rule", () => {
     expect(readiness).toContain("A plain brick, office-like, residential-looking, warehouse-like, or windowless building exterior with no visible data-center infrastructure does not qualify");
     expect(readiness).toContain("filename, caption, source page, or metadata identifies it as a data center");
