@@ -1,3 +1,4 @@
+-- BULK_IMAGE_ALT_LABEL_MAINTENANCE
 -- Governed-ready article heroes can be either reusable real photography or
 -- photorealistic generated editorial imagery. Avoid labeling every validated
 -- asset as either a literal photograph or an illustration. Use the neutral,
