@@ -25,7 +25,7 @@ const RECENT_2026 = [
   { date: 'April 1, 2026', bill: 'SB 9', note: 'Specified pretrial release and bail provisions take effect on this date.' },
 ] as const;
 
-export const Route = createFileRoute('/laws/effective-dates')({
+export const Route = createFileRoute('/laws_/effective-dates')({
   head: () => ({
     meta: [
       { title: 'Texas Laws Taking Effect in 2026 | Effective-Date Tracker' },

@@ -12,7 +12,7 @@ const LAST_BALLOT_URL = 'https://www.sos.state.tx.us/about/newsreleases/2025/062
 const LAST_CANVASS_URL = 'https://www.sos.state.tx.us/texreg/archive/December52025/The%20Governor/The%20Governor.html';
 const EMPTY_BILLS_SEARCH = { q: '', status: '', legislature: 0, chamber: '', billType: '', page: 1 } as const;
 
-export const Route = createFileRoute('/laws/constitutional-amendments')({
+export const Route = createFileRoute('/laws_/constitutional-amendments')({
   head: () => ({
     meta: [
       { title: 'Texas Constitutional Amendments: 2026 Status & How the Process Works | KeepTXRed' },

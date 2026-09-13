@@ -5,7 +5,7 @@ import { buildVotingAnswerHead } from "@/lib/elections/voting-answer-seo";
 
 const canonicalPath = "/elections/voting/voter-registration-card";
 
-export const Route = createFileRoute("/elections/voting/voter-registration-card")({
+export const Route = createFileRoute("/elections/voting_/voter-registration-card")({
   head: () => buildVotingAnswerHead(VOTER_REGISTRATION_CARD_ANSWER, canonicalPath),
   component: Page,
 });

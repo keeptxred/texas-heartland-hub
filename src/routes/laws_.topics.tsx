@@ -8,7 +8,7 @@ const DESCRIPTION = "Plain-English Texas law guides covering property taxes, gun
 const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
 const INDEXABLE_LAW_TOPICS = LAW_TOPICS.filter(isLawTopicIndexable);
 
-export const Route = createFileRoute("/laws/topics")({
+export const Route = createFileRoute("/laws_/topics")({
   head: () => {
     const seo = buildSeo({ title: TITLE, description: DESCRIPTION, path: "/laws/topics" });
     return { meta: seo.meta, links: seo.links, scripts: [

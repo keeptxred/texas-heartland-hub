@@ -9,25 +9,32 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WhyTexasHasNoStateIncomeTaxRouteImport } from './routes/why-texas-has-no-state-income-tax'
 import { Route as VotingLocationsRouteImport } from './routes/voting-locations'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as TopicsRouteImport } from './routes/topics'
+import { Route as TexasWaterRouteImport } from './routes/texas-water'
 import { Route as TexasVeteransRouteImport } from './routes/texas-veterans'
 import { Route as TexasUtilityCostCalculatorRouteImport } from './routes/texas-utility-cost-calculator'
 import { Route as TexasSportsRouteImport } from './routes/texas-sports'
 import { Route as TexasSecretaryOfStateRouteImport } from './routes/texas-secretary-of-state'
+import { Route as TexasSchoolBoardPowersRouteImport } from './routes/texas-school-board-powers'
 import { Route as TexasSalesTaxExplainedRouteImport } from './routes/texas-sales-tax-explained'
 import { Route as TexasSalaryComparisonByCityRouteImport } from './routes/texas-salary-comparison-by-city'
 import { Route as TexasSalaryCalculatorRouteImport } from './routes/texas-salary-calculator'
 import { Route as TexasResourcesRouteImport } from './routes/texas-resources'
 import { Route as TexasRentVsBuyCalculatorRouteImport } from './routes/texas-rent-vs-buy-calculator'
 import { Route as TexasRefinanceSavingsCalculatorRouteImport } from './routes/texas-refinance-savings-calculator'
+import { Route as TexasRefinanceCalculatorRouteImport } from './routes/texas-refinance-calculator'
 import { Route as TexasPropertyTaxProtestGuideRouteImport } from './routes/texas-property-tax-protest-guide'
 import { Route as TexasPropertyTaxIncreaseCalculatorRouteImport } from './routes/texas-property-tax-increase-calculator'
+import { Route as TexasPropertyTaxCalculatorRouteImport } from './routes/texas-property-tax-calculator'
 import { Route as TexasPoliticsRouteImport } from './routes/texas-politics'
 import { Route as TexasPoliticalReferenceRouteImport } from './routes/texas-political-reference'
+import { Route as TexasPoliticalFiguresRouteImport } from './routes/texas-political-figures'
 import { Route as TexasNewsRouteImport } from './routes/texas-news'
 import { Route as TexasMovingCostCalculatorRouteImport } from './routes/texas-moving-cost-calculator'
+import { Route as TexasMortgageQualificationCalculatorRouteImport } from './routes/texas-mortgage-qualification-calculator'
 import { Route as TexasMortgagePayoffCalculatorRouteImport } from './routes/texas-mortgage-payoff-calculator'
 import { Route as TexasMortgageCalculatorRouteImport } from './routes/texas-mortgage-calculator'
 import { Route as TexasLivingRouteImport } from './routes/texas-living'
@@ -36,18 +43,22 @@ import { Route as TexasLawsRouteImport } from './routes/texas-laws'
 import { Route as TexasLawPolicyRouteImport } from './routes/texas-law-policy'
 import { Route as TexasLawEnforcementRouteImport } from './routes/texas-law-enforcement'
 import { Route as TexasHomeownershipCostCalculatorRouteImport } from './routes/texas-homeownership-cost-calculator'
+import { Route as TexasHomeOwnershipCostCalculatorRouteImport } from './routes/texas-home-ownership-cost-calculator'
 import { Route as TexasHomeInsuranceCalculatorRouteImport } from './routes/texas-home-insurance-calculator'
 import { Route as TexasHomeEquityGrowthCalculatorRouteImport } from './routes/texas-home-equity-growth-calculator'
 import { Route as TexasHomeEquityCalculatorRouteImport } from './routes/texas-home-equity-calculator'
 import { Route as TexasHomeAffordabilityCalculatorRouteImport } from './routes/texas-home-affordability-calculator'
+import { Route as TexasHelocCalculatorRouteImport } from './routes/texas-heloc-calculator'
 import { Route as TexasGovernmentRouteImport } from './routes/texas-government'
 import { Route as TexasFirstTimeHomebuyerProgramsRouteImport } from './routes/texas-first-time-homebuyer-programs'
 import { Route as TexasFinancialToolsRouteImport } from './routes/texas-financial-tools'
+import { Route as TexasEnergyPolicyRouteImport } from './routes/texas-energy-policy'
 import { Route as TexasEnergyRouteImport } from './routes/texas-energy'
 import { Route as TexasEconomyRouteImport } from './routes/texas-economy'
 import { Route as TexasDownPaymentCalculatorRouteImport } from './routes/texas-down-payment-calculator'
 import { Route as TexasDownPaymentAssistanceCalculatorRouteImport } from './routes/texas-down-payment-assistance-calculator'
 import { Route as TexasDataRouteImport } from './routes/texas-data'
+import { Route as TexasCourtsRouteImport } from './routes/texas-courts'
 import { Route as TexasCostOfLivingCalculatorRouteImport } from './routes/texas-cost-of-living-calculator'
 import { Route as TexasComptrollerRouteImport } from './routes/texas-comptroller'
 import { Route as TexasClosingCostCalculatorRouteImport } from './routes/texas-closing-cost-calculator'
@@ -66,7 +77,10 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SitemapSourcesDotxmlRouteImport } from './routes/sitemap-sources[.]xml'
 import { Route as SitemapRepresentativesDotxmlRouteImport } from './routes/sitemap-representatives[.]xml'
 import { Route as SitemapProductsDotxmlRouteImport } from './routes/sitemap-products[.]xml'
+import { Route as SitemapPriorityDotxmlRouteImport } from './routes/sitemap-priority[.]xml'
+import { Route as SitemapPoliticalGeographyDotxmlRouteImport } from './routes/sitemap-political-geography[.]xml'
 import { Route as SitemapPoliticalFiguresDotxmlRouteImport } from './routes/sitemap-political-figures[.]xml'
+import { Route as SitemapPartyRepresentationDotxmlRouteImport } from './routes/sitemap-party-representation[.]xml'
 import { Route as SitemapPagesDotxmlRouteImport } from './routes/sitemap-pages[.]xml'
 import { Route as SitemapNewsDotxmlRouteImport } from './routes/sitemap-news[.]xml'
 import { Route as SitemapLegislatureDotxmlRouteImport } from './routes/sitemap-legislature[.]xml'
@@ -76,6 +90,7 @@ import { Route as SitemapExploreDotxmlRouteImport } from './routes/sitemap-explo
 import { Route as SitemapExploreLocationsDotxmlRouteImport } from './routes/sitemap-explore-locations[.]xml'
 import { Route as SitemapEvergreenDotxmlRouteImport } from './routes/sitemap-evergreen[.]xml'
 import { Route as SitemapElectionsDotxmlRouteImport } from './routes/sitemap-elections[.]xml'
+import { Route as SitemapDmvDotxmlRouteImport } from './routes/sitemap-dmv[.]xml'
 import { Route as SitemapDistrictsDotxmlRouteImport } from './routes/sitemap-districts[.]xml'
 import { Route as SitemapCommitteesDotxmlRouteImport } from './routes/sitemap-committees[.]xml'
 import { Route as SitemapBillsDotxmlRouteImport } from './routes/sitemap-bills[.]xml'
@@ -87,13 +102,17 @@ import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ReturnRefundPolicyRouteImport } from './routes/return-refund-policy'
 import { Route as RepresentativesRouteImport } from './routes/representatives'
 import { Route as RegisterToVoteRouteImport } from './routes/register-to-vote'
+import { Route as PropertyTaxesRouteImport } from './routes/property-taxes'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PoliticsRouteImport } from './routes/politics'
+import { Route as PoliticalFigureImageRouteImport } from './routes/political-figure-image'
 import { Route as PolicyTrackersDottxtRouteImport } from './routes/policy-trackers[.]txt'
 import { Route as PolicyRouteImport } from './routes/policy'
 import { Route as NewsSitemapDotxmlRouteImport } from './routes/news-sitemap[.]xml'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as MovingToTexasChecklistRouteImport } from './routes/moving-to-texas-checklist'
 import { Route as MovingToTexasRouteImport } from './routes/moving-to-texas'
+import { Route as MovingChecklistRouteImport } from './routes/moving-checklist'
 import { Route as MerchantImageRouteImport } from './routes/merchant-image'
 import { Route as LivingInTexasRouteImport } from './routes/living-in-texas'
 import { Route as LegislatureRouteImport } from './routes/legislature'
@@ -111,18 +130,22 @@ import { Route as FindRepresentativeRouteImport } from './routes/find-representa
 import { Route as FindMySchoolDistrictRouteImport } from './routes/find-my-school-district'
 import { Route as FindMyDmvRouteImport } from './routes/find-my-dmv'
 import { Route as ExploreRouteImport } from './routes/explore'
+import { Route as ErcotTexasPowerGridRouteImport } from './routes/ercot-texas-power-grid'
 import { Route as ElectionsRouteImport } from './routes/elections'
 import { Route as ElPasoRouteImport } from './routes/el-paso'
 import { Route as EditorialStandardsRouteImport } from './routes/editorial-standards'
 import { Route as DmvRouteImport } from './routes/dmv'
 import { Route as DistrictsRouteImport } from './routes/districts'
+import { Route as DataDeletionRouteImport } from './routes/data-deletion'
 import { Route as DataRouteImport } from './routes/data'
 import { Route as DallasFortWorthRouteImport } from './routes/dallas-fort-worth'
 import { Route as CountyElectionsRouteImport } from './routes/county-elections'
 import { Route as ContactLegislatorsRouteImport } from './routes/contact-legislators'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CommitteesRouteImport } from './routes/committees'
 import { Route as CivicToolsRouteImport } from './routes/civic-tools'
 import { Route as CitationGuideRouteImport } from './routes/citation-guide'
+import { Route as CartRouteImport } from './routes/cart'
 import { Route as CandidateGuidesRouteImport } from './routes/candidate-guides'
 import { Route as BillsRouteImport } from './routes/bills'
 import { Route as AustinRouteImport } from './routes/austin'
@@ -132,11 +155,15 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ToolsIndexRouteImport } from './routes/tools/index'
 import { Route as TexasSportsIndexRouteImport } from './routes/texas-sports.index'
+import { Route as TexasPoliticsIndexRouteImport } from './routes/texas-politics.index'
 import { Route as TexasNewsIndexRouteImport } from './routes/texas-news/index'
 import { Route as TexasLegislatureIndexRouteImport } from './routes/texas-legislature.index'
+import { Route as TexasGovernmentIndexRouteImport } from './routes/texas-government.index'
 import { Route as SourcesIndexRouteImport } from './routes/sources.index'
 import { Route as ShopIndexRouteImport } from './routes/shop.index'
+import { Route as PolicyIndexRouteImport } from './routes/policy.index'
 import { Route as NewsIndexRouteImport } from './routes/news.index'
+import { Route as LawsIndexRouteImport } from './routes/laws.index'
 import { Route as IssuesIndexRouteImport } from './routes/issues/index'
 import { Route as ExploreIndexRouteImport } from './routes/explore.index'
 import { Route as ElectionsIndexRouteImport } from './routes/elections.index'
@@ -166,12 +193,56 @@ import { Route as VehiclesBuyingSellingRouteImport } from './routes/vehicles.buy
 import { Route as VehiclesBuyingACarRouteImport } from './routes/vehicles.buying-a-car'
 import { Route as VehiclesBondedTitlesRouteImport } from './routes/vehicles.bonded-titles'
 import { Route as VehiclesAutoInsuranceRequirementsRouteImport } from './routes/vehicles.auto-insurance-requirements'
+import { Route as ToolsTexasUtilitiesCalculatorRouteImport } from './routes/tools.texas-utilities-calculator'
 import { Route as ToolsTexasTaxStructureComparisonRouteImport } from './routes/tools/texas-tax-structure-comparison'
 import { Route as ToolsTexasSpendingGrowthCapRouteImport } from './routes/tools/texas-spending-growth-cap'
 import { Route as ToolsTexasRainyDayFundRouteImport } from './routes/tools/texas-rainy-day-fund'
 import { Route as ToolsTexasBudgetHeadroomRouteImport } from './routes/tools/texas-budget-headroom'
+import { Route as ToolsPropertyTaxCalculatorRouteImport } from './routes/tools.property-tax-calculator'
+import { Route as ToolsMortgageCalculatorRouteImport } from './routes/tools.mortgage-calculator'
+import { Route as ToolsHomeInsuranceCalculatorRouteImport } from './routes/tools.home-insurance-calculator'
+import { Route as ToolsHomeAffordabilityCalculatorRouteImport } from './routes/tools.home-affordability-calculator'
+import { Route as ToolsClosingCostCalculatorRouteImport } from './routes/tools.closing-cost-calculator'
+import { Route as TexasPropertyTaxes2026RouteImport } from './routes/texas.property-taxes-2026'
 import { Route as TexasSportsLeagueRouteImport } from './routes/texas-sports.$league'
+import { Route as TexasPoliticsVotingRightsHistoryRouteImport } from './routes/texas-politics.voting-rights-history'
+import { Route as TexasPoliticsTexasWomenSuffragePoliticalRepresentationHistoryRouteImport } from './routes/texas-politics.texas-women-suffrage-political-representation-history'
+import { Route as TexasPoliticsTexasWhitePrimaryHistoryRouteImport } from './routes/texas-politics.texas-white-primary-history'
+import { Route as TexasPoliticsTexasUrbanSuburbanRuralPoliticsHistoryRouteImport } from './routes/texas-politics.texas-urban-suburban-rural-politics-history'
+import { Route as TexasPoliticsTexasSupremeCourtRealignmentRouteImport } from './routes/texas-politics.texas-supreme-court-realignment'
+import { Route as TexasPoliticsTexasSecessionConvention1861RouteImport } from './routes/texas-politics.texas-secession-convention-1861'
+import { Route as TexasPoliticsTexasRepublicanPartyHistoryRouteImport } from './routes/texas-politics.texas-republican-party-history'
+import { Route as TexasPoliticsTexasRedistrictingHistoryRouteImport } from './routes/texas-politics.texas-redistricting-history'
+import { Route as TexasPoliticsTexasReconstructionGovernmentRouteImport } from './routes/texas-politics.texas-reconstruction-government'
+import { Route as TexasPoliticsTexasPopulistProgressiveEraRouteImport } from './routes/texas-politics.texas-populist-progressive-era'
+import { Route as TexasPoliticsTexasPoliticalGeographyHistoryRouteImport } from './routes/texas-politics.texas-political-geography-history'
+import { Route as TexasPoliticsTexasNewDealPoliticsRouteImport } from './routes/texas-politics.texas-new-deal-politics'
+import { Route as TexasPoliticsTexasMexicanAmericanPoliticalOrganizationHistoryRouteImport } from './routes/texas-politics.texas-mexican-american-political-organization-history'
+import { Route as TexasPoliticsTexasMetroRegionalRealignmentHistoryRouteImport } from './routes/texas-politics.texas-metro-regional-realignment-history'
+import { Route as TexasPoliticsTexasGovernmentDuringCivilWarRouteImport } from './routes/texas-politics.texas-government-during-civil-war'
+import { Route as TexasPoliticsTexasElectionHistoryRouteImport } from './routes/texas-politics.texas-election-history'
+import { Route as TexasPoliticsTexasDemocraticPartyHistoryRouteImport } from './routes/texas-politics.texas-democratic-party-history'
+import { Route as TexasPoliticsTexasDemocraticDominance18761952RouteImport } from './routes/texas-politics.texas-democratic-dominance-1876-1952'
+import { Route as TexasPoliticsTexasConstitutionalHistoryRouteImport } from './routes/texas-politics.texas-constitutional-history'
+import { Route as TexasPoliticsTexasConstitutionalConvention1875RouteImport } from './routes/texas-politics.texas-constitutional-convention-1875'
+import { Route as TexasPoliticsTexasCivilRightsEraPoliticsRouteImport } from './routes/texas-politics.texas-civil-rights-era-politics'
+import { Route as TexasPoliticsTexasAnnexationStatehoodHistoryRouteImport } from './routes/texas-politics.texas-annexation-statehood-history'
+import { Route as TexasPoliticsSouthTexasRioGrandeValleyPoliticalHistoryRouteImport } from './routes/texas-politics.south-texas-rio-grande-valley-political-history'
+import { Route as TexasPoliticsRepublicToStateGovernmentTransitionRouteImport } from './routes/texas-politics.republic-to-state-government-transition'
+import { Route as TexasPoliticsRepublicOfTexasGovernmentHistoryRouteImport } from './routes/texas-politics.republic-of-texas-government-history'
+import { Route as TexasPoliticsRepublicOfTexasDiplomacyRecognitionRouteImport } from './routes/texas-politics.republic-of-texas-diplomacy-recognition'
+import { Route as TexasPoliticsRepublicOfTexasDebtFinanceRouteImport } from './routes/texas-politics.republic-of-texas-debt-finance'
+import { Route as TexasPoliticsRepublicOfTexasCapitalsGovernmentSeatsRouteImport } from './routes/texas-politics.republic-of-texas-capitals-government-seats'
+import { Route as TexasPoliticsReconstructionRepublicansRouteImport } from './routes/texas-politics.reconstruction-republicans'
+import { Route as TexasPoliticsPresidentsOfRepublicOfTexasRouteImport } from './routes/texas-politics.presidents-of-republic-of-texas'
+import { Route as TexasPoliticsHowTexasBecameRepublicanRouteImport } from './routes/texas-politics.how-texas-became-republican'
 import { Route as TexasPoliticsFiguresRouteImport } from './routes/texas-politics.figures'
+import { Route as TexasPoliticsFergusonEraTexasPoliticsRouteImport } from './routes/texas-politics.ferguson-era-texas-politics'
+import { Route as TexasPoliticsConstitutionOf1869TexasRouteImport } from './routes/texas-politics.constitution-of-1869-texas'
+import { Route as TexasPoliticsConstitutionOf1866TexasRouteImport } from './routes/texas-politics.constitution-of-1866-texas'
+import { Route as TexasPoliticsConstitutionOf1861TexasRouteImport } from './routes/texas-politics.constitution-of-1861-texas'
+import { Route as TexasPoliticsConstitutionOf1836RepublicOfTexasRouteImport } from './routes/texas-politics.constitution-of-1836-republic-of-texas'
+import { Route as TexasPoliticsCongressOfRepublicOfTexasRouteImport } from './routes/texas-politics.congress-of-republic-of-texas'
 import { Route as TexasPoliticalReferenceSlugRouteImport } from './routes/texas-political-reference.$slug'
 import { Route as TexasNewsTopicRouteImport } from './routes/texas-news.$topic'
 import { Route as TexasLegislatureVotesRouteImport } from './routes/texas-legislature.votes'
@@ -180,9 +251,39 @@ import { Route as TexasLegislatureSenateRouteImport } from './routes/texas-legis
 import { Route as TexasLegislatureHouseRouteImport } from './routes/texas-legislature.house'
 import { Route as TexasLegislatureCurrentSessionRouteImport } from './routes/texas-legislature.current-session'
 import { Route as TexasLegislatureCommitteesRouteImport } from './routes/texas-legislature.committees'
+import { Route as TexasGovernmentTexasTrialCourtsRouteImport } from './routes/texas-government.texas-trial-courts'
+import { Route as TexasGovernmentTexasSupremeCourtHistoryRouteImport } from './routes/texas-government.texas-supreme-court-history'
+import { Route as TexasGovernmentTexasSpecialDistrictGovernmentHistoryRouteImport } from './routes/texas-government.texas-special-district-government-history'
+import { Route as TexasGovernmentTexasMunicipalGovernmentHistoryRouteImport } from './routes/texas-government.texas-municipal-government-history'
+import { Route as TexasGovernmentTexasMunicipalCourtsHistoryRouteImport } from './routes/texas-government.texas-municipal-courts-history'
+import { Route as TexasGovernmentTexasLegislatureHistoryRouteImport } from './routes/texas-government.texas-legislature-history'
+import { Route as TexasGovernmentTexasJudicialSelectionHistoryRouteImport } from './routes/texas-government.texas-judicial-selection-history'
+import { Route as TexasGovernmentTexasGovernmentHistoryRouteImport } from './routes/texas-government.texas-government-history'
+import { Route as TexasGovernmentTexasCourtOfCriminalAppealsHistoryRouteImport } from './routes/texas-government.texas-court-of-criminal-appeals-history'
+import { Route as TexasGovernmentTexasCountyGovernmentHistoryRouteImport } from './routes/texas-government.texas-county-government-history'
+import { Route as TexasGovernmentTexasBusinessCourtRouteImport } from './routes/texas-government.texas-business-court'
+import { Route as TexasGovernmentTaxAssessorCollectorHistoryRouteImport } from './routes/texas-government.tax-assessor-collector-history'
+import { Route as TexasGovernmentStateCommissionOnJudicialConductRouteImport } from './routes/texas-government.state-commission-on-judicial-conduct'
+import { Route as TexasGovernmentSpeakerOfTheHouseHistoryRouteImport } from './routes/texas-government.speaker-of-the-house-history'
+import { Route as TexasGovernmentMunicipalFinanceTaxDebtHistoryRouteImport } from './routes/texas-government.municipal-finance-tax-debt-history'
+import { Route as TexasGovernmentMunicipalElectionsRepresentationHistoryRouteImport } from './routes/texas-government.municipal-elections-representation-history'
+import { Route as TexasGovernmentMayorCityCouncilHistoryRouteImport } from './routes/texas-government.mayor-city-council-history'
+import { Route as TexasGovernmentLieutenantGovernorHistoryRouteImport } from './routes/texas-government.lieutenant-governor-history'
+import { Route as TexasGovernmentJusticeOfThePeaceConstableHistoryRouteImport } from './routes/texas-government.justice-of-the-peace-constable-history'
+import { Route as TexasGovernmentJudicialSelectionElectionsRouteImport } from './routes/texas-government.judicial-selection-elections'
+import { Route as TexasGovernmentHomeRuleGeneralLawCitiesHistoryRouteImport } from './routes/texas-government.home-rule-general-law-cities-history'
+import { Route as TexasGovernmentGovernorHistoryRouteImport } from './routes/texas-government.governor-history'
+import { Route as TexasGovernmentFifteenthCourtOfAppealsRouteImport } from './routes/texas-government.fifteenth-court-of-appeals'
+import { Route as TexasGovernmentCourtOfCriminalAppealsHistoryRouteImport } from './routes/texas-government.court-of-criminal-appeals-history'
+import { Route as TexasGovernmentCountySheriffHistoryRouteImport } from './routes/texas-government.county-sheriff-history'
+import { Route as TexasGovernmentCountyJudgeHistoryRouteImport } from './routes/texas-government.county-judge-history'
+import { Route as TexasGovernmentCountyDistrictClerkHistoryRouteImport } from './routes/texas-government.county-district-clerk-history'
+import { Route as TexasGovernmentCountyCommissionerHistoryRouteImport } from './routes/texas-government.county-commissioner-history'
+import { Route as TexasGovernmentComptrollerHistoryRouteImport } from './routes/texas-government.comptroller-history'
+import { Route as TexasGovernmentCommissionersCourtHistoryRouteImport } from './routes/texas-government.commissioners-court-history'
+import { Route as TexasGovernmentCityManagerGovernmentHistoryRouteImport } from './routes/texas-government.city-manager-government-history'
 import { Route as TexasGovernmentAgenciesRouteImport } from './routes/texas-government.agencies'
 import { Route as TexasGovernmentEntitySlugRouteImport } from './routes/texas-government.$entitySlug'
-import { Route as TexasGovernmentFifteenthCourtOfAppealsRouteImport } from './routes/texas-government.fifteenth-court-of-appeals'
 import { Route as TexasDataDatasetSlugRouteImport } from './routes/texas-data.$datasetSlug'
 import { Route as TexasCaseFactsRouteImport } from './routes/texas-case.facts'
 import { Route as TexasCaseSlugRouteImport } from './routes/texas-case.$slug'
@@ -199,6 +300,7 @@ import { Route as PolicyViolentOffenseBailRouteImport } from './routes/policy.vi
 import { Route as PolicyTexasCyberCommandRouteImport } from './routes/policy.texas-cyber-command'
 import { Route as PolicyTanfWorkParticipationRouteImport } from './routes/policy.tanf-work-participation'
 import { Route as PolicyStateFederalPowerRouteImport } from './routes/policy.state-federal-power'
+import { Route as PolicySocialMediaViewpointModerationRouteImport } from './routes/policy.social-media-viewpoint-moderation'
 import { Route as PolicySemiconductorManufacturingRouteImport } from './routes/policy.semiconductor-manufacturing'
 import { Route as PolicyScopeActOnlineMinorsRouteImport } from './routes/policy.scope-act-online-minors'
 import { Route as PolicySchoolSafetySecurityRouteImport } from './routes/policy.school-safety-security'
@@ -263,9 +365,18 @@ import { Route as News20260809CanyonLakeFullCapacityRecoveryRouteImport } from '
 import { Route as News20260704TheRealReasonBehindTheResilienceOfTexasIdentityIn2026ExplainedSimplyRouteImport } from './routes/news.2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity-in-2026-explained-simply'
 import { Route as News20260704TheRealReasonBehindTheResilienceOfTexasIdentityRouteImport } from './routes/news.2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity'
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
-import { Route as LawsTopicsRouteImport } from './routes/laws.topics'
-import { Route as LawsEffectiveDatesRouteImport } from './routes/laws.effective-dates'
-import { Route as LawsConstitutionalAmendmentsRouteImport } from './routes/laws.constitutional-amendments'
+import { Route as LawsTopicsRouteImport } from './routes/laws_.topics'
+import { Route as LawsEffectiveDatesRouteImport } from './routes/laws_.effective-dates'
+import { Route as LawsConstitutionalAmendmentsRouteImport } from './routes/laws_.constitutional-amendments'
+import { Route as LawsTexasPropertyTaxLawsExplainedRouteImport } from './routes/laws.texas-property-tax-laws-explained'
+import { Route as LawsTexasPropertyTaxLawsRouteImport } from './routes/laws.texas-property-tax-laws'
+import { Route as LawsTexasNewLaws2026RouteImport } from './routes/laws.texas-new-laws-2026'
+import { Route as LawsTexasGunLawsExplainedRouteImport } from './routes/laws.texas-gun-laws-explained'
+import { Route as LawsTexasGunLawsRouteImport } from './routes/laws.texas-gun-laws'
+import { Route as LawsTexasElectionLawsExplainedRouteImport } from './routes/laws.texas-election-laws-explained'
+import { Route as LawsTexasElectionLawsRouteImport } from './routes/laws.texas-election-laws'
+import { Route as LawsTexasConstitutionRouteImport } from './routes/laws.texas-constitution'
+import { Route as LawsShowIdToPoliceInTexasRouteImport } from './routes/laws.show-id-to-police-in-texas'
 import { Route as IssuesTexasPolicyHandbookRouteImport } from './routes/issues/texas-policy-handbook'
 import { Route as IssuesTexasLocalGovernmentHandbookRouteImport } from './routes/issues/texas-local-government-handbook'
 import { Route as IssuesTexasGovernmentAccountabilityHandbookRouteImport } from './routes/issues/texas-government-accountability-handbook'
@@ -365,6 +476,9 @@ import { Route as ExploreRegionRegionRouteImport } from './routes/explore.region
 import { Route as ExploreLakeSlugRouteImport } from './routes/explore.lake.$slug'
 import { Route as ExploreCountyCountyRouteImport } from './routes/explore.county.$county'
 import { Route as ExploreCavernSlugRouteImport } from './routes/explore.cavern.$slug'
+import { Route as ElectionsVotingVoterRegistrationCardRouteImport } from './routes/elections.voting_.voter-registration-card'
+import { Route as ElectionsVotingPollingPlaceRouteImport } from './routes/elections.voting_.polling-place'
+import { Route as ElectionsVotingPollingHoursRouteImport } from './routes/elections.voting_.polling-hours'
 import { Route as ElectionsResultsResultSlugRouteImport } from './routes/elections.results.$resultSlug'
 import { Route as ElectionsRacesRaceSlugRouteImport } from './routes/elections.races_.$raceSlug'
 import { Route as ElectionsPollsPollSlugRouteImport } from './routes/elections.polls.$pollSlug'
@@ -373,10 +487,13 @@ import { Route as ElectionsDistrictsDistrictSlugRouteImport } from './routes/ele
 import { Route as ElectionsCandidatesCandidateSlugRouteImport } from './routes/elections.candidates_.$candidateSlug'
 import { Route as BillsSubjectSubjectSlugRouteImport } from './routes/bills/subject/$subjectSlug'
 import { Route as ApiShopStripeWebhookRouteImport } from './routes/api/shop/stripe-webhook'
+import { Route as ApiPublicTexasdefinedGovernmentSearchRouteImport } from './routes/api/public/texasdefined-government-search'
 import { Route as ApiPublicTexasdefinedCheckoutRouteImport } from './routes/api/public/texasdefined-checkout'
 import { Route as ApiPublicStoreProductsRouteImport } from './routes/api/public/store-products'
 import { Route as ApiPublicOfficialBillTextRouteImport } from './routes/api/public/official-bill-text'
+import { Route as ApiPublicNewsroomSourceHealthRouteImport } from './routes/api/public/newsroom-source-health'
 import { Route as ApiPublicNewsroomHealthRouteImport } from './routes/api/public/newsroom-health'
+import { Route as ApiPublicFlyoverAug10HealthRouteImport } from './routes/api/public/flyover-aug10-health'
 import { Route as ApiPublicDeploymentFingerprintRouteImport } from './routes/api/public/deployment-fingerprint'
 import { Route as ApiPublicCrossSitePublicationHealthRouteImport } from './routes/api/public/cross-site-publication-health'
 import { Route as ApiElectionsDistrictLookupRouteImport } from './routes/api.elections.district-lookup'
@@ -384,6 +501,7 @@ import { Route as ApiAdminShopProductsRouteImport } from './routes/api/admin/sho
 import { Route as ApiAdminNewsroomMetricsRouteImport } from './routes/api/admin/newsroom-metrics'
 import { Route as ApiAdminLegislationSyncProxyRouteImport } from './routes/api/admin/legislation-sync-proxy'
 import { Route as ApiAdminGscSyncRouteImport } from './routes/api/admin/gsc-sync'
+import { Route as ApiAdminGscSitewideSyncRouteImport } from './routes/api/admin/gsc-sitewide-sync'
 import { Route as AdminElectionsResultsRouteImport } from './routes/admin/elections/results'
 import { Route as AdminElectionsRacesRouteImport } from './routes/admin/elections/races'
 import { Route as AdminElectionsPollsRouteImport } from './routes/admin/elections/polls'
@@ -400,7 +518,9 @@ import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/publi
 import { Route as ApiPublicPaymentsSandboxHealthRouteImport } from './routes/api/public/payments/sandbox-health'
 import { Route as ApiPublicPaymentsSandboxConfigRouteImport } from './routes/api/public/payments/sandbox-config'
 import { Route as ApiPublicPaymentsHealthRouteImport } from './routes/api/public/payments/health'
+import { Route as ApiPublicOpsEtsyHalloweenSeo20260911RouteImport } from './routes/api/public/ops/etsy-halloween-seo-20260911'
 import { Route as ApiPublicHooksTrackVariantRouteImport } from './routes/api/public/hooks/track-variant'
+import { Route as ApiPublicHooksTexasdefinedFacebookCommentSignalsRouteImport } from './routes/api/public/hooks/texasdefined-facebook-comment-signals'
 import { Route as ApiPublicHooksSyncPrintifyRouteImport } from './routes/api/public/hooks/sync-printify'
 import { Route as ApiPublicHooksScoreViralBackfillRouteImport } from './routes/api/public/hooks/score-viral-backfill'
 import { Route as ApiPublicHooksScoreViralRouteImport } from './routes/api/public/hooks/score-viral'
@@ -412,13 +532,18 @@ import { Route as ApiPublicHooksRepairArticleStructureRouteImport } from './rout
 import { Route as ApiPublicHooksRemediateAug10FlyoverRouteImport } from './routes/api/public/hooks/remediate-aug10-flyover'
 import { Route as ApiPublicHooksReconcileNewsHistoryRouteImport } from './routes/api/public/hooks/reconcile-news-history'
 import { Route as ApiPublicHooksPublishingSafetyNetRouteImport } from './routes/api/public/hooks/publishing-safety-net'
+import { Route as ApiPublicHooksPublishTexasdefinedReelRouteImport } from './routes/api/public/hooks/publish-texasdefined-reel'
+import { Route as ApiPublicHooksPublishTexasdefinedGeneratedImageRouteImport } from './routes/api/public/hooks/publish-texasdefined-generated-image'
 import { Route as ApiPublicHooksPublishOverdueGapRouteImport } from './routes/api/public/hooks/publish-overdue-gap'
+import { Route as ApiPublicHooksPublishKtrGeneratedAttentionImageRouteImport } from './routes/api/public/hooks/publish-ktr-generated-attention-image'
+import { Route as ApiPublicHooksOpenaiArticleImageRecoveryRouteImport } from './routes/api/public/hooks/openai-article-image-recovery'
 import { Route as ApiPublicHooksNormalizeNewsroomFeedRouteImport } from './routes/api/public/hooks/normalize-newsroom-feed'
 import { Route as ApiPublicHooksNewsroomGenerationDiagnosticsRouteImport } from './routes/api/public/hooks/newsroom-generation-diagnostics'
 import { Route as ApiPublicHooksListShopsRouteImport } from './routes/api/public/hooks/list-shops'
 import { Route as ApiPublicHooksIngestSportsRouteImport } from './routes/api/public/hooks/ingest-sports'
 import { Route as ApiPublicHooksIngestFeedsRouteImport } from './routes/api/public/hooks/ingest-feeds'
 import { Route as ApiPublicHooksImageBacklogRecoveryRouteImport } from './routes/api/public/hooks/image-backlog-recovery'
+import { Route as ApiPublicHooksHydrateNewsroomSourcePagesRouteImport } from './routes/api/public/hooks/hydrate-newsroom-source-pages'
 import { Route as ApiPublicHooksHealthRouteImport } from './routes/api/public/hooks/health'
 import { Route as ApiPublicHooksGenerateSportsRouteImport } from './routes/api/public/hooks/generate-sports'
 import { Route as ApiPublicHooksGenerateNewsroomRouteImport } from './routes/api/public/hooks/generate-newsroom'
@@ -434,8 +559,10 @@ import { Route as ApiPublicHooksClassifyPillarsRouteImport } from './routes/api/
 import { Route as ApiPublicHooksClassifyArticlePillarsRouteImport } from './routes/api/public/hooks/classify-article-pillars'
 import { Route as ApiPublicHooksBuildNewsroomResearchPacketsRouteImport } from './routes/api/public/hooks/build-newsroom-research-packets'
 import { Route as ApiPublicHooksBackfillFeaturedImagesRouteImport } from './routes/api/public/hooks/backfill-featured-images'
+import { Route as ApiPublicHooksAutoFacebookPostTexasdefinedWithImageRouteImport } from './routes/api/public/hooks/auto-facebook-post-texasdefined-with-image'
 import { Route as ApiPublicHooksAutoFacebookPostTexasdefinedSmartRouteImport } from './routes/api/public/hooks/auto-facebook-post-texasdefined-smart'
 import { Route as ApiPublicHooksAutoFacebookPostTexasdefinedRouteImport } from './routes/api/public/hooks/auto-facebook-post-texasdefined'
+import { Route as ApiPublicHooksAutoFacebookPostSmartRouteImport } from './routes/api/public/hooks/auto-facebook-post-smart'
 import { Route as ApiPublicHooksAutoFacebookPostRouteImport } from './routes/api/public/hooks/auto-facebook-post'
 import { Route as ApiPublicHooksAdsenseImageBackfillRouteImport } from './routes/api/public/hooks/adsense-image-backfill'
 import { Route as ApiPublicExploreRecommendationsRouteImport } from './routes/api/public/explore/recommendations'
@@ -449,8 +576,16 @@ import { Route as BillsTexasLegislatureBillTypeIndexRouteImport } from './routes
 import { Route as BillsTexasLegislatureBillTypeBillNumberRouteImport } from './routes/bills/texas/$legislature/$billType/$billNumber'
 import { Route as ApiPublicOauthFacebookStartRouteImport } from './routes/api/public/oauth/facebook/start'
 import { Route as ApiPublicOauthFacebookCallbackRouteImport } from './routes/api/public/oauth/facebook/callback'
+import { Route as BillsTexasLegislatureSessionBillTypeBillNumberRouteImport } from './routes/bills/texas/$legislature/$session/$billType/$billNumber'
 import { Route as BillsTexasLegislatureBillTypeBillNumberReferenceDotjsonRouteImport } from './routes/bills.texas.$legislature.$billType.$billNumber.reference[.]json'
+import { Route as BillsTexasLegislatureSessionBillTypeBillNumberReferenceDotjsonRouteImport } from './routes/bills.texas.$legislature.$session.$billType.$billNumber.reference[.]json'
 
+const WhyTexasHasNoStateIncomeTaxRoute =
+  WhyTexasHasNoStateIncomeTaxRouteImport.update({
+    id: '/why-texas-has-no-state-income-tax',
+    path: '/why-texas-has-no-state-income-tax',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const VotingLocationsRoute = VotingLocationsRouteImport.update({
   id: '/voting-locations',
   path: '/voting-locations',
@@ -464,6 +599,11 @@ const UnsubscribeRoute = UnsubscribeRouteImport.update({
 const TopicsRoute = TopicsRouteImport.update({
   id: '/topics',
   path: '/topics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasWaterRoute = TexasWaterRouteImport.update({
+  id: '/texas-water',
+  path: '/texas-water',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TexasVeteransRoute = TexasVeteransRouteImport.update({
@@ -485,6 +625,11 @@ const TexasSportsRoute = TexasSportsRouteImport.update({
 const TexasSecretaryOfStateRoute = TexasSecretaryOfStateRouteImport.update({
   id: '/texas-secretary-of-state',
   path: '/texas-secretary-of-state',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasSchoolBoardPowersRoute = TexasSchoolBoardPowersRouteImport.update({
+  id: '/texas-school-board-powers',
+  path: '/texas-school-board-powers',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TexasSalesTaxExplainedRoute = TexasSalesTaxExplainedRouteImport.update({
@@ -520,6 +665,12 @@ const TexasRefinanceSavingsCalculatorRoute =
     path: '/texas-refinance-savings-calculator',
     getParentRoute: () => rootRouteImport,
   } as any)
+const TexasRefinanceCalculatorRoute =
+  TexasRefinanceCalculatorRouteImport.update({
+    id: '/texas-refinance-calculator',
+    path: '/texas-refinance-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const TexasPropertyTaxProtestGuideRoute =
   TexasPropertyTaxProtestGuideRouteImport.update({
     id: '/texas-property-tax-protest-guide',
@@ -532,6 +683,12 @@ const TexasPropertyTaxIncreaseCalculatorRoute =
     path: '/texas-property-tax-increase-calculator',
     getParentRoute: () => rootRouteImport,
   } as any)
+const TexasPropertyTaxCalculatorRoute =
+  TexasPropertyTaxCalculatorRouteImport.update({
+    id: '/texas-property-tax-calculator',
+    path: '/texas-property-tax-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const TexasPoliticsRoute = TexasPoliticsRouteImport.update({
   id: '/texas-politics',
   path: '/texas-politics',
@@ -540,6 +697,11 @@ const TexasPoliticsRoute = TexasPoliticsRouteImport.update({
 const TexasPoliticalReferenceRoute = TexasPoliticalReferenceRouteImport.update({
   id: '/texas-political-reference',
   path: '/texas-political-reference',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasPoliticalFiguresRoute = TexasPoliticalFiguresRouteImport.update({
+  id: '/texas-political-figures',
+  path: '/texas-political-figures',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TexasNewsRoute = TexasNewsRouteImport.update({
@@ -551,6 +713,12 @@ const TexasMovingCostCalculatorRoute =
   TexasMovingCostCalculatorRouteImport.update({
     id: '/texas-moving-cost-calculator',
     path: '/texas-moving-cost-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasMortgageQualificationCalculatorRoute =
+  TexasMortgageQualificationCalculatorRouteImport.update({
+    id: '/texas-mortgage-qualification-calculator',
+    path: '/texas-mortgage-qualification-calculator',
     getParentRoute: () => rootRouteImport,
   } as any)
 const TexasMortgagePayoffCalculatorRoute =
@@ -595,6 +763,12 @@ const TexasHomeownershipCostCalculatorRoute =
     path: '/texas-homeownership-cost-calculator',
     getParentRoute: () => rootRouteImport,
   } as any)
+const TexasHomeOwnershipCostCalculatorRoute =
+  TexasHomeOwnershipCostCalculatorRouteImport.update({
+    id: '/texas-home-ownership-cost-calculator',
+    path: '/texas-home-ownership-cost-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const TexasHomeInsuranceCalculatorRoute =
   TexasHomeInsuranceCalculatorRouteImport.update({
     id: '/texas-home-insurance-calculator',
@@ -619,6 +793,11 @@ const TexasHomeAffordabilityCalculatorRoute =
     path: '/texas-home-affordability-calculator',
     getParentRoute: () => rootRouteImport,
   } as any)
+const TexasHelocCalculatorRoute = TexasHelocCalculatorRouteImport.update({
+  id: '/texas-heloc-calculator',
+  path: '/texas-heloc-calculator',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TexasGovernmentRoute = TexasGovernmentRouteImport.update({
   id: '/texas-government',
   path: '/texas-government',
@@ -633,6 +812,11 @@ const TexasFirstTimeHomebuyerProgramsRoute =
 const TexasFinancialToolsRoute = TexasFinancialToolsRouteImport.update({
   id: '/texas-financial-tools',
   path: '/texas-financial-tools',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasEnergyPolicyRoute = TexasEnergyPolicyRouteImport.update({
+  id: '/texas-energy-policy',
+  path: '/texas-energy-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TexasEnergyRoute = TexasEnergyRouteImport.update({
@@ -660,6 +844,11 @@ const TexasDownPaymentAssistanceCalculatorRoute =
 const TexasDataRoute = TexasDataRouteImport.update({
   id: '/texas-data',
   path: '/texas-data',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasCourtsRoute = TexasCourtsRouteImport.update({
+  id: '/texas-courts',
+  path: '/texas-courts',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TexasCostOfLivingCalculatorRoute =
@@ -755,10 +944,27 @@ const SitemapProductsDotxmlRoute = SitemapProductsDotxmlRouteImport.update({
   path: '/sitemap-products.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapPriorityDotxmlRoute = SitemapPriorityDotxmlRouteImport.update({
+  id: '/sitemap-priority.xml',
+  path: '/sitemap-priority.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapPoliticalGeographyDotxmlRoute =
+  SitemapPoliticalGeographyDotxmlRouteImport.update({
+    id: '/sitemap-political-geography.xml',
+    path: '/sitemap-political-geography.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const SitemapPoliticalFiguresDotxmlRoute =
   SitemapPoliticalFiguresDotxmlRouteImport.update({
     id: '/sitemap-political-figures.xml',
     path: '/sitemap-political-figures.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SitemapPartyRepresentationDotxmlRoute =
+  SitemapPartyRepresentationDotxmlRouteImport.update({
+    id: '/sitemap-party-representation.xml',
+    path: '/sitemap-party-representation.xml',
     getParentRoute: () => rootRouteImport,
   } as any)
 const SitemapPagesDotxmlRoute = SitemapPagesDotxmlRouteImport.update({
@@ -806,6 +1012,11 @@ const SitemapEvergreenDotxmlRoute = SitemapEvergreenDotxmlRouteImport.update({
 const SitemapElectionsDotxmlRoute = SitemapElectionsDotxmlRouteImport.update({
   id: '/sitemap-elections.xml',
   path: '/sitemap-elections.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDmvDotxmlRoute = SitemapDmvDotxmlRouteImport.update({
+  id: '/sitemap-dmv.xml',
+  path: '/sitemap-dmv.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDistrictsDotxmlRoute = SitemapDistrictsDotxmlRouteImport.update({
@@ -863,9 +1074,24 @@ const RegisterToVoteRoute = RegisterToVoteRouteImport.update({
   path: '/register-to-vote',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PropertyTaxesRoute = PropertyTaxesRouteImport.update({
+  id: '/property-taxes',
+  path: '/property-taxes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PoliticsRoute = PoliticsRouteImport.update({
+  id: '/politics',
+  path: '/politics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PoliticalFigureImageRoute = PoliticalFigureImageRouteImport.update({
+  id: '/political-figure-image',
+  path: '/political-figure-image',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PolicyTrackersDottxtRoute = PolicyTrackersDottxtRouteImport.update({
@@ -896,6 +1122,11 @@ const MovingToTexasChecklistRoute = MovingToTexasChecklistRouteImport.update({
 const MovingToTexasRoute = MovingToTexasRouteImport.update({
   id: '/moving-to-texas',
   path: '/moving-to-texas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MovingChecklistRoute = MovingChecklistRouteImport.update({
+  id: '/moving-checklist',
+  path: '/moving-checklist',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MerchantImageRoute = MerchantImageRouteImport.update({
@@ -984,6 +1215,11 @@ const ExploreRoute = ExploreRouteImport.update({
   path: '/explore',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ErcotTexasPowerGridRoute = ErcotTexasPowerGridRouteImport.update({
+  id: '/ercot-texas-power-grid',
+  path: '/ercot-texas-power-grid',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ElectionsRoute = ElectionsRouteImport.update({
   id: '/elections',
   path: '/elections',
@@ -1007,6 +1243,11 @@ const DmvRoute = DmvRouteImport.update({
 const DistrictsRoute = DistrictsRouteImport.update({
   id: '/districts',
   path: '/districts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DataDeletionRoute = DataDeletionRouteImport.update({
+  id: '/data-deletion',
+  path: '/data-deletion',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DataRoute = DataRouteImport.update({
@@ -1034,6 +1275,11 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CommitteesRoute = CommitteesRouteImport.update({
+  id: '/committees',
+  path: '/committees',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CivicToolsRoute = CivicToolsRouteImport.update({
   id: '/civic-tools',
   path: '/civic-tools',
@@ -1042,6 +1288,11 @@ const CivicToolsRoute = CivicToolsRouteImport.update({
 const CitationGuideRoute = CitationGuideRouteImport.update({
   id: '/citation-guide',
   path: '/citation-guide',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CartRoute = CartRouteImport.update({
+  id: '/cart',
+  path: '/cart',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CandidateGuidesRoute = CandidateGuidesRouteImport.update({
@@ -1089,6 +1340,11 @@ const TexasSportsIndexRoute = TexasSportsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => TexasSportsRoute,
 } as any)
+const TexasPoliticsIndexRoute = TexasPoliticsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TexasPoliticsRoute,
+} as any)
 const TexasNewsIndexRoute = TexasNewsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -1098,6 +1354,11 @@ const TexasLegislatureIndexRoute = TexasLegislatureIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => TexasLegislatureRoute,
+} as any)
+const TexasGovernmentIndexRoute = TexasGovernmentIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TexasGovernmentRoute,
 } as any)
 const SourcesIndexRoute = SourcesIndexRouteImport.update({
   id: '/sources/',
@@ -1109,10 +1370,20 @@ const ShopIndexRoute = ShopIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ShopRoute,
 } as any)
+const PolicyIndexRoute = PolicyIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PolicyRoute,
+} as any)
 const NewsIndexRoute = NewsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => NewsRoute,
+} as any)
+const LawsIndexRoute = LawsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LawsRoute,
 } as any)
 const IssuesIndexRoute = IssuesIndexRouteImport.update({
   id: '/issues/',
@@ -1269,6 +1540,12 @@ const VehiclesAutoInsuranceRequirementsRoute =
     path: '/vehicles/auto-insurance-requirements',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ToolsTexasUtilitiesCalculatorRoute =
+  ToolsTexasUtilitiesCalculatorRouteImport.update({
+    id: '/tools/texas-utilities-calculator',
+    path: '/tools/texas-utilities-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ToolsTexasTaxStructureComparisonRoute =
   ToolsTexasTaxStructureComparisonRouteImport.update({
     id: '/tools/texas-tax-structure-comparison',
@@ -1292,16 +1569,276 @@ const ToolsTexasBudgetHeadroomRoute =
     path: '/tools/texas-budget-headroom',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ToolsPropertyTaxCalculatorRoute =
+  ToolsPropertyTaxCalculatorRouteImport.update({
+    id: '/tools/property-tax-calculator',
+    path: '/tools/property-tax-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ToolsMortgageCalculatorRoute = ToolsMortgageCalculatorRouteImport.update({
+  id: '/tools/mortgage-calculator',
+  path: '/tools/mortgage-calculator',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ToolsHomeInsuranceCalculatorRoute =
+  ToolsHomeInsuranceCalculatorRouteImport.update({
+    id: '/tools/home-insurance-calculator',
+    path: '/tools/home-insurance-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ToolsHomeAffordabilityCalculatorRoute =
+  ToolsHomeAffordabilityCalculatorRouteImport.update({
+    id: '/tools/home-affordability-calculator',
+    path: '/tools/home-affordability-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ToolsClosingCostCalculatorRoute =
+  ToolsClosingCostCalculatorRouteImport.update({
+    id: '/tools/closing-cost-calculator',
+    path: '/tools/closing-cost-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasPropertyTaxes2026Route = TexasPropertyTaxes2026RouteImport.update({
+  id: '/property-taxes-2026',
+  path: '/property-taxes-2026',
+  getParentRoute: () => TexasRoute,
+} as any)
 const TexasSportsLeagueRoute = TexasSportsLeagueRouteImport.update({
   id: '/$league',
   path: '/$league',
   getParentRoute: () => TexasSportsRoute,
 } as any)
+const TexasPoliticsVotingRightsHistoryRoute =
+  TexasPoliticsVotingRightsHistoryRouteImport.update({
+    id: '/voting-rights-history',
+    path: '/voting-rights-history',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsTexasWomenSuffragePoliticalRepresentationHistoryRoute =
+  TexasPoliticsTexasWomenSuffragePoliticalRepresentationHistoryRouteImport.update(
+    {
+      id: '/texas-women-suffrage-political-representation-history',
+      path: '/texas-women-suffrage-political-representation-history',
+      getParentRoute: () => TexasPoliticsRoute,
+    } as any,
+  )
+const TexasPoliticsTexasWhitePrimaryHistoryRoute =
+  TexasPoliticsTexasWhitePrimaryHistoryRouteImport.update({
+    id: '/texas-white-primary-history',
+    path: '/texas-white-primary-history',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsTexasUrbanSuburbanRuralPoliticsHistoryRoute =
+  TexasPoliticsTexasUrbanSuburbanRuralPoliticsHistoryRouteImport.update({
+    id: '/texas-urban-suburban-rural-politics-history',
+    path: '/texas-urban-suburban-rural-politics-history',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsTexasSupremeCourtRealignmentRoute =
+  TexasPoliticsTexasSupremeCourtRealignmentRouteImport.update({
+    id: '/texas-supreme-court-realignment',
+    path: '/texas-supreme-court-realignment',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsTexasSecessionConvention1861Route =
+  TexasPoliticsTexasSecessionConvention1861RouteImport.update({
+    id: '/texas-secession-convention-1861',
+    path: '/texas-secession-convention-1861',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsTexasRepublicanPartyHistoryRoute =
+  TexasPoliticsTexasRepublicanPartyHistoryRouteImport.update({
+    id: '/texas-republican-party-history',
+    path: '/texas-republican-party-history',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsTexasRedistrictingHistoryRoute =
+  TexasPoliticsTexasRedistrictingHistoryRouteImport.update({
+    id: '/texas-redistricting-history',
+    path: '/texas-redistricting-history',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsTexasReconstructionGovernmentRoute =
+  TexasPoliticsTexasReconstructionGovernmentRouteImport.update({
+    id: '/texas-reconstruction-government',
+    path: '/texas-reconstruction-government',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsTexasPopulistProgressiveEraRoute =
+  TexasPoliticsTexasPopulistProgressiveEraRouteImport.update({
+    id: '/texas-populist-progressive-era',
+    path: '/texas-populist-progressive-era',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsTexasPoliticalGeographyHistoryRoute =
+  TexasPoliticsTexasPoliticalGeographyHistoryRouteImport.update({
+    id: '/texas-political-geography-history',
+    path: '/texas-political-geography-history',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsTexasNewDealPoliticsRoute =
+  TexasPoliticsTexasNewDealPoliticsRouteImport.update({
+    id: '/texas-new-deal-politics',
+    path: '/texas-new-deal-politics',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsTexasMexicanAmericanPoliticalOrganizationHistoryRoute =
+  TexasPoliticsTexasMexicanAmericanPoliticalOrganizationHistoryRouteImport.update(
+    {
+      id: '/texas-mexican-american-political-organization-history',
+      path: '/texas-mexican-american-political-organization-history',
+      getParentRoute: () => TexasPoliticsRoute,
+    } as any,
+  )
+const TexasPoliticsTexasMetroRegionalRealignmentHistoryRoute =
+  TexasPoliticsTexasMetroRegionalRealignmentHistoryRouteImport.update({
+    id: '/texas-metro-regional-realignment-history',
+    path: '/texas-metro-regional-realignment-history',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsTexasGovernmentDuringCivilWarRoute =
+  TexasPoliticsTexasGovernmentDuringCivilWarRouteImport.update({
+    id: '/texas-government-during-civil-war',
+    path: '/texas-government-during-civil-war',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsTexasElectionHistoryRoute =
+  TexasPoliticsTexasElectionHistoryRouteImport.update({
+    id: '/texas-election-history',
+    path: '/texas-election-history',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsTexasDemocraticPartyHistoryRoute =
+  TexasPoliticsTexasDemocraticPartyHistoryRouteImport.update({
+    id: '/texas-democratic-party-history',
+    path: '/texas-democratic-party-history',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsTexasDemocraticDominance18761952Route =
+  TexasPoliticsTexasDemocraticDominance18761952RouteImport.update({
+    id: '/texas-democratic-dominance-1876-1952',
+    path: '/texas-democratic-dominance-1876-1952',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsTexasConstitutionalHistoryRoute =
+  TexasPoliticsTexasConstitutionalHistoryRouteImport.update({
+    id: '/texas-constitutional-history',
+    path: '/texas-constitutional-history',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsTexasConstitutionalConvention1875Route =
+  TexasPoliticsTexasConstitutionalConvention1875RouteImport.update({
+    id: '/texas-constitutional-convention-1875',
+    path: '/texas-constitutional-convention-1875',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsTexasCivilRightsEraPoliticsRoute =
+  TexasPoliticsTexasCivilRightsEraPoliticsRouteImport.update({
+    id: '/texas-civil-rights-era-politics',
+    path: '/texas-civil-rights-era-politics',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsTexasAnnexationStatehoodHistoryRoute =
+  TexasPoliticsTexasAnnexationStatehoodHistoryRouteImport.update({
+    id: '/texas-annexation-statehood-history',
+    path: '/texas-annexation-statehood-history',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsSouthTexasRioGrandeValleyPoliticalHistoryRoute =
+  TexasPoliticsSouthTexasRioGrandeValleyPoliticalHistoryRouteImport.update({
+    id: '/south-texas-rio-grande-valley-political-history',
+    path: '/south-texas-rio-grande-valley-political-history',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsRepublicToStateGovernmentTransitionRoute =
+  TexasPoliticsRepublicToStateGovernmentTransitionRouteImport.update({
+    id: '/republic-to-state-government-transition',
+    path: '/republic-to-state-government-transition',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsRepublicOfTexasGovernmentHistoryRoute =
+  TexasPoliticsRepublicOfTexasGovernmentHistoryRouteImport.update({
+    id: '/republic-of-texas-government-history',
+    path: '/republic-of-texas-government-history',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsRepublicOfTexasDiplomacyRecognitionRoute =
+  TexasPoliticsRepublicOfTexasDiplomacyRecognitionRouteImport.update({
+    id: '/republic-of-texas-diplomacy-recognition',
+    path: '/republic-of-texas-diplomacy-recognition',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsRepublicOfTexasDebtFinanceRoute =
+  TexasPoliticsRepublicOfTexasDebtFinanceRouteImport.update({
+    id: '/republic-of-texas-debt-finance',
+    path: '/republic-of-texas-debt-finance',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsRepublicOfTexasCapitalsGovernmentSeatsRoute =
+  TexasPoliticsRepublicOfTexasCapitalsGovernmentSeatsRouteImport.update({
+    id: '/republic-of-texas-capitals-government-seats',
+    path: '/republic-of-texas-capitals-government-seats',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsReconstructionRepublicansRoute =
+  TexasPoliticsReconstructionRepublicansRouteImport.update({
+    id: '/reconstruction-republicans',
+    path: '/reconstruction-republicans',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsPresidentsOfRepublicOfTexasRoute =
+  TexasPoliticsPresidentsOfRepublicOfTexasRouteImport.update({
+    id: '/presidents-of-republic-of-texas',
+    path: '/presidents-of-republic-of-texas',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsHowTexasBecameRepublicanRoute =
+  TexasPoliticsHowTexasBecameRepublicanRouteImport.update({
+    id: '/how-texas-became-republican',
+    path: '/how-texas-became-republican',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
 const TexasPoliticsFiguresRoute = TexasPoliticsFiguresRouteImport.update({
   id: '/figures',
   path: '/figures',
   getParentRoute: () => TexasPoliticsRoute,
 } as any)
+const TexasPoliticsFergusonEraTexasPoliticsRoute =
+  TexasPoliticsFergusonEraTexasPoliticsRouteImport.update({
+    id: '/ferguson-era-texas-politics',
+    path: '/ferguson-era-texas-politics',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsConstitutionOf1869TexasRoute =
+  TexasPoliticsConstitutionOf1869TexasRouteImport.update({
+    id: '/constitution-of-1869-texas',
+    path: '/constitution-of-1869-texas',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsConstitutionOf1866TexasRoute =
+  TexasPoliticsConstitutionOf1866TexasRouteImport.update({
+    id: '/constitution-of-1866-texas',
+    path: '/constitution-of-1866-texas',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsConstitutionOf1861TexasRoute =
+  TexasPoliticsConstitutionOf1861TexasRouteImport.update({
+    id: '/constitution-of-1861-texas',
+    path: '/constitution-of-1861-texas',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsConstitutionOf1836RepublicOfTexasRoute =
+  TexasPoliticsConstitutionOf1836RepublicOfTexasRouteImport.update({
+    id: '/constitution-of-1836-republic-of-texas',
+    path: '/constitution-of-1836-republic-of-texas',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
+const TexasPoliticsCongressOfRepublicOfTexasRoute =
+  TexasPoliticsCongressOfRepublicOfTexasRouteImport.update({
+    id: '/congress-of-republic-of-texas',
+    path: '/congress-of-republic-of-texas',
+    getParentRoute: () => TexasPoliticsRoute,
+  } as any)
 const TexasPoliticalReferenceSlugRoute =
   TexasPoliticalReferenceSlugRouteImport.update({
     id: '/$slug',
@@ -1346,6 +1883,192 @@ const TexasLegislatureCommitteesRoute =
     path: '/committees',
     getParentRoute: () => TexasLegislatureRoute,
   } as any)
+const TexasGovernmentTexasTrialCourtsRoute =
+  TexasGovernmentTexasTrialCourtsRouteImport.update({
+    id: '/texas-trial-courts',
+    path: '/texas-trial-courts',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentTexasSupremeCourtHistoryRoute =
+  TexasGovernmentTexasSupremeCourtHistoryRouteImport.update({
+    id: '/texas-supreme-court-history',
+    path: '/texas-supreme-court-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentTexasSpecialDistrictGovernmentHistoryRoute =
+  TexasGovernmentTexasSpecialDistrictGovernmentHistoryRouteImport.update({
+    id: '/texas-special-district-government-history',
+    path: '/texas-special-district-government-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentTexasMunicipalGovernmentHistoryRoute =
+  TexasGovernmentTexasMunicipalGovernmentHistoryRouteImport.update({
+    id: '/texas-municipal-government-history',
+    path: '/texas-municipal-government-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentTexasMunicipalCourtsHistoryRoute =
+  TexasGovernmentTexasMunicipalCourtsHistoryRouteImport.update({
+    id: '/texas-municipal-courts-history',
+    path: '/texas-municipal-courts-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentTexasLegislatureHistoryRoute =
+  TexasGovernmentTexasLegislatureHistoryRouteImport.update({
+    id: '/texas-legislature-history',
+    path: '/texas-legislature-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentTexasJudicialSelectionHistoryRoute =
+  TexasGovernmentTexasJudicialSelectionHistoryRouteImport.update({
+    id: '/texas-judicial-selection-history',
+    path: '/texas-judicial-selection-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentTexasGovernmentHistoryRoute =
+  TexasGovernmentTexasGovernmentHistoryRouteImport.update({
+    id: '/texas-government-history',
+    path: '/texas-government-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentTexasCourtOfCriminalAppealsHistoryRoute =
+  TexasGovernmentTexasCourtOfCriminalAppealsHistoryRouteImport.update({
+    id: '/texas-court-of-criminal-appeals-history',
+    path: '/texas-court-of-criminal-appeals-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentTexasCountyGovernmentHistoryRoute =
+  TexasGovernmentTexasCountyGovernmentHistoryRouteImport.update({
+    id: '/texas-county-government-history',
+    path: '/texas-county-government-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentTexasBusinessCourtRoute =
+  TexasGovernmentTexasBusinessCourtRouteImport.update({
+    id: '/texas-business-court',
+    path: '/texas-business-court',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentTaxAssessorCollectorHistoryRoute =
+  TexasGovernmentTaxAssessorCollectorHistoryRouteImport.update({
+    id: '/tax-assessor-collector-history',
+    path: '/tax-assessor-collector-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentStateCommissionOnJudicialConductRoute =
+  TexasGovernmentStateCommissionOnJudicialConductRouteImport.update({
+    id: '/state-commission-on-judicial-conduct',
+    path: '/state-commission-on-judicial-conduct',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentSpeakerOfTheHouseHistoryRoute =
+  TexasGovernmentSpeakerOfTheHouseHistoryRouteImport.update({
+    id: '/speaker-of-the-house-history',
+    path: '/speaker-of-the-house-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentMunicipalFinanceTaxDebtHistoryRoute =
+  TexasGovernmentMunicipalFinanceTaxDebtHistoryRouteImport.update({
+    id: '/municipal-finance-tax-debt-history',
+    path: '/municipal-finance-tax-debt-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentMunicipalElectionsRepresentationHistoryRoute =
+  TexasGovernmentMunicipalElectionsRepresentationHistoryRouteImport.update({
+    id: '/municipal-elections-representation-history',
+    path: '/municipal-elections-representation-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentMayorCityCouncilHistoryRoute =
+  TexasGovernmentMayorCityCouncilHistoryRouteImport.update({
+    id: '/mayor-city-council-history',
+    path: '/mayor-city-council-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentLieutenantGovernorHistoryRoute =
+  TexasGovernmentLieutenantGovernorHistoryRouteImport.update({
+    id: '/lieutenant-governor-history',
+    path: '/lieutenant-governor-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentJusticeOfThePeaceConstableHistoryRoute =
+  TexasGovernmentJusticeOfThePeaceConstableHistoryRouteImport.update({
+    id: '/justice-of-the-peace-constable-history',
+    path: '/justice-of-the-peace-constable-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentJudicialSelectionElectionsRoute =
+  TexasGovernmentJudicialSelectionElectionsRouteImport.update({
+    id: '/judicial-selection-elections',
+    path: '/judicial-selection-elections',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentHomeRuleGeneralLawCitiesHistoryRoute =
+  TexasGovernmentHomeRuleGeneralLawCitiesHistoryRouteImport.update({
+    id: '/home-rule-general-law-cities-history',
+    path: '/home-rule-general-law-cities-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentGovernorHistoryRoute =
+  TexasGovernmentGovernorHistoryRouteImport.update({
+    id: '/governor-history',
+    path: '/governor-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentFifteenthCourtOfAppealsRoute =
+  TexasGovernmentFifteenthCourtOfAppealsRouteImport.update({
+    id: '/fifteenth-court-of-appeals',
+    path: '/fifteenth-court-of-appeals',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentCourtOfCriminalAppealsHistoryRoute =
+  TexasGovernmentCourtOfCriminalAppealsHistoryRouteImport.update({
+    id: '/court-of-criminal-appeals-history',
+    path: '/court-of-criminal-appeals-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentCountySheriffHistoryRoute =
+  TexasGovernmentCountySheriffHistoryRouteImport.update({
+    id: '/county-sheriff-history',
+    path: '/county-sheriff-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentCountyJudgeHistoryRoute =
+  TexasGovernmentCountyJudgeHistoryRouteImport.update({
+    id: '/county-judge-history',
+    path: '/county-judge-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentCountyDistrictClerkHistoryRoute =
+  TexasGovernmentCountyDistrictClerkHistoryRouteImport.update({
+    id: '/county-district-clerk-history',
+    path: '/county-district-clerk-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentCountyCommissionerHistoryRoute =
+  TexasGovernmentCountyCommissionerHistoryRouteImport.update({
+    id: '/county-commissioner-history',
+    path: '/county-commissioner-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentComptrollerHistoryRoute =
+  TexasGovernmentComptrollerHistoryRouteImport.update({
+    id: '/comptroller-history',
+    path: '/comptroller-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentCommissionersCourtHistoryRoute =
+  TexasGovernmentCommissionersCourtHistoryRouteImport.update({
+    id: '/commissioners-court-history',
+    path: '/commissioners-court-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasGovernmentCityManagerGovernmentHistoryRoute =
+  TexasGovernmentCityManagerGovernmentHistoryRouteImport.update({
+    id: '/city-manager-government-history',
+    path: '/city-manager-government-history',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
 const TexasGovernmentAgenciesRoute = TexasGovernmentAgenciesRouteImport.update({
   id: '/agencies',
   path: '/agencies',
@@ -1355,12 +2078,6 @@ const TexasGovernmentEntitySlugRoute =
   TexasGovernmentEntitySlugRouteImport.update({
     id: '/$entitySlug',
     path: '/$entitySlug',
-    getParentRoute: () => TexasGovernmentRoute,
-  } as any)
-const TexasGovernmentFifteenthCourtOfAppealsRoute =
-  TexasGovernmentFifteenthCourtOfAppealsRouteImport.update({
-    id: '/fifteenth-court-of-appeals',
-    path: '/fifteenth-court-of-appeals',
     getParentRoute: () => TexasGovernmentRoute,
   } as any)
 const TexasDataDatasetSlugRoute = TexasDataDatasetSlugRouteImport.update({
@@ -1447,6 +2164,12 @@ const PolicyStateFederalPowerRoute = PolicyStateFederalPowerRouteImport.update({
   path: '/state-federal-power',
   getParentRoute: () => PolicyRoute,
 } as any)
+const PolicySocialMediaViewpointModerationRoute =
+  PolicySocialMediaViewpointModerationRouteImport.update({
+    id: '/social-media-viewpoint-moderation',
+    path: '/social-media-viewpoint-moderation',
+    getParentRoute: () => PolicyRoute,
+  } as any)
 const PolicySemiconductorManufacturingRoute =
   PolicySemiconductorManufacturingRouteImport.update({
     id: '/semiconductor-manufacturing',
@@ -1816,19 +2539,69 @@ const NewsSlugRoute = NewsSlugRouteImport.update({
   getParentRoute: () => NewsRoute,
 } as any)
 const LawsTopicsRoute = LawsTopicsRouteImport.update({
-  id: '/topics',
-  path: '/topics',
-  getParentRoute: () => LawsRoute,
+  id: '/laws_/topics',
+  path: '/laws/topics',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const LawsEffectiveDatesRoute = LawsEffectiveDatesRouteImport.update({
-  id: '/effective-dates',
-  path: '/effective-dates',
-  getParentRoute: () => LawsRoute,
+  id: '/laws_/effective-dates',
+  path: '/laws/effective-dates',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const LawsConstitutionalAmendmentsRoute =
   LawsConstitutionalAmendmentsRouteImport.update({
-    id: '/constitutional-amendments',
-    path: '/constitutional-amendments',
+    id: '/laws_/constitutional-amendments',
+    path: '/laws/constitutional-amendments',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const LawsTexasPropertyTaxLawsExplainedRoute =
+  LawsTexasPropertyTaxLawsExplainedRouteImport.update({
+    id: '/texas-property-tax-laws-explained',
+    path: '/texas-property-tax-laws-explained',
+    getParentRoute: () => LawsRoute,
+  } as any)
+const LawsTexasPropertyTaxLawsRoute =
+  LawsTexasPropertyTaxLawsRouteImport.update({
+    id: '/texas-property-tax-laws',
+    path: '/texas-property-tax-laws',
+    getParentRoute: () => LawsRoute,
+  } as any)
+const LawsTexasNewLaws2026Route = LawsTexasNewLaws2026RouteImport.update({
+  id: '/texas-new-laws-2026',
+  path: '/texas-new-laws-2026',
+  getParentRoute: () => LawsRoute,
+} as any)
+const LawsTexasGunLawsExplainedRoute =
+  LawsTexasGunLawsExplainedRouteImport.update({
+    id: '/texas-gun-laws-explained',
+    path: '/texas-gun-laws-explained',
+    getParentRoute: () => LawsRoute,
+  } as any)
+const LawsTexasGunLawsRoute = LawsTexasGunLawsRouteImport.update({
+  id: '/texas-gun-laws',
+  path: '/texas-gun-laws',
+  getParentRoute: () => LawsRoute,
+} as any)
+const LawsTexasElectionLawsExplainedRoute =
+  LawsTexasElectionLawsExplainedRouteImport.update({
+    id: '/texas-election-laws-explained',
+    path: '/texas-election-laws-explained',
+    getParentRoute: () => LawsRoute,
+  } as any)
+const LawsTexasElectionLawsRoute = LawsTexasElectionLawsRouteImport.update({
+  id: '/texas-election-laws',
+  path: '/texas-election-laws',
+  getParentRoute: () => LawsRoute,
+} as any)
+const LawsTexasConstitutionRoute = LawsTexasConstitutionRouteImport.update({
+  id: '/texas-constitution',
+  path: '/texas-constitution',
+  getParentRoute: () => LawsRoute,
+} as any)
+const LawsShowIdToPoliceInTexasRoute =
+  LawsShowIdToPoliceInTexasRouteImport.update({
+    id: '/show-id-to-police-in-texas',
+    path: '/show-id-to-police-in-texas',
     getParentRoute: () => LawsRoute,
   } as any)
 const IssuesTexasPolicyHandbookRoute =
@@ -2354,6 +3127,24 @@ const ExploreCavernSlugRoute = ExploreCavernSlugRouteImport.update({
   path: '/cavern/$slug',
   getParentRoute: () => ExploreRoute,
 } as any)
+const ElectionsVotingVoterRegistrationCardRoute =
+  ElectionsVotingVoterRegistrationCardRouteImport.update({
+    id: '/voting_/voter-registration-card',
+    path: '/voting/voter-registration-card',
+    getParentRoute: () => ElectionsRoute,
+  } as any)
+const ElectionsVotingPollingPlaceRoute =
+  ElectionsVotingPollingPlaceRouteImport.update({
+    id: '/voting_/polling-place',
+    path: '/voting/polling-place',
+    getParentRoute: () => ElectionsRoute,
+  } as any)
+const ElectionsVotingPollingHoursRoute =
+  ElectionsVotingPollingHoursRouteImport.update({
+    id: '/voting_/polling-hours',
+    path: '/voting/polling-hours',
+    getParentRoute: () => ElectionsRoute,
+  } as any)
 const ElectionsResultsResultSlugRoute =
   ElectionsResultsResultSlugRouteImport.update({
     id: '/$resultSlug',
@@ -2398,6 +3189,12 @@ const ApiShopStripeWebhookRoute = ApiShopStripeWebhookRouteImport.update({
   path: '/api/shop/stripe-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicTexasdefinedGovernmentSearchRoute =
+  ApiPublicTexasdefinedGovernmentSearchRouteImport.update({
+    id: '/api/public/texasdefined-government-search',
+    path: '/api/public/texasdefined-government-search',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicTexasdefinedCheckoutRoute =
   ApiPublicTexasdefinedCheckoutRouteImport.update({
     id: '/api/public/texasdefined-checkout',
@@ -2415,11 +3212,23 @@ const ApiPublicOfficialBillTextRoute =
     path: '/api/public/official-bill-text',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicNewsroomSourceHealthRoute =
+  ApiPublicNewsroomSourceHealthRouteImport.update({
+    id: '/api/public/newsroom-source-health',
+    path: '/api/public/newsroom-source-health',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicNewsroomHealthRoute = ApiPublicNewsroomHealthRouteImport.update({
   id: '/api/public/newsroom-health',
   path: '/api/public/newsroom-health',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicFlyoverAug10HealthRoute =
+  ApiPublicFlyoverAug10HealthRouteImport.update({
+    id: '/api/public/flyover-aug10-health',
+    path: '/api/public/flyover-aug10-health',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicDeploymentFingerprintRoute =
   ApiPublicDeploymentFingerprintRouteImport.update({
     id: '/api/public/deployment-fingerprint',
@@ -2457,6 +3266,11 @@ const ApiAdminLegislationSyncProxyRoute =
 const ApiAdminGscSyncRoute = ApiAdminGscSyncRouteImport.update({
   id: '/api/admin/gsc-sync',
   path: '/api/admin/gsc-sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminGscSitewideSyncRoute = ApiAdminGscSitewideSyncRouteImport.update({
+  id: '/api/admin/gsc-sitewide-sync',
+  path: '/api/admin/gsc-sitewide-sync',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminElectionsResultsRoute = AdminElectionsResultsRouteImport.update({
@@ -2545,10 +3359,22 @@ const ApiPublicPaymentsHealthRoute = ApiPublicPaymentsHealthRouteImport.update({
   path: '/api/public/payments/health',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicOpsEtsyHalloweenSeo20260911Route =
+  ApiPublicOpsEtsyHalloweenSeo20260911RouteImport.update({
+    id: '/api/public/ops/etsy-halloween-seo-20260911',
+    path: '/api/public/ops/etsy-halloween-seo-20260911',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksTrackVariantRoute =
   ApiPublicHooksTrackVariantRouteImport.update({
     id: '/api/public/hooks/track-variant',
     path: '/api/public/hooks/track-variant',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksTexasdefinedFacebookCommentSignalsRoute =
+  ApiPublicHooksTexasdefinedFacebookCommentSignalsRouteImport.update({
+    id: '/api/public/hooks/texasdefined-facebook-comment-signals',
+    path: '/api/public/hooks/texasdefined-facebook-comment-signals',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksSyncPrintifyRoute =
@@ -2617,10 +3443,34 @@ const ApiPublicHooksPublishingSafetyNetRoute =
     path: '/api/public/hooks/publishing-safety-net',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksPublishTexasdefinedReelRoute =
+  ApiPublicHooksPublishTexasdefinedReelRouteImport.update({
+    id: '/api/public/hooks/publish-texasdefined-reel',
+    path: '/api/public/hooks/publish-texasdefined-reel',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksPublishTexasdefinedGeneratedImageRoute =
+  ApiPublicHooksPublishTexasdefinedGeneratedImageRouteImport.update({
+    id: '/api/public/hooks/publish-texasdefined-generated-image',
+    path: '/api/public/hooks/publish-texasdefined-generated-image',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksPublishOverdueGapRoute =
   ApiPublicHooksPublishOverdueGapRouteImport.update({
     id: '/api/public/hooks/publish-overdue-gap',
     path: '/api/public/hooks/publish-overdue-gap',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksPublishKtrGeneratedAttentionImageRoute =
+  ApiPublicHooksPublishKtrGeneratedAttentionImageRouteImport.update({
+    id: '/api/public/hooks/publish-ktr-generated-attention-image',
+    path: '/api/public/hooks/publish-ktr-generated-attention-image',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksOpenaiArticleImageRecoveryRoute =
+  ApiPublicHooksOpenaiArticleImageRecoveryRouteImport.update({
+    id: '/api/public/hooks/openai-article-image-recovery',
+    path: '/api/public/hooks/openai-article-image-recovery',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksNormalizeNewsroomFeedRoute =
@@ -2656,6 +3506,12 @@ const ApiPublicHooksImageBacklogRecoveryRoute =
   ApiPublicHooksImageBacklogRecoveryRouteImport.update({
     id: '/api/public/hooks/image-backlog-recovery',
     path: '/api/public/hooks/image-backlog-recovery',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksHydrateNewsroomSourcePagesRoute =
+  ApiPublicHooksHydrateNewsroomSourcePagesRouteImport.update({
+    id: '/api/public/hooks/hydrate-newsroom-source-pages',
+    path: '/api/public/hooks/hydrate-newsroom-source-pages',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksHealthRoute = ApiPublicHooksHealthRouteImport.update({
@@ -2747,6 +3603,12 @@ const ApiPublicHooksBackfillFeaturedImagesRoute =
     path: '/api/public/hooks/backfill-featured-images',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksAutoFacebookPostTexasdefinedWithImageRoute =
+  ApiPublicHooksAutoFacebookPostTexasdefinedWithImageRouteImport.update({
+    id: '/api/public/hooks/auto-facebook-post-texasdefined-with-image',
+    path: '/api/public/hooks/auto-facebook-post-texasdefined-with-image',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksAutoFacebookPostTexasdefinedSmartRoute =
   ApiPublicHooksAutoFacebookPostTexasdefinedSmartRouteImport.update({
     id: '/api/public/hooks/auto-facebook-post-texasdefined-smart',
@@ -2757,6 +3619,12 @@ const ApiPublicHooksAutoFacebookPostTexasdefinedRoute =
   ApiPublicHooksAutoFacebookPostTexasdefinedRouteImport.update({
     id: '/api/public/hooks/auto-facebook-post-texasdefined',
     path: '/api/public/hooks/auto-facebook-post-texasdefined',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksAutoFacebookPostSmartRoute =
+  ApiPublicHooksAutoFacebookPostSmartRouteImport.update({
+    id: '/api/public/hooks/auto-facebook-post-smart',
+    path: '/api/public/hooks/auto-facebook-post-smart',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksAutoFacebookPostRoute =
@@ -2836,12 +3704,26 @@ const ApiPublicOauthFacebookCallbackRoute =
     path: '/api/public/oauth/facebook/callback',
     getParentRoute: () => rootRouteImport,
   } as any)
+const BillsTexasLegislatureSessionBillTypeBillNumberRoute =
+  BillsTexasLegislatureSessionBillTypeBillNumberRouteImport.update({
+    id: '/texas/$legislature/$session/$billType/$billNumber',
+    path: '/texas/$legislature/$session/$billType/$billNumber',
+    getParentRoute: () => BillsRoute,
+  } as any)
 const BillsTexasLegislatureBillTypeBillNumberReferenceDotjsonRoute =
   BillsTexasLegislatureBillTypeBillNumberReferenceDotjsonRouteImport.update({
     id: '/reference.json',
     path: '/reference.json',
     getParentRoute: () => BillsTexasLegislatureBillTypeBillNumberRoute,
   } as any)
+const BillsTexasLegislatureSessionBillTypeBillNumberReferenceDotjsonRoute =
+  BillsTexasLegislatureSessionBillTypeBillNumberReferenceDotjsonRouteImport.update(
+    {
+      id: '/reference.json',
+      path: '/reference.json',
+      getParentRoute: () => BillsTexasLegislatureSessionBillTypeBillNumberRoute,
+    } as any,
+  )
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -2851,18 +3733,22 @@ export interface FileRoutesByFullPath {
   '/austin': typeof AustinRoute
   '/bills': typeof BillsRouteWithChildren
   '/candidate-guides': typeof CandidateGuidesRoute
+  '/cart': typeof CartRoute
   '/citation-guide': typeof CitationGuideRoute
   '/civic-tools': typeof CivicToolsRouteWithChildren
+  '/committees': typeof CommitteesRoute
   '/contact': typeof ContactRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
   '/dallas-fort-worth': typeof DallasFortWorthRoute
   '/data': typeof DataRouteWithChildren
+  '/data-deletion': typeof DataDeletionRoute
   '/districts': typeof DistrictsRouteWithChildren
   '/dmv': typeof DmvRouteWithChildren
   '/editorial-standards': typeof EditorialStandardsRoute
   '/el-paso': typeof ElPasoRoute
   '/elections': typeof ElectionsRouteWithChildren
+  '/ercot-texas-power-grid': typeof ErcotTexasPowerGridRoute
   '/explore': typeof ExploreRouteWithChildren
   '/find-my-dmv': typeof FindMyDmvRoute
   '/find-my-school-district': typeof FindMySchoolDistrictRoute
@@ -2880,13 +3766,17 @@ export interface FileRoutesByFullPath {
   '/legislature': typeof LegislatureRoute
   '/living-in-texas': typeof LivingInTexasRoute
   '/merchant-image': typeof MerchantImageRoute
+  '/moving-checklist': typeof MovingChecklistRoute
   '/moving-to-texas': typeof MovingToTexasRoute
   '/moving-to-texas-checklist': typeof MovingToTexasChecklistRoute
   '/news': typeof NewsRouteWithChildren
   '/news-sitemap.xml': typeof NewsSitemapDotxmlRoute
   '/policy': typeof PolicyRouteWithChildren
   '/policy-trackers.txt': typeof PolicyTrackersDottxtRoute
+  '/political-figure-image': typeof PoliticalFigureImageRoute
+  '/politics': typeof PoliticsRoute
   '/privacy': typeof PrivacyRoute
+  '/property-taxes': typeof PropertyTaxesRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRouteWithChildren
   '/return-refund-policy': typeof ReturnRefundPolicyRoute
@@ -2898,6 +3788,7 @@ export interface FileRoutesByFullPath {
   '/sitemap-bills.xml': typeof SitemapBillsDotxmlRoute
   '/sitemap-committees.xml': typeof SitemapCommitteesDotxmlRoute
   '/sitemap-districts.xml': typeof SitemapDistrictsDotxmlRoute
+  '/sitemap-dmv.xml': typeof SitemapDmvDotxmlRoute
   '/sitemap-elections.xml': typeof SitemapElectionsDotxmlRoute
   '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
   '/sitemap-explore-locations.xml': typeof SitemapExploreLocationsDotxmlRoute
@@ -2907,7 +3798,10 @@ export interface FileRoutesByFullPath {
   '/sitemap-legislature.xml': typeof SitemapLegislatureDotxmlRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
+  '/sitemap-party-representation.xml': typeof SitemapPartyRepresentationDotxmlRoute
   '/sitemap-political-figures.xml': typeof SitemapPoliticalFiguresDotxmlRoute
+  '/sitemap-political-geography.xml': typeof SitemapPoliticalGeographyDotxmlRoute
+  '/sitemap-priority.xml': typeof SitemapPriorityDotxmlRoute
   '/sitemap-products.xml': typeof SitemapProductsDotxmlRoute
   '/sitemap-representatives.xml': typeof SitemapRepresentativesDotxmlRoute
   '/sitemap-sources.xml': typeof SitemapSourcesDotxmlRoute
@@ -2915,7 +3809,7 @@ export interface FileRoutesByFullPath {
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
   '/terms-of-service': typeof TermsOfServiceRoute
-  '/texas': typeof TexasRoute
+  '/texas': typeof TexasRouteWithChildren
   '/texas-agriculture': typeof TexasAgricultureRoute
   '/texas-attorney-general': typeof TexasAttorneyGeneralRoute
   '/texas-border-security': typeof TexasBorderSecurityRoute
@@ -2926,18 +3820,22 @@ export interface FileRoutesByFullPath {
   '/texas-closing-cost-calculator': typeof TexasClosingCostCalculatorRoute
   '/texas-comptroller': typeof TexasComptrollerRoute
   '/texas-cost-of-living-calculator': typeof TexasCostOfLivingCalculatorRoute
+  '/texas-courts': typeof TexasCourtsRoute
   '/texas-data': typeof TexasDataRouteWithChildren
   '/texas-down-payment-assistance-calculator': typeof TexasDownPaymentAssistanceCalculatorRoute
   '/texas-down-payment-calculator': typeof TexasDownPaymentCalculatorRoute
   '/texas-economy': typeof TexasEconomyRoute
   '/texas-energy': typeof TexasEnergyRoute
+  '/texas-energy-policy': typeof TexasEnergyPolicyRoute
   '/texas-financial-tools': typeof TexasFinancialToolsRoute
   '/texas-first-time-homebuyer-programs': typeof TexasFirstTimeHomebuyerProgramsRoute
   '/texas-government': typeof TexasGovernmentRouteWithChildren
+  '/texas-heloc-calculator': typeof TexasHelocCalculatorRoute
   '/texas-home-affordability-calculator': typeof TexasHomeAffordabilityCalculatorRoute
   '/texas-home-equity-calculator': typeof TexasHomeEquityCalculatorRoute
   '/texas-home-equity-growth-calculator': typeof TexasHomeEquityGrowthCalculatorRoute
   '/texas-home-insurance-calculator': typeof TexasHomeInsuranceCalculatorRoute
+  '/texas-home-ownership-cost-calculator': typeof TexasHomeOwnershipCostCalculatorRoute
   '/texas-homeownership-cost-calculator': typeof TexasHomeownershipCostCalculatorRoute
   '/texas-law-enforcement': typeof TexasLawEnforcementRoute
   '/texas-law-policy': typeof TexasLawPolicyRoute
@@ -2946,25 +3844,32 @@ export interface FileRoutesByFullPath {
   '/texas-living': typeof TexasLivingRoute
   '/texas-mortgage-calculator': typeof TexasMortgageCalculatorRoute
   '/texas-mortgage-payoff-calculator': typeof TexasMortgagePayoffCalculatorRoute
+  '/texas-mortgage-qualification-calculator': typeof TexasMortgageQualificationCalculatorRoute
   '/texas-moving-cost-calculator': typeof TexasMovingCostCalculatorRoute
   '/texas-news': typeof TexasNewsRouteWithChildren
+  '/texas-political-figures': typeof TexasPoliticalFiguresRoute
   '/texas-political-reference': typeof TexasPoliticalReferenceRouteWithChildren
   '/texas-politics': typeof TexasPoliticsRouteWithChildren
+  '/texas-property-tax-calculator': typeof TexasPropertyTaxCalculatorRoute
   '/texas-property-tax-increase-calculator': typeof TexasPropertyTaxIncreaseCalculatorRoute
   '/texas-property-tax-protest-guide': typeof TexasPropertyTaxProtestGuideRoute
+  '/texas-refinance-calculator': typeof TexasRefinanceCalculatorRoute
   '/texas-refinance-savings-calculator': typeof TexasRefinanceSavingsCalculatorRoute
   '/texas-rent-vs-buy-calculator': typeof TexasRentVsBuyCalculatorRoute
   '/texas-resources': typeof TexasResourcesRouteWithChildren
   '/texas-salary-calculator': typeof TexasSalaryCalculatorRoute
   '/texas-salary-comparison-by-city': typeof TexasSalaryComparisonByCityRoute
   '/texas-sales-tax-explained': typeof TexasSalesTaxExplainedRoute
+  '/texas-school-board-powers': typeof TexasSchoolBoardPowersRoute
   '/texas-secretary-of-state': typeof TexasSecretaryOfStateRoute
   '/texas-sports': typeof TexasSportsRouteWithChildren
   '/texas-utility-cost-calculator': typeof TexasUtilityCostCalculatorRoute
   '/texas-veterans': typeof TexasVeteransRoute
+  '/texas-water': typeof TexasWaterRoute
   '/topics': typeof TopicsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
+  '/why-texas-has-no-state-income-tax': typeof WhyTexasHasNoStateIncomeTaxRoute
   '/admin/coverage-gaps': typeof AdminCoverageGapsRoute
   '/admin/governance-health': typeof AdminGovernanceHealthRoute
   '/admin/newsroom': typeof AdminNewsroomRoute
@@ -3041,6 +3946,15 @@ export interface FileRoutesByFullPath {
   '/issues/texas-government-accountability-handbook': typeof IssuesTexasGovernmentAccountabilityHandbookRoute
   '/issues/texas-local-government-handbook': typeof IssuesTexasLocalGovernmentHandbookRoute
   '/issues/texas-policy-handbook': typeof IssuesTexasPolicyHandbookRoute
+  '/laws/show-id-to-police-in-texas': typeof LawsShowIdToPoliceInTexasRoute
+  '/laws/texas-constitution': typeof LawsTexasConstitutionRoute
+  '/laws/texas-election-laws': typeof LawsTexasElectionLawsRoute
+  '/laws/texas-election-laws-explained': typeof LawsTexasElectionLawsExplainedRoute
+  '/laws/texas-gun-laws': typeof LawsTexasGunLawsRoute
+  '/laws/texas-gun-laws-explained': typeof LawsTexasGunLawsExplainedRoute
+  '/laws/texas-new-laws-2026': typeof LawsTexasNewLaws2026Route
+  '/laws/texas-property-tax-laws': typeof LawsTexasPropertyTaxLawsRoute
+  '/laws/texas-property-tax-laws-explained': typeof LawsTexasPropertyTaxLawsExplainedRoute
   '/laws/constitutional-amendments': typeof LawsConstitutionalAmendmentsRoute
   '/laws/effective-dates': typeof LawsEffectiveDatesRoute
   '/laws/topics': typeof LawsTopicsRoute
@@ -3108,6 +4022,7 @@ export interface FileRoutesByFullPath {
   '/policy/school-safety-security': typeof PolicySchoolSafetySecurityRoute
   '/policy/scope-act-online-minors': typeof PolicyScopeActOnlineMinorsRoute
   '/policy/semiconductor-manufacturing': typeof PolicySemiconductorManufacturingRoute
+  '/policy/social-media-viewpoint-moderation': typeof PolicySocialMediaViewpointModerationRoute
   '/policy/state-federal-power': typeof PolicyStateFederalPowerRoute
   '/policy/tanf-work-participation': typeof PolicyTanfWorkParticipationRoute
   '/policy/texas-cyber-command': typeof PolicyTexasCyberCommandRoute
@@ -3126,6 +4041,37 @@ export interface FileRoutesByFullPath {
   '/texas-data/$datasetSlug': typeof TexasDataDatasetSlugRoute
   '/texas-government/$entitySlug': typeof TexasGovernmentEntitySlugRoute
   '/texas-government/agencies': typeof TexasGovernmentAgenciesRouteWithChildren
+  '/texas-government/city-manager-government-history': typeof TexasGovernmentCityManagerGovernmentHistoryRoute
+  '/texas-government/commissioners-court-history': typeof TexasGovernmentCommissionersCourtHistoryRoute
+  '/texas-government/comptroller-history': typeof TexasGovernmentComptrollerHistoryRoute
+  '/texas-government/county-commissioner-history': typeof TexasGovernmentCountyCommissionerHistoryRoute
+  '/texas-government/county-district-clerk-history': typeof TexasGovernmentCountyDistrictClerkHistoryRoute
+  '/texas-government/county-judge-history': typeof TexasGovernmentCountyJudgeHistoryRoute
+  '/texas-government/county-sheriff-history': typeof TexasGovernmentCountySheriffHistoryRoute
+  '/texas-government/court-of-criminal-appeals-history': typeof TexasGovernmentCourtOfCriminalAppealsHistoryRoute
+  '/texas-government/fifteenth-court-of-appeals': typeof TexasGovernmentFifteenthCourtOfAppealsRoute
+  '/texas-government/governor-history': typeof TexasGovernmentGovernorHistoryRoute
+  '/texas-government/home-rule-general-law-cities-history': typeof TexasGovernmentHomeRuleGeneralLawCitiesHistoryRoute
+  '/texas-government/judicial-selection-elections': typeof TexasGovernmentJudicialSelectionElectionsRoute
+  '/texas-government/justice-of-the-peace-constable-history': typeof TexasGovernmentJusticeOfThePeaceConstableHistoryRoute
+  '/texas-government/lieutenant-governor-history': typeof TexasGovernmentLieutenantGovernorHistoryRoute
+  '/texas-government/mayor-city-council-history': typeof TexasGovernmentMayorCityCouncilHistoryRoute
+  '/texas-government/municipal-elections-representation-history': typeof TexasGovernmentMunicipalElectionsRepresentationHistoryRoute
+  '/texas-government/municipal-finance-tax-debt-history': typeof TexasGovernmentMunicipalFinanceTaxDebtHistoryRoute
+  '/texas-government/speaker-of-the-house-history': typeof TexasGovernmentSpeakerOfTheHouseHistoryRoute
+  '/texas-government/state-commission-on-judicial-conduct': typeof TexasGovernmentStateCommissionOnJudicialConductRoute
+  '/texas-government/tax-assessor-collector-history': typeof TexasGovernmentTaxAssessorCollectorHistoryRoute
+  '/texas-government/texas-business-court': typeof TexasGovernmentTexasBusinessCourtRoute
+  '/texas-government/texas-county-government-history': typeof TexasGovernmentTexasCountyGovernmentHistoryRoute
+  '/texas-government/texas-court-of-criminal-appeals-history': typeof TexasGovernmentTexasCourtOfCriminalAppealsHistoryRoute
+  '/texas-government/texas-government-history': typeof TexasGovernmentTexasGovernmentHistoryRoute
+  '/texas-government/texas-judicial-selection-history': typeof TexasGovernmentTexasJudicialSelectionHistoryRoute
+  '/texas-government/texas-legislature-history': typeof TexasGovernmentTexasLegislatureHistoryRoute
+  '/texas-government/texas-municipal-courts-history': typeof TexasGovernmentTexasMunicipalCourtsHistoryRoute
+  '/texas-government/texas-municipal-government-history': typeof TexasGovernmentTexasMunicipalGovernmentHistoryRoute
+  '/texas-government/texas-special-district-government-history': typeof TexasGovernmentTexasSpecialDistrictGovernmentHistoryRoute
+  '/texas-government/texas-supreme-court-history': typeof TexasGovernmentTexasSupremeCourtHistoryRoute
+  '/texas-government/texas-trial-courts': typeof TexasGovernmentTexasTrialCourtsRoute
   '/texas-legislature/committees': typeof TexasLegislatureCommitteesRouteWithChildren
   '/texas-legislature/current-session': typeof TexasLegislatureCurrentSessionRoute
   '/texas-legislature/house': typeof TexasLegislatureHouseRoute
@@ -3134,12 +4080,56 @@ export interface FileRoutesByFullPath {
   '/texas-legislature/votes': typeof TexasLegislatureVotesRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-political-reference/$slug': typeof TexasPoliticalReferenceSlugRoute
+  '/texas-politics/congress-of-republic-of-texas': typeof TexasPoliticsCongressOfRepublicOfTexasRoute
+  '/texas-politics/constitution-of-1836-republic-of-texas': typeof TexasPoliticsConstitutionOf1836RepublicOfTexasRoute
+  '/texas-politics/constitution-of-1861-texas': typeof TexasPoliticsConstitutionOf1861TexasRoute
+  '/texas-politics/constitution-of-1866-texas': typeof TexasPoliticsConstitutionOf1866TexasRoute
+  '/texas-politics/constitution-of-1869-texas': typeof TexasPoliticsConstitutionOf1869TexasRoute
+  '/texas-politics/ferguson-era-texas-politics': typeof TexasPoliticsFergusonEraTexasPoliticsRoute
   '/texas-politics/figures': typeof TexasPoliticsFiguresRoute
+  '/texas-politics/how-texas-became-republican': typeof TexasPoliticsHowTexasBecameRepublicanRoute
+  '/texas-politics/presidents-of-republic-of-texas': typeof TexasPoliticsPresidentsOfRepublicOfTexasRoute
+  '/texas-politics/reconstruction-republicans': typeof TexasPoliticsReconstructionRepublicansRoute
+  '/texas-politics/republic-of-texas-capitals-government-seats': typeof TexasPoliticsRepublicOfTexasCapitalsGovernmentSeatsRoute
+  '/texas-politics/republic-of-texas-debt-finance': typeof TexasPoliticsRepublicOfTexasDebtFinanceRoute
+  '/texas-politics/republic-of-texas-diplomacy-recognition': typeof TexasPoliticsRepublicOfTexasDiplomacyRecognitionRoute
+  '/texas-politics/republic-of-texas-government-history': typeof TexasPoliticsRepublicOfTexasGovernmentHistoryRoute
+  '/texas-politics/republic-to-state-government-transition': typeof TexasPoliticsRepublicToStateGovernmentTransitionRoute
+  '/texas-politics/south-texas-rio-grande-valley-political-history': typeof TexasPoliticsSouthTexasRioGrandeValleyPoliticalHistoryRoute
+  '/texas-politics/texas-annexation-statehood-history': typeof TexasPoliticsTexasAnnexationStatehoodHistoryRoute
+  '/texas-politics/texas-civil-rights-era-politics': typeof TexasPoliticsTexasCivilRightsEraPoliticsRoute
+  '/texas-politics/texas-constitutional-convention-1875': typeof TexasPoliticsTexasConstitutionalConvention1875Route
+  '/texas-politics/texas-constitutional-history': typeof TexasPoliticsTexasConstitutionalHistoryRoute
+  '/texas-politics/texas-democratic-dominance-1876-1952': typeof TexasPoliticsTexasDemocraticDominance18761952Route
+  '/texas-politics/texas-democratic-party-history': typeof TexasPoliticsTexasDemocraticPartyHistoryRoute
+  '/texas-politics/texas-election-history': typeof TexasPoliticsTexasElectionHistoryRoute
+  '/texas-politics/texas-government-during-civil-war': typeof TexasPoliticsTexasGovernmentDuringCivilWarRoute
+  '/texas-politics/texas-metro-regional-realignment-history': typeof TexasPoliticsTexasMetroRegionalRealignmentHistoryRoute
+  '/texas-politics/texas-mexican-american-political-organization-history': typeof TexasPoliticsTexasMexicanAmericanPoliticalOrganizationHistoryRoute
+  '/texas-politics/texas-new-deal-politics': typeof TexasPoliticsTexasNewDealPoliticsRoute
+  '/texas-politics/texas-political-geography-history': typeof TexasPoliticsTexasPoliticalGeographyHistoryRoute
+  '/texas-politics/texas-populist-progressive-era': typeof TexasPoliticsTexasPopulistProgressiveEraRoute
+  '/texas-politics/texas-reconstruction-government': typeof TexasPoliticsTexasReconstructionGovernmentRoute
+  '/texas-politics/texas-redistricting-history': typeof TexasPoliticsTexasRedistrictingHistoryRoute
+  '/texas-politics/texas-republican-party-history': typeof TexasPoliticsTexasRepublicanPartyHistoryRoute
+  '/texas-politics/texas-secession-convention-1861': typeof TexasPoliticsTexasSecessionConvention1861Route
+  '/texas-politics/texas-supreme-court-realignment': typeof TexasPoliticsTexasSupremeCourtRealignmentRoute
+  '/texas-politics/texas-urban-suburban-rural-politics-history': typeof TexasPoliticsTexasUrbanSuburbanRuralPoliticsHistoryRoute
+  '/texas-politics/texas-white-primary-history': typeof TexasPoliticsTexasWhitePrimaryHistoryRoute
+  '/texas-politics/texas-women-suffrage-political-representation-history': typeof TexasPoliticsTexasWomenSuffragePoliticalRepresentationHistoryRoute
+  '/texas-politics/voting-rights-history': typeof TexasPoliticsVotingRightsHistoryRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
+  '/texas/property-taxes-2026': typeof TexasPropertyTaxes2026Route
+  '/tools/closing-cost-calculator': typeof ToolsClosingCostCalculatorRoute
+  '/tools/home-affordability-calculator': typeof ToolsHomeAffordabilityCalculatorRoute
+  '/tools/home-insurance-calculator': typeof ToolsHomeInsuranceCalculatorRoute
+  '/tools/mortgage-calculator': typeof ToolsMortgageCalculatorRoute
+  '/tools/property-tax-calculator': typeof ToolsPropertyTaxCalculatorRoute
   '/tools/texas-budget-headroom': typeof ToolsTexasBudgetHeadroomRoute
   '/tools/texas-rainy-day-fund': typeof ToolsTexasRainyDayFundRoute
   '/tools/texas-spending-growth-cap': typeof ToolsTexasSpendingGrowthCapRoute
   '/tools/texas-tax-structure-comparison': typeof ToolsTexasTaxStructureComparisonRoute
+  '/tools/texas-utilities-calculator': typeof ToolsTexasUtilitiesCalculatorRoute
   '/vehicles/auto-insurance-requirements': typeof VehiclesAutoInsuranceRequirementsRoute
   '/vehicles/bonded-titles': typeof VehiclesBondedTitlesRoute
   '/vehicles/buying-a-car': typeof VehiclesBuyingACarRoute
@@ -3169,11 +4159,15 @@ export interface FileRoutesByFullPath {
   '/elections/': typeof ElectionsIndexRoute
   '/explore/': typeof ExploreIndexRoute
   '/issues/': typeof IssuesIndexRoute
+  '/laws/': typeof LawsIndexRoute
   '/news/': typeof NewsIndexRoute
+  '/policy/': typeof PolicyIndexRoute
   '/shop/': typeof ShopIndexRoute
   '/sources/': typeof SourcesIndexRoute
+  '/texas-government/': typeof TexasGovernmentIndexRoute
   '/texas-legislature/': typeof TexasLegislatureIndexRoute
   '/texas-news/': typeof TexasNewsIndexRoute
+  '/texas-politics/': typeof TexasPoliticsIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
   '/tools/': typeof ToolsIndexRoute
   '/admin/bills/backfill': typeof AdminBillsBackfillRoute
@@ -3186,6 +4180,7 @@ export interface FileRoutesByFullPath {
   '/admin/elections/polls': typeof AdminElectionsPollsRoute
   '/admin/elections/races': typeof AdminElectionsRacesRoute
   '/admin/elections/results': typeof AdminElectionsResultsRoute
+  '/api/admin/gsc-sitewide-sync': typeof ApiAdminGscSitewideSyncRoute
   '/api/admin/gsc-sync': typeof ApiAdminGscSyncRoute
   '/api/admin/legislation-sync-proxy': typeof ApiAdminLegislationSyncProxyRouteWithChildren
   '/api/admin/newsroom-metrics': typeof ApiAdminNewsroomMetricsRoute
@@ -3193,10 +4188,13 @@ export interface FileRoutesByFullPath {
   '/api/elections/district-lookup': typeof ApiElectionsDistrictLookupRoute
   '/api/public/cross-site-publication-health': typeof ApiPublicCrossSitePublicationHealthRoute
   '/api/public/deployment-fingerprint': typeof ApiPublicDeploymentFingerprintRoute
+  '/api/public/flyover-aug10-health': typeof ApiPublicFlyoverAug10HealthRoute
   '/api/public/newsroom-health': typeof ApiPublicNewsroomHealthRoute
+  '/api/public/newsroom-source-health': typeof ApiPublicNewsroomSourceHealthRoute
   '/api/public/official-bill-text': typeof ApiPublicOfficialBillTextRoute
   '/api/public/store-products': typeof ApiPublicStoreProductsRoute
   '/api/public/texasdefined-checkout': typeof ApiPublicTexasdefinedCheckoutRoute
+  '/api/public/texasdefined-government-search': typeof ApiPublicTexasdefinedGovernmentSearchRoute
   '/api/shop/stripe-webhook': typeof ApiShopStripeWebhookRoute
   '/bills/subject/$subjectSlug': typeof BillsSubjectSubjectSlugRoute
   '/elections/candidates/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
@@ -3205,6 +4203,9 @@ export interface FileRoutesByFullPath {
   '/elections/polls/$pollSlug': typeof ElectionsPollsPollSlugRoute
   '/elections/races/$raceSlug': typeof ElectionsRacesRaceSlugRoute
   '/elections/results/$resultSlug': typeof ElectionsResultsResultSlugRoute
+  '/elections/voting/polling-hours': typeof ElectionsVotingPollingHoursRoute
+  '/elections/voting/polling-place': typeof ElectionsVotingPollingPlaceRoute
+  '/elections/voting/voter-registration-card': typeof ElectionsVotingVoterRegistrationCardRoute
   '/explore/cavern/$slug': typeof ExploreCavernSlugRoute
   '/explore/county/$county': typeof ExploreCountyCountyRoute
   '/explore/lake/$slug': typeof ExploreLakeSlugRoute
@@ -3237,8 +4238,10 @@ export interface FileRoutesByFullPath {
   '/api/public/explore/recommendations': typeof ApiPublicExploreRecommendationsRoute
   '/api/public/hooks/adsense-image-backfill': typeof ApiPublicHooksAdsenseImageBackfillRoute
   '/api/public/hooks/auto-facebook-post': typeof ApiPublicHooksAutoFacebookPostRoute
+  '/api/public/hooks/auto-facebook-post-smart': typeof ApiPublicHooksAutoFacebookPostSmartRoute
   '/api/public/hooks/auto-facebook-post-texasdefined': typeof ApiPublicHooksAutoFacebookPostTexasdefinedRoute
   '/api/public/hooks/auto-facebook-post-texasdefined-smart': typeof ApiPublicHooksAutoFacebookPostTexasdefinedSmartRoute
+  '/api/public/hooks/auto-facebook-post-texasdefined-with-image': typeof ApiPublicHooksAutoFacebookPostTexasdefinedWithImageRoute
   '/api/public/hooks/backfill-featured-images': typeof ApiPublicHooksBackfillFeaturedImagesRoute
   '/api/public/hooks/build-newsroom-research-packets': typeof ApiPublicHooksBuildNewsroomResearchPacketsRoute
   '/api/public/hooks/classify-article-pillars': typeof ApiPublicHooksClassifyArticlePillarsRoute
@@ -3254,13 +4257,18 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/generate-newsroom': typeof ApiPublicHooksGenerateNewsroomRoute
   '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
   '/api/public/hooks/health': typeof ApiPublicHooksHealthRoute
+  '/api/public/hooks/hydrate-newsroom-source-pages': typeof ApiPublicHooksHydrateNewsroomSourcePagesRoute
   '/api/public/hooks/image-backlog-recovery': typeof ApiPublicHooksImageBacklogRecoveryRoute
   '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
   '/api/public/hooks/ingest-sports': typeof ApiPublicHooksIngestSportsRoute
   '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
   '/api/public/hooks/newsroom-generation-diagnostics': typeof ApiPublicHooksNewsroomGenerationDiagnosticsRoute
   '/api/public/hooks/normalize-newsroom-feed': typeof ApiPublicHooksNormalizeNewsroomFeedRoute
+  '/api/public/hooks/openai-article-image-recovery': typeof ApiPublicHooksOpenaiArticleImageRecoveryRoute
+  '/api/public/hooks/publish-ktr-generated-attention-image': typeof ApiPublicHooksPublishKtrGeneratedAttentionImageRoute
   '/api/public/hooks/publish-overdue-gap': typeof ApiPublicHooksPublishOverdueGapRoute
+  '/api/public/hooks/publish-texasdefined-generated-image': typeof ApiPublicHooksPublishTexasdefinedGeneratedImageRoute
+  '/api/public/hooks/publish-texasdefined-reel': typeof ApiPublicHooksPublishTexasdefinedReelRoute
   '/api/public/hooks/publishing-safety-net': typeof ApiPublicHooksPublishingSafetyNetRoute
   '/api/public/hooks/reconcile-news-history': typeof ApiPublicHooksReconcileNewsHistoryRoute
   '/api/public/hooks/remediate-aug10-flyover': typeof ApiPublicHooksRemediateAug10FlyoverRoute
@@ -3272,7 +4280,9 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/score-viral': typeof ApiPublicHooksScoreViralRoute
   '/api/public/hooks/score-viral-backfill': typeof ApiPublicHooksScoreViralBackfillRoute
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
+  '/api/public/hooks/texasdefined-facebook-comment-signals': typeof ApiPublicHooksTexasdefinedFacebookCommentSignalsRoute
   '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
+  '/api/public/ops/etsy-halloween-seo-20260911': typeof ApiPublicOpsEtsyHalloweenSeo20260911Route
   '/api/public/payments/health': typeof ApiPublicPaymentsHealthRoute
   '/api/public/payments/sandbox-config': typeof ApiPublicPaymentsSandboxConfigRoute
   '/api/public/payments/sandbox-health': typeof ApiPublicPaymentsSandboxHealthRoute
@@ -3284,6 +4294,8 @@ export interface FileRoutesByFullPath {
   '/bills/texas/$legislature/$billType/$billNumber': typeof BillsTexasLegislatureBillTypeBillNumberRouteWithChildren
   '/bills/texas/$legislature/$billType/': typeof BillsTexasLegislatureBillTypeIndexRoute
   '/bills/texas/$legislature/$billType/$billNumber/reference.json': typeof BillsTexasLegislatureBillTypeBillNumberReferenceDotjsonRoute
+  '/bills/texas/$legislature/$session/$billType/$billNumber': typeof BillsTexasLegislatureSessionBillTypeBillNumberRouteWithChildren
+  '/bills/texas/$legislature/$session/$billType/$billNumber/reference.json': typeof BillsTexasLegislatureSessionBillTypeBillNumberReferenceDotjsonRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -3291,17 +4303,21 @@ export interface FileRoutesByTo {
   '/about-keep-texas-red': typeof AboutKeepTexasRedRoute
   '/austin': typeof AustinRoute
   '/candidate-guides': typeof CandidateGuidesRoute
+  '/cart': typeof CartRoute
   '/citation-guide': typeof CitationGuideRoute
   '/civic-tools': typeof CivicToolsRouteWithChildren
+  '/committees': typeof CommitteesRoute
   '/contact': typeof ContactRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
   '/dallas-fort-worth': typeof DallasFortWorthRoute
   '/data': typeof DataRouteWithChildren
+  '/data-deletion': typeof DataDeletionRoute
   '/districts': typeof DistrictsRouteWithChildren
   '/dmv': typeof DmvRouteWithChildren
   '/editorial-standards': typeof EditorialStandardsRoute
   '/el-paso': typeof ElPasoRoute
+  '/ercot-texas-power-grid': typeof ErcotTexasPowerGridRoute
   '/find-my-dmv': typeof FindMyDmvRoute
   '/find-my-school-district': typeof FindMySchoolDistrictRoute
   '/find-representative': typeof FindRepresentativeRoute
@@ -3312,18 +4328,20 @@ export interface FileRoutesByTo {
   '/houston': typeof HoustonRoute
   '/issue-guides.txt': typeof IssueGuidesDottxtRoute
   '/keep-texas-red': typeof KeepTexasRedRoute
-  '/laws': typeof LawsRouteWithChildren
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
   '/legislature': typeof LegislatureRoute
   '/living-in-texas': typeof LivingInTexasRoute
   '/merchant-image': typeof MerchantImageRoute
+  '/moving-checklist': typeof MovingChecklistRoute
   '/moving-to-texas': typeof MovingToTexasRoute
   '/moving-to-texas-checklist': typeof MovingToTexasChecklistRoute
   '/news-sitemap.xml': typeof NewsSitemapDotxmlRoute
-  '/policy': typeof PolicyRouteWithChildren
   '/policy-trackers.txt': typeof PolicyTrackersDottxtRoute
+  '/political-figure-image': typeof PoliticalFigureImageRoute
+  '/politics': typeof PoliticsRoute
   '/privacy': typeof PrivacyRoute
+  '/property-taxes': typeof PropertyTaxesRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRouteWithChildren
   '/return-refund-policy': typeof ReturnRefundPolicyRoute
@@ -3334,6 +4352,7 @@ export interface FileRoutesByTo {
   '/sitemap-bills.xml': typeof SitemapBillsDotxmlRoute
   '/sitemap-committees.xml': typeof SitemapCommitteesDotxmlRoute
   '/sitemap-districts.xml': typeof SitemapDistrictsDotxmlRoute
+  '/sitemap-dmv.xml': typeof SitemapDmvDotxmlRoute
   '/sitemap-elections.xml': typeof SitemapElectionsDotxmlRoute
   '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
   '/sitemap-explore-locations.xml': typeof SitemapExploreLocationsDotxmlRoute
@@ -3343,7 +4362,10 @@ export interface FileRoutesByTo {
   '/sitemap-legislature.xml': typeof SitemapLegislatureDotxmlRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
+  '/sitemap-party-representation.xml': typeof SitemapPartyRepresentationDotxmlRoute
   '/sitemap-political-figures.xml': typeof SitemapPoliticalFiguresDotxmlRoute
+  '/sitemap-political-geography.xml': typeof SitemapPoliticalGeographyDotxmlRoute
+  '/sitemap-priority.xml': typeof SitemapPriorityDotxmlRoute
   '/sitemap-products.xml': typeof SitemapProductsDotxmlRoute
   '/sitemap-representatives.xml': typeof SitemapRepresentativesDotxmlRoute
   '/sitemap-sources.xml': typeof SitemapSourcesDotxmlRoute
@@ -3351,7 +4373,7 @@ export interface FileRoutesByTo {
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
   '/terms-of-service': typeof TermsOfServiceRoute
-  '/texas': typeof TexasRoute
+  '/texas': typeof TexasRouteWithChildren
   '/texas-agriculture': typeof TexasAgricultureRoute
   '/texas-attorney-general': typeof TexasAttorneyGeneralRoute
   '/texas-border-security': typeof TexasBorderSecurityRoute
@@ -3362,18 +4384,21 @@ export interface FileRoutesByTo {
   '/texas-closing-cost-calculator': typeof TexasClosingCostCalculatorRoute
   '/texas-comptroller': typeof TexasComptrollerRoute
   '/texas-cost-of-living-calculator': typeof TexasCostOfLivingCalculatorRoute
+  '/texas-courts': typeof TexasCourtsRoute
   '/texas-data': typeof TexasDataRouteWithChildren
   '/texas-down-payment-assistance-calculator': typeof TexasDownPaymentAssistanceCalculatorRoute
   '/texas-down-payment-calculator': typeof TexasDownPaymentCalculatorRoute
   '/texas-economy': typeof TexasEconomyRoute
   '/texas-energy': typeof TexasEnergyRoute
+  '/texas-energy-policy': typeof TexasEnergyPolicyRoute
   '/texas-financial-tools': typeof TexasFinancialToolsRoute
   '/texas-first-time-homebuyer-programs': typeof TexasFirstTimeHomebuyerProgramsRoute
-  '/texas-government': typeof TexasGovernmentRouteWithChildren
+  '/texas-heloc-calculator': typeof TexasHelocCalculatorRoute
   '/texas-home-affordability-calculator': typeof TexasHomeAffordabilityCalculatorRoute
   '/texas-home-equity-calculator': typeof TexasHomeEquityCalculatorRoute
   '/texas-home-equity-growth-calculator': typeof TexasHomeEquityGrowthCalculatorRoute
   '/texas-home-insurance-calculator': typeof TexasHomeInsuranceCalculatorRoute
+  '/texas-home-ownership-cost-calculator': typeof TexasHomeOwnershipCostCalculatorRoute
   '/texas-homeownership-cost-calculator': typeof TexasHomeownershipCostCalculatorRoute
   '/texas-law-enforcement': typeof TexasLawEnforcementRoute
   '/texas-law-policy': typeof TexasLawPolicyRoute
@@ -3381,23 +4406,29 @@ export interface FileRoutesByTo {
   '/texas-living': typeof TexasLivingRoute
   '/texas-mortgage-calculator': typeof TexasMortgageCalculatorRoute
   '/texas-mortgage-payoff-calculator': typeof TexasMortgagePayoffCalculatorRoute
+  '/texas-mortgage-qualification-calculator': typeof TexasMortgageQualificationCalculatorRoute
   '/texas-moving-cost-calculator': typeof TexasMovingCostCalculatorRoute
+  '/texas-political-figures': typeof TexasPoliticalFiguresRoute
   '/texas-political-reference': typeof TexasPoliticalReferenceRouteWithChildren
-  '/texas-politics': typeof TexasPoliticsRouteWithChildren
+  '/texas-property-tax-calculator': typeof TexasPropertyTaxCalculatorRoute
   '/texas-property-tax-increase-calculator': typeof TexasPropertyTaxIncreaseCalculatorRoute
   '/texas-property-tax-protest-guide': typeof TexasPropertyTaxProtestGuideRoute
+  '/texas-refinance-calculator': typeof TexasRefinanceCalculatorRoute
   '/texas-refinance-savings-calculator': typeof TexasRefinanceSavingsCalculatorRoute
   '/texas-rent-vs-buy-calculator': typeof TexasRentVsBuyCalculatorRoute
   '/texas-resources': typeof TexasResourcesRouteWithChildren
   '/texas-salary-calculator': typeof TexasSalaryCalculatorRoute
   '/texas-salary-comparison-by-city': typeof TexasSalaryComparisonByCityRoute
   '/texas-sales-tax-explained': typeof TexasSalesTaxExplainedRoute
+  '/texas-school-board-powers': typeof TexasSchoolBoardPowersRoute
   '/texas-secretary-of-state': typeof TexasSecretaryOfStateRoute
   '/texas-utility-cost-calculator': typeof TexasUtilityCostCalculatorRoute
   '/texas-veterans': typeof TexasVeteransRoute
+  '/texas-water': typeof TexasWaterRoute
   '/topics': typeof TopicsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
+  '/why-texas-has-no-state-income-tax': typeof WhyTexasHasNoStateIncomeTaxRoute
   '/admin/coverage-gaps': typeof AdminCoverageGapsRoute
   '/admin/governance-health': typeof AdminGovernanceHealthRoute
   '/admin/newsroom': typeof AdminNewsroomRoute
@@ -3473,6 +4504,15 @@ export interface FileRoutesByTo {
   '/issues/texas-government-accountability-handbook': typeof IssuesTexasGovernmentAccountabilityHandbookRoute
   '/issues/texas-local-government-handbook': typeof IssuesTexasLocalGovernmentHandbookRoute
   '/issues/texas-policy-handbook': typeof IssuesTexasPolicyHandbookRoute
+  '/laws/show-id-to-police-in-texas': typeof LawsShowIdToPoliceInTexasRoute
+  '/laws/texas-constitution': typeof LawsTexasConstitutionRoute
+  '/laws/texas-election-laws': typeof LawsTexasElectionLawsRoute
+  '/laws/texas-election-laws-explained': typeof LawsTexasElectionLawsExplainedRoute
+  '/laws/texas-gun-laws': typeof LawsTexasGunLawsRoute
+  '/laws/texas-gun-laws-explained': typeof LawsTexasGunLawsExplainedRoute
+  '/laws/texas-new-laws-2026': typeof LawsTexasNewLaws2026Route
+  '/laws/texas-property-tax-laws': typeof LawsTexasPropertyTaxLawsRoute
+  '/laws/texas-property-tax-laws-explained': typeof LawsTexasPropertyTaxLawsExplainedRoute
   '/laws/constitutional-amendments': typeof LawsConstitutionalAmendmentsRoute
   '/laws/effective-dates': typeof LawsEffectiveDatesRoute
   '/laws/topics': typeof LawsTopicsRoute
@@ -3540,6 +4580,7 @@ export interface FileRoutesByTo {
   '/policy/school-safety-security': typeof PolicySchoolSafetySecurityRoute
   '/policy/scope-act-online-minors': typeof PolicyScopeActOnlineMinorsRoute
   '/policy/semiconductor-manufacturing': typeof PolicySemiconductorManufacturingRoute
+  '/policy/social-media-viewpoint-moderation': typeof PolicySocialMediaViewpointModerationRoute
   '/policy/state-federal-power': typeof PolicyStateFederalPowerRoute
   '/policy/tanf-work-participation': typeof PolicyTanfWorkParticipationRoute
   '/policy/texas-cyber-command': typeof PolicyTexasCyberCommandRoute
@@ -3558,18 +4599,93 @@ export interface FileRoutesByTo {
   '/texas-data/$datasetSlug': typeof TexasDataDatasetSlugRoute
   '/texas-government/$entitySlug': typeof TexasGovernmentEntitySlugRoute
   '/texas-government/agencies': typeof TexasGovernmentAgenciesRouteWithChildren
+  '/texas-government/city-manager-government-history': typeof TexasGovernmentCityManagerGovernmentHistoryRoute
+  '/texas-government/commissioners-court-history': typeof TexasGovernmentCommissionersCourtHistoryRoute
+  '/texas-government/comptroller-history': typeof TexasGovernmentComptrollerHistoryRoute
+  '/texas-government/county-commissioner-history': typeof TexasGovernmentCountyCommissionerHistoryRoute
+  '/texas-government/county-district-clerk-history': typeof TexasGovernmentCountyDistrictClerkHistoryRoute
+  '/texas-government/county-judge-history': typeof TexasGovernmentCountyJudgeHistoryRoute
+  '/texas-government/county-sheriff-history': typeof TexasGovernmentCountySheriffHistoryRoute
+  '/texas-government/court-of-criminal-appeals-history': typeof TexasGovernmentCourtOfCriminalAppealsHistoryRoute
+  '/texas-government/fifteenth-court-of-appeals': typeof TexasGovernmentFifteenthCourtOfAppealsRoute
+  '/texas-government/governor-history': typeof TexasGovernmentGovernorHistoryRoute
+  '/texas-government/home-rule-general-law-cities-history': typeof TexasGovernmentHomeRuleGeneralLawCitiesHistoryRoute
+  '/texas-government/judicial-selection-elections': typeof TexasGovernmentJudicialSelectionElectionsRoute
+  '/texas-government/justice-of-the-peace-constable-history': typeof TexasGovernmentJusticeOfThePeaceConstableHistoryRoute
+  '/texas-government/lieutenant-governor-history': typeof TexasGovernmentLieutenantGovernorHistoryRoute
+  '/texas-government/mayor-city-council-history': typeof TexasGovernmentMayorCityCouncilHistoryRoute
+  '/texas-government/municipal-elections-representation-history': typeof TexasGovernmentMunicipalElectionsRepresentationHistoryRoute
+  '/texas-government/municipal-finance-tax-debt-history': typeof TexasGovernmentMunicipalFinanceTaxDebtHistoryRoute
+  '/texas-government/speaker-of-the-house-history': typeof TexasGovernmentSpeakerOfTheHouseHistoryRoute
+  '/texas-government/state-commission-on-judicial-conduct': typeof TexasGovernmentStateCommissionOnJudicialConductRoute
+  '/texas-government/tax-assessor-collector-history': typeof TexasGovernmentTaxAssessorCollectorHistoryRoute
+  '/texas-government/texas-business-court': typeof TexasGovernmentTexasBusinessCourtRoute
+  '/texas-government/texas-county-government-history': typeof TexasGovernmentTexasCountyGovernmentHistoryRoute
+  '/texas-government/texas-court-of-criminal-appeals-history': typeof TexasGovernmentTexasCourtOfCriminalAppealsHistoryRoute
+  '/texas-government/texas-government-history': typeof TexasGovernmentTexasGovernmentHistoryRoute
+  '/texas-government/texas-judicial-selection-history': typeof TexasGovernmentTexasJudicialSelectionHistoryRoute
+  '/texas-government/texas-legislature-history': typeof TexasGovernmentTexasLegislatureHistoryRoute
+  '/texas-government/texas-municipal-courts-history': typeof TexasGovernmentTexasMunicipalCourtsHistoryRoute
+  '/texas-government/texas-municipal-government-history': typeof TexasGovernmentTexasMunicipalGovernmentHistoryRoute
+  '/texas-government/texas-special-district-government-history': typeof TexasGovernmentTexasSpecialDistrictGovernmentHistoryRoute
+  '/texas-government/texas-supreme-court-history': typeof TexasGovernmentTexasSupremeCourtHistoryRoute
+  '/texas-government/texas-trial-courts': typeof TexasGovernmentTexasTrialCourtsRoute
   '/texas-legislature/current-session': typeof TexasLegislatureCurrentSessionRoute
   '/texas-legislature/house': typeof TexasLegislatureHouseRoute
   '/texas-legislature/senate': typeof TexasLegislatureSenateRoute
   '/texas-legislature/votes': typeof TexasLegislatureVotesRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-political-reference/$slug': typeof TexasPoliticalReferenceSlugRoute
+  '/texas-politics/congress-of-republic-of-texas': typeof TexasPoliticsCongressOfRepublicOfTexasRoute
+  '/texas-politics/constitution-of-1836-republic-of-texas': typeof TexasPoliticsConstitutionOf1836RepublicOfTexasRoute
+  '/texas-politics/constitution-of-1861-texas': typeof TexasPoliticsConstitutionOf1861TexasRoute
+  '/texas-politics/constitution-of-1866-texas': typeof TexasPoliticsConstitutionOf1866TexasRoute
+  '/texas-politics/constitution-of-1869-texas': typeof TexasPoliticsConstitutionOf1869TexasRoute
+  '/texas-politics/ferguson-era-texas-politics': typeof TexasPoliticsFergusonEraTexasPoliticsRoute
   '/texas-politics/figures': typeof TexasPoliticsFiguresRoute
+  '/texas-politics/how-texas-became-republican': typeof TexasPoliticsHowTexasBecameRepublicanRoute
+  '/texas-politics/presidents-of-republic-of-texas': typeof TexasPoliticsPresidentsOfRepublicOfTexasRoute
+  '/texas-politics/reconstruction-republicans': typeof TexasPoliticsReconstructionRepublicansRoute
+  '/texas-politics/republic-of-texas-capitals-government-seats': typeof TexasPoliticsRepublicOfTexasCapitalsGovernmentSeatsRoute
+  '/texas-politics/republic-of-texas-debt-finance': typeof TexasPoliticsRepublicOfTexasDebtFinanceRoute
+  '/texas-politics/republic-of-texas-diplomacy-recognition': typeof TexasPoliticsRepublicOfTexasDiplomacyRecognitionRoute
+  '/texas-politics/republic-of-texas-government-history': typeof TexasPoliticsRepublicOfTexasGovernmentHistoryRoute
+  '/texas-politics/republic-to-state-government-transition': typeof TexasPoliticsRepublicToStateGovernmentTransitionRoute
+  '/texas-politics/south-texas-rio-grande-valley-political-history': typeof TexasPoliticsSouthTexasRioGrandeValleyPoliticalHistoryRoute
+  '/texas-politics/texas-annexation-statehood-history': typeof TexasPoliticsTexasAnnexationStatehoodHistoryRoute
+  '/texas-politics/texas-civil-rights-era-politics': typeof TexasPoliticsTexasCivilRightsEraPoliticsRoute
+  '/texas-politics/texas-constitutional-convention-1875': typeof TexasPoliticsTexasConstitutionalConvention1875Route
+  '/texas-politics/texas-constitutional-history': typeof TexasPoliticsTexasConstitutionalHistoryRoute
+  '/texas-politics/texas-democratic-dominance-1876-1952': typeof TexasPoliticsTexasDemocraticDominance18761952Route
+  '/texas-politics/texas-democratic-party-history': typeof TexasPoliticsTexasDemocraticPartyHistoryRoute
+  '/texas-politics/texas-election-history': typeof TexasPoliticsTexasElectionHistoryRoute
+  '/texas-politics/texas-government-during-civil-war': typeof TexasPoliticsTexasGovernmentDuringCivilWarRoute
+  '/texas-politics/texas-metro-regional-realignment-history': typeof TexasPoliticsTexasMetroRegionalRealignmentHistoryRoute
+  '/texas-politics/texas-mexican-american-political-organization-history': typeof TexasPoliticsTexasMexicanAmericanPoliticalOrganizationHistoryRoute
+  '/texas-politics/texas-new-deal-politics': typeof TexasPoliticsTexasNewDealPoliticsRoute
+  '/texas-politics/texas-political-geography-history': typeof TexasPoliticsTexasPoliticalGeographyHistoryRoute
+  '/texas-politics/texas-populist-progressive-era': typeof TexasPoliticsTexasPopulistProgressiveEraRoute
+  '/texas-politics/texas-reconstruction-government': typeof TexasPoliticsTexasReconstructionGovernmentRoute
+  '/texas-politics/texas-redistricting-history': typeof TexasPoliticsTexasRedistrictingHistoryRoute
+  '/texas-politics/texas-republican-party-history': typeof TexasPoliticsTexasRepublicanPartyHistoryRoute
+  '/texas-politics/texas-secession-convention-1861': typeof TexasPoliticsTexasSecessionConvention1861Route
+  '/texas-politics/texas-supreme-court-realignment': typeof TexasPoliticsTexasSupremeCourtRealignmentRoute
+  '/texas-politics/texas-urban-suburban-rural-politics-history': typeof TexasPoliticsTexasUrbanSuburbanRuralPoliticsHistoryRoute
+  '/texas-politics/texas-white-primary-history': typeof TexasPoliticsTexasWhitePrimaryHistoryRoute
+  '/texas-politics/texas-women-suffrage-political-representation-history': typeof TexasPoliticsTexasWomenSuffragePoliticalRepresentationHistoryRoute
+  '/texas-politics/voting-rights-history': typeof TexasPoliticsVotingRightsHistoryRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
+  '/texas/property-taxes-2026': typeof TexasPropertyTaxes2026Route
+  '/tools/closing-cost-calculator': typeof ToolsClosingCostCalculatorRoute
+  '/tools/home-affordability-calculator': typeof ToolsHomeAffordabilityCalculatorRoute
+  '/tools/home-insurance-calculator': typeof ToolsHomeInsuranceCalculatorRoute
+  '/tools/mortgage-calculator': typeof ToolsMortgageCalculatorRoute
+  '/tools/property-tax-calculator': typeof ToolsPropertyTaxCalculatorRoute
   '/tools/texas-budget-headroom': typeof ToolsTexasBudgetHeadroomRoute
   '/tools/texas-rainy-day-fund': typeof ToolsTexasRainyDayFundRoute
   '/tools/texas-spending-growth-cap': typeof ToolsTexasSpendingGrowthCapRoute
   '/tools/texas-tax-structure-comparison': typeof ToolsTexasTaxStructureComparisonRoute
+  '/tools/texas-utilities-calculator': typeof ToolsTexasUtilitiesCalculatorRoute
   '/vehicles/auto-insurance-requirements': typeof VehiclesAutoInsuranceRequirementsRoute
   '/vehicles/bonded-titles': typeof VehiclesBondedTitlesRoute
   '/vehicles/buying-a-car': typeof VehiclesBuyingACarRoute
@@ -3599,11 +4715,15 @@ export interface FileRoutesByTo {
   '/elections': typeof ElectionsIndexRoute
   '/explore': typeof ExploreIndexRoute
   '/issues': typeof IssuesIndexRoute
+  '/laws': typeof LawsIndexRoute
   '/news': typeof NewsIndexRoute
+  '/policy': typeof PolicyIndexRoute
   '/shop': typeof ShopIndexRoute
   '/sources': typeof SourcesIndexRoute
+  '/texas-government': typeof TexasGovernmentIndexRoute
   '/texas-legislature': typeof TexasLegislatureIndexRoute
   '/texas-news': typeof TexasNewsIndexRoute
+  '/texas-politics': typeof TexasPoliticsIndexRoute
   '/texas-sports': typeof TexasSportsIndexRoute
   '/tools': typeof ToolsIndexRoute
   '/admin/bills/backfill': typeof AdminBillsBackfillRoute
@@ -3616,6 +4736,7 @@ export interface FileRoutesByTo {
   '/admin/elections/polls': typeof AdminElectionsPollsRoute
   '/admin/elections/races': typeof AdminElectionsRacesRoute
   '/admin/elections/results': typeof AdminElectionsResultsRoute
+  '/api/admin/gsc-sitewide-sync': typeof ApiAdminGscSitewideSyncRoute
   '/api/admin/gsc-sync': typeof ApiAdminGscSyncRoute
   '/api/admin/legislation-sync-proxy': typeof ApiAdminLegislationSyncProxyRouteWithChildren
   '/api/admin/newsroom-metrics': typeof ApiAdminNewsroomMetricsRoute
@@ -3623,10 +4744,13 @@ export interface FileRoutesByTo {
   '/api/elections/district-lookup': typeof ApiElectionsDistrictLookupRoute
   '/api/public/cross-site-publication-health': typeof ApiPublicCrossSitePublicationHealthRoute
   '/api/public/deployment-fingerprint': typeof ApiPublicDeploymentFingerprintRoute
+  '/api/public/flyover-aug10-health': typeof ApiPublicFlyoverAug10HealthRoute
   '/api/public/newsroom-health': typeof ApiPublicNewsroomHealthRoute
+  '/api/public/newsroom-source-health': typeof ApiPublicNewsroomSourceHealthRoute
   '/api/public/official-bill-text': typeof ApiPublicOfficialBillTextRoute
   '/api/public/store-products': typeof ApiPublicStoreProductsRoute
   '/api/public/texasdefined-checkout': typeof ApiPublicTexasdefinedCheckoutRoute
+  '/api/public/texasdefined-government-search': typeof ApiPublicTexasdefinedGovernmentSearchRoute
   '/api/shop/stripe-webhook': typeof ApiShopStripeWebhookRoute
   '/bills/subject/$subjectSlug': typeof BillsSubjectSubjectSlugRoute
   '/elections/candidates/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
@@ -3635,6 +4759,9 @@ export interface FileRoutesByTo {
   '/elections/polls/$pollSlug': typeof ElectionsPollsPollSlugRoute
   '/elections/races/$raceSlug': typeof ElectionsRacesRaceSlugRoute
   '/elections/results/$resultSlug': typeof ElectionsResultsResultSlugRoute
+  '/elections/voting/polling-hours': typeof ElectionsVotingPollingHoursRoute
+  '/elections/voting/polling-place': typeof ElectionsVotingPollingPlaceRoute
+  '/elections/voting/voter-registration-card': typeof ElectionsVotingVoterRegistrationCardRoute
   '/explore/cavern/$slug': typeof ExploreCavernSlugRoute
   '/explore/county/$county': typeof ExploreCountyCountyRoute
   '/explore/lake/$slug': typeof ExploreLakeSlugRoute
@@ -3667,8 +4794,10 @@ export interface FileRoutesByTo {
   '/api/public/explore/recommendations': typeof ApiPublicExploreRecommendationsRoute
   '/api/public/hooks/adsense-image-backfill': typeof ApiPublicHooksAdsenseImageBackfillRoute
   '/api/public/hooks/auto-facebook-post': typeof ApiPublicHooksAutoFacebookPostRoute
+  '/api/public/hooks/auto-facebook-post-smart': typeof ApiPublicHooksAutoFacebookPostSmartRoute
   '/api/public/hooks/auto-facebook-post-texasdefined': typeof ApiPublicHooksAutoFacebookPostTexasdefinedRoute
   '/api/public/hooks/auto-facebook-post-texasdefined-smart': typeof ApiPublicHooksAutoFacebookPostTexasdefinedSmartRoute
+  '/api/public/hooks/auto-facebook-post-texasdefined-with-image': typeof ApiPublicHooksAutoFacebookPostTexasdefinedWithImageRoute
   '/api/public/hooks/backfill-featured-images': typeof ApiPublicHooksBackfillFeaturedImagesRoute
   '/api/public/hooks/build-newsroom-research-packets': typeof ApiPublicHooksBuildNewsroomResearchPacketsRoute
   '/api/public/hooks/classify-article-pillars': typeof ApiPublicHooksClassifyArticlePillarsRoute
@@ -3684,13 +4813,18 @@ export interface FileRoutesByTo {
   '/api/public/hooks/generate-newsroom': typeof ApiPublicHooksGenerateNewsroomRoute
   '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
   '/api/public/hooks/health': typeof ApiPublicHooksHealthRoute
+  '/api/public/hooks/hydrate-newsroom-source-pages': typeof ApiPublicHooksHydrateNewsroomSourcePagesRoute
   '/api/public/hooks/image-backlog-recovery': typeof ApiPublicHooksImageBacklogRecoveryRoute
   '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
   '/api/public/hooks/ingest-sports': typeof ApiPublicHooksIngestSportsRoute
   '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
   '/api/public/hooks/newsroom-generation-diagnostics': typeof ApiPublicHooksNewsroomGenerationDiagnosticsRoute
   '/api/public/hooks/normalize-newsroom-feed': typeof ApiPublicHooksNormalizeNewsroomFeedRoute
+  '/api/public/hooks/openai-article-image-recovery': typeof ApiPublicHooksOpenaiArticleImageRecoveryRoute
+  '/api/public/hooks/publish-ktr-generated-attention-image': typeof ApiPublicHooksPublishKtrGeneratedAttentionImageRoute
   '/api/public/hooks/publish-overdue-gap': typeof ApiPublicHooksPublishOverdueGapRoute
+  '/api/public/hooks/publish-texasdefined-generated-image': typeof ApiPublicHooksPublishTexasdefinedGeneratedImageRoute
+  '/api/public/hooks/publish-texasdefined-reel': typeof ApiPublicHooksPublishTexasdefinedReelRoute
   '/api/public/hooks/publishing-safety-net': typeof ApiPublicHooksPublishingSafetyNetRoute
   '/api/public/hooks/reconcile-news-history': typeof ApiPublicHooksReconcileNewsHistoryRoute
   '/api/public/hooks/remediate-aug10-flyover': typeof ApiPublicHooksRemediateAug10FlyoverRoute
@@ -3702,7 +4836,9 @@ export interface FileRoutesByTo {
   '/api/public/hooks/score-viral': typeof ApiPublicHooksScoreViralRoute
   '/api/public/hooks/score-viral-backfill': typeof ApiPublicHooksScoreViralBackfillRoute
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
+  '/api/public/hooks/texasdefined-facebook-comment-signals': typeof ApiPublicHooksTexasdefinedFacebookCommentSignalsRoute
   '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
+  '/api/public/ops/etsy-halloween-seo-20260911': typeof ApiPublicOpsEtsyHalloweenSeo20260911Route
   '/api/public/payments/health': typeof ApiPublicPaymentsHealthRoute
   '/api/public/payments/sandbox-config': typeof ApiPublicPaymentsSandboxConfigRoute
   '/api/public/payments/sandbox-health': typeof ApiPublicPaymentsSandboxHealthRoute
@@ -3714,6 +4850,8 @@ export interface FileRoutesByTo {
   '/bills/texas/$legislature/$billType/$billNumber': typeof BillsTexasLegislatureBillTypeBillNumberRouteWithChildren
   '/bills/texas/$legislature/$billType': typeof BillsTexasLegislatureBillTypeIndexRoute
   '/bills/texas/$legislature/$billType/$billNumber/reference.json': typeof BillsTexasLegislatureBillTypeBillNumberReferenceDotjsonRoute
+  '/bills/texas/$legislature/$session/$billType/$billNumber': typeof BillsTexasLegislatureSessionBillTypeBillNumberRouteWithChildren
+  '/bills/texas/$legislature/$session/$billType/$billNumber/reference.json': typeof BillsTexasLegislatureSessionBillTypeBillNumberReferenceDotjsonRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -3724,18 +4862,22 @@ export interface FileRoutesById {
   '/austin': typeof AustinRoute
   '/bills': typeof BillsRouteWithChildren
   '/candidate-guides': typeof CandidateGuidesRoute
+  '/cart': typeof CartRoute
   '/citation-guide': typeof CitationGuideRoute
   '/civic-tools': typeof CivicToolsRouteWithChildren
+  '/committees': typeof CommitteesRoute
   '/contact': typeof ContactRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
   '/dallas-fort-worth': typeof DallasFortWorthRoute
   '/data': typeof DataRouteWithChildren
+  '/data-deletion': typeof DataDeletionRoute
   '/districts': typeof DistrictsRouteWithChildren
   '/dmv': typeof DmvRouteWithChildren
   '/editorial-standards': typeof EditorialStandardsRoute
   '/el-paso': typeof ElPasoRoute
   '/elections': typeof ElectionsRouteWithChildren
+  '/ercot-texas-power-grid': typeof ErcotTexasPowerGridRoute
   '/explore': typeof ExploreRouteWithChildren
   '/find-my-dmv': typeof FindMyDmvRoute
   '/find-my-school-district': typeof FindMySchoolDistrictRoute
@@ -3753,13 +4895,17 @@ export interface FileRoutesById {
   '/legislature': typeof LegislatureRoute
   '/living-in-texas': typeof LivingInTexasRoute
   '/merchant-image': typeof MerchantImageRoute
+  '/moving-checklist': typeof MovingChecklistRoute
   '/moving-to-texas': typeof MovingToTexasRoute
   '/moving-to-texas-checklist': typeof MovingToTexasChecklistRoute
   '/news': typeof NewsRouteWithChildren
   '/news-sitemap.xml': typeof NewsSitemapDotxmlRoute
   '/policy': typeof PolicyRouteWithChildren
   '/policy-trackers.txt': typeof PolicyTrackersDottxtRoute
+  '/political-figure-image': typeof PoliticalFigureImageRoute
+  '/politics': typeof PoliticsRoute
   '/privacy': typeof PrivacyRoute
+  '/property-taxes': typeof PropertyTaxesRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRouteWithChildren
   '/return-refund-policy': typeof ReturnRefundPolicyRoute
@@ -3771,6 +4917,7 @@ export interface FileRoutesById {
   '/sitemap-bills.xml': typeof SitemapBillsDotxmlRoute
   '/sitemap-committees.xml': typeof SitemapCommitteesDotxmlRoute
   '/sitemap-districts.xml': typeof SitemapDistrictsDotxmlRoute
+  '/sitemap-dmv.xml': typeof SitemapDmvDotxmlRoute
   '/sitemap-elections.xml': typeof SitemapElectionsDotxmlRoute
   '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
   '/sitemap-explore-locations.xml': typeof SitemapExploreLocationsDotxmlRoute
@@ -3780,7 +4927,10 @@ export interface FileRoutesById {
   '/sitemap-legislature.xml': typeof SitemapLegislatureDotxmlRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
+  '/sitemap-party-representation.xml': typeof SitemapPartyRepresentationDotxmlRoute
   '/sitemap-political-figures.xml': typeof SitemapPoliticalFiguresDotxmlRoute
+  '/sitemap-political-geography.xml': typeof SitemapPoliticalGeographyDotxmlRoute
+  '/sitemap-priority.xml': typeof SitemapPriorityDotxmlRoute
   '/sitemap-products.xml': typeof SitemapProductsDotxmlRoute
   '/sitemap-representatives.xml': typeof SitemapRepresentativesDotxmlRoute
   '/sitemap-sources.xml': typeof SitemapSourcesDotxmlRoute
@@ -3788,7 +4938,7 @@ export interface FileRoutesById {
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
   '/terms-of-service': typeof TermsOfServiceRoute
-  '/texas': typeof TexasRoute
+  '/texas': typeof TexasRouteWithChildren
   '/texas-agriculture': typeof TexasAgricultureRoute
   '/texas-attorney-general': typeof TexasAttorneyGeneralRoute
   '/texas-border-security': typeof TexasBorderSecurityRoute
@@ -3799,18 +4949,22 @@ export interface FileRoutesById {
   '/texas-closing-cost-calculator': typeof TexasClosingCostCalculatorRoute
   '/texas-comptroller': typeof TexasComptrollerRoute
   '/texas-cost-of-living-calculator': typeof TexasCostOfLivingCalculatorRoute
+  '/texas-courts': typeof TexasCourtsRoute
   '/texas-data': typeof TexasDataRouteWithChildren
   '/texas-down-payment-assistance-calculator': typeof TexasDownPaymentAssistanceCalculatorRoute
   '/texas-down-payment-calculator': typeof TexasDownPaymentCalculatorRoute
   '/texas-economy': typeof TexasEconomyRoute
   '/texas-energy': typeof TexasEnergyRoute
+  '/texas-energy-policy': typeof TexasEnergyPolicyRoute
   '/texas-financial-tools': typeof TexasFinancialToolsRoute
   '/texas-first-time-homebuyer-programs': typeof TexasFirstTimeHomebuyerProgramsRoute
   '/texas-government': typeof TexasGovernmentRouteWithChildren
+  '/texas-heloc-calculator': typeof TexasHelocCalculatorRoute
   '/texas-home-affordability-calculator': typeof TexasHomeAffordabilityCalculatorRoute
   '/texas-home-equity-calculator': typeof TexasHomeEquityCalculatorRoute
   '/texas-home-equity-growth-calculator': typeof TexasHomeEquityGrowthCalculatorRoute
   '/texas-home-insurance-calculator': typeof TexasHomeInsuranceCalculatorRoute
+  '/texas-home-ownership-cost-calculator': typeof TexasHomeOwnershipCostCalculatorRoute
   '/texas-homeownership-cost-calculator': typeof TexasHomeownershipCostCalculatorRoute
   '/texas-law-enforcement': typeof TexasLawEnforcementRoute
   '/texas-law-policy': typeof TexasLawPolicyRoute
@@ -3819,25 +4973,32 @@ export interface FileRoutesById {
   '/texas-living': typeof TexasLivingRoute
   '/texas-mortgage-calculator': typeof TexasMortgageCalculatorRoute
   '/texas-mortgage-payoff-calculator': typeof TexasMortgagePayoffCalculatorRoute
+  '/texas-mortgage-qualification-calculator': typeof TexasMortgageQualificationCalculatorRoute
   '/texas-moving-cost-calculator': typeof TexasMovingCostCalculatorRoute
   '/texas-news': typeof TexasNewsRouteWithChildren
+  '/texas-political-figures': typeof TexasPoliticalFiguresRoute
   '/texas-political-reference': typeof TexasPoliticalReferenceRouteWithChildren
   '/texas-politics': typeof TexasPoliticsRouteWithChildren
+  '/texas-property-tax-calculator': typeof TexasPropertyTaxCalculatorRoute
   '/texas-property-tax-increase-calculator': typeof TexasPropertyTaxIncreaseCalculatorRoute
   '/texas-property-tax-protest-guide': typeof TexasPropertyTaxProtestGuideRoute
+  '/texas-refinance-calculator': typeof TexasRefinanceCalculatorRoute
   '/texas-refinance-savings-calculator': typeof TexasRefinanceSavingsCalculatorRoute
   '/texas-rent-vs-buy-calculator': typeof TexasRentVsBuyCalculatorRoute
   '/texas-resources': typeof TexasResourcesRouteWithChildren
   '/texas-salary-calculator': typeof TexasSalaryCalculatorRoute
   '/texas-salary-comparison-by-city': typeof TexasSalaryComparisonByCityRoute
   '/texas-sales-tax-explained': typeof TexasSalesTaxExplainedRoute
+  '/texas-school-board-powers': typeof TexasSchoolBoardPowersRoute
   '/texas-secretary-of-state': typeof TexasSecretaryOfStateRoute
   '/texas-sports': typeof TexasSportsRouteWithChildren
   '/texas-utility-cost-calculator': typeof TexasUtilityCostCalculatorRoute
   '/texas-veterans': typeof TexasVeteransRoute
+  '/texas-water': typeof TexasWaterRoute
   '/topics': typeof TopicsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
+  '/why-texas-has-no-state-income-tax': typeof WhyTexasHasNoStateIncomeTaxRoute
   '/admin/coverage-gaps': typeof AdminCoverageGapsRoute
   '/admin/governance-health': typeof AdminGovernanceHealthRoute
   '/admin/newsroom': typeof AdminNewsroomRoute
@@ -3914,9 +5075,18 @@ export interface FileRoutesById {
   '/issues/texas-government-accountability-handbook': typeof IssuesTexasGovernmentAccountabilityHandbookRoute
   '/issues/texas-local-government-handbook': typeof IssuesTexasLocalGovernmentHandbookRoute
   '/issues/texas-policy-handbook': typeof IssuesTexasPolicyHandbookRoute
-  '/laws/constitutional-amendments': typeof LawsConstitutionalAmendmentsRoute
-  '/laws/effective-dates': typeof LawsEffectiveDatesRoute
-  '/laws/topics': typeof LawsTopicsRoute
+  '/laws/show-id-to-police-in-texas': typeof LawsShowIdToPoliceInTexasRoute
+  '/laws/texas-constitution': typeof LawsTexasConstitutionRoute
+  '/laws/texas-election-laws': typeof LawsTexasElectionLawsRoute
+  '/laws/texas-election-laws-explained': typeof LawsTexasElectionLawsExplainedRoute
+  '/laws/texas-gun-laws': typeof LawsTexasGunLawsRoute
+  '/laws/texas-gun-laws-explained': typeof LawsTexasGunLawsExplainedRoute
+  '/laws/texas-new-laws-2026': typeof LawsTexasNewLaws2026Route
+  '/laws/texas-property-tax-laws': typeof LawsTexasPropertyTaxLawsRoute
+  '/laws/texas-property-tax-laws-explained': typeof LawsTexasPropertyTaxLawsExplainedRoute
+  '/laws_/constitutional-amendments': typeof LawsConstitutionalAmendmentsRoute
+  '/laws_/effective-dates': typeof LawsEffectiveDatesRoute
+  '/laws_/topics': typeof LawsTopicsRoute
   '/news/$slug': typeof NewsSlugRoute
   '/news/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity': typeof News20260704TheRealReasonBehindTheResilienceOfTexasIdentityRoute
   '/news/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity-in-2026-explained-simply': typeof News20260704TheRealReasonBehindTheResilienceOfTexasIdentityIn2026ExplainedSimplyRoute
@@ -3981,6 +5151,7 @@ export interface FileRoutesById {
   '/policy/school-safety-security': typeof PolicySchoolSafetySecurityRoute
   '/policy/scope-act-online-minors': typeof PolicyScopeActOnlineMinorsRoute
   '/policy/semiconductor-manufacturing': typeof PolicySemiconductorManufacturingRoute
+  '/policy/social-media-viewpoint-moderation': typeof PolicySocialMediaViewpointModerationRoute
   '/policy/state-federal-power': typeof PolicyStateFederalPowerRoute
   '/policy/tanf-work-participation': typeof PolicyTanfWorkParticipationRoute
   '/policy/texas-cyber-command': typeof PolicyTexasCyberCommandRoute
@@ -3999,6 +5170,37 @@ export interface FileRoutesById {
   '/texas-data/$datasetSlug': typeof TexasDataDatasetSlugRoute
   '/texas-government/$entitySlug': typeof TexasGovernmentEntitySlugRoute
   '/texas-government/agencies': typeof TexasGovernmentAgenciesRouteWithChildren
+  '/texas-government/city-manager-government-history': typeof TexasGovernmentCityManagerGovernmentHistoryRoute
+  '/texas-government/commissioners-court-history': typeof TexasGovernmentCommissionersCourtHistoryRoute
+  '/texas-government/comptroller-history': typeof TexasGovernmentComptrollerHistoryRoute
+  '/texas-government/county-commissioner-history': typeof TexasGovernmentCountyCommissionerHistoryRoute
+  '/texas-government/county-district-clerk-history': typeof TexasGovernmentCountyDistrictClerkHistoryRoute
+  '/texas-government/county-judge-history': typeof TexasGovernmentCountyJudgeHistoryRoute
+  '/texas-government/county-sheriff-history': typeof TexasGovernmentCountySheriffHistoryRoute
+  '/texas-government/court-of-criminal-appeals-history': typeof TexasGovernmentCourtOfCriminalAppealsHistoryRoute
+  '/texas-government/fifteenth-court-of-appeals': typeof TexasGovernmentFifteenthCourtOfAppealsRoute
+  '/texas-government/governor-history': typeof TexasGovernmentGovernorHistoryRoute
+  '/texas-government/home-rule-general-law-cities-history': typeof TexasGovernmentHomeRuleGeneralLawCitiesHistoryRoute
+  '/texas-government/judicial-selection-elections': typeof TexasGovernmentJudicialSelectionElectionsRoute
+  '/texas-government/justice-of-the-peace-constable-history': typeof TexasGovernmentJusticeOfThePeaceConstableHistoryRoute
+  '/texas-government/lieutenant-governor-history': typeof TexasGovernmentLieutenantGovernorHistoryRoute
+  '/texas-government/mayor-city-council-history': typeof TexasGovernmentMayorCityCouncilHistoryRoute
+  '/texas-government/municipal-elections-representation-history': typeof TexasGovernmentMunicipalElectionsRepresentationHistoryRoute
+  '/texas-government/municipal-finance-tax-debt-history': typeof TexasGovernmentMunicipalFinanceTaxDebtHistoryRoute
+  '/texas-government/speaker-of-the-house-history': typeof TexasGovernmentSpeakerOfTheHouseHistoryRoute
+  '/texas-government/state-commission-on-judicial-conduct': typeof TexasGovernmentStateCommissionOnJudicialConductRoute
+  '/texas-government/tax-assessor-collector-history': typeof TexasGovernmentTaxAssessorCollectorHistoryRoute
+  '/texas-government/texas-business-court': typeof TexasGovernmentTexasBusinessCourtRoute
+  '/texas-government/texas-county-government-history': typeof TexasGovernmentTexasCountyGovernmentHistoryRoute
+  '/texas-government/texas-court-of-criminal-appeals-history': typeof TexasGovernmentTexasCourtOfCriminalAppealsHistoryRoute
+  '/texas-government/texas-government-history': typeof TexasGovernmentTexasGovernmentHistoryRoute
+  '/texas-government/texas-judicial-selection-history': typeof TexasGovernmentTexasJudicialSelectionHistoryRoute
+  '/texas-government/texas-legislature-history': typeof TexasGovernmentTexasLegislatureHistoryRoute
+  '/texas-government/texas-municipal-courts-history': typeof TexasGovernmentTexasMunicipalCourtsHistoryRoute
+  '/texas-government/texas-municipal-government-history': typeof TexasGovernmentTexasMunicipalGovernmentHistoryRoute
+  '/texas-government/texas-special-district-government-history': typeof TexasGovernmentTexasSpecialDistrictGovernmentHistoryRoute
+  '/texas-government/texas-supreme-court-history': typeof TexasGovernmentTexasSupremeCourtHistoryRoute
+  '/texas-government/texas-trial-courts': typeof TexasGovernmentTexasTrialCourtsRoute
   '/texas-legislature/committees': typeof TexasLegislatureCommitteesRouteWithChildren
   '/texas-legislature/current-session': typeof TexasLegislatureCurrentSessionRoute
   '/texas-legislature/house': typeof TexasLegislatureHouseRoute
@@ -4007,12 +5209,56 @@ export interface FileRoutesById {
   '/texas-legislature/votes': typeof TexasLegislatureVotesRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-political-reference/$slug': typeof TexasPoliticalReferenceSlugRoute
+  '/texas-politics/congress-of-republic-of-texas': typeof TexasPoliticsCongressOfRepublicOfTexasRoute
+  '/texas-politics/constitution-of-1836-republic-of-texas': typeof TexasPoliticsConstitutionOf1836RepublicOfTexasRoute
+  '/texas-politics/constitution-of-1861-texas': typeof TexasPoliticsConstitutionOf1861TexasRoute
+  '/texas-politics/constitution-of-1866-texas': typeof TexasPoliticsConstitutionOf1866TexasRoute
+  '/texas-politics/constitution-of-1869-texas': typeof TexasPoliticsConstitutionOf1869TexasRoute
+  '/texas-politics/ferguson-era-texas-politics': typeof TexasPoliticsFergusonEraTexasPoliticsRoute
   '/texas-politics/figures': typeof TexasPoliticsFiguresRoute
+  '/texas-politics/how-texas-became-republican': typeof TexasPoliticsHowTexasBecameRepublicanRoute
+  '/texas-politics/presidents-of-republic-of-texas': typeof TexasPoliticsPresidentsOfRepublicOfTexasRoute
+  '/texas-politics/reconstruction-republicans': typeof TexasPoliticsReconstructionRepublicansRoute
+  '/texas-politics/republic-of-texas-capitals-government-seats': typeof TexasPoliticsRepublicOfTexasCapitalsGovernmentSeatsRoute
+  '/texas-politics/republic-of-texas-debt-finance': typeof TexasPoliticsRepublicOfTexasDebtFinanceRoute
+  '/texas-politics/republic-of-texas-diplomacy-recognition': typeof TexasPoliticsRepublicOfTexasDiplomacyRecognitionRoute
+  '/texas-politics/republic-of-texas-government-history': typeof TexasPoliticsRepublicOfTexasGovernmentHistoryRoute
+  '/texas-politics/republic-to-state-government-transition': typeof TexasPoliticsRepublicToStateGovernmentTransitionRoute
+  '/texas-politics/south-texas-rio-grande-valley-political-history': typeof TexasPoliticsSouthTexasRioGrandeValleyPoliticalHistoryRoute
+  '/texas-politics/texas-annexation-statehood-history': typeof TexasPoliticsTexasAnnexationStatehoodHistoryRoute
+  '/texas-politics/texas-civil-rights-era-politics': typeof TexasPoliticsTexasCivilRightsEraPoliticsRoute
+  '/texas-politics/texas-constitutional-convention-1875': typeof TexasPoliticsTexasConstitutionalConvention1875Route
+  '/texas-politics/texas-constitutional-history': typeof TexasPoliticsTexasConstitutionalHistoryRoute
+  '/texas-politics/texas-democratic-dominance-1876-1952': typeof TexasPoliticsTexasDemocraticDominance18761952Route
+  '/texas-politics/texas-democratic-party-history': typeof TexasPoliticsTexasDemocraticPartyHistoryRoute
+  '/texas-politics/texas-election-history': typeof TexasPoliticsTexasElectionHistoryRoute
+  '/texas-politics/texas-government-during-civil-war': typeof TexasPoliticsTexasGovernmentDuringCivilWarRoute
+  '/texas-politics/texas-metro-regional-realignment-history': typeof TexasPoliticsTexasMetroRegionalRealignmentHistoryRoute
+  '/texas-politics/texas-mexican-american-political-organization-history': typeof TexasPoliticsTexasMexicanAmericanPoliticalOrganizationHistoryRoute
+  '/texas-politics/texas-new-deal-politics': typeof TexasPoliticsTexasNewDealPoliticsRoute
+  '/texas-politics/texas-political-geography-history': typeof TexasPoliticsTexasPoliticalGeographyHistoryRoute
+  '/texas-politics/texas-populist-progressive-era': typeof TexasPoliticsTexasPopulistProgressiveEraRoute
+  '/texas-politics/texas-reconstruction-government': typeof TexasPoliticsTexasReconstructionGovernmentRoute
+  '/texas-politics/texas-redistricting-history': typeof TexasPoliticsTexasRedistrictingHistoryRoute
+  '/texas-politics/texas-republican-party-history': typeof TexasPoliticsTexasRepublicanPartyHistoryRoute
+  '/texas-politics/texas-secession-convention-1861': typeof TexasPoliticsTexasSecessionConvention1861Route
+  '/texas-politics/texas-supreme-court-realignment': typeof TexasPoliticsTexasSupremeCourtRealignmentRoute
+  '/texas-politics/texas-urban-suburban-rural-politics-history': typeof TexasPoliticsTexasUrbanSuburbanRuralPoliticsHistoryRoute
+  '/texas-politics/texas-white-primary-history': typeof TexasPoliticsTexasWhitePrimaryHistoryRoute
+  '/texas-politics/texas-women-suffrage-political-representation-history': typeof TexasPoliticsTexasWomenSuffragePoliticalRepresentationHistoryRoute
+  '/texas-politics/voting-rights-history': typeof TexasPoliticsVotingRightsHistoryRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
+  '/texas/property-taxes-2026': typeof TexasPropertyTaxes2026Route
+  '/tools/closing-cost-calculator': typeof ToolsClosingCostCalculatorRoute
+  '/tools/home-affordability-calculator': typeof ToolsHomeAffordabilityCalculatorRoute
+  '/tools/home-insurance-calculator': typeof ToolsHomeInsuranceCalculatorRoute
+  '/tools/mortgage-calculator': typeof ToolsMortgageCalculatorRoute
+  '/tools/property-tax-calculator': typeof ToolsPropertyTaxCalculatorRoute
   '/tools/texas-budget-headroom': typeof ToolsTexasBudgetHeadroomRoute
   '/tools/texas-rainy-day-fund': typeof ToolsTexasRainyDayFundRoute
   '/tools/texas-spending-growth-cap': typeof ToolsTexasSpendingGrowthCapRoute
   '/tools/texas-tax-structure-comparison': typeof ToolsTexasTaxStructureComparisonRoute
+  '/tools/texas-utilities-calculator': typeof ToolsTexasUtilitiesCalculatorRoute
   '/vehicles/auto-insurance-requirements': typeof VehiclesAutoInsuranceRequirementsRoute
   '/vehicles/bonded-titles': typeof VehiclesBondedTitlesRoute
   '/vehicles/buying-a-car': typeof VehiclesBuyingACarRoute
@@ -4042,11 +5288,15 @@ export interface FileRoutesById {
   '/elections/': typeof ElectionsIndexRoute
   '/explore/': typeof ExploreIndexRoute
   '/issues/': typeof IssuesIndexRoute
+  '/laws/': typeof LawsIndexRoute
   '/news/': typeof NewsIndexRoute
+  '/policy/': typeof PolicyIndexRoute
   '/shop/': typeof ShopIndexRoute
   '/sources/': typeof SourcesIndexRoute
+  '/texas-government/': typeof TexasGovernmentIndexRoute
   '/texas-legislature/': typeof TexasLegislatureIndexRoute
   '/texas-news/': typeof TexasNewsIndexRoute
+  '/texas-politics/': typeof TexasPoliticsIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
   '/tools/': typeof ToolsIndexRoute
   '/admin/bills/backfill': typeof AdminBillsBackfillRoute
@@ -4059,6 +5309,7 @@ export interface FileRoutesById {
   '/admin/elections/polls': typeof AdminElectionsPollsRoute
   '/admin/elections/races': typeof AdminElectionsRacesRoute
   '/admin/elections/results': typeof AdminElectionsResultsRoute
+  '/api/admin/gsc-sitewide-sync': typeof ApiAdminGscSitewideSyncRoute
   '/api/admin/gsc-sync': typeof ApiAdminGscSyncRoute
   '/api/admin/legislation-sync-proxy': typeof ApiAdminLegislationSyncProxyRouteWithChildren
   '/api/admin/newsroom-metrics': typeof ApiAdminNewsroomMetricsRoute
@@ -4066,10 +5317,13 @@ export interface FileRoutesById {
   '/api/elections/district-lookup': typeof ApiElectionsDistrictLookupRoute
   '/api/public/cross-site-publication-health': typeof ApiPublicCrossSitePublicationHealthRoute
   '/api/public/deployment-fingerprint': typeof ApiPublicDeploymentFingerprintRoute
+  '/api/public/flyover-aug10-health': typeof ApiPublicFlyoverAug10HealthRoute
   '/api/public/newsroom-health': typeof ApiPublicNewsroomHealthRoute
+  '/api/public/newsroom-source-health': typeof ApiPublicNewsroomSourceHealthRoute
   '/api/public/official-bill-text': typeof ApiPublicOfficialBillTextRoute
   '/api/public/store-products': typeof ApiPublicStoreProductsRoute
   '/api/public/texasdefined-checkout': typeof ApiPublicTexasdefinedCheckoutRoute
+  '/api/public/texasdefined-government-search': typeof ApiPublicTexasdefinedGovernmentSearchRoute
   '/api/shop/stripe-webhook': typeof ApiShopStripeWebhookRoute
   '/bills/subject/$subjectSlug': typeof BillsSubjectSubjectSlugRoute
   '/elections/candidates_/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
@@ -4078,6 +5332,9 @@ export interface FileRoutesById {
   '/elections/polls/$pollSlug': typeof ElectionsPollsPollSlugRoute
   '/elections/races_/$raceSlug': typeof ElectionsRacesRaceSlugRoute
   '/elections/results/$resultSlug': typeof ElectionsResultsResultSlugRoute
+  '/elections/voting_/polling-hours': typeof ElectionsVotingPollingHoursRoute
+  '/elections/voting_/polling-place': typeof ElectionsVotingPollingPlaceRoute
+  '/elections/voting_/voter-registration-card': typeof ElectionsVotingVoterRegistrationCardRoute
   '/explore/cavern/$slug': typeof ExploreCavernSlugRoute
   '/explore/county/$county': typeof ExploreCountyCountyRoute
   '/explore/lake/$slug': typeof ExploreLakeSlugRoute
@@ -4110,8 +5367,10 @@ export interface FileRoutesById {
   '/api/public/explore/recommendations': typeof ApiPublicExploreRecommendationsRoute
   '/api/public/hooks/adsense-image-backfill': typeof ApiPublicHooksAdsenseImageBackfillRoute
   '/api/public/hooks/auto-facebook-post': typeof ApiPublicHooksAutoFacebookPostRoute
+  '/api/public/hooks/auto-facebook-post-smart': typeof ApiPublicHooksAutoFacebookPostSmartRoute
   '/api/public/hooks/auto-facebook-post-texasdefined': typeof ApiPublicHooksAutoFacebookPostTexasdefinedRoute
   '/api/public/hooks/auto-facebook-post-texasdefined-smart': typeof ApiPublicHooksAutoFacebookPostTexasdefinedSmartRoute
+  '/api/public/hooks/auto-facebook-post-texasdefined-with-image': typeof ApiPublicHooksAutoFacebookPostTexasdefinedWithImageRoute
   '/api/public/hooks/backfill-featured-images': typeof ApiPublicHooksBackfillFeaturedImagesRoute
   '/api/public/hooks/build-newsroom-research-packets': typeof ApiPublicHooksBuildNewsroomResearchPacketsRoute
   '/api/public/hooks/classify-article-pillars': typeof ApiPublicHooksClassifyArticlePillarsRoute
@@ -4127,13 +5386,18 @@ export interface FileRoutesById {
   '/api/public/hooks/generate-newsroom': typeof ApiPublicHooksGenerateNewsroomRoute
   '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
   '/api/public/hooks/health': typeof ApiPublicHooksHealthRoute
+  '/api/public/hooks/hydrate-newsroom-source-pages': typeof ApiPublicHooksHydrateNewsroomSourcePagesRoute
   '/api/public/hooks/image-backlog-recovery': typeof ApiPublicHooksImageBacklogRecoveryRoute
   '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
   '/api/public/hooks/ingest-sports': typeof ApiPublicHooksIngestSportsRoute
   '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
   '/api/public/hooks/newsroom-generation-diagnostics': typeof ApiPublicHooksNewsroomGenerationDiagnosticsRoute
   '/api/public/hooks/normalize-newsroom-feed': typeof ApiPublicHooksNormalizeNewsroomFeedRoute
+  '/api/public/hooks/openai-article-image-recovery': typeof ApiPublicHooksOpenaiArticleImageRecoveryRoute
+  '/api/public/hooks/publish-ktr-generated-attention-image': typeof ApiPublicHooksPublishKtrGeneratedAttentionImageRoute
   '/api/public/hooks/publish-overdue-gap': typeof ApiPublicHooksPublishOverdueGapRoute
+  '/api/public/hooks/publish-texasdefined-generated-image': typeof ApiPublicHooksPublishTexasdefinedGeneratedImageRoute
+  '/api/public/hooks/publish-texasdefined-reel': typeof ApiPublicHooksPublishTexasdefinedReelRoute
   '/api/public/hooks/publishing-safety-net': typeof ApiPublicHooksPublishingSafetyNetRoute
   '/api/public/hooks/reconcile-news-history': typeof ApiPublicHooksReconcileNewsHistoryRoute
   '/api/public/hooks/remediate-aug10-flyover': typeof ApiPublicHooksRemediateAug10FlyoverRoute
@@ -4145,7 +5409,9 @@ export interface FileRoutesById {
   '/api/public/hooks/score-viral': typeof ApiPublicHooksScoreViralRoute
   '/api/public/hooks/score-viral-backfill': typeof ApiPublicHooksScoreViralBackfillRoute
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
+  '/api/public/hooks/texasdefined-facebook-comment-signals': typeof ApiPublicHooksTexasdefinedFacebookCommentSignalsRoute
   '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
+  '/api/public/ops/etsy-halloween-seo-20260911': typeof ApiPublicOpsEtsyHalloweenSeo20260911Route
   '/api/public/payments/health': typeof ApiPublicPaymentsHealthRoute
   '/api/public/payments/sandbox-config': typeof ApiPublicPaymentsSandboxConfigRoute
   '/api/public/payments/sandbox-health': typeof ApiPublicPaymentsSandboxHealthRoute
@@ -4157,6 +5423,8 @@ export interface FileRoutesById {
   '/bills/texas/$legislature/$billType/$billNumber': typeof BillsTexasLegislatureBillTypeBillNumberRouteWithChildren
   '/bills/texas/$legislature/$billType/': typeof BillsTexasLegislatureBillTypeIndexRoute
   '/bills/texas/$legislature/$billType/$billNumber/reference.json': typeof BillsTexasLegislatureBillTypeBillNumberReferenceDotjsonRoute
+  '/bills/texas/$legislature/$session/$billType/$billNumber': typeof BillsTexasLegislatureSessionBillTypeBillNumberRouteWithChildren
+  '/bills/texas/$legislature/$session/$billType/$billNumber/reference.json': typeof BillsTexasLegislatureSessionBillTypeBillNumberReferenceDotjsonRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -4168,18 +5436,22 @@ export interface FileRouteTypes {
     | '/austin'
     | '/bills'
     | '/candidate-guides'
+    | '/cart'
     | '/citation-guide'
     | '/civic-tools'
+    | '/committees'
     | '/contact'
     | '/contact-legislators'
     | '/county-elections'
     | '/dallas-fort-worth'
     | '/data'
+    | '/data-deletion'
     | '/districts'
     | '/dmv'
     | '/editorial-standards'
     | '/el-paso'
     | '/elections'
+    | '/ercot-texas-power-grid'
     | '/explore'
     | '/find-my-dmv'
     | '/find-my-school-district'
@@ -4197,13 +5469,17 @@ export interface FileRouteTypes {
     | '/legislature'
     | '/living-in-texas'
     | '/merchant-image'
+    | '/moving-checklist'
     | '/moving-to-texas'
     | '/moving-to-texas-checklist'
     | '/news'
     | '/news-sitemap.xml'
     | '/policy'
     | '/policy-trackers.txt'
+    | '/political-figure-image'
+    | '/politics'
     | '/privacy'
+    | '/property-taxes'
     | '/register-to-vote'
     | '/representatives'
     | '/return-refund-policy'
@@ -4215,6 +5491,7 @@ export interface FileRouteTypes {
     | '/sitemap-bills.xml'
     | '/sitemap-committees.xml'
     | '/sitemap-districts.xml'
+    | '/sitemap-dmv.xml'
     | '/sitemap-elections.xml'
     | '/sitemap-evergreen.xml'
     | '/sitemap-explore-locations.xml'
@@ -4224,7 +5501,10 @@ export interface FileRouteTypes {
     | '/sitemap-legislature.xml'
     | '/sitemap-news.xml'
     | '/sitemap-pages.xml'
+    | '/sitemap-party-representation.xml'
     | '/sitemap-political-figures.xml'
+    | '/sitemap-political-geography.xml'
+    | '/sitemap-priority.xml'
     | '/sitemap-products.xml'
     | '/sitemap-representatives.xml'
     | '/sitemap-sources.xml'
@@ -4243,18 +5523,22 @@ export interface FileRouteTypes {
     | '/texas-closing-cost-calculator'
     | '/texas-comptroller'
     | '/texas-cost-of-living-calculator'
+    | '/texas-courts'
     | '/texas-data'
     | '/texas-down-payment-assistance-calculator'
     | '/texas-down-payment-calculator'
     | '/texas-economy'
     | '/texas-energy'
+    | '/texas-energy-policy'
     | '/texas-financial-tools'
     | '/texas-first-time-homebuyer-programs'
     | '/texas-government'
+    | '/texas-heloc-calculator'
     | '/texas-home-affordability-calculator'
     | '/texas-home-equity-calculator'
     | '/texas-home-equity-growth-calculator'
     | '/texas-home-insurance-calculator'
+    | '/texas-home-ownership-cost-calculator'
     | '/texas-homeownership-cost-calculator'
     | '/texas-law-enforcement'
     | '/texas-law-policy'
@@ -4263,25 +5547,32 @@ export interface FileRouteTypes {
     | '/texas-living'
     | '/texas-mortgage-calculator'
     | '/texas-mortgage-payoff-calculator'
+    | '/texas-mortgage-qualification-calculator'
     | '/texas-moving-cost-calculator'
     | '/texas-news'
+    | '/texas-political-figures'
     | '/texas-political-reference'
     | '/texas-politics'
+    | '/texas-property-tax-calculator'
     | '/texas-property-tax-increase-calculator'
     | '/texas-property-tax-protest-guide'
+    | '/texas-refinance-calculator'
     | '/texas-refinance-savings-calculator'
     | '/texas-rent-vs-buy-calculator'
     | '/texas-resources'
     | '/texas-salary-calculator'
     | '/texas-salary-comparison-by-city'
     | '/texas-sales-tax-explained'
+    | '/texas-school-board-powers'
     | '/texas-secretary-of-state'
     | '/texas-sports'
     | '/texas-utility-cost-calculator'
     | '/texas-veterans'
+    | '/texas-water'
     | '/topics'
     | '/unsubscribe'
     | '/voting-locations'
+    | '/why-texas-has-no-state-income-tax'
     | '/admin/coverage-gaps'
     | '/admin/governance-health'
     | '/admin/newsroom'
@@ -4358,6 +5649,15 @@ export interface FileRouteTypes {
     | '/issues/texas-government-accountability-handbook'
     | '/issues/texas-local-government-handbook'
     | '/issues/texas-policy-handbook'
+    | '/laws/show-id-to-police-in-texas'
+    | '/laws/texas-constitution'
+    | '/laws/texas-election-laws'
+    | '/laws/texas-election-laws-explained'
+    | '/laws/texas-gun-laws'
+    | '/laws/texas-gun-laws-explained'
+    | '/laws/texas-new-laws-2026'
+    | '/laws/texas-property-tax-laws'
+    | '/laws/texas-property-tax-laws-explained'
     | '/laws/constitutional-amendments'
     | '/laws/effective-dates'
     | '/laws/topics'
@@ -4425,6 +5725,7 @@ export interface FileRouteTypes {
     | '/policy/school-safety-security'
     | '/policy/scope-act-online-minors'
     | '/policy/semiconductor-manufacturing'
+    | '/policy/social-media-viewpoint-moderation'
     | '/policy/state-federal-power'
     | '/policy/tanf-work-participation'
     | '/policy/texas-cyber-command'
@@ -4443,6 +5744,37 @@ export interface FileRouteTypes {
     | '/texas-data/$datasetSlug'
     | '/texas-government/$entitySlug'
     | '/texas-government/agencies'
+    | '/texas-government/city-manager-government-history'
+    | '/texas-government/commissioners-court-history'
+    | '/texas-government/comptroller-history'
+    | '/texas-government/county-commissioner-history'
+    | '/texas-government/county-district-clerk-history'
+    | '/texas-government/county-judge-history'
+    | '/texas-government/county-sheriff-history'
+    | '/texas-government/court-of-criminal-appeals-history'
+    | '/texas-government/fifteenth-court-of-appeals'
+    | '/texas-government/governor-history'
+    | '/texas-government/home-rule-general-law-cities-history'
+    | '/texas-government/judicial-selection-elections'
+    | '/texas-government/justice-of-the-peace-constable-history'
+    | '/texas-government/lieutenant-governor-history'
+    | '/texas-government/mayor-city-council-history'
+    | '/texas-government/municipal-elections-representation-history'
+    | '/texas-government/municipal-finance-tax-debt-history'
+    | '/texas-government/speaker-of-the-house-history'
+    | '/texas-government/state-commission-on-judicial-conduct'
+    | '/texas-government/tax-assessor-collector-history'
+    | '/texas-government/texas-business-court'
+    | '/texas-government/texas-county-government-history'
+    | '/texas-government/texas-court-of-criminal-appeals-history'
+    | '/texas-government/texas-government-history'
+    | '/texas-government/texas-judicial-selection-history'
+    | '/texas-government/texas-legislature-history'
+    | '/texas-government/texas-municipal-courts-history'
+    | '/texas-government/texas-municipal-government-history'
+    | '/texas-government/texas-special-district-government-history'
+    | '/texas-government/texas-supreme-court-history'
+    | '/texas-government/texas-trial-courts'
     | '/texas-legislature/committees'
     | '/texas-legislature/current-session'
     | '/texas-legislature/house'
@@ -4451,12 +5783,56 @@ export interface FileRouteTypes {
     | '/texas-legislature/votes'
     | '/texas-news/$topic'
     | '/texas-political-reference/$slug'
+    | '/texas-politics/congress-of-republic-of-texas'
+    | '/texas-politics/constitution-of-1836-republic-of-texas'
+    | '/texas-politics/constitution-of-1861-texas'
+    | '/texas-politics/constitution-of-1866-texas'
+    | '/texas-politics/constitution-of-1869-texas'
+    | '/texas-politics/ferguson-era-texas-politics'
     | '/texas-politics/figures'
+    | '/texas-politics/how-texas-became-republican'
+    | '/texas-politics/presidents-of-republic-of-texas'
+    | '/texas-politics/reconstruction-republicans'
+    | '/texas-politics/republic-of-texas-capitals-government-seats'
+    | '/texas-politics/republic-of-texas-debt-finance'
+    | '/texas-politics/republic-of-texas-diplomacy-recognition'
+    | '/texas-politics/republic-of-texas-government-history'
+    | '/texas-politics/republic-to-state-government-transition'
+    | '/texas-politics/south-texas-rio-grande-valley-political-history'
+    | '/texas-politics/texas-annexation-statehood-history'
+    | '/texas-politics/texas-civil-rights-era-politics'
+    | '/texas-politics/texas-constitutional-convention-1875'
+    | '/texas-politics/texas-constitutional-history'
+    | '/texas-politics/texas-democratic-dominance-1876-1952'
+    | '/texas-politics/texas-democratic-party-history'
+    | '/texas-politics/texas-election-history'
+    | '/texas-politics/texas-government-during-civil-war'
+    | '/texas-politics/texas-metro-regional-realignment-history'
+    | '/texas-politics/texas-mexican-american-political-organization-history'
+    | '/texas-politics/texas-new-deal-politics'
+    | '/texas-politics/texas-political-geography-history'
+    | '/texas-politics/texas-populist-progressive-era'
+    | '/texas-politics/texas-reconstruction-government'
+    | '/texas-politics/texas-redistricting-history'
+    | '/texas-politics/texas-republican-party-history'
+    | '/texas-politics/texas-secession-convention-1861'
+    | '/texas-politics/texas-supreme-court-realignment'
+    | '/texas-politics/texas-urban-suburban-rural-politics-history'
+    | '/texas-politics/texas-white-primary-history'
+    | '/texas-politics/texas-women-suffrage-political-representation-history'
+    | '/texas-politics/voting-rights-history'
     | '/texas-sports/$league'
+    | '/texas/property-taxes-2026'
+    | '/tools/closing-cost-calculator'
+    | '/tools/home-affordability-calculator'
+    | '/tools/home-insurance-calculator'
+    | '/tools/mortgage-calculator'
+    | '/tools/property-tax-calculator'
     | '/tools/texas-budget-headroom'
     | '/tools/texas-rainy-day-fund'
     | '/tools/texas-spending-growth-cap'
     | '/tools/texas-tax-structure-comparison'
+    | '/tools/texas-utilities-calculator'
     | '/vehicles/auto-insurance-requirements'
     | '/vehicles/bonded-titles'
     | '/vehicles/buying-a-car'
@@ -4486,11 +5862,15 @@ export interface FileRouteTypes {
     | '/elections/'
     | '/explore/'
     | '/issues/'
+    | '/laws/'
     | '/news/'
+    | '/policy/'
     | '/shop/'
     | '/sources/'
+    | '/texas-government/'
     | '/texas-legislature/'
     | '/texas-news/'
+    | '/texas-politics/'
     | '/texas-sports/'
     | '/tools/'
     | '/admin/bills/backfill'
@@ -4503,6 +5883,7 @@ export interface FileRouteTypes {
     | '/admin/elections/polls'
     | '/admin/elections/races'
     | '/admin/elections/results'
+    | '/api/admin/gsc-sitewide-sync'
     | '/api/admin/gsc-sync'
     | '/api/admin/legislation-sync-proxy'
     | '/api/admin/newsroom-metrics'
@@ -4510,10 +5891,13 @@ export interface FileRouteTypes {
     | '/api/elections/district-lookup'
     | '/api/public/cross-site-publication-health'
     | '/api/public/deployment-fingerprint'
+    | '/api/public/flyover-aug10-health'
     | '/api/public/newsroom-health'
+    | '/api/public/newsroom-source-health'
     | '/api/public/official-bill-text'
     | '/api/public/store-products'
     | '/api/public/texasdefined-checkout'
+    | '/api/public/texasdefined-government-search'
     | '/api/shop/stripe-webhook'
     | '/bills/subject/$subjectSlug'
     | '/elections/candidates/$candidateSlug'
@@ -4522,6 +5906,9 @@ export interface FileRouteTypes {
     | '/elections/polls/$pollSlug'
     | '/elections/races/$raceSlug'
     | '/elections/results/$resultSlug'
+    | '/elections/voting/polling-hours'
+    | '/elections/voting/polling-place'
+    | '/elections/voting/voter-registration-card'
     | '/explore/cavern/$slug'
     | '/explore/county/$county'
     | '/explore/lake/$slug'
@@ -4554,8 +5941,10 @@ export interface FileRouteTypes {
     | '/api/public/explore/recommendations'
     | '/api/public/hooks/adsense-image-backfill'
     | '/api/public/hooks/auto-facebook-post'
+    | '/api/public/hooks/auto-facebook-post-smart'
     | '/api/public/hooks/auto-facebook-post-texasdefined'
     | '/api/public/hooks/auto-facebook-post-texasdefined-smart'
+    | '/api/public/hooks/auto-facebook-post-texasdefined-with-image'
     | '/api/public/hooks/backfill-featured-images'
     | '/api/public/hooks/build-newsroom-research-packets'
     | '/api/public/hooks/classify-article-pillars'
@@ -4571,13 +5960,18 @@ export interface FileRouteTypes {
     | '/api/public/hooks/generate-newsroom'
     | '/api/public/hooks/generate-sports'
     | '/api/public/hooks/health'
+    | '/api/public/hooks/hydrate-newsroom-source-pages'
     | '/api/public/hooks/image-backlog-recovery'
     | '/api/public/hooks/ingest-feeds'
     | '/api/public/hooks/ingest-sports'
     | '/api/public/hooks/list-shops'
     | '/api/public/hooks/newsroom-generation-diagnostics'
     | '/api/public/hooks/normalize-newsroom-feed'
+    | '/api/public/hooks/openai-article-image-recovery'
+    | '/api/public/hooks/publish-ktr-generated-attention-image'
     | '/api/public/hooks/publish-overdue-gap'
+    | '/api/public/hooks/publish-texasdefined-generated-image'
+    | '/api/public/hooks/publish-texasdefined-reel'
     | '/api/public/hooks/publishing-safety-net'
     | '/api/public/hooks/reconcile-news-history'
     | '/api/public/hooks/remediate-aug10-flyover'
@@ -4589,7 +5983,9 @@ export interface FileRouteTypes {
     | '/api/public/hooks/score-viral'
     | '/api/public/hooks/score-viral-backfill'
     | '/api/public/hooks/sync-printify'
+    | '/api/public/hooks/texasdefined-facebook-comment-signals'
     | '/api/public/hooks/track-variant'
+    | '/api/public/ops/etsy-halloween-seo-20260911'
     | '/api/public/payments/health'
     | '/api/public/payments/sandbox-config'
     | '/api/public/payments/sandbox-health'
@@ -4601,6 +5997,8 @@ export interface FileRouteTypes {
     | '/bills/texas/$legislature/$billType/$billNumber'
     | '/bills/texas/$legislature/$billType/'
     | '/bills/texas/$legislature/$billType/$billNumber/reference.json'
+    | '/bills/texas/$legislature/$session/$billType/$billNumber'
+    | '/bills/texas/$legislature/$session/$billType/$billNumber/reference.json'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -4608,17 +6006,21 @@ export interface FileRouteTypes {
     | '/about-keep-texas-red'
     | '/austin'
     | '/candidate-guides'
+    | '/cart'
     | '/citation-guide'
     | '/civic-tools'
+    | '/committees'
     | '/contact'
     | '/contact-legislators'
     | '/county-elections'
     | '/dallas-fort-worth'
     | '/data'
+    | '/data-deletion'
     | '/districts'
     | '/dmv'
     | '/editorial-standards'
     | '/el-paso'
+    | '/ercot-texas-power-grid'
     | '/find-my-dmv'
     | '/find-my-school-district'
     | '/find-representative'
@@ -4629,18 +6031,20 @@ export interface FileRouteTypes {
     | '/houston'
     | '/issue-guides.txt'
     | '/keep-texas-red'
-    | '/laws'
     | '/laws-to-know'
     | '/legislative-updates'
     | '/legislature'
     | '/living-in-texas'
     | '/merchant-image'
+    | '/moving-checklist'
     | '/moving-to-texas'
     | '/moving-to-texas-checklist'
     | '/news-sitemap.xml'
-    | '/policy'
     | '/policy-trackers.txt'
+    | '/political-figure-image'
+    | '/politics'
     | '/privacy'
+    | '/property-taxes'
     | '/register-to-vote'
     | '/representatives'
     | '/return-refund-policy'
@@ -4651,6 +6055,7 @@ export interface FileRouteTypes {
     | '/sitemap-bills.xml'
     | '/sitemap-committees.xml'
     | '/sitemap-districts.xml'
+    | '/sitemap-dmv.xml'
     | '/sitemap-elections.xml'
     | '/sitemap-evergreen.xml'
     | '/sitemap-explore-locations.xml'
@@ -4660,7 +6065,10 @@ export interface FileRouteTypes {
     | '/sitemap-legislature.xml'
     | '/sitemap-news.xml'
     | '/sitemap-pages.xml'
+    | '/sitemap-party-representation.xml'
     | '/sitemap-political-figures.xml'
+    | '/sitemap-political-geography.xml'
+    | '/sitemap-priority.xml'
     | '/sitemap-products.xml'
     | '/sitemap-representatives.xml'
     | '/sitemap-sources.xml'
@@ -4679,18 +6087,21 @@ export interface FileRouteTypes {
     | '/texas-closing-cost-calculator'
     | '/texas-comptroller'
     | '/texas-cost-of-living-calculator'
+    | '/texas-courts'
     | '/texas-data'
     | '/texas-down-payment-assistance-calculator'
     | '/texas-down-payment-calculator'
     | '/texas-economy'
     | '/texas-energy'
+    | '/texas-energy-policy'
     | '/texas-financial-tools'
     | '/texas-first-time-homebuyer-programs'
-    | '/texas-government'
+    | '/texas-heloc-calculator'
     | '/texas-home-affordability-calculator'
     | '/texas-home-equity-calculator'
     | '/texas-home-equity-growth-calculator'
     | '/texas-home-insurance-calculator'
+    | '/texas-home-ownership-cost-calculator'
     | '/texas-homeownership-cost-calculator'
     | '/texas-law-enforcement'
     | '/texas-law-policy'
@@ -4698,23 +6109,29 @@ export interface FileRouteTypes {
     | '/texas-living'
     | '/texas-mortgage-calculator'
     | '/texas-mortgage-payoff-calculator'
+    | '/texas-mortgage-qualification-calculator'
     | '/texas-moving-cost-calculator'
+    | '/texas-political-figures'
     | '/texas-political-reference'
-    | '/texas-politics'
+    | '/texas-property-tax-calculator'
     | '/texas-property-tax-increase-calculator'
     | '/texas-property-tax-protest-guide'
+    | '/texas-refinance-calculator'
     | '/texas-refinance-savings-calculator'
     | '/texas-rent-vs-buy-calculator'
     | '/texas-resources'
     | '/texas-salary-calculator'
     | '/texas-salary-comparison-by-city'
     | '/texas-sales-tax-explained'
+    | '/texas-school-board-powers'
     | '/texas-secretary-of-state'
     | '/texas-utility-cost-calculator'
     | '/texas-veterans'
+    | '/texas-water'
     | '/topics'
     | '/unsubscribe'
     | '/voting-locations'
+    | '/why-texas-has-no-state-income-tax'
     | '/admin/coverage-gaps'
     | '/admin/governance-health'
     | '/admin/newsroom'
@@ -4790,6 +6207,15 @@ export interface FileRouteTypes {
     | '/issues/texas-government-accountability-handbook'
     | '/issues/texas-local-government-handbook'
     | '/issues/texas-policy-handbook'
+    | '/laws/show-id-to-police-in-texas'
+    | '/laws/texas-constitution'
+    | '/laws/texas-election-laws'
+    | '/laws/texas-election-laws-explained'
+    | '/laws/texas-gun-laws'
+    | '/laws/texas-gun-laws-explained'
+    | '/laws/texas-new-laws-2026'
+    | '/laws/texas-property-tax-laws'
+    | '/laws/texas-property-tax-laws-explained'
     | '/laws/constitutional-amendments'
     | '/laws/effective-dates'
     | '/laws/topics'
@@ -4857,6 +6283,7 @@ export interface FileRouteTypes {
     | '/policy/school-safety-security'
     | '/policy/scope-act-online-minors'
     | '/policy/semiconductor-manufacturing'
+    | '/policy/social-media-viewpoint-moderation'
     | '/policy/state-federal-power'
     | '/policy/tanf-work-participation'
     | '/policy/texas-cyber-command'
@@ -4875,18 +6302,93 @@ export interface FileRouteTypes {
     | '/texas-data/$datasetSlug'
     | '/texas-government/$entitySlug'
     | '/texas-government/agencies'
+    | '/texas-government/city-manager-government-history'
+    | '/texas-government/commissioners-court-history'
+    | '/texas-government/comptroller-history'
+    | '/texas-government/county-commissioner-history'
+    | '/texas-government/county-district-clerk-history'
+    | '/texas-government/county-judge-history'
+    | '/texas-government/county-sheriff-history'
+    | '/texas-government/court-of-criminal-appeals-history'
+    | '/texas-government/fifteenth-court-of-appeals'
+    | '/texas-government/governor-history'
+    | '/texas-government/home-rule-general-law-cities-history'
+    | '/texas-government/judicial-selection-elections'
+    | '/texas-government/justice-of-the-peace-constable-history'
+    | '/texas-government/lieutenant-governor-history'
+    | '/texas-government/mayor-city-council-history'
+    | '/texas-government/municipal-elections-representation-history'
+    | '/texas-government/municipal-finance-tax-debt-history'
+    | '/texas-government/speaker-of-the-house-history'
+    | '/texas-government/state-commission-on-judicial-conduct'
+    | '/texas-government/tax-assessor-collector-history'
+    | '/texas-government/texas-business-court'
+    | '/texas-government/texas-county-government-history'
+    | '/texas-government/texas-court-of-criminal-appeals-history'
+    | '/texas-government/texas-government-history'
+    | '/texas-government/texas-judicial-selection-history'
+    | '/texas-government/texas-legislature-history'
+    | '/texas-government/texas-municipal-courts-history'
+    | '/texas-government/texas-municipal-government-history'
+    | '/texas-government/texas-special-district-government-history'
+    | '/texas-government/texas-supreme-court-history'
+    | '/texas-government/texas-trial-courts'
     | '/texas-legislature/current-session'
     | '/texas-legislature/house'
     | '/texas-legislature/senate'
     | '/texas-legislature/votes'
     | '/texas-news/$topic'
     | '/texas-political-reference/$slug'
+    | '/texas-politics/congress-of-republic-of-texas'
+    | '/texas-politics/constitution-of-1836-republic-of-texas'
+    | '/texas-politics/constitution-of-1861-texas'
+    | '/texas-politics/constitution-of-1866-texas'
+    | '/texas-politics/constitution-of-1869-texas'
+    | '/texas-politics/ferguson-era-texas-politics'
     | '/texas-politics/figures'
+    | '/texas-politics/how-texas-became-republican'
+    | '/texas-politics/presidents-of-republic-of-texas'
+    | '/texas-politics/reconstruction-republicans'
+    | '/texas-politics/republic-of-texas-capitals-government-seats'
+    | '/texas-politics/republic-of-texas-debt-finance'
+    | '/texas-politics/republic-of-texas-diplomacy-recognition'
+    | '/texas-politics/republic-of-texas-government-history'
+    | '/texas-politics/republic-to-state-government-transition'
+    | '/texas-politics/south-texas-rio-grande-valley-political-history'
+    | '/texas-politics/texas-annexation-statehood-history'
+    | '/texas-politics/texas-civil-rights-era-politics'
+    | '/texas-politics/texas-constitutional-convention-1875'
+    | '/texas-politics/texas-constitutional-history'
+    | '/texas-politics/texas-democratic-dominance-1876-1952'
+    | '/texas-politics/texas-democratic-party-history'
+    | '/texas-politics/texas-election-history'
+    | '/texas-politics/texas-government-during-civil-war'
+    | '/texas-politics/texas-metro-regional-realignment-history'
+    | '/texas-politics/texas-mexican-american-political-organization-history'
+    | '/texas-politics/texas-new-deal-politics'
+    | '/texas-politics/texas-political-geography-history'
+    | '/texas-politics/texas-populist-progressive-era'
+    | '/texas-politics/texas-reconstruction-government'
+    | '/texas-politics/texas-redistricting-history'
+    | '/texas-politics/texas-republican-party-history'
+    | '/texas-politics/texas-secession-convention-1861'
+    | '/texas-politics/texas-supreme-court-realignment'
+    | '/texas-politics/texas-urban-suburban-rural-politics-history'
+    | '/texas-politics/texas-white-primary-history'
+    | '/texas-politics/texas-women-suffrage-political-representation-history'
+    | '/texas-politics/voting-rights-history'
     | '/texas-sports/$league'
+    | '/texas/property-taxes-2026'
+    | '/tools/closing-cost-calculator'
+    | '/tools/home-affordability-calculator'
+    | '/tools/home-insurance-calculator'
+    | '/tools/mortgage-calculator'
+    | '/tools/property-tax-calculator'
     | '/tools/texas-budget-headroom'
     | '/tools/texas-rainy-day-fund'
     | '/tools/texas-spending-growth-cap'
     | '/tools/texas-tax-structure-comparison'
+    | '/tools/texas-utilities-calculator'
     | '/vehicles/auto-insurance-requirements'
     | '/vehicles/bonded-titles'
     | '/vehicles/buying-a-car'
@@ -4916,11 +6418,15 @@ export interface FileRouteTypes {
     | '/elections'
     | '/explore'
     | '/issues'
+    | '/laws'
     | '/news'
+    | '/policy'
     | '/shop'
     | '/sources'
+    | '/texas-government'
     | '/texas-legislature'
     | '/texas-news'
+    | '/texas-politics'
     | '/texas-sports'
     | '/tools'
     | '/admin/bills/backfill'
@@ -4933,6 +6439,7 @@ export interface FileRouteTypes {
     | '/admin/elections/polls'
     | '/admin/elections/races'
     | '/admin/elections/results'
+    | '/api/admin/gsc-sitewide-sync'
     | '/api/admin/gsc-sync'
     | '/api/admin/legislation-sync-proxy'
     | '/api/admin/newsroom-metrics'
@@ -4940,10 +6447,13 @@ export interface FileRouteTypes {
     | '/api/elections/district-lookup'
     | '/api/public/cross-site-publication-health'
     | '/api/public/deployment-fingerprint'
+    | '/api/public/flyover-aug10-health'
     | '/api/public/newsroom-health'
+    | '/api/public/newsroom-source-health'
     | '/api/public/official-bill-text'
     | '/api/public/store-products'
     | '/api/public/texasdefined-checkout'
+    | '/api/public/texasdefined-government-search'
     | '/api/shop/stripe-webhook'
     | '/bills/subject/$subjectSlug'
     | '/elections/candidates/$candidateSlug'
@@ -4952,6 +6462,9 @@ export interface FileRouteTypes {
     | '/elections/polls/$pollSlug'
     | '/elections/races/$raceSlug'
     | '/elections/results/$resultSlug'
+    | '/elections/voting/polling-hours'
+    | '/elections/voting/polling-place'
+    | '/elections/voting/voter-registration-card'
     | '/explore/cavern/$slug'
     | '/explore/county/$county'
     | '/explore/lake/$slug'
@@ -4984,8 +6497,10 @@ export interface FileRouteTypes {
     | '/api/public/explore/recommendations'
     | '/api/public/hooks/adsense-image-backfill'
     | '/api/public/hooks/auto-facebook-post'
+    | '/api/public/hooks/auto-facebook-post-smart'
     | '/api/public/hooks/auto-facebook-post-texasdefined'
     | '/api/public/hooks/auto-facebook-post-texasdefined-smart'
+    | '/api/public/hooks/auto-facebook-post-texasdefined-with-image'
     | '/api/public/hooks/backfill-featured-images'
     | '/api/public/hooks/build-newsroom-research-packets'
     | '/api/public/hooks/classify-article-pillars'
@@ -5001,13 +6516,18 @@ export interface FileRouteTypes {
     | '/api/public/hooks/generate-newsroom'
     | '/api/public/hooks/generate-sports'
     | '/api/public/hooks/health'
+    | '/api/public/hooks/hydrate-newsroom-source-pages'
     | '/api/public/hooks/image-backlog-recovery'
     | '/api/public/hooks/ingest-feeds'
     | '/api/public/hooks/ingest-sports'
     | '/api/public/hooks/list-shops'
     | '/api/public/hooks/newsroom-generation-diagnostics'
     | '/api/public/hooks/normalize-newsroom-feed'
+    | '/api/public/hooks/openai-article-image-recovery'
+    | '/api/public/hooks/publish-ktr-generated-attention-image'
     | '/api/public/hooks/publish-overdue-gap'
+    | '/api/public/hooks/publish-texasdefined-generated-image'
+    | '/api/public/hooks/publish-texasdefined-reel'
     | '/api/public/hooks/publishing-safety-net'
     | '/api/public/hooks/reconcile-news-history'
     | '/api/public/hooks/remediate-aug10-flyover'
@@ -5019,7 +6539,9 @@ export interface FileRouteTypes {
     | '/api/public/hooks/score-viral'
     | '/api/public/hooks/score-viral-backfill'
     | '/api/public/hooks/sync-printify'
+    | '/api/public/hooks/texasdefined-facebook-comment-signals'
     | '/api/public/hooks/track-variant'
+    | '/api/public/ops/etsy-halloween-seo-20260911'
     | '/api/public/payments/health'
     | '/api/public/payments/sandbox-config'
     | '/api/public/payments/sandbox-health'
@@ -5031,6 +6553,8 @@ export interface FileRouteTypes {
     | '/bills/texas/$legislature/$billType/$billNumber'
     | '/bills/texas/$legislature/$billType'
     | '/bills/texas/$legislature/$billType/$billNumber/reference.json'
+    | '/bills/texas/$legislature/$session/$billType/$billNumber'
+    | '/bills/texas/$legislature/$session/$billType/$billNumber/reference.json'
   id:
     | '__root__'
     | '/'
@@ -5040,18 +6564,22 @@ export interface FileRouteTypes {
     | '/austin'
     | '/bills'
     | '/candidate-guides'
+    | '/cart'
     | '/citation-guide'
     | '/civic-tools'
+    | '/committees'
     | '/contact'
     | '/contact-legislators'
     | '/county-elections'
     | '/dallas-fort-worth'
     | '/data'
+    | '/data-deletion'
     | '/districts'
     | '/dmv'
     | '/editorial-standards'
     | '/el-paso'
     | '/elections'
+    | '/ercot-texas-power-grid'
     | '/explore'
     | '/find-my-dmv'
     | '/find-my-school-district'
@@ -5069,13 +6597,17 @@ export interface FileRouteTypes {
     | '/legislature'
     | '/living-in-texas'
     | '/merchant-image'
+    | '/moving-checklist'
     | '/moving-to-texas'
     | '/moving-to-texas-checklist'
     | '/news'
     | '/news-sitemap.xml'
     | '/policy'
     | '/policy-trackers.txt'
+    | '/political-figure-image'
+    | '/politics'
     | '/privacy'
+    | '/property-taxes'
     | '/register-to-vote'
     | '/representatives'
     | '/return-refund-policy'
@@ -5087,6 +6619,7 @@ export interface FileRouteTypes {
     | '/sitemap-bills.xml'
     | '/sitemap-committees.xml'
     | '/sitemap-districts.xml'
+    | '/sitemap-dmv.xml'
     | '/sitemap-elections.xml'
     | '/sitemap-evergreen.xml'
     | '/sitemap-explore-locations.xml'
@@ -5096,7 +6629,10 @@ export interface FileRouteTypes {
     | '/sitemap-legislature.xml'
     | '/sitemap-news.xml'
     | '/sitemap-pages.xml'
+    | '/sitemap-party-representation.xml'
     | '/sitemap-political-figures.xml'
+    | '/sitemap-political-geography.xml'
+    | '/sitemap-priority.xml'
     | '/sitemap-products.xml'
     | '/sitemap-representatives.xml'
     | '/sitemap-sources.xml'
@@ -5115,18 +6651,22 @@ export interface FileRouteTypes {
     | '/texas-closing-cost-calculator'
     | '/texas-comptroller'
     | '/texas-cost-of-living-calculator'
+    | '/texas-courts'
     | '/texas-data'
     | '/texas-down-payment-assistance-calculator'
     | '/texas-down-payment-calculator'
     | '/texas-economy'
     | '/texas-energy'
+    | '/texas-energy-policy'
     | '/texas-financial-tools'
     | '/texas-first-time-homebuyer-programs'
     | '/texas-government'
+    | '/texas-heloc-calculator'
     | '/texas-home-affordability-calculator'
     | '/texas-home-equity-calculator'
     | '/texas-home-equity-growth-calculator'
     | '/texas-home-insurance-calculator'
+    | '/texas-home-ownership-cost-calculator'
     | '/texas-homeownership-cost-calculator'
     | '/texas-law-enforcement'
     | '/texas-law-policy'
@@ -5135,25 +6675,32 @@ export interface FileRouteTypes {
     | '/texas-living'
     | '/texas-mortgage-calculator'
     | '/texas-mortgage-payoff-calculator'
+    | '/texas-mortgage-qualification-calculator'
     | '/texas-moving-cost-calculator'
     | '/texas-news'
+    | '/texas-political-figures'
     | '/texas-political-reference'
     | '/texas-politics'
+    | '/texas-property-tax-calculator'
     | '/texas-property-tax-increase-calculator'
     | '/texas-property-tax-protest-guide'
+    | '/texas-refinance-calculator'
     | '/texas-refinance-savings-calculator'
     | '/texas-rent-vs-buy-calculator'
     | '/texas-resources'
     | '/texas-salary-calculator'
     | '/texas-salary-comparison-by-city'
     | '/texas-sales-tax-explained'
+    | '/texas-school-board-powers'
     | '/texas-secretary-of-state'
     | '/texas-sports'
     | '/texas-utility-cost-calculator'
     | '/texas-veterans'
+    | '/texas-water'
     | '/topics'
     | '/unsubscribe'
     | '/voting-locations'
+    | '/why-texas-has-no-state-income-tax'
     | '/admin/coverage-gaps'
     | '/admin/governance-health'
     | '/admin/newsroom'
@@ -5230,9 +6777,18 @@ export interface FileRouteTypes {
     | '/issues/texas-government-accountability-handbook'
     | '/issues/texas-local-government-handbook'
     | '/issues/texas-policy-handbook'
-    | '/laws/constitutional-amendments'
-    | '/laws/effective-dates'
-    | '/laws/topics'
+    | '/laws/show-id-to-police-in-texas'
+    | '/laws/texas-constitution'
+    | '/laws/texas-election-laws'
+    | '/laws/texas-election-laws-explained'
+    | '/laws/texas-gun-laws'
+    | '/laws/texas-gun-laws-explained'
+    | '/laws/texas-new-laws-2026'
+    | '/laws/texas-property-tax-laws'
+    | '/laws/texas-property-tax-laws-explained'
+    | '/laws_/constitutional-amendments'
+    | '/laws_/effective-dates'
+    | '/laws_/topics'
     | '/news/$slug'
     | '/news/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity'
     | '/news/2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity-in-2026-explained-simply'
@@ -5297,6 +6853,7 @@ export interface FileRouteTypes {
     | '/policy/school-safety-security'
     | '/policy/scope-act-online-minors'
     | '/policy/semiconductor-manufacturing'
+    | '/policy/social-media-viewpoint-moderation'
     | '/policy/state-federal-power'
     | '/policy/tanf-work-participation'
     | '/policy/texas-cyber-command'
@@ -5315,6 +6872,37 @@ export interface FileRouteTypes {
     | '/texas-data/$datasetSlug'
     | '/texas-government/$entitySlug'
     | '/texas-government/agencies'
+    | '/texas-government/city-manager-government-history'
+    | '/texas-government/commissioners-court-history'
+    | '/texas-government/comptroller-history'
+    | '/texas-government/county-commissioner-history'
+    | '/texas-government/county-district-clerk-history'
+    | '/texas-government/county-judge-history'
+    | '/texas-government/county-sheriff-history'
+    | '/texas-government/court-of-criminal-appeals-history'
+    | '/texas-government/fifteenth-court-of-appeals'
+    | '/texas-government/governor-history'
+    | '/texas-government/home-rule-general-law-cities-history'
+    | '/texas-government/judicial-selection-elections'
+    | '/texas-government/justice-of-the-peace-constable-history'
+    | '/texas-government/lieutenant-governor-history'
+    | '/texas-government/mayor-city-council-history'
+    | '/texas-government/municipal-elections-representation-history'
+    | '/texas-government/municipal-finance-tax-debt-history'
+    | '/texas-government/speaker-of-the-house-history'
+    | '/texas-government/state-commission-on-judicial-conduct'
+    | '/texas-government/tax-assessor-collector-history'
+    | '/texas-government/texas-business-court'
+    | '/texas-government/texas-county-government-history'
+    | '/texas-government/texas-court-of-criminal-appeals-history'
+    | '/texas-government/texas-government-history'
+    | '/texas-government/texas-judicial-selection-history'
+    | '/texas-government/texas-legislature-history'
+    | '/texas-government/texas-municipal-courts-history'
+    | '/texas-government/texas-municipal-government-history'
+    | '/texas-government/texas-special-district-government-history'
+    | '/texas-government/texas-supreme-court-history'
+    | '/texas-government/texas-trial-courts'
     | '/texas-legislature/committees'
     | '/texas-legislature/current-session'
     | '/texas-legislature/house'
@@ -5323,12 +6911,56 @@ export interface FileRouteTypes {
     | '/texas-legislature/votes'
     | '/texas-news/$topic'
     | '/texas-political-reference/$slug'
+    | '/texas-politics/congress-of-republic-of-texas'
+    | '/texas-politics/constitution-of-1836-republic-of-texas'
+    | '/texas-politics/constitution-of-1861-texas'
+    | '/texas-politics/constitution-of-1866-texas'
+    | '/texas-politics/constitution-of-1869-texas'
+    | '/texas-politics/ferguson-era-texas-politics'
     | '/texas-politics/figures'
+    | '/texas-politics/how-texas-became-republican'
+    | '/texas-politics/presidents-of-republic-of-texas'
+    | '/texas-politics/reconstruction-republicans'
+    | '/texas-politics/republic-of-texas-capitals-government-seats'
+    | '/texas-politics/republic-of-texas-debt-finance'
+    | '/texas-politics/republic-of-texas-diplomacy-recognition'
+    | '/texas-politics/republic-of-texas-government-history'
+    | '/texas-politics/republic-to-state-government-transition'
+    | '/texas-politics/south-texas-rio-grande-valley-political-history'
+    | '/texas-politics/texas-annexation-statehood-history'
+    | '/texas-politics/texas-civil-rights-era-politics'
+    | '/texas-politics/texas-constitutional-convention-1875'
+    | '/texas-politics/texas-constitutional-history'
+    | '/texas-politics/texas-democratic-dominance-1876-1952'
+    | '/texas-politics/texas-democratic-party-history'
+    | '/texas-politics/texas-election-history'
+    | '/texas-politics/texas-government-during-civil-war'
+    | '/texas-politics/texas-metro-regional-realignment-history'
+    | '/texas-politics/texas-mexican-american-political-organization-history'
+    | '/texas-politics/texas-new-deal-politics'
+    | '/texas-politics/texas-political-geography-history'
+    | '/texas-politics/texas-populist-progressive-era'
+    | '/texas-politics/texas-reconstruction-government'
+    | '/texas-politics/texas-redistricting-history'
+    | '/texas-politics/texas-republican-party-history'
+    | '/texas-politics/texas-secession-convention-1861'
+    | '/texas-politics/texas-supreme-court-realignment'
+    | '/texas-politics/texas-urban-suburban-rural-politics-history'
+    | '/texas-politics/texas-white-primary-history'
+    | '/texas-politics/texas-women-suffrage-political-representation-history'
+    | '/texas-politics/voting-rights-history'
     | '/texas-sports/$league'
+    | '/texas/property-taxes-2026'
+    | '/tools/closing-cost-calculator'
+    | '/tools/home-affordability-calculator'
+    | '/tools/home-insurance-calculator'
+    | '/tools/mortgage-calculator'
+    | '/tools/property-tax-calculator'
     | '/tools/texas-budget-headroom'
     | '/tools/texas-rainy-day-fund'
     | '/tools/texas-spending-growth-cap'
     | '/tools/texas-tax-structure-comparison'
+    | '/tools/texas-utilities-calculator'
     | '/vehicles/auto-insurance-requirements'
     | '/vehicles/bonded-titles'
     | '/vehicles/buying-a-car'
@@ -5358,11 +6990,15 @@ export interface FileRouteTypes {
     | '/elections/'
     | '/explore/'
     | '/issues/'
+    | '/laws/'
     | '/news/'
+    | '/policy/'
     | '/shop/'
     | '/sources/'
+    | '/texas-government/'
     | '/texas-legislature/'
     | '/texas-news/'
+    | '/texas-politics/'
     | '/texas-sports/'
     | '/tools/'
     | '/admin/bills/backfill'
@@ -5375,6 +7011,7 @@ export interface FileRouteTypes {
     | '/admin/elections/polls'
     | '/admin/elections/races'
     | '/admin/elections/results'
+    | '/api/admin/gsc-sitewide-sync'
     | '/api/admin/gsc-sync'
     | '/api/admin/legislation-sync-proxy'
     | '/api/admin/newsroom-metrics'
@@ -5382,10 +7019,13 @@ export interface FileRouteTypes {
     | '/api/elections/district-lookup'
     | '/api/public/cross-site-publication-health'
     | '/api/public/deployment-fingerprint'
+    | '/api/public/flyover-aug10-health'
     | '/api/public/newsroom-health'
+    | '/api/public/newsroom-source-health'
     | '/api/public/official-bill-text'
     | '/api/public/store-products'
     | '/api/public/texasdefined-checkout'
+    | '/api/public/texasdefined-government-search'
     | '/api/shop/stripe-webhook'
     | '/bills/subject/$subjectSlug'
     | '/elections/candidates_/$candidateSlug'
@@ -5394,6 +7034,9 @@ export interface FileRouteTypes {
     | '/elections/polls/$pollSlug'
     | '/elections/races_/$raceSlug'
     | '/elections/results/$resultSlug'
+    | '/elections/voting_/polling-hours'
+    | '/elections/voting_/polling-place'
+    | '/elections/voting_/voter-registration-card'
     | '/explore/cavern/$slug'
     | '/explore/county/$county'
     | '/explore/lake/$slug'
@@ -5426,8 +7069,10 @@ export interface FileRouteTypes {
     | '/api/public/explore/recommendations'
     | '/api/public/hooks/adsense-image-backfill'
     | '/api/public/hooks/auto-facebook-post'
+    | '/api/public/hooks/auto-facebook-post-smart'
     | '/api/public/hooks/auto-facebook-post-texasdefined'
     | '/api/public/hooks/auto-facebook-post-texasdefined-smart'
+    | '/api/public/hooks/auto-facebook-post-texasdefined-with-image'
     | '/api/public/hooks/backfill-featured-images'
     | '/api/public/hooks/build-newsroom-research-packets'
     | '/api/public/hooks/classify-article-pillars'
@@ -5443,13 +7088,18 @@ export interface FileRouteTypes {
     | '/api/public/hooks/generate-newsroom'
     | '/api/public/hooks/generate-sports'
     | '/api/public/hooks/health'
+    | '/api/public/hooks/hydrate-newsroom-source-pages'
     | '/api/public/hooks/image-backlog-recovery'
     | '/api/public/hooks/ingest-feeds'
     | '/api/public/hooks/ingest-sports'
     | '/api/public/hooks/list-shops'
     | '/api/public/hooks/newsroom-generation-diagnostics'
     | '/api/public/hooks/normalize-newsroom-feed'
+    | '/api/public/hooks/openai-article-image-recovery'
+    | '/api/public/hooks/publish-ktr-generated-attention-image'
     | '/api/public/hooks/publish-overdue-gap'
+    | '/api/public/hooks/publish-texasdefined-generated-image'
+    | '/api/public/hooks/publish-texasdefined-reel'
     | '/api/public/hooks/publishing-safety-net'
     | '/api/public/hooks/reconcile-news-history'
     | '/api/public/hooks/remediate-aug10-flyover'
@@ -5461,7 +7111,9 @@ export interface FileRouteTypes {
     | '/api/public/hooks/score-viral'
     | '/api/public/hooks/score-viral-backfill'
     | '/api/public/hooks/sync-printify'
+    | '/api/public/hooks/texasdefined-facebook-comment-signals'
     | '/api/public/hooks/track-variant'
+    | '/api/public/ops/etsy-halloween-seo-20260911'
     | '/api/public/payments/health'
     | '/api/public/payments/sandbox-config'
     | '/api/public/payments/sandbox-health'
@@ -5473,6 +7125,8 @@ export interface FileRouteTypes {
     | '/bills/texas/$legislature/$billType/$billNumber'
     | '/bills/texas/$legislature/$billType/'
     | '/bills/texas/$legislature/$billType/$billNumber/reference.json'
+    | '/bills/texas/$legislature/$session/$billType/$billNumber'
+    | '/bills/texas/$legislature/$session/$billType/$billNumber/reference.json'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -5483,18 +7137,22 @@ export interface RootRouteChildren {
   AustinRoute: typeof AustinRoute
   BillsRoute: typeof BillsRouteWithChildren
   CandidateGuidesRoute: typeof CandidateGuidesRoute
+  CartRoute: typeof CartRoute
   CitationGuideRoute: typeof CitationGuideRoute
   CivicToolsRoute: typeof CivicToolsRouteWithChildren
+  CommitteesRoute: typeof CommitteesRoute
   ContactRoute: typeof ContactRoute
   ContactLegislatorsRoute: typeof ContactLegislatorsRoute
   CountyElectionsRoute: typeof CountyElectionsRoute
   DallasFortWorthRoute: typeof DallasFortWorthRoute
   DataRoute: typeof DataRouteWithChildren
+  DataDeletionRoute: typeof DataDeletionRoute
   DistrictsRoute: typeof DistrictsRouteWithChildren
   DmvRoute: typeof DmvRouteWithChildren
   EditorialStandardsRoute: typeof EditorialStandardsRoute
   ElPasoRoute: typeof ElPasoRoute
   ElectionsRoute: typeof ElectionsRouteWithChildren
+  ErcotTexasPowerGridRoute: typeof ErcotTexasPowerGridRoute
   ExploreRoute: typeof ExploreRouteWithChildren
   FindMyDmvRoute: typeof FindMyDmvRoute
   FindMySchoolDistrictRoute: typeof FindMySchoolDistrictRoute
@@ -5512,13 +7170,17 @@ export interface RootRouteChildren {
   LegislatureRoute: typeof LegislatureRoute
   LivingInTexasRoute: typeof LivingInTexasRoute
   MerchantImageRoute: typeof MerchantImageRoute
+  MovingChecklistRoute: typeof MovingChecklistRoute
   MovingToTexasRoute: typeof MovingToTexasRoute
   MovingToTexasChecklistRoute: typeof MovingToTexasChecklistRoute
   NewsRoute: typeof NewsRouteWithChildren
   NewsSitemapDotxmlRoute: typeof NewsSitemapDotxmlRoute
   PolicyRoute: typeof PolicyRouteWithChildren
   PolicyTrackersDottxtRoute: typeof PolicyTrackersDottxtRoute
+  PoliticalFigureImageRoute: typeof PoliticalFigureImageRoute
+  PoliticsRoute: typeof PoliticsRoute
   PrivacyRoute: typeof PrivacyRoute
+  PropertyTaxesRoute: typeof PropertyTaxesRoute
   RegisterToVoteRoute: typeof RegisterToVoteRoute
   RepresentativesRoute: typeof RepresentativesRouteWithChildren
   ReturnRefundPolicyRoute: typeof ReturnRefundPolicyRoute
@@ -5530,6 +7192,7 @@ export interface RootRouteChildren {
   SitemapBillsDotxmlRoute: typeof SitemapBillsDotxmlRoute
   SitemapCommitteesDotxmlRoute: typeof SitemapCommitteesDotxmlRoute
   SitemapDistrictsDotxmlRoute: typeof SitemapDistrictsDotxmlRoute
+  SitemapDmvDotxmlRoute: typeof SitemapDmvDotxmlRoute
   SitemapElectionsDotxmlRoute: typeof SitemapElectionsDotxmlRoute
   SitemapEvergreenDotxmlRoute: typeof SitemapEvergreenDotxmlRoute
   SitemapExploreLocationsDotxmlRoute: typeof SitemapExploreLocationsDotxmlRoute
@@ -5539,7 +7202,10 @@ export interface RootRouteChildren {
   SitemapLegislatureDotxmlRoute: typeof SitemapLegislatureDotxmlRoute
   SitemapNewsDotxmlRoute: typeof SitemapNewsDotxmlRoute
   SitemapPagesDotxmlRoute: typeof SitemapPagesDotxmlRoute
+  SitemapPartyRepresentationDotxmlRoute: typeof SitemapPartyRepresentationDotxmlRoute
   SitemapPoliticalFiguresDotxmlRoute: typeof SitemapPoliticalFiguresDotxmlRoute
+  SitemapPoliticalGeographyDotxmlRoute: typeof SitemapPoliticalGeographyDotxmlRoute
+  SitemapPriorityDotxmlRoute: typeof SitemapPriorityDotxmlRoute
   SitemapProductsDotxmlRoute: typeof SitemapProductsDotxmlRoute
   SitemapRepresentativesDotxmlRoute: typeof SitemapRepresentativesDotxmlRoute
   SitemapSourcesDotxmlRoute: typeof SitemapSourcesDotxmlRoute
@@ -5547,7 +7213,7 @@ export interface RootRouteChildren {
   TaxCalculatorRoute: typeof TaxCalculatorRoute
   TermsRoute: typeof TermsRoute
   TermsOfServiceRoute: typeof TermsOfServiceRoute
-  TexasRoute: typeof TexasRoute
+  TexasRoute: typeof TexasRouteWithChildren
   TexasAgricultureRoute: typeof TexasAgricultureRoute
   TexasAttorneyGeneralRoute: typeof TexasAttorneyGeneralRoute
   TexasBorderSecurityRoute: typeof TexasBorderSecurityRoute
@@ -5558,18 +7224,22 @@ export interface RootRouteChildren {
   TexasClosingCostCalculatorRoute: typeof TexasClosingCostCalculatorRoute
   TexasComptrollerRoute: typeof TexasComptrollerRoute
   TexasCostOfLivingCalculatorRoute: typeof TexasCostOfLivingCalculatorRoute
+  TexasCourtsRoute: typeof TexasCourtsRoute
   TexasDataRoute: typeof TexasDataRouteWithChildren
   TexasDownPaymentAssistanceCalculatorRoute: typeof TexasDownPaymentAssistanceCalculatorRoute
   TexasDownPaymentCalculatorRoute: typeof TexasDownPaymentCalculatorRoute
   TexasEconomyRoute: typeof TexasEconomyRoute
   TexasEnergyRoute: typeof TexasEnergyRoute
+  TexasEnergyPolicyRoute: typeof TexasEnergyPolicyRoute
   TexasFinancialToolsRoute: typeof TexasFinancialToolsRoute
   TexasFirstTimeHomebuyerProgramsRoute: typeof TexasFirstTimeHomebuyerProgramsRoute
   TexasGovernmentRoute: typeof TexasGovernmentRouteWithChildren
+  TexasHelocCalculatorRoute: typeof TexasHelocCalculatorRoute
   TexasHomeAffordabilityCalculatorRoute: typeof TexasHomeAffordabilityCalculatorRoute
   TexasHomeEquityCalculatorRoute: typeof TexasHomeEquityCalculatorRoute
   TexasHomeEquityGrowthCalculatorRoute: typeof TexasHomeEquityGrowthCalculatorRoute
   TexasHomeInsuranceCalculatorRoute: typeof TexasHomeInsuranceCalculatorRoute
+  TexasHomeOwnershipCostCalculatorRoute: typeof TexasHomeOwnershipCostCalculatorRoute
   TexasHomeownershipCostCalculatorRoute: typeof TexasHomeownershipCostCalculatorRoute
   TexasLawEnforcementRoute: typeof TexasLawEnforcementRoute
   TexasLawPolicyRoute: typeof TexasLawPolicyRoute
@@ -5578,25 +7248,32 @@ export interface RootRouteChildren {
   TexasLivingRoute: typeof TexasLivingRoute
   TexasMortgageCalculatorRoute: typeof TexasMortgageCalculatorRoute
   TexasMortgagePayoffCalculatorRoute: typeof TexasMortgagePayoffCalculatorRoute
+  TexasMortgageQualificationCalculatorRoute: typeof TexasMortgageQualificationCalculatorRoute
   TexasMovingCostCalculatorRoute: typeof TexasMovingCostCalculatorRoute
   TexasNewsRoute: typeof TexasNewsRouteWithChildren
+  TexasPoliticalFiguresRoute: typeof TexasPoliticalFiguresRoute
   TexasPoliticalReferenceRoute: typeof TexasPoliticalReferenceRouteWithChildren
   TexasPoliticsRoute: typeof TexasPoliticsRouteWithChildren
+  TexasPropertyTaxCalculatorRoute: typeof TexasPropertyTaxCalculatorRoute
   TexasPropertyTaxIncreaseCalculatorRoute: typeof TexasPropertyTaxIncreaseCalculatorRoute
   TexasPropertyTaxProtestGuideRoute: typeof TexasPropertyTaxProtestGuideRoute
+  TexasRefinanceCalculatorRoute: typeof TexasRefinanceCalculatorRoute
   TexasRefinanceSavingsCalculatorRoute: typeof TexasRefinanceSavingsCalculatorRoute
   TexasRentVsBuyCalculatorRoute: typeof TexasRentVsBuyCalculatorRoute
   TexasResourcesRoute: typeof TexasResourcesRouteWithChildren
   TexasSalaryCalculatorRoute: typeof TexasSalaryCalculatorRoute
   TexasSalaryComparisonByCityRoute: typeof TexasSalaryComparisonByCityRoute
   TexasSalesTaxExplainedRoute: typeof TexasSalesTaxExplainedRoute
+  TexasSchoolBoardPowersRoute: typeof TexasSchoolBoardPowersRoute
   TexasSecretaryOfStateRoute: typeof TexasSecretaryOfStateRoute
   TexasSportsRoute: typeof TexasSportsRouteWithChildren
   TexasUtilityCostCalculatorRoute: typeof TexasUtilityCostCalculatorRoute
   TexasVeteransRoute: typeof TexasVeteransRoute
+  TexasWaterRoute: typeof TexasWaterRoute
   TopicsRoute: typeof TopicsRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
   VotingLocationsRoute: typeof VotingLocationsRoute
+  WhyTexasHasNoStateIncomeTaxRoute: typeof WhyTexasHasNoStateIncomeTaxRoute
   ApiContentDispositionRoute: typeof ApiContentDispositionRoute
   ApiGovernanceHealthRoute: typeof ApiGovernanceHealthRoute
   ApiPlatformCoreStatusRoute: typeof ApiPlatformCoreStatusRoute
@@ -5610,11 +7287,20 @@ export interface RootRouteChildren {
   IssuesTexasGovernmentAccountabilityHandbookRoute: typeof IssuesTexasGovernmentAccountabilityHandbookRoute
   IssuesTexasLocalGovernmentHandbookRoute: typeof IssuesTexasLocalGovernmentHandbookRoute
   IssuesTexasPolicyHandbookRoute: typeof IssuesTexasPolicyHandbookRoute
+  LawsConstitutionalAmendmentsRoute: typeof LawsConstitutionalAmendmentsRoute
+  LawsEffectiveDatesRoute: typeof LawsEffectiveDatesRoute
+  LawsTopicsRoute: typeof LawsTopicsRoute
   SourcesSlugRoute: typeof SourcesSlugRoute
+  ToolsClosingCostCalculatorRoute: typeof ToolsClosingCostCalculatorRoute
+  ToolsHomeAffordabilityCalculatorRoute: typeof ToolsHomeAffordabilityCalculatorRoute
+  ToolsHomeInsuranceCalculatorRoute: typeof ToolsHomeInsuranceCalculatorRoute
+  ToolsMortgageCalculatorRoute: typeof ToolsMortgageCalculatorRoute
+  ToolsPropertyTaxCalculatorRoute: typeof ToolsPropertyTaxCalculatorRoute
   ToolsTexasBudgetHeadroomRoute: typeof ToolsTexasBudgetHeadroomRoute
   ToolsTexasRainyDayFundRoute: typeof ToolsTexasRainyDayFundRoute
   ToolsTexasSpendingGrowthCapRoute: typeof ToolsTexasSpendingGrowthCapRoute
   ToolsTexasTaxStructureComparisonRoute: typeof ToolsTexasTaxStructureComparisonRoute
+  ToolsTexasUtilitiesCalculatorRoute: typeof ToolsTexasUtilitiesCalculatorRoute
   VehiclesAutoInsuranceRequirementsRoute: typeof VehiclesAutoInsuranceRequirementsRoute
   VehiclesBondedTitlesRoute: typeof VehiclesBondedTitlesRoute
   VehiclesBuyingACarRoute: typeof VehiclesBuyingACarRoute
@@ -5642,6 +7328,7 @@ export interface RootRouteChildren {
   IssuesIndexRoute: typeof IssuesIndexRoute
   SourcesIndexRoute: typeof SourcesIndexRoute
   ToolsIndexRoute: typeof ToolsIndexRoute
+  ApiAdminGscSitewideSyncRoute: typeof ApiAdminGscSitewideSyncRoute
   ApiAdminGscSyncRoute: typeof ApiAdminGscSyncRoute
   ApiAdminLegislationSyncProxyRoute: typeof ApiAdminLegislationSyncProxyRouteWithChildren
   ApiAdminNewsroomMetricsRoute: typeof ApiAdminNewsroomMetricsRoute
@@ -5649,10 +7336,13 @@ export interface RootRouteChildren {
   ApiElectionsDistrictLookupRoute: typeof ApiElectionsDistrictLookupRoute
   ApiPublicCrossSitePublicationHealthRoute: typeof ApiPublicCrossSitePublicationHealthRoute
   ApiPublicDeploymentFingerprintRoute: typeof ApiPublicDeploymentFingerprintRoute
+  ApiPublicFlyoverAug10HealthRoute: typeof ApiPublicFlyoverAug10HealthRoute
   ApiPublicNewsroomHealthRoute: typeof ApiPublicNewsroomHealthRoute
+  ApiPublicNewsroomSourceHealthRoute: typeof ApiPublicNewsroomSourceHealthRoute
   ApiPublicOfficialBillTextRoute: typeof ApiPublicOfficialBillTextRoute
   ApiPublicStoreProductsRoute: typeof ApiPublicStoreProductsRoute
   ApiPublicTexasdefinedCheckoutRoute: typeof ApiPublicTexasdefinedCheckoutRoute
+  ApiPublicTexasdefinedGovernmentSearchRoute: typeof ApiPublicTexasdefinedGovernmentSearchRoute
   ApiShopStripeWebhookRoute: typeof ApiShopStripeWebhookRoute
   ProductOfferProductIdVariantIdRoute: typeof ProductOfferProductIdVariantIdRoute
   ApiEmailTransactionalSendRoute: typeof ApiEmailTransactionalSendRoute
@@ -5663,8 +7353,10 @@ export interface RootRouteChildren {
   ApiPublicExploreRecommendationsRoute: typeof ApiPublicExploreRecommendationsRoute
   ApiPublicHooksAdsenseImageBackfillRoute: typeof ApiPublicHooksAdsenseImageBackfillRoute
   ApiPublicHooksAutoFacebookPostRoute: typeof ApiPublicHooksAutoFacebookPostRoute
+  ApiPublicHooksAutoFacebookPostSmartRoute: typeof ApiPublicHooksAutoFacebookPostSmartRoute
   ApiPublicHooksAutoFacebookPostTexasdefinedRoute: typeof ApiPublicHooksAutoFacebookPostTexasdefinedRoute
   ApiPublicHooksAutoFacebookPostTexasdefinedSmartRoute: typeof ApiPublicHooksAutoFacebookPostTexasdefinedSmartRoute
+  ApiPublicHooksAutoFacebookPostTexasdefinedWithImageRoute: typeof ApiPublicHooksAutoFacebookPostTexasdefinedWithImageRoute
   ApiPublicHooksBackfillFeaturedImagesRoute: typeof ApiPublicHooksBackfillFeaturedImagesRoute
   ApiPublicHooksBuildNewsroomResearchPacketsRoute: typeof ApiPublicHooksBuildNewsroomResearchPacketsRoute
   ApiPublicHooksClassifyArticlePillarsRoute: typeof ApiPublicHooksClassifyArticlePillarsRoute
@@ -5680,13 +7372,18 @@ export interface RootRouteChildren {
   ApiPublicHooksGenerateNewsroomRoute: typeof ApiPublicHooksGenerateNewsroomRoute
   ApiPublicHooksGenerateSportsRoute: typeof ApiPublicHooksGenerateSportsRoute
   ApiPublicHooksHealthRoute: typeof ApiPublicHooksHealthRoute
+  ApiPublicHooksHydrateNewsroomSourcePagesRoute: typeof ApiPublicHooksHydrateNewsroomSourcePagesRoute
   ApiPublicHooksImageBacklogRecoveryRoute: typeof ApiPublicHooksImageBacklogRecoveryRoute
   ApiPublicHooksIngestFeedsRoute: typeof ApiPublicHooksIngestFeedsRoute
   ApiPublicHooksIngestSportsRoute: typeof ApiPublicHooksIngestSportsRoute
   ApiPublicHooksListShopsRoute: typeof ApiPublicHooksListShopsRoute
   ApiPublicHooksNewsroomGenerationDiagnosticsRoute: typeof ApiPublicHooksNewsroomGenerationDiagnosticsRoute
   ApiPublicHooksNormalizeNewsroomFeedRoute: typeof ApiPublicHooksNormalizeNewsroomFeedRoute
+  ApiPublicHooksOpenaiArticleImageRecoveryRoute: typeof ApiPublicHooksOpenaiArticleImageRecoveryRoute
+  ApiPublicHooksPublishKtrGeneratedAttentionImageRoute: typeof ApiPublicHooksPublishKtrGeneratedAttentionImageRoute
   ApiPublicHooksPublishOverdueGapRoute: typeof ApiPublicHooksPublishOverdueGapRoute
+  ApiPublicHooksPublishTexasdefinedGeneratedImageRoute: typeof ApiPublicHooksPublishTexasdefinedGeneratedImageRoute
+  ApiPublicHooksPublishTexasdefinedReelRoute: typeof ApiPublicHooksPublishTexasdefinedReelRoute
   ApiPublicHooksPublishingSafetyNetRoute: typeof ApiPublicHooksPublishingSafetyNetRoute
   ApiPublicHooksReconcileNewsHistoryRoute: typeof ApiPublicHooksReconcileNewsHistoryRoute
   ApiPublicHooksRemediateAug10FlyoverRoute: typeof ApiPublicHooksRemediateAug10FlyoverRoute
@@ -5698,7 +7395,9 @@ export interface RootRouteChildren {
   ApiPublicHooksScoreViralRoute: typeof ApiPublicHooksScoreViralRoute
   ApiPublicHooksScoreViralBackfillRoute: typeof ApiPublicHooksScoreViralBackfillRoute
   ApiPublicHooksSyncPrintifyRoute: typeof ApiPublicHooksSyncPrintifyRoute
+  ApiPublicHooksTexasdefinedFacebookCommentSignalsRoute: typeof ApiPublicHooksTexasdefinedFacebookCommentSignalsRoute
   ApiPublicHooksTrackVariantRoute: typeof ApiPublicHooksTrackVariantRoute
+  ApiPublicOpsEtsyHalloweenSeo20260911Route: typeof ApiPublicOpsEtsyHalloweenSeo20260911Route
   ApiPublicPaymentsHealthRoute: typeof ApiPublicPaymentsHealthRoute
   ApiPublicPaymentsSandboxConfigRoute: typeof ApiPublicPaymentsSandboxConfigRoute
   ApiPublicPaymentsSandboxHealthRoute: typeof ApiPublicPaymentsSandboxHealthRoute
@@ -5709,6 +7408,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/why-texas-has-no-state-income-tax': {
+      id: '/why-texas-has-no-state-income-tax'
+      path: '/why-texas-has-no-state-income-tax'
+      fullPath: '/why-texas-has-no-state-income-tax'
+      preLoaderRoute: typeof WhyTexasHasNoStateIncomeTaxRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/voting-locations': {
       id: '/voting-locations'
       path: '/voting-locations'
@@ -5728,6 +7434,13 @@ declare module '@tanstack/react-router' {
       path: '/topics'
       fullPath: '/topics'
       preLoaderRoute: typeof TopicsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-water': {
+      id: '/texas-water'
+      path: '/texas-water'
+      fullPath: '/texas-water'
+      preLoaderRoute: typeof TexasWaterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/texas-veterans': {
@@ -5756,6 +7469,13 @@ declare module '@tanstack/react-router' {
       path: '/texas-secretary-of-state'
       fullPath: '/texas-secretary-of-state'
       preLoaderRoute: typeof TexasSecretaryOfStateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-school-board-powers': {
+      id: '/texas-school-board-powers'
+      path: '/texas-school-board-powers'
+      fullPath: '/texas-school-board-powers'
+      preLoaderRoute: typeof TexasSchoolBoardPowersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/texas-sales-tax-explained': {
@@ -5800,6 +7520,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasRefinanceSavingsCalculatorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/texas-refinance-calculator': {
+      id: '/texas-refinance-calculator'
+      path: '/texas-refinance-calculator'
+      fullPath: '/texas-refinance-calculator'
+      preLoaderRoute: typeof TexasRefinanceCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/texas-property-tax-protest-guide': {
       id: '/texas-property-tax-protest-guide'
       path: '/texas-property-tax-protest-guide'
@@ -5812,6 +7539,13 @@ declare module '@tanstack/react-router' {
       path: '/texas-property-tax-increase-calculator'
       fullPath: '/texas-property-tax-increase-calculator'
       preLoaderRoute: typeof TexasPropertyTaxIncreaseCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-property-tax-calculator': {
+      id: '/texas-property-tax-calculator'
+      path: '/texas-property-tax-calculator'
+      fullPath: '/texas-property-tax-calculator'
+      preLoaderRoute: typeof TexasPropertyTaxCalculatorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/texas-politics': {
@@ -5828,6 +7562,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasPoliticalReferenceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/texas-political-figures': {
+      id: '/texas-political-figures'
+      path: '/texas-political-figures'
+      fullPath: '/texas-political-figures'
+      preLoaderRoute: typeof TexasPoliticalFiguresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/texas-news': {
       id: '/texas-news'
       path: '/texas-news'
@@ -5840,6 +7581,13 @@ declare module '@tanstack/react-router' {
       path: '/texas-moving-cost-calculator'
       fullPath: '/texas-moving-cost-calculator'
       preLoaderRoute: typeof TexasMovingCostCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-mortgage-qualification-calculator': {
+      id: '/texas-mortgage-qualification-calculator'
+      path: '/texas-mortgage-qualification-calculator'
+      fullPath: '/texas-mortgage-qualification-calculator'
+      preLoaderRoute: typeof TexasMortgageQualificationCalculatorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/texas-mortgage-payoff-calculator': {
@@ -5898,6 +7646,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasHomeownershipCostCalculatorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/texas-home-ownership-cost-calculator': {
+      id: '/texas-home-ownership-cost-calculator'
+      path: '/texas-home-ownership-cost-calculator'
+      fullPath: '/texas-home-ownership-cost-calculator'
+      preLoaderRoute: typeof TexasHomeOwnershipCostCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/texas-home-insurance-calculator': {
       id: '/texas-home-insurance-calculator'
       path: '/texas-home-insurance-calculator'
@@ -5926,6 +7681,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasHomeAffordabilityCalculatorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/texas-heloc-calculator': {
+      id: '/texas-heloc-calculator'
+      path: '/texas-heloc-calculator'
+      fullPath: '/texas-heloc-calculator'
+      preLoaderRoute: typeof TexasHelocCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/texas-government': {
       id: '/texas-government'
       path: '/texas-government'
@@ -5945,6 +7707,13 @@ declare module '@tanstack/react-router' {
       path: '/texas-financial-tools'
       fullPath: '/texas-financial-tools'
       preLoaderRoute: typeof TexasFinancialToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-energy-policy': {
+      id: '/texas-energy-policy'
+      path: '/texas-energy-policy'
+      fullPath: '/texas-energy-policy'
+      preLoaderRoute: typeof TexasEnergyPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/texas-energy': {
@@ -5980,6 +7749,13 @@ declare module '@tanstack/react-router' {
       path: '/texas-data'
       fullPath: '/texas-data'
       preLoaderRoute: typeof TexasDataRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-courts': {
+      id: '/texas-courts'
+      path: '/texas-courts'
+      fullPath: '/texas-courts'
+      preLoaderRoute: typeof TexasCourtsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/texas-cost-of-living-calculator': {
@@ -6108,11 +7884,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapProductsDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap-priority.xml': {
+      id: '/sitemap-priority.xml'
+      path: '/sitemap-priority.xml'
+      fullPath: '/sitemap-priority.xml'
+      preLoaderRoute: typeof SitemapPriorityDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-political-geography.xml': {
+      id: '/sitemap-political-geography.xml'
+      path: '/sitemap-political-geography.xml'
+      fullPath: '/sitemap-political-geography.xml'
+      preLoaderRoute: typeof SitemapPoliticalGeographyDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap-political-figures.xml': {
       id: '/sitemap-political-figures.xml'
       path: '/sitemap-political-figures.xml'
       fullPath: '/sitemap-political-figures.xml'
       preLoaderRoute: typeof SitemapPoliticalFiguresDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-party-representation.xml': {
+      id: '/sitemap-party-representation.xml'
+      path: '/sitemap-party-representation.xml'
+      fullPath: '/sitemap-party-representation.xml'
+      preLoaderRoute: typeof SitemapPartyRepresentationDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap-pages.xml': {
@@ -6176,6 +7973,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap-elections.xml'
       fullPath: '/sitemap-elections.xml'
       preLoaderRoute: typeof SitemapElectionsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-dmv.xml': {
+      id: '/sitemap-dmv.xml'
+      path: '/sitemap-dmv.xml'
+      fullPath: '/sitemap-dmv.xml'
+      preLoaderRoute: typeof SitemapDmvDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap-districts.xml': {
@@ -6255,11 +8059,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterToVoteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/property-taxes': {
+      id: '/property-taxes'
+      path: '/property-taxes'
+      fullPath: '/property-taxes'
+      preLoaderRoute: typeof PropertyTaxesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/politics': {
+      id: '/politics'
+      path: '/politics'
+      fullPath: '/politics'
+      preLoaderRoute: typeof PoliticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/political-figure-image': {
+      id: '/political-figure-image'
+      path: '/political-figure-image'
+      fullPath: '/political-figure-image'
+      preLoaderRoute: typeof PoliticalFigureImageRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/policy-trackers.txt': {
@@ -6302,6 +8127,13 @@ declare module '@tanstack/react-router' {
       path: '/moving-to-texas'
       fullPath: '/moving-to-texas'
       preLoaderRoute: typeof MovingToTexasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/moving-checklist': {
+      id: '/moving-checklist'
+      path: '/moving-checklist'
+      fullPath: '/moving-checklist'
+      preLoaderRoute: typeof MovingChecklistRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/merchant-image': {
@@ -6423,6 +8255,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExploreRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ercot-texas-power-grid': {
+      id: '/ercot-texas-power-grid'
+      path: '/ercot-texas-power-grid'
+      fullPath: '/ercot-texas-power-grid'
+      preLoaderRoute: typeof ErcotTexasPowerGridRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/elections': {
       id: '/elections'
       path: '/elections'
@@ -6456,6 +8295,13 @@ declare module '@tanstack/react-router' {
       path: '/districts'
       fullPath: '/districts'
       preLoaderRoute: typeof DistrictsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/data-deletion': {
+      id: '/data-deletion'
+      path: '/data-deletion'
+      fullPath: '/data-deletion'
+      preLoaderRoute: typeof DataDeletionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/data': {
@@ -6493,6 +8339,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/committees': {
+      id: '/committees'
+      path: '/committees'
+      fullPath: '/committees'
+      preLoaderRoute: typeof CommitteesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/civic-tools': {
       id: '/civic-tools'
       path: '/civic-tools'
@@ -6505,6 +8358,13 @@ declare module '@tanstack/react-router' {
       path: '/citation-guide'
       fullPath: '/citation-guide'
       preLoaderRoute: typeof CitationGuideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cart': {
+      id: '/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof CartRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/candidate-guides': {
@@ -6570,6 +8430,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasSportsIndexRouteImport
       parentRoute: typeof TexasSportsRoute
     }
+    '/texas-politics/': {
+      id: '/texas-politics/'
+      path: '/'
+      fullPath: '/texas-politics/'
+      preLoaderRoute: typeof TexasPoliticsIndexRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
     '/texas-news/': {
       id: '/texas-news/'
       path: '/'
@@ -6583,6 +8450,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/texas-legislature/'
       preLoaderRoute: typeof TexasLegislatureIndexRouteImport
       parentRoute: typeof TexasLegislatureRoute
+    }
+    '/texas-government/': {
+      id: '/texas-government/'
+      path: '/'
+      fullPath: '/texas-government/'
+      preLoaderRoute: typeof TexasGovernmentIndexRouteImport
+      parentRoute: typeof TexasGovernmentRoute
     }
     '/sources/': {
       id: '/sources/'
@@ -6598,12 +8472,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopIndexRouteImport
       parentRoute: typeof ShopRoute
     }
+    '/policy/': {
+      id: '/policy/'
+      path: '/'
+      fullPath: '/policy/'
+      preLoaderRoute: typeof PolicyIndexRouteImport
+      parentRoute: typeof PolicyRoute
+    }
     '/news/': {
       id: '/news/'
       path: '/'
       fullPath: '/news/'
       preLoaderRoute: typeof NewsIndexRouteImport
       parentRoute: typeof NewsRoute
+    }
+    '/laws/': {
+      id: '/laws/'
+      path: '/'
+      fullPath: '/laws/'
+      preLoaderRoute: typeof LawsIndexRouteImport
+      parentRoute: typeof LawsRoute
     }
     '/issues/': {
       id: '/issues/'
@@ -6808,6 +8696,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VehiclesAutoInsuranceRequirementsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tools/texas-utilities-calculator': {
+      id: '/tools/texas-utilities-calculator'
+      path: '/tools/texas-utilities-calculator'
+      fullPath: '/tools/texas-utilities-calculator'
+      preLoaderRoute: typeof ToolsTexasUtilitiesCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tools/texas-tax-structure-comparison': {
       id: '/tools/texas-tax-structure-comparison'
       path: '/tools/texas-tax-structure-comparison'
@@ -6836,6 +8731,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ToolsTexasBudgetHeadroomRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tools/property-tax-calculator': {
+      id: '/tools/property-tax-calculator'
+      path: '/tools/property-tax-calculator'
+      fullPath: '/tools/property-tax-calculator'
+      preLoaderRoute: typeof ToolsPropertyTaxCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tools/mortgage-calculator': {
+      id: '/tools/mortgage-calculator'
+      path: '/tools/mortgage-calculator'
+      fullPath: '/tools/mortgage-calculator'
+      preLoaderRoute: typeof ToolsMortgageCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tools/home-insurance-calculator': {
+      id: '/tools/home-insurance-calculator'
+      path: '/tools/home-insurance-calculator'
+      fullPath: '/tools/home-insurance-calculator'
+      preLoaderRoute: typeof ToolsHomeInsuranceCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tools/home-affordability-calculator': {
+      id: '/tools/home-affordability-calculator'
+      path: '/tools/home-affordability-calculator'
+      fullPath: '/tools/home-affordability-calculator'
+      preLoaderRoute: typeof ToolsHomeAffordabilityCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tools/closing-cost-calculator': {
+      id: '/tools/closing-cost-calculator'
+      path: '/tools/closing-cost-calculator'
+      fullPath: '/tools/closing-cost-calculator'
+      preLoaderRoute: typeof ToolsClosingCostCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas/property-taxes-2026': {
+      id: '/texas/property-taxes-2026'
+      path: '/property-taxes-2026'
+      fullPath: '/texas/property-taxes-2026'
+      preLoaderRoute: typeof TexasPropertyTaxes2026RouteImport
+      parentRoute: typeof TexasRoute
+    }
     '/texas-sports/$league': {
       id: '/texas-sports/$league'
       path: '/$league'
@@ -6843,11 +8780,270 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasSportsLeagueRouteImport
       parentRoute: typeof TexasSportsRoute
     }
+    '/texas-politics/voting-rights-history': {
+      id: '/texas-politics/voting-rights-history'
+      path: '/voting-rights-history'
+      fullPath: '/texas-politics/voting-rights-history'
+      preLoaderRoute: typeof TexasPoliticsVotingRightsHistoryRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/texas-women-suffrage-political-representation-history': {
+      id: '/texas-politics/texas-women-suffrage-political-representation-history'
+      path: '/texas-women-suffrage-political-representation-history'
+      fullPath: '/texas-politics/texas-women-suffrage-political-representation-history'
+      preLoaderRoute: typeof TexasPoliticsTexasWomenSuffragePoliticalRepresentationHistoryRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/texas-white-primary-history': {
+      id: '/texas-politics/texas-white-primary-history'
+      path: '/texas-white-primary-history'
+      fullPath: '/texas-politics/texas-white-primary-history'
+      preLoaderRoute: typeof TexasPoliticsTexasWhitePrimaryHistoryRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/texas-urban-suburban-rural-politics-history': {
+      id: '/texas-politics/texas-urban-suburban-rural-politics-history'
+      path: '/texas-urban-suburban-rural-politics-history'
+      fullPath: '/texas-politics/texas-urban-suburban-rural-politics-history'
+      preLoaderRoute: typeof TexasPoliticsTexasUrbanSuburbanRuralPoliticsHistoryRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/texas-supreme-court-realignment': {
+      id: '/texas-politics/texas-supreme-court-realignment'
+      path: '/texas-supreme-court-realignment'
+      fullPath: '/texas-politics/texas-supreme-court-realignment'
+      preLoaderRoute: typeof TexasPoliticsTexasSupremeCourtRealignmentRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/texas-secession-convention-1861': {
+      id: '/texas-politics/texas-secession-convention-1861'
+      path: '/texas-secession-convention-1861'
+      fullPath: '/texas-politics/texas-secession-convention-1861'
+      preLoaderRoute: typeof TexasPoliticsTexasSecessionConvention1861RouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/texas-republican-party-history': {
+      id: '/texas-politics/texas-republican-party-history'
+      path: '/texas-republican-party-history'
+      fullPath: '/texas-politics/texas-republican-party-history'
+      preLoaderRoute: typeof TexasPoliticsTexasRepublicanPartyHistoryRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/texas-redistricting-history': {
+      id: '/texas-politics/texas-redistricting-history'
+      path: '/texas-redistricting-history'
+      fullPath: '/texas-politics/texas-redistricting-history'
+      preLoaderRoute: typeof TexasPoliticsTexasRedistrictingHistoryRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/texas-reconstruction-government': {
+      id: '/texas-politics/texas-reconstruction-government'
+      path: '/texas-reconstruction-government'
+      fullPath: '/texas-politics/texas-reconstruction-government'
+      preLoaderRoute: typeof TexasPoliticsTexasReconstructionGovernmentRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/texas-populist-progressive-era': {
+      id: '/texas-politics/texas-populist-progressive-era'
+      path: '/texas-populist-progressive-era'
+      fullPath: '/texas-politics/texas-populist-progressive-era'
+      preLoaderRoute: typeof TexasPoliticsTexasPopulistProgressiveEraRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/texas-political-geography-history': {
+      id: '/texas-politics/texas-political-geography-history'
+      path: '/texas-political-geography-history'
+      fullPath: '/texas-politics/texas-political-geography-history'
+      preLoaderRoute: typeof TexasPoliticsTexasPoliticalGeographyHistoryRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/texas-new-deal-politics': {
+      id: '/texas-politics/texas-new-deal-politics'
+      path: '/texas-new-deal-politics'
+      fullPath: '/texas-politics/texas-new-deal-politics'
+      preLoaderRoute: typeof TexasPoliticsTexasNewDealPoliticsRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/texas-mexican-american-political-organization-history': {
+      id: '/texas-politics/texas-mexican-american-political-organization-history'
+      path: '/texas-mexican-american-political-organization-history'
+      fullPath: '/texas-politics/texas-mexican-american-political-organization-history'
+      preLoaderRoute: typeof TexasPoliticsTexasMexicanAmericanPoliticalOrganizationHistoryRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/texas-metro-regional-realignment-history': {
+      id: '/texas-politics/texas-metro-regional-realignment-history'
+      path: '/texas-metro-regional-realignment-history'
+      fullPath: '/texas-politics/texas-metro-regional-realignment-history'
+      preLoaderRoute: typeof TexasPoliticsTexasMetroRegionalRealignmentHistoryRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/texas-government-during-civil-war': {
+      id: '/texas-politics/texas-government-during-civil-war'
+      path: '/texas-government-during-civil-war'
+      fullPath: '/texas-politics/texas-government-during-civil-war'
+      preLoaderRoute: typeof TexasPoliticsTexasGovernmentDuringCivilWarRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/texas-election-history': {
+      id: '/texas-politics/texas-election-history'
+      path: '/texas-election-history'
+      fullPath: '/texas-politics/texas-election-history'
+      preLoaderRoute: typeof TexasPoliticsTexasElectionHistoryRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/texas-democratic-party-history': {
+      id: '/texas-politics/texas-democratic-party-history'
+      path: '/texas-democratic-party-history'
+      fullPath: '/texas-politics/texas-democratic-party-history'
+      preLoaderRoute: typeof TexasPoliticsTexasDemocraticPartyHistoryRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/texas-democratic-dominance-1876-1952': {
+      id: '/texas-politics/texas-democratic-dominance-1876-1952'
+      path: '/texas-democratic-dominance-1876-1952'
+      fullPath: '/texas-politics/texas-democratic-dominance-1876-1952'
+      preLoaderRoute: typeof TexasPoliticsTexasDemocraticDominance18761952RouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/texas-constitutional-history': {
+      id: '/texas-politics/texas-constitutional-history'
+      path: '/texas-constitutional-history'
+      fullPath: '/texas-politics/texas-constitutional-history'
+      preLoaderRoute: typeof TexasPoliticsTexasConstitutionalHistoryRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/texas-constitutional-convention-1875': {
+      id: '/texas-politics/texas-constitutional-convention-1875'
+      path: '/texas-constitutional-convention-1875'
+      fullPath: '/texas-politics/texas-constitutional-convention-1875'
+      preLoaderRoute: typeof TexasPoliticsTexasConstitutionalConvention1875RouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/texas-civil-rights-era-politics': {
+      id: '/texas-politics/texas-civil-rights-era-politics'
+      path: '/texas-civil-rights-era-politics'
+      fullPath: '/texas-politics/texas-civil-rights-era-politics'
+      preLoaderRoute: typeof TexasPoliticsTexasCivilRightsEraPoliticsRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/texas-annexation-statehood-history': {
+      id: '/texas-politics/texas-annexation-statehood-history'
+      path: '/texas-annexation-statehood-history'
+      fullPath: '/texas-politics/texas-annexation-statehood-history'
+      preLoaderRoute: typeof TexasPoliticsTexasAnnexationStatehoodHistoryRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/south-texas-rio-grande-valley-political-history': {
+      id: '/texas-politics/south-texas-rio-grande-valley-political-history'
+      path: '/south-texas-rio-grande-valley-political-history'
+      fullPath: '/texas-politics/south-texas-rio-grande-valley-political-history'
+      preLoaderRoute: typeof TexasPoliticsSouthTexasRioGrandeValleyPoliticalHistoryRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/republic-to-state-government-transition': {
+      id: '/texas-politics/republic-to-state-government-transition'
+      path: '/republic-to-state-government-transition'
+      fullPath: '/texas-politics/republic-to-state-government-transition'
+      preLoaderRoute: typeof TexasPoliticsRepublicToStateGovernmentTransitionRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/republic-of-texas-government-history': {
+      id: '/texas-politics/republic-of-texas-government-history'
+      path: '/republic-of-texas-government-history'
+      fullPath: '/texas-politics/republic-of-texas-government-history'
+      preLoaderRoute: typeof TexasPoliticsRepublicOfTexasGovernmentHistoryRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/republic-of-texas-diplomacy-recognition': {
+      id: '/texas-politics/republic-of-texas-diplomacy-recognition'
+      path: '/republic-of-texas-diplomacy-recognition'
+      fullPath: '/texas-politics/republic-of-texas-diplomacy-recognition'
+      preLoaderRoute: typeof TexasPoliticsRepublicOfTexasDiplomacyRecognitionRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/republic-of-texas-debt-finance': {
+      id: '/texas-politics/republic-of-texas-debt-finance'
+      path: '/republic-of-texas-debt-finance'
+      fullPath: '/texas-politics/republic-of-texas-debt-finance'
+      preLoaderRoute: typeof TexasPoliticsRepublicOfTexasDebtFinanceRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/republic-of-texas-capitals-government-seats': {
+      id: '/texas-politics/republic-of-texas-capitals-government-seats'
+      path: '/republic-of-texas-capitals-government-seats'
+      fullPath: '/texas-politics/republic-of-texas-capitals-government-seats'
+      preLoaderRoute: typeof TexasPoliticsRepublicOfTexasCapitalsGovernmentSeatsRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/reconstruction-republicans': {
+      id: '/texas-politics/reconstruction-republicans'
+      path: '/reconstruction-republicans'
+      fullPath: '/texas-politics/reconstruction-republicans'
+      preLoaderRoute: typeof TexasPoliticsReconstructionRepublicansRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/presidents-of-republic-of-texas': {
+      id: '/texas-politics/presidents-of-republic-of-texas'
+      path: '/presidents-of-republic-of-texas'
+      fullPath: '/texas-politics/presidents-of-republic-of-texas'
+      preLoaderRoute: typeof TexasPoliticsPresidentsOfRepublicOfTexasRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/how-texas-became-republican': {
+      id: '/texas-politics/how-texas-became-republican'
+      path: '/how-texas-became-republican'
+      fullPath: '/texas-politics/how-texas-became-republican'
+      preLoaderRoute: typeof TexasPoliticsHowTexasBecameRepublicanRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
     '/texas-politics/figures': {
       id: '/texas-politics/figures'
       path: '/figures'
       fullPath: '/texas-politics/figures'
       preLoaderRoute: typeof TexasPoliticsFiguresRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/ferguson-era-texas-politics': {
+      id: '/texas-politics/ferguson-era-texas-politics'
+      path: '/ferguson-era-texas-politics'
+      fullPath: '/texas-politics/ferguson-era-texas-politics'
+      preLoaderRoute: typeof TexasPoliticsFergusonEraTexasPoliticsRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/constitution-of-1869-texas': {
+      id: '/texas-politics/constitution-of-1869-texas'
+      path: '/constitution-of-1869-texas'
+      fullPath: '/texas-politics/constitution-of-1869-texas'
+      preLoaderRoute: typeof TexasPoliticsConstitutionOf1869TexasRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/constitution-of-1866-texas': {
+      id: '/texas-politics/constitution-of-1866-texas'
+      path: '/constitution-of-1866-texas'
+      fullPath: '/texas-politics/constitution-of-1866-texas'
+      preLoaderRoute: typeof TexasPoliticsConstitutionOf1866TexasRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/constitution-of-1861-texas': {
+      id: '/texas-politics/constitution-of-1861-texas'
+      path: '/constitution-of-1861-texas'
+      fullPath: '/texas-politics/constitution-of-1861-texas'
+      preLoaderRoute: typeof TexasPoliticsConstitutionOf1861TexasRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/constitution-of-1836-republic-of-texas': {
+      id: '/texas-politics/constitution-of-1836-republic-of-texas'
+      path: '/constitution-of-1836-republic-of-texas'
+      fullPath: '/texas-politics/constitution-of-1836-republic-of-texas'
+      preLoaderRoute: typeof TexasPoliticsConstitutionOf1836RepublicOfTexasRouteImport
+      parentRoute: typeof TexasPoliticsRoute
+    }
+    '/texas-politics/congress-of-republic-of-texas': {
+      id: '/texas-politics/congress-of-republic-of-texas'
+      path: '/congress-of-republic-of-texas'
+      fullPath: '/texas-politics/congress-of-republic-of-texas'
+      preLoaderRoute: typeof TexasPoliticsCongressOfRepublicOfTexasRouteImport
       parentRoute: typeof TexasPoliticsRoute
     }
     '/texas-political-reference/$slug': {
@@ -6905,6 +9101,223 @@ declare module '@tanstack/react-router' {
       fullPath: '/texas-legislature/committees'
       preLoaderRoute: typeof TexasLegislatureCommitteesRouteImport
       parentRoute: typeof TexasLegislatureRoute
+    }
+    '/texas-government/texas-trial-courts': {
+      id: '/texas-government/texas-trial-courts'
+      path: '/texas-trial-courts'
+      fullPath: '/texas-government/texas-trial-courts'
+      preLoaderRoute: typeof TexasGovernmentTexasTrialCourtsRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/texas-supreme-court-history': {
+      id: '/texas-government/texas-supreme-court-history'
+      path: '/texas-supreme-court-history'
+      fullPath: '/texas-government/texas-supreme-court-history'
+      preLoaderRoute: typeof TexasGovernmentTexasSupremeCourtHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/texas-special-district-government-history': {
+      id: '/texas-government/texas-special-district-government-history'
+      path: '/texas-special-district-government-history'
+      fullPath: '/texas-government/texas-special-district-government-history'
+      preLoaderRoute: typeof TexasGovernmentTexasSpecialDistrictGovernmentHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/texas-municipal-government-history': {
+      id: '/texas-government/texas-municipal-government-history'
+      path: '/texas-municipal-government-history'
+      fullPath: '/texas-government/texas-municipal-government-history'
+      preLoaderRoute: typeof TexasGovernmentTexasMunicipalGovernmentHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/texas-municipal-courts-history': {
+      id: '/texas-government/texas-municipal-courts-history'
+      path: '/texas-municipal-courts-history'
+      fullPath: '/texas-government/texas-municipal-courts-history'
+      preLoaderRoute: typeof TexasGovernmentTexasMunicipalCourtsHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/texas-legislature-history': {
+      id: '/texas-government/texas-legislature-history'
+      path: '/texas-legislature-history'
+      fullPath: '/texas-government/texas-legislature-history'
+      preLoaderRoute: typeof TexasGovernmentTexasLegislatureHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/texas-judicial-selection-history': {
+      id: '/texas-government/texas-judicial-selection-history'
+      path: '/texas-judicial-selection-history'
+      fullPath: '/texas-government/texas-judicial-selection-history'
+      preLoaderRoute: typeof TexasGovernmentTexasJudicialSelectionHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/texas-government-history': {
+      id: '/texas-government/texas-government-history'
+      path: '/texas-government-history'
+      fullPath: '/texas-government/texas-government-history'
+      preLoaderRoute: typeof TexasGovernmentTexasGovernmentHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/texas-court-of-criminal-appeals-history': {
+      id: '/texas-government/texas-court-of-criminal-appeals-history'
+      path: '/texas-court-of-criminal-appeals-history'
+      fullPath: '/texas-government/texas-court-of-criminal-appeals-history'
+      preLoaderRoute: typeof TexasGovernmentTexasCourtOfCriminalAppealsHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/texas-county-government-history': {
+      id: '/texas-government/texas-county-government-history'
+      path: '/texas-county-government-history'
+      fullPath: '/texas-government/texas-county-government-history'
+      preLoaderRoute: typeof TexasGovernmentTexasCountyGovernmentHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/texas-business-court': {
+      id: '/texas-government/texas-business-court'
+      path: '/texas-business-court'
+      fullPath: '/texas-government/texas-business-court'
+      preLoaderRoute: typeof TexasGovernmentTexasBusinessCourtRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/tax-assessor-collector-history': {
+      id: '/texas-government/tax-assessor-collector-history'
+      path: '/tax-assessor-collector-history'
+      fullPath: '/texas-government/tax-assessor-collector-history'
+      preLoaderRoute: typeof TexasGovernmentTaxAssessorCollectorHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/state-commission-on-judicial-conduct': {
+      id: '/texas-government/state-commission-on-judicial-conduct'
+      path: '/state-commission-on-judicial-conduct'
+      fullPath: '/texas-government/state-commission-on-judicial-conduct'
+      preLoaderRoute: typeof TexasGovernmentStateCommissionOnJudicialConductRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/speaker-of-the-house-history': {
+      id: '/texas-government/speaker-of-the-house-history'
+      path: '/speaker-of-the-house-history'
+      fullPath: '/texas-government/speaker-of-the-house-history'
+      preLoaderRoute: typeof TexasGovernmentSpeakerOfTheHouseHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/municipal-finance-tax-debt-history': {
+      id: '/texas-government/municipal-finance-tax-debt-history'
+      path: '/municipal-finance-tax-debt-history'
+      fullPath: '/texas-government/municipal-finance-tax-debt-history'
+      preLoaderRoute: typeof TexasGovernmentMunicipalFinanceTaxDebtHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/municipal-elections-representation-history': {
+      id: '/texas-government/municipal-elections-representation-history'
+      path: '/municipal-elections-representation-history'
+      fullPath: '/texas-government/municipal-elections-representation-history'
+      preLoaderRoute: typeof TexasGovernmentMunicipalElectionsRepresentationHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/mayor-city-council-history': {
+      id: '/texas-government/mayor-city-council-history'
+      path: '/mayor-city-council-history'
+      fullPath: '/texas-government/mayor-city-council-history'
+      preLoaderRoute: typeof TexasGovernmentMayorCityCouncilHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/lieutenant-governor-history': {
+      id: '/texas-government/lieutenant-governor-history'
+      path: '/lieutenant-governor-history'
+      fullPath: '/texas-government/lieutenant-governor-history'
+      preLoaderRoute: typeof TexasGovernmentLieutenantGovernorHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/justice-of-the-peace-constable-history': {
+      id: '/texas-government/justice-of-the-peace-constable-history'
+      path: '/justice-of-the-peace-constable-history'
+      fullPath: '/texas-government/justice-of-the-peace-constable-history'
+      preLoaderRoute: typeof TexasGovernmentJusticeOfThePeaceConstableHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/judicial-selection-elections': {
+      id: '/texas-government/judicial-selection-elections'
+      path: '/judicial-selection-elections'
+      fullPath: '/texas-government/judicial-selection-elections'
+      preLoaderRoute: typeof TexasGovernmentJudicialSelectionElectionsRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/home-rule-general-law-cities-history': {
+      id: '/texas-government/home-rule-general-law-cities-history'
+      path: '/home-rule-general-law-cities-history'
+      fullPath: '/texas-government/home-rule-general-law-cities-history'
+      preLoaderRoute: typeof TexasGovernmentHomeRuleGeneralLawCitiesHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/governor-history': {
+      id: '/texas-government/governor-history'
+      path: '/governor-history'
+      fullPath: '/texas-government/governor-history'
+      preLoaderRoute: typeof TexasGovernmentGovernorHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/fifteenth-court-of-appeals': {
+      id: '/texas-government/fifteenth-court-of-appeals'
+      path: '/fifteenth-court-of-appeals'
+      fullPath: '/texas-government/fifteenth-court-of-appeals'
+      preLoaderRoute: typeof TexasGovernmentFifteenthCourtOfAppealsRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/court-of-criminal-appeals-history': {
+      id: '/texas-government/court-of-criminal-appeals-history'
+      path: '/court-of-criminal-appeals-history'
+      fullPath: '/texas-government/court-of-criminal-appeals-history'
+      preLoaderRoute: typeof TexasGovernmentCourtOfCriminalAppealsHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/county-sheriff-history': {
+      id: '/texas-government/county-sheriff-history'
+      path: '/county-sheriff-history'
+      fullPath: '/texas-government/county-sheriff-history'
+      preLoaderRoute: typeof TexasGovernmentCountySheriffHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/county-judge-history': {
+      id: '/texas-government/county-judge-history'
+      path: '/county-judge-history'
+      fullPath: '/texas-government/county-judge-history'
+      preLoaderRoute: typeof TexasGovernmentCountyJudgeHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/county-district-clerk-history': {
+      id: '/texas-government/county-district-clerk-history'
+      path: '/county-district-clerk-history'
+      fullPath: '/texas-government/county-district-clerk-history'
+      preLoaderRoute: typeof TexasGovernmentCountyDistrictClerkHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/county-commissioner-history': {
+      id: '/texas-government/county-commissioner-history'
+      path: '/county-commissioner-history'
+      fullPath: '/texas-government/county-commissioner-history'
+      preLoaderRoute: typeof TexasGovernmentCountyCommissionerHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/comptroller-history': {
+      id: '/texas-government/comptroller-history'
+      path: '/comptroller-history'
+      fullPath: '/texas-government/comptroller-history'
+      preLoaderRoute: typeof TexasGovernmentComptrollerHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/commissioners-court-history': {
+      id: '/texas-government/commissioners-court-history'
+      path: '/commissioners-court-history'
+      fullPath: '/texas-government/commissioners-court-history'
+      preLoaderRoute: typeof TexasGovernmentCommissionersCourtHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-government/city-manager-government-history': {
+      id: '/texas-government/city-manager-government-history'
+      path: '/city-manager-government-history'
+      fullPath: '/texas-government/city-manager-government-history'
+      preLoaderRoute: typeof TexasGovernmentCityManagerGovernmentHistoryRouteImport
+      parentRoute: typeof TexasGovernmentRoute
     }
     '/texas-government/agencies': {
       id: '/texas-government/agencies'
@@ -7030,6 +9443,13 @@ declare module '@tanstack/react-router' {
       path: '/state-federal-power'
       fullPath: '/policy/state-federal-power'
       preLoaderRoute: typeof PolicyStateFederalPowerRouteImport
+      parentRoute: typeof PolicyRoute
+    }
+    '/policy/social-media-viewpoint-moderation': {
+      id: '/policy/social-media-viewpoint-moderation'
+      path: '/social-media-viewpoint-moderation'
+      fullPath: '/policy/social-media-viewpoint-moderation'
+      preLoaderRoute: typeof PolicySocialMediaViewpointModerationRouteImport
       parentRoute: typeof PolicyRoute
     }
     '/policy/semiconductor-manufacturing': {
@@ -7480,25 +9900,88 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NewsSlugRouteImport
       parentRoute: typeof NewsRoute
     }
-    '/laws/topics': {
-      id: '/laws/topics'
-      path: '/topics'
+    '/laws_/topics': {
+      id: '/laws_/topics'
+      path: '/laws/topics'
       fullPath: '/laws/topics'
       preLoaderRoute: typeof LawsTopicsRouteImport
-      parentRoute: typeof LawsRoute
+      parentRoute: typeof rootRouteImport
     }
-    '/laws/effective-dates': {
-      id: '/laws/effective-dates'
-      path: '/effective-dates'
+    '/laws_/effective-dates': {
+      id: '/laws_/effective-dates'
+      path: '/laws/effective-dates'
       fullPath: '/laws/effective-dates'
       preLoaderRoute: typeof LawsEffectiveDatesRouteImport
-      parentRoute: typeof LawsRoute
+      parentRoute: typeof rootRouteImport
     }
-    '/laws/constitutional-amendments': {
-      id: '/laws/constitutional-amendments'
-      path: '/constitutional-amendments'
+    '/laws_/constitutional-amendments': {
+      id: '/laws_/constitutional-amendments'
+      path: '/laws/constitutional-amendments'
       fullPath: '/laws/constitutional-amendments'
       preLoaderRoute: typeof LawsConstitutionalAmendmentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/laws/texas-property-tax-laws-explained': {
+      id: '/laws/texas-property-tax-laws-explained'
+      path: '/texas-property-tax-laws-explained'
+      fullPath: '/laws/texas-property-tax-laws-explained'
+      preLoaderRoute: typeof LawsTexasPropertyTaxLawsExplainedRouteImport
+      parentRoute: typeof LawsRoute
+    }
+    '/laws/texas-property-tax-laws': {
+      id: '/laws/texas-property-tax-laws'
+      path: '/texas-property-tax-laws'
+      fullPath: '/laws/texas-property-tax-laws'
+      preLoaderRoute: typeof LawsTexasPropertyTaxLawsRouteImport
+      parentRoute: typeof LawsRoute
+    }
+    '/laws/texas-new-laws-2026': {
+      id: '/laws/texas-new-laws-2026'
+      path: '/texas-new-laws-2026'
+      fullPath: '/laws/texas-new-laws-2026'
+      preLoaderRoute: typeof LawsTexasNewLaws2026RouteImport
+      parentRoute: typeof LawsRoute
+    }
+    '/laws/texas-gun-laws-explained': {
+      id: '/laws/texas-gun-laws-explained'
+      path: '/texas-gun-laws-explained'
+      fullPath: '/laws/texas-gun-laws-explained'
+      preLoaderRoute: typeof LawsTexasGunLawsExplainedRouteImport
+      parentRoute: typeof LawsRoute
+    }
+    '/laws/texas-gun-laws': {
+      id: '/laws/texas-gun-laws'
+      path: '/texas-gun-laws'
+      fullPath: '/laws/texas-gun-laws'
+      preLoaderRoute: typeof LawsTexasGunLawsRouteImport
+      parentRoute: typeof LawsRoute
+    }
+    '/laws/texas-election-laws-explained': {
+      id: '/laws/texas-election-laws-explained'
+      path: '/texas-election-laws-explained'
+      fullPath: '/laws/texas-election-laws-explained'
+      preLoaderRoute: typeof LawsTexasElectionLawsExplainedRouteImport
+      parentRoute: typeof LawsRoute
+    }
+    '/laws/texas-election-laws': {
+      id: '/laws/texas-election-laws'
+      path: '/texas-election-laws'
+      fullPath: '/laws/texas-election-laws'
+      preLoaderRoute: typeof LawsTexasElectionLawsRouteImport
+      parentRoute: typeof LawsRoute
+    }
+    '/laws/texas-constitution': {
+      id: '/laws/texas-constitution'
+      path: '/texas-constitution'
+      fullPath: '/laws/texas-constitution'
+      preLoaderRoute: typeof LawsTexasConstitutionRouteImport
+      parentRoute: typeof LawsRoute
+    }
+    '/laws/show-id-to-police-in-texas': {
+      id: '/laws/show-id-to-police-in-texas'
+      path: '/show-id-to-police-in-texas'
+      fullPath: '/laws/show-id-to-police-in-texas'
+      preLoaderRoute: typeof LawsShowIdToPoliceInTexasRouteImport
       parentRoute: typeof LawsRoute
     }
     '/issues/texas-policy-handbook': {
@@ -8194,6 +10677,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExploreCavernSlugRouteImport
       parentRoute: typeof ExploreRoute
     }
+    '/elections/voting_/voter-registration-card': {
+      id: '/elections/voting_/voter-registration-card'
+      path: '/voting/voter-registration-card'
+      fullPath: '/elections/voting/voter-registration-card'
+      preLoaderRoute: typeof ElectionsVotingVoterRegistrationCardRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/voting_/polling-place': {
+      id: '/elections/voting_/polling-place'
+      path: '/voting/polling-place'
+      fullPath: '/elections/voting/polling-place'
+      preLoaderRoute: typeof ElectionsVotingPollingPlaceRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/voting_/polling-hours': {
+      id: '/elections/voting_/polling-hours'
+      path: '/voting/polling-hours'
+      fullPath: '/elections/voting/polling-hours'
+      preLoaderRoute: typeof ElectionsVotingPollingHoursRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
     '/elections/results/$resultSlug': {
       id: '/elections/results/$resultSlug'
       path: '/$resultSlug'
@@ -8250,6 +10754,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiShopStripeWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/texasdefined-government-search': {
+      id: '/api/public/texasdefined-government-search'
+      path: '/api/public/texasdefined-government-search'
+      fullPath: '/api/public/texasdefined-government-search'
+      preLoaderRoute: typeof ApiPublicTexasdefinedGovernmentSearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/texasdefined-checkout': {
       id: '/api/public/texasdefined-checkout'
       path: '/api/public/texasdefined-checkout'
@@ -8271,11 +10782,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicOfficialBillTextRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/newsroom-source-health': {
+      id: '/api/public/newsroom-source-health'
+      path: '/api/public/newsroom-source-health'
+      fullPath: '/api/public/newsroom-source-health'
+      preLoaderRoute: typeof ApiPublicNewsroomSourceHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/newsroom-health': {
       id: '/api/public/newsroom-health'
       path: '/api/public/newsroom-health'
       fullPath: '/api/public/newsroom-health'
       preLoaderRoute: typeof ApiPublicNewsroomHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/flyover-aug10-health': {
+      id: '/api/public/flyover-aug10-health'
+      path: '/api/public/flyover-aug10-health'
+      fullPath: '/api/public/flyover-aug10-health'
+      preLoaderRoute: typeof ApiPublicFlyoverAug10HealthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/deployment-fingerprint': {
@@ -8325,6 +10850,13 @@ declare module '@tanstack/react-router' {
       path: '/api/admin/gsc-sync'
       fullPath: '/api/admin/gsc-sync'
       preLoaderRoute: typeof ApiAdminGscSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/gsc-sitewide-sync': {
+      id: '/api/admin/gsc-sitewide-sync'
+      path: '/api/admin/gsc-sitewide-sync'
+      fullPath: '/api/admin/gsc-sitewide-sync'
+      preLoaderRoute: typeof ApiAdminGscSitewideSyncRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/elections/results': {
@@ -8439,11 +10971,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/ops/etsy-halloween-seo-20260911': {
+      id: '/api/public/ops/etsy-halloween-seo-20260911'
+      path: '/api/public/ops/etsy-halloween-seo-20260911'
+      fullPath: '/api/public/ops/etsy-halloween-seo-20260911'
+      preLoaderRoute: typeof ApiPublicOpsEtsyHalloweenSeo20260911RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/track-variant': {
       id: '/api/public/hooks/track-variant'
       path: '/api/public/hooks/track-variant'
       fullPath: '/api/public/hooks/track-variant'
       preLoaderRoute: typeof ApiPublicHooksTrackVariantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/texasdefined-facebook-comment-signals': {
+      id: '/api/public/hooks/texasdefined-facebook-comment-signals'
+      path: '/api/public/hooks/texasdefined-facebook-comment-signals'
+      fullPath: '/api/public/hooks/texasdefined-facebook-comment-signals'
+      preLoaderRoute: typeof ApiPublicHooksTexasdefinedFacebookCommentSignalsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/sync-printify': {
@@ -8523,11 +11069,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksPublishingSafetyNetRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/publish-texasdefined-reel': {
+      id: '/api/public/hooks/publish-texasdefined-reel'
+      path: '/api/public/hooks/publish-texasdefined-reel'
+      fullPath: '/api/public/hooks/publish-texasdefined-reel'
+      preLoaderRoute: typeof ApiPublicHooksPublishTexasdefinedReelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/publish-texasdefined-generated-image': {
+      id: '/api/public/hooks/publish-texasdefined-generated-image'
+      path: '/api/public/hooks/publish-texasdefined-generated-image'
+      fullPath: '/api/public/hooks/publish-texasdefined-generated-image'
+      preLoaderRoute: typeof ApiPublicHooksPublishTexasdefinedGeneratedImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/publish-overdue-gap': {
       id: '/api/public/hooks/publish-overdue-gap'
       path: '/api/public/hooks/publish-overdue-gap'
       fullPath: '/api/public/hooks/publish-overdue-gap'
       preLoaderRoute: typeof ApiPublicHooksPublishOverdueGapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/publish-ktr-generated-attention-image': {
+      id: '/api/public/hooks/publish-ktr-generated-attention-image'
+      path: '/api/public/hooks/publish-ktr-generated-attention-image'
+      fullPath: '/api/public/hooks/publish-ktr-generated-attention-image'
+      preLoaderRoute: typeof ApiPublicHooksPublishKtrGeneratedAttentionImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/openai-article-image-recovery': {
+      id: '/api/public/hooks/openai-article-image-recovery'
+      path: '/api/public/hooks/openai-article-image-recovery'
+      fullPath: '/api/public/hooks/openai-article-image-recovery'
+      preLoaderRoute: typeof ApiPublicHooksOpenaiArticleImageRecoveryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/normalize-newsroom-feed': {
@@ -8570,6 +11144,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/hooks/image-backlog-recovery'
       fullPath: '/api/public/hooks/image-backlog-recovery'
       preLoaderRoute: typeof ApiPublicHooksImageBacklogRecoveryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/hydrate-newsroom-source-pages': {
+      id: '/api/public/hooks/hydrate-newsroom-source-pages'
+      path: '/api/public/hooks/hydrate-newsroom-source-pages'
+      fullPath: '/api/public/hooks/hydrate-newsroom-source-pages'
+      preLoaderRoute: typeof ApiPublicHooksHydrateNewsroomSourcePagesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/health': {
@@ -8677,6 +11258,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksBackfillFeaturedImagesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/auto-facebook-post-texasdefined-with-image': {
+      id: '/api/public/hooks/auto-facebook-post-texasdefined-with-image'
+      path: '/api/public/hooks/auto-facebook-post-texasdefined-with-image'
+      fullPath: '/api/public/hooks/auto-facebook-post-texasdefined-with-image'
+      preLoaderRoute: typeof ApiPublicHooksAutoFacebookPostTexasdefinedWithImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/auto-facebook-post-texasdefined-smart': {
       id: '/api/public/hooks/auto-facebook-post-texasdefined-smart'
       path: '/api/public/hooks/auto-facebook-post-texasdefined-smart'
@@ -8689,6 +11277,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/hooks/auto-facebook-post-texasdefined'
       fullPath: '/api/public/hooks/auto-facebook-post-texasdefined'
       preLoaderRoute: typeof ApiPublicHooksAutoFacebookPostTexasdefinedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/auto-facebook-post-smart': {
+      id: '/api/public/hooks/auto-facebook-post-smart'
+      path: '/api/public/hooks/auto-facebook-post-smart'
+      fullPath: '/api/public/hooks/auto-facebook-post-smart'
+      preLoaderRoute: typeof ApiPublicHooksAutoFacebookPostSmartRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/auto-facebook-post': {
@@ -8782,12 +11377,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicOauthFacebookCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/bills/texas/$legislature/$session/$billType/$billNumber': {
+      id: '/bills/texas/$legislature/$session/$billType/$billNumber'
+      path: '/texas/$legislature/$session/$billType/$billNumber'
+      fullPath: '/bills/texas/$legislature/$session/$billType/$billNumber'
+      preLoaderRoute: typeof BillsTexasLegislatureSessionBillTypeBillNumberRouteImport
+      parentRoute: typeof BillsRoute
+    }
     '/bills/texas/$legislature/$billType/$billNumber/reference.json': {
       id: '/bills/texas/$legislature/$billType/$billNumber/reference.json'
       path: '/reference.json'
       fullPath: '/bills/texas/$legislature/$billType/$billNumber/reference.json'
       preLoaderRoute: typeof BillsTexasLegislatureBillTypeBillNumberReferenceDotjsonRouteImport
       parentRoute: typeof BillsTexasLegislatureBillTypeBillNumberRoute
+    }
+    '/bills/texas/$legislature/$session/$billType/$billNumber/reference.json': {
+      id: '/bills/texas/$legislature/$session/$billType/$billNumber/reference.json'
+      path: '/reference.json'
+      fullPath: '/bills/texas/$legislature/$session/$billType/$billNumber/reference.json'
+      preLoaderRoute: typeof BillsTexasLegislatureSessionBillTypeBillNumberReferenceDotjsonRouteImport
+      parentRoute: typeof BillsTexasLegislatureSessionBillTypeBillNumberRoute
     }
   }
 }
@@ -8857,12 +11466,28 @@ const BillsTexasLegislatureBillTypeBillNumberRouteWithChildren =
     BillsTexasLegislatureBillTypeBillNumberRouteChildren,
   )
 
+interface BillsTexasLegislatureSessionBillTypeBillNumberRouteChildren {
+  BillsTexasLegislatureSessionBillTypeBillNumberReferenceDotjsonRoute: typeof BillsTexasLegislatureSessionBillTypeBillNumberReferenceDotjsonRoute
+}
+
+const BillsTexasLegislatureSessionBillTypeBillNumberRouteChildren: BillsTexasLegislatureSessionBillTypeBillNumberRouteChildren =
+  {
+    BillsTexasLegislatureSessionBillTypeBillNumberReferenceDotjsonRoute:
+      BillsTexasLegislatureSessionBillTypeBillNumberReferenceDotjsonRoute,
+  }
+
+const BillsTexasLegislatureSessionBillTypeBillNumberRouteWithChildren =
+  BillsTexasLegislatureSessionBillTypeBillNumberRoute._addFileChildren(
+    BillsTexasLegislatureSessionBillTypeBillNumberRouteChildren,
+  )
+
 interface BillsRouteChildren {
   BillsIndexRoute: typeof BillsIndexRoute
   BillsSubjectSubjectSlugRoute: typeof BillsSubjectSubjectSlugRoute
   BillsTexasLegislatureIndexRoute: typeof BillsTexasLegislatureIndexRoute
   BillsTexasLegislatureBillTypeBillNumberRoute: typeof BillsTexasLegislatureBillTypeBillNumberRouteWithChildren
   BillsTexasLegislatureBillTypeIndexRoute: typeof BillsTexasLegislatureBillTypeIndexRoute
+  BillsTexasLegislatureSessionBillTypeBillNumberRoute: typeof BillsTexasLegislatureSessionBillTypeBillNumberRouteWithChildren
 }
 
 const BillsRouteChildren: BillsRouteChildren = {
@@ -8873,6 +11498,8 @@ const BillsRouteChildren: BillsRouteChildren = {
     BillsTexasLegislatureBillTypeBillNumberRouteWithChildren,
   BillsTexasLegislatureBillTypeIndexRoute:
     BillsTexasLegislatureBillTypeIndexRoute,
+  BillsTexasLegislatureSessionBillTypeBillNumberRoute:
+    BillsTexasLegislatureSessionBillTypeBillNumberRouteWithChildren,
 }
 
 const BillsRouteWithChildren = BillsRoute._addFileChildren(BillsRouteChildren)
@@ -9021,6 +11648,9 @@ interface ElectionsRouteChildren {
   ElectionsIndexRoute: typeof ElectionsIndexRoute
   ElectionsCandidatesCandidateSlugRoute: typeof ElectionsCandidatesCandidateSlugRoute
   ElectionsRacesRaceSlugRoute: typeof ElectionsRacesRaceSlugRoute
+  ElectionsVotingPollingHoursRoute: typeof ElectionsVotingPollingHoursRoute
+  ElectionsVotingPollingPlaceRoute: typeof ElectionsVotingPollingPlaceRoute
+  ElectionsVotingVoterRegistrationCardRoute: typeof ElectionsVotingVoterRegistrationCardRoute
 }
 
 const ElectionsRouteChildren: ElectionsRouteChildren = {
@@ -9040,6 +11670,10 @@ const ElectionsRouteChildren: ElectionsRouteChildren = {
   ElectionsIndexRoute: ElectionsIndexRoute,
   ElectionsCandidatesCandidateSlugRoute: ElectionsCandidatesCandidateSlugRoute,
   ElectionsRacesRaceSlugRoute: ElectionsRacesRaceSlugRoute,
+  ElectionsVotingPollingHoursRoute: ElectionsVotingPollingHoursRoute,
+  ElectionsVotingPollingPlaceRoute: ElectionsVotingPollingPlaceRoute,
+  ElectionsVotingVoterRegistrationCardRoute:
+    ElectionsVotingVoterRegistrationCardRoute,
 }
 
 const ElectionsRouteWithChildren = ElectionsRoute._addFileChildren(
@@ -9115,16 +11749,31 @@ const ExploreRouteWithChildren =
   ExploreRoute._addFileChildren(ExploreRouteChildren)
 
 interface LawsRouteChildren {
-  LawsConstitutionalAmendmentsRoute: typeof LawsConstitutionalAmendmentsRoute
-  LawsEffectiveDatesRoute: typeof LawsEffectiveDatesRoute
-  LawsTopicsRoute: typeof LawsTopicsRoute
+  LawsShowIdToPoliceInTexasRoute: typeof LawsShowIdToPoliceInTexasRoute
+  LawsTexasConstitutionRoute: typeof LawsTexasConstitutionRoute
+  LawsTexasElectionLawsRoute: typeof LawsTexasElectionLawsRoute
+  LawsTexasElectionLawsExplainedRoute: typeof LawsTexasElectionLawsExplainedRoute
+  LawsTexasGunLawsRoute: typeof LawsTexasGunLawsRoute
+  LawsTexasGunLawsExplainedRoute: typeof LawsTexasGunLawsExplainedRoute
+  LawsTexasNewLaws2026Route: typeof LawsTexasNewLaws2026Route
+  LawsTexasPropertyTaxLawsRoute: typeof LawsTexasPropertyTaxLawsRoute
+  LawsTexasPropertyTaxLawsExplainedRoute: typeof LawsTexasPropertyTaxLawsExplainedRoute
+  LawsIndexRoute: typeof LawsIndexRoute
   LawsTopicSlugRoute: typeof LawsTopicSlugRoute
 }
 
 const LawsRouteChildren: LawsRouteChildren = {
-  LawsConstitutionalAmendmentsRoute: LawsConstitutionalAmendmentsRoute,
-  LawsEffectiveDatesRoute: LawsEffectiveDatesRoute,
-  LawsTopicsRoute: LawsTopicsRoute,
+  LawsShowIdToPoliceInTexasRoute: LawsShowIdToPoliceInTexasRoute,
+  LawsTexasConstitutionRoute: LawsTexasConstitutionRoute,
+  LawsTexasElectionLawsRoute: LawsTexasElectionLawsRoute,
+  LawsTexasElectionLawsExplainedRoute: LawsTexasElectionLawsExplainedRoute,
+  LawsTexasGunLawsRoute: LawsTexasGunLawsRoute,
+  LawsTexasGunLawsExplainedRoute: LawsTexasGunLawsExplainedRoute,
+  LawsTexasNewLaws2026Route: LawsTexasNewLaws2026Route,
+  LawsTexasPropertyTaxLawsRoute: LawsTexasPropertyTaxLawsRoute,
+  LawsTexasPropertyTaxLawsExplainedRoute:
+    LawsTexasPropertyTaxLawsExplainedRoute,
+  LawsIndexRoute: LawsIndexRoute,
   LawsTopicSlugRoute: LawsTopicSlugRoute,
 }
 
@@ -9236,11 +11885,13 @@ interface PolicyRouteChildren {
   PolicySchoolSafetySecurityRoute: typeof PolicySchoolSafetySecurityRoute
   PolicyScopeActOnlineMinorsRoute: typeof PolicyScopeActOnlineMinorsRoute
   PolicySemiconductorManufacturingRoute: typeof PolicySemiconductorManufacturingRoute
+  PolicySocialMediaViewpointModerationRoute: typeof PolicySocialMediaViewpointModerationRoute
   PolicyStateFederalPowerRoute: typeof PolicyStateFederalPowerRoute
   PolicyTanfWorkParticipationRoute: typeof PolicyTanfWorkParticipationRoute
   PolicyTexasCyberCommandRoute: typeof PolicyTexasCyberCommandRoute
   PolicyViolentOffenseBailRoute: typeof PolicyViolentOffenseBailRoute
   PolicyWomensSportsRoute: typeof PolicyWomensSportsRoute
+  PolicyIndexRoute: typeof PolicyIndexRoute
 }
 
 const PolicyRouteChildren: PolicyRouteChildren = {
@@ -9290,11 +11941,14 @@ const PolicyRouteChildren: PolicyRouteChildren = {
   PolicySchoolSafetySecurityRoute: PolicySchoolSafetySecurityRoute,
   PolicyScopeActOnlineMinorsRoute: PolicyScopeActOnlineMinorsRoute,
   PolicySemiconductorManufacturingRoute: PolicySemiconductorManufacturingRoute,
+  PolicySocialMediaViewpointModerationRoute:
+    PolicySocialMediaViewpointModerationRoute,
   PolicyStateFederalPowerRoute: PolicyStateFederalPowerRoute,
   PolicyTanfWorkParticipationRoute: PolicyTanfWorkParticipationRoute,
   PolicyTexasCyberCommandRoute: PolicyTexasCyberCommandRoute,
   PolicyViolentOffenseBailRoute: PolicyViolentOffenseBailRoute,
   PolicyWomensSportsRoute: PolicyWomensSportsRoute,
+  PolicyIndexRoute: PolicyIndexRoute,
 }
 
 const PolicyRouteWithChildren =
@@ -9332,6 +11986,16 @@ const ShopRouteChildren: ShopRouteChildren = {
 }
 
 const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)
+
+interface TexasRouteChildren {
+  TexasPropertyTaxes2026Route: typeof TexasPropertyTaxes2026Route
+}
+
+const TexasRouteChildren: TexasRouteChildren = {
+  TexasPropertyTaxes2026Route: TexasPropertyTaxes2026Route,
+}
+
+const TexasRouteWithChildren = TexasRoute._addFileChildren(TexasRouteChildren)
 
 interface TexasBusinessRouteChildren {
   TexasBusinessTopicRoute: typeof TexasBusinessTopicRoute
@@ -9401,14 +12065,104 @@ const TexasGovernmentAgenciesRouteWithChildren =
 interface TexasGovernmentRouteChildren {
   TexasGovernmentEntitySlugRoute: typeof TexasGovernmentEntitySlugRoute
   TexasGovernmentAgenciesRoute: typeof TexasGovernmentAgenciesRouteWithChildren
+  TexasGovernmentCityManagerGovernmentHistoryRoute: typeof TexasGovernmentCityManagerGovernmentHistoryRoute
+  TexasGovernmentCommissionersCourtHistoryRoute: typeof TexasGovernmentCommissionersCourtHistoryRoute
+  TexasGovernmentComptrollerHistoryRoute: typeof TexasGovernmentComptrollerHistoryRoute
+  TexasGovernmentCountyCommissionerHistoryRoute: typeof TexasGovernmentCountyCommissionerHistoryRoute
+  TexasGovernmentCountyDistrictClerkHistoryRoute: typeof TexasGovernmentCountyDistrictClerkHistoryRoute
+  TexasGovernmentCountyJudgeHistoryRoute: typeof TexasGovernmentCountyJudgeHistoryRoute
+  TexasGovernmentCountySheriffHistoryRoute: typeof TexasGovernmentCountySheriffHistoryRoute
+  TexasGovernmentCourtOfCriminalAppealsHistoryRoute: typeof TexasGovernmentCourtOfCriminalAppealsHistoryRoute
   TexasGovernmentFifteenthCourtOfAppealsRoute: typeof TexasGovernmentFifteenthCourtOfAppealsRoute
+  TexasGovernmentGovernorHistoryRoute: typeof TexasGovernmentGovernorHistoryRoute
+  TexasGovernmentHomeRuleGeneralLawCitiesHistoryRoute: typeof TexasGovernmentHomeRuleGeneralLawCitiesHistoryRoute
+  TexasGovernmentJudicialSelectionElectionsRoute: typeof TexasGovernmentJudicialSelectionElectionsRoute
+  TexasGovernmentJusticeOfThePeaceConstableHistoryRoute: typeof TexasGovernmentJusticeOfThePeaceConstableHistoryRoute
+  TexasGovernmentLieutenantGovernorHistoryRoute: typeof TexasGovernmentLieutenantGovernorHistoryRoute
+  TexasGovernmentMayorCityCouncilHistoryRoute: typeof TexasGovernmentMayorCityCouncilHistoryRoute
+  TexasGovernmentMunicipalElectionsRepresentationHistoryRoute: typeof TexasGovernmentMunicipalElectionsRepresentationHistoryRoute
+  TexasGovernmentMunicipalFinanceTaxDebtHistoryRoute: typeof TexasGovernmentMunicipalFinanceTaxDebtHistoryRoute
+  TexasGovernmentSpeakerOfTheHouseHistoryRoute: typeof TexasGovernmentSpeakerOfTheHouseHistoryRoute
+  TexasGovernmentStateCommissionOnJudicialConductRoute: typeof TexasGovernmentStateCommissionOnJudicialConductRoute
+  TexasGovernmentTaxAssessorCollectorHistoryRoute: typeof TexasGovernmentTaxAssessorCollectorHistoryRoute
+  TexasGovernmentTexasBusinessCourtRoute: typeof TexasGovernmentTexasBusinessCourtRoute
+  TexasGovernmentTexasCountyGovernmentHistoryRoute: typeof TexasGovernmentTexasCountyGovernmentHistoryRoute
+  TexasGovernmentTexasCourtOfCriminalAppealsHistoryRoute: typeof TexasGovernmentTexasCourtOfCriminalAppealsHistoryRoute
+  TexasGovernmentTexasGovernmentHistoryRoute: typeof TexasGovernmentTexasGovernmentHistoryRoute
+  TexasGovernmentTexasJudicialSelectionHistoryRoute: typeof TexasGovernmentTexasJudicialSelectionHistoryRoute
+  TexasGovernmentTexasLegislatureHistoryRoute: typeof TexasGovernmentTexasLegislatureHistoryRoute
+  TexasGovernmentTexasMunicipalCourtsHistoryRoute: typeof TexasGovernmentTexasMunicipalCourtsHistoryRoute
+  TexasGovernmentTexasMunicipalGovernmentHistoryRoute: typeof TexasGovernmentTexasMunicipalGovernmentHistoryRoute
+  TexasGovernmentTexasSpecialDistrictGovernmentHistoryRoute: typeof TexasGovernmentTexasSpecialDistrictGovernmentHistoryRoute
+  TexasGovernmentTexasSupremeCourtHistoryRoute: typeof TexasGovernmentTexasSupremeCourtHistoryRoute
+  TexasGovernmentTexasTrialCourtsRoute: typeof TexasGovernmentTexasTrialCourtsRoute
+  TexasGovernmentIndexRoute: typeof TexasGovernmentIndexRoute
 }
 
 const TexasGovernmentRouteChildren: TexasGovernmentRouteChildren = {
   TexasGovernmentEntitySlugRoute: TexasGovernmentEntitySlugRoute,
   TexasGovernmentAgenciesRoute: TexasGovernmentAgenciesRouteWithChildren,
+  TexasGovernmentCityManagerGovernmentHistoryRoute:
+    TexasGovernmentCityManagerGovernmentHistoryRoute,
+  TexasGovernmentCommissionersCourtHistoryRoute:
+    TexasGovernmentCommissionersCourtHistoryRoute,
+  TexasGovernmentComptrollerHistoryRoute:
+    TexasGovernmentComptrollerHistoryRoute,
+  TexasGovernmentCountyCommissionerHistoryRoute:
+    TexasGovernmentCountyCommissionerHistoryRoute,
+  TexasGovernmentCountyDistrictClerkHistoryRoute:
+    TexasGovernmentCountyDistrictClerkHistoryRoute,
+  TexasGovernmentCountyJudgeHistoryRoute:
+    TexasGovernmentCountyJudgeHistoryRoute,
+  TexasGovernmentCountySheriffHistoryRoute:
+    TexasGovernmentCountySheriffHistoryRoute,
+  TexasGovernmentCourtOfCriminalAppealsHistoryRoute:
+    TexasGovernmentCourtOfCriminalAppealsHistoryRoute,
   TexasGovernmentFifteenthCourtOfAppealsRoute:
     TexasGovernmentFifteenthCourtOfAppealsRoute,
+  TexasGovernmentGovernorHistoryRoute: TexasGovernmentGovernorHistoryRoute,
+  TexasGovernmentHomeRuleGeneralLawCitiesHistoryRoute:
+    TexasGovernmentHomeRuleGeneralLawCitiesHistoryRoute,
+  TexasGovernmentJudicialSelectionElectionsRoute:
+    TexasGovernmentJudicialSelectionElectionsRoute,
+  TexasGovernmentJusticeOfThePeaceConstableHistoryRoute:
+    TexasGovernmentJusticeOfThePeaceConstableHistoryRoute,
+  TexasGovernmentLieutenantGovernorHistoryRoute:
+    TexasGovernmentLieutenantGovernorHistoryRoute,
+  TexasGovernmentMayorCityCouncilHistoryRoute:
+    TexasGovernmentMayorCityCouncilHistoryRoute,
+  TexasGovernmentMunicipalElectionsRepresentationHistoryRoute:
+    TexasGovernmentMunicipalElectionsRepresentationHistoryRoute,
+  TexasGovernmentMunicipalFinanceTaxDebtHistoryRoute:
+    TexasGovernmentMunicipalFinanceTaxDebtHistoryRoute,
+  TexasGovernmentSpeakerOfTheHouseHistoryRoute:
+    TexasGovernmentSpeakerOfTheHouseHistoryRoute,
+  TexasGovernmentStateCommissionOnJudicialConductRoute:
+    TexasGovernmentStateCommissionOnJudicialConductRoute,
+  TexasGovernmentTaxAssessorCollectorHistoryRoute:
+    TexasGovernmentTaxAssessorCollectorHistoryRoute,
+  TexasGovernmentTexasBusinessCourtRoute:
+    TexasGovernmentTexasBusinessCourtRoute,
+  TexasGovernmentTexasCountyGovernmentHistoryRoute:
+    TexasGovernmentTexasCountyGovernmentHistoryRoute,
+  TexasGovernmentTexasCourtOfCriminalAppealsHistoryRoute:
+    TexasGovernmentTexasCourtOfCriminalAppealsHistoryRoute,
+  TexasGovernmentTexasGovernmentHistoryRoute:
+    TexasGovernmentTexasGovernmentHistoryRoute,
+  TexasGovernmentTexasJudicialSelectionHistoryRoute:
+    TexasGovernmentTexasJudicialSelectionHistoryRoute,
+  TexasGovernmentTexasLegislatureHistoryRoute:
+    TexasGovernmentTexasLegislatureHistoryRoute,
+  TexasGovernmentTexasMunicipalCourtsHistoryRoute:
+    TexasGovernmentTexasMunicipalCourtsHistoryRoute,
+  TexasGovernmentTexasMunicipalGovernmentHistoryRoute:
+    TexasGovernmentTexasMunicipalGovernmentHistoryRoute,
+  TexasGovernmentTexasSpecialDistrictGovernmentHistoryRoute:
+    TexasGovernmentTexasSpecialDistrictGovernmentHistoryRoute,
+  TexasGovernmentTexasSupremeCourtHistoryRoute:
+    TexasGovernmentTexasSupremeCourtHistoryRoute,
+  TexasGovernmentTexasTrialCourtsRoute: TexasGovernmentTexasTrialCourtsRoute,
+  TexasGovernmentIndexRoute: TexasGovernmentIndexRoute,
 }
 
 const TexasGovernmentRouteWithChildren = TexasGovernmentRoute._addFileChildren(
@@ -9501,12 +12255,124 @@ const TexasPoliticalReferenceRouteWithChildren =
   )
 
 interface TexasPoliticsRouteChildren {
+  TexasPoliticsCongressOfRepublicOfTexasRoute: typeof TexasPoliticsCongressOfRepublicOfTexasRoute
+  TexasPoliticsConstitutionOf1836RepublicOfTexasRoute: typeof TexasPoliticsConstitutionOf1836RepublicOfTexasRoute
+  TexasPoliticsConstitutionOf1861TexasRoute: typeof TexasPoliticsConstitutionOf1861TexasRoute
+  TexasPoliticsConstitutionOf1866TexasRoute: typeof TexasPoliticsConstitutionOf1866TexasRoute
+  TexasPoliticsConstitutionOf1869TexasRoute: typeof TexasPoliticsConstitutionOf1869TexasRoute
+  TexasPoliticsFergusonEraTexasPoliticsRoute: typeof TexasPoliticsFergusonEraTexasPoliticsRoute
   TexasPoliticsFiguresRoute: typeof TexasPoliticsFiguresRoute
+  TexasPoliticsHowTexasBecameRepublicanRoute: typeof TexasPoliticsHowTexasBecameRepublicanRoute
+  TexasPoliticsPresidentsOfRepublicOfTexasRoute: typeof TexasPoliticsPresidentsOfRepublicOfTexasRoute
+  TexasPoliticsReconstructionRepublicansRoute: typeof TexasPoliticsReconstructionRepublicansRoute
+  TexasPoliticsRepublicOfTexasCapitalsGovernmentSeatsRoute: typeof TexasPoliticsRepublicOfTexasCapitalsGovernmentSeatsRoute
+  TexasPoliticsRepublicOfTexasDebtFinanceRoute: typeof TexasPoliticsRepublicOfTexasDebtFinanceRoute
+  TexasPoliticsRepublicOfTexasDiplomacyRecognitionRoute: typeof TexasPoliticsRepublicOfTexasDiplomacyRecognitionRoute
+  TexasPoliticsRepublicOfTexasGovernmentHistoryRoute: typeof TexasPoliticsRepublicOfTexasGovernmentHistoryRoute
+  TexasPoliticsRepublicToStateGovernmentTransitionRoute: typeof TexasPoliticsRepublicToStateGovernmentTransitionRoute
+  TexasPoliticsSouthTexasRioGrandeValleyPoliticalHistoryRoute: typeof TexasPoliticsSouthTexasRioGrandeValleyPoliticalHistoryRoute
+  TexasPoliticsTexasAnnexationStatehoodHistoryRoute: typeof TexasPoliticsTexasAnnexationStatehoodHistoryRoute
+  TexasPoliticsTexasCivilRightsEraPoliticsRoute: typeof TexasPoliticsTexasCivilRightsEraPoliticsRoute
+  TexasPoliticsTexasConstitutionalConvention1875Route: typeof TexasPoliticsTexasConstitutionalConvention1875Route
+  TexasPoliticsTexasConstitutionalHistoryRoute: typeof TexasPoliticsTexasConstitutionalHistoryRoute
+  TexasPoliticsTexasDemocraticDominance18761952Route: typeof TexasPoliticsTexasDemocraticDominance18761952Route
+  TexasPoliticsTexasDemocraticPartyHistoryRoute: typeof TexasPoliticsTexasDemocraticPartyHistoryRoute
+  TexasPoliticsTexasElectionHistoryRoute: typeof TexasPoliticsTexasElectionHistoryRoute
+  TexasPoliticsTexasGovernmentDuringCivilWarRoute: typeof TexasPoliticsTexasGovernmentDuringCivilWarRoute
+  TexasPoliticsTexasMetroRegionalRealignmentHistoryRoute: typeof TexasPoliticsTexasMetroRegionalRealignmentHistoryRoute
+  TexasPoliticsTexasMexicanAmericanPoliticalOrganizationHistoryRoute: typeof TexasPoliticsTexasMexicanAmericanPoliticalOrganizationHistoryRoute
+  TexasPoliticsTexasNewDealPoliticsRoute: typeof TexasPoliticsTexasNewDealPoliticsRoute
+  TexasPoliticsTexasPoliticalGeographyHistoryRoute: typeof TexasPoliticsTexasPoliticalGeographyHistoryRoute
+  TexasPoliticsTexasPopulistProgressiveEraRoute: typeof TexasPoliticsTexasPopulistProgressiveEraRoute
+  TexasPoliticsTexasReconstructionGovernmentRoute: typeof TexasPoliticsTexasReconstructionGovernmentRoute
+  TexasPoliticsTexasRedistrictingHistoryRoute: typeof TexasPoliticsTexasRedistrictingHistoryRoute
+  TexasPoliticsTexasRepublicanPartyHistoryRoute: typeof TexasPoliticsTexasRepublicanPartyHistoryRoute
+  TexasPoliticsTexasSecessionConvention1861Route: typeof TexasPoliticsTexasSecessionConvention1861Route
+  TexasPoliticsTexasSupremeCourtRealignmentRoute: typeof TexasPoliticsTexasSupremeCourtRealignmentRoute
+  TexasPoliticsTexasUrbanSuburbanRuralPoliticsHistoryRoute: typeof TexasPoliticsTexasUrbanSuburbanRuralPoliticsHistoryRoute
+  TexasPoliticsTexasWhitePrimaryHistoryRoute: typeof TexasPoliticsTexasWhitePrimaryHistoryRoute
+  TexasPoliticsTexasWomenSuffragePoliticalRepresentationHistoryRoute: typeof TexasPoliticsTexasWomenSuffragePoliticalRepresentationHistoryRoute
+  TexasPoliticsVotingRightsHistoryRoute: typeof TexasPoliticsVotingRightsHistoryRoute
+  TexasPoliticsIndexRoute: typeof TexasPoliticsIndexRoute
   TexasPoliticsFiguresFigureSlugRoute: typeof TexasPoliticsFiguresFigureSlugRoute
 }
 
 const TexasPoliticsRouteChildren: TexasPoliticsRouteChildren = {
+  TexasPoliticsCongressOfRepublicOfTexasRoute:
+    TexasPoliticsCongressOfRepublicOfTexasRoute,
+  TexasPoliticsConstitutionOf1836RepublicOfTexasRoute:
+    TexasPoliticsConstitutionOf1836RepublicOfTexasRoute,
+  TexasPoliticsConstitutionOf1861TexasRoute:
+    TexasPoliticsConstitutionOf1861TexasRoute,
+  TexasPoliticsConstitutionOf1866TexasRoute:
+    TexasPoliticsConstitutionOf1866TexasRoute,
+  TexasPoliticsConstitutionOf1869TexasRoute:
+    TexasPoliticsConstitutionOf1869TexasRoute,
+  TexasPoliticsFergusonEraTexasPoliticsRoute:
+    TexasPoliticsFergusonEraTexasPoliticsRoute,
   TexasPoliticsFiguresRoute: TexasPoliticsFiguresRoute,
+  TexasPoliticsHowTexasBecameRepublicanRoute:
+    TexasPoliticsHowTexasBecameRepublicanRoute,
+  TexasPoliticsPresidentsOfRepublicOfTexasRoute:
+    TexasPoliticsPresidentsOfRepublicOfTexasRoute,
+  TexasPoliticsReconstructionRepublicansRoute:
+    TexasPoliticsReconstructionRepublicansRoute,
+  TexasPoliticsRepublicOfTexasCapitalsGovernmentSeatsRoute:
+    TexasPoliticsRepublicOfTexasCapitalsGovernmentSeatsRoute,
+  TexasPoliticsRepublicOfTexasDebtFinanceRoute:
+    TexasPoliticsRepublicOfTexasDebtFinanceRoute,
+  TexasPoliticsRepublicOfTexasDiplomacyRecognitionRoute:
+    TexasPoliticsRepublicOfTexasDiplomacyRecognitionRoute,
+  TexasPoliticsRepublicOfTexasGovernmentHistoryRoute:
+    TexasPoliticsRepublicOfTexasGovernmentHistoryRoute,
+  TexasPoliticsRepublicToStateGovernmentTransitionRoute:
+    TexasPoliticsRepublicToStateGovernmentTransitionRoute,
+  TexasPoliticsSouthTexasRioGrandeValleyPoliticalHistoryRoute:
+    TexasPoliticsSouthTexasRioGrandeValleyPoliticalHistoryRoute,
+  TexasPoliticsTexasAnnexationStatehoodHistoryRoute:
+    TexasPoliticsTexasAnnexationStatehoodHistoryRoute,
+  TexasPoliticsTexasCivilRightsEraPoliticsRoute:
+    TexasPoliticsTexasCivilRightsEraPoliticsRoute,
+  TexasPoliticsTexasConstitutionalConvention1875Route:
+    TexasPoliticsTexasConstitutionalConvention1875Route,
+  TexasPoliticsTexasConstitutionalHistoryRoute:
+    TexasPoliticsTexasConstitutionalHistoryRoute,
+  TexasPoliticsTexasDemocraticDominance18761952Route:
+    TexasPoliticsTexasDemocraticDominance18761952Route,
+  TexasPoliticsTexasDemocraticPartyHistoryRoute:
+    TexasPoliticsTexasDemocraticPartyHistoryRoute,
+  TexasPoliticsTexasElectionHistoryRoute:
+    TexasPoliticsTexasElectionHistoryRoute,
+  TexasPoliticsTexasGovernmentDuringCivilWarRoute:
+    TexasPoliticsTexasGovernmentDuringCivilWarRoute,
+  TexasPoliticsTexasMetroRegionalRealignmentHistoryRoute:
+    TexasPoliticsTexasMetroRegionalRealignmentHistoryRoute,
+  TexasPoliticsTexasMexicanAmericanPoliticalOrganizationHistoryRoute:
+    TexasPoliticsTexasMexicanAmericanPoliticalOrganizationHistoryRoute,
+  TexasPoliticsTexasNewDealPoliticsRoute:
+    TexasPoliticsTexasNewDealPoliticsRoute,
+  TexasPoliticsTexasPoliticalGeographyHistoryRoute:
+    TexasPoliticsTexasPoliticalGeographyHistoryRoute,
+  TexasPoliticsTexasPopulistProgressiveEraRoute:
+    TexasPoliticsTexasPopulistProgressiveEraRoute,
+  TexasPoliticsTexasReconstructionGovernmentRoute:
+    TexasPoliticsTexasReconstructionGovernmentRoute,
+  TexasPoliticsTexasRedistrictingHistoryRoute:
+    TexasPoliticsTexasRedistrictingHistoryRoute,
+  TexasPoliticsTexasRepublicanPartyHistoryRoute:
+    TexasPoliticsTexasRepublicanPartyHistoryRoute,
+  TexasPoliticsTexasSecessionConvention1861Route:
+    TexasPoliticsTexasSecessionConvention1861Route,
+  TexasPoliticsTexasSupremeCourtRealignmentRoute:
+    TexasPoliticsTexasSupremeCourtRealignmentRoute,
+  TexasPoliticsTexasUrbanSuburbanRuralPoliticsHistoryRoute:
+    TexasPoliticsTexasUrbanSuburbanRuralPoliticsHistoryRoute,
+  TexasPoliticsTexasWhitePrimaryHistoryRoute:
+    TexasPoliticsTexasWhitePrimaryHistoryRoute,
+  TexasPoliticsTexasWomenSuffragePoliticalRepresentationHistoryRoute:
+    TexasPoliticsTexasWomenSuffragePoliticalRepresentationHistoryRoute,
+  TexasPoliticsVotingRightsHistoryRoute: TexasPoliticsVotingRightsHistoryRoute,
+  TexasPoliticsIndexRoute: TexasPoliticsIndexRoute,
   TexasPoliticsFiguresFigureSlugRoute: TexasPoliticsFiguresFigureSlugRoute,
 }
 
@@ -9571,18 +12437,22 @@ const rootRouteChildren: RootRouteChildren = {
   AustinRoute: AustinRoute,
   BillsRoute: BillsRouteWithChildren,
   CandidateGuidesRoute: CandidateGuidesRoute,
+  CartRoute: CartRoute,
   CitationGuideRoute: CitationGuideRoute,
   CivicToolsRoute: CivicToolsRouteWithChildren,
+  CommitteesRoute: CommitteesRoute,
   ContactRoute: ContactRoute,
   ContactLegislatorsRoute: ContactLegislatorsRoute,
   CountyElectionsRoute: CountyElectionsRoute,
   DallasFortWorthRoute: DallasFortWorthRoute,
   DataRoute: DataRouteWithChildren,
+  DataDeletionRoute: DataDeletionRoute,
   DistrictsRoute: DistrictsRouteWithChildren,
   DmvRoute: DmvRouteWithChildren,
   EditorialStandardsRoute: EditorialStandardsRoute,
   ElPasoRoute: ElPasoRoute,
   ElectionsRoute: ElectionsRouteWithChildren,
+  ErcotTexasPowerGridRoute: ErcotTexasPowerGridRoute,
   ExploreRoute: ExploreRouteWithChildren,
   FindMyDmvRoute: FindMyDmvRoute,
   FindMySchoolDistrictRoute: FindMySchoolDistrictRoute,
@@ -9600,13 +12470,17 @@ const rootRouteChildren: RootRouteChildren = {
   LegislatureRoute: LegislatureRoute,
   LivingInTexasRoute: LivingInTexasRoute,
   MerchantImageRoute: MerchantImageRoute,
+  MovingChecklistRoute: MovingChecklistRoute,
   MovingToTexasRoute: MovingToTexasRoute,
   MovingToTexasChecklistRoute: MovingToTexasChecklistRoute,
   NewsRoute: NewsRouteWithChildren,
   NewsSitemapDotxmlRoute: NewsSitemapDotxmlRoute,
   PolicyRoute: PolicyRouteWithChildren,
   PolicyTrackersDottxtRoute: PolicyTrackersDottxtRoute,
+  PoliticalFigureImageRoute: PoliticalFigureImageRoute,
+  PoliticsRoute: PoliticsRoute,
   PrivacyRoute: PrivacyRoute,
+  PropertyTaxesRoute: PropertyTaxesRoute,
   RegisterToVoteRoute: RegisterToVoteRoute,
   RepresentativesRoute: RepresentativesRouteWithChildren,
   ReturnRefundPolicyRoute: ReturnRefundPolicyRoute,
@@ -9618,6 +12492,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapBillsDotxmlRoute: SitemapBillsDotxmlRoute,
   SitemapCommitteesDotxmlRoute: SitemapCommitteesDotxmlRoute,
   SitemapDistrictsDotxmlRoute: SitemapDistrictsDotxmlRoute,
+  SitemapDmvDotxmlRoute: SitemapDmvDotxmlRoute,
   SitemapElectionsDotxmlRoute: SitemapElectionsDotxmlRoute,
   SitemapEvergreenDotxmlRoute: SitemapEvergreenDotxmlRoute,
   SitemapExploreLocationsDotxmlRoute: SitemapExploreLocationsDotxmlRoute,
@@ -9627,7 +12502,10 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapLegislatureDotxmlRoute: SitemapLegislatureDotxmlRoute,
   SitemapNewsDotxmlRoute: SitemapNewsDotxmlRoute,
   SitemapPagesDotxmlRoute: SitemapPagesDotxmlRoute,
+  SitemapPartyRepresentationDotxmlRoute: SitemapPartyRepresentationDotxmlRoute,
   SitemapPoliticalFiguresDotxmlRoute: SitemapPoliticalFiguresDotxmlRoute,
+  SitemapPoliticalGeographyDotxmlRoute: SitemapPoliticalGeographyDotxmlRoute,
+  SitemapPriorityDotxmlRoute: SitemapPriorityDotxmlRoute,
   SitemapProductsDotxmlRoute: SitemapProductsDotxmlRoute,
   SitemapRepresentativesDotxmlRoute: SitemapRepresentativesDotxmlRoute,
   SitemapSourcesDotxmlRoute: SitemapSourcesDotxmlRoute,
@@ -9635,7 +12513,7 @@ const rootRouteChildren: RootRouteChildren = {
   TaxCalculatorRoute: TaxCalculatorRoute,
   TermsRoute: TermsRoute,
   TermsOfServiceRoute: TermsOfServiceRoute,
-  TexasRoute: TexasRoute,
+  TexasRoute: TexasRouteWithChildren,
   TexasAgricultureRoute: TexasAgricultureRoute,
   TexasAttorneyGeneralRoute: TexasAttorneyGeneralRoute,
   TexasBorderSecurityRoute: TexasBorderSecurityRoute,
@@ -9646,19 +12524,23 @@ const rootRouteChildren: RootRouteChildren = {
   TexasClosingCostCalculatorRoute: TexasClosingCostCalculatorRoute,
   TexasComptrollerRoute: TexasComptrollerRoute,
   TexasCostOfLivingCalculatorRoute: TexasCostOfLivingCalculatorRoute,
+  TexasCourtsRoute: TexasCourtsRoute,
   TexasDataRoute: TexasDataRouteWithChildren,
   TexasDownPaymentAssistanceCalculatorRoute:
     TexasDownPaymentAssistanceCalculatorRoute,
   TexasDownPaymentCalculatorRoute: TexasDownPaymentCalculatorRoute,
   TexasEconomyRoute: TexasEconomyRoute,
   TexasEnergyRoute: TexasEnergyRoute,
+  TexasEnergyPolicyRoute: TexasEnergyPolicyRoute,
   TexasFinancialToolsRoute: TexasFinancialToolsRoute,
   TexasFirstTimeHomebuyerProgramsRoute: TexasFirstTimeHomebuyerProgramsRoute,
   TexasGovernmentRoute: TexasGovernmentRouteWithChildren,
+  TexasHelocCalculatorRoute: TexasHelocCalculatorRoute,
   TexasHomeAffordabilityCalculatorRoute: TexasHomeAffordabilityCalculatorRoute,
   TexasHomeEquityCalculatorRoute: TexasHomeEquityCalculatorRoute,
   TexasHomeEquityGrowthCalculatorRoute: TexasHomeEquityGrowthCalculatorRoute,
   TexasHomeInsuranceCalculatorRoute: TexasHomeInsuranceCalculatorRoute,
+  TexasHomeOwnershipCostCalculatorRoute: TexasHomeOwnershipCostCalculatorRoute,
   TexasHomeownershipCostCalculatorRoute: TexasHomeownershipCostCalculatorRoute,
   TexasLawEnforcementRoute: TexasLawEnforcementRoute,
   TexasLawPolicyRoute: TexasLawPolicyRoute,
@@ -9667,26 +12549,34 @@ const rootRouteChildren: RootRouteChildren = {
   TexasLivingRoute: TexasLivingRoute,
   TexasMortgageCalculatorRoute: TexasMortgageCalculatorRoute,
   TexasMortgagePayoffCalculatorRoute: TexasMortgagePayoffCalculatorRoute,
+  TexasMortgageQualificationCalculatorRoute:
+    TexasMortgageQualificationCalculatorRoute,
   TexasMovingCostCalculatorRoute: TexasMovingCostCalculatorRoute,
   TexasNewsRoute: TexasNewsRouteWithChildren,
+  TexasPoliticalFiguresRoute: TexasPoliticalFiguresRoute,
   TexasPoliticalReferenceRoute: TexasPoliticalReferenceRouteWithChildren,
   TexasPoliticsRoute: TexasPoliticsRouteWithChildren,
+  TexasPropertyTaxCalculatorRoute: TexasPropertyTaxCalculatorRoute,
   TexasPropertyTaxIncreaseCalculatorRoute:
     TexasPropertyTaxIncreaseCalculatorRoute,
   TexasPropertyTaxProtestGuideRoute: TexasPropertyTaxProtestGuideRoute,
+  TexasRefinanceCalculatorRoute: TexasRefinanceCalculatorRoute,
   TexasRefinanceSavingsCalculatorRoute: TexasRefinanceSavingsCalculatorRoute,
   TexasRentVsBuyCalculatorRoute: TexasRentVsBuyCalculatorRoute,
   TexasResourcesRoute: TexasResourcesRouteWithChildren,
   TexasSalaryCalculatorRoute: TexasSalaryCalculatorRoute,
   TexasSalaryComparisonByCityRoute: TexasSalaryComparisonByCityRoute,
   TexasSalesTaxExplainedRoute: TexasSalesTaxExplainedRoute,
+  TexasSchoolBoardPowersRoute: TexasSchoolBoardPowersRoute,
   TexasSecretaryOfStateRoute: TexasSecretaryOfStateRoute,
   TexasSportsRoute: TexasSportsRouteWithChildren,
   TexasUtilityCostCalculatorRoute: TexasUtilityCostCalculatorRoute,
   TexasVeteransRoute: TexasVeteransRoute,
+  TexasWaterRoute: TexasWaterRoute,
   TopicsRoute: TopicsRoute,
   UnsubscribeRoute: UnsubscribeRoute,
   VotingLocationsRoute: VotingLocationsRoute,
+  WhyTexasHasNoStateIncomeTaxRoute: WhyTexasHasNoStateIncomeTaxRoute,
   ApiContentDispositionRoute: ApiContentDispositionRoute,
   ApiGovernanceHealthRoute: ApiGovernanceHealthRoute,
   ApiPlatformCoreStatusRoute: ApiPlatformCoreStatusRoute,
@@ -9702,11 +12592,20 @@ const rootRouteChildren: RootRouteChildren = {
   IssuesTexasLocalGovernmentHandbookRoute:
     IssuesTexasLocalGovernmentHandbookRoute,
   IssuesTexasPolicyHandbookRoute: IssuesTexasPolicyHandbookRoute,
+  LawsConstitutionalAmendmentsRoute: LawsConstitutionalAmendmentsRoute,
+  LawsEffectiveDatesRoute: LawsEffectiveDatesRoute,
+  LawsTopicsRoute: LawsTopicsRoute,
   SourcesSlugRoute: SourcesSlugRoute,
+  ToolsClosingCostCalculatorRoute: ToolsClosingCostCalculatorRoute,
+  ToolsHomeAffordabilityCalculatorRoute: ToolsHomeAffordabilityCalculatorRoute,
+  ToolsHomeInsuranceCalculatorRoute: ToolsHomeInsuranceCalculatorRoute,
+  ToolsMortgageCalculatorRoute: ToolsMortgageCalculatorRoute,
+  ToolsPropertyTaxCalculatorRoute: ToolsPropertyTaxCalculatorRoute,
   ToolsTexasBudgetHeadroomRoute: ToolsTexasBudgetHeadroomRoute,
   ToolsTexasRainyDayFundRoute: ToolsTexasRainyDayFundRoute,
   ToolsTexasSpendingGrowthCapRoute: ToolsTexasSpendingGrowthCapRoute,
   ToolsTexasTaxStructureComparisonRoute: ToolsTexasTaxStructureComparisonRoute,
+  ToolsTexasUtilitiesCalculatorRoute: ToolsTexasUtilitiesCalculatorRoute,
   VehiclesAutoInsuranceRequirementsRoute:
     VehiclesAutoInsuranceRequirementsRoute,
   VehiclesBondedTitlesRoute: VehiclesBondedTitlesRoute,
@@ -9736,6 +12635,7 @@ const rootRouteChildren: RootRouteChildren = {
   IssuesIndexRoute: IssuesIndexRoute,
   SourcesIndexRoute: SourcesIndexRoute,
   ToolsIndexRoute: ToolsIndexRoute,
+  ApiAdminGscSitewideSyncRoute: ApiAdminGscSitewideSyncRoute,
   ApiAdminGscSyncRoute: ApiAdminGscSyncRoute,
   ApiAdminLegislationSyncProxyRoute:
     ApiAdminLegislationSyncProxyRouteWithChildren,
@@ -9745,10 +12645,14 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicCrossSitePublicationHealthRoute:
     ApiPublicCrossSitePublicationHealthRoute,
   ApiPublicDeploymentFingerprintRoute: ApiPublicDeploymentFingerprintRoute,
+  ApiPublicFlyoverAug10HealthRoute: ApiPublicFlyoverAug10HealthRoute,
   ApiPublicNewsroomHealthRoute: ApiPublicNewsroomHealthRoute,
+  ApiPublicNewsroomSourceHealthRoute: ApiPublicNewsroomSourceHealthRoute,
   ApiPublicOfficialBillTextRoute: ApiPublicOfficialBillTextRoute,
   ApiPublicStoreProductsRoute: ApiPublicStoreProductsRoute,
   ApiPublicTexasdefinedCheckoutRoute: ApiPublicTexasdefinedCheckoutRoute,
+  ApiPublicTexasdefinedGovernmentSearchRoute:
+    ApiPublicTexasdefinedGovernmentSearchRoute,
   ApiShopStripeWebhookRoute: ApiShopStripeWebhookRoute,
   ProductOfferProductIdVariantIdRoute: ProductOfferProductIdVariantIdRoute,
   ApiEmailTransactionalSendRoute: ApiEmailTransactionalSendRoute,
@@ -9760,10 +12664,14 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksAdsenseImageBackfillRoute:
     ApiPublicHooksAdsenseImageBackfillRoute,
   ApiPublicHooksAutoFacebookPostRoute: ApiPublicHooksAutoFacebookPostRoute,
+  ApiPublicHooksAutoFacebookPostSmartRoute:
+    ApiPublicHooksAutoFacebookPostSmartRoute,
   ApiPublicHooksAutoFacebookPostTexasdefinedRoute:
     ApiPublicHooksAutoFacebookPostTexasdefinedRoute,
   ApiPublicHooksAutoFacebookPostTexasdefinedSmartRoute:
     ApiPublicHooksAutoFacebookPostTexasdefinedSmartRoute,
+  ApiPublicHooksAutoFacebookPostTexasdefinedWithImageRoute:
+    ApiPublicHooksAutoFacebookPostTexasdefinedWithImageRoute,
   ApiPublicHooksBackfillFeaturedImagesRoute:
     ApiPublicHooksBackfillFeaturedImagesRoute,
   ApiPublicHooksBuildNewsroomResearchPacketsRoute:
@@ -9786,6 +12694,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksGenerateNewsroomRoute: ApiPublicHooksGenerateNewsroomRoute,
   ApiPublicHooksGenerateSportsRoute: ApiPublicHooksGenerateSportsRoute,
   ApiPublicHooksHealthRoute: ApiPublicHooksHealthRoute,
+  ApiPublicHooksHydrateNewsroomSourcePagesRoute:
+    ApiPublicHooksHydrateNewsroomSourcePagesRoute,
   ApiPublicHooksImageBacklogRecoveryRoute:
     ApiPublicHooksImageBacklogRecoveryRoute,
   ApiPublicHooksIngestFeedsRoute: ApiPublicHooksIngestFeedsRoute,
@@ -9795,7 +12705,15 @@ const rootRouteChildren: RootRouteChildren = {
     ApiPublicHooksNewsroomGenerationDiagnosticsRoute,
   ApiPublicHooksNormalizeNewsroomFeedRoute:
     ApiPublicHooksNormalizeNewsroomFeedRoute,
+  ApiPublicHooksOpenaiArticleImageRecoveryRoute:
+    ApiPublicHooksOpenaiArticleImageRecoveryRoute,
+  ApiPublicHooksPublishKtrGeneratedAttentionImageRoute:
+    ApiPublicHooksPublishKtrGeneratedAttentionImageRoute,
   ApiPublicHooksPublishOverdueGapRoute: ApiPublicHooksPublishOverdueGapRoute,
+  ApiPublicHooksPublishTexasdefinedGeneratedImageRoute:
+    ApiPublicHooksPublishTexasdefinedGeneratedImageRoute,
+  ApiPublicHooksPublishTexasdefinedReelRoute:
+    ApiPublicHooksPublishTexasdefinedReelRoute,
   ApiPublicHooksPublishingSafetyNetRoute:
     ApiPublicHooksPublishingSafetyNetRoute,
   ApiPublicHooksReconcileNewsHistoryRoute:
@@ -9814,7 +12732,11 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksScoreViralRoute: ApiPublicHooksScoreViralRoute,
   ApiPublicHooksScoreViralBackfillRoute: ApiPublicHooksScoreViralBackfillRoute,
   ApiPublicHooksSyncPrintifyRoute: ApiPublicHooksSyncPrintifyRoute,
+  ApiPublicHooksTexasdefinedFacebookCommentSignalsRoute:
+    ApiPublicHooksTexasdefinedFacebookCommentSignalsRoute,
   ApiPublicHooksTrackVariantRoute: ApiPublicHooksTrackVariantRoute,
+  ApiPublicOpsEtsyHalloweenSeo20260911Route:
+    ApiPublicOpsEtsyHalloweenSeo20260911Route,
   ApiPublicPaymentsHealthRoute: ApiPublicPaymentsHealthRoute,
   ApiPublicPaymentsSandboxConfigRoute: ApiPublicPaymentsSandboxConfigRoute,
   ApiPublicPaymentsSandboxHealthRoute: ApiPublicPaymentsSandboxHealthRoute,

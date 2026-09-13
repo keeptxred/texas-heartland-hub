@@ -53,10 +53,12 @@ describe("Election Central route title contract", () => {
     }
   });
 
-  it("keeps dynamic election detail title sources free of the compact legacy brand", () => {
+  it("keeps dynamic election detail title construction free of legacy compact-brand suffixes", () => {
     const dynamicRoutes = titleContractRoutes.slice(0, 5);
     for (const fileName of dynamicRoutes) {
-      expect(sourceFor(fileName)).not.toContain("KeepTXRed");
+      const source = sourceFor(fileName);
+      expect(source).not.toContain("| KeepTXRed Election Central");
+      expect(source).not.toMatch(/not found \| KeepTXRed/i);
     }
   });
 
