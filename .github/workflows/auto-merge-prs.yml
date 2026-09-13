@@ -155,8 +155,27 @@ jobs:
             exit 0
           fi
 
+          before_deploy_run_id="$(gh run list --repo "$REPOSITORY" --workflow deploy-cloudflare-after-verify.yml --branch main --event workflow_dispatch --limit 1 --json databaseId --jq '.[0].databaseId // 0')"
           gh workflow run deploy-cloudflare-after-verify.yml --ref main --repo "$REPOSITORY" -f verified_sha="$merged_sha"
           echo "Main verification and required migration gates passed; dispatched Cloudflare deployment for exact verified revision $merged_sha."
+
+          deploy_run_id=""
+          for attempt in $(seq 1 90); do
+            deploy_run_id="$(gh run list --repo "$REPOSITORY" --workflow deploy-cloudflare-after-verify.yml --branch main --event workflow_dispatch --limit 30 --json databaseId,headSha --jq ".[] | select(.headSha == \"$merged_sha\" and .databaseId > $before_deploy_run_id) | .databaseId" | head -n 1)"
+            [[ -n "$deploy_run_id" ]] && break
+            sleep 2
+          done
+
+          if [[ -z "$deploy_run_id" ]]; then
+            echo "::error title=Deployment run not found::Could not resolve the workflow_dispatch deployment for $merged_sha."
+            exit 1
+          fi
+
+          gh run watch "$deploy_run_id" --repo "$REPOSITORY" --exit-status
+          echo "Cloudflare deployment passed for exact verified revision $merged_sha."
+
+          gh workflow run article-hero-readiness-audit.yml --ref main --repo "$REPOSITORY"
+          echo "Dispatched post-deploy article hero readiness audit on current main."
 
           if grep -qxF '.github/workflows/sync-gsc-metrics.yml' <<<"$changed_files" || \
              grep -qxF 'scripts/seo/sync-gsc-metrics.mjs' <<<"$changed_files" || \
