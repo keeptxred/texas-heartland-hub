@@ -1,0 +1,240 @@
+[31m+     const featuredProfile = getFeaturedCandidateProfile(recordName);[39m
+[31m+     const recordDescription =[39m
+[31m+       record && "biography" in record && typeof record.biography === "string" && record.biography[39m
+[31m+         ? record.biography[39m
+[31m+         : featuredProfile?.biography[39m
+[31m+           ? featuredProfile.biography[39m
+[31m+         : record && "description" in record && typeof record.description === "string" && record.description[39m
+[31m+           ? record.description[39m
+[31m+           : "View verified information for this Texas election candidate.";[39m
+[31m+     const recordImage =[39m
+[31m+       record &&[39m
+[31m+       "imageUrl" in record &&[39m
+[31m+       typeof record.imageUrl === "string" &&[39m
+[31m+       record.imageUrl &&[39m
+[31m+       "imageRights" in record &&[39m
+[31m+       record.imageRights &&[39m
+[31m+       typeof record.imageRights === "object" &&[39m
+[31m+       "usageStatus" in record.imageRights &&[39m
+[31m+       record.imageRights.usageStatus === "approved"[39m
+[31m+         ? record.imageUrl[39m
+[31m+         : featuredProfile?.imageUrl ?? null;[39m
+[31m+     const title = formatElectionTitle([39m
+[31m+       indexable ? `${recordName} Election Central` : "Election candidate not found",[39m
+[31m+     );[39m
+[31m+[39m
+[31m+     return {[39m
+[31m+       meta: [[39m
+[31m+         { title },[39m
+[31m+         { name: "description", content: recordDescription },[39m
+[31m+         {[39m
+[31m+           name: "robots",[39m
+[31m+           content: indexable ? "index, follow, max-image-preview:large" : "noindex, follow",[39m
+[31m+         },[39m
+[31m+         ...(indexable[39m
+[31m+           ? [[39m
+[31m+               { property: "og:title", content: title },[39m
+[31m+               { property: "og:description", content: recordDescription },[39m
+[31m+               { property: "og:url", content: canonicalUrl },[39m
+[31m+               { property: "og:type", content: "website" },[39m
+[31m+               { property: "og:site_name", content: "Keep TX Red" },[39m
+[31m+               { name: "twitter:card", content: "summary_large_image" },[39m
+[31m+               { name: "twitter:title", content: title },[39m
+[31m+               { name: "twitter:description", content: recordDescription },[39m
+[31m+               ...(recordImage[39m
+[31m+                 ? [[39m
+[31m+                     { property: "og:image", content: recordImage },[39m
+[31m+                     { property: "og:image:alt", content: `Portrait of ${recordName}` },[39m
+[31m+                     { name: "twitter:image", content: recordImage },[39m
+[31m+                   ][39m
+[31m+                 : [[39m
+[31m+                     {[39m
+[31m+                       property: "og:image",[39m
+[31m+                       content: "https://keeptxred.com/images/elections/election-central-social.jpg",[39m
+[31m+                     },[39m
+[31m+                     { property: "og:image:width", content: "1200" },[39m
+[31m+                     { property: "og:image:height", content: "630" },[39m
+[31m+                     { property: "og:image:alt", content: "2026 Texas Election Central" },[39m
+[31m+                     {[39m
+[31m+                       name: "twitter:image",[39m
+[31m+                       content: "https://keeptxred.com/images/elections/election-central-social.jpg",[39m
+[31m+                     },[39m
+[31m+                   ]),[39m
+[31m+             ][39m
+[31m+           : []),[39m
+[31m+       ],[39m
+[31m+       links: indexable ? [{ rel: "canonical", href: canonicalUrl }] : [],[39m
+[31m+       scripts: indexable[39m
+[31m+         ? [[39m
+[31m+             {[39m
+[31m+               type: "application/ld+json",[39m
+[31m+               children: JSON.stringify({[39m
+[31m+                 "@context": "https://schema.org",[39m
+[31m+                 "@type": "Person",[39m
+[31m+                 name: recordName,[39m
+[31m+                 description: recordDescription,[39m
+[31m+                 url: canonicalUrl,[39m
+[31m+                 ...(recordImage ? { image: recordImage } : {}),[39m
+[31m+                 ...(featuredProfile?.occupation[39m
+[31m+                   ? {[39m
+[31m+                       hasOccupation: {[39m
+[31m+                         "@type": "Occupation",[39m
+[31m+                         name: featuredProfile.occupation,[39m
+[31m+                       },[39m
+[31m+                     }[39m
+[31m+                   : {}),[39m
+[31m+                 ...(featuredProfile?.currentRole ? { jobTitle: featuredProfile.currentRole } : {}),[39m
+[31m+                 ...(featuredProfile?.education.length[39m
+[31m+                   ? {[39m
+[31m+                       alumniOf: featuredProfile.education.map((education) => ({[39m
+[31m+                         "@type": "EducationalOrganization",[39m
+[31m+                         name: education,[39m
+[31m+                       })),[39m
+[31m+                     }[39m
+[31m+                   : {}),[39m
+[31m+                 affiliation: {[39m
+[31m+                   "@type": "Organization",[39m
+[31m+                   name:[39m
+[31m+                     record && "partyLabel" in record && typeof record.partyLabel === "string"[39m
+[31m+                       ? record.partyLabel[39m
+[31m+                       : record && "party" in record && typeof record.party === "string"[39m
+[31m+                         ? record.party[39m
+[31m+                         : "Candidate",[39m
+[31m+                 },[39m
+[31m+                 ...(featuredProfile?.sameAs.length ? { sameAs: featuredProfile.sameAs } : {}),[39m
+[31m+               }).replace(/</g, "\\u003c"),[39m
+[31m+             },[39m
+[31m+           ][39m
+[31m+         : [],[39m
+[31m+     };[39m
+[31m+   },[39m
+[31m+   component: ElectionCandidateDetailRoute,[39m
+[31m+ });[39m
+[31m+[39m
+[31m+ function ElectionCandidateDetailRoute() {[39m
+[31m+   const { candidateSlug } = Route.useParams();[39m
+[31m+   const storedSlug = findCandidateStoredSlug(candidateSlug, candidates);[39m
+[31m+   const validSlug = Boolean(storedSlug && isElectionSlug(storedSlug));[39m
+[31m+   const indexable =[39m
+[31m+     validSlug &&[39m
+[31m+     Boolean([39m
+[31m+       storedSlug &&[39m
+[31m+         candidates.some([39m
+[31m+           (item) =>[39m
+[31m+             item.slug === storedSlug &&[39m
+[31m+             item.publicationStatus === "published" &&[39m
+[31m+             item.verificationStatus === "verified",[39m
+[31m+         ),[39m
+[31m+     );[39m
+[31m+   const canonicalSlug = storedSlug ? candidateSeoSlug(storedSlug) : candidateSlug;[39m
+[31m+[39m
+[31m+   return ([39m
+[31m+     <ElectionRepositoryProvider>[39m
+[31m+       <ElectionLayout[39m
+[31m+         title="Texas Election Candidate"[39m
+[31m+         description="Verified candidate details from KeepTXRed Election Central."[39m
+[31m+         indexable={indexable}[39m
+[31m+         canonicalUrl={[39m
+[31m+           indexable ? `https://keeptxred.com/elections/candidates/${canonicalSlug}` : undefined[39m
+[31m+         }[39m
+[31m+         navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.candidates} />}[39m
+[31m+       >[39m
+[31m+         {indexable && storedSlug ? ([39m
+[31m+           <ElectionCandidateDetailData candidateSlug={storedSlug} />[39m
+[31m+         ) : ([39m
+[31m+           <ElectionErrorState[39m
+[31m+             kind="not_found"[39m
+[31m+             title="Election candidate not found"[39m
+[31m+             message="This candidate URL is invalid. Return to the candidate list to browse published Texas election candidates."[39m
+[31m+           />[39m
+[31m+         )}[39m
+[31m+       </ElectionLayout>[39m
+[31m+     </ElectionRepositoryProvider>[39m
+[31m+   );[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ function ElectionCandidateDetailData({ candidateSlug }: { candidateSlug: string }) {[39m
+[31m+   const candidate = useElectionCandidate({[39m
+[31m+     slug: electionSlugs.candidate(candidateSlug),[39m
+[31m+   });[39m
+[31m+   const race = useElectionRace({ id: candidate.data?.primaryRaceId ?? undefined });[39m
+[31m+   const polls = usePollsByCandidate(candidate.data?.id);[39m
+[31m+   const result = useResultByRace(candidate.data?.primaryRaceId ?? undefined);[39m
+[31m+   const error = candidate.error ?? race.error ?? polls.error ?? result.error;[39m
+[31m+   const isLoading = candidate.isLoading || race.isLoading || polls.isLoading || result.isLoading;[39m
+[31m+[39m
+[31m+   const handleRetry = () => {[39m
+[31m+     void candidate.refetch();[39m
+[31m+     void race.refetch();[39m
+[31m+     void polls.refetch();[39m
+[31m+     void result.refetch();[39m
+[31m+   };[39m
+[31m+[39m
+[31m+   if (isLoading) {[39m
+[31m+     return <ElectionLoading variant="detail" label="Loading Texas election candidate details" />;[39m
+[31m+   }[39m
+[31m+[39m
+[31m+   if (error) {[39m
+[31m+     return ([39m
+[31m+       <ElectionErrorState[39m
+[31m+         kind="service"[39m
+[31m+         title="Election candidate details could not be loaded"[39m
+[31m+         technicalMessage={error.message}[39m
+[31m+         retryAction={{ label: "Try again", onClick: handleRetry }}[39m
+[31m+       />[39m
+[31m+     );[39m
+[31m+   }[39m
+[31m+[39m
+[31m+   if (candidate.isMissing || !candidate.data) {[39m
+[31m+     return ([39m
+[31m+       <ElectionErrorState[39m
+[31m+         kind="not_found"[39m
+[31m+         title="Election candidate not found"[39m
+[31m+         message="This candidate is not published or is no longer available."[39m
+[31m+       />[39m
+[31m+     );[39m
+[31m+   }[39m
+[31m+[39m
+[31m+   return ([39m
+[31m+     <div className="space-y-10">[39m
+[31m+       <CandidateDetailSeo candidate={candidate.data} race={race.data ?? null} />[39m
+[31m+       <CandidateBiographySection candidate={candidate.data} race={race.data ?? null} />[39m
+[31m+       <CandidateCampaignLinks candidate={candidate.data} />[39m
+[31m+       <CandidateOfficeHistory candidate={candidate.data} />[39m
+[31m+       <CandidateRaceSection candidate={candidate.data} race={race.data ?? null} />[39m
+[31m+       <CandidateExpandedProfile candidate={candidate.data} />[39m
+[31m+       <CandidatePollingSection[39m
+[31m+         candidate={candidate.data}[39m
+[31m+         polls={polls.data?.items ?? []}[39m
+[31m+         hasStaleData={polls.hasStaleData}[39m
+[31m+       />[39m
+[31m+       <CandidateResultsSection[39m
+[31m+         candidate={candidate.data}[39m
+[31m+         result={result.data ?? null}[39m
+[31m+         isPreElection={result.isPreElection}[39m
+[31m+       />[39m
+[31m+       <CandidateSourcesSection candidate={candidate.data} />[39m
+[31m+       <CandidateInternalLinks candidate={candidate.data} race={race.data ?? null} />[39m
+[31m+     </div>[39m
+[31m+   );[39m
+[31m+ }[39m
+[31m+[39m
+
+[36m [2m❯[22m src/lib/election-route-title-contract.test.ts:[2m59:39[22m[39m
+    [90m 57|[39m     const dynamicRoutes = titleContractRoutes.slice(0, 5);
+    [90m 58|[39m     for (const fileName of dynamicRoutes) {
+    [90m 59|[39m       expect(sourceFor(fileName)).not.toContain("KeepTXRed");
+    [90m   |[39m                                       [31m^[39m
+    [90m 60|[39m     }
+    [90m 61|[39m   });
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m13 passed[39m[22m[90m (14)[39m
+[2m   Start at [22m 04:21:26
+[2m   Duration [22m 684ms[2m (transform 72%, import 22%, tests 5%, worker 1%)[22m
+
+
+::error file=/home/runner/work/texas-heartland-hub/texas-heartland-hub/src/lib/election-route-title-contract.test.ts,title=src/lib/election-route-title-contract.test.ts > Election Central route title contract > keeps dynamic election detail title sources free of the compact legacy brand,line=59,column=39::AssertionError: expected 'import { createFileRoute, notFound, r…' not to contain 'KeepTXRed'%0A%0A- Expected%0A+ Received%0A%0A- KeepTXRed%0A+ import { createFileRoute, notFound, redirect } from "@tanstack/react-router";%0A+ import candidates from "@/data/elections/2026/candidates.json";%0A+ import {%0A+   CandidateBiographySection,%0A+   CandidateCampaignLinks,%0A+   CandidateDetailSeo,%0A+   CandidateExpandedProfile,%0A+   CandidateInternalLinks,%0A+   CandidateOfficeHistory,%0A+   CandidatePollingSection,%0A+   CandidateRaceSection,%0A+   CandidateResultsSection,%0A+   CandidateSourcesSection,%0A+   ElectionErrorState,%0A+   ElectionLayout,%0A+   ElectionLoading,%0A+   ElectionNavigation,%0A+ } from "@/components/elections";%0A+ import {%0A+   useElectionCandidate,%0A+   useElectionRace,%0A+   usePollsByCandidate,%0A+   useResultByRace,%0A+ } from "@/hooks/elections";%0A+ import { ELECTION_ROUTES } from "@/lib/elections";%0A+ import { formatElectionTitle } from "@/lib/elections/seo";%0A+ import { getFeaturedCandidateProfile } from "@/lib/elections/featuredCandidateProfiles";%0A+ import { findCandidateStoredSlug, candidateSeoSlug } from "@/lib/elections/seoSlugs";%0A+ import { ElectionRepositoryProvider } from "@/lib/elections/repositories";%0A+ import { electionSlugs, isElectionSlug } from "@/types/elections";%0A+%0A+ export const Route = createFileRoute("/elections/candidates_/$candidateSlug")({%0A+   beforeLoad: ({ params }) => {%0A+     const storedSlug = findCandidateStoredSlug(params.candidateSlug, candidates);%0A+     const record = storedSlug%0A+       ? candidates.find(%0A+           (item) =>%0A+             item.slug === storedSlug &&%0A+             item.publicationStatus === "published" &&%0A+             item.verificationStatus === "verified",%0A+         )%0A+       : undefined;%0A+%0A+     // Do not render a 200-status "candidate not found" shell. Google correctly%0A+     // treats those as soft 404s. Unknown, unpublished, and unverified candidate%0A+     // URLs must be real 404 responses until a publishable record exists.%0A+     if (!storedSlug || !record || !isElectionSlug(storedSlug)) {%0A+       throw notFound();%0A+     }%0A+%0A+     const canonicalSlug = candidateSeoSlug(storedSlug);%0A+     if (params.candidateSlug !== canonicalSlug) {%0A+       throw redirect({%0A+         to: "/elections/candidates/$candidateSlug",%0A+         params: { candidateSlug: canonicalSlug },%0A+         replace: true,%0A+         statusCode: 301,%0A+       });%0A+     }%0A+   },%0A+   head: ({ params }) => {%0A+     const storedSlug = findCandidateStoredSlug(params.candidateSlug, candidates);%0A+     const record = storedSlug%0A+       ? candidates.find(%0A+           (item) =>%0A+             item.slug === storedSlug &&%0A+             item.publicationStatus === "published" &&%0A+             item.verificationStatus === "verified",%0A+         )%0A+       : undefined;%0A+     const validSlug = Boolean(storedSlug && isElectionSlug(storedSlug));%0A+     const indexable = validSlug && Boolean(record);%0A+     const canonicalSlug = storedSlug ? candidateSeoSlug(storedSlug) : params.candidateSlug;%0A+     const canonicalUrl = `https://keeptxred.com/elections/candidates/${canonicalSlug}`;%0A+     const recordName =%0A+       record && "fullName" in record && typeof record.fullName === "string"%0A+         ? record.fullName%0A+         : record && "name" in record && typeof record.name === "string"%0A+           ? record.name%0A+           : "Texas Election Candidate";%0A+     const featuredProfile = getFeaturedCandidateProfile(recordName);%0A+     const recordDescription =%0A+       record && "biography" in record && typeof record.biography === "string" && record.biography%0A+         ? record.biography%0A+         : featuredProfile?.biography%0A+           ? featuredProfile.biography%0A+         : record && "description" in record && typeof record.description === "string" && record.description%0A+           ? record.description%0A+           : "View verified information for this Texas election candidate.";%0A+     const recordImage =%0A+       record &&%0A+       "imageUrl" in record &&%0A+       typeof record.imageUrl === "string" &&%0A+       record.imageUrl &&%0A+       "imageRights" in record &&%0A+       record.imageRights &&%0A+       typeof record.imageRights === "object" &&%0A+       "usageStatus" in record.imageRights &&%0A+       record.imageRights.usageStatus === "approved"%0A+         ? record.imageUrl%0A+         : featuredProfile?.imageUrl ?? null;%0A+     const title = formatElectionTitle(%0A+       indexable ? `${recordName} Election Central` : "Election candidate not found",%0A+     );%0A+%0A+     return {%0A+       meta: [%0A+         { title },%0A+         { name: "description", content: recordDescription },%0A+         {%0A+           name: "robots",%0A+           content: indexable ? "index, follow, max-image-preview:large" : "noindex, follow",%0A+         },%0A+         ...(indexable%0A+           ? [%0A+               { property: "og:title", content: title },%0A+               { property: "og:description", content: recordDescription },%0A+               { property: "og:url", content: canonicalUrl },%0A+               { property: "og:type", content: "website" },%0A+               { property: "og:site_name", content: "Keep TX Red" },%0A+               { name: "twitter:card", content: "summary_large_image" },%0A+               { name: "twitter:title", content: title },%0A+               { name: "twitter:description", content: recordDescription },%0A+               ...(recordImage%0A+                 ? [%0A+                     { property: "og:image", content: recordImage },%0A+                     { property: "og:image:alt", content: `Portrait of ${recordName}` },%0A+                     { name: "twitter:image", content: recordImage },%0A+                   ]%0A+                 : [%0A+                     {%0A+                       property: "og:image",%0A+                       content: "https://keeptxred.com/images/elections/election-central-social.jpg",%0A+                     },%0A+                     { property: "og:image:width", content: "1200" },%0A+                     { property: "og:image:height", content: "630" },%0A+                     { property: "og:image:alt", content: "2026 Texas Election Central" },%0A+                     {%0A+                       name: "twitter:image",%0A+                       content: "https://keeptxred.com/images/elections/election-central-social.jpg",%0A+                     },%0A+                   ]),%0A+             ]%0A+           : []),%0A+       ],%0A+       links: indexable ? [{ rel: "canonical", href: canonicalUrl }] : [],%0A+       scripts: indexable%0A+         ? [%0A+             {%0A+               type: "application/ld+json",%0A+               children: JSON.stringify({%0A+                 "@context": "https://schema.org",%0A+                 "@type": "Person",%0A+                 name: recordName,%0A+                 description: recordDescription,%0A+                 url: canonicalUrl,%0A+                 ...(recordImage ? { image: recordImage } : {}),%0A+                 ...(featuredProfile?.occupation%0A+                   ? {%0A+                       hasOccupation: {%0A+                         "@type": "Occupation",%0A+                         name: featuredProfile.occupation,%0A+                       },%0A+                     }%0A+                   : {}),%0A+                 ...(featuredProfile?.currentRole ? { jobTitle: featuredProfile.currentRole } : {}),%0A+                 ...(featuredProfile?.education.length%0A+                   ? {%0A+                       alumniOf: featuredProfile.education.map((education) => ({%0A+                         "@type": "EducationalOrganization",%0A+                         name: education,%0A+                       })),%0A+                     }%0A+                   : {}),%0A+                 affiliation: {%0A+                   "@type": "Organization",%0A+                   name:%0A+                     record && "partyLabel" in record && typeof record.partyLabel === "string"%0A+                       ? record.partyLabel%0A+                       : record && "party" in record && typeof record.party === "string"%0A+                         ? record.party%0A+                         : "Candidate",%0A+                 },%0A+                 ...(featuredProfile?.sameAs.length ? { sameAs: featuredProfile.sameAs } : {}),%0A+               }).replace(/</g, "\\u003c"),%0A+             },%0A+           ]%0A+         : [],%0A+     };%0A+   },%0A+   component: ElectionCandidateDetailRoute,%0A+ });%0A+%0A+ function ElectionCandidateDetailRoute() {%0A+   const { candidateSlug } = Route.useParams();%0A+   const storedSlug = findCandidateStoredSlug(candidateSlug, candidates);%0A+   const validSlug = Boolean(storedSlug && isElectionSlug(storedSlug));%0A+   const indexable =%0A+     validSlug &&%0A+     Boolean(%0A+       storedSlug &&%0A+         candidates.some(%0A+           (item) =>%0A+             item.slug === storedSlug &&%0A+             item.publicationStatus === "published" &&%0A+             item.verificationStatus === "verified",%0A+         ),%0A+     );%0A+   const canonicalSlug = storedSlug ? candidateSeoSlug(storedSlug) : candidateSlug;%0A+%0A+   return (%0A+     <ElectionRepositoryProvider>%0A+       <ElectionLayout%0A+         title="Texas Election Candidate"%0A+         description="Verified candidate details from KeepTXRed Election Central."%0A+         indexable={indexable}%0A+         canonicalUrl={%0A+           indexable ? `https://keeptxred.com/elections/candidates/${canonicalSlug}` : undefined%0A+         }%0A+         navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.candidates} />}%0A+       >%0A+         {indexable && storedSlug ? (%0A+           <ElectionCandidateDetailData candidateSlug={storedSlug} />%0A+         ) : (%0A+           <ElectionErrorState%0A+             kind="not_found"%0A+             title="Election candidate not found"%0A+             message="This candidate URL is invalid. Return to the candidate list to browse published Texas election candidates."%0A+           />%0A+         )}%0A+       </ElectionLayout>%0A+     </ElectionRepositoryProvider>%0A+   );%0A+ }%0A+%0A+ function ElectionCandidateDetailData({ candidateSlug }: { candidateSlug: string }) {%0A+   const candidate = useElectionCandidate({%0A+     slug: electionSlugs.candidate(candidateSlug),%0A+   });%0A+   const race = useElectionRace({ id: candidate.data?.primaryRaceId ?? undefined });%0A+   const polls = usePollsByCandidate(candidate.data?.id);%0A+   const result = useResultByRace(candidate.data?.primaryRaceId ?? undefined);%0A+   const error = candidate.error ?? race.error ?? polls.error ?? result.error;%0A+   const isLoading = candidate.isLoading || race.isLoading || polls.isLoading || result.isLoading;%0A+%0A+   const handleRetry = () => {%0A+     void candidate.refetch();%0A+     void race.refetch();%0A+     void polls.refetch();%0A+     void result.refetch();%0A+   };%0A+%0A+   if (isLoading) {%0A+     return <ElectionLoading variant="detail" label="Loading Texas election candidate details" />;%0A+   }%0A+%0A+   if (error) {%0A+     return (%0A+       <ElectionErrorState%0A+         kind="service"%0A+         title="Election candidate details could not be loaded"%0A+         technicalMessage={error.message}%0A+         retryAction={{ label: "Try again", onClick: handleRetry }}%0A+       />%0A+     );%0A+   }%0A+%0A+   if (candidate.isMissing || !candidate.data) {%0A+     return (%0A+       <ElectionErrorState%0A+         kind="not_found"%0A+         title="Election candidate not found"%0A+         message="This candidate is not published or is no longer available."%0A+       />%0A+     );%0A+   }%0A+%0A+   return (%0A+     <div className="space-y-10">%0A+       <CandidateDetailSeo candidate={candidate.data} race={race.data ?? null} />%0A+       <CandidateBiographySection candidate={candidate.data} race={race.data ?? null} />%0A+       <CandidateCampaignLinks candidate={candidate.data} />%0A+       <CandidateOfficeHistory candidate={candidate.data} />%0A+       <CandidateRaceSection candidate={candidate.data} race={race.data ?? null} />%0A+       <CandidateExpandedProfile candidate={candidate.data} />%0A+       <CandidatePollingSection%0A+         candidate={candidate.data}%0A+         polls={polls.data?.items ?? []}%0A+         hasStaleData={polls.hasStaleData}%0A+       />%0A+       <CandidateResultsSection%0A+         candidate={candidate.data}%0A+         result={result.data ?? null}%0A+         isPreElection={result.isPreElection}%0A+       />%0A+       <CandidateSourcesSection candidate={candidate.data} />%0A+       <CandidateInternalLinks candidate={candidate.data} race={race.data ?? null} />%0A+     </div>%0A+   );%0A+ }%0A+%0A%0A ❯ src/lib/election-route-title-contract.test.ts:59:39%0A%0A

@@ -1,19 +1,22 @@
 import type { VotingAnswerPageData } from "@/data/election-voting-answers";
+import { formatElectionTitle } from "@/lib/elections/seo";
 
 export function buildVotingAnswerHead(data: VotingAnswerPageData, canonicalPath: string) {
   const url = `https://keeptxred.com${canonicalPath}`;
+  const title = formatElectionTitle(data.metaTitle.replace(/\s*\|\s*KeepTXRed\s*$/i, ""));
   return {
     meta: [
-      { title: data.metaTitle },
+      { title },
       { name: "description", content: data.description },
       { name: "robots", content: "index, follow, max-image-preview:large" },
-      { property: "og:title", content: data.title },
+      { property: "og:title", content: title },
       { property: "og:description", content: data.description },
       { property: "og:url", content: url },
       { property: "og:type", content: "article" },
       { property: "og:site_name", content: "Keep TX Red" },
       { property: "og:image", content: "https://keeptxred.com/images/elections/election-central-social.jpg" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: title },
       { name: "twitter:image", content: "https://keeptxred.com/images/elections/election-central-social.jpg" },
     ],
     links: [{ rel: "canonical", href: url }],

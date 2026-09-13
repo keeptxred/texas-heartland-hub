@@ -9,6 +9,7 @@ import {
 } from "@/components/elections";
 import { useElectionPoll } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
+import { formatElectionTitle } from "@/lib/elections/seo";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { electionSlugs, isElectionSlug } from "@/types/elections";
 
@@ -31,9 +32,9 @@ export const Route = createFileRoute("/elections/polls/$pollSlug")({
       record && "description" in record && typeof record.description === "string" && record.description
         ? record.description
         : "Review poll toplines, sample details, sponsor, and methodology.";
-    const title = indexable
-      ? `${recordName} | KeepTXRed Election Central`
-      : "Election poll not found | KeepTXRed";
+    const title = formatElectionTitle(
+      indexable ? `${recordName} Election Central` : "Election poll not found",
+    );
 
     return {
       meta: [
