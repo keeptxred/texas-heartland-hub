@@ -1,14 +1,16 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 /**
- * KTR is refocusing indexed discovery on Texas politics, elections, government,
- * law, policy, and material business/economic coverage. Preserve the existing
- * sports URLs for users and historical links, but keep this entire route tree
- * out of search while that topical boundary is in effect.
+ * TexasDefined owns Texas sports discovery and evergreen sports coverage.
+ * KeepTXRed permanently redirects this retired route tree so historical links
+ * consolidate on the current topical owner instead of leaving a competing
+ * noindex surface behind.
  */
 export const Route = createFileRoute("/texas-sports")({
-  head: () => ({
-    meta: [{ name: "robots", content: "noindex,follow,max-image-preview:large" }],
-  }),
-  component: () => <Outlet />,
+  beforeLoad: ({ location }) => {
+    throw redirect({
+      href: `https://texasdefined.com/sports${location.searchStr || ""}`,
+      statusCode: 301,
+    });
+  },
 });
