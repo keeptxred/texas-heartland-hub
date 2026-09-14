@@ -46,7 +46,7 @@ function TexasDmvVsDpsPage() {
       <nav aria-label="Breadcrumb" className="mx-auto max-w-4xl px-4 pt-6 text-sm text-muted-foreground">
         <a href="/" className="hover:text-foreground hover:underline">Home</a>
         <span aria-hidden="true" className="px-2">/</span>
-        <a href="/dmv" className="hover:text-foreground hover:underline">Texas DMV & Driver Services</a>
+        <a href="https://texasdefined.com/texas-dmv" className="hover:text-foreground hover:underline">Texas DMV & Driver Services</a>
         <span aria-hidden="true" className="px-2">/</span>
         <span className="text-foreground">DMV vs. DPS</span>
       </nav>
@@ -210,7 +210,7 @@ function TexasDmvVsDpsPage() {
         <aside className="mt-12 rounded-xl border bg-muted/30 p-6">
           <h2 className="text-2xl font-bold">Continue with Texas driver and vehicle services</h2>
           <p className="mt-3 text-muted-foreground">
-            Return to the <a href="/dmv" className="font-semibold text-primary underline underline-offset-4">Texas DMV & Driver Services hub</a> for current and upcoming guides, or use the <a href="https://texasdefined.com/find-my-dmv" className="font-semibold text-primary underline underline-offset-4">office finder and registration estimator</a> for a vehicle transaction.
+            Return to the <a href="https://texasdefined.com/texas-dmv" className="font-semibold text-primary underline underline-offset-4">Texas DMV & Driver Services hub</a> for current and upcoming guides, or use the <a href="https://texasdefined.com/find-my-dmv" className="font-semibold text-primary underline underline-offset-4">office finder and registration estimator</a> for a vehicle transaction.
           </p>
         </aside>
 
@@ -275,7 +275,7 @@ export const Route = createFileRoute("/dmv/texas-dmv-vs-dps")({
             "@type": "BreadcrumbList",
             itemListElement: [
               { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
-              { "@type": "ListItem", position: 2, name: "Texas DMV & Driver Services", item: `${SITE_URL}/dmv` },
+              { "@type": "ListItem", position: 2, name: "Texas DMV & Driver Services", item: "https://texasdefined.com/texas-dmv" },
               { "@type": "ListItem", position: 3, name: "Texas DMV vs. DPS", item: `${SITE_URL}/dmv/texas-dmv-vs-dps` },
             ],
           }),
