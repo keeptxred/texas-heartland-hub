@@ -3,7 +3,7 @@ import { buildSeo } from "@/lib/seo";
 
 const EDITORIAL_STANDARDS_TITLE = "Editorial Standards";
 const EDITORIAL_STANDARDS_DESCRIPTION =
-  "How Keep TX Red verifies, attributes, analyzes, and adds original Texas political-intelligence context to news, elections, legislation, and public records.";
+  "How Keep TX Red verifies, attributes, analyzes, and adds original Texas political-intelligence context to news, elections, legislation, public records, and visual media.";
 
 export function editorialStandardsHead() {
   const seo = buildSeo({
@@ -88,12 +88,25 @@ function EditorialStandardsPage() {
 
         <section>
           <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Use of AI-Assisted Tools</h2>
-          <p>We use AI-assisted tools in parts of our aggregation, rewriting, summarization, classification, and research workflow.</p>
+          <p>We use AI-assisted tools in parts of our aggregation, rewriting, summarization, classification, research, and media workflow.</p>
           <ul className="list-disc pl-6 space-y-1 mt-2">
             <li>AI output must stay grounded in the source material supplied to the generation step.</li>
             <li>Our automated validators reject drafts that fail required structure, evidence, length, or publication rules.</li>
             <li>AI-generated wording does not convert source-based reporting into original reporting.</li>
             <li>AI tools do not change the role of the underlying source: reporting remains reporting, analysis remains analysis, and primary records remain primary records.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Images, Illustrations &amp; AI-Generated Media</h2>
+          <p>
+            Some imagery on Keep TX Red may be created or enhanced using artificial intelligence. Generated imagery is used for illustrative or editorial purposes when appropriate and should not be interpreted as documentary photography of an actual person, place, event, or moment unless the page specifically identifies it as such.
+          </p>
+          <ul className="list-disc pl-6 space-y-1 mt-2">
+            <li>We preserve source and generation provenance in our internal media records.</li>
+            <li>We do not require a repetitive “AI-generated” label on every generated image when this sitewide disclosure adequately explains the practice.</li>
+            <li>An individual image may receive an additional disclosure when a synthetic depiction of a specific real-world person, place, or event could reasonably be mistaken for documentary evidence.</li>
+            <li>Third-party photography remains subject to its own source, rights, and licensing requirements.</li>
           </ul>
         </section>
 

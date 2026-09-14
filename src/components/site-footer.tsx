@@ -109,6 +109,10 @@ export function SiteFooter() {
             <span className="normal-case tracking-normal">Independent commentary. Not authorized by any candidate or candidate&apos;s committee.</span>
             <br />
             <span className="normal-case tracking-normal">
+              Some imagery on this site may be AI-generated or AI-enhanced. See our <Link to="/editorial-standards" className="underline underline-offset-2 hover:text-white">Editorial Standards</Link> for details.
+            </span>
+            <br />
+            <span className="normal-case tracking-normal">
               TexasDefined is a nonpolitical sister publication from the same publisher, focused on Texas places, culture, travel, and practical guides.{" "}
               <a href="https://texasdefined.com" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-white">
                 Visit TexasDefined ↗
