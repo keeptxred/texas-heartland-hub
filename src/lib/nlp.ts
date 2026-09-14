@@ -42,6 +42,32 @@ const ENTITY_DICT: Record<string, string[]> = {
   "Elections": ["election", "ballot", "campaign", "voter", "primary"],
   "Taxes": ["property tax", "tax cut", "appraisal", "school tax"],
   "Education": ["school", "isd", "curriculum", "teacher", "student"],
+  "Sports": [
+    "dallas cowboys",
+    "cowboys",
+    "houston texans",
+    "texans",
+    "houston astros",
+    "astros",
+    "texas rangers",
+    "dallas mavericks",
+    "mavericks",
+    "houston rockets",
+    "san antonio spurs",
+    "dallas stars",
+    "fc dallas",
+    "houston dynamo",
+    "longhorns",
+    "aggies",
+    "red raiders",
+    "horned frogs",
+    "baylor bears",
+    "smu mustangs",
+    "utep miners",
+    "dallas wings",
+    "football roster",
+    "nfl roster",
+  ],
 };
 
 export type ExtractedEntities = string[];
@@ -75,16 +101,17 @@ const GOV_ACTION_RE =
   /\b(governor|abbott|paxton|legislature|executive order|disaster declaration|proclamation|signs (?:bill|into law)|signed into law|vetoes?|appoints|policy|state of emergency)\b/i;
 
 export function inferCategory(entities: ExtractedEntities, rawText?: string): string {
-  // Topic entities take precedence — preserves existing routing.
+  // Public-affairs topics and government action keep precedence over a sports
+  // mention so policy, elections, and official actions remain KeepTXRed-owned.
   if (entities.includes("Border")) return "Border";
   if (entities.includes("Elections")) return "Elections";
   if (entities.includes("Energy")) return "Energy";
   if (entities.includes("Taxes")) return "Tax & Spending";
   if (entities.includes("Education")) return "Education";
   if (entities.includes("Texas Legislature")) return "Legislature";
-  // Government/official signals → route to Legislature (existing political bucket).
   if (entities.some((e) => TX_OFFICIAL_ENTITIES.has(e))) return "Legislature";
   if (rawText && GOV_ACTION_RE.test(rawText)) return "Legislature";
+  if (entities.includes("Sports")) return "Sports";
   return "Non-Political";
 }
 
