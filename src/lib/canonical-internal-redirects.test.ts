@@ -21,6 +21,7 @@ const mappings = [
     "/texas-government/court-of-criminal-appeals-history",
   ],
   ["/find-my-dmv", "https://texasdefined.com/find-my-dmv"],
+  ["/dmv", "https://texasdefined.com/texas-dmv"],
   ["/texas-property-tax-protest-guide", "https://texasdefined.com/do/property-tax-protest"],
   ["/living-in-texas", "https://texasdefined.com/texas-living"],
   ["/moving-to-texas", "https://texasdefined.com/moving-to-texas"],
@@ -45,6 +46,9 @@ describe("canonical internal redirect links", () => {
     expect(canonicalInternalRedirectHref("/find-my-dmv?county=Harris#offices")).toBe(
       "https://texasdefined.com/find-my-dmv?county=Harris#offices",
     );
+    expect(canonicalInternalRedirectHref("/dmv?task=registration#start")).toBe(
+      "https://texasdefined.com/texas-dmv?task=registration#start",
+    );
     expect(canonicalInternalRedirectHref("/texas-sports?league=nfl#teams")).toBe(
       "https://texasdefined.com/sports?league=nfl#teams",
     );
@@ -63,10 +67,10 @@ describe("canonical internal redirect links", () => {
   it("rewrites markdown destinations without changing anchor text", () => {
     expect(
       canonicalizeInternalRedirectMarkdownLinks(
-        "Read [Election Central](/elections), [DMV offices](/find-my-dmv), [Texas sports](/texas-sports), and [Moving to Texas](/moving-to-texas).",
+        "Read [Election Central](/elections), [DMV guide](/dmv), [DMV offices](/find-my-dmv), [Texas sports](/texas-sports), and [Moving to Texas](/moving-to-texas).",
       ),
     ).toBe(
-      "Read [Election Central](/elections/2026), [DMV offices](https://texasdefined.com/find-my-dmv), [Texas sports](https://texasdefined.com/sports), and [Moving to Texas](https://texasdefined.com/moving-to-texas).",
+      "Read [Election Central](/elections/2026), [DMV guide](https://texasdefined.com/texas-dmv), [DMV offices](https://texasdefined.com/find-my-dmv), [Texas sports](https://texasdefined.com/sports), and [Moving to Texas](https://texasdefined.com/moving-to-texas).",
     );
   });
 });
