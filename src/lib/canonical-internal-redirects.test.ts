@@ -16,6 +16,7 @@ const mappings = [
   ["/texas-news", "/news"],
   ["/elections", "/elections/2026"],
   ["/voting-locations", "/elections/voting"],
+  ["/news/texas-constitutional-amendments-guide", "/laws/constitutional-amendments"],
   [
     "/texas-government/texas-court-of-criminal-appeals-history",
     "/texas-government/court-of-criminal-appeals-history",
@@ -39,6 +40,9 @@ describe("canonical internal redirect links", () => {
   it("preserves query and hash state while removing the redirect hop", () => {
     expect(canonicalInternalRedirectHref("/elections/?cycle=2026#top")).toBe(
       "/elections/2026?cycle=2026#top",
+    );
+    expect(canonicalInternalRedirectHref("/news/texas-constitutional-amendments-guide?year=2026#process")).toBe(
+      "/laws/constitutional-amendments?year=2026#process",
     );
     expect(canonicalInternalRedirectHref("/moving-to-texas?county=Travis#checklist")).toBe(
       "https://texasdefined.com/moving-to-texas?county=Travis#checklist",
@@ -67,10 +71,10 @@ describe("canonical internal redirect links", () => {
   it("rewrites markdown destinations without changing anchor text", () => {
     expect(
       canonicalizeInternalRedirectMarkdownLinks(
-        "Read [Election Central](/elections), [DMV guide](/dmv), [DMV offices](/find-my-dmv), [Texas sports](/texas-sports), and [Moving to Texas](/moving-to-texas).",
+        "Read [Election Central](/elections), [amendment process](/news/texas-constitutional-amendments-guide), [DMV guide](/dmv), [DMV offices](/find-my-dmv), [Texas sports](/texas-sports), and [Moving to Texas](/moving-to-texas).",
       ),
     ).toBe(
-      "Read [Election Central](/elections/2026), [DMV guide](https://texasdefined.com/texas-dmv), [DMV offices](https://texasdefined.com/find-my-dmv), [Texas sports](https://texasdefined.com/sports), and [Moving to Texas](https://texasdefined.com/moving-to-texas).",
+      "Read [Election Central](/elections/2026), [amendment process](/laws/constitutional-amendments), [DMV guide](https://texasdefined.com/texas-dmv), [DMV offices](https://texasdefined.com/find-my-dmv), [Texas sports](https://texasdefined.com/sports), and [Moving to Texas](https://texasdefined.com/moving-to-texas).",
     );
   });
 });
