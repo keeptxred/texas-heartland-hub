@@ -1,14 +1,14 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const ACTIVE_RELOCATION_FILES = [
-  "dmv.tsx",
-  "dmv.change-address.tsx",
-  "dmv.driver-license.tsx",
-  "dmv.real-id.tsx",
-  "dmv.texas-dmv-vs-dps.tsx",
-  "vehicles.new-residents.tsx",
-  "vehicles.registration.tsx",
+const ACTIVE_RELOCATION_HANDOFFS = [
+  ["dmv.tsx", "https://texasdefined.com/texas-dmv"],
+  ["dmv.change-address.tsx", "https://texasdefined.com/moving-to-texas"],
+  ["dmv.driver-license.tsx", "https://texasdefined.com/moving-to-texas"],
+  ["dmv.real-id.tsx", "https://texasdefined.com/moving-to-texas"],
+  ["dmv.texas-dmv-vs-dps.tsx", "https://texasdefined.com/moving-to-texas"],
+  ["vehicles.new-residents.tsx", "https://texasdefined.com/moving-to-texas"],
+  ["vehicles.registration.tsx", "https://texasdefined.com/moving-to-texas"],
 ] as const;
 
 const LEGACY_RELOCATION_ROUTES = [
@@ -20,9 +20,9 @@ const LEGACY_RELOCATION_ROUTES = [
 const TEXASDEFINED_RELOCATION = "https://texasdefined.com/moving-to-texas";
 
 describe("active relocation cross-site handoffs", () => {
-  it.each(ACTIVE_RELOCATION_FILES)("routes retired lifestyle links in %s to TexasDefined", (file) => {
+  it.each(ACTIVE_RELOCATION_HANDOFFS)("routes retired lifestyle links in %s to its TexasDefined owner", (file, destination) => {
     const source = readFileSync(new URL(`./${file}`, import.meta.url), "utf8");
-    expect(source).toContain(TEXASDEFINED_RELOCATION);
+    expect(source).toContain(destination);
     expect(source).not.toContain('href="/moving-to-texas"');
     expect(source).not.toContain('href="/moving-to-texas-checklist"');
   });
