@@ -8,6 +8,7 @@ const INTERNAL_REDIRECT_CANONICALS: Readonly<Record<string, string>> = {
   "/texas-news": "/news",
   "/elections": "/elections/2026",
   "/voting-locations": "/elections/voting",
+  "/news/texas-constitutional-amendments-guide": "/laws/constitutional-amendments",
   "/texas-government/texas-court-of-criminal-appeals-history": "/texas-government/court-of-criminal-appeals-history",
   "/find-my-dmv": "https://texasdefined.com/find-my-dmv",
   "/texas-property-tax-protest-guide": "https://texasdefined.com/do/property-tax-protest",
