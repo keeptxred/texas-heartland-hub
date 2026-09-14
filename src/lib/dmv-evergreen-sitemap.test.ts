@@ -5,6 +5,7 @@ import { DMV_EVERGREEN_SITEMAP_PATHS } from "@/data/dmv-evergreen-sitemap-paths"
 const rootSitemap = readFileSync(new URL("../routes/sitemap[.]xml.ts", import.meta.url), "utf8");
 const dmvSitemap = readFileSync(new URL("../routes/sitemap-dmv[.]xml.ts", import.meta.url), "utf8");
 const dmvRoute = readFileSync(new URL("../routes/dmv.tsx", import.meta.url), "utf8");
+const vehicleRegistrationRoute = readFileSync(new URL("../routes/vehicles.registration.tsx", import.meta.url), "utf8");
 
 function routeSourcePath(path: string): URL {
   const [section, slug] = path.slice(1).split("/");
@@ -23,8 +24,16 @@ describe("DMV and vehicle sitemap ownership", () => {
     expect(dmvRoute).toContain("statusCode: 301");
   });
 
+  it("hands the vehicle registration authority page to TexasDefined", () => {
+    expect(new Set<string>(DMV_EVERGREEN_SITEMAP_PATHS).has("/vehicles/registration")).toBe(false);
+    expect(vehicleRegistrationRoute).toContain(
+      'href: `https://texasdefined.com/texas-vehicle-registration${location.searchStr || ""}`',
+    );
+    expect(vehicleRegistrationRoute).toContain("statusCode: 301");
+  });
+
   it("keeps the remaining vehicle guides canonical on KeepTXRed until separately adjudicated", () => {
-    expect(DMV_EVERGREEN_SITEMAP_PATHS).toHaveLength(23);
+    expect(DMV_EVERGREEN_SITEMAP_PATHS).toHaveLength(22);
     expect(new Set(DMV_EVERGREEN_SITEMAP_PATHS).size).toBe(DMV_EVERGREEN_SITEMAP_PATHS.length);
 
     for (const path of DMV_EVERGREEN_SITEMAP_PATHS) {
