@@ -8,7 +8,7 @@ const ACTIVE_RELOCATION_HANDOFFS = [
   ["dmv.real-id.tsx", "https://texasdefined.com/moving-to-texas"],
   ["dmv.texas-dmv-vs-dps.tsx", "https://texasdefined.com/moving-to-texas"],
   ["vehicles.new-residents.tsx", "https://texasdefined.com/moving-to-texas"],
-  ["vehicles.registration.tsx", "https://texasdefined.com/moving-to-texas"],
+  ["vehicles.registration.tsx", "https://texasdefined.com/texas-vehicle-registration"],
 ] as const;
 
 const LEGACY_RELOCATION_ROUTES = [
@@ -25,6 +25,12 @@ describe("active relocation cross-site handoffs", () => {
     expect(source).toContain(destination);
     expect(source).not.toContain('href="/moving-to-texas"');
     expect(source).not.toContain('href="/moving-to-texas-checklist"');
+  });
+
+  it("keeps the retired vehicle registration route as a permanent exact-owner handoff", () => {
+    const source = readFileSync(new URL("./vehicles.registration.tsx", import.meta.url), "utf8");
+    expect(source).toContain("https://texasdefined.com/texas-vehicle-registration");
+    expect(source).toContain("statusCode: 301");
   });
 
   it.each(LEGACY_RELOCATION_ROUTES)("redirects legacy route %s directly to the current TexasDefined relocation page", (file) => {
