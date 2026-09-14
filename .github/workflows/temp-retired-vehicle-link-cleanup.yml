@@ -1,0 +1,78 @@
+name: Temporary retired vehicle link cleanup
+
+on:
+  push:
+    branches:
+      - seo/vehicle-renewal-fees-handoff-2026-09-14
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout feature branch
+        uses: actions/checkout@v4
+        with:
+          ref: seo/vehicle-renewal-fees-handoff-2026-09-14
+          fetch-depth: 0
+
+      - name: Patch retired vehicle and DMV crosslinks
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          replacements = [
+              ('href="/vehicles/registration-fees-taxes"', 'href="https://texasdefined.com/texas-vehicle-registration-fees-taxes"'),
+              ('href="/vehicles/registration"', 'href="https://texasdefined.com/texas-vehicle-registration"'),
+              ('href="/vehicles/renewal"', 'href="https://texasdefined.com/texas-vehicle-registration-renewal"'),
+              ('href="/dmv"', 'href="https://texasdefined.com/texas-dmv"'),
+              ('`${SITE_URL}/vehicles/registration-fees-taxes`', '"https://texasdefined.com/texas-vehicle-registration-fees-taxes"'),
+              ('`${SITE_URL}/vehicles/registration`', '"https://texasdefined.com/texas-vehicle-registration"'),
+              ('`${SITE_URL}/vehicles/renewal`', '"https://texasdefined.com/texas-vehicle-registration-renewal"'),
+              ('`${SITE_URL}/dmv`', '"https://texasdefined.com/texas-dmv"'),
+          ]
+
+          changed = []
+          for path in sorted(Path('src/routes').glob('vehicles.*.tsx')):
+              original = path.read_text()
+              updated = original
+              for old, new in replacements:
+                  updated = updated.replace(old, new)
+              if path.name == 'vehicles.bonded-titles.tsx':
+                  updated = updated.replace('<main>vehicles.bonded-titles.tsx', '<main>')
+              if updated != original:
+                  path.write_text(updated)
+                  changed.append(str(path))
+
+          print('Updated files:')
+          print('\n'.join(changed) if changed else '(none)')
+          PY
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run retired vehicle regression test
+        run: npm test -- src/routes/retired-vehicle-crosslinks.test.ts
+
+      - name: Commit cleanup if changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- src/routes/vehicles.*.tsx; then
+            echo "Vehicle crosslinks already current"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/routes/vehicles.*.tsx
+          git commit -m "Remove retired vehicle redirect hops"
+          git push origin HEAD:seo/vehicle-renewal-fees-handoff-2026-09-14
