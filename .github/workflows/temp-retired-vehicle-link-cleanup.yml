@@ -35,8 +35,11 @@ jobs:
               ('`${SITE_URL}/dmv`', '"https://texasdefined.com/texas-dmv"'),
           ]
 
+          candidates = sorted(Path('src/routes').glob('vehicles.*.tsx'))
+          candidates.append(Path('src/routes/dmv.texas-dmv-vs-dps.tsx'))
+
           changed = []
-          for path in sorted(Path('src/routes').glob('vehicles.*.tsx')):
+          for path in candidates:
               original = path.read_text()
               updated = original
               for old, new in replacements:
@@ -66,12 +69,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if git diff --quiet -- src/routes/vehicles.*.tsx; then
-            echo "Vehicle crosslinks already current"
+          if git diff --quiet -- src/routes/vehicles.*.tsx src/routes/dmv.texas-dmv-vs-dps.tsx; then
+            echo "Vehicle and DMV crosslinks already current"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/routes/vehicles.*.tsx
-          git commit -m "Remove retired vehicle redirect hops"
+          git add src/routes/vehicles.*.tsx src/routes/dmv.texas-dmv-vs-dps.tsx
+          git commit -m "Remove final retired DMV redirect hops"
           git push origin HEAD:seo/vehicle-renewal-fees-handoff-2026-09-14
