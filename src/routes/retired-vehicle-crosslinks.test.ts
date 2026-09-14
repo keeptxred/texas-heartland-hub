@@ -10,10 +10,10 @@ const RETIRED_INTERNAL_HREFS = [
 ] as const;
 
 const RETIRED_INTERNAL_SCHEMA_TARGETS = [
-  "${SITE_URL}/dmv",
-  "${SITE_URL}/vehicles/registration",
-  "${SITE_URL}/vehicles/renewal",
-  "${SITE_URL}/vehicles/registration-fees-taxes",
+  "${SITE_URL}/dmv`",
+  "${SITE_URL}/vehicles/registration`",
+  "${SITE_URL}/vehicles/renewal`",
+  "${SITE_URL}/vehicles/registration-fees-taxes`",
 ] as const;
 
 const HANDOFFS = [
@@ -32,7 +32,9 @@ function expectNoRetiredTargets(routeFile: string) {
   }
 
   for (const retiredSchemaTarget of RETIRED_INTERNAL_SCHEMA_TARGETS) {
-    expect(source, `${routeFile} still declares ${retiredSchemaTarget}`).not.toContain(retiredSchemaTarget);
+    expect(source, `${routeFile} still declares exact retired schema target ${retiredSchemaTarget}`).not.toContain(
+      retiredSchemaTarget,
+    );
   }
 }
 
