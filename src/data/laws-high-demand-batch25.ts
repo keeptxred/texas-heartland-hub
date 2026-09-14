@@ -82,7 +82,7 @@ export const HIGH_DEMAND_BATCH25_GUIDES: Record<string, CornerstoneGuide> = {
     sources: [transport547, dpsTint],
     related: [
       { label: "Texas Laws", href: "/laws" },
-      { label: "Texas driver license and vehicle laws", href: "/laws/topic/driving-traffic-law" },
+      { label: "Texas driver license and vehicle laws", href: "/laws" },
       { label: "Texas speeding laws", href: "/guides/texas-speeding-laws-guide" },
     ],
   },
