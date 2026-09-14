@@ -20,8 +20,8 @@ const EXPECTED = [
 ];
 
 describe("verified Texas driving law guides", () => {
-  it("registers the first ten guides as verified and indexable", () => {
-    const guides = lawGuidesForTopic("driving");
+  it("keeps the original ten-guide driving cohort verified and indexable", () => {
+    const guides = lawGuidesForTopic("driving").filter((guide) => EXPECTED.includes(guide.slug));
     expect(guides.map((guide) => guide.slug).sort()).toEqual([...EXPECTED].sort());
     expect(guides).toHaveLength(10);
 
