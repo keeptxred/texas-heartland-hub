@@ -12,6 +12,7 @@ const INTERNAL_REDIRECT_CANONICALS: Readonly<Record<string, string>> = {
   "/texas-government/texas-court-of-criminal-appeals-history": "/texas-government/court-of-criminal-appeals-history",
   "/find-my-dmv": "https://texasdefined.com/find-my-dmv",
   "/dmv": "https://texasdefined.com/texas-dmv",
+  "/vehicles/registration": "https://texasdefined.com/texas-vehicle-registration",
   "/texas-property-tax-protest-guide": "https://texasdefined.com/do/property-tax-protest",
   "/living-in-texas": "https://texasdefined.com/texas-living",
   "/moving-to-texas": "https://texasdefined.com/moving-to-texas",
