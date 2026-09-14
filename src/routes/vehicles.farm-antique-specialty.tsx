@@ -45,7 +45,7 @@ export const Route = createFileRoute("/vehicles/farm-antique-specialty")({
     return { meta: seo.meta, links: seo.links, scripts: [
       { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "Article", headline: "Farm, Antique, Classic & Specialty Vehicle Registration", url: `${SITE_URL}/vehicles/farm-antique-specialty`, isPartOf: { "@type": "WebSite", name: "Keep TX Red", url: `${SITE_URL}/` } }) },
       { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faq.map((item) => ({ "@type": "Question", name: item.question, acceptedAnswer: { "@type": "Answer", text: item.answer } })) }) },
-      { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` }, { "@type": "ListItem", position: 2, name: "Texas DMV", item: `${SITE_URL}/dmv` }, { "@type": "ListItem", position: 3, name: "Farm, Antique, Classic & Specialty Registration", item: `${SITE_URL}/vehicles/farm-antique-specialty` }] }) },
+      { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` }, { "@type": "ListItem", position: 2, name: "Texas DMV", item: "https://texasdefined.com/texas-dmv" }, { "@type": "ListItem", position: 3, name: "Farm, Antique, Classic & Specialty Registration", item: `${SITE_URL}/vehicles/farm-antique-specialty` }] }) },
     ] };
   },
   component: FarmAntiqueSpecialtyPage,

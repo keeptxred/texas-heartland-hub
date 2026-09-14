@@ -49,7 +49,7 @@ export const Route = createFileRoute("/vehicles/title-transfer")({
     return { meta: seo.meta, links: seo.links, scripts: [
       { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "Article", headline: "Texas Vehicle Title Transfer Guide", description: "Texas vehicle title transfer steps, documents, taxes, deadlines, and special-transfer guidance.", mainEntityOfPage: `${SITE_URL}/vehicles/title-transfer`, publisher: { "@type": "Organization", name: "Keep TX Red", url: `${SITE_URL}/` } }) },
       { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faq.map((item) => ({ "@type": "Question", name: item.question, acceptedAnswer: { "@type": "Answer", text: item.answer } })) }) },
-      { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` }, { "@type": "ListItem", position: 2, name: "Texas DMV & Driver Services", item: `${SITE_URL}/dmv` }, { "@type": "ListItem", position: 3, name: "Texas Vehicle Title Transfer", item: `${SITE_URL}/vehicles/title-transfer` }] }) },
+      { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` }, { "@type": "ListItem", position: 2, name: "Texas DMV & Driver Services", item: "https://texasdefined.com/texas-dmv" }, { "@type": "ListItem", position: 3, name: "Texas Vehicle Title Transfer", item: `${SITE_URL}/vehicles/title-transfer` }] }) },
     ] };
   },
   component: TitleTransferPage,

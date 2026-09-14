@@ -52,7 +52,7 @@ export const Route = createFileRoute("/vehicles/new-residents")({
     return { meta: seo.meta, links: seo.links, scripts: [
       { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "Article", headline: "Vehicle Registration for New Texas Residents", url: `${SITE_URL}/vehicles/new-residents`, isPartOf: { "@type": "WebSite", name: "Keep TX Red", url: `${SITE_URL}/` } }) },
       { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faq.map((item) => ({ "@type": "Question", name: item.question, acceptedAnswer: { "@type": "Answer", text: item.answer } })) }) },
-      { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` }, { "@type": "ListItem", position: 2, name: "Texas DMV", item: `${SITE_URL}/dmv` }, { "@type": "ListItem", position: 3, name: "Vehicle Registration for New Residents", item: `${SITE_URL}/vehicles/new-residents` }] }) },
+      { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` }, { "@type": "ListItem", position: 2, name: "Texas DMV", item: "https://texasdefined.com/texas-dmv" }, { "@type": "ListItem", position: 3, name: "Vehicle Registration for New Residents", item: `${SITE_URL}/vehicles/new-residents` }] }) },
     ] };
   },
   component: VehicleNewResidentsPage,

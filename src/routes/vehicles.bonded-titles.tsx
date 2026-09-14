@@ -23,7 +23,7 @@ const faq = [
 
 function BondedTitlesPage() {
   return (
-    <main>vehicles.bonded-titles.tsx
+    <main>
       <HubBreadcrumbs current="Texas Bonded Titles" />
       <section className="border-b bg-muted/30"><div className="mx-auto max-w-5xl px-4 py-16 sm:py-20"><p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Texas vehicle ownership</p><h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">Texas Bonded Title Guide</h1><p className="mt-5 max-w-3xl text-lg leading-relaxed text-muted-foreground">Learn how to pursue a Texas bonded title when ownership documents are missing, incomplete, or incorrect. Follow the TxDMV eligibility review, appraisal, surety-bond, VIN-inspection, and county filing process.</p><div className="mt-8 flex flex-wrap gap-3"><a href="https://www.txdmv.gov/motorists/buying-or-selling-a-vehicle/bought-a-vehicle-with-no-title" target="_blank" rel="noreferrer" className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90">Open official TxDMV instructions</a><a href="https://texasdefined.com/find-my-dmv" className="rounded-md border px-5 py-3 text-sm font-semibold hover:bg-muted">Find a regional or county office</a><a href="/vehicles/title-transfer" className="rounded-md border px-5 py-3 text-sm font-semibold hover:bg-muted">Title-transfer guide</a></div></div></section>
 
@@ -48,7 +48,7 @@ export const Route = createFileRoute("/vehicles/bonded-titles")({
     return { meta: seo.meta, links: seo.links, scripts: [
       { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "Article", headline: "Texas Bonded Title Guide", description: "Texas bonded-title eligibility, forms, vehicle valuation, surety-bond, VIN-inspection, and county filing guidance.", mainEntityOfPage: `${SITE_URL}/vehicles/bonded-titles`, publisher: { "@type": "Organization", name: "Keep TX Red", url: `${SITE_URL}/` } }) },
       { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faq.map((item) => ({ "@type": "Question", name: item.question, acceptedAnswer: { "@type": "Answer", text: item.answer } })) }) },
-      { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` }, { "@type": "ListItem", position: 2, name: "Texas DMV & Driver Services", item: `${SITE_URL}/dmv` }, { "@type": "ListItem", position: 3, name: "Texas Bonded Titles", item: `${SITE_URL}/vehicles/bonded-titles` }] }) },
+      { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` }, { "@type": "ListItem", position: 2, name: "Texas DMV & Driver Services", item: "https://texasdefined.com/texas-dmv" }, { "@type": "ListItem", position: 3, name: "Texas Bonded Titles", item: `${SITE_URL}/vehicles/bonded-titles` }] }) },
     ] };
   },
   component: BondedTitlesPage,
