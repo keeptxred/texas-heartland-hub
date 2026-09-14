@@ -56,7 +56,7 @@ const TERMS: Term[] = [
     definition:
       "A voter-approved change to the Texas Constitution. Requires a two-thirds vote of each legislative chamber plus a simple majority of statewide voters.",
     seeAlso: [
-      { label: "Amendment Process Guide", href: "/news/texas-constitutional-amendments-guide" },
+      { label: "Amendment Process Guide", href: "/laws/constitutional-amendments" },
     ],
   },
   {
