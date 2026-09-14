@@ -14,6 +14,7 @@ const INTERNAL_REDIRECT_CANONICALS: Readonly<Record<string, string>> = {
   "/living-in-texas": "https://texasdefined.com/texas-living",
   "/moving-to-texas": "https://texasdefined.com/moving-to-texas",
   "/texas-living": "https://texasdefined.com/texas-living",
+  "/texas-sports": "https://texasdefined.com/sports",
   "/explore": "https://texasdefined.com/explore",
   "/tax-calculator": "https://texasdefined.com/decide/property-taxes",
 };

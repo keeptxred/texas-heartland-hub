@@ -25,6 +25,7 @@ const mappings = [
   ["/living-in-texas", "https://texasdefined.com/texas-living"],
   ["/moving-to-texas", "https://texasdefined.com/moving-to-texas"],
   ["/texas-living", "https://texasdefined.com/texas-living"],
+  ["/texas-sports", "https://texasdefined.com/sports"],
   ["/explore", "https://texasdefined.com/explore"],
   ["/tax-calculator", "https://texasdefined.com/decide/property-taxes"],
 ] as const;
@@ -44,6 +45,9 @@ describe("canonical internal redirect links", () => {
     expect(canonicalInternalRedirectHref("/find-my-dmv?county=Harris#offices")).toBe(
       "https://texasdefined.com/find-my-dmv?county=Harris#offices",
     );
+    expect(canonicalInternalRedirectHref("/texas-sports?league=nfl#teams")).toBe(
+      "https://texasdefined.com/sports?league=nfl#teams",
+    );
   });
 
   it("canonicalizes absolute KeepTXRed aliases and leaves unrelated URLs alone", () => {
@@ -59,10 +63,10 @@ describe("canonical internal redirect links", () => {
   it("rewrites markdown destinations without changing anchor text", () => {
     expect(
       canonicalizeInternalRedirectMarkdownLinks(
-        "Read [Election Central](/elections), [DMV offices](/find-my-dmv), and [Moving to Texas](/moving-to-texas).",
+        "Read [Election Central](/elections), [DMV offices](/find-my-dmv), [Texas sports](/texas-sports), and [Moving to Texas](/moving-to-texas).",
       ),
     ).toBe(
-      "Read [Election Central](/elections/2026), [DMV offices](https://texasdefined.com/find-my-dmv), and [Moving to Texas](https://texasdefined.com/moving-to-texas).",
+      "Read [Election Central](/elections/2026), [DMV offices](https://texasdefined.com/find-my-dmv), [Texas sports](https://texasdefined.com/sports), and [Moving to Texas](https://texasdefined.com/moving-to-texas).",
     );
   });
 });
