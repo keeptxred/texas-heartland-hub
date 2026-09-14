@@ -21,8 +21,9 @@ const expectedUpdated = (slug: string) =>
   slug === "texas-failure-to-identify-law" ? "2026-09-07" : "2026-08-13";
 
 describe("Everyday Criminal Law evergreen guide registry", () => {
-  it("registers exactly ten newly verified criminal-law guides", () => {
-    const verified = lawGuidesForTopic("criminal").filter((guide) => guide.status === "verified");
+  it("keeps the original ten-guide criminal cohort verified", () => {
+    const verified = lawGuidesForTopic("criminal")
+      .filter((guide) => guide.status === "verified" && EXPECTED.includes(guide.slug));
 
     expect(verified.map((guide) => guide.slug).sort()).toEqual([...EXPECTED].sort());
     expect(verified).toHaveLength(10);
