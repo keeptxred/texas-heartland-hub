@@ -117,4 +117,12 @@ describe("Infolinks document integration", () => {
     expect(rootSource).toContain("data-infolinks-gated");
     expect(rootSource).not.toContain('<script src="https://resources.infolinks.com/js/infolinks_main.js" />');
   });
+
+  it("keeps the same review-excluded, noindex, 404, and runtime-error surfaces free of Infolinks", () => {
+    expect(rootSource).toContain("const INFOLINKS_BOOTSTRAP");
+    expect(rootSource).toContain("var x=${JSON.stringify(ADSENSE_EXCLUDED_PATH_PREFIXES)}");
+    expect(rootSource).toContain("var d=${JSON.stringify(ADSENSE_EXCLUDED_DETAIL_PATH_PREFIXES)}");
+    expect(rootSource).toContain("if(excluded||noindex||ineligible)return");
+    expect(rootSource).toContain("document.querySelector('[data-adsense-ineligible=\"true\"]')");
+  });
 });
