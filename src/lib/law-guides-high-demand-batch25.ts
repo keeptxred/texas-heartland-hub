@@ -1,11 +1,17 @@
 import { HIGH_DEMAND_BATCH25_GUIDES } from "@/data/laws-high-demand-batch25";
 import type { LawGuideMeta, LawTopic } from "@/lib/law-guides-core";
 
-const TOPIC_BY_SLUG: Record<keyof typeof HIGH_DEMAND_BATCH25_GUIDES, LawTopic> = {
-  "texas-hidden-camera-privacy-law": "criminal",
-  "texas-window-tint-law": "driving",
-  "texas-knife-carry-law": "criminal",
-  "texas-squatter-adverse-possession-law": "hoa-property",
+const topicFor = (slug: string): LawTopic => {
+  switch (slug) {
+    case "texas-window-tint-law":
+      return "driving";
+    case "texas-squatter-adverse-possession-law":
+      return "hoa-property";
+    case "texas-hidden-camera-privacy-law":
+    case "texas-knife-carry-law":
+    default:
+      return "criminal";
+  }
 };
 
 const isPrimaryAuthority = (url: string) =>
@@ -36,7 +42,7 @@ const effectiveDate = (slug: string): string | undefined => {
 
 export const HIGH_DEMAND_BATCH25_LAW_GUIDES: readonly LawGuideMeta[] = Object.values(HIGH_DEMAND_BATCH25_GUIDES).map((guide) => ({
   slug: guide.slug,
-  topic: TOPIC_BY_SLUG[guide.slug],
+  topic: topicFor(guide.slug),
   status: "verified",
   canonicalPath: `/guides/${guide.slug}`,
   statutes: statuteLabels(guide.slug),
