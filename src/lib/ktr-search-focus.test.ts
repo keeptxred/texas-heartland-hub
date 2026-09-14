@@ -18,8 +18,9 @@ describe("KTR impression-recovery search focus", () => {
     expect(happeningNow).not.toContain('kind?.startsWith("sports-")');
   });
 
-  it("preserves legacy sports URLs for users while explicitly removing them from indexing", () => {
-    expect(sportsRoute).toContain('name: "robots"');
-    expect(sportsRoute).toContain("noindex,follow");
+  it("permanently consolidates the retired KTR sports tree on TexasDefined", () => {
+    expect(sportsRoute).toContain('href: `https://texasdefined.com/sports${location.searchStr || ""}`');
+    expect(sportsRoute).toContain("statusCode: 301");
+    expect(sportsRoute).not.toContain('name: "robots"');
   });
 });
