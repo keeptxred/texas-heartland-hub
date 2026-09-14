@@ -13,9 +13,9 @@ function routeSourcePath(path: string): URL {
 
 describe("DMV and vehicle sitemap ownership", () => {
   it("keeps the legacy dedicated sitemap wired while excluding retired KTR DMV paths", () => {
-    expect(rootSitemap).toContain('"sitemap-dmv.xml"');
+    expect(rootSitemap).toContain('\"sitemap-dmv.xml\"');
     expect(dmvSitemap).toContain("DMV_EVERGREEN_SITEMAP_PATHS");
-    expect(DMV_EVERGREEN_SITEMAP_PATHS.some((path) => path === "/dmv" || path.startsWith("/dmv/"))).toBe(false);
+    expect(DMV_EVERGREEN_SITEMAP_PATHS.every((path) => !path.startsWith("/dmv"))).toBe(true);
   });
 
   it("permanently consolidates the retired KTR DMV tree on TexasDefined", () => {
