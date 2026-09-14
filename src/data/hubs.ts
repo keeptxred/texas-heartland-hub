@@ -105,7 +105,6 @@ export const HUBS: Hub[] = [
     pillarSlug: "how-a-bill-becomes-texas-law",
     articleSlugs: [
       "how-a-bill-becomes-texas-law",
-      "texas-constitutional-amendments-guide",
       "texas-open-meetings-public-info",
       "what-local-governments-control",
       "constitutional-carry-one-year-later",
