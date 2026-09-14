@@ -51,16 +51,16 @@ jobs:
           print('\n'.join(changed) if changed else '(none)')
           PY
 
-      - name: Set up Node
-        uses: actions/setup-node@v4
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: 20
+          bun-version: latest
 
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: bun install --frozen-lockfile
 
       - name: Run retired vehicle regression test
-        run: npm test -- src/routes/retired-vehicle-crosslinks.test.ts
+        run: bun run test -- src/routes/retired-vehicle-crosslinks.test.ts
 
       - name: Commit cleanup if changed
         shell: bash
