@@ -8,6 +8,7 @@ const RETIRED_STATIC_SLUGS = new Set([
   "speaker-special-session",
   "isd-tax-burdens",
   "permian-energy",
+  "texas-constitutional-amendments-guide",
 ]);
 
 export function isExplicitlyRetiredStaticSlug(slug: string): boolean {
