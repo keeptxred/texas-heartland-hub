@@ -1,14 +1,10 @@
 name: Promote Google Preferred Source
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      # Lets this workflow bootstrap immediately when its own guarded promotion
-      # policy is updated on main. The 21-day live-page duplicate check remains
-      # authoritative, so future workflow maintenance cannot spam Facebook.
-      - '.github/workflows/promote-google-preferred-source.yml'
+  workflow_run:
+    workflows: ["Repository test and build health"]
+    types: [completed]
+    branches: [main]
   schedule:
     # Mondays at 15:20 UTC (10:20 a.m. Central while CDT is in effect).
     # The server hook suppresses reposts within 21 days, so this schedule is
@@ -26,6 +22,10 @@ concurrency:
 
 jobs:
   promote:
+    if: >-
+      github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       contains(github.event.workflow_run.head_commit.message, 'Enable Preferred Sources social bootstrap'))
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
