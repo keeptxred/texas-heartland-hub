@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { subscribeNewsletter } from "@/lib/newsletter.functions";
 import { getApprovedBillsForArticleSlug, type ArticleBill } from "@/lib/article-bills";
 import { ArticleBillsSection } from "@/components/bills/ArticleBillsSection";
+import { GooglePreferredSourceCta } from "@/components/google-preferred-source-cta";
 
 type Props = {
   sourcePage?: string;
@@ -112,6 +113,9 @@ export function NewsletterSignup({ sourcePage, compact = false }: Props) {
             {message}
           </p>
         )}
+        <div className="mt-5 border-t border-border pt-5">
+          <GooglePreferredSourceCta compact />
+        </div>
       </section>
     </>
   );
