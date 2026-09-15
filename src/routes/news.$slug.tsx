@@ -13,6 +13,7 @@ import { isBadYearSlug, parseArticleSlug } from "@/lib/article-slug-integrity";
 import { normalizeCategoryName, type CategoryName } from "@/lib/articles-by-category";
 import { AdSlot } from "@/components/ad-slot";
 import { NewsletterSignup } from "@/components/newsletter-signup";
+import { GooglePreferredSourceCta } from "@/components/google-preferred-source-cta";
 import {
   buildSeo,
   imageObjectJsonLd,
@@ -392,6 +393,8 @@ function ArticlePage() {
           </>
         ) : null}
       </div>
+
+      <GooglePreferredSourceCta />
 
       {body.editorNote ? (
         <p className="mt-5 text-sm bg-accent/10 border-l-4 border-accent px-4 py-3 italic text-foreground/80 leading-6">
