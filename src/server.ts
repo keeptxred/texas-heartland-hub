@@ -32,6 +32,8 @@ const ADS_TXT = "google.com, pub-1891256141359926, DIRECT, f08c47fec0942fa0\n";
 const TEXAS_DEFINED_ORIGIN = "https://texasdefined.com";
 const LEGACY_ABOUT_PATH = "/about-keep-texas-red";
 const CANONICAL_ABOUT_URL = `https://${CANONICAL_HOST}/about`;
+const LEGACY_CONSTITUTIONAL_AMENDMENTS_PATH = "/news/texas-constitutional-amendments-guide";
+const CANONICAL_CONSTITUTIONAL_AMENDMENTS_URL = `https://${CANONICAL_HOST}/laws/constitutional-amendments`;
 const CITY_MIGRATION_REDIRECTS: Readonly<Record<string, string>> = {
   "/austin": "https://texasdefined.com/article/moving-to-austin-guide",
   "/dallas-fort-worth": "https://texasdefined.com/article/moving-to-dallas-fort-worth-guide",
@@ -182,6 +184,15 @@ export function legacyAboutRedirect(request: Request): Response | null {
   return Response.redirect(destination.toString(), 301);
 }
 
+export function constitutionalAmendmentsLegacyRedirect(request: Request): Response | null {
+  const url = new URL(request.url);
+  if (url.pathname !== LEGACY_CONSTITUTIONAL_AMENDMENTS_PATH) return null;
+
+  const destination = new URL(CANONICAL_CONSTITUTIONAL_AMENDMENTS_URL);
+  destination.search = url.search;
+  return Response.redirect(destination.toString(), 301);
+}
+
 export function cityMigrationRedirect(request: Request): Response | null {
   const url = new URL(request.url);
   const target = CITY_MIGRATION_REDIRECTS[url.pathname];
@@ -242,6 +253,9 @@ export default {
 
     const aboutRedirect = legacyAboutRedirect(appRequest);
     if (aboutRedirect) return aboutRedirect;
+
+    const constitutionalRedirect = constitutionalAmendmentsLegacyRedirect(appRequest);
+    if (constitutionalRedirect) return constitutionalRedirect;
 
     const cityRedirect = cityMigrationRedirect(appRequest);
     if (cityRedirect) return cityRedirect;
