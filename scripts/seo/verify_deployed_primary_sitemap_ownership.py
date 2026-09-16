@@ -35,7 +35,6 @@ DMV_EVERGREEN_PATHS = {
     "/vehicles/inspections",
     "/vehicles/inspections-emissions",
     "/vehicles/liens-duplicate-corrected-titles",
-    "/vehicles/new-residents",
     "/vehicles/personalized-plates",
     "/vehicles/plates",
     "/vehicles/private-party-sales",
