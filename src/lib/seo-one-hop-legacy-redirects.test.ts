@@ -15,6 +15,10 @@ describe("legacy redirect chains", () => {
     for (const mapping of expected) expect(source).toContain(mapping);
   });
 
+  it("keeps candidate-guides in server canonicalization for one-hop www/http cleanup", () => {
+    expect(source).toContain('["/candidate-guides", "/elections/2026"]');
+  });
+
   it("resolves external legacy destinations before KTR host/protocol normalization", () => {
     const externalLookup = source.indexOf("const externalTarget = EXTERNAL_LEGACY_REDIRECTS.get");
     const externalReturn = source.indexOf("location: finalUrl.toString()", externalLookup);

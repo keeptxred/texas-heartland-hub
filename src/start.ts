@@ -27,6 +27,7 @@ const LEGACY_ELECTION_PATHS = new Map([
   ["/election-central", "/elections/2026"],
   ["/texas-elections", "/elections/2026"],
   ["/elections-2026", "/elections/2026"],
+  ["/candidate-guides", "/elections/2026"],
   ["/texas-news/elections", "/elections/2026"],
   ["/elections/forecasts", "/elections/forecast"],
   ["/elections/statewide-races", "/elections/statewide"],
