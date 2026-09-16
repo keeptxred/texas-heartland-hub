@@ -149,3 +149,43 @@ jobs:
             echo 'Hero-readiness queue did not shrink; failing to prevent a silent retry loop.' >&2
             exit 1
           fi
+
+  sitemap-indexability:
+    if: >-
+      (github.event_name == 'workflow_dispatch' ||
+       github.event_name == 'workflow_run' ||
+       github.event_name == 'push') &&
+      (github.event_name != 'workflow_run' ||
+       github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out current main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Check sitemap audit syntax
+        run: node --check scripts/ci/audit-sitemap-page-indexability.mjs
+
+      - name: Audit every submitted sitemap page
+        env:
+          AUDIT_CONCURRENCY: "12"
+          AUDIT_RETRIES: "2"
+          AUDIT_TIMEOUT_MS: "15000"
+          AUDIT_OUTPUT: tmp/sitemap-page-indexability-audit.json
+        run: node scripts/ci/audit-sitemap-page-indexability.mjs
+
+      - name: Upload sitemap indexability report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sitemap-page-indexability-audit
+          path: tmp/sitemap-page-indexability-audit.json
+          if-no-files-found: warn
+          retention-days: 14
