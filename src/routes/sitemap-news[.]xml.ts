@@ -12,6 +12,7 @@ import { SITE_NAME } from "@/lib/seo";
 import { ARTICLES, isPublished } from "@/data/articles";
 import { ARTICLE_BODIES } from "@/data/article-bodies";
 import { listSitemapArticles } from "@/lib/evergreen.functions";
+import { getNewsSitemapHeadlines } from "@/lib/news-sitemap.functions";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 
 const WINDOW_MS = 48 * 60 * 60 * 1000;
@@ -58,18 +59,24 @@ export const Route = createFileRoute("/sitemap-news.xml")({
 
         try {
           const { articles } = await listSitemapArticles();
-          for (const a of articles) {
-            if (!isGoogleNewsArticleKind(a.kind)) continue;
+          const recentCloud = articles.filter((a) => {
+            if (!isGoogleNewsArticleKind(a.kind)) return false;
             const t = new Date(a.published_at).getTime();
-            if (
+            return !(
               isNaN(t)
               || t < cutoff
               || t > now
               || !isArticleSlugDateConsistent(a.slug, a.published_at)
-            ) continue;
+            );
+          });
+          const { headlines } = await getNewsSitemapHeadlines({
+            data: { slugs: recentCloud.map((a) => a.slug) },
+          });
+
+          for (const a of recentCloud) {
             items.push({
               loc: `${BASE_URL}/news/${a.slug}`,
-              title: a.title,
+              title: headlines[a.slug] ?? a.title,
               pubDate: toIsoDate(a.published_at),
             });
           }
