@@ -59,8 +59,9 @@ export const Route = createFileRoute("/robots.txt")({
           "Disallow: /draft/",
           "Disallow: /private/",
           "Disallow: /email/",
-          "Disallow: /hubs",
-          "Disallow: /hubs/",
+          // Legacy public aliases such as /hubs and /hubs/* intentionally remain
+          // crawlable so Google can observe their server-side 301 redirects and
+          // consolidate old signals into the current canonical destinations.
           // Cart / checkout and low-value search/filter/sort URLs should not
           // enter the crawl queue. Pagination is intentionally crawlable so
           // Googlebot can follow bill-directory links beyond the first page.
