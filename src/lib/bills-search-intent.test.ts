@@ -19,7 +19,7 @@ describe("Texas bills search-intent authority", () => {
   });
 
   it("keeps filtered search-result combinations out of the index while preserving the canonical hub", () => {
-    expect(billsRoute).toContain("filtered ?");
+    expect(billsRoute).toContain("content: filtered");
     expect(billsRoute).toContain("noindex,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1");
     expect(billsRoute).toContain("index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1");
     expect(billsRoute).toContain("`${SITE_URL}/bills`");
