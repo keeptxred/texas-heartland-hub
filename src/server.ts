@@ -3,6 +3,7 @@ import "./lib/error-capture";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 import { installDirectAiFetch } from "./lib/direct-ai-fetch";
+import { buildVehicleHandoffLocation } from "./lib/vehicle-handoff-redirect";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -193,6 +194,19 @@ export function constitutionalAmendmentsLegacyRedirect(request: Request): Respon
   return Response.redirect(destination.toString(), 301);
 }
 
+export function vehicleAuthorityHandoffRedirect(request: Request): Response | null {
+  const location = buildVehicleHandoffLocation(request.url);
+  if (!location) return null;
+
+  return new Response(null, {
+    status: 301,
+    headers: {
+      location,
+      "cache-control": "public, max-age=86400",
+    },
+  });
+}
+
 export function cityMigrationRedirect(request: Request): Response | null {
   const url = new URL(request.url);
   const target = CITY_MIGRATION_REDIRECTS[url.pathname];
@@ -244,6 +258,11 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     const appRequest = canonicalizeDeploymentSmokeRequest(request);
+
+    // Retired ownership routes must hand off before KTR host/path/query cleanup.
+    // This keeps the redirect one-hop and preserves tracking plus ordinary query state.
+    const vehicleRedirect = vehicleAuthorityHandoffRedirect(appRequest);
+    if (vehicleRedirect) return vehicleRedirect;
 
     const canonicalRedirect = canonicalHostRedirect(appRequest);
     if (canonicalRedirect) return canonicalRedirect;
