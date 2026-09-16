@@ -30,6 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
+      PUBLIC_ORIGIN: https://keeptxred.com
       WORKER_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
     steps:
       - name: Verify retired vehicle routes redirect to TexasDefined
@@ -38,38 +39,59 @@ jobs:
           set -euo pipefail
 
           verify_redirect() {
-            local source_path="$1"
-            local destination="$2"
+            local origin="$1"
+            local source_path="$2"
+            local destination="$3"
+            local deployment_smoke="${4:-false}"
             local headers body status location probe expected
+            local -a request_headers
             headers="$(mktemp)"
             body="$(mktemp)"
-            trap 'rm -f "$headers" "$body"' RETURN
             probe="?vehicle_smoke=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
             expected="${destination}${probe}"
+            request_headers=(
+              -H 'cache-control: no-cache'
+              -H 'pragma: no-cache'
+            )
+
+            if [[ "$deployment_smoke" == "true" ]]; then
+              request_headers+=( -H 'x-keeptxred-deployment-smoke: canonical' )
+            fi
 
             for attempt in $(seq 1 12); do
+              : > "$headers"
+              : > "$body"
               status="$(curl --retry 3 --retry-delay 2 --retry-all-errors \
                 --connect-timeout 10 --max-time 45 --max-redirs 0 \
                 --silent --show-error \
-                -H 'cache-control: no-cache' \
-                -H 'pragma: no-cache' \
+                "${request_headers[@]}" \
                 -D "$headers" -o "$body" -w '%{http_code}' \
-                "${WORKER_ORIGIN}${source_path}${probe}" || true)"
+                "${origin}${source_path}${probe}" || true)"
               location="$(tr -d '\r' < "$headers" | awk 'BEGIN { IGNORECASE=1 } /^location:/ { sub(/^[^:]*:[[:space:]]*/, ""); print; exit }')"
 
               if [[ "$status" == "301" && "$location" == "$expected" ]]; then
-                echo "Vehicle handoff passed: $source_path -> $location"
+                echo "Vehicle handoff passed at $origin: $source_path -> $location"
+                rm -f "$headers" "$body"
                 return 0
               fi
 
-              echo "Waiting for $source_path: HTTP ${status:-000}, location=${location:-<missing>}, attempt $attempt/12"
+              echo "Waiting for $origin$source_path: HTTP ${status:-000}, location=${location:-<missing>}, attempt $attempt/12"
               sleep 5
             done
 
-            echo "::error title=Vehicle handoff production smoke failed::$source_path expected HTTP 301 to $expected, got HTTP ${status:-000} and location ${location:-<missing>}."
+            echo "::error title=Vehicle handoff production smoke failed::$origin$source_path expected HTTP 301 to $expected, got HTTP ${status:-000} and location ${location:-<missing>}."
             cat "$headers" >&2 || true
-            exit 1
+            rm -f "$headers" "$body"
+            return 1
           }
 
-          verify_redirect "/vehicles/renewal" "https://texasdefined.com/texas-vehicle-registration-renewal"
-          verify_redirect "/vehicles/registration-fees-taxes" "https://texasdefined.com/texas-vehicle-registration-fees-taxes"
+          # Public-domain verification proves what users and crawlers receive.
+          verify_redirect "$PUBLIC_ORIGIN" "/vehicles/renewal" "https://texasdefined.com/texas-vehicle-registration-renewal"
+          verify_redirect "$PUBLIC_ORIGIN" "/vehicles/registration-fees-taxes" "https://texasdefined.com/texas-vehicle-registration-fees-taxes"
+
+          # Direct Worker verification uses the same canonical deployment-smoke
+          # contract as the rest of the production verification suite. Without
+          # this header, the Worker hostname is intentionally canonicalized back
+          # to keeptxred.com before route handling, which does not test handoff.
+          verify_redirect "$WORKER_ORIGIN" "/vehicles/renewal" "https://texasdefined.com/texas-vehicle-registration-renewal" true
+          verify_redirect "$WORKER_ORIGIN" "/vehicles/registration-fees-taxes" "https://texasdefined.com/texas-vehicle-registration-fees-taxes" true
