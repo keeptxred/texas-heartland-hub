@@ -11,7 +11,6 @@ export const DMV_EVERGREEN_SITEMAP_PATHS = [
   "/vehicles/inspections",
   "/vehicles/inspections-emissions",
   "/vehicles/liens-duplicate-corrected-titles",
-  "/vehicles/new-residents",
   "/vehicles/personalized-plates",
   "/vehicles/plates",
   "/vehicles/private-party-sales",

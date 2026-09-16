@@ -7,7 +7,7 @@ const ACTIVE_RELOCATION_HANDOFFS = [
   ["dmv.driver-license.tsx", "https://texasdefined.com/moving-to-texas"],
   ["dmv.real-id.tsx", "https://texasdefined.com/moving-to-texas"],
   ["dmv.texas-dmv-vs-dps.tsx", "https://texasdefined.com/moving-to-texas"],
-  ["vehicles.new-residents.tsx", "https://texasdefined.com/moving-to-texas"],
+  ["vehicles.new-residents.tsx", "https://texasdefined.com/find-my-dmv"],
   ["vehicles.registration.tsx", "https://texasdefined.com/texas-vehicle-registration"],
 ] as const;
 
@@ -31,6 +31,12 @@ describe("active relocation cross-site handoffs", () => {
     const source = readFileSync(new URL("./vehicles.registration.tsx", import.meta.url), "utf8");
     expect(source).toContain("https://texasdefined.com/texas-vehicle-registration");
     expect(source).toContain("statusCode: 301");
+  });
+
+  it("keeps the new-resident vehicle route as a permanent exact-owner handoff", () => {
+    const source = readFileSync(new URL("./vehicles.new-residents.tsx", import.meta.url), "utf8");
+    expect(source).toContain("https://texasdefined.com/find-my-dmv");
+    expect(source).toContain("statusCode: 308");
   });
 
   it.each(LEGACY_RELOCATION_ROUTES)("redirects legacy route %s directly to the current TexasDefined relocation page", (file) => {
