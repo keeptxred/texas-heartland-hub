@@ -3,27 +3,28 @@ import { describe, expect, it } from "vitest";
 import { buildFlux2ImageRequest, buildFluxImagePrompt, buildFluxImageRequest } from "./featured-image-cloudflare";
 
 describe("Cloudflare featured-image payload", () => {
-  it("uses FLUX 2 multipart generation with a supported Schnell fallback", () => {
+  it("uses FLUX 2 multipart generation with a large 16:9 quality fallback", () => {
     const source = fs.readFileSync(new URL("./featured-image-cloudflare.ts", import.meta.url), "utf8");
     const requestStart = source.indexOf("export function buildFluxImageRequest");
     const generateStart = source.indexOf("export async function generateImageBytes");
     const validatorStart = source.indexOf("export async function validateImageMatchesArticle");
     const requestSource = source.slice(requestStart, generateStart);
     const generateImageSource = source.slice(generateStart, validatorStart);
-    const fallbackRequest = buildFluxImageRequest("Texas preparedness supplies", "people, illustration");
+    const legacyRequest = buildFluxImageRequest("Texas preparedness supplies", "people, illustration");
     const qualityRequest = buildFlux2ImageRequest("Texas preparedness supplies", "people, illustration");
 
     expect(source).toContain('@cf/black-forest-labs/flux-2-klein-4b');
-    expect(source).toContain('@cf/black-forest-labs/flux-1-schnell');
+    expect(source).toContain('@cf/black-forest-labs/flux-2-klein-9b');
+    expect(source).not.toContain('@cf/black-forest-labs/flux-1-schnell');
     expect(requestSource).toContain("buildFluxImagePrompt");
     expect(requestSource).toContain('form.append("guidance", "5.5")');
-    expect(requestSource).toContain('form.append("width", "1024")');
-    expect(requestSource).toContain('form.append("height", "768")');
+    expect(requestSource).toContain('form.append("width", "1280")');
+    expect(requestSource).toContain('form.append("height", "720")');
     expect(qualityRequest.get("guidance")).toBe("5.5");
-    expect(qualityRequest.get("width")).toBe("1024");
-    expect(qualityRequest.get("height")).toBe("768");
-    expect(fallbackRequest).toEqual(expect.objectContaining({ steps: 8 }));
-    expect(fallbackRequest).not.toHaveProperty("seed");
+    expect(qualityRequest.get("width")).toBe("1280");
+    expect(qualityRequest.get("height")).toBe("720");
+    expect(legacyRequest).toEqual(expect.objectContaining({ steps: 8 }));
+    expect(legacyRequest).not.toHaveProperty("seed");
     expect(generateImageSource).toContain("CLOUDFLARE_IMAGE_FALLBACK_MODEL");
     expect(generateImageSource).toContain("usedFallback = true");
     expect(generateImageSource).toContain("rememberGeneratedImage");

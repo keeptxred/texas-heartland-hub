@@ -1,13 +1,12 @@
 import { parseVisionVerdict, type SubjectExtract } from "./featured-image-core";
 
 // FLUX.2 Klein 4B remains the quota-safe production path for article photography.
-// The enhanced-quality Klein 9B model is reserved for only the final strict-
-// validator retry, bounding worst-case image cost while giving repeatedly rejected
-// scenes one materially stronger generation attempt. Schnell remains an API-
-// availability fallback for the cheap first-pass/retry path.
+// The enhanced-quality Klein 9B model is reserved for final strict-validator retries
+// and provider fallback so every accepted production path can request the same
+// Discover-ready 1280x720 canvas.
 export const CLOUDFLARE_IMAGE_MODEL = "@cf/black-forest-labs/flux-2-klein-4b";
 export const CLOUDFLARE_IMAGE_QUALITY_MODEL = "@cf/black-forest-labs/flux-2-klein-9b";
-export const CLOUDFLARE_IMAGE_FALLBACK_MODEL = "@cf/black-forest-labs/flux-1-schnell";
+export const CLOUDFLARE_IMAGE_FALLBACK_MODEL = CLOUDFLARE_IMAGE_QUALITY_MODEL;
 export const CLOUDFLARE_CULTURE_IMAGE_MODEL = CLOUDFLARE_IMAGE_MODEL;
 export const CLOUDFLARE_VISION_MODEL = "@cf/mistralai/mistral-small-3.1-24b-instruct";
 
@@ -99,8 +98,8 @@ export function buildFlux2ImageRequest(prompt: string, _negativePrompt: string, 
   const form = new FormData();
   form.append("prompt", buildFlux2ImagePrompt(prompt));
   form.append("guidance", "5.5");
-  form.append("width", "1024");
-  form.append("height", "768");
+  form.append("width", "1280");
+  form.append("height", "720");
   return form;
 }
 
