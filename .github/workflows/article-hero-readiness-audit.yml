@@ -189,3 +189,26 @@ jobs:
           path: tmp/sitemap-page-indexability-audit.json
           if-no-files-found: warn
           retention-days: 14
+
+  vehicle-handoff:
+    if: >-
+      (github.event_name == 'workflow_dispatch' ||
+       github.event_name == 'workflow_run' ||
+       github.event_name == 'push') &&
+      (github.event_name != 'workflow_run' ||
+       github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
+    steps:
+      - name: Check out current main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+
+      - name: Verify retired vehicle and constitutional routes redirect permanently
+        run: python3 scripts/authority/smoke-production.py --legacy-redirects-only
+
+      - name: Verify vehicle handoffs preserve full queries and resolve directly
+        run: python3 scripts/authority/verify-vehicle-handoff-query-production.py
