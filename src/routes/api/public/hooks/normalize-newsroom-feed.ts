@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   findDeterministicDuplicate,
   normalizeNewsFeedItem,
+  sameTimestamp,
   type ExistingNormalization,
 } from "@/lib/newsroom-normalization";
 
@@ -31,6 +32,11 @@ type PriorNormalizationRow = ExistingNormalization & {
 
 type DesiredNormalizationRow = PriorNormalizationRow;
 
+function sameNullableNumber(left: number | null, right: number | null): boolean {
+  if (left === null || right === null) return left === right;
+  return Number(left) === Number(right);
+}
+
 function sameNormalization(left: DesiredNormalizationRow, right: PriorNormalizationRow | undefined): boolean {
   if (!right) return false;
   return left.feed_item_id === right.feed_item_id
@@ -42,8 +48,8 @@ function sameNormalization(left: DesiredNormalizationRow, right: PriorNormalizat
     && left.content_fingerprint === right.content_fingerprint
     && left.duplicate_of_feed_item_id === right.duplicate_of_feed_item_id
     && left.duplicate_reason === right.duplicate_reason
-    && left.dedupe_confidence === right.dedupe_confidence
-    && left.observed_at === right.observed_at
+    && sameNullableNumber(left.dedupe_confidence, right.dedupe_confidence)
+    && sameTimestamp(left.observed_at, right.observed_at)
     && left.normalization_version === right.normalization_version;
 }
 

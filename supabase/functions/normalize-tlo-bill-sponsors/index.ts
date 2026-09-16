@@ -22,7 +22,7 @@ type Alias = {
 const KTR_ROSTER = "https://raw.githubusercontent.com/keeptxred/texas-heartland-hub/main/src/data/texas-legislators.generated.ts";
 const TLO_HOUSE = "https://capitol.texas.gov/Members/Members.aspx?Chamber=H";
 const TLO_SENATE = "https://capitol.texas.gov/Members/Members.aspx?Chamber=S";
-const HEADERS = { "user-agent": "KeepTXRed legislative sponsor normalizer/3.0" };
+const HEADERS = { "user-agent": "KeepTXRed legislative sponsor normalizer/3.1" };
 const BATCH_LIMIT = 250;
 const MAX_BATCHES_PER_RUN = 6;
 
@@ -188,26 +188,18 @@ Deno.serve(async (request) => {
       if (!collisions.has(aliasKey)) aliasMap.set(aliasKey, { member, code: entry.code });
     }
 
-    const rows: any[] = [];
-    for (let from = 0; ; from += 1000) {
-      const { data, error } = await db
-        .from("bill_sponsors")
-        .select("sponsor_name,chamber,bill_id")
-        .order("id")
-        .range(from, from + 999);
-      if (error) throw error;
-      rows.push(...(data || []));
-      if ((data || []).length < 1000) break;
-    }
+    const { data: candidateRows, error: candidateError } = await db.rpc(
+      "list_89th_bill_sponsor_normalization_candidates",
+    );
+    if (candidateError) throw candidateError;
 
     const groups = new Map<string, { name: string; chamber: Chamber }>();
-    for (const row of rows) {
+    for (const row of candidateRows || []) {
       const chamber = String(row.chamber || "").toLowerCase();
       if (chamber !== "house" && chamber !== "senate") continue;
-      groups.set(`${chamber}:${String(row.sponsor_name || "")}`, {
-        name: String(row.sponsor_name || ""),
-        chamber: chamber as Chamber,
-      });
+      const name = String(row.sponsor_name || "");
+      if (!name) continue;
+      groups.set(`${chamber}:${name}`, { name, chamber: chamber as Chamber });
     }
 
     const aliases: Alias[] = [];
@@ -243,19 +235,21 @@ Deno.serve(async (request) => {
     let touched = 0;
     let batches = 0;
     let lastTouched = 0;
-    for (let index = 0; index < MAX_BATCHES_PER_RUN; index += 1) {
-      const { data, error } = await db.rpc("normalize_89th_bill_sponsors_batch", {
-        p_aliases: aliases,
-        p_limit: BATCH_LIMIT,
-      });
-      if (error) throw error;
-      const result = (data || {}) as any;
-      lastTouched = Number(result.touched_bills || 0);
-      updated += Number(result.updated || 0);
-      deduplicated += Number(result.deduplicated || 0);
-      touched += lastTouched;
-      batches += 1;
-      if (lastTouched === 0) break;
+    if (aliases.length > 0) {
+      for (let index = 0; index < MAX_BATCHES_PER_RUN; index += 1) {
+        const { data, error } = await db.rpc("normalize_89th_bill_sponsors_batch", {
+          p_aliases: aliases,
+          p_limit: BATCH_LIMIT,
+        });
+        if (error) throw error;
+        const result = (data || {}) as any;
+        lastTouched = Number(result.touched_bills || 0);
+        updated += Number(result.updated || 0);
+        deduplicated += Number(result.deduplicated || 0);
+        touched += lastTouched;
+        batches += 1;
+        if (lastTouched === 0) break;
+      }
     }
 
     return Response.json({
@@ -264,7 +258,7 @@ Deno.serve(async (request) => {
       master_roster: members.length,
       tlo_directory: directory.length,
       alias_keys: aliasMap.size,
-      groups: groups.size,
+      candidate_groups: groups.size,
       resolved_groups: aliases.length,
       unresolved_groups: unresolved.length,
       normalization: {
