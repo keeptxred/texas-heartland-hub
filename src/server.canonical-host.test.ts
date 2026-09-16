@@ -4,6 +4,7 @@ import {
   adsTxtResponse,
   canonicalHostRedirect,
   cityMigrationRedirect,
+  constitutionalAmendmentsLegacyRedirect,
   normalizeCanonicalHref,
   normalizeCanonicalLinksInHtml,
   normalizeCanonicalLinksInHtmlText,
@@ -180,6 +181,29 @@ describe("adsTxtResponse", () => {
 
     expect(response?.status).toBe(200);
     expect(await response?.text()).toBe("");
+  });
+});
+
+describe("constitutionalAmendmentsLegacyRedirect", () => {
+  it("returns a 301 to the canonical law guide and preserves the complete query string", () => {
+    const response = constitutionalAmendmentsLegacyRedirect(
+      new Request(
+        "https://keeptxred.com/news/texas-constitutional-amendments-guide?utm_source=test&probe=constitutional-legacy",
+      ),
+    );
+
+    expect(response?.status).toBe(301);
+    expect(response?.headers.get("location")).toBe(
+      "https://keeptxred.com/laws/constitutional-amendments?utm_source=test&probe=constitutional-legacy",
+    );
+  });
+
+  it("leaves unrelated news URLs on the existing server path", () => {
+    expect(
+      constitutionalAmendmentsLegacyRedirect(
+        new Request("https://keeptxred.com/news/texas-voting-guide-2026"),
+      ),
+    ).toBeNull();
   });
 });
 
