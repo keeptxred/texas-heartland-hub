@@ -24,6 +24,8 @@ const mappings = [
   ["/find-my-dmv", "https://texasdefined.com/find-my-dmv"],
   ["/dmv", "https://texasdefined.com/texas-dmv"],
   ["/vehicles/registration", "https://texasdefined.com/texas-vehicle-registration"],
+  ["/vehicles/renewal", "https://texasdefined.com/texas-vehicle-registration-renewal"],
+  ["/vehicles/registration-fees-taxes", "https://texasdefined.com/texas-vehicle-registration-fees-taxes"],
   ["/texas-property-tax-protest-guide", "https://texasdefined.com/do/property-tax-protest"],
   ["/living-in-texas", "https://texasdefined.com/texas-living"],
   ["/moving-to-texas", "https://texasdefined.com/moving-to-texas"],
@@ -57,6 +59,12 @@ describe("canonical internal redirect links", () => {
     expect(canonicalInternalRedirectHref("/vehicles/registration?county=Harris#fees")).toBe(
       "https://texasdefined.com/texas-vehicle-registration?county=Harris#fees",
     );
+    expect(canonicalInternalRedirectHref("/vehicles/renewal?county=Harris#online")).toBe(
+      "https://texasdefined.com/texas-vehicle-registration-renewal?county=Harris#online",
+    );
+    expect(canonicalInternalRedirectHref("/vehicles/registration-fees-taxes?vehicle=ev#fees")).toBe(
+      "https://texasdefined.com/texas-vehicle-registration-fees-taxes?vehicle=ev#fees",
+    );
     expect(canonicalInternalRedirectHref("/texas-sports?league=nfl#teams")).toBe(
       "https://texasdefined.com/sports?league=nfl#teams",
     );
@@ -75,10 +83,10 @@ describe("canonical internal redirect links", () => {
   it("rewrites markdown destinations without changing anchor text", () => {
     expect(
       canonicalizeInternalRedirectMarkdownLinks(
-        "Read [Election Central](/elections), [amendment process](/news/texas-constitutional-amendments-guide), [DMV guide](/dmv), [vehicle registration](/vehicles/registration), [DMV offices](/find-my-dmv), [Texas sports](/texas-sports), and [Moving to Texas](/moving-to-texas).",
+        "Read [Election Central](/elections), [amendment process](/news/texas-constitutional-amendments-guide), [DMV guide](/dmv), [vehicle registration](/vehicles/registration), [registration renewal](/vehicles/renewal), [vehicle fees](/vehicles/registration-fees-taxes), [DMV offices](/find-my-dmv), [Texas sports](/texas-sports), and [Moving to Texas](/moving-to-texas).",
       ),
     ).toBe(
-      "Read [Election Central](/elections/2026), [amendment process](/laws/constitutional-amendments), [DMV guide](https://texasdefined.com/texas-dmv), [vehicle registration](https://texasdefined.com/texas-vehicle-registration), [DMV offices](https://texasdefined.com/find-my-dmv), [Texas sports](https://texasdefined.com/sports), and [Moving to Texas](https://texasdefined.com/moving-to-texas).",
+      "Read [Election Central](/elections/2026), [amendment process](/laws/constitutional-amendments), [DMV guide](https://texasdefined.com/texas-dmv), [vehicle registration](https://texasdefined.com/texas-vehicle-registration), [registration renewal](https://texasdefined.com/texas-vehicle-registration-renewal), [vehicle fees](https://texasdefined.com/texas-vehicle-registration-fees-taxes), [DMV offices](https://texasdefined.com/find-my-dmv), [Texas sports](https://texasdefined.com/sports), and [Moving to Texas](https://texasdefined.com/moving-to-texas).",
     );
   });
 });
