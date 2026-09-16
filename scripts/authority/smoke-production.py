@@ -15,15 +15,27 @@ import urllib.request
 from typing import Any
 
 SITE_URL = os.environ.get("SITE_URL", "https://keeptxred.com").rstrip("/")
+PRODUCTION_URL = "https://keeptxred.com"
 TIMEOUT_SECONDS = 30
 ATTEMPTS = 4
 RETRY_SECONDS = 3
 CITY_PROBE_QUERY = "utm_source=ktr-smoke&probe=city-migration"
+LEGACY_PROBE_QUERY = (
+    "legacy_smoke="
+    f"{os.environ.get('GITHUB_RUN_ID', 'local')}-{os.environ.get('GITHUB_RUN_ATTEMPT', '0')}"
+)
 CITY_REDIRECTS = {
     "/austin": "https://texasdefined.com/article/moving-to-austin-guide",
     "/dallas-fort-worth": "https://texasdefined.com/article/moving-to-dallas-fort-worth-guide",
     "/san-antonio": "https://texasdefined.com/article/moving-to-san-antonio-guide",
     "/el-paso": "https://texasdefined.com/article/moving-to-el-paso-guide",
+}
+LEGACY_REDIRECTS = {
+    "/vehicles/renewal": "https://texasdefined.com/texas-vehicle-registration-renewal",
+    "/vehicles/registration-fees-taxes": "https://texasdefined.com/texas-vehicle-registration-fees-taxes",
+    "/news/texas-constitutional-amendments-guide": (
+        "https://keeptxred.com/laws/constitutional-amendments"
+    ),
 }
 
 
@@ -57,16 +69,27 @@ def fetch(path: str) -> tuple[bytes, dict[str, str]]:
     raise SmokeFailure(f"Unable to fetch {path}: {last_error}")
 
 
-def fetch_without_redirect(path: str) -> tuple[int, dict[str, str]]:
-    url = f"{SITE_URL}{path}"
+def fetch_without_redirect(
+    path: str,
+    *,
+    origin: str | None = None,
+    extra_headers: dict[str, str] | None = None,
+) -> tuple[int, dict[str, str]]:
+    base_url = (origin or SITE_URL).rstrip("/")
+    url = f"{base_url}{path}"
     opener = urllib.request.build_opener(NoRedirect())
     last_error: Exception | None = None
+    request_headers = {
+        "User-Agent": "KeepTXRed-route-production-smoke/1.0",
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
+    }
+    if extra_headers:
+        request_headers.update(extra_headers)
+
     for attempt in range(1, ATTEMPTS + 1):
         try:
-            request = urllib.request.Request(
-                url,
-                headers={"User-Agent": "KeepTXRed-city-migration-smoke/1.0"},
-            )
+            request = urllib.request.Request(url, headers=request_headers)
             try:
                 with opener.open(request, timeout=TIMEOUT_SECONDS) as response:
                     return response.status, {
@@ -82,7 +105,9 @@ def fetch_without_redirect(path: str) -> tuple[int, dict[str, str]]:
             last_error = exc
             if attempt < ATTEMPTS:
                 time.sleep(RETRY_SECONDS)
-    raise SmokeFailure(f"Unable to fetch {path} without redirects: {last_error}")
+    raise SmokeFailure(
+        f"Unable to fetch {url} without redirects after {ATTEMPTS} attempts: {last_error}"
+    )
 
 
 def fetch_json(path: str) -> tuple[dict[str, Any], dict[str, str]]:
@@ -288,6 +313,45 @@ def verify_city_migration() -> None:
     print(f"Houston remains on KeepTXRed: /houston -> {location}")
 
 
+def verify_legacy_redirects() -> None:
+    origins: list[tuple[str, str, dict[str, str]]] = [
+        ("public", PRODUCTION_URL, {}),
+    ]
+    if SITE_URL != PRODUCTION_URL:
+        origins.append(
+            (
+                "configured-worker",
+                SITE_URL,
+                {"x-keeptxred-deployment-smoke": "canonical"},
+            )
+        )
+
+    for label, origin, request_headers in origins:
+        for path, target in LEGACY_REDIRECTS.items():
+            probe_path = f"{path}?{LEGACY_PROBE_QUERY}"
+            status, headers = fetch_without_redirect(
+                probe_path,
+                origin=origin,
+                extra_headers=request_headers,
+            )
+            expected_location = f"{target}?{LEGACY_PROBE_QUERY}"
+            location = headers.get("location")
+            print(
+                f"Legacy redirect probe ({label}): {path} "
+                f"status={status} location={location!r}"
+            )
+            if status != 301:
+                raise SmokeFailure(
+                    f"{origin}{path} returned HTTP {status}, expected permanent 301"
+                )
+            if location != expected_location:
+                raise SmokeFailure(
+                    f"{origin}{path} redirected to {location!r}, "
+                    f"expected {expected_location!r}"
+                )
+            print(f"Legacy redirect healthy ({label}): {path} -> {location}")
+
+
 def verify_political_profiles() -> None:
     script = Path(__file__).with_name("verify-political-profiles-production.py")
     completed = subprocess.run(
@@ -304,12 +368,21 @@ def verify_political_profiles() -> None:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
         "--city-migration-only",
         action="store_true",
         help=(
-            "Run the deployed-Worker critical browser-route guard used by production deployment: "
-            "retired city redirects, Houston retention, and original political profiles."
+            "Run the deployment-critical browser-route guard: retired city redirects, "
+            "Houston retention, legacy permanent redirects, and political profiles."
+        ),
+    )
+    group.add_argument(
+        "--legacy-redirects-only",
+        action="store_true",
+        help=(
+            "Verify the retired vehicle handoffs and constitutional legacy route return "
+            "exact permanent redirects on the public origin and configured Worker."
         ),
     )
     return parser.parse_args()
@@ -318,8 +391,13 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     try:
+        if args.legacy_redirects_only:
+            verify_legacy_redirects()
+            print("Legacy permanent redirect smoke passed")
+            return 0
         if args.city_migration_only:
             verify_city_migration()
+            verify_legacy_redirects()
             verify_political_profiles()
             print(f"Deployment-critical browser-route smoke passed against {SITE_URL}")
             return 0
