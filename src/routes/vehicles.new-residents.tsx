@@ -4,7 +4,7 @@ export const Route = createFileRoute("/vehicles/new-residents")({
   beforeLoad: ({ location }) => {
     throw redirect({
       href: `https://texasdefined.com/find-my-dmv${location.searchStr || ""}`,
-      statusCode: 301,
+      statusCode: 308,
     });
   },
 });
