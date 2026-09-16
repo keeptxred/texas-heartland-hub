@@ -200,8 +200,8 @@ function BillsPage() {
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Bill directory</p>
-              <h2 id="browse-legislature-heading" className="mt-1 text-2xl font-bold">Browse Texas bills by Legislature</h2>
-              <p className="mt-2 max-w-3xl text-sm text-muted-foreground">Open a Legislature to browse its House, Senate and joint measures by bill type before drilling into individual bill histories. Regular and called sessions are labeled on each bill result.</p>
+              <h2 id="browse-legislature-heading" className="mt-1 text-2xl font-bold">Browse by Legislature</h2>
+              <p className="mt-2 max-w-3xl text-sm text-muted-foreground">Browse Texas bills by Legislature, then open its House, Senate and joint measures by bill type before drilling into individual bill histories. Regular and called sessions are labeled on each bill result.</p>
             </div>
           </div>
           <div className="mt-5 flex flex-wrap gap-3">
