@@ -36,6 +36,12 @@ describe("retired static news hard removal", () => {
     expect(isExplicitlyRetiredStaticNewsPath("/news/moving-to-texas-guide")).toBe(true);
   });
 
+  it("lets the constitutional amendment legacy URL reach its permanent redirect", () => {
+    const slug = "texas-constitutional-amendments-guide";
+    expect(isExplicitlyRetiredStaticSlug(slug)).toBe(true);
+    expect(isExplicitlyRetiredStaticNewsPath(`/news/${slug}`)).toBe(false);
+  });
+
   it("retires explicit pre-quality-gate fixture news", () => {
     expect(isExplicitlyRetiredStaticNewsPath("/news/voter-id-surge")).toBe(true);
     expect(isExplicitlyRetiredStaticNewsPath("/news/operation-lone-star")).toBe(true);
