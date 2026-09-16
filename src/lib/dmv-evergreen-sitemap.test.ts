@@ -49,7 +49,7 @@ describe("DMV and vehicle sitemap ownership", () => {
   });
 
   it("keeps the remaining vehicle guides canonical on KeepTXRed until separately adjudicated", () => {
-    expect(DMV_EVERGREEN_SITEMAP_PATHS).toHaveLength(20);
+    expect(DMV_EVERGREEN_SITEMAP_PATHS).toHaveLength(19);
     expect(new Set(DMV_EVERGREEN_SITEMAP_PATHS).size).toBe(DMV_EVERGREEN_SITEMAP_PATHS.length);
 
     for (const path of DMV_EVERGREEN_SITEMAP_PATHS) {
