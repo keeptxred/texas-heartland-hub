@@ -1,0 +1,62 @@
+name: Temporary vehicle handoff raw-header verification
+
+on:
+  push:
+    branches:
+      - verify/vehicle-handoff-headers-2026-09-16
+    paths:
+      - .github/workflows/verify-vehicle-handoff-headers-temp.yml
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify raw production 301 headers
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          check_redirect() {
+            local source="$1"
+            local expected="$2"
+            local headers
+            headers="$(mktemp)"
+
+            curl --silent --show-error --dump-header "$headers" --output /dev/null --max-redirs 0 "$source"
+
+            local status
+            local location
+            status="$(awk 'toupper($1) ~ /^HTTP\// { s=$2 } END { print s }' "$headers")"
+            location="$(awk 'BEGIN { IGNORECASE=1 } /^location:/ { sub(/^[^:]*:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$headers")"
+
+            echo "SOURCE=$source"
+            echo "STATUS=$status"
+            echo "LOCATION=$location"
+
+            test "$status" = "301"
+            test "$location" = "$expected"
+
+            local final_status
+            final_status="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' --max-redirs 0 "$location")"
+            echo "FINAL_STATUS=$final_status"
+            test "$final_status" = "200"
+          }
+
+          check_redirect \
+            'https://keeptxred.com/vehicles/registration' \
+            'https://texasdefined.com/texas-vehicle-registration'
+
+          check_redirect \
+            'https://keeptxred.com/vehicles/renewal?utm_source=test&foo=bar' \
+            'https://texasdefined.com/texas-vehicle-registration-renewal?utm_source=test&foo=bar'
+
+          check_redirect \
+            'https://keeptxred.com/vehicles/registration-fees-taxes' \
+            'https://texasdefined.com/texas-vehicle-registration-fees-taxes'
+
+          check_redirect \
+            'https://keeptxred.com/dmv' \
+            'https://texasdefined.com/texas-dmv'
