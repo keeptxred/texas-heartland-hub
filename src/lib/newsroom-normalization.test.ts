@@ -5,6 +5,7 @@ import {
   normalizeNewsFeedItem,
   normalizeSourceKey,
   normalizeTitle,
+  sameTimestamp,
 } from "./newsroom-normalization";
 
 describe("newsroom zero-AI normalization", () => {
@@ -16,6 +17,12 @@ describe("newsroom zero-AI normalization", () => {
   it("removes tracking parameters but keeps meaningful query parameters", () => {
     expect(canonicalizeNewsUrl("https://Example.com/story/?utm_source=x&id=42&fbclid=abc#top"))
       .toBe("https://example.com/story?id=42");
+  });
+
+  it("treats equivalent timestamp serializations as the same instant", () => {
+    expect(sameTimestamp("2026-09-15T23:28:41.000Z", "2026-09-15 23:28:41+00:00")).toBe(true);
+    expect(sameTimestamp("2026-09-15T23:28:41Z", "2026-09-15T18:28:41-05:00")).toBe(true);
+    expect(sameTimestamp("2026-09-15T23:28:41Z", "2026-09-15T23:28:42Z")).toBe(false);
   });
 
   it("marks exact canonical URL repeats as duplicates even when tracking URLs differ", () => {
