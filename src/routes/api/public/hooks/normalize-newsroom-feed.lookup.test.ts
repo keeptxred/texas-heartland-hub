@@ -8,17 +8,17 @@ const source = readFileSync(sourcePath, "utf8");
 describe("newsroom normalization current-row lookup", () => {
   it("keeps historical dedupe context separate from exact current feed lookups", () => {
     expect(source).toContain("const priorRows = (priorData ?? []) as PriorNormalizationRow[]");
-    expect(source).toContain("const minFeedItemId = Math.min(...feedRows.map((row) => row.id))");
-    expect(source).toContain("const maxFeedItemId = Math.max(...feedRows.map((row) => row.id))");
-    expect(source).toContain('.gte("feed_item_id", minFeedItemId)');
-    expect(source).toContain('.lte("feed_item_id", maxFeedItemId)');
+    expect(source).toContain('"list_news_feed_normalizations"');
+    expect(source).toContain("p_feed_item_ids: feedRows.map((row) => row.id)");
     expect(source).toContain("new Map(currentPriorRows.map((row) => [row.feed_item_id, row]))");
     expect(source).not.toContain("new Map(priorRows.map((row) => [row.feed_item_id, row]))");
   });
 
-  it("uses one bounded current-row lookup instead of chunked IN requests", () => {
+  it("uses one exact RPC instead of chunked or range-based current-row requests", () => {
     expect(source).not.toContain("CURRENT_LOOKUP_CHUNK_SIZE");
     expect(source).not.toContain('.in("feed_item_id", chunk)');
-    expect(source).toContain(".limit(FEED_LIMIT)");
+    expect(source).not.toContain('minFeedItemId');
+    expect(source).not.toContain('maxFeedItemId');
+    expect(source).toContain("p_feed_item_ids: feedRows.map((row) => row.id)");
   });
 });
