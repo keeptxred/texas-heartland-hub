@@ -5,12 +5,14 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/vehicle-handoff-production-smoke.yml'
+      - 'scripts/authority/smoke-production.py'
       - 'src/start.ts'
       - 'src/server.ts'
   pull_request:
     branches: [main]
     paths:
       - '.github/workflows/vehicle-handoff-production-smoke.yml'
+      - 'scripts/authority/smoke-production.py'
   workflow_run:
     workflows: ["Deploy verified KeepTXRed to Cloudflare"]
     types: [completed]
@@ -37,70 +39,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      PUBLIC_ORIGIN: https://keeptxred.com
-      WORKER_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
+      SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
     steps:
+      - name: Checkout redirect smoke verifier
+        uses: actions/checkout@v5
+
       - name: Verify retired vehicle and constitutional routes redirect permanently
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          verify_redirect() {
-            local origin="$1"
-            local source_path="$2"
-            local destination="$3"
-            local deployment_smoke="${4:-false}"
-            local headers body status location probe expected
-            local -a request_headers
-            headers="$(mktemp)"
-            body="$(mktemp)"
-            probe="?vehicle_smoke=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
-            expected="${destination}${probe}"
-            request_headers=(
-              -H 'cache-control: no-cache'
-              -H 'pragma: no-cache'
-            )
-
-            if [[ "$deployment_smoke" == "true" ]]; then
-              request_headers+=( -H 'x-keeptxred-deployment-smoke: canonical' )
-            fi
-
-            for attempt in $(seq 1 12); do
-              : > "$headers"
-              : > "$body"
-              status="$(curl --retry 3 --retry-delay 2 --retry-all-errors \
-                --connect-timeout 10 --max-time 45 --max-redirs 0 \
-                --silent --show-error \
-                "${request_headers[@]}" \
-                -D "$headers" -o "$body" -w '%{http_code}' \
-                "${origin}${source_path}${probe}" || true)"
-              location="$(tr -d '\r' < "$headers" | awk 'BEGIN { IGNORECASE=1 } /^location:/ { sub(/^[^:]*:[[:space:]]*/, ""); print; exit }')"
-
-              if [[ "$status" == "301" && "$location" == "$expected" ]]; then
-                echo "Permanent redirect passed at $origin: $source_path -> $location"
-                rm -f "$headers" "$body"
-                return 0
-              fi
-
-              echo "Waiting for $origin$source_path: HTTP ${status:-000}, location=${location:-<missing>}, attempt $attempt/12"
-              sleep 5
-            done
-
-            echo "::error title=Production redirect smoke failed::$origin$source_path expected HTTP 301 to $expected, got HTTP ${status:-000} and location ${location:-<missing>}."
-            cat "$headers" >&2 || true
-            rm -f "$headers" "$body"
-            return 1
-          }
-
-          # Public-domain verification proves what users and crawlers receive.
-          verify_redirect "$PUBLIC_ORIGIN" "/vehicles/renewal" "https://texasdefined.com/texas-vehicle-registration-renewal"
-          verify_redirect "$PUBLIC_ORIGIN" "/vehicles/registration-fees-taxes" "https://texasdefined.com/texas-vehicle-registration-fees-taxes"
-          verify_redirect "$PUBLIC_ORIGIN" "/news/texas-constitutional-amendments-guide" "https://keeptxred.com/laws/constitutional-amendments"
-
-          # Direct Worker verification uses the same canonical deployment-smoke
-          # contract as the rest of the production verification suite. Without
-          # this header, the Worker hostname is intentionally canonicalized back
-          # to keeptxred.com before route handling, which does not test handoff.
-          verify_redirect "$WORKER_ORIGIN" "/vehicles/renewal" "https://texasdefined.com/texas-vehicle-registration-renewal" true
-          verify_redirect "$WORKER_ORIGIN" "/vehicles/registration-fees-taxes" "https://texasdefined.com/texas-vehicle-registration-fees-taxes" true
-          verify_redirect "$WORKER_ORIGIN" "/news/texas-constitutional-amendments-guide" "https://keeptxred.com/laws/constitutional-amendments" true
+        run: python3 scripts/authority/smoke-production.py --legacy-redirects-only
