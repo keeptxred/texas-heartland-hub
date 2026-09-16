@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/vehicle-handoff-production-smoke.yml'
       - 'src/start.ts'
+      - 'src/server.ts'
   workflow_run:
     workflows: ["Deploy verified KeepTXRed to Cloudflare"]
     types: [completed]
