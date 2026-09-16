@@ -6,6 +6,7 @@ const rootSitemap = readFileSync(new URL("../routes/sitemap[.]xml.ts", import.me
 const dmvSitemap = readFileSync(new URL("../routes/sitemap-dmv[.]xml.ts", import.meta.url), "utf8");
 const dmvRoute = readFileSync(new URL("../routes/dmv.tsx", import.meta.url), "utf8");
 const vehicleRegistrationRoute = readFileSync(new URL("../routes/vehicles.registration.tsx", import.meta.url), "utf8");
+const vehicleNewResidentsRoute = readFileSync(new URL("../routes/vehicles.new-residents.tsx", import.meta.url), "utf8");
 const vehicleRenewalRoute = readFileSync(new URL("../routes/vehicles.renewal.tsx", import.meta.url), "utf8");
 const vehicleFeesRoute = readFileSync(new URL("../routes/vehicles.registration-fees-taxes.tsx", import.meta.url), "utf8");
 
@@ -34,6 +35,14 @@ describe("DMV and vehicle sitemap ownership", () => {
     expect(vehicleRegistrationRoute).toContain("statusCode: 301");
   });
 
+  it("hands the new-resident vehicle guide to the exact TexasDefined newcomer owner", () => {
+    expect(new Set<string>(DMV_EVERGREEN_SITEMAP_PATHS).has("/vehicles/new-residents")).toBe(false);
+    expect(vehicleNewResidentsRoute).toContain(
+      'href: `https://texasdefined.com/find-my-dmv${location.searchStr || ""}`',
+    );
+    expect(vehicleNewResidentsRoute).toContain("statusCode: 308");
+  });
+
   it("hands registration renewal and fees/taxes to their exact TexasDefined owners", () => {
     const advertised = new Set<string>(DMV_EVERGREEN_SITEMAP_PATHS);
     expect(advertised.has("/vehicles/renewal")).toBe(false);
@@ -49,7 +58,7 @@ describe("DMV and vehicle sitemap ownership", () => {
   });
 
   it("keeps the remaining vehicle guides canonical on KeepTXRed until separately adjudicated", () => {
-    expect(DMV_EVERGREEN_SITEMAP_PATHS).toHaveLength(19);
+    expect(DMV_EVERGREEN_SITEMAP_PATHS).toHaveLength(18);
     expect(new Set(DMV_EVERGREEN_SITEMAP_PATHS).size).toBe(DMV_EVERGREEN_SITEMAP_PATHS.length);
 
     for (const path of DMV_EVERGREEN_SITEMAP_PATHS) {
