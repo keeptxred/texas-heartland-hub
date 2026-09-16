@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
-  findDeterministicDuplicate,
+  addDeterministicDuplicateCandidate,
+  createDeterministicDuplicateIndex,
+  findDeterministicDuplicateIndexed,
   normalizeNewsFeedItem,
   sameTimestamp,
   type ExistingNormalization,
@@ -113,11 +115,12 @@ async function handler() {
       title_fingerprint: row.title_fingerprint,
       observed_at: row.observed_at,
     }));
+  const duplicateIndex = createDeterministicDuplicateIndex(canonicalRows);
   const normalized: DesiredNormalizationRow[] = [...feedRows]
     .sort((a, b) => Date.parse(a.pub_date ?? a.created_at) - Date.parse(b.pub_date ?? b.created_at) || a.id - b.id)
     .map((row) => {
       const item = normalizeNewsFeedItem(row);
-      const duplicate = findDeterministicDuplicate(item, canonicalRows);
+      const duplicate = findDeterministicDuplicateIndexed(item, duplicateIndex);
       const output: DesiredNormalizationRow = {
         feed_item_id: item.feedItemId,
         normalized_title: item.normalizedTitle,
@@ -133,7 +136,7 @@ async function handler() {
         normalization_version: NORMALIZATION_VERSION,
       };
       if (!duplicate) {
-        canonicalRows.push({
+        addDeterministicDuplicateCandidate(duplicateIndex, {
           feed_item_id: item.feedItemId,
           canonical_url: item.canonicalUrl,
           source_key: item.sourceKey,
