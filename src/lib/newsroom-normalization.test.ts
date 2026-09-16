@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
+  addDeterministicDuplicateCandidate,
   canonicalizeNewsUrl,
+  createDeterministicDuplicateIndex,
   findDeterministicDuplicate,
+  findDeterministicDuplicateIndexed,
   normalizeNewsFeedItem,
   normalizeSourceKey,
   normalizeTitle,
@@ -77,5 +80,79 @@ describe("newsroom zero-AI normalization", () => {
       title_fingerprint: item.titleFingerprint,
       observed_at: "2026-08-15T11:00:00Z",
     }])).toBeNull();
+  });
+
+  it("matches legacy duplicate decisions with indexed lookup and self-exclusion", () => {
+    const item = normalizeNewsFeedItem({
+      id: 22,
+      title: "Texas agency releases report",
+      source: "Example News",
+      link: "https://example.com/report",
+      description: "Latest copy",
+      pub_date: "2026-08-15T12:00:00Z",
+    });
+    const existing = [
+      {
+        feed_item_id: 22,
+        canonical_url: item.canonicalUrl,
+        source_key: item.sourceKey,
+        title_fingerprint: item.titleFingerprint,
+        observed_at: "2026-08-15T09:00:00Z",
+      },
+      {
+        feed_item_id: 21,
+        canonical_url: item.canonicalUrl,
+        source_key: "other-source",
+        title_fingerprint: "other-title",
+        observed_at: "2026-08-15T10:00:00Z",
+      },
+      {
+        feed_item_id: 20,
+        canonical_url: item.canonicalUrl,
+        source_key: item.sourceKey,
+        title_fingerprint: item.titleFingerprint,
+        observed_at: "2026-08-15T08:00:00Z",
+      },
+    ];
+    const index = createDeterministicDuplicateIndex(existing);
+    expect(findDeterministicDuplicateIndexed(item, index)).toEqual(findDeterministicDuplicate(item, existing));
+    expect(findDeterministicDuplicateIndexed(item, index)).toEqual({
+      feedItemId: 20,
+      reason: "canonical-url",
+      confidence: 1,
+    });
+  });
+
+  it("updates the indexed matcher as new canonical rows are accepted", () => {
+    const first = normalizeNewsFeedItem({
+      id: 31,
+      title: "Texas board posts agenda",
+      source: "Example News",
+      link: "https://example.com/agenda",
+      description: "Agenda posted",
+      pub_date: "2026-08-15T10:00:00Z",
+    });
+    const repeat = normalizeNewsFeedItem({
+      id: 32,
+      title: "Texas board posts agenda",
+      source: "Example News",
+      link: "https://example.com/agenda?utm_source=feed",
+      description: "Agenda reposted",
+      pub_date: "2026-08-15T11:00:00Z",
+    });
+    const index = createDeterministicDuplicateIndex([]);
+    expect(findDeterministicDuplicateIndexed(first, index)).toBeNull();
+    addDeterministicDuplicateCandidate(index, {
+      feed_item_id: first.feedItemId,
+      canonical_url: first.canonicalUrl,
+      source_key: first.sourceKey,
+      title_fingerprint: first.titleFingerprint,
+      observed_at: first.observedAt,
+    });
+    expect(findDeterministicDuplicateIndexed(repeat, index)).toEqual({
+      feedItemId: 31,
+      reason: "canonical-url",
+      confidence: 1,
+    });
   });
 });
