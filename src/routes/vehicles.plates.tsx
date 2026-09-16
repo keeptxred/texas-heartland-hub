@@ -36,7 +36,7 @@ export const Route = createFileRoute("/vehicles/plates")({
     return { meta: seo.meta, links: seo.links, scripts: [
       { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "Article", headline: "Texas License Plates Guide", mainEntityOfPage: `${SITE_URL}/vehicles/plates`, publisher: { "@type": "Organization", name: "Keep TX Red" } }) },
       { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faq.map((item) => ({ "@type": "Question", name: item.question, acceptedAnswer: { "@type": "Answer", text: item.answer } })) }) },
-      { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` }, { "@type": "ListItem", position: 2, name: "Texas DMV & Driver Services", item: `${SITE_URL}/dmv` }, { "@type": "ListItem", position: 3, name: "Texas License Plates", item: `${SITE_URL}/vehicles/plates` }] }) },
+      { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` }, { "@type": "ListItem", position: 2, name: "Texas DMV & Driver Services", item: "https://texasdefined.com/texas-dmv" }, { "@type": "ListItem", position: 3, name: "Texas License Plates", item: `${SITE_URL}/vehicles/plates` }] }) },
     ] };
   },
   component: PlatesPage,

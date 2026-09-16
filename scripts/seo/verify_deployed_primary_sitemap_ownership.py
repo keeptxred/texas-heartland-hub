@@ -39,8 +39,6 @@ DMV_EVERGREEN_PATHS = {
     "/vehicles/personalized-plates",
     "/vehicles/plates",
     "/vehicles/private-party-sales",
-    "/vehicles/registration-fees-taxes",
-    "/vehicles/renewal",
     "/vehicles/salvage-rebuilt-titles",
     "/vehicles/selling-a-car",
     "/vehicles/temporary-tags",
