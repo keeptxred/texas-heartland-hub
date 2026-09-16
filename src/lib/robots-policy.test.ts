@@ -50,4 +50,13 @@ describe("robots policy", () => {
     const source = readFileSync(dynamicRobotsPath, "utf8");
     expect(source).not.toContain("Disallow: /merchant-image");
   });
+
+  it("keeps legacy public redirect sources crawlable so crawlers can observe 301s", () => {
+    const source = readFileSync(dynamicRobotsPath, "utf8");
+    expect(source).not.toContain('"Disallow: /hubs"');
+    expect(source).not.toContain('"Disallow: /hubs/"');
+    expect(source).toContain('"Disallow: /api/"');
+    expect(source).toContain('"Disallow: /admin"');
+    expect(source).toContain('"Disallow: /private/"');
+  });
 });
