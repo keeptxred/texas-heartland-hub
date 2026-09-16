@@ -60,7 +60,7 @@ const EXTERNAL_LEGACY_REDIRECTS = new Map([
 ]);
 const BAD_YEAR_NEWS_REDIRECTS = new Map([
   ["live-2001-01-28-texas-voter-registration-deadline-approaching-essential-guide-for-the--6rien8", "live-2026-01-28-texas-voter-registration-deadline-approaching-essential-guide-for-the--6rien8"],
-  ["live-2001-02-11-texas-mail-in-ballot-deadlines-approach-for-march-2026-primary-electio-76tc0a", "live-2026-02-11-texas-mail-in-ballot-deadlines-approach-for-march-primary-electio-76tc0a"],
+  ["live-2001-02-11-texas-mail-in-ballot-deadlines-approach-for-march-2026-primary-electio-76tc0a", "live-2026-02-11-texas-mail-in-ballot-deadlines-approach-for-march-2026-primary-electio-76tc0a"],
   ["live-2001-02-17-texas-reaches-record-voter-registration-levels-ahead-of-march-primary--xy6p6f", "live-2026-02-17-texas-reaches-record-voter-registration-levels-ahead-of-march-primary--xy6p6f"],
   ["live-2001-02-24-state-election-officials-record-high-engagement-as-early-voting-for-ma-t31b6w", "live-2026-02-24-state-election-officials-record-high-engagement-as-early-voting-for-ma-t31b6w"],
   ["live-2001-04-29-streamlined-economic-growth-secretary-of-state-launches-texas-express--ovz2ap", "live-2026-04-29-streamlined-economic-growth-secretary-of-state-launches-texas-express--ovz2ap"],
