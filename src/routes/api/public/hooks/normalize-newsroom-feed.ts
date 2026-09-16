@@ -83,22 +83,16 @@ async function handler() {
   const feedRows = (feedData ?? []) as FeedNormalizationRow[];
   const priorRows = (priorData ?? []) as PriorNormalizationRow[];
 
-  // Dedupe context and idempotency lookup have different requirements. The 5,000-row
-  // history window above is intentionally ordered oldest-first for deterministic duplicate
-  // selection, so it may not contain the newest feed items once the 14-day window grows
-  // beyond 5,000 rows. Current feed IDs are monotonically assigned but ingestion can make
-  // the latest created_at slice span a wide ID range. One indexed range query covers that
-  // exact slice without the four extra HTTP round trips of chunked IN filters.
+  // Historical dedupe context and current-row idempotency lookup have different
+  // requirements. Ask Postgres for exactly the feed IDs in this batch through one
+  // service-role-only RPC: no 5,000-row history cap, no oversized IN URL, no range
+  // assumptions, and no repeated HTTP round trips.
   let currentPriorRows: PriorNormalizationRow[] = [];
   if (feedRows.length > 0) {
-    const minFeedItemId = Math.min(...feedRows.map((row) => row.id));
-    const maxFeedItemId = Math.max(...feedRows.map((row) => row.id));
-    const { data: currentPriorData, error: currentPriorError } = await newsroomDb
-      .from("news_feed_normalization")
-      .select(NORMALIZATION_SELECT)
-      .gte("feed_item_id", minFeedItemId)
-      .lte("feed_item_id", maxFeedItemId)
-      .limit(FEED_LIMIT);
+    const { data: currentPriorData, error: currentPriorError } = await newsroomDb.rpc(
+      "list_news_feed_normalizations",
+      { p_feed_item_ids: feedRows.map((row) => row.id) },
+    );
     if (currentPriorError) {
       return Response.json({ ok: false, error: currentPriorError.message }, { status: 500 });
     }
