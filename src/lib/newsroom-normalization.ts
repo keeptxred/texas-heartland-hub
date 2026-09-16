@@ -72,6 +72,17 @@ export function stableFingerprint(value: string): string {
   return (hash >>> 0).toString(16).padStart(8, "0");
 }
 
+export function sameTimestamp(
+  left: string | null | undefined,
+  right: string | null | undefined,
+): boolean {
+  if (left === right) return true;
+  if (!left || !right) return false;
+  const leftMs = Date.parse(left);
+  const rightMs = Date.parse(right);
+  return Number.isFinite(leftMs) && Number.isFinite(rightMs) && leftMs === rightMs;
+}
+
 export type NormalizedNewsFeedItem = {
   feedItemId: number;
   normalizedTitle: string;
