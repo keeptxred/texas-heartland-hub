@@ -80,7 +80,7 @@ const BAD_YEAR_NEWS_REDIRECTS = new Map([
   ["live-2001-07-23-streamlined-documents-texas-secretary-of-state-jane-nelson-launches-ap-c1e3us", "live-2025-07-23-streamlined-documents-texas-secretary-of-state-jane-nelson-launches-ap-c1e3us"],
   ["live-2001-08-12-secretary-of-state-jane-nelson-leads-critical-border-trade-discussions-8m50tf", "live-2025-08-12-secretary-of-state-jane-nelson-leads-critical-border-trade-discussions-8m50tf"],
   ["live-2001-10-03-october-6-deadline-secretary-of-state-nelson-issues-final-call-for-tex-r43bxj", "live-2025-10-03-october-6-deadline-secretary-of-state-nelson-issues-final-call-for-tex-r43bxj"],
-  ["live-2001-10-17-a-guide-to-texas-early-voting-secretary-jane-nelson-outlines-key-deadl-arwqgp", "live-2025-10-17-a-guide-to-texas-early-voting-secretary-of-state-jane-nelson-outlines-key-deadl-arwqgp"],
+  ["live-2001-10-17-a-guide-to-texas-early-voting-secretary-jane-nelson-outlines-key-deadl-arwqgp", "live-2025-10-17-a-guide-to-texas-early-voting-secretary-jane-nelson-outlines-key-deadl-arwqgp"],
   ["live-2001-10-20-secretary-jane-nelson-enhances-texas-election-integrity-with-federal-d-3ocr9t", "live-2025-10-20-secretary-jane-nelson-enhances-texas-election-integrity-with-federal-d-3ocr9t"],
   ["live-2001-10-29-texas-voter-turnout-surges-with-half-a-million-early-ballots-recorded--irss2i", "live-2025-10-29-texas-voter-turnout-surges-with-half-a-million-early-ballots-recorded--irss2i"],
   ["live-2001-10-30-texas-secretary-of-state-defends-constitutionality-of-state-primary-el-fcshc", "live-2025-10-30-texas-secretary-of-state-defends-constitutionality-of-state-primary-el-fcshc"],
