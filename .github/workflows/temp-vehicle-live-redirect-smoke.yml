@@ -1,0 +1,52 @@
+name: Temporary vehicle live redirect smoke
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/temp-vehicle-live-redirect-smoke.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      WORKER_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
+    steps:
+      - name: Verify live vehicle redirects
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          verify_redirect() {
+            local source_path="$1"
+            local destination="$2"
+            local headers body status location probe expected
+            headers="$(mktemp)"
+            body="$(mktemp)"
+            trap 'rm -f "$headers" "$body"' RETURN
+            probe="?vehicle_smoke=diagnostic-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+            expected="${destination}${probe}"
+
+            status="$(curl --retry 5 --retry-delay 2 --retry-all-errors \
+              --connect-timeout 10 --max-time 45 --max-redirs 0 \
+              --silent --show-error \
+              -H 'cache-control: no-cache' \
+              -H 'pragma: no-cache' \
+              -D "$headers" -o "$body" -w '%{http_code}' \
+              "${WORKER_ORIGIN}${source_path}${probe}" || true)"
+            location="$(tr -d '\r' < "$headers" | awk 'BEGIN { IGNORECASE=1 } /^location:/ { sub(/^[^:]*:[[:space:]]*/, ""); print; exit }')"
+
+            if [[ "$status" != "301" || "$location" != "$expected" ]]; then
+              echo "::error::$source_path expected HTTP 301 to $expected, got HTTP ${status:-000} and location ${location:-<missing>}"
+              cat "$headers" >&2 || true
+              exit 1
+            fi
+
+            echo "PASS $source_path -> $location"
+          }
+
+          verify_redirect "/vehicles/renewal" "https://texasdefined.com/texas-vehicle-registration-renewal"
+          verify_redirect "/vehicles/registration-fees-taxes" "https://texasdefined.com/texas-vehicle-registration-fees-taxes"
