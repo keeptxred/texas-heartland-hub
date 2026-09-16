@@ -80,7 +80,7 @@ def check(path: str, required: list[str], forbidden: list[str] | None = None, ca
 def main() -> int:
     check(
         "/bills",
-        ["Texas Bills and Legislation", "89(2) · 2nd Called Session"],
+        ["Texas Bill Lookup and Legislature Bill Search", "89(2) · 2nd Called Session"],
     )
     check(
         "/bills/texas/89",

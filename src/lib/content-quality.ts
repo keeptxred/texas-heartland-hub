@@ -106,10 +106,6 @@ const CATEGORY_HUB: Record<string, InternalLink[]> = {
     { label: "Texas Laws", href: "/laws", kind: "hub" },
     { label: "Texas Bills", href: "/bills", kind: "resource" },
   ],
-  Sports: [{ label: "Texas Sports", href: "/texas-sports", kind: "hub" }],
-  NFL: [{ label: "Texas Sports", href: "/texas-sports", kind: "hub" }],
-  MLB: [{ label: "Texas Sports", href: "/texas-sports", kind: "hub" }],
-  NBA: [{ label: "Texas Sports", href: "/texas-sports", kind: "hub" }],
   "Non-Political": [{ label: "Latest Texas News", href: "/news", kind: "hub" }],
 };
 
@@ -151,6 +147,7 @@ export function pickInternalLinks(input: {
     push({ label: "Texas Bills", href: "/bills", kind: "resource" });
   }
   if (/vote|ballot|election|primary/.test(hay)) push({ label: "Election Central", href: "/elections/2026", kind: "hub" });
+  if (/voter|voting|ballot/.test(hay)) push({ label: "Texas Voting Guide", href: "/news/texas-voting-guide-2026", kind: "evergreen" });
   if (/moving|relocat|newcomer|housing market/.test(hay)) push({ label: "Texas Economy", href: "/texas-economy", kind: "hub" });
   ALWAYS_AVAILABLE.forEach(push);
   return out.slice(0, 5);

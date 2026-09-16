@@ -9,6 +9,7 @@ const REDIRECT_ALIASES = new Set([
   "/texas-laws",
   "/texas-law-policy",
   "/texas-news",
+  "/texas-sports",
 ]);
 
 describe("generated internal links", () => {
@@ -20,6 +21,10 @@ describe("generated internal links", () => {
     "Energy",
     "Border",
     "Politics",
+    "Sports",
+    "NFL",
+    "MLB",
+    "NBA",
   ])("uses only canonical destinations for %s", (category) => {
     const links = pickInternalLinks({
       category,
@@ -36,6 +41,18 @@ describe("generated internal links", () => {
     const links = pickInternalLinks({ category: "Elections", title: "Texas primary election update" });
     expect(links.some((link) => link.href === "/elections/2026")).toBe(true);
     expect(links.some((link) => link.href === "/elections")).toBe(false);
+  });
+
+  it("supports the existing voting-guide search foothold for voting-intent stories", () => {
+    const links = pickInternalLinks({ category: "Elections", title: "Texas voter and ballot guide" });
+    expect(links.some((link) => link.href === "/news/texas-voting-guide-2026")).toBe(true);
+  });
+
+  it("does not send sports categories into the retired KTR sports tree", () => {
+    for (const category of ["Sports", "NFL", "MLB", "NBA"]) {
+      const links = pickInternalLinks({ category, title: "Texas sports update" });
+      expect(links.some((link) => link.href.startsWith("/texas-sports"))).toBe(false);
+    }
   });
 
   it("sends laws directly to /laws", () => {

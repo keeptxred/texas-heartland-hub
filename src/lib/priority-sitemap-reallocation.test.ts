@@ -4,8 +4,12 @@ import { getPrioritySitemapPaths, MAX_SEARCH_CONSOLE_PRIORITY_URLS } from "@/lib
 const PRIORITY_ISSUE_PATHS = [
   "/issues",
   "/issues/texas-gun-laws",
-  "/issues/texas-medical-transition-minors-law",
+  "/issues/texas-property-tax-relief",
   "/issues/texas-bail-criminal-justice",
+] as const;
+
+const DISPLACED_ZERO_SIGNAL_ISSUES = [
+  "/issues/texas-medical-transition-minors-law",
   "/issues/texas-rural-healthcare",
 ] as const;
 
@@ -24,9 +28,14 @@ describe("Search Console priority sitemap authority allocation", () => {
     expect(new Set(paths).size).toBe(MAX_SEARCH_CONSOLE_PRIORITY_URLS);
   });
 
-  it("prioritizes the uncrawled Issues hub before spending all five slots on child guides", () => {
+  it("keeps the Issues hub and current GSC-proven issue authority in the crawl-focus overlay", () => {
     const paths = getPrioritySitemapPaths();
     for (const path of PRIORITY_ISSUE_PATHS) expect(paths).toContain(path);
+  });
+
+  it("does not spend capped priority slots on displaced zero-signal issue guides", () => {
+    const paths = getPrioritySitemapPaths();
+    for (const path of DISPLACED_ZERO_SIGNAL_ISSUES) expect(paths).not.toContain(path);
   });
 
   it("does not spend priority slots on the five zero-crawl bill details", () => {
