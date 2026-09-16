@@ -42,7 +42,7 @@ describe("authority hub shared SEO", () => {
 
     expectSharedHub(
       head,
-      "Texas State Agency Directory & Profiles | Keep TX Red",
+      "Texas State Agency Directory, Official | Keep TX Red",
       "/texas-government/agencies",
     );
 

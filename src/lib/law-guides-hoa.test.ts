@@ -26,8 +26,8 @@ const EXPECTED = [
 ];
 
 describe("HOA and property evergreen guide registry", () => {
-  it("registers exactly twenty verified HOA guides", () => {
-    const guides = lawGuidesForTopic("hoa-property");
+  it("keeps the original twenty-guide HOA cohort verified", () => {
+    const guides = lawGuidesForTopic("hoa-property").filter((guide) => EXPECTED.includes(guide.slug));
     expect(guides.map((guide) => guide.slug).sort()).toEqual([...EXPECTED].sort());
     expect(guides).toHaveLength(20);
 

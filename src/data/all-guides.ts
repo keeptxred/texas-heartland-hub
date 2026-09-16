@@ -28,6 +28,7 @@ import { PROBATE_BATCH21_GUIDES } from "@/data/laws-probate-batch21";
 import { OUTDOORS_BATCH22_GUIDES } from "@/data/laws-outdoors-batch22";
 import { ALCOHOL_BATCH23_GUIDES } from "@/data/laws-alcohol-batch23";
 import { ANIMALS_BATCH24_GUIDES } from "@/data/laws-animals-batch24";
+import { HIGH_DEMAND_BATCH25_GUIDES } from "@/data/laws-high-demand-batch25";
 
 export const SUPPORTING_GUIDES = {
   ...AGRICULTURE_SUPPORTING_GUIDES,
@@ -58,6 +59,7 @@ export const SUPPORTING_GUIDES = {
   ...OUTDOORS_BATCH22_GUIDES,
   ...ALCOHOL_BATCH23_GUIDES,
   ...ANIMALS_BATCH24_GUIDES,
+  ...HIGH_DEMAND_BATCH25_GUIDES,
 };
 
 export const ALL_GUIDES: Record<string, CornerstoneGuide> = {
