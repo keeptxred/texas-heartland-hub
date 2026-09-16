@@ -9,7 +9,6 @@ import {
 const NORMALIZATION_VERSION = 1;
 const FEED_LIMIT = 1000;
 const LOOKBACK_DAYS = 14;
-const CURRENT_LOOKUP_CHUNK_SIZE = 250;
 const NORMALIZATION_SELECT = "feed_item_id,normalized_title,normalized_description,canonical_url,source_key,title_fingerprint,content_fingerprint,duplicate_of_feed_item_id,duplicate_reason,dedupe_confidence,observed_at,normalization_version";
 
 type FeedNormalizationRow = {
@@ -85,24 +84,24 @@ async function handler() {
   // Dedupe context and idempotency lookup have different requirements. The 5,000-row
   // history window above is intentionally ordered oldest-first for deterministic duplicate
   // selection, so it may not contain the newest feed items once the 14-day window grows
-  // beyond 5,000 rows. Fetch the exact current feed IDs separately so unchanged rows are
-  // never mistaken for new rows merely because they fell outside that historical slice.
-  const feedItemIds = feedRows.map((row) => row.id);
-  const currentLookupChunks: number[][] = [];
-  for (let index = 0; index < feedItemIds.length; index += CURRENT_LOOKUP_CHUNK_SIZE) {
-    currentLookupChunks.push(feedItemIds.slice(index, index + CURRENT_LOOKUP_CHUNK_SIZE));
-  }
-  const currentPriorResults = await Promise.all(currentLookupChunks.map((chunk) =>
-    newsroomDb
+  // beyond 5,000 rows. Current feed IDs are monotonically assigned but ingestion can make
+  // the latest created_at slice span a wide ID range. One indexed range query covers that
+  // exact slice without the four extra HTTP round trips of chunked IN filters.
+  let currentPriorRows: PriorNormalizationRow[] = [];
+  if (feedRows.length > 0) {
+    const minFeedItemId = Math.min(...feedRows.map((row) => row.id));
+    const maxFeedItemId = Math.max(...feedRows.map((row) => row.id));
+    const { data: currentPriorData, error: currentPriorError } = await newsroomDb
       .from("news_feed_normalization")
       .select(NORMALIZATION_SELECT)
-      .in("feed_item_id", chunk)
-  ));
-  const currentPriorError = currentPriorResults.find((result) => result.error)?.error;
-  if (currentPriorError) {
-    return Response.json({ ok: false, error: currentPriorError.message }, { status: 500 });
+      .gte("feed_item_id", minFeedItemId)
+      .lte("feed_item_id", maxFeedItemId)
+      .limit(FEED_LIMIT);
+    if (currentPriorError) {
+      return Response.json({ ok: false, error: currentPriorError.message }, { status: 500 });
+    }
+    currentPriorRows = (currentPriorData ?? []) as PriorNormalizationRow[];
   }
-  const currentPriorRows = currentPriorResults.flatMap((result) => result.data ?? []) as PriorNormalizationRow[];
   const priorByFeedItemId = new Map(currentPriorRows.map((row) => [row.feed_item_id, row]));
 
   const canonicalRows: ExistingNormalization[] = priorRows
