@@ -13,7 +13,7 @@ const INTERNAL_REDIRECT_CANONICALS: Readonly<Record<string, string>> = {
   "/find-my-dmv": "https://texasdefined.com/find-my-dmv",
   "/dmv": "https://texasdefined.com/texas-dmv",
   "/vehicles/registration": "https://texasdefined.com/texas-vehicle-registration",
-  "/vehicles/new-residents": "https://texasdefined.com/texas-vehicle-registration",
+  "/vehicles/new-residents": "https://texasdefined.com/find-my-dmv",
   "/vehicles/renewal": "https://texasdefined.com/texas-vehicle-registration-renewal",
   "/vehicles/registration-fees-taxes": "https://texasdefined.com/texas-vehicle-registration-fees-taxes",
   "/texas-property-tax-protest-guide": "https://texasdefined.com/do/property-tax-protest",
