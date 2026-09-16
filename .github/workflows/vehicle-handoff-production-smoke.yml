@@ -33,7 +33,7 @@ jobs:
       PUBLIC_ORIGIN: https://keeptxred.com
       WORKER_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
     steps:
-      - name: Verify retired vehicle routes redirect to TexasDefined
+      - name: Verify retired vehicle and constitutional routes redirect permanently
         shell: bash
         run: |
           set -euo pipefail
@@ -70,7 +70,7 @@ jobs:
               location="$(tr -d '\r' < "$headers" | awk 'BEGIN { IGNORECASE=1 } /^location:/ { sub(/^[^:]*:[[:space:]]*/, ""); print; exit }')"
 
               if [[ "$status" == "301" && "$location" == "$expected" ]]; then
-                echo "Vehicle handoff passed at $origin: $source_path -> $location"
+                echo "Permanent redirect passed at $origin: $source_path -> $location"
                 rm -f "$headers" "$body"
                 return 0
               fi
@@ -79,7 +79,7 @@ jobs:
               sleep 5
             done
 
-            echo "::error title=Vehicle handoff production smoke failed::$origin$source_path expected HTTP 301 to $expected, got HTTP ${status:-000} and location ${location:-<missing>}."
+            echo "::error title=Production redirect smoke failed::$origin$source_path expected HTTP 301 to $expected, got HTTP ${status:-000} and location ${location:-<missing>}."
             cat "$headers" >&2 || true
             rm -f "$headers" "$body"
             return 1
@@ -88,6 +88,7 @@ jobs:
           # Public-domain verification proves what users and crawlers receive.
           verify_redirect "$PUBLIC_ORIGIN" "/vehicles/renewal" "https://texasdefined.com/texas-vehicle-registration-renewal"
           verify_redirect "$PUBLIC_ORIGIN" "/vehicles/registration-fees-taxes" "https://texasdefined.com/texas-vehicle-registration-fees-taxes"
+          verify_redirect "$PUBLIC_ORIGIN" "/news/texas-constitutional-amendments-guide" "https://keeptxred.com/laws/constitutional-amendments"
 
           # Direct Worker verification uses the same canonical deployment-smoke
           # contract as the rest of the production verification suite. Without
@@ -95,3 +96,4 @@ jobs:
           # to keeptxred.com before route handling, which does not test handoff.
           verify_redirect "$WORKER_ORIGIN" "/vehicles/renewal" "https://texasdefined.com/texas-vehicle-registration-renewal" true
           verify_redirect "$WORKER_ORIGIN" "/vehicles/registration-fees-taxes" "https://texasdefined.com/texas-vehicle-registration-fees-taxes" true
+          verify_redirect "$WORKER_ORIGIN" "/news/texas-constitutional-amendments-guide" "https://keeptxred.com/laws/constitutional-amendments" true
