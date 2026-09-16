@@ -127,13 +127,102 @@ export type ExistingNormalization = {
   observed_at: string;
 };
 
+export type DeterministicDuplicateMatch = {
+  feedItemId: number;
+  reason: "canonical-url" | "same-source-title";
+  confidence: number;
+};
+
+type DuplicateCandidateBucket = ExistingNormalization[];
+
+export type DeterministicDuplicateIndex = {
+  byCanonicalUrl: Map<string, DuplicateCandidateBucket>;
+  bySourceTitle: Map<string, DuplicateCandidateBucket>;
+};
+
+function compareCandidates(a: ExistingNormalization, b: ExistingNormalization): number {
+  return Date.parse(a.observed_at) - Date.parse(b.observed_at) || a.feed_item_id - b.feed_item_id;
+}
+
+function sourceTitleKey(sourceKey: string, titleFingerprint: string): string {
+  return `${sourceKey}\u0000${titleFingerprint}`;
+}
+
+function addCandidateToBucket(
+  map: Map<string, DuplicateCandidateBucket>,
+  key: string,
+  candidate: ExistingNormalization,
+): void {
+  if (!key) return;
+  const existing = map.get(key) ?? [];
+  if (existing.some((row) => row.feed_item_id === candidate.feed_item_id)) return;
+  existing.push(candidate);
+  existing.sort(compareCandidates);
+  // Duplicate matching only ever needs the earliest candidate that is not the
+  // current feed item, so two distinct feed IDs are sufficient for self-exclusion.
+  if (existing.length > 2) existing.length = 2;
+  map.set(key, existing);
+}
+
+export function createDeterministicDuplicateIndex(
+  existing: readonly ExistingNormalization[],
+): DeterministicDuplicateIndex {
+  const index: DeterministicDuplicateIndex = {
+    byCanonicalUrl: new Map(),
+    bySourceTitle: new Map(),
+  };
+  for (const candidate of existing) addDeterministicDuplicateCandidate(index, candidate);
+  return index;
+}
+
+export function addDeterministicDuplicateCandidate(
+  index: DeterministicDuplicateIndex,
+  candidate: ExistingNormalization,
+): void {
+  if (candidate.canonical_url) {
+    addCandidateToBucket(index.byCanonicalUrl, candidate.canonical_url, candidate);
+  }
+  addCandidateToBucket(
+    index.bySourceTitle,
+    sourceTitleKey(candidate.source_key, candidate.title_fingerprint),
+    candidate,
+  );
+}
+
+function firstCandidateOtherThan(
+  bucket: DuplicateCandidateBucket | undefined,
+  feedItemId: number,
+): ExistingNormalization | null {
+  return bucket?.find((candidate) => candidate.feed_item_id !== feedItemId) ?? null;
+}
+
+export function findDeterministicDuplicateIndexed(
+  item: NormalizedNewsFeedItem,
+  index: DeterministicDuplicateIndex,
+): DeterministicDuplicateMatch | null {
+  if (item.canonicalUrl) {
+    const exactUrl = firstCandidateOtherThan(index.byCanonicalUrl.get(item.canonicalUrl), item.feedItemId);
+    if (exactUrl) return { feedItemId: exactUrl.feed_item_id, reason: "canonical-url", confidence: 1 };
+  }
+
+  const sameSourceTitle = firstCandidateOtherThan(
+    index.bySourceTitle.get(sourceTitleKey(item.sourceKey, item.titleFingerprint)),
+    item.feedItemId,
+  );
+  if (sameSourceTitle) {
+    return { feedItemId: sameSourceTitle.feed_item_id, reason: "same-source-title", confidence: 0.98 };
+  }
+
+  return null;
+}
+
 export function findDeterministicDuplicate(
   item: NormalizedNewsFeedItem,
   existing: readonly ExistingNormalization[],
-): { feedItemId: number; reason: "canonical-url" | "same-source-title"; confidence: number } | null {
+): DeterministicDuplicateMatch | null {
   const candidates = existing
     .filter((candidate) => candidate.feed_item_id !== item.feedItemId)
-    .sort((a, b) => Date.parse(a.observed_at) - Date.parse(b.observed_at) || a.feed_item_id - b.feed_item_id);
+    .sort(compareCandidates);
 
   if (item.canonicalUrl) {
     const exactUrl = candidates.find((candidate) => candidate.canonical_url === item.canonicalUrl);
