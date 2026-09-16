@@ -6,6 +6,8 @@ on:
     paths:
       - '.github/workflows/vehicle-handoff-production-smoke.yml'
       - 'scripts/authority/smoke-production.py'
+      - 'scripts/authority/verify-vehicle-handoff-query-production.py'
+      - 'src/lib/vehicle-handoff-redirect.ts'
       - 'src/start.ts'
       - 'src/server.ts'
   pull_request:
@@ -13,6 +15,9 @@ on:
     paths:
       - '.github/workflows/vehicle-handoff-production-smoke.yml'
       - 'scripts/authority/smoke-production.py'
+      - 'scripts/authority/verify-vehicle-handoff-query-production.py'
+      - 'src/lib/vehicle-handoff-redirect.ts'
+      - 'src/server.ts'
   workflow_run:
     workflows: ["Deploy verified KeepTXRed to Cloudflare"]
     types: [completed]
@@ -46,3 +51,10 @@ jobs:
 
       - name: Verify retired vehicle and constitutional routes redirect permanently
         run: python3 scripts/authority/smoke-production.py --legacy-redirects-only
+
+      - name: Verify vehicle handoffs preserve full queries and resolve directly
+        if: >-
+          github.event_name == 'workflow_run' ||
+          github.event_name == 'schedule' ||
+          github.event_name == 'workflow_dispatch'
+        run: python3 scripts/authority/verify-vehicle-handoff-query-production.py
