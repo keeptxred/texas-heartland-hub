@@ -1,0 +1,1 @@
+2026-09-17: Tighten stored-hero validation so exact primary subjects outrank generic same-domain context. Queue re-audit of remediated hero candidates.
