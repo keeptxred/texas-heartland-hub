@@ -49,6 +49,13 @@ describe("deployed primary sitemap ownership hard gate", () => {
     expect(ownershipSmoke).toContain("expected exactly one primary owner");
   });
 
+  it("keeps migrated vehicle routes retired from every KTR primary sitemap", () => {
+    expect(ownershipSmoke).toContain("RETIRED_DMV_PATHS");
+    expect(ownershipSmoke).toContain("/vehicles/buying-a-car");
+    expect(ownershipSmoke).toContain("retired migrated vehicle URL must not appear in a KTR primary sitemap");
+    expect(ownershipSmoke).not.toContain("for path in DMV_EVERGREEN_PATHS");
+  });
+
   it("keeps the bulk district, representative, and bill feeds unadvertised", () => {
     for (const sitemap of [
       "sitemap-districts.xml",

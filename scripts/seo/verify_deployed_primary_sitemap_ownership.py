@@ -22,7 +22,10 @@ SUPPRESSED_BULK_SITEMAPS = {
     f"{SITE_ORIGIN}/sitemap-bills.xml",
 }
 
-DMV_EVERGREEN_PATHS = {
+# These routes were migrated to TexasDefined and intentionally retired from the
+# KTR DMV sitemap. The production gate must keep them out of every primary KTR
+# sitemap rather than requiring them to remain indexable on KTR.
+RETIRED_DMV_PATHS = {
     "/vehicles/auto-insurance-requirements",
     "/vehicles/bonded-titles",
     "/vehicles/buying-a-car",
@@ -54,10 +57,6 @@ EXPECTED_PRIMARY_OWNER = {
     f"{SITE_ORIGIN}/texas-legislature": f"{SITE_ORIGIN}/sitemap-pages.xml",
     f"{SITE_ORIGIN}/elections/2026": f"{SITE_ORIGIN}/sitemap-elections.xml",
     f"{SITE_ORIGIN}/texas-government/fifteenth-court-of-appeals": f"{SITE_ORIGIN}/sitemap-government.xml",
-    **{
-        f"{SITE_ORIGIN}{path}": f"{SITE_ORIGIN}/sitemap-dmv.xml"
-        for path in DMV_EVERGREEN_PATHS
-    },
 }
 
 
@@ -173,6 +172,8 @@ def verify_primary_sitemap_ownership(site_url: str | None = None) -> None:
 
     primary_children = [child for child in advertised if child not in DERIVATIVE_SITEMAPS]
     ownership: dict[str, list[str]] = {url: [] for url in EXPECTED_PRIMARY_OWNER}
+    retired_urls = {f"{SITE_ORIGIN}{path}" for path in RETIRED_DMV_PATHS}
+    retired_ownership: dict[str, list[str]] = {url: [] for url in retired_urls}
 
     for child_url in primary_children:
         if not child_url.startswith(f"{SITE_ORIGIN}/"):
@@ -183,12 +184,21 @@ def verify_primary_sitemap_ownership(site_url: str | None = None) -> None:
         for canonical_url in ownership:
             if canonical_url in locs:
                 ownership[canonical_url].append(child_url)
+        for retired_url in retired_ownership:
+            if retired_url in locs:
+                retired_ownership[retired_url].append(child_url)
 
     for canonical_url, expected_owner in EXPECTED_PRIMARY_OWNER.items():
         owners = ownership[canonical_url]
         if owners != [expected_owner]:
             failures.append(
                 f"{canonical_url}: expected exactly one primary owner {expected_owner}, got {owners}"
+            )
+
+    for retired_url, owners in sorted(retired_ownership.items()):
+        if owners:
+            failures.append(
+                f"{retired_url}: retired migrated vehicle URL must not appear in a KTR primary sitemap, got {owners}"
             )
 
     if failures:
@@ -201,6 +211,7 @@ def verify_primary_sitemap_ownership(site_url: str | None = None) -> None:
     print(
         "Deployed primary sitemap ownership passed: "
         f"{len(EXPECTED_PRIMARY_OWNER)} core canonical URLs, "
+        f"{len(RETIRED_DMV_PATHS)} retired vehicle URLs absent, "
         f"{len(primary_children)} advertised primary sitemaps, "
         f"{len(SUPPRESSED_BULK_SITEMAPS)} suppressed bulk sitemaps on {site_url}."
     )
