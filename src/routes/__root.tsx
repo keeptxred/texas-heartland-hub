@@ -13,6 +13,7 @@ import { SiteHeader } from "../components/site-header";
 import { SiteFooter } from "../components/site-footer";
 import { SiteNotFound } from "../components/site-not-found";
 import { ArticleSourceTransparencyPanel } from "../components/article-source-transparency";
+import { ContextualAffiliatePanel } from "../components/monetization/contextual-affiliate-panel";
 import { organizationJsonLd } from "../lib/seo";
 
 const ADSENSE_CLIENT = "ca-pub-1891256141359926";
@@ -162,6 +163,7 @@ function RootComponent() {
         <SiteHeader />
         <main className="flex-1">
           <Outlet />
+          <ContextualAffiliatePanel />
           <ArticleSourceTransparencyPanel />
         </main>
         <SiteFooter />
