@@ -15,4 +15,13 @@ describe("core newsroom publication boundary", () => {
     expect(source).toContain('!row.target_site || row.target_site === "keeptxred"');
     expect(source).toContain("buildStoryCluster(primary, recentKeepTxRed as ClusterableFeedItem[]");
   });
+
+  it("paginates the full corroboration lookback instead of truncating the newest rows", () => {
+    expect(source).toContain("const CLUSTER_CANDIDATE_PAGE_SIZE = 500");
+    expect(source).toContain("loadRecentClusterCandidates(db, feedItemId, since)");
+    expect(source).toContain(".range(from, from + CLUSTER_CANDIDATE_PAGE_SIZE - 1)");
+    expect(source).toContain("page.length < CLUSTER_CANDIDATE_PAGE_SIZE");
+    expect(source).not.toContain(".limit(140)");
+    expect(source).toContain("Could not scan the full ${CLUSTER_LOOKBACK_HOURS}-hour corroboration window");
+  });
 });

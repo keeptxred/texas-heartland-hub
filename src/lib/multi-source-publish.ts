@@ -46,13 +46,48 @@ type PublishResult = {
   noveltyScore?: number;
 };
 
+type RecentClusterCandidate = ClusterableFeedItem & {
+  target_site?: string | null;
+};
+
+type RecentClusterScan = {
+  data: RecentClusterCandidate[];
+  error: { message: string } | null;
+};
+
 const CLUSTER_LOOKBACK_HOURS = 72;
+const CLUSTER_CANDIDATE_PAGE_SIZE = 500;
 const SAME_EVENT_SCORE = 80;
 const MAX_CLUSTER_SOURCES = 5;
 const MAX_FACT_PACKET_CHARS = 9000;
 
 function wordCount(text: string): number {
   return text.trim() ? text.trim().split(/\s+/).length : 0;
+}
+
+async function loadRecentClusterCandidates(
+  db: any,
+  feedItemId: number,
+  since: string,
+): Promise<RecentClusterScan> {
+  const rows: RecentClusterCandidate[] = [];
+
+  for (let from = 0; ; from += CLUSTER_CANDIDATE_PAGE_SIZE) {
+    const { data, error } = await db
+      .from("texas_news_feed")
+      .select("id,title,link,source,description,pub_date,internal_slug,extracted_body,target_site")
+      .gte("pub_date", since)
+      .neq("id", feedItemId)
+      .order("pub_date", { ascending: false })
+      .order("id", { ascending: false })
+      .range(from, from + CLUSTER_CANDIDATE_PAGE_SIZE - 1);
+
+    if (error) return { data: [], error: { message: error.message } };
+
+    const page = (data ?? []) as RecentClusterCandidate[];
+    rows.push(...page);
+    if (page.length < CLUSTER_CANDIDATE_PAGE_SIZE) return { data: rows, error: null };
+  }
 }
 
 async function fetchReadableText(url: string): Promise<string | null> {
@@ -334,13 +369,10 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
   if (primary.internal_slug) return { ok: true, slug: primary.internal_slug, alreadyPublished: true };
 
   const since = new Date(Date.now() - CLUSTER_LOOKBACK_HOURS * 60 * 60 * 1000).toISOString();
-  const { data: recent } = await db
-    .from("texas_news_feed")
-    .select("id,title,link,source,description,pub_date,internal_slug,extracted_body,target_site")
-    .gte("pub_date", since)
-    .neq("id", feedItemId)
-    .order("pub_date", { ascending: false })
-    .limit(140);
+  const { data: recent, error: recentError } = await loadRecentClusterCandidates(db, feedItemId, since);
+  if (recentError) {
+    return { ok: false, error: `Could not scan the full ${CLUSTER_LOOKBACK_HOURS}-hour corroboration window: ${recentError.message}` };
+  }
 
   const recentKeepTxRed = (recent ?? []).filter(
     (row: { target_site?: string | null }) => !row.target_site || row.target_site === "keeptxred",
