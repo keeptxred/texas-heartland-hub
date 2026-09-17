@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
   buildHeroReadinessSubject,
+  CURRENT_CURRENT_STORED_HERO_POLICY_VERSION,
   hasHeroVisualReadinessProvenance,
   isAuthoritativeOfficialGraphic,
   isHeroReadinessQuarantined,
@@ -19,7 +20,6 @@ const COMMONS_AUDIT_WIDTH = 1600;
 const FETCH_TIMEOUT_MS = 45_000;
 const SOURCE_METADATA_TIMEOUT_MS = 15_000;
 const IMAGE_FETCH_USER_AGENT = "KeepTXRed/1.0 (+https://keeptxred.com; editorial image readiness audit)";
-const STORED_HERO_POLICY_VERSION = "v4";
 const DATA_CENTER_STORY_RE = /\b(data center(?:s)?|data-center(?:s)?|server farm(?:s)?|hyperscale)\b/i;
 
 type AuditRow = ArticleHeroReadinessRow & {
@@ -307,7 +307,7 @@ async function acceptAuthoritativeGraphic(db: any, row: AuditRow, candidate: str
 
 async function acceptValidatedHero(db: any, row: AuditRow, candidate: string, reason: string) {
   const alt = row.image_candidate_alt_text?.trim() || row.image_alt_text?.trim() || `Editorial image for Keep TX Red article: ${row.title}`;
-  const note = `stored-cloudflare-vision-${STORED_HERO_POLICY_VERSION} ok: ${reason}`.slice(0, 1000);
+  const note = `stored-cloudflare-vision-${CURRENT_STORED_HERO_POLICY_VERSION} ok: ${reason}`.slice(0, 1000);
   const { error } = await db.from("daily_articles").update({
     featured_image_url: candidate,
     image_url: candidate,
@@ -326,7 +326,7 @@ async function rejectHero(db: any, row: AuditRow, candidate: string, reason: str
   const previousHeroIsTrusted = Boolean(row.featured_image_url?.trim())
     && Boolean(row.image_candidate_url?.trim())
     && hasHeroVisualReadinessProvenance(row.image_validation_note, row.featured_image_url);
-  const note = `stored-cloudflare-vision-${STORED_HERO_POLICY_VERSION} rejected: ${reason}`.slice(0, 1000);
+  const note = `stored-cloudflare-vision-${CURRENT_STORED_HERO_POLICY_VERSION} rejected: ${reason}`.slice(0, 1000);
 
   if (previousHeroIsTrusted) {
     const { error } = await db.from("daily_articles").update({
@@ -387,7 +387,7 @@ async function post({ request }: { request: Request }) {
       primarySubjectRemediations: queue.filter((row) => (row.image_validation_note ?? "").toLowerCase().includes("primary-subject remediation")).length,
       candidates: queue.filter((row) => Boolean(row.image_candidate_url?.trim())).length,
       dataCenterStories: queue.filter(isDataCenterStory).length,
-      storedHeroPolicy: STORED_HERO_POLICY_VERSION,
+      storedHeroPolicy: CURRENT_STORED_HERO_POLICY_VERSION,
       scope: "all_published_hero_candidates_without_visual_readiness_provenance",
     });
   }
