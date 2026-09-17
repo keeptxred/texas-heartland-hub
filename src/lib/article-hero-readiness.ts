@@ -70,11 +70,20 @@ function normalizeReadinessDomain(
   return inferred;
 }
 
-export function hasHeroVisualReadinessProvenance(note: string | null | undefined): boolean {
+export function hasHeroVisualReadinessProvenance(
+  note: string | null | undefined,
+  heroUrl?: string | null,
+): boolean {
   const value = (note ?? "").trim().toLowerCase();
-  return value.includes("cloudflare-vision ok:")
-    || /cloudflare-vision-v\d+\s+ok:/.test(value)
-    || value.startsWith("authoritative-image-exempt:");
+  if (value.includes("cloudflare-vision ok:") || /cloudflare-vision-v\d+\s+ok:/.test(value)) return true;
+
+  // Only tightly scoped official government graphics may bypass pixel validation.
+  // Historical/manual Commons notes sometimes used the authoritative-image-exempt
+  // prefix to record licensing provenance. Licensing provenance is not visual
+  // story-match provenance, so those rows must still pass the stored-hero vision
+  // gate before they are treated as ready.
+  return value.startsWith("authoritative-image-exempt:")
+    && isAuthoritativeOfficialGraphic(heroUrl);
 }
 
 export function isHeroReadinessQuarantined(row: Pick<ArticleHeroReadinessRow,
