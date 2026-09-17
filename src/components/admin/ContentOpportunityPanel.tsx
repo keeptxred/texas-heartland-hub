@@ -398,7 +398,7 @@ export function ContentOpportunityPanel() {
           },
         }));
       } else {
-        setArticleMsg((s) => ({ ...s, [r.id]: { ok: false, text: res.error } }));
+        setArticleMsg((s) => ({ ...s, [r.id]: { ok: false, text: `Publish failed — ${res.error}` } }));
         const { data: refreshed } = await supabase
           .from("texas_news_feed")
           .select("id,title,source,pub_date,internal_slug,link,description,extracted_body,preflight_json")
@@ -408,9 +408,6 @@ export function ContentOpportunityPanel() {
           setItems((current) =>
             current.map((item) => (item.id === r.id ? ({ ...item, ...refreshed } as FeedItem) : item)),
           );
-        }
-        if (/does not contain enough text|not enough factual/i.test(res.error)) {
-          setItems((current) => current.filter((item) => item.id !== r.id));
         }
       }
     } catch (e) {
@@ -644,11 +641,11 @@ export function ContentOpportunityPanel() {
   const scored = useMemo(
     () =>
       items
-        .filter((it) => statuses[it.id]?.rewritten || shouldShowOpportunity(it))
+        .filter((it) => statuses[it.id]?.rewritten || !!articleMsg[it.id]?.text || shouldShowOpportunity(it))
         .filter((it) => !ignored.has(ignoreKey(it)))
         .map(score)
         .sort((a, b) => b.total - a.total),
-    [items, ignored, statuses],
+    [items, ignored, statuses, articleMsg],
   );
 
   const filtered = useMemo(() => {
