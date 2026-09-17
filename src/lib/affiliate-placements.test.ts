@@ -5,7 +5,7 @@ describe("KTR contextual affiliate placement guard", () => {
   it("enables school-supply offers only on the approved school-story cohort", () => {
     expect(
       getKtrAffiliatePlacement(
-        "/news/2026-08-21-gov-abbott-proposes-ban-on-h-1b-visa-use-for-texas-public-schools",
+        "/news/2026-08-20-gov-abbott-proposes-ban-on-h-1b-visa-use-for-texas-public-schools",
       ),
     ).toEqual({ kind: "school-supplies", placementId: "ktr-school-story-resource" });
 
