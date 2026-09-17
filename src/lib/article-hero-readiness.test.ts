@@ -14,13 +14,13 @@ describe("article hero visual readiness", () => {
     )).toBe(false);
   });
 
-  it("accepts actual visual-validation provenance across stored-photo policy versions", () => {
-    expect(hasHeroVisualReadinessProvenance("cloudflare-vision ok: direct story match")).toBe(true);
-    expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision ok: direct story match")).toBe(true);
-    expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v2 ok: representative archive photo passed")).toBe(true);
-    expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v3 ok: entity-aware archive photo passed")).toBe(true);
+  it("requires the current stored-photo policy instead of grandfathering older or generated verdicts", () => {
+    expect(hasHeroVisualReadinessProvenance("cloudflare-vision ok: direct story match")).toBe(false);
+    expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision ok: direct story match")).toBe(false);
+    expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v2 ok: representative archive photo passed")).toBe(false);
+    expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v3 ok: entity-aware archive photo passed")).toBe(false);
     expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v4 ok: source-grounded archive photo passed")).toBe(true);
-    expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v19 ok: future version passed")).toBe(true);
+    expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v19 ok: future version passed")).toBe(false);
     expect(hasHeroVisualReadinessProvenance(
       "authoritative-image-exempt: official NHC forecast graphic",
       "https://www.nhc.noaa.gov/storm_graphics/AT05/AL052026_3day_cone.png",
@@ -33,7 +33,7 @@ describe("article hero visual readiness", () => {
       "authoritative-image-exempt: official NHC forecast graphic",
     )).toBe(false);
     expect(hasHeroVisualReadinessProvenance("verified-shared-hero: reused validated infrastructure hero")).toBe(false);
-    expect(hasHeroVisualReadinessProvenance("verified-shared-hero: cloudflare-vision ok: reused validated infrastructure hero")).toBe(true);
+    expect(hasHeroVisualReadinessProvenance("verified-shared-hero: cloudflare-vision ok: reused validated infrastructure hero")).toBe(false);
   });
 
   it("rechecks older rejects under v4 and quarantines only v4 rejects", () => {
