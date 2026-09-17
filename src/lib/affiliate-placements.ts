@@ -6,7 +6,7 @@ export type KtrAffiliatePlacement = {
 const SCHOOL_SUPPLY_PATHS = new Set([
   "/news/2026-08-20-lt-gov-dan-patrick-proposes-penalties-for-schools-that-keep-vulgar-books-on-libr",
   "/news/2026-08-20-texas-families-ask-supreme-court-to-review-state-law-requiring-ten-commandments-",
-  "/news/2026-08-21-gov-abbott-proposes-ban-on-h-1b-visa-use-for-texas-public-schools",
+  "/news/2026-08-20-gov-abbott-proposes-ban-on-h-1b-visa-use-for-texas-public-schools",
 ]);
 
 export function getKtrAffiliatePlacement(pathname: string): KtrAffiliatePlacement | null {
