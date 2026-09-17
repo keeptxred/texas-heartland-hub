@@ -1,0 +1,72 @@
+name: Fix admin KTR publish retention
+
+on:
+  push:
+    branches:
+      - fix/admin-ktr-publish-retention-20260917
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: ${{ !contains(github.event.head_commit.message, '[admin-publish-fix]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Patch ContentOpportunityPanel
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('src/components/admin/ContentOpportunityPanel.tsx')
+          text = path.read_text()
+
+          old = '''  const scored = useMemo(\n    () =>\n      items\n        .filter(shouldShowOpportunity)\n        .filter((it) => !ignored.has(ignoreKey(it)))\n        .map(score)\n        .sort((a, b) => b.total - a.total),\n    [items, ignored],\n  );'''
+          new = '''  const scored = useMemo(\n    () =>\n      items\n        .filter((it) => statuses[it.id]?.rewritten || shouldShowOpportunity(it))\n        .filter((it) => !ignored.has(ignoreKey(it)))\n        .map(score)\n        .sort((a, b) => b.total - a.total),\n    [items, ignored, statuses],\n  );'''
+          if old not in text:
+            raise SystemExit('scored block not found')
+          text = text.replace(old, new, 1)
+
+          old = '''        setStatuses((s) => ({\n          ...s,\n          [r.id]: {\n            rewritten: true,\n            imageReady: s[r.id]?.imageReady ?? false,\n            reelReady: s[r.id]?.reelReady ?? false,\n            generatedTitle: s[r.id]?.generatedTitle ?? null,\n          },\n        }));'''
+          new = '''        setItems((current) =>\n          current.map((item) =>\n            item.id === r.id\n              ? {\n                  ...item,\n                  internal_slug: res.slug,\n                  article_slug: res.slug,\n                  article_url: `https://keeptxred.com/news/${res.slug}`,\n                }\n              : item,\n          ),\n        );\n        setStatuses((s) => ({\n          ...s,\n          [r.id]: {\n            rewritten: true,\n            imageReady: s[r.id]?.imageReady ?? false,\n            reelReady: s[r.id]?.reelReady ?? false,\n            generatedTitle: s[r.id]?.generatedTitle ?? null,\n          },\n        }));'''
+          if old not in text:
+            raise SystemExit('publish success status block not found')
+          text = text.replace(old, new, 1)
+
+          old = '''                              disabled={!!articleWorking[r.id] || !canAttemptPublish}'''
+          new = '''                              disabled={!!articleWorking[r.id] || alreadyPublished || !canAttemptPublish}'''
+          if old not in text:
+            raise SystemExit('table publish disabled expression not found')
+          text = text.replace(old, new, 1)
+
+          old = '''                                : alreadyPublished\n                                ? "Republish"'''
+          new = '''                                : alreadyPublished\n                                ? "Published"'''
+          if old not in text:
+            raise SystemExit('table republish label not found')
+          text = text.replace(old, new, 1)
+
+          old = '''                        !!articleWorking[previewRow.id] ||\n                        (!statuses[previewRow.id]?.rewritten && !canAttemptArticlePublish(preflightById[previewRow.id]))'''
+          new = '''                        !!articleWorking[previewRow.id] ||\n                        !!statuses[previewRow.id]?.rewritten ||\n                        (!statuses[previewRow.id]?.rewritten && !canAttemptArticlePublish(preflightById[previewRow.id]))'''
+          if old not in text:
+            raise SystemExit('preview publish disabled expression not found')
+          text = text.replace(old, new, 1)
+
+          old = '''                      {statuses[previewRow.id]?.rewritten\n                        ? "Republish"'''
+          new = '''                      {statuses[previewRow.id]?.rewritten\n                        ? "Published"'''
+          if old not in text:
+            raise SystemExit('preview republish label not found')
+          text = text.replace(old, new, 1)
+
+          path.write_text(text)
+          PY
+      - name: Remove one-time workflow and commit fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/fix-admin-ktr-publish-retention.yml
+          git add src/components/admin/ContentOpportunityPanel.tsx
+          git commit -m "Fix admin KTR publish retention [admin-publish-fix]"
+          git push origin HEAD:fix/admin-ktr-publish-retention-20260917
