@@ -4,67 +4,56 @@ on:
   push:
     branches:
       - fix/admin-publish-failure-retention-20260917
-    paths:
-      - .github/workflows/fix-admin-publish-failure-retention.yml
 
 permissions:
   contents: write
 
 jobs:
   patch:
+    if: ${{ !contains(github.event.head_commit.message, '[admin-publish-failure-fix]') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: fix/admin-publish-failure-retention-20260917
           fetch-depth: 0
       - name: Patch ContentOpportunityPanel
         run: |
           python - <<'PY'
           from pathlib import Path
-          p = Path('src/components/admin/ContentOpportunityPanel.tsx')
-          s = p.read_text()
 
-          old = '''        if (/does not contain enough text|not enough factual/i.test(res.error)) {
-          setItems((current) => current.filter((item) => item.id !== r.id));
-        }
-'''
-          if old not in s:
-              raise SystemExit('expected insufficient-text removal block not found')
-          s = s.replace(old, '')
+          path = Path('src/components/admin/ContentOpportunityPanel.tsx')
+          text = path.read_text()
 
-          old = '''        .filter((it) => statuses[it.id]?.rewritten || shouldShowOpportunity(it))
-'''
-          new = '''        .filter((it) => statuses[it.id]?.rewritten || !!articleMsg[it.id]?.text || shouldShowOpportunity(it))
-'''
-          if old not in s:
-              raise SystemExit('expected scored visibility filter not found')
-          s = s.replace(old, new, 1)
+          old = '''        if (/does not contain enough text|not enough factual/i.test(res.error)) {\n          setItems((current) => current.filter((item) => item.id !== r.id));\n        }\n'''
+          if old not in text:
+            raise SystemExit('insufficient-text removal block not found')
+          text = text.replace(old, '', 1)
 
-          old = '''    [items, ignored, statuses],
-'''
-          new = '''    [items, ignored, statuses, articleMsg],
-'''
-          if old not in s:
-              raise SystemExit('expected scored dependency list not found')
-          s = s.replace(old, new, 1)
+          old = '''        setArticleMsg((s) => ({ ...s, [r.id]: { ok: false, text: res.error } }));'''
+          new = '''        setArticleMsg((s) => ({ ...s, [r.id]: { ok: false, text: `Publish failed — ${res.error}` } }));'''
+          if old not in text:
+            raise SystemExit('publish error message assignment not found')
+          text = text.replace(old, new, 1)
 
-          old = '''        setArticleMsg((s) => ({ ...s, [r.id]: { ok: false, text: res.error } }));
-'''
-          new = '''        setArticleMsg((s) => ({ ...s, [r.id]: { ok: false, text: `Publish failed — ${res.error}` } }));
-'''
-          if old not in s:
-              raise SystemExit('expected publish error message assignment not found')
-          s = s.replace(old, new, 1)
+          old = '''        .filter((it) => statuses[it.id]?.rewritten || shouldShowOpportunity(it))'''
+          new = '''        .filter((it) => statuses[it.id]?.rewritten || !!articleMsg[it.id]?.text || shouldShowOpportunity(it))'''
+          if old not in text:
+            raise SystemExit('scored visibility filter not found')
+          text = text.replace(old, new, 1)
 
-          p.write_text(s)
+          old = '''    [items, ignored, statuses],'''
+          new = '''    [items, ignored, statuses, articleMsg],'''
+          if old not in text:
+            raise SystemExit('scored dependency list not found')
+          text = text.replace(old, new, 1)
+
+          path.write_text(text)
           PY
-      - name: Remove one-time workflow
-        run: rm .github/workflows/fix-admin-publish-failure-retention.yml
-      - name: Commit fix
+      - name: Remove one-time workflow and commit fix
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/components/admin/ContentOpportunityPanel.tsx .github/workflows/fix-admin-publish-failure-retention.yml
-          git commit -m "Keep failed KTR publish rows visible"
+          git rm .github/workflows/fix-admin-publish-failure-retention.yml
+          git add src/components/admin/ContentOpportunityPanel.tsx
+          git commit -m "Keep failed KTR publish rows visible [admin-publish-failure-fix]"
           git push origin HEAD:fix/admin-publish-failure-retention-20260917
