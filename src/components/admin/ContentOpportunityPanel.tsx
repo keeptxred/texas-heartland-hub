@@ -376,6 +376,18 @@ export function ContentOpportunityPanel() {
             text: res.alreadyPublished ? "Already published" : "Published to Keep Texas Red",
           },
         }));
+        setItems((current) =>
+          current.map((item) =>
+            item.id === r.id
+              ? {
+                  ...item,
+                  internal_slug: res.slug,
+                  article_slug: res.slug,
+                  article_url: `https://keeptxred.com/news/${res.slug}`,
+                }
+              : item,
+          ),
+        );
         setStatuses((s) => ({
           ...s,
           [r.id]: {
@@ -632,11 +644,11 @@ export function ContentOpportunityPanel() {
   const scored = useMemo(
     () =>
       items
-        .filter(shouldShowOpportunity)
+        .filter((it) => statuses[it.id]?.rewritten || shouldShowOpportunity(it))
         .filter((it) => !ignored.has(ignoreKey(it)))
         .map(score)
         .sort((a, b) => b.total - a.total),
-    [items, ignored],
+    [items, ignored, statuses],
   );
 
   const filtered = useMemo(() => {
@@ -754,7 +766,7 @@ export function ContentOpportunityPanel() {
                           {isDailyArticle ? null : (
                             <button
                               type="button"
-                              disabled={!!articleWorking[r.id] || !canAttemptPublish}
+                              disabled={!!articleWorking[r.id] || alreadyPublished || !canAttemptPublish}
                               onClick={() => void publishArticle(r)}
                               title={!canAttemptPublish ? preflight?.message : undefined}
                               className="px-3 py-1 bg-secondary text-secondary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60 disabled:cursor-not-allowed"
@@ -762,7 +774,7 @@ export function ContentOpportunityPanel() {
                               {articleWorking[r.id]
                                 ? "Publishing…"
                                 : alreadyPublished
-                                ? "Republish"
+                                ? "Published"
                                 : preflight?.reason === "PENDING_EXTRACTION"
                                 ? "Check Source & Publish"
                                 : "Publish to Keep Texas Red"}
@@ -946,13 +958,14 @@ export function ContentOpportunityPanel() {
                       type="button"
                       disabled={
                         !!articleWorking[previewRow.id] ||
+                        !!statuses[previewRow.id]?.rewritten ||
                         (!statuses[previewRow.id]?.rewritten && !canAttemptArticlePublish(preflightById[previewRow.id]))
                       }
                       onClick={() => void publishArticle(previewRow)}
                       className="px-3 py-1 bg-secondary text-secondary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
                     >
                       {statuses[previewRow.id]?.rewritten
-                        ? "Republish"
+                        ? "Published"
                         : preflightById[previewRow.id]?.reason === "PENDING_EXTRACTION"
                         ? "Check Source & Publish"
                         : "Publish to Keep Texas Red"}
