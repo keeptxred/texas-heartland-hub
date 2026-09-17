@@ -36,7 +36,7 @@ describe("stored hero Wikimedia audit derivatives", () => {
 
   it("audits historical failed rows that still expose an ungoverned canonical hero", () => {
     expect(route).toContain('return (status === "ready" || status === "failed")');
-    expect(route).toContain("!hasHeroVisualReadinessProvenance(row.image_validation_note)");
+    expect(route).toContain("!hasHeroVisualReadinessProvenance(row.image_validation_note, targetUrl(row))");
     expect(route).toContain("Historical rows can still carry a canonical hero");
   });
 
