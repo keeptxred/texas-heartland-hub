@@ -11,6 +11,8 @@ const AUDITABLE_EXTERNAL_HOSTS = new Set([
   "www.keeptxred.com",
 ]);
 
+export const CURRENT_STORED_HERO_POLICY_VERSION = "v4";
+
 export type ArticleHeroReadinessRow = {
   slug: string;
   title: string;
@@ -75,7 +77,12 @@ export function hasHeroVisualReadinessProvenance(
   heroUrl?: string | null,
 ): boolean {
   const value = (note ?? "").trim().toLowerCase();
-  if (value.includes("cloudflare-vision ok:") || /cloudflare-vision-v\d+\s+ok:/.test(value)) return true;
+  // Final publication readiness is deliberately policy-versioned. Generated-image
+  // validation and older stored-photo policies are useful upstream gates, but they
+  // do not prove that the image has passed the CURRENT independent stored-hero
+  // review. Re-auditing them once prevents old, looser semantic decisions from
+  // becoming permanent exemptions when the editorial image policy gets stricter.
+  if (value.startsWith(`stored-cloudflare-vision-${CURRENT_STORED_HERO_POLICY_VERSION} ok:`)) return true;
 
   // Only tightly scoped official government graphics may bypass pixel validation.
   // Historical/manual Commons notes sometimes used the authoritative-image-exempt
