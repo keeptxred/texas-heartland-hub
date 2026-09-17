@@ -17,7 +17,7 @@ const PRIMARY_SUBJECT_PRIORITY = [
 
 const SPECIFIC_VISUAL_PRIORITY = [
   "SPECIFIC-VISUAL PRIORITY:",
-  "When the story is specifically about a product, merchandise item, opening, performance, festival, incident, visual post, or other visually concrete event, prefer the exact named subject or defining activity/object.",
+  "When the story is about a specific product, merchandise item, opening, performance, festival, incident, visual post, or other visually concrete event, prefer the exact named subject or defining activity/object.",
   "A generic brand storefront, generic venue, generic city scene, or generic category image cannot pass solely because it is associated with the same brand, place, or topic when the defining visual subject is absent.",
 ].join(" ");
 
