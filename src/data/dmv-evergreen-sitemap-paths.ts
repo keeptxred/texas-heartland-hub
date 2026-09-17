@@ -1,21 +1,4 @@
-export const DMV_EVERGREEN_SITEMAP_PATHS = [
-  "/vehicles/auto-insurance-requirements",
-  "/vehicles/bonded-titles",
-  "/vehicles/buying-a-car",
-  "/vehicles/buying-selling",
-  "/vehicles/commercial-fleet-irp",
-  "/vehicles/disabled-parking",
-  "/vehicles/duplicate-titles",
-  "/vehicles/farm-antique-specialty",
-  "/vehicles/financial-responsibility",
-  "/vehicles/inspections",
-  "/vehicles/inspections-emissions",
-  "/vehicles/liens-duplicate-corrected-titles",
-  "/vehicles/personalized-plates",
-  "/vehicles/plates",
-  "/vehicles/private-party-sales",
-  "/vehicles/salvage-rebuilt-titles",
-  "/vehicles/selling-a-car",
-  "/vehicles/temporary-tags",
-  "/vehicles/title-transfer",
-] as const;
+// Vehicle-service evergreen pages moved to TexasDefined. KeepTXRed retains the
+// legacy routes as permanent redirects, but redirecting URLs must not be
+// submitted as indexable sitemap entries.
+export const DMV_EVERGREEN_SITEMAP_PATHS = [] as const;
