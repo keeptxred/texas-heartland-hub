@@ -258,7 +258,7 @@ const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
     return new Response(renderErrorPage(), {
       status: 404,
       headers: {
-        "content-type": "text/html; charset=utf-8" },
+        "content-type": "text/html; charset=utf-8",
         "x-robots-tag": "noindex, follow",
         "cache-control": "public, max-age=300",
       },
