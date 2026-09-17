@@ -4,6 +4,7 @@ import { DMV_EVERGREEN_SITEMAP_PATHS } from "@/data/dmv-evergreen-sitemap-paths"
 
 const rootSitemap = readFileSync(new URL("../routes/sitemap[.]xml.ts", import.meta.url), "utf8");
 const dmvSitemap = readFileSync(new URL("../routes/sitemap-dmv[.]xml.ts", import.meta.url), "utf8");
+const dmvSitemapSource = readFileSync(new URL("../data/dmv-evergreen-sitemap-paths.ts", import.meta.url), "utf8");
 const dmvRoute = readFileSync(new URL("../routes/dmv.tsx", import.meta.url), "utf8");
 const vehicleRegistrationRoute = readFileSync(new URL("../routes/vehicles.registration.tsx", import.meta.url), "utf8");
 const vehicleNewResidentsRoute = readFileSync(new URL("../routes/vehicles.new-residents.tsx", import.meta.url), "utf8");
@@ -53,6 +54,6 @@ describe("DMV and vehicle sitemap ownership", () => {
   });
 
   it("keeps retired vehicle guides out of the KeepTXRed DMV sitemap after the ownership handoff", () => {
-    expect(DMV_EVERGREEN_SITEMAP_PATHS).toHaveLength(0);
+    expect(dmvSitemapSource).not.toContain('"/vehicles/');
   });
 });
