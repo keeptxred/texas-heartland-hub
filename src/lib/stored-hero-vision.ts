@@ -111,9 +111,9 @@ export function storedHeroEditorialGuidance(subject: SubjectExtract): string {
   if (subject.domain === "politics" || subject.domain === "legal") {
     return [
       "STORED CIVIC PHOTO RULE:",
-      "A real photograph of the named policymaker, court, public agency, governing institution, official venue, or concrete policy target is a direct representative match.",
+      "A real photograph of a named person who is central to the case or headline, or of the named policymaker, court, public agency, governing institution, official venue, or concrete policy target, is a direct representative match.",
       "Do not require an invisible appointment, vote, investigation, lawsuit, budget action, tax change, hearing outcome, or policy decision to be literally visible in the frame.",
-      "When trusted reusable-source metadata explicitly identifies the visible official person, agency, institution, or venue, treat that identity as established; the pixels need only be visually consistent with that kind of subject.",
+      "When trusted reusable-source metadata explicitly identifies the visible named person, official, agency, institution, or venue, treat that identity as established; the pixels need only be visually consistent with that kind of subject.",
       "Reject unrelated capitol/courthouse/government stock imagery when neither the named institution, person, place, nor concrete policy target is actually represented.",
       PRIMARY_SUBJECT_PRIORITY,
       SPECIFIC_VISUAL_PRIORITY,
