@@ -16,8 +16,6 @@ export type KeepTxRedSearchStory = {
  */
 export function isKeepTxRedSearchOwnedStory(input: KeepTxRedSearchStory): boolean {
   const kind = input.kind?.trim().toLowerCase() ?? "";
-  if (kind.startsWith("sports-")) return false;
-
   const route = classifyStoryOwnership({
     title: input.title,
     description: input.description,
@@ -25,6 +23,12 @@ export function isKeepTxRedSearchOwnedStory(input: KeepTxRedSearchStory): boolea
     source: input.source,
     fallbackDomain: "breaking-news",
   });
+
+  // Legacy sports rows with no strong story-level signal still belong to the
+  // retired sports pipeline, not KTR search. Explicit government, election,
+  // court, enforcement, or public-safety signals are classified before sports
+  // and remain eligible for the KTR newsroom.
+  if (kind.startsWith("sports-") && route.confidence === "fallback") return false;
 
   return route.owner === "KeepTXRed";
 }
