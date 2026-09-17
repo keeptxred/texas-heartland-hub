@@ -94,19 +94,21 @@ async function fetchReadableText(url: string): Promise<string | null> {
 
 async function enrichClusterBodies(cluster: StoryCluster, supabaseAdmin: any): Promise<StoryCluster> {
   const rows = [cluster.primary, ...cluster.members];
-  const enriched: ClusterableFeedItem[] = [];
-
-  for (const row of rows) {
-    let body = (row.extracted_body ?? "").trim();
-    const description = (row.description ?? "").trim();
-    if (!body && wordCount(description) < 180 && /^https?:\/\//i.test(row.link)) {
-      body = (await fetchReadableText(row.link)) ?? "";
-      if (body && row.id) {
-        await supabaseAdmin.from("texas_news_feed").update({ extracted_body: body }).eq("id", row.id);
+  // The cluster is bounded to MAX_CLUSTER_SOURCES, so parallel enrichment is
+  // safe and prevents multiple slow source fetches from stacking 10s timeouts.
+  const enriched: ClusterableFeedItem[] = await Promise.all(
+    rows.map(async (row) => {
+      let body = (row.extracted_body ?? "").trim();
+      const description = (row.description ?? "").trim();
+      if (!body && wordCount(description) < 180 && /^https?:\/\//i.test(row.link)) {
+        body = (await fetchReadableText(row.link)) ?? "";
+        if (body && row.id) {
+          await supabaseAdmin.from("texas_news_feed").update({ extracted_body: body }).eq("id", row.id);
+        }
       }
-    }
-    enriched.push({ ...row, extracted_body: body || description });
-  }
+      return { ...row, extracted_body: body || description };
+    }),
+  );
 
   const primary = enriched[0];
   const members = cluster.members.map((member, index) => ({ ...member, ...enriched[index + 1] }));
