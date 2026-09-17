@@ -13,6 +13,7 @@ import { ARTICLES, isPublished } from "@/data/articles";
 import { ARTICLE_BODIES } from "@/data/article-bodies";
 import { listSitemapArticles } from "@/lib/evergreen.functions";
 import { getNewsSitemapHeadlines } from "@/lib/news-sitemap.functions";
+import { isKeepTxRedSearchOwnedStory } from "@/lib/ktr-search-ownership";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 
 const WINDOW_MS = 48 * 60 * 60 * 1000;
@@ -23,7 +24,7 @@ function hasSubstantiveStaticBody(slug: string): boolean {
 }
 
 export function isGoogleNewsArticleKind(kind: string): boolean {
-  return kind === "ingested" || kind === "news" || kind.startsWith("sports-");
+  return kind === "ingested" || kind === "news";
 }
 
 /** Google News sitemap — only recent news articles from the last 48 hours. */
@@ -61,6 +62,7 @@ export const Route = createFileRoute("/sitemap-news.xml")({
           const { articles } = await listSitemapArticles();
           const recentCloud = articles.filter((a) => {
             if (!isGoogleNewsArticleKind(a.kind)) return false;
+            if (!isKeepTxRedSearchOwnedStory({ title: a.title, kind: a.kind })) return false;
             const t = new Date(a.published_at).getTime();
             return !(
               isNaN(t)

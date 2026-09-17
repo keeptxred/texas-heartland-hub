@@ -17,13 +17,14 @@ describe("Google News pipeline contract", () => {
     expect(sitemap).toContain("!a.pillar");
   });
 
-  it("includes current cloud news and sports kinds while excluding evergreen cloud content", () => {
+  it("includes KTR cloud news while excluding sports and evergreen cloud content", () => {
     const sitemap = readFileSync(new URL("../routes/sitemap-news[.]xml.ts", import.meta.url), "utf8");
 
     expect(sitemap).toContain('kind === "ingested"');
     expect(sitemap).toContain('kind === "news"');
-    expect(sitemap).toContain('kind.startsWith("sports-")');
+    expect(sitemap).not.toContain('kind.startsWith("sports-")');
     expect(sitemap).not.toContain('kind === "evergreen" ||');
+    expect(sitemap).toContain("isKeepTxRedSearchOwnedStory");
   });
 
   it("uses the displayed cloud SEO headline when one exists", () => {

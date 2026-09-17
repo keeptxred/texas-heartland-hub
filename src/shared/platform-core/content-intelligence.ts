@@ -70,7 +70,7 @@ export function classifyStoryOwnership(input: StoryRoutingInput): StoryRoutingDe
   }
   if (/\b(cowboys|texans|astros|rangers|mavericks|spurs|stars|fc dallas|dynamo|austin fc|longhorns|aggies|red raiders|horned frogs|sports?|football|baseball|basketball|hockey|soccer)/.test(text)) {
     if (/\b(today|tonight|game|match|score|win|loss|injury|roster|contract|trade|draft|coach|player|season|playoffs?|standings|schedule|opens? play|ownership stake)/.test(text)) {
-      return route('breaking-news', 'KeepTXRed', 'medium', ['Current Texas sports news.'], 'context');
+      return route('texas-culture', 'TexasDefined', 'medium', ['Current Texas sports news belongs to TexasDefined.'], 'news-update');
     }
     return route('texas-culture', 'TexasDefined', 'medium', ['Evergreen sports culture/fan story.'], 'guide');
   }

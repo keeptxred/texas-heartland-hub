@@ -9,7 +9,7 @@ describe('story-level brand routing', () => {
     ['Texas is top moving destination for Gen Z', 'A migration report ranks Texas first for Gen Z moves and second for Millennials.', 'TexasDefined', 'moving'],
     ['Whataburger turns 76 with app-only birthday deals', 'The chain is offering 76-cent menu items and anniversary promotions.', 'TexasDefined', 'food'],
     ['Tarrant County considers voting site reductions', 'Commissioners would reduce Election Day polling locations.', 'KeepTXRed', 'elections'],
-    ['FC Dallas opens Leagues Cup play tonight', 'FC Dallas faces Queretaro tonight after a winless stretch.', 'KeepTXRed', 'breaking-news'],
+    ['FC Dallas opens Leagues Cup play tonight', 'FC Dallas faces Queretaro tonight after a winless stretch.', 'TexasDefined', 'texas-culture'],
     ['A fan guide to Texas football traditions', 'A guide to tailgating, stadium culture and traditions across Texas.', 'TexasDefined', 'texas-culture'],
   ] as const;
 
@@ -29,5 +29,15 @@ describe('story-level brand routing', () => {
       fallbackDomain: 'texas-culture',
     });
     expect(result.owner).toBe('KeepTXRed');
+  });
+
+  it('keeps sports-related government and enforcement stories with KeepTXRed', () => {
+    const result = classifyStoryOwnership({
+      title: 'Attorney general sues Dallas sports venue over state-law dispute',
+      description: 'The lawsuit asks a Texas court to enforce state law.',
+      fallbackDomain: 'texas-culture',
+    });
+    expect(result.owner).toBe('KeepTXRed');
+    expect(result.domain).toBe('breaking-news');
   });
 });
