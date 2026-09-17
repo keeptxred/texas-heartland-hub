@@ -86,9 +86,9 @@ const BAD_YEAR_NEWS_REDIRECTS = new Map([
   ["live-2001-08-12-secretary-of-state-jane-nelson-leads-critical-border-trade-discussions-8m50tf", "live-2025-08-12-secretary-of-state-jane-nelson-leads-critical-border-trade-discussions-8m50tf"],
   ["live-2001-10-03-october-6-deadline-secretary-of-state-nelson-issues-final-call-for-tex-r43bxj", "live-2025-10-03-october-6-deadline-secretary-of-state-nelson-issues-final-call-for-tex-r43bxj"],
   ["live-2001-10-17-a-guide-to-texas-early-voting-secretary-jane-nelson-outlines-key-deadl-arwqgp", "live-2025-10-17-a-guide-to-texas-early-voting-secretary-jane-nelson-outlines-key-deadl-arwqgp"],
-  ["live-2001-10-20-secretary-jane-nelson-enhances-texas-election-integrity-with-federal-d-3ocr9t", "live-2025-10-20-secretary-of-state-jane-nelson-enhances-texas-election-integrity-with-federal-d-3ocr9t"],
+  ["live-2001-10-20-secretary-jane-nelson-enhances-texas-election-integrity-with-federal-d-3ocr9t", "live-2025-10-20-secretary-jane-nelson-enhances-texas-election-integrity-with-federal-d-3ocr9t"],
   ["live-2001-10-29-texas-voter-turnout-surges-with-half-a-million-early-ballots-recorded--irss2i", "live-2025-10-29-texas-voter-turnout-surges-with-half-a-million-early-ballots-recorded--irss2i"],
-  ["live-2001-10-30-secretary-of-state-defends-constitutionality-of-state-primary-el-fcshc", "live-2025-10-30-secretary-of-state-defends-constitutionality-of-state-primary-el-fcshc"],
+  ["live-2001-10-30-texas-secretary-of-state-defends-constitutionality-of-state-primary-el-fcshc", "live-2025-10-30-texas-secretary-of-state-defends-constitutionality-of-state-primary-el-fcshc"],
   ["live-2001-10-31-voter-preparation-guide-for-the-texas-constitutional-amendment-electio-tgr8b3", "live-2025-10-31-voter-preparation-guide-for-the-texas-constitutional-amendment-electio-tgr8b3"],
   ["live-2001-11-06-texas-breaks-all-time-record-with-3-million-active-business-entities-a-qxu7on", "live-2025-11-06-texas-breaks-all-time-record-with-3-million-active-business-entities-a-qxu7on"],
   ["live-2001-11-25-harris-county-election-procedures-under-fire-after-texas-secretary-of--xfu59l", "live-2025-11-25-harris-county-election-procedures-under-fire-after-texas-secretary-of--xfu59l"],
@@ -258,7 +258,7 @@ const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
     return new Response(renderErrorPage(), {
       status: 404,
       headers: {
-        "content-type": "text/html; charset=utf-8",
+        "content-type": "text/html; charset=utf-8" },
         "x-robots-tag": "noindex, follow",
         "cache-control": "public, max-age=300",
       },
