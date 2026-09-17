@@ -36,6 +36,17 @@ describe("stored hero representative-photo policy", () => {
     expect(guidance).toContain("must fail");
   });
 
+  it("allows a source-identified named person to represent a legal story", () => {
+    const guidance = storedHeroEditorialGuidance(subject({
+      title: "James Harden’s Houston Gun Charge Dismissed After Alternative Resolution Program",
+      domain: "legal",
+      concreteSubject: "James Harden is the headline-defining named person in the legal story.",
+    }));
+    expect(guidance).toContain("named person who is central to the case or headline");
+    expect(guidance).toContain("trusted reusable-source metadata explicitly identifies the visible named person");
+    expect(guidance).toContain("generic TV studio, control room, capitol, courthouse");
+  });
+
   it("requires specific products and events to beat brand-only association", () => {
     const guidance = storedHeroEditorialGuidance(subject({
       title: "Texas brand launches a specific co-branded shirt",
