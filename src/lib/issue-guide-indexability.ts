@@ -1,5 +1,6 @@
 import type { IssueGuide } from "@/data/issue-guides";
 import { applyPriorityIssueGuideUpgrade } from "@/data/issue-guide-priority-upgrades";
+import { applyPropertyTaxPolicyOwnershipPatch } from "@/data/issue-guide-property-tax-policy-patch";
 import { applyWave2IssueGuideUpgrade } from "@/data/issue-guide-wave2-upgrades";
 import { applyWave3IssueGuideUpgrade } from "@/data/issue-guide-wave3-upgrades";
 import { applyWave3DepthPatch } from "@/data/issue-guide-wave3-depth-patches";
@@ -14,6 +15,7 @@ const ISSUE_GUIDE_WAVE2_UPDATED_AT = "2026-08-21T21:37:27Z";
 const ISSUE_GUIDE_WAVE3_UPDATED_AT = "2026-08-21T21:52:15Z";
 const ISSUE_GUIDE_WAVE4_UPDATED_AT = "2026-08-25T16:12:08Z";
 const ISSUE_GUIDE_CURRENT_PATCH_UPDATED_AT = "2026-09-03T04:08:30Z";
+const ISSUE_GUIDE_PROPERTY_TAX_POLICY_UPDATED_AT = "2026-09-17T13:50:00Z";
 
 const hydratedGuides = new WeakSet<IssueGuide>();
 const guideLastModified = new WeakMap<IssueGuide, string>();
@@ -45,9 +47,16 @@ function hydrateIssueGuide(guide: IssueGuide) {
   const currentWave4 = applyWave4CurrentPatch(wave4Upgraded);
   if (currentWave4 !== wave4Upgraded) lastModified = ISSUE_GUIDE_CURRENT_PATCH_UPDATED_AT;
 
-  if (currentWave4 !== guide) {
-    guide.sections = currentWave4.sections;
-    guide.sources = currentWave4.sources;
+  const ownershipPatched = applyPropertyTaxPolicyOwnershipPatch(currentWave4);
+  if (ownershipPatched !== currentWave4) lastModified = ISSUE_GUIDE_PROPERTY_TAX_POLICY_UPDATED_AT;
+
+  if (ownershipPatched !== guide) {
+    guide.title = ownershipPatched.title;
+    guide.dek = ownershipPatched.dek;
+    guide.quickAnswer = ownershipPatched.quickAnswer;
+    guide.sections = ownershipPatched.sections;
+    guide.sources = ownershipPatched.sources;
+    guide.toolLinks = ownershipPatched.toolLinks;
   }
   guideLastModified.set(guide, lastModified);
   hydratedGuides.add(guide);
