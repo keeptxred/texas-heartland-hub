@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useLocation } from "@tanstack/react-router";
 import { getKtrAffiliatePlacement } from "@/lib/affiliate-placements";
 
@@ -26,21 +28,19 @@ function trackAffiliateClick(partner: string, placement: string, label: string) 
   window.dispatchEvent(new CustomEvent("ktr:affiliate-click", { detail }));
 }
 
-function SchoolSupplyAffiliateCard({ placementId, compact = false }: { placementId: string; compact?: boolean }) {
+function SchoolSupplyAffiliateCard({ placementId }: { placementId: string }) {
   return (
     <aside
       aria-label="Optional school and classroom resources"
-      className={`border-2 border-primary/40 bg-background shadow-sm ${compact ? "p-5" : "p-6 sm:p-7"}`}
+      className="border-2 border-primary/40 bg-background p-6 shadow-sm sm:p-7"
     >
       <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-primary">Optional resources</p>
-      <h2 className={`font-display tracking-tight ${compact ? "mt-2 text-2xl" : "mt-2 text-2xl sm:text-3xl"}`}>
-        School & classroom supplies
-      </h2>
+      <h2 className="mt-2 font-display text-2xl tracking-tight sm:text-3xl">School & classroom supplies</h2>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
         For families, teachers and homeschool households already shopping for supplies. These offers are separate from our reporting and do not affect editorial coverage.
       </p>
 
-      <div className={`mt-5 grid gap-3 ${compact ? "" : "sm:grid-cols-2"}`}>
+      <div className="mt-5 grid gap-3 sm:grid-cols-2">
         <a
           href={REALLY_GOOD_STUFF_URL}
           target="_blank"
@@ -88,17 +88,45 @@ function SchoolSupplyAffiliateCard({ placementId, compact = false }: { placement
 export function ContextualAffiliatePanel() {
   const { pathname } = useLocation();
   const placement = getKtrAffiliatePlacement(pathname);
+  const [target, setTarget] = useState<HTMLElement | null>(null);
 
-  if (!placement) return null;
+  useEffect(() => {
+    setTarget(null);
+    if (!placement) return;
 
-  return (
-    <>
-      <div className="fixed right-4 top-32 z-30 hidden w-72 2xl:block">
-        <SchoolSupplyAffiliateCard placementId={`${placement.placementId}-rail`} compact />
-      </div>
-      <div className="mx-auto w-full max-w-4xl px-4 pb-10 sm:px-6 2xl:hidden">
-        <SchoolSupplyAffiliateCard placementId={`${placement.placementId}-inline`} />
-      </div>
-    </>
+    const articleProse = document.querySelector<HTMLElement>("article .prose");
+    if (!articleProse) return;
+
+    let slot = articleProse.querySelector<HTMLElement>("[data-ktr-contextual-affiliate-slot]");
+    const created = !slot;
+
+    if (!slot) {
+      slot = document.createElement("div");
+      slot.setAttribute("data-ktr-contextual-affiliate-slot", "true");
+      slot.className = "not-prose my-10 md:my-12";
+
+      const firstSection = Array.from(articleProse.children).find(
+        (child) => child instanceof HTMLElement && child.tagName === "SECTION",
+      );
+
+      if (firstSection) {
+        articleProse.insertBefore(slot, firstSection);
+      } else {
+        articleProse.appendChild(slot);
+      }
+    }
+
+    setTarget(slot);
+
+    return () => {
+      if (created) slot?.remove();
+    };
+  }, [pathname, placement?.placementId]);
+
+  if (!placement || !target) return null;
+
+  return createPortal(
+    <SchoolSupplyAffiliateCard placementId={`${placement.placementId}-inline`} />,
+    target,
   );
 }
