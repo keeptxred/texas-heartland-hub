@@ -21,6 +21,30 @@ describe("stored hero representative-photo policy", () => {
     expect(guidance).toContain("does not need to literally visualize");
     expect(guidance).toContain("trusted reusable-source metadata");
     expect(guidance).toContain("Metadata can establish identity, not visual type or semantic relevance");
+    expect(guidance).toContain("PRIMARY-SUBJECT PRIORITY");
+    expect(guidance).toContain("same-domain setting must fail");
+  });
+
+  it("requires named-person stories to beat generic domain context", () => {
+    const guidance = storedHeroEditorialGuidance(subject({
+      title: "Houston anchor returns after station review",
+      domain: "culture",
+      concreteSubject: "A named television anchor is the defining subject of the story.",
+    }));
+    expect(guidance).toContain("headline foregrounds one or more named people");
+    expect(guidance).toContain("generic TV studio, control room");
+    expect(guidance).toContain("must fail");
+  });
+
+  it("requires specific products and events to beat brand-only association", () => {
+    const guidance = storedHeroEditorialGuidance(subject({
+      title: "Texas brand launches a specific co-branded shirt",
+      domain: "culture",
+      concreteSubject: "The specific merchandise item is the defining visual subject.",
+    }));
+    expect(guidance).toContain("SPECIFIC-VISUAL PRIORITY");
+    expect(guidance).toContain("specific product, merchandise item, opening, performance, festival, incident");
+    expect(guidance).toContain("generic brand storefront");
   });
 
   it("allows source-identified archive sports photography without requiring logos or exact game action", () => {
@@ -33,6 +57,7 @@ describe("stored hero representative-photo policy", () => {
     expect(guidance).toContain("Do not require the exact historical game");
     expect(guidance).toContain("trusted reusable-source metadata");
     expect(guidance).toContain("do not require the vision model to rediscover a team from logos, colors, jersey text, or facial recognition");
+    expect(guidance).toContain("marching band, mascot, stadium-only, or crowd-only");
   });
 
   it("allows a source-identified central person in a data-center story while keeping facility imagery strict", () => {
