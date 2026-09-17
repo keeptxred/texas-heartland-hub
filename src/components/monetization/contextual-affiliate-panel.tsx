@@ -1,4 +1,4 @@
-import { useRouterState } from "@tanstack/react-router";
+import { useLocation } from "@tanstack/react-router";
 import { getKtrAffiliatePlacement } from "@/lib/affiliate-placements";
 
 const REALLY_GOOD_STUFF_URL = "https://www.anrdoezrs.net/click-101876465-17106455";
@@ -86,7 +86,7 @@ function SchoolSupplyAffiliateCard({ placementId, compact = false }: { placement
 }
 
 export function ContextualAffiliatePanel() {
-  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const { pathname } = useLocation();
   const placement = getKtrAffiliatePlacement(pathname);
 
   if (!placement) return null;

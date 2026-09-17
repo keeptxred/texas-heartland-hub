@@ -40,6 +40,21 @@ describe("article source authority", () => {
     ]);
   });
 
+  it("drops a section when deduplication removes all of its visible content", () => {
+    const repeated = "Texas schools use this program to fill critical teacher shortages in bilingual education.";
+    const body = dedupeArticleBody({
+      intro: [repeated],
+      sections: [
+        { heading: "Impact", paragraphs: [repeated] },
+        { heading: "What happens next", paragraphs: ["Lawmakers would still need to act before any proposal becomes law."] },
+      ],
+      faq: [],
+      sources: [],
+    });
+
+    expect(body.sections?.map((section) => section.heading)).toEqual(["What happens next"]);
+  });
+
   it("routes migrated calculator links directly to TexasDefined before rendering", () => {
     const body = dedupeArticleBody({
       intro: ["Use the [Texas Mortgage Calculator](/tools/mortgage-calculator?price=350000) before choosing a home."],
