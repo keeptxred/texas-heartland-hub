@@ -12,6 +12,7 @@ import {
 import { ARTICLES, isPublished } from "@/data/articles";
 import { ARTICLE_BODIES } from "@/data/article-bodies";
 import { listSitemapArticles } from "@/lib/evergreen.functions";
+import { isKeepTxRedSearchOwnedStory } from "@/lib/ktr-search-ownership";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 
 /**
@@ -54,6 +55,7 @@ export const Route = createFileRoute("/sitemap-evergreen.xml")({
         try {
           const { articles } = await listSitemapArticles();
           for (const a of articles) {
+            if (!isKeepTxRedSearchOwnedStory({ title: a.title, kind: a.kind })) continue;
             if (!isArticleSlugDateConsistent(a.slug, a.published_at)) continue;
             if (!isSitemapArticleAllowed(a.slug)) continue;
             entries.push({
