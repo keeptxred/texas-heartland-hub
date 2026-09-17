@@ -90,7 +90,10 @@ jobs:
 
           max_per_run=4
           if [[ "${GITHUB_EVENT_NAME}" == "workflow_run" || "${GITHUB_EVENT_NAME}" == "workflow_dispatch" || "${GITHUB_EVENT_NAME}" == "push" ]]; then
-            max_per_run=12
+            # Deployment/manual runs are intentionally larger so a corrected
+            # readiness policy can re-audit a historical backlog promptly.
+            # The requests remain sequential and the job has a 90-minute cap.
+            max_per_run=36
           fi
           if [[ "$ready" -lt "$max_per_run" ]]; then
             max_per_run="$ready"
