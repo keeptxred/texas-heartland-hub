@@ -21,7 +21,17 @@ describe("article hero visual readiness", () => {
     expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v3 ok: entity-aware archive photo passed")).toBe(true);
     expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v4 ok: source-grounded archive photo passed")).toBe(true);
     expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v19 ok: future version passed")).toBe(true);
-    expect(hasHeroVisualReadinessProvenance("authoritative-image-exempt: official NHC forecast graphic")).toBe(true);
+    expect(hasHeroVisualReadinessProvenance(
+      "authoritative-image-exempt: official NHC forecast graphic",
+      "https://www.nhc.noaa.gov/storm_graphics/AT05/AL052026_3day_cone.png",
+    )).toBe(true);
+    expect(hasHeroVisualReadinessProvenance(
+      "authoritative-image-exempt: Wikimedia Commons metadata manually verified",
+      "https://commons.wikimedia.org/wiki/Special:Redirect/file/TexasStateCapitolBuilding.jpg",
+    )).toBe(false);
+    expect(hasHeroVisualReadinessProvenance(
+      "authoritative-image-exempt: official NHC forecast graphic",
+    )).toBe(false);
     expect(hasHeroVisualReadinessProvenance("verified-shared-hero: reused validated infrastructure hero")).toBe(false);
     expect(hasHeroVisualReadinessProvenance("verified-shared-hero: cloudflare-vision ok: reused validated infrastructure hero")).toBe(true);
   });
