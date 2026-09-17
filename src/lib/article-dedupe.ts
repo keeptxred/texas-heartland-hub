@@ -212,7 +212,7 @@ export function dedupeArticleBody<T extends ArticleBodyShape>(body: T): T {
       const bullets = Array.isArray(sec.bullets) ? dedupeList(sec.bullets, new Set<string>()) : sec.bullets;
       const hasTable = Boolean(sec.table);
       const hasImage = Boolean(sec.image);
-      if (paragraphs.length === 0 && (!bullets || bullets.length === 0) && !hasTable && !hasImage && !h) continue;
+      if (paragraphs.length === 0 && (!bullets || bullets.length === 0) && !hasTable && !hasImage) continue;
       sections.push({ ...sec, heading: h || undefined, paragraphs, bullets });
     }
   }
