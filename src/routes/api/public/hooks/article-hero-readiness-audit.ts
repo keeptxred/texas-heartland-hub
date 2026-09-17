@@ -72,7 +72,7 @@ function isEligible(row: AuditRow): boolean {
   // escape the governed stored-hero audit merely because their status is failed.
   const status = (row.image_generation_status ?? "").trim().toLowerCase();
   return (status === "ready" || status === "failed")
-    && !hasHeroVisualReadinessProvenance(row.image_validation_note);
+    && !hasHeroVisualReadinessProvenance(row.image_validation_note, targetUrl(row));
 }
 
 function isDataCenterStory(row: AuditRow): boolean {
@@ -325,7 +325,7 @@ async function acceptValidatedHero(db: any, row: AuditRow, candidate: string, re
 async function rejectHero(db: any, row: AuditRow, candidate: string, reason: string, repair: boolean) {
   const previousHeroIsTrusted = Boolean(row.featured_image_url?.trim())
     && Boolean(row.image_candidate_url?.trim())
-    && hasHeroVisualReadinessProvenance(row.image_validation_note);
+    && hasHeroVisualReadinessProvenance(row.image_validation_note, row.featured_image_url);
   const note = `stored-cloudflare-vision-${STORED_HERO_POLICY_VERSION} rejected: ${reason}`.slice(0, 1000);
 
   if (previousHeroIsTrusted) {
