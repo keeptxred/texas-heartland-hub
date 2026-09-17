@@ -68,19 +68,16 @@ describe("static article body authority upgrades", () => {
     }
   });
 
-  it("links the high-impression page into the stronger property-tax authority cluster", () => {
+  it("routes homeowner task links to TexasDefined while retaining KTR policy context", () => {
     const body = renderedHomesteadBody() as ArticleBodyShape & { related?: string[]; cta?: { href?: string } };
     const text = JSON.stringify(body);
-    expect(text).toContain("/texas/property-taxes-2026");
+    expect(text).toContain("https://texasdefined.com/learn/property-taxes");
+    expect(text).toContain("https://texasdefined.com/do/property-tax-protest");
+    expect(text).toContain("https://texasdefined.com/learn/appraisal-districts");
     expect(text).toContain("/news/texas-property-tax-laws-explained");
-    expect(text).toContain("/news/appraisal-protest-playbook");
-    expect(body.related).toEqual(expect.arrayContaining([
-      "texas-property-tax-guide",
-      "texas-property-tax-laws-explained",
-      "appraisal-protest-playbook",
-      "county-appraisal-districts-explained",
-    ]));
-    expect(body.cta?.href).toBe("/texas/property-taxes-2026");
+    expect(text).not.toContain('href":"/texas/property-taxes-2026');
+    expect(text).not.toContain("/news/appraisal-protest-playbook");
+    expect(text).not.toContain("/news/county-appraisal-districts-explained");
   });
 
   it("leaves unrelated article bodies untouched", () => {

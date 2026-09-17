@@ -52,7 +52,7 @@ const HOMESTEAD_2026_BODY: UpgradeableArticleBody = {
       paragraphs: [
         "Texas voters approved an increase in the state-mandated school-district residence-homestead exemption to $140,000, effective for the current rules reflected by the Comptroller and Texas Tax Code. This is an exemption from the home's appraised value for school-district taxation; it is not a $140,000 reduction in the home's market value and it is not a $140,000 tax credit.",
         "Other taxing units can provide additional relief. A taxing unit may adopt a local-option residence-homestead exemption of up to 20% of appraised value, with a statutory minimum exemption amount when that option is adopted. Texas also provides a $3,000 county exemption for the county purposes authorized by the Constitution for farm-to-market roads or flood control. Because local options differ, two homeowners with the same appraised value can have different taxable values depending on where the homes are located.",
-        "For a broader explanation of how appraisal value, exemptions, tax rates, and taxing units fit together, use the [Texas Property Tax Guide](/texas/property-taxes-2026) and the [Texas property-tax laws explainer](/news/texas-property-tax-laws-explained).",
+        "For a broader explanation of how appraisal value, exemptions, tax rates, and taxing units fit together, use the [Texas Property Tax Guide](https://texasdefined.com/learn/property-taxes) and the [Texas property-tax laws explainer](/news/texas-property-tax-laws-explained).",
       ],
     },
     {
@@ -83,7 +83,7 @@ const HOMESTEAD_2026_BODY: UpgradeableArticleBody = {
       paragraphs: [
         "The familiar 10% rule limits the appraised value used for a qualifying residence homestead; it does not stop the appraisal district from estimating a higher market value. Under Tax Code Section 23.23, a homeowner who qualifies the homestead for exemptions in the preceding and current year generally receives a limitation that prevents the appraised value from increasing by more than 10% per year, subject to the statutory formula and the market value of qualifying new improvements.",
         "Timing is important. The Comptroller states that the limitation takes effect on January 1 of the tax year following the year in which the property owner first qualifies for the residence-homestead exemption. A new buyer should therefore not assume the 10% limitation protects the first qualifying year's appraisal. The limitation also does not erase the market value of qualifying new improvements added under the statute.",
-        "An appraisal cap and an appraisal protest do different jobs. The cap limits the appraised value under the statutory formula after it applies; a protest challenges matters such as the appraisal district's value or other appealable actions. If the market value itself appears wrong, see the [Texas appraisal protest playbook](/news/appraisal-protest-playbook).",
+        "An appraisal cap and an appraisal protest do different jobs. The cap limits the appraised value under the statutory formula after it applies; a protest challenges matters such as the appraisal district's value or other appealable actions. If the market value itself appears wrong, see the [Texas appraisal protest playbook](https://texasdefined.com/do/property-tax-protest).",
       ],
     },
     {
@@ -112,7 +112,7 @@ const HOMESTEAD_2026_BODY: UpgradeableArticleBody = {
       heading: "Homestead exemption and appraisal protest are separate rights",
       paragraphs: [
         "Receiving a residence-homestead exemption does not mean the appraisal district's market value is correct, and filing an appraisal protest does not substitute for filing an exemption application. A homeowner can need both processes in the same year: the exemption determines qualifying tax relief, while the protest process can challenge the appraisal district's value or another appealable determination.",
-        "The practical workflow is to verify exemptions as soon as the annual appraisal notice arrives, compare the district's market and appraised values, and then decide whether a timely protest is warranted. KTR's [county appraisal district explainer](/news/county-appraisal-districts-explained) covers who sets values, while the [appraisal protest playbook](/news/appraisal-protest-playbook) covers the protest process.",
+        "The practical workflow is to verify exemptions as soon as the annual appraisal notice arrives, compare the district's market and appraised values, and then decide whether a timely protest is warranted. The [TexasDefined county appraisal district explainer](https://texasdefined.com/learn/appraisal-districts) covers who sets values, while the [appraisal protest playbook](https://texasdefined.com/do/property-tax-protest) covers the protest process.",
       ],
     },
     {
@@ -199,7 +199,7 @@ const HOMESTEAD_2026_BODY: UpgradeableArticleBody = {
     "county-appraisal-districts-explained",
     "isd-tax-burdens",
   ],
-  cta: { label: "Read the Texas Property Tax Guide", href: "/texas/property-taxes-2026" },
+  cta: { label: "Read the Texas Property Tax Guide", href: "https://texasdefined.com/learn/property-taxes" },
 };
 
 function isLegacyHomesteadExplainer(body: UpgradeableArticleBody): boolean {

@@ -14,7 +14,7 @@ const CASES = [
   ["texas-water.tsx", "/texas-water", "/issues/texas-water-policy"],
   ["texas-school-board-powers.tsx", "/texas-school-board-powers", "/news/texas-school-board-powers"],
   ["why-texas-has-no-state-income-tax.tsx", "/why-texas-has-no-state-income-tax", "/news/why-texas-has-no-income-tax"],
-  ["texas.property-taxes-2026.tsx", "/texas/property-taxes-2026", "/news/texas-property-tax-guide"],
+  ["texas.property-taxes-2026.tsx", "/texas/property-taxes-2026", "https://texasdefined.com/learn/property-taxes"],
 ] as const;
 
 describe("legacy policy and law aliases", () => {

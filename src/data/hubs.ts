@@ -32,12 +32,8 @@ export const HUBS: Hub[] = [
     eyebrow: "Content Pillar",
     intro:
       "Jobs, taxes, state spending, regulation, entrepreneurship, and the policy decisions that affect Texas employers and small businesses — with the numbers and legislation behind the headlines.",
-    pillarSlug: "texas-property-tax-guide",
+    pillarSlug: "why-texas-has-no-income-tax",
     articleSlugs: [
-      "texas-property-tax-guide",
-      "homestead-exemption-explained",
-      "appraisal-protest-playbook",
-      "county-appraisal-districts-explained",
       "why-texas-has-no-income-tax",
       "how-texas-counties-spend",
       "texas-energy-economy-overview",

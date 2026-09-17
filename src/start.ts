@@ -42,7 +42,6 @@ const LEGACY_ELECTION_PATHS = new Map([
 ]);
 const LEGACY_CONTENT_PATHS = new Map([
   ["/houston-news", "/houston"],
-  ["/property-taxes", "/news/texas-property-tax-guide"],
   ["/texas-news/tax-spending", "/texas-economy"],
   ["/texas-news/legislature", "/texas-legislature"],
   ["/texas-news/border", "/texas-border-security"],
@@ -55,6 +54,12 @@ const LEGACY_CONTENT_PATHS = new Map([
 ]);
 const EXTERNAL_LEGACY_REDIRECTS = new Map([
   ["/tax-calculator", "https://texasdefined.com/decide/property-taxes"],
+  ["/property-taxes", "https://texasdefined.com/learn/property-taxes"],
+  ["/texas/property-taxes-2026", "https://texasdefined.com/learn/property-taxes"],
+  ["/news/texas-property-tax-guide", "https://texasdefined.com/learn/property-taxes"],
+  ["/news/homestead-exemption-explained", "https://texasdefined.com/do/homestead-exemption"],
+  ["/news/appraisal-protest-playbook", "https://texasdefined.com/do/property-tax-protest"],
+  ["/news/county-appraisal-districts-explained", "https://texasdefined.com/learn/appraisal-districts"],
   ["/texas-property-tax-protest-guide", "https://texasdefined.com/do/property-tax-protest"],
   ["/texas-financial-tools", "https://texasdefined.com/decide/financial-tools"],
   ["/living-in-texas", "https://texasdefined.com/texas-living"],
