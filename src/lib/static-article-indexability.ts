@@ -18,11 +18,19 @@ const RETIRED_DISPLAY_CATEGORIES = new Set([
   "Culture & Identity",
 ]);
 
+const TEXASDEFINED_HOMEOWNER_PROPERTY_TAX_SLUGS = new Set([
+  "texas-property-tax-guide",
+  "homestead-exemption-explained",
+  "appraisal-protest-playbook",
+  "county-appraisal-districts-explained",
+]);
+
 type StaticArticleIndexabilityCandidate = Pick<Article, "slug" | "pillar" | "contentCategory">
   & Partial<Pick<Article, "category">>;
 
 export function isStaticArticleIndexable(article: StaticArticleIndexabilityCandidate): boolean {
   if (isExplicitlyRetiredStaticSlug(article.slug)) return false;
+  if (TEXASDEFINED_HOMEOWNER_PROPERTY_TAX_SLUGS.has(article.slug)) return false;
   if (article.contentCategory && RETIRED_CONTENT_CATEGORIES.has(article.contentCategory)) return false;
   if (article.category && RETIRED_DISPLAY_CATEGORIES.has(article.category)) return false;
   return true;
