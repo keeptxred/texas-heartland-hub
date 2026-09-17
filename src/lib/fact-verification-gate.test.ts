@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { assessFactVerification } from "@/lib/fact-verification-gate";
+import { assessFactVerification, buildVerificationInstructions } from "@/lib/fact-verification-gate";
 import type { StoryCluster } from "@/lib/story-clustering";
 import type { StructuredFact, StructuredFactLedger } from "@/lib/structured-fact-provenance";
 
@@ -63,6 +63,42 @@ describe("fact verification gate", () => {
     const decision = assessFactVerification(cluster(), ledger([conflicted]));
     expect(decision.publish).toBe(false);
     expect(decision.mode).toBe("hold_material_conflict");
+  });
+
+  it("resolves the 2026 voter-registration date conflict from the verified Texas SOS cycle record", () => {
+    const electionCluster = cluster("Texans have less than 3 weeks to register to vote for November 2026 midterm election");
+    electionCluster.primary.source = "Houston Public Media";
+    electionCluster.primary.link = "https://www.houstonpublicmedia.org/elections/registration-deadline";
+    electionCluster.primary.description = "Texas law requires eligible citizens to register 30 days before Election Day.";
+
+    const conflicted = fact({
+      factKey: "date:voter-registration",
+      type: "date",
+      text: "The Oct. 5 deadline to register to vote is for the Nov. 4, 2026 midterm election.",
+      normalizedText: "oct 5 deadline register vote nov 4 2026 midterm election",
+      corroborationCount: 1,
+      primaryRecordSupport: false,
+      sourceFeedItemIds: [1],
+      sourceLabels: ["Houston Public Media"],
+      sourceUrls: [electionCluster.primary.link],
+      conflictGroup: "numeric-conflict:election-date",
+      hasConflict: true,
+      numericValues: ["5", "4", "2026"],
+    });
+
+    const electionLedger = ledger([conflicted]);
+    const decision = assessFactVerification(electionCluster, electionLedger);
+    expect(decision.publish).toBe(true);
+    expect(decision.mode).toBe("publish_with_attribution");
+    expect(decision.primaryRecordMajorFacts).toBeGreaterThan(0);
+    expect(decision.materialConflictKeys).toEqual([]);
+    expect(decision.primaryRecordNotes?.[0]).toContain("voter registration deadline=October 5, 2026");
+    expect(decision.primaryRecordNotes?.[0]).toContain("general election date=November 3, 2026");
+    expect(decision.primaryRecordNotes?.[0]).toContain("sos.texas.gov");
+
+    const instructions = buildVerificationInstructions(decision, electionLedger);
+    expect(instructions).toContain("PRIMARY RECORD RESOLUTION");
+    expect(instructions).toContain("November 3, 2026");
   });
 
   it("does not block a peripheral conflict that can be attributed", () => {
