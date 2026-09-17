@@ -1,11 +1,11 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
 const destinationForVehiclePath = (pathname: string) => {
-  if (pathname === "/vehicles/plates") return "/texas-vehicle-registration#license-plates";
+  if (pathname === "/vehicles/plates") return { path: "/texas-vehicle-registration", hash: "#license-plates" };
   if (pathname === "/vehicles/title-transfer" || pathname === "/vehicles/duplicate-titles") {
-    return "/texas-vehicle-registration#title-transfer";
+    return { path: "/texas-vehicle-registration", hash: "#title-transfer" };
   }
-  return "/texas-vehicle-registration";
+  return { path: "/texas-vehicle-registration", hash: "" };
 };
 
 /**
@@ -15,8 +15,9 @@ const destinationForVehiclePath = (pathname: string) => {
  */
 export const Route = createFileRoute("/vehicles")({
   beforeLoad: ({ location }) => {
+    const destination = destinationForVehiclePath(location.pathname);
     throw redirect({
-      href: `https://texasdefined.com${destinationForVehiclePath(location.pathname)}${location.searchStr || ""}`,
+      href: `https://texasdefined.com${destination.path}${location.searchStr || ""}${destination.hash}`,
       statusCode: 301,
     });
   },
