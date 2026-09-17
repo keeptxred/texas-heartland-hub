@@ -651,6 +651,8 @@ export function ContentOpportunityPanel() {
   const filtered = useMemo(() => {
     if (filter === "all") return scored;
     return scored.filter((r) => {
+      const attempt = articleMsg[r.id];
+      if (attempt?.text && !attempt.ok) return true;
       const cat = categorizeForFilter(r, statuses[r.id], preflightById[r.id] ?? {
         rewriteable: false,
         reason: "PENDING_EXTRACTION",
@@ -662,7 +664,7 @@ export function ContentOpportunityPanel() {
       if (filter === "ready") return cat === "ready" || cat === "pending";
       return cat === filter;
     });
-  }, [scored, filter, statuses, preflightById]);
+  }, [scored, filter, statuses, preflightById, articleMsg]);
 
   useEffect(() => {
     setVisibleCount(75);
