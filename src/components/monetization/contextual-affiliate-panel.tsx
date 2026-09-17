@@ -91,6 +91,26 @@ export function ContextualAffiliatePanel() {
   const [target, setTarget] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
+    const headings = Array.from(
+      document.querySelectorAll<HTMLElement>("article .prose > section > h2"),
+    );
+    const previous = headings.map((heading) => heading.style.getPropertyValue("text-align"));
+    const previousPriority = headings.map((heading) => heading.style.getPropertyPriority("text-align"));
+
+    headings.forEach((heading) => heading.style.setProperty("text-align", "center", "important"));
+
+    return () => {
+      headings.forEach((heading, index) => {
+        if (previous[index]) {
+          heading.style.setProperty("text-align", previous[index], previousPriority[index]);
+        } else {
+          heading.style.removeProperty("text-align");
+        }
+      });
+    };
+  }, [pathname]);
+
+  useEffect(() => {
     setTarget(null);
     if (!placement) return;
 
