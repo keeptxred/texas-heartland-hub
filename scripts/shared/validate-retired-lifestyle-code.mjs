@@ -109,6 +109,21 @@ const publicOwnershipFiles = [
     forbidden: ['/tax-calculator', 'Property tax calculator by county', 'moving to Texas'],
     required: ['/elections', '/bills', '/texas-legislature', 'government accountability'],
   },
+  {
+    path: 'src/lib/static-no-income-tax-upgrade.ts',
+    forbidden: [
+      '/texas/property-taxes-2026',
+      '/news/texas-property-tax-guide',
+      '/news/homestead-exemption-explained',
+      '/news/appraisal-protest-playbook',
+      '/news/county-appraisal-districts-explained',
+      '/tax-calculator',
+    ],
+    required: [
+      'https://texasdefined.com/learn/property-taxes',
+      '/news/texas-property-tax-laws-explained',
+    ],
+  },
 ];
 
 for (const entry of publicOwnershipFiles) {
