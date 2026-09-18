@@ -2306,8 +2306,8 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     ],
     related: [
       "how-texas-counties-spend",
-      "texas-property-tax-guide",
-      "county-appraisal-districts-explained",
+      "texas-property-tax-laws-explained",
+      "why-texas-has-no-income-tax",
     ],
     cta: { label: "See What Your County Charges", href: "https://texasdefined.com/decide/property-taxes" },
   },
@@ -2481,8 +2481,8 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         url: "https://comptroller.texas.gov/transparency/local/",
       },
     ],
-    related: ["what-local-governments-control", "texas-property-tax-guide"],
-    cta: { label: "Calculate Your County Tax", href: "https://texasdefined.com/decide/property-taxes" },
+    related: ["what-local-governments-control", "texas-property-tax-laws-explained", "why-texas-has-no-income-tax"],
+    cta: { label: "Use TexasDefined Property-Tax Tools", href: "https://texasdefined.com/decide/property-taxes" },
   },
 
   "texas-water-rights-explained": {
@@ -2677,7 +2677,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         heading: "The Trade-Off: High Property Taxes",
         paragraphs: [
           "Because Texas leans on property tax to fund schools, the state has some of the highest effective property tax rates in the country — typically 1.6%–2.2% of market value once ISD, county, and city rates are combined.",
-          "That's why the 88th and 89th Legislatures put record surplus dollars into school-district rate compression and homestead exemption increases. See the [Texas Property Tax Guide](/news/texas-property-tax-guide) for the full mechanics.",
+          "That's why the 88th and 89th Legislatures put record surplus dollars into school-district rate compression and homestead exemption increases. See the [Texas Property Tax Law & Policy Guide](/news/texas-property-tax-laws-explained) for the legal and policy framework.",
         ],
       },
     ],
@@ -2710,7 +2710,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     related: [
-      "texas-property-tax-guide",
+      "texas-property-tax-laws-explained",
       "what-local-governments-control",
       "how-texas-counties-spend",
     ],
