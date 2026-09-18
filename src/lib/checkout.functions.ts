@@ -110,6 +110,30 @@ export function priceToCents(value: unknown): number {
   return cents;
 }
 
+const LIVE_CHECKOUT_REQUIRED_BINDINGS = [
+  "PAYMENTS_LIVE_WEBHOOK_SECRET",
+  "PRINTIFY_API_TOKEN",
+  "PRINTIFY_SHOP_ID",
+  "SUPABASE_SERVICE_ROLE_KEY",
+] as const;
+
+type LiveCheckoutRuntime = Partial<Record<(typeof LIVE_CHECKOUT_REQUIRED_BINDINGS)[number], string>>;
+
+export function assertCheckoutFulfillmentRuntimeReady(
+  environment: StripeEnv,
+  env: LiveCheckoutRuntime = process.env,
+): void {
+  if (environment !== "live") return;
+
+  const missing = LIVE_CHECKOUT_REQUIRED_BINDINGS.filter(
+    (name) => !env[name]?.trim(),
+  );
+  if (missing.length > 0) {
+    console.error("Live checkout disabled: required fulfillment runtime is incomplete", missing);
+    throw new Error("Checkout is temporarily unavailable. Please try again later.");
+  }
+}
+
 export function assertCheckoutEnvironmentMatchesReturnUrl(
   environment: StripeEnv,
   returnUrl: string,
@@ -347,6 +371,7 @@ export const createCartCheckoutSession = createServerFn({ method: "POST" })
   })
   .handler(async ({ data }): Promise<CheckoutResult> => {
     try {
+      assertCheckoutFulfillmentRuntimeReady(data.environment);
       const stripe = createStripeClient(data.environment);
       const validatedItems = await loadAuthoritativeCheckoutItems(data.items);
       const currency = validatedItems[0]?.currency || "usd";
