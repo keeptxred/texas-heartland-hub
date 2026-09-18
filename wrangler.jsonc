@@ -12,6 +12,12 @@
     "NEWSROOM_AI_ENABLED": "true",
     "NEWSROOM_PUBLISH_ENABLED": "true"
   },
+  "analytics_engine_datasets": [
+    {
+      "binding": "KTR_SHOP_ANALYTICS",
+      "dataset": "ktr_shop_analytics"
+    }
+  ],
   "send_email": [
     {
       "name": "EMAIL",
