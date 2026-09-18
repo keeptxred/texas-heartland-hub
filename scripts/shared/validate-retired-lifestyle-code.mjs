@@ -94,6 +94,8 @@ const retiredFiles = [
   'src/data/seo/homeEquitySEO.ts',
   'src/data/sitemap/homeEquitySitemap.ts',
   'src/lib/analytics/homeEquityAnalytics.ts',
+  'src/lib/calculators/additionalCalculatorSuite.ts',
+  'src/lib/calculators/__tests__/financialEngines.test.ts',
   'src/lib/property-address-lookup.ts',
   'src/routes/api/public/property-address-lookup.ts',
   'src/routes/texas.index.tsx',
