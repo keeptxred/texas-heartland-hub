@@ -10,6 +10,7 @@ const TIMEOUT_MS = Math.max(1000, Number(process.env.AUDIT_TIMEOUT_MS || 15000))
 const OUTPUT = process.env.AUDIT_OUTPUT || "tmp/sitemap-page-indexability-audit.json";
 const MAX_SITEMAPS = 100;
 const MAX_URLS = 100000;
+const SITEMAP_CACHE_BUSTER = process.env.GITHUB_SHA || `audit-${Date.now()}`;
 const TRANSIENT = new Set([408, 425, 429, 500, 502, 503, 504, 520, 522, 524]);
 const LEGACY_REDIRECTS = new Map([
   ["/hubs", "/topics"],
@@ -26,6 +27,12 @@ const decodeXml = (value) => value
   .replace(/&quot;/g, '"')
   .replace(/&apos;/g, "'");
 const decodeHtml = decodeXml;
+
+function freshSitemapUrl(value) {
+  const url = new URL(value);
+  url.searchParams.set("__ktr_sitemap_audit", SITEMAP_CACHE_BUSTER);
+  return url.href;
+}
 
 function extractBlockLocs(xml, tag) {
   const blocks = [...xml.matchAll(new RegExp(`<${tag}\\b[^>]*>([\\s\\S]*?)<\\/${tag}>`, "gi"))];
@@ -188,7 +195,7 @@ async function collectSitemapUrls() {
 
     let response;
     try {
-      response = await fetchManual(sitemapUrl, "application/xml,text/xml;q=0.9,*/*;q=0.1");
+      response = await fetchManual(freshSitemapUrl(sitemapUrl), "application/xml,text/xml;q=0.9,*/*;q=0.1");
     } catch (error) {
       issues.push({ type: "sitemap-fetch", url: sitemapUrl, detail: String(error) });
       continue;
