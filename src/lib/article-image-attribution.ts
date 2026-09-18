@@ -95,6 +95,14 @@ const ATTRIBUTIONS: AttributionEntry[] = [
     caption: "Representative archive Dallas Cowboys football photo; not the roster-decision event described in this article.",
   },
   {
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Jimmy_Kimmel_01.jpg",
+    credit: "Ken Conley",
+    sourceUrl: `${COMMONS}Jimmy_Kimmel_01.jpg`,
+    licenseName: "CC BY-SA 2.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/2.0/",
+    caption: "Representative archive photo of Jimmy Kimmel; not the unaired James Talarico interview.",
+  },
+  {
     imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Lone_Star_Showdown_2006_McGee_on_goal-line.jpg",
     credit: "Johntex",
     sourceUrl: `${COMMONS}Lone_Star_Showdown_2006_McGee_on_goal-line.jpg`,
