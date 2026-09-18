@@ -4426,15 +4426,15 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   "texas-property-tax-laws-explained": {
     updated: "2026-07-15",
     intro: [
-      "Property tax is the single most consequential tax a Texas homeowner pays, and it operates under a body of law most residents never encounter until the appraisal notice arrives in April. This guide explains the statutory framework that governs how your home is valued, how your rate is set, how your bill is calculated, and what legal tools you have to challenge every one of those steps.",
-      "Texas property tax law is a mix of the Property Tax Code (Title 1), the Tax Code (Chapter 26), constitutional caps (Article VIII), and voter-approved amendments — including the 2025 measure that raised the residence homestead exemption to $140,000. If you're new to the state and want the whole system in plain English, start with [The Texas Property Tax Guide](/news/texas-property-tax-guide), and use our [Property Tax Calculator](/tax-calculator) to run your actual numbers.",
+      "Texas property taxes are local taxes operating inside a statewide constitutional and statutory framework. This guide focuses on the public-policy structure: how appraisal authority, tax-rate adoption, school finance, relief measures, and taxpayer appeal rights fit together.",
+      "Texas property tax law is a mix of the Property Tax Code, constitutional provisions, school-finance law, tax-rate procedures, and voter-approved amendments. KTR covers those government choices and their implementation. For practical homeowner tasks — estimating a bill, filing an exemption, finding an appraisal district, or preparing a protest — use [TexasDefined's property-tax guide](https://texasdefined.com/learn/property-taxes) and [property-tax tools](https://texasdefined.com/decide/property-taxes).",
     ],
     sections: [
       {
         heading: "Why Texas Relies on Property Tax So Heavily",
         paragraphs: [
           "Texas has no personal income tax, and voters made that permanent with a 2019 constitutional amendment. That leaves property tax as the primary funding mechanism for local government — school districts, counties, cities, community colleges, hospital districts, MUDs, and emergency-service districts all draw from it. The state itself does not levy property tax; the whole system is local, which is why identical homes in adjacent ZIP codes can carry very different bills.",
-          "For a full explanation of the trade-off, see [Why Texas Has No State Income Tax](/news/why-texas-has-no-income-tax). The upside is choice: Texans decide the size of local government by voting on bonds and by voting for the elected officials who set rates.",
+          "For a broader fiscal context, see [Why Texas Has No State Income Tax](/news/why-texas-has-no-income-tax). Local tax burdens are shaped by elected governing bodies, budget decisions, bond elections, appraisal rules, exemptions, and state school-finance policy.",
         ],
       },
       {
@@ -4443,7 +4443,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
           "Every Texas county has a Central Appraisal District (CAD) governed by a board and led by a chief appraiser. The CAD is legally independent of every taxing entity — the county doesn't set your value, the school district doesn't set your value, only the CAD does. Values are certified in July and used by every entity that draws from your property.",
           "By statute, the CAD must appraise at market value as of January 1 each year using mass appraisal techniques. Residential appraisers analyze comparable sales, adjust for differences, and generate a value for every parcel. The methodology is public. The result is the 'appraised value' that appears on your April notice.",
           "For homestead properties, the Texas Constitution caps the growth of the taxable value at 10% per year regardless of how much the market value rose. That 'assessed value' is what your rate is applied to, not the raw market number. For non-homestead residential properties valued at $5 million or less, a temporary 20% growth cap runs through the 2026 tax year.",
-          "For a deeper dive into how the CAD operates and your statutory rights during the process, see [How County Appraisal Districts Work](/news/county-appraisal-districts-explained).",
+          "KTR covers the legal division of authority among appraisal districts, appraisal review boards, taxing units, and the Legislature. For appraisal-district lookup help and homeowner process guidance, use [TexasDefined's appraisal-district guide](https://texasdefined.com/learn/appraisal-districts).",
         ],
       },
       {
@@ -4451,7 +4451,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         paragraphs: [
           "The residence homestead exemption is the single largest property-tax reduction many Texans will qualify for. Following the November 2025 constitutional amendments, the school-district homestead exemption is $140,000. Homeowners age 65 or older or with a qualifying disability receive an additional $60,000 school-district exemption plus a school-tax ceiling for qualifying homeowners.",
           "Optional local homestead exemptions of up to 20% of appraised value may be adopted by counties, cities, and other taxing units. Many major counties have adopted them. Disabled veterans qualify for exemptions ranging from $5,000 to a full exemption depending on VA disability rating; 100% disabled veterans and their surviving spouses pay no property tax on their homestead.",
-          "The exemption is not automatic. It must be applied for at your county appraisal district using Form 50-114, ordinarily by April 30 of the tax year, though late filings back two years are commonly accepted. See [The Texas Homestead Exemption Explained](/news/homestead-exemption-explained) for the filing walkthrough.",
+          "Eligibility and filing are administered through appraisal districts under state law, and the applicable rules can change by tax year and circumstance. For filing steps, forms, and homeowner-specific guidance, use [TexasDefined's homestead exemption guide](https://texasdefined.com/do/homestead-exemption).",
         ],
       },
       {
@@ -4474,7 +4474,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         paragraphs: [
           "Every property owner has a statutory right to protest the appraised value each year. The typical protest deadline is May 15 or 30 days after the notice was mailed, whichever is later. Two grounds carry the most weight: (1) the market value is too high compared to actual sales of comparable properties, and (2) the appraisal is unequal — comparable properties in the neighborhood are appraised for less on a per-square-foot basis.",
           "The process starts with an informal meeting at the CAD, where a substantial percentage of protests are resolved. If not, the case moves to the Appraisal Review Board (ARB) — a panel of citizen volunteers who hear evidence from both sides. ARB hearings are not adversarial in the courtroom sense; they are structured, brief, and evidence-driven. From an ARB order, the property owner may appeal to district court, to binding arbitration, or to SOAH (the State Office of Administrative Hearings) depending on the property type.",
-          "Practical advice: file the protest online the day the notice arrives, request the CAD's evidence packet (they are required to provide it), and build a five-page comparable-sales packet from MLS data, closing statements, or a fee appraisal. See [How to Protest Your Property Appraisal — and Actually Win](/news/appraisal-protest-playbook) for the full playbook.",
+          "KTR covers the statutory protest and appeal framework and any legislative changes to those rights. For homeowner deadlines, evidence preparation, and step-by-step protest workflow, use [TexasDefined's property-tax protest guide](https://texasdefined.com/do/property-tax-protest).",
         ],
       },
       {
@@ -4482,7 +4482,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         paragraphs: [
           "The 2023 reform package (SB 2, the constitutional Proposition 4) delivered the largest one-time property tax reduction in Texas history: $18 billion. It compressed school district M&O rates by roughly 10.7 cents, raised the school-district homestead exemption from $40,000 to $100,000, and introduced the temporary 20% cap on non-homestead residential properties valued at $5 million or under.",
           "The 2025 constitutional amendment approved by voters raised the homestead exemption further to $140,000 and expanded the additional over-65/disabled exemption. School district rate compression continued in the 2025 budget. Both packages left the underlying formula intact — Texas still funds schools through property tax with state supplementation — but shifted a meaningful share of the burden off the residential homeowner.",
-          "For related coverage, see [New Property Tax Relief Package](/news/property-tax-relief-package) and our [Texas Property Tax Relief Calculator](/tax-calculator).",
+          "For related KTR coverage, see [Texas property-tax policy and relief](/issues/texas-property-tax-relief) and [Texas school finance](/news/texas-school-finance-explained). For household estimates, use [TexasDefined's property-tax tools](https://texasdefined.com/decide/property-taxes).",
         ],
       },
       {
@@ -4508,37 +4508,33 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         ],
       },
       {
-        heading: "What Every Homeowner Should Do Every Year",
+        heading: "Policy coverage versus homeowner action steps",
         paragraphs: [
-          "Three steps, every year, without exception: (1) verify your homestead exemption is on file with your CAD, (2) protest the appraised value when it arrives in April, and (3) show up or vote absentee in the November constitutional-amendment and rollback elections. These are the only levers a homeowner controls, and each one measurably affects the annual bill.",
-          "For a full first-year checklist for new arrivals, our [Moving to Texas Guide](/news/moving-to-texas-guide) walks through the entire property tax cycle in the context of everything else a new resident has to file.",
+          "KTR follows changes to the statewide legal framework: legislation, constitutional amendments, school-finance policy, tax-rate rules, appraisal law, local taxing authority, and implementation of enacted relief. Those policy questions remain part of KTR even when they affect individual tax bills.",
+          "TexasDefined owns the practical homeowner workflow. Use its [property-tax guide](https://texasdefined.com/learn/property-taxes), [homestead exemption guide](https://texasdefined.com/do/homestead-exemption), [appraisal-protest guide](https://texasdefined.com/do/property-tax-protest), [appraisal-district guide](https://texasdefined.com/learn/appraisal-districts), and [property-tax tools](https://texasdefined.com/decide/property-taxes) for household-specific tasks.",
         ],
       },
     ],
     faq: [
       {
-        q: "How much is the Texas homestead exemption in 2026?",
-        a: "The residence homestead exemption for school district purposes is $140,000 as of the November 2025 constitutional amendment. Homeowners 65 or older or with a qualifying disability receive an additional exemption plus a school-tax freeze.",
+        q: "Who controls Texas property-tax policy?",
+        a: "The Texas Constitution and Legislature set statewide rules, while appraisal districts determine values and local taxing units adopt rates and budgets within that framework.",
       },
       {
-        q: "When is the deadline to protest my property appraisal?",
-        a: "The standard deadline is May 15 or 30 days after the appraisal notice was mailed, whichever is later. File online with your county appraisal district as soon as the notice arrives.",
+        q: "How is appraisal policy different from tax-rate policy?",
+        a: "Appraisal districts determine taxable-property values under state law; cities, counties, school districts, and other taxing units separately adopt rates. A change in one does not prove a change in the other.",
       },
       {
-        q: "Who actually sets my property tax rate?",
-        a: "Each taxing entity — school district, county, city, hospital district, MUD — sets its own rate every year. If the total exceeds the voter-approval rate, a rollback election is automatic in November.",
+        q: "What does school-tax compression change?",
+        a: "Compression reduces school-district maintenance-and-operations tax rates through state finance policy. It is different from a homestead exemption or an appraisal limitation, which operate elsewhere in the tax calculation.",
       },
       {
-        q: "What is the appraisal cap and how does it work?",
-        a: "The Texas Constitution caps growth of the taxable value on a homestead at 10% per year regardless of market value. A temporary 20% cap applies to non-homestead residential properties valued under $5 million through the 2026 tax year.",
+        q: "Why do constitutional amendments matter to property-tax relief?",
+        a: "Texas constitutional provisions can establish or change major limits and exemptions, and voter-approved amendments can alter the framework the Legislature and local governments must follow.",
       },
       {
-        q: "Can I stop paying property tax when I turn 65?",
-        a: "No, but you may qualify for a school-tax freeze, an additional exemption, and a full deferral of collection during your lifetime (interest continues to accrue). File with your CAD when you qualify.",
-      },
-      {
-        q: "What happens if I do not pay my property tax bill?",
-        a: "Delinquency triggers penalty and interest starting February 1, followed by potential lawsuit, lien, and eventually tax-lien foreclosure at courthouse auction.",
+        q: "Where does KTR draw the line between policy coverage and homeowner help?",
+        a: "KTR covers legislation, constitutional changes, school finance, rate policy, local taxing authority, and implementation. TexasDefined handles calculators, filing steps, appraisal-protest preparation, appraisal-district help, and payment logistics.",
       },
     ],
     sources: [
@@ -4561,19 +4557,19 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     related: [
-      "texas-property-tax-guide",
-      "homestead-exemption-explained",
-      "appraisal-protest-playbook",
-      "county-appraisal-districts-explained",
+      "why-texas-has-no-income-tax",
+      "what-local-governments-control",
+      "how-texas-counties-spend",
+      "texas-school-finance-explained",
       "texas-new-laws-2026",
     ],
     cta: { label: "Estimate Your Bill With Our Calculator", href: "https://texasdefined.com/decide/property-taxes" },
     keyTakeaways: [
-      "The homestead exemption is $140,000 for school purposes as of 2025's constitutional amendment.",
-      "Homestead values are capped at 10% annual growth regardless of market appreciation.",
-      "Every taxing entity sets its own rate; rates above the voter-approval rate trigger November rollback elections.",
-      "The protest deadline is May 15 or 30 days after your notice — file online and request the CAD evidence packet.",
-      "Seniors 65+ qualify for a school-tax freeze and can defer collection entirely during their lifetime.",
+      "Texas property taxation is locally administered inside a statewide constitutional and statutory framework.",
+      "Appraisal rules, exemptions, tax-rate adoption, and school-finance policy operate at different points in the system and should not be treated as the same kind of relief.",
+      "Local taxing units adopt rates separately from the appraisal process, while state law sets the procedures and limits they must follow.",
+      "Property owners have statutory protest and appeal rights; KTR covers changes to those rights while TexasDefined owns the filing workflow.",
+      "KTR tracks legislation, constitutional changes, school-finance policy, local taxing authority, and implementation; TexasDefined handles household calculators and homeowner action steps.",
     ],
   },
   "texas-election-laws-explained": {
