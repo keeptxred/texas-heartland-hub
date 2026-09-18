@@ -3,6 +3,7 @@ import {
   FREE_SHIPPING_THRESHOLD_CENTS,
   STRIPE_CHECKOUT_UI_MODE,
   assertCheckoutEnvironmentMatchesReturnUrl,
+  assertCheckoutFulfillmentRuntimeReady,
   getStandardShippingCents,
   priceToCents,
   qualifiesForFreeShipping,
@@ -60,6 +61,31 @@ describe("checkout shipping policy", () => {
         "https://keeptxred.com/shop/checkout-return?session_id={CHECKOUT_SESSION_ID}",
       ),
     ).not.toThrow();
+  });
+
+  it("fails live checkout closed when fulfillment runtime is incomplete", () => {
+    expect(() =>
+      assertCheckoutFulfillmentRuntimeReady("live", {
+        PRINTIFY_API_TOKEN: "token",
+        PRINTIFY_SHOP_ID: "shop",
+        SUPABASE_SERVICE_ROLE_KEY: "service",
+      }),
+    ).toThrow("Checkout is temporarily unavailable. Please try again later.");
+  });
+
+  it("allows live checkout only when webhook and fulfillment bindings are present", () => {
+    expect(() =>
+      assertCheckoutFulfillmentRuntimeReady("live", {
+        PAYMENTS_LIVE_WEBHOOK_SECRET: "whsec_example",
+        PRINTIFY_API_TOKEN: "token",
+        PRINTIFY_SHOP_ID: "shop",
+        SUPABASE_SERVICE_ROLE_KEY: "service",
+      }),
+    ).not.toThrow();
+  });
+
+  it("does not require live fulfillment bindings for sandbox checkout", () => {
+    expect(() => assertCheckoutFulfillmentRuntimeReady("sandbox", {})).not.toThrow();
   });
 
   it("blocks live/sandbox return-route crossover before creating a Stripe session", () => {
