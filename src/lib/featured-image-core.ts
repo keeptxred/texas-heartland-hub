@@ -21,6 +21,7 @@ const WEATHER_PREPAREDNESS_RE = /\b(emergency plan|preparedness|prepared|checkli
 const SENSITIVE_VIOLENCE_RE = /\b(shooting|shot|gunfire|road rage|killed|dead|death|fatal|murder|homicide|victim|suspect|attack|assault)\b/i;
 const DATA_CENTER_POLICY_RE = /\b(data center(?:s)?|data-center(?:s)?|server farm(?:s)?|hyperscale)\b/i;
 const POLITICAL_IDENTITY_RE = /\b(?:texas\s+)?(?:republican|democratic|democrat|gop)\s+(?:party|coalition|identity|platform)\b|\b(?:party|coalition|identity|platform)\s+(?:of\s+)?(?:texas\s+)?(?:republican|democrat|gop)\b/i;
+const NONLEGAL_COURT_PHRASE_RE = /\b(?:food court|basketball court|tennis court|pickleball court|volleyball court)\b/gi;
 
 const DOMAIN_KEYWORDS: Array<[Domain, RegExp]> = [
   ["wildlife", /\b(jellyfish|shark|whale|dolphin|bird|fish|species|wildlife|reef|coral|deer|coyote|snake|alligator|manatee|turtle|habitat|ecosystem|marine|hunting|hunter(?:s)?|fishing|angler(?:s)?)\b/i],
@@ -36,7 +37,7 @@ const DOMAIN_KEYWORDS: Array<[Domain, RegExp]> = [
   ["business", /\b(company|corporation|factory|manufacturing|semiconductor|investment|economy|jobs|hiring)\b/i],
   ["legal", /\b(court|courthouse|judge|justice|lawsuit|sues?|suing|ruling|appeal|appellate|injunction|litigation|plaintiff|defendant|judicial|legal challenge|supreme court|court of appeals|acquit(?:s|ted|tal)?|extradition|custody|parental rights|surrogacy|fraud case|criminal charges?)\b/i],
   ["politics", /\b(governor|senator|representative|legislature|capitol|abbott|patrick|paxton|cruz|cornyn|bill|law|policy|election|ballot)\b/i],
-  ["culture", /\b(rodeo|barbecue|music|festival|art|museum|heritage|cultural)\b/i],
+  ["culture", /\b(rodeo|barbecue|music|festival|art|museum|heritage|cultural|food court|restaurant|dining|cuisine|chef)\b/i],
 ];
 
 const VISUAL_DOMAIN_PRIORITY: Domain[] = [
@@ -47,7 +48,12 @@ const VISUAL_DOMAIN_PRIORITY: Domain[] = [
 
 function matchedDomains(text: string): Set<Domain> {
   const matches = new Set<Domain>();
-  for (const [domain, re] of DOMAIN_KEYWORDS) if (re.test(text)) matches.add(domain);
+  for (const [domain, re] of DOMAIN_KEYWORDS) {
+    // "Court" is also ordinary venue language. Do not route food/sports venue
+    // phrases into legal imagery merely because they contain that word.
+    const domainText = domain === "legal" ? text.replace(NONLEGAL_COURT_PHRASE_RE, " ") : text;
+    if (re.test(domainText)) matches.add(domain);
+  }
   return matches;
 }
 
