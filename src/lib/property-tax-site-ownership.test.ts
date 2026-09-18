@@ -20,6 +20,11 @@ const routeTargets = [
   ["src/routes/news.homestead-exemption-explained.tsx", "https://texasdefined.com/do/homestead-exemption"],
   ["src/routes/news.appraisal-protest-playbook.tsx", "https://texasdefined.com/do/property-tax-protest"],
   ["src/routes/news.county-appraisal-districts-explained.tsx", "https://texasdefined.com/learn/appraisal-districts"],
+  ["src/routes/texas-property-tax-protest-guide.tsx", "https://texasdefined.com/do/property-tax-protest"],
+  ["src/routes/tax-calculator.tsx", "https://texasdefined.com/decide/property-taxes"],
+  ["src/routes/texas-property-tax-calculator.tsx", "https://texasdefined.com/decide/property-taxes"],
+  ["src/routes/tools.property-tax-calculator.tsx", "https://texasdefined.com/decide/property-taxes"],
+  ["src/routes/texas-property-tax-increase-calculator.tsx", "https://texasdefined.com/decide/property-taxes"],
 ] as const;
 
 describe("property-tax site ownership", () => {
