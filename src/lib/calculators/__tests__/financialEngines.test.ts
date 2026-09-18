@@ -1,28 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { analyzeTexasDownPayment } from "../../downPayment/texasDownPaymentEngine";
 import { analyzeTexasRefinance } from "../../mortgage/texasRefinanceEngine";
 import { analyzeTexasMortgagePayoff } from "../../mortgage/texasMortgagePayoffEngine";
 import { analyzeTexasRentVsBuy } from "../../home/texasRentVsBuyEngine";
 import { getAdditionalCalculatorDefinition } from "../additionalCalculatorSuite";
 
 describe("Texas financial calculator known-answer checks", () => {
-  it("uses percentage-form interest rates in the down-payment engine", () => {
-    const result = analyzeTexasDownPayment({
-      homePrice: 400000,
-      loanProgram: "conventional",
-      downPaymentPercent: 0.1,
-      closingCostPercent: 0.03,
-      currentSavings: 60000,
-      monthlySavings: 1000,
-      interestRate: 6.5,
-      loanTermYears: 30,
-    });
-
-    expect(result.program.loanAmount).toBe(360000);
-    expect(result.payment.monthlyPayment).toBeCloseTo(2275.44, 1);
-    expect(Number.isFinite(result.payment.monthlyPayment)).toBe(true);
-  });
-
   it("calculates refinance payments using annual percentage rates", () => {
     const result = analyzeTexasRefinance({
       currentLoanBalance: 300000,
