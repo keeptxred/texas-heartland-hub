@@ -191,13 +191,12 @@ const TEXAS_NO_INCOME_TAX_2026: ArticleBodyLike = {
     },
   ],
   related: [
-    "texas-property-tax-guide",
     "texas-property-tax-laws-explained",
-    "homestead-exemption-explained",
-    "isd-tax-burdens",
-    "local-government-control",
+    "what-local-governments-control",
+    "how-texas-counties-spend",
+    "texas-school-finance-explained",
   ],
-  cta: { label: "Read the Texas Property Tax Guide", href: "/texas/property-taxes-2026" },
+  cta: { label: "Read the Texas Property Tax Policy Guide", href: "/news/texas-property-tax-laws-explained" },
 };
 
 function isLegacyNoIncomeTaxExplainer(body: ArticleBodyLike): boolean {
