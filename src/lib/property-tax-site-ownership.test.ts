@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { issueGuides } from "@/data/issue-guides";
 import { ARTICLE_BODIES } from "@/data/article-bodies";
+import { ARTICLES } from "@/data/articles";
 import { isIssueGuideIndexable, issueGuideContentLastModified } from "@/lib/issue-guide-indexability";
 import { canonicalInternalRedirectHref } from "@/lib/canonical-internal-redirects";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
@@ -47,6 +48,34 @@ describe("property-tax site ownership", () => {
   it("removes migrated homeowner articles from KTR sitemap and listing indexability", () => {
     for (const slug of migratedStaticSlugs) {
       expect(isStaticArticleIndexable({ slug, pillar: false })).toBe(false);
+    }
+  });
+
+  it("prevents every indexable KTR static article from reviving retired homeowner links", () => {
+    const retiredInternalPaths = [
+      "/news/texas-property-tax-guide",
+      "/news/homestead-exemption-explained",
+      "/news/appraisal-protest-playbook",
+      "/news/county-appraisal-districts-explained",
+      "/texas/property-taxes-2026",
+      "/tax-calculator",
+      "/tools/property-tax-calculator",
+      "/texas-property-tax-calculator",
+      "/texas-property-tax-increase-calculator",
+    ] as const;
+
+    for (const article of ARTICLES) {
+      if (!isStaticArticleIndexable(article)) continue;
+      const body = ARTICLE_BODIES[article.slug];
+      if (!body) continue;
+
+      const text = JSON.stringify(body);
+      for (const path of retiredInternalPaths) {
+        expect(text, `indexable static article ${article.slug} revives ${path}`).not.toContain(path);
+      }
+      for (const slug of migratedStaticSlugs) {
+        expect(body.related ?? [], `indexable static article ${article.slug} recommends retired ${slug}`).not.toContain(slug);
+      }
     }
   });
 
