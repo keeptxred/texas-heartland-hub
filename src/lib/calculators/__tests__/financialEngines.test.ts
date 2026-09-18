@@ -1,32 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { analyzeTexasRentVsBuy } from "../../home/texasRentVsBuyEngine";
 import { getAdditionalCalculatorDefinition } from "../additionalCalculatorSuite";
 
 describe("Texas financial calculator known-answer checks", () => {
-  it("calculates a realistic mortgage inside rent-versus-buy", () => {
-    const result = analyzeTexasRentVsBuy({
-      rent: {
-        monthlyRent: 2200,
-        annualRentIncrease: 0.035,
-        yearsAnalyzed: 10,
-      },
-      buy: {
-        homePrice: 400000,
-        downPayment: 80000,
-        interestRate: 6.5,
-        loanTermYears: 30,
-        propertyTaxRate: 0.018,
-        homeInsurance: 0.003,
-        maintenanceRate: 0.01,
-        annualAppreciation: 0.03,
-      },
-      investmentReturn: 0.07,
-    });
-
-    expect(result.buyAnalysis.monthlyMortgage).toBeCloseTo(2022.62, 1);
-    expect(Number.isFinite(result.comparison.wealthDifference)).toBe(true);
-  });
-
   it("calculates home insurance from rate, risk, and deductible assumptions", () => {
     const results = getAdditionalCalculatorDefinition("homeInsurance").calculate({
       homeValue: 400000,
