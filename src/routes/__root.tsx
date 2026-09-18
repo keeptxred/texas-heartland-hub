@@ -13,6 +13,7 @@ import { SiteHeader } from "../components/site-header";
 import { SiteFooter } from "../components/site-footer";
 import { SiteNotFound } from "../components/site-not-found";
 import { ArticleSourceTransparencyPanel } from "../components/article-source-transparency";
+import { ShopAnalyticsTracker } from "../components/analytics/ShopAnalyticsTracker";
 import { organizationJsonLd } from "../lib/seo";
 
 const ADSENSE_CLIENT = "ca-pub-1891256141359926";
@@ -158,6 +159,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <ShopAnalyticsTracker />
       <div className="min-h-screen flex flex-col bg-background text-foreground">
         <SiteHeader />
         <main className="flex-1 [&_article_.prose_section>h2]:text-center">
