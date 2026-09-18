@@ -74,9 +74,10 @@ describe("Texas no-income-tax static authority upgrade", () => {
     expect(text).not.toContain("The Trade-Off: High Property Taxes");
   });
 
-  it("links the explainer into KTR's property-tax authority cluster", () => {
+  it("links homeowner guidance to TexasDefined and policy coverage to KTR", () => {
     const body = renderedBody();
     const text = JSON.stringify(body);
+    expect(text).toContain("https://texasdefined.com/learn/property-taxes");
     expect(text).toContain("/news/texas-property-tax-laws-explained");
     expect(text).not.toContain("/texas/property-taxes-2026");
     expect(body.related).toEqual(expect.arrayContaining([
