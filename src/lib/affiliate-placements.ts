@@ -25,7 +25,7 @@ const HOMEOWNER_SIGNAL =
 const ENERGY_SIGNAL =
   /\b(ercot|electricity|electric rates?|electric bill|utility bill|power bill|power grid|energy provider|energy prices?|electricity plan|power plan)\b/i;
 const SPORTS_EVENT_SIGNAL =
-  /\b(game|stadium|arena|ballpark|concert|festival|rodeo|event|match|series|playoffs?|cowboys|rangers|mavericks|stars|astros|texans|rockets|dynamo|spurs)\b/i;
+  /\b(game|home opener|stadium|arena|ballpark|concert|festival|rodeo|event|match|series|playoffs?|tournament|race|weekend)\b/i;
 
 const MARKET_SIGNALS: ReadonlyArray<[KtrAffiliateMarket, RegExp]> = [
   [
