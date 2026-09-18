@@ -20,6 +20,7 @@ const SCHOOL_SUPPLY_PATHS = new Set([
 ]);
 
 const AUTOMATED_MONETIZATION_BLOCKED_CATEGORIES = /^(elections?|politics|legislature|laws?)$/i;
+const CAMPAIGN_STORY_SIGNAL = /\b(candidate|campaign|election|ballot|polling|primary race|general election)\b/i;
 const HOMEOWNER_SIGNAL =
   /\b(property taxes?|homestead(?: exemption)?|appraisal district|property appraisal|home insurance|homeowner(?:ship)?|housing market|mortgage|property value)\b/i;
 const ENERGY_SIGNAL =
@@ -73,6 +74,8 @@ export function getKtrAffiliatePlacement(
   if (AUTOMATED_MONETIZATION_BLOCKED_CATEGORIES.test(category)) return null;
 
   const text = `${input.title ?? ""} ${input.dek ?? ""}`.trim();
+
+  if (CAMPAIGN_STORY_SIGNAL.test(text)) return null;
 
   if (HOMEOWNER_SIGNAL.test(text)) {
     return {
