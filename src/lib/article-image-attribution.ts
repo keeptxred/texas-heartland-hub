@@ -1,0 +1,126 @@
+export type ArticleImageAttribution = {
+  credit: string;
+  sourceUrl: string;
+  licenseName: string;
+  licenseUrl: string;
+  caption?: string;
+  usageNote?: string;
+};
+
+type AttributionEntry = ArticleImageAttribution & {
+  imageUrl: string;
+};
+
+const COMMONS = "https://commons.wikimedia.org/wiki/File:";
+
+const ATTRIBUTIONS: AttributionEntry[] = [
+  {
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Victor_Wembanyama_San_Antonio_Spurs_2025_NBA_Cup_(cropped).jpg",
+    credit: "Daiei Onoguchi",
+    sourceUrl: `${COMMONS}Victor_Wembanyama_San_Antonio_Spurs_2025_NBA_Cup_(cropped).jpg`,
+    licenseName: "CC BY 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by/4.0/",
+    caption: "Representative archive photo of Victor Wembanyama; not the Katy pickup soccer game.",
+  },
+  {
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Luke_Kornet.jpg",
+    credit: "Rikster2",
+    sourceUrl: `${COMMONS}Luke_Kornet.jpg`,
+    licenseName: "CC BY-SA 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+    caption: "Representative archive photo of Luke Kornet; not the reported roadside stop.",
+  },
+  {
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Jacob_deGrom.jpg",
+    credit: "slgckgc",
+    sourceUrl: `${COMMONS}Jacob_deGrom.jpg`,
+    licenseName: "CC BY 2.0",
+    licenseUrl: "https://creativecommons.org/licenses/by/2.0/",
+    caption: "Representative archive photo of Jacob deGrom; not the game described in this article.",
+  },
+  {
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Victor_Wembanyama_San_Antonio_Spurs_2024.jpg",
+    credit: "Frenchieinportland",
+    sourceUrl: `${COMMONS}Victor_Wembanyama_San_Antonio_Spurs_2024.jpg`,
+    licenseName: "CC BY 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by/4.0/",
+    caption: "Representative archive photo of Victor Wembanyama; not the NBA 2K27 cover image.",
+  },
+  {
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Houston_Texans_vs._Dallas_Cowboys_2019_45_(Dallas_kicking_off).jpg",
+    credit: "Michael Barera",
+    sourceUrl: `${COMMONS}Houston_Texans_vs._Dallas_Cowboys_2019_45_(Dallas_kicking_off).jpg`,
+    licenseName: "CC BY-SA 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+    caption: "Representative archive Dallas Cowboys football photo; not the game described in this article.",
+  },
+  {
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Texans_vs_Cowboys_preseason_2010.jpg",
+    credit: "MC Glasgow",
+    sourceUrl: `${COMMONS}Texans_vs_Cowboys_preseason_2010.jpg`,
+    licenseName: "CC BY 2.0",
+    licenseUrl: "https://creativecommons.org/licenses/by/2.0/",
+    caption: "Representative archive Dallas Cowboys football photo; not the game described in this article.",
+  },
+  {
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Dan_Patrick_Texas.jpg",
+    credit: "Redwhiteandboujee",
+    sourceUrl: `${COMMONS}Dan_Patrick_Texas.jpg`,
+    licenseName: "CC BY-SA 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+    caption: "Representative archive photo of Dan Patrick; not the event described in this article.",
+  },
+  {
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Brandon_Williams_Cowboys_vs_Texans.jpg",
+    credit: "MC Glasgow",
+    sourceUrl: `${COMMONS}Brandon_Williams_Cowboys_vs_Texans.jpg`,
+    licenseName: "CC BY 2.0",
+    licenseUrl: "https://creativecommons.org/licenses/by/2.0/",
+    caption: "Representative archive Dallas Cowboys football photo; not the game described in this article.",
+  },
+  {
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Dallas_Cowboys_in_the_red-zone.jpg",
+    credit: "Mahanga",
+    sourceUrl: `${COMMONS}Dallas_Cowboys_in_the_red-zone.jpg`,
+    licenseName: "CC BY-SA 3.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/3.0/",
+    caption: "Representative archive Dallas Cowboys football photo; not the game described in this article.",
+  },
+  {
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/2020_Cowboys_pregame_(50533294763).jpg",
+    credit: "All-Pro Reels",
+    sourceUrl: `${COMMONS}2020_Cowboys_pregame_(50533294763).jpg`,
+    licenseName: "CC BY-SA 2.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/2.0/",
+    caption: "Representative archive Dallas Cowboys football photo; not the roster-decision event described in this article.",
+  },
+  {
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Lone_Star_Showdown_2006_McGee_on_goal-line.jpg",
+    credit: "Johntex",
+    sourceUrl: `${COMMONS}Lone_Star_Showdown_2006_McGee_on_goal-line.jpg`,
+    licenseName: "CC BY 2.5",
+    licenseUrl: "https://creativecommons.org/licenses/by/2.5/",
+    caption: "Representative archive Texas A&M football photo from the 2006 Lone Star Showdown; not the 2026 Missouri State game.",
+  },
+].map((entry) => ({
+  ...entry,
+  usageNote: "Source image unmodified; page presentation may crop it responsively.",
+}));
+
+const ATTRIBUTION_BY_URL = new Map(
+  ATTRIBUTIONS.map((entry) => [entry.imageUrl, entry] as const),
+);
+
+export function getArticleImageAttribution(
+  imageUrl: string | null | undefined,
+): ArticleImageAttribution | null {
+  const key = String(imageUrl ?? "").trim();
+  if (!key) return null;
+  return ATTRIBUTION_BY_URL.get(key) ?? null;
+}
+
+export function hasRequiredArticleImageAttribution(
+  imageUrl: string | null | undefined,
+): boolean {
+  return getArticleImageAttribution(imageUrl) !== null;
+}
