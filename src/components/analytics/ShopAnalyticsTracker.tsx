@@ -12,10 +12,26 @@ function emitShopEvent(eventName: string, detail: Record<string, unknown>) {
     event: eventName,
     ...detail,
     page_path: window.location.pathname,
+    occurred_at: new Date().toISOString(),
   };
 
   analyticsWindow.dataLayer = analyticsWindow.dataLayer || [];
   analyticsWindow.dataLayer.push(payload);
+
+  const body = JSON.stringify(payload);
+  if (navigator.sendBeacon) {
+    navigator.sendBeacon(
+      "/api/shop-analytics",
+      new Blob([body], { type: "application/json" }),
+    );
+  } else {
+    void fetch("/api/shop-analytics", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body,
+      keepalive: true,
+    }).catch(() => undefined);
+  }
 
   if (typeof analyticsWindow.gtag === "function") {
     analyticsWindow.gtag("event", eventName, detail);
