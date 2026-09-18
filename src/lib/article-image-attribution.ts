@@ -118,14 +118,6 @@ const ATTRIBUTIONS: AttributionEntry[] = [
     licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
     caption: "La Unión del Pueblo Entero (LUPE) logo, used to identify the organization discussed in this article.",
   },
-  {
-    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/TXSE_logo_Sep_2024.svg",
-    credit: "TXSE Group Inc.",
-    sourceUrl: `${COMMONS}TXSE_logo_Sep_2024.svg`,
-    licenseName: "Public domain (PD-textlogo)",
-    licenseUrl: "https://commons.wikimedia.org/wiki/Template:PD-textlogo",
-    caption: "Texas Stock Exchange (TXSE) logo, used to identify the exchange discussed in this article.",
-  },
 ].map((entry) => ({
   ...entry,
   usageNote: "Source image unmodified; page presentation may crop it responsively.",
