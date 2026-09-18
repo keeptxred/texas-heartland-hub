@@ -108,8 +108,16 @@ describe("property-tax site ownership", () => {
     expect(agriculture).toContain("https://texasdefined.com/learn/property-taxes");
 
     const lawTopic = readFileSync("src/data/law-topic-property-tax-authority.ts", "utf8");
-    expect(lawTopic).toContain("https://texasdefined.com/decide/property-taxes");
+    expect(lawTopic).toContain("https://texasdefined.com/learn/property-taxes");
+    expect(lawTopic).toContain("https://texasdefined.com/do/homestead-exemption");
+    expect(lawTopic).toContain("https://texasdefined.com/do/property-tax-protest");
+    expect(lawTopic).toContain("https://texasdefined.com/learn/appraisal-districts");
     expect(lawTopic).not.toContain('{ label: "Property Tax Calculator", href: "/tools/property-tax-calculator" }');
+    expect(lawTopic).not.toContain("May 15");
+    expect(lawTopic).not.toContain("$140,000");
+    expect(lawTopic).not.toContain("How long do I have to protest");
+    expect(lawTopic).not.toContain("What is the current Texas school-district homestead exemption");
+    expect(lawTopic).not.toContain("Can I appeal an appraisal review board decision");
 
     const noIncomeTaxUpgrade = readFileSync("src/lib/static-no-income-tax-upgrade.ts", "utf8");
     expect(noIncomeTaxUpgrade).toContain("https://texasdefined.com/learn/property-taxes");
@@ -193,7 +201,10 @@ describe("property-tax site ownership", () => {
     expect(glossary).toContain("https://texasdefined.com/do/homestead-exemption");
 
     const topic = readFileSync("src/data/law-topic-property-tax-authority.ts", "utf8");
-    expect(topic).toContain('{ label: "TexasDefined Property Tax Tools", href: "https://texasdefined.com/decide/property-taxes" }');
+    expect(topic).toContain('{ label: "TexasDefined Property Tax Guide", href: "https://texasdefined.com/learn/property-taxes" }');
+    expect(topic).toContain('{ label: "TexasDefined Homestead Exemption Guide", href: "https://texasdefined.com/do/homestead-exemption" }');
+    expect(topic).toContain('{ label: "TexasDefined Property Tax Protest Guide", href: "https://texasdefined.com/do/property-tax-protest" }');
+    expect(topic).toContain('{ label: "TexasDefined Appraisal District Guide", href: "https://texasdefined.com/learn/appraisal-districts" }');
     expect(topic).not.toContain('{ label: "Property Tax Calculator", href: "/tools/property-tax-calculator" }');
   });
 
