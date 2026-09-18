@@ -124,7 +124,10 @@ export function getArticleImageAttribution(
 ): ArticleImageAttribution | null {
   const key = String(imageUrl ?? "").trim();
   if (!key) return null;
-  return ATTRIBUTION_BY_URL.get(key) ?? null;
+  const entry = ATTRIBUTION_BY_URL.get(key);
+  if (!entry) return null;
+  const { imageUrl: _imageUrl, ...attribution } = entry;
+  return attribution;
 }
 
 export function hasRequiredArticleImageAttribution(
