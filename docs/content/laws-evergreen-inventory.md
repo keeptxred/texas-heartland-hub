@@ -1,6 +1,6 @@
 # KTR Texas Laws Evergreen Inventory
 
-Updated: 2026-08-13
+Updated: 2026-09-18
 
 ## Purpose
 
@@ -18,10 +18,10 @@ This document tracks the migration of the Keep TX Red laws section from a small 
 
 ### Laws You Should Know
 
-- `homestead-exemption-explained`
 - `texas-open-meetings-public-info`
-- `appraisal-protest-playbook`
 - `texas-voter-registration-guide`
+- `texas-school-board-powers`
+- `constitutional-carry-one-year-later`
 
 ### Legislative Updates
 
@@ -30,7 +30,7 @@ This document tracks the migration of the Keep TX Red laws section from a small 
 - `speaker-special-session`
 - `texas-constitutional-amendments-guide`
 
-These existing pages are treated as legacy guides until each one is migrated through the new verification workflow. Legacy status preserves current indexability and does not represent a new legal review.
+These existing KTR pages are treated as legacy guides until each one is migrated through the new verification workflow. Practical homeowner property-tax guides are owned by TexasDefined and are not part of the KTR law inventory. Legacy status preserves current indexability for KTR-owned content and does not represent a new legal review.
 
 ## Topic taxonomy for expansion
 
