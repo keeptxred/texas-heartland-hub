@@ -65,6 +65,8 @@ export const PROPERTY_TAX_LAW_TOPIC: LawTopic = {
     { label: "Texas Tax Code", url: "https://statutes.capitol.texas.gov/?link=TX", note: "Controlling state statutory framework for appraisal, exemptions, rate adoption, protests, appeals, billing, and collection." },
     { label: "Texas Comptroller — Property Tax Assistance", url: "https://comptroller.texas.gov/taxes/property-tax/", note: "Statewide explanation of the state-local property-tax structure, administration resources, and official guidance." },
     { label: "Texas Comptroller — Property Tax System Basics", url: "https://comptroller.texas.gov/taxes/property-tax/basics.php", note: "Official overview of local taxing units, appraisal administration, and the state legal framework." },
+    { label: "Texas Constitution — Article VIII", url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.8.htm", note: "Constitutional provisions governing taxation and major limits or authorities relevant to property-tax policy." },
+    { label: "Texas Comptroller — Property Taxpayers' Bill of Rights", url: "https://comptroller.texas.gov/taxes/property-tax/bill-of-rights.php", note: "Official summary of the state-local system and taxpayer participation in appraisal and rate-setting processes." },
     { label: "Texas Comptroller — Truth-in-Taxation: Tax Rate Adoption", url: "https://comptroller.texas.gov/taxes/property-tax/truth-in-taxation/", note: "Official guidance on local tax-rate adoption, public notice, no-new-revenue rates, and voter-approval rates." },
     { label: "Texas Comptroller — Tax Rate Calculation", url: "https://comptroller.texas.gov/taxes/property-tax/truth-in-taxation/calculations.php", note: "Official explanation of statutory rate calculations used by taxing units." },
   ],
