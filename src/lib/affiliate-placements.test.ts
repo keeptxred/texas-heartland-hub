@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { getKtrAffiliatePlacement } from "./affiliate-placements";
 
 describe("KTR contextual affiliate placement guard", () => {
-  it("enables school-supply offers only on the approved school-story cohort", () => {
+  it("keeps the approved school-supply cohort explicit", () => {
     expect(
       getKtrAffiliatePlacement(
         "/news/2026-08-20-gov-abbott-proposes-ban-on-h-1b-visa-use-for-texas-public-schools",
@@ -16,9 +16,78 @@ describe("KTR contextual affiliate placement guard", () => {
     ).toEqual({ kind: "school-supplies", placementId: "ktr-school-story-resource" });
   });
 
-  it("does not monetize election, candidate, or unrelated news pages", () => {
-    expect(getKtrAffiliatePlacement("/elections/candidates/ken-paxton")).toBeNull();
-    expect(getKtrAffiliatePlacement("/elections/races/texas-2026-us-senate-2026")).toBeNull();
+  it("routes high-intent homeowner stories to the TexasDefined planning funnel", () => {
+    expect(
+      getKtrAffiliatePlacement({
+        pathname: "/news/texas-property-tax-appraisal-changes",
+        title: "Texas Property Tax Appraisal Changes Hit Homeowners",
+        dek: "Homestead exemptions and appraisal values shape household costs.",
+        category: "Tax & Spending",
+      }),
+    ).toEqual({ kind: "homeowner-resources", placementId: "ktr-homeowner-story-resource" });
+  });
+
+  it("routes household energy stories to utility-cost tools", () => {
+    expect(
+      getKtrAffiliatePlacement({
+        pathname: "/news/texas-electricity-rates-rise",
+        title: "Texas Electricity Rates Rise as Summer Demand Climbs",
+        dek: "Households are watching electric bills and ERCOT demand.",
+        category: "Energy",
+      }),
+    ).toEqual({ kind: "energy-resources", placementId: "ktr-energy-story-resource" });
+  });
+
+  it("routes Dallas, Houston and San Antonio sports-event stories to approved travel partners", () => {
+    expect(
+      getKtrAffiliatePlacement({
+        pathname: "/news/cowboys-home-opener-arlington",
+        title: "Cowboys Home Opener Brings Weekend Crowds to Arlington",
+        dek: "AT&T Stadium hosts the game Saturday.",
+        category: "Sports",
+      }),
+    ).toEqual({ kind: "sports-travel", placementId: "ktr-sports-event-travel", market: "Dallas" });
+
+    expect(
+      getKtrAffiliatePlacement({
+        pathname: "/news/astros-weekend-series-houston",
+        title: "Astros Weekend Series Brings Fans to Houston",
+        dek: "The three-game series starts Friday.",
+        category: "Sports",
+      }),
+    ).toEqual({ kind: "sports-travel", placementId: "ktr-sports-event-travel", market: "Houston" });
+
+    expect(
+      getKtrAffiliatePlacement({
+        pathname: "/news/spurs-game-san-antonio",
+        title: "Spurs Return to San Antonio for Saturday Game",
+        dek: "Fans head to Frost Bank Center this weekend.",
+        category: "Sports",
+      }),
+    ).toEqual({ kind: "sports-travel", placementId: "ktr-sports-event-travel", market: "San Antonio" });
+  });
+
+  it("does not turn ordinary team news into travel intent", () => {
+    expect(
+      getKtrAffiliatePlacement({
+        pathname: "/news/astros-trade-deadline-move",
+        title: "Astros Complete Trade Ahead of Deadline",
+        dek: "Houston adds a veteran pitcher for the stretch run.",
+        category: "Sports",
+      }),
+    ).toBeNull();
+  });
+
+  it("keeps automated commercial placement off election, candidate and unrelated pages", () => {
+    expect(
+      getKtrAffiliatePlacement({
+        pathname: "/news/candidate-property-tax-plan",
+        title: "Candidate Discusses Property Tax Plan",
+        dek: "The proposal was outlined during the campaign.",
+        category: "Elections",
+      }),
+    ).toBeNull();
+    expect(getKtrAffiliatePlacement("/elections/candidates/example")).toBeNull();
     expect(getKtrAffiliatePlacement("/news/texas-policing-agencies-compared")).toBeNull();
     expect(getKtrAffiliatePlacement("/")).toBeNull();
   });
