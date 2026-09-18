@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { storedHeroEditorialGuidance } from "./stored-hero-vision";
+import { storedHeroEditorialGuidance, storedHeroPolicyCorrection } from "./stored-hero-vision";
 import type { SubjectExtract } from "./featured-image-core";
 
 function subject(overrides: Partial<SubjectExtract> = {}): SubjectExtract {
@@ -84,6 +84,57 @@ describe("stored hero representative-photo policy", () => {
     expect(guidance).toContain("industrial cooling equipment");
     expect(guidance).toContain("plain brick");
     expect(guidance).toContain("must fail under PATH B");
+  });
+
+  it("retries a sports verdict that wrongly demands the exact historical game", () => {
+    const correction = storedHeroPolicyCorrection(
+      subject({
+        title: "Bills Beat Texans 36-31 After Late Josh Allen Touchdown and Stroud Fumble",
+        domain: "sports",
+        entities: ["Houston Texans"],
+        concreteSubject: "Houston Texans football game-result story.",
+      }),
+      {
+        candidateAltText: "Houston Texans football players in an on-field huddle",
+        sourceMetadata: "File: Houston Texans players 2006-09-10.jpg",
+      },
+      "The image shows Houston Texans players, but the specific 2026 game mentioned in the article is not depicted.",
+    );
+    expect(correction).toContain("Do not require the exact game");
+  });
+
+  it("retries a legal verdict that wrongly forces a courthouse over the named person", () => {
+    const correction = storedHeroPolicyCorrection(
+      subject({
+        title: "James Harden’s Houston Gun Charge Dismissed After Alternative Resolution Program",
+        domain: "legal",
+        entities: ["James Harden"],
+        concreteSubject: "James Harden is the headline-defining named person.",
+      }),
+      {
+        candidateAltText: "Archive photograph of James Harden playing basketball for Team USA in 2012",
+        sourceMetadata: "File: James Harden dunk vs Dominican Republic 2012.jpg",
+      },
+      "The image shows James Harden playing basketball, which is not directly relevant to the legal story; the primary subject should depict a courthouse.",
+    );
+    expect(correction).toContain("headline-defining named person");
+    expect(correction).toContain("Do not require a courthouse");
+  });
+
+  it("does not retry a generic candidate with no story-entity identity match", () => {
+    const correction = storedHeroPolicyCorrection(
+      subject({
+        title: "Bills Beat Texans 36-31",
+        domain: "sports",
+        entities: ["Houston Texans"],
+      }),
+      {
+        candidateAltText: "Generic football stadium",
+        sourceMetadata: "File: Generic stadium.jpg",
+      },
+      "The specific game is not depicted.",
+    );
+    expect(correction).toBeNull();
   });
 
   it("does not let trusted metadata turn a generic facility into a data-center match", () => {
