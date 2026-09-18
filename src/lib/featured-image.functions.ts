@@ -161,6 +161,56 @@ export function buildGenerationSafeSubject(subject: SubjectExtract): SubjectExtr
 }
 
 function buildRepeatedFailureRecoverySubject(row: ArticleRow, subject: SubjectExtract): SubjectExtract {
+  if (row.slug === "2026-09-14-paxton-talarico-affordability-plans-compared") {
+    return {
+      ...subject,
+      domain: "politics",
+      title: "Texas household affordability policy comparison",
+      firstParagraph: "",
+      locations: ["Texas"],
+      concreteSubject: "A physical-camera documentary photograph of a real Texas household kitchen table set up for a serious budget review. Show two neutral stacks of household expense paperwork representing competing affordability approaches: property-tax and home-insurance paperwork, a utility bill, grocery receipts, rent or mortgage paperwork, a calculator, pen, and ordinary household keys. All printed words, dollar amounts, logos, and account details are intentionally out of focus and unreadable. No campaign material, candidate likenesses, party branding, podiums, or capitol-building symbolism. The concrete visual subject is the household cost burden and policy-impact comparison itself.",
+    };
+  }
+  if (row.slug === "2026-09-17-more-young-people-are-getting-involved-with-south-texas-civil-rights-group-amid-") {
+    return {
+      ...subject,
+      domain: "politics",
+      title: "South Texas youth community-organizing meeting",
+      firstParagraph: "",
+      locations: ["Rio Grande Valley, Texas"],
+      concreteSubject: "A real documentary photograph inside a South Texas community center during a youth-led immigrant-rights organizing meeting. Show a small group of anonymous young adult volunteers around folding tables assembling know-your-rights packets, clipboards, phone-bank sheets, bottled water, and community-outreach materials. Faces are incidental or turned away, and all text, names, logos, and organization branding are unreadable. The visible activity must clearly be community organizing and immigrant-rights outreach by young adults, not a generic protest crowd or an unrelated city scene.",
+    };
+  }
+  if (row.slug === "2026-09-14-several-texas-republicans-condemn-bo-french-s-racist-posts-calling-asian-student") {
+    return {
+      ...subject,
+      domain: "politics",
+      title: "Texas political social-media controversy involving UT Austin students",
+      firstParagraph: "",
+      locations: ["Austin, Texas"],
+      concreteSubject: "An over-the-shoulder documentary photograph of an anonymous adult reviewing a social-media post on a smartphone near the University of Texas at Austin. The phone must visibly read as a social-media interface, but every username, sentence, image caption, notification, and account detail is deliberately unreadable. A small group of anonymous college-age students is visible in the background near campus, without identifiable faces. No fabricated quote, fake post content, campaign sign, party logo, or public-figure likeness. The concrete action is a public social-media controversy involving UT students, not generic campus architecture.",
+    };
+  }
+  if (row.slug === "2026-09-10-texas-stock-exchange-first-primary-listings") {
+    return {
+      ...subject,
+      domain: "general",
+      title: "Texas Stock Exchange primary corporate listing activity",
+      firstParagraph: "",
+      locations: ["Dallas, Texas"],
+      concreteSubject: "A physical-camera documentary photograph inside a modern Dallas financial-market workspace during a corporate listing event. Show a brass market-opening bell on a podium-height table, neutral electronic market boards in the background, listing folders and financial paperwork on a nearby desk, and several anonymous finance workers. All company names, ticker symbols, logos, exchange branding, numbers, and readable text are absent or intentionally out of focus. The room should look like a new contemporary exchange or listing venue, not the historic New York or Chicago trading floors. The defining activity is a company receiving a primary stock-market listing.",
+    };
+  }
+  if (row.slug === "2026-09-18-texas-hospitals-to-receive-12-billion-in-medicaid-funds-ending-dispute-with-feds") {
+    return {
+      ...subject,
+      domain: "politics",
+      title: "Texas hospital Medicaid reimbursement funding restored",
+      firstParagraph: "",
+      locations: ["Texas"],
+      concreteSubject: "A real documentary photograph inside a Texas hospital administration and revenue-cycle office. Show anonymous hospital finance staff reviewing reimbursement paperwork, claim folders, payment-reconciliation sheets, a calculator, and medical-billing workstations, with a hospital corridor or clinical wing visible beyond the office. All patient information, dollar amounts, logos, agency names, screens, and printed text are unreadable. The image must clearly center hospital reimbursement and funding administration rather than a generic empty hospital bed, ambulance, or waiting room.",
+    };
+  }
   if (row.slug === "2026-09-04-denton-191-turtles-shipment") {
     return {
       ...subject,
