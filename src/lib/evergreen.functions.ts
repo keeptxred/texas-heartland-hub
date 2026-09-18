@@ -232,6 +232,9 @@ export const listEvergreenSlugs = createServerFn({ method: "GET" }).handler(asyn
 export type SitemapArticle = {
   slug: string;
   title: string;
+  dek: string | null;
+  category: string | null;
+  source_name: string | null;
   published_at: string;
   updated_at: string | null;
   image_url: string | null;
@@ -272,9 +275,10 @@ export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
     if (!supabase) return { articles: [] };
 
     type Row = SitemapArticle & {
-      category?: string | null;
-      source_name?: string | null;
+      discover_category?: string | null;
       source_url?: string | null;
+      featured_image_url?: string | null;
+      image_generation_status?: string | null;
       body_json?: EvergreenBody | null;
       quality_flags?: string[] | null;
       content_quality_score?: number | null;
@@ -283,7 +287,7 @@ export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
     for (let from = 0; from < MAX_CLOUD_SITEMAP_ARTICLES; from += SITEMAP_ARTICLE_PAGE_SIZE) {
       const { data, error } = await supabase
         .from("daily_articles")
-        .select("slug,title,category,source_name,source_url,published_at,updated_at,image_url,kind,body_json,quality_flags,content_quality_score")
+        .select("slug,title,dek,category,discover_category,source_name,source_url,published_at,updated_at,image_url,featured_image_url,image_generation_status,kind,body_json,quality_flags,content_quality_score")
         .in("kind", ["evergreen", "ingested", "news", "sports-nfl", "sports-mlb", "sports-nba", "sports-cfb", "sports-nhl", "sports-mls", "sports-nwsl", "sports-wnba", "sports-general", "sports-policy", "sports-motorsports"])
         .order("published_at", { ascending: false })
         .order("slug", { ascending: true })
@@ -303,7 +307,7 @@ export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
         const sanitized = sanitizeEvergreenBody(a.body_json, a.published_at);
         return meetsArticleMainWordCount(a.kind, sanitized);
       })
-      .map(({ body_json, quality_flags: _flags, category: _category, source_name: _sourceName, source_url: _sourceUrl, ...a }) => ({
+      .map(({ body_json, quality_flags: _flags, discover_category: _discoverCategory, source_url: _sourceUrl, featured_image_url: _featuredImage, image_generation_status: _imageStatus, ...a }) => ({
         ...a,
         main_word_count: articleMainWordCount(sanitizeEvergreenBody(body_json!, a.published_at)),
       }));
