@@ -21,6 +21,9 @@ const CITY_GUIDE_URLS: Readonly<Record<KtrAffiliateMarket, string>> = {
 };
 
 const CJ_PUBLISHER_ID = "101876465";
+const HOTELS_DESTINATION = "https://www.hotels.com/";
+const HOTELS_AFFILIATE_URL =
+  `https://www.anrdoezrs.net/links/${CJ_PUBLISHER_ID}/type/dlg/${encodeURI(HOTELS_DESTINATION)}`;
 const BOOKING_CAR_RENTAL_DESTINATION = "https://www.booking.com/cars/country/us.html";
 const BOOKING_CAR_RENTAL_URL =
   `https://www.anrdoezrs.net/links/${CJ_PUBLISHER_ID}/type/dlg/${encodeURI(BOOKING_CAR_RENTAL_DESTINATION)}`;
@@ -63,6 +66,7 @@ const ENERGY_RESOURCES = [
 
 type AnalyticsWindow = Window & {
   dataLayer?: Array<Record<string, unknown>>;
+  gtag?: (...args: unknown[]) => void;
 };
 
 function pushAnalytics(detail: Record<string, unknown>) {
@@ -70,6 +74,12 @@ function pushAnalytics(detail: Record<string, unknown>) {
   const analyticsWindow = window as AnalyticsWindow;
   analyticsWindow.dataLayer = analyticsWindow.dataLayer || [];
   analyticsWindow.dataLayer.push(detail);
+}
+
+function sendGaEvent(eventName: string, params: Record<string, unknown>) {
+  if (typeof window === "undefined") return;
+  const gtag = (window as AnalyticsWindow).gtag;
+  if (typeof gtag === "function") gtag("event", eventName, params);
 }
 
 function trackAffiliateClick(partner: string, placement: string, label: string, module: string) {
@@ -85,6 +95,13 @@ function trackAffiliateClick(partner: string, placement: string, label: string, 
   };
 
   pushAnalytics(detail);
+  sendGaEvent("affiliate_click", {
+    affiliate_partner: partner,
+    affiliate_placement: placement,
+    affiliate_label: label,
+    affiliate_module: module,
+    page_path: window.location.pathname,
+  });
   window.dispatchEvent(new CustomEvent("ktr:affiliate-click", { detail }));
 }
 
@@ -100,6 +117,12 @@ function trackResourceReferral(label: string, placement: string, destination: st
   };
 
   pushAnalytics(detail);
+  sendGaEvent("resource_referral_click", {
+    resource_label: label,
+    resource_placement: placement,
+    resource_destination: destination,
+    page_path: window.location.pathname,
+  });
   window.dispatchEvent(new CustomEvent("ktr:resource-referral-click", { detail }));
 }
 
@@ -191,6 +214,7 @@ function SportsTravelAffiliateCard({
   placementId: string;
   market: KtrAffiliateMarket;
 }) {
+  const hotelPlacement = `${placementId}-hotels-com`;
   const cityPassPlacement = `${placementId}-citypass-${market.toLowerCase().replace(/\s+/g, "-")}`;
   const rentalPlacement = `${placementId}-booking-car-rental`;
 
@@ -200,7 +224,25 @@ function SportsTravelAffiliateCard({
       title={`Making a ${market} trip out of it?`}
       body="If you are already traveling for the game or event, these are practical add-ons to compare after your plans are set. They are separate from Keep TX Red's editorial coverage."
     >
-      <div className="mt-5 grid gap-3 sm:grid-cols-2">
+      <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <a
+          href={HOTELS_AFFILIATE_URL}
+          target="_blank"
+          rel="sponsored nofollow noopener noreferrer"
+          data-affiliate-partner="hotels.com"
+          data-affiliate-placement={hotelPlacement}
+          onClick={() => trackAffiliateClick("hotels.com", hotelPlacement, `Find hotels for a ${market} trip`, "sports-event-travel")}
+          className="group border border-border bg-muted/30 p-4 no-underline transition-colors hover:border-primary/60"
+        >
+          <span className="block font-semibold text-foreground group-hover:text-primary">Hotels.com</span>
+          <span className="mt-2 block text-sm leading-5 text-muted-foreground">
+            Check hotel availability when the game or event turns into an overnight trip.
+          </span>
+          <span className="mt-3 inline-block text-xs font-bold uppercase tracking-[0.12em] text-primary">
+            Find hotels ↗
+          </span>
+        </a>
+
         <a
           href={CITYPASS_AFFILIATE_URLS[market]}
           target="_blank"
@@ -247,7 +289,7 @@ function SportsTravelAffiliateCard({
       </a>
 
       <AffiliateDisclosure>
-        Keep TX Red may earn a commission from qualifying CityPASS® purchases or Booking.com car-rental bookings, at no additional cost to you. Prices, availability and terms can change.
+        Keep TX Red may earn a commission from qualifying Hotels.com activity, CityPASS® purchases or Booking.com car-rental bookings, at no additional cost to you. Prices, availability and terms can change.
       </AffiliateDisclosure>
     </CardShell>
   );
