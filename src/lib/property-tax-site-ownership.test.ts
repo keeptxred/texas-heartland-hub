@@ -45,6 +45,60 @@ describe("property-tax site ownership", () => {
     }
   });
 
+  it("keeps active KTR discovery surfaces out of homeowner property-tax ownership", () => {
+    const dataPanel = readFileSync("src/components/property-tax-data-panel.tsx", "utf8");
+    expect(dataPanel).toContain("https://texasdefined.com/decide/property-taxes");
+    expect(dataPanel).not.toContain("County-rate calculator");
+    expect(dataPanel).not.toContain("countyOnlyEstimate");
+
+    const lawsHub = readFileSync("src/routes/laws.index.tsx", "utf8");
+    expect(lawsHub).toContain("texas-property-tax-laws-explained");
+    expect(lawsHub).not.toContain('"homestead-exemption-explained"');
+    expect(lawsHub).not.toContain('"appraisal-protest-playbook"');
+
+    const lawRegistry = readFileSync("src/lib/law-guides-core.ts", "utf8");
+    expect(lawRegistry).not.toContain('{ slug: "homestead-exemption-explained", topic: "property-tax"');
+    expect(lawRegistry).not.toContain('{ slug: "appraisal-protest-playbook", topic: "property-tax"');
+
+    const business = readFileSync("src/components/texas-business-view.tsx", "utf8");
+    expect(business).toContain('"texas-property-tax-laws-explained"');
+    expect(business).not.toContain('"county-appraisal-districts-explained"');
+  });
+
+  it("links practical homeowner references directly to TexasDefined", () => {
+    const glossary = readFileSync("src/routes/glossary.tsx", "utf8");
+    expect(glossary).toContain("https://texasdefined.com/learn/appraisal-districts");
+    expect(glossary).toContain("https://texasdefined.com/do/homestead-exemption");
+
+    const agriculture = readFileSync("src/data/supporting-guides-agriculture.ts", "utf8");
+    expect(agriculture).toContain("https://texasdefined.com/learn/property-taxes");
+
+    const lawTopic = readFileSync("src/data/law-topic-property-tax-authority.ts", "utf8");
+    expect(lawTopic).toContain("https://texasdefined.com/decide/property-taxes");
+    expect(lawTopic).not.toContain('{ label: "Property Tax Calculator", href: "/tools/property-tax-calculator" }');
+  });
+
+  it("keeps the KTR property-tax law article policy-scoped", () => {
+    const source = readFileSync("src/data/article-bodies.ts", "utf8");
+    const start = source.indexOf('  "texas-property-tax-laws-explained": {');
+    const end = source.indexOf('\n  "texas-election-laws-explained": {', start);
+    expect(start).toBeGreaterThanOrEqual(0);
+    expect(end).toBeGreaterThan(start);
+    const block = source.slice(start, end);
+
+    expect(block).toContain("/issues/texas-property-tax-relief");
+    expect(block).toContain("https://texasdefined.com/learn/property-taxes");
+    expect(block).toContain("https://texasdefined.com/do/homestead-exemption");
+    expect(block).toContain("https://texasdefined.com/do/property-tax-protest");
+    expect(block).toContain("https://texasdefined.com/learn/appraisal-districts");
+    expect(block).toContain("https://texasdefined.com/decide/property-taxes");
+    expect(block).not.toContain("/news/texas-property-tax-guide");
+    expect(block).not.toContain("/news/homestead-exemption-explained");
+    expect(block).not.toContain("/news/appraisal-protest-playbook");
+    expect(block).not.toContain("/news/county-appraisal-districts-explained");
+    expect(block).not.toContain("/tax-calculator");
+  });
+
   it("keeps the KTR property-tax issue guide indexable but explicitly policy-owned", () => {
     const source = issueGuides.find((guide) => guide.slug === "texas-property-tax-relief");
     if (!source) throw new Error("Missing texas-property-tax-relief guide");
