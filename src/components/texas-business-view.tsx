@@ -28,7 +28,7 @@ export const BUSINESS_SLUGS: Record<string, string[]> = {
   regulation: ["texas-energy-policy-guide", "what-local-governments-control"],
   taxation: [
     "property-tax-relief-package",
-    "county-appraisal-districts-explained",
+    "texas-property-tax-laws-explained",
     "isd-tax-burdens",
     "how-texas-counties-spend",
   ],
