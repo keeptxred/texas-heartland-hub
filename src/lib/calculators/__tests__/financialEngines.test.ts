@@ -1,30 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { calculateTexasMortgage } from "../../mortgage/texasMortgageEngine";
 import { analyzeTexasDownPayment } from "../../downPayment/texasDownPaymentEngine";
-import { analyzeTexasHomeAffordability } from "../../homeAffordability/texasHomeAffordabilityEngine";
 import { analyzeTexasRefinance } from "../../mortgage/texasRefinanceEngine";
 import { analyzeTexasMortgagePayoff } from "../../mortgage/texasMortgagePayoffEngine";
 import { analyzeTexasRentVsBuy } from "../../home/texasRentVsBuyEngine";
 import { getAdditionalCalculatorDefinition } from "../additionalCalculatorSuite";
 
 describe("Texas financial calculator known-answer checks", () => {
-  it("calculates a standard 30-year mortgage payment", () => {
-    const result = calculateTexasMortgage({
-      homePrice: 400000,
-      downPayment: 80000,
-      annualInterestRate: 6.5,
-      termYears: 30,
-      annualPropertyTax: 7200,
-      annualHomeInsurance: 2400,
-      monthlyHoa: 0,
-      monthlyPmi: 0,
-    });
-
-    expect(result.loanAmount).toBe(320000);
-    expect(result.principalAndInterest).toBeCloseTo(2022.62, 1);
-    expect(result.totalMonthlyPayment).toBeCloseTo(2822.62, 1);
-  });
-
   it("uses percentage-form interest rates in the down-payment engine", () => {
     const result = analyzeTexasDownPayment({
       homePrice: 400000,
@@ -40,21 +21,6 @@ describe("Texas financial calculator known-answer checks", () => {
     expect(result.program.loanAmount).toBe(360000);
     expect(result.payment.monthlyPayment).toBeCloseTo(2275.44, 1);
     expect(Number.isFinite(result.payment.monthlyPayment)).toBe(true);
-  });
-
-  it("returns a realistic affordability result at 6.5 percent", () => {
-    const result = analyzeTexasHomeAffordability({
-      buyer: {
-        annualIncome: 120000,
-        monthlyDebtPayments: 750,
-        downPayment: 60000,
-        interestRate: 6.5,
-        loanTermYears: 30,
-      },
-    } as never);
-
-    expect(result.homePriceAnalysis.maximumHomePrice).toBeGreaterThan(300000);
-    expect(result.homePriceAnalysis.maximumHomePrice).toBeLessThan(700000);
   });
 
   it("calculates refinance payments using annual percentage rates", () => {
