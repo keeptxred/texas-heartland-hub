@@ -131,6 +131,15 @@ const retiredFiles = [
   'src/data/seo/equityGrowthSEO.ts',
   'src/data/sitemap/equityGrowthSitemap.ts',
   'src/lib/analytics/equityGrowthAnalytics.ts',
+  'src/components/calculators/CalculatorPageTemplate.tsx',
+  'src/components/calculators/CalculatorFAQ.tsx',
+  'src/components/calculators/RelatedTools.tsx',
+  'src/components/calculators/CalculatorHero.tsx',
+  'src/components/calculators/CalculatorDisclaimer.tsx',
+  'src/components/calculators/CalculatorShareCard.tsx',
+  'src/components/calculators/FinancialTrustPanel.tsx',
+  'src/data/calculators.ts',
+  'src/lib/calculators/calculatorTypes.ts',
   'src/lib/property-address-lookup.ts',
   'src/routes/api/public/property-address-lookup.ts',
   'src/routes/texas.index.tsx',
@@ -146,6 +155,15 @@ const retiredFiles = [
 
 for (const file of retiredFiles) {
   if (fs.existsSync(file)) errors.push(`Retired lifestyle implementation returned: ${file}`);
+}
+
+const retiredDirectories = [
+  'src/components/calculators',
+  'src/lib/calculators',
+];
+
+for (const directory of retiredDirectories) {
+  if (fs.existsSync(directory)) errors.push(`Retired lifestyle implementation directory returned: ${directory}`);
 }
 
 const registryPath = 'src/shared/texas-platform/registry.ts';
