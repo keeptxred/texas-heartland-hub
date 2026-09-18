@@ -22,6 +22,18 @@ describe("article image attribution", () => {
     });
   });
 
+  it("credits the reusable LUPE organization image", () => {
+    expect(
+      getArticleImageAttribution(
+        "https://commons.wikimedia.org/wiki/Special:Redirect/file/Lupe_logo_jpeg.jpg",
+      ),
+    ).toMatchObject({
+      credit: "TE(HIST 316)",
+      licenseName: "CC BY-SA 4.0",
+      licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+    });
+  });
+
   it("fails closed for unregistered external images instead of inventing credit", () => {
     expect(getArticleImageAttribution("https://example.com/photo.jpg")).toBeNull();
     expect(hasRequiredArticleImageAttribution("https://example.com/photo.jpg")).toBe(false);
