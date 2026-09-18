@@ -427,7 +427,12 @@ function ArticlePage() {
 
         <AdSlot placement="top" />
 
-        <ContextualAffiliatePanel pathname={`/news/${article.slug}`} />
+        <ContextualAffiliatePanel
+          pathname={`/news/${article.slug}`}
+          title={article.title}
+          dek={article.dek}
+          category={article.category}
+        />
 
         {body.sections.map((sec, i) => (
           <section key={i} className="mt-12 md:mt-14 first:mt-10">
