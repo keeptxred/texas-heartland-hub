@@ -159,6 +159,7 @@ for (const file of retiredFiles) {
 
 const retiredDirectories = [
   'src/components/calculators',
+  'src/lib/calculators',
 ];
 
 for (const directory of retiredDirectories) {
