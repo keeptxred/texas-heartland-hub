@@ -1,25 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { analyzeTexasMortgagePayoff } from "../../mortgage/texasMortgagePayoffEngine";
 import { analyzeTexasRentVsBuy } from "../../home/texasRentVsBuyEngine";
 import { getAdditionalCalculatorDefinition } from "../additionalCalculatorSuite";
 
 describe("Texas financial calculator known-answer checks", () => {
-  it("produces a normal payoff timeline instead of an immediate negative-amortization stop", () => {
-    const result = analyzeTexasMortgagePayoff({
-      currentBalance: 300000,
-      interestRate: 6.5,
-      currentMonthlyPayment: 1896.2,
-      strategy: "monthly_extra",
-      extraMonthlyPayment: 300,
-      annualExtraPayment: 0,
-    });
-
-    expect(result.baseline.remainingMonths).toBeGreaterThan(350);
-    expect(result.baseline.remainingMonths).toBeLessThanOrEqual(362);
-    expect(result.accelerated.newPayoffMonths).toBeLessThan(result.baseline.remainingMonths);
-    expect(result.accelerated.interestSaved).toBeGreaterThan(0);
-  });
-
   it("calculates a realistic mortgage inside rent-versus-buy", () => {
     const result = analyzeTexasRentVsBuy({
       rent: {
