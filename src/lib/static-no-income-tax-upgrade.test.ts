@@ -77,12 +77,19 @@ describe("Texas no-income-tax static authority upgrade", () => {
   it("links the explainer into KTR's property-tax authority cluster", () => {
     const body = renderedBody();
     const text = JSON.stringify(body);
-    expect(text).toContain("/texas/property-taxes-2026");
     expect(text).toContain("/news/texas-property-tax-laws-explained");
+    expect(text).not.toContain("/texas/property-taxes-2026");
     expect(body.related).toEqual(expect.arrayContaining([
-      "texas-property-tax-guide",
       "texas-property-tax-laws-explained",
+      "what-local-governments-control",
+      "how-texas-counties-spend",
+      "texas-school-finance-explained",
+    ]));
+    expect(body.related).not.toEqual(expect.arrayContaining([
+      "texas-property-tax-guide",
       "homestead-exemption-explained",
+      "appraisal-protest-playbook",
+      "county-appraisal-districts-explained",
     ]));
   });
 
