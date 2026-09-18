@@ -29,7 +29,10 @@ import type { HeadlineVariants } from "@/lib/ctr-score";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 import { visibleArticleDates } from "@/lib/article-visible-dates";
-import { getArticleImageAttribution } from "@/lib/article-image-attribution";
+import {
+  getArticleImageAttribution,
+  getGeneratedArticleImageDisclosure,
+} from "@/lib/article-image-attribution";
 
 type StructuredArticleBody = ArticleBody & { entities?: EvergreenBody["entities"] };
 type RenderedArticle = Omit<Article, "category"> & {
@@ -360,6 +363,7 @@ function ArticlePage() {
   const authorHref = author ? `/authors/${author.slug}` : `/authors/${authorSlug(article.author)}`;
   const imageAlt = article.imageAlt ?? article.title;
   const imageAttribution = getArticleImageAttribution(article.image);
+  const generatedImageDisclosure = getGeneratedArticleImageDisclosure(article.image);
 
   return (
     <article className="mx-auto max-w-4xl px-4 sm:px-6 py-10 sm:py-14">
@@ -444,6 +448,11 @@ function ArticlePage() {
               </a>
               . {imageAttribution.usageNote}
             </span>
+          </figcaption>
+        ) : null}
+        {!imageAttribution && generatedImageDisclosure ? (
+          <figcaption className="mt-2 text-xs leading-relaxed text-muted-foreground">
+            {generatedImageDisclosure}
           </figcaption>
         ) : null}
       </figure>
