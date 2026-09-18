@@ -34,6 +34,17 @@ describe("article image attribution", () => {
     });
   });
 
+  it("identifies the exact Texas Stock Exchange logo and public-domain basis", () => {
+    expect(
+      getArticleImageAttribution(
+        "https://commons.wikimedia.org/wiki/Special:Redirect/file/TXSE_logo_Sep_2024.svg",
+      ),
+    ).toMatchObject({
+      credit: "TXSE Group Inc.",
+      licenseName: "Public domain (PD-textlogo)",
+    });
+  });
+
   it("fails closed for unregistered external images instead of inventing credit", () => {
     expect(getArticleImageAttribution("https://example.com/photo.jpg")).toBeNull();
     expect(hasRequiredArticleImageAttribution("https://example.com/photo.jpg")).toBe(false);
