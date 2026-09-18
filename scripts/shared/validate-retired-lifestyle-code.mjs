@@ -157,6 +157,14 @@ for (const file of retiredFiles) {
   if (fs.existsSync(file)) errors.push(`Retired lifestyle implementation returned: ${file}`);
 }
 
+const retiredDirectories = [
+  'src/components/calculators',
+];
+
+for (const directory of retiredDirectories) {
+  if (fs.existsSync(directory)) errors.push(`Retired lifestyle implementation directory returned: ${directory}`);
+}
+
 const registryPath = 'src/shared/texas-platform/registry.ts';
 if (!fs.existsSync(registryPath)) {
   errors.push(`Missing ${registryPath}`);
