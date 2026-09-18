@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import {
   getKtrAffiliatePlacement,
   type KtrAffiliateMarket,
@@ -102,7 +103,7 @@ function trackResourceReferral(label: string, placement: string, destination: st
   window.dispatchEvent(new CustomEvent("ktr:resource-referral-click", { detail }));
 }
 
-function AffiliateDisclosure({ children }: { children: React.ReactNode }) {
+function AffiliateDisclosure({ children }: { children: ReactNode }) {
   return (
     <p className="mt-4 text-[11px] leading-5 text-muted-foreground">
       Affiliate disclosure: {children}
@@ -119,7 +120,7 @@ function CardShell({
   eyebrow: string;
   title: string;
   body: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <aside className="border-2 border-primary/40 bg-background p-6 shadow-sm sm:p-7">
@@ -305,7 +306,7 @@ export function ContextualAffiliatePanel({
   const placement = getKtrAffiliatePlacement({ pathname, title, dek, category });
   if (!placement) return null;
 
-  let content: React.ReactNode = null;
+  let content: ReactNode = null;
 
   switch (placement.kind) {
     case "school-supplies":
