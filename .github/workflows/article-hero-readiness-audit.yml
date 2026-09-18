@@ -116,7 +116,7 @@ jobs:
               --max-time 180 \
               -H 'accept: application/json' \
               -H "Authorization: Bearer ${oidc_token}" \
-              "${endpoint}?slug=${encoded_slug}&repair=0" || echo 000)
+              "${endpoint}?slug=${encoded_slug}&repair=1" || echo 000)
             echo "hero slug=${slug} HTTP ${status}"
             cat "$output" 2>/dev/null || true
             echo

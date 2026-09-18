@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildExhaustedHeroRecoveryNote,
   buildHeroReadinessSubject,
   hasHeroVisualReadinessProvenance,
   isAuthoritativeOfficialGraphic,
@@ -63,6 +64,23 @@ describe("article hero visual readiness", () => {
       image_validation_note: "Primary-subject remediation: awaiting first governed audit",
       quality_flags: [],
     })).toBe(false);
+  });
+
+  it("keeps an exhausted one-shot generated repair quarantined", () => {
+    const note = buildExhaustedHeroRecoveryNote(
+      "v4",
+      "stored candidate omitted the defining named subject",
+      "Generated image failed Cloudflare story-match validation",
+    );
+
+    expect(note).toContain("stored-cloudflare-vision-v4 rejected:");
+    expect(note).toContain("generated recovery failed:");
+    expect(isHeroReadinessQuarantined({
+      image_candidate_url: "https://commons.wikimedia.org/wiki/Special:Redirect/file/example.jpg",
+      image_generation_status: "failed",
+      image_validation_note: note,
+      quality_flags: ["image_requires_visual_validation"],
+    })).toBe(true);
   });
 
   it("exempts only tightly scoped authoritative NOAA graphics", () => {

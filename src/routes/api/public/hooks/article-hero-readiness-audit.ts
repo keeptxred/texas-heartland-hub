@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
+  buildExhaustedHeroRecoveryNote,
   buildHeroReadinessSubject,
   hasHeroVisualReadinessProvenance,
   isAuthoritativeOfficialGraphic,
@@ -354,9 +355,30 @@ async function rejectHero(db: any, row: AuditRow, candidate: string, reason: str
 
   if (!repair) return { accepted: false as const, retainedPreviousHero: false as const, repaired: false as const, note };
   const generated = await generateFeaturedImageForSlugDirect(row.slug, true);
-  return generated.ok
-    ? { accepted: false as const, retainedPreviousHero: false as const, repaired: true as const, replacementUrl: generated.url, note }
-    : { accepted: false as const, retainedPreviousHero: false as const, repaired: false as const, repairError: generated.error, note };
+  if (generated.ok) {
+    return { accepted: false as const, retainedPreviousHero: false as const, repaired: true as const, replacementUrl: generated.url, note };
+  }
+
+  // The generator records its own failure note. Restore the stored-candidate
+  // rejection prefix afterward so this exhausted candidate remains quarantined
+  // instead of re-entering the hourly queue and consuming generation repeatedly.
+  const exhaustedNote = buildExhaustedHeroRecoveryNote(STORED_HERO_POLICY_VERSION, reason, generated.error);
+  const { error: quarantineError } = await db.from("daily_articles").update({
+    image_candidate_url: candidate,
+    image_candidate_alt_text: row.image_candidate_alt_text?.trim() || row.image_alt_text?.trim() || null,
+    image_generation_status: "failed",
+    image_validation_note: exhaustedNote,
+    quality_flags: flags,
+  }).eq("slug", row.slug);
+  if (quarantineError) throw new Error(quarantineError.message);
+
+  return {
+    accepted: false as const,
+    retainedPreviousHero: false as const,
+    repaired: false as const,
+    repairError: generated.error,
+    note: exhaustedNote,
+  };
 }
 
 async function post({ request }: { request: Request }) {

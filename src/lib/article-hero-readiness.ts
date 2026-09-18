@@ -86,6 +86,15 @@ export function hasHeroVisualReadinessProvenance(
     && isAuthoritativeOfficialGraphic(heroUrl);
 }
 
+export function buildExhaustedHeroRecoveryNote(
+  policyVersion: string,
+  rejectionReason: string,
+  repairError: string,
+): string {
+  const version = policyVersion.trim().toLowerCase().replace(/[^a-z0-9.-]/g, "") || "v4";
+  return `stored-cloudflare-vision-${version} rejected: ${rejectionReason.slice(0, 520)}; generated recovery failed: ${repairError.slice(0, 360)}`.slice(0, 1000);
+}
+
 export function isHeroReadinessQuarantined(row: Pick<ArticleHeroReadinessRow,
   "image_candidate_url" | "image_generation_status" | "image_validation_note" | "quality_flags"
 >): boolean {
