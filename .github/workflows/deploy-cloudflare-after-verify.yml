@@ -426,6 +426,7 @@ jobs:
           header_file="$(mktemp)"
           trap 'rm -f "$body_file" "$header_file"' EXIT
           status="$(curl --retry 5 --retry-delay 2 --retry-all-errors --silent --show-error \
+            -H 'x-keeptxred-deployment-smoke: canonical' \
             -D "$header_file" -o "$body_file" -w '%{http_code}' \
             "$PREVIEW_URL/api/public/payments/health")"
           python3 - "$status" "$header_file" "$body_file" <<'PY'
