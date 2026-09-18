@@ -4,29 +4,15 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - "src/components/calculators/**"
-      - "src/components/budget/**"
-      - "src/components/closingCosts/**"
-      - "src/components/cost/**"
-      - "src/components/downPayment/**"
-      - "src/components/equity/**"
-      - "src/components/home/**"
-      - "src/components/homeAffordability/**"
-      - "src/components/income/**"
-      - "src/components/mortgage/**"
-      - "src/data/{budget,closingCosts,cost,downPayment,equity,home,homeAffordability,income,mortgage}/**"
-      - "src/lib/{budget,closingCosts,cost,downPayment,equity,home,homeAffordability,income,mortgage,calculators}/**"
-      - "src/pages/{budget,closingCosts,cost,downPayment,equity,home,homeAffordability,income,mortgage}/**"
-      - "src/types/{budget,closingCosts,cost,downPayment,equity,home,homeAffordability,income,mortgage}/**"
-      - "package.json"
-      - "bun.lock"
-      - "tsconfig.calculators.json"
       - "src/routes/*calculator*.tsx"
       - "src/routes/moving-checklist.tsx"
       - "src/routes/migrated-tool-redirects.test.ts"
       - "src/lib/migrated-tool-canonical.ts"
       - "src/lib/migrated-tool-canonical.test.ts"
+      - "scripts/shared/validate-retired-lifestyle-code.mjs"
       - ".github/workflows/calculator-validation.yml"
+      - "package.json"
+      - "bun.lock"
   workflow_dispatch:
 
 permissions:
@@ -49,65 +35,17 @@ jobs:
           bun-version: 1.3.14
       - name: Install dependencies
         run: bun install --frozen-lockfile
-      - name: Typecheck calculator code
-        run: bunx tsc -p tsconfig.calculators.json --pretty false
+      - name: Typecheck surviving calculator handoff contracts
+        run: bunx tsc --noEmit --pretty false
       - name: Run calculator ownership tests
         run: bunx vitest run src/routes/migrated-tool-redirects.test.ts src/lib/migrated-tool-canonical.test.ts
-      - name: Lint calculator code
+      - name: Validate retired calculator code stays retired
+        run: node scripts/shared/validate-retired-lifestyle-code.mjs
+      - name: Lint calculator handoff contracts
         run: |
-          paths=(
-            src/components/calculators
-            src/components/budget
-            src/components/closingCosts
-            src/components/cost
-            src/components/downPayment
-            src/components/equity
-            src/components/home
-            src/components/homeAffordability
-            src/components/income
-            src/components/mortgage
-            src/data/budget
-            src/data/closingCosts
-            src/data/cost
-            src/data/downPayment
-            src/data/equity
-            src/data/home
-            src/data/homeAffordability
-            src/data/income
-            src/data/mortgage
-            src/lib/budget
-            src/lib/closingCosts
-            src/lib/cost
-            src/lib/downPayment
-            src/lib/equity
-            src/lib/home
-            src/lib/homeAffordability
-            src/lib/income
-            src/lib/mortgage
-            src/pages/budget
-            src/pages/closingCosts
-            src/pages/cost
-            src/pages/downPayment
-            src/pages/equity
-            src/pages/home
-            src/pages/homeAffordability
-            src/pages/income
-            src/pages/mortgage
-            src/types/budget
-            src/types/closingCosts
-            src/types/cost
-            src/types/downPayment
-            src/types/equity
-            src/types/home
-            src/types/homeAffordability
-            src/types/income
-            src/types/mortgage
-          )
-          existing=()
-          for path in "${paths[@]}"; do
-            if [ -e "$path" ]; then existing+=("$path"); fi
-          done
-          bunx eslint --rule 'prettier/prettier: off' "${existing[@]}" \
+          bunx eslint --rule 'prettier/prettier: off' \
             src/lib/migrated-tool-canonical.ts \
             src/lib/migrated-tool-canonical.test.ts \
-            src/routes/migrated-tool-redirects.test.ts
+            src/routes/migrated-tool-redirects.test.ts \
+            src/routes/*calculator*.tsx \
+            src/routes/moving-checklist.tsx
