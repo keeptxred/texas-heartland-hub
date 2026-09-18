@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
   buildHeroReadinessSubject,
-  CURRENT_CURRENT_STORED_HERO_POLICY_VERSION,
+  CURRENT_STORED_HERO_POLICY_VERSION,
   hasHeroVisualReadinessProvenance,
   isAuthoritativeOfficialGraphic,
   isHeroReadinessQuarantined,
