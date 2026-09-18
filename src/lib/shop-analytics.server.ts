@@ -43,8 +43,11 @@ function response(body: unknown, status = 200) {
 
 function cleanString(value: unknown, maxLength: number) {
   if (typeof value !== "string") return "";
-  return value
-    .replace(/[\u0000-\u001f\u007f]/g, " ")
+  return Array.from(value, (character) => {
+    const code = character.charCodeAt(0);
+    return code < 32 || code === 127 ? " " : character;
+  })
+    .join("")
     .replace(/\s+/g, " ")
     .trim()
     .slice(0, maxLength);
