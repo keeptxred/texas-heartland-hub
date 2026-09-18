@@ -35,7 +35,7 @@ const MARKET_SIGNALS: ReadonlyArray<[KtrAffiliateMarket, RegExp]> = [
   ],
   [
     "Houston",
-    /\b(houston|astros|texans|rockets|dynamo|nrg stadium|toyota center|shell energy stadium)\b/i,
+    /\b(houston|astros|houston texans|rockets|dynamo|nrg stadium|toyota center|shell energy stadium)\b/i,
   ],
   [
     "San Antonio",
