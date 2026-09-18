@@ -28,7 +28,7 @@ const RULES: Rule[] = [
   },
   {
     slug: "texas-oil-gas-federal-regulation",
-    phrases: ["oil and gas", "oil & gas", "permian basin", "eagle ford", "railroad commission", "drilling", "fracking", "lng", "refinery", "pipeline"],
+    phrases: ["oil and gas", "oil & gas", "permian basin", "eagle ford", "railroad commission", "drilling", "fracking", "lng", "refinery", "oil pipeline", "gas pipeline", "pipeline safety", "pipeline regulation"],
     categoryHints: ["energy", "business"],
   },
   {
