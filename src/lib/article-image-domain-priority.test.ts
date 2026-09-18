@@ -30,6 +30,15 @@ describe("article image domain priority", () => {
     ).toBe("military");
   });
 
+  it("does not treat a food court phrase as a legal story", () => {
+    expect(
+      inferArticleImageDomain(
+        "Houston’s Latest Viral Food Court Is Facebook Marketplace",
+        "Houston residents are discovering locally sold meals and viral food listings.",
+      ),
+    ).not.toBe("legal");
+  });
+
   it("does not retain the SVG military-honor bypass", () => {
     const source = readFileSync(new URL("./featured-image.functions.ts", import.meta.url), "utf8");
     expect(source).not.toContain("PURPLE_HEART_IMAGE_URL");

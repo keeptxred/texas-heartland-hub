@@ -11,6 +11,9 @@ const AUDITABLE_EXTERNAL_HOSTS = new Set([
   "www.keeptxred.com",
 ]);
 
+export const CURRENT_STORED_HERO_POLICY_VERSION = "v5";
+const ACCEPTED_STORED_HERO_POLICY_VERSIONS = new Set(["v4", CURRENT_STORED_HERO_POLICY_VERSION]);
+
 export type ArticleHeroReadinessRow = {
   slug: string;
   title: string;
@@ -75,7 +78,13 @@ export function hasHeroVisualReadinessProvenance(
   heroUrl?: string | null,
 ): boolean {
   const value = (note ?? "").trim().toLowerCase();
-  if (value.includes("cloudflare-vision ok:") || /cloudflare-vision-v\d+\s+ok:/.test(value)) return true;
+  // Final publication readiness is deliberately policy-versioned. Generated-image
+  // validation and older stored-photo policies are useful upstream gates, but they
+  // do not prove that the image has passed the CURRENT independent stored-hero
+  // review. Re-auditing them once prevents old, looser semantic decisions from
+  // becoming permanent exemptions when the editorial image policy gets stricter.
+  const storedMatch = value.match(/^stored-cloudflare-vision-(v\d+) ok:/);
+  if (storedMatch && ACCEPTED_STORED_HERO_POLICY_VERSIONS.has(storedMatch[1])) return true;
 
   // Only tightly scoped official government graphics may bypass pixel validation.
   // Historical/manual Commons notes sometimes used the authoritative-image-exempt
@@ -103,7 +112,7 @@ export function isHeroReadinessQuarantined(row: Pick<ArticleHeroReadinessRow,
   const note = (row.image_validation_note ?? "").trim().toLowerCase();
   return Boolean(candidate)
     && status === "failed"
-    && note.startsWith("stored-cloudflare-vision-v4 rejected:")
+    && note.startsWith(`stored-cloudflare-vision-${CURRENT_STORED_HERO_POLICY_VERSION} rejected:`)
     && (row.quality_flags ?? []).includes("image_requires_visual_validation");
 }
 
@@ -159,7 +168,7 @@ export function buildHeroReadinessSubject(row: ArticleHeroReadinessRow): Subject
   }
 
   const baseSubject = domain === "legal"
-    ? `${title}. A real Texas courthouse, courtroom, disputed object, institution, or concrete practice directly representing the judicial story. ${intro}`.trim()
+    ? `${title}. A strong legal-story hero may directly depict a central named person foregrounded by the headline, or the exact Texas court, courthouse, governing institution, disputed object, or concrete practice central to the case. A generic courthouse is not a substitute for a headline-defining named person when the pictured court is not the exact institution materially involved. ${intro}`.trim()
     : `${title}. ${intro}`.trim();
 
   return {

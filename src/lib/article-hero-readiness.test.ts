@@ -15,13 +15,14 @@ describe("article hero visual readiness", () => {
     )).toBe(false);
   });
 
-  it("accepts actual visual-validation provenance across stored-photo policy versions", () => {
-    expect(hasHeroVisualReadinessProvenance("cloudflare-vision ok: direct story match")).toBe(true);
-    expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision ok: direct story match")).toBe(true);
-    expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v2 ok: representative archive photo passed")).toBe(true);
-    expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v3 ok: entity-aware archive photo passed")).toBe(true);
+  it("requires the current stored-photo policy instead of grandfathering older or generated verdicts", () => {
+    expect(hasHeroVisualReadinessProvenance("cloudflare-vision ok: direct story match")).toBe(false);
+    expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision ok: direct story match")).toBe(false);
+    expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v2 ok: representative archive photo passed")).toBe(false);
+    expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v3 ok: entity-aware archive photo passed")).toBe(false);
     expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v4 ok: source-grounded archive photo passed")).toBe(true);
-    expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v19 ok: future version passed")).toBe(true);
+    expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v5 ok: current exact-subject archive photo passed")).toBe(true);
+    expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v19 ok: future version passed")).toBe(false);
     expect(hasHeroVisualReadinessProvenance(
       "authoritative-image-exempt: official NHC forecast graphic",
       "https://www.nhc.noaa.gov/storm_graphics/AT05/AL052026_3day_cone.png",
@@ -34,14 +35,15 @@ describe("article hero visual readiness", () => {
       "authoritative-image-exempt: official NHC forecast graphic",
     )).toBe(false);
     expect(hasHeroVisualReadinessProvenance("verified-shared-hero: reused validated infrastructure hero")).toBe(false);
-    expect(hasHeroVisualReadinessProvenance("verified-shared-hero: cloudflare-vision ok: reused validated infrastructure hero")).toBe(true);
+    expect(hasHeroVisualReadinessProvenance("verified-shared-hero: cloudflare-vision ok: reused validated infrastructure hero")).toBe(false);
   });
 
-  it("rechecks older rejects under v4 and quarantines only v4 rejects", () => {
+  it("rechecks older rejects under v5 and quarantines only current v5 rejects", () => {
     for (const note of [
       "stored-cloudflare-vision rejected: exact-action rule rejected the archive photo",
       "stored-cloudflare-vision-v2 rejected: data-center override rejected the central entity",
       "stored-cloudflare-vision-v3 rejected: source identity was not available",
+      "stored-cloudflare-vision-v4 rejected: exact named legal subject was previously excluded",
     ]) {
       expect(isHeroReadinessQuarantined({
         image_candidate_url: "https://commons.wikimedia.org/wiki/Special:Redirect/file/example.jpg",
@@ -54,7 +56,7 @@ describe("article hero visual readiness", () => {
     expect(isHeroReadinessQuarantined({
       image_candidate_url: "https://commons.wikimedia.org/wiki/Special:Redirect/file/example.jpg",
       image_generation_status: "failed",
-      image_validation_note: "stored-cloudflare-vision-v4 rejected: source-grounded rule still failed",
+      image_validation_note: "stored-cloudflare-vision-v5 rejected: source-grounded rule still failed",
       quality_flags: ["image_requires_visual_validation"],
     })).toBe(true);
 
@@ -131,6 +133,19 @@ describe("article hero visual readiness", () => {
       body_json: { intro: ["The Aggies controlled the football game from the opening quarter."] },
     });
     expect(subject.domain).toBe("sports");
+  });
+
+  it("keeps a headline-defining named person eligible in a legal story", () => {
+    const subject = buildHeroReadinessSubject({
+      slug: "2026-08-08-james-harden-gun-charge-dismissed",
+      title: "James Harden’s Houston Gun Charge Dismissed After Alternative Resolution Program",
+      category: "Non-Political",
+      dek: "A Houston charge involving James Harden was dismissed after an alternative resolution.",
+      body_json: { intro: ["The legal case involving James Harden ended after an alternative resolution program."] },
+    });
+    expect(subject.domain).toBe("legal");
+    expect(subject.concreteSubject).toContain("central named person");
+    expect(subject.concreteSubject).toContain("generic courthouse is not a substitute");
   });
 
   it("requires ordinary story subjects to read from the pixels rather than hidden metadata", () => {
