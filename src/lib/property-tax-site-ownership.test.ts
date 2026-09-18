@@ -110,6 +110,10 @@ describe("property-tax site ownership", () => {
     const lawTopic = readFileSync("src/data/law-topic-property-tax-authority.ts", "utf8");
     expect(lawTopic).toContain("https://texasdefined.com/decide/property-taxes");
     expect(lawTopic).not.toContain('{ label: "Property Tax Calculator", href: "/tools/property-tax-calculator" }');
+
+    const noIncomeTaxUpgrade = readFileSync("src/lib/static-no-income-tax-upgrade.ts", "utf8");
+    expect(noIncomeTaxUpgrade).toContain("https://texasdefined.com/learn/property-taxes");
+    expect(noIncomeTaxUpgrade).not.toContain("](/texas/property-taxes-2026)");
   });
 
   it("keeps the KTR property-tax law article policy-scoped", () => {
