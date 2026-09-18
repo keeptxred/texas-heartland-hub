@@ -4,6 +4,7 @@ import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 import { installDirectAiFetch } from "./lib/direct-ai-fetch";
 import { buildVehicleHandoffLocation } from "./lib/vehicle-handoff-redirect";
+import { shopAnalyticsResponse } from "./lib/shop-analytics.server";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -266,6 +267,9 @@ export default {
 
     const canonicalRedirect = canonicalHostRedirect(appRequest);
     if (canonicalRedirect) return canonicalRedirect;
+
+    const shopAnalytics = await shopAnalyticsResponse(appRequest, env);
+    if (shopAnalytics) return shopAnalytics;
 
     const adsTxt = adsTxtResponse(appRequest);
     if (adsTxt) return adsTxt;
