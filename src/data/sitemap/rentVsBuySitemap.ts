@@ -1,2 +1,0 @@
-export const rentVsBuySitemap={url:"https://keeptxred.com/texas-rent-vs-buy-calculator",lastModified:new Date().toISOString(),changeFrequency:"monthly",priority:.95};
-export const generateRentVsBuyLocationPages=(locations:string[])=>locations.map(location=>({url:`https://keeptxred.com/${location}-rent-vs-buy-calculator`,lastModified:new Date().toISOString(),changeFrequency:"monthly",priority:.85}));
