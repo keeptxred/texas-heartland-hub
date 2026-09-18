@@ -36,7 +36,7 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
       - name: Typecheck surviving calculator handoff contracts
-        run: bunx tsc --noEmit --pretty false
+        run: bun run typecheck
       - name: Run calculator ownership tests
         run: bunx vitest run src/routes/migrated-tool-redirects.test.ts src/lib/migrated-tool-canonical.test.ts
       - name: Validate retired calculator code stays retired
