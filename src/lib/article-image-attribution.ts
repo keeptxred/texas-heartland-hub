@@ -110,6 +110,14 @@ const ATTRIBUTIONS: AttributionEntry[] = [
     licenseUrl: "https://creativecommons.org/licenses/by/2.5/",
     caption: "Representative archive Texas A&M football photo from the 2006 Lone Star Showdown; not the 2026 Missouri State game.",
   },
+  {
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Lupe_logo_jpeg.jpg",
+    credit: "TE(HIST 316)",
+    sourceUrl: `${COMMONS}Lupe_logo_jpeg.jpg`,
+    licenseName: "CC BY-SA 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+    caption: "La Unión del Pueblo Entero (LUPE) logo, used to identify the organization discussed in this article.",
+  },
 ].map((entry) => ({
   ...entry,
   usageNote: "Source image unmodified; page presentation may crop it responsively.",
