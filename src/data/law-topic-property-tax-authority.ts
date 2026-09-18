@@ -76,7 +76,7 @@ export const PROPERTY_TAX_LAW_TOPIC: LawTopic = {
   related: [
     { label: "Texas Property Tax Data", href: "/data/property-tax" },
     { label: "Property Tax Policy Tracker", href: "/policy/property-taxes" },
-    { label: "Property Tax Calculator", href: "/tools/property-tax-calculator" },
+    { label: "TexasDefined Property Tax Tools", href: "https://texasdefined.com/decide/property-taxes" },
     { label: "The Texas Case for Eliminating Property Taxes", href: "/texas-case/eliminate-property-taxes" },
     { label: "Texas bills", href: "/bills" },
   ],
