@@ -1,3 +1,4 @@
+-- BULK_ARTICLE_MAINTENANCE
 -- Stage an exact, reusable John Whitmire photograph for the governed
 -- stored-hero visual audit. Do not replace the currently approved hero until
 -- the common vision gate accepts this candidate.
