@@ -58,7 +58,11 @@ function chooseVisualDomain(text: string): Domain {
   // identity story into a festival or heritage image assignment.
   if (POLITICAL_IDENTITY_RE.test(text)) return "politics";
 
-  const matches = matchedDomains(text);
+  // "Food court" is a retail/dining phrase, not a judicial signal. Remove
+  // that narrow lexical collision before evaluating the legal-domain keyword
+  // "court" so food stories cannot be forced into courthouse imagery.
+  const domainText = text.replace(/\bfood courts?\b/gi, "food hall");
+  const matches = matchedDomains(domainText);
   if (matches.size === 0) return "general";
 
   // Multi-topic governor/legislative agenda stories are policy stories, not a
