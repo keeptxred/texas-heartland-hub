@@ -65,7 +65,7 @@ export const LAW_TOPICS = {
   },
   "property-tax": {
     label: "Property Tax",
-    description: "Homestead exemptions, appraisal protests, tax relief, and Texas property-tax procedure.",
+    description: "State property-tax law, appraisal authority, tax-rate rules, relief legislation, school finance, and taxpayer appeal rights.",
   },
   "legislative-process": {
     label: "Legislative Process",
