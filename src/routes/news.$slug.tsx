@@ -12,6 +12,7 @@ import { getCloudArticleIndexability } from "@/lib/article-indexability.function
 import { isBadYearSlug, parseArticleSlug } from "@/lib/article-slug-integrity";
 import { normalizeCategoryName, type CategoryName } from "@/lib/articles-by-category";
 import { AdSlot } from "@/components/ad-slot";
+import { ContextualAffiliatePanel } from "@/components/monetization/contextual-affiliate-panel";
 import { NewsletterSignup } from "@/components/newsletter-signup";
 import { GooglePreferredSourceCta } from "@/components/google-preferred-source-cta";
 import {
@@ -425,6 +426,8 @@ function ArticlePage() {
         ))}
 
         <AdSlot placement="top" />
+
+        <ContextualAffiliatePanel pathname={`/news/${article.slug}`} />
 
         {body.sections.map((sec, i) => (
           <section key={i} className="mt-12 md:mt-14 first:mt-10">

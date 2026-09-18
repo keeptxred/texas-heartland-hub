@@ -55,6 +55,16 @@ describe("matchArticleIssueGuides", () => {
     expect(matches[0]?.slug).toBe("texas-state-federal-power");
   });
 
+  it("does not treat a teaching pipeline as an oil and gas pipeline", () => {
+    const matches = matchArticleIssueGuides({
+      title: "Gov. Abbott Proposes Ban on H-1B Visa Use for Texas Public Schools",
+      dek: "Texas school districts say the proposal could affect teacher shortages.",
+      category: "Elections",
+      text: "If the expectation is to eliminate these teachers, then we're going to need more Texans in the teaching pipeline.",
+    });
+    expect(matches.some((match) => match.slug === "texas-oil-gas-federal-regulation")).toBe(false);
+  });
+
   it("does not match unrelated sports coverage", () => {
     const matches = matchArticleIssueGuides({
       title: "Astros win extra-inning thriller in Houston",

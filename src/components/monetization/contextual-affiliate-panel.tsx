@@ -1,6 +1,3 @@
-import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
-import { useLocation } from "@tanstack/react-router";
 import { getKtrAffiliatePlacement } from "@/lib/affiliate-placements";
 
 const REALLY_GOOD_STUFF_URL = "https://www.anrdoezrs.net/click-101876465-17106455";
@@ -28,7 +25,7 @@ function trackAffiliateClick(partner: string, placement: string, label: string) 
   window.dispatchEvent(new CustomEvent("ktr:affiliate-click", { detail }));
 }
 
-function SchoolSupplyAffiliateCard({ placementId }: { placementId: string }) {
+export function SchoolSupplyAffiliateCard({ placementId }: { placementId: string }) {
   return (
     <aside
       aria-label="Optional school and classroom resources"
@@ -85,68 +82,13 @@ function SchoolSupplyAffiliateCard({ placementId }: { placementId: string }) {
   );
 }
 
-export function ContextualAffiliatePanel() {
-  const { pathname } = useLocation();
+export function ContextualAffiliatePanel({ pathname }: { pathname: string }) {
   const placement = getKtrAffiliatePlacement(pathname);
-  const [target, setTarget] = useState<HTMLElement | null>(null);
+  if (!placement) return null;
 
-  useEffect(() => {
-    const headings = Array.from(
-      document.querySelectorAll<HTMLElement>("article .prose > section > h2"),
-    );
-    const previous = headings.map((heading) => heading.style.getPropertyValue("text-align"));
-    const previousPriority = headings.map((heading) => heading.style.getPropertyPriority("text-align"));
-
-    headings.forEach((heading) => heading.style.setProperty("text-align", "center", "important"));
-
-    return () => {
-      headings.forEach((heading, index) => {
-        if (previous[index]) {
-          heading.style.setProperty("text-align", previous[index], previousPriority[index]);
-        } else {
-          heading.style.removeProperty("text-align");
-        }
-      });
-    };
-  }, [pathname]);
-
-  useEffect(() => {
-    setTarget(null);
-    if (!placement) return;
-
-    const articleProse = document.querySelector<HTMLElement>("article .prose");
-    if (!articleProse) return;
-
-    let slot = articleProse.querySelector<HTMLElement>("[data-ktr-contextual-affiliate-slot]");
-    const created = !slot;
-
-    if (!slot) {
-      slot = document.createElement("div");
-      slot.setAttribute("data-ktr-contextual-affiliate-slot", "true");
-      slot.className = "not-prose my-10 md:my-12";
-
-      const firstSection = Array.from(articleProse.children).find(
-        (child) => child instanceof HTMLElement && child.tagName === "SECTION",
-      );
-
-      if (firstSection) {
-        articleProse.insertBefore(slot, firstSection);
-      } else {
-        articleProse.appendChild(slot);
-      }
-    }
-
-    setTarget(slot);
-
-    return () => {
-      if (created) slot?.remove();
-    };
-  }, [pathname, placement?.placementId]);
-
-  if (!placement || !target) return null;
-
-  return createPortal(
-    <SchoolSupplyAffiliateCard placementId={`${placement.placementId}-inline`} />,
-    target,
+  return (
+    <div className="not-prose my-10 md:my-12" data-ktr-contextual-affiliate-slot="true">
+      <SchoolSupplyAffiliateCard placementId={`${placement.placementId}-inline`} />
+    </div>
   );
 }

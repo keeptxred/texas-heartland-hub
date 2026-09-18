@@ -12,7 +12,7 @@ export function ArticleIssueContext({ matches }: { matches: ArticleIssueMatch[] 
   return (
     <aside className="not-prose my-10 border-y border-border bg-muted/30 px-5 py-6" aria-labelledby="policy-context-heading">
       <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-primary">Policy context</p>
-      <h2 id="policy-context-heading" className="mt-1 font-display text-2xl tracking-tight text-foreground">Understand the issue behind this story</h2>
+      <h2 id="policy-context-heading" className="mt-1 text-center font-display text-2xl tracking-tight text-foreground">Understand the issue behind this story</h2>
       <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
         These evergreen KTR guides explain the law, agencies, primary sources and policy framework connected to this coverage.
       </p>
