@@ -67,6 +67,28 @@ describe("KTR contextual affiliate placement guard", () => {
     ).toEqual({ kind: "sports-travel", placementId: "ktr-sports-event-travel", market: "San Antonio" });
   });
 
+  it("monetizes a real San Antonio festival story without requiring a team signal", () => {
+    expect(
+      getKtrAffiliatePlacement({
+        pathname: "/news/2026-08-09-san-antonio-frida-fest-record",
+        title: "San Antonio’s Frida Fest Wants a World Record Sea of Flower Crowns and Unibrows",
+        dek: "The 10th annual festival is inviting Texans to dress as Frida Kahlo for a Guinness World Record attempt.",
+        category: "Non-Political",
+      }),
+    ).toEqual({ kind: "sports-travel", placementId: "ktr-sports-event-travel", market: "San Antonio" });
+  });
+
+  it("does not treat a casual pickup game as travel-booking intent", () => {
+    expect(
+      getKtrAffiliatePlacement({
+        pathname: "/news/2026-08-08-victor-wembanyama-soccer-katy",
+        title: "Victor Wembanyama Surprises Katy Soccer Players With a Casual Pickup Game",
+        dek: "Videos of the Spurs star joining a local soccer game spread quickly online.",
+        category: "Sports",
+      }),
+    ).toBeNull();
+  });
+
   it("does not turn ordinary team news into travel intent", () => {
     expect(
       getKtrAffiliatePlacement({

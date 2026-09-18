@@ -26,7 +26,7 @@ const HOMEOWNER_SIGNAL =
 const ENERGY_SIGNAL =
   /\b(ercot|electricity|electric rates?|electric bill|utility bill|power bill|power grid|energy provider|energy prices?|electricity plan|power plan)\b/i;
 const SPORTS_EVENT_SIGNAL =
-  /\b(game|home opener|stadium|arena|ballpark|concert|festival|rodeo|event|match|series|playoffs?|tournament|race|weekend)\b/i;
+  /\b(home opener|home game|game day|gameday|stadium|arena|ballpark|concert|festival|fest|rodeo|event|series|playoffs?|tournament|race|weekend|tickets?|schedule)\b/i;
 
 const MARKET_SIGNALS: ReadonlyArray<[KtrAffiliateMarket, RegExp]> = [
   [
@@ -35,7 +35,7 @@ const MARKET_SIGNALS: ReadonlyArray<[KtrAffiliateMarket, RegExp]> = [
   ],
   [
     "Houston",
-    /\b(houston|astros|texans|rockets|dynamo|nrg stadium|toyota center|shell energy stadium)\b/i,
+    /\b(houston|astros|houston texans|rockets|dynamo|nrg stadium|toyota center|shell energy stadium)\b/i,
   ],
   [
     "San Antonio",
