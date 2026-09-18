@@ -29,6 +29,7 @@ import type { HeadlineVariants } from "@/lib/ctr-score";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 import { visibleArticleDates } from "@/lib/article-visible-dates";
+import { getArticleImageAttribution } from "@/lib/article-image-attribution";
 
 type StructuredArticleBody = ArticleBody & { entities?: EvergreenBody["entities"] };
 type RenderedArticle = Omit<Article, "category"> & {
@@ -358,6 +359,7 @@ function ArticlePage() {
   const author = getAuthor(article.author);
   const authorHref = author ? `/authors/${author.slug}` : `/authors/${authorSlug(article.author)}`;
   const imageAlt = article.imageAlt ?? article.title;
+  const imageAttribution = getArticleImageAttribution(article.image);
 
   return (
     <article className="mx-auto max-w-4xl px-4 sm:px-6 py-10 sm:py-14">
@@ -408,15 +410,43 @@ function ArticlePage() {
         Reporting is based on the sources and public records cited or linked in this article. Opinion and analysis are labeled and follow our <Link to="/editorial-standards" className="text-primary hover:underline">editorial standards</Link>.
       </p>
 
-      <div className={`${article.slug === "texas-policing-agencies-compared" ? "aspect-[40/21]" : "aspect-[16/9]"} overflow-hidden bg-muted my-8 md:my-10 border-2 border-foreground/10`}>
-        <img
-          src={article.image}
-          alt={imageAlt}
-          className={`size-full ${article.slug === "texas-policing-agencies-compared" ? "object-contain" : "object-cover"}`}
-          width={1280}
-          height={article.slug === "texas-policing-agencies-compared" ? 672 : 720}
-        />
-      </div>
+      <figure className="my-8 md:my-10">
+        <div className={`${article.slug === "texas-policing-agencies-compared" ? "aspect-[40/21]" : "aspect-[16/9]"} overflow-hidden bg-muted border-2 border-foreground/10`}>
+          <img
+            src={article.image}
+            alt={imageAlt}
+            className={`size-full ${article.slug === "texas-policing-agencies-compared" ? "object-contain" : "object-cover"}`}
+            width={1280}
+            height={article.slug === "texas-policing-agencies-compared" ? 672 : 720}
+          />
+        </div>
+        {imageAttribution ? (
+          <figcaption className="mt-2 text-xs leading-relaxed text-muted-foreground">
+            {imageAttribution.caption ? <span>{imageAttribution.caption} </span> : null}
+            <span>
+              Photo by{" "}
+              <a
+                href={imageAttribution.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2 hover:text-foreground"
+              >
+                {imageAttribution.credit}
+              </a>{" "}
+              via Wikimedia Commons, licensed{" "}
+              <a
+                href={imageAttribution.licenseUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2 hover:text-foreground"
+              >
+                {imageAttribution.licenseName}
+              </a>
+              . {imageAttribution.usageNote}
+            </span>
+          </figcaption>
+        ) : null}
+      </figure>
 
       <div className="prose prose-neutral mx-auto max-w-2xl prose-a:font-medium prose-a:text-primary prose-a:underline prose-a:underline-offset-2 prose-blockquote:my-8 prose-blockquote:border-l-4 prose-blockquote:pl-5 prose-blockquote:font-serif prose-blockquote:text-lg prose-blockquote:leading-8 prose-li:my-1.5">
         {body.intro.map((p, i) => (
