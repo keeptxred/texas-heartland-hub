@@ -67,6 +67,17 @@ describe("KTR contextual affiliate placement guard", () => {
     ).toEqual({ kind: "sports-travel", placementId: "ktr-sports-event-travel", market: "San Antonio" });
   });
 
+  it("does not turn ordinary team news into travel intent", () => {
+    expect(
+      getKtrAffiliatePlacement({
+        pathname: "/news/astros-trade-deadline-move",
+        title: "Astros Complete Trade Ahead of Deadline",
+        dek: "Houston adds a veteran pitcher for the stretch run.",
+        category: "Sports",
+      }),
+    ).toBeNull();
+  });
+
   it("keeps automated commercial placement off election, candidate and unrelated pages", () => {
     expect(
       getKtrAffiliatePlacement({
