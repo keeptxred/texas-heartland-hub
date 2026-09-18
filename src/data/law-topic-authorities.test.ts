@@ -19,10 +19,11 @@ describe("Law Library authority overrides", () => {
     for (const topic of LAW_TOPIC_AUTHORITIES) expect(isLawTopicIndexable(topic)).toBe(true);
   });
 
-  it("preserves current property-tax anchors", () => {
-    expect(PROPERTY_TAX_LAW_TOPIC.updated).toBe("2026-09-06");
+  it("preserves current property-tax policy anchors", () => {
+    expect(PROPERTY_TAX_LAW_TOPIC.updated).toBe("2026-09-18");
     expect(PROPERTY_TAX_LAW_TOPIC.quickAnswer).toContain("no state property tax");
-    expect(PROPERTY_TAX_LAW_TOPIC.keyRules.join(" ")).toContain("$140,000");
+    expect(PROPERTY_TAX_LAW_TOPIC.keyRules.join(" ")).toContain("Tax Code Chapter 26");
+    expect(PROPERTY_TAX_LAW_TOPIC.keyRules.join(" ")).toContain("TexasDefined");
     expect(PROPERTY_TAX_LAW_TOPIC.sources.length).toBeGreaterThanOrEqual(7);
     expect(PROPERTY_TAX_LAW_TOPIC.sources.every((source) => source.url.startsWith("https://"))).toBe(true);
   });
