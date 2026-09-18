@@ -19,7 +19,7 @@ const TERMS: Term[] = [
     term: "Appraisal Review Board (ARB)",
     definition:
       "Citizen panel that hears property tax protests at each County Appraisal District. Its decisions can be appealed to state district court.",
-    seeAlso: [{ label: "How CADs Work", href: "/news/county-appraisal-districts-explained" }],
+    seeAlso: [{ label: "How CADs Work", href: "https://texasdefined.com/learn/appraisal-districts" }],
   },
   {
     term: "Basic Allotment",
@@ -85,7 +85,7 @@ const TERMS: Term[] = [
     definition:
       "Property tax exemption that removes $140,000 from the value taxed by a school district on a qualifying owner-occupied principal residence; additional relief may apply for homeowners age 65 or older, disabled homeowners, and disabled veterans.",
     seeAlso: [
-      { label: "Homestead Exemption Explained", href: "/news/homestead-exemption-explained" },
+      { label: "Homestead Exemption Explained", href: "https://texasdefined.com/do/homestead-exemption" },
     ],
   },
   {

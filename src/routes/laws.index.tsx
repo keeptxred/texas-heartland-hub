@@ -95,12 +95,12 @@ const SECTIONS: {
     heading: "Laws You Should Know",
     intent: "For anyone who lives in Texas and just wants to stay out of trouble.",
     description:
-      "Traffic stops, castle doctrine, homestead exemption, open-records rights — the everyday rules Texans actually encounter and the practical guides that explain them.",
+      "Open-records rights, voting rules, school-board authority, and carry law — durable legal explainers for Texans who want the governing rules without mixing in homeowner tax-service content.",
     articleSlugs: [
-      "homestead-exemption-explained",
       "texas-open-meetings-public-info",
-      "appraisal-protest-playbook",
       "texas-voter-registration-guide",
+      "texas-school-board-powers",
+      "constitutional-carry-one-year-later",
     ],
   },
   {

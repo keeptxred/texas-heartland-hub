@@ -18,18 +18,13 @@ function formatMoney(value: number): string {
 
 export function PropertyTaxDataPanel() {
   const [query, setQuery] = useState("");
-  const [countySlug, setCountySlug] = useState("");
-  const [taxableValue, setTaxableValue] = useState("100000");
   const summary = useMemo(() => summarizeCountyRates(COUNTIES), []);
-  const selectedCounty = useMemo(() => COUNTIES.find((county) => county.slug === countySlug), [countySlug]);
   const visibleCounties = useMemo(() => {
     const normalized = query.trim().toLowerCase();
     return [...COUNTIES]
       .filter((county) => !normalized || county.name.toLowerCase().includes(normalized))
       .sort((left, right) => left.name.localeCompare(right.name));
   }, [query]);
-  const parsedTaxableValue = Number.parseFloat(taxableValue.replaceAll(",", ""));
-  const countyOnlyEstimate = selectedCounty ? estimateTaxFromRate(parsedTaxableValue, selectedCounty.countyRate) : 0;
 
   function downloadCountyCsv() {
     const blob = new Blob([buildCountyRateCsv(COUNTIES)], { type: "text/csv;charset=utf-8" });
@@ -68,32 +63,17 @@ export function PropertyTaxDataPanel() {
 
         <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_1fr]">
           <div className="rounded-lg border bg-background p-5">
-            <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-muted-foreground">County-rate calculator</p>
-            <h3 className="mt-2 font-display text-2xl tracking-tight">Estimate the county portion only</h3>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <label className="text-sm font-semibold">
-                County
-                <select value={countySlug} onChange={(event) => setCountySlug(event.target.value)} className="mt-2 w-full rounded-md border bg-background px-3 py-2 font-normal">
-                  <option value="">Select a county</option>
-                  {[...COUNTIES].sort((left, right) => left.name.localeCompare(right.name)).map((county) => (
-                    <option key={county.slug} value={county.slug}>{county.name}</option>
-                  ))}
-                </select>
-              </label>
-              <label className="text-sm font-semibold">
-                Taxable value
-                <input value={taxableValue} onChange={(event) => setTaxableValue(event.target.value)} inputMode="decimal" className="mt-2 w-full rounded-md border bg-background px-3 py-2 font-normal" aria-label="Taxable value" />
-              </label>
-            </div>
-            <div className="mt-5 rounded-md bg-muted/40 p-4">
-              {selectedCounty ? (
-                <>
-                  <p className="text-sm text-muted-foreground">{selectedCounty.name} county rate: <strong className="text-foreground">{formatRate(selectedCounty.countyRate)}</strong></p>
-                  <p className="mt-1 text-2xl font-bold">{formatMoney(countyOnlyEstimate)}</p>
-                  <p className="mt-1 text-xs leading-5 text-muted-foreground">Illustrative county levy on the taxable value entered. This is not a full tax-bill estimate and excludes school, city and special-district rates, exemptions, ceilings, caps and local adjustments.</p>
-                </>
-              ) : <p className="text-sm text-muted-foreground">Select a county to calculate its county-tax portion from the official statewide rate.</p>}
-            </div>
+            <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-muted-foreground">Homeowner estimates</p>
+            <h3 className="mt-2 font-display text-2xl tracking-tight">Use TexasDefined for your property-tax estimate</h3>
+            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+              Keep TX Red keeps this page focused on statewide rate data, public records, and policy analysis. TexasDefined owns household property-tax calculators, exemptions, appraisal-protest guidance, and other homeowner tasks.
+            </p>
+            <a
+              href="https://texasdefined.com/decide/property-taxes"
+              className="mt-5 inline-flex min-h-11 items-center justify-center rounded-md border-2 border-primary px-4 py-2 text-sm font-bold text-primary hover:bg-primary hover:text-primary-foreground"
+            >
+              Open TexasDefined property-tax tools
+            </a>
           </div>
 
           <div className="rounded-lg border bg-background p-5">

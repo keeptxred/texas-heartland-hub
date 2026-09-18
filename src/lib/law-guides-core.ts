@@ -65,7 +65,7 @@ export const LAW_TOPICS = {
   },
   "property-tax": {
     label: "Property Tax",
-    description: "Homestead exemptions, appraisal protests, tax relief, and Texas property-tax procedure.",
+    description: "State property-tax law, appraisal authority, tax-rate rules, relief legislation, school finance, and taxpayer appeal rights.",
   },
   "legislative-process": {
     label: "Legislative Process",
@@ -105,9 +105,7 @@ export const LAW_GUIDES: readonly LawGuideMeta[] = [
   { slug: "texas-election-laws-explained", topic: "elections", status: "legacy" },
   { slug: "constitutional-carry-one-year-later", topic: "self-defense-firearms", status: "legacy" },
   { slug: "how-a-bill-becomes-texas-law", topic: "legislative-process", status: "legacy" },
-  { slug: "homestead-exemption-explained", topic: "property-tax", status: "legacy" },
   { slug: "texas-open-meetings-public-info", topic: "open-government", status: "legacy" },
-  { slug: "appraisal-protest-playbook", topic: "property-tax", status: "legacy" },
   { slug: "texas-voter-registration-guide", topic: "elections", status: "legacy" },
   { slug: "texas-new-laws-2026", topic: "legislative-process", status: "legacy" },
   { slug: "property-tax-relief-package", topic: "property-tax", status: "legacy" },
