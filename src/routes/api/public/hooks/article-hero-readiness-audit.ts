@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
+  buildExhaustedHeroRecoveryNote,
   buildHeroReadinessSubject,
   hasHeroVisualReadinessProvenance,
   isAuthoritativeOfficialGraphic,
@@ -361,7 +362,7 @@ async function rejectHero(db: any, row: AuditRow, candidate: string, reason: str
   // The generator records its own failure note. Restore the stored-candidate
   // rejection prefix afterward so this exhausted candidate remains quarantined
   // instead of re-entering the hourly queue and consuming generation repeatedly.
-  const exhaustedNote = `stored-cloudflare-vision-${STORED_HERO_POLICY_VERSION} rejected: ${reason.slice(0, 520)}; generated recovery failed: ${generated.error.slice(0, 360)}`.slice(0, 1000);
+  const exhaustedNote = buildExhaustedHeroRecoveryNote(STORED_HERO_POLICY_VERSION, reason, generated.error);
   const { error: quarantineError } = await db.from("daily_articles").update({
     image_candidate_url: candidate,
     image_candidate_alt_text: row.image_candidate_alt_text?.trim() || row.image_alt_text?.trim() || null,
