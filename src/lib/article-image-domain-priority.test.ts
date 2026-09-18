@@ -89,4 +89,11 @@ describe("production regression image routing", () => {
       "The custody dispute could reshape Texas surrogacy law",
     )).toBe("legal");
   });
+
+  it("does not mistake a food court phrase for a legal story", () => {
+    expect(inferArticleImageDomain(
+      "Houston’s Latest Viral Food Court Is Facebook Marketplace",
+      "Home cooks across Houston are selling meals through Facebook Marketplace.",
+    )).toBe("culture");
+  });
 });
