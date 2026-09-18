@@ -65,6 +65,48 @@ function isDataCenterSubject(subject: SubjectExtract): boolean {
   return DATA_CENTER_RE.test(`${subject.title} ${subject.concreteSubject}`);
 }
 
+function normalizedIdentityText(hint: StoredHeroIdentityHint | undefined): string {
+  return [hint?.candidateAltText ?? "", hint?.sourceMetadata ?? ""]
+    .join(" ")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function sourceHintNamesStoryEntity(subject: SubjectExtract, hint: StoredHeroIdentityHint | undefined): boolean {
+  const identity = normalizedIdentityText(hint);
+  if (!identity) return false;
+  return (subject.entities ?? []).some((entity) => {
+    const normalized = entity.toLowerCase().replace(/[^a-z0-9]+/g, " ").replace(/\s+/g, " ").trim();
+    return normalized.length >= 5 && identity.includes(normalized);
+  });
+}
+
+export function storedHeroPolicyCorrection(
+  subject: SubjectExtract,
+  hint: StoredHeroIdentityHint | undefined,
+  reason: string,
+): string | null {
+  const value = reason.toLowerCase();
+
+  if (subject.domain === "sports" && sourceHintNamesStoryEntity(subject, hint)) {
+    const exactGameDemand = /(?:exact|specific|same|2026|historical)[^.!]{0,80}\bgame\b|\bgame\b[^.!]{0,80}(?:not depicted|not shown|exact|specific|same)/i.test(reason);
+    if (exactGameDemand) {
+      return "POLICY CORRECTION: Do not require the exact game, season, score, date, or play. Trusted source metadata identifies a story-named team or athlete, and the pixels must only show the correct sport/team-action type. Re-evaluate under the archive-sports rule; reject only if the visible sport/action type or identified team/athlete is actually wrong.";
+    }
+  }
+
+  if (subject.domain === "legal" && sourceHintNamesStoryEntity(subject, hint)) {
+    const forcedCourthouse = /(?:should|must|needs? to)\s+(?:be|show|depict)[^.!]{0,100}(?:court|courthouse|courtroom)|not directly relevant to (?:the )?legal story/i.test(value);
+    if (forcedCourthouse) {
+      return "POLICY CORRECTION: A source-identified headline-defining named person is itself a valid primary subject for a legal story. Do not require a courthouse or courtroom merely because the article concerns a case. Re-evaluate the visible person/photo type and trusted identity metadata; reject only if the person is not actually central to the headline/story or the visual type is otherwise wrong.";
+    }
+  }
+
+  return null;
+}
+
 function identityHintText(hint: StoredHeroIdentityHint | undefined): string[] {
   const lines: string[] = [];
   const alt = hint?.candidateAltText?.replace(/\s+/g, " ").trim();
@@ -218,7 +260,9 @@ export async function validateStoredHeroMatchesArticle(
             },
             {
               role: "user",
-              content: attempt === 1 ? prompt : `${prompt}\nThis is a retry because the prior response was unavailable or malformed. Follow the JSON format exactly.`,
+              content: attempt === 1
+                ? prompt
+                : `${prompt}\n${lastFailure.startsWith("POLICY CORRECTION:") ? lastFailure : "This is a retry because the prior response was unavailable or malformed. Follow the JSON format exactly."}`,
             },
           ],
           image,
@@ -248,10 +292,15 @@ export async function validateStoredHeroMatchesArticle(
       const parsed = parseVisionVerdict(normalized);
       if (parsed) {
         const ok = parsed.matches && parsed.photorealistic;
-        return {
-          matches: ok,
-          reason: String(parsed.reason || (ok ? "story match and photorealism passed" : "quality gate failed")).slice(0, 300),
-        };
+        const reason = String(parsed.reason || (ok ? "story match and photorealism passed" : "quality gate failed")).slice(0, 300);
+        if (!ok && attempt < VALIDATION_ATTEMPTS) {
+          const correction = storedHeroPolicyCorrection(subject, identityHint, reason);
+          if (correction) {
+            lastFailure = correction;
+            continue;
+          }
+        }
+        return { matches: ok, reason };
       }
       lastFailure = `Cloudflare vision validator returned no parseable verdict${finishReason ? ` (finish_reason=${finishReason})` : ""}`;
     } catch (error) {
