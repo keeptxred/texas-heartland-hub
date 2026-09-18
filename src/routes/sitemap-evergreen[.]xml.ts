@@ -55,7 +55,13 @@ export const Route = createFileRoute("/sitemap-evergreen.xml")({
         try {
           const { articles } = await listSitemapArticles();
           for (const a of articles) {
-            if (!isKeepTxRedSearchOwnedStory({ title: a.title, kind: a.kind })) continue;
+            if (!isKeepTxRedSearchOwnedStory({
+              title: a.title,
+              description: a.dek,
+              category: a.category,
+              source: a.source_name,
+              kind: a.kind,
+            })) continue;
             if (!isArticleSlugDateConsistent(a.slug, a.published_at)) continue;
             if (!isSitemapArticleAllowed(a.slug)) continue;
             entries.push({
