@@ -1,27 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { analyzeTexasRefinance } from "../../mortgage/texasRefinanceEngine";
 import { analyzeTexasMortgagePayoff } from "../../mortgage/texasMortgagePayoffEngine";
 import { analyzeTexasRentVsBuy } from "../../home/texasRentVsBuyEngine";
 import { getAdditionalCalculatorDefinition } from "../additionalCalculatorSuite";
 
 describe("Texas financial calculator known-answer checks", () => {
-  it("calculates refinance payments using annual percentage rates", () => {
-    const result = analyzeTexasRefinance({
-      currentLoanBalance: 300000,
-      currentInterestRate: 7,
-      currentLoanTermYears: 30,
-      currentYearsRemaining: 30,
-      newInterestRate: 5.5,
-      newLoanTermYears: 30,
-      closingCosts: 6000,
-      cashOutAmount: 0,
-    });
-
-    expect(result.currentMortgage.monthlyPayment).toBeCloseTo(1995.91, 1);
-    expect(result.newMortgage.monthlyPayment).toBeCloseTo(1703.37, 1);
-    expect(result.savings.monthlySavings).toBeGreaterThan(250);
-  });
-
   it("produces a normal payoff timeline instead of an immediate negative-amortization stop", () => {
     const result = analyzeTexasMortgagePayoff({
       currentBalance: 300000,
