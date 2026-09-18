@@ -184,6 +184,12 @@ jobs:
           SITE_URL: ${{ env.PREVIEW_URL }}
         run: python3 scripts/seo/verify-deployed-laws-routes.py
 
+      - name: Verify property-tax ownership handoff on deployed Worker
+        if: steps.revision.outputs.deploy == 'true'
+        env:
+          SITE_URL: ${{ env.PREVIEW_URL }}
+        run: python3 scripts/seo/verify-property-tax-handoff.py
+
       - name: Verify city migration redirects on deployed Worker
         if: steps.revision.outputs.deploy == 'true'
         env:
@@ -416,12 +422,48 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          response="$(curl --retry 5 --retry-delay 2 --retry-all-errors --silent --show-error \
+          body_file="$(mktemp)"
+          header_file="$(mktemp)"
+          trap 'rm -f "$body_file" "$header_file"' EXIT
+          status="$(curl --retry 5 --retry-delay 2 --retry-all-errors --silent --show-error \
+            -D "$header_file" -o "$body_file" -w '%{http_code}' \
             "$PREVIEW_URL/api/public/payments/health")"
-          python3 - "$response" <<'PY'
-          import json, sys
-          data = json.loads(sys.argv[1])
+          python3 - "$status" "$header_file" "$body_file" <<'PY'
+          import json, pathlib, sys
+
+          status, header_path, body_path = sys.argv[1:]
+          headers = pathlib.Path(header_path).read_text(encoding="utf-8", errors="replace")
+          body = pathlib.Path(body_path).read_text(encoding="utf-8", errors="replace")
+          content_type = next(
+              (
+                  line.split(":", 1)[1].strip()
+                  for line in headers.splitlines()
+                  if line.lower().startswith("content-type:")
+              ),
+              "",
+          )
+
+          try:
+              data = json.loads(body)
+          except json.JSONDecodeError:
+              print(
+                  "Payment runtime diagnostics:",
+                  json.dumps(
+                      {
+                          "http_status": status,
+                          "content_type": content_type,
+                          "json": False,
+                          "body_bytes": len(body.encode("utf-8")),
+                      },
+                      sort_keys=True,
+                  ),
+              )
+              raise SystemExit(0)
+
           safe = {
+              "http_status": status,
+              "content_type": content_type,
+              "json": True,
               "status": data.get("status"),
               "bindings": data.get("bindings"),
               "stripe_api": data.get("stripe_api"),
