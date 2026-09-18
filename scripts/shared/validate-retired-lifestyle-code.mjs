@@ -124,6 +124,24 @@ const publicOwnershipFiles = [
       '/news/texas-property-tax-laws-explained',
     ],
   },
+  {
+    path: 'src/data/law-topic-property-tax-authority.ts',
+    forbidden: [
+      'May 15',
+      '$140,000',
+      'How long do I have to protest',
+      'What is the current Texas school-district homestead exemption',
+      'Can I appeal an appraisal review board decision',
+      '/tax-calculator',
+    ],
+    required: [
+      'KTR keeps this law topic focused on government authority',
+      'https://texasdefined.com/learn/property-taxes',
+      'https://texasdefined.com/do/homestead-exemption',
+      'https://texasdefined.com/do/property-tax-protest',
+      'https://texasdefined.com/learn/appraisal-districts',
+    ],
+  },
 ];
 
 for (const entry of publicOwnershipFiles) {
