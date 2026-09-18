@@ -34,6 +34,25 @@ describe("article image attribution", () => {
     });
   });
 
+  it("credits licensed September primary-subject remediation photos", () => {
+    expect(
+      getArticleImageAttribution(
+        "https://commons.wikimedia.org/wiki/Special:Redirect/file/Entrance_to_San_Antonio_Zoo_IMG_3110.JPG",
+      ),
+    ).toMatchObject({
+      credit: "Billy Hathorn",
+      licenseName: "CC BY-SA 3.0",
+    });
+    expect(
+      getArticleImageAttribution(
+        "https://commons.wikimedia.org/wiki/Special:Redirect/file/Texas_A%26M_University_Academic_Building.jpg",
+      ),
+    ).toMatchObject({
+      credit: "Donnie Ray Jones",
+      licenseName: "CC BY 2.0",
+    });
+  });
+
   it("fails closed for unregistered external images instead of inventing credit", () => {
     expect(getArticleImageAttribution("https://example.com/photo.jpg")).toBeNull();
     expect(hasRequiredArticleImageAttribution("https://example.com/photo.jpg")).toBe(false);

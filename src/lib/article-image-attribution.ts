@@ -118,6 +118,22 @@ const ATTRIBUTIONS: AttributionEntry[] = [
     licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
     caption: "La Unión del Pueblo Entero (LUPE) logo, used to identify the organization discussed in this article.",
   },
+  {
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Entrance_to_San_Antonio_Zoo_IMG_3110.JPG",
+    credit: "Billy Hathorn",
+    sourceUrl: `${COMMONS}Entrance_to_San_Antonio_Zoo_IMG_3110.JPG`,
+    licenseName: "CC BY-SA 3.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/3.0/",
+    caption: "Representative archive photo of the San Antonio Zoo entrance; not the Dinos After Dark event described in this article.",
+  },
+  {
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Texas_A%26M_University_Academic_Building.jpg",
+    credit: "Donnie Ray Jones",
+    sourceUrl: `${COMMONS}Texas_A%26M_University_Academic_Building.jpg`,
+    licenseName: "CC BY 2.0",
+    licenseUrl: "https://creativecommons.org/licenses/by/2.0/",
+    caption: "Representative archive photo of the Texas A&M University Academic Building; not the SB 37 review meeting described in this article.",
+  },
 ].map((entry) => ({
   ...entry,
   usageNote: "Source image unmodified; page presentation may crop it responsively.",
