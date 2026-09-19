@@ -61,3 +61,10 @@ For compatibility, the workflow still supports the older linked-project method w
 Never commit the database URI or database password to the repository. Keep the URI only in GitHub Actions secrets. The workflow does not print the secret value.
 
 The read-only parity fallback intentionally uses only public frontend Supabase configuration and a narrowly scoped read-only RPC. Do not replace that public key with a service-role key.
+
+### Security note: read-only parity RPC
+
+`public.verify_repo_migrations(text[])` is intentionally callable by the `anon` and `authenticated` API roles because verify-only GitHub Actions uses the checked-in publishable key rather than a database-write credential. The function is `SECURITY DEFINER` only so it can read the otherwise private Supabase migration ledger and `repo_migration_equivalences`; its result is limited to the caller-supplied version strings plus an `applied` boolean, and it performs no writes.
+
+Supabase Database Advisor lints 0028/0029 therefore flag this RPC by design. Do not silence those warnings by revoking the API-role grants unless the verify-only transport is replaced first. `PUBLIC` execute remains revoked, and migrations `20260919015904` / `20260919020008` record the September 19 security review and restoration of the required read-only contract.
+
