@@ -59,6 +59,9 @@ if (/^\s*push:\s*$/m.test(workflow)) {
 if (!workflow.includes("github.event.workflow_run.conclusion == 'success'")) {
   errors.push("IndexNow workflow must only react to successful production deployments.");
 }
+if (!workflow.includes("github.event.workflow_run.head_sha == github.sha")) {
+  errors.push("IndexNow workflow must ignore completed deployments that are no longer current main.");
+}
 
 if (errors.length) {
   console.error("KeepTXRed IndexNow validation failed:");
