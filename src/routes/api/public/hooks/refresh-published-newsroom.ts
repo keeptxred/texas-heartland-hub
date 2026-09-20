@@ -236,7 +236,7 @@ Material novelty markers: ${JSON.stringify(novelty)}`;
 }
 
 function refreshUserPrompt(candidate: RefreshCandidate): string {
-  const sourceMaterial = candidate.newSources.slice(0, MAX_NEW_SOURCES_IN_PROMPT).map((source) => ({
+  const sourceMaterial = candidate.materialSources.slice(0, MAX_NEW_SOURCES_IN_PROMPT).map(({ source }) => ({
     title: source.title,
     source: source.source,
     url: source.url,
