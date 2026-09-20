@@ -20,7 +20,7 @@ export const Route = createFileRoute("/shop/live-payment-test")({
   head: () => ({
     meta: [
       { title: "Live Payment Verification — Keep TX Red" },
-      { name: "robots", content: "noindex,nofollow" },
+      { name: "robots", content: "noindex,follow" },
     ],
     links: [{ rel: "canonical", href: `${SITE_URL}/shop/live-payment-test` }],
   }),
