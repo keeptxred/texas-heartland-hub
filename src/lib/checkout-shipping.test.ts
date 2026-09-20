@@ -16,7 +16,8 @@ describe("checkout shipping policy", () => {
 
   it("makes shipping free at the advertised $35 threshold", () => {
     expect(FREE_SHIPPING_THRESHOLD_CENTS).toBe(3500);
-    expect(qualifiesForFreeShipping(3499)).toBe(false);\n    expect(qualifiesForFreeShipping(3500)).toBe(true);
+    expect(qualifiesForFreeShipping(3499)).toBe(false);
+    expect(qualifiesForFreeShipping(3500)).toBe(true);
   });
 
   it("keeps shipping free above $35", () => {
