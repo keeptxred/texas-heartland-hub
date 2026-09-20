@@ -1,7 +1,7 @@
 import {
   CheckoutElementsProvider,
   PaymentElement,
-  useCheckoutElements,
+  useCheckout,
 } from "@stripe/react-stripe-js/checkout";
 import { loadStripe } from "@stripe/stripe-js";
 import { type FormEvent, useMemo, useState } from "react";
@@ -71,7 +71,7 @@ function PaymentStep({
   checkout: PreparedCheckout;
   returnUrl: string;
 }) {
-  const result = useCheckoutElements();
+  const result = useCheckout();
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
