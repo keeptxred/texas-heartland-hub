@@ -155,7 +155,7 @@ function PaymentStep({
       </button>
 
       <p className="text-xs leading-relaxed text-muted-foreground">
-        Payment details are handled securely by Stripe. Keep TX Red never receives your card number.
+        Payment details are handled securely by Stripe. Complete card details are not received by this website.
       </p>
     </form>
   );
