@@ -87,7 +87,7 @@ type ValidatedCheckoutItem = {
 };
 
 export function qualifiesForFreeShipping(subtotalCents: number): boolean {
-  return subtotalCents >= FREE_SHIPPING_THRESHOLD_CENTS;
+  return subtotalCents > FREE_SHIPPING_THRESHOLD_CENTS;
 }
 
 export function getStandardShippingCents(quote: PrintifyShippingQuote): number {
