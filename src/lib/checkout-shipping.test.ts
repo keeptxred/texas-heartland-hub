@@ -10,9 +10,18 @@ import {
   qualifiesForFreeShipping,
 } from "@/lib/checkout.functions";
 
+const checkoutSource = readFileSync("src/lib/checkout.functions.ts", "utf8");
+
 describe("checkout shipping policy", () => {
-  it("uses Stripe's current embedded Checkout UI mode", () => {
-    expect(STRIPE_CHECKOUT_UI_MODE).toBe("embedded");
+  it("uses Stripe's supported Checkout Sessions + Elements UI mode", () => {
+    expect(STRIPE_CHECKOUT_UI_MODE).toBe("elements");
+  });
+
+  it("does not use the deprecated Embedded Checkout shipping permission", () => {
+    expect(checkoutSource).not.toContain("update_shipping_details");
+    expect(checkoutSource).not.toContain("Shipping calculated after address");
+    expect(checkoutSource).toContain("quotePrintifyStandardShipping");
+    expect(checkoutSource).toContain("shipping_options");
   });
 
   it("charges shipping at exactly $35", () => {
