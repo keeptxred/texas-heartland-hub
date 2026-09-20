@@ -1,0 +1,56 @@
+[
+  {
+    "domain": "prlog.org",
+    "sourceClass": "campaign-press-release-media",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use campaign-authored or campaign-representative press releases only when the release itself identifies the candidate and office/campaign, provides campaign/media contact or attribution, and exposes a candidate-specific photo in an explicit press Photos/Media section. Never auto-approve the domain globally; each image still requires item-level identity, exact source URL, and a documented narrow editorial permission basis or reusable license.",
+    "searchHint": "candidate campaign press release Photos media contact portrait PRLog Texas 2026",
+    "notes": "New source class discovered August 31, 2026 while resolving Theodis Daniel. A campaign statement distributed by Noble Marketing for Theodis Daniel contains an explicit campaign media contact and numbered Photos section with candidate-specific images. Treat every other PRLog item as discovery-only until the same item-level provenance and campaign-media context is verified."
+  },
+  {
+    "domain": "jejunemagazine.com",
+    "sourceClass": "candidate-interview-publication",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use first-person candidate interviews to corroborate identity, office, official campaign links, and discover portrait leads. Do not reuse publication-hosted images without explicit candidate-supplied attribution, a reusable license, direct permission, or another documented editorial permission basis at item level.",
+    "searchHint": "Texas 2026 candidate interview campaign portrait official website",
+    "notes": "New discovery source found August 31, 2026 through a June 29, 2026 first-person interview with Crystal Sedillo that links her official campaign site and campaign social profiles and includes several candidate images. Images remain discovery-only because the article does not state their reuse terms or candidate-supplied status."
+  },
+  {
+    "domain": "snapcoalition.org",
+    "sourceClass": "candidate-submitted-policy-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-submitted public-policy profiles to corroborate current candidacy and follow official candidate links or image leads. Do not approve any hosted image without item-level provenance and explicit reusable rights, candidate/media permission, or another documented editorial permission basis.",
+    "searchHint": "Texas candidate submitted policy profile portrait 2026",
+    "notes": "New source discovered August 31, 2026 through Scientist Network for Advancing Policy's current Crystal Sedillo HD-30 response, submitted August 16, 2026. Useful as a current candidate-linked discovery bridge, not an automatic image-rights source."
+  },
+  {
+    "domain": "callthemap.com",
+    "sourceClass": "current-election-race-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Call the Map's current Texas legislative race pages only to corroborate candidate/race identity and discover downstream official profiles or candidate-linked portrait sources. Do not approve or reuse any hosted image without item-level provenance plus explicit reusable rights, candidate/campaign permission, candidate-supplied provenance, or another documented editorial permission basis.",
+    "searchHint": "Call the Map Texas House candidate portrait official campaign 2026",
+    "notes": "Discovered August 31, 2026 while researching still-missing Texas House candidates. Current race pages identify named general-election fields, including Rhett Rosenquest Smith (HD116), Scott Whitmarsh (HD131), Laura Garcia DeLeon (HD140), Julie Hunt (HD141), Heidi Hall (HD142), and Frank Salazar (HD143). Treat as a current-race discovery bridge, not an automatic image-rights source."
+  },
+  {
+    "domain": "govexperts.com",
+    "sourceClass": "election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use GovExperts' Texas 2026 election candidate directory to corroborate candidate/race identity and discover downstream official campaign, government, party, or public-record portrait sources. Do not approve or reuse any hosted image without item-level provenance plus explicit reusable rights, candidate/campaign permission, candidate-supplied provenance, or another documented editorial permission basis.",
+    "searchHint": "GovExperts Texas 2026 candidate official campaign portrait",
+    "notes": "Discovered August 31, 2026 while researching the current missing-photo set. The directory lists current Texas House candidates across multiple districts, including candidates with sparse web footprints. Treat as a discovery bridge only; no hosted image or rights conclusion is inferred."
+  },
+  {
+    "domain": "tx3dnews.com",
+    "sourceClass": "candidate-supplied-newsroom-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use TX3DNews candidate profiles only when the page explicitly identifies the candidate and office and item-level image provenance is documented. A portrait may be approved only when the exact profile explicitly states that the image was submitted or supplied by the candidate/campaign, or another documented reusable/editorial permission basis exists. Do not treat ordinary TX3DNews-hosted images, graphics, logos, or generic newsroom assets as reusable by default.",
+    "searchHint": "site:tx3dnews.com candidate profile Texas 2026 campaign headshot submitted by campaign",
+    "notes": "New source class discovered August 31, 2026. TX3DNews states that its Meet the Candidates profiles are based on information submitted directly by candidates or campaigns. Individual profiles can provide stronger item-level provenance; Dr. Fatima La'Juan Muse's August 24, 2026 profile labels the exact portrait as a campaign headshot and states 'Photo: Submitted by the campaign.' Keep auto-approval disabled and require that same item-level provenance standard for every candidate image."
+  }
+]

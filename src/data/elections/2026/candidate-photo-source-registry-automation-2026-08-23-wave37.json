@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "huffmanforhd1.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Sean Huffman's official Texas House District 1 campaign website when the page context independently confirms Sean Huffman and HD1 and the image is clearly attributable to the campaign. Exclude logos, issue graphics, stock images, third-party embeds, group photographs without unambiguous candidate identification, and any image without item-level provenance.",
+    "searchHint": "site:huffmanforhd1.com Sean Huffman Texas House District 1 portrait candidate photo",
+    "notes": "Verified August 23, 2026. TCTA and Teach the Vote independently identify huffmanforhd1.com as Sean Huffman's campaign website for Texas House District 1; the live site directly hosts candidate campaign imagery."
+  },
+  {
+    "domain": "votejuniorezeonu.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Junior Ezeonu's official Texas House District 101 campaign website when page context confirms Junior Ezeonu and District 101 and the image is clearly attributable to the campaign. Prefer explicitly labeled headshots. Exclude logos, issue graphics, stock imagery, third-party embeds, and group photographs without unambiguous candidate identification.",
+    "searchHint": "site:votejuniorezeonu.com Junior Ezeonu Texas House District 101 headshot candidate photo",
+    "notes": "Verified August 23, 2026. The live site labels a 2026 candidate headshot, identifies Junior Ezeonu as the District 101 candidate, and carries a paid-for-by campaign disclaimer. The League of Women Voters Tarrant County voter guide independently lists votejuniorezeonu.com as his campaign website."
+  },
+  {
+    "domain": "elliscountydemocraticparty.com",
+    "sourceClass": "official-county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use the Ellis County Democratic Party candidate directory to corroborate current candidate identity and race context and to discover candidate portraits or outbound official campaign sources. Do not reuse party-hosted images unless candidate identity and item-level provenance or a documented editorial permission basis are independently established.",
+    "searchHint": "site:elliscountydemocraticparty.com/candidates Texas 2026 candidate portrait campaign",
+    "notes": "Verified August 23, 2026. The official county party candidate page currently profiles 2026 candidates including Michael Myers for Texas House District 10 and Amy Martinez-Salas for Texas Senate District 22 and displays candidate images, making it a useful discovery bridge for unresolved portraits."
+  }
+]

@@ -35,10 +35,7 @@ export function CandidateListFilters({
   onIncumbencyChange,
 }: CandidateListFiltersProps) {
   return (
-    <div
-      aria-label="Filter election candidates"
-      className="grid gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4 sm:grid-cols-2 xl:grid-cols-4"
-    >
+    <div aria-label="Filter election candidates" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       <FilterSelect
         label="Party"
         value={party ?? ""}
@@ -96,10 +93,10 @@ interface FilterSelectProps {
 
 function FilterSelect({ label, value, options, onChange }: FilterSelectProps) {
   return (
-    <label className="block text-sm font-semibold text-slate-900">
+    <label className="block text-sm font-semibold text-foreground">
       {label}
       <select
-        className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-100"
+        className="mt-2 block w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
         value={value}
         onChange={(event) => onChange(event.target.value)}
       >

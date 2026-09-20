@@ -15,7 +15,8 @@
     "shared:validate": "bun scripts/shared/validate-texas-platform.ts",
     "shared:entities:validate": "bun scripts/shared/validate-entity-framework.ts",
     "publication:validate": "bun scripts/shared/validate-publication-writers.mjs",
-    "seo:validate": "node scripts/seo/validate.mjs && node --experimental-strip-types scripts/seo/validate-indexability.mjs",
+    "seo:crawl-leaks": "node scripts/seo/audit-retired-public-links.mjs",
+    "seo:validate": "node scripts/seo/validate.mjs && node scripts/seo/validate-indexnow.mjs && npm run seo:crawl-leaks && node --experimental-strip-types scripts/seo/validate-indexability.mjs",
     "elections:normalize": "node scripts/elections/normalize-imports.mjs",
     "elections:authority-registry": "node scripts/elections/generate-political-authority-registry.mjs",
     "elections:migrate-sources": "node scripts/elections/migrate-source-urls.mjs",
@@ -135,7 +136,7 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.56.1",
     "vite": "^8.0.16",
-    "vitest": "^3.2.4",
+    "vitest": "^5.0.0",
     "wrangler": "^4.120.1"
   },
   "pnpm": {

@@ -124,8 +124,18 @@ if (!relationshipLinker.includes("rpc('refresh_bill_relationships'")) {
 }
 
 const sitemapIndex = await readFile('src/routes/sitemap[.]xml.ts', 'utf8');
-for (const name of ['bills', 'representatives', 'committees', 'districts', 'government', 'legislature']) {
+for (const name of ['committees', 'government', 'legislature']) {
   if (!sitemapIndex.includes(`sitemap-${name}.xml`)) errors.push(`Sitemap index missing ${name}`);
+}
+// Large programmatic detail sitemap routes must continue to exist for historical
+// Search Console submissions and future promotion, but they are intentionally
+// omitted from the advertised sitemap index during crawl-recovery. Their hub-only
+// endpoints remain valid so a stale direct Google fetch drains rather than refills
+// the discovered-but-not-crawled queue.
+for (const name of ['bills', 'representatives', 'districts']) {
+  if (sitemapIndex.includes(`sitemap-${name}.xml`)) {
+    errors.push(`Low-priority sitemap unexpectedly advertised: ${name}`);
+  }
 }
 
 const legislativeSitemaps = sources.get('src/lib/legislative-sitemaps.ts') || '';

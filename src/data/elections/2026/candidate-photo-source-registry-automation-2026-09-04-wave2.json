@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "howardolsen4texas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Howard Olsen's official Texas House District 50 campaign website to verify candidate identity and office and to discover candidate-supplied portraits or campaign media. Do not approve or reuse any site image without item-level provenance plus explicit reusable rights, campaign/media permission, candidate-supplied status with a documented editorial-identification basis, or another valid reuse basis. Reject logos, campaign graphics, social-share images, placeholders, and other non-candidate assets.",
+    "searchHint": "Howard Olsen Texas House District 50 official campaign portrait media",
+    "notes": "New source confirmed September 4, 2026. The current campaign homepage identifies Howard Olsen as the Republican candidate for Texas House District 50 and visibly publishes multiple candidate-specific Howard Olsen portraits. Treat the domain as discovery-only until an exact portrait asset is tied to item-level provenance and a documented rights/editorial-permission basis."
+  }
+]

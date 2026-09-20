@@ -3,6 +3,8 @@ import { createClient } from "@supabase/supabase-js";
 import { enrichArticleRow } from "@/lib/content-quality";
 import { EVERGREEN_MIN_MAIN_WORDS, articleMainWordCount } from "@/lib/article-length";
 import { EDITORIAL_SYSTEM_ADDENDUM, validateArticle } from "@/lib/editorial-pipeline";
+import { runCloudflareJson } from "@/lib/cloudflare-json-ai.server";
+import { getGovernmentGraphLinks } from "@/lib/government-graph";
 
 const TOPICS: { category: string; topic: string }[] = [
   { category: "Tax & Spending", topic: "How Texas property-tax policy is set and what the Legislature can change" },
@@ -57,7 +59,7 @@ type GeneratedBody = {
   keyTakeaways: string[];
 };
 
-async function generate(topic: string, category: string, lovableApiKey: string): Promise<GeneratedBody> {
+async function generate(topic: string, category: string): Promise<GeneratedBody> {
   const system = `You are the senior editor of Keep TX Red, a Texas political news, elections, legislation, and government-accountability publication.
 
 Write a long-form evergreen explainer about the assigned Texas government or public-policy topic. KeepTXRed does not publish travel, food, culture, relocation, household-planning, real-estate-planning, mortgage, insurance, utility, moving, or cost-of-living guides. Do not drift into those subjects. When a topic touches taxes, education, energy, business, or the border, frame it through legislation, elections, regulation, government spending, official authority, or public accountability.
@@ -89,7 +91,12 @@ REQUIRED SECTION ORDER:
 Add additional substantive sections as needed to meet the minimum length without filler.
 
 INTERNAL LINKS:
-Include 3 to 5 natural markdown links using only relevant KeepTXRed-owned destinations:
+Include 3 to 6 natural markdown links using only relevant KeepTXRed-owned destinations:
+- /policy
+- /texas-case
+- /texas-political-reference
+- /texas-government
+- /texas-government/agencies
 - /bills
 - /texas-legislature
 - /committees
@@ -110,28 +117,13 @@ Return only valid JSON with this shape:
 
 Markdown links inside paragraph strings are allowed.`;
 
-  const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "Lovable-API-Key": lovableApiKey },
-    body: JSON.stringify({
-      model: "google/gemini-3-flash-preview",
-      messages: [
-        { role: "system", content: system + EDITORIAL_SYSTEM_ADDENDUM },
-        { role: "user", content: `Topic: ${topic}\nCategory: ${category}\n\nWrite the complete evergreen explainer.` },
-      ],
-      response_format: { type: "json_object" },
-      max_tokens: 16000,
-    }),
+  const ai = await runCloudflareJson<GeneratedBody & { brief?: import("@/lib/editorial-pipeline").StoryBrief }>({
+    system: system + EDITORIAL_SYSTEM_ADDENDUM,
+    user: `Topic: ${topic}\nCategory: ${category}\n\nWrite the complete evergreen explainer.`,
+    maxTokens: 12000,
+    maxAttempts: 2,
   });
-
-  if (!response.ok) {
-    throw new Error(`AI gateway ${response.status}: ${(await response.text()).slice(0, 300)}`);
-  }
-
-  const data = (await response.json()) as { choices?: { message?: { content?: string } }[] };
-  const parsed = JSON.parse(data.choices?.[0]?.message?.content ?? "{}") as GeneratedBody & {
-    brief?: import("@/lib/editorial-pipeline").StoryBrief;
-  };
+  const parsed = ai.value;
 
   const validation = validateArticle(
     {
@@ -164,8 +156,7 @@ export const Route = createFileRoute("/api/public/hooks/generate-evergreen")({
       POST: async () => {
         const supabaseUrl = process.env.SUPABASE_URL;
         const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-        const lovableApiKey = process.env.LOVABLE_API_KEY;
-        if (!supabaseUrl || !serviceKey || !lovableApiKey) {
+        if (!supabaseUrl || !serviceKey) {
           return Response.json({ error: "Missing env" }, { status: 500 });
         }
 
@@ -192,7 +183,7 @@ export const Route = createFileRoute("/api/public/hooks/generate-evergreen")({
 
         let generated: GeneratedBody;
         try {
-          generated = await generate(pick.topic, pick.category, lovableApiKey);
+          generated = await generate(pick.topic, pick.category);
         } catch (error) {
           console.error("evergreen AI failed", error);
           return Response.json({ error: "AI failed", details: String(error) }, { status: 500 });
@@ -205,10 +196,26 @@ export const Route = createFileRoute("/api/public/hooks/generate-evergreen")({
         const now = new Date();
         const { dedupeArticleBody, hasDuplicateContent } = await import("@/lib/article-dedupe");
         const slug = `${now.toISOString().slice(0, 10)}-${slugify(generated.title)}`;
+        const graphText = [
+          generated.title,
+          generated.dek,
+          ...(generated.keywords ?? []),
+          ...(generated.intro ?? []),
+          ...(generated.sections ?? []).flatMap((section) => [section.heading, ...(section.paragraphs ?? []), ...(section.bullets ?? [])]),
+        ].join(" ");
+        const graphLinks = getGovernmentGraphLinks(graphText, 5, [`/news/${slug}`]);
+        const graphSection = graphLinks.length > 0
+          ? [{
+              heading: "Permanent KTR context",
+              paragraphs: [
+                `This explainer connects to KTR's permanent government and policy coverage: ${graphLinks.map((node) => `[${node.label}](${node.href})`).join(", ")}.`,
+              ],
+            }]
+          : [];
         const cleanBody = dedupeArticleBody({
           updated: now.toISOString().slice(0, 10),
           intro: generated.intro ?? [generated.dek],
-          sections: generated.sections,
+          sections: [...generated.sections, ...graphSection],
           faq: generated.faq ?? [],
           sources: generated.sources ?? [],
           keyTakeaways: (generated.keyTakeaways ?? []).slice(0, 6),
@@ -275,7 +282,7 @@ export const Route = createFileRoute("/api/public/hooks/generate-evergreen")({
           return Response.json({ error: error.message }, { status: 500 });
         }
 
-        return Response.json({ ok: true, slug, category: pick.category });
+        return Response.json({ ok: true, slug, category: pick.category, provider: "cloudflare-workers-ai", graphLinks: graphLinks.map((node) => node.href) });
       },
     },
   },

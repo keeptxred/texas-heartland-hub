@@ -1,0 +1,131 @@
+name: AdSense Image Readiness Backfill
+
+on:
+  # Recurring recovery prevents one failed generation/validation attempt from
+  # permanently removing an otherwise publishable article from Facebook and
+  # AdSense-ready inventory. The endpoint still applies the full image gate.
+  # Stagger this pass from both the newsroom publisher and general backlog
+  # recovery so background repairs cannot consume the Workers AI daily budget.
+  schedule:
+    - cron: "45 6,14,22 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: adsense-image-readiness-backfill
+  cancel-in-progress: false
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Generate images for AdSense-ready articles
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          oidc_url="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-newsroom"
+          issue_oidc_token() {
+            local token
+            token=$(curl -fsS \
+              -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+              "$oidc_url" | jq -r '.value // empty')
+            if [[ -z "$token" ]]; then
+              echo 'GitHub Actions did not issue the newsroom OIDC token.' >&2
+              return 1
+            fi
+            printf '%s' "$token"
+          }
+
+          # Authenticated recovery intentionally uses the direct Worker origin.
+          # The public hostname can challenge non-browser OIDC POSTs; a regression
+          # test protects this transport choice separately from public canonical URLs.
+          endpoint='https://keeptxred-site.freddy-coppola.workers.dev/api/public/hooks/adsense-image-backfill'
+          ready=-1
+          for attempt in $(seq 1 6); do
+            oidc_token=$(issue_oidc_token)
+            status=$(curl -sS -X POST -o /tmp/adsense-image-dry.json -w '%{http_code}' \
+              --max-time 45 \
+              -H 'accept: application/json' \
+              -H "Authorization: Bearer ${oidc_token}" \
+              "${endpoint}?dry=1" || echo 000)
+            echo "worker endpoint probe ${attempt}/6 HTTP ${status}"
+            cat /tmp/adsense-image-dry.json 2>/dev/null || true
+            echo
+            if [[ "$status" == "200" ]] && jq -e '.ok == true and .dryRun == true' /tmp/adsense-image-dry.json >/dev/null 2>&1; then
+              ready=$(jq -r '.ready // 0' /tmp/adsense-image-dry.json)
+              break
+            fi
+            sleep 10
+          done
+
+          if [[ "$ready" -lt 0 ]]; then
+            echo 'Direct Worker AdSense image endpoint never became ready.' >&2
+            exit 1
+          fi
+          if [[ "$ready" -eq 0 ]]; then
+            echo 'ADSENSE_IMAGE_BACKFILL_SUCCESS ready=0; image queue already clean.'
+            exit 0
+          fi
+
+          # One article per pass bounds worst-case generation to the existing
+          # initial image plus three validator-steered retries. Staggered passes
+          # keep repairing the finite backlog without starving fresh news AI.
+          max_per_run=1
+          mapfile -t slugs < <(jq -r --argjson max "$max_per_run" '.slugs[:$max][]' /tmp/adsense-image-dry.json)
+          failures=0
+          deferred=0
+          succeeded=0
+          processed=0
+
+          for slug in "${slugs[@]}"; do
+            # Mint a fresh short-lived OIDC token for every protected Worker call
+            # so a slow prior image cannot make later requests fail authentication.
+            oidc_token=$(issue_oidc_token)
+            encoded_slug=$(jq -rn --arg value "$slug" '$value|@uri')
+            output="/tmp/adsense-image-${processed}.json"
+            status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
+              --max-time 600 \
+              -H 'accept: application/json' \
+              -H "Authorization: Bearer ${oidc_token}" \
+              "${endpoint}?slug=${encoded_slug}" || echo 000)
+            echo "image slug=${slug} HTTP ${status}"
+            cat "$output" 2>/dev/null || true
+            echo
+            processed=$((processed + 1))
+
+            if [[ "$status" == "200" ]] && jq -e '.ok == true and .failed == 0' "$output" >/dev/null 2>&1; then
+              succeeded=$((succeeded + 1))
+            elif [[ "$status" == "422" ]] && jq -e '.ok == false and (.failed // 0) > 0' "$output" >/dev/null 2>&1; then
+              # A 422 here means the image safety/story-match gate worked as
+              # designed. Keep the article queued for a later bounded retry,
+              # but do not turn a correctly rejected image into an infrastructure
+              # failure that leaves a permanently red scheduled workflow.
+              deferred=$((deferred + 1))
+              echo "ADSENSE_IMAGE_BACKFILL_DEFERRED slug=${slug}; generated image rejected by production quality gate"
+            else
+              # Authentication, endpoint, response-contract, timeout and other
+              # unexpected failures remain hard failures so CI still surfaces
+              # genuine recovery-system breakage.
+              failures=$((failures + 1))
+            fi
+          done
+
+          echo "ADSENSE_IMAGE_BACKFILL_TOTAL ready_at_start=${ready} processed=${processed} succeeded=${succeeded} deferred=${deferred} failures=${failures}"
+          if [[ "$failures" -gt 0 ]]; then
+            echo "ADSENSE_IMAGE_BACKFILL_PARTIAL processed=${processed} failures=${failures} ready_at_start=${ready}" >&2
+            exit 1
+          fi
+
+          remaining=$((ready - succeeded))
+          if [[ "$deferred" -gt 0 ]]; then
+            echo "ADSENSE_IMAGE_BACKFILL_SUCCESS deferred=${deferred} remaining_for_next_run=${remaining}; quality gate rejection retained for bounded retry"
+          elif [[ "$remaining" -gt 0 ]]; then
+            echo "ADSENSE_IMAGE_BACKFILL_SUCCESS processed=${processed} remaining_for_next_run=${remaining}"
+          else
+            echo "ADSENSE_IMAGE_BACKFILL_SUCCESS processed=${processed} remaining=0"
+          fi

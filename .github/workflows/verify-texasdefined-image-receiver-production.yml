@@ -1,0 +1,118 @@
+name: Verify TexasDefined image receiver production
+
+on:
+  workflow_run:
+    workflows:
+      - "Repository test and build health"
+      - "Deploy verified KeepTXRed to Cloudflare"
+      - "Deploy KeepTXRed to Cloudflare Workers"
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: verify-texasdefined-image-receiver-production-${{ github.event.workflow_run.head_sha || github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       (github.event.workflow_run.event == 'push' ||
+        github.event.workflow_run.event == 'workflow_dispatch'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      RECEIVER_URL: https://keeptxred-site.freddy-coppola.workers.dev/api/public/hooks/publish-texasdefined-generated-image
+    steps:
+      - name: Wait for matching Cloudflare production deployment
+        if: >-
+          github.event_name == 'workflow_run' &&
+          github.event.workflow_run.name == 'Repository test and build health'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          EXPECTED_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          api="https://api.github.com/repos/${REPOSITORY}/actions/workflows/deploy-cloudflare-after-verify.yml/runs?branch=main&event=workflow_dispatch&per_page=30"
+
+          for attempt in $(seq 1 72); do
+            runs_json="$(curl --retry 3 --retry-delay 2 --retry-all-errors \
+              --fail-with-body --silent --show-error \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H 'Accept: application/vnd.github+json' \
+              "$api")"
+
+            match="$(RUNS_JSON="$runs_json" python3 - "$EXPECTED_SHA" <<'PY'
+          import json, os, sys
+          expected = sys.argv[1]
+          data = json.loads(os.environ['RUNS_JSON'])
+          for run in data.get('workflow_runs', []):
+              if run.get('head_sha') == expected:
+                  print(f"{run.get('status','')}|{run.get('conclusion') or ''}|{run.get('html_url','')}")
+                  break
+          PY
+          )"
+
+            if [[ -z "$match" ]]; then
+              echo "Matching deployment for ${EXPECTED_SHA} has not started yet (${attempt}/72)."
+              sleep 10
+              continue
+            fi
+
+            IFS='|' read -r status conclusion run_url <<<"$match"
+            echo "Matching deployment: status=${status} conclusion=${conclusion:-pending} ${run_url}"
+
+            if [[ "$status" != "completed" ]]; then
+              sleep 10
+              continue
+            fi
+            if [[ "$conclusion" != "success" ]]; then
+              echo "Matching Cloudflare deployment did not succeed; receiver smoke is blocked." >&2
+              exit 1
+            fi
+
+            echo "Matching Cloudflare production deployment succeeded for ${EXPECTED_SHA}."
+            exit 0
+          done
+
+          echo "Timed out waiting for a successful matching Cloudflare deployment for ${EXPECTED_SHA}." >&2
+          exit 1
+
+      - name: Verify unauthenticated generated-image publishing is rejected
+        shell: bash
+        run: |
+          set -euo pipefail
+          body_file="$(mktemp)"
+          trap 'rm -f "$body_file"' EXIT
+
+          status="$(curl --retry 5 --retry-delay 2 --retry-all-errors \
+            --silent --show-error \
+            --output "$body_file" \
+            --write-out '%{http_code}' \
+            --request POST \
+            "$RECEIVER_URL")"
+
+          if [[ "$status" != "401" ]]; then
+            echo "TexasDefined generated-image receiver returned HTTP $status instead of 401 for an unauthenticated request." >&2
+            cat "$body_file" >&2 || true
+            exit 1
+          fi
+
+          python3 - "$body_file" <<'PY'
+          import json, sys
+          with open(sys.argv[1], encoding='utf-8') as fh:
+              data = json.load(fh)
+          if data.get('ok') is not False or data.get('posted') is not False:
+              raise SystemExit(f'Unexpected receiver security response: {data!r}')
+          if data.get('error') != 'Missing GitHub Actions OIDC token':
+              raise SystemExit(f'Unexpected receiver rejection reason: {data!r}')
+          print('TexasDefined generated-image receiver is live and rejects unauthenticated publishing.')
+          PY

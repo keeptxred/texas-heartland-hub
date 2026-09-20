@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "theedinburgadvocate.com",
+    "sourceClass": "candidate-submitted-local-news-announcement",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use The Edinburg Advocate candidate announcement pages to corroborate candidate identity, office, campaign-controlled statements, and discover candidate-linked image assets. The site is All Rights Reserved, so do not approve or reuse any hosted image without item-level evidence that the image itself was candidate-supplied, a reusable license, explicit permission, or another documented editorial permission basis. Reject campaign graphics, logos, social-share art, and other non-portrait assets even when candidate-specific.",
+    "searchHint": "The Edinburg Advocate Texas House candidate announcement portrait submitted campaign 2026",
+    "notes": "New source discovered September 1, 2026 while researching missing HD40 candidate Celeste Cabrera-Huff. Her November 15, 2025 filing announcement states that candidates may submit first campaign announcements and that the publication does not edit them. The page contains a candidate-specific campaign graphic, but because the image is branded campaign art and the site is All Rights Reserved, it is not approved as a portrait. Treat this domain as a discovery/corroboration bridge only unless item-level image provenance and a supported reuse/editorial permission basis are independently established."
+  }
+]

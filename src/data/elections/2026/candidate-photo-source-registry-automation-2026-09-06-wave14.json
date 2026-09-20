@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "teamldhowardfortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the official L.D. Howard for Texas House District 124 campaign website to corroborate candidate identity, office, campaign-controlled biography and press materials, and to discover candidate-specific portrait assets or media leads. Do not approve or reuse any hosted image without item-level candidate identity, provenance, and either an explicit reusable license, documented candidate-supplied status with a narrow editorial-identification basis, explicit permission, or another supported reuse basis. Reject stock photos, event graphics, logos, social-share images, placeholders, default avatars, and other non-candidate imagery.",
+    "searchHint": "site:teamldhowardfortexas.com L.D. Howard Texas House District 124 portrait campaign media",
+    "notes": "Discovered September 6, 2026 during the current missing-photo and eligibility-reconciliation pass. The campaign-controlled site identifies LaKeisha D. Howard / L.D. Howard as a 2026 Texas House District 124 candidate and publishes campaign-authored biography, filing, press-release, event, and contact materials. Texas Secretary of State currently lists the independent filing as rejected, so this registry entry does not alter canonical eligibility or the coverage denominator; it exists only as an official downstream identity and portrait-discovery source pending item-level image-rights verification."
+  }
+]

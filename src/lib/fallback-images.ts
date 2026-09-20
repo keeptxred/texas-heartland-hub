@@ -72,7 +72,7 @@ const KEYWORD_MAP: Record<Exclude<ImageCategory, "default">, string[]> = {
   finance: ["tax", "mortgage", "insurance", "budget", "spending", "deficit", "inflation", "wages", "salary", "cost of living", "affordability"],
   relocation: ["move", "moving", "relocate", "relocation", "houston", "dallas", "austin", "san antonio", "fort worth", "suburb", "housing", "home price", "neighborhood"],
   weather: ["storm", "rain", "hurricane", "tornado", "flood", "heat", "freeze", "snow", "drought", "forecast"],
-  technology: ["ai", " app ", "software", "iphone", "chip", "tech", "startup", "cyber", "data center", "semiconductor"],
+  technology: ["ai", "app", "software", "iphone", "chip", "tech", "startup", "cyber", "data center", "semiconductor"],
 };
 
 // Stable per-slug pick so the same article always shows the same image.
@@ -83,10 +83,21 @@ function pickFromPool(key: string, pool: string[]): string {
   return pool[h % pool.length];
 }
 
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function hasWholeKeyword(text: string, keyword: string): boolean {
+  const term = keyword.trim().toLowerCase();
+  if (!term) return false;
+  const pattern = escapeRegExp(term).replace(/\s+/g, "\\s+");
+  return new RegExp(`(^|[^a-z0-9])${pattern}(?=$|[^a-z0-9])`, "i").test(text);
+}
+
 function keywordCategory(text: string): ImageCategory | null {
-  const t = ` ${text.toLowerCase()} `;
+  const normalized = text.toLowerCase();
   for (const [cat, words] of Object.entries(KEYWORD_MAP) as [Exclude<ImageCategory, "default">, string[]][]) {
-    if (words.some((w) => t.includes(w))) return cat;
+    if (words.some((word) => hasWholeKeyword(normalized, word))) return cat;
   }
   return null;
 }
@@ -97,7 +108,7 @@ function normalizeCategory(raw?: string | null): ImageCategory | null {
   if (c in CATEGORY_IMAGE_POOLS) return c as ImageCategory;
   // Map site taxonomy -> image bucket.
   if (["elections", "election", "voting", "voter registration"].includes(c)) return "elections";
-  if (["politics", "laws", "legislature", "law"].includes(c)) return "politics";
+  if (["politics", "government", "laws", "legislature", "law"].includes(c)) return "politics";
   if (["business", "economy", "energy"].includes(c)) return "business";
   if (["finance", "tax & spending", "taxes", "money"].includes(c)) return "finance";
   if (["relocation", "move to texas", "housing", "real estate"].includes(c)) return "relocation";
@@ -149,24 +160,13 @@ export type ArticleImageInput = {
  * Priority:
  *  1. article.image_url (publisher / scraped / hand-set)
  *  2. AI-classified image_category (one Gemini call per ingestion batch)
- *  3. keyword detection on title + dek + keywords + site category
- *  4. default stock pool
+ *  3. exact site category mapping
+ *  4. whole-word keyword detection on title + dek + keywords
+ *  5. default stock pool
  * Deterministic per slug so the image is stable across refreshes.
  */
 export function getArticleImage(article: ArticleImageInput): string {
   if (article.image_url && article.image_url.trim()) return article.image_url;
-
-  const aiCat = normalizeCategory(article.image_category);
-  if (aiCat) return pickFromPool(article.slug, CATEGORY_IMAGE_POOLS[aiCat]);
-
-  const haystack = [article.title, article.dek, (article.keywords ?? []).join(" "), article.category]
-    .filter(Boolean)
-    .join(" ");
-  const kw = keywordCategory(haystack);
-  if (kw) return pickFromPool(article.slug, CATEGORY_IMAGE_POOLS[kw]);
-
-  const siteCat = normalizeCategory(article.category);
-  if (siteCat) return pickFromPool(article.slug, CATEGORY_IMAGE_POOLS[siteCat]);
-
-  return pickFromPool(article.slug, CATEGORY_IMAGE_POOLS.default);
+  const category = resolveImageCategory(article);
+  return pickFromPool(article.slug, CATEGORY_IMAGE_POOLS[category]);
 }

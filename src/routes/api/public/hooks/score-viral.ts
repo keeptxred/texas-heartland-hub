@@ -6,7 +6,9 @@ import {
   qualifiesReadyForRewrite,
   qualifiesForAutoRewrite,
   VIRAL_READY_MIN_SCORE,
+  SOURCE_REPUTATION_FLOOR,
 } from "@/lib/viral-score";
+import { applyTrustedDiscoveryReviewFloor } from "@/lib/discovery-provenance-reputation";
 import { isLowValueTitle } from "@/lib/low-value-titles";
 import { publishSingleFeedItem } from "./ingest-feeds";
 
@@ -161,7 +163,7 @@ async function scoreRecent(request: Request) {
   const sinceIso = new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString();
   const { data, error } = await supabase
     .from("texas_news_feed")
-    .select("id,title,source,link,pub_date,description,viral_score,viral_signals,internal_slug")
+    .select("id,title,source,trend_source,link,pub_date,description,viral_score,viral_signals,internal_slug")
     .gte("pub_date", sinceIso)
     .order("pub_date", { ascending: false })
     .limit(300);
@@ -171,6 +173,7 @@ async function scoreRecent(request: Request) {
     id: number;
     title: string;
     source: string;
+    trend_source: string | null;
     link: string | null;
     pub_date: string;
     description: string | null;
@@ -238,9 +241,17 @@ async function scoreRecent(request: Request) {
       continue;
     }
 
-    const rep =
+    const publisherRep =
       repOverride.get((row.source || "").toLowerCase()) ??
       classifySourceReputation(row.source || "");
+    const discoveryRep = row.trend_source
+      ? repOverride.get(row.trend_source.toLowerCase()) ?? classifySourceReputation(row.trend_source)
+      : null;
+    const rep = applyTrustedDiscoveryReviewFloor(
+      publisherRep,
+      discoveryRep,
+      SOURCE_REPUTATION_FLOOR,
+    );
     const hasVideo = VIDEO_RE.test(`${row.link ?? ""} ${row.description ?? ""}`);
     const result = scoreFeedItem({
       ...row,
@@ -276,6 +287,7 @@ async function scoreRecent(request: Request) {
         viral_signals: {
           ...result.signals,
           source_reputation_reason: result.sourceReputationReason,
+          discovery_source: row.trend_source,
           has_video: hasVideo,
           editorial_value_score: result.editorialValueScore,
           editorial_lane: persistedEditorialLane,

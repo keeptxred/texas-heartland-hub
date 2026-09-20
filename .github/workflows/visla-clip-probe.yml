@@ -1,0 +1,59 @@
+name: Visla clip probe
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/visla-clip-probe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+      - name: Install dependencies and Chromium
+        shell: bash
+        run: |
+          set -euo pipefail
+          bun install --frozen-lockfile
+          bunx playwright install --with-deps chromium
+      - name: Inspect shared Visla clip with Chromium
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat >.visla-probe.mjs <<'JS'
+          import { chromium } from '@playwright/test';
+          const target = 'https://app.visla.us/clip/1540580154592547701';
+          const browser = await chromium.launch({ headless: true });
+          const page = await browser.newPage();
+          const candidates = new Set();
+          const record = (url, contentType = '') => {
+            const lower = String(url).toLowerCase();
+            const type = String(contentType).toLowerCase();
+            if (lower.includes('.mp4') || lower.includes('.m3u8') || type.startsWith('video/') || lower.includes('/video') || lower.includes('/media')) candidates.add(url);
+          };
+          page.on('response', (response) => record(response.url(), response.headers()['content-type'] || ''));
+          await page.goto(target, { waitUntil: 'domcontentloaded', timeout: 60000 });
+          await page.waitForTimeout(12000);
+          const dom = await page.evaluate(() => ({
+            videos: Array.from(document.querySelectorAll('video')).flatMap((v) => [v.currentSrc, v.src, ...Array.from(v.querySelectorAll('source')).map((s) => s.src)]).filter(Boolean),
+            links: Array.from(document.querySelectorAll('a')).map((a) => a.href).filter(Boolean),
+            body: document.body?.innerText?.slice(0, 4000) || '',
+          }));
+          for (const url of [...dom.videos, ...dom.links]) record(url);
+          console.log('PAGE_TEXT_START');
+          console.log(dom.body);
+          console.log('PAGE_TEXT_END');
+          console.log('VIDEO_ELEMENT_URLS', JSON.stringify(dom.videos));
+          console.log('CANDIDATE_COUNT', candidates.size);
+          for (const url of candidates) console.log('CANDIDATE', url);
+          await browser.close();
+          if (![...candidates].some((u) => /\.mp4(?:$|\?)/i.test(u))) process.exitCode = 2;
+          JS
+          node .visla-probe.mjs

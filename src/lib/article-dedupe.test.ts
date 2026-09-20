@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { dedupeArticleBody, isOfficialArticleSource } from "./article-dedupe";
 
+const legacyWwwHost = ["www", "keeptxred", "com"].join(".");
+
 describe("article source authority", () => {
   it("accepts government and military sources as official", () => {
     expect(isOfficialArticleSource({ label: "Texas Legislature Online", url: "https://capitol.texas.gov/" })).toBe(true);
@@ -36,5 +38,75 @@ describe("article source authority", () => {
     expect(body.sources).toEqual([
       { label: "Texas Secretary of State", url: "https://www.sos.state.tx.us/elections/" },
     ]);
+  });
+
+  it("drops a section when deduplication removes all of its visible content", () => {
+    const repeated = "Texas schools use this program to fill critical teacher shortages in bilingual education.";
+    const body = dedupeArticleBody({
+      intro: [repeated],
+      sections: [
+        { heading: "Impact", paragraphs: [repeated] },
+        { heading: "What happens next", paragraphs: ["Lawmakers would still need to act before any proposal becomes law."] },
+      ],
+      faq: [],
+      sources: [],
+    });
+
+    expect(body.sections?.map((section) => section.heading)).toEqual(["What happens next"]);
+  });
+
+  it("routes migrated calculator links directly to TexasDefined before rendering", () => {
+    const body = dedupeArticleBody({
+      intro: ["Use the [Texas Mortgage Calculator](/tools/mortgage-calculator?price=350000) before choosing a home."],
+      sections: [
+        {
+          heading: "Compare costs",
+          paragraphs: [
+            "Estimate taxes with the [Texas Property Tax Calculator](/tools/property-tax-calculator#estimate), but keep the [Texas budget tool](/tools/texas-budget-headroom) on Keep TX Red.",
+          ],
+        },
+      ],
+      faq: [],
+      sources: [],
+    });
+
+    expect(body.intro?.[0]).toContain("https://texasdefined.com/texas-mortgage-calculator?price=350000");
+    expect(body.sections?.[0]?.paragraphs?.[0]).toContain("https://texasdefined.com/decide/property-taxes#estimate");
+    expect(body.sections?.[0]?.paragraphs?.[0]).toContain("/tools/texas-budget-headroom");
+  });
+
+  it("routes retired KeepTXRed aliases directly to canonical destinations before rendering", () => {
+    const body = dedupeArticleBody({
+      intro: [
+        "Start with [Texas News](/texas-news) and [Election Central](/elections/?cycle=2026#top).",
+      ],
+      sections: [
+        {
+          heading: "Follow the Legislature",
+          paragraphs: [
+            `Use [Legislative Updates](/legislative-updates) and [Texas Law & Policy](https://${legacyWwwHost}/texas-law-policy#guide), while keeping [Election Races](/elections/races) unchanged.`,
+          ],
+          bullets: ["Read [Texas Laws](/texas-laws) before the next session."],
+        },
+      ],
+      keyTakeaways: ["The [laws guide](/laws-to-know) is now consolidated."],
+      faq: [
+        {
+          q: "Where is the [election hub](/elections)?",
+          a: "Use [Election Central](/elections) for the current cycle.",
+        },
+      ],
+      sources: [],
+    });
+
+    expect(body.intro?.[0]).toContain("[Texas News](/news)");
+    expect(body.intro?.[0]).toContain("[Election Central](/elections/2026?cycle=2026#top)");
+    expect(body.sections?.[0]?.paragraphs?.[0]).toContain("[Legislative Updates](/bills)");
+    expect(body.sections?.[0]?.paragraphs?.[0]).toContain("https://keeptxred.com/laws#guide");
+    expect(body.sections?.[0]?.paragraphs?.[0]).toContain("[Election Races](/elections/races)");
+    expect(body.sections?.[0]?.bullets?.[0]).toContain("[Texas Laws](/laws)");
+    expect(body.keyTakeaways?.[0]).toContain("[laws guide](/laws)");
+    expect(body.faq?.[0]?.q).toContain("[election hub](/elections/2026)");
+    expect(body.faq?.[0]?.a).toContain("[Election Central](/elections/2026)");
   });
 });

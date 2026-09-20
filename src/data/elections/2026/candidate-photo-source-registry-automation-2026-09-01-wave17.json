@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "julioforrgv.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Julio Salinas's official Texas House District 41 campaign website to verify candidate identity, office, biography, and discover candidate-supplied portrait/media assets. Do not auto-approve imagery; require item-level provenance and a documented editorial-identification basis, explicit campaign/media permission, reusable license, or another supported rights basis before use.",
+    "searchHint": "Julio Salinas Texas House District 41 official campaign portrait media kit",
+    "notes": "Discovered September 1, 2026. The official campaign biography explicitly states that Julio Salinas is running for State Representative in House District 41 and contains candidate-specific imagery."
+  },
+  {
+    "domain": "crystalsedillo.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Crystal Sedillo's official Texas House District 30 campaign website to verify candidate identity, office, biography, and discover candidate-supplied portrait/media assets. Do not auto-approve imagery; require item-level provenance and a documented editorial-identification basis, explicit campaign/media permission, reusable license, or another supported rights basis before use.",
+    "searchHint": "Crystal Sedillo Texas House District 30 official campaign portrait media",
+    "notes": "Discovered September 1, 2026. The official campaign website identifies Crystal Sedillo as running for Texas House District 30 and publishes a candidate biography and candidate imagery."
+  },
+  {
+    "domain": "celestefortexas.com",
+    "sourceClass": "official-campaign-media-kit",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Celeste Cabrera-Huff's official Texas House District 40 campaign media-kit pages to discover candidate-approved press assets and verify candidate identity. Inspect each linked image before use and reject campaign logos, text graphics, social-share art, or other non-portrait assets; require candidate-specific portrait provenance and a documented reuse/editorial basis at item level.",
+    "searchHint": "Celeste Cabrera-Huff Texas House District 40 official media kit portrait",
+    "notes": "Discovered September 1, 2026. The campaign site exposes a MEDIA KIT with downloadable files. One inspected linked asset was a campaign logo without a portrait and was explicitly rejected; the domain remains useful for future item-level media-kit discovery."
+  }
+]

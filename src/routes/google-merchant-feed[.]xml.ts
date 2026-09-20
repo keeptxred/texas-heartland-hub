@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
+import { merchantImageUrl } from "@/lib/merchant-image-url";
+import { parseProductVariantOptions } from "@/lib/product-variant-options";
 import { getProducts, type Product, type ProductVariant } from "@/lib/products.functions";
 import { BASE_URL } from "@/lib/sitemap-shared";
 import { seoDescription, seoTitle } from "@/lib/shop-seo";
@@ -8,7 +10,9 @@ const XML_HEADER = '<?xml version="1.0" encoding="UTF-8"?>';
 const BRAND = "Keep TX Red";
 const TITLE_LIMIT = 150;
 const DESCRIPTION_LIMIT = 5000;
-const FREE_SHIPPING_THRESHOLD_USD = 35;
+const STANDARD_SHIPPING_PRICE_USD = 6.99;
+// Checkout grants free shipping only when the subtotal is greater than $35.
+const FREE_SHIPPING_THRESHOLD_USD = 35.01;
 
 type VariantOption = {
   name: "Color" | "Size";
@@ -61,32 +65,6 @@ function limitText(value: string, maxLength: number): string {
   return value.slice(0, maxLength).replace(/\s+\S*$/, "").trim();
 }
 
-function absoluteImageUrl(value: string | null | undefined): string {
-  if (!value) return "";
-  try {
-    return new URL(value, BASE_URL).toString();
-  } catch {
-    return "";
-  }
-}
-
-function merchantImageUrl(value: string | null | undefined): string {
-  const absolute = absoluteImageUrl(value);
-  if (!absolute) return "";
-
-  try {
-    const image = new URL(absolute);
-    const isPrintify = image.protocol === "https:" &&
-      (image.hostname === "printify.com" || image.hostname.endsWith(".printify.com"));
-
-    return isPrintify
-      ? `${BASE_URL}/merchant-image?src=${encodeURIComponent(absolute)}`
-      : absolute;
-  } catch {
-    return "";
-  }
-}
-
 function productCategory(product: Product): { category?: string; apparel: boolean } {
   const haystack = [product.title, ...(product.tags ?? [])].join(" ").toLowerCase();
 
@@ -121,46 +99,21 @@ function productCategory(product: Product): { category?: string; apparel: boolea
   return { apparel: false };
 }
 
-function variantSize(variant: ProductVariant, apparel: boolean): string | undefined {
-  const title = variant.title.trim();
-  if (!title) return undefined;
-
-  const parts = title.split(/\s*\/\s*|\s*\|\s*|\s+-\s+/).map((part) => part.trim()).filter(Boolean);
-  const knownSize = parts.find((part) =>
-    /^(?:XXS|XS|S|M|L|XL|2XL|XXL|3XL|XXXL|4XL|XXXXL|5XL|6XL|OS|OSFA|OSFM|ONE\s*SIZE|ONE\s*SIZE\s*FITS\s*(?:ALL|MOST)|\d+(?:\.\d+)?\s*(?:in|inch|inches|cm|oz)?|\d+(?:\.\d+)?\s*[x×]\s*\d+(?:\.\d+)?)$/i.test(part),
-  );
-  if (knownSize) return knownSize;
-
-  if (apparel && parts.length >= 2) return parts[parts.length - 1];
-  return undefined;
+function variantAttributes(variant: ProductVariant): { color?: string; size?: string } {
+  const parsed = parseProductVariantOptions(variant.title, variant.color);
+  return {
+    ...(parsed.color ? { color: parsed.color } : {}),
+    ...(parsed.size ? { size: parsed.size } : {}),
+  };
 }
 
 function itemTitle(product: Product, variant?: ProductVariant): string {
   const title = seoTitle(product);
   if (!variant) return limitText(plainText(title), TITLE_LIMIT);
-  const { apparel } = productCategory(product);
-  const options = [variant.color, variantSize(variant, apparel)].filter(Boolean);
+  const attrs = variantAttributes(variant);
+  const options = [attrs.color, attrs.size].filter(Boolean);
   const withOptions = options.length ? `${title} - ${options.join(" / ")}` : title;
   return limitText(plainText(withOptions), TITLE_LIMIT);
-}
-
-function variantAttributes(
-  product: Product,
-  variant: ProductVariant,
-  apparel: boolean,
-): { color?: string; size?: string } {
-  const rawColor = variant.color?.trim() || undefined;
-  const parsedSize = variantSize(variant, apparel);
-  const haystack = [product.title, ...(product.tags ?? [])].join(" ").toLowerCase();
-  const optionLooksLikeDimensions = rawColor != null &&
-    /\d+(?:\.\d+)?\s*(?:in|inch|inches|cm|["″])?\s*[x×]\s*\d+(?:\.\d+)?/i.test(rawColor);
-  const dimensionFirstProduct = /\b(sticker|decal|poster|print|canvas)\b/.test(haystack);
-
-  if (!apparel && dimensionFirstProduct && optionLooksLikeDimensions) {
-    return { size: rawColor };
-  }
-
-  return { color: rawColor, size: parsedSize };
 }
 
 function variantOptionNames(
@@ -171,7 +124,7 @@ function variantOptionNames(
   if (variants.length <= 1) return [];
 
   const rows = variants.map((variant) => {
-    const attrs = variantAttributes(product, variant, apparel);
+    const attrs = variantAttributes(variant);
     return { Color: attrs.color, Size: attrs.size };
   });
   const candidates: Array<Array<VariantOption["name"]>> = [
@@ -223,7 +176,7 @@ function merchantItems(product: Product): MerchantItem[] {
   return enabledVariants.flatMap((variant) => {
     const imageLink = merchantImageUrl(variant.image || variant.images?.[0] || product.image);
     const price = Number(variant.price || product.price);
-    const attrs = variantAttributes(product, variant, apparel);
+    const attrs = variantAttributes(variant);
     const color = attrs.color || (product.colors?.length === 1 ? product.colors[0]?.trim() : undefined);
     const size = attrs.size;
     if (!imageLink || !Number.isFinite(price) || price <= 0 || !description) return [];
@@ -260,10 +213,7 @@ function merchantItems(product: Product): MerchantItem[] {
 
 function renderVariantOptions(options: VariantOption[] | undefined): string {
   if (!options?.length) return "";
-  return options.map((option) => `      <g:variant_option>
-        <g:name>${escapeXml(option.name)}</g:name>
-        <g:value>${escapeXml(option.value)}</g:value>
-      </g:variant_option>`).join("\n");
+  return options.map((option) => `      <g:variant_option>\n        <g:name>${escapeXml(option.name)}</g:name>\n        <g:value>${escapeXml(option.value)}</g:value>\n      </g:variant_option>`).join("\n");
 }
 
 function renderItem(item: MerchantItem): string {
@@ -277,39 +227,16 @@ function renderItem(item: MerchantItem): string {
     item.apparel ? "      <g:gender>unisex</g:gender>" : "",
     item.apparel && item.size ? "      <g:size_system>US</g:size_system>" : "",
     item.category ? `      <g:google_product_category>${escapeXml(item.category)}</g:google_product_category>` : "",
-    item.currency.toUpperCase() === "USD" ? `      <g:free_shipping_threshold>
-        <g:country>US</g:country>
-        <g:price_threshold>${FREE_SHIPPING_THRESHOLD_USD.toFixed(2)} USD</g:price_threshold>
-      </g:free_shipping_threshold>` : "",
+    item.currency.toUpperCase() === "USD" ? `      <g:shipping>\n        <g:country>US</g:country>\n        <g:service>Standard</g:service>\n        <g:price>${STANDARD_SHIPPING_PRICE_USD.toFixed(2)} USD</g:price>\n      </g:shipping>` : "",
+    item.currency.toUpperCase() === "USD" ? `      <g:free_shipping_threshold>\n        <g:country>US</g:country>\n        <g:price_threshold>${FREE_SHIPPING_THRESHOLD_USD.toFixed(2)} USD</g:price_threshold>\n      </g:free_shipping_threshold>` : "",
   ].filter(Boolean).join("\n");
 
-  return `    <item>
-      <g:id>${escapeXml(item.id)}</g:id>
-      <title>${escapeXml(item.title)}</title>
-      <description>${escapeXml(item.description)}</description>
-      <link>${escapeXml(item.link)}</link>
-      <g:canonical_link>${escapeXml(item.canonicalLink)}</g:canonical_link>
-      <g:image_link>${escapeXml(item.imageLink)}</g:image_link>
-      <g:availability>in_stock</g:availability>
-      <g:condition>new</g:condition>
-      <g:price>${escapeXml(item.price.toFixed(2))} ${escapeXml(item.currency)}</g:price>
-      <g:brand>${escapeXml(BRAND)}</g:brand>
-      <g:mpn>${escapeXml(item.mpn)}</g:mpn>
-${optional}
-    </item>`;
+  return `    <item>\n      <g:id>${escapeXml(item.id)}</g:id>\n      <title>${escapeXml(item.title)}</title>\n      <description>${escapeXml(item.description)}</description>\n      <link>${escapeXml(item.link)}</link>\n      <g:canonical_link>${escapeXml(item.canonicalLink)}</g:canonical_link>\n      <g:image_link>${escapeXml(item.imageLink)}</g:image_link>\n      <g:availability>in_stock</g:availability>\n      <g:condition>new</g:condition>\n      <g:price>${escapeXml(item.price.toFixed(2))} ${escapeXml(item.currency)}</g:price>\n      <g:brand>${escapeXml(BRAND)}</g:brand>\n      <g:mpn>${escapeXml(item.mpn)}</g:mpn>\n${optional}\n    </item>`;
 }
 
 function renderFeed(items: MerchantItem[]): string {
   const renderedItems = items.map(renderItem).join("\n");
-  return `${XML_HEADER}
-<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
-  <channel>
-    <title>Keep TX Red Product Catalog</title>
-    <link>${escapeXml(`${BASE_URL}/shop`)}</link>
-    <description>Official Keep TX Red apparel and merchandise.</description>
-${renderedItems}
-  </channel>
-</rss>`;
+  return `${XML_HEADER}\n<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">\n  <channel>\n    <title>Keep TX Red Product Catalog</title>\n    <link>${escapeXml(`${BASE_URL}/shop`)}</link>\n    <description>Official Keep TX Red apparel and merchandise.</description>\n${renderedItems}\n  </channel>\n</rss>`;
 }
 
 function response(body: string, status = 200): Response {

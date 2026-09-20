@@ -1,0 +1,60 @@
+name: Prepare Article Distribution Packages
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: keeptxred-distribution-packages
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      AUTOMATION_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
+    steps:
+      - name: Request signed GitHub Actions token
+        id: auth
+        shell: bash
+        run: |
+          set -euo pipefail
+          oidc_url="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-distribution-packages"
+          oidc_token=$(curl -fsS \
+            -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+            "$oidc_url" | jq -r '.value // empty')
+          if [[ -z "$oidc_token" ]]; then
+            echo 'GitHub Actions did not issue the distribution-package OIDC token.' >&2
+            exit 1
+          fi
+          echo "token=$oidc_token" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare missing article distribution packages
+        shell: bash
+        env:
+          OIDC_TOKEN: ${{ steps.auth.outputs.token }}
+        run: |
+          set -euo pipefail
+          output="$(mktemp)"
+          status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
+            --max-time 240 \
+            -H 'accept: application/json' \
+            -H "Authorization: Bearer ${OIDC_TOKEN}" \
+            "${AUTOMATION_ORIGIN%/}/api/public/hooks/prepare-distribution-packages" || echo 000)
+
+          echo "distribution package preparation HTTP ${status}"
+          cat "$output"
+          echo
+
+          if [[ "$status" != "200" ]] || ! jq -e '.ok == true' "$output" >/dev/null 2>&1; then
+            echo "DISTRIBUTION_PACKAGE_PREPARATION_FAILED" >&2
+            exit 1
+          fi
+
+          jq -r '"DISTRIBUTION_PACKAGE_PREPARATION_SUCCESS eligible=\(.eligible // 0) created=\(.created // 0) enriched=\(.enriched // 0) unchanged=\(.unchanged // 0)"' "$output"

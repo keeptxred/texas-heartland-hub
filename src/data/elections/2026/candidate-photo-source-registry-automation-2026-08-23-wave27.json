@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "arminfortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Armin Mizani's official Texas House District 98 campaign site when page context independently confirms Armin Mizani and District 98 and the image is clearly attributable to the campaign. Exclude logos, donation graphics, issue graphics, stock imagery, third-party embeds, group photographs where Armin Mizani cannot be unambiguously identified, and any image without item-level provenance.",
+    "searchHint": "site:arminfortexas.com Armin Mizani Texas House District 98 portrait meet candidate",
+    "notes": "Verified August 23, 2026. The live campaign site identifies Mayor Armin Mizani as a candidate for Texas House District 98, carries an Armin Mizani Campaign payment disclaimer and direct campaign contact information, and links a dedicated Pictures collection from its Media section. TCTA independently links arminfortexas.com as Mizani's District 98 candidate website."
+  },
+  {
+    "domain": "cityofkeller.com",
+    "sourceClass": "official-local-government-biography",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use City of Keller pages to corroborate Armin Mizani's identity and public-office history and to discover any official local-government portraits. Do not auto-approve City-hosted imagery. Approve only an exact candidate-identifying image after item-level provenance, current identity, HTTPS, portrait quality, and a documented government or licensed reuse basis are verified.",
+    "searchHint": "site:cityofkeller.com Armin Mizani mayor photo biography",
+    "notes": "Verified August 23, 2026. The official City of Keller staff directory identifies Armin Mizani in the City Council department as Mayor, providing an independent government identity bridge for the District 98 candidate."
+  },
+  {
+    "domain": "tarrantcountytx.gov",
+    "sourceClass": "official-county-government-directory",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use official Tarrant County pages to corroborate local elected-office identity and follow official municipal or election links. Do not treat county-hosted imagery as automatically reusable. Any portrait lead must pass item-level identity, provenance, rights, and image-quality validation before approval.",
+    "searchHint": "site:tarrantcountytx.gov candidate name mayor council elected official Texas",
+    "notes": "Verified August 23, 2026. Tarrant County publishes official local-government and election reference pages that can bridge current local officeholders who later become state candidates to municipal profiles and other primary sources."
+  }
+]

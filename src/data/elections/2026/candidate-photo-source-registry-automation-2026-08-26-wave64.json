@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "votewittliff.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography from Albert Wittliff's verified Texas House District 129 campaign site only after the exact image URL and source page independently validate and the item-level editorial-identification permission basis is recorded. Preserve campaign attribution and do not infer broader reuse rights for unrelated site imagery.",
+    "searchHint": "Albert Wittliff Texas House District 129 votewittliff.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 26, 2026. The site identifies Albert Wittliff as a Texas House District 129 candidate and carries a paid-for-by Vote Wittliff TX129 disclaimer. Candidate portrait discovery remains pending exact image-level validation, so this source is active but not auto-approved."
+  },
+  {
+    "domain": "palmerfortexased.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography from Michelle Palmer's verified State Board of Education District 6 campaign site only after the exact image URL and source page independently validate and the item-level editorial-identification permission basis is recorded. Preserve campaign attribution and do not infer broader reuse rights for unrelated site or linked social-media imagery.",
+    "searchHint": "Michelle Palmer State Board of Education District 6 palmerfortexased.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 26, 2026. Independent candidate-directory and election sources link this domain to Michelle Palmer's 2026 SBOE District 6 campaign. The campaign landing page currently resolves primarily through a linked Facebook image, so image use remains pending exact item-level provenance validation and is not auto-approved."
+  }
+]

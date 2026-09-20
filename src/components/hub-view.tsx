@@ -4,17 +4,21 @@ import type { Hub } from "@/data/hubs";
 import { ARTICLES, isPublished, sortByDateDesc, type Article } from "@/data/articles";
 import { assignUniqueImages } from "@/lib/dedupe-images";
 import { matchesTopic } from "@/lib/article-filters";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 
 export type HubSection = { title: string; description: string; href?: string };
 
 export function HubView({ hub, sections, children, filterTopic }: { hub: Hub; sections?: HubSection[]; children?: ReactNode; filterTopic?: string }) {
   const articles = hub.articleSlugs
     .map((s) => ARTICLES.find((a) => a.slug === s))
-    .filter((a): a is Article => Boolean(a) && isPublished(a as Article));
+    .filter((a): a is Article =>
+      Boolean(a)
+      && isPublished(a as Article)
+      && isStaticArticleIndexable(a as Article),
+    );
   const pillar = articles.find((a) => a.slug === hub.pillarSlug);
   const supportingAll = articles.filter((a) => a.slug !== hub.pillarSlug);
   const supporting = (filterTopic ? supportingAll.filter((a) => matchesTopic(a, filterTopic)) : supportingAll).sort(sortByDateDesc);
-  // Enforce per-page image uniqueness across pillar + supporting cards.
   const allForPage = pillar ? [pillar, ...supporting] : supporting;
   const uniq = assignUniqueImages(allForPage, (a) => a.slug, (a) => a.image, (a) => a.category ?? null);
 

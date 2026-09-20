@@ -1,0 +1,38 @@
+[
+  {
+    "domain": "david4texas.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use David Flores's candidate-controlled campaign website to corroborate identity, office, official social links, and discover campaign portrait assets. Do not approve or reuse any image without item-level provenance plus a reusable license, explicit campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "David Flores Texas House District 144 david4texas.com portrait press media",
+    "notes": "New source verified August 27, 2026. TCTA lists david4texas.com as David Flores's website for Texas House District 144 and links his candidate Facebook page, making it a candidate-controlled discovery bridge for portrait provenance."
+  },
+  {
+    "domain": "theodisfortexas.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Theodis Daniel's candidate-controlled campaign website to corroborate identity, office, official campaign profiles, and discover candidate portrait assets. Do not approve or reuse campaign images without item-level provenance plus reusable rights or explicit media permission.",
+    "searchHint": "Theodis Daniel Texas House District 147 theodisfortexas.com portrait press media",
+    "notes": "New source verified August 27, 2026. The live site identifies Theodis Daniel as a Texas State Representative HD 147 candidate, and BallotReady independently lists a verified website for the same candidate."
+  },
+  {
+    "domain": "flip150.org",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use A'Yonna Kellum's candidate campaign site only as a discovery source for identity, contact, official social links, and portrait provenance. Do not approve any displayed image without item-level provenance and documented reusable rights or permission; the current site contains placeholder/template content, so treat all imagery cautiously.",
+    "searchHint": "A'Yonna Kellum Texas House District 150 flip150.org portrait official campaign",
+    "notes": "New source discovered August 27, 2026. The live site identifies A'Yonna Kellum as running for Texas House District 150 and provides campaign contact details. Because portions of the page contain obvious placeholder/template content, this source is discovery-only and must not be auto-approved."
+  },
+  {
+    "domain": "harrisdemocrats.org",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the Harris County Democratic Party candidate directory to corroborate Democratic nominees, offices, and discover candidate-supplied portraits or official campaign links. Do not approve party-directory images without item-level provenance plus reusable rights, explicit permission, or a documented candidate-supplied editorial-use basis.",
+    "searchHint": "Harris County Democratic Party 2026 candidates A'Yonna Kellum portrait campaign website",
+    "notes": "New source expansion verified August 27, 2026. The current Harris County Democratic candidate directory identifies A'Yonna Kellum for State Representative District 150 and displays candidate imagery, creating a county-party discovery bridge for downstream provenance checks."
+  }
+]

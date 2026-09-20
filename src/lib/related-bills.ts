@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
-import { canonicalBillPath, type Bill } from '@/lib/bills';
+import { type Bill } from '@/lib/bills';
+import { publicBillPath } from '@/lib/bill-public-path';
 
 const db = supabase as any;
 
@@ -7,6 +8,7 @@ export type RelatedBill = Pick<
   Bill,
   | 'id'
   | 'legislature_number'
+  | 'session_code'
   | 'bill_type'
   | 'bill_number'
   | 'bill_identifier'
@@ -118,7 +120,7 @@ export async function getRelatedBills(
     db
       .from('bills')
       .select(
-        'id,legislature_number,bill_type,bill_number,bill_identifier,caption,current_status_label,last_action_date,became_law',
+        'id,legislature_number,session_code,bill_type,bill_number,bill_identifier,caption,current_status_label,last_action_date,became_law',
       )
       .in('id', rankedIds)
       .eq('legislature_number', legislatureNumber)
@@ -141,7 +143,7 @@ export async function getRelatedBills(
       }
       return {
         ...bill,
-        href: canonicalBillPath(bill),
+        href: publicBillPath(bill),
         relationshipReasons: reasons,
         relationshipScore: score.subjectMatches * 3 + score.sponsorMatches,
       } as RelatedBill;

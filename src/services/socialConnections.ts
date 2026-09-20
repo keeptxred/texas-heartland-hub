@@ -3,9 +3,10 @@ import {
   disconnectSocialFn,
   testSocialConnectionFn,
   type SocialConnection,
+  type SocialPlatform,
 } from "./socialConnections.functions";
 
-export type { SocialConnection };
+export type { SocialConnection, SocialPlatform };
 
 function getAdminToken(): string {
   if (typeof window === "undefined") return "";
@@ -22,14 +23,17 @@ export async function listSocialConnections(): Promise<SocialConnection[]> {
   return res.rows;
 }
 
-export function disconnectSocial(platform: "facebook" | "instagram") {
+export function disconnectSocial(platform: SocialPlatform) {
   return disconnectSocialFn({ data: { token: getAdminToken(), platform } });
 }
 
-export function testSocialConnection(platform: "facebook" | "instagram") {
+export function testSocialConnection(platform: SocialPlatform) {
   return testSocialConnectionFn({ data: { token: getAdminToken(), platform } });
 }
 
-export function facebookConnectUrl(): string {
-  return `/api/public/oauth/facebook/start?t=${encodeURIComponent(getAdminToken())}`;
+export function facebookConnectUrl(
+  platform: "facebook" | "facebook_texasdefined" = "facebook",
+): string {
+  const target = platform === "facebook_texasdefined" ? "texasdefined" : "keeptxred";
+  return `/api/public/oauth/facebook/start?t=${encodeURIComponent(getAdminToken())}&target=${target}`;
 }

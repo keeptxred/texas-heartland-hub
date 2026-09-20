@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "hcgop.v-web.com",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the Harris County Republican Party 2026 candidate directory to corroborate candidate identity, office, and campaign contact details, and to discover downstream official campaign websites, candidate-controlled social profiles, media kits, or other authoritative portrait sources. Do not copy or approve imagery hosted on this directory unless item-level provenance and an explicit reusable license, candidate/campaign permission, publisher permission, or another documented editorial permission basis is established. Do not use this directory by itself to override authoritative ballot or lifecycle status.",
+    "searchHint": "site:hcgop.v-web.com/2026-candidates Texas candidate name campaign website portrait",
+    "notes": "Fresh source expansion discovered September 5, 2026. The current 2026 candidates page lists Harris County-area nominees including Scott Whitmarsh, Kyle Harding, Laura Garcia DeLeon, Julie Hunt, Heidi Hall, and Frank Salazar, and exposes campaign-site/contact leads for source discovery. Treat as a discovery/corroboration bridge only."
+  },
+  {
+    "domain": "dallasgop.org",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Dallas County Republican Party candidate pages to corroborate candidate identity and office and to discover downstream official campaign websites, candidate-controlled social profiles, media kits, government biographies, or other authoritative portrait sources. Do not copy or approve Dallas GOP-hosted imagery without item-level provenance plus an explicit reusable license, candidate/campaign permission, publisher permission, or another documented editorial permission basis. Do not use party-directory content alone to alter canonical candidate eligibility or lifecycle status.",
+    "searchHint": "site:dallasgop.org/meet-the-candidates Texas candidate name campaign portrait",
+    "notes": "Fresh source expansion discovered September 5, 2026. The current Meet the Candidates page includes a candidate-specific entry for Carlos 'Charlie' Garza and other Texas races, making it useful for race-aware discovery of downstream official portrait sources."
+  },
+  {
+    "domain": "politics1.com",
+    "sourceClass": "election-candidate-link-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Politics1's current Texas candidate guide to corroborate candidate identity, office context, write-in/general-election context, and to discover linked official campaign websites. Do not reuse Politics1-hosted imagery or text as a portrait-rights basis. Any portrait must be verified separately for identity, provenance, and reuse rights at the downstream source. Do not use this directory alone to override authoritative election status.",
+    "searchHint": "site:politics1.com/tx.htm Texas 2026 candidate campaign site portrait",
+    "notes": "Fresh source expansion discovered September 5, 2026. The Texas candidate guide was updated August 20, 2026 and currently surfaces campaign-site links plus write-in context for unresolved statewide candidates including Ed Giles, Jinghpaw Majoishingra, Stephen Samuelson, and Arturo Espinosa. Treat strictly as a discovery bridge."
+  }
+]

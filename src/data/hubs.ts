@@ -24,9 +24,6 @@ export const HUBS: Hub[] = [
       "texas-political-terminology",
       "texas-attorney-general-powers",
       "texas-governor-powers",
-      "speaker-special-session",
-      "voter-id-surge",
-      "school-board-elections",
     ],
   },
   {
@@ -35,16 +32,10 @@ export const HUBS: Hub[] = [
     eyebrow: "Content Pillar",
     intro:
       "Jobs, taxes, state spending, regulation, entrepreneurship, and the policy decisions that affect Texas employers and small businesses — with the numbers and legislation behind the headlines.",
-    pillarSlug: "texas-property-tax-guide",
+    pillarSlug: "why-texas-has-no-income-tax",
     articleSlugs: [
-      "texas-property-tax-guide",
-      "homestead-exemption-explained",
-      "appraisal-protest-playbook",
-      "county-appraisal-districts-explained",
       "why-texas-has-no-income-tax",
-      "isd-tax-burdens",
       "how-texas-counties-spend",
-      "property-tax-relief-package",
       "texas-energy-economy-overview",
     ],
   },
@@ -57,7 +48,6 @@ export const HUBS: Hub[] = [
     pillarSlug: "texas-border-policy-full-guide",
     articleSlugs: [
       "texas-border-policy-full-guide",
-      "operation-lone-star",
       "border-security-state-role",
       "texas-border-geography-101",
     ],
@@ -71,7 +61,6 @@ export const HUBS: Hub[] = [
     pillarSlug: "texas-energy-economy-overview",
     articleSlugs: [
       "texas-energy-economy-overview",
-      "permian-energy",
       "texas-grid-ercot-explained",
       "texas-energy-policy-guide",
     ],
@@ -112,7 +101,6 @@ export const HUBS: Hub[] = [
     pillarSlug: "how-a-bill-becomes-texas-law",
     articleSlugs: [
       "how-a-bill-becomes-texas-law",
-      "texas-constitutional-amendments-guide",
       "texas-open-meetings-public-info",
       "what-local-governments-control",
       "constitutional-carry-one-year-later",

@@ -1,0 +1,56 @@
+import fs from "node:fs";
+import { describe, expect, it } from "vitest";
+import { SUPPORTING_GUIDES } from "@/data/all-guides";
+import {
+  MIN_SUPPORTING_GUIDE_WORDS,
+  isSupportingGuideIndexable,
+  supportingGuideWordCount,
+} from "@/lib/supporting-guide-indexability";
+
+const guideRoute = fs.readFileSync(new URL("../routes/guides.$slug.tsx", import.meta.url), "utf8");
+const pageSitemap = fs.readFileSync(new URL("../routes/sitemap-pages[.]xml.ts", import.meta.url), "utf8");
+
+function staticSitemapBlock() {
+  const match = pageSitemap.match(/const STATIC_PATHS:string\[\]=\[([\s\S]*?)\];/);
+  if (!match) throw new Error("Could not locate STATIC_PATHS in sitemap source");
+  return match[1];
+}
+
+describe("AdSense supporting guide indexability", () => {
+  it("requires substantial depth in addition to existing sourcing and FAQ structure", () => {
+    expect(MIN_SUPPORTING_GUIDE_WORDS).toBe(1200);
+    for (const guide of Object.values(SUPPORTING_GUIDES)) {
+      if (supportingGuideWordCount(guide) < MIN_SUPPORTING_GUIDE_WORDS) {
+        expect(isSupportingGuideIndexable(guide)).toBe(false);
+      }
+    }
+  });
+
+  it("noindexes every unready guide while keeping it accessible", () => {
+    expect(guideRoute).toContain("ALL_GUIDES[params.slug]");
+    expect(guideRoute).toContain("isSupportingGuideIndexable(guide)");
+    expect(guideRoute).toContain('content: "noindex,follow"');
+    expect(guideRoute).toContain("CornerstoneGuidePage");
+  });
+
+  it("advertises only readiness-qualified guides in the pages sitemap", () => {
+    expect(pageSitemap).toContain("Object.values(ALL_GUIDES).filter(isSupportingGuideIndexable)");
+    expect(pageSitemap).toContain("INDEXABLE_GUIDES.map((guide)=>`/guides/${guide.slug}`)");
+    expect(pageSitemap).not.toContain("SUPPORTING_GUIDE_SLUGS.map((slug)=>`/guides/${slug}`)");
+  });
+
+  it("does not let a hard-coded static path or lastmod entry bypass readiness", () => {
+    expect(staticSitemapBlock()).not.toContain('"/guides/');
+    for (const guide of Object.values(SUPPORTING_GUIDES)) {
+      expect(pageSitemap).not.toContain(`"/guides/${guide.slug}": GUIDE_LASTMOD`);
+    }
+    expect(pageSitemap).toContain("GUIDE_LASTMOD_BY_PATH");
+    expect(pageSitemap).toContain("...GUIDE_LASTMOD_BY_PATH");
+  });
+
+  it("currently keeps every known sub-1200-word supporting guide out of the index", () => {
+    const unready = Object.values(SUPPORTING_GUIDES).filter((guide) => !isSupportingGuideIndexable(guide));
+    expect(unready.length).toBeGreaterThan(0);
+    expect(unready.every((guide) => supportingGuideWordCount(guide) < MIN_SUPPORTING_GUIDE_WORDS)).toBe(true);
+  });
+});

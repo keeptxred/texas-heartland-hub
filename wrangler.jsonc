@@ -3,8 +3,21 @@
   "name": "keeptxred-site",
   "main": "src/server.ts",
   "compatibility_date": "2026-08-12",
-  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "workers_dev": true,
+  "vars": {
+    "PRINTIFY_SHOP_ID": "28098650",
+    "SUPABASE_URL": "https://ftkznprjljkhymknvhye.supabase.co",
+    "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_J6-Lke5yaaGA5N5agMsltQ_rCG2MVYo",
+    "NEWSROOM_AI_ENABLED": "true",
+    "NEWSROOM_PUBLISH_ENABLED": "true"
+  },
+  "analytics_engine_datasets": [
+    {
+      "binding": "KTR_SHOP_ANALYTICS",
+      "dataset": "ktr_shop_analytics"
+    }
+  ],
   "send_email": [
     {
       "name": "EMAIL",

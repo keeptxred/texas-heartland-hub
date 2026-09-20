@@ -803,8 +803,8 @@ export const ARTICLES: Article[] = [
   {
     slug: "texas-property-tax-laws-explained",
     category: "Tax & Spending",
-    title: "Texas Property Tax Laws Explained: What Homeowners Need to Know",
-    dek: "How Texas property tax law actually works in 2026 — appraisals, exemptions, rate-setting, ARB protests, truth-in-taxation notices, and the constitutional amendments that raised the homestead exemption to $140,000.",
+    title: "Texas Property Tax Law & Policy Explained: Appraisals, Rates and Relief",
+    dek: "How Texas law divides property-tax appraisal, rate-setting, school finance, relief, protest rights, and local taxing authority — with homeowner filing and calculator tasks handled by TexasDefined.",
     author: "Taxpayer Desk",
     date: "Evergreen guide",
     publishedAt: "2026-07-15T09:30:00",

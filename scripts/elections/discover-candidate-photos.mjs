@@ -67,29 +67,21 @@ if (coverage < TARGET_COVERAGE) console.warn(`Coverage remains below the ${(TARG
 
 async function discoverForCandidate(candidate) {
   const review = [];
-
-  // 1. Existing candidate-linked sources remain highest confidence.
   for (const source of buildLinkedSources(candidate)) {
     const entry = source.kind === "wikidata"
       ? await discoverFromWikidata(candidate, source)
       : await discoverFromPage(candidate, source);
     if (entry) return { entry, review };
   }
-
-  // 2. Public knowledge APIs locate records even when the candidate dataset lacks IDs.
   for (const finder of [discoverFromWikidataSearch, discoverFromCommonsSearch]) {
     const entry = await finder(candidate);
     if (entry) return { entry, review };
   }
-
-  // 3. Targeted domain searches find official, campaign, legislative, judicial,
-  // party, professional and reputable profile pages that are not yet linked.
   const discoveredPages = await discoverSourcePages(candidate);
   for (const source of discoveredPages) {
     const entry = await discoverFromPage(candidate, source);
     if (entry) return { entry, review };
   }
-
   return { entry: null, review };
 }
 
@@ -296,6 +288,7 @@ async function validateImage(url) {
 function classifySource(url) {
   let host;
   try { host = new URL(url).hostname.toLowerCase(); } catch { return null; }
+  if (/catalog\.archives\.gov|(^|\.)loc\.gov$|(^|\.)si\.edu$|picryl\.com|flickr\.com|openverse\.org|reutersconnect\.com|dvidshub\.net|history\.house\.gov|ballotready\.org|texasgop\.org|texasdemocrats\.org|harrisdemocrats\.org/.test(host)) return null;
   if (/house\.texas\.gov|senate\.texas\.gov/.test(host)) return "legislature";
   if (/(^|\.)house\.gov$|(^|\.)senate\.gov$/.test(host)) return "congress";
   if (/txcourts\.gov|\.tx\.us$/.test(host)) return "judicial";

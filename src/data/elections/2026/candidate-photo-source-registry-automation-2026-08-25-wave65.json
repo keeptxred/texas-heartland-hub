@@ -1,0 +1,47 @@
+[
+  {
+    "domain": "bowenfortx.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Scott Bowen's official Texas House District 129 campaign website only after the exact page and image independently validate and clearly identify Bowen. Preserve campaign attribution and the exact source page. Do not approve campaign logos, endorsement graphics, issue graphics, group photos without an unambiguous subject, or unrelated decorative media as the canonical portrait.",
+    "searchHint": "site:bowenfortx.com Scott Bowen Texas House District 129 portrait photo",
+    "notes": "New candidate-controlled source verified August 25, 2026. Bowen's live campaign site identifies him as the District 129 candidate, provides a Meet Scott biography, campaign contact information, and a paid-for-by-Scott-Bowen-Campaign disclosure. Community Impact's January 23, 2026 District 129 candidate Q&A independently links bowenfortx.com as Scott Bowen's candidate website. Portrait extraction remains item-level review only until a specific image asset is independently validated."
+  },
+  {
+    "domain": "votewittliff.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Albert Wittliff's official Texas House District 129 campaign website only after the exact page and image independently validate and clearly identify Wittliff. Preserve campaign attribution and the exact source page. Do not approve campaign logos, event flyers, endorsement graphics, or unrelated decorative media as candidate portraits.",
+    "searchHint": "site:votewittliff.com Albert Wittliff Texas House District 129 portrait photo",
+    "notes": "New candidate-controlled source verified August 25, 2026. The live site identifies Albert Wittliff for Texas House District 129 and carries a political-advertising disclosure paid for by Vote Wittliff TX129. The Texas Classroom Teachers Association's current 2026 candidate directory independently links votewittliff.com for Wittliff. Portrait extraction remains review-required until the exact candidate image is independently validated."
+  },
+  {
+    "domain": "palmerfortexased.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Michelle Palmer's official State Board of Education District 6 campaign website only after the exact page and image independently validate and clearly identify Palmer. Preserve campaign attribution and the exact source page. Do not infer reuse rights for campaign graphics, endorsements, event photos, or unrelated media.",
+    "searchHint": "site:palmerfortexased.com Michelle Palmer State Board of Education District 6 portrait photo",
+    "notes": "New candidate-controlled source verified for the current 2026 race on August 25, 2026. ATPE Teach the Vote and the Texas Classroom Teachers Association both identify Michelle Palmer as the 2026 District 6 candidate and independently link palmerfortexased.com as her campaign website. The campaign domain has also published paid-for-by-Michelle-L-Palmer-campaign material. No portrait is approved from this registry entry without exact current image validation."
+  },
+  {
+    "domain": "teachthevote.atpe.org",
+    "sourceClass": "candidate-directory-discovery-bridge",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use ATPE Teach the Vote to corroborate candidate identity, office, party, ballot status context, and candidate-controlled website/contact links. Do not approve ATPE-hosted profile imagery solely because it appears in the directory. Follow the linked official campaign website or another qualifying source and satisfy the normal item-level provenance and image-rights gate before approving a portrait.",
+    "searchHint": "site:teachthevote.atpe.org/Candidates Texas 2026 candidate website",
+    "notes": "New discovery bridge registered August 25, 2026 after it exposed current official campaign links for unresolved candidates including Michelle Palmer and Scott Bowen. Useful for finding candidate-controlled domains while preserving the existing image-rights gate."
+  },
+  {
+    "domain": "tcta.org",
+    "sourceClass": "candidate-directory-discovery-bridge",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the Texas Classroom Teachers Association TexasTeachersVote candidate directory to corroborate candidate identity, sought office, party, and candidate-controlled website/social links. Do not approve TCTA-hosted candidate thumbnails without independent candidate-supplied provenance or a qualifying reuse license. Prefer the linked official campaign source for final portrait validation.",
+    "searchHint": "site:tcta.org/texasteachersvote/find-candidates Texas 2026 candidate website",
+    "notes": "New discovery bridge registered August 25, 2026. Current candidate pages expose official campaign links for unresolved races, including Tim McDonough, Albert Wittliff, Mindy Bumgarner, and Michelle Palmer, making the directory useful for source expansion without weakening portrait rights review."
+  }
+]

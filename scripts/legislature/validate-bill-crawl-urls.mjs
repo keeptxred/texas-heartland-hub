@@ -48,14 +48,48 @@ const checks = [
     ],
   },
   {
+    file: 'src/lib/bill-public-path.ts',
+    required: [
+      "sessionCode === 'R'",
+      '`/bills/texas/${legislature}/${billType}/${billNumber}`',
+      '`/bills/texas/${legislature}/${sessionCode.toLowerCase()}/${billType}/${billNumber}`',
+      'publicBillReferencePath',
+    ],
+  },
+  {
     file: 'src/lib/bills.ts',
     required: [
       "const BILL_DIRECTORY_PAGE_SIZE = 1000;",
       ".order('last_action_date', { ascending: false, nullsFirst: false })",
       ".order('id', { ascending: true })",
       ".range(from, from + BILL_DIRECTORY_PAGE_SIZE - 1)",
+      "import { publicBillPath } from '@/lib/bill-public-path';",
+      "eq('session_code', 'R')",
+      'bills(id,legislature_number,session_code,bill_type,bill_number',
       '`${SITE_URL}/bills/texas/${bill.legislature_number}`',
       '`${SITE_URL}/bills/texas/${bill.legislature_number}/${billType}`',
+    ],
+  },
+  {
+    file: 'src/routes/bills/texas/$legislature/$session/$billType/$billNumber.tsx',
+    required: [
+      "createFileRoute('/bills/texas/$legislature/$session/$billType/$billNumber')",
+      "eq('session_code', sessionCode)",
+      "sessionCode === 'R'",
+      'publicBillPath(bill)',
+      'noindex,follow',
+      'OfficialBillTextViewer',
+      'BillDocumentsPanel',
+    ],
+  },
+  {
+    file: 'src/routes/bills.texas.$legislature.$session.$billType.$billNumber.reference[.]json.ts',
+    required: [
+      "createFileRoute('/bills/texas/$legislature/$session/$billType/$billNumber/reference.json')",
+      'publicBillReferencePath',
+      "sessionCode === 'R'",
+      "eq('session_code', sessionCode)",
+      "'x-robots-tag': 'noindex, follow'",
     ],
   },
   {
@@ -76,12 +110,16 @@ const checks = [
       '...hierarchyEntries(sitemapBills)',
       'newestDate([bill.last_action_date, bill.updated_at])',
       '...sitemapBills.flatMap((bill) => [bill.last_action_date, bill.updated_at])',
+      'id,legislature_number,session_code,bill_type,bill_number',
     ],
   },
   {
     file: 'src/lib/authority-relationships.ts',
     required: [
-      "article: '/news/'",
+      "'id,legislature_number,session_code,bill_type,bill_number,bill_identifier,caption,current_status_label'",
+      'href: publicBillPath(bill)',
+      "if (row.target_type === 'article') {",
+      'if (!articleMap.has(row.target_key)) return [];',
       'href: `/news/${article.slug}`',
     ],
   },
@@ -113,10 +151,21 @@ const bills = await readFile('src/lib/bills.ts', 'utf8');
 if (bills.includes('`${SITE_URL}/bills?legislature=${bill.legislature_number}`')) {
   errors.push('bill structured breadcrumbs must not point to the filtered/noindex legislature URL');
 }
+if (!bills.includes(".eq('session_code', 'R')")) {
+  errors.push('legacy bill detail lookup must be explicitly restricted to the regular session');
+}
+
+const publicBillPath = await readFile('src/lib/bill-public-path.ts', 'utf8');
+if (!publicBillPath.includes("if (sessionCode === 'R')")) {
+  errors.push('regular-session bill paths must preserve the historical URL shape');
+}
 
 const legislativeSitemaps = await readFile('src/lib/legislative-sitemaps.ts', 'utf8');
 if (legislativeSitemaps.includes('...hierarchyEntries(billRows)')) {
   errors.push('bill hierarchy sitemap hubs must derive from sitemap-worthy bills, not every active bill');
+}
+if (!legislativeSitemaps.includes('session_code')) {
+  errors.push('bill sitemap query must carry session_code into canonical URL generation');
 }
 
 for (const file of [
@@ -128,6 +177,11 @@ for (const file of [
   if (source.includes('/article/${article.slug}') || source.includes("article: '/article/'")) {
     errors.push(`${file} must use canonical /news/ article links`);
   }
+}
+
+const authorityRelationships = await readFile('src/lib/authority-relationships.ts', 'utf8');
+if (authorityRelationships.includes("article: '/news/'")) {
+  errors.push('authority article relationships must not synthesize /news/ fallbacks for unresolved or unready articles');
 }
 
 const robots = await readFile('src/routes/robots[.]txt.ts', 'utf8');

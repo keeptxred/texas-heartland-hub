@@ -10,19 +10,19 @@ type League = (typeof LEAGUES)[number];
 
 const LEAGUE_IMAGES: Record<League, string[]> = {
   nfl: [
-    "https://keeptxred.com/__l5e/assets-v1/cc97f0e5-5817-419b-80ed-27c7f73eddde/nfl-1.jpg",
-    "https://keeptxred.com/__l5e/assets-v1/8224cbdd-d972-4bd3-a6fe-8a0dfb3d61b7/nfl-2.jpg",
-    "https://keeptxred.com/__l5e/assets-v1/8440c8e2-93f0-435b-ac9d-a59b1c891fe8/nfl-3.jpg",
+    "https://keeptxred.com/og/default.jpg",
+    "https://keeptxred.com/og/default.jpg",
+    "https://keeptxred.com/og/default.jpg",
   ],
   mlb: [
-    "https://keeptxred.com/__l5e/assets-v1/0d14382d-24e7-448d-9df6-3bb4acba04d4/mlb-1.jpg",
-    "https://keeptxred.com/__l5e/assets-v1/99eda2bf-0020-4096-a84d-3b5e585d135a/mlb-2.jpg",
-    "https://keeptxred.com/__l5e/assets-v1/c0ea7e8f-6aec-4de0-92d6-21373e70556e/mlb-3.jpg",
+    "https://keeptxred.com/og/default.jpg",
+    "https://keeptxred.com/og/default.jpg",
+    "https://keeptxred.com/og/default.jpg",
   ],
   nba: [
-    "https://keeptxred.com/__l5e/assets-v1/2fb0d24d-c01c-4cca-bfca-16a522cb9eba/nba-1.jpg",
-    "https://keeptxred.com/__l5e/assets-v1/08d4b935-12c9-43e6-bdf7-c9741d1f0fe0/nba-2.jpg",
-    "https://keeptxred.com/__l5e/assets-v1/d9dcf452-1451-4ef7-b57a-93b7a5987dd1/nba-3.jpg",
+    "https://keeptxred.com/og/default.jpg",
+    "https://keeptxred.com/og/default.jpg",
+    "https://keeptxred.com/og/default.jpg",
   ],
 };
 
@@ -199,7 +199,7 @@ function articleBodyText(body: {
   return parts.join(" ");
 }
 
-async function generate(topic: string, subject: string, lovableApiKey: string): Promise<GeneratedBody> {
+async function generate(topic: string, subject: string, aiProviderReady: string): Promise<GeneratedBody> {
   const minWords = requiredMainWordCountForKind("sports-nfl");
   const system = `You are a Texas sports writer for Keep TX Red. Write a weekly evergreen-style overview about ${subject} in a clear, fan-friendly tone. Stay factual and timeless — describe ongoing storylines, team identity, recent seasons, and what fans should watch for. Do NOT invent specific scores, dates, injuries, trades, or quotes. Reference only publicly known team facts and rosters.
 
@@ -215,9 +215,9 @@ REQUIREMENTS:
 Return ONLY valid JSON:
 {"title":"...","dek":"...","keywords":["..."],"intro":["..."],"sections":[{"heading":"...","paragraphs":["..."],"bullets":["..."]}],"faq":[{"q":"...","a":"..."}],"sources":[{"label":"...","url":"https://..."}]}`;
 
-  const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+  const r = await fetch("https://ai.internal.keeptxred.local/v1/chat/completions", {
     method: "POST",
-    headers: { "Content-Type": "application/json", "Lovable-API-Key": lovableApiKey },
+    headers: { "Content-Type": "application/json", "X-KTR-AI-Provider": aiProviderReady },
     body: JSON.stringify({
       model: "google/gemini-3-flash-preview",
       messages: [
@@ -247,7 +247,7 @@ type AnySupabase = ReturnType<typeof createClient<any, any, any>>;
 async function generateForTeam(
   team: TeamMeta,
   supabase: AnySupabase,
-  lovableApiKey: string,
+  aiProviderReady: string,
 ): Promise<{ slug?: string; error?: string }> {
   const pool = TEAM_TOPIC_POOL[team.slug] ?? [`Weekly outlook for the ${team.name}`];
   const { data: recent } = await supabase
@@ -264,7 +264,7 @@ async function generateForTeam(
   const topicPool = available.length > 0 ? available : pool;
   const topic = topicPool[Math.floor(Math.random() * topicPool.length)];
 
-  const gen = await generate(topic, team.name, lovableApiKey);
+  const gen = await generate(topic, team.name, aiProviderReady);
   if (!gen?.title || !gen?.dek || !Array.isArray(gen.sections) || gen.sections.length < 3) {
     return { error: "Bad AI output" };
   }
@@ -326,8 +326,8 @@ export const Route = createFileRoute("/api/public/hooks/generate-sports")({
       POST: async ({ request }) => {
         const supabaseUrl = process.env.SUPABASE_URL;
         const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-        const lovableApiKey = process.env.LOVABLE_API_KEY;
-        if (!supabaseUrl || !serviceKey || !lovableApiKey) {
+        const aiProviderReady = process.env.KTR_AI_PROVIDER_READY;
+        if (!supabaseUrl || !serviceKey || !aiProviderReady) {
           return Response.json({ error: "Missing env" }, { status: 500 });
         }
 
@@ -369,7 +369,7 @@ export const Route = createFileRoute("/api/public/hooks/generate-sports")({
         for (const team of teamTargets) {
           for (let i = 0; i < perTeam; i++) {
             try {
-              const r = await generateForTeam(team, supabase, lovableApiKey);
+              const r = await generateForTeam(team, supabase, aiProviderReady);
               results.push({ team: team.slug, ...r });
             } catch (err) {
               results.push({ team: team.slug, error: String(err) });

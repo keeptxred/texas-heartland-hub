@@ -5,8 +5,13 @@ on:
     types: [opened, reopened, synchronize, ready_for_review]
 
 permissions:
+  actions: write
   contents: write
   pull-requests: write
+
+concurrency:
+  group: auto-merge-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 jobs:
   enable-auto-merge:
@@ -16,9 +21,178 @@ jobs:
       github.event.pull_request.draft == false &&
       github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    timeout-minutes: 55
     steps:
       - name: Enable auto-merge
         env:
           GH_TOKEN: ${{ github.token }}
           PR_URL: ${{ github.event.pull_request.html_url }}
-        run: gh pr merge --auto --squash "$PR_URL"
+        shell: bash
+        run: |
+          set -euo pipefail
+          auto_merge_enabled="$(gh pr view "$PR_URL" --json autoMergeRequest --jq '.autoMergeRequest != null')"
+          if [[ "$auto_merge_enabled" == "true" ]]; then
+            echo "Auto-merge is already enabled for $PR_URL; continuing with post-merge verification orchestration."
+          else
+            gh pr merge --auto --squash "$PR_URL"
+            echo "Auto-merge enabled for $PR_URL."
+          fi
+
+      - name: Wait for merge, verify main, gate migrations, and dispatch exact verified deploy
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          merged_sha=""
+          for attempt in $(seq 1 300); do
+            pr_json="$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER")"
+            merged_sha="$(python3 - "$pr_json" <<'PY'
+          import json, sys
+          data = json.loads(sys.argv[1])
+          print(data.get("merge_commit_sha") if data.get("merged_at") else "")
+          PY
+            )"
+            state="$(python3 - "$pr_json" <<'PY'
+          import json, sys
+          print(json.loads(sys.argv[1]).get("state") or "")
+          PY
+            )"
+
+            [[ -n "$merged_sha" ]] && break
+            if [[ "$state" == "closed" ]]; then
+              echo "PR #$PR_NUMBER closed without merging; nothing to deploy."
+              exit 0
+            fi
+            sleep 5
+          done
+
+          if [[ -z "$merged_sha" ]]; then
+            echo "::error title=Auto-merge wait timed out::PR #$PR_NUMBER did not merge within 25 minutes."
+            exit 1
+          fi
+
+          before_run_id="$(gh run list --repo "$REPOSITORY" --workflow shared-vitest.yml --branch main --event workflow_dispatch --limit 1 --json databaseId --jq '.[0].databaseId // 0')"
+          gh workflow run shared-vitest.yml --ref main --repo "$REPOSITORY"
+          echo "Merged PR #$PR_NUMBER as $merged_sha; dispatched repository health verification for main."
+
+          verify_run_id=""
+          for attempt in $(seq 1 60); do
+            verify_run_id="$(gh run list --repo "$REPOSITORY" --workflow shared-vitest.yml --branch main --event workflow_dispatch --limit 20 --json databaseId,headSha --jq ".[] | select(.headSha == \"$merged_sha\" and .databaseId > $before_run_id) | .databaseId" | head -n 1)"
+            [[ -n "$verify_run_id" ]] && break
+            sleep 2
+          done
+
+          if [[ -z "$verify_run_id" ]]; then
+            echo "::error title=Main verification run not found::Could not resolve the workflow_dispatch verification for $merged_sha."
+            exit 1
+          fi
+
+          gh run watch "$verify_run_id" --repo "$REPOSITORY" --exit-status
+
+          changed_files="$(gh api --paginate "repos/$REPOSITORY/pulls/$PR_NUMBER/files?per_page=100" --jq '.[].filename')"
+          if grep -qxF '.github/workflows/update-election-data.yml' <<<"$changed_files" || \
+             grep -qxF 'scripts/elections/scrape-official-primary-winners.mjs' <<<"$changed_files"; then
+            gh workflow run update-election-data.yml --ref main --repo "$REPOSITORY"
+            echo "Dispatched current-main Election Central data refresh verification."
+          fi
+          if grep -qxF '.github/workflows/update-election-forecasts.yml' <<<"$changed_files"; then
+            gh workflow run update-election-forecasts.yml --ref main --repo "$REPOSITORY"
+            echo "Dispatched current-main Election Central forecast verification."
+          fi
+          if grep -qxF '.github/workflows/broken-link-audit.yml' <<<"$changed_files" || \
+             grep -qxF 'scripts/seo/audit-broken-links.mjs' <<<"$changed_files" || \
+             grep -qxF 'scripts/seo/broken-link-scan-scope.mjs' <<<"$changed_files" || \
+             grep -Eq '^src/routes/' <<<"$changed_files" || \
+             grep -Eq '^src/server/' <<<"$changed_files"; then
+            gh workflow run broken-link-audit.yml --ref main --repo "$REPOSITORY"
+            echo "Dispatched current-main broken-link audit verification."
+          fi
+
+          if grep -Eq '^(\.github/workflows/candidate-photo-enrichment\.yml|scripts/elections/.*(candidate-photo|photo-findings|senate-photo|filing-status).*|src/data/elections/2026/(candidate-photo-source-registry.*\.json|candidate-photo-assets\.json|candidate-supreme-court-media\.json|candidate-filing-status-authority\.json))$' <<<"$changed_files"; then
+            gh workflow run candidate-photo-enrichment.yml --ref main --repo "$REPOSITORY"
+            echo "Dispatched current-main candidate photo enrichment after protected verification."
+          fi
+
+          main_sha="$(gh api "repos/$REPOSITORY/git/ref/heads/main" --jq '.object.sha')"
+          if [[ "$main_sha" != "$merged_sha" ]]; then
+            echo "A newer main revision exists ($main_sha); skipping stale migration/deployment orchestration for $merged_sha."
+            exit 0
+          fi
+
+          if grep -Eq '^(supabase/migrations/|\.github/workflows/apply-supabase-migrations\.yml$)' <<<"$changed_files"; then
+            migration_run_id="$(gh run list --repo "$REPOSITORY" --workflow apply-supabase-migrations.yml --branch main --limit 20 --json databaseId,headSha,event --jq ".[] | select(.headSha == \"$merged_sha\" and (.event == \"push\" or .event == \"workflow_dispatch\")) | .databaseId" | head -n 1)"
+
+            if [[ -z "$migration_run_id" ]]; then
+              before_migration_run_id="$(gh run list --repo "$REPOSITORY" --workflow apply-supabase-migrations.yml --branch main --event workflow_dispatch --limit 1 --json databaseId --jq '.[0].databaseId // 0')"
+              gh workflow run apply-supabase-migrations.yml --ref main --repo "$REPOSITORY"
+              echo "Database-affecting changes detected; dispatched production Supabase migration gate for $merged_sha."
+
+              for attempt in $(seq 1 60); do
+                migration_run_id="$(gh run list --repo "$REPOSITORY" --workflow apply-supabase-migrations.yml --branch main --event workflow_dispatch --limit 20 --json databaseId,headSha --jq ".[] | select(.headSha == \"$merged_sha\" and .databaseId > $before_migration_run_id) | .databaseId" | head -n 1)"
+                [[ -n "$migration_run_id" ]] && break
+                sleep 2
+              done
+            else
+              echo "Using existing Supabase migration run $migration_run_id for exact revision $merged_sha."
+            fi
+
+            if [[ -z "$migration_run_id" ]]; then
+              echo "::error title=Supabase migration run not found::Could not resolve a migration workflow run for $merged_sha."
+              exit 1
+            fi
+
+            gh run watch "$migration_run_id" --repo "$REPOSITORY" --exit-status
+            echo "Supabase migration gate passed for exact revision $merged_sha."
+          fi
+
+          main_sha="$(gh api "repos/$REPOSITORY/git/ref/heads/main" --jq '.object.sha')"
+          if [[ "$main_sha" != "$merged_sha" ]]; then
+            echo "A newer main revision exists ($main_sha); skipping stale deployment of $merged_sha."
+            exit 0
+          fi
+
+          before_deploy_run_id="$(gh run list --repo "$REPOSITORY" --workflow deploy-cloudflare-after-verify.yml --branch main --event workflow_dispatch --limit 1 --json databaseId --jq '.[0].databaseId // 0')"
+          gh workflow run deploy-cloudflare-after-verify.yml --ref main --repo "$REPOSITORY" -f verified_sha="$merged_sha"
+          echo "Main verification and required migration gates passed; dispatched Cloudflare deployment for exact verified revision $merged_sha."
+
+          deploy_run_id=""
+          for attempt in $(seq 1 90); do
+            deploy_run_id="$(gh run list --repo "$REPOSITORY" --workflow deploy-cloudflare-after-verify.yml --branch main --event workflow_dispatch --limit 30 --json databaseId,headSha --jq ".[] | select(.headSha == \"$merged_sha\" and .databaseId > $before_deploy_run_id) | .databaseId" | head -n 1)"
+            [[ -n "$deploy_run_id" ]] && break
+            sleep 2
+          done
+
+          if [[ -z "$deploy_run_id" ]]; then
+            echo "::error title=Deployment run not found::Could not resolve the workflow_dispatch deployment for $merged_sha."
+            exit 1
+          fi
+
+          gh run watch "$deploy_run_id" --repo "$REPOSITORY" --exit-status
+          echo "Cloudflare deployment passed for exact verified revision $merged_sha."
+
+          gh workflow run article-hero-readiness-audit.yml --ref main --repo "$REPOSITORY"
+          echo "Dispatched post-deploy article hero readiness audit on current main."
+
+          if grep -qxF '.github/workflows/sync-gsc-metrics.yml' <<<"$changed_files" || \
+             grep -qxF 'scripts/seo/sync-gsc-metrics.mjs' <<<"$changed_files" || \
+             grep -qxF 'src/lib/gsc.ts' <<<"$changed_files" || \
+             grep -qxF 'src/routes/api/admin/gsc-sync.ts' <<<"$changed_files"; then
+            gh workflow run sync-gsc-metrics.yml --ref main --repo "$REPOSITORY"
+            echo "Dispatched current-main article Search Console metric sync."
+          fi
+
+          if grep -qxF '.github/workflows/sync-gsc-sitewide.yml' <<<"$changed_files" || \
+             grep -qxF 'scripts/seo/gsc-sitewide-utils.mjs' <<<"$changed_files" || \
+             grep -qxF 'scripts/seo/gsc-sitewide-utils.test.mjs' <<<"$changed_files" || \
+             grep -qxF 'scripts/seo/gsc-sitewide-transport-contract.test.mjs' <<<"$changed_files" || \
+             grep -qxF 'scripts/seo/sync-gsc-sitewide.mjs' <<<"$changed_files" || \
+             grep -qxF 'src/lib/gsc-sitewide.ts' <<<"$changed_files" || \
+             grep -qxF 'src/routes/api/admin/gsc-sitewide-sync.ts' <<<"$changed_files" || \
+             grep -Eq '^supabase/migrations/.*_gsc_sitewide_search_console[.]sql$' <<<"$changed_files"; then
+            gh workflow run sync-gsc-sitewide.yml --ref main --repo "$REPOSITORY"
+            echo "Dispatched current-main sitewide Search Console metric and inspection sync."
+          fi

@@ -18,7 +18,7 @@ export const Route = createFileRoute('/admin/bills/backfill')({
 });
 
 const STORAGE_KEY = 'ktr-admin-ok';
-const PASSCODE = (import.meta.env.VITE_ADMIN_PASSCODE as string) || 'keeptxred';
+const PASSCODE = (import.meta.env.VITE_ADMIN_PASSCODE as string | undefined)?.trim() ?? '';
 
 type BackfillStatus = {
   session: string;
@@ -40,7 +40,7 @@ function LegislativeBackfillPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && sessionStorage.getItem(STORAGE_KEY) === '1') setOk(true);
+    if (PASSCODE && typeof window !== 'undefined' && sessionStorage.getItem(STORAGE_KEY) === '1') setOk(true);
   }, []);
 
   if (!ok) {
@@ -48,16 +48,17 @@ function LegislativeBackfillPage() {
       <div className="flex min-h-[70vh] items-center justify-center bg-muted/30 px-4">
         <form className="w-full max-w-sm space-y-4 border-2 border-foreground/10 bg-white p-6" onSubmit={(event) => {
           event.preventDefault();
-          if (pass === PASSCODE) {
+          if (PASSCODE && pass === PASSCODE) {
             sessionStorage.setItem(STORAGE_KEY, '1');
             sessionStorage.setItem('ktr-admin-passcode', pass);
             setOk(true);
-          } else setError('Incorrect passcode.');
+          } else setError(PASSCODE ? 'Incorrect passcode.' : 'Admin passcode is not configured.');
         }}>
           <h1 className="text-2xl font-bold">Legislative Backfill</h1>
-          <Input type="password" value={pass} onChange={(event) => { setPass(event.target.value); setError(''); }} placeholder="Passcode" autoFocus />
+          <Input type="password" value={pass} onChange={(event) => { setPass(event.target.value); setError(''); }} placeholder="Passcode" autoFocus disabled={!PASSCODE} />
           {error && <p className="text-xs text-destructive">{error}</p>}
-          <Button type="submit" className="w-full">Unlock</Button>
+          {!PASSCODE && <p className="text-xs text-destructive">Admin access is unavailable until the required passcode is configured.</p>}
+          <Button type="submit" className="w-full" disabled={!PASSCODE}>Unlock</Button>
         </form>
       </div>
     );
@@ -71,7 +72,7 @@ function BackfillDashboard() {
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState(false);
   const [message, setMessage] = useState('');
-  const token = typeof window !== 'undefined' ? sessionStorage.getItem('ktr-admin-passcode') || PASSCODE : PASSCODE;
+  const token = typeof window !== 'undefined' ? sessionStorage.getItem('ktr-admin-passcode') || '' : '';
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -85,7 +86,7 @@ function BackfillDashboard() {
 
   async function runPass() {
     setRunning(true);
-    setMessage('Running one bounded Lovable Cloud backfill pass…');
+    setMessage('Running one bounded server-side backfill pass…');
     const result = await runLegislativeBackfillPass({
       data: { token, session: '89R', maxSeconds: 60, limit: 100 },
     });
@@ -114,7 +115,7 @@ function BackfillDashboard() {
         <div className="mx-auto max-w-6xl px-4 py-8">
           <a href="/admin" className="text-sm text-white/80 hover:underline">← Editorial Dashboard</a>
           <h1 className="mt-3 text-3xl font-bold md:text-5xl">Legislative Backfill</h1>
-          <p className="mt-2 text-sm text-white/85">Run bounded official-subject and relationship passes inside Lovable Cloud.</p>
+          <p className="mt-2 text-sm text-white/85">Run bounded official-subject and relationship passes through the production admin runtime.</p>
         </div>
       </header>
 

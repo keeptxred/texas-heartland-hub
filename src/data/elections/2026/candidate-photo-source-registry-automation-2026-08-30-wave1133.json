@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "directory.texastribune.org",
+    "sourceClass": "reputable-news-official-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the Texas Tribune elected-official directory to corroborate current Texas officeholder identity, district, official contact information, and discover candidate-specific portraits or downstream official sources. Do not approve or reuse a Tribune-hosted portrait without exact-asset provenance plus a documented reusable license, explicit permission, candidate-supplied attribution, or another item-level editorial permission basis.",
+    "searchHint": "Janie Lopez Texas House District 37 Texas Tribune elected official portrait official website",
+    "notes": "New discovery source added August 30, 2026. The current Texas Tribune directory page for Rep. Janie Lopez identifies her as the District 37 officeholder, states the seat is up in 2026, labels a candidate-specific image as Representative Janie Lopez, and links her official website. Treat the Tribune image as discovery-only unless item-level rights are established; prefer an actual official Texas House portrait when available."
+  },
+  {
+    "domain": "legdir.capitol.texas.gov",
+    "sourceClass": "official-government-legislative-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the Texas Legislative Directory to corroborate incumbent identity, chamber, district, office, official contact information, and downstream official portrait sources. Do not approve generic site art or shared assets. Any portrait must be candidate-specific, tied to the correct member, and retain exact source and asset provenance under the repository's normal editorial-use rules.",
+    "searchHint": "Janie Lopez District 37 Texas Legislative Directory official portrait member",
+    "notes": "New official-government discovery source added August 30, 2026. The current Legislative Directory identifies Representative Janie Lopez as Texas House District 37 and provides authoritative office/contact metadata. Use as a corroboration and downstream-source bridge; it does not by itself create image reuse rights."
+  },
+  {
+    "domain": "texaspolicy.com",
+    "sourceClass": "public-policy-institution-biography",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Public Policy Foundation public biography pages that explicitly offer a named person's headshot for download to discover candidate-specific media assets and corroborate identity. Do not infer a reusable license from the presence of a download link alone; require the exact asset, correct candidate identity, and a documented media/editorial permission basis before approval.",
+    "searchHint": "Janie Lopez Texas House District 37 Texas Public Policy Foundation download headshot",
+    "notes": "New discovery source added August 30, 2026. TPPF's public biography for The Honorable Janie Lopez identifies her as the Republican representative for Texas House District 37 and exposes a Download Headshot action. This is a promising media-source lead but remains discovery-only until item-level permission and exact-asset provenance are documented."
+  }
+]

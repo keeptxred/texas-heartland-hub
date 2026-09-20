@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "texaspolicy.com",
+    "sourceClass": "public-institutional-profile-headshot",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Public Policy Foundation person/profile pages to verify identity and discover downloadable candidate or officeholder headshots. Do not approve imagery solely because it appears on a profile; require item-level candidate identity plus an explicit download/headshot affordance or another documented editorial permission basis. Preserve exact source attribution and do not infer a broader reuse license.",
+    "searchHint": "site:texaspolicy.com/about/people candidate Texas headshot Download Headshot",
+    "notes": "Source class added August 30, 2026 after Janie Lopez's institutional profile provided an explicit candidate-specific 'Download Headshot' link. Treat as discovery-first and approve only item-level assets meeting the existing provenance and editorial-use gates."
+  }
+]

@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "chavezfortexas.org",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Jeff Chavez's official Texas House District 8 campaign site to discover candidate-identifying photographs and campaign-source leads. Do not automatically approve images whose filenames or surrounding context identify them as AI-generated, generic graphics, screenshots, endorsement art, stock imagery, or third-party embeds. A portrait may be approved only after the specific image is verified to depict Jeff Chavez and is directly hosted or clearly attributable to the official campaign, with item-level source attribution.",
+    "searchHint": "site:chavezfortexas.org Jeff Chavez Texas House District 8 portrait candidate photo",
+    "notes": "Discovered and verified August 22, 2026. The live site identifies Jeff Chavez as a candidate for Texas State Representative HD 8 and carries a Chavez For Texas political-ad disclaimer. The page contains both campaign/media photographs and explicitly AI-generated images, so the domain is retained as an active source while automatic image approval is disabled pending item-level identity verification."
+  }
+]

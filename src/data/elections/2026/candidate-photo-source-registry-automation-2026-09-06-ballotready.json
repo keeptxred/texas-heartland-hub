@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "ballotready.org",
+    "sourceClass": "candidate-voter-guide-profile",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use BallotReady candidate profiles only to corroborate candidate identity, office, candidacy, and candidate-linked verified webpages and to discover downstream official campaign websites or candidate-specific portrait leads. Do not approve or reuse BallotReady-hosted imagery without item-level candidate provenance plus an explicit reusable license, documented candidate-supplied status with a narrow editorial-identification basis, explicit permission, or another supported reuse basis. Reject generic Open Graph/social-share images, logos, placeholders, default avatars, voter-guide graphics, and other non-candidate imagery.",
+    "searchHint": "site:ballotready.org/people Texas 2026 candidate name verified webpages portrait campaign website",
+    "notes": "Discovered September 6, 2026 during candidate-photo enrichment while researching Cathy Broadrick (Texas House District 82). BallotReady exposes a current candidate profile, candidate portrait lead, and verified website/social links. Registered strictly as a discovery bridge; BallotReady-hosted images are not automatically approved."
+  }
+]

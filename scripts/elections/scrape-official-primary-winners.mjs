@@ -302,10 +302,6 @@ function raceIdFromOffice(value) {
   return null;
 }
 
-function contextFields(record) {
-  return record;
-}
-
 function first(record, patterns) {
   for (const pattern of patterns) {
     const entry = Object.entries(record).find(

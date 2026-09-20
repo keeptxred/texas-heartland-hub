@@ -1,7 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { AUTHORS, authorSlug, type Author } from "@/data/authors";
+import { AUTHORS, EDITORIAL_BYLINE_DISCLOSURE, authorSlug, type Author } from "@/data/authors";
 import { ARTICLES, isPublished } from "@/data/articles";
 import { getPublishedAuthorArticles, type DailyArticle } from "@/lib/daily-news.functions";
+import { getDiscoverableStaticArticleSlugs } from "@/lib/static-article-discovery.functions";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
+import { hasEnoughAuthorArticles, isCompleteAuthorProfile } from "@/lib/author-indexability";
 import {
   buildSeo,
   ORGANIZATION_ID,
@@ -9,73 +12,76 @@ import {
   WEBSITE_ID,
 } from "@/lib/seo";
 
-export function isIndexableAuthor(author: Author | null | undefined): author is Author {
-  if (!author) return false;
-  const biography = author.bio.join(" ").trim();
-  return Boolean(
-    /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(author.slug) &&
-      author.name.trim().length >= 3 &&
-      author.role.trim().length >= 3 &&
-      biography.length >= 100 &&
-      author.beats.length > 0 &&
-      author.beats.every((beat) => beat.trim().length >= 3),
-  );
-}
-
-function hasStaticByline(author: Author): boolean {
-  return ARTICLES.some(
-    (article) => isPublished(article) && authorSlug(article.author) === author.slug,
-  );
-}
+export const isIndexableAuthor = isCompleteAuthorProfile;
 
 type AuthorLoaderData = {
   author: Author;
   liveArticles: DailyArticle[];
-  hasPublishedArticles: boolean;
+  discoverableStaticSlugs: string[];
+  hasEnoughPublishedArticles: boolean;
 };
+
+function staticBylineSlugs(author: Author, discoverableStatic: ReadonlySet<string>): string[] {
+  return ARTICLES.filter(
+    (article) =>
+      isPublished(article)
+      && isStaticArticleIndexable(article)
+      && discoverableStatic.has(article.slug)
+      && authorSlug(article.author) === author.slug,
+  ).map((article) => article.slug);
+}
 
 export const Route = createFileRoute("/authors/$slug")({
   loader: async ({ params }): Promise<AuthorLoaderData> => {
     const author = AUTHORS.find((candidate) => candidate.slug === params.slug);
-    if (!isIndexableAuthor(author)) throw notFound();
-    const { articles } = await getPublishedAuthorArticles();
-    const liveArticles = articles
-      .filter((article) => article.slug && authorSlug(article.author) === author.slug)
-      .slice(0, 12);
+    if (!isCompleteAuthorProfile(author)) throw notFound();
+    const [{ articles }, discoverableStaticSlugs] = await Promise.all([
+      getPublishedAuthorArticles(),
+      getDiscoverableStaticArticleSlugs(),
+    ]);
+    const discoverableStatic = new Set(discoverableStaticSlugs);
+    const allLiveArticles = articles.filter(
+      (article) => article.slug && authorSlug(article.author) === author.slug,
+    );
+    const publishedSlugs = [
+      ...staticBylineSlugs(author, discoverableStatic),
+      ...allLiveArticles.map((article) => article.slug),
+    ];
     return {
       author,
-      liveArticles,
-      hasPublishedArticles: liveArticles.length > 0 || hasStaticByline(author),
+      liveArticles: allLiveArticles.slice(0, 12),
+      discoverableStaticSlugs,
+      hasEnoughPublishedArticles: hasEnoughAuthorArticles(publishedSlugs),
     };
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
       return {
         meta: [
-          { title: "Newsroom desk not found — Keep TX Red" },
+          { title: "Editorial desk not found — Keep TX Red" },
           { name: "robots", content: "noindex,follow" },
         ],
       };
     }
 
-    const { author, hasPublishedArticles } = loaderData;
+    const { author, hasEnoughPublishedArticles } = loaderData;
     const path = `/authors/${author.slug}`;
     const url = `${SITE_URL}${path}`;
     const deskId = `${url}#desk`;
-    const description = `${author.name} covers ${author.beats.join(", ")} for Keep TX Red. ${author.bio[0]}`;
+    const description = `${author.name} is a Keep TX Red editorial byline for ${author.beats.join(", ")}. ${author.bio[0]}`;
     const seo = buildSeo({
-      title: `${author.name} | Newsroom Desk`,
+      title: `${author.name} | Editorial Byline`,
       description,
       path,
       type: "website",
-      noindex: !hasPublishedArticles,
+      noindex: !hasEnoughPublishedArticles,
     });
     const desk = {
       "@type": "Organization",
       "@id": deskId,
       name: author.name,
       url,
-      description: author.bio.join(" "),
+      description: `${author.bio.join(" ")} ${EDITORIAL_BYLINE_DISCLOSURE}`,
       parentOrganization: { "@id": ORGANIZATION_ID },
       knowsAbout: author.beats,
     };
@@ -120,7 +126,7 @@ export const Route = createFileRoute("/authors/$slug")({
   },
   notFoundComponent: () => (
     <div className="mx-auto max-w-3xl px-4 py-24 text-center">
-      <h1 className="font-display text-4xl mb-3">Newsroom Desk Not Found</h1>
+      <h1 className="font-display text-4xl mb-3">Editorial Desk Not Found</h1>
       <Link to="/news" className="text-primary underline">Back to the newsroom</Link>
     </div>
   ),
@@ -142,10 +148,15 @@ type ProfileArticle = {
 };
 
 function AuthorPage() {
-  const { author, liveArticles } = Route.useLoaderData() as AuthorLoaderData;
+  const { author, liveArticles, discoverableStaticSlugs } = Route.useLoaderData() as AuthorLoaderData;
+  const discoverableStatic = new Set(discoverableStaticSlugs);
 
   const staticArticles: ProfileArticle[] = ARTICLES.filter(
-    (article) => isPublished(article) && authorSlug(article.author) === author.slug,
+    (article) =>
+      isPublished(article)
+      && isStaticArticleIndexable(article)
+      && discoverableStatic.has(article.slug)
+      && authorSlug(article.author) === author.slug,
   ).map((article) => ({
     slug: article.slug,
     category: article.category,
@@ -173,11 +184,15 @@ function AuthorPage() {
       <nav aria-label="Breadcrumb" className="text-[11px] uppercase tracking-[0.25em] text-muted-foreground mb-6">
         <Link to="/news" className="hover:text-primary">Newsroom</Link>
         <span className="mx-2">/</span>
-        <span className="text-primary">Newsroom Desk</span>
+        <span className="text-primary">Editorial Byline</span>
       </nav>
       <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-primary">★ Keep TX Red</span>
       <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-2">{author.name}</h1>
       <p className="mt-2 font-serif italic text-muted-foreground">{author.role}</p>
+
+      <div className="mt-6 rounded-lg border bg-muted/30 p-4 text-sm leading-6 text-muted-foreground">
+        <strong className="text-foreground">Byline disclosure:</strong> {EDITORIAL_BYLINE_DISCLOSURE}
+      </div>
 
       <div className="mt-6 space-y-4 font-serif text-base leading-relaxed">
         {author.bio.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
@@ -195,7 +210,7 @@ function AuthorPage() {
       <section className="mt-12 pt-6 border-t-2 border-foreground">
         <h2 className="font-display text-2xl tracking-tight mb-4">Recent Articles</h2>
         {byAuthor.length === 0 ? (
-          <p className="text-muted-foreground">This desk has not published under this byline yet.</p>
+          <p className="text-muted-foreground">This editorial byline has not published a current article yet.</p>
         ) : (
           <ul className="space-y-5">
             {byAuthor.map((article) => (
@@ -211,8 +226,8 @@ function AuthorPage() {
         )}
       </section>
 
-      <p className="mt-12 text-xs italic text-muted-foreground border-t border-border pt-4">
-        Opinions and analysis published under this byline are editorial content produced by this newsroom desk and reviewed under Keep TX Red's editorial standards — not statements of fact.
+      <p className="mt-12 text-xs text-muted-foreground border-t border-border pt-4 leading-5">
+        This is an organizational editorial byline, not a personal profile. Source attribution, AI assistance, synthesis, corrections, and other production practices are described in Keep TX Red's <Link to="/editorial-standards" className="text-primary underline underline-offset-2">Editorial Standards</Link>.
       </p>
     </div>
   );

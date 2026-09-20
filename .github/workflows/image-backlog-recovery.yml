@@ -1,0 +1,190 @@
+name: KeepTXRed Image Backlog Recovery
+
+on:
+  workflow_dispatch:
+  # Protected-main merges are performed by repository automation, so a marker
+  # commit may not emit a second push-triggered workflow. Listen to the required
+  # repository verification as a fallback. For workflow_run events, resolve the
+  # verified commit message through the commits API before doing any recovery.
+  workflow_run:
+    workflows: ["Repository test and build health"]
+    types: [completed]
+    branches: [main]
+  # Keep background image repair inside the Workers AI free-neuron budget.
+  # This pass is staggered from both the newsroom publisher and AdSense image
+  # recovery so a persistent failure cannot trigger an unbounded retry storm.
+  schedule:
+    - cron: '45 2,10,18 * * *'
+  # The marker path provides an explicit, bounded production-repair mechanism.
+  # A marker push must name one to four exact slugs so an emergency repair can
+  # never spend the bounded batch on unrelated newer backlog rows.
+  push:
+    branches: [main]
+    paths:
+      - '.github/force-image-backlog-recovery'
+
+permissions:
+  contents: read
+  id-token: write
+
+# Share the production image-recovery lock with the recurring AdSense image
+# job so two workflows never regenerate the same article concurrently.
+concurrency:
+  group: adsense-image-readiness-backfill
+  cancel-in-progress: false
+
+jobs:
+  recover:
+    if: >-
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Recover missing and legacy article images pending-first
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MARKER_REF: ${{ github.event.workflow_run.head_sha || github.sha }}
+        run: |
+          set -euo pipefail
+
+          # workflow_run payloads do not reliably expose head_commit.message.
+          # Resolve the exact verified commit instead, and keep ordinary
+          # verification completions as a no-op unless the sentinel is present.
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_run" ]]; then
+            verified_message=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${MARKER_REF}" --jq '.commit.message')
+            if [[ "$verified_message" != *"[run-image-backlog]"* ]]; then
+              echo "IMAGE_BACKLOG_RECOVERY_SKIP no [run-image-backlog] sentinel on verified commit ${MARKER_REF}."
+              exit 0
+            fi
+          fi
+
+          oidc_url="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-newsroom"
+          issue_oidc_token() {
+            local token
+            token=$(curl -fsS \
+              -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+              "$oidc_url" | jq -r '.value // empty')
+            if [[ -z "$token" ]]; then
+              echo 'GitHub Actions did not issue the newsroom OIDC token.' >&2
+              return 1
+            fi
+            printf '%s' "$token"
+          }
+
+          endpoint='https://keeptxred-site.freddy-coppola.workers.dev/api/public/hooks/image-backlog-recovery'
+          ready=-1
+          for attempt in $(seq 1 8); do
+            oidc_token=$(issue_oidc_token)
+            status=$(curl -sS -X POST -o /tmp/image-backlog-dry.json -w '%{http_code}' \
+              --max-time 45 \
+              -H 'accept: application/json' \
+              -H "Authorization: Bearer ${oidc_token}" \
+              "${endpoint}?dry=1" || echo 000)
+            echo "worker endpoint probe ${attempt}/8 HTTP ${status}"
+            cat /tmp/image-backlog-dry.json 2>/dev/null || true
+            echo
+            if [[ "$status" == "200" ]] && jq -e '.ok == true and .dryRun == true' /tmp/image-backlog-dry.json >/dev/null 2>&1; then
+              ready=$(jq -r '.ready // 0' /tmp/image-backlog-dry.json)
+              break
+            fi
+            sleep 15
+          done
+
+          if [[ "$ready" -lt 0 ]]; then
+            echo 'Direct Worker image backlog endpoint never became ready.' >&2
+            exit 1
+          fi
+          if [[ "$ready" -eq 0 ]]; then
+            echo 'IMAGE_BACKLOG_RECOVERY_SUCCESS ready=0; missing/legacy quality backlog already clean.'
+            exit 0
+          fi
+
+          load_exact_marker_slugs() {
+            max_per_run=4
+            marker_b64=$(gh api "repos/${GITHUB_REPOSITORY}/contents/.github/force-image-backlog-recovery?ref=${MARKER_REF}" --jq '.content')
+            printf '%s' "$marker_b64" | base64 --decode > /tmp/image-recovery-marker
+            mapfile -t marker_slugs < <(sed -n 's/^slug:[[:space:]]*//p' /tmp/image-recovery-marker | sed '/^[[:space:]]*$/d' | awk '!seen[$0]++')
+            if [[ "${#marker_slugs[@]}" -lt 1 ]]; then
+              echo 'Force-marker repair must name at least one exact slug using slug:<value>.' >&2
+              exit 1
+            fi
+            if [[ "${#marker_slugs[@]}" -gt "$max_per_run" ]]; then
+              echo "Force-marker repair exceeds the ${max_per_run}-article safety cap." >&2
+              exit 1
+            fi
+            # Keep the exact marker set intact on retries. The protected Worker
+            # endpoint treats a previously recovered, governed-ready slug as an
+            # idempotent success, while typos/unpublished/non-governed rows still
+            # fail closed with 409. This lets a partially successful four-item
+            # batch resume without regenerating the rows that already passed.
+            slugs=("${marker_slugs[@]}")
+          }
+
+          # Ordinary background passes remain capped at one article. When the
+          # audit reports an AdSense-ready article blocked only by its image,
+          # take the first priority slug (the Worker sorts those first). Once
+          # that queue is empty, rotate across missing images so one strict-
+          # validator failure cannot monopolize every scheduled run. After
+          # missing images are cleared, the same rotation advances legacy assets.
+          max_per_run=1
+          if [[ "${GITHUB_EVENT_NAME}" == "push" || "${GITHUB_EVENT_NAME}" == "workflow_run" ]]; then
+            load_exact_marker_slugs
+          else
+            adsense_priority=$(jq -r '.adsensePriority // 0' /tmp/image-backlog-dry.json)
+            if [[ "$adsense_priority" -gt 0 ]]; then
+              mapfile -t slugs < <(jq -r --argjson max "$max_per_run" '.slugs[0:$max][]' /tmp/image-backlog-dry.json)
+              echo "IMAGE_BACKLOG_RECOVERY_ADSENSE_PRIORITY count=${adsense_priority} slug=${slugs[0]:-none}"
+            else
+              missing=$(jq -r '.missing // 0' /tmp/image-backlog-dry.json)
+              candidate_count="$ready"
+              if [[ "$missing" -gt 0 ]]; then
+                candidate_count="$missing"
+              fi
+              if [[ "$candidate_count" -lt 1 ]]; then
+                echo 'No eligible image-recovery candidates remain.'
+                exit 0
+              fi
+              rotation=$(( (GITHUB_RUN_NUMBER - 1) % candidate_count ))
+              mapfile -t slugs < <(jq -r --argjson offset "$rotation" --argjson max "$max_per_run" '.slugs[$offset:($offset + $max)][]' /tmp/image-backlog-dry.json)
+              echo "IMAGE_BACKLOG_RECOVERY_ROTATION candidate_count=${candidate_count} offset=${rotation} slug=${slugs[0]:-none}"
+            fi
+          fi
+
+          failures=0
+          succeeded=0
+          skipped=0
+          processed=0
+
+          for slug in "${slugs[@]}"; do
+            # GitHub OIDC tokens are intentionally short-lived. Long image
+            # generations can outlast a token, so mint a fresh token before
+            # every protected Worker request instead of reusing the probe token.
+            oidc_token=$(issue_oidc_token)
+            encoded_slug=$(jq -rn --arg value "$slug" '$value|@uri')
+            output="/tmp/image-backlog-${processed}.json"
+            status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
+              --max-time 600 \
+              -H 'accept: application/json' \
+              -H "Authorization: Bearer ${oidc_token}" \
+              "${endpoint}?slug=${encoded_slug}" || echo 000)
+            echo "image slug=${slug} HTTP ${status}"
+            cat "$output" 2>/dev/null || true
+            echo
+            processed=$((processed + 1))
+            if [[ "$status" == "200" ]] && jq -e '.ok == true and .failed == 0' "$output" >/dev/null 2>&1; then
+              succeeded=$((succeeded + 1))
+              if jq -e '.skipped == 1' "$output" >/dev/null 2>&1; then
+                skipped=$((skipped + 1))
+              fi
+            else
+              failures=$((failures + 1))
+            fi
+          done
+
+          echo "IMAGE_BACKLOG_RECOVERY_TOTAL ready_at_start=${ready} processed=${processed} succeeded=${succeeded} skipped=${skipped} failures=${failures}"
+          if [[ "$failures" -gt 0 ]]; then
+            echo 'At least one requested image failed the existing production quality gate; retaining failures for diagnosis.' >&2
+            exit 1
+          fi

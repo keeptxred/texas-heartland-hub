@@ -12,12 +12,9 @@ export function ElectionNavigation({
   ariaLabel = "Election Central navigation",
 }: ElectionNavigationProps) {
   return (
-    <nav
-      aria-label={ariaLabel}
-      className={`border-y border-border/70 bg-background/95 ${className}`.trim()}
-    >
-      <div className="mx-auto max-w-7xl overflow-x-auto px-4">
-        <ul className="flex min-w-max items-center gap-1 py-2">
+    <nav aria-label={ariaLabel} className={`bg-background ${className}`.trim()}>
+      <div className="-mx-4 overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:mx-0 lg:px-0">
+        <ul className="flex min-w-max items-center gap-1 py-3 lg:min-w-0 lg:flex-wrap">
           {ELECTION_PRIMARY_NAVIGATION.map((item) => {
             const isActive =
               currentPath === item.href || currentPath?.startsWith(`${item.href}/`);

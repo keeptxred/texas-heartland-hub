@@ -1,26 +1,27 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { LegalPage } from "@/components/legal-page";
-import { SITE_URL } from "@/lib/seo";
+import { buildSeo } from "@/lib/seo";
 
-const title = "Return & Refund Policy | Keep TX Red";
-const description = "Read the Keep TX Red policy for damaged, defective, misprinted, incorrect, lost, or made-to-order merchandise.";
-const canonical = `${SITE_URL}/return-refund-policy`;
+const RETURN_REFUND_TITLE = "Return & Refund Policy";
+const RETURN_REFUND_DESCRIPTION = "Read the Keep TX Red policy for damaged, defective, misprinted, incorrect, lost, or made-to-order merchandise.";
+
+export function returnRefundPolicyHead() {
+  const seo = buildSeo({
+    title: RETURN_REFUND_TITLE,
+    description: RETURN_REFUND_DESCRIPTION,
+    path: "/return-refund-policy",
+    type: "website",
+    imageAlt: "Keep TX Red Return and Refund Policy",
+  });
+
+  return {
+    meta: seo.meta,
+    links: seo.links,
+  };
+}
 
 export const Route = createFileRoute("/return-refund-policy")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: canonical },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: title },
-      { name: "twitter:description", content: description },
-    ],
-    links: [{ rel: "canonical", href: canonical }],
-  }),
+  head: returnRefundPolicyHead,
   component: ReturnRefundPolicyPage,
 });
 

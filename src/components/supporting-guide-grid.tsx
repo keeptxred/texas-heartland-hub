@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { supportingGuidesForPillar } from "@/data/all-guides";
+import { isSupportingGuideIndexable } from "@/lib/supporting-guide-indexability";
 
 export function SupportingGuideGrid({ pillarHref }: { pillarHref: string }) {
-  const guides = supportingGuidesForPillar(pillarHref);
+  const guides = supportingGuidesForPillar(pillarHref).filter(isSupportingGuideIndexable);
   if (guides.length === 0) return null;
 
   return (

@@ -11,27 +11,27 @@ export interface ForecastSummaryCardProps {
 
 export function ForecastSummaryCard({ forecast }: ForecastSummaryCardProps) {
   return (
-    <article className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+    <article className="rounded-xl border border-border bg-card p-6 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-700">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
             {forecast.sourceName}
           </p>
-          <h3 className="mt-2 text-xl font-bold tracking-tight text-slate-950">
+          <h3 className="mt-2 text-xl font-bold tracking-tight text-foreground">
             <a
               href={ELECTION_ROUTES.forecastDetail(forecast.slug)}
-              className="hover:text-red-700 hover:underline"
+              className="hover:text-primary hover:underline"
             >
               {forecast.race.name}
             </a>
           </h3>
-          <p className="mt-1 text-sm text-slate-600">{forecast.race.officeName}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{forecast.race.officeName}</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <span className="rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-700">
+          <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
             {FORECAST_RATING_LABELS[forecast.rating]}
           </span>
-          <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+          <span className="rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
             {FORECAST_CONFIDENCE_LEVEL_LABELS[forecast.confidenceLevel]} confidence
           </span>
           {forecast.model === "fundamentals" ? (
@@ -49,12 +49,12 @@ export function ForecastSummaryCard({ forecast }: ForecastSummaryCardProps) {
           return (
             <div key={candidate.candidateId}>
               <div className="flex items-center justify-between gap-3 text-sm">
-                <span className="font-semibold text-slate-950">{candidate.candidateName}</span>
-                <span className="font-mono font-bold text-slate-950">
+                <span className="font-semibold text-foreground">{candidate.candidateName}</span>
+                <span className="font-mono font-bold text-foreground">
                   {probability.toFixed(1)}%
                 </span>
               </div>
-              <dl className="mt-2 grid grid-cols-2 gap-2 text-xs text-slate-600 sm:grid-cols-4">
+              <dl className="mt-2 grid grid-cols-2 gap-2 text-xs text-muted-foreground sm:grid-cols-4">
                 <CandidateMetric
                   label="Est. vote"
                   value={formatPercent(candidate.projectedVoteShare)}
@@ -69,10 +69,10 @@ export function ForecastSummaryCard({ forecast }: ForecastSummaryCardProps) {
                 />
                 <CandidateMetric label="Win chance" value={`${probability.toFixed(1)}%`} />
               </dl>
-              <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
                 <div
                   aria-hidden="true"
-                  className="h-full rounded-full bg-red-700"
+                  className="h-full rounded-full bg-primary"
                   style={{ width: `${probability}%` }}
                 />
               </div>
@@ -81,7 +81,7 @@ export function ForecastSummaryCard({ forecast }: ForecastSummaryCardProps) {
         })}
       </div>
 
-      <p className="mt-5 text-xs text-slate-500">
+      <p className="mt-5 text-xs text-muted-foreground">
         Updated {new Date(forecast.updatedAt).toLocaleString("en-US")}
       </p>
     </article>
@@ -91,8 +91,8 @@ export function ForecastSummaryCard({ forecast }: ForecastSummaryCardProps) {
 function CandidateMetric({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="font-semibold uppercase tracking-wide text-slate-500">{label}</dt>
-      <dd className="mt-0.5 font-mono font-semibold text-slate-800">{value}</dd>
+      <dt className="font-semibold uppercase tracking-wide text-muted-foreground">{label}</dt>
+      <dd className="mt-0.5 font-mono font-semibold text-foreground">{value}</dd>
     </div>
   );
 }

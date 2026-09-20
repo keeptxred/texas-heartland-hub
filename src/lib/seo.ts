@@ -4,18 +4,19 @@
 
 import { getAuthor } from "@/data/authors";
 import { getCavernSeoOverride } from "@/lib/explore/cavern-seo";
+import { isRetiredStaticNewsPath } from "@/lib/static-article-indexability";
 
 export const SITE_URL = "https://keeptxred.com";
 export const SITE_NAME = "Keep TX Red";
 export const SITE_ALTERNATE_NAMES = ["Keep Texas Red", "KeepTXRed.com"] as const;
 export const ORGANIZATION_ID = `${SITE_URL}/#organization`;
 export const WEBSITE_ID = `${SITE_URL}/#website`;
-export const TWITTER_HANDLE = "@KeepTXRed";
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/og/default.jpg`;
 export const DEFAULT_OG_ALT = "Keep TX Red — Texas News, Politics & Conservative Commentary";
-export const PUBLISHER_LOGO = `${SITE_URL}/__l5e/assets-v1/44ccd7e8-589f-48c9-b255-0b52bb83c041/red-texas-icon.png`;
+export const PUBLISHER_LOGO = `${SITE_URL}/keep-tx-red-icon.svg`;
 export const PUBLISHER_LOGO_ALT = "Keep TX Red red Texas logo";
 export const OFFICIAL_PROFILE_URLS = [
+  "https://www.facebook.com/profile.php?id=61591363654407",
   "https://www.instagram.com/keeptxreddotcom/",
   "https://github.com/keeptxred",
 ] as const;
@@ -112,10 +113,13 @@ function truncateAtWordBoundary(value: string, maxLength: number): string {
 }
 
 function clampTitle(value: string): string {
-  const title = value.trim();
+  const title = value.trim().replace(/\s+/g, " ");
   const separator = " | ";
   const suffix = `${separator}${SITE_NAME}`;
-  if (title.endsWith(SITE_NAME)) return truncateAtWordBoundary(title, 60);
+  const prefix = `${SITE_NAME}${separator}`;
+  if (title === SITE_NAME || title.startsWith(prefix) || title.endsWith(suffix)) {
+    return truncateAtWordBoundary(title, 60);
+  }
   if (`${title}${suffix}`.length <= 60) return `${title}${suffix}`;
   const available = 60 - suffix.length;
   const shortened = truncateAtWordBoundary(title, available);
@@ -145,13 +149,14 @@ export function buildSeo(input: SeoInput) {
   const image = absoluteSeoImage(effectiveInput.image);
   const isArticle = effectiveInput.type === "article";
   const imageAlt = effectiveInput.imageAlt?.trim() || effectiveInput.title;
+  const effectiveNoindex = effectiveInput.noindex ?? isRetiredStaticNewsPath(path);
 
   const meta: Array<Record<string, string>> = [
     { title },
     { name: "description", content: description },
     {
       name: "robots",
-      content: effectiveInput.noindex
+      content: effectiveNoindex
         ? "noindex,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
         : "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1",
     },
@@ -164,10 +169,8 @@ export function buildSeo(input: SeoInput) {
     { property: "og:image", content: image },
     { property: "og:image:secure_url", content: image },
     { property: "og:image:alt", content: imageAlt },
-    { property: "og:image:type", content: image.endsWith(".png") ? "image/png" : "image/jpeg" },
+    { property: "og:image:type", content: image.endsWith(".png") ? "image/png" : image.endsWith(".webp") ? "image/webp" : "image/jpeg" },
     { name: "twitter:card", content: "summary_large_image" },
-    { name: "twitter:site", content: TWITTER_HANDLE },
-    { name: "twitter:creator", content: TWITTER_HANDLE },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
     { name: "twitter:image", content: image },

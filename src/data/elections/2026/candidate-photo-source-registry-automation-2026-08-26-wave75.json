@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "david4texas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Treat imagery on David Flores's official campaign site as candidate-identity and image-discovery evidence only unless the exact image is accompanied by an explicit reusable license, press/media permission, campaign-supplied reuse statement, or other documented item-level permission basis. Preserve the page URL, direct image URL, credit/provenance, and permission evidence before approval.",
+    "searchHint": "site:david4texas.com David Flores Texas House District 144 portrait media press",
+    "notes": "Official campaign site verified August 26, 2026 for unresolved Texas House District 144 Republican candidate David Flores. The site identifies Flores as a candidate for Texas House District 144, includes campaign biography/press material and campaign-controlled imagery, and adds a candidate-controlled source for further portrait discovery while retaining manual rights verification."
+  },
+  {
+    "domain": "vote-usa.org",
+    "sourceClass": "candidate-profile-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Vote-USA candidate-profile imagery only as a discovery lead unless the exact image has an explicit reusable license, candidate/campaign-supplied provenance with documented reuse permission, or another item-level permission basis. Do not infer reuse rights from appearance on a candidate profile. Preserve the exact profile URL, image URL, credit/provenance, candidate identity, and any license or permission statement before approval.",
+    "searchHint": "site:vote-usa.org 2026 Texas candidate portrait State Representative",
+    "notes": "New discovery source verified August 26, 2026. Vote-USA currently exposes candidate-specific profiles with portrait imagery for unresolved candidates including Alexandria Nicole Butler (HD-146). This adds a previously unused candidate-profile directory bridge; image approval remains item-level and rights-gated."
+  }
+]

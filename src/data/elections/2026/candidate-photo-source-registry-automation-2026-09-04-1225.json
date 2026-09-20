@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "gprepublicans.com",
+    "sourceClass": "candidate-linked-local-party-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the Grand Prairie Republican Club leadership page only to corroborate Carlos (Charlie) Garza's identity and candidate-linked local profile and to discover downstream official campaign, party, or candidate-specific portrait sources. Do not approve or reuse any hosted image without item-level provenance plus an explicit reusable license, candidate-supplied media basis, explicit permission, or another documented narrow editorial-identification basis. Reject logos, social-share graphics, endorsements, placeholders, and unrelated club imagery.",
+    "searchHint": "Carlos Charlie Garza Texas State Board of Education District 13 official campaign portrait media Grand Prairie Republican Club",
+    "notes": "New source discovered September 4, 2026. The club's leadership page identifies Charlie Garza as president and exposes a candidate-specific image reference for the SBOE candidate, making it useful as a discovery bridge for the still-missing District 13 portrait. Treat all hosted imagery as discovery-only until item-level rights and provenance are established."
+  }
+]

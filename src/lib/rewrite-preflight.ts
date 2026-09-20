@@ -37,11 +37,11 @@ export type RewritePreflightInput = {
 };
 
 // Practical thresholds. No source below the absolute floor may enter the
-// rewrite-ready queue, even when it contains several factual signals. This
-// prevents very short Reddit posts and snippets from being expanded into
-// articles. Government releases and other high-signal sources between the
-// absolute floor and the normal target may still use the factual-signal bypass.
+// rewrite-ready queue. Fact-dense government releases can still bypass the
+// normal 400-word target, but only after they contain enough source material to
+// support a full editorial article without padding or invention.
 export const ABSOLUTE_MIN_SOURCE_WORDS = 150;
+export const SHORT_RELEASE_MIN_SOURCE_WORDS = 300;
 const BREAKING_MIN_WORDS = 250;
 const STANDARD_MIN_WORDS = 400;
 const FACTUAL_SIGNALS_MIN = 4;
@@ -88,14 +88,16 @@ const NEWS_EVENT_PATTERNS: RegExp[] = [
   /\b(bill|law|ruling|order|lawsuit|indictment|arrest|election|primary|runoff|hearing|verdict|storm|hurricane|tornado|flood|wildfire|shooting|crash|outbreak)\b/i,
 ];
 
-function normalize(text: string | null | undefined): string {
+/** Normalizes the exact text that may be counted, displayed and rewritten. */
+export function normalizeUsableSourceText(text: string | null | undefined): string {
   return (text ?? "").replace(/\s+/g, " ").trim();
 }
 
-function wordCount(text: string): number {
-  const t = text.trim();
-  if (!t) return 0;
-  return t.split(/\s+/).length;
+/** Single source of truth for rewrite-source word counts. */
+export function countUsableSourceWords(text: string | null | undefined): number {
+  const normalized = normalizeUsableSourceText(text);
+  if (!normalized) return 0;
+  return normalized.split(/\s+/).filter(Boolean).length;
 }
 
 function countMatches(text: string, patterns: RegExp[]): number {
@@ -133,7 +135,7 @@ function detectPaywall(text: string): boolean {
 
 function detectBoilerplateHeavy(text: string): boolean {
   const hits = countMatches(text, BOILERPLATE_PATTERNS);
-  const words = wordCount(text);
+  const words = countUsableSourceWords(text);
   // Only flag when the extraction is small AND dominated by boilerplate cues.
   return hits >= 2 && words < 250;
 }
@@ -183,9 +185,9 @@ function reasonMessage(reason: RewritePreflightReason, words: number): string {
 }
 
 export function assessRewritePreflight(input: RewritePreflightInput): RewritePreflightResult {
-  const title = normalize(input.title);
-  const body = normalize(input.description);
-  const words = wordCount(body);
+  const title = normalizeUsableSourceText(input.title);
+  const body = normalizeUsableSourceText(input.description);
+  const words = countUsableSourceWords(body);
   const factual = factualSignalCount(`${title} ${body}`);
   const eventState = detectNewsEvent(title, body);
 
@@ -222,8 +224,13 @@ export function assessRewritePreflight(input: RewritePreflightInput): RewritePre
 
   const min = input.isBreaking ? BREAKING_MIN_WORDS : STANDARD_MIN_WORDS;
   if (words < min) {
-    // Allow fact-dense sources only after they clear the absolute 150-word floor.
-    if (factual >= FACTUAL_SIGNALS_FOR_SHORT_RELEASES) {
+    // Fact density does not substitute for source depth. The 300-word bypass
+    // floor prevents thin appointment notices and short official announcements
+    // from being expanded into 800/1,200-word stories they cannot support.
+    if (
+      words >= SHORT_RELEASE_MIN_SOURCE_WORDS &&
+      factual >= FACTUAL_SIGNALS_FOR_SHORT_RELEASES
+    ) {
       return finalize("READY");
     }
     return finalize("BODY_TOO_SHORT");

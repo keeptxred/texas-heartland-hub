@@ -46,9 +46,10 @@ export const Route = createFileRoute("/texas-news/$topic")({
     }
     const title = section ? `${section.title} — Texas News` : "Texas News";
     const desc = section?.description ?? "Texas news coverage.";
-    // Filter sub-routes consolidate into the main category page — canonical to
-    // the base URL + noindex prevents duplicate indexed pages.
-    const canonical = "https://keeptxred.com/texas-news";
+    // Filter sub-routes consolidate into the canonical newsroom. Keeping them
+    // noindex preserves useful navigation without pointing canonicals at a URL
+    // that immediately redirects again.
+    const canonical = "https://keeptxred.com/news";
     return {
       meta: [
         { title: `${title} | Keep Texas Red` },

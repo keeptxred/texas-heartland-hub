@@ -1,0 +1,47 @@
+[
+  {
+    "domain": "texasjudges.org",
+    "sourceClass": "judicial-candidate-comparison-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use current judicial race pages to confirm candidate identity, office, campaign website, and social links. Do not reuse portraits unless the underlying image has an independently verified rights basis.",
+    "searchHint": "site:texasjudges.org/2026-races candidate name",
+    "notes": "Verified August 22, 2026 as a current Texas judicial candidate comparison directory with direct campaign links and current occupation details."
+  },
+  {
+    "domain": "harrisdemocrats.org",
+    "sourceClass": "official-county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use the official county party candidate directory to confirm candidate context and locate campaign websites/social accounts. Do not copy directory imagery without separate provenance and reuse-rights verification.",
+    "searchHint": "site:harrisdemocrats.org/candidates candidate name",
+    "notes": "Verified August 22, 2026 as the Harris County Democratic Party candidate directory with 2026 candidate listings and images."
+  },
+  {
+    "domain": "elliscountydemocraticparty.com",
+    "sourceClass": "official-county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use the official county party candidate page to locate campaign websites and confirm candidate/race context. Reuse an image only after tracing it to a campaign, government, public-domain, or licensed source.",
+    "searchHint": "site:elliscountydemocraticparty.com/candidates candidate name",
+    "notes": "Verified August 22, 2026 as an Ellis County Democratic Party candidate directory linking statewide judicial and local candidates to their campaign sites."
+  },
+  {
+    "domain": "nebcd.org",
+    "sourceClass": "local-political-organization-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use endorsement/candidate pages to discover current campaign links and candidate context. Do not reuse organization-hosted imagery without independently documented provenance and rights.",
+    "searchHint": "site:nebcd.org endorsements candidate name 2026",
+    "notes": "Verified August 22, 2026 as a current 2026 endorsement directory with direct campaign links for statewide and judicial candidates."
+  },
+  {
+    "domain": "amarillopioneer.com",
+    "sourceClass": "local-voter-guide",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use voter-guide questionnaires to confirm candidate identity and discover official sites or candidate-supplied media. Do not copy publication-hosted images unless a campaign-supplied/editorial permission basis is explicitly documented.",
+    "searchHint": "site:amarillopioneer.com/2026-primary-voter-guide candidate name",
+    "notes": "Verified August 22, 2026 as a current Texas candidate questionnaire source containing judicial and other candidate profiles."
+  }
+]

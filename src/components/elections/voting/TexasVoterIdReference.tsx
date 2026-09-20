@@ -23,24 +23,24 @@ const SUPPORTING_IDS = [
 
 export function TexasVoterIdReference() {
   return (
-    <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm" aria-labelledby="texas-voter-id-heading">
-      <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-700">In-person voting ID</p>
-      <h2 id="texas-voter-id-heading" className="mt-2 text-2xl font-bold text-slate-950">Texas voter identification reference</h2>
-      <p className="mt-3 max-w-4xl leading-7 text-slate-600">Texas voters who possess one of the seven acceptable forms of photo identification are asked to present it when voting in person. A voter who does not possess an acceptable photo ID and cannot reasonably obtain one may use a qualifying supporting document and complete a Reasonable Impediment Declaration.</p>
+    <section className="rounded-xl border border-border bg-card p-6 shadow-sm" aria-labelledby="texas-voter-id-heading">
+      <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">In-person voting ID</p>
+      <h2 id="texas-voter-id-heading" className="mt-2 font-display text-3xl leading-none tracking-tight text-foreground">Texas voter identification reference</h2>
+      <p className="mt-3 max-w-4xl leading-7 text-muted-foreground">Texas voters who possess one of the seven acceptable forms of photo identification are asked to present it when voting in person. A voter who does not possess an acceptable photo ID and cannot reasonably obtain one may use a qualifying supporting document and complete a Reasonable Impediment Declaration.</p>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <div>
-          <h3 className="font-bold text-slate-950">Seven acceptable photo IDs</h3>
-          <ol className="mt-3 space-y-2 text-sm leading-6 text-slate-700">
-            {ACCEPTABLE_PHOTO_IDS.map((id, index) => <li key={id} className="flex gap-3"><span className="font-bold text-red-700">{index + 1}.</span><span>{id}</span></li>)}
+        <div className="rounded-lg border border-border bg-muted/30 p-5">
+          <h3 className="font-bold text-foreground">Seven acceptable photo IDs</h3>
+          <ol className="mt-3 space-y-2 text-sm leading-6 text-muted-foreground">
+            {ACCEPTABLE_PHOTO_IDS.map((id, index) => <li key={id} className="flex gap-3"><span className="font-bold text-primary">{index + 1}.</span><span>{id}</span></li>)}
           </ol>
         </div>
-        <div>
-          <h3 className="font-bold text-slate-950">Supporting ID route when a photo ID cannot reasonably be obtained</h3>
-          <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-700">
+        <div className="rounded-lg border border-border bg-muted/30 p-5">
+          <h3 className="font-bold text-foreground">Supporting ID route when a photo ID cannot reasonably be obtained</h3>
+          <ul className="mt-3 space-y-2 text-sm leading-6 text-muted-foreground">
             {SUPPORTING_IDS.map((id) => <li key={id} className="flex gap-2"><span aria-hidden="true">•</span><span>{id}</span></li>)}
           </ul>
-          <p className="mt-4 rounded-lg bg-amber-50 p-4 text-sm leading-6 text-amber-950">The supporting-document route requires a Reasonable Impediment Declaration. Other exceptions and provisional-ballot procedures can apply, so use the official VoteTexas guidance for your circumstances.</p>
+          <p className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950">The supporting-document route requires a Reasonable Impediment Declaration. Other exceptions and provisional-ballot procedures can apply, so use the official VoteTexas guidance for your circumstances.</p>
         </div>
       </div>
 

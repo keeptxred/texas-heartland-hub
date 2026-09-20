@@ -8,37 +8,64 @@ const getEnv = (key: string): string => {
 
 export type StripeEnv = "sandbox" | "live";
 
-const GATEWAY_STRIPE_BASE = "https://connector-gateway.lovable.dev/stripe";
+export function normalizeStripeEnv(value: unknown): StripeEnv {
+  if (value === "sandbox" || value === "live") return value;
+  throw new Error("Invalid Stripe environment.");
+}
 
-export function getConnectionApiKey(env: StripeEnv): string {
-  return env === "sandbox"
-    ? getEnv("STRIPE_SANDBOX_API_KEY")
-    : getEnv("STRIPE_LIVE_API_KEY");
+export function validateStripeSecretKeyForEnvironment(
+  env: StripeEnv,
+  value: string,
+): string {
+  const key = value.trim();
+  const allowedPrefixes =
+    env === "sandbox" ? ["sk_test_", "rk_test_"] : ["sk_live_", "rk_live_"];
+
+  if (!allowedPrefixes.some((prefix) => key.startsWith(prefix))) {
+    const variable =
+      env === "sandbox" ? "STRIPE_SANDBOX_SECRET_KEY" : "STRIPE_LIVE_SECRET_KEY";
+    const mode = env === "sandbox" ? "test-mode" : "live-mode";
+    throw new Error(`${variable} must contain a ${mode} Stripe secret key.`);
+  }
+
+  return key;
+}
+
+export function getStripeSecretKey(env: StripeEnv): string {
+  const resolvedEnvironment = normalizeStripeEnv(env);
+  const variable =
+    resolvedEnvironment === "sandbox"
+      ? "STRIPE_SANDBOX_SECRET_KEY"
+      : "STRIPE_LIVE_SECRET_KEY";
+
+  return validateStripeSecretKeyForEnvironment(
+    resolvedEnvironment,
+    getEnv(variable),
+  );
 }
 
 export function createStripeClient(env: StripeEnv): Stripe {
-  const connectionApiKey = getConnectionApiKey(env);
-  const lovableApiKey = getEnv("LOVABLE_API_KEY");
-
-  return new Stripe(connectionApiKey, {
+  const resolvedEnvironment = normalizeStripeEnv(env);
+  const stripe = new Stripe(getStripeSecretKey(resolvedEnvironment), {
     apiVersion: "2026-03-25.dahlia",
-    httpClient: Stripe.createFetchHttpClient((input, init) => {
-      const stripeUrl = input instanceof Request ? input.url : input.toString();
-      const gatewayUrl = stripeUrl.replace("https://api.stripe.com", GATEWAY_STRIPE_BASE);
-      return fetch(gatewayUrl, {
-        ...init,
-        headers: {
-          ...Object.fromEntries(
-            new Headers(
-              init?.headers ?? (input instanceof Request ? input.headers : undefined),
-            ).entries(),
-          ),
-          "X-Connection-Api-Key": connectionApiKey,
-          "Lovable-API-Key": lovableApiKey,
-        },
-      });
-    }),
+    maxNetworkRetries: 2,
   });
+
+  // This Stripe account/API version uses the newer `embedded_page` value.
+  // Normalize the legacy app constant at the client boundary so every direct
+  // Checkout Session create call uses the mode Stripe currently accepts.
+  const createCheckoutSession = stripe.checkout.sessions.create.bind(
+    stripe.checkout.sessions,
+  );
+  (stripe.checkout.sessions as any).create = (params: any, options?: any) =>
+    createCheckoutSession(
+      params?.ui_mode === "embedded"
+        ? { ...params, ui_mode: "embedded_page" }
+        : params,
+      options,
+    );
+
+  return stripe;
 }
 
 export function getStripeErrorMessage(error: unknown): string {

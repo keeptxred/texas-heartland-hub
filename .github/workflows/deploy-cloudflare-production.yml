@@ -196,6 +196,49 @@ jobs:
           if failures: raise SystemExit("Preview health verification failed: " + "; ".join(failures))
           PY
 
+      - name: Verify preview GEO content before production promotion
+        shell: bash
+        env:
+          PREVIEW_URL: ${{ steps.deploy.outputs.preview_url }}
+        run: |
+          set -euo pipefail
+          election_body="$(mktemp)"
+          home_body="$(mktemp)"
+          trap 'rm -f "$election_body" "$home_body"' EXIT
+
+          curl --retry 20 --retry-delay 3 --retry-all-errors \
+            --fail-with-body --silent --show-error \
+            -H "x-keeptxred-deployment-smoke: canonical" \
+            "${PREVIEW_URL%/}/elections/2026" -o "$election_body"
+          curl --retry 20 --retry-delay 3 --retry-all-errors \
+            --fail-with-body --silent --show-error \
+            -H "x-keeptxred-deployment-smoke: canonical" \
+            "${PREVIEW_URL%/}/" -o "$home_body"
+
+          python3 - "$election_body" "$home_body" <<'PY'
+          import pathlib
+          import re
+          import sys
+
+          election = pathlib.Path(sys.argv[1]).read_text(encoding="utf-8", errors="replace")
+          home = pathlib.Path(sys.argv[2]).read_text(encoding="utf-8", errors="replace")
+
+          strong_h1 = "2026 Texas Election Central: Races, Candidates, Polls & Results"
+          if strong_h1 not in election:
+              h1s = re.findall(r"<h1\b[^>]*>(.*?)</h1>", election, flags=re.I | re.S)
+              simplified = [re.sub(r"<[^>]+>", "", value).strip() for value in h1s]
+              raise SystemExit(f"Preview election HTML is missing the strengthened H1; observed h1={simplified!r}")
+
+          for marker in ('"Organization"', '"NewsMediaOrganization"'):
+              if marker not in election:
+                  raise SystemExit(f"Preview election HTML is missing JSON-LD marker {marker}")
+
+          if '"FAQPage"' not in home:
+              raise SystemExit("Preview home HTML is missing FAQPage JSON-LD")
+
+          print("Preview GEO gate passed: strengthened election H1, Organization/NewsMediaOrganization JSON-LD, and home FAQPage JSON-LD are present before production promotion.")
+          PY
+
       - name: Promote tested Worker to production custom domain
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.activate_custom_domain == true }}
         shell: bash
@@ -275,19 +318,44 @@ jobs:
           print(f"Attached {result['hostname']} to {result['service']} in zone {result['zone_name']} after preview health passed.")
           PY
 
-      - name: Verify production database and AI health
+      - name: Verify promoted Worker health and production edge route
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.activate_custom_domain == true }}
         shell: bash
+        env:
+          PREVIEW_URL: ${{ steps.deploy.outputs.preview_url }}
         run: |
           set -euo pipefail
-          health_url="https://$PRODUCTION_HOSTNAME/api/public/hooks/health"
-          response="$(curl --retry 10 --retry-delay 3 --retry-all-errors --fail-with-body --silent --show-error "$health_url")"
-          echo "$response"
+
+          # GitHub-hosted runner IPs are intentionally challenged by the production
+          # zone on dynamic/browser-facing paths. Verify the promoted Worker through
+          # its workers.dev origin, then verify that the production hostname is
+          # reachable through Cloudflare on a static path. The preceding Domains API
+          # step already requires the hostname to map to this exact Worker service.
+          health_url="${PREVIEW_URL%/}/api/public/hooks/health"
+          response="$(curl --retry 20 --retry-delay 3 --retry-all-errors \
+            --fail-with-body --silent --show-error "$health_url")"
           python3 - "$response" <<'PY'
           import json, sys
           data = json.loads(sys.argv[1])
           failures = []
           if data.get("database") != "ok": failures.append("database is not ok")
           if data.get("ai_provider_ready") is not True: failures.append("AI provider is not ready")
-          if failures: raise SystemExit("Production health verification failed: " + "; ".join(failures))
+          if failures:
+              raise SystemExit("Promoted Worker health verification failed: " + "; ".join(failures))
+          print(json.dumps({"database": data.get("database"), "ai_provider_ready": data.get("ai_provider_ready")}))
           PY
+
+          robots_url="https://$PRODUCTION_HOSTNAME/robots.txt"
+          robots_body="$(curl --retry 10 --retry-delay 3 --retry-all-errors \
+            --fail-with-body --silent --show-error "$robots_url")"
+          if [[ -z "$robots_body" ]]; then
+            echo "Production edge returned an empty robots.txt response." >&2
+            exit 1
+          fi
+          echo "Promoted Worker health passed and production edge route is reachable."
+
+      - name: Verify deployed law route ownership, H1s, and canonicals
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.activate_custom_domain == true }}
+        env:
+          SITE_URL: ${{ steps.deploy.outputs.preview_url }}
+        run: python3 scripts/verify-deployed-laws-runtime.py

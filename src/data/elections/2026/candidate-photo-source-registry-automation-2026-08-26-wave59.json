@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "odusfortexas.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Odus Evbagharu's verified Texas House District 135 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Odus Evbagharu Texas House District 135 odusfortexas.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 26, 2026. The live site states that Odus Evbagharu is running for the Texas House, contains current HD 135 campaign material, and is explicitly paid for by Odus Evbagharu for Texas. The site exposes candidate imagery, but this registry entry does not approve a portrait until a stable candidate-identifying asset suitable for the canonical manifest independently validates."
+  },
+  {
+    "domain": "votewittliff.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Albert Wittliff's verified Texas House District 129 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Albert Wittliff Texas House District 129 votewittliff.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 26, 2026. The live campaign identifies Albert Wittliff for Texas House District 129 and carries a paid-for-by Vote Wittliff TX129 disclaimer. Register the domain for follow-on portrait discovery; current indexed assets include campaign event graphics and branding, so do not approve a portrait until a stable candidate-identifying image independently validates."
+  }
+]

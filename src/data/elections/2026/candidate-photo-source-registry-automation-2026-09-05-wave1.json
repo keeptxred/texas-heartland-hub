@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "celestefortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Celeste Cabrera-Huff's official campaign website and campaign-controlled media-kit pages to verify candidate identity, office, campaign biography, and discover candidate-supplied portrait/media assets. Do not approve any image unless the exact asset has item-level provenance and a documented campaign/media-kit reuse basis or another valid editorial permission basis. Reject campaign logos, graphics without the candidate, and generic social-share assets.",
+    "searchHint": "site:celestefortexas.com Celeste Cabrera-Huff media kit portrait Texas House District 40",
+    "notes": "Discovered September 5, 2026 while enriching the current missing-photo list. TCTA links celestefortexas.com as Celeste Cabrera-Huff's campaign website, and the campaign site exposes a MEDIA KIT section with downloadable campaign files. The visible Squarespace image inspected during discovery was a campaign logo without the candidate and is explicitly not suitable as a portrait."
+  },
+  {
+    "domain": "morenofortxhd145.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Inocensia Moreno's campaign website to verify candidate identity, office, biography, and discover candidate-controlled portrait or media-kit assets. Do not approve any image without exact item-level provenance plus an explicit reusable license, campaign/media permission, candidate-supplied newsroom terms, or another documented editorial permission basis. Reject logos, placeholders, social-share graphics, and other non-candidate imagery.",
+    "searchHint": "site:morenofortxhd145.com Inocensia Moreno portrait Texas House District 145",
+    "notes": "Discovered September 5, 2026 from a current Community Impact Texas House District 145 candidate Q&A that identifies www.morenofortxhd145.com as Inocensia Moreno's website. Treat site imagery as discovery-only until item-level rights are established."
+  },
+  {
+    "domain": "communityimpact.com",
+    "sourceClass": "reputable-local-news-candidate-qa",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Community Impact candidate Q&A pages to corroborate current candidate identity, office, campaign website, and discover candidate-supplied portraits when the specific article explicitly states that candidate photos were submitted by the candidates or otherwise documents the image provenance. Do not approve newsroom-hosted imagery without item-level candidate-supplied provenance or another documented editorial permission basis.",
+    "searchHint": "site:communityimpact.com Texas 2026 candidate Q&A photos submitted candidates portrait",
+    "notes": "Added September 5, 2026 as a discovery bridge after a current House District 145 Q&A surfaced Inocensia Moreno's campaign website and candidate image. This source remains discovery-only by default; image approval requires article-specific provenance language and candidate-specific asset matching."
+  }
+]

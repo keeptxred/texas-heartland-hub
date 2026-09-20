@@ -1,0 +1,38 @@
+[
+  {
+    "domain": "ballotready.org",
+    "sourceClass": "candidate-linked-voter-guide-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use BallotReady candidate profiles to corroborate candidate identity, office, current-cycle candidacy, linked official webpages/social profiles, and candidate-specific portrait leads. Do not approve or reuse BallotReady-hosted imagery without item-level provenance plus an explicit reusable license, documented candidate-supplied status with a narrow editorial-identification basis, explicit permission, or another supported reuse basis. Reject logos, generic election graphics, placeholders, default avatars, social-share images, and non-candidate imagery.",
+    "searchHint": "site:ballotready.org/people Texas 2026 candidate name portrait official website",
+    "notes": "Discovered September 7, 2026 while researching live missing Texas candidate portraits. BallotReady exposes candidate-specific profiles, headshots, race/cycle identity, and verified outbound webpages; for example, its Mindy Bumgarner profile identifies her 2026 State Board of Education District 14 candidacy and provides verified official-web/social links. Registered strictly as a discovery bridge; BallotReady-hosted images are not automatically approved."
+  },
+  {
+    "domain": "sanantonioreport.org",
+    "sourceClass": "reputable-local-news-candidate-profile",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use San Antonio Report candidate profiles to corroborate candidate identity, office, biography, campaign linkage, and candidate-specific portrait leads. Treat outlet-hosted portraits as copyrighted editorial material unless item-level evidence establishes candidate-supplied media, an explicit reusable license, explicit permission, or another supported narrow editorial-identification basis. Do not auto-approve newsroom photographs, logos, social-share graphics, placeholders, generic district images, or non-candidate imagery.",
+    "searchHint": "site:sanantonioreport.org/profile 2026 Texas candidate name district portrait campaign",
+    "notes": "Discovered September 7, 2026 while researching missing Texas House portraits. San Antonio Report publishes current candidate-specific profile pages, including a January 6, 2026 Rhett Rosenquest Smith HD116 profile with a candidate image and identifying race metadata. Registered for discovery and downstream official-source research only; newsroom-hosted imagery is not automatically approved."
+  },
+  {
+    "domain": "dallasgop.org",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Dallas County Republican Party candidate pages to corroborate current-cycle candidate identity, office, party linkage, campaign websites, and candidate-specific portrait leads. Do not approve party-hosted imagery without item-level provenance plus a supported reuse basis such as an explicit reusable license, documented candidate-supplied media with a narrow editorial-identification basis, or explicit permission. Reject logos, endorsement graphics, event photos, social-share graphics, placeholders, and non-candidate imagery.",
+    "searchHint": "site:dallasgop.org/meet-the-candidates 2026 candidate name Texas portrait campaign website",
+    "notes": "Discovered September 7, 2026 while researching missing State Board of Education portraits. The Dallas County GOP Meet the Candidates page publishes current candidate biographies and candidate-image leads, including Carlos \"Charlie\" Garza for State Board of Education District 13. Registered as a discovery bridge only; party-hosted images are not automatically approved."
+  },
+  {
+    "domain": "hcgop.com",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Harris County Republican Party candidate directories to corroborate current-cycle candidate identity, office, campaign website, contact linkage, and portrait leads. Do not approve party-hosted imagery without item-level provenance plus a supported reuse basis such as an explicit reusable license, documented candidate-supplied media with a narrow editorial-identification basis, or explicit permission. Reject logos, endorsement graphics, event photos, social-share images, placeholders, and non-candidate imagery.",
+    "searchHint": "site:hcgop.com 2026 candidates Texas House candidate name portrait campaign website",
+    "notes": "Discovered September 7, 2026 while researching several missing Harris County-area Texas House portraits. Harris County GOP's 2026 candidate directory lists current district candidates and available campaign websites or contact details, including Scott Whitmarsh (HD131), Kyle Harding (HD139), Laura Garcia DeLeon (HD140), Julie Hunt (HD141), Heidi Hall (HD142), Frank Salazar (HD143), and Inocensia Moreno (HD145). Registered for discovery and downstream official-source research only; party-hosted imagery is not automatically approved."
+  }
+]

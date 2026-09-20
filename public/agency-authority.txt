@@ -1,0 +1,23 @@
+# Keep TX Red — Texas Agency Authority Profiles
+Reviewed: 2026-08-19
+Canonical hub: https://keeptxred.com/texas-government/agencies
+
+Purpose: Permanent, source-backed explanations of what high-use Texas agencies and institutions control, what they do not control, their major functions, oversight, and primary records. These pages are institutional reference material; current political disputes remain in KTR policy, bill, law and newsroom pages.
+
+Profiles:
+- Texas Education Agency (TEA): /texas-government/agencies/texas-education-agency
+- Texas Department of Public Safety (DPS): /texas-government/agencies/texas-department-public-safety
+- Public Utility Commission of Texas (PUCT): /texas-government/agencies/public-utility-commission
+- Electric Reliability Council of Texas (ERCOT): /texas-government/agencies/ercot
+- Texas Department of Transportation (TxDOT): /texas-government/agencies/texas-department-transportation
+- Texas Commission on Environmental Quality (TCEQ): /texas-government/agencies/texas-commission-environmental-quality
+- Texas Health and Human Services Commission (HHSC): /texas-government/agencies/health-human-services-commission
+- Railroad Commission of Texas (RRC): /texas-government/agencies/railroad-commission
+- Texas Water Development Board (TWDB): /texas-government/agencies/texas-water-development-board
+
+Source standard:
+1. Prefer the agency's own official website and controlling Texas statute.
+2. Distinguish an operator from a regulator (for example, ERCOT versus PUCT).
+3. Distinguish state agency authority from local government, federal government, elected boards, or the Legislature.
+4. Do not infer new legal authority from press releases or political statements.
+5. Re-review these profiles at least every 60 days and sooner after major statutory reorganization.

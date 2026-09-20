@@ -1,17 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CONTENT_PILLARS, getRelatedContentPillars } from "@/lib/content-pillars";
+import { buildSeo, SITE_URL } from "@/lib/seo";
 
-export const Route = createFileRoute("/topics")({
-  head: () => ({
-    meta: [
-      { title: "Texas Coverage Topics — Keep TX Red Content Pillars" },
-      { name: "description", content: "Browse Keep TX Red's core Texas coverage pillars: politics, elections, border security, energy, economy and small business, agriculture, veterans, law enforcement, and the Legislature." },
-      { property: "og:title", content: "Texas Coverage Topics — Keep TX Red" },
-      { property: "og:description", content: "The core topics Keep TX Red covers consistently across breaking news and evergreen guides." },
-      { property: "og:url", content: "https://keeptxred.com/topics" },
-      { property: "og:type", content: "website" },
-    ],
-    links: [{ rel: "canonical", href: "https://keeptxred.com/topics" }],
+const TOPICS_TITLE = "Texas Coverage Topics & Content Pillars";
+const TOPICS_DESCRIPTION =
+  "Browse Keep TX Red's core Texas coverage pillars: politics, elections, border security, energy, economy and small business, agriculture, veterans, law enforcement, and the Legislature.";
+
+export function topicsHead() {
+  const seo = buildSeo({
+    title: TOPICS_TITLE,
+    description: TOPICS_DESCRIPTION,
+    path: "/topics",
+    type: "website",
+    imageAlt: "Keep TX Red Texas coverage topics",
+  });
+
+  return {
+    meta: seo.meta,
+    links: seo.links,
     scripts: [
       {
         type: "application/ld+json",
@@ -20,15 +26,15 @@ export const Route = createFileRoute("/topics")({
           "@graph": [
             {
               "@type": "CollectionPage",
-              "@id": "https://keeptxred.com/topics#page",
-              url: "https://keeptxred.com/topics",
+              "@id": `${SITE_URL}/topics#page`,
+              url: `${SITE_URL}/topics`,
               name: "Keep TX Red Texas Coverage Topics",
               description: "The canonical topic map for Keep TX Red's Texas politics, elections, government, law, economy, energy, border, agriculture, veterans, and public-safety coverage.",
               about: CONTENT_PILLARS.map((pillar) => ({
                 "@type": "Thing",
-                "@id": `https://keeptxred.com${pillar.href}#topic`,
+                "@id": `${SITE_URL}${pillar.href}#topic`,
                 name: pillar.title,
-                url: `https://keeptxred.com${pillar.href}`,
+                url: `${SITE_URL}${pillar.href}`,
                 description: pillar.description,
               })),
             },
@@ -39,14 +45,18 @@ export const Route = createFileRoute("/topics")({
                 "@type": "ListItem",
                 position: index + 1,
                 name: pillar.title,
-                url: `https://keeptxred.com${pillar.href}`,
+                url: `${SITE_URL}${pillar.href}`,
               })),
             },
           ],
         }),
       },
     ],
-  }),
+  };
+}
+
+export const Route = createFileRoute("/topics")({
+  head: topicsHead,
   component: TopicsPage,
 });
 
@@ -58,6 +68,14 @@ function TopicsPage() {
       <p className="mt-5 max-w-3xl font-serif text-lg leading-relaxed text-muted-foreground">
         Keep TX Red organizes developing news and evergreen explainers around these core Texas content pillars. Each hub connects the latest reporting to the laws, institutions, elections, industries, and public-policy context behind the story.
       </p>
+
+      <section className="mt-8 border-l-4 border-primary bg-muted/40 p-5" aria-labelledby="issue-guides-heading">
+        <h2 id="issue-guides-heading" className="font-display text-2xl tracking-tight">Need the law and policy behind the headline?</h2>
+        <p className="mt-2 max-w-4xl text-sm leading-relaxed text-muted-foreground">
+          The coverage hubs below follow developing stories. Our Texas Issues library goes deeper with source-first evergreen guides, direct links to enacted bills and statutes, quick answers, related tools, and cross-topic context.
+        </p>
+        <a href="/issues" className="mt-4 inline-block text-sm font-bold text-primary hover:underline underline-offset-4">Browse Texas issue guides →</a>
+      </section>
 
       <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {CONTENT_PILLARS.map((pillar) => {
@@ -90,6 +108,12 @@ function TopicsPage() {
           );
         })}
       </div>
+
+      <section className="mt-12 border-t pt-8 text-center">
+        <h2 className="font-display text-3xl tracking-tight">From coverage hub to primary source</h2>
+        <p className="mx-auto mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">Use Topics for the ongoing news stream and Issues for durable explainers. The two systems are intentionally complementary so readers can move from a developing story to the governing law without competing duplicate pages.</p>
+        <a href="/issues" className="mt-5 inline-block border px-5 py-3 text-sm font-semibold hover:border-primary hover:text-primary">Open Texas Issues →</a>
+      </section>
     </main>
   );
 }

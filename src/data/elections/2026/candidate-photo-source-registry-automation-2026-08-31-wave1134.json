@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "ivoterguide.com",
+    "sourceClass": "election-voter-guide-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use iVoterGuide's current Texas 2026 voter-guide and race pages to corroborate candidate identity, party, office sought, and discover candidate-specific portraits plus downstream official campaign or public profiles. Do not approve or reuse any iVoterGuide-hosted image without item-level provenance plus an explicit reusable license, candidate/campaign permission, candidate-supplied provenance, or another documented editorial permission basis. Do not use iVoterGuide to override authoritative election lifecycle status.",
+    "searchHint": "site:ivoterguide.com Texas 2026 candidate portrait official campaign",
+    "notes": "Discovered August 31, 2026 while researching the live missing-photo set. The current Texas general-election guide exposes candidate-specific images for unresolved candidates including Tom Luck (HD19), Crystal Sedillo (HD30), Fatima Muse (HD2), Mike Meadors (HD25), and others. Treat as a discovery/corroboration bridge only."
+  },
+  {
+    "domain": "bluevoterguide.org",
+    "sourceClass": "endorsement-voter-guide-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Blue Voter Guide's current Texas candidate and endorsement pages to corroborate candidate identity and discover candidate-specific portraits or downstream official sources. Do not approve or reuse any Blue Voter Guide-hosted image without item-level provenance plus an explicit reusable license, candidate/campaign permission, candidate-supplied provenance, or another documented editorial permission basis. Do not infer eligibility or ballot lifecycle status from endorsement listings.",
+    "searchHint": "site:bluevoterguide.org Texas 2026 candidate portrait official campaign",
+    "notes": "Discovered August 31, 2026 while researching current missing candidates. Current Texas endorsement pages expose candidate-specific images for unresolved candidates including Fatima Muse, Crystal Sedillo, and Mike Meadors and can be used to trace stronger first-party portrait sources."
+  },
+  {
+    "domain": "govbase.com",
+    "sourceClass": "election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use GovBase's current Texas election pages to corroborate candidate/race identity and follow candidate-linked Ballotpedia, campaign website, X, Facebook, or other official profile links. Do not approve or reuse any GovBase-hosted image without item-level provenance plus documented reusable or editorial permission. Do not use GovBase to override authoritative election lifecycle status.",
+    "searchHint": "site:govbase.com Texas 2026 election candidate official website portrait",
+    "notes": "Discovered August 31, 2026 from a live Texas 2026 general-election directory that links candidates to downstream campaign and Ballotpedia sources. Discovery-only bridge; no hosted image or rights status is auto-approved."
+  }
+]

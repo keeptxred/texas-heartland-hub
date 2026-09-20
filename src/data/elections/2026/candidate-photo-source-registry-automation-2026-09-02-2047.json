@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "mindybumgarner.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Mindy Bumgarner's official State Board of Education District 14 campaign website to verify candidate identity, office, biography, and discover candidate-supplied portrait or media assets. Do not approve or reuse any site image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Mindy Bumgarner Texas State Board of Education District 14 official campaign portrait media",
+    "notes": "Discovered September 2, 2026. The campaign website identifies Mindy Bumgarner as running for Texas State Board of Education District 14 and contains campaign-controlled biography content and imagery. Treat imagery as discovery-only until item-level rights and candidate-specific provenance are established."
+  },
+  {
+    "domain": "crystalsedillo.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Crystal Sedillo's official Texas House District 30 campaign website to verify candidate identity, office, biography, and discover candidate-supplied portraits or campaign media. Do not approve or reuse any site image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Crystal Sedillo Texas House District 30 official campaign portrait media",
+    "notes": "Discovered September 2, 2026. The campaign website identifies Crystal Sedillo as running for Texas House District 30 and includes campaign-controlled biography content. TCTA independently links this same campaign site from its 2026 candidate profile. Treat imagery as discovery-only until item-level rights and candidate-specific provenance are established."
+  },
+  {
+    "domain": "palmerfortexased.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Michelle Palmer's official Texas State Board of Education District 6 campaign website to verify candidate identity, office, biography, and discover candidate-supplied portraits or media. Do not approve or reuse any site image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Michelle Palmer Texas State Board of Education District 6 official campaign portrait media",
+    "notes": "Discovered September 2, 2026. TCTA and ATPE both identify palmerfortexased.com as Michelle Palmer's 2026 campaign website for State Board of Education District 6. Treat campaign imagery as discovery-only unless item-level reuse rights and candidate-specific provenance are documented."
+  }
+]

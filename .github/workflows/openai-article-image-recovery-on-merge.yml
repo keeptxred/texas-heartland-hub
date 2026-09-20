@@ -1,0 +1,63 @@
+name: Trigger OpenAI Article Image Recovery On Merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  dispatch:
+    if: >-
+      github.event.pull_request.merged == true &&
+      contains(github.event.pull_request.title, '[run-openai-article-image]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Wait for exact merge SHA deployment, then dispatch recovery
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -z "$MERGE_SHA" ]]; then
+            echo 'Merged PR did not expose a merge SHA.' >&2
+            exit 1
+          fi
+
+          main_sha="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/main" --jq '.object.sha')"
+          if [[ "$MERGE_SHA" != "$main_sha" ]]; then
+            echo "Merged sentinel SHA $MERGE_SHA is no longer current main ($main_sha); refusing stale recovery."
+            exit 0
+          fi
+
+          deploy_run=''
+          for attempt in $(seq 1 80); do
+            deploy_run="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow deploy-cloudflare-after-verify.yml --event workflow_dispatch --limit 30 --json databaseId,headSha,status,conclusion --jq ".[] | select(.headSha == \"$MERGE_SHA\") | @base64" | head -n 1)"
+            if [[ -n "$deploy_run" ]]; then
+              status="$(printf '%s' "$deploy_run" | base64 --decode | jq -r '.status')"
+              conclusion="$(printf '%s' "$deploy_run" | base64 --decode | jq -r '.conclusion // ""')"
+              run_id="$(printf '%s' "$deploy_run" | base64 --decode | jq -r '.databaseId')"
+              echo "Exact deploy run $run_id status=$status conclusion=$conclusion"
+              if [[ "$status" == 'completed' ]]; then
+                if [[ "$conclusion" != 'success' ]]; then
+                  echo "Exact deployment failed with conclusion $conclusion; refusing recovery dispatch." >&2
+                  exit 1
+                fi
+                gh workflow run openai-article-image-recovery.yml --ref main --repo "$GITHUB_REPOSITORY"
+                echo "Dispatched bounded OpenAI article-image recovery after successful deployment of $MERGE_SHA"
+                exit 0
+              fi
+            else
+              echo "Waiting for exact deployment run for $MERGE_SHA (${attempt}/80)"
+            fi
+            sleep 10
+          done
+
+          echo "Timed out waiting for successful deployment of $MERGE_SHA" >&2
+          exit 1

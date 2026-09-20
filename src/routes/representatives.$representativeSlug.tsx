@@ -7,7 +7,9 @@ import {
 } from "@/data/representative-authority";
 import { canonicalBillPath, getRepresentativeLegislation, SITE_URL } from "@/lib/bills";
 import { getRelatedAuthorityContent } from "@/lib/authority-relationships";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 import { RelatedAuthorityContent } from "@/components/authority/RelatedAuthorityContent";
+import { RepresentativeLegislativeIntelligence } from "@/components/representative-legislative-intelligence";
 
 export const Route = createFileRoute("/representatives/$representativeSlug")({
   loader: async ({ params }) => {
@@ -18,7 +20,7 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
     const terms = (
       authority?.newsKeywords ?? (directoryRepresentative ? [directoryRepresentative.name] : [])
     ).map((term) => term.toLowerCase());
-    const news = ARTICLES.filter((article) => isPublished(article))
+    const news = ARTICLES.filter((article) => isPublished(article) && isStaticArticleIndexable(article))
       .filter((article) => {
         const haystack =
           `${article.title} ${article.dek} ${(article.topics ?? []).join(" ")}`.toLowerCase();
@@ -221,6 +223,7 @@ function RepresentativeProfile() {
               "Education",
               "Committees",
               "Elections",
+              "Activity",
               "Legislation",
               "Finance",
               "District",
@@ -313,6 +316,12 @@ function RepresentativeProfile() {
               </a>
             )}
           </section>
+
+          <RepresentativeLegislativeIntelligence
+            name={name}
+            bills={bills}
+            relatedContent={relatedContent}
+          />
 
           <section className="rounded-xl border bg-card p-6">
             <span id="legislation" className="scroll-mt-24" />

@@ -3,8 +3,10 @@ import racesSnapshot from "@/data/elections/2026/races.json";
 import { CitationTrustPanel } from "@/components/authority/CitationTrustPanel";
 import { ElectionLayout, ElectionNavigation } from "@/components/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
+import { formatElectionTitle } from "@/lib/elections/seo";
 
 const URL = "https://keeptxred.com/elections/districts";
+const PAGE_TITLE = formatElectionTitle("Texas Election Districts & 2026 Race Lookup");
 const WHO_REPRESENTS_ME = "https://wrm.capitol.texas.gov/home";
 const REDISTRICTING = "https://redistricting.capitol.texas.gov/";
 const TEXAS_SENATE_DISTRICTS = [1, 2, 3, 4, 5, 9, 11, 13, 18, 19, 21, 22, 24, 26, 28, 31] as const;
@@ -20,14 +22,14 @@ function raceForDistrict(jurisdictionType: string, districtNumber: number): Veri
 export const Route = createFileRoute("/elections/districts/")({
   head: () => ({
     meta: [
-      { title: "Texas Election Districts & 2026 Race Lookup | Congressional, House & Senate" },
+      { title: PAGE_TITLE },
       {
         name: "description",
         content:
           "Find Texas congressional, Texas House, and Texas Senate district pages and jump directly to published, verified 2026 race records when available.",
       },
       { name: "robots", content: "index, follow, max-image-preview:large" },
-      { property: "og:title", content: "Texas Election Districts & 2026 Race Lookup" },
+      { property: "og:title", content: PAGE_TITLE },
       {
         property: "og:description",
         content: "Browse Texas congressional and legislative districts and their verified 2026 race records.",
@@ -126,22 +128,22 @@ function DistrictGroup({
   const districtNumbers = districts ?? Array.from({ length: count ?? 0 }, (_, index) => index + 1);
   return (
     <section>
-      <h2 className="text-2xl font-bold text-slate-950">{title}</h2>
+      <h2 className="text-2xl font-bold text-foreground">{title}</h2>
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
         {districtNumbers.map((number) => {
           const districtSlug = `${prefix}-${number}`;
           const race = raceForDistrict(jurisdictionType, number);
           return (
-            <div key={number} className="rounded-lg border border-slate-200 bg-white p-3">
+            <div key={number} className="rounded-lg border border-border bg-card p-3 shadow-sm">
               <Link
                 to="/elections/districts/$districtSlug"
                 params={{ districtSlug }}
                 aria-label={`Open District ${number} election page`}
-                className="relative z-10 block cursor-pointer font-semibold text-slate-800 pointer-events-auto hover:text-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2"
+                className="relative z-10 block cursor-pointer font-semibold text-foreground pointer-events-auto transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 District {number}
               </Link>
-              {race ? <a href={`/elections/races/${race.slug}`} className="mt-2 block text-xs font-bold text-red-700 hover:underline">2026 race →</a> : <span className="mt-2 block text-xs text-slate-500">No verified 2026 race linked</span>}
+              {race ? <a href={`/elections/races/${race.slug}`} className="mt-2 block text-xs font-bold text-primary hover:underline">2026 race →</a> : <span className="mt-2 block text-xs text-muted-foreground">No verified 2026 race linked</span>}
             </div>
           );
         })}

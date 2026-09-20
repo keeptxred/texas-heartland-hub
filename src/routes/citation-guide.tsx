@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { SITE_URL } from '@/lib/seo';
+import { buildSeo, SITE_URL } from '@/lib/seo';
 
 const URL = `${SITE_URL}/citation-guide`;
+const CITATION_TITLE = 'Texas Reference Citation Guide';
+const CITATION_DESCRIPTION = 'Citation guidance for Keep TX Red election, legislative, law and Texas government reference pages, including canonical URLs, official-source rules and machine-readable resources.';
 const REFERENCE_GROUPS = [
   {
     title: 'Elections',
@@ -33,17 +35,18 @@ const REFERENCE_GROUPS = [
   },
 ] as const;
 
-export const Route = createFileRoute('/citation-guide')({
-  head: () => ({
-    meta: [
-      { title: 'How to Cite Keep TX Red References & Data' },
-      { name: 'description', content: 'Citation guidance for Keep TX Red election, legislative, law and Texas government reference pages, including canonical URLs, official-source rules and machine-readable resources.' },
-      { property: 'og:title', content: 'How to Cite Keep TX Red References & Data' },
-      { property: 'og:description', content: 'Canonical citation guidance and machine-readable reference resources from Keep TX Red.' },
-      { property: 'og:url', content: URL },
-      { property: 'og:type', content: 'website' },
-    ],
-    links: [{ rel: 'canonical', href: URL }],
+export function citationGuideHead() {
+  const seo = buildSeo({
+    title: CITATION_TITLE,
+    description: CITATION_DESCRIPTION,
+    path: '/citation-guide',
+    type: 'website',
+    imageAlt: 'Keep TX Red Texas reference citation guide',
+  });
+
+  return {
+    meta: seo.meta,
+    links: seo.links,
     scripts: [{
       type: 'application/ld+json',
       children: JSON.stringify({
@@ -60,7 +63,11 @@ export const Route = createFileRoute('/citation-guide')({
         ],
       }),
     }],
-  }),
+  };
+}
+
+export const Route = createFileRoute('/citation-guide')({
+  head: citationGuideHead,
   component: CitationGuidePage,
 });
 
@@ -102,9 +109,10 @@ function CitationGuidePage() {
 
       <section className="mt-14 rounded-2xl border bg-muted/30 p-6 md:p-8" aria-labelledby="machine-heading">
         <h2 id="machine-heading" className="font-display text-3xl">Machine-readable reference index</h2>
-        <p className="mt-3 max-w-4xl text-sm leading-7 text-muted-foreground">The citation-magnet manifest is the machine-readable inventory of maintained factual-reference targets. The llms.txt file provides retrieval guidance and topic entry points. These files are discovery aids; the canonical page and its cited official sources remain the human-readable evidence layer.</p>
+        <p className="mt-3 max-w-4xl text-sm leading-7 text-muted-foreground">The citation-magnet manifest inventories maintained factual-reference targets. The published+verified Election Central JSON exposes a compact race/candidate relationship graph with canonical URLs and source dates while excluding private, contact, donation, biography and admin fields. Every canonical Texas bill page also has a primary-source JSON companion by appending <code>/reference.json</code>; it exposes the canonical Keep TX Red bill URL, official Texas Legislature bill URL, official document versions and dated official actions while excluding database IDs, ingestion metadata, editorial relationships and internal fields. The llms.txt file provides retrieval guidance and topic entry points. These files are discovery/reuse aids; the canonical page and its cited official sources remain the human-readable evidence layer.</p>
         <div className="mt-5 flex flex-wrap gap-3">
           <a href="/citation-magnets.json" className="rounded-md border px-4 py-2 text-sm font-semibold hover:border-primary">citation-magnets.json</a>
+          <a href="/elections/reference.json" className="rounded-md border px-4 py-2 text-sm font-semibold hover:border-primary">2026 election reference JSON</a>
           <a href="/llms.txt" className="rounded-md border px-4 py-2 text-sm font-semibold hover:border-primary">llms.txt</a>
           <Link to="/editorial-standards" className="rounded-md border px-4 py-2 text-sm font-semibold hover:border-primary">Editorial standards</Link>
           <Link to="/authors" className="rounded-md border px-4 py-2 text-sm font-semibold hover:border-primary">Newsroom desks</Link>

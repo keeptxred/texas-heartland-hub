@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { parseProductVariantOptions } from "@/lib/product-variant-options";
 
 export type ProductVariant = {
   id: number;
@@ -7,6 +8,7 @@ export type ProductVariant = {
   image: string | null;
   images?: string[];
   color: string;
+  size?: string;
   is_enabled?: boolean;
 };
 
@@ -95,6 +97,15 @@ type ProductsResult = {
   isFallback?: boolean;
 };
 
+function normalizeVariant(variant: ProductVariant): ProductVariant {
+  const parsed = parseProductVariantOptions(variant.title, variant.color);
+  return {
+    ...variant,
+    color: parsed.color ?? "",
+    ...(parsed.size ? { size: parsed.size } : {}),
+  };
+}
+
 export const getProducts = createServerFn({ method: "GET" }).handler(async (): Promise<ProductsResult> => {
   try {
     const url = process.env.SUPABASE_URL;
@@ -139,24 +150,29 @@ export const getProducts = createServerFn({ method: "GET" }).handler(async (): P
       is_new: boolean | null;
       is_on_sale: boolean | null;
       synced_at: string | null;
-    }>).map((r) => ({
-      id: r.id,
-      title: r.title,
-      price: typeof r.price === "string" ? Number(r.price) : r.price,
-      currency: r.currency || "USD",
-      image: r.image_url,
-      url: r.product_url,
-      description: r.description ?? "",
-      tags: r.tags ?? [],
-      colors: r.colors ?? [],
-      variants: Array.isArray(r.variants) ? r.variants : [],
-      category: r.keeptxred_category,
-      collections: r.keeptxred_collections ?? [],
-      isFeatured: Boolean(r.keeptxred_featured),
-      isNew: Boolean(r.is_new),
-      isOnSale: Boolean(r.is_on_sale),
-      syncedAt: r.synced_at,
-    }));
+    }>).map((r) => {
+      const variants = Array.isArray(r.variants) ? r.variants.map(normalizeVariant) : [];
+      const normalizedColors = Array.from(new Set(variants.map((variant) => variant.color).filter(Boolean)));
+
+      return {
+        id: r.id,
+        title: r.title,
+        price: typeof r.price === "string" ? Number(r.price) : r.price,
+        currency: r.currency || "USD",
+        image: r.image_url,
+        url: r.product_url,
+        description: r.description ?? "",
+        tags: r.tags ?? [],
+        colors: normalizedColors,
+        variants,
+        category: r.keeptxred_category,
+        collections: r.keeptxred_collections ?? [],
+        isFeatured: Boolean(r.keeptxred_featured),
+        isNew: Boolean(r.is_new),
+        isOnSale: Boolean(r.is_on_sale),
+        syncedAt: r.synced_at,
+      };
+    });
     return { products, isFallback: false };
   } catch (error) {
     return {

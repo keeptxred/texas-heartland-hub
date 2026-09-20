@@ -16,14 +16,15 @@ export function ElectionResearchList({ entries, totalSaved, onClear }: ElectionR
   return (
     <aside
       aria-labelledby="election-research-list-heading"
-      className="rounded-xl border border-blue-200 bg-blue-50 p-5"
+      className="rounded-xl border border-border bg-muted/30 p-5"
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 id="election-research-list-heading" className="font-bold text-slate-950">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Saved research</p>
+          <h2 id="election-research-list-heading" className="mt-1 font-bold text-foreground">
             Browser-saved ballot research
           </h2>
-          <p className="mt-1 text-sm text-slate-700">
+          <p className="mt-1 text-sm text-muted-foreground">
             {totalSaved} item{totalSaved === 1 ? "" : "s"} saved only in this browser. This is a
             research list, not a ballot or ballot-tracking service.
           </p>
@@ -31,7 +32,7 @@ export function ElectionResearchList({ entries, totalSaved, onClear }: ElectionR
         <button
           type="button"
           onClick={onClear}
-          className="text-sm font-semibold text-red-700 underline-offset-4 hover:underline"
+          className="text-sm font-semibold text-primary underline-offset-4 hover:underline"
         >
           Clear saved research
         </button>
@@ -42,7 +43,7 @@ export function ElectionResearchList({ entries, totalSaved, onClear }: ElectionR
             <li key={entry.id}>
               <a
                 href={entry.href}
-                className="inline-flex rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-blue-900 shadow-sm hover:underline"
+                className="inline-flex rounded-full border border-border bg-card px-3 py-1.5 text-sm font-semibold text-foreground shadow-sm transition hover:border-primary hover:text-primary hover:underline"
               >
                 {entry.label}
               </a>
@@ -50,7 +51,7 @@ export function ElectionResearchList({ entries, totalSaved, onClear }: ElectionR
           ))}
         </ul>
       ) : (
-        <p className="mt-3 text-sm text-slate-600">
+        <p className="mt-3 text-sm text-muted-foreground">
           Saved items outside the current filters remain stored by ID.
         </p>
       )}

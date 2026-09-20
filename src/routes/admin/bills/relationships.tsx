@@ -15,7 +15,7 @@ export const Route = createFileRoute('/admin/bills/relationships')({
 });
 
 const STORAGE_KEY = 'ktr-admin-ok';
-const PASSCODE = (import.meta.env.VITE_ADMIN_PASSCODE as string) || 'keeptxred';
+const PASSCODE = (import.meta.env.VITE_ADMIN_PASSCODE as string | undefined)?.trim() ?? '';
 
 type ReviewStatus = 'pending' | 'approved' | 'rejected';
 type ReviewType = 'all' | 'subject' | 'article';
@@ -26,7 +26,7 @@ function BillRelationshipReviewPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && sessionStorage.getItem(STORAGE_KEY) === '1') setOk(true);
+    if (PASSCODE && typeof window !== 'undefined' && sessionStorage.getItem(STORAGE_KEY) === '1') setOk(true);
   }, []);
 
   if (!ok) {
@@ -34,16 +34,17 @@ function BillRelationshipReviewPage() {
       <div className="flex min-h-[70vh] items-center justify-center bg-muted/30 px-4">
         <form className="w-full max-w-sm space-y-4 border-2 border-foreground/10 bg-white p-6" onSubmit={(event) => {
           event.preventDefault();
-          if (pass === PASSCODE) {
+          if (PASSCODE && pass === PASSCODE) {
             sessionStorage.setItem(STORAGE_KEY, '1');
             sessionStorage.setItem('ktr-admin-passcode', pass);
             setOk(true);
-          } else setError('Incorrect passcode.');
+          } else setError(PASSCODE ? 'Incorrect passcode.' : 'Admin passcode is not configured.');
         }}>
           <div><p className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary">Restricted</p><h1 className="mt-1 text-2xl font-bold">Bill Relationship Review</h1></div>
-          <Input type="password" value={pass} onChange={(event) => { setPass(event.target.value); setError(''); }} placeholder="Passcode" autoFocus />
+          <Input type="password" value={pass} onChange={(event) => { setPass(event.target.value); setError(''); }} placeholder="Passcode" autoFocus disabled={!PASSCODE} />
           {error && <p className="text-xs text-destructive">{error}</p>}
-          <Button type="submit" className="w-full">Unlock</Button>
+          {!PASSCODE && <p className="text-xs text-destructive">Admin access is unavailable until the required passcode is configured.</p>}
+          <Button type="submit" className="w-full" disabled={!PASSCODE}>Unlock</Button>
         </form>
       </div>
     );
@@ -59,7 +60,7 @@ function ReviewDashboard() {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
 
-  const token = typeof window !== 'undefined' ? sessionStorage.getItem('ktr-admin-passcode') || PASSCODE : PASSCODE;
+  const token = typeof window !== 'undefined' ? sessionStorage.getItem('ktr-admin-passcode') || '' : '';
 
   const load = useCallback(async () => {
     setLoading(true);

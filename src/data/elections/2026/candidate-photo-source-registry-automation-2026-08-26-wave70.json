@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "hallforhd19.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Kelly Hall campaign-site imagery only after the exact image URL, candidate identity, and candidate-supplied or otherwise documented editorial permission basis are verified at item level. Campaign ownership/display alone does not establish a reusable license. Preserve exact page and image provenance.",
+    "searchHint": "site:hallforhd19.com Kelly Hall Texas House District 19 portrait",
+    "notes": "New official campaign source discovered and verified August 26, 2026. The site identifies Kelly Hall as the Democratic nominee for Texas House District 19 and displays a candidate image on the homepage. The domain is not present in the existing candidate-photo source registries. Keep discovery-only until the exact portrait's reuse basis is documented."
+  },
+  {
+    "domain": "patriotsinaction.com",
+    "sourceClass": "candidate-interview-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Patriots in Action candidate-profile imagery only as a discovery bridge unless the exact portrait is explicitly candidate-supplied, licensed for reuse, or covered by another documented editorial permission basis. Do not infer reuse rights from directory display or interview participation alone. Preserve the candidate profile URL and image provenance.",
+    "searchHint": "site:patriotsinaction.com/tx/candidates Texas House 2026 candidate portrait",
+    "notes": "New candidate-profile discovery source verified August 26, 2026. Its Texas candidate directory includes unresolved candidate Frank Salazar for House District 143 with a visible candidate image and interview/profile entry. Identity and office can be cross-checked against current election sources, but the directory does not state a reusable image license, so this remains discovery-only pending item-level rights verification."
+  }
+]

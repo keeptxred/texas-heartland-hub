@@ -5,6 +5,16 @@ import { getBillTypePage } from '@/lib/bill-hierarchy';
 const EMPTY_BILLS_SEARCH = { q: '', status: '', legislature: 0, chamber: '', billType: '', page: 1 } as const;
 const DEFAULT_SEARCH = { page: 1 } as const;
 const label = (value: string) => value.toUpperCase();
+const billSessionLabel = (legislature: number, sessionCode?: string | null) => {
+  const code = String(sessionCode || 'R').trim().toUpperCase() || 'R';
+  if (code === 'R') return `${legislature}(R) · Regular Session`;
+  if (/^\d+$/.test(code)) {
+    const number = Number(code);
+    const suffix = number % 100 >= 11 && number % 100 <= 13 ? 'th' : number % 10 === 1 ? 'st' : number % 10 === 2 ? 'nd' : number % 10 === 3 ? 'rd' : 'th';
+    return `${legislature}(${code}) · ${number}${suffix} Called Session`;
+  }
+  return `${legislature}(${code}) · Session ${code}`;
+};
 
 function paginationPages(current: number, total: number): number[] {
   return [...new Set([1, current - 2, current - 1, current, current + 1, current + 2, total])]
@@ -32,7 +42,7 @@ export const Route = createFileRoute('/bills/texas/$legislature/$billType/')({
     const baseUrl = `${SITE_URL}/bills/texas/${legislature}/${billType}`;
     const canonical = page > 1 ? `${baseUrl}?page=${page}` : baseUrl;
     const title = `${label(billType)} Bills — ${legislature}th Texas Legislature${page > 1 ? ` — Page ${page}` : ''} | Keep TX Red`;
-    const description = `Browse ${count.toLocaleString()} ${label(billType)} measures from the ${legislature}th Texas Legislature with status, captions, legislative activity and official bill history.`;
+    const description = `Browse ${count.toLocaleString()} ${label(billType)} measures from the ${legislature}th Texas Legislature with status, captions, session identity, legislative activity and official bill history.`;
     return {
       meta: [
         { title },
@@ -84,6 +94,9 @@ function BillTypeHub() {
         <p className="mt-4 max-w-3xl text-lg text-muted-foreground">
           {count.toLocaleString()} {label(billType)} measure{count === 1 ? '' : 's'} in the {legislature}th Legislature. Open any bill for sponsors, status, committee history, actions and official documents.
         </p>
+        <p className="mt-3 max-w-3xl text-sm text-muted-foreground">
+          Regular-session and called-session measures can reuse the same bill number. Session labels are shown on every result so {legislature}(R), {legislature}(1), and {legislature}(2) remain distinct.
+        </p>
       </header>
 
       <section className="mt-10">
@@ -101,6 +114,7 @@ function BillTypeHub() {
               <a href={canonicalBillPath(bill)} className="text-xl font-bold text-primary hover:underline">{bill.bill_identifier}</a>
               <p className="mt-2 font-medium leading-snug">{bill.caption}</p>
               <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                <span className="font-semibold text-foreground/80">{billSessionLabel(bill.legislature_number, bill.session_code)}</span>
                 <span>{bill.current_status_label}</span>
                 {bill.last_action_date ? <span>Updated {new Date(`${bill.last_action_date}T12:00:00`).toLocaleDateString()}</span> : null}
               </div>

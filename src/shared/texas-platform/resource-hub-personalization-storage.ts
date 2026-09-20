@@ -1,10 +1,11 @@
-import type { ResourceHubLink, ResourceHubOwner } from './resource-hub';
 import {
   normalizeDailyResourceViews,
   normalizeRecentlyViewed,
   popularResourcesForDate,
   recordDailyResourceView,
   recordRecentlyViewed,
+  type ResourceHubLink,
+  type ResourceHubOwner,
   type ResourceView,
 } from './resource-hub-personalization';
 

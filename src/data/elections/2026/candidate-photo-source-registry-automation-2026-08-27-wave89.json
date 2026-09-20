@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "teamdanielforcongress.com",
+    "sourceClass": "candidate-linked-official-profile-alias",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Theodis Daniel's verified candidate-linked campaign domain as a discovery bridge to his current official Texas House District 147 campaign site and candidate-supplied media. Do not approve or reuse any image without item-level provenance plus an explicit reusable-rights basis, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Theodis Daniel Texas House District 147 official campaign portrait press media gallery",
+    "notes": "New source discovered August 27, 2026. BallotReady lists teamdanielforcongress.com as a verified webpage for Theodis Daniel; the domain currently redirects to theodisfortexas.com, whose live page identifies THEODIS DANIEL for TEXAS STATE REP H.D. 147 and states that it is paid for and authorized by Theodis Daniel for Texas. Treat this alias as discovery-only and preserve item-level rights review before any portrait approval."
+  }
+]

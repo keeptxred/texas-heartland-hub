@@ -9,8 +9,8 @@ const entities: SharedEntity[] = [
     type: 'guide',
     title: 'Texas Property Tax Guide',
     summary: 'Understand property taxes and exemptions.',
-    route: '/property-taxes',
-    sites: ['keeptxred', 'texasdefined'],
+    route: '/learn/property-taxes',
+    sites: ['texasdefined'],
     topics: ['home-property'],
     journeys: ['buying-home'],
     searchTerms: ['property tax homestead exemption'],
@@ -28,12 +28,12 @@ describe('search content gaps', () => {
   });
 
   it('recommends ranking improvements when results exist but receive no clicks', () => {
-    const gaps = sharedSearchContentGaps(Array.from({ length: 5 }, () => event('property taxes', 2)), entities, 'keeptxred');
+    const gaps = sharedSearchContentGaps(Array.from({ length: 5 }, () => event('property taxes', 2)), entities, 'texasdefined');
     expect(gaps[0]).toEqual(expect.objectContaining({ recommendation: 'improve-ranking', currentMatches: 1 }));
   });
 
   it('omits successful searches with clicks', () => {
-    const gaps = sharedSearchContentGaps([event('property taxes', 1, 'resource:taxes')], entities, 'keeptxred');
+    const gaps = sharedSearchContentGaps([event('property taxes', 1, 'resource:taxes')], entities, 'texasdefined');
     expect(gaps).toEqual([]);
   });
 });

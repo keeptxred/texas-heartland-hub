@@ -2,9 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { HUBS } from "@/data/hubs";
 import { HubView } from "@/components/hub-view";
 import { PillarRelationshipNav } from "@/components/pillar-relationship-nav";
+import { buildSeo } from "@/lib/seo";
 
 const HUB = HUBS.find((h) => h.slug === "texas-economy")!;
 const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
+const TEXAS_ECONOMY_TITLE = "Texas Economy: Jobs, Taxes & Business Policy";
+const TEXAS_ECONOMY_DESCRIPTION = "Coverage of Texas economic policy, energy regulation, jobs, state spending, taxes, and business conditions.";
 const SECTIONS = [
   { title: "Energy & Oil", description: "Permian Basin, ERCOT, and state energy policy.", href: "/news/texas-energy-economy-overview" },
   { title: "Jobs & Employment", description: "Workforce policy, business conditions, and the Texas labor market.", href: "/texas-business" },
@@ -12,18 +15,18 @@ const SECTIONS = [
   { title: "Taxes & State Budget", description: "Tax policy, appropriations, public spending, and legislative proposals.", href: "/bills" },
 ];
 
+export function texasEconomyHead() {
+  return buildSeo({
+    title: TEXAS_ECONOMY_TITLE,
+    description: TEXAS_ECONOMY_DESCRIPTION,
+    path: "/texas-economy",
+    type: "website",
+    imageAlt: "Keep TX Red Texas economy coverage",
+  });
+}
+
 export const Route = createFileRoute("/texas-economy")({
-  head: () => ({
-    meta: [
-      { title: "Texas Economy — Energy, Jobs, Taxes & Business Policy" },
-      { name: "description", content: "Coverage of Texas economic policy, energy regulation, jobs, state spending, taxes, and business conditions." },
-      { property: "og:title", content: "Texas Economy — Keep TX Red" },
-      { property: "og:description", content: "Texas economic policy, energy regulation, jobs, state spending, taxes, and business conditions." },
-      { property: "og:url", content: "https://keeptxred.com/texas-economy" },
-      { property: "og:type", content: "website" },
-    ],
-    links: [{ rel: "canonical", href: "https://keeptxred.com/texas-economy" }],
-  }),
+  head: texasEconomyHead,
   component: TexasEconomyPage,
 });
 

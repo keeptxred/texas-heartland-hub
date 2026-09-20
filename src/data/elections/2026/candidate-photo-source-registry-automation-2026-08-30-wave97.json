@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "sanantonioreport.org",
+    "sourceClass": "candidate-voter-guide-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use San Antonio Report 2026 candidate profiles only as a discovery bridge for candidate identity, campaign materials, official profiles, and outbound source leads. Do not reuse San Antonio Report-hosted images without explicit item-level permission or a separately documented reusable-rights basis; its terms reserve copyright by default.",
+    "searchHint": "site:sanantonioreport.org/profile 2026 Texas candidate official campaign portrait",
+    "notes": "Added August 30, 2026. Current 2026 profiles cover candidates including Rhett Rosenquest Smith and many Bexar-area races. Discovery-only because site terms reserve copyright absent express permission."
+  },
+  {
+    "domain": "hcgop.org",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Harris County Republican Party candidate directories as a discovery bridge to official campaign websites and candidate contact/profile sources. Do not reuse directory-hosted images without item-level rights verification.",
+    "searchHint": "site:hcgop.org 2026 candidate Texas House campaign website",
+    "notes": "Added August 30, 2026 as an alternate canonical Harris County GOP domain. The current candidate directory identifies official campaign sites including Liz Ramos for Texas House District 135 and other Harris County candidates."
+  },
+  {
+    "domain": "communityimpact.com",
+    "sourceClass": "candidate-supplied-newsroom-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Community Impact election Q&A pages as a discovery and provenance source. Candidate photos may only be approved when the specific article explicitly identifies the image as submitted/courtesy by the candidate or campaign and the individual image can be matched to that candidate with a documented editorial-use permission basis. Never infer reuse rights from the publication generally.",
+    "searchHint": "site:communityimpact.com 2026 election candidate Q&A photos submitted by respective candidates Texas",
+    "notes": "Added August 30, 2026. Current 2026 election Q&A pages sometimes explicitly state that candidate photos were submitted by the respective candidates, making them useful item-level provenance leads while retaining manual rights review."
+  }
+]

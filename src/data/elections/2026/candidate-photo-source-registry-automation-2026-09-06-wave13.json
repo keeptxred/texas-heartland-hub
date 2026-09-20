@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "mrt.com",
+    "sourceClass": "reputable-local-news-candidate-profile",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Midland Reporter-Telegram election guides and candidate interviews to corroborate current candidate identity, office, campaign context, and discover downstream official campaign websites or candidate-specific portrait leads. Do not approve or reuse MRT-hosted photography without item-level provenance plus an explicit reusable license, documented candidate-supplied status with a narrow editorial-identification basis, explicit permission, or another supported reuse basis. Reject generic social-share images, logos, seals, placeholders, stock imagery, event photos that do not clearly identify the candidate, and other non-candidate assets.",
+    "searchHint": "site:mrt.com 2026 Texas candidate name election interview campaign portrait",
+    "notes": "Discovered September 6, 2026 while researching current missing-photo Texas House candidates. MRT's current 2026 election coverage includes candidate-specific profiles and interviews, including Texas House District 82 challenger Cathy Broadrick, and can expose downstream campaign or candidate-specific image leads. Registered strictly as a discovery bridge; newsroom-hosted imagery is not automatically approved."
+  },
+  {
+    "domain": "kwtx.com",
+    "sourceClass": "reputable-local-news-election-profile",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use KWTX election coverage to corroborate current candidate identity, office, district context, and discover downstream official campaign websites, public profiles, or candidate-specific portrait leads. Do not approve or reuse KWTX-hosted photography without item-level provenance plus an explicit reusable license, documented candidate-supplied status with a narrow editorial-identification basis, explicit permission, or another supported reuse basis. Reject generic social-share images, station branding, logos, seals, placeholders, stock imagery, and other non-candidate assets.",
+    "searchHint": "site:kwtx.com 2026 Texas candidate name House district campaign portrait",
+    "notes": "Discovered September 6, 2026 while researching current missing-photo Texas House candidates. KWTX's 2026 election coverage corroborates Albert Hunter as a Texas House District 13 candidate and provides race-aware reporting that can lead to downstream candidate-controlled or otherwise reusable portrait sources. Registered as discovery-only; KWTX-hosted images are not automatically approved."
+  }
+]

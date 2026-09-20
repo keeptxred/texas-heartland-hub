@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "fecpac.org",
+    "sourceClass": "texas-candidate-endorsement-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use FEC PAC endorsement pages only to corroborate candidate identity and race context and to follow outbound official campaign website and social links. Do not reuse FEC PAC-hosted candidate images unless the exact original provenance and item-level reuse permission are independently verified from the originating campaign or photographer.",
+    "searchHint": "site:fecpac.org/endorsements Texas candidate 2026 official website",
+    "notes": "Discovered and verified August 23, 2026. The live endorsements directory includes current Texas legislative candidates, candidate images, and outbound official campaign links, including Chris Spencer for Texas House District 1. Registered strictly as a discovery bridge rather than an image-rights authority."
+  },
+  {
+    "domain": "txkmag.com",
+    "sourceClass": "local-candidate-interview-publication",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use current candidate interview and election-guide pages to corroborate candidate identity, district context, biography, and to identify campaign-source trails. Do not reuse TXK Magazine-hosted photographs unless the original photographer or campaign provenance and item-level reuse permission are independently established.",
+    "searchHint": "site:txkmag.com 2026 candidate Texas House Senate meet the candidates campaign",
+    "notes": "Discovered August 23, 2026 while researching the remaining Texas House portrait cohort. TXK Magazine's 2026 candidate interviews include candidate-specific photographs and detailed race context, including Chris Spencer in House District 1. Hosted imagery remains review-only."
+  },
+  {
+    "domain": "morningstar.com",
+    "sourceClass": "press-release-multimedia-mirror",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Morningstar-hosted PR Newswire mirrors to identify candidate-supplied press releases, campaign source names, media contacts, official campaign websites, and original PR Newswire multimedia links. Do not reuse Morningstar-hosted or mirrored images directly unless the original campaign-supplied provenance and item-level reuse basis are independently verified from the originating release or campaign source.",
+    "searchHint": "site:morningstar.com/news/pr-newswire Texas candidate 2026 image campaign",
+    "notes": "Discovered and verified August 23, 2026. Current PR Newswire mirrors expose campaign-supplied releases and multimedia trails, including Jenn Mack Raphoon's Texas gubernatorial campaign, and can reveal source URLs that search engines otherwise miss. Registered as a source-discovery bridge only."
+  }
+]

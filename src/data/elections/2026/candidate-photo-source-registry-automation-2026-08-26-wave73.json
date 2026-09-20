@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "beaumontenterprise.com",
+    "sourceClass": "reputable-news-candidate-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Beaumont Enterprise candidate-profile or campaign-reporting photography only when the exact image is candidate-supplied, campaign-supplied, or another explicit reusable editorial permission basis/license is documented at item level. Do not auto-approve staff, Hearst, wire, or other newsroom photography merely because it appears on the article. Preserve the exact article URL, image URL, credit, and candidate identity.",
+    "searchHint": "site:beaumontenterprise.com 2026 Texas candidate Q&A portrait campaign",
+    "notes": "New discovery source verified August 26, 2026. Beaumont Enterprise published current 2026 candidate coverage for Southeast Texas races, including a dedicated Q&A/profile covering Texas House District 21 Republican nominee Ray Callas and separate campaign-event reporting that identifies Jacqueline Hernandez. This adds a previously unused regional-news discovery bridge for unresolved Southeast Texas candidates while keeping all portrait approval item-level and rights-gated."
+  }
+]

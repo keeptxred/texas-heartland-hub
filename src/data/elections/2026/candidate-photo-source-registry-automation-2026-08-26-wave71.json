@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "tcta.org",
+    "sourceClass": "nonpartisan-candidate-voter-guide",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Classroom Teachers Association candidate-page imagery only as a discovery bridge unless the exact portrait has a documented candidate-supplied, licensed-for-reuse, or otherwise valid editorial permission basis. Do not infer reusable rights from display on a voter-guide page. Preserve the exact candidate page and image URL provenance.",
+    "searchHint": "site:tcta.org/texasteachersvote/find-candidates 2026 Texas candidate portrait",
+    "notes": "New discovery source verified August 26, 2026. TCTA maintains 2026 Texas candidate pages with visible candidate images, including unresolved candidates such as Rhett Rosenquest Smith, Scott Whitmarsh, Michelle Palmer, and Mindy Bumgarner. It is useful for identity/source discovery, but image reuse rights must still be verified item by item."
+  },
+  {
+    "domain": "ballotready.org",
+    "sourceClass": "nonpartisan-candidate-voter-guide",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use BallotReady candidate imagery only as a discovery bridge unless the exact image is explicitly licensed for reuse, candidate-supplied with a documented editorial permission basis, or traceable to another approved reusable source. Preserve the candidate profile URL and original image provenance; do not treat a visible headshot as reusable by default.",
+    "searchHint": "site:ballotready.org/people 2026 Texas candidate headshot",
+    "notes": "New discovery source verified August 26, 2026. BallotReady exposes candidate profiles and headshots for unresolved 2026 Texas candidates such as Scott Whitmarsh. Keep discovery-only and use it to trace candidate identities and possible upstream portrait sources."
+  },
+  {
+    "domain": "palmerfortexased.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Michelle Palmer campaign-site imagery only after verifying the exact image URL, candidate identity, and a candidate-supplied or otherwise documented reuse/editorial permission basis. Campaign ownership/display alone does not establish a reusable license. Preserve exact page and image provenance.",
+    "searchHint": "site:palmerfortexased.com Michelle Palmer Texas State Board of Education District 6 portrait",
+    "notes": "New official campaign source discovered August 26, 2026 via TCTA and independently verified as Michelle Palmer's campaign website for State Board of Education District 6. Keep discovery-only until item-level portrait rights are documented."
+  }
+]

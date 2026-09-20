@@ -12,6 +12,7 @@ type Item = {
   source: string;
   description: string;
 };
+type IngestRow = Item & { trend_source: string };
 
 type SourceMode = "rss" | "tpwd-html" | "texas-standard-html" | "html-links";
 type Source = {
@@ -55,21 +56,11 @@ const DIRECT_SOURCES: Source[] = [
     include: "^/newsroom/(local-media-release|media-releases)/",
     texasOnly: true,
   },
-  { name: "Laredo Morning Times", url: "https://www.lmtonline.com/local/", mode: "html-links", include: "^/local/" },
   { name: "NewsChannel 10 Amarillo", url: "https://www.newschannel10.com/news/", mode: "html-links", include: "^/20\\d{2}/" },
-  { name: "KCEN Central Texas", url: "https://www.kcentv.com/", mode: "html-links", include: "^/article/news/(local|community|education|military)/" },
-  { name: "City of Dallas News", url: "https://www.dallascitynews.net/", mode: "html-links", include: "^/20\\d{2}/" },
-  { name: "WFAA Dallas Local", url: "https://www.wfaa.com/", mode: "html-links", include: "^/article/news/local/" },
   { name: "Dallas Cowboys", url: "https://www.dallascowboys.com/rss/news", category: "Sports", mode: "rss" },
   { name: "Houston Texans", url: "https://www.houstontexans.com/rss/news", category: "Sports", mode: "rss" },
-  { name: "Dallas Mavericks", url: "https://www.mavs.com/news/", category: "Sports", mode: "html-links", include: "^/news/" },
-  { name: "San Antonio Spurs", url: "https://www.nba.com/spurs/news", category: "Sports", mode: "html-links", include: "^/spurs/news/" },
-  { name: "Texas Rangers", url: "https://www.mlb.com/rangers/news", category: "Sports", mode: "html-links", include: "^/rangers/news/" },
-  { name: "Houston Astros", url: "https://www.mlb.com/astros/news", category: "Sports", mode: "html-links", include: "^/astros/news/" },
   { name: "Dallas Stars", url: "https://www.nhl.com/stars/news/", category: "Sports", mode: "html-links", include: "^/stars/news/" },
-  { name: "Texas Longhorns", url: "https://texaslonghorns.com/news/", category: "Sports", mode: "html-links", include: "^/news/20\\d{2}/" },
   { name: "Texas A&M Aggies", url: "https://12thman.com/news/", category: "Sports", mode: "html-links", include: "^/news/20\\d{2}/" },
-  { name: "Texas Tech Athletics", url: "https://texastech.com/news/", category: "Sports", mode: "html-links", include: "^/news/20\\d{2}/" },
   { name: "National Hurricane Center", url: "https://www.nhc.noaa.gov/index-at.xml", category: "Weather", mode: "rss" },
 ];
 
@@ -79,8 +70,10 @@ const VERIFIED_YOUTUBE = new Map<string, string>([
 ]);
 
 const TRANSIENT_STATUS = new Set([408, 425, 429, 500, 502, 503, 504]);
-const GOOGLE_NEWS_RE = /^https:\/\/news\.google\.com\/rss\/search/i;
+const GOOGLE_NEWS_RE = /^(?:https:\/\/news\.google\.com\/rss\/search|https:\/\/ftkznprjljkhymknvhye\.supabase\.co\/functions\/v1\/ktr-rss-relay\?feed=google-)/i;
 const GOOGLE_FEEDS_PER_RUN = 10;
+const INGEST_UPSERT_BATCH_SIZE = 200;
+const OFFICIAL_HYPERLOCAL_SOURCE_RE = /— CivicEngage$/i;
 const TEXAS_LOCATION_RE = /\b(texas|tx|amarillo|austin|beaumont|brownsville|college station|corpus christi|dallas|del rio|eagle pass|el paso|fort worth|galveston|harlingen|hereford|houston|killeen|laredo|longview|lubbock|mcallen|midland|odessa|san angelo|san antonio|temple|texarkana|tyler|victoria|waco|webb county|bexar county|harris county|tarrant county|travis county|denton county|collin county|rio grande valley|panhandle)\b/i;
 const HTML_NAV_RE = /\b(home|about|contact|privacy|terms|advertise|subscribe|newsletter|weather|watch live|shop|careers|login|sign in|search|facebook|instagram|youtube|twitter|x)\b/i;
 
@@ -293,7 +286,18 @@ async function loadSources(): Promise<{ sources: Source[]; skippedLegacyYoutube:
   return { sources: list, skippedLegacyYoutube };
 }
 
-function isTexasRelevant(item: Item): boolean {
+function isRegionalListingNoise(item: Item, configuredSource: string): boolean {
+  if (configuredSource !== "Texas Panhandle and South Plains — Regional Discovery") return false;
+  if (item.source.trim().toLowerCase() !== "amarillo tribune") return false;
+  const normalizedDescription = decode(item.description).replace(/\s+/g, " ").trim().toLowerCase();
+  const expectedDescription = `${item.title} Amarillo Tribune`.replace(/\s+/g, " ").trim().toLowerCase();
+  if (normalizedDescription !== expectedDescription) return false;
+  const wordCount = item.title.trim().split(/\s+/).filter(Boolean).length;
+  return item.title.length <= 64 && wordCount >= 2 && wordCount <= 6 && !/[?!:]/.test(item.title);
+}
+
+function isTexasRelevant(item: Item, configuredSource: string): boolean {
+  if (OFFICIAL_HYPERLOCAL_SOURCE_RE.test(configuredSource)) return true;
   const result = scoreFeedItem({ title: item.title, source: item.source, pub_date: item.pub_date, description: item.description });
   return result.texasRelevanceScore >= TEXAS_RELEVANCE_MIN;
 }
@@ -330,21 +334,40 @@ async function handler() {
   const directResults = await mapWithConcurrency(direct, 8, fetchSource);
   const googleResults = await mapWithConcurrency(google, 4, fetchSource);
   const results = [...directResults, ...googleResults];
-  const unique = new Map<string, Item>();
+  const unique = new Map<string, IngestRow>();
+  const attributionGroups = new Map<string, string[]>();
   for (const result of results) {
     for (const item of result.items) {
-      if (!isTexasRelevant(item)) continue;
-      if (!unique.has(item.link)) unique.set(item.link, item);
+      if (isRegionalListingNoise(item, result.source)) continue;
+      if (!isTexasRelevant(item, result.source)) continue;
+      if (!unique.has(item.link)) {
+        unique.set(item.link, { ...item, trend_source: result.source });
+        const links = attributionGroups.get(result.source) ?? [];
+        links.push(item.link);
+        attributionGroups.set(result.source, links);
+      }
     }
   }
   const rows = [...unique.values()];
   let inserted = 0;
   if (rows.length > 0) {
-    const { count, error } = await supabaseAdmin.from("texas_news_feed").upsert(rows, { onConflict: "link", ignoreDuplicates: true, count: "exact" });
-    if (error) return Response.json({ ok: false, error: error.message }, { status: 500 });
-    inserted = count ?? 0;
+    for (let offset = 0; offset < rows.length; offset += INGEST_UPSERT_BATCH_SIZE) {
+      const batch = rows.slice(offset, offset + INGEST_UPSERT_BATCH_SIZE);
+      const { count, error } = await supabaseAdmin.from("texas_news_feed").upsert(batch, { onConflict: "link", ignoreDuplicates: true, count: "exact" });
+      if (error) return Response.json({ ok: false, error: error.message, failedBatchOffset: offset, batchSize: batch.length }, { status: 500 });
+      inserted += count ?? 0;
+    }
+    await Promise.all([...attributionGroups.entries()].map(async ([trendSource, links]) => {
+      const { error: attributionError } = await supabaseAdmin
+        .from("texas_news_feed")
+        .update({ trend_source: trendSource })
+        .in("link", links)
+        .is("trend_source", null);
+      if (attributionError) console.warn("[ingest-feeds] trend_source backfill failed", trendSource, attributionError.message);
+    }));
   }
   const diag = results.map(({ items, ...rest }) => ({ ...rest, count: items.length }));
+  const successfulResults = results.filter((result) => result.status >= 200 && result.status < 300);
   return Response.json({
     ok: true,
     fetched: rows.length,
@@ -357,8 +380,9 @@ async function handler() {
     googleNewsSourcesConfigured: allGoogle.length,
     googleNewsSourcesChecked: google.length,
     skippedLegacyYoutube,
-    healthySources: results.filter((result) => result.status >= 200 && result.status < 300 && result.items.length > 0).length,
-    failedSources: results.filter((result) => !(result.status >= 200 && result.status < 300) || result.items.length === 0).length,
+    healthySources: successfulResults.filter((result) => result.items.length > 0).length,
+    quietSources: successfulResults.filter((result) => result.items.length === 0).length,
+    failedSources: results.filter((result) => !(result.status >= 200 && result.status < 300)).length,
     diag,
   });
 }

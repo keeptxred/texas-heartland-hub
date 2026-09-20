@@ -146,9 +146,13 @@ const PRIORITY: ContentPillarSlug[] = [
 ];
 
 const CATEGORY_SIGNALS: Partial<Record<string, ContentPillarSlug>> = {
+  politics: "texas-politics-government",
+  government: "texas-politics-government",
+  "local government": "texas-politics-government",
   elections: "texas-elections",
   border: "texas-border-immigration",
   energy: "texas-energy-oil",
+  laws: "texas-laws-legislature",
   "tax & spending": "texas-economy-small-business",
 };
 

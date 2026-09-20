@@ -1,0 +1,38 @@
+[
+  {
+    "domain": "expressnews.com",
+    "sourceClass": "regional-news-voter-guide-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use San Antonio Express-News 2026 voter-guide candidate profiles to locate official campaign websites, candidate Facebook pages, and downstream official sources. Do not auto-approve Express-News-hosted imagery unless item-level provenance and reuse rights are separately documented.",
+    "searchHint": "site:expressnews.com/projects/2026 candidate name Texas campaign website",
+    "notes": "Verified August 23, 2026 as a current Texas primary/general-election voter-guide source with campaign links across statewide, legislative, congressional, and local races. Discovery bridge only."
+  },
+  {
+    "domain": "votecommongood.com",
+    "sourceClass": "candidate-endorsement-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Vote Common Good candidate profiles to identify candidate campaign websites and corroborate candidate identity. Do not auto-approve directory-hosted images; follow outbound campaign links and verify rights at the item level.",
+    "searchHint": "site:votecommongood.com/candidates-for-common-good-2026 Texas candidate name",
+    "notes": "Verified August 23, 2026 as a current 2026 candidate directory containing Texas candidates and outbound campaign website links. Discovery bridge only."
+  },
+  {
+    "domain": "theofficialfacetofaceprojectofcampaignvideosforvotereducation.com",
+    "sourceClass": "candidate-link-and-video-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Face to Face Project candidate listings to discover campaign websites and corroborate candidate identity and office. Do not auto-approve site-hosted imagery or video frames; follow official candidate links and verify portrait provenance and reuse rights separately.",
+    "searchHint": "site:theofficialfacetofaceprojectofcampaignvideosforvotereducation.com Texas candidate 2026 campaign",
+    "notes": "Verified August 23, 2026 as a current state-level candidate-link directory that includes Texas candidates and source campaign URLs. Discovery bridge only."
+  },
+  {
+    "domain": "lwvtexas.org",
+    "sourceClass": "nonpartisan-voter-guide-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use League of Women Voters of Texas 2026 voter guides to corroborate ballot identity, candidate responses, and campaign website references. Do not auto-approve LWV-hosted portraits or guide graphics; follow candidate-provided campaign links and verify portrait rights separately.",
+    "searchHint": "site:lwvtexas.org 2026 candidate name Texas voters guide campaign website",
+    "notes": "Verified August 23, 2026 as the current nonpartisan Texas voter-guide publisher covering statewide, State Board of Education, courts of appeals, congressional, Texas Senate, and Texas House contests, with VOTE411 as its interactive companion. Discovery bridge only."
+  }
+]

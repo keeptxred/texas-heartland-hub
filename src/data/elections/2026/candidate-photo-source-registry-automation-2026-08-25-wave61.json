@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "tpr.org",
+    "sourceClass": "candidate-supplied-newsroom-photo",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use a Texas Public Radio-hosted candidate photograph only when the exact article explicitly credits the image to the candidate or candidate campaign (for example, 'Courtesy: Reyna campaign'), the article clearly identifies the same candidate and race, and the image is used only for editorial candidate identification with source attribution and a link to the exact article. Do not reuse staff, wire-service, listener, or third-party newsroom photography unless separate item-level reuse permission or license is independently verified.",
+    "searchHint": "site:tpr.org Texas 2026 candidate Courtesy campaign portrait election",
+    "notes": "New source class verified August 25, 2026. Texas Public Radio's May 26, 2026 runoff article for Adrian Reyna explicitly identifies him as the Democratic nominee for Texas House District 125 and credits its candidate photograph 'Courtesy: Reyna campaign.' The exact image is served from npr.brightspotcdn.com. This registry entry is intentionally review-required so only item-level candidate-supplied newsroom images with explicit provenance can advance to approval."
+  },
+  {
+    "domain": "npr.brightspotcdn.com",
+    "sourceClass": "candidate-supplied-newsroom-image-host",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Treat Brightspot-hosted image URLs only as the delivery endpoint for a photograph whose originating newsroom article independently documents candidate or campaign provenance. Never infer reuse rights from the CDN URL alone; require the exact source article, candidate/race match, and explicit campaign/candidate credit before approval.",
+    "searchHint": "npr.brightspotcdn.com Texas candidate campaign courtesy TPR 2026",
+    "notes": "New image-host bridge verified August 25, 2026 from the TPR Adrian Reyna article. The direct image endpoint renders the same candidate photograph credited by TPR to the Reyna campaign. Registered only to allow the discovery pipeline to retain stable image-host references while provenance remains anchored to the newsroom article."
+  }
+]

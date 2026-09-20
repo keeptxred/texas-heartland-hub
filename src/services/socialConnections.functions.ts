@@ -17,10 +17,12 @@ export type SocialConnection = {
   updated_at: string;
 };
 
+export type SocialPlatform = "facebook" | "facebook_texasdefined" | "instagram";
+
 const TokenInput = z.object({ token: z.string().min(1) });
 const PlatformInput = z.object({
   token: z.string().min(1),
-  platform: z.enum(["facebook", "instagram"]),
+  platform: z.enum(["facebook", "facebook_texasdefined", "instagram"]),
 });
 
 type Admin = {
@@ -49,7 +51,9 @@ export const listSocialConnectionsFn = createServerFn({ method: "POST" })
       const client = await getAdmin();
       const { data: rows, error } = await client
         .from("social_connections")
-        .select("id, platform, account_name, account_id, connection_status, token_expires_at, created_at, updated_at")
+        .select(
+          "id, platform, account_name, account_id, connection_status, token_expires_at, created_at, updated_at",
+        )
         .order("created_at", { ascending: true });
       if (error) return { ok: false, error: error.message };
       return { ok: true, rows: rows ?? [] };
@@ -75,12 +79,18 @@ export const testSocialConnectionFn = createServerFn({ method: "POST" })
     async ({ data }): Promise<{ ok: boolean; account?: string; error?: string }> => {
       if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      const { data: row } = await supabaseAdmin
+      const { data: row, error: lookupError } = await supabaseAdmin
         .from("social_connections")
         .select("account_id, account_name, access_token, connection_status")
         .ilike("platform", data.platform)
+        .order("updated_at", { ascending: false })
+        .limit(1)
         .maybeSingle();
-      if (!row || !row.access_token) return { ok: false, error: "Not connected" };
+      if (lookupError) return { ok: false, error: lookupError.message };
+      if (!row || !row.access_token || !row.account_id) {
+        return { ok: false, error: "Not connected" };
+      }
+
       const url = `https://graph.facebook.com/v21.0/${encodeURIComponent(String(row.account_id))}?fields=id,name,fan_count&access_token=${encodeURIComponent(String(row.access_token))}`;
       try {
         const res = await fetch(url);

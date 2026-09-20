@@ -6,32 +6,33 @@
 // existing static catalog without rewriting each article.
 
 import { ARTICLES, isPublished, sortByDateDesc, type Article } from "@/data/articles";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 
 const TOPIC_KEYWORDS: Record<string, string[]> = {
-  // Texas News
   economy: ["economy", "income-tax", "energy-economy", "jobs", "wage"],
   housing: ["property-tax", "homestead", "appraisal", "housing", "isd"],
   migration: ["moving", "relocation", "growth", "migration", "border"],
   culture: ["culture", "carry", "water-rights", "open-meetings", "constitutional", "terminology"],
   education: ["school", "isd", "education", "esa"],
   "sports-culture": ["sport", "team", "friday-night"],
-  // Texas Business
   energy: ["energy", "grid", "ercot", "permian", "oil", "wind", "gas"],
   jobs: ["job", "income-tax", "economy", "workforce"],
   relocations: ["moving", "relocation", "income-tax", "growth"],
   "real-estate": ["property-tax", "appraisal", "homestead", "housing", "isd", "county"],
   policy: ["policy", "governor", "legislature", "local-government", "regulation"],
-  // Politics
   elections: ["election", "voting", "ballot", "primary", "voter", "candidate", "runoff"],
   legislature: ["legislature", "bill", "session", "law", "amendment", "rotunda"],
   "governor-leadership": ["governor", "attorney-general", "lt-governor", "leadership", "statewide"],
   "voting-policy": ["voter", "voting", "register", "ballot", "voter-id"],
-  // Houston
   "property-taxes": ["property-tax", "appraisal", "homestead", "isd"],
   schools: ["school", "isd", "education", "esa"],
   growth: ["moving", "relocation", "growth", "migration"],
   border: ["border", "trooper", "immigration", "rio-grande"],
 };
+
+function isDiscoverableStaticArticle(article: Article): boolean {
+  return isPublished(article) && isStaticArticleIndexable(article);
+}
 
 /** Returns true when the article matches the given topic id. */
 export function matchesTopic(a: Article, topic: string): boolean {
@@ -44,12 +45,12 @@ export function matchesTopic(a: Article, topic: string): boolean {
   return kws.some((k) => hay.includes(k));
 }
 
-/** Filter a list of articles by a category/topic id. */
+/** Filter a list of indexable static articles by category/topic id. */
 export function filterArticlesByCategory(
   articles: Article[],
   topic?: string | null,
 ): Article[] {
-  const list = articles.filter((a) => isPublished(a));
+  const list = articles.filter(isDiscoverableStaticArticle);
   const scoped = topic ? list.filter((a) => matchesTopic(a, topic)) : list;
   return scoped.slice().sort(sortByDateDesc);
 }
@@ -62,13 +63,13 @@ export function filterArticlesBySubcategory(
   return filterArticlesByCategory(articles, sub);
 }
 
-/** Related articles for a given slug, optionally within a topic. */
+/** Related articles never re-promote a retired/noindex static page. */
 export function getRelatedArticles(
   slug: string,
   topic?: string | null,
   limit = 3,
 ): Article[] {
-  const base = ARTICLES.filter((a) => isPublished(a)).filter((a) => a.slug !== slug);
+  const base = ARTICLES.filter(isDiscoverableStaticArticle).filter((a) => a.slug !== slug);
   const scoped = topic ? base.filter((a) => matchesTopic(a, topic)) : base;
   return scoped.slice().sort(sortByDateDesc).slice(0, limit);
 }

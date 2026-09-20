@@ -29,8 +29,7 @@ export const generateContentPackageFn = createServerFn({ method: "POST" })
     const expected = process.env.ADMIN_PASSCODE ?? "keeptxred";
     if (data.token !== expected) return { ok: false, error: "Unauthorized" };
 
-    const key = process.env.LOVABLE_API_KEY;
-    if (!key) return { ok: false, error: "Missing LOVABLE_API_KEY" };
+    if (!process.env.KTR_AI_PROVIDER_READY) return { ok: false, error: "AI provider unavailable" };
 
     const userPrompt = `Content item:
 Headline: ${data.headline}
@@ -62,12 +61,9 @@ Do NOT write "Read more at KeepTXRed.com". Do NOT include any URL — Facebook a
   }
 }`;
 
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const res = await fetch("https://ai.internal.keeptxred.local/v1/chat/completions", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Lovable-API-Key": key,
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
@@ -81,7 +77,7 @@ Do NOT write "Read more at KeepTXRed.com". Do NOT include any URL — Facebook a
 
     if (!res.ok) {
       const body = await res.text();
-      return { ok: false, error: `AI gateway ${res.status}: ${body.slice(0, 200)}` };
+      return { ok: false, error: `AI provider ${res.status}: ${body.slice(0, 200)}` };
     }
 
     const json = (await res.json()) as { choices?: { message?: { content?: string } }[] };

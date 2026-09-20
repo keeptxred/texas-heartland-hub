@@ -11,7 +11,9 @@ on:
       - .github/workflows/sync-texas-legislators.yml
 
 permissions:
+  actions: write
   contents: write
+  pull-requests: write
 
 concurrency:
   group: texas-legislator-authority-sync
@@ -31,7 +33,12 @@ jobs:
           node-version: 22
       - name: Generate official roster profiles
         run: node scripts/legislators/sync-official-roster.mjs
-      - name: Validate and commit refreshed authority data
+      - name: Validate and publish refreshed authority data as PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_TITLE: Refresh Texas legislator authority profiles
+          PR_BODY: Automated official-roster refresh. The existing protected verify check must pass before the trusted same-repository auto-merge workflow can merge and deploy this data.
+          COMMIT_MESSAGE: "data: refresh Texas legislator authority profiles"
         shell: bash
         run: |
           set -euo pipefail
@@ -46,13 +53,4 @@ jobs:
             echo "$unexpected" >&2
             exit 1
           fi
-          git fetch origin main
-          if [[ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]]; then
-            echo 'main advanced during generation; refusing to publish stale authority data.' >&2
-            exit 1
-          fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add "$target"
-          git commit -m 'data: refresh Texas legislator authority profiles'
-          git push origin HEAD:main
+          bash scripts/ci/publish-automation-pr.sh texas-legislators "$target"

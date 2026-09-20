@@ -4,6 +4,7 @@ import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
 import { assignUniqueImages } from "@/lib/dedupe-images";
 import type { CategoryFeedItem } from "@/lib/category-feed.functions";
 import { resolveArticleImage } from "@/lib/seo-headline";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 
 const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
 
@@ -27,11 +28,6 @@ export const TEXAS_NEWS_SECTIONS = [
     id: "public-safety",
     title: "Public Safety",
     description: "Border enforcement, emergency policy, courts, policing, and public-safety institutions.",
-  },
-  {
-    id: "sports",
-    title: "Sports",
-    description: "Texas professional, college, and high-school sports coverage.",
   },
 ];
 
@@ -60,7 +56,6 @@ const TEXAS_NEWS_SLUGS: Record<string, string[]> = {
     "texas-border-geography-101",
     "what-local-governments-control",
   ],
-  sports: [],
 };
 
 const TEXAS_NEWS_EXCLUDED_SLUGS = new Set(["gracie-the-giraffe"]);
@@ -73,7 +68,10 @@ function articlesForSlugs(slugs: string[]) {
     .map((slug) => ARTICLES.find((a) => a.slug === slug))
     .filter(
       (a): a is NonNullable<typeof a> =>
-        Boolean(a) && isPublished(a!) && !TEXAS_NEWS_EXCLUDED_SLUGS.has(a!.slug),
+        Boolean(a)
+        && isPublished(a!)
+        && isStaticArticleIndexable(a!)
+        && !TEXAS_NEWS_EXCLUDED_SLUGS.has(a!.slug),
     )
     .sort(sortByDateDesc);
 }
@@ -135,13 +133,13 @@ export function TexasNewsView({
         <h2 className="font-sans text-2xl font-semibold tracking-tight text-foreground mb-4">
           What we cover
         </h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {TEXAS_NEWS_SECTIONS.map((s) => {
             const active = topic === s.id;
             return (
               <Link
                 key={s.id}
-                to={active ? "/texas-news" : "/texas-news/$topic"}
+                to={active ? "/news" : "/texas-news/$topic"}
                 params={active ? undefined : { topic: s.id }}
                 className={`group block border-2 p-5 transition-colors ${
                   active
@@ -175,7 +173,7 @@ export function TexasNewsView({
             </p>
           </div>
           {activeSection && (
-            <Link to="/texas-news" className="text-sm text-primary hover:underline">
+            <Link to="/news" className="text-sm text-primary hover:underline">
               Show all Texas news →
             </Link>
           )}
@@ -184,15 +182,10 @@ export function TexasNewsView({
           {articles.length === 0 && liveOnly.length === 0 && (
             <div className="col-span-full border-2 border-dashed border-border p-8 text-center">
               <p className="text-sm text-muted-foreground">
-                {topic === "sports"
-                  ? "No sports articles are available in this feed yet. Browse Texas teams and league coverage."
-                  : "No articles currently available in this topic. Browse related Texas coverage."}
+                No articles currently available in this topic. Browse related Texas coverage.
               </p>
-              <Link
-                to={topic === "sports" ? "/texas-sports" : "/texas-news"}
-                className="mt-3 inline-block text-sm text-primary hover:underline"
-              >
-                {topic === "sports" ? "Browse Texas Sports →" : "← Back to all Texas news"}
+              <Link to="/news" className="mt-3 inline-block text-sm text-primary hover:underline">
+                ← Back to all Texas news
               </Link>
             </div>
           )}
@@ -280,9 +273,9 @@ export function TexasNewsView({
         <ul className="mt-4 grid sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
           <li><Link to="/texas-politics" className="text-primary hover:underline">Texas Politics →</Link></li>
           <li><Link to="/houston" className="text-primary hover:underline">Houston News →</Link></li>
-          <li><Link to="/texas-sports" className="text-primary hover:underline">Texas Sports →</Link></li>
+          <li><Link to="/laws" className="text-primary hover:underline">Texas Laws →</Link></li>
           <li><Link to="/texas-business" className="text-primary hover:underline">Texas Business →</Link></li>
-          <li><Link to="/elections" className="text-primary hover:underline">Elections →</Link></li>
+          <li><Link to="/elections/2026" className="text-primary hover:underline">Election Central →</Link></li>
           <li><Link to="/bills" search={EMPTY_BILLS_SEARCH} className="text-primary hover:underline">Texas Bills →</Link></li>
         </ul>
       </section>

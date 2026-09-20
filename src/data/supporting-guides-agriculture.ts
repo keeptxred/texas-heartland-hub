@@ -155,7 +155,7 @@ export const AGRICULTURE_SUPPORTING_GUIDES: Record<string, CornerstoneGuide> = {
       { label: "Texas Comptroller — Property Tax Assistance", url: "https://comptroller.texas.gov/taxes/property-tax/" },
       { label: "Texas Constitution and Statutes", url: "https://statutes.capitol.texas.gov/" },
     ],
-    related: [...commonRelated, { label: "Texas property tax guide", href: "/news/texas-property-tax-guide" }],
+    related: [...commonRelated, { label: "TexasDefined property tax guide", href: "https://texasdefined.com/learn/property-taxes" }],
   },
 
   "texas-agriculture-drought-water-guide": {

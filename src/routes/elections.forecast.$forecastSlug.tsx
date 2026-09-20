@@ -9,6 +9,7 @@ import {
 } from "@/components/elections";
 import { useElectionForecast } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
+import { formatElectionTitle } from "@/lib/elections/seo";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { electionSlugs, isElectionSlug } from "@/types/elections";
 
@@ -31,9 +32,9 @@ export const Route = createFileRoute("/elections/forecast/$forecastSlug")({
       record && "description" in record && typeof record.description === "string" && record.description
         ? record.description
         : "Review a published Texas election forecast, probabilities, methodology, and source.";
-    const title = indexable
-      ? `${recordName} | KeepTXRed Election Central`
-      : "Election forecast not found | KeepTXRed";
+    const title = formatElectionTitle(
+      indexable ? `${recordName} Election Central` : "Election forecast not found",
+    );
 
     return {
       meta: [

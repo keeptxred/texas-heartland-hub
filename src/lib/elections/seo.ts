@@ -1,8 +1,10 @@
-const DEFAULT_SITE_NAME = "KeepTXRed";
+import { SITE_NAME } from "@/lib/seo";
+
+const DEFAULT_SITE_NAME = SITE_NAME;
 const DEFAULT_SITE_URL = "https://keeptxred.com";
 const DEFAULT_SOCIAL_IMAGE = "/images/elections/election-central-social.jpg";
 const DEFAULT_DESCRIPTION =
-  "Follow Texas elections, candidates, races, polling, forecasts, voting dates, and voter resources from KeepTXRed.";
+  "Follow Texas elections, candidates, races, polling, forecasts, voting dates, and voter resources from Keep TX Red.";
 
 export type ElectionSeoPageType =
   | "website"
@@ -168,14 +170,26 @@ export function buildElectionCollectionSchema(input: ElectionCollectionSchemaInp
 
 export function formatElectionTitle(title: string, siteName = DEFAULT_SITE_NAME): string {
   const cleanTitle = collapseWhitespace(title);
-  const suffix = ` | ${siteName}`;
+  const cleanSiteName = collapseWhitespace(siteName) || DEFAULT_SITE_NAME;
+  const suffix = ` | ${cleanSiteName}`;
+  const prefix = `${cleanSiteName} | `;
   const maximumTitleLength = 60;
 
-  if (cleanTitle.endsWith(suffix) || cleanTitle === siteName) return cleanTitle;
-  if (cleanTitle.length + suffix.length <= maximumTitleLength) return `${cleanTitle}${suffix}`;
+  if (
+    cleanTitle === cleanSiteName ||
+    cleanTitle.startsWith(prefix) ||
+    cleanTitle.endsWith(suffix)
+  ) {
+    return truncateAtWordBoundary(cleanTitle, maximumTitleLength);
+  }
 
-  const availableLength = Math.max(1, maximumTitleLength - suffix.length - 1);
-  return `${cleanTitle.slice(0, availableLength).trimEnd()}…${suffix}`;
+  if (cleanTitle.length + suffix.length <= maximumTitleLength) {
+    return `${cleanTitle}${suffix}`;
+  }
+
+  const availableLength = Math.max(1, maximumTitleLength - suffix.length);
+  const shortened = truncateAtWordBoundary(cleanTitle, availableLength);
+  return shortened ? `${shortened}${suffix}` : truncateAtWordBoundary(cleanTitle, maximumTitleLength);
 }
 
 export function buildCanonicalUrl(pathname: string, siteUrl = DEFAULT_SITE_URL): string {
@@ -198,6 +212,17 @@ function normalizeSiteUrl(siteUrl: string): string {
 function toAbsoluteUrl(value: string, siteUrl: string): string {
   if (/^https?:\/\//i.test(value)) return value;
   return buildCanonicalUrl(value, siteUrl);
+}
+
+function truncateAtWordBoundary(value: string, maxLength: number): string {
+  const normalized = collapseWhitespace(value);
+  if (normalized.length <= maxLength) return normalized;
+  const clipped = normalized.slice(0, maxLength + 1);
+  const boundary = clipped.lastIndexOf(" ");
+  const safe = boundary >= Math.floor(maxLength * 0.65)
+    ? clipped.slice(0, boundary)
+    : normalized.slice(0, maxLength);
+  return safe.replace(/[\s|—–,:;-]+$/, "").trim();
 }
 
 function collapseWhitespace(value: string): string {

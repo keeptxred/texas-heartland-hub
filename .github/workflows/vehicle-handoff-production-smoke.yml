@@ -1,0 +1,60 @@
+name: Vehicle handoff production smoke
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/vehicle-handoff-production-smoke.yml'
+      - 'scripts/authority/smoke-production.py'
+      - 'scripts/authority/verify-vehicle-handoff-query-production.py'
+      - 'src/lib/vehicle-handoff-redirect.ts'
+      - 'src/start.ts'
+      - 'src/server.ts'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/vehicle-handoff-production-smoke.yml'
+      - 'scripts/authority/smoke-production.py'
+      - 'scripts/authority/verify-vehicle-handoff-query-production.py'
+      - 'src/lib/vehicle-handoff-redirect.ts'
+      - 'src/server.ts'
+  workflow_run:
+    workflows: ["Deploy verified KeepTXRed to Cloudflare"]
+    types: [completed]
+    branches: [main]
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: keeptxred-vehicle-handoff-production-smoke
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    if: >-
+      github.event_name == 'push' ||
+      github.event_name == 'pull_request' ||
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
+    steps:
+      - name: Checkout redirect smoke verifier
+        uses: actions/checkout@v5
+
+      - name: Verify retired vehicle and constitutional routes redirect permanently
+        run: python3 scripts/authority/smoke-production.py --legacy-redirects-only
+
+      - name: Verify vehicle handoffs preserve full queries and resolve directly
+        if: >-
+          github.event_name == 'workflow_run' ||
+          github.event_name == 'schedule' ||
+          github.event_name == 'workflow_dispatch'
+        run: python3 scripts/authority/verify-vehicle-handoff-query-production.py

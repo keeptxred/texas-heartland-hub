@@ -6,6 +6,7 @@ on:
     paths:
       - 'supabase/migrations/**'
       - '.github/workflows/apply-supabase-migrations.yml'
+      - 'scripts/verify-supabase-migration-parity.sh'
   workflow_dispatch:
     inputs:
       dry_run_only:
@@ -27,8 +28,8 @@ jobs:
     timeout-minutes: 15
     env:
       # Preferred path: a Supabase Postgres Session Pooler connection string.
-      # This talks directly to Postgres and requires neither Lovable nor a
-      # Supabase Personal Access Token.
+      # This talks directly to Postgres and requires no external site-builder
+      # integration or Supabase Personal Access Token.
       SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
 
       # Backward-compatible fallback for a linked-project workflow.
@@ -40,11 +41,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: supabase/setup-cli@v1
-        with:
-          version: latest
-
-      - name: Select direct database or linked-project transport
+      - name: Select migration transport or read-only parity verification
         id: transport
         shell: bash
         run: |
@@ -62,10 +59,70 @@ jobs:
             exit 0
           fi
 
-          echo 'No Supabase migration transport is configured.' >&2
-          echo 'Preferred fix: add repository secret SUPABASE_DB_URL using the Supabase Session Pooler URI from Project > Connect.' >&2
-          echo 'This direct database path bypasses Lovable and does not require SUPABASE_ACCESS_TOKEN.' >&2
-          exit 1
+          echo 'mode=verify-only' >> "$GITHUB_OUTPUT"
+          echo 'No database write transport is configured; using the public read-only migration ledger verifier.'
+          echo 'Verify-only mode proves only newly added migration versions in this exact revision and fails closed for edited, deleted, or renamed migration files.'
+
+      - name: Resolve migration versions introduced by this revision
+        if: steps.transport.outputs.mode == 'verify-only'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          expected_file="$RUNNER_TEMP/supabase-expected-migrations.txt"
+          : > "$expected_file"
+
+          base_sha=''
+          if [[ "$GITHUB_EVENT_NAME" == 'push' ]]; then
+            candidate="$(jq -r '.before // empty' "$GITHUB_EVENT_PATH")"
+            if [[ -n "$candidate" && "$candidate" != '0000000000000000000000000000000000000000' ]] && git cat-file -e "$candidate^{commit}" 2>/dev/null; then
+              base_sha="$candidate"
+            fi
+          fi
+
+          if [[ -z "$base_sha" ]]; then
+            if base_sha="$(git rev-parse "$GITHUB_SHA^" 2>/dev/null)"; then
+              :
+            else
+              echo 'Unable to resolve the parent revision for fail-closed migration verification.' >&2
+              exit 1
+            fi
+          fi
+
+          changed_status_file="$RUNNER_TEMP/supabase-migration-delta.tsv"
+          git diff --name-status "$base_sha" "$GITHUB_SHA" -- supabase/migrations/ > "$changed_status_file"
+
+          while IFS=$'\t' read -r status path extra; do
+            [[ -z "${status:-}" ]] && continue
+
+            if [[ "$status" != 'A' ]]; then
+              echo "Verify-only mode refuses migration history mutation ($status ${path:-}${extra:+ -> $extra})." >&2
+              echo 'Configure a database write transport or reconcile the migration history explicitly.' >&2
+              exit 1
+            fi
+
+            filename="${path##*/}"
+            if [[ "$filename" =~ ^([0-9]+)_.+[.]sql$ ]]; then
+              printf '%s\n' "${BASH_REMATCH[1]}" >> "$expected_file"
+            else
+              echo "Verify-only mode found a migration file without a versioned filename: $path" >&2
+              exit 1
+            fi
+          done < "$changed_status_file"
+
+          sort -u -o "$expected_file" "$expected_file"
+          echo "SUPABASE_EXPECTED_VERSIONS_FILE=$expected_file" >> "$GITHUB_ENV"
+
+          count="$(wc -l < "$expected_file" | tr -d ' ')"
+          echo "Resolved $count newly added migration version(s) for read-only parity verification."
+          if [[ "$count" != '0' ]]; then
+            sed 's/^/  /' "$expected_file"
+          fi
+
+      - uses: supabase/setup-cli@v1
+        if: steps.transport.outputs.mode != 'verify-only'
+        with:
+          version: latest
 
       - name: Link production project for legacy transport
         if: steps.transport.outputs.mode == 'linked'
@@ -75,10 +132,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [[ "${{ steps.transport.outputs.mode }}" == 'db-url' ]]; then
+          mode='${{ steps.transport.outputs.mode }}'
+          if [[ "$mode" == 'db-url' ]]; then
             supabase db push --db-url "$SUPABASE_DB_URL" --include-all --dry-run
-          else
+          elif [[ "$mode" == 'linked' ]]; then
             supabase db push --linked --password "$SUPABASE_DB_PASSWORD" --include-all --dry-run
+          else
+            bash scripts/verify-supabase-migration-parity.sh
           fi
 
       - name: Apply pending production migrations
@@ -86,10 +146,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [[ "${{ steps.transport.outputs.mode }}" == 'db-url' ]]; then
+          mode='${{ steps.transport.outputs.mode }}'
+          if [[ "$mode" == 'db-url' ]]; then
             supabase db push --db-url "$SUPABASE_DB_URL" --include-all
-          else
+          elif [[ "$mode" == 'linked' ]]; then
             supabase db push --linked --password "$SUPABASE_DB_PASSWORD" --include-all
+          else
+            echo 'Read-only parity is proven for the current migration delta; no database write is required.'
           fi
 
       - name: Verify migration state
@@ -97,8 +160,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [[ "${{ steps.transport.outputs.mode }}" == 'db-url' ]]; then
+          mode='${{ steps.transport.outputs.mode }}'
+          if [[ "$mode" == 'db-url' ]]; then
             supabase migration list --db-url "$SUPABASE_DB_URL"
-          else
+          elif [[ "$mode" == 'linked' ]]; then
             supabase migration list --linked --password "$SUPABASE_DB_PASSWORD"
+          else
+            bash scripts/verify-supabase-migration-parity.sh
           fi

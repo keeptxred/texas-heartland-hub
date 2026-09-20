@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "teachthevote.atpe.org",
+    "sourceClass": "texas-educator-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use ATPE Teach the Vote candidate profiles to locate official campaign websites, candidate contact information, and downstream official sources. Do not copy profile imagery unless the specific image has a separately documented provenance and reuse basis.",
+    "searchHint": "site:teachthevote.atpe.org/Candidates candidate name Texas 2026",
+    "notes": "Verified August 2026 as a current Texas candidate directory. Candidate profiles expose race context and downstream campaign links, making this a useful source-expansion directory without treating its images as automatically reusable."
+  }
+]

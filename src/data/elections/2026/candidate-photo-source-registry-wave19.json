@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "votemichna.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Mike Michna's official Texas House District 134 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude Instagram-hosted embeds, endorsement portraits of other people, stock, issue graphics, logos, and third-party imagery.",
+    "searchHint": "site:votemichna.com Mike Michna Texas House District 134 portrait candidate",
+    "notes": "Verified August 22, 2026. The live site identifies Mike Michna as a candidate for Texas House District 134 and directly hosts candidate imagery including a locally hosted image named me.png. Third-party Instagram CDN images remain excluded from registry auto-approval."
+  }
+]

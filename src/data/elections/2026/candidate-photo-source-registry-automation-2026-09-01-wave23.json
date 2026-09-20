@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "mwareanews.com",
+    "sourceClass": "local-news-candidate-event-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Mineral Wells Area News candidate-event coverage only to corroborate candidate identity, office sought, campaign appearances, and discover downstream official campaign, party, or candidate-controlled portrait sources. Do not approve or reuse publication-hosted imagery without item-level provenance plus an explicit reusable license, candidate-supplied attribution, publication permission, or another documented editorial permission basis.",
+    "searchHint": "site:mwareanews.com 2026 Texas candidate campaign portrait State Board of Education House",
+    "notes": "New source discovered September 1, 2026 while researching unresolved State Board of Education District 14 candidate Mindy Bumgarner. A September 4, 2025 Mineral Wells Area News report identifies Bumgarner as a State Board of Education District 14 candidate and documents a candidate event appearance. Treat all hosted imagery as discovery-only unless item-level rights and candidate identity are separately established."
+  }
+]

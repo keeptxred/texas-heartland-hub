@@ -2,7 +2,12 @@ const SOCIAL_LINKS = [
   {
     name: "Facebook",
     href: "https://www.facebook.com/profile.php?id=61591363654407",
-    label: "Follow Keep Texas Red on Facebook",
+    label: "Follow Keep TX Red on Facebook",
+  },
+  {
+    name: "Instagram",
+    href: "https://www.instagram.com/keeptxreddotcom/",
+    label: "Follow Keep TX Red on Instagram",
   },
 ] as const;
 
@@ -28,8 +33,8 @@ export function SocialLinks({ variant = "default" }: { variant?: "default" | "fo
       </h3>
       <p className={isFooter ? "text-sm text-white/75 max-w-2xl" : "text-sm text-muted-foreground max-w-2xl"}>
         Stay connected with our Texas-focused newsroom. Follow Keep Texas Red on social media for breaking Lone Star headlines,
-        legislative updates, election coverage, and policy explainers as they publish. We share the same reporting you read on
-        keeptxred.com — straight from our editors, verified against primary Texas sources, and delivered without spin.
+        legislative updates, election coverage, policy explainers, and permanent public-affairs resources. Posts point back to the
+        same source-attributed coverage and reference pages published on keeptxred.com under our editorial standards.
       </p>
       <ul className="mt-4 flex flex-wrap gap-3 text-sm font-semibold">
         {SOCIAL_LINKS.map((s) => (

@@ -81,6 +81,16 @@
   h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.01em; }
 }
 
+/* Keep article section labels visually aligned with the centered story column. */
+article > .prose > section > h2 {
+  text-align: center;
+}
+
+/* Newsletter is still in development. Hide homepage promo copy along with the disabled form. */
+section:has(> [data-newsletter-disabled-root]) {
+  display: none;
+}
+
 /* Shared calculator field styles must be global because the address screen
    returns before the calculator component's manual-mode style block renders. */
 .tax-field {

@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 const ALLOWED_CATEGORIES = ["shirts", "hoodies", "hats", "drinkware", "stickers", "tote-bags", "accessories"] as const;
-const ALLOWED_COLLECTIONS = ["patriotic", "texas", "floral", "conservative", "texas-pride", "outdoors", "home", "gifts", "texas-wildlife", "hill-country", "gulf-coast", "bbq", "state-parks", "small-town-texas", "texas-christmas"] as const;
+const ALLOWED_COLLECTIONS = ["patriotic", "texas", "floral", "conservative", "texas-pride", "outdoors", "home", "gifts", "texas-wildlife", "hill-country", "gulf-coast", "bbq", "state-parks", "small-town-texas", "texas-christmas", "holiday"] as const;
 
 type Category = (typeof ALLOWED_CATEGORIES)[number];
 type Collection = (typeof ALLOWED_COLLECTIONS)[number];

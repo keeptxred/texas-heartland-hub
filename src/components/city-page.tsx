@@ -4,6 +4,7 @@ import { CITY_NAVIGATION, type TexasCityConfig } from "@/data/texas-cities";
 import type { CategoryFeedItem } from "@/lib/category-feed.functions";
 import { assignUniqueImages } from "@/lib/dedupe-images";
 import { resolveArticleImage } from "@/lib/seo-headline";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 
 export function CityPage({
   config,
@@ -18,7 +19,10 @@ export function CityPage({
     .map((slug) => ARTICLES.find((article) => article.slug === slug))
     .filter(
       (article): article is NonNullable<typeof article> =>
-        Boolean(article) && isPublished(article!) && !liveSlugs.has(article!.slug),
+        Boolean(article)
+        && isPublished(article!)
+        && isStaticArticleIndexable(article!)
+        && !liveSlugs.has(article!.slug),
     )
     .sort(sortByDateDesc)
     .slice(0, fallbackSlots);

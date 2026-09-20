@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "voteforallkids.org",
+    "sourceClass": "issue-advocacy-election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Vote For All Kids election pages only to corroborate current candidate identity and race context and to discover downstream candidate-linked official profiles or campaign/social sources. Do not approve or reuse Vote For All Kids-hosted imagery without item-level candidate identity, provenance, and an explicit reusable license, candidate/campaign-supplied basis, or another documented editorial permission basis. Treat logos, generic social-share images, page graphics, placeholders, and non-candidate imagery as ineligible.",
+    "searchHint": "site:voteforallkids.org Texas 2026 candidate Facebook campaign portrait",
+    "notes": "Discovered September 5, 2026 while researching the current missing-photo list. The site's Texas ballot page identifies the Texas House District 13 matchup and provides an additional-information link to Albert Hunter's candidate Facebook page, making it a useful bridge to a candidate-linked profile. Discovery only; no image reuse rights are inferred from the directory itself."
+  }
+]

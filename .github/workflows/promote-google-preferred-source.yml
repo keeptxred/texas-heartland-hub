@@ -1,0 +1,70 @@
+name: Promote Google Preferred Source
+
+on:
+  workflow_run:
+    workflows: ["Repository test and build health"]
+    types: [completed]
+    branches: [main]
+  schedule:
+    # Mondays at 15:20 UTC (10:20 a.m. Central while CDT is in effect).
+    # The server hook suppresses reposts within 21 days, so this schedule is
+    # intentionally more frequent than the actual eligible publication cadence.
+    - cron: "20 15 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: keeptxred-google-preferred-source
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    if: >-
+      github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       contains(github.event.workflow_run.head_commit.message, 'Enable Preferred Sources social bootstrap'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      AUTOMATION_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
+    steps:
+      - name: Request Google Preferred Sources Facebook promotion
+        shell: bash
+        run: |
+          set -euo pipefail
+          oidc_url="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-facebook"
+          oidc_token=$(curl -fsS \
+            -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+            "$oidc_url" | jq -r '.value // empty')
+
+          if [[ -z "$oidc_token" ]]; then
+            echo 'GitHub Actions did not issue the Preferred Sources OIDC token.' >&2
+            exit 1
+          fi
+
+          output=/tmp/preferred-source.json
+          status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
+            --max-time 180 \
+            -H 'accept: application/json' \
+            -H "Authorization: Bearer ${oidc_token}" \
+            "${AUTOMATION_ORIGIN%/}/api/public/hooks/promote-google-preferred-source" || echo 000)
+
+          echo "Keep TX Red Preferred Sources promotion HTTP ${status}"
+          cat "$output" 2>/dev/null || true
+          echo
+
+          if [[ "$status" != "200" ]] || ! jq -e '.ok == true' "$output" >/dev/null 2>&1; then
+            echo 'GOOGLE_PREFERRED_SOURCE_PROMOTION_FAILED' >&2
+            exit 1
+          fi
+
+          if jq -e '.posted == true' "$output" >/dev/null 2>&1; then
+            post_url=$(jq -r '.post_url // ""' "$output")
+            echo "GOOGLE_PREFERRED_SOURCE_PROMOTION_POSTED post_url=${post_url}"
+          else
+            reason=$(jq -r '.reason // "no post required"' "$output")
+            echo "GOOGLE_PREFERRED_SOURCE_PROMOTION_NOOP reason=${reason}"
+          fi

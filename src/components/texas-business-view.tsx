@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
 import { assignUniqueImages } from "@/lib/dedupe-images";
 import { filterArticlesByCategory } from "@/lib/article-filters";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 import schoolbus from "@/assets/article-schoolbus.jpg";
 import boardroom from "@/assets/article-boardroom.jpg";
 import rotunda from "@/assets/article-rotunda.jpg";
@@ -27,7 +28,7 @@ export const BUSINESS_SLUGS: Record<string, string[]> = {
   regulation: ["texas-energy-policy-guide", "what-local-governments-control"],
   taxation: [
     "property-tax-relief-package",
-    "county-appraisal-districts-explained",
+    "texas-property-tax-laws-explained",
     "isd-tax-burdens",
     "how-texas-counties-spend",
   ],
@@ -68,11 +69,13 @@ export function TexasBusinessView({ topic }: { topic: string }) {
   const curated = topic && BUSINESS_SLUGS[topic] ? BUSINESS_SLUGS[topic] : ALL_BUSINESS_SLUGS;
   const curatedArticles = curated
     .map((s) => ARTICLES.find((a) => a.slug === s))
-    .filter((a): a is NonNullable<typeof a> => Boolean(a) && isPublished(a!));
+    .filter((a): a is NonNullable<typeof a> => Boolean(a) && isPublished(a!) && isStaticArticleIndexable(a!));
   const filtered = topic ? filterArticlesByCategory(ARTICLES, topic) : [];
   const merged = new Map<string, (typeof ARTICLES)[number]>();
   for (const a of [...curatedArticles, ...filtered]) merged.set(a.slug, a);
-  const businessArticles = Array.from(merged.values()).sort(sortByDateDesc);
+  const businessArticles = Array.from(merged.values())
+    .filter(isStaticArticleIndexable)
+    .sort(sortByDateDesc);
   const uniqImg = assignUniqueImages(
     businessArticles,
     (a) => a.slug,
@@ -184,11 +187,11 @@ export function TexasBusinessView({ topic }: { topic: string }) {
       <section className="mt-16 border-t border-border pt-10">
         <h2 className="font-sans text-2xl font-semibold tracking-tight text-foreground">More from Keep Texas Red</h2>
         <ul className="mt-4 grid sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
-          <li><Link to="/texas-news" className="text-primary hover:underline">Texas News →</Link></li>
+          <li><Link to="/news" className="text-primary hover:underline">Texas News →</Link></li>
           <li><Link to="/texas-politics" className="text-primary hover:underline">Texas Politics →</Link></li>
           <li><Link to="/houston" className="text-primary hover:underline">Houston News →</Link></li>
-          <li><Link to="/texas-sports" className="text-primary hover:underline">Texas Sports →</Link></li>
-          <li><Link to="/elections" className="text-primary hover:underline">Elections →</Link></li>
+          <li><Link to="/laws" className="text-primary hover:underline">Texas Laws →</Link></li>
+          <li><Link to="/elections/2026" className="text-primary hover:underline">Election Central →</Link></li>
           <li><Link to="/bills" search={EMPTY_BILLS_SEARCH} className="text-primary hover:underline">Texas Bills →</Link></li>
         </ul>
       </section>

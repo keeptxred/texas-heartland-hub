@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "texastogether2026.com",
+    "sourceClass": "state-party-coordinated-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Together 2026, the Texas Democratic Party's statewide coordinated campaign, as an official party-linked discovery bridge for 2026 Democratic candidate identity, district, campaign-site links, and campaign-supplied roster information. Do not approve or reuse site-hosted images by default; require item-level provenance plus an explicit reusable-rights basis, candidate/campaign permission, or another documented editorial permission basis before approving any portrait.",
+    "searchHint": "site:texastogether2026.com/candidates candidate name Texas 2026 campaign site",
+    "notes": "New source verified August 30, 2026. Its candidate directory identifies 132 Democratic candidates across statewide, congressional, Texas Senate, and Texas House races and links many of them to their campaign websites. The site states that bios, photos, and priorities are added as campaigns share them, making it a useful candidate-supplied discovery bridge while still requiring item-level image-rights review."
+  }
+]

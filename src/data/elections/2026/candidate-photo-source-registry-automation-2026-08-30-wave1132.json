@@ -1,0 +1,47 @@
+[
+  {
+    "domain": "communityimpact.com",
+    "sourceClass": "reputable-news-candidate-supplied-photo",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Community Impact election Q&A and candidate-profile pages to discover candidate-specific portraits only when the page explicitly states the photos were submitted by, or are courtesy of, the respective candidates. Do not approve a Community Impact-hosted image unless the exact asset is tied to the correct candidate and the page-level candidate-supplied attribution is retained as the item-level editorial permission basis.",
+    "searchHint": "site:communityimpact.com Texas 2026 candidate Q&A all photos submitted respective candidates",
+    "notes": "New source class discovered August 30, 2026. A March 20, 2026 Round Rock mayor Q&A states that all photos were submitted by the respective candidates and includes an individually labeled Kelly Hall portrait; later Community Impact coverage repeats that the candidate photos were courtesy of the respective candidates. This is a strong candidate-supplied editorial source once an exact image asset is selected and matched, but it is not an automatic license for unrelated Community Impact imagery."
+  },
+  {
+    "domain": "house.texas.gov",
+    "sourceClass": "official-government-legislative-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use official Texas House member biography pages to verify incumbent identity, district, and discover the actual inline member portrait. Never use generic Open Graph/social-share graphics, seals, logos, or shared site art. Retain the exact biography URL and portrait asset URL, and require the repository's normal item-level editorial-use/provenance validation before approval.",
+    "searchHint": "site:house.texas.gov/members Texas House member biography portrait 2026",
+    "notes": "Expanded August 30, 2026 after confirming the current official biography for Rep. Janie Lopez (House District 37). This source should be preferred for incumbent Texas House members when an actual inline member portrait can be identified and distinguished from generic social assets."
+  },
+  {
+    "domain": "teachthevote.org",
+    "sourceClass": "education-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Teach the Vote / ATPE candidate pages to corroborate candidate identity, office, campaign links, and locate candidate-specific headshots. Do not approve or reuse a hosted headshot without item-level provenance plus an explicit reusable license, candidate/media permission, or another documented editorial permission basis.",
+    "searchHint": "Teach the Vote Texas 2026 candidate headshot official campaign",
+    "notes": "New discovery bridge added August 30, 2026. Current pages cover sparse candidates and incumbents such as Janie Lopez and Michelle Palmer and expose candidate-specific headshots and campaign links. Treat hosted images as discovery-only unless rights are separately established."
+  },
+  {
+    "domain": "palmerfortexased.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Michelle Palmer's official State Board of Education District 6 campaign website to verify identity, office, biography context, and discover candidate-specific portrait/media assets. Do not approve or reuse any image without exact-asset provenance plus an explicit reusable license, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Michelle Palmer Texas State Board of Education District 6 official campaign portrait media",
+    "notes": "New current campaign source discovered August 30, 2026. Teach the Vote/ATPE independently identifies palmerfortexased.com as Michelle Palmer's District 6 campaign website. Imagery remains discovery-only until exact-asset rights are verified."
+  },
+  {
+    "domain": "mindybumgarner.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Mindy Bumgarner's official State Board of Education District 14 campaign website to verify identity, office, biography context, and discover candidate-specific portrait/media assets. Do not approve or reuse any image without exact-asset provenance plus an explicit reusable license, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Mindy Bumgarner Texas State Board of Education District 14 official campaign portrait media",
+    "notes": "New current campaign source discovered August 30, 2026. The site identifies Mindy Bumgarner as a District 14 candidate, and TCTA independently links the same campaign domain. Images remain discovery-only absent item-level rights verification."
+  }
+]

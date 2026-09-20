@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "voteyourviews.org",
+    "sourceClass": "nonpartisan-candidate-guide",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use VoteYourViews candidate and race pages to corroborate current 2026 candidate identity, office sought, campaign website links, and candidate-specific portrait leads. Do not approve or reuse any VoteYourViews-hosted image without item-level provenance plus an explicit reusable license, candidate/campaign permission, publisher permission, or another documented editorial permission basis. Reject generic race graphics, logos, social-share images, default avatars, and other non-candidate imagery.",
+    "searchHint": "site:voteyourviews.org Texas 2026 candidate campaign website portrait",
+    "notes": "Discovered September 2, 2026 during fresh source expansion for unresolved candidate-photo coverage. Current Texas Midterm 2026 candidate pages expose candidate-specific images and outbound campaign-website links, including Oscar Rosa in Texas House District 35. Treat hosted imagery as discovery-only unless item-level rights/provenance is independently established; use the directory primarily as a bridge to candidate-controlled portrait sources."
+  }
+]

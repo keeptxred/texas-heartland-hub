@@ -1,0 +1,38 @@
+[
+  {
+    "domain": "nicolekingforall.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Nicole King's verified official Texas House District 3 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Nicole King Texas House District 3 nicolekingforall.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. The live homepage identifies Nicole King as the Democratic candidate for Texas House District 3, hosts candidate photography, and states that political advertising is paid for by the Nicole King campaign. Montgomery County official primary results independently confirm Nicole King in the 2026 Democratic HD3 race."
+  },
+  {
+    "domain": "tatum4texas9.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Shelley Tatum's verified official Texas House District 9 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Shelley Tatum Texas House District 9 tatum4texas9.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. The live site contains a Meet Shelley Tatum biography and campaign-hosted candidate photography; TCTA independently lists tatum4texas9.com for Shelley Tatum, and official 2026 primary materials identify her in HD9."
+  },
+  {
+    "domain": "chavezfortexas.org",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use this verified official campaign site to discover Jeff Chavez candidate-identifying photography, but require manual item-level review before approval because the site mixes candidate photography, endorsement graphics, screenshots, and AI-generated imagery. Preserve campaign attribution and the exact source page; never approve images labeled or identifiable as generated imagery.",
+    "searchHint": "Jeff Chavez Texas House District 8 chavezfortexas.org official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. TCTA independently links chavezfortexas.org to Jeff Chavez for Texas House District 8, the live site identifies him as running for HD8 and carries a paid-for-by-campaign notice, but its media gallery also contains files explicitly labeled Gemini_Generated_Image, so auto-approval is intentionally disabled."
+  },
+  {
+    "domain": "secure.actblue.com",
+    "sourceClass": "candidate-fundraising-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use ActBlue's current Texas candidate directory only as a discovery and corroboration bridge for candidate identity, office, campaign websites, and candidate-controlled fundraising pages. Do not reuse ActBlue-hosted candidate images unless the original image provenance and item-level reuse basis are independently verified from an eligible source.",
+    "searchHint": "site:secure.actblue.com/directory/TX 2026 Texas candidate image campaign website",
+    "notes": "New discovery source verified August 24, 2026. The current Texas directory includes 2026 office labels, candidate names, images for many candidates, and outbound campaign website links. ActBlue itself states that platform pages are not authorized by candidate committees, so its hosted imagery is discovery-only and never auto-approved."
+  }
+]

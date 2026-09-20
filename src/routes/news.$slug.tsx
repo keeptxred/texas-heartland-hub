@@ -8,9 +8,13 @@ import {
   resolveArticleSlugRedirect,
   type EvergreenBody,
 } from "@/lib/evergreen.functions";
+import { getCloudArticleIndexability } from "@/lib/article-indexability.functions";
 import { isBadYearSlug, parseArticleSlug } from "@/lib/article-slug-integrity";
+import { normalizeCategoryName, type CategoryName } from "@/lib/articles-by-category";
 import { AdSlot } from "@/components/ad-slot";
+import { ContextualAffiliatePanel } from "@/components/monetization/contextual-affiliate-panel";
 import { NewsletterSignup } from "@/components/newsletter-signup";
+import { GooglePreferredSourceCta } from "@/components/google-preferred-source-cta";
 import {
   buildSeo,
   imageObjectJsonLd,
@@ -23,8 +27,20 @@ import { dedupeArticleBody } from "@/lib/article-dedupe";
 import { resolveArticleImage } from "@/lib/seo-headline";
 import type { HeadlineVariants } from "@/lib/ctr-score";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
+import { visibleArticleDates } from "@/lib/article-visible-dates";
+import {
+  getArticleImageAttribution,
+  getGeneratedArticleImageDisclosure,
+} from "@/lib/article-image-attribution";
 
 type StructuredArticleBody = ArticleBody & { entities?: EvergreenBody["entities"] };
+type RenderedArticle = Omit<Article, "category"> & {
+  category: CategoryName;
+  noindex?: boolean;
+  imageAlt?: string;
+  contentModifiedAt?: string | null;
+};
 
 const GENERIC_FAQ_PATTERNS = [
   /where can i read more/i,
@@ -39,13 +55,33 @@ function validIsoDate(value: string | null | undefined): string | undefined {
   return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString();
 }
 
-function articleDates(article: Article, body: ArticleBody) {
-  const published = validIsoDate(article.publishedAt) ?? validIsoDate(body.updated) ?? new Date().toISOString();
-  const candidateModified = validIsoDate(body.updated) ?? published;
-  const modified = new Date(candidateModified).getTime() < new Date(published).getTime()
-    ? published
-    : candidateModified;
-  return { published, modified };
+function latestContentUpdate(...values: Array<string | null | undefined>): string | undefined {
+  let newest: string | undefined;
+  let newestMs = Number.NEGATIVE_INFINITY;
+  for (const value of values) {
+    const iso = validIsoDate(value);
+    if (!iso) continue;
+    const ms = Date.parse(iso);
+    if (ms > newestMs) {
+      newest = iso;
+      newestMs = ms;
+    }
+  }
+  return newest;
+}
+
+function articleDates(
+  article: Pick<RenderedArticle, "publishedAt" | "contentModifiedAt">,
+  body: ArticleBody,
+) {
+  const visible = visibleArticleDates(
+    article.publishedAt,
+    latestContentUpdate(body.updated, article.contentModifiedAt),
+  );
+  return {
+    published: visible.publishedIso,
+    modified: visible.updatedIso ?? visible.publishedIso,
+  };
 }
 
 function isSpecificFaq(faq: { q: string; a: string }) {
@@ -55,18 +91,29 @@ function isSpecificFaq(faq: { q: string; a: string }) {
   return !GENERIC_FAQ_PATTERNS.some((pattern) => pattern.test(`${question} ${answer}`));
 }
 
+function isStaticArticleDiscoverableForRelated(article: Article): boolean {
+  return isPublished(article) && isStaticArticleIndexable(article) && Boolean(ARTICLE_BODIES[article.slug]);
+}
+
 export const Route = createFileRoute("/news/$slug")({
   loader: async ({ params }): Promise<{
-    article: Article;
+    article: RenderedArticle;
     body: StructuredArticleBody;
     ctr?: { variants: HeadlineVariants | null; score: number | null } | null;
   }> => {
     const article = ARTICLES.find((a) => a.slug === params.slug);
-    if (article) {
+    if (article && isStaticArticleIndexable(article)) {
       if (!isPublished(article)) throw notFound();
-      const rawBody = ARTICLE_BODIES[params.slug] ?? buildDefaultBody(article);
+      const explicitBody = ARTICLE_BODIES[params.slug];
+      const rawBody = explicitBody ?? buildDefaultBody(article);
       const body = dedupeArticleBody(rawBody) as ArticleBody;
-      return { article, body, ctr: null };
+      const renderedArticle: RenderedArticle = {
+        ...article,
+        // Preserve the retired-content guard and keep generated fallback bodies
+        // out of search until they have explicit, substantive article content.
+        noindex: !isStaticArticleIndexable(article) || !explicitBody,
+      };
+      return { article: renderedArticle, body, ctr: null };
     }
     const mapped = await resolveArticleSlugRedirect({ data: { slug: params.slug } });
     if (mapped.slug && mapped.slug !== params.slug) {
@@ -74,6 +121,12 @@ export const Route = createFileRoute("/news/$slug")({
     }
     const ever = await getEvergreenBySlug({ data: { slug: params.slug } });
     if (!ever || !ever.body) {
+      if (article) {
+        if (!isPublished(article)) throw notFound();
+        const rawBody = ARTICLE_BODIES[params.slug] ?? buildDefaultBody(article);
+        const body = dedupeArticleBody(rawBody) as ArticleBody;
+        return { article: { ...article, noindex: true }, body, ctr: null };
+      }
       const parsed = parseArticleSlug(params.slug);
       if (parsed && isBadYearSlug(params.slug)) {
         const { slug } = await resolveArticleSlugByTail({ data: { tail: parsed.tail } });
@@ -90,16 +143,19 @@ export const Route = createFileRoute("/news/$slug")({
     );
     if (nonStubSections.length === 0 && introText.length < 200) throw notFound();
     if (!meetsArticleMainWordCount(ever.kind, ever.body)) throw notFound();
-    const allowed = ["Legislature", "Border", "Elections", "Tax & Spending", "Energy", "Education"] as const;
-    const cat = (allowed as readonly string[]).includes(ever.category) ? (ever.category as Article["category"]) : "Legislature";
-    const synth: Article = {
+    const { noindex } = await getCloudArticleIndexability({ data: { slug: params.slug } });
+    const cat = normalizeCategoryName(ever.category);
+    const displayTitle = (ever.seo_headline ?? "").trim() || ever.title;
+    const synth: RenderedArticle = {
       slug: ever.slug,
       category: cat,
-      title: (ever.seo_headline ?? "").trim() || ever.title,
+      noindex,
+      title: displayTitle,
       dek: ever.dek,
       author: ever.author,
       date: new Date(ever.published_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
       publishedAt: ever.published_at,
+      contentModifiedAt: ever.updated_at,
       image: resolveArticleImage({
         slug: ever.slug,
         title: ever.title,
@@ -114,6 +170,7 @@ export const Route = createFileRoute("/news/$slug")({
         featured_image_url: ever.featured_image_url,
         image_alt_text: ever.image_alt_text,
       }),
+      imageAlt: (ever.image_alt_text ?? "").trim() || displayTitle,
     };
     const rawBody: StructuredArticleBody = {
       updated: ever.body.updated,
@@ -121,7 +178,9 @@ export const Route = createFileRoute("/news/$slug")({
       sections: ever.body.sections,
       faq: ever.body.faq,
       sources: ever.body.sources,
-      related: ARTICLES.filter((x) => x.category === ever.category && isPublished(x)).sort(sortByDateDesc).slice(0, 3).map((x) => x.slug),
+      related: ARTICLES.filter(
+        (x) => x.category === ever.category && isStaticArticleDiscoverableForRelated(x),
+      ).sort(sortByDateDesc).slice(0, 3).map((x) => x.slug),
       cta: { label: "Browse the Newsroom", href: "/news" },
       keyTakeaways: ever.body.keyTakeaways,
       entities: ever.body.entities,
@@ -147,26 +206,30 @@ export const Route = createFileRoute("/news/$slug")({
     const authorPath = `/authors/${authorSlug(article.author)}`;
     const authorUrl = `${SITE_URL}${authorPath}`;
     const articleFaq = body.faq.filter(isSpecificFaq);
+    const articleImageWidth = 1280;
+    const articleImageHeight = article.slug === "texas-policing-agencies-compared" ? 672 : 720;
+    const imageAlt = article.imageAlt ?? article.title;
     const seo = buildSeo({
       title: article.title,
       description: article.dek,
       path,
       image: article.image,
-      imageAlt: article.title,
-      imageWidth: 1280,
-      imageHeight: 720,
+      imageAlt,
+      imageWidth: articleImageWidth,
+      imageHeight: articleImageHeight,
       type: "article",
       publishedTime: published,
       modifiedTime: modified,
       section: article.category,
       author: article.author,
+      noindex: article.noindex === true,
     });
     const articleImage = imageObjectJsonLd({
       url: seo.image,
-      width: 1280,
-      height: 720,
+      width: articleImageWidth,
+      height: articleImageHeight,
       caption: article.title,
-      alt: article.title,
+      alt: imageAlt,
       representativeOfPage: true,
     });
     return {
@@ -272,7 +335,9 @@ function _buildDefaultBody(a: Article): ArticleBody {
       { label: "Texas Legislature Online", url: "https://capitol.texas.gov/" },
       { label: "Texas Secretary of State", url: "https://www.sos.state.tx.us/" },
     ],
-    related: ARTICLES.filter((x) => x.category === a.category && x.slug !== a.slug && isPublished(x))
+    related: ARTICLES.filter(
+      (x) => x.category === a.category && x.slug !== a.slug && isStaticArticleDiscoverableForRelated(x),
+    )
       .sort(sortByDateDesc)
       .slice(0, 3)
       .map((x) => x.slug),
@@ -282,14 +347,14 @@ function _buildDefaultBody(a: Article): ArticleBody {
 
 function ArticlePage() {
   const { article, body } = Route.useLoaderData() as {
-    article: Article;
+    article: RenderedArticle;
     body: ArticleBody;
     ctr?: { variants: HeadlineVariants | null; score: number | null } | null;
   };
 
   const related = body.related
     .map((slug) => ARTICLES.find((a) => a.slug === slug))
-    .filter((a): a is Article => Boolean(a) && isPublished(a as Article));
+    .filter((a): a is Article => Boolean(a) && isStaticArticleDiscoverableForRelated(a as Article));
 
   const wordCount =
     body.intro.join(" ").split(/\s+/).length +
@@ -302,14 +367,29 @@ function ArticlePage() {
     );
   const readingMinutes = Math.max(2, Math.round(wordCount / 230));
 
-  const formattedDate = new Date(body.updated).toLocaleDateString("en-US", {
+  const visibleDates = visibleArticleDates(
+    article.publishedAt,
+    latestContentUpdate(body.updated, article.contentModifiedAt),
+  );
+  const publishedDisplay = new Date(visibleDates.publishedIso).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
     timeZone: "America/Chicago",
   });
+  const updatedDisplay = visibleDates.updatedIso
+    ? new Date(visibleDates.updatedIso).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        timeZone: "America/Chicago",
+      })
+    : null;
   const author = getAuthor(article.author);
   const authorHref = author ? `/authors/${author.slug}` : `/authors/${authorSlug(article.author)}`;
+  const imageAlt = article.imageAlt ?? article.title;
+  const imageAttribution = getArticleImageAttribution(article.image);
+  const generatedImageDisclosure = getGeneratedArticleImageDisclosure(article.image);
 
   return (
     <article className="mx-auto max-w-4xl px-4 sm:px-6 py-10 sm:py-14">
@@ -328,9 +408,13 @@ function ArticlePage() {
           By {article.author}
         </Link>
         <span>•</span>
-        <span>Published <time dateTime={article.publishedAt ?? body.updated}>{new Date(article.publishedAt ?? body.updated).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</time></span>
-        <span>•</span>
-        <span>Updated <time dateTime={body.updated}>{formattedDate}</time></span>
+        <span>Published <time dateTime={visibleDates.publishedIso}>{publishedDisplay}</time></span>
+        {visibleDates.updatedIso && updatedDisplay ? (
+          <>
+            <span>•</span>
+            <span>Updated <time dateTime={visibleDates.updatedIso}>{updatedDisplay}</time></span>
+          </>
+        ) : null}
         <span>•</span>
         <span>{readingMinutes} min read</span>
         <span>•</span>
@@ -343,6 +427,8 @@ function ArticlePage() {
         ) : null}
       </div>
 
+      <GooglePreferredSourceCta />
+
       {body.editorNote ? (
         <p className="mt-5 text-sm bg-accent/10 border-l-4 border-accent px-4 py-3 italic text-foreground/80 leading-6">
           <strong className="not-italic font-semibold text-accent uppercase tracking-wider text-[10px] block mb-1">Editor's Note</strong>
@@ -351,12 +437,51 @@ function ArticlePage() {
       ) : null}
 
       <p className="mt-4 text-[11px] uppercase tracking-[0.2em] text-muted-foreground border-l-2 border-primary/40 pl-3 leading-5">
-        Editorial disclaimer: Opinions and analysis on Keep TX Red are editorial content — not statements of fact. See our <Link to="/editorial-standards" className="text-primary hover:underline">editorial standards</Link>.
+        Reporting is based on the sources and public records cited or linked in this article. Opinion and analysis are labeled and follow our <Link to="/editorial-standards" className="text-primary hover:underline">editorial standards</Link>.
       </p>
 
-      <div className="aspect-[16/9] overflow-hidden bg-muted my-8 md:my-10 border-2 border-foreground/10">
-        <img src={article.image} alt={article.title} className="size-full object-cover" width={1280} height={720} />
-      </div>
+      <figure className="my-8 md:my-10">
+        <div className={`${article.slug === "texas-policing-agencies-compared" ? "aspect-[40/21]" : "aspect-[16/9]"} overflow-hidden bg-muted border-2 border-foreground/10`}>
+          <img
+            src={article.image}
+            alt={imageAlt}
+            className={`size-full ${article.slug === "texas-policing-agencies-compared" ? "object-contain" : "object-cover"}`}
+            width={1280}
+            height={article.slug === "texas-policing-agencies-compared" ? 672 : 720}
+          />
+        </div>
+        {imageAttribution ? (
+          <figcaption className="mt-2 text-xs leading-relaxed text-muted-foreground">
+            {imageAttribution.caption ? <span>{imageAttribution.caption} </span> : null}
+            <span>
+              Photo by{" "}
+              <a
+                href={imageAttribution.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2 hover:text-foreground"
+              >
+                {imageAttribution.credit}
+              </a>{" "}
+              via Wikimedia Commons, licensed{" "}
+              <a
+                href={imageAttribution.licenseUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2 hover:text-foreground"
+              >
+                {imageAttribution.licenseName}
+              </a>
+              . {imageAttribution.usageNote}
+            </span>
+          </figcaption>
+        ) : null}
+        {!imageAttribution && generatedImageDisclosure ? (
+          <figcaption className="mt-2 text-xs leading-relaxed text-muted-foreground">
+            {generatedImageDisclosure}
+          </figcaption>
+        ) : null}
+      </figure>
 
       <div className="prose prose-neutral mx-auto max-w-2xl prose-a:font-medium prose-a:text-primary prose-a:underline prose-a:underline-offset-2 prose-blockquote:my-8 prose-blockquote:border-l-4 prose-blockquote:pl-5 prose-blockquote:font-serif prose-blockquote:text-lg prose-blockquote:leading-8 prose-li:my-1.5">
         {body.intro.map((p, i) => (
@@ -366,6 +491,13 @@ function ArticlePage() {
         ))}
 
         <AdSlot placement="top" />
+
+        <ContextualAffiliatePanel
+          pathname={`/news/${article.slug}`}
+          title={article.title}
+          dek={article.dek}
+          category={article.category}
+        />
 
         {body.sections.map((sec, i) => (
           <section key={i} className="mt-12 md:mt-14 first:mt-10">
@@ -435,7 +567,7 @@ function ArticlePage() {
 
         {body.sources.length > 0 ? (
           <section className="mt-14 md:mt-16">
-            <h2 className="font-display text-xl md:text-2xl tracking-tight mb-4">Official Sources</h2>
+            <h2 className="font-display text-xl md:text-2xl tracking-tight mb-4">Sources</h2>
             <ul className="space-y-2 text-sm leading-6">
               {body.sources.map((s, i) => (
                 <li key={i}>
@@ -471,15 +603,6 @@ function ArticlePage() {
           </Link>
         </div>
       ) : null}
-
-      <div className="mx-auto max-w-2xl mt-8 border-l-4 border-primary bg-muted/40 p-5">
-        <p className="font-serif text-[17px] leading-8">
-          <Link to="/keep-texas-red" className="text-primary font-semibold underline underline-offset-2 hover:no-underline">
-            Read more about Keep Texas Red →
-          </Link>
-          <span className="text-muted-foreground"> Our full guide to what Keep Texas Red means and why Texans support it.</span>
-        </p>
-      </div>
 
       {related.length > 0 ? (
         <section className="mt-14 pt-8 border-t-2 border-foreground">

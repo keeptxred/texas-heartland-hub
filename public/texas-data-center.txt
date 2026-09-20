@@ -1,0 +1,29 @@
+# Keep TX Red Texas Data Center
+
+Canonical hub: https://keeptxred.com/data
+
+The Texas Data Center maps authoritative datasets and methodology beneath Keep TX Red reporting, policy trackers, law guides, and editorial analysis. KTR distinguishes raw official records, estimates, projections, polls, models, and derived analysis.
+
+## Current data source maps
+
+- https://keeptxred.com/data/property-tax
+- https://keeptxred.com/data/state-budget-spending
+- https://keeptxred.com/data/elections-results
+- https://keeptxred.com/data/population-demographics
+- https://keeptxred.com/data/energy-grid
+- https://keeptxred.com/data/water
+- https://keeptxred.com/data/crime-public-safety
+
+## Related permanent layers
+
+- Texas Policy Trackers: https://keeptxred.com/policy
+- Texas Law Library: https://keeptxred.com/laws/topics
+- Texas Government: https://keeptxred.com/texas-government
+- Texas Legislature: https://keeptxred.com/texas-legislature
+- Texas bills: https://keeptxred.com/bills
+- Election Central: https://keeptxred.com/elections/2026
+- The Texas Case: https://keeptxred.com/texas-case
+
+## Data standard
+
+A KTR chart, table, comparison, calculator, or derived dataset should preserve the publisher, source URL, data period, retrieval or update date, relevant geographic scope, and any transformation or denominator used. Official source data should not be relabeled as KTR-collected data. Survey estimates and projections must be labeled as estimates or projections, and modeled political affiliation must never be presented as official Texas party-registration data.

@@ -4,13 +4,15 @@ import {
   BASE_URL,
   renderUrlset,
   xmlResponse,
-  toIsoDate,
   latestIsoDate,
   isArticleSlugDateConsistent,
   type UrlEntry,
 } from "@/lib/sitemap-shared";
 import { ARTICLES, isPublished } from "@/data/articles";
+import { ARTICLE_BODIES } from "@/data/article-bodies";
 import { listSitemapArticles } from "@/lib/evergreen.functions";
+import { isKeepTxRedSearchOwnedStory } from "@/lib/ktr-search-ownership";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 
 /**
  * Tombstoned article slugs that are known to return 404 and must never be
@@ -24,6 +26,10 @@ function isSitemapArticleAllowed(slug: string): boolean {
   return !TOMBSTONED_ARTICLE_SLUGS.has(slug);
 }
 
+function hasSubstantiveStaticBody(slug: string): boolean {
+  return Boolean(ARTICLE_BODIES[slug]);
+}
+
 /** Evergreen + all article URLs (news items also live here for long-term
  *  indexing; the 48-hour News sitemap is separate). */
 export const Route = createFileRoute("/sitemap-evergreen.xml")({
@@ -32,18 +38,29 @@ export const Route = createFileRoute("/sitemap-evergreen.xml")({
       GET: async () => {
         const entries: UrlEntry[] = [];
 
-        for (const a of ARTICLES.filter((a) => isPublished(a))) {
+        for (const a of ARTICLES.filter((a) =>
+          isPublished(a)
+          && isStaticArticleIndexable(a)
+          && hasSubstantiveStaticBody(a.slug),
+        )) {
           if (!isArticleSlugDateConsistent(a.slug, a.publishedAt)) continue;
           if (!isSitemapArticleAllowed(a.slug)) continue;
           entries.push({
             loc: `${BASE_URL}/news/${a.slug}`,
-            lastmod: toIsoDate(a.publishedAt),
+            lastmod: latestIsoDate(a.publishedAt, ARTICLE_BODIES[a.slug]?.updated),
           });
         }
 
         try {
           const { articles } = await listSitemapArticles();
           for (const a of articles) {
+            if (!isKeepTxRedSearchOwnedStory({
+              title: a.title,
+              description: a.dek,
+              category: a.category,
+              source: a.source_name,
+              kind: a.kind,
+            })) continue;
             if (!isArticleSlugDateConsistent(a.slug, a.published_at)) continue;
             if (!isSitemapArticleAllowed(a.slug)) continue;
             entries.push({

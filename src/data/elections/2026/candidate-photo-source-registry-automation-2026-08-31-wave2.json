@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "hallforhd19.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Kelly Hall's official Texas House District 19 campaign website to verify candidate identity, office, biography, and discover candidate-specific portrait or media assets. The site currently labels a candidate image as 'Kelly Hall - Candidate for Texas House District 19'. Do not approve or reuse any image unless the exact asset URL and item-level provenance are captured and a documented reusable license, candidate/campaign media permission, candidate-supplied status, or another narrow editorial-identification permission basis is established. Reject logos, initials, social-share/Open Graph graphics, placeholders, and other non-candidate imagery.",
+    "searchHint": "Kelly Hall Texas House District 19 official campaign portrait media hallforhd19",
+    "notes": "Discovered August 31, 2026 during live missing-photo enrichment. The site identifies Kelly Hall as the Democratic nominee for Texas House District 19 and exposes a candidate-specific image in both the homepage and biography surfaces. Registered discovery-only because the exact image asset URL and item-level reuse basis were not established in this pass. Candidate lifecycle/ballot status must remain governed by authoritative election reconciliation rather than this campaign-site registration."
+  }
+]

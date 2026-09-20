@@ -23,6 +23,7 @@ const expectedSlugs = [
 const requiredFiles = [
   "src/lib/texas-government.ts",
   "src/routes/texas-government.tsx",
+  "src/routes/texas-government.index.tsx",
   "src/routes/texas-government.$entitySlug.tsx",
   "src/routes/sitemap-government[.]xml.ts",
 ];
@@ -49,8 +50,9 @@ for (const file of requiredFiles) {
 }
 
 const dataSource = await readFile(path.join(ROOT, "src/lib/texas-government.ts"), "utf8");
+const layoutSource = await readFile(path.join(ROOT, "src/routes/texas-government.tsx"), "utf8");
 const detailSource = await readFile(path.join(ROOT, "src/routes/texas-government.$entitySlug.tsx"), "utf8");
-const hubSource = await readFile(path.join(ROOT, "src/routes/texas-government.tsx"), "utf8");
+const hubSource = await readFile(path.join(ROOT, "src/routes/texas-government.index.tsx"), "utf8");
 const sitemapSource = await readFile(path.join(ROOT, "src/routes/sitemap-government[.]xml.ts"), "utf8");
 const sitemapIndex = await readFile(path.join(ROOT, "src/routes/sitemap[.]xml.ts"), "utf8");
 
@@ -59,6 +61,17 @@ const uniqueSlugs = new Set(discoveredSlugs);
 if (discoveredSlugs.length !== uniqueSlugs.size) errors.push("Duplicate government entity slugs detected.");
 for (const slug of expectedSlugs) if (!uniqueSlugs.has(slug)) errors.push(`Missing entity slug: ${slug}`);
 if (uniqueSlugs.size !== expectedSlugs.length) errors.push(`Expected ${expectedSlugs.length} entities, found ${uniqueSlugs.size}.`);
+
+if (!layoutSource.includes("Outlet")) errors.push("Texas government parent route must render an Outlet for child-route ownership.");
+if (layoutSource.includes('rel: "canonical"') || layoutSource.includes("og:title")) {
+  errors.push("Texas government parent layout must not contribute hub SEO metadata to child routes.");
+}
+if (!hubSource.includes('createFileRoute("/texas-government/")')) {
+  errors.push("Texas government hub must be owned by the index route.");
+}
+if (!hubSource.includes("buildSeo({") || !hubSource.includes('path: "/texas-government"') || !hubSource.includes("texasGovernmentHead")) {
+  errors.push("Texas government hub must use the shared generated SEO contract.");
+}
 
 for (const section of requiredSections) {
   if (!detailSource.includes(`id=\"${section}\"`)) errors.push(`Detail template missing section: ${section}`);
@@ -82,20 +95,17 @@ for (const field of requiredDataFields) if (!dataSource.includes(field)) errors.
 for (const marker of ["GovernmentOrganization", "FAQPage", "BreadcrumbList", "CollectionPage", "ItemList"]) {
   if (!dataSource.includes(marker)) errors.push(`Structured data marker missing: ${marker}`);
 }
-for (const marker of ["rel: \"canonical\"", "og:title", "description"]) {
-  if (!detailSource.includes(marker) || !hubSource.includes(marker)) errors.push(`SEO marker missing from hub or detail route: ${marker}`);
+for (const marker of ['rel: "canonical"', "og:title", "description"]) {
+  if (!detailSource.includes(marker)) errors.push(`SEO marker missing from government detail route: ${marker}`);
 }
+if (!hubSource.includes("DESCRIPTION")) errors.push("Texas government hub description contract is missing.");
 if (!sitemapSource.includes("GOVERNMENT_ENTITIES.map")) errors.push("Government sitemap does not enumerate entity pages.");
 if (!sitemapIndex.includes("sitemap-government.xml")) errors.push("Government sitemap is absent from the sitemap index.");
-if (/TODO|FIXME|placeholder/i.test(`${dataSource}\n${detailSource}\n${hubSource}`)) errors.push("Unfinished placeholder marker detected.");
+if (/TODO|FIXME|placeholder/i.test(`${dataSource}\n${layoutSource}\n${detailSource}\n${hubSource}`)) errors.push("Unfinished placeholder marker detected.");
 
-const result = {
-  valid: errors.length === 0,
-  entityCount: uniqueSlugs.size,
-  routeCount: uniqueSlugs.size + 1,
-  requiredSectionCount: requiredSections.length,
-  structuredDataTypes: ["GovernmentOrganization", "Organization", "WebPage", "CollectionPage", "ItemList", "BreadcrumbList", "FAQPage", "Person"],
-  errors,
-};
-console.log(JSON.stringify(result, null, 2));
-if (errors.length) process.exit(1);
+if (errors.length) {
+  console.error("Texas government authority validation failed:\n" + errors.map((error) => `- ${error}`).join("\n"));
+  process.exit(1);
+}
+
+console.log(`Texas government authority validation passed for ${uniqueSlugs.size} entity pages.`);

@@ -12,23 +12,35 @@ describe("robots policy", () => {
     expect(existsSync(staticRobotsPath)).toBe(false);
   });
 
-  it("explicitly names Google Merchant crawlers in the shared group", () => {
+  it("explicitly names Google Merchant and AdSense crawlers in the shared group", () => {
     const source = readFileSync(dynamicRobotsPath, "utf8");
     expect(source).toContain('"Googlebot"');
     expect(source).toContain('"Googlebot-Image"');
     expect(source).toContain('"Storebot-Google"');
+    expect(source).toContain('"Mediapartners-Google"');
+    expect(source).toContain('"AdsBot-Google"');
     expect(source).toContain('"User-agent: *"');
+    expect(source).toContain('"Allow: /ads.txt"');
     expect(source).toContain('"Allow: /"');
   });
 
-  it("explicitly names AI discovery and user-fetch crawlers in the shared group", () => {
+  it("explicitly names AI discovery, training, and user-fetch crawlers in the shared group", () => {
     const source = readFileSync(dynamicRobotsPath, "utf8");
     for (const agent of [
       "OAI-SearchBot",
+      "GPTBot",
       "ChatGPT-User",
+      "ClaudeBot",
+      "Claude-Web",
+      "anthropic-ai",
       "PerplexityBot",
       "Perplexity-User",
       "Google-Extended",
+      "Applebot-Extended",
+      "Amazonbot",
+      "Meta-ExternalAgent",
+      "CCBot",
+      "Bytespider",
     ]) {
       expect(source).toContain(`"${agent}"`);
     }
@@ -37,5 +49,14 @@ describe("robots policy", () => {
   it("keeps the first-party Merchant image endpoint crawlable", () => {
     const source = readFileSync(dynamicRobotsPath, "utf8");
     expect(source).not.toContain("Disallow: /merchant-image");
+  });
+
+  it("keeps legacy public redirect sources crawlable so crawlers can observe 301s", () => {
+    const source = readFileSync(dynamicRobotsPath, "utf8");
+    expect(source).not.toContain('"Disallow: /hubs"');
+    expect(source).not.toContain('"Disallow: /hubs/"');
+    expect(source).toContain('"Disallow: /api/"');
+    expect(source).toContain('"Disallow: /admin"');
+    expect(source).toContain('"Disallow: /private/"');
   });
 });

@@ -1,0 +1,38 @@
+[
+  {
+    "domain": "voteyourviews.org",
+    "sourceClass": "election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use VoteYourViews candidate and race pages to corroborate current candidate identity, office, campaign website links, and discover downstream official candidate profiles or candidate-specific media. Do not approve or reuse VoteYourViews-hosted images without item-level provenance plus explicit reusable rights, candidate/media permission, or another documented editorial permission basis.",
+    "searchHint": "VoteYourViews Texas 2026 candidate campaign website portrait",
+    "notes": "Discovered September 3, 2026 while enriching Crystal Sedillo and other current missing-photo candidates. The site exposes candidate-specific profiles and links to campaign websites, making it useful as a discovery bridge rather than an automatic image-rights source."
+  },
+  {
+    "domain": "votetexasvalues.org",
+    "sourceClass": "election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use VoteTexasValues race pages to corroborate candidate identity and discover campaign websites or downstream candidate-specific portrait sources. Do not approve or reuse site-hosted images without item-level provenance plus explicit reusable rights, candidate/media permission, or another documented editorial permission basis.",
+    "searchHint": "VoteTexasValues Texas 2026 candidate campaign website portrait",
+    "notes": "Discovered September 3, 2026 while researching current missing-photo candidates including Mike Meadors. Treat all imagery as discovery-only unless independent item-level provenance and rights are established."
+  },
+  {
+    "domain": "snapcoalition.org",
+    "sourceClass": "candidate-questionnaire-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Scientist Network for Advancing Policy candidate questionnaire pages to verify candidate identity, office, current campaign participation, and discover candidate-linked profile or media sources. Do not approve or reuse questionnaire-page imagery without item-level provenance plus explicit reusable rights, candidate/media permission, or another documented editorial permission basis.",
+    "searchHint": "SNAP Coalition Texas candidate questionnaire portrait 2026",
+    "notes": "Discovered September 3, 2026. Current questionnaire pages include candidate-specific submissions such as Crystal Sedillo for Texas House District 30. This is a discovery and identity-corroboration source, not an automatic image-rights source."
+  },
+  {
+    "domain": "jejunemagazine.com",
+    "sourceClass": "reputable-news-candidate-interview",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate interviews and profiles from Jejune Magazine to corroborate candidate identity, office, campaign website/social links, and discover candidate-supplied or publication-hosted portrait assets. Do not approve any image unless the specific item has documented candidate-supplied provenance, explicit reusable rights, publication permission, or another defensible editorial permission basis.",
+    "searchHint": "Jejune Magazine Texas 2026 candidate interview portrait campaign",
+    "notes": "Discovered September 3, 2026 through a current Crystal Sedillo Texas House District 30 interview that links her campaign website and social profiles. Treat publication imagery as discovery-only unless item-level permission/provenance is established."
+  }
+]

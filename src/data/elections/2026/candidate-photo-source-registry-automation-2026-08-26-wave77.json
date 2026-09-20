@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "palmerfortexased.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Treat imagery on Michelle Palmer's official campaign site as candidate-identity and image-discovery evidence only unless the exact image carries an explicit reusable license, press/media permission, campaign-supplied reuse statement, or another documented item-level permission basis. Preserve the page URL, direct image URL, credit/provenance, and permission evidence before approval.",
+    "searchHint": "site:palmerfortexased.com Michelle Palmer portrait media photo State Board Education District 6",
+    "notes": "Official campaign domain verified August 26, 2026 for unresolved Texas State Board of Education District 6 Democratic candidate Michelle Palmer. Current third-party candidate profiles from TCTA, ATPE Teach the Vote, Vote Common Good, and the 2026 SBOE candidate listings all point to this campaign domain. This adds a candidate-controlled discovery path while retaining manual item-level rights verification."
+  },
+  {
+    "domain": "flip150.org",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Treat imagery on A'Yonna Kellum's official campaign site as candidate-identity and image-discovery evidence only unless the exact image carries an explicit reusable license, press/media permission, campaign-supplied reuse statement, or another documented item-level permission basis. Preserve the page URL, direct image URL, credit/provenance, and permission evidence before approval.",
+    "searchHint": "site:flip150.org A'Yonna Kellum portrait media photo Texas House District 150",
+    "notes": "Official campaign domain verified August 26, 2026 for unresolved Texas House District 150 Democratic candidate A'Yonna Kellum. The site identifies Kellum as running for Texas House District 150 and provides candidate-controlled campaign content. This adds a previously unregistered portrait-discovery path; no reuse rights are inferred from campaign ownership."
+  }
+]

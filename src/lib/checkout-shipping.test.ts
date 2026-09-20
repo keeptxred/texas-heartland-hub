@@ -1,12 +1,19 @@
 import { describe, expect, it } from "vitest";
 import {
   FREE_SHIPPING_THRESHOLD_CENTS,
+  STRIPE_CHECKOUT_UI_MODE,
+  assertCheckoutEnvironmentMatchesReturnUrl,
+  assertCheckoutFulfillmentRuntimeReady,
   getStandardShippingCents,
   priceToCents,
   qualifiesForFreeShipping,
 } from "@/lib/checkout.functions";
 
 describe("checkout shipping policy", () => {
+  it("uses Stripe's current embedded Checkout UI mode", () => {
+    expect(STRIPE_CHECKOUT_UI_MODE).toBe("embedded");
+  });
+
   it("charges shipping at exactly $35", () => {
     expect(FREE_SHIPPING_THRESHOLD_CENTS).toBe(3500);
     expect(qualifiesForFreeShipping(3500)).toBe(false);
@@ -39,5 +46,60 @@ describe("checkout shipping policy", () => {
     expect(() => priceToCents(0)).toThrow();
     expect(() => priceToCents(-1)).toThrow();
     expect(() => priceToCents("not-a-price")).toThrow();
+  });
+
+  it("allows each Stripe environment only on its matching return route", () => {
+    expect(() =>
+      assertCheckoutEnvironmentMatchesReturnUrl(
+        "sandbox",
+        "https://keeptxred.com/shop/checkout-sandbox-return?session_id={CHECKOUT_SESSION_ID}",
+      ),
+    ).not.toThrow();
+    expect(() =>
+      assertCheckoutEnvironmentMatchesReturnUrl(
+        "live",
+        "https://keeptxred.com/shop/checkout-return?session_id={CHECKOUT_SESSION_ID}",
+      ),
+    ).not.toThrow();
+  });
+
+  it("fails live checkout closed when fulfillment runtime is incomplete", () => {
+    expect(() =>
+      assertCheckoutFulfillmentRuntimeReady("live", {
+        PRINTIFY_API_TOKEN: "token",
+        PRINTIFY_SHOP_ID: "shop",
+        SUPABASE_SERVICE_ROLE_KEY: "service",
+      }),
+    ).toThrow("Checkout is temporarily unavailable. Please try again later.");
+  });
+
+  it("allows live checkout only when webhook and fulfillment bindings are present", () => {
+    expect(() =>
+      assertCheckoutFulfillmentRuntimeReady("live", {
+        PAYMENTS_LIVE_WEBHOOK_SECRET: "whsec_example",
+        PRINTIFY_API_TOKEN: "token",
+        PRINTIFY_SHOP_ID: "shop",
+        SUPABASE_SERVICE_ROLE_KEY: "service",
+      }),
+    ).not.toThrow();
+  });
+
+  it("does not require live fulfillment bindings for sandbox checkout", () => {
+    expect(() => assertCheckoutFulfillmentRuntimeReady("sandbox", {})).not.toThrow();
+  });
+
+  it("blocks live/sandbox return-route crossover before creating a Stripe session", () => {
+    expect(() =>
+      assertCheckoutEnvironmentMatchesReturnUrl(
+        "live",
+        "https://keeptxred.com/shop/checkout-sandbox-return?session_id={CHECKOUT_SESSION_ID}",
+      ),
+    ).toThrow("Stripe live checkout cannot use the /shop/checkout-sandbox-return return route.");
+    expect(() =>
+      assertCheckoutEnvironmentMatchesReturnUrl(
+        "sandbox",
+        "https://keeptxred.com/shop/checkout-return?session_id={CHECKOUT_SESSION_ID}",
+      ),
+    ).toThrow("Stripe sandbox checkout cannot use the /shop/checkout-return return route.");
   });
 });

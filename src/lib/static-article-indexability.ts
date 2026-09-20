@@ -1,0 +1,46 @@
+import { ARTICLES, type Article } from "@/data/articles";
+import { isExplicitlyRetiredStaticSlug } from "@/lib/retired-static-news";
+
+const RETIRED_CONTENT_CATEGORIES = new Set([
+  "relocation",
+  "housing",
+  "financial",
+  "cost-of-living",
+  "history",
+  "culture",
+  "lifestyle",
+  "sports",
+]);
+
+const RETIRED_DISPLAY_CATEGORIES = new Set([
+  "Sports",
+  "Sports Culture",
+  "Culture & Identity",
+]);
+
+const TEXASDEFINED_HOMEOWNER_PROPERTY_TAX_SLUGS = new Set([
+  "texas-property-tax-guide",
+  "homestead-exemption-explained",
+  "appraisal-protest-playbook",
+  "county-appraisal-districts-explained",
+]);
+
+type StaticArticleIndexabilityCandidate = Pick<Article, "slug" | "pillar" | "contentCategory">
+  & Partial<Pick<Article, "category">>;
+
+export function isStaticArticleIndexable(article: StaticArticleIndexabilityCandidate): boolean {
+  if (isExplicitlyRetiredStaticSlug(article.slug)) return false;
+  if (TEXASDEFINED_HOMEOWNER_PROPERTY_TAX_SLUGS.has(article.slug)) return false;
+  if (article.contentCategory && RETIRED_CONTENT_CATEGORIES.has(article.contentCategory)) return false;
+  if (article.category && RETIRED_DISPLAY_CATEGORIES.has(article.category)) return false;
+  return true;
+}
+
+export function isRetiredStaticNewsPath(path: string): boolean {
+  const match = path.match(/^\/news\/([^/?#]+)$/);
+  if (!match) return false;
+  const slug = decodeURIComponent(match[1]);
+  const article = ARTICLES.find((candidate) => candidate.slug === slug);
+  if (article) return !isStaticArticleIndexable(article);
+  return isExplicitlyRetiredStaticSlug(slug);
+}

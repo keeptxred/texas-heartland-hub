@@ -1,0 +1,217 @@
+name: KeepTXRed Article Hero Readiness Audit
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - "Deploy verified KeepTXRed to Cloudflare"
+      - "Deploy KeepTXRed to Cloudflare Workers"
+    types: [completed]
+    branches: [main]
+  schedule:
+    - cron: '23 * * * *'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/article-hero-readiness-audit.yml'
+      - '.github/force-article-hero-readiness-audit'
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: article-hero-readiness-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: >-
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Validate stored article heroes through the common visual gate
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          endpoint='https://keeptxred-site.freddy-coppola.workers.dev/api/public/hooks/article-hero-readiness-audit'
+          oidc_url="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-newsroom"
+
+          issue_oidc_token() {
+            local token
+            token=$(curl -fsS \
+              -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+              "$oidc_url" | jq -r '.value // empty')
+            if [[ -z "$token" ]]; then
+              echo 'GitHub Actions did not issue the newsroom OIDC token.' >&2
+              return 1
+            fi
+            printf '%s' "$token"
+          }
+
+          probe_queue() {
+            local output="$1"
+            local oidc_token status
+            oidc_token=$(issue_oidc_token)
+            status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
+              --max-time 60 \
+              -H 'accept: application/json' \
+              -H "Authorization: Bearer ${oidc_token}" \
+              "${endpoint}?dry=1" || echo 000)
+            [[ "$status" == "200" ]] && jq -e '.ok == true and .dryRun == true' "$output" >/dev/null 2>&1
+          }
+
+          ready=-1
+          for attempt in $(seq 1 12); do
+            if probe_queue /tmp/hero-readiness-dry.json; then
+              ready=$(jq -r '.ready // 0' /tmp/hero-readiness-dry.json)
+              echo "hero-readiness probe ${attempt}/12 HTTP 200"
+              cat /tmp/hero-readiness-dry.json
+              echo
+              break
+            fi
+            echo "hero-readiness probe ${attempt}/12 not ready"
+            cat /tmp/hero-readiness-dry.json 2>/dev/null || true
+            echo
+            sleep 20
+          done
+
+          if [[ "$ready" -lt 0 ]]; then
+            echo 'Article hero readiness endpoint never became ready after deployment.' >&2
+            exit 1
+          fi
+          if [[ "$ready" -eq 0 ]]; then
+            echo 'ARTICLE_HERO_READINESS_SUCCESS ready=0; every published hero has governed provenance or has already been quarantined for image recovery.'
+            exit 0
+          fi
+
+          max_per_run=4
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_run" || "${GITHUB_EVENT_NAME}" == "workflow_dispatch" || "${GITHUB_EVENT_NAME}" == "push" ]]; then
+            # Deployment/manual runs are intentionally larger so a corrected
+            # readiness policy can re-audit a historical backlog promptly.
+            # The requests remain sequential and the job has a 90-minute cap.
+            max_per_run=36
+          fi
+          if [[ "$ready" -lt "$max_per_run" ]]; then
+            max_per_run="$ready"
+          fi
+
+          mapfile -t slugs < <(jq -r --argjson max "$max_per_run" '.slugs[0:$max][]' /tmp/hero-readiness-dry.json)
+          echo "ARTICLE_HERO_READINESS_START ready=${ready} batch=${#slugs[@]} primary_subject=$(jq -r '.primarySubjectRemediations // 0' /tmp/hero-readiness-dry.json) candidates=$(jq -r '.candidates // 0' /tmp/hero-readiness-dry.json)"
+
+          processed=0
+          accepted=0
+          repaired=0
+          quarantined=0
+          failures=0
+
+          for slug in "${slugs[@]}"; do
+            oidc_token=$(issue_oidc_token)
+            encoded_slug=$(jq -rn --arg value "$slug" '$value|@uri')
+            output="/tmp/hero-readiness-${processed}.json"
+            status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
+              --max-time 180 \
+              -H 'accept: application/json' \
+              -H "Authorization: Bearer ${oidc_token}" \
+              "${endpoint}?slug=${encoded_slug}&repair=1" || echo 000)
+            echo "hero slug=${slug} HTTP ${status}"
+            cat "$output" 2>/dev/null || true
+            echo
+            processed=$((processed + 1))
+
+            if [[ "$status" != "200" ]] || ! jq -e '.ok == true' "$output" >/dev/null 2>&1; then
+              failures=$((failures + 1))
+              continue
+            fi
+            if jq -e '.accepted == true' "$output" >/dev/null 2>&1; then
+              accepted=$((accepted + 1))
+            elif jq -e '.repaired == true' "$output" >/dev/null 2>&1; then
+              repaired=$((repaired + 1))
+            else
+              quarantined=$((quarantined + 1))
+            fi
+          done
+
+          ready_end=-1
+          if probe_queue /tmp/hero-readiness-final.json; then
+            ready_end=$(jq -r '.ready // -1' /tmp/hero-readiness-final.json)
+          fi
+          echo "ARTICLE_HERO_READINESS_TOTAL ready_at_start=${ready} ready_at_end=${ready_end} processed=${processed} accepted=${accepted} repaired=${repaired} quarantined=${quarantined} failures=${failures}"
+          if [[ "$failures" -gt 0 ]]; then
+            echo 'One or more audit requests failed at the endpoint level; successful rows remain committed and the next hourly pass will continue.' >&2
+            exit 1
+          fi
+          if [[ "$ready_end" -lt 0 ]]; then
+            echo 'Final hero-readiness convergence probe failed.' >&2
+            exit 1
+          fi
+          if [[ "$ready_end" -ge "$ready" ]]; then
+            echo 'Hero-readiness queue did not shrink; failing to prevent a silent retry loop.' >&2
+            exit 1
+          fi
+
+  sitemap-indexability:
+    if: >-
+      (github.event_name == 'workflow_dispatch' ||
+       github.event_name == 'workflow_run' ||
+       github.event_name == 'push') &&
+      (github.event_name != 'workflow_run' ||
+       github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out current main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Check sitemap audit syntax
+        run: node --check scripts/ci/audit-sitemap-page-indexability.mjs
+
+      - name: Audit every submitted sitemap page
+        env:
+          AUDIT_CONCURRENCY: "12"
+          AUDIT_RETRIES: "2"
+          AUDIT_TIMEOUT_MS: "15000"
+          AUDIT_OUTPUT: tmp/sitemap-page-indexability-audit.json
+        run: node scripts/ci/audit-sitemap-page-indexability.mjs
+
+      - name: Upload sitemap indexability report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sitemap-page-indexability-audit
+          path: tmp/sitemap-page-indexability-audit.json
+          if-no-files-found: warn
+          retention-days: 14
+
+  vehicle-handoff:
+    if: >-
+      (github.event_name == 'workflow_dispatch' ||
+       github.event_name == 'workflow_run' ||
+       github.event_name == 'push') &&
+      (github.event_name != 'workflow_run' ||
+       github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
+    steps:
+      - name: Check out current main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+
+      - name: Verify retired vehicle and constitutional routes redirect permanently
+        run: python3 scripts/authority/smoke-production.py --legacy-redirects-only
+
+      - name: Verify vehicle handoffs preserve full queries and resolve directly
+        run: python3 scripts/authority/verify-vehicle-handoff-query-production.py

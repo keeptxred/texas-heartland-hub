@@ -13,8 +13,8 @@ export function RaceCandidateSection({ race, candidates }: RaceCandidateSectionP
   return (
     <section aria-labelledby="race-candidates-heading" className="space-y-5">
       <div>
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-700">Ballot field</p>
-        <h2 id="race-candidates-heading" className="mt-2 text-2xl font-bold tracking-tight text-slate-950">
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Ballot field</p>
+        <h2 id="race-candidates-heading" className="mt-2 text-2xl font-bold tracking-tight text-foreground">
           Candidates
         </h2>
       </div>

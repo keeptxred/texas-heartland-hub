@@ -4,6 +4,10 @@
 // article's "Official Sources" list limited to genuinely authoritative
 // government / military sources.
 
+import { applyReviewedStaticArticleBodyUpgrade } from "@/lib/static-article-body-upgrade-router";
+import { canonicalizeInternalRedirectMarkdownLinks } from "@/lib/canonical-internal-redirects";
+import { canonicalizeMigratedToolMarkdownLinks } from "@/lib/migrated-tool-canonical";
+
 export type Section = {
   heading?: string;
   paragraphs?: string[];
@@ -39,6 +43,10 @@ const splitSentences = (p: string) =>
   p.split(/(?<=[.!?])\s+(?=[A-Z0-9"'\u201c])/).map((s) => s.trim()).filter(Boolean);
 
 const wordCount = (value: string) => value.trim().split(/\s+/).filter(Boolean).length;
+
+function canonicalizeArticleMarkdownLinks(value: string) {
+  return canonicalizeInternalRedirectMarkdownLinks(canonicalizeMigratedToolMarkdownLinks(value));
+}
 
 /**
  * Published database rows can predate the editorial readability gate or arrive
@@ -106,7 +114,7 @@ function dedupeParagraphs(paragraphs: string[], seenPara: Set<string>, seenSent:
   const out: string[] = [];
   for (const raw of paragraphs) {
     for (const repaired of repairParagraphStructure(raw ?? "")) {
-      const p = repaired.trim();
+      const p = canonicalizeArticleMarkdownLinks(repaired).trim();
       if (!p) continue;
       const key = norm(p);
       if (key.length >= 30 && seenPara.has(key)) continue;
@@ -122,7 +130,7 @@ function dedupeParagraphs(paragraphs: string[], seenPara: Set<string>, seenSent:
 function dedupeList(items: string[], seen: Set<string>): string[] {
   const out: string[] = [];
   for (const raw of items) {
-    const v = (raw ?? "").trim();
+    const v = canonicalizeArticleMarkdownLinks(raw ?? "").trim();
     if (!v) continue;
     const key = norm(v);
     if (!key) continue;
@@ -180,16 +188,19 @@ function officialSourcesOnly(sources: ArticleSource[] | undefined): ArticleSourc
 
 export function dedupeArticleBody<T extends ArticleBodyShape>(body: T): T {
   if (!body || typeof body !== "object") return body;
+  const sourceBody = applyReviewedStaticArticleBodyUpgrade(body);
   const seenPara = new Set<string>();
   const seenSent = new Set<string>();
   const seenHeading = new Set<string>();
 
-  const intro = Array.isArray(body.intro) ? dedupeParagraphs(body.intro, seenPara, seenSent) : body.intro;
+  const intro = Array.isArray(sourceBody.intro)
+    ? dedupeParagraphs(sourceBody.intro, seenPara, seenSent)
+    : sourceBody.intro;
 
   let sections: Section[] | undefined;
-  if (Array.isArray(body.sections)) {
+  if (Array.isArray(sourceBody.sections)) {
     sections = [];
-    for (const sec of body.sections) {
+    for (const sec of sourceBody.sections) {
       if (!sec) continue;
       const h = (sec.heading ?? "").trim();
       const hKey = norm(h);
@@ -201,33 +212,33 @@ export function dedupeArticleBody<T extends ArticleBodyShape>(body: T): T {
       const bullets = Array.isArray(sec.bullets) ? dedupeList(sec.bullets, new Set<string>()) : sec.bullets;
       const hasTable = Boolean(sec.table);
       const hasImage = Boolean(sec.image);
-      if (paragraphs.length === 0 && (!bullets || bullets.length === 0) && !hasTable && !hasImage && !h) continue;
+      if (paragraphs.length === 0 && (!bullets || bullets.length === 0) && !hasTable && !hasImage) continue;
       sections.push({ ...sec, heading: h || undefined, paragraphs, bullets });
     }
   }
 
-  const keyTakeaways = Array.isArray(body.keyTakeaways)
-    ? dedupeList(body.keyTakeaways, new Set<string>())
-    : body.keyTakeaways;
+  const keyTakeaways = Array.isArray(sourceBody.keyTakeaways)
+    ? dedupeList(sourceBody.keyTakeaways, new Set<string>())
+    : sourceBody.keyTakeaways;
 
   let faq: FaqItem[] | undefined;
-  if (Array.isArray(body.faq)) {
+  if (Array.isArray(sourceBody.faq)) {
     const seenQ = new Set<string>();
     faq = [];
-    for (const f of body.faq) {
+    for (const f of sourceBody.faq) {
       if (!f) continue;
-      const q = (f.q ?? "").trim();
+      const q = canonicalizeArticleMarkdownLinks(f.q ?? "").trim();
       const qKey = norm(q);
       if (!qKey || seenQ.has(qKey)) continue;
       seenQ.add(qKey);
-      const a = (f.a ?? "").trim();
+      const a = canonicalizeArticleMarkdownLinks(f.a ?? "").trim();
       faq.push({ q, a });
     }
   }
 
-  const sources = officialSourcesOnly(body.sources);
+  const sources = officialSourcesOnly(sourceBody.sources);
 
-  return { ...body, intro, sections, keyTakeaways, faq, sources } as T;
+  return { ...sourceBody, intro, sections, keyTakeaways, faq, sources } as T;
 }
 
 // True when the body still contains duplicate paragraphs/sentences after dedupe.

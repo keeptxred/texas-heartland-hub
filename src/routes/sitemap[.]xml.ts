@@ -1,133 +1,43 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import {
-  BASE_URL,
-  isRealImage,
-  isArticleSlugDateConsistent,
-  xmlEscape,
-  xmlResponse,
-} from "@/lib/sitemap-shared";
-import { ARTICLES, isPublished } from "@/data/articles";
-import { listSitemapArticles } from "@/lib/evergreen.functions";
-import { getProducts } from "@/lib/products.functions";
-import { AUTHORS, authorSlug } from "@/data/authors";
-import { getPublishedAuthorArticles } from "@/lib/daily-news.functions";
-import { ELECTION_DISTRICT_PATHS, ELECTION_STATIC_SITEMAP_COUNT } from "@/lib/elections/sitemap";
-import { GOVERNMENT_ENTITIES } from "@/lib/texas-government";
+import { BASE_URL, xmlEscape, xmlResponse } from "@/lib/sitemap-shared";
 
-function isCompleteAuthor(author: (typeof AUTHORS)[number]): boolean {
-  return Boolean(
-    author.slug.trim()
-      && author.name.trim().length >= 3
-      && author.role.trim().length >= 3
-      && author.bio.some((paragraph) => paragraph.trim().length >= 80)
-      && author.beats.some((beat) => beat.trim().length >= 3),
-  );
-}
+/**
+ * Deterministic sitemap index.
+ *
+ * The root sitemap must remain available even when optional database, catalog,
+ * or byline services are cold or unavailable. Child sitemap routes own their
+ * data fetching and may return an empty but valid urlset when they have no
+ * eligible entries. Bulk district, representative, and bill-detail sitemaps
+ * remain intentionally unadvertised to protect crawl budget.
+ *
+ * sitemap-priority.xml is a derivative discovery feed: every URL it advertises
+ * must also be canonically owned by one of the primary child sitemaps.
+ */
+const ADVERTISED_SITEMAPS = [
+  "sitemap-pages.xml",
+  "sitemap-dmv.xml",
+  "sitemap-sources.xml",
+  "sitemap-news.xml",
+  "sitemap-evergreen.xml",
+  "sitemap-priority.xml",
+  "sitemap-elections.xml",
+  "sitemap-government.xml",
+  "sitemap-political-figures.xml",
+  "sitemap-political-geography.xml",
+  "sitemap-party-representation.xml",
+  "sitemap-legislature.xml",
+  "sitemap-committees.xml",
+  "sitemap-authors.xml",
+  "sitemap-products.xml",
+  "sitemap-images.xml",
+] as const;
 
-/** Sitemap index. Includes every dedicated sitemap at most once and omits empty dynamic sitemaps. */
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
-      GET: async () => {
-        const cutoff = Date.now() - 48 * 60 * 60 * 1000;
-        const localArticles = ARTICLES.filter((article) =>
-          isPublished(article) && isArticleSlugDateConsistent(article.slug, article.publishedAt),
-        );
-        let cloudArticles: Array<{
-          published_at: string;
-          image_url: string | null;
-          title: string;
-          slug: string;
-          kind: string;
-          updated_at: string | null;
-        }> = [];
-        try {
-          cloudArticles = (await listSitemapArticles()).articles.filter((article) =>
-            isArticleSlugDateConsistent(article.slug, article.published_at),
-          );
-        } catch (error) {
-          console.error("sitemap index: cloud articles fetch failed", error);
-        }
-
-        const newsCount =
-          localArticles.filter((article) => new Date(article.publishedAt).getTime() >= cutoff).length
-          + cloudArticles.filter((article) =>
-            new Date(article.published_at).getTime() >= cutoff
-            && (article.kind === "ingested" || article.kind === "news"),
-          ).length;
-        const evergreenCount = localArticles.length + cloudArticles.length;
-
-        let productCount = 0;
-        let productImageCount = 0;
-        try {
-          const { products, isFallback } = await getProducts();
-          if (!isFallback) {
-            const completeProducts = products.filter((product) =>
-              String(product.id ?? "").trim()
-              && String(product.title ?? "").trim()
-              && isRealImage(product.image),
-            );
-            productCount = completeProducts.length;
-            productImageCount = completeProducts.length;
-          }
-        } catch (error) {
-          console.error("sitemap index: products fetch failed", error);
-        }
-
-        const activeAuthorSlugs = new Set(
-          localArticles.map((article) => authorSlug(article.author)).filter(Boolean),
-        );
-        try {
-          const { articles: liveArticles } = await getPublishedAuthorArticles();
-          for (const article of liveArticles) {
-            if (article.slug && article.author) activeAuthorSlugs.add(authorSlug(article.author));
-          }
-        } catch (error) {
-          console.error("sitemap index: live author bylines fetch failed", error);
-        }
-        const authorCount = AUTHORS.filter(
-          (author) => isCompleteAuthor(author) && activeAuthorSlugs.has(author.slug),
-        ).length;
-
-        const imageCount =
-          localArticles.filter((article) => isRealImage(article.image)).length
-          + cloudArticles.filter((article) => isRealImage(article.image_url)).length
-          + productImageCount;
-
-        // Keep the index organized around the URLs we most want humans and crawlers
-        // to discover first: core pages, current news, evergreen explainers, and
-        // Election Central. Sitemap order is not a ranking signal; the practical
-        // crawl-priority work happens through selective inclusion and strong internal links.
-        const candidates = [
-          { file: "sitemap-pages.xml", count: 1 },
-          { file: "sitemap-news.xml", count: newsCount },
-          { file: "sitemap-evergreen.xml", count: evergreenCount },
-          { file: "sitemap-elections.xml", count: ELECTION_STATIC_SITEMAP_COUNT },
-          { file: "sitemap-districts.xml", count: ELECTION_DISTRICT_PATHS.length },
-          { file: "sitemap-representatives.xml", count: 1 },
-          { file: "sitemap-government.xml", count: GOVERNMENT_ENTITIES.length + 1 },
-          // One or more session-detail pages are emitted dynamically from the
-          // legislative_sessions table; the three shared Legislature hubs live
-          // in sitemap-pages.xml and are intentionally not duplicated here.
-          { file: "sitemap-legislature.xml", count: 1 },
-          { file: "sitemap-committees.xml", count: 1 },
-          { file: "sitemap-bills.xml", count: 1 },
-          { file: "sitemap-authors.xml", count: authorCount },
-          { file: "sitemap-products.xml", count: productCount },
-          { file: "sitemap-images.xml", count: imageCount },
-        ];
-
-        const seen = new Set<string>();
-        const included = candidates.filter(({ file, count }) => {
-          if (count <= 0 || seen.has(file)) return false;
-          seen.add(file);
-          return true;
-        });
-        // A sitemap index lastmod is optional. Omitting it is more truthful than
-        // hard-coding a sitewide date that quickly becomes stale and cannot
-        // represent each child sitemap's independent update cadence.
-        const entries = included.map(({ file }) =>
+      GET: () => {
+        const entries = ADVERTISED_SITEMAPS.map((file) =>
           `  <sitemap>\n    <loc>${xmlEscape(`${BASE_URL}/${file}`)}</loc>\n  </sitemap>`,
         ).join("\n");
         const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries}\n</sitemapindex>`;

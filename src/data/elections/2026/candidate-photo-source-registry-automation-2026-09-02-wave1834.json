@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "hcgop.v-web.com",
+    "sourceClass": "official-county-party-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the Harris County Republican Party's 2026 candidate directory to corroborate Republican candidate identity, office, contact details, and linked official campaign sites. Do not approve or reuse directory-hosted imagery without item-level provenance plus explicit reusable rights, candidate/party permission, or another documented editorial permission basis.",
+    "searchHint": "site:hcgop.v-web.com/2026-candidates Texas House candidate portrait campaign",
+    "notes": "Discovered September 2, 2026. The official county-party directory lists current 2026 Texas House candidates including Scott Whitmarsh (HD131), Kyle Harding (HD139), Laura Garcia DeLeon (HD140), Julie Hunt (HD141), Heidi Hall (HD142), Frank Salazar (HD143), and David Flores (HD144), with campaign websites or direct campaign contact details where available. Treat it as a strong identity/contact discovery bridge, not an automatic image-rights source."
+  },
+  {
+    "domain": "votetexasvalues.org",
+    "sourceClass": "independent-election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use VoteTexasValues candidate and race pages to corroborate current general-election participation and discover candidate-linked campaign websites or downstream portrait sources. Do not approve or reuse VoteTexasValues-hosted images without item-level provenance plus a reusable license, explicit permission, candidate-supplied provenance, or another documented editorial permission basis.",
+    "searchHint": "site:votetexasvalues.org/races Texas House 2026 candidate campaign website portrait",
+    "notes": "Discovered September 2, 2026. Current race pages identify November 2026 candidates and expose candidate cards and campaign links, including Scott Whitmarsh in HD131. Useful as a discovery bridge when sparse candidates lack indexed campaign sites; imagery remains discovery-only absent item-level rights."
+  }
+]

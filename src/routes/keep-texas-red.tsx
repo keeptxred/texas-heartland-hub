@@ -1,34 +1,38 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import heroFlag from "@/assets/hero-flag.jpg";
-import { PUBLISHER_LOGO } from "@/lib/seo";
+import { buildSeo, PUBLISHER_LOGO, SITE_URL } from "@/lib/seo";
 
-const URL = "https://keeptxred.com/keep-texas-red";
-const TITLE = "Keep Texas Red | Elections, Policy and Conservative Government";
+const URL = `${SITE_URL}/keep-texas-red`;
+const SEO_TITLE = "Keep Texas Red: Elections, Policy & Government";
+const ARTICLE_TITLE = "Keep Texas Red: Elections, Policy and Conservative Government";
 const DESC =
   "What Keep Texas Red means in Texas politics: elections, legislation, border policy, energy, constitutional rights, education policy and government accountability.";
 const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
 
-export const Route = createFileRoute("/keep-texas-red")({
-  head: () => ({
-    meta: [
-      { title: TITLE },
-      { name: "description", content: DESC },
-      { property: "og:title", content: TITLE },
-      { property: "og:description", content: DESC },
-      { property: "og:type", content: "article" },
-      { property: "og:url", content: URL },
-      { property: "og:image", content: heroFlag },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: heroFlag },
-    ],
-    links: [{ rel: "canonical", href: URL }],
+export function keepTexasRedHead() {
+  const seo = buildSeo({
+    title: SEO_TITLE,
+    description: DESC,
+    path: "/keep-texas-red",
+    type: "article",
+    image: heroFlag,
+    imageAlt: "Texas state flag waving against a clear sky",
+    publishedTime: "2026-06-27",
+    modifiedTime: "2026-08-04",
+    section: "Texas Politics",
+    author: "Keep TX Red Editorial Team",
+  });
+
+  return {
+    meta: seo.meta,
+    links: seo.links,
     scripts: [
       {
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Article",
-          headline: TITLE,
+          headline: ARTICLE_TITLE,
           description: DESC,
           image: [heroFlag],
           datePublished: "2026-06-27",
@@ -37,7 +41,7 @@ export const Route = createFileRoute("/keep-texas-red")({
           publisher: {
             "@type": "NewsMediaOrganization",
             name: "Keep TX Red",
-            url: "https://keeptxred.com/",
+            url: `${SITE_URL}/`,
             logo: { "@type": "ImageObject", url: PUBLISHER_LOGO },
           },
           mainEntityOfPage: { "@type": "WebPage", "@id": URL },
@@ -49,13 +53,17 @@ export const Route = createFileRoute("/keep-texas-red")({
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
           itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "https://keeptxred.com/" },
+            { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
             { "@type": "ListItem", position: 2, name: "Keep Texas Red", item: URL },
           ],
         }),
       },
     ],
-  }),
+  };
+}
+
+export const Route = createFileRoute("/keep-texas-red")({
+  head: keepTexasRedHead,
   component: KeepTexasRedPage,
 });
 
@@ -108,7 +116,7 @@ function KeepTexasRedPage() {
           Texas voters choose statewide officials, legislators, judges, members of Congress, county officials, school-board members and local leaders. Primary elections often decide the direction of the Republican Party because many districts are not competitive in November. Runoffs, low-turnout local elections and constitutional-amendment elections can therefore matter as much as the most visible statewide race.
         </p>
         <p>
-          Keep TX Red tracks candidates, races, districts, polls and results through <Link to="/elections" className="text-primary underline">Election Central</Link>. Voters can also use the <Link to="/representatives" className="text-primary underline">representatives directory</Link> to connect campaign promises with an official’s actual record.
+          Keep TX Red tracks candidates, races, districts, polls and results through <Link to="/elections/2026" className="text-primary underline">Election Central</Link>. Voters can also use the <Link to="/representatives" className="text-primary underline">representatives directory</Link> to connect campaign promises with an official’s actual record.
         </p>
       </Section>
 
@@ -181,7 +189,7 @@ function KeepTexasRedPage() {
           <li><Link to="/news" className="text-primary hover:underline">Latest Texas news →</Link></li>
           <li><Link to="/texas-politics" className="text-primary hover:underline">Texas politics →</Link></li>
           <li><Link to="/texas-economy" className="text-primary hover:underline">Texas economic policy →</Link></li>
-          <li><Link to="/elections" className="text-primary hover:underline">Election Central →</Link></li>
+          <li><Link to="/elections/2026" className="text-primary hover:underline">Election Central →</Link></li>
           <li><Link to="/bills" search={EMPTY_BILLS_SEARCH} className="text-primary hover:underline">Search Texas bills →</Link></li>
           <li><Link to="/about" className="text-primary hover:underline">About Keep TX Red →</Link></li>
         </ul>

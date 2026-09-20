@@ -18,8 +18,7 @@ export const Route = createFileRoute('/admin/bills/enrichment')({
   component: Page,
 });
 
-const PASSCODE =
-  (import.meta.env.VITE_ADMIN_PASSCODE as string) || 'keeptxred';
+const PASSCODE = (import.meta.env.VITE_ADMIN_PASSCODE as string | undefined)?.trim() ?? '';
 const STORAGE_KEY = 'ktr-admin-ok';
 
 function Page() {
@@ -27,7 +26,7 @@ function Page() {
   const [pass, setPass] = useState('');
 
   useEffect(() => {
-    if (sessionStorage.getItem(STORAGE_KEY) === '1') setOk(true);
+    if (PASSCODE && sessionStorage.getItem(STORAGE_KEY) === '1') setOk(true);
   }, []);
 
   if (!ok) {
@@ -37,7 +36,7 @@ function Page() {
           className="w-full max-w-sm space-y-4 border p-6"
           onSubmit={(event) => {
             event.preventDefault();
-            if (pass === PASSCODE) {
+            if (PASSCODE && pass === PASSCODE) {
               sessionStorage.setItem(STORAGE_KEY, '1');
               sessionStorage.setItem('ktr-admin-passcode', pass);
               setOk(true);
@@ -45,13 +44,19 @@ function Page() {
           }}
         >
           <h1 className="text-2xl font-bold">Bill Editorial Enrichment</h1>
+          {!PASSCODE && (
+            <p className="text-sm text-destructive">
+              Admin access is unavailable because the required passcode is not configured.
+            </p>
+          )}
           <Input
             type="password"
             value={pass}
             onChange={(event) => setPass(event.target.value)}
             placeholder="Passcode"
+            disabled={!PASSCODE}
           />
-          <Button className="w-full">Unlock</Button>
+          <Button className="w-full" disabled={!PASSCODE}>Unlock</Button>
         </form>
       </div>
     );
@@ -61,7 +66,7 @@ function Page() {
 }
 
 function Dashboard() {
-  const token = sessionStorage.getItem('ktr-admin-passcode') || PASSCODE;
+  const token = sessionStorage.getItem('ktr-admin-passcode') || '';
   const [mode, setMode] = useState<
     'candidates' | 'draft' | 'pending' | 'approved' | 'rejected'
   >('candidates');

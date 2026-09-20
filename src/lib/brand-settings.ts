@@ -8,12 +8,14 @@ export type BrandSettings = {
   socialCta: string;
 };
 
+const LEGACY_X_SOCIAL_CTA = "Follow @KeepTXRed for more Texas coverage.";
+
 export const DEFAULT_BRAND_SETTINGS: BrandSettings = {
   logoUrl: "",
   brandName: "KEEP TX RED",
   websiteUrl: "keeptxred.com",
   footerText: "© Keep Texas Red — Texas news, politics, and policy.",
-  socialCta: "Follow @KeepTXRed for more Texas coverage.",
+  socialCta: "Follow Keep TX Red on Facebook and Instagram for more Texas coverage.",
 };
 
 const STORAGE_KEY = "ktr-brand-settings";
@@ -24,6 +26,7 @@ export function loadBrandSettings(): BrandSettings {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return DEFAULT_BRAND_SETTINGS;
     const parsed = JSON.parse(raw) as Partial<BrandSettings>;
+    if (parsed.socialCta === LEGACY_X_SOCIAL_CTA) parsed.socialCta = DEFAULT_BRAND_SETTINGS.socialCta;
     return { ...DEFAULT_BRAND_SETTINGS, ...parsed };
   } catch {
     return DEFAULT_BRAND_SETTINGS;

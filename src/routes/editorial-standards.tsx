@@ -1,15 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { buildSeo } from "@/lib/seo";
+
+const EDITORIAL_STANDARDS_TITLE = "Editorial Standards";
+const EDITORIAL_STANDARDS_DESCRIPTION =
+  "How Keep TX Red verifies, attributes, analyzes, and adds original Texas political-intelligence context to news, elections, legislation, public records, and visual media.";
+
+export function editorialStandardsHead() {
+  const seo = buildSeo({
+    title: EDITORIAL_STANDARDS_TITLE,
+    description: EDITORIAL_STANDARDS_DESCRIPTION,
+    path: "/editorial-standards",
+    type: "website",
+    imageAlt: "Keep TX Red editorial standards",
+  });
+  return { meta: seo.meta, links: seo.links };
+}
 
 export const Route = createFileRoute("/editorial-standards")({
-  head: () => ({
-    meta: [
-      { title: "Editorial Standards — Keep TX Red" },
-      { name: "description", content: "How Keep TX Red verifies facts, maintains independence, and earns reader trust." },
-      { property: "og:title", content: "Editorial Standards — Keep TX Red" },
-      { property: "og:description", content: "How Keep TX Red verifies facts, maintains independence, and earns reader trust." },
-    ],
-    links: [{ rel: "canonical", href: "https://keeptxred.com/editorial-standards" }],
-  }),
+  head: editorialStandardsHead,
   component: EditorialStandardsPage,
 });
 
@@ -20,56 +28,102 @@ function EditorialStandardsPage() {
         <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-primary">★ Our Standards</span>
         <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Editorial Standards</h1>
         <p className="mt-3 text-sm text-muted-foreground">
-          How we verify facts, maintain independence, and earn your trust.
+          How we verify, attribute, analyze, and add durable Texas public-affairs context to our coverage.
         </p>
       </div>
 
       <div className="prose-like space-y-10 font-serif text-base leading-relaxed text-foreground/90">
         <section>
-          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Our Mission</h2>
+          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">What Keep TX Red Is</h2>
           <p>
-            Keep TX Red exists to provide Texans with clear, accurate, and accessible information about state policy, elections, local government, and the issues shaping the future of the Lone Star State. Our editorial standards ensure that every article we publish reflects our commitment to transparency, accuracy, and reader trust.
+            Keep TX Red is a Texas political-intelligence and public-affairs publication. We combine current news coverage with permanent reference pages for elections, candidates, officeholders, legislative districts, bills, laws, government institutions, policy issues, and public data so readers can move from a headline to the underlying Texas record.
+          </p>
+          <p className="mt-2">
+            Some news articles begin with publicly available reporting, RSS feeds, government releases, public records, and other linked source material. When we synthesize or rewrite source-based reporting, we identify that sourcing rather than presenting it as original on-the-ground reporting. Our editorial goal is not to reproduce another publisher's article; it is to verify the event, preserve the source trail, connect it to primary records, and add Texas-specific context that remains useful after the news cycle moves on.
           </p>
         </section>
 
         <section>
-          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Accuracy & Verification</h2>
-          <p>We strive to ensure that all information published on Keep TX Red is accurate at the time of publication.</p>
+          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Original Value Standard</h2>
+          <p>
+            Publication is not justified by paraphrase alone. Indexable Keep TX Red content should provide meaningful value beyond the source material through one or more of the following: primary-record verification, multi-source synthesis, Texas legal or institutional context, entity and district connections, legislative history, election context, data interpretation, timelines, clearly labeled analysis, or links into our permanent government reference graph.
+          </p>
           <ul className="list-disc pl-6 space-y-1 mt-2">
-            <li>We verify facts using official sources such as the Texas Legislature, Texas Comptroller, Secretary of State, ERCOT, TEA, and county appraisal districts.</li>
-            <li>When reporting on public statements, legislation, or government actions, we link directly to primary documents whenever possible.</li>
-            <li>If an error is identified, we correct it promptly and transparently.</li>
+            <li>Thin summaries and mechanically repetitive pages are held back from search indexing until they meet the relevant content standard.</li>
+            <li>Permanent authority pages are maintained separately from short-lived news articles so candidate, officeholder, district, bill, law, and election information can be updated without creating duplicate pages.</li>
+            <li>When a page cannot add durable value, our preferred remedies are expansion, consolidation, noindex, redirect, or removal rather than publishing more near-duplicate text.</li>
           </ul>
+        </section>
+
+        <section>
+          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Accuracy &amp; Verification</h2>
+          <p>Our publishing systems are designed to preserve the underlying source trail and reject content that does not meet our evidence and publication checks.</p>
+          <ul className="list-disc pl-6 space-y-1 mt-2">
+            <li>When an exact government record or official source is available, we identify it separately from third-party reporting.</li>
+            <li>We do not treat a general agency homepage as proof of a specific claim.</li>
+            <li>Published-source links remain available so readers can inspect the material behind a source-based story.</li>
+            <li>Automated publishing is subject to source-sufficiency, article-length, ownership, and quality validation gates.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Source Roles</h2>
+          <p>
+            A source can play different roles in a story. A government filing, bill text, election result, or official system notice is different from a news report or policy analysis. We label those roles instead of presenting every link as equivalent evidence.
+          </p>
+          <p className="mt-2">
+            Our public <a href="/sources" className="text-primary underline underline-offset-4">Sources &amp; Primary Records directory</a> explains how major sources are classified and used. Inclusion of a source does not imply endorsement of its viewpoint or conclusions.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Single-Source vs. Multi-Source Articles</h2>
+          <p>
+            We distinguish source-based single-report coverage from multi-source synthesis. Generated articles carry provenance metadata and visible sourcing language. Our clustered newsroom pipeline can combine multiple independent reports and primary records about the same event; when it does, the article identifies the number and role of the linked sources and may include a coverage timeline.
+          </p>
+          <p className="mt-2">
+            Single-source generated articles are tagged internally so we can audit them, strengthen them with primary records and additional context, or keep them out of the index when they do not provide enough independent value.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Use of AI-Assisted Tools</h2>
+          <p>We use AI-assisted tools in parts of our aggregation, rewriting, summarization, classification, research, and media workflow.</p>
+          <ul className="list-disc pl-6 space-y-1 mt-2">
+            <li>AI output must stay grounded in the source material supplied to the generation step.</li>
+            <li>Our automated validators reject drafts that fail required structure, evidence, length, or publication rules.</li>
+            <li>AI-generated wording does not convert source-based reporting into original reporting.</li>
+            <li>AI tools do not change the role of the underlying source: reporting remains reporting, analysis remains analysis, and primary records remain primary records.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Images, Illustrations &amp; AI-Generated Media</h2>
+          <p>
+            Some imagery on Keep TX Red may be created or enhanced using artificial intelligence. Generated imagery is used for illustrative or editorial purposes when appropriate and should not be interpreted as documentary photography of an actual person, place, event, or moment unless the page specifically identifies it as such.
+          </p>
+          <ul className="list-disc pl-6 space-y-1 mt-2">
+            <li>We preserve source and generation provenance in our internal media records.</li>
+            <li>We do not require a repetitive “AI-generated” label on every generated image when this sitewide disclosure adequately explains the practice.</li>
+            <li>An individual image may receive an additional disclosure when a synthetic depiction of a specific real-world person, place, or event could reasonably be mistaken for documentary evidence.</li>
+            <li>Third-party photography remains subject to its own source, rights, and licensing requirements.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Entity &amp; Topic Context</h2>
+          <p>
+            News articles are connected to permanent Keep TX Red resources where relevant, including Election Central, Texas Legislature, candidates, officeholders, districts, bills, laws, government pages, topic pages, policy trackers, and public-data references. The goal is to make each useful article an entry point into a durable Texas public-affairs reference network rather than an isolated rewrite.
+          </p>
         </section>
 
         <section>
           <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Editorial Independence</h2>
           <p>Keep TX Red is an independent publication. We are not authorized by any candidate or candidate’s committee.</p>
           <ul className="list-disc pl-6 space-y-1 mt-2">
-            <li>Our coverage decisions are made by our editorial team.</li>
-            <li>We do not accept payment for coverage, placement, or favorable treatment.</li>
-            <li>Sponsored content, if ever used, will be clearly labeled.</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Use of AI‑Assisted Tools</h2>
-          <p>We use AI‑assisted tools to help generate drafts, summaries, and research support. However:</p>
-          <ul className="list-disc pl-6 space-y-1 mt-2">
-            <li>Every evergreen article includes human‑written sections, edits, and review.</li>
-            <li>All content is checked for accuracy, clarity, and relevance before publication.</li>
-            <li>AI tools never determine our editorial stance or coverage priorities.</li>
-          </ul>
-          <p className="mt-2">This hybrid approach allows us to publish efficiently while maintaining human oversight and accountability.</p>
-        </section>
-
-        <section>
-          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Sourcing & Transparency</h2>
-          <p>We prioritize transparency in how we gather and present information.</p>
-          <ul className="list-disc pl-6 space-y-1 mt-2">
-            <li>Official sources are linked directly in each article.</li>
-            <li>When citing data, we reference the originating agency or dataset.</li>
-            <li>When using third‑party reports, we attribute them clearly and avoid misrepresentation.</li>
+            <li>We do not accept payment for favorable news treatment.</li>
+            <li>Sponsored content, if used, will be clearly labeled.</li>
+            <li>Source inclusion is not an endorsement of a publisher, organization, candidate, agency, or viewpoint.</li>
           </ul>
         </section>
 
@@ -77,36 +131,27 @@ function EditorialStandardsPage() {
           <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Corrections Policy</h2>
           <p>If we publish an error, we correct it as quickly as possible.</p>
           <ul className="list-disc pl-6 space-y-1 mt-2">
-            <li>Minor corrections (typos, formatting) may be made silently.</li>
-            <li>Substantive corrections (facts, figures, misstatements) include an editor’s note at the bottom of the article.</li>
+            <li>Minor corrections such as typos or formatting may be made without a correction note.</li>
+            <li>Substantive factual corrections should be identified on the affected article when appropriate.</li>
             <li>Readers may submit correction requests through our <a href="/contact" className="text-primary underline underline-offset-4">Contact page</a>.</li>
           </ul>
         </section>
 
         <section>
-          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Editorial Voice</h2>
-          <p>Our editorial voice is clear, direct, and focused on Texas policy, governance, and civic engagement.</p>
-          <ul className="list-disc pl-6 space-y-1 mt-2">
-            <li>Evergreen explainers aim to educate, not sensationalize.</li>
-            <li>News updates summarize key developments without unnecessary speculation.</li>
-            <li>Opinion or analysis pieces, if published, will be clearly labeled.</li>
-          </ul>
-        </section>
-
-        <section>
           <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Reader Trust</h2>
-          <p>We believe Texans deserve journalism that respects their intelligence and their time.</p>
+          <p>Our goal is to make the source trail easier—not harder—to inspect.</p>
           <ul className="list-disc pl-6 space-y-1 mt-2">
-            <li>Articles include “Last Updated” timestamps.</li>
-            <li>FAQs and related‑article sections help readers explore topics in depth.</li>
-            <li>We maintain a <a href="/glossary" className="text-primary underline underline-offset-4">glossary</a> to ensure clarity around Texas political terminology.</li>
+            <li>Articles retain linked sources and publication/update dates.</li>
+            <li>Known source types are labeled as government, official, reporting, or analysis sources.</li>
+            <li>Related Keep TX Red resources provide durable context around bills, elections, laws, government, districts, officeholders, and Texas issues.</li>
+            <li>Our <a href="/glossary" className="text-primary underline underline-offset-4">glossary</a> helps explain Texas political terminology.</li>
           </ul>
         </section>
 
         <section>
           <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Contact Us</h2>
           <p>
-            We welcome feedback, corrections, and questions. Readers can reach us anytime through our <a href="/contact" className="text-primary underline underline-offset-4">Contact page</a>.
+            We welcome feedback, corrections, and sourcing questions through our <a href="/contact" className="text-primary underline underline-offset-4">Contact page</a>.
           </p>
         </section>
       </div>

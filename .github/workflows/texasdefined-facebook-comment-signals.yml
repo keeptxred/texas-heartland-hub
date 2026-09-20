@@ -1,0 +1,155 @@
+name: TexasDefined Facebook comment signals
+
+on:
+  schedule:
+    # Monday and Thursday mornings in Texas during daylight-saving season.
+    - cron: '15 14 * * 1,4'
+  workflow_dispatch:
+    inputs:
+      smoke_only:
+        description: Validate Facebook comment signals without creating or updating a planning issue
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+  id-token: write
+  issues: write
+  statuses: write
+
+concurrency:
+  group: texasdefined-facebook-comment-signals
+  cancel-in-progress: false
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      COMMENT_SIGNAL_SMOKE: ${{ github.event_name == 'workflow_dispatch' && inputs.smoke_only }}
+      GH_TOKEN: ${{ github.token }}
+      # GitHub-hosted runners are intentionally challenged on browser-facing
+      # keeptxred.com dynamic paths. This hook calls the same deployed Worker
+      # directly and remains protected by strict GitHub Actions OIDC validation.
+      AUTOMATION_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
+    steps:
+      - name: Request audience signals
+        id: signals
+        shell: bash
+        run: |
+          set -euo pipefail
+          oidc_url="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-facebook"
+          oidc_token="$(curl -fsS -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" "$oidc_url" | jq -r '.value // empty')"
+          if [[ -z "$oidc_token" ]]; then
+            echo 'GitHub Actions did not issue the Facebook OIDC token.' >&2
+            printf '{"ok":false,"error":"Missing GitHub Actions OIDC token"}\n' > /tmp/texasdefined-comment-signals.json
+            exit 1
+          fi
+
+          output='/tmp/texasdefined-comment-signals.json'
+          rm -f "$output"
+          endpoint="${AUTOMATION_ORIGIN%/}/api/public/hooks/texasdefined-facebook-comment-signals"
+          if [[ "$COMMENT_SIGNAL_SMOKE" == "true" ]]; then
+            endpoint="${endpoint}?smoke_only=true"
+          fi
+          status="$(curl -sS -X POST -o "$output" -w '%{http_code}' \
+            --max-time 90 \
+            -H 'accept: application/json' \
+            -H "Authorization: Bearer ${oidc_token}" \
+            "$endpoint" || echo 000)"
+          cat "$output" 2>/dev/null || true
+          echo
+          if [[ "$status" != '200' ]] || ! jq -e '.ok == true' "$output" >/dev/null 2>&1; then
+            echo "TexasDefined Facebook comment-signal request failed (HTTP $status)." >&2
+            exit 1
+          fi
+
+          signal_count="$(jq '.signals | length' "$output")"
+          echo "signal_count=$signal_count" >> "$GITHUB_OUTPUT"
+
+          if [[ "$COMMENT_SIGNAL_SMOKE" == "true" ]]; then
+            jq -e '.smoke_only == true and .site == "TexasDefined" and (.lookback_days | type == "number") and (.minimum_signal_comments | type == "number") and (.posts_scanned | type == "number") and (.signals | type == "array")' "$output" >/dev/null
+            echo "TexasDefined Facebook comment-signal read-only transport smoke passed; no comments were read and no GitHub planning issue was created or modified."
+            exit 0
+          fi
+
+          if [[ "$signal_count" -eq 0 ]]; then
+            echo 'No strong Facebook audience themes met the threshold.'
+            exit 0
+          fi
+
+          report="$(mktemp)"
+          trap 'rm -f "$report"' EXIT
+          jq -r '
+            "TexasDefined Facebook audience signals\n\n" +
+            "Window: last \(.lookback_days) days · posts scanned: \(.posts_scanned) · minimum comments per signal: \(.minimum_signal_comments)\n\n" +
+            ([.signals[] |
+              "## \(.label)\n" +
+              "- Signal strength: \(.commentCount) relevant comments across \(.postCount) TexasDefined Facebook post(s)\n" +
+              "- Editorial opportunity: \(.contentIdea)\n" +
+              (if (.sourcePostUrls | length) > 0 then "- Source discussions:\n" + ([.sourcePostUrls[] | "  - " + .] | join("\n")) + "\n" else "" end)
+            ] | join("\n")) +
+            "\n---\nThis is an aggregate planning signal. No commenter names or raw comment text are stored in this report."
+          ' "$output" > "$report"
+
+          date_key="$(date -u +%F)"
+          title="[TexasDefined audience signals] ${date_key}"
+          existing="$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --search "${title} in:title" --json number,title | jq -r --arg title "$title" '.[] | select(.title == $title) | .number' | head -1)"
+          if [[ -n "$existing" ]]; then
+            gh issue edit "$existing" --repo "$GITHUB_REPOSITORY" --body-file "$report"
+            echo "Updated existing audience-signal issue #$existing"
+          else
+            url="$(gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" --body-file "$report")"
+            echo "Created audience-signal issue: $url"
+          fi
+
+      - name: Publish comment-signal smoke status
+        if: always() && env.COMMENT_SIGNAL_SMOKE == 'true'
+        shell: bash
+        env:
+          STEP_OUTCOME: ${{ steps.signals.outcome }}
+        run: |
+          set -euo pipefail
+          state='failure'
+          description='TexasDefined Facebook comment-signal production smoke failed'
+          category='other'
+
+          if [[ "$STEP_OUTCOME" == 'success' ]]; then
+            state='success'
+            description='Comment-signal endpoint passed read-only transport/OIDC/connection smoke'
+            category='success'
+          elif [[ -s /tmp/texasdefined-comment-signals.json ]]; then
+            safe_error="$(jq -r '.error // empty' /tmp/texasdefined-comment-signals.json 2>/dev/null | tr '\n\r' ' ' | cut -c1-100)"
+            if [[ -n "$safe_error" ]]; then
+              description="Comment smoke failed: ${safe_error}"
+            fi
+            case "$safe_error" in
+              *OIDC*|*GitHub\ Actions*) category='oidc' ;;
+              *not\ connected*) category='connection' ;;
+              *Failed\ to\ analyze*) category='facebook-graph' ;;
+              *) category='other' ;;
+            esac
+          fi
+
+          publish_status() {
+            local context="$1"
+            local status_state="$2"
+            local status_description="$3"
+            payload="$(python3 - "$status_state" "$context" "$status_description" <<'PY'
+          import json, sys
+          print(json.dumps({"state": sys.argv[1], "context": sys.argv[2], "description": sys.argv[3][:140]}))
+          PY
+          )"
+            curl --fail-with-body --silent --show-error --request POST \
+              --header "Authorization: Bearer $GH_TOKEN" \
+              --header 'Accept: application/vnd.github+json' \
+              --header 'X-GitHub-Api-Version: 2022-11-28' \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+              --data "$payload" >/dev/null
+          }
+
+          publish_status 'texasdefined-comment-signals-smoke' "$state" "$description"
+          if [[ "$state" == 'failure' ]]; then
+            publish_status "texasdefined-comment-signals-${category}" 'failure' "$description"
+          fi

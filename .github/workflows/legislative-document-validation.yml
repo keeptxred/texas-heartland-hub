@@ -7,6 +7,8 @@ on:
       - 'scripts/legislature/**'
       - 'src/lib/bill-documents.ts'
       - 'src/lib/bill-documents.test.ts'
+      - 'src/lib/bill-primary-source-reference.ts'
+      - 'src/lib/bill-primary-source-reference.test.ts'
       - 'src/routes/bills/texas/**'
       - 'supabase/migrations/*legislative_document*'
       - 'package.json'
@@ -39,4 +41,4 @@ jobs:
       - name: Run official document parser tests
         run: bun run legislature:archive:test-parser
       - name: Run bill document grouping tests
-        run: bun test src/lib/bill-documents.test.ts
+        run: bun test src/lib/bill-documents.test.ts src/lib/bill-primary-source-reference.test.ts

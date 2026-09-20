@@ -1,0 +1,110 @@
+[
+  {
+    "domain": "house.texas.gov",
+    "sourceClass": "official-texas-house-member-profile",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only member portraits hosted on official Texas House member pages with source attribution; reject generic chamber, seal, district, or site artwork.",
+    "searchHint": "site:house.texas.gov/members candidate name portrait",
+    "notes": "Primary official source for incumbent Texas House member portraits."
+  },
+  {
+    "domain": "senate.texas.gov",
+    "sourceClass": "official-texas-senate-member-profile",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-specific portraits from official Texas Senate member pages with source attribution; never use the site's generic Open Graph image as a candidate portrait.",
+    "searchHint": "site:senate.texas.gov/member.php candidate name portrait",
+    "notes": "Primary official source for incumbent Texas Senate portraits; generic og_image.jpg must remain excluded."
+  },
+  {
+    "domain": "gov.texas.gov",
+    "sourceClass": "official-texas-governor-profile",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-specific official portraits or biography images hosted by the Office of the Texas Governor with source attribution.",
+    "searchHint": "site:gov.texas.gov candidate name portrait",
+    "notes": "Official state executive source."
+  },
+  {
+    "domain": "glo.texas.gov",
+    "sourceClass": "official-texas-general-land-office-profile",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-specific official commissioner portraits or field photographs hosted by the Texas General Land Office with source attribution.",
+    "searchHint": "site:glo.texas.gov candidate name commissioner portrait",
+    "notes": "Official government source for Texas General Land Office officeholders."
+  },
+  {
+    "domain": "ballotpedia.org",
+    "sourceClass": "candidate-directory-and-source-discovery",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Ballotpedia to confirm candidate identity and locate campaign or official links; do not copy Ballotpedia images without a separately documented item-level reuse basis.",
+    "searchHint": "site:ballotpedia.org candidate name Texas 2026",
+    "notes": "High-value candidate identity and downstream-source directory."
+  },
+  {
+    "domain": "votesmart.org",
+    "sourceClass": "candidate-directory-and-source-discovery",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Vote Smart profiles for identity, office context, and downstream official links; do not auto-approve portrait assets without separate provenance and reuse-rights verification.",
+    "searchHint": "site:votesmart.org candidate name Texas",
+    "notes": "Useful source-expansion directory for current and former candidates."
+  },
+  {
+    "domain": "wikidata.org",
+    "sourceClass": "structured-identity-and-image-discovery",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Wikidata only to resolve candidate identity and discover linked Wikimedia Commons files; verify the exact Commons file identity and license before approval.",
+    "searchHint": "site:wikidata.org candidate name Texas",
+    "notes": "Structured discovery layer feeding item-level Wikimedia Commons verification."
+  },
+  {
+    "domain": "teachthevote.org",
+    "sourceClass": "texas-education-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Teach the Vote candidate profiles to confirm identity and locate campaign websites, emails, and downstream official sources; do not copy candidate images without a separate reuse basis.",
+    "searchHint": "site:teachthevote.org/Candidates candidate name Texas",
+    "notes": "ATPE candidate directory covers Texas legislative and education races and can expose campaign links not present in canonical data."
+  },
+  {
+    "domain": "transparencyusa.org",
+    "sourceClass": "campaign-finance-and-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Transparency USA for current race status, committee identity, and downstream campaign-source discovery only; do not reuse profile imagery without separate rights documentation.",
+    "searchHint": "site:transparencyusa.org/tx candidate name 2026",
+    "notes": "Useful for identifying active candidates and campaign committees when campaign websites are difficult to locate."
+  },
+  {
+    "domain": "branch.vote",
+    "sourceClass": "candidate-directory-and-link-aggregator",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Branch candidate pages to locate campaign websites and other downstream primary sources; do not copy Branch-hosted candidate photos without independently documented reuse rights.",
+    "searchHint": "site:branch.vote Texas candidate name 2026",
+    "notes": "New source-discovery directory found during active August 22 source expansion."
+  },
+  {
+    "domain": "tsl.texas.gov",
+    "sourceClass": "official-texas-state-library-archive",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use only Texas State Library and Archives Commission items whose item-level rights statement supports reuse and whose caption clearly identifies the candidate; preserve collection, creator, item URL, and rights statement.",
+    "searchHint": "site:tsl.texas.gov candidate name portrait photograph",
+    "notes": "Official Texas archival source for historical officeholder and public-service photography."
+  },
+  {
+    "domain": "texashistory.unt.edu",
+    "sourceClass": "portal-to-texas-history-archive",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Approve only after verifying the exact Portal to Texas History item identifies the candidate and provides a compatible rights statement; preserve originating institution, creator, item URL, and rights metadata.",
+    "searchHint": "site:texashistory.unt.edu candidate name portrait",
+    "notes": "New archival source class discovered during active source expansion; rights vary by item and institution."
+  }
+]

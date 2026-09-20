@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "drklenzfortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Mary Elizabeth Klenz's official Texas House District 17 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, issue graphics, stock imagery, third-party embeds, and images that do not clearly identify the candidate.",
+    "searchHint": "site:drklenzfortexas.com Mary Elizabeth Klenz Texas House District 17 portrait candidate",
+    "notes": "Verified August 23, 2026 from the live campaign site, which states that Dr. Mary Elizabeth Klenz is running for Texas State House District 17 and publishes candidate imagery alongside her campaign biography."
+  },
+  {
+    "domain": "valoriebarton.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Valorie Barton's official Texas House District 18 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, issue graphics, stock imagery, third-party embeds, and images that do not clearly identify the candidate.",
+    "searchHint": "site:valoriebarton.com Valorie Barton Texas House District 18 portrait candidate",
+    "notes": "Verified August 23, 2026 from the live campaign site, which identifies Valorie Barton for Texas House District 18 and contains a current Meet Valorie biography and campaign imagery; official Montgomery County March 3, 2026 Democratic primary results also list Valorie Barton for State Representative District 18."
+  },
+  {
+    "domain": "votejacky21.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Jacqueline 'Jacky' Hernandez's official Texas House District 21 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, issue graphics, stock imagery, third-party embeds, and images that do not clearly identify the candidate.",
+    "searchHint": "site:votejacky21.com Jacqueline Jacky Hernandez Texas House District 21 portrait candidate",
+    "notes": "Verified August 23, 2026 from the live campaign site, which identifies Jacqueline 'Jacky' Hernandez for Texas House District 21 and publishes candidate-identifying campaign images; Orange County's March 3, 2026 Democratic primary results list Jacqueline 'Jacky' Hernandez for State Representative District 21."
+  }
+]

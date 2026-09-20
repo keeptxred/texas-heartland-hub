@@ -10,9 +10,15 @@ on:
       - 'src/lib/ctr-loop.functions.ts'
       - 'src/lib/featured-image.functions.ts'
       - 'src/lib/gsc.ts'
+      - 'src/lib/publication-quality-gate.ts'
+      - 'src/lib/publication-quality-gate.test.ts'
+      - 'src/lib/multi-source-publish.ts'
+      - 'src/lib/newsroom-shadow-canary.test.ts'
+      - 'src/lib/newsroom-legacy-fallback-budget.test.ts'
       - 'src/routes/api/public/hooks/**'
       - 'src/lib/ingest-and-normalize.functions.ts'
       - 'scripts/shared/validate-publication-writers.mjs'
+      - '.github/workflows/run-daily-news-now.yml'
       - '.github/workflows/publication-writers.yml'
   workflow_dispatch:
 
@@ -36,3 +42,5 @@ jobs:
         run: bun install --frozen-lockfile
       - name: Audit article publication writers
         run: bun run publication:validate
+      - name: Test publication-quality contracts
+        run: bunx vitest run src/lib/publication-quality-gate.test.ts src/routes/api/public/hooks/generate-news.word-budget.test.ts src/lib/newsroom-shadow-canary.test.ts src/lib/newsroom-legacy-fallback-budget.test.ts

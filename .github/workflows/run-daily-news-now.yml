@@ -1,100 +1,170 @@
 name: Run Daily News Now
 
-# Production publisher: try ranked stories until one publishes, then use the reserve safety net if needed.
+# Production publisher: prioritize quality-gated overdue gaps, then the
+# clustered newsroom, then the curated reserve safety net. The retired legacy
+# single-source RSS writer is intentionally not part of this workflow.
+# Six daily opportunities keep the fresh article pool deep enough for Facebook
+# while the existing AI reservation/budget gates remain authoritative.
 on:
   schedule:
-    - cron: "15 12 * * *"
+    - cron: "15 */4 * * *"
   workflow_dispatch:
 
 permissions:
   contents: read
+  id-token: write
+
+env:
+  # GitHub-hosted runners are challenged on browser-facing keeptxred.com API
+  # routes. Machine hooks use the same deployed Worker directly while retaining
+  # their existing OIDC and publication-safety authorization.
+  AUTOMATION_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - name: Invoke production daily news publisher (one ranked story per request)
+      - name: Publish best available quality-gated newsroom story
         shell: bash
         run: |
           set -euo pipefail
-          base='https://keeptxred.com/api/public/hooks/generate-news'
-          inserted=0
-          failed=0
-          for offset in $(seq 0 9); do
-            result='unknown'
-            for attempt in 1 2; do
-              status=$(curl -sS -X POST -o /tmp/publish.json -w '%{http_code}' \
-                --max-time 95 -H 'accept: application/json' \
-                "${base}?offset=${offset}&limit=1" || echo 000)
 
-              if grep -Eqi 'daily free allocation|used up.*neurons|Workers AI.*quota|RESOURCE_EXHAUSTED' /tmp/publish.json 2>/dev/null; then
-                echo "offset=${offset} QUOTA_EXHAUSTED"
-                cat /tmp/publish.json || true
-                echo
-                echo 'Cloudflare Workers AI daily allocation exhausted; stopping to avoid waste.'
+          oidc_url="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-newsroom"
+          oidc_token=$(curl -fsS \
+            -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+            "$oidc_url" | jq -r '.value // empty')
+
+          if [[ -z "$oidc_token" ]]; then
+            echo 'GitHub Actions did not issue the newsroom OIDC token.' >&2
+            exit 1
+          fi
+
+          gap_status=$(curl -sS -X POST -o /tmp/overdue-gap.json -w '%{http_code}' \
+            --max-time 360 \
+            -H 'accept: application/json' \
+            -H "Authorization: Bearer ${oidc_token}" \
+            "${AUTOMATION_ORIGIN%/}/api/public/hooks/publish-overdue-gap" || echo 000)
+
+          echo "overdue-gap HTTP ${gap_status}"
+          cat /tmp/overdue-gap.json 2>/dev/null || true
+          echo
+
+          if [[ "$gap_status" != "200" ]] || ! jq -e '.ok == true' /tmp/overdue-gap.json >/dev/null 2>&1; then
+            echo 'OVERDUE_GAP_PUBLISHER_FAILED'
+            exit 1
+          fi
+
+          overdue_published=$(jq -r '.published // 0' /tmp/overdue-gap.json)
+          if [[ "$overdue_published" -gt 0 ]]; then
+            echo "DAILY_NEWS_PUBLISH_SUCCESS overdue_published=${overdue_published}"
+            exit 0
+          fi
+
+          echo 'No overdue gap published; refreshing deterministic clustered newsroom pipeline.'
+          clustered_ready=1
+
+          run_zero_ai_stage() {
+            local name="$1"
+            local endpoint="$2"
+            local timeout="$3"
+            local output="/tmp/newsroom-${name}.json"
+            local status
+            status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
+              --max-time "$timeout" -H 'accept: application/json' \
+              "${AUTOMATION_ORIGIN%/}/api/public/hooks/${endpoint}" || echo 000)
+            echo "newsroom-${name} HTTP ${status}"
+            cat "$output" 2>/dev/null || true
+            echo
+            if [[ "$status" != "200" ]] || ! jq -e '.ok == true and (.aiCalls // 0) == 0' "$output" >/dev/null 2>&1; then
+              echo "CLUSTERED_NEWSROOM_${name^^}_FAILED; unsafe legacy fallback is disabled."
+              clustered_ready=0
+              return 0
+            fi
+          }
+
+          run_zero_ai_stage evidence enrich-newsroom-rss-evidence 90
+          run_zero_ai_stage normalize normalize-newsroom-feed 90
+          run_zero_ai_stage cluster cluster-newsroom-stories 90
+          run_zero_ai_stage score score-newsroom-stories 90
+          run_zero_ai_stage decide decide-newsroom-packages 90
+          run_zero_ai_stage packets build-newsroom-research-packets 180
+
+          if [[ "$clustered_ready" -eq 1 ]]; then
+            newsroom_status=$(curl -sS -X POST -o /tmp/newsroom-publish.json -w '%{http_code}' \
+              --max-time 240 \
+              -H 'accept: application/json' \
+              -H "Authorization: Bearer ${oidc_token}" \
+              "${AUTOMATION_ORIGIN%/}/api/public/hooks/generate-newsroom?mode=publish" || echo 000)
+
+            echo "clustered-newsroom HTTP ${newsroom_status}"
+            cat /tmp/newsroom-publish.json 2>/dev/null || true
+            echo
+
+            if grep -Eqi 'daily free allocation|used up.*neurons|Workers AI.*quota|RESOURCE_EXHAUSTED|ai_budget_exhausted' /tmp/newsroom-publish.json 2>/dev/null; then
+              echo 'Clustered newsroom AI budget/quota exhausted; stopping to avoid additional AI calls.' >&2
+              exit 1
+            fi
+
+            if [[ "$newsroom_status" == "200" ]] && jq -e '.ok == true and .published == true' /tmp/newsroom-publish.json >/dev/null 2>&1; then
+              slug=$(jq -r '.slug // ""' /tmp/newsroom-publish.json)
+              source_count=$(jq -r '.sourceCount // 0' /tmp/newsroom-publish.json)
+              primary_count=$(jq -r '.primarySourceCount // 0' /tmp/newsroom-publish.json)
+              ai_calls=$(jq -r '.aiCalls // 0' /tmp/newsroom-publish.json)
+              repair=$(jq -r '.repairAttempted // false' /tmp/newsroom-publish.json)
+
+              finalize_payload=$(jq -nc --arg slug "$slug" '{slug:$slug}')
+              finalize_status=$(curl -sS -X POST -o /tmp/newsroom-finalize.json -w '%{http_code}' \
+                --max-time 300 \
+                -H 'accept: application/json' \
+                -H 'content-type: application/json' \
+                -H "Authorization: Bearer ${oidc_token}" \
+                --data "$finalize_payload" \
+                "${AUTOMATION_ORIGIN%/}/api/public/hooks/finalize-newsroom-article" || echo 000)
+
+              echo "clustered-newsroom-finalize HTTP ${finalize_status}"
+              cat /tmp/newsroom-finalize.json 2>/dev/null || true
+              echo
+
+              if [[ "$finalize_status" != "200" ]] || ! jq -e '.ok == true' /tmp/newsroom-finalize.json >/dev/null 2>&1; then
+                echo "CLUSTERED_NEWSROOM_FINALIZE_FAILED slug=${slug} HTTP=${finalize_status}; article remains published for safe recovery, but this run is not a production pass." >&2
+                exit 1
+              fi
+              if ! jq -e '.image.ok == true' /tmp/newsroom-finalize.json >/dev/null 2>&1; then
+                echo "CLUSTERED_NEWSROOM_IMAGE_FAILED slug=${slug}; article remains published for safe recovery, but this run is not a production pass." >&2
                 exit 1
               fi
 
-              if [[ "$status" == "200" ]] && jq -e '.ok == true' /tmp/publish.json >/dev/null 2>&1; then
-                if jq -e '.no_items == true' /tmp/publish.json >/dev/null 2>&1; then
-                  result="ok(no-items)"
-                else
-                  current_inserted=$(jq -r '.inserted // 0' /tmp/publish.json)
-                  result="ok(inserted=${current_inserted})"
-                  inserted=$((inserted + current_inserted))
-                fi
-                break
-              fi
-
-              if [[ "$status" == "200" ]] && grep -Eqi 'No items met the publish threshold|duplicate' /tmp/publish.json 2>/dev/null; then
-                result='ok(benign-skip)'
-                break
-              fi
-
-              if [[ "$status" == "000" || "$status" =~ ^5 ]]; then
-                result="retryable(HTTP ${status})"
-                if [[ "$attempt" -lt 2 ]]; then
-                  echo "offset=${offset} attempt=${attempt} -> ${result}; response=$(head -c 1200 /tmp/publish.json 2>/dev/null | tr -d '\n')"
-                  sleep 10
-                  continue
-                fi
-                echo "offset=${offset} final -> ${result}"
-                echo '--- production response body ---'
-                cat /tmp/publish.json 2>/dev/null || true
-                echo
-                result="rejected(HTTP ${status})"
-                failed=$((failed + 1))
-                break
-              fi
-
-              echo "offset=${offset} -> failed(HTTP ${status})"
-              echo '--- production response body ---'
-              cat /tmp/publish.json 2>/dev/null || true
-              echo
-              result="rejected(HTTP ${status})"
-              failed=$((failed + 1))
-              break
-            done
-
-            echo "offset=${offset} -> ${result}"
-            if [[ "$inserted" -gt 0 ]]; then
-              echo "A normal article published at offset=${offset}; stopping further AI calls."
-              break
+              echo "DAILY_NEWS_PUBLISH_SUCCESS clustered_slug=${slug} sources=${source_count} primary=${primary_count} ai_calls=${ai_calls} repair=${repair}"
+              exit 0
             fi
-          done
 
-          if [[ "$inserted" -eq 0 ]]; then
-            echo "No normal article published (${failed} rejected candidate(s)); invoking reserve safety net."
-            safety_status=$(curl -sS -X POST -o /tmp/safety-net.json -w '%{http_code}' \
-              --max-time 95 -H 'accept: application/json' \
-              'https://keeptxred.com/api/public/hooks/publishing-safety-net' || echo 000)
-            cat /tmp/safety-net.json 2>/dev/null || true
-            echo
-            if [[ "$safety_status" != "200" ]] || ! jq -e '.ok == true' /tmp/safety-net.json >/dev/null 2>&1; then
-              echo "PUBLISHING_SAFETY_NET_FAILED (HTTP ${safety_status})"
-              exit 1
+            if [[ "$newsroom_status" == "200" ]] && jq -e '.ok == true and .no_items == true' /tmp/newsroom-publish.json >/dev/null 2>&1; then
+              echo "Clustered newsroom had no production-eligible packet: $(jq -r '.reason // "unknown"' /tmp/newsroom-publish.json). No lower-quality writer will be attempted."
+            elif [[ "$newsroom_status" == "200" ]] && jq -e '.ok == true and .generated == true and .published != true' /tmp/newsroom-publish.json >/dev/null 2>&1; then
+              echo 'Clustered newsroom draft did not pass final validation. No lower-quality writer will be attempted.'
+            else
+              echo "Clustered newsroom publish attempt was unavailable (HTTP ${newsroom_status}). No lower-quality writer will be attempted."
             fi
+          else
+            echo 'Clustered newsroom preprocessing failed. No lower-quality writer will be attempted.'
           fi
 
-          echo "DAILY_NEWS_PUBLISH_SUCCESS inserted=${inserted} rejected=${failed}"
+          echo 'No quality-gated normal article published; invoking curated reserve safety net.'
+          safety_status=$(curl -sS -X POST -o /tmp/safety-net.json -w '%{http_code}' \
+            --max-time 95 -H 'accept: application/json' \
+            "${AUTOMATION_ORIGIN%/}/api/public/hooks/publishing-safety-net" || echo 000)
+          cat /tmp/safety-net.json 2>/dev/null || true
+          echo
+
+          if [[ "$safety_status" != "200" ]] || ! jq -e '.ok == true' /tmp/safety-net.json >/dev/null 2>&1; then
+            echo "PUBLISHING_SAFETY_NET_FAILED (HTTP ${safety_status})"
+            exit 1
+          fi
+
+          reserve_published=$(jq -r '.reserve_published // ""' /tmp/safety-net.json)
+          if [[ -n "$reserve_published" ]]; then
+            echo "DAILY_NEWS_PUBLISH_SUCCESS reserve_published=${reserve_published}"
+          else
+            echo 'DAILY_NEWS_PUBLISH_SUCCESS no_quality_gated_article=true reserve_published=false'
+          fi

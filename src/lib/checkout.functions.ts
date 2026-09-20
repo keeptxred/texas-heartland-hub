@@ -3,13 +3,12 @@ import {
   type StripeEnv,
   createStripeClient,
   getStripeErrorMessage,
+  normalizeStripeEnv,
 } from "@/lib/stripe.server";
 
 export const FREE_SHIPPING_THRESHOLD_CENTS = 3500;
+export const STRIPE_CHECKOUT_UI_MODE = "embedded" as const;
 
-// Compact cart shape we stamp onto Stripe session metadata. Kept small
-// because Stripe caps each metadata value at 500 chars. Printify only
-// needs product_id + variant_id + quantity to place an order.
 type CheckoutCartItem = {
   productId: string;
   variantId: number | null;
@@ -109,6 +108,57 @@ export function priceToCents(value: unknown): number {
     throw new Error("A product has an invalid server-side price.");
   }
   return cents;
+}
+
+const LIVE_CHECKOUT_REQUIRED_BINDINGS = [
+  "PAYMENTS_LIVE_WEBHOOK_SECRET",
+  "PRINTIFY_API_TOKEN",
+  "PRINTIFY_SHOP_ID",
+  "SUPABASE_SERVICE_ROLE_KEY",
+] as const;
+
+type LiveCheckoutRuntime = Partial<Record<(typeof LIVE_CHECKOUT_REQUIRED_BINDINGS)[number], string>>;
+
+export function assertCheckoutFulfillmentRuntimeReady(
+  environment: StripeEnv,
+  env: LiveCheckoutRuntime = process.env,
+): void {
+  if (environment !== "live") return;
+
+  const missing = LIVE_CHECKOUT_REQUIRED_BINDINGS.filter(
+    (name) => !env[name]?.trim(),
+  );
+  if (missing.length > 0) {
+    console.error("Live checkout disabled: required fulfillment runtime is incomplete", missing);
+    throw new Error("Checkout is temporarily unavailable. Please try again later.");
+  }
+}
+
+export function assertCheckoutEnvironmentMatchesReturnUrl(
+  environment: StripeEnv,
+  returnUrl: string,
+): void {
+  if (typeof returnUrl !== "string" || !returnUrl.trim()) {
+    throw new Error("Checkout return URL is invalid.");
+  }
+
+  let pathname: string;
+  try {
+    pathname = new URL(returnUrl).pathname.replace(/\/+$/, "") || "/";
+  } catch {
+    throw new Error("Checkout return URL is invalid.");
+  }
+
+  const expectedPath =
+    environment === "sandbox"
+      ? "/shop/checkout-sandbox-return"
+      : "/shop/checkout-return";
+
+  if (pathname !== expectedPath) {
+    throw new Error(
+      `Stripe ${environment} checkout cannot use the ${pathname} return route.`,
+    );
+  }
 }
 
 function parseCompactCart(value: string | null | undefined): CompactCartItem[] {
@@ -300,6 +350,9 @@ async function quotePrintifyStandardShipping(
 
 export const createCartCheckoutSession = createServerFn({ method: "POST" })
   .validator((data: CheckoutInput) => {
+    const environment = normalizeStripeEnv(data.environment);
+    assertCheckoutEnvironmentMatchesReturnUrl(environment, data.returnUrl);
+
     if (!Array.isArray(data.items) || data.items.length === 0 || data.items.length > 10) {
       throw new Error("Cart must contain between 1 and 10 items.");
     }
@@ -314,10 +367,11 @@ export const createCartCheckoutSession = createServerFn({ method: "POST" })
         throw new Error("Invalid cart item");
       }
     }
-    return data;
+    return { ...data, environment };
   })
   .handler(async ({ data }): Promise<CheckoutResult> => {
     try {
+      assertCheckoutFulfillmentRuntimeReady(data.environment);
       const stripe = createStripeClient(data.environment);
       const validatedItems = await loadAuthoritativeCheckoutItems(data.items);
       const currency = validatedItems[0]?.currency || "usd";
@@ -325,7 +379,6 @@ export const createCartCheckoutSession = createServerFn({ method: "POST" })
         return { error: "Cart items must use the same currency." };
       }
 
-      // Compact cart for Printify fulfillment (500-char metadata limit).
       const compactCart = validatedItems.map((item) => ({
         p: item.productId,
         v: item.variantId,
@@ -341,7 +394,7 @@ export const createCartCheckoutSession = createServerFn({ method: "POST" })
 
       const session = await stripe.checkout.sessions.create({
         mode: "payment",
-        ui_mode: "embedded_page",
+        ui_mode: STRIPE_CHECKOUT_UI_MODE,
         return_url: data.returnUrl,
         line_items: validatedItems.map((item) => ({
           quantity: item.quantity,
@@ -375,9 +428,16 @@ export const createCartCheckoutSession = createServerFn({ method: "POST" })
         ],
         payment_intent_data: {
           description: "Keep Texas Red — Shop Order",
-          metadata: { cart: cartJson },
+          metadata: {
+            cart: cartJson,
+            payment_environment: data.environment,
+          },
         },
-        metadata: { cart: cartJson, source: "keeptxred_shop" },
+        metadata: {
+          cart: cartJson,
+          source: "keeptxred_shop",
+          payment_environment: data.environment,
+        },
       } as any);
 
       return { clientSecret: session.client_secret ?? "" };
@@ -405,6 +465,11 @@ export const updateCartCheckoutShipping = createServerFn({ method: "POST" })
 
       if (session.status !== "open" || session.metadata?.source !== "keeptxred_shop") {
         return { error: "This checkout session can no longer be updated." };
+      }
+
+      const sessionEnvironment = session.metadata?.payment_environment;
+      if (sessionEnvironment && sessionEnvironment !== data.environment) {
+        return { error: "Checkout environment mismatch. Please restart checkout." };
       }
 
       const cart = parseCompactCart(session.metadata?.cart);

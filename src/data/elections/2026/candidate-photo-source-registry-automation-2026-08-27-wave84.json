@@ -1,0 +1,56 @@
+[
+  {
+    "domain": "fatimamuse.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Dr. Fatima La'Juan Muse's official campaign website to verify candidate identity, office, campaign-controlled biographies, and discover candidate-supplied portrait or media assets. Do not approve or reuse any site image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Fatima La'Juan Muse Texas House District 2 official campaign portrait media",
+    "notes": "New source discovered August 27, 2026. The site identifies Fatima La'Juan Muse as a Texas House District 2 candidate and includes campaign-controlled candidate and district photo sections. Treat images as discovery candidates unless item-level reuse rights are documented."
+  },
+  {
+    "domain": "flip150.org",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use A'Yonna Kellum's official campaign website to verify candidate identity, office, and candidate-linked media or portrait sources. Do not approve or reuse campaign-site images without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "A'Yonna Kellum Texas House District 150 official campaign portrait media",
+    "notes": "New source discovered August 27, 2026. The campaign site identifies A'Yonna Kellum as the District 150 candidate and provides direct campaign contact and social links that can lead to candidate-supplied portrait assets."
+  },
+  {
+    "domain": "scottforhd15.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Moniqua' Scott's official Texas House District 15 campaign website to verify candidate identity, office, and discover candidate-supplied portraits or media assets. Do not approve or reuse any image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Moniqua Scott Texas House District 15 official campaign portrait media",
+    "notes": "New source discovered August 27, 2026. The site is paid political advertising by Moniqua' S. Scott and contains campaign-controlled biography and campaign content, making it a strong discovery source but not an automatic rights source."
+  },
+  {
+    "domain": "david4texas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use David Flores's official Texas House District 144 campaign website to verify candidate identity, office, and discover candidate-supplied portraits, press materials, or campaign media. Do not approve or reuse any image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "David Flores Texas House District 144 official campaign portrait press release media",
+    "notes": "New source discovered August 27, 2026. The site carries David Flores's District 144 candidacy announcement and campaign-controlled biography imagery. Treat all imagery as discovery-only until item-level rights are established."
+  },
+  {
+    "domain": "luckfortexashouse.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Tom Luck's official Texas House campaign website, corroborated by the Kendall County Democratic Party's candidate event listing, to verify candidate identity, office, and discover candidate-supplied portraits or media. Do not approve or reuse any image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Tom Luck Texas House District 19 official campaign portrait media",
+    "notes": "New source discovered August 27, 2026. A current Kendall County Democratic Party Mobilize event identifies luckfortexashouse.com as Tom Luck's campaign website. Treat campaign imagery as discovery-only absent explicit reuse terms."
+  },
+  {
+    "domain": "ballot-card.com",
+    "sourceClass": "election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Ballot Card candidate and race pages to corroborate current ballot participation and discover downstream official profiles, campaign pages, or public-record sources. Do not approve or reuse any Ballot Card-hosted image without item-level provenance plus a reusable license, explicit permission, or another documented editorial permission basis.",
+    "searchHint": "Ballot Card Texas 2026 House candidate official campaign portrait",
+    "notes": "New source discovered August 27, 2026. Current race pages can help locate otherwise sparse candidates such as Kyle Harding and link them to official/public-record sources. It is a discovery bridge, not an automatic image-rights source."
+  }
+]

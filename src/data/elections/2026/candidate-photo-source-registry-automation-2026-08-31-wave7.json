@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "tcta.org",
+    "sourceClass": "teacher-association-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Classroom Teachers Association Texas Teachers Vote candidate pages to corroborate current candidate identity, party, office sought, campaign website, and candidate-linked social profiles, and to discover downstream official campaign or public-record portrait sources. Do not approve or reuse any TCTA-hosted or linked image without item-level provenance plus explicit reusable rights, campaign/media permission, candidate-supplied newsroom attribution, or another documented editorial permission basis.",
+    "searchHint": "site:tcta.org/texasteachersvote Texas 2026 candidate portrait campaign website",
+    "notes": "New source discovered August 31, 2026 while working the current missing-photo set. Current TCTA candidate pages identify candidates and offices and, when available, expose official campaign websites and social profiles. Verified examples include Mindy Bumgarner for State Board of Education District 14 and Rhett Rosenquest Smith for Texas House District 116. TCTA is a discovery bridge only; its candidate-page images and external social images are not automatically reusable."
+  }
+]

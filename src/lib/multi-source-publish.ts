@@ -5,7 +5,35 @@ import {
   type ClusterableFeedItem,
   type StoryCluster,
 } from "@/lib/story-clustering";
+import { persistEventCluster } from "@/lib/event-cluster-persistence";
+import {
+  buildStructuredFactLedger,
+  buildStructuredFactPacket,
+  persistStructuredFacts,
+} from "@/lib/structured-fact-provenance";
+import {
+  assessFactVerification,
+  buildVerificationInstructions,
+  type FactVerificationDecision,
+} from "@/lib/fact-verification-gate";
+import {
+  buildStoryAngleInstructions,
+  selectStoryAngle,
+  type StoryAnglePlan,
+} from "@/lib/story-angle-selector";
+import {
+  acquirePublicationClaim,
+  assessPublicationTiming,
+  persistTimingDecision,
+  releasePublicationClaim,
+} from "@/lib/publication-lifecycle";
+import {
+  acquireLivingStoryUpdateClaim,
+  releaseLivingStoryUpdateClaim,
+  updateCanonicalLivingStory,
+} from "@/lib/living-story-update";
 import { assessStoryNovelty, type StoryNovelty } from "@/lib/story-novelty";
+import { assessPublicationReadiness } from "@/lib/publication-quality-gate";
 import { publishSingleFeedItem as publishLegacySingleFeedItem } from "@/lib/ingest-feeds-legacy";
 
 type PublishResult = {
@@ -18,13 +46,48 @@ type PublishResult = {
   noveltyScore?: number;
 };
 
+type RecentClusterCandidate = ClusterableFeedItem & {
+  target_site?: string | null;
+};
+
+type RecentClusterScan = {
+  data: RecentClusterCandidate[];
+  error: { message: string } | null;
+};
+
 const CLUSTER_LOOKBACK_HOURS = 72;
-const STRONG_MERGE_SCORE = 65;
+const CLUSTER_CANDIDATE_PAGE_SIZE = 500;
 const SAME_EVENT_SCORE = 80;
 const MAX_CLUSTER_SOURCES = 5;
+const MAX_FACT_PACKET_CHARS = 9000;
 
 function wordCount(text: string): number {
   return text.trim() ? text.trim().split(/\s+/).length : 0;
+}
+
+async function loadRecentClusterCandidates(
+  db: any,
+  feedItemId: number,
+  since: string,
+): Promise<RecentClusterScan> {
+  const rows: RecentClusterCandidate[] = [];
+
+  for (let from = 0; ; from += CLUSTER_CANDIDATE_PAGE_SIZE) {
+    const { data, error } = await db
+      .from("texas_news_feed")
+      .select("id,title,link,source,description,pub_date,internal_slug,extracted_body,target_site")
+      .gte("pub_date", since)
+      .neq("id", feedItemId)
+      .order("pub_date", { ascending: false })
+      .order("id", { ascending: false })
+      .range(from, from + CLUSTER_CANDIDATE_PAGE_SIZE - 1);
+
+    if (error) return { data: [], error: { message: error.message } };
+
+    const page = (data ?? []) as RecentClusterCandidate[];
+    rows.push(...page);
+    if (page.length < CLUSTER_CANDIDATE_PAGE_SIZE) return { data: rows, error: null };
+  }
 }
 
 async function fetchReadableText(url: string): Promise<string | null> {
@@ -66,19 +129,21 @@ async function fetchReadableText(url: string): Promise<string | null> {
 
 async function enrichClusterBodies(cluster: StoryCluster, supabaseAdmin: any): Promise<StoryCluster> {
   const rows = [cluster.primary, ...cluster.members];
-  const enriched: ClusterableFeedItem[] = [];
-
-  for (const row of rows) {
-    let body = (row.extracted_body ?? "").trim();
-    const description = (row.description ?? "").trim();
-    if (!body && wordCount(description) < 180 && /^https?:\/\//i.test(row.link)) {
-      body = (await fetchReadableText(row.link)) ?? "";
-      if (body && row.id) {
-        await supabaseAdmin.from("texas_news_feed").update({ extracted_body: body }).eq("id", row.id);
+  // The cluster is bounded to MAX_CLUSTER_SOURCES, so parallel enrichment is
+  // safe and prevents multiple slow source fetches from stacking 10s timeouts.
+  const enriched: ClusterableFeedItem[] = await Promise.all(
+    rows.map(async (row) => {
+      let body = (row.extracted_body ?? "").trim();
+      const description = (row.description ?? "").trim();
+      if (!body && wordCount(description) < 180 && /^https?:\/\//i.test(row.link)) {
+        body = (await fetchReadableText(row.link)) ?? "";
+        if (body && row.id) {
+          await supabaseAdmin.from("texas_news_feed").update({ extracted_body: body }).eq("id", row.id);
+        }
       }
-    }
-    enriched.push({ ...row, extracted_body: body || description });
-  }
+      return { ...row, extracted_body: body || description };
+    }),
+  );
 
   const primary = enriched[0];
   const members = cluster.members.map((member, index) => ({ ...member, ...enriched[index + 1] }));
@@ -109,9 +174,6 @@ async function writeClusterMetadata(
   const { error } = await supabaseAdmin.from("texas_news_feed").update({ cluster_json: metadata }).in("id", ids);
   if (error) console.warn("[multi-source] cluster metadata not persisted", error.message);
   if (slug) {
-    // Never repoint a feed item that already belongs to an earlier published
-    // article. On a material follow-up only the new/unpublished cluster rows
-    // should link to the follow-up slug; the original article keeps its sources.
     const linkableIds = rows
       .filter((row) => !row.internal_slug)
       .map((row) => row.id)
@@ -120,6 +182,84 @@ async function writeClusterMetadata(
       await supabaseAdmin.from("texas_news_feed").update({ internal_slug: slug }).in("id", linkableIds);
     }
   }
+}
+
+async function writeQualityHoldMetadata(
+  supabaseAdmin: any,
+  feedItemId: number,
+  readiness: ReturnType<typeof assessPublicationReadiness>,
+  cluster: StoryCluster,
+): Promise<void> {
+  const metadata = {
+    cluster_score: cluster.score,
+    source_count: cluster.sourceCount,
+    source_links: clusterSourceList(cluster),
+    clustered_at: new Date().toISOString(),
+    publication_readiness: readiness.mode,
+    publication_hold_reason: readiness.reason,
+    authority_topic: readiness.authorityTopic,
+    primary_record: readiness.primaryRecord,
+  };
+  const { error } = await supabaseAdmin
+    .from("texas_news_feed")
+    .update({ cluster_json: metadata })
+    .eq("id", feedItemId);
+  if (error) console.warn("[multi-source] publication hold metadata not persisted", error.message);
+}
+
+async function writeFactVerificationHoldMetadata(
+  supabaseAdmin: any,
+  feedItemId: number,
+  decision: FactVerificationDecision,
+  cluster: StoryCluster,
+): Promise<void> {
+  const metadata = {
+    cluster_score: cluster.score,
+    source_count: cluster.sourceCount,
+    source_links: clusterSourceList(cluster),
+    clustered_at: new Date().toISOString(),
+    publication_readiness: decision.mode,
+    publication_hold_reason: decision.reason,
+    fact_verification: {
+      traceable_major_facts: decision.traceableMajorFacts,
+      corroborated_major_facts: decision.corroboratedMajorFacts,
+      primary_record_major_facts: decision.primaryRecordMajorFacts,
+      material_conflict_keys: decision.materialConflictKeys,
+      attributed_claim_keys: decision.attributedClaimKeys,
+    },
+  };
+  const { error } = await supabaseAdmin
+    .from("texas_news_feed")
+    .update({ cluster_json: metadata })
+    .eq("id", feedItemId);
+  if (error) console.warn("[multi-source] fact verification hold metadata not persisted", error.message);
+}
+
+async function writeStoryAngleMetadata(
+  supabaseAdmin: any,
+  feedItemId: number,
+  anglePlan: StoryAnglePlan | null,
+): Promise<void> {
+  if (!anglePlan) return;
+  const { data } = await supabaseAdmin
+    .from("texas_news_feed")
+    .select("cluster_json")
+    .eq("id", feedItemId)
+    .maybeSingle();
+  const current = data?.cluster_json && typeof data.cluster_json === "object" ? data.cluster_json : {};
+  const storyAngle = {
+    angle_type: anglePlan.angleType,
+    lead_fact_key: anglePlan.leadFactKey,
+    lead_fact: anglePlan.leadFact,
+    evidence_score: anglePlan.leadScore,
+    alternate_facts: anglePlan.alternateFacts,
+    selected_at: new Date().toISOString(),
+  };
+  const { error } = await supabaseAdmin
+    .from("texas_news_feed")
+    .update({ cluster_json: { ...current, story_angle: storyAngle } })
+    .eq("id", feedItemId);
+  if (error) console.warn("[multi-source] story angle metadata not persisted", error.message);
 }
 
 async function updateArticleAttribution(supabaseAdmin: any, slug: string, cluster: StoryCluster): Promise<void> {
@@ -166,30 +306,146 @@ async function assessExistingStory(
   return assessStoryNovelty(incoming, existingText);
 }
 
+async function preparePublicationLifecycle(
+  db: any,
+  feedItemId: number,
+  clusterId: string | null,
+  cluster: StoryCluster,
+  factVerification: FactVerificationDecision,
+): Promise<{ proceed: boolean; claimToken?: string; result?: PublishResult }> {
+  const timing = assessPublicationTiming(cluster, factVerification);
+  await persistTimingDecision(db, feedItemId, clusterId, timing);
+
+  if (timing.mode === "collect_briefly") {
+    return {
+      proceed: false,
+      result: {
+        ok: false,
+        error: `Publication collecting briefly: ${timing.reason}. Recheck after ${timing.waitUntil}.`,
+        clusteredSources: cluster.sourceCount,
+      },
+    };
+  }
+
+  const claim = await acquirePublicationClaim(db, clusterId);
+  if (claim.alreadyPublished && claim.publishedSlug) {
+    await db.from("texas_news_feed").update({ internal_slug: claim.publishedSlug }).eq("id", feedItemId);
+    return {
+      proceed: false,
+      result: {
+        ok: true,
+        slug: claim.publishedSlug,
+        alreadyPublished: true,
+        clusteredSources: cluster.sourceCount,
+      },
+    };
+  }
+  if (!claim.acquired) {
+    return {
+      proceed: false,
+      result: {
+        ok: false,
+        error: `Publication deferred: ${claim.reason}.`,
+        clusteredSources: cluster.sourceCount,
+      },
+    };
+  }
+  return { proceed: true, claimToken: claim.claimToken };
+}
+
 export async function publishSingleFeedItem(feedItemId: number): Promise<PublishResult> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const db = supabaseAdmin as any;
 
   const { data: primary, error } = await db
     .from("texas_news_feed")
-    .select("id,title,link,source,description,pub_date,internal_slug,extracted_body")
+    .select("id,title,link,source,description,pub_date,internal_slug,extracted_body,target_site")
     .eq("id", feedItemId)
     .maybeSingle();
   if (error || !primary) return { ok: false, error: error?.message ?? "Feed item not found" };
+  if (primary.target_site && primary.target_site !== "keeptxred") {
+    return { ok: false, error: `Publication held: feed item is routed to ${primary.target_site}, not KeepTXRed.` };
+  }
   if (primary.internal_slug) return { ok: true, slug: primary.internal_slug, alreadyPublished: true };
 
   const since = new Date(Date.now() - CLUSTER_LOOKBACK_HOURS * 60 * 60 * 1000).toISOString();
-  const { data: recent } = await db
-    .from("texas_news_feed")
-    .select("id,title,link,source,description,pub_date,internal_slug,extracted_body")
-    .gte("pub_date", since)
-    .neq("id", feedItemId)
-    .order("pub_date", { ascending: false })
-    .limit(140);
+  const { data: recent, error: recentError } = await loadRecentClusterCandidates(db, feedItemId, since);
+  if (recentError) {
+    return { ok: false, error: `Could not scan the full ${CLUSTER_LOOKBACK_HOURS}-hour corroboration window: ${recentError.message}` };
+  }
 
-  let cluster = buildStoryCluster(primary, (recent ?? []) as ClusterableFeedItem[], MAX_CLUSTER_SOURCES);
-  if (!cluster.strongMerge || cluster.score < STRONG_MERGE_SCORE) {
-    return publishLegacySingleFeedItem(feedItemId);
+  const recentKeepTxRed = (recent ?? []).filter(
+    (row: { target_site?: string | null }) => !row.target_site || row.target_site === "keeptxred",
+  );
+  let cluster = buildStoryCluster(primary, recentKeepTxRed as ClusterableFeedItem[], MAX_CLUSTER_SOURCES);
+  if (!cluster.strongMerge) {
+    cluster = await enrichClusterBodies(cluster, db);
+    const readiness = assessPublicationReadiness(cluster);
+    const eventClusterId = await persistEventCluster(db, cluster, { status: "collecting" });
+    const ledger = buildStructuredFactLedger(cluster);
+    await persistStructuredFacts(db, eventClusterId, ledger);
+
+    if (!readiness.publish) {
+      await writeQualityHoldMetadata(db, feedItemId, readiness, cluster);
+      console.info("[multi-source] publication held for quality", {
+        feedItemId,
+        reason: readiness.reason,
+        authorityTopic: readiness.authorityTopic,
+        primaryRecord: readiness.primaryRecord,
+      });
+      return {
+        ok: false,
+        error: `Publication held: ${readiness.reason}. Waiting for an independent source or a substantive primary record.`,
+        clusteredSources: cluster.sourceCount,
+      };
+    }
+
+    const factVerification = assessFactVerification(cluster, ledger);
+    if (!factVerification.publish) {
+      await writeFactVerificationHoldMetadata(db, feedItemId, factVerification, cluster);
+      console.info("[multi-source] publication held for fact verification", {
+        feedItemId,
+        mode: factVerification.mode,
+        reason: factVerification.reason,
+      });
+      return {
+        ok: false,
+        error: `Publication held: ${factVerification.reason}.`,
+        clusteredSources: cluster.sourceCount,
+      };
+    }
+
+    const lifecycle = await preparePublicationLifecycle(db, feedItemId, eventClusterId, cluster, factVerification);
+    if (!lifecycle.proceed) return lifecycle.result!;
+
+    const singleResult = await publishLegacySingleFeedItem(feedItemId);
+    if (singleResult.ok && singleResult.slug) {
+      await persistEventCluster(db, cluster, { status: "published", publishedSlug: singleResult.slug });
+    } else {
+      await releasePublicationClaim(db, eventClusterId, lifecycle.claimToken);
+    }
+    return { ...singleResult, clusteredSources: cluster.sourceCount };
+  }
+
+  cluster = await enrichClusterBodies(cluster, db);
+  const eventClusterId = await persistEventCluster(db, cluster, { status: "ready" });
+  const ledger = buildStructuredFactLedger(cluster);
+  await persistStructuredFacts(db, eventClusterId, ledger);
+  const factVerification = assessFactVerification(cluster, ledger);
+
+  if (!factVerification.publish) {
+    await writeFactVerificationHoldMetadata(db, feedItemId, factVerification, cluster);
+    console.info("[multi-source] multi-source publication held for fact verification", {
+      feedItemId,
+      mode: factVerification.mode,
+      reason: factVerification.reason,
+      materialConflictKeys: factVerification.materialConflictKeys,
+    });
+    return {
+      ok: false,
+      error: `Publication held: ${factVerification.reason}.`,
+      clusteredSources: cluster.sourceCount,
+    };
   }
 
   const existing = cluster.members
@@ -200,9 +456,6 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
   if (existing?.internal_slug) {
     existingNovelty = await assessExistingStory(db, existing.internal_slug, primary);
 
-    // Confirmation coverage strengthens the existing article without spending
-    // another AI credit. Materially new actions, figures or facts instead
-    // proceed through synthesis so readers get a distinct follow-up article.
     if (!existingNovelty?.material) {
       await db.from("texas_news_feed").update({ internal_slug: existing.internal_slug }).eq("id", feedItemId);
       await writeClusterMetadata(db, cluster, existing.internal_slug, {
@@ -210,6 +463,7 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
         novelty: existingNovelty ?? undefined,
       });
       await updateArticleAttribution(db, existing.internal_slug, cluster);
+      await persistEventCluster(db, cluster, { status: "published", publishedSlug: existing.internal_slug });
       return {
         ok: true,
         slug: existing.internal_slug,
@@ -221,12 +475,33 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
     }
   }
 
-  cluster = await enrichClusterBodies(cluster, db);
+  const materialExistingSlug = existing?.internal_slug && existingNovelty?.material
+    ? existing.internal_slug
+    : null;
+  let lifecycleClaimToken: string | undefined;
+  if (!materialExistingSlug) {
+    const lifecycle = await preparePublicationLifecycle(db, feedItemId, eventClusterId, cluster, factVerification);
+    if (!lifecycle.proceed) return lifecycle.result!;
+    lifecycleClaimToken = lifecycle.claimToken;
+  }
+
+  const anglePlan = selectStoryAngle(cluster, ledger, {
+    preferredActions: existingNovelty?.material ? existingNovelty.newActions : [],
+    preferredNumbers: existingNovelty?.material ? existingNovelty.newNumbers : [],
+  });
+  const angleInstructions = buildStoryAngleInstructions(anglePlan);
   const packet = buildSourcePacket(cluster);
+  const structuredFacts = buildStructuredFactPacket(ledger).slice(0, MAX_FACT_PACKET_CHARS);
+  const verificationInstructions = buildVerificationInstructions(factVerification, ledger);
   const sourceNames = [cluster.primary, ...cluster.members].map((row) => row.source);
   const synthesisHeader = [
     "MULTI-SOURCE STORY PACKET.",
-    "Use only facts supported by the sources below. Reconcile duplicate facts. Attribute claims when sources differ. Do not copy source wording.",
+    "Use only facts supported by the material below. The structured fact ledger is an extraction aid, not a new source; verify every claim against the raw source packet.",
+    "Prefer facts corroborated by independent sources. For directly verifiable facts, prefer official government, agency, court, team, or other primary records over secondary summaries when they conflict.",
+    "When the fact ledger marks a conflict, do not average, choose silently, or invent a resolution. Attribute the competing figures or omit the disputed detail unless a primary record resolves it.",
+    "Quotes must remain attached to the source that actually contains the quotation. Never create composite or reconstructed quotes.",
+    verificationInstructions,
+    angleInstructions,
     `Independent sources: ${sourceNames.join(" | ")}.`,
     "Treat this as one developing Texas story when the evidence supports it; do not invent a connection that is not supported.",
     existingNovelty?.material
@@ -234,33 +509,104 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
       : "",
   ].filter(Boolean).join("\n");
 
+  const synthesisMaterial = [
+    synthesisHeader,
+    structuredFacts ? `STRUCTURED FACT LEDGER\n${structuredFacts}` : "",
+    `RAW SOURCE PACKET\n${packet}`,
+  ].filter(Boolean).join("\n\n");
+
   await db
     .from("texas_news_feed")
-    .update({ extracted_body: `${synthesisHeader}\n\n${packet}`.slice(0, 26000) })
+    .update({ extracted_body: synthesisMaterial.slice(0, 26000) })
     .eq("id", feedItemId);
 
   await writeClusterMetadata(db, cluster, undefined, existingNovelty?.material ? {
     kind: "follow_up",
     novelty: existingNovelty,
   } : undefined);
-  const result = await publishLegacySingleFeedItem(feedItemId);
-  if (result.ok && result.slug) {
-    await writeClusterMetadata(db, cluster, result.slug, existingNovelty?.material ? {
+  await writeStoryAngleMetadata(db, feedItemId, anglePlan);
+  await persistEventCluster(db, cluster, { status: "synthesized" });
+
+  if (materialExistingSlug && existingNovelty && eventClusterId) {
+    const updateClaim = await acquireLivingStoryUpdateClaim(db, eventClusterId);
+    if (!updateClaim.acquired) {
+      return {
+        ok: false,
+        error: `Canonical update deferred: ${updateClaim.reason}.`,
+        slug: materialExistingSlug,
+        alreadyPublished: true,
+        clusteredSources: cluster.sourceCount,
+        developingStory: "follow_up",
+        noveltyScore: existingNovelty.score,
+      };
+    }
+
+    const updateResult = await updateCanonicalLivingStory({
+      db,
+      slug: materialExistingSlug,
+      clusterId: eventClusterId,
+      feedItemId,
+      cluster,
+      novelty: existingNovelty,
+      anglePlan,
+    });
+    await releaseLivingStoryUpdateClaim(db, eventClusterId, updateClaim.token);
+
+    if (!updateResult.ok) {
+      return {
+        ok: false,
+        error: `Canonical update failed: ${updateResult.error ?? "unknown error"}.`,
+        slug: materialExistingSlug,
+        alreadyPublished: true,
+        clusteredSources: cluster.sourceCount,
+        developingStory: "follow_up",
+        noveltyScore: existingNovelty.score,
+      };
+    }
+
+    await writeClusterMetadata(db, cluster, materialExistingSlug, {
       kind: "follow_up",
       novelty: existingNovelty,
-    } : undefined);
-    await updateArticleAttribution(db, result.slug, cluster);
+    });
+    await writeStoryAngleMetadata(db, feedItemId, anglePlan);
+    await updateArticleAttribution(db, materialExistingSlug, cluster);
+    await persistEventCluster(db, cluster, { status: "published", publishedSlug: materialExistingSlug });
     return {
-      ...result,
+      ok: true,
+      slug: materialExistingSlug,
+      alreadyPublished: true,
       clusteredSources: cluster.sourceCount,
-      developingStory: existingNovelty?.material ? "follow_up" : undefined,
+      developingStory: "follow_up",
+      noveltyScore: existingNovelty.score,
+    };
+  }
+
+  if (materialExistingSlug && (!existingNovelty || !eventClusterId)) {
+    return {
+      ok: false,
+      error: "Canonical update blocked because durable event identity is unavailable; refusing to mint a duplicate URL.",
+      slug: materialExistingSlug,
+      alreadyPublished: true,
+      clusteredSources: cluster.sourceCount,
+      developingStory: "follow_up",
       noveltyScore: existingNovelty?.score,
     };
   }
+
+  const result = await publishLegacySingleFeedItem(feedItemId);
+  if (result.ok && result.slug) {
+    await writeClusterMetadata(db, cluster, result.slug);
+    await writeStoryAngleMetadata(db, feedItemId, anglePlan);
+    await updateArticleAttribution(db, result.slug, cluster);
+    await persistEventCluster(db, cluster, { status: "published", publishedSlug: result.slug });
+    return {
+      ...result,
+      clusteredSources: cluster.sourceCount,
+    };
+  }
+  await releasePublicationClaim(db, eventClusterId, lifecycleClaimToken);
   return {
     ...result,
     clusteredSources: cluster.sourceCount,
-    developingStory: existingNovelty?.material ? "follow_up" : undefined,
-    noveltyScore: existingNovelty?.score,
   };
 }

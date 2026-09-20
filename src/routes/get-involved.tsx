@@ -1,15 +1,23 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
+import { buildSeo } from "@/lib/seo";
+
+const GET_INVOLVED_TITLE = "Get Involved: Texas Voting & Civic Action";
+const GET_INVOLVED_DESCRIPTION =
+  "Register to vote, contact your legislators, find your representative, and find your polling place.";
+
+export function getInvolvedHead() {
+  return buildSeo({
+    title: GET_INVOLVED_TITLE,
+    description: GET_INVOLVED_DESCRIPTION,
+    path: "/get-involved",
+    type: "website",
+    imageAlt: "Keep TX Red Texas voting and civic action resources",
+  });
+}
 
 export const Route = createFileRoute("/get-involved")({
-  head: () => ({
-    meta: [
-      { title: "Get Involved — Keep TX Red" },
-      { name: "description", content: "Register to vote, contact your legislators, find your representative, and find your polling place." },
-      { property: "og:title", content: "Get Involved — Keep TX Red" },
-    ],
-    links: [{ rel: "canonical", href: "https://keeptxred.com/get-involved" }],
-  }),
+  head: getInvolvedHead,
   component: GetInvolvedPage,
 });
 

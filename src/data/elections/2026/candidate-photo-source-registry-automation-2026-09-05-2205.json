@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "smithco.democrat",
+    "sourceClass": "county-party-current-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the Smith County Democratic Party current-candidates directory to corroborate current candidate identity and office and to discover downstream official campaign, candidate-linked social, or candidate-specific media sources. Do not approve or reuse Smith County Democratic Party-hosted imagery without item-level identity and provenance plus an explicit reusable license, candidate/media permission, candidate-supplied status with a documented narrow editorial-identification basis, or another supported reuse basis. Reject logos, social-share images, placeholders, default avatars, event graphics, and other non-candidate imagery.",
+    "searchHint": "site:smithco.democrat/current-candidates 2026 Texas candidate campaign portrait",
+    "notes": "New discovery source verified September 5, 2026 during active research of the live canonical missing-photo queue. The current-candidates page identifies remaining missing-photo candidates Hector Garza (Texas House District 5) and Lorenzo Johnson (Texas House District 6), making it useful for candidate/race corroboration and downstream official-source discovery. Discovery-only; no hosted image is auto-approved."
+  }
+]

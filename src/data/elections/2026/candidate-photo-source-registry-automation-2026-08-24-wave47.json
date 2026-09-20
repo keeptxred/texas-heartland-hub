@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "kristianfortexas.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Kristian Carranza's official 2026 Texas House District 118 campaign website for editorial candidate identification with campaign attribution and a source link. The discovery script must independently verify the page matches the candidate and validate the image before approval.",
+    "searchHint": "Kristian Carranza Texas House District 118 official campaign kristianfortexas.com",
+    "notes": "Verified August 24, 2026 through the live campaign site, which identifies Kristian Carranza for TX HD-118, carries the campaign paid-for-by disclaimer, and hosts candidate-identifying imagery; independently corroborated by TCTA."
+  },
+  {
+    "domain": "womencount.org",
+    "sourceClass": "candidate-profile-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use WomenCount Texas 2026 candidate profiles only to corroborate candidate identity, office, issue context, and discover follow-up campaign-controlled or primary sources. Do not reuse WomenCount-hosted portraits or graphics unless original provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:womencount.org/teams/texas-2026 Texas candidate campaign website",
+    "notes": "New source bridge verified August 24, 2026. The current Texas 2026 directory profiles multiple candidates still relevant to candidate-photo enrichment, including Amelia Rabroker, Denise Wooten, Katie O'Brien Duzan, and Kristian Carranza."
+  },
+  {
+    "domain": "raiseyourhandtexas.org",
+    "sourceClass": "candidate-forum-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Raise Your Hand Texas public-education candidate forum pages to corroborate current candidate identity, district, and campaign participation and to discover candidate-controlled sources. Do not reuse forum thumbnails, video stills, or photographs unless exact original provenance and item-level reuse rights are independently verified.",
+    "searchHint": "site:raiseyourhandtexas.org/public-education-candidate-forums 2026 Texas House candidate campaign",
+    "notes": "New source bridge verified August 24, 2026. The current forum directory covers many 2026 Texas House races and candidates still missing canonical portraits, making it useful for targeted follow-up discovery without serving as an image-rights authority."
+  }
+]

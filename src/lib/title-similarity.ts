@@ -26,8 +26,19 @@ export function isDuplicateTitle(a: string, b: string): boolean {
   for (const t of ta) if (tb.has(t)) shared++;
   const union = ta.size + tb.size - shared;
   const jaccard = union === 0 ? 0 : shared / union;
+  const overlap = shared / Math.min(ta.size, tb.size);
+
   // Same story if they share several distinctive tokens with meaningful overlap.
-  return (shared >= 5 && jaccard >= 0.3) || (shared >= 4 && jaccard >= 0.5) || jaccard >= 0.7;
+  // The overlap-coefficient branch catches headline rewrites that add a lot of
+  // framing words around the same core event (for example the same person,
+  // place and action) without making the broad Jaccard threshold so loose that
+  // merely topical stories collapse together.
+  return (
+    (shared >= 5 && jaccard >= 0.3)
+    || (shared >= 4 && jaccard >= 0.5)
+    || (shared >= 3 && overlap >= 0.6 && jaccard >= 0.35)
+    || jaccard >= 0.7
+  );
 }
 
 // Drops later items whose title is a near-duplicate of an earlier kept item.

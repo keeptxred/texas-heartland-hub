@@ -1,5 +1,8 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { authorsIndexHead } from "@/routes/authors.index";
+import { houstonHead } from "@/routes/houston";
+import { keepTexasRedHead } from "@/routes/keep-texas-red";
 
 function source(path: string) {
   return readFileSync(path, "utf8");
@@ -7,16 +10,23 @@ function source(path: string) {
 
 describe("GSC canonical override regressions", () => {
   it("keeps important indexable pages self-canonical", () => {
-    const expected = [
-      ["src/routes/houston.tsx", "https://keeptxred.com/houston"],
-      ["src/routes/register-to-vote.tsx", "https://keeptxred.com/register-to-vote"],
-      ["src/routes/authors.index.tsx", "https://keeptxred.com/authors"],
-      ["src/routes/keep-texas-red.tsx", "https://keeptxred.com/keep-texas-red"],
-    ] as const;
+    expect(
+      source("src/routes/register-to-vote.tsx"),
+      "src/routes/register-to-vote.tsx must declare https://keeptxred.com/register-to-vote",
+    ).toContain("https://keeptxred.com/register-to-vote");
 
-    for (const [file, canonical] of expected) {
-      expect(source(file), `${file} must declare ${canonical}`).toContain(canonical);
-    }
+    expect(keepTexasRedHead().links).toContainEqual({
+      rel: "canonical",
+      href: "https://keeptxred.com/keep-texas-red",
+    });
+    expect(authorsIndexHead().links).toContainEqual({
+      rel: "canonical",
+      href: "https://keeptxred.com/authors",
+    });
+    expect(houstonHead().links).toContainEqual({
+      rel: "canonical",
+      href: "https://keeptxred.com/houston",
+    });
   });
 
   it("does not let the Houston canonical page regress into a lifestyle moving guide", () => {
@@ -49,5 +59,12 @@ describe("GSC canonical override regressions", () => {
     expect(staticPaths).toContain('"/register-to-vote"');
     expect(staticPaths).toContain('"/authors"');
     expect(staticPaths).toContain('"/keep-texas-red"');
+  });
+
+  it("gives the Keep Texas Red brand pillar a sitewide footer authority link", () => {
+    const navigation = source("src/lib/site-navigation.ts");
+    const footer = source("src/components/site-footer.tsx");
+    expect(navigation).toContain('{ to: "/keep-texas-red", label: "What Keep Texas Red Means" }');
+    expect(footer).toContain("ABOUT_LINKS.map");
   });
 });

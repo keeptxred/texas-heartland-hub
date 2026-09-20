@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "amarillopioneer.com",
+    "sourceClass": "candidate-submitted-voter-guide-campaign-photo",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Amarillo Pioneer 2026 candidate questionnaire pages when the page explicitly identifies a candidate photograph as 'Photo via campaign' or equivalent candidate/campaign-supplied media. Treat that caption as provenance evidence only, not as a blanket reuse license: require an exact candidate-specific image asset, matching candidate identity and office, and a documented narrow editorial-identification permission basis or other supported reuse basis before approval. Reject publication graphics, generic social-share images, logos, seals, placeholders, default avatars, unrelated newsroom imagery, and any image whose campaign-supplied status is not explicit at item level.",
+    "searchHint": "site:amarillopioneer.com/2026-primary-voter-guide Texas candidate \"Photo via campaign\" portrait",
+    "notes": "Expanded September 5, 2026 after current-source review found Amarillo Pioneer 2026 questionnaires that explicitly label candidate portraits as campaign-supplied, including Stephen Samuelson and Nate Sheets. This source class is narrower than the existing local-voter-guide registry entry and is intended to surface item-level candidate-supplied portrait leads; no hosted image is auto-approved."
+  }
+]

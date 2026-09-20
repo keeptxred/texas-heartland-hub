@@ -11,8 +11,10 @@ import {
   type UrlEntry,
 } from "@/lib/sitemap-shared";
 import { ARTICLES, isPublished } from "@/data/articles";
+import { ARTICLE_BODIES } from "@/data/article-bodies";
 import { listSitemapArticles } from "@/lib/evergreen.functions";
 import { getProducts } from "@/lib/products.functions";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 
 const PRODUCT_CATALOG_LASTMOD = toIsoDate("2026-07-01T00:00:00-05:00");
 const TOMBSTONED_ARTICLE_SLUGS = new Set([
@@ -50,7 +52,9 @@ export const Route = createFileRoute("/sitemap-images.xml")({
           });
         };
 
-        for (const a of ARTICLES.filter((a) => isPublished(a))) {
+        for (const a of ARTICLES.filter(
+          (a) => isPublished(a) && isStaticArticleIndexable(a) && Boolean(ARTICLE_BODIES[a.slug]),
+        )) {
           if (TOMBSTONED_ARTICLE_SLUGS.has(a.slug)) continue;
           push(
             `${BASE_URL}/news/${a.slug}`,

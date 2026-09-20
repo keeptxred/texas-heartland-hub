@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "traviscountygop.org",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the Travis County Republican Party candidate directory and candidate news posts to corroborate current candidate identity, office, and official campaign websites and to discover candidate-specific portrait leads. Do not auto-approve Travis County GOP-hosted imagery. Require item-level candidate identity and provenance plus a separately documented reusable-rights, candidate-supplied, explicit party/media permission, or narrow editorial-identification basis before any image is promoted. Reject logos, generic party art, social-share images, stock photography, and other non-candidate assets.",
+    "searchHint": "site:traviscountygop.org/candidates 2026 Texas House candidate portrait campaign website Travis County",
+    "notes": "Discovered September 2, 2026 during unresolved-candidate research. The current Travis County Republican Party candidate directory identifies Jennifer Mushtaler as the Republican candidate for Texas House District 47 and publishes candidate-specific imagery, while its campaign news post links to DrJenForTexas.com and includes a Jennifer Mushtaler image. Treat this source as discovery/corroboration only until each image has item-level rights and provenance review."
+  }
+]

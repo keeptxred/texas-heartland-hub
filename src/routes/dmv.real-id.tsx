@@ -107,7 +107,7 @@ function TexasRealIdPage() {
             A first Texas license application already includes the identity, residency, lawful-presence, and Social Security review used for REAL ID-compliant issuance. New residents should follow the full <a className="font-semibold text-primary hover:underline" href="/dmv/driver-license">Texas driver license guide</a>, register owned vehicles when required, and complete the DPS document checklist before the appointment.
           </p>
           <p className="mt-4">
-            The <a className="font-semibold text-primary hover:underline" href="/moving-to-texas">Moving to Texas resource center</a> and <a className="font-semibold text-primary hover:underline" href="/moving-to-texas-checklist">interactive moving checklist</a> organize the separate vehicle-registration and driver-license steps.
+            The <a className="font-semibold text-primary hover:underline" href="https://texasdefined.com/moving-to-texas">TexasDefined Moving to Texas resource center</a> and <a className="font-semibold text-primary hover:underline" href="https://texasdefined.com/moving-to-texas">interactive moving checklist</a> organize the separate vehicle-registration and driver-license steps.
           </p>
         </section>
 

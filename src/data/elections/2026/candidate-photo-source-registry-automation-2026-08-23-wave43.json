@@ -1,0 +1,47 @@
+[
+  {
+    "domain": "votejuniorezeonu.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Junior Ezeonu's official Texas House District 101 campaign website when page context independently confirms Junior Ezeonu and District 101 and the image is clearly attributable to the campaign. Exclude logos, issue graphics, third-party embeds, event crowds where the candidate cannot be unambiguously identified, and any image without item-level provenance.",
+    "searchHint": "site:votejuniorezeonu.com Junior Ezeonu Texas House District 101 headshot portrait candidate photo",
+    "notes": "Verified August 23, 2026. The live site identifies Junior Ezeonu as the Texas House District 101 candidate, carries a paid-for-by Junior Ezeonu Campaign disclaimer, and directly hosts a 2026 candidate headshot. TCTA, Transparency USA, Branch, and current Texas Tribune coverage independently corroborate the candidacy."
+  },
+  {
+    "domain": "allisonmitchellfortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Allison Mitchell's official Texas House District 108 campaign website when page context confirms Allison Mitchell and District 108 and the image is clearly attributable to the campaign. Exclude logos, issue graphics, stock imagery, third-party embeds, and photographs where Allison Mitchell cannot be unambiguously identified.",
+    "searchHint": "site:allisonmitchellfortexas.com Allison Mitchell Texas House District 108 portrait family candidate photo",
+    "notes": "Verified August 23, 2026. The live site explicitly identifies Allison Mitchell as a Texas House District 108 candidate and carries a political-advertising disclaimer paid for by the Allison Mitchell for State House Campaign. The site directly hosts campaign and family photography."
+  },
+  {
+    "domain": "zach4texas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Zach Herbert's official Texas House District 112 campaign website when page context confirms Zach Herbert and District 112 and the image is clearly attributable to the campaign. Exclude logos, generic military imagery, stock images, third-party embeds, and photographs where Zach Herbert cannot be unambiguously identified.",
+    "searchHint": "site:zach4texas.com Zach Herbert Texas House District 112 portrait family candidate photo",
+    "notes": "Verified August 23, 2026. The live site identifies Zach Herbert as running for the Texas House, carries a paid political advertisement notice for Zach Herbert for Texas Campaign, and directly hosts candidate/family photography. Transparency USA and current election directories independently corroborate his District 112 candidacy."
+  },
+  {
+    "domain": "branch.vote",
+    "sourceClass": "current-election-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Branch candidate pages to corroborate current candidate identity, race context, biographical details, and outbound official campaign websites. Do not reuse Branch-hosted portraits or other images unless the exact original provenance and item-level reuse permission are independently verified from the originating source.",
+    "searchHint": "site:branch.vote/races/2026-texas-general-election Texas candidate website House Senate SBOE",
+    "notes": "Verified August 23, 2026. Branch publishes current Texas general-election candidate pages with candidate photographs and outbound campaign-site references. It is registered as a discovery/corroboration bridge only, not an image-rights authority."
+  },
+  {
+    "domain": "transparencyusa.org",
+    "sourceClass": "current-election-status-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Transparency USA race pages to corroborate current election stage, active-candidate status, primary advancement, and race context and to generate follow-up searches for official portrait sources. Do not reuse images from this source unless original provenance and item-level reuse permission are independently verified.",
+    "searchHint": "site:transparencyusa.org/tx/race 2026 Texas House Senate State Board candidate On the Ballot",
+    "notes": "Verified August 23, 2026. Transparency USA publishes current 2026 Texas race pages with active-candidate and advancement status, including SBOE District 6, House District 101, and House District 112. It is useful for eligibility/status corroboration and source discovery but is not an image-rights authority."
+  }
+]

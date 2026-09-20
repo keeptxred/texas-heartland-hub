@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "huffmanforhd1.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Sean Huffman's verified official Texas House District 1 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Sean Huffman Texas House District 1 huffmanforhd1.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 24, 2026. TCTA's current Texas Teachers Vote candidate profile lists huffmanforhd1.com as Sean Huffman's campaign website and identifies him as the Democratic candidate for Texas House District 1; the live campaign site identifies Sean Huffman as running for State Representative in Texas House District One."
+  },
+  {
+    "domain": "tcta.org",
+    "sourceClass": "candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use TCTA Texas Teachers Vote pages as candidate identity, office, campaign-link, and social-link discovery evidence only. Do not auto-approve or reuse TCTA-hosted candidate imagery unless item-level rights or candidate-supplied provenance is independently verified.",
+    "searchHint": "site:tcta.org/texasteachersvote candidate Texas 2026 campaign website",
+    "notes": "New discovery directory verified August 24, 2026. Current TCTA candidate pages expose office sought plus candidate-linked campaign and social URLs for races including Texas House and State Board of Education."
+  },
+  {
+    "domain": "elliscountydemocraticparty.com",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the Ellis County Democratic Party candidate page to discover current candidate identities, offices, biographies, linked campaign sites, and candidate-image leads. Do not auto-approve party-hosted images without item-level provenance or a documented editorial permission basis.",
+    "searchHint": "site:elliscountydemocraticparty.com/candidates 2026 Texas candidate campaign",
+    "notes": "New county-party discovery source verified August 24, 2026. Its current 2026 candidate page includes candidate biographies and images for statewide, legislative, congressional, and county races, including Michael Myers for Texas House District 10."
+  }
+]

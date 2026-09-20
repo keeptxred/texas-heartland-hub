@@ -75,7 +75,7 @@ export const Route = createFileRoute("/api/admin/legislation-sync-proxy")({
         const supabaseUrl = String(process.env.SUPABASE_URL || "").replace(/\/$/, "");
         const serviceKey = String(process.env.SUPABASE_SERVICE_ROLE_KEY || "");
         if (!supabaseUrl || !serviceKey) {
-          return Response.json({ ok: false, error: "Lovable server database credentials are unavailable" }, { status: 503 });
+          return Response.json({ ok: false, error: "Server database credentials are unavailable" }, { status: 503 });
         }
 
         const upstream = await fetch(`${supabaseUrl}/rest/v1/${path}`, {

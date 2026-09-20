@@ -56,14 +56,15 @@ export function CandidateComparison({ candidates, onClear }: CandidateComparison
   return (
     <section
       aria-labelledby="candidate-comparison-heading"
-      className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
+      className="overflow-hidden rounded-xl border border-border bg-card shadow-sm"
     >
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-5">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border p-5">
         <div>
-          <h2 id="candidate-comparison-heading" className="text-xl font-bold text-slate-950">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Side-by-side research</p>
+          <h2 id="candidate-comparison-heading" className="mt-1 text-xl font-bold text-foreground">
             Candidate comparison
           </h2>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-muted-foreground">
             Compare documented, sourced fields from the published candidate directory. Missing
             information is shown plainly and is never inferred.
           </p>
@@ -71,7 +72,7 @@ export function CandidateComparison({ candidates, onClear }: CandidateComparison
         <button
           type="button"
           onClick={onClear}
-          className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 hover:border-red-300 hover:text-red-700"
+          className="rounded-lg border border-input bg-background px-3 py-2 text-sm font-semibold text-foreground transition hover:border-primary hover:text-primary"
         >
           Clear comparison
         </button>
@@ -79,19 +80,19 @@ export function CandidateComparison({ candidates, onClear }: CandidateComparison
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse text-left text-sm">
           <thead>
-            <tr className="bg-slate-50">
-              <th className="p-4 font-semibold text-slate-700" scope="col">
+            <tr className="bg-muted/40">
+              <th className="p-4 font-semibold text-muted-foreground" scope="col">
                 Field
               </th>
               {comparisonCandidates.map(({ summary }) => (
                 <th
                   key={summary.id}
-                  className="min-w-64 p-4 font-bold text-slate-950"
+                  className="min-w-64 p-4 font-bold text-foreground"
                   scope="col"
                 >
                   <a
                     href={ELECTION_ROUTES.candidate(summary.slug)}
-                    className="hover:text-red-700 hover:underline"
+                    className="hover:text-primary hover:underline"
                   >
                     {summary.fullName}
                   </a>
@@ -198,12 +199,12 @@ function ComparisonRow({
   value: (candidate: ComparisonCandidate) => ReactNode;
 }) {
   return (
-    <tr className="border-t border-slate-200 align-top">
-      <th className="bg-slate-50 p-4 font-semibold text-slate-700" scope="row">
+    <tr className="border-t border-border align-top">
+      <th className="bg-muted/30 p-4 font-semibold text-muted-foreground" scope="row">
         {label}
       </th>
       {candidates.map((candidate) => (
-        <td key={candidate.summary.id} className="p-4 leading-6 text-slate-800">
+        <td key={candidate.summary.id} className="p-4 leading-6 text-foreground">
           {value(candidate)}
         </td>
       ))}
@@ -268,7 +269,7 @@ function renderFundraising(finance: CandidateDetail["fundraising"]) {
     </div>
   );
   return finance.sourceUrl ? (
-    <a href={finance.sourceUrl} target="_blank" rel="noreferrer" className="block hover:text-blue-800">
+    <a href={finance.sourceUrl} target="_blank" rel="noreferrer" className="block hover:text-primary">
       {body}
     </a>
   ) : (
@@ -328,7 +329,7 @@ function sourceLink(text: string, sourceUrl?: string | null, strong = false) {
       href={sourceUrl}
       target="_blank"
       rel="noreferrer"
-      className={`${strong ? "font-semibold " : "font-medium "}text-blue-800 underline-offset-4 hover:underline`}
+      className={`${strong ? "font-semibold " : "font-medium "}text-primary underline-offset-4 hover:underline`}
     >
       {text}
     </a>
@@ -336,7 +337,7 @@ function sourceLink(text: string, sourceUrl?: string | null, strong = false) {
 }
 
 function muted(text: string) {
-  return <span className="text-slate-500">{text}</span>;
+  return <span className="text-muted-foreground">{text}</span>;
 }
 
 function formatValue(value: string) {

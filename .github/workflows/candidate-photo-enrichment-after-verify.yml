@@ -1,0 +1,40 @@
+name: Dispatch candidate photo enrichment after protected verify
+
+on:
+  workflow_run:
+    workflows: ["Repository test and build health"]
+    types: [completed]
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  dispatch-candidate-photo-enrichment:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check whether the verified main commit touches candidate-photo inputs
+        id: candidate_photo_paths
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          files="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${HEAD_SHA}" --jq '.files[].filename')"
+          printf '%s\n' "$files"
+
+          if grep -Eq '^(\.github/workflows/candidate-photo-enrichment\.yml|scripts/elections/.*(candidate-photo|photo-findings|senate-photo|filing-status).*|src/data/elections/2026/(candidate-photo-source-registry.*\.json|candidate-photo-assets\.json|candidate-supreme-court-media\.json|candidate-filing-status-authority\.json))$' <<<"$files"; then
+            echo "should_dispatch=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_dispatch=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Dispatch candidate photo enrichment from verified main
+        if: steps.candidate_photo_paths.outputs.should_dispatch == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run candidate-photo-enrichment.yml --ref main

@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "kwbu.org",
+    "sourceClass": "regional-public-radio-candidate-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use KWBU candidate-profile photography only as a discovery lead unless the exact image carries an explicit reusable license, is clearly candidate/campaign supplied with documented reuse permission, or has another item-level permission basis. Do not infer reuse rights from publication by the station. Preserve the exact article URL, direct image URL, photographer/credit, candidate identity, and permission evidence before approval.",
+    "searchHint": "site:kwbu.org Texas candidate 2026 portrait House District",
+    "notes": "New source verified August 26, 2026 while researching the unresolved 2026 cohort. KWBU has candidate-specific election profiles, including Albert Hunter, with identifiable portrait photography and local-race context. This source is discovery-only and retains item-level rights verification."
+  },
+  {
+    "domain": "dallasnews.com",
+    "sourceClass": "newspaper-voter-guide",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Dallas Morning News voter-guide portraits only as discovery evidence unless the exact image has an explicit reusable license, a documented candidate/campaign-supplied permission basis, or another item-level reuse grant. Staff, freelance, wire, and otherwise copyrighted newsroom photography is not reusable by default. Preserve the exact voter-guide URL, image URL, credit/provenance, candidate identity, and rights evidence before approval.",
+    "searchHint": "site:dallasnews.com/voter-guide Texas 2026 candidate portrait",
+    "notes": "New discovery bridge verified August 26, 2026 from an unresolved-candidate search. The Dallas Morning News voter guide exposes candidate-specific portrait assets, including prior Mindy Bumgarner coverage, and may lead to candidate-supplied or otherwise documented portrait sources. No image is auto-approved from this domain."
+  }
+]

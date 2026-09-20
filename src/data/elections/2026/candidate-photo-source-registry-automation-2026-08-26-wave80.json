@@ -1,0 +1,83 @@
+[
+  {
+    "domain": "mindybumgarner.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use this verified candidate-controlled campaign site to discover Mindy Bumgarner portrait assets and campaign attribution. Do not approve any image without item-level provenance plus a reusable license, explicit campaign/media permission, or another documented permission basis.",
+    "searchHint": "Mindy Bumgarner Texas State Board of Education District 14 mindybumgarner.com portrait",
+    "notes": "New candidate-controlled source verified August 26, 2026. The live site identifies Mindy Bumgarner as a Republican candidate for Texas State Board of Education District 14, and TCTA independently links this exact domain as her campaign website."
+  },
+  {
+    "domain": "willcampbellfortexas.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use this verified candidate-controlled campaign site to discover Will Campbell portrait assets and campaign attribution. Do not approve any image without item-level provenance plus a reusable license, explicit campaign/media permission, or another documented permission basis.",
+    "searchHint": "Will Campbell Texas House District 109 willcampbellfortexas.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 26, 2026. The live site explicitly identifies Will Campbell as a candidate for Texas House District 109 and labels itself the official campaign website; BallotReady independently lists a verified campaign website for the same candidate and office."
+  },
+  {
+    "domain": "stanleyfortexashouse.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use this verified candidate-controlled campaign site and its photo section to discover Stephen Stanley portrait assets and campaign attribution. Do not approve any image without item-level provenance plus a reusable license, explicit campaign/media permission, or another documented permission basis.",
+    "searchHint": "Stephen Stanley Texas House District 113 stanleyfortexashouse.com official campaign portrait photos",
+    "notes": "New candidate-controlled source verified August 26, 2026. The live site is paid for by the Committee to Elect Stephen Stanley, includes a dedicated photos section and campaign contact details, and identifies the campaign for State Representative."
+  },
+  {
+    "domain": "zach4texas.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use this verified candidate-controlled campaign site to discover Zach Herbert portrait assets and campaign attribution. Do not approve any image without item-level provenance plus a reusable license, explicit campaign/media permission, or another documented permission basis.",
+    "searchHint": "Zach Herbert Texas House District 112 zach4texas.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 26, 2026. The live site identifies Zach Herbert as running for the Texas House and carries a paid-political-advertisement disclaimer; TCTA independently links this exact domain for the District 112 candidate."
+  },
+  {
+    "domain": "timforhouse.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use this verified candidate-controlled campaign site to discover Tim McDonough portrait assets and campaign attribution. Do not approve any image without item-level provenance plus a reusable license, explicit campaign/media permission, or another documented permission basis.",
+    "searchHint": "Tim McDonough Texas House District 114 timforhouse.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 26, 2026. The live site presents Tim McDonough's campaign and volunteer/donation infrastructure; TCTA independently links this exact domain for the District 114 candidate."
+  },
+  {
+    "domain": "rosellinifortx.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use this verified candidate-controlled campaign site to discover Danny Rosellini portrait assets and campaign attribution. Do not approve any image without item-level provenance plus a reusable license, explicit campaign/media permission, or another documented permission basis.",
+    "searchHint": "Danny Rosellini Texas House District 115 rosellinifortx.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 26, 2026. The live site identifies Danny Rosellini as a candidate for Texas House District 115 and publishes campaign contact and donation information; BallotReady independently identifies a verified website for the same candidate."
+  },
+  {
+    "domain": "melanie4texas.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use this verified candidate-controlled campaign site to discover Melanie Medley-Thomas portrait assets and campaign attribution. Do not approve any image without item-level provenance plus a reusable license, explicit campaign/media permission, or another documented permission basis.",
+    "searchHint": "Melanie Medley-Thomas Texas House District 103 melanie4texas.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 26, 2026. The live campaign site identifies Melanie Medley-Thomas for Texas House 103 and includes a professional candidate portrait plus campaign contact information."
+  },
+  {
+    "domain": "colorfulconservative.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use this verified candidate-controlled campaign site to discover Bonnie Abadie portrait assets and campaign attribution. Do not approve any image without item-level provenance plus a reusable license, explicit campaign/media permission, or another documented permission basis.",
+    "searchHint": "Bonnie Abadie Texas House District 102 colorfulconservative.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 26, 2026. Dallas County Republican Party event listings identify colorfulconservative.com as Bonnie Abadie's campaign website for Texas House District 102, and a candidate-controlled temporary campaign page separately identifies her candidacy."
+  },
+  {
+    "domain": "votematthiasearly.com",
+    "sourceClass": "official-campaign-press-kit",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying headshots explicitly offered by the official Matthias Early campaign as downloadable assets in its Press Kit for media and press. Preserve exact campaign attribution and source-page provenance; do not infer permission for unrelated campaign imagery.",
+    "searchHint": "Matthias Early Texas House District 20 votematthiasearly.com press kit headshot",
+    "notes": "Verified August 26, 2026. The official campaign press page identifies Matthias Early as the Democratic nominee for Texas House District 20 and explicitly offers portrait and close-up headshots as downloadable assets for media and press. Exact portrait provenance is recorded in the wave 80 verified-findings script."
+  }
+]

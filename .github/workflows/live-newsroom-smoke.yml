@@ -10,15 +10,22 @@ on:
     paths:
       - 'src/routes/api/public/hooks/ingest-feeds.ts'
       - 'src/routes/api/public/hooks/health.ts'
+      - 'src/routes/api/public/hooks/newsroom-generation-diagnostics.ts'
       - 'src/routes/api/public/newsroom-health.ts'
       - 'src/lib/multi-source-publish.ts'
       - 'src/lib/ingest-feeds-legacy.ts'
       - 'scripts/news/smoke-live-newsroom.mjs'
+      - 'scripts/news/worker-origin-canonical-fetch.mjs'
       - 'supabase/migrations/**'
       - '.github/workflows/live-newsroom-smoke.yml'
 
 permissions:
   contents: read
+
+env:
+  # Browser-facing keeptxred.com challenges GitHub-hosted runners. Smoke the
+  # same deployed application through its machine-safe Worker origin instead.
+  AUTOMATION_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
 
 # Keep coverage reporting independent so schema failures cannot hide the story matrix.
 concurrency:
@@ -35,7 +42,11 @@ jobs:
         run: |
           set -euo pipefail
           for attempt in 1 2 3 4 5 6; do
-            if curl -fsSL --max-time 30 https://keeptxred.com/api/public/newsroom-health -o /tmp/newsroom-health.json; then
+            if curl -fsSL --max-time 30 \
+              -H 'User-Agent: KeepTXRed-Newsroom-Smoke/1.0' \
+              -H 'X-Forwarded-Host: keeptxred.com' \
+              "${AUTOMATION_ORIGIN%/}/api/public/newsroom-health" \
+              -o /tmp/newsroom-health.json; then
               jq -r '
                 "Flyover audit: ingested=\(.flyoverIngestedCount // 0) routed-correctly=\(.flyoverRoutedCorrectlyCount // 0) published=\(.flyoverPublishedCount // 0) degraded=\(.degraded // false) routing-ready=\(.routingSchemaReady // true) td-ready=\(.texasDefinedChannelReady // false)",
                 (.schemaErrors[]? | "schema-error | \(.)"),
@@ -60,21 +71,37 @@ jobs:
       - name: Verify Cloudflare rewrite provider
         run: |
           node <<'NODE'
-          const url = 'https://keeptxred.com/api/public/hooks/health';
-          const response = await fetch(url, { headers: { Accept: 'application/json', 'User-Agent': 'KeepTXRed-Newsroom-Smoke/1.0' } });
+          const baseUrl = process.env.AUTOMATION_ORIGIN.replace(/\/$/, '');
+          const url = `${baseUrl}/api/public/hooks/health`;
+          const response = await fetch(url, { headers: { Accept: 'application/json', 'User-Agent': 'KeepTXRed-Newsroom-Smoke/1.0', 'X-Forwarded-Host': 'keeptxred.com' } });
           const text = await response.text();
           if (!response.ok) throw new Error(`health returned HTTP ${response.status}: ${text.slice(0, 500)}`);
           const payload = JSON.parse(text);
           if (payload.rewrite_provider !== 'cloudflare-workers-ai') throw new Error(`unexpected rewrite_provider=${payload.rewrite_provider}`);
           if (payload.rewrite_provider_ready !== true) throw new Error('rewrite_provider_ready is not true');
-          if (payload.lovable_rewrite_bypassed !== true) throw new Error('lovable_rewrite_bypassed is not true');
+          if (payload.external_ai_gateway_disabled !== true) throw new Error('external_ai_gateway_disabled is not true');
+          if (payload.direct_provider_only !== true) throw new Error('direct_provider_only is not true');
           if (typeof payload.rewrite_model !== 'string' || !payload.rewrite_model.startsWith('@cf/')) throw new Error(`rewrite_model is missing or not Cloudflare: ${payload.rewrite_model}`);
           if (payload.image_provider !== 'cloudflare-workers-ai') throw new Error(`unexpected image_provider=${payload.image_provider}`);
-          if (payload.image_validation_model !== '@cf/meta/llama-3.2-11b-vision-instruct') throw new Error(`unexpected image_validation_model=${payload.image_validation_model}`);
+          if (payload.image_validation_model !== '@cf/mistralai/mistral-small-3.1-24b-instruct') throw new Error(`unexpected image_validation_model=${payload.image_validation_model}`);
           console.log(`OK rewrite provider=${payload.rewrite_provider} model=${payload.rewrite_model} image=${payload.image_model} validator=${payload.image_validation_model}`);
           NODE
+      - name: Report zero-AI newsroom generation eligibility
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --retry 6 --retry-delay 3 --retry-all-errors --fail-with-body --silent --show-error \
+            -H 'X-Forwarded-Host: keeptxred.com' \
+            "${AUTOMATION_ORIGIN%/}/api/public/hooks/newsroom-generation-diagnostics" \
+            -o /tmp/newsroom-generation-diagnostics.json
+          jq -e '.ok == true and .aiCalls == 0 and .writes == 0' /tmp/newsroom-generation-diagnostics.json >/dev/null
+          jq -r '
+            "generation-eligibility | total=\(.summary.total) | eligible=\(.summary.eligible) | maxEvidence=\(.summary.maxEvidenceChars) | reasons=\(.summary.reasonCounts | tojson)",
+            (.closestBelowFloor[]? | "closest | candidate=\(.candidateId) | score=\(.score) | pillar=\(.pillar // "-") | format=\(.format) | evidence=\(.evidenceChars)/\(.evidenceFloor) | gap=\(.evidenceGap) | sources=\(.sourceCount) | primary=\(.primarySourceCount) | shadowed=\(.alreadyShadowed)"),
+            (.eligible[]? | "eligible | candidate=\(.candidateId) | score=\(.score) | pillar=\(.pillar // "-") | format=\(.format) | evidence=\(.evidenceChars)/\(.evidenceFloor) | sources=\(.sourceCount) | primary=\(.primarySourceCount)")
+          ' /tmp/newsroom-generation-diagnostics.json
       - name: Check live ingestion and both publication sites
         env:
-          KTR_BASE_URL: https://keeptxred.com
+          KTR_BASE_URL: ${{ env.AUTOMATION_ORIGIN }}
           TEXASDEFINED_BASE_URL: https://texasdefined.com
-        run: node scripts/news/smoke-live-newsroom.mjs
+        run: node --import ./scripts/news/worker-origin-canonical-fetch.mjs scripts/news/smoke-live-newsroom.mjs

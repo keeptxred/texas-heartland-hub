@@ -1,13 +1,26 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { texasEconomyHead } from "@/routes/texas-economy";
+import { texasPoliticsHead } from "@/routes/texas-politics.index";
 
 const sourceFiles = [
   "src/components/site-header.tsx",
   "src/components/site-footer.tsx",
   "src/components/sports-coverage-placeholder.tsx",
   "src/components/city-page.tsx",
+  "src/components/texas-news-view.tsx",
+  "src/components/texas-business-view.tsx",
+  "src/components/government-history-authority-page.tsx",
+  "src/components/admin/ContentPackagePreview.tsx",
   "src/routes/texas-sports.index.tsx",
+  "src/routes/texas-government.tsx",
+  "src/routes/texas-government.$entitySlug.tsx",
+  "src/routes/texas-politics.figures.tsx",
+  "src/routes/texas-politics.figures_.$figureSlug.tsx",
+  "src/routes/texas-politics.how-texas-became-republican.tsx",
+  "src/routes/texas-politics.texas-supreme-court-realignment.tsx",
   "src/lib/elections/internalLinks.ts",
+  "src/data/texas-political-figure-builder.ts",
   "src/data/search-console-priority-urls.json",
   "public/llms.txt",
 ];
@@ -16,9 +29,14 @@ const legacyWwwHost = "www." + "keeptxred.com/";
 const redirectAliases = [
   'to="/texas-news"',
   'href="/texas-news"',
+  'href: "/texas-news"',
   'texasNews: "/texas-news"',
+  'to="/texas-law-policy"',
+  'href="/texas-law-policy"',
+  'href: "/texas-law-policy"',
   'to="/elections"',
   'href="/elections"',
+  'href: "/elections"',
   'livingInTexas: "/living-in-texas"',
   "http://keeptxred.com/",
   `http://${legacyWwwHost}`,
@@ -34,7 +52,6 @@ const redirectAliases = [
 const canonicalRouteChecks = [
   ["src/routes/shop.index.tsx", "https://keeptxred.com/shop"],
   ["src/routes/texas-sports.index.tsx", "https://keeptxred.com/texas-sports"],
-  ["src/routes/texas-economy.tsx", "https://keeptxred.com/texas-economy"],
 ] as const;
 
 describe("canonical internal links", () => {
@@ -45,6 +62,23 @@ describe("canonical internal links", () => {
         expect(source, `${file} must not contain redirecting internal link ${alias}`).not.toContain(alias);
       }
     }
+  });
+
+  it("keeps the new Texas courts hub self-canonical and non-redirecting", () => {
+    const route = readFileSync("src/routes/texas-courts.tsx", "utf8");
+    const page = readFileSync("src/components/texas-courts-authority-page.tsx", "utf8");
+
+    expect(route).toContain('createFileRoute("/texas-courts")');
+    expect(route).toContain("TexasCourtsAuthorityPage");
+    expect(route).not.toContain("redirect(");
+    expect(page).toContain('const CANONICAL = `${SITE_URL}/texas-courts`');
+    expect(page).toContain('rel: "canonical", href: CANONICAL');
+  });
+
+  it("keeps Texas news topic canonicals pointed at the final newsroom URL", () => {
+    const topicRoute = readFileSync("src/routes/texas-news.$topic.tsx", "utf8");
+    expect(topicRoute).toContain('const canonical = "https://keeptxred.com/news"');
+    expect(topicRoute).not.toContain('const canonical = "https://keeptxred.com/texas-news"');
   });
 
   it("keeps key Search Console pages self-canonical", () => {
@@ -58,5 +92,23 @@ describe("canonical internal links", () => {
         `${file} must declare ${canonical} as canonical`,
       ).toBe(true);
     }
+
+    expect(texasEconomyHead().links).toContainEqual({
+      rel: "canonical",
+      href: "https://keeptxred.com/texas-economy",
+    });
+  });
+
+  it("keeps the Texas politics parent as a canonical-free layout and the index self-canonical", () => {
+    const layout = readFileSync("src/routes/texas-politics.tsx", "utf8");
+    const index = readFileSync("src/routes/texas-politics.index.tsx", "utf8");
+
+    expect(layout).toContain("<Outlet />");
+    expect(layout).not.toContain('rel: "canonical"');
+    expect(index).toContain('createFileRoute("/texas-politics/")');
+    expect(texasPoliticsHead().links).toContainEqual({
+      rel: "canonical",
+      href: "https://keeptxred.com/texas-politics",
+    });
   });
 });

@@ -1,0 +1,71 @@
+name: Finalize election automation PRs
+
+on:
+  workflow_run:
+    workflows:
+      - Refresh Election Central data
+      - Update Election Central forecasts
+      - Statewide election audit
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: finalize-election-automation-${{ github.event.workflow_run.name || 'manual' }}
+  cancel-in-progress: false
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - name: Check out current main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Resolve automation branch
+        id: resolve
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          SOURCE_WORKFLOW: ${{ github.event.workflow_run.name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "$SOURCE_WORKFLOW" in
+            "Refresh Election Central data") branch='automation/election-data-refresh' ;;
+            "Update Election Central forecasts") branch='automation/election-forecast-refresh' ;;
+            "Statewide election audit") branch='automation/statewide-election-refresh' ;;
+            "")
+              echo "Manual dispatch has no source workflow to resolve; nothing to finalize."
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+              exit 0
+              ;;
+            *)
+              echo "Unexpected source workflow: $SOURCE_WORKFLOW" >&2
+              exit 1
+              ;;
+          esac
+
+          pr_number="$(gh pr list --repo "$REPOSITORY" --head "$branch" --base main --state open --json number --jq '.[0].number // empty')"
+          if [[ -z "$pr_number" ]]; then
+            echo "No open automation PR exists for $branch; source workflow had nothing to publish or already completed publication."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+          echo "pr_number=$pr_number" >> "$GITHUB_OUTPUT"
+
+      - name: Verify, merge, verify main, and deploy
+        if: steps.resolve.outputs.skip == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/ci/finalize-automation-pr.sh "${{ steps.resolve.outputs.pr_number }}" "${{ steps.resolve.outputs.branch }}"

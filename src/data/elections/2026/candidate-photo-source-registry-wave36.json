@@ -1,0 +1,83 @@
+[
+  {
+    "domain": "margofortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs published by Margo Jordan's official Texas State Board of Education District 6 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, quote graphics, issue graphics, stock imagery, third-party embeds, donation widgets, and images that do not clearly identify Margo Jordan.",
+    "searchHint": "site:margofortexas.com Margo Jordan Texas State Board of Education District 6 portrait candidate",
+    "notes": "Verified August 24, 2026 from the live official campaign site, which identifies Margo Jordan as a write-in candidate for Texas State Board of Education District 6 and publishes candidate biography and campaign imagery."
+  },
+  {
+    "domain": "votejuniorezeonu.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs published by Junior Ezeonu's official Texas House District 101 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude logos, issue graphics, endorsement graphics, stock imagery, third-party embeds, and images that do not clearly identify Junior Ezeonu.",
+    "searchHint": "site:votejuniorezeonu.com Junior Ezeonu Texas House District 101 portrait candidate",
+    "notes": "Re-verified August 24, 2026 from the live official campaign site. The homepage explicitly identifies Junior Ezeonu as the Texas House District 101 candidate, contains a 2026 candidate headshot and additional biography photography, and is independently linked by TCTA's 2026 candidate guide. This supersedes the earlier review-only source entry."
+  },
+  {
+    "domain": "hoffnaglefortexas.org",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs published by Jordan Hoffnagle's Texas House District 100 campaign site and clearly attributable to the campaign. Exclude logos, issue graphics, stock imagery, third-party embeds, and non-candidate images.",
+    "searchHint": "site:hoffnaglefortexas.org Jordan Hoffnagle Texas House District 100 portrait candidate",
+    "notes": "New source verified August 24, 2026 through the Dallas County Republican Party 2026 candidate directory, which links this domain as Jordan Hoffnagle's campaign website."
+  },
+  {
+    "domain": "colorfulconservative.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Treat as a candidate-source lead for Bonnie Abadie. Approve only after a candidate-identifying portrait is validated directly on the site and clearly attributable to Bonnie Abadie's Texas House District 102 campaign; exclude unrelated site imagery and third-party content.",
+    "searchHint": "site:colorfulconservative.com Bonnie Abadie Texas House District 102 portrait candidate",
+    "notes": "New source discovered August 24, 2026 from the Dallas County Republican Party 2026 candidate directory, which links this domain for Bonnie Abadie. Keep review-required because the domain branding is not candidate-specific."
+  },
+  {
+    "domain": "melanie4texas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs published by Melanie Medley-Thomas's Texas House District 103 campaign site and clearly attributable to the campaign. Exclude logos, issue graphics, stock imagery, third-party embeds, and non-candidate images.",
+    "searchHint": "site:melanie4texas.com Melanie Medley-Thomas Texas House District 103 portrait candidate",
+    "notes": "New source verified August 24, 2026 through the Dallas County Republican Party 2026 candidate directory, which links this domain as Melanie Medley-Thomas's campaign website."
+  },
+  {
+    "domain": "willcampbellfortexas.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs published by Will Campbell's Texas House District 109 campaign site and clearly attributable to the campaign. Exclude logos, issue graphics, stock imagery, third-party embeds, and non-candidate images.",
+    "searchHint": "site:willcampbellfortexas.com Will Campbell Texas House District 109 portrait candidate",
+    "notes": "New source verified August 24, 2026 through the Dallas County Republican Party 2026 candidate directory, which links this domain as Will Campbell's campaign website."
+  },
+  {
+    "domain": "stanleyfortexashouse.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs published by Stephen W. Stanley's Texas House District 113 campaign site and clearly attributable to the campaign. Exclude logos, issue graphics, stock imagery, third-party embeds, and non-candidate images.",
+    "searchHint": "site:stanleyfortexashouse.com Stephen W Stanley Texas House District 113 portrait candidate",
+    "notes": "New source verified August 24, 2026 through the Dallas County Republican Party 2026 candidate directory, which links this domain as Stephen Stanley's campaign website."
+  },
+  {
+    "domain": "timforhouse.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs published by Tim McDonough's Texas House District 114 campaign site and clearly attributable to the campaign. Exclude logos, issue graphics, stock imagery, third-party embeds, and non-candidate images.",
+    "searchHint": "site:timforhouse.com Tim McDonough Texas House District 114 portrait candidate",
+    "notes": "New source verified August 24, 2026 through the Dallas County Republican Party 2026 candidate directory, which links this domain as Tim McDonough's campaign website."
+  },
+  {
+    "domain": "rosellinifortx.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs published by Danny Rosellini's Texas House District 115 campaign site and clearly attributable to the campaign. Exclude logos, issue graphics, stock imagery, third-party embeds, and non-candidate images.",
+    "searchHint": "site:rosellinifortx.com Danny Rosellini Texas House District 115 portrait candidate",
+    "notes": "New source verified August 24, 2026 through the Dallas County Republican Party 2026 candidate directory, which links this domain as Danny Rosellini's campaign website."
+  }
+]

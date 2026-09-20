@@ -15,13 +15,22 @@ const missing=candidates.filter(c=>byId.get(c.id)?.usageStatus!=='approved');
 const found=[]; const failures=[];
 for (const c of missing){
   const hit=await discover(c);
-  if(hit){byId.set(c.id,hit);found.push(hit);claimed.add(host(hit.sourceUrl));claimed.add(host(hit.imageUrl));}
+  if(hit){found.push(hit);claimed.add(host(hit.sourceUrl));claimed.add(host(hit.imageUrl));}
   else failures.push({candidateId:c.id,name:c.fullName,raceId:c.primaryRaceId});
 }
 await mkdir(path.dirname(reportPath),{recursive:true});
-await writeFile(manifestPath,JSON.stringify([...byId.values()].sort((a,b)=>a.candidateId.localeCompare(b.candidateId)),null,2)+'\n');
-await writeFile(reportPath,JSON.stringify({generatedAt:new Date().toISOString(),scanned:missing.length,discovered:found.length,blockedDomains:[...blocked].sort(),newDomains:[...claimed].filter(Boolean).sort(),found,failures},null,2)+'\n');
-console.log(`Wave 2 added ${found.length} portraits.`);
+await writeFile(reportPath,JSON.stringify({
+  generatedAt:new Date().toISOString(),
+  purpose:'Discover additional unused-domain portrait leads without auto-approving identity, provenance, or reuse rights.',
+  scanned:missing.length,
+  discoveredReviewLeadCount:found.length,
+  blockedDomains:[...blocked].sort(),
+  newDomains:[...claimed].filter(Boolean).sort(),
+  found,
+  failures
+},null,2)+'\n');
+console.log(`Wave 2 found ${found.length} review lead(s).`);
+console.log('No wave-two discovery is auto-approved; identity, provenance, and reuse rights require verification first.');
 
 async function discover(c){
   const name=(c.fullName||'').trim();
@@ -44,7 +53,19 @@ async function discover(c){
       const html=await get(url); if(!html||!matches(html,name)) continue;
       for(const image of images(html,url)){
         const id=host(image); if(!id||blocked.has(id)||claimed.has(id)||badImage(image)) continue;
-        return {candidateId:c.id,imageUrl:image,sourceUrl:url,altText:`Portrait of ${name}`,credit:d,license:null,permissionBasis:'Publicly published candidate or biography portrait used for editorial identification with source attribution.',usageStatus:'approved',discoveredAt:new Date().toISOString(),discoveryMethod:'new-domain-wave2'};
+        return {
+          candidateId:c.id,
+          imageUrl:image,
+          sourceUrl:url,
+          altText:`Portrait lead for ${name}`,
+          credit:d,
+          license:null,
+          permissionBasis:null,
+          usageStatus:'unknown',
+          reviewReason:'Unused-domain discovery lead. Verify candidate identity, original provenance, and item-level reuse rights before approval.',
+          discoveredAt:new Date().toISOString(),
+          discoveryMethod:'new-domain-wave2'
+        };
       }
     }
   }

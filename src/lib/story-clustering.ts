@@ -7,6 +7,8 @@ export type ClusterableFeedItem = {
   pub_date?: string | null;
   extracted_body?: string | null;
   internal_slug?: string | null;
+  event_cluster_id?: string | null;
+  event_cluster_score?: number | null;
 };
 
 export type ClusterCandidate = ClusterableFeedItem & {
@@ -26,10 +28,38 @@ const STOP = new Set([
   "the","a","an","and","or","but","for","to","of","in","on","at","by","with","from","as","is","are","was","were","be","been","being","this","that","these","those","it","its","texas","tx","new","says","said","after","before","over","more","about","into","amid","during","will","would","could","should","today","friday","monday","tuesday","wednesday","thursday","saturday","sunday",
 ]);
 
+const LOCATION_TERMS = new Set([
+  "houston","dallas","fort worth","san antonio","austin","laredo","amarillo","killeen","temple","waco","hereford","galveston","lubbock","midland",
+]);
+
+// These words are useful scoring signals after two reports are already tied to
+// the same event, but are too generic to establish event identity on their own.
+// In particular, a public official can announce many unrelated grants on the
+// same day; actor + generic action is not a story key.
+const GENERIC_EVENT_ANCHOR_TERMS = new Set([
+  "abbott","governor","grant","grants","fund","funds","funding","million","announce","announces","announced","announcement","state","statewide",
+]);
+
 const IMPORTANT = [
-  /\b(abbott|ercot|trump|buc-?ee'?s|comptroller|uil|spurs|mavericks|cowboys|texans|rangers|astros|stars|longhorns|aggies|texas tech)\b/gi,
+  /\b(abbott|ercot|trump|buc-?ee'?s|comptroller|uil|spurs|mavericks|cowboys|rangers|astros|stars|longhorns|aggies|texas tech)\b/gi,
   /\b(data center|data centers|tax[- ]free|sales tax|heat index|wet bulb|moratorium|water supply|power grid|counterfeit|trademark|immigration|ice detention|border|parkland|graduation)\b/gi,
   /\b(houston|dallas|fort worth|san antonio|austin|laredo|amarillo|killeen|temple|waco|hereford|galveston|lubbock|midland)\b/gi,
+];
+
+const SPORTS_CONTEXT_RE = /\b(nfl|football|game|season|score|team|roster|offense|defense|quarterback|touchdown|training camp|practice|coach|player|depth chart|preseason|playoff)\b/i;
+
+const SPORTS_IDENTITIES: Array<{ id: string; pattern: RegExp }> = [
+  { id: "cowboys", pattern: /\b(?:dallas\s+)?cowboys\b/i },
+  { id: "texans", pattern: /\bhouston\s+texans\b/i },
+  { id: "aggies", pattern: /\b(?:texas\s+a\s*&?\s*m|aggies)\b/i },
+  { id: "stars", pattern: /\bdallas\s+stars\b/i },
+  { id: "dynamo", pattern: /\bhouston\s+dynamo\b/i },
+  { id: "spurs", pattern: /\b(?:san\s+antonio\s+)?spurs\b/i },
+  { id: "mavericks", pattern: /\b(?:dallas\s+)?mavericks\b/i },
+  { id: "rangers", pattern: /\btexas\s+rangers\b/i },
+  { id: "astros", pattern: /\b(?:houston\s+)?astros\b/i },
+  { id: "longhorns", pattern: /\b(?:texas\s+)?longhorns\b/i },
+  { id: "texas-tech", pattern: /\btexas\s+tech\b/i },
 ];
 
 const TOPIC_BRIDGES: Array<{ tag: string; patterns: RegExp[] }> = [
@@ -76,9 +106,13 @@ function normalize(text: string): string {
   return text
     .toLowerCase()
     .replace(/https?:\/\/\S+/g, " ")
-    .replace(/[^a-z0-9' -]+/g, " ")
+    .replace(/[^a-z0-9' &-]+/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+export function normalizeClusterText(text: string): string {
+  return normalize(text);
 }
 
 function textFor(item: ClusterableFeedItem): string {
@@ -94,17 +128,38 @@ function topicTags(item: ClusterableFeedItem): Set<string> {
   return tags;
 }
 
+function sportsIdentities(item: ClusterableFeedItem): Set<string> {
+  const text = textFor(item);
+  const identities = new Set(SPORTS_IDENTITIES.filter(({ pattern }) => pattern.test(text)).map(({ id }) => id));
+  // “Texans” is also the ordinary demonym for residents of Texas. Only treat a
+  // standalone occurrence as the NFL team when the same item contains sports context.
+  if (!identities.has("texans") && /\btexans\b/i.test(text) && SPORTS_CONTEXT_RE.test(text)) {
+    identities.add("texans");
+  }
+  return identities;
+}
+
+function hasSportsIdentityConflict(primary: ClusterableFeedItem, candidate: ClusterableFeedItem): boolean {
+  const a = sportsIdentities(primary);
+  const b = sportsIdentities(candidate);
+  if (!a.size || !b.size) return false;
+  return ![...a].some((id) => b.has(id));
+}
+
 function tokens(item: ClusterableFeedItem): Set<string> {
   const raw = textFor(item);
+  const sports = sportsIdentities(item);
   const out = new Set<string>();
   for (const token of raw.split(/\s+/)) {
     if (token.length < 4 || STOP.has(token)) continue;
+    if (token === "texans" && !sports.has("texans")) continue;
     out.add(token);
   }
   for (const re of IMPORTANT) {
     re.lastIndex = 0;
     for (const m of raw.matchAll(re)) out.add(m[0].toLowerCase());
   }
+  if (sports.has("texans")) out.add("texans");
   return out;
 }
 
@@ -159,31 +214,76 @@ function hoursApart(a?: string | null, b?: string | null): number {
   return Math.abs(ta - tb) / 3_600_000;
 }
 
+function isLocationTerm(term: string): boolean {
+  return LOCATION_TERMS.has(term);
+}
+
+function isEventSpecificTerm(term: string): boolean {
+  const normalized = term.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  if (!normalized) return false;
+  if (normalized.includes(" ")) {
+    return normalized.split(/\s+/).some((part) => !GENERIC_EVENT_ANCHOR_TERMS.has(part));
+  }
+  return !GENERIC_EVENT_ANCHOR_TERMS.has(normalized);
+}
+
+/**
+ * High false-positive domains require stronger evidence before reports are
+ * merged. Sports and routine government actions can safely use a slightly
+ * lower threshold because team/agency + action + date provide strong anchors.
+ */
+export function strongMergeThreshold(item: ClusterableFeedItem): number {
+  const text = textFor(item);
+  if (/\b(shooting|killed|dead|death|arrest|charged|indicted|crash|collision|missing)\b/i.test(text)) return 75;
+  if (/\b(lawsuit|court|judge|ruling|appeal|injunction|supreme court)\b/i.test(text)) return 72;
+  if (/\b(tornado|hurricane|wildfire|flood|warning|watch|storm)\b/i.test(text)) return 72;
+  if (/\b(cowboys|texans|rangers|astros|spurs|mavericks|stars|longhorns|aggies|game|season|score)\b/i.test(text)) return 62;
+  if (/\b(governor|senate|house|agency|commission|council|school district|tea)\b/i.test(text)) return 64;
+  return 65;
+}
+
 export function combinationScore(primary: ClusterableFeedItem, candidate: ClusterableFeedItem): { score: number; overlapTerms: string[] } {
   if (primary.link === candidate.link) return { score: 0, overlapTerms: [] };
+  if (hasSportsIdentityConflict(primary, candidate)) return { score: 0, overlapTerms: [] };
+
   const a = tokens(primary);
   const b = tokens(candidate);
   const overlap = [...a].filter((t) => b.has(t));
-  let score = 0;
 
   const titleA = tokens({ ...primary, description: "" });
   const titleB = tokens({ ...candidate, description: "" });
   const titleOverlap = [...titleA].filter((t) => titleB.has(t));
-  score += Math.min(40, titleOverlap.length * 10);
-  score += Math.min(25, overlap.length * 5);
+  const substantiveOverlap = overlap.filter((term) => !isLocationTerm(term));
+  const substantiveTitleOverlap = titleOverlap.filter((term) => !isLocationTerm(term));
+  const eventSpecificTitleOverlap = substantiveTitleOverlap.filter(isEventSpecificTerm);
 
-  const importantOverlap = overlap.filter((t) => {
+  const importantOverlap = substantiveOverlap.filter((t) => {
     if (t.includes(" ")) return true;
-    return IMPORTANT.some((re) => {
+    return IMPORTANT.slice(0, 2).some((re) => {
       re.lastIndex = 0;
       return re.test(t);
     });
   });
-  score += Math.min(20, importantOverlap.length * 10);
+  const eventSpecificImportantOverlap = importantOverlap.filter(isEventSpecificTerm);
 
   const primaryTopics = topicTags(primary);
   const candidateTopics = topicTags(candidate);
   const sharedTopics = [...primaryTopics].filter((tag) => candidateTopics.has(tag));
+
+  // Recency, a different outlet, a public official, a generic grant/funding word,
+  // or a shared city are confidence boosts only after the reports are tied to the
+  // same event. Require at least one event-specific title/important anchor unless
+  // a curated topic bridge establishes the event family.
+  const hasSemanticAnchor =
+    sharedTopics.length > 0 ||
+    (substantiveTitleOverlap.length >= 2 && eventSpecificTitleOverlap.length >= 1) ||
+    (eventSpecificImportantOverlap.length >= 1 && substantiveOverlap.length >= 2);
+  if (!hasSemanticAnchor) return { score: 0, overlapTerms: [] };
+
+  let score = 0;
+  score += Math.min(40, substantiveTitleOverlap.length * 10);
+  score += Math.min(25, substantiveOverlap.length * 5);
+  score += Math.min(20, importantOverlap.length * 10);
   if (sharedTopics.length) score += Math.min(35, sharedTopics.length * 35);
 
   const apart = hoursApart(primary.pub_date, candidate.pub_date);
@@ -197,12 +297,11 @@ export function combinationScore(primary: ClusterableFeedItem, candidate: Cluste
 
   const primaryText = textFor(primary);
   const candidateText = textFor(candidate);
-  const locations = ["houston","dallas","fort worth","san antonio","austin","laredo","amarillo","killeen","temple","waco","hereford","galveston","lubbock","midland"];
-  if (locations.some((loc) => primaryText.includes(loc) && candidateText.includes(loc))) score += 10;
+  if ([...LOCATION_TERMS].some((loc) => primaryText.includes(loc) && candidateText.includes(loc))) score += 10;
 
   return {
     score: Math.max(0, Math.min(100, score)),
-    overlapTerms: [...overlap, ...sharedTopics.map((tag) => `topic:${tag}`)].slice(0, 12),
+    overlapTerms: [...substantiveOverlap, ...sharedTopics.map((tag) => `topic:${tag}`)].slice(0, 12),
   };
 }
 
@@ -225,12 +324,13 @@ export function buildStoryCluster(primary: ClusterableFeedItem, recent: Clustera
   }
 
   const score = members.length ? Math.max(...members.map((m) => m.combinationScore)) : 0;
+  const threshold = strongMergeThreshold(primary);
   return {
     primary,
     members,
     score,
     sourceCount: 1 + members.length,
-    strongMerge: members.some((m) => m.combinationScore >= 65),
+    strongMerge: members.some((m) => m.combinationScore >= threshold),
   };
 }
 

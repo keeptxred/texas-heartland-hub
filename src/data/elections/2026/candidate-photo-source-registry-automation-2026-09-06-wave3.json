@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "watch.vote",
+    "sourceClass": "federal-candidate-filing-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use watch.vote federal candidate and race pages only to corroborate FEC candidacy records, office sought, filing identifiers, and to discover downstream official FEC or campaign-source leads. Do not approve or reuse watch.vote-hosted imagery as a candidate portrait unless item-level candidate identity, provenance, and an explicit reusable license, documented candidate-supplied status with a narrow editorial-identification basis, explicit permission, or another supported reuse basis are independently established. Treat any asset labeled 'Portrait not verified' as ineligible for candidate-photo approval. Reject initials avatars, generic record graphics, logos, seals, social-share images, placeholders, and other non-candidate imagery.",
+    "searchHint": "site:watch.vote/midterms/2026/candidates Texas candidate FEC campaign website portrait",
+    "notes": "Discovered September 6, 2026 during the current missing-portrait enrichment pass. Current Texas federal candidate pages expose FEC filing identifiers, office and party metadata, campaign-finance source links, and explicitly flag unverified portraits as 'Portrait not verified.' Registered strictly as a filing/source-discovery bridge; watch.vote imagery is not auto-approved and its unverified portrait placeholders are explicitly excluded."
+  }
+]

@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "mcallennewstribune.com",
+    "sourceClass": "local-election-newsroom",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use McAllen News Tribune election coverage to corroborate current Rio Grande Valley candidate identity, district, primary/runoff status, campaign statements, and discover downstream official campaign or candidate-linked portrait sources. Do not approve or reuse newsroom-hosted images without item-level provenance plus an explicit reusable license, candidate-supplied attribution, campaign/media permission, or another documented editorial permission basis. Reject generic election graphics, logos, social-share images, and other non-candidate assets.",
+    "searchHint": "site:mcallennewstribune.com 2026 Texas House candidate campaign portrait Hidalgo Edinburg McAllen",
+    "notes": "New source discovered September 1, 2026 while researching unresolved candidate Celeste Cabrera-Huff in Texas House District 40. Current March 4, 2026 coverage identifies Cabrera-Huff in the HD40 Republican primary and cites Texas Secretary of State and Associated Press results. Register as a discovery/eligibility bridge only; no item-level portrait reuse rights were established during this run."
+  }
+]

@@ -136,7 +136,7 @@ async function writeBatch(batch) {
 
     const body = await response.text();
     lastFailure = `${response.status} ${body}`;
-    const retryable = [401, 502, 503, 504].includes(response.status);
+    const retryable = [401, 404, 500, 502, 503, 504].includes(response.status);
     if (!retryable || attempt === retryDelaysMs.length - 1) break;
     console.log(`GSC write attempt ${attempt + 1} hit transient ${response.status}; production may still be serving the prior revision.`);
   }

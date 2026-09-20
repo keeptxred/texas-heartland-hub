@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "secure.actblue.com",
+    "sourceClass": "candidate-controlled-fundraising-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-linked ActBlue fundraising pages to corroborate candidate identity, office, campaign-controlled messaging, and discover candidate-specific campaign imagery only when the fundraiser clearly identifies the same candidate and race. Do not approve or reuse any hosted image without exact item-level provenance plus candidate-supplied attribution, explicit reusable rights, campaign permission, or another documented editorial permission basis.",
+    "searchHint": "site:secure.actblue.com Texas 2026 candidate fundraiser portrait campaign",
+    "notes": "New source class discovered August 31, 2026 while researching Fatima La'Juan Muse for Texas House District 2. Her campaign-linked ActBlue fundraiser explicitly identifies the candidate and race and exposes candidate-specific imagery, but hosted image reuse rights are not assumed and remain discovery-only until established at item level."
+  },
+  {
+    "domain": "hcgop.v-web.com",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the Harris County Republican Party's current candidate directory to corroborate candidate identity and race and to discover downstream official campaign websites, candidate profiles, and portrait sources. Do not approve or reuse any party-directory-hosted image without exact item-level provenance plus a reusable license, candidate-supplied attribution, explicit permission, or another documented editorial permission basis.",
+    "searchHint": "site:hcgop.v-web.com 2026 candidates Texas House portrait campaign",
+    "notes": "New current-party discovery source verified August 31, 2026. The 2026 candidate directory links Texas House District 147 candidate Theodis Daniel to theodisfortexas.com and provides other race-aware candidate leads. Directory imagery remains discovery-only."
+  }
+]

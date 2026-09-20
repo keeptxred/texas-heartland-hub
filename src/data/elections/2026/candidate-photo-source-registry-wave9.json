@@ -1,0 +1,38 @@
+[
+  {
+    "domain": "guides.vote",
+    "sourceClass": "nonpartisan-voter-guide",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use current candidate-guide pages to identify candidates, candidate websites, issue links, and portrait leads. Do not reuse Guides.vote-hosted candidate images unless the original image provenance and reuse permission are separately verified.",
+    "searchHint": "site:guides.vote Texas 2026 candidate name",
+    "notes": "Verified August 22, 2026 as a current voter-guide source with a live 2026 Texas U.S. Senate guide containing candidate profiles, images, and campaign links."
+  },
+  {
+    "domain": "smarter.vote",
+    "sourceClass": "candidate-research-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use candidate and race research pages to find original campaign, government, and other cited sources. Do not reuse Smarter.Vote-hosted portraits without independently verified provenance and image-use rights.",
+    "searchHint": "site:smarter.vote Texas 2026 candidate name",
+    "notes": "Verified August 22, 2026 as a live nonpartisan candidate-research site with a published 2026 Texas U.S. Senate comparison and linked original sources."
+  },
+  {
+    "domain": "houstonchronicle.com",
+    "sourceClass": "major-news-voter-guide",
+    "discoveryStatus": "review-only",
+    "autoApprove": false,
+    "rightsRule": "Use the 2026 Texas primary voter guide and candidate pages to confirm candidate identity and discover campaign or official links. Do not reuse Chronicle staff, wire-service, or third-party portraits without a separately documented permission, license, or candidate-supplied provenance.",
+    "searchHint": "site:houstonchronicle.com/projects/2026/houston-texas-primary-voter-guide candidate name",
+    "notes": "Verified August 22, 2026 as a current comprehensive Texas primary voter guide covering more than 350 candidates across federal, statewide, legislative, and Houston-area races."
+  },
+  {
+    "domain": "isidewith.com",
+    "sourceClass": "candidate-election-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use current Texas election and candidate pages as discovery leads only, including candidate names and race context. Do not reuse candidate images unless their source and reuse rights are independently verified.",
+    "searchHint": "site:isidewith.com/elections/2026/states/texas candidate name",
+    "notes": "Verified August 22, 2026 as a current 2026 Texas election directory spanning statewide, congressional, legislative, judicial, and local races."
+  }
+]

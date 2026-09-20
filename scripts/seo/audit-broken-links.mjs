@@ -1,19 +1,37 @@
 // Repository and production-site broken-link audit for KeepTXRed.
+// Verification touch: exercise the post-merge current-main broken-link dispatcher.
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
+import { isNavigationalPath, shouldScanRuntimeLinks } from './broken-link-scan-scope.mjs';
+import {
+  extractLinkCandidates,
+  normalizeInternalLink,
+  routeRegexFromRouteName,
+} from './broken-link-audit-utils.mjs';
 
 const ROOT = process.cwd();
+const ROUTES_ROOT = path.join(ROOT, 'src', 'routes');
+const PUBLIC_ROOT = path.join(ROOT, 'public');
 const SITE = process.env.AUDIT_SITE_URL || 'https://keeptxred.com';
+const LIVE_FETCH_ORIGIN = process.env.AUDIT_FETCH_ORIGIN || SITE;
+const SITE_ORIGIN = new URL(SITE).origin;
+const FETCH_ORIGIN = new URL(LIVE_FETCH_ORIGIN).origin;
 const LIVE = process.argv.includes('--live');
 const SCAN_ROOTS = ['src', 'public', 'scripts', 'supabase'];
 const TEXT_EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.mjs', '.cjs', '.json', '.md', '.html', '.sql', '.txt']);
 const RETIRED_PREFIXES = [
   '/explore', '/texas-living', '/living-in-texas', '/moving-to-texas',
   '/moving-to-texas-checklist', '/texas-resources', '/texas-data',
-  '/events', '/guides', '/food-bbq',
+  '/events', '/food-bbq',
 ];
 const IGNORE_PREFIXES = ['/api/', '/admin', '/auth/', '/assets/', '/favicon', '/robots.txt', '/sitemap'];
 const MAX_FETCH_ATTEMPTS = 3;
+const AUDIT_REQUEST_HEADERS = {
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36',
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+  'accept-language': 'en-US,en;q=0.9',
+  'cache-control': 'no-cache',
+};
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -29,84 +47,108 @@ async function walk(dir) {
   return files;
 }
 
+async function walkAllFiles(dir) {
+  const entries = await fs.readdir(dir, { withFileTypes: true });
+  const files = [];
+  for (const entry of entries) {
+    if (['node_modules', '.git', 'dist', '.output', 'coverage'].includes(entry.name)) continue;
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) files.push(...await walkAllFiles(full));
+    else files.push(full);
+  }
+  return files;
+}
+
+async function collectPublicAssetPaths() {
+  try {
+    const files = await walkAllFiles(PUBLIC_ROOT);
+    return new Set(files.map((file) => `/${path.relative(PUBLIC_ROOT, file).replace(/\\/g, '/')}`));
+  } catch {
+    return new Set();
+  }
+}
+
 function routeRegexFromFile(file) {
-  let name = path.basename(file).replace(/\.(tsx?|jsx?)$/, '');
-  if (name === '__root') return null;
-  name = name.replace(/\[\.\]/g, '.');
-  const parts = name.split('.');
-  if (parts.at(-1) === 'index') parts.pop();
-  const route = '/' + parts.map((part) => part.startsWith('$') ? '[^/]+' : part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('/');
-  return new RegExp(`^${route === '/' ? '/' : route}/?$`);
+  const name = path.relative(ROUTES_ROOT, file).replace(/\\/g, '/');
+  return routeRegexFromRouteName(name);
 }
 
 function normalizeInternal(raw) {
-  if (!raw || raw.startsWith('#') || raw.startsWith('mailto:') || raw.startsWith('tel:') || raw.startsWith('javascript:')) return null;
-  // Route-template literals such as /elections/races/$raceSlug are source-code
-  // patterns, not user-facing links. They are validated by route/type checks.
-  if (raw.includes('${') || raw.includes('{') || raw.includes('}') || raw.includes('$')) return null;
-  try {
-    const url = new URL(raw, SITE);
-    if (!['keeptxred.com', 'www.keeptxred.com'].includes(url.hostname)) return null;
-    return url.pathname.replace(/\/{2,}/g, '/') || '/';
-  } catch {
-    return null;
-  }
+  const pathname = normalizeInternalLink(raw, SITE);
+  return pathname && isNavigationalPath(pathname) ? pathname : null;
 }
 
 function extractLinks(text) {
-  const found = new Set();
-  const patterns = [
-    /(?:href|to|url|canonical|loc)\s*[:=]\s*["'`]([^"'`]+)["'`]/gi,
-    /\]\((https?:\/\/keeptxred\.com[^)\s]*|\/[^)\s]*)\)/gi,
-    /https?:\/\/(?:www\.)?keeptxred\.com\/[A-Za-z0-9_?&=/%#.-]*/gi,
-  ];
-  for (const pattern of patterns) {
-    for (const match of text.matchAll(pattern)) found.add(match[1] || match[0]);
-  }
-  return [...found];
+  return extractLinkCandidates(text);
+}
+
+function isRetiredPath(pathname) {
+  return RETIRED_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(prefix + '/'));
+}
+
+function auditFetchUrl(canonicalUrl) {
+  const target = new URL(canonicalUrl, SITE);
+  if (target.origin !== SITE_ORIGIN || FETCH_ORIGIN === SITE_ORIGIN) return target.href;
+  return new URL(`${target.pathname}${target.search}`, `${FETCH_ORIGIN}/`).href;
 }
 
 async function staticAudit() {
-  const routeFiles = await walk(path.join(ROOT, 'src', 'routes'));
+  const routeFiles = await walk(ROUTES_ROOT);
   const routeRegexes = routeFiles.map(routeRegexFromFile).filter(Boolean);
+  const publicAssetPaths = await collectPublicAssetPaths();
   const findings = [];
+
   for (const root of SCAN_ROOTS) {
     const absolute = path.join(ROOT, root);
     try { await fs.access(absolute); } catch { continue; }
+
     for (const file of await walk(absolute)) {
+      if (!shouldScanRuntimeLinks(file)) continue;
       const text = await fs.readFile(file, 'utf8');
       const lines = text.split(/\r?\n/);
+
       lines.forEach((line, index) => {
         for (const raw of extractLinks(line)) {
           const pathname = normalizeInternal(raw);
           if (!pathname || IGNORE_PREFIXES.some((prefix) => pathname.startsWith(prefix))) continue;
-          const retired = RETIRED_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(prefix + '/'));
+
+          const retired = isRetiredPath(pathname);
           const matched = routeRegexes.some((regex) => regex.test(pathname));
-          if (retired || !matched) findings.push({
-            type: retired ? 'retired-internal-link' : 'unmatched-internal-route',
-            severity: retired ? 'migration-debt' : 'blocking',
-            file: path.relative(ROOT, file), line: index + 1, raw, pathname,
-          });
+          let publicAsset = false;
+          try { publicAsset = publicAssetPaths.has(decodeURIComponent(pathname)); } catch { publicAsset = false; }
+
+          if (retired || (!matched && !publicAsset)) {
+            findings.push({
+              type: retired ? 'retired-internal-link' : 'unmatched-internal-route',
+              severity: retired ? 'migration-debt' : 'blocking',
+              file: path.relative(ROOT, file),
+              line: index + 1,
+              raw,
+              pathname,
+            });
+          }
         }
       });
     }
   }
+
   return findings;
 }
 
 async function fetchText(url) {
+  const requestUrl = auditFetchUrl(url);
   let lastError;
   for (let attempt = 1; attempt <= MAX_FETCH_ATTEMPTS; attempt += 1) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 20000);
     try {
-      const response = await fetch(url, {
+      const response = await fetch(requestUrl, {
         redirect: 'follow',
         signal: controller.signal,
-        headers: { 'user-agent': 'KeepTXRed-Link-Audit/1.1' },
+        headers: AUDIT_REQUEST_HEADERS,
       });
       const text = await response.text();
-      if (response.status < 500 || attempt === MAX_FETCH_ATTEMPTS) return { response, text, attempts: attempt };
+      if (response.status < 500 || attempt === MAX_FETCH_ATTEMPTS) return { response, text, attempts: attempt, requestUrl };
       lastError = new Error(`HTTP ${response.status}`);
     } catch (error) {
       lastError = error;
@@ -120,7 +162,7 @@ async function fetchText(url) {
 }
 
 function xmlLocs(xml) {
-  return [...xml.matchAll(/<loc>(.*?)<\/loc>/gi)].map((m) => m[1].replace(/&amp;/g, '&'));
+  return [...xml.matchAll(/<loc>(.*?)<\/loc>/gi)].map((match) => match[1].replace(/&amp;/g, '&'));
 }
 
 async function collectSitemapUrls(url, seen = new Set()) {
@@ -144,11 +186,13 @@ async function liveAudit() {
   const entries = await collectSitemapUrls(sitemap);
   const failures = [];
   const pages = entries.filter((entry) => typeof entry === 'string');
+
   failures.push(...entries.filter((entry) => typeof entry !== 'string').map((entry) => ({
     type: entry.sitemapFailure ? 'sitemap-http-error' : 'sitemap-request-error',
     severity: 'blocking',
     ...entry,
   })));
+
   let cursor = 0;
   const workers = Array.from({ length: 8 }, async () => {
     while (cursor < pages.length) {
@@ -157,9 +201,11 @@ async function liveAudit() {
         const { response, text, attempts } = await fetchText(url);
         if (!response.ok) failures.push({ type: 'page-http-error', severity: 'blocking', url, status: response.status, attempts });
         if (/text\/html/i.test(response.headers.get('content-type') || '')) {
-          const links = extractLinks(text).map((raw) => ({ raw, pathname: normalizeInternal(raw) })).filter((x) => x.pathname);
+          const links = extractLinks(text)
+            .map((raw) => ({ raw, pathname: normalizeInternal(raw) }))
+            .filter((item) => item.pathname);
           for (const link of links) {
-            if (RETIRED_PREFIXES.some((prefix) => link.pathname === prefix || link.pathname.startsWith(prefix + '/'))) {
+            if (isRetiredPath(link.pathname)) {
               failures.push({ type: 'live-retired-link', severity: 'migration-debt', source: url, ...link });
             }
           }
@@ -169,8 +215,29 @@ async function liveAudit() {
       }
     }
   });
+
   await Promise.all(workers);
   return { pagesChecked: pages.length, failures };
+}
+
+function printBlockingStaticFindings(findings) {
+  if (!findings.length) return;
+  const counts = new Map();
+  for (const item of findings) counts.set(item.pathname, (counts.get(item.pathname) ?? 0) + 1);
+  const grouped = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  console.log('\nBlocking static targets by frequency:');
+  for (const [pathname, count] of grouped) console.log(`- ${count} × ${pathname}`);
+  console.log('\nBlocking static findings:');
+  for (const item of findings) console.log(`- ${item.file}:${item.line} ${item.pathname} (${item.raw})`);
+}
+
+function printBlockingLiveFailures(failures) {
+  if (!failures.length) return;
+  console.log('\nBlocking live failures:');
+  for (const item of failures) {
+    const detail = item.status ?? item.sitemapFailure ?? item.error ?? item.sitemapRequestError ?? '';
+    console.log(`- ${item.type}: ${item.url || item.source || ''} ${detail}`.trim());
+  }
 }
 
 const staticFindings = await staticAudit();
@@ -179,8 +246,12 @@ const blockingStatic = staticFindings.filter((item) => item.severity === 'blocki
 const migrationStatic = staticFindings.filter((item) => item.severity === 'migration-debt');
 const blockingLive = live.failures.filter((item) => item.severity === 'blocking');
 const migrationLive = live.failures.filter((item) => item.severity === 'migration-debt');
+
 const report = {
-  generatedAt: new Date().toISOString(), site: SITE, liveEnabled: LIVE,
+  generatedAt: new Date().toISOString(),
+  site: SITE,
+  liveFetchOrigin: FETCH_ORIGIN,
+  liveEnabled: LIVE,
   summary: {
     staticFindings: staticFindings.length,
     blockingStaticFindings: blockingStatic.length,
@@ -193,7 +264,10 @@ const report = {
   staticFindings,
   liveFailures: live.failures,
 };
+
 await fs.mkdir(path.join(ROOT, 'artifacts'), { recursive: true });
 await fs.writeFile(path.join(ROOT, 'artifacts', 'broken-link-audit.json'), JSON.stringify(report, null, 2) + '\n');
 console.log(JSON.stringify(report.summary, null, 2));
+printBlockingStaticFindings(blockingStatic);
+printBlockingLiveFailures(blockingLive);
 if (blockingStatic.length || blockingLive.length) process.exitCode = 1;

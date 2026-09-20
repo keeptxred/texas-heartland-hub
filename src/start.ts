@@ -2,6 +2,7 @@ import { createCsrfMiddleware, createStart, createMiddleware } from "@tanstack/r
 
 import { renderErrorPage } from "./lib/error-page";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
+import { isExplicitlyRetiredStaticNewsPath } from "@/lib/retired-static-news";
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
@@ -26,6 +27,7 @@ const LEGACY_ELECTION_PATHS = new Map([
   ["/election-central", "/elections/2026"],
   ["/texas-elections", "/elections/2026"],
   ["/elections-2026", "/elections/2026"],
+  ["/candidate-guides", "/elections/2026"],
   ["/texas-news/elections", "/elections/2026"],
   ["/elections/forecasts", "/elections/forecast"],
   ["/elections/statewide-races", "/elections/statewide"],
@@ -40,8 +42,6 @@ const LEGACY_ELECTION_PATHS = new Map([
 ]);
 const LEGACY_CONTENT_PATHS = new Map([
   ["/houston-news", "/houston"],
-  ["/property-taxes", "/texas/property-taxes-2026"],
-  ["/favicon.ico", "/__l5e/assets-v1/44ccd7e8-589f-48c9-b255-0b52bb83c041/red-texas-icon.png"],
   ["/texas-news/tax-spending", "/texas-economy"],
   ["/texas-news/legislature", "/texas-legislature"],
   ["/texas-news/border", "/texas-border-security"],
@@ -50,6 +50,19 @@ const LEGACY_CONTENT_PATHS = new Map([
   ["/hubs/texas-policy-law", "/laws"],
   ["/hubs/texas-politics", "/texas-politics"],
   ["/hubs/texas-economy", "/texas-economy"],
+  ["/news/texas-constitutional-amendments-guide", "/laws/constitutional-amendments"],
+]);
+const EXTERNAL_LEGACY_REDIRECTS = new Map([
+  ["/tax-calculator", "https://texasdefined.com/decide/property-taxes"],
+  ["/property-taxes", "https://texasdefined.com/learn/property-taxes"],
+  ["/texas/property-taxes-2026", "https://texasdefined.com/learn/property-taxes"],
+  ["/news/texas-property-tax-guide", "https://texasdefined.com/learn/property-taxes"],
+  ["/news/homestead-exemption-explained", "https://texasdefined.com/do/homestead-exemption"],
+  ["/news/appraisal-protest-playbook", "https://texasdefined.com/do/property-tax-protest"],
+  ["/news/county-appraisal-districts-explained", "https://texasdefined.com/learn/appraisal-districts"],
+  ["/texas-property-tax-protest-guide", "https://texasdefined.com/do/property-tax-protest"],
+  ["/texas-financial-tools", "https://texasdefined.com/decide/financial-tools"],
+  ["/living-in-texas", "https://texasdefined.com/texas-living"],
 ]);
 const BAD_YEAR_NEWS_REDIRECTS = new Map([
   ["live-2001-01-28-texas-voter-registration-deadline-approaching-essential-guide-for-the--6rien8", "live-2026-01-28-texas-voter-registration-deadline-approaching-essential-guide-for-the--6rien8"],
@@ -82,6 +95,8 @@ const BAD_YEAR_NEWS_REDIRECTS = new Map([
   ["live-2001-12-18-texas-secretary-of-state-announces-temporary-relocation-of-public-serv-mdazcr", "live-2025-12-18-texas-secretary-of-state-announces-temporary-relocation-of-public-serv-mdazcr"],
 ]);
 const CANONICAL_ORIGIN = "https://keeptxred.com";
+const DIRECT_WORKER_HOST = "keeptxred-site.freddy-coppola.workers.dev";
+const DEPLOYMENT_SMOKE_HEADER = "x-keeptxred-deployment-smoke";
 
 const TRACKING_PARAMS = new Set([
   "fbclid",
@@ -126,8 +141,6 @@ function isTrackingParam(name: string): boolean {
   return normalized.startsWith("utm_") || TRACKING_PARAMS.has(normalized);
 }
 
-// Parameter-specific cleanup: only known tracking keys are removed, so
-// legitimate application query state is preserved.
 function stripTrackingParams(url: URL): void {
   for (const key of Array.from(url.searchParams.keys())) {
     if (isTrackingParam(key)) url.searchParams.delete(key);
@@ -159,8 +172,8 @@ function buildCanonicalTarget(url: URL): URL {
   const target = new URL(url.toString());
   target.pathname = resolveLegacyPath(target.pathname);
 
-  const topic = target.searchParams.get("topic");
-  if (topic && TOPIC_REDIRECT_PATHS.has(target.pathname)) {
+  if (TOPIC_REDIRECT_PATHS.has(target.pathname) && target.searchParams.has("topic")) {
+    const topic = target.searchParams.get("topic") ?? "";
     const slug = slugify(topic);
     if (slug) target.pathname = `${target.pathname}/${slug}`;
     target.searchParams.delete("topic");
@@ -189,21 +202,48 @@ function hasNoindexState(url: URL): boolean {
 
 const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
   const url = new URL(request.url);
+  const directHost = url.host.toLowerCase();
+  const isDirectDeploymentSmoke =
+    directHost === DIRECT_WORKER_HOST
+    && request.headers.get(DEPLOYMENT_SMOKE_HEADER)?.trim().toLowerCase() === "canonical";
   const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
-  const requestHost = (forwardedHost || url.host).toLowerCase();
+  const forwardedProto = request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim().toLowerCase();
+  const requestHost = isDirectDeploymentSmoke ? "keeptxred.com" : (forwardedHost || directHost).toLowerCase();
+  const requestProto = forwardedProto || url.protocol.replace(":", "").toLowerCase();
   const canRedirect = request.method === "GET" || request.method === "HEAD";
-  const excludedPath = url.pathname.startsWith("/lovable/") || url.pathname === "/email/unsubscribe";
+  const isDirectAuthorityReference =
+    directHost === DIRECT_WORKER_HOST
+    && (
+      url.pathname === "/elections/reference.json"
+      || /^\/bills\/texas\/\d+\/[a-zA-Z]+\/\d+\/reference\.json\/?$/.test(url.pathname)
+    );
+  const excludedPath =
+    url.pathname === "/email/unsubscribe"
+    || url.pathname === "/api/public/hooks/health"
+    || isDirectAuthorityReference;
 
   if (canRedirect && !excludedPath) {
     const target = buildCanonicalTarget(url);
-    const hostChanged = requestHost === "www.keeptxred.com";
+    const externalTarget = EXTERNAL_LEGACY_REDIRECTS.get(target.pathname.toLowerCase());
+    if (externalTarget) {
+      const finalUrl = new URL(externalTarget);
+      target.searchParams.forEach((value, key) => finalUrl.searchParams.append(key, value));
+      return new Response(null, {
+        status: 301,
+        headers: {
+          location: finalUrl.toString(),
+          "cache-control": "public, max-age=86400",
+        },
+      });
+    }
+
+    const hostChanged = requestHost !== "keeptxred.com";
+    const protocolChanged = requestProto !== "https";
     const pathChanged = target.pathname !== url.pathname;
     const queryChanged = target.search !== url.search;
 
-    if (hostChanged || pathChanged || queryChanged) {
-      const location = hostChanged
-        ? `${CANONICAL_ORIGIN}${target.pathname}${target.search}`
-        : `${target.pathname}${target.search}`;
+    if (hostChanged || protocolChanged || pathChanged || queryChanged) {
+      const location = `${CANONICAL_ORIGIN}${target.pathname}${target.search}`;
       return new Response(null, {
         status: 301,
         headers: {
@@ -214,14 +254,21 @@ const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
     }
   }
 
+  if (canRedirect && !excludedPath && isExplicitlyRetiredStaticNewsPath(url.pathname)) {
+    return new Response(renderErrorPage(), {
+      status: 404,
+      headers: {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex, follow",
+        "cache-control": "public, max-age=300",
+      },
+    });
+  }
+
   if (excludedPath) return next();
 
   const result = await next();
 
-  // Shareable filters and UI states remain usable, but do not compete with
-  // their clean canonical route in search results. Clean bill page 2+ URLs are
-  // an explicit exception because those routes self-canonicalize and are part
-  // of the bill discovery hierarchy.
   const shouldNoindex = hasNoindexState(url) || result.response.status === 404 || result.response.status === 410;
   if (shouldNoindex) {
     try {

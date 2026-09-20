@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "mindybumgarner.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Mindy Bumgarner's verified official State Board of Education District 14 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Mindy Bumgarner State Board of Education District 14 mindybumgarner.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 25, 2026. The live site identifies Mindy Bumgarner as a candidate for Texas State Board of Education District 14 and publishes campaign contact information; TCTA independently links mindybumgarner.com as her campaign website for the same office. The current campaign page exposes campaign imagery, but this registry entry does not by itself approve any non-portrait graphic as the canonical candidate portrait."
+  },
+  {
+    "domain": "timforhouse.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Tim McDonough's verified official Texas House District 114 campaign website for editorial candidate identification only after the page and image independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated imagery.",
+    "searchHint": "Tim McDonough Texas House District 114 timforhouse.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 25, 2026. TCTA's current candidate profile identifies Tim McDonough as the Republican candidate for Texas House District 114 and links timforhouse.com as his campaign website. The source is registered for follow-on image validation; no portrait is approved solely from this registry entry."
+  },
+  {
+    "domain": "skyegarciafortexas.com",
+    "sourceClass": "candidate-linked-campaign-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use this candidate-controlled campaign page only as a discovery bridge to official candidate campaign domains or clearly candidate-supplied imagery. Do not treat directory thumbnails as reusable portraits without independent provenance and rights validation for the depicted candidate.",
+    "searchHint": "Texas House candidate campaign links skyegarciafortexas.com Will Campbell Stephen Stanley Tim McDonough Danny Rosellini",
+    "notes": "New discovery bridge verified August 25, 2026. The Skye Garcia campaign site contains a current candidate-support section linking multiple 2026 Texas House campaign domains, including timforhouse.com, and can expose additional candidate-controlled sources that were not previously registered. It is discovery-only and must not bypass item-level provenance checks."
+  }
+]

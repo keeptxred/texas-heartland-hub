@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "ballotready.org",
+    "sourceClass": "nonpartisan-candidate-guide",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use BallotReady candidate profiles to verify candidate identity, office, campaign-linked webpages, and discover candidate-specific headshot leads. Do not approve or reuse BallotReady-hosted images without item-level provenance plus explicit reusable rights, candidate/media permission, or another documented editorial permission basis.",
+    "searchHint": "BallotReady Texas 2026 candidate headshot official campaign",
+    "notes": "Discovered September 2, 2026 while researching unresolved Texas candidates. Current candidate profiles expose candidate-specific headshots and verified outbound webpages; useful as a discovery bridge only unless item-level image rights are separately documented."
+  },
+  {
+    "domain": "tcta.org",
+    "sourceClass": "professional-association-voter-guide",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the Texas Classroom Teachers Association TexasTeachersVote candidate pages to verify candidate identity, office, and discover candidate-specific portrait leads and downstream campaign sources. Do not approve or reuse TCTA-hosted images without item-level provenance plus explicit reusable rights, candidate/media permission, or another documented editorial permission basis.",
+    "searchHint": "site:tcta.org TexasTeachersVote 2026 Texas House candidate portrait",
+    "notes": "Discovered September 2, 2026 while researching unresolved Texas House candidates. The current Rhett Rosenquest Smith District 116 profile includes a candidate-specific image, but hosted imagery remains discovery-only absent item-level reuse permission."
+  },
+  {
+    "domain": "sanantonioreport.org",
+    "sourceClass": "reputable-news-candidate-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use San Antonio Report 2026 candidate profile pages to verify candidate identity, office, biography, and discover candidate-specific portrait leads. Approve a newsroom-hosted image only when the page or associated metadata documents candidate-supplied media, a reusable license, explicit permission, or another narrow editorial-identification permission basis; otherwise keep the image discovery-only.",
+    "searchHint": "site:sanantonioreport.org 2026 candidate Texas House portrait",
+    "notes": "Discovered September 2, 2026 while researching unresolved Texas House District 116 candidate Rhett Rosenquest Smith. Candidate archive pages provide candidate-specific profile imagery and can lead to attributable portrait sources, but no blanket image reuse right is asserted."
+  }
+]

@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "votetexasvalues.org",
+    "sourceClass": "current-election-candidate-directory-and-campaign-bridge",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use VoteTexasValues current 2026 Texas race and candidate pages to corroborate candidate identity, office, general-election field, and discover downstream campaign websites or candidate-specific image leads. Do not approve or reuse VoteTexasValues-hosted imagery without item-level provenance plus an explicit reusable license, candidate/media permission, candidate-supplied newsroom basis, or another documented narrow editorial-identification basis. Treat generic, logo, placeholder, or non-candidate imagery as ineligible.",
+    "searchHint": "site:votetexasvalues.org/races Texas candidate name district campaign website headshot",
+    "notes": "New source discovered September 1, 2026 while researching still-missing Texas House candidates. The current statewide directory lists the 2026 general-election field across statewide, congressional, legislative, judicial, and local races and exposes candidate-specific headshots and campaign-link fields for candidates including Scott Whitmarsh (HD131), Kyle Harding (HD139), Laura Garcia DeLeon (HD140), Julie Hunt (HD141), Heidi Hall (HD142), Frank Salazar (HD143), Inocensia Moreno (HD145), and Theodis Daniel (HD147). Registered as discovery-only; hosted images must not be counted without independent item-level provenance and rights review."
+  }
+]

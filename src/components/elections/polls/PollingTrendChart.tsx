@@ -36,13 +36,14 @@ export function PollingTrendChart({ polls }: PollingTrendChartProps) {
   return (
     <section
       aria-labelledby="polling-trend-heading"
-      className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+      className="rounded-xl border border-border bg-card p-5 shadow-sm"
     >
-      <div className="mb-4">
-        <h2 id="polling-trend-heading" className="text-lg font-bold text-slate-950">
+      <div className="mb-5">
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Polling over time</p>
+        <h2 id="polling-trend-heading" className="mt-1 text-lg font-bold text-foreground">
           Polling trend
         </h2>
-        <p className="text-sm text-slate-600">
+        <p className="mt-1 text-sm text-muted-foreground">
           Published candidate toplines by poll field-end date. Values are not interpolated.
         </p>
       </div>
@@ -91,7 +92,7 @@ export function PollingTrendChart({ polls }: PollingTrendChartProps) {
           ))}
         </LineChart>
       </ChartContainer>
-      <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm text-slate-700">
+      <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground">
         {trend.candidates.map((candidate, index) => (
           <li key={candidate.key} className="flex items-center gap-2">
             <span

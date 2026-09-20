@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-30T00:39:00Z",
+  "generatedAt": "2026-08-22T07:46:00Z",
   "raceIds": [
     "race-2026-texas-supreme-court-place-1",
     "race-2026-texas-supreme-court-place-2",
@@ -30,9 +30,9 @@
       "campaignUrl": "https://charikelly.com/",
       "pressUrl": "https://charikelly.com/",
       "pressEmail": null,
-      "photoSourceUrl": "https://charikelly.com/",
-      "status": "official-campaign-source",
-      "notes": "Official campaign website for the Democratic nominee for Supreme Court Place 2."
+      "photoSourceUrl": "https://www.txcourts.gov/3rdcoa/about-the-court/justices/justice-chari-l-kelly/",
+      "status": "official-campaign-and-government-source",
+      "notes": "Official campaign website plus the Texas Judicial Branch Third Court of Appeals biography and portrait."
     },
     {
       "candidateId": "candidate-james-p-sullivan-republican-race-2026-texas-supreme-court-place-2",
@@ -48,9 +48,9 @@
       "campaignUrl": "https://judgehawkins.com/",
       "pressUrl": "https://judgehawkins.com/",
       "pressEmail": null,
-      "photoSourceUrl": "https://judgehawkins.com/",
+      "photoSourceUrl": "https://judgehawkins.com/about/",
       "status": "official-campaign-source",
-      "notes": "Official campaign website for the Democratic nominee for Supreme Court Place 7."
+      "notes": "Official campaign website for the Democratic nominee for Supreme Court Place 7, including a high-resolution judge portrait."
     },
     {
       "candidateId": "candidate-kyle-hawkins-republican-race-2026-texas-supreme-court-place-7",
@@ -82,6 +82,17 @@
   ],
   "assets": [
     {
+      "candidateId": "candidate-maggie-ellis-democratic-race-2026-texas-supreme-court-place-1",
+      "assetType": "campaign-portrait",
+      "imageUrl": "https://images.squarespace-cdn.com/content/v1/5ffe1e10830ce5345e720df1/fc9a7df2-b728-43b4-87fb-668b570bf316/ellis1.jpg",
+      "sourceUrl": "https://www.maggieforjustice.com/",
+      "altText": "Maggie Ellis, Democratic nominee for Chief Justice of the Texas Supreme Court",
+      "credit": "Maggie Ellis campaign",
+      "license": null,
+      "permissionBasis": "Candidate portrait published on the official campaign website and used for editorial candidate identification with attribution and a source link.",
+      "usageStatus": "approved"
+    },
+    {
       "candidateId": "candidate-jimmy-blacklock-republican-race-2026-texas-supreme-court-place-1",
       "assetType": "official-court-portrait",
       "imageUrl": "https://www.txcourts.gov/media/1460030/chief-justice-jimmy-blacklock-web.jpg",
@@ -93,6 +104,28 @@
       "usageStatus": "approved"
     },
     {
+      "candidateId": "candidate-chari-kelly-democratic-race-2026-texas-supreme-court-place-2",
+      "assetType": "official-appellate-portrait",
+      "imageUrl": "https://txcourts.gov/media/1445093/kelly-1.jpg",
+      "sourceUrl": "https://txcourts.gov/3rdcoa/about-the-court/justices/justice-chari-l-kelly/",
+      "altText": "Official portrait of Third Court of Appeals Justice Chari L. Kelly",
+      "credit": "Texas Judicial Branch",
+      "license": null,
+      "permissionBasis": "Official Texas government appellate-court portrait used for informational candidate identification with source attribution.",
+      "usageStatus": "approved"
+    },
+    {
+      "candidateId": "candidate-kristen-hawkins-democratic-race-2026-texas-supreme-court-place-7",
+      "assetType": "campaign-judge-portrait",
+      "imageUrl": "https://judgehawkins.com/wp-content/uploads/2024/02/Judge-Kristen-Hawkins-127-HR-scaled.jpg",
+      "sourceUrl": "https://judgehawkins.com/about/",
+      "altText": "Judge Kristen Hawkins, Democratic nominee for Texas Supreme Court Place 7",
+      "credit": "Kristen Hawkins campaign",
+      "license": null,
+      "permissionBasis": "High-resolution candidate portrait published on the official judicial campaign biography page and used for editorial candidate identification with attribution and a source link.",
+      "usageStatus": "approved"
+    },
+    {
       "candidateId": "candidate-kyle-hawkins-republican-race-2026-texas-supreme-court-place-7",
       "assetType": "official-court-portrait",
       "imageUrl": "https://www.txcourts.gov/media/1461570/justice-kyle-hawkins.jpg",
@@ -101,6 +134,17 @@
       "credit": "Texas Judicial Branch",
       "license": null,
       "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
+      "usageStatus": "approved"
+    },
+    {
+      "candidateId": "candidate-gisela-d-triana-democratic-race-2026-texas-supreme-court-place-8",
+      "assetType": "campaign-portrait",
+      "imageUrl": "https://www.justicetriana.com/wp-content/uploads/2018/05/Donate-GiselaPortraits-41.jpg",
+      "sourceUrl": "https://www.justicetriana.com/",
+      "altText": "Justice Gisela Triana, Democratic nominee for Texas Supreme Court Place 8",
+      "credit": "Justice Gisela Triana campaign",
+      "license": null,
+      "permissionBasis": "Candidate portrait published on the official campaign website and used for editorial candidate identification with attribution and a source link.",
       "usageStatus": "approved"
     },
     {

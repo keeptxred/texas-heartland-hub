@@ -16,10 +16,10 @@ export default defineConfig({
     screenshot: "only-on-failure",
   },
   webServer: {
-    command: "bun run dev -- --host 127.0.0.1 --port 4173",
+    command: "bun run build && bun run preview -- --host 127.0.0.1 --port 4173",
     url: "http://127.0.0.1:4173",
     reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
+    timeout: 180_000,
   },
   projects: [{ name: "mobile-chromium", use: { browserName: "chromium" } }],
 });

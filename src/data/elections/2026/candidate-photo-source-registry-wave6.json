@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "texasattorneygeneral.gov",
+    "sourceClass": "official-texas-executive-profile",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying portraits hosted on the official Office of the Attorney General of Texas biography or leadership pages with source attribution.",
+    "searchHint": "site:texasattorneygeneral.gov candidate name biography portrait",
+    "notes": "Verified August 22, 2026 through the official Attorney General biography page and its directly hosted Ken Paxton portrait."
+  },
+  {
+    "domain": "vote-usa.org",
+    "sourceClass": "candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use candidate pages to locate campaign websites and confirm current candidate context. Do not copy portrait assets without a separately documented reusable-rights or editorial permission basis.",
+    "searchHint": "site:vote-usa.org candidate name Texas 2026",
+    "notes": "Verified August 22, 2026 as a current candidate directory that exposes campaign website links and race context."
+  },
+  {
+    "domain": "whistlestopeasttx.us",
+    "sourceClass": "local-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use nominee pages to locate the candidate's official website and social profiles. Do not reuse directory imagery without separate provenance and rights verification.",
+    "searchHint": "site:whistlestopeasttx.us/nominees candidate name",
+    "notes": "Verified August 22, 2026 as an East Texas candidate directory with official-site links; useful for downstream source discovery only."
+  }
+]

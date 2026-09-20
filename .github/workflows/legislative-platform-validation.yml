@@ -49,6 +49,14 @@ jobs:
         run: node scripts/legislature/validate-bill-crawl-urls.mjs
       - name: Validate article-to-bill display
         run: node scripts/legislature/validate-article-bill-display.mjs
+      - name: Validate bill article session disambiguation
+        run: node scripts/legislature/validate-bill-article-session-disambiguation.mjs
+      - name: Validate bill directory session labels
+        run: node scripts/legislature/validate-bill-session-labels.mjs
+      - name: Validate bill lifecycle dates
+        run: node scripts/legislature/validate-bill-lifecycle-dates.mjs
+      - name: Validate structured bill effective dates
+        run: node scripts/legislature/validate-structured-effective-dates.mjs
       - name: Validate bill analysis summaries
         run: node scripts/legislature/validate-bill-analysis-summary.mjs
       - name: Validate bill fiscal impact display
@@ -57,3 +65,5 @@ jobs:
         run: node scripts/legislature/validate-bill-source-agencies.mjs
       - name: Validate bill witness summaries
         run: node scripts/legislature/validate-bill-witness-summary.mjs
+      - name: Validate legislative admin authentication
+        run: node scripts/legislature/validate-admin-passcode-fail-closed.mjs

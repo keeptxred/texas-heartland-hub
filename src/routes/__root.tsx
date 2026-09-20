@@ -1,58 +1,55 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
-  Link,
   createRootRouteWithContext,
-  useLocation,
   useRouter,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "../components/site-header";
 import { SiteFooter } from "../components/site-footer";
+import { SiteNotFound } from "../components/site-not-found";
+import { ArticleSourceTransparencyPanel } from "../components/article-source-transparency";
+import { ShopAnalyticsTracker } from "../components/analytics/ShopAnalyticsTracker";
 import { organizationJsonLd } from "../lib/seo";
-import { exploreDestinations } from "../data/explore/all-destinations";
-import { isPublicCavernDestination, relatedCaverns } from "../lib/explore/cavern-discovery";
-import {
-  buildCavernBreadcrumbSchema,
-  buildRelatedCavernItemListSchema,
-} from "../lib/explore/cavern-structured-data";
 
-function NotFoundComponent() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
-        </p>
-        <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Go home
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
-}
+const ADSENSE_CLIENT = "ca-pub-1891256141359926";
+const ADSENSE_SCRIPT = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`;
+const ICON_VERSION = "20260822";
+const ADSENSE_EXCLUDED_PATH_PREFIXES = [
+  "/admin",
+  "/api",
+  "/auth",
+  "/shop",
+  "/product-offer",
+  "/privacy",
+  "/terms-of-service",
+  "/return-refund-policy",
+  "/shipping-policy",
+  "/contact",
+  "/about",
+  "/editorial-standards",
+  "/authors",
+  "/sources",
+  "/news",
+] as const;
+const ADSENSE_EXCLUDED_DETAIL_PATH_PREFIXES = [
+  "/elections/candidates/",
+  "/elections/districts/",
+  "/elections/races/",
+] as const;
+const ADSENSE_BOOTSTRAP = `(function(){function load(){var p=location.pathname;var x=${JSON.stringify(ADSENSE_EXCLUDED_PATH_PREFIXES)};var d=${JSON.stringify(ADSENSE_EXCLUDED_DETAIL_PATH_PREFIXES)};var excluded=x.some(function(prefix){return p===prefix||p.indexOf(prefix+'/')===0;})||d.some(function(prefix){return p.indexOf(prefix)===0;});var noindex=Array.prototype.some.call(document.querySelectorAll('meta[name="robots"]'),function(m){return /(?:^|[,\\s])noindex(?:$|[,\\s])/i.test(m.content||'');});var ineligible=document.querySelector('[data-adsense-ineligible="true"]');if(excluded||noindex||ineligible)return;var s=document.createElement('script');s.async=true;s.crossOrigin='anonymous';s.src='${ADSENSE_SCRIPT}';s.setAttribute('data-adsense-gated','true');document.head.appendChild(s);}if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',load,{once:true});}else{load();}}());`;
+const INFOLINKS_BOOTSTRAP = `(function(){function load(){var h=location.hostname;if(h!=="keeptxred.com"&&h!=="www.keeptxred.com")return;var p=location.pathname;var x=${JSON.stringify(ADSENSE_EXCLUDED_PATH_PREFIXES)};var d=${JSON.stringify(ADSENSE_EXCLUDED_DETAIL_PATH_PREFIXES)};var excluded=x.some(function(prefix){return p===prefix||p.indexOf(prefix+'/')===0;})||d.some(function(prefix){return p.indexOf(prefix)===0;});var noindex=Array.prototype.some.call(document.querySelectorAll('meta[name="robots"]'),function(m){return /(?:^|[,\\s])noindex(?:$|[,\\s])/i.test(m.content||'');});var ineligible=document.querySelector('[data-adsense-ineligible="true"]');if(excluded||noindex||ineligible)return;var infolinks_pid=3446723;var infolinks_wsid=0;window.infolinks_pid=infolinks_pid;window.infolinks_wsid=infolinks_wsid;var s=document.createElement("script");s.async=true;s.src="https://resources.infolinks.com/js/infolinks_main.js";s.setAttribute("data-infolinks-gated","true");document.body.appendChild(s);}if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',load,{once:true});}else{load();}}());`;
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <div data-adsense-ineligible="true" className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">
           This page didn't load
@@ -96,15 +93,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      {
-        rel: "icon",
-        type: "image/png",
-        href: "/__l5e/assets-v1/44ccd7e8-589f-48c9-b255-0b52bb83c041/red-texas-icon.png",
-      },
-      {
-        rel: "apple-touch-icon",
-        href: "/__l5e/assets-v1/44ccd7e8-589f-48c9-b255-0b52bb83c041/red-texas-icon.png",
-      },
+      { rel: "icon", href: `/favicon.ico?v=${ICON_VERSION}`, sizes: "any" },
+      { rel: "icon", type: "image/svg+xml", href: `/keep-tx-red-icon.svg?v=${ICON_VERSION}` },
+      { rel: "shortcut icon", href: `/favicon.ico?v=${ICON_VERSION}` },
+      { rel: "apple-touch-icon", href: `/keep-tx-red-icon.svg?v=${ICON_VERSION}` },
       { rel: "dns-prefetch", href: "https://fonts.googleapis.com" },
       { rel: "dns-prefetch", href: "https://pagead2.googlesyndication.com" },
       { rel: "dns-prefetch", href: "https://googleads.g.doubleclick.net" },
@@ -120,21 +112,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     scripts: [
       {
         children:
-          "(function(){function l(){var s=document.createElement('script');s.async=true;s.crossOrigin='anonymous';s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1891256141359926';document.head.appendChild(s);}if(document.readyState==='complete'){setTimeout(l,1500);}else{window.addEventListener('load',function(){setTimeout(l,1500);});}})();",
-      },
-      {
-        children:
-          "(function(){function l(){var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=G-R7QW1X96TW';document.head.appendChild(s);window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;gtag('js',new Date());gtag('config','G-R7QW1X96TW');}if(document.readyState==='complete'){setTimeout(l,500);}else{window.addEventListener('load',function(){setTimeout(l,500);});}})();",
+          "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-PFLVR74X');",
       },
       {
         type: "application/ld+json",
-        children: JSON.stringify(organizationJsonLd()),
+        children: JSON.stringify({
+          ...organizationJsonLd(),
+          "@type": ["Organization", "NewsMediaOrganization"],
+        }),
       },
     ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
-  notFoundComponent: NotFoundComponent,
+  notFoundComponent: SiteNotFound,
   errorComponent: ErrorComponent,
 });
 
@@ -143,78 +134,23 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <script dangerouslySetInnerHTML={{ __html: ADSENSE_BOOTSTRAP }} />
       </head>
       <body>
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-PFLVR74X"
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+            title="Google Tag Manager"
+          />
+        </noscript>
         {children}
         <Scripts />
+        <script dangerouslySetInnerHTML={{ __html: INFOLINKS_BOOTSTRAP }} />
       </body>
     </html>
-  );
-}
-
-function CavernGuideTrail() {
-  const location = useLocation();
-  const slug = location.pathname.match(/^\/explore\/([^/]+)\/?$/)?.[1];
-  if (!slug || slug === "caverns" || slug === "search" || slug === "trip-planner") return null;
-
-  const cavern = exploreDestinations.find(
-    (destination) => destination.slug === slug && isPublicCavernDestination(destination),
-  );
-  if (!cavern) return null;
-
-  const recommendations = relatedCaverns(cavern, exploreDestinations, 3);
-  const breadcrumbSchema = buildCavernBreadcrumbSchema(cavern);
-  const relatedSchema = buildRelatedCavernItemListSchema(cavern, recommendations);
-  const structuredData = [breadcrumbSchema, relatedSchema].filter(Boolean);
-
-  return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
-        }}
-      />
-      <aside className="border-y bg-muted/30" aria-label="Texas cavern guide navigation">
-        <div className="mx-auto max-w-6xl px-4 py-6">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
-                Texas caverns
-              </p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Compare this destination with other guided cave tours, visitor policies, and
-                underground attractions across Texas.
-              </p>
-            </div>
-            <Link
-              to="/explore/caverns"
-              className="shrink-0 text-sm font-semibold text-primary hover:underline"
-            >
-              Explore all Texas caverns and caves
-            </Link>
-          </div>
-
-          {recommendations.length > 0 && (
-            <div className="mt-5 grid gap-3 sm:grid-cols-3">
-              {recommendations.map((related) => (
-                <Link
-                  key={related.slug}
-                  to="/explore/$slug"
-                  params={{ slug: related.slug }}
-                  className="rounded-lg border bg-background p-4 transition-colors hover:border-primary hover:bg-primary/5"
-                >
-                  <span className="block font-semibold">{related.name}</span>
-                  <span className="mt-1 block text-sm text-muted-foreground">
-                    {[related.city, related.region].filter(Boolean).join(", ")}
-                  </span>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-      </aside>
-    </>
   );
 }
 
@@ -223,11 +159,12 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <ShopAnalyticsTracker />
       <div className="min-h-screen flex flex-col bg-background text-foreground">
         <SiteHeader />
-        <main className="flex-1">
+        <main className="flex-1 [&_article_.prose_section>h2]:text-center">
           <Outlet />
-          <CavernGuideTrail />
+          <ArticleSourceTransparencyPanel />
         </main>
         <SiteFooter />
       </div>

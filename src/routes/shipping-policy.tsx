@@ -1,26 +1,27 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { LegalPage } from "@/components/legal-page";
-import { SITE_URL } from "@/lib/seo";
+import { buildSeo } from "@/lib/seo";
 
-const title = "Shipping Policy | Keep TX Red";
-const description = "Production, delivery estimates, tracking, address changes, delays, and international shipping information for Keep TX Red orders.";
-const canonical = `${SITE_URL}/shipping-policy`;
+const SHIPPING_TITLE = "Shipping Policy";
+const SHIPPING_DESCRIPTION = "Production, delivery estimates, tracking, address changes, delays, and international shipping information for Keep TX Red orders.";
+
+export function shippingPolicyHead() {
+  const seo = buildSeo({
+    title: SHIPPING_TITLE,
+    description: SHIPPING_DESCRIPTION,
+    path: "/shipping-policy",
+    type: "website",
+    imageAlt: "Keep TX Red Shipping Policy",
+  });
+
+  return {
+    meta: seo.meta,
+    links: seo.links,
+  };
+}
 
 export const Route = createFileRoute("/shipping-policy")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: canonical },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: title },
-      { name: "twitter:description", content: description },
-    ],
-    links: [{ rel: "canonical", href: canonical }],
-  }),
+  head: shippingPolicyHead,
   component: ShippingPolicyPage,
 });
 

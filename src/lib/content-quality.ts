@@ -6,6 +6,7 @@
 // input simply produces a lower score / empty output.
 
 import { articleMainWordCount, requiredMainWordCountForKind } from "@/lib/article-length";
+import { applyGeneratedNewsAuthority } from "@/lib/article-authority";
 import { assertKeepTxRedPublication, inferKeepTxRedDomain } from "@/lib/content-publication-guard";
 
 export type QualityRow = {
@@ -23,6 +24,7 @@ export type QualityRow = {
   headline_variants?: { a?: string; b?: string } | null;
   published_at?: string | null;
   kind?: string | null;
+  source_name?: string | null;
   source_url?: string | null;
   internal_url?: string | null;
 };
@@ -104,10 +106,6 @@ const CATEGORY_HUB: Record<string, InternalLink[]> = {
     { label: "Texas Laws", href: "/laws", kind: "hub" },
     { label: "Texas Bills", href: "/bills", kind: "resource" },
   ],
-  Sports: [{ label: "Texas Sports", href: "/texas-sports", kind: "hub" }],
-  NFL: [{ label: "Texas Sports", href: "/texas-sports", kind: "hub" }],
-  MLB: [{ label: "Texas Sports", href: "/texas-sports", kind: "hub" }],
-  NBA: [{ label: "Texas Sports", href: "/texas-sports", kind: "hub" }],
   "Non-Political": [{ label: "Latest Texas News", href: "/news", kind: "hub" }],
 };
 
@@ -149,6 +147,7 @@ export function pickInternalLinks(input: {
     push({ label: "Texas Bills", href: "/bills", kind: "resource" });
   }
   if (/vote|ballot|election|primary/.test(hay)) push({ label: "Election Central", href: "/elections/2026", kind: "hub" });
+  if (/voter|voting|ballot/.test(hay)) push({ label: "Texas Voting Guide", href: "/news/texas-voting-guide-2026", kind: "evergreen" });
   if (/moving|relocat|newcomer|housing market/.test(hay)) push({ label: "Texas Economy", href: "/texas-economy", kind: "hub" });
   ALWAYS_AVAILABLE.forEach(push);
   return out.slice(0, 5);
@@ -267,6 +266,14 @@ export function enrichArticleRow<T extends QualityRow>(row: T): T {
   const impact = buildTexasImpactSummary(text, regions);
   const affiliate = detectAffiliateCategory(text);
   const links = pickInternalLinks({ category: row.category ?? null, title: row.title ?? null, keywords: row.keywords ?? null });
+  const authority = applyGeneratedNewsAuthority({
+    bodyJson: row.body_json,
+    kind: row.kind,
+    sourceName: row.source_name,
+    sourceUrl: row.source_url,
+    internalLinks: links,
+  });
+  row.body_json = authority.bodyJson;
   const imageScore = scoreImage({ url: row.image_url ?? null, title: row.title ?? null, category: row.category ?? null, imageHash: row.image_hash ?? null });
   const quality = scoreQuality(row);
   const bag = row as unknown as Record<string, unknown>;
@@ -276,6 +283,7 @@ export function enrichArticleRow<T extends QualityRow>(row: T): T {
   bag.internal_links = links;
   bag.image_score = imageScore;
   bag.content_quality_score = quality.score;
-  bag.quality_flags = quality.flags.length > 0 ? quality.flags : null;
+  const allQualityFlags = [...new Set([...quality.flags, ...authority.flags])];
+  bag.quality_flags = allQualityFlags.length > 0 ? allQualityFlags : null;
   return row;
 }

@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "votewittliff.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Albert Wittliff's official Texas House District 129 campaign website only after the exact page and image independently validate and clearly identify Wittliff. Preserve campaign attribution and the exact source page. Do not approve campaign logos, event flyers, endorsement media, group photos without an unambiguous subject, or unrelated decorative imagery as the canonical portrait.",
+    "searchHint": "site:votewittliff.com Albert Wittliff Texas House District 129 portrait photo",
+    "notes": "New candidate-controlled source verified August 25, 2026. The live site identifies Albert Wittliff as a candidate for Texas House District 129 and carries the political-ad disclaimer for Vote Wittliff TX129. TCTA independently links votewittliff.com from Wittliff's current candidate profile. The current crawl prominently exposes event graphics and campaign branding, so portrait approval remains item-level review only until a specific candidate image validates."
+  },
+  {
+    "domain": "margofortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Margo Jordan's official State Board of Education District 6 campaign website only after the exact page and image independently validate and clearly identify Jordan. Preserve campaign attribution and the exact source page. Do not approve campaign logos, issue graphics, embedded widgets, stock imagery, group photos without an unambiguous subject, or unrelated decorative imagery as the canonical portrait.",
+    "searchHint": "site:margofortexas.com Margo Jordan State Board Education District 6 portrait photo",
+    "notes": "New candidate-controlled source verified August 25, 2026. The live site explicitly identifies Margo Jordan as running for the Texas State Board of Education and provides a candidate biography; her current LinkedIn candidacy announcement independently corroborates the race. The page exposes an image surface but not enough crawlable image metadata to approve a portrait without item-level validation."
+  }
+]

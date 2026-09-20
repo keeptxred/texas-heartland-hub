@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-08T13:12:14.700Z",
+  "generatedAt": "2026-09-09T16:38:02.644Z",
   "authoritySources": [
     "Texas Secretary of State Qualified Candidate Listing",
     "Keep TX Red verified election race registry"
@@ -934,6 +934,26 @@
       ]
     },
     {
+      "id": "candidate-avery-ayers-other-race-2026-us-senate",
+      "aliases": [
+        "AVERY AYERS",
+        "Avery Ayers"
+      ],
+      "party": "other",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-us-senate",
+          "electionYear": 2026,
+          "office": "U.S. Senate",
+          "officeLevel": "federal",
+          "districtId": null,
+          "districtName": null,
+          "districtNumber": null
+        }
+      ]
+    },
+    {
       "id": "candidate-barbara-gervin-hawkins-democratic-race-2026-texas-house-120",
       "aliases": [
         "BARBARA GERVIN HAWKINS",
@@ -1256,6 +1276,26 @@
       ]
     },
     {
+      "id": "candidate-bradford-brad-hall-other-race-2026-us-senate",
+      "aliases": [
+        "BRADFORD \"BRAD\" HALL",
+        "Bradford \"brad\" Hall"
+      ],
+      "party": "other",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-us-senate",
+          "electionYear": 2026,
+          "office": "U.S. Senate",
+          "officeLevel": "federal",
+          "districtId": null,
+          "districtName": null,
+          "districtNumber": null
+        }
+      ]
+    },
+    {
       "id": "candidate-brandon-gill-republican-race-2026-us-house-26",
       "aliases": [
         "BRANDON GILL",
@@ -1540,6 +1580,26 @@
           "districtId": "district-texas-house-84",
           "districtName": "Texas House District 84",
           "districtNumber": "84"
+        }
+      ]
+    },
+    {
+      "id": "candidate-carlos-charlie-garza-republican-race-2026-state-board-of-education-13",
+      "aliases": [
+        "CARLOS (CHARLIE) GARZA",
+        "Carlos (charlie) Garza"
+      ],
+      "party": "republican",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-state-board-of-education-13",
+          "electionYear": 2026,
+          "office": "State Board of Education",
+          "officeLevel": "state",
+          "districtId": "district-state-board-of-education-13",
+          "districtName": "State Board of Education District 13",
+          "districtNumber": "13"
         }
       ]
     },
@@ -3042,6 +3102,26 @@
       ]
     },
     {
+      "id": "candidate-edward-earl-giles-other-race-2026-governor",
+      "aliases": [
+        "EDWARD EARL GILES",
+        "Edward Earl Giles"
+      ],
+      "party": "other",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-governor",
+          "electionYear": 2026,
+          "office": "Governor",
+          "officeLevel": "state",
+          "districtId": null,
+          "districtName": null,
+          "districtNumber": null
+        }
+      ]
+    },
+    {
       "id": "candidate-elizabeth-eliz-markowitz-democratic-race-2026-texas-house-26",
       "aliases": [
         "ELIZABETH \"ELIZ\" MARKOWITZ",
@@ -4014,6 +4094,26 @@
       ]
     },
     {
+      "id": "candidate-jade-simmons-other-race-2026-us-senate",
+      "aliases": [
+        "JADE SIMMONS",
+        "Jade Simmons"
+      ],
+      "party": "other",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-us-senate",
+          "electionYear": 2026,
+          "office": "U.S. Senate",
+          "officeLevel": "federal",
+          "districtId": null,
+          "districtName": null,
+          "districtNumber": null
+        }
+      ]
+    },
+    {
       "id": "candidate-jake-ellzey-republican-race-2026-us-house-6",
       "aliases": [
         "JAKE ELLZEY",
@@ -4526,6 +4626,26 @@
           "raceId": "race-2026-texas-supreme-court-place-1",
           "electionYear": 2026,
           "office": "Texas Supreme Court Chief Justice, Place 1",
+          "officeLevel": "state",
+          "districtId": null,
+          "districtName": null,
+          "districtNumber": null
+        }
+      ]
+    },
+    {
+      "id": "candidate-jinghpaw-majoishingra-other-race-2026-governor",
+      "aliases": [
+        "JINGHPAW MAJOISHINGRA",
+        "Jinghpaw Majoishingra"
+      ],
+      "party": "other",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-governor",
+          "electionYear": 2026,
+          "office": "Governor",
           "officeLevel": "state",
           "districtId": null,
           "districtName": null,
@@ -5692,6 +5812,26 @@
       ]
     },
     {
+      "id": "candidate-l-d-howard-other-race-2026-texas-house-124",
+      "aliases": [
+        "L.D. HOWARD",
+        "L.d. Howard"
+      ],
+      "party": "other",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-texas-house-124",
+          "electionYear": 2026,
+          "office": "Texas House",
+          "officeLevel": "state",
+          "districtId": "district-texas-house-124",
+          "districtName": "Texas House District 124",
+          "districtNumber": "124"
+        }
+      ]
+    },
+    {
       "id": "candidate-lacey-hull-republican-race-2026-texas-house-138",
       "aliases": [
         "LACEY HULL",
@@ -6192,6 +6332,26 @@
       ]
     },
     {
+      "id": "candidate-margo-jordan-other-race-2026-state-board-of-education-6",
+      "aliases": [
+        "MARGO JORDAN",
+        "Margo Jordan"
+      ],
+      "party": "other",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-state-board-of-education-6",
+          "electionYear": 2026,
+          "office": "State Board of Education",
+          "officeLevel": "state",
+          "districtId": "district-state-board-of-education-6",
+          "districtName": "State Board of Education District 6",
+          "districtNumber": "6"
+        }
+      ]
+    },
+    {
       "id": "candidate-maria-luisa-lulu-flores-democratic-race-2026-texas-house-51",
       "aliases": [
         "MARIA LUISA \"LULU\" FLORES",
@@ -6682,6 +6842,26 @@
       ]
     },
     {
+      "id": "candidate-michelle-craig-other-race-2026-us-house-33",
+      "aliases": [
+        "MICHELLE CRAIG",
+        "Michelle Craig"
+      ],
+      "party": "other",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-us-house-33",
+          "electionYear": 2026,
+          "office": "U.S. House",
+          "officeLevel": "federal",
+          "districtId": "district-us-house-33",
+          "districtName": "U.S. House District 33",
+          "districtNumber": "33"
+        }
+      ]
+    },
+    {
       "id": "candidate-michelle-palmer-democratic-race-2026-state-board-of-education-6",
       "aliases": [
         "MICHELLE PALMER",
@@ -6818,6 +6998,26 @@
           "districtId": "district-texas-house-134",
           "districtName": "Texas House District 134",
           "districtNumber": "134"
+        }
+      ]
+    },
+    {
+      "id": "candidate-mike-miller-other-race-2026-governor",
+      "aliases": [
+        "MIKE MILLER",
+        "Mike Miller"
+      ],
+      "party": "other",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-governor",
+          "electionYear": 2026,
+          "office": "Governor",
+          "officeLevel": "state",
+          "districtId": null,
+          "districtName": null,
+          "districtNumber": null
         }
       ]
     },
@@ -8482,6 +8682,26 @@
       ]
     },
     {
+      "id": "candidate-stephen-samuelson-other-race-2026-lieutenant-governor",
+      "aliases": [
+        "STEPHEN SAMUELSON",
+        "Stephen Samuelson"
+      ],
+      "party": "other",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-lieutenant-governor",
+          "electionYear": 2026,
+          "office": "Lieutenant Governor",
+          "officeLevel": "state",
+          "districtId": null,
+          "districtName": null,
+          "districtNumber": null
+        }
+      ]
+    },
+    {
       "id": "candidate-stephen-w-stanley-republican-race-2026-texas-house-113",
       "aliases": [
         "STEPHEN W. STANLEY",
@@ -9316,6 +9536,26 @@
       ]
     },
     {
+      "id": "candidate-valencia-williams-other-race-2026-us-house-18",
+      "aliases": [
+        "VALENCIA WILLIAMS",
+        "Valencia Williams"
+      ],
+      "party": "other",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-us-house-18",
+          "electionYear": 2026,
+          "office": "U.S. House",
+          "officeLevel": "federal",
+          "districtId": "district-us-house-18",
+          "districtName": "U.S. House District 18",
+          "districtNumber": "18"
+        }
+      ]
+    },
+    {
       "id": "candidate-valoree-swanson-republican-race-2026-texas-house-150",
       "aliases": [
         "VALOREE SWANSON",
@@ -9676,6 +9916,26 @@
           "districtId": "district-texas-house-121",
           "districtName": "Texas House District 121",
           "districtNumber": "121"
+        }
+      ]
+    },
+    {
+      "id": "candidate-zul-mohamed-other-race-2026-us-senate",
+      "aliases": [
+        "ZUL MOHAMED",
+        "Zul Mohamed"
+      ],
+      "party": "other",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-us-senate",
+          "electionYear": 2026,
+          "office": "U.S. Senate",
+          "officeLevel": "federal",
+          "districtId": null,
+          "districtName": null,
+          "districtNumber": null
         }
       ]
     }

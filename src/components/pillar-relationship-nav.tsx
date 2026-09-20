@@ -3,10 +3,86 @@ import {
   getRelatedContentPillars,
   type ContentPillarSlug,
 } from "@/lib/content-pillars";
+import { issueGuideBySlug, type IssueGuide } from "@/data/issue-guides";
+import { isIssueGuideIndexable } from "@/lib/issue-guide-indexability";
+
+const PILLAR_ISSUE_GUIDES: Partial<Record<ContentPillarSlug, readonly string[]>> = {
+  "texas-politics-government": [
+    "texas-state-federal-power",
+    "texas-election-law",
+    "texas-economy-no-income-tax",
+  ],
+  "texas-elections": [
+    "texas-election-law",
+    "texas-state-federal-power",
+  ],
+  "texas-border-immigration": [
+    "texas-border-security-operation-lone-star",
+    "texas-state-federal-power",
+    "rural-texas",
+  ],
+  "texas-energy-oil": [
+    "ercot-grid-reliability",
+    "texas-oil-gas-federal-regulation",
+    "texas-state-federal-power",
+  ],
+  "texas-economy-small-business": [
+    "texas-economy-no-income-tax",
+    "texas-property-tax-relief",
+    "texas-water-policy",
+  ],
+  "texas-agriculture-rural": [
+    "rural-texas",
+    "texas-water-policy",
+    "texas-property-tax-relief",
+  ],
+  "texas-law-enforcement-public-safety": [
+    "texas-gun-laws",
+    "texas-border-security-operation-lone-star",
+    "texas-state-federal-power",
+  ],
+  "texas-laws-legislature": [
+    "texas-election-law",
+    "texas-gun-laws",
+    "parental-rights-texas-schools",
+  ],
+};
+
+type FeaturedArticle = {
+  href: string;
+  title: string;
+  dek: string;
+};
+
+export const PILLAR_FEATURED_ARTICLES: Partial<Record<ContentPillarSlug, readonly FeaturedArticle[]>> = {
+  "texas-politics-government": [
+    {
+      href: "/texas-politics/texas-reconstruction-government",
+      title: "Texas Reconstruction Government",
+      dek: "Military rule, readmission, Black political participation, the 1869 Constitution and the governmental conflict that led directly to the Constitution of 1876.",
+    },
+    {
+      href: "/texas-politics/texas-secession-convention-1861",
+      title: "Texas Secession Convention of 1861",
+      dek: "How the convention, statewide referendum and conflict with Governor Sam Houston moved Texas from the Union into Confederate government.",
+    },
+  ],
+  "texas-law-enforcement-public-safety": [
+    {
+      href: "/news/texas-policing-agencies-compared",
+      title: "Texas Policing Agencies Compared",
+      dek: "Police, sheriffs, constables, DPS, Texas Rangers, ISD police, university police and game wardens—who they work for, where they operate and how their authority differs.",
+    },
+  ],
+};
 
 export function PillarRelationshipNav({ pillarSlug }: { pillarSlug: ContentPillarSlug }) {
   const pillar = getContentPillar(pillarSlug);
   const related = getRelatedContentPillars(pillarSlug);
+  const issueGuides = (PILLAR_ISSUE_GUIDES[pillarSlug] ?? [])
+    .map((slug) => issueGuideBySlug[slug])
+    .filter((guide): guide is IssueGuide => Boolean(guide) && isIssueGuideIndexable(guide));
+  const featuredArticles = PILLAR_FEATURED_ARTICLES[pillarSlug] ?? [];
 
   return (
     <section className="mt-10 max-w-4xl border-t border-border pt-6" aria-labelledby={`${pillarSlug}-coverage-map`}>
@@ -23,6 +99,26 @@ export function PillarRelationshipNav({ pillarSlug }: { pillarSlug: ContentPilla
           ))}
         </ul>
       </div>
+
+      {issueGuides.length > 0 || featuredArticles.length > 0 ? (
+        <nav className="mt-5" aria-label={`Issue guides for ${pillar.title}`}>
+          <h3 className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">Issue guides & explainers</h3>
+          <div className="mt-2 grid gap-2 sm:grid-cols-2">
+            {featuredArticles.map((article) => (
+              <a key={article.href} href={article.href} className="border border-border bg-muted/20 px-3 py-3 transition hover:border-primary">
+                <span className="block text-sm font-semibold text-primary">{article.title} →</span>
+                <span className="mt-1 block text-xs leading-5 text-muted-foreground">{article.dek}</span>
+              </a>
+            ))}
+            {issueGuides.map((guide) => (
+              <a key={guide.slug} href={`/issues/${guide.slug}`} className="border border-border bg-muted/20 px-3 py-3 transition hover:border-primary">
+                <span className="block text-sm font-semibold text-primary">{guide.title} →</span>
+                <span className="mt-1 block text-xs leading-5 text-muted-foreground">{guide.dek}</span>
+              </a>
+            ))}
+          </div>
+        </nav>
+      ) : null}
 
       <nav className="mt-5" aria-label={`Related coverage for ${pillar.title}`}>
         <h3 className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">Related coverage</h3>

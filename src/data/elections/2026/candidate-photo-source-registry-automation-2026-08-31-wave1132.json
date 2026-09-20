@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "snapcoalition.org",
+    "sourceClass": "candidate-submitted-policy-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Scientist Network for Advancing Policy candidate-response pages to corroborate current candidate identity, office, and candidate-submitted public-policy profiles and to discover downstream official campaign or candidate-controlled portrait sources. Do not approve or reuse any SNAP-hosted image without item-level provenance plus an explicit reusable license, candidate/media permission, or another documented editorial permission basis.",
+    "searchHint": "SNAP Coalition Texas 2026 candidate profile official campaign portrait",
+    "notes": "New source discovered August 31, 2026. Current August 2026 SNAP candidate-response pages identify candidates including Crystal Sedillo (Texas House District 30) and Fatima La'Juan Muse (Texas House District 2) and record candidate-submitted responses. Treat SNAP as a discovery/corroboration bridge only; it does not establish image rights by itself."
+  },
+  {
+    "domain": "transparencyusa.org",
+    "sourceClass": "campaign-finance-election-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Transparency USA current Texas race and candidate pages to corroborate active 2026 candidacies, race context, campaign-finance identity, and locate downstream official candidate or committee sources. Do not approve or reuse any Transparency USA-hosted image without item-level provenance plus an explicit reusable license, candidate/media permission, or another documented editorial permission basis. Do not use this source alone to override authoritative Texas election lifecycle status.",
+    "searchHint": "Transparency USA Texas 2026 candidate campaign official website portrait",
+    "notes": "New source discovered August 31, 2026. Current 2026 Texas race pages enumerate general-election candidates and can help distinguish active candidates and locate campaign committees in sparse races. It is a discovery bridge, not an image-rights or authoritative eligibility source."
+  }
+]

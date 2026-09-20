@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "pasadenachamber.org",
+    "sourceClass": "local-chamber-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the Pasadena Chamber of Commerce 2026 candidate directory and linked candidate videos only to corroborate candidate identity, office, campaign participation, and discover candidate-supplied portrait/video assets or official campaign links. Do not approve or reuse any chamber-hosted image or video frame without item-level provenance plus reusable rights, explicit candidate/media permission, or another documented editorial permission basis.",
+    "searchHint": "Pasadena Chamber Meet the Candidates 2026 Albert Wittliff Liz Ramos Texas House portrait video campaign",
+    "notes": "New source discovered August 27, 2026. The Pasadena Chamber's current Meet the Candidates page lists 2026 candidates by office and provides candidate-specific video links for several races, including Texas House District 129 candidate Albert Wittliff. Treat as a discovery bridge only; candidate participation does not establish image reuse rights."
+  },
+  {
+    "domain": "capitolinside.com",
+    "sourceClass": "texas-political-race-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Capitol Inside race coverage to corroborate candidate names, districts, campaign activity, and discover downstream official campaign or candidate-profile sources. Do not approve or reuse any image from Capitol Inside without item-level provenance plus a reusable license, explicit permission, or another documented editorial permission basis.",
+    "searchHint": "Capitol Inside 2026 Harris County Texas House candidates Liz Ramos Laura Garcia DeLeon Frank Salazar portrait campaign",
+    "notes": "New source discovered August 27, 2026. Capitol Inside's 2026 Harris County race coverage identifies multiple currently missing-photo candidates and can act as a downstream discovery bridge to campaign and filing sources. It is not an automatic image-rights source."
+  }
+]

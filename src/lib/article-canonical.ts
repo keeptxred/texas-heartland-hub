@@ -3,7 +3,7 @@
  *
  * Pure module (no I/O) so it is testable and safe on both client and server:
  *  - resolve `article_slug_redirects` chains with a loop/self guard
- *  - detect SEO duplicate / noindex quality flags
+ *  - detect SEO duplicate / quarantine quality flags
  *  - pick the *strongest* article in a same-event cluster
  *  - decide conservatively whether two headlines are the same event rewrite
  *    or a materially new follow-up development
@@ -12,7 +12,14 @@
 import { isDuplicateTitle } from "@/lib/title-similarity";
 import { newsClusterKey } from "@/lib/article-slug-integrity";
 
-/** Quality flags that mean "do not advertise this URL to search engines". */
+/**
+ * Quality flags that mean "do not advertise this URL to search engines".
+ *
+ * This list is also the public-discovery quarantine contract used by newsroom
+ * loaders. Keep it synchronized with the AdSense readiness audit so a row that
+ * is deliberately noindexed cannot still be promoted through homepage,
+ * newsroom, or author discovery.
+ */
 export const SEO_DUPLICATE_FLAGS = [
   "seo_duplicate",
   "duplicate",
@@ -22,6 +29,14 @@ export const SEO_DUPLICATE_FLAGS = [
   "noindex",
   "seo_noindex",
   "canonical_duplicate",
+  "legacy_thin_content",
+  "seo_legacy_single_source",
+  "seo_low_value_commodity",
+  "seo_false_multisource",
+  "source_integrity_failure",
+  "seo_off_topic",
+  "site_boundary_violation",
+  "gsc_zero_impression_hold_2026_09_03",
 ] as const;
 
 export function hasSeoDuplicateFlag(flags: string[] | null | undefined): boolean {
@@ -61,12 +76,11 @@ export function resolveRedirectChain(
   for (let hop = 0; hop < maxHops; hop++) {
     const next = (get(current) ?? "").trim();
     if (!next) break;
-    if (next === current || seen.has(next)) return null; // self redirect or loop
+    if (next === current || seen.has(next)) return null;
     seen.add(next);
     current = next;
   }
   if (current === start) return null;
-  // Chain longer than allowed and still pointing somewhere: refuse.
   if (get(current)) return null;
   return current;
 }
@@ -75,10 +89,6 @@ export function resolveRedirectChain(
  * Same-event clustering
  * ------------------------------------------------------------------ */
 
-/**
- * Markers that signal a materially new development in an ongoing story.
- * These keep legitimate follow-up reporting publishable and indexable.
- */
 const FOLLOW_UP_MARKERS = [
   /\barrest(ed|s)?\b/i,
   /\bindict(ed|ment)\b/i,
@@ -101,10 +111,6 @@ function numbersIn(title: string): string[] {
   return (title.match(/\d+(?:[.,]\d+)?/g) ?? []).filter((n) => n.length > 0);
 }
 
-/**
- * True when `candidate` reads like a new development on the same story as
- * `existing` rather than a straight rewrite of it.
- */
 export function isFollowUpDevelopment(existing: string, candidate: string): boolean {
   const a = existing ?? "";
   const b = candidate ?? "";
@@ -118,17 +124,10 @@ export function isFollowUpDevelopment(existing: string, candidate: string): bool
   );
   if (newMarker) return true;
 
-  // New concrete figures (death toll, vote count, dollar amount) also mark a
-  // genuine development.
   const existingNumbers = new Set(numbersIn(a));
   return numbersIn(b).some((n) => !existingNumbers.has(n));
 }
 
-/**
- * Conservative same-event test used before insertion and before sitemap
- * exposure. Only blocks when the headlines are near-identical rewrites, or
- * share a same-event fingerprint with no new development signal.
- */
 export function isSameEventRewrite(existing: string, candidate: string): boolean {
   if (!existing?.trim() || !candidate?.trim()) return false;
   if (isDuplicateTitle(existing, candidate)) {
@@ -152,10 +151,6 @@ export type ClusterCandidate = {
   main_word_count?: number | null;
 };
 
-/**
- * Cluster winner: highest content_quality_score, then most substantive body,
- * then newest published_at, then a stable slug tiebreak.
- */
 export function isStrongerArticle(a: ClusterCandidate, b: ClusterCandidate): boolean {
   const qa = a.content_quality_score ?? 0;
   const qb = b.content_quality_score ?? 0;
@@ -177,10 +172,6 @@ export function pickStrongestArticle<T extends ClusterCandidate>(candidates: T[]
   return best;
 }
 
-/**
- * Collapses same-event clusters to their strongest member. Articles that are
- * only topically related, or that report a new development, are preserved.
- */
 export function selectCanonicalArticles<T extends ClusterCandidate>(articles: T[]): T[] {
   const groups: T[][] = [];
   for (const article of articles) {

@@ -2,411 +2,239 @@ import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
+import { installDirectAiFetch } from "./lib/direct-ai-fetch";
+import { buildVehicleHandoffLocation } from "./lib/vehicle-handoff-redirect";
+import { shopAnalyticsResponse } from "./lib/shop-analytics.server";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
 };
 
-type OpenAiTextPart = { type?: "text"; text?: string };
-type OpenAiImagePart = { type?: "image_url"; image_url?: { url?: string } };
-type OpenAiContent = string | Array<OpenAiTextPart | OpenAiImagePart>;
-type OpenAiMessage = { role?: string; content?: OpenAiContent };
-type OpenAiCompatBody = {
-  model?: string;
-  messages?: OpenAiMessage[];
-  max_tokens?: number;
-  response_format?: { type?: string; json_schema?: unknown };
-};
-type OpenAiImageBody = {
-  model?: string;
-  messages?: OpenAiMessage[];
+type HtmlRewriterElement = {
+  getAttribute: (name: string) => string | null;
+  setAttribute: (name: string, value: string) => void;
 };
 
-type GeminiInteraction = {
-  status?: string;
-  steps?: Array<{
-    type?: string;
-    content?: Array<{
-      type?: string;
-      text?: string;
-      data?: string;
-      mime_type?: string;
-    }>;
-    error?: { message?: string };
-  }>;
+type HtmlRewriterConstructor = new () => {
+  on: (
+    selector: string,
+    handlers: { element: (element: HtmlRewriterElement) => void },
+  ) => {
+    transform: (response: Response) => Response;
+  };
 };
 
-type CloudflareAiResponse = {
-  success?: boolean;
-  result?: { response?: unknown };
-  errors?: Array<{ code?: number; message?: string }>;
+declare const HTMLRewriter: HtmlRewriterConstructor;
+
+const CANONICAL_HOST = "keeptxred.com";
+const WWW_HOST = `www.${CANONICAL_HOST}`;
+const DIRECT_WORKER_HOST = "keeptxred-site.freddy-coppola.workers.dev";
+const DEPLOYMENT_SMOKE_HEADER = "x-keeptxred-deployment-smoke";
+const ADS_TXT = "google.com, pub-1891256141359926, DIRECT, f08c47fec0942fa0\n";
+const TEXAS_DEFINED_ORIGIN = "https://texasdefined.com";
+const LEGACY_ABOUT_PATH = "/about-keep-texas-red";
+const CANONICAL_ABOUT_URL = `https://${CANONICAL_HOST}/about`;
+const LEGACY_CONSTITUTIONAL_AMENDMENTS_PATH = "/news/texas-constitutional-amendments-guide";
+const CANONICAL_CONSTITUTIONAL_AMENDMENTS_URL = `https://${CANONICAL_HOST}/laws/constitutional-amendments`;
+const CITY_MIGRATION_REDIRECTS: Readonly<Record<string, string>> = {
+  "/austin": "https://texasdefined.com/article/moving-to-austin-guide",
+  "/dallas-fort-worth": "https://texasdefined.com/article/moving-to-dallas-fort-worth-guide",
+  "/san-antonio": "https://texasdefined.com/article/moving-to-san-antonio-guide",
+  "/el-paso": "https://texasdefined.com/article/moving-to-el-paso-guide",
 };
 
-const LOVABLE_AI_GATEWAY_PREFIX = "https://ai.gateway.lovable.dev/";
-const LOVABLE_CHAT_GATEWAY = "https://ai.gateway.lovable.dev/v1/chat/completions";
-const LOVABLE_IMAGE_GATEWAY = "https://ai.gateway.lovable.dev/v1/images/generations";
-const GEMINI_INTERACTIONS = "https://generativelanguage.googleapis.com/v1beta/interactions";
-const GEMINI_IMAGE_MIME_TYPE = "image/jpeg";
-const CLOUDFLARE_TEXT_MODEL = "@cf/meta/llama-3.1-8b-instruct-fast";
-const nativeFetch = globalThis.fetch.bind(globalThis);
-let directAiFetchInstalled = false;
+export function canonicalizeDeploymentSmokeRequest(request: Request): Request {
+  const url = new URL(request.url);
+  const canSmoke = request.method === "GET" || request.method === "HEAD";
+  const isDirectDeploymentSmoke =
+    canSmoke
+    && url.host.toLowerCase() === DIRECT_WORKER_HOST
+    && request.headers.get(DEPLOYMENT_SMOKE_HEADER)?.trim().toLowerCase() === "canonical";
 
-function directGeminiApiKey(): string | undefined {
-  return process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GOOGLE_AI_API_KEY;
+  if (!isDirectDeploymentSmoke) return request;
+
+  url.protocol = "https:";
+  url.host = CANONICAL_HOST;
+  return new Request(url.toString(), {
+    method: request.method,
+    headers: request.headers,
+    redirect: request.redirect,
+    signal: request.signal,
+  });
 }
 
-function cloudflareCredentials(): { accountId: string; apiToken: string } | null {
-  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
-  const apiToken = process.env.CLOUDFLARE_API_TOKEN;
-  return accountId && apiToken ? { accountId, apiToken } : null;
+export function canonicalHostRedirect(request: Request): Response | null {
+  const url = new URL(request.url);
+
+  // Google explicitly crawls ads.txt over both HTTP and HTTPS and may begin at
+  // either the apex or www host. Keep this machine-readable file out of the
+  // normal canonical-host redirect path so every KTR hostname the Worker owns
+  // can answer it directly with HTTP 200.
+  if (url.pathname === "/ads.txt") return null;
+
+  const isSiteHost = url.hostname === CANONICAL_HOST || url.hostname === WWW_HOST;
+  if (!isSiteHost) return null;
+  if (url.hostname === CANONICAL_HOST && url.protocol === "https:") return null;
+
+  url.protocol = "https:";
+  url.hostname = CANONICAL_HOST;
+  url.port = "";
+  return Response.redirect(url.toString(), 308);
 }
 
-function textFromContent(content: OpenAiContent | undefined): string {
-  if (typeof content === "string") return content;
-  if (!Array.isArray(content)) return "";
-  return content
-    .filter((part): part is OpenAiTextPart => part?.type === "text")
-    .map((part) => part.text?.trim() || "")
-    .filter(Boolean)
-    .join("\n");
-}
+export function normalizeCanonicalHref(href: string): string {
+  const value = href.trim();
+  if (!value) return href;
 
-function geminiPartsFromContent(content: OpenAiContent | undefined): Array<Record<string, unknown>> {
-  if (typeof content === "string") return [{ text: content }];
-  if (!Array.isArray(content)) return [];
-
-  const parts: Array<Record<string, unknown>> = [];
-  for (const part of content) {
-    if (part?.type === "text" && part.text) {
-      parts.push({ text: part.text });
-      continue;
+  try {
+    const url = new URL(value);
+    const isCanonicalOrigin =
+      url.protocol === "https:" && url.hostname.toLowerCase() === CANONICAL_HOST && url.port === "";
+    if (!isCanonicalOrigin || url.pathname === "/" || !url.pathname.endsWith("/")) {
+      return href;
     }
-    if (part?.type === "image_url") {
-      const raw = part.image_url?.url || "";
-      const match = raw.match(/^data:([^;,]+);base64,([A-Za-z0-9+/=]+)$/);
-      if (match) {
-        parts.push({
-          inline_data: {
-            mime_type: match[1],
-            data: match[2],
-          },
-        });
-      }
-    }
+
+    url.pathname = url.pathname.replace(/\/+$/, "");
+    return url.toString();
+  } catch {
+    return href;
   }
-  return parts;
 }
 
-function requestedImageModel(body: OpenAiImageBody): string {
-  const requested = body.model?.replace(/^google\//, "").trim();
-  return process.env.AI_IMAGE_MODEL || requested || "gemini-3.1-flash-image";
+export function normalizeCanonicalLinksInHtmlText(html: string): string {
+  return html.replace(/<link\b[^>]*>/gi, (tag) => {
+    const relMatch = tag.match(/\brel\s*=\s*(["'])([^"']*)\1/i);
+    const relTokens = relMatch?.[2]?.trim().toLowerCase().split(/\s+/) ?? [];
+    if (!relTokens.includes("canonical")) return tag;
+
+    return tag.replace(/\bhref\s*=\s*(["'])([^"']*)\1/i, (hrefAttribute, quote: string, href: string) => {
+      const normalized = normalizeCanonicalHref(href);
+      return normalized === href ? hrefAttribute : `href=${quote}${normalized}${quote}`;
+    });
+  });
 }
 
-function hasImageInput(body: OpenAiCompatBody): boolean {
-  return (body.messages ?? []).some(
-    (message) =>
-      Array.isArray(message.content) &&
-      message.content.some((part) => part?.type === "image_url"),
-  );
+function cloudflareHtmlRewriter(): HtmlRewriterConstructor | undefined {
+  // Cloudflare documents HTMLRewriter as a runtime global (`new HTMLRewriter()`),
+  // not as an optional property lookup on globalThis. `typeof` keeps non-Worker
+  // runtimes safe while ensuring the production binding is actually exercised.
+  return typeof HTMLRewriter === "function" ? HTMLRewriter : undefined;
 }
 
-async function directGeminiImageResponse(
-  body: OpenAiImageBody,
-  apiKey: string,
-  signal?: AbortSignal | null,
-): Promise<Response> {
-  const prompt = (body.messages ?? [])
-    .map((message) => textFromContent(message.content))
-    .filter(Boolean)
-    .join("\n\n")
-    .trim();
-  if (!prompt) {
-    return Response.json({ error: { message: "Image request contained no prompt" } }, { status: 400 });
+function responseWithHtml(response: Response, html: string): Response {
+  const headers = new Headers(response.headers);
+  headers.delete("content-length");
+  return new Response(html, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
+export async function normalizeCanonicalLinksInHtml(response: Response): Promise<Response> {
+  if (response.status < 200 || response.status >= 300 || !response.body) return response;
+  const contentType = response.headers.get("content-type") ?? "";
+  if (!contentType.toLowerCase().includes("text/html")) return response;
+
+  const Rewriter = cloudflareHtmlRewriter();
+  if (Rewriter) {
+    return new Rewriter()
+      .on('link[rel~="canonical"]', {
+        element(element) {
+          const href = element.getAttribute("href");
+          if (!href) return;
+          const normalized = normalizeCanonicalHref(href);
+          if (normalized !== href) element.setAttribute("href", normalized);
+        },
+      })
+      .transform(response);
   }
 
-  const model = requestedImageModel(body);
-  const response = await nativeFetch(GEMINI_INTERACTIONS, {
-    method: "POST",
+  // Deterministic fallback for runtimes that do not provide Cloudflare's
+  // HTMLRewriter. This is also what makes the exact response-body contract
+  // testable in Vitest instead of relying on source-string assertions alone.
+  const html = await response.text();
+  return responseWithHtml(response, normalizeCanonicalLinksInHtmlText(html));
+}
+
+export function adsTxtResponse(request: Request): Response | null {
+  const url = new URL(request.url);
+  if (url.pathname !== "/ads.txt") return null;
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    return new Response("Method not allowed", {
+      status: 405,
+      headers: { Allow: "GET, HEAD" },
+    });
+  }
+
+  return new Response(request.method === "HEAD" ? null : ADS_TXT, {
+    status: 200,
     headers: {
-      "content-type": "application/json",
-      "x-goog-api-key": apiKey,
+      "Cache-Control": "public, max-age=300, s-maxage=300",
+      "Content-Type": "text/plain; charset=utf-8",
+      "X-Content-Type-Options": "nosniff",
     },
-    body: JSON.stringify({
-      model,
-      input: prompt,
-      response_format: {
-        type: "image",
-        mime_type: GEMINI_IMAGE_MIME_TYPE,
-        aspect_ratio: "16:9",
-        image_size: "1K",
-      },
-    }),
-    signal: signal ?? undefined,
-  });
-
-  const text = await response.text();
-  if (!response.ok) {
-    return new Response(text, {
-      status: response.status,
-      headers: { "content-type": response.headers.get("content-type") || "application/json" },
-    });
-  }
-
-  let payload: GeminiInteraction;
-  try {
-    payload = JSON.parse(text) as GeminiInteraction;
-  } catch {
-    return Response.json({ error: { message: "Gemini image API returned invalid JSON" } }, { status: 502 });
-  }
-
-  const modelOutputs = (payload.steps ?? []).filter((step) => step.type === "model_output");
-  const image = modelOutputs
-    .flatMap((step) => step.content ?? [])
-    .reverse()
-    .find((part) => part.type === "image" && typeof part.data === "string" && part.data.length > 0);
-
-  if (!image?.data) {
-    const failure = (payload.steps ?? []).find((step) => step.error?.message)?.error?.message;
-    return Response.json(
-      { error: { message: failure || `Gemini image API returned no image (${payload.status || "unknown status"})` } },
-      { status: 502 },
-    );
-  }
-
-  return Response.json({
-    data: [{ b64_json: image.data }],
-    provider: "google-gemini-direct",
-    model,
   });
 }
 
-async function directGeminiVisionResponse(
-  body: OpenAiCompatBody,
-  apiKey: string,
-  signal?: AbortSignal | null,
-): Promise<Response> {
-  const messages = Array.isArray(body.messages) ? body.messages : [];
-  const system = messages
-    .filter((message) => message.role === "system")
-    .map((message) => textFromContent(message.content).trim())
-    .filter(Boolean)
-    .join("\n\n");
-  const conversational = messages
-    .filter((message) => message.role !== "system")
-    .map((message) => ({
-      role: message.role === "assistant" ? "model" : "user",
-      parts: geminiPartsFromContent(message.content),
-    }))
-    .filter((message) => message.parts.length > 0);
+export function legacyAboutRedirect(request: Request): Response | null {
+  const url = new URL(request.url);
+  if (url.pathname !== LEGACY_ABOUT_PATH) return null;
 
-  const model = hasImageInput(body)
-    ? process.env.AI_VALIDATION_MODEL || "gemini-3.5-flash"
-    : "gemini-3.1-flash-lite";
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
-  const response = await nativeFetch(endpoint, {
-    method: "POST",
+  const destination = new URL(CANONICAL_ABOUT_URL);
+  destination.search = url.search;
+  return Response.redirect(destination.toString(), 301);
+}
+
+export function constitutionalAmendmentsLegacyRedirect(request: Request): Response | null {
+  const url = new URL(request.url);
+  if (url.pathname !== LEGACY_CONSTITUTIONAL_AMENDMENTS_PATH) return null;
+
+  const destination = new URL(CANONICAL_CONSTITUTIONAL_AMENDMENTS_URL);
+  destination.search = url.search;
+  return Response.redirect(destination.toString(), 301);
+}
+
+export function vehicleAuthorityHandoffRedirect(request: Request): Response | null {
+  const location = buildVehicleHandoffLocation(request.url);
+  if (!location) return null;
+
+  return new Response(null, {
+    status: 301,
     headers: {
-      "content-type": "application/json",
-      "x-goog-api-key": apiKey,
+      location,
+      "cache-control": "public, max-age=86400",
     },
-    body: JSON.stringify({
-      ...(system ? { systemInstruction: { parts: [{ text: system }] } } : {}),
-      contents: conversational,
-      generationConfig: {
-        responseMimeType: "application/json",
-        ...(body.response_format?.type === "json_schema" && body.response_format.json_schema
-          ? { responseJsonSchema: body.response_format.json_schema }
-          : {}),
-        maxOutputTokens: Math.min(Math.max(Number(body.max_tokens) || 1024, 256), 12000),
-      },
-    }),
-    signal: signal ?? undefined,
-  });
-
-  const text = await response.text();
-  if (!response.ok) {
-    return new Response(text, {
-      status: response.status,
-      headers: { "content-type": response.headers.get("content-type") || "application/json" },
-    });
-  }
-
-  let payload: { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> };
-  try {
-    payload = JSON.parse(text) as typeof payload;
-  } catch {
-    return Response.json({ error: { message: "Gemini returned invalid JSON" } }, { status: 502 });
-  }
-
-  const content = payload.candidates?.[0]?.content?.parts
-    ?.map((part) => part.text || "")
-    .join("")
-    .trim();
-  if (!content) {
-    return Response.json({ error: { message: "Gemini returned an empty response" } }, { status: 502 });
-  }
-
-  return Response.json({
-    choices: [{ message: { role: "assistant", content } }],
-    provider: "google-gemini-direct",
-    model,
   });
 }
 
-function normalizeCloudflareJsonContent(rawContent: unknown): string | null {
-  if (rawContent && typeof rawContent === "object") return JSON.stringify(rawContent);
-  if (typeof rawContent !== "string") return null;
-  const content = rawContent.trim();
-  if (!content) return null;
-  try {
-    return JSON.stringify(JSON.parse(content));
-  } catch {
-    return null;
-  }
+export function cityMigrationRedirect(request: Request): Response | null {
+  const url = new URL(request.url);
+  const target = CITY_MIGRATION_REDIRECTS[url.pathname];
+  if (!target) return null;
+
+  const destination = new URL(target);
+  destination.search = url.search;
+  return Response.redirect(destination.toString(), 301);
 }
 
-async function directCloudflareTextResponse(
-  body: OpenAiCompatBody,
-  credentials: { accountId: string; apiToken: string },
-  signal?: AbortSignal | null,
-): Promise<Response> {
-  const messages = (body.messages ?? [])
-    .map((message) => ({
-      role: message.role === "assistant" ? "assistant" : message.role === "system" ? "system" : "user",
-      content: textFromContent(message.content),
-    }))
-    .filter((message) => message.content.trim().length > 0);
+export function exploreMigrationRedirect(request: Request): Response | null {
+  const url = new URL(request.url);
+  if (url.pathname !== "/explore" && !url.pathname.startsWith("/explore/")) return null;
 
-  if (messages.length === 0) {
-    return Response.json({ error: { message: "Cloudflare text request contained no prompt" } }, { status: 400 });
-  }
-
-  // Legacy callers may still send a stale @cf model. The production rewrite
-  // path is intentionally centralized here so every text rewrite uses the
-  // configured efficient model and cannot silently bypass it.
-  const model = process.env.AI_REWRITE_MODEL_CF || CLOUDFLARE_TEXT_MODEL;
-  const endpoint = `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(credentials.accountId)}/ai/run/${model}`;
-  const maxTokens = Math.min(Math.max(Number(body.max_tokens) || 9000, 256), 12000);
-  let lastFailure = "Cloudflare Workers AI returned invalid JSON";
-
-  for (let attempt = 1; attempt <= 3; attempt += 1) {
-    const retryInstruction = attempt === 1 ? null : {
-      role: "system" as const,
-      content: "CRITICAL: Your previous attempt was malformed or truncated. Return one COMPLETE valid JSON object only. Close every string, array, and object. Do not include markdown fences or prose outside the JSON object.",
-    };
-    const response = await nativeFetch(endpoint, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${credentials.apiToken}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        messages: retryInstruction ? [...messages, retryInstruction] : messages,
-        response_format: body.response_format ?? { type: "json_object" },
-        max_tokens: maxTokens,
-        temperature: attempt === 1 ? 0.25 : 0.1,
-      }),
-      signal: signal ?? undefined,
-    });
-
-    const text = await response.text();
-    let payload: CloudflareAiResponse | null = null;
-    try {
-      payload = JSON.parse(text) as CloudflareAiResponse;
-    } catch {
-      lastFailure = `Cloudflare Workers AI ${response.status}: provider envelope was invalid JSON`;
-      continue;
-    }
-
-    if (!response.ok || payload?.success === false) {
-      const detail = payload?.errors?.map((error) => error.message).filter(Boolean).join("; ") || text.slice(0, 400);
-      lastFailure = `Cloudflare Workers AI ${response.status}: ${detail}`;
-      const dailyQuotaExhausted =
-        response.status === 429 && /daily free allocation|used up.*neurons/i.test(detail);
-      if (dailyQuotaExhausted) {
-        return Response.json({ error: { message: lastFailure } }, { status: 429 });
-      }
-      if (response.status >= 400 && response.status < 500 && response.status !== 408 && response.status !== 429) {
-        return Response.json({ error: { message: lastFailure } }, { status: response.status || 502 });
-      }
-      continue;
-    }
-
-    const content = normalizeCloudflareJsonContent(payload?.result?.response);
-    if (content) {
-      return Response.json({
-        choices: [{ message: { role: "assistant", content } }],
-        provider: "cloudflare-workers-ai",
-        model,
-        attempts: attempt,
-      });
-    }
-    lastFailure = `Cloudflare Workers AI returned malformed or truncated JSON on attempt ${attempt}`;
-  }
-
-  return Response.json({ error: { message: lastFailure } }, { status: 502 });
-}
-
-function installDirectAiFetch(): void {
-  if (directAiFetchInstalled) return;
-  const geminiApiKey = directGeminiApiKey();
-  const cf = cloudflareCredentials();
-
-  // Compatibility only: legacy callers still check LOVABLE_API_KEY before
-  // entering their AI paths. No request is allowed to reach Lovable.
-  if ((cf || geminiApiKey) && !process.env.LOVABLE_API_KEY) {
-    process.env.LOVABLE_API_KEY = "direct-provider";
-  }
-
-  globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
-    const url = typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url;
-
-    if (!url.startsWith(LOVABLE_AI_GATEWAY_PREFIX)) return nativeFetch(input, init);
-    if (url !== LOVABLE_CHAT_GATEWAY && url !== LOVABLE_IMAGE_GATEWAY) {
-      return Response.json({ error: { message: `Unsupported legacy AI endpoint blocked from Lovable: ${url}` } }, { status: 501 });
-    }
-
-    let body: OpenAiCompatBody | OpenAiImageBody;
-    try {
-      body = JSON.parse(typeof init?.body === "string" ? init.body : "{}") as OpenAiCompatBody | OpenAiImageBody;
-    } catch {
-      return Response.json({ error: { message: "Invalid AI request JSON" } }, { status: 400 });
-    }
-
-    if (url === LOVABLE_IMAGE_GATEWAY) {
-      if (!geminiApiKey) return Response.json({ error: { message: "Direct Gemini image AI is not configured. Lovable fallback is disabled." } }, { status: 503 });
-      return directGeminiImageResponse(body as OpenAiImageBody, geminiApiKey, init?.signal);
-    }
-
-    const chatBody = body as OpenAiCompatBody;
-    if (hasImageInput(chatBody)) {
-      if (!geminiApiKey) return Response.json({ error: { message: "Direct Gemini image validation is not configured. Lovable fallback is disabled." } }, { status: 503 });
-      return directGeminiVisionResponse(chatBody, geminiApiKey, init?.signal);
-    }
-
-    // Text rewriting is Cloudflare Workers AI ONLY. Gemini is never used for
-    // text-only rewrites (even when GEMINI_API_KEY exists), and the Lovable
-    // gateway fallback stays disabled.
-    if (!cf) {
-      return Response.json({ error: { message: "Cloudflare Workers AI text rewrite is not configured. Set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN; Gemini text rewrite and Lovable fallback are disabled." } }, { status: 503 });
-    }
-
-    return directCloudflareTextResponse(chatBody, cf, init?.signal);
-  }) as typeof globalThis.fetch;
-
-  directAiFetchInstalled = true;
-  if (cf) {
-    console.info(`[AI] text rewrite provider = Cloudflare Workers AI ONLY (${process.env.AI_REWRITE_MODEL_CF || CLOUDFLARE_TEXT_MODEL}); Gemini text rewrite and Lovable fallback are disabled`);
-  } else {
-    console.warn("[AI] Cloudflare Workers AI credentials missing; text rewrite calls will fail closed");
-  }
+  const destination = new URL(TEXAS_DEFINED_ORIGIN);
+  destination.pathname = url.pathname;
+  destination.search = url.search;
+  return Response.redirect(destination.toString(), 301);
 }
 
 let serverEntryPromise: Promise<ServerEntry> | undefined;
 
 async function getServerEntry(): Promise<ServerEntry> {
   if (!serverEntryPromise) {
-    serverEntryPromise = import("@tanstack/react-start/server-entry").then((m) => (m.default ?? m) as ServerEntry);
+    serverEntryPromise = import("@tanstack/react-start/server-entry").then(
+      (module) => (module.default ?? module) as ServerEntry,
+    );
   }
   return serverEntryPromise;
 }
@@ -417,7 +245,9 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
   if (!contentType.includes("application/json")) return response;
 
   const body = await response.clone().text();
-  if (!body.includes('"unhandled":true') || !body.includes('"message":"HTTPError"')) return response;
+  if (!body.includes('\"unhandled\":true') || !body.includes('\"message\":\"HTTPError\"')) {
+    return response;
+  }
 
   console.error(consumeLastCapturedError() ?? new Error(`h3 swallowed SSR error: ${body}`));
   return new Response(renderErrorPage(), {
@@ -428,11 +258,40 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
 
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    const appRequest = canonicalizeDeploymentSmokeRequest(request);
+
+    // Retired ownership routes must hand off before KTR host/path/query cleanup.
+    // This keeps the redirect one-hop and preserves tracking plus ordinary query state.
+    const vehicleRedirect = vehicleAuthorityHandoffRedirect(appRequest);
+    if (vehicleRedirect) return vehicleRedirect;
+
+    const canonicalRedirect = canonicalHostRedirect(appRequest);
+    if (canonicalRedirect) return canonicalRedirect;
+
+    const shopAnalytics = await shopAnalyticsResponse(appRequest, env);
+    if (shopAnalytics) return shopAnalytics;
+
+    const adsTxt = adsTxtResponse(appRequest);
+    if (adsTxt) return adsTxt;
+
+    const aboutRedirect = legacyAboutRedirect(appRequest);
+    if (aboutRedirect) return aboutRedirect;
+
+    const constitutionalRedirect = constitutionalAmendmentsLegacyRedirect(appRequest);
+    if (constitutionalRedirect) return constitutionalRedirect;
+
+    const cityRedirect = cityMigrationRedirect(appRequest);
+    if (cityRedirect) return cityRedirect;
+
+    const exploreRedirect = exploreMigrationRedirect(appRequest);
+    if (exploreRedirect) return exploreRedirect;
+
     try {
       installDirectAiFetch();
       const handler = await getServerEntry();
-      const response = await handler.fetch(request, env, ctx);
-      return await normalizeCatastrophicSsrResponse(response);
+      const response = await handler.fetch(appRequest, env, ctx);
+      const normalizedResponse = await normalizeCatastrophicSsrResponse(response);
+      return await normalizeCanonicalLinksInHtml(normalizedResponse);
     } catch (error) {
       console.error(error);
       return new Response(renderErrorPage(), {

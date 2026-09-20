@@ -5,14 +5,14 @@ import { ELECTION_ROUTES } from "@/lib/elections";
 export const Route = createFileRoute("/elections/methodology")({
   head: () => ({
     meta: [
-      { title: "Election Central Methodology | KeepTXRed" },
+      { title: "Election Central Methodology | Keep TX Red" },
       {
         name: "description",
         content:
-          "Learn how KeepTXRed sources, verifies, weights, forecasts, updates, and labels public Texas election information.",
+          "Learn how Keep TX Red sources, verifies, weights, forecasts, updates, and labels public Texas election information.",
       },
       { name: "robots", content: "index, follow, max-image-preview:large" },
-      { property: "og:title", content: "Election Central Methodology | KeepTXRed" },
+      { property: "og:title", content: "Election Central Methodology | Keep TX Red" },
       { property: "og:url", content: "https://keeptxred.com/elections/methodology" },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Keep TX Red" },
@@ -32,7 +32,7 @@ function Page() {
   return (
     <ElectionLayout
       title="Election Central Methodology"
-      description="How KeepTXRed attributes, verifies, calculates, updates, and labels public election information."
+      description="How Keep TX Red attributes, verifies, calculates, updates, and labels public election information."
       canonicalUrl="https://keeptxred.com/elections/methodology"
       navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.methodology} />}
     >

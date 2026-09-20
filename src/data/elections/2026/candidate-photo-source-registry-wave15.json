@@ -1,0 +1,47 @@
+[
+  {
+    "domain": "mindybumgarner.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Mindy Bumgarner's official State Board of Education District 14 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude stock images, issue graphics, endorsements, and third-party embeds.",
+    "searchHint": "site:mindybumgarner.com Mindy Bumgarner portrait about candidate photo",
+    "notes": "Verified August 22, 2026. The current site identifies Mindy Bumgarner as running for Texas State Board of Education District 14 and provides campaign contact information. TCTA independently links this domain as her candidate website."
+  },
+  {
+    "domain": "palmerfortexased.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Michelle Palmer's official State Board of Education District 6 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude stock images and third-party embeds.",
+    "searchHint": "site:palmerfortexased.com Michelle Palmer State Board Education District 6 portrait",
+    "notes": "Verified August 22, 2026. The live page title identifies the site as Michelle Palmer for State Board of Education District 6; current 2026 SBOE candidate directories also list palmerfortexased.com as her official campaign website."
+  },
+  {
+    "domain": "huffmanforhd1.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Sean Huffman's official Texas House District 1 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude stock, issue, and third-party imagery.",
+    "searchHint": "site:huffmanforhd1.com Sean Huffman Texas House District 1 portrait campaign",
+    "notes": "Verified August 22, 2026. Texas Classroom Teachers Association identifies Sean Huffman as the Democratic candidate for Texas House District 1 and links huffmanforhd1.com as his website."
+  },
+  {
+    "domain": "chrisspencer.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Chris Spencer's official Texas House District 1 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude endorsement headshots of other people, stock images, issue graphics, logos, and third-party embeds.",
+    "searchHint": "site:chrisspencer.com Chris Spencer Texas House District 1 portrait candidate",
+    "notes": "Verified August 22, 2026. The current campaign site is live and TCTA identifies chrisspencer.com as Chris Spencer's website for his Texas House District 1 candidacy."
+  },
+  {
+    "domain": "votejuniorezeonu.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Junior Ezeonu's official Texas House District 101 campaign site when clearly attributable to the campaign and used for editorial candidate identification with source attribution. Exclude stock, issue, and third-party imagery.",
+    "searchHint": "site:votejuniorezeonu.com Junior Ezeonu Texas House District 101 portrait campaign",
+    "notes": "Verified August 22, 2026. The 2026 League of Women Voters Tarrant County voter guide identifies votejuniorezeonu.com as Junior Ezeonu's campaign website for Texas House District 101."
+  }
+]

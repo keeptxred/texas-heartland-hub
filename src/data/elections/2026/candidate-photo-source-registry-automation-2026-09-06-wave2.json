@@ -1,0 +1,38 @@
+[
+  {
+    "domain": "communityimpact.com",
+    "sourceClass": "reputable-local-news-candidate-qa",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Community Impact candidate Q&A pages to corroborate candidate identity, office, campaign contact information, and downstream official campaign websites. Do not approve or reuse Community Impact-hosted candidate imagery unless the specific item documents candidate-supplied status, a reusable license, explicit permission, or another supported narrow editorial-identification basis. Reject stock photos, generic election graphics, social-share images, logos, seals, placeholders, and non-candidate imagery.",
+    "searchHint": "site:communityimpact.com candidate name Texas 2026 Q&A campaign website portrait",
+    "notes": "Discovered September 6, 2026 while researching missing Texas House portraits. A current District 145 Q&A identifies Inocensia Moreno, links her campaign website, and publishes a candidate image, but the page does not expose a sufficient item-level reuse basis for automatic approval. Registered as a discovery bridge only."
+  },
+  {
+    "domain": "dallasgop.org",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Dallas County Republican Party candidate directories to corroborate candidate identity, office, campaign linkage, and discover downstream official campaign pages or candidate-specific portrait leads. Do not approve party-hosted imagery without item-level provenance plus a documented candidate-supplied status, reusable license, explicit permission, or another supported reuse basis. Reject logos, endorsement graphics, social-share images, placeholders, and non-candidate imagery.",
+    "searchHint": "site:dallasgop.org candidate 2026 Texas portrait campaign website",
+    "notes": "Discovered September 6, 2026 while researching missing State Board of Education portraits. The current candidate directory includes Carlos Charlie Garza for SBOE District 13 and other 2026 candidates. Registered for discovery only; party-hosted images are not auto-approved."
+  },
+  {
+    "domain": "hcgop.v-web.com",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use the Harris County GOP 2026 candidate directory to corroborate candidate identity, district, campaign contact information, and discover downstream official campaign websites or candidate-specific portrait leads. Do not approve hosted imagery without item-level provenance plus a documented reusable or narrow editorial-identification basis. Reject logos, generic campaign graphics, social-share images, placeholders, default avatars, and non-candidate imagery.",
+    "searchHint": "site:hcgop.v-web.com/2026-candidates candidate name Texas House 2026 portrait campaign",
+    "notes": "Discovered September 6, 2026 while researching missing Harris County Texas House portraits. The directory lists multiple still-missing candidates including Scott Whitmarsh (HD131), Kyle Harding (HD139), Laura Garcia DeLeon (HD140), Julie Hunt (HD141), Heidi Hall (HD142), Frank Salazar (HD143), and Inocensia Moreno (HD145), with campaign links where available. Registered strictly as a discovery bridge."
+  },
+  {
+    "domain": "traviscountygop-refresh.squarespace.com",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use the Travis County Republican Party candidate directory to corroborate candidate identity, office, campaign linkage, and discover downstream official campaign websites or candidate-specific portrait leads. Do not approve party-hosted imagery without item-level provenance plus documented candidate-supplied status, a reusable license, explicit permission, or another supported narrow editorial-identification basis. Reject logos, endorsement graphics, social-share images, placeholders, and non-candidate imagery.",
+    "searchHint": "site:traviscountygop-refresh.squarespace.com/candidates Texas House candidate 2026 portrait campaign website",
+    "notes": "Discovered September 6, 2026 while researching missing Texas House District 51 portrait coverage. The current Travis County Republican Party candidate page identifies Jessica Martinez for House District 51 and displays a candidate image, but the party page does not establish an item-level reuse basis. Registered strictly as discovery-only."
+  }
+]

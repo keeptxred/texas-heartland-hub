@@ -1,0 +1,47 @@
+name: KeepTXRed IndexNow
+
+on:
+  workflow_run:
+    workflows: ["Deploy verified KeepTXRed to Cloudflare"]
+    types: [completed]
+    branches: [main]
+  schedule:
+    - cron: "17 13 * * *"
+  workflow_dispatch:
+    inputs:
+      full:
+        description: Submit every canonical URL instead of only recently changed URLs
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: keeptxred-indexnow
+  cancel-in-progress: true
+
+jobs:
+  submit:
+    if: >-
+      github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_sha == github.sha)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      INDEXNOW_FULL: ${{ github.event_name == 'workflow_dispatch' && inputs.full && 'true' || 'false' }}
+      INDEXNOW_FRESHNESS_HOURS: ${{ github.event_name == 'schedule' && '48' || '2' }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Notify IndexNow of canonical changes
+        run: node scripts/seo/submit-indexnow.mjs

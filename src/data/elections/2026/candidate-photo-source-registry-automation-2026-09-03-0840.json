@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "frankforhd143.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Frank Salazar's official Texas House District 143 campaign website to verify candidate identity, office, biography, and discover candidate-specific portrait or media assets. Do not approve or reuse any image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis. Reject logos, campaign graphics, social-share images, and other non-portrait assets.",
+    "searchHint": "Frank Salazar Texas House District 143 official campaign portrait media",
+    "notes": "Discovered September 3, 2026. The site identifies Frank Salazar and HD 143 and is a candidate-controlled source. Its current landing page includes branding and campaign imagery, so all assets remain discovery-only until a candidate-specific portrait and item-level permission basis are verified."
+  },
+  {
+    "domain": "voteyourviews.org",
+    "sourceClass": "election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use VoteYourViews candidate pages to corroborate current ballot participation and discover linked campaign websites or candidate-specific portrait sources. Do not approve or reuse VoteYourViews-hosted images without item-level provenance plus a reusable license, explicit permission, or another documented editorial permission basis; prefer the linked official campaign or original source when available.",
+    "searchHint": "VoteYourViews Texas 2026 candidate campaign website portrait",
+    "notes": "Discovered September 3, 2026 while researching missing-photo candidates. Current Texas candidate pages identify candidates such as Inocensia Moreno and link to campaign websites, making the directory useful as a discovery bridge rather than an automatic image-rights source."
+  }
+]

@@ -1,12 +1,46 @@
 name: Candidate photo enrichment
+# Trigger refresh: September 7, 2026 current-main source expansion replay.
 
 on:
   workflow_dispatch:
   schedule:
     - cron: "30 13 * * 1"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/candidate-photo-enrichment.yml"
+      - "scripts/elections/apply-authoritative-candidate-filing-status.mjs"
+      - "scripts/elections/candidate-photo-enrichment.mjs"
+      - "scripts/elections/remove-generic-candidate-photo-entries.mjs"
+      - "scripts/elections/apply-official-senate-photo-replacements-2026-08-30.mjs"
+      - "scripts/elections/merge-approved-candidate-photo-assets.mjs"
+      - "scripts/elections/apply-direct-web-photo-findings.mjs"
+      - "scripts/elections/apply-verified-photo-findings-2026-07-31.mjs"
+      - "scripts/elections/apply-automation-verified-photo-findings.mjs"
+      - "scripts/elections/apply-official-government-photo-findings-2026-08-21.mjs"
+      - "scripts/elections/apply-official-federal-photo-findings-2026-08-21-wave2.mjs"
+      - "scripts/elections/apply-public-domain-congress-photo-findings-2026-08-21-wave3.mjs"
+      - "scripts/elections/apply-public-domain-congress-photo-findings-2026-08-22-wave4.mjs"
+      - "scripts/elections/apply-verified-candidate-photo-findings-*.mjs"
+      - "scripts/elections/apply-official-judicial-photo-findings-2026-08-21-wave2.mjs"
+      - "scripts/elections/discover-candidate-photo-sources.mjs"
+      - "scripts/elections/discover-candidate-photo-sources-fast.mjs"
+      - "scripts/elections/discover-candidate-photos-source-registries.mjs"
+      - "scripts/elections/discover-candidate-photos-house-clerk.mjs"
+      - "scripts/elections/discover-candidate-photos-congress-gov.mjs"
+      - "scripts/elections/discover-candidate-photos-tcta.mjs"
+      - "scripts/elections/discover-candidate-photos-texas-archives.mjs"
+      - "scripts/elections/discover-candidate-photos-directories.mjs"
+      - "src/data/elections/2026/candidate-filing-status-authority.json"
+      - "src/data/elections/2026/candidate-photo-assets.json"
+      - "src/data/elections/2026/candidate-supreme-court-media.json"
+      - "src/data/elections/2026/candidate-photo-source-registry*.json"
 
 permissions:
+  actions: write
   contents: write
+  pull-requests: write
 
 concurrency:
   group: candidate-photo-enrichment
@@ -28,34 +62,195 @@ jobs:
         with:
           node-version: 22
 
+      - name: Reconcile authoritative candidate filing status
+        run: node scripts/elections/apply-authoritative-candidate-filing-status.mjs
+      - name: Merge approved candidate photo assets
+        run: node scripts/elections/merge-approved-candidate-photo-assets.mjs
       - name: Apply direct verified web findings
         run: node scripts/elections/apply-direct-web-photo-findings.mjs
+      - name: Apply July 31 verified campaign findings
+        run: node scripts/elections/apply-verified-photo-findings-2026-07-31.mjs
+      - name: Apply automation-verified candidate-guide findings
+        run: node scripts/elections/apply-automation-verified-photo-findings.mjs
+      - name: Apply verified official government portraits
+        run: node scripts/elections/apply-official-government-photo-findings-2026-08-21.mjs
+      - name: Apply verified official federal portrait wave 2
+        run: node scripts/elections/apply-official-federal-photo-findings-2026-08-21-wave2.mjs
+      - name: Apply verified public-domain congressional portrait wave 3
+        run: node scripts/elections/apply-public-domain-congress-photo-findings-2026-08-21-wave3.mjs
+      - name: Apply verified public-domain congressional portrait wave 4
+        run: node scripts/elections/apply-public-domain-congress-photo-findings-2026-08-22-wave4.mjs
+      - name: Apply all verified candidate portrait waves
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          scripts=(scripts/elections/apply-verified-candidate-photo-findings-*.mjs)
+          for script in "${scripts[@]}"; do
+            echo "Applying $script"
+            node "$script"
+          done
+      - name: Apply verified Texas appellate portrait wave 2
+        run: node scripts/elections/apply-official-judicial-photo-findings-2026-08-21-wave2.mjs
+      - name: Remove known generic and placeholder candidate images before discovery
+        run: node scripts/elections/remove-generic-candidate-photo-entries.mjs
+      - name: Apply verified Texas Senate member portrait replacements
+        run: node scripts/elections/apply-official-senate-photo-replacements-2026-08-30.mjs
+      - name: Discover portraits from verified source registries
+        run: node scripts/elections/discover-candidate-photos-source-registries.mjs
+      - name: Discover previously unseen candidate photo source domains
+        run: node scripts/elections/discover-candidate-photo-sources-fast.mjs
+      - name: Discover Congress.gov member portraits
+        run: node scripts/elections/discover-candidate-photos-congress-gov.mjs
+      - name: Discover U.S. House Clerk member portraits
+        run: node scripts/elections/discover-candidate-photos-house-clerk.mjs
+      - name: Discover TCTA-linked official campaign portraits
+        run: node scripts/elections/discover-candidate-photos-tcta.mjs
+      - name: Discover Texas and national archive portrait leads
+        run: node scripts/elections/discover-candidate-photos-texas-archives.mjs
       - name: Discover directory candidate portraits
         run: node scripts/elections/discover-candidate-photos-directories.mjs
       - name: Discover linked and public-source candidate portraits
-        run: node scripts/elections/discover-candidate-photos.mjs
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=30s 12m node scripts/elections/discover-candidate-photos.mjs
+          code=$?
+          set -e
+          if [[ "$code" -eq 124 || "$code" -eq 137 || "$code" -eq 143 ]]; then
+            echo "::warning title=Broad candidate-photo discovery budget reached::Continuing with the remaining specialized discovery passes after the 12-minute broad-search budget."
+          elif [[ "$code" -ne 0 ]]; then
+            exit "$code"
+          fi
       - name: Discover alternate search-provider candidate portraits
-        run: node scripts/elections/discover-candidate-photos-search-providers.mjs
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=30s 4m node scripts/elections/discover-candidate-photos-search-providers.mjs
+          code=$?
+          set -e
+          if [[ "$code" -eq 124 || "$code" -eq 137 || "$code" -eq 143 ]]; then
+            echo "::warning title=Search-provider discovery budget reached::Continuing after the 4-minute optional discovery budget."
+          elif [[ "$code" -ne 0 ]]; then
+            exit "$code"
+          fi
       - name: Discover expanded voter-guide and public-directory portraits
-        run: node scripts/elections/discover-candidate-photos-expanded.mjs
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=30s 12m node scripts/elections/discover-candidate-photos-expanded.mjs
+          code=$?
+          set -e
+          if [[ "$code" -eq 124 || "$code" -eq 137 || "$code" -eq 143 ]]; then
+            echo "::warning title=Expanded voter-guide discovery budget reached::Continuing after the 12-minute optional discovery budget."
+          elif [[ "$code" -ne 0 ]]; then
+            exit "$code"
+          fi
       - name: Discover race-aware multi-engine portraits
-        run: node scripts/elections/discover-candidate-photos-race-aware.mjs
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=30s 4m node scripts/elections/discover-candidate-photos-race-aware.mjs
+          code=$?
+          set -e
+          if [[ "$code" -eq 124 || "$code" -eq 137 || "$code" -eq 143 ]]; then
+            echo "::warning title=Race-aware discovery budget reached::Continuing after the 4-minute optional discovery budget."
+          elif [[ "$code" -ne 0 ]]; then
+            exit "$code"
+          fi
       - name: Discover county media finance and professional portraits
-        run: node scripts/elections/discover-candidate-photos-source-wave.mjs
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=30s 5m node scripts/elections/discover-candidate-photos-source-wave.mjs
+          code=$?
+          set -e
+          if [[ "$code" -eq 124 || "$code" -eq 137 || "$code" -eq 143 ]]; then
+            echo "::warning title=County/professional discovery budget reached::Continuing after the 5-minute optional discovery budget."
+          elif [[ "$code" -ne 0 ]]; then
+            exit "$code"
+          fi
       - name: Discover deep-web document image and archived portraits
-        run: node scripts/elections/discover-candidate-photos-deep-web.mjs
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=30s 4m node scripts/elections/discover-candidate-photos-deep-web.mjs
+          code=$?
+          set -e
+          if [[ "$code" -eq 124 || "$code" -eq 137 || "$code" -eq 143 ]]; then
+            echo "::warning title=Deep-web discovery budget reached::Continuing after the 4-minute optional discovery budget."
+          elif [[ "$code" -ne 0 ]]; then
+            exit "$code"
+          fi
       - name: Discover local public-record and biography portraits
-        run: node scripts/elections/discover-candidate-photos-local-records.mjs
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=30s 4m node scripts/elections/discover-candidate-photos-local-records.mjs
+          code=$?
+          set -e
+          if [[ "$code" -eq 124 || "$code" -eq 137 || "$code" -eq 143 ]]; then
+            echo "::warning title=Local-record discovery budget reached::Continuing after the 4-minute optional discovery budget."
+          elif [[ "$code" -ne 0 ]]; then
+            exit "$code"
+          fi
       - name: Discover verified Wikidata and Wikimedia Commons portraits
-        run: node scripts/elections/discover-candidate-photos-wikimedia.mjs
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=30s 4m node scripts/elections/discover-candidate-photos-wikimedia.mjs
+          code=$?
+          set -e
+          if [[ "$code" -eq 124 || "$code" -eq 137 || "$code" -eq 143 ]]; then
+            echo "::warning title=Wikimedia discovery budget reached::Continuing after the 4-minute optional discovery budget."
+          elif [[ "$code" -ne 0 ]]; then
+            exit "$code"
+          fi
       - name: Discover portraits from previously unused domains only
-        run: node scripts/elections/discover-candidate-photos-new-domains.mjs
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=30s 3m node scripts/elections/discover-candidate-photos-new-domains.mjs
+          code=$?
+          set -e
+          if [[ "$code" -eq 124 || "$code" -eq 137 || "$code" -eq 143 ]]; then
+            echo "::warning title=Unused-domain discovery budget reached::Continuing after the 3-minute optional discovery budget."
+          elif [[ "$code" -ne 0 ]]; then
+            exit "$code"
+          fi
       - name: Discover second-wave portraits from unused campaign and local domains
-        run: node scripts/elections/discover-candidate-photos-new-domains-wave2.mjs
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=30s 3m node scripts/elections/discover-candidate-photos-new-domains-wave2.mjs
+          code=$?
+          set -e
+          if [[ "$code" -eq 124 || "$code" -eq 137 || "$code" -eq 143 ]]; then
+            echo "::warning title=Second-wave unused-domain discovery budget reached::Continuing after the 3-minute optional discovery budget."
+          elif [[ "$code" -ne 0 ]]; then
+            exit "$code"
+          fi
+      - name: Remove generic images introduced by any discovery source
+        run: node scripts/elections/remove-generic-candidate-photo-entries.mjs
       - name: Apply approved candidate photos
         run: node scripts/elections/candidate-photo-enrichment.mjs --apply
 
-      - name: Commit enriched candidate records and reports
+      - name: Publish enriched candidate records and reports as protected PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_TITLE: Discover and apply verified candidate photos
+          PR_BODY: Automated candidate-photo enrichment from approved, verified, official, public-domain, registry-driven, and review-queued sources. Authoritative rejected or withdrawn filings remain in canonical data but are excluded from coverage only through supported lifecycle fields. Known generic and placeholder images are rejected before coverage is calculated. Existing source verification and candidate-photo validation are unchanged; protected verify gates merge and deployment.
+          COMMIT_MESSAGE: Discover and apply candidate photos from expanded sources
         shell: bash
         run: |
           set -euo pipefail
@@ -63,7 +258,15 @@ jobs:
             src/data/elections/2026/candidate-photos.json
             src/data/elections/2026/candidates.json
             artifacts/elections/candidate-photo-report.json
+            artifacts/elections/candidate-photo-generic-image-audit.json
+            artifacts/elections/candidate-photo-eligibility-reconciliation.json
             artifacts/elections/candidate-photo-discovery-report.json
+            artifacts/elections/candidate-photo-source-discovery-report.json
+            artifacts/elections/candidate-photo-source-registry-report.json
+            artifacts/elections/candidate-photo-congress-gov-report.json
+            artifacts/elections/candidate-photo-house-clerk-report.json
+            artifacts/elections/candidate-photo-tcta-report.json
+            artifacts/elections/candidate-photo-texas-archives-report.json
             artifacts/elections/candidate-photo-search-provider-report.json
             artifacts/elections/candidate-photo-expanded-report.json
             artifacts/elections/candidate-photo-race-aware-report.json
@@ -77,22 +280,14 @@ jobs:
             artifacts/elections/candidate-photo-review-queue.json
           )
           if git diff --quiet -- "${TRACKED[@]}"; then
-            echo "No candidate photo changes to commit."
+            echo "No candidate photo changes to publish."
             exit 0
           fi
-          git add "${TRACKED[@]}"
-          unexpected_files="$(git diff --cached --name-only | grep -vE '^(src/data/elections/2026/(candidate-photos|candidates)\.json|artifacts/elections/candidate-photo-[a-z0-9-]+\.json)$' || true)"
+          changed="$(git status --short | awk '{print $2}')"
+          unexpected_files="$(grep -vE '^(src/data/elections/2026/(candidate-photos|candidates)\.json|artifacts/elections/candidate-photo-[a-z0-9-]+\.json)$' <<<"$changed" || true)"
           if [[ -n "$unexpected_files" ]]; then
             echo "Refusing to publish files outside the candidate-photo allowlist:" >&2
             echo "$unexpected_files" >&2
             exit 1
           fi
-          git fetch origin main
-          if [[ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]]; then
-            echo "main advanced during candidate-photo enrichment; refusing to publish stale data." >&2
-            exit 1
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Discover and apply candidate photos from expanded sources"
-          git push origin HEAD:main
+          bash scripts/ci/publish-automation-pr.sh candidate-photo-enrichment "${TRACKED[@]}"

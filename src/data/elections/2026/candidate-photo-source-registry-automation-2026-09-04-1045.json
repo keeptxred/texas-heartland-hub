@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "asianam.org",
+    "sourceClass": "candidate-demographic-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Asian American Politics candidate directory pages only to corroborate candidate identity, office sought, and discover downstream official campaign or candidate-controlled profile sources. Do not approve or reuse asianam.org-hosted images without exact item-level provenance plus an explicit reusable license, candidate-supplied media basis, campaign/media permission, or another documented narrow editorial-identification basis. Reject generic social-share images, logos, placeholders, and unrelated directory graphics.",
+    "searchHint": "site:asianam.org/asian-american-candidates Texas 2026 candidate official campaign portrait",
+    "notes": "Discovered September 4, 2026 while researching missing Texas House District 48 candidate Anthony Gupta. The directory identifies Anthony Gupta as a 2026 Texas House District 48 candidate and frequently links official campaign or candidate social profiles for listed candidates. Treat as a discovery bridge only."
+  },
+  {
+    "domain": "austinretiredteachers.org",
+    "sourceClass": "local-education-association-election-guide",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Austin Retired Teachers Association election materials only to corroborate Austin-area candidate identity and race participation and to discover downstream official campaign, voter-guide, or public-profile sources. Do not approve or reuse association-hosted images or document graphics without exact item-level provenance plus a reusable license, candidate-supplied media basis, explicit permission, or another documented narrow editorial-identification basis.",
+    "searchHint": "site:austinretiredteachers.org 2026 Texas House candidate portrait campaign",
+    "notes": "Discovered September 4, 2026 through ARTA's February 2026 election packet, which lists Austin-area Texas House primary candidates including Anthony Gupta in District 48 and can serve as a local corroboration/discovery bridge. No hosted image is approved by this registry entry."
+  }
+]

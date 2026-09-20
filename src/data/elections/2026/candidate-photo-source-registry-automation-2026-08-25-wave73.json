@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "dallasgop.org",
+    "sourceClass": "official-county-party-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying portraits from the Dallas County Republican Party's current Meet the Candidates directory only after the exact candidate entry and exact image independently validate, the entry clearly identifies the candidate and office, and the image is a usable portrait rather than a logo, event graphic, group photo, or unrelated decorative media. Preserve Dallas GOP attribution and the exact candidate-directory source page; do not infer broader reuse rights.",
+    "searchHint": "site:dallasgop.org/meet-the-candidates Texas House candidate portrait Dallas County Republican Party",
+    "notes": "New source class verified August 25, 2026. Dallas GOP's live 2026 Meet the Candidates page identifies candidates by office, links their campaign websites, and publishes candidate-specific portrait images. Item-level verification remains required before approval."
+  }
+]

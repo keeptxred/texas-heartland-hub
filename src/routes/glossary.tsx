@@ -1,14 +1,25 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
+import { CitationTrustPanel } from "@/components/authority/CitationTrustPanel";
+import { buildSeo, SITE_URL } from "@/lib/seo";
 
 type Term = { term: string; definition: string; seeAlso?: { label: string; href: string }[] };
+
+const TLC_GLOSSARY = "https://tlc.texas.gov/Glossary";
+const LRL_SESSIONS = "https://lrl.texas.gov/sessions/sessionyears.cfm";
+const COMPTROLLER_PROPERTY_TAX = "https://comptroller.texas.gov/taxes/property-tax/basics.php";
+const COMPTROLLER_EXEMPTIONS = "https://comptroller.texas.gov/taxes/property-tax/exemptions/";
+const TEA_SCHOOL_FINANCE = "https://tea.texas.gov/about-tea/state-funding/state-funding-manuals/school-finance-topics-one-page-descriptions";
+const GLOSSARY_TITLE = "Texas Political Glossary";
+const GLOSSARY_DESCRIPTION =
+  "Plain-English definitions of Texas political terms: special session, sunset review, recapture, ERCOT, homestead exemption, and more.";
 
 const TERMS: Term[] = [
   {
     term: "Appraisal Review Board (ARB)",
     definition:
       "Citizen panel that hears property tax protests at each County Appraisal District. Its decisions can be appealed to state district court.",
-    seeAlso: [{ label: "How CADs Work", href: "/news/county-appraisal-districts-explained" }],
+    seeAlso: [{ label: "How CADs Work", href: "https://texasdefined.com/learn/appraisal-districts" }],
   },
   {
     term: "Basic Allotment",
@@ -45,7 +56,7 @@ const TERMS: Term[] = [
     definition:
       "A voter-approved change to the Texas Constitution. Requires a two-thirds vote of each legislative chamber plus a simple majority of statewide voters.",
     seeAlso: [
-      { label: "Amendment Process Guide", href: "/news/texas-constitutional-amendments-guide" },
+      { label: "Amendment Process Guide", href: "/laws/constitutional-amendments" },
     ],
   },
   {
@@ -74,7 +85,7 @@ const TERMS: Term[] = [
     definition:
       "Property tax exemption that removes $140,000 from the value taxed by a school district on a qualifying owner-occupied principal residence; additional relief may apply for homeowners age 65 or older, disabled homeowners, and disabled veterans.",
     seeAlso: [
-      { label: "Homestead Exemption Explained", href: "/news/homestead-exemption-explained" },
+      { label: "Homestead Exemption Explained", href: "https://texasdefined.com/do/homestead-exemption" },
     ],
   },
   {
@@ -140,23 +151,18 @@ const TERMS: Term[] = [
   },
 ];
 
-export const Route = createFileRoute("/glossary")({
-  head: () => ({
-    meta: [
-      { title: "Texas Political Glossary — Keep TX Red" },
-      {
-        name: "description",
-        content:
-          "Plain-English definitions of Texas political terms: special session, sunset review, recapture, ERCOT, homestead exemption, and more.",
-      },
-      { property: "og:title", content: "Texas Political Glossary — Keep TX Red" },
-      {
-        property: "og:description",
-        content: "Definitions of the most common Texas political and policy terms.",
-      },
-      { property: "og:url", content: "/glossary" },
-    ],
-    links: [{ rel: "canonical", href: "https://keeptxred.com/glossary" }],
+export function glossaryHead() {
+  const seo = buildSeo({
+    title: GLOSSARY_TITLE,
+    description: GLOSSARY_DESCRIPTION,
+    path: "/glossary",
+    type: "website",
+    imageAlt: "Keep TX Red Texas Political Glossary",
+  });
+
+  return {
+    meta: seo.meta,
+    links: seo.links,
     scripts: [
       {
         type: "application/ld+json",
@@ -164,6 +170,9 @@ export const Route = createFileRoute("/glossary")({
           "@context": "https://schema.org",
           "@type": "DefinedTermSet",
           name: "Texas Political Glossary",
+          url: `${SITE_URL}/glossary`,
+          dateModified: "2026-08-20",
+          isBasedOn: [TLC_GLOSSARY, LRL_SESSIONS, COMPTROLLER_PROPERTY_TAX, COMPTROLLER_EXEMPTIONS, TEA_SCHOOL_FINANCE],
           hasDefinedTerm: TERMS.map((t) => ({
             "@type": "DefinedTerm",
             name: t.term,
@@ -172,7 +181,11 @@ export const Route = createFileRoute("/glossary")({
         }),
       },
     ],
-  }),
+  };
+}
+
+export const Route = createFileRoute("/glossary")({
+  head: glossaryHead,
   component: GlossaryPage,
 });
 
@@ -192,16 +205,20 @@ function GlossaryPage() {
         highlight="Glossary"
         description="The terms Austin reporters never define — special session, sunset review, recapture, M&O, point of order, and the rest of the Capitol's working vocabulary."
       />
-      <div className="mx-auto max-w-4xl px-4 py-14">
+      <main className="mx-auto max-w-4xl px-4 py-14">
+        <aside className="mb-8 rounded-xl border bg-muted/30 p-5 text-sm leading-6 text-muted-foreground">
+          <strong className="text-foreground">Reference note:</strong> These are concise plain-English definitions, not substitutes for the governing statute, rule, constitutional provision, agency guidance, or chamber rules. Terms can have exceptions or context-specific meanings; the official source families linked below control when precision matters.
+        </aside>
+
         <nav
           aria-label="Glossary index"
-          className="flex flex-wrap gap-2 mb-10 border-b border-border pb-5"
+          className="mb-10 flex flex-wrap gap-2 border-b border-border pb-5"
         >
           {letters.map((l) => (
             <a
               key={l}
               href={`#letter-${l}`}
-              className="text-xs font-bold tracking-widest uppercase px-2 py-1 border border-border hover:border-primary hover:text-primary"
+              className="border border-border px-2 py-1 text-xs font-bold uppercase tracking-widest hover:border-primary hover:text-primary"
             >
               {l}
             </a>
@@ -210,21 +227,21 @@ function GlossaryPage() {
 
         {letters.map((l) => (
           <section key={l} id={`letter-${l}`} className="mb-10">
-            <h2 className="font-display text-4xl text-primary border-b-2 border-foreground mb-5">
+            <h2 className="mb-5 border-b-2 border-foreground font-display text-4xl text-primary">
               {l}
             </h2>
             <dl className="space-y-6">
               {grouped[l].map((t) => (
                 <div key={t.term}>
                   <dt className="font-display text-lg tracking-tight">{t.term}</dt>
-                  <dd className="font-serif text-base text-muted-foreground leading-relaxed mt-1">
+                  <dd className="mt-1 font-serif text-base leading-relaxed text-muted-foreground">
                     {t.definition}
                   </dd>
                   {t.seeAlso?.map((s) => (
                     <Link
                       key={s.href}
                       to={s.href}
-                      className="inline-block text-xs uppercase tracking-widest text-primary mt-2 hover:underline"
+                      className="mt-2 inline-block text-xs uppercase tracking-widest text-primary hover:underline"
                     >
                       → {s.label}
                     </Link>
@@ -234,7 +251,21 @@ function GlossaryPage() {
             </dl>
           </section>
         ))}
-      </div>
+
+        <CitationTrustPanel
+          className="mt-12"
+          sources={[
+            { name: "Texas Legislative Council — Legislative Glossary", url: TLC_GLOSSARY, note: "Official terminology for legislative procedure and measures." },
+            { name: "Texas Legislative Reference Library — Sessions and Years", url: LRL_SESSIONS, note: "Official-reference session dates and lengths." },
+            { name: "Texas Comptroller — Property Tax System Basics", url: COMPTROLLER_PROPERTY_TAX, note: "Property appraisal, ARB and local property-tax process." },
+            { name: "Texas Comptroller — Property Tax Exemptions", url: COMPTROLLER_EXEMPTIONS, note: "Current residence-homestead exemption amounts and eligibility framework." },
+            { name: "Texas Education Agency — School Finance Topics", url: TEA_SCHOOL_FINANCE, note: "Basic allotment, Foundation School Program, recapture and school-finance references." },
+          ]}
+          methodology="Keep TX Red summarizes recurring Texas government and policy terminology in plain English, then checks legislative terms against Texas Legislative Council/Legislative Reference Library materials, property-tax terms against Comptroller guidance, and school-finance terms against Texas Education Agency references. Definitions are intentionally short and should not be read to erase statutory exceptions."
+          lastVerified="August 20, 2026"
+          title="Glossary sources and verification"
+        />
+      </main>
     </>
   );
 }

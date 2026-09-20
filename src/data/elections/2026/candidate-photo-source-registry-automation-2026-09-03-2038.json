@@ -1,0 +1,20 @@
+[
+  {
+    "domain": "bluevoterguide.org",
+    "sourceClass": "candidate-endorsement-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Blue Voter Guide Texas candidate and endorser pages to corroborate current candidate identity, race, and discover downstream official campaign or candidate-profile sources. Do not approve or reuse Blue Voter Guide-hosted images without item-level provenance plus explicit reusable rights, candidate-supplied permission, or another documented editorial permission basis.",
+    "searchHint": "site:bluevoterguide.org Texas 2026 candidate portrait campaign website",
+    "notes": "Discovered September 3, 2026 during current missing-photo enrichment. Texas endorsement pages expose candidate-specific images and current race participation for unresolved candidates including Crystal Sedillo and Mike Meadors. Treat hosted imagery as discovery-only and follow downstream official links before any approval."
+  },
+  {
+    "domain": "gawtp.com",
+    "sourceClass": "state-political-endorsement-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Grassroots America - We The People endorsement pages to corroborate candidate identity, office, and discover downstream official campaign or candidate-specific media sources. Do not approve or reuse hosted images without item-level provenance plus explicit reusable rights, candidate-supplied permission, or another documented editorial permission basis.",
+    "searchHint": "site:gawtp.com 2026 Texas candidate endorsement portrait campaign",
+    "notes": "Discovered September 3, 2026 during current missing-photo enrichment. The 2026 Republican primary endorsements page includes candidate-specific entries and images for unresolved candidates including Mindy Bumgarner. Treat hosted imagery as discovery-only absent item-level rights and use the page as a bridge to stronger first-party sources."
+  }
+]

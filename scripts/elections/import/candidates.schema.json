@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://keeptxred.com/schemas/elections/2026/candidates-import.schema.json",
+  "$id": "urn:keeptxred:elections:2026:candidates-import",
   "title": "Keep TX Red 2026 Candidate Import",
   "type": "array",
   "items": {

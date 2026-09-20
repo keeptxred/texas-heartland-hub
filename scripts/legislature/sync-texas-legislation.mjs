@@ -26,7 +26,7 @@ const sessions = String(args.sessions || process.env.TLO_SESSIONS || '89R').spli
 const dryRun = Boolean(args['dry-run']);
 const maxRecords = Number(args.limit || 0);
 const freshRun = Boolean(args.fresh);
-// A Lovable/CI command has a hard execution ceiling; stop cleanly before it and checkpoint.
+// A legacy builder/CI command has a hard execution ceiling; stop cleanly before it and checkpoint.
 const maxSeconds = Number(args['max-seconds'] || process.env.TLO_MAX_SECONDS || 480);
 // Already-imported source files are re-downloaded only after this many days, so restarts are cheap
 // while later incremental runs still pick up upstream changes.
@@ -51,6 +51,21 @@ const isoDate = (text) => {
   const date = new Date(text); return Number.isNaN(date.getTime()) ? null : date.toISOString().slice(0, 10);
 };
 const hash = (text) => createHash('sha256').update(text).digest('hex');
+const formatMdy = (iso) => {
+  if (!iso) return null;
+  const [year, month, day] = iso.split('-').map(Number);
+  return `${month}/${day}/${year}`;
+};
+function normalizeActionText(part) {
+  const description = value(part, ['actionDescription', 'description', 'actionText']);
+  const comment = value(part, ['actionComment', 'comment', 'comments', 'actionRemarks', 'remarks', 'remark']);
+  if (!description) return decode(part.replace(/<[^>]+>/g, ' '));
+  if (comment && /^Effective on(?:\s*\.)+\s*$/i.test(description)) {
+    const effectiveDate = formatMdy(isoDate(comment));
+    if (effectiveDate) return `Effective on ${effectiveDate}`;
+  }
+  return description;
+}
 
 async function request(url, init = {}) {
   const response = await fetch(url, init);
@@ -149,7 +164,7 @@ function billIdentity(xml, sourceUrl, session) {
 function normalizeStatus(actions) {
   const text = actions.map((a) => a.action_text).join(' | ').toLowerCase();
   const rules = [
-    ['vetoed', 'Vetoed', /veto/], ['signed', 'Signed by governor', /signed by the governor|governor signed/],
+    ['vetoed', 'Vetoed', /vetoed by the governor/], ['signed', 'Signed by governor', /signed by the governor|governor signed/],
     ['became-law', 'Became law', /effective|became law|filed without signature/], ['sent-to-governor', 'Sent to governor', /sent to the governor/],
     ['passed-senate', 'Passed Senate', /passed senate/], ['passed-house', 'Passed House', /passed house/],
     ['in-committee', 'In committee', /referred to|committee/],
@@ -162,7 +177,7 @@ function parseBill(xml, sourceUrl, session) {
   const actions = actionBlocks.map((part, index) => ({
     action_date: isoDate(value(part, ['actionDate', 'date'])), action_sequence: index,
     chamber: value(part, ['chamber', 'actionChamber'])?.toLowerCase() || null,
-    action_code: value(part, ['actionCode', 'code']), action_text: value(part, ['actionDescription', 'description', 'actionText']) || decode(part.replace(/<[^>]+>/g, ' ')),
+    action_code: value(part, ['actionCode', 'code']), action_text: normalizeActionText(part),
     source_url: sourceUrl,
   })).filter((a) => a.action_date && a.action_text);
   const status = normalizeStatus(actions);

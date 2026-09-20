@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "kltv.com",
+    "sourceClass": "local-news-candidate-announcement-discovery-bridge",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use KLTV candidate-announcement and local-election coverage to corroborate candidate identity, office sought, campaign-linked statements, and discover downstream candidate-controlled portrait sources. Do not approve or reuse KLTV-hosted photography solely because it accompanies an article. Require item-level provenance plus a reusable license, explicit permission, candidate-supplied status with a documented editorial-identification basis, or another supported reuse basis. Reject station graphics, logos, social-share images, placeholders, and unrelated newsroom imagery.",
+    "searchHint": "site:kltv.com 2026 Texas House candidate campaign portrait official website",
+    "notes": "New source discovered September 5, 2026 while researching unresolved Texas House District 5 candidate Hector Garza. KLTV's November 19, 2025 report identifies Garza by name, shows a candidate-specific image, and states that he planned to run for Texas House District 5. Treat KLTV as an identity and downstream-source discovery bridge unless item-level image provenance and reuse permission are separately established."
+  }
+]

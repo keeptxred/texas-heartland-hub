@@ -1,0 +1,54 @@
+import priorityUrls from "../data/search-console-priority-sitemap-urls.json";
+
+const SITE_ORIGIN = "https://keeptxred.com";
+export const MAX_SEARCH_CONSOLE_PRIORITY_URLS = 30;
+
+const DISALLOWED_PRIORITY_PATHS = new Set([
+  "/elections",
+  "/elections/polls/methodology",
+  "/bills/capital-punishment",
+  "/texas-legislature/cross-party-scorecard",
+  "/fact-checks",
+  "/fact-checks/federal",
+  "/fact-checks/state",
+  "/bills/texas/89/hb/37",
+  "/bills/texas/89/hb/119",
+  "/bills/texas/89/hb/261",
+  "/bills/texas/89/sb/13",
+  "/bills/texas/89/sb/1253",
+  "/bills/texas/89/hb/1404",
+  "/bills/texas/89/hb/1942",
+  "/bills/texas/89/hb/2746",
+  "/bills/texas/89/hb/3435",
+  "/bills/texas/89/hb/3913",
+  "/news/democrat-viral-tweet-falsely-claims-texas-congressional-map-eliminates-black-and-latino-majority-districts",
+  "/news/texas-lawmakers-propose-expanding-death-penalty-to-cover-abortion-after-fetal-heartbeat",
+]);
+
+function isDisallowedPriorityPath(path: string) {
+  return DISALLOWED_PRIORITY_PATHS.has(path)
+    || path.startsWith("/texas-house/")
+    || path.startsWith("/texas-senate/");
+}
+
+function normalizePriorityPath(value: string) {
+  try {
+    const url = new URL(value, SITE_ORIGIN);
+    if (url.origin !== SITE_ORIGIN) return null;
+    url.hash = "";
+    url.search = "";
+    const path = url.pathname.replace(/\/+$/, "") || "/";
+    if (isDisallowedPriorityPath(path)) return null;
+    return path;
+  } catch {
+    return null;
+  }
+}
+
+export function getPrioritySitemapPaths() {
+  const normalized = priorityUrls
+    .map(normalizePriorityPath)
+    .filter((value): value is string => Boolean(value));
+
+  return [...new Set(normalized)].slice(0, MAX_SEARCH_CONSOLE_PRIORITY_URLS);
+}

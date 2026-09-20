@@ -12,11 +12,11 @@ const generalElection = calendar2026.find((item) => item.type === 'general');
 
 export function ElectionMasterReference() {
   return (
-    <section className="border-y border-slate-200 bg-slate-50" aria-labelledby="election-master-reference">
+    <section className="border-y border-border bg-muted/30" aria-labelledby="election-master-reference">
       <div className="mx-auto max-w-[1200px] px-6 py-12">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">2026 master reference</p>
-        <h2 id="election-master-reference" className="mt-2 text-3xl font-bold tracking-tight text-slate-950">Texas election cycle at a glance</h2>
-        <p className="mt-3 max-w-3xl leading-7 text-slate-600">This index counts only Election Central race and candidate records that are both published and verified. Calendar dates come from the centralized Texas election calendar and link into the maintained race, candidate, voting and results systems.</p>
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">2026 master reference</p>
+        <h2 id="election-master-reference" className="mt-2 font-display text-3xl leading-none tracking-tight text-foreground">Texas election cycle at a glance</h2>
+        <p className="mt-3 max-w-3xl leading-7 text-muted-foreground">This index counts only Election Central race and candidate records that are both published and verified. Calendar dates come from the centralized Texas election calendar and link into the maintained race, candidate, voting and results systems.</p>
 
         <dl className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <MasterFact label="Verified races" value={publishedRaces.length.toLocaleString('en-US')} />
@@ -46,11 +46,11 @@ export function ElectionMasterReference() {
 }
 
 function MasterFact({ label, value }: { label: string; value: string }) {
-  return <div className="rounded-xl border border-slate-200 bg-white p-5"><dt className="text-xs font-bold uppercase tracking-wide text-slate-500">{label}</dt><dd className="mt-2 text-2xl font-bold text-slate-950">{value}</dd></div>;
+  return <div className="rounded-xl border border-border bg-card p-5"><dt className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{label}</dt><dd className="mt-2 text-2xl font-bold text-foreground">{value}</dd></div>;
 }
 
 function ReferenceLink({ href, label }: { href: string; label: string }) {
-  return <a href={href} className="rounded-xl border border-slate-200 bg-white p-4 font-semibold text-red-700 shadow-sm hover:border-red-300 hover:underline">{label} →</a>;
+  return <a href={href} className="rounded-xl border border-border bg-card p-4 font-semibold text-primary shadow-sm hover:border-primary hover:underline">{label} →</a>;
 }
 
 export default ElectionMasterReference;

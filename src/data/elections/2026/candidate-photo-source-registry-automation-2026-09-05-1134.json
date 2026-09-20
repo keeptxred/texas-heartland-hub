@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "kathrynhartmannhd53.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Kathryn Hartmann's official Texas House District 53 campaign website to verify candidate identity, office, campaign-controlled biography content, and discover candidate-specific portrait or media assets. Do not approve or reuse any site image without item-level provenance plus an explicit reusable license, campaign/media permission, candidate-supplied status with a documented narrow editorial-identification basis, or another documented reuse basis. Reject logos, social-share images, default avatars, placeholders, scenery-only images, and other non-candidate imagery.",
+    "searchHint": "site:kathrynhartmannhd53.com Kathryn Hartmann Texas House District 53 portrait media",
+    "notes": "Discovered September 5, 2026 while researching the live canonical missing-photo list. The current campaign site identifies Kathryn Hartmann as running for Texas House District 53 and contains campaign-controlled biography and media content. Treat all imagery as discovery-only until the exact candidate-specific asset, provenance, and item-level reuse/editorial permission basis are documented."
+  }
+]

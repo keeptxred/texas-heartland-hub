@@ -122,6 +122,10 @@ function effectivePreflight(item: FeedItem): RewritePreflightResult {
   });
 }
 
+function canAttemptArticlePublish(preflight: RewritePreflightResult | undefined): boolean {
+  return !!preflight && (preflight.rewriteable || preflight.reason === "PENDING_EXTRACTION");
+}
+
 function normalizeOpportunityTitle(value: string | null | undefined): string {
   return String(value ?? "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 }
@@ -163,7 +167,7 @@ function dedupeFeedOpportunities(feed: FeedItem[]): FeedItem[] {
 function shouldShowOpportunity(item: FeedItem): boolean {
   if (item.id < 0 || item.internal_slug) return true;
   if (!item.preflight_json) return true;
-  return effectivePreflight(item).rewriteable;
+  return canAttemptArticlePublish(effectivePreflight(item));
 }
 
 function OpportunityStatusBadges({ status }: { status?: OpportunityStatus }) {
@@ -211,7 +215,9 @@ function readinessLabel(
   if (preflight.rewriteable) {
     return { text: `Rewrite ready · ${preflight.sourceWordCount} source words`, tone: "ok" };
   }
-  if (preflight.reason === "PENDING_EXTRACTION") return { text: "Checking source", tone: "muted" };
+  if (preflight.reason === "PENDING_EXTRACTION") {
+    return { text: "Source check required · publishing will extract the source", tone: "muted" };
+  }
   return { text: preflightStatusLabel(preflight), tone: "bad" };
 }
 
@@ -239,6 +245,7 @@ export function ContentOpportunityPanel() {
   const [imageWorking, setImageWorking] = useState<Record<number, boolean>>({});
   const [filter, setFilter] = useState<FilterKey>("ready");
   const [previewId, setPreviewId] = useState<number | null>(null);
+  const [visibleCount, setVisibleCount] = useState(75);
 
   const IGNORE_STORAGE_KEY = "ktr.opportunities.ignored.v1";
   const [ignored, setIgnored] = useState<Set<string>>(() => {
@@ -369,6 +376,18 @@ export function ContentOpportunityPanel() {
             text: res.alreadyPublished ? "Already published" : "Published to Keep Texas Red",
           },
         }));
+        setItems((current) =>
+          current.map((item) =>
+            item.id === r.id
+              ? {
+                  ...item,
+                  internal_slug: res.slug,
+                  article_slug: res.slug,
+                  article_url: `https://keeptxred.com/news/${res.slug}`,
+                }
+              : item,
+          ),
+        );
         setStatuses((s) => ({
           ...s,
           [r.id]: {
@@ -379,9 +398,16 @@ export function ContentOpportunityPanel() {
           },
         }));
       } else {
-        setArticleMsg((s) => ({ ...s, [r.id]: { ok: false, text: res.error } }));
-        if (/does not contain enough text|not enough factual/i.test(res.error)) {
-          setItems((current) => current.filter((item) => item.id !== r.id));
+        setArticleMsg((s) => ({ ...s, [r.id]: { ok: false, text: `Publish failed — ${res.error}` } }));
+        const { data: refreshed } = await supabase
+          .from("texas_news_feed")
+          .select("id,title,source,pub_date,internal_slug,link,description,extracted_body,preflight_json")
+          .eq("id", r.id)
+          .maybeSingle();
+        if (refreshed) {
+          setItems((current) =>
+            current.map((item) => (item.id === r.id ? ({ ...item, ...refreshed } as FeedItem) : item)),
+          );
         }
       }
     } catch (e) {
@@ -397,13 +423,16 @@ export function ContentOpportunityPanel() {
   useEffect(() => {
     let active = true;
     (async () => {
-      const [feedRes, articleRes, pkgRes] = await Promise.all([
+      const since = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
+      const [feedRes, articleRes, pkgRes, normalizationRes] = await Promise.all([
         supabase
           .from("texas_news_feed")
           .select("id,title,source,pub_date,internal_slug,link,description,extracted_body,preflight_json")
+          .gte("pub_date", since)
           .order("pub_date", { ascending: false })
-          // Keep a full recent catch-up window visible. A 150-row cap hid
-          // requested backfills after large multi-source refreshes.
+          // Keep the review queue bounded to the same canonical 14-day newsroom window.
+          // Source history remains in texas_news_feed; deterministic duplicates are hidden below
+          // using news_feed_normalization rather than deleted.
           .limit(500),
         supabase
           .from("daily_articles")
@@ -415,9 +444,20 @@ export function ContentOpportunityPanel() {
           .from("content_packages")
           .select("source_url,source_title")
           .eq("workflow_status", "PUBLISHED"),
+        supabase
+          .from("news_feed_normalization")
+          .select("feed_item_id,duplicate_of_feed_item_id")
+          .gte("observed_at", since)
+          .not("duplicate_of_feed_item_id", "is", null)
+          .limit(5000),
       ]);
       if (!active) return;
-      const rawFeed = (feedRes.data ?? []) as FeedItem[];
+      const duplicateFeedIds = new Set<number>(
+        ((normalizationRes.data ?? []) as Array<{ feed_item_id: number; duplicate_of_feed_item_id: number | null }>).map(
+          (row) => row.feed_item_id,
+        ),
+      );
+      const rawFeed = ((feedRes.data ?? []) as FeedItem[]).filter((item) => !duplicateFeedIds.has(item.id));
       const rawArticles = (articleRes.data ?? []) as Array<{
         slug: string;
         title: string;
@@ -601,16 +641,18 @@ export function ContentOpportunityPanel() {
   const scored = useMemo(
     () =>
       items
-        .filter(shouldShowOpportunity)
+        .filter((it) => statuses[it.id]?.rewritten || !!articleMsg[it.id]?.text || shouldShowOpportunity(it))
         .filter((it) => !ignored.has(ignoreKey(it)))
         .map(score)
         .sort((a, b) => b.total - a.total),
-    [items, ignored],
+    [items, ignored, statuses, articleMsg],
   );
 
   const filtered = useMemo(() => {
     if (filter === "all") return scored;
     return scored.filter((r) => {
+      const attempt = articleMsg[r.id];
+      if (attempt?.text && !attempt.ok) return true;
       const cat = categorizeForFilter(r, statuses[r.id], preflightById[r.id] ?? {
         rewriteable: false,
         reason: "PENDING_EXTRACTION",
@@ -622,7 +664,11 @@ export function ContentOpportunityPanel() {
       if (filter === "ready") return cat === "ready" || cat === "pending";
       return cat === filter;
     });
-  }, [scored, filter, statuses, preflightById]);
+  }, [scored, filter, statuses, preflightById, articleMsg]);
+
+  useEffect(() => {
+    setVisibleCount(75);
+  }, [filter]);
 
   const previewRow = useMemo(
     () => (previewId == null ? null : scored.find((r) => r.id === previewId) ?? null),
@@ -669,11 +715,12 @@ export function ContentOpportunityPanel() {
               </tr>
             </thead>
             <tbody>
-              {filtered.slice(0, 75).map((r) => {
+              {filtered.slice(0, visibleCount).map((r) => {
                 const status = statuses[r.id];
                 const alreadyPublished = !!status?.rewritten;
                 const isDailyArticle = r.id < 0;
                 const preflight = preflightById[r.id];
+                const canAttemptPublish = alreadyPublished || canAttemptArticlePublish(preflight);
                 const resolvedArticleSlug = r.article_slug ?? r.internal_slug ?? null;
                 const resolvedArticleUrl =
                   r.article_url ?? (resolvedArticleSlug ? `https://keeptxred.com/news/${resolvedArticleSlug}` : null);
@@ -718,19 +765,17 @@ export function ContentOpportunityPanel() {
                           {isDailyArticle ? null : (
                             <button
                               type="button"
-                              disabled={!!articleWorking[r.id] || (!alreadyPublished && !preflight?.rewriteable)}
+                              disabled={!!articleWorking[r.id] || alreadyPublished || !canAttemptPublish}
                               onClick={() => void publishArticle(r)}
-                              title={
-                                !alreadyPublished && !preflight?.rewriteable
-                                  ? preflight?.message
-                                  : undefined
-                              }
+                              title={!canAttemptPublish ? preflight?.message : undefined}
                               className="px-3 py-1 bg-secondary text-secondary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60 disabled:cursor-not-allowed"
                             >
                               {articleWorking[r.id]
                                 ? "Publishing…"
                                 : alreadyPublished
-                                ? "Republish"
+                                ? "Published"
+                                : preflight?.reason === "PENDING_EXTRACTION"
+                                ? "Check Source & Publish"
                                 : "Publish to Keep Texas Red"}
                             </button>
                           )}
@@ -788,6 +833,20 @@ export function ContentOpportunityPanel() {
               })}
             </tbody>
           </table>
+          <div className="mt-3 flex items-center justify-between gap-3 text-[11px] text-muted-foreground">
+            <span>
+              Showing {Math.min(visibleCount, filtered.length)} of {filtered.length} matching opportunities · {items.length} loaded
+            </span>
+            {visibleCount < filtered.length ? (
+              <button
+                type="button"
+                onClick={() => setVisibleCount((count) => Math.min(count + 75, filtered.length))}
+                className="px-3 py-1 border border-border font-bold uppercase tracking-widest text-foreground hover:bg-muted"
+              >
+                Load more
+              </button>
+            ) : null}
+          </div>
         </div>
       )}
 
@@ -898,12 +957,17 @@ export function ContentOpportunityPanel() {
                       type="button"
                       disabled={
                         !!articleWorking[previewRow.id] ||
-                        (!statuses[previewRow.id]?.rewritten && !preflightById[previewRow.id]?.rewriteable)
+                        !!statuses[previewRow.id]?.rewritten ||
+                        (!statuses[previewRow.id]?.rewritten && !canAttemptArticlePublish(preflightById[previewRow.id]))
                       }
                       onClick={() => void publishArticle(previewRow)}
                       className="px-3 py-1 bg-secondary text-secondary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
                     >
-                      {statuses[previewRow.id]?.rewritten ? "Republish" : "Publish to Keep Texas Red"}
+                      {statuses[previewRow.id]?.rewritten
+                        ? "Published"
+                        : preflightById[previewRow.id]?.reason === "PENDING_EXTRACTION"
+                        ? "Check Source & Publish"
+                        : "Publish to Keep Texas Red"}
                     </button>
                   ) : null}
                   {(previewRow.id < 0 ||

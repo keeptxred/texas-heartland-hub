@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "hd126.stanstanart.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Stan Stanart's official Texas House District 126 campaign website only after the exact page and image independently validate and clearly identify Stanart. Preserve campaign attribution and the exact source page. Do not approve campaign logos, endorsement graphics, issue graphics, group photos without an unambiguous subject, or unrelated decorative media as the canonical portrait.",
+    "searchHint": "site:hd126.stanstanart.com Stan Stanart Texas House District 126 portrait photo",
+    "notes": "New candidate-controlled source verified August 25, 2026. The live campaign site identifies Stan Stanart as the Republican candidate for Texas House District 126; TCTA and VOTE411 independently identify the same campaign website. Exact portrait approval remains item-level review only."
+  },
+  {
+    "domain": "jorgefortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Jorge Borrego's official Texas House District 118 campaign website only after the exact page and image independently validate and clearly identify Borrego. Preserve campaign attribution and the exact source page. Do not approve campaign logos, endorsement graphics, issue graphics, group photos without an unambiguous subject, or unrelated decorative media as the canonical portrait.",
+    "searchHint": "site:jorgefortexas.com Jorge Borrego Texas House District 118 portrait photo",
+    "notes": "New candidate-controlled source verified August 25, 2026. The live campaign site identifies Jorge Borrego as the Republican candidate for Texas House District 118, and TCTA independently links jorgefortexas.com as his campaign website. Exact portrait approval remains item-level review only."
+  },
+  {
+    "domain": "melvafortexas.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography hosted on Melva Perez's official Texas House District 119 campaign website only after the exact page and image independently validate and clearly identify Perez. Preserve campaign attribution and the exact source page. Do not approve campaign logos, endorsement graphics, issue graphics, group photos without an unambiguous subject, or unrelated decorative media as the canonical portrait.",
+    "searchHint": "site:melvafortexas.com Melva Perez Texas House District 119 portrait photo",
+    "notes": "New candidate-controlled source discovered August 25, 2026 through TCTA's current candidate profile, which identifies Melva Perez as the Republican candidate for Texas House District 119 and links melvafortexas.com. BallotReady independently confirms Perez's candidacy and verified campaign webpages. Exact portrait approval remains item-level review only."
+  }
+]

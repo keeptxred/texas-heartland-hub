@@ -1,5 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
+import {
+  CLOUDFLARE_IMAGE_MODEL,
+  CLOUDFLARE_VISION_MODEL,
+} from "@/lib/featured-image-cloudflare";
 
 function aiProviderState() {
   const ready = Boolean(
@@ -14,12 +18,10 @@ function aiProviderState() {
     rewrite_model: ready ? rewriteModel : null,
     image_provider: ready ? "cloudflare-workers-ai" : "unconfigured",
     image_provider_ready: ready,
-    image_model: ready ? "@cf/black-forest-labs/flux-1-schnell" : null,
-    image_validation_model: ready ? "@cf/meta/llama-3.2-11b-vision-instruct" : null,
-    lovable_rewrite_bypassed: true,
-    lovable_image_bypassed: true,
-    lovable_ai_network_disabled: true,
-    lovable_ai_fallback_allowed: false,
+    image_model: ready ? CLOUDFLARE_IMAGE_MODEL : null,
+    image_validation_model: ready ? CLOUDFLARE_VISION_MODEL : null,
+    external_ai_gateway_disabled: true,
+    direct_provider_only: true,
   };
 }
 

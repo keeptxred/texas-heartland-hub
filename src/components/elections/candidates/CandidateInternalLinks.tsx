@@ -1,4 +1,5 @@
 import { RelatedResources } from "../resources";
+import { politicalFigureProfilePathByName } from "@/data/texas-political-figure-links";
 import { ELECTION_INTERNAL_LINKS, ELECTION_ROUTES } from "@/lib/elections";
 import type { CandidateDetail, RaceDetail } from "@/types/elections";
 
@@ -27,7 +28,18 @@ function districtPathForRaceSlug(slug: string): { href: string; title: string } 
 
 export function CandidateInternalLinks({ candidate, race }: CandidateInternalLinksProps) {
   const district = race ? districtPathForRaceSlug(race.slug) : null;
+  const politicalProfileHref = politicalFigureProfilePathByName(candidate.fullName);
   const resources = [
+    ...(politicalProfileHref
+      ? [
+          {
+            title: `${candidate.fullName} evergreen political profile`,
+            href: politicalProfileHref,
+            description: "Read the long-term political biography, office history, and Texas institutional context outside the live election cycle.",
+            eyebrow: "Evergreen profile",
+          },
+        ]
+      : []),
     ...(race
       ? [
           {
@@ -80,7 +92,7 @@ export function CandidateInternalLinks({ candidate, race }: CandidateInternalLin
     <RelatedResources
       resources={resources}
       title="Related candidate resources"
-      description="Continue to the related race, district, other candidates, and trusted Texas election guidance."
+      description="Continue to the evergreen political biography, related race, district, other candidates, and trusted Texas election guidance."
     />
   );
 }

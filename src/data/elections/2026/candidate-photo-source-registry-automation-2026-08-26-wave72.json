@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "mindybumgarner.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the official Mindy Bumgarner campaign website to verify candidate identity, office sought, campaign-controlled profiles, and candidate-specific image provenance. Do not infer reuse permission from publication on the campaign site; any portrait still requires item-level rights verification before approval.",
+    "searchHint": "Mindy Bumgarner Texas State Board of Education District 14 official campaign portrait",
+    "notes": "New candidate-controlled discovery source verified August 26, 2026. The site identifies Mindy Bumgarner as a candidate for Texas State Board of Education District 14 and contains campaign-branded imagery. Registered as discovery-only because no explicit portrait reuse license was verified."
+  },
+  {
+    "domain": "votewittliff.com",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Albert Wittliff's official HD129 campaign website to verify candidate identity, office sought, campaign-controlled profiles, and image provenance. The site states all rights reserved, so no image may be approved from it without separate explicit reuse permission or another qualifying rights basis.",
+    "searchHint": "Albert Wittliff Texas House District 129 official campaign portrait",
+    "notes": "New candidate-controlled discovery source verified August 26, 2026. The site identifies Albert Wittliff as running for Texas House District 129 and links campaign social profiles. It is useful for identity/source chaining but remains discovery-only for images because the site states all rights reserved."
+  },
+  {
+    "domain": "tcta.org",
+    "sourceClass": "candidate-linked-professional-association-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Classroom Teachers Association candidate profiles as a candidate/office and official-link discovery bridge. Candidate profile images or embedded assets must not be reused unless their item-level license, candidate-supplied permission, or another documented rights basis is independently verified.",
+    "searchHint": "site:tcta.org TexasTeachersVote 2026 Texas House candidate official website portrait",
+    "notes": "New discovery bridge verified August 26, 2026. TCTA's TexasTeachersVote candidate directory identifies 2026 candidates, offices, and in some cases official campaign websites/social accounts, including Albert Wittliff and Rhett Rosenquest Smith. Registered to expand candidate-aware source discovery without weakening image-rights review."
+  }
+]

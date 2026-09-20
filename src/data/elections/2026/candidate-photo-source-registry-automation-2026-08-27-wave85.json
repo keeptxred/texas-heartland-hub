@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "mikemiller.netlify.app",
+    "sourceClass": "official-campaign-website",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Mike Miller's official 2026 Texas gubernatorial campaign website, as linked by the Texas Solidarity Party and American Solidarity Party, to verify candidate identity, office, biography, and discover candidate-supplied portrait or media assets. Do not approve or reuse any image without item-level provenance plus explicit reusable rights, campaign/media permission, or another documented editorial permission basis.",
+    "searchHint": "Mike Miller Texas governor 2026 official campaign portrait media",
+    "notes": "New source discovered August 27, 2026. Both the Texas Solidarity Party and the national American Solidarity Party identify mikemiller.netlify.app as Mike Miller's campaign website for the November 3, 2026 Texas gubernatorial election. Treat campaign imagery as discovery-only until reuse rights are documented."
+  },
+  {
+    "domain": "txsolidarity.party",
+    "sourceClass": "state-party-candidate-page",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the Texas Solidarity Party site to verify Mike Miller's 2026 gubernatorial nomination, write-in status, and downstream official campaign links. Do not approve or reuse party-hosted images without item-level provenance plus a reusable license, explicit permission, or another documented editorial permission basis.",
+    "searchHint": "Texas Solidarity Party Mike Miller governor 2026 portrait campaign",
+    "notes": "New source discovered August 27, 2026. The party states that its July 11, 2026 state convention nominated Mike Miller for Governor of Texas and links directly to his campaign website. This is a strong identity/provenance bridge but not an automatic image-rights source."
+  },
+  {
+    "domain": "solidarity-party.org",
+    "sourceClass": "national-party-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the American Solidarity Party candidate directory to corroborate Mike Miller's 2026 Texas gubernatorial candidacy and discover downstream campaign/media assets. Do not approve or reuse party-hosted images without item-level provenance plus a reusable license, explicit permission, or another documented editorial permission basis.",
+    "searchHint": "American Solidarity Party Mike Miller Texas governor portrait 2026",
+    "notes": "New source discovered August 27, 2026. The national party lists Mike Miller as a current candidate for Texas Governor on November 3, 2026 and links to the same official campaign website. Treat its hosted portrait as discovery-only absent explicit reuse terms."
+  }
+]

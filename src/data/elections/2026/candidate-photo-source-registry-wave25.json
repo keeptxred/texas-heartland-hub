@@ -1,0 +1,74 @@
+[
+  {
+    "domain": "mindybumgarner.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Official Mindy Bumgarner campaign imagery may be used for editorial candidate identification with campaign attribution and a source link after the existing identity, portrait-quality, HTTPS, and image validation gates pass.",
+    "searchHint": "Mindy Bumgarner Texas State Board of Education District 14 2026",
+    "notes": "Official campaign site verified August 23, 2026 and independently corroborated by TCTA's Texas Teachers Vote candidate directory."
+  },
+  {
+    "domain": "palmerfortexased.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Official Michelle Palmer campaign imagery may be used for editorial candidate identification with campaign attribution and a source link after the existing identity, portrait-quality, HTTPS, and image validation gates pass.",
+    "searchHint": "Michelle Palmer Texas State Board of Education District 6 2026",
+    "notes": "Official campaign site verified August 23, 2026 and independently corroborated by TCTA and Teach the Vote candidate profiles."
+  },
+  {
+    "domain": "history.house.gov",
+    "sourceClass": "official-government-congressional-biographical-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use the U.S. House History, Art & Archives Biographical Directory to corroborate current or former congressional service, BioGuide identity, and official member-source links. Do not auto-approve a hosted portrait unless the specific item has a separately verified public-domain or reuse basis; some profile images are credited as courtesy of the Member.",
+    "searchHint": "site:history.house.gov/People candidate name Texas Congress biography",
+    "notes": "Official U.S. House source verified August 23, 2026. The Biographical Directory is continuously updated and includes member biographies, images, and research/source links. Discovery and identity-corroboration bridge only so item-level image rights remain explicit."
+  },
+  {
+    "domain": "bioguide.congress.gov",
+    "sourceClass": "official-government-congressional-biographical-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use the official Biographical Directory of the United States Congress to corroborate BioGuide identity and locate congressional image or archival records. Do not auto-approve an image without verifying the specific image's copyright/public-domain statement or downstream official source.",
+    "searchHint": "site:bioguide.congress.gov candidate name Texas",
+    "notes": "Official congressional biographical directory referenced by Congress.gov and the U.S. House History, Art & Archives office. Discovery bridge only; item-level rights verification is required."
+  },
+  {
+    "domain": "houstonchronicle.com",
+    "sourceClass": "reputable-news-voter-guide-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use the Houston Chronicle 2026 Texas primary voter guide to discover campaign websites, campaign videos, and candidate-provided profile links. Do not auto-approve Chronicle-hosted photography or graphics; follow outbound links to an official campaign or other rights-cleared source.",
+    "searchHint": "site:houstonchronicle.com/projects/2026 candidate name Texas primary voter guide campaign website",
+    "notes": "Verified August 23, 2026 as a current 2026 Texas voter guide containing campaign-website links across statewide, congressional, legislative, State Board of Education, and Harris County races. Discovery bridge only."
+  },
+  {
+    "domain": "texastribune.org",
+    "sourceClass": "reputable-news-candidate-guide-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Tribune 2026 election and race guides to corroborate candidate identity and locate candidate-supplied portraits, campaign websites, or downstream official sources. Do not auto-approve Tribune-hosted imagery unless the individual image is explicitly documented as candidate-supplied or otherwise has an item-level reuse basis.",
+    "searchHint": "site:texastribune.org/2026 candidate name Texas election guide campaign",
+    "notes": "Verified August 23, 2026 as a current statewide election-guide source covering federal, statewide, appellate, legislative, and local Texas races. Discovery bridge; candidate-supplied images may be promoted only after item-level provenance review."
+  },
+  {
+    "domain": "dallasnews.com",
+    "sourceClass": "reputable-news-voter-guide-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Dallas Morning News 2026 voter-guide questionnaires and race pages to discover official campaign websites and corroborate candidate identity. Do not auto-approve Dallas Morning News-hosted imagery; use outbound campaign or separately rights-cleared sources.",
+    "searchHint": "site:dallasnews.com/projects/2026 candidate name Texas voter guide campaign website",
+    "notes": "Verified August 23, 2026 as a current North Texas voter-guide and candidate-questionnaire source with 2026 race context and references to campaign websites. Discovery bridge only."
+  },
+  {
+    "domain": "keranews.org",
+    "sourceClass": "public-media-voter-guide-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use KERA's 2026 North Texas primary guides to corroborate candidate identity and locate official campaign or institutional biography sources. Do not auto-approve KERA or partner-station photography; follow candidate-linked or separately rights-cleared sources.",
+    "searchHint": "site:keranews.org 2026 Texas candidate name primary voter guide",
+    "notes": "Verified August 23, 2026 as a current public-media election guide covering North Texas legislative and congressional candidates. Discovery bridge only."
+  }
+]

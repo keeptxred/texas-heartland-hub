@@ -2,28 +2,32 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ContentPillarView } from "@/components/content-pillar-view";
 import { SupportingGuideGrid } from "@/components/supporting-guide-grid";
 import { EvergreenAuthorityReference } from "@/components/authority/EvergreenAuthorityReference";
+import { buildSeo } from "@/lib/seo";
 
 const SECTIONS = [
-  { title: "Veterans & Military Guide", description: "Start here: benefits navigation, state services, employment, education, military families, and installations.", href: "/guides/texas-veterans-military-guide" },
+  { title: "Veterans Services & Agencies", description: "Start with the state and federal institutions responsible for veteran services, benefits, employment, education, and military families.", href: "/texas-government" },
   { title: "Laws & Benefits Policy", description: "Legislation and policy affecting veterans, benefits, and military families.", href: "/laws" },
   { title: "Texas Government", description: "State agencies and officials responsible for veterans policy and services.", href: "/texas-government" },
   { title: "Representatives", description: "Find Texas elected officials and follow the offices shaping veterans policy.", href: "/representatives" },
 ];
 
 const VERIFIED = "Reviewed against the cited official institutional sources on August 11, 2026.";
+const TEXAS_VETERANS_TITLE = "Texas Veterans & Military Benefits & Policy";
+const TEXAS_VETERANS_DESCRIPTION =
+  "Texas veterans and military coverage: service members, bases, benefits, honors, deployments, military families, and policy affecting Texans who served.";
+
+export function texasVeteransHead() {
+  return buildSeo({
+    title: TEXAS_VETERANS_TITLE,
+    description: TEXAS_VETERANS_DESCRIPTION,
+    path: "/texas-veterans",
+    type: "website",
+    imageAlt: "Keep TX Red Texas veterans and military coverage",
+  });
+}
 
 export const Route = createFileRoute("/texas-veterans")({
-  head: () => ({
-    meta: [
-      { title: "Texas Veterans & Military — Benefits, Bases, Honors & Policy" },
-      { name: "description", content: "Texas veterans and military coverage: service members, bases, benefits, honors, deployments, military families, and policy affecting Texans who served." },
-      { property: "og:title", content: "Texas Veterans & Military — Keep TX Red" },
-      { property: "og:description", content: "Texas veterans, service members, military installations, benefits, honors, and policy." },
-      { property: "og:url", content: "https://keeptxred.com/texas-veterans" },
-      { property: "og:type", content: "website" },
-    ],
-    links: [{ rel: "canonical", href: "https://keeptxred.com/texas-veterans" }],
-  }),
+  head: texasVeteransHead,
   component: TexasVeteransPage,
 });
 
@@ -40,7 +44,7 @@ function TexasVeteransPage() {
           "Military honors and commemorations belong here when the Texas veteran, service-member, installation, or public-policy connection is central to the story.",
         ]}
         related={[
-          { label: "Read the veterans and military guide", href: "/guides/texas-veterans-military-guide" },
+          { label: "Texas Government & Agencies", href: "/texas-government" },
           { label: "Texas Laws & Legislature", href: "/laws" },
           { label: "Texas Politics & Government", href: "/texas-politics" },
           { label: "Latest Texas News", href: "/news" },
@@ -57,7 +61,7 @@ function TexasVeteransPage() {
           { name: "Texas Legislature", href: "/texas-legislature", role: "Creates state statutes and appropriations affecting Texas veteran programs, state benefits and military-related policy.", scopeNote: "A proposed bill does not change current benefits until it completes the legislative process and takes effect." },
         ]}
         questions={[
-          { question: "Are Texas veteran benefits the same as federal VA benefits?", answer: "No. Texas can provide state programs and benefits, while the U.S. Department of Veterans Affairs administers federal benefits under federal law. A veteran may interact with both systems for different purposes.", href: "/guides/texas-veterans-military-guide", linkLabel: "Open the Texas veterans and military guide" },
+          { question: "Are Texas veteran benefits the same as federal VA benefits?", answer: "No. Texas can provide state programs and benefits, while the U.S. Department of Veterans Affairs administers federal benefits under federal law. A veteran may interact with both systems for different purposes.", href: "https://tvc.texas.gov/", linkLabel: "Visit the Texas Veterans Commission" },
           { question: "Who can help with a VA claim in Texas?", answer: "The Texas Veterans Commission provides state-level veteran assistance, including claims-related support, while the VA makes federal benefit decisions. Readers should distinguish assistance with a claim from the federal agency that adjudicates it." },
           { question: "Who controls Texas National Guard and State Guard matters?", answer: "The Texas Military Department is the state military organization. The legal command framework can depend on the force and mission, including whether personnel are serving under state or federal authority.", href: "https://tmd.texas.gov/about-us", linkLabel: "Read the Texas Military Department overview" },
         ]}

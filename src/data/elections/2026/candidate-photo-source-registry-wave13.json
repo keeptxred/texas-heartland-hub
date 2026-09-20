@@ -1,0 +1,38 @@
+[
+  {
+    "domain": "mindybumgarner.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Mindy Bumgarner's official State Board of Education District 14 campaign site when the image is clearly attributable to the campaign and used for editorial candidate identification with source attribution. Do not auto-approve logos, issue graphics, endorsement images, or third-party embeds.",
+    "searchHint": "site:mindybumgarner.com Mindy Bumgarner portrait about bio photo",
+    "notes": "Verified August 22, 2026. Texas Classroom Teachers Association's 2026 State Board of Education candidate guide links mindybumgarner.com as Mindy Bumgarner's campaign website, and the site identifies her as the Republican candidate for State Board of Education District 14."
+  },
+  {
+    "domain": "palmerfortexased.com",
+    "sourceClass": "official-campaign-site",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use only candidate-identifying portraits or campaign photographs directly hosted on Michelle Palmer's official State Board of Education District 6 campaign site when the image is clearly attributable to the campaign and used for editorial candidate identification with source attribution. Do not infer rights for Facebook-hosted assets, embedded media, or third-party images.",
+    "searchHint": "site:palmerfortexased.com Michelle Palmer portrait about bio photo",
+    "notes": "Verified August 22, 2026. Texas Classroom Teachers Association and ATPE Teach the Vote both identify palmerfortexased.com as Michelle Palmer's 2026 State Board of Education District 6 campaign website."
+  },
+  {
+    "domain": "teachthevote.atpe.org",
+    "sourceClass": "texas-education-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use ATPE Teach the Vote candidate profiles to confirm candidate identity, current race context, and official campaign website/contact links. Do not reuse ATPE-hosted candidate images unless the exact image's original provenance and reuse permission are independently verified at item level.",
+    "searchHint": "site:teachthevote.atpe.org/Candidates Texas 2026 candidate website",
+    "notes": "Verified August 22, 2026 as a current Texas candidate directory. Its Michelle Palmer profile identifies her 2026 SBOE District 6 candidacy and links her official campaign website."
+  },
+  {
+    "domain": "tcta.org",
+    "sourceClass": "texas-education-candidate-directory",
+    "discoveryStatus": "discovery-only",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Classroom Teachers Association TexasTeachersVote candidate profiles to confirm candidate identity, current race, incumbency, and official campaign/social links. Do not reuse TCTA-hosted candidate images unless original provenance and image-use permission are separately verified at item level.",
+    "searchHint": "site:tcta.org/texasteachersvote/find-candidates Texas 2026 candidate website",
+    "notes": "Verified August 22, 2026 as a current candidate directory for Texas State Board of Education and Texas House races. Profiles link official campaign websites, including Mindy Bumgarner and Michelle Palmer."
+  }
+]

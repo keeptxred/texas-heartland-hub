@@ -2,19 +2,20 @@ const baseUrl = (process.env.KTR_BASE_URL || "https://keeptxred.com").replace(/\
 const texasDefinedUrl = (process.env.TEXASDEFINED_BASE_URL || "https://texasdefined.com").replace(/\/$/, "");
 const expectedFingerprint = (process.env.KTR_EXPECTED_FINGERPRINT || "").trim();
 
-const requiredFlyoverSources = [
-  "Texas Courts and Legal — Daily Discovery",
-  "Texas Public Safety — Daily Discovery",
-  "Texas Health — Daily Discovery",
-  "Texas Schools and Community — Daily Discovery",
-  "Texas Outdoors and Water — Daily Discovery",
-  "Texas Human Interest — Daily Discovery",
-  "Texas History and Identity — Daily Discovery",
-  "Texas Business Local — Daily Discovery",
-  "Texas Pro Sports — Daily Discovery",
-  "Texas Amateur and College Sports — Daily Discovery",
-  "North Texas Local — Daily Discovery",
-  "South and Central Texas Local — Daily Discovery",
+const requiredDirectCoverageSources = [
+  "Community Impact — Texas Hyperlocal",
+  "KRIS 6 — Corpus Christi Local",
+  "KZTV Action 10 — Corpus Christi Local",
+  "Texas City Municipal Agendas — CivicEngage",
+  "Sinton City Council Agendas — CivicEngage",
+  "Orange City Council Agendas — CivicEngage",
+  "Webster City Council Agendas — CivicEngage",
+  "Aubrey City Council Agendas — CivicEngage",
+  "Paris Texas City Notices — CivicEngage",
+  "Galveston City Council Agendas — CivicEngage",
+  "WFAA 8 — Dallas Local",
+  "KHOU 11 — Houston Local",
+  "Texas Department of Insurance — News Releases",
 ];
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -101,10 +102,10 @@ async function checkNewsroomHealth() {
   if (payload.coverageGapCount !== 0) throw new Error(`newsroom-health reports ${payload.coverageGapCount} unresolved source coverage gap(s)`);
   if (payload.texasDefinedChannelReady !== true) throw new Error(`TexasDefined shared article channel is not ready: ${JSON.stringify(payload).slice(0, 700)}`);
   const sourceNames = new Set((payload.sources ?? []).map((source) => source.source_name));
-  const missing = requiredFlyoverSources.filter((name) => !sourceNames.has(name));
-  if (missing.length > 0) throw new Error(`Flyover-style discovery feeds missing from production: ${missing.join(", ")}`);
+  const missing = requiredDirectCoverageSources.filter((name) => !sourceNames.has(name));
+  if (missing.length > 0) throw new Error(`Required direct/hyperlocal coverage feeds missing from production: ${missing.join(", ")}`);
   console.log(`OK newsroom-health sources=${payload.sourceCount} gaps=0 items24h=${payload.items24h} tdQueue=${payload.texasDefinedQueueCount} tdReady=${payload.texasDefinedReadyCount} tdPublished=${payload.texasDefinedPublishedCount}`);
-  console.log(`OK all ${requiredFlyoverSources.length} Flyover-style discovery feeds are configured`);
+  console.log(`OK all ${requiredDirectCoverageSources.length} direct/hyperlocal coverage feeds are configured`);
 }
 
 function extractMeta(html, key) {
@@ -209,9 +210,10 @@ async function checkIngestion() {
   if (typeof payload.fetched !== "number" || typeof payload.inserted !== "number") throw new Error(`ingest-feeds response lacks numeric ingestion counts: ${text.slice(0, 500)}`);
   if (typeof payload.sourceCount === "number" && payload.sourceCount < 1) throw new Error(`ingest-feeds reports zero configured sources: ${text.slice(0, 500)}`);
   if (typeof payload.healthySources === "number" && payload.healthySources < 1) throw new Error(`ingest-feeds reports zero healthy sources: ${text.slice(0, 500)}`);
+  if (typeof payload.failedSources === "number" && payload.failedSources > 0) throw new Error(`ingest-feeds reports ${payload.failedSources} transport-failed source(s): ${text.slice(0, 700)}`);
   if (payload.fetched < 1) throw new Error(`ingest-feeds completed but fetched zero Texas-relevant candidates: ${text.slice(0, 500)}`);
   const elapsed = Math.round((Date.now() - startedAt) / 1000);
-  console.log(`OK ingest-feeds elapsed=${elapsed}s fetched=${payload.fetched} inserted=${payload.inserted} healthySources=${payload.healthySources ?? "n/a"}`);
+  console.log(`OK ingest-feeds elapsed=${elapsed}s fetched=${payload.fetched} inserted=${payload.inserted} healthySources=${payload.healthySources ?? "n/a"} quietSources=${payload.quietSources ?? "n/a"} failedSources=${payload.failedSources ?? "n/a"}`);
 }
 
 const failures = [];

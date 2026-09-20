@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "tmd55.org",
+    "sourceClass": "public-institutional-profile",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Toastmasters District 55 leadership pages only to corroborate Frank Salazar identity and discover candidate-linked headshot provenance. Do not approve or reuse the displayed headshot without item-level permission, a reusable license, or another documented editorial permission basis.",
+    "searchHint": "Frank Salazar Texas House District 143 Toastmasters District 55 headshot",
+    "notes": "New source discovered August 27, 2026. Toastmasters District 55 leadership pages identify a Frank Salazar and publish a file explicitly labeled FrankSalazarHeadshot / Frank Salazar Headshot. Treat as identity/provenance discovery only until the candidate match and image-use rights are verified at item level."
+  },
+  {
+    "domain": "dallasgop.org",
+    "sourceClass": "county-party-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Dallas County Republican Party candidate directories to corroborate candidate identity, office, and official campaign-site links and to discover candidate imagery. Do not approve party-page images without item-level provenance plus reusable rights or explicit permission.",
+    "searchHint": "Dallas County Republican Party 2026 Texas House candidates portrait official campaign site",
+    "notes": "New source expansion verified August 27, 2026. The Dallas County Republican Party Meet the Candidates directory identifies Stephen Stanley for HD 113 and links candidate campaign information, providing a useful county-party bridge for Dallas-area candidate discovery."
+  },
+  {
+    "domain": "texashdcc.com",
+    "sourceClass": "state-party-campaign-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use the Texas House Democratic Campaign Committee candidate directory to corroborate Democratic Texas House candidates and discover official campaign links or candidate-supplied media. Do not approve committee imagery without item-level provenance plus reusable rights or explicit media permission.",
+    "searchHint": "Texas House Democratic Campaign Committee 2026 candidates portrait campaign website",
+    "notes": "New source expansion verified August 27, 2026. The Texas HDCC directory currently identifies Zach Herbert for Texas House District 112 and other 2026 House candidates, creating a state-party discovery bridge for campaign-controlled sources."
+  }
+]

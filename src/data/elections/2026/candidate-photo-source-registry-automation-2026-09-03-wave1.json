@@ -1,0 +1,29 @@
+[
+  {
+    "domain": "tcta.org",
+    "sourceClass": "education-association-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Texas Classroom Teachers Association candidate-profile pages to corroborate current candidate identity, office sought, campaign links, and discover candidate-specific portrait sources. Do not approve or reuse any TCTA-hosted image without item-level provenance plus a reusable license, candidate-supplied media basis, explicit permission, or another documented editorial permission basis.",
+    "searchHint": "site:tcta.org texasteachersvote candidate portrait Texas 2026",
+    "notes": "New discovery source added September 3, 2026. TCTA's TexasTeachersVote directory publishes current candidate-specific pages, including profiles for Rhett Rosenquest Smith and Scott Whitmarsh, and can expose downstream campaign links. Treat TCTA imagery as discovery-only unless item-level rights are independently established."
+  },
+  {
+    "domain": "ivoterguide.com",
+    "sourceClass": "election-voter-guide-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use iVoterGuide candidate-profile and election-guide pages to corroborate candidate identity, office sought, campaign links, and discover candidate-linked portrait sources. Do not approve or reuse any iVoterGuide-hosted image without item-level provenance plus a reusable license, candidate-supplied media basis, explicit permission, or another documented editorial permission basis.",
+    "searchHint": "site:ivoterguide.com Texas 2026 candidate portrait",
+    "notes": "New discovery source added September 3, 2026. Current 2026 Texas profiles include candidates still missing from the canonical photo report and may provide campaign/profile links useful for downstream discovery. Discovery-only by default."
+  },
+  {
+    "domain": "vote-usa.org",
+    "sourceClass": "election-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use Vote-USA election and candidate pages to corroborate current ballot participation, candidate websites, and discover downstream official portrait sources. Do not approve or reuse any Vote-USA-hosted image without item-level provenance plus a reusable license, explicit permission, candidate-supplied basis, or another documented editorial permission basis.",
+    "searchHint": "site:vote-usa.org Texas 2026 candidate official website portrait",
+    "notes": "New discovery source added September 3, 2026. The 2026 Texas general-election pages expose campaign websites for candidates such as Mindy Bumgarner and can serve as a bridge to official campaign media. Discovery-only by default."
+  }
+]

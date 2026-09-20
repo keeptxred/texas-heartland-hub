@@ -1,20 +1,20 @@
 import { createFileRoute } from '@tanstack/react-router';
 import type {} from '@tanstack/react-start';
-import readiness from '@/data/elections/2026/readiness.json';
-import { ELECTION_DISTRICT_PATHS } from '@/lib/elections/sitemap';
-import { BASE_URL, renderUrlset, toIsoDate, xmlResponse } from '@/lib/sitemap-shared';
+import { BASE_URL, renderUrlset, xmlResponse } from '@/lib/sitemap-shared';
 
-const DISTRICT_DATA_LASTMOD = toIsoDate(readiness.generatedAt);
-
+/**
+ * Keep this historically submitted sitemap valid without advertising every
+ * programmatic district detail URL. Search Console showed 204 submitted district
+ * URLs while the current Election Central hub and other priority pages remained
+ * uncrawled. District detail pages stay live and internally discoverable; this
+ * sitemap promotes only the canonical district directory during recovery.
+ */
 export const Route = createFileRoute('/sitemap-districts.xml')({
   server: {
     handlers: {
-      GET: async () => xmlResponse(renderUrlset(
-        ELECTION_DISTRICT_PATHS.map((path) => ({
-          loc: `${BASE_URL}${path}`,
-          lastmod: DISTRICT_DATA_LASTMOD,
-        })),
-      )),
+      GET: async () => xmlResponse(renderUrlset([
+        { loc: `${BASE_URL}/districts` },
+      ])),
     },
   },
 });

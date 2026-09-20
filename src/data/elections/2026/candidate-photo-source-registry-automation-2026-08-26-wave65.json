@@ -1,0 +1,38 @@
+[
+  {
+    "domain": "bradbaileycampaign.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": true,
+    "rightsRule": "Use candidate-identifying photography hosted on Brad Bailey's verified Texas House District 15 campaign website for editorial candidate identification only after the exact image URL and source page independently validate. Preserve campaign attribution and the exact source page; do not infer broader reuse rights for unrelated site imagery.",
+    "searchHint": "Brad Bailey Texas House District 15 bradbaileycampaign.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 26, 2026. The site identifies Brad Bailey as running for Texas House District 15, and a clean candidate portrait asset is exposed by the official campaign site. Item-level provenance is recorded separately in the verified findings script."
+  },
+  {
+    "domain": "david4texas.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography from David Flores's verified Texas House District 144 campaign site only after the exact image URL and source page independently validate and the item-level editorial-identification permission basis is recorded. Preserve campaign attribution and do not infer broader reuse rights for unrelated campaign imagery.",
+    "searchHint": "David Flores Texas House District 144 david4texas.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 26, 2026. The site explicitly announces David Flores's candidacy for Texas House District 144. Available campaign artwork was not promoted to the canonical manifest in this wave because a clean portrait asset still needs exact item-level validation."
+  },
+  {
+    "domain": "scottforhd15.com",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography from Moniqua' S. Scott's verified Texas House District 15 campaign site only after the exact image URL and source page independently validate and the item-level editorial-identification permission basis is recorded. Preserve campaign attribution and do not infer broader reuse rights.",
+    "searchHint": "Moniqua Scott Texas House District 15 scottforhd15.com official campaign portrait",
+    "notes": "New candidate-controlled source verified August 26, 2026. The campaign site identifies Moniqua' S. Scott and carries a paid-political-advertising disclaimer. Exact portrait-asset validation remains pending, so this source is active but not auto-approved."
+  },
+  {
+    "domain": "flip150.org",
+    "sourceClass": "official-campaign",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use candidate-identifying photography from A'Yonna Kellum's Texas House District 150 campaign site only after the exact image URL, candidate identity, source-page provenance, and item-level editorial-identification basis independently validate. Preserve campaign attribution and do not infer broader reuse rights.",
+    "searchHint": "A'Yonna Kellum Texas House District 150 flip150.org campaign portrait",
+    "notes": "New candidate-controlled source discovered August 26, 2026. The site states that A'Yonna Kellum is running for Texas House District 150, but portions of the site contain unfinished placeholder content. Treat it as a discovery bridge only until an exact candidate portrait and provenance are independently validated."
+  }
+]

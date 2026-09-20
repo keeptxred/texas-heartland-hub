@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "plaindocket.com",
+    "sourceClass": "election-reference-campaign-bridge",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use PlainDocket only as a discovery bridge to authoritative candidacy records and candidate-controlled campaign websites. Do not approve or reuse PlainDocket-hosted candidate imagery unless an independent item-level reuse-rights basis is documented. When PlainDocket links an official campaign site, validate the candidate identity, office, and exact campaign-hosted image on that candidate-controlled domain before approval.",
+    "searchHint": "site:plaindocket.com/ballot/candidate Texas 2026 candidate official campaign site",
+    "notes": "New discovery bridge verified August 25, 2026 while researching missing Texas House District 129 portraits. PlainDocket candidate pages identify current ballot candidates, explicitly distinguish official campaign material from its own summaries, and link candidate filings and candidate-controlled campaign sites. It led directly to Scott Bowen's official campaign domain bowenfortx.com, where a campaign-hosted candidate portrait was independently validated. This registry entry expands source discovery only and does not confer image-use rights."
+  }
+]

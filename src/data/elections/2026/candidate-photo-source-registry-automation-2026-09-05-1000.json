@@ -1,0 +1,11 @@
+[
+  {
+    "domain": "kgtx7news.com",
+    "sourceClass": "local-news-election-results-and-candidate-directory",
+    "discoveryStatus": "active",
+    "autoApprove": false,
+    "rightsRule": "Use KGTX 7 election coverage only to corroborate current candidate identity, office, primary/general-election context, and to discover downstream official campaign, party, government, or candidate-specific portrait sources. Do not approve or reuse KGTX-hosted images without item-level provenance plus a reusable license, explicit permission, candidate-supplied status with a documented narrow editorial-identification basis, or another supported reuse basis. Reject newsroom avatars, logos, generic election graphics, social-share images, placeholders, and unrelated photos.",
+    "searchHint": "site:kgtx7news.com 2026 Texas candidate election portrait campaign",
+    "notes": "Discovered September 5, 2026 while researching current missing-photo candidates. KGTX 7's March 4, 2026 Galveston County primary-results coverage names current Texas House District 23 candidate Cheryl Lynn Clark and can serve as a local-news discovery bridge to candidate-specific downstream sources. Registered as discovery-only; no KGTX-hosted image is approved by this entry."
+  }
+]
