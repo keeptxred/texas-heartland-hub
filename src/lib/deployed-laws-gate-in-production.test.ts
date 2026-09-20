@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 
 const deployWorkflow = readFileSync(".github/workflows/deploy-cloudflare-after-verify.yml", "utf8");
 const smokeScript = readFileSync("scripts/seo/verify-deployed-laws-routes.py", "utf8");
+const lawRouteContract = readFileSync("scripts/seo/deployed-laws-route-contract.json", "utf8");
 const prioritySmoke = readFileSync("scripts/seo/verify_deployed_priority_sitemap.py", "utf8");
 const startServer = readFileSync("src/start.ts", "utf8");
 const workerServer = readFileSync("src/server.ts", "utf8");
@@ -25,28 +26,26 @@ describe("deployed law routes production gate", () => {
     expect(smokeStep).not.toContain("continue-on-error: true");
   });
 
-  it("covers the hub, all three child hubs, and a dynamic law topic", () => {
-    for (const route of [
+  it("covers the hub, all three child hubs, and a dynamic law topic from one shared contract", () => {
+    expect(smokeScript).toContain("deployed-laws-route-contract.json");
+    expect(smokeScript).toContain('for check in CONTRACT["checks"]');
+
+    for (const marker of [
       "/laws",
       "/laws/constitutional-amendments",
       "/laws/effective-dates",
       "/laws/topics",
       "/laws/topic/property-tax-law",
-    ]) {
-      expect(smokeScript).toContain(route);
-    }
-
-    for (const h1 of [
       "Texas Constitutional Amendments Tracker",
       "Texas Laws Taking Effect in 2026",
       "Texas Law Library",
       "Texas Property Tax Policy & Law",
+      "https://keeptxred.com/laws/topic/property-tax-law",
     ]) {
-      expect(smokeScript).toContain(h1);
+      expect(lawRouteContract).toContain(marker);
     }
 
     expect(smokeScript).toContain("child route is still rendering the /laws parent H1");
-    expect(smokeScript).toContain("https://keeptxred.com/laws/topic/property-tax-law");
     expect(smokeScript).toContain("cache-control: no-cache");
   });
 
