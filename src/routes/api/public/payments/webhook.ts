@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { allowsRealFulfillment } from "@/lib/payment-safety";
+import { allowsRealFulfillment, isCheckoutPaymentFulfillable } from "@/lib/payment-safety";
 import { type StripeEnv, createStripeClient, verifyWebhook } from "@/lib/stripe.server";
 
 type CompactCartItem = { p: string; v: number | null; q: number };
@@ -97,6 +97,15 @@ async function handleCheckoutCompleted(sessionObj: any, env: StripeEnv) {
   const session = await stripe.checkout.sessions.retrieve(sessionObj.id, {
     expand: ["customer_details", "shipping_details", "line_items", "line_items.data.price.product"],
   });
+
+  if (!isCheckoutPaymentFulfillable(session.payment_status)) {
+    console.log(
+      "Checkout completion received before payment was settled; fulfillment deferred",
+      session.id,
+      session.payment_status,
+    );
+    return;
+  }
 
   const cartJson =
     (session.metadata?.cart as string | undefined) ??
@@ -309,7 +318,6 @@ async function handleWebhook(req: Request, env: StripeEnv) {
   switch (event.type) {
     case "checkout.session.completed":
     case "checkout.session.async_payment_succeeded":
-    case "transaction.completed":
       await handleCheckoutCompleted(event.data.object, env);
       break;
     default:
