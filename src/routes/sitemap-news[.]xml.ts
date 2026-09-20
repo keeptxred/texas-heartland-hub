@@ -5,6 +5,7 @@ import {
   xmlEscape,
   xmlResponse,
   toIsoDate,
+  latestIsoDate,
   canonicalize,
   isArticleSlugDateConsistent,
 } from "@/lib/sitemap-shared";
@@ -35,7 +36,7 @@ export const Route = createFileRoute("/sitemap-news.xml")({
         const now = Date.now();
         const cutoff = now - WINDOW_MS;
 
-        type NewsItem = { loc: string; title: string; pubDate: string };
+        type NewsItem = { loc: string; title: string; pubDate: string; lastmod: string };
         const items: NewsItem[] = [];
 
         for (const a of ARTICLES.filter((a) =>
@@ -55,6 +56,7 @@ export const Route = createFileRoute("/sitemap-news.xml")({
             loc: `${BASE_URL}/news/${a.slug}`,
             title: a.title,
             pubDate: toIsoDate(a.publishedAt),
+            lastmod: latestIsoDate(a.publishedAt, ARTICLE_BODIES[a.slug]?.updated),
           });
         }
 
@@ -86,6 +88,7 @@ export const Route = createFileRoute("/sitemap-news.xml")({
               loc: `${BASE_URL}/news/${a.slug}`,
               title: headlines[a.slug] ?? a.title,
               pubDate: toIsoDate(a.published_at),
+              lastmod: latestIsoDate(a.published_at, a.updated_at),
             });
           }
         } catch (e) {
@@ -102,7 +105,7 @@ export const Route = createFileRoute("/sitemap-news.xml")({
           if (!key || seen.has(key)) continue;
           seen.add(key);
           rows.push(
-            `  <url>\n    <loc>${xmlEscape(key)}</loc>\n    <lastmod>${it.pubDate}</lastmod>\n    <news:news>\n      <news:publication>\n        <news:name>${xmlEscape(SITE_NAME)}</news:name>\n        <news:language>en</news:language>\n      </news:publication>\n      <news:publication_date>${it.pubDate}</news:publication_date>\n      <news:title>${xmlEscape(it.title)}</news:title>\n    </news:news>\n  </url>`,
+            `  <url>\n    <loc>${xmlEscape(key)}</loc>\n    <lastmod>${it.lastmod}</lastmod>\n    <news:news>\n      <news:publication>\n        <news:name>${xmlEscape(SITE_NAME)}</news:name>\n        <news:language>en</news:language>\n      </news:publication>\n      <news:publication_date>${it.pubDate}</news:publication_date>\n      <news:title>${xmlEscape(it.title)}</news:title>\n    </news:news>\n  </url>`,
           );
         }
 
