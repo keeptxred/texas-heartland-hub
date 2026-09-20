@@ -94,7 +94,7 @@ async function handler() {
   const { data: candidateData, error: candidateError } = await newsroomDb
     .from("news_publish_candidates")
     .select("cluster_id,editorial_score,recommended_format,status,created_at")
-    .in("status", ["PENDING", "HELD", "SELECTED"])
+    .in("status", ["PENDING", "HELD", "SELECTED", "PUBLISHED"])
     .neq("recommended_format", "SKIP")
     .gte("created_at", since)
     .order("editorial_score", { ascending: false })

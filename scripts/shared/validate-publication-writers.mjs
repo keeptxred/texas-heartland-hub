@@ -3,6 +3,7 @@ import path from 'node:path';
 
 const writers = [
   'src/routes/api/public/hooks/generate-newsroom.ts',
+  'src/routes/api/public/hooks/refresh-published-newsroom.ts',
   'src/routes/api/public/hooks/generate-daily-brief.ts',
   'src/routes/api/public/hooks/generate-evergreen.ts',
   'src/routes/api/public/hooks/generate-sports.ts',
