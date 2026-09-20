@@ -129,6 +129,7 @@ export const Route = createFileRoute("/api/public/texasdefined-checkout")({
           const stripe = createStripeClient("live");
           const session = await stripe.checkout.sessions.create({
             mode: "payment",
+            wallet_options: { link: { display: "never" } },
             branding_settings: {
               display_name: "Secure Checkout",
               icon: { type: "url", url: "https://keeptxred.com/secure-checkout-icon.png" },
