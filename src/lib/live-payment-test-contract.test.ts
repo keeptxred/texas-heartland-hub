@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 
 const endpoint = readFileSync("src/routes/api/public/payments/live-test.ts", "utf8");
 const webhook = readFileSync("src/routes/api/public/payments/webhook.ts", "utf8");
+const page = readFileSync("src/routes/shop.live-payment-test.tsx", "utf8");
 
 describe("one-shot live payment verification", () => {
   it("charges exactly 50 cents in live Stripe", () => {
@@ -32,5 +33,14 @@ describe("one-shot live payment verification", () => {
     expect(endpoint).toContain('allowSameOriginUrlFallback = false');
     expect(endpoint).toContain('new URL(request.url).origin');
     expect(endpoint).toContain('originAllowed(request, test.site, true)');
+  });
+
+  it("recovers an existing diagnostic session when the return-page session id is lost", () => {
+    expect(endpoint).toContain('stripe.checkout.sessions.list({ limit: 100 })');
+    expect(endpoint).toContain('found: false');
+    expect(endpoint).toContain('found: true');
+    expect(page).toContain('if (!validRun) return');
+    expect(page).toContain('if (session_id) url.searchParams.set("session_id", session_id)');
+    expect(page).toContain('No existing KTR diagnostic payment found');
   });
 });
