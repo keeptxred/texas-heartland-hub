@@ -39,6 +39,7 @@ type RenderedArticle = Omit<Article, "category"> & {
   category: CategoryName;
   noindex?: boolean;
   imageAlt?: string;
+  contentModifiedAt?: string | null;
 };
 
 const GENERIC_FAQ_PATTERNS = [
@@ -54,8 +55,29 @@ function validIsoDate(value: string | null | undefined): string | undefined {
   return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString();
 }
 
-function articleDates(article: Pick<RenderedArticle, "publishedAt">, body: ArticleBody) {
-  const visible = visibleArticleDates(article.publishedAt, body.updated);
+function latestContentUpdate(...values: Array<string | null | undefined>): string | undefined {
+  let newest: string | undefined;
+  let newestMs = Number.NEGATIVE_INFINITY;
+  for (const value of values) {
+    const iso = validIsoDate(value);
+    if (!iso) continue;
+    const ms = Date.parse(iso);
+    if (ms > newestMs) {
+      newest = iso;
+      newestMs = ms;
+    }
+  }
+  return newest;
+}
+
+function articleDates(
+  article: Pick<RenderedArticle, "publishedAt" | "contentModifiedAt">,
+  body: ArticleBody,
+) {
+  const visible = visibleArticleDates(
+    article.publishedAt,
+    latestContentUpdate(body.updated, article.contentModifiedAt),
+  );
   return {
     published: visible.publishedIso,
     modified: visible.updatedIso ?? visible.publishedIso,
@@ -133,6 +155,7 @@ export const Route = createFileRoute("/news/$slug")({
       author: ever.author,
       date: new Date(ever.published_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
       publishedAt: ever.published_at,
+      contentModifiedAt: ever.updated_at,
       image: resolveArticleImage({
         slug: ever.slug,
         title: ever.title,
@@ -344,7 +367,10 @@ function ArticlePage() {
     );
   const readingMinutes = Math.max(2, Math.round(wordCount / 230));
 
-  const visibleDates = visibleArticleDates(article.publishedAt, body.updated);
+  const visibleDates = visibleArticleDates(
+    article.publishedAt,
+    latestContentUpdate(body.updated, article.contentModifiedAt),
+  );
   const publishedDisplay = new Date(visibleDates.publishedIso).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
