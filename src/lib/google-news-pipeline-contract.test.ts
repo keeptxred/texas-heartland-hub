@@ -14,6 +14,9 @@ describe("Google News pipeline contract", () => {
     expect(sitemap).toContain("t > now");
     expect(sitemap).toContain("if (rows.length >= MAX_NEWS_URLS) break");
     expect(sitemap).toContain("canonicalize(it.loc)");
+    expect(sitemap).toContain("<lastmod>${it.lastmod}</lastmod>");
+    expect(sitemap).toContain("<news:publication_date>${it.pubDate}</news:publication_date>");
+    expect(sitemap).toContain("latestIsoDate(a.published_at, a.updated_at)");
     expect(sitemap).toContain("!a.pillar");
   });
 
@@ -49,6 +52,8 @@ describe("Google News pipeline contract", () => {
     expect(articleRoute).toContain('"@type": "NewsArticle"');
     expect(articleRoute).toContain("datePublished: published");
     expect(articleRoute).toContain("dateModified: modified");
+    expect(articleRoute).toContain("contentModifiedAt: ever.updated_at");
+    expect(articleRoute).toContain("latestContentUpdate(body.updated, article.contentModifiedAt)");
     expect(articleRoute).toContain("author: personJsonLd");
     expect(articleRoute).toContain("image: { ...articleImage");
     expect(articleRoute).toContain("thumbnailUrl: seo.image");
