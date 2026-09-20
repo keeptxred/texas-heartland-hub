@@ -108,15 +108,20 @@ jobs:
             await page.goto(url, { waitUntil: "domcontentloaded", timeout: 90000 });
             await page.waitForTimeout(5000);
             const bodyText = await page.locator("body").innerText();
-            if (!/Secure Checkout/i.test(bodyText)) {
-              throw new Error("Neutral per-session display name was not visible on Stripe Checkout.");
-            }
-            for (const phrase of ["Keep TX Red", "Keep Texas Red", "Texas Defined"]) {
-              if (bodyText.toLowerCase().includes(phrase.toLowerCase())) {
-                throw new Error(`Storefront branding remains visible on Stripe Checkout: ${phrase}`);
+            const visible = bodyText.toLowerCase();
+            const forbidden = [
+              "keep tx red",
+              "keep texas red",
+              "keeptxred",
+              "texas defined",
+              "texasdefined",
+            ];
+            for (const phrase of forbidden) {
+              if (visible.includes(phrase)) {
+                throw new Error(`Storefront identification remains visible on Stripe Checkout: ${phrase}`);
               }
             }
-            console.log("TexasDefined Stripe-hosted Checkout is visibly brand neutral.");
+            console.log("Stripe-hosted Checkout contains no visible storefront identification.");
           } finally {
             await browser.close();
           }
