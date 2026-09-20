@@ -18,10 +18,19 @@ describe("one-shot live payment verification", () => {
     expect(endpoint).toContain('td-20260920-8c2e41');
   });
 
-  it("suppresses Printify fulfillment for diagnostic payments", () => {
-    expect(webhook).toContain('session.metadata?.diagnostic_only === "true"');
+  it("suppresses Printify fulfillment for diagnostic payments before session re-retrieval", () => {
+    expect(webhook).toContain('diagnostic_only === "true"');
     expect(webhook).toContain('Live payment diagnostic webhook verified; fulfillment suppressed');
+    expect(webhook.indexOf('isLivePaymentDiagnostic(sessionObj)')).toBeLessThan(
+      webhook.indexOf('stripe.checkout.sessions.retrieve(sessionObj.id'),
+    );
     expect(webhook.indexOf('diagnostic_only')).toBeLessThan(webhook.indexOf('const cartJson ='));
+  });
+
+  it("retrieves real checkout sessions without invalid Stripe expand fields", () => {
+    expect(webhook).toContain('expand: ["line_items"]');
+    expect(webhook).not.toContain('expand: ["customer_details"');
+    expect(webhook).not.toContain('"shipping_details", "line_items"');
   });
 
   it("marks webhook receipt on the Stripe Checkout Session", () => {
