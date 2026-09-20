@@ -21,9 +21,13 @@ const LIVE_TESTS = {
 type LiveTestSite = keyof typeof LIVE_TESTS;
 
 function testFor(site: string | null, run: string | null) {
-  if (site !== "ktr" && site !== "texasdefined") return null;
-  const test = LIVE_TESTS[site];
-  return run === test.run ? { site, ...test } : null;
+  if (site === "ktr" && run === LIVE_TESTS.ktr.run) {
+    return { site: "ktr" as const, ...LIVE_TESTS.ktr };
+  }
+  if (site === "texasdefined" && run === LIVE_TESTS.texasdefined.run) {
+    return { site: "texasdefined" as const, ...LIVE_TESTS.texasdefined };
+  }
+  return null;
 }
 
 function corsHeaders(request: Request, site?: LiveTestSite) {
