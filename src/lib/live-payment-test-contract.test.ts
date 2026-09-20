@@ -27,4 +27,10 @@ describe("one-shot live payment verification", () => {
     expect(webhook).toContain('live_test_webhook_received: "true"');
     expect(endpoint).toContain('webhookReceived: session.metadata?.live_test_webhook_received === "true"');
   });
+
+  it("allows same-origin GET verification when the browser omits the Origin header", () => {
+    expect(endpoint).toContain('allowSameOriginUrlFallback = false');
+    expect(endpoint).toContain('new URL(request.url).origin');
+    expect(endpoint).toContain('originAllowed(request, test.site, true)');
+  });
 });
