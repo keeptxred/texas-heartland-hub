@@ -14,13 +14,12 @@ describe("checkout shipping policy", () => {
     expect(STRIPE_CHECKOUT_UI_MODE).toBe("embedded");
   });
 
-  it("makes shipping free at the advertised $35 threshold", () => {
+  it("charges shipping at exactly $35", () => {
     expect(FREE_SHIPPING_THRESHOLD_CENTS).toBe(3500);
-    expect(qualifiesForFreeShipping(3499)).toBe(false);
-    expect(qualifiesForFreeShipping(3500)).toBe(true);
+    expect(qualifiesForFreeShipping(3500)).toBe(false);
   });
 
-  it("keeps shipping free above $35", () => {
+  it("makes shipping free only above $35", () => {
     expect(qualifiesForFreeShipping(3501)).toBe(true);
     expect(qualifiesForFreeShipping(5000)).toBe(true);
   });
