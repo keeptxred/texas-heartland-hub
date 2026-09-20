@@ -1,0 +1,38 @@
+name: Verify existing KTR 50c diagnostic
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/verify-existing-ktr-live-payment.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify existing KTR live payment and webhook
+        shell: bash
+        run: |
+          set -euo pipefail
+          url='https://keeptxred.com/api/public/payments/live-test?site=ktr&run=ktr-20260920-3f7a9d'
+          body=''
+          for attempt in 1 2 3 4 5; do
+            body="$(curl --silent --show-error --fail-with-body               --retry 2 --retry-all-errors --connect-timeout 10 --max-time 30               -H 'Accept: application/json' "$url")" && break
+            sleep 3
+          done
+          printf '%s\n' "$body"
+          LIVE_PAYMENT_JSON="$body" python3 - <<'PY'
+          import json
+          import os
+
+          payload = json.loads(os.environ["LIVE_PAYMENT_JSON"])
+          assert payload.get("ok") is True, payload
+          assert payload.get("found") is True, payload
+          assert payload.get("paid") is True, payload
+          assert payload.get("webhookReceived") is True, payload
+          assert payload.get("amountTotal") == 50, payload
+          assert payload.get("currency") == "usd", payload
+          print("KTR 50-cent live payment verified: paid=true webhookReceived=true amountTotal=50 currency=usd")
+          PY
