@@ -3,14 +3,17 @@ import os
 import re
 import subprocess
 import tempfile
+import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from urllib.parse import urlsplit
 
+KTR_ORIGIN = "https://keeptxred.com"
 DEFAULT_SITE_URL = "https://keeptxred-site.freddy-coppola.workers.dev"
 DEPLOYMENT_SMOKE_HEADER = "x-keeptxred-deployment-smoke: canonical"
 CANONICAL_MAP = Path("src/lib/migrated-tool-canonical.ts")
 SMOKE_QUERY = "ktr_smoke=1"
+NS = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
 
 ENTRY_RE = re.compile(r'^\s*"([^"]+)":\s*"([^"]+)",\s*$', re.MULTILINE)
 
@@ -59,7 +62,7 @@ def header_values(headers: str, name: str) -> list[str]:
     ]
 
 
-def curl_redirect(url: str) -> tuple[int, str]:
+def curl(url: str, *, follow: bool = False) -> tuple[int, str, str]:
     with tempfile.NamedTemporaryFile() as header_file, tempfile.NamedTemporaryFile() as body_file:
         command = [
             "curl",
@@ -75,8 +78,11 @@ def curl_redirect(url: str) -> tuple[int, str]:
             "-D", header_file.name,
             "-o", body_file.name,
             "-w", "%{http_code}",
-            "--max-redirs", "0",
         ]
+        if follow:
+            command.extend(["--location", "--max-redirs", "5"])
+        else:
+            command.extend(["--max-redirs", "0"])
         if "workers.dev" in url:
             command.extend(["-H", DEPLOYMENT_SMOKE_HEADER])
         command.append(url)
@@ -87,8 +93,20 @@ def curl_redirect(url: str) -> tuple[int, str]:
 
         status = int((result.stdout or "0").strip())
         headers = Path(header_file.name).read_text(encoding="utf-8", errors="replace")
-        locations = header_values(headers, "location")
-        return status, locations[-1] if locations else ""
+        body = Path(body_file.name).read_text(encoding="utf-8", errors="replace")
+        return status, headers, body
+
+
+def parse_locs(body: str, expected_root: str) -> list[str]:
+    root = ET.fromstring(body)
+    if not root.tag.endswith(expected_root):
+        raise ValueError(f"root is {root.tag!r}, expected {expected_root}")
+    path = "sm:sitemap/sm:loc" if expected_root == "sitemapindex" else "sm:url/sm:loc"
+    return [
+        node.text.strip()
+        for node in root.findall(path, NS)
+        if node.text and node.text.strip()
+    ]
 
 
 def verify_one(site_url: str, path: str, target: str) -> list[str]:
@@ -98,9 +116,12 @@ def verify_one(site_url: str, path: str, target: str) -> list[str]:
     failures: list[str] = []
 
     try:
-        status, location = curl_redirect(request_url)
+        status, headers, _ = curl(request_url)
     except RuntimeError as exc:
         return [f"{path}: fetch failed ({exc})"]
+
+    locations = header_values(headers, "location")
+    location = locations[-1] if locations else ""
 
     if status != 301:
         failures.append(f"{path}: expected HTTP 301, got {status}")
@@ -115,6 +136,42 @@ def verify_one(site_url: str, path: str, target: str) -> list[str]:
             failures.append(f"{path}: query string was not preserved exactly; got {parts.query!r}")
 
     return failures
+
+
+def verify_sitemap_absence(site_url: str, redirects: dict[str, str], failures: list[str]) -> None:
+    try:
+        status, _, body = curl(f"{site_url}/sitemap.xml")
+        if status != 200:
+            failures.append(f"/sitemap.xml: expected HTTP 200, got {status}")
+            return
+        children = parse_locs(body, "sitemapindex")
+    except (RuntimeError, ET.ParseError, ValueError) as exc:
+        failures.append(f"/sitemap.xml: unable to verify migrated-tool absence ({exc})")
+        return
+
+    retired = {f"{KTR_ORIGIN}{path}" for path in redirects}
+    found: dict[str, list[str]] = {url: [] for url in retired}
+
+    for child_url in children:
+        if not child_url.startswith(f"{KTR_ORIGIN}/"):
+            continue
+        child_path = child_url[len(KTR_ORIGIN):]
+        try:
+            status, _, child_body = curl(f"{site_url}{child_path}")
+            if status != 200:
+                failures.append(f"{child_path}: expected HTTP 200, got {status}")
+                continue
+            locs = set(parse_locs(child_body, "urlset"))
+        except (RuntimeError, ET.ParseError, ValueError) as exc:
+            failures.append(f"{child_path}: unable to inspect sitemap ({exc})")
+            continue
+
+        for retired_url in retired.intersection(locs):
+            found[retired_url].append(child_url)
+
+    for retired_url, owners in sorted(found.items()):
+        if owners:
+            failures.append(f"{retired_url}: migrated tool URL still appears in KTR sitemap(s): {owners}")
 
 
 def main() -> None:
@@ -133,6 +190,8 @@ def main() -> None:
             except Exception as exc:  # pragma: no cover - defensive runner guard
                 failures.append(f"{futures[future]}: unexpected smoke error ({exc})")
 
+    verify_sitemap_absence(site_url, redirects, failures)
+
     if failures:
         for failure in sorted(failures):
             github_error(failure)
@@ -142,7 +201,8 @@ def main() -> None:
 
     print(
         "Migrated-tool production handoff passed: "
-        f"{len(redirects)} direct KTR 301 redirects to TexasDefined with query preservation."
+        f"{len(redirects)} direct KTR 301 redirects to TexasDefined with query preservation "
+        f"and {len(redirects)} migrated KTR URLs absent from advertised sitemaps."
     )
 
 
