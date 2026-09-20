@@ -1,4 +1,4 @@
-const MIGRATED_TOOL_CANONICALS: Record<string, string> = {
+export const MIGRATED_TOOL_CANONICALS: Record<string, string> = {
   "/texas-refinance-calculator": "https://texasdefined.com/texas-refinance-savings-calculator",
   "/texas-refinance-savings-calculator": "https://texasdefined.com/texas-refinance-savings-calculator",
   "/tools/home-affordability-calculator": "https://texasdefined.com/texas-home-affordability-calculator",
