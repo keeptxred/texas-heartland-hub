@@ -70,7 +70,7 @@ jobs:
                   threshold = item.find("g:free_shipping_threshold", ns)
                   country = threshold.findtext("g:country", namespaces=ns) if threshold is not None else None
                   amount = threshold.findtext("g:price_threshold", namespaces=ns) if threshold is not None else None
-                  if country != "US" or amount != "35.00 USD":
+                  if country != "US" or amount != "35.01 USD":
                       threshold_errors.append({"title": title, "country": country, "threshold": amount})
 
               for shipping in item.findall("g:shipping", ns):
@@ -103,7 +103,7 @@ jobs:
           result = {"under": under, "over": over, "offer_count": len(items)}
           with open("/tmp/smoke-products.json", "w", encoding="utf-8") as fh:
               json.dump(result, fh)
-          print(f"Merchant feed PASS: {len(items)} offers; threshold is 35.00 USD; no universal $0 shipping overrides")
+          print(f"Merchant feed PASS: {len(items)} offers; threshold is 35.01 USD; no universal $0 shipping overrides")
           print(f"Under-$35 smoke product: {under['title']} @ ${under['price']:.2f}")
           print(f"Over-$35 smoke product: {over['title']} @ ${over['price']:.2f}")
           PY
