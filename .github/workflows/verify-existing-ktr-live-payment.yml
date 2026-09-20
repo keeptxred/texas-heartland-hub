@@ -11,85 +11,36 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    env:
-      STRIPE_LIVE_SECRET_KEY: ${{ secrets.STRIPE_LIVE_SECRET_KEY }}
     steps:
-      - name: Inspect live Stripe session, event, and webhook endpoint
+      - name: Query deployed KTR Stripe event diagnostics
         shell: bash
         run: |
           set -euo pipefail
-          if [[ -z "${STRIPE_LIVE_SECRET_KEY:-}" ]]; then
-            echo "STRIPE_LIVE_SECRET_KEY is unavailable to this diagnostic workflow."
-            exit 2
-          fi
-
-          sessions_file="$RUNNER_TEMP/ktr-live-sessions.json"
-          events_file="$RUNNER_TEMP/ktr-live-events.json"
-          endpoints_file="$RUNNER_TEMP/ktr-live-endpoints.json"
-
-          curl --silent --show-error --fail-with-body             --retry 2 --retry-all-errors --connect-timeout 10 --max-time 30             -H "Authorization: Bearer $STRIPE_LIVE_SECRET_KEY"             -G 'https://api.stripe.com/v1/checkout/sessions'             --data-urlencode 'limit=100'             -o "$sessions_file"
-
-          curl --silent --show-error --fail-with-body             --retry 2 --retry-all-errors --connect-timeout 10 --max-time 30             -H "Authorization: Bearer $STRIPE_LIVE_SECRET_KEY"             -G 'https://api.stripe.com/v1/events'             --data-urlencode 'limit=100'             -o "$events_file"
-
-          curl --silent --show-error --fail-with-body             --retry 2 --retry-all-errors --connect-timeout 10 --max-time 30             -H "Authorization: Bearer $STRIPE_LIVE_SECRET_KEY"             -G 'https://api.stripe.com/v1/webhook_endpoints'             --data-urlencode 'limit=100'             -o "$endpoints_file"
-
-          python3 - "$sessions_file" "$events_file" "$endpoints_file" <<'PY'
+          url='https://keeptxred.com/api/public/payments/live-test?site=ktr&run=ktr-20260920-3f7a9d&diagnostics=1'
+          body="$(curl --silent --show-error --fail-with-body             --retry 3 --retry-all-errors --connect-timeout 10 --max-time 30             -H 'Accept: application/json' "$url")"
+          printf '%s\n' "$body"
+          LIVE_PAYMENT_JSON="$body" python3 - <<'PY'
           import json
-          import sys
+          import os
 
-          sessions = json.load(open(sys.argv[1], encoding="utf-8"))
-          events = json.load(open(sys.argv[2], encoding="utf-8"))
-          endpoints = json.load(open(sys.argv[3], encoding="utf-8"))
+          payload = json.loads(os.environ["LIVE_PAYMENT_JSON"])
+          assert payload.get("ok") is True, payload
+          assert payload.get("found") is True, payload
+          assert payload.get("paid") is True, payload
+          assert payload.get("amountTotal") == 50, payload
+          assert payload.get("currency") == "usd", payload
 
-          session = next((
-              item for item in sessions.get("data", [])
-              if item.get("metadata", {}).get("source") == "ktr_live_payment_test"
-              and item.get("metadata", {}).get("live_test_run") == "ktr-20260920-3f7a9d"
-              and item.get("metadata", {}).get("diagnostic_only") == "true"
-          ), None)
-
-          if not session:
-              print(json.dumps({"session_found": False}))
-              raise SystemExit(3)
-
-          matching_events = [
-              event for event in events.get("data", [])
-              if event.get("type") in ("checkout.session.completed", "checkout.session.async_payment_succeeded")
-              and event.get("data", {}).get("object", {}).get("id") == session.get("id")
-          ]
-          matching_events.sort(key=lambda event: event.get("created", 0), reverse=True)
-          event = matching_events[0] if matching_events else None
-
-          endpoint = next((
-              item for item in endpoints.get("data", [])
-              if item.get("url") == "https://keeptxred.com/api/public/payments/webhook?env=live"
-          ), None)
-
+          diagnostic = payload.get("diagnostics") or {}
           summary = {
-              "session_found": True,
-              "amount_total": session.get("amount_total"),
-              "currency": session.get("currency"),
-              "session_status": session.get("status"),
-              "payment_status": session.get("payment_status"),
-              "webhook_marker": session.get("metadata", {}).get("live_test_webhook_received") == "true",
-              "stripe_event_found": event is not None,
-              "stripe_event_type": event.get("type") if event else None,
-              "stripe_event_pending_webhooks": event.get("pending_webhooks") if event else None,
-              "stripe_event_livemode": event.get("livemode") if event else None,
-              "webhook_endpoint_found": endpoint is not None,
-              "webhook_endpoint_status": endpoint.get("status") if endpoint else None,
-              "webhook_endpoint_receives_checkout_completed": (
-                  endpoint is not None
-                  and (
-                      "*" in endpoint.get("enabled_events", [])
-                      or "checkout.session.completed" in endpoint.get("enabled_events", [])
-                  )
-              ),
+              "paid": payload.get("paid"),
+              "webhook_received_marker": payload.get("webhookReceived"),
+              "stripe_event_found": diagnostic.get("stripeEventFound"),
+              "stripe_event_type": diagnostic.get("stripeEventType"),
+              "stripe_event_pending_webhooks": diagnostic.get("stripeEventPendingWebhooks"),
+              "stripe_event_livemode": diagnostic.get("stripeEventLivemode"),
+              "webhook_endpoint_found": diagnostic.get("webhookEndpointFound"),
+              "webhook_endpoint_status": diagnostic.get("webhookEndpointStatus"),
+              "webhook_endpoint_receives_checkout_completed": diagnostic.get("webhookEndpointReceivesCheckoutCompleted"),
           }
-          print(json.dumps(summary, sort_keys=True))
-
-          assert session.get("amount_total") == 50, summary
-          assert session.get("currency") == "usd", summary
-          assert session.get("status") == "complete", summary
-          assert session.get("payment_status") == "paid", summary
+          print("SAFE_DIAGNOSTIC=" + json.dumps(summary, sort_keys=True))
           PY
