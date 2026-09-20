@@ -1,4 +1,5 @@
 name: Verify neutral production payment pages
+# rerun after Stripe Link was disabled in production
 
 on:
   pull_request:
