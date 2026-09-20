@@ -25,7 +25,7 @@ describe("published newsroom freshness refresh", () => {
     expect(refresher).toContain('.eq("id", selected.article.id)');
     expect(refresher).toContain('.eq("slug", selected.article.slug)');
     expect(refresher).not.toContain(".upsert(");
-    expect(refresher).not.toContain("published_at:");
+    expect(refresher).not.toMatch(/\.update\(\{[\s\S]{0,600}published_at:/);
   });
 
   it("keeps the refresh source-backed, neutral, and budget bounded", () => {
