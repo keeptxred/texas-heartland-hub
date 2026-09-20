@@ -36,6 +36,14 @@ describe("shared checkout branding", () => {
     expect(footer).toContain("return null");
   });
 
+  it("disables Stripe Link so the shared account domain cannot appear on payment pages", () => {
+    expect(checkoutFunctions).toContain('wallet_options: { link: { display: "never" } }');
+    const source = paymentFacingFiles.find(({ path }) =>
+      path.endsWith("texasdefined-checkout.ts")
+    )?.source ?? "";
+    expect(source).toContain('wallet_options: { link: { display: "never" } }');
+  });
+
   it("overrides hosted TexasDefined Checkout with neutral per-session branding", () => {
     const source = paymentFacingFiles.find(({ path }) =>
       path.endsWith("texasdefined-checkout.ts")
