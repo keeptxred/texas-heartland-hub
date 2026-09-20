@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { AIReferralTracker } from "@/components/analytics/AIReferralTracker";
 import { CitationCollectionTrustRouter } from "@/components/authority/CitationCollectionTrustRouter";
 import { NewsGovernmentGraphRouter } from "@/components/news-government-graph-router";
@@ -17,6 +17,9 @@ const FOOTER_LINK_LABELS = new Set<string>([
 ]);
 
 export function SiteFooter() {
+  const { pathname } = useLocation();
+  if (pathname.startsWith("/shop/checkout")) return null;
+
   return (
     <>
       <AIReferralTracker />
