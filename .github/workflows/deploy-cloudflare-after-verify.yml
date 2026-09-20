@@ -163,6 +163,90 @@ jobs:
           PY
           bunx wrangler deploy --secrets-file "$secrets_file"
 
+      - name: Bootstrap live Stripe webhook signing secret
+        if: steps.revision.outputs.deploy == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          tmpdir="$(mktemp -d)"
+          trap 'rm -rf "$tmpdir"' EXIT
+
+          response_file="$tmpdir/bootstrap.json"
+          status="$(curl --retry 5 --retry-delay 2 --retry-all-errors \
+            --silent --show-error \
+            --output "$response_file" \
+            --write-out '%{http_code}' \
+            --request POST \
+            --header "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+            "$PREVIEW_URL/api/public/ops/bootstrap-live-payment-webhook")"
+
+          if [[ "$status" != "200" ]]; then
+            echo "Live payment webhook bootstrap returned HTTP $status." >&2
+            python3 - "$response_file" <<'PY'
+          import json, pathlib, sys
+          try:
+              data = json.loads(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8"))
+          except Exception:
+              raise SystemExit("Bootstrap response was not valid JSON.")
+          raise SystemExit(data.get("error") or "Live payment webhook bootstrap failed.")
+          PY
+          fi
+
+          mapfile -t bootstrap < <(python3 - "$response_file" <<'PY'
+          import json, pathlib, sys
+          data = json.loads(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8"))
+          if data.get("ok") is not True:
+              raise SystemExit(data.get("error") or "Live payment webhook bootstrap failed.")
+          print("true" if data.get("created") is True else "false")
+          print(data.get("endpoint_id") or "")
+          print(data.get("secret") or "")
+          PY
+          )
+
+          created="${bootstrap[0]:-false}"
+          endpoint_id="${bootstrap[1]:-}"
+          signing_secret="${bootstrap[2]:-}"
+
+          if [[ "$created" == "true" ]]; then
+            if [[ -z "$endpoint_id" || -z "$signing_secret" ]]; then
+              echo "Stripe webhook bootstrap did not return the required endpoint metadata." >&2
+              exit 1
+            fi
+
+            echo "::add-mask::$signing_secret"
+            payload_file="$tmpdir/cloudflare-secret.json"
+            PAYMENT_WEBHOOK_SECRET="$signing_secret" python3 - "$payload_file" <<'PY'
+          import json, os, sys
+          with open(sys.argv[1], "w", encoding="utf-8") as fh:
+              json.dump({
+                  "name": "PAYMENTS_LIVE_WEBHOOK_SECRET",
+                  "text": os.environ["PAYMENT_WEBHOOK_SECRET"],
+                  "type": "secret_text",
+              }, fh)
+          PY
+
+            cf_response="$(curl --fail-with-body --silent --show-error \
+              --request PUT \
+              --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+              --header "Content-Type: application/json" \
+              --data-binary "@$payload_file" \
+              "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/$WORKER_NAME/secrets")"
+
+            python3 - "$cf_response" <<'PY'
+          import json, sys
+          data = json.loads(sys.argv[1])
+          if data.get("success") is not True:
+              raise SystemExit(f"Cloudflare rejected live webhook secret: {data.get('errors')!r}")
+          result = data.get("result") or {}
+          if result.get("name") != "PAYMENTS_LIVE_WEBHOOK_SECRET":
+              raise SystemExit(f"Unexpected Cloudflare secret response: {result!r}")
+          print("Stored PAYMENTS_LIVE_WEBHOOK_SECRET in the production Worker.")
+          PY
+            echo "Created live Stripe webhook endpoint $endpoint_id."
+          else
+            echo "Live Stripe webhook signing secret was already configured."
+          fi
+
       - name: Verify workers.dev health
         if: steps.revision.outputs.deploy == 'true'
         shell: bash
@@ -458,7 +542,7 @@ jobs:
                       sort_keys=True,
                   ),
               )
-              raise SystemExit(0)
+              raise SystemExit("Payment runtime endpoint did not return JSON.")
 
           safe = {
               "http_status": status,
