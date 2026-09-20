@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 const workflow = readFileSync(".github/workflows/verify-laws-after-deploy.yml", "utf8");
 const productionDeploy = readFileSync(".github/workflows/deploy-cloudflare-production.yml", "utf8");
 const runtimeVerifier = readFileSync("scripts/verify-deployed-laws-runtime.py", "utf8");
+const lawRouteContract = readFileSync("scripts/seo/deployed-laws-route-contract.json", "utf8");
 
 describe("deployed laws route smoke workflow", () => {
   it("keeps the standalone smoke available after either recognized Cloudflare deployment", () => {
@@ -11,6 +12,8 @@ describe("deployed laws route smoke workflow", () => {
     expect(workflow).toContain('"Deploy KeepTXRed to Cloudflare Workers"');
     expect(workflow).toContain("github.event.workflow_run.conclusion == 'success'");
     expect(workflow).toContain("https://keeptxred-site.freddy-coppola.workers.dev");
+    expect(workflow).toContain("uses: actions/checkout@v5");
+    expect(workflow).toContain("run: python3 scripts/verify-deployed-laws-runtime.py");
   });
 
   it("gates the real production deployment on the reusable laws runtime verifier", () => {
@@ -24,9 +27,13 @@ describe("deployed laws route smoke workflow", () => {
     expect(productionDeploy).toContain("inputs.activate_custom_domain == true");
   });
 
-  it("guards the laws hub, child routes, and a dynamic topic route", () => {
-    const required = [
-      '("/laws", PARENT_H1',
+  it("loads one shared contract for the hub, child routes, and dynamic topic route", () => {
+    expect(runtimeVerifier).toContain("deployed-laws-route-contract.json");
+    expect(runtimeVerifier).toContain('CONTRACT["parentH1"]');
+    expect(runtimeVerifier).toContain('for check in CONTRACT["checks"]');
+
+    for (const marker of [
+      "/laws",
       "/laws/constitutional-amendments",
       "/laws/effective-dates",
       "/laws/topics",
@@ -35,21 +42,17 @@ describe("deployed laws route smoke workflow", () => {
       "Texas Laws Taking Effect in 2026",
       "Texas Law Library",
       "Texas Property Tax Policy & Law",
-    ];
+      "https://keeptxred.com/laws/topic/property-tax-law",
+    ]) {
+      expect(lawRouteContract).toContain(marker);
+    }
 
-    for (const marker of required) expect(runtimeVerifier).toContain(marker);
     expect(runtimeVerifier).toContain("child route is still rendering the /laws parent H1");
   });
 
-  it("requires canonical production URLs for every runtime-checked route", () => {
-    for (const canonical of [
-      "https://keeptxred.com/laws",
-      "https://keeptxred.com/laws/constitutional-amendments",
-      "https://keeptxred.com/laws/effective-dates",
-      "https://keeptxred.com/laws/topics",
-      "https://keeptxred.com/laws/topic/property-tax-law",
-    ]) {
-      expect(runtimeVerifier).toContain(canonical);
-    }
+  it("keeps route expectations out of the standalone workflow copy", () => {
+    expect(workflow).not.toContain("Texas Property Tax Policy & Law");
+    expect(workflow).not.toContain("/laws/topic/property-tax-law");
+    expect(workflow).not.toContain("class PageParser");
   });
 });
