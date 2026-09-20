@@ -172,13 +172,25 @@ jobs:
           trap 'rm -rf "$tmpdir"' EXIT
 
           response_file="$tmpdir/bootstrap.json"
-          status="$(curl --retry 5 --retry-delay 2 --retry-all-errors \
-            --silent --show-error \
-            --output "$response_file" \
-            --write-out '%{http_code}' \
-            --request POST \
-            --header "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
-            "$PREVIEW_URL/api/public/ops/bootstrap-live-payment-webhook")"
+          status=""
+          for attempt in $(seq 1 20); do
+            status="$(curl --retry 3 --retry-delay 2 --retry-all-errors \
+              --silent --show-error \
+              --output "$response_file" \
+              --write-out '%{http_code}' \
+              --request POST \
+              --header "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+              "$PREVIEW_URL/api/public/ops/bootstrap-live-payment-webhook")"
+
+            if [[ "$status" == "200" ]]; then
+              break
+            fi
+            if [[ "$status" != "404" ]]; then
+              break
+            fi
+            echo "Live payment bootstrap route is not propagated yet (HTTP 404), retrying."
+            sleep 3
+          done
 
           if [[ "$status" != "200" ]]; then
             echo "Live payment webhook bootstrap returned HTTP $status." >&2
