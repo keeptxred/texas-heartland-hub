@@ -9,3 +9,7 @@ export function assertSandboxCannotFulfill(environment: PaymentEnvironment): voi
     throw new Error("Sandbox-only payment path cannot run with live fulfillment enabled.");
   }
 }
+
+export function isCheckoutPaymentFulfillable(paymentStatus: unknown): boolean {
+  return paymentStatus === "paid" || paymentStatus === "no_payment_required";
+}
