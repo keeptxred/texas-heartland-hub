@@ -44,8 +44,8 @@ export const Route = createFileRoute("/api/public/ops/bootstrap-live-payment-web
           const existing = await stripe.webhookEndpoints.list({ limit: 100 });
 
           for (const endpoint of existing.data) {
-            if (endpoint.url === webhookUrl) {
-              await stripe.webhookEndpoints.del(endpoint.id);
+            if (endpoint.url === webhookUrl && endpoint.status !== "disabled") {
+              await stripe.webhookEndpoints.update(endpoint.id, { disabled: true });
             }
           }
 
