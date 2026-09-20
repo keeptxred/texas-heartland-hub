@@ -86,53 +86,31 @@ async function findStripeFrame(page) {
   throw new Error(`Stripe checkout frame did not load. Frames: ${page.frames().map((f) => f.url()).join(", ")}`);
 }
 
-async function fillShipping(page) {
-  await fillIfPresent(
-    page,
-    ['input[autocomplete="email"]', 'input[type="email"]'],
-    testAddress.email,
-    "email",
-  );
-  await fillIfPresent(
-    page,
-    ['input[autocomplete="tel"]', 'input[type="tel"]'],
-    testAddress.phone,
-    "phone",
-  );
-  await fillIfPresent(
-    page,
-    ['input[autocomplete="name"]'],
-    testAddress.name,
-    "full name",
-  );
-  await fillIfPresent(
-    page,
-    ['input[autocomplete*="address-line1"]'],
-    testAddress.line1,
-    "address line 1",
-  );
-  await fillIfPresent(
-    page,
-    ['input[autocomplete*="address-level2"]'],
-    testAddress.city,
-    "city",
-  );
-  await fillIfPresent(
-    page,
-    ['input[autocomplete*="address-level1"]'],
-    testAddress.state,
-    "state",
-  );
-  await fillIfPresent(
-    page,
-    ['input[autocomplete*="postal-code"]'],
-    testAddress.postalCode,
-    "ZIP",
-  );
+async function fillShipping(page, label) {
+  await page.getByRole("heading", { name: /shipping information/i })
+    .waitFor({ state: "visible", timeout: 30000 });
+
+  await dumpInputs(page, `${label}-shipping-form`);
+
+  await page.getByLabel(/^Email$/i).fill(testAddress.email);
+  console.log("Filled: email");
+  await page.getByLabel(/^Phone/i).fill(testAddress.phone);
+  console.log("Filled: phone");
+  await page.getByLabel(/^Full name$/i).fill(testAddress.name);
+  console.log("Filled: full name");
+  await page.getByLabel(/^Street address$/i).fill(testAddress.line1);
+  console.log("Filled: address line 1");
+  await page.getByLabel(/^City$/i).fill(testAddress.city);
+  console.log("Filled: city");
+  await page.getByLabel(/^State$/i).fill(testAddress.state);
+  console.log("Filled: state");
+  await page.getByLabel(/^ZIP code$/i).fill(testAddress.postalCode);
+  console.log("Filled: ZIP");
 
   await page
     .getByRole("button", { name: /continue to secure payment/i })
     .click();
+
   await page
     .getByRole("button", { name: /pay \$/i })
     .waitFor({ state: "visible", timeout: 90000 });
@@ -153,7 +131,7 @@ async function runCase(browser, product, expectedFree, label) {
     );
 
     await page.goto(`${site}/shop/checkout`, { waitUntil: "domcontentloaded", timeout: 90000 });
-    await fillShipping(page);
+    await fillShipping(page, label);
     const frame = await findStripeFrame(page);
     console.log(`${label} Stripe payment frame: ${frame.url()}`);
 
