@@ -129,6 +129,11 @@ export const Route = createFileRoute("/api/public/texasdefined-checkout")({
           const stripe = createStripeClient("live");
           const session = await stripe.checkout.sessions.create({
             mode: "payment",
+            branding_settings: {
+              display_name: "Secure Checkout",
+              icon: { type: "url", url: "https://keeptxred.com/secure-checkout-icon.png" },
+              logo: { type: "url", url: "https://keeptxred.com/secure-checkout-icon.png" },
+            },
             line_items: resolved.map((item) => ({
               quantity: item.quantity,
               price_data: {
@@ -146,7 +151,7 @@ export const Route = createFileRoute("/api/public/texasdefined-checkout")({
             success_url: "https://texasdefined.com/shop/checkout-return?session_id={CHECKOUT_SESSION_ID}",
             cancel_url: "https://texasdefined.com/shop/cart",
             payment_intent_data: {
-              description: "Texas Defined — Shop Order",
+              description: "Online Shop Order",
               metadata: { cart: cartJson, source: "texasdefined_shop" },
             },
             metadata: { cart: cartJson, source: "texasdefined_shop" },
