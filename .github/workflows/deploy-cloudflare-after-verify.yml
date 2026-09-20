@@ -257,6 +257,62 @@ jobs:
           print("Live payment runtime verification passed")
           PY
 
+      - name: Replay TexasDefined live diagnostic event
+        if: steps.revision.outputs.deploy == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          marker='.github/replay-texasdefined-live-payment-once'
+          if [[ ! -f "$marker" ]]; then
+            echo 'No TexasDefined diagnostic replay marker present; skipping.'
+            exit 0
+          fi
+          if [[ "$(tr -d '\r\n' < "$marker")" != 'replay-td-2026-09-20-a' ]]; then
+            echo 'Unexpected TexasDefined diagnostic replay marker; refusing replay.' >&2
+            exit 1
+          fi
+
+          response_file="$(mktemp)"
+          trap 'rm -f "$response_file"' EXIT
+          status=''
+
+          for attempt in $(seq 1 20); do
+            status="$(curl --retry 2 --retry-delay 2 --retry-all-errors               --silent --show-error               --output "$response_file"               --write-out '%{http_code}'               --request POST               --header "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY"               "$PREVIEW_URL/api/public/ops/replay-live-payment-diagnostic")"
+            if [[ "$status" == "200" ]]; then
+              break
+            fi
+            if [[ "$status" != "404" ]]; then
+              break
+            fi
+            echo "Replay route is not propagated yet (HTTP 404), retrying."
+            sleep 3
+          done
+
+          if [[ "$status" != "200" ]]; then
+            echo "TexasDefined live diagnostic replay returned HTTP $status." >&2
+            cat "$response_file" >&2 || true
+            exit 1
+          fi
+
+          python3 - "$response_file" <<'PY'
+          import json, pathlib, sys
+          data = json.loads(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8"))
+          expected = {
+              "ok": True,
+              "replay_status": 200,
+              "paid": True,
+              "amount_total": 50,
+              "currency": "usd",
+              "webhook_received": True,
+              "event_type": "checkout.session.completed",
+              "event_livemode": True,
+          }
+          for key, value in expected.items():
+              if data.get(key) != value:
+                  raise SystemExit(f"TexasDefined diagnostic replay verification failed: {data!r}")
+          print("TexasDefined 50-cent live event replay verified: paid=true webhook_received=true")
+          PY
+
       - name: Verify deployed law route ownership, H1s, and canonicals
         if: steps.revision.outputs.deploy == 'true'
         env:
