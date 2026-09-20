@@ -137,10 +137,40 @@ function splitName(name?: string | null): { first: string; last: string } {
   return { first: parts[0], last: parts.slice(1).join(" ") };
 }
 
+function isLivePaymentDiagnostic(session: any) {
+  return (
+    session?.metadata?.diagnostic_only === "true" &&
+    (session?.metadata?.source === "ktr_live_payment_test" ||
+      session?.metadata?.source === "texasdefined_live_payment_test")
+  );
+}
+
+async function markLivePaymentDiagnosticReceived(stripe: ReturnType<typeof createStripeClient>, session: any) {
+  await stripe.checkout.sessions.update(session.id, {
+    metadata: {
+      live_test_webhook_received: "true",
+      live_test_webhook_received_at: new Date().toISOString(),
+    },
+  });
+  console.log("Live payment diagnostic webhook verified; fulfillment suppressed", {
+    sessionId: session.id,
+    source: session.metadata?.source,
+  });
+}
+
 async function handleCheckoutCompleted(sessionObj: any, env: StripeEnv) {
   const stripe = createStripeClient(env);
+
+  if (
+    isCheckoutPaymentFulfillable(sessionObj?.payment_status) &&
+    isLivePaymentDiagnostic(sessionObj)
+  ) {
+    await markLivePaymentDiagnosticReceived(stripe, sessionObj);
+    return;
+  }
+
   const session = await stripe.checkout.sessions.retrieve(sessionObj.id, {
-    expand: ["customer_details", "shipping_details", "line_items", "line_items.data.price.product"],
+    expand: ["line_items"],
   });
 
   if (!isCheckoutPaymentFulfillable(session.payment_status)) {
@@ -152,21 +182,8 @@ async function handleCheckoutCompleted(sessionObj: any, env: StripeEnv) {
     return;
   }
 
-  if (
-    session.metadata?.diagnostic_only === "true" &&
-    (session.metadata?.source === "ktr_live_payment_test" ||
-      session.metadata?.source === "texasdefined_live_payment_test")
-  ) {
-    await stripe.checkout.sessions.update(session.id, {
-      metadata: {
-        live_test_webhook_received: "true",
-        live_test_webhook_received_at: new Date().toISOString(),
-      },
-    });
-    console.log("Live payment diagnostic webhook verified; fulfillment suppressed", {
-      sessionId: session.id,
-      source: session.metadata?.source,
-    });
+  if (isLivePaymentDiagnostic(session)) {
+    await markLivePaymentDiagnosticReceived(stripe, session);
     return;
   }
 
