@@ -185,7 +185,7 @@ function validateShippingDetails(details: ShippingDetails): ShippingDetails {
   const address = details?.address;
   if (!details?.name?.trim()) throw new Error("Enter a name for the shipping address.");
   if (!address || address.country !== "US") {
-    throw new Error("Keep Texas Red currently ships only to U.S. addresses.");
+    throw new Error("Orders currently ship only to U.S. addresses.");
   }
   if (
     !address.line1?.trim() ||
@@ -475,7 +475,7 @@ export const createCartCheckoutSession = createServerFn({ method: "POST" })
           },
         ],
         payment_intent_data: {
-          description: "Keep Texas Red — Shop Order",
+          description: "Online Shop Order",
           metadata: {
             cart: cartJson,
             fulfillment,
