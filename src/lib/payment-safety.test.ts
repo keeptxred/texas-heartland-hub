@@ -1,10 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { allowsRealFulfillment, assertSandboxCannotFulfill } from "@/lib/payment-safety";
+import { allowsRealFulfillment, assertSandboxCannotFulfill, isCheckoutPaymentFulfillable } from "@/lib/payment-safety";
 
 describe("payment fulfillment safety", () => {
   it("allows real fulfillment only for live payments", () => {
     expect(allowsRealFulfillment("live")).toBe(true);
     expect(allowsRealFulfillment("sandbox")).toBe(false);
+  });
+
+  it("fulfills only paid or no-payment-required Checkout sessions", () => {
+    expect(isCheckoutPaymentFulfillable("paid")).toBe(true);
+    expect(isCheckoutPaymentFulfillable("no_payment_required")).toBe(true);
+    expect(isCheckoutPaymentFulfillable("unpaid")).toBe(false);
+    expect(isCheckoutPaymentFulfillable(null)).toBe(false);
   });
 
   it("keeps the sandbox-only path fail-closed", () => {
