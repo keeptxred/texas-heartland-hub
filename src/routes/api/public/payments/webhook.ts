@@ -152,6 +152,24 @@ async function handleCheckoutCompleted(sessionObj: any, env: StripeEnv) {
     return;
   }
 
+  if (
+    session.metadata?.diagnostic_only === "true" &&
+    (session.metadata?.source === "ktr_live_payment_test" ||
+      session.metadata?.source === "texasdefined_live_payment_test")
+  ) {
+    await stripe.checkout.sessions.update(session.id, {
+      metadata: {
+        live_test_webhook_received: "true",
+        live_test_webhook_received_at: new Date().toISOString(),
+      },
+    });
+    console.log("Live payment diagnostic webhook verified; fulfillment suppressed", {
+      sessionId: session.id,
+      source: session.metadata?.source,
+    });
+    return;
+  }
+
   const cartJson =
     (session.metadata?.cart as string | undefined) ??
     (session.payment_intent && typeof session.payment_intent !== "string"
