@@ -11,18 +11,23 @@ from verify_deployed_priority_sitemap import verify_priority_sitemap
 SITE_URL = os.environ.get("SITE_URL", "https://keeptxred-site.freddy-coppola.workers.dev").rstrip("/")
 DEPLOYMENT_SMOKE_HEADER = "x-keeptxred-deployment-smoke: canonical"
 DEPLOYMENT_SMOKE_REPORT = os.environ.get("DEPLOYMENT_SMOKE_REPORT")
-PARENT_H1 = "Texas Laws Explained:"
+CONTRACT_PATH = Path(__file__).resolve().with_name("deployed-laws-route-contract.json")
+CONTRACT = json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))
+PARENT_H1 = CONTRACT["parentH1"]
 HB1056_PATH = "/bills/texas/89/hb/1056"
 HB1056_CANONICAL = "https://keeptxred.com/bills/texas/89/hb/1056"
 HB1056_ARTICLE_PATH = "/news/texas-gold-silver-legal-tender-hb-1056"
 HB1056_ARTICLE_TITLE = "Texas Gold and Silver Legal Tender Law: What HB 1056 Does Sept. 1"
 HB1056_MISSING_ARTICLE_FALLBACK = "KeepTXRed has not linked a related article to this bill yet."
 CHECKS = [
-    ("/laws", PARENT_H1, "https://keeptxred.com/laws", False, False),
-    ("/laws/constitutional-amendments", "Texas Constitutional Amendments Tracker", "https://keeptxred.com/laws/constitutional-amendments", True, True),
-    ("/laws/effective-dates", "Texas Laws Taking Effect in 2026", "https://keeptxred.com/laws/effective-dates", True, True),
-    ("/laws/topics", "Texas Law Library", "https://keeptxred.com/laws/topics", True, True),
-    ("/laws/topic/property-tax-law", "Texas Property Tax Policy & Law", "https://keeptxred.com/laws/topic/property-tax-law", True, True),
+    (
+        check["path"],
+        check["h1"],
+        check["canonical"],
+        check["exactH1"],
+        check["forbidParent"],
+    )
+    for check in CONTRACT["checks"]
 ]
 
 
