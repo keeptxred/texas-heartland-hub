@@ -78,14 +78,14 @@ jobs:
           stripe_html="$RUNNER_TEMP/stripe-checkout.html"
           curl --location --silent --show-error --fail-with-body --retry 3 --retry-all-errors --connect-timeout 10 --max-time 30 "$checkout_url" -o "$stripe_html"
 
-          python3 - "$stripe_html" <<'PY'
-          import pathlib, sys
-          html = pathlib.Path(sys.argv[1]).read_text(encoding="utf-8", errors="replace")
-          decoded = html.replace("\\u0026", "&").replace("\\u003c", "<").replace("\\u003e", ">")
-          if "Secure Checkout" not in decoded:
-              raise SystemExit("Neutral per-session display name was not found on Stripe Checkout.")
-          for phrase in ("Keep TX Red", "Keep Texas Red", "Texas Defined"):
-              if phrase.lower() in decoded.lower():
-                  raise SystemExit(f"Storefront branding remains on Stripe Checkout: {phrase}")
-          print("TexasDefined Stripe-hosted Checkout is brand neutral.")
-          PY
+          if ! grep -aFq 'Secure Checkout' "$stripe_html"; then
+            echo 'Neutral per-session display name was not found on Stripe Checkout.' >&2
+            exit 1
+          fi
+          for phrase in 'Keep TX Red' 'Keep Texas Red' 'Texas Defined'; do
+            if grep -aiFq "$phrase" "$stripe_html"; then
+              echo "Storefront branding remains on Stripe Checkout: $phrase" >&2
+              exit 1
+            fi
+          done
+          echo 'TexasDefined Stripe-hosted Checkout is brand neutral.'
