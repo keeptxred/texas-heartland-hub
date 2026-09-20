@@ -135,13 +135,30 @@ export const Route = createFileRoute("/api/public/payments/live-test")({
         }
 
         const sessionId = url.searchParams.get("session_id")?.trim() ?? "";
-        if (!sessionId.startsWith("cs_") || sessionId.length > 255) {
+        if (sessionId && (!sessionId.startsWith("cs_") || sessionId.length > 255)) {
           return Response.json({ ok: false, error: "Invalid checkout session" }, { status: 400, headers });
         }
 
         try {
           const stripe = createStripeClient("live");
-          const session = await stripe.checkout.sessions.retrieve(sessionId);
+          const session = sessionId
+            ? await stripe.checkout.sessions.retrieve(sessionId)
+            : (await stripe.checkout.sessions.list({ limit: 100 })).data.find((candidate) =>
+                candidate.metadata?.source === test.source &&
+                candidate.metadata?.live_test_run === test.run &&
+                candidate.metadata?.diagnostic_only === "true"
+              );
+
+          if (!session) {
+            return Response.json({
+              ok: true,
+              found: false,
+              site: test.site,
+              paid: false,
+              webhookReceived: false,
+            }, { headers });
+          }
+
           if (
             session.metadata?.source !== test.source ||
             session.metadata?.live_test_run !== test.run ||
@@ -152,6 +169,7 @@ export const Route = createFileRoute("/api/public/payments/live-test")({
 
           return Response.json({
             ok: true,
+            found: true,
             site: test.site,
             amountTotal: session.amount_total,
             currency: session.currency,
