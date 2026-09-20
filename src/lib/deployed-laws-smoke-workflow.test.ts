@@ -34,7 +34,7 @@ describe("deployed laws route smoke workflow", () => {
       "Texas Constitutional Amendments Tracker",
       "Texas Laws Taking Effect in 2026",
       "Texas Law Library",
-      "Texas Property Tax Law Explained",
+      "Texas Property Tax Policy & Law",
     ];
 
     for (const marker of required) expect(runtimeVerifier).toContain(marker);
