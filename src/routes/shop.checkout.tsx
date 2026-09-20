@@ -8,8 +8,8 @@ import { SITE_URL } from "@/lib/seo";
 export const Route = createFileRoute("/shop/checkout")({
   head: () => ({
     meta: [
-      { title: "Secure Checkout — Keep Texas Red" },
-      { name: "description", content: "Complete your Keep Texas Red order securely." },
+      { title: "Secure Checkout" },
+      { name: "description", content: "Complete your order securely." },
       { name: "robots", content: "noindex,follow" },
     ],
     links: [{ rel: "canonical", href: `${SITE_URL}/shop/checkout` }],
@@ -50,9 +50,6 @@ function CheckoutPage() {
       <PaymentTestModeBanner />
       <section className="border-b border-border bg-secondary text-secondary-foreground">
         <div className="mx-auto max-w-[1100px] px-6 py-10">
-          <div className="text-[11px] font-semibold tracking-[0.3em] uppercase text-primary mb-3">
-            Keep TX Red Shop
-          </div>
           <h1 className="font-display text-3xl md:text-4xl leading-tight">Secure Checkout</h1>
           <p className="mt-3 max-w-2xl text-white/90 text-sm">
             Payment is processed securely. Your order ships from our print partner within 3–7 business days.
