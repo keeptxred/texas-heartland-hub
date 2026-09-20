@@ -15,6 +15,7 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const pathname = location.pathname;
+  const isPaymentRoute = pathname.startsWith("/shop/checkout");
   const electionHeadline = nextElectionHeadline();
   const fetchDaily = useServerFn(getDailyArticles);
   const { data } = useQuery({
@@ -27,6 +28,8 @@ export function SiteHeader() {
   const breaking = validTicker.filter((article) => article.is_breaking);
   const rest = validTicker.filter((article) => !article.is_breaking);
   const tickerItems = [...breaking, ...rest].slice(0, 6);
+
+  if (isPaymentRoute) return null;
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-secondary text-secondary-foreground shadow-sm">
