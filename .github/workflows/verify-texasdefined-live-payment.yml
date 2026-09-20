@@ -1,0 +1,53 @@
+name: Verify TexasDefined 50c live payment
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/verify-texasdefined-live-payment.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify TexasDefined live payment and webhook
+        shell: bash
+        run: |
+          set -euo pipefail
+          url='https://keeptxred.com/api/public/payments/live-test?site=texasdefined&run=td-20260920-8c2e41&diagnostics=1'
+          body="$(curl --silent --show-error --fail-with-body             --retry 3 --retry-all-errors --connect-timeout 10 --max-time 30             -H 'Accept: application/json'             -H 'Origin: https://texasdefined.com'             "$url")"
+          printf '%s\n' "$body"
+          LIVE_PAYMENT_JSON="$body" python3 - <<'PY'
+          import json
+          import os
+
+          payload = json.loads(os.environ["LIVE_PAYMENT_JSON"])
+          assert payload.get("ok") is True, payload
+          assert payload.get("found") is True, payload
+          assert payload.get("paid") is True, payload
+          assert payload.get("webhookReceived") is True, payload
+          assert payload.get("amountTotal") == 50, payload
+          assert payload.get("currency") == "usd", payload
+
+          diagnostic = payload.get("diagnostics") or {}
+          assert diagnostic.get("stripeEventFound") is True, payload
+          assert diagnostic.get("stripeEventLivemode") is True, payload
+          assert diagnostic.get("webhookEndpointFound") is True, payload
+          assert diagnostic.get("webhookEndpointStatus") == "enabled", payload
+          assert diagnostic.get("webhookEndpointReceivesCheckoutCompleted") is True, payload
+
+          summary = {
+              "paid": payload.get("paid"),
+              "webhook_received": payload.get("webhookReceived"),
+              "amount_total": payload.get("amountTotal"),
+              "currency": payload.get("currency"),
+              "stripe_event_type": diagnostic.get("stripeEventType"),
+              "stripe_event_pending_webhooks": diagnostic.get("stripeEventPendingWebhooks"),
+              "stripe_event_livemode": diagnostic.get("stripeEventLivemode"),
+              "webhook_endpoint_status": diagnostic.get("webhookEndpointStatus"),
+              "webhook_endpoint_receives_checkout_completed": diagnostic.get("webhookEndpointReceivesCheckoutCompleted"),
+          }
+          print("SAFE_RESULT=" + json.dumps(summary, sort_keys=True))
+          PY
