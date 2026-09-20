@@ -1,0 +1,90 @@
+name: Verify neutral production payment pages
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/verify-neutral-production-payment-pages.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify KTR-hosted checkout has neutral visible copy
+        shell: bash
+        run: |
+          set -euo pipefail
+          html="$(curl --location --silent --show-error --fail-with-body             --retry 3 --retry-all-errors --connect-timeout 10 --max-time 30             'https://keeptxred.com/shop/checkout')"
+          KTR_CHECKOUT_HTML="$html" python3 - <<'PY'
+          import os, re
+          html = os.environ["KTR_CHECKOUT_HTML"]
+          text = re.sub(r"<script\b[^>]*>.*?</script>", " ", html, flags=re.I|re.S)
+          text = re.sub(r"<style\b[^>]*>.*?</style>", " ", text, flags=re.I|re.S)
+          text = re.sub(r"<[^>]+>", " ", text)
+          text = re.sub(r"\s+", " ", text)
+          for phrase in ("Keep TX Red", "Keep Texas Red", "Texas Defined"):
+              if phrase.lower() in text.lower():
+                  raise SystemExit(f"Visible storefront branding remains on KTR checkout: {phrase}")
+          if "Secure Checkout" not in html:
+              raise SystemExit("Neutral Secure Checkout title not found.")
+          print("KTR checkout visible copy is brand neutral.")
+          PY
+
+      - name: Create no-charge TexasDefined live Checkout Session
+        shell: bash
+        run: |
+          set -euo pipefail
+          products="$(curl --silent --show-error --fail-with-body             --retry 3 --retry-all-errors --connect-timeout 10 --max-time 30             -H 'Origin: https://texasdefined.com'             'https://keeptxred.com/api/public/store-products?site=texasdefined&limit=50')"
+
+          payload="$(PRODUCTS_JSON="$products" python3 - <<'PY'
+          import json, os
+          data = json.loads(os.environ["PRODUCTS_JSON"])
+          if data.get("ok") is not True:
+              raise SystemExit(data)
+          for product in data.get("products", []):
+              variants = product.get("variants") or []
+              for variant in variants:
+                  if variant.get("is_enabled", True) and variant.get("id") is not None:
+                      print(json.dumps({
+                          "items": [{
+                              "productId": product["id"],
+                              "variantId": int(variant["id"]),
+                              "quantity": 1,
+                          }]
+                      }))
+                      raise SystemExit(0)
+          raise SystemExit("No enabled TexasDefined shop variant found.")
+          PY
+          )"
+
+          response="$(curl --silent --show-error --fail-with-body             --retry 3 --retry-all-errors --connect-timeout 10 --max-time 30             -H 'Origin: https://texasdefined.com'             -H 'Content-Type: application/json'             --data "$payload"             'https://keeptxred.com/api/public/texasdefined-checkout')"
+
+          checkout_url="$(CHECKOUT_JSON="$response" python3 - <<'PY'
+          import json, os
+          data = json.loads(os.environ["CHECKOUT_JSON"])
+          if data.get("ok") is not True:
+              raise SystemExit(data)
+          url = data.get("url") or ""
+          if not url.startswith("https://checkout.stripe.com/"):
+              raise SystemExit(f"Unexpected Checkout URL: {url!r}")
+          print(url)
+          PY
+          )"
+
+          echo "Created live Checkout Session without submitting payment."
+
+          html="$(curl --location --silent --show-error --fail-with-body             --retry 3 --retry-all-errors --connect-timeout 10 --max-time 30             "$checkout_url")"
+
+          STRIPE_CHECKOUT_HTML="$html" python3 - <<'PY'
+          import os, re
+          html = os.environ["STRIPE_CHECKOUT_HTML"]
+          decoded = html.replace("\\u0026", "&").replace("\\u003c", "<").replace("\\u003e", ">")
+          if "Secure Checkout" not in decoded:
+              raise SystemExit("Neutral per-session display name was not found on Stripe Checkout.")
+          for phrase in ("Keep TX Red", "Keep Texas Red", "Texas Defined"):
+              if phrase.lower() in decoded.lower():
+                  raise SystemExit(f"Storefront branding remains on Stripe Checkout: {phrase}")
+          print("TexasDefined Stripe-hosted Checkout is brand neutral.")
+          PY
