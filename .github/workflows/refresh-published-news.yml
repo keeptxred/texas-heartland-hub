@@ -1,0 +1,73 @@
+name: Refresh Developing Published News
+
+on:
+  schedule:
+    - cron: "47 */2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: ktr-published-news-refresh
+  cancel-in-progress: false
+
+env:
+  AUTOMATION_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Rebuild evidence and refresh one material developing story
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          run_zero_ai_stage() {
+            local name="$1"
+            local endpoint="$2"
+            local timeout="$3"
+            local output="/tmp/refresh-${name}.json"
+            local status
+            status=$(curl -sS -X POST -o "$output" -w '%{http_code}'               --max-time "$timeout" -H 'accept: application/json'               "${AUTOMATION_ORIGIN%/}/api/public/hooks/${endpoint}" || echo 000)
+            echo "refresh-${name} HTTP ${status}"
+            cat "$output" 2>/dev/null || true
+            echo
+            if [[ "$status" != "200" ]] || ! jq -e '.ok == true and (.aiCalls // 0) == 0' "$output" >/dev/null 2>&1; then
+              echo "REFRESH_${name^^}_FAILED" >&2
+              exit 1
+            fi
+          }
+
+          run_zero_ai_stage evidence enrich-newsroom-rss-evidence 90
+          run_zero_ai_stage normalize normalize-newsroom-feed 90
+          run_zero_ai_stage cluster cluster-newsroom-stories 90
+          run_zero_ai_stage packets build-newsroom-research-packets 180
+
+          oidc_url="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-newsroom-refresh"
+          oidc_token=$(curl -fsS             -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}"             "$oidc_url" | jq -r '.value // empty')
+
+          if [[ -z "$oidc_token" ]]; then
+            echo 'GitHub Actions did not issue the published-news refresh OIDC token.' >&2
+            exit 1
+          fi
+
+          status=$(curl -sS -X POST -o /tmp/published-news-refresh.json -w '%{http_code}'             --max-time 240             -H 'accept: application/json'             -H "Authorization: Bearer ${oidc_token}"             "${AUTOMATION_ORIGIN%/}/api/public/hooks/refresh-published-newsroom" || echo 000)
+
+          echo "published-news-refresh HTTP ${status}"
+          cat /tmp/published-news-refresh.json 2>/dev/null || true
+          echo
+
+          if [[ "$status" != "200" ]] || ! jq -e '.ok == true' /tmp/published-news-refresh.json >/dev/null 2>&1; then
+            echo 'PUBLISHED_NEWS_REFRESH_FAILED' >&2
+            exit 1
+          fi
+
+          if jq -e '.refreshed == true' /tmp/published-news-refresh.json >/dev/null 2>&1; then
+            echo "PUBLISHED_NEWS_REFRESH_SUCCESS slug=$(jq -r '.slug') novelty=$(jq -r '.noveltyScore') new_sources=$(jq -r '.newSources')"
+          else
+            echo "PUBLISHED_NEWS_REFRESH_NOOP reason=$(jq -r '.reason // "none"')"
+          fi
