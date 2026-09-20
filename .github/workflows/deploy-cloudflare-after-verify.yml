@@ -416,9 +416,8 @@ jobs:
           }, indent=2))
           PY
 
-      - name: Report payment runtime diagnostics
+      - name: Verify live payment runtime
         if: steps.revision.outputs.deploy == 'true'
-        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
@@ -468,7 +467,30 @@ jobs:
               "status": data.get("status"),
               "bindings": data.get("bindings"),
               "stripe_api": data.get("stripe_api"),
+              "stripe_webhook": data.get("stripe_webhook"),
+              "printify_api": data.get("printify_api"),
               "stripe_error": data.get("stripe_error"),
+              "stripe_webhook_error": data.get("stripe_webhook_error"),
+              "printify_error": data.get("printify_error"),
           }
           print("Payment runtime diagnostics:", json.dumps(safe, sort_keys=True))
+
+          bindings = data.get("bindings") or {}
+          missing = sorted(name for name, present in bindings.items() if present is not True)
+          failures = []
+          if status != "200":
+              failures.append(f"HTTP {status}")
+          if data.get("status") != "ok":
+              failures.append(f"status={data.get('status')!r}")
+          if data.get("stripe_api") != "ok":
+              failures.append(f"stripe_api={data.get('stripe_api')!r}")
+          if data.get("stripe_webhook") != "ok":
+              failures.append(f"stripe_webhook={data.get('stripe_webhook')!r}")
+          if data.get("printify_api") != "ok":
+              failures.append(f"printify_api={data.get('printify_api')!r}")
+          if missing:
+              failures.append(f"missing_bindings={missing!r}")
+          if failures:
+              raise SystemExit("Live payment runtime verification failed: " + "; ".join(failures))
+          print("Live payment runtime verification passed")
           PY
