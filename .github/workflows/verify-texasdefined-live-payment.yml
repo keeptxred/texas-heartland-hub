@@ -1,5 +1,5 @@
 name: Verify TexasDefined 50c live payment
-# rerun after webhook handler deploy
+# Read-only watcher for Stripe retry after webhook handler repair.
 
 on:
   pull_request:
@@ -13,33 +13,25 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - name: Verify TexasDefined live payment and webhook
+      - name: Wait for TexasDefined live webhook retry
         shell: bash
         run: |
           set -euo pipefail
           url='https://keeptxred.com/api/public/payments/live-test?site=texasdefined&run=td-20260920-8c2e41&diagnostics=1'
-          body="$(curl --silent --show-error --fail-with-body             --retry 3 --retry-all-errors --connect-timeout 10 --max-time 30             -H 'Accept: application/json'             -H 'Origin: https://texasdefined.com'             "$url")"
-          printf '%s\n' "$body"
-          LIVE_PAYMENT_JSON="$body" python3 - <<'PY'
+
+          for attempt in $(seq 1 20); do
+            body="$(curl --silent --show-error --fail-with-body               --retry 2 --retry-all-errors --connect-timeout 10 --max-time 30               -H 'Accept: application/json'               -H 'Origin: https://texasdefined.com'               "$url")"
+
+            LIVE_PAYMENT_JSON="$body" python3 - "$attempt" <<'PY'
           import json
           import os
+          import sys
 
           payload = json.loads(os.environ["LIVE_PAYMENT_JSON"])
-          assert payload.get("ok") is True, payload
-          assert payload.get("found") is True, payload
-          assert payload.get("paid") is True, payload
-          assert payload.get("webhookReceived") is True, payload
-          assert payload.get("amountTotal") == 50, payload
-          assert payload.get("currency") == "usd", payload
-
           diagnostic = payload.get("diagnostics") or {}
-          assert diagnostic.get("stripeEventFound") is True, payload
-          assert diagnostic.get("stripeEventLivemode") is True, payload
-          assert diagnostic.get("webhookEndpointFound") is True, payload
-          assert diagnostic.get("webhookEndpointStatus") == "enabled", payload
-          assert diagnostic.get("webhookEndpointReceivesCheckoutCompleted") is True, payload
-
           summary = {
+              "attempt": int(sys.argv[1]),
+              "found": payload.get("found"),
               "paid": payload.get("paid"),
               "webhook_received": payload.get("webhookReceived"),
               "amount_total": payload.get("amountTotal"),
@@ -51,4 +43,30 @@ jobs:
               "webhook_endpoint_receives_checkout_completed": diagnostic.get("webhookEndpointReceivesCheckoutCompleted"),
           }
           print("SAFE_RESULT=" + json.dumps(summary, sort_keys=True))
+
+          assert payload.get("ok") is True, payload
+          assert payload.get("found") is True, payload
+          assert payload.get("paid") is True, payload
+          assert payload.get("amountTotal") == 50, payload
+          assert payload.get("currency") == "usd", payload
+          assert diagnostic.get("stripeEventFound") is True, payload
+          assert diagnostic.get("stripeEventLivemode") is True, payload
+          assert diagnostic.get("webhookEndpointFound") is True, payload
+          assert diagnostic.get("webhookEndpointStatus") == "enabled", payload
+          assert diagnostic.get("webhookEndpointReceivesCheckoutCompleted") is True, payload
+
+          raise SystemExit(0 if payload.get("webhookReceived") is True else 10)
           PY
+            status=$?
+            if [[ "$status" == "0" ]]; then
+              echo "TexasDefined live payment webhook verified."
+              exit 0
+            fi
+            if [[ "$status" != "10" ]]; then
+              exit "$status"
+            fi
+            sleep 30
+          done
+
+          echo "Stripe has not retried the TexasDefined event within the watcher window." >&2
+          exit 1
