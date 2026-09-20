@@ -167,6 +167,48 @@ export const Route = createFileRoute("/api/public/payments/live-test")({
             return Response.json({ ok: false, error: "Checkout session does not belong to this live test" }, { status: 404, headers });
           }
 
+          const includeDiagnostics = url.searchParams.get("diagnostics") === "1";
+          let diagnostics:
+            | {
+                stripeEventFound: boolean;
+                stripeEventType: string | null;
+                stripeEventPendingWebhooks: number | null;
+                stripeEventLivemode: boolean | null;
+                webhookEndpointFound: boolean;
+                webhookEndpointStatus: string | null;
+                webhookEndpointReceivesCheckoutCompleted: boolean;
+              }
+            | undefined;
+
+          if (includeDiagnostics) {
+            const [events, endpoints] = await Promise.all([
+              stripe.events.list({ limit: 100 }),
+              stripe.webhookEndpoints.list({ limit: 100 }),
+            ]);
+            const stripeEvent = events.data.find((event) => {
+              const object = event.data?.object as { id?: string } | undefined;
+              return (
+                (event.type === "checkout.session.completed" ||
+                  event.type === "checkout.session.async_payment_succeeded") &&
+                object?.id === session.id
+              );
+            });
+            const webhookUrl = "https://keeptxred.com/api/public/payments/webhook?env=live";
+            const webhookEndpoint = endpoints.data.find((candidate) => candidate.url === webhookUrl);
+            const enabledEvents = webhookEndpoint?.enabled_events ?? [];
+
+            diagnostics = {
+              stripeEventFound: Boolean(stripeEvent),
+              stripeEventType: stripeEvent?.type ?? null,
+              stripeEventPendingWebhooks: stripeEvent?.pending_webhooks ?? null,
+              stripeEventLivemode: stripeEvent?.livemode ?? null,
+              webhookEndpointFound: Boolean(webhookEndpoint),
+              webhookEndpointStatus: webhookEndpoint?.status ?? null,
+              webhookEndpointReceivesCheckoutCompleted:
+                enabledEvents.includes("*") || enabledEvents.includes("checkout.session.completed"),
+            };
+          }
+
           return Response.json({
             ok: true,
             found: true,
@@ -177,6 +219,7 @@ export const Route = createFileRoute("/api/public/payments/live-test")({
             paymentStatus: session.payment_status,
             paid: session.status === "complete" && session.payment_status === "paid",
             webhookReceived: session.metadata?.live_test_webhook_received === "true",
+            ...(diagnostics ? { diagnostics } : {}),
           }, { headers });
         } catch (error) {
           return Response.json(

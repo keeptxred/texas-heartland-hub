@@ -43,4 +43,12 @@ describe("one-shot live payment verification", () => {
     expect(page).toContain('if (session_id) url.searchParams.set("session_id", session_id)');
     expect(page).toContain('No existing KTR diagnostic payment found');
   });
+
+  it("exposes only safe Stripe event and endpoint diagnostics when explicitly requested", () => {
+    expect(endpoint).toContain('url.searchParams.get("diagnostics") === "1"');
+    expect(endpoint).toContain('stripe.events.list({ limit: 100 })');
+    expect(endpoint).toContain('stripeEventPendingWebhooks');
+    expect(endpoint).toContain('webhookEndpointReceivesCheckoutCompleted');
+    expect(endpoint).not.toContain('webhookEndpoint.secret');
+  });
 });
