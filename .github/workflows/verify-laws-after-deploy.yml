@@ -26,8 +26,10 @@ jobs:
     env:
       SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
     steps:
-      - name: Check out repository
+      - name: Check out deployed revision
         uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Verify deployed law route ownership, H1s, and canonicals
         run: python3 scripts/verify-deployed-laws-runtime.py
