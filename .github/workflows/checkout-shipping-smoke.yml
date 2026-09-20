@@ -138,6 +138,8 @@ jobs:
           print("Required payment secrets present: " + str(not missing_required))
           print("Missing required payment secret names: " + (", ".join(missing_required) if missing_required else "none"))
           print("PRINTIFY_SHOP_ID is configured as a Wrangler runtime var, not a secret.")
+          if missing_required:
+              raise SystemExit("Missing required live payment Worker secrets: " + ", ".join(missing_required))
           PY
 
       - name: Install Chromium
