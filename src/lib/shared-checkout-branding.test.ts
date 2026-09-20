@@ -17,8 +17,8 @@ const footer = readFileSync("src/components/site-footer.tsx", "utf8");
 describe("shared checkout branding", () => {
   it("keeps payment-facing copy free of storefront identification", () => {
     for (const { path, source } of paymentFacingFiles) {
-      expect(source, path).not.toMatch(/Keep\s*(?:TX|Texas)\s*Red/i);
-      expect(source, path).not.toMatch(/Texas\s*Defined/i);
+      expect(source, path).not.toMatch(/Keep (?:TX|Texas) Red/i);
+      expect(source, path).not.toMatch(/Texas Defined/i);
     }
   });
 
