@@ -7,7 +7,7 @@ import {
 } from "@/lib/stripe.server";
 
 export const FREE_SHIPPING_THRESHOLD_CENTS = 3500;
-export const STRIPE_CHECKOUT_UI_MODE = "embedded" as const;
+export const STRIPE_CHECKOUT_UI_MODE = "elements" as const;
 
 type CheckoutCartItem = {
   productId: string;
@@ -22,15 +22,6 @@ type CheckoutCartItem = {
 
 type CompactCartItem = { p: string; v: number | null; q: number };
 
-type CheckoutInput = {
-  items: CheckoutCartItem[];
-  currency?: string;
-  returnUrl: string;
-  environment: StripeEnv;
-};
-
-type CheckoutResult = { clientSecret: string } | { error: string };
-
 type ShippingDetails = {
   name: string;
   address: {
@@ -43,13 +34,30 @@ type ShippingDetails = {
   };
 };
 
-type ShippingUpdateInput = {
-  checkoutSessionId: string;
-  shippingDetails: ShippingDetails;
-  environment: StripeEnv;
+type CheckoutCustomer = {
+  email: string;
+  phone?: string | null;
 };
 
-type ShippingUpdateResult = { ok: true } | { error: string };
+type CheckoutInput = {
+  items: CheckoutCartItem[];
+  currency?: string;
+  returnUrl: string;
+  environment: StripeEnv;
+  shippingDetails: ShippingDetails;
+  customer: CheckoutCustomer;
+};
+
+type CheckoutResult =
+  | {
+      clientSecret: string;
+      sessionId: string;
+      subtotalCents: number;
+      shippingCents: number;
+      totalCents: number;
+      shippingLabel: string;
+    }
+  | { error: string };
 
 type PrintifyShippingQuote = {
   standard?: number;
@@ -84,6 +92,18 @@ type ValidatedCheckoutItem = {
   image: string | null;
   color: string | null;
   size: string | null;
+};
+
+type FulfillmentMetadata = {
+  n: string;
+  l1: string;
+  l2?: string;
+  c: string;
+  s: string;
+  z: string;
+  co: "US";
+  e: string;
+  p?: string;
 };
 
 export function qualifiesForFreeShipping(subtotalCents: number): boolean {
@@ -161,37 +181,6 @@ export function assertCheckoutEnvironmentMatchesReturnUrl(
   }
 }
 
-function parseCompactCart(value: string | null | undefined): CompactCartItem[] {
-  if (!value) throw new Error("Checkout session is missing cart information.");
-
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(value);
-  } catch {
-    throw new Error("Checkout session contains invalid cart information.");
-  }
-
-  if (!Array.isArray(parsed) || parsed.length === 0) {
-    throw new Error("Checkout session contains no shippable items.");
-  }
-
-  const cart = parsed as CompactCartItem[];
-  for (const item of cart) {
-    if (
-      !item ||
-      typeof item.p !== "string" ||
-      !item.p ||
-      !Number.isInteger(item.v) ||
-      !Number.isInteger(item.q) ||
-      item.q < 1
-    ) {
-      throw new Error("One or more cart items cannot be quoted for shipping.");
-    }
-  }
-
-  return cart;
-}
-
 function validateShippingDetails(details: ShippingDetails): ShippingDetails {
   const address = details?.address;
   if (!details?.name?.trim()) throw new Error("Enter a name for the shipping address.");
@@ -213,11 +202,20 @@ function validateShippingDetails(details: ShippingDetails): ShippingDetails {
       line1: address.line1.trim(),
       ...(address.line2?.trim() ? { line2: address.line2.trim() } : {}),
       city: address.city.trim(),
-      state: address.state.trim(),
+      state: address.state.trim().toUpperCase(),
       postal_code: address.postal_code.trim(),
       country: "US",
     },
   };
+}
+
+function validateCustomer(customer: CheckoutCustomer): CheckoutCustomer {
+  const email = customer?.email?.trim().toLowerCase();
+  if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+    throw new Error("Enter a valid email address.");
+  }
+  const phone = customer.phone?.trim() || null;
+  return { email, phone };
 }
 
 function splitName(name: string): { first: string; last: string } {
@@ -227,6 +225,30 @@ function splitName(name: string): { first: string; last: string } {
     first: parts[0],
     last: parts.slice(1).join(" "),
   };
+}
+
+function buildFulfillmentMetadata(
+  shippingDetails: ShippingDetails,
+  customer: CheckoutCustomer,
+): string {
+  const metadata: FulfillmentMetadata = {
+    n: shippingDetails.name,
+    l1: shippingDetails.address.line1,
+    ...(shippingDetails.address.line2
+      ? { l2: shippingDetails.address.line2 }
+      : {}),
+    c: shippingDetails.address.city,
+    s: shippingDetails.address.state,
+    z: shippingDetails.address.postal_code,
+    co: "US",
+    e: customer.email,
+    ...(customer.phone ? { p: customer.phone } : {}),
+  };
+  const encoded = JSON.stringify(metadata);
+  if (encoded.length > 480) {
+    throw new Error("Shipping address is too long. Please shorten the address and try again.");
+  }
+  return encoded;
 }
 
 async function loadAuthoritativeCheckoutItems(
@@ -294,7 +316,7 @@ async function loadAuthoritativeCheckoutItems(
 async function quotePrintifyStandardShipping(
   cart: CompactCartItem[],
   shippingDetails: ShippingDetails,
-  customer?: { email?: string | null; phone?: string | null },
+  customer: CheckoutCustomer,
 ): Promise<number> {
   const shopId = process.env.PRINTIFY_SHOP_ID;
   const token = process.env.PRINTIFY_API_TOKEN;
@@ -313,8 +335,8 @@ async function quotePrintifyStandardShipping(
     ...(address.line2 ? { address2: address.line2 } : {}),
     city: address.city,
     zip: address.postal_code,
-    ...(customer?.email ? { email: customer.email } : {}),
-    ...(customer?.phone ? { phone: customer.phone } : {}),
+    email: customer.email,
+    ...(customer.phone ? { phone: customer.phone } : {}),
   };
 
   const response = await fetch(
@@ -341,7 +363,9 @@ async function quotePrintifyStandardShipping(
   if (!response.ok) {
     const body = await response.text().catch(() => "");
     console.error("Printify shipping quote failed", response.status, body);
-    throw new Error("We could not calculate shipping for that address. Please verify the address and try again.");
+    throw new Error(
+      "We could not calculate shipping for that address. Please verify the address and try again.",
+    );
   }
 
   const quote = (await response.json()) as PrintifyShippingQuote;
@@ -367,7 +391,13 @@ export const createCartCheckoutSession = createServerFn({ method: "POST" })
         throw new Error("Invalid cart item");
       }
     }
-    return { ...data, environment };
+
+    return {
+      ...data,
+      environment,
+      shippingDetails: validateShippingDetails(data.shippingDetails),
+      customer: validateCustomer(data.customer),
+    };
   })
   .handler(async ({ data }): Promise<CheckoutResult> => {
     try {
@@ -392,10 +422,31 @@ export const createCartCheckoutSession = createServerFn({ method: "POST" })
         };
       }
 
+      const subtotalCents = validatedItems.reduce(
+        (total, item) => total + item.unitAmount * item.quantity,
+        0,
+      );
+      const shippingCents = qualifiesForFreeShipping(subtotalCents)
+        ? 0
+        : await quotePrintifyStandardShipping(
+            compactCart,
+            data.shippingDetails,
+            data.customer,
+          );
+      const shippingLabel =
+        shippingCents === 0
+          ? "Free standard shipping"
+          : "Printify standard shipping";
+      const fulfillment = buildFulfillmentMetadata(
+        data.shippingDetails,
+        data.customer,
+      );
+
       const session = await stripe.checkout.sessions.create({
         mode: "payment",
         ui_mode: STRIPE_CHECKOUT_UI_MODE,
         return_url: data.returnUrl,
+        customer_email: data.customer.email,
         line_items: validatedItems.map((item) => ({
           quantity: item.quantity,
           price_data: {
@@ -414,15 +465,12 @@ export const createCartCheckoutSession = createServerFn({ method: "POST" })
             unit_amount: item.unitAmount,
           },
         })),
-        shipping_address_collection: { allowed_countries: ["US"] },
-        phone_number_collection: { enabled: true },
-        permissions: { update_shipping_details: "server_only" },
         shipping_options: [
           {
             shipping_rate_data: {
               type: "fixed_amount",
-              fixed_amount: { amount: 0, currency },
-              display_name: "Shipping calculated after address",
+              fixed_amount: { amount: shippingCents, currency },
+              display_name: shippingLabel,
             },
           },
         ],
@@ -430,91 +478,31 @@ export const createCartCheckoutSession = createServerFn({ method: "POST" })
           description: "Keep Texas Red — Shop Order",
           metadata: {
             cart: cartJson,
+            fulfillment,
             payment_environment: data.environment,
           },
         },
         metadata: {
           cart: cartJson,
+          fulfillment,
           source: "keeptxred_shop",
           payment_environment: data.environment,
         },
       } as any);
 
-      return { clientSecret: session.client_secret ?? "" };
+      if (!session.client_secret) {
+        return { error: "Stripe did not return a client secret." };
+      }
+
+      return {
+        clientSecret: session.client_secret,
+        sessionId: session.id,
+        subtotalCents,
+        shippingCents,
+        totalCents: subtotalCents + shippingCents,
+        shippingLabel,
+      };
     } catch (error) {
       return { error: getStripeErrorMessage(error) };
-    }
-  });
-
-export const updateCartCheckoutShipping = createServerFn({ method: "POST" })
-  .validator((data: ShippingUpdateInput) => {
-    if (!data.checkoutSessionId?.startsWith("cs_")) {
-      throw new Error("Invalid checkout session.");
-    }
-    if (data.environment !== "sandbox" && data.environment !== "live") {
-      throw new Error("Invalid checkout environment.");
-    }
-    validateShippingDetails(data.shippingDetails);
-    return data;
-  })
-  .handler(async ({ data }): Promise<ShippingUpdateResult> => {
-    try {
-      const stripe = createStripeClient(data.environment);
-      const shippingDetails = validateShippingDetails(data.shippingDetails);
-      const session = await stripe.checkout.sessions.retrieve(data.checkoutSessionId);
-
-      if (session.status !== "open" || session.metadata?.source !== "keeptxred_shop") {
-        return { error: "This checkout session can no longer be updated." };
-      }
-
-      const sessionEnvironment = session.metadata?.payment_environment;
-      if (sessionEnvironment && sessionEnvironment !== data.environment) {
-        return { error: "Checkout environment mismatch. Please restart checkout." };
-      }
-
-      const cart = parseCompactCart(session.metadata?.cart);
-      const subtotalCents = session.amount_subtotal;
-      if (!Number.isInteger(subtotalCents) || (subtotalCents ?? -1) < 0) {
-        return { error: "Unable to verify the order subtotal." };
-      }
-
-      const shippingCents = qualifiesForFreeShipping(subtotalCents as number)
-        ? 0
-        : await quotePrintifyStandardShipping(cart, shippingDetails, {
-            email: session.customer_details?.email,
-            phone: session.customer_details?.phone,
-          });
-
-      await stripe.checkout.sessions.update(
-        data.checkoutSessionId,
-        {
-          collected_information: { shipping_details: shippingDetails },
-          shipping_options: [
-            {
-              shipping_rate_data: {
-                type: "fixed_amount",
-                fixed_amount: {
-                  amount: shippingCents,
-                  currency: session.currency || "usd",
-                },
-                display_name:
-                  shippingCents === 0
-                    ? "Free standard shipping"
-                    : "Printify standard shipping",
-              },
-            },
-          ],
-        } as any,
-      );
-
-      return { ok: true };
-    } catch (error) {
-      console.error("Checkout shipping update failed", error);
-      return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Unable to calculate shipping for that address.",
-      };
     }
   });

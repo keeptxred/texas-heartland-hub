@@ -4,6 +4,51 @@ import { type StripeEnv, createStripeClient, verifyWebhook } from "@/lib/stripe.
 
 type CompactCartItem = { p: string; v: number | null; q: number };
 
+type FulfillmentMetadata = {
+  n: string;
+  l1: string;
+  l2?: string;
+  c: string;
+  s: string;
+  z: string;
+  co: string;
+  e: string;
+  p?: string;
+};
+
+function parseFulfillmentMetadata(value?: string | null) {
+  if (!value) return null;
+  try {
+    const data = JSON.parse(value) as FulfillmentMetadata;
+    if (
+      !data.n ||
+      !data.l1 ||
+      !data.c ||
+      !data.s ||
+      !data.z ||
+      data.co !== "US" ||
+      !data.e
+    ) {
+      return null;
+    }
+    return {
+      name: data.n,
+      email: data.e,
+      phone: data.p || "",
+      address: {
+        line1: data.l1,
+        line2: data.l2 || null,
+        city: data.c,
+        state: data.s,
+        postal_code: data.z,
+        country: "US",
+      },
+    };
+  } catch {
+    return null;
+  }
+}
+
 const ADMIN_NOTIFY_EMAIL = "admin@keeptxred.com";
 
 type PrintifyAddress = {
@@ -126,24 +171,43 @@ async function handleCheckoutCompleted(sessionObj: any, env: StripeEnv) {
     return;
   }
 
+  const metadataFulfillment = parseFulfillmentMetadata(
+    session.metadata?.fulfillment as string | undefined,
+  );
   const ship =
     (session as any).shipping_details ??
     (session as any).collected_information?.shipping_details ??
-    null;
+    (metadataFulfillment
+      ? {
+          name: metadataFulfillment.name,
+          address: metadataFulfillment.address,
+        }
+      : null);
   const shipAddress = ship?.address;
   const customer = session.customer_details;
+  const customerEmail =
+    customer?.email ??
+    (session as any).customer_email ??
+    metadataFulfillment?.email ??
+    null;
+  const customerPhone =
+    customer?.phone ??
+    metadataFulfillment?.phone ??
+    "";
 
-  if (!shipAddress || !customer?.email) {
+  if (!shipAddress || !customerEmail) {
     console.error("Missing shipping address or email on session", session.id);
     return;
   }
 
-  const { first, last } = splitName(ship?.name || customer.name);
+  const { first, last } = splitName(
+    ship?.name || customer?.name || metadataFulfillment?.name,
+  );
   const address: PrintifyAddress = {
     first_name: first,
     last_name: last,
-    email: customer.email,
-    phone: customer.phone || "",
+    email: customerEmail,
+    phone: customerPhone,
     country: shipAddress.country || "US",
     region: shipAddress.state || "",
     address1: shipAddress.line1 || "",
@@ -155,7 +219,11 @@ async function handleCheckoutCompleted(sessionObj: any, env: StripeEnv) {
   const printifyOrderId = await createPrintifyOrder(cart, address, session.id);
 
   try {
-    const fullName = ship?.name || customer.name || `${first} ${last}`.trim();
+    const fullName =
+      ship?.name ||
+      customer?.name ||
+      metadataFulfillment?.name ||
+      `${first} ${last}`.trim();
     const lineItems = (session as any).line_items?.data ?? [];
     const items = lineItems.map((lineItem: any) => ({
       description: lineItem.description,
@@ -175,8 +243,8 @@ async function handleCheckoutCompleted(sessionObj: any, env: StripeEnv) {
             : session.payment_intent?.id ?? null,
         printify_order_id: printifyOrderId,
         customer_name: fullName,
-        customer_email: customer.email,
-        customer_phone: customer.phone || null,
+        customer_email: customerEmail,
+        customer_phone: customerPhone || null,
         shipping_address: {
           name: fullName,
           line1: shipAddress.line1,
@@ -201,7 +269,7 @@ async function handleCheckoutCompleted(sessionObj: any, env: StripeEnv) {
     await sendOrderEmails({
       request: (globalThis as any).__ktrWebhookRequest as Request | undefined,
       sessionId: session.id,
-      customerEmail: customer.email,
+      customerEmail: customerEmail,
       customerName: fullName,
       items,
       totalCents: session.amount_total ?? 0,
