@@ -43,9 +43,13 @@ function corsHeaders(request: Request, site?: LiveTestSite) {
   };
 }
 
-function originAllowed(request: Request, site: LiveTestSite) {
+function originAllowed(request: Request, site: LiveTestSite, allowSameOriginUrlFallback = false) {
   const origin = request.headers.get("origin") ?? "";
-  return LIVE_TESTS[site].allowedOrigins.has(origin);
+  if (LIVE_TESTS[site].allowedOrigins.has(origin)) return true;
+  if (!origin && allowSameOriginUrlFallback) {
+    return LIVE_TESTS[site].allowedOrigins.has(new URL(request.url).origin);
+  }
+  return false;
 }
 
 export const Route = createFileRoute("/api/public/payments/live-test")({
@@ -126,7 +130,7 @@ export const Route = createFileRoute("/api/public/payments/live-test")({
           return Response.json({ ok: false, error: "Live test link is invalid or expired" }, { status: 404 });
         }
         const headers = corsHeaders(request, test.site);
-        if (!originAllowed(request, test.site)) {
+        if (!originAllowed(request, test.site, true)) {
           return Response.json({ ok: false, error: "Origin not allowed" }, { status: 403, headers });
         }
 
