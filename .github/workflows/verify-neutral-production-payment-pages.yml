@@ -118,6 +118,11 @@ jobs:
             ];
             for (const phrase of forbidden) {
               if (visible.includes(phrase)) {
+                const lines = bodyText
+                  .split("\n")
+                  .map((line) => line.trim())
+                  .filter((line) => line.toLowerCase().includes(phrase));
+                console.log("VISIBLE_BRANDING_MATCH=" + JSON.stringify({ phrase, lines }));
                 throw new Error(`Storefront identification remains visible on Stripe Checkout: ${phrase}`);
               }
             }
