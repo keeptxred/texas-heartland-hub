@@ -447,6 +447,7 @@ export const createCartCheckoutSession = createServerFn({ method: "POST" })
         ui_mode: STRIPE_CHECKOUT_UI_MODE,
         return_url: data.returnUrl,
         customer_email: data.customer.email,
+        wallet_options: { link: { display: "never" } },
         line_items: validatedItems.map((item) => ({
           quantity: item.quantity,
           price_data: {
