@@ -8,6 +8,7 @@
   "secrets": {
     "required": [
       "STRIPE_LIVE_SECRET_KEY",
+      "PAYMENTS_LIVE_WEBHOOK_SECRET",
       "PRINTIFY_API_TOKEN",
       "SUPABASE_SERVICE_ROLE_KEY"
     ]
