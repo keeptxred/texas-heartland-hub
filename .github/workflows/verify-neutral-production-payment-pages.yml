@@ -75,11 +75,12 @@ jobs:
 
           echo "Created live Checkout Session without submitting payment."
 
-          html="$(curl --location --silent --show-error --fail-with-body             --retry 3 --retry-all-errors --connect-timeout 10 --max-time 30             "$checkout_url")"
+          stripe_html="$RUNNER_TEMP/stripe-checkout.html"
+          curl --location --silent --show-error --fail-with-body --retry 3 --retry-all-errors --connect-timeout 10 --max-time 30 "$checkout_url" -o "$stripe_html"
 
-          STRIPE_CHECKOUT_HTML="$html" python3 - <<'PY'
-          import os, re
-          html = os.environ["STRIPE_CHECKOUT_HTML"]
+          python3 - "$stripe_html" <<'PY'
+          import pathlib, sys
+          html = pathlib.Path(sys.argv[1]).read_text(encoding="utf-8", errors="replace")
           decoded = html.replace("\\u0026", "&").replace("\\u003c", "<").replace("\\u003e", ">")
           if "Secure Checkout" not in decoded:
               raise SystemExit("Neutral per-session display name was not found on Stripe Checkout.")
