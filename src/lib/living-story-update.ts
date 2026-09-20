@@ -201,7 +201,7 @@ export async function updateCanonicalLivingStory(input: {
 
     const bodyJson = {
       ...(previousBodyJson as Record<string, unknown>),
-      updated: now.toISOString().slice(0, 10),
+      updated: now.toISOString(),
       intro: [ai.value.summary.trim()],
       sections: [
         { heading: "Texas relevance", paragraphs: [ai.value.relevance.trim()] },

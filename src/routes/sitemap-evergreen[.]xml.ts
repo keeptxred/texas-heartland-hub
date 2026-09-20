@@ -4,7 +4,6 @@ import {
   BASE_URL,
   renderUrlset,
   xmlResponse,
-  toIsoDate,
   latestIsoDate,
   isArticleSlugDateConsistent,
   type UrlEntry,
@@ -48,7 +47,7 @@ export const Route = createFileRoute("/sitemap-evergreen.xml")({
           if (!isSitemapArticleAllowed(a.slug)) continue;
           entries.push({
             loc: `${BASE_URL}/news/${a.slug}`,
-            lastmod: toIsoDate(a.publishedAt),
+            lastmod: latestIsoDate(a.publishedAt, ARTICLE_BODIES[a.slug]?.updated),
           });
         }
 

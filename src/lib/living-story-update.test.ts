@@ -46,6 +46,12 @@ describe("living story canonical updates", () => {
     expect(updater).not.toContain("KTR_AI_PROVIDER_READY");
   });
 
+  it("records the exact material-update instant for freshness metadata", () => {
+    expect(updater).toContain("updated: now.toISOString(),");
+    expect(updater).toContain("lastMaterialUpdateAt: now.toISOString()");
+    expect(updater).not.toContain("updated: now.toISOString().slice(0, 10)");
+  });
+
   it("keeps an auditable material-update history", () => {
     expect(migration).toContain("CREATE TABLE IF NOT EXISTS public.news_event_article_updates");
     expect(migration).toContain("canonical_slug text NOT NULL");

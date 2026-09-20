@@ -419,7 +419,7 @@ async function handler({ request }: { request: Request }) {
       ],
     }] : [];
     const bodyJson = {
-      updated: now.toISOString().slice(0, 10),
+      updated: now.toISOString(),
       intro: [draft.summary.trim()],
       sections: [
         ...authoritySections,

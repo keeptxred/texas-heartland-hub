@@ -44,6 +44,7 @@ export type EvergreenArticle = {
   ctr_score: number | null;
   headline_variants: { a: string; b: string } | null;
   published_at: string;
+  updated_at: string | null;
   kind: string;
   keywords: string[] | null;
   body: EvergreenBody | null;
@@ -178,7 +179,7 @@ export const getEvergreenBySlug = createServerFn({ method: "GET" })
     // Slugs are unique in production, so one ordered/limited row is sufficient.
     const { data: rows, error } = await supabase
       .from("daily_articles")
-      .select("slug,category,title,dek,author,source_name,source_url,image_url,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,seo_keywords,ctr_score,headline_variants,published_at,keywords,body_json,kind")
+      .select("slug,category,title,dek,author,source_name,source_url,image_url,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,seo_keywords,ctr_score,headline_variants,published_at,updated_at,keywords,body_json,kind")
       .eq("slug", data.slug)
       .limit(1);
     if (error) {
@@ -210,6 +211,7 @@ export const getEvergreenBySlug = createServerFn({ method: "GET" })
       headline_variants:
         (row as { headline_variants?: { a: string; b: string } | null }).headline_variants ?? null,
       published_at: row.published_at,
+      updated_at: (row as { updated_at?: string | null }).updated_at ?? null,
       kind: row.kind,
       keywords: (row as { keywords?: string[] | null }).keywords ?? null,
       body,
