@@ -1,0 +1,40 @@
+{
+  "parentH1": "Texas Laws Explained:",
+  "checks": [
+    {
+      "path": "/laws",
+      "h1": "Texas Laws Explained:",
+      "canonical": "https://keeptxred.com/laws",
+      "exactH1": false,
+      "forbidParent": false
+    },
+    {
+      "path": "/laws/constitutional-amendments",
+      "h1": "Texas Constitutional Amendments Tracker",
+      "canonical": "https://keeptxred.com/laws/constitutional-amendments",
+      "exactH1": true,
+      "forbidParent": true
+    },
+    {
+      "path": "/laws/effective-dates",
+      "h1": "Texas Laws Taking Effect in 2026",
+      "canonical": "https://keeptxred.com/laws/effective-dates",
+      "exactH1": true,
+      "forbidParent": true
+    },
+    {
+      "path": "/laws/topics",
+      "h1": "Texas Law Library",
+      "canonical": "https://keeptxred.com/laws/topics",
+      "exactH1": true,
+      "forbidParent": true
+    },
+    {
+      "path": "/laws/topic/property-tax-law",
+      "h1": "Texas Property Tax Policy & Law",
+      "canonical": "https://keeptxred.com/laws/topic/property-tax-law",
+      "exactH1": true,
+      "forbidParent": true
+    }
+  ]
+}
