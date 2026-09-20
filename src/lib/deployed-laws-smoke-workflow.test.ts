@@ -1,10 +1,15 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { PROPERTY_TAX_LAW_TOPIC } from "@/data/law-topic-property-tax-authority";
 
 const workflow = readFileSync(".github/workflows/verify-laws-after-deploy.yml", "utf8");
 const productionDeploy = readFileSync(".github/workflows/deploy-cloudflare-production.yml", "utf8");
 const runtimeVerifier = readFileSync("scripts/verify-deployed-laws-runtime.py", "utf8");
 const lawRouteContract = readFileSync("scripts/seo/deployed-laws-route-contract.json", "utf8");
+const parsedLawRouteContract = JSON.parse(lawRouteContract) as {
+  parentH1: string;
+  checks: Array<{ path: string; h1: string; canonical: string; exactH1: boolean; forbidParent: boolean }>;
+};
 
 describe("deployed laws route smoke workflow", () => {
   it("keeps the standalone smoke available after either recognized Cloudflare deployment", () => {
@@ -48,6 +53,16 @@ describe("deployed laws route smoke workflow", () => {
     }
 
     expect(runtimeVerifier).toContain("child route is still rendering the /laws parent H1");
+  });
+
+  it("keeps the property-tax deployment H1 synchronized with the law-topic owner", () => {
+    const propertyTaxCheck = parsedLawRouteContract.checks.find(
+      (check) => check.path === "/laws/topic/property-tax-law",
+    );
+    expect(propertyTaxCheck).toBeTruthy();
+    expect(propertyTaxCheck?.h1).toBe(PROPERTY_TAX_LAW_TOPIC.title);
+    expect(propertyTaxCheck?.canonical).toBe("https://keeptxred.com/laws/topic/property-tax-law");
+    expect(propertyTaxCheck?.exactH1).toBe(true);
   });
 
   it("keeps route expectations out of the standalone workflow copy", () => {
