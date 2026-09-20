@@ -7,8 +7,8 @@ import { SITE_URL } from "@/lib/seo";
 export const Route = createFileRoute("/shop/checkout-sandbox")({
   head: () => ({
     meta: [
-      { title: "Sandbox Checkout — Keep Texas Red" },
-      { name: "description", content: "Stripe sandbox checkout for Keep Texas Red payment testing." },
+      { title: "Sandbox Checkout" },
+      { name: "description", content: "Stripe sandbox checkout for payment testing." },
       { name: "robots", content: "noindex,follow" },
     ],
     links: [{ rel: "canonical", href: `${SITE_URL}/shop/checkout-sandbox` }],
@@ -51,9 +51,6 @@ function SandboxCheckoutPage() {
       </div>
       <section className="border-b border-border bg-secondary text-secondary-foreground">
         <div className="mx-auto max-w-[1100px] px-6 py-10">
-          <div className="text-[11px] font-semibold tracking-[0.3em] uppercase text-primary mb-3">
-            Keep TX Red Shop Test
-          </div>
           <h1 className="font-display text-3xl md:text-4xl leading-tight">Sandbox Checkout</h1>
           <p className="mt-3 max-w-2xl text-white/90 text-sm">
             Use Stripe test card 4242 4242 4242 4242. Payment and webhook handling are tested, while real fulfillment is disabled.

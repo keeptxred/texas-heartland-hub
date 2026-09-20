@@ -6,8 +6,8 @@ import { SITE_URL } from "@/lib/seo";
 export const Route = createFileRoute("/shop/checkout-return")({
   head: () => ({
     meta: [
-      { title: "Order Confirmed — Keep Texas Red" },
-      { name: "description", content: "Thanks for supporting Keep Texas Red." },
+      { title: "Order Confirmed" },
+      { name: "description", content: "Your order has been confirmed." },
       { name: "robots", content: "noindex,follow" },
     ],
     links: [{ rel: "canonical", href: `${SITE_URL}/shop/checkout-return` }],
@@ -42,7 +42,7 @@ function CheckoutReturn() {
         <h1 className="font-display text-4xl md:text-5xl leading-tight">Thank you!</h1>
         <p className="mt-4 text-muted-foreground">
           Your order is confirmed{sessionId ? "" : ""}. A receipt has been emailed to you, and
-          your Keep Texas Red merch is heading to production.
+          your order is heading to production.
         </p>
         {sessionId && (
           <p className="mt-2 text-xs text-muted-foreground font-mono break-all">

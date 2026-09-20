@@ -6,7 +6,7 @@ import { SITE_URL } from "@/lib/seo";
 export const Route = createFileRoute("/shop/checkout-sandbox-return")({
   head: () => ({
     meta: [
-      { title: "Sandbox Payment Complete — Keep Texas Red" },
+      { title: "Sandbox Payment Complete" },
       { name: "description", content: "Stripe sandbox checkout completed." },
       { name: "robots", content: "noindex,follow" },
     ],
