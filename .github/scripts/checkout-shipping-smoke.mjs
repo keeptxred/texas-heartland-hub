@@ -86,88 +86,56 @@ async function findStripeFrame(page) {
   throw new Error(`Stripe checkout frame did not load. Frames: ${page.frames().map((f) => f.url()).join(", ")}`);
 }
 
-async function fillShipping(frame) {
-  await dumpInputs(frame, "initial");
-
+async function fillShipping(page) {
   await fillIfPresent(
-    frame,
-    ['input[autocomplete*="email"]', 'input[type="email"]', 'input[name*="email" i]'],
+    page,
+    ['input[autocomplete="email"]', 'input[type="email"]'],
     testAddress.email,
     "email",
   );
   await fillIfPresent(
-    frame,
-    ['input[autocomplete*="tel"]', 'input[type="tel"]', 'input[name*="phone" i]'],
+    page,
+    ['input[autocomplete="tel"]', 'input[type="tel"]'],
     testAddress.phone,
     "phone",
   );
-
-  const manualText = frame.getByText(/enter address manually|enter address yourself|manual address/i).first();
-  if (await manualText.isVisible().catch(() => false)) {
-    await manualText.click();
-    await frame.waitForTimeout(500);
-  }
-
   await fillIfPresent(
-    frame,
-    ['input[autocomplete*="name"]', 'input[name*="name" i]'],
+    page,
+    ['input[autocomplete="name"]'],
     testAddress.name,
     "full name",
   );
-
-  const line1 = await visibleFirst(frame, [
-    'input[autocomplete*="address-line1"]',
-    'input[name*="addressLine1" i]',
-    'input[name*="line1" i]',
-    'input[placeholder*="address" i]',
-  ]);
-  if (line1) {
-    await line1.fill(testAddress.line1);
-    await frame.waitForTimeout(1500);
-    // Stripe may offer address autocomplete. Accept the first suggestion if one exists;
-    // otherwise the structured city/state/ZIP fields below are filled directly.
-    await line1.press("ArrowDown").catch(() => {});
-    await line1.press("Enter").catch(() => {});
-    console.log("Filled: address line 1");
-  }
-
   await fillIfPresent(
-    frame,
-    ['input[autocomplete*="address-level2"]', 'input[name*="city" i]'],
+    page,
+    ['input[autocomplete*="address-line1"]'],
+    testAddress.line1,
+    "address line 1",
+  );
+  await fillIfPresent(
+    page,
+    ['input[autocomplete*="address-level2"]'],
     testAddress.city,
     "city",
   );
-
-  const stateSelect = await visibleFirst(frame, [
-    'select[autocomplete*="address-level1"]',
-    'select[name*="state" i]',
-  ]);
-  if (stateSelect) {
-    await stateSelect.selectOption({ value: testAddress.state }).catch(async () => {
-      await stateSelect.selectOption({ label: /Texas/i });
-    });
-    console.log("Selected: Texas");
-  } else {
-    await fillIfPresent(
-      frame,
-      ['input[autocomplete*="address-level1"]', 'input[name*="state" i]'],
-      testAddress.state,
-      "state",
-    );
-  }
-
   await fillIfPresent(
-    frame,
-    ['input[autocomplete*="postal-code"]', 'input[name*="postal" i]', 'input[name*="zip" i]'],
+    page,
+    ['input[autocomplete*="address-level1"]'],
+    testAddress.state,
+    "state",
+  );
+  await fillIfPresent(
+    page,
+    ['input[autocomplete*="postal-code"]'],
     testAddress.postalCode,
     "ZIP",
   );
 
-  await dumpInputs(frame, "after-fill");
-
-  // Blur the final field and allow the server-only Stripe shipping update to finish.
-  await frame.locator("body").click({ position: { x: 5, y: 5 } }).catch(() => {});
-  await frame.waitForTimeout(6000);
+  await page
+    .getByRole("button", { name: /continue to secure payment/i })
+    .click();
+  await page
+    .getByRole("button", { name: /pay \$/i })
+    .waitFor({ state: "visible", timeout: 90000 });
 }
 
 async function runCase(browser, product, expectedFree, label) {
@@ -185,11 +153,11 @@ async function runCase(browser, product, expectedFree, label) {
     );
 
     await page.goto(`${site}/shop/checkout`, { waitUntil: "domcontentloaded", timeout: 90000 });
+    await fillShipping(page);
     const frame = await findStripeFrame(page);
-    console.log(`${label} Stripe frame: ${frame.url()}`);
-    await fillShipping(frame);
+    console.log(`${label} Stripe payment frame: ${frame.url()}`);
 
-    const bodyText = await frame.locator("body").innerText();
+    const bodyText = await page.locator("body").innerText();
     console.log(`${label} checkout text:\n${bodyText.slice(0, 12000)}`);
     const screenshot = path.join(screenshotDir, `${label}.png`);
     await page.screenshot({ path: screenshot, fullPage: true });
