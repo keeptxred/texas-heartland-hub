@@ -5,6 +5,7 @@ import { SITE_URL } from "@/lib/seo";
 const LIVE_TEST_RUN = "ktr-20260920-3f7a9d";
 
 type TestStatus = {
+  found?: boolean;
   paid: boolean;
   webhookReceived: boolean;
   amountTotal?: number | null;
@@ -35,7 +36,7 @@ function LivePaymentTestPage() {
   const [status, setStatus] = useState<TestStatus | null>(null);
 
   useEffect(() => {
-    if (!validRun || !session_id) return;
+    if (!validRun) return;
     let cancelled = false;
     let attempts = 0;
 
@@ -45,12 +46,13 @@ function LivePaymentTestPage() {
         const url = new URL("/api/public/payments/live-test", window.location.origin);
         url.searchParams.set("site", "ktr");
         url.searchParams.set("run", LIVE_TEST_RUN);
-        url.searchParams.set("session_id", session_id);
+        if (session_id) url.searchParams.set("session_id", session_id);
         const response = await fetch(url, { headers: { accept: "application/json" }, cache: "no-store" });
         const payload = await response.json() as TestStatus & { ok?: boolean; error?: string };
         if (!response.ok || !payload.ok) throw new Error(payload.error || "Unable to verify payment.");
         if (cancelled) return;
         setStatus(payload);
+        if (payload.found === false) return;
         if ((!payload.paid || !payload.webhookReceived) && attempts < 15) {
           window.setTimeout(poll, 1500);
         }
@@ -107,15 +109,17 @@ function LivePaymentTestPage() {
               Return to the shop
             </Link>
           </div>
-        ) : session_id ? (
+        ) : status?.found !== false ? (
           <div className="rounded-2xl border border-border bg-card p-8">
             <h2 className="font-display text-3xl">
-              {complete ? "Live payment verified" : status?.paid ? "Payment received — checking webhook" : "Checking live payment"}
+              {complete ? "Live payment verified" : status?.paid ? "Payment received — checking webhook" : "Checking existing live payment"}
             </h2>
             <p className="mt-4 text-muted-foreground">
               {complete
                 ? "Stripe confirms the 50¢ live payment and the production webhook received it. Printify fulfillment was intentionally suppressed."
-                : "This page is checking Stripe and the production webhook. It may take a few seconds after checkout returns."}
+                : status
+                  ? "The existing diagnostic payment was found. This page is checking Stripe and the production webhook."
+                  : "This page is looking for an existing KTR diagnostic payment before offering another charge."}
             </p>
             {status ? (
               <div className="mt-6 grid gap-3 rounded-xl border border-border bg-muted/20 p-5 text-sm sm:grid-cols-2">
@@ -129,9 +133,9 @@ function LivePaymentTestPage() {
           </div>
         ) : (
           <div className="rounded-2xl border border-border bg-card p-8">
-            <h2 className="font-display text-3xl">Ready to run the live KTR charge</h2>
+            <h2 className="font-display text-3xl">No existing KTR diagnostic payment found</h2>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">
-              Clicking below opens Stripe’s live hosted checkout. Enter the card there. The charge is real and is exactly 50¢.
+              Only use the button below if you have not already completed the KTR 50¢ test. It opens Stripe’s live hosted checkout and creates a real 50¢ charge.
             </p>
             <button
               type="button"
