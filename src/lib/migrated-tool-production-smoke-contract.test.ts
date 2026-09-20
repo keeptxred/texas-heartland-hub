@@ -32,6 +32,12 @@ describe("migrated-tool production handoff hard gate", () => {
     expect(smoke).toContain('SMOKE_QUERY = "ktr_smoke=1"');
   });
 
+  it("keeps migrated KTR tool URLs out of advertised sitemaps", () => {
+    expect(smoke).toContain("verify_sitemap_absence");
+    expect(smoke).toContain("migrated tool URL still appears in KTR sitemap");
+    expect(smoke).toContain('KTR_ORIGIN = "https://keeptxred.com"');
+  });
+
   it("uses the deployment smoke header for workers.dev verification", () => {
     expect(smoke).toContain('DEPLOYMENT_SMOKE_HEADER = "x-keeptxred-deployment-smoke: canonical"');
     expect(smoke).toContain('if "workers.dev" in url');
