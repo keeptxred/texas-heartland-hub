@@ -40,7 +40,7 @@ describe("deployed law routes production gate", () => {
       "Texas Constitutional Amendments Tracker",
       "Texas Laws Taking Effect in 2026",
       "Texas Law Library",
-      "Texas Property Tax Law Explained",
+      "Texas Property Tax Policy & Law",
     ]) {
       expect(smokeScript).toContain(h1);
     }
