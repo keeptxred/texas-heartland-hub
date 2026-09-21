@@ -1,5 +1,6 @@
 export const MIGRATED_PRACTICAL_GUIDE_CANONICALS: Record<string, string> = {
   "/texas-first-time-homebuyer-programs": "https://texasdefined.com/texas-first-time-homebuyer-programs",
+  "/news/moving-to-texas-guide": "https://texasdefined.com/article/moving-to-texas-what-nobody-tells-you",
   "/news/renting-vs-buying-in-texas": "https://texasdefined.com/article/renting-vs-buying-in-texas",
   "/news/texas-house-down-payment-guide": "https://texasdefined.com/article/texas-house-down-payment-guide",
   "/news/true-cost-of-owning-a-home-in-texas": "https://texasdefined.com/article/true-cost-of-owning-a-home-in-texas",
