@@ -179,7 +179,9 @@ for (const required of [
   ".select(\"slug,title,dek,category,discover_category,source_name,source_url,published_at,updated_at,image_url,featured_image_url,image_generation_status,kind,body_json,quality_flags,content_quality_score\")",
   ".range(from, from + SITEMAP_ARTICLE_PAGE_SIZE - 1)",
   'import { isPublicArticleReady } from "@/lib/public-article-readiness"',
+  'import { isKeepTxRedSearchOwnedStory } from "@/lib/ktr-search-ownership"',
   "if (!isPublicArticleReady(a)) return false;",
+  "if (!isKeepTxRedSearchOwnedStory({",
 ]) {
   if (!sitemapArticleLoader.includes(required)) {
     fail("src/lib/evergreen.functions.ts", `cloud sitemap loader missing completeness/readiness contract: ${required}`);
