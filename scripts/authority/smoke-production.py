@@ -31,9 +31,23 @@ CITY_REDIRECTS = {
     "/el-paso": "https://texasdefined.com/article/moving-to-el-paso-guide",
 }
 PRACTICAL_GUIDE_REDIRECTS = {
-    "/news/moving-to-texas-guide": "https://texasdefined.com/article/moving-to-texas-what-nobody-tells-you",
-    "/news/moving-to-austin-guide": "https://texasdefined.com/article/moving-to-austin-guide",
     "/texas-first-time-homebuyer-programs": "https://texasdefined.com/texas-first-time-homebuyer-programs",
+    "/news/moving-to-texas-guide": "https://texasdefined.com/article/moving-to-texas-what-nobody-tells-you",
+    "/news/renting-vs-buying-in-texas": "https://texasdefined.com/article/renting-vs-buying-in-texas",
+    "/news/texas-house-down-payment-guide": "https://texasdefined.com/article/texas-house-down-payment-guide",
+    "/news/true-cost-of-owning-a-home-in-texas": "https://texasdefined.com/article/true-cost-of-owning-a-home-in-texas",
+    "/news/should-you-refinance-texas-mortgage": "https://texasdefined.com/article/should-you-refinance-texas-mortgage",
+    "/news/texas-home-equity-heloc-guide": "https://texasdefined.com/article/texas-home-equity-heloc-guide",
+    "/news/texas-mortgage-payment-guide": "https://texasdefined.com/article/texas-mortgage-payment-guide",
+    "/news/texas-closing-costs-guide": "https://texasdefined.com/article/texas-closing-costs-guide",
+    "/news/texas-utility-costs-guide": "https://texasdefined.com/article/texas-utility-costs-guide",
+    "/news/texas-homeowners-insurance-guide": "https://texasdefined.com/article/texas-homeowners-insurance-guide",
+    "/news/salary-needed-to-buy-a-house-in-texas": "https://texasdefined.com/article/salary-needed-to-buy-a-house-in-texas",
+    "/news/moving-to-houston-address-checklist": "https://texasdefined.com/article/moving-to-houston-address-checklist",
+    "/news/moving-to-dallas-fort-worth-guide": "https://texasdefined.com/article/moving-to-dallas-fort-worth-guide",
+    "/news/moving-to-san-antonio-guide": "https://texasdefined.com/article/moving-to-san-antonio-guide",
+    "/news/moving-to-austin-guide": "https://texasdefined.com/article/moving-to-austin-guide",
+    "/news/moving-to-el-paso-guide": "https://texasdefined.com/article/moving-to-el-paso-guide",
 }
 LEGACY_REDIRECTS = {
     "/vehicles/renewal": "https://texasdefined.com/texas-vehicle-registration-renewal",
