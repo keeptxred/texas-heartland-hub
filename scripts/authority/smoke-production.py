@@ -30,10 +30,12 @@ CITY_REDIRECTS = {
     "/san-antonio": "https://texasdefined.com/article/moving-to-san-antonio-guide",
     "/el-paso": "https://texasdefined.com/article/moving-to-el-paso-guide",
 }
-LEGACY_REDIRECTS = {
+PRACTICAL_GUIDE_REDIRECTS = {
     "/news/moving-to-texas-guide": "https://texasdefined.com/article/moving-to-texas-what-nobody-tells-you",
     "/news/moving-to-austin-guide": "https://texasdefined.com/article/moving-to-austin-guide",
     "/texas-first-time-homebuyer-programs": "https://texasdefined.com/texas-first-time-homebuyer-programs",
+}
+LEGACY_REDIRECTS = {
     "/vehicles/renewal": "https://texasdefined.com/texas-vehicle-registration-renewal",
     "/vehicles/registration-fees-taxes": "https://texasdefined.com/texas-vehicle-registration-fees-taxes",
     "/news/texas-constitutional-amendments-guide": (
@@ -355,6 +357,45 @@ def verify_legacy_redirects() -> None:
             print(f"Legacy redirect healthy ({label}): {path} -> {location}")
 
 
+def verify_practical_guide_redirects() -> None:
+    origins: list[tuple[str, str, dict[str, str]]] = [
+        ("public", PRODUCTION_URL, {}),
+    ]
+    if SITE_URL != PRODUCTION_URL:
+        origins.append(
+            (
+                "configured-worker",
+                SITE_URL,
+                {"x-keeptxred-deployment-smoke": "canonical"},
+            )
+        )
+
+    for label, origin, request_headers in origins:
+        for path, target in PRACTICAL_GUIDE_REDIRECTS.items():
+            probe_path = f"{path}?{LEGACY_PROBE_QUERY}"
+            status, headers = fetch_without_redirect(
+                probe_path,
+                origin=origin,
+                extra_headers=request_headers,
+            )
+            expected_location = f"{target}?{LEGACY_PROBE_QUERY}"
+            location = headers.get("location")
+            print(
+                f"Practical guide redirect probe ({label}): {path} "
+                f"status={status} location={location!r}"
+            )
+            if status != 301:
+                raise SmokeFailure(
+                    f"{origin}{path} returned HTTP {status}, expected permanent 301"
+                )
+            if location != expected_location:
+                raise SmokeFailure(
+                    f"{origin}{path} redirected to {location!r}, "
+                    f"expected {expected_location!r}"
+                )
+            print(f"Practical guide redirect healthy ({label}): {path} -> {location}")
+
+
 def verify_political_profiles() -> None:
     script = Path(__file__).with_name("verify-political-profiles-production.py")
     completed = subprocess.run(
@@ -401,6 +442,7 @@ def main() -> int:
         if args.city_migration_only:
             verify_city_migration()
             verify_legacy_redirects()
+            verify_practical_guide_redirects()
             verify_political_profiles()
             print(f"Deployment-critical browser-route smoke passed against {SITE_URL}")
             return 0
