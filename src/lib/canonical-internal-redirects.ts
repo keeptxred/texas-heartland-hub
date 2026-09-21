@@ -1,3 +1,5 @@
+import { MIGRATED_PRACTICAL_GUIDE_CANONICALS } from "./migrated-practical-guide-canonical";
+
 const INTERNAL_REDIRECT_CANONICALS: Readonly<Record<string, string>> = {
   "/about-keep-texas-red": "/about",
   "/candidate-guides": "/elections/2026",
@@ -29,6 +31,7 @@ const INTERNAL_REDIRECT_CANONICALS: Readonly<Record<string, string>> = {
   "/texas-sports": "https://texasdefined.com/sports",
   "/explore": "https://texasdefined.com/explore",
   "/tax-calculator": "https://texasdefined.com/decide/property-taxes",
+  ...MIGRATED_PRACTICAL_GUIDE_CANONICALS,
 };
 
 const CANONICAL_HOST = "keeptxred.com";

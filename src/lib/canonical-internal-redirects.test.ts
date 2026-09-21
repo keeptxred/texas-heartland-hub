@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { MIGRATED_PRACTICAL_GUIDE_CANONICALS } from "./migrated-practical-guide-canonical";
 import {
   canonicalInternalRedirectHref,
   canonicalizeInternalRedirectMarkdownLinks,
@@ -40,6 +41,12 @@ describe("canonical internal redirect links", () => {
     expect(canonicalInternalRedirectHref(alias)).toBe(canonical);
   });
 
+  it("maps every migrated practical guide directly to its TexasDefined owner", () => {
+    for (const [alias, canonical] of Object.entries(MIGRATED_PRACTICAL_GUIDE_CANONICALS)) {
+      expect(canonicalInternalRedirectHref(alias)).toBe(canonical);
+    }
+  });
+
   it("preserves query and hash state while removing the redirect hop", () => {
     expect(canonicalInternalRedirectHref("/elections/?cycle=2026#top")).toBe(
       "/elections/2026?cycle=2026#top",
@@ -67,6 +74,9 @@ describe("canonical internal redirect links", () => {
     );
     expect(canonicalInternalRedirectHref("/texas-sports?league=nfl#teams")).toBe(
       "https://texasdefined.com/sports?league=nfl#teams",
+    );
+    expect(canonicalInternalRedirectHref("/news/moving-to-texas-guide?county=Travis#checklist")).toBe(
+      "https://texasdefined.com/article/moving-to-texas-what-nobody-tells-you?county=Travis#checklist",
     );
   });
 
