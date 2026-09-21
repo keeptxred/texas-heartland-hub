@@ -347,6 +347,21 @@ if (!fs.existsSync(migratedPracticalGuideMapPath)) {
   }
 }
 
+const canonicalInternalRedirectsPath = 'src/lib/canonical-internal-redirects.ts';
+if (!fs.existsSync(canonicalInternalRedirectsPath)) {
+  errors.push(`Missing ${canonicalInternalRedirectsPath}`);
+} else {
+  const canonicalInternalRedirects = fs.readFileSync(canonicalInternalRedirectsPath, 'utf8');
+  for (const token of [
+    'MIGRATED_PRACTICAL_GUIDE_CANONICALS',
+    '...MIGRATED_PRACTICAL_GUIDE_CANONICALS',
+  ]) {
+    if (!canonicalInternalRedirects.includes(token)) {
+      errors.push(`${canonicalInternalRedirectsPath} missing practical-guide canonicalization token: ${token}`);
+    }
+  }
+}
+
 const retiredStaticNewsPath = 'src/lib/retired-static-news.ts';
 if (!fs.existsSync(retiredStaticNewsPath)) {
   errors.push(`Missing ${retiredStaticNewsPath}`);
