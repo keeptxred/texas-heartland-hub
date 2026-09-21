@@ -1,12 +1,9 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
-const TARGET_URL =
-  "https://texasdefined.com/article/moving-to-austin-guide";
-
 export const Route = createFileRoute("/news/moving-to-austin-guide")({
-  beforeLoad: () => {
+  beforeLoad: ({ location }) => {
     throw redirect({
-      href: TARGET_URL,
+      href: `https://texasdefined.com/article/moving-to-austin-guide${location.searchStr || ""}`,
       statusCode: 301,
       reloadDocument: true,
     });
