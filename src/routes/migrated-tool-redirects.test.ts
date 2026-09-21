@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
+import { MIGRATED_TOOL_CANONICALS } from "@/lib/migrated-tool-canonical";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const CASES = [
@@ -40,6 +41,11 @@ const CASES = [
 ] as const;
 
 describe("migrated TexasDefined tool redirects", () => {
+  it("keeps the redirect route contract in exact sync with the canonical ownership map", () => {
+    const routeCases = Object.fromEntries(CASES.map(([, legacyPath, target]) => [legacyPath, target]));
+    expect(routeCases).toEqual(MIGRATED_TOOL_CANONICALS);
+  });
+
   it.each(CASES)("preserves %s with an exact permanent redirect", (file, legacyPath, target) => {
     const source = readFileSync(resolve(HERE, file), "utf8");
     expect(source).toContain(`createFileRoute(\"${legacyPath}\")`);
