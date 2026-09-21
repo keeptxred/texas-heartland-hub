@@ -347,6 +347,17 @@ if (!fs.existsSync(migratedPracticalGuideMapPath)) {
   }
 }
 
+const retiredStaticNewsPath = 'src/lib/retired-static-news.ts';
+if (!fs.existsSync(retiredStaticNewsPath)) {
+  errors.push(`Missing ${retiredStaticNewsPath}`);
+} else {
+  const retiredStaticNews = fs.readFileSync(retiredStaticNewsPath, 'utf8');
+  const redirectAllowlist = retiredStaticNews.match(/const RETIRED_STATIC_REDIRECT_SLUGS = new Set\(\[([\s\S]*?)\]\);/)?.[1] ?? '';
+  if (!redirectAllowlist.includes('"moving-to-texas-guide"')) {
+    errors.push('moving-to-texas-guide must stay in the retired-static redirect allowlist so its TexasDefined 301 can execute');
+  }
+}
+
 const generatorPath = 'src/routes/api/public/hooks/generate-evergreen.ts';
 if (!fs.existsSync(generatorPath)) {
   errors.push(`Missing ${generatorPath}`);
