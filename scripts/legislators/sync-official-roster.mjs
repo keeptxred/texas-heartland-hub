@@ -1,5 +1,6 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
+import { normalizeHouseCommitteePayload } from "./normalize-house-committees.mjs";
 
 const REVIEWED_AT = new Date().toISOString().slice(0, 10);
 const HOUSE_LIST_URL = "https://house.texas.gov/members";
@@ -314,7 +315,7 @@ async function main() {
     const [bioHtml, committees, lrlHtml] = await Promise.all([
       fetchText(`${member.website}/biography`),
       fetchText(`https://house.texas.gov/api/getMemberCommittees/${member.code}`).then((text) =>
-        JSON.parse(text),
+        normalizeHouseCommitteePayload(JSON.parse(text)),
       ),
       lrl?.memberId
         ? fetchText(
