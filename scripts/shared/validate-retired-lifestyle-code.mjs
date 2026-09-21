@@ -297,6 +297,55 @@ for (const entry of publicOwnershipFiles) {
   }
 }
 
+const migratedPracticalGuideMapPath = 'src/lib/migrated-practical-guide-canonical.ts';
+const migratedPracticalGuideRoutes = [
+  ['src/routes/texas-first-time-homebuyer-programs.tsx', '/texas-first-time-homebuyer-programs', 'https://texasdefined.com/texas-first-time-homebuyer-programs'],
+  ['src/routes/news.renting-vs-buying-in-texas.tsx', '/news/renting-vs-buying-in-texas', 'https://texasdefined.com/article/renting-vs-buying-in-texas'],
+  ['src/routes/news.texas-house-down-payment-guide.tsx', '/news/texas-house-down-payment-guide', 'https://texasdefined.com/article/texas-house-down-payment-guide'],
+  ['src/routes/news.true-cost-of-owning-a-home-in-texas.tsx', '/news/true-cost-of-owning-a-home-in-texas', 'https://texasdefined.com/article/true-cost-of-owning-a-home-in-texas'],
+  ['src/routes/news.should-you-refinance-texas-mortgage.tsx', '/news/should-you-refinance-texas-mortgage', 'https://texasdefined.com/article/should-you-refinance-texas-mortgage'],
+  ['src/routes/news.texas-home-equity-heloc-guide.tsx', '/news/texas-home-equity-heloc-guide', 'https://texasdefined.com/article/texas-home-equity-heloc-guide'],
+  ['src/routes/news.texas-mortgage-payment-guide.tsx', '/news/texas-mortgage-payment-guide', 'https://texasdefined.com/article/texas-mortgage-payment-guide'],
+  ['src/routes/news.texas-closing-costs-guide.tsx', '/news/texas-closing-costs-guide', 'https://texasdefined.com/article/texas-closing-costs-guide'],
+  ['src/routes/news.texas-utility-costs-guide.tsx', '/news/texas-utility-costs-guide', 'https://texasdefined.com/article/texas-utility-costs-guide'],
+  ['src/routes/news.texas-homeowners-insurance-guide.tsx', '/news/texas-homeowners-insurance-guide', 'https://texasdefined.com/article/texas-homeowners-insurance-guide'],
+  ['src/routes/news.salary-needed-to-buy-a-house-in-texas.tsx', '/news/salary-needed-to-buy-a-house-in-texas', 'https://texasdefined.com/article/salary-needed-to-buy-a-house-in-texas'],
+  ['src/routes/news.moving-to-houston-address-checklist.tsx', '/news/moving-to-houston-address-checklist', 'https://texasdefined.com/article/moving-to-houston-address-checklist'],
+  ['src/routes/news.moving-to-dallas-fort-worth-guide.tsx', '/news/moving-to-dallas-fort-worth-guide', 'https://texasdefined.com/article/moving-to-dallas-fort-worth-guide'],
+  ['src/routes/news.moving-to-san-antonio-guide.tsx', '/news/moving-to-san-antonio-guide', 'https://texasdefined.com/article/moving-to-san-antonio-guide'],
+  ['src/routes/news.moving-to-austin-guide.tsx', '/news/moving-to-austin-guide', 'https://texasdefined.com/article/moving-to-austin-guide'],
+  ['src/routes/news.moving-to-el-paso-guide.tsx', '/news/moving-to-el-paso-guide', 'https://texasdefined.com/article/moving-to-el-paso-guide'],
+];
+
+if (!fs.existsSync(migratedPracticalGuideMapPath)) {
+  errors.push(`Missing ${migratedPracticalGuideMapPath}`);
+} else {
+  const ownershipMap = fs.readFileSync(migratedPracticalGuideMapPath, 'utf8');
+  for (const [routeFile, legacyPath, target] of migratedPracticalGuideRoutes) {
+    const mapEntry = `"${legacyPath}": "${target}"`;
+    if (!ownershipMap.includes(mapEntry)) {
+      errors.push(`${migratedPracticalGuideMapPath} missing exact ownership mapping: ${mapEntry}`);
+    }
+    if (!fs.existsSync(routeFile)) {
+      errors.push(`Missing migrated practical guide redirect route: ${routeFile}`);
+      continue;
+    }
+    const source = fs.readFileSync(routeFile, 'utf8');
+    if (!source.includes(`createFileRoute("${legacyPath}")`)) {
+      errors.push(`${routeFile} missing legacy route contract ${legacyPath}`);
+    }
+    if (!source.includes(target)) {
+      errors.push(`${routeFile} must redirect directly to ${target}`);
+    }
+    if (!source.includes('statusCode: 301')) {
+      errors.push(`${routeFile} must remain a permanent 301 redirect`);
+    }
+    if (!source.includes('location.searchStr')) {
+      errors.push(`${routeFile} must preserve the incoming query string`);
+    }
+  }
+}
+
 const generatorPath = 'src/routes/api/public/hooks/generate-evergreen.ts';
 if (!fs.existsSync(generatorPath)) {
   errors.push(`Missing ${generatorPath}`);
