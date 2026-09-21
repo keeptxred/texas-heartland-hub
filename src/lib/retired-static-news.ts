@@ -16,6 +16,7 @@ const RETIRED_STATIC_SLUGS = new Set([
 // being intercepted by the generic retired-news 404 guard.
 const RETIRED_STATIC_REDIRECT_SLUGS = new Set([
   "texas-constitutional-amendments-guide",
+  "moving-to-texas-guide",
 ]);
 
 export function isExplicitlyRetiredStaticSlug(slug: string): boolean {
