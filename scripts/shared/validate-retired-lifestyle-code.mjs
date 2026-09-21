@@ -20,6 +20,7 @@ const retiredFiles = [
   'src/lib/vehicle-registration.ts',
   'src/lib/__tests__/moving-resources.test.ts',
   'src/components/tax-calculator.tsx',
+  'src/components/homestead-exemption-guide.tsx',
   'src/pages/home/TexasHomeOwnershipCostPage.tsx',
   'src/components/home/TexasHomeOwnershipCostDashboard.tsx',
   'src/pages/homeAffordability/TexasHomeAffordabilityPage.tsx',
