@@ -30,10 +30,10 @@ describe("retired static news hard removal", () => {
       "moving-to-san-antonio-guide",
       "moving-to-austin-guide",
       "moving-to-el-paso-guide",
+      "moving-to-texas-guide",
     ]) {
       expect(isExplicitlyRetiredStaticNewsPath(`/news/${slug}`)).toBe(false);
     }
-    expect(isExplicitlyRetiredStaticNewsPath("/news/moving-to-texas-guide")).toBe(true);
   });
 
   it("lets the constitutional amendment legacy URL reach its permanent redirect", () => {
