@@ -31,6 +31,9 @@ CITY_REDIRECTS = {
     "/el-paso": "https://texasdefined.com/article/moving-to-el-paso-guide",
 }
 LEGACY_REDIRECTS = {
+    "/news/moving-to-texas-guide": "https://texasdefined.com/article/moving-to-texas-what-nobody-tells-you",
+    "/news/moving-to-austin-guide": "https://texasdefined.com/article/moving-to-austin-guide",
+    "/texas-first-time-homebuyer-programs": "https://texasdefined.com/texas-first-time-homebuyer-programs",
     "/vehicles/renewal": "https://texasdefined.com/texas-vehicle-registration-renewal",
     "/vehicles/registration-fees-taxes": "https://texasdefined.com/texas-vehicle-registration-fees-taxes",
     "/news/texas-constitutional-amendments-guide": (
