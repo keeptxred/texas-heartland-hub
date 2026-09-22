@@ -16,7 +16,6 @@ import { BASE_URL, xmlEscape, xmlResponse } from "@/lib/sitemap-shared";
  */
 const ADVERTISED_SITEMAPS = [
   "sitemap-pages.xml",
-  "sitemap-dmv.xml",
   "sitemap-sources.xml",
   "sitemap-news.xml",
   "sitemap-evergreen.xml",
