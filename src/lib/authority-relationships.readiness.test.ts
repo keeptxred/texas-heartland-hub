@@ -6,7 +6,8 @@ const source = fs.readFileSync(new URL("./authority-relationships.ts", import.me
 describe("authority related article readiness", () => {
   it("loads the fields required by the public readiness predicate", () => {
     expect(source).toContain("isPublicArticleReady");
-    expect(source).toContain("category,source_name,source_url,published_at,content_quality_score,body_json,quality_flags");
+    expect(source).toContain("category,discover_category,kind,source_name,source_url,published_at,content_quality_score,body_json,quality_flags");
+    expect(source).toContain("isKeepTxRedSearchOwnedStory");
   });
 
   it("drops unavailable or not-ready article relationships instead of synthesizing links", () => {
