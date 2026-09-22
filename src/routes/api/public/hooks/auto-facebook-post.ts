@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
+import { isKeepTxRedSearchOwnedStory } from "@/lib/ktr-search-ownership";
+import { isPublicArticleReady } from "@/lib/public-article-readiness";
 import { publishDurableFacebookGuideFallback } from "@/lib/facebook-durable-guide-publisher.server";
 import {
   rankFacebookCandidates,
@@ -30,7 +32,11 @@ type ArticleRow = {
   slug: string;
   title: string;
   category: string | null;
+  discover_category: string | null;
+  dek: string | null;
+  image_url: string | null;
   featured_image_url: string | null;
+  image_generation_status: string | null;
   published_at: string;
   source_name: string | null;
   source_url: string | null;
@@ -38,6 +44,8 @@ type ArticleRow = {
   is_breaking: boolean | null;
   score: number | null;
   body_json: unknown;
+  content_quality_score: number | null;
+  quality_flags: string[] | null;
 };
 
 type PackageRow = {
@@ -212,7 +220,7 @@ async function runAutoFacebookPost(request: Request) {
   ).toISOString();
   const { data: rawArticles, error: articleError } = await db
     .from("daily_articles")
-    .select("slug,title,category,featured_image_url,published_at,source_name,source_url,kind,is_breaking,score,body_json")
+    .select("slug,title,dek,category,discover_category,image_url,featured_image_url,image_generation_status,published_at,source_name,source_url,kind,is_breaking,score,body_json,content_quality_score,quality_flags")
     .not("featured_image_url", "is", null)
     .gte("published_at", cutoff)
     .order("published_at", { ascending: false })
@@ -224,8 +232,16 @@ async function runAutoFacebookPost(request: Request) {
 
   const articles = ((rawArticles ?? []) as ArticleRow[]).filter(
     (row) =>
-      Boolean(row.slug && row.title && row.featured_image_url) &&
-      meetsArticleMainWordCount(row.kind, row.body_json as never),
+      Boolean(row.slug && row.title && row.featured_image_url)
+      && isPublicArticleReady(row)
+      && isKeepTxRedSearchOwnedStory({
+        title: row.title,
+        description: row.dek,
+        category: row.category,
+        source: row.source_name,
+        kind: row.kind,
+      })
+      && meetsArticleMainWordCount(row.kind, row.body_json as never),
   );
 
   if (articles.length === 0) {
