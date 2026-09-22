@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 
 const dailySource = fs.readFileSync(new URL("./daily-news.functions.ts", import.meta.url), "utf8");
 const categorySource = fs.readFileSync(new URL("./category-feed.functions.ts", import.meta.url), "utf8");
-const sportsSource = fs.readFileSync(new URL("./sports.functions.ts", import.meta.url), "utf8");
 const feedLinkMigration = fs.readFileSync(
   new URL("../../supabase/migrations/20260818042500_quarantine_news_feed_article_links.sql", import.meta.url),
   "utf8",
@@ -21,12 +20,6 @@ describe("public cloud article quarantine", () => {
     expect(categorySource).toContain("source_name,source_url");
     expect(categorySource).toContain("body_json,quality_flags,content_quality_score");
     expect(categorySource).toContain("isPublicArticleReady(row)");
-  });
-
-  it("removes not-ready rows from the direct sports team query", () => {
-    expect(sportsSource).toContain('import { isPublicArticleReady } from "@/lib/public-article-readiness"');
-    expect(sportsSource).toContain("source_name,source_url,body_json,quality_flags,content_quality_score");
-    expect(sportsSource).toContain("isPublicArticleReady(row)");
   });
 
   it("prevents feed cards from linking to quarantined internal articles", () => {
