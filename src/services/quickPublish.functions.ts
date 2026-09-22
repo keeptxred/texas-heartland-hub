@@ -122,6 +122,17 @@ function validateArticleUrl(raw: unknown): string | null {
   }
 }
 
+function keepTxRedNewsSlug(rawUrl: string): string | null {
+  try {
+    const url = new URL(rawUrl);
+    if (url.origin !== SITE_URL) return null;
+    const match = url.pathname.match(/^\/news\/([a-z0-9-]+)\/?$/i);
+    return match?.[1]?.toLowerCase() ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
   .validator((d: unknown) => Input.parse(d))
   .handler(async ({ data }): Promise<QuickPublishResult> => {
@@ -291,12 +302,16 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
     }
 
     let originalSourceUrl: string | null = null;
-    if (data.slug && articleUrl.startsWith(`${SITE_URL}/news/`)) {
-      const safeSlug = String(data.slug).trim().replace(/^\/+|\/+$/g, "");
+    const articleSlugFromUrl = keepTxRedNewsSlug(articleUrl);
+    if (articleSlugFromUrl) {
+      const suppliedSlug = data.slug ? String(data.slug).trim().replace(/^\/+|\/+$/g, "").toLowerCase() : null;
+      if (suppliedSlug && suppliedSlug !== articleSlugFromUrl) {
+        return { ok: false, error: "Cannot publish: the KeepTXRed article URL and slug do not match." };
+      }
       const { data: articleRow } = await supabaseAdmin
         .from("daily_articles")
         .select("title,dek,category,discover_category,source_name,source_url,published_at,kind,body_json,content_quality_score,quality_flags,image_url,featured_image_url,image_generation_status")
-        .eq("slug", safeSlug)
+        .eq("slug", articleSlugFromUrl)
         .maybeSingle();
       if (!articleRow) {
         return { ok: false, error: "Cannot publish: this item does not have a KeepTXRed article yet. Click 'Publish to Keep Texas Red' first." };
