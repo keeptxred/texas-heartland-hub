@@ -125,7 +125,7 @@ function validateArticleUrl(raw: unknown): string | null {
 function keepTxRedNewsSlug(rawUrl: string): string | null {
   try {
     const url = new URL(rawUrl);
-    if (url.origin !== SITE_URL) return null;
+    if (!GENERATED_IMAGE_HOSTS.has(url.hostname.toLowerCase())) return null;
     const match = url.pathname.match(/^\/news\/([a-z0-9-]+)\/?$/i);
     return match?.[1]?.toLowerCase() ?? null;
   } catch {
