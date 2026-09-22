@@ -488,6 +488,79 @@ if (!fs.existsSync(indexabilityGuardPath)) {
   }
 }
 
+const retiredVehicleGuideRoutes = [
+  ['src/routes/vehicles.plates.tsx', '/vehicles/plates', '#license-plates'],
+  ['src/routes/vehicles.buying-a-car.tsx', '/vehicles/buying-a-car', '#title-transfer'],
+  ['src/routes/vehicles.buying-selling.tsx', '/vehicles/buying-selling', '#title-transfer'],
+  ['src/routes/vehicles.selling-a-car.tsx', '/vehicles/selling-a-car', '#title-transfer'],
+  ['src/routes/vehicles.inspections.tsx', '/vehicles/inspections', ''],
+  ['src/routes/vehicles.duplicate-titles.tsx', '/vehicles/duplicate-titles', '#title-transfer'],
+  ['src/routes/vehicles.personalized-plates.tsx', '/vehicles/personalized-plates', '#license-plates'],
+  ['src/routes/vehicles.private-party-sales.tsx', '/vehicles/private-party-sales', '#title-transfer'],
+  ['src/routes/vehicles.commercial-fleet-irp.tsx', '/vehicles/commercial-fleet-irp', ''],
+  ['src/routes/vehicles.bonded-titles.tsx', '/vehicles/bonded-titles', '#title-transfer'],
+  ['src/routes/vehicles.disabled-parking.tsx', '/vehicles/disabled-parking', '#license-plates'],
+  ['src/routes/vehicles.title-transfer.tsx', '/vehicles/title-transfer', '#title-transfer'],
+  ['src/routes/vehicles.temporary-tags.tsx', '/vehicles/temporary-tags', ''],
+  ['src/routes/vehicles.financial-responsibility.tsx', '/vehicles/financial-responsibility', ''],
+  ['src/routes/vehicles.farm-antique-specialty.tsx', '/vehicles/farm-antique-specialty', '#license-plates'],
+  ['src/routes/vehicles.auto-insurance-requirements.tsx', '/vehicles/auto-insurance-requirements', ''],
+  ['src/routes/vehicles.inspections-emissions.tsx', '/vehicles/inspections-emissions', ''],
+  ['src/routes/vehicles.salvage-rebuilt-titles.tsx', '/vehicles/salvage-rebuilt-titles', '#title-transfer'],
+  ['src/routes/vehicles.liens-duplicate-corrected-titles.tsx', '/vehicles/liens-duplicate-corrected-titles', '#title-transfer'],
+];
+
+for (const [routeFile, routePath, hash] of retiredVehicleGuideRoutes) {
+  if (!fs.existsSync(routeFile)) {
+    errors.push(`Missing retired vehicle redirect route: ${routeFile}`);
+    continue;
+  }
+  const source = fs.readFileSync(routeFile, 'utf8');
+  for (const token of [
+    `createFileRoute("${routePath}")`,
+    'const TEXASDEFINED_PATH = "/texas-vehicle-registration"',
+    `const TEXASDEFINED_HASH = "${hash}"`,
+    'statusCode: 301',
+    'location.searchStr',
+  ]) {
+    if (!source.includes(token)) {
+      errors.push(`${routeFile} missing retired vehicle handoff token: ${token}`);
+    }
+  }
+  for (const token of [
+    'buildSeo',
+    'SITE_URL',
+    'component:',
+    'FAQPage',
+    'HubBreadcrumbs',
+    'rel: "canonical"',
+  ]) {
+    if (source.includes(token)) {
+      errors.push(`${routeFile} restored retired KeepTXRed vehicle-guide logic: ${token}`);
+    }
+  }
+}
+
+const vehicleParentPath = 'src/routes/vehicles.tsx';
+if (!fs.existsSync(vehicleParentPath)) {
+  errors.push(`Missing ${vehicleParentPath}`);
+} else {
+  const source = fs.readFileSync(vehicleParentPath, 'utf8');
+  for (const token of [
+    'PLATE_GUIDE_PATHS',
+    'TITLE_GUIDE_PATHS',
+    '"/texas-vehicle-registration"',
+    '"#license-plates"',
+    '"#title-transfer"',
+    'location.searchStr',
+    'statusCode: 301',
+  ]) {
+    if (!source.includes(token)) {
+      errors.push(`${vehicleParentPath} missing retired vehicle-tree ownership token: ${token}`);
+    }
+  }
+}
+
 const migratedPracticalGuideMapPath = 'src/lib/migrated-practical-guide-canonical.ts';
 const migratedPracticalGuideRoutes = [
   ['src/routes/texas-first-time-homebuyer-programs.tsx', '/texas-first-time-homebuyer-programs', 'https://texasdefined.com/texas-first-time-homebuyer-programs'],
