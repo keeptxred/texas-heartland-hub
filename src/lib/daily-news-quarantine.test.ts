@@ -13,6 +13,8 @@ describe("public cloud article quarantine", () => {
     expect(dailySource).toContain('import { isPublicArticleReady } from "@/lib/public-article-readiness"');
     expect(dailySource).toContain("body_json,quality_flags,content_quality_score");
     expect(dailySource).toContain("isPublicArticleReady(article)");
+    expect(dailySource).toContain('import { isKeepTxRedSearchOwnedStory } from "@/lib/ktr-search-ownership"');
+    expect(dailySource).toContain("isKeepTxRedSearchOwnedStory({");
   });
 
   it("removes not-ready rows from shared category and region feeds", () => {
@@ -20,6 +22,8 @@ describe("public cloud article quarantine", () => {
     expect(categorySource).toContain("source_name,source_url");
     expect(categorySource).toContain("body_json,quality_flags,content_quality_score");
     expect(categorySource).toContain("isPublicArticleReady(row)");
+    expect(categorySource).toContain('import { isKeepTxRedSearchOwnedStory } from "@/lib/ktr-search-ownership"');
+    expect(categorySource).toContain("isKeepTxRedSearchOwnedStory({");
   });
 
   it("prevents feed cards from linking to quarantined internal articles", () => {
