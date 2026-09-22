@@ -4411,7 +4411,6 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       "constitutional-carry-one-year-later",
       "texas-new-laws-2026",
       "texas-election-laws-explained",
-      "moving-to-texas-guide",
       "how-a-bill-becomes-texas-law",
     ],
     cta: { label: "Explore More Texas Law Guides", href: "/laws" },
