@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
+import { isKeepTxRedSearchOwnedStory } from "@/lib/ktr-search-ownership";
+import { isPublicArticleReady } from "@/lib/public-article-readiness";
 import {
   assessImageUrl,
   FACEBOOK_IMAGE_FETCH_HEADERS,
@@ -293,11 +295,23 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
       const safeSlug = String(data.slug).trim().replace(/^\/+|\/+$/g, "");
       const { data: articleRow } = await supabaseAdmin
         .from("daily_articles")
-        .select("kind, body_json, source_url")
+        .select("title,dek,category,discover_category,source_name,source_url,published_at,kind,body_json,content_quality_score,quality_flags,image_url,featured_image_url,image_generation_status")
         .eq("slug", safeSlug)
         .maybeSingle();
       if (!articleRow) {
         return { ok: false, error: "Cannot publish: this item does not have a KeepTXRed article yet. Click 'Publish to Keep Texas Red' first." };
+      }
+      if (!isPublicArticleReady(articleRow)) {
+        return { ok: false, error: "Cannot publish: the KeepTXRed article is not public-ready." };
+      }
+      if (!isKeepTxRedSearchOwnedStory({
+        title: articleRow.title,
+        description: articleRow.dek,
+        category: articleRow.category,
+        source: articleRow.source_name,
+        kind: articleRow.kind,
+      })) {
+        return { ok: false, error: "Cannot publish: this story belongs to TexasDefined rather than KeepTXRed." };
       }
       if (!meetsArticleMainWordCount(articleRow.kind, articleRow.body_json as never)) {
         return { ok: false, error: "Cannot publish: the KeepTXRed article is below the minimum length and would 404. Regenerate the article before posting." };
