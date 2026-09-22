@@ -15,6 +15,8 @@ describe("article distribution automation", () => {
 
   it("uses the same public-quality boundary as search-facing KTR articles", () => {
     expect(endpoint).toContain("isPublicArticleReady(article)");
+    expect(endpoint).toContain('import { isKeepTxRedSearchOwnedStory } from "@/lib/ktr-search-ownership"');
+    expect(endpoint).toContain("isKeepTxRedSearchOwnedStory({");
     expect(endpoint).toContain("meetsArticleMainWordCount(article.kind");
     expect(endpoint).toContain("published <= now");
     expect(endpoint).toContain("MAX_ARTICLE_AGE_DAYS = 4");

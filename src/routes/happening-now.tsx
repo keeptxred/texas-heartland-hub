@@ -5,6 +5,7 @@ import { isLowValueTitle } from "@/lib/low-value-titles";
 import { buildSeo, PUBLISHER_LOGO } from "@/lib/seo";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
 import { isPublicArticleReady, type PublicArticleCandidate } from "@/lib/public-article-readiness";
+import { isKeepTxRedSearchOwnedStory } from "@/lib/ktr-search-ownership";
 
 const MAX_VISIBLE_STORIES = 24;
 const FETCH_CANDIDATES = 72;
@@ -152,7 +153,7 @@ function HappeningNowPage() {
       const { data, error } = await supabase
         .from("daily_articles")
         .select(
-          "id,slug,title,dek,category,source_name,source_url,published_at,kind,featured_image_url,image_url,image_alt_text,is_breaking,content_quality_score,body_json,quality_flags",
+          "id,slug,title,dek,category,discover_category,source_name,source_url,published_at,kind,featured_image_url,image_url,image_alt_text,is_breaking,content_quality_score,body_json,quality_flags",
         )
         .order("published_at", { ascending: false })
         .limit(FETCH_CANDIDATES);
@@ -173,6 +174,13 @@ function HappeningNowPage() {
             && isRollingNewsKind(article.kind)
             && !isLowValueTitle(article.title)
             && isPublicArticleReady(article)
+            && isKeepTxRedSearchOwnedStory({
+              title: article.title,
+              description: article.dek,
+              category: article.category,
+              source: article.source_name,
+              kind: article.kind,
+            })
             && meetsArticleMainWordCount(article.kind, article.body_json as never),
         )
         .sort((a, b) => Date.parse(b.published_at) - Date.parse(a.published_at))

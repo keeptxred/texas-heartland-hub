@@ -639,6 +639,27 @@ if (!fs.existsSync(retiredStaticNewsPath)) {
   }
 }
 
+const publicOwnershipSurfaces = [
+  ['src/lib/daily-news.functions.ts', ['isPublicArticleReady(article)', 'isKeepTxRedSearchOwnedStory({', 'discover_category']],
+  ['src/lib/category-feed.functions.ts', ['isPublicArticleReady(row)', 'isKeepTxRedSearchOwnedStory({', 'discover_category']],
+  ['src/routes/happening-now.tsx', ['isPublicArticleReady(article)', 'isKeepTxRedSearchOwnedStory({', 'discover_category']],
+  ['src/routes/api/public/hooks/prepare-distribution-packages.ts', ['isPublicArticleReady(article)', 'isKeepTxRedSearchOwnedStory({', 'discover_category']],
+  ['src/lib/authority-relationships.ts', ['isPublicArticleReady(article)', 'isKeepTxRedSearchOwnedStory({', 'discover_category', 'kind']],
+];
+
+for (const [surfacePath, requiredTokens] of publicOwnershipSurfaces) {
+  if (!fs.existsSync(surfacePath)) {
+    errors.push(`Missing KTR public ownership surface: ${surfacePath}`);
+    continue;
+  }
+  const source = fs.readFileSync(surfacePath, 'utf8');
+  for (const token of requiredTokens) {
+    if (!source.includes(token)) {
+      errors.push(`${surfacePath} missing KTR public ownership token: ${token}`);
+    }
+  }
+}
+
 const generatorPath = 'src/routes/api/public/hooks/generate-evergreen.ts';
 if (!fs.existsSync(generatorPath)) {
   errors.push(`Missing ${generatorPath}`);

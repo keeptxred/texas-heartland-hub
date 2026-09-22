@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { dedupeByTitle } from "@/lib/title-similarity";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
 import { isPublicArticleReady } from "@/lib/public-article-readiness";
+import { isKeepTxRedSearchOwnedStory } from "@/lib/ktr-search-ownership";
 import { isPublicBreaking, PUBLIC_BREAKING_WINDOW_MS } from "@/lib/public-breaking";
 
 export type DailyArticle = {
@@ -52,6 +53,13 @@ function stripPrivateFields(rows: DailyArticleRow[]): DailyArticle[] {
   return rows
     .filter((article) =>
       isPublicArticleReady(article)
+      && isKeepTxRedSearchOwnedStory({
+        title: article.title,
+        description: article.dek,
+        category: article.category,
+        source: article.source_name,
+        kind: article.kind,
+      })
       && meetsArticleMainWordCount(article.kind, article.body_json as never),
     )
     .map(({ body_json: _bodyJson, quality_flags: _qualityFlags, content_quality_score: _qualityScore, ...article }) => article);

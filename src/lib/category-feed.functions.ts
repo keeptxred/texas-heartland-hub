@@ -2,13 +2,14 @@
 //
 // Single source of truth for pulling published rows out of `public.daily_articles`
 // for any website category page. Public feeds use the same AdSense/readiness
-// floor as homepage/newsroom discovery so alternate browse routes cannot
-// re-promote a row that has been deliberately withheld from Google-facing pages.
+// floor and site-ownership boundary as homepage/newsroom discovery so alternate
+// browse routes cannot re-promote a TexasDefined-owned or otherwise withheld row.
 
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
 import { isPublicArticleReady } from "@/lib/public-article-readiness";
+import { isKeepTxRedSearchOwnedStory } from "@/lib/ktr-search-ownership";
 
 export type CategoryFeedItem = {
   slug: string;
@@ -90,6 +91,13 @@ export const getArticlesByCategory = createServerFn({ method: "GET" })
     const gated = ((rows ?? []) as CategoryFeedRow[])
       .filter((row) =>
         isPublicArticleReady(row)
+        && isKeepTxRedSearchOwnedStory({
+          title: row.title,
+          description: row.dek,
+          category: row.category,
+          source: row.source_name,
+          kind: row.kind,
+        })
         && meetsArticleMainWordCount(row.kind, row.body_json as never),
       )
       .map(({

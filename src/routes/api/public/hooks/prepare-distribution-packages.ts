@@ -7,6 +7,7 @@ import {
 } from "@/lib/article-distribution-package";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 import { isPublicArticleReady, type PublicArticleCandidate } from "@/lib/public-article-readiness";
+import { isKeepTxRedSearchOwnedStory } from "@/lib/ktr-search-ownership";
 
 const OIDC_AUDIENCE = "keeptxred-distribution-packages";
 const REPOSITORY = "keeptxred/texas-heartland-hub";
@@ -147,7 +148,14 @@ async function prepareDistributionPackages(request: Request): Promise<Response> 
       && Number.isFinite(published)
       && published <= now
       && meetsArticleMainWordCount(article.kind, article.body_json as never)
-      && isPublicArticleReady(article);
+      && isPublicArticleReady(article)
+      && isKeepTxRedSearchOwnedStory({
+        title: article.title,
+        description: article.dek,
+        category: article.category,
+        source: article.source_name,
+        kind: article.kind,
+      });
   });
 
   if (articles.length === 0) {
