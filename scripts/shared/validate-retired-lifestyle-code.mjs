@@ -354,11 +354,13 @@ if (!fs.existsSync(canonicalInternalRedirectsPath)) {
 } else {
   const canonicalInternalRedirects = fs.readFileSync(canonicalInternalRedirectsPath, 'utf8');
   for (const token of [
+    'MIGRATED_TOOL_CANONICALS',
+    '...MIGRATED_TOOL_CANONICALS',
     'MIGRATED_PRACTICAL_GUIDE_CANONICALS',
     '...MIGRATED_PRACTICAL_GUIDE_CANONICALS',
   ]) {
     if (!canonicalInternalRedirects.includes(token)) {
-      errors.push(`${canonicalInternalRedirectsPath} missing practical-guide canonicalization token: ${token}`);
+      errors.push(`${canonicalInternalRedirectsPath} missing migrated ownership canonicalization token: ${token}`);
     }
   }
 }
