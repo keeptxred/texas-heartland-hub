@@ -30,6 +30,8 @@ const retiredFiles = [
   'src/lib/sports.functions.ts',
   'src/lib/sports-lifecycle.ts',
   'src/routes/api/public/hooks/generate-sports.ts',
+  'src/routes/sitemap-dmv[.]xml.ts',
+  'src/data/dmv-evergreen-sitemap-paths.ts',
   'src/pages/home/TexasHomeOwnershipCostPage.tsx',
   'src/components/home/TexasHomeOwnershipCostDashboard.tsx',
   'src/pages/homeAffordability/TexasHomeAffordabilityPage.tsx',
@@ -455,6 +457,34 @@ for (const [routeFile, routePath, target] of retiredDmvRoutes) {
     if (source.includes(token)) {
       errors.push(`${routeFile} restored retired KeepTXRed DMV product logic: ${token}`);
     }
+  }
+}
+
+const sitemapIndexPath = 'src/routes/sitemap[.]xml.ts';
+if (!fs.existsSync(sitemapIndexPath)) {
+  errors.push(`Missing ${sitemapIndexPath}`);
+} else {
+  const source = fs.readFileSync(sitemapIndexPath, 'utf8');
+  if (source.includes('sitemap-dmv.xml')) {
+    errors.push(`${sitemapIndexPath} restored retired empty DMV sitemap advertisement`);
+  }
+}
+
+const indexabilityGuardPath = 'scripts/seo/validate-indexability.mjs';
+if (!fs.existsSync(indexabilityGuardPath)) {
+  errors.push(`Missing ${indexabilityGuardPath}`);
+} else {
+  const source = fs.readFileSync(indexabilityGuardPath, 'utf8');
+  if (source.includes('/sitemap-dmv.xml')) {
+    errors.push(`${indexabilityGuardPath} restored retired DMV sitemap checks`);
+  }
+  const priorityBlock = source.match(/const INDEXABLE_PRIORITY_PATHS = \[([\s\S]*?)\];/)?.[1] ?? '';
+  if (priorityBlock.includes('"/dmv"')) {
+    errors.push(`${indexabilityGuardPath} restored retired /dmv as an indexable KTR priority page`);
+  }
+  const redirectBlock = source.match(/const REDIRECT_ALIASES = \[([\s\S]*?)\];/)?.[1] ?? '';
+  if (!redirectBlock.includes('"/dmv"')) {
+    errors.push(`${indexabilityGuardPath} must keep /dmv in the redirect alias exclusion list`);
   }
 }
 
