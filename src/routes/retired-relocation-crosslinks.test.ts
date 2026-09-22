@@ -3,10 +3,10 @@ import { describe, expect, it } from "vitest";
 
 const ACTIVE_RELOCATION_HANDOFFS = [
   ["dmv.tsx", "https://texasdefined.com/texas-dmv"],
-  ["dmv.change-address.tsx", "https://texasdefined.com/moving-to-texas"],
-  ["dmv.driver-license.tsx", "https://texasdefined.com/moving-to-texas"],
-  ["dmv.real-id.tsx", "https://texasdefined.com/moving-to-texas"],
-  ["dmv.texas-dmv-vs-dps.tsx", "https://texasdefined.com/moving-to-texas"],
+  ["dmv.change-address.tsx", "https://texasdefined.com/texas-drivers-license"],
+  ["dmv.driver-license.tsx", "https://texasdefined.com/texas-drivers-license"],
+  ["dmv.real-id.tsx", "https://texasdefined.com/texas-drivers-license"],
+  ["dmv.texas-dmv-vs-dps.tsx", "https://texasdefined.com/texas-dmv"],
   ["vehicles.new-residents.tsx", "https://texasdefined.com/find-my-dmv"],
   ["vehicles.registration.tsx", "https://texasdefined.com/texas-vehicle-registration"],
 ] as const;
