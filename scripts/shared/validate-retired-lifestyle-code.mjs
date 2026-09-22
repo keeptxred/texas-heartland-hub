@@ -409,6 +409,55 @@ if (!fs.existsSync(sportsOwnershipMigrationPath)) {
   }
 }
 
+const retiredDmvRoutes = [
+  ['src/routes/dmv.tsx', '/dmv', 'https://texasdefined.com/texas-dmv'],
+  ['src/routes/dmv.cdl.tsx', '/dmv/cdl', 'https://texasdefined.com/texas-drivers-license'],
+  ['src/routes/dmv.cdl-classes.tsx', '/dmv/cdl-classes', 'https://texasdefined.com/texas-drivers-license'],
+  ['src/routes/dmv.real-id.tsx', '/dmv/real-id', 'https://texasdefined.com/texas-drivers-license'],
+  ['src/routes/dmv.forms-downloads.tsx', '/dmv/forms-downloads', 'https://texasdefined.com/texas-dmv'],
+  ['src/routes/dmv.cdl-endorsements.tsx', '/dmv/cdl-endorsements', 'https://texasdefined.com/texas-drivers-license'],
+  ['src/routes/dmv.change-address.tsx', '/dmv/change-address', 'https://texasdefined.com/texas-drivers-license'],
+  ['src/routes/dmv.license-status.tsx', '/dmv/license-status', 'https://texasdefined.com/texas-drivers-license'],
+  ['src/routes/dmv.driver-license.tsx', '/dmv/driver-license', 'https://texasdefined.com/texas-drivers-license'],
+  ['src/routes/dmv.dps-appointments.tsx', '/dmv/dps-appointments', 'https://texasdefined.com/texas-drivers-license'],
+  ['src/routes/dmv.replace-lost-license.tsx', '/dmv/replace-lost-license', 'https://texasdefined.com/texas-drivers-license'],
+  ['src/routes/dmv.texas-dmv-vs-dps.tsx', '/dmv/texas-dmv-vs-dps', 'https://texasdefined.com/texas-dmv'],
+  ['src/routes/dmv.identification-card.tsx', '/dmv/identification-card', 'https://texasdefined.com/texas-drivers-license'],
+  ['src/routes/dmv.driver-license-renewal.tsx', '/dmv/driver-license-renewal', 'https://texasdefined.com/texas-drivers-license'],
+  ['src/routes/dmv.driver-license-documents.tsx', '/dmv/driver-license-documents', 'https://texasdefined.com/texas-drivers-license'],
+];
+
+for (const [routeFile, routePath, target] of retiredDmvRoutes) {
+  if (!fs.existsSync(routeFile)) {
+    errors.push(`Missing retired DMV redirect route: ${routeFile}`);
+    continue;
+  }
+  const source = fs.readFileSync(routeFile, 'utf8');
+  for (const token of [
+    `createFileRoute("${routePath}")`,
+    target,
+    'statusCode: 301',
+    'location.searchStr',
+  ]) {
+    if (!source.includes(token)) {
+      errors.push(`${routeFile} missing retired DMV handoff token: ${token}`);
+    }
+  }
+  for (const token of [
+    'buildSeo',
+    'SITE_URL',
+    'component:',
+    'FAQPage',
+    'Related Keep TX Red guides',
+    'HubBreadcrumbs',
+    'rel: "canonical"',
+  ]) {
+    if (source.includes(token)) {
+      errors.push(`${routeFile} restored retired KeepTXRed DMV product logic: ${token}`);
+    }
+  }
+}
+
 const migratedPracticalGuideMapPath = 'src/lib/migrated-practical-guide-canonical.ts';
 const migratedPracticalGuideRoutes = [
   ['src/routes/texas-first-time-homebuyer-programs.tsx', '/texas-first-time-homebuyer-programs', 'https://texasdefined.com/texas-first-time-homebuyer-programs'],
