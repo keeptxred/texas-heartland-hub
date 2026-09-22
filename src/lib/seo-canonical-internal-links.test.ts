@@ -7,7 +7,6 @@ const sourceFiles = [
   "src/components/site-header.tsx",
   "src/components/site-footer.tsx",
   "src/components/sports-coverage-placeholder.tsx",
-  "src/components/city-page.tsx",
   "src/components/texas-news-view.tsx",
   "src/components/texas-business-view.tsx",
   "src/components/government-history-authority-page.tsx",
