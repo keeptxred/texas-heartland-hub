@@ -17,15 +17,39 @@ function internalMarkdownLinks(value: string): string[] {
   return Array.from(value.matchAll(/\]\((\/[^)]+)\)/g), (match) => match[1]);
 }
 
+const migratedPaths = new Set(Object.keys(MIGRATED_PRACTICAL_GUIDE_CANONICALS));
+const migratedStaticSlugs = new Set(
+  Array.from(migratedPaths)
+    .filter((path) => path.startsWith("/news/"))
+    .map((path) => path.slice("/news/".length)),
+);
+
 describe("migrated TexasDefined practical-guide ownership in active static articles", () => {
+  it("keeps every migrated practical-guide static article non-indexable", () => {
+    for (const slug of migratedStaticSlugs) {
+      const article = ARTICLES.find((candidate) => candidate.slug === slug);
+      if (!article) continue;
+      expect(
+        isStaticArticleIndexable(article),
+        `Migrated practical guide ${slug} must never regain KTR indexability`,
+      ).toBe(false);
+    }
+  });
+
   it("keeps every indexable KTR article source free of legacy practical-guide links", () => {
     const violations: string[] = [];
-    const migratedPaths = new Set(Object.keys(MIGRATED_PRACTICAL_GUIDE_CANONICALS));
 
     for (const article of ARTICLES) {
       if (!isStaticArticleIndexable(article)) continue;
       const body = ARTICLE_BODIES[article.slug];
       if (!body) continue;
+
+      const related = (body as { related?: string[] }).related ?? [];
+      for (const relatedSlug of related) {
+        if (migratedStaticSlugs.has(relatedSlug)) {
+          violations.push(`${article.slug}: related article ${relatedSlug}`);
+        }
+      }
 
       for (const value of stringsIn(body)) {
         if (migratedPaths.has(value)) {
