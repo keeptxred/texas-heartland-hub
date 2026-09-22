@@ -6,12 +6,10 @@ import { texasPoliticsHead } from "@/routes/texas-politics.index";
 const sourceFiles = [
   "src/components/site-header.tsx",
   "src/components/site-footer.tsx",
-  "src/components/sports-coverage-placeholder.tsx",
   "src/components/texas-news-view.tsx",
   "src/components/texas-business-view.tsx",
   "src/components/government-history-authority-page.tsx",
   "src/components/admin/ContentPackagePreview.tsx",
-  "src/routes/texas-sports.index.tsx",
   "src/routes/texas-government.tsx",
   "src/routes/texas-government.$entitySlug.tsx",
   "src/routes/texas-politics.figures.tsx",
@@ -50,7 +48,6 @@ const redirectAliases = [
 
 const canonicalRouteChecks = [
   ["src/routes/shop.index.tsx", "https://keeptxred.com/shop"],
-  ["src/routes/texas-sports.index.tsx", "https://keeptxred.com/texas-sports"],
 ] as const;
 
 describe("canonical internal links", () => {

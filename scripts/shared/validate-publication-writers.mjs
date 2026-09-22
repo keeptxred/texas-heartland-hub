@@ -6,7 +6,6 @@ const writers = [
   'src/routes/api/public/hooks/refresh-published-newsroom.ts',
   'src/routes/api/public/hooks/generate-daily-brief.ts',
   'src/routes/api/public/hooks/generate-evergreen.ts',
-  'src/routes/api/public/hooks/generate-sports.ts',
   'src/routes/api/public/hooks/publishing-safety-net.ts',
   'src/lib/ingest-feeds-legacy.ts',
   'src/lib/ingest-and-normalize.functions.ts',
@@ -63,7 +62,6 @@ const sharedWriters = new Set([
   'src/routes/api/public/hooks/generate-newsroom.ts',
   'src/routes/api/public/hooks/generate-daily-brief.ts',
   'src/routes/api/public/hooks/generate-evergreen.ts',
-  'src/routes/api/public/hooks/generate-sports.ts',
   'src/routes/api/public/hooks/publishing-safety-net.ts',
   'src/lib/ingest-feeds-legacy.ts',
 ]);

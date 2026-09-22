@@ -45,7 +45,6 @@ const LEGACY_CONTENT_PATHS = new Map([
   ["/texas-news/tax-spending", "/texas-economy"],
   ["/texas-news/legislature", "/texas-legislature"],
   ["/texas-news/border", "/texas-border-security"],
-  ["/texas-sports/team/aggies", "/texas-sports/team/texas-am"],
   ["/hubs", "/topics"],
   ["/hubs/texas-policy-law", "/laws"],
   ["/hubs/texas-politics", "/texas-politics"],
@@ -63,6 +62,7 @@ const EXTERNAL_LEGACY_REDIRECTS = new Map([
   ["/texas-property-tax-protest-guide", "https://texasdefined.com/do/property-tax-protest"],
   ["/texas-financial-tools", "https://texasdefined.com/decide/financial-tools"],
   ["/living-in-texas", "https://texasdefined.com/texas-living"],
+  ["/texas-sports/team/aggies", "https://texasdefined.com/sports"],
 ]);
 const BAD_YEAR_NEWS_REDIRECTS = new Map([
   ["live-2001-01-28-texas-voter-registration-deadline-approaching-essential-guide-for-the--6rien8", "live-2026-01-28-texas-voter-registration-deadline-approaching-essential-guide-for-the--6rien8"],
