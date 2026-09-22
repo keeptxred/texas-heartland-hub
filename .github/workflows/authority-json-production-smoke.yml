@@ -43,7 +43,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v5
       - name: Validate production smoke scripts
-        run: python3 -m py_compile scripts/authority/smoke-production.py scripts/authority/verify-political-profiles-production.py scripts/authority/verify-political-geography-production.py
+        run: python3 -m py_compile scripts/authority/smoke-production.py scripts/authority/verify-political-profiles-production.py scripts/authority/verify-political-geography-production.py scripts/seo/verify-texasdefined-ownership-destinations.py
 
   smoke:
     if: github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')

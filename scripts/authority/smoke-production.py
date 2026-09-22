@@ -49,6 +49,40 @@ PRACTICAL_GUIDE_REDIRECTS = {
     "/news/moving-to-austin-guide": "https://texasdefined.com/article/moving-to-austin-guide",
     "/news/moving-to-el-paso-guide": "https://texasdefined.com/article/moving-to-el-paso-guide",
 }
+MIGRATED_TOOL_REDIRECTS = {
+    "/texas-refinance-calculator": "https://texasdefined.com/texas-refinance-savings-calculator",
+    "/texas-refinance-savings-calculator": "https://texasdefined.com/texas-refinance-savings-calculator",
+    "/tools/home-affordability-calculator": "https://texasdefined.com/texas-home-affordability-calculator",
+    "/texas-home-affordability-calculator": "https://texasdefined.com/texas-home-affordability-calculator",
+    "/tools/home-insurance-calculator": "https://texasdefined.com/texas-home-insurance-calculator",
+    "/texas-home-insurance-calculator": "https://texasdefined.com/texas-home-insurance-calculator",
+    "/tools/mortgage-calculator": "https://texasdefined.com/texas-mortgage-calculator",
+    "/texas-mortgage-calculator": "https://texasdefined.com/texas-mortgage-calculator",
+    "/texas-property-tax-calculator": "https://texasdefined.com/decide/property-taxes",
+    "/texas-property-tax-increase-calculator": "https://texasdefined.com/decide/property-taxes",
+    "/tax-calculator": "https://texasdefined.com/decide/property-taxes",
+    "/tools/property-tax-calculator": "https://texasdefined.com/decide/property-taxes",
+    "/tools/closing-cost-calculator": "https://texasdefined.com/texas-closing-cost-calculator",
+    "/texas-closing-cost-calculator": "https://texasdefined.com/texas-closing-cost-calculator",
+    "/tools/texas-utilities-calculator": "https://texasdefined.com/texas-utility-cost-calculator",
+    "/texas-utility-cost-calculator": "https://texasdefined.com/texas-utility-cost-calculator",
+    "/texas-home-ownership-cost-calculator": "https://texasdefined.com/texas-homeownership-cost-calculator",
+    "/texas-homeownership-cost-calculator": "https://texasdefined.com/texas-homeownership-cost-calculator",
+    "/texas-home-equity-calculator": "https://texasdefined.com/texas-home-equity-calculator",
+    "/texas-mortgage-qualification-calculator": "https://texasdefined.com/texas-home-affordability-calculator",
+    "/texas-heloc-calculator": "https://texasdefined.com/texas-home-equity-calculator",
+    "/texas-home-equity-growth-calculator": "https://texasdefined.com/texas-home-equity-growth-calculator",
+    "/texas-mortgage-payoff-calculator": "https://texasdefined.com/texas-mortgage-payoff-calculator",
+    "/texas-down-payment-calculator": "https://texasdefined.com/texas-down-payment-calculator",
+    "/texas-down-payment-assistance-calculator": "https://texasdefined.com/texas-down-payment-assistance-calculator",
+    "/texas-rent-vs-buy-calculator": "https://texasdefined.com/texas-rent-vs-buy-calculator",
+    "/texas-budget-planner": "https://texasdefined.com/texas-budget-planner",
+    "/texas-cost-of-living-calculator": "https://texasdefined.com/texas-cost-of-living-calculator",
+    "/texas-salary-calculator": "https://texasdefined.com/texas-salary-calculator",
+    "/texas-salary-comparison-by-city": "https://texasdefined.com/texas-salary-comparison-by-city",
+    "/texas-moving-cost-calculator": "https://texasdefined.com/texas-moving-cost-calculator",
+    "/moving-checklist": "https://texasdefined.com/moving-to-texas",
+}
 LEGACY_REDIRECTS = {
     "/vehicles/renewal": "https://texasdefined.com/texas-vehicle-registration-renewal",
     "/vehicles/registration-fees-taxes": "https://texasdefined.com/texas-vehicle-registration-fees-taxes",
@@ -371,6 +405,45 @@ def verify_legacy_redirects() -> None:
             print(f"Legacy redirect healthy ({label}): {path} -> {location}")
 
 
+def verify_migrated_tool_redirects() -> None:
+    origins: list[tuple[str, str, dict[str, str]]] = [
+        ("public", PRODUCTION_URL, {}),
+    ]
+    if SITE_URL != PRODUCTION_URL:
+        origins.append(
+            (
+                "configured-worker",
+                SITE_URL,
+                {"x-keeptxred-deployment-smoke": "canonical"},
+            )
+        )
+
+    for label, origin, request_headers in origins:
+        for path, target in MIGRATED_TOOL_REDIRECTS.items():
+            probe_path = f"{path}?{LEGACY_PROBE_QUERY}"
+            status, headers = fetch_without_redirect(
+                probe_path,
+                origin=origin,
+                extra_headers=request_headers,
+            )
+            expected_location = f"{target}?{LEGACY_PROBE_QUERY}"
+            location = headers.get("location")
+            print(
+                f"Migrated tool redirect probe ({label}): {path} "
+                f"status={status} location={location!r}"
+            )
+            if status != 301:
+                raise SmokeFailure(
+                    f"{origin}{path} returned HTTP {status}, expected permanent 301"
+                )
+            if location != expected_location:
+                raise SmokeFailure(
+                    f"{origin}{path} redirected to {location!r}, "
+                    f"expected {expected_location!r}"
+                )
+            print(f"Migrated tool redirect healthy ({label}): {path} -> {location}")
+
+
 def verify_practical_guide_redirects() -> None:
     origins: list[tuple[str, str, dict[str, str]]] = [
         ("public", PRODUCTION_URL, {}),
@@ -456,6 +529,7 @@ def main() -> int:
         if args.city_migration_only:
             verify_city_migration()
             verify_legacy_redirects()
+            verify_migrated_tool_redirects()
             verify_practical_guide_redirects()
             verify_political_profiles()
             print(f"Deployment-critical browser-route smoke passed against {SITE_URL}")

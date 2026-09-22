@@ -269,6 +269,10 @@ jobs:
           SITE_URL: ${{ env.PREVIEW_URL }}
         run: python3 scripts/seo/verify-property-tax-handoff.py
 
+      - name: Verify all TexasDefined ownership destinations
+        if: steps.revision.outputs.deploy == 'true'
+        run: python3 scripts/seo/verify-texasdefined-ownership-destinations.py
+
       - name: Verify city migration redirects on deployed Worker
         if: steps.revision.outputs.deploy == 'true'
         env:
