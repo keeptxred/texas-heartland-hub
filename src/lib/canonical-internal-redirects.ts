@@ -1,4 +1,5 @@
 import { MIGRATED_PRACTICAL_GUIDE_CANONICALS } from "./migrated-practical-guide-canonical";
+import { MIGRATED_TOOL_CANONICALS } from "./migrated-tool-canonical";
 
 const INTERNAL_REDIRECT_CANONICALS: Readonly<Record<string, string>> = {
   "/about-keep-texas-red": "/about",
@@ -30,7 +31,7 @@ const INTERNAL_REDIRECT_CANONICALS: Readonly<Record<string, string>> = {
   "/texas-living": "https://texasdefined.com/texas-living",
   "/texas-sports": "https://texasdefined.com/sports",
   "/explore": "https://texasdefined.com/explore",
-  "/tax-calculator": "https://texasdefined.com/decide/property-taxes",
+  ...MIGRATED_TOOL_CANONICALS,
   ...MIGRATED_PRACTICAL_GUIDE_CANONICALS,
 };
 
