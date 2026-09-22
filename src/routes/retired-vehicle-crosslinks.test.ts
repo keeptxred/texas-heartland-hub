@@ -1,6 +1,5 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { DMV_EVERGREEN_SITEMAP_PATHS } from "@/data/dmv-evergreen-sitemap-paths";
 
 const RETIRED_INTERNAL_HREFS = [
   'href="/dmv"',
@@ -39,11 +38,6 @@ function expectNoRetiredTargets(routeFile: string) {
 }
 
 describe("retired vehicle authority handoffs", () => {
-  it.each(DMV_EVERGREEN_SITEMAP_PATHS)("keeps active route %s free of retired internal vehicle/DMV targets", (routePath) => {
-    const routeFile = `${routePath.slice(1).replaceAll("/", ".")}.tsx`;
-    expectNoRetiredTargets(routeFile);
-  });
-
   it.each(EXTRA_ACTIVE_ROUTE_FILES)("keeps active DMV route %s free of retired internal targets", (routeFile) => {
     expectNoRetiredTargets(routeFile);
   });

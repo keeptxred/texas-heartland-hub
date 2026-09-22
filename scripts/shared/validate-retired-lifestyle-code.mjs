@@ -30,6 +30,8 @@ const retiredFiles = [
   'src/lib/sports.functions.ts',
   'src/lib/sports-lifecycle.ts',
   'src/routes/api/public/hooks/generate-sports.ts',
+  'src/routes/sitemap-dmv[.]xml.ts',
+  'src/data/dmv-evergreen-sitemap-paths.ts',
   'src/pages/home/TexasHomeOwnershipCostPage.tsx',
   'src/components/home/TexasHomeOwnershipCostDashboard.tsx',
   'src/pages/homeAffordability/TexasHomeAffordabilityPage.tsx',
@@ -406,6 +408,83 @@ if (!fs.existsSync(sportsOwnershipMigrationPath)) {
     if (!source.includes(token)) {
       errors.push(`${sportsOwnershipMigrationPath} missing current sports ownership token: ${token}`);
     }
+  }
+}
+
+const retiredDmvRoutes = [
+  ['src/routes/dmv.tsx', '/dmv', 'https://texasdefined.com/texas-dmv'],
+  ['src/routes/dmv.cdl.tsx', '/dmv/cdl', 'https://texasdefined.com/texas-drivers-license'],
+  ['src/routes/dmv.cdl-classes.tsx', '/dmv/cdl-classes', 'https://texasdefined.com/texas-drivers-license'],
+  ['src/routes/dmv.real-id.tsx', '/dmv/real-id', 'https://texasdefined.com/texas-drivers-license'],
+  ['src/routes/dmv.forms-downloads.tsx', '/dmv/forms-downloads', 'https://texasdefined.com/texas-dmv'],
+  ['src/routes/dmv.cdl-endorsements.tsx', '/dmv/cdl-endorsements', 'https://texasdefined.com/texas-drivers-license'],
+  ['src/routes/dmv.change-address.tsx', '/dmv/change-address', 'https://texasdefined.com/texas-drivers-license'],
+  ['src/routes/dmv.license-status.tsx', '/dmv/license-status', 'https://texasdefined.com/texas-drivers-license'],
+  ['src/routes/dmv.driver-license.tsx', '/dmv/driver-license', 'https://texasdefined.com/texas-drivers-license'],
+  ['src/routes/dmv.dps-appointments.tsx', '/dmv/dps-appointments', 'https://texasdefined.com/texas-drivers-license'],
+  ['src/routes/dmv.replace-lost-license.tsx', '/dmv/replace-lost-license', 'https://texasdefined.com/texas-drivers-license'],
+  ['src/routes/dmv.texas-dmv-vs-dps.tsx', '/dmv/texas-dmv-vs-dps', 'https://texasdefined.com/texas-dmv'],
+  ['src/routes/dmv.identification-card.tsx', '/dmv/identification-card', 'https://texasdefined.com/texas-drivers-license'],
+  ['src/routes/dmv.driver-license-renewal.tsx', '/dmv/driver-license-renewal', 'https://texasdefined.com/texas-drivers-license'],
+  ['src/routes/dmv.driver-license-documents.tsx', '/dmv/driver-license-documents', 'https://texasdefined.com/texas-drivers-license'],
+];
+
+for (const [routeFile, routePath, target] of retiredDmvRoutes) {
+  if (!fs.existsSync(routeFile)) {
+    errors.push(`Missing retired DMV redirect route: ${routeFile}`);
+    continue;
+  }
+  const source = fs.readFileSync(routeFile, 'utf8');
+  for (const token of [
+    `createFileRoute("${routePath}")`,
+    target,
+    'statusCode: 301',
+    'location.searchStr',
+  ]) {
+    if (!source.includes(token)) {
+      errors.push(`${routeFile} missing retired DMV handoff token: ${token}`);
+    }
+  }
+  for (const token of [
+    'buildSeo',
+    'SITE_URL',
+    'component:',
+    'FAQPage',
+    'Related Keep TX Red guides',
+    'HubBreadcrumbs',
+    'rel: "canonical"',
+  ]) {
+    if (source.includes(token)) {
+      errors.push(`${routeFile} restored retired KeepTXRed DMV product logic: ${token}`);
+    }
+  }
+}
+
+const sitemapIndexPath = 'src/routes/sitemap[.]xml.ts';
+if (!fs.existsSync(sitemapIndexPath)) {
+  errors.push(`Missing ${sitemapIndexPath}`);
+} else {
+  const source = fs.readFileSync(sitemapIndexPath, 'utf8');
+  if (source.includes('sitemap-dmv.xml')) {
+    errors.push(`${sitemapIndexPath} restored retired empty DMV sitemap advertisement`);
+  }
+}
+
+const indexabilityGuardPath = 'scripts/seo/validate-indexability.mjs';
+if (!fs.existsSync(indexabilityGuardPath)) {
+  errors.push(`Missing ${indexabilityGuardPath}`);
+} else {
+  const source = fs.readFileSync(indexabilityGuardPath, 'utf8');
+  if (source.includes('/sitemap-dmv.xml')) {
+    errors.push(`${indexabilityGuardPath} restored retired DMV sitemap checks`);
+  }
+  const priorityBlock = source.match(/const INDEXABLE_PRIORITY_PATHS = \[([\s\S]*?)\];/)?.[1] ?? '';
+  if (priorityBlock.includes('"/dmv"')) {
+    errors.push(`${indexabilityGuardPath} restored retired /dmv as an indexable KTR priority page`);
+  }
+  const redirectBlock = source.match(/const REDIRECT_ALIASES = \[([\s\S]*?)\];/)?.[1] ?? '';
+  if (!redirectBlock.includes('"/dmv"')) {
+    errors.push(`${indexabilityGuardPath} must keep /dmv in the redirect alias exclusion list`);
   }
 }
 
