@@ -388,6 +388,27 @@ if (!fs.existsSync(startPath)) {
   }
 }
 
+const sportsOwnershipMigrationPath = 'supabase/migrations/20260922133526_align_routine_sports_ownership_to_texasdefined.sql';
+if (!fs.existsSync(sportsOwnershipMigrationPath)) {
+  errors.push(`Missing ${sportsOwnershipMigrationPath}`);
+} else {
+  const source = fs.readFileSync(sportsOwnershipMigrationPath, 'utf8');
+  for (const token of [
+    'public.enforce_texasdefined_sports_ownership()',
+    'zzzzzzzzzzzz_enforce_texasdefined_sports_ownership',
+    "new.target_site := 'texasdefined'",
+    "new.target_section := 'Sports'",
+    'new.ready_for_rewrite := false',
+    'new.internal_slug is not null or new.texasdefined_slug is not null',
+    'internal_slug is null',
+    'texasdefined_slug is null',
+  ]) {
+    if (!source.includes(token)) {
+      errors.push(`${sportsOwnershipMigrationPath} missing current sports ownership token: ${token}`);
+    }
+  }
+}
+
 const migratedPracticalGuideMapPath = 'src/lib/migrated-practical-guide-canonical.ts';
 const migratedPracticalGuideRoutes = [
   ['src/routes/texas-first-time-homebuyer-programs.tsx', '/texas-first-time-homebuyer-programs', 'https://texasdefined.com/texas-first-time-homebuyer-programs'],
