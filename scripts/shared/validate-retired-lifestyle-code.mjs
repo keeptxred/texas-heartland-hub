@@ -26,6 +26,10 @@ const retiredFiles = [
   'src/components/city-page.tsx',
   'src/lib/static-article-body-upgrades.ts',
   'src/lib/static-article-body-upgrades.test.ts',
+  'src/components/sports-coverage-placeholder.tsx',
+  'src/lib/sports.functions.ts',
+  'src/lib/sports-lifecycle.ts',
+  'src/routes/api/public/hooks/generate-sports.ts',
   'src/pages/home/TexasHomeOwnershipCostPage.tsx',
   'src/components/home/TexasHomeOwnershipCostDashboard.tsx',
   'src/pages/homeAffordability/TexasHomeAffordabilityPage.tsx',
@@ -326,6 +330,61 @@ for (const entry of publicOwnershipFiles) {
     if (!source.toLowerCase().includes(token.toLowerCase())) {
       errors.push(`${entry.path} missing KeepTXRed ownership token: ${token}`);
     }
+  }
+}
+
+const retiredSportsRoutes = [
+  ['src/routes/texas-sports.tsx', '/texas-sports'],
+  ['src/routes/texas-sports.index.tsx', '/texas-sports/'],
+  ['src/routes/texas-sports.$league.tsx', '/texas-sports/$league'],
+  ['src/routes/texas-sports.team.$team.tsx', '/texas-sports/team/$team'],
+  ['src/routes/texas-sports.topic.$topic.tsx', '/texas-sports/topic/$topic'],
+];
+
+for (const [routeFile, routePath] of retiredSportsRoutes) {
+  if (!fs.existsSync(routeFile)) {
+    errors.push(`Missing retired sports redirect route: ${routeFile}`);
+    continue;
+  }
+  const source = fs.readFileSync(routeFile, 'utf8');
+  for (const token of [
+    `createFileRoute("${routePath}")`,
+    'https://texasdefined.com/sports',
+    'statusCode: 301',
+    'location.searchStr',
+  ]) {
+    if (!source.includes(token)) {
+      errors.push(`${routeFile} missing retired sports handoff token: ${token}`);
+    }
+  }
+  for (const token of [
+    'Keep TX Red Sports',
+    'listSportsLatest',
+    'listSportsTrending',
+    'listSportsByLeague',
+    'listSportsByTeam',
+    'listSportsByTopic',
+    'component:',
+    'rel: "canonical"',
+  ]) {
+    if (source.includes(token)) {
+      errors.push(`${routeFile} restored retired KeepTXRed sports product logic: ${token}`);
+    }
+  }
+}
+
+const startPath = 'src/start.ts';
+if (!fs.existsSync(startPath)) {
+  errors.push(`Missing ${startPath}`);
+} else {
+  const source = fs.readFileSync(startPath, 'utf8');
+  const directAggiesHandoff = '["/texas-sports/team/aggies", "https://texasdefined.com/sports"]';
+  const oldAggiesHop = '["/texas-sports/team/aggies", "/texas-sports/team/texas-am"]';
+  if (!source.includes(directAggiesHandoff)) {
+    errors.push(`${startPath} missing one-hop retired Aggies sports handoff`);
+  }
+  if (source.includes(oldAggiesHop)) {
+    errors.push(`${startPath} restored two-hop retired Aggies sports redirect`);
   }
 }
 
