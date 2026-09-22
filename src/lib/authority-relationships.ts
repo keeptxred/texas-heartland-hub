@@ -6,6 +6,7 @@ import {
 } from '@/lib/authority-entity';
 import { authorityEntityPath } from '@/lib/authority-entity-paths';
 import { isPublicArticleReady } from '@/lib/public-article-readiness';
+import { isKeepTxRedSearchOwnedStory } from '@/lib/ktr-search-ownership';
 
 const db = supabase as any;
 
@@ -101,14 +102,23 @@ export async function getRelatedAuthorityContent(
     articleIds.length
       ? db
           .from('daily_articles')
-          .select('id,title,slug,dek,category,source_name,source_url,published_at,content_quality_score,body_json,quality_flags')
+          .select('id,title,slug,dek,category,discover_category,kind,source_name,source_url,published_at,content_quality_score,body_json,quality_flags')
           .in('id', articleIds)
       : { data: [] },
   ]);
   const billMap = new Map((bills.data ?? []).map((bill: any) => [bill.id, bill]));
   const articleMap = new Map(
     (articles.data ?? [])
-      .filter((article: any) => isPublicArticleReady(article))
+      .filter((article: any) =>
+        isPublicArticleReady(article)
+        && isKeepTxRedSearchOwnedStory({
+          title: article.title ?? '',
+          description: article.dek,
+          category: article.category,
+          source: article.source_name,
+          kind: article.kind,
+        }),
+      )
       .map((article: any) => [article.id, article]),
   );
 
