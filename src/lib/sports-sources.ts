@@ -15,10 +15,11 @@ export type SportsSource = {
 };
 
 /**
- * Primary-source-first registry for KTR Sports discovery. The standalone
- * ingest hook uses this list, while the existing general ingest pipeline can
- * continue to run unchanged. HTML entries intentionally provide an include
- * regex rather than pretending a non-existent RSS feed exists.
+ * Primary-source-first registry for shared Texas sports discovery. The KTR-hosted
+ * ingest hook only collects source material into the shared feed; downstream
+ * ownership routing sends routine sports coverage to TexasDefined and preserves
+ * public-affairs sports stories for KeepTXRed. HTML entries intentionally use
+ * include regexes rather than pretending a non-existent RSS feed exists.
  */
 export const SPORTS_SOURCES: readonly SportsSource[] = [
   { name: "Dallas Cowboys", url: "https://www.dallascowboys.com/rss/news", mode: "rss", team: "cowboys", league: "nfl", priority: 1, reputation: 95 },
