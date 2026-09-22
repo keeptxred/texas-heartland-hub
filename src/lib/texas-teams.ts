@@ -1,6 +1,6 @@
-// Central registry for every Texas team surfaced under /texas-sports.
-// A team's `slug` is the URL segment (/texas-sports/team/$team) AND the
-// value stored in `daily_articles.teams[]` for cross-posting.
+// Shared Texas team registry used for sports classification and source routing.
+// KeepTXRed no longer owns public team pages; routine sports coverage is routed
+// to TexasDefined while KTR retains public-affairs stories involving sports.
 
 export type TeamKind = "pro" | "college";
 export type LeagueSlug = "nfl" | "mlb" | "nba" | "nhl" | "mls" | "nwsl" | "wnba" | "cfb";
