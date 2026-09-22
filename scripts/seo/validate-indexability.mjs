@@ -24,7 +24,7 @@ const SAMPLE = Number(process.env.SEO_SAMPLE || 60);
 const PRIORITY_SITEMAP = "/sitemap-priority.xml";
 const MAX_PRIORITY_URLS = 30;
 const DERIVATIVE_SITEMAPS = new Set(["/sitemap-news.xml", "/sitemap-images.xml", PRIORITY_SITEMAP]);
-const ALWAYS_LIVE_CHECK_SITEMAPS = new Set(["/sitemap-pages.xml", "/sitemap-dmv.xml"]);
+const ALWAYS_LIVE_CHECK_SITEMAPS = new Set(["/sitemap-pages.xml"]);
 const DISALLOWED = [/\?/, /#/, /^\/admin/, /^\/api\//, /^\/cart/, /^\/shop\/checkout/, /^\/preview\//, /^\/hubs/, /^\/email\//];
 const INDEXABLE_PRIORITY_PATHS = [
   "/contact-legislators",
@@ -32,7 +32,6 @@ const INDEXABLE_PRIORITY_PATHS = [
   "/laws",
   "/bills",
   "/texas-legislature",
-  "/dmv",
 ];
 const REDIRECT_ALIASES = [
   "/about-keep-texas-red",
@@ -44,6 +43,7 @@ const REDIRECT_ALIASES = [
   "/texas-news",
   "/voting-locations",
   "/living-in-texas",
+  "/dmv",
   "/moving-to-texas",
   "/texas-living",
   "/explore",
