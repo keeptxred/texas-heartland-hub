@@ -21,6 +21,8 @@ const retiredFiles = [
   'src/lib/__tests__/moving-resources.test.ts',
   'src/components/tax-calculator.tsx',
   'src/components/homestead-exemption-guide.tsx',
+  'src/lib/static-article-body-upgrades.ts',
+  'src/lib/static-article-body-upgrades.test.ts',
   'src/pages/home/TexasHomeOwnershipCostPage.tsx',
   'src/components/home/TexasHomeOwnershipCostDashboard.tsx',
   'src/pages/homeAffordability/TexasHomeAffordabilityPage.tsx',
@@ -189,6 +191,32 @@ const retiredDirectories = [
 
 for (const directory of retiredDirectories) {
   if (fs.existsSync(directory)) errors.push(`Retired lifestyle implementation directory returned: ${directory}`);
+}
+
+const staticArticleUpgradeRouterPath = 'src/lib/static-article-body-upgrade-router.ts';
+if (!fs.existsSync(staticArticleUpgradeRouterPath)) {
+  errors.push(`Missing ${staticArticleUpgradeRouterPath}`);
+} else {
+  const source = fs.readFileSync(staticArticleUpgradeRouterPath, 'utf8');
+  for (const token of [
+    'applyStaticArticleBodyUpgrade',
+    'ORIGINAL_HOMESTEAD_EDITOR_FINGERPRINT',
+    'ORIGINAL_HOMESTEAD_INTRO_FINGERPRINT',
+    'isCurrentLegacyHomesteadExplainer',
+  ]) {
+    if (source.includes(token)) {
+      errors.push(`${staticArticleUpgradeRouterPath} restored retired homeowner homestead upgrade logic: ${token}`);
+    }
+  }
+  for (const token of [
+    'applyNoIncomeTaxArticleUpgrade',
+    'applyVotingGuide2026Upgrade',
+    'applyGunLawsCurrentUpgrade',
+  ]) {
+    if (!source.includes(token)) {
+      errors.push(`${staticArticleUpgradeRouterPath} lost active KTR-owned reviewed upgrade: ${token}`);
+    }
+  }
 }
 
 const registryPath = 'src/shared/texas-platform/registry.ts';
