@@ -8,7 +8,10 @@ const TEXASDEFINED_URL =
 export const Route = createFileRoute(
   "/news/2026-08-09-canyon-lake-full-capacity-recovery",
 )({
-  loader: () => {
-    throw redirect({ href: TEXASDEFINED_URL, statusCode: 301 });
+  beforeLoad: ({ location }) => {
+    throw redirect({
+      href: `${TEXASDEFINED_URL}${location.searchStr || ""}`,
+      statusCode: 301,
+    });
   },
 });
