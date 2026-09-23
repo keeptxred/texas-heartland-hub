@@ -1,9 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/texas-resources/topic/$topicId')({
-  beforeLoad: ({ params }) => {
-    const target = `https://texasdefined.com/texas-resources?q=${encodeURIComponent(params.topicId)}`;
-    if (typeof window !== 'undefined') window.location.replace(target);
-    throw new Response(null, { status: 301, headers: { Location: target } });
+export const Route = createFileRoute("/texas-resources/topic/$topicId")({
+  beforeLoad: ({ params, location }) => {
+    throw redirect({
+      href: `https://texasdefined.com/texas-resources?q=${encodeURIComponent(params.topicId)}${location.searchStr ? `&${location.searchStr.replace(/^\\?/, "")}` : ""}`,
+      statusCode: 301,
+    });
   },
 });
