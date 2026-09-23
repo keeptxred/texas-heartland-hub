@@ -27,6 +27,7 @@ const retiredFiles = [
   'src/lib/static-article-body-upgrades.ts',
   'src/lib/static-article-body-upgrades.test.ts',
   'src/components/sports-coverage-placeholder.tsx',
+  'src/shared/texas-platform/components.tsx',
   'src/lib/sports.functions.ts',
   'src/lib/sports-lifecycle.ts',
   'src/routes/api/public/hooks/generate-sports.ts',
