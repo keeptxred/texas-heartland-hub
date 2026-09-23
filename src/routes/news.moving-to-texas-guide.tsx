@@ -5,8 +5,6 @@ export const Route = createFileRoute("/news/moving-to-texas-guide")({
     throw redirect({
       href: `https://texasdefined.com/article/moving-to-texas-what-nobody-tells-you${location.searchStr || ""}`,
       statusCode: 301,
-      reloadDocument: true,
     });
   },
-  component: () => null,
 });
