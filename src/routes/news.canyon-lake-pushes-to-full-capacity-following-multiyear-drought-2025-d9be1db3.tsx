@@ -6,12 +6,10 @@ const TARGET_URL =
 export const Route = createFileRoute(
   "/news/canyon-lake-pushes-to-full-capacity-following-multiyear-drought-2025-d9be1db3",
 )({
-  beforeLoad: () => {
+  beforeLoad: ({ location }) => {
     throw redirect({
-      href: TARGET_URL,
+      href: `${TARGET_URL}${location.searchStr || ""}`,
       statusCode: 301,
-      reloadDocument: true,
     });
   },
-  component: () => null,
 });

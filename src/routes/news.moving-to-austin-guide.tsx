@@ -5,8 +5,6 @@ export const Route = createFileRoute("/news/moving-to-austin-guide")({
     throw redirect({
       href: `https://texasdefined.com/article/moving-to-austin-guide${location.searchStr || ""}`,
       statusCode: 301,
-      reloadDocument: true,
     });
   },
-  component: () => null,
 });
