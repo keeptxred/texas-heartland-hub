@@ -55,10 +55,14 @@ test('September Flyover business query covers the observed missed business beats
     'tourism+impact',
     'Goodfellow+Air+Force+Base',
     'Christoval+Road',
+    'Project+Crystal+Sun',
   ]) {
     expect(relay).toContain(term);
   }
   expect(relay).toContain('when%3A7d');
+  for (const term of ['nuclear+fuel+salt', 'National+Math+Stars', 'Jordan+Shipley']) {
+    expect(relay).toContain(term);
+  }
 });
 
 test('September Flyover recurring community and campus stories escape generic review safely', () => {
