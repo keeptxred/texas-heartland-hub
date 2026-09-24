@@ -8,6 +8,7 @@ const FEEDS: Record<string, string> = {
   "kens-local": "https://www.kens5.com/feeds/syndication/rss/news/local",
   "kcen-local": "https://www.kcentv.com/feeds/syndication/rss/news/local",
   "lmt-local": "https://www.lmtonline.com/default/feed/news-rss-1512.php",
+  "texas-flyover": "https://thetexasflyover.com/feed/",
   "google-executive-actions": "https://news.google.com/rss/search?q=%28site%3Agov.texas.gov+OR+%22Governor+Abbott%22+appointment+OR+%22Governor+Abbott%22+directs+OR+%22Governor+Abbott%22+grant%29+when%3A3d&hl=en-US&gl=US&ceid=US%3Aen",
   "google-attorney-general": "https://news.google.com/rss/search?q=%28%22Texas+Attorney+General%22+OR+site%3Atexasattorneygeneral.gov%29+when%3A7d&hl=en-US&gl=US&ceid=US%3Aen",
   "google-dps-wanted": "https://news.google.com/rss/search?q=%28site%3Adps.texas.gov+OR+%22Texas+10+Most+Wanted%22+OR+%22Texas+DPS%22+reward+OR+%22Texas+DPS%22+arrest%29+when%3A3d&hl=en-US&gl=US&ceid=US%3Aen",
@@ -58,6 +59,156 @@ const UPSTREAM_HEADERS = {
   "Cache-Control": "no-cache",
 };
 
+
+const FLYOVER_KEY = "texas-flyover";
+const FLYOVER_TEXAS_CONTEXT_RE = /\b(texas|tx|abilene|amarillo|arlington|austin|beaumont|brownsville|bryan|college station|corpus christi|dallas|denton|el paso|fort worth|galveston|harlingen|houston|harris county|killeen|laredo|lubbock|mcallen|midland|odessa|palestine|san angelo|san antonio|spring|tyler|waco|longhorns?|aggies|cowboys|texans|rangers|astros|spurs|mavericks|stars|wings|baylor|tcu|smu|texas tech|unt|university of north texas|ercot|saws|dps|camp mystic|big tex)\b/i;
+const FLYOVER_SKIP_HOST_RE = /(^|\.)((thetexasflyover|jointheflyover)\.com|rebrand\.ly|emailnewsletter\.ad|nativepath\.com|invest\.doroni\.io|gotrk1\.com|optout\.thetexasflyover\.com)$/i;
+const FLYOVER_SCORE_LINK_RE = /^(mlb|nfl|nhl|wnba|soccer|ncaa(?:\s+volleyball)?)$/i;
+const FLYOVER_GENERIC_LINK_RE = /\b(more|see details|read story|watch video|see video|see case|see charges|read statement|see rankings|see visit|see photo)\b/gi;
+
+function decodeHtmlEntities(value: string): string {
+  return value
+    .replace(/&#x([0-9a-f]+);/gi, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCodePoint(parseInt(dec, 10)))
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">");
+}
+
+function readableHtml(value: string): string {
+  return decodeHtmlEntities(
+    value
+      .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
+      .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
+      .replace(/<br\s*\/?>/gi, "\n")
+      .replace(/<\/(?:p|div|li|h[1-6])>/gi, "\n")
+      .replace(/<[^>]+>/g, " "),
+  )
+    .replace(/[ \t]+/g, " ")
+    .replace(/ *\n+ */g, "\n")
+    .trim();
+}
+
+function rawXmlTag(block: string, tag: string): string {
+  const escaped = tag.replace(/[.*+?^$()|[\]\\{}]/g, "\\
+Deno.serve(");
+  const match = block.match(new RegExp("<" + escaped + "[^>]*>([\\s\\S]*?)<\\/" + escaped + ">", "i"));
+  if (!match) return "";
+  return match[1].replace(/^<!\[CDATA\[/i, "").replace(/\]\]>$/i, "");
+}
+
+function xmlEscape(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+function storyTitle(segment: string): string {
+  const clean = segment
+    .replace(/KTRLINK\d+(?:END)?TOKEN/g, " ")
+    .replace(FLYOVER_GENERIC_LINK_RE, " ")
+    .replace(/\(\s*\)/g, " ")
+    .replace(/^[➤\s•–—-]+/, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  const sentence = clean.match(/^(.{25,260}?[.!?])(?:\s|$)/)?.[1] ?? clean;
+  return sentence.length > 240 ? sentence.slice(0, 237).trimEnd() + "…" : sentence;
+}
+
+type FlyoverLead = { title: string; link: string; pubDate: string };
+
+function extractFlyoverLeads(xml: string): FlyoverLead[] {
+  const editions = xml.match(/<item\b[\s\S]*?<\/item>/gi) ?? [];
+  const leads: FlyoverLead[] = [];
+  const seenLinks = new Set<string>();
+  const seenStories = new Set<string>();
+
+  for (const edition of editions.slice(0, 5)) {
+    const pubDateRaw = readableHtml(rawXmlTag(edition, "pubDate"));
+    const parsedDate = new Date(pubDateRaw);
+    const pubDate = Number.isFinite(parsedDate.getTime()) ? parsedDate.toUTCString() : new Date().toUTCString();
+    const html = rawXmlTag(edition, "content:encoded") || rawXmlTag(edition, "description");
+    if (!html) continue;
+
+    const anchors: Array<{ token: string; href: string; label: string }> = [];
+    let serial = 0;
+    const annotated = html.replace(
+      /<a\b[^>]*href=(["'])(.*?)\1[^>]*>([\s\S]*?)<\/a>/gi,
+      (_full, _quote, rawHref, rawLabel) => {
+        const token = "KTRLINK" + serial++ + "TOKEN";
+        const label = readableHtml(rawLabel);
+        anchors.push({ token, href: decodeHtmlEntities(rawHref), label });
+        return token + " " + label + " KTRLINK" + (serial - 1) + "ENDTOKEN";
+      },
+    );
+    const plain = readableHtml(annotated);
+
+    for (const anchor of anchors) {
+      let url: URL;
+      try {
+        url = new URL(anchor.href, "https://thetexasflyover.com/");
+      } catch {
+        continue;
+      }
+      if (!/^https?:$/.test(url.protocol)) continue;
+      if (FLYOVER_SKIP_HOST_RE.test(url.hostname)) continue;
+      if (/\.(?:jpg|jpeg|png|gif|webp|svg)(?:$|\?)/i.test(url.pathname + url.search)) continue;
+      if (FLYOVER_SCORE_LINK_RE.test(anchor.label.trim())) continue;
+      const canonicalLink = url.toString();
+      if (seenLinks.has(canonicalLink)) continue;
+
+      const markerIndex = plain.indexOf(anchor.token);
+      if (markerIndex < 0) continue;
+      const lineStart = plain.lastIndexOf("\n", markerIndex) + 1;
+      const nextLine = plain.indexOf("\n", markerIndex);
+      const lineEnd = nextLine < 0 ? plain.length : nextLine;
+      const line = plain.slice(lineStart, lineEnd);
+      const localMarker = markerIndex - lineStart;
+      const previousBullet = line.lastIndexOf("➤", localMarker);
+      const nextBullet = line.indexOf("➤", localMarker + anchor.token.length);
+      const segment = line.slice(previousBullet >= 0 ? previousBullet + 1 : 0, nextBullet >= 0 ? nextBullet : line.length);
+      if (/flying together with our sponsor/i.test(segment) || /yesterday.?s results/i.test(segment)) continue;
+      if (!FLYOVER_TEXAS_CONTEXT_RE.test(segment)) continue;
+
+      const title = storyTitle(segment);
+      if (title.length < 25) continue;
+      const storyKey = title.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+      if (!storyKey || seenStories.has(storyKey)) continue;
+
+      seenStories.add(storyKey);
+      seenLinks.add(canonicalLink);
+      leads.push({ title, link: canonicalLink, pubDate });
+    }
+  }
+  return leads;
+}
+
+function buildFlyoverDiscoveryFeed(xml: string): string {
+  const leads = extractFlyoverLeads(xml).slice(0, 100);
+  const items = leads.map((lead) =>
+    "<item>" +
+    "<title>" + xmlEscape(lead.title) + "</title>" +
+    "<link>" + xmlEscape(lead.link) + "</link>" +
+    "<guid isPermaLink=\"true\">" + xmlEscape(lead.link) + "</guid>" +
+    "<pubDate>" + xmlEscape(lead.pubDate) + "</pubDate>" +
+    "<description>Discovery-only lead from The Texas Flyover. Verify and report from the linked original publisher before publication.</description>" +
+    "</item>"
+  ).join("");
+  return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+    "<rss version=\"2.0\"><channel>" +
+    "<title>KeepTXRed Texas Flyover discovery bridge</title>" +
+    "<link>https://thetexasflyover.com/</link>" +
+    "<description>Discovery-only outbound Texas story leads; not a republication feed.</description>" +
+    items +
+    "</channel></rss>";
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method !== "GET") return new Response("Method not allowed", { status: 405, headers: { Allow: "GET" } });
   const key = new URL(req.url).searchParams.get("feed") ?? "";
@@ -65,6 +216,19 @@ Deno.serve(async (req: Request) => {
   if (!upstreamUrl) return new Response("Unknown feed", { status: 404 });
   try {
     const upstream = await fetch(upstreamUrl, { headers: UPSTREAM_HEADERS, redirect: "follow", signal: AbortSignal.timeout(15000) });
+    if (key === FLYOVER_KEY && upstream.ok) {
+      const transformed = buildFlyoverDiscoveryFeed(await upstream.text());
+      return new Response(transformed, {
+        status: 200,
+        headers: {
+          "Content-Type": "application/rss+xml; charset=utf-8",
+          "Cache-Control": "public, max-age=120, s-maxage=120",
+          "X-KTR-RSS-Source": key,
+          "X-KTR-Discovery-Mode": "outbound-story-leads",
+          "X-Content-Type-Options": "nosniff",
+        },
+      });
+    }
     const body = await upstream.arrayBuffer();
     return new Response(body, {
       status: upstream.status,
