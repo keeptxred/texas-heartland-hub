@@ -8,7 +8,7 @@ function item(source: string, title: string, description: string, link: string, 
 }
 
 describe("story clustering", () => {
-  it("strongly connects statewide and local data-center angles", () => {
+  it("does not merge unrelated statewide and local data-center stories just because they share the beat", () => {
     const statewide = item(
       "Office of the Governor",
       "Texas pauses new data center grid connections",
@@ -21,10 +21,30 @@ describe("story clustering", () => {
       "City leaders are weighing rules for new data centers and their effect on power demand.",
       "https://ksat.com/data-center-moratorium",
     );
-    expect(combinationScore(statewide, local).score).toBeGreaterThanOrEqual(65);
+    expect(combinationScore(statewide, local).score).toBeLessThan(45);
+    expect(buildStoryCluster(statewide, [local]).members).toHaveLength(0);
   });
 
-  it("connects tax-free weekend, school practice and heat as complementary angles", () => {
+  it("still merges independent reports about the same data-center permit pause", () => {
+    const first = item(
+      "Office of the Governor",
+      "Abbott orders halt to Texas data center permits pending grid and water audits",
+      "The governor directed TCEQ to pause environmental permits while state agencies audit grid and water impacts.",
+      "https://gov.texas.gov/data-center-permit-pause",
+      "2026-09-22T12:00:00Z",
+    );
+    const second = item(
+      "Independent News",
+      "Texas data center permit pause remains in place during grid, water audits",
+      "TCEQ paused environmental permits for new data centers while the state completes grid and water audits.",
+      "https://news.example/data-center-permit-pause",
+      "2026-09-22T13:00:00Z",
+    );
+    expect(combinationScore(first, second).score).toBeGreaterThanOrEqual(45);
+    expect(buildStoryCluster(first, [second]).members).toHaveLength(1);
+  });
+
+  it("does not merge tax-free shopping with an unrelated school heat-practice story", () => {
     const tax = item(
       "Texas Comptroller",
       "Texas tax-free weekend runs Aug. 7-9",
@@ -38,7 +58,62 @@ describe("story clustering", () => {
       "https://uiltexas.org/heat",
       "2026-08-08T10:00:00Z",
     );
-    expect(combinationScore(tax, heat).score).toBeGreaterThanOrEqual(65);
+    expect(combinationScore(tax, heat).score).toBeLessThan(45);
+    expect(buildStoryCluster(tax, [heat]).members).toHaveLength(0);
+  });
+
+  it("does not merge unrelated Fort Worth stories just because the multi-word city name overlaps", () => {
+    const shooting = item(
+      "Outlet A",
+      "Fort Worth police investigate shooting near apartment complex",
+      "Detectives are investigating a shooting at an apartment complex.",
+      "https://a.example/fort-worth-shooting",
+      "2026-09-22T10:00:00Z",
+    );
+    const garden = item(
+      "Outlet B",
+      "Fort Worth Botanic Garden opens new enchanted exhibit",
+      "The seasonal exhibit opens this weekend at the Fort Worth Botanic Garden.",
+      "https://b.example/fort-worth-garden",
+      "2026-09-22T11:00:00Z",
+    );
+    expect(combinationScore(shooting, garden).score).toBe(0);
+  });
+
+  it("does not merge unrelated shootings that only share generic crime vocabulary", () => {
+    const a = item(
+      "Outlet A",
+      "Austin police launch investigation after downtown shooting",
+      "Police are investigating a shooting in Austin.",
+      "https://a.example/austin-shooting",
+      "2026-09-22T10:00:00Z",
+    );
+    const b = item(
+      "Outlet B",
+      "Nacogdoches shooting investigation continues after man found dead",
+      "Police are investigating an unrelated shooting in Nacogdoches.",
+      "https://b.example/nacogdoches-shooting",
+      "2026-09-22T11:00:00Z",
+    );
+    expect(combinationScore(a, b).score).toBe(0);
+  });
+
+  it("does not merge unrelated border-enforcement stories solely because both mention ICE", () => {
+    const a = item(
+      "Outlet A",
+      "Austin attorney seeks release of Venezuelan man after ICE shooting",
+      "The case concerns a Venezuelan man shot by an ICE officer in Austin.",
+      "https://a.example/austin-ice-shooting",
+      "2026-09-22T10:00:00Z",
+    );
+    const b = item(
+      "Outlet B",
+      "Texas landowners sue federal government over border wall plans",
+      "Landowners filed suit over federal border wall construction plans.",
+      "https://b.example/border-wall-lawsuit",
+      "2026-09-22T11:00:00Z",
+    );
+    expect(combinationScore(a, b).score).toBe(0);
   });
 
   it("does not merge unrelated Texas stories just because they are recent", () => {
