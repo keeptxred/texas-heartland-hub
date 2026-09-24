@@ -1,0 +1,80 @@
+name: Retry feed 3745344 once
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/retry-feed-3745344.once'
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AUTOMATION_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
+
+jobs:
+  retry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Verify one-time marker
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f .github/retry-feed-3745344.once
+          marker="$(tr -d '\r\n' < .github/retry-feed-3745344.once)"
+          if [[ "$marker" != "retry-feed-3745344-2026-09-24" ]]; then
+            echo "Unexpected one-time retry marker: $marker" >&2
+            exit 1
+          fi
+
+      - name: Retry exact feed item through deployed publisher
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          oidc_url="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-newsroom"
+          oidc_token="$(curl -fsS \
+            -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+            "$oidc_url" | jq -r '.value // empty')"
+
+          if [[ -z "$oidc_token" ]]; then
+            echo "GitHub Actions did not issue the newsroom OIDC token." >&2
+            exit 1
+          fi
+
+          endpoint="${AUTOMATION_ORIGIN%/}/api/public/hooks/retry-feed-3745344-once"
+          status=""
+          for attempt in $(seq 1 60); do
+            status="$(curl -sS -X POST -o /tmp/retry-feed.json -w '%{http_code}' \
+              --max-time 360 \
+              -H 'accept: application/json' \
+              -H "Authorization: Bearer ${oidc_token}" \
+              "$endpoint" || echo 000)"
+
+            echo "attempt=${attempt} HTTP=${status}"
+            cat /tmp/retry-feed.json 2>/dev/null || true
+            echo
+
+            if [[ "$status" == "404" ]]; then
+              sleep 10
+              continue
+            fi
+            break
+          done
+
+          if [[ "$status" != "200" ]]; then
+            echo "One-time feed retry endpoint did not return HTTP 200." >&2
+            exit 1
+          fi
+
+          jq -e '.feed_item_id == 3745344' /tmp/retry-feed.json >/dev/null
+          if ! jq -e '.ok == true and (.slug // "") != ""' /tmp/retry-feed.json >/dev/null; then
+            echo "Feed 3745344 did not pass the production publisher." >&2
+            exit 1
+          fi
+
+          echo "FEED_3745344_RETRY_SUCCESS slug=$(jq -r '.slug' /tmp/retry-feed.json)"
