@@ -35,7 +35,7 @@ describe("story clustering", () => {
     );
     const second = item(
       "Independent News",
-      "Texas data center permit pause remains in place during grid, water audits",
+      "Texas data center permits remain paused during grid, water audits",
       "TCEQ paused environmental permits for new data centers while the state completes grid and water audits.",
       "https://news.example/data-center-permit-pause",
       "2026-09-22T13:00:00Z",
