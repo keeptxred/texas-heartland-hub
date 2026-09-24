@@ -32,6 +32,12 @@ test('established Texas outlets do not fall to the unclassified reputation floor
     'dallas news',
     'borderreport',
     'newschannel ?10',
+    'texas parks (?:&|and) wildlife',
+    'kwtx',
+    'kvue',
+    'kcen(?: 6)?',
+    'kbtx(?: news 3)?',
+    'san angelo live',
   ]) {
     expect(scorer).toContain(sourcePattern);
   }
