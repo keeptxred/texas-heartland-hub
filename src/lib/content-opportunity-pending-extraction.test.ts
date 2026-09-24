@@ -19,12 +19,12 @@ describe("Content Opportunities pending extraction flow", () => {
     expect(source).toContain("executes every publication-quality and fact-verification gate server-side");
   });
 
-  it("loads held KTR rows across the full 14-day window instead of losing them behind the newest-500 cap", () => {
-    expect(source).toContain("fetchHeldKtrOpportunities(since)");
+  it("loads the full KTR 14-day window so older opportunities remain searchable", () => {
+    expect(source).toContain("fetchKtrOpportunities(since)");
     expect(source).toContain('.filter("target_site", "eq", "keeptxred")');
-    expect(source).toContain('.contains("preflight_json", { reason: "PUBLICATION_HOLD" })');
     expect(source).toContain(".range(pageStart, pageStart + pageSize - 1)");
-    expect(source).toContain("...heldFeed");
+    expect(source).toContain("const rawFeed = fullFeed.filter");
+    expect(source).not.toContain(".limit(500),");
   });
 
 
