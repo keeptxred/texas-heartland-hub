@@ -166,6 +166,73 @@ async function fetchHeldKtrOpportunities(since: string): Promise<FeedItem[]> {
   return held;
 }
 
+async function searchKtrOpportunityHistory(query: string, since: string): Promise<FeedItem[]> {
+  const term = query.trim();
+  if (!term) return [];
+
+  const select = "id,title,source,pub_date,internal_slug,link,description,extracted_body,preflight_json";
+  const titleSearch = supabase
+    .from("texas_news_feed")
+    .select(select)
+    .gte("pub_date", since)
+    .filter("target_site", "eq", "keeptxred")
+    .is("internal_slug", null)
+    .ilike("title", `%${term}%`)
+    .order("pub_date", { ascending: false })
+    .limit(100);
+  const sourceSearch = supabase
+    .from("texas_news_feed")
+    .select(select)
+    .gte("pub_date", since)
+    .filter("target_site", "eq", "keeptxred")
+    .is("internal_slug", null)
+    .ilike("source", `%${term}%`)
+    .order("pub_date", { ascending: false })
+    .limit(100);
+
+  const requests = [titleSearch, sourceSearch];
+  if (/^\d+$/.test(term)) {
+    requests.push(
+      supabase
+        .from("texas_news_feed")
+        .select(select)
+        .gte("pub_date", since)
+        .filter("target_site", "eq", "keeptxred")
+        .is("internal_slug", null)
+        .eq("id", Number(term))
+        .limit(1),
+    );
+  }
+
+  const results = await Promise.all(requests);
+  const firstError = results.find((result) => result.error)?.error;
+  if (firstError) throw firstError;
+
+  const candidates = dedupeFeedOpportunities(
+    results.flatMap((result) => (result.data ?? []) as FeedItem[]),
+  );
+  if (candidates.length === 0) return [];
+
+  const candidateIds = candidates.map((item) => item.id);
+  const { data: normalized, error: normalizationError } = await supabase
+    .from("news_feed_normalization")
+    .select("feed_item_id,duplicate_of_feed_item_id")
+    .in("feed_item_id", candidateIds)
+    .not("duplicate_of_feed_item_id", "is", null);
+
+  if (normalizationError) {
+    console.error("Failed to normalize KTR history search results", normalizationError);
+    return candidates;
+  }
+
+  const duplicateIds = new Set(
+    ((normalized ?? []) as Array<{ feed_item_id: number; duplicate_of_feed_item_id: number | null }>).map(
+      (row) => row.feed_item_id,
+    ),
+  );
+  return candidates.filter((item) => !duplicateIds.has(item.id));
+}
+
 function normalizeOpportunityTitle(value: string | null | undefined): string {
   return String(value ?? "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 }
@@ -285,6 +352,9 @@ export function ContentOpportunityPanel() {
   const [imageWorking, setImageWorking] = useState<Record<number, boolean>>({});
   const [filter, setFilter] = useState<FilterKey>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [historySearchItems, setHistorySearchItems] = useState<FeedItem[]>([]);
+  const [searchingHistory, setSearchingHistory] = useState(false);
+  const [historySearchError, setHistorySearchError] = useState<string | null>(null);
   const [previewId, setPreviewId] = useState<number | null>(null);
   const [visibleCount, setVisibleCount] = useState(75);
 
@@ -313,6 +383,21 @@ export function ContentOpportunityPanel() {
       if (prev.has(key)) return prev;
       const next = new Set(prev);
       next.add(key);
+      try {
+        window.localStorage.setItem(IGNORE_STORAGE_KEY, JSON.stringify([...next]));
+      } catch {
+        // ignore quota errors
+      }
+      return next;
+    });
+  }
+
+  function restoreOpportunity(r: FeedItem) {
+    const key = ignoreKey(r);
+    setIgnored((prev) => {
+      if (!prev.has(key)) return prev;
+      const next = new Set(prev);
+      next.delete(key);
       try {
         window.localStorage.setItem(IGNORE_STORAGE_KEY, JSON.stringify([...next]));
       } catch {
@@ -664,10 +749,53 @@ export function ContentOpportunityPanel() {
     };
   }, []);
 
+  useEffect(() => {
+    const term = searchQuery.trim();
+    if (term.length < 2) {
+      setHistorySearchItems([]);
+      setSearchingHistory(false);
+      setHistorySearchError(null);
+      return;
+    }
+
+    let active = true;
+    const timer = window.setTimeout(() => {
+      setSearchingHistory(true);
+      setHistorySearchError(null);
+      const since = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
+      void searchKtrOpportunityHistory(term, since)
+        .then((matches) => {
+          if (active) setHistorySearchItems(matches);
+        })
+        .catch((error) => {
+          if (!active) return;
+          console.error("Failed to search full KTR opportunity history", error);
+          setHistorySearchItems([]);
+          setHistorySearchError("History search failed — showing loaded opportunities only.");
+        })
+        .finally(() => {
+          if (active) setSearchingHistory(false);
+        });
+    }, 250);
+
+    return () => {
+      active = false;
+      window.clearTimeout(timer);
+    };
+  }, [searchQuery]);
+
   // Compute preflight once per item — pure, no network.
+  const opportunityPool = useMemo(
+    () =>
+      searchQuery.trim()
+        ? dedupeFeedOpportunities([...items, ...historySearchItems])
+        : items,
+    [items, historySearchItems, searchQuery],
+  );
+
   const preflightById = useMemo(() => {
     const m: Record<number, RewritePreflightResult> = {};
-    items.forEach((it) => {
+    opportunityPool.forEach((it) => {
       m[it.id] =
         it.id < 0
           ? {
@@ -681,17 +809,18 @@ export function ContentOpportunityPanel() {
           : effectivePreflight(it);
     });
     return m;
-  }, [items]);
+  }, [opportunityPool]);
 
-  const scored = useMemo(
-    () =>
-      items
-        .filter((it) => statuses[it.id]?.rewritten || !!articleMsg[it.id]?.text || shouldShowOpportunity(it))
-        .filter((it) => !ignored.has(ignoreKey(it)))
-        .map(score)
-        .sort((a, b) => b.total - a.total),
-    [items, ignored, statuses, articleMsg],
-  );
+  const scored = useMemo(() => {
+    const hasSearch = normalizeOpportunityTitle(searchQuery).length > 0;
+    return opportunityPool
+      .filter((it) => statuses[it.id]?.rewritten || !!articleMsg[it.id]?.text || shouldShowOpportunity(it))
+      // A deliberate search should be able to recover an item hidden earlier
+      // with Ignore. The row will show a Restore action instead of vanishing.
+      .filter((it) => hasSearch || !ignored.has(ignoreKey(it)))
+      .map(score)
+      .sort((a, b) => b.total - a.total);
+  }, [opportunityPool, ignored, statuses, articleMsg, searchQuery]);
 
   const filtered = useMemo(() => {
     const statusFiltered = filter === "all"
@@ -758,7 +887,7 @@ export function ContentOpportunityPanel() {
           type="search"
           value={searchQuery}
           onChange={(event) => setSearchQuery(event.target.value)}
-          placeholder="Search headline, source, or slug…"
+          placeholder="Search headline, source, or feed ID…"
           aria-label="Search content opportunities"
           className="min-w-[18rem] flex-1 border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary"
         />
@@ -772,7 +901,13 @@ export function ContentOpportunityPanel() {
           </button>
         ) : null}
         <span className="text-[10px] text-muted-foreground">
-          All is the default so status changes do not hide opportunities.
+          {historySearchError
+            ? historySearchError
+            : searchingHistory
+              ? "Searching the full 14-day KTR opportunity history…"
+              : searchQuery.trim()
+                ? "Search covers the full 14-day unpublished KTR history, not just the newest 500 loaded rows."
+                : "All is the default so status changes do not hide opportunities."}
         </span>
       </div>
       {loading ? (
@@ -796,6 +931,7 @@ export function ContentOpportunityPanel() {
             <tbody>
               {filtered.slice(0, visibleCount).map((r) => {
                 const status = statuses[r.id];
+                const rowIgnored = ignored.has(ignoreKey(r));
                 const alreadyPublished = !!status?.rewritten;
                 const isDailyArticle = r.id < 0;
                 const preflight = preflightById[r.id];
@@ -896,11 +1032,15 @@ export function ContentOpportunityPanel() {
                           )}
                           <button
                             type="button"
-                            onClick={() => ignoreOpportunity(r)}
-                            title="Hide this opportunity from the list (does not delete the source article)."
+                            onClick={() => rowIgnored ? restoreOpportunity(r) : ignoreOpportunity(r)}
+                            title={
+                              rowIgnored
+                                ? "Restore this opportunity to the normal queue."
+                                : "Hide this opportunity from the list (does not delete the source article)."
+                            }
                             className="px-3 py-1 border border-border text-[11px] font-bold uppercase tracking-widest hover:bg-muted"
                           >
-                            Ignore
+                            {rowIgnored ? "Restore" : "Ignore"}
                           </button>
                         </div>
                         {articleMsg[r.id]?.text ? (
@@ -1085,12 +1225,16 @@ export function ContentOpportunityPanel() {
                   <button
                     type="button"
                     onClick={() => {
-                      ignoreOpportunity(previewRow);
+                      if (ignored.has(ignoreKey(previewRow))) {
+                        restoreOpportunity(previewRow);
+                      } else {
+                        ignoreOpportunity(previewRow);
+                      }
                       setPreviewId(null);
                     }}
                     className="px-3 py-1 border border-border text-[11px] font-bold uppercase tracking-widest hover:bg-muted"
                   >
-                    Ignore
+                    {ignored.has(ignoreKey(previewRow)) ? "Restore" : "Ignore"}
                   </button>
                 </div>
               </div>
