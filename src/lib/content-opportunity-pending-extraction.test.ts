@@ -5,9 +5,18 @@ const source = readFileSync(new URL("../components/admin/ContentOpportunityPanel
 
 describe("Content Opportunities pending extraction flow", () => {
   it("keeps pending-extraction rows actionable", () => {
-    expect(source).toContain('preflight.rewriteable || preflight.reason === "PENDING_EXTRACTION"');
+    expect(source).toContain('preflight.reason === "PENDING_EXTRACTION"');
     expect(source).toContain('return canAttemptArticlePublish(effectivePreflight(item));');
     expect(source).toContain('"Check Source & Publish"');
+  });
+
+
+  it("keeps publication-held rows visible and manually recheckable without bypassing server gates", () => {
+    expect(source).toContain('String(preflight?.reason ?? "") === "PUBLICATION_HOLD"');
+    expect(source).toContain("isPublicationHold(preflight)");
+    expect(source).toContain('"Recheck & Publish"');
+    expect(source).toContain("publishFeedItem(r.id)");
+    expect(source).toContain("executes every publication-quality and fact-verification gate server-side");
   });
 
   it("refreshes persisted preflight after a failed publish attempt", () => {
