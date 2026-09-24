@@ -147,7 +147,7 @@ async function fetchHeldKtrOpportunities(since: string): Promise<FeedItem[]> {
       .from("texas_news_feed")
       .select("id,title,source,pub_date,internal_slug,link,description,extracted_body,preflight_json")
       .gte("pub_date", since)
-      .eq("target_site", "keeptxred")
+      .filter("target_site", "eq", "keeptxred")
       .contains("preflight_json", { reason: "PUBLICATION_HOLD" })
       .order("pub_date", { ascending: false })
       .order("id", { ascending: false })
