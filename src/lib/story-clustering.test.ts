@@ -221,6 +221,89 @@ describe("story clustering", () => {
     expect(likelySameLineage(a, b)).toBe(true);
   });
 
+
+  it("does not merge the real voter-registration story with unrelated campaign, tax, or school-award stories", () => {
+    const registration = item(
+      "Houston Public Media",
+      "Texans have less than 3 weeks to register to vote for November 2026 midterm election",
+      "Texas law requires eligible citizens to register 30 days before Election Day, meaning Oct. 5 is the last day to register for the Nov. 3, 2026 midterm election.",
+      "https://www.houstonpublicmedia.org/elections/registration-deadline",
+      "2026-09-17T19:03:31Z",
+    );
+    const campaignCaption = item(
+      "Bryan College Station Eagle",
+      "Texas state Rep. Gina Hinojosa, Texas Democratic gubernatorial candidate, speaks at a Lubbock County Democratic candidate rally on July 18, 2026, in Lubbock, Texas. Hinojosa will face Republican Gov. Greg Abbott in the November election.",
+      "Gina Hinojosa spoke at a Democratic candidate rally and will face Greg Abbott in the November election.",
+      "https://news.google.com/rss/articles/campaign-caption",
+      "2026-09-18T12:55:07Z",
+    );
+    const poll = item(
+      "KXAN — Austin",
+      "New poll shows Hinojosa ahead of Abbott for first time, Talarico leads Paxton",
+      "ReconMR/Siena finds Gina Hinojosa up 4 points on the three-term governor.",
+      "https://www.kxan.com/news/texas-politics/poll",
+      "2026-09-17T19:48:25Z",
+    );
+    const tax = item(
+      "KPRC 2 Click2Houston",
+      "3 Harris County commissioners defend property tax increase, blame Trump and Abbott policies for $250 million in costs",
+      "Harris County commissioners approved a property tax rate increase.",
+      "https://www.click2houston.com/news/local/harris-county-tax",
+      "2026-09-18T02:33:44Z",
+    );
+    const schools = item(
+      "Office of the Governor",
+      "Governor Abbott Announces 2026 Lone Star Ribbon Schools",
+      "Governor Greg Abbott announced 25 Texas public schools as Lone Star Ribbon Schools.",
+      "https://gov.texas.gov/news/post/lone-star-ribbon-schools",
+      "2026-09-17T16:37:05Z",
+    );
+
+    for (const unrelated of [campaignCaption, poll, tax, schools]) {
+      expect(combinationScore(registration, unrelated).score).toBe(0);
+    }
+    const cluster = buildStoryCluster(registration, [campaignCaption, poll, tax, schools], 5);
+    expect(cluster.members).toHaveLength(0);
+    expect(cluster.strongMerge).toBe(false);
+  });
+
+  it("does not treat a shared candidate plus governor as enough to merge a poll with a campaign-caption story", () => {
+    const poll = item(
+      "KXAN — Austin",
+      "New poll shows Hinojosa ahead of Abbott for first time, Talarico leads Paxton",
+      "A statewide poll measured support in the governor and Senate races.",
+      "https://kxan.com/poll",
+      "2026-09-17T19:48:25Z",
+    );
+    const caption = item(
+      "Bryan College Station Eagle",
+      "Texas state Rep. Gina Hinojosa speaks at a Democratic candidate rally and will face Gov. Greg Abbott in the November election",
+      "The candidate appeared at a July rally in Lubbock.",
+      "https://eagle.example/caption",
+      "2026-09-18T12:55:07Z",
+    );
+    expect(combinationScore(poll, caption).score).toBe(0);
+  });
+
+  it("still merges independent reports about the same voter-registration deadline", () => {
+    const first = item(
+      "Houston Public Media",
+      "Texas voters face Oct. 5 registration deadline for Nov. 3 election",
+      "Eligible Texans must register by Oct. 5 ahead of the Nov. 3 election.",
+      "https://houstonpublicmedia.org/registration",
+      "2026-09-17T19:03:31Z",
+    );
+    const second = item(
+      "Independent News",
+      "Texas voter registration deadline is Oct. 5 ahead of Nov. 3 election",
+      "The voter registration deadline for the November election is Oct. 5.",
+      "https://news.example/texas-registration-deadline",
+      "2026-09-17T20:03:31Z",
+    );
+    expect(combinationScore(first, second).score).toBeGreaterThanOrEqual(45);
+    expect(buildStoryCluster(first, [second]).members).toHaveLength(1);
+  });
+
   it("does not count syndicated copies as separate independent cluster sources", () => {
     const primary = item(
       "Official source",

@@ -38,6 +38,14 @@ const LOCATION_TERMS = new Set([
 // same day; actor + generic action is not a story key.
 const GENERIC_EVENT_ANCHOR_TERMS = new Set([
   "abbott","governor","grant","grants","fund","funds","funding","million","announce","announces","announced","announcement","state","statewide",
+  // Generic civic/political/time vocabulary can describe many unrelated stories
+  // in the same news cycle. These terms may boost a score after event identity
+  // is established, but they cannot establish that identity themselves.
+  "county","city","district","election","elections","campaign","candidate","candidates",
+  "democratic","democrat","republican","gop","vote","voter","voters","voting",
+  "poll","polls","race","midterm","midterms","primary","runoff",
+  "january","february","march","april","may","june","july","august","september",
+  "october","november","december",
 ]);
 
 const IMPORTANT = [
@@ -86,6 +94,15 @@ const TOPIC_BRIDGES: Array<{ tag: string; patterns: RegExp[] }> = [
       /\bfall practice/i,
       /\bfootball practice/i,
       /\bheat index\b/i,
+    ],
+  },
+  {
+    tag: "education-resource-grants",
+    patterns: [
+      /\bopen educational resources?\b/i,
+      /\beducational resources?\b/i,
+      /\beducation(?:al)? resource grants?\b/i,
+      /\bresource grants?\b/i,
     ],
   },
   {
@@ -218,13 +235,17 @@ function isLocationTerm(term: string): boolean {
   return LOCATION_TERMS.has(term);
 }
 
+function isGenericEventAnchorTerm(term: string): boolean {
+  return GENERIC_EVENT_ANCHOR_TERMS.has(term) || /^(?:19|20)\d{2}$/.test(term);
+}
+
 function isEventSpecificTerm(term: string): boolean {
   const normalized = term.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
   if (!normalized) return false;
   if (normalized.includes(" ")) {
-    return normalized.split(/\s+/).some((part) => !GENERIC_EVENT_ANCHOR_TERMS.has(part));
+    return normalized.split(/\s+/).some((part) => !isGenericEventAnchorTerm(part));
   }
-  return !GENERIC_EVENT_ANCHOR_TERMS.has(normalized);
+  return !isGenericEventAnchorTerm(normalized);
 }
 
 /**
@@ -270,14 +291,16 @@ export function combinationScore(primary: ClusterableFeedItem, candidate: Cluste
   const candidateTopics = topicTags(candidate);
   const sharedTopics = [...primaryTopics].filter((tag) => candidateTopics.has(tag));
 
-  // Recency, a different outlet, a public official, a generic grant/funding word,
-  // or a shared city are confidence boosts only after the reports are tied to the
-  // same event. Require at least one event-specific title/important anchor unless
-  // a curated topic bridge establishes the event family.
+  // Recency, a different outlet, a public official, a candidate name, an election
+  // month/year, or a shared city are confidence boosts only after the reports are
+  // tied to the same event. Require two event-specific title anchors unless a
+  // curated topic bridge or a genuinely event-specific important term establishes
+  // the event family. This prevents one actor plus generic election/time language
+  // from merging unrelated political stories into a single source packet.
   const hasSemanticAnchor =
     sharedTopics.length > 0 ||
-    (substantiveTitleOverlap.length >= 2 && eventSpecificTitleOverlap.length >= 1) ||
-    (eventSpecificImportantOverlap.length >= 1 && substantiveOverlap.length >= 2);
+    eventSpecificTitleOverlap.length >= 2 ||
+    (eventSpecificImportantOverlap.length >= 1 && eventSpecificTitleOverlap.length >= 1);
   if (!hasSemanticAnchor) return { score: 0, overlapTerms: [] };
 
   let score = 0;
