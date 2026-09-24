@@ -138,32 +138,34 @@ function canAttemptArticlePublish(preflight: RewritePreflightResult | undefined)
   );
 }
 
-async function fetchHeldKtrOpportunities(since: string): Promise<FeedItem[]> {
+async function fetchKtrOpportunities(since: string): Promise<FeedItem[]> {
   const pageSize = 500;
-  const held: FeedItem[] = [];
+  const opportunities: FeedItem[] = [];
 
+  // Search/filtering happens client-side, so the client must actually have the
+  // complete 14-day KTR window. A fixed newest-500 query made older valid rows
+  // impossible to find even with the All filter and search box.
   for (let pageStart = 0; ; pageStart += pageSize) {
     const { data, error } = await supabase
       .from("texas_news_feed")
       .select("id,title,source,pub_date,internal_slug,link,description,extracted_body,preflight_json")
       .gte("pub_date", since)
       .filter("target_site", "eq", "keeptxred")
-      .contains("preflight_json", { reason: "PUBLICATION_HOLD" })
       .order("pub_date", { ascending: false })
       .order("id", { ascending: false })
       .range(pageStart, pageStart + pageSize - 1);
 
     if (error) {
-      console.error("Failed to load held KTR opportunities", error);
+      console.error("Failed to load KTR opportunities", error);
       break;
     }
 
     const page = (data ?? []) as FeedItem[];
-    held.push(...page);
+    opportunities.push(...page);
     if (page.length < pageSize) break;
   }
 
-  return held;
+  return opportunities;
 }
 
 function normalizeOpportunityTitle(value: string | null | undefined): string {
@@ -465,17 +467,8 @@ export function ContentOpportunityPanel() {
     let active = true;
     (async () => {
       const since = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
-      const [feedRes, heldFeed, articleRes, pkgRes, normalizationRes] = await Promise.all([
-        supabase
-          .from("texas_news_feed")
-          .select("id,title,source,pub_date,internal_slug,link,description,extracted_body,preflight_json")
-          .gte("pub_date", since)
-          .order("pub_date", { ascending: false })
-          // Keep the fast default queue bounded. Publication holds are loaded
-          // separately across the full 14-day window so older rechecks never
-          // disappear merely because newer ingestion pushed them past row 500.
-          .limit(500),
-        fetchHeldKtrOpportunities(since),
+      const [fullFeed, articleRes, pkgRes, normalizationRes] = await Promise.all([
+        fetchKtrOpportunities(since),
         supabase
           .from("daily_articles")
           .select("slug,title,category,source_name,published_at,featured_image_url,source_url")
@@ -499,10 +492,7 @@ export function ContentOpportunityPanel() {
           (row) => row.feed_item_id,
         ),
       );
-      const rawFeed = [
-        ...((feedRes.data ?? []) as FeedItem[]),
-        ...heldFeed,
-      ].filter((item) => !duplicateFeedIds.has(item.id));
+      const rawFeed = fullFeed.filter((item) => !duplicateFeedIds.has(item.id));
       const rawArticles = (articleRes.data ?? []) as Array<{
         slug: string;
         title: string;
