@@ -27,6 +27,16 @@ describe("Content Opportunities pending extraction flow", () => {
     expect(source).toContain("...heldFeed");
   });
 
+
+  it("defaults to the full queue and searches before the 75-row display cap", () => {
+    expect(source).toContain('useState<FilterKey>("all")');
+    expect(source).toContain('const [searchQuery, setSearchQuery] = useState("")');
+    expect(source).toContain('placeholder="Search headline, source, or slug…"');
+    expect(source).toContain('const normalizedSearch = normalizeOpportunityTitle(searchQuery)');
+    expect(source).toContain('All is the default so status changes do not hide opportunities.');
+    expect(source).toContain('filtered.slice(0, visibleCount)');
+  });
+
   it("refreshes persisted preflight after a failed publish attempt", () => {
     expect(source).toContain('.select("id,title,source,pub_date,internal_slug,link,description,extracted_body,preflight_json")');
     expect(source).toContain('.eq("id", r.id)');
