@@ -25,6 +25,7 @@ async function retryExactFeedItem(request: Request) {
       audience: OIDC_AUDIENCE,
       repository: REPOSITORY,
       workflowPath: WORKFLOW_PATH,
+      allowedEventNames: ["push"],
     });
   } catch (error) {
     return Response.json(
