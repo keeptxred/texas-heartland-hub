@@ -31,10 +31,25 @@ describe("Content Opportunities pending extraction flow", () => {
   it("defaults to the full queue and searches before the 75-row display cap", () => {
     expect(source).toContain('useState<FilterKey>("all")');
     expect(source).toContain('const [searchQuery, setSearchQuery] = useState("")');
-    expect(source).toContain('placeholder="Search headline, source, or slug…"');
+    expect(source).toContain('placeholder="Search headline, source, or feed ID…"');
     expect(source).toContain('const normalizedSearch = normalizeOpportunityTitle(searchQuery)');
     expect(source).toContain('All is the default so status changes do not hide opportunities.');
     expect(source).toContain('filtered.slice(0, visibleCount)');
+  });
+
+  it("searches the full 14-day KTR history instead of only the newest 500 loaded rows", () => {
+    expect(source).toContain("searchKtrOpportunityHistory(term, since)");
+    expect(source).toContain('.ilike("title", `%${term}%`)');
+    expect(source).toContain('.ilike("source", `%${term}%`)');
+    expect(source).toContain('.eq("id", Number(term))');
+    expect(source).toContain("dedupeFeedOpportunities([...items, ...historySearchItems])");
+    expect(source).toContain("Search covers the full 14-day unpublished KTR history, not just the newest 500 loaded rows.");
+  });
+
+  it("lets deliberate search recover locally ignored opportunities", () => {
+    expect(source).toContain("hasSearch || !ignored.has(ignoreKey(it))");
+    expect(source).toContain("rowIgnored ? restoreOpportunity(r) : ignoreOpportunity(r)");
+    expect(source).toContain('{rowIgnored ? "Restore" : "Ignore"}');
   });
 
   it("refreshes persisted preflight after a failed publish attempt", () => {
