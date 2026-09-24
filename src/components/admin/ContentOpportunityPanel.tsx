@@ -138,6 +138,34 @@ function canAttemptArticlePublish(preflight: RewritePreflightResult | undefined)
   );
 }
 
+async function fetchHeldKtrOpportunities(since: string): Promise<FeedItem[]> {
+  const pageSize = 500;
+  const held: FeedItem[] = [];
+
+  for (let pageStart = 0; ; pageStart += pageSize) {
+    const { data, error } = await supabase
+      .from("texas_news_feed")
+      .select("id,title,source,pub_date,internal_slug,link,description,extracted_body,preflight_json")
+      .gte("pub_date", since)
+      .eq("target_site", "keeptxred")
+      .contains("preflight_json", { reason: "PUBLICATION_HOLD" })
+      .order("pub_date", { ascending: false })
+      .order("id", { ascending: false })
+      .range(pageStart, pageStart + pageSize - 1);
+
+    if (error) {
+      console.error("Failed to load held KTR opportunities", error);
+      break;
+    }
+
+    const page = (data ?? []) as FeedItem[];
+    held.push(...page);
+    if (page.length < pageSize) break;
+  }
+
+  return held;
+}
+
 function normalizeOpportunityTitle(value: string | null | undefined): string {
   return String(value ?? "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 }
@@ -436,16 +464,17 @@ export function ContentOpportunityPanel() {
     let active = true;
     (async () => {
       const since = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
-      const [feedRes, articleRes, pkgRes, normalizationRes] = await Promise.all([
+      const [feedRes, heldFeed, articleRes, pkgRes, normalizationRes] = await Promise.all([
         supabase
           .from("texas_news_feed")
           .select("id,title,source,pub_date,internal_slug,link,description,extracted_body,preflight_json")
           .gte("pub_date", since)
           .order("pub_date", { ascending: false })
-          // Keep the review queue bounded to the same canonical 14-day newsroom window.
-          // Source history remains in texas_news_feed; deterministic duplicates are hidden below
-          // using news_feed_normalization rather than deleted.
+          // Keep the fast default queue bounded. Publication holds are loaded
+          // separately across the full 14-day window so older rechecks never
+          // disappear merely because newer ingestion pushed them past row 500.
           .limit(500),
+        fetchHeldKtrOpportunities(since),
         supabase
           .from("daily_articles")
           .select("slug,title,category,source_name,published_at,featured_image_url,source_url")
@@ -469,7 +498,10 @@ export function ContentOpportunityPanel() {
           (row) => row.feed_item_id,
         ),
       );
-      const rawFeed = ((feedRes.data ?? []) as FeedItem[]).filter((item) => !duplicateFeedIds.has(item.id));
+      const rawFeed = [
+        ...((feedRes.data ?? []) as FeedItem[]),
+        ...heldFeed,
+      ].filter((item) => !duplicateFeedIds.has(item.id));
       const rawArticles = (articleRes.data ?? []) as Array<{
         slug: string;
         title: string;
