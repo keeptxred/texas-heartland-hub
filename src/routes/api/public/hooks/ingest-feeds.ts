@@ -62,6 +62,10 @@ const DIRECT_SOURCES: Source[] = [
   { name: "Dallas Stars", url: "https://www.nhl.com/stars/news/", category: "Sports", mode: "html-links", include: "^/stars/news/" },
   { name: "Texas A&M Aggies", url: "https://12thman.com/news/", category: "Sports", mode: "html-links", include: "^/news/20\\d{2}/" },
   { name: "National Hurricane Center", url: "https://www.nhc.noaa.gov/index-at.xml", category: "Weather", mode: "rss" },
+  { name: "Texas Business Long-Tail — Google News", url: "https://ftkznprjljkhymknvhye.supabase.co/functions/v1/ktr-rss-relay-priority?feed=google-texas-business-longtail", category: "Business", mode: "rss" },
+  { name: "Texas Campus Long-Tail — Google News", url: "https://ftkznprjljkhymknvhye.supabase.co/functions/v1/ktr-rss-relay-priority?feed=google-texas-campus-longtail", category: "Education", mode: "rss" },
+  { name: "Texas Community Long-Tail — Google News", url: "https://ftkznprjljkhymknvhye.supabase.co/functions/v1/ktr-rss-relay-priority?feed=google-texas-community-longtail", category: "Non-Political", mode: "rss" },
+  { name: "Texas Sports Long-Tail — Google News", url: "https://ftkznprjljkhymknvhye.supabase.co/functions/v1/ktr-rss-relay-priority?feed=google-texas-sports-longtail", category: "Sports", mode: "rss" },
 ];
 
 const VERIFIED_YOUTUBE = new Map<string, string>([
@@ -322,7 +326,7 @@ async function fetchSource(source: Source): Promise<FetchResult> {
   }
   if (!fetched.text) return { source: source.name, url: source.url, status: fetched.status, attempts: fetched.attempts, mode: source.mode, items: [], error: fetched.error };
   const items = source.mode === "tpwd-html" ? parseTpwdHtml(fetched.text) : source.mode === "html-links" ? parseHtmlLinks(fetched.text, source) : parseFeed(fetched.text, source.name);
-  return { source: source.name, url: source.url, status: fetched.status, attempts: fetched.attempts, mode: source.mode, items: items.slice(0, isGoogle ? 20 : 30) };
+  return { source: source.name, url: source.url, status: fetched.status, attempts: fetched.attempts, mode: source.mode, items: items.slice(0, 30) };
 }
 
 async function handler() {
