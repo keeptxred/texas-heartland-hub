@@ -8,6 +8,10 @@ const FEEDS = new Set([
   "google-primary-workforce",
   "google-primary-governor",
   "google-workforce-grants",
+  "google-texas-business-longtail",
+  "google-texas-campus-longtail",
+  "google-texas-community-longtail",
+  "google-texas-sports-longtail",
 ]);
 
 const RELAY_BASE = "https://ftkznprjljkhymknvhye.supabase.co/functions/v1/ktr-rss-relay";
