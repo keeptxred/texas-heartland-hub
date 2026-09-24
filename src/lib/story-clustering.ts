@@ -32,6 +32,10 @@ const LOCATION_TERMS = new Set([
   "houston","dallas","fort worth","san antonio","austin","laredo","amarillo","killeen","temple","waco","hereford","galveston","lubbock","midland",
 ]);
 
+const LOCATION_TOKEN_TERMS = new Set(
+  [...LOCATION_TERMS].flatMap((location) => location.split(/\s+/)).filter(Boolean),
+);
+
 // These words are useful scoring signals after two reports are already tied to
 // the same event, but are too generic to establish event identity on their own.
 // In particular, a public official can announce many unrelated grants on the
@@ -44,6 +48,14 @@ const GENERIC_EVENT_ANCHOR_TERMS = new Set([
   "county","city","district","election","elections","campaign","candidate","candidates",
   "democratic","democrat","republican","gop","vote","voter","voters","voting",
   "poll","polls","race","midterm","midterms","primary","runoff",
+  "council","commission","commissioner","commissioners","office","officer","officers",
+  "police","sheriff","sheriffs","official","officials",
+  "budget","budgets","tax","taxes","rate","rates","property","approve","approves","approved","approval",
+  "shooting","shootings","shot","shoots","killed","dead","death","deaths",
+  "arrest","arrests","arrested","charge","charges","charged","investigation","investigates","investigating",
+  "data","center","centers","grid","power","water","supply","infrastructure",
+  "immigration","border","enforcement","ice","detention",
+  "school","schools","student","students",
   "january","february","march","april","may","june","july","august","september",
   "october","november","december",
 ]);
@@ -69,6 +81,13 @@ const SPORTS_IDENTITIES: Array<{ id: string; pattern: RegExp }> = [
   { id: "longhorns", pattern: /\b(?:texas\s+)?longhorns\b/i },
   { id: "texas-tech", pattern: /\btexas\s+tech\b/i },
 ];
+
+const BROAD_TOPIC_TAGS = new Set([
+  "data-center-grid",
+  "back-to-school-heat",
+  "water-infrastructure",
+  "border-enforcement",
+]);
 
 const TOPIC_BRIDGES: Array<{ tag: string; patterns: RegExp[] }> = [
   {
@@ -232,11 +251,12 @@ function hoursApart(a?: string | null, b?: string | null): number {
 }
 
 function isLocationTerm(term: string): boolean {
-  return LOCATION_TERMS.has(term);
+  const normalized = term.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  return LOCATION_TERMS.has(normalized) || LOCATION_TOKEN_TERMS.has(normalized);
 }
 
 function isGenericEventAnchorTerm(term: string): boolean {
-  return GENERIC_EVENT_ANCHOR_TERMS.has(term) || /^(?:19|20)\d{2}$/.test(term);
+  return GENERIC_EVENT_ANCHOR_TERMS.has(term) || /^(?:19|20)\d{2}(?:-\d{2,4})?$/.test(term);
 }
 
 function isEventSpecificTerm(term: string): boolean {
@@ -290,15 +310,17 @@ export function combinationScore(primary: ClusterableFeedItem, candidate: Cluste
   const primaryTopics = topicTags(primary);
   const candidateTopics = topicTags(candidate);
   const sharedTopics = [...primaryTopics].filter((tag) => candidateTopics.has(tag));
+  const narrowSharedTopics = sharedTopics.filter((tag) => !BROAD_TOPIC_TAGS.has(tag));
 
   // Recency, a different outlet, a public official, a candidate name, an election
   // month/year, or a shared city are confidence boosts only after the reports are
   // tied to the same event. Require two event-specific title anchors unless a
-  // curated topic bridge or a genuinely event-specific important term establishes
-  // the event family. This prevents one actor plus generic election/time language
-  // from merging unrelated political stories into a single source packet.
+  // narrow curated bridge or a genuinely event-specific important term establishes
+  // the event family. Broad subject bridges (data centers, border enforcement,
+  // water infrastructure, back-to-school/heat) may boost a score only after event
+  // identity exists; otherwise they collapse an entire beat into one false event.
   const hasSemanticAnchor =
-    sharedTopics.length > 0 ||
+    narrowSharedTopics.length > 0 ||
     eventSpecificTitleOverlap.length >= 2 ||
     (eventSpecificImportantOverlap.length >= 1 && eventSpecificTitleOverlap.length >= 1);
   if (!hasSemanticAnchor) return { score: 0, overlapTerms: [] };
