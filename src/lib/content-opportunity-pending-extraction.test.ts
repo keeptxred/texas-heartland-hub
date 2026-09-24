@@ -21,7 +21,7 @@ describe("Content Opportunities pending extraction flow", () => {
 
   it("loads held KTR rows across the full 14-day window instead of losing them behind the newest-500 cap", () => {
     expect(source).toContain("fetchHeldKtrOpportunities(since)");
-    expect(source).toContain('.eq("target_site", "keeptxred")');
+    expect(source).toContain('.filter("target_site", "eq", "keeptxred")');
     expect(source).toContain('.contains("preflight_json", { reason: "PUBLICATION_HOLD" })');
     expect(source).toContain(".range(pageStart, pageStart + pageSize - 1)");
     expect(source).toContain("...heldFeed");
