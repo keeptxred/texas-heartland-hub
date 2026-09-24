@@ -283,7 +283,8 @@ export function ContentOpportunityPanel() {
   const [articleWorking, setArticleWorking] = useState<Record<number, boolean>>({});
   const [articleMsg, setArticleMsg] = useState<Record<number, { ok: boolean; text: string }>>({});
   const [imageWorking, setImageWorking] = useState<Record<number, boolean>>({});
-  const [filter, setFilter] = useState<FilterKey>("ready");
+  const [filter, setFilter] = useState<FilterKey>("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const [previewId, setPreviewId] = useState<number | null>(null);
   const [visibleCount, setVisibleCount] = useState(75);
 
@@ -693,26 +694,38 @@ export function ContentOpportunityPanel() {
   );
 
   const filtered = useMemo(() => {
-    if (filter === "all") return scored;
-    return scored.filter((r) => {
-      const attempt = articleMsg[r.id];
-      if (attempt?.text && !attempt.ok) return true;
-      const cat = categorizeForFilter(r, statuses[r.id], preflightById[r.id] ?? {
-        rewriteable: false,
-        reason: "PENDING_EXTRACTION",
-        message: "",
-        sourceWordCount: 0,
-        factualSignalCount: 0,
-        hasClearNewsEvent: null,
-      });
-      if (filter === "ready") return cat === "ready" || cat === "pending";
-      return cat === filter;
-    });
-  }, [scored, filter, statuses, preflightById, articleMsg]);
+    const statusFiltered = filter === "all"
+      ? scored
+      : scored.filter((r) => {
+          const attempt = articleMsg[r.id];
+          if (attempt?.text && !attempt.ok) return true;
+          const cat = categorizeForFilter(r, statuses[r.id], preflightById[r.id] ?? {
+            rewriteable: false,
+            reason: "PENDING_EXTRACTION",
+            message: "",
+            sourceWordCount: 0,
+            factualSignalCount: 0,
+            hasClearNewsEvent: null,
+          });
+          if (filter === "ready") return cat === "ready" || cat === "pending";
+          return cat === filter;
+        });
+
+    const normalizedSearch = normalizeOpportunityTitle(searchQuery);
+    if (!normalizedSearch) return statusFiltered;
+
+    return statusFiltered.filter((r) =>
+      normalizeOpportunityTitle(
+        [r.title, r.source, r.article_title, r.internal_slug, r.article_slug]
+          .filter(Boolean)
+          .join(" "),
+      ).includes(normalizedSearch),
+    );
+  }, [scored, filter, statuses, preflightById, articleMsg, searchQuery]);
 
   useEffect(() => {
     setVisibleCount(75);
-  }, [filter]);
+  }, [filter, searchQuery]);
 
   const previewRow = useMemo(
     () => (previewId == null ? null : scored.find((r) => r.id === previewId) ?? null),
@@ -724,7 +737,7 @@ export function ContentOpportunityPanel() {
       <div className="flex items-center justify-between mb-3 gap-3 flex-wrap">
         <h2 className="font-display text-xl">Content Opportunities</h2>
         <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest">
-          {(["ready", "pending", "blocked", "all"] as FilterKey[]).map((k) => (
+          {(["all", "ready", "pending", "blocked"] as FilterKey[]).map((k) => (
             <button
               key={k}
               type="button"
@@ -739,6 +752,28 @@ export function ContentOpportunityPanel() {
             </button>
           ))}
         </div>
+      </div>
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <input
+          type="search"
+          value={searchQuery}
+          onChange={(event) => setSearchQuery(event.target.value)}
+          placeholder="Search headline, source, or slug…"
+          aria-label="Search content opportunities"
+          className="min-w-[18rem] flex-1 border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary"
+        />
+        {searchQuery ? (
+          <button
+            type="button"
+            onClick={() => setSearchQuery("")}
+            className="px-3 py-2 border border-border text-[10px] font-bold uppercase tracking-widest hover:bg-muted"
+          >
+            Clear
+          </button>
+        ) : null}
+        <span className="text-[10px] text-muted-foreground">
+          All is the default so status changes do not hide opportunities.
+        </span>
       </div>
       {loading ? (
         <div className="text-sm text-muted-foreground">Loading…</div>
