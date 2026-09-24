@@ -51,7 +51,7 @@ describe("multi-source clustering phases 1-2", () => {
     expect(strongMergeThreshold(crime)).toBeGreaterThan(strongMergeThreshold(sports));
   });
 
-  it("still merges complementary independent reports about one event", () => {
+  it("does not collapse complementary data-center beat coverage into one durable event", () => {
     const statewide = item(
       "Office of the Governor",
       "Texas pauses new data center grid connections",
@@ -65,10 +65,10 @@ describe("multi-source clustering phases 1-2", () => {
       "https://ksat.com/data-center-moratorium",
       "2026-08-16T18:00:00Z",
     );
-    expect(combinationScore(statewide, local).score).toBeGreaterThanOrEqual(strongMergeThreshold(statewide));
+    expect(combinationScore(statewide, local).score).toBeLessThan(strongMergeThreshold(statewide));
     const cluster = buildStoryCluster(statewide, [local]);
-    expect(cluster.strongMerge).toBe(true);
-    expect(cluster.sourceCount).toBe(2);
+    expect(cluster.strongMerge).toBe(false);
+    expect(cluster.sourceCount).toBe(1);
   });
 
   it("does not count syndicated copies as independent evidence", () => {
