@@ -122,8 +122,20 @@ function effectivePreflight(item: FeedItem): RewritePreflightResult {
   });
 }
 
+function isPublicationHold(preflight: RewritePreflightResult | undefined): boolean {
+  return String(preflight?.reason ?? "") === "PUBLICATION_HOLD";
+}
+
 function canAttemptArticlePublish(preflight: RewritePreflightResult | undefined): boolean {
-  return !!preflight && (preflight.rewriteable || preflight.reason === "PENDING_EXTRACTION");
+  // A persisted publication hold is not a client-side prohibition. It records
+  // the last backend decision. Let an editor explicitly re-run that decision
+  // after new corroboration or a primary record arrives; publishFeedItem still
+  // executes every publication-quality and fact-verification gate server-side.
+  return !!preflight && (
+    preflight.rewriteable ||
+    preflight.reason === "PENDING_EXTRACTION" ||
+    isPublicationHold(preflight)
+  );
 }
 
 function normalizeOpportunityTitle(value: string | null | undefined): string {
@@ -767,7 +779,13 @@ export function ContentOpportunityPanel() {
                               type="button"
                               disabled={!!articleWorking[r.id] || alreadyPublished || !canAttemptPublish}
                               onClick={() => void publishArticle(r)}
-                              title={!canAttemptPublish ? preflight?.message : undefined}
+                              title={
+                                isPublicationHold(preflight)
+                                  ? "Re-run all publication checks against the latest sources and primary records."
+                                  : !canAttemptPublish
+                                    ? preflight?.message
+                                    : undefined
+                              }
                               className="px-3 py-1 bg-secondary text-secondary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60 disabled:cursor-not-allowed"
                             >
                               {articleWorking[r.id]
@@ -776,6 +794,8 @@ export function ContentOpportunityPanel() {
                                 ? "Published"
                                 : preflight?.reason === "PENDING_EXTRACTION"
                                 ? "Check Source & Publish"
+                                : isPublicationHold(preflight)
+                                ? "Recheck & Publish"
                                 : "Publish to Keep Texas Red"}
                             </button>
                           )}
@@ -967,6 +987,8 @@ export function ContentOpportunityPanel() {
                         ? "Published"
                         : preflightById[previewRow.id]?.reason === "PENDING_EXTRACTION"
                         ? "Check Source & Publish"
+                        : isPublicationHold(preflightById[previewRow.id])
+                        ? "Recheck & Publish"
                         : "Publish to Keep Texas Red"}
                     </button>
                   ) : null}
