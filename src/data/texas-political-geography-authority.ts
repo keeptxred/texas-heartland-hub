@@ -8,6 +8,7 @@ const VOTING_RIGHTS = "/texas-politics/voting-rights-history";
 const REDISTRICTING = "/texas-politics/texas-redistricting-history";
 const FIGURES = "/texas-politics/figures";
 const COMPETITIVENESS = "/texas-politics/why-texas-is-politically-competitive";
+const KEEP_TEXAS_RED = "/keep-texas-red";
 
 const SOS_ARCHIVE = { href: "https://www.sos.state.tx.us/elections/historical/elections-results-archive.shtml", label: "Texas Secretary of State: Election Results Archive" };
 const SOS_PRESIDENTIAL = { href: "https://www.sos.state.tx.us/elections/historical/presidential.shtml", label: "Texas Secretary of State: Presidential Election Results" };
@@ -58,6 +59,7 @@ export const TEXAS_POLITICAL_GEOGRAPHY_HISTORY: PoliticalHistoryAuthorityPage = 
   ],
   sources: [SOS_ARCHIVE, SOS_PRESIDENTIAL, UT_GEOGRAPHY, TSHA_REPUBLICAN, TSHA_URBANIZATION, TSL_ELECTIONS],
   relatedLinks: [
+    { href: KEEP_TEXAS_RED, label: "Keep Texas Red pillar", description: "The core KTR guide connecting elections, institutions, policy and government accountability." },
     { href: COMPETITIVENESS, label: "Why Texas is politically competitive", description: "How population growth, turnout and regional vote margins shape modern statewide and district competition." },
     { href: ELECTION_HISTORY, label: "Texas election history", description: "The statewide electoral chronology behind changing regional coalitions." },
     { href: REALIGNMENT, label: "How Texas became Republican", description: "The partisan realignment that reshaped the state's map." },
@@ -113,6 +115,7 @@ export const TEXAS_URBAN_SUBURBAN_RURAL_POLITICS: PoliticalHistoryAuthorityPage 
   ],
   sources: [SOS_ARCHIVE, UT_GEOGRAPHY, TSHA_URBANIZATION, TSHA_REPUBLICAN, TSL_ELECTIONS],
   relatedLinks: [
+    { href: KEEP_TEXAS_RED, label: "Keep Texas Red pillar", description: "The core KTR guide connecting elections, institutions, policy and government accountability." },
     { href: COMPETITIVENESS, label: "Why Texas is politically competitive", description: "How population growth, turnout and regional vote margins shape modern statewide and district competition." },
     { href: "/texas-politics/texas-political-geography-history", label: "Texas political geography", description: "The broader regional map behind urban, suburban and rural patterns." },
     { href: REALIGNMENT, label: "How Texas became Republican", description: "How suburban and rural coalitions drove partisan change." },
@@ -168,6 +171,7 @@ export const SOUTH_TEXAS_RGV_POLITICAL_HISTORY: PoliticalHistoryAuthorityPage = 
   ],
   sources: [SOS_ARCHIVE, SOS_PRESIDENTIAL, UT_GEOGRAPHY, TSHA_BOSS_RULE, TSL_ELECTIONS],
   relatedLinks: [
+    { href: KEEP_TEXAS_RED, label: "Keep Texas Red pillar", description: "The core KTR guide connecting elections, institutions, policy and government accountability." },
     { href: COMPETITIVENESS, label: "Why Texas is politically competitive", description: "How population growth, turnout and regional vote margins shape modern statewide and district competition." },
     { href: VOTING_RIGHTS, label: "Texas voting rights history", description: "Poll taxes, white primaries, federal law and minority political participation." },
     { href: "/texas-politics/texas-political-geography-history", label: "Texas political geography", description: "How South Texas fits into the broader regional map." },
@@ -223,6 +227,7 @@ export const TEXAS_METRO_REGIONAL_REALIGNMENT: PoliticalHistoryAuthorityPage = {
   ],
   sources: [SOS_ARCHIVE, SOS_PRESIDENTIAL, UT_GEOGRAPHY, TSHA_REPUBLICAN, TSHA_URBANIZATION, TSHA_BOSS_RULE],
   relatedLinks: [
+    { href: KEEP_TEXAS_RED, label: "Keep Texas Red pillar", description: "The core KTR guide connecting elections, institutions, policy and government accountability." },
     { href: COMPETITIVENESS, label: "Why Texas is politically competitive", description: "How population growth, turnout and regional vote margins shape modern statewide and district competition." },
     { href: "/texas-politics/texas-political-geography-history", label: "Texas political geography", description: "The statewide regional framework for electoral analysis." },
     { href: "/texas-politics/texas-urban-suburban-rural-politics-history", label: "Urban, suburban and rural politics", description: "How community type became a major partisan divide." },

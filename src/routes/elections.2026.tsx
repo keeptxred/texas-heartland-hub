@@ -144,7 +144,10 @@ function PriorityElectionLinks() {
           <h2 id="priority-election-pages" className="mt-2 font-display text-3xl leading-none tracking-tight text-foreground">Candidate and district pages</h2>
           <p className="mt-3 leading-7 text-muted-foreground">These links point directly to published, verified Election Central records so voters and search engines can reach important detail pages without relying on filters or search forms.</p>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">
-            Need the statewide context behind these races? <Link to="/texas-politics/why-texas-is-politically-competitive" className="font-semibold text-primary hover:underline">See why Texas is politically competitive →</Link>
+            Need the broader KTR framework? <Link to="/keep-texas-red" className="font-semibold text-primary hover:underline">Start with the Keep Texas Red pillar →</Link>
+          </p>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            For the statewide electoral context behind these races, <Link to="/texas-politics/why-texas-is-politically-competitive" className="font-semibold text-primary hover:underline">see why Texas is politically competitive →</Link>
           </p>
         </div>
 
