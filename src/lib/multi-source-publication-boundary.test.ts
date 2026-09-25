@@ -38,7 +38,12 @@ describe("core newsroom publication boundary", () => {
 
   it("paginates the full corroboration lookback instead of truncating the newest rows", () => {
     expect(source).toContain("const CLUSTER_CANDIDATE_PAGE_SIZE = 500");
-    expect(source).toContain("loadRecentClusterCandidates(db, feedItemId, since)");
+    expect(source).toContain("corroborationAnchorMs");
+    expect(source).toContain("corroborationAnchorMs - corroborationWindowMs");
+    expect(source).toContain("corroborationAnchorMs + corroborationWindowMs");
+    expect(source).toContain("loadRecentClusterCandidates(");
+    expect(candidateLoader).toContain('.gte("pub_date", since)');
+    expect(candidateLoader).toContain('.lte("pub_date", until)');
     expect(source).toContain(".range(from, from + CLUSTER_CANDIDATE_PAGE_SIZE - 1)");
     expect(source).toContain("page.length < CLUSTER_CANDIDATE_PAGE_SIZE");
     expect(source).not.toContain(".limit(140)");
