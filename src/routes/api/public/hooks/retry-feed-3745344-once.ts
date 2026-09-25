@@ -38,8 +38,19 @@ async function retryExactFeedItem(request: Request) {
     );
   }
 
-  const result = await publishSingleFeedItem(FEED_ITEM_ID);
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { error: bypassError } = await (supabaseAdmin as any).rpc(
+    "grant_manual_ai_rewrite_bypass",
+    { p_feed_item_id: FEED_ITEM_ID },
+  );
+  if (bypassError) {
+    return Response.json(
+      { ok: false, feed_item_id: FEED_ITEM_ID, error: `Could not authorize explicit manual retry: ${bypassError.message}` },
+      { status: 500 },
+    );
+  }
+
+  const result = await publishSingleFeedItem(FEED_ITEM_ID);
   const { data: feed } = await (supabaseAdmin as any)
     .from("texas_news_feed")
     .select("id,internal_slug,preflight_json,event_cluster_id,cluster_json")
