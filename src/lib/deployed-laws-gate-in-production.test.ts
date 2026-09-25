@@ -3,6 +3,8 @@ import { describe, expect, it } from "vitest";
 
 const deployWorkflow = readFileSync(".github/workflows/deploy-cloudflare-after-verify.yml", "utf8");
 const smokeScript = readFileSync("scripts/seo/verify-deployed-laws-routes.py", "utf8");
+const runtimeSmoke = readFileSync("scripts/verify-deployed-laws-runtime.py", "utf8");
+const propertyTaxAuthority = readFileSync("src/data/law-topic-property-tax-authority.ts", "utf8");
 const prioritySmoke = readFileSync("scripts/seo/verify_deployed_priority_sitemap.py", "utf8");
 const startServer = readFileSync("src/start.ts", "utf8");
 const workerServer = readFileSync("src/server.ts", "utf8");
@@ -48,6 +50,17 @@ describe("deployed law routes production gate", () => {
     expect(smokeScript).toContain("child route is still rendering the /laws parent H1");
     expect(smokeScript).toContain("https://keeptxred.com/laws/topic/property-tax-law");
     expect(smokeScript).toContain("cache-control: no-cache");
+  });
+
+  it("keeps both deploy smokes synchronized with the current property-tax authority H1", () => {
+    const propertyTaxTitle = propertyTaxAuthority.match(/title:\s*"([^"]+)"/)?.[1];
+    expect(propertyTaxTitle).toBeTruthy();
+
+    const expectedRouteTuple =
+      `("/laws/topic/property-tax-law", "${propertyTaxTitle}", "https://keeptxred.com/laws/topic/property-tax-law", True, True)`;
+
+    expect(smokeScript).toContain(expectedRouteTuple);
+    expect(runtimeSmoke).toContain(expectedRouteTuple);
   });
 
   it("hard-gates the HB 1056 related article in freshly deployed HTML", () => {
