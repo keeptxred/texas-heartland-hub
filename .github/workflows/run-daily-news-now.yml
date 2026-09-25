@@ -9,6 +9,17 @@ on:
   schedule:
     - cron: "15 */4 * * *"
   workflow_dispatch:
+    inputs:
+      flyover_feed_id:
+        description: "Optional exact KTR feed item selected by the Flyover automation"
+        required: false
+        type: string
+      flyover_run_id:
+        description: "Flyover execution run id used only for audit correlation"
+        required: false
+        type: string
+
+run-name: "${{ inputs.flyover_run_id != '' && format('Flyover {0} feed {1}', inputs.flyover_run_id, inputs.flyover_feed_id) || 'Run Daily News Now' }}"
 
 permissions:
   contents: read
@@ -19,6 +30,8 @@ env:
   # routes. Machine hooks use the same deployed Worker directly while retaining
   # their existing OIDC and publication-safety authorization.
   AUTOMATION_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
+  FLYOVER_FEED_ID: "${{ inputs.flyover_feed_id || '' }}"
+  FLYOVER_RUN_ID: "${{ inputs.flyover_run_id || '' }}"
 
 jobs:
   publish:
@@ -38,6 +51,70 @@ jobs:
           if [[ -z "$oidc_token" ]]; then
             echo 'GitHub Actions did not issue the newsroom OIDC token.' >&2
             exit 1
+          fi
+
+          # A Flyover dispatch names the exact feed item that this run is
+          # authorized to evaluate. This avoids asking the general newsroom
+          # scheduler to choose a different higher-priority story.
+          if [[ -n "${FLYOVER_FEED_ID:-}" ]]; then
+            if [[ ! "$FLYOVER_FEED_ID" =~ ^[1-9][0-9]*$ ]]; then
+              echo "Invalid Flyover feed id: $FLYOVER_FEED_ID" >&2
+              exit 1
+            fi
+            if [[ -z "${FLYOVER_RUN_ID:-}" ]]; then
+              echo 'Flyover exact-feed dispatch requires flyover_run_id.' >&2
+              exit 1
+            fi
+
+            payload="$(jq -nc --argjson feed_item_id "$FLYOVER_FEED_ID" '{feed_item_id:$feed_item_id}')"
+            exact_status=""
+            for attempt in $(seq 1 60); do
+              exact_status="$(curl -sS -X POST -o /tmp/flyover-exact.json -w '%{http_code}' \
+                --max-time 420 \
+                -H 'accept: application/json' \
+                -H 'content-type: application/json' \
+                -H "Authorization: Bearer ${oidc_token}" \
+                --data "$payload" \
+                "${AUTOMATION_ORIGIN%/}/api/public/hooks/publish-flyover-feed" || echo 000)"
+
+              echo "flyover-exact attempt=${attempt} HTTP=${exact_status}"
+              cat /tmp/flyover-exact.json 2>/dev/null || true
+              echo
+
+              # A newly merged route can briefly be absent from the deployed
+              # worker. Retry only 404 deployment lag here. Transport failures
+              # remain failures so the outer automation can perform its
+              # side-effect-first safe retry contract.
+              if [[ "$exact_status" == "404" ]]; then
+                sleep 10
+                continue
+              fi
+              break
+            done
+
+            if [[ "$exact_status" != "200" ]] || ! jq -e '.ok == true and (.slug // "") != "" and .image.ok == true' /tmp/flyover-exact.json >/dev/null 2>&1; then
+              echo "FLYOVER_EXACT_FEED_PUBLISH_FAILED feed_id=${FLYOVER_FEED_ID} HTTP=${exact_status}" >&2
+              exit 1
+            fi
+
+            slug="$(jq -r '.slug' /tmp/flyover-exact.json)"
+            live_url="$(jq -r '.live_url' /tmp/flyover-exact.json)"
+            live_ok=0
+            for attempt in $(seq 1 18); do
+              live_status="$(curl -sS -L -o /tmp/flyover-live.html -w '%{http_code}' --max-time 30 "$live_url" || echo 000)"
+              if [[ "$live_status" == "200" ]] && grep -Fq "$slug" /tmp/flyover-live.html; then
+                live_ok=1
+                break
+              fi
+              sleep 10
+            done
+            if [[ "$live_ok" -ne 1 ]]; then
+              echo "FLYOVER_EXACT_FEED_LIVE_VERIFY_FAILED feed_id=${FLYOVER_FEED_ID} slug=${slug} url=${live_url}" >&2
+              exit 1
+            fi
+
+            echo "FLYOVER_EXACT_FEED_PUBLISH_SUCCESS run_id=${FLYOVER_RUN_ID} feed_id=${FLYOVER_FEED_ID} slug=${slug} live_url=${live_url}"
+            exit 0
           fi
 
           gap_status=$(curl -sS -X POST -o /tmp/overdue-gap.json -w '%{http_code}' \
