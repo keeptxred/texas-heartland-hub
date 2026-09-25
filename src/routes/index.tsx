@@ -80,9 +80,9 @@ function homepageFaqJsonLd() {
 }
 
 function homepageHead() {
-  const title = "Keep TX Red | Texas Politics, Elections & Government Accountability";
-  const description = "Texas political news, elections, government accountability, legislative tracking, law and policy guides, business and economic context, and clearly labeled commentary from Keep TX Red.";
-  const seo = buildSeo({ title, description, path: "/", image: heroFlag, imageAlt: "Keep TX Red Texas politics and election coverage", type: "website" });
+  const title = "Keep Texas Red (Keep TX Red) | Texas Politics & Elections";
+  const description = "Keep Texas Red (Keep TX Red) covers Texas politics, elections, government accountability, legislation, public officials, policy, business, and the economy.";
+  const seo = buildSeo({ title, description, path: "/", image: heroFlag, imageAlt: "Keep Texas Red (Keep TX Red) Texas politics and election coverage", type: "website" });
   return {
     meta: seo.meta,
     links: seo.links,
@@ -93,7 +93,7 @@ function homepageHead() {
         "@graph": [
           { ...organizationJsonLd(), "@context": undefined },
           { ...websiteJsonLd(), "@context": undefined },
-          { ...webPageJsonLd({ name: title, description, path: "/", image: { url: heroFlag, caption: "Keep TX Red", alt: "Keep TX Red Texas politics and election coverage" } }), "@context": undefined, url: `${SITE_URL}/` },
+          { ...webPageJsonLd({ name: title, description, path: "/", image: { url: heroFlag, caption: "Keep Texas Red (Keep TX Red)", alt: "Keep Texas Red (Keep TX Red) Texas politics and election coverage" } }), "@context": undefined, url: `${SITE_URL}/` },
           homepageFaqJsonLd(),
         ],
       }),
@@ -220,8 +220,9 @@ function PoliticalHomepage() {
         <div className="mx-auto grid max-w-[1200px] gap-10 px-6 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.22em] text-primary">Texas politics. Elections. Government. Verified facts. Clear context.</p>
-            <h1 className="mt-4 max-w-4xl font-display text-5xl leading-none tracking-tight sm:text-6xl">Follow the decisions shaping Texas</h1>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/80">Keep TX Red covers Texas politics, elections, bills, public officials, government accountability, law, policy, business and the economy — and makes the common-sense case for the principles we believe Texas should defend.</p>
+            <h1 className="mt-4 max-w-4xl font-display text-5xl leading-none tracking-tight sm:text-6xl">Keep Texas Red <span className="sr-only">(Keep TX Red)</span></h1>
+            <p className="mt-3 max-w-3xl text-xl font-semibold text-white/90">Texas politics, elections, government and public affairs</p>
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/80">Keep TX Red — short for Keep Texas Red — covers Texas politics, elections, bills, public officials, government accountability, law, policy, business and the economy — and makes the common-sense case for the principles we believe Texas should defend.</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/elections/2026" className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Election Central</Link>
               <a href="/texas-case" className="rounded-md border border-white/25 px-5 py-3 text-sm font-semibold">The Texas Case</a>
