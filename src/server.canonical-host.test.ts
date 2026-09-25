@@ -75,12 +75,21 @@ describe("normalizeCanonicalHref", () => {
     );
   });
 
-  it("does not rewrite another origin or a non-HTTPS URL", () => {
-    expect(normalizeCanonicalHref("https://texasdefined.com/laws/")).toBe(
-      "https://texasdefined.com/laws/",
+  it("rewrites HTTP and www KeepTXRed canonicals to the HTTPS apex", () => {
+    expect(normalizeCanonicalHref("https://www.keeptxred.com/laws/")).toBe(
+      "https://keeptxred.com/laws",
     );
     expect(normalizeCanonicalHref("http://keeptxred.com/laws/")).toBe(
-      "http://keeptxred.com/laws/",
+      "https://keeptxred.com/laws",
+    );
+    expect(
+      normalizeCanonicalHref("http://www.keeptxred.com/laws/?view=all#top"),
+    ).toBe("https://keeptxred.com/laws?view=all#top");
+  });
+
+  it("does not rewrite another origin", () => {
+    expect(normalizeCanonicalHref("https://texasdefined.com/laws/")).toBe(
+      "https://texasdefined.com/laws/",
     );
   });
 
@@ -97,6 +106,8 @@ describe("normalizeCanonicalLinksInHtmlText", () => {
       "<html><head>",
       '<link rel="canonical" href="https://keeptxred.com/laws/">',
       '<link href="https://keeptxred.com/laws/topics/" rel="alternate canonical">',
+      '<link rel="canonical" href="https://www.keeptxred.com/elections/2026/">',
+      '<link rel="canonical" href="http://keeptxred.com/texas-politics/">',
       '<link rel="canonical" href="https://texasdefined.com/laws/">',
       '<link rel="stylesheet" href="https://keeptxred.com/assets/app.css/">',
       "</head></html>",
@@ -107,6 +118,12 @@ describe("normalizeCanonicalLinksInHtmlText", () => {
     expect(output).toContain('<link rel="canonical" href="https://keeptxred.com/laws">');
     expect(output).toContain(
       '<link href="https://keeptxred.com/laws/topics" rel="alternate canonical">',
+    );
+    expect(output).toContain(
+      '<link rel="canonical" href="https://keeptxred.com/elections/2026">',
+    );
+    expect(output).toContain(
+      '<link rel="canonical" href="https://keeptxred.com/texas-politics">',
     );
     expect(output).toContain(
       '<link rel="canonical" href="https://texasdefined.com/laws/">',
