@@ -321,10 +321,10 @@ function TexasPoliticalCompetitivenessPage() {
 
           <div className="mt-6 grid gap-4 md:grid-cols-2">
             {clusterLinks.map((item) => (
-              <Link key={item.href} to={item.href} className="rounded-xl border p-5 transition hover:border-primary hover:shadow-sm">
+              <a key={item.href} href={item.href} className="rounded-xl border p-5 transition hover:border-primary hover:shadow-sm">
                 <h3 className="font-bold text-primary">{item.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.description}</p>
-              </Link>
+              </a>
             ))}
           </div>
         </section>
