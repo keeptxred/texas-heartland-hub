@@ -79,7 +79,7 @@ describe("editorial retry ceiling", () => {
       ) => {
         calls.push({ addendum, attempt });
         const mainWords = attempt === "initial" ? 300 : attempt === "strict-retry" ? 448 : 680;
-        return { raw: JSON.stringify(draft(mainWords, "Texas voter registration deadline set for November election")) };
+        return { raw: JSON.stringify(draft(mainWords)) };
       },
     );
 
