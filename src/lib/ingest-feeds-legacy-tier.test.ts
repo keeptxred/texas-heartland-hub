@@ -4,12 +4,11 @@ import { describe, expect, it } from "vitest";
 const source = readFileSync(new URL("./ingest-feeds-legacy.ts", import.meta.url), "utf8");
 
 describe("legacy ingest evidence-driven rewrite length", () => {
-  it("uses compact, standard, and rich evidence floors", () => {
-    expect(source).toContain("const MIN_WORDS_COMPACT = 650;");
-    expect(source).toContain("const MIN_WORDS_STANDARD = 800;");
-    expect(source).toContain("const MIN_WORDS_ANALYSIS = 1200;");
-    expect(source).toContain("if (evidenceChars < COMPACT_SOURCE_MAX_CHARS) return MIN_WORDS_COMPACT;");
-    expect(source).toContain("if (analysisCategory && evidenceChars >= RICH_SOURCE_MIN_CHARS) return MIN_WORDS_ANALYSIS;");
+  it("uses the shared editorial evidence floor instead of duplicating tier logic", () => {
+    expect(source).toContain('import { editorialMinimumFor, runEditorialRewrite } from "@/lib/editorial-pipeline"');
+    expect(source).toContain("return editorialMinimumFor(cat, it.description ?? \"\");");
+    expect(source).not.toContain("const MIN_WORDS_COMPACT = 650;");
+    expect(source).not.toContain("const COMPACT_SOURCE_MAX_CHARS = 4_500;");
   });
 
   it("does not make a third paid expansion call after shared editorial repair", () => {
