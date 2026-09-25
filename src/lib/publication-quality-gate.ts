@@ -1,5 +1,6 @@
 import { sourceFamily, type ClusterableFeedItem, type StoryCluster } from "@/lib/story-clustering";
 import { sourceFamilyFromUrl } from "@/lib/article-source-integrity";
+import { verifiedElectionSchedulePrimaryRecord } from "@/lib/election-schedule-primary-record";
 
 export type PublicationReadiness = {
   publish: boolean;
@@ -60,7 +61,9 @@ export function independentPublisherFamilyCount(cluster: StoryCluster): number {
  * queue until another independent publisher arrives.
  */
 export function assessPublicationReadiness(cluster: StoryCluster): PublicationReadiness {
-  const primaryRecord = isPrimaryRecordSource(cluster.primary);
+  const directPrimaryRecord = isPrimaryRecordSource(cluster.primary);
+  const electionSchedulePrimaryRecord = verifiedElectionSchedulePrimaryRecord(cluster.primary);
+  const primaryRecord = directPrimaryRecord || Boolean(electionSchedulePrimaryRecord);
   const authorityTopic = isAuthorityTopic(cluster.primary);
   const independentSourceCount = independentPublisherFamilyCount(cluster);
 
@@ -75,7 +78,18 @@ export function assessPublicationReadiness(cluster: StoryCluster): PublicationRe
     };
   }
 
-  if (primaryRecord && hasSubstantivePrimaryRecord(cluster.primary)) {
+  if (electionSchedulePrimaryRecord) {
+    return {
+      publish: true,
+      reason: "verified Texas Secretary of State primary record supports the election-schedule facts",
+      mode: "primary_record",
+      authorityTopic,
+      primaryRecord: true,
+      independentSourceCount,
+    };
+  }
+
+  if (directPrimaryRecord && hasSubstantivePrimaryRecord(cluster.primary)) {
     return {
       publish: true,
       reason: authorityTopic
