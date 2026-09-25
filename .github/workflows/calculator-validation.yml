@@ -9,6 +9,10 @@ on:
       - "src/routes/migrated-tool-redirects.test.ts"
       - "src/lib/migrated-tool-canonical.ts"
       - "src/lib/migrated-tool-canonical.test.ts"
+      - "src/lib/migrated-tool-production-smoke-contract.test.ts"
+      - "src/lib/texasdefined-ownership-destination-production-smoke-contract.test.ts"
+      - "scripts/authority/smoke-production.py"
+      - "scripts/seo/verify-texasdefined-ownership-destinations.py"
       - "scripts/shared/validate-retired-lifestyle-code.mjs"
       - ".github/workflows/calculator-validation.yml"
       - "package.json"
@@ -38,7 +42,9 @@ jobs:
       - name: Typecheck surviving calculator handoff contracts
         run: bun run typecheck
       - name: Run calculator ownership tests
-        run: bunx vitest run src/routes/migrated-tool-redirects.test.ts src/lib/migrated-tool-canonical.test.ts
+        run: bunx vitest run src/routes/migrated-tool-redirects.test.ts src/lib/migrated-tool-canonical.test.ts src/lib/migrated-tool-production-smoke-contract.test.ts src/lib/texasdefined-ownership-destination-production-smoke-contract.test.ts
+      - name: Validate production smoke syntax
+        run: python3 -m py_compile scripts/authority/smoke-production.py scripts/seo/verify-texasdefined-ownership-destinations.py
       - name: Validate retired calculator code stays retired
         run: node scripts/shared/validate-retired-lifestyle-code.mjs
       - name: Lint calculator handoff contracts
@@ -46,6 +52,8 @@ jobs:
           bunx eslint --rule 'prettier/prettier: off' \
             src/lib/migrated-tool-canonical.ts \
             src/lib/migrated-tool-canonical.test.ts \
+            src/lib/migrated-tool-production-smoke-contract.test.ts \
+            src/lib/texasdefined-ownership-destination-production-smoke-contract.test.ts \
             src/routes/migrated-tool-redirects.test.ts \
             src/routes/*calculator*.tsx \
             src/routes/moving-checklist.tsx
