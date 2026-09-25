@@ -46,12 +46,8 @@ type PublishResult = {
   noveltyScore?: number;
 };
 
-type RecentClusterCandidate = ClusterableFeedItem & {
-  target_site?: string | null;
-};
-
 type RecentClusterScan = {
-  data: RecentClusterCandidate[];
+  data: ClusterableFeedItem[];
   error: { message: string } | null;
 };
 
@@ -70,13 +66,17 @@ async function loadRecentClusterCandidates(
   feedItemId: number,
   since: string,
 ): Promise<RecentClusterScan> {
-  const rows: RecentClusterCandidate[] = [];
+  const rows: ClusterableFeedItem[] = [];
 
   for (let from = 0; ; from += CLUSTER_CANDIDATE_PAGE_SIZE) {
     const { data, error } = await db
       .from("texas_news_feed")
-      .select("id,title,link,source,description,pub_date,internal_slug,extracted_body,target_site")
+      // Keep the corroboration scan lightweight. Full extracted bodies can be
+      // many kilobytes each and are unnecessary until a row is selected into
+      // the bounded cluster, where enrichClusterBodies fetches/caches evidence.
+      .select("id,title,link,source,description,pub_date,internal_slug")
       .gte("pub_date", since)
+      .or("target_site.is.null,target_site.eq.keeptxred")
       .neq("id", feedItemId)
       .order("pub_date", { ascending: false })
       .order("id", { ascending: false })
@@ -84,7 +84,7 @@ async function loadRecentClusterCandidates(
 
     if (error) return { data: [], error: { message: error.message } };
 
-    const page = (data ?? []) as RecentClusterCandidate[];
+    const page = (data ?? []) as ClusterableFeedItem[];
     rows.push(...page);
     if (page.length < CLUSTER_CANDIDATE_PAGE_SIZE) return { data: rows, error: null };
   }
@@ -432,10 +432,7 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
     return { ok: false, error: `Could not scan the full ${CLUSTER_LOOKBACK_HOURS}-hour corroboration window: ${recentError.message}` };
   }
 
-  const recentKeepTxRed = (recent ?? []).filter(
-    (row: { target_site?: string | null }) => !row.target_site || row.target_site === "keeptxred",
-  );
-  let cluster = buildStoryCluster(primary, recentKeepTxRed as ClusterableFeedItem[], MAX_CLUSTER_SOURCES);
+  let cluster = buildStoryCluster(primary, recent ?? [], MAX_CLUSTER_SOURCES);
   if (!cluster.strongMerge) {
     cluster = await enrichClusterBodies(cluster, db);
     const readiness = assessPublicationReadiness(cluster);
