@@ -118,6 +118,9 @@ function KeepTexasRedPage() {
         <p>
           Keep TX Red tracks candidates, races, districts, polls and results through <Link to="/elections/2026" className="text-primary underline">Election Central</Link>. Voters can also use the <Link to="/representatives" className="text-primary underline">representatives directory</Link> to connect campaign promises with an official’s actual record.
         </p>
+        <p>
+          For the geographic and demographic forces beneath those statewide results, see <Link to="/texas-politics/why-texas-is-politically-competitive" className="text-primary underline">Why Texas Is Politically Competitive</Link>, which connects population growth, turnout, metro and rural margins, changing suburbs, South Texas and redistricting to the statewide electoral map.
+        </p>
       </Section>
 
       <Section id="legislature" title="The Legislature Turns Campaigns Into Law">
@@ -188,6 +191,7 @@ function KeepTexasRedPage() {
         <ul className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
           <li><Link to="/news" className="text-primary hover:underline">Latest Texas news →</Link></li>
           <li><Link to="/texas-politics" className="text-primary hover:underline">Texas politics →</Link></li>
+          <li><Link to="/texas-politics/why-texas-is-politically-competitive" className="text-primary hover:underline">Why Texas is politically competitive →</Link></li>
           <li><Link to="/texas-economy" className="text-primary hover:underline">Texas economic policy →</Link></li>
           <li><Link to="/elections/2026" className="text-primary hover:underline">Election Central →</Link></li>
           <li><Link to="/bills" search={EMPTY_BILLS_SEARCH} className="text-primary hover:underline">Search Texas bills →</Link></li>
