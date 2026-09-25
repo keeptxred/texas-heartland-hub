@@ -136,6 +136,18 @@ export const Route = createFileRoute("/texas-politics/why-texas-is-politically-c
           type: "application/ld+json",
           children: JSON.stringify({
             "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+              { "@type": "ListItem", position: 2, name: "Texas Politics", item: `${SITE_URL}/texas-politics` },
+              { "@type": "ListItem", position: 3, name: "Why Texas Is Politically Competitive", item: CANONICAL },
+            ],
+          }).replace(/</g, "\\u003c"),
+        },
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
             "@type": "FAQPage",
             mainEntity: FAQS.map((faq) => ({
               "@type": "Question",
