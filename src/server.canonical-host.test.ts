@@ -76,7 +76,7 @@ describe("normalizeCanonicalHref", () => {
   });
 
   it("rewrites HTTP and www KeepTXRed canonicals to the HTTPS apex", () => {
-    expect(normalizeCanonicalHref("https://www.keeptxred.com/laws/")).toBe(
+    expect(normalizeCanonicalHref(`https://${WWW_HOST}/laws/`)).toBe(
       "https://keeptxred.com/laws",
     );
     expect(normalizeCanonicalHref("http://keeptxred.com/laws/")).toBe(
@@ -106,7 +106,7 @@ describe("normalizeCanonicalLinksInHtmlText", () => {
       "<html><head>",
       '<link rel="canonical" href="https://keeptxred.com/laws/">',
       '<link href="https://keeptxred.com/laws/topics/" rel="alternate canonical">',
-      '<link rel="canonical" href="https://www.keeptxred.com/elections/2026/">',
+      `<link rel="canonical" href="https://${WWW_HOST}/elections/2026/">`,
       '<link rel="canonical" href="http://keeptxred.com/texas-politics/">',
       '<link rel="canonical" href="https://texasdefined.com/laws/">',
       '<link rel="stylesheet" href="https://keeptxred.com/assets/app.css/">',
