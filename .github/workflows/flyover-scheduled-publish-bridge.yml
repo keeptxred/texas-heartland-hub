@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 50
     steps:
-      - name: Validate trigger envelope
+      - name: Validate exact-feed trigger envelope
         shell: bash
         env:
           ISSUE_BODY: ${{ github.event.issue.body }}
@@ -27,32 +27,19 @@ jobs:
           first_line="$(printf '%s\n' "$ISSUE_BODY" | sed -n '1p')"
           run_line="$(printf '%s\n' "$ISSUE_BODY" | sed -n '2p')"
           site_line="$(printf '%s\n' "$ISSUE_BODY" | sed -n '3p')"
+          feed_line="$(printf '%s\n' "$ISSUE_BODY" | sed -n '4p')"
           line_count="$(printf '%s\n' "$ISSUE_BODY" | awk 'END {print NR}')"
 
-          [[ "$line_count" -eq 3 ]]
-          [[ "$first_line" == "flyover_publish_request_v1" ]]
+          [[ "$line_count" -eq 4 ]]
+          [[ "$first_line" == "flyover_publish_request_v2" ]]
           [[ "$run_line" =~ ^run_id=[A-Za-z0-9._:-]{8,160}$ ]]
           [[ "$site_line" == "site=ktr" ]]
+          [[ "$feed_line" =~ ^feed_id=[1-9][0-9]*$ ]]
 
           echo "RUN_ID=${run_line#run_id=}" >> "$GITHUB_ENV"
+          echo "FEED_ID=${feed_line#feed_id=}" >> "$GITHUB_ENV"
 
-      - name: Capture previous production dispatch
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          before="$(gh run list \
-            --repo "$GITHUB_REPOSITORY" \
-            --workflow run-daily-news-now.yml \
-            --event workflow_dispatch \
-            --branch main \
-            --limit 1 \
-            --json databaseId \
-            --jq '.[0].databaseId // 0')"
-          echo "BEFORE_RUN_ID=$before" >> "$GITHUB_ENV"
-
-      - name: Dispatch protected KTR publisher
+      - name: Dispatch protected exact-feed KTR publisher
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -60,25 +47,28 @@ jobs:
           set -euo pipefail
           gh workflow run run-daily-news-now.yml \
             --repo "$GITHUB_REPOSITORY" \
-            --ref main
+            --ref main \
+            -f flyover_feed_id="$FEED_ID" \
+            -f flyover_run_id="$RUN_ID"
 
-      - name: Resolve dispatched production run
+      - name: Resolve exact dispatched production run
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          expected="Flyover $RUN_ID feed $FEED_ID"
           for attempt in $(seq 1 30); do
-            row="$(gh run list \
+            rows="$(gh run list \
               --repo "$GITHUB_REPOSITORY" \
               --workflow run-daily-news-now.yml \
               --event workflow_dispatch \
               --branch main \
-              --limit 1 \
-              --json databaseId,status,url \
-              --jq '.[0] // {}')"
+              --limit 30 \
+              --json databaseId,status,url,displayTitle)"
+            row="$(jq -c --arg expected "$expected" '[.[] | select(.displayTitle == $expected)][0] // {}' <<<"$rows")"
             run_id="$(jq -r '.databaseId // 0' <<<"$row")"
-            if [[ "$run_id" != "0" && "$run_id" != "$BEFORE_RUN_ID" ]]; then
+            if [[ "$run_id" != "0" ]]; then
               echo "DISPATCHED_RUN_ID=$run_id" >> "$GITHUB_ENV"
               echo "DISPATCHED_RUN_URL=$(jq -r '.url // ""' <<<"$row")" >> "$GITHUB_ENV"
               exit 0
@@ -86,10 +76,10 @@ jobs:
             sleep 2
           done
 
-          echo "No new Run Daily News Now workflow_dispatch run appeared." >&2
+          echo "No matching exact-feed Run Daily News Now dispatch appeared." >&2
           exit 1
 
-      - name: Wait for protected KTR publisher
+      - name: Wait for protected exact-feed KTR publisher
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -104,10 +94,10 @@ jobs:
 
           gh issue comment "$ISSUE_NUMBER" \
             --repo "$GITHUB_REPOSITORY" \
-            --body "Flyover bridge \`$RUN_ID\` dispatched the protected KTR publisher, but downstream Actions run $DISPATCHED_RUN_URL failed. This issue remains open for retry/reconciliation."
+            --body "Flyover exact-feed bridge \`$RUN_ID\` for feed \`$FEED_ID\` reached the protected KTR publisher, but downstream Actions run $DISPATCHED_RUN_URL failed. This issue remains open for side-effect reconciliation or one safe retry."
           exit 1
 
-      - name: Record successful downstream result and close request
+      - name: Record successful exact-feed result and close request
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -116,7 +106,7 @@ jobs:
           set -euo pipefail
           gh issue comment "$ISSUE_NUMBER" \
             --repo "$GITHUB_REPOSITORY" \
-            --body "Flyover bridge completed \`$RUN_ID\`. The protected KTR publisher finished successfully. Actions run: $DISPATCHED_RUN_URL"
+            --body "Flyover exact-feed bridge completed \`$RUN_ID\` for feed \`$FEED_ID\`. The protected KTR publisher, hero-image gate, and live-URL verification succeeded. Actions run: $DISPATCHED_RUN_URL"
           gh issue close "$ISSUE_NUMBER" \
             --repo "$GITHUB_REPOSITORY" \
             --reason completed
