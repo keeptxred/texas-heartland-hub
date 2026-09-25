@@ -104,8 +104,8 @@ export const Route = createFileRoute("/texas-politics/why-texas-is-politically-c
       type: "article",
       section: "Texas Politics",
       author: "Keep TX Red Editorial Desk",
-      publishedTime: "2026-09-24",
-      modifiedTime: "2026-09-24",
+      publishedTime: "2026-09-25",
+      modifiedTime: "2026-09-25",
       imageAlt: "Texas political geography and election competitiveness explainer",
     });
 
@@ -120,8 +120,8 @@ export const Route = createFileRoute("/texas-politics/why-texas-is-politically-c
             "@type": "Article",
             headline: TITLE,
             description: DESCRIPTION,
-            datePublished: "2026-09-24",
-            dateModified: "2026-09-24",
+            datePublished: "2026-09-25",
+            dateModified: "2026-09-25",
             mainEntityOfPage: { "@type": "WebPage", "@id": CANONICAL },
             author: { "@type": "Organization", name: "Keep TX Red Editorial Desk", url: `${SITE_URL}/about` },
             publisher: { "@type": "Organization", name: "Keep TX Red", url: SITE_URL },
@@ -167,7 +167,7 @@ function TexasPoliticalCompetitivenessPage() {
             are moving at different speeds in different parts of the state.
           </p>
           <div className="mt-5 text-sm text-muted-foreground">
-            Updated <time dateTime="2026-09-24">September 24, 2026</time>
+            Updated <time dateTime="2026-09-25">September 25, 2026</time>
           </div>
         </header>
 
