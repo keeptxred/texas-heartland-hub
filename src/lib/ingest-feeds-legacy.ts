@@ -11,7 +11,7 @@ import { isSameEventRewrite } from "@/lib/article-canonical";
 import { articleMainWordCount } from "@/lib/article-length";
 import { scoreFeedItem, TEXAS_RELEVANCE_MIN } from "@/lib/viral-score";
 import { neutralizeFirstPersonTitle } from "@/lib/neutralize-headline";
-import { runEditorialRewrite } from "@/lib/editorial-pipeline";
+import { editorialMinimumFor, runEditorialRewrite } from "@/lib/editorial-pipeline";
 import { validatePoliticalAuthority } from "@/lib/political-entity-authority";
 
 // Reuses the existing Texas relevance scorer (title + description + source
@@ -30,23 +30,13 @@ function isTexasRelevantItem(it: Item): boolean {
   return r.texasRelevanceScore >= TEXAS_RELEVANCE_MIN;
 }
 
-// Evidence-driven length floors. Thin but legitimate primary-source updates
-// should become concise factual stories instead of being retried until an AI
-// pads them to an arbitrary category length. Rich packets still support deep
-// analysis. Keep these thresholds aligned with editorial-pipeline.ts.
-const MIN_WORDS_COMPACT = 650;
-const MIN_WORDS_STANDARD = 800;
-const MIN_WORDS_ANALYSIS = 1200;
-const COMPACT_SOURCE_MAX_CHARS = 4_500;
-const RICH_SOURCE_MIN_CHARS = 9_000;
-
+// Use the same evidence-driven floor as the editorial validator. Keeping one
+// implementation prevents provenance wrappers or future tier changes from
+// producing a draft that passes editorial validation but is rejected later by
+// the article-row guard.
 function minWordsForItem(it: Item, rw: Rewrite | null): number {
   const cat = (rw?.category ?? it.category ?? categoryFor(it.source)).toLowerCase();
-  const evidenceChars = (it.description ?? "").trim().length;
-  if (evidenceChars < COMPACT_SOURCE_MAX_CHARS) return MIN_WORDS_COMPACT;
-  const analysisCategory = cat === "non-political" || cat === "business" || cat === "education" || cat === "sports";
-  if (analysisCategory && evidenceChars >= RICH_SOURCE_MIN_CHARS) return MIN_WORDS_ANALYSIS;
-  return MIN_WORDS_STANDARD;
+  return editorialMinimumFor(cat, it.description ?? "");
 }
 
 // Image-bucket taxonomy. Kept in sync with CATEGORY_IMAGE_POOLS in
