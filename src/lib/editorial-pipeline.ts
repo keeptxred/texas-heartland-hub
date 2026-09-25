@@ -66,17 +66,22 @@ const RICH_ANALYSIS_MIN_WORDS = 1200;
 const PRIMARY_RECORD_AUGMENTED_PREFIX = "PRIMARY-RECORD-AUGMENTED SOURCE PACKET.";
 const RAW_SECONDARY_SOURCE_MARKER = "RAW SECONDARY SOURCE:";
 
+function hasPrimaryRecordAugmentation(sourceText?: string | null): boolean {
+  if (!sourceText) return false;
+  const prefixIndex = sourceText.indexOf(PRIMARY_RECORD_AUGMENTED_PREFIX);
+  const markerIndex = sourceText.indexOf(RAW_SECONDARY_SOURCE_MARKER);
+  return prefixIndex >= 0 && markerIndex > prefixIndex;
+}
+
 function evidenceTextForLengthTier(sourceText: string): string {
   const trimmed = sourceText.trim();
-  if (!trimmed.startsWith(PRIMARY_RECORD_AUGMENTED_PREFIX)) return trimmed;
+  if (!hasPrimaryRecordAugmentation(trimmed)) return trimmed;
 
-  // The primary-record wrapper carries verification instructions and a small
-  // official correction packet. Those characters are provenance/control text,
-  // not additional reporting depth. Measure the underlying secondary source so
-  // adding an official date correction cannot accidentally raise a compact
-  // source from the 650-word tier to the 800-word tier.
+  // The caller prepends the original headline before the evidence packet.
+  // Detect the wrapper anywhere in sourceText, but only when the raw-source
+  // marker follows it. The wrapper is provenance/control text, not reporting
+  // depth, so measure only the underlying secondary source for the tier.
   const markerIndex = trimmed.indexOf(RAW_SECONDARY_SOURCE_MARKER);
-  if (markerIndex < 0) return trimmed;
   return trimmed.slice(markerIndex + RAW_SECONDARY_SOURCE_MARKER.length).trim();
 }
 
@@ -524,9 +529,7 @@ export async function runEditorialRewrite<T extends ArticleShape>(
     };
   }
 
-  const primaryRecordAugmented = Boolean(
-    sourceText?.trim().startsWith(PRIMARY_RECORD_AUGMENTED_PREFIX),
-  );
+  const primaryRecordAugmented = hasPrimaryRecordAugmentation(sourceText);
   const onlyLengthFailure =
     secondValidation.reasons.length === 1 &&
     /^tiered_main_word_count:\d+\/\d+$/.test(secondValidation.reasons[0] ?? "");
