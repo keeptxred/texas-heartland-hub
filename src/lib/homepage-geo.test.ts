@@ -30,6 +30,8 @@ describe("homepage GEO signals", () => {
     expect(source).toContain('to="/elections/2026"');
     expect(source).toContain("<HomepageFaqs />");
     expect(source).not.toContain("<ElectionHomePage");
-    expect(source).toContain("Keep TX Red | Texas Politics, Elections & Government Accountability");
+    expect(source).toContain("Keep Texas Red (Keep TX Red) | Texas Politics & Elections");
+    expect(source).toContain(">Keep Texas Red <");
+    expect(source).toContain("Keep TX Red — short for Keep Texas Red —");
   });
 });
