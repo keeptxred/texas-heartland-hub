@@ -10,10 +10,11 @@ describe("core newsroom publication boundary", () => {
     expect(source).toContain('Publication held: feed item is routed to ${primary.target_site}, not KeepTXRed.');
   });
 
-  it("excludes non-KTR feed rows from multi-source clustering", () => {
-    expect(source).toContain("const recentKeepTxRed = (recent ?? []).filter(");
-    expect(source).toContain('!row.target_site || row.target_site === "keeptxred"');
-    expect(source).toContain("buildStoryCluster(primary, recentKeepTxRed as ClusterableFeedItem[]");
+  it("filters non-KTR rows inside the corroboration query and keeps payloads lightweight", () => {
+    expect(source).toContain('.select("id,title,link,source,description,pub_date,internal_slug")');
+    expect(source).toContain('.or("target_site.is.null,target_site.eq.keeptxred")');
+    expect(source).not.toContain('.select("id,title,link,source,description,pub_date,internal_slug,extracted_body,target_site")');
+    expect(source).toContain("buildStoryCluster(primary, recent ?? [], MAX_CLUSTER_SOURCES)");
   });
 
   it("injects verified primary-record evidence into single-source rewrites without replacing the stored extraction", () => {
@@ -23,6 +24,12 @@ describe("core newsroom publication boundary", () => {
     expect(source).toContain("await publishLegacySingleFeedItem(feedItemId)");
     expect(source).toContain("original source extraction restore failed");
     expect(source).toContain("updateArticleAttribution(db, singleResult.slug, cluster, factVerification)");
+  });
+
+  it("loads full bodies only after a candidate is selected into the bounded cluster", () => {
+    expect(source).toContain("enrichClusterBodies(cluster, db)");
+    expect(source).toContain("fetchReadableText(row.link)");
+    expect(source).toContain('update({ extracted_body: body }).eq("id", row.id)');
   });
 
   it("paginates the full corroboration lookback instead of truncating the newest rows", () => {
