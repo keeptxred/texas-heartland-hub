@@ -62,6 +62,7 @@ describe("editorial retry ceiling", () => {
 
     expect(editorialMinimumFor("politics", raw)).toBe(650);
     expect(editorialMinimumFor("politics", wrapped)).toBe(650);
+    expect(editorialMinimumFor("politics", `Original headline before wrapper\n${wrapped}`)).toBe(650);
   });
 
   it("allows one final length-only completion for a primary-record-augmented draft", async () => {
@@ -83,7 +84,7 @@ describe("editorial retry ceiling", () => {
       },
     );
 
-    const result = await runEditorialRewrite(generate, sourceText);
+    const result = await runEditorialRewrite(generate, `Original headline before wrapper\n${sourceText}`);
 
     expect(result.validation.ok).toBe(true);
     expect(result.attempts).toBe(3);
