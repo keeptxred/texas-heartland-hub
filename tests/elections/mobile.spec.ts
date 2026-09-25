@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const STANDARD_HOMEPAGE_HEADING = /follow the decisions shaping texas/i;
+const STANDARD_HOMEPAGE_HEADING = /keep texas red/i;
 const ELECTION_HOMEPAGE_HEADING = /texas election central/i;
 const LOCAL_PREVIEW = "http://127.0.0.1:4173";
 
