@@ -95,7 +95,7 @@ const clusterLinks = [
   },
 ];
 
-export const Route = createFileRoute(PATH)({
+export const Route = createFileRoute("/texas-politics/why-texas-is-politically-competitive")({
   head: () => {
     const seo = buildSeo({
       title: SEO_TITLE,
