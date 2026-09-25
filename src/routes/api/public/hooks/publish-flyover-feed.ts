@@ -105,8 +105,7 @@ async function publishExactFlyoverFeed(request: Request) {
   const imageUrl =
     (article?.featured_image_url as string | null | undefined) ??
     (article?.image_url as string | null | undefined) ??
-    image.url ??
-    null;
+    (image.ok ? image.url : null);
 
   const imageOk = Boolean(image.ok && imageUrl);
   const liveUrl = `https://keeptxred.com/news/${slug}`;
