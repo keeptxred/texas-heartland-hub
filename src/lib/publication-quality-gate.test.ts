@@ -38,6 +38,22 @@ describe("publication quality gate", () => {
     expect(readiness.authorityTopic).toBe(true);
   });
 
+  it("allows a secondary election-schedule report when a verified SOS primary record supplies the schedule facts", () => {
+    const primary = item({
+      title: "Texans have less than 3 weeks to register to vote for November 2026 midterm election",
+      source: "Houston Public Media",
+      link: "https://www.houstonpublicmedia.org/articles/news/politics/election-2026/2026/09/17/562107/texas-2026-midterm-voter-registration-deadline-november/",
+      description: "Texas voters must register by Oct. 5 ahead of the Nov. 3, 2026 general election.",
+      extracted_body: "Texas voters must register by Oct. 5, 2026. Election Day is Nov. 3, 2026. The deadline is set by the state election calendar.",
+    });
+    const readiness = assessPublicationReadiness(cluster(primary));
+    expect(readiness.publish).toBe(true);
+    expect(readiness.mode).toBe("primary_record");
+    expect(readiness.primaryRecord).toBe(true);
+    expect(readiness.independentSourceCount).toBe(1);
+    expect(readiness.reason).toContain("Secretary of State");
+  });
+
   it("allows independently corroborated multi-source events", () => {
     const primary = item({ link: "https://firstnews.com/story" });
     const readiness = assessPublicationReadiness(cluster(primary, {

@@ -226,6 +226,8 @@ async function writeFactVerificationHoldMetadata(
       primary_record_major_facts: decision.primaryRecordMajorFacts,
       material_conflict_keys: decision.materialConflictKeys,
       attributed_claim_keys: decision.attributedClaimKeys,
+      primary_record_notes: decision.primaryRecordNotes ?? [],
+      primary_record_sources: decision.primaryRecordSources ?? [],
     },
   };
   const { error } = await supabaseAdmin
@@ -262,11 +264,19 @@ async function writeStoryAngleMetadata(
   if (error) console.warn("[multi-source] story angle metadata not persisted", error.message);
 }
 
-async function updateArticleAttribution(supabaseAdmin: any, slug: string, cluster: StoryCluster): Promise<void> {
-  const sources = clusterSourceList(cluster).map((source) => ({
-    label: `${source.label} — source`,
-    url: source.url,
-  }));
+async function updateArticleAttribution(
+  supabaseAdmin: any,
+  slug: string,
+  cluster: StoryCluster,
+  factVerification?: FactVerificationDecision,
+): Promise<void> {
+  const sources = [
+    ...clusterSourceList(cluster).map((source) => ({
+      label: `${source.label} — source`,
+      url: source.url,
+    })),
+    ...(factVerification?.primaryRecordSources ?? []),
+  ];
   const { data: article } = await supabaseAdmin
     .from("daily_articles")
     .select("body_json")
@@ -287,8 +297,56 @@ async function updateArticleAttribution(supabaseAdmin: any, slug: string, cluste
   };
   await supabaseAdmin
     .from("daily_articles")
-    .update({ body_json: bodyJson, source_name: "Multiple independent sources" })
+    .update({
+      body_json: bodyJson,
+      source_name: byUrl.size >= 2 ? "Multiple independent sources" : cluster.primary.source,
+    })
     .eq("slug", slug);
+}
+
+async function publishSingleSourceWithPrimaryRecord(
+  db: any,
+  feedItemId: number,
+  cluster: StoryCluster,
+  factVerification: FactVerificationDecision,
+): Promise<Awaited<ReturnType<typeof publishLegacySingleFeedItem>>> {
+  const notes = factVerification.primaryRecordNotes ?? [];
+  const recordSources = factVerification.primaryRecordSources ?? [];
+  if (!notes.length || !recordSources.length) {
+    return publishLegacySingleFeedItem(feedItemId);
+  }
+
+  const originalSourceText = (cluster.primary.extracted_body ?? cluster.primary.description ?? "").trim();
+  const augmentedSourceText = [
+    "PRIMARY-RECORD-AUGMENTED SOURCE PACKET.",
+    "The official primary-record facts below are authoritative for the election schedule. If the secondary source contains a conflicting date, use the official record and do not repeat the conflicting date as fact.",
+    ...notes.map((note) => `PRIMARY RECORD: ${note}`),
+    "RAW SECONDARY SOURCE:",
+    originalSourceText,
+  ].filter(Boolean).join("\n\n");
+
+  const { error: augmentationError } = await db
+    .from("texas_news_feed")
+    .update({ extracted_body: augmentedSourceText.slice(0, 26000) })
+    .eq("id", feedItemId);
+  if (augmentationError) {
+    return { ok: false, error: `Could not attach verified primary-record evidence: ${augmentationError.message}` };
+  }
+
+  try {
+    return await publishLegacySingleFeedItem(feedItemId);
+  } finally {
+    const { error: restoreError } = await db
+      .from("texas_news_feed")
+      .update({ extracted_body: originalSourceText || null })
+      .eq("id", feedItemId);
+    if (restoreError) {
+      console.warn("[multi-source] original source extraction restore failed", {
+        feedItemId,
+        error: restoreError.message,
+      });
+    }
+  }
 }
 
 async function assessExistingStory(
@@ -418,8 +476,9 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
     const lifecycle = await preparePublicationLifecycle(db, feedItemId, eventClusterId, cluster, factVerification);
     if (!lifecycle.proceed) return lifecycle.result!;
 
-    const singleResult = await publishLegacySingleFeedItem(feedItemId);
+    const singleResult = await publishSingleSourceWithPrimaryRecord(db, feedItemId, cluster, factVerification);
     if (singleResult.ok && singleResult.slug) {
+      await updateArticleAttribution(db, singleResult.slug, cluster, factVerification);
       await persistEventCluster(db, cluster, { status: "published", publishedSlug: singleResult.slug });
     } else {
       await releasePublicationClaim(db, eventClusterId, lifecycle.claimToken);
@@ -462,7 +521,7 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
         kind: "confirmation",
         novelty: existingNovelty ?? undefined,
       });
-      await updateArticleAttribution(db, existing.internal_slug, cluster);
+      await updateArticleAttribution(db, existing.internal_slug, cluster, factVerification);
       await persistEventCluster(db, cluster, { status: "published", publishedSlug: existing.internal_slug });
       return {
         ok: true,
@@ -569,7 +628,7 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
       novelty: existingNovelty,
     });
     await writeStoryAngleMetadata(db, feedItemId, anglePlan);
-    await updateArticleAttribution(db, materialExistingSlug, cluster);
+    await updateArticleAttribution(db, materialExistingSlug, cluster, factVerification);
     await persistEventCluster(db, cluster, { status: "published", publishedSlug: materialExistingSlug });
     return {
       ok: true,
@@ -597,7 +656,7 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
   if (result.ok && result.slug) {
     await writeClusterMetadata(db, cluster, result.slug);
     await writeStoryAngleMetadata(db, feedItemId, anglePlan);
-    await updateArticleAttribution(db, result.slug, cluster);
+    await updateArticleAttribution(db, result.slug, cluster, factVerification);
     await persistEventCluster(db, cluster, { status: "published", publishedSlug: result.slug });
     return {
       ...result,
