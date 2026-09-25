@@ -9,6 +9,7 @@ import { buildSeo } from "@/lib/seo";
 const HUB = HUBS.find((h) => h.slug === "texas-politics")!;
 const SECTIONS = [
   { title: "Elections", description: "Primaries, runoffs, and the races shaping the next Texas Legislature.", href: "/elections/2026" },
+  { title: "Why Texas Is Politically Competitive", description: "How population growth, turnout, metros, suburbs, rural margins and South Texas create different kinds of electoral competition beneath the statewide result.", href: "/texas-politics/why-texas-is-politically-competitive" },
   { title: "Republic of Texas Government", description: "The presidency, Congress, 1836 Constitution, capitals, diplomacy, public finance, annexation and transition from independent republic to state government.", href: "/texas-politics/republic-of-texas-government-history" },
   { title: "Democratic Dominance, 1876–1952", description: "How one-party Democratic control, primary politics and suffrage restrictions shaped Texas after Reconstruction.", href: "/texas-politics/texas-democratic-dominance-1876-1952" },
   { title: "Populist & Progressive Texas", description: "Farm revolt, railroad regulation, political reform and the contradictions of Progressive-era election change.", href: "/texas-politics/texas-populist-progressive-era" },
@@ -147,6 +148,9 @@ function TexasPoliticsPage() {
             </p>
             <p>
               The <a href="/texas-politics/texas-political-geography-history" className="font-semibold text-primary underline underline-offset-4">Texas Political Geography</a> cluster shows how that chronology played out on the map: county returns, urban-suburban-rural divergence, South Texas and Rio Grande Valley political development, and the separate realignment paths of Dallas-Fort Worth, Houston, Austin and San Antonio.
+            </p>
+            <p>
+              The <a href="/texas-politics/why-texas-is-politically-competitive" className="font-semibold text-primary underline underline-offset-4">Why Texas Is Politically Competitive</a> guide connects those historical patterns to the modern electoral arithmetic: rapid population growth, urban and rural margins, varied suburban trajectories, South Texas movement, turnout and redistricting.
             </p>
             <p>
               KTR's <a href="/texas-politics/texas-constitutional-history" className="font-semibold text-primary underline underline-offset-4">Texas Constitutional History</a> explains why that power is divided in the first place: the sequence from the Republic constitution through the 1845, 1861, 1866, 1869 and 1876 charters, the post-Reconstruction reaction against concentrated authority, the plural executive and the amendment system voters still use today.
