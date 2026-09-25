@@ -2,6 +2,10 @@ import fs from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const source = fs.readFileSync(new URL("./multi-source-publish.ts", import.meta.url), "utf8");
+const candidateLoader = source.slice(
+  source.indexOf("async function loadRecentClusterCandidates"),
+  source.indexOf("async function fetchReadableText"),
+);
 
 describe("core newsroom publication boundary", () => {
   it("loads target_site for the primary feed item and rejects non-KTR routes", () => {
@@ -11,9 +15,9 @@ describe("core newsroom publication boundary", () => {
   });
 
   it("filters non-KTR rows inside the corroboration query and keeps payloads lightweight", () => {
-    expect(source).toContain('.select("id,title,link,source,description,pub_date,internal_slug")');
-    expect(source).toContain('.or("target_site.is.null,target_site.eq.keeptxred")');
-    expect(source).not.toContain('.select("id,title,link,source,description,pub_date,internal_slug,extracted_body,target_site")');
+    expect(candidateLoader).toContain('.select("id,title,link,source,description,pub_date,internal_slug")');
+    expect(candidateLoader).toContain('.or("target_site.is.null,target_site.eq.keeptxred")');
+    expect(candidateLoader).not.toContain("extracted_body");
     expect(source).toContain("buildStoryCluster(primary, recent ?? [], MAX_CLUSTER_SOURCES)");
   });
 
