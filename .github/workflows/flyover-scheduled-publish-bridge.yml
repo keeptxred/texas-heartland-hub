@@ -1,0 +1,102 @@
+name: Flyover scheduled publish bridge
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  actions: write
+  contents: read
+  issues: write
+
+jobs:
+  dispatch:
+    if: >-
+      github.event.issue.user.login == 'keeptxred' &&
+      github.event.issue.author_association == 'OWNER' &&
+      startsWith(github.event.issue.title, '[Flyover Publish KTR] ')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Validate trigger envelope
+        shell: bash
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          set -euo pipefail
+          first_line="$(printf '%s\n' "$ISSUE_BODY" | sed -n '1p')"
+          run_line="$(printf '%s\n' "$ISSUE_BODY" | sed -n '2p')"
+          site_line="$(printf '%s\n' "$ISSUE_BODY" | sed -n '3p')"
+
+          [[ "$first_line" == "flyover_publish_request_v1" ]]
+          [[ "$run_line" =~ ^run_id=[A-Za-z0-9._:-]{8,160}$ ]]
+          [[ "$site_line" == "site=ktr" ]]
+
+          echo "RUN_ID=${run_line#run_id=}" >> "$GITHUB_ENV"
+
+      - name: Capture previous production dispatch
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          before="$(gh run list \
+            --repo "$GITHUB_REPOSITORY" \
+            --workflow run-daily-news-now.yml \
+            --event workflow_dispatch \
+            --branch main \
+            --limit 1 \
+            --json databaseId \
+            --jq '.[0].databaseId // 0')"
+          echo "BEFORE_RUN_ID=$before" >> "$GITHUB_ENV"
+
+      - name: Dispatch protected KTR publisher
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh workflow run run-daily-news-now.yml \
+            --repo "$GITHUB_REPOSITORY" \
+            --ref main
+
+      - name: Resolve dispatched production run
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 30); do
+            row="$(gh run list \
+              --repo "$GITHUB_REPOSITORY" \
+              --workflow run-daily-news-now.yml \
+              --event workflow_dispatch \
+              --branch main \
+              --limit 1 \
+              --json databaseId,status,url \
+              --jq '.[0] // {}')"
+            run_id="$(jq -r '.databaseId // 0' <<<"$row")"
+            if [[ "$run_id" != "0" && "$run_id" != "$BEFORE_RUN_ID" ]]; then
+              echo "DISPATCHED_RUN_ID=$run_id" >> "$GITHUB_ENV"
+              echo "DISPATCHED_RUN_URL=$(jq -r '.url // ""' <<<"$row")" >> "$GITHUB_ENV"
+              exit 0
+            fi
+            sleep 2
+          done
+
+          echo "No new Run Daily News Now workflow_dispatch run appeared." >&2
+          exit 1
+
+      - name: Record bridge result and close request
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          set -euo pipefail
+          gh issue comment "$ISSUE_NUMBER" \
+            --repo "$GITHUB_REPOSITORY" \
+            --body "Flyover bridge accepted \`$RUN_ID\` and dispatched the protected KTR publisher. Actions run: $DISPATCHED_RUN_URL"
+          gh issue close "$ISSUE_NUMBER" \
+            --repo "$GITHUB_REPOSITORY" \
+            --reason completed
