@@ -29,6 +29,8 @@ ROUTES = {
         "South Texas and Rio Grande Valley Political History",
     "/texas-politics/texas-metro-regional-realignment-history":
         "Texas Metro and Regional Realignment: Dallas, Houston, Austin, San Antonio and Beyond",
+    "/texas-politics/why-texas-is-politically-competitive":
+        "Why Is Texas Politically Competitive? Population, Cities, Suburbs and Voting Trends",
 }
 
 
@@ -175,7 +177,7 @@ def verify_sitemaps() -> None:
         raise RuntimeError(f"political-geography sitemap contains duplicate URLs: {observed!r}")
     if set(observed) != set(expected) or len(observed) != len(expected):
         raise RuntimeError(
-            "political-geography sitemap does not own exactly the four authority URLs: "
+            "political-geography sitemap does not own exactly the configured authority URLs: "
             f"observed={observed!r} expected={expected!r}"
         )
 
@@ -220,7 +222,7 @@ def main() -> int:
             print(f"FAIL: {failure}", file=sys.stderr)
         return 1
 
-    print("Political-geography production smoke passed: four authority routes, canonicals, indexability, schema, hub discovery, and dedicated sitemap ownership are intact.")
+    print(f"Political-geography production smoke passed: {len(ROUTES)} authority routes, canonicals, indexability, schema, hub discovery, and dedicated sitemap ownership are intact.")
     return 0
 
 
