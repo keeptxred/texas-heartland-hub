@@ -241,6 +241,7 @@ export const TEXAS_ELECTION_HISTORY: PoliticalHistoryAuthorityPage = {
     { href: "https://www.senate.gov/states/TX/timeline.htm", label: "United States Senate: Texas Senate delegation timeline" },
   ],
   relatedLinks: [
+    { href: "/keep-texas-red", label: "Keep Texas Red pillar", description: "The core KTR guide connecting elections, institutions, policy and government accountability." },
     { href: "/elections/2026", label: "2026 Election Central", description: "Verified current races, candidates, dates, polls, forecasts and voting information." },
     { href: "/texas-politics/why-texas-is-politically-competitive", label: "Why Texas is politically competitive", description: "How population growth, turnout and regional vote margins shape modern statewide and district competition." },
     { href: "/texas-politics/how-texas-became-republican", label: "How Texas became Republican", description: "A deeper chronology of the state's modern partisan realignment." },
