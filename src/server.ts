@@ -88,13 +88,17 @@ export function normalizeCanonicalHref(href: string): string {
 
   try {
     const url = new URL(value);
-    const isCanonicalOrigin =
-      url.protocol === "https:" && url.hostname.toLowerCase() === CANONICAL_HOST && url.port === "";
-    if (!isCanonicalOrigin || url.pathname === "/" || !url.pathname.endsWith("/")) {
-      return href;
-    }
+    const hostname = url.hostname.toLowerCase();
+    const isSiteHost = hostname === CANONICAL_HOST || hostname === WWW_HOST;
+    const isHttpProtocol = url.protocol === "http:" || url.protocol === "https:";
+    if (!isSiteHost || !isHttpProtocol) return href;
 
-    url.pathname = url.pathname.replace(/\/+$/, "");
+    url.protocol = "https:";
+    url.hostname = CANONICAL_HOST;
+    url.port = "";
+    if (url.pathname !== "/" && url.pathname.endsWith("/")) {
+      url.pathname = url.pathname.replace(/\/+$/, "");
+    }
     return url.toString();
   } catch {
     return href;
