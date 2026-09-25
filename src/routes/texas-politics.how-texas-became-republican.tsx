@@ -288,6 +288,7 @@ function TexasRepublicanRealignmentPage() {
         <h2 className="text-2xl font-bold">Continue through KTR's Texas politics authority layer</h2>
         <div className="mt-5 flex flex-wrap gap-3">
           <a href="/texas-politics/figures" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">Political figures</a>
+          <a href="/texas-politics/why-texas-is-politically-competitive" className="rounded-md border bg-card px-4 py-2 text-sm font-bold hover:border-primary">Why Texas is politically competitive</a>
           <a href="/texas-political-reference" className="rounded-md border bg-card px-4 py-2 text-sm font-bold hover:border-primary">Political reference</a>
           <a href="/policy" className="rounded-md border bg-card px-4 py-2 text-sm font-bold hover:border-primary">Policy trackers</a>
           <a href="/laws" className="rounded-md border bg-card px-4 py-2 text-sm font-bold hover:border-primary">Texas Law Library</a>
