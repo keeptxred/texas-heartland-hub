@@ -113,7 +113,6 @@ export const Route = createFileRoute(PATH)({
       meta: seo.meta,
       links: seo.links,
       scripts: [
-        ...(seo.scripts ?? []),
         {
           type: "application/ld+json",
           children: JSON.stringify({
