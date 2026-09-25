@@ -62,10 +62,13 @@ describe("News and civic shared SEO", () => {
     expect(metaContent(head.meta, "property", "og:image")).toBe(expectedImage);
     expect(metaContent(head.meta, "name", "twitter:image")).toBe(expectedImage);
     expect(metaContent(head.meta, "property", "article:published_time")).toBe("2026-06-27");
-    expect(metaContent(head.meta, "property", "article:modified_time")).toBe("2026-08-04");
+    expect(metaContent(head.meta, "property", "article:modified_time")).toBe("2026-09-25");
 
-    expect(head.scripts).toHaveLength(2);
+    expect(head.scripts).toHaveLength(3);
     expect(JSON.parse(head.scripts[0].children)["@type"]).toBe("Article");
     expect(JSON.parse(head.scripts[1].children)["@type"]).toBe("BreadcrumbList");
+    const supportingGuides = JSON.parse(head.scripts[2].children);
+    expect(supportingGuides["@type"]).toBe("ItemList");
+    expect(supportingGuides.itemListElement).toHaveLength(6);
   });
 });

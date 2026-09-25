@@ -9,6 +9,39 @@ const DESC =
   "What Keep Texas Red means in Texas politics: elections, legislation, border policy, energy, constitutional rights, education policy and government accountability.";
 const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
 
+const SUPPORTING_GUIDES = [
+  {
+    href: "/texas-politics/texas-political-geography-history",
+    title: "Texas Political Geography",
+    description: "How regions, counties, metros and population change built the statewide electoral map.",
+  },
+  {
+    href: "/texas-politics/texas-election-history",
+    title: "Texas Election History",
+    description: "The transition from one-party primary dominance to modern two-party statewide and district competition.",
+  },
+  {
+    href: "/texas-politics/how-texas-became-republican",
+    title: "How Texas Became Republican",
+    description: "A source-backed chronology of the state's modern partisan realignment and governing transition.",
+  },
+  {
+    href: "/texas-politics/texas-urban-suburban-rural-politics-history",
+    title: "Urban, Suburban and Rural Texas Politics",
+    description: "How cities, suburbs, exurbs and rural counties developed different electoral patterns.",
+  },
+  {
+    href: "/texas-politics/why-texas-is-politically-competitive",
+    title: "Why Texas Is Politically Competitive",
+    description: "How population growth, turnout and regional margins can produce competition beneath statewide results.",
+  },
+  {
+    href: "/elections/2026",
+    title: "2026 Texas Election Central",
+    description: "Current verified races, candidates, districts, voting information, polls and results.",
+  },
+] as const;
+
 export function keepTexasRedHead() {
   const seo = buildSeo({
     title: SEO_TITLE,
@@ -18,7 +51,7 @@ export function keepTexasRedHead() {
     image: heroFlag,
     imageAlt: "Texas state flag waving against a clear sky",
     publishedTime: "2026-06-27",
-    modifiedTime: "2026-08-04",
+    modifiedTime: "2026-09-25",
     section: "Texas Politics",
     author: "Keep TX Red Editorial Team",
   });
@@ -36,7 +69,7 @@ export function keepTexasRedHead() {
           description: DESC,
           image: [heroFlag],
           datePublished: "2026-06-27",
-          dateModified: "2026-08-04",
+          dateModified: "2026-09-25",
           author: { "@type": "Organization", name: "Keep TX Red Editorial Team" },
           publisher: {
             "@type": "NewsMediaOrganization",
@@ -56,6 +89,20 @@ export function keepTexasRedHead() {
             { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
             { "@type": "ListItem", position: 2, name: "Keep Texas Red", item: URL },
           ],
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: "Keep Texas Red supporting guides",
+          itemListElement: SUPPORTING_GUIDES.map((guide, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            name: guide.title,
+            url: `${SITE_URL}${guide.href}`,
+          })),
         }),
       },
     ],
@@ -100,7 +147,7 @@ function KeepTexasRedPage() {
       <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 border-y border-border py-3 text-xs text-muted-foreground">
         <span className="font-semibold text-foreground">By Keep TX Red Editorial Team</span>
         <span>•</span>
-        <span>Updated <time dateTime="2026-08-04">August 4, 2026</time></span>
+        <span>Updated <time dateTime="2026-09-25">September 25, 2026</time></span>
       </div>
 
       <div className="my-8 aspect-[16/9] overflow-hidden border-2 border-foreground/10 bg-muted">
@@ -185,6 +232,22 @@ function KeepTexasRedPage() {
           Keep TX Red exists to connect political news to the institutions and records behind it. The goal is to help Texans understand who made a decision, what authority they used, what the policy actually does and what voters can do next.
         </p>
       </Section>
+
+      <section className="mt-12 rounded-2xl border border-primary/20 bg-primary/[0.03] p-6 md:p-8" aria-labelledby="supporting-guides">
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Supporting content</p>
+        <h2 id="supporting-guides" className="mt-2 font-display text-3xl tracking-tight">Understand the Texas political landscape</h2>
+        <p className="mt-3 leading-7 text-muted-foreground">
+          These guides provide the historical, geographic and current-election context behind the Keep Texas Red pillar.
+        </p>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          {SUPPORTING_GUIDES.map((guide) => (
+            <a key={guide.href} href={guide.href} className="rounded-xl border bg-card p-5 transition hover:border-primary hover:shadow-sm">
+              <h3 className="font-bold text-primary">{guide.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">{guide.description}</p>
+            </a>
+          ))}
+        </div>
+      </section>
 
       <section className="mt-12 border-t border-border pt-8">
         <h2 className="font-display text-2xl tracking-tight">Continue exploring</h2>
