@@ -242,6 +242,7 @@ export const TEXAS_ELECTION_HISTORY: PoliticalHistoryAuthorityPage = {
   ],
   relatedLinks: [
     { href: "/elections/2026", label: "2026 Election Central", description: "Verified current races, candidates, dates, polls, forecasts and voting information." },
+    { href: "/texas-politics/why-texas-is-politically-competitive", label: "Why Texas is politically competitive", description: "How population growth, turnout and regional vote margins shape modern statewide and district competition." },
     { href: "/texas-politics/how-texas-became-republican", label: "How Texas became Republican", description: "A deeper chronology of the state's modern partisan realignment." },
     { href: "/texas-politics/voting-rights-history", label: "Texas voting-rights history", description: "How access to the ballot and primary changed through state law, litigation and federal law." },
     { href: "/texas-politics/texas-redistricting-history", label: "Texas redistricting history", description: "How changing district lines reshaped congressional and legislative competition." },
