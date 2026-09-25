@@ -97,8 +97,69 @@ describe("fact verification gate", () => {
     expect(decision.primaryRecordNotes?.[0]).toContain("sos.texas.gov");
 
     const instructions = buildVerificationInstructions(decision, electionLedger);
-    expect(instructions).toContain("PRIMARY RECORD RESOLUTION");
+    expect(instructions).toContain("PRIMARY RECORD");
     expect(instructions).toContain("November 3, 2026");
+  });
+
+  it("uses the verified SOS calendar as primary support for a single-source registration deadline story", () => {
+    const electionCluster = cluster("Texas voter registration deadline is Oct. 5 for the November 2026 general election");
+    electionCluster.primary.source = "Houston Public Media";
+    electionCluster.primary.link = "https://www.houstonpublicmedia.org/elections/registration-deadline";
+    electionCluster.primary.description = "Texas voters must register by Oct. 5, 2026 for the Nov. 3, 2026 general election.";
+
+    const dateFact = fact({
+      factKey: "date:registration-deadline",
+      type: "date",
+      text: "Texas voters must register by Oct. 5, 2026 for the Nov. 3, 2026 general election.",
+      normalizedText: "texas voters register oct 5 2026 nov 3 2026 general election",
+      corroborationCount: 1,
+      primaryRecordSupport: false,
+      sourceFeedItemIds: [1],
+      sourceLabels: ["Houston Public Media"],
+      sourceUrls: [electionCluster.primary.link],
+      numericValues: ["5", "2026", "3", "2026"],
+      hasConflict: false,
+    });
+
+    const decision = assessFactVerification(electionCluster, ledger([dateFact]));
+    expect(decision.publish).toBe(true);
+    expect(decision.mode).toBe("verified");
+    expect(decision.primaryRecordMajorFacts).toBe(1);
+    expect(decision.primaryRecordSources).toEqual([
+      expect.objectContaining({
+        label: expect.stringContaining("Texas Secretary of State"),
+        url: expect.stringContaining("sos.texas.gov"),
+      }),
+    ]);
+    expect(decision.primaryRecordNotes?.join(" ")).toContain("October 5, 2026");
+    expect(decision.primaryRecordNotes?.join(" ")).toContain("November 3, 2026");
+  });
+
+  it("does not let an election calendar resolve an unrelated central numeric conflict", () => {
+    const electionCluster = cluster("Texas voter registration deadline for the November 2026 general election");
+    electionCluster.primary.source = "Houston Public Media";
+    electionCluster.primary.link = "https://www.houstonpublicmedia.org/elections/registration-deadline";
+    electionCluster.primary.description = "Texas voter registration officials are preparing for the November election.";
+
+    const voterCountConflict = fact({
+      factKey: "number:voter-count",
+      type: "number",
+      text: "Texas voter registration officials reported 2.9 million voter records in the system.",
+      normalizedText: "texas voter registration officials reported 2 9 million voter records system",
+      corroborationCount: 1,
+      primaryRecordSupport: false,
+      sourceFeedItemIds: [1],
+      sourceLabels: ["Houston Public Media"],
+      sourceUrls: [electionCluster.primary.link],
+      conflictGroup: "numeric-conflict:voter-count",
+      hasConflict: true,
+      numericValues: ["2.9 million", "3.1 million"],
+    });
+
+    const decision = assessFactVerification(electionCluster, ledger([voterCountConflict]));
+    expect(decision.publish).toBe(false);
+    expect(decision.mode).toBe("hold_material_conflict");
+    expect(decision.materialConflictKeys).toContain("number:voter-count");
   });
 
   it("does not block a peripheral conflict that can be attributed", () => {
