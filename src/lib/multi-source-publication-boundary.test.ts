@@ -16,6 +16,15 @@ describe("core newsroom publication boundary", () => {
     expect(source).toContain("buildStoryCluster(primary, recentKeepTxRed as ClusterableFeedItem[]");
   });
 
+  it("injects verified primary-record evidence into single-source rewrites without replacing the stored extraction", () => {
+    expect(source).toContain("publishSingleSourceWithPrimaryRecord");
+    expect(source).toContain("PRIMARY-RECORD-AUGMENTED SOURCE PACKET.");
+    expect(source).toContain("use the official record and do not repeat the conflicting date as fact");
+    expect(source).toContain("await publishLegacySingleFeedItem(feedItemId)");
+    expect(source).toContain("original source extraction restore failed");
+    expect(source).toContain("updateArticleAttribution(db, singleResult.slug, cluster, factVerification)");
+  });
+
   it("paginates the full corroboration lookback instead of truncating the newest rows", () => {
     expect(source).toContain("const CLUSTER_CANDIDATE_PAGE_SIZE = 500");
     expect(source).toContain("loadRecentClusterCandidates(db, feedItemId, since)");
