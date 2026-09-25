@@ -63,11 +63,28 @@ const RICH_ANALYSIS_MIN_WORDS = 1200;
  * When sourceText is omitted, preserve the historical category-based contract
  * for callers/tests that have not supplied an evidence packet.
  */
+const PRIMARY_RECORD_AUGMENTED_PREFIX = "PRIMARY-RECORD-AUGMENTED SOURCE PACKET.";
+const RAW_SECONDARY_SOURCE_MARKER = "RAW SECONDARY SOURCE:";
+
+function evidenceTextForLengthTier(sourceText: string): string {
+  const trimmed = sourceText.trim();
+  if (!trimmed.startsWith(PRIMARY_RECORD_AUGMENTED_PREFIX)) return trimmed;
+
+  // The primary-record wrapper carries verification instructions and a small
+  // official correction packet. Those characters are provenance/control text,
+  // not additional reporting depth. Measure the underlying secondary source so
+  // adding an official date correction cannot accidentally raise a compact
+  // source from the 650-word tier to the 800-word tier.
+  const markerIndex = trimmed.indexOf(RAW_SECONDARY_SOURCE_MARKER);
+  if (markerIndex < 0) return trimmed;
+  return trimmed.slice(markerIndex + RAW_SECONDARY_SOURCE_MARKER.length).trim();
+}
+
 export function editorialMinimumFor(category?: string | null, sourceText?: string | null): number {
   const isAnalysis = ANALYSIS_CATEGORIES.has((category ?? "").trim().toLowerCase());
   if (sourceText == null) return isAnalysis ? RICH_ANALYSIS_MIN_WORDS : STANDARD_NEWS_MIN_WORDS;
 
-  const evidenceChars = sourceText.trim().length;
+  const evidenceChars = evidenceTextForLengthTier(sourceText).length;
   if (evidenceChars < COMPACT_SOURCE_MAX_CHARS) return COMPACT_NEWS_MIN_WORDS;
   if (isAnalysis && evidenceChars >= RICH_SOURCE_MIN_CHARS) return RICH_ANALYSIS_MIN_WORDS;
   return STANDARD_NEWS_MIN_WORDS;
@@ -507,10 +524,58 @@ export async function runEditorialRewrite<T extends ArticleShape>(
     };
   }
 
-  // Two model calls is the hard ceiling for one source. A candidate that still
-  // fails after a targeted repair is returned to the caller as failed so the
-  // scheduler can cool it down and move to another story instead of spending
-  // more credits on the same difficult source.
+  const primaryRecordAugmented = Boolean(
+    sourceText?.trim().startsWith(PRIMARY_RECORD_AUGMENTED_PREFIX),
+  );
+  const onlyLengthFailure =
+    secondValidation.reasons.length === 1 &&
+    /^tiered_main_word_count:\d+\/\d+$/.test(secondValidation.reasons[0] ?? "");
+
+  // Keep the normal two-call ceiling. A narrowly scoped exception is allowed
+  // only for verified-primary-record augmentation when the repaired draft is
+  // otherwise valid and misses only the unchanged evidence-driven word floor.
+  // This gives the model one final completion pass without weakening any factual,
+  // readability, source, or minimum-length validator.
+  if (primaryRecordAugmented && onlyLengthFailure) {
+    const third = await generate(
+      EDITORIAL_SYSTEM_ADDENDUM +
+        EDITORIAL_STRICT_RETRY_ADDENDUM +
+        EDITORIAL_LENGTH_COMPLETION_ADDENDUM +
+        retryContext(second.raw, secondValidation),
+      "length-completion",
+    );
+
+    if (third?.raw) {
+      const parsedThird = parseEditorialResponse<T>(third.raw);
+      if (parsedThird.brief?.hasClearNewsEvent !== false) {
+        const thirdArticle = parsedThird.article ? repairArticleReadability(parsedThird.article) : null;
+        const thirdValidation = validateArticle(
+          thirdArticle ?? {},
+          parsedThird.brief ?? parsedSecond.brief ?? parsedFirst.brief ?? undefined,
+          sourceText,
+        );
+        if (thirdValidation.ok && thirdArticle) {
+          return {
+            article: thirdArticle,
+            brief: parsedThird.brief ?? parsedSecond.brief ?? parsedFirst.brief,
+            validation: thirdValidation,
+            attempts: 3,
+          };
+        }
+        return {
+          article: null,
+          brief: parsedThird.brief ?? parsedSecond.brief ?? parsedFirst.brief,
+          validation: thirdValidation,
+          attempts: 3,
+          droppedReason: "validation_failed_twice",
+        };
+      }
+    }
+  }
+
+  // Two model calls remains the hard ceiling for ordinary sources. A candidate
+  // that still fails after a targeted repair is returned to the caller as failed
+  // so the scheduler can cool it down and move to another story.
   return {
     article: null,
     brief: parsedSecond.brief ?? parsedFirst.brief,
