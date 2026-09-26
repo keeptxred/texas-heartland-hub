@@ -88,6 +88,32 @@ describe("article image attribution", () => {
     });
   });
 
+
+  it("credits every attribution-required remediated hero added by the final audit", () => {
+    const expected = [
+      ["https://commons.wikimedia.org/wiki/Special:Redirect/file/Charley_Crockett.jpg", "Bobby Cochran", "CC BY-SA 4.0"],
+      ["https://commons.wikimedia.org/wiki/Special:Redirect/file/Pickle_Juice_Drinking_Competition.jpg", "BanjoZebra", "CC BY-SA 4.0"],
+      ["https://commons.wikimedia.org/wiki/Special:Redirect/file/ERCOTOperator_2.jpg", "Dpysh w", "CC BY 3.0"],
+      ["https://commons.wikimedia.org/wiki/Special:Redirect/file/USA_Big_Bend_Rio_Grande_TX.jpg", "Daniel Schwen", "CC BY-SA 2.5"],
+      ["https://commons.wikimedia.org/wiki/Special:Redirect/file/1_Opening_the_box_(12001259465).jpg", "Bob Herndon, U.S. Fish and Wildlife Service", "CC BY 2.0"],
+      ["https://commons.wikimedia.org/wiki/Special:Redirect/file/Tesla_Cybercab_-_San_Francisco_-_June_2026.jpg", "9yz", "CC BY 4.0"],
+      ["https://commons.wikimedia.org/wiki/Special:Redirect/file/Lake_Livingston_Dam.jpg", "i_am_jim", "CC BY-SA 3.0"],
+      ["https://commons.wikimedia.org/wiki/Special:Redirect/file/Fallopian_tube.jpg", "Scientific Animations", "CC BY-SA 4.0"],
+      ["https://commons.wikimedia.org/wiki/Special:Redirect/file/0011Tarrant%20County%20Courthouse%20Full%20E%20Fort%20Worth%20Texas.jpg", "Mark Fisher", "CC BY-SA 3.0"],
+      ["https://commons.wikimedia.org/wiki/Special:Redirect/file/Celina%20High%20School%2C%20Friday%20Night%20Football.jpg", "Heidi Knapp", "CC BY-SA 4.0"],
+      ["https://commons.wikimedia.org/wiki/Special:Redirect/file/Federal_Courthouse,_Austin,_TX_IMG_6339.JPG", "Billy Hathorn", "CC BY-SA 3.0"],
+      ["https://commons.wikimedia.org/wiki/Special:Redirect/file/HuntsvilleUnitHuntsvilleTX.jpg", "Nick DiFonzo", "CC BY 2.0"],
+      ["https://commons.wikimedia.org/wiki/Special:Redirect/file/Stock_ponds_are_vital_for_livestock_to_survive_at_Stasney%27s_Cook_Ranch_in_Albany,_Texas._(25017182991).jpg", "USDA NRCS Texas", "Public domain (U.S. Department of Agriculture work)"],
+      ["https://commons.wikimedia.org/wiki/Special:Redirect/file/Texas_Woman%27s_University_September_2015_04_(Old_Main_Building).jpg", "Michael Barera", "CC BY-SA 4.0"],
+      ["https://upload.wikimedia.org/wikipedia/commons/3/33/Japanese_dinner%2C_kaiseki.jpg", "(WT-en) Jpatokal at English Wikivoyage", "CC BY-SA 3.0"],
+    ] as const;
+
+    for (const [url, credit, licenseName] of expected) {
+      expect(getArticleImageAttribution(url)).toMatchObject({ credit, licenseName });
+      expect(hasRequiredArticleImageAttribution(url)).toBe(true);
+    }
+  });
+
   it("contains wide governed identity graphics instead of cropping them", () => {
     expect(shouldContainArticleImage(
       "https://commons.wikimedia.org/wiki/Special:Redirect/file/Lupe_logo_jpeg.jpg",
