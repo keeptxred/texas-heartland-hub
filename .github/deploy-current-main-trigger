@@ -1,5 +1,5 @@
 Deploy current main to Cloudflare production.
 Trigger production deployment convergence for keeptxred.com.
-Target main: 4d0e83853fbab7a7e5921e84f05d400021ad68ef
-Production-current verification requested: 2026-09-25T19:05-05:00
-Reason: deploy the verified story-relative Flyover corroboration-window fix before retrying historical exact-feed publications.
+Target main: 95efb28a9b35713789c4a2fa0319080b51d74928
+Production-current verification requested: 2026-09-25T19:27-05:00
+Reason: deploy merged primary-source clustering fix and current Flyover image-recovery marker before exact-feed retries.
