@@ -33,7 +33,7 @@ describe("image backlog recovery publication boundary", () => {
     expect(recoveredSource).toContain("meetsArticleMainWordCount");
     expect(recoveredSource).toContain("isLegacyGeneratedNewsAsset(imageUrl)");
     expect(recoveredSource).toContain('!== "ready"');
-    expect(recoveredSource).toContain("hasHeroVisualReadinessProvenance(row.image_validation_note, imageUrl)");
+    expect(recoveredSource).toContain("hasHeroVisualReadinessProvenance(row.image_validation_note, imageUrl, row.slug)");
     expect(source).toContain('reason: "already-ready"');
     expect(source).toContain("processed: 0");
     expect(source).toContain("skipped: 1");
