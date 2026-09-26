@@ -123,7 +123,7 @@ describe("article hero visual readiness", () => {
     const lupeSlug = "2026-09-17-more-young-people-are-getting-involved-with-south-texas-civil-rights-group-amid-";
     const lupeUrl = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Lupe_logo_jpeg.jpg";
     const txseSlug = "2026-09-10-texas-stock-exchange-first-primary-listings";
-    const txseUrl = "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6b/TXSE_logo_Sep_2024.svg/1280px-TXSE_logo_Sep_2024.svg.png";
+    const txseUrl = "/images/news/editorial/txse-identity.png";
 
     expect(governedExactEntityGraphicUrl(lupeSlug)).toBe(lupeUrl);
     expect(governedExactEntityGraphicUrl(txseSlug)).toBe(txseUrl);

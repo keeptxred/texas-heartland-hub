@@ -47,14 +47,14 @@ describe("article image attribution", () => {
     });
   });
 
-  it("credits the governed Texas Stock Exchange identity graphic", () => {
+  it("credits the governed raster Texas Stock Exchange identity graphic", () => {
     expect(
       getArticleImageAttribution(
-        "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6b/TXSE_logo_Sep_2024.svg/1280px-TXSE_logo_Sep_2024.svg.png",
+        "/images/news/editorial/txse-identity.png",
       ),
     ).toMatchObject({
-      credit: "TXSE Group Inc.",
-      licenseName: "Public domain (PD-textlogo)",
+      credit: "Keep TX Red editorial desk",
+      licenseName: "Original editorial raster; identity text references a public-domain text logo",
     });
   });
 
@@ -119,7 +119,7 @@ describe("article image attribution", () => {
       "https://commons.wikimedia.org/wiki/Special:Redirect/file/Lupe_logo_jpeg.jpg",
     )).toBe(true);
     expect(shouldContainArticleImage(
-      "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6b/TXSE_logo_Sep_2024.svg/1280px-TXSE_logo_Sep_2024.svg.png",
+      "/images/news/editorial/txse-identity.png",
     )).toBe(true);
     expect(shouldContainArticleImage(AM_IMAGE)).toBe(false);
   });
