@@ -112,9 +112,15 @@ export function buildExhaustedHeroRecoveryNote(
 }
 
 export function isHeroReadinessQuarantined(row: Pick<ArticleHeroReadinessRow,
-  "image_candidate_url" | "image_generation_status" | "image_validation_note" | "quality_flags"
+  "slug" | "image_candidate_url" | "image_generation_status" | "image_validation_note" | "quality_flags"
 >): boolean {
   const candidate = row.image_candidate_url?.trim();
+  // A candidate that has since been explicitly approved as the exact identity
+  // graphic for this exact article must be allowed back through the readiness
+  // queue. Otherwise an older v4 rejection permanently masks the governed
+  // allowlist and the recovery path can never accept the newly approved asset.
+  if (isGovernedExactEntityGraphic(row.slug, candidate)) return false;
+
   const status = (row.image_generation_status ?? "").trim().toLowerCase();
   const note = (row.image_validation_note ?? "").trim().toLowerCase();
   return Boolean(candidate)
