@@ -21,3 +21,10 @@ test('all Google discovery uses the fixed allowlist RSS relay', () => {
   }
   expect(feedKeys).toHaveLength(35);
 });
+
+
+test('Central Texas relay query stays bounded after upstream 503 regression', () => {
+  expect(relay).toContain('google-region-central-texas');
+  expect(relay).toContain('%28Waco+OR+Temple+OR+Killeen+OR+Bryan+OR+%22College+Station%22%29+Texas+when%3A2d');
+  expect(relay).not.toContain('Waco+OR+Temple+OR+Killeen+OR+Belton+OR+Bryan+OR+College+Station+OR+Brenham+OR+Georgetown');
+});
