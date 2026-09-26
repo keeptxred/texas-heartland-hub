@@ -392,6 +392,7 @@ function ArticlePage() {
   const imageAttribution = getArticleImageAttribution(article.image);
   const generatedImageDisclosure = getGeneratedArticleImageDisclosure(article.image);
   const containHero = shouldContainArticleImage(article.image);
+  const isKeepTxRedEditorialGraphic = String(article.image ?? "").startsWith("/images/news/editorial/");
 
   return (
     <article className="mx-auto max-w-4xl px-4 sm:px-6 py-10 sm:py-14">
@@ -456,7 +457,7 @@ function ArticlePage() {
           <figcaption className="mt-2 text-xs leading-relaxed text-muted-foreground">
             {imageAttribution.caption ? <span>{imageAttribution.caption} </span> : null}
             <span>
-              Photo by{" "}
+              {isKeepTxRedEditorialGraphic ? "Graphic by " : "Photo by "}
               <a
                 href={imageAttribution.sourceUrl}
                 target="_blank"
@@ -464,17 +465,23 @@ function ArticlePage() {
                 className="underline underline-offset-2 hover:text-foreground"
               >
                 {imageAttribution.credit}
-              </a>{" "}
-              via Wikimedia Commons, licensed{" "}
-              <a
-                href={imageAttribution.licenseUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline underline-offset-2 hover:text-foreground"
-              >
-                {imageAttribution.licenseName}
               </a>
-              . {imageAttribution.usageNote}
+              {isKeepTxRedEditorialGraphic ? (
+                <>. {imageAttribution.licenseName}. {imageAttribution.usageNote}</>
+              ) : (
+                <>
+                  {" "}via Wikimedia Commons, licensed{" "}
+                  <a
+                    href={imageAttribution.licenseUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline underline-offset-2 hover:text-foreground"
+                  >
+                    {imageAttribution.licenseName}
+                  </a>
+                  . {imageAttribution.usageNote}
+                </>
+              )}
             </span>
           </figcaption>
         ) : null}
