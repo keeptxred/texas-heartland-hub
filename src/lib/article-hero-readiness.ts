@@ -18,7 +18,7 @@ const GOVERNED_EXACT_ENTITY_GRAPHICS = new Map<string, string>([
   ],
   [
     "2026-09-10-texas-stock-exchange-first-primary-listings",
-    "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6b/TXSE_logo_Sep_2024.svg/1280px-TXSE_logo_Sep_2024.svg.png",
+    "/images/news/editorial/txse-identity.png",
   ],
 ]);
 
