@@ -14,7 +14,7 @@ from pathlib import Path
 
 TD_ORIGIN = "https://texasdefined.com"
 NS = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
-DESTINATION_WORKERS = 6
+DESTINATION_WORKERS = 4
 DESTINATIONS = [
     "https://texasdefined.com/article/moving-to-austin-guide",
     "https://texasdefined.com/article/moving-to-dallas-fort-worth-guide",
@@ -106,6 +106,11 @@ def curl(url: str) -> tuple[int, str]:
         result = subprocess.run(
             [
                 "curl",
+                # GitHub-hosted runners have intermittently received the full
+                # Cloudflare response body over HTTP/2 without a clean EOF,
+                # leaving curl to hit --max-time. HTTP/1.1 avoids that false
+                # negative while preserving the same live-page assertions.
+                "--http1.1",
                 "--location",
                 "--max-redirs", "5",
                 "--retry", "5",
