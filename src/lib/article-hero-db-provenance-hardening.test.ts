@@ -10,7 +10,7 @@ describe("DB hero readiness provenance hardening", () => {
   it("binds authoritative exemptions to the hero URL and article slug", () => {
     expect(migration).toContain("note text,\n  article_slug text,\n  hero_url text");
     expect(migration).toContain("authoritative-image-exempt:%");
-    expect(migration).toContain("www\\.nhc\\.noaa\\.gov/storm_graphics");
+    expect(migration).toContain("www\\\\.nhc\\\\.noaa\\\\.gov/storm_graphics");
     expect(migration).toContain("2026-09-22-protesters-gather-at-texas-capitol-a-day-after-austin-ice-shooting");
     expect(migration).toContain("2026-09-22-ice-officer-shoots-man-in-north-austin");
     expect(migration).toContain("2026-09-21-man-injured-in-shooting-by-ice-officer-in-north-austin");
