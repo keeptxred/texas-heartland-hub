@@ -160,38 +160,128 @@ export function buildGenerationSafeSubject(subject: SubjectExtract): SubjectExtr
   return subject;
 }
 
+type RepeatedFailureRecoveryScene = {
+  domain: SubjectExtract["domain"];
+  title: string;
+  firstParagraph: string;
+  locations: string[];
+  concreteSubject: string;
+};
+
+export function repeatedFailureRecoveryScene(slug: string): RepeatedFailureRecoveryScene | null {
+  switch (slug) {
+    case "2026-09-18-top-texas-republicans-knew-bo-french-s-history-of-racist-comments-they-supported":
+      return {
+        domain: "politics",
+        title: "Texas political endorsements and social-media controversy",
+        firstParagraph: "",
+        locations: ["Texas"],
+        concreteSubject: "A physical-camera editorial photograph of an active Texas political campaign workspace focused on the controversy itself: a smartphone lying on a table with a social-media feed visibly open but all text unreadable, endorsement briefing folders, a generic campaign-event credential turned face-down, and a microphone stand and press riser in the background. Include a few anonymous adult campaign staff from behind reviewing the phone and paperwork. No identifiable public figure, party logo, candidate likeness, readable post, slogan, seal, or fabricated quotation.",
+      };
+    case "2026-09-17-more-young-people-are-getting-involved-with-south-texas-civil-rights-group-amid-":
+      return {
+        domain: "general",
+        title: "Young South Texas community organizers meeting on immigration",
+        firstParagraph: "",
+        locations: ["Rio Grande Valley, Texas"],
+        concreteSubject: "A documentary photograph inside a South Texas community center where a mixed group of young adult volunteers are actively organizing around immigration issues: folding tables, clipboards, voter-rights and know-your-rights handouts with writing deliberately unreadable, bottled water, name-tag stickers turned away, and a wall map of the Rio Grande Valley without labels. Show people from the side or back in a working meeting, not posing. No organization logo, no identifiable real person, no protest reenactment, and no readable political messaging.",
+      };
+    case "2026-09-14-paxton-talarico-affordability-plans-compared":
+      return {
+        domain: "politics",
+        title: "Texas household affordability policy comparison",
+        firstParagraph: "",
+        locations: ["Texas"],
+        concreteSubject: "A documentary household-cost scene showing the concrete policy targets of two competing affordability plans: a kitchen table with grocery staples, a calculator, utility bills with all names and numbers out of focus, a rent or mortgage statement turned partly away, a pharmacy receipt with unreadable text, and two plain unlabeled policy folders side by side. Natural home lighting, no politicians, no campaign branding, no logos, and no invented readable figures.",
+      };
+    case "2026-09-10-texas-stock-exchange-first-primary-listings":
+      return {
+        domain: "general",
+        title: "New Texas stock exchange primary-listing launch",
+        firstParagraph: "",
+        locations: ["Dallas, Texas"],
+        concreteSubject: "A physical-camera editorial photograph of a newly opened securities-exchange operations space in Dallas during a primary-listing launch: an exchange bell or podium in the foreground, professional market-operations staff viewed from behind, trading workstations, and large electronic market boards showing abstract charts and deliberately unreadable ticker text. The scene must clearly read as a stock-exchange listing operation rather than a generic office. No NYSE or Nasdaq branding, no company logos, and no fabricated readable ticker symbols.",
+      };
+    case "2026-08-09-sarah-acosta-ksat-farewell":
+      return {
+        domain: "general",
+        title: "San Antonio morning-news farewell broadcast",
+        firstParagraph: "",
+        locations: ["San Antonio, Texas"],
+        concreteSubject: "A documentary local-television studio during a morning anchor's final broadcast: one anonymous female anchor seen mostly in profile or from behind at a real news desk, studio cameras pointed toward the set, a small bouquet and farewell cards on the edge of the desk, and coworkers gathered off-camera-side in the background. Faces must be incidental and not identifiable as any real broadcaster. No station logo, no readable lower-third, no name text, and no fabricated likeness of Sarah Acosta.",
+      };
+    case "2026-08-09-san-antonio-frida-fest-record":
+      return {
+        domain: "culture",
+        title: "San Antonio Frida-inspired festival record attempt",
+        firstParagraph: "",
+        locations: ["San Antonio, Texas"],
+        concreteSubject: "A lively indoor community arts festival filled with anonymous adults of varied ages wearing Frida-Kahlo-inspired floral crowns, colorful dresses and jackets, and stylized connected-brow makeup while gathering for a group-count photograph. Show dozens of participants, vendor art tables and festive handmade decorations so the defining record-attempt activity is unmistakable. Do not depict Frida Kahlo herself, do not copy a specific painting, and include no readable event logo or signage.",
+      };
+    case "2026-08-08-texas-reserve-officer-mexico-homicides":
+      return {
+        domain: "legal",
+        title: "Cross-border law-enforcement custody case",
+        firstParagraph: "",
+        locations: ["Texas-Mexico border"],
+        concreteSubject: "A restrained documentary photograph of cross-border law-enforcement case processing after an arrest: an anonymous adult detainee seen only from behind while being escorted through a secure border-station corridor by two uniformed officers whose agency patches and faces are not readable, with a document intake desk and closed interview-room door visible. No weapons drawn, no blood, no crime-scene reenactment, no child, no victim depiction, and no recognizable likeness of Chad Eberle.",
+      };
+    case "2026-08-08-tamu-texarkana-athletics-complex":
+      return {
+        domain: "general",
+        title: "College football stadium and athletics complex under construction",
+        firstParagraph: "",
+        locations: ["Texarkana, Texas"],
+        concreteSubject: "A documentary construction photograph of a small-college athletics complex being built in northeast Texas: an unfinished football grandstand sized for a few thousand spectators, fresh synthetic-turf work, construction fencing, earth-moving equipment, partially completed locker or support buildings, and football goalposts or field markings being installed. The image must clearly show an athletics-complex construction project, not a finished generic stadium or an unrelated campus building. No university logo or claim that the pictured construction is the actual Texas A&M-Texarkana site.",
+      };
+    case "2026-08-08-the-hop-webster-closes-preslees":
+      return {
+        domain: "general",
+        title: "Webster dance hall closing for restaurant conversion",
+        firstParagraph: "",
+        locations: ["Webster, Texas"],
+        concreteSubject: "A documentary photograph of a long-running retro neighborhood dance hall in transition after closing: locked front doors, an unlit vintage marquee with no readable business name, workers carrying restaurant chairs and boxed fixtures through a side entrance, renovation materials near the doorway, and an older roadside commercial building that still retains dance-hall character. The image must communicate closure and restaurant conversion, not a generic empty nightclub. No fabricated The Hop or Preslee's logo and no claim that the building shown is the actual venue.",
+      };
+    case "2026-08-08-daniella-guzman-kprc-return-ticket-review":
+      return {
+        domain: "general",
+        title: "Houston morning-news anchor returns to the studio",
+        firstParagraph: "",
+        locations: ["Houston, Texas"],
+        concreteSubject: "A documentary morning-news studio as an anonymous female anchor returns to the desk after an internal review: the anchor is seen from the side or back preparing at the desk, a studio camera and teleprompter are aimed at the set, production staff work behind glass, and a neutral stack of compliance-review paperwork sits off to one side with all text unreadable. No station logo, concert or World Cup branding, free-ticket imagery, readable names, or fabricated likeness of Daniella Guzman.",
+      };
+    case "2026-09-04-denton-191-turtles-shipment":
+      return {
+        domain: "general",
+        title: "Denton wildlife shipment inspection",
+        firstParagraph: "",
+        locations: ["Denton, Texas"],
+        concreteSubject: "A real handheld DSLR documentary photograph inside an ordinary Texas parcel-shipping inspection workspace. Show a slightly cluttered examination table with scuffed cardboard shipping cartons, ventilated reptile transport carriers, a used digital parcel scale, disposable nitrile gloves, packing tape, paper labels turned away or unreadable, and inspection paperwork with writing out of focus. Include natural fluorescent-plus-window lighting, subtle sensor grain, imperfect shadows, minor wear on table surfaces, realistic cardboard fibers, plastic scratches, and uneven object spacing. The frame should read as an unposed local-news photograph made with a physical camera, with true material texture, small asymmetries, ordinary wear, natural optical depth, and believable environmental clutter. Keep the animals calm and safely contained, with the workspace empty of people and the inspection routine understated.",
+      };
+    case "2026-09-04-texas-food-insecurity-one-in-five":
+      return {
+        domain: "general",
+        title: "Texas food bank grocery packing line",
+        firstParagraph: "",
+        locations: ["Texas"],
+        concreteSubject: "A real documentary photograph taken inside a busy Texas food bank grocery-packing area. The foreground and middle of the frame must be dominated by unmistakable food-bank objects: open family food boxes being filled, rows of canned vegetables and soup, bags of rice or beans, boxed pasta and cereal, fresh produce crates, rolling warehouse carts, and pallet racks of groceries. Show several anonymous adult volunteers from the side or back actively sorting groceries into boxes with ordinary gloves and casual work clothes; faces remain incidental and package branding unreadable. Use natural warehouse lighting, realistic skin and cardboard texture, shelf clutter, imperfect box alignment, scuffed concrete floor, ordinary shadows, and true 35mm depth of field. The image should immediately read as ordinary food-bank distribution work observed by a local-news photographer, with active packing and grocery inventory unmistakable throughout the frame.",
+      };
+    case "2026-09-04-fort-worth-kindergartner-school-safety":
+      return {
+        domain: "general",
+        title: "Fort Worth elementary school perimeter security",
+        firstParagraph: "",
+        locations: ["Fort Worth, Texas"],
+        concreteSubject: "A documentary photograph of an elementary-school perimeter entrance in Fort Worth, Texas during daylight: closed pedestrian gate, school fence, visitor-entry intercom, exterior security camera, crosswalk markings, yellow school bus in the background, and the main school entrance beyond the fence. The entrance is empty, student identities are absent, school-name lettering is unreadable, and the physical security boundary is the unmistakable subject of the frame.",
+      };
+    default:
+      return null;
+  }
+}
+
 function buildRepeatedFailureRecoverySubject(row: ArticleRow, subject: SubjectExtract): SubjectExtract {
-  if (row.slug === "2026-09-04-denton-191-turtles-shipment") {
-    return {
-      ...subject,
-      domain: "general",
-      title: "Denton wildlife shipment inspection",
-      firstParagraph: "",
-      locations: ["Denton, Texas"],
-      concreteSubject: "A real handheld DSLR documentary photograph inside an ordinary Texas parcel-shipping inspection workspace. Show a slightly cluttered examination table with scuffed cardboard shipping cartons, ventilated reptile transport carriers, a used digital parcel scale, disposable nitrile gloves, packing tape, paper labels turned away or unreadable, and inspection paperwork with writing out of focus. Include natural fluorescent-plus-window lighting, subtle sensor grain, imperfect shadows, minor wear on table surfaces, realistic cardboard fibers, plastic scratches, and uneven object spacing. The frame should read as an unposed local-news photograph made with a physical camera, with true material texture, small asymmetries, ordinary wear, natural optical depth, and believable environmental clutter. Keep the animals calm and safely contained, with the workspace empty of people and the inspection routine understated.",
-    };
-  }
-  if (row.slug === "2026-09-04-texas-food-insecurity-one-in-five") {
-    return {
-      ...subject,
-      domain: "general",
-      title: "Texas food bank grocery packing line",
-      firstParagraph: "",
-      locations: ["Texas"],
-      concreteSubject: "A real documentary photograph taken inside a busy Texas food bank grocery-packing area. The foreground and middle of the frame must be dominated by unmistakable food-bank objects: open family food boxes being filled, rows of canned vegetables and soup, bags of rice or beans, boxed pasta and cereal, fresh produce crates, rolling warehouse carts, and pallet racks of groceries. Show several anonymous adult volunteers from the side or back actively sorting groceries into boxes with ordinary gloves and casual work clothes; faces remain incidental and package branding unreadable. Use natural warehouse lighting, realistic skin and cardboard texture, shelf clutter, imperfect box alignment, scuffed concrete floor, ordinary shadows, and true 35mm depth of field. The image should immediately read as ordinary food-bank distribution work observed by a local-news photographer, with active packing and grocery inventory unmistakable throughout the frame.",
-    };
-  }
-  if (row.slug === "2026-09-04-fort-worth-kindergartner-school-safety") {
-    return {
-      ...subject,
-      domain: "general",
-      title: "Fort Worth elementary school perimeter security",
-      firstParagraph: "",
-      locations: ["Fort Worth, Texas"],
-      concreteSubject: "A documentary photograph of an elementary-school perimeter entrance in Fort Worth, Texas during daylight: closed pedestrian gate, school fence, visitor-entry intercom, exterior security camera, crosswalk markings, yellow school bus in the background, and the main school entrance beyond the fence. The entrance is empty, student identities are absent, school-name lettering is unreadable, and the physical security boundary is the unmistakable subject of the frame.",
-    };
-  }
-  return subject;
+  const recovery = repeatedFailureRecoveryScene(row.slug);
+  return recovery ? { ...subject, ...recovery } : subject;
 }
 
 export function buildGenerationOnlyImagePrompt(subject: SubjectExtract, extraGuidance = ""): string {
@@ -346,7 +436,7 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
       image_alt_text: alt,
       image_generation_status: "ready",
       image_prompt: usedPrompt,
-      image_validation_note: `${grounding ? `multisource-${grounding.mode}; ` : ""}cloudflare-vision ok: ${verdict.reason}`,
+      image_validation_note: `${usesGenerationOnlyPrompt ? "representative-recovery-scene; " : ""}${grounding ? `multisource-${grounding.mode}; ` : ""}cloudflare-vision ok: ${verdict.reason}`,
     }).eq("slug", row.slug);
     return { ok: true, url, alt };
   } catch (err) {
