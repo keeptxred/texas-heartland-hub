@@ -28,6 +28,32 @@ describe("content pillar classification", () => {
     expect(classifyContentPillar({ title })).toBe(expected);
   });
 
+  it("keeps sports and weather outside political content pillars and respects business taxonomy", () => {
+    expect(
+      classifyContentPillar({
+        title: "Texas A&M Dominates Missouri State in Season Opener",
+        description: "The Aggies won a college football game after a strong primary rotation.",
+        category: "Sports",
+      }),
+    ).toBeNull();
+
+    expect(
+      classifyContentPillar({
+        title: "Tropical Storm Edouard Makes Landfall Near Texas-Louisiana Border",
+        description: "The storm crossed the coastline near the state border.",
+        category: "Weather",
+      }),
+    ).toBeNull();
+
+    expect(
+      classifyContentPillar({
+        title: "Texas Stock Exchange Wins Its First Primary Corporate Listings",
+        description: "Two companies selected the exchange for primary listings.",
+        category: "Business",
+      }),
+    ).toBe("texas-economy-small-business");
+  });
+
   it("routes reviewed government and law categories to their canonical authority pillars", () => {
     expect(classifyContentPillar({ title: "County records update", category: "Government" })).toBe(
       "texas-politics-government",

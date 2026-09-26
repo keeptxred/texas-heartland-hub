@@ -9,6 +9,10 @@ const reviewedTaxonomy = readFileSync(
   "supabase/migrations/20260912030000_lock_reviewed_taxonomy_drift.sql",
   "utf8",
 );
+const classifierHook = readFileSync(
+  "src/routes/api/public/hooks/classify-article-pillars.ts",
+  "utf8",
+);
 
 describe("legacy pillar sports protection", () => {
   it("refuses to rewrite rows already carrying strong sports markers", () => {
@@ -29,6 +33,11 @@ describe("legacy pillar sports protection", () => {
     expect(reviewedTaxonomy).toContain("'taxonomy_locked'");
     expect(reviewedTaxonomy).toContain("pillar_slug = NULL");
     expect(reviewedTaxonomy).toContain("manual-taxonomy-review-20260912");
+  });
+
+  it("does not reclassify manually reviewed assignments on later pillar runs", () => {
+    expect(classifierHook).toContain('version?.startsWith("manual-taxonomy-review")');
+    expect(classifierHook).toContain("isSettledAssignmentVersion(row.classifier_version)");
   });
 
   it("keeps existing review and TexasDefined guards", () => {
