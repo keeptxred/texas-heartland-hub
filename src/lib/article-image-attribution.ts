@@ -119,12 +119,13 @@ const ATTRIBUTIONS: AttributionEntry[] = [
     caption: "Representative archive Texas A&M football photo from the 2006 Lone Star Showdown; not the 2026 Missouri State game.",
   },
   {
-    imageUrl: "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6b/TXSE_logo_Sep_2024.svg/1280px-TXSE_logo_Sep_2024.svg.png",
-    credit: "TXSE Group Inc.",
+    imageUrl: "/images/news/editorial/txse-identity.png",
+    credit: "Keep TX Red editorial desk",
     sourceUrl: `${COMMONS}TXSE_logo_Sep_2024.svg`,
-    licenseName: "Public domain (PD-textlogo)",
+    licenseName: "Original editorial raster; identity text references a public-domain text logo",
     licenseUrl: "https://commons.wikimedia.org/wiki/Template:PD-textlogo",
-    caption: "Texas Stock Exchange identity graphic. Used editorially to identify the exchange discussed in the article; not a photograph of the reported listings.",
+    caption: "Texas Stock Exchange editorial identity graphic. Used to identify the exchange discussed in the article; not a photograph of the reported listings.",
+    usageNote: "Original Keep TX Red raster identity graphic; no third-party photograph is embedded.",
   },
   {
     imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Folclor_mexicano_-_Frida_Kahlo.jpg",
@@ -280,7 +281,7 @@ const ATTRIBUTIONS: AttributionEntry[] = [
   },
 ].map((entry) => ({
   ...entry,
-  usageNote: "Source image unmodified; page presentation may crop it responsively.",
+  usageNote: entry.usageNote ?? "Source image unmodified; page presentation may crop it responsively.",
 }));
 
 const ATTRIBUTION_BY_URL = new Map(
