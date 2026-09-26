@@ -1,5 +1,5 @@
 Deploy current main to Cloudflare production.
 Trigger production deployment convergence for keeptxred.com.
-Target main: 72f1fe94e6f42db33684d9552353d01c93e7b0cb
-Production-current verification requested: 2026-09-02T23:02-05:00
-Reason: confirm the merged HB 1056 relationship and Election Central canonical fixes are deployed as exact current main after the protected Cloudflare deploy passed.
+Target main: 4d0e83853fbab7a7e5921e84f05d400021ad68ef
+Production-current verification requested: 2026-09-25T19:05-05:00
+Reason: deploy the verified story-relative Flyover corroboration-window fix before retrying historical exact-feed publications.
