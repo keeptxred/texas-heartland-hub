@@ -4,6 +4,7 @@ import {
   buildHeroReadinessSubject,
   hasHeroVisualReadinessProvenance,
   isAuthoritativeOfficialGraphic,
+  isGovernedExactEntityGraphic,
   isHeroReadinessQuarantined,
   resolveAuditableHeroUrl,
 } from "./article-hero-readiness";
@@ -81,6 +82,29 @@ describe("article hero visual readiness", () => {
       image_validation_note: note,
       quality_flags: ["image_requires_visual_validation"],
     })).toBe(true);
+  });
+
+  it("allows exact-entity graphics only for the matching governed article and URL", () => {
+    const lupeSlug = "2026-09-17-more-young-people-are-getting-involved-with-south-texas-civil-rights-group-amid-";
+    const lupeUrl = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Lupe_logo_jpeg.jpg";
+    const txseSlug = "2026-09-10-texas-stock-exchange-first-primary-listings";
+    const txseUrl = "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6b/TXSE_logo_Sep_2024.svg/1280px-TXSE_logo_Sep_2024.svg.png";
+
+    expect(isGovernedExactEntityGraphic(lupeSlug, lupeUrl)).toBe(true);
+    expect(isGovernedExactEntityGraphic(txseSlug, txseUrl)).toBe(true);
+    expect(isGovernedExactEntityGraphic("unrelated-story", lupeUrl)).toBe(false);
+    expect(isGovernedExactEntityGraphic(lupeSlug, txseUrl)).toBe(false);
+
+    expect(hasHeroVisualReadinessProvenance(
+      "exact-entity-graphic-v1 ok: governed identity graphic",
+      lupeUrl,
+      lupeSlug,
+    )).toBe(true);
+    expect(hasHeroVisualReadinessProvenance(
+      "exact-entity-graphic-v1 ok: governed identity graphic",
+      lupeUrl,
+      "unrelated-story",
+    )).toBe(false);
   });
 
   it("exempts only tightly scoped authoritative NOAA graphics", () => {
