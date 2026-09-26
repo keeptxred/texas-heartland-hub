@@ -15,6 +15,14 @@ const COMMONS = "https://commons.wikimedia.org/wiki/File:";
 
 const ATTRIBUTIONS: AttributionEntry[] = [
   {
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flock_Safety_License_Plate_Reader_Camera_in_Colorado_(55307233186).jpg",
+    credit: "Tony Webster",
+    sourceUrl: `${COMMONS}Flock_Safety_License_Plate_Reader_Camera_in_Colorado_(55307233186).jpg`,
+    licenseName: "CC BY 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by/4.0/",
+    caption: "Representative 2026 archive photograph of an actual Flock Safety ALPR camera; not one of the Texas cameras disconnected after the funding change.",
+  },
+  {
     imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Victor_Wembanyama_San_Antonio_Spurs_2025_NBA_Cup_(cropped).jpg",
     credit: "Daiei Onoguchi",
     sourceUrl: `${COMMONS}Victor_Wembanyama_San_Antonio_Spurs_2025_NBA_Cup_(cropped).jpg`,
