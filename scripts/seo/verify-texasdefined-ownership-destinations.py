@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 import os
 import subprocess
 import tempfile
@@ -12,6 +14,7 @@ from pathlib import Path
 
 TD_ORIGIN = "https://texasdefined.com"
 NS = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+DESTINATION_WORKERS = 6
 DESTINATIONS = [
     "https://texasdefined.com/article/moving-to-austin-guide",
     "https://texasdefined.com/article/moving-to-dallas-fort-worth-guide",
@@ -163,31 +166,49 @@ def sitemap_urls() -> set[str]:
     return urls
 
 
+def verify_destination(url: str, advertised: set[str]) -> list[str]:
+    failures: list[str] = []
+    try:
+        status, body = curl(url)
+    except RuntimeError as exc:
+        return [f"{url}: fetch failed ({exc})"]
+
+    if status != 200:
+        return [f"{url}: expected HTTP 200, got {status}"]
+
+    signals = PageSignals()
+    signals.feed(body)
+    if signals.canonicals != [url]:
+        failures.append(f"{url}: expected one self-canonical, got {signals.canonicals}")
+    if any("noindex" in value.lower() for value in signals.robots):
+        failures.append(f"{url}: unexpectedly declares noindex: {signals.robots}")
+    if not signals.h1:
+        failures.append(f"{url}: missing H1")
+    if url not in advertised:
+        failures.append(f"{url}: missing from TexasDefined sitemap ownership")
+    return failures
+
+
 def main() -> None:
     failures: list[str] = []
     advertised = sitemap_urls()
 
-    for url in DESTINATIONS:
-        try:
-            status, body = curl(url)
-        except RuntimeError as exc:
-            failures.append(f"{url}: fetch failed ({exc})")
-            continue
-        if status != 200:
-            failures.append(f"{url}: expected HTTP 200, got {status}")
-            continue
+    with ThreadPoolExecutor(
+        max_workers=min(DESTINATION_WORKERS, len(DESTINATIONS)),
+        thread_name_prefix="td-ownership-smoke",
+    ) as executor:
+        futures = {
+            executor.submit(verify_destination, url, advertised): url
+            for url in DESTINATIONS
+        }
+        for future in as_completed(futures):
+            url = futures[future]
+            try:
+                failures.extend(future.result())
+            except Exception as exc:
+                failures.append(f"{url}: verification crashed ({exc})")
 
-        signals = PageSignals()
-        signals.feed(body)
-        if signals.canonicals != [url]:
-            failures.append(f"{url}: expected one self-canonical, got {signals.canonicals}")
-        if any("noindex" in value.lower() for value in signals.robots):
-            failures.append(f"{url}: unexpectedly declares noindex: {signals.robots}")
-        if not signals.h1:
-            failures.append(f"{url}: missing H1")
-        if url not in advertised:
-            failures.append(f"{url}: missing from TexasDefined sitemap ownership")
-
+    failures.sort()
     if failures:
         for failure in failures:
             github_error(failure)
