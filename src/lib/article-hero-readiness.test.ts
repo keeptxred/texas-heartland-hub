@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildExhaustedHeroRecoveryNote,
   buildHeroReadinessSubject,
+  governedExactEntityGraphicUrl,
   hasHeroVisualReadinessProvenance,
   isAuthoritativeOfficialGraphic,
   isGovernedExactEntityGraphic,
@@ -83,6 +84,14 @@ describe("article hero visual readiness", () => {
     })).toBe(false);
 
     expect(isHeroReadinessQuarantined({
+      slug: txseSlug,
+      image_candidate_url: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Trading_Floor_in_the_Chicago_Board_of_Trade_Building.png",
+      image_generation_status: "failed",
+      image_validation_note: "stored-cloudflare-vision-v4 rejected: stale pre-allowlist candidate",
+      quality_flags: ["image_requires_visual_validation"],
+    })).toBe(false);
+
+    expect(isHeroReadinessQuarantined({
       slug: "unrelated-story",
       image_candidate_url: lupeUrl,
       image_generation_status: "failed",
@@ -115,6 +124,9 @@ describe("article hero visual readiness", () => {
     const txseSlug = "2026-09-10-texas-stock-exchange-first-primary-listings";
     const txseUrl = "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6b/TXSE_logo_Sep_2024.svg/1280px-TXSE_logo_Sep_2024.svg.png";
 
+    expect(governedExactEntityGraphicUrl(lupeSlug)).toBe(lupeUrl);
+    expect(governedExactEntityGraphicUrl(txseSlug)).toBe(txseUrl);
+    expect(governedExactEntityGraphicUrl("unrelated-story")).toBeNull();
     expect(isGovernedExactEntityGraphic(lupeSlug, lupeUrl)).toBe(true);
     expect(isGovernedExactEntityGraphic(txseSlug, txseUrl)).toBe(true);
     expect(isGovernedExactEntityGraphic("unrelated-story", lupeUrl)).toBe(false);
