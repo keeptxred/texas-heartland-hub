@@ -37,10 +37,11 @@ describe("TexasDefined ownership destination production gate", () => {
 
   it("uses bounded concurrency so destination verification cannot serialize every retry", () => {
     expect(smoke).toContain("from concurrent.futures import ThreadPoolExecutor, as_completed");
-    expect(smoke).toContain("DESTINATION_WORKERS = 6");
+    expect(smoke).toContain("DESTINATION_WORKERS = 4");
     expect(smoke).toContain("ThreadPoolExecutor(");
     expect(smoke).toContain("max_workers=min(DESTINATION_WORKERS, len(DESTINATIONS))");
     expect(smoke).toContain("for future in as_completed(futures):");
+    expect(smoke).toContain('"--http1.1"');
   });
 
   it("emits GitHub annotations for actionable production failures", () => {
