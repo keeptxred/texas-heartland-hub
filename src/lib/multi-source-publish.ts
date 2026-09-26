@@ -65,6 +65,7 @@ async function loadRecentClusterCandidates(
   db: any,
   feedItemId: number,
   since: string,
+  until: string,
 ): Promise<RecentClusterScan> {
   const rows: ClusterableFeedItem[] = [];
 
@@ -76,6 +77,7 @@ async function loadRecentClusterCandidates(
       // the bounded cluster, where enrichClusterBodies fetches/caches evidence.
       .select("id,title,link,source,description,pub_date,internal_slug")
       .gte("pub_date", since)
+      .lte("pub_date", until)
       .or("target_site.is.null,target_site.eq.keeptxred")
       .neq("id", feedItemId)
       .order("pub_date", { ascending: false })
@@ -426,8 +428,17 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
   }
   if (primary.internal_slug) return { ok: true, slug: primary.internal_slug, alreadyPublished: true };
 
-  const since = new Date(Date.now() - CLUSTER_LOOKBACK_HOURS * 60 * 60 * 1000).toISOString();
-  const { data: recent, error: recentError } = await loadRecentClusterCandidates(db, feedItemId, since);
+  const parsedPrimaryPubDate = primary.pub_date ? Date.parse(primary.pub_date) : Number.NaN;
+  const corroborationAnchorMs = Number.isFinite(parsedPrimaryPubDate) ? parsedPrimaryPubDate : Date.now();
+  const corroborationWindowMs = CLUSTER_LOOKBACK_HOURS * 60 * 60 * 1000;
+  const since = new Date(corroborationAnchorMs - corroborationWindowMs).toISOString();
+  const until = new Date(Math.min(Date.now(), corroborationAnchorMs + corroborationWindowMs)).toISOString();
+  const { data: recent, error: recentError } = await loadRecentClusterCandidates(
+    db,
+    feedItemId,
+    since,
+    until,
+  );
   if (recentError) {
     return { ok: false, error: `Could not scan the full ${CLUSTER_LOOKBACK_HOURS}-hour corroboration window: ${recentError.message}` };
   }
