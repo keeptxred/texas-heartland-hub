@@ -33,6 +33,17 @@ ROUTES = {
         "Why Is Texas Politically Competitive? Population, Cities, Suburbs and Voting Trends",
 }
 
+PILLAR_PATH = "/keep-texas-red"
+COMPETITIVENESS_PATH = "/texas-politics/why-texas-is-politically-competitive"
+CORE_SUPPORTING_PATHS = (
+    "/texas-politics/texas-political-geography-history",
+    "/texas-politics/texas-election-history",
+    "/texas-politics/how-texas-became-republican",
+    "/texas-politics/texas-urban-suburban-rural-politics-history",
+    COMPETITIVENESS_PATH,
+    "/elections/2026",
+)
+
 
 class AuthorityHTMLParser(HTMLParser):
     def __init__(self) -> None:
@@ -178,6 +189,138 @@ def verify_authority_page(path: str, expected_h1: str) -> None:
             raise RuntimeError(f"{path} visible update date is no longer September 25, 2026")
 
 
+def verify_cluster_page(
+    path: str,
+    *,
+    expected_h1: str | None,
+    required_schema: set[str],
+    required_hrefs: set[str],
+) -> None:
+    body, content_type = fetch(path)
+    if "html" not in content_type.lower():
+        raise RuntimeError(f"{path} is not HTML: content-type={content_type!r}")
+
+    parser = AuthorityHTMLParser()
+    decoded = body.decode("utf-8", errors="replace")
+    parser.feed(decoded)
+
+    if expected_h1 is not None and parser.h1s != [expected_h1]:
+        raise RuntimeError(f"{path} H1 mismatch: observed={parser.h1s!r}")
+
+    canonical = f"{CANONICAL_SITE}{path}"
+    if parser.canonicals != [canonical]:
+        raise RuntimeError(f"{path} canonical mismatch: observed={parser.canonicals!r}")
+
+    robots = ",".join(parser.robots).lower()
+    if "index" not in robots or "follow" not in robots or "noindex" in robots:
+        raise RuntimeError(f"{path} robots metadata is not index/follow: {parser.robots!r}")
+
+    missing_schema = required_schema - schema_types(parser)
+    if missing_schema:
+        raise RuntimeError(f"{path} is missing JSON-LD types: {sorted(missing_schema)!r}")
+
+    missing_hrefs = sorted(required_hrefs - set(parser.hrefs))
+    if missing_hrefs:
+        raise RuntimeError(f"{path} lost required cluster links: {missing_hrefs!r}")
+
+
+def verify_keep_texas_red_pillar() -> None:
+    body, content_type = fetch(PILLAR_PATH)
+    if "html" not in content_type.lower():
+        raise RuntimeError(
+            f"{PILLAR_PATH} is not HTML: content-type={content_type!r}"
+        )
+
+    parser = AuthorityHTMLParser()
+    decoded = body.decode("utf-8", errors="replace")
+    parser.feed(decoded)
+
+    expected_h1 = "Keep Texas Red: Elections, Policy and Conservative Government"
+    if parser.h1s != [expected_h1]:
+        raise RuntimeError(
+            f"{PILLAR_PATH} H1 mismatch: observed={parser.h1s!r}"
+        )
+
+    canonical = f"{CANONICAL_SITE}{PILLAR_PATH}"
+    if parser.canonicals != [canonical]:
+        raise RuntimeError(
+            f"{PILLAR_PATH} canonical mismatch: observed={parser.canonicals!r}"
+        )
+
+    robots = ",".join(parser.robots).lower()
+    if "index" not in robots or "follow" not in robots or "noindex" in robots:
+        raise RuntimeError(
+            f"{PILLAR_PATH} robots metadata is not index/follow: {parser.robots!r}"
+        )
+
+    missing_schema = {"Article", "BreadcrumbList", "ItemList"} - schema_types(parser)
+    if missing_schema:
+        raise RuntimeError(
+            f"{PILLAR_PATH} is missing JSON-LD types: {sorted(missing_schema)!r}"
+        )
+
+    missing_hrefs = sorted(set(CORE_SUPPORTING_PATHS) - set(parser.hrefs))
+    if missing_hrefs:
+        raise RuntimeError(
+            f"{PILLAR_PATH} lost supporting-guide links: {missing_hrefs!r}"
+        )
+
+    objects = json_ld_objects(parser)
+    article = next((obj for obj in objects if obj.get("@type") == "Article"), None)
+    if not article:
+        raise RuntimeError(f"{PILLAR_PATH} is missing Article JSON-LD")
+    if article.get("dateModified") != "2026-09-25":
+        raise RuntimeError(
+            f"{PILLAR_PATH} dateModified drifted: {article.get('dateModified')!r}"
+        )
+
+    item_list = next((obj for obj in objects if obj.get("@type") == "ItemList"), None)
+    if not item_list:
+        raise RuntimeError(f"{PILLAR_PATH} is missing supporting-guides ItemList")
+    items = item_list.get("itemListElement")
+    if not isinstance(items, list):
+        raise RuntimeError(f"{PILLAR_PATH} ItemList has invalid itemListElement")
+
+    observed_urls = {
+        item.get("url")
+        for item in items
+        if isinstance(item, dict) and isinstance(item.get("url"), str)
+    }
+    expected_urls = {f"{CANONICAL_SITE}{path}" for path in CORE_SUPPORTING_PATHS}
+    if observed_urls != expected_urls or len(items) != len(CORE_SUPPORTING_PATHS):
+        raise RuntimeError(
+            f"{PILLAR_PATH} supporting ItemList drifted: "
+            f"observed={sorted(observed_urls)!r} expected={sorted(expected_urls)!r}"
+        )
+
+    if "September 25, 2026" not in decoded:
+        raise RuntimeError(
+            f"{PILLAR_PATH} visible update date is no longer September 25, 2026"
+        )
+
+
+def verify_reciprocal_cluster() -> None:
+    verify_keep_texas_red_pillar()
+    verify_cluster_page(
+        "/texas-politics/texas-election-history",
+        expected_h1="Texas Election History",
+        required_schema={"Article", "BreadcrumbList", "FAQPage"},
+        required_hrefs={PILLAR_PATH},
+    )
+    verify_cluster_page(
+        "/texas-politics/how-texas-became-republican",
+        expected_h1="How Texas Became Republican",
+        required_schema={"Article", "FAQPage"},
+        required_hrefs={PILLAR_PATH},
+    )
+    verify_cluster_page(
+        "/elections/2026",
+        expected_h1=None,
+        required_schema={"CollectionPage"},
+        required_hrefs={PILLAR_PATH, COMPETITIVENESS_PATH},
+    )
+
+
 def parse_locs(body: bytes, source: str) -> list[str]:
     try:
         root = ET.fromstring(body)
@@ -267,7 +410,11 @@ def main() -> int:
         except RuntimeError as exc:
             failures.append(str(exc))
 
-    for label, verifier in (("sitemaps", verify_sitemaps), ("politics hub", verify_politics_hub)):
+    for label, verifier in (
+        ("sitemaps", verify_sitemaps),
+        ("politics hub", verify_politics_hub),
+        ("reciprocal Keep Texas Red cluster", verify_reciprocal_cluster),
+    ):
         try:
             verifier()
             print(f"PASS {label}")
@@ -279,7 +426,7 @@ def main() -> int:
             print(f"FAIL: {failure}", file=sys.stderr)
         return 1
 
-    print(f"Political-geography production smoke passed: {len(ROUTES)} authority routes, canonicals, indexability, schema, Keep Texas Red pillar backlinks, competitiveness dates, hub discovery, and dedicated sitemap ownership are intact.")
+    print(f"Political-geography production smoke passed: {len(ROUTES)} geography routes plus the reciprocal Keep Texas Red pillar, election-history, realignment, and Election Central cluster are intact across canonicals, indexability, schema, dates, backlinks, hub discovery, and dedicated sitemap ownership.")
     return 0
 
 
