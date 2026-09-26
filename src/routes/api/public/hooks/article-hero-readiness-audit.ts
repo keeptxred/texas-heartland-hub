@@ -4,6 +4,7 @@ import {
   buildHeroReadinessSubject,
   hasHeroVisualReadinessProvenance,
   isAuthoritativeOfficialGraphic,
+  isGovernedExactEntityGraphic,
   isHeroReadinessQuarantined,
   resolveAuditableHeroUrl,
   type ArticleHeroReadinessRow,
@@ -73,7 +74,7 @@ function isEligible(row: AuditRow): boolean {
   // escape the governed stored-hero audit merely because their status is failed.
   const status = (row.image_generation_status ?? "").trim().toLowerCase();
   return (status === "ready" || status === "failed")
-    && !hasHeroVisualReadinessProvenance(row.image_validation_note, targetUrl(row));
+    && !hasHeroVisualReadinessProvenance(row.image_validation_note, targetUrl(row), row.slug);
 }
 
 function isDataCenterStory(row: AuditRow): boolean {
@@ -306,6 +307,23 @@ async function acceptAuthoritativeGraphic(db: any, row: AuditRow, candidate: str
   return { accepted: true as const, exempt: true as const, note };
 }
 
+async function acceptGovernedExactEntityGraphic(db: any, row: AuditRow, candidate: string) {
+  const note = "exact-entity-graphic-v1 ok: exact named-entity identity graphic matched by both article slug and allowlisted reusable source URL; used only when a truthful event photograph is unavailable and labeled as a graphic rather than documentary photography.";
+  const alt = row.image_candidate_alt_text?.trim() || row.image_alt_text?.trim() || `Identity graphic for ${row.title}`;
+  const { error } = await db.from("daily_articles").update({
+    featured_image_url: candidate,
+    image_url: candidate,
+    image_alt_text: alt,
+    image_generation_status: "ready",
+    image_validation_note: note,
+    image_candidate_url: null,
+    image_candidate_alt_text: null,
+    quality_flags: cleanFlags(row.quality_flags),
+  }).eq("slug", row.slug);
+  if (error) throw new Error(error.message);
+  return { accepted: true as const, exempt: true as const, exactEntityGraphic: true as const, note };
+}
+
 async function acceptValidatedHero(db: any, row: AuditRow, candidate: string, reason: string) {
   const alt = row.image_candidate_alt_text?.trim() || row.image_alt_text?.trim() || `Editorial image for Keep TX Red article: ${row.title}`;
   const note = `stored-cloudflare-vision-${STORED_HERO_POLICY_VERSION} ok: ${reason}`.slice(0, 1000);
@@ -326,7 +344,7 @@ async function acceptValidatedHero(db: any, row: AuditRow, candidate: string, re
 async function rejectHero(db: any, row: AuditRow, candidate: string, reason: string, repair: boolean) {
   const previousHeroIsTrusted = Boolean(row.featured_image_url?.trim())
     && Boolean(row.image_candidate_url?.trim())
-    && hasHeroVisualReadinessProvenance(row.image_validation_note, row.featured_image_url);
+    && hasHeroVisualReadinessProvenance(row.image_validation_note, row.featured_image_url, row.slug);
   const note = `stored-cloudflare-vision-${STORED_HERO_POLICY_VERSION} rejected: ${reason}`.slice(0, 1000);
 
   if (previousHeroIsTrusted) {
@@ -420,6 +438,11 @@ async function post({ request }: { request: Request }) {
 
   const candidate = targetUrl(row);
   try {
+    if (isGovernedExactEntityGraphic(row.slug, candidate)) {
+      const result = await acceptGovernedExactEntityGraphic(db, row, candidate);
+      return Response.json({ ok: true, slug: row.slug, candidate, ...result });
+    }
+
     if (isAuthoritativeOfficialGraphic(candidate)) {
       const result = await acceptAuthoritativeGraphic(db, row, candidate);
       return Response.json({ ok: true, slug: row.slug, candidate, ...result });
