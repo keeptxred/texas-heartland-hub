@@ -20,6 +20,38 @@ const GOVERNED_EXACT_ENTITY_GRAPHICS = new Map<string, string>([
     "2026-09-10-texas-stock-exchange-first-primary-listings",
     "/images/news/editorial/txse-identity.png",
   ],
+  [
+    "2026-09-18-top-texas-republicans-knew-bo-french-s-history-of-racist-comments-they-supported",
+    "/images/news/editorial/subject-identity/bo-french-endorsement-controversy.png",
+  ],
+  [
+    "2026-09-14-paxton-talarico-affordability-plans-compared",
+    "/images/news/editorial/subject-identity/paxton-talarico-affordability.png",
+  ],
+  [
+    "2026-08-09-daniella-guzman-kprc-return",
+    "/images/news/editorial/subject-identity/daniella-guzman-kprc.png",
+  ],
+  [
+    "2026-08-08-daniella-guzman-kprc-return-ticket-review",
+    "/images/news/editorial/subject-identity/daniella-guzman-kprc.png",
+  ],
+  [
+    "2026-08-09-sarah-acosta-ksat-farewell",
+    "/images/news/editorial/subject-identity/sarah-acosta-ksat.png",
+  ],
+  [
+    "2026-08-08-texas-reserve-officer-mexico-homicides",
+    "/images/news/editorial/subject-identity/chad-eberle-mexico-arrest.png",
+  ],
+  [
+    "2026-08-08-tamu-texarkana-athletics-complex",
+    "/images/news/editorial/subject-identity/tamu-texarkana-athletics.png",
+  ],
+  [
+    "2026-08-08-the-hop-webster-closes-preslees",
+    "/images/news/editorial/subject-identity/the-hop-preslees-webster.png",
+  ],
 ]);
 
 export type ArticleHeroReadinessRow = {

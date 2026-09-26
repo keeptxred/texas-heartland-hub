@@ -148,3 +148,26 @@ describe("article image attribution", () => {
     expect(getGeneratedArticleImageDisclosure(AM_IMAGE)).toBeNull();
   });
 });
+
+
+describe("editorial identity hero disclosure", () => {
+  const internalHeroes = [
+    "/images/news/editorial/subject-identity/bo-french-endorsement-controversy.png",
+    "/images/news/editorial/subject-identity/paxton-talarico-affordability.png",
+    "/images/news/editorial/subject-identity/daniella-guzman-kprc.png",
+    "/images/news/editorial/subject-identity/sarah-acosta-ksat.png",
+    "/images/news/editorial/subject-identity/chad-eberle-mexico-arrest.png",
+    "/images/news/editorial/subject-identity/tamu-texarkana-athletics.png",
+    "/images/news/editorial/subject-identity/the-hop-preslees-webster.png",
+  ] as const;
+
+  it.each(internalHeroes)("registers, contains, and discloses %s", (url) => {
+    expect(hasRequiredArticleImageAttribution(url)).toBe(true);
+    expect(getArticleImageAttribution(url)).toMatchObject({
+      credit: "Keep TX Red editorial desk",
+      licenseName: "Original Keep TX Red editorial graphic",
+    });
+    expect(shouldContainArticleImage(url)).toBe(true);
+    expect(getGeneratedArticleImageDisclosure(url)).toContain("not a documentary photograph");
+  });
+});
