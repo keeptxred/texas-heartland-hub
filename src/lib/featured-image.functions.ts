@@ -151,7 +151,7 @@ export function buildGenerationSafeSubject(subject: SubjectExtract): SubjectExtr
         ...subject,
         title: `${location ? `${location} ` : "Texas "}roadway aftermath setting`.trim(),
         firstParagraph: "",
-        concreteSubject: `An empty section of ${location ? `roadway in ${location}` : "Texas roadway"} in daylight, with asphalt lanes, shoulder, traffic-control equipment, and ordinary roadside infrastructure visible. No people, violence, or reenactment.`,
+        concreteSubject: `An empty section of ${location ? `roadway in ${location}` : "Texas roadway"} in daylight, with asphalt lanes, shoulder, traffic-control equipment, and ordinary roadside infrastructure visible.`,
       };
     }
     if (subject.domain === "legal" || SENSITIVE_COURT_CONTEXT_RE.test(storyText)) {
@@ -160,7 +160,7 @@ export function buildGenerationSafeSubject(subject: SubjectExtract): SubjectExtr
         domain: "legal",
         title: `${location ? `${location} ` : "Texas "}judicial process setting`.trim(),
         firstParagraph: "",
-        concreteSubject: `A real ${location ? `${location} ` : "Texas "}courthouse exterior or courtroom interior representing the judicial proceeding, with ordinary legal architecture, counsel tables, case folders, or courthouse entry infrastructure. No people, violence, reenactment, readable case text, or fabricated evidence.`,
+        concreteSubject: `A real ${location ? `${location} ` : "Texas "}courthouse exterior or courtroom interior representing the judicial proceeding, with ordinary legal architecture, counsel tables, case folders, or courthouse entry infrastructure.`,
       };
     }
     if (SENSITIVE_PROTEST_CONTEXT_RE.test(storyText)) {
@@ -169,7 +169,7 @@ export function buildGenerationSafeSubject(subject: SubjectExtract): SubjectExtr
         domain: "politics",
         title: `${location ? `${location} ` : "Texas "}civic gathering setting`.trim(),
         firstParagraph: "",
-        concreteSubject: `A documentary view of a ${location ? `${location} ` : "Texas "}government or capitol public space prepared for a civic gathering, with plaza, barriers, microphones or ordinary event infrastructure and only distant anonymous figures if any. No violence, reenactment, readable signs, or identifiable faces.`,
+        concreteSubject: `A documentary view of a ${location ? `${location} ` : "Texas "}government or capitol public space prepared for a civic gathering, with plaza, barriers, microphones or ordinary event infrastructure and only distant anonymous figures if any.`,
       };
     }
     if (SENSITIVE_INVESTIGATION_CONTEXT_RE.test(storyText)) {
@@ -178,7 +178,7 @@ export function buildGenerationSafeSubject(subject: SubjectExtract): SubjectExtr
         domain: "general",
         title: `${location ? `${location} ` : "Texas "}public-safety investigation setting`.trim(),
         firstParagraph: "",
-        concreteSubject: `A real ${location ? `${location} ` : "Texas "}public-safety or local-government office exterior with ordinary administrative and investigative infrastructure, parked official vehicles without readable markings, and no people, violence, reenactment, weapons, or fabricated evidence.`,
+        concreteSubject: `A real ${location ? `${location} ` : "Texas "}public-safety or local-government office exterior with ordinary administrative and investigative infrastructure and parked official vehicles.`,
       };
     }
     if (subject.domain === "border" || SENSITIVE_IMMIGRATION_CONTEXT_RE.test(storyText)) {
@@ -187,7 +187,7 @@ export function buildGenerationSafeSubject(subject: SubjectExtract): SubjectExtr
         domain: "border",
         title: `${location ? `${location} ` : "Texas "}federal immigration-enforcement setting`.trim(),
         firstParagraph: "",
-        concreteSubject: `A neutral ${location ? `${location} ` : "Texas "}federal immigration-enforcement or detention-administration setting, such as a secured government-facility exterior, controlled entry area, or official vehicle staging area. No people, confrontation, violence, reenactment, readable agency markings, or fabricated evidence.`,
+        concreteSubject: `A neutral ${location ? `${location} ` : "Texas "}federal immigration-enforcement or detention-administration setting, such as a secured government-facility exterior, controlled entry area, or official vehicle staging area.`,
       };
     }
     return {
@@ -195,7 +195,7 @@ export function buildGenerationSafeSubject(subject: SubjectExtract): SubjectExtr
       domain: "general",
       title: `${location ? `${location} ` : "Texas "}public-safety institutional setting`.trim(),
       firstParagraph: "",
-      concreteSubject: `A neutral ${location ? `${location} ` : "Texas "}institutional setting directly connected to the article's public-safety context, with ordinary government or administrative infrastructure. No people, violence, reenactment, weapons, readable text, or fabricated evidence.`,
+      concreteSubject: `A neutral ${location ? `${location} ` : "Texas "}institutional setting directly connected to the article's public-safety context, with ordinary government or administrative infrastructure.`,
     };
   }
   if (subject.domain === "energy" && DATA_CENTER_IMAGE_SUBJECT_RE.test(storyText)) {
