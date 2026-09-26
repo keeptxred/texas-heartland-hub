@@ -9,6 +9,10 @@ const retirementMigration = readFileSync(
   "supabase/migrations/20260926200000_retire_legacy_article_hero_provenance_overload.sql",
   "utf8",
 );
+const equivalenceMigration = readFileSync(
+  "supabase/migrations/20260926201500_register_legacy_hero_provenance_migration_equivalence.sql",
+  "utf8",
+);
 
 describe("DB hero readiness provenance hardening", () => {
   it("binds authoritative exemptions to the hero URL and article slug", () => {
@@ -36,5 +40,14 @@ describe("DB hero readiness provenance hardening", () => {
     expect(retirementMigration).toContain(
       "comment on function public.article_hero_has_visual_readiness_provenance(text, text, text)",
     );
+  });
+
+  it("records the truthful connector-version equivalence for the retirement migration", () => {
+    expect(equivalenceMigration).toContain("'20260926200000'");
+    expect(equivalenceMigration).toContain("'20260926201353'");
+    expect(equivalenceMigration).toContain(
+      "'retire_legacy_article_hero_provenance_overload'",
+    );
+    expect(equivalenceMigration).toContain("repo_migration_equivalences");
   });
 });
