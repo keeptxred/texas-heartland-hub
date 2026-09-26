@@ -15,4 +15,14 @@ describe("political geography sitemap ownership", () => {
     expect(sitemap).toContain("/texas-politics/${page.slug}");
     expect(TEXAS_POLITICAL_GEOGRAPHY_AUTHORITY_PAGES).toHaveLength(4);
   });
+
+  it("keeps the standalone competitiveness guide in the child sitemap with its September 25 lastmod", () => {
+    expect(sitemap).toContain(
+      'const COMPETITIVENESS_LASTMOD = toIsoDate("2026-09-25T07:00:00-05:00")',
+    );
+    expect(sitemap).toContain(
+      'loc: `${BASE_URL}/texas-politics/why-texas-is-politically-competitive`',
+    );
+    expect(sitemap).toContain("lastmod: COMPETITIVENESS_LASTMOD");
+  });
 });
