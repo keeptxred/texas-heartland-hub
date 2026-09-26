@@ -108,8 +108,8 @@ def fetch(path: str, accept: str = "text/html") -> tuple[bytes, str]:
         raise RuntimeError(f"{url} could not be fetched: {exc.reason}") from exc
 
 
-def schema_types(parser: AuthorityHTMLParser) -> set[str]:
-    observed: set[str] = set()
+def json_ld_objects(parser: AuthorityHTMLParser) -> list[dict]:
+    objects: list[dict] = []
     for block in parser.json_ld_blocks:
         if not block:
             continue
@@ -117,15 +117,19 @@ def schema_types(parser: AuthorityHTMLParser) -> set[str]:
             payload = json.loads(block)
         except json.JSONDecodeError as exc:
             raise RuntimeError(f"invalid JSON-LD block: {exc}") from exc
-        objects = payload if isinstance(payload, list) else [payload]
-        for obj in objects:
-            if not isinstance(obj, dict):
-                continue
-            value = obj.get("@type")
-            if isinstance(value, str):
-                observed.add(value)
-            elif isinstance(value, list):
-                observed.update(item for item in value if isinstance(item, str))
+        candidates = payload if isinstance(payload, list) else [payload]
+        objects.extend(obj for obj in candidates if isinstance(obj, dict))
+    return objects
+
+
+def schema_types(parser: AuthorityHTMLParser) -> set[str]:
+    observed: set[str] = set()
+    for obj in json_ld_objects(parser):
+        value = obj.get("@type")
+        if isinstance(value, str):
+            observed.add(value)
+        elif isinstance(value, list):
+            observed.update(item for item in value if isinstance(item, str))
     return observed
 
 
@@ -154,6 +158,25 @@ def verify_authority_page(path: str, expected_h1: str) -> None:
     if "/texas-politics" not in parser.hrefs:
         raise RuntimeError(f"{path} lost its Texas Politics authority backlink")
 
+    if "/keep-texas-red" not in parser.hrefs:
+        raise RuntimeError(f"{path} lost its Keep Texas Red pillar backlink")
+
+    if path == "/texas-politics/why-texas-is-politically-competitive":
+        article = next(
+            (obj for obj in json_ld_objects(parser) if obj.get("@type") == "Article"),
+            None,
+        )
+        if not article:
+            raise RuntimeError(f"{path} is missing Article JSON-LD")
+        expected_date = "2026-09-25"
+        observed_dates = (article.get("datePublished"), article.get("dateModified"))
+        if observed_dates != (expected_date, expected_date):
+            raise RuntimeError(
+                f"{path} publication dates drifted: observed={observed_dates!r}"
+            )
+        if "September 25, 2026" not in body.decode("utf-8", errors="replace"):
+            raise RuntimeError(f"{path} visible update date is no longer September 25, 2026")
+
 
 def parse_locs(body: bytes, source: str) -> list[str]:
     try:
@@ -165,6 +188,30 @@ def parse_locs(body: bytes, source: str) -> list[str]:
         for element in root.iter()
         if element.tag.rsplit("}", 1)[-1] == "loc" and element.text and element.text.strip()
     ]
+
+
+def parse_url_lastmods(body: bytes, source: str) -> dict[str, str]:
+    try:
+        root = ET.fromstring(body)
+    except ET.ParseError as exc:
+        raise RuntimeError(f"{source} is not valid XML: {exc}") from exc
+
+    entries: dict[str, str] = {}
+    for element in root.iter():
+        if element.tag.rsplit("}", 1)[-1] != "url":
+            continue
+        loc = ""
+        lastmod = ""
+        for child in element:
+            local_name = child.tag.rsplit("}", 1)[-1]
+            value = child.text.strip() if child.text and child.text.strip() else ""
+            if local_name == "loc":
+                loc = value
+            elif local_name == "lastmod":
+                lastmod = value
+        if loc:
+            entries[loc] = lastmod
+    return entries
 
 
 def verify_sitemaps() -> None:
@@ -179,6 +226,16 @@ def verify_sitemaps() -> None:
         raise RuntimeError(
             "political-geography sitemap does not own exactly the configured authority URLs: "
             f"observed={observed!r} expected={expected!r}"
+        )
+
+    lastmods = parse_url_lastmods(child_body, "political-geography sitemap")
+    competitiveness_url = f"{CANONICAL_SITE}/texas-politics/why-texas-is-politically-competitive"
+    expected_competitiveness_lastmod = "2026-09-25T12:00:00.000Z"
+    if lastmods.get(competitiveness_url) != expected_competitiveness_lastmod:
+        raise RuntimeError(
+            "competitiveness sitemap lastmod drifted: "
+            f"observed={lastmods.get(competitiveness_url)!r} "
+            f"expected={expected_competitiveness_lastmod!r}"
         )
 
     root_body, root_type = fetch("/sitemap.xml", "application/xml,text/xml;q=0.9,*/*;q=0.1")
@@ -222,7 +279,7 @@ def main() -> int:
             print(f"FAIL: {failure}", file=sys.stderr)
         return 1
 
-    print(f"Political-geography production smoke passed: {len(ROUTES)} authority routes, canonicals, indexability, schema, hub discovery, and dedicated sitemap ownership are intact.")
+    print(f"Political-geography production smoke passed: {len(ROUTES)} authority routes, canonicals, indexability, schema, Keep Texas Red pillar backlinks, competitiveness dates, hub discovery, and dedicated sitemap ownership are intact.")
     return 0
 
 
