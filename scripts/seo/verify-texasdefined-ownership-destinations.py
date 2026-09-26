@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import os
 import subprocess
 import tempfile
 import xml.etree.ElementTree as ET
@@ -55,6 +56,13 @@ DESTINATIONS = [
     "https://texasdefined.com/texas-salary-comparison-by-city",
     "https://texasdefined.com/texas-utility-cost-calculator",
 ]
+
+
+def github_error(message: str) -> None:
+    if os.environ.get("GITHUB_ACTIONS") != "true":
+        return
+    escaped = message.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+    print(f"::error title=TexasDefined ownership destination failed::{escaped}", flush=True)
 
 
 class PageSignals(HTMLParser):
@@ -181,6 +189,8 @@ def main() -> None:
             failures.append(f"{url}: missing from TexasDefined sitemap ownership")
 
     if failures:
+        for failure in failures:
+            github_error(failure)
         raise RuntimeError(
             "TexasDefined ownership destination verification failed:\n- "
             + "\n- ".join(failures)
