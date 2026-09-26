@@ -79,3 +79,22 @@ WHERE coalesce((viral_signals->>'expanded_pro_sports_guard')::boolean,false)
   )
   AND internal_slug IS NULL
   AND texasdefined_slug IS NULL;
+
+-- Run this lane-specific guard after generic routing and TexasDefined sports ownership.
+DROP TRIGGER IF EXISTS zzzzzzzz_guard_expanded_texas_pro_sports_discovery_row ON public.texas_news_feed;
+DROP TRIGGER IF EXISTS zzzzzzzzzzzzz_guard_expanded_texas_pro_sports_discovery_row ON public.texas_news_feed;
+CREATE TRIGGER zzzzzzzzzzzzz_guard_expanded_texas_pro_sports_discovery_row
+BEFORE INSERT OR UPDATE OF title, description, source, trend_source, viral_signals
+ON public.texas_news_feed
+FOR EACH ROW EXECUTE FUNCTION public.guard_expanded_texas_pro_sports_discovery_row();
+
+-- Re-run the bounded cleanup now that the lane guard executes last.
+UPDATE public.texas_news_feed
+SET title = title
+WHERE coalesce((viral_signals->>'expanded_pro_sports_guard')::boolean,false)
+  AND coalesce(trend_source,'') NOT IN (
+    'Texas Pro Basketball — Rockets and Wings Discovery',
+    'Texas Pro Soccer — Daily Discovery'
+  )
+  AND internal_slug IS NULL
+  AND texasdefined_slug IS NULL;
