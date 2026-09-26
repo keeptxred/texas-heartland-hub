@@ -20,9 +20,10 @@ describe("Phase 11 image pipeline integration", () => {
     expect(generationIndex).toBeGreaterThan(holdIndex);
   });
 
-  it("continues using the existing Cloudflare generation and validation calls without adding another AI review path", () => {
+  it("continues using the existing Cloudflare generation and validates candidates against the original article subject", () => {
     expect(source.match(/generateImageBytes\(/g)?.length).toBe(2);
-    expect(source.match(/validateImageMatchesArticle\(/g)?.length).toBe(2);
+    expect(source.match(/validateImageMatchesArticle\(bytes, subject\)/g)?.length).toBe(2);
+    expect(source).not.toContain("validateImageMatchesArticle(bytes, generationSubject)");
     expect(source).not.toMatch(/openai|gemini|anthropic/i);
   });
 
