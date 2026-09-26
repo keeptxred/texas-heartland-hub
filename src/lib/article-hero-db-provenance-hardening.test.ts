@@ -5,6 +5,10 @@ const migration = readFileSync(
   "supabase/migrations/20260926192804_tighten_article_hero_db_readiness_provenance.sql",
   "utf8",
 );
+const retirementMigration = readFileSync(
+  "supabase/migrations/20260926200000_retire_legacy_article_hero_provenance_overload.sql",
+  "utf8",
+);
 
 describe("DB hero readiness provenance hardening", () => {
   it("binds authoritative exemptions to the hero URL and article slug", () => {
@@ -19,5 +23,18 @@ describe("DB hero readiness provenance hardening", () => {
   it("makes the trigger pass note, slug, and exact featured image URL", () => {
     expect(migration).toContain("old.image_validation_note,\n          old.slug,\n          old.featured_image_url");
     expect(migration).toContain("new.image_validation_note,\n        new.slug,\n        new.featured_image_url");
+  });
+
+  it("retires only the permissive one-argument provenance overload", () => {
+    expect(retirementMigration).toContain(
+      "to_regprocedure(\n    'public.article_hero_has_visual_readiness_provenance(text,text,text)'",
+    );
+    expect(retirementMigration).toContain(
+      "drop function if exists public.article_hero_has_visual_readiness_provenance(text);",
+    );
+    expect(retirementMigration).not.toContain("cascade");
+    expect(retirementMigration).toContain(
+      "comment on function public.article_hero_has_visual_readiness_provenance(text, text, text)",
+    );
   });
 });
