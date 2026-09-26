@@ -327,11 +327,11 @@ const PRIMARY_SUBJECT_RULE = "PRIMARY-SUBJECT RULE: the image must show the head
 
 export function imageValidationDomainGuidance(subject: SubjectExtract): string {
   const storyText = `${subject.title} ${subject.concreteSubject}`;
-  if (/\b(shoot(?:s|ing)?|shot|gunfire|homicide|murder|killed|fatal|assault)\b/i.test(storyText)) {
-    return `${PRIMARY_SUBJECT_RULE} For a violent or law-enforcement incident story, an empty roadway, border landscape, fence, skyline, generic city scene, or unrelated infrastructure does NOT pass merely because the incident occurred nearby or involves immigration enforcement. Do not create or approve a synthetic reenactment of the alleged incident. Prefer a verified reusable archive photograph of the exact named agency, officers performing ordinary agency work, the relevant court/institution, or another concrete primary entity, with truthful archive context.`;
-  }
   if (/\b(protest(?:ers?|s|ed|ing)?|demonstrat(?:ion|ors?|ing)|rally|march(?:ers?|ing)?)\b/i.test(storyText)) {
     return `${PRIMARY_SUBJECT_RULE} For a protest or demonstration story, visible protest activity is the defining subject: a real crowd, march, rally, signs, speakers, or other unmistakable demonstration context must be present. An empty roadway, capitol-only exterior, generic government building, or unrelated crowd does NOT pass merely because it shares the city or venue. A truthful archive protest photograph may represent the activity only when the caption makes clear it is not the reported event.`;
+  }
+  if (/\b(shoot(?:s|ing)?|shot|gunfire|homicide|murder|killed|fatal|assault)\b/i.test(storyText)) {
+    return `${PRIMARY_SUBJECT_RULE} For a violent or law-enforcement incident story, an empty roadway, border landscape, fence, skyline, generic city scene, or unrelated infrastructure does NOT pass merely because the incident occurred nearby or involves immigration enforcement. Do not create or approve a synthetic reenactment of the alleged incident. Prefer a verified reusable archive photograph of the exact named agency, officers performing ordinary agency work, the relevant court/institution, or another concrete primary entity, with truthful archive context.`;
   }
   if (subject.domain === "legal") {
     return `${PRIMARY_SUBJECT_RULE} For a court-ruling story, a believable photorealistic courthouse exterior or courtroom interior IS a valid direct story match when the court process itself is the defining subject; it does not need to literally visualize abstract legal wording. When the dispute centers on a concrete object or practice (for example a Ten Commandments display), prefer that object/practice over a generic courthouse or school. Reject maps, state outlines, unrelated politicians, generic capitol scenes, election graphics, cartoons, and illustrations.`;
