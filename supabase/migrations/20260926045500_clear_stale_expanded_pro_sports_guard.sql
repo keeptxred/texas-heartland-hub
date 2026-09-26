@@ -44,8 +44,13 @@ begin
   is_allowed := (has_team_name or (has_team_alias and has_sports_context)) and not is_utility_page;
 
   if is_allowed then
-    new.target_site := 'keeptxred';
-    new.target_section := 'Sports';
+    if new.target_site = 'keeptxred' and new.target_section in ('Politics','Elections','Business','Texas News') then
+      null; -- preserve material public-affairs ownership on KeepTXRed
+    else
+      new.target_site := 'texasdefined';
+      new.target_section := 'Sports';
+      new.ready_for_rewrite := false;
+    end if;
     if was_guarded and new.internal_slug is null and new.texasdefined_slug is null then
       new.viral_scored_at:=null; new.classification_confidence:=null; new.viral_score:=0; new.ready_for_rewrite:=false;
     end if;
