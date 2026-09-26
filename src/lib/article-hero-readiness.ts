@@ -11,6 +11,17 @@ const AUDITABLE_EXTERNAL_HOSTS = new Set([
   "www.keeptxred.com",
 ]);
 
+const GOVERNED_EXACT_ENTITY_GRAPHICS = new Map<string, string>([
+  [
+    "2026-09-17-more-young-people-are-getting-involved-with-south-texas-civil-rights-group-amid-",
+    "https://commons.wikimedia.org/wiki/Special:Redirect/file/Lupe_logo_jpeg.jpg",
+  ],
+  [
+    "2026-09-10-texas-stock-exchange-first-primary-listings",
+    "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6b/TXSE_logo_Sep_2024.svg/1280px-TXSE_logo_Sep_2024.svg.png",
+  ],
+]);
+
 export type ArticleHeroReadinessRow = {
   slug: string;
   title: string;
@@ -73,9 +84,14 @@ function normalizeReadinessDomain(
 export function hasHeroVisualReadinessProvenance(
   note: string | null | undefined,
   heroUrl?: string | null,
+  articleSlug?: string | null,
 ): boolean {
   const value = (note ?? "").trim().toLowerCase();
   if (value.includes("cloudflare-vision ok:") || /cloudflare-vision-v\d+\s+ok:/.test(value)) return true;
+  if (
+    value.startsWith("exact-entity-graphic-v1 ok:")
+    && isGovernedExactEntityGraphic(articleSlug, heroUrl)
+  ) return true;
 
   // Only tightly scoped official government graphics may bypass pixel validation.
   // Historical/manual Commons notes sometimes used the authoritative-image-exempt
@@ -105,6 +121,16 @@ export function isHeroReadinessQuarantined(row: Pick<ArticleHeroReadinessRow,
     && status === "failed"
     && note.startsWith("stored-cloudflare-vision-v4 rejected:")
     && (row.quality_flags ?? []).includes("image_requires_visual_validation");
+}
+
+export function isGovernedExactEntityGraphic(
+  articleSlug: string | null | undefined,
+  value: string | null | undefined,
+): boolean {
+  const slug = (articleSlug ?? "").trim();
+  const url = (value ?? "").trim();
+  if (!slug || !url) return false;
+  return GOVERNED_EXACT_ENTITY_GRAPHICS.get(slug) === url;
 }
 
 export function isAuthoritativeOfficialGraphic(value: string | null | undefined): boolean {
