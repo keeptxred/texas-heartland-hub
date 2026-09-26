@@ -73,7 +73,7 @@ function isAlreadyRecovered(row: BacklogRow | null | undefined): boolean {
   const imageUrl = row.featured_image_url?.trim();
   if (!imageUrl || isLegacyGeneratedNewsAsset(imageUrl)) return false;
   if ((row.image_generation_status ?? "").trim().toLowerCase() !== "ready") return false;
-  return hasHeroVisualReadinessProvenance(row.image_validation_note, imageUrl);
+  return hasHeroVisualReadinessProvenance(row.image_validation_note, imageUrl, row.slug);
 }
 
 function priority(row: BacklogRow): number {
