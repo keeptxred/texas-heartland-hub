@@ -3,6 +3,7 @@ import {
   buildExhaustedHeroRecoveryNote,
   buildHeroReadinessSubject,
   hasHeroVisualReadinessProvenance,
+  governedExactEntityGraphicUrl,
   isAuthoritativeOfficialGraphic,
   isGovernedExactEntityGraphic,
   isHeroReadinessQuarantined,
@@ -61,7 +62,10 @@ async function authorized(request: Request): Promise<boolean> {
 }
 
 function targetUrl(row: AuditRow): string {
-  return row.image_candidate_url?.trim() || row.featured_image_url?.trim() || "";
+  return governedExactEntityGraphicUrl(row.slug)
+    || row.image_candidate_url?.trim()
+    || row.featured_image_url?.trim()
+    || "";
 }
 
 function isEligible(row: AuditRow): boolean {
