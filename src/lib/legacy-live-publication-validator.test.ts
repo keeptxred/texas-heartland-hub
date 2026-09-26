@@ -9,6 +9,7 @@ const validator = readFileSync(
 describe("legacy live URL publication validation", () => {
   it("recognizes dated live slugs without relaxing the dated slug requirement", () => {
     expect(validator).toContain("(?:live-)?(?:20\\d{2}-\\d{2}-\\d{2})");
+    expect(validator).toContain("\\(\\s*'");
     expect(validator).toContain("could not find any dated article slugs in the publication input");
   });
 
