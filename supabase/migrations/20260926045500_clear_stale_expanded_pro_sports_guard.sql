@@ -7,8 +7,8 @@ AS $function$
 declare
   haystack text := lower(coalesce(new.title,'') || ' ' || coalesce(new.description,'') || ' ' || coalesce(new.source,''));
   title_text text := lower(coalesce(new.title,''));
-  is_basketball_lane boolean := new.trend_source = 'Texas Pro Basketball — Rockets and Wings Discovery';
-  is_soccer_lane boolean := new.trend_source = 'Texas Pro Soccer — Daily Discovery';
+  is_basketball_lane boolean := coalesce(new.trend_source = 'Texas Pro Basketball — Rockets and Wings Discovery', false);
+  is_soccer_lane boolean := coalesce(new.trend_source = 'Texas Pro Soccer — Daily Discovery', false);
   has_team_name boolean := false;
   has_team_alias boolean := false;
   has_sports_context boolean := false;
