@@ -20,10 +20,10 @@ describe("featured image retry budget", () => {
     expect(source).not.toContain("Validator rejection ${attempt}: ${verdict.reason}");
   });
 
-  it("validates every generated image against the same sanitized factual subject used for generation before storage", () => {
-    expect(source).toContain("let verdict = await validateImageMatchesArticle(bytes, generationSubject)");
-    expect(source).toContain("verdict = await validateImageMatchesArticle(bytes, generationSubject)");
-    expect(source).not.toContain("validateImageMatchesArticle(bytes, subject)");
+  it("validates every generated image against the original article subject before storage", () => {
+    expect(source).toContain("let verdict = await validateImageMatchesArticle(bytes, subject)");
+    expect(source).toContain("verdict = await validateImageMatchesArticle(bytes, subject)");
+    expect(source).not.toContain("validateImageMatchesArticle(bytes, generationSubject)");
     expect(source).toContain("if (!verdict.matches) throw new Error");
   });
 });
