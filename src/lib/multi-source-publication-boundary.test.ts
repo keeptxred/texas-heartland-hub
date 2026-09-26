@@ -15,7 +15,7 @@ describe("core newsroom publication boundary", () => {
   });
 
   it("filters non-KTR rows inside the corroboration query and keeps payloads lightweight", () => {
-    expect(candidateLoader).toContain('.select("id,title,link,source,description,pub_date,internal_slug")');
+    expect(candidateLoader).toContain('.select("id,title,link,source,description,pub_date,internal_slug,viral_signals")');
     expect(candidateLoader).toContain('.or("target_site.is.null,target_site.eq.keeptxred")');
     expect(candidateLoader).not.toContain("extracted_body");
     expect(source).toContain("buildStoryCluster(primary, recent ?? [], MAX_CLUSTER_SOURCES)");

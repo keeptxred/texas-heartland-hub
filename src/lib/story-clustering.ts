@@ -9,6 +9,10 @@ export type ClusterableFeedItem = {
   internal_slug?: string | null;
   event_cluster_id?: string | null;
   event_cluster_score?: number | null;
+  viral_signals?: {
+    primary_source?: boolean;
+    [key: string]: unknown;
+  } | null;
 };
 
 export type ClusterCandidate = ClusterableFeedItem & {
@@ -235,7 +239,10 @@ export function likelySameLineage(a: ClusterableFeedItem, b: ClusterableFeedItem
   if (sourceFamily(a) && sourceFamily(a) === sourceFamily(b)) return true;
   const titleA = normalize(a.title);
   const titleB = normalize(b.title);
-  if (titleA && titleA === titleB) return true;
+  const explicitPrimaryRecord =
+    a.viral_signals?.primary_source === true ||
+    b.viral_signals?.primary_source === true;
+  if (titleA && titleA === titleB && !explicitPrimaryRecord) return true;
 
   const wordsA = meaningfulWords(a);
   const wordsB = meaningfulWords(b);

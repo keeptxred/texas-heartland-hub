@@ -75,7 +75,7 @@ async function loadRecentClusterCandidates(
       // Keep the corroboration scan lightweight. Full extracted bodies can be
       // many kilobytes each and are unnecessary until a row is selected into
       // the bounded cluster, where enrichClusterBodies fetches/caches evidence.
-      .select("id,title,link,source,description,pub_date,internal_slug")
+      .select("id,title,link,source,description,pub_date,internal_slug,viral_signals")
       .gte("pub_date", since)
       .lte("pub_date", until)
       .or("target_site.is.null,target_site.eq.keeptxred")
