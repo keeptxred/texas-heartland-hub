@@ -167,6 +167,11 @@ const ATTRIBUTION_BY_URL = new Map(
   ATTRIBUTIONS.map((entry) => [entry.imageUrl, entry] as const),
 );
 
+const CONTAINED_ARTICLE_IMAGE_URLS = new Set([
+  "https://commons.wikimedia.org/wiki/Special:Redirect/file/Lupe_logo_jpeg.jpg",
+  "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6b/TXSE_logo_Sep_2024.svg/1280px-TXSE_logo_Sep_2024.svg.png",
+]);
+
 export function getArticleImageAttribution(
   imageUrl: string | null | undefined,
 ): ArticleImageAttribution | null {
@@ -182,6 +187,12 @@ export function hasRequiredArticleImageAttribution(
   imageUrl: string | null | undefined,
 ): boolean {
   return getArticleImageAttribution(imageUrl) !== null;
+}
+
+export function shouldContainArticleImage(
+  imageUrl: string | null | undefined,
+): boolean {
+  return CONTAINED_ARTICLE_IMAGE_URLS.has(String(imageUrl ?? "").trim());
 }
 
 export function getGeneratedArticleImageDisclosure(
