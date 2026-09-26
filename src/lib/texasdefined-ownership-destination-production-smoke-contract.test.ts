@@ -35,6 +35,15 @@ describe("TexasDefined ownership destination production gate", () => {
     expect(smoke).toContain("if url not in advertised");
   });
 
+  it("uses bounded concurrency so destination verification cannot serialize every retry", () => {
+    expect(smoke).toContain("from concurrent.futures import ThreadPoolExecutor, as_completed");
+    expect(smoke).toContain("DESTINATION_WORKERS = 4");
+    expect(smoke).toContain("ThreadPoolExecutor(");
+    expect(smoke).toContain("max_workers=min(DESTINATION_WORKERS, len(DESTINATIONS))");
+    expect(smoke).toContain("for future in as_completed(futures):");
+    expect(smoke).toContain('"--http1.1"');
+  });
+
   it("emits GitHub annotations for actionable production failures", () => {
     expect(smoke).toContain("def github_error(message: str) -> None");
     expect(smoke).toContain("::error title=TexasDefined ownership destination failed::");
@@ -51,5 +60,7 @@ describe("TexasDefined ownership destination production gate", () => {
     expect(destinationGate).toBeGreaterThan(propertyGate);
     expect(redirectGate).toBeGreaterThan(destinationGate);
     expect(workflow).toContain("python3 scripts/seo/verify-texasdefined-ownership-destinations.py");
+    const destinationStep = workflow.slice(destinationGate, redirectGate);
+    expect(destinationStep).toContain("timeout-minutes: 10");
   });
 });
