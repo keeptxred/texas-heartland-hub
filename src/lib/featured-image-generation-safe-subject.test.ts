@@ -24,6 +24,46 @@ describe("buildGenerationSafeSubject", () => {
     expect(negative.replace(/rejected visual motif:.*$/i, "")).not.toMatch(/shoot|road rage|gun|dead|victim/i);
   });
 
+  it("keeps court and death-row coverage on a judicial setting instead of inventing a roadway scene", () => {
+    const subject: SubjectExtract = {
+      title: "Appeals court rejects finding that Texas death row inmate is innocent",
+      firstParagraph: "The court rejected a lower-court innocence finding in a Texas death-row case.",
+      entities: ["Texas"],
+      locations: ["Texas"],
+      domain: "legal",
+      concreteSubject: "A Texas appeals-court ruling in a death-row case.",
+    };
+
+    const safe = buildGenerationSafeSubject(subject);
+    const prompt = buildGenerationOnlyImagePrompt(safe);
+
+    expect(safe.domain).toBe("legal");
+    expect(safe.title).toContain("judicial process setting");
+    expect(safe.concreteSubject).toMatch(/courthouse|courtroom/i);
+    expect(`${safe.title} ${safe.concreteSubject}`).not.toMatch(/interstate|highway|roadway/i);
+    expect(prompt).toMatch(/courthouse|courtroom/i);
+  });
+
+  it("keeps ICE shooting coverage on immigration-enforcement context instead of an unrelated highway", () => {
+    const subject: SubjectExtract = {
+      title: "ICE officer shoots man in North Austin",
+      firstParagraph: "An ICE officer shot a man in North Austin during an immigration-enforcement encounter.",
+      entities: ["ICE", "Austin"],
+      locations: ["Austin"],
+      domain: "border",
+      concreteSubject: "An ICE shooting in North Austin.",
+    };
+
+    const safe = buildGenerationSafeSubject(subject);
+    const prompt = buildGenerationOnlyImagePrompt(safe);
+
+    expect(safe.domain).toBe("border");
+    expect(safe.title).toContain("federal immigration-enforcement setting");
+    expect(safe.concreteSubject).toMatch(/immigration-enforcement|detention-administration/i);
+    expect(`${safe.title} ${safe.concreteSubject}`).not.toMatch(/interstate|highway|roadway/i);
+    expect(prompt).toMatch(/immigration-enforcement|detention-administration/i);
+  });
+
   it("keeps data-center generation focused on infrastructure without putting politician terms into generation inputs", () => {
     const subject: SubjectExtract = {
       title: "Gov. Abbott orders pause on data center approvals",
