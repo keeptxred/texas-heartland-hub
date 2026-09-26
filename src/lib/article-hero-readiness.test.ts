@@ -45,6 +45,7 @@ describe("article hero visual readiness", () => {
       "stored-cloudflare-vision-v3 rejected: source identity was not available",
     ]) {
       expect(isHeroReadinessQuarantined({
+        slug: "test-story",
         image_candidate_url: "https://commons.wikimedia.org/wiki/Special:Redirect/file/example.jpg",
         image_generation_status: "failed",
         image_validation_note: note,
@@ -53,6 +54,7 @@ describe("article hero visual readiness", () => {
     }
 
     expect(isHeroReadinessQuarantined({
+      slug: "test-story",
       image_candidate_url: "https://commons.wikimedia.org/wiki/Special:Redirect/file/example.jpg",
       image_generation_status: "failed",
       image_validation_note: "stored-cloudflare-vision-v4 rejected: source-grounded rule still failed",
@@ -60,11 +62,33 @@ describe("article hero visual readiness", () => {
     })).toBe(true);
 
     expect(isHeroReadinessQuarantined({
+      slug: "test-story",
       image_candidate_url: "https://commons.wikimedia.org/wiki/Special:Redirect/file/example.jpg",
       image_generation_status: "ready",
       image_validation_note: "Primary-subject remediation: awaiting first governed audit",
       quality_flags: [],
     })).toBe(false);
+  });
+
+  it("requeues a previously rejected candidate when it is now the governed exact-entity graphic", () => {
+    const lupeSlug = "2026-09-17-more-young-people-are-getting-involved-with-south-texas-civil-rights-group-amid-";
+    const lupeUrl = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Lupe_logo_jpeg.jpg";
+
+    expect(isHeroReadinessQuarantined({
+      slug: lupeSlug,
+      image_candidate_url: lupeUrl,
+      image_generation_status: "failed",
+      image_validation_note: "stored-cloudflare-vision-v4 rejected: older policy treated the identity graphic as too generic",
+      quality_flags: ["image_requires_visual_validation"],
+    })).toBe(false);
+
+    expect(isHeroReadinessQuarantined({
+      slug: "unrelated-story",
+      image_candidate_url: lupeUrl,
+      image_generation_status: "failed",
+      image_validation_note: "stored-cloudflare-vision-v4 rejected: ordinary failed candidate",
+      quality_flags: ["image_requires_visual_validation"],
+    })).toBe(true);
   });
 
   it("keeps an exhausted one-shot generated repair quarantined", () => {
@@ -77,6 +101,7 @@ describe("article hero visual readiness", () => {
     expect(note).toContain("stored-cloudflare-vision-v4 rejected:");
     expect(note).toContain("generated recovery failed:");
     expect(isHeroReadinessQuarantined({
+      slug: "test-story",
       image_candidate_url: "https://commons.wikimedia.org/wiki/Special:Redirect/file/example.jpg",
       image_generation_status: "failed",
       image_validation_note: note,
