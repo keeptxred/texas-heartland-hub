@@ -6,6 +6,7 @@ import { buildSeo, PUBLISHER_LOGO } from "@/lib/seo";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
 import { isPublicArticleReady, type PublicArticleCandidate } from "@/lib/public-article-readiness";
 import { isKeepTxRedSearchOwnedStory } from "@/lib/ktr-search-ownership";
+import { shouldContainArticleImage } from "@/lib/article-image-attribution";
 
 const MAX_VISIBLE_STORIES = 24;
 const FETCH_CANDIDATES = 72;
@@ -109,7 +110,7 @@ function StoryCard({ article }: { article: ArticleRow }) {
           <img
             src={image}
             alt={article.image_alt_text || article.title}
-            className="h-full w-full object-cover transition-transform duration-300 hover:scale-[1.02]"
+            className={`h-full w-full ${shouldContainArticleImage(image) ? "object-contain bg-white p-4" : "object-cover"} transition-transform duration-300 hover:scale-[1.02]`}
             loading="lazy"
           />
         </a>
@@ -255,7 +256,7 @@ function HappeningNowPage() {
                   <img
                     src={storyImage(lead) as string}
                     alt={lead.image_alt_text || lead.title}
-                    className="h-full w-full object-cover"
+                    className={`h-full w-full ${shouldContainArticleImage(storyImage(lead)) ? "object-contain bg-white p-6" : "object-cover"}`}
                   />
                 </a>
               ) : null}
