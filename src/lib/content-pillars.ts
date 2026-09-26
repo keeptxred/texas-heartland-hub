@@ -152,6 +152,7 @@ const CATEGORY_SIGNALS: Partial<Record<string, ContentPillarSlug>> = {
   elections: "texas-elections",
   border: "texas-border-immigration",
   energy: "texas-energy-oil",
+  business: "texas-economy-small-business",
   laws: "texas-laws-legislature",
   "tax & spending": "texas-economy-small-business",
 };
@@ -163,6 +164,7 @@ export function classifyContentPillar(input: {
   category?: string | null;
 }): ContentPillarSlug | null {
   const category = (input.category ?? "").trim().toLowerCase();
+  if (["sports", "nfl", "mls", "college sports", "weather"].includes(category)) return null;
   const categorySignal = CATEGORY_SIGNALS[category];
   if (categorySignal) return categorySignal;
 
