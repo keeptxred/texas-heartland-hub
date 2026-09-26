@@ -17,6 +17,7 @@ import { assignUniqueImages } from "@/lib/dedupe-images";
 import { resolveArticleImage } from "@/lib/seo-headline";
 import { resolveDisplayHeadline } from "@/lib/ctr-score";
 import { buildSeo } from "@/lib/seo";
+import { shouldContainArticleImage } from "@/lib/article-image-attribution";
 
 const NEWS_TITLE = "Texas Political News";
 const NEWS_DESCRIPTION =
@@ -250,7 +251,7 @@ function NewsPage() {
               const card = (
                 <>
                   <div className="aspect-[4/3] overflow-hidden bg-muted mb-4">
-                    <img src={img} alt={title} loading="lazy" className="size-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <img src={img} alt={title} loading="lazy" className={`size-full ${shouldContainArticleImage(img) ? "object-contain bg-white p-4" : "object-cover"} group-hover:scale-105 transition-transform duration-500`} />
                   </div>
                   <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-primary">{a.category}</span>
                   <h3 className="font-serif text-lg font-bold leading-snug mt-1 group-hover:underline underline-offset-4">{title}</h3>
