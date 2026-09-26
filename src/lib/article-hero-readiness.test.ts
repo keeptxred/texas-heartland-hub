@@ -74,6 +74,7 @@ describe("article hero visual readiness", () => {
   it("requeues a previously rejected candidate when it is now the governed exact-entity graphic", () => {
     const lupeSlug = "2026-09-17-more-young-people-are-getting-involved-with-south-texas-civil-rights-group-amid-";
     const lupeUrl = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Lupe_logo_jpeg.jpg";
+    const txseSlug = "2026-09-10-texas-stock-exchange-first-primary-listings";
 
     expect(isHeroReadinessQuarantined({
       slug: lupeSlug,
