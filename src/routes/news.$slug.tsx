@@ -32,6 +32,7 @@ import { visibleArticleDates } from "@/lib/article-visible-dates";
 import {
   getArticleImageAttribution,
   getGeneratedArticleImageDisclosure,
+  shouldContainArticleImage,
 } from "@/lib/article-image-attribution";
 
 type StructuredArticleBody = ArticleBody & { entities?: EvergreenBody["entities"] };
@@ -390,6 +391,7 @@ function ArticlePage() {
   const imageAlt = article.imageAlt ?? article.title;
   const imageAttribution = getArticleImageAttribution(article.image);
   const generatedImageDisclosure = getGeneratedArticleImageDisclosure(article.image);
+  const containHero = shouldContainArticleImage(article.image);
 
   return (
     <article className="mx-auto max-w-4xl px-4 sm:px-6 py-10 sm:py-14">
@@ -445,7 +447,7 @@ function ArticlePage() {
           <img
             src={article.image}
             alt={imageAlt}
-            className={`size-full ${article.slug === "texas-policing-agencies-compared" ? "object-contain" : "object-cover"}`}
+            className={`size-full ${article.slug === "texas-policing-agencies-compared" || containHero ? "object-contain" : "object-cover"} ${containHero ? "bg-white p-6 sm:p-10" : ""}`}
             width={1280}
             height={article.slug === "texas-policing-agencies-compared" ? 672 : 720}
           />
