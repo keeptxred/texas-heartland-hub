@@ -17,7 +17,7 @@ describe("buildGenerationSafeSubject", () => {
     const prompt = buildGenerationOnlyImagePrompt(safe, "Use a completely new physical-camera composition");
     const negative = buildNegativeImagePrompt(safe, "Rejected image showed a gun and target illustration");
 
-    expect(safe.title).toBe("Fort Worth interstate roadway infrastructure");
+    expect(safe.title).toBe("Fort Worth roadway aftermath setting");
     expect(`${safe.title} ${safe.firstParagraph} ${safe.concreteSubject}`).not.toMatch(/shoot|road rage|gun|dead|victim|reenactment/i);
     expect(prompt).toContain("roadway");
     expect(prompt).not.toMatch(/shoot|road rage|gun|dead|victim|illustration|cartoon|poster|graphic design|speech bubble/i);
