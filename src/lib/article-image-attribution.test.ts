@@ -46,6 +46,28 @@ describe("article image attribution", () => {
     });
   });
 
+  it("credits the governed Texas Stock Exchange identity graphic", () => {
+    expect(
+      getArticleImageAttribution(
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6b/TXSE_logo_Sep_2024.svg/1280px-TXSE_logo_Sep_2024.svg.png",
+      ),
+    ).toMatchObject({
+      credit: "TXSE Group Inc.",
+      licenseName: "Public domain (PD-textlogo)",
+    });
+  });
+
+  it("credits the representative Frida Kahlo impersonator photograph", () => {
+    expect(
+      getArticleImageAttribution(
+        "https://commons.wikimedia.org/wiki/Special:Redirect/file/Folclor_mexicano_-_Frida_Kahlo.jpg",
+      ),
+    ).toMatchObject({
+      credit: "Lemad.resaeva",
+      licenseName: "CC BY-SA 4.0",
+    });
+  });
+
   it("credits licensed September primary-subject remediation photos", () => {
     expect(
       getArticleImageAttribution(
