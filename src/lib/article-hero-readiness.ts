@@ -112,9 +112,15 @@ export function buildExhaustedHeroRecoveryNote(
 }
 
 export function isHeroReadinessQuarantined(row: Pick<ArticleHeroReadinessRow,
-  "image_candidate_url" | "image_generation_status" | "image_validation_note" | "quality_flags"
+  "slug" | "image_candidate_url" | "image_generation_status" | "image_validation_note" | "quality_flags"
 >): boolean {
   const candidate = row.image_candidate_url?.trim();
+  // A slug that has since been explicitly approved for an exact identity
+  // graphic must be allowed back through the readiness queue even when its
+  // stored candidate is an older rejected asset. The audit will resolve the
+  // current governed graphic before validation/publication.
+  if (governedExactEntityGraphicUrl(row.slug)) return false;
+
   const status = (row.image_generation_status ?? "").trim().toLowerCase();
   const note = (row.image_validation_note ?? "").trim().toLowerCase();
   return Boolean(candidate)
@@ -123,14 +129,21 @@ export function isHeroReadinessQuarantined(row: Pick<ArticleHeroReadinessRow,
     && (row.quality_flags ?? []).includes("image_requires_visual_validation");
 }
 
+export function governedExactEntityGraphicUrl(
+  articleSlug: string | null | undefined,
+): string | null {
+  const slug = (articleSlug ?? "").trim();
+  if (!slug) return null;
+  return GOVERNED_EXACT_ENTITY_GRAPHICS.get(slug) ?? null;
+}
+
 export function isGovernedExactEntityGraphic(
   articleSlug: string | null | undefined,
   value: string | null | undefined,
 ): boolean {
-  const slug = (articleSlug ?? "").trim();
   const url = (value ?? "").trim();
-  if (!slug || !url) return false;
-  return GOVERNED_EXACT_ENTITY_GRAPHICS.get(slug) === url;
+  if (!url) return false;
+  return governedExactEntityGraphicUrl(articleSlug) === url;
 }
 
 export function isAuthoritativeOfficialGraphic(value: string | null | undefined): boolean {
