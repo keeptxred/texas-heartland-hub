@@ -4,6 +4,12 @@ import { classifyContentPillar } from "@/lib/content-pillars";
 const BATCH_SIZE = 10000;
 const CLASSIFIER_VERSION = "content-pillars-v2";
 
+function isSettledAssignmentVersion(version: string | null): boolean {
+  return version === CLASSIFIER_VERSION
+    || version === `${CLASSIFIER_VERSION}:texasdefined-excluded`
+    || version?.startsWith("manual-taxonomy-review") === true;
+}
+
 type ArticleCandidate = {
   slug: string;
   title: string;
@@ -45,7 +51,7 @@ async function handler() {
 
   const currentAssignments = new Set(
     ((assigned ?? []) as ExistingAssignment[])
-      .filter((row) => row.classifier_version === CLASSIFIER_VERSION)
+      .filter((row) => isSettledAssignmentVersion(row.classifier_version))
       .map((row) => row.article_slug),
   );
 
