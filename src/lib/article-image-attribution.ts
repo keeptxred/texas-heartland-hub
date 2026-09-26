@@ -279,6 +279,62 @@ const ATTRIBUTIONS: AttributionEntry[] = [
     licenseUrl: "https://creativecommons.org/licenses/by-sa/3.0/",
     caption: "Representative archive kaiseki meal; not a photograph of Ichika in Plano.",
   },
+  {
+    imageUrl: "/images/news/editorial/subject-identity/bo-french-endorsement-controversy.png",
+    credit: "Keep TX Red editorial desk",
+    sourceUrl: "https://keeptxred.com/",
+    licenseName: "Original Keep TX Red editorial graphic",
+    licenseUrl: "https://keeptxred.com/about",
+    caption: "Editorial identity graphic for the Bo French endorsement controversy; not a photograph of French, endorsers, or an event.",
+  },
+  {
+    imageUrl: "/images/news/editorial/subject-identity/paxton-talarico-affordability.png",
+    credit: "Keep TX Red editorial desk",
+    sourceUrl: "https://keeptxred.com/",
+    licenseName: "Original Keep TX Red editorial graphic",
+    licenseUrl: "https://keeptxred.com/about",
+    caption: "Neutral editorial comparison graphic for the Paxton and Talarico affordability plans; not a photograph of either candidate or a campaign event.",
+  },
+  {
+    imageUrl: "/images/news/editorial/subject-identity/daniella-guzman-kprc.png",
+    credit: "Keep TX Red editorial desk",
+    sourceUrl: "https://keeptxred.com/",
+    licenseName: "Original Keep TX Red editorial graphic",
+    licenseUrl: "https://keeptxred.com/about",
+    caption: "Editorial identity graphic for the Daniella Guzman KPRC return and ticket-review stories; not a photograph of Guzman or KPRC.",
+  },
+  {
+    imageUrl: "/images/news/editorial/subject-identity/sarah-acosta-ksat.png",
+    credit: "Keep TX Red editorial desk",
+    sourceUrl: "https://keeptxred.com/",
+    licenseName: "Original Keep TX Red editorial graphic",
+    licenseUrl: "https://keeptxred.com/about",
+    caption: "Editorial identity graphic for Sarah Acosta's KSAT farewell; not a photograph of Acosta or the broadcast.",
+  },
+  {
+    imageUrl: "/images/news/editorial/subject-identity/chad-eberle-mexico-arrest.png",
+    credit: "Keep TX Red editorial desk",
+    sourceUrl: "https://keeptxred.com/",
+    licenseName: "Original Keep TX Red editorial graphic",
+    licenseUrl: "https://keeptxred.com/about",
+    caption: "Editorial identity graphic for the reported arrest involving Chad Eberle; not a likeness, incident reenactment, or depiction of alleged conduct.",
+  },
+  {
+    imageUrl: "/images/news/editorial/subject-identity/tamu-texarkana-athletics.png",
+    credit: "Keep TX Red editorial desk",
+    sourceUrl: "https://keeptxred.com/",
+    licenseName: "Original Keep TX Red editorial graphic",
+    licenseUrl: "https://keeptxred.com/about",
+    caption: "Editorial planning graphic for Texas A&M-Texarkana's announced athletics complex; not an architectural rendering or construction photograph.",
+  },
+  {
+    imageUrl: "/images/news/editorial/subject-identity/the-hop-preslees-webster.png",
+    credit: "Keep TX Red editorial desk",
+    sourceUrl: "https://keeptxred.com/",
+    licenseName: "Original Keep TX Red editorial graphic",
+    licenseUrl: "https://keeptxred.com/about",
+    caption: "Editorial identity graphic for The Hop-to-Preslee's venue transition in Webster; not a photograph of either venue.",
+  },
 ].map((entry) => ({
   ...entry,
   usageNote: entry.usageNote ?? "Source image unmodified; page presentation may crop it responsively.",
@@ -313,7 +369,9 @@ export function hasRequiredArticleImageAttribution(
 export function shouldContainArticleImage(
   imageUrl: string | null | undefined,
 ): boolean {
-  return CONTAINED_ARTICLE_IMAGE_URLS.has(String(imageUrl ?? "").trim());
+  const raw = String(imageUrl ?? "").trim();
+  return CONTAINED_ARTICLE_IMAGE_URLS.has(raw)
+    || raw.startsWith("/images/news/editorial/subject-identity/");
 }
 
 export function getGeneratedArticleImageDisclosure(
