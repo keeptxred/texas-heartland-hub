@@ -25,6 +25,11 @@ export type { Domain, SubjectExtract, VisionVerdict } from "./featured-image-cor
 const BUCKET = "article-images";
 const STALE_GENERATION_LEASE_MS = 20 * 60 * 1000;
 const SENSITIVE_IMAGE_SUBJECT_RE = /\b(shooting|shot|gunfire|road rage|killed|dead|death|fatal|murder|homicide|victim|suspect|attack|assault)\b/i;
+const SENSITIVE_ROADWAY_CONTEXT_RE = /\b(road rage|roadway|interstate|highway|traffic|vehicle|driver|crash|collision|shoulder|overpass)\b/i;
+const SENSITIVE_COURT_CONTEXT_RE = /\b(court|courthouse|judge|appeal|appellate|ruling|lawsuit|trial|death row|inmate|prison|deportation|custody)\b/i;
+const SENSITIVE_PROTEST_CONTEXT_RE = /\b(protest|protester|demonstration|capitol|rally)\b/i;
+const SENSITIVE_INVESTIGATION_CONTEXT_RE = /\b(investigation|investigate|police|district attorney|prosecutor|\bda\b|oversight)\b/i;
+const SENSITIVE_IMMIGRATION_CONTEXT_RE = /\b(ice|immigration|detainee|detention|deportation|removal)\b/i;
 const DATA_CENTER_IMAGE_SUBJECT_RE = /\b(data center(?:s)?|data-center(?:s)?|server farm(?:s)?|hyperscale)\b/i;
 const ADMINISTRATIVE_RULEMAKING_IMAGE_SUBJECT_RE = /\b(texas register|state agency rules?|rulemaking|proposed rules?|adopted rules?|administrative rules?)\b/i;
 
@@ -141,11 +146,56 @@ export function buildGenerationSafeSubject(subject: SubjectExtract): SubjectExtr
     };
   }
   if (SENSITIVE_IMAGE_SUBJECT_RE.test(storyText)) {
+    if (subject.domain === "transportation" || SENSITIVE_ROADWAY_CONTEXT_RE.test(storyText)) {
+      return {
+        ...subject,
+        title: `${location ? `${location} ` : "Texas "}roadway aftermath setting`.trim(),
+        firstParagraph: "",
+        concreteSubject: `An empty section of ${location ? `roadway in ${location}` : "Texas roadway"} in daylight, with asphalt lanes, shoulder, traffic-control equipment, and ordinary roadside infrastructure visible. No people, violence, or reenactment.`,
+      };
+    }
+    if (subject.domain === "legal" || SENSITIVE_COURT_CONTEXT_RE.test(storyText)) {
+      return {
+        ...subject,
+        domain: "legal",
+        title: `${location ? `${location} ` : "Texas "}judicial process setting`.trim(),
+        firstParagraph: "",
+        concreteSubject: `A real ${location ? `${location} ` : "Texas "}courthouse exterior or courtroom interior representing the judicial proceeding, with ordinary legal architecture, counsel tables, case folders, or courthouse entry infrastructure. No people, violence, reenactment, readable case text, or fabricated evidence.`,
+      };
+    }
+    if (SENSITIVE_PROTEST_CONTEXT_RE.test(storyText)) {
+      return {
+        ...subject,
+        domain: "politics",
+        title: `${location ? `${location} ` : "Texas "}civic gathering setting`.trim(),
+        firstParagraph: "",
+        concreteSubject: `A documentary view of a ${location ? `${location} ` : "Texas "}government or capitol public space prepared for a civic gathering, with plaza, barriers, microphones or ordinary event infrastructure and only distant anonymous figures if any. No violence, reenactment, readable signs, or identifiable faces.`,
+      };
+    }
+    if (SENSITIVE_INVESTIGATION_CONTEXT_RE.test(storyText)) {
+      return {
+        ...subject,
+        domain: "general",
+        title: `${location ? `${location} ` : "Texas "}public-safety investigation setting`.trim(),
+        firstParagraph: "",
+        concreteSubject: `A real ${location ? `${location} ` : "Texas "}public-safety or local-government office exterior with ordinary administrative and investigative infrastructure, parked official vehicles without readable markings, and no people, violence, reenactment, weapons, or fabricated evidence.`,
+      };
+    }
+    if (subject.domain === "border" || SENSITIVE_IMMIGRATION_CONTEXT_RE.test(storyText)) {
+      return {
+        ...subject,
+        domain: "border",
+        title: `${location ? `${location} ` : "Texas "}federal immigration-enforcement setting`.trim(),
+        firstParagraph: "",
+        concreteSubject: `A neutral ${location ? `${location} ` : "Texas "}federal immigration-enforcement or detention-administration setting, such as a secured government-facility exterior, controlled entry area, or official vehicle staging area. No people, confrontation, violence, reenactment, readable agency markings, or fabricated evidence.`,
+      };
+    }
     return {
       ...subject,
-      title: `${location ? `${location} ` : "Texas "}interstate roadway infrastructure`.trim(),
+      domain: "general",
+      title: `${location ? `${location} ` : "Texas "}public-safety institutional setting`.trim(),
       firstParagraph: "",
-      concreteSubject: `An empty section of ${location ? `interstate roadway in ${location}` : "Texas interstate roadway"} in daylight, with asphalt travel lanes, concrete overpass, shoulder, guardrails, lane markings, and roadside traffic equipment clearly visible.`,
+      concreteSubject: `A neutral ${location ? `${location} ` : "Texas "}institutional setting directly connected to the article's public-safety context, with ordinary government or administrative infrastructure. No people, violence, reenactment, weapons, readable text, or fabricated evidence.`,
     };
   }
   if (subject.domain === "energy" && DATA_CENTER_IMAGE_SUBJECT_RE.test(storyText)) {
@@ -318,7 +368,10 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
     let negativePrompt = buildNegativeImagePrompt(generationSubject, previousFailure);
     const imageModel = subject.domain === "culture" ? CLOUDFLARE_CULTURE_IMAGE_MODEL : undefined;
     let bytes = await generateImageBytes(prompt, negativePrompt, imageModel);
-    let verdict = await validateImageMatchesArticle(bytes, generationSubject);
+    // Safety sanitization may simplify the generation scene, but it must never
+    // redefine the story that the validator judges. Validate against the original
+    // article subject so a generic safe fallback cannot pass by changing topics.
+    let verdict = await validateImageMatchesArticle(bytes, subject);
     let usedPrompt = prompt;
 
     for (let attempt = 1; !verdict.matches && attempt <= 3; attempt += 1) {
@@ -327,7 +380,7 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
       usedPrompt = stronger;
       negativePrompt = buildNegativeImagePrompt(generationSubject, verdict.reason);
       bytes = await generateImageBytes(stronger, negativePrompt, imageModel);
-      verdict = await validateImageMatchesArticle(bytes, generationSubject);
+      verdict = await validateImageMatchesArticle(bytes, subject);
     }
 
     if (!verdict.matches) throw new Error(`Generated image failed Cloudflare story-match/photorealism validation: ${verdict.reason}`);
