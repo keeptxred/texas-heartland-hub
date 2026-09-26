@@ -3,6 +3,7 @@ import fs from 'node:fs';
 
 const relay = fs.readFileSync('supabase/functions/ktr-rss-relay-sports/index.ts', 'utf8');
 const migration = fs.readFileSync('supabase/migrations/20260829040000_expand_texas_pro_sports_discovery.sql', 'utf8');
+const staleGuardFix = fs.readFileSync('supabase/migrations/20260926045500_clear_stale_expanded_pro_sports_guard.sql', 'utf8');
 
 test('expanded Texas pro sports discovery covers the canonical uncovered teams', () => {
   for (const team of ['Houston+Rockets', 'Dallas+Wings', 'Austin+FC', 'FC+Dallas', 'Houston+Dynamo+FC', 'Houston+Dash']) {
@@ -24,4 +25,14 @@ test('expanded pro sports lanes remain guarded and publication-ineligible on con
   expect(migration).toContain("new.target_site := 'keeptxred'");
   expect(migration).toContain("new.target_section := 'Sports'");
   expect(migration).toContain('how to watch');
+});
+
+
+test('latest expanded sports guard handles null lane provenance and preserves current site ownership', () => {
+  expect(staleGuardFix).toContain("coalesce(new.trend_source = 'Texas Pro Basketball — Rockets and Wings Discovery', false)");
+  expect(staleGuardFix).toContain("coalesce(new.trend_source = 'Texas Pro Soccer — Daily Discovery', false)");
+  expect(staleGuardFix).toContain("new.target_site := 'texasdefined'");
+  expect(staleGuardFix).toContain("new.target_section := 'Sports'");
+  expect(staleGuardFix).toContain("new.target_section in ('Politics','Elections','Business','Texas News')");
+  expect(staleGuardFix).toContain("zzzzzzzzzzzzz_guard_expanded_texas_pro_sports_discovery_row");
 });
