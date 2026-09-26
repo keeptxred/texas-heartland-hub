@@ -1,6 +1,11 @@
 name: Authority JSON Production Smoke
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/authority-json-production-smoke.yml'
+      - 'scripts/authority/verify-political-geography-production.py'
   pull_request:
     branches: [main]
     paths:
