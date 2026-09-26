@@ -119,6 +119,22 @@ const ATTRIBUTIONS: AttributionEntry[] = [
     caption: "Representative archive Texas A&M football photo from the 2006 Lone Star Showdown; not the 2026 Missouri State game.",
   },
   {
+    imageUrl: "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6b/TXSE_logo_Sep_2024.svg/1280px-TXSE_logo_Sep_2024.svg.png",
+    credit: "TXSE Group Inc.",
+    sourceUrl: `${COMMONS}TXSE_logo_Sep_2024.svg`,
+    licenseName: "Public domain (PD-textlogo)",
+    licenseUrl: "https://commons.wikimedia.org/wiki/Template:PD-textlogo",
+    caption: "Texas Stock Exchange identity graphic. Used editorially to identify the exchange discussed in the article; not a photograph of the reported listings.",
+  },
+  {
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Folclor_mexicano_-_Frida_Kahlo.jpg",
+    credit: "Lemad.resaeva",
+    sourceUrl: `${COMMONS}Folclor_mexicano_-_Frida_Kahlo.jpg`,
+    licenseName: "CC BY-SA 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+    caption: "Representative archive photograph of a Frida Kahlo impersonator and related student artwork; not the San Antonio Frida Fest record attempt.",
+  },
+  {
     imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Lupe_logo_jpeg.jpg",
     credit: "TE(HIST 316)",
     sourceUrl: `${COMMONS}Lupe_logo_jpeg.jpg`,
