@@ -3,6 +3,7 @@ import {
   getArticleImageAttribution,
   getGeneratedArticleImageDisclosure,
   hasRequiredArticleImageAttribution,
+  shouldContainArticleImage,
 } from "./article-image-attribution";
 
 const AM_IMAGE =
@@ -85,6 +86,16 @@ describe("article image attribution", () => {
       credit: "Donnie Ray Jones",
       licenseName: "CC BY 2.0",
     });
+  });
+
+  it("contains wide governed identity graphics instead of cropping them", () => {
+    expect(shouldContainArticleImage(
+      "https://commons.wikimedia.org/wiki/Special:Redirect/file/Lupe_logo_jpeg.jpg",
+    )).toBe(true);
+    expect(shouldContainArticleImage(
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6b/TXSE_logo_Sep_2024.svg/1280px-TXSE_logo_Sep_2024.svg.png",
+    )).toBe(true);
+    expect(shouldContainArticleImage(AM_IMAGE)).toBe(false);
   });
 
   it("fails closed for unregistered external images instead of inventing credit", () => {
