@@ -35,6 +35,13 @@ describe("TexasDefined ownership destination production gate", () => {
     expect(smoke).toContain("if url not in advertised");
   });
 
+  it("emits GitHub annotations for actionable production failures", () => {
+    expect(smoke).toContain("def github_error(message: str) -> None");
+    expect(smoke).toContain("::error title=TexasDefined ownership destination failed::");
+    expect(smoke).toContain("for failure in failures:");
+    expect(smoke).toContain("github_error(failure)");
+  });
+
   it("runs after the property-tax handoff and before the redirect smoke", () => {
     const propertyGate = workflow.indexOf("Verify property-tax ownership handoff on deployed Worker");
     const destinationGate = workflow.indexOf("Verify all TexasDefined ownership destinations");
