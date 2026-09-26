@@ -111,6 +111,22 @@ const ATTRIBUTIONS: AttributionEntry[] = [
     caption: "Representative archive photo of Jimmy Kimmel; not the unaired James Talarico interview.",
   },
   {
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Crowd_at_the_Texas_State_Capitol_for_the_No_Kings_Day_Protest_on_June_14,_2025_(54604569560).jpg",
+    credit: "Andy Thrasher",
+    sourceUrl: `${COMMONS}Crowd_at_the_Texas_State_Capitol_for_the_No_Kings_Day_Protest_on_June_14,_2025_(54604569560).jpg`,
+    licenseName: "CC0 1.0",
+    licenseUrl: "https://creativecommons.org/publicdomain/zero/1.0/",
+    caption: "Archive protest crowd at the Texas State Capitol in Austin; not the September 2026 ICE-shooting protest.",
+  },
+  {
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/U_S_Immigration_and_Customs_Enforcement_conducts_Operation_Secure_Streets_(50044962302).jpg",
+    credit: "U.S. Immigration and Customs Enforcement / Ron Rogers",
+    sourceUrl: `${COMMONS}U_S_Immigration_and_Customs_Enforcement_conducts_Operation_Secure_Streets_(50044962302).jpg`,
+    licenseName: "Public domain (U.S. Department of Homeland Security / ICE work)",
+    licenseUrl: "https://commons.wikimedia.org/wiki/Template:PD-USGov-DHS",
+    caption: "Archive U.S. Immigration and Customs Enforcement operation photograph; not the North Austin shooting.",
+  },
+  {
     imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Lone_Star_Showdown_2006_McGee_on_goal-line.jpg",
     credit: "Johntex",
     sourceUrl: `${COMMONS}Lone_Star_Showdown_2006_McGee_on_goal-line.jpg`,

@@ -109,7 +109,7 @@ for (const file of files) {
   if (/image\/svg\+xml/i.test(sql)) errors.push('SVG image content types are not allowed for published news');
   if (!isBulkImageAltLabelMaintenance && /(?:editorial\s+illustration|vector\s+illustration|generic\s+illustration|placeholder\s+image)/i.test(sql)) errors.push('placeholder/vector/illustration hero imagery is not allowed for published news');
 
-  const valuesSlugs = [...sql.matchAll(/\('((?:live-)?(?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)'\s*,/g)].map((match) => match[1]);
+  const valuesSlugs = [...sql.matchAll(/\(\s*'((?:live-)?(?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)'\s*,/g)].map((match) => match[1]);
   const selectSlugs = [...sql.matchAll(/SELECT\s+'((?:live-)?(?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)'\s*::\s*text\s+slug\b/gi)].map((match) => match[1]);
   const dollarSlugs = [...sql.matchAll(/SELECT\s+\$slug\$((?:live-)?(?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)\$slug\$\s*::\s*text\s+slug\b/gi)].map((match) => match[1]);
   const whereSlugs = [...sql.matchAll(/WHERE\s+(?:[a-z_]+\.)?slug\s*=\s*'((?:live-)?(?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)'/gi)].map((match) => match[1]);
