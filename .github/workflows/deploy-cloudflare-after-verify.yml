@@ -271,6 +271,7 @@ jobs:
 
       - name: Verify all TexasDefined ownership destinations
         if: steps.revision.outputs.deploy == 'true'
+        timeout-minutes: 10
         run: python3 scripts/seo/verify-texasdefined-ownership-destinations.py
 
       - name: Verify city migration redirects on deployed Worker
