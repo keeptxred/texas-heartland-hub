@@ -296,6 +296,32 @@ describe("story clustering", () => {
     expect(likelySameLineage(a, b)).toBe(true);
   });
 
+  it("keeps an explicitly marked direct primary record even when its headline matches the secondary report", () => {
+    const secondary = item(
+      "KXAN Austin",
+      "Texas Children’s in Austin announces NICU expansion",
+      "Texas Children’s in Austin announces NICU expansion.",
+      "https://news.google.com/rss/articles/secondary-nicu",
+      "2026-08-13T17:53:46Z",
+    );
+    const primary = {
+      ...item(
+        "Texas Children’s",
+        "Texas Children’s in Austin announces NICU expansion",
+        "Texas Children’s announced a $39 million NICU expansion from 14 rooms to 31 rooms using fifth-floor shell space.",
+        "https://www.texaschildrens.org/content/news-release/austin-nicu-expansion",
+        "2026-08-13T12:00:00Z",
+      ),
+      viral_signals: { primary_source: true },
+    };
+
+    expect(likelySameLineage(secondary, primary)).toBe(false);
+    expect(combinationScore(secondary, primary).score).toBeGreaterThanOrEqual(45);
+    const storyCluster = buildStoryCluster(secondary, [primary], 5);
+    expect(storyCluster.members).toHaveLength(1);
+    expect(storyCluster.strongMerge).toBe(true);
+  });
+
 
   it("does not merge the real voter-registration story with unrelated campaign, tax, or school-award stories", () => {
     const registration = item(
