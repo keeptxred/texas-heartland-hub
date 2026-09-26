@@ -54,6 +54,21 @@ const GOVERNED_EXACT_ENTITY_GRAPHICS = new Map<string, string>([
   ],
 ]);
 
+const GOVERNED_MANUALLY_REVIEWED_ARCHIVE_HEROES = new Map<string, string>([
+  [
+    "2026-09-22-protesters-gather-at-texas-capitol-a-day-after-austin-ice-shooting",
+    "https://commons.wikimedia.org/wiki/Special:Redirect/file/Crowd_at_the_Texas_State_Capitol_for_the_No_Kings_Day_Protest_on_June_14,_2025_(54604569560).jpg",
+  ],
+  [
+    "2026-09-22-ice-officer-shoots-man-in-north-austin",
+    "https://commons.wikimedia.org/wiki/Special:Redirect/file/U_S_Immigration_and_Customs_Enforcement_conducts_Operation_Secure_Streets_(50044962302).jpg",
+  ],
+  [
+    "2026-09-21-man-injured-in-shooting-by-ice-officer-in-north-austin",
+    "https://commons.wikimedia.org/wiki/Special:Redirect/file/U_S_Immigration_and_Customs_Enforcement_conducts_Operation_Secure_Streets_(50044962302).jpg",
+  ],
+]);
+
 export type ArticleHeroReadinessRow = {
   slug: string;
   title: string;
@@ -131,7 +146,10 @@ export function hasHeroVisualReadinessProvenance(
   // story-match provenance, so those rows must still pass the stored-hero vision
   // gate before they are treated as ready.
   return value.startsWith("authoritative-image-exempt:")
-    && isAuthoritativeOfficialGraphic(heroUrl);
+    && (
+      isAuthoritativeOfficialGraphic(heroUrl)
+      || GOVERNED_MANUALLY_REVIEWED_ARCHIVE_HEROES.get((articleSlug ?? "").trim()) === (heroUrl ?? "").trim()
+    );
 }
 
 export function buildExhaustedHeroRecoveryNote(
