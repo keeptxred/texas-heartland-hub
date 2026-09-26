@@ -9,6 +9,18 @@ const AM_IMAGE =
   "https://commons.wikimedia.org/wiki/Special:Redirect/file/Lone_Star_Showdown_2006_McGee_on_goal-line.jpg";
 
 describe("article image attribution", () => {
+  it("credits the exact Flock Safety ALPR archive photograph", () => {
+    expect(
+      getArticleImageAttribution(
+        "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flock_Safety_License_Plate_Reader_Camera_in_Colorado_(55307233186).jpg",
+      ),
+    ).toMatchObject({
+      credit: "Tony Webster",
+      licenseName: "CC BY 4.0",
+      licenseUrl: "https://creativecommons.org/licenses/by/4.0/",
+    });
+  });
+
   it("renders complete attribution metadata for the Texas A&M representative football image", () => {
     expect(getArticleImageAttribution(AM_IMAGE)).toEqual({
       credit: "Johntex",
