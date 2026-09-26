@@ -25,6 +25,18 @@ describe("stored hero representative-photo policy", () => {
     expect(guidance).toContain("same-domain setting must fail");
   });
 
+  it("accepts the exact named physical subject without demanding a staged administrative action", () => {
+    const guidance = storedHeroEditorialGuidance(subject({
+      title: "At least 900 Flock cameras unplugged in Texas since state funding cut",
+      domain: "general",
+      entities: ["Flock Safety"],
+      concreteSubject: "Flock Safety automated license plate reader cameras are the exact named physical subject.",
+    }));
+    expect(guidance).toContain("specific named physical device, product, facility, vehicle, or piece of infrastructure");
+    expect(guidance).toContain("Do not require a staged reenactment");
+    expect(guidance).toContain("literally unplugging");
+  });
+
   it("requires named-person stories to beat generic domain context", () => {
     const guidance = storedHeroEditorialGuidance(subject({
       title: "Houston anchor returns after station review",
