@@ -20,7 +20,7 @@ WITH sources(platform, source_name, source_url, rss_url, category, notes, source
       true
     ),
     (
-      'web',
+      'website',
       'METRO Houston — Official News and Service Updates',
       'https://www.ridemetro.org/about/news-media/news-releases',
       NULL,
@@ -30,7 +30,7 @@ WITH sources(platform, source_name, source_url, rss_url, category, notes, source
       true
     ),
     (
-      'web',
+      'website',
       'Texas State Historical Association — Handbook of Texas',
       'https://www.tshaonline.org/handbook',
       NULL,
@@ -40,7 +40,7 @@ WITH sources(platform, source_name, source_url, rss_url, category, notes, source
       true
     ),
     (
-      'newsletter',
+      'website',
       'The Texas Flyover — Discovery Benchmark',
       'https://thetexasflyover.com/',
       NULL,
