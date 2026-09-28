@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Building2, Gavel, Landmark, Scale } from "lucide-react";
-import { StatewideOfficePowersComparison } from "@/components/government/StatewideOfficePowersComparison";\nimport { SEARCH_RECOVERY_AUTHORITY_GUIDES } from "@/data/search-recovery-authority";
+import { StatewideOfficePowersComparison } from "@/components/government/StatewideOfficePowersComparison";
+import { SEARCH_RECOVERY_AUTHORITY_GUIDES } from "@/data/search-recovery-authority";
 import { GOVERNMENT_HISTORY_AUTHORITY_PAGES } from "@/data/texas-government-history-authority";
 import { TEXAS_LOCAL_GOVERNMENT_AUTHORITY_PAGES } from "@/data/texas-local-government-authority";
 import { TEXAS_MUNICIPAL_GOVERNMENT_AUTHORITY_PAGES } from "@/data/texas-municipal-government-authority";
