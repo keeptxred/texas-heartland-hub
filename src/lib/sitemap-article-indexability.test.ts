@@ -23,6 +23,13 @@ describe("article sitemap indexability alignment", () => {
     expect(news).toContain("hasSubstantiveStaticBody(a.slug)");
   });
 
+  it("keeps automated cloud news out of both Google discovery sitemap paths during recovery", () => {
+    const evergreenFunctions = readFileSync(join(ROOT, "src/lib/evergreen.functions.ts"), "utf8");
+    const news = readFileSync(newsSitemap, "utf8");
+    expect(evergreenFunctions).toContain("isCloudArticleSearchEligibleByKind(a.kind)");
+    expect(news).toContain("isCloudArticleSearchEligibleByKind(a.kind)");
+  });
+
   it("keeps both guarded article sitemaps advertised by the deterministic root index", () => {
     const index = readFileSync(sitemapIndex, "utf8");
     expect(index).toContain('"sitemap-evergreen.xml"');
