@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { shouldNoindexCloudArticle } from "./article-indexability.functions";
 
 const readyRow = {
+  kind: "evergreen",
   category: "Legislature",
   source_name: "Texas Legislature",
   source_url: "https://capitol.texas.gov/",
@@ -39,6 +40,12 @@ describe("shouldNoindexCloudArticle", () => {
     expect(shouldNoindexCloudArticle({ ...readyRow, category: "Non-Political" }, true)).toBe(true);
     expect(shouldNoindexCloudArticle({ ...readyRow, content_quality_score: 59 }, true)).toBe(true);
     expect(shouldNoindexCloudArticle({ ...readyRow, source_url: null, body_json: { updated: readyRow.published_at, sources: [] } }, true)).toBe(true);
+  });
+
+  it("suppresses automated cloud news during search recovery", () => {
+    expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news" }, true)).toBe(true);
+    expect(shouldNoindexCloudArticle({ ...readyRow, kind: "ingested" }, true)).toBe(true);
+    expect(shouldNoindexCloudArticle({ ...readyRow, kind: "evergreen" }, true)).toBe(false);
   });
 
   it("noindexes missing, failed, and branded-fallback article images", () => {

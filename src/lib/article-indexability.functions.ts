@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { hasSeoDuplicateFlag } from "@/lib/article-canonical";
 import { isKeepTxRedSearchOwnedStory } from "@/lib/ktr-search-ownership";
+import { isCloudArticleSearchEligibleByKind } from "@/lib/cloud-search-indexability";
 import {
   isPublicArticleReady,
   type PublicArticleCandidate,
@@ -23,6 +24,7 @@ export function shouldNoindexCloudArticle(
   if (Array.isArray(candidate) || candidate == null) {
     return hasSeoDuplicateFlag(candidate as string[] | null | undefined);
   }
+  if (!isCloudArticleSearchEligibleByKind(candidate.kind)) return true;
   return !isPublicArticleReady(candidate);
 }
 

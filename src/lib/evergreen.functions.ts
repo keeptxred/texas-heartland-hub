@@ -6,6 +6,7 @@ import { isSitemapEligibleSlug } from "@/lib/article-slug-integrity";
 import { selectCanonicalArticles } from "@/lib/article-canonical";
 import { isPublicArticleReady } from "@/lib/public-article-readiness";
 import { isKeepTxRedSearchOwnedStory } from "@/lib/ktr-search-ownership";
+import { isCloudArticleSearchEligibleByKind } from "@/lib/cloud-search-indexability";
 import { getChatNewsFallbackBySlug } from "@/lib/chat-news-fallback";
 
 export type EvergreenSection = {
@@ -306,6 +307,7 @@ export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
         if (!a.body_json) return false;
         if (!isLegacyArticleAllowedInSitemap(a.slug, a.quality_flags)) return false;
         if (!isSitemapEligibleSlug(a.slug, a.published_at)) return false;
+        if (!isCloudArticleSearchEligibleByKind(a.kind)) return false;
         if (!isPublicArticleReady(a)) return false;
         if (!isKeepTxRedSearchOwnedStory({
           title: a.title,
