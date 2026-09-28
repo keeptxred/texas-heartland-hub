@@ -19,7 +19,7 @@ export type SearchRecoveryAuthorityGuide = {
   methodology: string;
 };
 
-export const SEARCH_RECOVERY_AUTHORITY_GUIDES = {
+export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuthorityGuide> = {
   "texas-lobbying-2026": {
     "slug": "texas-lobbying-2026",
     "title": "Who Lobbies Texas Government? 2026 Lobbyists, Clients and Spending Explained",
@@ -950,6 +950,6 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES = {
     ],
     "methodology": "KeepTXRed uses Article IV, Section 14 as the controlling constitutional framework and the Legislative Reference Library plus official bill histories for session-specific veto records. Full vetoes and appropriation line-item vetoes are labeled separately."
   }
-} satisfies Record<string, SearchRecoveryAuthorityGuide>;
+};
 
 export const SEARCH_RECOVERY_AUTHORITY_SLUGS = Object.keys(SEARCH_RECOVERY_AUTHORITY_GUIDES);
