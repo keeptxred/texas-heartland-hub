@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Building2, Gavel, Landmark, Scale } from "lucide-react";
-import { StatewideOfficePowersComparison } from "@/components/government/StatewideOfficePowersComparison";
+import { StatewideOfficePowersComparison } from "@/components/government/StatewideOfficePowersComparison";\nimport { SEARCH_RECOVERY_AUTHORITY_GUIDES } from "@/data/search-recovery-authority";
 import { GOVERNMENT_HISTORY_AUTHORITY_PAGES } from "@/data/texas-government-history-authority";
 import { TEXAS_LOCAL_GOVERNMENT_AUTHORITY_PAGES } from "@/data/texas-local-government-authority";
 import { TEXAS_MUNICIPAL_GOVERNMENT_AUTHORITY_PAGES } from "@/data/texas-municipal-government-authority";
@@ -47,6 +47,24 @@ function TexasGovernmentHub() {
         <p className="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">Understand who runs Texas government, what the constitution allows each institution to do, what limits apply, how leaders are selected, and how state, county and municipal offices connect to laws, elections and public accountability.</p>
         <div className="mt-6 flex flex-wrap gap-3"><a href="/laws" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">Read the Texas Constitution</a><a href="/elections/2026" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Texas Election Central</a><a href="/bills" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Track Texas bills</a><a href="/texas-government/agencies" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">State agency directory</a></div>
       </header>
+
+      <section className="mt-10 rounded-2xl border border-primary/25 bg-primary/[0.04] p-6 md:p-8" aria-labelledby="public-record-research-guides">
+        <div className="max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Primary-source authority set</p>
+          <h2 id="public-record-research-guides" className="mt-2 text-3xl font-bold md:text-4xl">Texas public-record research guides</h2>
+          <p className="mt-3 leading-7 text-muted-foreground">Eight deliberately limited reference pages explain how to verify Texas lobbying, campaign finance, bills, fiscal notes, the state budget, agency rules, party offices and gubernatorial vetoes. They are maintained as durable primary-source guides rather than automated news rewrites.</p>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-2">
+          {Object.values(SEARCH_RECOVERY_AUTHORITY_GUIDES).map((guide) => (
+            <a key={guide.slug} href={`/texas-government/reference/${guide.slug}`} className="rounded-xl border bg-card p-5 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-sm">
+              <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{guide.eyebrow}</p>
+              <h3 className="mt-2 text-lg font-bold text-primary">{guide.title}</h3>
+              <p className="mt-2 line-clamp-3 text-sm leading-6 text-muted-foreground">{guide.dek}</p>
+              <span className="mt-4 inline-flex text-sm font-bold text-primary">Open research guide →</span>
+            </a>
+          ))}
+        </div>
+      </section>
 
       <section className="mt-10" aria-labelledby="government-history-authority">
         <div className="max-w-4xl">
