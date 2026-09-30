@@ -42,10 +42,10 @@ jobs:
             fi
           }
 
+          # Evidence enrichment remains part of this workflow. The deterministic
+          # normalize/cluster/packet stages are already maintained by pg_cron, so
+          # rerunning them here every two hours only creates duplicate database I/O.
           run_zero_ai_stage evidence enrich-newsroom-rss-evidence 90
-          run_zero_ai_stage normalize normalize-newsroom-feed 90
-          run_zero_ai_stage cluster cluster-newsroom-stories 90
-          run_zero_ai_stage packets build-newsroom-research-packets 180
 
           oidc_url="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-newsroom-refresh"
           oidc_token=$(curl -fsS             -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}"             "$oidc_url" | jq -r '.value // empty')
