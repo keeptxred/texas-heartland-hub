@@ -52,6 +52,11 @@ export const Route = createFileRoute("/robots.txt")({
           // site has path-based Disallow rules that could otherwise be broad.
           "Allow: /ads.txt",
           "Allow: /",
+          // Public article imagery is intentionally served through a narrowly
+          // scoped API route. Keep the rest of /api private while allowing
+          // Googlebot-Image and other shared-group crawlers to fetch editorial
+          // hero images advertised in article markup and sitemap-images.xml.
+          "Allow: /api/public/article-image/",
           "Disallow: /api/",
           "Disallow: /admin",
           "Disallow: /admin/",

@@ -15,8 +15,11 @@ PARENT_H1 = "Texas Laws Explained:"
 HB1056_PATH = "/bills/texas/89/hb/1056"
 HB1056_CANONICAL = "https://keeptxred.com/bills/texas/89/hb/1056"
 HB1056_ARTICLE_PATH = "/news/texas-gold-silver-legal-tender-hb-1056"
+HB1056_ARTICLE_CANONICAL = f"https://keeptxred.com{HB1056_ARTICLE_PATH}"
 HB1056_ARTICLE_TITLE = "Texas Gold and Silver Legal Tender Law: What HB 1056 Does Sept. 1"
 HB1056_MISSING_ARTICLE_FALLBACK = "KeepTXRed has not linked a related article to this bill yet."
+HB1056_EVERGREEN_SITEMAP_PATH = "/sitemap-evergreen.xml"
+HB1056_IMAGE_ROBOTS_ALLOW = "Allow: /api/public/article-image/"
 CHECKS = [
     ("/laws", PARENT_H1, "https://keeptxred.com/laws", False, False),
     ("/laws/constitutional-amendments", "Texas Constitutional Amendments Tracker", "https://keeptxred.com/laws/constitutional-amendments", True, True),
@@ -55,6 +58,7 @@ class PageParser(HTMLParser):
         self.h1_depth = 0
         self.h1_parts: list[str] = []
         self.canonicals: list[str] = []
+        self.robots: list[str] = []
         self.anchor_depth = 0
         self.anchor_href: str | None = None
         self.anchor_parts: list[str] = []
@@ -71,6 +75,12 @@ class PageParser(HTMLParser):
             href = values.get("href")
             if "canonical" in rel and href:
                 self.canonicals.append(href)
+        if tag == "meta":
+            values = dict(attrs)
+            if (values.get("name") or "").strip().lower() == "robots":
+                content = values.get("content")
+                if content:
+                    self.robots.append(content)
         if tag == "a":
             if self.anchor_depth == 0:
                 values = dict(attrs)
@@ -131,6 +141,20 @@ def main() -> int:
             "article_link_found": False,
             "article_title_found": False,
             "missing_article_fallback_found": False,
+        },
+        "hb1056_discovery": {
+            "article_fetch": "pending",
+            "article_fetch_error": None,
+            "article_canonicals": [],
+            "article_robots": [],
+            "article_indexable": False,
+            "evergreen_sitemap_fetch": "pending",
+            "evergreen_sitemap_fetch_error": None,
+            "article_in_evergreen_sitemap": False,
+            "robots_fetch": "pending",
+            "robots_fetch_error": None,
+            "article_image_allow_found": False,
+            "api_disallow_preserved": False,
         },
         "priority_sitemap": {"status": "not_run", "error": None},
         "fifteenth_court": {"status": "not_run", "error": None},
@@ -232,13 +256,75 @@ def main() -> int:
         failures.append(f"{HB1056_PATH}: fetch failed ({exc})")
     write_report(report)
 
+    discovery = report["hb1056_discovery"]
+    try:
+        article_body = fetch(f"{SITE_URL}{HB1056_ARTICLE_PATH}")
+        discovery["article_fetch"] = "ok"
+        article_parser = PageParser()
+        article_parser.feed(article_body)
+        article_canonicals = [normalize(value) for value in article_parser.canonicals]
+        article_robots = [normalize(value).lower() for value in article_parser.robots]
+        discovery["article_canonicals"] = article_canonicals
+        discovery["article_robots"] = article_robots
+        discovery["article_indexable"] = not any("noindex" in value for value in article_robots)
+        if article_canonicals != [HB1056_ARTICLE_CANONICAL]:
+            failures.append(
+                f"{HB1056_ARTICLE_PATH}: expected one canonical {HB1056_ARTICLE_CANONICAL!r}, got {article_canonicals!r}"
+            )
+        if not discovery["article_indexable"]:
+            failures.append(f"{HB1056_ARTICLE_PATH}: rendered robots metadata contains noindex")
+    except RuntimeError as exc:
+        discovery["article_fetch"] = "failed"
+        discovery["article_fetch_error"] = str(exc)
+        failures.append(f"{HB1056_ARTICLE_PATH}: fetch failed ({exc})")
+
+    try:
+        evergreen = fetch(f"{SITE_URL}{HB1056_EVERGREEN_SITEMAP_PATH}")
+        discovery["evergreen_sitemap_fetch"] = "ok"
+        expected_loc = f"<loc>{HB1056_ARTICLE_CANONICAL}</loc>"
+        discovery["article_in_evergreen_sitemap"] = expected_loc in evergreen
+        if not discovery["article_in_evergreen_sitemap"]:
+            failures.append(
+                f"{HB1056_EVERGREEN_SITEMAP_PATH}: missing HB 1056 article URL {HB1056_ARTICLE_CANONICAL!r}"
+            )
+    except RuntimeError as exc:
+        discovery["evergreen_sitemap_fetch"] = "failed"
+        discovery["evergreen_sitemap_fetch_error"] = str(exc)
+        failures.append(f"{HB1056_EVERGREEN_SITEMAP_PATH}: fetch failed ({exc})")
+
+    try:
+        robots_body = fetch(f"{SITE_URL}/robots.txt")
+        discovery["robots_fetch"] = "ok"
+        robots_lines = {line.strip() for line in robots_body.splitlines()}
+        discovery["article_image_allow_found"] = HB1056_IMAGE_ROBOTS_ALLOW in robots_lines
+        discovery["api_disallow_preserved"] = "Disallow: /api/" in robots_lines
+        if not discovery["article_image_allow_found"]:
+            failures.append(
+                f"/robots.txt: missing specific public article-image crawl rule {HB1056_IMAGE_ROBOTS_ALLOW!r}"
+            )
+        if not discovery["api_disallow_preserved"]:
+            failures.append("/robots.txt: broad /api/ crawl block was unexpectedly removed")
+    except RuntimeError as exc:
+        discovery["robots_fetch"] = "failed"
+        discovery["robots_fetch_error"] = str(exc)
+        failures.append(f"/robots.txt: fetch failed ({exc})")
+
+    print(
+        "HB 1056 discovery: "
+        f"article_indexable={discovery['article_indexable']} "
+        f"evergreen={discovery['article_in_evergreen_sitemap']} "
+        f"article_image_allowed={discovery['article_image_allow_found']} "
+        f"api_block_preserved={discovery['api_disallow_preserved']}"
+    )
+    write_report(report)
+
     if failures:
         write_report(report)
         for failure in failures:
             github_error("Deployed laws route smoke failed", failure)
         raise SystemExit("Deployed laws route smoke failed:\n- " + "\n- ".join(failures))
 
-    print(f"Deployed laws route smoke passed for {len(CHECKS)} routes plus the HB 1056 related article on {SITE_URL}.")
+    print(f"Deployed laws route smoke passed for {len(CHECKS)} routes plus the HB 1056 related article and discovery surfaces on {SITE_URL}.")
     try:
         verify_priority_sitemap(SITE_URL)
         report["priority_sitemap"] = {"status": "passed", "error": None}

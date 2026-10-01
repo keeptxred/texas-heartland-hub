@@ -46,9 +46,11 @@ describe("robots policy", () => {
     }
   });
 
-  it("keeps the first-party Merchant image endpoint crawlable", () => {
+  it("keeps first-party public image endpoints crawlable without opening the API surface", () => {
     const source = readFileSync(dynamicRobotsPath, "utf8");
     expect(source).not.toContain("Disallow: /merchant-image");
+    expect(source).toContain('"Allow: /api/public/article-image/"');
+    expect(source).toContain('"Disallow: /api/"');
   });
 
   it("keeps legacy public redirect sources crawlable so crawlers can observe 301s", () => {
