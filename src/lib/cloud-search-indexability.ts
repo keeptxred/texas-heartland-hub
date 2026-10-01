@@ -15,10 +15,31 @@ export const SEARCH_RECOVERY_SUPPRESSED_CLOUD_KINDS = [
   "ingested",
 ] as const;
 
-const SUPPRESSED = new Set<string>(SEARCH_RECOVERY_SUPPRESSED_CLOUD_KINDS);
+export const SEARCH_RECOVERY_AUTHORITY_FLAG = "search_recovery_authority";
 
+const SUPPRESSED = new Set<string>(SEARCH_RECOVERY_SUPPRESSED_CLOUD_KINDS);
+const REQUIRED_AUTHORITY_FLAGS = [
+  SEARCH_RECOVERY_AUTHORITY_FLAG,
+  "editorial_reviewed",
+  "primary_sources",
+] as const;
+
+/**
+ * During search recovery, ordinary cloud news remains suppressed. A narrowly
+ * governed exception is available for durable authority explainers that have
+ * been explicitly approved for search and carry both editorial-review and
+ * primary-source provenance flags. This prevents an automated or accidental
+ * single flag from reopening the commodity-news class.
+ */
 export function isCloudArticleSearchEligibleByKind(
   kind: string | null | undefined,
+  qualityFlags: string[] | null | undefined = null,
 ): boolean {
-  return !SUPPRESSED.has((kind ?? "").trim().toLowerCase());
+  const normalizedKind = (kind ?? "").trim().toLowerCase();
+  if (!SUPPRESSED.has(normalizedKind)) return true;
+
+  const flags = new Set(
+    (qualityFlags ?? []).map((flag) => String(flag).trim().toLowerCase()),
+  );
+  return REQUIRED_AUTHORITY_FLAGS.every((flag) => flags.has(flag));
 }
