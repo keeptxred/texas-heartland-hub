@@ -24,7 +24,7 @@ export function shouldNoindexCloudArticle(
   if (Array.isArray(candidate) || candidate == null) {
     return hasSeoDuplicateFlag(candidate as string[] | null | undefined);
   }
-  if (!isCloudArticleSearchEligibleByKind(candidate.kind)) return true;
+  if (!isCloudArticleSearchEligibleByKind(candidate.kind, candidate.quality_flags)) return true;
   return !isPublicArticleReady(candidate);
 }
 

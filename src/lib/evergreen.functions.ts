@@ -243,6 +243,7 @@ export type SitemapArticle = {
   updated_at: string | null;
   image_url: string | null;
   kind: string;
+  quality_flags?: string[] | null;
 };
 
 export const resolveArticleSlugRedirect = createServerFn({ method: "GET" })
@@ -307,7 +308,7 @@ export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
         if (!a.body_json) return false;
         if (!isLegacyArticleAllowedInSitemap(a.slug, a.quality_flags)) return false;
         if (!isSitemapEligibleSlug(a.slug, a.published_at)) return false;
-        if (!isCloudArticleSearchEligibleByKind(a.kind)) return false;
+        if (!isCloudArticleSearchEligibleByKind(a.kind, a.quality_flags)) return false;
         if (!isPublicArticleReady(a)) return false;
         if (!isKeepTxRedSearchOwnedStory({
           title: a.title,
@@ -319,7 +320,7 @@ export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
         const sanitized = sanitizeEvergreenBody(a.body_json, a.published_at);
         return meetsArticleMainWordCount(a.kind, sanitized);
       })
-      .map(({ body_json, quality_flags: _flags, discover_category: _discoverCategory, source_url: _sourceUrl, featured_image_url: _featuredImage, image_generation_status: _imageStatus, ...a }) => ({
+      .map(({ body_json, discover_category: _discoverCategory, source_url: _sourceUrl, featured_image_url: _featuredImage, image_generation_status: _imageStatus, ...a }) => ({
         ...a,
         main_word_count: articleMainWordCount(sanitizeEvergreenBody(body_json!, a.published_at)),
       }));
