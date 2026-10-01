@@ -48,6 +48,13 @@ describe("shouldNoindexCloudArticle", () => {
     expect(shouldNoindexCloudArticle({ ...readyRow, kind: "evergreen" }, true)).toBe(false);
   });
 
+  it("allows only explicitly reviewed primary-source authority news through recovery", () => {
+    const authorityFlags = ["search_recovery_authority", "editorial_reviewed", "primary_sources"];
+    expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", quality_flags: authorityFlags }, true)).toBe(false);
+    expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", quality_flags: ["search_recovery_authority"] }, true)).toBe(true);
+    expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", quality_flags: ["search_recovery_authority", "editorial_reviewed"] }, true)).toBe(true);
+  });
+
   it("noindexes missing, failed, and branded-fallback article images", () => {
     expect(shouldNoindexCloudArticle({ ...readyRow, featured_image_url: null, image_url: null }, true)).toBe(true);
     expect(shouldNoindexCloudArticle({ ...readyRow, image_generation_status: "failed" }, true)).toBe(true);
