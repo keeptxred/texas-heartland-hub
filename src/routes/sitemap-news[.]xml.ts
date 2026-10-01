@@ -65,7 +65,7 @@ export const Route = createFileRoute("/sitemap-news.xml")({
           const { articles } = await listSitemapArticles();
           const recentCloud = articles.filter((a) => {
             if (!isGoogleNewsArticleKind(a.kind)) return false;
-            if (!isCloudArticleSearchEligibleByKind(a.kind)) return false;
+            if (!isCloudArticleSearchEligibleByKind(a.kind, a.quality_flags)) return false;
             if (!isKeepTxRedSearchOwnedStory({
               title: a.title,
               description: a.dek,
