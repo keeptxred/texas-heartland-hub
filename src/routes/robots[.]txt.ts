@@ -9,6 +9,7 @@ const GOOGLE_MERCHANT_AGENTS = [
   "Mediapartners-Google",
   "AdsBot-Google",
 ] as const;
+const SEARCH_DISCOVERY_AGENTS = ["Bingbot", "Applebot", "DuckDuckBot"] as const;
 const AI_DISCOVERY_AGENTS = [
   "OAI-SearchBot",
   "GPTBot",
@@ -39,6 +40,7 @@ export const Route = createFileRoute("/robots.txt")({
           // Merchant Center explicitly requires Googlebot and Googlebot-Image.
           // Storebot-Google is included for Google Shopping product analysis.
           // Mediapartners-Google and AdsBot-Google make AdSense access explicit.
+          // Bing, Apple and DuckDuckGo search crawlers are named explicitly.
           // AI/search discovery agents are explicitly named so OpenAI,
           // Anthropic/Claude, Perplexity, Gemini/Google, Apple, Amazon,
           // Meta, Common Crawl, and ByteDance controls are unambiguous.
@@ -46,6 +48,7 @@ export const Route = createFileRoute("/robots.txt")({
           // shared rules group instead of allowing a specific bot to bypass
           // the common Disallow rules below.
           ...GOOGLE_MERCHANT_AGENTS.map((agent) => `User-agent: ${agent}`),
+          ...SEARCH_DISCOVERY_AGENTS.map((agent) => `User-agent: ${agent}`),
           ...AI_DISCOVERY_AGENTS.map((agent) => `User-agent: ${agent}`),
           "User-agent: *",
           // Google AdSense specifically recommends an explicit Allow when a
