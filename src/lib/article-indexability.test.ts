@@ -42,17 +42,25 @@ describe("shouldNoindexCloudArticle", () => {
     expect(shouldNoindexCloudArticle({ ...readyRow, source_url: null, body_json: { updated: readyRow.published_at, sources: [] } }, true)).toBe(true);
   });
 
-  it("suppresses automated cloud news during search recovery", () => {
+  it("suppresses ordinary cloud news during search recovery", () => {
     expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news" }, true)).toBe(true);
     expect(shouldNoindexCloudArticle({ ...readyRow, kind: "ingested" }, true)).toBe(true);
     expect(shouldNoindexCloudArticle({ ...readyRow, kind: "evergreen" }, true)).toBe(false);
   });
 
-  it("allows only explicitly reviewed primary-source authority news through recovery", () => {
+  it("allows only explicitly reviewed primary-source authority news through manual recovery", () => {
     const authorityFlags = ["search_recovery_authority", "editorial_reviewed", "primary_sources"];
     expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", quality_flags: authorityFlags }, true)).toBe(false);
     expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", quality_flags: ["search_recovery_authority"] }, true)).toBe(true);
     expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", quality_flags: ["search_recovery_authority", "editorial_reviewed"] }, true)).toBe(true);
+  });
+
+  it("keeps the automated source-first recovery lane behind normal readiness gates", () => {
+    const sourceFirstFlags = ["search_recovery_source_first"];
+    expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", quality_flags: sourceFirstFlags }, true)).toBe(false);
+    expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", content_quality_score: 59, quality_flags: sourceFirstFlags }, true)).toBe(true);
+    expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", image_generation_status: "failed", quality_flags: sourceFirstFlags }, true)).toBe(true);
+    expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", quality_flags: ["search_recovery_source_first", "seo_duplicate"] }, true)).toBe(true);
   });
 
   it("noindexes missing, failed, and branded-fallback article images", () => {
