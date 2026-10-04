@@ -1,4 +1,4 @@
-export type AIReferralPlatform = 'chatgpt' | 'perplexity' | 'gemini';
+export type AIReferralPlatform = 'chatgpt' | 'copilot' | 'perplexity' | 'gemini' | 'claude' | 'you';
 
 export type AIReferral = {
   platform: AIReferralPlatform;
@@ -9,17 +9,27 @@ export type AIReferral = {
 const HOST_PLATFORM: ReadonlyArray<[suffix: string, platform: AIReferralPlatform]> = [
   ['chatgpt.com', 'chatgpt'],
   ['chat.openai.com', 'chatgpt'],
+  ['copilot.microsoft.com', 'copilot'],
+  ['copilot.com', 'copilot'],
   ['perplexity.ai', 'perplexity'],
   ['gemini.google.com', 'gemini'],
+  ['claude.ai', 'claude'],
+  ['you.com', 'you'],
 ];
 
 const UTM_PLATFORM: Record<string, AIReferralPlatform> = {
   chatgpt: 'chatgpt',
   openai: 'chatgpt',
   'chat.openai': 'chatgpt',
+  copilot: 'copilot',
+  microsoft_copilot: 'copilot',
   perplexity: 'perplexity',
   gemini: 'gemini',
   google_gemini: 'gemini',
+  claude: 'claude',
+  anthropic: 'claude',
+  you: 'you',
+  you_com: 'you',
 };
 
 export function classifyAIReferral(referrer: string, search: string): AIReferral | null {
