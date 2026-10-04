@@ -14,6 +14,10 @@ on:
         required: false
         type: boolean
         default: false
+      urls:
+        description: Optional canonical URLs for explicit publish/update/delete/redirect notification (space or comma separated)
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -32,6 +36,7 @@ jobs:
     timeout-minutes: 10
     env:
       INDEXNOW_FULL: ${{ github.event_name == 'workflow_dispatch' && inputs.full && 'true' || 'false' }}
+      INDEXNOW_URLS: ${{ github.event_name == 'workflow_dispatch' && inputs.urls || '' }}
       INDEXNOW_FRESHNESS_HOURS: ${{ github.event_name == 'schedule' && '48' || '2' }}
 
     steps:
