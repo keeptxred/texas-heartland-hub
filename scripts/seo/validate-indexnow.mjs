@@ -21,6 +21,7 @@ function requireText(source, text, message) {
 const submitter = read("scripts/seo/submit-indexnow.mjs");
 const workflow = read(".github/workflows/indexnow.yml");
 const runtimeService = read("src/lib/search-distribution.server.ts");
+const productionVerifier = read("scripts/seo/verify-search-production.mjs");
 const robots = read("src/routes/robots[.]txt.ts");
 const keyFile = read(`public/${key}.txt`).trim();
 
@@ -50,6 +51,7 @@ for (const expected of [
   'urls:',
   'INDEXNOW_URLS:',
   'cancel-in-progress: true',
+  'node scripts/seo/verify-search-production.mjs',
   'node scripts/seo/submit-indexnow.mjs',
 ]) requireText(workflow, expected, `IndexNow workflow is missing required contract: ${expected}`);
 
@@ -61,6 +63,19 @@ for (const expected of [
   'IndexNow notification failed without blocking publication',
   'INDEXNOW_BATCH_SIZE = 1000',
 ]) requireText(runtimeService, expected, `Reusable search-distribution service is missing required contract: ${expected}`);
+
+for (const expected of [
+  'Googlebot/2.1',
+  'bingbot/2.0',
+  'Applebot/0.1',
+  'DuckDuckBot/1.0',
+  'OAI-SearchBot/1.0',
+  'Public IndexNow key verification failed.',
+  'canonical mismatch',
+  'CSS',
+  'JavaScript',
+  'Image',
+]) requireText(productionVerifier, expected, `Production search verifier is missing required contract: ${expected}`);
 
 for (const expected of [
   '"Googlebot"',
@@ -85,4 +100,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log("KeepTXRed IndexNow ownership, canonical filtering, lifecycle support, hourly meaningful-change distribution, soft-failure isolation, explicit OAI search access, and separate training policy are protected.");
+console.log("KeepTXRed IndexNow ownership, canonical filtering, lifecycle support, hourly meaningful-change distribution, soft-failure isolation, production crawler verification, explicit OAI search access, and separate training policy are protected.");
