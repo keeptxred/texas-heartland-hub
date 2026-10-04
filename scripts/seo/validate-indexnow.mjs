@@ -20,6 +20,7 @@ function requireText(source, text, message) {
 
 const submitter = read("scripts/seo/submit-indexnow.mjs");
 const workflow = read(".github/workflows/indexnow.yml");
+const robotsRoute = read("src/routes/robots[.]txt.ts");
 const keyFile = read(`public/${key}.txt`).trim();
 
 if (keyFile !== key) errors.push("IndexNow ownership key file must exactly match the configured key.");
@@ -29,14 +30,21 @@ for (const expected of [
   'const host = "keeptxred.com";',
   'https://api.indexnow.org/indexnow',
   'Sitemap: ${rootSitemap}',
-  'https:',
-  'url.hostname === host',
+  'url.protocol !== "https:"',
+  'url.hostname !== host',
   'const maxUrls = 10_000;',
   'INDEXNOW_FULL === "true"',
   'INDEXNOW_FRESHNESS_HOURS',
+  'INDEXNOW_URLS',
+  'blockedPrefixes',
+  'if (url.search || url.hash) return null;',
   'if (![200, 202].includes(response.status))',
 ]) {
   requireText(submitter, expected, `IndexNow submitter is missing required contract: ${expected}`);
+}
+
+for (const agent of ['"Bingbot"', '"Applebot"', '"DuckDuckBot"', '"OAI-SearchBot"']) {
+  requireText(robotsRoute, agent, `robots.txt route must explicitly identify ${agent}.`);
 }
 
 for (const expected of [
@@ -44,6 +52,7 @@ for (const expected of [
   'workflows: ["Deploy verified KeepTXRed to Cloudflare"]',
   'schedule:',
   'workflow_dispatch:',
+  'INDEXNOW_URLS:',
   'cancel-in-progress: true',
   'node scripts/seo/submit-indexnow.mjs',
 ]) {
@@ -69,4 +78,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log("KeepTXRed IndexNow ownership, canonical URL filtering, bounded batching, deployment gating, and scheduled freshness notifications are protected.");
+console.log("KeepTXRed IndexNow ownership, explicit canonical URL notifications, crawler access, bounded batching, deployment gating, and scheduled freshness notifications are protected.");
