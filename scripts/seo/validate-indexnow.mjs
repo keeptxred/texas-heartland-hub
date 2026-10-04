@@ -40,9 +40,7 @@ for (const expected of [
   'INDEXNOW_URLS',
   'cosmetic deployment produced no notification',
   'failed without blocking publishing/deployment',
-]) {
-  requireText(submitter, expected, `IndexNow submitter is missing required contract: ${expected}`);
-}
+]) requireText(submitter, expected, `IndexNow submitter is missing required contract: ${expected}`);
 
 for (const expected of [
   'workflow_run:',
@@ -53,24 +51,28 @@ for (const expected of [
   'INDEXNOW_URLS:',
   'cancel-in-progress: true',
   'node scripts/seo/submit-indexnow.mjs',
-]) {
-  requireText(workflow, expected, `IndexNow workflow is missing required contract: ${expected}`);
-}
+]) requireText(workflow, expected, `IndexNow workflow is missing required contract: ${expected}`);
 
 for (const expected of [
   'type SearchChangeKind = "published" | "updated" | "deleted" | "redirected";',
   'keeptxred.com',
   'texasdefined.com',
-  'utm_',
+  'url.search || url.hash',
   'IndexNow notification failed without blocking publication',
   'INDEXNOW_BATCH_SIZE = 1000',
-]) {
-  requireText(runtimeService, expected, `Reusable search-distribution service is missing required contract: ${expected}`);
-}
+]) requireText(runtimeService, expected, `Reusable search-distribution service is missing required contract: ${expected}`);
 
-for (const expected of ["OAI-SearchBot", "Googlebot", "Googlebot-Image", "User-agent: *"]) {
-  requireText(robots, expected, `robots policy is missing required crawler contract: ${expected}`);
-}
+for (const expected of [
+  '"Googlebot"',
+  '"Bingbot"',
+  '"Applebot"',
+  '"DuckDuckBot"',
+  '"OAI-SearchBot"',
+  '"GPTBot"',
+  'TRAINING_EXTENDED_AGENTS',
+  'SEARCH_DISCOVERY_AGENTS',
+  'group(["*"])',
+]) requireText(robots, expected, `robots policy is missing required crawler contract: ${expected}`);
 
 if (/\bsecrets\./.test(workflow)) errors.push("IndexNow workflow must not depend on repository secrets; ownership is proven by the public key file.");
 if (/^\s*push:\s*$/m.test(workflow)) errors.push("IndexNow must run after verified deployment, not directly on an undeployed push.");
@@ -83,4 +85,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log("KeepTXRed IndexNow ownership, canonical filtering, lifecycle support, hourly meaningful-change distribution, soft-failure isolation, and OAI search crawler access are protected.");
+console.log("KeepTXRed IndexNow ownership, canonical filtering, lifecycle support, hourly meaningful-change distribution, soft-failure isolation, explicit OAI search access, and separate training policy are protected.");
