@@ -33,7 +33,7 @@ jobs:
       (github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.head_sha == github.sha)
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     env:
       INDEXNOW_FULL: ${{ github.event_name == 'workflow_dispatch' && inputs.full && 'true' || 'false' }}
       INDEXNOW_URLS: ${{ github.event_name == 'workflow_dispatch' && inputs.urls || '' }}
@@ -47,6 +47,9 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 22
+
+      - name: Verify production crawler, canonical, sitemap and asset access
+        run: node scripts/seo/verify-search-production.mjs
 
       - name: Notify IndexNow of canonical meaningful changes
         run: node scripts/seo/submit-indexnow.mjs
