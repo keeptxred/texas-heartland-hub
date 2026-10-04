@@ -9,6 +9,7 @@ const rootSitemap = `${origin}/sitemap.xml`;
 const fullSubmission = process.env.INDEXNOW_FULL === "true";
 const freshnessHours = Math.max(1, Number(process.env.INDEXNOW_FRESHNESS_HOURS || 72));
 const maxUrls = 10_000;
+const blockedPrefixes = ["/admin", "/api", "/account", "/cart", "/shop/checkout", "/search"];
 
 function decodeXml(value) {
   return value
@@ -21,7 +22,7 @@ function decodeXml(value) {
 
 async function fetchText(url) {
   const response = await fetch(url, {
-    headers: { "user-agent": "KeepTXRedIndexNow/1.0" },
+    headers: { "user-agent": "KeepTXRedIndexNow/2.0" },
     redirect: "follow",
   });
   if (!response.ok) throw new Error(`${url} returned HTTP ${response.status}`);
@@ -33,16 +34,25 @@ function tag(block, name) {
   return match ? decodeXml(match[1].trim()) : null;
 }
 
-function isCanonicalKtrUrl(value) {
+function canonicalKtrUrl(value) {
   try {
-    const url = new URL(value);
-    return url.protocol === "https:"
-      && url.hostname === host
-      && !url.search
-      && !url.hash;
+    const url = new URL(value, origin);
+    if (url.protocol !== "https:" || url.hostname !== host || url.username || url.password) return null;
+    if (url.search || url.hash) return null;
+    if (blockedPrefixes.some((prefix) => url.pathname === prefix || url.pathname.startsWith(`${prefix}/`))) return null;
+    return url.toString();
   } catch {
-    return false;
+    return null;
   }
+}
+
+function explicitUrls() {
+  return (process.env.INDEXNOW_URLS || "")
+    .split(/[\s,]+/)
+    .map((value) => value.trim())
+    .filter(Boolean)
+    .map(canonicalKtrUrl)
+    .filter(Boolean);
 }
 
 async function collectSitemapEntries(sitemapUrl, visited = new Set(), depth = 0) {
@@ -64,15 +74,34 @@ async function collectSitemapEntries(sitemapUrl, visited = new Set(), depth = 0)
 
   return [...xml.matchAll(/<url>[\s\S]*?<\/url>/gi)]
     .map((match) => ({
-      url: tag(match[0], "loc"),
+      url: canonicalKtrUrl(tag(match[0], "loc")),
       lastmod: tag(match[0], "lastmod"),
     }))
-    .filter((entry) => entry.url && isCanonicalKtrUrl(entry.url));
+    .filter((entry) => entry.url);
+}
+
+async function submitChunk(urlList) {
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: { "content-type": "application/json; charset=utf-8" },
+    body: JSON.stringify({ host, key, keyLocation, urlList }),
+  });
+  if (![200, 202].includes(response.status)) {
+    const body = (await response.text()).slice(0, 1000);
+    throw new Error(`IndexNow returned HTTP ${response.status}${body ? `: ${body}` : ""}`);
+  }
+  return response.status;
 }
 
 const robots = await fetchText(`${origin}/robots.txt`);
-if (!robots.includes(`Sitemap: ${rootSitemap}`)) {
-  throw new Error("robots.txt does not advertise the canonical KeepTXRed sitemap.");
+for (const required of [
+  `Sitemap: ${rootSitemap}`,
+  "User-agent: Bingbot",
+  "User-agent: Applebot",
+  "User-agent: DuckDuckBot",
+  "User-agent: OAI-SearchBot",
+]) {
+  if (!robots.includes(required)) throw new Error(`robots.txt missing: ${required}`);
 }
 
 const localKey = (await readFile(new URL(`../../public/${key}.txt`, import.meta.url), "utf8")).trim();
@@ -93,41 +122,31 @@ for (const entry of entries) {
 }
 
 const cutoff = Date.now() - freshnessHours * 60 * 60 * 1000;
-const selected = [...canonical.values()]
-  .filter((entry) => {
-    if (fullSubmission) return true;
-    if (!entry.lastmod) return false;
-    const timestamp = Date.parse(entry.lastmod);
-    return Number.isFinite(timestamp) && timestamp >= cutoff;
-  })
-  .map((entry) => entry.url)
-  .sort();
+const selected = new Set(explicitUrls());
+for (const entry of canonical.values()) {
+  if (fullSubmission) {
+    selected.add(entry.url);
+    continue;
+  }
+  if (!entry.lastmod) continue;
+  const timestamp = Date.parse(entry.lastmod);
+  if (Number.isFinite(timestamp) && timestamp >= cutoff) selected.add(entry.url);
+}
 
-if (selected.length === 0) {
-  console.log(`IndexNow: no canonical KeepTXRed URLs changed in the last ${freshnessHours} hours.`);
+if (selected.size === 0) {
+  console.log(`IndexNow: no canonical KeepTXRed URLs changed in the last ${freshnessHours} hours and no explicit URLs were supplied.`);
   process.exit(0);
 }
 
-if (selected.length > maxUrls) {
-  throw new Error(`IndexNow batch exceeds ${maxUrls} URLs: ${selected.length}`);
-}
-
-const response = await fetch(endpoint, {
-  method: "POST",
-  headers: { "content-type": "application/json; charset=utf-8" },
-  body: JSON.stringify({
-    host,
-    key,
-    keyLocation,
-    urlList: selected,
-  }),
-});
-
-if (![200, 202].includes(response.status)) {
-  const body = (await response.text()).slice(0, 1000);
-  throw new Error(`IndexNow returned HTTP ${response.status}${body ? `: ${body}` : ""}`);
+const sorted = [...selected].sort();
+let accepted = 0;
+for (let offset = 0; offset < sorted.length; offset += maxUrls) {
+  const chunk = sorted.slice(offset, offset + maxUrls);
+  const status = await submitChunk(chunk);
+  accepted += chunk.length;
+  console.log(`IndexNow accepted ${chunk.length} canonical KeepTXRed URL(s) with HTTP ${status}.`);
 }
 
 console.log(
-  `IndexNow accepted ${selected.length} canonical KeepTXRed URL(s) with HTTP ${response.status} (${fullSubmission ? "full" : `last ${freshnessHours}h`}).`,
+  `IndexNow submission complete: ${accepted} URL(s), mode=${fullSubmission ? "full" : `last-${freshnessHours}h`}, explicit=${explicitUrls().length}.`,
 );
