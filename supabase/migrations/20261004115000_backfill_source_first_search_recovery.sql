@@ -15,12 +15,14 @@ set
     else coalesce(quality_flags, array[]::text[]) || array['search_recovery_source_first']::text[]
   end,
   updated_at = now()
-where slug = '2026-09-14-texas-election-countdown-key-dates-early-voting-2026'
+where (
+  slug = '2026-09-14-texas-election-countdown-key-dates-early-voting-2026'
   or slug in (
     '2026-09-14-ercot-november-2026-grid-outlook-winter-risk',
     '2026-09-14-texas-uninsured-rate-16-7-census',
     '2026-09-14-austin-measles-unvaccinated-infant-exposure'
   )
+)
   and kind = 'news'
   and author = 'Keep TX Red Newsroom'
   and coalesce(content_quality_score, 0) >= 90
