@@ -8,6 +8,10 @@ import {
   assessArticleSourceIntegrity,
   sourceReferencesFromBodyJson,
 } from "@/lib/article-source-integrity";
+import {
+  isSearchRecoveryPrimarySourceUrl,
+  SEARCH_RECOVERY_SOURCE_FIRST_FLAG,
+} from "@/lib/cloud-search-indexability";
 
 const OIDC_AUDIENCE = "keeptxred-newsroom";
 const REPOSITORY = "keeptxred/texas-heartland-hub";
@@ -49,7 +53,9 @@ function existingNonScoreFlags(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
   return value
     .filter((flag): flag is string => typeof flag === "string")
-    .filter((flag) => !SCORE_QUALITY_FLAGS.has(flag));
+    .filter(
+      (flag) => !SCORE_QUALITY_FLAGS.has(flag) && flag !== SEARCH_RECOVERY_SOURCE_FIRST_FLAG,
+    );
 }
 
 async function post({ request }: { request: Request }) {
@@ -89,15 +95,17 @@ async function post({ request }: { request: Request }) {
     if (updateError) return Response.json({ error: updateError.message }, { status: 500 });
   }
 
+  const sourceReferences = sourceReferencesFromBodyJson(normalized.bodyJson);
   const sourceIntegrity = assessArticleSourceIntegrity({
     sourceName: article.source_name,
     sourceUrl: article.source_url,
-    sources: sourceReferencesFromBodyJson(normalized.bodyJson),
+    sources: sourceReferences,
   });
   const sourceIntegrityFlags = sourceIntegrity.falseMultiSourceClaim
     ? ["seo_false_multisource", "seo_noindex"]
     : [];
-  const repetitionFlags = duplicateParagraphOccurrences(normalized.bodyJson) > 2
+  const repetitionCount = duplicateParagraphOccurrences(normalized.bodyJson);
+  const repetitionFlags = repetitionCount > 2
     ? ["seo_low_value_commodity", "internal_repetition"]
     : [];
 
@@ -113,11 +121,18 @@ async function post({ request }: { request: Request }) {
     body_json: normalized.bodyJson,
     image_url: image.ok ? image.url : null,
   });
+  const sourceFirstRecoveryEligible = quality.score >= 90
+    && sourceIntegrity.primarySourceRepresented
+    && !sourceIntegrity.falseMultiSourceClaim
+    && repetitionCount <= 2
+    && [article.source_url, ...sourceReferences.map((source) => source.url)]
+      .some(isSearchRecoveryPrimarySourceUrl);
   const qualityFlags = [...new Set([
     ...existingNonScoreFlags(article.quality_flags),
     ...quality.flags,
     ...sourceIntegrityFlags,
     ...repetitionFlags,
+    ...(sourceFirstRecoveryEligible ? [SEARCH_RECOVERY_SOURCE_FIRST_FLAG] : []),
   ])];
   const { error: qualityUpdateError } = await db
     .from("daily_articles")
@@ -136,7 +151,8 @@ async function post({ request }: { request: Request }) {
     contentQualityScore: quality.score,
     qualityFlags: qualityFlags.length > 0 ? qualityFlags : null,
     sourceIntegrity,
-    duplicateParagraphOccurrences: duplicateParagraphOccurrences(normalized.bodyJson),
+    searchRecoverySourceFirst: sourceFirstRecoveryEligible,
+    duplicateParagraphOccurrences: repetitionCount,
   });
 }
 
