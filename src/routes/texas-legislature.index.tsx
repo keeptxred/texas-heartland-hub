@@ -3,6 +3,7 @@ import TexasLegislaturePage from "@/components/legislature/TexasLegislaturePage"
 import { LegislatureHubTrustPanel } from "@/components/legislature/LegislatureHubTrustPanel";
 import { legislatureSeo } from "@/lib/legislature-seo";
 
+const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
 const title = "Texas Legislature: Bills, House, Senate & Current Session";
 const description = "Texas Legislature guide with bill search, House and Senate resources, current and past sessions, committees, lawmakers, votes, elections and official legislative records.";
 
@@ -24,7 +25,7 @@ function LegislatureHubRoute() {
           Use KeepTXRed's Texas Legislature bill search when you know a bill number, caption or subject. Use the Legislature hub to move between the House, Senate, current-session reference, committees, votes and lawmakers, then verify official text and actions with Texas Legislature Online.
         </p>
         <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Link to="/bills" className="rounded-lg border px-4 py-3 font-semibold text-primary hover:border-primary">Texas bill search →</Link>
+          <Link to="/bills" search={EMPTY_BILLS_SEARCH} className="rounded-lg border px-4 py-3 font-semibold text-primary hover:border-primary">Texas bill search →</Link>
           <Link to="/texas-legislature/current-session" className="rounded-lg border px-4 py-3 font-semibold text-primary hover:border-primary">Current session →</Link>
           <Link to="/texas-legislature/committees" className="rounded-lg border px-4 py-3 font-semibold text-primary hover:border-primary">Committees →</Link>
           <a href="https://capitol.texas.gov/" target="_blank" rel="noopener noreferrer" className="rounded-lg border px-4 py-3 font-semibold text-primary hover:border-primary">Official Legislature site →</a>
