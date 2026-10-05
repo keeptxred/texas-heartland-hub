@@ -12,6 +12,7 @@ const strict = process.env.INDEXNOW_STRICT === "true";
 const maxUrls = 10_000;
 const batchSize = 1000;
 const maxFetchAttempts = 3;
+const sitemapConcurrency = 3;
 
 const blockedPrefixes = ["/admin", "/api", "/search", "/preview", "/draft", "/private", "/email", "/cart", "/shop/checkout"];
 const sitemapFailures = [];
@@ -83,18 +84,21 @@ async function collectSitemapEntries(sitemapUrl, visited = new Set(), depth = 0)
       .map((match) => tag(match[0], "loc"))
       .filter(Boolean);
     if (children.length > 500) throw new Error(`Sitemap index is unexpectedly large: ${children.length}`);
-    const nested = await Promise.allSettled(children.map((child) => collectSitemapEntries(child, visited, depth + 1)));
     const entries = [];
-    nested.forEach((result, index) => {
-      if (result.status === "fulfilled") {
-        entries.push(...result.value);
-        return;
-      }
-      const child = children[index];
-      const message = result.reason instanceof Error ? result.reason.message : String(result.reason);
-      sitemapFailures.push({ sitemap: child, message });
-      console.warn(`IndexNow sitemap warning: ${child} failed after retries: ${message}`);
-    });
+    for (let offset = 0; offset < children.length; offset += sitemapConcurrency) {
+      const batch = children.slice(offset, offset + sitemapConcurrency);
+      const nested = await Promise.allSettled(batch.map((child) => collectSitemapEntries(child, visited, depth + 1)));
+      nested.forEach((result, index) => {
+        if (result.status === "fulfilled") {
+          entries.push(...result.value);
+          return;
+        }
+        const child = batch[index];
+        const message = result.reason instanceof Error ? result.reason.message : String(result.reason);
+        sitemapFailures.push({ sitemap: child, message });
+        console.warn(`IndexNow sitemap warning: ${child} failed after retries: ${message}`);
+      });
+    }
     return entries;
   }
 
