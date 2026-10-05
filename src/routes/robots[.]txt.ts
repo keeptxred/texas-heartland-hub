@@ -2,23 +2,33 @@ import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { BASE_URL } from "@/lib/sitemap-shared";
 
-const GOOGLE_MERCHANT_AGENTS = [
+const GOOGLE_SEARCH_AGENTS = [
   "Googlebot",
   "Googlebot-Image",
   "Storebot-Google",
   "Mediapartners-Google",
   "AdsBot-Google",
 ] as const;
-const SEARCH_DISCOVERY_AGENTS = ["Bingbot", "Applebot", "DuckDuckBot"] as const;
-const AI_DISCOVERY_AGENTS = [
+
+const SEARCH_DISCOVERY_AGENTS = [
+  "Bingbot",
+  "Applebot",
+  "DuckDuckBot",
   "OAI-SearchBot",
-  "GPTBot",
   "ChatGPT-User",
+  "Claude-SearchBot",
+  "PerplexityBot",
+  "Perplexity-User",
+] as const;
+
+// Training / extended-use policy is deliberately separate from search access.
+// Permissions are unchanged from the prior shared group; future training-policy
+// changes therefore cannot accidentally disable OAI-SearchBot or other search bots.
+const TRAINING_EXTENDED_AGENTS = [
+  "GPTBot",
   "ClaudeBot",
   "Claude-Web",
   "anthropic-ai",
-  "PerplexityBot",
-  "Perplexity-User",
   "Google-Extended",
   "Applebot-Extended",
   "Amazonbot",
@@ -27,62 +37,45 @@ const AI_DISCOVERY_AGENTS = [
   "Bytespider",
 ] as const;
 
-/** Dynamic robots.txt. This is the single robots policy for Keep TX Red.
- *  Public search, merchant, AdSense, and AI-discovery crawlers share the same
- *  rule group as the wildcard so explicit allowlisting never bypasses the
- *  common private/operational crawl boundaries. */
+const COMMON_RULES = [
+  "Allow: /ads.txt",
+  "Allow: /",
+  "Allow: /api/public/article-image/",
+  "Disallow: /api/",
+  "Disallow: /admin",
+  "Disallow: /admin/",
+  "Disallow: /preview/",
+  "Disallow: /draft/",
+  "Disallow: /private/",
+  "Disallow: /email/",
+  "Disallow: /cart",
+  "Disallow: /shop/checkout",
+  "Disallow: /shop/checkout-return",
+  "Disallow: /*?topic=",
+  "Disallow: /*?q=",
+  "Disallow: /*?query=",
+  "Disallow: /*?search=",
+  "Disallow: /*?sort=",
+  "Disallow: /*?filter=",
+] as const;
+
+function group(agents: readonly string[]): string[] {
+  return [...agents.map((agent) => `User-agent: ${agent}`), ...COMMON_RULES, ""];
+}
+
+/** Public pages are crawlable while operational/private/query-state URLs remain excluded. */
 export const Route = createFileRoute("/robots.txt")({
   server: {
     handlers: {
       GET: async () => {
         const body = [
-          "# Keep TX Red — public pages are crawlable; private, operational, checkout, and low-value query states are excluded for every crawler.",
-          // Merchant Center explicitly requires Googlebot and Googlebot-Image.
-          // Storebot-Google is included for Google Shopping product analysis.
-          // Mediapartners-Google and AdsBot-Google make AdSense access explicit.
-          // Bing, Apple and DuckDuckGo search crawlers are named explicitly.
-          // AI/search discovery agents are explicitly named so OpenAI,
-          // Anthropic/Claude, Perplexity, Gemini/Google, Apple, Amazon,
-          // Meta, Common Crawl, and ByteDance controls are unambiguous.
-          // Keep all named agents consecutive with `*` so this remains ONE
-          // shared rules group instead of allowing a specific bot to bypass
-          // the common Disallow rules below.
-          ...GOOGLE_MERCHANT_AGENTS.map((agent) => `User-agent: ${agent}`),
-          ...SEARCH_DISCOVERY_AGENTS.map((agent) => `User-agent: ${agent}`),
-          ...AI_DISCOVERY_AGENTS.map((agent) => `User-agent: ${agent}`),
-          "User-agent: *",
-          // Google AdSense specifically recommends an explicit Allow when a
-          // site has path-based Disallow rules that could otherwise be broad.
-          "Allow: /ads.txt",
-          "Allow: /",
-          // Public article imagery is intentionally served through a narrowly
-          // scoped API route. Keep the rest of /api private while allowing
-          // Googlebot-Image and other shared-group crawlers to fetch editorial
-          // hero images advertised in article markup and sitemap-images.xml.
-          "Allow: /api/public/article-image/",
-          "Disallow: /api/",
-          "Disallow: /admin",
-          "Disallow: /admin/",
-          "Disallow: /preview/",
-          "Disallow: /draft/",
-          "Disallow: /private/",
-          "Disallow: /email/",
-          // Legacy public aliases such as /hubs and /hubs/* intentionally remain
-          // crawlable so Google can observe their server-side 301 redirects and
-          // consolidate old signals into the current canonical destinations.
-          // Cart / checkout and low-value search/filter/sort URLs should not
-          // enter the crawl queue. Pagination is intentionally crawlable so
-          // Googlebot can follow bill-directory links beyond the first page.
-          "Disallow: /cart",
-          "Disallow: /shop/checkout",
-          "Disallow: /shop/checkout-return",
-          "Disallow: /*?topic=",
-          "Disallow: /*?q=",
-          "Disallow: /*?query=",
-          "Disallow: /*?search=",
-          "Disallow: /*?sort=",
-          "Disallow: /*?filter=",
+          "# Keep TX Red — public indexable content is open to search crawlers; private and low-value states are excluded.",
+          "# Search/discovery access and training/extended-use policy are intentionally separate.",
           "",
+          ...group(GOOGLE_SEARCH_AGENTS),
+          ...group(SEARCH_DISCOVERY_AGENTS),
+          ...group(TRAINING_EXTENDED_AGENTS),
+          ...group(["*"]),
           `Sitemap: ${BASE_URL}/sitemap.xml`,
           "",
         ].join("\n");
