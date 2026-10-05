@@ -27,6 +27,8 @@ describe("KTR authority ranking remediation", () => {
     expect(patch).toContain('https://texasdefined.com/decide/property-taxes');
     expect(patch).toContain('https://texasdefined.com/do/homestead-exemption');
     expect(patch).toContain('https://texasdefined.com/do/property-tax-protest');
-    expect(patch).toContain('KTR covers policy; TexasDefined covers homeowner tasks');
+    expect(patch).toContain('Keep TX Red tracks Texas property-tax policy');
+    expect(patch).toContain('Practical homeowner questions');
+    expect(patch).toContain('belong on TexasDefined');
   });
 });
