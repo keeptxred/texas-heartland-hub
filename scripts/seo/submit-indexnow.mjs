@@ -11,8 +11,10 @@ const freshnessHours = Math.max(1, Number(process.env.INDEXNOW_FRESHNESS_HOURS |
 const strict = process.env.INDEXNOW_STRICT === "true";
 const maxUrls = 10_000;
 const batchSize = 1000;
+const maxFetchAttempts = 3;
 
 const blockedPrefixes = ["/admin", "/api", "/search", "/preview", "/draft", "/private", "/email", "/cart", "/shop/checkout"];
+const sitemapFailures = [];
 
 function decodeXml(value) {
   return value
@@ -23,14 +25,29 @@ function decodeXml(value) {
     .replaceAll("&apos;", "'");
 }
 
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function fetchText(url) {
-  const response = await fetch(url, {
-    headers: { "user-agent": "KeepTXRedIndexNow/2.0" },
-    redirect: "follow",
-    signal: AbortSignal.timeout(15_000),
-  });
-  if (!response.ok) throw new Error(`${url} returned HTTP ${response.status}`);
-  return response.text();
+  let lastError;
+  for (let attempt = 1; attempt <= maxFetchAttempts; attempt += 1) {
+    try {
+      const response = await fetch(url, {
+        headers: { "user-agent": "KeepTXRedIndexNow/2.1" },
+        redirect: "follow",
+        signal: AbortSignal.timeout(15_000),
+      });
+      if (response.ok) return response.text();
+      lastError = new Error(`${url} returned HTTP ${response.status}`);
+      if (response.status < 500 || attempt === maxFetchAttempts) break;
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+      if (attempt === maxFetchAttempts) break;
+    }
+    await delay(750 * attempt);
+  }
+  throw lastError ?? new Error(`${url} could not be fetched`);
 }
 
 function tag(block, name) {
@@ -66,8 +83,19 @@ async function collectSitemapEntries(sitemapUrl, visited = new Set(), depth = 0)
       .map((match) => tag(match[0], "loc"))
       .filter(Boolean);
     if (children.length > 500) throw new Error(`Sitemap index is unexpectedly large: ${children.length}`);
-    const nested = await Promise.all(children.map((child) => collectSitemapEntries(child, visited, depth + 1)));
-    return nested.flat();
+    const nested = await Promise.allSettled(children.map((child) => collectSitemapEntries(child, visited, depth + 1)));
+    const entries = [];
+    nested.forEach((result, index) => {
+      if (result.status === "fulfilled") {
+        entries.push(...result.value);
+        return;
+      }
+      const child = children[index];
+      const message = result.reason instanceof Error ? result.reason.message : String(result.reason);
+      sitemapFailures.push({ sitemap: child, message });
+      console.warn(`IndexNow sitemap warning: ${child} failed after retries: ${message}`);
+    });
+    return entries;
   }
 
   if (!xml.includes("<urlset")) throw new Error(`${sitemapUrl} is neither a sitemap index nor a URL sitemap.`);
@@ -81,7 +109,7 @@ async function submitBatches(urls) {
     const urlList = urls.slice(i, i + batchSize);
     const response = await fetch(endpoint, {
       method: "POST",
-      headers: { "content-type": "application/json; charset=utf-8", "user-agent": "KeepTXRedIndexNow/2.0" },
+      headers: { "content-type": "application/json; charset=utf-8", "user-agent": "KeepTXRedIndexNow/2.1" },
       body: JSON.stringify({ host, key, keyLocation, urlList }),
       signal: AbortSignal.timeout(15_000),
     });
@@ -130,15 +158,19 @@ if (!selected.length) {
 
 if (!selected.length) {
   console.log(`IndexNow: no ${mode}; cosmetic deployment produced no notification.`);
-  process.exit(0);
+} else {
+  if (selected.length > maxUrls) throw new Error(`IndexNow submission exceeds ${maxUrls} URLs: ${selected.length}`);
+  try {
+    await submitBatches(selected);
+    console.log(`IndexNow accepted ${selected.length} canonical KeepTXRed URL(s): ${mode}.`);
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    console.warn(`IndexNow notification failed without blocking publishing/deployment: ${detail}`);
+    if (strict) process.exitCode = 1;
+  }
 }
-if (selected.length > maxUrls) throw new Error(`IndexNow submission exceeds ${maxUrls} URLs: ${selected.length}`);
 
-try {
-  await submitBatches(selected);
-  console.log(`IndexNow accepted ${selected.length} canonical KeepTXRed URL(s): ${mode}.`);
-} catch (error) {
-  const detail = error instanceof Error ? error.message : String(error);
-  console.warn(`IndexNow notification failed without blocking publishing/deployment: ${detail}`);
+if (sitemapFailures.length > 0) {
+  console.warn(`IndexNow completed with ${sitemapFailures.length} child sitemap failure(s); healthy canonical URLs were still processed.`);
   if (strict) process.exitCode = 1;
 }
