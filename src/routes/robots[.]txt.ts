@@ -75,7 +75,9 @@ export const Route = createFileRoute("/robots.txt")({
           ...group(GOOGLE_SEARCH_AGENTS),
           ...group(SEARCH_DISCOVERY_AGENTS),
           ...group(TRAINING_EXTENDED_AGENTS),
-          ...group(["*"]),
+          "User-agent: *",
+          ...COMMON_RULES,
+          "",
           `Sitemap: ${BASE_URL}/sitemap.xml`,
           "",
         ].join("\n");
