@@ -21,7 +21,7 @@ function LegislatureHubRoute() {
           Search Texas bills, sessions, committees and lawmakers
         </h2>
         <p className="mt-3 max-w-4xl leading-7 text-muted-foreground">
-          Use KeepTXRed's Texas bill search when you know a bill number, caption or subject. Use the Legislature hub to move between the House, Senate, current-session reference, committees, votes and lawmakers, then verify official text and actions with Texas Legislature Online.
+          Use KeepTXRed's Texas Legislature bill search when you know a bill number, caption or subject. Use the Legislature hub to move between the House, Senate, current-session reference, committees, votes and lawmakers, then verify official text and actions with Texas Legislature Online.
         </p>
         <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Link to="/bills" className="rounded-lg border px-4 py-3 font-semibold text-primary hover:border-primary">Texas bill search →</Link>
