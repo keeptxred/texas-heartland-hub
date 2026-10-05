@@ -6,7 +6,7 @@ on:
     types: [completed]
     branches: [main]
   schedule:
-    - cron: "17 13 * * *"
+    - cron: "17 * * * *"
   workflow_dispatch:
     inputs:
       full:
@@ -15,7 +15,7 @@ on:
         type: boolean
         default: false
       urls:
-        description: Optional canonical URLs for explicit publish/update/delete/redirect notification (space or comma separated)
+        description: Optional clean canonical/former URLs for publish, delete, or redirect lifecycle notification
         required: false
         type: string
 
@@ -33,11 +33,11 @@ jobs:
       (github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.head_sha == github.sha)
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     env:
       INDEXNOW_FULL: ${{ github.event_name == 'workflow_dispatch' && inputs.full && 'true' || 'false' }}
       INDEXNOW_URLS: ${{ github.event_name == 'workflow_dispatch' && inputs.urls || '' }}
-      INDEXNOW_FRESHNESS_HOURS: ${{ github.event_name == 'schedule' && '48' || '2' }}
+      INDEXNOW_FRESHNESS_HOURS: ${{ github.event_name == 'schedule' && '3' || '2' }}
 
     steps:
       - name: Check out repository
@@ -48,5 +48,8 @@ jobs:
         with:
           node-version: 22
 
-      - name: Notify IndexNow of canonical changes
+      - name: Verify production crawler, canonical, sitemap and asset access
+        run: node scripts/seo/verify-search-production.mjs
+
+      - name: Notify IndexNow of canonical meaningful changes
         run: node scripts/seo/submit-indexnow.mjs
