@@ -86,7 +86,7 @@ for (const expected of [
   '"GPTBot"',
   'TRAINING_EXTENDED_AGENTS',
   'SEARCH_DISCOVERY_AGENTS',
-  'group(["*"])',
+  '"User-agent: *"',
 ]) requireText(robots, expected, `robots policy is missing required crawler contract: ${expected}`);
 
 if (/\bsecrets\./.test(workflow)) errors.push("IndexNow workflow must not depend on repository secrets; ownership is proven by the public key file.");
