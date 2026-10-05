@@ -1,0 +1,109 @@
+const ORIGIN = "https://keeptxred.com";
+const KEY = "f2877f4619069ed6765e12380d28d9e0";
+const ROOT_SITEMAP = `${ORIGIN}/sitemap.xml`;
+const USER_AGENTS = [
+  "Googlebot/2.1 (+http://www.google.com/bot.html)",
+  "bingbot/2.0 (+http://www.bing.com/bingbot.htm)",
+  "Applebot/0.1",
+  "DuckDuckBot/1.0; (+http://duckduckgo.com/duckduckbot.html)",
+  "OAI-SearchBot/1.0; +https://openai.com/searchbot",
+  "Mozilla/5.0 (compatible; KeepTXRedAnonymousCrawler/1.0)",
+];
+const challengePattern = /cf-chl|just a moment|attention required|captcha|access denied/i;
+
+async function fetchResponse(url, userAgent, redirect = "manual") {
+  return fetch(url, {
+    redirect,
+    headers: { "user-agent": userAgent, accept: "text/html,application/xml,text/xml,text/css,application/javascript,image/*,*/*;q=0.5", "cache-control": "no-cache" },
+    signal: AbortSignal.timeout(20_000),
+  });
+}
+function decodeXml(value) { return String(value).replaceAll("&amp;", "&").replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&quot;", '"').replaceAll("&apos;", "'"); }
+function tag(block, name) { return decodeXml(block.match(new RegExp(`<${name}>([^<]+)</${name}>`, "i"))?.[1]?.trim() ?? ""); }
+function assertCanonicalUrl(raw, source) {
+  const url = new URL(raw);
+  if (url.origin !== ORIGIN) throw new Error(`${source} contains off-origin URL ${raw}`);
+  if (url.search || url.hash) throw new Error(`${source} contains parameter/fragment URL ${raw}`);
+  if (url.href !== raw) throw new Error(`${source} contains non-normalized URL ${raw}`);
+}
+async function collectSitemaps(url, visited = new Set(), depth = 0) {
+  if (depth > 4) throw new Error(`Sitemap depth exceeded at ${url}`);
+  if (visited.has(url)) return [];
+  visited.add(url);
+  const response = await fetchResponse(url, USER_AGENTS[5], "manual");
+  if (response.status !== 200) throw new Error(`${url} returned HTTP ${response.status}`);
+  const xml = await response.text();
+  if (xml.includes("<sitemapindex")) {
+    const children = [...xml.matchAll(/<sitemap>[\s\S]*?<\/sitemap>/gi)].map((match) => tag(match[0], "loc")).filter(Boolean);
+    for (const child of children) assertCanonicalUrl(child, url);
+    return (await Promise.all(children.map((child) => collectSitemaps(child, visited, depth + 1)))).flat();
+  }
+  if (!xml.includes("<urlset")) throw new Error(`${url} is neither sitemap index nor urlset`);
+  const entries = [...xml.matchAll(/<url>[\s\S]*?<\/url>/gi)].map((match) => ({ url: tag(match[0], "loc"), lastmod: tag(match[0], "lastmod") || null }));
+  if (!entries.length) throw new Error(`${url} contains no URL entries`);
+  for (const entry of entries) {
+    assertCanonicalUrl(entry.url, url);
+    if (entry.lastmod && Number.isNaN(Date.parse(entry.lastmod))) throw new Error(`${url} has invalid lastmod for ${entry.url}`);
+  }
+  const locations = entries.map((entry) => entry.url);
+  if (new Set(locations).size !== locations.length) throw new Error(`${url} contains duplicate URLs`);
+  return entries;
+}
+function chooseRepresentatives(entries) {
+  const urls = entries.map((entry) => entry.url);
+  const families = ["/news/", "/politics/", "/elections", "/texas-news", "/business", "/sports", "/houston"];
+  const chosen = new Set([`${ORIGIN}/`]);
+  for (const family of families) {
+    const match = urls.find((url) => new URL(url).pathname.startsWith(family));
+    if (match) chosen.add(match);
+  }
+  for (const url of urls.slice(0, 6)) chosen.add(url);
+  return [...chosen].slice(0, 16);
+}
+async function verifyHtml(url, userAgent) {
+  const response = await fetchResponse(url, userAgent, "manual");
+  if (response.status !== 200) throw new Error(`${url} returned HTTP ${response.status} to ${userAgent}`);
+  const type = response.headers.get("content-type") ?? "";
+  if (!type.includes("text/html")) throw new Error(`${url} returned non-HTML content to ${userAgent}: ${type}`);
+  if (/noindex/i.test(response.headers.get("x-robots-tag") ?? "")) throw new Error(`${url} sends X-Robots-Tag noindex`);
+  const html = await response.text();
+  if (challengePattern.test(html.slice(0, 6000))) throw new Error(`${url} appears blocked/challenged for ${userAgent}`);
+  if (/<meta[^>]+name=["']robots["'][^>]+content=["'][^"']*noindex/i.test(html)) throw new Error(`${url} contains meta robots noindex`);
+  const canonical = html.match(/<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)["']/i)?.[1] ?? html.match(/<link[^>]+href=["']([^"']+)["'][^>]+rel=["']canonical["']/i)?.[1];
+  if (!canonical) throw new Error(`${url} is missing canonical link`);
+  if (new URL(canonical, ORIGIN).href !== new URL(url).href) throw new Error(`${url} canonical mismatch: ${canonical}`);
+  const visibleText = html.replace(/<script[\s\S]*?<\/script>/gi, " ").replace(/<style[\s\S]*?<\/style>/gi, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  if (visibleText.length < 300) throw new Error(`${url} exposes too little primary HTML content to ${userAgent}`);
+  return html;
+}
+async function verifyAsset(html, pattern, label) {
+  const raw = html.match(pattern)?.[1];
+  if (!raw) return;
+  const url = new URL(raw, ORIGIN);
+  if (url.origin !== ORIGIN) return;
+  for (const userAgent of USER_AGENTS) {
+    const response = await fetchResponse(url.href, userAgent, "follow");
+    if (response.status >= 400) throw new Error(`${label} ${url.href} returned HTTP ${response.status} to ${userAgent}`);
+  }
+}
+
+const robotsResponse = await fetchResponse(`${ORIGIN}/robots.txt`, USER_AGENTS[5], "manual");
+if (robotsResponse.status !== 200) throw new Error(`robots.txt returned HTTP ${robotsResponse.status}`);
+const robots = await robotsResponse.text();
+for (const token of ["Googlebot", "Bingbot", "Applebot", "DuckDuckBot", "OAI-SearchBot", `Sitemap: ${ROOT_SITEMAP}`]) {
+  if (!robots.includes(token)) throw new Error(`robots.txt missing ${token}`);
+}
+const keyResponse = await fetchResponse(`${ORIGIN}/${KEY}.txt`, USER_AGENTS[5], "manual");
+if (keyResponse.status !== 200 || (await keyResponse.text()).trim() !== KEY) throw new Error("Public IndexNow key verification failed.");
+
+const entries = await collectSitemaps(ROOT_SITEMAP);
+const representatives = chooseRepresentatives(entries);
+for (const userAgent of USER_AGENTS) {
+  for (const url of representatives.slice(0, 4)) await verifyHtml(url, userAgent);
+}
+for (const url of representatives) await verifyHtml(url, USER_AGENTS[5]);
+const homepageHtml = await verifyHtml(`${ORIGIN}/`, USER_AGENTS[5]);
+await verifyAsset(homepageHtml, /<link[^>]+rel=["']stylesheet["'][^>]+href=["']([^"']+)["']/i, "CSS");
+await verifyAsset(homepageHtml, /<script[^>]+src=["']([^"']+)["']/i, "JavaScript");
+await verifyAsset(homepageHtml, /<img[^>]+src=["']([^"']+)["']/i, "Image");
+console.log(`KeepTXRed production search verification passed: ${entries.length} canonical sitemap entries checked structurally; ${representatives.length} representative URLs verified; Googlebot, Bingbot, Applebot, DuckDuckBot, OAI-SearchBot and anonymous crawler HTTP access passed; required rendering assets are reachable.`);
