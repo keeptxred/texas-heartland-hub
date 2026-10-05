@@ -147,7 +147,11 @@ export function SearchRecoveryAuthorityPage({ guide }: { guide: SearchRecoveryAu
 
       <section className="mt-10 rounded-2xl border bg-muted/20 p-6" aria-labelledby="continue-research">
         <h2 id="continue-research" className="text-2xl font-bold">Continue your Texas research</h2>
+        <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">Connect this source-first guide to KeepTXRed's core Texas legislative and legal reference hubs.</p>
         <div className="mt-4 flex flex-wrap gap-3">
+          <Link to="/bills" className="rounded-md border bg-card px-4 py-2 text-sm font-semibold text-primary hover:border-primary">Texas bill search →</Link>
+          <Link to="/texas-legislature" className="rounded-md border bg-card px-4 py-2 text-sm font-semibold text-primary hover:border-primary">Texas Legislature →</Link>
+          <Link to="/laws" className="rounded-md border bg-card px-4 py-2 text-sm font-semibold text-primary hover:border-primary">Texas laws →</Link>
           {guide.related.map((item) => (
             <a key={item.href} href={item.href} className="rounded-md border bg-card px-4 py-2 text-sm font-semibold text-primary hover:border-primary">{item.label} →</a>
           ))}
