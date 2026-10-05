@@ -8,6 +8,13 @@ const POLICY_OWNERSHIP_SECTION = {
   ]
 } satisfies IssueGuide["sections"][number];
 
+const HOMEOWNER_HANDOFF_LINKS = [
+  { label: "Texas property-tax guide", href: "https://texasdefined.com/learn/property-taxes" },
+  { label: "Property-tax estimate and comparison", href: "https://texasdefined.com/decide/property-taxes" },
+  { label: "Texas homestead exemption guide", href: "https://texasdefined.com/do/homestead-exemption" },
+  { label: "Texas property-tax protest guide", href: "https://texasdefined.com/do/property-tax-protest" },
+] satisfies NonNullable<IssueGuide["toolLinks"]>;
+
 export function applyPropertyTaxPolicyOwnershipPatch(guide: IssueGuide): IssueGuide {
   if (guide.slug !== "texas-property-tax-relief") return guide;
 
@@ -17,5 +24,6 @@ export function applyPropertyTaxPolicyOwnershipPatch(guide: IssueGuide): IssueGu
     dek: "How Texas lawmakers, constitutional rules, school-finance policy and local taxing authority shape property-tax relief. Practical homeowner tools and filing guidance live on TexasDefined.",
     quickAnswer: "Keep TX Red tracks Texas property-tax policy: legislation, constitutional amendments, school-finance changes, rate compression, appraisal-law changes and the implementation of state relief. Practical homeowner questions such as exemptions, appraisal protests, calculators, county offices and payment steps belong on TexasDefined so each site serves a distinct search intent.",
     sections: [POLICY_OWNERSHIP_SECTION, ...guide.sections],
+    toolLinks: [...(guide.toolLinks ?? []), ...HOMEOWNER_HANDOFF_LINKS],
   };
 }
