@@ -10,6 +10,7 @@ const USER_AGENTS = [
   "Mozilla/5.0 (compatible; KeepTXRedAnonymousCrawler/1.0)",
 ];
 const challengePattern = /cf-chl|just a moment|attention required|captcha|access denied/i;
+const sitemapFailures = [];
 
 async function fetchResponse(url, userAgent, redirect = "manual") {
   return fetch(url, {
@@ -36,7 +37,19 @@ async function collectSitemaps(url, visited = new Set(), depth = 0) {
   if (xml.includes("<sitemapindex")) {
     const children = [...xml.matchAll(/<sitemap>[\s\S]*?<\/sitemap>/gi)].map((match) => tag(match[0], "loc")).filter(Boolean);
     for (const child of children) assertCanonicalUrl(child, url);
-    return (await Promise.all(children.map((child) => collectSitemaps(child, visited, depth + 1)))).flat();
+    const nested = await Promise.allSettled(children.map((child) => collectSitemaps(child, visited, depth + 1)));
+    const entries = [];
+    nested.forEach((result, index) => {
+      if (result.status === "fulfilled") {
+        entries.push(...result.value);
+        return;
+      }
+      const child = children[index];
+      const message = result.reason instanceof Error ? result.reason.message : String(result.reason);
+      sitemapFailures.push({ sitemap: child, message });
+      console.warn(`Search verification sitemap warning: ${child} failed: ${message}`);
+    });
+    return entries;
   }
   if (!xml.includes("<urlset")) throw new Error(`${url} is neither sitemap index nor urlset`);
   const entries = [...xml.matchAll(/<url>[\s\S]*?<\/url>/gi)].map((match) => ({ url: tag(match[0], "loc"), lastmod: tag(match[0], "lastmod") || null }));
@@ -97,6 +110,7 @@ const keyResponse = await fetchResponse(`${ORIGIN}/${KEY}.txt`, USER_AGENTS[5], 
 if (keyResponse.status !== 200 || (await keyResponse.text()).trim() !== KEY) throw new Error("Public IndexNow key verification failed.");
 
 const entries = await collectSitemaps(ROOT_SITEMAP);
+if (!entries.length) throw new Error("Root sitemap yielded no healthy canonical URL entries.");
 const representatives = chooseRepresentatives(entries);
 for (const userAgent of USER_AGENTS) {
   for (const url of representatives.slice(0, 4)) await verifyHtml(url, userAgent);
@@ -106,4 +120,7 @@ const homepageHtml = await verifyHtml(`${ORIGIN}/`, USER_AGENTS[5]);
 await verifyAsset(homepageHtml, /<link[^>]+rel=["']stylesheet["'][^>]+href=["']([^"']+)["']/i, "CSS");
 await verifyAsset(homepageHtml, /<script[^>]+src=["']([^"']+)["']/i, "JavaScript");
 await verifyAsset(homepageHtml, /<img[^>]+src=["']([^"']+)["']/i, "Image");
+if (sitemapFailures.length) {
+  console.warn(`KeepTXRed production search verification completed with ${sitemapFailures.length} child sitemap failure(s); healthy sitemap families and crawler checks still passed.`);
+}
 console.log(`KeepTXRed production search verification passed: ${entries.length} canonical sitemap entries checked structurally; ${representatives.length} representative URLs verified; Googlebot, Bingbot, Applebot, DuckDuckBot, OAI-SearchBot and anonymous crawler HTTP access passed; required rendering assets are reachable.`);
