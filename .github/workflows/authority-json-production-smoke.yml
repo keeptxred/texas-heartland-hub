@@ -64,7 +64,35 @@ jobs:
         with:
           ref: main
       - name: Verify live machine-readable authority resources
-        run: python3 scripts/authority/smoke-production.py
+        run: |
+          python3 -u - <<'PY'
+          import runpy
+          import time
+
+          smoke = runpy.run_path("scripts/authority/smoke-production.py")
+          checks = (
+              ("election reference", "verify_elections"),
+              ("bill reference", "verify_bill"),
+              ("citation manifest", "verify_manifest"),
+          )
+
+          for label, function_name in checks:
+              started = time.monotonic()
+              print(f"SMOKE START: {label}", flush=True)
+              try:
+                  smoke[function_name]()
+              except Exception as exc:
+                  elapsed = time.monotonic() - started
+                  print(
+                      f"SMOKE FAIL: {label} after {elapsed:.1f}s: {exc}",
+                      flush=True,
+                  )
+                  raise
+              elapsed = time.monotonic() - started
+              print(f"SMOKE PASS: {label} in {elapsed:.1f}s", flush=True)
+
+          print("Authority JSON production smoke passed", flush=True)
+          PY
 
   city-migration-smoke:
     if: github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
