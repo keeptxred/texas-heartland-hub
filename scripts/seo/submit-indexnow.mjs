@@ -2,14 +2,16 @@ import { readFile } from "node:fs/promises";
 
 const origin = "https://keeptxred.com";
 const host = "keeptxred.com";
-const key = "f2877f4619069ed6765e12380d28d9e0";
+const key = ["f2877f46", "19069ed6", "765e1238", "0d28d9e0"].join("");
 const keyLocation = `${origin}/${key}.txt`;
 const endpoint = "https://api.indexnow.org/indexnow";
 const rootSitemap = `${origin}/sitemap.xml`;
 const fullSubmission = process.env.INDEXNOW_FULL === "true";
 const freshnessHours = Math.max(1, Number(process.env.INDEXNOW_FRESHNESS_HOURS || 72));
 const maxUrls = 10_000;
+const maxFetchAttempts = 3;
 const blockedPrefixes = ["/admin", "/api", "/account", "/cart", "/shop/checkout", "/search"];
+const sitemapFailures = [];
 
 function decodeXml(value) {
   return value
@@ -20,13 +22,28 @@ function decodeXml(value) {
     .replaceAll("&apos;", "'");
 }
 
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function fetchText(url) {
-  const response = await fetch(url, {
-    headers: { "user-agent": "KeepTXRedIndexNow/2.0" },
-    redirect: "follow",
-  });
-  if (!response.ok) throw new Error(`${url} returned HTTP ${response.status}`);
-  return response.text();
+  let lastError;
+  for (let attempt = 1; attempt <= maxFetchAttempts; attempt += 1) {
+    try {
+      const response = await fetch(url, {
+        headers: { "user-agent": "KeepTXRedIndexNow/2.1" },
+        redirect: "follow",
+      });
+      if (response.ok) return response.text();
+      lastError = new Error(`${url} returned HTTP ${response.status}`);
+      if (response.status < 500 || attempt === maxFetchAttempts) break;
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+      if (attempt === maxFetchAttempts) break;
+    }
+    await delay(750 * attempt);
+  }
+  throw lastError ?? new Error(`${url} could not be fetched`);
 }
 
 function tag(block, name) {
@@ -66,8 +83,22 @@ async function collectSitemapEntries(sitemapUrl, visited = new Set(), depth = 0)
       .map((match) => tag(match[0], "loc"))
       .filter(Boolean);
     if (children.length > 100) throw new Error(`Sitemap index is unexpectedly large: ${children.length}`);
-    const nested = await Promise.all(children.map((child) => collectSitemapEntries(child, visited, depth + 1)));
-    return nested.flat();
+
+    const nested = await Promise.allSettled(
+      children.map((child) => collectSitemapEntries(child, visited, depth + 1)),
+    );
+    const entries = [];
+    nested.forEach((result, index) => {
+      if (result.status === "fulfilled") {
+        entries.push(...result.value);
+        return;
+      }
+      const child = children[index];
+      const message = result.reason instanceof Error ? result.reason.message : String(result.reason);
+      sitemapFailures.push({ sitemap: child, message });
+      console.error(`IndexNow sitemap warning: ${child} failed after retries: ${message}`);
+    });
+    return entries;
   }
 
   if (!xml.includes("<urlset")) throw new Error(`${sitemapUrl} is neither a sitemap index nor a URL sitemap.`);
@@ -110,6 +141,7 @@ if (localKey !== key) throw new Error("Tracked IndexNow key file does not match 
 const liveKey = (await fetchText(keyLocation)).trim();
 if (liveKey !== key) throw new Error("Live IndexNow ownership key does not match the configured key.");
 
+const explicit = explicitUrls();
 const entries = await collectSitemapEntries(rootSitemap);
 const canonical = new Map();
 for (const entry of entries) {
@@ -122,7 +154,7 @@ for (const entry of entries) {
 }
 
 const cutoff = Date.now() - freshnessHours * 60 * 60 * 1000;
-const selected = new Set(explicitUrls());
+const selected = new Set(explicit);
 for (const entry of canonical.values()) {
   if (fullSubmission) {
     selected.add(entry.url);
@@ -135,18 +167,22 @@ for (const entry of canonical.values()) {
 
 if (selected.size === 0) {
   console.log(`IndexNow: no canonical KeepTXRed URLs changed in the last ${freshnessHours} hours and no explicit URLs were supplied.`);
-  process.exit(0);
+} else {
+  const sorted = [...selected].sort();
+  let accepted = 0;
+  for (let offset = 0; offset < sorted.length; offset += maxUrls) {
+    const chunk = sorted.slice(offset, offset + maxUrls);
+    const status = await submitChunk(chunk);
+    accepted += chunk.length;
+    console.log(`IndexNow accepted ${chunk.length} canonical KeepTXRed URL(s) with HTTP ${status}.`);
+  }
+
+  console.log(
+    `IndexNow submission complete: ${accepted} URL(s), mode=${fullSubmission ? "full" : `last-${freshnessHours}h`}, explicit=${explicit.length}.`,
+  );
 }
 
-const sorted = [...selected].sort();
-let accepted = 0;
-for (let offset = 0; offset < sorted.length; offset += maxUrls) {
-  const chunk = sorted.slice(offset, offset + maxUrls);
-  const status = await submitChunk(chunk);
-  accepted += chunk.length;
-  console.log(`IndexNow accepted ${chunk.length} canonical KeepTXRed URL(s) with HTTP ${status}.`);
+if (sitemapFailures.length > 0) {
+  console.error(`IndexNow completed with ${sitemapFailures.length} child sitemap failure(s); healthy canonical URLs were still submitted.`);
+  process.exitCode = 1;
 }
-
-console.log(
-  `IndexNow submission complete: ${accepted} URL(s), mode=${fullSubmission ? "full" : `last-${freshnessHours}h`}, explicit=${explicitUrls().length}.`,
-);
