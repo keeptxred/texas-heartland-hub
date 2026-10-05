@@ -1,7 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
 import type {} from '@tanstack/react-start';
 import { supabase } from '@/integrations/supabase/client';
-import { getBillRelations, SITE_URL } from '@/lib/bills';
+import { SITE_URL } from '@/lib/bills';
+import { getBillPrimarySourceRelations } from '@/lib/bill-primary-source-data';
 import { buildBillPrimarySourceReference } from '@/lib/bill-primary-source-reference';
 import { normalizePublicBillSessionCode, publicBillPath, publicBillReferencePath } from '@/lib/bill-public-path';
 
@@ -45,7 +46,7 @@ export const Route = createFileRoute('/bills/texas/$legislature/$session/$billTy
         if (error) throw error;
         if (!bill) return Response.json({ error: 'Bill not found' }, { status: 404 });
 
-        const { actions, documents } = await getBillRelations(bill.id);
+        const { actions, documents } = await getBillPrimarySourceRelations(bill.id);
         const payload = buildBillPrimarySourceReference(bill, actions, documents);
         payload.canonicalUrl = `${SITE_URL}${publicBillPath(bill)}`;
 
