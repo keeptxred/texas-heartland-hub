@@ -184,13 +184,36 @@ jobs:
         run: |
           set -euo pipefail
           health_url="${PREVIEW_URL%/}/api/public/hooks/health"
-          response="$(curl --retry 20 --retry-delay 3 --retry-all-errors --fail-with-body --silent --show-error "$health_url")"
-          echo "$response"
-          python3 - "$response" <<'PY'
+          response_file="$(mktemp)"
+          trap 'rm -f "$response_file"' EXIT
+          set +e
+          http_status="$(curl --retry 20 --retry-delay 3 --retry-all-errors --silent --show-error \
+            -o "$response_file" -w '%{http_code}' "$health_url")"
+          curl_status=$?
+          set -e
+          response="$(cat "$response_file")"
+          echo "Preview health HTTP status: $http_status"
+          echo "Preview health response: $response"
+          if [[ "$curl_status" -ne 0 ]]; then
+            echo "Preview health request failed with curl status $curl_status." >&2
+            exit "$curl_status"
+          fi
+          python3 - "$http_status" "$response" <<'PY'
           import json
           import sys
-          data = json.loads(sys.argv[1])
+          http_status = sys.argv[1]
+          data = json.loads(sys.argv[2])
+          summary = {
+              "http_status": http_status,
+              "database": data.get("database"),
+              "database_ready": data.get("database_ready"),
+              "ai_provider_ready": data.get("ai_provider_ready"),
+              "publishing_stalled": data.get("publishing_stalled"),
+              "articles_last_24h": data.get("articles_last_24h"),
+          }
+          print("Preview health summary: " + json.dumps(summary, sort_keys=True))
           failures = []
+          if http_status != "200": failures.append(f"health endpoint returned HTTP {http_status}")
           if data.get("database") != "ok": failures.append("database is not ok")
           if data.get("ai_provider_ready") is not True: failures.append("AI provider is not ready")
           if failures: raise SystemExit("Preview health verification failed: " + "; ".join(failures))
