@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 const packetBuilder = readFileSync("src/routes/api/public/hooks/build-newsroom-research-packets.ts", "utf8");
 const refresher = readFileSync("src/routes/api/public/hooks/refresh-published-newsroom.ts", "utf8");
 const workflow = readFileSync(".github/workflows/refresh-published-news.yml", "utf8");
+const cronCadence = readFileSync("supabase/migrations/20261006001500_align_newsroom_cron_cadence.sql", "utf8");
 
 describe("published newsroom freshness refresh", () => {
   it("keeps rebuilding source packets after a candidate is published", () => {
@@ -36,10 +37,30 @@ describe("published newsroom freshness refresh", () => {
     expect(refresher).toContain("MAX_NEW_SOURCES_IN_PROMPT = 4");
   });
 
-  it("checks for new evidence every two hours without increasing ordinary publishing cadence", () => {
+  it("checks for new evidence every two hours without duplicating pg_cron normalization or clustering", () => {
     expect(workflow).toContain('cron: "47 */2 * * *"');
+    expect(workflow).toContain("enrich-newsroom-rss-evidence");
     expect(workflow).toContain("build-newsroom-research-packets");
     expect(workflow).toContain("refresh-published-newsroom");
+    expect(workflow).not.toContain("run_zero_ai_stage normalize normalize-newsroom-feed");
+    expect(workflow).not.toContain("run_zero_ai_stage cluster cluster-newsroom-stories");
     expect(workflow).not.toContain("generate-newsroom?mode=publish");
+  });
+
+  it("records the reduced newsroom pg_cron cadence used in production", () => {
+    for (const expected of [
+      "keep-tx-red-normalize-newsroom-feed",
+      "schedule => '7,37 * * * *'",
+      "keep-tx-red-cluster-newsroom-stories",
+      "schedule => '9,39 * * * *'",
+      "keep-tx-red-score-newsroom-stories",
+      "schedule => '11,41 * * * *'",
+      "keep-tx-red-decide-newsroom-packages",
+      "schedule => '13,43 * * * *'",
+      "keep-tx-red-build-newsroom-research-packets",
+      "schedule => '29 * * * *'",
+    ]) {
+      expect(cronCadence).toContain(expected);
+    }
   });
 });
