@@ -2,7 +2,7 @@ name: KeepTXRed IndexNow
 
 on:
   workflow_run:
-    workflows: ["Deploy verified KeepTXRed to Cloudflare"]
+    workflows: ["Deploy KeepTXRed to Cloudflare Workers"]
     types: [completed]
     branches: [main]
   schedule:

@@ -1,6 +1,7 @@
 const ORIGIN = "https://keeptxred.com";
 const KEY = "f2877f4619069ed6765e12380d28d9e0";
 const ROOT_SITEMAP = `${ORIGIN}/sitemap.xml`;
+const SITEMAP_CONCURRENCY = 3;
 const USER_AGENTS = [
   "Googlebot/2.1 (+http://www.google.com/bot.html)",
   "bingbot/2.0 (+http://www.bing.com/bingbot.htm)",
@@ -37,18 +38,21 @@ async function collectSitemaps(url, visited = new Set(), depth = 0) {
   if (xml.includes("<sitemapindex")) {
     const children = [...xml.matchAll(/<sitemap>[\s\S]*?<\/sitemap>/gi)].map((match) => tag(match[0], "loc")).filter(Boolean);
     for (const child of children) assertCanonicalUrl(child, url);
-    const nested = await Promise.allSettled(children.map((child) => collectSitemaps(child, visited, depth + 1)));
     const entries = [];
-    nested.forEach((result, index) => {
-      if (result.status === "fulfilled") {
-        entries.push(...result.value);
-        return;
-      }
-      const child = children[index];
-      const message = result.reason instanceof Error ? result.reason.message : String(result.reason);
-      sitemapFailures.push({ sitemap: child, message });
-      console.warn(`Search verification sitemap warning: ${child} failed: ${message}`);
-    });
+    for (let offset = 0; offset < children.length; offset += SITEMAP_CONCURRENCY) {
+      const batch = children.slice(offset, offset + SITEMAP_CONCURRENCY);
+      const nested = await Promise.allSettled(batch.map((child) => collectSitemaps(child, visited, depth + 1)));
+      nested.forEach((result, index) => {
+        if (result.status === "fulfilled") {
+          entries.push(...result.value);
+          return;
+        }
+        const child = batch[index];
+        const message = result.reason instanceof Error ? result.reason.message : String(result.reason);
+        sitemapFailures.push({ sitemap: child, message });
+        console.warn(`Search verification sitemap warning: ${child} failed: ${message}`);
+      });
+    }
     return entries;
   }
   if (!xml.includes("<urlset")) throw new Error(`${url} is neither sitemap index nor urlset`);
