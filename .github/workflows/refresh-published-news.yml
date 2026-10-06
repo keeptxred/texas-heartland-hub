@@ -42,9 +42,10 @@ jobs:
             fi
           }
 
+          # Evidence enrichment and packet rebuilding are freshness-critical here.
+          # Deterministic normalize/cluster stages are already maintained by pg_cron;
+          # rerunning them in this two-hour workflow only duplicates database I/O.
           run_zero_ai_stage evidence enrich-newsroom-rss-evidence 90
-          run_zero_ai_stage normalize normalize-newsroom-feed 90
-          run_zero_ai_stage cluster cluster-newsroom-stories 90
           run_zero_ai_stage packets build-newsroom-research-packets 180
 
           oidc_url="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-newsroom-refresh"
