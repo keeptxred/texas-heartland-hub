@@ -194,6 +194,15 @@ jobs:
           response="$(cat "$response_file")"
           echo "Preview health HTTP status: $http_status"
           echo "Preview health response: $response"
+          {
+            echo "### Preview database and AI health"
+            echo
+            echo "- HTTP status: \`$http_status\`"
+            echo
+            echo '```json'
+            echo "$response"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
           if [[ "$curl_status" -ne 0 ]]; then
             echo "Preview health request failed with curl status $curl_status." >&2
             exit "$curl_status"
