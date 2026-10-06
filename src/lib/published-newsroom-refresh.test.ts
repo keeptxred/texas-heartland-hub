@@ -36,10 +36,13 @@ describe("published newsroom freshness refresh", () => {
     expect(refresher).toContain("MAX_NEW_SOURCES_IN_PROMPT = 4");
   });
 
-  it("checks for new evidence every two hours without increasing ordinary publishing cadence", () => {
+  it("checks for new evidence every two hours without duplicating pg_cron normalization or clustering", () => {
     expect(workflow).toContain('cron: "47 */2 * * *"');
+    expect(workflow).toContain("enrich-newsroom-rss-evidence");
     expect(workflow).toContain("build-newsroom-research-packets");
     expect(workflow).toContain("refresh-published-newsroom");
+    expect(workflow).not.toContain("run_zero_ai_stage normalize normalize-newsroom-feed");
+    expect(workflow).not.toContain("run_zero_ai_stage cluster cluster-newsroom-stories");
     expect(workflow).not.toContain("generate-newsroom?mode=publish");
   });
 });
