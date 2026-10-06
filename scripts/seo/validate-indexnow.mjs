@@ -36,6 +36,7 @@ for (const expected of [
   'url.search || url.hash',
   'const maxUrls = 10_000;',
   'const batchSize = 1000;',
+  'const sitemapConcurrency = 3;',
   'INDEXNOW_FULL === "true"',
   'INDEXNOW_FRESHNESS_HOURS',
   'INDEXNOW_URLS',
@@ -45,7 +46,7 @@ for (const expected of [
 
 for (const expected of [
   'workflow_run:',
-  'workflows: ["Deploy verified KeepTXRed to Cloudflare"]',
+  'workflows: ["Deploy KeepTXRed to Cloudflare Workers"]',
   'cron: "17 * * * *"',
   'workflow_dispatch:',
   'urls:',
@@ -65,6 +66,7 @@ for (const expected of [
 ]) requireText(runtimeService, expected, `Reusable search-distribution service is missing required contract: ${expected}`);
 
 for (const expected of [
+  'const SITEMAP_CONCURRENCY = 3;',
   'Googlebot/2.1',
   'bingbot/2.0',
   'Applebot/0.1',
