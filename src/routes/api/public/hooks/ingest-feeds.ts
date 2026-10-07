@@ -445,11 +445,12 @@ async function handler() {
   let inserted = 0;
   if (rows.length > 0) {
     const existingLinks = new Set<string>();
+    const attributionNeededLinks = new Set<string>();
     for (let offset = 0; offset < rows.length; offset += INGEST_UPSERT_BATCH_SIZE) {
       const linkBatch = rows.slice(offset, offset + INGEST_UPSERT_BATCH_SIZE).map((row) => row.link);
       const { data: existingRows, error: existingError } = await supabaseAdmin
         .from("texas_news_feed")
-        .select("link")
+        .select("link,trend_source")
         .in("link", linkBatch);
       if (existingError) {
         return Response.json(
@@ -457,8 +458,10 @@ async function handler() {
           { status: 500 },
         );
       }
-      for (const existingRow of (existingRows ?? []) as Array<{ link: string | null }>) {
-        if (existingRow.link) existingLinks.add(existingRow.link);
+      for (const existingRow of (existingRows ?? []) as Array<{ link: string | null; trend_source: string | null }>) {
+        if (!existingRow.link) continue;
+        existingLinks.add(existingRow.link);
+        if (existingRow.trend_source == null) attributionNeededLinks.add(existingRow.link);
       }
     }
 
@@ -488,8 +491,9 @@ async function handler() {
     let attributionRetries = 0;
     let attributionFailures = 0;
     for (const [trendSource, links] of attributionGroups.entries()) {
-      for (let offset = 0; offset < links.length; offset += ATTRIBUTION_BACKFILL_BATCH_SIZE) {
-        const linkBatch = links.slice(offset, offset + ATTRIBUTION_BACKFILL_BATCH_SIZE);
+      const missingAttributionLinks = links.filter((link) => attributionNeededLinks.has(link));
+      for (let offset = 0; offset < missingAttributionLinks.length; offset += ATTRIBUTION_BACKFILL_BATCH_SIZE) {
+        const linkBatch = missingAttributionLinks.slice(offset, offset + ATTRIBUTION_BACKFILL_BATCH_SIZE);
         attributionBatches += 1;
         const result = await backfillTrendSourceAdaptive(supabaseAdmin, trendSource, linkBatch);
         attributionSplits += result.splits;
