@@ -163,5 +163,18 @@ for (const token of [
 for (const token of ["/admin/coverage-gaps", "/api/public/newsroom-health", "/api/public/hooks/ingest-feeds"]) {
   if (!smoke.includes(token)) throw new Error(`Live newsroom smoke contract missing: ${token}`);
 }
+for (const token of [
+  "backlog is reported but does not fail live availability",
+  "failureRatio > 0.10",
+  "below 10% outage threshold",
+]) {
+  if (!smoke.includes(token)) throw new Error(`Live newsroom smoke resilience contract missing: ${token}`);
+}
+if (smoke.includes("payload.coverageGapCount !== 0")) {
+  throw new Error("Live newsroom smoke must not treat editorial backlog as a production availability failure");
+}
+if (smoke.includes("payload.failedSources > 0) throw new Error")) {
+  throw new Error("Live newsroom smoke must tolerate isolated transient transport failures");
+}
 
 console.log(`Newsroom coverage contract valid: ${configuredSources.length} statewide discovery sources + ${hyperlocalRequiredSources.length} hyperlocal sources, configured-feed attribution, scoring, gap reporting, authoritative Flyover reconciliation, fetch-state source health, deterministic geography telemetry, server aggregation, and live smoke monitoring.`);

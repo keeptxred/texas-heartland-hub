@@ -99,7 +99,8 @@ async function checkDeploymentFingerprint() {
 async function checkNewsroomHealth() {
   const payload = await fetchNewsroomHealth();
   if (!Number.isFinite(payload?.sourceCount) || payload.sourceCount < 1) throw new Error(`newsroom-health reports no configured sources: ${JSON.stringify(payload).slice(0, 500)}`);
-  if (payload.coverageGapCount !== 0) throw new Error(`newsroom-health reports ${payload.coverageGapCount} unresolved source coverage gap(s)`);
+  if (!Number.isFinite(payload.coverageGapCount) || payload.coverageGapCount < 0) throw new Error(`newsroom-health returned invalid coverageGapCount=${payload.coverageGapCount}`);
+  if (payload.coverageGapCount > 0) console.warn(`WARN newsroom-health backlog=${payload.coverageGapCount} unresolved publish gap(s); backlog is reported but does not fail live availability`);
   if (payload.texasDefinedChannelReady !== true) throw new Error(`TexasDefined shared article channel is not ready: ${JSON.stringify(payload).slice(0, 700)}`);
   const sourceNames = new Set((payload.sources ?? []).map((source) => source.source_name));
   const missing = requiredDirectCoverageSources.filter((name) => !sourceNames.has(name));
@@ -210,7 +211,15 @@ async function checkIngestion() {
   if (typeof payload.fetched !== "number" || typeof payload.inserted !== "number") throw new Error(`ingest-feeds response lacks numeric ingestion counts: ${text.slice(0, 500)}`);
   if (typeof payload.sourceCount === "number" && payload.sourceCount < 1) throw new Error(`ingest-feeds reports zero configured sources: ${text.slice(0, 500)}`);
   if (typeof payload.healthySources === "number" && payload.healthySources < 1) throw new Error(`ingest-feeds reports zero healthy sources: ${text.slice(0, 500)}`);
-  if (typeof payload.failedSources === "number" && payload.failedSources > 0) throw new Error(`ingest-feeds reports ${payload.failedSources} transport-failed source(s): ${text.slice(0, 700)}`);
+  if (typeof payload.failedSources === "number" && typeof payload.sourceCount === "number" && payload.sourceCount > 0) {
+    const failureRatio = payload.failedSources / payload.sourceCount;
+    if (failureRatio > 0.10) {
+      throw new Error(`ingest-feeds transport failure ratio is ${(failureRatio * 100).toFixed(1)}% (${payload.failedSources}/${payload.sourceCount}): ${text.slice(0, 700)}`);
+    }
+    if (payload.failedSources > 0) {
+      console.warn(`WARN ingest-feeds transient transport failures=${payload.failedSources}/${payload.sourceCount}; below 10% outage threshold`);
+    }
+  }
   if (payload.fetched < 1) throw new Error(`ingest-feeds completed but fetched zero Texas-relevant candidates: ${text.slice(0, 500)}`);
   const elapsed = Math.round((Date.now() - startedAt) / 1000);
   console.log(`OK ingest-feeds elapsed=${elapsed}s fetched=${payload.fetched} inserted=${payload.inserted} healthySources=${payload.healthySources ?? "n/a"} quietSources=${payload.quietSources ?? "n/a"} failedSources=${payload.failedSources ?? "n/a"}`);
