@@ -3,8 +3,9 @@ import { SPORTS_SOURCES, type SportsSource } from "@/lib/sports-sources";
 import { classifySportsText } from "@/lib/sports-taxonomy";
 
 const TRANSIENT = new Set([408, 425, 429, 500, 502, 503, 504]);
+const SPORTS_UPSERT_BATCH_SIZE = 50;
 
-type FeedRow = { title: string; link: string; pub_date: string; source: string; description: string };
+type FeedRow = { title: string; link: string; pub_date: string; source: string; description: string; trend_source: string };
 type SourceResult = { source: string; status: number; items: FeedRow[]; error?: string };
 
 function decode(value: string): string {
@@ -37,7 +38,7 @@ function parseRss(xml: string, source: SportsSource): FeedRow[] {
     if (!title || !/^https?:\/\//i.test(link)) continue;
     const classification = classifySportsText(`${title} ${description} ${source.name}`);
     if (!source.team && !source.topic && !classification.isSports) continue;
-    out.push({ title: title.slice(0, 500), link, pub_date: safeIso(date), source: source.name, description: description.slice(0, 1200) });
+    out.push({ title: title.slice(0, 500), link, pub_date: safeIso(date), source: source.name, description: description.slice(0, 1200), trend_source: source.name });
   }
   return out;
 }
@@ -64,7 +65,7 @@ function parseHtml(html: string, source: SportsSource): FeedRow[] {
     if (seen.has(canonical)) continue;
     seen.add(canonical);
     const description = `${source.name}: ${title}`;
-    out.push({ title: title.slice(0, 500), link: canonical, pub_date: new Date().toISOString(), source: source.name, description: description.slice(0, 1200) });
+    out.push({ title: title.slice(0, 500), link: canonical, pub_date: new Date().toISOString(), source: source.name, description: description.slice(0, 1200), trend_source: source.name });
     if (out.length >= 20) break;
   }
   return out;
@@ -109,9 +110,19 @@ async function handler() {
   const rows = [...unique.values()];
   let inserted = 0;
   if (rows.length) {
-    const { count, error } = await supabaseAdmin.from("texas_news_feed").upsert(rows, { onConflict: "link", ignoreDuplicates: true, count: "exact" });
-    if (error) return Response.json({ ok: false, error: error.message }, { status: 500 });
-    inserted = count ?? 0;
+    for (let offset = 0; offset < rows.length; offset += SPORTS_UPSERT_BATCH_SIZE) {
+      const batch = rows.slice(offset, offset + SPORTS_UPSERT_BATCH_SIZE);
+      const { count, error } = await supabaseAdmin
+        .from("texas_news_feed")
+        .upsert(batch, { onConflict: "link", ignoreDuplicates: true, count: "exact" });
+      if (error) {
+        return Response.json(
+          { ok: false, error: error.message, failedBatchOffset: offset, batchSize: batch.length },
+          { status: 500 },
+        );
+      }
+      inserted += count ?? 0;
+    }
   }
   return Response.json({ ok: true, sourceCount: SPORTS_SOURCES.length, fetched: rows.length, inserted, healthySources: results.filter((result) => result.status >= 200 && result.status < 300 && result.items.length).length, failedSources: results.filter((result) => result.status < 200 || result.status >= 300 || !result.items.length).map((result) => ({ source: result.source, status: result.status, error: result.error })) });
 }
