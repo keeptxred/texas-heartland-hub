@@ -27,6 +27,9 @@ test('feed attribution backfill is bounded, sequential, and timeout-resilient', 
   expect(ingest).toContain('offset < links.length');
   expect(ingest).toContain('links.slice(offset, offset + ATTRIBUTION_BACKFILL_BATCH_SIZE)');
   expect(ingest).toContain('await backfillTrendSourceAdaptive(supabaseAdmin, trendSource, linkBatch)');
+  expect(ingest).toContain('.select("link,trend_source")');
+  expect(ingest).toContain('if (existingRow.trend_source == null) attributionNeededLinks.add(existingRow.link)');
+  expect(ingest).toContain('const missingAttributionLinks = links.filter((link) => attributionNeededLinks.has(link))');
   expect(ingest).toContain('links.slice(0, midpoint)');
   expect(ingest).toContain('links.slice(midpoint)');
   expect(ingest).toContain('attributionFailures');
