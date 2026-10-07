@@ -444,7 +444,8 @@ async function handler() {
   const rows = [...unique.values()];
   let inserted = 0;
   if (rows.length > 0) {
-    const existingLinks = new Set<string>();\n    const attributionNeededLinks = new Set<string>();
+    const existingLinks = new Set<string>();
+    const attributionNeededLinks = new Set<string>();
     for (let offset = 0; offset < rows.length; offset += INGEST_UPSERT_BATCH_SIZE) {
       const linkBatch = rows.slice(offset, offset + INGEST_UPSERT_BATCH_SIZE).map((row) => row.link);
       const { data: existingRows, error: existingError } = await supabaseAdmin
