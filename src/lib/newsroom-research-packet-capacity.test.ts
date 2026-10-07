@@ -17,4 +17,13 @@ describe("newsroom research packet capacity", () => {
     expect(route).not.toContain("runCloudflareJson");
     expect(route).not.toContain("newsroom_reserve_ai_generation");
   });
+  it("bounds feed hydration reads to avoid oversized PostgREST IN requests", () => {
+    expect(route).toContain("const HYDRATION_ID_BATCH_SIZE = 100");
+    expect(route).toContain("const HYDRATION_READ_CONCURRENCY = 2");
+    expect(route).toContain("const feedIdBatches = chunkValues(feedIds, HYDRATION_ID_BATCH_SIZE)");
+    expect(route).toContain("mapWithConcurrency(feedIdBatches, HYDRATION_READ_CONCURRENCY");
+    expect(route).not.toContain('.in("id", feedIds)');
+    expect(route).not.toContain('.in("feed_item_id", feedIds)');
+  });
+
 });
