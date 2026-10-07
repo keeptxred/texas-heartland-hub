@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 const packetBuilder = readFileSync("src/routes/api/public/hooks/build-newsroom-research-packets.ts", "utf8");
 const refresher = readFileSync("src/routes/api/public/hooks/refresh-published-newsroom.ts", "utf8");
 const workflow = readFileSync(".github/workflows/refresh-published-news.yml", "utf8");
-const cronCadence = readFileSync("supabase/migrations/20261006001500_align_newsroom_cron_cadence.sql", "utf8");
+const cronCadence = readFileSync("supabase/migrations/20261007152500_restore_reduced_newsroom_cron_cadence.sql", "utf8");
 
 describe("published newsroom freshness refresh", () => {
   it("keeps rebuilding source packets after a candidate is published", () => {
