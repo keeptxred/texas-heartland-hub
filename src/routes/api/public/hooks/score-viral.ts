@@ -43,6 +43,28 @@ function stableJson(value: unknown): string {
   return JSON.stringify(value);
 }
 
+async function updateFeedRowWithRetry(
+  supabase: any,
+  id: number,
+  values: Record<string, unknown>,
+): Promise<{ retries: number; error?: { code?: string; message: string } }> {
+  let retries = 0;
+  while (true) {
+    const { error } = await supabase.from("texas_news_feed").update(values).eq("id", id);
+    if (!error) return { retries };
+
+    const timedOut =
+      error.code === "57014" ||
+      /statement timeout|canceling statement due to statement timeout/i.test(error.message ?? "");
+    if (!timedOut || retries >= 2) {
+      return { retries, error: { code: error.code, message: error.message } };
+    }
+
+    retries += 1;
+    await new Promise((resolve) => setTimeout(resolve, 250 * retries));
+  }
+}
+
 const POST_REWRITE_REVIEW_RE =
   /\b(election|elections|candidate|candidates|campaign|campaigns|ballot|ballots|voter|voters|voting|primary|runoff|poll|polls|polling|redistrict(?:ing)?|lawsuit|sues?|sued|court|judge|ruling|injunction|indicted|indictment|arrested|charged|charges|suspect|murder|homicide|shooting|killed|dead|death|dies|sexual assault|rape|abuse|fraud claim|unverified|threat(?:en|ened|ening)?|swatting)\b/i;
 
@@ -230,6 +252,9 @@ async function scoreRecent(request: Request) {
   const now = new Date().toISOString();
   let updated = 0;
   let skippedUnchanged = 0;
+  let updateRetries = 0;
+  let updateFailures = 0;
+  const updateErrors: Array<{ id: number; code: string | null; message: string }> = [];
   let readyFlagged = 0;
   let autoPublishFlagged = 0;
   let reviewFlagged = 0;
@@ -322,22 +347,32 @@ async function scoreRecent(request: Request) {
     if (unchanged) {
       skippedUnchanged += 1;
     } else {
-      const { error: updateError } = await supabase
-        .from("texas_news_feed")
-        .update({
-          viral_score: result.viralScore,
-          classification_confidence: result.classificationConfidence,
-          viral_signals: nextViralSignals,
-          texas_relevance_score: result.texasRelevanceScore,
-          source_reputation_score: result.sourceReputationScore,
-          routing_type: result.routingType,
-          trend_velocity: trendVelocity,
-          source_count: sourceCount,
-          ready_for_rewrite: readyForRewrite,
-          viral_scored_at: now,
-        })
-        .eq("id", row.id);
-      if (!updateError) updated += 1;
+      const updateResult = await updateFeedRowWithRetry(supabase, row.id, {
+        viral_score: result.viralScore,
+        classification_confidence: result.classificationConfidence,
+        viral_signals: nextViralSignals,
+        texas_relevance_score: result.texasRelevanceScore,
+        source_reputation_score: result.sourceReputationScore,
+        routing_type: result.routingType,
+        trend_velocity: trendVelocity,
+        source_count: sourceCount,
+        ready_for_rewrite: readyForRewrite,
+        viral_scored_at: now,
+      });
+      updateRetries += updateResult.retries;
+      if (!updateResult.error) {
+        updated += 1;
+      } else {
+        updateFailures += 1;
+        if (updateErrors.length < 10) {
+          updateErrors.push({
+            id: row.id,
+            code: updateResult.error.code ?? null,
+            message: updateResult.error.message,
+          });
+        }
+        console.warn("[score-viral] feed update failed", row.id, updateResult.error.code, updateResult.error.message);
+      }
     }
 
     if (result.viralScore >= VIRAL_READY_MIN_SCORE && hasVideo && result.classificationConfidence >= 0.8) {
@@ -450,6 +485,9 @@ async function scoreRecent(request: Request) {
     scanned: rows.length,
     updated,
     skippedUnchanged,
+    updateRetries,
+    updateFailures,
+    updateErrors,
     readyFlagged,
     autoPublishFlagged,
     reviewFlagged,
