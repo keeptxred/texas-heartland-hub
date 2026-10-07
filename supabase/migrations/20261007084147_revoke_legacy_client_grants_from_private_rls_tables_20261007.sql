@@ -1,0 +1,13 @@
+revoke all privileges on table public.ai_generation_budget from anon, authenticated;
+revoke all privileges on table public.ai_rewrite_cache from anon, authenticated;
+revoke all privileges on table public.ai_rewrite_failures from anon, authenticated;
+revoke all privileges on table public.ai_rewrite_manual_bypass from anon, authenticated;
+revoke all privileges on table public.ai_rewrite_usage from anon, authenticated;
+revoke all privileges on table public.article_category_reclassification_log from anon, authenticated;
+revoke all privileges on table public.legislative_source_records from anon, authenticated;
+revoke all privileges on table public.legislative_sync_runs from anon, authenticated;
+revoke all privileges on table public.news_feed_normalization from anon, authenticated;
+revoke all privileges on table public.news_story_clusters from anon, authenticated;
+revoke all privileges on table public.newsroom_daily_briefs from anon, authenticated;
+revoke all privileges on table public.newsroom_generation_drafts from anon, authenticated;
+revoke all privileges on table public.newsroom_source_page_fetch_state from anon, authenticated;
