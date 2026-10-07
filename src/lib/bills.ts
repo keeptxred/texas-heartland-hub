@@ -62,7 +62,6 @@ const STATUS_GROUPS: Record<string, string[]> = {
 };
 
 const STATE_LEGISLATORS = [...TEXAS_HOUSE_MEMBERS, ...TEXAS_SENATE_MEMBERS];
-const BILL_DIRECTORY_PAGE_SIZE = 1000;
 
 const normalizePersonToken = (value = '') =>
   value
@@ -159,22 +158,9 @@ export async function listBills({ search = '', status = '', legislature, chamber
 }
 
 export async function getBillFilterOptions() {
-  const rows: any[] = [];
-  for (let from = 0; ; from += BILL_DIRECTORY_PAGE_SIZE) {
-    const { data, error } = await db
-      .from('bills')
-      .select('legislature_number,session_code,bill_type,chamber')
-      .eq('is_active', true)
-      .order('legislature_number', { ascending: false })
-      .order('session_code', { ascending: true })
-      .order('bill_type', { ascending: true })
-      .order('chamber', { ascending: true })
-      .range(from, from + BILL_DIRECTORY_PAGE_SIZE - 1);
-    if (error) throw error;
-    const page = data ?? [];
-    rows.push(...page);
-    if (page.length < BILL_DIRECTORY_PAGE_SIZE) break;
-  }
+  const { data, error } = await db.rpc('list_active_bill_filter_options');
+  if (error) throw error;
+  const rows = data ?? [];
   const legislatures = [...new Map(rows.map((row: any) => [row.legislature_number, { value: row.legislature_number, label: `${row.legislature_number}th Legislature${row.session_code ? ` · ${row.session_code}` : ''}` }])).values()];
   const billTypes = [...new Set(rows.map((row: any) => row.bill_type).filter(Boolean))].sort();
   const chambers = [...new Set(rows.map((row: any) => row.chamber).filter(Boolean))].sort();
