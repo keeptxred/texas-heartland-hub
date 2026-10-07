@@ -163,6 +163,24 @@ for (const token of [
 for (const token of ["/admin/coverage-gaps", "/api/public/newsroom-health", "/api/public/hooks/ingest-feeds"]) {
   if (!smoke.includes(token)) throw new Error(`Live newsroom smoke contract missing: ${token}`);
 }
+for (const source of [
+  "Texas City Municipal News — CivicEngage",
+  "Sinton Municipal Agendas — CivicEngage",
+  "Webster Municipal Agendas — CivicEngage",
+  "Paris Municipal News — CivicEngage",
+  "Galveston Municipal News — CivicEngage",
+]) {
+  if (!smoke.includes(source)) throw new Error(`Live newsroom smoke current CivicEngage source missing: ${source}`);
+}
+for (const retired of [
+  "Texas City Municipal Agendas — CivicEngage",
+  "Sinton City Council Agendas — CivicEngage",
+  "Webster City Council Agendas — CivicEngage",
+  "Paris Texas City Notices — CivicEngage",
+  "Galveston City Council Agendas — CivicEngage",
+]) {
+  if (smoke.includes(retired)) throw new Error(`Live newsroom smoke still references retired CivicEngage source: ${retired}`);
+}
 for (const token of [
   "backlog is reported but does not fail live availability",
   "failureRatio > 0.10",
