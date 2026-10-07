@@ -78,6 +78,7 @@ const GOOGLE_NEWS_RE = /^(?:https:\/\/news\.google\.com\/rss\/search|https:\/\/f
 const GOOGLE_FEEDS_PER_RUN = 10;
 // Keep trigger-heavy feed writes below the production statement timeout.
 const INGEST_UPSERT_BATCH_SIZE = 20;
+const ATTRIBUTION_BACKFILL_BATCH_SIZE = 20;
 const OFFICIAL_HYPERLOCAL_SOURCE_RE = /— CivicEngage$/i;
 const TEXAS_LOCATION_RE = /\b(texas|tx|amarillo|austin|beaumont|brownsville|college station|corpus christi|dallas|del rio|eagle pass|el paso|fort worth|galveston|harlingen|hereford|houston|killeen|laredo|longview|lubbock|mcallen|midland|odessa|san angelo|san antonio|temple|texarkana|tyler|victoria|waco|webb county|bexar county|harris county|tarrant county|travis county|denton county|collin county|rio grande valley|panhandle)\b/i;
 const HTML_NAV_RE = /\b(home|about|contact|privacy|terms|advertise|subscribe|newsletter|weather|watch live|shop|careers|login|sign in|search|facebook|instagram|youtube|twitter|x)\b/i;
@@ -369,6 +370,54 @@ async function upsertFeedRowsAdaptive(
   return { inserted: 0, splits: 0, error: { code: error.code, message: error.message } };
 }
 
+async function backfillTrendSourceAdaptive(
+  supabaseAdmin: any,
+  trendSource: string,
+  links: string[],
+  singletonRetry = 0,
+): Promise<{ splits: number; retries: number; error?: { code?: string; message: string } }> {
+  const { error } = await supabaseAdmin
+    .from("texas_news_feed")
+    .update({ trend_source: trendSource })
+    .in("link", links)
+    .is("trend_source", null);
+
+  if (!error) return { splits: 0, retries: singletonRetry };
+
+  const timedOut =
+    error.code === "57014" ||
+    /statement timeout|canceling statement due to statement timeout/i.test(error.message ?? "");
+
+  if (!timedOut) {
+    return { splits: 0, retries: singletonRetry, error: { code: error.code, message: error.message } };
+  }
+
+  if (links.length > 1) {
+    const midpoint = Math.ceil(links.length / 2);
+    const left = await backfillTrendSourceAdaptive(supabaseAdmin, trendSource, links.slice(0, midpoint));
+    if (left.error) return left;
+    const right = await backfillTrendSourceAdaptive(supabaseAdmin, trendSource, links.slice(midpoint));
+    if (right.error) {
+      return {
+        splits: left.splits + right.splits + 1,
+        retries: left.retries + right.retries,
+        error: right.error,
+      };
+    }
+    return {
+      splits: left.splits + right.splits + 1,
+      retries: left.retries + right.retries,
+    };
+  }
+
+  if (singletonRetry < 2) {
+    await new Promise((resolve) => setTimeout(resolve, 250 * (singletonRetry + 1)));
+    return backfillTrendSourceAdaptive(supabaseAdmin, trendSource, links, singletonRetry + 1);
+  }
+
+  return { splits: 0, retries: singletonRetry, error: { code: error.code, message: error.message } };
+}
+
 async function handler() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { sources, skippedLegacyYoutube } = await loadSources();
@@ -394,13 +443,18 @@ async function handler() {
   }
   const rows = [...unique.values()];
   let inserted = 0;
+  let attributionBatches = 0;
+  let attributionSplits = 0;
+  let attributionRetries = 0;
+  let attributionFailures = 0;
   if (rows.length > 0) {
     const existingLinks = new Set<string>();
+    const attributionNeededLinks = new Set<string>();
     for (let offset = 0; offset < rows.length; offset += INGEST_UPSERT_BATCH_SIZE) {
       const linkBatch = rows.slice(offset, offset + INGEST_UPSERT_BATCH_SIZE).map((row) => row.link);
       const { data: existingRows, error: existingError } = await supabaseAdmin
         .from("texas_news_feed")
-        .select("link")
+        .select("link,trend_source")
         .in("link", linkBatch);
       if (existingError) {
         return Response.json(
@@ -408,8 +462,10 @@ async function handler() {
           { status: 500 },
         );
       }
-      for (const existingRow of (existingRows ?? []) as Array<{ link: string | null }>) {
-        if (existingRow.link) existingLinks.add(existingRow.link);
+      for (const existingRow of (existingRows ?? []) as Array<{ link: string | null; trend_source: string | null }>) {
+        if (!existingRow.link) continue;
+        existingLinks.add(existingRow.link);
+        if (existingRow.trend_source == null) attributionNeededLinks.add(existingRow.link);
       }
     }
 
@@ -434,14 +490,25 @@ async function handler() {
       inserted += result.inserted;
       adaptiveSplits += result.splits;
     }
-    await Promise.all([...attributionGroups.entries()].map(async ([trendSource, links]) => {
-      const { error: attributionError } = await supabaseAdmin
-        .from("texas_news_feed")
-        .update({ trend_source: trendSource })
-        .in("link", links)
-        .is("trend_source", null);
-      if (attributionError) console.warn("[ingest-feeds] trend_source backfill failed", trendSource, attributionError.message);
-    }));
+    for (const [trendSource, links] of attributionGroups.entries()) {
+      const missingAttributionLinks = links.filter((link) => attributionNeededLinks.has(link));
+      for (let offset = 0; offset < missingAttributionLinks.length; offset += ATTRIBUTION_BACKFILL_BATCH_SIZE) {
+        const linkBatch = missingAttributionLinks.slice(offset, offset + ATTRIBUTION_BACKFILL_BATCH_SIZE);
+        attributionBatches += 1;
+        const result = await backfillTrendSourceAdaptive(supabaseAdmin, trendSource, linkBatch);
+        attributionSplits += result.splits;
+        attributionRetries += result.retries;
+        if (result.error) {
+          attributionFailures += 1;
+          console.warn(
+            "[ingest-feeds] trend_source backfill failed",
+            trendSource,
+            result.error.code,
+            result.error.message,
+          );
+        }
+      }
+    }
   }
   const diag = results.map(({ items, ...rest }) => ({ ...rest, count: items.length }));
   const successfulResults = results.filter((result) => result.status >= 200 && result.status < 300);
@@ -460,6 +527,10 @@ async function handler() {
     healthySources: successfulResults.filter((result) => result.items.length > 0).length,
     quietSources: successfulResults.filter((result) => result.items.length === 0).length,
     failedSources: results.filter((result) => !(result.status >= 200 && result.status < 300)).length,
+    attributionBatches,
+    attributionSplits,
+    attributionRetries,
+    attributionFailures,
     diag,
   });
 }
