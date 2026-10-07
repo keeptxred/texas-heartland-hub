@@ -271,7 +271,7 @@ export const resolveArticleSlugRedirect = createServerFn({ method: "GET" })
     return { slug: resolveRedirectChain(map, data.slug) };
   });
 
-const SITEMAP_ARTICLE_PAGE_SIZE = 1000;
+const SITEMAP_ARTICLE_PAGE_SIZE = 100;
 const MAX_CLOUD_SITEMAP_ARTICLES = 45000;
 
 export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
