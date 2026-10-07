@@ -59,10 +59,9 @@ const checks = [
   {
     file: 'src/lib/bills.ts',
     required: [
-      "const BILL_DIRECTORY_PAGE_SIZE = 1000;",
+      "rpc('list_active_bill_filter_options')",
       ".order('last_action_date', { ascending: false, nullsFirst: false })",
       ".order('id', { ascending: true })",
-      ".range(from, from + BILL_DIRECTORY_PAGE_SIZE - 1)",
       "import { publicBillPath } from '@/lib/bill-public-path';",
       "eq('session_code', 'R')",
       'bills(id,legislature_number,session_code,bill_type,bill_number',
@@ -148,6 +147,9 @@ for (const check of checks) {
 }
 
 const bills = await readFile('src/lib/bills.ts', 'utf8');
+if (bills.includes('BILL_DIRECTORY_PAGE_SIZE') || bills.includes('.range(from, from + BILL_DIRECTORY_PAGE_SIZE - 1)')) {
+  errors.push('bill filter options must use the compact RPC instead of paginating the full active bill table');
+}
 if (bills.includes('`${SITE_URL}/bills?legislature=${bill.legislature_number}`')) {
   errors.push('bill structured breadcrumbs must not point to the filtered/noindex legislature URL');
 }
