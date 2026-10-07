@@ -10,4 +10,5 @@ test('score-viral preserves publisher attribution while consulting discovery pro
   expect(scorer).toContain('SOURCE_REPUTATION_FLOOR');
   expect(scorer).toContain('discovery_source: row.trend_source');
   expect(scorer).toContain('source_account: row.source');
+  expect(scorer).toContain('...(row.viral_signals ?? {})');
 });
