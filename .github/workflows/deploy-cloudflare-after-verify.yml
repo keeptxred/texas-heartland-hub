@@ -397,6 +397,12 @@ jobs:
           verify_reference "$PREVIEW_URL/elections/reference.json" election
           verify_reference "$PREVIEW_URL/bills/texas/89/sb/37/reference.json" bill
 
+      - name: Verify Keep Texas Red political-geography cluster
+        if: steps.revision.outputs.deploy == 'true'
+        env:
+          SITE_URL: ${{ env.PREVIEW_URL }}
+        run: python3 scripts/authority/verify-political-geography-production.py
+
       - name: Apply guarded one-time news history reconciliation
         if: steps.revision.outputs.deploy == 'true'
         shell: bash

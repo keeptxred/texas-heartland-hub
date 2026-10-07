@@ -23,6 +23,11 @@ const electionCentralSource = readFileSync(
   "utf8",
 );
 
+const verifiedDeployWorkflow = readFileSync(
+  new URL("../../.github/workflows/deploy-cloudflare-after-verify.yml", import.meta.url),
+  "utf8",
+);
+
 describe("Keep Texas Red supporting-content cluster", () => {
   it("keeps every political-geography authority page linked back to the pillar", () => {
     expect(TEXAS_POLITICAL_GEOGRAPHY_AUTHORITY_PAGES).toHaveLength(4);
@@ -70,5 +75,13 @@ describe("Keep Texas Red supporting-content cluster", () => {
     );
     expect(competitivenessSource).not.toContain("2026-09-24");
     expect(competitivenessSource).not.toContain("September 24, 2026");
+  });
+
+  it("keeps the full political-geography cluster in the verified deploy path", () => {
+    expect(verifiedDeployWorkflow).toContain("Verify Keep Texas Red political-geography cluster");
+    expect(verifiedDeployWorkflow).toContain("SITE_URL: ${{ env.PREVIEW_URL }}");
+    expect(verifiedDeployWorkflow).toContain(
+      "python3 scripts/authority/verify-political-geography-production.py",
+    );
   });
 });
