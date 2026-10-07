@@ -2,7 +2,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { listBills, normalizeBillType, type Bill } from '@/lib/bills';
 
 const db = supabase as any;
-const DIRECTORY_PAGE_SIZE = 1000;
 
 export type BillTypeSummary = {
   billType: string;
@@ -19,10 +18,10 @@ export type LegislatureBillDirectory = {
   lastActionDate: string | null;
 };
 
-type DirectoryRow = {
-  id: string;
+type DirectorySummaryRow = {
   bill_type: string;
   chamber: Bill['chamber'];
+  bill_count: number | string;
   last_action_date?: string | null;
 };
 
@@ -30,52 +29,38 @@ function validLegislature(value: number) {
   return Number.isInteger(value) && value > 0 && value < 200;
 }
 
-async function getLegislatureDirectoryRows(legislature: number): Promise<DirectoryRow[]> {
-  const rows: DirectoryRow[] = [];
-  for (let from = 0; ; from += DIRECTORY_PAGE_SIZE) {
-    const { data, error } = await db
-      .from('bills')
-      .select('id,bill_type,chamber,last_action_date')
-      .eq('is_active', true)
-      .eq('legislature_number', legislature)
-      .order('last_action_date', { ascending: false, nullsFirst: false })
-      .order('id')
-      .range(from, from + DIRECTORY_PAGE_SIZE - 1);
-    if (error) throw error;
-    const page = (data ?? []) as DirectoryRow[];
-    rows.push(...page);
-    if (page.length < DIRECTORY_PAGE_SIZE) return rows;
-  }
+async function getLegislatureDirectorySummary(legislature: number): Promise<DirectorySummaryRow[]> {
+  const { data, error } = await db.rpc('get_legislature_bill_directory_summary', {
+    p_legislature: legislature,
+  });
+  if (error) throw error;
+  return (data ?? []) as DirectorySummaryRow[];
 }
 
 export async function getLegislatureBillDirectory(legislature: number): Promise<LegislatureBillDirectory | null> {
   if (!validLegislature(legislature)) return null;
 
   const [rows, recent] = await Promise.all([
-    getLegislatureDirectoryRows(legislature),
+    getLegislatureDirectorySummary(legislature),
     listBills({ legislature, limit: 24, offset: 0 }),
   ]);
   if (rows.length === 0) return null;
 
   const grouped = new Map<string, BillTypeSummary>();
+  let totalCount = 0;
   let lastActionDate: string | null = null;
   for (const row of rows) {
     const billType = normalizeBillType(row.bill_type);
     if (!billType) continue;
-    const existing = grouped.get(billType);
-    if (existing) {
-      existing.count += 1;
-      if (row.last_action_date && (!existing.lastActionDate || row.last_action_date > existing.lastActionDate)) {
-        existing.lastActionDate = row.last_action_date;
-      }
-    } else {
-      grouped.set(billType, {
-        billType,
-        chamber: row.chamber,
-        count: 1,
-        lastActionDate: row.last_action_date ?? null,
-      });
-    }
+    const count = Number(row.bill_count);
+    if (!Number.isFinite(count) || count < 0) continue;
+    totalCount += count;
+    grouped.set(billType, {
+      billType,
+      chamber: row.chamber,
+      count,
+      lastActionDate: row.last_action_date ?? null,
+    });
     if (row.last_action_date && (!lastActionDate || row.last_action_date > lastActionDate)) {
       lastActionDate = row.last_action_date;
     }
@@ -88,7 +73,7 @@ export async function getLegislatureBillDirectory(legislature: number): Promise<
 
   return {
     legislature,
-    totalCount: rows.length,
+    totalCount,
     billTypes,
     recentBills: recent.bills,
     lastActionDate,
