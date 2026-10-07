@@ -330,6 +330,45 @@ async function fetchSource(source: Source): Promise<FetchResult> {
   return { source: source.name, url: source.url, status: fetched.status, attempts: fetched.attempts, mode: source.mode, items: items.slice(0, 30) };
 }
 
+async function upsertFeedRowsAdaptive(
+  supabaseAdmin: any,
+  batch: IngestRow[],
+  singletonRetry = 0,
+): Promise<{ inserted: number; splits: number; error?: { code?: string; message: string } }> {
+  const { count, error } = await supabaseAdmin
+    .from("texas_news_feed")
+    .upsert(batch, { onConflict: "link", ignoreDuplicates: true, count: "exact" });
+
+  if (!error) return { inserted: count ?? 0, splits: 0 };
+
+  const timedOut =
+    error.code === "57014" ||
+    /statement timeout|canceling statement due to statement timeout/i.test(error.message ?? "");
+
+  if (!timedOut) {
+    return { inserted: 0, splits: 0, error: { code: error.code, message: error.message } };
+  }
+
+  if (batch.length > 1) {
+    const midpoint = Math.ceil(batch.length / 2);
+    const left = await upsertFeedRowsAdaptive(supabaseAdmin, batch.slice(0, midpoint));
+    if (left.error) return left;
+    const right = await upsertFeedRowsAdaptive(supabaseAdmin, batch.slice(midpoint));
+    if (right.error) return { inserted: left.inserted + right.inserted, splits: left.splits + right.splits + 1, error: right.error };
+    return {
+      inserted: left.inserted + right.inserted,
+      splits: left.splits + right.splits + 1,
+    };
+  }
+
+  if (singletonRetry < 2) {
+    await new Promise((resolve) => setTimeout(resolve, 250 * (singletonRetry + 1)));
+    return upsertFeedRowsAdaptive(supabaseAdmin, batch, singletonRetry + 1);
+  }
+
+  return { inserted: 0, splits: 0, error: { code: error.code, message: error.message } };
+}
+
 async function handler() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { sources, skippedLegacyYoutube } = await loadSources();
@@ -375,11 +414,25 @@ async function handler() {
     }
 
     const newRows = rows.filter((row) => !existingLinks.has(row.link));
+    let adaptiveSplits = 0;
     for (let offset = 0; offset < newRows.length; offset += INGEST_UPSERT_BATCH_SIZE) {
       const batch = newRows.slice(offset, offset + INGEST_UPSERT_BATCH_SIZE);
-      const { count, error } = await supabaseAdmin.from("texas_news_feed").upsert(batch, { onConflict: "link", ignoreDuplicates: true, count: "exact" });
-      if (error) return Response.json({ ok: false, error: error.message, failedBatchOffset: offset, batchSize: batch.length }, { status: 500 });
-      inserted += count ?? 0;
+      const result = await upsertFeedRowsAdaptive(supabaseAdmin, batch);
+      if (result.error) {
+        return Response.json(
+          {
+            ok: false,
+            error: result.error.message,
+            errorCode: result.error.code ?? null,
+            failedBatchOffset: offset,
+            batchSize: batch.length,
+            adaptiveSplits,
+          },
+          { status: 500 },
+        );
+      }
+      inserted += result.inserted;
+      adaptiveSplits += result.splits;
     }
     await Promise.all([...attributionGroups.entries()].map(async ([trendSource, links]) => {
       const { error: attributionError } = await supabaseAdmin

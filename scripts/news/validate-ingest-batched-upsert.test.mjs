@@ -12,5 +12,10 @@ test('feed ingestion writes only new candidates in bounded database batches', ()
   expect(ingest).toContain('newRows.slice(offset, offset + INGEST_UPSERT_BATCH_SIZE)');
   expect(ingest).toContain('failedExistingLinkOffset: offset');
   expect(ingest).toContain('failedBatchOffset: offset');
+  expect(ingest).toContain('async function upsertFeedRowsAdaptive');
+  expect(ingest).toContain('error.code === "57014"');
+  expect(ingest).toContain('batch.slice(0, midpoint)');
+  expect(ingest).toContain('batch.slice(midpoint)');
+  expect(ingest).toContain('singletonRetry < 2');
   expect(ingest).not.toContain('.upsert(rows, { onConflict: "link"');
 });
