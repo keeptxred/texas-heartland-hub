@@ -31,12 +31,12 @@ The fallback works as follows:
 2. inspect changes under `supabase/migrations/`;
 3. allow only newly added, correctly versioned migration files in verify-only mode;
 4. fail closed if an existing migration was edited, deleted, or renamed because a version-only ledger check cannot prove SQL-content equivalence;
-5. call production `verify_repo_migrations(text[])` using only the checked-in public Supabase URL and publishable key; and
-6. succeed only when production reports every newly added migration version in that revision as already applied.
+5. query production `repo_migration_public_ledger` using only the checked-in public Supabase URL and publishable key; and
+6. succeed only when production exposes every newly added migration version in that revision as already applied.
 
 If the revision changes only the migration workflow or verifier and adds no SQL migration, the current-delta parity check succeeds with a zero-version result. It does not claim that the historical repository and historical Supabase ledger are globally identical.
 
-The RPC exposes only boolean ledger membership for caller-supplied migration version identifiers. It cannot run SQL or mutate the database.
+The public ledger exposes only applied migration version identifiers. It contains no SQL text and cannot run SQL or mutate the database.
 
 This fallback is intended for the case where a newly introduced repository migration was already applied through a controlled production operation but GitHub has no database write secret. A genuinely new unapplied migration still stops the deployment chain until a write transport is configured or the migration is applied through another controlled path.
 
@@ -60,11 +60,11 @@ For compatibility, the workflow still supports the older linked-project method w
 
 Never commit the database URI or database password to the repository. Keep the URI only in GitHub Actions secrets. The workflow does not print the secret value.
 
-The read-only parity fallback intentionally uses only public frontend Supabase configuration and a narrowly scoped read-only RPC. Do not replace that public key with a service-role key.
+The read-only parity fallback intentionally uses only public frontend Supabase configuration and a narrowly scoped SELECT-only ledger. Do not replace that public key with a service-role key.
 
-### Security note: read-only parity RPC
+### Security note: read-only parity ledger
 
-`public.verify_repo_migrations(text[])` is intentionally callable by the `anon` and `authenticated` API roles because verify-only GitHub Actions uses the checked-in publishable key rather than a database-write credential. The function is `SECURITY DEFINER` only so it can read the otherwise private Supabase migration ledger and `repo_migration_equivalences`; its result is limited to the caller-supplied version strings plus an `applied` boolean, and it performs no writes.
+`public.repo_migration_public_ledger` mirrors only migration version identifiers from Supabase's private migration history. RLS permits `SELECT` to `anon` and `authenticated`; all write privileges remain revoked. A database trigger owned by `postgres` keeps the mirror synchronized whenever Supabase records, changes, or removes a migration version.
 
-Supabase Database Advisor lints 0028/0029 therefore flag this RPC by design. Do not silence those warnings by revoking the API-role grants unless the verify-only transport is replaced first. `PUBLIC` execute remains revoked, and migrations `20260919015904` / `20260919020008` record the September 19 security review and restoration of the required read-only contract.
+The older `public.verify_repo_migrations(text[])` RPC remains restricted to `service_role` and is no longer used by verify-only GitHub Actions. This avoids reopening a public `SECURITY DEFINER` function while still allowing CI to prove that newly added migration files are already present in production.
 
