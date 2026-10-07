@@ -245,7 +245,7 @@ const statusContracts = [
   ["query.eq('chamber', chamber)", 'chamber database query'],
   ["query.eq('bill_type', normalizeBillType(billType))", 'bill-type database query'],
   ['getBillFilterOptions', 'filter-option loader'],
-  ["select('legislature_number,session_code,bill_type,chamber')", 'session-aware filter-option query'],
+  ["rpc('list_active_bill_filter_options')", 'compact session-aware filter-option RPC'],
   ['new Map(rows.map', 'legislature/session option deduplication'],
 ];
 for (const [token, label] of statusContracts) {
