@@ -356,8 +356,27 @@ async function handler() {
   const rows = [...unique.values()];
   let inserted = 0;
   if (rows.length > 0) {
+    const existingLinks = new Set<string>();
     for (let offset = 0; offset < rows.length; offset += INGEST_UPSERT_BATCH_SIZE) {
-      const batch = rows.slice(offset, offset + INGEST_UPSERT_BATCH_SIZE);
+      const linkBatch = rows.slice(offset, offset + INGEST_UPSERT_BATCH_SIZE).map((row) => row.link);
+      const { data: existingRows, error: existingError } = await supabaseAdmin
+        .from("texas_news_feed")
+        .select("link")
+        .in("link", linkBatch);
+      if (existingError) {
+        return Response.json(
+          { ok: false, error: existingError.message, failedExistingLinkOffset: offset, batchSize: linkBatch.length },
+          { status: 500 },
+        );
+      }
+      for (const existingRow of (existingRows ?? []) as Array<{ link: string | null }>) {
+        if (existingRow.link) existingLinks.add(existingRow.link);
+      }
+    }
+
+    const newRows = rows.filter((row) => !existingLinks.has(row.link));
+    for (let offset = 0; offset < newRows.length; offset += INGEST_UPSERT_BATCH_SIZE) {
+      const batch = newRows.slice(offset, offset + INGEST_UPSERT_BATCH_SIZE);
       const { count, error } = await supabaseAdmin.from("texas_news_feed").upsert(batch, { onConflict: "link", ignoreDuplicates: true, count: "exact" });
       if (error) return Response.json({ ok: false, error: error.message, failedBatchOffset: offset, batchSize: batch.length }, { status: 500 });
       inserted += count ?? 0;
