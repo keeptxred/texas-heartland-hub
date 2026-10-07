@@ -200,7 +200,7 @@ const billHierarchy = sources.get('src/lib/bill-hierarchy.ts') || '';
 for (const [token, label] of [
   ['getLegislatureBillDirectory', 'Legislature hierarchy loader'],
   ['getBillTypePage', 'bill-type hierarchy loader'],
-  [".eq('legislature_number', legislature)", 'Legislature-scoped hierarchy query'],
+  ["rpc('get_legislature_bill_directory_summary'", 'compact Legislature directory summary RPC'],
   ['normalizeBillType', 'normalized bill-type hierarchy'],
   ['offset: (safePage - 1) * limit', 'bill-type hierarchy pagination'],
 ]) {
