@@ -19,3 +19,16 @@ test('feed ingestion writes only new candidates in bounded database batches', ()
   expect(ingest).toContain('singletonRetry < 2');
   expect(ingest).not.toContain('.upsert(rows, { onConflict: "link"');
 });
+
+
+test('feed attribution backfill is bounded, sequential, and timeout-resilient', () => {
+  expect(ingest).toContain('const ATTRIBUTION_BACKFILL_BATCH_SIZE = 20');
+  expect(ingest).toContain('async function backfillTrendSourceAdaptive');
+  expect(ingest).toContain('offset < links.length');
+  expect(ingest).toContain('links.slice(offset, offset + ATTRIBUTION_BACKFILL_BATCH_SIZE)');
+  expect(ingest).toContain('await backfillTrendSourceAdaptive(supabaseAdmin, trendSource, linkBatch)');
+  expect(ingest).toContain('links.slice(0, midpoint)');
+  expect(ingest).toContain('links.slice(midpoint)');
+  expect(ingest).toContain('attributionFailures');
+  expect(ingest).not.toContain('Promise.all([...attributionGroups.entries()]');
+});
