@@ -285,6 +285,7 @@ async function scoreRecent(request: Request) {
         viral_score: result.viralScore,
         classification_confidence: result.classificationConfidence,
         viral_signals: {
+          ...(row.viral_signals ?? {}),
           ...result.signals,
           source_reputation_reason: result.sourceReputationReason,
           discovery_source: row.trend_source,
