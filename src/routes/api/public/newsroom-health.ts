@@ -144,8 +144,13 @@ export const Route = createFileRoute("/api/public/newsroom-health")({
         let texasDefinedPublishedSample: PublishedRow[] = [];
         const optionalErrors: string[] = [];
 
-        const tdQueueResult = await supabaseAdmin.from("texasdefined_story_queue" as never).select("id", { count: "exact", head: true });
-        if (tdQueueResult.error) optionalErrors.push(tdQueueResult.error.message); else texasDefinedQueueCount = tdQueueResult.count ?? 0;
+        const tdQueueResult = await supabaseAdmin
+          .from("newsroom_queue_counters" as never)
+          .select("counter_value")
+          .eq("counter_key", "texasdefined_story_queue")
+          .single();
+        if (tdQueueResult.error) optionalErrors.push(tdQueueResult.error.message);
+        else texasDefinedQueueCount = Number((tdQueueResult.data as unknown as { counter_value?: number | string | null } | null)?.counter_value ?? 0);
 
         const tdReadyResult = await supabaseAdmin.from("texasdefined_ready_queue" as never)
           .select("id,title,description,source,link,target_section,pub_date", { count: "exact" }).order("pub_date", { ascending: false }).limit(10);
