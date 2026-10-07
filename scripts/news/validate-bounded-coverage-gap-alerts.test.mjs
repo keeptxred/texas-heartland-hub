@@ -2,12 +2,13 @@ import { expect, test } from 'vitest';
 import fs from 'node:fs';
 
 const migration = fs.readFileSync(
-  'supabase/migrations/20260926125500_bound_coverage_gap_alerts.sql',
+  'supabase/migrations/20261007153000_single_scan_coverage_gap_alerts.sql',
   'utf8',
 );
 
 test('coverage gap escalation keeps open alerts bounded to the current top-N set', () => {
   expect(migration).toContain('limit p_limit');
+  expect(migration).toContain('eligible_gaps as materialized');
   expect(migration).toContain('current_top');
   expect(migration).toContain("a.incident_key like 'coverage-gap-%'");
   expect(migration).toContain('not exists (select 1 from current_top');
