@@ -34,6 +34,15 @@ const DISCOVERY_FEEDS = [
 const AUTO_PUBLISH_PER_RUN = 6;
 const MAX_AUTO_PUBLISH_ATTEMPTS_PER_RUN = 18;
 
+function stableJson(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(stableJson).join(",")}]`;
+  if (value && typeof value === "object") {
+    const entries = Object.entries(value as Record<string, unknown>).sort(([a], [b]) => a.localeCompare(b));
+    return `{${entries.map(([key, entry]) => `${JSON.stringify(key)}:${stableJson(entry)}`).join(",")}}`;
+  }
+  return JSON.stringify(value);
+}
+
 const POST_REWRITE_REVIEW_RE =
   /\b(election|elections|candidate|candidates|campaign|campaigns|ballot|ballots|voter|voters|voting|primary|runoff|poll|polls|polling|redistrict(?:ing)?|lawsuit|sues?|sued|court|judge|ruling|injunction|indicted|indictment|arrested|charged|charges|suspect|murder|homicide|shooting|killed|dead|death|dies|sexual assault|rape|abuse|fraud claim|unverified|threat(?:en|ened|ening)?|swatting)\b/i;
 
@@ -163,7 +172,7 @@ async function scoreRecent(request: Request) {
   const sinceIso = new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString();
   const { data, error } = await supabase
     .from("texas_news_feed")
-    .select("id,title,source,trend_source,link,pub_date,description,viral_score,viral_signals,internal_slug")
+    .select("id,title,source,trend_source,link,pub_date,description,viral_score,classification_confidence,viral_signals,texas_relevance_score,source_reputation_score,routing_type,trend_velocity,source_count,ready_for_rewrite,internal_slug")
     .gte("pub_date", sinceIso)
     .order("pub_date", { ascending: false })
     .limit(300);
@@ -178,7 +187,14 @@ async function scoreRecent(request: Request) {
     pub_date: string;
     description: string | null;
     viral_score: number | null;
+    classification_confidence: number | null;
     viral_signals: Record<string, unknown> | null;
+    texas_relevance_score: number | null;
+    source_reputation_score: number | null;
+    routing_type: string | null;
+    trend_velocity: number | null;
+    source_count: number | null;
+    ready_for_rewrite: boolean | null;
     internal_slug: string | null;
   }>;
 
@@ -213,6 +229,7 @@ async function scoreRecent(request: Request) {
 
   const now = new Date().toISOString();
   let updated = 0;
+  let skippedUnchanged = 0;
   let readyFlagged = 0;
   let autoPublishFlagged = 0;
   let reviewFlagged = 0;
@@ -279,33 +296,49 @@ async function scoreRecent(request: Request) {
       autoPublishCandidates.push({ id: row.id, score: result.editorialValueScore, pubDate: row.pub_date });
     }
 
-    const { error: updateError } = await supabase
-      .from("texas_news_feed")
-      .update({
-        viral_score: result.viralScore,
-        classification_confidence: result.classificationConfidence,
-        viral_signals: {
-          ...(row.viral_signals ?? {}),
-          ...result.signals,
-          source_reputation_reason: result.sourceReputationReason,
-          discovery_source: row.trend_source,
-          has_video: hasVideo,
-          editorial_value_score: result.editorialValueScore,
-          editorial_lane: persistedEditorialLane,
-          editorial_signals: result.editorialSignals,
-          auto_publish_eligible: autoPublish,
-          post_rewrite_review_required: postRewriteReviewRequired,
-        },
-        texas_relevance_score: result.texasRelevanceScore,
-        source_reputation_score: result.sourceReputationScore,
-        routing_type: result.routingType,
-        trend_velocity: trendVelocity,
-        source_count: sourceCount,
-        ready_for_rewrite: readyForRewrite,
-        viral_scored_at: now,
-      })
-      .eq("id", row.id);
-    if (!updateError) updated += 1;
+    const nextViralSignals = {
+      ...(row.viral_signals ?? {}),
+      ...result.signals,
+      source_reputation_reason: result.sourceReputationReason,
+      discovery_source: row.trend_source,
+      has_video: hasVideo,
+      editorial_value_score: result.editorialValueScore,
+      editorial_lane: persistedEditorialLane,
+      editorial_signals: result.editorialSignals,
+      auto_publish_eligible: autoPublish,
+      post_rewrite_review_required: postRewriteReviewRequired,
+    };
+    const unchanged =
+      row.viral_score === result.viralScore &&
+      row.classification_confidence === result.classificationConfidence &&
+      row.texas_relevance_score === result.texasRelevanceScore &&
+      row.source_reputation_score === result.sourceReputationScore &&
+      row.routing_type === result.routingType &&
+      row.trend_velocity === trendVelocity &&
+      row.source_count === sourceCount &&
+      row.ready_for_rewrite === readyForRewrite &&
+      stableJson(row.viral_signals ?? {}) === stableJson(nextViralSignals);
+
+    if (unchanged) {
+      skippedUnchanged += 1;
+    } else {
+      const { error: updateError } = await supabase
+        .from("texas_news_feed")
+        .update({
+          viral_score: result.viralScore,
+          classification_confidence: result.classificationConfidence,
+          viral_signals: nextViralSignals,
+          texas_relevance_score: result.texasRelevanceScore,
+          source_reputation_score: result.sourceReputationScore,
+          routing_type: result.routingType,
+          trend_velocity: trendVelocity,
+          source_count: sourceCount,
+          ready_for_rewrite: readyForRewrite,
+          viral_scored_at: now,
+        })
+        .eq("id", row.id);
+      if (!updateError) updated += 1;
+    }
 
     if (result.viralScore >= VIRAL_READY_MIN_SCORE && hasVideo && result.classificationConfidence >= 0.8) {
       const { data: existing } = await supabase
@@ -416,6 +449,7 @@ async function scoreRecent(request: Request) {
     discovery,
     scanned: rows.length,
     updated,
+    skippedUnchanged,
     readyFlagged,
     autoPublishFlagged,
     reviewFlagged,
