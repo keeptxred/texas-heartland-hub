@@ -13,6 +13,8 @@ const CANDIDATE_LIMIT = 500;
 // the work at the highest-scored candidate sources first.
 const SOURCE_PAGE_FETCH_LIMIT = 40;
 const SOURCE_PAGE_CONCURRENCY = 4;
+const HYDRATION_ID_BATCH_SIZE = 100;
+const HYDRATION_READ_CONCURRENCY = 2;
 // A blocked or already-short page must not consume one of the same 40 fetch
 // slots every 15-minute packet cycle. Explicit targeted hydration can still be
 // used at any time, but automatic retries cool down for six hours.
@@ -84,6 +86,12 @@ async function mapWithConcurrency<T, R>(items: readonly T[], limit: number, fn: 
   return output;
 }
 
+function chunkValues<T>(values: readonly T[], size: number): T[][] {
+  const chunks: T[][] = [];
+  for (let index = 0; index < values.length; index += size) chunks.push(values.slice(index, index + size));
+  return chunks;
+}
+
 async function handler() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   // New newsroom tables and recent feed columns intentionally lead the generated Database type.
@@ -123,28 +131,37 @@ async function handler() {
 
   const feedIds = [...new Set(memberships.map((row) => row.feed_item_id))];
   let feeds: FeedPacketRow[] = [];
-  if (feedIds.length) {
-    const { data: feedData, error: feedError } = await newsroomDb
-      .from("texas_news_feed")
-      .select("id,title,source,link,pub_date,description,extracted_body,source_reputation_score")
-      .in("id", feedIds);
+  const feedIdBatches = chunkValues(feedIds, HYDRATION_ID_BATCH_SIZE);
+  if (feedIdBatches.length) {
+    const feedResults = await mapWithConcurrency(feedIdBatches, HYDRATION_READ_CONCURRENCY, async (batch) => {
+      return newsroomDb
+        .from("texas_news_feed")
+        .select("id,title,source,link,pub_date,description,extracted_body,source_reputation_score")
+        .in("id", batch);
+    });
+    const feedError = feedResults.find((result) => result.error)?.error;
     if (feedError) return Response.json({ ok: false, error: feedError.message }, { status: 500 });
-    feeds = (feedData ?? []) as FeedPacketRow[];
+    feeds = feedResults.flatMap((result) => result.data ?? []) as FeedPacketRow[];
   }
 
   const sourcePageStateById = new Map<number, SourcePageFetchStateRow>();
-  if (feedIds.length) {
-    const { data: stateData, error: stateError } = await newsroomDb
-      .from("newsroom_source_page_fetch_state")
-      .select("feed_item_id,last_attempt_at,last_success_at,last_result,chars")
-      .in("feed_item_id", feedIds);
+  if (feedIdBatches.length) {
+    const stateResults = await mapWithConcurrency(feedIdBatches, HYDRATION_READ_CONCURRENCY, async (batch) => {
+      return newsroomDb
+        .from("newsroom_source_page_fetch_state")
+        .select("feed_item_id,last_attempt_at,last_success_at,last_result,chars")
+        .in("feed_item_id", batch);
+    });
+    const stateError = stateResults.find((result) => result.error)?.error;
     // Stay backward-compatible if application code reaches production before
     // the migration. Cooldown is an optimization/safety valve, not a reason to
     // block packet construction.
     if (stateError) {
       console.warn("[newsroom-packets] source-page fetch state read failed", stateError.message);
     } else {
-      for (const row of (stateData ?? []) as SourcePageFetchStateRow[]) sourcePageStateById.set(row.feed_item_id, row);
+      for (const result of stateResults) {
+        for (const row of (result.data ?? []) as SourcePageFetchStateRow[]) sourcePageStateById.set(row.feed_item_id, row);
+      }
     }
   }
 
