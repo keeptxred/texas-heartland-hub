@@ -87,11 +87,10 @@ export const Route = createFileRoute("/api/public/newsroom-health")({
         const oneDayAgoMs = now - 24 * 60 * 60 * 1000;
 
         const [gapResult, sourcesResult, fetchStateResult, reconciliationResult, ktrPublishedResult] = await Promise.all([
-          supabaseAdmin
-            .from("news_coverage_gaps" as never)
-            .select("id", { count: "exact", head: true })
-            .eq("gap_reason", "article_generation_or_publish_gap")
-            .lt("pub_date", publicationGapCutoff),
+          supabaseAdmin.rpc(
+            "count_overdue_news_coverage_gaps" as never,
+            { p_cutoff: publicationGapCutoff } as never,
+          ),
           supabaseAdmin.from("content_sources" as never).select("source_name,rss_url,category").eq("enabled", true).not("rss_url", "is", null),
           supabaseAdmin
             .from("news_source_fetch_state" as never)
@@ -290,7 +289,7 @@ export const Route = createFileRoute("/api/public/newsroom-health")({
           flyoverReviewReadyCount: flyoverCoverage.filter((item) => item.disposition === "review_ready").length,
           flyoverOutOfScopeCount: flyoverCoverage.filter((item) => item.disposition === "out_of_scope").length,
           flyoverSourceNeededCount: flyoverCoverage.filter((item) => item.disposition === "source_needed").length,
-          coverageGapCount: gapResult.count ?? 0,
+          coverageGapCount: Number(gapResult.data ?? 0),
           coverageGapSlaHours: 10,
           sourceCount: sources.length,
           sourceStatusCounts: statusCounts,

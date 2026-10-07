@@ -36,7 +36,7 @@ type DailyArticleRow = DailyArticle & {
   content_quality_score?: number | null;
 };
 
-const ARTICLE_PAGE_SIZE = 1000;
+const ARTICLE_PAGE_SIZE = 100;
 const DAILY_ARTICLE_SELECT = "slug,category,title,dek,author,source_name,source_url,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,seo_keywords,ctr_score,headline_variants,published_at,kind,score,is_breaking,body_json,quality_flags,content_quality_score";
 
 function getSupabaseClient() {

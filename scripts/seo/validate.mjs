@@ -174,7 +174,7 @@ for (const required of [
 
 const sitemapArticleLoader = contents.get("src/lib/evergreen.functions.ts") ?? "";
 for (const required of [
-  "const SITEMAP_ARTICLE_PAGE_SIZE = 1000;",
+  "const SITEMAP_ARTICLE_PAGE_SIZE = 100;",
   "const MAX_CLOUD_SITEMAP_ARTICLES = 45000;",
   ".select(\"slug,title,dek,category,discover_category,source_name,source_url,published_at,updated_at,image_url,featured_image_url,image_generation_status,kind,body_json,quality_flags,content_quality_score\")",
   ".range(from, from + SITEMAP_ARTICLE_PAGE_SIZE - 1)",
