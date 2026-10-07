@@ -443,6 +443,10 @@ async function handler() {
   }
   const rows = [...unique.values()];
   let inserted = 0;
+  let attributionBatches = 0;
+  let attributionSplits = 0;
+  let attributionRetries = 0;
+  let attributionFailures = 0;
   if (rows.length > 0) {
     const existingLinks = new Set<string>();
     const attributionNeededLinks = new Set<string>();
@@ -486,10 +490,6 @@ async function handler() {
       inserted += result.inserted;
       adaptiveSplits += result.splits;
     }
-    let attributionBatches = 0;
-    let attributionSplits = 0;
-    let attributionRetries = 0;
-    let attributionFailures = 0;
     for (const [trendSource, links] of attributionGroups.entries()) {
       const missingAttributionLinks = links.filter((link) => attributionNeededLinks.has(link));
       for (let offset = 0; offset < missingAttributionLinks.length; offset += ATTRIBUTION_BACKFILL_BATCH_SIZE) {
