@@ -173,7 +173,7 @@ for (const token of [
 if (smoke.includes("payload.coverageGapCount !== 0")) {
   throw new Error("Live newsroom smoke must not treat editorial backlog as a production availability failure");
 }
-if (smoke.includes("payload.failedSources > 0")) {
+if (smoke.includes("payload.failedSources > 0) throw new Error")) {
   throw new Error("Live newsroom smoke must tolerate isolated transient transport failures");
 }
 
