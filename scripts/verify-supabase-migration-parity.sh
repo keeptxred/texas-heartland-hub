@@ -49,12 +49,12 @@ for version in "${expected_versions[@]}"; do
 done
 
 if (( ${#expected_versions[@]} == 0 )); then
-  echo 'SUPABASE_MIGRATION_PARITY_OK count=0 mode=read-only-rpc scope=current-delta'
+  echo 'SUPABASE_MIGRATION_PARITY_OK count=0 mode=read-only-ledger scope=current-delta'
   exit 0
 fi
 
+versions_csv="$(IFS=,; echo "${expected_versions[*]}")"
 versions_json="$(printf '%s\n' "${expected_versions[@]}" | jq -R . | jq -s .)"
-payload="$(jq -cn --argjson expected "$versions_json" '{expected_versions:$expected}')"
 response_file="$(mktemp)"
 trap 'rm -f "$response_file"' EXIT
 
@@ -63,26 +63,25 @@ curl -fsS \
   --retry-all-errors \
   --connect-timeout 15 \
   --max-time 60 \
-  -X POST \
+  --get \
   -H "apikey: $publishable_key" \
-  -H 'Content-Type: application/json' \
   -H 'Accept: application/json' \
-  --data "$payload" \
-  "$supabase_url/rest/v1/rpc/verify_repo_migrations" \
+  --data-urlencode 'select=version' \
+  --data-urlencode "version=in.($versions_csv)" \
+  "$supabase_url/rest/v1/repo_migration_public_ledger" \
   > "$response_file"
 
 if ! jq -e 'type == "array"' "$response_file" >/dev/null; then
-  echo 'Supabase parity verification failed: read-only RPC returned an unexpected response.' >&2
+  echo 'Supabase parity verification failed: public migration ledger returned an unexpected response.' >&2
   jq -c . "$response_file" >&2 || true
   exit 1
 fi
 
 if jq -e --argjson expected "$versions_json" '
   (length == ($expected | length))
-  and (all(.[]; .applied == true))
   and (([.[].version] | sort) == ($expected | sort))
 ' "$response_file" >/dev/null; then
-  echo "SUPABASE_MIGRATION_PARITY_OK count=${#expected_versions[@]} mode=read-only-rpc scope=current-delta"
+  echo "SUPABASE_MIGRATION_PARITY_OK count=${#expected_versions[@]} mode=read-only-ledger scope=current-delta"
   exit 0
 fi
 
@@ -90,7 +89,7 @@ missing="$(jq -nr --argjson expected "$versions_json" --slurpfile actual "$respo
   $actual[0] as $rows
   | $expected[]
   | . as $version
-  | select(($rows | any(.version == $version and .applied == true)) | not)
+  | select(($rows | any(.version == $version)) | not)
   | $version
 ' 2>/dev/null || true)"
 
@@ -100,7 +99,7 @@ if [[ -n "$missing" ]]; then
     [[ -n "$version" ]] && printf '  %s\n' "$version" >&2
   done <<< "$missing"
 else
-  echo 'Supabase migration parity check failed because production returned an incomplete or inconsistent migration ledger response.' >&2
+  echo 'Supabase migration parity check failed because production returned an incomplete migration-ledger response.' >&2
 fi
 
 echo 'No database writes were attempted. Configure SUPABASE_DB_URL (preferred) or linked-project credentials to apply missing migrations.' >&2
