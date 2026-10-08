@@ -54,7 +54,6 @@ export const Route = createFileRoute('/bills/texas/$legislature/$billType/$billN
     const relations = await relationsPromise;
     const relatedBillsPromise = getRelatedBills(bill.id, bill.legislature_number, 8, {
       subjectIds: relations.subjects.map((subject: any) => subject.id).filter(Boolean),
-      sponsorSlugs: relations.sponsors.map((sponsor: any) => sponsor.sponsor_slug).filter(Boolean),
     }).catch((error: any) => {
       console.error(`getRelatedBills failed for bill ${bill.id}:`, error?.message ?? error);
       return [];
