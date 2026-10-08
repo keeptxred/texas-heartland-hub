@@ -34,6 +34,15 @@ function clusterWithScores(scores: number[]): StoryCluster {
 }
 
 describe("durable event cluster write pressure", () => {
+  it("folds durable ledger counts into the existing-cluster state update", () => {
+    expect(persistenceSource).toContain("const existingCluster = Boolean(id)");
+    expect(persistenceSource).toContain("if (existingCluster)");
+    expect(persistenceSource).toContain("...payload,");
+    expect(persistenceSource).toContain("source_count: ledgerCounts.sourceCount");
+    expect(persistenceSource).toContain("ledgerCounts.sourceCount !== rows.length");
+    expect(persistenceSource).toContain("ledgerCounts.independentSourceCount !== independentSourceCount(cluster)");
+  });
+
   it("batches source-ledger upserts and skips unchanged feed metadata patches", () => {
     expect(persistenceSource).toContain("const sourcePayloads: Array<Record<string, unknown>> = []");
     expect(persistenceSource).toContain('.upsert(sourcePayloads, { onConflict: "feed_item_id" })');
