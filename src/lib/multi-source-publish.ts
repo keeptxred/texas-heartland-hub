@@ -5,7 +5,7 @@ import {
   type ClusterableFeedItem,
   type StoryCluster,
 } from "@/lib/story-clustering";
-import { persistEventCluster } from "@/lib/event-cluster-persistence";
+import { persistEventCluster, transitionEventClusterStatus } from "@/lib/event-cluster-persistence";
 import {
   buildStructuredFactLedger,
   buildStructuredFactPacket,
@@ -509,7 +509,7 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
     const singleResult = await publishSingleSourceWithPrimaryRecord(db, feedItemId, cluster, factVerification);
     if (singleResult.ok && singleResult.slug) {
       await updateArticleAttribution(db, singleResult.slug, cluster, factVerification);
-      await persistEventCluster(db, cluster, { status: "published", publishedSlug: singleResult.slug });
+      await transitionEventClusterStatus(db, eventClusterId, cluster, { status: "published", publishedSlug: singleResult.slug });
     } else {
       await releasePublicationClaim(db, eventClusterId, lifecycle.claimToken);
     }
@@ -552,7 +552,7 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
         novelty: existingNovelty ?? undefined,
       });
       await updateArticleAttribution(db, existing.internal_slug, cluster, factVerification);
-      await persistEventCluster(db, cluster, { status: "published", publishedSlug: existing.internal_slug });
+      await transitionEventClusterStatus(db, eventClusterId, cluster, { status: "published", publishedSlug: existing.internal_slug });
       return {
         ok: true,
         slug: existing.internal_slug,
@@ -614,7 +614,7 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
     novelty: existingNovelty,
   } : undefined);
   await writeStoryAngleMetadata(db, feedItemId, anglePlan);
-  await persistEventCluster(db, cluster, { status: "synthesized" });
+  await transitionEventClusterStatus(db, eventClusterId, cluster, { status: "synthesized" });
 
   if (materialExistingSlug && existingNovelty && eventClusterId) {
     const updateClaim = await acquireLivingStoryUpdateClaim(db, eventClusterId);
@@ -659,7 +659,7 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
     });
     await writeStoryAngleMetadata(db, feedItemId, anglePlan);
     await updateArticleAttribution(db, materialExistingSlug, cluster, factVerification);
-    await persistEventCluster(db, cluster, { status: "published", publishedSlug: materialExistingSlug });
+    await transitionEventClusterStatus(db, eventClusterId, cluster, { status: "published", publishedSlug: materialExistingSlug });
     return {
       ok: true,
       slug: materialExistingSlug,
@@ -687,7 +687,7 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
     await writeClusterMetadata(db, cluster, result.slug);
     await writeStoryAngleMetadata(db, feedItemId, anglePlan);
     await updateArticleAttribution(db, result.slug, cluster, factVerification);
-    await persistEventCluster(db, cluster, { status: "published", publishedSlug: result.slug });
+    await transitionEventClusterStatus(db, eventClusterId, cluster, { status: "published", publishedSlug: result.slug });
     return {
       ...result,
       clusteredSources: cluster.sourceCount,
