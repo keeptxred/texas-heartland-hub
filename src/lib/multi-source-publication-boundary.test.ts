@@ -40,6 +40,16 @@ describe("core newsroom publication boundary", () => {
     expect(source).toContain('update({ extracted_body: body }).eq("id", row.id)');
   });
 
+  it("uses status-only transitions after the first durable event persistence", () => {
+    expect(source).toContain("transitionEventClusterStatus");
+    expect(source).toContain('persistEventCluster(db, cluster, { status: "collecting" })');
+    expect(source).toContain('persistEventCluster(db, cluster, { status: "ready" })');
+    expect(source).not.toContain('persistEventCluster(db, cluster, { status: "synthesized" })');
+    expect(source).not.toContain('persistEventCluster(db, cluster, { status: "published"');
+    expect(source).toContain('transitionEventClusterStatus(db, eventClusterId, cluster, { status: "synthesized" })');
+    expect(source).toContain('transitionEventClusterStatus(db, eventClusterId, cluster, { status: "published"');
+  });
+
   it("paginates the full corroboration lookback instead of truncating the newest rows", () => {
     expect(source).toContain("const CLUSTER_CANDIDATE_PAGE_SIZE = 500");
     expect(source).toContain("corroborationAnchorMs");

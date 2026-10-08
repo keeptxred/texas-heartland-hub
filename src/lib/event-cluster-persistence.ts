@@ -132,6 +132,44 @@ async function refreshLedgerCounts(db: any, clusterId: string): Promise<{ source
   };
 }
 
+export async function transitionEventClusterStatus(
+  db: any,
+  clusterId: string | null,
+  cluster: StoryCluster,
+  options: PersistOptions,
+): Promise<string | null> {
+  if (!clusterId) return persistEventCluster(db, cluster, options);
+
+  try {
+    const now = new Date().toISOString();
+    const payload: Record<string, unknown> = {
+      status: options.status,
+      last_seen_at: now,
+    };
+    if (options.status === "synthesized" || options.status === "published") {
+      payload.synthesized_at = now;
+    }
+    if (options.status === "published") {
+      payload.published_at = now;
+      payload.published_article_id = await resolvePublishedArticleId(db, options.publishedSlug);
+      payload.published_slug = options.publishedSlug ?? null;
+    }
+
+    const { error } = await db
+      .from("news_event_clusters")
+      .update(payload)
+      .eq("id", clusterId);
+    if (error) throw error;
+    return clusterId;
+  } catch (error) {
+    console.warn(
+      "[multi-source] durable event cluster status transition skipped",
+      error instanceof Error ? error.message : String(error),
+    );
+    return null;
+  }
+}
+
 /**
  * Persists the in-memory clustering decision without making it a hard dependency
  * of publishing. A schema rollout or transient persistence failure must never
