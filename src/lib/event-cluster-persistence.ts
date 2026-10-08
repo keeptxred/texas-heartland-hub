@@ -145,6 +145,7 @@ export async function persistEventCluster(
   try {
     const rows = clusterRows(cluster);
     let id = await resolveExistingClusterId(db, cluster);
+    const existingCluster = Boolean(id);
     const now = new Date().toISOString();
     const publishedArticleId = await resolvePublishedArticleId(db, options.publishedSlug);
     const payload: Record<string, unknown> = {
@@ -179,9 +180,6 @@ export async function persistEventCluster(
         .single();
       if (error) throw error;
       id = data?.id ?? null;
-    } else {
-      const { error } = await db.from("news_event_clusters").update(payload).eq("id", id);
-      if (error) throw error;
     }
 
     if (!id) return null;
@@ -277,14 +275,29 @@ export async function persistEventCluster(
     // Count the durable source ledger, not just the current lookback window, so
     // later refreshes never make an established event appear to lose sources.
     const ledgerCounts = await refreshLedgerCounts(db, id);
-    const { error: countError } = await db
-      .from("news_event_clusters")
-      .update({
-        source_count: ledgerCounts.sourceCount,
-        independent_source_count: ledgerCounts.independentSourceCount,
-      })
-      .eq("id", id);
-    if (countError) throw countError;
+    if (existingCluster) {
+      const { error: clusterUpdateError } = await db
+        .from("news_event_clusters")
+        .update({
+          ...payload,
+          source_count: ledgerCounts.sourceCount,
+          independent_source_count: ledgerCounts.independentSourceCount,
+        })
+        .eq("id", id);
+      if (clusterUpdateError) throw clusterUpdateError;
+    } else if (
+      ledgerCounts.sourceCount !== rows.length ||
+      ledgerCounts.independentSourceCount !== independentSourceCount(cluster)
+    ) {
+      const { error: countError } = await db
+        .from("news_event_clusters")
+        .update({
+          source_count: ledgerCounts.sourceCount,
+          independent_source_count: ledgerCounts.independentSourceCount,
+        })
+        .eq("id", id);
+      if (countError) throw countError;
+    }
 
     console.info("[multi-source] event cluster persisted", {
       eventClusterId: id,
