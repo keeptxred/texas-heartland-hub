@@ -53,6 +53,47 @@ describe("bill directory pagination under the public API timeout", () => {
     expect(second.calls).toContainEqual({ method: "in", args: ["id", ["b", "a"]] });
   });
 
+  it("hydrates deep Legislature 89 results via indexed IDs without losing exact count or order", async () => {
+    const first = mockQuery({ data: [{ id: "b" }, { id: "a" }], count: 12786 });
+    const hydration = mockQuery({ data: [{ id: "a", caption: "A" }, { id: "b", caption: "B" }] });
+    fromMock.mockReturnValueOnce(first.builder).mockReturnValueOnce(hydration.builder);
+    const result = await listBills({ legislature: 89, limit: 24, offset: 12336 });
+    expect(result).toEqual({ bills: [{ id: "b", caption: "B" }, { id: "a", caption: "A" }], count: 12786 });
+    expect(fromMock).toHaveBeenCalledTimes(2);
+    expect(first.calls.find((call) => call.method === "select")?.args).toEqual(["id", { count: "exact" }]);
+    expect(first.calls).toContainEqual({ method: "eq", args: ["legislature_number", 89] });
+    expect(first.calls).toContainEqual({ method: "range", args: [12336, 12359] });
+    expect(hydration.calls).toContainEqual({ method: "in", args: ["id", ["b", "a"]] });
+  });
+
+  it("hydrates deep House committee-status results using existing status and chamber indexes", async () => {
+    const first = mockQuery({ data: [{ id: "z" }, { id: "y" }], count: 5285 });
+    const hydration = mockQuery({ data: [{ id: "y", caption: "Y" }, { id: "z", caption: "Z" }] });
+    fromMock.mockReturnValueOnce(first.builder).mockReturnValueOnce(hydration.builder);
+    const result = await listBills({ chamber: "house", status: "in-committee", limit: 24, offset: 4944 });
+    expect(result).toEqual({ bills: [{ id: "z", caption: "Z" }, { id: "y", caption: "Y" }], count: 5285 });
+    expect(fromMock).toHaveBeenCalledTimes(2);
+    expect(first.calls.find((call) => call.method === "select")?.args).toEqual(["id", { count: "exact" }]);
+    expect(first.calls).toContainEqual({ method: "eq", args: ["chamber", "house"] });
+    expect(first.calls).toContainEqual({ method: "in", args: [
+      "current_status_code", ["in-committee", "referred-to-committee", "scheduled-for-hearing", "reported-from-committee"],
+    ] });
+    expect(first.calls).toContainEqual({ method: "range", args: [4944, 4967] });
+    expect(hydration.calls).toContainEqual({ method: "in", args: ["id", ["z", "y"]] });
+  });
+
+  it("keeps unprofiled deep status-only and bill-type filters as one query", async () => {
+    for (const filters of [{ status: "in-committee" }, { chamber: "house", billType: "hb" }, { legislature: 89, chamber: "senate" }]) {
+      fromMock.mockReset();
+      const first = mockQuery({ data: [{ id: "original" }], count: 1 });
+      fromMock.mockReturnValueOnce(first.builder);
+      const result = await listBills({ ...filters, offset: 800 });
+      expect(result).toEqual({ bills: [{ id: "original" }], count: 1 });
+      expect(fromMock).toHaveBeenCalledTimes(1);
+      expect(first.calls.find((call) => call.method === "select")?.args[0]).toContain("caption");
+    }
+  });
+
   it("does not issue a hydration query for an out-of-range deep page", async () => {
     const first = mockQuery({ data: [], count: 4260 });
     fromMock.mockReturnValueOnce(first.builder);

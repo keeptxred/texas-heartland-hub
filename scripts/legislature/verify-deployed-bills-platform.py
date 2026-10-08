@@ -95,7 +95,10 @@ def check_deep_directory_page(path: str, page: int, *, filtered: bool) -> None:
     if active_page is None or active_page.group(1).strip() != str(page):
         raise AssertionError(f"{url}: expected active pagination marker for page {page}")
     if filtered:
-        require(text, "Texas Senate", context=url)
+        if "chamber=senate" in path:
+            require(text, "Texas Senate", context=url)
+        if "chamber=house" in path:
+            require(text, "Texas House", context=url)
     else:
         require_canonical(body, path, context=url)
     print(f"PASS deep pagination {url} (24 cards, page={page})")
@@ -155,6 +158,8 @@ def main() -> int:
     )
     check_deep_directory_page("/bills?page=166", 166, filtered=False)
     check_deep_directory_page("/bills?chamber=senate&page=165", 165, filtered=True)
+    check_deep_directory_page("/bills?legislature=89&page=515", 515, filtered=True)
+    check_deep_directory_page("/bills?chamber=house&status=in-committee&page=207", 207, filtered=True)
     print("Texas Bills deployed-render smoke passed")
     return 0
 
