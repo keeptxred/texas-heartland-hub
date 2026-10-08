@@ -131,11 +131,33 @@ async function fetchReadableText(url: string): Promise<string | null> {
 
 async function enrichClusterBodies(cluster: StoryCluster, supabaseAdmin: any): Promise<StoryCluster> {
   const rows = [cluster.primary, ...cluster.members];
+  const missingBodyIds = rows
+    .filter((row) => !(row.extracted_body ?? "").trim())
+    .map((row) => row.id)
+    .filter((id): id is number => typeof id === "number");
+  const cachedBodies = new Map<number, string>();
+
+  if (missingBodyIds.length) {
+    const { data: cachedRows, error: cacheError } = await supabaseAdmin
+      .from("texas_news_feed")
+      .select("id,extracted_body")
+      .in("id", missingBodyIds);
+    if (cacheError) {
+      console.warn("[multi-source] cached extraction lookup failed", cacheError.message);
+    } else {
+      for (const cachedRow of cachedRows ?? []) {
+        const cachedBody = (cachedRow.extracted_body ?? "").trim();
+        if (cachedBody && typeof cachedRow.id === "number") cachedBodies.set(cachedRow.id, cachedBody);
+      }
+    }
+  }
+
   // The cluster is bounded to MAX_CLUSTER_SOURCES, so parallel enrichment is
   // safe and prevents multiple slow source fetches from stacking 10s timeouts.
   const enriched: ClusterableFeedItem[] = await Promise.all(
     rows.map(async (row) => {
       let body = (row.extracted_body ?? "").trim();
+      if (!body && typeof row.id === "number") body = cachedBodies.get(row.id) ?? "";
       const description = (row.description ?? "").trim();
       if (!body && wordCount(description) < 180 && /^https?:\/\//i.test(row.link)) {
         body = (await fetchReadableText(row.link)) ?? "";

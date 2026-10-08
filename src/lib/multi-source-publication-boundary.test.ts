@@ -32,6 +32,10 @@ describe("core newsroom publication boundary", () => {
 
   it("loads full bodies only after a candidate is selected into the bounded cluster", () => {
     expect(source).toContain("enrichClusterBodies(cluster, db)");
+    expect(source).toContain("missingBodyIds");
+    expect(source).toContain('.select("id,extracted_body")');
+    expect(source).toContain('.in("id", missingBodyIds)');
+    expect(source).toContain("cachedBodies.get(row.id)");
     expect(source).toContain("fetchReadableText(row.link)");
     expect(source).toContain('update({ extracted_body: body }).eq("id", row.id)');
   });
