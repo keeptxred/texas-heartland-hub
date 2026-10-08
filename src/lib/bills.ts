@@ -133,10 +133,18 @@ export const canonicalBillPath = (
 export const normalizeBillType = (value: string) => value.trim().toLowerCase();
 export const normalizeStatus = (value: string) => value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
+const BILL_LIST_COLUMNS = 'id,legislature_number,session_code,bill_type,bill_number,bill_identifier,chamber,caption,current_status_code,current_status_label,last_action_date,became_law';
+const INDEX_FIRST_BILL_PAGE_OFFSET = 480;
+
 export async function listBills({ search = '', status = '', legislature, chamber = '', billType = '', limit = 24, offset = 0 }: BillListFilters = {}) {
+  // For deep, unfiltered directory pages, the existing partial (chamber, date, id)
+  // index can select page IDs with minimal heap access. Fetch the 24 full records
+  // afterward rather than scanning thousands of wide bill rows just to skip them.
+  // Other filters retain the original one-query semantics until individually profiled.
+  const indexFirst = offset >= INDEX_FIRST_BILL_PAGE_OFFSET && !search && !status && !legislature && !billType;
   let query = db
     .from('bills')
-    .select('id,legislature_number,session_code,bill_type,bill_number,bill_identifier,chamber,caption,current_status_code,current_status_label,last_action_date,became_law', { count: 'exact' })
+    .select(indexFirst ? 'id' : BILL_LIST_COLUMNS, { count: 'exact' })
     .eq('is_active', true)
     .order('last_action_date', { ascending: false, nullsFirst: false })
     .order('id', { ascending: true })
@@ -154,7 +162,22 @@ export async function listBills({ search = '', status = '', legislature, chamber
   }
   const { data, error, count } = await query;
   if (error) throw error;
-  return { bills: (data ?? []) as Bill[], count: count ?? 0 };
+  if (!indexFirst) return { bills: (data ?? []) as Bill[], count: count ?? 0 };
+
+  const ids = (data ?? []).map((row: { id: string }) => row.id);
+  if (!ids.length) return { bills: [] as Bill[], count: count ?? 0 };
+
+  const { data: fullRows, error: hydrationError } = await db
+    .from('bills')
+    .select(BILL_LIST_COLUMNS)
+    .in('id', ids);
+  if (hydrationError) throw hydrationError;
+
+  // PostgREST .in() does not promise ID order. Keep the original stable
+  // last_action_date DESC NULLS LAST, id ASC order from the indexed page.
+  const byId = new Map<string, Bill>(((fullRows ?? []) as Bill[]).map((row) => [row.id, row]));
+  const bills = ids.map((id: string) => byId.get(id)).filter((row: Bill | undefined): row is Bill => Boolean(row));
+  return { bills, count: count ?? 0 };
 }
 
 export async function getBillFilterOptions() {
