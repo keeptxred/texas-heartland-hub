@@ -137,11 +137,15 @@ const BILL_LIST_COLUMNS = 'id,legislature_number,session_code,bill_type,bill_num
 const INDEX_FIRST_BILL_PAGE_OFFSET = 480;
 
 export async function listBills({ search = '', status = '', legislature, chamber = '', billType = '', limit = 24, offset = 0 }: BillListFilters = {}): Promise<{ bills: Bill[]; count: number }> {
-  // For deep, unfiltered directory pages, the existing partial (chamber, date, id)
-  // index can select page IDs with minimal heap access. Fetch the 24 full records
-  // afterward rather than scanning thousands of wide bill rows just to skip them.
-  // Other filters retain the original one-query semantics until individually profiled.
-  const indexFirst = offset >= INDEX_FIRST_BILL_PAGE_OFFSET && !search && !status && !legislature && !billType;
+  // Index-first reads reduce heap access on deep directory, legislature and
+  // chamber/status pages backed by existing active-bills indexes. Restore the
+  // original full record order after fetching each page's IDs. Keep searches,
+  // bill-type filters and unprofiled filter combinations on their single query.
+  const indexedDirectory = !status && !legislature && !billType;
+  const indexedLegislature = Boolean(legislature) && !status && !chamber && !billType;
+  const indexedChamberStatus = Boolean(status && chamber) && !legislature && !billType;
+  const indexFirst = offset >= INDEX_FIRST_BILL_PAGE_OFFSET && !search &&
+    (indexedDirectory || indexedLegislature || indexedChamberStatus);
   let query = db
     .from('bills')
     .select(indexFirst ? 'id' : BILL_LIST_COLUMNS, { count: 'exact' })
