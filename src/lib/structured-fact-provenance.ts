@@ -274,29 +274,35 @@ export function buildStructuredFactPacket(ledger: StructuredFactLedger): string 
     .join("\n\n");
 }
 
+const STRUCTURED_FACT_UPSERT_BATCH_SIZE = 100;
+
 export async function persistStructuredFacts(db: any, clusterId: string | null, ledger: StructuredFactLedger): Promise<void> {
   if (!clusterId || !ledger.facts.length) return;
   try {
     const now = new Date().toISOString();
-    for (const fact of ledger.facts) {
-      const payload = {
-        cluster_id: clusterId,
-        fact_key: fact.factKey,
-        fact_type: fact.type,
-        fact_text: fact.text,
-        normalized_text: fact.normalizedText,
-        confidence: fact.confidence,
-        corroboration_count: fact.corroborationCount,
-        primary_record_support: fact.primaryRecordSupport,
-        source_feed_item_ids: fact.sourceFeedItemIds,
-        source_labels: fact.sourceLabels,
-        source_urls: fact.sourceUrls,
-        numeric_values: fact.numericValues,
-        conflict_group: fact.conflictGroup ?? null,
-        has_conflict: fact.hasConflict,
-        last_seen_at: now,
-      };
-      const { error } = await db.from("news_event_facts").upsert(payload, { onConflict: "cluster_id,fact_key" });
+    const payloads = ledger.facts.map((fact) => ({
+      cluster_id: clusterId,
+      fact_key: fact.factKey,
+      fact_type: fact.type,
+      fact_text: fact.text,
+      normalized_text: fact.normalizedText,
+      confidence: fact.confidence,
+      corroboration_count: fact.corroborationCount,
+      primary_record_support: fact.primaryRecordSupport,
+      source_feed_item_ids: fact.sourceFeedItemIds,
+      source_labels: fact.sourceLabels,
+      source_urls: fact.sourceUrls,
+      numeric_values: fact.numericValues,
+      conflict_group: fact.conflictGroup ?? null,
+      has_conflict: fact.hasConflict,
+      last_seen_at: now,
+    }));
+
+    for (let index = 0; index < payloads.length; index += STRUCTURED_FACT_UPSERT_BATCH_SIZE) {
+      const batch = payloads.slice(index, index + STRUCTURED_FACT_UPSERT_BATCH_SIZE);
+      const { error } = await db
+        .from("news_event_facts")
+        .upsert(batch, { onConflict: "cluster_id,fact_key" });
       if (error) throw error;
     }
   } catch (error) {

@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { buildStructuredFactLedger, buildStructuredFactPacket } from "./structured-fact-provenance";
+import { buildStructuredFactLedger, buildStructuredFactPacket, persistStructuredFacts } from "./structured-fact-provenance";
 import type { StoryCluster } from "./story-clustering";
 
 function clusterWith(bodyA: string, bodyB: string, bodyC?: string): StoryCluster {
@@ -121,6 +121,48 @@ describe("structured fact provenance", () => {
     expect(migration).toContain("primary_record_support");
     expect(migration).toContain("source_feed_item_ids");
     expect(migration).toContain("has_conflict");
+  });
+
+  it("persists structured facts in bounded batches instead of one request per fact", async () => {
+    const calls: Array<{ rows: any[]; options: any }> = [];
+    const db = {
+      from(table: string) {
+        expect(table).toBe("news_event_facts");
+        return {
+          async upsert(rows: any[], options: any) {
+            calls.push({ rows, options });
+            return { error: null };
+          },
+        };
+      },
+    };
+
+    const template = buildStructuredFactLedger(clusterWith(
+      "ERCOT announced the Texas grid plan will add 2,400 megawatts of capacity on August 16, 2026.",
+      "ERCOT announced a Texas grid plan adding 2,400 megawatts of capacity on August 16, 2026.",
+    )).facts[0];
+
+    const facts = Array.from({ length: 205 }, (_, index) => ({
+      ...template,
+      factKey: `action:test-${index}`,
+      text: `Test fact ${index}`,
+      normalizedText: `test fact ${index}`,
+    }));
+
+    await persistStructuredFacts(db, "cluster-1", {
+      facts,
+      whatHappened: [],
+      keyNumbers: [],
+      timeline: [],
+      quotations: [],
+      whatNext: [],
+      conflicts: [],
+    });
+
+    expect(calls).toHaveLength(3);
+    expect(calls.map((call) => call.rows.length)).toEqual([100, 100, 5]);
+    expect(calls.every((call) => call.options.onConflict === "cluster_id,fact_key")).toBe(true);
+    expect(calls.flatMap((call) => call.rows).every((row) => row.cluster_id === "cluster-1")).toBe(true);
   });
 
   it("feeds the structured ledger into the existing synthesis call rather than creating a second AI stage", () => {
