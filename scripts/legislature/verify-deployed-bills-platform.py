@@ -88,11 +88,11 @@ def check_deep_directory_page(path: str, page: int, *, filtered: bool) -> None:
 
     # Both chosen pages have at least 24 rows in the live source registry.
     # Assert the server rendered every result, not a skeleton or empty response.
-    article_count = len(re.findall(r"<article\\b", body, flags=re.I))
+    article_count = len(re.findall(r"<article(?:[ >])", body, flags=re.I))
     if article_count != 24:
         raise AssertionError(f"{url}: expected 24 SSR bill cards, found {article_count}")
-    active_page = rf'aria-current=["\\\']page["\\\'][^>]*>\\s*{page}\\s*<'
-    if not re.search(active_page, body, flags=re.I):
+    active_page = re.search(r'<span[^>]+aria-current="page"[^>]*>([^<]+)</span>', body, flags=re.I)
+    if active_page is None or active_page.group(1).strip() != str(page):
         raise AssertionError(f"{url}: expected active pagination marker for page {page}")
     if filtered:
         require(text, "Texas Senate", context=url)
