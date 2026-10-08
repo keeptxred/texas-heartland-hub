@@ -33,10 +33,15 @@ type CandidateScore = {
  * guessing is intentionally excluded so unrelated bills are never linked by
  * wording alone.
  */
+export type RelatedBillSeed = {
+  subjectIds?: string[];
+};
+
 export async function getRelatedBills(
   billId: string,
   legislatureNumber: number,
   limit = 8,
+  seed: RelatedBillSeed = {},
 ): Promise<RelatedBill[]> {
   const safe = async (build: () => any) => {
     try {
@@ -48,14 +53,17 @@ export async function getRelatedBills(
     }
   };
 
+  const hasSubjectSeed = seed.subjectIds !== undefined;
   const [subjectRows, sponsorRows] = await Promise.all([
-    safe(() =>
-      db
-        .from('bill_subject_relationships')
-        .select('subject_id')
-        .eq('bill_id', billId)
-        .eq('review_status', 'approved'),
-    ),
+    hasSubjectSeed
+      ? Promise.resolve([])
+      : safe(() =>
+          db
+            .from('bill_subject_relationships')
+            .select('subject_id')
+            .eq('bill_id', billId)
+            .eq('review_status', 'approved'),
+        ),
     safe(() =>
       db
         .from('bill_sponsors')
@@ -65,7 +73,9 @@ export async function getRelatedBills(
     ),
   ]);
 
-  const subjectIds = [...new Set(subjectRows.map((row: any) => row.subject_id).filter(Boolean))];
+  const subjectIds = [...new Set(
+    hasSubjectSeed ? seed.subjectIds!.filter(Boolean) : subjectRows.map((row: any) => row.subject_id).filter(Boolean),
+  )];
   const sponsorSlugs = [...new Set(sponsorRows.map((row: any) => row.sponsor_slug).filter(Boolean))];
 
   if (!subjectIds.length && !sponsorSlugs.length) return [];

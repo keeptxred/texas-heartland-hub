@@ -14,7 +14,7 @@ const db = supabase as any;
  * verified representative directory.
  */
 export async function getPublicBillRelations(billId: string) {
-  const base = await getBillRelations(billId);
+  const base = await getBillRelations(billId, { includeEditorialRelations: false });
 
   const safe = async (label: string, build: () => any) => {
     try {

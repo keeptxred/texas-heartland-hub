@@ -43,18 +43,27 @@ export const Route = createFileRoute('/bills/texas/$legislature/$billType/$billN
     if (params.billType !== billType || params.billNumber !== String(billNumber)) throw redirect({ href: normalizedPath, statusCode: 301 });
     const bill = await getBill(legislature, billType, billNumber);
     if (!bill) throw notFound();
-    const [relations, relatedContent, relatedBills, editorial, effectiveDates] = await Promise.all([
-      getPublicBillRelations(bill.id),
-      getRelatedAuthorityContent('bill', bill.id).catch((error: any) => {
-        console.error(`getRelatedAuthorityContent failed for bill ${bill.id}:`, error?.message ?? error);
-        return [] as any;
-      }),
-      getRelatedBills(bill.id, bill.legislature_number).catch((error: any) => {
-        console.error(`getRelatedBills failed for bill ${bill.id}:`, error?.message ?? error);
-        return [];
-      }),
-      getBillEditorialEnrichment(bill.id),
-      getBillEffectiveDateProvisions(bill.id),
+    const relationsPromise = getPublicBillRelations(bill.id);
+    const relatedContentPromise = getRelatedAuthorityContent('bill', bill.id).catch((error: any) => {
+      console.error(`getRelatedAuthorityContent failed for bill ${bill.id}:`, error?.message ?? error);
+      return [] as any;
+    });
+    const editorialPromise = getBillEditorialEnrichment(bill.id);
+    const effectiveDatesPromise = getBillEffectiveDateProvisions(bill.id);
+
+    const relations = await relationsPromise;
+    const relatedBillsPromise = getRelatedBills(bill.id, bill.legislature_number, 8, {
+      subjectIds: relations.subjects.map((subject: any) => subject.id).filter(Boolean),
+    }).catch((error: any) => {
+      console.error(`getRelatedBills failed for bill ${bill.id}:`, error?.message ?? error);
+      return [];
+    });
+
+    const [relatedContent, relatedBills, editorial, effectiveDates] = await Promise.all([
+      relatedContentPromise,
+      relatedBillsPromise,
+      editorialPromise,
+      effectiveDatesPromise,
     ]);
     return { bill, ...relations, relatedContent, relatedBills, editorial, effectiveDates };
   },

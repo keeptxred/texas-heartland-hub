@@ -206,7 +206,12 @@ export async function getBillEditorialEnrichment(billId: string) {
   return (data as BillEditorialEnrichment | null) ?? null;
 }
 
-export async function getBillRelations(billId: string) {
+export type BillRelationLoadOptions = {
+  includeEditorialRelations?: boolean;
+};
+
+export async function getBillRelations(billId: string, options: BillRelationLoadOptions = {}) {
+  const includeEditorialRelations = options.includeEditorialRelations ?? true;
   const safe = async (label: string, build: () => any) => {
     try {
       const { data, error } = await build();
@@ -222,8 +227,12 @@ export async function getBillRelations(billId: string) {
     safe('actions', () => db.from('bill_actions').select('*,legislative_committees(committee_name,committee_slug,chamber)').eq('bill_id', billId).order('action_date', { ascending: false }).order('action_sequence', { ascending: false })),
     safe('committees', () => db.from('bill_committee_history').select('*,legislative_committees(committee_slug)').eq('bill_id', billId).order('sequence')),
     safe('documents', () => db.from('bill_documents').select('*').eq('bill_id', billId).order('document_date', { ascending: false })),
-    safe('subjects', () => db.from('bill_subject_relationships').select('bill_subjects(*)').eq('bill_id', billId)),
-    safe('articles', () => db.from('bill_article_relationships').select('relationship_type,confidence,is_manual,daily_articles(id,title,slug,dek,published_at,image_url)').eq('bill_id', billId).order('is_manual', { ascending: false }).order('confidence', { ascending: false }).limit(8)),
+    includeEditorialRelations
+      ? safe('subjects', () => db.from('bill_subject_relationships').select('bill_subjects(*)').eq('bill_id', billId))
+      : Promise.resolve({ data: [] }),
+    includeEditorialRelations
+      ? safe('articles', () => db.from('bill_article_relationships').select('relationship_type,confidence,is_manual,daily_articles(id,title,slug,dek,published_at,image_url)').eq('bill_id', billId).order('is_manual', { ascending: false }).order('confidence', { ascending: false }).limit(8))
+      : Promise.resolve({ data: [] }),
   ]);
   return {
     sponsors: (sponsors.data ?? []).map(resolveSponsorIdentity),
