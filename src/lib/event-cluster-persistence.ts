@@ -186,6 +186,9 @@ export async function persistEventCluster(
 
     if (!id) return null;
 
+    const sourcePayloads: Array<Record<string, unknown>> = [];
+    const feedUpdates: Array<{ id: number; score: number; reason: string }> = [];
+
     for (const row of rows) {
       if (typeof row.id !== "number") continue;
       const match = matchData(row, cluster.primary);
@@ -193,7 +196,7 @@ export async function persistEventCluster(
       const isPrimaryRecord = looksPrimaryRecord(row);
       const canonicalUrl = canonicalizeUrl(row.link);
       const text = rawText(row);
-      const sourcePayload = {
+      sourcePayloads.push({
         cluster_id: id,
         feed_item_id: row.id,
         relationship_type: row === cluster.primary ? "primary" : "supporting",
@@ -209,19 +212,33 @@ export async function persistEventCluster(
         is_independent_source: true,
         match_score: match.score,
         match_reason: match.reason,
-      };
+      });
+
+      feedUpdates.push({
+        id: row.id,
+        score: match.score,
+        reason: row === cluster.primary
+          ? "primary event report"
+          : `score=${match.score}; overlap=${("overlapTerms" in row ? row.overlapTerms : []).join(",") || "none"}`,
+      });
+    }
+
+    if (sourcePayloads.length) {
       const { error: sourceError } = await db
         .from("news_event_cluster_sources")
-        .upsert(sourcePayload, { onConflict: "feed_item_id" });
+        .upsert(sourcePayloads, { onConflict: "feed_item_id" });
       if (sourceError) throw sourceError;
+    }
 
-      const reason = row === cluster.primary
-        ? "primary event report"
-        : `score=${match.score}; overlap=${("overlapTerms" in row ? row.overlapTerms : []).join(",") || "none"}`;
+    for (const feedUpdate of feedUpdates) {
       const { error: feedError } = await db
         .from("texas_news_feed")
-        .update({ event_cluster_id: id, event_cluster_score: match.score, event_cluster_reason: reason })
-        .eq("id", row.id);
+        .update({
+          event_cluster_id: id,
+          event_cluster_score: feedUpdate.score,
+          event_cluster_reason: feedUpdate.reason,
+        })
+        .eq("id", feedUpdate.id);
       if (feedError) throw feedError;
     }
 

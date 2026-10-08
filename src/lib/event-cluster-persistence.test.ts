@@ -1,6 +1,9 @@
+import fs from "node:fs";
 import { describe, expect, it } from "vitest";
 import { strongSupportingFeedIds } from "./event-cluster-persistence";
 import type { StoryCluster } from "./story-clustering";
+const persistenceSource = fs.readFileSync(new URL("./event-cluster-persistence.ts", import.meta.url), "utf8");
+
 
 function clusterWithScores(scores: number[]): StoryCluster {
   const primary = {
@@ -29,6 +32,15 @@ function clusterWithScores(scores: number[]): StoryCluster {
     strongMerge: scores.some((score) => score >= 64),
   };
 }
+
+describe("durable event cluster write pressure", () => {
+  it("batches source-ledger upserts while preserving per-feed cluster metadata updates", () => {
+    expect(persistenceSource).toContain("const sourcePayloads: Array<Record<string, unknown>> = []");
+    expect(persistenceSource).toContain('.upsert(sourcePayloads, { onConflict: "feed_item_id" })');
+    expect(persistenceSource).toContain("for (const feedUpdate of feedUpdates)");
+    expect(persistenceSource).not.toContain('.upsert(sourcePayload, { onConflict: "feed_item_id" })');
+  });
+});
 
 describe("durable event cluster inheritance", () => {
   it("does not allow weak context members to choose an existing cluster", () => {
