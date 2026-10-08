@@ -56,6 +56,21 @@ describe("durable event cluster write pressure", () => {
   });
 });
 
+describe("durable event cluster status transitions", () => {
+  it("updates lifecycle state without replaying source-ledger persistence", () => {
+    const start = persistenceSource.indexOf("export async function transitionEventClusterStatus");
+    const end = persistenceSource.indexOf("/**\n * Persists the in-memory clustering decision", start);
+    const transitionSource = persistenceSource.slice(start, end);
+
+    expect(transitionSource).toContain('.from("news_event_clusters")');
+    expect(transitionSource).toContain(".update(payload)");
+    expect(transitionSource).toContain('payload.published_slug = options.publishedSlug ?? null');
+    expect(transitionSource).toContain("if (!clusterId) return persistEventCluster(db, cluster, options)");
+    expect(transitionSource).not.toContain("news_event_cluster_sources");
+    expect(transitionSource).not.toContain("texas_news_feed");
+  });
+});
+
 describe("durable event cluster inheritance", () => {
   it("does not allow weak context members to choose an existing cluster", () => {
     expect(strongSupportingFeedIds(clusterWithScores([45, 55, 63]))).toEqual([]);
