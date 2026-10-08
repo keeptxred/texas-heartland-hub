@@ -136,7 +136,7 @@ export const normalizeStatus = (value: string) => value.trim().toLowerCase().rep
 const BILL_LIST_COLUMNS = 'id,legislature_number,session_code,bill_type,bill_number,bill_identifier,chamber,caption,current_status_code,current_status_label,last_action_date,became_law';
 const INDEX_FIRST_BILL_PAGE_OFFSET = 480;
 
-export async function listBills({ search = '', status = '', legislature, chamber = '', billType = '', limit = 24, offset = 0 }: BillListFilters = {}) {
+export async function listBills({ search = '', status = '', legislature, chamber = '', billType = '', limit = 24, offset = 0 }: BillListFilters = {}): Promise<{ bills: Bill[]; count: number }> {
   // For deep, unfiltered directory pages, the existing partial (chamber, date, id)
   // index can select page IDs with minimal heap access. Fetch the 24 full records
   // afterward rather than scanning thousands of wide bill rows just to skip them.
