@@ -23,9 +23,7 @@ const checks = [
     file: 'src/lib/related-bills.ts',
     required: [
       'subjectIds?: string[]',
-      'sponsorSlugs?: string[]',
       'const hasSubjectSeed = seed.subjectIds !== undefined',
-      'const hasSponsorSeed = seed.sponsorSlugs !== undefined',
       "from('bill_subject_relationships')",
       ".eq('review_status', 'approved')",
     ],
@@ -35,7 +33,6 @@ const checks = [
     required: [
       'getPublicBillRelations',
       'subjectIds: relations.subjects',
-      'sponsorSlugs: relations.sponsors',
     ],
   },
   {
@@ -43,7 +40,6 @@ const checks = [
     required: [
       'getPublicBillRelations',
       'subjectIds: relations.subjects',
-      'sponsorSlugs: relations.sponsors',
     ],
   },
 ];
