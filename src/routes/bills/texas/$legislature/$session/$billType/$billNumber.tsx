@@ -103,12 +103,22 @@ export const Route = createFileRoute('/bills/texas/$legislature/$session/$billTy
     if (error) throw error;
     if (!bill) throw notFound();
 
-    const [relations, relatedContent, relatedBills, editorial, effectiveDates] = await Promise.all([
-      getPublicBillRelations(bill.id),
-      getRelatedAuthorityContent('bill', bill.id).catch(() => []),
-      getRelatedBills(bill.id, bill.legislature_number).catch(() => []),
-      getBillEditorialEnrichment(bill.id),
-      getBillEffectiveDateProvisions(bill.id),
+    const relationsPromise = getPublicBillRelations(bill.id);
+    const relatedContentPromise = getRelatedAuthorityContent('bill', bill.id).catch(() => []);
+    const editorialPromise = getBillEditorialEnrichment(bill.id);
+    const effectiveDatesPromise = getBillEffectiveDateProvisions(bill.id);
+
+    const relations = await relationsPromise;
+    const relatedBillsPromise = getRelatedBills(bill.id, bill.legislature_number, 8, {
+      subjectIds: relations.subjects.map((subject: any) => subject.id).filter(Boolean),
+      sponsorSlugs: relations.sponsors.map((sponsor: any) => sponsor.sponsor_slug).filter(Boolean),
+    }).catch(() => []);
+
+    const [relatedContent, relatedBills, editorial, effectiveDates] = await Promise.all([
+      relatedContentPromise,
+      relatedBillsPromise,
+      editorialPromise,
+      effectiveDatesPromise,
     ]);
     return { bill, ...relations, relatedContent, relatedBills, editorial, effectiveDates };
   },
