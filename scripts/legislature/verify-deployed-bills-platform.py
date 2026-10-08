@@ -77,6 +77,30 @@ def check(path: str, required: list[str], forbidden: list[str] | None = None, ca
     print(f"PASS {url}")
 
 
+def check_deep_directory_page(path: str, page: int, *, filtered: bool) -> None:
+    """Verify a genuinely populated SSR page, not just an HTTP 200 error fallback."""
+    url, body = fetch(path)
+    text = visible_text(body)
+    require(text, "Texas Bill Lookup and Legislature Bill Search", context=url)
+    require(text, "Matching Texas bills" if filtered else "Recently updated Texas bills", context=url)
+    forbid(text, "Texas bills are temporarily unavailable", context=url)
+    forbid(text, "No matching bills", context=url)
+
+    # Both chosen pages have at least 24 rows in the live source registry.
+    # Assert the server rendered every result, not a skeleton or empty response.
+    article_count = len(re.findall(r"<article(?:[ >])", body, flags=re.I))
+    if article_count != 24:
+        raise AssertionError(f"{url}: expected 24 SSR bill cards, found {article_count}")
+    active_page = re.search(r'<span[^>]+aria-current="page"[^>]*>([^<]+)</span>', body, flags=re.I)
+    if active_page is None or active_page.group(1).strip() != str(page):
+        raise AssertionError(f"{url}: expected active pagination marker for page {page}")
+    if filtered:
+        require(text, "Texas Senate", context=url)
+    else:
+        require_canonical(body, path, context=url)
+    print(f"PASS deep pagination {url} (24 cards, page={page})")
+
+
 def main() -> int:
     check(
         "/bills",
@@ -129,6 +153,8 @@ def main() -> int:
         forbidden=["89th Texas Legislature · Called Session 2"],
         canonical="/bills/texas/89/2/sb/18",
     )
+    check_deep_directory_page("/bills?page=166", 166, filtered=False)
+    check_deep_directory_page("/bills?chamber=senate&page=165", 165, filtered=True)
     print("Texas Bills deployed-render smoke passed")
     return 0
 
