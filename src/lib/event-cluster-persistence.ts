@@ -188,6 +188,30 @@ export async function persistEventCluster(
 
     const sourcePayloads: Array<Record<string, unknown>> = [];
     const feedUpdates: Array<{ id: number; score: number; reason: string }> = [];
+    const rowIds = rows
+      .map((row) => row.id)
+      .filter((feedId): feedId is number => typeof feedId === "number");
+    const currentFeedState = new Map<number, {
+      event_cluster_id: string | null;
+      event_cluster_score: number | null;
+      event_cluster_reason: string | null;
+    }>();
+
+    if (rowIds.length) {
+      const { data: currentRows, error: currentRowsError } = await db
+        .from("texas_news_feed")
+        .select("id,event_cluster_id,event_cluster_score,event_cluster_reason")
+        .in("id", rowIds);
+      if (currentRowsError) throw currentRowsError;
+      for (const currentRow of currentRows ?? []) {
+        if (typeof currentRow.id !== "number") continue;
+        currentFeedState.set(currentRow.id, {
+          event_cluster_id: currentRow.event_cluster_id ?? null,
+          event_cluster_score: currentRow.event_cluster_score ?? null,
+          event_cluster_reason: currentRow.event_cluster_reason ?? null,
+        });
+      }
+    }
 
     for (const row of rows) {
       if (typeof row.id !== "number") continue;
@@ -214,13 +238,21 @@ export async function persistEventCluster(
         match_reason: match.reason,
       });
 
-      feedUpdates.push({
-        id: row.id,
-        score: match.score,
-        reason: row === cluster.primary
-          ? "primary event report"
-          : `score=${match.score}; overlap=${("overlapTerms" in row ? row.overlapTerms : []).join(",") || "none"}`,
-      });
+      const reason = row === cluster.primary
+        ? "primary event report"
+        : `score=${match.score}; overlap=${("overlapTerms" in row ? row.overlapTerms : []).join(",") || "none"}`;
+      const current = currentFeedState.get(row.id);
+      if (
+        current?.event_cluster_id !== id ||
+        current.event_cluster_score !== match.score ||
+        current.event_cluster_reason !== reason
+      ) {
+        feedUpdates.push({
+          id: row.id,
+          score: match.score,
+          reason,
+        });
+      }
     }
 
     if (sourcePayloads.length) {

@@ -34,9 +34,14 @@ function clusterWithScores(scores: number[]): StoryCluster {
 }
 
 describe("durable event cluster write pressure", () => {
-  it("batches source-ledger upserts while preserving per-feed cluster metadata updates", () => {
+  it("batches source-ledger upserts and skips unchanged feed metadata patches", () => {
     expect(persistenceSource).toContain("const sourcePayloads: Array<Record<string, unknown>> = []");
     expect(persistenceSource).toContain('.upsert(sourcePayloads, { onConflict: "feed_item_id" })');
+    expect(persistenceSource).toContain('.select("id,event_cluster_id,event_cluster_score,event_cluster_reason")');
+    expect(persistenceSource).toContain("const currentFeedState = new Map<number");
+    expect(persistenceSource).toContain("current?.event_cluster_id !== id");
+    expect(persistenceSource).toContain("current.event_cluster_score !== match.score");
+    expect(persistenceSource).toContain("current.event_cluster_reason !== reason");
     expect(persistenceSource).toContain("for (const feedUpdate of feedUpdates)");
     expect(persistenceSource).not.toContain('.upsert(sourcePayload, { onConflict: "feed_item_id" })');
   });
