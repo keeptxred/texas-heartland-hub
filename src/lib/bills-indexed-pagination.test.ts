@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { fromMock } = vi.hoisted(() => ({ fromMock: vi.fn() }));
-vi.mock("@/integrations/supabase/client", () => ({ supabase: { from: fromMock } }));
+const { fromMock, rpcMock } = vi.hoisted(() => ({ fromMock: vi.fn(), rpcMock: vi.fn() }));
+vi.mock("@/integrations/supabase/client", () => ({ supabase: { from: fromMock, rpc: rpcMock } }));
 
-import { listBills } from "./bills";
+import { listBills, getBillFilterOptions } from "./bills";
 
 type QueryResult = { data: unknown[] | null; count?: number | null; error?: Error | null };
 type Call = { method: string; args: unknown[] };
@@ -23,7 +23,50 @@ function mockQuery(result: QueryResult) {
 }
 
 describe("bill directory pagination under the public API timeout", () => {
-  beforeEach(() => fromMock.mockReset());
+
+  it("retries an isolated PostgREST 57014 bill listing timeout once", async () => {
+    const query = mockQuery({ data: null });
+    let attempts = 0;
+    query.builder.then = (resolve: (result: QueryResult) => unknown, reject: (error: unknown) => unknown) =>
+      Promise.resolve(attempts++ === 0
+        ? { data: null, error: Object.assign(new Error("statement timeout"), { code: "57014" }) }
+        : { data: [{ id: "recovered" }], count: 4260 }).then(resolve, reject);
+    fromMock.mockReturnValueOnce(query.builder);
+    expect(await listBills({ chamber: "senate", limit: 24, offset: 0 })).toEqual({
+      bills: [{ id: "recovered" }], count: 4260,
+    });
+    expect(attempts).toBe(2);
+    expect(fromMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("coalesces and briefly caches stable bill filter-option RPCs", async () => {
+    const now = vi.spyOn(Date, "now").mockReturnValue(1_000_000);
+    try {
+      rpcMock.mockResolvedValue({
+        data: [{ legislature_number: 89, session_code: "R", bill_type: "hb", chamber: "house" }],
+        error: null,
+      });
+      const [first, second] = await Promise.all([getBillFilterOptions(), getBillFilterOptions()]);
+      expect(first).toEqual({
+        legislatures: [{ value: 89, label: "89th Legislature · R" }],
+        billTypes: ["hb"], chambers: ["house"],
+      });
+      expect(second).toEqual(first);
+      expect(await getBillFilterOptions()).toEqual(first);
+      expect(rpcMock).toHaveBeenCalledTimes(1);
+
+      now.mockReturnValue(1_300_001);
+      rpcMock.mockResolvedValueOnce({
+        data: [{ legislature_number: 90, session_code: "R", bill_type: "sb", chamber: "senate" }],
+        error: null,
+      });
+      expect((await getBillFilterOptions()).legislatures[0].value).toBe(90);
+      expect(rpcMock).toHaveBeenCalledTimes(2);
+    } finally {
+      now.mockRestore();
+    }
+  });
+  beforeEach(() => { fromMock.mockReset(); rpcMock.mockReset(); });
 
   it("keeps first-page requests as one query with exact totals", async () => {
     const first = mockQuery({ data: [{ id: "a", caption: "First bill" }], count: 12786 });
