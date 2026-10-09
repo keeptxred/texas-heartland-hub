@@ -303,12 +303,18 @@ export async function getRepresentativeLegislation(sponsorSlug: string) {
     possibleSlugs.add(representativeSlug(nameParts[nameParts.length - 1]));
   }
 
-  const { data, error } = await db
+  const query = db
     .from('bill_sponsors')
     .select('id,sponsor_name,sponsor_slug,sponsor_role,chamber,party,district,bills(id,legislature_number,session_code,bill_type,bill_number,bill_identifier,caption,current_status_label,last_action_date,became_law)')
     .in('sponsor_slug', [...possibleSlugs])
     .order('date_added', { ascending: false })
     .limit(100);
+  let { data, error } = await query;
+  if (error && (error.code === '57014' || error.message?.includes('statement timeout'))) {
+    const retry = await query;
+    data = retry.data;
+    error = retry.error;
+  }
   if (error) throw error;
   const rows = (data ?? []).map(resolveSponsorIdentity);
   const identity = rows[0] ?? (directoryRepresentative ? resolveSponsorIdentity({
