@@ -86,7 +86,7 @@ def check_deep_directory_page(path: str, page: int, *, filtered: bool) -> None:
     forbid(text, "Texas bills are temporarily unavailable", context=url)
     forbid(text, "No matching bills", context=url)
 
-    # Both chosen pages have at least 24 rows in the live source registry.
+    # The chosen deep pages each have at least 24 matching bills in the source registry.
     # Assert the server rendered every result, not a skeleton or empty response.
     article_count = len(re.findall(r"<article(?:[ >])", body, flags=re.I))
     if article_count != 24:
@@ -160,6 +160,8 @@ def main() -> int:
     check_deep_directory_page("/bills?chamber=senate&page=165", 165, filtered=True)
     check_deep_directory_page("/bills?legislature=89&page=515", 515, filtered=True)
     check_deep_directory_page("/bills?chamber=house&status=in-committee&page=207", 207, filtered=True)
+    check_deep_directory_page("/bills?status=in-committee&page=289", 289, filtered=True)
+    check_deep_directory_page("/bills?status=signed&page=44", 44, filtered=True)
     print("Texas Bills deployed-render smoke passed")
     return 0
 
