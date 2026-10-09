@@ -14,6 +14,7 @@ on:
 
 permissions:
   contents: read
+  statuses: write
 
 concurrency:
   group: keeptxred-cloudflare-production
@@ -508,6 +509,34 @@ jobs:
               'slugChanges': data.get('slugChanges'),
           }, indent=2))
           PY
+
+
+      # The ensure-current workflow reads this exact-SHA status and verifies the
+      # live Fifteenth Court contract before deciding another deploy is needed.
+      # Record it only AFTER every blocking legacy deployment/authority gate.
+      - name: Record verified production-current status for deployment reconciliation
+        if: steps.revision.outputs.deploy == 'true' && success()
+        continue-on-error: true
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          VERIFIED_SHA: ${{ steps.revision.outputs.sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          current_main="$(gh api "repos/$REPOSITORY/commits/main" --jq '.sha')"
+          if [[ "$current_main" != "$VERIFIED_SHA" ]]; then
+            echo "Main advanced beyond $VERIFIED_SHA; refusing to certify a stale deployment."
+            exit 0
+          fi
+
+          gh api --method POST "repos/$REPOSITORY/statuses/$VERIFIED_SHA" \
+            -f state='success' \
+            -f context='keeptxred-production-current' \
+            -f description='Verified legacy deployment; avoid duplicate Cloudflare promotion' \
+            -f target_url="$RUN_URL" >/dev/null
+          echo "Published verified production-current status for exact main $VERIFIED_SHA."
 
 
   newsroom-smoke:
