@@ -82,8 +82,34 @@ describe("bill directory pagination under the public API timeout", () => {
     expect(hydration.calls).toContainEqual({ method: "in", args: ["id", ["z", "y"]] });
   });
 
-  it("keeps unprofiled deep status-only and bill-type filters as one query", async () => {
-    for (const filters of [{ status: "in-committee" }, { chamber: "house", billType: "hb" }, { legislature: 89, chamber: "senate" }]) {
+  it("uses the status index for deep status-only pages and preserves order, count and mapped status codes", async () => {
+    const first = mockQuery({ data: [{ id: "b" }, { id: "a" }], count: 7458 });
+    const hydration = mockQuery({ data: [{ id: "a", caption: "A" }, { id: "b", caption: "B" }] });
+    fromMock.mockReturnValueOnce(first.builder).mockReturnValueOnce(hydration.builder);
+    const result = await listBills({ status: "in-committee", limit: 24, offset: 6912 });
+    expect(result).toEqual({ bills: [{ id: "b", caption: "B" }, { id: "a", caption: "A" }], count: 7458 });
+    expect(fromMock).toHaveBeenCalledTimes(2);
+    expect(first.calls.find((call) => call.method === "select")?.args).toEqual(["id", { count: "exact" }]);
+    expect(first.calls).toContainEqual({ method: "in", args: [
+      "current_status_code", ["in-committee", "referred-to-committee", "scheduled-for-hearing", "reported-from-committee"],
+    ] });
+    expect(first.calls).toContainEqual({ method: "range", args: [6912, 6935] });
+    expect(hydration.calls).toContainEqual({ method: "in", args: ["id", ["b", "a"]] });
+  });
+
+  it("keeps short status-only pages as a single query", async () => {
+    const first = mockQuery({ data: [{ id: "x", caption: "X" }], count: 7458 });
+    fromMock.mockReturnValueOnce(first.builder);
+    expect(await listBills({ status: "in-committee", offset: 24 })).toEqual({
+      bills: [{ id: "x", caption: "X" }], count: 7458,
+    });
+    expect(fromMock).toHaveBeenCalledTimes(1);
+    expect(first.calls.find((call) => call.method === "select")?.args[0]).toContain("caption");
+  });
+
+  it("keeps unprofiled combined and bill-type filters as one query", async () => {
+    for (const filters of [{ chamber: "house", billType: "hb" }, { legislature: 89, chamber: "senate" },
+      { status: "in-committee", legislature: 89 }, { status: "signed", billType: "hb" }]) {
       fromMock.mockReset();
       const first = mockQuery({ data: [{ id: "original" }], count: 1 });
       fromMock.mockReturnValueOnce(first.builder);
