@@ -64,7 +64,7 @@ const checks = [
       ".order('id', { ascending: true })",
       "import { publicBillPath } from '@/lib/bill-public-path';",
       "eq('session_code', 'R')",
-      'bills(id,legislature_number,session_code,bill_type,bill_number',
+      'id,legislature_number,session_code,bill_type,bill_number,bill_identifier,caption,current_status_label,last_action_date,became_law',
       '`${SITE_URL}/bills/texas/${bill.legislature_number}`',
       '`${SITE_URL}/bills/texas/${bill.legislature_number}/${billType}`',
     ],
