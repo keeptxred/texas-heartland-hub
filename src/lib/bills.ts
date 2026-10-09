@@ -165,7 +165,15 @@ export async function listBills({ search = '', status = '', legislature, chamber
     const safe = search.replace(/[,%()]/g, ' ').trim();
     query = query.or(`bill_identifier.ilike.%${safe}%,caption.ilike.%${safe}%`);
   }
-  const { data, error, count } = await query;
+  let { data, error, count } = await query;
+  // Transient PostgREST 57014 timeouts can occur during shared-database load.
+  // Retry only that specific failure once; avoid retry storms for other errors.
+  if (error && (error.code === '57014' || error.message?.includes('statement timeout'))) {
+    const retry = await query;
+    data = retry.data;
+    error = retry.error;
+    count = retry.count;
+  }
   if (error) throw error;
   if (!indexFirst) return { bills: (data ?? []) as Bill[], count: count ?? 0 };
 
