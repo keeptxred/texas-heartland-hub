@@ -193,7 +193,12 @@ export async function listBills({ search = '', status = '', legislature, chamber
   return { bills, count: count ?? 0 };
 }
 
+let filterOptionsPromise: Promise<any> | null = null;
+let filterOptionsExpiresAt = 0;
+
 export async function getBillFilterOptions() {
+  if (filterOptionsPromise && Date.now() < filterOptionsExpiresAt) return filterOptionsPromise;
+  const request = (async () => {
   const { data, error } = await db.rpc('list_active_bill_filter_options');
   if (error) throw error;
   const rows = data ?? [];
@@ -201,6 +206,14 @@ export async function getBillFilterOptions() {
   const billTypes = [...new Set(rows.map((row: any) => row.bill_type).filter(Boolean))].sort();
   const chambers = [...new Set(rows.map((row: any) => row.chamber).filter(Boolean))].sort();
   return { legislatures, billTypes, chambers };
+  })();
+  filterOptionsPromise = request;
+  filterOptionsExpiresAt = Date.now() + 5 * 60 * 1000;
+  try { return await request; }
+  catch (error) {
+    if (filterOptionsPromise === request) filterOptionsPromise = null;
+    throw error;
+  }
 }
 
 export async function getBill(legislature: number, billType: string, billNumber: number) {
