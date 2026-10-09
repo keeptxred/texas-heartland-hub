@@ -24,22 +24,54 @@ function mockQuery(result: QueryResult) {
 
 describe("bill directory pagination under the public API timeout", () => {
 
-  it("retries a transient bill-sponsor directory timeout once", async () => {
-    const query = mockQuery({ data: null });
+  it("retries a transient bill-sponsor directory timeout once, then hydrates only limited IDs", async () => {
+    const sponsorQuery = mockQuery({ data: null });
+    const hydration = mockQuery({ data: [{ id: "b1", bill_identifier: "HB 1", legislature_number: 89 }] });
     let attempts = 0;
-    query.builder.then = (resolve: (result: QueryResult) => unknown, reject: (error: unknown) => unknown) =>
+    sponsorQuery.builder.then = (resolve: (result: QueryResult) => unknown, reject: (error: unknown) => unknown) =>
       Promise.resolve(attempts++ === 0
         ? { data: null, error: Object.assign(new Error("statement timeout"), { code: "57014" }) }
         : { data: [{
-            id: "s1", sponsor_name: "Example Maker", sponsor_slug: "example-maker",
-            sponsor_role: "author", chamber: "house",
-            bills: { id: "b1", bill_identifier: "HB 1", legislature_number: 89 },
+            id: "s1", bill_id: "b1", sponsor_name: "Example Maker",
+            sponsor_slug: "example-maker", sponsor_role: "author", chamber: "house",
           }], error: null }).then(resolve, reject);
-    fromMock.mockReturnValueOnce(query.builder);
+    fromMock.mockReturnValueOnce(sponsorQuery.builder).mockReturnValueOnce(hydration.builder);
     const result = await getRepresentativeLegislation("example-maker");
     expect(result.bills).toEqual([{ id: "b1", bill_identifier: "HB 1", legislature_number: 89 }]);
     expect(attempts).toBe(2);
-    expect(fromMock).toHaveBeenCalledTimes(1);
+    expect(fromMock).toHaveBeenCalledTimes(2);
+    expect(sponsorQuery.calls.find((call) => call.method === "select")?.args[0]).not.toContain("bills(");
+    expect(sponsorQuery.calls).toContainEqual({ method: "limit", args: [100] });
+    expect(hydration.calls).toContainEqual({ method: "in", args: ["id", ["b1"]] });
+  });
+
+  it("preserves sponsor date ordering even when bill hydration returns rows out of order", async () => {
+    const sponsors = mockQuery({ data: [
+      { id: "s2", bill_id: "b2", sponsor_name: "Example Maker", sponsor_slug: "example-maker" },
+      { id: "s1", bill_id: "b1", sponsor_name: "Example Maker", sponsor_slug: "example-maker" },
+    ] });
+    const hydration = mockQuery({ data: [
+      { id: "b1", bill_identifier: "HB 1" }, { id: "b2", bill_identifier: "HB 2" },
+    ] });
+    fromMock.mockReturnValueOnce(sponsors.builder).mockReturnValueOnce(hydration.builder);
+    expect((await getRepresentativeLegislation("example-maker")).bills.map((bill: any) => bill.id)).toEqual(["b2", "b1"]);
+    expect(hydration.calls).toContainEqual({ method: "in", args: ["id", ["b2", "b1"]] });
+  });
+
+  it("retries a transient sponsor bill-hydration timeout once", async () => {
+    const sponsors = mockQuery({ data: [
+      { id: "s1", bill_id: "b1", sponsor_name: "Example Maker", sponsor_slug: "example-maker" },
+    ] });
+    const hydration = mockQuery({ data: null });
+    let attempts = 0;
+    hydration.builder.then = (resolve: (result: QueryResult) => unknown, reject: (error: unknown) => unknown) =>
+      Promise.resolve(attempts++ === 0
+        ? { data: null, error: Object.assign(new Error("statement timeout"), { code: "57014" }) }
+        : { data: [{ id: "b1", bill_identifier: "HB 1" }], error: null }).then(resolve, reject);
+    fromMock.mockReturnValueOnce(sponsors.builder).mockReturnValueOnce(hydration.builder);
+    expect((await getRepresentativeLegislation("example-maker")).bills).toEqual([{ id: "b1", bill_identifier: "HB 1" }]);
+    expect(attempts).toBe(2);
+    expect(fromMock).toHaveBeenCalledTimes(2);
   });
 
   it("retries an isolated PostgREST 57014 bill listing timeout once", async () => {
