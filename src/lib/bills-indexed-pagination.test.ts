@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const { fromMock, rpcMock } = vi.hoisted(() => ({ fromMock: vi.fn(), rpcMock: vi.fn() }));
 vi.mock("@/integrations/supabase/client", () => ({ supabase: { from: fromMock, rpc: rpcMock } }));
 
-import { listBills, getBillFilterOptions } from "./bills";
+import { listBills, getBillFilterOptions, getRepresentativeLegislation } from "./bills";
 
 type QueryResult = { data: unknown[] | null; count?: number | null; error?: Error | null };
 type Call = { method: string; args: unknown[] };
@@ -11,7 +11,7 @@ type Call = { method: string; args: unknown[] };
 function mockQuery(result: QueryResult) {
   const calls: Call[] = [];
   const builder: Record<string, any> = {};
-  for (const method of ["select", "eq", "order", "range", "in", "or"]) {
+  for (const method of ["select", "eq", "order", "range", "in", "or", "limit"]) {
     builder[method] = (...args: unknown[]) => {
       calls.push({ method, args });
       return builder;
@@ -23,6 +23,24 @@ function mockQuery(result: QueryResult) {
 }
 
 describe("bill directory pagination under the public API timeout", () => {
+
+  it("retries a transient bill-sponsor directory timeout once", async () => {
+    const query = mockQuery({ data: null });
+    let attempts = 0;
+    query.builder.then = (resolve: (result: QueryResult) => unknown, reject: (error: unknown) => unknown) =>
+      Promise.resolve(attempts++ === 0
+        ? { data: null, error: Object.assign(new Error("statement timeout"), { code: "57014" }) }
+        : { data: [{
+            id: "s1", sponsor_name: "Example Maker", sponsor_slug: "example-maker",
+            sponsor_role: "author", chamber: "house",
+            bills: { id: "b1", bill_identifier: "HB 1", legislature_number: 89 },
+          }], error: null }).then(resolve, reject);
+    fromMock.mockReturnValueOnce(query.builder);
+    const result = await getRepresentativeLegislation("example-maker");
+    expect(result.bills).toEqual([{ id: "b1", bill_identifier: "HB 1", legislature_number: 89 }]);
+    expect(attempts).toBe(2);
+    expect(fromMock).toHaveBeenCalledTimes(1);
+  });
 
   it("retries an isolated PostgREST 57014 bill listing timeout once", async () => {
     const query = mockQuery({ data: null });
