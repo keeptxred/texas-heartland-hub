@@ -305,7 +305,7 @@ export async function getRepresentativeLegislation(sponsorSlug: string) {
 
   const query = db
     .from('bill_sponsors')
-    .select('id,sponsor_name,sponsor_slug,sponsor_role,chamber,party,district,bills(id,legislature_number,session_code,bill_type,bill_number,bill_identifier,caption,current_status_label,last_action_date,became_law)')
+    .select('id,bill_id,sponsor_name,sponsor_slug,sponsor_role,chamber,party,district')
     .in('sponsor_slug', [...possibleSlugs])
     .order('date_added', { ascending: false })
     .limit(100);
@@ -316,7 +316,28 @@ export async function getRepresentativeLegislation(sponsorSlug: string) {
     error = retry.error;
   }
   if (error) throw error;
-  const rows = (data ?? []).map(resolveSponsorIdentity);
+  // Apply ORDER BY/LIMIT before fetching bill details. The former embedded
+  // relation joined every matching sponsor before limiting to 100 records.
+  const sponsorRows = data ?? [];
+  const ids = [...new Set(sponsorRows.map((row: any) => row.bill_id).filter(Boolean))];
+  let billsById = new Map<string, any>();
+  if (ids.length) {
+    const hydration = db
+      .from('bills')
+      .select('id,legislature_number,session_code,bill_type,bill_number,bill_identifier,caption,current_status_label,last_action_date,became_law')
+      .in('id', ids);
+    let { data: billRows, error: billError } = await hydration;
+    if (billError && (billError.code === '57014' || billError.message?.includes('statement timeout'))) {
+      const retry = await hydration;
+      billRows = retry.data;
+      billError = retry.error;
+    }
+    if (billError) throw billError;
+    billsById = new Map((billRows ?? []).map((bill: any) => [bill.id, bill]));
+  }
+  const rows = sponsorRows.map((row: any) =>
+    resolveSponsorIdentity({ ...row, bills: billsById.get(row.bill_id) ?? null })
+  );
   const identity = rows[0] ?? (directoryRepresentative ? resolveSponsorIdentity({
     sponsor_name: directoryRepresentative.name,
     sponsor_slug: representativeSlug(directoryRepresentative.name),
