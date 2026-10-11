@@ -47,3 +47,9 @@ Typed verification records, source checks, source registry, route inventory, pri
 
 ## Security design decision
 The existing `/admin` layout uses a client-side passcode and sessionStorage, which is **not** server authentication. Do not expose service-role credentials or a ledger-writing endpoint protected only by that passcode. A server-verified identity and authorization check must precede editorial writes. Until then, keep the private Supabase tables server-only and use CI artifacts for source monitoring.
+
+## Source-check ingestion implementation (2026-10-11)
+- `scripts/evergreen/persist-source-results.mjs` writes each source check to the private Supabase ledger and appends an audit event, **only** when server credentials are configured.
+- The weekly workflow invokes ingestion with GitHub Actions secrets `KTR_EVERGREEN_SUPABASE_URL` and `KTR_EVERGREEN_SUPABASE_SERVICE_ROLE_KEY`. Without these, ingestion explicitly skips; artifacts still retain source-check results.
+- Source monitor entries use `source:<id>` and `/internal/evergreen/sources/<id>` identifiers, not fabricated published page claims. They are not a substitute for per-page factual review.
+- Do not put the service-role key in client-side Vite variables. Confirm secrets and workflow execution after merge; the secure editorial approval interface remains unimplemented.
