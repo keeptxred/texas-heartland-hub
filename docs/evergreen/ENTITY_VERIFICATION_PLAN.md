@@ -38,3 +38,9 @@ Initial typed verification record and pure scheduling/review helpers implemented
 - Read-only official-source list and scheduled GitHub Actions workflow committed; scheduled workflows do not run from an unmerged feature branch.
 - A successful source fetch is classified as retrieved-not-verified, not a factual verification.
 - PR must pass CI and merge before the weekly watch can run from default branch. No automatic publication.
+
+## Database application verified (2026-10-11)
+- Applied private `ktr_evergreen_verifications` and `ktr_evergreen_verification_events` tables in Supabase project `ftkznprjljkhymknvhye` through two database migrations.
+- Queried Postgres catalog to verify both tables have row-level security enabled.
+- Tables are deliberately not exposed to anonymous or ordinary authenticated clients; absence of public RLS policies is intentional.
+- Source-check to ledger ingestion and editorial review UI are **not yet implemented**; no content is auto-published.
