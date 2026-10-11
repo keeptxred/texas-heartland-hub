@@ -40,6 +40,14 @@ describe('evergreen entity verification', () => {
     const result = {...base, officialSources: [], status:'retrieved-not-verified' as const, evidence:[{url:base.officialSources[0],checkedAt:at,status:'available' as const}]};
     expect(() => approveFactualVerification(result, at)).toThrow();
   });
+  it('rejects malformed evidence timestamps and approval predating a check', () => {
+    expect(() => recordSourceCheck(base, [{url:base.officialSources[0],checkedAt:'not-a-date',status:'available'}])).toThrow();
+    const checked = recordSourceCheck(base, [{url:base.officialSources[0],checkedAt:at,status:'available'}]);
+    expect(() => approveFactualVerification(checked, '2026-10-09T12:00:00.000Z')).toThrow();
+  });
+  it('never publishes a forged verified record with missing official evidence', () => {
+    expect(publishable({...base,status:'verified',reviewerApprovedAt:at})).toBe(false);
+  });
   it('does not accept an empty evidence list', () => {
     expect(() => recordSourceCheck(base, [])).toThrow();
   });
