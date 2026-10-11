@@ -18,7 +18,7 @@ for (const result of payload.results) {
   if (typeof result.url !== 'string') throw new Error('Invalid source URL');
   const sourceUrl = new URL(result.url);
   if (sourceUrl.protocol !== 'https:' || !(sourceUrl.hostname.endsWith('.gov') || sourceUrl.hostname === 'www.sos.state.tx.us') || sourceUrl.username || sourceUrl.password) throw new Error('Invalid government source URL');
-  if (!Number.isFinite(Date.parse(result.checkedAt || payload.generatedAt))) throw new Error('Invalid check time');
+  if (!Number.isFinite(Date.parse(result.checkedAt))) throw new Error('Invalid check time');
   if (!['retrieved-not-verified','unavailable','manual-review'].includes(result.status)) throw new Error('Unknown source-check status');
 }
 const headers = { apikey:key, ...(key.startsWith('sb_secret_') ? {} : {Authorization:`Bearer ${key}`}), 'Content-Type':'application/json', Prefer:'resolution=merge-duplicates,return=minimal' };
