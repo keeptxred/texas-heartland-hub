@@ -1,4 +1,4 @@
-import { test } from 'node:test';
+import { test, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -6,7 +6,8 @@ import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
 const dir = mkdtempSync(join(tmpdir(), 'ktr-source-test-'));
-try {
+after(() => rmSync(dir,{recursive:true,force:true}));
+{
   const input = join(dir, 'input.json');
   const output = join(dir, 'output.json');
   function run(records) {
@@ -24,7 +25,4 @@ try {
   test('rejects invalid source identifiers', () => {
     assert.notEqual(run([{id:'../bad',url:'https://example.gov/'}]).status,0);
   });
-} finally {
-  // The test runner executes these synchronous tests before cleanup.
-  rmSync(dir,{recursive:true,force:true});
 }
