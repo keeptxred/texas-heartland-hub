@@ -50,6 +50,11 @@ The existing `/admin` layout uses a client-side passcode and sessionStorage, whi
 
 ## Source-check ingestion implementation (2026-10-11)
 - `scripts/evergreen/persist-source-results.mjs` writes each source check to the private Supabase ledger and appends an audit event, **only** when server credentials are configured.
-- The weekly workflow invokes ingestion with GitHub Actions secrets `KTR_EVERGREEN_SUPABASE_URL` and `KTR_EVERGREEN_SUPABASE_SERVICE_ROLE_KEY`. Without these, ingestion explicitly skips; artifacts still retain source-check results.
+- The weekly workflow invokes ingestion with GitHub Actions secrets `KTR_EVERGREEN_SUPABASE_URL` and `KTR_EVERGREEN_SUPABASE_SERVICE_ROLE_KEY`. Without these, ingestion fails closed and the workflow reports a failure rather than silently succeeding.
 - Source monitor entries use `source:<id>` and `/internal/evergreen/sources/<id>` identifiers, not fabricated published page claims. They are not a substitute for per-page factual review.
 - Do not put the service-role key in client-side Vite variables. Confirm secrets and workflow execution after merge; the secure editorial approval interface remains unimplemented.
+
+## CI and credential checkpoint (2026-10-11)
+- All six CI checks passed on commit `111715821`, including Evergreen Entity Audit, workflow validation, repository health and production build.
+- The ingestion runner now fails closed on missing credentials; CI checks validate syntax but do not exercise the private production database write.
+- Configure and verify GitHub Actions secrets before merging or dispatching the source-watch workflow. No claim of successful live ingestion is made.
