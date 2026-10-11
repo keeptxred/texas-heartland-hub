@@ -36,6 +36,7 @@ export function verificationDue(record: EntityVerificationRecord, now = new Date
 }
 export function recordSourceCheck(record: EntityVerificationRecord, evidence: OfficialEvidence[]): EntityVerificationRecord {
   if (!evidence.length) throw new Error('Source checks must include evidence');
+  if (evidence.some(item => !Number.isFinite(Date.parse(item.checkedAt)))) throw new Error('Invalid evidence timestamp');
   const checkedAt = evidence.map(item => item.checkedAt).sort().at(-1)!;
   const hasFailure = record.officialSources.some(url => !evidence.some(item => item.url === url)) || evidence.some(item => item.status === 'unavailable');
   const hasChange = evidence.some(item => item.status === 'changed');
@@ -48,7 +49,7 @@ export function recordSourceCheck(record: EntityVerificationRecord, evidence: Of
 }
 /** Never auto-publish a detected change, especially legal, tax or government facts. */
 export function publishable(record: EntityVerificationRecord): boolean {
-  return record.status === 'verified' && Boolean(record.reviewerApprovedAt) && record.pendingChanges.length === 0;
+  return record.status === 'verified' && Boolean(record.reviewerApprovedAt) && record.pendingChanges.length === 0 && record.officialSources.length > 0 && record.officialSources.every(url => record.evidence.some(item => item.url === url && item.status === 'available'));
 }
 
 /** Human factual review is required: HTTP success and hash equality are not proof. */
@@ -56,6 +57,7 @@ export function approveFactualVerification(record: EntityVerificationRecord, app
   if (record.status !== 'retrieved-not-verified' || record.pendingChanges.length || !record.officialSources.length || record.officialSources.some(url => !record.evidence.some(item => item.url === url && item.status === 'available')) || record.evidence.some(item => item.status !== 'available')) {
     throw new Error('Cannot approve missing, changed or unavailable source evidence');
   }
-  if (!Number.isFinite(Date.parse(approvedAt))) throw new Error('Invalid approval timestamp');
+  const approvalTime = Date.parse(approvedAt);
+  if (!Number.isFinite(approvalTime) || record.evidence.some(item => !Number.isFinite(Date.parse(item.checkedAt)) || Date.parse(item.checkedAt) > approvalTime)) throw new Error('Invalid approval or evidence timestamp');
   return {...record, status:'verified', lastVerifiedAt:approvedAt, reviewerApprovedAt:approvedAt};
 }
