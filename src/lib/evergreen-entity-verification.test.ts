@@ -30,6 +30,16 @@ describe('evergreen entity verification', () => {
     expect(changed.status).toBe('needs-review');
     expect(publishable(changed)).toBe(false);
   });
+  it('rejects approval when a required official source was never checked', () => {
+    const twoSources = {...base, officialSources: ['https://statutes.capitol.texas.gov/', 'https://comptroller.texas.gov/']};
+    const result = recordSourceCheck(twoSources, [{url:twoSources.officialSources[0],checkedAt:at,status:'available' as const}]);
+    expect(result.status).toBe('source-unavailable');
+    expect(() => approveFactualVerification(result, at)).toThrow();
+  });
+  it('rejects approval without any registered official sources', () => {
+    const result = {...base, officialSources: [], status:'retrieved-not-verified' as const, evidence:[{url:base.officialSources[0],checkedAt:at,status:'available' as const}]};
+    expect(() => approveFactualVerification(result, at)).toThrow();
+  });
   it('does not accept an empty evidence list', () => {
     expect(() => recordSourceCheck(base, [])).toThrow();
   });
