@@ -11,6 +11,7 @@ const base = new URL(url);
 if (base.protocol !== 'https:') throw new Error('Supabase endpoint must use HTTPS');
 const payload = JSON.parse(readFileSync(inputPath, 'utf8'));
 if (!Array.isArray(payload.results) || payload.results.length === 0 || payload.results.length > 25) throw new Error('Expected 1 to 25 source-check results');
+if (new Set(payload.results.map(item => item.id)).size !== payload.results.length) throw new Error('Duplicate source-check identifiers');
 const headers = { apikey:key, ...(key.startsWith('sb_secret_') ? {} : {Authorization:`Bearer ${key}`}), 'Content-Type':'application/json', Prefer:'resolution=merge-duplicates,return=minimal' };
 for (const result of payload.results) {
   if (typeof result.id !== 'string' || !/^[a-z0-9-]{1,80}$/.test(result.id)) throw new Error('Invalid source identifier');
@@ -18,6 +19,7 @@ for (const result of payload.results) {
   const entityId = `source:${result.id}`;
   const checkedAt = result.checkedAt || payload.generatedAt;
   if (!Number.isFinite(Date.parse(checkedAt))) throw new Error('Invalid check time');
+  if (!['retrieved-not-verified','unavailable','manual-review'].includes(result.status)) throw new Error('Unknown source-check status');
   const status = result.status === 'retrieved-not-verified' ? 'retrieved-not-verified' : result.status === 'unavailable' ? 'source-unavailable' : 'needs-review';
   const row = { entity_id:entityId, route:'/internal/evergreen/sources/'+result.id, cadence:'weekly', status, official_sources:[result.url], evidence:[result], last_checked_at:checkedAt, next_check_at:new Date(Date.parse(checkedAt)+7*86400000).toISOString(), updated_at:new Date().toISOString() };
   const endpoint = new URL('/rest/v1/ktr_evergreen_verifications?on_conflict=entity_id', base);
