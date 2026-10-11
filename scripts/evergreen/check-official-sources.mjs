@@ -12,7 +12,7 @@ const MAX_BYTES = 2_000_000;
 for(const record of records) {
  const url=new URL(record.url);
  const checkedAt=new Date().toISOString();
- if(url.protocol!=='https:' || !url.hostname.endsWith('.gov')) {
+ if(url.protocol!=='https:' || !(url.hostname.endsWith('.gov') || url.hostname === 'www.sos.state.tx.us')) {
   results.push({id:record.id,url:record.url,status:'manual-review',checkedAt,reason:'Source host not on conservative government allowlist'});continue;
  }
  try {
