@@ -50,6 +50,11 @@ describe('evergreen entity verification', () => {
   it('never publishes a forged verified record with missing official evidence', () => {
     expect(publishable({...base,status:'verified',reviewerApprovedAt:at})).toBe(false);
   });
+  it('rejects duplicate evidence and evidence from unregistered official sources', () => {
+    const evidence = {url:base.officialSources[0],checkedAt:at,status:'available' as const};
+    expect(() => recordSourceCheck(base,[evidence,evidence])).toThrow();
+    expect(() => recordSourceCheck(base,[{...evidence,url:'https://unregistered.gov/'}])).toThrow();
+  });
   it('does not accept an empty evidence list', () => {
     expect(() => recordSourceCheck(base, [])).toThrow();
   });
