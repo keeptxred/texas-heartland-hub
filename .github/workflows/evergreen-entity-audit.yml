@@ -18,6 +18,10 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bunx vitest run src/lib/evergreen-entity-verification.test.ts
       - run: node scripts/evergreen/audit-entities.mjs > evergreen-inventory.json
+      - name: Validate evergreen monitor scripts
+        run: |
+          node --check scripts/evergreen/check-official-sources.mjs
+          node --check scripts/evergreen/persist-source-results.mjs
       - uses: actions/upload-artifact@v4
         with:
           name: evergreen-inventory
