@@ -68,3 +68,10 @@ The existing `/admin` layout uses a client-side passcode and sessionStorage, whi
 ## Batch ingestion integrity (2026-10-11)
 - The private writer prevalidates every source record before its first network write, rejecting duplicate IDs, malformed government URLs, unknown statuses and invalid timestamps.
 - **Important remaining limitation:** PostgREST writes to verification records and audit events are separate requests; a network failure between them can leave a partial batch. Production acceptance requires atomic server-side ingestion (single transaction or equivalent idempotent recovery) before treating this as fully reliable.
+
+## Atomic ingestion deployment (2026-10-11)
+- Applied `ktr_evergreen_atomic_source_ingestion` migration to the shared Supabase project. GitHub migration file: `supabase/migrations/20261011194500_ktr_evergreen_atomic_source_ingestion.sql`.
+- `ktr_ingest_evergreen_source_batch(jsonb)` performs all verification upserts and append-only audit inserts in one PostgreSQL transaction, validating the batch before writes.
+- Direct privilege check: `anon_execute=false`, `authenticated_execute=false`, `service_execute=true`.
+- GitHub ingestion script now calls the atomic RPC; the prior separate REST writes are removed.
+- **Still pending:** GitHub Actions credentials, successful live source-watch dispatch and persisted records, CI for these new changes, authenticated human review, and release verification.
