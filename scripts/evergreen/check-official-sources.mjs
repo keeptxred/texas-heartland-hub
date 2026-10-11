@@ -4,17 +4,20 @@ import { readFileSync, writeFileSync } from 'node:fs';
 const [,,inputPath,outputPath] = process.argv;
 if(!inputPath || !outputPath) {console.error('Usage: node check-official-sources.mjs sources.json results.json');process.exit(2)}
 const records=JSON.parse(readFileSync(inputPath,'utf8'));
-if(!Array.isArray(records)) throw new Error('Expected array of source records');
+if(!Array.isArray(records) || records.length < 1 || records.length > 25) throw new Error('Expected 1 to 25 source records');
+if(records.some(record => !record || typeof record.id !== 'string' || !/^[a-z0-9-]{1,80}$/.test(record.id) || typeof record.url !== 'string')) throw new Error('Invalid source record');
+if(new Set(records.map(record => record.id)).size !== records.length) throw new Error('Duplicate source IDs');
 const results=[];
 const MAX_BYTES = 2_000_000;
-for(const record of records.slice(0,25)) {
+for(const record of records) {
  const url=new URL(record.url);
+ const checkedAt=new Date().toISOString();
  if(url.protocol!=='https:' || !url.hostname.endsWith('.gov')) {
-  results.push({id:record.id,url:record.url,status:'manual-review',reason:'Source host not on conservative government allowlist'});continue;
+  results.push({id:record.id,url:record.url,status:'manual-review',checkedAt,reason:'Source host not on conservative government allowlist'});continue;
  }
  try {
   const response=await fetch(url,{headers:{'User-Agent':'KeepTXRed-SourceAudit/1.0 (+https://keeptxred.com/contact)','Accept':'text/html,application/json,text/plain'},signal:AbortSignal.timeout(12000),redirect:'error'});
-  if(!response.ok) {results.push({id:record.id,url:record.url,status:'unavailable',httpStatus:response.status});continue}
+  if(!response.ok) {results.push({id:record.id,url:record.url,status:'unavailable',checkedAt,httpStatus:response.status});continue}
   const declaredSize=Number(response.headers.get('content-length') || 0);
   if(declaredSize > MAX_BYTES) {results.push({id:record.id,url:record.url,status:'manual-review',reason:'Response exceeds fetch budget'});continue}
   const reader=response.body?.getReader();
@@ -28,8 +31,8 @@ for(const record of records.slice(0,25)) {
    chunks.push(value);
   }
   const content=Buffer.concat(chunks).toString('utf8');
-  results.push({id:record.id,url:record.url,status:'retrieved-not-verified',checkedAt:new Date().toISOString(),httpStatus:response.status,sha256:createHash('sha256').update(content).digest('hex'),bytes});
- } catch(error) {results.push({id:record.id,url:record.url,status:'unavailable',error:String(error).slice(0,250)})}
+  results.push({id:record.id,url:record.url,status:'retrieved-not-verified',checkedAt:httpStatus:response.status,sha256:createHash('sha256').update(content).digest('hex'),bytes});
+ } catch(error) {results.push({id:record.id,url:record.url,status:'unavailable',checkedAt,error:String(error).slice(0,250)})}
 }
 writeFileSync(outputPath,JSON.stringify({generatedAt:new Date().toISOString(),results},null,2)+'\n');
 console.log('Checked '+results.length+' sources; no factual claims were verified or published.');
