@@ -14,12 +14,13 @@ jobs:
         with:
           node-version: '22'
       - run: node scripts/evergreen/check-official-sources.mjs scripts/evergreen/official-sources.json evergreen-source-results.json
-      - name: Persist checks to private Supabase ledger when credentials are configured
+      - name: Persist checks to private Supabase ledger (required)
         env:
           SUPABASE_URL: ${{ secrets.KTR_EVERGREEN_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.KTR_EVERGREEN_SUPABASE_SERVICE_ROLE_KEY }}
         run: node scripts/evergreen/persist-source-results.mjs evergreen-source-results.json
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: evergreen-source-results
           path: evergreen-source-results.json
