@@ -44,3 +44,6 @@ Initial typed verification record and pure scheduling/review helpers implemented
 - Queried Postgres catalog to verify both tables have row-level security enabled.
 - Tables are deliberately not exposed to anonymous or ordinary authenticated clients; absence of public RLS policies is intentional.
 - Source-check to ledger ingestion and editorial review UI are **not yet implemented**; no content is auto-published.
+
+## Security design decision
+The existing `/admin` layout uses a client-side passcode and sessionStorage, which is **not** server authentication. Do not expose service-role credentials or a ledger-writing endpoint protected only by that passcode. A server-verified identity and authorization check must precede editorial writes. Until then, keep the private Supabase tables server-only and use CI artifacts for source monitoring.
