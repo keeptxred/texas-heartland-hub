@@ -20,7 +20,9 @@ describe('evergreen entity verification', () => {
     expect(result.lastVerifiedAt).toBeUndefined();
     expect(publishable(result)).toBe(false);
     const approved = approveFactualVerification(result, at);
-    expect(publishable(approved)).toBe(true);
+    expect(publishable(approved, '2026-10-11T12:00:00.000Z')).toBe(true);
+    expect(publishable(approved, '2026-10-17T12:00:00.000Z')).toBe(false);
+    expect(() => approveFactualVerification(result, '2026-10-18T12:00:00.000Z')).toThrow();
   });
   it('blocks source failures and changes pending editorial review', () => {
     const unavailable = recordSourceCheck(base, [{url:base.officialSources[0],checkedAt:at,status:'unavailable'}]);
