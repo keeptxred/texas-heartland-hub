@@ -75,3 +75,9 @@ The existing `/admin` layout uses a client-side passcode and sessionStorage, whi
 - Direct privilege check: `anon_execute=false`, `authenticated_execute=false`, `service_execute=true`.
 - GitHub ingestion script now calls the atomic RPC; the prior separate REST writes are removed.
 - **Still pending:** GitHub Actions credentials, successful live source-watch dispatch and persisted records, CI for these new changes, authenticated human review, and release verification.
+
+## CI acceptance update (2026-10-11)
+- Commit `4ca4cc7c316f0eff0f38f050b20cabdcd9ce98b9` passed all six pull-request workflows: repository health, production build, evergreen audit, workflow validation, roundup contract, daily news publication.
+- The live Supabase ledger still had zero verification records and zero events at last inspection; successful CI does not establish live ingestion.
+- The source-watch workflow now retains its source-check artifact on failure for diagnostics; private ledger persistence remains mandatory and fails closed when secrets are missing.
+- PR remains draft; do not merge or claim full release readiness until live credentials, persisted source checks, authenticated human factual approval, and production verification are complete.
