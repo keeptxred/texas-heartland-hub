@@ -11,7 +11,7 @@ const base = new URL(url);
 if (base.protocol !== 'https:') throw new Error('Supabase endpoint must use HTTPS');
 const payload = JSON.parse(readFileSync(inputPath, 'utf8'));
 if (!Array.isArray(payload.results) || payload.results.length === 0 || payload.results.length > 25) throw new Error('Expected 1 to 25 source-check results');
-const headers = { apikey:key, Authorization:`Bearer ${key}`, 'Content-Type':'application/json', Prefer:'resolution=merge-duplicates,return=minimal' };
+const headers = { apikey:key, ...(key.startsWith('sb_secret_') ? {} : {Authorization:`Bearer ${key}`}), 'Content-Type':'application/json', Prefer:'resolution=merge-duplicates,return=minimal' };
 for (const result of payload.results) {
   if (typeof result.id !== 'string' || !/^[a-z0-9-]{1,80}$/.test(result.id)) throw new Error('Invalid source identifier');
   if (typeof result.url !== 'string' || new URL(result.url).protocol !== 'https:') throw new Error('Invalid source URL');
