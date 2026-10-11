@@ -8,7 +8,7 @@ if(!Array.isArray(records)) throw new Error('Expected array of source records');
 const results=[];
 for(const record of records.slice(0,25)) {
  const url=new URL(record.url);
- if(url.protocol!=='https:' || !url.hostname.endsWith('.gov') && !url.hostname.endsWith('.texas.gov') && !url.hostname.endsWith('.tx.us')) {
+ if(url.protocol!=='https:' || !url.hostname.endsWith('.gov')) {
   results.push({id:record.id,url:record.url,status:'manual-review',reason:'Source host not on conservative government allowlist'});continue;
  }
  try {
