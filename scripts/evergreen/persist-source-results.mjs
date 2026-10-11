@@ -8,7 +8,7 @@ if (!url || !key) {
   throw new Error('Private ledger ingestion requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
 }
 const base = new URL(url);
-if (base.protocol !== 'https:' || base.username || base.password || base.pathname !== '/' || base.search || base.hash || !/^https:\/\/[a-z0-9-]+\.supabase\.co\/$/.test(base.href)) throw new Error('Supabase endpoint must be a project HTTPS origin');
+if (base.protocol !== 'https:' || base.username || base.password || base.pathname !== '/' || base.search || base.hash || !base.hostname.endsWith('.supabase.co')) throw new Error('Supabase endpoint must be a project HTTPS origin');
 const payload = JSON.parse(readFileSync(inputPath, 'utf8'));
 if (!Array.isArray(payload.results) || payload.results.length === 0 || payload.results.length > 25) throw new Error('Expected 1 to 25 source-check results');
 if (new Set(payload.results.map(item => item.id)).size !== payload.results.length) throw new Error('Duplicate source-check identifiers');
