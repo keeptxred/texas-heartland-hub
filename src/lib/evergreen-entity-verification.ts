@@ -1,5 +1,5 @@
 /** Source-backed evergreen entity verification, independent of election pipelines. */
-export type VerificationStatus = 'pending' | 'verified' | 'change-detected' | 'source-unavailable' | 'needs-review';
+export type VerificationStatus = 'pending' | 'retrieved-not-verified' | 'verified' | 'change-detected' | 'source-unavailable' | 'needs-review';
 export type VerificationCadence = 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'event-driven';
 export interface OfficialEvidence {
   url: string;
@@ -39,14 +39,23 @@ export function recordSourceCheck(record: EntityVerificationRecord, evidence: Of
   const checkedAt = evidence.map(item => item.checkedAt).sort().at(-1)!;
   const hasFailure = evidence.some(item => item.status === 'unavailable');
   const hasChange = evidence.some(item => item.status === 'changed');
-  const status: VerificationStatus = hasFailure ? 'source-unavailable' : hasChange ? 'needs-review' : 'verified';
+  const status: VerificationStatus = hasFailure ? 'source-unavailable' : hasChange ? 'needs-review' : 'retrieved-not-verified';
   return {
     ...record, evidence, status, lastCheckedAt: checkedAt,
-    lastVerifiedAt: status === 'verified' ? checkedAt : record.lastVerifiedAt,
+    lastVerifiedAt: record.lastVerifiedAt,
     nextCheckAt: nextVerificationDate(record.cadence, checkedAt),
   };
 }
 /** Never auto-publish a detected change, especially legal, tax or government facts. */
 export function publishable(record: EntityVerificationRecord): boolean {
-  return record.status === 'verified' && record.pendingChanges.length === 0;
+  return record.status === 'verified' && Boolean(record.reviewerApprovedAt) && record.pendingChanges.length === 0;
+}
+
+/** Human factual review is required: HTTP success and hash equality are not proof. */
+export function approveFactualVerification(record: EntityVerificationRecord, approvedAt: string): EntityVerificationRecord {
+  if (record.status !== 'retrieved-not-verified' || record.pendingChanges.length || record.evidence.some(item => item.status !== 'available')) {
+    throw new Error('Cannot approve missing, changed or unavailable source evidence');
+  }
+  if (!Number.isFinite(Date.parse(approvedAt))) throw new Error('Invalid approval timestamp');
+  return {...record, status:'verified', lastVerifiedAt:approvedAt, reviewerApprovedAt:approvedAt};
 }
