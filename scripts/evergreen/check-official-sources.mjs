@@ -28,7 +28,7 @@ for(const record of records.slice(0,25)) {
    chunks.push(value);
   }
   const content=Buffer.concat(chunks).toString('utf8');
-  results.push({id:record.id,url:record.url,status:'retrieved-not-verified',checkedAt:new Date().toISOString(),httpStatus:response.status,sha256:createHash('sha256').update(content).digest('hex'),bytes:content.length});
+  results.push({id:record.id,url:record.url,status:'retrieved-not-verified',checkedAt:new Date().toISOString(),httpStatus:response.status,sha256:createHash('sha256').update(content).digest('hex'),bytes});
  } catch(error) {results.push({id:record.id,url:record.url,status:'unavailable',error:String(error).slice(0,250)})}
 }
 writeFileSync(outputPath,JSON.stringify({generatedAt:new Date().toISOString(),results},null,2)+'\n');
