@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { nextVerificationDate, recordSourceCheck, verificationDue, publishable, type EntityVerificationRecord } from './evergreen-entity-verification';
+import { nextVerificationDate, recordSourceCheck, verificationDue, publishable, approveFactualVerification, type EntityVerificationRecord } from './evergreen-entity-verification';
 
 const base: EntityVerificationRecord = {
   entityId: 'resource:texas-laws', route: '/laws/topics', cadence: 'weekly',
@@ -16,9 +16,11 @@ describe('evergreen entity verification', () => {
   });
   it('records successful source checks without changing published content', () => {
     const result = recordSourceCheck(base, [{url:base.officialSources[0], checkedAt:at,status:'available'}]);
-    expect(result.status).toBe('verified');
-    expect(result.lastVerifiedAt).toBe(at);
-    expect(publishable(result)).toBe(true);
+    expect(result.status).toBe('retrieved-not-verified');
+    expect(result.lastVerifiedAt).toBeUndefined();
+    expect(publishable(result)).toBe(false);
+    const approved = approveFactualVerification(result, at);
+    expect(publishable(approved)).toBe(true);
   });
   it('blocks source failures and changes pending editorial review', () => {
     const unavailable = recordSourceCheck(base, [{url:base.officialSources[0],checkedAt:at,status:'unavailable'}]);
