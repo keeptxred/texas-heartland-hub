@@ -5,16 +5,16 @@ if (!inputPath) throw new Error('Usage: node persist-source-results.mjs results.
 const url = process.env.SUPABASE_URL;
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 if (!url || !key) {
-  console.log('Private ledger ingestion skipped: server credentials not configured');
-  process.exit(0);
+  throw new Error('Private ledger ingestion requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
 }
 const base = new URL(url);
 if (base.protocol !== 'https:') throw new Error('Supabase endpoint must use HTTPS');
 const payload = JSON.parse(readFileSync(inputPath, 'utf8'));
-if (!Array.isArray(payload.results)) throw new Error('Expected source-check results');
+if (!Array.isArray(payload.results) || payload.results.length === 0 || payload.results.length > 25) throw new Error('Expected 1 to 25 source-check results');
 const headers = { apikey:key, Authorization:`Bearer ${key}`, 'Content-Type':'application/json', Prefer:'resolution=merge-duplicates,return=minimal' };
 for (const result of payload.results) {
   if (typeof result.id !== 'string' || !/^[a-z0-9-]{1,80}$/.test(result.id)) throw new Error('Invalid source identifier');
+  if (typeof result.url !== 'string' || new URL(result.url).protocol !== 'https:') throw new Error('Invalid source URL');
   const entityId = `source:${result.id}`;
   const checkedAt = result.checkedAt || payload.generatedAt;
   if (!Number.isFinite(Date.parse(checkedAt))) throw new Error('Invalid check time');
