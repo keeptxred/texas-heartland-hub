@@ -58,3 +58,9 @@ The existing `/admin` layout uses a client-side passcode and sessionStorage, whi
 - All six CI checks passed on commit `111715821`, including Evergreen Entity Audit, workflow validation, repository health and production build.
 - The ingestion runner now fails closed on missing credentials; CI checks validate syntax but do not exercise the private production database write.
 - Configure and verify GitHub Actions secrets before merging or dispatching the source-watch workflow. No claim of successful live ingestion is made.
+
+## Live readiness check (2026-10-11)
+- All six CI workflows succeeded at `363539f9737e217f56c7283b389dfd2904df419f`.
+- Direct database counts: **zero** rows in `ktr_evergreen_verifications` and **zero** rows in `ktr_evergreen_verification_events`. No live source ingestion has occurred; do not describe it as operational.
+- Weekly schedule activates on default branch only after merge; secret availability and real service-role write permissions still require a workflow run.
+- Do not merge or announce production readiness before verifying real ledger writes, authenticated editorial review, and the publishing guard.
