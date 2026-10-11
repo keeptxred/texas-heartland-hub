@@ -19,7 +19,7 @@ for(const record of records) {
   const response=await fetch(url,{headers:{'User-Agent':'KeepTXRed-SourceAudit/1.0 (+https://keeptxred.com/contact)','Accept':'text/html,application/json,text/plain'},signal:AbortSignal.timeout(12000),redirect:'error'});
   if(!response.ok) {results.push({id:record.id,url:record.url,status:'unavailable',checkedAt,httpStatus:response.status});continue}
   const declaredSize=Number(response.headers.get('content-length') || 0);
-  if(declaredSize > MAX_BYTES) {results.push({id:record.id,url:record.url,status:'manual-review',reason:'Response exceeds fetch budget'});continue}
+  if(declaredSize > MAX_BYTES) {results.push({id:record.id,url:record.url,status:'manual-review',checkedAt,reason:'Response exceeds fetch budget'});continue}
   const reader=response.body?.getReader();
   if(!reader) throw new Error('Missing response body');
   const chunks=[];let bytes=0;
@@ -31,7 +31,7 @@ for(const record of records) {
    chunks.push(value);
   }
   const content=Buffer.concat(chunks).toString('utf8');
-  results.push({id:record.id,url:record.url,status:'retrieved-not-verified',checkedAt:httpStatus:response.status,sha256:createHash('sha256').update(content).digest('hex'),bytes});
+  results.push({id:record.id,url:record.url,status:'retrieved-not-verified',checkedAt,httpStatus:response.status,sha256:createHash('sha256').update(content).digest('hex'),bytes});
  } catch(error) {results.push({id:record.id,url:record.url,status:'unavailable',checkedAt,error:String(error).slice(0,250)})}
 }
 writeFileSync(outputPath,JSON.stringify({generatedAt:new Date().toISOString(),results},null,2)+'\n');
