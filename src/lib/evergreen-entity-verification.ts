@@ -51,7 +51,8 @@ export function recordSourceCheck(record: EntityVerificationRecord, evidence: Of
 export function publishable(record: EntityVerificationRecord, now = new Date().toISOString()): boolean {
   const currentTime = Date.parse(now);
   if (!Number.isFinite(currentTime) || !record.lastVerifiedAt || !record.nextCheckAt || !Number.isFinite(Date.parse(record.nextCheckAt)) || Date.parse(record.nextCheckAt) <= currentTime) return false;
-  if (record.evidence.some(item => !Number.isFinite(Date.parse(item.checkedAt)) || Date.parse(item.checkedAt) > currentTime)) return false;
+  if (!record.reviewerApprovedAt || !Number.isFinite(Date.parse(record.reviewerApprovedAt)) || Date.parse(record.reviewerApprovedAt) > currentTime || Date.parse(record.lastVerifiedAt) > currentTime) return false;
+  if (record.evidence.some(item => !Number.isFinite(Date.parse(item.checkedAt)) || Date.parse(item.checkedAt) > currentTime || Date.parse(item.checkedAt) > Date.parse(record.reviewerApprovedAt!))) return false;
   return record.status === 'verified' && Boolean(record.reviewerApprovedAt) && record.pendingChanges.length === 0 && record.officialSources.length > 0 && record.officialSources.every(url => record.evidence.some(item => item.url === url && item.status === 'available'));
 }
 
