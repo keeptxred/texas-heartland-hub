@@ -11,7 +11,16 @@ const base = new URL(url);
 if (base.protocol !== 'https:' || base.username || base.password || base.pathname !== '/' || base.search || base.hash || !base.hostname.endsWith('.supabase.co')) throw new Error('Supabase endpoint must be a project HTTPS origin');
 const payload = JSON.parse(readFileSync(inputPath, 'utf8'));
 if (!Array.isArray(payload.results) || payload.results.length === 0 || payload.results.length > 25) throw new Error('Expected 1 to 25 source-check results');
+if (payload.results.some(item => !item || typeof item !== 'object')) throw new Error('Invalid source-check entry');
 if (new Set(payload.results.map(item => item.id)).size !== payload.results.length) throw new Error('Duplicate source-check identifiers');
+for (const result of payload.results) {
+  if (typeof result.id !== 'string' || !/^[a-z0-9-]{1,80}$/.test(result.id)) throw new Error('Invalid source identifier');
+  if (typeof result.url !== 'string') throw new Error('Invalid source URL');
+  const sourceUrl = new URL(result.url);
+  if (sourceUrl.protocol !== 'https:' || !sourceUrl.hostname.endsWith('.gov') || sourceUrl.username || sourceUrl.password) throw new Error('Invalid government source URL');
+  if (!Number.isFinite(Date.parse(result.checkedAt || payload.generatedAt))) throw new Error('Invalid check time');
+  if (!['retrieved-not-verified','unavailable','manual-review'].includes(result.status)) throw new Error('Unknown source-check status');
+}
 const headers = { apikey:key, ...(key.startsWith('sb_secret_') ? {} : {Authorization:`Bearer ${key}`}), 'Content-Type':'application/json', Prefer:'resolution=merge-duplicates,return=minimal' };
 for (const result of payload.results) {
   if (typeof result.id !== 'string' || !/^[a-z0-9-]{1,80}$/.test(result.id)) throw new Error('Invalid source identifier');
