@@ -23,10 +23,6 @@ for (const result of payload.results) {
 }
 const headers = { apikey:key, ...(key.startsWith('sb_secret_') ? {} : {Authorization:`Bearer ${key}`}), 'Content-Type':'application/json', Prefer:'resolution=merge-duplicates,return=minimal' };
 for (const result of payload.results) {
-  if (typeof result.id !== 'string' || !/^[a-z0-9-]{1,80}$/.test(result.id)) throw new Error('Invalid source identifier');
-  if (typeof result.url !== 'string') throw new Error('Invalid source URL');
-  const sourceUrl = new URL(result.url);
-  if (sourceUrl.protocol !== 'https:' || !sourceUrl.hostname.endsWith('.gov') || sourceUrl.username || sourceUrl.password) throw new Error('Invalid government source URL');
   const entityId = `source:${result.id}`;
   const checkedAt = result.checkedAt || payload.generatedAt;
   if (!Number.isFinite(Date.parse(checkedAt))) throw new Error('Invalid check time');
