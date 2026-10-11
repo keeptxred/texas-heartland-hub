@@ -48,7 +48,10 @@ export function recordSourceCheck(record: EntityVerificationRecord, evidence: Of
   };
 }
 /** Never auto-publish a detected change, especially legal, tax or government facts. */
-export function publishable(record: EntityVerificationRecord): boolean {
+export function publishable(record: EntityVerificationRecord, now = new Date().toISOString()): boolean {
+  const currentTime = Date.parse(now);
+  if (!Number.isFinite(currentTime) || !record.lastVerifiedAt || !record.nextCheckAt || !Number.isFinite(Date.parse(record.nextCheckAt)) || Date.parse(record.nextCheckAt) <= currentTime) return false;
+  if (record.evidence.some(item => !Number.isFinite(Date.parse(item.checkedAt)) || Date.parse(item.checkedAt) > currentTime)) return false;
   return record.status === 'verified' && Boolean(record.reviewerApprovedAt) && record.pendingChanges.length === 0 && record.officialSources.length > 0 && record.officialSources.every(url => record.evidence.some(item => item.url === url && item.status === 'available'));
 }
 
@@ -58,6 +61,6 @@ export function approveFactualVerification(record: EntityVerificationRecord, app
     throw new Error('Cannot approve missing, changed or unavailable source evidence');
   }
   const approvalTime = Date.parse(approvedAt);
-  if (!Number.isFinite(approvalTime) || record.evidence.some(item => !Number.isFinite(Date.parse(item.checkedAt)) || Date.parse(item.checkedAt) > approvalTime)) throw new Error('Invalid approval or evidence timestamp');
+  if (!Number.isFinite(approvalTime) || !record.nextCheckAt || !Number.isFinite(Date.parse(record.nextCheckAt)) || approvalTime >= Date.parse(record.nextCheckAt) || record.evidence.some(item => !Number.isFinite(Date.parse(item.checkedAt)) || Date.parse(item.checkedAt) > approvalTime)) throw new Error('Invalid or stale approval or evidence timestamp');
   return {...record, status:'verified', lastVerifiedAt:approvedAt, reviewerApprovedAt:approvedAt};
 }
