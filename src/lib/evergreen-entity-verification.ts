@@ -37,6 +37,8 @@ export function verificationDue(record: EntityVerificationRecord, now = new Date
 export function recordSourceCheck(record: EntityVerificationRecord, evidence: OfficialEvidence[]): EntityVerificationRecord {
   if (!evidence.length) throw new Error('Source checks must include evidence');
   if (evidence.some(item => !Number.isFinite(Date.parse(item.checkedAt)))) throw new Error('Invalid evidence timestamp');
+  if (new Set(evidence.map(item => item.url)).size !== evidence.length) throw new Error('Duplicate evidence sources');
+  if (evidence.some(item => !record.officialSources.includes(item.url))) throw new Error('Evidence from unregistered source');
   const checkedAt = evidence.map(item => item.checkedAt).sort().at(-1)!;
   const hasFailure = record.officialSources.some(url => !evidence.some(item => item.url === url)) || evidence.some(item => item.status === 'unavailable');
   const hasChange = evidence.some(item => item.status === 'changed');
