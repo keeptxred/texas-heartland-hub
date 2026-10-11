@@ -32,3 +32,9 @@ Homestead exemption; property tax protest; appraisal districts; property tax dea
 
 ## Current status
 Initial typed verification record and pure scheduling/review helpers implemented on a feature branch. No source crawler, Supabase migration, admin queue, complete inventory, CI validation, deployment or production verification has been completed. Do not claim otherwise.
+
+## Implementation checkpoint
+- Private ledger SQL migration committed but **not applied** to Supabase.
+- Read-only official-source list and scheduled GitHub Actions workflow committed; scheduled workflows do not run from an unmerged feature branch.
+- A successful source fetch is classified as retrieved-not-verified, not a factual verification.
+- PR must pass CI and merge before the weekly watch can run from default branch. No automatic publication.
