@@ -1,0 +1,25 @@
+name: Verify Supabase Free Tier Retention
+on:
+  pull_request:
+    paths:
+      - 'supabase/migrations/20261011233913_cron_success_history_rollup_and_safe_retention.sql'
+      - 'supabase/migrations/20261011234016_schedule_hourly_successful_cron_retention.sql'
+      - 'scripts/ci/verify-supabase-free-tier-retention.mjs'
+      - '.github/workflows/verify-supabase-free-tier-retention.yml'
+  push:
+    paths:
+      - 'supabase/migrations/20261011233913_cron_success_history_rollup_and_safe_retention.sql'
+      - 'supabase/migrations/20261011234016_schedule_hourly_successful_cron_retention.sql'
+      - 'scripts/ci/verify-supabase-free-tier-retention.mjs'
+      - '.github/workflows/verify-supabase-free-tier-retention.yml'
+jobs:
+  retention-validation:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/ci/verify-supabase-free-tier-retention.mjs
