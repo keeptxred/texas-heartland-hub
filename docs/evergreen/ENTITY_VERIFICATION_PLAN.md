@@ -64,3 +64,7 @@ The existing `/admin` layout uses a client-side passcode and sessionStorage, whi
 - Direct database counts: **zero** rows in `ktr_evergreen_verifications` and **zero** rows in `ktr_evergreen_verification_events`. No live source ingestion has occurred; do not describe it as operational.
 - Weekly schedule activates on default branch only after merge; secret availability and real service-role write permissions still require a workflow run.
 - Do not merge or announce production readiness before verifying real ledger writes, authenticated editorial review, and the publishing guard.
+
+## Batch ingestion integrity (2026-10-11)
+- The private writer prevalidates every source record before its first network write, rejecting duplicate IDs, malformed government URLs, unknown statuses and invalid timestamps.
+- **Important remaining limitation:** PostgREST writes to verification records and audit events are separate requests; a network failure between them can leave a partial batch. Production acceptance requires atomic server-side ingestion (single transaction or equivalent idempotent recovery) before treating this as fully reliable.
