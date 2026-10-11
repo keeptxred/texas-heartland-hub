@@ -37,7 +37,7 @@ export function verificationDue(record: EntityVerificationRecord, now = new Date
 export function recordSourceCheck(record: EntityVerificationRecord, evidence: OfficialEvidence[]): EntityVerificationRecord {
   if (!evidence.length) throw new Error('Source checks must include evidence');
   const checkedAt = evidence.map(item => item.checkedAt).sort().at(-1)!;
-  const hasFailure = evidence.some(item => item.status === 'unavailable');
+  const hasFailure = record.officialSources.some(url => !evidence.some(item => item.url === url)) || evidence.some(item => item.status === 'unavailable');
   const hasChange = evidence.some(item => item.status === 'changed');
   const status: VerificationStatus = hasFailure ? 'source-unavailable' : hasChange ? 'needs-review' : 'retrieved-not-verified';
   return {
@@ -53,7 +53,7 @@ export function publishable(record: EntityVerificationRecord): boolean {
 
 /** Human factual review is required: HTTP success and hash equality are not proof. */
 export function approveFactualVerification(record: EntityVerificationRecord, approvedAt: string): EntityVerificationRecord {
-  if (record.status !== 'retrieved-not-verified' || record.pendingChanges.length || record.evidence.some(item => item.status !== 'available')) {
+  if (record.status !== 'retrieved-not-verified' || record.pendingChanges.length || !record.officialSources.length || record.officialSources.some(url => !record.evidence.some(item => item.url === url && item.status === 'available')) || record.evidence.some(item => item.status !== 'available')) {
     throw new Error('Cannot approve missing, changed or unavailable source evidence');
   }
   if (!Number.isFinite(Date.parse(approvedAt))) throw new Error('Invalid approval timestamp');
