@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 jobs:
   export:
@@ -40,3 +41,12 @@ jobs:
       - run: npm ci --ignore-scripts --no-audit
       - name: Export and verify private cold archives (never delete database rows)
         run: node scripts/data/export-supabase-cold-archives.mjs
+      - name: Report export result to review PR
+        if: always() && github.ref == 'refs/heads/fix/supabase-free-tier-followup-20261012'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          JOB_STATUS: ${{ job.status }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh api "repos/${GH_REPO}/issues/2724/comments" -f body="Cold archive export validation: ${JOB_STATUS}. Workflow run: ${RUN_URL}. Database archive copies are NOT deleted by this job."
