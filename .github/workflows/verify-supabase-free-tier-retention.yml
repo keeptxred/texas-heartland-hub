@@ -5,6 +5,9 @@ on:
       - 'supabase/migrations/20261011233913_cron_success_history_rollup_and_safe_retention.sql'
       - 'supabase/migrations/20261011234016_schedule_hourly_successful_cron_retention.sql'
       - 'scripts/ci/verify-supabase-free-tier-retention.mjs'
+      - 'scripts/ops/monitor-supabase-free-tier.mjs'
+      - '.github/workflows/supabase-free-tier-capacity-alert.yml'
+      - 'supabase/migrations/20261012122533_service_only_capacity_alert_probe.sql'
       - 'scripts/data/export-supabase-cold-archives.mjs'
       - 'supabase/migrations/20261011234405_create_private_legislative_editorial_cold_archive.sql'
       - 'supabase/migrations/20261011234848_create_private_newsroom_cold_archive.sql'
@@ -16,6 +19,9 @@ on:
       - 'supabase/migrations/20261011233913_cron_success_history_rollup_and_safe_retention.sql'
       - 'supabase/migrations/20261011234016_schedule_hourly_successful_cron_retention.sql'
       - 'scripts/ci/verify-supabase-free-tier-retention.mjs'
+      - 'scripts/ops/monitor-supabase-free-tier.mjs'
+      - '.github/workflows/supabase-free-tier-capacity-alert.yml'
+      - 'supabase/migrations/20261012122533_service_only_capacity_alert_probe.sql'
       - 'scripts/data/export-supabase-cold-archives.mjs'
       - 'supabase/migrations/20261011234405_create_private_legislative_editorial_cold_archive.sql'
       - 'supabase/migrations/20261011234848_create_private_newsroom_cold_archive.sql'
@@ -33,4 +39,5 @@ jobs:
         with:
           node-version: '22'
       - run: node --check scripts/data/export-supabase-cold-archives.mjs
+      - run: node --check scripts/ops/monitor-supabase-free-tier.mjs
       - run: node scripts/ci/verify-supabase-free-tier-retention.mjs
