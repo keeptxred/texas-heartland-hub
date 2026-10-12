@@ -81,3 +81,9 @@ The existing `/admin` layout uses a client-side passcode and sessionStorage, whi
 - The live Supabase ledger still had zero verification records and zero events at last inspection; successful CI does not establish live ingestion.
 - The source-watch workflow now retains its source-check artifact on failure for diagnostics; private ledger persistence remains mandatory and fails closed when secrets are missing.
 - PR remains draft; do not merge or claim full release readiness until live credentials, persisted source checks, authenticated human factual approval, and production verification are complete.
+
+## Authenticated editorial review gate (2026-10-12 migration)
+- Applied `ktr_evergreen_authenticated_editor_approval` migration: private `ktr_evergreen_reviewers` allowlist keyed to `auth.users`, and `ktr_approve_evergreen_verification(entity_id)` with a server-side `auth.uid()` authorization check, locked-row validation, and append-only editor approval event.
+- Anonymous callers cannot execute the approval RPC. Authenticated callers must additionally be enabled in the reviewer allowlist. Raw `source:*` monitoring observations are explicitly ineligible for factual approval.
+- Reviewer allowlist is intentionally empty pending confirmation of the owner's actual Supabase Auth user UUID. Do not guess an identity or authorize the browser-only `/admin` passcode.
+- Remaining: provision an authenticated editor using an owner-verified Auth identity, build an authenticated review UI, exercise positive/negative end-to-end approval tests, and prove source-watch ingestion with configured GitHub secrets.
