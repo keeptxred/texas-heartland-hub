@@ -66,7 +66,7 @@ async function ensureBucket() {
   }
   const created = await supabase.storage.createBucket(bucketName, {
     public: false,
-    fileSizeLimit: 52428800,
+    fileSizeLimit: 45000000,
     allowedMimeTypes: ['application/gzip','application/json'],
   });
   if (created.error) throw new Error('Private Storage bucket cannot be created or verified.');
@@ -126,7 +126,7 @@ for (const def of sourceDefs) {
   const audit = integrityAudit(plaintext, def);
   if (audit.rows === 0) continue;
   const zipped = gzipSync(Buffer.from(plaintext+'\n', 'utf8'), {level: 9});
-  if (zipped.byteLength > 52428800) throw new Error('Archive exceeds Supabase Free file limit.');
+  if (zipped.byteLength > 45000000) throw new Error('Archive exceeds Supabase Free file limit.');
   const digest = sha(zipped);
   const path = `postgres-cold/${datePrefix}/${def.kind}-${digest}.ndjson.gz`;
   await saveAndVerify(path, zipped, 'application/gzip');
