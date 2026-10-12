@@ -1,0 +1,34 @@
+name: Shared Supabase Free Tier Capacity Alert
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '9 1,7,13,19 * * *'
+  push:
+    branches:
+      - fix/supabase-free-tier-followup-20261012
+      - main
+    paths:
+      - 'scripts/ops/monitor-supabase-free-tier.mjs'
+      - '.github/workflows/supabase-free-tier-capacity-alert.yml'
+permissions:
+  contents: read
+  issues: write
+concurrency:
+  group: shared-supabase-capacity-alert
+  cancel-in-progress: false
+jobs:
+  capacity-alert:
+    if: github.repository == 'keeptxred/texas-heartland-hub'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.KEEP_TX_RED_SUPABASE_SERVICE_ROLE_KEY }}
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+      - run: bun install --frozen-lockfile
+      - name: Check shared database usage and notify on quota pressure
+        run: bun scripts/ops/monitor-supabase-free-tier.mjs

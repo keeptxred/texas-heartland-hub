@@ -5,12 +5,22 @@ on:
       - 'supabase/migrations/20261011233913_cron_success_history_rollup_and_safe_retention.sql'
       - 'supabase/migrations/20261011234016_schedule_hourly_successful_cron_retention.sql'
       - 'scripts/ci/verify-supabase-free-tier-retention.mjs'
+      - 'scripts/data/export-supabase-cold-archives.mjs'
+      - 'supabase/migrations/20261011234405_create_private_legislative_editorial_cold_archive.sql'
+      - 'supabase/migrations/20261011234848_create_private_newsroom_cold_archive.sql'
+      - 'supabase/migrations/20261011235331_create_private_old_feed_cold_archive.sql'
+      - 'supabase/migrations/20261012000443_monitor_shared_free_tier_database_capacity.sql'
       - '.github/workflows/verify-supabase-free-tier-retention.yml'
   push:
     paths:
       - 'supabase/migrations/20261011233913_cron_success_history_rollup_and_safe_retention.sql'
       - 'supabase/migrations/20261011234016_schedule_hourly_successful_cron_retention.sql'
       - 'scripts/ci/verify-supabase-free-tier-retention.mjs'
+      - 'scripts/data/export-supabase-cold-archives.mjs'
+      - 'supabase/migrations/20261011234405_create_private_legislative_editorial_cold_archive.sql'
+      - 'supabase/migrations/20261011234848_create_private_newsroom_cold_archive.sql'
+      - 'supabase/migrations/20261011235331_create_private_old_feed_cold_archive.sql'
+      - 'supabase/migrations/20261012000443_monitor_shared_free_tier_database_capacity.sql'
       - '.github/workflows/verify-supabase-free-tier-retention.yml'
 jobs:
   retention-validation:
@@ -18,8 +28,9 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: '22'
+      - run: node --check scripts/data/export-supabase-cold-archives.mjs
       - run: node scripts/ci/verify-supabase-free-tier-retention.mjs

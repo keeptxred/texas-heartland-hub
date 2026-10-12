@@ -1,0 +1,46 @@
+name: Export Supabase Cold Archives to Private Storage
+on:
+  push:
+    branches:
+      - main
+      - fix/supabase-free-tier-followup-20261012
+    paths:
+      - scripts/data/export-supabase-cold-archives.mjs
+      - .github/workflows/export-supabase-cold-archives.yml
+  workflow_dispatch:
+  schedule:
+    - cron: '33 7 * * 0'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  export:
+    if: github.repository == 'keeptxred/texas-heartland-hub'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      SUPABASE_URL: https://ftkznprjljkhymknvhye.supabase.co
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.KEEP_TX_RED_SUPABASE_SERVICE_ROLE_KEY }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+      - name: Verify existing Supabase service-role credentials
+        shell: bash
+        run: |
+          test -n "${SUPABASE_SERVICE_ROLE_KEY}" || { echo "::error::Supabase service-role secret not configured"; exit 1; }
+      - run: bun install --frozen-lockfile
+      - name: Export and verify private cold archives (never delete database rows)
+        run: bun scripts/data/export-supabase-cold-archives.mjs
+      - name: Report export result to review PR
+        if: always() && github.ref == 'refs/heads/fix/supabase-free-tier-followup-20261012'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          JOB_STATUS: ${{ job.status }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh api "repos/${GH_REPO}/issues/2724/comments" -f body="Cold archive export validation: ${JOB_STATUS}. Workflow run: ${RUN_URL}. Database archive copies are NOT deleted by this job."
