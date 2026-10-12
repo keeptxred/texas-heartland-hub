@@ -124,6 +124,14 @@ function verifyArchiveBlob(gzipData, metadataChunk) {
   return rows;
 }
 
+const maintenanceMode = process.env.SUPABASE_COLD_MAINTENANCE || 'off';
+if (!['off','canary','live'].includes(maintenanceMode)) throw Error('Invalid retention mode');
+if(maintenanceMode!=='off'){
+  const batchSize=maintenanceMode==='canary'?1:2000;
+  const {data:staged,error:stageError}=await db.rpc('stage_expired_free_tier_feed',{p_limit:batchSize});
+  if(stageError||!staged) throw Error('Feed staging RPC failed; no retirement attempted');
+  console.log('Cold-feed staging: '+JSON.stringify(staged));
+}
 const metadata = await listMetadata();
 if (!metadata.length) {
   console.log('No private archives exist; no export needed.');
@@ -180,8 +188,26 @@ for (const [kind, list] of grouped) {
 const totalBatches = manifest.archive_objects.reduce((sum,x)=>sum+x.batches,0);
 if (totalBatches !== metadata.length) throw new Error('Not every archive batch was exported.');
 const manifestBytes = Buffer.from(JSON.stringify(manifest,null,2)+'\n');
-await storeAndReadBack(
-  `postgres-cold/${folder}/manifest-${sha256(manifestBytes)}.json`,
-  manifestBytes,'application/json'
-);
-console.log('Complete private Storage export/read-back verified. No database rows deleted.');
+const immutableManifestName=`postgres-cold/${folder}/manifest-${sha256(manifestBytes)}.json`;
+await storeAndReadBack(immutableManifestName,manifestBytes,'application/json');
+console.log('Complete private Storage export/read-back verified.');
+if(maintenanceMode!=='off'){
+  const feedMeta=metadata.filter(x=>x.archive_kind==='feed');
+  const parent=feedMeta.filter(x=>x.source_table==='texas_news_feed');
+  const feedCount=parent.reduce((sum,x)=>sum+x.record_count,0);
+  if(feedCount>0){
+    const {data:retired,error:retireError}=await db.rpc('retire_verified_expired_free_tier_feed',{
+      p_manifest_name:immutableManifestName,
+      p_expected_feed_rows:feedCount,
+      p_expected_batches:feedMeta.length,
+    });
+    if(retireError||retired?.retired_feed!==feedCount){
+      throw Error('Fail-closed retirement rejected; all private archived rows remain in PostgreSQL');
+    }
+    console.log('Post-export exact-record retirement verified: '+feedCount+' safely archived feed rows');
+  }else{
+    console.log('No newly staged feed rows to retire.');
+  }
+}else{
+  console.log('Export-only run: no database retirement requested.');
+}
