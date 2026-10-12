@@ -9,11 +9,12 @@ on:
       - .github/workflows/export-supabase-cold-archives.yml
   workflow_dispatch:
   schedule:
-    - cron: '33 7 * * 0'
+    - cron: '33 7 * * *'
 
 permissions:
   contents: read
   pull-requests: write
+  issues: write
 
 jobs:
   export:
@@ -23,6 +24,7 @@ jobs:
     env:
       SUPABASE_URL: https://ftkznprjljkhymknvhye.supabase.co
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.KEEP_TX_RED_SUPABASE_SERVICE_ROLE_KEY }}
+      SUPABASE_COLD_MAINTENANCE: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && 'live' || (github.ref == 'refs/heads/fix/supabase-free-tier-followup-20261012' && 'canary' || 'off') }}
     steps:
       - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
