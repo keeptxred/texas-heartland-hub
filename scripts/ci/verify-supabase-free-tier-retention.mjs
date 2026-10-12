@@ -49,6 +49,6 @@ requirePattern(exporter,/record_checksum/,'Require row ID checksums');
 assert.doesNotMatch(exporter,/delete\s+from\s+private\./i,'Exporter must not delete private archive tables');
 assert.doesNotMatch(exporter,/truncate\s+/i,'Exporter must not truncate data');
 const exportWorkflow = readFileSync('.github/workflows/export-supabase-cold-archives.yml','utf8');
-requirePattern(exportWorkflow,/fix\/supabase-free-tier-retention-20261011/,'Secrets only on trusted branch push');
+requirePattern(exportWorkflow,/fix\/supabase-free-tier-followup-20261012/,'Secrets only on trusted branch push');
 assert.doesNotMatch(exportWorkflow,/pull_request:/,'No DB secrets for pull request execution');
 console.log('Cold archive safety and capacity monitoring checks passed.');
