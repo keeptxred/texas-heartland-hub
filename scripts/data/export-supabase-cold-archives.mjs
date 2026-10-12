@@ -1,146 +1,187 @@
 /**
  * Export verified, exact-record private PostgreSQL cold archives to a PRIVATE
- * Supabase Storage bucket. Export-only; never deletes a database row.
+ * Supabase Storage bucket using existing service-role credentials only.
+ * No raw database password, new secrets, table deletions, or VACUUM required.
  *
- * Requires repo-scoped SUPABASE_DB_URL + SUPABASE_SERVICE_ROLE_KEY.
- * Output includes no data payload or credential in Actions logs.
+ * Read access is restricted by SQL EXECUTE grants on the two service-role-only
+ * RPC functions. This export is safe to retry: files use content SHA-256.
  */
 import { createHash } from 'node:crypto';
 import { gzipSync, gunzipSync } from 'node:zlib';
-import { spawnSync } from 'node:child_process';
 import { createClient } from '@supabase/supabase-js';
 
-const dbURL = process.env.SUPABASE_DB_URL;
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.KEEP_TX_RED_SUPABASE_SERVICE_ROLE_KEY;
-const apiURL = process.env.SUPABASE_URL || 'https://ftkznprjljkhymknvhye.supabase.co';
+const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY ||
+                   process.env.KEEP_TX_RED_SUPABASE_SERVICE_ROLE_KEY;
+const apiURL = process.env.SUPABASE_URL ||
+               'https://ftkznprjljkhymknvhye.supabase.co';
 const bucketName = 'shared-postgres-cold-archives';
-
-if (!dbURL || !serviceKey) {
-  throw new Error('Configured PostgreSQL DB URL and Supabase service-role key are required.');
-}
-if (!apiURL.endsWith('ftkznprjljkhymknvhye.supabase.co')) {
+const MAX_UPLOAD_BYTES = 45_000_000;
+const MAX_ARCHIVE_BATCHES_PER_OBJECT = 40;
+const FETCH_CONCURRENCY = 6;
+const LIST_PAGE_SIZE = 100;
+if (!serviceKey) throw new Error('Supabase service-role key not configured.');
+if (new URL(apiURL).origin !== 'https://ftkznprjljkhymknvhye.supabase.co') {
   throw new Error('Unexpected Supabase project URL.');
 }
-const parsed = new URL(dbURL);
-if (!['postgres:', 'postgresql:'].includes(parsed.protocol)) {
-  throw new Error('Supabase DB URL must be PostgreSQL.');
-}
-const pgEnv = {
-  ...process.env,
-  PGHOST: parsed.hostname,
-  PGPORT: parsed.port || '5432',
-  PGUSER: decodeURIComponent(parsed.username),
-  PGPASSWORD: decodeURIComponent(parsed.password),
-  PGDATABASE: decodeURIComponent(parsed.pathname.replace(/^\//, '')),
-  PGSSLMODE: parsed.searchParams.get('sslmode') || 'require',
-  PGCONNECT_TIMEOUT: '15',
-};
-delete pgEnv.SUPABASE_DB_URL;
-delete pgEnv.SUPABASE_SERVICE_ROLE_KEY;
-delete pgEnv.KEEP_TX_RED_SUPABASE_SERVICE_ROLE_KEY;
-const sha = (bytes) => createHash('sha256').update(bytes).digest('hex');
-const md5 = (data) => createHash('md5').update(data).digest('hex');
-function query(sql) {
-  const res = spawnSync('psql', ['--no-psqlrc', '--tuples-only', '--no-align', '--quiet', '-v', 'ON_ERROR_STOP=1', '-c', sql], {
-    encoding: 'utf8',
-    maxBuffer: 180 * 1024 * 1024,
-    timeout: 180000,
-    env: pgEnv,
-  });
-  if (res.status !== 0 || res.error) {
-    throw new Error('Postgres archive query failed (no payload logged).');
+const db = createClient(apiURL, serviceKey, {
+  auth: { persistSession: false, autoRefreshToken: false },
+});
+const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
+const md5 = data => createHash('md5').update(data).digest('hex');
+
+async function listMetadata() {
+  const rows = [];
+  for (let offset = 0; offset < 100_000; offset += LIST_PAGE_SIZE) {
+    const {data, error} = await db.rpc('list_private_cold_archive_batches', {
+      p_offset: offset, p_limit: LIST_PAGE_SIZE,
+    });
+    if (error) throw new Error('Archive listing RPC failed: ' + (error.code || 'unknown'));
+    if (!Array.isArray(data)) throw new Error('Archive listing returned a non-array.');
+    rows.push(...data);
+    if (data.length < LIST_PAGE_SIZE) return rows;
   }
-  return res.stdout.trim();
+  throw new Error('Archive listing exceeded pagination safety limit.');
 }
-const sourceDefs = [
-  {table: 'private.legislative_opportunity_cold_batches',kind: 'legislative',key: 'id',checksum: 'record_ids_md5',fields: "'legislative_content_opportunities' as source_table"},
-  {table: 'private.newsroom_cold_batches',kind: 'newsroom',key: 'id',checksum: 'record_ids_md5',fields: 'source_table'},
-  {table: 'private.feed_cold_batches',kind: 'feed',key: 'feed_item_id',checksum: 'record_keys_md5',fields: 'source_table'},
-];
-const supabase = createClient(apiURL, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
-async function ensureBucket() {
-  const { data, error } = await supabase.storage.getBucket(bucketName);
-  if (!error && data) {
-    if (data.public) throw new Error('Archive bucket must remain private.');
+async function readBatch(meta) {
+  const {data, error} = await db.rpc('read_private_cold_archive_batch', {
+    p_kind: meta.archive_kind,
+    p_key: meta.archive_key,
+  });
+  if (error || !data) throw new Error('Archive RPC read failed: ' + (error?.code || 'empty'));
+  validateBatch(data, meta);
+  return data;
+}
+function validateBatch(entry, meta) {
+  if (!entry || entry.archive_key !== meta.archive_key ||
+      entry.source_table !== meta.source_table ||
+      entry.record_count !== meta.record_count ||
+      entry.record_checksum !== meta.record_checksum) {
+    throw new Error('Archive metadata/readback mismatch.');
+  }
+  if (!Array.isArray(entry.records) || entry.records.length !== entry.record_count) {
+    throw new Error('Archive count mismatch.');
+  }
+  const key = meta.archive_kind === 'feed' && entry.source_table !== 'texas_news_feed'
+    ? 'feed_item_id' : 'id';
+  const digest = md5(entry.records.map(row => String(row[key])).join(','));
+  if (digest !== entry.record_checksum) throw new Error('Archive row IDs checksum mismatch.');
+}
+async function readChunk(metaChunk) {
+  const result = [];
+  for (let i = 0; i < metaChunk.length; i += FETCH_CONCURRENCY) {
+    const group = metaChunk.slice(i, i + FETCH_CONCURRENCY);
+    result.push(...await Promise.all(group.map(readBatch)));
+  }
+  return result;
+}
+async function ensurePrivateBucket() {
+  const current = await db.storage.getBucket(bucketName);
+  if (!current.error && current.data) {
+    if (current.data.public !== false) throw new Error('Archive bucket is public.');
     return;
   }
-  const created = await supabase.storage.createBucket(bucketName, {
+  const created = await db.storage.createBucket(bucketName, {
     public: false,
-    fileSizeLimit: 45000000,
+    fileSizeLimit: MAX_UPLOAD_BYTES,
     allowedMimeTypes: ['application/gzip','application/json'],
   });
-  if (created.error) throw new Error('Private Storage bucket cannot be created or verified.');
-  const check = await supabase.storage.getBucket(bucketName);
-  if (check.error || check.data?.public !== false) throw new Error('Private bucket verification failed.');
-}
-async function saveAndVerify(path, bytes, mime) {
-  const dest = supabase.storage.from(bucketName);
-  const { error } = await dest.upload(path, bytes, { contentType: mime, upsert: false, cacheControl: '86400' });
-  if (error && !/already exists|duplicate/i.test(error.message)) {
-    throw new Error('Storage upload failed: '+path);
+  if (created.error) throw new Error('Could not create archive Storage bucket: ' +
+                                      (created.error.statusCode || 'unknown'));
+  const verified = await db.storage.getBucket(bucketName);
+  if (verified.error || verified.data?.public !== false) {
+    throw new Error('Created archive bucket failed private-access verification.');
   }
-  const download = await dest.download(path);
-  if (download.error || !download.data) throw new Error('Storage read-back failed: '+path);
-  const fetched = Buffer.from(await download.data.arrayBuffer());
-  if (sha(fetched) !== sha(bytes)) throw new Error('Storage SHA-256 mismatch: '+path);
 }
-function queryArchive(def) {
-  const base = def.checksum;
-  const source = def.kind === 'legislative' ? "'legislative_content_opportunities'" : 'source_table';
-  return query(`SELECT jsonb_build_object(
-    'archive_key',archive_key,
-    'source_table',${source},
-    'record_count',record_count,
-    'record_checksum',${base},
-    'records',records
-  )::text FROM ${def.table} ORDER BY archive_key;`);
+async function storeAndReadBack(path, bytes, mime) {
+  if (bytes.byteLength > MAX_UPLOAD_BYTES) throw new Error('Backup file exceeds Free Plan size limit.');
+  const bucket = db.storage.from(bucketName);
+  const {error} = await bucket.upload(path, bytes, {
+    contentType: mime, upsert: false, cacheControl: '86400',
+  });
+  if (error && !/already exists|duplicate/i.test(error.message)) {
+    throw new Error('Storage upload failed: '+(error.statusCode || 'unknown'));
+  }
+  const downloaded = await bucket.download(path);
+  if (downloaded.error || !downloaded.data) throw new Error('Private Storage readback failed.');
+  const verifiedBytes = Buffer.from(await downloaded.data.arrayBuffer());
+  if (sha256(verifiedBytes) !== sha256(bytes)) {
+    throw new Error('Private Storage object checksum mismatch.');
+  }
+  return verifiedBytes;
 }
-function integrityAudit(text, def) {
-  const lines = text ? text.split('\n').filter(Boolean) : [];
+function verifyArchiveBlob(gzipData, metadataChunk) {
+  const plaintext = gunzipSync(gzipData).toString('utf8').trim();
+  const lines = plaintext ? plaintext.split('\n') : [];
+  if (lines.length !== metadataChunk.length) {
+    throw new Error('Downloaded archive has incorrect batch count.');
+  }
   let rows = 0;
-  for (const line of lines) {
-    const entry = JSON.parse(line);
-    if (!Array.isArray(entry.records) || entry.records.length !== entry.record_count)
-      throw new Error('Archive record count mismatch: '+def.kind);
-    const key = def.kind === 'feed'
-      ? (entry.source_table === 'texas_news_feed' ? 'id' : 'feed_item_id')
-      : 'id';
-    const digest = md5(entry.records.map((r) => String(r[key])).join(','));
-    if (digest !== entry.record_checksum) throw new Error('Archive row ID checksum mismatch: '+def.kind);
+  for (let i=0; i<lines.length; i++) {
+    const entry = JSON.parse(lines[i]);
+    validateBatch(entry, metadataChunk[i]);
     rows += entry.record_count;
   }
-  const expected = query(`select coalesce(sum(record_count),0) from ${def.table};`);
-  if (Number(expected) !== rows) throw new Error('Archive aggregate count mismatch: '+def.kind);
-  return {rows,batches:lines.length};
+  return rows;
 }
-await ensureBucket();
+
+const metadata = await listMetadata();
+if (!metadata.length) {
+  console.log('No private archives exist; no export needed.');
+  process.exit(0);
+}
+const unique = new Set();
+const grouped = new Map();
+const allowed = {
+  feed: new Set(['texas_news_feed','news_feed_normalization','newsroom_source_page_fetch_state']),
+  newsroom: new Set(['news_story_clusters','news_publish_candidates','news_research_packets','news_story_cluster_items']),
+  legislative: new Set(['legislative_content_opportunities']),
+};
+for (const row of metadata) {
+  if (!allowed[row.archive_kind]?.has(row.source_table)) {
+    throw new Error('Archive source not allowlisted.');
+  }
+  const id = row.archive_kind + ':' + row.archive_key;
+  if (unique.has(id)) throw new Error('Repeated archive key.');
+  unique.add(id);
+  if (!grouped.has(row.archive_kind)) grouped.set(row.archive_kind, []);
+  grouped.get(row.archive_kind).push(row);
+}
+await ensurePrivateBucket();
 const manifest = {
   project: 'ftkznprjljkhymknvhye',
   created_at: new Date().toISOString(),
   export_only: true,
-  archives: [],
+  batch_count: metadata.length,
+  archive_objects: [],
 };
-const datePrefix = new Date().toISOString().slice(0,10);
-for (const def of sourceDefs) {
-  const plaintext = queryArchive(def);
-  const audit = integrityAudit(plaintext, def);
-  if (audit.rows === 0) continue;
-  const zipped = gzipSync(Buffer.from(plaintext+'\n', 'utf8'), {level: 9});
-  if (zipped.byteLength > 45000000) throw new Error('Archive exceeds Supabase Free file limit.');
-  const digest = sha(zipped);
-  const path = `postgres-cold/${datePrefix}/${def.kind}-${digest}.ndjson.gz`;
-  await saveAndVerify(path, zipped, 'application/gzip');
-  const plainRoundTrip = gunzipSync(zipped).toString('utf8').trim();
-  const checked = integrityAudit(plainRoundTrip, def);
-  if (checked.rows !== audit.rows || checked.batches !== audit.batches)
-    throw new Error('Gzip integrity mismatch.');
-  manifest.archives.push({kind:def.kind,storage_path:path,sha256:digest,rows:audit.rows,batches:audit.batches,bytes:zipped.length});
-  console.log(`Verified private Storage export: ${def.kind}, ${audit.rows} records, ${audit.batches} batches`);
+const folder = new Date().toISOString().slice(0,10);
+for (const [kind, list] of grouped) {
+  for (let first = 0; first < list.length; first += MAX_ARCHIVE_BATCHES_PER_OBJECT) {
+    const slice = list.slice(first, first + MAX_ARCHIVE_BATCHES_PER_OBJECT);
+    const records = await readChunk(slice);
+    const payload = Buffer.from(records.map(row => JSON.stringify(row)).join('\n')+'\n');
+    const zipped = gzipSync(payload,{level:9});
+    if (zipped.length > MAX_UPLOAD_BYTES) {
+      throw new Error('Archive chunk too large; lower MAX_ARCHIVE_BATCHES_PER_OBJECT.');
+    }
+    const digest = sha256(zipped);
+    const path = `postgres-cold/${folder}/${kind}-${first}-${digest}.ndjson.gz`;
+    const downloaded = await storeAndReadBack(path,zipped,'application/gzip');
+    const rowCount = verifyArchiveBlob(downloaded,slice);
+    const metadataCount = slice.reduce((sum,x)=>sum+x.record_count,0);
+    if (rowCount !== metadataCount) throw new Error('Storage row count mismatch.');
+    manifest.archive_objects.push({
+      kind,storage_path:path,sha256:digest,
+      batches:slice.length,rows:rowCount,compressed_bytes:zipped.length,
+    });
+    console.log(`Verified Storage archive ${kind}: ${rowCount} records, ${slice.length} batches`);
+  }
 }
-if (!manifest.archives.length) {
-  console.log('No unexported archive batches found. Nothing deleted.');
-  process.exit(0);
-}
+const totalBatches = manifest.archive_objects.reduce((sum,x)=>sum+x.batches,0);
+if (totalBatches !== metadata.length) throw new Error('Not every archive batch was exported.');
 const manifestBytes = Buffer.from(JSON.stringify(manifest,null,2)+'\n');
-await saveAndVerify(`postgres-cold/${datePrefix}/manifest-${sha(manifestBytes)}.json`, manifestBytes, 'application/json');
-console.log('All archive objects verified in private Storage. Database archives preserved; export-only complete.');
+await storeAndReadBack(
+  `postgres-cold/${folder}/manifest-${sha256(manifestBytes)}.json`,
+  manifestBytes,'application/json'
+);
+console.log('Complete private Storage export/read-back verified. No database rows deleted.');
