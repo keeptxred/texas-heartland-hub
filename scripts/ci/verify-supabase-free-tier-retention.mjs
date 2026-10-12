@@ -76,3 +76,30 @@ const notifyWorkflow=readFileSync('.github/workflows/supabase-free-tier-capacity
 requirePattern(notifyWorkflow,/issues: write/,'Issue permissions required');
 requirePattern(notifyWorkflow,/cron: '9 1,7,13,19 \* \* \*'/,'Recurring alert schedule required');
 console.log('Supabase owner-alert safeguards verified.');
+
+const stageSql=readFileSync(root+'20261012123032_stage_21day_unpublished_feed_for_verified_private_archive.sql','utf8');
+const retireSql=readFileSync(root+'20261012123541_guard_verified_stale_feed_retirement_by_storage_manifest.sql','utf8');
+requirePattern(stageSql,/interval '21 days'/,'Aged source material must be held at least 21 days');
+requirePattern(stageSql,/stage_expired_free_tier_feed/,'Bounded cold-archive staging is required');
+requirePattern(stageSql,/p_limit NOT BETWEEN 1 AND 2000/i,'Archive staging must be bounded');
+requirePattern(stageSql,/internal_slug IS NULL AND f\.texasdefined_slug IS NULL/i,'Never retire already published slugs');
+requirePattern(stageSql,/public\.news_event_facts/,'Preserve soft event-source references');
+requirePattern(stageSql,/public\.texasdefined_articles/,'Preserve TD article citations');
+requirePattern(stageSql,/public\.daily_articles/,'Preserve KTR article sources');
+assert.doesNotMatch(stageSql,/DELETE FROM public\.|TRUNCATE TABLE public\./i,'Staging cannot retire live content');
+requirePattern(retireSql,/storage\.objects/,'Retirement requires a Storage manifest');
+requirePattern(retireSql,/to_jsonb\(f\)=a\.payload/i,'Live feed content must match archived record');
+requirePattern(retireSql,/news_feed_normalization/,'Verify normalization rows');
+requirePattern(retireSql,/newsroom_source_page_fetch_state/,'Verify page-fetch rows');
+requirePattern(retireSql,/RAISE EXCEPTION 'Feed changed or gained protected references/i,'Drift must fail closed');
+requirePattern(retireSql,/REVOKE ALL ON FUNCTION public\.retire_verified_expired_free_tier_feed/i,'No untrusted retirement access');
+requirePattern(retireSql,/TO service_role/i,'Privileged role only');
+requirePattern(exporter,/maintenanceMode==='canary'\?1:2000/,'Use one-row canary and bounded daily batches');
+requirePattern(exporter,/storeAndReadBack\(immutableManifestName,manifestBytes/,'Manifest must be copied/read back');
+requirePattern(exporter,/retire_verified_expired_free_tier_feed/,'Guarded retirement must follow successful export');
+if(exporter.indexOf('storeAndReadBack(immutableManifestName,manifestBytes')>exporter.indexOf("retire_verified_expired_free_tier_feed")){
+  throw new Error('Retirement attempted before manifest verification');
+}
+requirePattern(exportWorkflow,/cron: '33 7 \* \* \*'/,'Daily archive maintenance required');
+requirePattern(exportWorkflow,/SUPABASE_COLD_MAINTENANCE:/,'Daily live mode with pre-merge canary required');
+console.log('Nightly feed archiving and fail-closed retirement safety checks passed.');
