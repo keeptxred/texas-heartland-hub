@@ -131,6 +131,9 @@ if(maintenanceMode!=='off'){
   const {data:staged,error:stageError}=await db.rpc('stage_expired_free_tier_feed',{p_limit:batchSize});
   if(stageError||!staged) throw Error('Feed staging RPC failed; no retirement attempted');
   console.log('Cold-feed staging: '+JSON.stringify(staged));
+  const {data:newsroomStaged,error:newsroomStageError}=await db.rpc('stage_expired_free_tier_newsroom',{p_limit:batchSize});
+  if(newsroomStageError||!newsroomStaged) throw Error('Newsroom staging failed; no retirement attempted');
+  console.log('Cold-newsroom staging: '+JSON.stringify(newsroomStaged));
 }
 const metadata = await listMetadata();
 if (!metadata.length) {
@@ -207,6 +210,22 @@ if(maintenanceMode!=='off'){
     console.log('Post-export exact-record retirement verified: '+feedCount+' safely archived feed rows');
   }else{
     console.log('No newly staged feed rows to retire.');
+  }
+  const newsroomMeta=metadata.filter(x=>x.archive_kind==='newsroom');
+  const newsroomParents=newsroomMeta.filter(x=>x.source_table==='news_story_clusters');
+  const clusterCount=newsroomParents.reduce((sum,x)=>sum+x.record_count,0);
+  if(clusterCount>0){
+    const {data:retiredNewsroom,error:newsroomRetireError}=await db.rpc('retire_verified_expired_free_tier_newsroom',{
+      p_manifest_name:immutableManifestName,
+      p_expected_clusters:clusterCount,
+      p_expected_batches:newsroomMeta.length,
+    });
+    if(newsroomRetireError||retiredNewsroom?.retired_clusters!==clusterCount){
+      throw Error('Fail-closed newsroom retirement rejected; private staged records remain in PostgreSQL');
+    }
+    console.log('Post-export exact-record newsroom retirement verified: '+clusterCount+' dormant unpublished clusters');
+  }else{
+    console.log('No newly staged newsroom clusters to retire.');
   }
 }else{
   console.log('Export-only run: no database retirement requested.');
