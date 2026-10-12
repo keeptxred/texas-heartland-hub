@@ -60,4 +60,4 @@ where jobname in ('free-tier-database-capacity-monitor',
 
 Archives are versioned JSONB arrays with complete original record columns and ID checksums. Only a database administrator may restore. For each batch inspect with `jsonb_array_elements(records)`; reconstruct rows with `jsonb_populate_record(null::public.<original_table>, entry)` and restore the original parent rows before their FK children. Never expose private archive content in a public API or log.
 
-Source control: [KeepTXRed PR #2722](https://github.com/keeptxred/texas-heartland-hub/pull/2722). Its acceptance is independent of the fact that the live DB migrations have already been applied and verified.
+Source control: [merged cron-retention PR #2722](https://github.com/keeptxred/texas-heartland-hub/pull/2722) and [draft archive/export follow-up PR #2724](https://github.com/keeptxred/texas-heartland-hub/pull/2724). The latter is NOT yet approved or merged. Live migration application and PR acceptance are separate states.
