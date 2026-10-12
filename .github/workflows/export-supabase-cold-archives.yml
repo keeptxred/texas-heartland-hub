@@ -2,11 +2,14 @@ name: Export Supabase Cold Archives to Private Storage
 on:
   push:
     branches:
+      - main
       - fix/supabase-free-tier-followup-20261012
     paths:
       - scripts/data/export-supabase-cold-archives.mjs
       - .github/workflows/export-supabase-cold-archives.yml
   workflow_dispatch:
+  schedule:
+    - cron: '33 7 * * 0'
 
 permissions:
   contents: read
