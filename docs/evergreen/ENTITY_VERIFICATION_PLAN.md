@@ -92,3 +92,8 @@ The existing `/admin` layout uses a client-side passcode and sessionStorage, whi
 - Legal interpretation, legal claims, and lawyer-reviewed copy are explicitly excluded from this technical release; do not certify them through the monitoring or editorial approval pipeline.
 - Automated regression suite now checks writer failure before network transmission for malformed batches, invalid source domains, credentials embedded in URLs, invalid statuses, and missing service credentials.
 - A passing offline regression is not evidence of a successful GitHub Actions secret configuration or live Supabase ingestion. Those require an observed workflow run and nonzero persisted event counts.
+
+## Auth enrollment discovery (2026-10-12)
+- Supabase `auth.users` contains exactly one existing identity, an apparently synthetic `probe+...@proton.me` account with no recorded sign-in. Do **not** automatically designate it an editorial reviewer.
+- Before exposing an approval UI, enroll and verify the owner's real Supabase Auth identity; grant only that UUID membership in `ktr_evergreen_reviewers` through an administrator-controlled server-side process. Do not rely on `/admin` passcode, `sessionStorage`, or a client-provided reviewer UUID.
+- Raw monitoring evidence remains non-publishable. The editorial RPC is an additional server-side control, not a substitute for factual review.
