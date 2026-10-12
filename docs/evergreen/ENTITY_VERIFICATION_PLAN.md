@@ -97,3 +97,8 @@ The existing `/admin` layout uses a client-side passcode and sessionStorage, whi
 - Supabase `auth.users` contains exactly one existing identity, an apparently synthetic `probe+...@proton.me` account with no recorded sign-in. Do **not** automatically designate it an editorial reviewer.
 - Before exposing an approval UI, enroll and verify the owner's real Supabase Auth identity; grant only that UUID membership in `ktr_evergreen_reviewers` through an administrator-controlled server-side process. Do not rely on `/admin` passcode, `sessionStorage`, or a client-provided reviewer UUID.
 - Raw monitoring evidence remains non-publishable. The editorial RPC is an additional server-side control, not a substitute for factual review.
+
+## Source URL defense-in-depth (2026-10-12)
+- Applied migration `ktr_evergreen_harden_source_url_allowlist` to the shared live Supabase project. The service-role ingestion helper now rejects userinfo, custom ports, and hostname suffix lookalikes.
+- Verified live SQL outcomes: `statutes.capitol.texas.gov` and `www.sos.state.tx.us` allowed; userinfo, `:8443`, and `.gov.evil.com` rejected.
+- No reviewer was enrolled and no source checks were fabricated. Production monitoring and real editorial approval still need independently observed end-to-end proof.
