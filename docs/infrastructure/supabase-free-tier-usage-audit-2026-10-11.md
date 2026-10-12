@@ -30,7 +30,7 @@ Production project: `ftkznprjljkhymknvhye` (shared by KeepTXRed and TexasDefined
 
 **DO NOT delete or truncate these three tables until their complete datasets have been exported to a private Supabase Storage bucket and read back with SHA-256 + record-count verification.** This export is not yet certified.
 
-A private-Storage export-only pipeline was added at `scripts/data/export-supabase-cold-archives.mjs` with a trusted-branch GitHub Actions workflow. It requires existing GitHub secrets `SUPABASE_DB_URL` and `SUPABASE_SERVICE_ROLE_KEY` (or documented fallback). It is strictly export-only; it has NO DB DELETE or VACUUM calls. Await positive evidence from `storage.buckets` and `storage.objects` before any further database archive removal.
+A private-Storage export-only pipeline was added at `scripts/data/export-supabase-cold-archives.mjs` with a trusted-branch GitHub Actions workflow. It requires the existing `SUPABASE_SERVICE_ROLE_KEY` (or existing `KEEP_TX_RED_SUPABASE_SERVICE_ROLE_KEY`) GitHub secret, and uses service-role-only read RPC functions instead of a raw database URL. No new DB secret is required. It is strictly export-only; it has NO DB DELETE or VACUUM calls. Await positive evidence from `storage.buckets` and `storage.objects` before any further database archive removal.
 
 ## Capacity watch
 
@@ -73,3 +73,9 @@ Source control: [merged cron-retention PR #2722](https://github.com/keeptxred/te
 - **Storage export is still not verified**: as of 00:25 UTC, no bucket named `shared-postgres-cold-archives` existed. The export workflow reports a sanitized success/failure status into PR #2724 on the trusted branch and **never** deletes database copies. A PR comment or source-control CI success by itself does not certify readback of every archive; also verify objects and manifest in Storage.
 
 Storage free-plan upload guard was tightened to **45,000,000 bytes per object** (below the documented 50 MB global file limit). The private Storage export should be run and read back before moving a single archive row out of PostgreSQL.
+
+## Service-role-only export remediation (2026-10-12 UTC)
+
+- Applied `20261012002800_service_role_only_cold_archive_export_rpc`, with strictly read-only public RPC wrappers `list_private_cold_archive_batches` and `read_private_cold_archive_batch` over pre-existing private archives. Granted `EXECUTE` exclusively to `service_role`, revoked from `PUBLIC`, `anon` and `authenticated`. Verified effective grants: anon=false, authenticated=false, service_role=true.
+- Rewrote the GitHub export script to use these RPCs instead of `psql` and the unavailable `SUPABASE_DB_URL` secret. Uses Bun/frozen lockfile, paginated batches, record-count and ID-MD5 integrity, gzip chunks under 45,000,000 bytes, immutable SHA-256 file paths, private Storage bucket, byte-for-byte download verification and a final manifest. **Never** deletes cold archive database records.
+- GitHub export workflow emits a sanitized status comment on PR #2724 with the run link; a failed step leaves all archives safely in PostgreSQL. Positive success + private Storage bucket/object/manifest query is required before any database archive deletion.
