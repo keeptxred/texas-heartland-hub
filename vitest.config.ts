@@ -12,6 +12,7 @@ export default defineConfig({
       ...configDefaults.exclude,
       "tests/elections/**/*.spec.ts",
       "scripts/evergreen/check-official-sources.test.mjs",
+      "scripts/evergreen/persist-source-results.test.mjs",
     ],
   },
 });
