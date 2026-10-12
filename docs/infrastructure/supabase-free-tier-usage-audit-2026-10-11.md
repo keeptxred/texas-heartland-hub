@@ -61,3 +61,15 @@ where jobname in ('free-tier-database-capacity-monitor',
 Archives are versioned JSONB arrays with complete original record columns and ID checksums. Only a database administrator may restore. For each batch inspect with `jsonb_array_elements(records)`; reconstruct rows with `jsonb_populate_record(null::public.<original_table>, entry)` and restore the original parent rows before their FK children. Never expose private archive content in a public API or log.
 
 Source control: [merged cron-retention PR #2722](https://github.com/keeptxred/texas-heartland-hub/pull/2722) and [draft archive/export follow-up PR #2724](https://github.com/keeptxred/texas-heartland-hub/pull/2724). The latter is NOT yet approved or merged. Live migration application and PR acceptance are separate states.
+
+
+## Follow-up production measurements (2026-10-12 UTC)
+
+- After additional **physical-only** VACUUM (FULL, ANALYZE) on authority_relationships, bill_actions, bill_sponsors and bills, physical database usage fell to **416.11 decimal MB**, with all original 145,098 authority relationships, 147,775 actions, 41,504 sponsors and 12,786 bills preserved.
+- Additional compaction of TexasDefined taxing rates and other legislative history preserved 23,087 tax rows. Subsequent smaller table compaction produced **408.42 decimal MB** at 00:25 UTC, or approximately **91.58 MB** below the strict decimal cap. All 29 cron jobs remained active.
+- Migration `20261012002233_capture_free_tier_capacity_hourly_with_90day_retention` added restricted hourly samples, with a 90-day retention window; the existing capacity monitor job now runs each hour at minute 45 and also updates the daily sample. Verified the privileged function is not executable by anon or authenticated roles.
+- A restore-format test on a representative archived row from each of all eight source record types passed exact JSONB round-trip equality. This complements the full archive-vs-active-row equality checks that were performed before retirement.
+- A GitHub CI run for the follow-up changes passed Supabase retention tests, daily news publication verification, legislative validation, production build validation and GitHub workflow policy after upgrading the new workflows to actions/checkout@v5 and actions/setup-node@v5. Repo-level test and build health status must be independently checked before PR acceptance.
+- **Storage export is still not verified**: as of 00:25 UTC, no bucket named `shared-postgres-cold-archives` existed. The export workflow reports a sanitized success/failure status into PR #2724 on the trusted branch and **never** deletes database copies. A PR comment or source-control CI success by itself does not certify readback of every archive; also verify objects and manifest in Storage.
+
+Storage free-plan upload guard was tightened to **45,000,000 bytes per object** (below the documented 50 MB global file limit). The private Storage export should be run and read back before moving a single archive row out of PostgreSQL.
