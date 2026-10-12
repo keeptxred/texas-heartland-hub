@@ -61,3 +61,18 @@ requirePattern(exporter,/list_private_cold_archive_batches/,'Exporter must use r
 requirePattern(exporter,/read_private_cold_archive_batch/,'Exporter must use restricted batch reader');
 assert.doesNotMatch(exportWorkflow,/SUPABASE_DB_URL/,'Exporter must not require a separate Postgres secret');
 requirePattern(exportWorkflow,/bun install --frozen-lockfile/,'Use repository-supported locked Bun installation');
+
+const capacityProbe = readFileSync(root+'20261012122533_service_only_capacity_alert_probe.sql','utf8');
+requirePattern(capacityProbe,/revoke all on function public\.read_shared_free_tier_database_capacity\(\) from public,anon,authenticated/i,'Capacity query must be inaccessible to public users');
+requirePattern(capacityProbe,/grant execute on function public\.read_shared_free_tier_database_capacity\(\) to service_role/i,'Only service role may check database quota');
+for(const threshold of ['375000000','400000000','450000000','475000000','500000000']){
+  requirePattern(capacityProbe,new RegExp(threshold),'Missing capacity threshold: '+threshold);
+}
+const notifier=readFileSync('scripts/ops/monitor-supabase-free-tier.mjs','utf8');
+requirePattern(notifier,/read_shared_free_tier_database_capacity/,'Notifier must use exact database measurement');
+requirePattern(notifier,/const title='Shared Supabase Free Tier Capacity Alert'/,'Notifier must reuse a single issue');
+requirePattern(notifier,/if\(actual==='ok'\)/,'Notifier must close resolved alerts');
+const notifyWorkflow=readFileSync('.github/workflows/supabase-free-tier-capacity-alert.yml','utf8');
+requirePattern(notifyWorkflow,/issues: write/,'Issue permissions required');
+requirePattern(notifyWorkflow,/cron: '9 1,7,13,19 \* \* \*'/,'Recurring alert schedule required');
+console.log('Supabase owner-alert safeguards verified.');
