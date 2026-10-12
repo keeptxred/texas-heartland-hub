@@ -87,3 +87,8 @@ The existing `/admin` layout uses a client-side passcode and sessionStorage, whi
 - Anonymous callers cannot execute the approval RPC. Authenticated callers must additionally be enabled in the reviewer allowlist. Raw `source:*` monitoring observations are explicitly ineligible for factual approval.
 - Reviewer allowlist is intentionally empty pending confirmation of the owner's actual Supabase Auth user UUID. Do not guess an identity or authorize the browser-only `/admin` passcode.
 - Remaining: provision an authenticated editor using an owner-verified Auth identity, build an authenticated review UI, exercise positive/negative end-to-end approval tests, and prove source-watch ingestion with configured GitHub secrets.
+
+## Non-legal technical acceptance scope
+- Legal interpretation, legal claims, and lawyer-reviewed copy are explicitly excluded from this technical release; do not certify them through the monitoring or editorial approval pipeline.
+- Automated regression suite now checks writer failure before network transmission for malformed batches, invalid source domains, credentials embedded in URLs, invalid statuses, and missing service credentials.
+- A passing offline regression is not evidence of a successful GitHub Actions secret configuration or live Supabase ingestion. Those require an observed workflow run and nonzero persisted event counts.
