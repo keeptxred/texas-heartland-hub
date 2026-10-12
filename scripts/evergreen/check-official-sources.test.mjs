@@ -29,6 +29,17 @@ after(() => rmSync(dir,{recursive:true,force:true}));
     const outputData=JSON.parse(requireOutput());
     assert.equal(outputData.results[0].status,'manual-review');
   });
+  test('rejects URLs with embedded credentials without fetching', () => {
+    const outputResult=run([{id:'bad-credentials',url:'https://user:password@statutes.capitol.texas.gov/'}]);
+    assert.equal(outputResult.status,0);
+    const parsed=JSON.parse(requireOutput());
+    assert.equal(parsed.results[0].status,'manual-review');
+  });
+  test('rejects nonstandard HTTPS ports without fetching', () => {
+    const outputResult=run([{id:'bad-port',url:'https://statutes.capitol.texas.gov:8443/'}]);
+    assert.equal(outputResult.status,0);
+    assert.equal(JSON.parse(requireOutput()).results[0].status,'manual-review');
+  });
   test('rejects invalid source identifiers', () => {
     assert.notEqual(run([{id:'../bad',url:'https://example.gov/'}]).status,0);
   });
