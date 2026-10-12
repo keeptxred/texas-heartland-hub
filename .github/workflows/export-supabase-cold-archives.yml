@@ -45,4 +45,27 @@ jobs:
           JOB_STATUS: ${{ job.status }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          gh api "repos/${GH_REPO}/issues/2724/comments" -f body="Cold archive export validation: ${JOB_STATUS}. Workflow run: ${RUN_URL}. Database archive copies are NOT deleted by this job."
+          gh api "repos/${GH_REPO}/issues/2724/comments" -f body="Verified cold-archive canary/export job: ${JOB_STATUS}. See run logs for backed-up and safely retired row counts. A failed retirement transaction keeps its original rows. Run: ${RUN_URL}."
+
+      - name: Open or resolve production maintenance failure alert
+        if: always() && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          STATUS: ${{ job.status }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          title='Shared Supabase Cold Archive Maintenance Failure'
+          number=$(gh issue list --repo "$REPO" --state open --limit 100 --json number,title --jq ".[] | select(.title == \"$title\") | .number" | head -1)
+          if [[ "$STATUS" == "success" ]]; then
+            if [[ -n "$number" ]]; then
+              gh issue comment "$number" --repo "$REPO" --body "Scheduled archive pipeline recovered. Verified run: $RUN_URL"
+              gh issue close "$number" --repo "$REPO"
+            fi
+          elif [[ -n "$number" ]]; then
+            gh issue comment "$number" --repo "$REPO" --body "Maintenance failed closed; no unverified archive retirement. Investigate: $RUN_URL"
+          else
+            gh issue create --repo "$REPO" --title "$title" --body "The scheduled archive pipeline failed and did NOT certify a successful retirement. Inspect $RUN_URL. Check the private staging archive and manifest; avoid deleting unverified records."
+          fi
