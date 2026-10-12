@@ -44,7 +44,7 @@ requirePattern(exporter,/public:\s*false/,'Backup bucket must be private');
 requirePattern(exporter,/storage\.getBucket/,'Enforce bucket privacy');
 requirePattern(exporter,/storage\.from\(bucketName\)/,'Use explicit bucket');
 requirePattern(exporter,/\.download\(path\)/,'Require read-back');
-requirePattern(exporter,/sha256\\(verifiedBytes\\) !== sha256\\(bytes\\)/,'Require byte-for-byte verification');
+requirePattern(exporter,/sha256\(verifiedBytes\) !== sha256\(bytes\)/,'Require byte-for-byte verification');
 requirePattern(exporter,/record_checksum/,'Require row ID checksums');
 assert.doesNotMatch(exporter,/delete\s+from\s+private\./i,'Exporter must not delete private archive tables');
 assert.doesNotMatch(exporter,/truncate\s+/i,'Exporter must not truncate data');
@@ -54,9 +54,9 @@ assert.doesNotMatch(exportWorkflow,/pull_request:/,'No DB secrets for pull reque
 console.log('Cold archive safety and capacity monitoring checks passed.');
 
 const rpcSql = readFileSync(root+'20261012002800_service_role_only_cold_archive_export_rpc.sql','utf8');
-requirePattern(rpcSql,/revoke all on function public\\.list_private_cold_archive_batches\\(integer,integer\\) from public,anon,authenticated/i,'Archive list RPC cannot be public');
-requirePattern(rpcSql,/revoke all on function public\\.read_private_cold_archive_batch\\(text,text\\) from public,anon,authenticated/i,'Archive read RPC cannot be public');
-requirePattern(rpcSql,/grant execute on function public\\.read_private_cold_archive_batch\\(text,text\\) to service_role/i,'Service role must have archive read privilege');
+requirePattern(rpcSql,/revoke all on function public\.list_private_cold_archive_batches\(integer,integer\) from public,anon,authenticated/i,'Archive list RPC cannot be public');
+requirePattern(rpcSql,/revoke all on function public\.read_private_cold_archive_batch\(text,text\) from public,anon,authenticated/i,'Archive read RPC cannot be public');
+requirePattern(rpcSql,/grant execute on function public\.read_private_cold_archive_batch\(text,text\) to service_role/i,'Service role must have archive read privilege');
 requirePattern(exporter,/list_private_cold_archive_batches/,'Exporter must use restricted RPC metadata list');
 requirePattern(exporter,/read_private_cold_archive_batch/,'Exporter must use restricted batch reader');
 assert.doesNotMatch(exportWorkflow,/SUPABASE_DB_URL/,'Exporter must not require a separate Postgres secret');
