@@ -1,0 +1,11 @@
+[
+  {"id":"texas-statutes","url":"https://statutes.capitol.texas.gov/"},
+  {"id":"texas-comptroller","url":"https://comptroller.texas.gov/"},
+  {"id":"texas-secretary-of-state","url":"https://www.sos.state.tx.us/"},
+  {"id":"texas-attorney-general","url":"https://www.texasattorneygeneral.gov/"},
+  {"id":"texas-dps","url":"https://www.dps.texas.gov/"},
+  {"id":"texas-txdot","url":"https://www.txdot.gov/"},
+  {"id":"texas-railroad-commission","url":"https://www.rrc.texas.gov/"},
+  {"id":"texas-workforce","url":"https://www.twc.texas.gov/"},
+  {"id":"texas-insurance","url":"https://www.tdi.texas.gov/"}
+]
