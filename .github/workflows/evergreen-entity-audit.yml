@@ -22,7 +22,7 @@ jobs:
         run: |
           node --check scripts/evergreen/check-official-sources.mjs
           node --check scripts/evergreen/persist-source-results.mjs
-          node --test scripts/evergreen/check-official-sources.test.mjs
+          node --test scripts/evergreen/check-official-sources.test.mjs scripts/evergreen/persist-source-results.test.mjs
       - uses: actions/upload-artifact@v4
         with:
           name: evergreen-inventory
