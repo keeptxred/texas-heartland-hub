@@ -273,6 +273,25 @@ export async function resetStaleFeaturedImageGenerationLeasesDirect(): Promise<{
   // in `generating` beyond twice the guarded workflow request timeout.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any;
+  // If the visual audit rejected a concrete Commons candidate before a slow
+  // generation timed out, preserve its original v4 rejection. Overwriting the
+  // note with a generic lease-expired message would make the same known-bad
+  // candidate eligible for another hero audit, causing repeated expensive
+  // image generations and another timeout. Reset only the status in this lane.
+  const rejected = await db
+    .from("daily_articles")
+    .update({ image_generation_status: "failed" })
+    .is("featured_image_url", null)
+    .eq("image_generation_status", "generating")
+    .not("published_at", "is", null)
+    .not("image_candidate_url", "is", null)
+    .like("image_validation_note", "stored-cloudflare-vision-v4 rejected:%")
+    .lt("updated_at", staleBefore)
+    .select("slug");
+  if (rejected.error) return { reset: 0, error: rejected.error.message };
+
+  // All other abandoned leases retain their original guarded recovery path.
+  // Rows released above are already status=failed and cannot match again.
   const { data, error } = await db
     .from("daily_articles")
     .update({
@@ -284,8 +303,8 @@ export async function resetStaleFeaturedImageGenerationLeasesDirect(): Promise<{
     .not("published_at", "is", null)
     .lt("updated_at", staleBefore)
     .select("slug");
-  if (error) return { reset: 0, error: error.message };
-  return { reset: data?.length ?? 0 };
+  if (error) return { reset: rejected.data?.length ?? 0, error: error.message };
+  return { reset: (rejected.data?.length ?? 0) + (data?.length ?? 0) };
 }
 
 async function loadMultiSourceImageGrounding(db: any, slug: string): Promise<MultiSourceImageGrounding | null> {
