@@ -11,7 +11,7 @@ import {
 import { applyTrustedDiscoveryReviewFloor } from "@/lib/discovery-provenance-reputation";
 import { isLowValueTitle } from "@/lib/low-value-titles";
 import { shouldAttemptKtrAutoPublish } from "@/lib/ktr-auto-publish-selection";
-import { mergeScoringRows } from "@/lib/viral-score-backfill";
+import { isFreshForAutoPublication, mergeScoringRows } from "@/lib/viral-score-backfill";
 import { publishSingleFeedItem } from "./ingest-feeds";
 
 const DISCOVERY_FEEDS = [
@@ -344,7 +344,7 @@ async function scoreRecent(request: Request) {
     if (readyForRewrite) readyFlagged += 1;
     if (autoPublish) autoPublishFlagged += 1;
     if (persistedEditorialLane === "REVIEW") reviewFlagged += 1;
-    if (shouldAttemptKtrAutoPublish({
+    if (isFreshForAutoPublication(row.pub_date) && shouldAttemptKtrAutoPublish({
       eligible: autoPublish,
       targetSite: row.target_site,
       internalSlug: row.internal_slug,
