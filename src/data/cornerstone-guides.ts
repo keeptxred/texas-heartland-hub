@@ -2,6 +2,7 @@ export type CornerstoneGuideSection = {
   heading: string;
   paragraphs?: string[];
   bullets?: string[];
+  links?: { text: string; url: string }[];
 };
 
 export type CornerstoneGuide = {
