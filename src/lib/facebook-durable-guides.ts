@@ -97,8 +97,10 @@ const productionIssueGuides: DurableFacebookGuideCandidate[] = issueGuides
  * guides, and production-indexable issue guides. URL dedupe prevents the same
  * canonical page from entering twice when registries overlap.
  */
+// A generic OG placeholder is not a suitable thumbnail for a news feed.
+// Share only substantive pages that have their own specific editorial image.
 export const KTR_DURABLE_FACEBOOK_GUIDES: DurableFacebookGuideCandidate[] = uniqueByUrl([
   ...pillarArticles,
   ...productionGuides,
   ...productionIssueGuides,
-]);
+]).filter((guide) => guide.image_url !== DEFAULT_OG_IMAGE);
