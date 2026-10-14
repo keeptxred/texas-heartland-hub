@@ -9,6 +9,7 @@ import { AGENCY_AUTHORITY_PROFILES } from "@/data/agency-authority";
 import { ALL_REPRESENTATIVE_AUTHORITY } from "@/data/representative-authority";
 import { TEXAS_LEGISLATIVE_SEATS } from "@/data/texas-legislators.generated";
 import { stateDistrictSlug } from "@/lib/state-districts";
+import { verifiedIssueGuideReviewDate } from "@/lib/issue-guide-review-evidence";
 
 const POLITICAL_REVIEW_DAYS: Record<PoliticalSearchGuideCategory, number> = {
   races: 7,
@@ -72,9 +73,7 @@ function handler() {
       return { kind: "political-reference" as const, slug: guide.slug, path: `/texas-political-reference/${guide.slug}`, reviewed: guide.updated, reviewDays, dueAt: due.toISOString(), overdue: due.getTime() < now.getTime() };
     }),
     ...issueGuides.map((guide) => {
-      const sourceUrls = new Set(guide.sources.map((source) => source.url));
-      const hasReviewEvidence = Boolean(guide.reviewedAt && guide.reviewSourceUrls?.length && guide.reviewSourceUrls.every((url) => sourceUrls.has(url)));
-      const reviewed = hasReviewEvidence ? guide.reviewedAt! : "";
+      const reviewed = verifiedIssueGuideReviewDate(guide, now) ?? "";
       const due = reviewed ? dueDate(reviewed, ISSUE_GUIDE_REVIEW_DAYS) : new Date(0);
       return {
         kind: "issue-guide" as const,
