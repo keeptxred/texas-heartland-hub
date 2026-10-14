@@ -92,3 +92,13 @@ WHERE r.slug='live-2026-07-09-senate-district-8-showdown-why-the-paxton-talarico
   AND NOT EXISTS (SELECT 1 FROM public.daily_articles d WHERE d.slug=r.slug)
   AND NOT EXISTS (SELECT 1 FROM public.article_slug_redirects s WHERE s.old_slug=r.slug)
   AND POSITION('FACTCHECK_2026_10_14' IN COALESCE(r.notes,''))=0;
+
+-- If the row was already tagged pending on a previous partial rollout,
+-- remove the superseded follow-up suggestion; the certified-ballot decision
+-- above is the sole active disposition for this factual-error legacy URL.
+UPDATE public.article_url_registry AS r
+SET notes=replace(r.notes,' | EDITORIAL_TRIAGE_2026_10_14: follow-up candidate ONLY; find a new material October development and confirm official records before a new article. Do not promote this July URL as recent news.','')
+WHERE r.slug='live-2026-07-09-senate-district-8-showdown-why-the-paxton-talarico-battle-in-collin-co-j37z7b'
+  AND r.recovery_status='retired_low_value'
+  AND r.notes LIKE '%FACTCHECK_2026_10_14%'
+  AND r.notes LIKE '%follow-up candidate ONLY%';
