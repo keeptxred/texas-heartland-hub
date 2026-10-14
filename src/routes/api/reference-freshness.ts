@@ -72,7 +72,9 @@ function handler() {
       return { kind: "political-reference" as const, slug: guide.slug, path: `/texas-political-reference/${guide.slug}`, reviewed: guide.updated, reviewDays, dueAt: due.toISOString(), overdue: due.getTime() < now.getTime() };
     }),
     ...issueGuides.map((guide) => {
-      const reviewed = guide.reviewedAt ?? "";
+      const sourceUrls = new Set(guide.sources.map((source) => source.url));
+      const hasReviewEvidence = Boolean(guide.reviewedAt && guide.reviewSourceUrls?.length && guide.reviewSourceUrls.every((url) => sourceUrls.has(url)));
+      const reviewed = hasReviewEvidence ? guide.reviewedAt! : "";
       const due = reviewed ? dueDate(reviewed, ISSUE_GUIDE_REVIEW_DAYS) : new Date(0);
       return {
         kind: "issue-guide" as const,
@@ -130,7 +132,7 @@ function handler() {
       agencyAuthorityDays: AGENCY_REVIEW_DAYS,
       stateDistrictDays: DISTRICT_REVIEW_DAYS,
       representativeDays: REPRESENTATIVE_REVIEW_DAYS,
-      issueGuideReviewStatus: "Issue guides without a documented primary-source review date remain overdue.",
+      issueGuideReviewStatus: "Issue guides require both a documented primary-source review date and checked URLs matching their cited sources; otherwise they remain overdue.",
       note: "This endpoint identifies pages due for source review. It does not invent or auto-update facts; primary-source refresh remains required before changing dated claims.",
     },
     totalPages: items.length,
