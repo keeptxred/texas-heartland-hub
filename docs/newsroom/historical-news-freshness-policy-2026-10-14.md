@@ -8,8 +8,10 @@ Historically published `/news/live-*` addresses were rediscovered in July Google
 
 A verified October 14 audit found 46 unserved, unredirected historical `live-*` URLs, all with **zero clicks** during the July GSC recovery window. This batch was resolved into:
 
-- **32 intentionally retired from KeepTXRed recovery:** old lifestyle, culture, sport, entertainment, non-material or ambiguous event headlines. These are `article_url_registry.recovery_status='retired_low_value'` with explicit reasons. They are not silently dropped from the historical ledger, rewritten as politics, sent to Facebook, or redirected to loosely similar pages. TexasDefined may cover the underlying *topic* as a **new** original guide if worthwhile, but these lost articles are not automatically transferred.
-- **14 held as possible current public-affairs leads:** government oversight, elections, public safety, infrastructure, education/workforce, and economic policy. They remain `pending` with `EDITORIAL_TRIAGE_2026_10_14` annotations. This is a **research queue**, not a mandate to publish or restore their June/July headline. Some claims or political race framing may be inaccurate and require independent verification before any use.
+- **33 intentionally retired from KeepTXRed recovery:** old lifestyle, culture, sport, entertainment, non-material or ambiguous event headlines. These are `article_url_registry.recovery_status='retired_low_value'` with explicit reasons. They are not silently dropped from the historical ledger, rewritten as politics, sent to Facebook, or redirected to loosely similar pages. TexasDefined may cover the underlying *topic* as a **new** original guide if worthwhile, but these lost articles are not automatically transferred.
+- **13 held as possible current public-affairs leads:** government oversight, elections, public safety, infrastructure, education/workforce, and economic policy. They remain `pending` with `EDITORIAL_TRIAGE_2026_10_14` annotations. This is a **research queue**, not a mandate to publish or restore their June/July headline. Some claims or political race framing may be inaccurate and require independent verification before any use.
+
+A 33rd historical URL was retired for a **verified false race/district implication**: the July headline referred to Paxton versus Talarico as a Senate District 8 race, while the [2026 Texas Secretary of State certified ballot](https://www.sos.state.tx.us/elections/forms/2026-ballot-cert.pdf) lists both under the **statewide U.S. SENATOR** contest. The URL is not reconstructed or keyword-redirected; accurate statewide election developments should be reported as new news.
 
 The SQL migration `20261014215500_historical_news_editorial_triage.sql` is exact-slug scoped. It does not delete articles, create redirects, reset publication dates, or classify newly discovered future URLs. A later source record or legal obligation can justify manually revisiting an editorial retirement.
 
@@ -23,13 +25,13 @@ The SQL migration `20261014215500_historical_news_editorial_triage.sql` is exact
 6. **No unverifiable claims:** headlines from broken links are untrusted leads, not facts, especially candidate/district claims, criminal accusations or contested enforcement incidents. Use official records and corroborated reporting before approving a new article.
 7. **Do not mark media ready without real visual matching.** No generic substitute image is proof of the actual story.
 
-## Priority among 14 held leads
+## Priority among 13 held leads
 
 **Priority A — official-source verification and current consequences**
 - Hill Country flood **legislative oversight**: obtain the actual inquiry and resulting recommendations/implementation
 - Texas semiconductor innovation **grant**: recipient, contractual obligations and fresh economic milestones
 - Federal/Houston officer-involved shooting and related **Mexico legal action**: identify official investigation or court filings; do not combine separate incidents
-- **Election and voter-record allegations**: verify candidate/district/race details and primary government records before making any claim
+- **Election and voter-record allegations**: use official registrations, candidate and district certifications; the misleading Paxton–Talarico state Senate District 8 URL is already retired
 
 **Priority B — publish only if a new development exists**
 - Immigration enforcement or birthright-citizenship **court actions**
