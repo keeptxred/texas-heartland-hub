@@ -432,7 +432,7 @@ async function runAutoTexasDefinedFacebookPost(request: Request) {
   if (!token) return Response.json({ ok: false, error: "Missing GitHub Actions OIDC token" }, { status: 401 });
 
   try {
-    await verifyGitHubActionsOidc({ token, audience: OIDC_AUDIENCE, repository: REPOSITORY, workflowPath: WORKFLOW_PATH });
+    await verifyGitHubActionsOidc({ token, audience: OIDC_AUDIENCE, repository: REPOSITORY, workflowPath: WORKFLOW_PATH, allowedEventNames: ["schedule", "workflow_dispatch", "workflow_run"] });
   } catch (error) {
     return Response.json(
       {
