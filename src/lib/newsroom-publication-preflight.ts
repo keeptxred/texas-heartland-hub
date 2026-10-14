@@ -26,7 +26,12 @@ export function newsroomSourceFamilyFromUrl(inputUrl: string): string | null {
  * intact and use this stricter helper for newsroom editorial independence.
  */
 export function newsroomIndependentPublisherFamilyFromUrl(url: string): string | null {
-  if (/^https?:\\/\\/(?:www\\.)?news\\.google\\.com(?:\\/|$)/i.test(url.trim())) return null;
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    if (host === "news.google.com" || host === "www.news.google.com") return null;
+  } catch {
+    return null;
+  }
   return newsroomSourceFamilyFromUrl(url);
 }
 
