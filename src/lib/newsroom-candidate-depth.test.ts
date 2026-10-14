@@ -36,6 +36,19 @@ describe("newsroom evidence-first candidate depth", () => {
     expect(generator).toContain('"insufficient_source_evidence"');
   });
 
+  it("skips a recently published subject even when another cluster has a different source URL", () => {
+    const reserve = generator.indexOf('db.rpc("newsroom_reserve_ai_generation"');
+    const subjectCheck = generator.indexOf('.in("canonical_subject", subjects.slice(offset, offset + 20))');
+    const leadCheck = generator.indexOf('.in("source_url", leadUrls.slice(offset, offset + 25))');
+    expect(subjectCheck).toBeGreaterThan(-1);
+    expect(subjectCheck).toBeLessThan(leadCheck);
+    expect(leadCheck).toBeLessThan(reserve);
+    expect(generator).toContain('recentlyPublishedSubjects.has(subject)');
+    expect(generator).toContain('      ? novelSubjectCandidates.find((row) => {');
+    expect(generator).toContain('"already_published_story_subject"');
+    expect(generator).toContain('.gte("published_at", newsroomNewStoryCutoff())');
+  });
+
   it("applies a stable ranked order so crossing the first 100 does not reorder stories", () => {
     expect(generator).toContain('.order("editorial_score", { ascending: false })');
     expect(generator).toContain('.order("created_at", { ascending: false })');
