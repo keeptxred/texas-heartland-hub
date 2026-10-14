@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createStripeClient, getStripeErrorMessage } from "@/lib/stripe.server";
 
+import { reviewOrderForPaidSession } from "@/lib/google-customer-reviews";
+
 const ALLOWED_ORIGINS = new Set([
   "https://texasdefined.com",
   "https://www.texasdefined.com",
@@ -54,12 +56,12 @@ export const Route = createFileRoute("/api/public/texasdefined-checkout")({
         try {
           const stripe = createStripeClient("live");
           const session = await stripe.checkout.sessions.retrieve(sessionId);
-          if (session.metadata?.source !== "texasdefined_shop") {
+          if (!session.livemode || session.metadata?.source !== "texasdefined_shop") {
             return Response.json({ ok: false, error: "Checkout session not found" }, { status: 404, headers });
           }
 
           const paid = session.status === "complete" && session.payment_status === "paid";
-          return Response.json({ ok: true, paid, status: session.status, paymentStatus: session.payment_status }, { headers });
+          return Response.json({ ok: true, paid, status: session.status, paymentStatus: session.payment_status, review: reviewOrderForPaidSession(session, "texasdefined") }, { headers });
         } catch (error) {
           return Response.json({ ok: false, error: getStripeErrorMessage(error) }, { status: 404, headers });
         }
