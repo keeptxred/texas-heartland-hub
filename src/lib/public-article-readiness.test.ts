@@ -78,6 +78,11 @@ describe("public article readiness floor", () => {
   it("blocks content below the impression-recovery quality floor and allows the boundary score", () => {
     expect(isPublicArticleReady({ ...base, content_quality_score: 69 })).toBe(false);
     expect(isPublicArticleReady({ ...base, content_quality_score: 70 })).toBe(true);
+    // A validated 65-point article has 75 editorial points if ten points
+    // were withheld only because no photo was available.
+    expect(isPublicArticleReady({ ...base, image_url: null, content_quality_score: 65 })).toBe(true);
+    expect(isPublicArticleReady({ ...base, image_url: null, content_quality_score: 59 })).toBe(false);
+    expect(isPublicArticleReady({ ...base, image_url: "/verified-photo.jpg", content_quality_score: 65 })).toBe(false);
   });
 
   it("keeps restored legacy URLs out of public discovery below 500 substantive words", () => {
