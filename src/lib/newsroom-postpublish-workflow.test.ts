@@ -13,16 +13,16 @@ describe("clustered newsroom post-publish workflow", () => {
     );
   });
 
-  it("preserves the published article but fails the production run when finalization or hero generation fails", () => {
+  it("fails on article finalization defects but defers failed image generation", () => {
     expect(workflow).toContain("CLUSTERED_NEWSROOM_FINALIZE_FAILED");
-    expect(workflow).toContain("CLUSTERED_NEWSROOM_IMAGE_FAILED");
-    expect(workflow).toContain("article remains published for safe recovery, but this run is not a production pass");
-    expect(workflow).not.toContain("CLUSTERED_NEWSROOM_FINALIZE_WARNING");
-    expect(workflow).not.toContain("CLUSTERED_NEWSROOM_IMAGE_WARNING");
-
+    expect(workflow).toContain("CLUSTERED_NEWSROOM_IMAGE_DEFERRED");
+    expect(workflow).not.toContain("CLUSTERED_NEWSROOM_IMAGE_FAILED");
     const finalizeFailure = workflow.indexOf("CLUSTERED_NEWSROOM_FINALIZE_FAILED");
-    const imageFailure = workflow.indexOf("CLUSTERED_NEWSROOM_IMAGE_FAILED");
+    const imageDeferred = workflow.indexOf("CLUSTERED_NEWSROOM_IMAGE_DEFERRED");
     expect(workflow.slice(finalizeFailure, finalizeFailure + 300)).toContain("exit 1");
-    expect(workflow.slice(imageFailure, imageFailure + 300)).toContain("exit 1");
+    expect(workflow.slice(imageDeferred, imageDeferred + 300)).not.toContain("exit 1");
+    expect(workflow).toContain("FLYOVER_EXACT_FEED_IMAGE_DEFERRED");
+    expect(workflow).toContain(".ok == true and (.slug // \"\") != \"\"");
+    expect(workflow).not.toContain("(.slug // \"\") != \"\" and .image.ok == true");
   });
 });
