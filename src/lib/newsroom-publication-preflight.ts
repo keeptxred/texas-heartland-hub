@@ -55,7 +55,7 @@ export function newsroomLeadSourceUrl(sources: ResearchPacketSource[]): string |
   return uniquePacketSources(sources)[0]?.url ?? null;
 }
 
-/** Equivalent to the database's generated-newsroom diversity guard. */
+/** Stricter than the database guard: discovery links never count as an independent publisher. */
 export function newsroomHasPublisherDiversity(sources: ResearchPacketSource[]): boolean {
   const unique = uniquePacketSources(sources);
   if (unique.some((source) => source.isPrimarySource)) return true;
