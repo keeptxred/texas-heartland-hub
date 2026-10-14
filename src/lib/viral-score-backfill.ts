@@ -16,3 +16,14 @@ export function mergeScoringRows<T extends { id: number }>(
   }
   return result;
 }
+
+/** Historical backfill improves discovery but may not mint stale news as new. */
+export function isFreshForAutoPublication(
+  pubDate: string | null,
+  nowMs = Date.now(),
+): boolean {
+  const publishMs = Date.parse(pubDate ?? "");
+  return Number.isFinite(publishMs) &&
+    publishMs >= nowMs - 72 * 60 * 60 * 1000 &&
+    publishMs <= nowMs + 60 * 60 * 1000;
+}
