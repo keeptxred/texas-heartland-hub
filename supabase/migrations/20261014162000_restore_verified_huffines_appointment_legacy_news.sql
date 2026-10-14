@@ -76,3 +76,16 @@ ON CONFLICT (slug) DO UPDATE SET
   quality_flags = EXCLUDED.quality_flags,
   gsc_impressions = GREATEST(public.daily_articles.gsc_impressions,EXCLUDED.gsc_impressions),
   gsc_clicks = GREATEST(public.daily_articles.gsc_clicks,EXCLUDED.gsc_clicks);
+
+-- Queue the licensed Commons photograph for the existing image audit.
+-- The audit itself is responsible for checking image bytes/metadata and
+-- recording real Cloudflare visual-match provenance before granting 'ready'.
+UPDATE public.daily_articles
+SET image_candidate_url = featured_image_url,
+    image_candidate_alt_text = image_alt_text
+WHERE slug = 'live-2026-07-02-governor-abbott-selects-don-huffines-to-serve-as-new-texas-comptroller-whlu3f'
+  AND image_generation_status = 'pending'
+  AND featured_image_url LIKE 'https://commons.wikimedia.org/wiki/Special:Redirect/file/%'
+  AND NULLIF(BTRIM(COALESCE(image_alt_text,'')),'') IS NOT NULL
+  AND NULLIF(BTRIM(COALESCE(image_validation_note,'')),'') IS NOT NULL
+  AND image_candidate_url IS NULL;
