@@ -229,10 +229,10 @@ async function handler({ request }: { request: Request }) {
     const unshadowedCandidates = batch.filter((row) => !shadowedCandidateIds.has(row.id));
     sawUnshadowed ||= unshadowedCandidates.length > 0;
     const evidenceEligibleCandidates = unshadowedCandidates.filter((row) => {
-      const packet = packetByCluster.get(row.cluster_id);
-      const story = clusterById.get(row.cluster_id);
-      if (!packet || !story || packet.source_count <= 0) return false;
-      return researchPacketEvidenceChars(packet.packet_json) >= evidenceFloorForPillar(story.pillar_slug);
+      const packetRow = packetByCluster.get(row.cluster_id);
+      const cluster = clusterById.get(row.cluster_id);
+      if (!packetRow || !cluster || packetRow.source_count <= 0) return false;
+      return researchPacketEvidenceChars(packetRow.packet_json) >= evidenceFloorForPillar(cluster.pillar_slug);
     });
     sawEvidenceEligible ||= evidenceEligibleCandidates.length > 0;
 
