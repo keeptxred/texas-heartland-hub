@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { buildResearchPacket } from "@/lib/newsroom-research-packet";
-import { newsroomSourceFamilyFromUrl } from "@/lib/newsroom-publication-preflight";
+import { newsroomIndependentPublisherFamilyFromUrl } from "@/lib/newsroom-publication-preflight";
 import {
   fetchReadableNewsroomSource,
   shouldFetchNewsroomSourcePage,
@@ -208,7 +208,7 @@ async function handler() {
   for (const membership of memberships) {
     const state = provenanceByCluster.get(membership.cluster_id) ?? { hasPrimary: false, families: new Set<string>() };
     state.hasPrimary ||= membership.is_primary_source;
-    const family = newsroomSourceFamilyFromUrl(feedByIdForPriority.get(membership.feed_item_id)?.link ?? "");
+    const family = newsroomIndependentPublisherFamilyFromUrl(feedByIdForPriority.get(membership.feed_item_id)?.link ?? "");
     if (family) state.families.add(family);
     provenanceByCluster.set(membership.cluster_id, state);
   }
