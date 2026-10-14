@@ -130,55 +130,75 @@ function verifyArchiveBlob(gzipData, metadataChunk) {
 // object storage. Historical URL and editorial-copy loss preceded the 2026
 // deletion archive, so saving only deleted-row logs cannot recover those cases.
 // This operation is export-only; it never edits or removes database records.
-async function snapshotPublishedArticles() {
+async function readSnapshotTable(table, key) {
   const rows = [];
   for (let offset = 0; offset < MAX_ARTICLE_SNAPSHOT_ROWS; offset += ARTICLE_SNAPSHOT_PAGE_SIZE) {
-    const {data, error} = await db.from('daily_articles')
+    const {data, error} = await db.from(table)
       .select('*')
-      .order('slug', {ascending: true})
+      .order(key, {ascending: true})
       .range(offset, offset + ARTICLE_SNAPSHOT_PAGE_SIZE - 1);
-    if (error) throw new Error('Published article snapshot read failed: ' + (error.code || error.message));
-    if (!Array.isArray(data)) throw new Error('Published article snapshot returned no array.');
+    if (error) throw new Error(table + ' recovery snapshot read failed: ' + (error.code || error.message));
+    if (!Array.isArray(data)) throw new Error(table + ' recovery snapshot response is invalid.');
     rows.push(...data);
     if (data.length < ARTICLE_SNAPSHOT_PAGE_SIZE) break;
   }
-  if (!rows.length || rows.length >= MAX_ARTICLE_SNAPSHOT_ROWS) {
-    throw new Error('Published article snapshot is empty or exceeded its safety limit.');
+  if (rows.length >= MAX_ARTICLE_SNAPSHOT_ROWS ||
+      new Set(rows.map(row => String(row[key]))).size !== rows.length ||
+      rows.some(row => row[key] == null)) {
+    throw new Error(table + ' recovery snapshot exceeded limit or contains missing/duplicate keys.');
   }
-  if (new Set(rows.map(row => row.slug)).size !== rows.length ||
-      rows.some(row => !row.slug || !row.body_json || !row.title)) {
-    throw new Error('Incomplete or duplicated published article rows: snapshot not accepted.');
+  return rows;
+}
+async function snapshotPublishedArticles() {
+  const [articles, deletedArticles, registeredUrls, redirects] = await Promise.all([
+    readSnapshotTable('daily_articles', 'slug'),
+    readSnapshotTable('daily_article_archive', 'archive_id'),
+    readSnapshotTable('article_url_registry', 'slug'),
+    readSnapshotTable('article_slug_redirects', 'old_slug'),
+  ]);
+  if (!articles.length ||
+      articles.some(row => !row.body_json || !row.title) ||
+      registeredUrls.length < articles.length) {
+    throw new Error('Published article recovery snapshot is incomplete.');
   }
   const day = new Date().toISOString().slice(0,10);
   const snapshot = {
-    schema_version: 1,
+    schema_version: 2,
     project: 'ftkznprjljkhymknvhye',
-    source_table: 'public.daily_articles',
     snapshot_day_utc: day,
-    record_count: rows.length,
-    records: rows,
+    tables: {
+      'public.daily_articles': articles,
+      'public.daily_article_archive': deletedArticles,
+      'public.article_url_registry': registeredUrls,
+      'public.article_slug_redirects': redirects,
+    },
+    record_counts: {
+      'public.daily_articles': articles.length,
+      'public.daily_article_archive': deletedArticles.length,
+      'public.article_url_registry': registeredUrls.length,
+      'public.article_slug_redirects': redirects.length,
+    },
   };
   const raw = Buffer.from(JSON.stringify(snapshot) + '\n');
   const zipped = gzipSync(raw, {level: 9});
   if (zipped.length > MAX_UPLOAD_BYTES) {
-    throw new Error('Article snapshot grew beyond the private Storage object limit.');
+    throw new Error('Article recovery snapshot exceeds the private Storage object limit.');
   }
-  const path = 'postgres-cold/' + day + '/published-articles-' + sha256(zipped) + '.json.gz';
+  const path = 'postgres-cold/' + day + '/published-article-recovery-' + sha256(zipped) + '.json.gz';
   const verified = await storeAndReadBack(path, zipped, 'application/gzip');
   const reopened = JSON.parse(gunzipSync(verified).toString('utf8'));
-  if (reopened.source_table !== 'public.daily_articles' ||
-      reopened.project !== snapshot.project ||
-      reopened.record_count !== rows.length ||
-      !Array.isArray(reopened.records) ||
-      reopened.records.length !== rows.length ||
-      sha256(Buffer.from(JSON.stringify(reopened.records))) !==
-        sha256(Buffer.from(JSON.stringify(rows)))) {
-    throw new Error('Published article snapshot failed full private readback validation.');
+  if (reopened.project !== snapshot.project || reopened.schema_version !== 2 ||
+      sha256(Buffer.from(JSON.stringify(reopened.tables))) !==
+        sha256(Buffer.from(JSON.stringify(snapshot.tables))) ||
+      sha256(Buffer.from(JSON.stringify(reopened.record_counts))) !==
+        sha256(Buffer.from(JSON.stringify(snapshot.record_counts)))) {
+    throw new Error('Private published article/URL recovery snapshot readback failed.');
   }
-  console.log('Verified immutable private article snapshot: ' + rows.length +
-    ' articles, ' + zipped.length + ' compressed bytes. No published rows deleted.');
+  console.log('Verified immutable private recovery snapshot: ' + articles.length +
+    ' published articles, ' + deletedArticles.length + ' deleted-row archives, ' +
+    registeredUrls.length + ' registered URLs, ' + redirects.length + ' redirects, ' +
+    zipped.length + ' compressed bytes. No database rows deleted.');
 }
-
 await ensurePrivateBucket();
 await snapshotPublishedArticles();
 
