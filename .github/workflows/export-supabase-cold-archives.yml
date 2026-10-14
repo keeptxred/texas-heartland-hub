@@ -33,7 +33,7 @@ jobs:
         run: |
           test -n "${SUPABASE_SERVICE_ROLE_KEY}" || { echo "::error::Supabase service-role secret not configured"; exit 1; }
       - run: bun install --frozen-lockfile
-      - name: Export and verify private cold archives (never delete database rows)
+      - name: Export verified immutable published-news snapshots and private cold archives (never delete database rows)
         run: bun scripts/data/export-supabase-cold-archives.mjs
       - name: Report export result to review PR
         if: always() && github.ref == 'refs/heads/fix/supabase-free-tier-followup-20261012'
