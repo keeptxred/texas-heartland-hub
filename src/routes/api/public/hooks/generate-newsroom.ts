@@ -201,6 +201,8 @@ async function handler({ request }: { request: Request }) {
   let sawEvidenceEligible = false;
   let sawAuthorityEligible = false;
   let sawIndependentSources = false;
+  let sawNovelSubject = false;
+  const recentlyPublishedSubjects = new Set<string>();
   const existingLeadSources = new Set<string>();
 
   for (let batchStart = 0; batchStart < candidates.length; batchStart += NEWSROOM_CANDIDATE_BATCH_SIZE) {
@@ -248,11 +250,38 @@ async function handler({ request }: { request: Request }) {
     });
     sawIndependentSources ||= independentlySourcedCandidates.length > 0;
 
+    // Distinct clusters can describe an already published event using other
+    // publishers' URLs. Check the exact normalized subject as well as the lead
+    // URL so expanding candidate depth never repackages recent coverage.
+    if (requestedMode === "publish" && independentlySourcedCandidates.length) {
+      const subjects = [...new Set(independentlySourcedCandidates
+        .map((row) => clusterById.get(row.cluster_id)?.canonical_subject)
+        .filter((subject): subject is string => Boolean(subject)))];
+      for (let offset = 0; offset < subjects.length; offset += 20) {
+        const { data: publishedClusters, error: subjectError } = await db.from("news_story_clusters")
+          .select("canonical_subject")
+          .eq("status", "PUBLISHED")
+          .gte("published_at", newsroomNewStoryCutoff())
+          .in("canonical_subject", subjects.slice(offset, offset + 20));
+        if (subjectError) return Response.json({ error: subjectError.message }, { status: 500 });
+        for (const publishedCluster of publishedClusters ?? []) {
+          if (publishedCluster.canonical_subject) recentlyPublishedSubjects.add(publishedCluster.canonical_subject);
+        }
+      }
+    }
+    const novelSubjectCandidates = requestedMode === "publish"
+      ? independentlySourcedCandidates.filter((row) => {
+        const subject = clusterById.get(row.cluster_id)?.canonical_subject;
+        return Boolean(subject && !recentlyPublishedSubjects.has(subject));
+      })
+      : independentlySourcedCandidates;
+    sawNovelSubject ||= novelSubjectCandidates.length > 0;
+
     // Match the database's duplicate daily_articles.source_url protection.
     // Inspect exact lead URLs in bounded sets rather than spend an AI call
     // and discover the duplicate only after attempting publication.
-    if (requestedMode === "publish" && independentlySourcedCandidates.length) {
-      const leadUrls = [...new Set(independentlySourcedCandidates
+    if (requestedMode === "publish" && novelSubjectCandidates.length) {
+      const leadUrls = [...new Set(novelSubjectCandidates
         .map((row) => newsroomLeadSourceUrl(packetByCluster.get(row.cluster_id)?.packet_json.sources ?? []))
         .filter((url): url is string => Boolean(url)))];
       for (let offset = 0; offset < leadUrls.length; offset += 25) {
@@ -267,7 +296,7 @@ async function handler({ request }: { request: Request }) {
     }
 
     const chosen = requestedMode === "publish"
-      ? independentlySourcedCandidates.find((row) => {
+      ? novelSubjectCandidates.find((row) => {
         const leadUrl = newsroomLeadSourceUrl(packetByCluster.get(row.cluster_id)?.packet_json.sources ?? []);
         return Boolean(leadUrl && !existingLeadSources.has(leadUrl));
       })
@@ -283,8 +312,10 @@ async function handler({ request }: { request: Request }) {
   if (!candidate) {
     const reason = requestedMode === "shadow" && !sawUnshadowed
       ? "no_unshadowed_candidates"
-      : requestedMode === "publish" && sawIndependentSources
+      : requestedMode === "publish" && sawNovelSubject
         ? "already_published_source_url"
+        : requestedMode === "publish" && sawIndependentSources
+          ? "already_published_story_subject"
         : requestedMode === "publish" && sawAuthorityEligible
           ? "insufficient_independent_sources"
           : requestedMode === "publish" && sawEvidenceEligible
