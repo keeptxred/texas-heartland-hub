@@ -51,10 +51,27 @@ WHERE r.slug=t.slug
 -- Preserve the remaining public-affairs leads as possible reporting assignments,
 -- not permission to restore old copy. This deliberately does not label the
 -- headline's assertions verified.
+WITH followups(slug) AS (VALUES
+  ('live-2026-07-09-texas-community-colleges-rebound-with-new-workforce-focus-uq2vra'),
+  ('live-2026-07-10-hollywood-expands-texas-footprint-as-motion-picture-association-partne-ew4vce'),
+  ('live-2026-07-02-austin-robotics-firm-unveils-massive-facility-for-humanoid-machine-dev-90almg'),
+  ('live-2026-07-03-legislative-inquiry-reveals-critical-infrastructure-gaps-following-hil-cvjzgm'),
+  ('live-2026-07-09-senate-district-8-showdown-why-the-paxton-talarico-battle-in-collin-co-j37z7b'),
+  ('live-2026-07-10-federal-agency-faces-scrutiny-after-houston-officer-involved-shooting--s2fagc'),
+  ('live-2026-06-29-renowned-texas-reporter-details-encounters-with-convicted-con-artist-tyf6qk'),
+  ('live-2026-06-30-governor-abbott-criticizes-recent-judicial-action-on-birthright-citize-ikvhrm'),
+  ('live-2026-07-01-fort-worth-leadership-faces-scrutiny-over-lobbying-connections-and-dat-h90fs5'),
+  ('live-2026-07-02-governor-abbott-bolsters-texas-dc-relations-and-high-demand-job-traini-yxw3hq'),
+  ('live-2026-06-28-governor-abbott-announces-texas-semiconductor-innovation-fund-grant-to-bx1y0k'),
+  ('live-2026-07-01-shift-in-ice-enforcement-tactics-impacts-texas-communities-as-arrest-d-gh8kzg'),
+  ('live-2026-07-07-scrutiny-intensifies-over-ken-paxton-s-residential-voting-records-amid-58gii3'),
+  ('live-2026-07-09-mexican-officials-pursue-legal-action-after-houston-ice-shooting-incid-96qjk3')
+)
 UPDATE public.article_url_registry r
 SET notes=concat_ws(' | ',NULLIF(r.notes,''),
   'EDITORIAL_TRIAGE_2026_10_14: follow-up candidate ONLY; find a new material October development and confirm official records before a new article. Do not promote this July URL as recent news.')
-WHERE r.slug LIKE 'live-%'
+FROM followups f
+WHERE r.slug=f.slug
   AND r.recovery_status='pending'
   AND r.gsc_clicks=0
   AND NOT EXISTS(SELECT 1 FROM public.daily_articles d WHERE d.slug=r.slug)
