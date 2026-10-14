@@ -1,0 +1,46 @@
+name: Verify Daily News Volume
+
+# Read-only monitor. Do not trigger publication or spend AI when a day misses
+# the 3-5 meaningful article target; make the shortage visible in Actions.
+on:
+  schedule:
+    # Runs after the preceding Central calendar day is complete in both CST
+    # and CDT. DST-safe day selection lives in the Node verification script.
+    - cron: '25 7 * * *'
+  workflow_dispatch:
+    inputs:
+      day:
+        description: Optional YYYY-MM-DD Central calendar day (default yesterday)
+        required: false
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/news/check-daily-quality-volume.mjs'
+      - '.github/workflows/verify-daily-news-volume.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: keeptxred-daily-news-quality-volume-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    if: github.repository == 'keeptxred/texas-heartland-hub'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.KEEP_TX_RED_SUPABASE_SERVICE_ROLE_KEY }}
+      CHECK_DAY: ${{ inputs.day || '' }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate quality-volume monitor contracts (zero network or AI)
+        run: node scripts/news/check-daily-quality-volume.mjs --self-test
+      - name: Verify previous Central day's substantive newsroom count
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: node scripts/news/check-daily-quality-volume.mjs
