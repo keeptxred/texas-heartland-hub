@@ -6,6 +6,8 @@ export type IssueSource = {
 
 export type IssueGuide = {
   slug: string;
+  /** Set only after documented primary-source verification. */
+  reviewedAt?: string;
   category: string;
   title: string;
   dek: string;
