@@ -21,7 +21,8 @@ const OIDC_AUDIENCE = "keeptxred-facebook";
 const REPOSITORY = "keeptxred/texas-heartland-hub";
 const WORKFLOW_PATH = ".github/workflows/auto-facebook-posts.yml";
 const SITE_URL = "https://keeptxred.com";
-const MAX_AUTO_FACEBOOK_ARTICLE_AGE_DAYS = 4;
+const MAX_AUTO_FACEBOOK_ARTICLE_AGE_DAYS = 5;
+const MIN_EDITORIAL_QUALITY_SCORE = 72;
 const MAX_CANDIDATES = 160;
 const MAX_ATTEMPTS = 12;
 const DIVERSITY_WINDOW_HOURS = 30;
@@ -37,6 +38,7 @@ type ArticleRow = {
   kind: string;
   is_breaking: boolean | null;
   score: number | null;
+  content_quality_score: number | null;
   body_json: unknown;
 };
 
@@ -212,7 +214,7 @@ async function runAutoFacebookPost(request: Request) {
   ).toISOString();
   const { data: rawArticles, error: articleError } = await db
     .from("daily_articles")
-    .select("slug,title,category,featured_image_url,published_at,source_name,source_url,kind,is_breaking,score,body_json")
+    .select("slug,title,category,featured_image_url,published_at,source_name,source_url,kind,is_breaking,score,content_quality_score,body_json")
     .not("featured_image_url", "is", null)
     .gte("published_at", cutoff)
     .order("published_at", { ascending: false })
@@ -225,6 +227,7 @@ async function runAutoFacebookPost(request: Request) {
   const articles = ((rawArticles ?? []) as ArticleRow[]).filter(
     (row) =>
       Boolean(row.slug && row.title && row.featured_image_url) &&
+      (row.content_quality_score ?? 0) >= MIN_EDITORIAL_QUALITY_SCORE &&
       meetsArticleMainWordCount(row.kind, row.body_json as never),
   );
 
