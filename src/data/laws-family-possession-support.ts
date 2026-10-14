@@ -65,7 +65,18 @@ export const FAMILY_POSSESSION_SUPPORT_GUIDES: Record<string, CornerstoneGuide> 
     sections: [
       { heading: "The calculation starts with statutory net resources", paragraphs: ["Section 154.062 defines net resources for child-support purposes and identifies categories of resources and statutory deductions. Gross salary by itself is therefore not the final guideline base."] },
       { heading: "Chapter 154 supplies the guideline framework", paragraphs: ["Sections 154.121 through 154.130 contain the principal guideline rules. Section 154.125 applies the standard schedule to qualifying net monthly resources: 20% for one child before the court, 25% for two, 30% for three, 35% for four, and 40% for five. For six or more children, the statute says the amount may not be less than the amount for five children. Section 154.125 also provides a lower-income schedule, while Sections 154.128 and 154.129 address children in more than one household."] },
-      { heading: "Use the Attorney General calculator as an estimate, not a court order", paragraphs: ["The Texas Attorney General's Child Support Division provides an official calculator to estimate support from a single source of income. The agency warns that the actual amount set or approved through the legal process may differ, so the calculator is best used as a planning tool rather than a substitute for the operative order."] },
+      {
+        heading: "Texas Attorney General Child Support Calculator",
+        paragraphs: [
+          "The Texas Office of the Attorney General’s Child Support Division hosts a Texas Attorney General Child Support Calculator that can be used to estimate child support. The amount set or approved through the legal process may differ, so the calculator should be treated as an estimate rather than a court order.",
+        ],
+        links: [
+          {
+            text: "Texas Attorney General Child Support Calculator",
+            url: "https://www.texasattorneygeneral.gov/child-support/get-started",
+          },
+        ],
+      },
       { heading: "Payments, case access and child-support services", paragraphs: ["The Attorney General provides the statewide practical service layer for many child-support cases. Parents can use its child-support portal to learn how to apply for services, review case information, and find payment and receipt options. Official payment methods include online and phone payments, mail, cash, wage withholding, and bank autodraft."] },
       { heading: "An existing order does not change automatically when income changes", paragraphs: ["A change in income, employment, family circumstances, or medical coverage does not by itself rewrite a child-support order. The Attorney General provides a modification-review process for eligible cases, and an informal agreement between parents does not replace the operative court-ordered amount."] },
       { heading: "The guideline result is presumptive, not mechanically absolute", paragraphs: ["Section 154.122 creates a rebuttable presumption that guideline support is reasonable and in the child's best interest. Section 154.123 lists additional factors a court may consider when deciding whether application of the guidelines would be unjust or inappropriate."] },
@@ -74,7 +85,7 @@ export const FAMILY_POSSESSION_SUPPORT_GUIDES: Record<string, CornerstoneGuide> 
     faq: [
       { q: "Is Texas child support based on gross income?", a: "Not directly. Chapter 154 uses statutory net resources, which are calculated under Section 154.062 before the guideline framework is applied." },
       { q: "What percentage is child support in Texas?", a: "For the standard guideline schedule and qualifying net resources, the percentages are 20% for one child, 25% for two, 30% for three, 35% for four, and 40% for five. For six or more children, Section 154.125 requires an amount not less than the amount for five children. Lower-income and multiple-household rules can produce different results, and a court may deviate when the statute permits." },
-      { q: "Does Texas have an official child support calculator?", a: "Yes. The Texas Office of the Attorney General provides a child-support calculator. It is an estimate for planning purposes; the amount set or approved through the legal process can differ." },
+      { q: "Does the Texas Attorney General provide a child support calculator?", a: "Yes. The Texas Office of the Attorney General’s Child Support Division hosts a Texas Attorney General Child Support Calculator. It provides an estimate; the amount set or approved through the legal process can differ." },
       { q: "How do I pay Texas child support?", a: "The Texas Attorney General lists official payment options including online or phone payment, mail, cash, wage withholding, and bank autodraft. Use the OAG payment page for the current methods and instructions tied to your case." },
       { q: "Can Texas child support be modified if income changes?", a: "Possibly, but the ordered amount does not change automatically. An eligible case can be reviewed for modification, and an informal agreement between parents does not change the court-ordered amount." },
       { q: "Can a Texas judge order a different amount than the guidelines?", a: "Yes. The guidelines are presumptively reasonable, but Section 154.123 lists factors the court may consider in deciding whether a different amount is appropriate." },
