@@ -187,7 +187,10 @@ async function handler({ request }: { request: Request }) {
   const { data: candidateData, error: candidateError } = await db
     .from("news_publish_candidates")
     .select("id,cluster_id,editorial_score,recommended_format,status")
-    .in("status", ["PENDING", "HELD"])
+    // HELD means editorial/recovery intervention is required. Retrying a
+    // validated-but-unpublished held draft with another paid AI call can
+    // regenerate the same article indefinitely; never auto-select held rows.
+    .eq("status", "PENDING")
     .in("recommended_format", ["SINGLE", "MERGE", "SYNTHESIS"])
     .gte("created_at", newsroomNewStoryCutoff())
     .order("editorial_score", { ascending: false })
