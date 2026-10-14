@@ -55,6 +55,11 @@ describe("image backlog recovery publication boundary", () => {
     expect(writerSource).toContain('.is("featured_image_url", null)');
     expect(writerSource).toContain('.eq("image_generation_status", "generating")');
     expect(writerSource).toContain('.not("published_at", "is", null)');
+    expect(writerSource).toContain('.not("image_candidate_url", "is", null)');
+    expect(writerSource).toContain('.like("image_validation_note", "stored-cloudflare-vision-v4 rejected:%")');
+    expect(writerSource).toContain('.update({ image_generation_status: "failed" })');
+    // Preserve the visual rejection on an expired generator lease to stop
+    // repeated audits of the same known-unrelated third-party photograph.
     expect(writerSource).toContain('.lt("updated_at", staleBefore)');
     expect(writerSource).toContain('image_generation_status: "failed"');
     expect(writerSource).toContain("Image generation lease expired before completion; returned to guarded recovery backlog.");
