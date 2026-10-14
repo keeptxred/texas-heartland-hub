@@ -3,6 +3,7 @@ import { resolvePublishTimestamp } from "@/lib/article-slug-integrity";
 import { isLowValueTitle } from "@/lib/low-value-titles";
 import { scoreFeedItem, TEXAS_RELEVANCE_MIN } from "@/lib/viral-score";
 import { selectRotatedSourceWindow } from "@/lib/ingest-source-window";
+import { partitionFeedLinkLookups } from "@/lib/ingest-link-lookup";
 export { publishSingleFeedItem } from "@/lib/multi-source-publish";
 export { isPuzzleTitle } from "@/lib/ingest-feeds-legacy";
 
@@ -89,9 +90,9 @@ const DIRECT_CORE_URLS = new Set(
 );
 // Keep trigger-heavy feed writes below the production statement timeout.
 const INGEST_UPSERT_BATCH_SIZE = 20;
-// Existing-link lookups are read-only and indexed: group them more widely than
-// trigger-heavy INSERT batches to keep 1,000+ discovery rows within runtime.
-const INGEST_EXISTING_LINK_LOOKUP_BATCH_SIZE = 100;
+// PostgREST encodes full RSS article links inside a GET query. Large .in()
+// arrays can return HTTP 400 for a long request target. Bound URL bytes and
+// number of links together, using the shared partition helper.
 // Per-source deadline, including transient retries, prevents one stalled feed
 // from monopolizing an ingestion wave for 3 × 25 seconds.
 const SOURCE_FETCH_TOTAL_BUDGET_MS = 30_000;
@@ -411,6 +412,30 @@ async function upsertFeedRowsAdaptive(
   return { inserted: 0, splits: 0, error: { code: error.code, message: error.message } };
 }
 
+async function readExistingLinkBatchAdaptive(
+  supabaseAdmin: any,
+  links: string[],
+): Promise<{ rows: Array<{ link: string | null; trend_source: string | null }>; error?: { message: string; code?: string } }> {
+  const { data, error } = await supabaseAdmin
+    .from("texas_news_feed")
+    .select("link,trend_source")
+    .in("link", links);
+  if (!error) return { rows: (data ?? []) as Array<{ link: string | null; trend_source: string | null }> };
+
+  const oversized = /bad request|uri too long|request[- ]?target|414|too large/i.test(error.message ?? "");
+  if (oversized && links.length > 1) {
+    const half = Math.ceil(links.length / 2);
+    const [left, right] = await Promise.all([
+      readExistingLinkBatchAdaptive(supabaseAdmin, links.slice(0, half)),
+      readExistingLinkBatchAdaptive(supabaseAdmin, links.slice(half)),
+    ]);
+    if (left.error) return left;
+    if (right.error) return right;
+    return { rows: [...left.rows, ...right.rows] };
+  }
+  return { rows: [], error: { message: error.message, code: error.code } };
+}
+
 async function backfillTrendSourceAdaptive(
   supabaseAdmin: any,
   trendSource: string,
@@ -502,19 +527,27 @@ async function handler() {
   if (rows.length > 0) {
     const existingLinks = new Set<string>();
     const attributionNeededLinks = new Set<string>();
-    for (let offset = 0; offset < rows.length; offset += INGEST_EXISTING_LINK_LOOKUP_BATCH_SIZE) {
-      const linkBatch = rows.slice(offset, offset + INGEST_EXISTING_LINK_LOOKUP_BATCH_SIZE).map((row) => row.link);
-      const { data: existingRows, error: existingError } = await supabaseAdmin
-        .from("texas_news_feed")
-        .select("link,trend_source")
-        .in("link", linkBatch);
-      if (existingError) {
+    const lookupBatches = partitionFeedLinkLookups(rows.map(row => row.link));
+    // Parallel bounded lookup groups save worker wall-clock time without
+    // overwhelming PostgREST or constructing 100-link GET request targets.
+    const lookedUp = await mapWithConcurrency(
+      lookupBatches, 4,
+      async ({ links }) => readExistingLinkBatchAdaptive(supabaseAdmin, links),
+    );
+    for (let i = 0; i < lookupBatches.length; i++) {
+      const batch = lookupBatches[i];
+      const result = lookedUp[i];
+      if (result.error) {
         return Response.json(
-          { ok: false, error: existingError.message, failedExistingLinkOffset: offset, batchSize: linkBatch.length },
+          {
+            ok: false, error: result.error.message, errorCode: result.error.code ?? null,
+            failedExistingLinkOffset: batch.offset, batchSize: batch.links.length,
+            lookupGroups: lookupBatches.length,
+          },
           { status: 500 },
         );
       }
-      for (const existingRow of (existingRows ?? []) as Array<{ link: string | null; trend_source: string | null }>) {
+      for (const existingRow of result.rows) {
         if (!existingRow.link) continue;
         existingLinks.add(existingRow.link);
         if (existingRow.trend_source == null) attributionNeededLinks.add(existingRow.link);
