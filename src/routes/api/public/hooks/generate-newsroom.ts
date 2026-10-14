@@ -5,6 +5,7 @@ import { runCloudflareJson } from "@/lib/cloudflare-json-ai.server";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 import { getGovernmentGraphLinks } from "@/lib/government-graph";
 import { newsroomNewStoryCutoff } from "@/lib/newsroom-candidate-window";
+import { newsroomHasPublisherDiversity, newsroomLeadSourceUrl, uniquePacketSources } from "@/lib/newsroom-publication-preflight";
 import {
   categoryForPillar,
   NEWSROOM_DRAFT_JSON_SCHEMA,
@@ -97,21 +98,6 @@ async function authorized(request: Request, mode: "shadow" | "publish"): Promise
   } catch {
     return false;
   }
-}
-
-function uniquePacketSources(sources: ResearchPacketSource[]): ResearchPacketSource[] {
-  const seen = new Set<string>();
-  return [...sources]
-    .filter((source) => Boolean(source.url))
-    .sort((a, b) => Number(b.isPrimarySource) - Number(a.isPrimarySource)
-      || (b.sourceReputationScore ?? 0) - (a.sourceReputationScore ?? 0)
-      || a.feedItemId - b.feedItemId)
-    .filter((source) => {
-      const key = source.url.trim().toLowerCase();
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
 }
 
 function coverageTimeline(sources: ResearchPacketSource[]): string[] {
@@ -228,15 +214,52 @@ async function handler({ request }: { request: Request }) {
     if (!packetRow || !cluster || packetRow.source_count <= 0) return false;
     return researchPacketEvidenceChars(packetRow.packet_json) >= evidenceFloorForPillar(cluster.pillar_slug);
   });
+  // Mirror the publisher-family INSERT guard before spending an AI call. A
+  // source packet can contain several URLs from one syndicated publisher,
+  // which is not independent corroboration.
+  const authorityEligibleCandidates = evidenceEligibleCandidates.filter(
+    (row) => productionAuthorityEligible(packetByCluster.get(row.cluster_id)!),
+  );
+  const independentlySourcedCandidates = authorityEligibleCandidates.filter((row) => {
+    const sources = packetByCluster.get(row.cluster_id)?.packet_json.sources ?? [];
+    return newsroomHasPublisherDiversity(sources);
+  });
+
+  // The database refuses to insert a second article using an existing
+  // source_url. Batch-check exact lead URLs now so an already-covered event
+  // cannot use AI tokens and then fail at INSERT (historically 40 retries).
+  const existingLeadSources = new Set<string>();
+  if (requestedMode === "publish" && independentlySourcedCandidates.length) {
+    const leadUrls = [...new Set(independentlySourcedCandidates
+      .map((row) => newsroomLeadSourceUrl(packetByCluster.get(row.cluster_id)?.packet_json.sources ?? []))
+      .filter((url): url is string => Boolean(url)))];
+    for (let offset = 0; offset < leadUrls.length; offset += 25) {
+      const { data: existingRows, error: lookupError } = await db.from("daily_articles")
+        .select("source_url")
+        .in("source_url", leadUrls.slice(offset, offset + 25));
+      if (lookupError) return Response.json({ error: lookupError.message }, { status: 500 });
+      for (const row of existingRows ?? []) {
+        if (row.source_url) existingLeadSources.add(row.source_url);
+      }
+    }
+  }
+
   const candidate = requestedMode === "publish"
-    ? evidenceEligibleCandidates.find((row) => productionAuthorityEligible(packetByCluster.get(row.cluster_id)!))
+    ? independentlySourcedCandidates.find((row) => {
+      const leadUrl = newsroomLeadSourceUrl(packetByCluster.get(row.cluster_id)?.packet_json.sources ?? []);
+      return leadUrl && !existingLeadSources.has(leadUrl);
+    })
     : evidenceEligibleCandidates[0];
   if (!candidate) {
     const reason = requestedMode === "shadow" && unshadowedCandidates.length === 0
       ? "no_unshadowed_candidates"
-      : requestedMode === "publish" && evidenceEligibleCandidates.length > 0
-        ? "insufficient_authority_evidence"
-        : "insufficient_source_evidence";
+      : requestedMode === "publish" && independentlySourcedCandidates.length > 0
+        ? "already_published_source_url"
+        : requestedMode === "publish" && authorityEligibleCandidates.length > 0
+          ? "insufficient_independent_sources"
+          : requestedMode === "publish" && evidenceEligibleCandidates.length > 0
+            ? "insufficient_authority_evidence"
+            : "insufficient_source_evidence";
     return Response.json({ ok: true, no_items: true, reason, aiCalls: 0 });
   }
 
