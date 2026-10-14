@@ -49,8 +49,10 @@ describe("image recovery workflow bounds", () => {
   it("prioritizes AdSense-ready missing-image blockers before ordinary rotation without increasing quota", () => {
     expect(backlogWorkflow).toContain("adsense_priority=$(jq -r '.adsensePriority // 0' /tmp/image-backlog-dry.json)");
     expect(backlogWorkflow).toContain('if [[ "$adsense_priority" -gt 0 ]]; then');
-    expect(backlogWorkflow).toContain(".slugs[0:$max][]");
-    expect(backlogWorkflow).toContain("IMAGE_BACKLOG_RECOVERY_ADSENSE_PRIORITY");
+    expect(backlogWorkflow).toContain("priority_offset=$(( (GITHUB_RUN_NUMBER - 1) % adsense_priority ))");
+    expect(backlogWorkflow).toContain('.slugs[$offset:($offset + $max)][]');
+    expect(backlogWorkflow).toContain('IMAGE_BACKLOG_RECOVERY_ADSENSE_PRIORITY count=${adsense_priority} offset=${priority_offset}');
+    expect(backlogWorkflow).not.toContain(".slugs[0:$max][]");
     expect(backlogWorkflow).toContain("max_per_run=1");
   });
 

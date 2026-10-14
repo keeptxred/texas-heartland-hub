@@ -134,8 +134,12 @@ jobs:
           else
             adsense_priority=$(jq -r '.adsensePriority // 0' /tmp/image-backlog-dry.json)
             if [[ "$adsense_priority" -gt 0 ]]; then
-              mapfile -t slugs < <(jq -r --argjson max "$max_per_run" '.slugs[0:$max][]' /tmp/image-backlog-dry.json)
-              echo "IMAGE_BACKLOG_RECOVERY_ADSENSE_PRIORITY count=${adsense_priority} slug=${slugs[0]:-none}"
+              # Rotate within the AdSense-priority cohort. Previously this
+              # always retried the same first slug after a strict image
+              # rejection, starving every other publishable news article.
+              priority_offset=$(( (GITHUB_RUN_NUMBER - 1) % adsense_priority ))
+              mapfile -t slugs < <(jq -r --argjson offset "$priority_offset" --argjson max "$max_per_run" '.slugs[$offset:($offset + $max)][]' /tmp/image-backlog-dry.json)
+              echo "IMAGE_BACKLOG_RECOVERY_ADSENSE_PRIORITY count=${adsense_priority} offset=${priority_offset} slug=${slugs[0]:-none}"
             else
               missing=$(jq -r '.missing // 0' /tmp/image-backlog-dry.json)
               candidate_count="$ready"
