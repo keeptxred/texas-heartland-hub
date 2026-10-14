@@ -256,18 +256,6 @@ export function CornerstoneGuidePage({ guide }: { guide: CornerstoneGuide }) {
 
       {media?.hero ? <GuidePhotoFigure photo={media.hero} priority /> : null}
 
-      {lawMeta ? (
-        <div className="mt-8 space-y-5">
-          <LawQuickAnswer
-            answer={guide.keyTakeaways[0]}
-            lastVerified={lawMeta.lastVerified}
-            sources={lawMeta.sources ?? []}
-          />
-          <LawStatuteCard meta={lawMeta} />
-          <LawDisclaimer />
-        </div>
-      ) : null}
-
       <section className="mt-8 border-l-4 border-primary bg-primary/5 p-5 md:p-6">
         <h2 className="font-display text-2xl tracking-tight">Key Takeaways</h2>
         <ul className="mt-3 space-y-2 text-sm leading-relaxed">
@@ -294,7 +282,7 @@ export function CornerstoneGuidePage({ guide }: { guide: CornerstoneGuide }) {
               {section.paragraphs?.length ? (
                 <div className="mt-4 space-y-5 font-serif text-base md:text-[17px] leading-8 text-foreground/95">
                   {section.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
+                    <p key={paragraph}>{renderGuideParagraph(paragraph, section.links)}</p>
                   ))}
                 </div>
               ) : null}
@@ -327,6 +315,20 @@ export function CornerstoneGuidePage({ guide }: { guide: CornerstoneGuide }) {
           ))}
         </div>
       </section>
+
+      {lawMeta ? (
+        <section className="mt-12 border-t border-border pt-8" aria-label="Texas law references and primary authorities">
+          <div className="space-y-5">
+            <LawQuickAnswer
+              answer={guide.keyTakeaways[0]}
+              lastVerified={lawMeta.lastVerified}
+              sources={lawMeta.sources ?? []}
+            />
+            <LawStatuteCard meta={lawMeta} />
+            <LawDisclaimer />
+          </div>
+        </section>
+      ) : null}
 
       {!lawMeta ? (
         <section className="mt-12 border-t border-border pt-8">
