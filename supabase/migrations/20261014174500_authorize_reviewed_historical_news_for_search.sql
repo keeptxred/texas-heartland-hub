@@ -8,18 +8,21 @@
 -- historical URLs. Do not relax the site's suppression rule globally, do not
 -- permit unreviewed/live-stub headlines, and keep normal readiness/ownership
 -- checks operative. Original historical copy is disclosed as unavailable.
-WITH manually_reviewed AS (
+WITH exact_historical_targets AS (
+  SELECT 'live-2026-06-28-governor-abbott-announces-axiom-space-redomiciles-in-texas-gcfyg'::text slug
+  UNION ALL SELECT 'live-2026-07-02-governor-abbott-selects-don-huffines-to-serve-as-new-texas-comptroller-whlu3f'::text slug
+  UNION ALL SELECT 'live-2026-07-07-governor-abbott-orders-prompt-investigation-into-birth-tourism-package-wf40tc'::text slug
+  UNION ALL SELECT 'live-2026-07-12-governor-abbott-deploys-tactical-emergency-resources-as-flash-flood-th-dslu6i'::text slug
+), manually_reviewed AS (
   SELECT d.slug
   FROM public.daily_articles AS d
-  WHERE d.slug IN (
-    'live-2026-06-28-governor-abbott-announces-axiom-space-redomiciles-in-texas-gcfyg',
-    'live-2026-07-02-governor-abbott-selects-don-huffines-to-serve-as-new-texas-comptroller-whlu3f',
-    'live-2026-07-07-governor-abbott-orders-prompt-investigation-into-birth-tourism-package-wf40tc',
-    'live-2026-07-12-governor-abbott-deploys-tactical-emergency-resources-as-flash-flood-th-dslu6i'
-  )
+  JOIN exact_historical_targets AS t ON t.slug = d.slug
+  WHERE TRUE
     AND d.kind = 'news'
     AND d.content_quality_score >= 90
     AND d.source_url LIKE 'https://gov.texas.gov/%'
+    AND NULLIF(BTRIM(COALESCE(d.featured_image_url,'')), '') IS NOT NULL
+    AND NULLIF(BTRIM(COALESCE(d.image_alt_text,'')), '') IS NOT NULL
     AND d.image_generation_status = 'ready'
     AND d.image_validation_note LIKE 'stored-cloudflare-vision-v4 ok:%'
     AND d.featured_image_url LIKE 'https://commons.wikimedia.org/wiki/Special:Redirect/file/%'
