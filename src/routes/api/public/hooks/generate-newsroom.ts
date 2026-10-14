@@ -4,6 +4,7 @@ import { enrichArticleRow } from "@/lib/content-quality";
 import { runCloudflareJson } from "@/lib/cloudflare-json-ai.server";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 import { getGovernmentGraphLinks } from "@/lib/government-graph";
+import { newsroomNewStoryCutoff } from "@/lib/newsroom-candidate-window";
 import {
   categoryForPillar,
   NEWSROOM_DRAFT_JSON_SCHEMA,
@@ -188,6 +189,7 @@ async function handler({ request }: { request: Request }) {
     .select("id,cluster_id,editorial_score,recommended_format,status")
     .in("status", ["PENDING", "HELD"])
     .in("recommended_format", ["SINGLE", "MERGE", "SYNTHESIS"])
+    .gte("created_at", newsroomNewStoryCutoff())
     .order("editorial_score", { ascending: false })
     .limit(100);
   if (candidateError) return Response.json({ error: candidateError.message }, { status: 500 });
