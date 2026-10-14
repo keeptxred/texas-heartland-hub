@@ -14,14 +14,18 @@ const SITE_URL = "https://texasdefined.com";
 const SITEMAP_URL = `${SITE_URL}/sitemap.xml`;
 const SOCIAL_PLATFORM = "facebook_texasdefined";
 const GRAPH_VERSION = "v21.0";
-const MAX_DAILY_POSTS = 2;
-const MIN_GAP_MINUTES = 180;
+const MAX_DAILY_POSTS = 5;
+const MIN_GAP_MINUTES = 75;
 const ARTICLE_HISTORY_DAYS = 45;
-const MAX_METADATA_ATTEMPTS = 36;
+const MAX_METADATA_ATTEMPTS = 72;
 
+// Four separated editorial slots, with a fifth post reserved for a genuinely
+// important article or an operator-controlled publication. Do not pad with prompts.
 const TARGET_WINDOWS: ReadonlyArray<readonly [number, number]> = [
-  [10 * 60, 12 * 60 + 30],
-  [17 * 60 + 30, 20 * 60 + 30],
+  [8 * 60, 9 * 60 + 30],
+  [11 * 60, 12 * 60 + 30],
+  [14 * 60, 15 * 60 + 30],
+  [17 * 60 + 30, 20 * 60],
 ];
 
 const FEATURED_STATIC_PATHS = new Set([
@@ -250,7 +254,10 @@ async function loadMetadata(candidateUrl: string): Promise<PageMetadata | null> 
   const description = metaContent(html, "og:description") ?? metaContent(html, "description") ?? "";
   const imageRaw = metaContent(html, "og:image");
   const canonicalRaw = canonicalHref(html) ?? candidateUrl;
-  if (!title || !imageRaw) return null;
+  // No empty, teaser-only, unillustrated or non-indexable articles.
+  if (!title || title.trim().length < 24 || description.trim().length < 80 || !imageRaw) return null;
+  const robots = metaContent(html, "robots") ?? "";
+  if (/\b(noindex|none)\b/i.test(robots)) return null;
   const canonical = normalizeTexasDefinedUrl(canonicalRaw, candidateUrl);
   if (!canonical) return null;
   let imageUrl: string;
@@ -260,6 +267,7 @@ async function loadMetadata(candidateUrl: string): Promise<PageMetadata | null> 
     return null;
   }
   if (!/^https:\/\//i.test(imageUrl)) return null;
+  if (/(?:placeholder|\/og\/default|\/default\.(?:jpg|jpeg|png|webp)|fallback-image)/i.test(imageUrl)) return null;
   return {
     url: canonical,
     title: title.trim(),
