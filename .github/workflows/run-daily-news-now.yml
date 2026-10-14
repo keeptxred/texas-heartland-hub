@@ -246,5 +246,12 @@ jobs:
           if [[ -n "$reserve_published" ]]; then
             echo "DAILY_NEWS_PUBLISH_SUCCESS reserve_published=${reserve_published}"
           else
-            echo 'DAILY_NEWS_PUBLISH_SUCCESS no_quality_gated_article=true reserve_published=false'
+            echo 'DAILY_NEWS_NO_PUBLICATION no_quality_gated_article=true reserve_published=false'
+            # Publishing is not a success if the feed has already gone stale.
+            # Leave legitimate quality-gated no-op runs green when there is no
+            # overdue gap; escalate a prolonged missing-publication condition.
+            if jq -e '.publication_gap == true' /tmp/safety-net.json >/dev/null 2>&1; then
+              echo 'DAILY_NEWS_PUBLISH_GAP no_qualifying_story_and_publication_overdue=true' >&2
+              exit 1
+            fi
           fi
