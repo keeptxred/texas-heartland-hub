@@ -5,9 +5,13 @@ import {
   shouldFetchNewsroomSourcePage,
 } from "@/lib/newsroom-source-page.server";
 
-const LOOKBACK_HOURS = 48;
-// Match the 500-candidate scoring/decision pipeline so eligible lower-scored
-// developments are not starved of research packets during high-volume windows.
+const LOOKBACK_HOURS = 72;
+const PUBLISHED_REFRESH_HOURS = 48;
+const PUBLISHED_REFRESH_LIMIT = 80;
+const CLUSTER_READ_BATCH_SIZE = 100;
+const CLUSTER_READ_CONCURRENCY = 2;
+// Match the 500-candidate publication window. Previously the packet builder
+// stopped after 48h, leaving 72h-old publishable candidates with stale packets.
 const CANDIDATE_LIMIT = 500;
 // Source-page fetching is zero-AI but network-bound. Keep it bounded and aim
 // the work at the highest-scored candidate sources first.
@@ -99,34 +103,55 @@ async function handler() {
   const newsroomDb = supabaseAdmin as any;
   const since = new Date(Date.now() - LOOKBACK_HOURS * 60 * 60 * 1000).toISOString();
 
-  const { data: candidateData, error: candidateError } = await newsroomDb
-    .from("news_publish_candidates")
-    .select("cluster_id,editorial_score,recommended_format,status,created_at")
-    .in("status", ["PENDING", "HELD", "SELECTED", "PUBLISHED"])
-    .neq("recommended_format", "SKIP")
-    .gte("created_at", since)
-    .order("editorial_score", { ascending: false })
-    .limit(CANDIDATE_LIMIT);
-  if (candidateError) return Response.json({ ok: false, error: candidateError.message }, { status: 500 });
-  const candidates = (candidateData ?? []) as CandidateRow[];
+  // Paid generation considers the top 500 PENDING candidates over 72 hours.
+  // Build those packets FIRST, without allowing held/published items to
+  // displace them. A separate bounded published cohort still supplies the
+  // existing source-backed in-place refresh workflow.
+  const [
+    { data: pendingData, error: pendingError },
+    { data: publishedData, error: publishedError },
+  ] = await Promise.all([
+    newsroomDb.from("news_publish_candidates")
+      .select("cluster_id,editorial_score,recommended_format,status,created_at")
+      .eq("status", "PENDING")
+      .in("recommended_format", ["SINGLE", "MERGE", "SYNTHESIS"])
+      .gte("created_at", since)
+      .order("editorial_score", { ascending: false })
+      .order("created_at", { ascending: false })
+      .order("cluster_id", { ascending: true })
+      .limit(CANDIDATE_LIMIT),
+    newsroomDb.from("news_publish_candidates")
+      .select("cluster_id,editorial_score,recommended_format,status,created_at")
+      .eq("status", "PUBLISHED")
+      .gte("published_at", new Date(Date.now() - PUBLISHED_REFRESH_HOURS * 60 * 60 * 1000).toISOString())
+      .order("published_at", { ascending: false })
+      .limit(PUBLISHED_REFRESH_LIMIT),
+  ]);
+  if (pendingError) return Response.json({ ok: false, error: pendingError.message }, { status: 500 });
+  if (publishedError) return Response.json({ ok: false, error: publishedError.message }, { status: 500 });
+  const pending = (pendingData ?? []) as CandidateRow[];
+  const published = (publishedData ?? []) as CandidateRow[];
+  const candidates = [...new Map([...pending, ...published].map((candidate) => [candidate.cluster_id, candidate])).values()];
   if (!candidates.length) return Response.json({ ok: true, built: 0, written: 0, unchanged: 0, sourceItems: 0, sourcePagesFetched: 0, sourcePagesUpdated: 0, sourcePagesCoolingDown: 0, aiCalls: 0 });
 
-  const clusterIds = candidates.map((candidate) => candidate.cluster_id);
-  const [
-    { data: clusterData, error: clusterError },
-    { data: membershipData, error: membershipError },
-    { data: existingPacketData, error: existingPacketError },
-  ] = await Promise.all([
-    newsroomDb.from("news_story_clusters").select("id,canonical_subject,pillar_slug").in("id", clusterIds),
-    newsroomDb.from("news_story_cluster_items").select("cluster_id,feed_item_id,is_primary_source").in("cluster_id", clusterIds),
-    newsroomDb.from("news_research_packets").select("cluster_id,packet_version,packet_json,source_count,primary_source_count").in("cluster_id", clusterIds),
-  ]);
-  if (clusterError) return Response.json({ ok: false, error: clusterError.message }, { status: 500 });
-  if (membershipError) return Response.json({ ok: false, error: membershipError.message }, { status: 500 });
-  if (existingPacketError) return Response.json({ ok: false, error: existingPacketError.message }, { status: 500 });
-  const clusters = (clusterData ?? []) as ClusterRow[];
-  const memberships = (membershipData ?? []) as MembershipRow[];
-  const existingPackets = (existingPacketData ?? []) as ExistingPacketRow[];
+  // Each provider request stays below PostgREST UUID/query and row limits.
+  // Group related lookups in the same bounded batch; no AI is used here.
+  const clusterIds = [...new Set(candidates.map((candidate) => candidate.cluster_id))];
+  const clusterBatches = chunkValues(clusterIds, CLUSTER_READ_BATCH_SIZE);
+  const clusterResults = await mapWithConcurrency(clusterBatches, CLUSTER_READ_CONCURRENCY, async (batch) => {
+    const [clusters, memberships, packets] = await Promise.all([
+      newsroomDb.from("news_story_clusters").select("id,canonical_subject,pillar_slug").in("id", batch),
+      newsroomDb.from("news_story_cluster_items").select("cluster_id,feed_item_id,is_primary_source").in("cluster_id", batch),
+      newsroomDb.from("news_research_packets").select("cluster_id,packet_version,packet_json,source_count,primary_source_count").in("cluster_id", batch),
+    ]);
+    return { clusters, memberships, packets };
+  });
+  const readError = clusterResults.flatMap((result) =>
+    [result.clusters.error, result.memberships.error, result.packets.error]).find(Boolean);
+  if (readError) return Response.json({ ok: false, error: readError.message }, { status: 500 });
+  const clusters = clusterResults.flatMap((result) => result.clusters.data ?? []) as ClusterRow[];
+  const memberships = clusterResults.flatMap((result) => result.memberships.data ?? []) as MembershipRow[];
+  const existingPackets = clusterResults.flatMap((result) => result.packets.data ?? []) as ExistingPacketRow[];
   const existingPacketByCluster = new Map(existingPackets.map((packet) => [packet.cluster_id, packet]));
 
   const feedIds = [...new Set(memberships.map((row) => row.feed_item_id))];
@@ -165,7 +190,12 @@ async function handler() {
     }
   }
 
-  const candidateScoreByCluster = new Map(candidates.map((candidate) => [candidate.cluster_id, candidate.editorial_score]));
+  // Do not let published refresh enrichment use the 40 fetch slots before
+  // pending publication candidates; both cohorts still get packet rebuilds.
+  const candidateScoreByCluster = new Map(candidates.map((candidate) => [
+    candidate.cluster_id,
+    candidate.editorial_score + (candidate.status === "PENDING" ? 1_000 : 0),
+  ]));
   const priorityByFeedId = new Map<number, number>();
   for (const membership of memberships) {
     const score = candidateScoreByCluster.get(membership.cluster_id) ?? 0;
@@ -296,10 +326,12 @@ async function handler() {
     .filter((packet) => !samePacket(packet, existingPacketByCluster.get(packet.cluster_id)))
     .map((packet) => ({ ...packet, built_at: builtAt }));
   if (packetsToWrite.length) {
-    const { error: upsertError } = await newsroomDb
-      .from("news_research_packets")
-      .upsert(packetsToWrite, { onConflict: "cluster_id" });
-    if (upsertError) return Response.json({ ok: false, error: upsertError.message }, { status: 500 });
+    for (const batch of chunkValues(packetsToWrite, CLUSTER_READ_BATCH_SIZE)) {
+      const { error: upsertError } = await newsroomDb
+        .from("news_research_packets")
+        .upsert(batch, { onConflict: "cluster_id" });
+      if (upsertError) return Response.json({ ok: false, error: upsertError.message }, { status: 500 });
+    }
   }
 
   return Response.json({
