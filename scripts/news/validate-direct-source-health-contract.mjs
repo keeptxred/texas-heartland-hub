@@ -14,12 +14,12 @@ for (const required of ['quietSources:', 'failedSources:', 'successfulResults'])
   if (!text.includes(required)) throw new Error(`Direct-source health contract missing: ${required}`);
 }
 if (!text.includes('https://12thman.com/news/')) throw new Error('Texas A&M direct source was accidentally removed');
-const sourceBudgetMatch = text.match(/const SOURCE_FETCH_TOTAL_BUDGET_MS = ([\\d_]+);/);
+const sourceBudgetMatch = text.match(/const SOURCE_FETCH_TOTAL_BUDGET_MS = ([\d_]+);/);
 const sourceBudgetMs = Number(sourceBudgetMatch?.[1]?.replaceAll('_', ''));
 if (!Number.isFinite(sourceBudgetMs) || sourceBudgetMs < 15_000 || sourceBudgetMs > 45_000) {
   throw new Error('Every feed needs a bounded, retry-inclusive 15–45s source deadline');
 }
-const lookupMatch = text.match(/const INGEST_EXISTING_LINK_LOOKUP_BATCH_SIZE = ([\\d_]+);/);
+const lookupMatch = text.match(/const INGEST_EXISTING_LINK_LOOKUP_BATCH_SIZE = ([\d_]+);/);
 const lookupSize = Number(lookupMatch?.[1]?.replaceAll('_', ''));
 if (!Number.isInteger(lookupSize) || lookupSize < 50 || lookupSize > 200) {
   throw new Error('Indexed existing-link reads must use a bounded 50–200 row batch');
