@@ -132,7 +132,7 @@ export function approvedPublishedEvergreen(
   const image = row.featured_image_url?.trim() ?? "";
   if (row.kind !== "evergreen" || (row.content_quality_score ?? 0) < 90) return null;
   if (!/^[a-z0-9-]+$/.test(row.slug) || !row.title.trim()) return null;
-  if (row.image_generation_status !== "ready" || !image || /\\/og\\/default\\.jpg(?:[?#]|$)/i.test(image)) return null;
+  if (row.image_generation_status !== "ready" || !image || image.toLowerCase().includes("/og/default.jpg")) return null;
   if (!flags.has("evergreen_authority") || !flags.has("editorial_reviewed") || !flags.has("primary_sources") || !flags.has("image_rights_verified")) return null;
   if (flags.has("chatgpt-admin-ignored") || flags.has("seo_noindex") || flags.has("seo_off_topic") || flags.has("legacy_url_restored") || flags.has("internal_repetition") || flags.has("seo_low_value_commodity")) return null;
   if (!(image.startsWith("https://") || image.startsWith("/api/public/article-image/"))) return null;
