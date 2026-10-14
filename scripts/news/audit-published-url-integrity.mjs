@@ -32,11 +32,18 @@ async function readAll(table, columns, applyFilters = (query) => query) {
   throw new Error(table + " exceeded audit pagination budget; refusing partial success.");
 }
 
-const [registry, articles, redirects, feed] = await Promise.all([
+// A restored historical article has an old published_at even when the row
+// was created today. Audit recently CREATED records, not recent news dates.
+// Read plain text only for the small recent cohort so the full registry scan
+// does not download every historical article's prose.
+const recentBodyAuditSince = new Date(Math.max(baseline, Date.now() - 7 * 24 * 60 * 60 * 1000)).toISOString();
+const [registry, articles, redirects, feed, recentlyCreatedBodies] = await Promise.all([
   readAll("article_url_registry", "slug,origin,first_seen_at,recovery_status,redirect_target,retired_reason,had_search_visibility"),
   readAll("daily_articles", "slug,created_at,body_json"),
   readAll("article_slug_redirects", "old_slug,new_slug"),
   readAll("texas_news_feed", "internal_slug", (query) => query.not("internal_slug", "is", null)),
+  readAll("daily_articles", "slug,created_at,kind,body", (query) =>
+    query.gte("created_at", recentBodyAuditSince)),
 ]);
 const articleBySlug = new Map(articles.map((article) => [article.slug, article]));
 const redirectBySlug = new Map(redirects.map((redirect) => [redirect.old_slug, redirect.new_slug]));
@@ -63,6 +70,9 @@ const missingBody = articles.filter((article) => {
     || !Array.isArray(body.sections) || body.sections.length === 0;
 });
 const newMissingBody = missingBody.filter((row) => Date.parse(row.created_at || "") >= baseline);
+const recentlyMissingPlainTextBody = recentlyCreatedBodies.filter((row) =>
+  row.kind === "news" && String(row.body ?? "").trim().length === 0);
+
 const report = {
   checkedAt: new Date().toISOString(),
   project,
@@ -76,6 +86,7 @@ const report = {
   danglingFeedSlugs: staleFeed,
   noSectionOrIntro: missingBody.map((article) => article.slug),
   newlyEmptyBodies: newMissingBody.map((article) => article.slug),
+  recentlyCreatedNewsWithoutPlainTextBody: recentlyMissingPlainTextBody.map((article) => article.slug),
   samplePendingHistoricalLive: historicalLive.slice(0, 40).map((entry) => entry.slug),
 };
 mkdirSync("artifacts", { recursive: true });
@@ -90,12 +101,13 @@ const summary = [
   "- New unaccounted-for article losses: **" + report.newlyMissing.length + "**",
   "- Dangling feed article pointers: **" + report.danglingFeedSlugs.length + "**",
   "- Recently published articles missing body structure: **" + report.newlyEmptyBodies.length + "**",
+  "- Recently created news articles missing plain-text body: **" + report.recentlyCreatedNewsWithoutPlainTextBody.length + "**",
   "",
   "Historical missing URLs are reported as existing backlog; they must be recovered from evidence or retired with an explicit editorial disposition. The baseline does not re-create or declare their content restored.",
   "",
 ];
 if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary.join("\n"));
 console.log(JSON.stringify(report, null, 2));
-if (newMissing.length || staleFeed.length || newMissingBody.length) {
+if (newMissing.length || staleFeed.length || newMissingBody.length || recentlyMissingPlainTextBody.length) {
   throw new Error("KeepTXRed published-news URL integrity regression detected.");
 }
