@@ -25,4 +25,13 @@ describe("clustered newsroom post-publish workflow", () => {
     expect(workflow).toContain(".ok == true and (.slug // \"\") != \"\"");
     expect(workflow).not.toContain("(.slug // \"\") != \"\" and .image.ok == true");
   });
+  it("reports a no-op honestly and fails if a publication gap is overdue", () => {
+    const reserveBranch = workflow.slice(workflow.indexOf("reserve_published=$(jq -r"));
+    expect(reserveBranch).toContain("DAILY_NEWS_NO_PUBLICATION");
+    expect(reserveBranch).toContain("if jq -e '.publication_gap == true' /tmp/safety-net.json");
+    expect(reserveBranch).toContain("DAILY_NEWS_PUBLISH_GAP");
+    expect(reserveBranch).toContain("exit 1");
+    expect(reserveBranch).not.toContain("DAILY_NEWS_PUBLISH_SUCCESS no_quality_gated_article=true");
+  });
+
 });
