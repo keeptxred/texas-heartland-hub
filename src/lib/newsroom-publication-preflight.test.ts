@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   newsroomHasPublisherDiversity,
+  newsroomIndependentPublisherFamilyFromUrl,
   newsroomLeadSourceUrl,
   newsroomSourceFamilyFromUrl,
   uniquePacketSources,
@@ -40,6 +41,20 @@ describe("newsroom publication preflight", () => {
     expect(newsroomHasPublisherDiversity([
       ...samePublisher,
       source("https://texasstandard.org/independent-report"),
+    ])).toBe(true);
+  });
+
+  it("excludes Google News discovery links from independent source corroboration", () => {
+    const singlePublisherAndDiscovery = [
+      source("https://www.kxan.com/politics/story"),
+      source("https://news.google.com/rss/articles/CBMiABC"),
+    ];
+    expect(newsroomSourceFamilyFromUrl(singlePublisherAndDiscovery[1].url)).toBe("google.com");
+    expect(newsroomIndependentPublisherFamilyFromUrl(singlePublisherAndDiscovery[1].url)).toBeNull();
+    expect(newsroomHasPublisherDiversity(singlePublisherAndDiscovery)).toBe(false);
+    expect(newsroomHasPublisherDiversity([
+      ...singlePublisherAndDiscovery,
+      source("https://www.texastribune.org/2026/10/independent-story"),
     ])).toBe(true);
   });
 

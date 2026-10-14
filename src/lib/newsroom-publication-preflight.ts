@@ -20,6 +20,21 @@ export function newsroomSourceFamilyFromUrl(inputUrl: string): string | null {
   return lastTwo;
 }
 
+/**
+ * A Google News discovery/RSS link is a pointer to reporting, not an
+ * independent publisher. Keep the database-compatible family function above
+ * intact and use this stricter helper for newsroom editorial independence.
+ */
+export function newsroomIndependentPublisherFamilyFromUrl(url: string): string | null {
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    if (host === "news.google.com" || host === "www.news.google.com") return null;
+  } catch {
+    return null;
+  }
+  return newsroomSourceFamilyFromUrl(url);
+}
+
 /** Identical deterministic ordering to the source list used in the article. */
 export function uniquePacketSources(sources: ResearchPacketSource[]): ResearchPacketSource[] {
   const seen = new Set<string>();
@@ -40,10 +55,10 @@ export function newsroomLeadSourceUrl(sources: ResearchPacketSource[]): string |
   return uniquePacketSources(sources)[0]?.url ?? null;
 }
 
-/** Equivalent to the database's generated-newsroom diversity guard. */
+/** Stricter than the database guard: discovery links never count as an independent publisher. */
 export function newsroomHasPublisherDiversity(sources: ResearchPacketSource[]): boolean {
   const unique = uniquePacketSources(sources);
   if (unique.some((source) => source.isPrimarySource)) return true;
-  const families = new Set(unique.map((source) => newsroomSourceFamilyFromUrl(source.url)).filter(Boolean));
+  const families = new Set(unique.map((source) => newsroomIndependentPublisherFamilyFromUrl(source.url)).filter(Boolean));
   return families.size >= 2;
 }
