@@ -35,11 +35,16 @@ export function newsroomIndependentPublisherFamilyFromUrl(url: string): string |
   return newsroomSourceFamilyFromUrl(url);
 }
 
-/** Identical deterministic ordering to the source list used in the article. */
+/**
+ * The same ordered, deduplicated publisher records drive publication lead
+ * selection, the source list and the pre-AI duplicate/source checks. Discovery
+ * RSS links are evidence-finding pointers, not citable publisher records.
+ */
 export function uniquePacketSources(sources: ResearchPacketSource[]): ResearchPacketSource[] {
   const seen = new Set<string>();
   return [...sources]
-    .filter((source) => Boolean(source.url?.trim()))
+    .filter((source) => Boolean(source.url?.trim())
+      && newsroomIndependentPublisherFamilyFromUrl(source.url) !== null)
     .sort((a, b) => Number(b.isPrimarySource) - Number(a.isPrimarySource)
       || (b.sourceReputationScore ?? 0) - (a.sourceReputationScore ?? 0)
       || a.feedItemId - b.feedItemId)
