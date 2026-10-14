@@ -153,10 +153,9 @@ function isRetiredKtrCategory(value: string | null | undefined): boolean {
 }
 
 /**
- * Image readiness is enforced only when a caller actually loaded image fields.
- * That keeps this shared predicate backward compatible for non-display joins,
- * while public article feeds/indexability can fail closed on missing, failed, or
- * deliberately neutral branded fallback imagery.
+ * Media readiness is independent of editorial publication readiness.
+ * Consumers preparing images or image-dependent distribution can use this
+ * predicate without suppressing a source-verified text-first news article.
  */
 export function hasGovernedPublicArticleImage(article: PublicArticleCandidate): boolean {
   const hasImageUrl = Object.prototype.hasOwnProperty.call(article, "image_url");
@@ -178,9 +177,14 @@ export function isPublicArticleReady(article: PublicArticleCandidate): boolean {
   if ((article.category ?? "").trim().toLowerCase() === "non-political") return false;
   if (isRetiredKtrCategory(article.category)) return false;
   if (isTexasDefinedDiscoverCategory(article.discover_category)) return false;
-  if ((article.content_quality_score ?? 0) < MIN_PUBLIC_CONTENT_QUALITY_SCORE) return false;
+  // Quality scoring reserves ten points for the mere presence of an image.
+  // Restore those points for a truly text-first row, without changing the
+  // editorial text/source/duplication floor. Rows with a loaded image keep
+  // their original score, and media-specific consumers still enforce image readiness.
+  const textFirstScoreAdjustment =
+    Object.prototype.hasOwnProperty.call(article, "image_url") && !article.image_url ? 10 : 0;
+  if ((article.content_quality_score ?? 0) + textFirstScoreAdjustment < MIN_PUBLIC_CONTENT_QUALITY_SCORE) return false;
   if (duplicateParagraphOccurrences(article.body_json) > MAX_DUPLICATE_PARAGRAPH_OCCURRENCES) return false;
-  if (!hasGovernedPublicArticleImage(article)) return false;
 
   const sourceRefs = sourceReferenceCount(article.body_json);
   if (!article.source_url && sourceRefs === 0) return false;

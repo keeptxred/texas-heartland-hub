@@ -136,6 +136,27 @@ function NewsroomControlCenter() {
           <Metric label="Cron health" value={loading ? "…" : cronFailures.length === 0 ? "Healthy" : `${cronFailures.length} issue${cronFailures.length === 1 ? "" : "s"}`} sub={`${snapshot?.cronHealth.length ?? 0} KeepTXRed jobs`} tone={cronFailures.length ? "warn" : "ok"} />
         </section>
 
+        <section aria-label="Today's publication funnel" className="space-y-3">
+          <div>
+            <h2 className="font-display text-xl">Publication Today (UTC)</h2>
+            <p className="text-xs text-muted-foreground">Whole-site production counters, not the limited 100-row editorial sample. Incomplete metrics display as unavailable.</p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+            <Metric label="Discovered" value={snapshot?.publicationMetrics.discoveredToday ?? "—"} sub="Feed items" />
+            <Metric label="Selected" value={snapshot?.publicationMetrics.selectedToday ?? "—"} sub="Candidates selected" />
+            <Metric label="Generated" value={snapshot?.publicationMetrics.generatedToday ?? "—"} sub="Draft attempts" />
+            <Metric label="Rejected" value={snapshot?.publicationMetrics.rejectedToday ?? "—"} sub="Failed editorial validation" />
+            <Metric label="Published" value={snapshot?.publicationMetrics.publishedToday ?? "—"} sub="New article rows" />
+            <Metric label="Unpublished drafts" value={snapshot?.publicationMetrics.unpublishedDrafts ?? "—"} sub="Generated, pending recovery" tone={(snapshot?.publicationMetrics.unpublishedDrafts ?? 0) > 0 ? "warn" : "default"} />
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Last article published: {formatDate(snapshot?.publicationMetrics.latestPublishedAt)}{snapshot?.publicationMetrics.latestPublishedSlug ? ` · ${snapshot.publicationMetrics.latestPublishedSlug}` : ""}
+          </p>
+          {(snapshot?.publicationMetrics.errors.length ?? 0) > 0 ? (
+            <p role="alert" className="text-xs text-destructive">{snapshot?.publicationMetrics.errors.join(" · ")}</p>
+          ) : null}
+        </section>
+
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {(["PENDING", "SELECTED", "HELD", "REJECTED", "PUBLISHED"] as const).map((status) => (
             <Metric key={status} label={status} value={snapshot?.statusCounts[status] ?? 0} sub="top 100 candidates" />

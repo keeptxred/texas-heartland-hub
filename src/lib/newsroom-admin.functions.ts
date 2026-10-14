@@ -31,6 +31,13 @@ export const getNewsroomAdminSnapshot = createServerFn({ method: "POST" })
       clusterFreshness,
       scoringFreshness,
       packetFreshness,
+      discoveredTodayResult,
+      selectedTodayResult,
+      generatedTodayResult,
+      rejectedTodayResult,
+      publishedTodayResult,
+      unpublishedDraftsResult,
+      latestPublicationResult,
     ] = await Promise.all([
       db.from("ai_generation_budget").select("*").eq("site", "keeptxred").eq("budget_date", today).maybeSingle(),
       db.from("news_publish_candidates")
@@ -56,6 +63,13 @@ export const getNewsroomAdminSnapshot = createServerFn({ method: "POST" })
       db.from("news_story_clusters").select("updated_at").order("updated_at", { ascending: false }).limit(1).maybeSingle(),
       db.from("news_publish_candidates").select("updated_at").order("updated_at", { ascending: false }).limit(1).maybeSingle(),
       db.from("news_research_packets").select("updated_at").order("updated_at", { ascending: false }).limit(1).maybeSingle(),
+      db.from("texas_news_feed").select("id", { head: true, count: "exact" }).gte("created_at", today),
+      db.from("news_publish_candidates").select("id", { head: true, count: "exact" }).gte("selected_at", today),
+      db.from("newsroom_generation_drafts").select("id", { head: true, count: "exact" }).gte("created_at", today),
+      db.from("newsroom_generation_drafts").select("id", { head: true, count: "exact" }).eq("status", "REJECTED").gte("created_at", today),
+      db.from("daily_articles").select("id", { head: true, count: "exact" }).gte("published_at", today),
+      db.from("newsroom_generation_drafts").select("id", { head: true, count: "exact" }).eq("status", "GENERATED"),
+      db.from("daily_articles").select("slug,published_at").order("published_at", { ascending: false }).limit(1).maybeSingle(),
     ]);
 
     for (const result of [budgetResult, candidatesResult, clustersResult, packetsResult, draftsResult, briefsResult]) {
@@ -110,6 +124,25 @@ export const getNewsroomAdminSnapshot = createServerFn({ method: "POST" })
       ok: true as const,
       generatedAt: new Date().toISOString(),
       budget: budgetResult.data ?? null,
+      publicationMetrics: {
+        discoveredToday: discoveredTodayResult.count ?? null,
+        selectedToday: selectedTodayResult.count ?? null,
+        generatedToday: generatedTodayResult.count ?? null,
+        rejectedToday: rejectedTodayResult.count ?? null,
+        publishedToday: publishedTodayResult.count ?? null,
+        unpublishedDrafts: unpublishedDraftsResult.count ?? null,
+        latestPublishedSlug: latestPublicationResult.data?.slug ?? null,
+        latestPublishedAt: latestPublicationResult.data?.published_at ?? null,
+        errors: [
+          ["Discovery", discoveredTodayResult.error],
+          ["Selection", selectedTodayResult.error],
+          ["Generation", generatedTodayResult.error],
+          ["Rejection", rejectedTodayResult.error],
+          ["Publication", publishedTodayResult.error],
+          ["Draft recovery", unpublishedDraftsResult.error],
+          ["Latest publication", latestPublicationResult.error],
+        ].filter((entry) => Boolean(entry[1])).map((entry) => `${entry[0]} metric unavailable`),
+      },
       queue,
       statusCounts,
       formatCounts,

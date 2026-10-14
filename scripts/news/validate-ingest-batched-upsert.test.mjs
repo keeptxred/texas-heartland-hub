@@ -13,6 +13,10 @@ test('feed ingestion writes only new candidates in bounded database batches', ()
   expect(ingest).toContain('failedExistingLinkOffset: batch.offset');
   expect(ingest).toContain('partitionFeedLinkLookups(rows.map(row => row.link))');
   expect(ingest).toContain('readExistingLinkBatchAdaptive(supabaseAdmin, links)');
+  expect(ingest).toContain('links.length === 1');
+  expect(ingest).toContain('.eq("link", links[0])');
+  expect(ingest).toContain('single-link lookup deferred to conflict-safe upsert');
+  expect(ingest).toContain('ignoreDuplicates: true');
   expect(ingest).toContain('lookupBatches, 4');
   expect(ingest).toContain('failedBatchOffset: offset');
   expect(ingest).toContain('async function upsertFeedRowsAdaptive');

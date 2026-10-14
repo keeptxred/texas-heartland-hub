@@ -92,9 +92,13 @@ jobs:
               break
             done
 
-            if [[ "$exact_status" != "200" ]] || ! jq -e '.ok == true and (.slug // "") != "" and .image.ok == true' /tmp/flyover-exact.json >/dev/null 2>&1; then
+            if [[ "$exact_status" != "200" ]] || ! jq -e '.ok == true and (.slug // "") != ""' /tmp/flyover-exact.json >/dev/null 2>&1; then
               echo "FLYOVER_EXACT_FEED_PUBLISH_FAILED feed_id=${FLYOVER_FEED_ID} HTTP=${exact_status}" >&2
               exit 1
+            fi
+
+            if ! jq -e '.image.ok == true' /tmp/flyover-exact.json >/dev/null 2>&1; then
+              echo "FLYOVER_EXACT_FEED_IMAGE_DEFERRED feed_id=${FLYOVER_FEED_ID}; text-first article will still be verified."
             fi
 
             slug="$(jq -r '.slug' /tmp/flyover-exact.json)"
@@ -208,8 +212,7 @@ jobs:
                 exit 1
               fi
               if ! jq -e '.image.ok == true' /tmp/newsroom-finalize.json >/dev/null 2>&1; then
-                echo "CLUSTERED_NEWSROOM_IMAGE_FAILED slug=${slug}; article remains published for safe recovery, but this run is not a production pass." >&2
-                exit 1
+                echo "CLUSTERED_NEWSROOM_IMAGE_DEFERRED slug=${slug}; text-first publication remains successful and image recovery is independent."
               fi
 
               echo "DAILY_NEWS_PUBLISH_SUCCESS clustered_slug=${slug} sources=${source_count} primary=${primary_count} ai_calls=${ai_calls} repair=${repair}"

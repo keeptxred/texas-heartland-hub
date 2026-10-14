@@ -416,13 +416,22 @@ async function readExistingLinkBatchAdaptive(
   supabaseAdmin: any,
   links: string[],
 ): Promise<{ rows: Array<{ link: string | null; trend_source: string | null }>; error?: { message: string; code?: string } }> {
-  const { data, error } = await supabaseAdmin
-    .from("texas_news_feed")
-    .select("link,trend_source")
-    .in("link", links);
+  // Single URLs containing commas or parentheses may not parse correctly in
+  // PostgREST's `in.(...)` syntax. Prefer equality for the terminal batch.
+  const query = supabaseAdmin.from("texas_news_feed").select("link,trend_source");
+  const { data, error } = links.length === 1
+    ? await query.eq("link", links[0])
+    : await query.in("link", links);
   if (!error) return { rows: (data ?? []) as Array<{ link: string | null; trend_source: string | null }> };
 
   const oversized = /bad request|uri too long|request[- ]?target|414|too large/i.test(error.message ?? "");
+  if (oversized && links.length === 1) {
+    // The final malformed/oversized lookup must not abort an entire feed wave.
+    // New-row upserts use the unique link constraint with ignoreDuplicates,
+    // so treating this URL as unknown cannot create a duplicate article.
+    console.warn("[ingest-feeds] single-link lookup deferred to conflict-safe upsert", links[0].length);
+    return { rows: [] };
+  }
   if (oversized && links.length > 1) {
     const half = Math.ceil(links.length / 2);
     const [left, right] = await Promise.all([

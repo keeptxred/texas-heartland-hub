@@ -59,13 +59,14 @@ describe("shouldNoindexCloudArticle", () => {
     const sourceFirstFlags = ["search_recovery_source_first"];
     expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", quality_flags: sourceFirstFlags }, true)).toBe(false);
     expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", content_quality_score: 59, quality_flags: sourceFirstFlags }, true)).toBe(true);
-    expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", image_generation_status: "failed", quality_flags: sourceFirstFlags }, true)).toBe(true);
+    expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", image_generation_status: "failed", quality_flags: sourceFirstFlags }, true)).toBe(false);
     expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", quality_flags: ["search_recovery_source_first", "seo_duplicate"] }, true)).toBe(true);
   });
 
-  it("noindexes missing, failed, and branded-fallback article images", () => {
-    expect(shouldNoindexCloudArticle({ ...readyRow, featured_image_url: null, image_url: null }, true)).toBe(true);
-    expect(shouldNoindexCloudArticle({ ...readyRow, image_generation_status: "failed" }, true)).toBe(true);
-    expect(shouldNoindexCloudArticle({ ...readyRow, featured_image_url: "/og/default.jpg", image_url: "/og/default.jpg" }, true)).toBe(true);
+  it("allows image-deferred articles through editorial readiness while preserving quarantine", () => {
+    expect(shouldNoindexCloudArticle({ ...readyRow, featured_image_url: null, image_url: null }, true)).toBe(false);
+    expect(shouldNoindexCloudArticle({ ...readyRow, image_generation_status: "failed" }, true)).toBe(false);
+    expect(shouldNoindexCloudArticle({ ...readyRow, featured_image_url: "/og/default.jpg", image_url: "/og/default.jpg" }, true)).toBe(false);
+    expect(shouldNoindexCloudArticle({ ...readyRow, featured_image_url: null, image_url: null, quality_flags: ["seo_low_value_commodity"] }, true)).toBe(true);
   });
 });

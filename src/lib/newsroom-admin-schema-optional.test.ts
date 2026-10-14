@@ -21,6 +21,9 @@ describe("Phase 11 optional admin extensions", () => {
   it("still has no generation or publication path", () => {
     expect(source).not.toContain("runCloudflareJson");
     expect(source).not.toContain("newsroom_reserve_ai_generation");
-    expect(source).not.toContain('.from("daily_articles")');
+    // Read-only publication counters are allowed; admin must never publish,
+    // delete or update articles as a side effect of loading a status page.
+    expect(source).toContain('db.from("daily_articles").select("id", { head: true, count: "exact" })');
+    expect(source).not.toMatch(/\.from\("daily_articles"\)\s*\.(?:insert|upsert|update|delete)\(/);
   });
 });
