@@ -10,6 +10,8 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '33 7 * * 0'
+    # Weekdays: only the ~1 MB published-article/URL recovery snapshot.
+    - cron: '43 7 * * 1-6'
 
 permissions:
   contents: read
@@ -23,6 +25,7 @@ jobs:
     env:
       SUPABASE_URL: https://ftkznprjljkhymknvhye.supabase.co
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.KEEP_TX_RED_SUPABASE_SERVICE_ROLE_KEY }}
+      ARTICLE_SNAPSHOT_ONLY: ${{ github.event_name == 'schedule' && github.event.schedule == '43 7 * * 1-6' && '1' || '0' }}
     steps:
       - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
