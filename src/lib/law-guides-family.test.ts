@@ -70,6 +70,34 @@ describe("Marriage & Family evergreen guide registry", () => {
     }
   });
 
+  it("keeps the child-support calculator link explicit and non-misleading", () => {
+    const guide = ALL_GUIDES["texas-child-support-guidelines-law"];
+    expect(guide).toBeDefined();
+    if (!guide) throw new Error("Missing Texas child-support guide");
+
+    const calculatorSection = guide.sections.find(
+      (section) => section.heading === "Texas Attorney General Child Support Calculator",
+    );
+    expect(calculatorSection).toBeDefined();
+    expect(calculatorSection?.links).toEqual([
+      {
+        text: "Texas Attorney General Child Support Calculator",
+        url: "https://www.texasattorneygeneral.gov/child-support/get-started",
+      },
+    ]);
+
+    const renderedCopy = [
+      ...guide.intro,
+      ...guide.sections.flatMap((section) => section.paragraphs ?? []),
+      ...guide.faq.flatMap((item) => [item.q, item.a]),
+    ].join(" ");
+
+    expect(renderedCopy).toContain(
+      "The Texas Office of the Attorney General’s Child Support Division hosts a Texas Attorney General Child Support Calculator",
+    );
+    expect(renderedCopy.toLowerCase()).not.toContain("official calculator");
+  });
+
   it("records the 2025 family-law updates carried by the verified guides", () => {
     const verified = lawGuidesForTopic("family").filter((guide) => guide.status === "verified");
     const informal = verified.find((item) => item.slug === "texas-common-law-marriage-law");
