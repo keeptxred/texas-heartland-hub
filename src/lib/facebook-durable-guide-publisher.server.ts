@@ -1,5 +1,5 @@
 import {
-  KTR_DURABLE_FACEBOOK_GUIDES,
+  approvedPublishedEvergreen,
   type DurableFacebookGuideCandidate,
 } from "@/lib/facebook-durable-guides";
 import {
@@ -35,6 +35,25 @@ function hash32(value: string): number {
     hash = Math.imul(hash, 0x01000193);
   }
   return hash >>> 0;
+}
+
+/**
+ * Query only the live, image-governed durable article rows. The September
+ * Facebook content_packages trigger deliberately rejects /news/:slug values
+ * absent from daily_articles, which made every static-pillar fallback fail 422.
+ */
+async function loadApprovedPublishedEvergreenGuides(db: any): Promise<DurableFacebookGuideCandidate[]> {
+  const { data, error } = await db.from("daily_articles")
+    .select("slug,title,category,kind,published_at,content_quality_score,quality_flags,image_generation_status,featured_image_url")
+    .eq("kind", "evergreen")
+    .eq("image_generation_status", "ready")
+    .gte("content_quality_score", 90)
+    .order("content_quality_score", { ascending: false })
+    .limit(60);
+  if (error) throw new Error(error.message);
+  return ((data ?? []) as Parameters<typeof approvedPublishedEvergreen>[0][])
+    .map(approvedPublishedEvergreen)
+    .filter((guide): guide is DurableFacebookGuideCandidate => guide !== null);
 }
 
 async function loadAlreadyPostedGuideUrls(db: any, urls: string[]): Promise<Set<string>> {
@@ -132,14 +151,24 @@ export async function publishDurableFacebookGuideFallback(args: {
   mode: string;
   fallbackReason: string;
 }): Promise<Response> {
-  const pool = KTR_DURABLE_FACEBOOK_GUIDES;
+  let pool: DurableFacebookGuideCandidate[];
+  try {
+    pool = await loadApprovedPublishedEvergreenGuides(args.db);
+  } catch (error) {
+    return Response.json({
+      ok: false,
+      posted: false,
+      error: "Failed to load governed evergreen article fallback pool",
+      detail: error instanceof Error ? error.message : String(error),
+    }, { status: 500 });
+  }
   if (pool.length === 0) {
     return Response.json({
       ok: true,
       posted: false,
       no_items: true,
       reason: args.fallbackReason,
-      durable_guide_reason: "No production-indexable durable guides are available",
+      durable_guide_reason: "No verified, canonical-image database-backed evergreen guides are available",
     });
   }
 
