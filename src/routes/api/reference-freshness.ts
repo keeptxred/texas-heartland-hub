@@ -95,6 +95,13 @@ function handler() {
   ].sort((a, b) => Date.parse(a.dueAt) - Date.parse(b.dueAt));
 
   const overdue = items.filter((item) => item.overdue);
+  const countsByKind = items.reduce<Record<FreshnessItem["kind"], { total: number; overdue: number }>>((counts, item) => {
+    const entry = counts[item.kind] ?? { total: 0, overdue: 0 };
+    entry.total += 1;
+    if (item.overdue) entry.overdue += 1;
+    counts[item.kind] = entry;
+    return counts;
+  }, {} as Record<FreshnessItem["kind"], { total: number; overdue: number }>);
   const upcoming = items.filter((item) => !item.overdue).slice(0, 40);
   return Response.json({
     ok: true,
@@ -111,6 +118,7 @@ function handler() {
     },
     totalPages: items.length,
     overdueCount: overdue.length,
+    countsByKind,
     overdue,
     nextDue: upcoming,
   }, {
