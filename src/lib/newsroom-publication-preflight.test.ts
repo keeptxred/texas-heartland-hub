@@ -58,6 +58,19 @@ describe("newsroom publication preflight", () => {
     ])).toBe(true);
   });
 
+  it("never uses a Google News discovery link as the canonical news article lead or source citation", () => {
+    const discovery = source("https://news.google.com/rss/articles/CBMiABC", false, 100);
+    const publisherA = source("https://www.texastribune.org/2026/10/14/report", false, 80);
+    const publisherB = source("https://www.kxan.com/news/report", false, 75);
+    const packet = [discovery, publisherA, publisherB];
+    expect(newsroomHasPublisherDiversity(packet)).toBe(true);
+    expect(newsroomLeadSourceUrl(packet)).toBe(publisherA.url);
+    expect(uniquePacketSources(packet).map((row) => row.url)).toEqual([publisherA.url, publisherB.url]);
+    expect(newsroomLeadSourceUrl([discovery])).toBeNull();
+    expect(newsroomHasPublisherDiversity([discovery])).toBe(false);
+    expect(newsroomHasPublisherDiversity([source(discovery.url, true)])).toBe(false);
+  });
+
   it("accepts a substantive official primary record without a second publisher", () => {
     expect(newsroomHasPublisherDiversity([source("https://gov.texas.gov/news/post/test", true)])).toBe(true);
     expect(newsroomHasPublisherDiversity([source("https://www.kxan.com/story")])).toBe(false);
