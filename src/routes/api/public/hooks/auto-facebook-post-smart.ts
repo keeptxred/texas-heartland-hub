@@ -1,8 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import {
-  prepareKtrFacebookAttentionPost,
-  shouldUseKtrFacebookAttentionSlot,
-} from "@/lib/facebook-attention-publisher.server";
 import type { RecentFacebookPost } from "@/lib/facebook-editorial-selection";
 import {
   facebookPostingDecision,
@@ -149,17 +145,9 @@ async function runSmartKtrFacebookPost(request: Request): Promise<Response> {
     });
   }
 
-  if (shouldUseKtrFacebookAttentionSlot(decision.postsToday)) {
-    const attentionResponse = await prepareKtrFacebookAttentionPost({
-      db,
-      seed,
-      dateKey: decision.dateKey,
-      slot: decision.postsToday,
-      mode,
-    });
-    if (attentionResponse) return attentionResponse;
-  }
-
+  // Scheduled slots now share substantive article/guide content only.
+  // Engagement questions and generated-image attention posts remain manual,
+  // never substitutes for the requested daily editorial posts.
   // Article slots keep the existing ranked recent-article publisher and its
   // production-indexable durable-guide fallback. Forward as manual so the
   // inner endpoint does not apply the schedule a second time.
