@@ -20,5 +20,4 @@ jobs:
       - name: Check Bills production endpoints
         env:
           SUPABASE_URL: https://ftkznprjljkhymknvhye.supabase.co
-          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
         run: node scripts/monitoring/check-bills-health.mjs
