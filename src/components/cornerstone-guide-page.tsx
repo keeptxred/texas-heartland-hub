@@ -14,6 +14,39 @@ import {
 import { SITE_URL } from "@/lib/seo";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 
+function renderGuideParagraph(
+  paragraph: string,
+  links: { text: string; url: string }[] = [],
+) {
+  let parts: React.ReactNode[] = [paragraph];
+
+  for (const link of links) {
+    parts = parts.flatMap((part, partIndex) => {
+      if (typeof part !== "string" || !part.includes(link.text)) return [part];
+      const segments = part.split(link.text);
+      return segments.flatMap((segment, segmentIndex) => {
+        const rendered: React.ReactNode[] = [segment];
+        if (segmentIndex < segments.length - 1) {
+          rendered.push(
+            <a
+              key={`${link.url}-${partIndex}-${segmentIndex}`}
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-primary underline underline-offset-2 hover:no-underline"
+            >
+              {link.text}
+            </a>,
+          );
+        }
+        return rendered;
+      });
+    });
+  }
+
+  return parts;
+}
+
 function isRelatedGuideLinkPublic(href: string): boolean {
   const match = /^\/news\/([^/?#]+)$/.exec(href);
   if (!match) return true;
