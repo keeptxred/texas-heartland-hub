@@ -67,6 +67,13 @@ jobs:
             exit 1
           fi
 
+          # A due editorial slot with no publishable content is a failed delivery,
+          # not a green workflow run. The next scheduled run can retry safely.
+          if jq -e '.no_items == true' "$output" >/dev/null 2>&1; then
+            echo "AUTO_FACEBOOK_EDITORIAL_SHORTAGE page=keeptxred" >&2
+            exit 1
+          fi
+
           echo "attention_generate=false" >> "$GITHUB_OUTPUT"
 
           if jq -e '.image_generation_required == true' "$output" >/dev/null 2>&1; then
@@ -275,4 +282,57 @@ jobs:
           else
             echo 'Generated-image publisher returned success without a post or duplicate confirmation; failing closed.' >&2
             exit 1
+          fi
+
+  texasdefined_articles:
+    name: Publish TexasDefined editorial article
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      AUTOMATION_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
+    steps:
+      - name: Publish due quality-checked TexasDefined article
+        shell: bash
+        run: |
+          set -euo pipefail
+          oidc_url="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-facebook"
+          oidc_token=$(curl -fsS \
+            -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+            "$oidc_url" | jq -r '.value // empty')
+          if [[ -z "$oidc_token" ]]; then
+            echo "GitHub Actions did not issue a TexasDefined publisher OIDC token." >&2
+            exit 1
+          fi
+
+          response=$(mktemp)
+          status=$(curl -sS -X POST -o "$response" -w '%{http_code}' \
+            --max-time 420 \
+            -H 'accept: application/json' \
+            -H "Authorization: Bearer ${oidc_token}" \
+            -H 'X-KTR-Facebook-Mode: scheduled' \
+            "${AUTOMATION_ORIGIN%/}/api/public/hooks/auto-facebook-post-texasdefined" || echo 000)
+
+          echo "texasdefined editorial-facebook HTTP ${status}"
+          cat "$response"
+          echo
+          if [[ "$status" != "200" ]] || ! jq -e '.ok == true' "$response" >/dev/null 2>&1; then
+            echo "AUTO_FACEBOOK_POST_FAILED page=texasdefined" >&2
+            exit 1
+          fi
+
+          if jq -e '.posted == true' "$response" >/dev/null 2>&1; then
+            article_url=$(jq -r '.article_url // empty' "$response")
+            post_url=$(jq -r '.post_url // empty' "$response")
+            if [[ -z "$article_url" || -z "$post_url" ]]; then
+              echo "TexasDefined reported a post without an article URL or Meta post ID." >&2
+              exit 1
+            fi
+            echo "AUTO_FACEBOOK_POST_SUCCESS page=texasdefined article_url=${article_url} post_url=${post_url}"
+          elif jq -e '.no_items == true' "$response" >/dev/null 2>&1; then
+            echo "AUTO_FACEBOOK_EDITORIAL_SHORTAGE page=texasdefined" >&2
+            exit 1
+          else
+            reason=$(jq -r '.reason // "waiting for a due editorial slot"' "$response")
+            echo "AUTO_FACEBOOK_POST_NOOP page=texasdefined reason=${reason}"
           fi

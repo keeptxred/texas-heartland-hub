@@ -15,6 +15,7 @@ import { quickPublishToFacebookFn } from "@/services/quickPublish.functions";
 
 const GUIDE_HISTORY_BATCH_SIZE = 50;
 const MAX_GUIDE_ATTEMPTS = 12;
+const GUIDE_REPOST_COOLDOWN_DAYS = 45;
 
 type PackageRow = {
   id: string;
@@ -38,6 +39,7 @@ function hash32(value: string): number {
 
 async function loadAlreadyPostedGuideUrls(db: any, urls: string[]): Promise<Set<string>> {
   const alreadyPosted = new Set<string>();
+  const cutoff = new Date(Date.now() - GUIDE_REPOST_COOLDOWN_DAYS * 86_400_000).toISOString();
 
   for (let start = 0; start < urls.length; start += GUIDE_HISTORY_BATCH_SIZE) {
     const urlBatch = urls.slice(start, start + GUIDE_HISTORY_BATCH_SIZE);
@@ -58,7 +60,8 @@ async function loadAlreadyPostedGuideUrls(db: any, urls: string[]): Promise<Set<
       .select("content_package_id")
       .in("content_package_id", packageIds)
       .ilike("platform", "facebook")
-      .eq("status", "PUBLISHED");
+      .eq("status", "PUBLISHED")
+      .gte("published_time", cutoff);
     if (queueError) throw new Error(queueError.message);
 
     const postedPackageIds = new Set<string>();
@@ -162,7 +165,7 @@ export async function publishDurableFacebookGuideFallback(args: {
       posted: false,
       no_items: true,
       reason: args.fallbackReason,
-      durable_guide_reason: "All durable guides have already been posted",
+      durable_guide_reason: "All eligible guides were posted within the 45-day editorial cooldown",
     });
   }
 
