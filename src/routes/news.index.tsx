@@ -245,14 +245,18 @@ function NewsPage() {
           </div>
           <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
             {filteredLive.map((a: DailyArticle) => {
-              const img = liveImages.get(a.slug) ?? resolveArticleImage(a);
+              // No unrelated fallback image should be displayed for a news article.
+              const imageIsPresent = Boolean(a.featured_image_url?.trim())
+                && !/\/og\/default\.jpg(?:[?#].*)?$/i.test(a.featured_image_url ?? "");
+              const img = imageIsPresent ? (liveImages.get(a.slug) ?? resolveArticleImage(a)) : null;
               const { headline: title } = resolveDisplayHeadline(a);
-              const isEvergreen = a.kind === "evergreen";
               const card = (
                 <>
-                  <div className="aspect-[4/3] overflow-hidden bg-muted mb-4">
-                    <img src={img} alt={title} loading="lazy" className={`size-full ${shouldContainArticleImage(img) ? "object-contain bg-white p-4" : "object-cover"} group-hover:scale-105 transition-transform duration-500`} />
-                  </div>
+                  {img ? (
+                    <div className="aspect-[4/3] overflow-hidden bg-muted mb-4">
+                      <img src={img} alt={title} loading="lazy" className={`size-full ${shouldContainArticleImage(img) ? "object-contain bg-white p-4" : "object-cover"} group-hover:scale-105 transition-transform duration-500`} />
+                    </div>
+                  ) : null}
                   <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-primary">{a.category}</span>
                   <h3 className="font-serif text-lg font-bold leading-snug mt-1 group-hover:underline underline-offset-4">{title}</h3>
                   <p className="mt-2 text-sm text-muted-foreground line-clamp-3">{a.dek}</p>
@@ -261,16 +265,11 @@ function NewsPage() {
                   </p>
                 </>
               );
-              const internal =
-                isEvergreen || a.kind === "ingested" || (a.source_url && a.source_url.startsWith("/"));
-              if (internal) {
-                return (
-                  <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group cursor-pointer block">
-                    {card}
-                  </Link>
-                );
-              }
-              return <article key={a.slug} className="group">{card}</article>;
+              return (
+                <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group cursor-pointer block">
+                  {card}
+                </Link>
+              );
             })}
           </div>
         </section>
