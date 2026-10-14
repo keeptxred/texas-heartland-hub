@@ -14,7 +14,8 @@ function corsHeaders(request: Request) {
     "access-control-allow-origin": ALLOWED_ORIGINS.has(origin) ? origin : "https://texasdefined.com",
     "access-control-allow-methods": "GET, POST, OPTIONS",
     "access-control-allow-headers": "content-type",
-    "cache-control": "no-store",
+    "cache-control": "private, no-store",
+    "referrer-policy": "no-referrer",
     vary: "Origin",
   };
 }

@@ -8,8 +8,8 @@ import { SITE_URL } from "@/lib/seo";
 export const Route = createFileRoute("/shop/checkout-return")({
   head: () => ({
     meta: [
-      { title: "Order Confirmed" },
-      { name: "description", content: "Your order has been confirmed." },
+      { title: "Checkout Status" },
+      { name: "description", content: "Verify the payment status of your shop order." },
       { name: "robots", content: "noindex,follow" },
       { name: "referrer", content: "no-referrer" },
     ],
