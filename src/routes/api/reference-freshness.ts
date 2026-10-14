@@ -71,15 +71,19 @@ function handler() {
       const due = dueDate(guide.updated, reviewDays);
       return { kind: "political-reference" as const, slug: guide.slug, path: `/texas-political-reference/${guide.slug}`, reviewed: guide.updated, reviewDays, dueAt: due.toISOString(), overdue: due.getTime() < now.getTime() };
     }),
-    ...issueGuides.map((guide) => ({
-      kind: "issue-guide" as const,
-      slug: guide.slug,
-      path: `/issues/${guide.slug}`,
-      reviewed: "",
-      reviewDays: ISSUE_GUIDE_REVIEW_DAYS,
-      dueAt: new Date(0).toISOString(),
-      overdue: true,
-    })),
+    ...issueGuides.map((guide) => {
+      const reviewed = guide.reviewedAt ?? "";
+      const due = reviewed ? dueDate(reviewed, ISSUE_GUIDE_REVIEW_DAYS) : new Date(0);
+      return {
+        kind: "issue-guide" as const,
+        slug: guide.slug,
+        path: `/issues/${guide.slug}`,
+        reviewed,
+        reviewDays: ISSUE_GUIDE_REVIEW_DAYS,
+        dueAt: due.toISOString(),
+        overdue: due.getTime() < now.getTime(),
+      };
+    }),
     ...POLICY_TRACKERS.map((tracker) => {
       const due = dueDate(tracker.updated, POLICY_REVIEW_DAYS);
       return { kind: "policy-tracker" as const, slug: tracker.slug, path: `/policy/${tracker.slug}`, reviewed: tracker.updated, reviewDays: POLICY_REVIEW_DAYS, dueAt: due.toISOString(), overdue: due.getTime() < now.getTime() };
@@ -126,7 +130,7 @@ function handler() {
       agencyAuthorityDays: AGENCY_REVIEW_DAYS,
       stateDistrictDays: DISTRICT_REVIEW_DAYS,
       representativeDays: REPRESENTATIVE_REVIEW_DAYS,
-      issueGuideReviewStatus: "Issue guides have no per-page review date in the current data model and are conservatively flagged unverified until source-review evidence is recorded.",
+      issueGuideReviewStatus: "Issue guides without a documented primary-source review date remain overdue.",
       note: "This endpoint identifies pages due for source review. It does not invent or auto-update facts; primary-source refresh remains required before changing dated claims.",
     },
     totalPages: items.length,
