@@ -177,7 +177,13 @@ export function isPublicArticleReady(article: PublicArticleCandidate): boolean {
   if ((article.category ?? "").trim().toLowerCase() === "non-political") return false;
   if (isRetiredKtrCategory(article.category)) return false;
   if (isTexasDefinedDiscoverCategory(article.discover_category)) return false;
-  if ((article.content_quality_score ?? 0) < MIN_PUBLIC_CONTENT_QUALITY_SCORE) return false;
+  // Quality scoring reserves ten points for the mere presence of an image.
+  // Restore those points for a truly text-first row, without changing the
+  // editorial text/source/duplication floor. Rows with a loaded image keep
+  // their original score, and media-specific consumers still enforce image readiness.
+  const textFirstScoreAdjustment =
+    Object.prototype.hasOwnProperty.call(article, "image_url") && !article.image_url ? 10 : 0;
+  if ((article.content_quality_score ?? 0) + textFirstScoreAdjustment < MIN_PUBLIC_CONTENT_QUALITY_SCORE) return false;
   if (duplicateParagraphOccurrences(article.body_json) > MAX_DUPLICATE_PARAGRAPH_OCCURRENCES) return false;
 
   const sourceRefs = sourceReferenceCount(article.body_json);
