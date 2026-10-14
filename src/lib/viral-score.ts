@@ -117,6 +117,7 @@ export function scoreFeedItem(item: {
   source: string;
   pub_date: string;
   description?: string | null;
+  link?: string | null;
   has_video?: boolean | null;
   source_reputation_score?: number | null;
   source_reputation_reason?: string | null;
@@ -126,6 +127,11 @@ export function scoreFeedItem(item: {
   const desc = item.description ?? "";
   const hay = `${title} ${desc}`;
   const sourceHay = source;
+  // Only a canonical release on the agency's own domain gets verified-primary
+  // treatment. A publisher label on a Google News wrapper is insufficient.
+  const verifiedComptrollerRelease =
+    /\b(?:texas comptroller|comptroller of public accounts)\b/i.test(sourceHay) &&
+    /^https:\/\/comptroller\.texas\.gov\/about\/media-center\/news\/20\d{6}-[a-z0-9-]+\/?(?:[?#].*)?$/i.test(item.link ?? "");
   const hrs = hoursSince(item.pub_date);
   const reasons: string[] = [];
   const entities = extractEntities(hay);
@@ -183,6 +189,9 @@ export function scoreFeedItem(item: {
   if (category !== "Non-Political") confidence += 0.35;
   else if (TEXAS_INSTITUTIONS.test(hay) || STATEWIDE_PUBLIC_INTEREST.test(hay)) confidence += 0.35;
   if (texas >= 20) confidence += 0.25;
+  // Entity extraction often misses agency press releases. An exact official
+  // source URL supplies confidence about provenance, not about every claim.
+  if (verifiedComptrollerRelease && texas >= 20) confidence = Math.max(confidence, 0.65);
   confidence = Math.min(1, Number(confidence.toFixed(2)));
 
   const ownedByTexasDefined = isTexasDefinedOwnedSource(source) || category === "Sports";
@@ -193,9 +202,11 @@ export function scoreFeedItem(item: {
           ? "Sports coverage belongs to TexasDefined"
           : "TexasDefined-owned source blocked from KeepTXRed publication",
       }
-    : item.source_reputation_score != null
-      ? { score: item.source_reputation_score, reason: item.source_reputation_reason || "From content_sources" }
-      : classifySourceReputation(source);
+    : verifiedComptrollerRelease
+      ? { score: 90, reason: "Verified Texas Comptroller primary release URL" }
+      : item.source_reputation_score != null
+        ? { score: item.source_reputation_score, reason: item.source_reputation_reason || "From content_sources" }
+        : classifySourceReputation(source);
   const repMultiplier = 0.5 + Math.max(0, Math.min(100, rep.score)) / 200;
   const rawScore = texas + velocity + social;
   const viralScore = Math.min(100, Math.round(rawScore * repMultiplier));
