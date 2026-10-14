@@ -25,6 +25,7 @@ const HYDRATION_READ_CONCURRENCY = 2;
 const SOURCE_PAGE_RETRY_COOLDOWN_MS = 6 * 60 * 60 * 1000;
 
 type CandidateRow = {
+  id: string;
   cluster_id: string;
   editorial_score: number;
   recommended_format: string;
@@ -112,16 +113,16 @@ async function handler() {
     { data: publishedData, error: publishedError },
   ] = await Promise.all([
     newsroomDb.from("news_publish_candidates")
-      .select("cluster_id,editorial_score,recommended_format,status,created_at")
+      .select("id,cluster_id,editorial_score,recommended_format,status,created_at")
       .eq("status", "PENDING")
       .in("recommended_format", ["SINGLE", "MERGE", "SYNTHESIS"])
       .gte("created_at", since)
       .order("editorial_score", { ascending: false })
       .order("created_at", { ascending: false })
-      .order("cluster_id", { ascending: true })
+      .order("id", { ascending: true })
       .limit(CANDIDATE_LIMIT),
     newsroomDb.from("news_publish_candidates")
-      .select("cluster_id,editorial_score,recommended_format,status,created_at")
+      .select("id,cluster_id,editorial_score,recommended_format,status,created_at")
       .eq("status", "PUBLISHED")
       .gte("published_at", new Date(Date.now() - PUBLISHED_REFRESH_HOURS * 60 * 60 * 1000).toISOString())
       .order("published_at", { ascending: false })
@@ -131,7 +132,9 @@ async function handler() {
   if (publishedError) return Response.json({ ok: false, error: publishedError.message }, { status: 500 });
   const pending = (pendingData ?? []) as CandidateRow[];
   const published = (publishedData ?? []) as CandidateRow[];
-  const candidates = [...new Map([...pending, ...published].map((candidate) => [candidate.cluster_id, candidate])).values()];
+  const candidates = [...new Map<string, CandidateRow>(
+    [...pending, ...published].map((candidate): [string, CandidateRow] => [candidate.cluster_id, candidate]),
+  ).values()];
   if (!candidates.length) return Response.json({ ok: true, built: 0, written: 0, unchanged: 0, sourceItems: 0, sourcePagesFetched: 0, sourcePagesUpdated: 0, sourcePagesCoolingDown: 0, aiCalls: 0 });
 
   // Each provider request stays below PostgREST UUID/query and row limits.
