@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { resolvePublishTimestamp } from "@/lib/article-slug-integrity";
 import { isLowValueTitle } from "@/lib/low-value-titles";
 import { scoreFeedItem, TEXAS_RELEVANCE_MIN } from "@/lib/viral-score";
+import { selectRotatedSourceWindow } from "@/lib/ingest-source-window";
 export { publishSingleFeedItem } from "@/lib/multi-source-publish";
 export { isPuzzleTitle } from "@/lib/ingest-feeds-legacy";
 
@@ -79,6 +80,13 @@ const VERIFIED_YOUTUBE = new Map<string, string>([
 const TRANSIENT_STATUS = new Set([408, 425, 429, 500, 502, 503, 504]);
 const GOOGLE_NEWS_RE = /^(?:https:\/\/news\.google\.com\/rss\/search|https:\/\/ftkznprjljkhymknvhye\.supabase\.co\/functions\/v1\/ktr-rss-relay\?feed=google-)/i;
 const GOOGLE_FEEDS_PER_RUN = 10;
+// Bound each scheduled invocation and rotate additional local feeds across
+// consecutive half-hour slots, without skipping primary first-party sources.
+const SUPPLEMENTAL_DIRECT_FEEDS_PER_RUN = 12;
+const DIRECT_CORE_URLS = new Set(
+  DIRECT_SOURCES.filter((source) => !GOOGLE_NEWS_RE.test(source.url))
+    .map((source) => source.url.toLowerCase()),
+);
 // Keep trigger-heavy feed writes below the production statement timeout.
 const INGEST_UPSERT_BATCH_SIZE = 20;
 // Existing-link lookups are read-only and indexed: group them more widely than
@@ -354,9 +362,9 @@ async function fetchSource(source: Source): Promise<FetchResult> {
   const isGoogle = GOOGLE_NEWS_RE.test(source.url);
   const isHtmlLinks = source.mode === "html-links";
   const accept = source.mode === "rss" ? "application/rss+xml,application/atom+xml,application/xml,text/xml,*/*" : "text/html,application/xhtml+xml,*/*";
-  const fetched = await fetchText(source.url, accept, isGoogle ? 2 : isHtmlLinks ? 1 : 3, isGoogle ? 10000 : isHtmlLinks ? 12000 : 25000);
+  const fetched = await fetchText(source.url, accept, isGoogle ? 2 : isHtmlLinks ? 1 : 2, isGoogle ? 10000 : isHtmlLinks ? 12000 : 14000);
   if (!fetched.text && source.name === "Texas Standard" && source.mode === "rss") {
-    const fallback = await fetchText("https://texasstandard.org/", "text/html,application/xhtml+xml,*/*", 2, 15000);
+    const fallback = await fetchText("https://texasstandard.org/", "text/html,application/xhtml+xml,*/*", 1, 12000);
     return { source: source.name, url: "https://texasstandard.org/", status: fallback.status, attempts: fetched.attempts + fallback.attempts, mode: "texas-standard-html", items: fallback.text ? parseTexasStandardHtml(fallback.text) : [], error: fallback.text ? undefined : fallback.error };
   }
   if (!fetched.text) return { source: source.name, url: source.url, status: fetched.status, attempts: fetched.attempts, mode: source.mode, items: [], error: fetched.error };
@@ -454,12 +462,18 @@ async function backfillTrendSourceAdaptive(
 async function handler() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { sources, skippedLegacyYoutube } = await loadSources();
-  const direct = sources.filter((source) => !GOOGLE_NEWS_RE.test(source.url));
+  const configuredDirect = sources.filter((source) => !GOOGLE_NEWS_RE.test(source.url));
   const allGoogle = sources.filter((source) => GOOGLE_NEWS_RE.test(source.url));
   const google = rotateGoogleSources(allGoogle);
-  // Direct and supplemental Google fetches are independent. Running both waves
-  // together avoids a second full outbound wait while retaining the same full
-  // direct-source roster and rotating 10-feed supplemental coverage.
+  const directWindow = selectRotatedSourceWindow(
+    configuredDirect,
+    DIRECT_CORE_URLS,
+    SUPPLEMENTAL_DIRECT_FEEDS_PER_RUN,
+    Math.floor(Date.now() / (30 * 60 * 1000)),
+  );
+  const direct = directWindow.selected;
+  // Execute independent Google and direct waves concurrently, while limiting
+  // direct remote origins to the Worker request's wall-clock budget.
   const [directResults, googleResults] = await Promise.all([
     mapWithConcurrency(direct, 8, fetchSource),
     mapWithConcurrency(google, 4, fetchSource),
@@ -559,6 +573,10 @@ async function handler() {
     aiCalls: 0,
     sourceCount: sources.length,
     directSources: direct.length,
+    directSourcesConfigured: configuredDirect.length,
+    directSourcesChecked: direct.length,
+    directSourcesDeferred: directWindow.deferred,
+    directSourceWindows: directWindow.windows,
     googleNewsSourcesConfigured: allGoogle.length,
     googleNewsSourcesChecked: google.length,
     skippedLegacyYoutube,
