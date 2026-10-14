@@ -425,13 +425,13 @@ function RepresentativeProfile() {
                   ))}
                 </ul>
                 <p className="mt-5 text-sm text-muted-foreground">
-                  Authority review completed{" "}
+                  Profile source review recorded{" "}
                   {new Date(`${profileAuthority.reviewedAt}T12:00:00`).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
                   })}
-                  .
+                  . This is the recorded review date, not a guarantee that all information is current. Confirm time-sensitive assignments, offices, and election details using the linked official sources.
                 </p>
               </AuthoritySection>
             </>
