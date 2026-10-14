@@ -116,3 +116,44 @@ describe("Texas statewide coverage scoring", () => {
     expect(result.routingType).not.toBe("SEO_ARTICLE");
   });
 });
+
+describe("verified Comptroller direct-release publication scoring", () => {
+  const release = {
+    title: "No Spy Cameras: Comptroller Huffines Announces Ban on Grant Money for Flock Cameras and License Plate Trackers",
+    source: "Texas Comptroller of Public Accounts",
+    description: "Texas Comptroller Huffines signs an order restricting future grant purchases of automated license plate readers.",
+    pub_date: fresh(),
+    source_reputation_score: 55,
+    source_reputation_reason: "Unclassified publisher from a discovery feed",
+  };
+
+  it("recognizes an exact official release as a trusted publication candidate", () => {
+    const result = scoreFeedItem({
+      ...release,
+      link: "https://comptroller.texas.gov/about/media-center/news/20261013-no-spy-cameras-comptroller-huffines-announces-order-1234",
+    });
+    expect(result.sourceReputationScore).toBe(90);
+    expect(result.classificationConfidence).toBeGreaterThanOrEqual(0.6);
+    expect(result.editorialLane).toBe("AUTO_PUBLISH");
+    expect(result.routingType).toBe("SEO_ARTICLE");
+  });
+
+  it("does not promote an unverified Google News wrapper with an official-sounding publisher label", () => {
+    const result = scoreFeedItem({
+      ...release,
+      link: "https://news.google.com/rss/articles/an-unverified-wrapper",
+    });
+    expect(result.sourceReputationScore).toBe(55);
+    expect(result.classificationConfidence).toBeLessThan(0.6);
+    expect(result.editorialLane).not.toBe("AUTO_PUBLISH");
+  });
+
+  it("does not trust a lookalike domain or unrelated publisher", () => {
+    for (const item of [
+      { link: "https://comptroller.texas.gov.evil.example/about/media-center/news/20261013-fake", source: release.source },
+      { link: "https://comptroller.texas.gov/about/media-center/news/20261013-fake", source: "Unverified Press Blog" },
+    ]) {
+      expect(scoreFeedItem({ ...release, ...item }).sourceReputationScore).toBe(55);
+    }
+  });
+});
