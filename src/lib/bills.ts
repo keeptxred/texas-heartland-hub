@@ -139,7 +139,7 @@ const INDEX_FIRST_BILL_PAGE_OFFSET = 480;
 export async function listBills({ search = '', status = '', legislature, chamber = '', billType = '', limit = 24, offset = 0 }: BillListFilters = {}): Promise<{ bills: Bill[]; count: number }> {
   // Use indexed IDs for deep directory, legislature, chamber/status and
   // status-only pages where measured index scans avoid thousands of wide
-  // row fetches. Preserve exact counts and sorted page order on hydration.
+  // row fetches. Use planned counts to avoid a full count on every request.
   // Searches, bill-type filters and unprofiled combinations stay unchanged.
   const indexedDirectory = !status && !legislature && !billType;
   const indexedLegislature = Boolean(legislature) && !status && !chamber && !billType;
@@ -149,7 +149,7 @@ export async function listBills({ search = '', status = '', legislature, chamber
     (indexedDirectory || indexedLegislature || indexedChamberStatus || indexedStatusOnly);
   let query = db
     .from('bills')
-    .select(indexFirst ? 'id' : BILL_LIST_COLUMNS, { count: 'exact' })
+    .select(indexFirst ? 'id' : BILL_LIST_COLUMNS, { count: 'planned' })
     .eq('is_active', true)
     .order('last_action_date', { ascending: false, nullsFirst: false })
     .order('id', { ascending: true })
@@ -165,15 +165,7 @@ export async function listBills({ search = '', status = '', legislature, chamber
     const safe = search.replace(/[,%()]/g, ' ').trim();
     query = query.or(`bill_identifier.ilike.%${safe}%,caption.ilike.%${safe}%`);
   }
-  let { data, error, count } = await query;
-  // Transient PostgREST 57014 timeouts can occur during shared-database load.
-  // Retry only that specific failure once; avoid retry storms for other errors.
-  if (error && (error.code === '57014' || error.message?.includes('statement timeout'))) {
-    const retry = await query;
-    data = retry.data;
-    error = retry.error;
-    count = retry.count;
-  }
+  const { data, error, count } = await query;
   if (error) throw error;
   if (!indexFirst) return { bills: (data ?? []) as Bill[], count: count ?? 0 };
 
