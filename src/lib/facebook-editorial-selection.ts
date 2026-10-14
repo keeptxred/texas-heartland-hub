@@ -4,6 +4,7 @@ export type FacebookEditorialCandidate = {
   kind?: string | null;
   is_breaking?: boolean | null;
   score?: number | null;
+  quality_flags?: string[] | null;
   published_at: string;
 };
 
@@ -43,6 +44,16 @@ const ENTITY_STOP_WORDS = new Set([
 
 function normalize(value: string | null | undefined): string {
   return (value ?? "").trim().toLowerCase();
+}
+
+/**
+ * A numerically high score does not excuse repetitive or low-value editorial copy.
+ * Never promote these flagged articles just to fill a social posting slot.
+ */
+export function hasMajorFacebookEditorialDefect(flags: string[] | null | undefined): boolean {
+  return (flags ?? []).some((flag) =>
+    flag === "seo_low_value_commodity" || flag === "internal_repetition",
+  );
 }
 
 export function isRoutineGovernmentAppointment(title: string): boolean {
@@ -126,7 +137,10 @@ export function rankFacebookCandidates<T extends FacebookEditorialCandidate>(
   }
 
   return candidates
-    .filter((candidate) => !isRoutineGovernmentAppointment(candidate.title))
+    .filter((candidate) =>
+      !isRoutineGovernmentAppointment(candidate.title) &&
+      !hasMajorFacebookEditorialDefect(candidate.quality_flags),
+    )
     .map((candidate) => {
       const topic = classifyFacebookTopic(candidate);
       const reasons: string[] = [];

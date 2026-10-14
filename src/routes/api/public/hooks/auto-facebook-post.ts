@@ -39,6 +39,7 @@ type ArticleRow = {
   is_breaking: boolean | null;
   score: number | null;
   content_quality_score: number | null;
+  quality_flags: string[] | null;
   body_json: unknown;
 };
 
@@ -215,7 +216,7 @@ async function runAutoFacebookPost(request: Request) {
   ).toISOString();
   const { data: rawArticles, error: articleError } = await db
     .from("daily_articles")
-    .select("slug,title,category,featured_image_url,published_at,source_name,source_url,kind,is_breaking,score,content_quality_score,body_json")
+    .select("slug,title,category,featured_image_url,published_at,source_name,source_url,kind,is_breaking,score,content_quality_score,quality_flags,body_json")
     .not("featured_image_url", "is", null)
     .gte("published_at", cutoff)
     .order("published_at", { ascending: false })
