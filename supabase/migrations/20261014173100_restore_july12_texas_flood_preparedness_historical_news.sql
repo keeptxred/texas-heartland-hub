@@ -28,7 +28,7 @@ SELECT
  jsonb_build_object('href','/texas','kind','hub','label','Texas')
  ),
  'On July 12 Governor Abbott activated state emergency response resources ahead of forecasts for multi-region flash flooding; the announcement was a precautionary mobilization, not a casualty or damage report.', ARRAY['north-texas','central-texas','west-texas','south-texas','east-texas']::text[],
- 92, ARRAY['legacy_url_restored','official_source_restored','public_domain_image']::text[], 2,0
+ 92, ARRAY['legacy_url_restored','official_source_restored','public_domain_image']::text[], 1,0
 FROM canonical_identity c
 ON CONFLICT (slug) DO UPDATE SET
  category=EXCLUDED.category,title=EXCLUDED.title,dek=EXCLUDED.dek,
