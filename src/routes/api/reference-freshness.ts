@@ -88,8 +88,8 @@ function handler() {
     }),
     ...TEXAS_LEGISLATIVE_SEATS.map((seat) => {
       const slug = stateDistrictSlug(seat.chamber, seat.district);
-      const reviewed = seat.authority?.reviewedAt ?? "2026-07-31";
-      const due = dueDate(reviewed, DISTRICT_REVIEW_DAYS);
+      const reviewed = seat.authority?.reviewedAt ?? "";
+      const due = reviewed ? dueDate(reviewed, DISTRICT_REVIEW_DAYS) : new Date(0);
       return { kind: "state-district" as const, slug, path: `/districts/${slug}`, reviewed, reviewDays: DISTRICT_REVIEW_DAYS, dueAt: due.toISOString(), overdue: due.getTime() < now.getTime() };
     }),
   ].sort((a, b) => Date.parse(a.dueAt) - Date.parse(b.dueAt));
