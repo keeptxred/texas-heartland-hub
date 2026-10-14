@@ -8,6 +8,8 @@ export type IssueGuide = {
   slug: string;
   /** Set only after documented primary-source verification. */
   reviewedAt?: string;
+  /** Official source URLs actually checked during the dated review. */
+  reviewSourceUrls?: string[];
   category: string;
   title: string;
   dek: string;
