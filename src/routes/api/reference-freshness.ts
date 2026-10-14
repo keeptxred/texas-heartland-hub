@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { POLITICAL_SEARCH_GUIDES, type PoliticalSearchGuideCategory } from "@/data/political-search-guides";
 import { POLICY_TRACKERS } from "@/data/policy-trackers";
+import { issueGuides } from "@/data/issue-guides";
 import { LAW_TOPICS } from "@/data/law-topics";
 import { TEXAS_DATA_SETS } from "@/data/texas-data-catalog";
 import { ACCOUNTABILITY_DATA_SETS } from "@/data/accountability-data-catalog";
@@ -18,13 +19,14 @@ const POLITICAL_REVIEW_DAYS: Record<PoliticalSearchGuideCategory, number> = {
 };
 const POLICY_REVIEW_DAYS = 30;
 const LAW_REVIEW_DAYS = 90;
+const ISSUE_GUIDE_REVIEW_DAYS = 30;
 const DATA_REVIEW_DAYS = 90;
 const AGENCY_REVIEW_DAYS = 60;
 const DISTRICT_REVIEW_DAYS = 90;
 const REPRESENTATIVE_REVIEW_DAYS = 30;
 
 type FreshnessItem = {
-  kind: "political-reference" | "policy-tracker" | "law-topic" | "data-source-map" | "agency-authority" | "state-district" | "representative";
+  kind: "issue-guide" | "political-reference" | "policy-tracker" | "law-topic" | "data-source-map" | "agency-authority" | "state-district" | "representative";
   slug: string;
   path: string;
   reviewed: string;
@@ -69,6 +71,15 @@ function handler() {
       const due = dueDate(guide.updated, reviewDays);
       return { kind: "political-reference" as const, slug: guide.slug, path: `/texas-political-reference/${guide.slug}`, reviewed: guide.updated, reviewDays, dueAt: due.toISOString(), overdue: due.getTime() < now.getTime() };
     }),
+    ...issueGuides.map((guide) => ({
+      kind: "issue-guide" as const,
+      slug: guide.slug,
+      path: `/issues/${guide.slug}`,
+      reviewed: "",
+      reviewDays: ISSUE_GUIDE_REVIEW_DAYS,
+      dueAt: new Date(0).toISOString(),
+      overdue: true,
+    })),
     ...POLICY_TRACKERS.map((tracker) => {
       const due = dueDate(tracker.updated, POLICY_REVIEW_DAYS);
       return { kind: "policy-tracker" as const, slug: tracker.slug, path: `/policy/${tracker.slug}`, reviewed: tracker.updated, reviewDays: POLICY_REVIEW_DAYS, dueAt: due.toISOString(), overdue: due.getTime() < now.getTime() };
@@ -110,10 +121,12 @@ function handler() {
       politicalReference: POLITICAL_REVIEW_DAYS,
       policyTrackerDays: POLICY_REVIEW_DAYS,
       lawTopicDays: LAW_REVIEW_DAYS,
+      issueGuideDays: ISSUE_GUIDE_REVIEW_DAYS,
       dataSourceMapDays: DATA_REVIEW_DAYS,
       agencyAuthorityDays: AGENCY_REVIEW_DAYS,
       stateDistrictDays: DISTRICT_REVIEW_DAYS,
       representativeDays: REPRESENTATIVE_REVIEW_DAYS,
+      issueGuideReviewStatus: "Issue guides have no per-page review date in the current data model and are conservatively flagged unverified until source-review evidence is recorded.",
       note: "This endpoint identifies pages due for source review. It does not invent or auto-update facts; primary-source refresh remains required before changing dated claims.",
     },
     totalPages: items.length,
