@@ -279,7 +279,7 @@ export function CornerstoneGuidePage({ guide }: { guide: CornerstoneGuide }) {
 
       <div className="mt-8 space-y-5 font-serif text-base md:text-[17px] leading-8 text-foreground/95">
         {guide.intro.map((paragraph) => (
-          <p key={paragraph}>{renderGuideParagraph(paragraph, section.links)}</p>
+          <p key={paragraph}>{paragraph}</p>
         ))}
       </div>
 
