@@ -6,12 +6,14 @@ on:
     paths:
       - 'supabase/migrations/**'
       - 'scripts/news/validate-daily-news-migration.mjs'
+      - 'scripts/news/check-destructive-migrations.mjs'
       - '.github/workflows/daily-news-publication-verification.yml'
   push:
     branches: [main]
     paths:
       - 'supabase/migrations/**'
       - 'scripts/news/validate-daily-news-migration.mjs'
+      - 'scripts/news/check-destructive-migrations.mjs'
       - '.github/workflows/daily-news-publication-verification.yml'
   workflow_run:
     workflows: ['Apply Supabase Migrations']
@@ -35,6 +37,22 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.ref }}
+
+      - name: Refuse destructive published-news migrations
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/news/check-destructive-migrations.mjs --self-test
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            git fetch origin "${{ github.base_ref }}" --depth=1
+            RANGE="origin/${{ github.base_ref }}...HEAD"
+          elif [[ "${{ github.event_name }}" == "push" && "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]]; then
+            RANGE="${{ github.event.before }}..${{ github.sha }}"
+          else
+            RANGE="HEAD^..HEAD"
+          fi
+          mapfile -t changed < <(git diff --name-only --diff-filter=AM "$RANGE" -- 'supabase/migrations/*.sql' || true)
+          node scripts/news/check-destructive-migrations.mjs "${changed[@]}"
 
       - name: Find changed daily news migrations
         id: changed
