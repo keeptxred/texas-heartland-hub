@@ -81,6 +81,12 @@ const GOOGLE_NEWS_RE = /^(?:https:\/\/news\.google\.com\/rss\/search|https:\/\/f
 const GOOGLE_FEEDS_PER_RUN = 10;
 // Keep trigger-heavy feed writes below the production statement timeout.
 const INGEST_UPSERT_BATCH_SIZE = 20;
+// Existing-link lookups are read-only and indexed: group them more widely than
+// trigger-heavy INSERT batches to keep 1,000+ discovery rows within runtime.
+const INGEST_EXISTING_LINK_LOOKUP_BATCH_SIZE = 100;
+// Per-source deadline, including transient retries, prevents one stalled feed
+// from monopolizing an ingestion wave for 3 × 25 seconds.
+const SOURCE_FETCH_TOTAL_BUDGET_MS = 30_000;
 const ATTRIBUTION_BACKFILL_BATCH_SIZE = 20;
 const OFFICIAL_HYPERLOCAL_SOURCE_RE = /— CivicEngage$/i;
 const TEXAS_LOCATION_RE = /\b(texas|tx|amarillo|austin|beaumont|brownsville|college station|corpus christi|dallas|del rio|eagle pass|el paso|fort worth|galveston|harlingen|hereford|houston|killeen|laredo|longview|lubbock|mcallen|midland|odessa|san angelo|san antonio|temple|texarkana|tyler|victoria|waco|webb county|bexar county|harris county|tarrant county|travis county|denton county|collin county|rio grande valley|panhandle)\b/i;
@@ -236,7 +242,12 @@ function parseTexasStandardHtml(html: string): Item[] {
 async function fetchText(url: string, accept: string, maxAttempts = 3, timeoutMs = 25000): Promise<{ status: number; text: string | null; attempts: number; error?: string }> {
   let lastStatus = 0;
   let lastError = "request failed";
+  let attemptsMade = 0;
+  const startedAt = Date.now();
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const remainingMs = SOURCE_FETCH_TOTAL_BUDGET_MS - (Date.now() - startedAt);
+    if (remainingMs <= 0) break;
+    attemptsMade = attempt;
     try {
       const response = await fetch(url, {
         headers: {
@@ -246,7 +257,7 @@ async function fetchText(url: string, accept: string, maxAttempts = 3, timeoutMs
           "Cache-Control": "no-cache",
         },
         redirect: "follow",
-        signal: AbortSignal.timeout(timeoutMs),
+        signal: AbortSignal.timeout(Math.max(1, Math.min(timeoutMs, remainingMs))),
       });
       lastStatus = response.status;
       if (response.ok) return { status: response.status, text: await response.text(), attempts: attempt };
@@ -255,9 +266,13 @@ async function fetchText(url: string, accept: string, maxAttempts = 3, timeoutMs
     } catch (error) {
       lastError = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
     }
-    if (attempt < maxAttempts) await sleep(500 * attempt + Math.floor(Math.random() * 250));
+    if (attempt < maxAttempts) {
+      const retryDelayMs = 500 * attempt + Math.floor(Math.random() * 250);
+      if (Date.now() - startedAt + retryDelayMs >= SOURCE_FETCH_TOTAL_BUDGET_MS) break;
+      await sleep(retryDelayMs);
+    }
   }
-  return { status: lastStatus, text: null, attempts: maxAttempts, error: lastError };
+  return { status: lastStatus, text: null, attempts: attemptsMade, error: lastError };
 }
 
 async function mapWithConcurrency<T, R>(items: T[], limit: number, fn: (item: T) => Promise<R>): Promise<R[]> {
@@ -442,8 +457,13 @@ async function handler() {
   const direct = sources.filter((source) => !GOOGLE_NEWS_RE.test(source.url));
   const allGoogle = sources.filter((source) => GOOGLE_NEWS_RE.test(source.url));
   const google = rotateGoogleSources(allGoogle);
-  const directResults = await mapWithConcurrency(direct, 8, fetchSource);
-  const googleResults = await mapWithConcurrency(google, 4, fetchSource);
+  // Direct and supplemental Google fetches are independent. Running both waves
+  // together avoids a second full outbound wait while retaining the same full
+  // direct-source roster and rotating 10-feed supplemental coverage.
+  const [directResults, googleResults] = await Promise.all([
+    mapWithConcurrency(direct, 8, fetchSource),
+    mapWithConcurrency(google, 4, fetchSource),
+  ]);
   const results = [...directResults, ...googleResults];
   const unique = new Map<string, IngestRow>();
   const attributionGroups = new Map<string, string[]>();
@@ -468,8 +488,8 @@ async function handler() {
   if (rows.length > 0) {
     const existingLinks = new Set<string>();
     const attributionNeededLinks = new Set<string>();
-    for (let offset = 0; offset < rows.length; offset += INGEST_UPSERT_BATCH_SIZE) {
-      const linkBatch = rows.slice(offset, offset + INGEST_UPSERT_BATCH_SIZE).map((row) => row.link);
+    for (let offset = 0; offset < rows.length; offset += INGEST_EXISTING_LINK_LOOKUP_BATCH_SIZE) {
+      const linkBatch = rows.slice(offset, offset + INGEST_EXISTING_LINK_LOOKUP_BATCH_SIZE).map((row) => row.link);
       const { data: existingRows, error: existingError } = await supabaseAdmin
         .from("texas_news_feed")
         .select("link,trend_source")
