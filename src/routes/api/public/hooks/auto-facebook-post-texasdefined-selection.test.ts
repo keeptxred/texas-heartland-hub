@@ -37,11 +37,20 @@ describe("TexasDefined Facebook article selection", () => {
     expect(source).toContain("metadataTrafficScore(candidate, metadata)");
   });
 
+  it("requires indexable, descriptive, non-placeholder article cards", () => {
+    expect(source).toContain("title.trim().length < 24");
+    expect(source).toContain("description.trim().length < 80");
+    expect(source).toContain("noindex|none");
+    expect(source).toContain("placeholder");
+    expect(source).toContain("MAX_METADATA_ATTEMPTS = 72");
+    expect(source).toContain("[17 * 60 + 30, 20 * 60]");
+  });
+
   it("still enforces live Facebook duplicate and posting guards", () => {
     expect(source).toContain("fetchRecentFacebookPagePosts");
     expect(source).toContain("facebookPostMatchesArticle");
     expect(source).toContain("hardPostingGuard");
-    expect(source).toContain("MAX_DAILY_POSTS = 2");
-    expect(source).toContain("MIN_GAP_MINUTES = 180");
+    expect(source).toContain("MAX_DAILY_POSTS = 5");
+    expect(source).toContain("MIN_GAP_MINUTES = 75");
   });
 });
