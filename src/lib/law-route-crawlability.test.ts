@@ -7,6 +7,11 @@ const topics = readFileSync(new URL("../routes/laws_.topics.tsx", import.meta.ur
 const amendments = readFileSync(new URL("../routes/laws_.constitutional-amendments.tsx", import.meta.url), "utf8");
 const effectiveDates = readFileSync(new URL("../routes/laws_.effective-dates.tsx", import.meta.url), "utf8");
 
+// TanStack's generated route IDs retain non-nesting underscores; public URLs do not.
+function publicPath(source: string): string | undefined {
+  return source.match(/createFileRoute\(["']([^"']+)["']\)/)?.[1].replace(/_(?=\/)/g, "");
+}
+
 describe("crawl-safe law route hierarchy", () => {
   it("keeps /laws as an Outlet layout and the substantive hub on its exact index route", () => {
     expect(parent).toContain('createFileRoute("/laws")');
@@ -18,8 +23,8 @@ describe("crawl-safe law route hierarchy", () => {
     expect(index).toContain('href: `${SITE_URL}/laws`');
     expect(index).toContain('title="Texas Laws Explained:"');
 
-    expect(topics).toContain('createFileRoute("/laws/topics")');
-    expect(amendments).toContain("createFileRoute('/laws/constitutional-amendments')");
-    expect(effectiveDates).toContain("createFileRoute('/laws/effective-dates')");
+    expect(publicPath(topics)).toBe("/laws/topics");
+    expect(publicPath(amendments)).toBe("/laws/constitutional-amendments");
+    expect(publicPath(effectiveDates)).toBe("/laws/effective-dates");
   });
 });

@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { additionalMerchantImages } from "@/lib/merchant-offer-images";
 import { SITE_URL } from "@/lib/seo";
 import { getProducts, type Product, type ProductVariant } from "@/lib/products.functions";
 import { CartProvider, buildAddPayload, parseVariantSize, useCart } from "@/lib/cart-context";
@@ -122,6 +124,9 @@ function ProductOfferPage() {
   const title = seoTitle(product);
   const description = seoDescription(product);
   const image = offerImage(product, variant);
+  const gallery = [image, ...additionalMerchantImages(image, variant.images ?? [], (value) => value || "")];
+  const [activeImage, setActiveImage] = useState<string | null>(null);
+  const displayImage = activeImage && gallery.includes(activeImage) ? activeImage : image;
   const price = Number(variant.price || product.price);
   const currency = product.currency || "USD";
   const size = parseVariantSize(variant.title);
@@ -163,13 +168,13 @@ function ProductOfferPage() {
       </section>
 
       <section className="mx-auto grid max-w-[1200px] gap-10 px-6 pb-16 md:grid-cols-2">
-        <div className="aspect-square overflow-hidden rounded-2xl bg-muted">
+        <div><div className="aspect-square overflow-hidden rounded-2xl bg-muted">
           <img
-            src={image}
+            src={displayImage}
             alt={seoAlt(product, color)}
             className="h-full w-full object-cover"
           />
-        </div>
+        </div>{gallery.length > 1 && <div className="mt-3 grid grid-cols-4 gap-3" aria-label="Product image gallery">{gallery.map((src, index) => <button key={src} type="button" aria-label={`View product image ${index + 1}`} aria-pressed={displayImage === src} onClick={() => setActiveImage(src)} className="aspect-square overflow-hidden rounded-lg border border-border focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"><img src={src} alt="" loading="lazy" className="size-full object-contain" /></button>)}</div>}</div>
 
         <div className="flex flex-col">
           <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-primary">
@@ -218,7 +223,7 @@ function ProductOfferPage() {
             "@type": "Product",
             name: `${title} - ${variant.title}`,
             description,
-            image,
+            image: gallery,
             url,
             sku,
             mpn: sku,
