@@ -6,7 +6,7 @@ import { getRelatedAuthorityContent } from "@/lib/authority-relationships";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 import { isGovernmentEntityIndexable } from "@/lib/government-entity-indexability";
 import { getPublicationGovernmentEntity } from "@/lib/government-entity-publication";
-import { GOVERNMENT_REVIEWED_AT, getGovernmentEntity, governmentJsonLd, governmentPath, SITE_URL, type GovernmentLink } from "@/lib/texas-government";
+import { getGovernmentEntity, governmentJsonLd, governmentPath, governmentReviewedAt, SITE_URL, type GovernmentLink } from "@/lib/texas-government";
 import {
   TexasFifteenthCourtAuthorityPage,
   texasFifteenthCourtAuthorityHead,
@@ -111,7 +111,7 @@ function GovernmentEntityPage() {
           <RelatedAuthorityContent items={scoredRelated} title="Related bills, elections, districts, and news" />
         </main>
         <aside className="space-y-6">
-          <section className="rounded-xl border bg-card p-5"><h2 className="font-bold">At a glance</h2><dl className="mt-4 space-y-3 text-sm"><Info label="Branch" value={entity.branch}/><Info label="Type" value={entity.entityType}/><Info label="Current leader" value={entity.currentOfficeholder}/><Info label="Authority reviewed" value={new Date(`${GOVERNMENT_REVIEWED_AT}T12:00:00`).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}/></dl></section>
+          <section className="rounded-xl border bg-card p-5"><h2 className="font-bold">At a glance</h2><dl className="mt-4 space-y-3 text-sm"><Info label="Branch" value={entity.branch}/><Info label="Type" value={entity.entityType}/><Info label="Current leader" value={entity.currentOfficeholder}/><Info label="Authority reviewed" value={new Date(`${governmentReviewedAt(entity)}T12:00:00`).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}/></dl></section>
           <section className="rounded-xl border bg-card p-5"><h2 className="font-bold">Official information</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Verify time-sensitive leadership, orders, rules and meeting information with the responsible Texas government source.</p><a href={entity.officialUrl} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-primary hover:underline">Visit official website <ExternalLink className="h-4 w-4"/></a></section>
           <section className="rounded-xl border bg-muted/30 p-5"><h2 className="font-bold">Explore Texas government</h2><div className="mt-3 space-y-2 text-sm"><a href="/texas-government" className="block font-semibold text-primary hover:underline">All government entities</a><a href="/representatives" className="block font-semibold text-primary hover:underline">Texas representatives</a><a href="/elections/2026" className="block font-semibold text-primary hover:underline">Texas elections</a><a href="/bills" className="block font-semibold text-primary hover:underline">Texas bills</a><a href="/laws" className="block font-semibold text-primary hover:underline">Texas laws</a></div></section>
         </aside>

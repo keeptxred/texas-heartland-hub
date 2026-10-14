@@ -260,7 +260,7 @@ export const REPRESENTATIVE_AUTHORITY: RepresentativeAuthority[] = [
         url: "https://comptroller.texas.gov/",
       },
       {
-        label: "Incoming comptroller appointment announcement",
+        label: "Governor appointment announcement",
         url: "https://comptroller.texas.gov/about/media-center/news/20260801-don-huffines-sworn-in-as-texas-comptroller-refuses-salary-calls-for-property-tax-relief-1785512488796",
       },
       {

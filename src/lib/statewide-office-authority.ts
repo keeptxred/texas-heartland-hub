@@ -1,6 +1,6 @@
 import {
   GOVERNMENT_ENTITIES,
-  GOVERNMENT_REVIEWED_AT,
+  governmentReviewedAt,
   type GovernmentEntity,
 } from '@/lib/texas-government';
 import {
@@ -27,7 +27,7 @@ export function statewideOfficeToAuthorityEntity(
     slug: office.slug,
     name: office.name,
     active: true,
-    lastVerified: GOVERNMENT_REVIEWED_AT,
+    lastVerified: governmentReviewedAt(office),
     sourceOfTruth: {
       label: `${office.shortName} official website`,
       url: office.officialUrl,

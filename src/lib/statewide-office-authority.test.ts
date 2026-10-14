@@ -23,6 +23,14 @@ describe('statewide office authority adapter', () => {
     expect(authority.sourceOfTruth?.url).toBe(governor!.officialUrl);
   });
 
+  it('uses an entity-specific review date when an office has been reverified independently', () => {
+    const comptroller = GOVERNMENT_ENTITIES.find((entity) => entity.slug === 'comptroller');
+    expect(comptroller).toBeDefined();
+
+    const authority = statewideOfficeToAuthorityEntity(comptroller!);
+    expect(authority.lastVerified).toBe('2026-10-13');
+  });
+
   it('only exports government entities classified as offices', () => {
     expect(STATEWIDE_OFFICE_AUTHORITY_ENTITIES.length).toBeGreaterThan(0);
     expect(
