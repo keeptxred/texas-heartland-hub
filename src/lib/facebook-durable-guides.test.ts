@@ -20,12 +20,12 @@ function eligiblePillarArticles(now = new Date()) {
 }
 
 describe("KTR durable Facebook content pool", () => {
-  it("includes every production-indexable guide without an age cutoff", () => {
+  it("does not substitute a generic OG image for any supporting guide", () => {
     const candidateUrls = new Set(KTR_DURABLE_FACEBOOK_GUIDES.map((candidate) => candidate.url));
     const expected = Object.values(ALL_GUIDES).filter(isSupportingGuideIndexable);
     expect(expected.length).toBeGreaterThan(0);
     for (const guide of expected) {
-      expect(candidateUrls.has(durableGuideCanonicalUrl(guide.slug))).toBe(true);
+      expect(candidateUrls.has(durableGuideCanonicalUrl(guide.slug))).toBe(false);
     }
   });
 
@@ -38,12 +38,12 @@ describe("KTR durable Facebook content pool", () => {
     }
   });
 
-  it("includes production-indexable issue guides regardless of age", () => {
+  it("does not pad the feed with generic issue-guide thumbnails", () => {
     const candidateUrls = new Set(KTR_DURABLE_FACEBOOK_GUIDES.map((candidate) => candidate.url));
     const expected = issueGuides.filter(isIssueGuideIndexable);
     expect(expected.length).toBeGreaterThan(0);
     for (const guide of expected) {
-      expect(candidateUrls.has(`https://keeptxred.com/issues/${encodeURIComponent(guide.slug)}`)).toBe(true);
+      expect(candidateUrls.has(`https://keeptxred.com/issues/${encodeURIComponent(guide.slug)}`)).toBe(false);
     }
   });
 
