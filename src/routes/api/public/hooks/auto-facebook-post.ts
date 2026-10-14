@@ -234,7 +234,7 @@ async function runAutoFacebookPost(request: Request) {
   );
 
   if (articles.length === 0) {
-    return durableFallback(`No eligible articles newer than ${MAX_AUTO_FACEBOOK_ARTICLE_AGE_DAYS} days`);
+    return durableFallback(`No eligible articles newer than ${MAX_FACEBOOK_NEWS_AGE_DAYS} days`);
   }
 
   const urls = articles.map(articleUrl);
