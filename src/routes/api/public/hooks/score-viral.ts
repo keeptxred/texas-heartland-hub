@@ -11,6 +11,7 @@ import {
 import { applyTrustedDiscoveryReviewFloor } from "@/lib/discovery-provenance-reputation";
 import { isLowValueTitle } from "@/lib/low-value-titles";
 import { shouldAttemptKtrAutoPublish } from "@/lib/ktr-auto-publish-selection";
+import { isFreshForAutoPublication, mergeScoringRows } from "@/lib/viral-score-backfill";
 import { publishSingleFeedItem } from "./ingest-feeds";
 
 const DISCOVERY_FEEDS = [
@@ -208,16 +209,23 @@ async function scoreRecent(request: Request) {
 
   const discovery = await ingestDiscoveryFeeds(supabase);
 
+  // Reserve part of the existing 300-row scoring budget for never-scored
+  // stories. A latest-first-only window permanently starves late-arriving
+  // direct agency releases and other verified news at normal feed volume.
   const sinceIso = new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString();
-  const { data, error } = await supabase
-    .from("texas_news_feed")
-    .select("id,title,source,trend_source,link,pub_date,description,viral_score,classification_confidence,viral_signals,texas_relevance_score,source_reputation_score,routing_type,trend_velocity,source_count,ready_for_rewrite,internal_slug,target_site")
-    .gte("pub_date", sinceIso)
-    .order("pub_date", { ascending: false })
-    .limit(300);
+  const backfillSinceIso = new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString();
+  const columns = "id,title,source,trend_source,link,pub_date,description,viral_score,classification_confidence,viral_signals,texas_relevance_score,source_reputation_score,routing_type,trend_velocity,source_count,ready_for_rewrite,internal_slug,target_site,viral_scored_at";
+  const [{ data: recentData, error: recentError }, { data: backfillData, error: backfillError }] = await Promise.all([
+    supabase.from("texas_news_feed").select(columns)
+      .gte("pub_date", sinceIso).order("pub_date", { ascending: false }).limit(230),
+    supabase.from("texas_news_feed").select(columns)
+      .gte("pub_date", backfillSinceIso).is("viral_scored_at", null)
+      .order("pub_date", { ascending: false }).limit(70),
+  ]);
 
+  const error = recentError ?? backfillError;
   if (error) return json({ ok: false, error: error.message, ingest, discovery }, 500);
-  const rows = (data ?? []) as Array<{
+  const rows = mergeScoringRows(recentData ?? [], backfillData ?? []) as Array<{
     id: number;
     title: string;
     source: string;
@@ -236,6 +244,7 @@ async function scoreRecent(request: Request) {
     ready_for_rewrite: boolean | null;
     internal_slug: string | null;
     target_site: string | null;
+    viral_scored_at: string | null;
   }>;
 
   const { data: srcs } = await supabase
@@ -335,7 +344,7 @@ async function scoreRecent(request: Request) {
     if (readyForRewrite) readyFlagged += 1;
     if (autoPublish) autoPublishFlagged += 1;
     if (persistedEditorialLane === "REVIEW") reviewFlagged += 1;
-    if (shouldAttemptKtrAutoPublish({
+    if (isFreshForAutoPublication(row.pub_date) && shouldAttemptKtrAutoPublish({
       eligible: autoPublish,
       targetSite: row.target_site,
       internalSlug: row.internal_slug,
@@ -357,6 +366,7 @@ async function scoreRecent(request: Request) {
       post_rewrite_review_required: postRewriteReviewRequired,
     };
     const unchanged =
+      Boolean(row.viral_scored_at) &&
       row.viral_score === result.viralScore &&
       row.classification_confidence === result.classificationConfidence &&
       row.texas_relevance_score === result.texasRelevanceScore &&
