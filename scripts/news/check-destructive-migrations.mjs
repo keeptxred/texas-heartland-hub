@@ -15,7 +15,7 @@ export function removeComments(sql) {
 export function unsafeStatements(sql) {
   const cleaned = removeComments(sql);
   // Match across newlines and quoting. Include unqualified table names.
-  const pattern = /\b(?:delete\s+from|truncate\s+(?:table\s+)?|drop\s+table\s+(?:if\s+exists\s+)?)(?:(?:"?public"?\s*\.\s*)?)"?daily_articles"?(?=\s|;|,|$)/gi;
+  const pattern = /\b(?:delete\s+from|truncate(?:\s+table)?|drop\s+table(?:\s+if\s+exists)?)\s+(?:only\s+)?(?:"?public"?\s*\.\s*)?"?daily_articles"?(?=\s|;|,|$)/gi;
   return [...cleaned.matchAll(pattern)].map((m) => m[0].replace(/\s+/g, " ").trim());
 }
 
@@ -23,6 +23,7 @@ if (process.argv.includes("--self-test")) {
   assert.deepEqual(unsafeStatements("DELETE FROM public.daily_articles WHERE kind='news';").length, 1);
   assert.deepEqual(unsafeStatements("delete \n from \n \"public\".\"daily_articles\";").length, 1);
   assert.deepEqual(unsafeStatements("TRUNCATE TABLE daily_articles;").length, 1);
+  assert.deepEqual(unsafeStatements("DELETE FROM ONLY public.daily_articles;").length, 1);
   assert.deepEqual(unsafeStatements("DROP TABLE IF EXISTS public.daily_articles;").length, 1);
   assert.deepEqual(unsafeStatements("-- DELETE FROM public.daily_articles\n SELECT 1;"), []);
   assert.deepEqual(unsafeStatements("/* DROP TABLE daily_articles */ UPDATE public.daily_articles SET title = 'ok'").length, 0);
