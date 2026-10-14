@@ -215,7 +215,7 @@ async function checkRecoveredHistoricalNewsUrls() {
       throw new Error(`historical news canonical mismatch: ${path} expected ${expected}, got ${canonical || "missing"}`);
     }
     const socialImage = extractMeta(html, "og:image") || extractMeta(html, "twitter:image");
-    if (!socialImage || /\\.svg(?:[?#].*)?$/i.test(socialImage)) {
+    if (!socialImage || /\.svg(?:[?#].*)?$/i.test(socialImage)) {
       throw new Error(`restored news ${path} has missing or invalid raster social image`);
     }
     console.log(`OK restored news URL ${path} HTTP 200 canonical=${canonical}`);
