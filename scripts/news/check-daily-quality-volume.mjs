@@ -117,10 +117,14 @@ if (process.argv.includes("--self-test")) {
   if (!key) throw new Error("Missing Supabase credential; daily output NOT verified");
   const day = process.env.CHECK_DAY || centralDate(new Date(Date.now() - 24 * 60 * 60 * 1000));
   if (!/^20\d{2}-\d{2}-\d{2}$/.test(day)) throw new Error("Invalid Central date");
-  const cutoff = new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString();
+  // Bound the query around the requested Central calendar day, including
+  // daylight-saving transitions. Manual checks can inspect historical dates.
+  const dayUtc = Date.parse(`${day}T00:00:00Z`);
+  const cutoff = new Date(dayUtc - 24 * 60 * 60 * 1000).toISOString();
+  const through = new Date(dayUtc + 2 * 24 * 60 * 60 * 1000).toISOString();
   const endpoint = new URL(`https://${PROJECT}.supabase.co/rest/v1/daily_articles`);
   endpoint.searchParams.set("select", "slug,published_at,kind,author,body,body_json,source_url,quality_flags");
-  endpoint.searchParams.set("published_at", `gte.${cutoff}`);
+  endpoint.searchParams.set("and", `(published_at.gte.${cutoff},published_at.lt.${through})`);
   endpoint.searchParams.set("kind", "eq.news");
   endpoint.searchParams.set("limit", "1000");
   const response = await fetch(endpoint, {
