@@ -41,6 +41,9 @@ const DIRECT_SOURCES: Source[] = [
   { name: "Texas Secretary of State", url: "https://www.sos.state.tx.us/rss/press.xml", mode: "rss" },
   { name: "Texas Register", url: "https://www.sos.state.tx.us/texreg/texreg.xml", mode: "rss" },
   { name: "Texas Comptroller", url: "https://public.govdelivery.com/topics/TXCOMPT_1/feed.rss", mode: "rss" },
+  // Canonical first-party releases are necessary: Google News RSS wrappers
+  // have neither a reliable primary URL nor enough text for quality preflight.
+  { name: "Texas Comptroller of Public Accounts", url: "https://comptroller.texas.gov/about/media-center/news/", category: "Politics", mode: "html-links", include: "^/about/media-center/news/20\\d{6}-" },
   { name: "UIL Press Releases", url: "https://feeds.feedburner.com/uil-press-releases", category: "Sports", mode: "rss" },
   { name: "Texas Parks & Wildlife", url: "https://tpwd.texas.gov/newsmedia/releases/", category: "Non-Political", mode: "tpwd-html" },
   { name: "Texas Monthly", url: "https://www.texasmonthly.com/feed/", category: "Non-Political", mode: "rss" },
@@ -171,11 +174,26 @@ function parseHtmlLinks(html: string, source: Source): Item[] {
     if (source.texasOnly && !TEXAS_LOCATION_RE.test(`${title} ${parsed.pathname}`)) continue;
     const cleanLink = `${parsed.origin}${parsed.pathname}${parsed.search}`;
     if (seen.has(cleanLink)) continue;
+
+    let publishDate = new Date().toISOString();
+    if (source.name === "Texas Comptroller of Public Accounts") {
+      // The index lists years of releases; only ingest fresh stories, and use
+      // their actual YYYYMMDD permalink date rather than today's crawl date.
+      const datedPath = parsed.pathname.match(/^\/about\/media-center\/news\/(20\d{2})(\d{2})(\d{2})-[^/]+\/?$/i);
+      if (!datedPath) continue;
+      const ymd = `${datedPath[1]}-${datedPath[2]}-${datedPath[3]}`;
+      const releaseDate = new Date(`${ymd}T12:00:00Z`);
+      if (Number.isNaN(releaseDate.getTime()) || releaseDate.toISOString().slice(0, 10) !== ymd) continue;
+      const age = Date.now() - releaseDate.getTime();
+      if (age > 21 * 86_400_000 || age < -2 * 86_400_000) continue;
+      publishDate = releaseDate.toISOString();
+    }
+
     seen.add(cleanLink);
     out.push({
       title: title.slice(0, 500),
       link: cleanLink,
-      pub_date: new Date().toISOString(),
+      pub_date: publishDate,
       source: source.name,
       description: `${source.name}: ${title}`.slice(0, 1200),
     });
