@@ -189,6 +189,53 @@ async function checkCrossSiteBoundary() {
   console.log(`OK cross-site boundary collisions=0 canyonKTRDuplicates=0 canyonTDSlug=${payload.canyonTexasDefinedSlug}`);
 }
 
+// Prevent historically published URLs from disappearing silently again.
+// This exercises the REAL rendered routes and canonical 301, not just the
+// article registry or database row. Use only known sourced restorations with
+// visually ready media; image-blocked historical pages remain separately held.
+async function checkRecoveredHistoricalNewsUrls() {
+  const recovered = [
+    "live-2026-07-02-governor-abbott-selects-don-huffines-to-serve-as-new-texas-comptroller-whlu3f",
+    "live-2026-07-03-ut-arlington-engineers-secure-4-million-to-build-next-generation-flood-wfaa2n",
+    "live-2026-06-28-governor-abbott-announces-more-than-22-million-in-grants-for-electric--tcj84y",
+  ];
+  for (const slug of recovered) {
+    const path = `/news/${slug}`;
+    const response = await fetchWithTimeout(`${baseUrl}${path}`, {
+      redirect: "manual",
+      headers: { Accept: "text/html", "User-Agent": "KeepTXRed-Historical-News-Smoke/1.0" },
+    }, 30000);
+    const html = await response.text();
+    if (response.status !== 200 || /article not found|page not found|404 not found/i.test(html)) {
+      throw new Error(`recovered news URL ${path} returned HTTP ${response.status} or a not-found body`);
+    }
+    const canonical = extractCanonical(html);
+    const expected = `https://keeptxred.com${path}`;
+    if (canonical !== expected) {
+      throw new Error(`historical news canonical mismatch: ${path} expected ${expected}, got ${canonical || "missing"}`);
+    }
+    const socialImage = extractMeta(html, "og:image") || extractMeta(html, "twitter:image");
+    if (!socialImage || /\.svg(?:[?#].*)?$/i.test(socialImage)) {
+      throw new Error(`restored news ${path} has missing or invalid raster social image`);
+    }
+    console.log(`OK restored news URL ${path} HTTP 200 canonical=${canonical}`);
+  }
+
+  const oldSlug = "live-2026-07-06-toyota-increases-san-antonio-footprint-with-massive-three-billion-doll-z2yvzl";
+  const newSlug = "live-2026-07-09-toyota-bolsters-san-antonio-manufacturing-footprint-with-major-tacoma--6ik2im";
+  const oldUrl = `${baseUrl}/news/${oldSlug}`;
+  const redirectResponse = await fetchWithTimeout(oldUrl, {
+    redirect: "manual",
+    headers: { "User-Agent": "KeepTXRed-Historical-News-Smoke/1.0" },
+  }, 30000);
+  const redirectLocation = redirectResponse.headers.get("location") || "";
+  const resolved = new URL(redirectLocation || oldUrl, oldUrl);
+  if (redirectResponse.status !== 301 || resolved.pathname !== `/news/${newSlug}`) {
+    throw new Error(`missing legacy Toyota 301: HTTP ${redirectResponse.status} location=${redirectLocation || "missing"}`);
+  }
+  console.log(`OK historical Toyota canonical 301 ${oldSlug} -> ${newSlug}`);
+}
+
 async function checkIngestion() {
   const startedAt = Date.now();
   let response;
@@ -230,6 +277,7 @@ for (const [label, check] of [
   ["coverage gaps admin route", () => retry("coverage gaps admin route", () => checkProtectedAdminRoute("/admin/coverage-gaps"))],
   ["deployment fingerprint", () => retry("deployment fingerprint", checkDeploymentFingerprint)],
   ["newsroom-health endpoint", () => retry("newsroom-health endpoint", checkNewsroomHealth)],
+  ["verified historical news URL recovery", checkRecoveredHistoricalNewsUrls],
   ["feed ingestion", checkIngestion],
   ["TexasDefined routed publication", () => retry("TexasDefined routed publication", checkTexasDefinedLive, 10, 30000)],
   ["cross-site publication boundary", () => retry("cross-site publication boundary", checkCrossSiteBoundary, 10, 30000)],
