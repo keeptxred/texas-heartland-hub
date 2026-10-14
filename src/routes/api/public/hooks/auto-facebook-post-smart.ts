@@ -102,9 +102,8 @@ async function runSmartKtrFacebookPost(request: Request): Promise<Response> {
   }
 
   const mode = request.headers.get("x-ktr-facebook-mode")?.trim().toLowerCase() || "scheduled";
-  // Manual workflow dispatch retains the existing article/guide behavior. The
-  // attention mix is only used by scheduled runs so manual publication remains
-  // predictable for operators.
+  // Manual dispatch goes straight to vetted article/guide publishing.
+  // Scheduled runs never create standalone question prompts as filler.
   if (mode === "manual") return forwardArticlePost(token);
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
