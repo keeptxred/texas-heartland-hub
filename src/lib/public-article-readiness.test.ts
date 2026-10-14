@@ -31,16 +31,25 @@ describe("public article readiness floor", () => {
     expect(isPublicArticleReady(base)).toBe(true);
   });
 
-  it("requires governed image state when image fields were loaded", () => {
-    expect(hasGovernedPublicArticleImage({
+  it("keeps editorial publication independent of image readiness", () => {
+    const readyImage = {
       ...base,
       image_url: "/api/public/article-image/example.jpg",
       featured_image_url: "/api/public/article-image/example.jpg",
       image_generation_status: "ready",
-    })).toBe(true);
-    expect(isPublicArticleReady({ ...base, image_url: null, featured_image_url: null, image_generation_status: "pending" })).toBe(false);
-    expect(isPublicArticleReady({ ...base, image_url: "/story.jpg", featured_image_url: "/story.jpg", image_generation_status: "failed" })).toBe(false);
-    expect(isPublicArticleReady({ ...base, image_url: "/og/default.jpg", featured_image_url: "/og/default.jpg", image_generation_status: "ready" })).toBe(false);
+    };
+    const pendingImage = { ...base, image_url: null, featured_image_url: null, image_generation_status: "pending" };
+    const failedImage = { ...base, image_url: "/story.jpg", featured_image_url: "/story.jpg", image_generation_status: "failed" };
+    const brandedFallback = { ...base, image_url: "/og/default.jpg", featured_image_url: "/og/default.jpg", image_generation_status: "ready" };
+    expect(hasGovernedPublicArticleImage(readyImage)).toBe(true);
+    expect(hasGovernedPublicArticleImage(pendingImage)).toBe(false);
+    expect(hasGovernedPublicArticleImage(failedImage)).toBe(false);
+    expect(hasGovernedPublicArticleImage(brandedFallback)).toBe(false);
+    expect(isPublicArticleReady(readyImage)).toBe(true);
+    expect(isPublicArticleReady(pendingImage)).toBe(true);
+    expect(isPublicArticleReady(failedImage)).toBe(true);
+    expect(isPublicArticleReady(brandedFallback)).toBe(true);
+    expect(isPublicArticleReady({ ...pendingImage, quality_flags: ["seo_noindex"] })).toBe(false);
   });
 
   it("blocks Non-Political taxonomy until it is corrected", () => {
