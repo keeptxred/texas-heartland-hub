@@ -7,6 +7,13 @@ on:
     # owns its separate Facebook engagement schedule in keeptxred/TexasDefined.
     - cron: "0,30 12-23 * * *"
     - cron: "0,30 0-4 * * *"
+  # Recover when GitHub drops or delays nominal half-hour cron triggers.
+  # This already-scheduled newsroom completes roughly every four hours.
+  # The Facebook article windows, cap, gap and duplicate checks still apply.
+  workflow_run:
+    workflows: ["Run Daily News Now"]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -46,7 +53,7 @@ jobs:
           fi
 
           mode="scheduled"
-          if [[ "${GITHUB_EVENT_NAME}" != "schedule" ]]; then
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
             mode="manual"
           fi
 
@@ -286,7 +293,7 @@ jobs:
 
   texasdefined_articles:
     name: Publish TexasDefined editorial article
-    if: github.event_name == 'schedule'
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_run'
     runs-on: ubuntu-latest
     timeout-minutes: 12
     env:
