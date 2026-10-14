@@ -18,6 +18,8 @@ const bucketName = 'shared-postgres-cold-archives';
 const MAX_UPLOAD_BYTES = 45_000_000;
 const MAX_ARCHIVE_BATCHES_PER_OBJECT = 40;
 const FETCH_CONCURRENCY = 6;
+const ARTICLE_SNAPSHOT_PAGE_SIZE = 500;
+const MAX_ARTICLE_SNAPSHOT_ROWS = 50_000;
 const LIST_PAGE_SIZE = 100;
 if (!serviceKey) throw new Error('Supabase service-role key not configured.');
 if (new URL(apiURL).origin !== 'https://ftkznprjljkhymknvhye.supabase.co') {
@@ -124,6 +126,82 @@ function verifyArchiveBlob(gzipData, metadataChunk) {
   return rows;
 }
 
+// Keep an immutable copy of the *entire* published-article table in PRIVATE
+// object storage. Historical URL and editorial-copy loss preceded the 2026
+// deletion archive, so saving only deleted-row logs cannot recover those cases.
+// This operation is export-only; it never edits or removes database records.
+async function readSnapshotTable(table, key) {
+  const rows = [];
+  for (let offset = 0; offset < MAX_ARTICLE_SNAPSHOT_ROWS; offset += ARTICLE_SNAPSHOT_PAGE_SIZE) {
+    const {data, error} = await db.from(table)
+      .select('*')
+      .order(key, {ascending: true})
+      .range(offset, offset + ARTICLE_SNAPSHOT_PAGE_SIZE - 1);
+    if (error) throw new Error(table + ' recovery snapshot read failed: ' + (error.code || error.message));
+    if (!Array.isArray(data)) throw new Error(table + ' recovery snapshot response is invalid.');
+    rows.push(...data);
+    if (data.length < ARTICLE_SNAPSHOT_PAGE_SIZE) break;
+  }
+  if (rows.length >= MAX_ARTICLE_SNAPSHOT_ROWS ||
+      new Set(rows.map(row => String(row[key]))).size !== rows.length ||
+      rows.some(row => row[key] == null)) {
+    throw new Error(table + ' recovery snapshot exceeded limit or contains missing/duplicate keys.');
+  }
+  return rows;
+}
+async function snapshotPublishedArticles() {
+  const [articles, deletedArticles, registeredUrls, redirects] = await Promise.all([
+    readSnapshotTable('daily_articles', 'slug'),
+    readSnapshotTable('daily_article_archive', 'archive_id'),
+    readSnapshotTable('article_url_registry', 'slug'),
+    readSnapshotTable('article_slug_redirects', 'old_slug'),
+  ]);
+  if (!articles.length ||
+      articles.some(row => !row.body_json || !row.title) ||
+      registeredUrls.length < articles.length) {
+    throw new Error('Published article recovery snapshot is incomplete.');
+  }
+  const day = new Date().toISOString().slice(0,10);
+  const snapshot = {
+    schema_version: 2,
+    project: 'ftkznprjljkhymknvhye',
+    snapshot_day_utc: day,
+    tables: {
+      'public.daily_articles': articles,
+      'public.daily_article_archive': deletedArticles,
+      'public.article_url_registry': registeredUrls,
+      'public.article_slug_redirects': redirects,
+    },
+    record_counts: {
+      'public.daily_articles': articles.length,
+      'public.daily_article_archive': deletedArticles.length,
+      'public.article_url_registry': registeredUrls.length,
+      'public.article_slug_redirects': redirects.length,
+    },
+  };
+  const raw = Buffer.from(JSON.stringify(snapshot) + '\n');
+  const zipped = gzipSync(raw, {level: 9});
+  if (zipped.length > MAX_UPLOAD_BYTES) {
+    throw new Error('Article recovery snapshot exceeds the private Storage object limit.');
+  }
+  const path = 'postgres-cold/' + day + '/published-article-recovery-' + sha256(zipped) + '.json.gz';
+  const verified = await storeAndReadBack(path, zipped, 'application/gzip');
+  const reopened = JSON.parse(gunzipSync(verified).toString('utf8'));
+  if (reopened.project !== snapshot.project || reopened.schema_version !== 2 ||
+      sha256(Buffer.from(JSON.stringify(reopened.tables))) !==
+        sha256(Buffer.from(JSON.stringify(snapshot.tables))) ||
+      sha256(Buffer.from(JSON.stringify(reopened.record_counts))) !==
+        sha256(Buffer.from(JSON.stringify(snapshot.record_counts)))) {
+    throw new Error('Private published article/URL recovery snapshot readback failed.');
+  }
+  console.log('Verified immutable private recovery snapshot: ' + articles.length +
+    ' published articles, ' + deletedArticles.length + ' deleted-row archives, ' +
+    registeredUrls.length + ' registered URLs, ' + redirects.length + ' redirects, ' +
+    zipped.length + ' compressed bytes. No database rows deleted.');
+}
+await ensurePrivateBucket();
+await snapshotPublishedArticles();
+
 const metadata = await listMetadata();
 if (!metadata.length) {
   console.log('No private archives exist; no export needed.');
@@ -146,7 +224,6 @@ for (const row of metadata) {
   if (!grouped.has(row.archive_kind)) grouped.set(row.archive_kind, []);
   grouped.get(row.archive_kind).push(row);
 }
-await ensurePrivateBucket();
 const manifest = {
   project: 'ftkznprjljkhymknvhye',
   created_at: new Date().toISOString(),
