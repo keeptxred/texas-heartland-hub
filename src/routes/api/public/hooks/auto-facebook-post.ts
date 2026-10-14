@@ -3,6 +3,7 @@ import { meetsArticleMainWordCount } from "@/lib/article-length";
 import { publishDurableFacebookGuideFallback } from "@/lib/facebook-durable-guide-publisher.server";
 import {
   rankFacebookCandidates,
+  MAX_FACEBOOK_NEWS_AGE_DAYS,
   type RecentFacebookPost,
 } from "@/lib/facebook-editorial-selection";
 import {
@@ -21,7 +22,6 @@ const OIDC_AUDIENCE = "keeptxred-facebook";
 const REPOSITORY = "keeptxred/texas-heartland-hub";
 const WORKFLOW_PATH = ".github/workflows/auto-facebook-posts.yml";
 const SITE_URL = "https://keeptxred.com";
-const MAX_AUTO_FACEBOOK_ARTICLE_AGE_DAYS = 5;
 const MIN_EDITORIAL_QUALITY_SCORE = 72;
 const MAX_CANDIDATES = 160;
 const MAX_ATTEMPTS = 12;
@@ -212,7 +212,7 @@ async function runAutoFacebookPost(request: Request) {
   }
 
   const cutoff = new Date(
-    Date.now() - MAX_AUTO_FACEBOOK_ARTICLE_AGE_DAYS * 24 * 60 * 60 * 1000,
+    Date.now() - MAX_FACEBOOK_NEWS_AGE_DAYS * 24 * 60 * 60 * 1000,
   ).toISOString();
   const { data: rawArticles, error: articleError } = await db
     .from("daily_articles")
