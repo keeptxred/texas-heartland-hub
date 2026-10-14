@@ -5,6 +5,7 @@ on:
     workflows:
       - "Deploy verified KeepTXRed to Cloudflare"
       - "Deploy KeepTXRed to Cloudflare Workers"
+      - "Ensure Cloudflare Production Matches Main"
     types: [completed]
     branches: [main]
   workflow_dispatch:
