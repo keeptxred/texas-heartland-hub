@@ -40,6 +40,18 @@ describe("stored hero Wikimedia audit derivatives", () => {
     expect(route).toContain("Historical rows can still carry a canonical hero");
   });
 
+  it("does not run long Cloudflare generation retries inside the hero audit", () => {
+    // A full generated-image attempt may take longer than the 180-second
+    // workflow request and leave a stale generating lease. The separate
+    // recovery workflow owns generation and its safety/quotas.
+    expect(route).not.toContain("generateFeaturedImageForSlugDirect");
+    expect(route).toContain('image_generation_status: "failed"');
+    expect(route).toContain("eligibleForBacklogRecovery: repair");
+    expect(route).toContain("stored-cloudflare-vision-");
+    expect(route).toContain("image_requires_visual_validation");
+    expect(route).toContain("image_candidate_url: candidate");
+  });
+
   it("does not let Commons metadata weaken the strict data-center visual rule", () => {
     expect(readiness).toContain("A plain brick, office-like, residential-looking, warehouse-like, or windowless building exterior with no visible data-center infrastructure does not qualify");
     expect(readiness).toContain("filename, caption, source page, or metadata identifies it as a data center");
