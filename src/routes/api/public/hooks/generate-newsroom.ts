@@ -26,6 +26,10 @@ import {
 const SITE = "keeptxred";
 const STANDARD_MIN_SOURCE_EVIDENCE_CHARS = 5_000;
 const LONG_FORM_MIN_SOURCE_EVIDENCE_CHARS = 9_000;
+// Match the 500-candidate packet-building pool without constructing oversized
+// PostgREST .in() filters or fetching all research packets at once.
+const NEWSROOM_PUBLISH_SCAN_LIMIT = 500;
+const NEWSROOM_CANDIDATE_BATCH_SIZE = 100;
 const OIDC_AUDIENCE = "keeptxred-newsroom";
 const REPOSITORY = "keeptxred/texas-heartland-hub";
 const PRODUCTION_WORKFLOW_PATH = ".github/workflows/run-daily-news-now.yml";
@@ -173,98 +177,152 @@ async function handler({ request }: { request: Request }) {
   const { data: candidateData, error: candidateError } = await db
     .from("news_publish_candidates")
     .select("id,cluster_id,editorial_score,recommended_format,status")
-    // HELD means editorial/recovery intervention is required. Retrying a
-    // validated-but-unpublished held draft with another paid AI call can
-    // regenerate the same article indefinitely; never auto-select held rows.
+    // HELD means editorial/recovery intervention is required. Never retry a
+    // held draft by spending another paid AI call.
     .eq("status", "PENDING")
     .in("recommended_format", ["SINGLE", "MERGE", "SYNTHESIS"])
     .gte("created_at", newsroomNewStoryCutoff())
     .order("editorial_score", { ascending: false })
-    .limit(100);
+    .order("created_at", { ascending: false })
+    .order("id", { ascending: true })
+    .limit(requestedMode === "publish" ? NEWSROOM_PUBLISH_SCAN_LIMIT : NEWSROOM_CANDIDATE_BATCH_SIZE);
   if (candidateError) return Response.json({ error: candidateError.message }, { status: 500 });
   const candidates = (candidateData ?? []) as CandidateRow[];
   if (!candidates.length) return Response.json({ ok: true, no_items: true, reason: "no_candidates", aiCalls: 0 });
 
-  const clusterIds = candidates.map((candidate) => candidate.cluster_id);
-  const candidateIds = candidates.map((candidate) => candidate.id);
-  const baseQueries = [
-    db.from("news_story_clusters").select("id,canonical_subject,pillar_slug").in("id", clusterIds),
-    db.from("news_research_packets").select("cluster_id,packet_json,source_count,primary_source_count").in("cluster_id", clusterIds),
-  ];
-  const shadowDraftQuery = requestedMode === "shadow"
-    ? db.from("newsroom_generation_drafts").select("candidate_id").eq("mode", "shadow").in("candidate_id", candidateIds)
-    : Promise.resolve({ data: [], error: null });
-  const [clusterResult, packetResult, shadowDraftResult] = await Promise.all([...baseQueries, shadowDraftQuery]);
-  const { data: clusterData, error: clusterError } = clusterResult;
-  const { data: packetData, error: packetError } = packetResult;
-  const { data: shadowDraftData, error: shadowDraftError } = shadowDraftResult;
-  if (clusterError) return Response.json({ error: clusterError.message }, { status: 500 });
-  if (packetError) return Response.json({ error: packetError.message }, { status: 500 });
-  if (shadowDraftError) return Response.json({ error: shadowDraftError.message }, { status: 500 });
-
-  const clusters = (clusterData ?? []) as ClusterRow[];
-  const packets = (packetData ?? []) as PacketRow[];
-  const clusterById = new Map(clusters.map((row) => [row.id, row]));
-  const packetByCluster = new Map(packets.map((row) => [row.cluster_id, row]));
-  const shadowedCandidateIds = new Set<string>((shadowDraftData ?? []).map((row: { candidate_id: string }) => row.candidate_id));
-  const unshadowedCandidates = candidates.filter((row) => !shadowedCandidateIds.has(row.id));
-  const evidenceEligibleCandidates = unshadowedCandidates.filter((row) => {
-    const packetRow = packetByCluster.get(row.cluster_id);
-    const cluster = clusterById.get(row.cluster_id);
-    if (!packetRow || !cluster || packetRow.source_count <= 0) return false;
-    return researchPacketEvidenceChars(packetRow.packet_json) >= evidenceFloorForPillar(cluster.pillar_slug);
-  });
-  // Mirror the publisher-family INSERT guard before spending an AI call. A
-  // source packet can contain several URLs from one syndicated publisher,
-  // which is not independent corroboration.
-  const authorityEligibleCandidates = evidenceEligibleCandidates.filter(
-    (row) => productionAuthorityEligible(packetByCluster.get(row.cluster_id)!),
-  );
-  const independentlySourcedCandidates = authorityEligibleCandidates.filter((row) => {
-    const sources = packetByCluster.get(row.cluster_id)?.packet_json.sources ?? [];
-    return newsroomHasPublisherDiversity(sources);
-  });
-
-  // The database refuses to insert a second article using an existing
-  // source_url. Batch-check exact lead URLs now so an already-covered event
-  // cannot use AI tokens and then fail at INSERT (historically 40 retries).
+  // Short-circuit as soon as a qualified candidate is found. Deeper ranked
+  // candidates are still reachable when the top 100 lack sufficient evidence.
+  // A single 500-UUID .in() filter can exceed provider URL/query limits; only
+  // load the 100 candidates in the active batch and their packet bodies.
+  let candidate: CandidateRow | undefined;
+  let cluster: ClusterRow | undefined;
+  let packetRow: PacketRow | undefined;
+  let sawUnshadowed = false;
+  let sawEvidenceEligible = false;
+  let sawAuthorityEligible = false;
+  let sawIndependentSources = false;
+  let sawNovelSubject = false;
+  const recentlyPublishedSubjects = new Set<string>();
   const existingLeadSources = new Set<string>();
-  if (requestedMode === "publish" && independentlySourcedCandidates.length) {
-    const leadUrls = [...new Set(independentlySourcedCandidates
-      .map((row) => newsroomLeadSourceUrl(packetByCluster.get(row.cluster_id)?.packet_json.sources ?? []))
-      .filter((url): url is string => Boolean(url)))];
-    for (let offset = 0; offset < leadUrls.length; offset += 25) {
-      const { data: existingRows, error: lookupError } = await db.from("daily_articles")
-        .select("source_url")
-        .in("source_url", leadUrls.slice(offset, offset + 25));
-      if (lookupError) return Response.json({ error: lookupError.message }, { status: 500 });
-      for (const row of existingRows ?? []) {
-        if (row.source_url) existingLeadSources.add(row.source_url);
+
+  for (let batchStart = 0; batchStart < candidates.length; batchStart += NEWSROOM_CANDIDATE_BATCH_SIZE) {
+    const batch = candidates.slice(batchStart, batchStart + NEWSROOM_CANDIDATE_BATCH_SIZE);
+    const clusterIds = [...new Set(batch.map((row) => row.cluster_id))];
+    const candidateIds = batch.map((row) => row.id);
+    const shadowDraftQuery = requestedMode === "shadow"
+      ? db.from("newsroom_generation_drafts").select("candidate_id").eq("mode", "shadow").in("candidate_id", candidateIds)
+      : Promise.resolve({ data: [], error: null });
+    const [
+      { data: clusterData, error: clusterError },
+      { data: packetData, error: packetError },
+      { data: shadowDraftData, error: shadowDraftError },
+    ] = await Promise.all([
+      db.from("news_story_clusters").select("id,canonical_subject,pillar_slug").in("id", clusterIds),
+      db.from("news_research_packets").select("cluster_id,packet_json,source_count,primary_source_count").in("cluster_id", clusterIds),
+      shadowDraftQuery,
+    ]);
+    if (clusterError) return Response.json({ error: clusterError.message }, { status: 500 });
+    if (packetError) return Response.json({ error: packetError.message }, { status: 500 });
+    if (shadowDraftError) return Response.json({ error: shadowDraftError.message }, { status: 500 });
+
+    const clusterById = new Map(((clusterData ?? []) as ClusterRow[]).map((row) => [row.id, row]));
+    const packetByCluster = new Map(((packetData ?? []) as PacketRow[]).map((row) => [row.cluster_id, row]));
+    const shadowedCandidateIds = new Set<string>((shadowDraftData ?? []).map((row: { candidate_id: string }) => row.candidate_id));
+    const unshadowedCandidates = batch.filter((row) => !shadowedCandidateIds.has(row.id));
+    sawUnshadowed ||= unshadowedCandidates.length > 0;
+    const evidenceEligibleCandidates = unshadowedCandidates.filter((row) => {
+      const packetRow = packetByCluster.get(row.cluster_id);
+      const cluster = clusterById.get(row.cluster_id);
+      if (!packetRow || !cluster || packetRow.source_count <= 0) return false;
+      return researchPacketEvidenceChars(packetRow.packet_json) >= evidenceFloorForPillar(cluster.pillar_slug);
+    });
+    sawEvidenceEligible ||= evidenceEligibleCandidates.length > 0;
+
+    // Keep the primary-source and independent-publisher requirements *before*
+    // the paid reservation. Source counts alone can include syndicated mirrors.
+    const authorityEligibleCandidates = evidenceEligibleCandidates.filter(
+      (row) => productionAuthorityEligible(packetByCluster.get(row.cluster_id)!),
+    );
+    sawAuthorityEligible ||= authorityEligibleCandidates.length > 0;
+    const independentlySourcedCandidates = authorityEligibleCandidates.filter((row) => {
+      const sources = packetByCluster.get(row.cluster_id)?.packet_json.sources ?? [];
+      return newsroomHasPublisherDiversity(sources);
+    });
+    sawIndependentSources ||= independentlySourcedCandidates.length > 0;
+
+    // Distinct clusters can describe an already published event using other
+    // publishers' URLs. Check the exact normalized subject as well as the lead
+    // URL so expanding candidate depth never repackages recent coverage.
+    if (requestedMode === "publish" && independentlySourcedCandidates.length) {
+      const subjects = [...new Set(independentlySourcedCandidates
+        .map((row) => clusterById.get(row.cluster_id)?.canonical_subject)
+        .filter((subject): subject is string => Boolean(subject)))];
+      for (let offset = 0; offset < subjects.length; offset += 20) {
+        const { data: publishedClusters, error: subjectError } = await db.from("news_story_clusters")
+          .select("canonical_subject")
+          .eq("status", "PUBLISHED")
+          .gte("published_at", newsroomNewStoryCutoff())
+          .in("canonical_subject", subjects.slice(offset, offset + 20));
+        if (subjectError) return Response.json({ error: subjectError.message }, { status: 500 });
+        for (const publishedCluster of publishedClusters ?? []) {
+          if (publishedCluster.canonical_subject) recentlyPublishedSubjects.add(publishedCluster.canonical_subject);
+        }
       }
+    }
+    const novelSubjectCandidates = requestedMode === "publish"
+      ? independentlySourcedCandidates.filter((row) => {
+        const subject = clusterById.get(row.cluster_id)?.canonical_subject;
+        return Boolean(subject && !recentlyPublishedSubjects.has(subject));
+      })
+      : independentlySourcedCandidates;
+    sawNovelSubject ||= novelSubjectCandidates.length > 0;
+
+    // Match the database's duplicate daily_articles.source_url protection.
+    // Inspect exact lead URLs in bounded sets rather than spend an AI call
+    // and discover the duplicate only after attempting publication.
+    if (requestedMode === "publish" && novelSubjectCandidates.length) {
+      const leadUrls = [...new Set(novelSubjectCandidates
+        .map((row) => newsroomLeadSourceUrl(packetByCluster.get(row.cluster_id)?.packet_json.sources ?? []))
+        .filter((url): url is string => Boolean(url)))];
+      for (let offset = 0; offset < leadUrls.length; offset += 25) {
+        const { data: existingRows, error: lookupError } = await db.from("daily_articles")
+          .select("source_url")
+          .in("source_url", leadUrls.slice(offset, offset + 25));
+        if (lookupError) return Response.json({ error: lookupError.message }, { status: 500 });
+        for (const row of existingRows ?? []) {
+          if (row.source_url) existingLeadSources.add(row.source_url);
+        }
+      }
+    }
+
+    const chosen = requestedMode === "publish"
+      ? novelSubjectCandidates.find((row) => {
+        const leadUrl = newsroomLeadSourceUrl(packetByCluster.get(row.cluster_id)?.packet_json.sources ?? []);
+        return Boolean(leadUrl && !existingLeadSources.has(leadUrl));
+      })
+      : evidenceEligibleCandidates[0];
+    if (chosen) {
+      candidate = chosen;
+      cluster = clusterById.get(chosen.cluster_id);
+      packetRow = packetByCluster.get(chosen.cluster_id);
+      break;
     }
   }
 
-  const candidate = requestedMode === "publish"
-    ? independentlySourcedCandidates.find((row) => {
-      const leadUrl = newsroomLeadSourceUrl(packetByCluster.get(row.cluster_id)?.packet_json.sources ?? []);
-      return leadUrl && !existingLeadSources.has(leadUrl);
-    })
-    : evidenceEligibleCandidates[0];
   if (!candidate) {
-    const reason = requestedMode === "shadow" && unshadowedCandidates.length === 0
+    const reason = requestedMode === "shadow" && !sawUnshadowed
       ? "no_unshadowed_candidates"
-      : requestedMode === "publish" && independentlySourcedCandidates.length > 0
+      : requestedMode === "publish" && sawNovelSubject
         ? "already_published_source_url"
-        : requestedMode === "publish" && authorityEligibleCandidates.length > 0
+        : requestedMode === "publish" && sawIndependentSources
+          ? "already_published_story_subject"
+        : requestedMode === "publish" && sawAuthorityEligible
           ? "insufficient_independent_sources"
-          : requestedMode === "publish" && evidenceEligibleCandidates.length > 0
+          : requestedMode === "publish" && sawEvidenceEligible
             ? "insufficient_authority_evidence"
             : "insufficient_source_evidence";
-    return Response.json({ ok: true, no_items: true, reason, aiCalls: 0 });
+    return Response.json({ ok: true, no_items: true, reason, aiCalls: 0, candidatesScanned: candidates.length });
   }
-
-  const cluster = clusterById.get(candidate.cluster_id);
-  const packetRow = packetByCluster.get(candidate.cluster_id);
   if (!cluster || !packetRow) return Response.json({ error: "Selected candidate is missing cluster or packet" }, { status: 500 });
   const evidenceChars = researchPacketEvidenceChars(packetRow.packet_json);
   const evidenceFloor = evidenceFloorForPillar(cluster.pillar_slug);
