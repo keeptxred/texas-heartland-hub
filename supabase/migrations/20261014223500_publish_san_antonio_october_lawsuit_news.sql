@@ -11,7 +11,7 @@ seo_headline,discover_category,seo_keywords,internal_links,texas_impact_summary,
 affected_regions,content_quality_score,quality_flags,gsc_impressions,gsc_clicks,image_generation_status)
 SELECT i.slug,'Border',
 'San Antonio Sues DHS and ICE Over Environmental Review of East Side Detention Warehouse',
-'Filed October 13, San Antonio challenges federal environmental-review procedures for a proposed 1,500-person ICE facility. DHS and two councilmembers contest the city's approach.',
+'Filed October 13, San Antonio challenges federal environmental-review procedures for a proposed 1,500-person ICE facility. DHS and two councilmembers contest the city''s approach.',
 NULL::text,'Keep TX Red Newsroom',
 'Federal court complaint and City of San Antonio',
 'https://www.texastribune.org/wp-content/uploads/2026/10/NEPA-petition-File-stamped.pdf',NULL::text,NULL::text,NULL::text,NULL::text,
