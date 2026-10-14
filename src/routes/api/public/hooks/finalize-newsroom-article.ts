@@ -109,7 +109,10 @@ async function post({ request }: { request: Request }) {
     ? ["seo_low_value_commodity", "internal_repetition"]
     : [];
 
-  const image = await generateFeaturedImageForSlugDirect(slug, false);
+  const image = await generateFeaturedImageForSlugDirect(slug, false).catch((imageError: unknown) => {
+    console.error("[finalize-newsroom-article] image generation deferred", imageError);
+    return { ok: false as const, error: "Image generation unavailable; article remains published" };
+  });
   const quality = scoreQuality({
     slug,
     title: article.title,
