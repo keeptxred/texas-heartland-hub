@@ -202,6 +202,14 @@ async function snapshotPublishedArticles() {
 await ensurePrivateBucket();
 await snapshotPublishedArticles();
 
+// Weekdays protect newly published copy without repeatedly exporting the
+// much larger historical feed/research cold archives. Sunday's scheduled
+// run and manual dispatches continue to export both classes.
+if (process.env.ARTICLE_SNAPSHOT_ONLY === '1') {
+  console.log('Daily immutable article/URL recovery snapshot completed; full cold-archive export reserved for weekly/manual runs.');
+  process.exit(0);
+}
+
 const metadata = await listMetadata();
 if (!metadata.length) {
   console.log('No private archives exist; no export needed.');
