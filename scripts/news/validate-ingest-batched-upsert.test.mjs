@@ -6,7 +6,7 @@ const ingest = fs.readFileSync('src/routes/api/public/hooks/ingest-feeds.ts', 'u
 test('feed ingestion writes only new candidates in bounded database batches', () => {
   expect(ingest).toContain('const INGEST_UPSERT_BATCH_SIZE = 20');
   expect(ingest).toContain('.select("link,trend_source")');
-  expect(ingest).toContain('.in("link", linkBatch)');
+  expect(ingest).toContain('.in("link", links)');
   expect(ingest).toContain('const newRows = rows.filter((row) => !existingLinks.has(row.link))');
   expect(ingest).toContain('offset < newRows.length');
   expect(ingest).toContain('newRows.slice(offset, offset + INGEST_UPSERT_BATCH_SIZE)');
