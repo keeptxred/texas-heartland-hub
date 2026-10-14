@@ -10,6 +10,7 @@ import {
 } from "@/lib/viral-score";
 import { applyTrustedDiscoveryReviewFloor } from "@/lib/discovery-provenance-reputation";
 import { isLowValueTitle } from "@/lib/low-value-titles";
+import { shouldAttemptKtrAutoPublish } from "@/lib/ktr-auto-publish-selection";
 import { publishSingleFeedItem } from "./ingest-feeds";
 
 const DISCOVERY_FEEDS = [
@@ -63,6 +64,22 @@ async function updateFeedRowWithRetry(
     retries += 1;
     await new Promise((resolve) => setTimeout(resolve, 250 * retries));
   }
+}
+
+// Remember quality holds so every 30-minute cron does not repeatedly spend its
+// limited publication attempts on the same unpublishable candidates.
+async function noteAutoPublishFailure(supabase: any, id: number, reason: string): Promise<void> {
+  const { data, error: readError } = await supabase.from("texas_news_feed")
+    .select("viral_signals").eq("id", id).maybeSingle();
+  if (readError || !data) return;
+  const prior = data.viral_signals && typeof data.viral_signals === "object"
+    ? data.viral_signals as Record<string, unknown> : {};
+  const qualityHold = /publication held|rewrite skipped|review|required|not rewriteable|corroboration|primary record/i.test(reason);
+  const retryAfter = new Date(Date.now() + (qualityHold ? 6 : 1) * 60 * 60 * 1000).toISOString();
+  const { error } = await supabase.from("texas_news_feed").update({
+    viral_signals: { ...prior, auto_publish_retry_after: retryAfter, auto_publish_last_error: reason.slice(0, 400) },
+  }).eq("id", id);
+  if (error) console.warn("[score-viral] could not persist publication failure", id, error.message);
 }
 
 const POST_REWRITE_REVIEW_RE =
@@ -194,7 +211,7 @@ async function scoreRecent(request: Request) {
   const sinceIso = new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString();
   const { data, error } = await supabase
     .from("texas_news_feed")
-    .select("id,title,source,trend_source,link,pub_date,description,viral_score,classification_confidence,viral_signals,texas_relevance_score,source_reputation_score,routing_type,trend_velocity,source_count,ready_for_rewrite,internal_slug")
+    .select("id,title,source,trend_source,link,pub_date,description,viral_score,classification_confidence,viral_signals,texas_relevance_score,source_reputation_score,routing_type,trend_velocity,source_count,ready_for_rewrite,internal_slug,target_site")
     .gte("pub_date", sinceIso)
     .order("pub_date", { ascending: false })
     .limit(300);
@@ -218,6 +235,7 @@ async function scoreRecent(request: Request) {
     source_count: number | null;
     ready_for_rewrite: boolean | null;
     internal_slug: string | null;
+    target_site: string | null;
   }>;
 
   const { data: srcs } = await supabase
@@ -317,7 +335,12 @@ async function scoreRecent(request: Request) {
     if (readyForRewrite) readyFlagged += 1;
     if (autoPublish) autoPublishFlagged += 1;
     if (persistedEditorialLane === "REVIEW") reviewFlagged += 1;
-    if (autoPublish && !row.internal_slug) {
+    if (shouldAttemptKtrAutoPublish({
+      eligible: autoPublish,
+      targetSite: row.target_site,
+      internalSlug: row.internal_slug,
+      retryAfter: row.viral_signals?.auto_publish_retry_after,
+    })) {
       autoPublishCandidates.push({ id: row.id, score: result.editorialValueScore, pubDate: row.pub_date });
     }
 
@@ -468,13 +491,12 @@ async function scoreRecent(request: Request) {
       }
 
       autoPublishResults.push({ id: candidate.id, ...result });
+      if (!result.ok) await noteAutoPublishFailure(supabase, candidate.id, result.error ?? "Unknown publisher failure");
       if (result.ok && result.slug && !result.alreadyPublished) autoPublishSucceeded += 1;
     } catch (error) {
-      autoPublishResults.push({
-        id: candidate.id,
-        ok: false,
-        error: error instanceof Error ? error.message : String(error),
-      });
+      const reason = error instanceof Error ? error.message : String(error);
+      autoPublishResults.push({ id: candidate.id, ok: false, error: reason });
+      await noteAutoPublishFailure(supabase, candidate.id, reason);
     }
   }
 
