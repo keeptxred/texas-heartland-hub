@@ -15,6 +15,10 @@ describe("Google Merchant feed contract", () => {
     expect(feed).toContain("<g:shipping>");
     expect(feed).toContain("<g:country>US</g:country>");
     expect(feed).toContain("<g:service>Standard</g:service>");
+    expect(feed).toContain("<g:min_handling_time>3</g:min_handling_time>");
+    expect(feed).toContain("<g:max_handling_time>7</g:max_handling_time>");
+    expect(feed).toContain("<g:min_transit_time>2</g:min_transit_time>");
+    expect(feed).toContain("<g:max_transit_time>5</g:max_transit_time>");
     expect(feed).toContain("<g:price>${STANDARD_SHIPPING_PRICE_USD.toFixed(2)} USD</g:price>");
   });
 

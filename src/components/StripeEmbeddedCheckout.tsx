@@ -1,10 +1,11 @@
 import {
   CheckoutElementsProvider,
+  ExpressCheckoutElement,
   PaymentElement,
   useCheckout,
 } from "@stripe/react-stripe-js/checkout";
-import { loadStripe } from "@stripe/stripe-js";
-import { type FormEvent, useMemo, useState } from "react";
+import { loadStripe, type StripeExpressCheckoutElementConfirmEvent } from "@stripe/stripe-js";
+import { type FormEvent, useMemo, useRef, useState } from "react";
 import { getStripe } from "@/lib/stripe";
 import { createCartCheckoutSession } from "@/lib/checkout.functions";
 import type { CartItem } from "@/lib/cart-context";
@@ -64,7 +65,7 @@ function money(cents: number): string {
   }).format(cents / 100);
 }
 
-function PaymentStep({
+export function PaymentStep({
   checkout,
   returnUrl,
 }: {
@@ -74,12 +75,34 @@ function PaymentStep({
   const result = useCheckout();
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const confirmationInFlight = useRef(false);
+
+  const handleWalletConfirm = async (event: StripeExpressCheckoutElementConfirmEvent) => {
+    if (result.type !== "success" || confirmationInFlight.current) return;
+    confirmationInFlight.current = true;
+    setPaymentError(null);
+    setSubmitting(true);
+    try {
+      const confirmed = await result.checkout.confirm({
+        expressCheckoutConfirmEvent: event,
+        returnUrl: returnUrl.replace("{CHECKOUT_SESSION_ID}", checkout.sessionId),
+      });
+      if (confirmed.type === "error") setPaymentError(confirmed.error.message || "Payment could not be completed.");
+    } catch (error) {
+      setPaymentError(error instanceof Error ? error.message : "Payment could not be completed. Please try again.");
+      event.paymentFailed({ reason: "fail" });
+    } finally {
+      confirmationInFlight.current = false;
+      setSubmitting(false);
+    }
+  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setPaymentError(null);
 
-    if (result.type !== "success") return;
+    if (result.type !== "success" || confirmationInFlight.current) return;
+    confirmationInFlight.current = true;
 
     setSubmitting(true);
     try {
@@ -100,6 +123,7 @@ function PaymentStep({
           : "Payment could not be completed. Please try again.",
       );
     } finally {
+      confirmationInFlight.current = false;
       setSubmitting(false);
     }
   };
@@ -131,6 +155,7 @@ function PaymentStep({
         </div>
       </div>
 
+      <ExpressCheckoutElement onConfirm={handleWalletConfirm} />
       <PaymentElement />
 
       {paymentError ? (
