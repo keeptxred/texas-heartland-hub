@@ -1,4 +1,5 @@
 import { articleMainWordCount } from "./article-length";
+import { duplicateParagraphOccurrences } from "./public-article-readiness";
 import { EDITORIAL_SYSTEM_ADDENDUM, editorialMinimumFor, validateArticle, type StoryBrief } from "./editorial-pipeline";
 import type { ResearchPacket } from "./newsroom-research-packet";
 
@@ -243,6 +244,13 @@ export function validateNewsroomDraft(draft: unknown, packet: ResearchPacket): D
   // category-specific prose floor directly at this stage instead.
   const requiredMainWords = editorialMinimumFor(categoryForPillar(packet.pillar));
   if (mainWordCount < requiredMainWords) reasons.push("below_news_word_floor");
+  // The post-publication readiness gate suppresses articles with >2 exact
+  // repeated substantive paragraphs. Reject or repair those drafts *before*
+  // inserting a live article, rather than publishing something hidden from
+  // the news index after image finalization.
+  if (duplicateParagraphOccurrences(bodyJson) > 2) {
+    reasons.push("repeated_newsroom_paragraphs");
+  }
   if (typedDraft.sections.length !== 6) reasons.push("section_count");
   if (typedDraft.sections.some((section) => section.paragraphs.length !== 3)) reasons.push("paragraph_count");
   return { ok: reasons.length === 0, reasons: [...new Set(reasons)], mainWordCount };

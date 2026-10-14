@@ -3,6 +3,7 @@ import { scoreQuality } from "@/lib/content-quality";
 import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 import { normalizeNewsroomWhyThisMatters } from "@/lib/newsroom-postpublish";
+import { retainNewsroomEditorialFlags } from "@/lib/newsroom-quality-flag-refresh";
 import { duplicateParagraphOccurrences } from "@/lib/public-article-readiness";
 import {
   assessArticleSourceIntegrity,
@@ -16,17 +17,6 @@ import {
 const OIDC_AUDIENCE = "keeptxred-newsroom";
 const REPOSITORY = "keeptxred/texas-heartland-hub";
 const PRODUCTION_WORKFLOW_PATH = ".github/workflows/run-daily-news-now.yml";
-const SCORE_QUALITY_FLAGS = new Set([
-  "weak_title",
-  "weak_dek",
-  "missing_author",
-  "missing_publish_date",
-  "missing_image",
-  "thin_body",
-  "missing_why_this_matters",
-  "missing_texas_context",
-]);
-
 function bearerToken(request: Request): string | null {
   const value = request.headers.get("authorization") ?? "";
   const match = value.match(/^Bearer\s+(.+)$/i);
@@ -47,15 +37,6 @@ async function authorized(request: Request): Promise<boolean> {
   } catch {
     return false;
   }
-}
-
-function existingNonScoreFlags(value: unknown): string[] {
-  if (!Array.isArray(value)) return [];
-  return value
-    .filter((flag): flag is string => typeof flag === "string")
-    .filter(
-      (flag) => !SCORE_QUALITY_FLAGS.has(flag) && flag !== SEARCH_RECOVERY_SOURCE_FIRST_FLAG,
-    );
 }
 
 async function post({ request }: { request: Request }) {
@@ -131,7 +112,7 @@ async function post({ request }: { request: Request }) {
     && [article.source_url, ...sourceReferences.map((source) => source.url)]
       .some(isSearchRecoveryPrimarySourceUrl);
   const qualityFlags = [...new Set([
-    ...existingNonScoreFlags(article.quality_flags),
+    ...retainNewsroomEditorialFlags(article.quality_flags),
     ...quality.flags,
     ...sourceIntegrityFlags,
     ...repetitionFlags,
