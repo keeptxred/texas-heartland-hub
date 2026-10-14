@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   classifyFacebookTopic,
+  hasMajorFacebookEditorialDefect,
   isRoutineGovernmentAppointment,
   rankFacebookCandidates,
 } from "@/lib/facebook-editorial-selection";
@@ -14,6 +15,21 @@ describe("Facebook editorial selection", () => {
 
   it("does not treat a controversial appointment story as routine", () => {
     expect(isRoutineGovernmentAppointment("Abbott Appointment Draws Ethics Scrutiny and Lawsuit")).toBe(false);
+  });
+
+  it("rejects high-scoring repetitive and low-value stories without discarding clean reporting", () => {
+    expect(hasMajorFacebookEditorialDefect(["internal_repetition"])).toBe(true);
+    expect(hasMajorFacebookEditorialDefect(["seo_low_value_commodity"])).toBe(true);
+    expect(hasMajorFacebookEditorialDefect(["missing_image"])).toBe(false);
+    expect(hasMajorFacebookEditorialDefect([])).toBe(false);
+
+    const ranked = rankFacebookCandidates([
+      { title: "Texas Data Center Politics Analysis Repeats the Same Claims", category: "Politics", kind: "news", published_at: "2026-10-14T14:00:00Z", score: 100, quality_flags: ["internal_repetition"] },
+      { title: "Texas Tax Policy Brief Repackages Commodity News", category: "Politics", kind: "news", published_at: "2026-10-14T13:00:00Z", score: 100, quality_flags: ["seo_low_value_commodity"] },
+      { title: "Texas Election Board Publishes Verified Voter Notice", category: "Elections", kind: "news", published_at: "2026-10-14T12:00:00Z", score: 75, quality_flags: [] },
+    ], [], new Date("2026-10-14T15:00:00Z"));
+    expect(ranked).toHaveLength(1);
+    expect(ranked[0].candidate.title).toContain("Verified Voter Notice");
   });
 
   it("recognizes different reader-interest topics", () => {
