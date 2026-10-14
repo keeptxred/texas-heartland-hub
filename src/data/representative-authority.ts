@@ -231,11 +231,11 @@ export const REPRESENTATIVE_AUTHORITY: RepresentativeAuthority[] = [
   },
   {
     slug: "kelly-hancock",
-    reviewedAt: "2026-07-31",
+    reviewedAt: "2026-10-13",
     biography:
-      "Kelly Hancock is the acting comptroller of public accounts of Texas. He assumed the duties of acting comptroller on July 1, 2025. Governor Greg Abbott has announced that Don Huffines will begin serving as comptroller effective August 1, 2026.",
+      "Kelly Hancock served as acting comptroller of public accounts of Texas from July 1, 2025, until Don Huffines was sworn in as comptroller on August 1, 2026.",
     career: [
-      "Acting Texas comptroller of public accounts since July 1, 2025.",
+      "Served as acting Texas comptroller of public accounts from July 1, 2025, through July 31, 2026.",
       "Previously represented Texas Senate District 9.",
       "Previously represented Texas House District 91.",
       "Worked in his family's manufacturing business.",
@@ -247,6 +247,7 @@ export const REPRESENTATIVE_AUTHORITY: RepresentativeAuthority[] = [
     electionHistory: [
       { year: "2012", result: "Elected to the Texas Senate." },
       { year: "2025", result: "Began serving as acting Texas comptroller." },
+      { year: "2026", result: "Acting service concluded when Don Huffines was sworn in as comptroller on August 1." },
     ],
     districtOverview:
       "The comptroller is a statewide office responsible for tax administration, state accounting and revenue estimates.",
@@ -255,12 +256,12 @@ export const REPRESENTATIVE_AUTHORITY: RepresentativeAuthority[] = [
     newsKeywords: ["Kelly Hancock", "Texas comptroller", "Acting Comptroller Hancock"],
     sources: [
       {
-        label: "Official acting comptroller biography",
-        url: "https://comptroller.texas.gov/about/bio.php",
+        label: "Texas Comptroller official website",
+        url: "https://comptroller.texas.gov/",
       },
       {
         label: "Incoming comptroller appointment announcement",
-        url: "https://gov.texas.gov/news/post/governor-abbott-appoints-don-huffines-as-comptroller-of-public-accounts",
+        url: "https://comptroller.texas.gov/about/media-center/news/20260801-don-huffines-sworn-in-as-texas-comptroller-refuses-salary-calls-for-property-tax-relief-1785512488796",
       },
       {
         label: "2026 offices up for election",
@@ -270,11 +271,11 @@ export const REPRESENTATIVE_AUTHORITY: RepresentativeAuthority[] = [
   },
   {
     slug: "don-huffines",
-    reviewedAt: "2026-07-31",
+    reviewedAt: "2026-10-13",
     biography:
-      "Don Huffines is the incoming comptroller of public accounts of Texas. Governor Greg Abbott appointed him on July 2, 2026, with service effective August 1, 2026. He previously represented Senate District 16 in the Texas Senate and worked in business.",
+      "Don Huffines is the Texas comptroller of public accounts. Governor Greg Abbott appointed him in July 2026, and Huffines was sworn in on August 1, 2026. He previously represented Senate District 16 in the Texas Senate and worked in business.",
     career: [
-      "Appointed to begin serving as Texas comptroller effective August 1, 2026.",
+      "Texas comptroller of public accounts since August 1, 2026.",
       "Represented Texas Senate District 16 from 2015 through 2019.",
       "Worked in automotive and real-estate businesses.",
     ],
@@ -286,7 +287,7 @@ export const REPRESENTATIVE_AUTHORITY: RepresentativeAuthority[] = [
     ],
     electionHistory: [
       { year: "2014", result: "Elected to Texas Senate District 16." },
-      { year: "2026", result: "Appointed comptroller with an effective date of August 1, 2026." },
+      { year: "2026", result: "Appointed and sworn in as Texas comptroller on August 1, 2026." },
     ],
     districtOverview:
       "The comptroller is a statewide office responsible for tax administration, state accounting and revenue estimates.",
@@ -295,7 +296,7 @@ export const REPRESENTATIVE_AUTHORITY: RepresentativeAuthority[] = [
     newsKeywords: ["Don Huffines", "Texas comptroller", "Comptroller Huffines"],
     sources: [
       {
-        label: "Governor's appointment announcement",
+        label: "Texas Comptroller swearing-in announcement",
         url: "https://gov.texas.gov/news/post/governor-abbott-appoints-don-huffines-as-comptroller-of-public-accounts",
       },
       { label: "Texas Comptroller official website", url: "https://comptroller.texas.gov/" },
