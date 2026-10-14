@@ -82,7 +82,7 @@ ON CONFLICT (slug) DO UPDATE SET
 UPDATE public.daily_articles
 SET image_candidate_url = featured_image_url,
     image_candidate_alt_text = image_alt_text
-WHERE slug = 'live-2026-07-07-governor-abbott-orders-prompt-investigation-into-birth-tourism-package-wf40tc'
+WHERE slug IN ('live-2026-07-07-governor-abbott-orders-prompt-investigation-into-birth-tourism-package-wf40tc')
   AND image_generation_status = 'pending'
   AND featured_image_url LIKE 'https://commons.wikimedia.org/wiki/Special:Redirect/file/%'
   AND NULLIF(BTRIM(COALESCE(image_alt_text,'')),'') IS NOT NULL
