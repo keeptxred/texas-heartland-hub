@@ -17,6 +17,12 @@ describe("daily substantive newsroom output", () => {
     expect(workflow).toContain("cron: '25 7 * * *'");
     expect(workflow).toContain("node scripts/news/check-daily-quality-volume.mjs");
     expect(workflow).toContain("github.event_name == 'schedule'");
+    expect(workflow).toContain('workflows: ["Run Daily News Now"]');
+    expect(workflow).toContain("github.event_name == 'push'");
+    expect(workflow).toContain("steps.fallback_window.outputs.ready == 'true'");
+    expect(workflow).toContain("SOURCE_RUN_CREATED_AT");
+    expect(workflow).toContain('utc_hour} >= 8');
+
     expect(workflow).not.toMatch(/generate-newsroom|publish-overdue-gap|workflow_dispatch.+inputs.+publish/s);
   });
 
