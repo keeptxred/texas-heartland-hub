@@ -2,7 +2,7 @@ const base = process.env.KTR_BASE_URL || "https://keeptxred.com";
 const supabase = process.env.SUPABASE_URL || "https://ftkznprjljkhymknvhye.supabase.co";
 const key = process.env.SUPABASE_PUBLISHABLE_KEY || "sb_publishable_J6-Lke5yaaGA5N5agMsltQ_rCG2MVYo";
 const checks = [
-  ["bills-page", base + "/texas-bills", false],
+  ["bills-page", base + "/bills", false],
   ["bills-api", supabase + "/rest/v1/bills?select=id&limit=1", true],
   ["bills-filters", supabase + "/rest/v1/rpc/list_active_bill_filter_options", true],
 ];
