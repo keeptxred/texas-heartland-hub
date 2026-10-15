@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { validateNewsroomDraft, type NewsroomDraft } from "./newsroom-rewrite-adapter";
+import { repeatedNewsroomParagraphPositions, newsroomRewriteSystemPrompt, validateNewsroomDraft, type NewsroomDraft } from "./newsroom-rewrite-adapter";
 import type { ResearchPacket } from "./newsroom-research-packet";
 import { duplicateParagraphOccurrences } from "./public-article-readiness";
 
@@ -57,6 +57,35 @@ describe("newsroom prepublication duplicate paragraph gate", () => {
     const result = validateNewsroomDraft(draft, packet);
     expect(result.ok).toBe(false);
     expect(result.reasons).toContain("repeated_newsroom_paragraphs");
+  });
+
+  it("locates every repeat precisely, without rewriting or deleting source-grounded paragraphs", () => {
+    const base = ("The source documents the Texas agency's dated official action and the specific steps it identifies. ").repeat(3);
+    const paragraphs = Array.from({ length: 18 }, (_, i) => base + " Confirmed reference " + i + ".");
+    paragraphs[4] = paragraphs[0].toUpperCase().replace(/ /g, "  ");
+    paragraphs[12] = paragraphs[0];
+    paragraphs[17] = paragraphs[6];
+    const draft = createDraft(paragraphs);
+    expect(repeatedNewsroomParagraphPositions(draft)).toEqual([
+      { originalSection: 1, originalParagraph: 1, repeatSection: 2, repeatParagraph: 2 },
+      { originalSection: 1, originalParagraph: 1, repeatSection: 5, repeatParagraph: 1 },
+      { originalSection: 3, originalParagraph: 1, repeatSection: 6, repeatParagraph: 3 },
+    ]);
+    expect(duplicateParagraphOccurrences({ sections: draft.sections })).toBe(3);
+    expect(draft.sections[1].paragraphs[1]).toBe(paragraphs[4]);
+  });
+
+  it("does not misdiagnose repeated short fragments as substantive paragraphs", () => {
+    const draft = createDraft(Array.from({ length: 18 }, (_, i) => i % 2 ? "Short note." : "Short note."));
+    expect(repeatedNewsroomParagraphPositions(draft)).toEqual([]);
+    expect(duplicateParagraphOccurrences({ sections: draft.sections })).toBe(0);
+  });
+
+  it("requires distinct source-backed roles in the initial draft rather than padding", () => {
+    const instructions = newsroomRewriteSystemPrompt(packet);
+    expect(instructions).toContain("Plan distinct factual roles for all 18 paragraphs");
+    expect(instructions).toContain("No substantive paragraph may appear more than once");
+    expect(instructions).toContain("set brief.hasClearNewsEvent=false");
   });
 
   it("rejects a single repeated substantive paragraph before publication", () => {
