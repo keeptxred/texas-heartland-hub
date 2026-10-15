@@ -13,7 +13,7 @@ describe("newsroom metadata uses the validated source-backed draft", () => {
       source.indexOf("draft.relevance.trim().slice(0, 750)"),
     );
     expect(source.indexOf("draft.relevance.trim().slice(0, 750)")).toBeLessThan(
-      source.indexOf('.from("daily_articles")\n      .upsert(row'),
+      source.indexOf('.upsert(row, { onConflict: "slug" })'),
     );
   });
 });
