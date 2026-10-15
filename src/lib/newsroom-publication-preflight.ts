@@ -1,4 +1,5 @@
 import type { ResearchPacketSource } from "./newsroom-research-packet";
+import { isGovernmentNewsClippingUrl } from "./newsroom-discovery-sources";
 
 /**
  * Mirrors public.newsroom_source_family_from_url() so publication candidates
@@ -21,11 +22,12 @@ export function newsroomSourceFamilyFromUrl(inputUrl: string): string | null {
 }
 
 /**
- * A Google News discovery/RSS link is a pointer to reporting, not an
+ * A Google News RSS or government newspaper-clipping link points to reporting, not an
  * independent publisher. Keep the database-compatible family function above
  * intact and use this stricter helper for newsroom editorial independence.
  */
 export function newsroomIndependentPublisherFamilyFromUrl(url: string): string | null {
+  if (isGovernmentNewsClippingUrl(url)) return null;
   try {
     const host = new URL(url).hostname.toLowerCase();
     if (host === "news.google.com" || host === "www.news.google.com") return null;
