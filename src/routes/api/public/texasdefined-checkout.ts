@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createStripeClient, getStripeErrorMessage } from "@/lib/stripe.server";
+import { checkoutClientKind, texasDefinedShippingCents } from "@/lib/texasdefined-shop-shipping";
 
 const ALLOWED_ORIGINS = new Set([
   "https://texasdefined.com",
@@ -71,7 +72,7 @@ export const Route = createFileRoute("/api/public/texasdefined-checkout")({
         }
 
         try {
-          const body = await request.json() as { items?: CartInput[] };
+          const body = await request.json() as { items?: CartInput[]; attemptId?: string };
           const items = Array.isArray(body.items) ? body.items : [];
           if (items.length === 0 || items.length > 30) {
             return Response.json({ ok: false, error: "Cart is empty or too large" }, { status: 400, headers });
@@ -126,12 +127,18 @@ export const Route = createFileRoute("/api/public/texasdefined-checkout")({
             return Response.json({ ok: false, error: "Cart is too large for one checkout" }, { status: 400, headers });
           }
 
+          const subtotalCents = resolved.reduce((sum, item) => sum + Math.round(item.price * 100) * item.quantity, 0);
+          const shippingCents = texasDefinedShippingCents(subtotalCents);
+          const attemptId = typeof body.attemptId === "string" && /^[a-f0-9-]{36}$/i.test(body.attemptId)
+            ? body.attemptId
+            : undefined;
+          const clientKind = checkoutClientKind(request.headers.get("user-agent"));
           const stripe = createStripeClient("live");
           const session = await stripe.checkout.sessions.create({
             mode: "payment",
             wallet_options: { link: { display: "never" } },
             branding_settings: {
-              display_name: "Secure Checkout",
+              display_name: "Texas Defined",
               icon: { type: "url", url: "https://keeptxred.com/secure-checkout-icon.png" },
               logo: { type: "url", url: "https://keeptxred.com/secure-checkout-icon.png" },
             },
@@ -148,17 +155,33 @@ export const Route = createFileRoute("/api/public/texasdefined-checkout")({
               },
             })),
             shipping_address_collection: { allowed_countries: ["US"] },
-            phone_number_collection: { enabled: true },
+            shipping_options: [{
+              shipping_rate_data: {
+                type: "fixed_amount",
+                fixed_amount: { amount: shippingCents, currency },
+                display_name: shippingCents === 0 ? "Free standard shipping" : "Standard shipping",
+              },
+            }],
+            phone_number_collection: { enabled: false },
+            ...(attemptId ? { client_reference_id: attemptId } : {}),
             success_url: "https://texasdefined.com/shop/checkout-return?session_id={CHECKOUT_SESSION_ID}",
             cancel_url: "https://texasdefined.com/shop/cart",
             payment_intent_data: {
-              description: "Online Shop Order",
+              description: "Texas Defined Shop Order",
               metadata: { cart: cartJson, source: "texasdefined_shop" },
             },
-            metadata: { cart: cartJson, source: "texasdefined_shop" },
+            metadata: {
+              cart: cartJson,
+              source: "texasdefined_shop",
+              checkout_client_kind: clientKind,
+              shipping_policy: shippingCents === 0 ? "free-over-35" : "standard-699",
+            },
           });
 
-          return Response.json({ ok: true, url: session.url }, { headers });
+          if (!session.url || !session.url.startsWith("https://checkout.stripe.com/")) {
+            return Response.json({ ok: false, error: "Checkout destination unavailable" }, { status: 502, headers });
+          }
+          return Response.json({ ok: true, url: session.url, sessionId: session.id }, { headers });
         } catch (error) {
           return Response.json({ ok: false, error: getStripeErrorMessage(error) }, { status: 500, headers });
         }
