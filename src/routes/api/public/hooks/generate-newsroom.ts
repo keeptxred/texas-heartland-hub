@@ -543,6 +543,12 @@ async function handler({ request }: { request: Request }) {
       body_json: bodyJson,
     };
     enrichArticleRow(row);
+    // Classifying a story as "Texas" does not establish statewide impact.
+    // The generic geographic template can falsely imply direct effects in
+    // San Antonio, statewide, or other incidental mentions. Reuse the
+    // factual Texas relevance prose that passed newsroom draft validation.
+    (row as typeof row & { texas_impact_summary?: string | null }).texas_impact_summary =
+      draft.relevance.trim().slice(0, 750);
 
     if (shouldNoindex) {
       const enriched = row as typeof row & { quality_flags?: string[] | null };
