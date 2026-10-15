@@ -1,6 +1,7 @@
 import { sourceFamily, type ClusterableFeedItem, type StoryCluster } from "@/lib/story-clustering";
 import { sourceFamilyFromUrl } from "@/lib/article-source-integrity";
 import { verifiedElectionSchedulePrimaryRecord } from "@/lib/election-schedule-primary-record";
+import { isGovernmentNewsClippingUrl } from "@/lib/newsroom-discovery-sources";
 
 export type PublicationReadiness = {
   publish: boolean;
@@ -25,6 +26,7 @@ function storyText(item: ClusterableFeedItem): string {
 }
 
 export function isPrimaryRecordSource(item: ClusterableFeedItem): boolean {
+  if (isGovernmentNewsClippingUrl(item.link)) return false;
   const family = sourceFamily(item);
   const text = `${item.source ?? ""} ${item.link ?? ""}`;
   return /(^|\.)gov(?::\d+)?(?:\/|$)/i.test(family) || /\.gov(?:\/|$)/i.test(text) || PRIMARY_SOURCE_RE.test(text);
@@ -44,6 +46,7 @@ function hasSubstantivePrimaryRecord(item: ClusterableFeedItem): boolean {
 export function independentPublisherFamilyCount(cluster: StoryCluster): number {
   const families = new Set<string>();
   for (const item of [cluster.primary, ...cluster.members]) {
+    if (isGovernmentNewsClippingUrl(item.link)) continue;
     const family = sourceFamilyFromUrl(item.link) ?? sourceFamily(item);
     if (family) families.add(family);
   }
