@@ -149,19 +149,19 @@ export function stripGenericExpertAttribution(value: string): string {
  * reporting; leave an unusable summary for the ordinary repair validator.
  */
 export function newsroomSourceBackedDek(title: string, dek: string, summary: string): string {
-  const cleanDek = dek.replace(/\\s+/g, " ").trim();
-  const cleanTitle = title.replace(/\\s+/g, " ").trim().toLowerCase();
+  const cleanDek = dek.replace(/\s+/g, " ").trim();
+  const cleanTitle = title.replace(/\s+/g, " ").trim().toLowerCase();
   if (cleanDek.length >= 80 && cleanDek.toLowerCase() !== cleanTitle) return cleanDek;
-  const cleanSummary = summary.replace(/\\s+/g, " ").trim();
+  const cleanSummary = summary.replace(/\s+/g, " ").trim();
   if (cleanSummary.length < 80 || cleanSummary.toLowerCase() === cleanTitle) return cleanDek;
-  const sentences = cleanSummary.split(/(?<=[.!?])\\s+/);
+  const sentences = cleanSummary.split(/(?<=[.!?])\s+/);
   let candidate = "";
   for (const sentence of sentences) {
     if (candidate.length > 0 && (candidate.length + sentence.length + 1) > 240) break;
     candidate = [candidate, sentence].filter(Boolean).join(" ");
     if (candidate.length >= 100) break;
   }
-  if (candidate.length < 80) candidate = cleanSummary.slice(0, 240).replace(/\\s+\\S*$/, "");
+  if (candidate.length < 80) candidate = cleanSummary.slice(0, 240).replace(/\s+\S*$/, "");
   return candidate.length >= 80 && candidate.toLowerCase() !== cleanTitle ? candidate : cleanDek;
 }
 
@@ -274,8 +274,8 @@ export function validateNewsroomDraft(draft: unknown, packet: ResearchPacket): D
   const requiredMainWords = editorialMinimumFor(categoryForPillar(packet.pillar));
   if (mainWordCount < requiredMainWords) reasons.push("below_news_word_floor");
   if (typedDraft.dek.trim().length < 80
-      || typedDraft.dek.replace(/\\s+/g, " ").trim().toLowerCase()
-        === typedDraft.title.replace(/\\s+/g, " ").trim().toLowerCase()) {
+      || typedDraft.dek.replace(/\s+/g, " ").trim().toLowerCase()
+        === typedDraft.title.replace(/\s+/g, " ").trim().toLowerCase()) {
     reasons.push("weak_newsroom_dek");
   }
   // The post-publication readiness gate suppresses articles with >2 exact
