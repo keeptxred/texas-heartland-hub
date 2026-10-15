@@ -65,6 +65,9 @@ export async function runPublishingSafetyNet() {
         .from("publishing_alerts")
         .select("id,incident_key,opened_at")
         .eq("status", "open")
+        // The safety net owns publication stalls only. A coverage-gap or
+        // editorial-review alert must never suppress or satisfy this lookup.
+        .like("incident_key", "publishing-stall-%")
         .order("opened_at", { ascending: false })
         .limit(1)
         .maybeSingle<OpenAlert>(),
@@ -137,7 +140,9 @@ export async function runPublishingSafetyNet() {
         resolved_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
-      .eq("id", openAlert.id);
+      .eq("id", openAlert.id)
+      // Defensive isolation: never resolve another subsystem's alert.
+      .like("incident_key", "publishing-stall-%");
     await sendOptionalWebhook({
       event: "publishing_recovered",
       severity: "info",
