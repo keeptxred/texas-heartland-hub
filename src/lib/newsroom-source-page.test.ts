@@ -25,12 +25,25 @@ describe("newsroom source-page enrichment", () => {
     })).toBe(false);
   });
 
-  it("skips Google News wrappers and non-http links", () => {
+  it("skips Google News wrappers, legislative clipping indexes, and non-http links", () => {
     expect(shouldFetchNewsroomSourcePage({
       url: "https://news.google.com/rss/articles/abc",
       extractedBody: "",
     })).toBe(false);
     expect(shouldFetchNewsroomSourcePage({ url: "mailto:test@example.com", extractedBody: "" })).toBe(false);
+    expect(shouldFetchNewsroomSourcePage({
+      url: "http://www.lrl.state.tx.us/cl.cfm?id=454951",
+      extractedBody: "",
+    })).toBe(false);
+    expect(shouldFetchNewsroomSourcePage({
+      url: "https://lrl.texas.gov/currentissues/clips/2026/article",
+      extractedBody: "",
+    })).toBe(false);
+    // Authentic government legislative documents are not newspaper clippings.
+    expect(shouldFetchNewsroomSourcePage({
+      url: "https://lrl.texas.gov/legis/89R/overview",
+      extractedBody: "",
+    })).toBe(true);
   });
 
 

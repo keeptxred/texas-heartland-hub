@@ -1,3 +1,5 @@
+import { isGovernmentNewsClippingUrl } from "./newsroom-discovery-sources";
+
 const MAX_SOURCE_TEXT_CHARS = 12_000;
 const MIN_READABLE_CHARS = 500;
 
@@ -10,6 +12,10 @@ export function shouldFetchNewsroomSourcePage(input: { url: string | null; extra
   const url = (input.url ?? "").trim();
   if (!/^https?:\/\//i.test(url)) return false;
   if (/^https?:\/\/(?:www\.)?news\.google\.com\//i.test(url)) return false;
+  // Government-hosted newspaper clipping indexes do not contain the underlying
+  // publisher's independent report or an official event record. Do not spend
+  // Worker CPU fetching these known discovery pointers.
+  if (isGovernmentNewsClippingUrl(url)) return false;
   const body = (input.extractedBody ?? "").trim();
   return looksSyntheticNewsroomText(body) || body.length < 4_000;
 }
