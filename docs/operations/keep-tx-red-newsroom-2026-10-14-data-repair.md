@@ -57,3 +57,57 @@ expansion or replacement of that production trigger.
 No slug, canonical URL, source citation, attribution, historical publication date,
 editorial quarantine, image selection, AI budget or protected release control was
 intentionally changed by these data repairs. The repairs do not count as new news.
+
+
+## Addendum — historical paragraph reconciliation (October 15 follow-through)
+
+An independent September–October newsroom scan identified ten additional unquarantined
+historical articles with one or two exact repeat occurrences of substantive
+section paragraphs. Each affected section was patched **only** where its
+paragraph and exact-occurrence guards matched the existing source text.
+The original article's source citation objects, title, slug, canonical URL,
+publication date, quality flags, and existing editorial disposition were
+not rewritten. No historical record was recounted as new October news.
+
+The affected slugs were:
+
+- `2026-10-08-san-antonio-water-bills-could-climb-as-city-council-considers-four-years-of-saws`
+- `2026-10-08-we-have-to-suck-it-up-ken-paxton-privately-suggests-cutting-federal-benefit-prog`
+- `2026-10-03-trump-to-visit-san-antonio-next-week-for-rally-with-paxton-de-la-cruz`
+- `2026-10-02-ken-paxton-says-trump-s-midterm-convention-in-dallas-hurt-his-senate-campaign`
+- `2026-09-25-austin-ice-shooting-raises-questions-about-medical-standards-for-detainees`
+- `2026-09-22-austin-man-shot-by-ice-will-not-face-immediate-deportation-judge-rules`
+- `2026-09-22-ice-officer-shoots-man-in-north-austin`
+- `2026-09-21-man-injured-in-shooting-by-ice-officer-in-north-austin`
+- `2026-09-18-top-texas-republicans-knew-bo-french-s-history-of-racist-comments-they-supported`
+- `2026-09-04-texas-dps-to-continue-using-vast-surveillance-network-despite-abbott-s-order-lim`
+
+The subsequently performed read-only scan confirmed **zero** surviving articles
+with one or two exact repeated section paragraphs (120-character floor) in
+the September–October cohort. Twenty-five other older articles have more
+extensive repetition; those were **not** indiscriminately approved,
+republished or cleared of preexisting quarantine flags.
+
+A second audit found that some rows' plain-text `body` no longer matched
+their corrected structured `body_json`. The existing production
+`trg_hydrate_keep_tx_red_newsroom_plain_body` trigger was used for a
+**guarded, one-time reconstruction** of these same ten authorship-verified
+newsroom rows from their own corrected sections/intro/FAQ/takeaways.
+Each resulted in a nonblank canonical body of 10,053–12,077 characters
+(with one at 10,275 and others in that range), retaining the original
+`published_at` and unchanged `quality_flags`.
+This operation neither generated new reporting nor altered source records.
+
+**Important distinction:** A section-paragraph audit cannot prove every
+phrase is unique across introductions, summaries, FAQ or other fields.
+Subsequent plain-text checks still found some long passages repeated
+across text fields or embedded passages; these should not be described as
+fully de-duplicated. There is no justification to delete these further
+without an editorial review of the overlapping source text. The new
+prepublication guard in PR #2804 prevents even one exact repeated
+substantive **section paragraph** in future newsroom drafts.
+
+The above direct production changes are documented here rather than
+misrepresented as a deployed SQL migration. SQL guards required matching
+slugs, newsroom authorship, news kind, adequate existing content, and
+preservation of the rows' quality-gate disposition.
