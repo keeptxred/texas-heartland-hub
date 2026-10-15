@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
+import { isEligibleTextFirstFacebookArticle } from "@/lib/facebook-text-first-eligibility";
 import { publishDurableFacebookGuideFallback } from "@/lib/facebook-durable-guide-publisher.server";
 import {
   rankFacebookCandidates,
+  MAX_FACEBOOK_NEWS_AGE_DAYS,
   type RecentFacebookPost,
 } from "@/lib/facebook-editorial-selection";
 import {
@@ -21,7 +23,6 @@ const OIDC_AUDIENCE = "keeptxred-facebook";
 const REPOSITORY = "keeptxred/texas-heartland-hub";
 const WORKFLOW_PATH = ".github/workflows/auto-facebook-posts.yml";
 const SITE_URL = "https://keeptxred.com";
-const MAX_AUTO_FACEBOOK_ARTICLE_AGE_DAYS = 5;
 const MIN_EDITORIAL_QUALITY_SCORE = 72;
 const MAX_CANDIDATES = 160;
 const MAX_ATTEMPTS = 12;
@@ -212,12 +213,11 @@ async function runAutoFacebookPost(request: Request) {
   }
 
   const cutoff = new Date(
-    Date.now() - MAX_AUTO_FACEBOOK_ARTICLE_AGE_DAYS * 24 * 60 * 60 * 1000,
+    Date.now() - MAX_FACEBOOK_NEWS_AGE_DAYS * 24 * 60 * 60 * 1000,
   ).toISOString();
   const { data: rawArticles, error: articleError } = await db
     .from("daily_articles")
     .select("slug,title,category,featured_image_url,published_at,source_name,source_url,kind,is_breaking,score,content_quality_score,quality_flags,body_json")
-    .not("featured_image_url", "is", null)
     .gte("published_at", cutoff)
     .order("published_at", { ascending: false })
     .limit(MAX_CANDIDATES);
@@ -228,13 +228,14 @@ async function runAutoFacebookPost(request: Request) {
 
   const articles = ((rawArticles ?? []) as ArticleRow[]).filter(
     (row) =>
-      Boolean(row.slug && row.title && row.featured_image_url) &&
+      Boolean(row.slug && row.title) &&
+      (Boolean(row.featured_image_url) || isEligibleTextFirstFacebookArticle(row)) &&
       (row.content_quality_score ?? 0) >= MIN_EDITORIAL_QUALITY_SCORE &&
       meetsArticleMainWordCount(row.kind, row.body_json as never),
   );
 
   if (articles.length === 0) {
-    return durableFallback(`No eligible articles newer than ${MAX_AUTO_FACEBOOK_ARTICLE_AGE_DAYS} days`);
+    return durableFallback(`No eligible articles newer than ${MAX_FACEBOOK_NEWS_AGE_DAYS} days`);
   }
 
   const urls = articles.map(articleUrl);
@@ -332,6 +333,7 @@ async function runAutoFacebookPost(request: Request) {
         feed_item_id: null,
         caption: row.title,
         asset_url: row.featured_image_url,
+        allow_text_first: isEligibleTextFirstFacebookArticle(row),
         slug: row.slug,
       },
     });

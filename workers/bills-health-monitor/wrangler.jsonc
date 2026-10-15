@@ -1,0 +1,13 @@
+{
+  "name": "ktr-bills-health-monitor",
+  "main": "index.js",
+  "compatibility_date": "2026-10-14",
+  "triggers": {
+    "crons": [
+      "*/15 * * * *"
+    ]
+  },
+  "observability": {
+    "enabled": true
+  }
+}

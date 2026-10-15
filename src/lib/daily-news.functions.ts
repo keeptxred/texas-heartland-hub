@@ -5,6 +5,7 @@ import { meetsArticleMainWordCount } from "@/lib/article-length";
 import { isPublicArticleReady } from "@/lib/public-article-readiness";
 import { isKeepTxRedSearchOwnedStory } from "@/lib/ktr-search-ownership";
 import { isPublicBreaking, PUBLIC_BREAKING_WINDOW_MS } from "@/lib/public-breaking";
+import { isCurrentNewsCandidate, CURRENT_NEWS_WINDOW_DAYS } from "@/lib/current-news-freshness";
 
 export type DailyArticle = {
   slug: string;
@@ -49,10 +50,11 @@ function getSupabaseClient() {
   });
 }
 
-function stripPrivateFields(rows: DailyArticleRow[]): DailyArticle[] {
+function stripPrivateFields(rows: DailyArticleRow[], currentNewsOnly = false): DailyArticle[] {
   return rows
     .filter((article) =>
-      isPublicArticleReady(article)
+      (!currentNewsOnly || isCurrentNewsCandidate(article))
+      && isPublicArticleReady(article)
       && isKeepTxRedSearchOwnedStory({
         title: article.title,
         description: article.dek,
@@ -65,16 +67,19 @@ function stripPrivateFields(rows: DailyArticleRow[]): DailyArticle[] {
     .map(({ body_json: _bodyJson, quality_flags: _qualityFlags, content_quality_score: _qualityScore, ...article }) => article);
 }
 
-async function loadPublishedDailyArticles(limit: number): Promise<DailyArticle[]> {
+async function loadPublishedDailyArticles(limit: number, currentNewsOnly = false): Promise<DailyArticle[]> {
   const supabase = getSupabaseClient();
   if (!supabase || limit <= 0) return [];
 
   const rows: DailyArticleRow[] = [];
+  const cutoff = currentNewsOnly
+    ? new Date(Date.now() - CURRENT_NEWS_WINDOW_DAYS * 24 * 60 * 60 * 1000).toISOString()
+    : null;
   for (let from = 0; from < limit; from += ARTICLE_PAGE_SIZE) {
     const pageSize = Math.min(ARTICLE_PAGE_SIZE, limit - from);
-    const { data, error } = await supabase
-      .from("daily_articles")
-      .select(DAILY_ARTICLE_SELECT)
+    let query = supabase.from("daily_articles").select(DAILY_ARTICLE_SELECT);
+    if (cutoff) query = query.gte("published_at", cutoff);
+    const { data, error } = await query
       .order("published_at", { ascending: false })
       .order("slug", { ascending: true })
       .range(from, from + pageSize - 1);
@@ -89,7 +94,7 @@ async function loadPublishedDailyArticles(limit: number): Promise<DailyArticle[]
     if (page.length < pageSize) break;
   }
 
-  return stripPrivateFields(rows);
+  return stripPrivateFields(rows, currentNewsOnly);
 }
 
 async function loadFreshBreakingArticles(limit = 12): Promise<DailyArticle[]> {
@@ -111,12 +116,12 @@ async function loadFreshBreakingArticles(limit = 12): Promise<DailyArticle[]> {
     return [];
   }
 
-  return stripPrivateFields((data ?? []) as DailyArticleRow[]).filter((article) => isPublicBreaking(article));
+  return stripPrivateFields((data ?? []) as DailyArticleRow[], true).filter((article) => isPublicBreaking(article));
 }
 
 export const getDailyArticles = createServerFn({ method: "GET" }).handler(async () => {
   const [rawDaily, freshBreaking] = await Promise.all([
-    loadPublishedDailyArticles(80),
+    loadPublishedDailyArticles(80, true),
     loadFreshBreakingArticles(),
   ]);
 

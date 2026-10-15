@@ -50,14 +50,15 @@ describe("newsroom Phase 13 AI canary and production promotion", () => {
     const legacy = productionWorkflow.indexOf("/api/public/hooks/generate-news'");
     const safetyNet = productionWorkflow.indexOf("publishing-safety-net");
     expect(overdue).toBeGreaterThan(-1);
-    expect(clustered).toBeGreaterThan(overdue);
+    expect(clustered).toBeLessThan(overdue);
     expect(legacy).toBe(-1);
     expect(safetyNet).toBeGreaterThan(clustered);
+    expect(safetyNet).toBeGreaterThan(overdue);
     expect(productionWorkflow).toContain("score-newsroom-stories");
     expect(productionWorkflow).toContain("decide-newsroom-packages");
     expect(productionWorkflow).toContain('(.aiCalls // 0) == 0');
     expect(productionWorkflow).toContain('Authorization: Bearer ${oidc_token}');
-    expect(productionWorkflow).toContain("No lower-quality writer will be attempted.");
+    expect(productionWorkflow).toContain("No clustered newsroom story published; trying the independent corroboration-gated overdue writer.");
   });
 
   it("requires the exact newsroom shape through Cloudflare JSON schema mode", () => {

@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
+import { isEligibleTextFirstFacebookArticle } from "@/lib/facebook-text-first-eligibility";
 import {
   assessImageUrl,
   FACEBOOK_IMAGE_FETCH_HEADERS,
@@ -25,6 +26,7 @@ const Input = z.object({
   feed_item_id: z.number().int().nullable().optional(),
   caption: z.string().default(""),
   asset_url: z.string().nullable().optional(),
+  allow_text_first: z.boolean().optional().default(false),
   slug: z.string().nullable().optional(),
 });
 
@@ -289,11 +291,12 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
     }
 
     let originalSourceUrl: string | null = null;
+    let textFirstEligible = false;
     if (data.slug && articleUrl.startsWith(`${SITE_URL}/news/`)) {
       const safeSlug = String(data.slug).trim().replace(/^\/+|\/+$/g, "");
       const { data: articleRow } = await supabaseAdmin
         .from("daily_articles")
-        .select("kind, body_json, source_url")
+        .select("kind, body_json, source_url, featured_image_url, content_quality_score, quality_flags")
         .eq("slug", safeSlug)
         .maybeSingle();
       if (!articleRow) {
@@ -303,6 +306,15 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
         return { ok: false, error: "Cannot publish: the KeepTXRed article is below the minimum length and would 404. Regenerate the article before posting." };
       }
       originalSourceUrl = validateArticleUrl(articleRow.source_url);
+      // Text-first is a separate, explicitly authorized link-post path, never
+      // an excuse to substitute a generic image or skip an invalid photo.
+      textFirstEligible = data.allow_text_first === true
+        && !resolvedAssetUrl
+        && articleUrl === `${SITE_URL}/news/${safeSlug}`
+        && isEligibleTextFirstFacebookArticle(articleRow);
+      if (data.allow_text_first && !textFirstEligible) {
+        return { ok: false, error: "Text-first Facebook publishing requires a substantive, unquarantined KeepTXRed news article with no featured image." };
+      }
     }
 
     const pageId = String(conn.account_id);
@@ -343,18 +355,19 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
     const rawCaption = data.caption?.trim() || buildDefaultCaption(data.headline, data.source);
     const caption = sanitizeCaption(rawCaption);
 
-    const staticCheck = assessImageUrl(resolvedAssetUrl, "stored_featured_image");
+    const staticCheck = textFirstEligible ? null : assessImageUrl(resolvedAssetUrl, "stored_featured_image");
     console.log("[quickPublish:server] facebook_image_check_started", {
-      static_reason: staticCheck.reason,
-      static_ready: staticCheck.ready,
+      static_reason: staticCheck?.reason ?? "TEXT_FIRST_ARTICLE",
+      static_ready: staticCheck?.ready ?? false,
     });
-    if (!staticCheck.ready) {
+    if (!textFirstEligible && staticCheck && !staticCheck.ready) {
       console.log("[quickPublish:server] facebook_publish_blocked_no_image", { reason: staticCheck.reason });
       return { ok: false, error: staticCheck.message };
     }
 
     let generatedImageBytes: ArrayBuffer | null = null;
     let generatedImageContentTypeValue: string | null = null;
+    if (!textFirstEligible) {
     if (generatedFilename) {
       const { data: imageBlob, error: imageError } = await supabaseAdmin.storage
         .from("article-images")
@@ -383,7 +396,7 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
         source: "article-images-storage",
       });
     } else {
-      const remoteCheck = await verifyImageIsReachable(staticCheck.imageUrl!);
+      const remoteCheck = await verifyImageIsReachable(staticCheck!.imageUrl!);
       console.log("[quickPublish:server] facebook_image_check_result", {
         reason: remoteCheck.reason,
         ready: remoteCheck.ready,
@@ -393,7 +406,8 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
         return { ok: false, error: remoteCheck.message };
       }
     }
-    resolvedAssetUrl = staticCheck.imageUrl;
+    resolvedAssetUrl = staticCheck!.imageUrl;
+    }
 
     const { data: pkg, error: pkgErr } = await supabaseAdmin
       .from("content_packages")
@@ -421,6 +435,15 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
 
     try {
       let endpoint: string;
+      let graphBody: FormData | URLSearchParams;
+      if (textFirstEligible) {
+        endpoint = `https://graph.facebook.com/${GRAPH_VERSION}/${pageId}/feed`;
+        const linkOnly = new URLSearchParams();
+        linkOnly.set("access_token", pageToken);
+        linkOnly.set("message", `${caption}\n\n${link}`);
+        graphBody = linkOnly;
+        console.log("[quickPublish:server] publish mode", { mode: "TEXT_FIRST", hasLink: true });
+      } else {
       let imageBytes: ArrayBuffer;
       let imageContentType: string;
 
@@ -474,7 +497,9 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
         hasLink: !!link,
         captionLength: caption.length,
       });
-      const res = await fetch(endpoint, { method: "POST", body });
+      graphBody = body;
+      }
+      const res = await fetch(endpoint, { method: "POST", body: graphBody });
       const rawText = await res.text();
       let json: { id?: string; post_id?: string; error?: { message?: string } } = {};
       try {

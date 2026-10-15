@@ -25,6 +25,20 @@ describe("clustered newsroom post-publish workflow", () => {
     expect(workflow).toContain(".ok == true and (.slug // \"\") != \"\"");
     expect(workflow).not.toContain("(.slug // \"\") != \"\" and .image.ok == true");
   });
+  it("tries the quality-gated clustered newsroom before the costly overdue writer", () => {
+    const clustered = workflow.indexOf("generate-newsroom?mode=publish");
+    const overdue = workflow.indexOf("/api/public/hooks/publish-overdue-gap");
+    const reserve = workflow.indexOf("/api/public/hooks/publishing-safety-net");
+    const clusteredSuccess = workflow.indexOf("DAILY_NEWS_PUBLISH_SUCCESS clustered_slug=");
+    expect(clustered).toBeGreaterThan(0);
+    expect(clustered).toBeLessThan(overdue);
+    expect(clusteredSuccess).toBeLessThan(overdue);
+    expect(overdue).toBeLessThan(reserve);
+    expect(workflow.slice(clusteredSuccess, overdue)).toContain("exit 0");
+    expect(workflow.slice(overdue, reserve)).toContain("DAILY_NEWS_PUBLISH_SUCCESS overdue_published=");
+    expect(workflow.slice(overdue, reserve)).toContain("OVERDUE_GAP_PUBLISHER_FAILED");
+  });
+
   it("reports a no-op honestly and fails if a publication gap is overdue", () => {
     const reserveBranch = workflow.slice(workflow.indexOf("reserve_published=$(jq -r"));
     expect(reserveBranch).toContain("DAILY_NEWS_NO_PUBLICATION");

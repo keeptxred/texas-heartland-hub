@@ -33,7 +33,12 @@ describe("retired newsroom legacy fallback", () => {
     expect(workflow).toContain("publish-overdue-gap");
     expect(workflow).toContain("generate-newsroom?mode=publish");
     expect(workflow).toContain("publishing-safety-net");
-    expect(workflow).toContain("No lower-quality writer will be attempted.");
+    expect(workflow.indexOf("generate-newsroom?mode=publish")).toBeLessThan(
+      workflow.indexOf("publish-overdue-gap"),
+    );
+    expect(workflow.indexOf("publish-overdue-gap")).toBeLessThan(
+      workflow.indexOf("publishing-safety-net"),
+    );
     expect(workflow).toContain("DAILY_NEWS_NO_PUBLICATION no_quality_gated_article=true reserve_published=false");
     expect(workflow).toContain("DAILY_NEWS_PUBLISH_GAP");
     expect(workflow).not.toContain("DAILY_NEWS_PUBLISH_SUCCESS no_quality_gated_article=true");

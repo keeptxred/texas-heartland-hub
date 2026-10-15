@@ -8,8 +8,10 @@ const cronCadence = readFileSync("supabase/migrations/20261007152500_restore_red
 
 describe("published newsroom freshness refresh", () => {
   it("keeps rebuilding source packets after a candidate is published", () => {
-    expect(packetBuilder).toContain('"PUBLISHED"');
-    expect(packetBuilder).toContain('"PENDING", "HELD", "SELECTED", "PUBLISHED"');
+    expect(packetBuilder).toContain('.eq("status", "PUBLISHED")');
+    expect(packetBuilder).toContain('.gte("published_at", new Date(Date.now() - PUBLISHED_REFRESH_HOURS');
+    expect(packetBuilder).toContain("const PUBLISHED_REFRESH_HOURS = 48");
+    expect(packetBuilder).toContain("const PUBLISHED_REFRESH_LIMIT = 80");
   });
 
   it("requires new packet evidence and a later story observation before touching the article", () => {

@@ -134,12 +134,35 @@ for (const marker of [
   'publish-overdue-gap',
   'generate-newsroom?mode=publish',
   'publishing-safety-net',
-  'No lower-quality writer will be attempted.',
 ]) {
   if (!dailyNewsWorkflow.includes(marker)) {
     errors.push(`Production daily-news workflow missing quality-gate marker: ${marker}`);
   }
 }
+// The quality-validated clustered newsroom must get first chance to
+// publish, avoiding eight costly overdue retries when a valid story exists.
+// The remaining overdue writer is independently fact/source gated, and the
+// retired single-source writer is never allowed back into the pipeline.
+const clusteredPublishAt = dailyNewsWorkflow.indexOf('generate-newsroom?mode=publish');
+const overdueFallbackAt = dailyNewsWorkflow.indexOf('publish-overdue-gap');
+const reserveAt = dailyNewsWorkflow.indexOf('publishing-safety-net');
+const clusteredSuccessAt = dailyNewsWorkflow.indexOf('DAILY_NEWS_PUBLISH_SUCCESS clustered_slug=');
+if (!(clusteredPublishAt >= 0
+  && clusteredPublishAt < clusteredSuccessAt
+  && clusteredSuccessAt < overdueFallbackAt
+  && overdueFallbackAt < reserveAt)) {
+  errors.push('Daily news production must run clustered source-validated publication, then independently gated overdue fallback, then reserve safety net.');
+}
+for (const marker of [
+  'assessPublicationReadiness(cluster)',
+  'if (!readiness.publish)',
+  'Waiting for an independent source or a substantive primary record',
+]) {
+  if (!multiSourcePublisher.includes(marker)) {
+    errors.push(`Overdue fallback publisher missing editorial/independent-source guard: ${marker}`);
+  }
+}
+
 for (const forbidden of [
   "'/api/public/hooks/generate-news'",
   'Continuing to legacy ranked RSS publisher',

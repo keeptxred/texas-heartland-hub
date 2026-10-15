@@ -1,4 +1,5 @@
 import { articleMainWordCount } from "./article-length";
+import { duplicateParagraphOccurrences } from "./public-article-readiness";
 import { EDITORIAL_SYSTEM_ADDENDUM, editorialMinimumFor, validateArticle, type StoryBrief } from "./editorial-pipeline";
 import type { ResearchPacket } from "./newsroom-research-packet";
 
@@ -87,6 +88,7 @@ NON-NEGOTIABLE RULES:
 - Never write generic attribution phrases such as "experts say", "experts suggest", "experts believe", "analysts say", "observers say", or equivalent wording. Name the supplied source responsible for a claim or omit the claim.
 - Preserve attribution where a claim belongs to a particular source.
 - Headline must be factual, specific, under 110 characters, and not clickbait.
+- Dek must be 90–190 characters, factual, and expand on the headline rather than repeat it verbatim.
 - Summary must be answer-first and 55–75 words. Do not exceed 90 words under any circumstance.
 - The relevance field MUST be prose explaining why the story matters to Texas readers, never a numeric score.
 - Use heading (not title) for every section object.
@@ -141,6 +143,28 @@ export function stripGenericExpertAttribution(value: string): string {
     .trim();
 }
 
+/**
+ * Reuse the model's already source-grounded answer-first summary when its
+ * short dek merely repeats the headline. No second model call or invented
+ * reporting; leave an unusable summary for the ordinary repair validator.
+ */
+export function newsroomSourceBackedDek(title: string, dek: string, summary: string): string {
+  const cleanDek = dek.replace(/\s+/g, " ").trim();
+  const cleanTitle = title.replace(/\s+/g, " ").trim().toLowerCase();
+  if (cleanDek.length >= 80 && cleanDek.toLowerCase() !== cleanTitle) return cleanDek;
+  const cleanSummary = summary.replace(/\s+/g, " ").trim();
+  if (cleanSummary.length < 80 || cleanSummary.toLowerCase() === cleanTitle) return cleanDek;
+  const sentences = cleanSummary.split(/(?<=[.!?])\s+/);
+  let candidate = "";
+  for (const sentence of sentences) {
+    if (candidate.length > 0 && (candidate.length + sentence.length + 1) > 240) break;
+    candidate = [candidate, sentence].filter(Boolean).join(" ");
+    if (candidate.length >= 100) break;
+  }
+  if (candidate.length < 80) candidate = cleanSummary.slice(0, 240).replace(/\s+\S*$/, "");
+  return candidate.length >= 80 && candidate.toLowerCase() !== cleanTitle ? candidate : cleanDek;
+}
+
 export function normalizeNewsroomDraft(value: unknown): unknown {
   if (!isRecord(value) || !Array.isArray(value.faq)) return value;
   const faq = value.faq.map((item) => {
@@ -173,7 +197,13 @@ export function normalizeNewsroomDraft(value: unknown): unknown {
   return {
     ...value,
     title: typeof value.title === "string" ? stripGenericExpertAttribution(value.title) : value.title,
-    dek: typeof value.dek === "string" ? stripGenericExpertAttribution(value.dek) : value.dek,
+    dek: typeof value.dek === "string" && typeof value.summary === "string"
+      ? newsroomSourceBackedDek(
+        typeof value.title === "string" ? stripGenericExpertAttribution(value.title) : "",
+        stripGenericExpertAttribution(value.dek),
+        stripGenericExpertAttribution(value.summary),
+      )
+      : value.dek,
     summary: typeof value.summary === "string" ? stripGenericExpertAttribution(value.summary) : value.summary,
     relevance: typeof value.relevance === "string" ? stripGenericExpertAttribution(value.relevance) : value.relevance,
     analysis: typeof value.analysis === "string" ? stripGenericExpertAttribution(value.analysis) : value.analysis,
@@ -243,6 +273,18 @@ export function validateNewsroomDraft(draft: unknown, packet: ResearchPacket): D
   // category-specific prose floor directly at this stage instead.
   const requiredMainWords = editorialMinimumFor(categoryForPillar(packet.pillar));
   if (mainWordCount < requiredMainWords) reasons.push("below_news_word_floor");
+  if (typedDraft.dek.trim().length < 80
+      || typedDraft.dek.replace(/\s+/g, " ").trim().toLowerCase()
+        === typedDraft.title.replace(/\s+/g, " ").trim().toLowerCase()) {
+    reasons.push("weak_newsroom_dek");
+  }
+  // One duplicated substantive paragraph is already a reader-facing editorial
+  // defect. Reject it *before* a newly generated draft reaches publication.
+  // Keep historical public-readiness rules separate to avoid silently changing
+  // indexability for older, already-published articles.
+  if (duplicateParagraphOccurrences(bodyJson) > 0) {
+    reasons.push("repeated_newsroom_paragraphs");
+  }
   if (typedDraft.sections.length !== 6) reasons.push("section_count");
   if (typedDraft.sections.some((section) => section.paragraphs.length !== 3)) reasons.push("paragraph_count");
   return { ok: reasons.length === 0, reasons: [...new Set(reasons)], mainWordCount };

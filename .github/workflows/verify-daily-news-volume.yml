@@ -1,0 +1,72 @@
+name: Verify Daily News Volume
+
+# Read-only monitor. Do not trigger publication or spend AI when a day misses
+# the 3-5 meaningful article target; make the shortage visible in Actions.
+on:
+  schedule:
+    # Runs after the preceding Central calendar day is complete in both CST
+    # and CDT. DST-safe day selection lives in the Node verification script.
+    - cron: '25 7 * * *'
+  # Independent fallback: GitHub can drop daily cron deliveries, whereas
+  # the normal newsroom publisher runs every four hours. Observe its one
+  # early-UTC scheduled completion to verify the PRECEDING Central day.
+  # This monitor remains read-only and cannot cause publication or AI usage.
+  workflow_run:
+    workflows: ["Run Daily News Now"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      day:
+        description: Optional YYYY-MM-DD Central calendar day (default yesterday)
+        required: false
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/news/check-daily-quality-volume.mjs'
+      - '.github/workflows/verify-daily-news-volume.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: keeptxred-daily-news-quality-volume-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    if: github.repository == 'keeptxred/texas-heartland-hub' && (github.event_name != 'workflow_run' || github.event.workflow_run.event == 'schedule')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.KEEP_TX_RED_SUPABASE_SERVICE_ROLE_KEY }}
+      CHECK_DAY: ${{ inputs.day || '' }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: Validate quality-volume monitor contracts (zero network or AI)
+        run: node scripts/news/check-daily-quality-volume.mjs --self-test
+      - name: Determine one early-UTC fallback window
+        id: fallback_window
+        if: github.event_name == 'workflow_run'
+        shell: bash
+        env:
+          SOURCE_RUN_CREATED_AT: ${{ github.event.workflow_run.created_at }}
+        run: |
+          set -euo pipefail
+          # Normal source job runs 00,04,08,12,... UTC. Only its
+          # 08:15 scheduled opportunity should trigger a once-daily fallback.
+          # Use the upstream timestamp, not runner start time, so runner
+          # queue delays cannot move the check to a different UTC window.
+          utc_hour=$(date -u -d "${SOURCE_RUN_CREATED_AT}" +%H)
+          if (( 10#${utc_hour} >= 8 && 10#${utc_hour} < 12 )); then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Verify previous Central day's substantive newsroom count
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event_name == 'push' || (github.event_name == 'workflow_run' && steps.fallback_window.outputs.ready == 'true')
+        run: node scripts/news/check-daily-quality-volume.mjs

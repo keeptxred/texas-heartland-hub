@@ -15,10 +15,12 @@ const header = readFileSync("src/components/site-header.tsx", "utf8");
 const footer = readFileSync("src/components/site-footer.tsx", "utf8");
 
 describe("shared checkout branding", () => {
-  it("keeps payment-facing copy free of storefront identification", () => {
+  it("keeps shared payment screens neutral but identifies the Texas Defined hosted checkout", () => {
     for (const { path, source } of paymentFacingFiles) {
       expect(source, path).not.toMatch(/Keep (?:TX|Texas) Red/i);
-      expect(source, path).not.toMatch(/Texas Defined/i);
+      if (!path.endsWith("texasdefined-checkout.ts")) {
+        expect(source, path).not.toMatch(/Texas Defined/i);
+      }
     }
   });
 
@@ -44,12 +46,17 @@ describe("shared checkout branding", () => {
     expect(source).toContain('wallet_options: { link: { display: "never" } }');
   });
 
-  it("overrides hosted TexasDefined Checkout with neutral per-session branding", () => {
+  it("identifies Texas Defined on its own hosted Stripe Checkout", () => {
     const source = paymentFacingFiles.find(({ path }) =>
       path.endsWith("texasdefined-checkout.ts")
     )?.source ?? "";
-    expect(source).toContain('display_name: "Secure Checkout"');
+    expect(source).toContain('display_name: "Texas Defined"');
     expect(source).toContain('secure-checkout-icon.png');
-    expect(source).toContain('description: "Online Shop Order"');
+    expect(source).toContain('description: "Texas Defined Shop Order"');
+    expect(source).toContain('shipping_options:');
+    expect(source).toContain('shipping_rate_data:');
+    expect(source).toContain('phone_number_collection: { enabled: false }');
+    expect(source).toContain('checkoutClientKind(request.headers.get("user-agent"))');
+    expect(source).toContain('return Response.json({ ok: true, url: session.url, sessionId: session.id }');
   });
 });

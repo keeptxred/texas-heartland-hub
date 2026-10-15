@@ -1,4 +1,5 @@
 import { classifyContentPillar } from "./content-pillars";
+import { isGovernmentNewsClippingUrl } from "./newsroom-discovery-sources";
 import { classifySportsText } from "./sports-taxonomy";
 
 function clamp(value: number, min = 0, max = 100): number {
@@ -48,7 +49,7 @@ export function isOfficialSportsSource(sourceName: string | null | undefined, so
 
 export function isPrimaryNewsSource(sourceName: string | null | undefined, sourceUrl: string | null | undefined): boolean {
   const hostname = hostnameOf(sourceUrl);
-  if (!hostname || hostname === "news.google.com") return false;
+  if (!hostname || hostname === "news.google.com" || isGovernmentNewsClippingUrl(sourceUrl)) return false;
   if (hostname.endsWith(".gov") || hostname.endsWith(".mil") || hostname.endsWith(".state.tx.us")) return true;
   if (isOfficialSportsSource(sourceName, sourceUrl)) return true;
   return false;
