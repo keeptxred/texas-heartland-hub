@@ -1,3 +1,5 @@
+import { isGovernmentNewsClippingUrl } from "@/lib/newsroom-discovery-sources";
+
 export type SourceAuthorityKind = "government" | "official" | "news" | "analysis";
 
 export type SourceAuthorityProfile = {
@@ -223,6 +225,7 @@ export function sourceAuthorityLabel(input: {
   url?: string | null;
   isPrimarySource?: boolean;
 }): string {
+  if (isGovernmentNewsClippingUrl(input.url)) return `${input.source} — newspaper clipping index (secondary discovery)`;
   const profile = getSourceAuthorityProfile(`${input.source} ${input.url ?? ""}`);
   if (input.isPrimarySource) return `${input.source} — primary / official source`;
   if (profile) return `${input.source} — ${profile.label.toLowerCase()}`;
