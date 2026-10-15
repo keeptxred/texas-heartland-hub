@@ -57,7 +57,7 @@ jobs:
           SOURCE_RUN_CREATED_AT: ${{ github.event.workflow_run.created_at }}
         run: |
           set -euo pipefail
-          # Normal upstream publisher runs 00,04,08,12,... UTC. Only its
+          # Normal source job runs 00,04,08,12,... UTC. Only its
           # 08:15 scheduled opportunity should trigger a once-daily fallback.
           # Use the upstream timestamp, not runner start time, so runner
           # queue delays cannot move the check to a different UTC window.
