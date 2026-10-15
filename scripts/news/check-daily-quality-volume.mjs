@@ -70,7 +70,7 @@ export function evaluatesAsSubstantiveNews(article) {
   if (!["Keep TX Red Newsroom", "Keep TX Red Editorial Staff"].includes(article.author)) return false;
   if (String(article.body ?? "").trim().length < 1800) return false;
   const sections = article.body_json?.sections;
-  if (!Array.isArray(sections) || sections.length < 2 || repeatedParagraphs(sections) > 2) return false;
+  if (!Array.isArray(sections) || sections.length < 2 || repeatedParagraphs(sections) > 0) return false;
   if ((article.quality_flags ?? []).some((flag) => excludedFlags.has(flag))) return false;
   const urls = [article.source_url, ...(article.body_json?.sources ?? []).map((source) => source.url)]
     .filter((url) => typeof url === "string" && url.trim());
@@ -97,6 +97,19 @@ function selfTest() {
     quality_flags: ["missing_image"],
   };
   assert.equal(evaluatesAsSubstantiveNews(article), true);
+  // A single repeated full paragraph is not a substantive new editorial unit.
+  // Do not credit it to a calendar-day publication target.
+  const oneRepeat = {
+    ...article,
+    body_json: {
+      ...article.body_json,
+      sections: [
+        { heading: "First", paragraphs: [paragraph] },
+        { heading: "Second", paragraphs: [paragraph] },
+      ],
+    },
+  };
+  assert.equal(evaluatesAsSubstantiveNews(oneRepeat), false);
   assert.equal(evaluatesAsSubstantiveNews({ ...article, body: "" }), false);
   assert.equal(evaluatesAsSubstantiveNews({ ...article, quality_flags: ["internal_repetition"] }), false);
   assert.equal(evaluatesAsSubstantiveNews({ ...article,

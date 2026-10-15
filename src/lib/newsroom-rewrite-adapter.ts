@@ -278,11 +278,11 @@ export function validateNewsroomDraft(draft: unknown, packet: ResearchPacket): D
         === typedDraft.title.replace(/\s+/g, " ").trim().toLowerCase()) {
     reasons.push("weak_newsroom_dek");
   }
-  // The post-publication readiness gate suppresses articles with >2 exact
-  // repeated substantive paragraphs. Reject or repair those drafts *before*
-  // inserting a live article, rather than publishing something hidden from
-  // the news index after image finalization.
-  if (duplicateParagraphOccurrences(bodyJson) > 2) {
+  // One duplicated substantive paragraph is already a reader-facing editorial
+  // defect. Reject it *before* a newly generated draft reaches publication.
+  // Keep historical public-readiness rules separate to avoid silently changing
+  // indexability for older, already-published articles.
+  if (duplicateParagraphOccurrences(bodyJson) > 0) {
     reasons.push("repeated_newsroom_paragraphs");
   }
   if (typedDraft.sections.length !== 6) reasons.push("section_count");
