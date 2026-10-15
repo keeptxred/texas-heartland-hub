@@ -84,5 +84,8 @@ describe("legislative newspaper clipping provenance", () => {
     expect(body.sources[0].label).not.toContain("primary / official source");
     expect(body.authority.primarySourceCount).toBe(0);
     expect(body.authority.sourceCount).toBe(2);
+    const normalizedAgain = applyGeneratedNewsAuthority({ kind: "news", bodyJson: result.bodyJson });
+    const sourcesAgain = (normalizedAgain.bodyJson as { sources: Array<{ label: string }> }).sources;
+    expect(sourcesAgain[0].label).toBe(body.sources[0].label);
   });
 });
