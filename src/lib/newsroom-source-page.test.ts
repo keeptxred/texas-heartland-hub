@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   extractReadableNewsroomHtml,
+  isNewsroomSourceFetchCoolingDown,
   looksSyntheticNewsroomText,
   shouldFetchNewsroomSourcePage,
 } from "./newsroom-source-page.server";
@@ -30,6 +31,25 @@ describe("newsroom source-page enrichment", () => {
       extractedBody: "",
     })).toBe(false);
     expect(shouldFetchNewsroomSourcePage({ url: "mailto:test@example.com", extractedBody: "" })).toBe(false);
+  });
+
+
+  it("backs off unreadable publisher pages for 24h while keeping successful fetches at 6h", () => {
+    const now = Date.parse("2026-10-15T12:00:00Z");
+    const hour = 60 * 60 * 1000;
+    const check = (hoursAgo: number, result: string) => isNewsroomSourceFetchCoolingDown(
+      { last_attempt_at: new Date(now - hoursAgo * hour).toISOString(), last_result: result },
+      now, 6 * hour, 24 * hour,
+    );
+    expect(check(12, "no_readable_body")).toBe(true);
+    expect(check(25, "no_readable_body")).toBe(false);
+    expect(check(4, "success")).toBe(true);
+    expect(check(7, "success")).toBe(false);
+    expect(check(4, "update_failed")).toBe(true);
+    expect(isNewsroomSourceFetchCoolingDown(null, now, 6 * hour, 24 * hour)).toBe(false);
+    expect(isNewsroomSourceFetchCoolingDown(
+      { last_attempt_at: "invalid", last_result: "no_readable_body" }, now, 6 * hour, 24 * hour,
+    )).toBe(false);
   });
 
   it("extracts readable article text without scripts or page chrome", () => {
