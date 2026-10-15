@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
+import { merchantOfferDescription } from "@/lib/merchant-offer-description";
 import { additionalMerchantImages } from "@/lib/merchant-offer-images";
 import { merchantImageUrl } from "@/lib/merchant-image-url";
 import { parseProductVariantOptions } from "@/lib/product-variant-options";
@@ -200,7 +201,7 @@ function merchantItems(product: Product): MerchantItem[] {
       itemGroupTitle: limitText(plainText(seoTitle(product)), TITLE_LIMIT),
       variantOptions,
       title: itemTitle(product, variant),
-      description,
+      description: merchantOfferDescription(description, color, size),
       link,
       canonicalLink,
       imageLink,
