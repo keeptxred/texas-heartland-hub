@@ -1,8 +1,7 @@
+# Targeted production browser acceptance remains manual, not every push.
 name: Verify political figures in production
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
