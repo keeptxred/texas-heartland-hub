@@ -10,6 +10,10 @@ const TIMEOUT_MS = Math.max(1000, Number(process.env.AUDIT_TIMEOUT_MS || 15000))
 const OUTPUT = process.env.AUDIT_OUTPUT || "tmp/sitemap-page-indexability-audit.json";
 const MAX_SITEMAPS = 100;
 const MAX_URLS = 100000;
+// A request budget is mandatory for any live full-site crawl. Exhaustion fails closed.
+const MAX_REQUESTS = 15_000;
+let requestCount = 0;
+let requestBudgetExceeded = false;
 const SITEMAP_CACHE_BUSTER = process.env.GITHUB_SHA || `audit-${Date.now()}`;
 const TRANSIENT = new Set([408, 425, 429, 500, 502, 503, 504, 520, 522, 524]);
 const LEGACY_REDIRECTS = new Map([
@@ -153,6 +157,10 @@ async function fetchManual(url, accept = "*/*") {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
     try {
+      if (++requestCount > MAX_REQUESTS) {
+        requestBudgetExceeded = true;
+        throw new Error(`Live crawl request budget exceeded (${MAX_REQUESTS}); incomplete audit`);
+      }
       const response = await fetch(url, {
         redirect: "manual",
         signal: controller.signal,
@@ -344,8 +352,12 @@ if (robotsGroups.length) {
   issues.push(...await auditLegacyRedirects(robotsGroups, new Set(uniquePages)));
 }
 
+if (requestBudgetExceeded) issues.push({ type: "request-budget-exhausted", url: ORIGIN, detail: `Crawl exceeded ${MAX_REQUESTS} network requests; partial audit cannot pass` });
+
 const report = {
   startedAt,
+  requestCount,
+  maxRequests: MAX_REQUESTS,
   finishedAt: new Date().toISOString(),
   origin: ORIGIN,
   rootSitemap: ROOT_SITEMAP,
