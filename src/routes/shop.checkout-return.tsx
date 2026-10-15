@@ -1,14 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CART_STORAGE_KEY, ETSY_CHECKOUT_STORAGE_KEY, useCart } from "@/lib/cart-context";
+import { GoogleCustomerReviews } from "@/components/GoogleCustomerReviews";
+import { reviewOrderFromResponse, type ReviewOrder } from "@/lib/google-customer-reviews";
 import { SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/shop/checkout-return")({
   head: () => ({
     meta: [
-      { title: "Order Confirmed" },
-      { name: "description", content: "Your order has been confirmed." },
+      { title: "Checkout Status" },
+      { name: "description", content: "Verify the payment status of your shop order." },
       { name: "robots", content: "noindex,follow" },
+      { name: "referrer", content: "no-referrer" },
     ],
     links: [{ rel: "canonical", href: `${SITE_URL}/shop/checkout-return` }],
   }),
@@ -22,29 +25,42 @@ function CheckoutReturn() {
   const { session_id: sessionId } = Route.useSearch();
   const cart = useCart();
 
+  const cartRef = useRef(cart);
+  useEffect(() => { cartRef.current = cart; }, [cart]);
+  const [state, setState] = useState<"checking" | "paid" | "unconfirmed">(sessionId ? "checking" : "unconfirmed");
+  const [review, setReview] = useState<ReviewOrder | null>(null);
   useEffect(() => {
-    // Clear the bag after successful checkout.
-    try {
-      window.localStorage.removeItem(CART_STORAGE_KEY);
-      window.localStorage.removeItem(ETSY_CHECKOUT_STORAGE_KEY);
-      window.sessionStorage.removeItem(ETSY_CHECKOUT_STORAGE_KEY);
-    } catch {
-      // ignore
-    }
-    cart.items.forEach((i) => cart.remove(i.key));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    let active = true;
+    setReview(null);
+    if (!sessionId) { setState("unconfirmed"); return; }
+    setState("checking");
+    void fetch(`/api/public/shop-checkout-status?session_id=${encodeURIComponent(sessionId)}`, { cache: "no-store", headers: { accept: "application/json" } })
+      .then(async response => {
+        const result = await response.json() as { ok?: boolean; paid?: boolean; review?: ReviewOrder | null };
+        if (!active) return;
+        if (!response.ok || !result.ok || !result.paid) { setState("unconfirmed"); return; }
+        setState("paid");
+        setReview(reviewOrderFromResponse(result.review, 5829731270));
+        try {
+          window.localStorage.removeItem(CART_STORAGE_KEY);
+          window.localStorage.removeItem(ETSY_CHECKOUT_STORAGE_KEY);
+          window.sessionStorage.removeItem(ETSY_CHECKOUT_STORAGE_KEY);
+        } catch { /* Storage may be unavailable. */ }
+        cartRef.current.items.forEach(item => cartRef.current.remove(item.key));
+      }).catch(() => { if (active) setState("unconfirmed"); });
+    return () => { active = false; };
+  }, [sessionId]);
 
   return (
     <div className="bg-background min-h-screen">
+      {state === "paid" && review && <GoogleCustomerReviews order={review} />}
       <section className="mx-auto max-w-[720px] px-6 py-20 text-center">
-        <div className="text-5xl mb-4">🎉</div>
-        <h1 className="font-display text-4xl md:text-5xl leading-tight">Thank you!</h1>
+        {state === "paid" && <div className="text-5xl mb-4">🎉</div>}
+        <h1 className="font-display text-4xl md:text-5xl leading-tight">{state === "checking" ? "Confirming your order" : state === "paid" ? "Thank you!" : "Checkout not confirmed"}</h1>
         <p className="mt-4 text-muted-foreground">
-          Your order is confirmed{sessionId ? "" : ""}. A receipt has been emailed to you, and
-          your order is heading to production.
+          {state === "checking" ? "We’re checking your payment status." : state === "paid" ? "Your payment is confirmed. Your order can now move into production." : "We could not verify a paid order. Your bag has not been cleared. Check your payment status before trying again."}
         </p>
-        {sessionId && (
+        {state === "paid" && sessionId && (
           <p className="mt-2 text-xs text-muted-foreground font-mono break-all">
             Order reference: {sessionId}
           </p>

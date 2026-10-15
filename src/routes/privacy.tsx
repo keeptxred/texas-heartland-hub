@@ -27,7 +27,13 @@ export const Route = createFileRoute("/privacy")({
 
 function PrivacyPage() {
   return (
-    <LegalPage title="Privacy Policy" description="This policy explains the information Keep TX Red handles when you read the site, use our tools, contact us, or place a shop order.">
+    <LegalPage title="Privacy Policy" updated="October 14, 2026" description="This policy explains the information Keep TX Red handles when you read the site, use our tools, contact us, or place a shop order.">
+      <section>
+        <h2>Google Customer Reviews</h2>
+        <p>On a verified paid order confirmation page, we share your email address, order reference, delivery country, and estimated delivery date with Google to display the Google Customer Reviews survey choice. Google sends a review survey only if you agree in its opt-in prompt. Declining does not affect your order or customer support.</p>
+        <p>Google may place or read cookies, or use similar technologies, for this program and processes transaction information under the <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google Privacy Policy</a>. You can manage or block cookies using your browser settings; blocking Google scripts may prevent the review prompt from appearing.</p>
+      </section>
+
       <section>
         <h2>Who We Are</h2>
         <p>
