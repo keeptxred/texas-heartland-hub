@@ -1,6 +1,6 @@
 name: Broken link audit
 
-# Run the full audit before audit-code changes merge and again after relevant main merges.
+# Source-only checks run on affected PRs; full production crawl is weekly/manual.
 # Zero-debt policy: retired internal links are no longer report-only once the migration backlog is cleared.
 on:
   workflow_dispatch:
@@ -13,14 +13,6 @@ on:
       - 'scripts/seo/audit-broken-links.mjs'
       - 'scripts/seo/broken-link-audit-utils.mjs'
       - 'scripts/seo/broken-link-scan-scope.mjs'
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/broken-link-audit.yml'
-      - 'scripts/seo/audit-broken-links.mjs'
-      - 'scripts/seo/broken-link-audit-utils.mjs'
-      - 'scripts/seo/broken-link-scan-scope.mjs'
-
 permissions:
   contents: read
 
@@ -37,12 +29,17 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 22
-      - name: Audit repository and production site
+      - name: Audit repository; inspect live site only on scheduled/manual runs
         id: audit
         env:
           AUDIT_SITE_URL: https://keeptxred.com
           AUDIT_FETCH_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
-        run: node scripts/seo/audit-broken-links.mjs --live
+        run: |
+          if [[ "${{ github.event_name }}" == 'schedule' || "${{ github.event_name }}" == 'workflow_dispatch' ]]; then
+            node scripts/seo/audit-broken-links.mjs --live
+          else
+            node scripts/seo/audit-broken-links.mjs
+          fi
         continue-on-error: true
       - name: Publish audit summary
         if: always()
