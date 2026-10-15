@@ -225,7 +225,10 @@ export function sourceAuthorityLabel(input: {
   url?: string | null;
   isPrimarySource?: boolean;
 }): string {
-  if (isGovernmentNewsClippingUrl(input.url)) return `${input.source} — newspaper clipping index (secondary discovery)`;
+  if (isGovernmentNewsClippingUrl(input.url)) {
+    const source = input.source.replace(/\s+[—–-]\s+newspaper clipping index \(secondary discovery\)$/i, "").trim();
+    return `${source} — newspaper clipping index (secondary discovery)`;
+  }
   const profile = getSourceAuthorityProfile(`${input.source} ${input.url ?? ""}`);
   if (input.isPrimarySource) return `${input.source} — primary / official source`;
   if (profile) return `${input.source} — ${profile.label.toLowerCase()}`;
