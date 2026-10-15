@@ -25,10 +25,34 @@ function centralDate(date) {
   return `${value.year}-${value.month}-${value.day}`;
 }
 
+// Keep aligned with newsroom-discovery-sources.ts. Government-hosted
+// newspaper clipping indexes are discovery pointers, not official evidence
+// of the underlying event or independent publisher reporting.
+function isGovernmentNewsClippingUrl(rawUrl) {
+  try {
+    const parsed = new URL(rawUrl);
+    const host = parsed.hostname.toLowerCase().replace(/^www\./, "");
+    if (host !== "lrl.state.tx.us" && host !== "lrl.texas.gov") return false;
+    const path = parsed.pathname.toLowerCase();
+    return path === "/cl.cfm" || path.startsWith("/currentissues/clips/");
+  } catch {
+    return false;
+  }
+}
+
+function isDiscoveryPointer(url) {
+  if (isGovernmentNewsClippingUrl(url)) return true;
+  try {
+    return new URL(url).hostname.toLowerCase().replace(/^www\./, "") === "news.google.com";
+  } catch {
+    return false;
+  }
+}
+
 function publisherFamily(url) {
+  if (isDiscoveryPointer(url)) return null;
   try {
     const hostname = new URL(url).hostname.toLowerCase().replace(/^www\./, "");
-    if (hostname === "news.google.com" || hostname === "www.news.google.com") return null;
     const parts = hostname.split(".");
     const lastTwo = parts.slice(-2).join(".");
     if (["co.uk", "org.uk", "gov.uk", "com.au", "org.au"].includes(lastTwo) && parts.length > 2) {
@@ -41,14 +65,20 @@ function publisherFamily(url) {
 }
 
 function hasPrimaryEvidence(article, urls) {
-  if ((article.quality_flags ?? []).includes("primary_sources")
-    || Number(article.body_json?.authority?.primarySourceCount ?? 0) > 0) return true;
-  return urls.some((url) => {
+  const verifiedOfficialUrl = urls.some((url) => {
+    if (isDiscoveryPointer(url)) return false;
     try {
       const host = new URL(url).hostname.toLowerCase();
       return host.endsWith(".gov") || host === "ercot.com" || host.endsWith(".ercot.com");
     } catch { return false; }
   });
+  if (verifiedOfficialUrl) return true;
+  // Existing authority metadata may have been computed before clipping URLs
+  // were reclassified as discovery links. In ambiguous cases fail closed rather
+  // than count that old metadata as current independent event evidence.
+  return !urls.some(isGovernmentNewsClippingUrl)
+    && ((article.quality_flags ?? []).includes("primary_sources")
+      || Number(article.body_json?.authority?.primarySourceCount ?? 0) > 0);
 }
 
 function repeatedParagraphs(sections) {
@@ -119,6 +149,28 @@ function selfTest() {
     ] },
   }), false);
   assert.equal(publisherFamily("https://news.google.com/rss/articles/abc"), null);
+  assert.equal(publisherFamily("http://www.lrl.state.tx.us/cl.cfm?id=454959"), null);
+  assert.equal(publisherFamily("https://lrl.texas.gov/currentissues/clips/2026/example"), null);
+  assert.equal(publisherFamily("https://lrl.texas.gov/legis/89R"), "texas.gov");
+  const clippingOnly = {
+    ...article,
+    body_json: {
+      ...article.body_json,
+      authority: { primarySourceCount: 1 },
+      sources: [
+        { url: "https://www.texastribune.org/news" },
+        { url: "http://www.lrl.state.tx.us/cl.cfm?id=454959" },
+      ],
+    },
+  };
+  assert.equal(evaluatesAsSubstantiveNews(clippingOnly), false);
+  assert.equal(evaluatesAsSubstantiveNews({
+    ...clippingOnly,
+    body_json: { ...clippingOnly.body_json, sources: [
+      ...clippingOnly.body_json.sources,
+      { url: "https://www.kxan.com/news" },
+    ] },
+  }), true);
   assert.equal(centralDate(new Date("2026-10-14T23:05:00Z")), "2026-10-14");
   console.log("Daily newsroom quality-volume monitor self-test passed.");
 }
