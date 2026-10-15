@@ -81,7 +81,7 @@ export function repeatedNewsroomParagraphPositions(
   }> = [];
   for (const [sectionIndex, section] of draft.sections.entries()) {
     for (const [paragraphIndex, text] of section.paragraphs.entries()) {
-      const key = text.trim().replace(/\\s+/g, " ").toLowerCase();
+      const key = text.trim().replace(/\s+/g, " ").toLowerCase();
       if (key.length < 120) continue;
       const first = firstLocation.get(key);
       if (first) {
