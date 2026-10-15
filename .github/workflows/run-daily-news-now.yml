@@ -121,28 +121,6 @@ jobs:
             exit 0
           fi
 
-          gap_status=$(curl -sS -X POST -o /tmp/overdue-gap.json -w '%{http_code}' \
-            --max-time 360 \
-            -H 'accept: application/json' \
-            -H "Authorization: Bearer ${oidc_token}" \
-            "${AUTOMATION_ORIGIN%/}/api/public/hooks/publish-overdue-gap" || echo 000)
-
-          echo "overdue-gap HTTP ${gap_status}"
-          cat /tmp/overdue-gap.json 2>/dev/null || true
-          echo
-
-          if [[ "$gap_status" != "200" ]] || ! jq -e '.ok == true' /tmp/overdue-gap.json >/dev/null 2>&1; then
-            echo 'OVERDUE_GAP_PUBLISHER_FAILED'
-            exit 1
-          fi
-
-          overdue_published=$(jq -r '.published // 0' /tmp/overdue-gap.json)
-          if [[ "$overdue_published" -gt 0 ]]; then
-            echo "DAILY_NEWS_PUBLISH_SUCCESS overdue_published=${overdue_published}"
-            exit 0
-          fi
-
-          echo 'No overdue gap published; refreshing deterministic clustered newsroom pipeline.'
           clustered_ready=1
 
           run_zero_ai_stage() {
@@ -229,6 +207,30 @@ jobs:
           else
             echo 'Clustered newsroom preprocessing failed. No lower-quality writer will be attempted.'
           fi
+
+          echo 'No clustered newsroom story published; trying the independent corroboration-gated overdue writer.'
+          gap_status=$(curl -sS -X POST -o /tmp/overdue-gap.json -w '%{http_code}' \
+            --max-time 360 \
+            -H 'accept: application/json' \
+            -H "Authorization: Bearer ${oidc_token}" \
+            "${AUTOMATION_ORIGIN%/}/api/public/hooks/publish-overdue-gap" || echo 000)
+
+          echo "overdue-gap HTTP ${gap_status}"
+          cat /tmp/overdue-gap.json 2>/dev/null || true
+          echo
+
+          if [[ "$gap_status" != "200" ]] || ! jq -e '.ok == true' /tmp/overdue-gap.json >/dev/null 2>&1; then
+            echo 'OVERDUE_GAP_PUBLISHER_FAILED'
+            exit 1
+          fi
+
+          overdue_published=$(jq -r '.published // 0' /tmp/overdue-gap.json)
+          if [[ "$overdue_published" -gt 0 ]]; then
+            echo "DAILY_NEWS_PUBLISH_SUCCESS overdue_published=${overdue_published}"
+            exit 0
+          fi
+
+          echo 'No overdue gap publication; continuing to reserve safety net.'
 
           echo 'No quality-gated normal article published; invoking curated reserve safety net.'
           safety_status=$(curl -sS -X POST -o /tmp/safety-net.json -w '%{http_code}' \
