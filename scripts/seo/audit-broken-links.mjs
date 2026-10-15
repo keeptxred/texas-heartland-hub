@@ -26,6 +26,9 @@ const RETIRED_PREFIXES = [
 ];
 const IGNORE_PREFIXES = ['/api/', '/admin', '/auth/', '/assets/', '/favicon', '/robots.txt', '/sitemap'];
 const MAX_FETCH_ATTEMPTS = 3;
+const MAX_LIVE_REQUESTS = 15_000;
+let liveRequests = 0;
+let liveBudgetExceeded = false;
 const AUDIT_REQUEST_HEADERS = {
   'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36',
   accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -142,6 +145,10 @@ async function fetchText(url) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 20000);
     try {
+      if (++liveRequests > MAX_LIVE_REQUESTS) {
+        liveBudgetExceeded = true;
+        throw new Error(`Live link audit request budget exceeded (${MAX_LIVE_REQUESTS}); partial scan cannot pass`);
+      }
       const response = await fetch(requestUrl, {
         redirect: 'follow',
         signal: controller.signal,
@@ -242,6 +249,7 @@ function printBlockingLiveFailures(failures) {
 
 const staticFindings = await staticAudit();
 const live = LIVE ? await liveAudit() : { pagesChecked: 0, failures: [] };
+if (liveBudgetExceeded) live.failures.push({ type: 'request-budget-exhausted', severity: 'blocking', url: SITE, error: `More than ${MAX_LIVE_REQUESTS} live HTTP attempts; refusing incomplete report` });
 const blockingStatic = staticFindings.filter((item) => item.severity === 'blocking');
 const migrationStatic = staticFindings.filter((item) => item.severity === 'migration-debt');
 const blockingLive = live.failures.filter((item) => item.severity === 'blocking');
@@ -257,6 +265,8 @@ const report = {
     blockingStaticFindings: blockingStatic.length,
     migrationStaticFindings: migrationStatic.length,
     livePagesChecked: live.pagesChecked,
+    liveRequests,
+    liveRequestBudget: MAX_LIVE_REQUESTS,
     liveFailures: live.failures.length,
     blockingLiveFailures: blockingLive.length,
     migrationLiveFindings: migrationLive.length,
