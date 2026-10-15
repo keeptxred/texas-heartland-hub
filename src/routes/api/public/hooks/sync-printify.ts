@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { printifyDescription } from "@/lib/printify-description";
 import { parseProductVariantOptions } from "@/lib/product-variant-options";
 
 const PRINTIFY_BASE = "https://api.printify.com/v1";
@@ -47,10 +48,6 @@ type WebsiteSettings = {
   keeptxred_display_order: number;
   texasdefined_display_order: number;
 };
-
-function stripHtml(value: string): string {
-  return (value || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
-}
 
 function variantIdFromSrc(src: string): number | null {
   const match = src.match(/\/mockup\/[^/]+\/(\d+)\//);
@@ -164,7 +161,7 @@ function mapProduct(product: PrintifyProduct, settings?: WebsiteSettings) {
     id: product.id,
     printify_product_id: product.id,
     title: product.title,
-    description: stripHtml(product.description).slice(0, 800),
+    description: printifyDescription(product.description),
     price: Math.round(chosenVariant?.price ?? 0) / 100,
     currency: "USD",
     image_url: image,
