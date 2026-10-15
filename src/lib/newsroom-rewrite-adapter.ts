@@ -67,6 +67,38 @@ export type DraftValidation = {
   mainWordCount: number;
 };
 
+/**
+ * Report exact 1-based locations of repeated substantive draft paragraphs.
+ * Follow public-article-readiness's case/whitespace normalization and >=120
+ * character threshold; never delete prose to fake a passing word count.
+ */
+export function repeatedNewsroomParagraphPositions(
+  draft: Pick<NewsroomDraft, "sections">,
+): Array<{ originalSection: number; originalParagraph: number; repeatSection: number; repeatParagraph: number }> {
+  const firstLocation = new Map<string, { section: number; paragraph: number }>();
+  const repeats: Array<{
+    originalSection: number; originalParagraph: number; repeatSection: number; repeatParagraph: number;
+  }> = [];
+  for (const [sectionIndex, section] of draft.sections.entries()) {
+    for (const [paragraphIndex, text] of section.paragraphs.entries()) {
+      const key = text.trim().replace(/\s+/g, " ").toLowerCase();
+      if (key.length < 120) continue;
+      const first = firstLocation.get(key);
+      if (first) {
+        repeats.push({
+          originalSection: first.section,
+          originalParagraph: first.paragraph,
+          repeatSection: sectionIndex + 1,
+          repeatParagraph: paragraphIndex + 1,
+        });
+      } else {
+        firstLocation.set(key, { section: sectionIndex + 1, paragraph: paragraphIndex + 1 });
+      }
+    }
+  }
+  return repeats;
+}
+
 export function newsroomRewriteSystemPrompt(packet: ResearchPacket): string {
   const mergeRule = packet.recommendedFormat === "MERGE"
     ? "This is a MERGE package. Reconcile overlapping reports into one story, preserve attribution for outlet-specific facts, and do not treat repeated reporting as independent new facts."
@@ -99,6 +131,8 @@ NON-NEGOTIABLE RULES:
 - Target 75–90 words per section paragraph so qualifying main-story prose clears the category-specific floor with a meaningful safety margin.
 - Every section paragraph should be at least about 380 characters of source-supported prose unless the packet cannot factually support that depth.
 - Each section paragraph must contain source-supported detail rather than generic commentary, predictions, public reaction, or moral framing.
+- Plan distinct factual roles for all 18 paragraphs before drafting: assign each a different source-supported event detail, record, statement, timeline point, procedural step, conflicting account, or explicitly documented consequence. Do not restate the same finding with synonym substitutions.
+- Before returning JSON, compare all section paragraphs with one another after trimming, lowercasing and normalizing whitespace. No substantive paragraph may appear more than once, even under another heading.
 - Keep paragraphs readable and fact-dense; do not repeat material to reach length.
 - Before returning JSON, verify that summary + relevance + all 18 section paragraphs total at least ${targetMainWords} words.
 - If the packet cannot support a truthful article at the required length, set brief.hasClearNewsEvent=false and return empty strings/arrays for the article fields while still satisfying the required JSON keys.

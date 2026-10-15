@@ -12,6 +12,7 @@ import {
   newsroomRewriteSystemPrompt,
   newsroomRewriteUserPrompt,
   normalizeNewsroomDraft,
+  repeatedNewsroomParagraphPositions,
   slugifyNewsroomTitle,
   validateNewsroomDraft,
   type NewsroomDraft,
@@ -149,6 +150,10 @@ function newsroomRepairUserPrompt(
   return JSON.stringify({
     instruction: "Repair the previous draft rather than restarting. Preserve every source-supported fact that already works. Fix every listed validation failure, remove unsupported/generic phrasing, keep the exact required JSON shape, and do not add facts that are absent from the packet. Return the complete corrected draft JSON.",
     validationFailures: validationReasons,
+    repeatedParagraphLocations: validationReasons.includes("repeated_newsroom_paragraphs")
+      ? repeatedNewsroomParagraphPositions(previousDraft)
+      : [],
+    repetitionRepairRule: "For each listed repeat, keep a factual first occurrence if supported. Rewrite the repeated location using genuinely different specific facts found in the supplied packet, without recycling another paragraph's facts. Do not merely rephrase the original, add generic commentary, or invent new details to meet a word target. If the packet lacks distinct evidence for all required paragraphs, set brief.hasClearNewsEvent=false rather than returning repetitive or unsupported copy.",
     previousDraft,
     packet: JSON.parse(newsroomRewriteUserPrompt(packet)),
   });
