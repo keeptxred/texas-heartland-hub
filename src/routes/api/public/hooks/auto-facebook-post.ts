@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
+import { isEligibleTextFirstFacebookArticle } from "@/lib/facebook-text-first-eligibility";
 import { publishDurableFacebookGuideFallback } from "@/lib/facebook-durable-guide-publisher.server";
 import {
   rankFacebookCandidates,
@@ -217,7 +218,6 @@ async function runAutoFacebookPost(request: Request) {
   const { data: rawArticles, error: articleError } = await db
     .from("daily_articles")
     .select("slug,title,category,featured_image_url,published_at,source_name,source_url,kind,is_breaking,score,content_quality_score,quality_flags,body_json")
-    .not("featured_image_url", "is", null)
     .gte("published_at", cutoff)
     .order("published_at", { ascending: false })
     .limit(MAX_CANDIDATES);
@@ -228,7 +228,8 @@ async function runAutoFacebookPost(request: Request) {
 
   const articles = ((rawArticles ?? []) as ArticleRow[]).filter(
     (row) =>
-      Boolean(row.slug && row.title && row.featured_image_url) &&
+      Boolean(row.slug && row.title) &&
+      (Boolean(row.featured_image_url) || isEligibleTextFirstFacebookArticle(row)) &&
       (row.content_quality_score ?? 0) >= MIN_EDITORIAL_QUALITY_SCORE &&
       meetsArticleMainWordCount(row.kind, row.body_json as never),
   );
@@ -332,6 +333,7 @@ async function runAutoFacebookPost(request: Request) {
         feed_item_id: null,
         caption: row.title,
         asset_url: row.featured_image_url,
+        allow_text_first: isEligibleTextFirstFacebookArticle(row),
         slug: row.slug,
       },
     });
