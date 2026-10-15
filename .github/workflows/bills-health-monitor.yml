@@ -5,6 +5,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  issues: write
 concurrency:
   group: bills-production-health
   cancel-in-progress: true
@@ -18,6 +19,40 @@ jobs:
         with:
           node-version: '22.15.0'
       - name: Check Bills production endpoints
+        id: probe
+        continue-on-error: true
         env:
           SUPABASE_URL: https://ftkznprjljkhymknvhye.supabase.co
         run: node scripts/monitoring/check-bills-health.mjs
+      - name: Open or resolve monitoring incident
+        if: always() && steps.probe.outcome != 'skipped'
+        uses: actions/github-script@v8
+        env:
+          PROBE_OUTCOME: ${{ steps.probe.outcome }}
+          FAILED_CHECKS: ${{ steps.probe.outputs.failed_checks }}
+        with:
+          script: |
+            const marker = '[bills-health-monitor]';
+            const {owner, repo} = context.repo;
+            const {data: issues} = await github.rest.issues.listForRepo({owner,repo,state:'open',per_page:100});
+            const existing = issues.find(i => !i.pull_request && i.title.startsWith(marker));
+            if (process.env.PROBE_OUTCOME !== 'success') {
+              const body = [
+                'Bills production health checks failed.',
+                'Failed checks: ' + (process.env.FAILED_CHECKS || 'probe step error'),
+                'Workflow: ' + context.serverUrl + '/' + owner + '/' + repo + '/actions/runs/' + context.runId,
+                'This issue is reused until a healthy check closes it.'
+              ].join('\n\n');
+              if (existing) {
+                core.warning('Existing incident #' + existing.number + ' remains open');
+              } else {
+                const {data: issue} = await github.rest.issues.create({owner,repo,title:marker + ' Production Bills health check failing',body});
+                core.warning('Opened incident #' + issue.number);
+              }
+            } else if (existing) {
+              await github.rest.issues.createComment({owner,repo,issue_number:existing.number,body:'Recovered: all Bills health checks passed. Run: ' + context.serverUrl + '/' + owner + '/' + repo + '/actions/runs/' + context.runId});
+              await github.rest.issues.update({owner,repo,issue_number:existing.number,state:'closed'});
+            }
+      - name: Fail workflow when checks fail
+        if: steps.probe.outcome != 'success'
+        run: exit 1
