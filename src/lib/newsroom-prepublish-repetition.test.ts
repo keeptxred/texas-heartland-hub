@@ -59,6 +59,20 @@ describe("newsroom prepublication duplicate paragraph gate", () => {
     expect(result.reasons).toContain("repeated_newsroom_paragraphs");
   });
 
+  it("rejects a single repeated substantive paragraph before publication", () => {
+    const unique = Array.from({ length: 18 }, (_, i) =>
+      "Official agency source excerpt " + String(i) + ": " + ("The public record describes the announced agency action in Texas and provides a source-backed reference. ").repeat(5),
+    );
+    unique[11] = unique[0];
+    const draft = createDraft(unique);
+    expect(duplicateParagraphOccurrences({
+      sections: draft.sections,
+    })).toBe(1);
+    const result = validateNewsroomDraft(draft, packet);
+    expect(result.ok).toBe(false);
+    expect(result.reasons).toContain("repeated_newsroom_paragraphs");
+  });
+
   it("does not invent a repetition failure for unique substantive paragraphs", () => {
     const unique = Array.from({ length: 18 }, (_, i) =>
       "Official agency source excerpt " + String(i) + ": " + ("The public record describes the announced agency action in Texas and provides a source-backed reference. ").repeat(5),
