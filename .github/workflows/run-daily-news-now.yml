@@ -1,7 +1,7 @@
 name: Run Daily News Now
 
-# Production publisher: prioritize quality-gated overdue gaps, then the
-# clustered newsroom, then the curated reserve safety net. The retired legacy
+# Production publisher: prioritize the evidence-rich clustered newsroom,
+# then the independently corroborated overdue fallback, then curated reserve. The retired legacy
 # single-source RSS writer is intentionally not part of this workflow.
 # Six daily opportunities keep the fresh article pool deep enough for Facebook
 # while the existing AI reservation/budget gates remain authoritative.
@@ -198,14 +198,14 @@ jobs:
             fi
 
             if [[ "$newsroom_status" == "200" ]] && jq -e '.ok == true and .no_items == true' /tmp/newsroom-publish.json >/dev/null 2>&1; then
-              echo "Clustered newsroom had no production-eligible packet: $(jq -r '.reason // "unknown"' /tmp/newsroom-publish.json). No lower-quality writer will be attempted."
+              echo "Clustered newsroom had no production-eligible packet: $(jq -r '.reason // "unknown"' /tmp/newsroom-publish.json). Overdue fallback remains subject to its own evidence and editorial gates."
             elif [[ "$newsroom_status" == "200" ]] && jq -e '.ok == true and .generated == true and .published != true' /tmp/newsroom-publish.json >/dev/null 2>&1; then
-              echo 'Clustered newsroom draft did not pass final validation. No lower-quality writer will be attempted.'
+              echo 'Clustered newsroom draft did not pass final validation. Overdue fallback remains subject to its own evidence and editorial gates.'
             else
-              echo "Clustered newsroom publish attempt was unavailable (HTTP ${newsroom_status}). No lower-quality writer will be attempted."
+              echo "Clustered newsroom publish attempt was unavailable (HTTP ${newsroom_status}). Overdue fallback remains subject to its own evidence and editorial gates."
             fi
           else
-            echo 'Clustered newsroom preprocessing failed. No lower-quality writer will be attempted.'
+            echo 'Clustered newsroom preprocessing failed. Overdue fallback remains subject to its own evidence and editorial gates.'
           fi
 
           echo 'No clustered newsroom story published; trying the independent corroboration-gated overdue writer.'
