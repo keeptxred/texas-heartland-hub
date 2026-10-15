@@ -3,6 +3,7 @@ import { buildResearchPacket } from "@/lib/newsroom-research-packet";
 import { newsroomIndependentPublisherFamilyFromUrl } from "@/lib/newsroom-publication-preflight";
 import {
   fetchReadableNewsroomSource,
+  isNewsroomSourceFetchCoolingDown,
   shouldFetchNewsroomSourcePage,
 } from "@/lib/newsroom-source-page.server";
 
@@ -20,10 +21,11 @@ const SOURCE_PAGE_FETCH_LIMIT = 40;
 const SOURCE_PAGE_CONCURRENCY = 4;
 const HYDRATION_ID_BATCH_SIZE = 100;
 const HYDRATION_READ_CONCURRENCY = 2;
-// A blocked or already-short page must not consume one of the same 40 fetch
-// slots every 15-minute packet cycle. Explicit targeted hydration can still be
-// used at any time, but automatic retries cool down for six hours.
+// Keep successful fetches on the existing six-hour retry cadence, but wait
+// 24 hours before retrying publishers whose pages supplied no readable body.
+// Explicit manual hydration remains available; no quality/evidence bar changes.
 const SOURCE_PAGE_RETRY_COOLDOWN_MS = 6 * 60 * 60 * 1000;
+const SOURCE_PAGE_UNREADABLE_RETRY_COOLDOWN_MS = 24 * 60 * 60 * 1000;
 
 type CandidateRow = {
   id: string;
@@ -225,16 +227,16 @@ async function handler() {
 
   const sourcePageCandidates = feeds
     .filter((feed) => shouldFetchNewsroomSourcePage({ url: feed.link, extractedBody: feed.extracted_body }));
-  const cooldownCutoff = Date.now() - SOURCE_PAGE_RETRY_COOLDOWN_MS;
-  const sourcePagesCoolingDown = sourcePageCandidates.filter((feed) => {
-    const state = sourcePageStateById.get(feed.id);
-    return Boolean(state && Number.isFinite(Date.parse(state.last_attempt_at)) && Date.parse(state.last_attempt_at) > cooldownCutoff);
-  }).length;
+  const nowMs = Date.now();
+  const sourcePageCoolingDown = (feedId: number) => isNewsroomSourceFetchCoolingDown(
+    sourcePageStateById.get(feedId),
+    nowMs,
+    SOURCE_PAGE_RETRY_COOLDOWN_MS,
+    SOURCE_PAGE_UNREADABLE_RETRY_COOLDOWN_MS,
+  );
+  const sourcePagesCoolingDown = sourcePageCandidates.filter((feed) => sourcePageCoolingDown(feed.id)).length;
   const sourcePageTargets = sourcePageCandidates
-    .filter((feed) => {
-      const state = sourcePageStateById.get(feed.id);
-      return !state || !Number.isFinite(Date.parse(state.last_attempt_at)) || Date.parse(state.last_attempt_at) <= cooldownCutoff;
-    })
+    .filter((feed) => !sourcePageCoolingDown(feed.id))
     .sort((a, b) => (priorityByFeedId.get(b.id) ?? 0) - (priorityByFeedId.get(a.id) ?? 0)
       || Number(Boolean(b.source_reputation_score)) - Number(Boolean(a.source_reputation_score))
       || a.id - b.id)
