@@ -36,6 +36,9 @@ describe("production crawl cost contract", () => {
     expect(text).toContain("node scripts/seo/audit-broken-links.mjs --live");
     expect(text).toContain("node scripts/seo/audit-broken-links.mjs\n");
     expect(text).toContain("github.event_name");
+    const runner = readFileSync(new URL("../../scripts/seo/audit-broken-links.mjs", import.meta.url), "utf8");
+    expect(runner).toContain("const MAX_LIVE_REQUESTS = 15_000;");
+    expect(runner).toContain("request-budget-exhausted");
   });
 
   it("keeps political-figure full browser acceptance manual, not every push", () => {
