@@ -146,3 +146,43 @@ code change in PR #2810 prevents future `/cl.cfm` and
 independent-publisher credit, while genuine Texas Legislative Reference
 Library legislative records remain eligible. Re-running the data correction
 is not necessary; the guarded match will no longer select the repaired row.
+
+
+## Follow-through — residual LRL clipping provenance cleanup
+
+After PR #2810 merged, a production Supabase audit found that the preventive
+classifier had been activated and the broader source-data repair was already
+effective: **0** `news_story_cluster_items` still marked the specified LRL
+newspaper clipping URL patterns as primary evidence, and **0** of the
+**315** packets containing those clipping URLs retained a positive
+`primary_source_count`. The matching article/packet/cluster repair for the
+Oct 14 Central-time prison air-conditioning story was independently verified.
+
+Five older articles were left with LRL newspaper clipping pages as their
+`daily_articles.source_url`, even though all five had already been corrected
+to zero primary sources. A guarded production SQL update moved each lead to
+a **direct article URL already present in its unchanged `body_json.sources`**:
+
+- 2026-09-11 Jimmy Kimmel/J. Talarico interview — Texas Tribune article
+- 2026-08-28 Minnesota ICE-officer extradition — KHOU 11 article
+- 2026-08-21 Trump and data centers — KXAN article
+- 2026-08-21 Abbott H-1B school proposal — Houston Public Media article
+- 2026-08-20 Ten Commandments court request — Houston Public Media's
+  contemporaneous August report (preferred to an older January background link)
+
+The update required newsroom authorship, `kind='news'`, the original
+`lrl.state.tx.us/cl.cfm` lead pattern, zero stored primary-source count,
+an existing qualifying direct publisher reference, and a historical publish
+date. The last article's direct lead selection was refined with an additional
+guard to prefer the already-cited contemporary August article.
+
+**No** `body_json.sources` citation was deleted; the Library's clipping URL
+remains transparently labeled as a secondary discovery index. Slugs,
+canonical URLs, original `published_at`, body text, editorial quarantine/
+noindex flags, and attribution arrays were not changed. These updates do
+not count as new news or reindex previously quarantined pages.
+
+Read-only verification returned **0** false-primary clipping memberships,
+**0** clipping-affected research packets with positive primary-source
+counts, and **0** blank news bodies. The remediation is intentionally
+not characterized as a historical content republication.
