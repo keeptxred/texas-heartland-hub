@@ -32,7 +32,10 @@ describe("daily substantive newsroom output", () => {
     expect(src).toContain("if (!pass) process.exitCode = 1");
     expect(src).toContain('article.kind !== "news"');
     expect(src).toContain('"source_integrity_failure"');
-    expect(src).toContain('hostname === "news.google.com"');
+    expect(src).toContain('isDiscoveryPointer(url)');
+    expect(src).toContain('isGovernmentNewsClippingUrl');
+    expect(src).toContain('lrl.state.tx.us');
+    expect(src).toContain('lrl.texas.gov');
     expect(src).toContain('publisherFamily');
     expect(src).not.toMatch(/reserve_ai_generation|Workers AI|model:\s*"chatgpt"/);
   });
