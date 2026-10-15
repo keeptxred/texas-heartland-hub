@@ -86,7 +86,7 @@ async function post({ request }: { request: Request }) {
     ? ["seo_false_multisource", "seo_noindex"]
     : [];
   const repetitionCount = duplicateParagraphOccurrences(normalized.bodyJson);
-  const repetitionFlags = repetitionCount > 2
+  const repetitionFlags = repetitionCount > 0
     ? ["seo_low_value_commodity", "internal_repetition"]
     : [];
 
@@ -108,7 +108,7 @@ async function post({ request }: { request: Request }) {
   const sourceFirstRecoveryEligible = quality.score >= 90
     && sourceIntegrity.primarySourceRepresented
     && !sourceIntegrity.falseMultiSourceClaim
-    && repetitionCount <= 2
+    && repetitionCount === 0
     && [article.source_url, ...sourceReferences.map((source) => source.url)]
       .some(isSearchRecoveryPrimarySourceUrl);
   const qualityFlags = [...new Set([
