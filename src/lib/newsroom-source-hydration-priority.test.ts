@@ -36,6 +36,9 @@ describe("zero-AI research source-page prioritization", () => {
     expect(builder).toContain("const SOURCE_PAGE_FETCH_LIMIT = 40");
     expect(builder).toContain("const SOURCE_PAGE_FETCH_CONCURRENCY = 4".replace("SOURCE_PAGE_FETCH_CONCURRENCY", "SOURCE_PAGE_CONCURRENCY"));
     expect(builder).toContain("const SOURCE_PAGE_RETRY_COOLDOWN_MS = 6 * 60 * 60 * 1000");
+    expect(builder).toContain("const SOURCE_PAGE_UNREADABLE_RETRY_COOLDOWN_MS = 24 * 60 * 60 * 1000");
+    expect(builder).toContain("isNewsroomSourceFetchCoolingDown(");
+    expect(builder).toContain(".filter((feed) => !sourcePageCoolingDown(feed.id))");
     expect(builder).toContain('candidate.status === "PENDING" ? 1_000 : 0');
     expect(builder).toContain("aiCalls: 0");
   });

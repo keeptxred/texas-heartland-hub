@@ -14,6 +14,23 @@ export function shouldFetchNewsroomSourcePage(input: { url: string | null; extra
   return looksSyntheticNewsroomText(body) || body.length < 4_000;
 }
 
+/** Avoid repeatedly spending CPU/network time on blocked publisher pages.
+ * A failure to extract readable text cools down longer than a successful fetch.
+ * This is only an automatic retry policy; explicit source verification is unaffected.
+ */
+export function isNewsroomSourceFetchCoolingDown(
+  state: { last_attempt_at: string | null; last_result: string | null } | null | undefined,
+  nowMs: number,
+  normalCooldownMs: number,
+  unreadableCooldownMs: number,
+): boolean {
+  if (!state) return false;
+  const lastAttemptMs = Date.parse(state.last_attempt_at ?? "");
+  if (!Number.isFinite(lastAttemptMs)) return false;
+  const cooldownMs = state.last_result === "no_readable_body" ? unreadableCooldownMs : normalCooldownMs;
+  return lastAttemptMs > nowMs - cooldownMs;
+}
+
 export function extractReadableNewsroomHtml(html: string): string | null {
   const stripped = html
     .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
