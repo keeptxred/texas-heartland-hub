@@ -38,6 +38,8 @@ describe("newsroom authority contract", () => {
 
   it("uses one bounded targeted repair instead of weakening validation", () => {
     expect(source).toContain("newsroomRepairUserPrompt");
+    expect(source).toContain("repeatedNewsroomParagraphPositions(previousDraft)");
+    expect(source).toContain("repetitionRepairRule");
     expect(source).toContain("REPAIR MODE:");
     expect(source).toContain("firstValidationReasons");
     expect(source).toContain("repairAttempted");
