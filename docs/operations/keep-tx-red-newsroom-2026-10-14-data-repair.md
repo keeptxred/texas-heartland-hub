@@ -111,3 +111,38 @@ The above direct production changes are documented here rather than
 misrepresented as a deployed SQL migration. SQL guards required matching
 slugs, newsroom authorship, news kind, adequate existing content, and
 preservation of the rows' quality-gate disposition.
+
+
+## Addendum — government clipping mistaken for a primary record (Oct 15)
+
+The new prison-air-conditioning appeal article
+`2026-10-15-texas-appeals-order-requiring-prison-air-conditioning`
+was published at 2026-10-15 04:42:21.567 UTC (late **Oct 14 Central**).
+A Texas Legislative Reference Library *Daily News Clips* URL
+`http://www.lrl.state.tx.us/cl.cfm?id=454959` was mistakenly counted as a
+primary or official record and made the lead source. The Library explicitly
+describes that service as an index of newspaper articles; being hosted by
+the government does not turn the newspapers' reporting into a court filing.
+
+A **single guarded production Supabase transaction** corrected this evidence
+classification without inventing material or changing the article's slug,
+canonical, published_at, source links, or editorial flags:
+
+- Changed the lead citation to the **existing** Texas Standard published report
+  already in the article's source list.
+- Preserved the Library clipping URL in the six-item citation list, but changed
+  its displayed role to `newspaper clipping index (secondary discovery)`.
+- Corrected the article's authority count to **0 primary** and **6 total
+  references**, including **5 published reporting sources and one clipping
+  index**, and revised the matching “How This Story Was Built” paragraph in
+  both the structured body and its plain-text counterpart.
+- Corrected the matching cluster membership from primary to supporting and
+  synchronized its research-packet and cluster primary-source counts to zero.
+
+The transaction returned **1 article, 1 membership, 1 packet, 1 cluster**
+updated. No extra article was generated and no paid AI was called. The
+code change in PR #2810 prevents future `/cl.cfm` and
+`/currentIssues/clips/*` URLs from being awarded primary-record or
+independent-publisher credit, while genuine Texas Legislative Reference
+Library legislative records remain eligible. Re-running the data correction
+is not necessary; the guarded match will no longer select the repaired row.
