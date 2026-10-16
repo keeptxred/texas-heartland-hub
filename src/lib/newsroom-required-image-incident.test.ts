@@ -35,12 +35,12 @@ describe("newsroom exact image recovery for October failed visual topics", () =>
   it("does not alter unrelated newsroom image criteria", () => {
     expect(newsroomAbstractPolicyVisualSubject({ slug: "2026-10-01-unrelated", title: "Other story" }, base)).toBe(base);
   });
-  it("accepts only the exact pre-vetted public-domain Cuellar portrait for the named article", () => {
+  it("does not treat an unvalidated archival image as approved solely by its URL", () => {
     const url = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Henry_Cuellar,_official_portrait.jpg";
     const slug = "2026-10-14-house-republicans-pull-3-million-reserved-for-ads-against-henry-cuellar";
-    expect(hasHeroVisualReadinessProvenance("authoritative-image-exempt: U.S. House public-domain original, official portrait of Henry Cuellar (2017)", url, slug)).toBe(true);
-    expect(hasHeroVisualReadinessProvenance("authoritative-image-exempt: someone else's picture", url, "unrelated")).toBe(false);
-    expect(hasHeroVisualReadinessProvenance("authoritative-image-exempt: same subject", "https://example.com/other.jpg", slug)).toBe(false);
+    expect(hasHeroVisualReadinessProvenance("authoritative-image-exempt: public-domain archive portrait", url, slug)).toBe(false);
+    expect(hasHeroVisualReadinessProvenance("stored-cloudflare-vision-v4 ok: verified named subject in image", url, slug)).toBe(true);
+    expect(hasHeroVisualReadinessProvenance("authoritative-image-exempt: photo", "https://example.com/other.jpg", slug)).toBe(false);
   });
 });
 
