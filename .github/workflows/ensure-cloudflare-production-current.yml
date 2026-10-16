@@ -1,10 +1,10 @@
 name: Ensure Cloudflare Production Matches Main
 
 on:
+  # The verified-deploy workflow owns normal main promotion.
+  # This is a low-frequency recovery/health check, never a second push deploy.
   schedule:
-    - cron: '*/5 * * * *'
-  push:
-    branches: [main]
+    - cron: '13,43 * * * *'
   pull_request:
     types: [opened, synchronize, reopened]
     branches: [main]
@@ -41,10 +41,9 @@ jobs:
           echo "main_sha=$main_sha" >> "$GITHUB_OUTPUT"
           echo "main_sha=$main_sha"
 
+          # A scheduled recovery performs one state read; never wait/poll for
+          # verification that the primary deployment is already responsible for.
           attempts=1
-          if [[ "$EVENT_NAME" == 'push' ]]; then
-            attempts=36
-          fi
 
           verify_success='false'
           verify_active='false'
