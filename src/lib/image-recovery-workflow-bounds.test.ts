@@ -37,7 +37,7 @@ describe("image recovery workflow bounds", () => {
   });
 
   it("uses verified-main workflow completion only for explicit marker sentinel commits", () => {
-    expect(backlogWorkflow).toContain('workflows: ["Repository test and build health"]');
+    expect(backlogWorkflow).toContain('workflows: ["Deploy verified KeepTXRed to Cloudflare"]');
     expect(backlogWorkflow).toContain("github.event.workflow_run.conclusion == 'success'");
     expect(backlogWorkflow).not.toContain("contains(github.event.workflow_run.head_commit.message, '[run-image-backlog]')");
     expect(backlogWorkflow).toContain("MARKER_REF: ${{ github.event.workflow_run.head_sha || github.sha }}");
@@ -77,8 +77,10 @@ describe("image recovery workflow bounds", () => {
     expect(adsenseWorkflow).toContain("45 6,14,22 * * *");
     for (const source of [backlogWorkflow, adsenseWorkflow]) {
       expect(source).not.toContain("*/5 * * * *");
-      expect(source).not.toContain('workflows: ["Deploy verified KeepTXRed to Cloudflare"]');
     }
+    expect(backlogWorkflow).toContain('workflows: ["Deploy verified KeepTXRed to Cloudflare"]');
+    expect(backlogWorkflow).not.toContain('workflows: ["Repository test and build health"]');
+    expect(adsenseWorkflow).not.toContain('workflows: ["Deploy verified KeepTXRed to Cloudflare"]');
   });
 
   it("refreshes the short-lived OIDC token for each protected article request", () => {
