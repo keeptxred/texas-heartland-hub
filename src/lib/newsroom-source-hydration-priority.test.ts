@@ -1,19 +1,26 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { newsroomIndependentPublisherFamilyFromUrl, newsroomSourceFamilyFromUrl } from "@/lib/newsroom-publication-preflight";
+import { newsroomHydrationPriority } from "@/lib/newsroom-source-page.server";
 
 const builder = readFileSync("src/routes/api/public/hooks/build-newsroom-research-packets.ts", "utf8");
 
 describe("zero-AI research source-page prioritization", () => {
   it("prefers publisher-independent or primary-source packets before spending fetch slots", () => {
     expect(builder).toContain("newsroomIndependentPublisherFamilyFromUrl");
-    expect(builder).toContain("const provenanceByCluster = new Map");
-    expect(builder).toContain("state.hasPrimary ||= membership.is_primary_source");
-    expect(builder).toContain("state.families.size >= 2");
-    expect(builder).toContain("publishableProvenance.has(membership.cluster_id) ? 10_000 : 0");
-    expect(builder.indexOf("publishableProvenance.has(membership.cluster_id)")).toBeLessThan(
+    expect(builder).toContain("const families = new Set<string>()");
+    expect(builder).toContain("if (family) {");
+    expect(builder).toContain("hasPrimary ||= membership.is_primary_source");
+    expect(builder).toContain("independentlySourced: hasPrimary || families.size >= 2");
+    expect(builder).toContain("newsroomHydrationPriority({");
+    expect(builder.indexOf("newsroomHydrationPriority({")).toBeLessThan(
       builder.indexOf(".slice(0, SOURCE_PAGE_FETCH_LIMIT)"),
     );
+    const rank = (pending: boolean, independentlySourced: boolean, evidenceChars: number) =>
+      newsroomHydrationPriority({ pending, independentlySourced, evidenceChars, requiredEvidenceChars: 5_000, editorialScore: 85 });
+    expect(rank(true, true, 4_800)).toBeGreaterThan(rank(true, true, 500));
+    expect(rank(true, true, 500)).toBeGreaterThan(rank(true, false, 4_800));
+    expect(rank(true, false, 4_800)).toBeGreaterThan(rank(false, true, 4_800));
   });
 
   it("does not count two syndicated hostnames as independent publisher families", () => {
@@ -39,7 +46,8 @@ describe("zero-AI research source-page prioritization", () => {
     expect(builder).toContain("const SOURCE_PAGE_UNREADABLE_RETRY_COOLDOWN_MS = 24 * 60 * 60 * 1000");
     expect(builder).toContain("isNewsroomSourceFetchCoolingDown(");
     expect(builder).toContain(".filter((feed) => !sourcePageCoolingDown(feed.id))");
-    expect(builder).toContain('candidate.status === "PENDING" ? 1_000 : 0');
+    expect(builder).toContain('pending: candidate.status === "PENDING"');
+    expect(builder).toContain(".slice(0, SOURCE_PAGE_FETCH_LIMIT)");
     expect(builder).toContain("aiCalls: 0");
   });
 });
