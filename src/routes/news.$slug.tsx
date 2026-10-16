@@ -453,6 +453,11 @@ function ArticlePage() {
             height={article.slug === "texas-policing-agencies-compared" ? 672 : 720}
           />
         </div>
+        {imageAlt.startsWith("Illustrative archival image") ? (
+          <figcaption className="mt-2 text-xs leading-relaxed text-muted-foreground">
+            Illustrative archival photograph of the reported subject, not a photograph of the event described.
+          </figcaption>
+        ) : null}
         {imageAttribution ? (
           <figcaption className="mt-2 text-xs leading-relaxed text-muted-foreground">
             {imageAttribution.caption ? <span>{imageAttribution.caption} </span> : null}
