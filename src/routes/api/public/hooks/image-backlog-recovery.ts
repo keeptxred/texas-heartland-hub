@@ -57,11 +57,12 @@ function isMissingImage(row: BacklogRow): boolean {
 
 function isEligible(row: BacklogRow): boolean {
   if (!row.published_at) return false;
-  // A real stored third-party/archive candidate belongs to the cheaper
-  // pixel-based hero-readiness audit, never the expensive AI generator.
-  if (row.image_candidate_url?.trim()
-    && (row.image_generation_status ?? "").toLowerCase() === "pending"
-    && (row.image_validation_note ?? "").startsWith("hero-readiness hold:")) return false;
+  // Any staged image has its own real-pixel editorial review. A rejected
+  // archive candidate must remain quarantined too: regenerating a synthetic
+  // image here wastes Workers AI usage and cannot approve the staged asset.
+  // Explicit manual image replacement requires removing/changing that
+  // candidate through the governed image-review process first.
+  if (row.image_candidate_url?.trim()) return false;
   if (!meetsArticleMainWordCount(row.kind, row.body_json)) return false;
 
   const status = (row.image_generation_status ?? "").trim().toLowerCase();
