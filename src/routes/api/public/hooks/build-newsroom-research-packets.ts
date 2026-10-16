@@ -21,8 +21,8 @@ const SOURCE_PAGE_FETCH_LIMIT = 40;
 const SOURCE_PAGE_CONCURRENCY = 4;
 const HYDRATION_ID_BATCH_SIZE = 100;
 const HYDRATION_READ_CONCURRENCY = 2;
-// Keep successful fetches on the existing six-hour retry cadence, but wait
-// 24 hours before retrying publishers whose pages supplied no readable body.
+// Keep full-length successful fetches on the six-hour retry cadence, but wait
+// 24 hours after unreadable or too-short extraction so thin pages do not monopolize fetch slots.
 // Explicit manual hydration remains available; no quality/evidence bar changes.
 const SOURCE_PAGE_RETRY_COOLDOWN_MS = 6 * 60 * 60 * 1000;
 const SOURCE_PAGE_UNREADABLE_RETRY_COOLDOWN_MS = 24 * 60 * 60 * 1000;
