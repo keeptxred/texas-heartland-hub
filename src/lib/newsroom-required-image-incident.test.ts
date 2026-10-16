@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { newsroomAbstractPolicyVisualSubject } from "./featured-image.functions";
 import { hasHeroVisualReadinessProvenance } from "./article-hero-readiness";
@@ -40,5 +41,32 @@ describe("newsroom exact image recovery for October failed visual topics", () =>
     expect(hasHeroVisualReadinessProvenance("authoritative-image-exempt: U.S. House public-domain original, official portrait of Henry Cuellar (2017)", url, slug)).toBe(true);
     expect(hasHeroVisualReadinessProvenance("authoritative-image-exempt: someone else's picture", url, "unrelated")).toBe(false);
     expect(hasHeroVisualReadinessProvenance("authoritative-image-exempt: same subject", "https://example.com/other.jpg", slug)).toBe(false);
+  });
+});
+
+describe("image is required before a newsroom article can become public", () => {
+  it("creates and validates a hero before the daily_articles upsert", () => {
+    const source = readFileSync("src/routes/api/public/hooks/generate-newsroom.ts", "utf8");
+    const prepareIndex = source.indexOf("await prepareFeaturedImageForUnpublishedNewsroomArticle({");
+    const guardIndex = source.indexOf("newsroom_image_publication_hold");
+    const insertIndex = source.indexOf(".upsert(readyRow, { onConflict: \"slug\" })");
+    expect(prepareIndex).toBeGreaterThan(0);
+    expect(guardIndex).toBeGreaterThan(prepareIndex);
+    expect(insertIndex).toBeGreaterThan(guardIndex);
+    expect(source).not.toContain(".upsert(row, { onConflict: \"slug\" })");
+    expect(source).toContain('image_generation_status: "ready"');
+    expect(source).toContain('image_validation_note: preparedImage.imageValidationNote');
+  });
+  it("runs image storage/vision without needing a published daily_articles row", () => {
+    const source = readFileSync("src/lib/featured-image.functions.ts", "utf8");
+    expect(source).toContain("beforePublish?: boolean");
+    expect(source).toContain("if (!opts.beforePublish)");
+    expect(source).toContain("return generateAndStore(row, { beforePublish: true })");
+    expect(source).toContain("if (!verdict.matches) throw new Error");
+  });
+  it("rejects missing hero finalization instead of reporting a successful text-only release", () => {
+    const source = readFileSync("src/routes/api/public/hooks/finalize-newsroom-article.ts", "utf8");
+    expect(source).toContain('error: "newsroom_featured_image_required"');
+    expect(source).toContain("status: image.ok ? 200 : 422");
   });
 });
