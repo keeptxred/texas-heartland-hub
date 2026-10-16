@@ -10,7 +10,7 @@ import {
   type ArticleHeroReadinessRow,
 } from "@/lib/article-hero-readiness";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
-import { validateStoredHeroMatchesArticle } from "@/lib/stored-hero-vision";
+import { validateStoredHeroMatchesArticle, type StoredHeroVisualClass } from "@/lib/stored-hero-vision";
 
 const OIDC_AUDIENCE = "keeptxred-newsroom";
 const REPOSITORY = "keeptxred/texas-heartland-hub";
@@ -20,7 +20,7 @@ const COMMONS_AUDIT_WIDTH = 1600;
 const FETCH_TIMEOUT_MS = 45_000;
 const SOURCE_METADATA_TIMEOUT_MS = 15_000;
 const IMAGE_FETCH_USER_AGENT = "KeepTXRed/1.0 (+https://keeptxred.com; editorial image readiness audit)";
-const STORED_HERO_POLICY_VERSION = "v4";
+const STORED_HERO_POLICY_VERSION = "v5";
 const DATA_CENTER_STORY_RE = /\b(data center(?:s)?|data-center(?:s)?|server farm(?:s)?|hyperscale)\b/i;
 
 type AuditRow = ArticleHeroReadinessRow & {
@@ -35,6 +35,8 @@ type CommonsAuditInfo = {
   auditImageUrl: string | null;
   originalByteSize: number | null;
   originalMime: string | null;
+  licenseVerified: boolean;
+  licenseCredit: string | null;
 };
 
 function bearerToken(request: Request): string | null {
@@ -129,6 +131,20 @@ function cleanMetadata(value: string): string {
     .trim();
 }
 
+/** Wikimedia licensing must pass independently of image relevance. */
+export function commonsReusableLicense(metadata: Record<string, { value?: string }>): { verified: boolean; credit: string | null } {
+  const shortName = cleanMetadata(metadata.LicenseShortName?.value ?? "");
+  const licenseUrl = cleanMetadata(metadata.LicenseUrl?.value ?? "").toLowerCase();
+  const lower = shortName.toLowerCase();
+  const verified = /^(?:cc[ -]?by(?:[ -]sa)?(?:[ -]|$)|cc0(?:[ -]|$)|public domain|pd-|pd |usgov)/i.test(lower)
+    || /^https:\/\/creativecommons\.org\/(?:licenses\/by(?:-sa)?\/|publicdomain\/)/.test(licenseUrl);
+  const creator = cleanMetadata(metadata.Artist?.value ?? metadata.Credit?.value ?? "").slice(0, 135);
+  const credit = verified
+    ? [creator, shortName || (licenseUrl.includes("creativecommons.org") ? licenseUrl : "Public domain")].filter(Boolean).join(" · ").slice(0, 220)
+    : null;
+  return { verified, credit };
+}
+
 export function commonsFileTitle(value: string): string | null {
   try {
     const url = new URL(value);
@@ -159,7 +175,7 @@ export function commonsFileTitle(value: string): string | null {
 async function fetchCommonsAuditInfo(value: string): Promise<CommonsAuditInfo> {
   const title = commonsFileTitle(value);
   if (!title) {
-    return { sourceMetadata: null, auditImageUrl: null, originalByteSize: null, originalMime: null };
+    return { sourceMetadata: null, auditImageUrl: null, originalByteSize: null, originalMime: null, licenseVerified: false, licenseCredit: null };
   }
 
   const endpoint = new URL("https://commons.wikimedia.org/w/api.php");
@@ -179,7 +195,7 @@ async function fetchCommonsAuditInfo(value: string): Promise<CommonsAuditInfo> {
       signal: controller.signal,
     });
     if (!response.ok) {
-      return { sourceMetadata: null, auditImageUrl: null, originalByteSize: null, originalMime: null };
+      return { sourceMetadata: null, auditImageUrl: null, originalByteSize: null, originalMime: null, licenseVerified: false, licenseCredit: null };
     }
     const payload = await response.json() as {
       query?: {
@@ -197,6 +213,7 @@ async function fetchCommonsAuditInfo(value: string): Promise<CommonsAuditInfo> {
     const page = payload.query?.pages?.[0];
     const imageInfo = page?.imageinfo?.[0];
     const metadata = imageInfo?.extmetadata ?? {};
+    const license = commonsReusableLicense(metadata);
     const parts = [
       page?.title ? `File: ${page.title.replace(/^File:/i, "").trim()}` : "",
       metadata.ObjectName?.value ? `Object: ${cleanMetadata(metadata.ObjectName.value)}` : "",
@@ -209,9 +226,11 @@ async function fetchCommonsAuditInfo(value: string): Promise<CommonsAuditInfo> {
       auditImageUrl: imageInfo?.thumburl?.trim() || null,
       originalByteSize: Number.isFinite(imageInfo?.size) ? Number(imageInfo?.size) : null,
       originalMime: imageInfo?.mime?.trim().toLowerCase() || null,
+      licenseVerified: license.verified,
+      licenseCredit: license.credit,
     };
   } catch {
-    return { sourceMetadata: null, auditImageUrl: null, originalByteSize: null, originalMime: null };
+    return { sourceMetadata: null, auditImageUrl: null, originalByteSize: null, originalMime: null, licenseVerified: false, licenseCredit: null };
   } finally {
     clearTimeout(timeout);
   }
@@ -326,9 +345,18 @@ async function acceptGovernedExactEntityGraphic(db: any, row: AuditRow, candidat
   return { accepted: true as const, exempt: true as const, exactEntityGraphic: true as const, note };
 }
 
-async function acceptValidatedHero(db: any, row: AuditRow, candidate: string, reason: string) {
-  const alt = row.image_candidate_alt_text?.trim() || row.image_alt_text?.trim() || `Editorial image for Keep TX Red article: ${row.title}`;
-  const note = `stored-cloudflare-vision-${STORED_HERO_POLICY_VERSION} ok: ${reason}`.slice(0, 1000);
+async function acceptValidatedHero(
+  db: any, row: AuditRow, candidate: string, reason: string,
+  visualClass: Extract<StoredHeroVisualClass, "exact_subject" | "representative_scene">,
+  credit: string | null,
+) {
+  const baseAlt = row.image_candidate_alt_text?.trim() || row.image_alt_text?.trim()
+    || `Editorial image for Keep TX Red article: ${row.title}`;
+  const caption = visualClass === "representative_scene" && !/^illustrative\b/i.test(baseAlt)
+    ? `Illustrative archival image (not the reported event): ${baseAlt}` : baseAlt;
+  const alt = credit && !caption.toLowerCase().includes(credit.toLowerCase())
+    ? `${caption} Credit: ${credit}`.slice(0, 600) : caption.slice(0, 600);
+  const note = `stored-cloudflare-vision-${STORED_HERO_POLICY_VERSION} ok: ${visualClass}; ${reason}`.slice(0, 1000);
   const { error } = await db.from("daily_articles").update({
     featured_image_url: candidate,
     image_url: candidate,
@@ -439,6 +467,12 @@ async function post({ request }: { request: Request }) {
     }
 
     const commonsAudit = await fetchCommonsAuditInfo(candidate);
+    // A Commons URL without reusable license metadata cannot be silently
+    // approved by an otherwise positive vision verdict.
+    if (commonsFileTitle(candidate) && !commonsAudit.licenseVerified) {
+      const result = await rejectHero(db, row, candidate, "License cannot be verified as public domain or reusable CC BY / CC BY-SA / CC0", repair);
+      return Response.json({ ok: true, slug: row.slug, candidate, licenseVerified: false, ...result });
+    }
     const auditImageUrl = commonsAudit.auditImageUrl || candidate;
     const fetched = await fetchHeroBytes(auditImageUrl, request.url);
     const subject = buildHeroReadinessSubject(row);
@@ -453,8 +487,8 @@ async function post({ request }: { request: Request }) {
       },
     );
     const auditDerivativeUsed = auditImageUrl !== candidate;
-    if (verdict.matches) {
-      const result = await acceptValidatedHero(db, row, candidate, verdict.reason);
+    if (verdict.matches && (verdict.visualClass === "exact_subject" || verdict.visualClass === "representative_scene")) {
+      const result = await acceptValidatedHero(db, row, candidate, verdict.reason, verdict.visualClass, commonsAudit.licenseCredit);
       return Response.json({
         ok: true,
         slug: row.slug,
@@ -465,6 +499,8 @@ async function post({ request }: { request: Request }) {
         sourceOriginalMime: commonsAudit.originalMime,
         sourceMetadataUsed: Boolean(commonsAudit.sourceMetadata),
         validation: verdict.reason,
+        visualClass: verdict.visualClass,
+        licenseVerified: !commonsFileTitle(candidate) || commonsAudit.licenseVerified,
         ...result,
       });
     }
@@ -480,6 +516,8 @@ async function post({ request }: { request: Request }) {
       sourceOriginalMime: commonsAudit.originalMime,
       sourceMetadataUsed: Boolean(commonsAudit.sourceMetadata),
       validation: verdict.reason,
+      visualClass: verdict.visualClass,
+      licenseVerified: !commonsFileTitle(candidate) || commonsAudit.licenseVerified,
       ...result,
     });
   } catch (error) {
