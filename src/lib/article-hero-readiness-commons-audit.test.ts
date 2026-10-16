@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
+import { commonsReusableLicense } from "../routes/api/public/hooks/article-hero-readiness-audit";
 
 describe("stored hero Wikimedia audit derivatives", () => {
   const route = fs.readFileSync(
@@ -7,6 +8,24 @@ describe("stored hero Wikimedia audit derivatives", () => {
     "utf8",
   );
   const readiness = fs.readFileSync(new URL("./article-hero-readiness.ts", import.meta.url), "utf8");
+
+  it("automatically permits public-domain, CC BY, BY-SA and CC0 but rejects restricted Commons licensing", () => {
+    const rights = (license: string, url = "") => commonsReusableLicense({
+      LicenseShortName: { value: license },
+      LicenseUrl: { value: url },
+      Artist: { value: "Archive photographer" },
+    });
+    for (const name of ["Public domain", "CC BY 2.0", "CC BY-SA 4.0", "CC0 1.0", "PD-USGov"]) {
+      expect(rights(name).verified, name).toBe(true);
+      expect(rights(name).credit).toContain("Archive photographer");
+    }
+    for (const name of ["All rights reserved", "CC BY-NC 4.0", "CC BY-ND 4.0", "CC BY-NC-SA 4.0", "Unknown"]) {
+      expect(rights(name).verified, name).toBe(false);
+      expect(rights(name).credit).toBeNull();
+    }
+    expect(rights("", "https://creativecommons.org/licenses/by/2.0/").verified).toBe(true);
+    expect(rights("", "https://creativecommons.org/licenses/by-nc/4.0/").verified).toBe(false);
+  });
 
   it("asks Commons for a bounded derivative plus source identity metadata", () => {
     expect(route).toContain("const COMMONS_AUDIT_WIDTH = 1600;");
@@ -22,7 +41,10 @@ describe("stored hero Wikimedia audit derivatives", () => {
     expect(route).toContain("fetchHeroBytes(auditImageUrl, request.url)");
     expect(route).toContain("candidateUrl: candidate");
     expect(route).toContain("sourceMetadata: commonsAudit.sourceMetadata");
-    expect(route).toContain("acceptValidatedHero(db, row, candidate, verdict.reason)");
+    expect(route).toContain("acceptValidatedHero(db, row, candidate, verdict.reason, verdict.visualClass, commonsAudit.licenseCredit)");
+    expect(route).toContain("if (commonsFileTitle(candidate) && !commonsAudit.licenseVerified)");
+    expect(route).toContain("visualClass: verdict.visualClass");
+    expect(route).toContain("Illustrative archival image (not the reported event)");
     expect(route).toContain("auditDerivativeUsed");
   });
 

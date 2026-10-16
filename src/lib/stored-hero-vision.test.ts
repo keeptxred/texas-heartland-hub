@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { storedHeroEditorialGuidance, storedHeroPolicyCorrection } from "./stored-hero-vision";
+import { classifyStoredHeroVerdict, storedHeroEditorialGuidance, storedHeroPolicyCorrection } from "./stored-hero-vision";
 import type { SubjectExtract } from "./featured-image-core";
 
 function subject(overrides: Partial<SubjectExtract> = {}): SubjectExtract {
@@ -15,6 +15,39 @@ function subject(overrides: Partial<SubjectExtract> = {}): SubjectExtract {
 }
 
 describe("stored hero representative-photo policy", () => {
+  it("automatically accepts exact people and truthful illustrative physical scenes, but not generic or uncertain images", () => {
+    const verdict = (visualClass: string, matches = true, photorealistic = true) =>
+      classifyStoredHeroVerdict(
+        { matches, photorealistic, reason: "Actual pixels reviewed" },
+        { visualClass },
+      );
+    expect(verdict("exact_subject").matches).toBe(true);
+    expect(verdict("representative_scene").matches).toBe(true);
+    expect(verdict("unrelated").matches).toBe(false);
+    expect(verdict("uncertain").matches).toBe(false);
+    expect(verdict("exact_subject", false).matches).toBe(false);
+    expect(verdict("representative_scene", true, false).matches).toBe(false);
+    expect(verdict("unexpected_value").matches).toBe(false);
+    expect(classifyStoredHeroVerdict(
+      { matches: true, photorealistic: true, reason: "Test" }, "{bad json",
+    ).matches).toBe(false);
+  });
+
+  it("does not treat an editorial caption alone as trusted identity evidence", () => {
+    const political = subject({
+      title: "House Republicans pull advertising planned against Henry Cuellar",
+      domain: "politics",
+      entities: ["Henry Cuellar"],
+    });
+    const reason = "A portrait of Henry Cuellar does not show the specific decision to pull advertising; should depict a courthouse.";
+    expect(storedHeroPolicyCorrection(political, { candidateAltText: "Henry Cuellar portrait" }, reason)).toBeNull();
+    const correction = storedHeroPolicyCorrection(political, {
+      candidateAltText: "Archival official portrait of Henry Cuellar, not the event",
+      sourceMetadata: "File: Henry Cuellar, official portrait.jpg | Description: U.S. House portrait of Henry Cuellar",
+    }, reason);
+    expect(correction).toContain("Do not require a courthouse");
+  });
+
   it("allows the central real entity without requiring an invisible action to be photographed", () => {
     const guidance = storedHeroEditorialGuidance(subject());
     expect(guidance).toContain("named person, organization, agency, institution, team, venue, product");

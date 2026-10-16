@@ -39,11 +39,12 @@ describe("article hero visual readiness", () => {
     expect(hasHeroVisualReadinessProvenance("verified-shared-hero: cloudflare-vision ok: reused validated infrastructure hero")).toBe(true);
   });
 
-  it("rechecks older rejects under v4 and quarantines only v4 rejects", () => {
+  it("rechecks old v4 rejects once under v5 and quarantines v5 rejects", () => {
     for (const note of [
       "stored-cloudflare-vision rejected: exact-action rule rejected the archive photo",
       "stored-cloudflare-vision-v2 rejected: data-center override rejected the central entity",
       "stored-cloudflare-vision-v3 rejected: source identity was not available",
+      "stored-cloudflare-vision-v4 rejected: incorrect literal event requirement",
     ]) {
       expect(isHeroReadinessQuarantined({
         slug: "test-story",
@@ -58,7 +59,7 @@ describe("article hero visual readiness", () => {
       slug: "test-story",
       image_candidate_url: "https://commons.wikimedia.org/wiki/Special:Redirect/file/example.jpg",
       image_generation_status: "failed",
-      image_validation_note: "stored-cloudflare-vision-v4 rejected: source-grounded rule still failed",
+      image_validation_note: "stored-cloudflare-vision-v5 rejected: source-grounded rule still failed",
       quality_flags: ["image_requires_visual_validation"],
     })).toBe(true);
 
@@ -80,7 +81,7 @@ describe("article hero visual readiness", () => {
       slug: lupeSlug,
       image_candidate_url: lupeUrl,
       image_generation_status: "failed",
-      image_validation_note: "stored-cloudflare-vision-v4 rejected: older policy treated the identity graphic as too generic",
+      image_validation_note: "stored-cloudflare-vision-v5 rejected: older policy treated the identity graphic as too generic",
       quality_flags: ["image_requires_visual_validation"],
     })).toBe(false);
 
@@ -88,7 +89,7 @@ describe("article hero visual readiness", () => {
       slug: txseSlug,
       image_candidate_url: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Trading_Floor_in_the_Chicago_Board_of_Trade_Building.png",
       image_generation_status: "failed",
-      image_validation_note: "stored-cloudflare-vision-v4 rejected: stale pre-allowlist candidate",
+      image_validation_note: "stored-cloudflare-vision-v5 rejected: stale pre-allowlist candidate",
       quality_flags: ["image_requires_visual_validation"],
     })).toBe(false);
 
@@ -96,19 +97,19 @@ describe("article hero visual readiness", () => {
       slug: "unrelated-story",
       image_candidate_url: lupeUrl,
       image_generation_status: "failed",
-      image_validation_note: "stored-cloudflare-vision-v4 rejected: ordinary failed candidate",
+      image_validation_note: "stored-cloudflare-vision-v5 rejected: ordinary failed candidate",
       quality_flags: ["image_requires_visual_validation"],
     })).toBe(true);
   });
 
   it("keeps an exhausted one-shot generated repair quarantined", () => {
     const note = buildExhaustedHeroRecoveryNote(
-      "v4",
+      "v5",
       "stored candidate omitted the defining named subject",
       "Generated image failed Cloudflare story-match validation",
     );
 
-    expect(note).toContain("stored-cloudflare-vision-v4 rejected:");
+    expect(note).toContain("stored-cloudflare-vision-v5 rejected:");
     expect(note).toContain("generated recovery failed:");
     expect(isHeroReadinessQuarantined({
       slug: "test-story",
@@ -195,7 +196,7 @@ describe("article hero visual readiness", () => {
     expect(subject.domain).toBe("sports");
   });
 
-  it("requires ordinary story subjects to read from the pixels rather than hidden metadata", () => {
+  it("allows source metadata to establish identity only when the correct visible visual type is present", () => {
     const subject = buildHeroReadinessSubject({
       slug: "2026-09-10-example",
       title: "Texas agency opens new Austin office",
@@ -203,9 +204,9 @@ describe("article hero visual readiness", () => {
       affected_regions: ["Austin"],
       body_json: { intro: ["The office will handle public services and records requests."] },
     });
-    expect(subject.concreteSubject).toContain("recognizable from visible image content alone");
-    expect(subject.concreteSubject).toContain("filename");
-    expect(subject.concreteSubject).toContain("source metadata");
+    expect(subject.concreteSubject).toContain("must be visible in the pixels");
+    expect(subject.concreteSubject).toContain("Source-fetched identity metadata");
+    expect(subject.concreteSubject).toContain("cannot transform the wrong visual type");
   });
 
   it("limits automated stored-hero fetching to the site and governed reusable-image hosts", () => {
