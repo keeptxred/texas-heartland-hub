@@ -55,23 +55,6 @@ const GOVERNED_EXACT_ENTITY_GRAPHICS = new Map<string, string>([
 ]);
 
 const GOVERNED_MANUALLY_REVIEWED_ARCHIVE_HEROES = new Map<string, string>([
-  // Exact-context, previously vision-approved recovery sources, not a general
-  // shared fallback. Article captions/audit notes identify archive context.
-  [
-    "2026-10-15-texas-appeals-order-requiring-prison-air-conditioning",
-    "https://commons.wikimedia.org/wiki/Special:Redirect/file/HuntsvilleUnitHuntsvilleTX.jpg",
-  ],
-  [
-    "2026-10-14-texas-penalties-for-data-center-violations-are-light-despite-tough-talk-from-abb",
-    "/api/public/article-image/2026-08-20-multiple-data-centers-commit-to-comply-with-governor-abbott-s-data-ce.jpg",
-  ],
-  // The subject is Rep. Henry Cuellar himself, not an unrelated generic
-  // campaign photograph. The U.S. House 2017 official portrait is public
-  // domain; source and original date are preserved in the article's audit note.
-  [
-    "2026-10-14-house-republicans-pull-3-million-reserved-for-ads-against-henry-cuellar",
-    "https://commons.wikimedia.org/wiki/Special:Redirect/file/Henry_Cuellar,_official_portrait.jpg",
-  ],
   [
     "2026-09-22-protesters-gather-at-texas-capitol-a-day-after-austin-ice-shooting",
     "https://commons.wikimedia.org/wiki/Special:Redirect/file/Crowd_at_the_Texas_State_Capitol_for_the_No_Kings_Day_Protest_on_June_14,_2025_(54604569560).jpg",
