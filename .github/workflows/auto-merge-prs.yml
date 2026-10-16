@@ -103,15 +103,6 @@ jobs:
             gh workflow run update-election-forecasts.yml --ref main --repo "$REPOSITORY"
             echo "Dispatched current-main Election Central forecast verification."
           fi
-          if grep -qxF '.github/workflows/broken-link-audit.yml' <<<"$changed_files" || \
-             grep -qxF 'scripts/seo/audit-broken-links.mjs' <<<"$changed_files" || \
-             grep -qxF 'scripts/seo/broken-link-scan-scope.mjs' <<<"$changed_files" || \
-             grep -Eq '^src/routes/' <<<"$changed_files" || \
-             grep -Eq '^src/server/' <<<"$changed_files"; then
-            gh workflow run broken-link-audit.yml --ref main --repo "$REPOSITORY"
-            echo "Dispatched current-main broken-link audit verification."
-          fi
-
           if grep -Eq '^(\.github/workflows/candidate-photo-enrichment\.yml|scripts/elections/.*(candidate-photo|photo-findings|senate-photo|filing-status).*|src/data/elections/2026/(candidate-photo-source-registry.*\.json|candidate-photo-assets\.json|candidate-supreme-court-media\.json|candidate-filing-status-authority\.json))$' <<<"$changed_files"; then
             gh workflow run candidate-photo-enrichment.yml --ref main --repo "$REPOSITORY"
             echo "Dispatched current-main candidate photo enrichment after protected verification."
@@ -173,9 +164,6 @@ jobs:
 
           gh run watch "$deploy_run_id" --repo "$REPOSITORY" --exit-status
           echo "Cloudflare deployment passed for exact verified revision $merged_sha."
-
-          gh workflow run article-hero-readiness-audit.yml --ref main --repo "$REPOSITORY"
-          echo "Dispatched post-deploy article hero readiness audit on current main."
 
           if grep -qxF '.github/workflows/sync-gsc-metrics.yml' <<<"$changed_files" || \
              grep -qxF 'scripts/seo/sync-gsc-metrics.mjs' <<<"$changed_files" || \

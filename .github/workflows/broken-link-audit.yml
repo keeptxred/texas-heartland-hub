@@ -13,6 +13,9 @@ on:
       - 'scripts/seo/audit-broken-links.mjs'
       - 'scripts/seo/broken-link-audit-utils.mjs'
       - 'scripts/seo/broken-link-scan-scope.mjs'
+      - 'src/routes/**'
+      - 'src/server.ts'
+      - 'src/server/**'
 permissions:
   contents: read
 
