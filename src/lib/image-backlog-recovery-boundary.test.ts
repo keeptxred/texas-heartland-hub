@@ -25,7 +25,9 @@ describe("image backlog recovery publication boundary", () => {
     const eligibleSource = source.slice(eligibleStart, eligibleEnd);
 
     expect(eligibleSource).toContain("if (!row.published_at) return false;");
-    expect(eligibleSource).toContain("if (row.image_candidate_url?.trim()) return false;");
+    expect(eligibleSource).toContain("if (row.image_candidate_url?.trim()");
+    expect(eligibleSource).toContain('=== "pending"');
+    expect(eligibleSource).toContain('startsWith("hero-readiness hold:")');
     expect(source).toContain("image_candidate_url,image_generation_status");
     expect(eligibleSource).toContain("meetsArticleMainWordCount");
     expect(eligibleSource).toContain("isLegacyGeneratedNewsAsset(row.featured_image_url)");
