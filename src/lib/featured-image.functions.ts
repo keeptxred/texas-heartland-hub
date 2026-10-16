@@ -459,7 +459,7 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
     if (upErr) throw upErr;
 
     const url = `/api/public/article-image/${filename}`;
-    await supabase.from("daily_articles").update({
+    const { error: imageWriteError } = await supabase.from("daily_articles").update({
       featured_image_url: url,
       image_url: url,
       image_alt_text: alt,
@@ -467,6 +467,7 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
       image_prompt: usedPrompt,
       image_validation_note: `${grounding ? `multisource-${grounding.mode}; ` : ""}cloudflare-vision ok: ${verdict.reason}`,
     }).eq("slug", row.slug);
+    if (imageWriteError) throw imageWriteError;
     return { ok: true, url, alt };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
