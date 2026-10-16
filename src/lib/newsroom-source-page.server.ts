@@ -4,6 +4,28 @@ const MAX_SOURCE_TEXT_CHARS = 12_000;
 const MIN_READABLE_CHARS = 500;
 export const NEWSROOM_SUBSTANTIVE_SOURCE_CHARS = 4_000;
 
+/**
+ * Rank a bounded source-hydration queue without changing any publication gate.
+ * Independently corroborated PENDING stories missing source evidence go first,
+ * with the smallest evidence deficit first. Already-qualified stories receive
+ * lower fetch priority because new fetches cannot unlock their word floor.
+ * These are scheduling hints only: official-source/independence and evidence
+ * validation still happen in the publisher.
+ */
+export function newsroomHydrationPriority(input: {
+  pending: boolean;
+  independentlySourced: boolean;
+  evidenceChars: number;
+  requiredEvidenceChars: number;
+  editorialScore: number;
+}): number {
+  const score = Math.max(0, Math.min(100, input.editorialScore));
+  if (!input.pending) return score;
+  if (!input.independentlySourced) return 1_000 + score;
+  const deficit = Math.max(0, input.requiredEvidenceChars - Math.max(0, input.evidenceChars));
+  return deficit > 0 ? 20_000 - Math.min(deficit, 9_000) + score : 10_000 + score;
+}
+
 export function looksSyntheticNewsroomText(value: string | null | undefined): boolean {
   const text = (value ?? "").trim();
   return /MULTI-SOURCE STORY PACKET\.|RAW SOURCE PACKET|STRUCTURED FACT LEDGER/i.test(text);

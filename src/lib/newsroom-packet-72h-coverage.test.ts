@@ -40,7 +40,9 @@ describe("72-hour publication evidence packet coverage", () => {
     expect(builder).toContain("for (const batch of chunkValues(packetsToWrite, CLUSTER_READ_BATCH_SIZE))");
     expect(builder).toContain("const SOURCE_PAGE_FETCH_LIMIT = 40");
     expect(builder).toContain("const SOURCE_PAGE_RETRY_COOLDOWN_MS = 6 * 60 * 60 * 1000");
-    expect(builder).toContain("candidate.status === \"PENDING\" ? 1_000 : 0");
+    expect(builder).toContain('pending: candidate.status === "PENDING"');
+    expect(builder).toContain("newsroomHydrationPriority({");
+    expect(builder).toContain(".slice(0, SOURCE_PAGE_FETCH_LIMIT)");
     expect(builder).toContain("aiCalls: 0");
   });
 });
