@@ -33,12 +33,22 @@ describe("production crawl cost contract", () => {
     expect(triggers).toContain("pull_request:");
     expect(triggers).not.toContain("  push:");
     expect(triggers).not.toContain("  workflow_run:");
+    expect(text).toContain("- 'src/routes/**'");
+    expect(text).toContain("- 'src/server.ts'");
+    expect(text).toContain("- 'src/server/**'");
     expect(text).toContain("node scripts/seo/audit-broken-links.mjs --live");
     expect(text).toContain("node scripts/seo/audit-broken-links.mjs\n");
     expect(text).toContain("github.event_name");
     const runner = readFileSync(new URL("../../scripts/seo/audit-broken-links.mjs", import.meta.url), "utf8");
     expect(runner).toContain("const MAX_LIVE_REQUESTS = 15_000;");
     expect(runner).toContain("request-budget-exhausted");
+  });
+
+  it("never manually dispatches full live link audits or redundant hero queues after auto-merge", () => {
+    const autoMerge = workflow("auto-merge-prs.yml");
+    expect(autoMerge).not.toContain("gh workflow run broken-link-audit.yml");
+    expect(autoMerge).not.toContain("gh workflow run article-hero-readiness-audit.yml");
+    expect(autoMerge).toContain("gh workflow run shared-vitest.yml");
   });
 
   it("keeps political-figure full browser acceptance manual, not every push", () => {
