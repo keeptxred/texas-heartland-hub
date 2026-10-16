@@ -408,8 +408,13 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
     return { ok: false, error: "Featured image held: the multi-source story has no safe corroborated or primary-record fact for visual generation." };
   }
 
-  const subject = newsroomAbstractPolicyVisualSubject(row, extractImageSubject(row, grounding));
-  const generationSubject = buildRepeatedFailureRecoverySubject(row, buildGenerationSafeSubject(subject));
+  const sourceSubject = extractImageSubject(row, grounding);
+  const subject = newsroomAbstractPolicyVisualSubject(row, sourceSubject);
+  // The four hand-scoped physical briefs already remove identifiable people,
+  // fabricated text, and exact-event reenactments. Do not overwrite the specific
+  // subject with the generic sensitive-news courthouse fallback.
+  const safeSubject = subject !== sourceSubject ? subject : buildGenerationSafeSubject(subject);
+  const generationSubject = buildRepeatedFailureRecoverySubject(row, safeSubject);
   const usesGenerationOnlyPrompt = generationSubject !== subject;
   const makeGenerationPrompt = (guidance = "") => usesGenerationOnlyPrompt
     ? buildGenerationOnlyImagePrompt(generationSubject, guidance)
