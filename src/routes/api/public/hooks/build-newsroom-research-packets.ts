@@ -1,9 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { buildResearchPacket } from "@/lib/newsroom-research-packet";
+import { categoryForPillar } from "@/lib/newsroom-rewrite-adapter";
 import { newsroomIndependentPublisherFamilyFromUrl } from "@/lib/newsroom-publication-preflight";
 import {
   fetchReadableNewsroomSource,
   isNewsroomSourceFetchCoolingDown,
+  newsroomHydrationPriority,
+  looksSyntheticNewsroomText,
   shouldFetchNewsroomSourcePage,
 } from "@/lib/newsroom-source-page.server";
 
@@ -196,33 +199,53 @@ async function handler() {
     }
   }
 
-  // Do not let published refresh enrichment use the 40 fetch slots before
-  // pending publication candidates; both cohorts still get packet rebuilds.
-  const candidateScoreByCluster = new Map(candidates.map((candidate) => [
-    candidate.cluster_id,
-    candidate.editorial_score + (candidate.status === "PENDING" ? 1_000 : 0),
-  ]));
-  // Spend scarce source-page fetches first on PENDING stories that could
-  // legally publish: an official primary record or two independent publisher
-  // families. Mirror the generation preflight's domain normalization.
+  // Spend the same forty network fetches where they can unlock a qualified
+  // new article: PENDING candidates with independent source families and a
+  // small remaining evidence deficit. Existing complete packets can already
+  // reach generation; endlessly hydrating a third thin source won't help them.
+  // Use inexpensive approximate body lengths for ordering ONLY. The exact
+  // de-duplicated 5k/9k evidence and authority gates remain in the publisher.
   const feedByIdForPriority = new Map(feeds.map((feed) => [feed.id, feed]));
-  const provenanceByCluster = new Map<string, { hasPrimary: boolean; families: Set<string> }>();
+  const clusterByIdForPriority = new Map(clusters.map((cluster) => [cluster.id, cluster]));
+  const membersByClusterForPriority = new Map<string, MembershipRow[]>();
   for (const membership of memberships) {
-    const state = provenanceByCluster.get(membership.cluster_id) ?? { hasPrimary: false, families: new Set<string>() };
-    state.hasPrimary ||= membership.is_primary_source;
-    const family = newsroomIndependentPublisherFamilyFromUrl(feedByIdForPriority.get(membership.feed_item_id)?.link ?? "");
-    if (family) state.families.add(family);
-    provenanceByCluster.set(membership.cluster_id, state);
+    const rows = membersByClusterForPriority.get(membership.cluster_id) ?? [];
+    rows.push(membership);
+    membersByClusterForPriority.set(membership.cluster_id, rows);
   }
-  const publishableProvenance = new Set(
-    [...provenanceByCluster].filter(([, state]) => state.hasPrimary || state.families.size >= 2)
-      .map(([clusterId]) => clusterId),
-  );
   const priorityByFeedId = new Map<number, number>();
-  for (const membership of memberships) {
-    const score = (candidateScoreByCluster.get(membership.cluster_id) ?? 0)
-      + (publishableProvenance.has(membership.cluster_id) ? 10_000 : 0);
-    priorityByFeedId.set(membership.feed_item_id, Math.max(priorityByFeedId.get(membership.feed_item_id) ?? 0, score));
+  for (const candidate of candidates) {
+    const members = membersByClusterForPriority.get(candidate.cluster_id) ?? [];
+    const families = new Set<string>();
+    let hasPrimary = false;
+    let approximateEvidenceChars = 0;
+    const seenEvidence = new Set<string>();
+    for (const membership of members) {
+      const feed = feedByIdForPriority.get(membership.feed_item_id);
+      hasPrimary ||= membership.is_primary_source;
+      const family = newsroomIndependentPublisherFamilyFromUrl(feed?.link ?? "");
+      if (family) families.add(family);
+      const body = looksSyntheticNewsroomText(feed?.extracted_body) ? "" : (feed?.extracted_body ?? "").slice(0, 8_000);
+      const description = looksSyntheticNewsroomText(feed?.description) ? "" : (feed?.description ?? "").slice(0, 3_000);
+      const evidence = `${description}\n${body}`.trim();
+      if (!evidence || seenEvidence.has(evidence)) continue;
+      seenEvidence.add(evidence);
+      approximateEvidenceChars += evidence.length;
+    }
+    const pillar = clusterByIdForPriority.get(candidate.cluster_id)?.pillar_slug ?? null;
+    const category = categoryForPillar(pillar).toLowerCase();
+    const requiredEvidenceChars = category === "sports" || category === "education" || category === "non-political"
+      ? 9_000 : 5_000;
+    const priority = newsroomHydrationPriority({
+      pending: candidate.status === "PENDING",
+      independentlySourced: hasPrimary || families.size >= 2,
+      evidenceChars: approximateEvidenceChars,
+      requiredEvidenceChars,
+      editorialScore: candidate.editorial_score,
+    });
+    for (const membership of members) {
+      priorityByFeedId.set(membership.feed_item_id, Math.max(priorityByFeedId.get(membership.feed_item_id) ?? 0, priority));
+    }
   }
 
   const sourcePageCandidates = feeds
