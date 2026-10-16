@@ -152,7 +152,7 @@ jobs:
 
           if [[ "$clustered_ready" -eq 1 ]]; then
             newsroom_status=$(curl -sS -X POST -o /tmp/newsroom-publish.json -w '%{http_code}' \
-              --max-time 240 \
+              --max-time 600 \
               -H 'accept: application/json' \
               -H "Authorization: Bearer ${oidc_token}" \
               "${AUTOMATION_ORIGIN%/}/api/public/hooks/generate-newsroom?mode=publish" || echo 000)
