@@ -222,9 +222,11 @@ async function handler() {
     const seenEvidence = new Set<string>();
     for (const membership of members) {
       const feed = feedByIdForPriority.get(membership.feed_item_id);
-      hasPrimary ||= membership.is_primary_source;
       const family = newsroomIndependentPublisherFamilyFromUrl(feed?.link ?? "");
-      if (family) families.add(family);
+      if (family) {
+        families.add(family);
+        hasPrimary ||= membership.is_primary_source;
+      }
       const body = looksSyntheticNewsroomText(feed?.extracted_body) ? "" : (feed?.extracted_body ?? "").slice(0, 8_000);
       const description = looksSyntheticNewsroomText(feed?.description) ? "" : (feed?.description ?? "").slice(0, 3_000);
       const evidence = `${description}\n${body}`.trim();
