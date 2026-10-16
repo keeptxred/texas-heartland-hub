@@ -29,6 +29,17 @@ describe("verified Cloudflare deployment reconciliation", () => {
     expect(ensure).toContain("deploy=false");
   });
 
+  it("runs recovery on a bounded schedule rather than racing every main push", () => {
+    const triggers = ensure.slice(0, ensure.indexOf("permissions:"));
+    expect(triggers).toContain("cron: '13,43 * * * *'");
+    expect(triggers).toContain("workflow_dispatch:");
+    expect(triggers).not.toContain("  push:");
+    expect(ensure).toContain("attempts=1");
+    expect(ensure).not.toContain("attempts=36");
+    expect(legacy).toContain('workflows: ["Repository test and build health"]');
+    expect(legacy).toContain("workflow_dispatch:");
+  });
+
   it("does not race an active exact-main verified deploy with a duplicate custom-domain deploy", () => {
     expect(ensure).toContain('actions/workflows/deploy-cloudflare-after-verify.yml/runs?branch=main&per_page=100');
     expect(ensure).toContain("select(.status != \"completed\")");
