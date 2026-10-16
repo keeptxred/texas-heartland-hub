@@ -56,7 +56,12 @@ jobs:
           if [[ "${GITHUB_EVENT_NAME}" == "workflow_run" ]]; then
             verified_message=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${MARKER_REF}" --jq '.commit.message')
             if [[ "$verified_message" != *"[run-image-backlog]"* ]]; then
-              echo "IMAGE_BACKLOG_RECOVERY_SKIP no [run-image-backlog] sentinel on verified commit ${MARKER_REF}."
+              echo "IMAGE_BACKLOG_RECOVERY_SKIP no [run-image-backlog] sentinel on deployed commit ${MARKER_REF}."
+              exit 0
+            fi
+            main_sha=$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/main" --jq '.object.sha')
+            if [[ "$MARKER_REF" != "$main_sha" ]]; then
+              echo "IMAGE_BACKLOG_RECOVERY_SKIP deployment ${MARKER_REF} is no longer current main ${main_sha}; stale Worker recovery prohibited."
               exit 0
             fi
           fi
