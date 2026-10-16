@@ -165,17 +165,17 @@ export function isHeroReadinessQuarantined(row: Pick<ArticleHeroReadinessRow,
   "slug" | "image_candidate_url" | "image_generation_status" | "image_validation_note" | "quality_flags"
 >): boolean {
   const candidate = row.image_candidate_url?.trim();
-  // A slug that has since been explicitly approved for an exact identity
-  // graphic must be allowed back through the readiness queue even when its
-  // stored candidate is an older rejected asset. The audit will resolve the
-  // current governed graphic before validation/publication.
+  // The v5 subject-aware review may reconsider v4 false negatives ONCE
+  // without bypassing the pixel or licensing checks. A v5 rejection is then
+  // quarantined until an editor stages a different candidate. Exact governed
+  // identity graphics remain handled by their narrow slug/URL allowlist.
   if (governedExactEntityGraphicUrl(row.slug)) return false;
 
   const status = (row.image_generation_status ?? "").trim().toLowerCase();
   const note = (row.image_validation_note ?? "").trim().toLowerCase();
   return Boolean(candidate)
     && status === "failed"
-    && note.startsWith("stored-cloudflare-vision-v4 rejected:")
+    && note.startsWith("stored-cloudflare-vision-v5 rejected:")
     && (row.quality_flags ?? []).includes("image_requires_visual_validation");
 }
 
@@ -257,6 +257,6 @@ export function buildHeroReadinessSubject(row: ArticleHeroReadinessRow): Subject
     entities,
     locations,
     domain,
-    concreteSubject: `${baseSubject} The defining subject or activity must be recognizable from visible image content alone without relying on the filename, source metadata, hidden caption, or an editor knowing what the image is supposed to depict.`.trim(),
+    concreteSubject: `${baseSubject} The photographed subject or its defining real-world physical cues must be visible in the pixels. Source-fetched identity metadata may establish WHICH real person, institution or site a plausible photographed person, building or facility is; it cannot transform the wrong visual type or generic same-domain stock imagery into the central subject. An archival representative scene must be genuinely connected to the physical story subject and labeled illustrative, not a photograph of the reported event.`.trim(),
   };
 }
