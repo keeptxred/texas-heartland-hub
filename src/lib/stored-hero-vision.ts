@@ -126,8 +126,9 @@ export function storedHeroPolicyCorrection(
 
   if ((subject.domain === "legal" || subject.domain === "politics") && sourceHintNamesStoryEntity(subject, hint)) {
     const forcedCourthouse = /(?:should|must|needs? to)\s+(?:be|show|depict)[^.!]{0,100}(?:court|courthouse|courtroom)|not directly relevant to (?:the )?legal story/i.test(value);
-    if (forcedCourthouse) {
-      return "POLICY CORRECTION: A source-identified headline-defining named person is itself a valid primary subject for a legal story. Do not require a courthouse or courtroom merely because the article concerns a case. Re-evaluate the visible person/photo type and trusted identity metadata; reject only if the person is not actually central to the headline/story or the visual type is otherwise wrong.";
+    const forcedInvisibleEvent = /(?:does not|doesn't|not)[^.!]{0,70}(?:show|depict|capture)[^.!]{0,140}(?:decision|ads?|advertising|funding|withdrawal|budget|vote|lawsuit|campaign|pulling|action)/i.test(value);
+    if (forcedCourthouse || forcedInvisibleEvent) {
+      return "POLICY CORRECTION: A source-identified headline-defining named person, including the targeted candidate or plaintiff, may represent the story even when an invisible political or legal decision cannot be photographed. Do not require a courthouse, literal withdrawn advertisements, vote, or event reenactment. Verify the visible photo type and trusted source identity; reject a merely incidental person or unrelated subject.";
     }
   }
 
