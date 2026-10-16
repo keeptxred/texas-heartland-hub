@@ -4,7 +4,7 @@ import { detectDiscoverCategory } from "@/lib/seo-headline";
 import { scoreDiscoverMatch, type HeadlineVariants } from "@/lib/ctr-score";
 import { getArticleImage } from "@/lib/fallback-images";
 import { enrichArticleRow } from "@/lib/content-quality";
-import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
+import { generateFeaturedImageForSlugDirect, prepareFeaturedImageForUnpublishedNewsroomArticle } from "@/lib/featured-image.functions";
 import { isDuplicateTitle, dedupeByTitle } from "@/lib/title-similarity";
 import { resolvePublishTimestamp } from "@/lib/article-slug-integrity";
 import { isSameEventRewrite } from "@/lib/article-canonical";
@@ -1583,9 +1583,31 @@ export async function publishSingleFeedItem(
     };
   }
 
+  const preparedImage = await prepareFeaturedImageForUnpublishedNewsroomArticle({
+    slug: articleRow.slug,
+    title: articleRow.title,
+    dek: articleRow.dek,
+    category: articleRow.category,
+    body_json: articleRow.body_json,
+  });
+  if (!preparedImage.ok || !preparedImage.url || !preparedImage.imageValidationNote) {
+    return {
+      ok: false,
+      error: `newsroom_image_publication_hold: ${preparedImage.ok ? "missing_image_provenance" : preparedImage.error}`,
+    };
+  }
+  const readyArticleRow = {
+    ...articleRow,
+    featured_image_url: preparedImage.url,
+    image_url: preparedImage.url,
+    image_alt_text: preparedImage.alt,
+    image_generation_status: "ready",
+    image_validation_note: preparedImage.imageValidationNote,
+    image_prompt: preparedImage.imagePrompt ?? null,
+  };
   const { error: upsertErr } = await supabaseAdmin
     .from("daily_articles")
-    .upsert([articleRow], { onConflict: "slug", ignoreDuplicates: true });
+    .upsert([readyArticleRow], { onConflict: "slug", ignoreDuplicates: true });
   if (upsertErr) return { ok: false, error: upsertErr.message };
 
   await supabaseAdmin
@@ -1593,8 +1615,8 @@ export async function publishSingleFeedItem(
     .update({ internal_slug: articleRow.slug })
     .eq("id", feedItemId);
 
-  // Fire-and-forget image generation; UI already renders without it.
-  void generateFeaturedImageForSlugDirect(articleRow.slug, true).catch(() => undefined);
+  // Image was persisted and vision-approved before the article row was inserted.
+  // No asynchronous post-publication image call or text-only success.
 
   return { ok: true, slug: articleRow.slug };
 }
