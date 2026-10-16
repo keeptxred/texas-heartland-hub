@@ -21,7 +21,10 @@ describe("clustered newsroom post-publish workflow", () => {
     const imageFailure = workflow.indexOf("CLUSTERED_NEWSROOM_IMAGE_FAILED");
     expect(workflow.slice(finalizeFailure, finalizeFailure + 300)).toContain("exit 1");
     expect(workflow.slice(imageFailure, imageFailure + 280)).toContain("exit 1");
-    expect(workflow).toContain("FLYOVER_EXACT_FEED_IMAGE_DEFERRED");
+    expect(workflow).toContain("FLYOVER_EXACT_FEED_IMAGE_FAILED");
+    expect(workflow).not.toContain("FLYOVER_EXACT_FEED_IMAGE_DEFERRED");
+    const flyoverFailure = workflow.indexOf("FLYOVER_EXACT_FEED_IMAGE_FAILED");
+    expect(workflow.slice(flyoverFailure, flyoverFailure + 270)).toContain("exit 1");
     expect(workflow).toContain(".ok == true and (.slug // \"\") != \"\"");
     expect(workflow).not.toContain("(.slug // \"\") != \"\" and .image.ok == true");
   });
