@@ -97,8 +97,9 @@ jobs:
               exit 1
             fi
 
-            if ! jq -e '.image.ok == true' /tmp/flyover-exact.json >/dev/null 2>&1; then
-              echo "FLYOVER_EXACT_FEED_IMAGE_DEFERRED feed_id=${FLYOVER_FEED_ID}; text-first article will still be verified."
+            if ! jq -e '.image.ok == true and (.image.url // "") != ""' /tmp/flyover-exact.json >/dev/null 2>&1; then
+              echo "FLYOVER_EXACT_FEED_IMAGE_FAILED feed_id=${FLYOVER_FEED_ID}; publication is incomplete without a validated image." >&2
+              exit 1
             fi
 
             slug="$(jq -r '.slug' /tmp/flyover-exact.json)"
@@ -151,7 +152,7 @@ jobs:
 
           if [[ "$clustered_ready" -eq 1 ]]; then
             newsroom_status=$(curl -sS -X POST -o /tmp/newsroom-publish.json -w '%{http_code}' \
-              --max-time 240 \
+              --max-time 600 \
               -H 'accept: application/json' \
               -H "Authorization: Bearer ${oidc_token}" \
               "${AUTOMATION_ORIGIN%/}/api/public/hooks/generate-newsroom?mode=publish" || echo 000)
@@ -189,8 +190,9 @@ jobs:
                 echo "CLUSTERED_NEWSROOM_FINALIZE_FAILED slug=${slug} HTTP=${finalize_status}; article remains published for safe recovery, but this run is not a production pass." >&2
                 exit 1
               fi
-              if ! jq -e '.image.ok == true' /tmp/newsroom-finalize.json >/dev/null 2>&1; then
-                echo "CLUSTERED_NEWSROOM_IMAGE_DEFERRED slug=${slug}; text-first publication remains successful and image recovery is independent."
+              if ! jq -e '.image.ok == true and (.image.url // "") != ""' /tmp/newsroom-finalize.json >/dev/null 2>&1; then
+                echo "CLUSTERED_NEWSROOM_IMAGE_FAILED slug=${slug}; no successful publication without a validated image." >&2
+                exit 1
               fi
 
               echo "DAILY_NEWS_PUBLISH_SUCCESS clustered_slug=${slug} sources=${source_count} primary=${primary_count} ai_calls=${ai_calls} repair=${repair}"

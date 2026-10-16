@@ -279,6 +279,13 @@ async function publishOverdueGaps(request: Request) {
       error: result.error,
     });
 
+    // One rejected image is an image-pipeline failure, not a reason to spend
+    // the remaining AI budget generating another seven doomed visuals.
+    if (!result.ok && result.error?.startsWith("newsroom_image_publication_hold:")) {
+      console.warn("[overdue-gap] stopping after rejected image; exact candidate held for recovery");
+      break;
+    }
+
     if (result.ok && result.slug) {
       published += result.alreadyPublished ? 0 : 1;
 

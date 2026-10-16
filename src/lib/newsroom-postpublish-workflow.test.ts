@@ -13,15 +13,18 @@ describe("clustered newsroom post-publish workflow", () => {
     );
   });
 
-  it("fails on article finalization defects but defers failed image generation", () => {
+  it("fails the scheduled publication when image generation or validation failed", () => {
     expect(workflow).toContain("CLUSTERED_NEWSROOM_FINALIZE_FAILED");
-    expect(workflow).toContain("CLUSTERED_NEWSROOM_IMAGE_DEFERRED");
-    expect(workflow).not.toContain("CLUSTERED_NEWSROOM_IMAGE_FAILED");
+    expect(workflow).toContain("CLUSTERED_NEWSROOM_IMAGE_FAILED");
+    expect(workflow).not.toContain("CLUSTERED_NEWSROOM_IMAGE_DEFERRED");
     const finalizeFailure = workflow.indexOf("CLUSTERED_NEWSROOM_FINALIZE_FAILED");
-    const imageDeferred = workflow.indexOf("CLUSTERED_NEWSROOM_IMAGE_DEFERRED");
+    const imageFailure = workflow.indexOf("CLUSTERED_NEWSROOM_IMAGE_FAILED");
     expect(workflow.slice(finalizeFailure, finalizeFailure + 300)).toContain("exit 1");
-    expect(workflow.slice(imageDeferred, imageDeferred + 300)).not.toContain("exit 1");
-    expect(workflow).toContain("FLYOVER_EXACT_FEED_IMAGE_DEFERRED");
+    expect(workflow.slice(imageFailure, imageFailure + 280)).toContain("exit 1");
+    expect(workflow).toContain("FLYOVER_EXACT_FEED_IMAGE_FAILED");
+    expect(workflow).not.toContain("FLYOVER_EXACT_FEED_IMAGE_DEFERRED");
+    const flyoverFailure = workflow.indexOf("FLYOVER_EXACT_FEED_IMAGE_FAILED");
+    expect(workflow.slice(flyoverFailure, flyoverFailure + 270)).toContain("exit 1");
     expect(workflow).toContain(".ok == true and (.slug // \"\") != \"\"");
     expect(workflow).not.toContain("(.slug // \"\") != \"\" and .image.ok == true");
   });

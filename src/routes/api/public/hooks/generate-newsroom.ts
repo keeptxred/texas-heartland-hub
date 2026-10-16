@@ -4,6 +4,7 @@ import { enrichArticleRow } from "@/lib/content-quality";
 import { runCloudflareJson } from "@/lib/cloudflare-json-ai.server";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 import { getGovernmentGraphLinks } from "@/lib/government-graph";
+import { prepareFeaturedImageForUnpublishedNewsroomArticle } from "@/lib/featured-image.functions";
 import { newsroomNewStoryCutoff } from "@/lib/newsroom-candidate-window";
 import { newsroomHasPublisherDiversity, newsroomLeadSourceUrl, uniquePacketSources } from "@/lib/newsroom-publication-preflight";
 import {
@@ -560,9 +561,27 @@ async function handler({ request }: { request: Request }) {
       enriched.quality_flags = [...new Set([...(enriched.quality_flags ?? []), "seo_noindex", "single_source_aggregation"] )];
     }
 
+    // Never create a live newsroom article with an unverified hero. Generate
+    // and vision-validate first, using the same image writer and exact slug;
+    // a failed image holds the candidate instead of inserting text-only news.
+    const preparedImage = await prepareFeaturedImageForUnpublishedNewsroomArticle({
+      slug, title: row.title, dek: row.dek, category: row.category, body_json: row.body_json,
+    });
+    if (!preparedImage.ok || !preparedImage.url || !preparedImage.imageValidationNote) {
+      throw new Error(`newsroom_image_publication_hold: ${preparedImage.ok ? "missing_image_provenance" : preparedImage.error}`);
+    }
+    const readyRow = {
+      ...row,
+      featured_image_url: preparedImage.url,
+      image_url: preparedImage.url,
+      image_alt_text: preparedImage.alt,
+      image_generation_status: "ready",
+      image_validation_note: preparedImage.imageValidationNote,
+      image_prompt: preparedImage.imagePrompt ?? null,
+    };
     const { data: articles, error: articleError } = await db
       .from("daily_articles")
-      .upsert(row, { onConflict: "slug" })
+      .upsert(readyRow, { onConflict: "slug" })
       .select("id")
       .limit(1);
     if (articleError) throw new Error(articleError.message);

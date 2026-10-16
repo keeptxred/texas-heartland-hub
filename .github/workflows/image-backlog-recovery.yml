@@ -2,12 +2,13 @@ name: KeepTXRed Image Backlog Recovery
 
 on:
   workflow_dispatch:
-  # Protected-main merges are performed by repository automation, so a marker
-  # commit may not emit a second push-triggered workflow. Listen to the required
-  # repository verification as a fallback. For workflow_run events, resolve the
-  # verified commit message through the commits API before doing any recovery.
+  # Protected-main merges may suppress ordinary push events. For explicit
+  # exact-slug incident markers, recover only AFTER the matching production
+  # deployment succeeded, not after source verification while the old Worker
+  # still handles image prompts. The referenced SHA must carry the incident
+  # sentinel; normal deployments are harmless no-ops.
   workflow_run:
-    workflows: ["Repository test and build health"]
+    workflows: ["Deploy verified KeepTXRed to Cloudflare"]
     types: [completed]
     branches: [main]
   # Keep background image repair inside the Workers AI free-neuron budget.
@@ -49,13 +50,18 @@ jobs:
         run: |
           set -euo pipefail
 
-          # workflow_run payloads do not reliably expose head_commit.message.
-          # Resolve the exact verified commit instead, and keep ordinary
-          # verification completions as a no-op unless the sentinel is present.
+          # Never recover from an undeployed revision. The workflow_run trigger
+          # is only a successful verified PRODUCTION deployment, carrying the
+          # commit SHA whose incident marker named the exact recovery slugs.
           if [[ "${GITHUB_EVENT_NAME}" == "workflow_run" ]]; then
             verified_message=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${MARKER_REF}" --jq '.commit.message')
             if [[ "$verified_message" != *"[run-image-backlog]"* ]]; then
-              echo "IMAGE_BACKLOG_RECOVERY_SKIP no [run-image-backlog] sentinel on verified commit ${MARKER_REF}."
+              echo "IMAGE_BACKLOG_RECOVERY_SKIP no [run-image-backlog] sentinel on deployed commit ${MARKER_REF}."
+              exit 0
+            fi
+            main_sha=$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/main" --jq '.object.sha')
+            if [[ "$MARKER_REF" != "$main_sha" ]]; then
+              echo "IMAGE_BACKLOG_RECOVERY_SKIP deployment ${MARKER_REF} is no longer current main ${main_sha}; stale Worker recovery prohibited."
               exit 0
             fi
           fi

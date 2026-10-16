@@ -127,8 +127,11 @@ async function post({ request }: { request: Request }) {
     .eq("slug", slug);
   if (qualityUpdateError) return Response.json({ error: qualityUpdateError.message }, { status: 500 });
 
+  // Publication never gets a green finalization result when its hero image is
+  // missing or rejected. Keep the existing article available for exact-slug
+  // repair, but propagate failure to the scheduled writer and diagnostics.
   return Response.json({
-    ok: true,
+    ok: image.ok,
     slug,
     normalizedWhyThisMatters: normalized.changed,
     image,
@@ -137,7 +140,8 @@ async function post({ request }: { request: Request }) {
     sourceIntegrity,
     searchRecoverySourceFirst: sourceFirstRecoveryEligible,
     duplicateParagraphOccurrences: repetitionCount,
-  });
+    ...(!image.ok ? { error: "newsroom_featured_image_required" } : {}),
+  }, { status: image.ok ? 200 : 422 });
 }
 
 export const Route = createFileRoute("/api/public/hooks/finalize-newsroom-article")({

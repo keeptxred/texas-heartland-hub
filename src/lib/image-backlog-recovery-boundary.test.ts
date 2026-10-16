@@ -2,6 +2,22 @@ import fs from "node:fs";
 import { describe, expect, it } from "vitest";
 
 describe("image backlog recovery publication boundary", () => {
+  it("executes exact emergency images only after verified production deployment, never predeploy", () => {
+    const workflow = fs.readFileSync(".github/workflows/image-backlog-recovery.yml", "utf8");
+    expect(workflow).toContain('workflows: ["Deploy verified KeepTXRed to Cloudflare"]');
+    expect(workflow).toContain('verified_message=$(gh api');
+    expect(workflow).toContain('[run-image-backlog]');
+    expect(workflow).not.toContain('workflows: ["Repository test and build health"]');
+    expect(workflow).toContain('load_exact_marker_slugs');
+    expect(workflow).toContain('max_per_run=4');
+
+    const marker = fs.readFileSync(".github/force-image-backlog-recovery", "utf8");
+    const slugs = marker.split(/\r?\n/).filter((line) => line.startsWith("slug:"));
+    expect(slugs).toEqual([
+      "slug:2026-10-14-san-antonio-files-federal-suit-over-ice-facility-environmental-review",
+      "slug:2026-10-14-texas-sued-for-failing-to-process-over-500-000-voter-registrations",
+    ]);
+  });
   it("keeps recovery published-only and quality-gated while including blocked legacy assets", () => {
     const source = fs.readFileSync(new URL("../routes/api/public/hooks/image-backlog-recovery.ts", import.meta.url), "utf8");
     const eligibleStart = source.indexOf("function isEligible");
@@ -9,6 +25,10 @@ describe("image backlog recovery publication boundary", () => {
     const eligibleSource = source.slice(eligibleStart, eligibleEnd);
 
     expect(eligibleSource).toContain("if (!row.published_at) return false;");
+    expect(eligibleSource).toContain("if (row.image_candidate_url?.trim()");
+    expect(eligibleSource).toContain('=== "pending"');
+    expect(eligibleSource).toContain('startsWith("hero-readiness hold:")');
+    expect(source).toContain("image_candidate_url,image_generation_status");
     expect(eligibleSource).toContain("meetsArticleMainWordCount");
     expect(eligibleSource).toContain("isLegacyGeneratedNewsAsset(row.featured_image_url)");
     expect(eligibleSource).toContain('status === "pending" || status === "failed"');

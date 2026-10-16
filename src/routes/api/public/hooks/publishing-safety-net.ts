@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { RESERVE_ARTICLES } from "@/data/reserve-articles";
 import { articleMainText, articleMainWordCount, INGESTED_MIN_MAIN_WORDS } from "@/lib/article-length";
 import { enrichArticleRow } from "@/lib/content-quality";
+import { prepareFeaturedImageForUnpublishedNewsroomArticle } from "@/lib/featured-image.functions";
 import { assertKeepTxRedPublication, inferKeepTxRedDomain } from "@/lib/content-publication-guard";
 
 const STALL_MS = 24 * 60 * 60 * 1000;
@@ -201,9 +202,27 @@ export async function runPublishingSafetyNet() {
       };
       enrichArticleRow(row);
 
+      const preparedImage = await prepareFeaturedImageForUnpublishedNewsroomArticle({
+        slug: row.slug, title: row.title, dek: row.dek,
+        category: row.category, body_json: row.body_json,
+      });
+      if (!preparedImage.ok || !preparedImage.url || !preparedImage.imageValidationNote) {
+        return {
+          ok: false as const, status: 503,
+          error: `reserve_newsroom_image_publication_hold: ${preparedImage.ok ? "missing_image_provenance" : preparedImage.error}`,
+        };
+      }
       const { error: articleError } = await supabase
         .from("daily_articles")
-        .insert(row);
+        .insert({
+          ...row,
+          featured_image_url: preparedImage.url,
+          image_url: preparedImage.url,
+          image_alt_text: preparedImage.alt,
+          image_generation_status: "ready",
+          image_validation_note: preparedImage.imageValidationNote,
+          image_prompt: preparedImage.imagePrompt ?? null,
+        });
       if (articleError) {
         console.error("[publishing-safety-net] reserve publish failed", articleError);
         return { ok: false as const, status: 500, error: articleError.message };
