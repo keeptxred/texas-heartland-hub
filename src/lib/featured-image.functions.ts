@@ -393,11 +393,13 @@ async function loadMultiSourceImageGrounding(db: any, slug: string): Promise<Mul
   });
 }
 
-async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } = {}): Promise<{ ok: true; url: string; alt: string } | { ok: false; error: string }> {
+type GeneratedHero = { ok: true; url: string; alt: string; imagePrompt?: string; imageValidationNote?: string } | { ok: false; error: string };
+
+async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean; beforePublish?: boolean } = {}): Promise<GeneratedHero> {
   const supabase = await serviceClient();
   if (!opts.overwrite && row.featured_image_url) return { ok: true, url: row.featured_image_url, alt: buildAltText(row) };
 
-  const grounding = await loadMultiSourceImageGrounding(supabase as any, row.slug);
+  const grounding = opts.beforePublish ? null : await loadMultiSourceImageGrounding(supabase as any, row.slug);
   if (grounding?.mode === "hold_image") {
     const note = `multisource-image-hold: no safe verified visual fact; excluded_conflicts=${grounding.excludedConflictCount}`;
     await supabase.from("daily_articles").update({
@@ -428,7 +430,13 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
   const prompt = makeGenerationPrompt(initialCorrection);
   const alt = buildAltText(row);
   const filename = `${sanitizeFilename(row.slug)}.jpg`;
-  await supabase.from("daily_articles").update({ image_generation_status: "generating", image_prompt: prompt }).eq("slug", row.slug);
+  // Pre-publication image generation runs before any live daily_articles row
+  // exists, so image work must not rely on or mutate a published article.
+  if (!opts.beforePublish) {
+    const { error: leaseError } = await supabase.from("daily_articles")
+      .update({ image_generation_status: "generating", image_prompt: prompt }).eq("slug", row.slug);
+    if (leaseError) return { ok: false, error: leaseError.message };
+  }
 
   try {
     let negativePrompt = buildNegativeImagePrompt(generationSubject, previousFailure);
@@ -459,24 +467,45 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
     if (upErr) throw upErr;
 
     const url = `/api/public/article-image/${filename}`;
-    const { error: imageWriteError } = await supabase.from("daily_articles").update({
-      featured_image_url: url,
-      image_url: url,
-      image_alt_text: alt,
-      image_generation_status: "ready",
-      image_prompt: usedPrompt,
-      image_validation_note: `${grounding ? `multisource-${grounding.mode}; ` : ""}cloudflare-vision ok: ${verdict.reason}`,
-    }).eq("slug", row.slug);
-    if (imageWriteError) throw imageWriteError;
-    return { ok: true, url, alt };
+    const imageValidationNote = `${grounding ? `multisource-${grounding.mode}; ` : ""}cloudflare-vision ok: ${verdict.reason}`;
+    if (!opts.beforePublish) {
+      const { error: imageWriteError } = await supabase.from("daily_articles").update({
+        featured_image_url: url,
+        image_url: url,
+        image_alt_text: alt,
+        image_generation_status: "ready",
+        image_prompt: usedPrompt,
+        image_validation_note: imageValidationNote,
+      }).eq("slug", row.slug);
+      if (imageWriteError) throw imageWriteError;
+    }
+    return { ok: true, url, alt, imagePrompt: usedPrompt, imageValidationNote };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    await supabase.from("daily_articles").update({
-      image_generation_status: "failed",
-      image_validation_note: msg.slice(0, 1000),
-    }).eq("slug", row.slug);
+    if (!opts.beforePublish) {
+      await supabase.from("daily_articles").update({
+        image_generation_status: "failed",
+        image_validation_note: msg.slice(0, 1000),
+      }).eq("slug", row.slug);
+    }
     return { ok: false, error: msg };
   }
+}
+
+/**
+ * Produces and validates the complete hero before publication. The story may
+ * be committed as PUBLISHED only after this method returns ok with URL and
+ * exact vision provenance. Failed images leave no public article behind.
+ */
+export async function prepareFeaturedImageForUnpublishedNewsroomArticle(
+  article: Pick<ArticleRow, "slug" | "title" | "dek" | "category" | "body_json">,
+): Promise<GeneratedHero> {
+  const row: ArticleRow = {
+    ...article, keywords: null, seo_keywords: null, affected_regions: null,
+    seo_headline: null, discover_category: null, texas_impact_summary: null,
+    featured_image_url: null, image_generation_status: "pending", image_validation_note: null,
+  };
+  return generateAndStore(row, { beforePublish: true });
 }
 
 const SELECT_COLS = "slug,title,dek,category,keywords,seo_keywords,affected_regions,seo_headline,discover_category,texas_impact_summary,featured_image_url,image_generation_status,image_validation_note,body_json";
