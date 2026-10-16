@@ -2,6 +2,7 @@ import { isGovernmentNewsClippingUrl } from "./newsroom-discovery-sources";
 
 const MAX_SOURCE_TEXT_CHARS = 12_000;
 const MIN_READABLE_CHARS = 500;
+export const NEWSROOM_SUBSTANTIVE_SOURCE_CHARS = 4_000;
 
 export function looksSyntheticNewsroomText(value: string | null | undefined): boolean {
   const text = (value ?? "").trim();
@@ -17,15 +18,16 @@ export function shouldFetchNewsroomSourcePage(input: { url: string | null; extra
   // Worker CPU fetching these known discovery pointers.
   if (isGovernmentNewsClippingUrl(url)) return false;
   const body = (input.extractedBody ?? "").trim();
-  return looksSyntheticNewsroomText(body) || body.length < 4_000;
+  return looksSyntheticNewsroomText(body) || body.length < NEWSROOM_SUBSTANTIVE_SOURCE_CHARS;
 }
 
-/** Avoid repeatedly spending CPU/network time on blocked publisher pages.
- * A failure to extract readable text cools down longer than a successful fetch.
- * This is only an automatic retry policy; explicit source verification is unaffected.
+/** Avoid repeatedly spending CPU/network time on blocked or persistently thin pages.
+ * A short successful extraction still cannot satisfy the 4k cached-body threshold.
+ * Use the longer backoff until the next daily attempt; complete source extractions
+ * retain their existing six-hour retry behavior. Manual verification is unaffected.
  */
 export function isNewsroomSourceFetchCoolingDown(
-  state: { last_attempt_at: string | null; last_result: string | null } | null | undefined,
+  state: { last_attempt_at: string | null; last_result: string | null; chars?: number | null } | null | undefined,
   nowMs: number,
   normalCooldownMs: number,
   unreadableCooldownMs: number,
@@ -33,7 +35,12 @@ export function isNewsroomSourceFetchCoolingDown(
   if (!state) return false;
   const lastAttemptMs = Date.parse(state.last_attempt_at ?? "");
   if (!Number.isFinite(lastAttemptMs)) return false;
-  const cooldownMs = state.last_result === "no_readable_body" ? unreadableCooldownMs : normalCooldownMs;
+  const shortSuccessfulBody = state.last_result === "success"
+    && typeof state.chars === "number"
+    && state.chars < NEWSROOM_SUBSTANTIVE_SOURCE_CHARS;
+  const cooldownMs = state.last_result === "no_readable_body" || shortSuccessfulBody
+    ? unreadableCooldownMs
+    : normalCooldownMs;
   return lastAttemptMs > nowMs - cooldownMs;
 }
 
