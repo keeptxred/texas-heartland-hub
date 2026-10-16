@@ -97,8 +97,9 @@ jobs:
               exit 1
             fi
 
-            if ! jq -e '.image.ok == true' /tmp/flyover-exact.json >/dev/null 2>&1; then
-              echo "FLYOVER_EXACT_FEED_IMAGE_DEFERRED feed_id=${FLYOVER_FEED_ID}; text-first article will still be verified."
+            if ! jq -e '.image.ok == true and (.image.url // "") != ""' /tmp/flyover-exact.json >/dev/null 2>&1; then
+              echo "FLYOVER_EXACT_FEED_IMAGE_FAILED feed_id=${FLYOVER_FEED_ID}; publication is incomplete without a validated image." >&2
+              exit 1
             fi
 
             slug="$(jq -r '.slug' /tmp/flyover-exact.json)"
