@@ -13,7 +13,7 @@ describe("image recovery OIDC workflow event contract", () => {
     expect(imageWorkflow).toContain("push:");
     expect(imageWorkflow).toContain("workflow_dispatch:");
     expect(imageWorkflow).toContain("workflow_run:");
-    expect(imageWorkflow).toContain('workflows: ["Repository test and build health"]');
+    expect(imageWorkflow).toContain('workflows: ["Deploy verified KeepTXRed to Cloudflare"]');
     expect(imageWorkflow).toContain("github.event.workflow_run.conclusion == 'success'");
     expect(imageWorkflow).not.toContain("contains(github.event.workflow_run.head_commit.message, '[run-image-backlog]')");
     expect(imageWorkflow).toContain("MARKER_REF: ${{ github.event.workflow_run.head_sha || github.sha }}");
