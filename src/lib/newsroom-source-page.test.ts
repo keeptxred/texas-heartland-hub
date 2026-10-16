@@ -1,13 +1,29 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   extractReadableNewsroomHtml,
   isNewsroomSourceFetchCoolingDown,
+  newsroomHydrationPriority,
   NEWSROOM_SUBSTANTIVE_SOURCE_CHARS,
   looksSyntheticNewsroomText,
   shouldFetchNewsroomSourcePage,
 } from "./newsroom-source-page.server";
 
 describe("newsroom source-page enrichment", () => {
+  it("spends the fixed fetch budget on independent pending stories near the evidence floor first", () => {
+    const priority = (pending: boolean, independentlySourced: boolean, evidenceChars: number, requiredEvidenceChars = 5_000) =>
+      newsroomHydrationPriority({ pending, independentlySourced, evidenceChars, requiredEvidenceChars, editorialScore: 70 });
+    expect(priority(true, true, 4_900)).toBeGreaterThan(priority(true, true, 700));
+    expect(priority(true, true, 700)).toBeGreaterThan(priority(true, true, 5_100));
+    expect(priority(true, true, 5_100)).toBeGreaterThan(priority(true, false, 4_900));
+    expect(priority(true, false, 4_900)).toBeGreaterThan(priority(false, true, 4_900));
+    expect(priority(true, true, 8_900, 9_000)).toBeGreaterThan(priority(true, true, 9_500, 9_000));
+    const builder = readFileSync("src/routes/api/public/hooks/build-newsroom-research-packets.ts", "utf8");
+    expect(builder).toContain("newsroomHydrationPriority({");
+    expect(builder).toContain(".slice(0, SOURCE_PAGE_FETCH_LIMIT)");
+    expect(builder).toContain("const SOURCE_PAGE_FETCH_LIMIT = 40");
+  });
+
   it("targets thin publisher bodies and synthetic pollution", () => {
     expect(shouldFetchNewsroomSourcePage({
       url: "https://example.com/story",
