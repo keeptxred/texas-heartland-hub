@@ -136,7 +136,7 @@ export function commonsReusableLicense(metadata: Record<string, { value?: string
   const shortName = cleanMetadata(metadata.LicenseShortName?.value ?? "");
   const licenseUrl = cleanMetadata(metadata.LicenseUrl?.value ?? "").toLowerCase();
   const lower = shortName.toLowerCase();
-  const verified = /^(?:cc[ -]?by(?:[ -]sa)?(?:[ -]|$)|cc0(?:[ -]|$)|public domain|pd-|pd |usgov)/i.test(lower)
+  const verified = /^(?:cc[ -]?by(?:[ -]?sa)?(?:\s+\d+(?:\.\d+)?|$)|cc0(?:\s|$)|public domain|pd-|pd |usgov)/i.test(lower)
     || /^https:\/\/creativecommons\.org\/(?:licenses\/by(?:-sa)?\/|publicdomain\/)/.test(licenseUrl);
   const creator = cleanMetadata(metadata.Artist?.value ?? metadata.Credit?.value ?? "").slice(0, 135);
   const credit = verified
