@@ -29,6 +29,17 @@ describe("verified Cloudflare deployment reconciliation", () => {
     expect(ensure).toContain("deploy=false");
   });
 
+  it("does not race an active exact-main verified deploy with a duplicate custom-domain deploy", () => {
+    expect(ensure).toContain('actions/workflows/deploy-cloudflare-after-verify.yml/runs?branch=main&per_page=100');
+    expect(ensure).toContain("select(.status != \"completed\")");
+    expect(ensure).toContain('expected="$main_sha"');
+    expect(ensure).toContain('if [[ -n "$active_verified_run_id" ]]');
+    const guard = ensure.indexOf('active_verified_run_id="$(gh api');
+    const fallback = ensure.indexOf('echo "Verified main $main_sha is not recorded as current in production; deployment is required."');
+    expect(guard).toBeGreaterThan(0);
+    expect(fallback).toBeGreaterThan(guard);
+  });
+
   it("keeps strict deployment gates and serializes both production entrypoints", () => {
     expect(legacy).toContain("group: keeptxred-cloudflare-production");
     expect(canonical).toContain("group: keeptxred-cloudflare-production");
