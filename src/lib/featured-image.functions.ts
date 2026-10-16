@@ -129,7 +129,7 @@ function extractImageSubject(row: ArticleRow, grounding: MultiSourceImageGroundi
 }
 
 export function buildAltText(a: { title: string; category?: string | null }): string {
-  return `Editorial news photograph for Keep TX Red article: ${a.title}${a.category ? ` — ${a.category}` : ""}`;
+  return `Illustrative editorial image for Keep TX Red article: ${a.title}${a.category ? ` — ${a.category}` : ""}`;
 }
 
 export function buildGenerationSafeSubject(subject: SubjectExtract): SubjectExtract {
@@ -208,6 +208,48 @@ export function buildGenerationSafeSubject(subject: SubjectExtract): SubjectExtr
     };
   }
   return subject;
+}
+
+/**
+ * Four October newsroom image failures came from a mismatch between abstract
+ * legal/policy headlines and generic photo prompts. Use story-specific visible
+ * subjects without reenacting a lawsuit, creating fake government documents, or
+ * claiming the photograph depicts the actual venue or event.
+ *
+ * Both generation AND validation must use the SAME verified representative
+ * physical subject. The original title remains present for factual relevance.
+ * These are strictly illustrative images, not documentary event photographs.
+ */
+export function newsroomAbstractPolicyVisualSubject(row: Pick<ArticleRow, "slug" | "title">, subject: SubjectExtract): SubjectExtract {
+  const visualAssignments: Record<string, { domain: Domain; scene: string }> = {
+    "2026-10-15-texas-appeals-order-requiring-prison-air-conditioning": {
+      domain: "general",
+      scene: "Interior ventilation and cooling infrastructure in an anonymous institutional correctional building: large visible wall-mounted air-conditioning supply vents, clearly recognizable metal cooling ducts, a thermostatic control box with no readable numbers, concrete-block walls and a secured metal doorway. The air-conditioning equipment must fill the composition. This is an illustrative prison-temperature-control setting, NOT a depiction of a specific Texas prison, the reported appeal hearing, or a claimed installed improvement. No inmates, officers, nameplates, fake court scene or readable text.",
+    },
+    "2026-10-14-san-antonio-files-federal-suit-over-ice-facility-environmental-review": {
+      domain: "general",
+      scene: "Exterior of an anonymous large existing commercial warehouse with a paved industrial access road, loading-bay doors, utility infrastructure and perimeter fencing; foreground contains a plain closed binder and survey clipboard on a portable site-inspection table, with every page blank or unreadable. This represents the warehouse-site environmental review disputed in litigation and does NOT claim to show the actual East Side site, any ICE operation, or the lawsuit filing.",
+    },
+    "2026-10-14-texas-sued-for-failing-to-process-over-500-000-voter-registrations": {
+      domain: "politics",
+      scene: "Close documentary-style view of a Texas election administration paperwork intake workspace: unmistakable stacks of unfilled paper voter-registration application forms with empty checkboxes and ruled fields, plain return envelopes, office inbox trays and a desktop document scanner. The registration-application paperwork is dominant, not ballots, voting machines or a courtroom. All lettering unreadable. This symbolizes administrative application processing and does NOT represent evidence of unprocessed actual voter applications, a specific office, or the filing of a lawsuit.",
+    },
+    "2026-10-14-texas-penalties-for-data-center-violations-are-light-despite-tough-talk-from-abb": {
+      domain: "energy",
+      scene: "A large real-world data-center exterior cooling-water and electricity infrastructure setting in Texas: multiple industrial cooling towers and chiller units with prominent metal pipework and water-flow control valves, adjacent high-voltage substation transformers and industrial service roads. Cooling-water infrastructure must dominate the frame; no generic indoor server-rack room. This is an illustrative view of the industry and water-use equipment subject to enforcement, not evidence of any named facility's violation or punishment.",
+    },
+  };
+  const assignment = visualAssignments[row.slug];
+  if (!assignment) return subject;
+  return {
+    ...subject,
+    title: row.title,
+    domain: assignment.domain,
+    firstParagraph: "",
+    concreteSubject: assignment.scene,
+    imageGroundingMode: "verified_symbolic",
+    evidenceGuidance: "Truthful illustrative representative subject only. No fabricated named property, person, document wording or staged historical event. The photograph illustrates a physical object or infrastructure directly identified in the reported issue.",
+  };
 }
 
 function buildRepeatedFailureRecoverySubject(row: ArticleRow, subject: SubjectExtract): SubjectExtract {
@@ -366,7 +408,7 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
     return { ok: false, error: "Featured image held: the multi-source story has no safe corroborated or primary-record fact for visual generation." };
   }
 
-  const subject = extractImageSubject(row, grounding);
+  const subject = newsroomAbstractPolicyVisualSubject(row, extractImageSubject(row, grounding));
   const generationSubject = buildRepeatedFailureRecoverySubject(row, buildGenerationSafeSubject(subject));
   const usesGenerationOnlyPrompt = generationSubject !== subject;
   const makeGenerationPrompt = (guidance = "") => usesGenerationOnlyPrompt
