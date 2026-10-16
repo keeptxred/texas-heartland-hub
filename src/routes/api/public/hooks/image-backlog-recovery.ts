@@ -17,6 +17,7 @@ type BacklogRow = {
   slug: string;
   published_at: string | null;
   featured_image_url: string | null;
+  image_candidate_url: string | null;
   image_generation_status: string | null;
   image_validation_note: string | null;
   kind: string | null;
@@ -56,6 +57,9 @@ function isMissingImage(row: BacklogRow): boolean {
 
 function isEligible(row: BacklogRow): boolean {
   if (!row.published_at) return false;
+  // A real stored third-party/archive candidate belongs to the cheaper
+  // pixel-based hero-readiness audit, never the expensive AI generator.
+  if (row.image_candidate_url?.trim()) return false;
   if (!meetsArticleMainWordCount(row.kind, row.body_json)) return false;
 
   const status = (row.image_generation_status ?? "").trim().toLowerCase();
@@ -98,7 +102,7 @@ async function post({ request }: { request: Request }) {
   // Generated database types can lag internal image-recovery fields.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabaseAdmin as any;
-  const columns = "slug,published_at,featured_image_url,image_generation_status,image_validation_note,kind,body_json";
+  const columns = "slug,published_at,featured_image_url,image_candidate_url,image_generation_status,image_validation_note,kind,body_json";
 
   const [missingResult, legacyResult, adsensePriorityResult] = await Promise.all([
     db
