@@ -15,6 +15,14 @@ const COMMONS = "https://commons.wikimedia.org/wiki/File:";
 
 const ATTRIBUTIONS: AttributionEntry[] = [
   {
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Henry_Cuellar,_official_portrait.jpg",
+    credit: "Eric Connolly / U.S. House Office of Photography",
+    sourceUrl: `${COMMONS}Henry_Cuellar,_official_portrait.jpg`,
+    licenseName: "Public domain (official U.S. House of Representatives photograph)",
+    licenseUrl: "https://commons.wikimedia.org/wiki/Template:PD-USGov-Congress",
+    caption: "Official 2017 congressional portrait of Rep. Henry Cuellar; not a photograph of the October 2026 political-advertising decision.",
+  },
+  {
     imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flock_Safety_License_Plate_Reader_Camera_in_Colorado_(55307233186).jpg",
     credit: "Tony Webster",
     sourceUrl: `${COMMONS}Flock_Safety_License_Plate_Reader_Camera_in_Colorado_(55307233186).jpg`,
