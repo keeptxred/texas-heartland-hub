@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   extractReadableNewsroomHtml,
   isNewsroomSourceFetchCoolingDown,
+  NEWSROOM_SUBSTANTIVE_SOURCE_CHARS,
   looksSyntheticNewsroomText,
   shouldFetchNewsroomSourcePage,
 } from "./newsroom-source-page.server";
@@ -58,7 +59,23 @@ describe("newsroom source-page enrichment", () => {
     expect(check(25, "no_readable_body")).toBe(false);
     expect(check(4, "success")).toBe(true);
     expect(check(7, "success")).toBe(false);
+    expect(NEWSROOM_SUBSTANTIVE_SOURCE_CHARS).toBe(4000);
     expect(check(4, "update_failed")).toBe(true);
+    // A readable but still thin result is not useful to retry four times a day.
+    expect(isNewsroomSourceFetchCoolingDown(
+      { last_attempt_at: new Date(now - 12 * hour).toISOString(), last_result: "success", chars: 3999 },
+      now, 6 * hour, 24 * hour,
+    )).toBe(true);
+    expect(isNewsroomSourceFetchCoolingDown(
+      { last_attempt_at: new Date(now - 25 * hour).toISOString(), last_result: "success", chars: 3999 },
+      now, 6 * hour, 24 * hour,
+    )).toBe(false);
+    expect(isNewsroomSourceFetchCoolingDown(
+      { last_attempt_at: new Date(now - 7 * hour).toISOString(), last_result: "success", chars: 4000 },
+      now, 6 * hour, 24 * hour,
+    )).toBe(false);
+    // Missing legacy length metadata preserves the existing six-hour success retry.
+    expect(check(7, "success")).toBe(false);
     expect(isNewsroomSourceFetchCoolingDown(null, now, 6 * hour, 24 * hour)).toBe(false);
     expect(isNewsroomSourceFetchCoolingDown(
       { last_attempt_at: "invalid", last_result: "no_readable_body" }, now, 6 * hour, 24 * hour,
