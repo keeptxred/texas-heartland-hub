@@ -12,7 +12,7 @@ describe("image backlog recovery publication boundary", () => {
     expect(workflow).toContain('max_per_run=4');
 
     const marker = fs.readFileSync(".github/force-image-backlog-recovery", "utf8");
-    const slugs = marker.split(/\\r?\\n/).filter((line) => line.startsWith("slug:"));
+    const slugs = marker.split(/\r?\n/).filter((line) => line.startsWith("slug:"));
     expect(slugs).toEqual([
       "slug:2026-10-14-san-antonio-files-federal-suit-over-ice-facility-environmental-review",
       "slug:2026-10-14-texas-sued-for-failing-to-process-over-500-000-voter-registrations",
