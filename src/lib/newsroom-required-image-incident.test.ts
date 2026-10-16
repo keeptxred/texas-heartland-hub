@@ -45,6 +45,28 @@ describe("newsroom exact image recovery for October failed visual topics", () =>
 });
 
 describe("image is required before a newsroom article can become public", () => {
+  it("holds legacy exact-feed and overdue publication before inserting image-free news", () => {
+    const legacy = readFileSync("src/lib/ingest-feeds-legacy.ts", "utf8");
+    const pre = legacy.lastIndexOf("await prepareFeaturedImageForUnpublishedNewsroomArticle({");
+    const inserted = legacy.lastIndexOf(".upsert([readyArticleRow],");
+    expect(pre).toBeGreaterThan(0);
+    expect(inserted).toBeGreaterThan(pre);
+    expect(legacy).toContain("newsroom_image_publication_hold:");
+    expect(legacy).not.toContain("Fire-and-forget image generation");
+
+    const overdue = readFileSync("src/routes/api/public/hooks/publish-overdue-gap.ts", "utf8");
+    expect(overdue).toContain('result.error?.startsWith("newsroom_image_publication_hold:")');
+    expect(overdue).toContain('stopping after rejected image');
+  });
+  it("holds emergency reserve publication unless its hero is already vision-approved", () => {
+    const source = readFileSync("src/routes/api/public/hooks/publishing-safety-net.ts", "utf8");
+    const prepare = source.indexOf("await prepareFeaturedImageForUnpublishedNewsroomArticle({");
+    const insert = source.indexOf(".insert({", prepare);
+    expect(prepare).toBeGreaterThan(0);
+    expect(insert).toBeGreaterThan(prepare);
+    expect(source).toContain('reserve_newsroom_image_publication_hold:');
+    expect(source).toContain('image_generation_status: "ready"');
+  });
   it("creates and validates a hero before the daily_articles upsert", () => {
     const source = readFileSync("src/routes/api/public/hooks/generate-newsroom.ts", "utf8");
     const prepareIndex = source.indexOf("await prepareFeaturedImageForUnpublishedNewsroomArticle({");
