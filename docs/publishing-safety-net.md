@@ -4,7 +4,7 @@ The newsroom has three independent content layers:
 
 1. Permanent static articles in `src/data/articles.ts` and `src/data/article-bodies.ts`.
 2. Normal automated and manually published articles in `daily_articles`.
-3. Three prewritten reserve articles in `src/data/reserve-articles.ts`.
+3. A prewritten reserve inventory in `src/data/reserve-articles.ts`.
 
 ## Permanent URL policy
 
@@ -56,11 +56,14 @@ receives a recovery event.
 
 ## Reserve inventory
 
-The initial queue contains:
+The reserve inventory currently contains:
 
 - How Texas County Government Works—and Who Controls What
 - Texas Public Information Requests: A Practical Guide
 - A Texas Household Emergency Plan That Works Year-Round
+- How a Texas Bill Becomes Law—and Where to Track It
+- How Texas State Agencies Make Rules—and How the Public Can Follow Them
+- Texas Open Meetings: A Practical Guide to Agendas, Quorums, and Closed Sessions
 
 Every reserve story is source-backed and exceeds the reader visibility floor.
 Publishing is recorded in `reserve_article_publications`, preventing a story
