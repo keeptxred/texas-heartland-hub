@@ -4,12 +4,14 @@ import { describe, expect, it } from "vitest";
 const workflow = readFileSync(new URL("../../../../.github/workflows/sync-texas-legislation.yml", import.meta.url), "utf8");
 const proxy = readFileSync(new URL("./legislation-sync-proxy.$.ts", import.meta.url), "utf8");
 
-const WORKER_PROXY = "https://keeptxred-site.freddy-coppola.workers.dev/api/admin/legislation-sync-proxy";
+const CANONICAL_PROXY = "https://keeptxred.com/api/admin/legislation-sync-proxy";
 
 describe("legislation sync Worker proxy contract", () => {
-  it("routes GitHub-hosted sync traffic through the deployed Worker origin", () => {
-    expect(workflow).toContain(`SUPABASE_URL: ${WORKER_PROXY}`);
-    expect(workflow).not.toContain("SUPABASE_URL: https://keeptxred.com/api/admin/legislation-sync-proxy");
+  it("routes GitHub-hosted sync traffic directly through the canonical Worker origin", () => {
+    expect(workflow).toContain(`SUPABASE_URL: ${CANONICAL_PROXY}`);
+    expect(workflow).not.toContain("SUPABASE_URL: https://keeptxred-site.freddy-coppola.workers.dev/api/admin/legislation-sync-proxy");
+    expect(workflow).toContain("workers.dev permanently redirects to keeptxred.com");
+    expect(workflow).toContain("strips Authorization on a cross-origin redirect");
     expect(workflow).toContain("SUPABASE_SERVICE_ROLE_KEY: ${{ github.token }}");
     expect(workflow).not.toContain("${{ github.token }}::${{ github.run_id }}");
   });
