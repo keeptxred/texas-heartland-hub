@@ -19,13 +19,13 @@ jobs:
     timeout-minutes: 90
     env:
       # GitHub performs the FTP ingestion work, while database writes are proxied
-      # through the deployed first-party Worker. The production zone intentionally
-      # challenges GitHub-hosted runners, so use the same workers.dev origin that
-      # production deployment smoke tests already trust. The short-lived GITHUB_TOKEN
-      # plus run id authenticate the exact workflow run, so no Supabase service
-      # role key is stored in GitHub Actions. The Worker verifies the exact
-      # active workflow run through explicit GitHub identity headers.
-      SUPABASE_URL: https://keeptxred-site.freddy-coppola.workers.dev/api/admin/legislation-sync-proxy
+      # through the deployed first-party Worker. Use the canonical KTR origin
+      # directly: workers.dev permanently redirects to keeptxred.com, and Fetch
+      # intentionally strips Authorization on a cross-origin redirect. Calling
+      # the canonical proxy preserves the short-lived GITHUB_TOKEN together with
+      # the exact run identity headers. No Supabase service-role key is stored in
+      # GitHub Actions.
+      SUPABASE_URL: https://keeptxred.com/api/admin/legislation-sync-proxy
       SUPABASE_SERVICE_ROLE_KEY: ${{ github.token }}
     steps:
       - uses: actions/checkout@v5
