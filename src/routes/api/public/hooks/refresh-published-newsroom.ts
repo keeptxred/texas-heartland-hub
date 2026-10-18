@@ -100,20 +100,46 @@ function bearerToken(request: Request): string | null {
   return match?.[1]?.trim() || null;
 }
 
+async function verifyActiveGithubRun(request: Request): Promise<boolean> {
+  const token = request.headers.get("x-github-token")?.trim() ?? "";
+  const runId = request.headers.get("x-github-run-id") ?? "";
+  const repository = request.headers.get("x-github-repository") ?? "";
+  if (!token || !/^\d+$/.test(runId) || repository !== REPOSITORY) return false;
+
+  const response = await fetch(`https://api.github.com/repos/${REPOSITORY}/actions/runs/${runId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28",
+      "User-Agent": "KeepTXRed-published-news-refresh",
+    },
+  });
+  if (!response.ok) return false;
+  const run = await response.json() as Record<string, any>;
+  return run?.repository?.full_name === REPOSITORY
+    && run?.path === WORKFLOW_PATH
+    && run?.head_branch === "main"
+    && ["schedule", "workflow_dispatch"].includes(String(run?.event || ""))
+    && ["queued", "in_progress"].includes(String(run?.status || ""));
+}
+
 async function authorized(request: Request): Promise<boolean> {
   const token = bearerToken(request);
-  if (!token) return false;
-  try {
-    await verifyGitHubActionsOidc({
-      token,
-      audience: OIDC_AUDIENCE,
-      repository: REPOSITORY,
-      workflowPath: WORKFLOW_PATH,
-    });
-    return true;
-  } catch {
-    return false;
+  if (token) {
+    try {
+      await verifyGitHubActionsOidc({
+        token,
+        audience: OIDC_AUDIENCE,
+        repository: REPOSITORY,
+        workflowPath: WORKFLOW_PATH,
+      });
+      return true;
+    } catch {
+      // Fall through to the exact active-run identity used by other proven
+      // first-party GitHub automation paths.
+    }
   }
+  return verifyActiveGithubRun(request);
 }
 
 function timestamp(value: string | null | undefined): number {
