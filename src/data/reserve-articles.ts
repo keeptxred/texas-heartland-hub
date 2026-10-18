@@ -211,4 +211,200 @@ export const RESERVE_ARTICLES: ReserveArticle[] = [
       ],
     },
   },
+,
+  {
+    key: "texas-bill-process",
+    slugStem: "how-a-texas-bill-becomes-law",
+    category: "Legislature",
+    title: "How a Texas Bill Becomes Law—and Where to Track It",
+    dek: "A practical guide to filing, committees, calendars, floor votes, conference committees, governor action, effective dates, and the Texas Legislature Online records that show what actually happened.",
+    body: {
+      editorNote:
+        "This prewritten reference article is part of the Keep TX Red publishing reserve. It is released only when the normal newsroom pipeline has been quiet for at least 24 hours.",
+      intro: [
+        "A Texas bill does not become law because it was filed, received a hearing, passed one chamber, or appeared in a press release. The process is a sequence of public actions that can be followed in official records from introduction through committee work, floor votes, action by the second chamber, agreement on final language, and delivery to the governor. Texas Legislature Online, commonly called TLO, is the most useful public record for following those steps.",
+        "Understanding the sequence matters because political claims often compress several stages into one. A bill that is reported favorably from committee is not yet passed by the House or Senate. A bill that passes one chamber still has another chamber to clear. A bill that passes both chambers in different forms is not finished until lawmakers agree on identical text. The safest way to describe a bill is to identify the latest official action and the date it occurred.",
+      ],
+      sections: [
+        {
+          heading: "Filing starts the public legislative record",
+          paragraphs: [
+            "A member of the Texas House or Senate files a bill and the measure receives a bill number. House bills use the HB prefix and Senate bills use SB. Other types of measures include joint resolutions, concurrent resolutions, and simple resolutions, each with a different legal purpose. TLO provides the text, author or sponsor information, action history, committee referrals, votes, analyses, fiscal notes when available, and later versions of the measure.",
+            "The introduced version is only the starting point. Bills can be substituted or amended during the process, so quoting the filed text after later action can be misleading. TLO's text history allows readers to compare versions and identify whether language was added, removed, or rewritten. Committee substitutes are especially important because a committee may recommend a substantially revised version instead of the exact bill that was filed.",
+            "Texas holds regular legislative sessions in odd-numbered years under the state constitution, and the governor may call special sessions. Special sessions are narrower because the governor identifies the subjects lawmakers may consider. Filing deadlines, calendars, and procedural rules affect which bills can advance, so a proposal's legal status should be checked against the official session record rather than inferred from a sponsor's announcement.",
+          ],
+        },
+        {
+          heading: "Committees do much of the detailed work",
+          paragraphs: [
+            "After filing and referral, a bill normally goes to a committee with jurisdiction over the subject. Committees can hold public hearings, receive testimony, request analysis, amend language, substitute a new version, report the bill favorably, report it unfavorably, or take no final action. Many filed bills never leave committee, which is why a hearing should not be described as legislative passage.",
+            "Committee pages and bill histories show scheduled hearings and reported actions. Written analyses, witness lists, fiscal notes, and other supporting documents can reveal how the proposal would operate and what supporters or opponents argued. For a reader trying to understand substance rather than political messaging, those records are often more useful than a short floor speech or campaign statement.",
+            "A favorable committee report still does not put every bill immediately before the full chamber. House and Senate scheduling procedures differ, and calendars or other procedural steps determine when a measure is eligible for floor consideration. Readers should look for the actual floor action in the official history before saying the chamber approved a bill.",
+          ],
+        },
+        {
+          heading: "Both chambers must agree to the same text",
+          paragraphs: [
+            "When a bill reaches a chamber floor, members may debate it and consider amendments under the chamber's rules. Passage in the originating chamber sends the measure to the other chamber, where the committee and floor process begins again. The second chamber can pass the bill unchanged, reject it, or pass a different version.",
+            "If the House and Senate pass different language, the disagreement must be resolved before the measure can be sent to the governor. One chamber may concur in the other's amendments, or lawmakers may use a conference committee to work out differences. A conference committee report must then receive the approvals required by legislative procedure. The final enrolled bill is the version that matters for determining what lawmakers actually sent to the governor.",
+            "Vote records should be read with the action they belong to. A committee vote, procedural vote, amendment vote, and final passage vote answer different questions. TLO links recorded votes where available, allowing readers to distinguish a member's position on an amendment from the member's vote on final passage.",
+          ],
+        },
+        {
+          heading: "The governor acts after legislative passage",
+          paragraphs: [
+            "After the Legislature completes a bill and the final text is enrolled, the measure is sent to the governor. Depending on timing and constitutional rules, the governor may sign a bill, veto it, or allow it to become law without a signature. Texas also has line-item veto authority for appropriations. The official bill history and governor records provide the safest confirmation of final action.",
+            "A bill's effective date is a separate question from whether it became law. Some laws take effect immediately when the constitutional vote threshold and bill language support that result; others take effect on a specified date or under the default constitutional timing. The enrolled bill and final legislative information should be checked before telling readers when a new requirement begins.",
+            "For practical tracking, save the TLO bill page rather than a search result or social-media screenshot. Check the Actions tab for the most recent official step, the Text tab for the current version, the Votes tab for recorded votes, and available analyses or fiscal notes for context. That habit makes it possible to report what the Legislature actually did without confusing a proposal, committee recommendation, chamber passage, or final law.",
+          ],
+        },
+      ],
+      faq: [
+        { q: "Does a committee vote make a Texas bill law?", a: "No. Committee action is only one stage. A bill generally must clear the required steps in both chambers and complete the constitutional process before becoming law." },
+        { q: "Where can I see the latest official version of a bill?", a: "Texas Legislature Online publishes bill text and action history. Check the text history because later substitutes, amendments, or enrolled versions may differ from the filed bill." },
+        { q: "If both chambers pass a bill, is the process always finished?", a: "Not necessarily. If the chambers passed different versions, they must agree on identical final language before the measure can be sent to the governor." },
+      ],
+      sources: [
+        { label: "Texas Legislature Online — How to Follow a Bill", url: "https://capitol.texas.gov/resources/FollowABill.aspx" },
+        { label: "Texas House — How a Bill Becomes a Law", url: "https://house.texas.gov/index.php/about" },
+        { label: "Texas Constitution, Article III", url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.3.htm" },
+      ],
+      keyTakeaways: [
+        "A filed bill is a proposal, not a law.",
+        "Committee action, chamber passage, and final legislative passage are separate milestones.",
+        "Both chambers must ultimately agree on the same text.",
+        "Texas Legislature Online is the best public record for bill text, actions, votes, and status.",
+      ],
+    },
+  },
+  {
+    key: "texas-agency-rulemaking",
+    slugStem: "how-texas-state-agencies-make-rules",
+    category: "Legislature",
+    title: "How Texas State Agencies Make Rules—and How the Public Can Follow Them",
+    dek: "A practical guide to proposed rules, public comments, adopted rules, emergency rules, the Texas Register, and the Texas Administrative Code.",
+    body: {
+      editorNote:
+        "This prewritten reference article is part of the Keep TX Red publishing reserve. It is released only when the normal newsroom pipeline has been quiet for at least 24 hours.",
+      intro: [
+        "The Legislature writes statutes, but much of the detail Texans encounter in licensing, environmental regulation, professional standards, benefits, transportation, health, education, and other programs appears in administrative rules. State agencies adopt those rules under authority granted by law. The Texas Register is the official public journal that lets residents see proposed, adopted, withdrawn, reviewed, and emergency rule actions as they move through that process.",
+        "Rulemaking is easy to miss because it does not look like a bill moving through the Capitol. A proposal can be highly consequential even though no floor vote appears on television. The public record is still extensive: agencies publish proposed text and explanations, identify statutory authority, accept comments when required, respond to significant issues, and later publish adopted rules. Final rules are codified in the Texas Administrative Code.",
+      ],
+      sections: [
+        {
+          heading: "Start with the agency's legal authority",
+          paragraphs: [
+            "A Texas agency cannot simply create any policy it wants and call it a rule. Rulemaking authority comes from the constitution or statutes that assign duties and powers to the agency. A proposed rule notice ordinarily identifies the legal authority relied upon. Reading that authority helps answer whether the proposal is implementing a specific legislative command, filling in administrative details, or interpreting a broader delegation.",
+            "The Administrative Procedure Act in Government Code Chapter 2001 supplies the general framework for state rulemaking. Other statutes can create agency-specific requirements, deadlines, consultation duties, or exceptions. That means two agencies may follow the same basic administrative framework while still operating under different program statutes.",
+            "For readers evaluating a controversial rule, separate the policy question from the authority question. The agency's explanation may argue that a proposal is wise, but the legal citation tells you why the agency believes it has power to adopt it. Courts can review agency action under applicable law, and the Legislature can change the underlying statute, but neither possibility changes the need to identify the current official rulemaking record.",
+          ],
+        },
+        {
+          heading: "The Texas Register is the rulemaking journal",
+          paragraphs: [
+            "The Secretary of State publishes the Texas Register weekly. It includes proposed rules, adopted rules, withdrawn proposals, emergency rules, notices of rule review, attorney general opinions, appointments, and other official materials. The Register page also provides current and previous issues and a searchable archive, making it possible to follow a proposal from publication through later action.",
+            "A proposed-rule notice typically explains the purpose of the rule, provides proposed text, identifies statutory authority, and includes information required by law about fiscal or other impacts. It also tells the public how and when to submit comments and whether a hearing is available or scheduled. Those details matter because comments sent outside the stated process may not become part of the formal rulemaking record.",
+            "The Register is a publication channel, not the author of agency policy. Questions about a particular proposal belong with the agency that submitted it. The notice includes agency contact information, and many agencies maintain their own rulemaking pages with additional staff contacts, hearing information, or explanatory material.",
+          ],
+        },
+        {
+          heading: "Public comments can test the proposal before adoption",
+          paragraphs: [
+            "During the comment period, residents, regulated businesses, local governments, professional groups, advocates, and other interested people can submit information and arguments. Effective comments are specific. They identify the section at issue, explain the practical or legal concern, and provide evidence or an alternative when possible. A short, well-supported comment can be more useful than a broad statement that does not engage the proposed text.",
+            "Comments do not function like votes in an election. An agency does not decide a rule simply by counting messages for and against it. The purpose is to build an administrative record and give the agency information it must consider under applicable law. When a rule is adopted, the agency's published order generally explains the action and addresses relevant comments or changes.",
+            "A proposal can change before adoption. That is why someone who commented on the proposed version should still read the adopted notice. The final wording, effective date, agency explanation, and response to comments may differ from what appeared initially. If the agency does not adopt the proposal, the Register can also document withdrawal or other disposition.",
+          ],
+        },
+        {
+          heading: "Adopted rules move into the Texas Administrative Code",
+          paragraphs: [
+            "After adoption and the required filing and publication steps, permanent rules are codified in the Texas Administrative Code, organized by title, part, chapter, subchapter, and section. The Code is the better place to read the currently codified rule text, while the Register is the better place to understand the history of a particular rulemaking action.",
+            "Emergency rules follow a different accelerated path permitted by statute in qualifying circumstances. Their existence is another reason not to assume that every rule change follows an identical schedule. The Register identifies emergency actions, and the Administrative Procedure Act sets the governing framework. Readers should use the official notice rather than treating an agency press release as the legal text.",
+            "A reliable rulemaking workflow is simple: locate the proposal in the Texas Register, save its agency and rule identifiers, read the cited statutory authority, note the comment deadline, check later Register issues for adoption or withdrawal, and then verify the codified rule in the Texas Administrative Code. That chain separates proposal from final law and gives Texans a durable public record of how administrative policy changed.",
+          ],
+        },
+      ],
+      faq: [
+        { q: "Is a proposed Texas agency rule already in effect?", a: "Usually no. A proposal is part of the rulemaking process. Check later official notices and the Texas Administrative Code to determine whether and when a rule was adopted and became effective." },
+        { q: "Where are Texas agency rules published?", a: "Rulemaking notices appear in the Texas Register. Adopted permanent rules are codified in the Texas Administrative Code." },
+        { q: "Do public comments work like a vote?", a: "No. Agencies consider comments under the governing legal process; rulemaking is not decided by simply counting comments for and against." },
+      ],
+      sources: [
+        { label: "Texas Secretary of State — Texas Register", url: "https://www.sos.state.tx.us/texreg/index.shtml" },
+        { label: "Texas Administrative Procedure Act", url: "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.2001.htm" },
+        { label: "Texas Administrative Code", url: "https://texreg.sos.state.tx.us/public/readtac$ext.ViewTAC" },
+      ],
+      keyTakeaways: [
+        "Texas agencies adopt rules under authority granted by law.",
+        "The Texas Register publishes proposed, adopted, withdrawn, reviewed, and emergency rule actions.",
+        "Public comments are part of an administrative record, not a simple popularity vote.",
+        "The Texas Administrative Code contains codified permanent agency rules.",
+      ],
+    },
+  },
+  {
+    key: "texas-open-meetings",
+    slugStem: "texas-open-meetings-act-practical-guide",
+    category: "Legislature",
+    title: "Texas Open Meetings: A Practical Guide to Agendas, Quorums, and Closed Sessions",
+    dek: "How to read public meeting notices, understand quorums and deliberation, follow executive sessions, find minutes or recordings, and distinguish a public meeting from a public hearing.",
+    body: {
+      editorNote:
+        "This prewritten reference article is part of the Keep TX Red publishing reserve. It is released only when the normal newsroom pipeline has been quiet for at least 24 hours.",
+      intro: [
+        "The Texas Open Meetings Act is built around a straightforward idea: when a covered governmental body deliberates or acts on public business as a body, the public generally has a right to know when and where that meeting will occur and to observe the open portions of the meeting. The details matter, however, because the law defines governmental bodies, meetings, deliberation, quorums, notice, emergency circumstances, closed sessions, and records with specific legal rules.",
+        "For residents, the most useful skill is learning to read a posted agenda before the meeting begins. The notice identifies the body, meeting time and place, and subjects to be considered. It creates the public roadmap for the meeting and helps residents decide when to attend, what documents to request, and which official has authority over the decision.",
+      ],
+      sections: [
+        {
+          heading: "Notice is the public roadmap",
+          paragraphs: [
+            "Governmental bodies subject to the Act must post notice in the manner and within the time required by law. The notice must be sufficiently specific to inform the public about the subjects the body will consider. A vague label can be inadequate when it hides the real matter under discussion, while routine items may require less detail than an unusual or high-interest decision.",
+            "Before attending, compare the agenda with supporting material published by the body. Cities, counties, school districts, boards, and state agencies often post staff reports, contracts, maps, presentations, or proposed orders alongside the agenda. Those packets are not a substitute for the legal notice, but they can make a technical agenda item understandable before officials begin deliberating.",
+            "If an issue is not on the posted notice, officials may be limited in what they can deliberate or decide about it during that meeting. Public-comment periods do not automatically turn every subject raised by a speaker into an agenda item. A body may sometimes provide a limited response permitted by law, but a later posted meeting may be necessary for fuller deliberation or action.",
+          ],
+        },
+        {
+          heading: "Quorums and deliberation are central concepts",
+          paragraphs: [
+            "The Act focuses heavily on whether a quorum of a governmental body is deliberating public business. A quorum is generally the minimum number of members required to conduct the body's business, although the exact number depends on the body and governing law. The statutory definitions are important when evaluating gatherings, electronic communications, committees, or serial discussions.",
+            "Officials do not escape open-meeting requirements merely by avoiding a formal vote if a covered deliberation is occurring. At the same time, not every social encounter, training event, ceremonial appearance, or communication automatically becomes a meeting. The statute contains definitions and exceptions that should be applied to the actual facts rather than reduced to a slogan.",
+            "For the public, the practical approach is to distinguish individual constituent communication from collective governmental deliberation. Residents can contact officials separately, but when members of a covered body collectively discuss matters within their jurisdiction, notice and meeting requirements may become relevant. Complex situations can require legal analysis, which is why the Attorney General publishes an Open Meetings Act handbook and training resources.",
+          ],
+        },
+        {
+          heading: "Closed sessions are exceptions, not a second invisible government",
+          paragraphs: [
+            "The Act permits closed meetings for specified subjects, commonly including certain consultations with an attorney, personnel matters, real-property deliberations, security issues, or other matters authorized by statute. A body should identify the legal basis before entering a closed session and follow the procedural requirements that apply.",
+            "A closed session does not mean every related action can occur in secret. Final action, decisions, or votes generally must occur in an open meeting as required by law. Residents following an issue should watch both the announcement that the body is entering closed session and the open-session agenda item where later action may be taken.",
+            "The existence of an exception also does not make every document about the subject confidential. Open-meeting law and public-information law are separate frameworks. A body may lawfully discuss a matter in closed session while some related records remain public, or records may be protected under another law. Requests for documents should therefore be evaluated under the Public Information Act and other applicable confidentiality rules rather than the meeting label alone.",
+          ],
+        },
+        {
+          heading: "Minutes, recordings, public comment, and practical follow-up",
+          paragraphs: [
+            "Covered bodies must keep records of open meetings as required by law, and many entities provide agendas, minutes, recordings, or video archives online. Minutes usually summarize subjects and actions rather than reproduce every statement. A recording can provide fuller context, while written orders, resolutions, contracts, and vote records show the legal result.",
+            "Public comment is important but is not identical across every governmental body. State law and local rules can govern when and how members of the public may address a body, including reasonable time limits and procedures. A public meeting also is not necessarily a public hearing; some hearings are required by specific statutes and have their own notice or participation rules.",
+            "To follow an issue effectively, save the posted notice, note the agenda item number, download the packet, watch or attend the meeting, record the motion and vote, and later compare the approved minutes or final document. If a meeting-law question remains, the Office of the Attorney General provides training materials and an Open Government Hotline for general information, while legal advice may be necessary for a specific dispute.",
+          ],
+        },
+      ],
+      faq: [
+        { q: "Can a Texas governmental body ever meet in closed session?", a: "Yes, but only when a statutory exception applies and the body follows the required procedure. Final action generally must occur in open session as required by law." },
+        { q: "Is every gathering of public officials automatically a meeting?", a: "No. The Act contains definitions and exceptions. Quorum, deliberation, subject matter, and the facts of the gathering matter." },
+        { q: "Does public comment let a body act on any subject raised by a speaker?", a: "No. The posted agenda and applicable law govern what the body may deliberate or decide at that meeting." },
+      ],
+      sources: [
+        { label: "Texas Government Code Chapter 551 — Open Meetings", url: "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.551.htm" },
+        { label: "Texas Attorney General — Open Meetings Act Training", url: "https://www.texasattorneygeneral.gov/open-government/governmental-bodies/pia-and-oma-training-resources/open-meetings-act-training" },
+        { label: "Texas Attorney General — Open Government Resources", url: "https://www.texasattorneygeneral.gov/open-government/governmental-bodies" },
+      ],
+      keyTakeaways: [
+        "Posted notice tells the public what a covered governmental body plans to consider.",
+        "Quorum and deliberation are central concepts in determining when the Act applies.",
+        "Closed sessions require legal authority and do not generally replace open-session final action.",
+        "Agendas, packets, recordings, minutes, and final documents create a public trail for following decisions.",
+      ],
+    },
+  },
 ];
