@@ -15,6 +15,7 @@ const base: SubjectExtract = {
 
 const cases: Array<[string, string, string]> = [
   ["2026-10-15-texas-appeals-order-requiring-prison-air-conditioning", "air-conditioning", "inmates"],
+  ["2026-09-29-austin-man-shot-by-ice-agent-charged-with-assault-resisting-arrest", "metal detector", "actual court"],
   ["2026-10-14-san-antonio-files-federal-suit-over-ice-facility-environmental-review", "warehouse", "ICE operation"],
   ["2026-10-14-texas-sued-for-failing-to-process-over-500-000-voter-registrations", "voter-registration", "ballots"],
   ["2026-10-14-texas-penalties-for-data-center-violations-are-light-despite-tough-talk-from-abb", "cooling-water", "server-rack room"],
