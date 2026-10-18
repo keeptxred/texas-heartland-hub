@@ -90,8 +90,13 @@ for cycle in 1 2 3; do
   git push --force-with-lease origin "$branch"
 done
 
-gh pr merge "$pr_url" --repo "$repo" --squash --delete-branch
+gh pr merge "$pr_url" --repo "$repo" --auto --squash --delete-branch
+pr_state="$(gh pr view "$pr_url" --repo "$repo" --json state --jq '.state')"
 merged_sha="$(gh pr view "$pr_url" --repo "$repo" --json mergeCommit --jq '.mergeCommit.oid // empty')"
+if [[ "$pr_state" != "MERGED" ]]; then
+  echo "Protected auto-merge is queued for $pr_url; GitHub will merge it when every base-branch requirement is satisfied."
+  exit 0
+fi
 if [[ -z "$merged_sha" ]]; then
   echo '::error title=Merge SHA unavailable::Automation PR merged but GitHub did not return the merge commit SHA.'
   exit 1

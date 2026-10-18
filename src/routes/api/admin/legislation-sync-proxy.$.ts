@@ -21,11 +21,19 @@ function allowedResource(resource: string, method: string) {
 
 function parseWorkflowCredential(request: Request) {
   const authorization = request.headers.get("authorization") ?? "";
-  const composite = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
-  const separator = composite.lastIndexOf("::");
+  const bearer = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+  const directRunId = request.headers.get("x-github-run-id") ?? "";
+  const directRepository = request.headers.get("x-github-repository") ?? "";
+  if (bearer && /^\d+$/.test(directRunId) && directRepository === EXPECTED_REPOSITORY) {
+    return { token: bearer, runId: directRunId };
+  }
+
+  // Backward-compatible fallback for an in-flight older runner while current
+  // workflows use explicit identity headers like the proven GSC sync path.
+  const separator = bearer.lastIndexOf("::");
   if (separator <= 0) return null;
-  const token = composite.slice(0, separator);
-  const runId = composite.slice(separator + 2);
+  const token = bearer.slice(0, separator);
+  const runId = bearer.slice(separator + 2);
   if (!token || !/^\d+$/.test(runId)) return null;
   return { token, runId };
 }
