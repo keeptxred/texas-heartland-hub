@@ -19,7 +19,7 @@ type ClusterRow = {
 };
 
 type MembershipRow = { cluster_id: string; feed_item_id: number; is_primary_source: boolean };
-type ExistingCandidateRow = { cluster_id: string; editorial_score: number; score_breakdown: unknown };
+type ExistingCandidateRow = { cluster_id: string; editorial_score: number; score_breakdown: unknown; status: string };
 type FeedScoreRow = {
   id: number;
   source: string | null;
@@ -74,7 +74,7 @@ async function handler() {
       .in("cluster_id", clusterIds),
     newsroomDb
       .from("news_publish_candidates")
-      .select("cluster_id,editorial_score,score_breakdown")
+      .select("cluster_id,editorial_score,score_breakdown,status")
       .in("cluster_id", clusterIds),
   ]);
   if (membershipError) return Response.json({ ok: false, error: membershipError.message }, { status: 500 });
@@ -180,9 +180,11 @@ async function handler() {
 
   const candidates = scored.map(({ cluster, score }) => {
     const selection = selectionByCluster.get(cluster.id)!;
+    const prior = existingCandidateByCluster.get(cluster.id);
     return {
       cluster_id: cluster.id,
       editorial_score: selection.selectionScore,
+      status: prior?.status ?? "PENDING",
       score_breakdown: {
         ...score.breakdown,
         baseEditorialScore: score.score,
@@ -200,6 +202,7 @@ async function handler() {
     const prior = existingCandidateByCluster.get(candidate.cluster_id);
     return !prior
       || Number(prior.editorial_score) !== Number(candidate.editorial_score)
+      || prior.status !== candidate.status
       || stableJson(prior.score_breakdown) !== stableJson(candidate.score_breakdown);
   });
   if (candidatesToWrite.length) {
