@@ -40,7 +40,14 @@ if (!SUPABASE_URL || (!SERVICE_KEY && !dryRun)) {
   throw new Error('SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required (service key is optional with --dry-run).');
 }
 
-const headers = { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}`, 'Content-Type': 'application/json', Prefer: 'return=representation' };
+const headers = {
+  apikey: SERVICE_KEY,
+  Authorization: `Bearer ${SERVICE_KEY}`,
+  'Content-Type': 'application/json',
+  Prefer: 'return=representation',
+  ...(process.env.GITHUB_RUN_ID ? { 'X-GitHub-Run-Id': process.env.GITHUB_RUN_ID } : {}),
+  ...(process.env.GITHUB_REPOSITORY ? { 'X-GitHub-Repository': process.env.GITHUB_REPOSITORY } : {}),
+};
 const decode = (value = '') => value.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'").trim();
 const values = (xml, names) => names.flatMap((name) => [...xml.matchAll(new RegExp(`<${name}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${name}>`, 'gi'))].map((m) => decode(m[1].replace(/<[^>]+>/g, ' ')))).filter(Boolean);
 const value = (xml, names) => values(xml, names)[0] || null;
