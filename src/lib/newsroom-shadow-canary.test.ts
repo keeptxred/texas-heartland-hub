@@ -5,6 +5,7 @@ const workflow = fs.readFileSync(new URL("../../.github/workflows/newsroom-shado
 const productionWorkflow = fs.readFileSync(new URL("../../.github/workflows/run-daily-news-now.yml", import.meta.url), "utf8");
 const wrangler = fs.readFileSync(new URL("../../wrangler.jsonc", import.meta.url), "utf8");
 const generator = fs.readFileSync(new URL("../routes/api/public/hooks/generate-newsroom.ts", import.meta.url), "utf8");
+const scorer = fs.readFileSync(new URL("../routes/api/public/hooks/score-newsroom-stories.ts", import.meta.url), "utf8");
 const cloudflare = fs.readFileSync(new URL("./cloudflare-json-ai.server.ts", import.meta.url), "utf8");
 const adapter = fs.readFileSync(new URL("./newsroom-rewrite-adapter.ts", import.meta.url), "utf8");
 
@@ -109,6 +110,13 @@ describe("newsroom Phase 13 AI canary and production promotion", () => {
     expect(workflow).toContain("-X PUT");
     expect(workflow).toContain("-X DELETE");
     expect(workflow).toContain("trap cleanup EXIT");
+  });
+
+  it("preserves rejected and held candidate lifecycle state while rescoring", () => {
+    expect(scorer).toContain('.select("cluster_id,editorial_score,score_breakdown,status")');
+    expect(scorer).toContain('status: prior?.status ?? "PENDING"');
+    expect(scorer).toContain("prior.status !== candidate.status");
+    expect(scorer).not.toContain('.select("cluster_id,editorial_score,score_breakdown")');
   });
 
   it("keeps failed shadow validation out of editorial rejection state", () => {
