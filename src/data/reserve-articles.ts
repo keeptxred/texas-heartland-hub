@@ -211,7 +211,6 @@ export const RESERVE_ARTICLES: ReserveArticle[] = [
       ],
     },
   },
-,
   {
     key: "texas-bill-process",
     slugStem: "how-a-texas-bill-becomes-law",
