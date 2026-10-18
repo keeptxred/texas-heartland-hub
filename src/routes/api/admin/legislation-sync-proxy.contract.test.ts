@@ -10,16 +10,22 @@ describe("legislation sync Worker proxy contract", () => {
   it("routes GitHub-hosted sync traffic through the deployed Worker origin", () => {
     expect(workflow).toContain(`SUPABASE_URL: ${WORKER_PROXY}`);
     expect(workflow).not.toContain("SUPABASE_URL: https://keeptxred.com/api/admin/legislation-sync-proxy");
-    expect(workflow).toContain("${{ github.token }}::${{ github.run_id }}");
+    expect(workflow).toContain("SUPABASE_SERVICE_ROLE_KEY: ${{ github.token }}");
+    expect(workflow).not.toContain("${{ github.token }}::${{ github.run_id }}");
   });
 
   it("authenticates the exact active main workflow run from the packed short-lived credential", () => {
     expect(proxy).toContain('const EXPECTED_REPOSITORY = "keeptxred/texas-heartland-hub"');
     expect(proxy).toContain('const EXPECTED_WORKFLOW = ".github/workflows/sync-texas-legislation.yml"');
-    expect(proxy).toContain('composite.lastIndexOf("::")');
+    expect(proxy).toContain('request.headers.get("x-github-run-id")');
+    expect(proxy).toContain('request.headers.get("x-github-repository")');
+    expect(proxy).toContain('bearer.lastIndexOf("::")');
     expect(proxy).toContain('run?.head_branch === "main"');
     expect(proxy).toContain('["schedule", "workflow_dispatch"].includes');
     expect(proxy).toContain('["queued", "in_progress"].includes');
+    const syncScript = readFileSync(new URL("../../../../scripts/legislature/sync-texas-legislation.mjs", import.meta.url), "utf8");
+    expect(syncScript).toContain("'X-GitHub-Run-Id': process.env.GITHUB_RUN_ID");
+    expect(syncScript).toContain("'X-GitHub-Repository': process.env.GITHUB_REPOSITORY");
   });
 
   it("keeps database access restricted to legislative tables and explicit RPCs", () => {
