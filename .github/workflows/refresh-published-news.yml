@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
   id-token: write
 
 concurrency:
@@ -20,6 +21,8 @@ jobs:
   refresh:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
     steps:
       - name: Rebuild evidence and refresh one material developing story
         shell: bash
@@ -56,7 +59,7 @@ jobs:
             exit 1
           fi
 
-          status=$(curl -sS -X POST -o /tmp/published-news-refresh.json -w '%{http_code}'             --max-time 240             -H 'accept: application/json'             -H "Authorization: Bearer ${oidc_token}"             "${AUTOMATION_ORIGIN%/}/api/public/hooks/refresh-published-newsroom" || echo 000)
+          status=$(curl -sS -X POST -o /tmp/published-news-refresh.json -w '%{http_code}'             --max-time 240             -H 'accept: application/json'             -H "Authorization: Bearer ${oidc_token}"             -H "X-GitHub-Token: ${GITHUB_TOKEN}"             -H "X-GitHub-Run-Id: ${GITHUB_RUN_ID}"             -H "X-GitHub-Repository: ${GITHUB_REPOSITORY}"             "${AUTOMATION_ORIGIN%/}/api/public/hooks/refresh-published-newsroom" || echo 000)
 
           echo "published-news-refresh HTTP ${status}"
           cat /tmp/published-news-refresh.json 2>/dev/null || true
