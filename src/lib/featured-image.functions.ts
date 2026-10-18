@@ -226,6 +226,10 @@ export function newsroomAbstractPolicyVisualSubject(row: Pick<ArticleRow, "slug"
       domain: "general",
       scene: "Interior ventilation and cooling infrastructure in an anonymous institutional correctional building: large visible wall-mounted air-conditioning supply vents, clearly recognizable metal cooling ducts, a thermostatic control box with no readable numbers, concrete-block walls and a secured metal doorway. The air-conditioning equipment must fill the composition. This is an illustrative prison-temperature-control setting, NOT a depiction of a specific Texas prison, the reported appeal hearing, or a claimed installed improvement. No inmates, officers, nameplates, fake court scene or readable text.",
     },
+    "2026-09-29-austin-man-shot-by-ice-agent-charged-with-assault-resisting-arrest": {
+      domain: "legal",
+      scene: "Documentary-style interior of an anonymous Texas federal courthouse security and case-processing area: a walk-through metal detector, security stanchions, plain courthouse corridor doors, an empty public bench, and closed case folders with all labels unreadable. The courthouse process infrastructure must dominate the frame. This is an illustrative legal-process setting connected to the reported custody and assault case, NOT the actual court, the named defendant, the ICE agent, the shooting, or a reenactment of the reported incident. No identifiable people, badges, agency seals, fake evidence, blood, weapons or readable case text.",
+    },
     "2026-10-14-san-antonio-files-federal-suit-over-ice-facility-environmental-review": {
       domain: "general",
       scene: "Exterior of an anonymous large existing commercial warehouse with a paved industrial access road, loading-bay doors, utility infrastructure and perimeter fencing; foreground contains a plain closed binder and survey clipboard on a portable site-inspection table, with every page blank or unreadable. This represents the warehouse-site environmental review disputed in litigation and does NOT claim to show the actual East Side site, any ICE operation, or the lawsuit filing.",
