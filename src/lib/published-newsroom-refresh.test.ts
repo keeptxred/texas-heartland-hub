@@ -39,6 +39,17 @@ describe("published newsroom freshness refresh", () => {
     expect(refresher).toContain("MAX_NEW_SOURCES_IN_PROMPT = 4");
   });
 
+  it("keeps refresh authorization tied to the exact active GitHub workflow run", () => {
+    expect(workflow).toContain("actions: read");
+    expect(workflow).toContain("X-GitHub-Token:");
+    expect(workflow).toContain("X-GitHub-Run-Id:");
+    expect(workflow).toContain("X-GitHub-Repository:");
+    expect(refresher).toContain("verifyActiveGithubRun");
+    expect(refresher).toContain('run?.path === WORKFLOW_PATH');
+    expect(refresher).toContain('run?.head_branch === "main"');
+    expect(refresher).toContain('["queued", "in_progress"].includes');
+  });
+
   it("checks for new evidence every two hours without duplicating pg_cron normalization or clustering", () => {
     expect(workflow).toContain('cron: "47 */2 * * *"');
     expect(workflow).toContain("enrich-newsroom-rss-evidence");
