@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { RESERVE_ARTICLES } from "@/data/reserve-articles";
 import { articleMainWordCount, INGESTED_MIN_MAIN_WORDS } from "@/lib/article-length";
+import { scoreQuality } from "@/lib/content-quality";
 
 describe("publishing safety-net reserve inventory", () => {
   it("keeps a replenished set of unique, publication-ready reserve stories", () => {
@@ -23,4 +24,29 @@ describe("publishing safety-net reserve inventory", () => {
       }
     }
   });
+
+  it("retains substantive relevance and clears the image-backed Facebook quality threshold", () => {
+    for (const article of RESERVE_ARTICLES) {
+      const sections = article.body.sections ?? [];
+      const why = sections.find((section) => section.heading === "Why This Matters");
+      expect(why, article.key).toBeDefined();
+      expect((why?.paragraphs ?? []).length, article.key).toBeGreaterThanOrEqual(2);
+      expect((why?.paragraphs ?? []).join(" ").split(/\\s+/).length, article.key).toBeGreaterThanOrEqual(65);
+
+      const body = { ...article.body, updated: "2026-10-19" };
+      const quality = scoreQuality({
+        slug: `2026-10-19-${article.slugStem}`,
+        title: article.title,
+        dek: article.dek,
+        author: "Keep TX Red Editorial Staff",
+        published_at: "2026-10-19T00:00:00Z",
+        image_url: "/api/public/article-image/example.jpg",
+        kind: "ingested",
+        body_json: body,
+      });
+      expect(quality.flags, article.key).not.toContain("missing_why_this_matters");
+      expect(quality.score, article.key).toBeGreaterThanOrEqual(72);
+    }
+  });
+
 });
