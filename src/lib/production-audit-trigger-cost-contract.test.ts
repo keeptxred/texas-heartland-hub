@@ -27,7 +27,7 @@ describe("production crawl cost contract", () => {
     expect(text).not.toContain("  workflow_run:");
   });
 
-  it("limits production link discovery to weekly/manual runs", () => {
+  it("limits production link discovery to weekly/manual and audit-code PRs", () => {
     const text = workflow("broken-link-audit.yml");
     const triggers = text.split("permissions:")[0];
     expect(triggers).toContain("pull_request:");
@@ -39,6 +39,10 @@ describe("production crawl cost contract", () => {
     expect(text).toContain("node scripts/seo/audit-broken-links.mjs --live");
     expect(text).toContain("node scripts/seo/audit-broken-links.mjs\n");
     expect(text).toContain("github.event_name");
+    expect(text).toContain("changed_files=");
+    expect(text).toContain("grep -Eq");
+    expect(text).toContain("HEAD^1 HEAD");
+    expect(text).toContain("fetch-depth: 2");
     const runner = readFileSync(new URL("../../scripts/seo/audit-broken-links.mjs", import.meta.url), "utf8");
     expect(runner).toContain("const MAX_LIVE_REQUESTS = 15_000;");
     expect(runner).toContain("request-budget-exhausted");
