@@ -17,6 +17,12 @@ on:
     types: [completed]
     branches: [main]
   workflow_dispatch:
+    inputs:
+      scheduled_recovery:
+        description: Perform a guarded scheduled check after an authorized newsroom refresh
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -36,6 +42,7 @@ jobs:
       # directly while retaining strict GitHub Actions OIDC authorization.
       AUTOMATION_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      SCHEDULED_RECOVERY: ${{ inputs.scheduled_recovery || false }}
     steps:
       - name: Check randomized Keep TX Red Facebook schedule
         id: decision
@@ -55,7 +62,9 @@ jobs:
           fi
 
           mode="scheduled"
-          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+          # An authorized background refresh may dispatch a scheduled eligibility
+          # check. It cannot bypass the cap, spacing, quality or image gates.
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" && "${SCHEDULED_RECOVERY:-false}" != "true" ]]; then
             mode="manual"
           fi
 
