@@ -1,6 +1,7 @@
 name: Broken link audit
 
-# Source-only checks run on affected PRs; full production crawl is weekly/manual.
+# Audit-code PRs run full live verification before merge; route-only PRs run static checks.
+# Full production crawls also run weekly/manual, not on every ordinary route change.
 # Zero-debt policy: retired internal links are no longer report-only once the migration backlog is cleared.
 on:
   workflow_dispatch:
@@ -29,10 +30,12 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 2 # PR merge ref and its first-parent base for changed-path detection
       - uses: actions/setup-node@v5
         with:
           node-version: 22
-      - name: Audit repository; inspect live site only on scheduled/manual runs
+      - name: Audit repository; require live verification for audit-code PRs
         id: audit
         env:
           AUDIT_SITE_URL: https://keeptxred.com
@@ -40,6 +43,15 @@ jobs:
         run: |
           if [[ "${{ github.event_name }}" == 'schedule' || "${{ github.event_name }}" == 'workflow_dispatch' ]]; then
             node scripts/seo/audit-broken-links.mjs --live
+          elif [[ "${{ github.event_name }}" == 'pull_request' ]]; then
+            # Fail closed if the merge-base diff cannot be read. Avoid full live
+            # production crawls for route-only PRs under the request budget.
+            changed_files="$(git diff --name-only HEAD^1 HEAD)"
+            if printf '%s\n' "$changed_files" | grep -Eq '^(\.github/workflows/broken-link-audit\.yml|scripts/seo/(audit-broken-links|broken-link-audit-utils|broken-link-scan-scope)\.mjs)$'; then
+              node scripts/seo/audit-broken-links.mjs --live
+            else
+              node scripts/seo/audit-broken-links.mjs
+            fi
           else
             node scripts/seo/audit-broken-links.mjs
           fi

@@ -11,7 +11,13 @@ describe('broken-link audit workflow contract', () => {
     expect(workflow).toContain("- 'scripts/seo/broken-link-scan-scope.mjs'");
     expect(workflow).toContain('AUDIT_SITE_URL: https://keeptxred.com');
     expect(workflow).toContain('AUDIT_FETCH_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev');
+    expect(workflow).toContain('fetch-depth: 2');
+    expect(workflow).toContain('changed_files=');
+    expect(workflow).toContain('HEAD^1 HEAD');
+    expect(workflow).toContain('grep -Eq');
+    expect(workflow).toContain('audit-broken-links|broken-link-audit-utils|broken-link-scan-scope');
     expect(workflow).toContain('node scripts/seo/audit-broken-links.mjs --live');
+    expect(workflow).toContain('if (report.summary.staticFindings || report.summary.liveFailures) process.exit(1)');
   });
 
   it('keeps PR and main/scheduled audit concurrency isolated', () => {
