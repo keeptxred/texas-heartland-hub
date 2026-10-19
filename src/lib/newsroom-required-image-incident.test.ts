@@ -33,6 +33,20 @@ describe("newsroom exact image recovery for October failed visual topics", () =>
       expect(image.evidenceGuidance).toContain("No fabricated");
     });
   }
+  it("illustrates the legislative committee stage instead of a generic Capitol for dated reserve articles", () => {
+    const image = newsroomAbstractPolicyVisualSubject(
+      { slug: "2026-10-19-how-a-texas-bill-becomes-law", title: "How a Texas Bill Becomes Law—and Where to Track It" },
+      base,
+    );
+    expect(image).not.toBe(base);
+    expect(image.domain).toBe("politics");
+    expect(image.concreteSubject).toContain("bill hearing");
+    expect(image.concreteSubject).toContain("document tray");
+    expect(image.concreteSubject).toContain("NOT a generic Texas Capitol exterior");
+    expect(image.concreteSubject).toContain("No readable signs");
+    expect(image.imageGroundingMode).toBe("verified_symbolic");
+    expect(image.evidenceGuidance).toContain("No fabricated");
+  });
   it("does not alter unrelated newsroom image criteria", () => {
     expect(newsroomAbstractPolicyVisualSubject({ slug: "2026-10-01-unrelated", title: "Other story" }, base)).toBe(base);
   });
