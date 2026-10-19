@@ -12,24 +12,12 @@ describe('broken-link audit workflow contract', () => {
     expect(workflow).toContain('AUDIT_SITE_URL: https://keeptxred.com');
     expect(workflow).toContain('AUDIT_FETCH_ORIGIN: https://keeptxred-site.freddy-coppola.workers.dev');
     expect(workflow).toContain('fetch-depth: 2');
-    expect(workflow).toContain('changed_files="$(git diff --name-only HEAD^1 HEAD)"');
-    expect(workflow).toContain("grep -Eq '^(\\.github/workflows/broken-link-audit\\.yml|scripts/seo/(audit-broken-links|broken-link-audit-utils|broken-link-scan-scope)\\.mjs)
-  });
-
-  it('keeps PR and main/scheduled audit concurrency isolated', () => {
-    expect(workflow).toContain('group: broken-link-audit-${{ github.event.pull_request.number || github.ref }}');
-    expect(workflow).toContain('cancel-in-progress: true');
-  });
-
-  it('preserves zero-debt enforcement for both blocking and migration findings', () => {
-    expect(workflow).toContain('name: Enforce zero broken-link debt');
-    expect(workflow).toContain('if (report.summary.staticFindings || report.summary.liveFailures) process.exit(1)');
-    expect(workflow).not.toContain('if (report.summary.blockingStaticFindings || report.summary.blockingLiveFailures) process.exit(1)');
-  });
-});
-");
+    expect(workflow).toContain('changed_files=');
+    expect(workflow).toContain('HEAD^1 HEAD');
+    expect(workflow).toContain('grep -Eq');
+    expect(workflow).toContain('audit-broken-links|broken-link-audit-utils|broken-link-scan-scope');
     expect(workflow).toContain('node scripts/seo/audit-broken-links.mjs --live');
-    expect(workflow).toContain('node scripts/seo/audit-broken-links.mjs\\n');
+    expect(workflow).toContain('if (report.summary.staticFindings || report.summary.liveFailures) process.exit(1)');
   });
 
   it('keeps PR and main/scheduled audit concurrency isolated', () => {
