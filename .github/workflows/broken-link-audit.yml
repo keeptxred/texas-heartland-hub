@@ -1,6 +1,7 @@
 name: Broken link audit
 
-# Source-only checks run on affected PRs; full production crawl is weekly/manual.
+# Audit-code PRs run full live verification before merge; route-only PRs run static checks.
+# Full production crawls also run weekly/manual, not on every ordinary route change.
 # Zero-debt policy: retired internal links are no longer report-only once the migration backlog is cleared.
 on:
   workflow_dispatch:
