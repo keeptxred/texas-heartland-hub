@@ -16,6 +16,14 @@ describe("KTR generated Facebook attention image contract", () => {
     expect(workflow).toContain("/api/public/hooks/publish-ktr-generated-attention-image");
   });
 
+  it("requires an editorial illustration instead of AI-made slogans or a fabricated event", () => {
+    expect(workflow).toContain("EDITORIAL IMAGE DIRECTION");
+    expect(workflow).toContain("NO words, letters, slogans");
+    expect(workflow).toContain("Do not make a political campaign poster");
+    expect(workflow).toContain("Do not impersonate a photo of a reported event");
+    expect(workflow).toContain("The caption will carry the exact post text");
+  });
+
   it("fails closed instead of using the old generic Keep TX Red image", () => {
     expect(workflow).not.toContain("og/default.jpg");
     expect(attentionPublisher).not.toContain("og/default.jpg");
