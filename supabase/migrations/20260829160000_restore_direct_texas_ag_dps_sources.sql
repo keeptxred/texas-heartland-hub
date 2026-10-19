@@ -11,9 +11,9 @@ WITH sources(platform, source_name, source_url, rss_url, category, notes, enable
       'rss',
       'Texas Attorney General — Direct News Releases',
       'https://www.texasattorneygeneral.gov/news',
-      'https://www2.texasattorneygeneral.gov/feeds/feeds.php?feed=pr',
+      'https://www.texasattorneygeneral.gov/news/press_releases',
       'Politics',
-      'Official Texas Attorney General press-release RSS feed. Direct every-run source for settlements, lawsuits, investigations, consumer actions, opinions-related announcements, and enforcement news.',
+      'Official dated Texas Attorney General first-party press-release index (old RSS endpoint returned HTTP 404). Direct every-run source for settlements, lawsuits, investigations, consumer actions, and enforcement news.',
       true
     ),
     (
@@ -45,9 +45,9 @@ WITH sources(platform, source_name, source_url, rss_url, category, notes, enable
       'rss',
       'Texas Attorney General — Direct News Releases',
       'https://www.texasattorneygeneral.gov/news',
-      'https://www2.texasattorneygeneral.gov/feeds/feeds.php?feed=pr',
+      'https://www.texasattorneygeneral.gov/news/press_releases',
       'Politics',
-      'Official Texas Attorney General press-release RSS feed. Direct every-run source for settlements, lawsuits, investigations, consumer actions, opinions-related announcements, and enforcement news.',
+      'Official dated Texas Attorney General first-party press-release index (old RSS endpoint returned HTTP 404). Direct every-run source for settlements, lawsuits, investigations, consumer actions, and enforcement news.',
       true
     ),
     (
