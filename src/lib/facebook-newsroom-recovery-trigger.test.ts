@@ -31,8 +31,11 @@ describe("Facebook article publishing missed-schedule recovery", () => {
     expect(workflow).toContain("SCHEDULED_RECOVERY: ${{ inputs.scheduled_recovery || false }}");
     expect(workflow).toContain('"${SCHEDULED_RECOVERY:-false}" != "true"');
     expect(workflow).toContain('mode="scheduled"');
+    expect(refresh).toContain("actions: read");
+    expect(refresh).toContain("facebook_recovery:");
+    expect(refresh).toContain("needs: refresh");
     expect(refresh).toContain("actions: write");
-    expect(refresh).toContain("if: success() && github.event_name == 'schedule'");
+    expect(refresh).toContain("github.event_name == 'schedule' && needs.refresh.result == 'success'");
     expect(refresh).toContain("gh workflow run auto-facebook-posts.yml");
     expect(refresh).toContain("-f scheduled_recovery=true");
     expect(refresh).toContain('TZ=America/Chicago date +%H');
