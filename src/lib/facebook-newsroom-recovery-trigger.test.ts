@@ -14,7 +14,7 @@ describe("Facebook article publishing missed-schedule recovery", () => {
     expect(workflow).toContain("branches: [main]");
     expect(workflow).toContain("group: keeptxred-auto-facebook");
     expect(workflow).toContain("cancel-in-progress: false");
-    expect(workflow).toContain('if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then');
+    expect(workflow).toContain('"${GITHUB_EVENT_NAME}" == "workflow_dispatch" && "${SCHEDULED_RECOVERY:-false}" != "true"');
     expect(workflow).toContain("github.event.workflow_run.name == 'Run Daily News Now'");
   });
 
