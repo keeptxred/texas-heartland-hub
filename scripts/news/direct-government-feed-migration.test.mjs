@@ -21,4 +21,10 @@ describe('direct Texas government feed restoration migration', () => {
     expect(sql).not.toContain('DELETE FROM');
     expect(sql).not.toContain('TRUNCATE');
   });
+
+  it('uses the verified first-party AG index, not the retired HTTP 404 RSS endpoint', () => {
+    expect((sql.match(/https:\/\/www\.texasattorneygeneral\.gov\/news\/press_releases/g) || [])).toHaveLength(2);
+    expect(sql).not.toContain('www2.texasattorneygeneral.gov/feeds/feeds.php');
+    expect((sql.match(/https:\/\/www\.dps\.texas\.gov\/rss\/most-wanted\.xml/g) || [])).toHaveLength(2);
+  });
 });
