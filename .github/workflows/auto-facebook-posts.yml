@@ -150,6 +150,20 @@ jobs:
           if not post_text:
               raise SystemExit('Exact KTR Facebook post text is empty')
           prompt = 'Generate an image for this Facebook post.\n\n' + post_text
+          prompt += (
+              '\n\nEDITORIAL IMAGE DIRECTION: Create a single original, polished, visually specific '
+              'editorial illustration of the concrete subject suggested by the question. '
+              'Make the central subject instantly recognizable at mobile-feed size. '
+              'Use natural, believable lighting, subtle visual depth, and a clean horizontal composition. '
+              'Do not make a political campaign poster, advertisement, graphic collage, or text-centric design. '
+              'NO words, letters, slogans, fake labels, fake signs, watermarks, charts, invented brand marks, '
+              'logos, or visible written statistics anywhere in the picture. '
+              'Avoid maps and Texas silhouettes as generic substitutes for relevant subjects. '
+              'Do not impersonate a photo of a reported event or show an identifiable political figure. '
+              'If the question is abstract, use representative physical objects and spaces instead of '
+              'fabricating a purported scene of the news event. '
+              'The caption will carry the exact post text; the image must never attempt to typeset it.'
+          )
           Path('/tmp/ktrfb/openai-request.json').write_text(
               json.dumps({
                   'model': 'gpt-image-2',
