@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: read
-  actions: write
+  actions: read
   id-token: write
 
 concurrency:
@@ -76,15 +76,27 @@ jobs:
             echo "PUBLISHED_NEWS_REFRESH_NOOP reason=$(jq -r '.reason // "none"')"
           fi
 
+  
+  facebook_recovery:
+    name: Relay successful newsroom refresh to guarded KTR Facebook check
+    needs: refresh
+    if: github.event_name == 'schedule' && needs.refresh.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    # Keep Actions write permission out of the article refresh job, which
+    # sends its GITHUB_TOKEN to a separately authenticated refresh endpoint.
+    permissions:
+      contents: read
+      actions: write
+    steps:
       - name: Request guarded KTR Facebook schedule recovery
-        if: success() && github.event_name == 'schedule'
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          # Restrict the relay to Texas daytime and evening. The Facebook Worker
-          # makes the actual due/window/spacing/duplicate decision.
+          # One bounded dispatch during Central posting hours. All due, spacing,
+          # duplicate, quality, image, and 5/day guards run in the publisher.
           local_hour="$(TZ=America/Chicago date +%H)"
           if (( 10#$local_hour < 7 || 10#$local_hour > 21 )); then
             echo "Outside KTR Facebook hours; no recovery dispatch."
