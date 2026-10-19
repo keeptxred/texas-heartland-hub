@@ -58,6 +58,14 @@ export const RESERVE_ARTICLES: ReserveArticle[] = [
             "County government is intentionally fragmented, but it is not unknowable. Agendas, budgets, tax notices, campaign filings, court records, and election results provide a public trail. Following that trail turns an abstract layer of government into a set of identifiable decisions and accountable officeholders.",
           ],
         },
+
+        {
+          heading: "Why This Matters",
+          paragraphs: [
+            "For Texans, knowing which county official actually has authority over a decision makes public accountability more precise. The commissioners court adopts many countywide budgets and tax decisions, while offices such as the sheriff and county clerk have separate elected responsibilities. Asking the correct office for records or action is more useful than assuming every county service reports to the county judge.",
+            "Residents can track meeting agendas, budget hearings, tax-rate votes, and published records to understand which decisions were made publicly and who voted on them. This helps distinguish a disagreement about spending priorities from a question about an independently elected official’s duties.",
+          ],
+        },
       ],
       faq: [
         { q: "Is a Texas county judge always a courtroom judge?", a: "No. The county judge presides over the commissioners court and often leads administration and emergency management. Judicial duties vary by county." },
@@ -122,6 +130,14 @@ export const RESERVE_ARTICLES: ReserveArticle[] = [
             "If an agency asks for clarification, respond promptly and preserve the exchange. Clarification can improve the request, but a government body should not use it to force the requester to identify a document number that only the agency knows. Describe the public business, people, time period, and record types as concretely as possible.",
             "When records arrive, compare the production with the request. Check whether attachments are present, date ranges are complete, redactions are labeled, and withheld categories are explained. A courteous, precise follow-up often resolves omissions. For persistent problems, the Attorney General's Open Government Hotline provides guidance, and legal advice may be appropriate in consequential disputes.",
             "Keep a simple request log with the submission date, tracking number, contact person, estimates, payments, clarification messages, ruling deadlines, and production dates. That record becomes important when an agency sends material in installments or when several offices hold related documents. It also lets a requester distinguish an ordinary production delay from a missed legal step and explain the history accurately in any later complaint or appeal.",
+          ],
+        },
+
+        {
+          heading: "Why This Matters",
+          paragraphs: [
+            "Why this matters to Texans is practical: a focused request for existing records can let residents check what a public body actually approved, spent, or communicated rather than relying on rumors or a press release. The right agency and a specific record description help ensure the request reaches the people who can locate it.",
+            "Public information requests seek records, not new explanations or research prepared on demand. Tracking the request date, the agency’s response, any claimed exceptions, and the applicable attorney general process gives Texans a better way to assess whether access to government information is being handled as the law requires.",
           ],
         },
       ],
@@ -191,6 +207,14 @@ export const RESERVE_ARTICLES: ReserveArticle[] = [
             "Recovery planning deserves the same attention as the first warning. Keep cleanup gloves, sturdy shoes, masks, basic tools, and a way to photograph damage. Treat downed power lines as energized, avoid contaminated floodwater, and use licensed professionals where electrical, gas, structural, or major tree hazards are involved. Save receipts for emergency lodging, repairs, food loss, and temporary supplies because insurers or assistance programs may request documentation.",
           ],
         },
+
+        {
+          heading: "Why This Matters",
+          paragraphs: [
+            "For Texans, a written emergency plan turns an uncertain warning into a set of decisions already made: where to shelter, whether and when to evacuate, who will check on vulnerable family members, and what to do when electricity or cellular service fails. The best plan reflects the actual hazards and official alerts affecting a particular address.",
+            "Families can reduce avoidable confusion by documenting medications, accessible transportation, pet arrangements, important contacts, and backup ways to receive reliable weather and emergency instructions. Practicing the plan and revisiting it after a move or major household change matters more than buying supplies without deciding how to use them.",
+          ],
+        },
       ],
       faq: [
         { q: "How much water should a household store?", a: "Federal guidance commonly starts with at least one gallon per person per day for several days, with additional water for heat, pets, illness, and sanitation." },
@@ -255,6 +279,14 @@ export const RESERVE_ARTICLES: ReserveArticle[] = [
             "After the Legislature completes a bill and the final text is enrolled, the measure is sent to the governor. Depending on timing and constitutional rules, the governor may sign a bill, veto it, or allow it to become law without a signature. Texas also has line-item veto authority for appropriations. The official bill history and governor records provide the safest confirmation of final action.",
             "A bill's effective date is a separate question from whether it became law. Some laws take effect immediately when the constitutional vote threshold and bill language support that result; others take effect on a specified date or under the default constitutional timing. The enrolled bill and final legislative information should be checked before telling readers when a new requirement begins.",
             "For practical tracking, save the TLO bill page rather than a search result or social-media screenshot. Check the Actions tab for the most recent official step, the Text tab for the current version, the Votes tab for recorded votes, and available analyses or fiscal notes for context. That habit makes it possible to report what the Legislature actually did without confusing a proposal, committee recommendation, chamber passage, or final law.",
+          ],
+        },
+
+        {
+          heading: "Why This Matters",
+          paragraphs: [
+            "For Texans, each legislative stage answers a different question: what is proposed, whether a committee advanced it, how each chamber voted, and whether the final measure actually became law. A filing or committee hearing does not itself change state law. That distinction helps readers evaluate legislative claims without confusing a proposal with a requirement already in force.",
+            "Texas Legislature Online lets readers check bill text, current status, actions and available recorded votes directly. Following the official record makes it easier to see what changed, identify the lawmakers who acted, and determine whether the measure was sent to the governor.",
           ],
         },
       ],
@@ -322,6 +354,14 @@ export const RESERVE_ARTICLES: ReserveArticle[] = [
             "A reliable rulemaking workflow is simple: locate the proposal in the Texas Register, save its agency and rule identifiers, read the cited statutory authority, note the comment deadline, check later Register issues for adoption or withdrawal, and then verify the codified rule in the Texas Administrative Code. That chain separates proposal from final law and gives Texans a durable public record of how administrative policy changed.",
           ],
         },
+
+        {
+          heading: "Why This Matters",
+          paragraphs: [
+            "An agency rule can affect how Texans apply for licenses, comply with requirements, or use public services even when there is no new floor vote in the Legislature. The proposal stage is an opportunity to review the agency’s stated legal authority, the actual rule text, its anticipated effects, and the available comment process.",
+            "Checking the Texas Register for proposed and adopted rules, then consulting the current Texas Administrative Code, helps residents and businesses separate a proposal from an effective requirement. The effective date and final adopted language—not an announcement about a proposed rule—determine what may be required now.",
+          ],
+        },
       ],
       faq: [
         { q: "Is a proposed Texas agency rule already in effect?", a: "Usually no. A proposal is part of the rulemaking process. Check later official notices and the Texas Administrative Code to determine whether and when a rule was adopted and became effective." },
@@ -385,6 +425,14 @@ export const RESERVE_ARTICLES: ReserveArticle[] = [
             "Covered bodies must keep records of open meetings as required by law, and many entities provide agendas, minutes, recordings, or video archives online. Minutes usually summarize subjects and actions rather than reproduce every statement. A recording can provide fuller context, while written orders, resolutions, contracts, and vote records show the legal result.",
             "Public comment is important but is not identical across every governmental body. State law and local rules can govern when and how members of the public may address a body, including reasonable time limits and procedures. A public meeting also is not necessarily a public hearing; some hearings are required by specific statutes and have their own notice or participation rules.",
             "To follow an issue effectively, save the posted notice, note the agenda item number, download the packet, watch or attend the meeting, record the motion and vote, and later compare the approved minutes or final document. If a meeting-law question remains, the Office of the Attorney General provides training materials and an Open Government Hotline for general information, while legal advice may be necessary for a specific dispute.",
+          ],
+        },
+
+        {
+          heading: "Why This Matters",
+          paragraphs: [
+            "Meeting notices, agendas and public records let Texans know when public bodies may make decisions that affect budgets, schools, local services, and community priorities. The posted subject of an agenda item matters because it helps residents decide whether to attend, watch, or request related records before a decision is made.",
+            "Open-meetings requirements do not make every discussion public or guarantee identical comment opportunities at every meeting. Residents should distinguish an open meeting from a legally permitted closed session, follow the published agenda and minutes or recordings, and use official procedures to raise concerns about a specific decision.",
           ],
         },
       ],
