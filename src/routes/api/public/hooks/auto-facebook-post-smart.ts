@@ -5,6 +5,7 @@ import {
   formatCentralMinute,
 } from "@/lib/facebook-posting-schedule";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
+import { prepareKtrFacebookAttentionPost } from "@/lib/facebook-attention-publisher.server";
 
 const OIDC_AUDIENCE = "keeptxred-facebook";
 const REPOSITORY = "keeptxred/texas-heartland-hub";
@@ -145,13 +146,24 @@ async function runSmartKtrFacebookPost(request: Request): Promise<Response> {
     });
   }
 
-  // Scheduled slots now share substantive article/guide content only.
-  // Engagement questions and generated-image attention posts remain manual,
-  // never substitutes for the requested daily editorial posts.
-  // Article slots keep the existing ranked recent-article publisher and its
-  // production-indexable durable-guide fallback. Forward as manual so the
-  // inner endpoint does not apply the schedule a second time.
-  return forwardArticlePost(token);
+  // Publish reviewed articles and verified evergreen guides first.
+  const articleResponse = await forwardArticlePost(token);
+  if (articleResponse.status !== 200) return articleResponse;
+  let result: { no_items?: boolean };
+  try {
+    result = (await articleResponse.clone().json()) as { no_items?: boolean };
+  } catch {
+    return articleResponse;
+  }
+  if (result?.no_items !== true) return articleResponse;
+
+  // Only a verified shortage can prepare an illustrated editorial post.
+  // Generation, integrity checks and image upload happen in the workflow;
+  // text is never sent to Facebook without the generated image.
+  return (await prepareKtrFacebookAttentionPost({
+    db, seed, dateKey: decision.dateKey,
+    slot: decision.postsToday, mode,
+  })) ?? articleResponse;
 }
 
 export const Route = createFileRoute("/api/public/hooks/auto-facebook-post-smart")({
