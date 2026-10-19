@@ -243,7 +243,16 @@ export function newsroomAbstractPolicyVisualSubject(row: Pick<ArticleRow, "slug"
       scene: "A large real-world data-center exterior cooling-water and electricity infrastructure setting in Texas: multiple industrial cooling towers and chiller units with prominent metal pipework and water-flow control valves, adjacent high-voltage substation transformers and industrial service roads. Cooling-water infrastructure must dominate the frame; no generic indoor server-rack room. This is an illustrative view of the industry and water-use equipment subject to enforcement, not evidence of any named facility's violation or punishment.",
     },
   };
-  const assignment = visualAssignments[row.slug];
+  // Reserve newsroom slugs carry a date prefix. A legislature-process guide
+  // cannot pass a physical-subject image check with a generic Capitol exterior;
+  // require a concrete committee-stage setting for both generation and vision.
+  const reserveLegislativeProcess = row.slug.endsWith("-how-a-texas-bill-becomes-law")
+    ? {
+        domain: "politics" as Domain,
+        scene: "A realistic documentary-style interior of an anonymous Texas legislative committee meeting room ready for a bill hearing: empty committee desks and microphones, an open stack of proposed-bill paper packets with all printed text deliberately unreadable, one clerk's organized document tray, empty chairs, and a clearly visible public-hearing dais. The central subject must unmistakably be the physical process of reviewing a bill in committee, NOT a generic Texas Capitol exterior or a governor signing a law. Natural indoor lighting and a believable unposed photographic composition. This is an illustrative government-process workspace, not documentation of a specific bill, session, vote, named lawmaker, historical event or venue. No readable signs, logos, false legal text, portraits, fake vote totals or campaign branding.",
+      }
+    : undefined;
+  const assignment = visualAssignments[row.slug] ?? reserveLegislativeProcess;
   if (!assignment) return subject;
   return {
     ...subject,
