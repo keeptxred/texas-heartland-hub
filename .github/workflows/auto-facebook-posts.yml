@@ -151,7 +151,7 @@ jobs:
               raise SystemExit('Exact KTR Facebook post text is empty')
           prompt = 'Generate an image for this Facebook post.\n\n' + post_text
           prompt += (
-              '\\n\\nEDITORIAL IMAGE DIRECTION: Create a single original, polished, visually specific '
+              '\n\nEDITORIAL IMAGE DIRECTION: Create a single original, polished, visually specific '
               'editorial illustration of the concrete subject suggested by the question. '
               'Make the central subject instantly recognizable at mobile-feed size. '
               'Use natural, believable lighting, subtle visual depth, and a clean horizontal composition. '
