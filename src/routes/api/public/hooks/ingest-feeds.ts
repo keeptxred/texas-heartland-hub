@@ -3,6 +3,7 @@ import { resolvePublishTimestamp } from "@/lib/article-slug-integrity";
 import { isLowValueTitle } from "@/lib/low-value-titles";
 import { scoreFeedItem, TEXAS_RELEVANCE_MIN } from "@/lib/viral-score";
 import { selectRotatedSourceWindow } from "@/lib/ingest-source-window";
+import { parseTexasAgPressReleaseIndex } from "@/lib/texas-ag-press-releases";
 import { partitionFeedLinkLookups } from "@/lib/ingest-link-lookup";
 export { publishSingleFeedItem } from "@/lib/multi-source-publish";
 export { isPuzzleTitle } from "@/lib/ingest-feeds-legacy";
@@ -41,6 +42,9 @@ type FetchResult = {
 const DIRECT_SOURCES: Source[] = [
   { name: "Office of the Governor", url: "https://gov.texas.gov/news/rss", mode: "rss" },
   { name: "Texas Secretary of State", url: "https://www.sos.state.tx.us/rss/press.xml", mode: "rss" },
+  // The Attorney General legacy RSS returns HTTP 404; use the verified, dated official release index.
+  { name: "Texas Attorney General — Direct News Releases", url: "https://www.texasattorneygeneral.gov/news/press_releases", category: "Politics", mode: "html-links", include: "^/news/releases/" },
+  { name: "Texas DPS — Direct Most Wanted RSS", url: "https://www.dps.texas.gov/rss/most-wanted.xml", category: "Local", mode: "rss" },
   { name: "Texas Register", url: "https://www.sos.state.tx.us/texreg/texreg.xml", mode: "rss" },
   { name: "Texas Comptroller", url: "https://public.govdelivery.com/topics/TXCOMPT_1/feed.rss", mode: "rss" },
   // Canonical first-party releases are necessary: Google News RSS wrappers
@@ -302,6 +306,11 @@ function normalizeDbSource(row: { source_name: string; rss_url: string | null; c
   const name = row.source_name;
   let url = (row.rss_url ?? "").trim();
   if (!url) return null;
+  // Normalize the formerly published AG RSS URL to its live first-party index.
+  // The exact source is already in DIRECT_SOURCES and is deduplicated by URL.
+  if (name === "Texas Attorney General — Direct News Releases") {
+    return { name, url: "https://www.texasattorneygeneral.gov/news/press_releases", category: row.category, mode: "html-links", include: "^/news/releases/" };
+  }
   if (/tpwd\.texas\.gov\/newsmedia\/releases\/rss\/?/i.test(url)) {
     return { name: "Texas Parks & Wildlife", url: "https://tpwd.texas.gov/newsmedia/releases/", category: row.category, mode: "tpwd-html" };
   }
@@ -369,7 +378,11 @@ async function fetchSource(source: Source): Promise<FetchResult> {
     return { source: source.name, url: "https://texasstandard.org/", status: fallback.status, attempts: fetched.attempts + fallback.attempts, mode: "texas-standard-html", items: fallback.text ? parseTexasStandardHtml(fallback.text) : [], error: fallback.text ? undefined : fallback.error };
   }
   if (!fetched.text) return { source: source.name, url: source.url, status: fetched.status, attempts: fetched.attempts, mode: source.mode, items: [], error: fetched.error };
-  const items = source.mode === "tpwd-html" ? parseTpwdHtml(fetched.text) : source.mode === "html-links" ? parseHtmlLinks(fetched.text, source) : parseFeed(fetched.text, source.name);
+  const items = source.name === "Texas Attorney General — Direct News Releases" && source.mode === "html-links"
+    ? parseTexasAgPressReleaseIndex(fetched.text)
+    : source.mode === "tpwd-html" ? parseTpwdHtml(fetched.text)
+    : source.mode === "html-links" ? parseHtmlLinks(fetched.text, source)
+    : parseFeed(fetched.text, source.name);
   return { source: source.name, url: source.url, status: fetched.status, attempts: fetched.attempts, mode: source.mode, items: items.slice(0, 30) };
 }
 
