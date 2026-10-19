@@ -8,13 +8,21 @@ const texasDefinedPublisher = fs.readFileSync("src/routes/api/public/hooks/auto-
 
 describe("Facebook article publishing missed-schedule recovery", () => {
   it("responds to newsroom completion without introducing an unbounded workflow", () => {
-    expect(workflow).toContain('workflows: ["Run Daily News Now"]');
+    expect(workflow).toContain('workflows: ["Run Daily News Now", "Refresh Developing Published News"]');
     expect(workflow).toContain("types: [completed]");
     expect(workflow).toContain("branches: [main]");
     expect(workflow).toContain("group: keeptxred-auto-facebook");
     expect(workflow).toContain("cancel-in-progress: false");
     expect(workflow).toContain('if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then');
-    expect(workflow).toContain("if: github.event_name == 'schedule' || github.event_name == 'workflow_run'");
+    expect(workflow).toContain("github.event.workflow_run.name == 'Run Daily News Now'");
+  });
+
+  it("avoids GitHub's congested :00/:30 starts and protects TexasDefined from recovery-only triggers", () => {
+    expect(workflow).toContain('cron: "11,41 12-23 * * *"');
+    expect(workflow).toContain('cron: "11,41 0-4 * * *"');
+    expect(workflow).not.toContain('cron: "0,30 12-23 * * *"');
+    expect(workflow).toContain("github.event.workflow_run.name == 'Run Daily News Now'");
+    expect(workflow).toContain("group: keeptxred-auto-facebook");
   });
 
   it("explicitly authorizes the added signed event at all three publisher boundaries", () => {

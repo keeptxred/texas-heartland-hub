@@ -2,16 +2,18 @@ name: Auto Facebook Posts
 
 on:
   schedule:
-    # Lightweight checks every 30 minutes across the Texas waking/evening day.
-    # Keep TX Red can publish up to five randomized posts per day. TexasDefined
-    # owns its separate Facebook engagement schedule in keeptxred/TexasDefined.
-    - cron: "0,30 12-23 * * *"
-    - cron: "0,30 0-4 * * *"
-  # Recover when GitHub drops or delays nominal half-hour cron triggers.
-  # This already-scheduled newsroom completes roughly every four hours.
-  # The Facebook article windows, cap, gap and duplicate checks still apply.
+    # Off-peak checks avoid GitHub's congestion at :00/:30, where scheduled
+    # triggers may be delayed or dropped. Central daily windows and safety
+    # gates still decide whether to publish; checking is not publishing.
+    - cron: "11,41 12-23 * * *"
+    - cron: "11,41 0-4 * * *"
+  # Independent completion triggers recover dropped schedule runs.
+  # Refresh Developing Published News runs every two hours, unlike the
+  # newsroom writer which may be delayed or fail its editorial checks.
+  # No additional publish without the five-post/day cap, 75-minute gap,
+  # live-Page duplicate checks, and image-first safeguards.
   workflow_run:
-    workflows: ["Run Daily News Now"]
+    workflows: ["Run Daily News Now", "Refresh Developing Published News"]
     types: [completed]
     branches: [main]
   workflow_dispatch:
@@ -307,7 +309,7 @@ jobs:
 
   texasdefined_articles:
     name: Publish TexasDefined editorial article
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_run'
+    if: github.event_name == 'schedule' || (github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Run Daily News Now')
     runs-on: ubuntu-latest
     timeout-minutes: 12
     env:
