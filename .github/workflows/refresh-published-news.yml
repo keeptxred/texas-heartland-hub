@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: read
-  actions: read
+  actions: write
   id-token: write
 
 concurrency:
@@ -75,3 +75,23 @@ jobs:
           else
             echo "PUBLISHED_NEWS_REFRESH_NOOP reason=$(jq -r '.reason // "none"')"
           fi
+
+      - name: Request guarded KTR Facebook schedule recovery
+        if: success() && github.event_name == 'schedule'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # Restrict the relay to Texas daytime and evening. The Facebook Worker
+          # makes the actual due/window/spacing/duplicate decision.
+          local_hour="$(TZ=America/Chicago date +%H)"
+          if (( 10#$local_hour < 7 || 10#$local_hour > 21 )); then
+            echo "Outside KTR Facebook hours; no recovery dispatch."
+            exit 0
+          fi
+          gh workflow run auto-facebook-posts.yml \
+            --repo "$GITHUB_REPOSITORY" \
+            --ref main \
+            -f scheduled_recovery=true
+          echo "Requested guarded KTR Facebook scheduled eligibility check."
