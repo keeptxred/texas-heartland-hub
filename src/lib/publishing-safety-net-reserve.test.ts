@@ -31,7 +31,7 @@ describe("publishing safety-net reserve inventory", () => {
       const why = sections.find((section) => section.heading === "Why This Matters");
       expect(why, article.key).toBeDefined();
       expect((why?.paragraphs ?? []).length, article.key).toBeGreaterThanOrEqual(2);
-      expect((why?.paragraphs ?? []).join(" ").split(/\\s+/).length, article.key).toBeGreaterThanOrEqual(65);
+      expect((why?.paragraphs ?? []).join(" ").split(/\s+/).length, article.key).toBeGreaterThanOrEqual(65);
 
       const body = { ...article.body, updated: "2026-10-19" };
       const quality = scoreQuality({
