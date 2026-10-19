@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { parseTexasAgPressReleaseIndex } from '../../src/lib/texas-ag-press-releases';
 
 const NOW = Date.parse('2026-10-19T20:00:00Z');
-function card(href: string, title: string, date: string, excerpt = 'The official press release contains current facts.') {
+function card(href, title, date, excerpt = 'The official press release contains current facts.') {
   return '<div class="m-b-3"><h4 class="m-b-1 h4-sans"><a href="' + href + '">' + title
     + '</a></h4><p class="m-b-0">' + excerpt + '</p><p class="meta m-b-0">'
     + date + '  | Press Release</p></div>';
