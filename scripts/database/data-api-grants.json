@@ -1,0 +1,3750 @@
+{
+  "project": "ftkznprjljkhymknvhye",
+  "capturedAt": "2026-10-20",
+  "migration": "20261020221732_explicit_data_api_grants_readiness.sql",
+  "grants": [
+    {
+      "name": "ai_rewrite_failures_id_seq",
+      "kind": "sequence",
+      "role": "service_role",
+      "privileges": [
+        "SELECT",
+        "USAGE"
+      ]
+    },
+    {
+      "name": "ai_rewrite_usage_id_seq",
+      "kind": "sequence",
+      "role": "service_role",
+      "privileges": [
+        "SELECT",
+        "USAGE"
+      ]
+    },
+    {
+      "name": "flyover_email_execution_ledger_id_seq",
+      "kind": "sequence",
+      "role": "service_role",
+      "privileges": [
+        "SELECT",
+        "USAGE"
+      ]
+    },
+    {
+      "name": "ktr_evergreen_verification_events_id_seq",
+      "kind": "sequence",
+      "role": "service_role",
+      "privileges": [
+        "SELECT",
+        "USAGE"
+      ]
+    },
+    {
+      "name": "td_ai_question_signals_id_seq",
+      "kind": "sequence",
+      "role": "service_role",
+      "privileges": [
+        "SELECT",
+        "USAGE"
+      ]
+    },
+    {
+      "name": "td_authority_sitemap_requests_id_seq",
+      "kind": "sequence",
+      "role": "service_role",
+      "privileges": [
+        "SELECT",
+        "USAGE"
+      ]
+    },
+    {
+      "name": "td_authority_verification_checks_id_seq",
+      "kind": "sequence",
+      "role": "service_role",
+      "privileges": [
+        "SELECT",
+        "USAGE"
+      ]
+    },
+    {
+      "name": "texas_news_feed_id_seq",
+      "kind": "sequence",
+      "role": "service_role",
+      "privileges": [
+        "SELECT",
+        "USAGE"
+      ]
+    },
+    {
+      "name": "texasdefined_articles_id_seq",
+      "kind": "sequence",
+      "role": "service_role",
+      "privileges": [
+        "SELECT",
+        "USAGE"
+      ]
+    },
+    {
+      "name": "texasdefined_bing_webmaster_snapshots_id_seq",
+      "kind": "sequence",
+      "role": "service_role",
+      "privileges": [
+        "SELECT",
+        "USAGE"
+      ]
+    },
+    {
+      "name": "ai_generation_budget",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "ai_rewrite_cache",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "ai_rewrite_failures",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "ai_rewrite_manual_bypass",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "ai_rewrite_usage",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "article_category_reclassification_log",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "article_pillar_assignments",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "article_pillar_assignments",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "article_pillar_assignments",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "article_search_metrics",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "article_search_metrics",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "article_search_metrics",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "article_slug_redirects",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "article_slug_redirects",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "article_slug_redirects",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "article_url_registry",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "authority_relationships",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "authority_relationships",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "authority_relationships",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_actions",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_actions",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_actions",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_article_relationships",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_article_relationships",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_article_relationships",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_committee_history",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_committee_history",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_committee_history",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_documents",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_documents",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_documents",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_editorial_enrichments",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_editorial_enrichments",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_editorial_enrichments",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_effective_date_provisions",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "bill_effective_date_provisions",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "bill_effective_date_provisions",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_schedule_events",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "bill_schedule_events",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "bill_schedule_events",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_sponsors",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_sponsors",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_sponsors",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_subject_relationships",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_subject_relationships",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_subject_relationships",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_subjects",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_subjects",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bill_subjects",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bills",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bills",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "bills",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "content_packages",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "content_packages",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "content_packages",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "content_sources",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "content_sources",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "content_sources",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "daily_article_archive",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "daily_articles",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "daily_articles",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "daily_articles",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "election_poll_questions",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "election_poll_questions",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "election_poll_questions",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "election_poll_responses",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "election_poll_responses",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "election_poll_responses",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "election_polls",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "election_polls",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "election_polls",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "email_send_log",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "email_send_log",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "email_send_log",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "email_send_state",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "email_send_state",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "email_send_state",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "email_unsubscribe_tokens",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_activities",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_activities",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_activities",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_amenities",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_amenities",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_amenities",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_business_profiles",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_business_profiles",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_business_profiles",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_campground_profiles",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_campground_profiles",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_campground_profiles",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_categories",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_categories",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_categories",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_duplicate_candidates",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_duplicate_candidates",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_duplicate_candidates",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entities",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entities",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entities",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_activities",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_activities",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_activities",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_amenities",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_amenities",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_amenities",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_categories",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_categories",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_categories",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_media",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_media",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_media",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_relationships",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_relationships",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_relationships",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_reviews",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_reviews",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_reviews",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_slug_history",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_slug_history",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_slug_history",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_sources",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_sources",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_sources",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_tags",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_tags",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_tags",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_types",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_types",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_types",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_versions",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_versions",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_entity_versions",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_import_jobs",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_import_jobs",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_import_jobs",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_import_records",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_import_records",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_import_records",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_import_revisions",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_import_revisions",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_import_revisions",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_import_rollbacks",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_import_rollbacks",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_import_rollbacks",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_import_sources",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_import_sources",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_import_sources",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_lake_profiles",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_lake_profiles",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_lake_profiles",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_locations",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_locations",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_locations",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_media",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_media",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_media",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_observations",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_observations",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_observations",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_park_profiles",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_park_profiles",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_park_profiles",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_relationship_types",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_relationship_types",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_relationship_types",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_saved_searches",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_saved_searches",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_saved_searches",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_search_index",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_search_index",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_search_index",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_search_synonyms",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_search_synonyms",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_search_synonyms",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_sources",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_sources",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_sources",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_species_profiles",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_species_profiles",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_species_profiles",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_tags",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_tags",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_tags",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_trips",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_trips",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "explore_trips",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "flyover_aug10_reconciliation",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "flyover_email_execution_ledger",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "gsc_page_daily_metrics",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "gsc_url_inspection",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "ktr_evergreen_reviewers",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "ktr_evergreen_verification_events",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "ktr_evergreen_verifications",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "legislative_committees",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "legislative_committees",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "legislative_committees",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "legislative_content_opportunities",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "legislative_content_opportunities",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "legislative_content_opportunities",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "legislative_report_indexes",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "legislative_report_indexes",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "legislative_report_indexes",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "legislative_sessions",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "legislative_sessions",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "legislative_sessions",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "legislative_source_records",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "legislative_sync_runs",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "news_event_article_updates",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "news_event_cluster_admin_actions",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "news_event_cluster_sources",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "news_event_clusters",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "news_event_facts",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "news_event_reconciliation_holds",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "news_feed_normalization",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "news_publish_candidates",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "news_publish_candidates",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "news_publish_candidates",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "news_research_packets",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "news_research_packets",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "news_research_packets",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "news_source_fetch_state",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "news_source_fetch_state",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "news_source_fetch_state",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "news_story_cluster_items",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "news_story_cluster_items",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "news_story_cluster_items",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "news_story_clusters",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "newsletter_signups",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "INSERT"
+      ]
+    },
+    {
+      "name": "newsletter_signups",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "INSERT"
+      ]
+    },
+    {
+      "name": "newsletter_signups",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "newsroom_daily_briefs",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "newsroom_editorial_actions",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "SELECT",
+        "INSERT",
+        "UPDATE",
+        "DELETE"
+      ]
+    },
+    {
+      "name": "newsroom_generation_drafts",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "newsroom_queue_counters",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "newsroom_source_page_fetch_state",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "orders",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "pillar_authority_snapshots",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "pillar_authority_snapshots",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "pillar_authority_snapshots",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "platform_governance_daily_summaries",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "platform_governance_events",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "products",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "products",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "products",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "publishing_alerts",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "publishing_alerts",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "publishing_alerts",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "publishing_queue",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "publishing_queue",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "publishing_queue",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "reel_candidates",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "reel_candidates",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "reel_candidates",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "repo_migration_equivalences",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "repo_migration_public_ledger",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "repo_migration_public_ledger",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "repo_migration_public_ledger",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "reserve_article_publications",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "reserve_article_publications",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "reserve_article_publications",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "social_connections",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "social_connections",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "social_connections",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "suppressed_emails",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "suppressed_emails",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "suppressed_emails",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "td_ai_coverage_gaps",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "td_ai_eval_cases",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "td_ai_eval_runs",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "td_ai_question_signals",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "td_ai_search_demand",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "td_authority_page_acceptance",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "td_authority_sitemap_requests",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "td_authority_verification_checks",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "td_authority_verification_registry",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "td_authority_verification_sources",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texas_events",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texas_events",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texas_events",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texas_news_feed",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texas_news_feed",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texas_news_feed",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texas_property_tax_rates",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "texas_property_tax_rates",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "texas_property_tax_rates",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_admin_access_keys",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_advertiser_agreement_offers",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_advertiser_agreements",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_articles",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_articles",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_articles",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_backlink_prospects",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_billing_accounts",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_billing_invoice_items",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_billing_invoices",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_billing_stripe_events",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_bing_webmaster_snapshots",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_brand_locations",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "texasdefined_event_offers",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_event_offers",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_event_offers",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_fishing_sponsor_daily_metrics",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_fishing_sponsor_placements",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_fishing_sponsors",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_network_applications",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_network_business_accounts",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "texasdefined_network_business_accounts",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_network_checkout_acceptances",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "INSERT",
+        "SELECT"
+      ]
+    },
+    {
+      "name": "texasdefined_network_checkout_attempts",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_network_email_outbox",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_network_owner_verifications",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_network_profile_revisions",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "INSERT",
+        "SELECT"
+      ]
+    },
+    {
+      "name": "texasdefined_network_profile_revisions",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_network_public_listings",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "texasdefined_network_public_listings",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "SELECT"
+      ]
+    },
+    {
+      "name": "texasdefined_network_public_listings",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_network_stripe_events",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_newsletter_deliveries",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_newsletter_events",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_newsletter_issues",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_newsletter_subscribers",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_offer_sources",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_offer_sources",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_offer_sources",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_partner_inquiries",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_partner_referral_daily",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_shop_funnel_daily",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_sports_sponsor_daily_metrics",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_sports_sponsor_placements",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_sports_sponsors",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "texasdefined_sports_venue_daily_traffic",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "user_roles",
+      "kind": "table",
+      "role": "anon",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "user_roles",
+      "kind": "table",
+      "role": "authenticated",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    },
+    {
+      "name": "user_roles",
+      "kind": "table",
+      "role": "service_role",
+      "privileges": [
+        "DELETE",
+        "INSERT",
+        "SELECT",
+        "UPDATE"
+      ]
+    }
+  ],
+  "legacyCreationFiles": {
+    "20260626145150_f89c6913-6609-4dcf-af52-ac29b46e8d67.sql": "dc97b5a69033b64c714da31df6941b8d9c558a7f1532d3a31d1c6d16352cccc0",
+    "20260628141546_cc73ca1a-fd4e-4c88-b394-c3b27cb18460.sql": "ee348cbf0a44fdb18d1507c1a23130f0ed2518d1aa4b8b12c908bbf50f31d889",
+    "20260701214416_7bfcab0f-f3da-4ffa-8ef8-49cddbef7eed.sql": "c49c7ae6b9d64581b5b52f67e5e846dd9ef5efaafee3ace144e6ee2558f3fdb5",
+    "20260702032000_e0eea184-3aed-4ef9-83c8-6fb71a16c60f.sql": "3d29fd6ea5739b3c0e89d22fb616ff5fb794826e6a2567e70a77bff889befe6a",
+    "20260702032355_email_infra.sql": "89c19e347c2914e34d3cc6b2b2079615c275e6c072295dec67bdfd141d434f9d",
+    "20260707215124_f885489c-5c1a-4ff1-a7a2-98593429da56.sql": "4b67cbd0a8a2230b1e917c64704e11c7c7301549ced907adc9bccb6268a68283",
+    "20260719023059_243aa1b3-cc99-478c-9bef-f84c07a9e848.sql": "62462d4e2f46081c3c2a32bd3557f2049416467606dfdbfcf38a9dbf6742dae9",
+    "20260719024547_df98bd8a-d384-4591-8259-7dd3713bc250.sql": "8a024df39833f5f5ec40a08e623a62955a386c2b94f178042dad7309418228a9",
+    "20260719024954_3f86f145-9624-4e4a-9a45-419482a5f53c.sql": "f8220d11957814fc37605076e4b2d282ae53208f96ee2f84a40bdf8c604c1e4b",
+    "20260719025236_283541f9-8329-42ee-b0f3-1ef24efc8238.sql": "5f68b045873cfe83fdf4d81825e527e614a97ecc58f2c3f08a3050354a78483a",
+    "20260719034518_1bc0442b-fcce-4d0b-85b9-713fd221244f.sql": "70374cc3b634b08b5bc29af99c82116595ba5d97c8171201ac05f422f66a980b",
+    "20260724143000_explore_texas_core_entities.sql": "408a32de0f440b6115d49fb231100ad0989ea247354a8500cab4be4f796afead",
+    "20260724150000_explore_texas_profiles_media_locations.sql": "d18d81a4a2351086f43e04cb823cecc54dbd8a267d9bc04d0dbbaf9e2ad8f187",
+    "20260724153000_explore_texas_taxonomy_quality_search.sql": "0ec41869ba9da649d3826ff4511406a635a949eaeac851d5cf17949b94bd34fe",
+    "20260724223000_explore_import_platform.sql": "ddcdb521666dc772e02de0f940fff5b80acf5173e01115219554e80d7ae9f59d",
+    "20260725120000_explore_public_platform.sql": "90ff7776e0eabac389638ca1864726c911522bf8d18e6654c8e5ec83d092c64a",
+    "20260725170000_ai_rewrite_cache_budget.sql": "0e5e069c8c3bb37f88c344fc44398da93fb1699cf196d0037a7911ed0d1a528a",
+    "20260725220000_publishing_safety_net.sql": "126b380210d66e898809f81e1186dc353952f406fa07477a5e71d3c532d54152",
+    "20260726025256_2e742e4a-6ab6-4146-93f3-5ab2c93557c0.sql": "f8e8981dd276ba3761df2d79eaab466901c15a5c2568b3fed4cda0ad66a4140f",
+    "20260726211500_repair_ai_rewrite_budget_rpc.sql": "4cea261ef0d3380345657ef0d727fbca6de982aaa1bd41df939863f01a7d026b",
+    "20260728090000_election_polling_center.sql": "b738f68a9c814aa3aba30eb55cc179cc36bf94ea74c704a00c71437d6c69e7de",
+    "20260730130600_texas_bills_platform.sql": "797f35bdf2c6828bcb963ea9b4057fd1afb8fd1139ddd0d3cd738bf2fcea7f28",
+    "20260731135643_df107b11-cb56-4bdb-a07c-75fc6915f471.sql": "97d108f91a8fcfb1c5e5d96d0193301ab53d531be79bdb583aa7ed444bc7ec39",
+    "20260731170500_rewrite_budget_manual_bypass.sql": "af43c7aec12ceafcbc820c63f9f69ff3b173203ae4f5808c3807c44b594d410c",
+    "20260731190000_legislative_authority_graph.sql": "cfd01b16767e11fbc5bfcd065cefbd69e3d77c1866fc543447bf7d1e78f9c194",
+    "20260801042227_d7b059c2-38b8-49f8-bfb3-63f1fc722c46.sql": "3b5e164a86c27f81d30c5cd7fc41388230b758c6ea51b38c9b2fb791ca64f617",
+    "20260803010000_legislative_document_ingestion.sql": "a53e2cd732f18d8b61fa63d6012780a742e95cccaf6fc73468c85949f53a8c08",
+    "20260803034702_1d67b545-4799-4681-aaaf-3e78e0b9269e.sql": "0d0d61392940c45cedb33ef921d66d779c19dd73d1a64b0ddcecda61b1e2ebd3",
+    "20260803223000_bill_editorial_enrichments.sql": "35f8059060655ca6121c7a5bf0b6a2baf31437d7bb45ed2e30f6c058bc7355a3",
+    "20260803231500_legislative_content_opportunities.sql": "469ba0e78974edd42362c00c4a1f7c1694a0908165f7240331b5509146f1b206",
+    "20260804221547_01f1f0d5-21eb-40ae-944c-d38b68652b48.sql": "b3a21163f027db2945fb4a662414c209ed451abad3df5de77e2283a1c817c075",
+    "20260807195500_fix_sos_article_years_and_redirects.sql": "0236d9ba0bc3d20187d8ad0450ef17ccea060dec7cf1f70be24a00b6c18bf507",
+    "20260809202000_article_pillar_authority_metrics.sql": "a292542620a0b1eabd2a8f6de133576e6609bd2b16c4c184da55179e49757011",
+    "20260809202500_pillar_authority_history.sql": "f520b3f12072b3a79e347076543850f7402e4719224f566a0a8ed0ccb5668c64",
+    "20260810145500_backfill_historical_article_categories.sql": "f91a300eefd145c12c3bccb9b6f9e9c76b908b0ee74b374a3b7c55857b6afca9",
+    "20260810215000_activate_texasdefined_article_channel.sql": "e3cfca40dd00015bd988aee3d5f82d3bcb0942c66d3b677d037167c8a7cd0d3d",
+    "20260811013000_article_search_metrics.sql": "631786a29bd5472367a1ab4e56730e3444b6c2c9d25fae6617557d799c2fe71f",
+    "20260815185000_add_newsroom_story_cluster_schema.sql": "c992772cde7551251de6532debcf140cf27eb7b285f2b9f7b3303fa63f0e9650",
+    "20260815190500_add_newsroom_zero_ai_normalization.sql": "797ced188030d20f723eced507424034541de860ba10c331b1f8e316bdf21c2b",
+    "20260815193000_add_newsroom_research_packets.sql": "692d6e3b6da70507f6fd396ee9c3752bac0733639f063d93ac42ea2a8a96d22e",
+    "20260815200000_add_newsroom_generation_drafts.sql": "3e83716a2b59db5a5ccf53b984e2efc4482cb54f625d5dadc177114e3b1a42f4",
+    "20260815203000_add_newsroom_daily_briefs.sql": "d00a07cc52d614657c06cba8e56fc713bb31ec1614b2e342a4c3127158d2ef2e",
+    "20260816104500_add_newsroom_admin_control_center.sql": "ddaeb441639919ec48c1d2095568ae28b02406c327367db5b9f14ccd17be0cbe",
+    "20260816142000_add_durable_news_event_clusters.sql": "369197d657169dd9369ee255992fe57787a7092882906e2ae27869950f6ea434",
+    "20260816151000_add_news_event_fact_provenance.sql": "4a545cc1ea29a0ad8ec901e95a4e1d47e746bd7084f0234f814c7d7c2ff0fdc0",
+    "20260816154500_add_living_story_updates.sql": "354b1fb44a6adfc0e6eeddc201eb25d63de7b581ef1a6bdcc478525438f068a9",
+    "20260816165000_add_source_provenance_admin_controls.sql": "0c32a0f8bc0c938ad96299e1f1a1e23c8998b139c58004f664ada9fe6f017028",
+    "20260817073000_add_news_event_reconciliation_holds.sql": "f8b8f60dfd67873b887164cea04b7fb356b6429b75b5d77ce010c614902cf06f",
+    "20260820122404_protect_historical_article_urls_and_archive_deletes.sql": "b9cf6fba70131fa848c7355919b906e2c2be5863fc8aeff6fb43c5fc25f74390",
+    "20260827005500_news_source_fetch_state.sql": "2db57fcd54a2ef34ed9e177a9c5cddfa020553a081d79655484a878465882ed9",
+    "20260827140500_gsc_sitewide_search_console.sql": "7a532d937692b45c05bcc70dcecd453bd8f5348e77676dc24477c6e8e176b01c",
+    "20260827214500_add_flyover_aug10_reconciliation_ledger.sql": "4086ba21ba48f096d62b53a2947443d22db468322ea9d4a9f3f03fe2e1f4cc9e",
+    "20260829150100_newsroom_source_page_fetch_cooldown.sql": "3d291d69c246032060d72ac1ebb93d40c148153110b6a8648ebf1a044a81df4a",
+    "20260905173000_structured_bill_effective_dates.sql": "af9003e9982ec5881dc9a4c27eec898ddc9c91d67a0885770dafbfcd6bbbe9e7",
+    "20260918151618_reconcile_repo_migration_equivalence.sql": "b22446c5480ad86e3e12549a426d7bff095ea8cbe2c4e5b3c21bc89a193f8e3d",
+    "20260925212500_add_texasdefined_event_offers.sql": "f4bfe6931269f0097abe40938eadb6ebf5229d2ed2abd4bce158bbc4a8c64723",
+    "20261007090951_add_public_readonly_migration_ledger_20261007.sql": "0a38d992e26e5be9dac8a910d1c3b2e3b35244bee43ef0d7452b46a7c1b87b6e",
+    "20261007091721_add_newsroom_queue_counter_20261007.sql": "3a95ab26f3f86c7889f50cd222c2ee39295d5ba99b52c0a42bcba4b1640bb6e5",
+    "20261011233913_cron_success_history_rollup_and_safe_retention.sql": "a41eb606ef8fc4374c700a6b938fc2cdce6822b53d6029e869653b16695cbad4",
+    "20261011234405_create_private_legislative_editorial_cold_archive.sql": "39fa2cfa9808a347cca5ecbe84ea6ccc4d1b0a0ebd361fbdaca07d1e3c2a41e3",
+    "20261011234848_create_private_newsroom_cold_archive.sql": "34b0840df9371c53914d47c2156bc47b9bae9137562509d6c345714b83f77770",
+    "20261011235331_create_private_old_feed_cold_archive.sql": "6182be6205e4c785a32b99b69a33bedd1cfd5d827d1de74a9ca696b35a666c26",
+    "20261012000443_monitor_shared_free_tier_database_capacity.sql": "4e2aea0b34d9a837084a04b56142be23525d2ac629a078529dafae1a2b061d64",
+    "20261012002233_capture_free_tier_capacity_hourly_with_90day_retention.sql": "6a6dff2d4cf4b094ae1522bc87cc0ef6965f500b5f2d406b10ab70e566fc524c",
+    "20261012003210_record_verified_cold_archive_storage_offload.sql": "13bec8cd778453d9b176bf7622a04d64f8c1054032a02cb7c87f5192e258a051"
+  }
+}

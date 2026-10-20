@@ -23,3 +23,7 @@ These rules apply to every human or AI coding agent working in this repository.
 19. Do not commit service-role keys, secret API keys, passwords, private tokens, or other credentials. Browser-exposed publishable identifiers/keys must be clearly intended for public client use; prefer deployment/environment configuration over adding new tracked `.env` values.
 20. Before creating a new workflow, search `.github/workflows` for an existing job with the same responsibility. If two workflows would execute substantially the same validation, consolidate them instead.
 21. A merged commit is not considered live until the configured production deployment has completed and production verification passes. Do not treat marker-file commits or branch synchronization as proof of deployment.
+
+## Supabase Data API permissions
+
+For every new public table, include explicit per-role GRANT statements and ENABLE ROW LEVEL SECURITY in the same migration. Grant only the access the application needs; private tables must not receive anon/authenticated grants. Identity/serial inserts also need explicit sequence privileges for the inserting role. Policies do not replace grants. Run `node scripts/database/validate-data-api-grants.mjs` and its test alongside the repository validation contract. The October 2026 readiness migration handles the frozen legacy creation history; do not add new files to its legacy exemption list.
