@@ -51,6 +51,9 @@ jobs:
         id: install
         run: bun install --frozen-lockfile
 
+      - name: Explicit Data API grants
+        run: node --test scripts/database/test-data-api-grants.mjs
+
       - name: ESLint
         id: lint
         run: bun run lint
