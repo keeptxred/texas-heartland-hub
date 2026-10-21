@@ -13,6 +13,12 @@ if (!url || !serviceKey) {
 
 const supabase = createClient(url, serviceKey, {
   auth: { persistSession: false, autoRefreshToken: false },
+  global: {
+    headers: {
+      ...(process.env.GITHUB_RUN_ID ? { 'X-GitHub-Run-Id': process.env.GITHUB_RUN_ID } : {}),
+      ...(process.env.GITHUB_REPOSITORY ? { 'X-GitHub-Repository': process.env.GITHUB_REPOSITORY } : {}),
+    },
+  },
 });
 
 const { data, error } = await supabase.rpc('refresh_bill_relationships', {
