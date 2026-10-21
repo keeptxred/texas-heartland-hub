@@ -1,3 +1,11 @@
+## Cloudflare connection and cache operations — no reconnection prompts
+
+- **Standing instruction:** Cloudflare is already connected for this project's existing production setup. Do not ask the user to reconnect, reinstall, or reauthorize Cloudflare merely to continue a cache, purge, Worker, or deployment task. Repeated connection prompts are explicitly prohibited.
+- Cloudflare read access, cache-purge write permissions, and individual operation approvals are distinct. An authorization prompt or denied cache-purge action **does not establish that the Cloudflare connection is disconnected**; do not misdiagnose it as such.
+- **Never invoke a Cloudflare connector cache purge as a routine cleanup step.** Favor the established GitHub-to-Cloudflare deployment and post-deploy checks. Where freshness matters, use targeted cache-busted reads and compare with the canonical URL; do not claim a cache was purged unless confirmed.
+- Only attempt an explicit cache purge when the user specifically requests that operation and the existing connection authorizes it without a new connection or approval workflow. If it prompts for new authorization, stop that optional cache operation immediately, record "cache purge skipped: operation-level authorization needed," and continue all independent tasks. **Do not ask the user to reconnect and do not retry in a loop.**
+- If a genuinely essential Cloudflare operation fails due to permissions, report the specific denied action **once**, distinguish that from connector connection health, and continue with already authorized workflows. Never claim the action succeeded if it did not.
+
 ## Repository coding and CI rules
 
 These rules apply to every human or AI coding agent working in this repository.
