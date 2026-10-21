@@ -62,16 +62,18 @@ describe("newsroom Phase 13 AI canary and production promotion", () => {
     expect(productionWorkflow).toContain("No clustered newsroom story published; trying the independent corroboration-gated overdue writer.");
   });
 
-  it("requires the exact newsroom shape through Cloudflare JSON schema mode", () => {
+  it("requires a bounded, evidence-proportional newsroom shape through Cloudflare JSON schema mode", () => {
     expect(generator).toContain("jsonSchema: NEWSROOM_DRAFT_JSON_SCHEMA");
     expect(cloudflare).toContain('{ type: "json_schema", json_schema: input.jsonSchema }');
     expect(adapter).toContain('required: ["brief", "title", "dek", "summary", "relevance", "sections", "keyTakeaways", "faq"]');
     expect(adapter).toContain('required: ["heading", "paragraphs"]');
     expect(adapter).toContain('required: ["q", "a"]');
-    expect(adapter).toContain("minItems: 6");
+    expect(adapter).toContain("minItems: 4");
     expect(adapter).toContain("maxItems: 6");
-    expect(adapter).toContain("minItems: 3");
+    expect(adapter).toContain("minItems: 2");
     expect(adapter).toContain("maxItems: 3");
+    expect(adapter).toContain("sections.length < 4 || typedDraft.sections.length > 6");
+    expect(adapter).toContain("section.paragraphs.length < 2 || section.paragraphs.length > 3");
     expect(adapter).toContain('minLength: 380');
   });
 

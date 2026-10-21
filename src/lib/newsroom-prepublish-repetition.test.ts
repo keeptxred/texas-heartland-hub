@@ -83,9 +83,38 @@ describe("newsroom prepublication duplicate paragraph gate", () => {
 
   it("requires distinct source-backed roles in the initial draft rather than padding", () => {
     const instructions = newsroomRewriteSystemPrompt(packet);
-    expect(instructions).toContain("Plan distinct factual roles for all 18 paragraphs");
+    expect(instructions).toContain("identify distinct source-backed factual roles for each proposed paragraph");
     expect(instructions).toContain("No substantive paragraph may appear more than once");
+    expect(instructions).toContain("Write 4 to 6 substantive sections");
+    expect(instructions).toContain("Reduce section/paragraph count");
     expect(instructions).toContain("set brief.hasClearNewsEvent=false");
+  });
+
+  it("allows four evidence-rich sections with two unique paragraphs without lowering word or repetition requirements", () => {
+    const unique = Array.from({ length: 18 }, (_, i) =>
+      "Official record point " + i + ": " + ("The source documents a concrete state agency action, a date, and a cited responsibility for Texas readers. ").repeat(6),
+    );
+    const draft = createDraft(unique);
+    draft.sections = draft.sections.slice(0, 4).map((section) => ({
+      ...section,
+      paragraphs: section.paragraphs.slice(0, 2),
+    }));
+    const result = validateNewsroomDraft(draft, packet);
+    expect(result.reasons).not.toContain("section_count");
+    expect(result.reasons).not.toContain("paragraph_count");
+    expect(result.reasons).not.toContain("repeated_newsroom_paragraphs");
+    expect(result.mainWordCount).toBeGreaterThan(0);
+  });
+
+  it("still rejects undersized sections and one-paragraph filler", () => {
+    const draft = createDraft(Array.from({ length: 18 }, (_, i) =>
+      "Documented fact number " + i + ". " + ("A dated Texas source describes the agency's publicly recorded decision and authority. ").repeat(7),
+    ));
+    draft.sections = draft.sections.slice(0, 3);
+    draft.sections[0].paragraphs = draft.sections[0].paragraphs.slice(0, 1);
+    const result = validateNewsroomDraft(draft, packet);
+    expect(result.reasons).toContain("section_count");
+    expect(result.reasons).toContain("paragraph_count");
   });
 
   it("rejects a single repeated substantive paragraph before publication", () => {

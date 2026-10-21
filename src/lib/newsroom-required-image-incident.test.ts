@@ -47,6 +47,20 @@ describe("newsroom exact image recovery for October failed visual topics", () =>
     expect(image.imageGroundingMode).toBe("verified_symbolic");
     expect(image.evidenceGuidance).toContain("No fabricated");
   });
+  it("makes Texas agency rulemaking visible with actual notice and comment materials, not a government facade", () => {
+    const image = newsroomAbstractPolicyVisualSubject(
+      { slug: "2026-10-20-how-texas-state-agencies-make-rules", title: "How Texas State Agencies Make Rules—and How the Public Can Follow Them" },
+      base,
+    );
+    expect(image).not.toBe(base);
+    expect(image.domain).toBe("general");
+    expect(image.imageGroundingMode).toBe("verified_symbolic");
+    expect(image.concreteSubject).toContain("proposed-rule notice");
+    expect(image.concreteSubject).toContain("public-comment submission form");
+    expect(image.concreteSubject).toContain("NO building exterior");
+    expect(image.concreteSubject).toContain("completely unreadable");
+    expect(image.evidenceGuidance).toContain("No fabricated");
+  });
   it("does not alter unrelated newsroom image criteria", () => {
     expect(newsroomAbstractPolicyVisualSubject({ slug: "2026-10-01-unrelated", title: "Other story" }, base)).toBe(base);
   });
