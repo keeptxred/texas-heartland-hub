@@ -128,14 +128,15 @@ jobs:
             slugs=("${marker_slugs[@]}")
           }
 
-          # Ordinary background passes remain capped at one article. When the
-          # audit reports an AdSense-ready article blocked only by its image,
-          # take the first priority slug (the Worker sorts those first). Once
-          # that queue is empty, rotate across missing images so one strict-
-          # validator failure cannot monopolize every scheduled run. After
-          # missing images are cleared, the same rotation advances legacy assets.
-          max_per_run=1
+          # Ordinary background passes try a small batch so one hard-to-visualize
+          # article cannot make every scheduled recovery run red. Every generated
+          # image still passes the same strict production quality gate; failures
+          # stay quarantined for later diagnosis/retry. Exact incident-marker
+          # batches remain fail-closed if any requested slug fails.
+          max_per_run=3
+          strict_batch=0
           if [[ "${GITHUB_EVENT_NAME}" == "push" || "${GITHUB_EVENT_NAME}" == "workflow_run" ]]; then
+            strict_batch=1
             load_exact_marker_slugs
           else
             adsense_priority=$(jq -r '.adsensePriority // 0' /tmp/image-backlog-dry.json)
@@ -194,7 +195,14 @@ jobs:
           done
 
           echo "IMAGE_BACKLOG_RECOVERY_TOTAL ready_at_start=${ready} processed=${processed} succeeded=${succeeded} skipped=${skipped} failures=${failures}"
-          if [[ "$failures" -gt 0 ]]; then
-            echo 'At least one requested image failed the existing production quality gate; retaining failures for diagnosis.' >&2
+          if [[ "$failures" -gt 0 && "$strict_batch" -eq 1 ]]; then
+            echo 'At least one exact requested image failed the existing production quality gate; retaining failures for diagnosis.' >&2
             exit 1
+          fi
+          if [[ "$processed" -gt 0 && "$succeeded" -eq 0 ]]; then
+            echo 'Every scheduled image in this bounded batch failed the existing production quality gate.' >&2
+            exit 1
+          fi
+          if [[ "$failures" -gt 0 ]]; then
+            echo "::warning title=Image recovery partial progress::Recovered ${succeeded} image(s); ${failures} candidate(s) remain quarantined after strict quality rejection."
           fi
