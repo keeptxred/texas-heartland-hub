@@ -64,12 +64,12 @@ describe("newsroom prepublication duplicate paragraph gate", () => {
       "Record " + (i + 1) + " documents a distinct dated fact about the Texas agency decision with specific officials and " +
       "relevant public responsibilities and verified statutory context for affected residents across the state.",
     ).join(" ");
-    expect(long.split(/\\s+/).length).toBeGreaterThan(200);
+    expect(long.split(/\s+/).length).toBeGreaterThan(200);
     const chunks = reflowNewsroomParagraph(long);
     expect(chunks.length).toBeGreaterThan(1);
     expect(chunks.join(" ")).toBe(long);
-    expect(chunks.every((chunk) => chunk.split(/\\s+/).length <= 110)).toBe(true);
-    expect(chunks.every((chunk) => (chunk.match(/\\./g) ?? []).length <= 4)).toBe(true);
+    expect(chunks.every((chunk) => chunk.split(/\s+/).length <= 110)).toBe(true);
+    expect(chunks.every((chunk) => (chunk.match(/\./g) ?? []).length <= 4)).toBe(true);
   });
 
   it("integrates lossless reflow into normalized sections and preserves section headings", () => {
@@ -85,7 +85,7 @@ describe("newsroom prepublication duplicate paragraph gate", () => {
     expect(section.heading).toBe("Section 2");
     expect(section.paragraphs.length).toBeGreaterThan(3);
     expect(section.paragraphs.join(" ")).toBe([long, normal, normal].join(" "));
-    expect(section.paragraphs.every((chunk) => chunk.split(/\\s+/).length <= 110)).toBe(true);
+    expect(section.paragraphs.every((chunk) => chunk.split(/\s+/).length <= 110)).toBe(true);
   });
 
   it("never conceals an unsplittable overlong sentence or repairs duplicate source text", () => {
