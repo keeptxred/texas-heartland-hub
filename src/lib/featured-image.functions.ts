@@ -252,7 +252,16 @@ export function newsroomAbstractPolicyVisualSubject(row: Pick<ArticleRow, "slug"
         scene: "A realistic documentary-style interior of an anonymous Texas legislative committee meeting room ready for a bill hearing: empty committee desks and microphones, an open stack of proposed-bill paper packets with all printed text deliberately unreadable, one clerk's organized document tray, empty chairs, and a clearly visible public-hearing dais. The central subject must unmistakably be the physical process of reviewing a bill in committee, NOT a generic Texas Capitol exterior or a governor signing a law. Natural indoor lighting and a believable unposed photographic composition. This is an illustrative government-process workspace, not documentation of a specific bill, session, vote, named lawmaker, historical event or venue. No readable signs, logos, false legal text, portraits, fake vote totals or campaign branding.",
       }
     : undefined;
-  const assignment = visualAssignments[row.slug] ?? reserveLegislativeProcess;
+  // Rulemaking reserve failed 2026-10-20 vision review because generic government
+  // architecture does not explain a proposed rule or how residents comment.
+  // A tangible reading/filing workflow illustrates what the guide actually covers.
+  const reserveRulemaking = row.slug.endsWith("-how-texas-state-agencies-make-rules")
+    ? {
+        domain: "general" as Domain,
+        scene: "Close documentary-style photograph of an anonymous Texas public-records reading-room table used to review a proposed agency rule. Foreground subject must clearly be a thick open rulemaking reference volume beside a stack of plain proposed-rule notice sheets, a simple public-comment submission form, blank return envelopes, a metal binder clip, and an uncapped pen. Include a public-access document scanner or file-index shelf softly out of focus in the background. Printed words, form fields, agency seals, labels and identifying dates must be completely unreadable, with no invented official documents or logos. The photo is an illustrative workspace for examining Texas Register notices and preparing comments, NOT an actual state agency hearing, an enacted rule, or a specific official record. NO building exterior, Capitol dome, politician, podium, ceremonial signing or generic government facade; paper-record review must fill the frame.",
+      }
+    : undefined;
+  const assignment = visualAssignments[row.slug] ?? reserveLegislativeProcess ?? reserveRulemaking;
   if (!assignment) return subject;
   return {
     ...subject,
