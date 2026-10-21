@@ -207,10 +207,10 @@ export function newsroomSourceBackedDek(title: string, dek: string, summary: str
  * deliberately left for the existing validator to reject.
  */
 export function reflowNewsroomParagraph(value: string): string[] {
-  const normalized = value.trim().replace(/\\s+/g, " ");
+  const normalized = value.trim().replace(/\s+/g, " ");
   if (!normalized) return [normalized];
-  const sentences = normalized.split(/(?<=[.!?])\\s+(?=[A-Z0-9"“‘])/);
-  const wordCount = (text: string) => text.trim().split(/\\s+/).filter(Boolean).length;
+  const sentences = normalized.split(/(?<=[.!?])\s+(?=[A-Z0-9"“‘])/);
+  const wordCount = (text: string) => text.trim().split(/\s+/).filter(Boolean).length;
   if (sentences.length <= 4 && wordCount(normalized) <= 110) return [normalized];
 
   const paragraphs: string[] = [];
