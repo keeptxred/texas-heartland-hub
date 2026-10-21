@@ -61,6 +61,16 @@ describe("newsroom exact image recovery for October failed visual topics", () =>
     expect(image.concreteSubject).toContain("completely unreadable");
     expect(image.evidenceGuidance).toContain("No fabricated");
   });
+  it("forces the rulemaking reserve through the literal generation-only recovery path", () => {
+    const source = readFileSync("src/lib/featured-image.functions.ts", "utf8");
+    expect(source).toContain('row.slug.endsWith("-how-texas-state-agencies-make-rules")');
+    expect(source).toContain("Texas rulemaking records-and-comment workspace");
+    expect(source).toContain("Mandatory composition:");
+    expect(source).toContain("Do not substitute a laptop, generic office desk");
+    expect(source).toContain("const usesGenerationOnlyPrompt = generationSubject !== subject");
+    expect(source).toContain("buildGenerationOnlyImagePrompt(generationSubject");
+  });
+
   it("does not alter unrelated newsroom image criteria", () => {
     expect(newsroomAbstractPolicyVisualSubject({ slug: "2026-10-01-unrelated", title: "Other story" }, base)).toBe(base);
   });

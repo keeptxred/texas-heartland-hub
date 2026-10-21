@@ -129,6 +129,7 @@ NON-NEGOTIABLE RULES:
 - Do not create standalone FAQ, FAQs, Sources, Source Attribution, Conclusion, or filler sections; FAQ and source attribution are handled separately by the application.
 - This packet maps to the ${category} category. Its validator requires at least ${requiredMainWords} main-story words.
 - Aim for 85–110 words per substantive paragraph, with approximately 10–12 paragraphs when evidence permits. Meet the category-specific main-story floor by verified facts, not by manufacturing an extra section or repeating claims.
+- Keep every paragraph at or below 130 words and no more than 4 sentences. These are hard readability targets with margin below the publication validator's 150-word / 5-sentence ceiling; split distinct facts into separate paragraphs instead of producing one long paragraph.
 - Every section paragraph should be at least about 380 characters of source-supported prose unless the packet cannot factually support that depth.
 - Each section paragraph must contain source-supported detail rather than generic commentary, predictions, public reaction, or moral framing.
 - Before drafting, identify distinct source-backed factual roles for each proposed paragraph. Reduce section/paragraph count rather than assigning the same event fact to multiple sections. Assign each paragraph a different documented event detail, record, statement, chronology point, procedure, conflicting account, or confirmed consequence.
