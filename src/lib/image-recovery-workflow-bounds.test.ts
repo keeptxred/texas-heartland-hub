@@ -12,9 +12,10 @@ describe("image recovery workflow bounds", () => {
     }
   });
 
-  it("bounds ordinary lock-holding passes to one article and ten minutes per article", () => {
+  it("bounds ordinary lock-holding passes and keeps each article capped at ten minutes", () => {
+    expect(backlogWorkflow).toContain("max_per_run=3");
+    expect(adsenseWorkflow).toContain("max_per_run=1");
     for (const source of [backlogWorkflow, adsenseWorkflow]) {
-      expect(source).toContain("max_per_run=1");
       expect(source).toContain("--max-time 600");
       expect(source).not.toContain("max_per_run=5");
       expect(source).not.toContain("max_per_run=20");
@@ -53,7 +54,7 @@ describe("image recovery workflow bounds", () => {
     expect(backlogWorkflow).toContain('.slugs[$offset:($offset + $max)][]');
     expect(backlogWorkflow).toContain('IMAGE_BACKLOG_RECOVERY_ADSENSE_PRIORITY count=${adsense_priority} offset=${priority_offset}');
     expect(backlogWorkflow).not.toContain(".slugs[0:$max][]");
-    expect(backlogWorkflow).toContain("max_per_run=1");
+    expect(backlogWorkflow).toContain("max_per_run=3");
   });
 
   it("rotates ordinary recovery across the current missing-image cohort once AdSense priority is empty", () => {
@@ -61,13 +62,17 @@ describe("image recovery workflow bounds", () => {
     expect(backlogWorkflow).toContain("rotation=$(( (GITHUB_RUN_NUMBER - 1) % candidate_count ))");
     expect(backlogWorkflow).toContain(".slugs[$offset:($offset + $max)][]");
     expect(backlogWorkflow).toContain("IMAGE_BACKLOG_RECOVERY_ROTATION");
-    expect(backlogWorkflow).toContain("max_per_run=1");
+    expect(backlogWorkflow).toContain("max_per_run=3");
   });
 
-  it("fails closed when any requested recovery image fails", () => {
-    expect(backlogWorkflow).toContain('if [[ "$failures" -gt 0 ]]; then');
-    expect(backlogWorkflow).toContain("At least one requested image failed the existing production quality gate");
-    expect(backlogWorkflow).not.toContain('if [[ "$processed" -gt 0 && "$succeeded" -eq 0 ]]; then');
+  it("keeps exact marker batches fail-closed while scheduled batches can make partial progress", () => {
+    expect(backlogWorkflow).toContain("strict_batch=0");
+    expect(backlogWorkflow).toContain("strict_batch=1");
+    expect(backlogWorkflow).toContain('if [[ "$failures" -gt 0 && "$strict_batch" -eq 1 ]]; then');
+    expect(backlogWorkflow).toContain("At least one exact requested image failed the existing production quality gate");
+    expect(backlogWorkflow).toContain('if [[ "$processed" -gt 0 && "$succeeded" -eq 0 ]]; then');
+    expect(backlogWorkflow).toContain("Every scheduled image in this bounded batch failed the existing production quality gate");
+    expect(backlogWorkflow).toContain("Image recovery partial progress");
   });
 
   it("staggers schedules and avoids unbounded or expired diagnostic AI retry loops", () => {
