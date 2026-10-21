@@ -32,7 +32,9 @@ describe("Phase 13 draft generation targets", () => {
     const prompt = newsroomRewriteSystemPrompt(packet);
     expect(prompt).toContain("Sports category");
     expect(prompt).toContain("requires at least 1200 main-story words");
-    expect(prompt).toContain("75–90 words per section paragraph");
+    expect(prompt).toContain("85–110 words per substantive paragraph");
+    expect(prompt).toContain("4 to 6 substantive sections");
+    expect(prompt).toContain("Reduce section/paragraph count");
     expect(prompt).toContain("at least 1300 words");
     expect(prompt).toContain("Do not exceed 90 words under any circumstance");
   });
