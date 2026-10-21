@@ -35,6 +35,8 @@ const headers = {
   Authorization: `Bearer ${SERVICE_KEY}`,
   'Content-Type': 'application/json',
   Prefer: 'return=representation',
+  ...(process.env.GITHUB_RUN_ID ? { 'X-GitHub-Run-Id': process.env.GITHUB_RUN_ID } : {}),
+  ...(process.env.GITHUB_REPOSITORY ? { 'X-GitHub-Repository': process.env.GITHUB_REPOSITORY } : {}),
 };
 const decode = (value = '') => value
   .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')

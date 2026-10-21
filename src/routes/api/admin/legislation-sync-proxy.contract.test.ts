@@ -26,8 +26,12 @@ describe("legislation sync Worker proxy contract", () => {
     expect(proxy).toContain('["schedule", "workflow_dispatch"].includes');
     expect(proxy).toContain('["queued", "in_progress"].includes');
     const syncScript = readFileSync(new URL("../../../../scripts/legislature/sync-texas-legislation.mjs", import.meta.url), "utf8");
-    expect(syncScript).toContain("'X-GitHub-Run-Id': process.env.GITHUB_RUN_ID");
-    expect(syncScript).toContain("'X-GitHub-Repository': process.env.GITHUB_REPOSITORY");
+    const subjectSyncScript = readFileSync(new URL("../../../../scripts/legislature/sync-bill-subjects.mjs", import.meta.url), "utf8");
+    const relationshipSyncScript = readFileSync(new URL("../../../../scripts/legislature/link-bill-relationships.mjs", import.meta.url), "utf8");
+    for (const script of [syncScript, subjectSyncScript, relationshipSyncScript]) {
+      expect(script).toContain("'X-GitHub-Run-Id': process.env.GITHUB_RUN_ID");
+      expect(script).toContain("'X-GitHub-Repository': process.env.GITHUB_REPOSITORY");
+    }
   });
 
   it("keeps database access restricted to legislative tables and explicit RPCs", () => {
