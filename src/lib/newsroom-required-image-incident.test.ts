@@ -57,6 +57,9 @@ describe("newsroom exact image recovery for October failed visual topics", () =>
     expect(image.imageGroundingMode).toBe("verified_symbolic");
     expect(image.concreteSubject).toContain("proposed-rule notice");
     expect(image.concreteSubject).toContain("public-comment submission form");
+    expect(image.concreteSubject).toContain("gooseneck microphones");
+    expect(image.concreteSubject).toContain("EMPTY visitor chairs");
+    expect(image.concreteSubject).toContain("no generic office desk");
     expect(image.concreteSubject).toContain("NO building exterior");
     expect(image.concreteSubject).toContain("completely unreadable");
     expect(image.evidenceGuidance).toContain("No fabricated");
