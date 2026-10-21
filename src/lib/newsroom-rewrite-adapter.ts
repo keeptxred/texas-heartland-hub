@@ -99,6 +99,72 @@ export function repeatedNewsroomParagraphPositions(
   return repeats;
 }
 
+export type NewsroomRepetitionRepair = {
+  replacements: Array<{ section: number; paragraph: number; text: string }>;
+};
+
+export const NEWSROOM_REPETITION_REPAIR_JSON_SCHEMA: Record<string, unknown> = {
+  type: "object",
+  properties: {
+    replacements: {
+      type: "array",
+      minItems: 1,
+      maxItems: 18,
+      items: {
+        type: "object",
+        properties: {
+          section: { type: "integer", minimum: 1, maximum: 6 },
+          paragraph: { type: "integer", minimum: 1, maximum: 3 },
+          text: { type: "string", minLength: 380 },
+        },
+        required: ["section", "paragraph", "text"],
+      },
+    },
+  },
+  required: ["replacements"],
+};
+
+export function newsroomRepetitionRepairUserPrompt(
+  packet: ResearchPacket,
+  previousDraft: NewsroomDraft,
+): string {
+  const repeats = repeatedNewsroomParagraphPositions(previousDraft);
+  return JSON.stringify({
+    instruction: "Repair only the duplicate paragraph locations listed in targets. Return replacements only for those repeat locations. Preserve every non-target field and paragraph exactly as-is. Each replacement must use genuinely different source-supported facts from the packet, not a paraphrase of the original paragraph. If the packet cannot support a distinct truthful paragraph at a target, return no replacement for that target; the existing validator will hold the draft rather than inventing detail.",
+    targets: repeats.map((item) => ({
+      ...item,
+      originalText: previousDraft.sections[item.originalSection - 1]?.paragraphs[item.originalParagraph - 1] ?? "",
+      repeatedText: previousDraft.sections[item.repeatSection - 1]?.paragraphs[item.repeatParagraph - 1] ?? "",
+    })),
+    packet: JSON.parse(newsroomRewriteUserPrompt(packet)),
+  });
+}
+
+export function applyNewsroomRepetitionRepair(
+  previousDraft: NewsroomDraft,
+  repair: NewsroomRepetitionRepair,
+): NewsroomDraft {
+  const allowedTargets = new Set(
+    repeatedNewsroomParagraphPositions(previousDraft)
+      .map((item) => `${item.repeatSection}:${item.repeatParagraph}`),
+  );
+  const replacements = new Map<string, string>();
+  for (const item of repair.replacements ?? []) {
+    const key = `${item.section}:${item.paragraph}`;
+    const text = typeof item.text === "string" ? item.text.trim() : "";
+    if (allowedTargets.has(key) && text) replacements.set(key, text);
+  }
+
+  return {
+    ...previousDraft,
+    sections: previousDraft.sections.map((section, sectionIndex) => ({
+      ...section,
+      paragraphs: section.paragraphs.map((paragraph, paragraphIndex) =>
+        replacements.get(`${sectionIndex + 1}:${paragraphIndex + 1}`) ?? paragraph),
+    })),
+  };
+}
+
 export function newsroomRewriteSystemPrompt(packet: ResearchPacket): string {
   const mergeRule = packet.recommendedFormat === "MERGE"
     ? "This is a MERGE package. Reconcile overlapping reports into one story, preserve attribution for outlet-specific facts, and do not treat repeated reporting as independent new facts."
