@@ -41,6 +41,8 @@ describe("newsroom authority contract", () => {
     expect(source).toContain("repeatedNewsroomParagraphPositions(previousDraft)");
     expect(source).toContain("repetitionRepairRule");
     expect(source).toContain("REPAIR MODE:");
+    expect(source).toContain("at or below 130 words and 4 sentences");
+    expect(source).toContain("never merge multiple factual roles into one oversized paragraph");
     expect(source).toContain("firstValidationReasons");
     expect(source).toContain("repairAttempted");
     expect(source).toContain("aiCalls += 1");
