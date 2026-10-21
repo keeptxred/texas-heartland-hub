@@ -73,7 +73,8 @@ describe("newsroom Phase 13 AI canary and production promotion", () => {
     expect(adapter).toContain("minItems: 2");
     expect(adapter).toContain("maxItems: 3");
     expect(adapter).toContain("sections.length < 4 || typedDraft.sections.length > 6");
-    expect(adapter).toContain("section.paragraphs.length < 2 || section.paragraphs.length > 3");
+    expect(adapter).toContain("section.paragraphs.length < 2 || section.paragraphs.length > 6");
+    expect(adapter).toContain("reflowNewsroomParagraph(stripGenericExpertAttribution(paragraph))");
     expect(adapter).toContain('minLength: 380');
   });
 

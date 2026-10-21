@@ -200,6 +200,37 @@ export function newsroomSourceBackedDek(title: string, dek: string, summary: str
   return candidate.length >= 80 && candidate.toLowerCase() !== cleanTitle ? candidate : cleanDek;
 }
 
+/**
+ * Reflow an overlong draft paragraph along existing sentence boundaries.
+ * This formatting-only step preserves every word in order; it cannot remove a
+ * questionable claim, invent reporting, repair duplicated prose, or bypass the
+ * downstream full editorial/readability validation. Unsplittable run-ons are
+ * deliberately left for the existing validator to reject.
+ */
+export function reflowNewsroomParagraph(value: string): string[] {
+  const normalized = value.trim().replace(/\s+/g, " ");
+  if (!normalized) return [normalized];
+  const sentences = normalized.split(/(?<=[.!?])\s+(?=[A-Z0-9"“‘])/);
+  const wordCount = (text: string) => text.trim().split(/\s+/).filter(Boolean).length;
+  if (sentences.length <= 4 && wordCount(normalized) <= 110) return [normalized];
+
+  const paragraphs: string[] = [];
+  let segment: string[] = [];
+  let segmentWords = 0;
+  for (const sentence of sentences) {
+    const words = wordCount(sentence);
+    if (segment.length > 0 && (segment.length >= 4 || segmentWords + words > 110)) {
+      paragraphs.push(segment.join(" "));
+      segment = [];
+      segmentWords = 0;
+    }
+    segment.push(sentence);
+    segmentWords += words;
+  }
+  if (segment.length) paragraphs.push(segment.join(" "));
+  return paragraphs;
+}
+
 export function normalizeNewsroomDraft(value: unknown): unknown {
   if (!isRecord(value) || !Array.isArray(value.faq)) return value;
   const faq = value.faq.map((item) => {
@@ -220,9 +251,9 @@ export function normalizeNewsroomDraft(value: unknown): unknown {
       ? {
           ...section,
           heading: typeof section.heading === "string" ? stripGenericExpertAttribution(section.heading) : section.heading,
-          paragraphs: section.paragraphs.map((paragraph) => typeof paragraph === "string"
-            ? stripGenericExpertAttribution(paragraph)
-            : paragraph),
+          paragraphs: section.paragraphs.flatMap((paragraph) => typeof paragraph === "string"
+            ? reflowNewsroomParagraph(stripGenericExpertAttribution(paragraph))
+            : [paragraph]),
         }
       : section)
     : value.sections;
@@ -321,7 +352,10 @@ export function validateNewsroomDraft(draft: unknown, packet: ResearchPacket): D
     reasons.push("repeated_newsroom_paragraphs");
   }
   if (typedDraft.sections.length < 4 || typedDraft.sections.length > 6) reasons.push("section_count");
-  if (typedDraft.sections.some((section) => section.paragraphs.length < 2 || section.paragraphs.length > 3)) reasons.push("paragraph_count");
+  // The provider supplies 2–3 source-backed paragraphs per section. A lossless
+  // readability reflow may split one paragraph into multiple shorter ones.
+  // Keep the upper bound finite so a failed AI draft cannot flood the page.
+  if (typedDraft.sections.some((section) => section.paragraphs.length < 2 || section.paragraphs.length > 6)) reasons.push("paragraph_count");
   return { ok: reasons.length === 0, reasons: [...new Set(reasons)], mainWordCount };
 }
 
