@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { repeatedNewsroomParagraphPositions, newsroomRewriteSystemPrompt, validateNewsroomDraft, type NewsroomDraft } from "./newsroom-rewrite-adapter";
+import { normalizeNewsroomDraft, reflowNewsroomParagraph, repeatedNewsroomParagraphPositions, newsroomRewriteSystemPrompt, validateNewsroomDraft, type NewsroomDraft } from "./newsroom-rewrite-adapter";
 import type { ResearchPacket } from "./newsroom-research-packet";
 import { duplicateParagraphOccurrences } from "./public-article-readiness";
 
@@ -57,6 +57,42 @@ describe("newsroom prepublication duplicate paragraph gate", () => {
     const result = validateNewsroomDraft(draft, packet);
     expect(result.ok).toBe(false);
     expect(result.reasons).toContain("repeated_newsroom_paragraphs");
+  });
+
+  it("losslessly reflows 10-sentence 200-plus-word reporting into readable source-identical paragraphs", () => {
+    const long = Array.from({ length: 10 }, (_, i) =>
+      "Record " + (i + 1) + " documents a distinct dated fact about the Texas agency decision with specific officials and " +
+      "relevant public responsibilities and verified statutory context for affected residents across the state.",
+    ).join(" ");
+    expect(long.split(/\\s+/).length).toBeGreaterThan(200);
+    const chunks = reflowNewsroomParagraph(long);
+    expect(chunks.length).toBeGreaterThan(1);
+    expect(chunks.join(" ")).toBe(long);
+    expect(chunks.every((chunk) => chunk.split(/\\s+/).length <= 110)).toBe(true);
+    expect(chunks.every((chunk) => (chunk.match(/\\./g) ?? []).length <= 4)).toBe(true);
+  });
+
+  it("integrates lossless reflow into normalized sections and preserves section headings", () => {
+    const normal = "One short sourced statement about an official Texas decision.";
+    const long = Array.from({ length: 9 }, (_, i) =>
+      "A named Texas state agency's official record documents step " + (i + 1) +
+      " and its specific timing, procedural purpose, and publicly available evidence for readers.",
+    ).join(" ");
+    const draft = createDraft(Array(18).fill(normal));
+    draft.sections[1].paragraphs = [long, normal, normal];
+    const normalized = normalizeNewsroomDraft(draft) as NewsroomDraft;
+    const section = normalized.sections[1];
+    expect(section.heading).toBe("Section 2");
+    expect(section.paragraphs.length).toBeGreaterThan(3);
+    expect(section.paragraphs.join(" ")).toBe([long, normal, normal].join(" "));
+    expect(section.paragraphs.every((chunk) => chunk.split(/\\s+/).length <= 110)).toBe(true);
+  });
+
+  it("never conceals an unsplittable overlong sentence or repairs duplicate source text", () => {
+    const runOn = Array(160).fill("documented").join(" ") + ".";
+    expect(reflowNewsroomParagraph(runOn)).toEqual([runOn]);
+    const repeated = ("The agency issued a detailed report of the same announcement and date. ").repeat(4).trim();
+    expect(reflowNewsroomParagraph(repeated).join(" ")).toBe(repeated);
   });
 
   it("locates every repeat precisely, without rewriting or deleting source-grounded paragraphs", () => {
