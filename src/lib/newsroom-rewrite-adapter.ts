@@ -32,7 +32,7 @@ export const NEWSROOM_DRAFT_JSON_SCHEMA: Record<string, unknown> = {
     relevance: { type: "string" },
     sections: {
       type: "array",
-      minItems: 6,
+      minItems: 4,
       maxItems: 6,
       items: {
         type: "object",
@@ -40,7 +40,7 @@ export const NEWSROOM_DRAFT_JSON_SCHEMA: Record<string, unknown> = {
           heading: { type: "string" },
           paragraphs: {
             type: "array",
-            minItems: 3,
+            minItems: 2,
             maxItems: 3,
             items: { type: "string", minLength: 380 },
           },
@@ -125,16 +125,16 @@ NON-NEGOTIABLE RULES:
 - The relevance field MUST be prose explaining why the story matters to Texas readers, never a numeric score.
 - Use heading (not title) for every section object.
 - Use q for the QUESTION and a for the ANSWER in every FAQ object.
-- Write exactly 6 substantive sections with exactly 3 separate paragraphs per section.
+- Write 4 to 6 substantive sections, each containing 2 to 3 separate paragraphs, choosing the smallest structure that can cover the packet's distinct source-backed facts.
 - Do not create standalone FAQ, FAQs, Sources, Source Attribution, Conclusion, or filler sections; FAQ and source attribution are handled separately by the application.
 - This packet maps to the ${category} category. Its validator requires at least ${requiredMainWords} main-story words.
-- Target 75–90 words per section paragraph so qualifying main-story prose clears the category-specific floor with a meaningful safety margin.
+- Aim for 85–110 words per substantive paragraph, with approximately 10–12 paragraphs when evidence permits. Meet the category-specific main-story floor by verified facts, not by manufacturing an extra section or repeating claims.
 - Every section paragraph should be at least about 380 characters of source-supported prose unless the packet cannot factually support that depth.
 - Each section paragraph must contain source-supported detail rather than generic commentary, predictions, public reaction, or moral framing.
-- Plan distinct factual roles for all 18 paragraphs before drafting: assign each a different source-supported event detail, record, statement, timeline point, procedural step, conflicting account, or explicitly documented consequence. Do not restate the same finding with synonym substitutions.
+- Before drafting, identify distinct source-backed factual roles for each proposed paragraph. Reduce section/paragraph count rather than assigning the same event fact to multiple sections. Assign each paragraph a different documented event detail, record, statement, chronology point, procedure, conflicting account, or confirmed consequence.
 - Before returning JSON, compare all section paragraphs with one another after trimming, lowercasing and normalizing whitespace. No substantive paragraph may appear more than once, even under another heading.
 - Keep paragraphs readable and fact-dense; do not repeat material to reach length.
-- Before returning JSON, verify that summary + relevance + all 18 section paragraphs total at least ${targetMainWords} words.
+- Before returning JSON, verify that summary + relevance + section paragraphs together total at least ${targetMainWords} words of original, non-repeated, source-supported main-story prose.
 - If the packet cannot support a truthful article at the required length, set brief.hasClearNewsEvent=false and return empty strings/arrays for the article fields while still satisfying the required JSON keys.
 - Return exactly one JSON object matching the supplied JSON schema.
 ${EDITORIAL_SYSTEM_ADDENDUM}`;
@@ -319,8 +319,8 @@ export function validateNewsroomDraft(draft: unknown, packet: ResearchPacket): D
   if (duplicateParagraphOccurrences(bodyJson) > 0) {
     reasons.push("repeated_newsroom_paragraphs");
   }
-  if (typedDraft.sections.length !== 6) reasons.push("section_count");
-  if (typedDraft.sections.some((section) => section.paragraphs.length !== 3)) reasons.push("paragraph_count");
+  if (typedDraft.sections.length < 4 || typedDraft.sections.length > 6) reasons.push("section_count");
+  if (typedDraft.sections.some((section) => section.paragraphs.length < 2 || section.paragraphs.length > 3)) reasons.push("paragraph_count");
   return { ok: reasons.length === 0, reasons: [...new Set(reasons)], mainWordCount };
 }
 
