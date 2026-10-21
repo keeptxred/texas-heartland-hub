@@ -1,3 +1,16 @@
+## Shared Cloudflare operating policy — both sites
+
+Applies to TexasDefined.com (keeptxred/TexasDefined, texasdefined-site) and KeepTXRed.com (keeptxred/texas-heartland-hub, keeptxred-site), including existing, in-progress, and future work.
+
+- Treat the ChatGPT Cloudflare connector as read-only for routine work. Do not attempt POST, PUT, PATCH, or DELETE through it for deployment, build triggers, cache purges, Browser Rendering, credentials, or configuration merely to continue shipping or verification. Those operations can request additional OAuth scopes even while the connection is healthy.
+- Use the established GitHub Actions production pipeline and its existing credentials for deployments and production verification. Keep publication and verification inside the site's shared production concurrency lock. Do not publish directly from an agent session or introduce a parallel production publisher.
+- For an explicitly required configuration change outside GitHub's capabilities, use an already signed-in dashboard when available. Do not probe connector writes to discover whether they request authorization. Respect any required action-specific confirmation.
+- If any operation requests reconnection or expanded scopes, abandon that route immediately; record the exact blocked operation once and continue through the established alternative. Never retry it in a loop or describe a scope denial as proof the connection is disconnected.
+- Check connection health with identity and harmless GET requests only. A failed local Wrangler/GitHub CLI login is separate from connector health; use a working authorized connector or existing GitHub workflow.
+- When inspecting Cloudflare Builds triggers or builds, resolve the Worker's system-generated script tag first. The Builds API's external_script_id is the tag, not the Worker name; an empty result from a name-based lookup is not evidence that no trigger exists.
+- Keep duplicate Cloudflare Git auto-deployment disconnected when GitHub Actions owns production. Diagnose publishers with audit-log token identity and GitHub run/version evidence before restricting credentials; preserve runtime AI and unrelated-site access.
+- These repository instructions prevent agent-initiated prompts; they do not alter ChatGPT's platform-wide OAuth behavior. Never claim that all possible authorization prompts have been eliminated.
+
 ## Cloudflare connection and cache operations — no reconnection prompts
 
 - **Standing instruction:** Cloudflare is already connected for this project's existing production setup. Do not ask the user to reconnect, reinstall, or reauthorize Cloudflare merely to continue a cache, purge, Worker, or deployment task. Repeated connection prompts are explicitly prohibited.
