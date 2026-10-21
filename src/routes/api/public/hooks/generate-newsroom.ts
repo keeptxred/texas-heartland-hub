@@ -369,7 +369,7 @@ async function handler({ request }: { request: Request }) {
     if (!validation.ok && !validation.reasons.includes("brief_no_clear_news_event")) {
       repairAttempted = true;
       const repaired = await runCloudflareJson<NewsroomDraft>({
-        system: `${newsroomRewriteSystemPrompt(packet)}\n\nREPAIR MODE: The previous draft failed local validation. Correct only the listed failures while preserving supported facts and the required six-section structure. Do not invent detail or pad with generic commentary.`,
+        system: `${newsroomRewriteSystemPrompt(packet)}\n\nREPAIR MODE: The previous draft failed local validation. Correct only the listed failures while preserving supported facts, a 4–6-section source-proportional structure, 2–3 factual paragraphs per section, and all existing source and anti-repetition quality requirements. Do not invent detail or pad with generic commentary.`,
         user: newsroomRepairUserPrompt(packet, draft, validation.reasons),
         maxTokens: 12000,
         maxAttempts: 1,
