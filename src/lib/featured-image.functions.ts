@@ -275,6 +275,15 @@ export function newsroomAbstractPolicyVisualSubject(row: Pick<ArticleRow, "slug"
 }
 
 function buildRepeatedFailureRecoverySubject(row: ArticleRow, subject: SubjectExtract): SubjectExtract {
+  if (row.slug.endsWith("-how-texas-state-agencies-make-rules")) {
+    return {
+      ...subject,
+      title: "Texas rulemaking records-and-comment workspace",
+      firstParagraph: "",
+      locations: [],
+      concreteSubject: `${subject.concreteSubject} Mandatory composition: the open rulemaking reference volume, proposed-rule notice sheets, public-comment form, envelopes, binder clip, and pen must dominate the foreground. Do not substitute a laptop, generic office desk, government building, Capitol exterior, conference room, or empty institutional workspace for these physical records-and-comment materials.`,
+    };
+  }
   if (row.slug === "2026-09-04-denton-191-turtles-shipment") {
     return {
       ...subject,
