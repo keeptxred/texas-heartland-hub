@@ -33,6 +33,8 @@ describe("Phase 13 draft generation targets", () => {
     expect(prompt).toContain("Sports category");
     expect(prompt).toContain("requires at least 1200 main-story words");
     expect(prompt).toContain("85–110 words per substantive paragraph");
+    expect(prompt).toContain("at or below 130 words and no more than 4 sentences");
+    expect(prompt).toContain("150-word / 5-sentence ceiling");
     expect(prompt).toContain("4 to 6 substantive sections");
     expect(prompt).toContain("Reduce section/paragraph count");
     expect(prompt).toContain("at least 1300 words");
