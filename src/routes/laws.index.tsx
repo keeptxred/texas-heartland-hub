@@ -109,7 +109,7 @@ const SECTIONS: {
     heading: "Legislative Updates",
     intent: "For readers tracking what's changing in Austin right now.",
     description:
-      "The 2026 statutes taking effect this cycle, the bills moving through committee, and the constitutional amendments Texans will vote on in November.",
+      "Enacted Texas laws, verified effective dates, legislative proposals, and constitutional amendments scheduled through the official election process.",
     hubHref: "/bills",
     articleSlugs: [
       "texas-new-laws-2026",
@@ -123,7 +123,7 @@ const SECTIONS: {
 const INTRO_FAQ = [
   {
     q: "How are laws actually created in Texas?",
-    a: "The Texas Legislature meets in regular session for 140 days every odd-numbered year. A bill must pass both the House and Senate in identical form and be signed by the governor (or become law without signature) to take effect — most on September 1 following the session.",
+    a: "The Texas Legislature meets in regular session for 140 days every odd-numbered year. A bill generally must pass both chambers in identical form, then be signed, allowed to become law without signature, or enacted over a veto. Each enacted law's effective-date provision controls.",
   },
   {
     q: "What is the difference between a Texas statute, a regulation, and a local rule?",
@@ -131,7 +131,7 @@ const INTRO_FAQ = [
   },
   {
     q: "How can Texans stay informed about legal changes?",
-    a: "Watch the November constitutional-amendment ballot every odd-numbered year, follow major bill trackers during session, review your annual property tax notice, and subscribe to a state-focused newsroom like Keep TX Red for ongoing coverage.",
+    a: "Check official Secretary of State notices for amendment elections and actual ballot measures, follow bill trackers during legislative sessions, and review appraisal and tax notices when issued.",
   },
   {
     q: "Do federal laws override Texas laws?",
@@ -154,7 +154,29 @@ function LawsHubPage() {
         description="Important Texas laws, everyday rights, and legislative updates — written in plain English for residents, homeowners, and voters."
       />
 
-      <article className="mx-auto max-w-4xl px-4 py-14 space-y-6 text-base leading-relaxed">
+      <nav aria-label="Find Texas law by category" className="mx-auto max-w-6xl px-4 pt-10">
+        <h2 className="font-display text-3xl tracking-tight">Find Texas laws by topic</h2>
+        <p className="mt-2 text-muted-foreground">Start with an everyday legal question, browse the complete law library, or consult the controlling code.</p>
+        <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4">
+          {[
+            ["Driving & Traffic", "#laws-driving-heading"],
+            ["Property & Housing", "#laws-landlord-tenant-heading"],
+            ["Firearms & Self-Defense", "#laws-self-defense-firearms-heading"],
+            ["Family & Child Support", "#laws-family-heading"],
+            ["Employment", "#laws-employment-heading"],
+            ["Consumer Rights", "#laws-consumer-heading"],
+            ["Elections", "#laws-elections-heading"],
+            ["Criminal Law", "#laws-criminal-heading"],
+          ].map(([label, href]) => <a key={href} href={href} className="border-2 border-border bg-card px-4 py-4 text-sm font-bold hover:border-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">{label} →</a>)}
+        </div>
+        <div className="mt-5 flex flex-wrap gap-5 text-sm">
+          <Link to="/laws/topics" className="font-semibold text-primary underline underline-offset-4">Browse full Texas law-topic library →</Link>
+          <a href="https://statutes.capitol.texas.gov/" rel="noopener noreferrer" className="font-semibold underline underline-offset-4">Official Texas statutes ↗</a>
+          <a href="https://www.sos.state.tx.us/elections/" rel="noopener noreferrer" className="font-semibold underline underline-offset-4">Official elections and ballot notices ↗</a>
+        </div>
+      </nav>
+
+      <article className="mx-auto max-w-4xl px-4 py-10 space-y-6 text-base leading-relaxed">
         <p className="text-lg font-serif text-muted-foreground">
           Texas law is one of the most consequential things about living in Texas, and one of the least
           taught. Between the Texas Constitution, the biennial statutes passed by the Legislature, the
@@ -171,13 +193,12 @@ function LawsHubPage() {
         </h2>
         <p>
           The Texas Legislature is a bicameral body of 31 state senators and 150 state representatives
-          that meets in regular session for 140 days every odd-numbered year. A bill originates when a
-          legislator files it with the House or Senate clerk, is referred to committee, receives a hearing
-          and a committee vote, is placed on a calendar, is debated on the floor, is amended, and is
-          voted on. It then repeats the process in the other chamber, moves through a conference committee
-          if the two versions differ, and is enrolled and sent to the governor. The governor may sign, may
-          veto, or may allow the bill to become law without signature. Most bills take effect September 1
-          following the session, though a two-thirds vote in each chamber can grant immediate effect.
+          that meets in regular session for 140 days every odd-numbered year. In the usual process, a legislator files a bill, the bill is referred to a committee,
+          and it may receive a hearing, a committee vote, floor consideration, amendments, and a chamber vote.
+          The other chamber considers the bill under its own rules. Differences may be resolved through
+          concurrence or a conference committee. A bill approved in identical form is sent to the governor. The governor may sign, may
+          veto, or may allow the bill to become law without signature. September 1 is a common effective date, but each act's effective-date provision controls;
+          some measures take effect immediately with the constitutionally required vote, and others take effect later.
         </p>
         <p>
           Between sessions, the governor may call a special session limited to topics the governor
@@ -193,8 +214,8 @@ function LawsHubPage() {
           Statutes, Regulations, and Local Rules — The Three Levels of Texas Law
         </h2>
         <p>
-          A Texas statute is a law passed by the Legislature and signed (or allowed to become law) by
-          the governor. Statutes are collected in the Texas codes — Penal, Property, Tax, Election, Family,
+          A Texas statute is a law enacted through the legislative process. Bills can also become law
+          over a veto when the Legislature overrides it. Statutes are collected in the Texas codes — Penal, Property, Tax, Election, Family,
           Government, Health & Safety, Labor, Transportation, and dozens more — each searchable through
           Texas Legislature Online.
         </p>
@@ -229,7 +250,7 @@ function LawsHubPage() {
         </p>
         <p>
           Two structural features distinguish Texas from most other states. First, the state has no
-          personal income tax, made permanent by a 2019 constitutional amendment; funding shifts onto
+          personal income tax, subject to a constitutional prohibition on individual income tax adopted in 2019; funding shifts onto
           property and sales tax, which is why the Property Tax Code is the statute most Texas households
           feel most acutely. Second, Texas leaves an unusual amount of authority to counties and school
           districts — 254 counties, more than 1,000 ISDs, plus municipal utility and emergency-services
@@ -243,14 +264,14 @@ function LawsHubPage() {
         <p>
           The Legislative Reference Library, Texas Legislature Online, and the Texas Register are the
           primary official sources. Every filed bill is tracked online with committee history, roll-call
-          votes, and the final enrolled text. The November ballot every odd-numbered year lists the
-          constitutional amendments referred by the Legislature that voters must approve for those changes
-          to take effect. Annual property tax notices provide truth-in-taxation figures for every taxing
+          votes, and the final enrolled text. A proposed constitutional amendment appears on the ballot only when submitted to voters
+          under the process in Article XVII of the Texas Constitution; check the Secretary of State
+          for the actual election date and certified ballot measures. Annual property tax notices provide truth-in-taxation figures for every taxing
           entity that reaches your parcel.
         </p>
         <p>
-          For a working reader, three habits cover most of it: watch the November constitutional-amendment
-          ballot, review the appraisal notice that arrives in April, and follow ongoing coverage from a
+          For a working reader, three habits cover most of it: check the Secretary of State's official constitutional-amendment election calendar,
+          review your appraisal notice when issued, and follow ongoing coverage from a
           state-focused newsroom during session. Keep TX Red maintains the{" "}
           <Link to="/bills" search={EMPTY_BILLS_SEARCH} className="text-primary underline underline-offset-4">
             Texas bill tracker
