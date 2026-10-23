@@ -5,6 +5,7 @@ export const EMPLOYMENT_WORKPLACE_LAW_TOPIC: LawTopic = {
   "title": "Texas Employment Law: Wages, Final Pay, Discrimination and Workplace Rights",
   "dek": "An official-source guide to the Texas Payday Law, employee classification, minimum wages and overtime, workplace discrimination, job separation, unemployment processes and the interaction between state and federal law.",
   "updated": "2026-10-23",
+  "published": "2026-10-23",
   "quickAnswer": "Texas workplace rules come from several sources. Labor Code Chapter 61 governs many wage-payment and final-pay obligations; Chapter 21 governs defined employment discrimination protections; Chapter 62 addresses state minimum wage; and federal law, including the Fair Labor Standards Act, adds important pay and overtime rules. Texas generally follows at-will employment absent an applicable exception or agreement, but at-will status does not eliminate wage-payment, discrimination, retaliation or other statutory protections.",
   "appliesTo": [
     "Texas employees and job applicants",

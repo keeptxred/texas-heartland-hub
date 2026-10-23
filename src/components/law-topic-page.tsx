@@ -5,12 +5,12 @@ import { buildSeo, SITE_URL } from "@/lib/seo";
 export function lawTopicHead(topic: LawTopic) {
   const path = `/laws/topic/${topic.slug}`;
   const url = `${SITE_URL}${path}`;
-  const seo = buildSeo({ title: topic.title, description: topic.dek, path, type: "article", publishedTime: `${topic.updated}T12:00:00-05:00`, modifiedTime: `${topic.updated}T12:00:00-05:00`, section: "Texas Law Library", author: "Keep TX Red Law Desk" });
+  const seo = buildSeo({ title: topic.title, description: topic.dek, path, type: "article", publishedTime: topic.published ? `${topic.published}T12:00:00-05:00` : undefined, modifiedTime: `${topic.updated}T12:00:00-05:00`, section: "Texas Law Library", author: "Keep TX Red Law Desk" });
   return {
     meta: seo.meta,
     links: seo.links,
     scripts: [
-      { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "Article", headline: topic.title, description: topic.dek, datePublished: topic.updated, dateModified: topic.updated, articleSection: "Texas Law Library", mainEntityOfPage: { "@type": "WebPage", "@id": url }, author: { "@type": "Organization", name: "Keep TX Red Law Desk", url: `${SITE_URL}/about` }, publisher: { "@type": "Organization", name: "Keep TX Red", url: SITE_URL } }) },
+      { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "Article", headline: topic.title, description: topic.dek, ...(topic.published ? { datePublished: topic.published } : {}), dateModified: topic.updated, articleSection: "Texas Law Library", mainEntityOfPage: { "@type": "WebPage", "@id": url }, author: { "@type": "Organization", name: "Keep TX Red Law Desk", url: `${SITE_URL}/about` }, publisher: { "@type": "Organization", name: "Keep TX Red", url: SITE_URL } }) },
       { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: SITE_URL }, { "@type": "ListItem", position: 2, name: "Texas Laws", item: `${SITE_URL}/laws` }, { "@type": "ListItem", position: 3, name: "Law Topics", item: `${SITE_URL}/laws/topics` }, { "@type": "ListItem", position: 4, name: topic.title, item: url }] }) },
       { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: topic.questions.map((item) => ({ "@type": "Question", name: item.q, acceptedAnswer: { "@type": "Answer", text: item.a } })) }) },
     ],

@@ -6,6 +6,7 @@ export const DRIVING_TRAFFIC_INSURANCE_LAW_TOPIC: LawTopic = {
   "title": "Texas Driving, Driver's Licenses, Traffic and Auto Insurance Laws",
   "dek": "The legal framework for Texas licenses, required financial responsibility, traffic controls, vehicle registration, road safety, penalties and the difference between statutory rules and agency procedures.",
   "updated": "2026-10-23",
+  "published": "2026-10-23",
   "quickAnswer": "Texas Transportation Code Chapter 521 generally requires a valid driver's license for someone driving on a public highway unless a statutory exemption applies. Chapter 601 ordinarily requires financial responsibility for a motor vehicle, commonly satisfied by auto liability insurance. The Transportation Code separately governs traffic movements, road signs, vehicle registration, equipment and enforcement. A traffic ticket, license suspension, insurance lapse and collision are different legal questions; each depends on its own statute, the facts, and any applicable administrative process.",
   "appliesTo": [
     "Texas drivers and new residents",
