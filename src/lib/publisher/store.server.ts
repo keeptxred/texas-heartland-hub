@@ -112,6 +112,8 @@ export class Store {
         `Publisher storage error (${response.status})`,
         response.status === 409 ? 409 : 503,
       );
+    // PostgREST return=minimal succeeds with 204 and no response stream.
+    if (response.status === 204) return null as T;
     const text = new TextDecoder().decode(await bounded(response, 4_000_000));
     return (text ? JSON.parse(text) : null) as T;
   }
