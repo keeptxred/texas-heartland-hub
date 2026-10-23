@@ -162,7 +162,7 @@ function LawsHubPage() {
             ["Driving & Traffic", "/laws/topic/driving-traffic-insurance-law"],
             ["Landlord & Tenant", "/laws/topic/landlord-tenant-rentals-law"],
             ["Firearms & Self-Defense", "/laws/topic/self-defense-use-of-force"],
-            ["Family & Child Support", "/laws/topics"],
+            ["Family & Child Support", "/laws/topic/family-custody-child-support-law"],
             ["Employment", "/laws/topic/employment-wages-workplace-rights-law"],
             ["Consumer Rights", "/laws/topic/consumer-protection-deceptive-trade-law"],
             ["Elections", "/laws/topic/election-law"],
