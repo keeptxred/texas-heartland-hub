@@ -10,6 +10,8 @@ export type CornerstoneGuide = {
   title: string;
   dek: string;
   updated: string;
+  /** Actual original publication date, only when verified; never infer it from updated. */
+  published?: string;
   pillarLabel: string;
   pillarHref: string;
   guideLabel?: string;
