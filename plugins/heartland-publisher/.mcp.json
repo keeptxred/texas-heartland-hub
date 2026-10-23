@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "heartland-publisher": {
+      "type": "http",
+      "url": "https://keeptxred.com/api/publisher/mcp"
+    }
+  }
+}

@@ -5,6 +5,7 @@ import { renderErrorPage } from "./lib/error-page";
 import { installDirectAiFetch } from "./lib/direct-ai-fetch";
 import { buildVehicleHandoffLocation } from "./lib/vehicle-handoff-redirect";
 import { shopAnalyticsResponse } from "./lib/shop-analytics.server";
+import { publisherResponse } from "./lib/publisher/mcp.server";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -271,6 +272,9 @@ export default {
 
     const canonicalRedirect = canonicalHostRedirect(appRequest);
     if (canonicalRedirect) return canonicalRedirect;
+
+    const publisher = await publisherResponse(appRequest, env);
+    if (publisher) return publisher;
 
     const shopAnalytics = await shopAnalyticsResponse(appRequest, env);
     if (shopAnalytics) return shopAnalytics;
