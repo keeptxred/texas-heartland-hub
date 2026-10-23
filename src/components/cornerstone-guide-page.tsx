@@ -111,7 +111,8 @@ export function cornerstoneGuideHead(guide: CornerstoneGuide) {
     "@id": `${url}#article`,
     headline: guide.title,
     description,
-    datePublished: guide.updated,
+    // A legal guide review date is not evidence of its original publication date.
+    ...(lawMeta ? (guide.published ? { datePublished: guide.published } : {}) : { datePublished: guide.published ?? guide.updated }),
     dateModified: lawMeta?.lastVerified ?? guide.updated,
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
     publisher: { "@type": "Organization", name: "Keep TX Red", url: SITE_URL },
