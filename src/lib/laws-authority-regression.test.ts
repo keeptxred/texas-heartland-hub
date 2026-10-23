@@ -18,11 +18,15 @@ describe("Texas laws authority accuracy and discoverability regressions", () => 
     expect(hub).toContain("/laws/topic/landlord-tenant-rentals-law");
     expect(hub).toContain("/laws/topic/employment-wages-workplace-rights-law");
     expect(hub).toContain("/laws/topic/consumer-protection-deceptive-trade-law");
+    expect(hub).toContain("/laws/topic/family-custody-child-support-law");
+    expect(hub).toContain("/laws/topic/wills-probate-inheritance-law");
     expect(hub).toContain("https://statutes.capitol.texas.gov/");
     expect(topics).toContain("DRIVING_TRAFFIC_INSURANCE_LAW_TOPIC");
     expect(topics).toContain("LANDLORD_TENANT_RENTALS_LAW_TOPIC");
     expect(topics).toContain("EMPLOYMENT_WORKPLACE_LAW_TOPIC");
     expect(topics).toContain("CONSUMER_PROTECTION_LAW_TOPIC");
+    expect(topics).toContain("FAMILY_CUSTODY_CHILD_SUPPORT_LAW_TOPIC");
+    expect(topics).toContain("WILLS_PROBATE_INHERITANCE_LAW_TOPIC");
   });
   it("does not relabel an evergreen legislative article as limited to the 88th Legislature", () => {
     const entry = articles.slice(articles.indexOf('slug: "how-a-bill-becomes-texas-law"'));
