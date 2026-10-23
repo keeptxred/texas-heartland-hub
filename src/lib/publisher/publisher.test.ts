@@ -607,6 +607,20 @@ describe("OAuth and MCP", () => {
       ),
     ).rejects.toThrow("origin");
   });
+  it("keeps rejecting missing and opaque consent origins", async () => {
+    for (const headers of [new Headers(), new Headers({ Origin: "null" })]) {
+      await expect(
+        oauth(
+          new Request(`${ISSUER}/authorize`, {
+            method: "POST",
+            headers,
+            body: "nonce=unused&passcode=unused",
+          }),
+          store,
+        ),
+      ).rejects.toThrow("Invalid origin");
+    }
+  });
   it("rejects expired and wrong-audience bearer tokens", async () => {
     const token = "random-token";
     const row = await store.insert(

@@ -73,9 +73,10 @@ async function form(request: Request) {
 const htmlHeaders = {
   "Content-Type": "text/html; charset=utf-8",
   "Cache-Control": "no-store",
-  "Referrer-Policy": "no-referrer",
+  // Preserve Origin on this same-origin HTML form POST; suppress cross-site referrers.
+  "Referrer-Policy": "same-origin",
   "Content-Security-Policy":
-    "default-src 'none'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'",
+    "default-src 'none'; form-action 'self' https://chatgpt.com/connector_platform_oauth_redirect; frame-ancestors 'none'; base-uri 'none'",
   "X-Content-Type-Options": "nosniff",
   "X-Frame-Options": "DENY",
   "X-Robots-Tag": "noindex",
