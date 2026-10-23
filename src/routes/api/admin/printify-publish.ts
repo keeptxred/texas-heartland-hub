@@ -166,12 +166,28 @@ async function run(request: Request) {
       results.push({ kind, error: String(error) });
     }
   }
-  // Existing Printify -> Supabase sync remains the website merchandising authority.
-  // Do not silently flip website visibility flags for newly-created products.
+  // Website routing can only complete after the established Printify sync.
+  let websitePublication = "not_requested";
+  const eligible = results.filter(r => r.submitted_to_channel && r.id).map(r => r.id!);
+  if (body.website && body.website !== "none" && eligible.length) {
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const desired = body.website === "keeptxred" ? "publish_keeptxred" : "publish_texasdefined";
+      const other = body.website === "keeptxred" ? "publish_texasdefined" : "publish_keeptxred";
+      const { data, error } = await supabaseAdmin.from("products").select("id").in("id", eligible);
+      if (error) throw error;
+      if ((data?.length ?? 0) === eligible.length) {
+        const { error: updateError } = await supabaseAdmin.from("products")
+          .update({ [desired]: true, [other]: false, is_active: true }).in("id", eligible);
+        if (updateError) throw updateError;
+        websitePublication = "routed_in_supabase";
+      } else websitePublication = "pending_printify_sync";
+    } catch (error) { websitePublication = "routing_error: " + String(error); }
+  }
   return response({
     ok: results.every(r => r.submitted_to_channel === true),
     job_id: body.job_id, website_requested: body.website ?? "none",
-    website_publication: "pending_product_sync_and_merchandising",
+    website_publication: websitePublication,
     etsy_listing_verification: "not_verified",
     results,
   }, results.every(r => r.submitted_to_channel) ? 200 : 207);
