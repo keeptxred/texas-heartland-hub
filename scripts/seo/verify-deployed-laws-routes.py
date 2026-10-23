@@ -209,6 +209,29 @@ def main() -> int:
         if canonicals != [expected_canonical]:
             failures.append(f"{path}: expected one canonical {expected_canonical!r}, got {canonicals!r}")
 
+        # Content freshness prevents a previously deployed but outdated hub from
+        # passing on its unchanged H1 and canonical tags alone.
+        page_text = normalize(" ".join(parser.text_parts))
+        if path == "/laws":
+            if "Find Texas laws by topic" not in page_text:
+                failures.append("/laws: new authority topic navigation is absent from deployed HTML")
+            if "made permanent by a 2019 constitutional amendment" in page_text:
+                failures.append("/laws: outdated constitutional income-tax claim still deployed")
+        if path == "/laws/topics" and "Search the Texas law-topic library" not in page_text:
+            failures.append("/laws/topics: searchable authority directory is absent from deployed HTML")
+
+        if path in ("/laws", "/laws/topics"):
+            existing_hrefs = {anchor["href"] for anchor in parser.anchors}
+            expected_hrefs = {
+                "/laws/topic/driving-traffic-insurance-law",
+                "/laws/topic/landlord-tenant-rentals-law",
+                "/laws/topic/employment-wages-workplace-rights-law",
+                "/laws/topic/consumer-protection-deceptive-trade-law",
+            }
+            missing_hrefs = sorted(expected_hrefs - existing_hrefs)
+            if missing_hrefs:
+                failures.append(f"{path}: missing published law topic crosslinks: {missing_hrefs!r}")
+
         print(f"{path}: h1={h1!r} canonical={canonicals!r}")
         write_report(report)
 
