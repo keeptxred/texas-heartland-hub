@@ -117,7 +117,7 @@ async function validateGrant(params: URLSearchParams): Promise<Grant> {
   )
     throw new PublisherError("Invalid authorization request");
   // Fetch only the pinned ChatGPT CIMD URL; caller-controlled URLs are never fetched.
-  const response = await fetch(CLIENT, { redirect: "error", signal: AbortSignal.timeout(10000) });
+  const response = await fetch(CLIENT, { redirect: "manual", signal: AbortSignal.timeout(10000) });
   if (!response.ok) throw new PublisherError("ChatGPT client metadata unavailable", 503);
   const metadata = JSON.parse(new TextDecoder().decode(await bounded(response, 32768))) as {
     client_id?: string;

@@ -287,7 +287,7 @@ export async function prepare(store: Store, subject: string, raw: unknown) {
   const input = prepareSchema.parse(raw),
     api = new Printify(store);
   const response = await fetch(artworkUrl(input.artwork.download_url), {
-    redirect: "error",
+    redirect: "manual",
     signal: AbortSignal.timeout(30000),
   });
   if (!response.ok)
@@ -450,7 +450,7 @@ export function etsyPageIsLive(html: string, expectedUrl: string): boolean {
 async function verifyPage(url: string, marker: string, isEtsy = false) {
   try {
     const response = await fetch(url, {
-      redirect: "error",
+      redirect: "manual",
       headers: { "Cache-Control": "no-cache" },
       signal: AbortSignal.timeout(15000),
     });
