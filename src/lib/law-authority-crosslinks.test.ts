@@ -15,6 +15,7 @@ describe("reciprocal Texas legal authority network", () => {
     ["employment", "employment-wages-workplace-rights-law"],
     ["family", "family-custody-child-support-law"],
     ["probate", "wills-probate-inheritance-law"],
+    ["criminal", "criminal-offenses-penalties-law"],
     ["consumer", "consumer-protection-deceptive-trade-law"],
     ["elections", "election-law"],
     ["open-government", "open-records-public-information"],
