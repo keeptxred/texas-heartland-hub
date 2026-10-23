@@ -28,6 +28,7 @@ class PageParser(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.h1_depth = 0
         self.h1_parts: list[str] = []
+        self.page_text_parts: list[str] = []
         self.canonicals: list[str] = []
 
     def handle_starttag(self, tag, attrs):
@@ -46,6 +47,7 @@ class PageParser(HTMLParser):
             self.h1_depth -= 1
 
     def handle_data(self, data):
+        self.page_text_parts.append(data)
         if self.h1_depth:
             self.h1_parts.append(data)
 
@@ -107,6 +109,17 @@ def main() -> None:
 
         if canonicals != [expected_canonical]:
             failures.append(f"{path}: expected one canonical {expected_canonical!r}, got {canonicals!r}")
+
+        # Content freshness prevents a previously deployed but outdated hub from
+        # passing on its unchanged H1 and canonical tags alone.
+        page_text = normalize(" ".join(parser.page_text_parts))
+        if path == "/laws":
+            if "Find Texas laws by topic" not in page_text:
+                failures.append("/laws: new authority topic navigation is absent from deployed HTML")
+            if "made permanent by a 2019 constitutional amendment" in page_text:
+                failures.append("/laws: outdated constitutional income-tax claim still deployed")
+        if path == "/laws/topics" and "Search the Texas law-topic library" not in page_text:
+            failures.append("/laws/topics: searchable authority directory is absent from deployed HTML")
 
         print(f"{path}: h1={h1!r} canonical={canonicals!r}")
 
