@@ -17,7 +17,10 @@ permissions:
 
 concurrency:
   group: repository-health-${{ github.event.pull_request.number || github.event.merge_group.head_sha || github.ref }}
-  cancel-in-progress: true
+  # Preserve protected-main push verification: its completion triggers production deploy.
+  # A concurrent manual dispatch must not cancel an already-running main check.
+  # Keep superseded PR/merge-queue checks cancellable for efficiency.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.event_name == 'merge_group' }}
 
 jobs:
   verify:
