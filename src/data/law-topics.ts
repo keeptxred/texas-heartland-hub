@@ -22,6 +22,7 @@ export const LAW_TOPICS: LawTopic[] = BASE_LAW_TOPICS.map((topic) =>
   FAMILY_CUSTODY_CHILD_SUPPORT_LAW_TOPIC,
   WILLS_PROBATE_INHERITANCE_LAW_TOPIC,
   CRIMINAL_OFFENSES_PENALTIES_LAW_TOPIC,
+  BUSINESS_FORMATION_LLC_LAW_TOPIC,
 ]);
 
 export function getLawTopic(slug: string): LawTopic | undefined {
