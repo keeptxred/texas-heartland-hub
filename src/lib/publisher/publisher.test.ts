@@ -4,6 +4,7 @@ import { authenticated, CLIENT, ISSUER, oauth, RESOURCE, SCOPE } from "./auth.se
 import {
   advance,
   artworkUrl,
+  etsyPageIsLive,
   fitScale,
   pngDimensions,
   prepare,
@@ -123,7 +124,9 @@ beforeEach(() => {
       if (url.hostname === "www.etsy.com")
         return publicBlocked
           ? new Response("challenge", { status: 403 })
-          : new Response("<html>schema.org Product 999</html>");
+          : new Response(
+              '<script type="application/ld+json">{"@type":"Product","name":"Texas design","url":"https://www.etsy.com/listing/999/test","offers":{"price":"29.99","availability":"https://schema.org/InStock"}}</script>',
+            );
       if (url.hostname === "keeptxred.com" || url.hostname === "texasdefined.com")
         return new Response("<html>product1 product2</html>");
       const path = url.pathname;
@@ -199,6 +202,16 @@ async function plan() {
 }
 
 describe("secure artwork and catalog", () => {
+  it("requires available Product offer evidence for the exact Etsy listing", () => {
+    const url = "https://www.etsy.com/listing/999/test";
+    const page = (availability = "InStock", id = "999") =>
+      `<script type="application/ld+json">${JSON.stringify({ "@type": "Product", name: "Texas design", url: `https://www.etsy.com/listing/${id}/test`, offers: { price: 29.99, availability: `https://schema.org/${availability}` } })}</script>`;
+    expect(etsyPageIsLive(page(), url)).toBe(true);
+    expect(etsyPageIsLive(page("OutOfStock"), url)).toBe(false);
+    expect(etsyPageIsLive(page("InStock", "888"), url)).toBe(false);
+    expect(etsyPageIsLive("schema.org Organization listing/999 og:type", url)).toBe(false);
+    expect(etsyPageIsLive(page() + "This listing is no longer available", url)).toBe(false);
+  });
   it.each([
     "http://files.oaiusercontent.com/x",
     "https://evil.example/x",
@@ -468,6 +481,26 @@ describe("OAuth and MCP", () => {
       nonce = html.match(/name="nonce" value="([^"]+)"/)![1];
     return { verifier, nonce, params };
   }
+  it("uses a dedicated publisher credential without changing the website login", async () => {
+    store.env.ADMIN_PASSCODE = "short-site-passcode";
+    store.env.PUBLISHER_LOGIN_SECRET = "a-separate-long-publisher-passcode";
+    const metadata = await oauth(
+      new Request("https://keeptxred.com/.well-known/oauth-authorization-server/publisher/oauth"),
+      store,
+    );
+    expect(await metadata!.json()).toMatchObject({ owner_authorization_ready: true });
+    const { nonce } = await authorization();
+    const response = await oauth(
+      new Request(`${ISSUER}/authorize`, {
+        method: "POST",
+        headers: { Origin: "https://keeptxred.com" },
+        body: new URLSearchParams({ nonce, passcode: store.env.PUBLISHER_LOGIN_SECRET }),
+      }),
+      store,
+    );
+    expect(response!.status).toBe(303);
+    expect(store.env.ADMIN_PASSCODE).toBe("short-site-passcode");
+  });
   it("publishes exact resource metadata and requires OAuth for MCP", async () => {
     const metadata = await publisherResponse(
       new Request("https://keeptxred.com/.well-known/oauth-protected-resource/api/publisher/mcp"),

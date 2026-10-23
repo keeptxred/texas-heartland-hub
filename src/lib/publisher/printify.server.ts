@@ -389,6 +389,64 @@ export function etsyUrl(product: Product): string | undefined {
     return undefined;
   }
 }
+export function etsyPageIsLive(html: string, expectedUrl: string): boolean {
+  const expectedId = new URL(expectedUrl).pathname.match(/^\/listing\/(\d+)/)?.[1];
+  if (
+    !expectedId ||
+    /\b(?:listing|item)\s+(?:is\s+)?(?:no longer available|unavailable|has been removed)\b/i.test(
+      html,
+    )
+  )
+    return false;
+  const sameListing = (value: unknown) => {
+    if (typeof value !== "string") return false;
+    try {
+      const url = new URL(value);
+      return (
+        ["etsy.com", "www.etsy.com"].includes(url.hostname) &&
+        url.pathname.match(/^\/listing\/(\d+)/)?.[1] === expectedId
+      );
+    } catch {
+      return false;
+    }
+  };
+  const matches = (node: unknown): boolean => {
+    if (Array.isArray(node)) return node.some(matches);
+    if (!node || typeof node !== "object") return false;
+    const object = node as Record<string, unknown>;
+    const types = Array.isArray(object["@type"]) ? object["@type"] : [object["@type"]];
+    if (types.some((type) => type === "Product" || type === "https://schema.org/Product")) {
+      const offers = Array.isArray(object.offers) ? object.offers : [object.offers];
+      if (
+        typeof object.name === "string" &&
+        object.name.trim() &&
+        offers.some((offer) => {
+          if (!offer || typeof offer !== "object") return false;
+          const value = offer as Record<string, unknown>;
+          return (
+            Number(value.price ?? value.lowPrice) > 0 &&
+            /(?:\/|^)(?:InStock|LimitedAvailability|PreOrder|BackOrder)$/.test(
+              String(value.availability ?? ""),
+            ) &&
+            (sameListing(object.url) || sameListing(value.url))
+          );
+        })
+      )
+        return true;
+    }
+    return Object.values(object).some(matches);
+  };
+  for (const match of html.matchAll(
+    /<script\b[^>]*\btype\s*=\s*["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi,
+  )) {
+    try {
+      if (matches(JSON.parse(match[1]))) return true;
+    } catch {
+      /* Invalid or challenge markup is not evidence of a live listing. */
+    }
+  }
+  return false;
+}
 async function verifyPage(url: string, marker: string, isEtsy = false) {
   try {
     const response = await fetch(url, {
@@ -398,11 +456,7 @@ async function verifyPage(url: string, marker: string, isEtsy = false) {
     });
     if (!response.ok) return false;
     const html = new TextDecoder().decode(await bounded(response, 2_000_000));
-    return isEtsy
-      ? html.includes(marker) &&
-          /schema.org|"@type"\s*:\s*"Product"|og:type/.test(html) &&
-          !/listing is unavailable|item is unavailable|listing has been removed/i.test(html)
-      : html.includes(marker);
+    return isEtsy ? etsyPageIsLive(html, url) : html.includes(marker);
   } catch {
     return false;
   }

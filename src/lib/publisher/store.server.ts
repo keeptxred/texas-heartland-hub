@@ -14,6 +14,7 @@ export function environment(raw: unknown): PublisherEnv {
     "SUPABASE_URL",
     "SUPABASE_SERVICE_ROLE_KEY",
     "ADMIN_PASSCODE",
+    "PUBLISHER_LOGIN_SECRET",
     "PRINTIFY_API_TOKEN",
     "PRINTIFY_SHOP_ID",
   ]) {

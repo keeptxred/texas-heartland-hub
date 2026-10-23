@@ -182,6 +182,12 @@ jobs:
           print("workers.dev health passed")
           PY
 
+      - name: Verify private publisher discovery and authentication boundaries
+        if: steps.revision.outputs.deploy == 'true'
+        env:
+          SITE_URL: ${{ env.PREVIEW_URL }}
+        run: node scripts/publisher/verify-public.mjs
+
       - name: Verify live payment runtime
         if: steps.revision.outputs.deploy == 'true'
         shell: bash
