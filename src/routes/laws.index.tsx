@@ -176,6 +176,10 @@ function LawsHubPage() {
         </div>
       </nav>
 
+
+
+      <LawGuideTopicGrid topic="driving" />
+
       <article className="mx-auto max-w-4xl px-4 py-10 space-y-6 text-base leading-relaxed">
         <p className="text-lg font-serif text-muted-foreground">
           Texas law is one of the most consequential things about living in Texas, and one of the least
@@ -279,8 +283,6 @@ function LawsHubPage() {
           during and after each session and maintains the evergreen guides below.
         </p>
       </article>
-
-      <LawGuideTopicGrid topic="driving" />
 
       {sections.map((section) => (
         <section key={section.key} className="border-t-4 border-foreground/10 bg-secondary/5">
