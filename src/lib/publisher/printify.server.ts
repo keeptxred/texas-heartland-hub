@@ -238,7 +238,9 @@ export function artworkUrl(raw: string) {
     url.hash ||
     !(url.hostname === "files.oaiusercontent.com" || url.hostname.endsWith(".oaiusercontent.com"))
   )
-    throw new PublisherError("Artwork must use a temporary ChatGPT file URL");
+    throw new PublisherError(
+      `Artwork must use a temporary ChatGPT file URL (received scheme=${url.protocol.replace(/[^a-zA-Z:-]/g, "").slice(0, 32)}, host=${url.hostname.replace(/[^a-zA-Z0-9.:-]/g, "").slice(0, 253) || "none"}). Signed URLs and local paths are not included in diagnostics.`,
+    );
   return url;
 }
 export function pngDimensions(bytes: Uint8Array) {
