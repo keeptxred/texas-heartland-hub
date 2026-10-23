@@ -13,6 +13,9 @@ export const ISSUER = `${ORIGIN}/publisher/oauth`;
 export const RESOURCE = `${ORIGIN}/api/publisher/mcp`;
 export const CLIENT = "https://chatgpt.com/oauth/client.json";
 export const SCOPE = "products:publish";
+function ownerCredential(store: Store) {
+  return store.env.PUBLISHER_LOGIN_SECRET || store.env.ADMIN_PASSCODE;
+}
 type Grant = {
   client_id: string;
   redirect_uri: string;
@@ -39,8 +42,8 @@ export async function authenticated(request: Request, store: Store): Promise<str
     session.value.client_id !== CLIENT ||
     session.value.resource !== RESOURCE ||
     session.value.scope !== SCOPE ||
-    !store.env.ADMIN_PASSCODE ||
-    session.value.credential !== (await digest(store.env.ADMIN_PASSCODE))
+    !ownerCredential(store) ||
+    session.value.credential !== (await digest(ownerCredential(store)!))
   ) {
     throw new PublisherError("Authentication required", 401);
   }
@@ -165,14 +168,16 @@ export async function oauth(request: Request, store: Store): Promise<Response | 
       scopes_supported: [SCOPE],
       client_id_metadata_document_supported: true,
       authorization_response_iss_parameter_supported: true,
-      owner_authorization_ready: Boolean(store.env.ADMIN_PASSCODE && store.env.ADMIN_PASSCODE.length >= 16),
+      owner_authorization_ready: Boolean(
+        ownerCredential(store) && ownerCredential(store)!.length >= 16,
+      ),
     });
   }
   if (!path.startsWith("/publisher/oauth/")) return null;
-  const credential = store.env.ADMIN_PASSCODE;
+  const credential = ownerCredential(store);
   if (!credential || credential.length < 16)
     throw new PublisherError(
-      "Publisher requires an administrator passcode of at least 16 characters",
+      "Publisher sign-in needs a dedicated passcode of at least 16 characters",
       503,
     );
   if (path === "/publisher/oauth/authorize" && request.method === "GET") {
@@ -187,7 +192,7 @@ export async function oauth(request: Request, store: Store): Promise<Response | 
     const nonce = randomToken();
     await store.insert(`consent:${await digest(nonce)}`, grant, 600);
     return new Response(
-      `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Connect Heartland Publisher</title><main><h1>Connect Heartland Publisher to ChatGPT</h1><p>This private connection can upload approved artwork, create Printify products, publish eligible Etsy listings, and assign your website store. Publishing requires your explicit approval in the conversation.</p><form method="post" action="/publisher/oauth/authorize"><input type="hidden" name="nonce" value="${nonce}"><label>Administrator passcode <input type="password" name="passcode" autocomplete="current-password" required maxlength="512"></label><button type="submit">Authorize ChatGPT</button></form><p>Close this page to cancel. Credentials stay on KeepTXRed.com.</p></main></html>`,
+      `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Connect Heartland Publisher</title><main><h1>Connect Heartland Publisher to ChatGPT</h1><p>This private connection can upload approved artwork, create Printify products, publish eligible Etsy listings, and assign your website store. Publishing requires your explicit approval in the conversation.</p><form method="post" action="/publisher/oauth/authorize"><input type="hidden" name="nonce" value="${nonce}"><label>Publisher passcode <input type="password" name="passcode" autocomplete="current-password" required maxlength="512"></label><button type="submit">Authorize ChatGPT</button></form><p>Close this page to cancel. Credentials stay on KeepTXRed.com.</p></main></html>`,
       { headers: htmlHeaders },
     );
   }
@@ -200,7 +205,7 @@ export async function oauth(request: Request, store: Store): Promise<Response | 
     // Persistent, race-safe five-attempt budget per source IP and 15-minute window.
     await budget(request, store, "login", 5);
     if (!(await equalSecret(data.get("passcode") ?? "", credential)))
-      throw new PublisherError("Invalid administrator passcode", 403);
+      throw new PublisherError("Invalid publisher passcode", 403);
     const code = randomToken();
     await store.insert(`code:${await digest(code)}`, grant.value, 120);
     const redirect = new URL(grant.value.redirect_uri);

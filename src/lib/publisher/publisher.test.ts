@@ -468,6 +468,16 @@ describe("OAuth and MCP", () => {
       nonce = html.match(/name="nonce" value="([^"]+)"/)![1];
     return { verifier, nonce, params };
   }
+  it('uses a dedicated publisher credential without changing the website login', async () => {
+    store.env.ADMIN_PASSCODE = 'short-site-passcode';
+    store.env.PUBLISHER_LOGIN_SECRET = 'a-separate-long-publisher-passcode';
+    const metadata = await oauth(new Request('https://keeptxred.com/.well-known/oauth-authorization-server/publisher/oauth'),store);
+    expect(await metadata!.json()).toMatchObject({owner_authorization_ready:true});
+    const {nonce} = await authorization();
+    const response = await oauth(new Request(`${ISSUER}/authorize`, {method:'POST',headers:{Origin:'https://keeptxred.com'},body:new URLSearchParams({nonce,passcode:store.env.PUBLISHER_LOGIN_SECRET})}),store);
+    expect(response!.status).toBe(303);
+    expect(store.env.ADMIN_PASSCODE).toBe('short-site-passcode');
+  });
   it("publishes exact resource metadata and requires OAuth for MCP", async () => {
     const metadata = await publisherResponse(
       new Request("https://keeptxred.com/.well-known/oauth-protected-resource/api/publisher/mcp"),
