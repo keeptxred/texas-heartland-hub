@@ -172,13 +172,12 @@ async function run(request: Request) {
   if (body.website && body.website !== "none" && eligible.length) {
     try {
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      const desired = body.website === "keeptxred" ? "publish_keeptxred" : "publish_texasdefined";
-      const other = body.website === "keeptxred" ? "publish_texasdefined" : "publish_keeptxred";
+      
       const { data, error } = await supabaseAdmin.from("products").select("id").in("id", eligible);
       if (error) throw error;
       if ((data?.length ?? 0) === eligible.length) {
         const { error: updateError } = await supabaseAdmin.from("products")
-          .update({ [desired]: true, [other]: false, is_active: true }).in("id", eligible);
+          .update(body.website === "keeptxred" ? { publish_keeptxred: true, publish_texasdefined: false, is_active: true } : { publish_texasdefined: true, publish_keeptxred: false, is_active: true }).in("id", eligible);
         if (updateError) throw updateError;
         websitePublication = "routed_in_supabase";
       } else websitePublication = "pending_printify_sync";
