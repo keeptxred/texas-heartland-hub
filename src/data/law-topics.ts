@@ -8,6 +8,7 @@ import { CONSUMER_PROTECTION_LAW_TOPIC } from "@/data/law-topic-consumer-protect
 import { FAMILY_CUSTODY_CHILD_SUPPORT_LAW_TOPIC } from "@/data/law-topic-family-custody-authority";
 import { WILLS_PROBATE_INHERITANCE_LAW_TOPIC } from "@/data/law-topic-wills-probate-authority";
 import { CRIMINAL_OFFENSES_PENALTIES_LAW_TOPIC } from "@/data/law-topic-criminal-offenses-authority";
+import { BUSINESS_FORMATION_LLC_LAW_TOPIC } from "@/data/law-topic-business-formation-authority";
 
 export type { LawTopic, LawTopicSource } from "@/data/law-topics-base";
 
