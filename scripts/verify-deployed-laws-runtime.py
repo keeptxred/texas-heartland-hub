@@ -16,6 +16,8 @@ CHECKS = [
     ("/laws/topic/landlord-tenant-rentals-law", "Texas Landlord-Tenant Law: Repairs, Deposits, Eviction and Tenant Rights", "https://keeptxred.com/laws/topic/landlord-tenant-rentals-law", True, True),
     ("/laws/topic/employment-wages-workplace-rights-law", "Texas Employment Law: Wages, Final Pay, Discrimination and Workplace Rights", "https://keeptxred.com/laws/topic/employment-wages-workplace-rights-law", True, True),
     ("/laws/topic/consumer-protection-deceptive-trade-law", "Texas Consumer Protection Law: Deceptive Practices, Complaints and Debt Collection", "https://keeptxred.com/laws/topic/consumer-protection-deceptive-trade-law", True, True),
+    ("/laws/topic/family-custody-child-support-law", "Texas Family Law: Divorce, Child Custody, Visitation and Child Support", "https://keeptxred.com/laws/topic/family-custody-child-support-law", True, True),
+    ("/laws/topic/wills-probate-inheritance-law", "Texas Wills, Probate and Inheritance Law Explained", "https://keeptxred.com/laws/topic/wills-probate-inheritance-law", True, True),
 ]
 
 
