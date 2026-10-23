@@ -141,7 +141,7 @@ async function run(request: Request) {
       const product = await api<PrintifyProduct>(token, `/shops/${shop}/products.json`, "POST", {
         title: `${body.title} – ${kind === "shirt" ? "T-Shirt" : "Sticker"}`,
         description: body.description,
-        tags: [...new Set([...(body.tags ?? []), marker])].slice(0, 13),
+        tags: [...new Set([marker, ...(body.tags ?? [])])].slice(0, 13),
         blueprint_id: config.blueprint_id,
         print_provider_id: config.print_provider_id,
         variants: config.variants.map(v => ({ id: v.id, price: v.price, is_enabled: true })),
