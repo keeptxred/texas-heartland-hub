@@ -5,6 +5,7 @@ export const CONSUMER_PROTECTION_LAW_TOPIC: LawTopic = {
   "title": "Texas Consumer Protection Law: Deceptive Practices, Complaints and Debt Collection",
   "dek": "An official-source guide to Texas's Deceptive Trade Practices Act, consumer claims and remedies, statutory notice rules, complaint channels, debt-collection restrictions and distinguishing enforcement from private lawsuits.",
   "updated": "2026-10-23",
+  "published": "2026-10-23",
   "quickAnswer": "Texas Business & Commerce Code Chapter 17, Subchapter E contains the Deceptive Trade Practices–Consumer Protection Act, commonly called the DTPA. It addresses specified false, misleading and deceptive trade practices and provides remedies under particular conditions. Texas Finance Code Chapter 392 separately regulates consumer debt collection. A complaint to the Attorney General may help identify broader misconduct, but filing a complaint does not make the Attorney General your private attorney, guarantee repayment, or substitute for the statutory steps required in a lawsuit.",
   "appliesTo": [
     "Texans purchasing goods and services",
