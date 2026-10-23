@@ -163,8 +163,8 @@ function LawsHubPage() {
             ["Landlord & Tenant", "/laws/topic/landlord-tenant-rentals-law"],
             ["Firearms & Self-Defense", "/laws/topic/self-defense-use-of-force"],
             ["Family & Child Support", "/laws/topics"],
-            ["Employment", "/laws/topics"],
-            ["Consumer Rights", "/laws/topics"],
+            ["Employment", "/laws/topic/employment-wages-workplace-rights-law"],
+            ["Consumer Rights", "/laws/topic/consumer-protection-deceptive-trade-law"],
             ["Elections", "/laws/topic/election-law"],
             ["Criminal Law", "/laws/topics"],
           ].map(([label, href]) => <a key={href} href={href} className="border-2 border-border bg-card px-4 py-4 text-sm font-bold hover:border-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">{label} →</a>)}
