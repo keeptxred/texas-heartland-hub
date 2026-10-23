@@ -6,6 +6,7 @@ export const LANDLORD_TENANT_RENTALS_LAW_TOPIC: LawTopic = {
   "title": "Texas Landlord-Tenant Law: Repairs, Deposits, Eviction and Tenant Rights",
   "dek": "An official-source legal framework for Texas residential leases, habitability and repairs, security deposits, lockouts, eviction procedure, anti-retaliation protections and the limits of self-help.",
   "updated": "2026-10-23",
+  "published": "2026-10-23",
   "quickAnswer": "Texas residential rental relationships are primarily governed by the written lease and the Texas Property Code. Chapter 92 governs many residential landlord-tenant rights, including repair duties, security deposits, utility interruptions, lockouts and retaliation. Chapter 24 sets important eviction procedure rules. A lease does not automatically override statutory tenant protections, but not every disagreement gives a tenant the right to stop paying rent or break a lease. The notice, deadlines and available remedies depend on the exact statutory provision and the facts.",
   "appliesTo": [
     "Texas apartment renters and single-family tenants",
