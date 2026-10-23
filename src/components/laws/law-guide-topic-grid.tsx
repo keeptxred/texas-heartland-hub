@@ -27,6 +27,8 @@ const FEATURED_LAW_TOPICS: LawTopic[] = [
 const CHILD_SUPPORT_SLUG = "texas-child-support-guidelines-law";
 
 const LAW_AUTHORITY_LINKS = [
+  ["Browse All Law Topics", "/laws/topics"],
+  ["Official Texas Laws Hub", "/laws"],
   ["Texas Legislature", "/texas-legislature"],
   ["Texas Bill Tracker", "/bills"],
   ["2026 Election Central", "/elections/2026"],
@@ -35,6 +37,8 @@ const LAW_AUTHORITY_LINKS = [
   ["Texas Gun Laws", "/news/texas-gun-laws-explained"],
   ["Texas Property Tax Laws", "/news/texas-property-tax-laws-explained"],
   ["New Texas Laws for 2026", "/news/texas-new-laws-2026"],
+  ["Texas Constitutional Amendments", "/laws/constitutional-amendments"],
+  ["Texas Law Finder", "/civic-tools/texas-law-finder"],
 ] as const;
 
 function ChildSupportPriorityGuide() {
