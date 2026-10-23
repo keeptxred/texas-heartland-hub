@@ -120,12 +120,12 @@ export class Printify {
   }
   async products(): Promise<Product[]> {
     const products: Product[] = [];
-    for (let page = 1; page <= 200; page++) {
+    for (let page = 1; page <= 400; page++) {
       const data = await this.api<{ data: Product[]; last_page?: number }>(
-        `/shops/${this.shop}/products.json?limit=100&page=${page}`,
+        `/shops/${this.shop}/products.json?limit=50&page=${page}`,
       );
       products.push(...data.data);
-      if (data.data.length < 100 || (data.last_page && page >= data.last_page)) return products;
+      if (data.data.length < 50 || (data.last_page && page >= data.last_page)) return products;
     }
     throw new PublisherError(
       "Catalog exceeds reconciliation limit; manual reconciliation required",
