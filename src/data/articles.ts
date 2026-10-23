@@ -490,7 +490,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "how-a-bill-becomes-texas-law",
     category: "Legislature",
-    title: "How a Bill Becomes Texas Law: A Citizen's Field Guide to the 88th Legislature",
+    title: "How a Bill Becomes Texas Law: The Texas Legislative Process",
     dek: "From filing in the House clerk's office to the Governor's desk — every committee, calendar, and conference step that shapes the bills you actually live under.",
     author: "Civics Desk",
     date: "1 week ago",

@@ -26,7 +26,7 @@ const TRUST_BY_PATH: Record<string, TrustConfig> = {
       { name: 'Texas Constitution and Statutes', url: 'https://statutes.capitol.texas.gov/', note: 'Official published Texas constitutional and statutory text.' },
     ],
     methodology: 'The laws hub organizes plain-English explainers and legislative references. Statutory text and legal effect come from official sources; editorial explanation is kept separate from the controlling law, and individual law/reference pages carry more specific source context.',
-    lastVerified: 'Hub source hierarchy reviewed August 11, 2026. Individual statutes, effective-date records and explainers carry their own more specific verification context when available.',
+    lastVerified: 'Hub navigation, legislative-process summary, and source hierarchy reviewed October 23, 2026. Individual statutes, effective dates, and topic guides have their own verification dates; consult linked official sources for current law.',
   },
   '/representatives': {
     title: 'Elected-official directory sources',
