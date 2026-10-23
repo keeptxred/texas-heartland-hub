@@ -11,6 +11,8 @@ describe("law topic publication and SEO provenance", () => {
     expect(older).toBeDefined();
     expect(older?.published).toBeUndefined();
     expect(page).not.toContain("datePublished: topic.updated");
+    expect(page).toContain("citation: topic.sources.map((source) => source.url)");
+    expect(page).toContain('isPartOf: { "@type": "CollectionPage"');
     expect(page).toContain("topic.published ? { datePublished: topic.published }");
   });
   it("retains known publication dates and separate review dates for new guides", () => {
