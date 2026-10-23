@@ -19,6 +19,8 @@ describe("law topic publication and SEO provenance", () => {
       "landlord-tenant-rentals-law",
       "employment-wages-workplace-rights-law",
       "consumer-protection-deceptive-trade-law",
+      "family-custody-child-support-law",
+      "wills-probate-inheritance-law",
     ]) {
       const topic = getLawTopic(slug);
       expect(topic?.published).toBe("2026-10-23");
