@@ -14,10 +14,10 @@ export const Route = createFileRoute("/laws/")({
       {
         name: "description",
         content:
-          "The Keep TX Red guide to Texas laws — how statutes are made, what every resident should know about carry, elections, property tax, and the major bills that took effect in 2026.",
+          "Explore verified Texas law guides on rights, driving, housing, elections, employment, consumer protections, statutory sources, effective dates, and legislation.",
       },
       { property: "og:title", content: "Texas Laws Explained: Rights, Statutes & Legislative Updates" },
-      { property: "og:description", content: "Plain-English breakdowns of the Texas statutes that shape daily life — carry, elections, property tax, and every major 2026 law." },
+      { property: "og:description", content: "Browse source-backed Texas statutes and everyday legal topics, with current law separated from proposals and linked official references." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
