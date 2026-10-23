@@ -167,6 +167,7 @@ function LawsHubPage() {
             ["Consumer Rights", "/laws/topic/consumer-protection-deceptive-trade-law"],
             ["Elections", "/laws/topic/election-law"],
             ["Criminal Law", "/laws/topics"],
+            ["Wills & Probate", "/laws/topic/wills-probate-inheritance-law"],
           ].map(([label, href]) => <a key={href} href={href} className="border-2 border-border bg-card px-4 py-4 text-sm font-bold hover:border-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">{label} →</a>)}
         </div>
         <div className="mt-5 flex flex-wrap gap-5 text-sm">
