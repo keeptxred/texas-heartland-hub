@@ -54,6 +54,10 @@ it("renders owner consent in Workerd with real request and storage response hand
       `https://keeptxred.com/publisher/oauth/authorize?${params}`,
     );
     expect(response.status).toBe(200);
+    expect(response.headers.get("Referrer-Policy")).toBe("same-origin");
+    expect(response.headers.get("Content-Security-Policy")).toContain(
+      "form-action 'self' https://chatgpt.com/connector_platform_oauth_redirect;",
+    );
     expect(await response.text()).toContain("Authorize ChatGPT");
   } finally {
     await runtime.dispose();
