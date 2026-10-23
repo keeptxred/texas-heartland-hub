@@ -220,6 +220,25 @@ async function plan() {
 }
 
 describe("secure artwork and catalog", () => {
+  it("uses Printify's 50-product page maximum without truncating the catalog", async () => {
+    const fetchMock = vi.fn(async (input: string | URL | Request) => {
+      const url = new URL(String(input));
+      const page = Number(url.searchParams.get("page"));
+      expect(url.searchParams.get("limit")).toBe("50");
+      expect(url.pathname).toBe("/v1/shops/123/products.json");
+      return Response.json({
+        data: Array.from({ length: page === 1 ? 50 : 1 }, (_, index) => ({
+          id: `${page}-${index}`,
+        })),
+        last_page: 2,
+      });
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const products = await new Printify(store).products();
+    expect(products).toHaveLength(51);
+    expect(products[50].id).toBe("2-0");
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
   it("requires available Product offer evidence for the exact Etsy listing", () => {
     const url = "https://www.etsy.com/listing/999/test";
     const page = (availability = "InStock", id = "999") =>
