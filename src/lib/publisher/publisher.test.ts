@@ -220,6 +220,18 @@ async function plan() {
 }
 
 describe("secure artwork and catalog", () => {
+  it("diagnoses unsupported artwork references without exposing signed queries or paths", () => {
+    try {
+      artworkUrl("https://example.com/private-artwork.png?signature=secret-value");
+      throw new Error("expected artwork reference rejection");
+    } catch (error) {
+      expect(error).toBeInstanceOf(PublisherError);
+      expect((error as Error).message).toContain("scheme=https:, host=example.com");
+      expect((error as Error).message).not.toContain("private-artwork.png");
+      expect((error as Error).message).not.toContain("secret-value");
+    }
+    expect(() => artworkUrl("sandbox:/mnt/data/private.png")).toThrow("scheme=sandbox:, host=none");
+  });
   it("uses Printify's 50-product page maximum without truncating the catalog", async () => {
     const fetchMock = vi.fn(async (input: string | URL | Request) => {
       const url = new URL(String(input));
