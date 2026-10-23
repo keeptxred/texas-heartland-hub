@@ -171,7 +171,7 @@ function LawsHubPage() {
         </div>
         <div className="mt-5 flex flex-wrap gap-5 text-sm">
           <Link to="/laws/topics" className="font-semibold text-primary underline underline-offset-4">Browse full Texas law-topic library →</Link>
-          <Link to="/laws/topic/property-tax-law" className="font-semibold text-primary underline underline-offset-4">Texas property tax law →</Link>
+          <Link to="/laws/topic/$slug" params={{ slug: "property-tax-law" }} className="font-semibold text-primary underline underline-offset-4">Texas property tax law →</Link>
           <a href="https://statutes.capitol.texas.gov/" rel="noopener noreferrer" className="font-semibold underline underline-offset-4">Official Texas statutes ↗</a>
           <a href="https://www.sos.state.tx.us/elections/" rel="noopener noreferrer" className="font-semibold underline underline-offset-4">Official elections and ballot notices ↗</a>
         </div>
