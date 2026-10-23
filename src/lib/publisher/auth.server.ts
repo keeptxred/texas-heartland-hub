@@ -165,6 +165,7 @@ export async function oauth(request: Request, store: Store): Promise<Response | 
       scopes_supported: [SCOPE],
       client_id_metadata_document_supported: true,
       authorization_response_iss_parameter_supported: true,
+      owner_authorization_ready: Boolean(store.env.ADMIN_PASSCODE && store.env.ADMIN_PASSCODE.length >= 16),
     });
   }
   if (!path.startsWith("/publisher/oauth/")) return null;
