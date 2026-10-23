@@ -159,14 +159,14 @@ function LawsHubPage() {
         <p className="mt-2 text-muted-foreground">Start with an everyday legal question, browse the complete law library, or consult the controlling code.</p>
         <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4">
           {[
-            ["Driving & Traffic", "#laws-driving-heading"],
-            ["Property & Housing", "#laws-landlord-tenant-heading"],
-            ["Firearms & Self-Defense", "#laws-self-defense-firearms-heading"],
-            ["Family & Child Support", "#laws-family-heading"],
-            ["Employment", "#laws-employment-heading"],
-            ["Consumer Rights", "#laws-consumer-heading"],
-            ["Elections", "#laws-elections-heading"],
-            ["Criminal Law", "#laws-criminal-heading"],
+            ["Driving & Traffic", "/civic-tools/texas-law-finder"],
+            ["Property & Housing", "/laws/topic/property-tax-law"],
+            ["Firearms & Self-Defense", "/laws/topic/self-defense-use-of-force"],
+            ["Family & Child Support", "/laws/topics"],
+            ["Employment", "/laws/topics"],
+            ["Consumer Rights", "/laws/topics"],
+            ["Elections", "/laws/topic/election-law"],
+            ["Criminal Law", "/laws/topics"],
           ].map(([label, href]) => <a key={href} href={href} className="border-2 border-border bg-card px-4 py-4 text-sm font-bold hover:border-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">{label} →</a>)}
         </div>
         <div className="mt-5 flex flex-wrap gap-5 text-sm">
