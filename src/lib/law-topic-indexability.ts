@@ -23,6 +23,10 @@ export function isLawTopicIndexable(topic: LawTopic | null | undefined): topic i
   return Boolean(topic)
     && lawTopicWordCount(topic!) >= MIN_LAW_TOPIC_WORDS
     && topic!.sources.length >= 3
+    && topic!.sources.every((source) => source.url.startsWith("https://"))
+    && topic!.sources.some((source) => source.url.startsWith("https://statutes.capitol.texas.gov/"))
+    && /^\d{4}-\d{2}-\d{2}$/.test(topic!.updated)
+    && Number.isFinite(Date.parse(topic!.updated))
     && topic!.framework.length >= 3
     && topic!.keyRules.length >= 4
     && topic!.questions.length >= 3
