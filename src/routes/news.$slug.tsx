@@ -393,6 +393,9 @@ function ArticlePage() {
   const generatedImageDisclosure = getGeneratedArticleImageDisclosure(article.image);
   const containHero = shouldContainArticleImage(article.image);
   const isKeepTxRedEditorialGraphic = String(article.image ?? "").startsWith("/images/news/editorial/");
+  const isTexasLawExplainer = article.topics?.includes("laws") || article.subcategory === "laws" ||
+    ["texas-gun-laws-explained", "texas-property-tax-laws-explained", "texas-election-laws-explained", "how-a-bill-becomes-texas-law", "texas-new-laws-2026", "texas-open-meetings-public-info"].includes(article.slug);
+
 
   return (
     <article className="mx-auto max-w-4xl px-4 sm:px-6 py-10 sm:py-14">
@@ -429,6 +432,22 @@ function ArticlePage() {
           </>
         ) : null}
       </div>
+
+      {isTexasLawExplainer ? (
+        <aside className="mt-6 rounded-lg border border-border bg-muted/20 p-5" aria-label="Texas law library">
+          <h2 className="font-display text-lg tracking-tight">Research the governing Texas law</h2>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            This article is an editorial explainer. For the underlying legal framework, official citations,
+            effective dates and related guides, consult the Texas law library and controlling statutes.
+            Bills and policy proposals are not enacted law.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
+            <Link to="/laws" className="text-primary underline underline-offset-4">Texas laws hub →</Link>
+            <Link to="/laws/topics" className="text-primary underline underline-offset-4">Law-topic directory →</Link>
+            <a href="https://statutes.capitol.texas.gov/" target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-4">Official Texas statutes ↗</a>
+          </div>
+        </aside>
+      ) : null}
 
       <GooglePreferredSourceCta />
 
