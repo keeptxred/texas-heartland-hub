@@ -166,7 +166,7 @@ function LawsHubPage() {
             ["Employment", "/laws/topic/employment-wages-workplace-rights-law"],
             ["Consumer Rights", "/laws/topic/consumer-protection-deceptive-trade-law"],
             ["Elections", "/laws/topic/election-law"],
-            ["Criminal Law", "/laws/topics"],
+            ["Criminal Law", "/laws/topic/criminal-offenses-penalties-law"],
             ["Wills & Probate", "/laws/topic/wills-probate-inheritance-law"],
             ["Property Tax Law", "/laws/topic/property-tax-law"],
             ["Public Records", "/laws/topic/open-records-public-information"],

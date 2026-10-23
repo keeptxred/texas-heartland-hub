@@ -18,6 +18,7 @@ CHECKS = [
     ("/laws/topic/consumer-protection-deceptive-trade-law", "Texas Consumer Protection Law: Deceptive Practices, Complaints and Debt Collection", "https://keeptxred.com/laws/topic/consumer-protection-deceptive-trade-law", True, True),
     ("/laws/topic/family-custody-child-support-law", "Texas Family Law: Divorce, Child Custody, Visitation and Child Support", "https://keeptxred.com/laws/topic/family-custody-child-support-law", True, True),
     ("/laws/topic/wills-probate-inheritance-law", "Texas Wills, Probate and Inheritance Law Explained", "https://keeptxred.com/laws/topic/wills-probate-inheritance-law", True, True),
+    ("/laws/topic/criminal-offenses-penalties-law", "Texas Criminal Law Explained: Offenses, Penalties and Legal Defenses", "https://keeptxred.com/laws/topic/criminal-offenses-penalties-law", True, True),
 ]
 
 

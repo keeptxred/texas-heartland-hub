@@ -7,6 +7,7 @@ import { EMPLOYMENT_WORKPLACE_LAW_TOPIC } from "@/data/law-topic-employment-work
 import { CONSUMER_PROTECTION_LAW_TOPIC } from "@/data/law-topic-consumer-protection-authority";
 import { FAMILY_CUSTODY_CHILD_SUPPORT_LAW_TOPIC } from "@/data/law-topic-family-custody-authority";
 import { WILLS_PROBATE_INHERITANCE_LAW_TOPIC } from "@/data/law-topic-wills-probate-authority";
+import { CRIMINAL_OFFENSES_PENALTIES_LAW_TOPIC } from "@/data/law-topic-criminal-offenses-authority";
 
 export type { LawTopic, LawTopicSource } from "@/data/law-topics-base";
 
@@ -19,6 +20,7 @@ export const LAW_TOPICS: LawTopic[] = BASE_LAW_TOPICS.map((topic) =>
   CONSUMER_PROTECTION_LAW_TOPIC,
   FAMILY_CUSTODY_CHILD_SUPPORT_LAW_TOPIC,
   WILLS_PROBATE_INHERITANCE_LAW_TOPIC,
+  CRIMINAL_OFFENSES_PENALTIES_LAW_TOPIC,
 ]);
 
 export function getLawTopic(slug: string): LawTopic | undefined {
