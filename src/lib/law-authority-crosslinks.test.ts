@@ -32,6 +32,7 @@ describe("reciprocal Texas legal authority network", () => {
     "employment-wages-workplace-rights-law",
     "family-custody-child-support-law",
     "wills-probate-inheritance-law",
+    "criminal-offenses-penalties-law",
     "consumer-protection-deceptive-trade-law",
   ])("only surfaces verified, public, canonically linked guides under %s", (slug) => {
     const guides = publicSupportingGuidesForAuthority(slug);
