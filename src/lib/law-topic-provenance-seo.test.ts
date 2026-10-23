@@ -23,6 +23,7 @@ describe("law topic publication and SEO provenance", () => {
       "consumer-protection-deceptive-trade-law",
       "family-custody-child-support-law",
       "wills-probate-inheritance-law",
+      "criminal-offenses-penalties-law",
     ]) {
       const topic = getLawTopic(slug);
       expect(topic?.published).toBe("2026-10-23");
