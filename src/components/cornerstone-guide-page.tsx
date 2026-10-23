@@ -13,6 +13,7 @@ import {
 } from "@/lib/law-guide-seo";
 import { SITE_URL } from "@/lib/seo";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
+import { authorityForSupportingGuideTopic } from "@/lib/law-authority-crosslinks";
 
 function renderGuideParagraph(
   paragraph: string,
@@ -178,6 +179,7 @@ export function cornerstoneGuideHead(guide: CornerstoneGuide) {
 
 export function CornerstoneGuidePage({ guide }: { guide: CornerstoneGuide }) {
   const lawMeta = getLawGuideMeta(guide.slug);
+  const topicAuthority = lawMeta ? authorityForSupportingGuideTopic(lawMeta.topic) : null;
   const media = GUIDE_MEDIA[guide.slug];
   const wordCount = [
     ...guide.intro,
@@ -315,6 +317,17 @@ export function CornerstoneGuidePage({ guide }: { guide: CornerstoneGuide }) {
           ))}
         </div>
       </section>
+
+      {topicAuthority ? (
+        <nav aria-label="Parent Texas law framework" className="mt-10 rounded-xl border border-border bg-muted/20 p-5">
+          <h2 className="font-display text-xl tracking-tight">Understand the controlling law</h2>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">This practical guide belongs to the larger Texas legal framework. Review the underlying statute, primary sources and related legal issues before relying on a general explanation.</p>
+          <div className="mt-3 flex flex-wrap gap-4 text-sm font-semibold">
+            <a className="text-primary underline underline-offset-4" href={`/laws/topic/${topicAuthority.slug}`}>{topicAuthority.title} →</a>
+            <Link className="text-primary underline underline-offset-4" to="/laws/topics">Browse all legal topics →</Link>
+          </div>
+        </nav>
+      ) : null}
 
       {lawMeta ? (
         <section className="mt-12 border-t border-border pt-8" aria-label="Texas law references and primary authorities">
