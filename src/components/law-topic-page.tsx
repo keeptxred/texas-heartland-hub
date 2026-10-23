@@ -5,7 +5,7 @@ import { buildSeo, SITE_URL } from "@/lib/seo";
 export function lawTopicHead(topic: LawTopic) {
   const path = `/laws/topic/${topic.slug}`;
   const url = `${SITE_URL}${path}`;
-  const seo = buildSeo({ title: topic.title, description: topic.dek, path, type: "article", publishedTime: `${topic.updated}T12:00:00-05:00`, modifiedTime: `${topic.updated}T12:00:00-05:00`, section: "Texas Law Library", author: "Keep TX Red Law Desk" });
+  const seo = buildSeo({ title: topic.title, description: topic.dek, path, type: "article", publishedTime: topic.published ? `${topic.published}T12:00:00-05:00` : undefined, modifiedTime: `${topic.updated}T12:00:00-05:00`, section: "Texas Law Library", author: "Keep TX Red Law Desk" });
   return {
     meta: seo.meta,
     links: seo.links,
