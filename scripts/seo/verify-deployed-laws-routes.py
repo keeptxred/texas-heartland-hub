@@ -33,6 +33,7 @@ CHECKS = [
     ("/laws/topic/family-custody-child-support-law", "Texas Family Law: Divorce, Child Custody, Visitation and Child Support", "https://keeptxred.com/laws/topic/family-custody-child-support-law", True, True),
     ("/laws/topic/wills-probate-inheritance-law", "Texas Wills, Probate and Inheritance Law Explained", "https://keeptxred.com/laws/topic/wills-probate-inheritance-law", True, True),
     ("/laws/topic/criminal-offenses-penalties-law", "Texas Criminal Law Explained: Offenses, Penalties and Legal Defenses", "https://keeptxred.com/laws/topic/criminal-offenses-penalties-law", True, True),
+    ("/laws/topic/business-formation-llc-law", "Texas Business Formation Law: LLCs, Corporations and Registered Agents", "https://keeptxred.com/laws/topic/business-formation-llc-law", True, True),
 ]
 
 
