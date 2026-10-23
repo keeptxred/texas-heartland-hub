@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { LawTopic } from "@/data/law-topics";
 import { buildSeo, SITE_URL } from "@/lib/seo";
+import { publicSupportingGuidesForAuthority } from "@/lib/law-authority-crosslinks";
 
 export function lawTopicHead(topic: LawTopic) {
   const path = `/laws/topic/${topic.slug}`;
@@ -18,6 +19,7 @@ export function lawTopicHead(topic: LawTopic) {
 }
 
 export function LawTopicPage({ topic }: { topic: LawTopic }) {
+  const supportingGuides = publicSupportingGuidesForAuthority(topic.slug);
   return (
     <article className="mx-auto max-w-4xl px-4 py-14 sm:px-6">
       <nav aria-label="Breadcrumb" className="mb-6 text-[11px] uppercase tracking-[0.22em] text-muted-foreground"><Link to="/">Home</Link><span className="mx-2">/</span><Link to="/laws">Texas Laws</Link><span className="mx-2">/</span><a href="/laws/topics">Law Topics</a></nav>
@@ -47,6 +49,21 @@ export function LawTopicPage({ topic }: { topic: LawTopic }) {
       <section className="mt-11"><h2 className="border-b pb-2 font-display text-3xl tracking-tight">Common questions</h2><div className="mt-5 space-y-5">{topic.questions.map((item) => <div key={item.q}><h3 className="font-semibold">{item.q}</h3><p className="mt-2 text-sm leading-7 text-muted-foreground">{item.a}</p></div>)}</div></section>
 
       <section className="mt-12 border-t pt-8"><p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-muted-foreground">Primary law</p><h2 className="mt-2 font-display text-2xl tracking-tight">Official sources</h2><ul className="mt-4 space-y-3 text-sm">{topic.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary underline underline-offset-4">{source.label}</a>{source.note ? <span className="ml-2 text-muted-foreground">— {source.note}</span> : null}</li>)}</ul></section>
+
+      {supportingGuides.length > 0 ? (
+        <section className="mt-12 border-t pt-8" aria-labelledby="law-supporting-guides-heading">
+          <h2 id="law-supporting-guides-heading" className="font-display text-2xl tracking-tight">Explore detailed guides on this law</h2>
+          <p className="mt-2 text-sm text-muted-foreground">These individual guides meet the site's verified law-reference and publication requirements. Refer back to the official law above for controlling text.</p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            {supportingGuides.map((guide) => (
+              <a key={guide.slug} href={guide.href} className="rounded-lg border bg-card p-4 hover:border-primary hover:bg-primary/5">
+                <span className="text-sm font-semibold text-primary">{guide.title} →</span>
+                <span className="mt-2 block text-xs leading-5 text-muted-foreground">{guide.description}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section className="mt-10 rounded-xl border bg-muted/20 p-6"><h2 className="font-display text-2xl tracking-tight">Related KTR coverage</h2><div className="mt-4 grid gap-3 sm:grid-cols-2">{topic.related.map((item) => <a key={item.href} href={item.href} className="rounded-lg border bg-background p-4 text-sm font-semibold hover:border-primary hover:text-primary">{item.label} →</a>)}</div></section>
 
