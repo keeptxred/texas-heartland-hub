@@ -4,6 +4,8 @@ export type LawTopic = {
   title: string;
   dek: string;
   updated: string;
+  /** Original publication date, only when known. Never infer this from last review. */
+  published?: string;
   quickAnswer: string;
   appliesTo: string[];
   framework: string[];
