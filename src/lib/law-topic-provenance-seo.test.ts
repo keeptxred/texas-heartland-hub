@@ -24,6 +24,7 @@ describe("law topic publication and SEO provenance", () => {
       "family-custody-child-support-law",
       "wills-probate-inheritance-law",
       "criminal-offenses-penalties-law",
+      "business-formation-llc-law",
     ]) {
       const topic = getLawTopic(slug);
       expect(topic?.published).toBe("2026-10-23");
