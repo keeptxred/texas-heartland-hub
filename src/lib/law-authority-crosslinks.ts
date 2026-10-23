@@ -44,6 +44,7 @@ export function publicSupportingGuidesForAuthority(authoritySlug: string) {
     "employment-wages-workplace-rights-law": "employment",
     "family-custody-child-support-law": "family",
     "wills-probate-inheritance-law": "probate",
+    "criminal-offenses-penalties-law": "criminal",
     "consumer-protection-deceptive-trade-law": "consumer",
     "election-law": "elections",
     "open-records-public-information": "open-government",
