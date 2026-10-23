@@ -14,6 +14,7 @@ export const Route = createFileRoute("/laws/topics")({
     const seo = buildSeo({ title: TITLE, description: DESCRIPTION, path: "/laws/topics" });
     return { meta: seo.meta, links: seo.links, scripts: [
       { type: "application/ld+json", children: JSON.stringify(webPageJsonLd({ name: TITLE, description: DESCRIPTION, path: "/laws/topics", type: "CollectionPage" })) },
+      { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: SITE_URL }, { "@type": "ListItem", position: 2, name: "Texas Laws", item: `${SITE_URL}/laws` }, { "@type": "ListItem", position: 3, name: "Law Topics", item: `${SITE_URL}/laws/topics` }] }) },
       { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "ItemList", name: "Texas Law Topics", numberOfItems: INDEXABLE_LAW_TOPICS.length, itemListElement: INDEXABLE_LAW_TOPICS.map((topic, index) => ({ "@type": "ListItem", position: index + 1, name: topic.title, url: `${SITE_URL}/laws/topic/${topic.slug}` })) }) },
     ] };
   },
@@ -27,6 +28,8 @@ function LawTopicsHub() {
   );
   return <main className="bg-background">
     <section className="border-b bg-secondary text-secondary-foreground"><div className="mx-auto max-w-[1180px] px-6 py-16 md:py-20"><p className="text-xs font-extrabold uppercase tracking-[0.25em] text-primary">Keep TX Red Law Desk</p><h1 className="mt-4 max-w-5xl font-display text-5xl leading-none tracking-tight md:text-7xl">Texas Law Library</h1><p className="mt-6 max-w-3xl text-lg leading-8 text-white/80 md:text-xl">The statutes behind the political arguments — organized by the legal questions Texans actually face.</p><p className="mt-5 max-w-3xl text-sm leading-7 text-white/65">Each guide starts with the controlling Texas code or official source, explains which government entity has authority, and connects the legal framework to KTR policy trackers, bills, elections, and editorial arguments.</p></div></section>
+    <nav aria-label="Breadcrumb" className="mx-auto max-w-[1180px] px-6 pt-6 text-xs text-muted-foreground"><Link to="/">Home</Link><span className="mx-2">/</span><Link to="/laws">Texas Laws</Link><span className="mx-2">/</span><span aria-current="page">Topics</span></nav>
+    <div className="mx-auto max-w-[1180px] px-6 pt-5 text-sm"><a href="https://statutes.capitol.texas.gov/" target="_blank" rel="noopener noreferrer" className="font-semibold text-primary underline underline-offset-4">Official Texas codes and statutes ↗</a></div>
     <section className="mx-auto max-w-[1180px] px-6 py-12">
       <label htmlFor="law-topic-filter" className="block text-sm font-bold">Search the Texas law-topic library</label>
       <input id="law-topic-filter" type="search" value={query} onChange={(event) => setQuery(event.target.value)}

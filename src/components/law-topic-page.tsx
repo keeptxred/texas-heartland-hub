@@ -26,6 +26,16 @@ export function LawTopicPage({ topic }: { topic: LawTopic }) {
       <p className="mt-5 font-serif text-lg italic leading-snug text-muted-foreground md:text-xl">{topic.dek}</p>
       <div className="mt-6 border-y py-3 text-xs text-muted-foreground"><span className="font-semibold text-foreground">Keep TX Red Law Desk</span><span className="mx-2">•</span>Reviewed {new Date(`${topic.updated}T12:00:00-05:00`).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</div>
 
+      <nav aria-label="Related Texas law resources" className="mt-7 flex flex-wrap gap-3 text-sm">
+        <Link to="/laws" className="rounded-lg border px-4 py-2 font-semibold hover:border-primary">Texas laws hub</Link>
+        <Link to="/laws/topics" className="rounded-lg border px-4 py-2 font-semibold hover:border-primary">All law topics</Link>
+        <a href="/civic-tools/texas-law-finder" className="rounded-lg border px-4 py-2 font-semibold hover:border-primary">Texas law finder</a>
+        <a href="https://statutes.capitol.texas.gov/" target="_blank" rel="noopener noreferrer" className="rounded-lg border px-4 py-2 font-semibold hover:border-primary">Official Texas statutes ↗</a>
+      </nav>
+      <aside className="mt-7 border-l-4 border-border bg-muted/20 p-5 text-sm leading-7 text-muted-foreground" aria-label="Understanding legal status">
+        <strong className="text-foreground">How to use this guide:</strong> A bill is a proposal until enacted. A statute, agency rule, court decision, and local ordinance may have different effective dates and scopes. Refer to the official sources below for controlling language, and check the individual law's effective date before relying on a summary.
+      </aside>
+
       <section className="mt-8 border-l-4 border-primary bg-primary/5 p-6"><p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-primary">Quick answer</p><p className="mt-3 text-base font-semibold leading-7">{topic.quickAnswer}</p></section>
 
       <section className="mt-10"><h2 className="border-b pb-2 font-display text-3xl tracking-tight">Who this law can affect</h2><div className="mt-5 grid gap-3 sm:grid-cols-2">{topic.appliesTo.map((item) => <div key={item} className="rounded-lg border bg-card p-4 text-sm font-semibold">{item}</div>)}</div></section>
