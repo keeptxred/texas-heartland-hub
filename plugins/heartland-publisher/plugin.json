@@ -1,0 +1,21 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "heartland-publisher",
+  "version": "2.0.0",
+  "description": "Private approved-artwork publishing to Printify, eligible Etsy listings, and KeepTXRed or TexasDefined stores.",
+  "author": { "name": "KeepTXRed", "url": "https://keeptxred.com" },
+  "homepage": "https://keeptxred.com/publisher/connect",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Heartland Publisher",
+        "shortDescription": "Publish approved shirt and sticker artwork",
+        "longDescription": "Private Printify publishing with approved product plans, duplicate protection, website routing, and verified listing links.",
+        "developerName": "KeepTXRed",
+        "category": "Productivity",
+        "capabilities": ["Read", "Write"],
+        "websiteURL": "https://keeptxred.com/publisher/connect"
+      }
+    }
+  }
+}
