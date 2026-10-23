@@ -26,6 +26,10 @@ CHECKS = [
     ("/laws/effective-dates", "Texas Laws Taking Effect in 2026", "https://keeptxred.com/laws/effective-dates", True, True),
     ("/laws/topics", "Texas Law Library", "https://keeptxred.com/laws/topics", True, True),
     ("/laws/topic/property-tax-law", "Texas Property Tax Policy & Law", "https://keeptxred.com/laws/topic/property-tax-law", True, True),
+    ("/laws/topic/driving-traffic-insurance-law", "Texas Driving, Driver's Licenses, Traffic and Auto Insurance Laws", "https://keeptxred.com/laws/topic/driving-traffic-insurance-law", True, True),
+    ("/laws/topic/landlord-tenant-rentals-law", "Texas Landlord-Tenant Law: Repairs, Deposits, Eviction and Tenant Rights", "https://keeptxred.com/laws/topic/landlord-tenant-rentals-law", True, True),
+    ("/laws/topic/employment-wages-workplace-rights-law", "Texas Employment Law: Wages, Final Pay, Discrimination and Workplace Rights", "https://keeptxred.com/laws/topic/employment-wages-workplace-rights-law", True, True),
+    ("/laws/topic/consumer-protection-deceptive-trade-law", "Texas Consumer Protection Law: Deceptive Practices, Complaints and Debt Collection", "https://keeptxred.com/laws/topic/consumer-protection-deceptive-trade-law", True, True),
 ]
 
 

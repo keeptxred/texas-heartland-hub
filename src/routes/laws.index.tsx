@@ -159,18 +159,19 @@ function LawsHubPage() {
         <p className="mt-2 text-muted-foreground">Start with an everyday legal question, browse the complete law library, or consult the controlling code.</p>
         <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4">
           {[
-            ["Driving & Traffic", "/civic-tools/texas-law-finder"],
-            ["Property & Housing", "/laws/topic/property-tax-law"],
+            ["Driving & Traffic", "/laws/topic/driving-traffic-insurance-law"],
+            ["Landlord & Tenant", "/laws/topic/landlord-tenant-rentals-law"],
             ["Firearms & Self-Defense", "/laws/topic/self-defense-use-of-force"],
             ["Family & Child Support", "/laws/topics"],
-            ["Employment", "/laws/topics"],
-            ["Consumer Rights", "/laws/topics"],
+            ["Employment", "/laws/topic/employment-wages-workplace-rights-law"],
+            ["Consumer Rights", "/laws/topic/consumer-protection-deceptive-trade-law"],
             ["Elections", "/laws/topic/election-law"],
             ["Criminal Law", "/laws/topics"],
           ].map(([label, href]) => <a key={href} href={href} className="border-2 border-border bg-card px-4 py-4 text-sm font-bold hover:border-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">{label} →</a>)}
         </div>
         <div className="mt-5 flex flex-wrap gap-5 text-sm">
           <Link to="/laws/topics" className="font-semibold text-primary underline underline-offset-4">Browse full Texas law-topic library →</Link>
+          <Link to="/laws/topic/$slug" params={{ slug: "property-tax-law" }} className="font-semibold text-primary underline underline-offset-4">Texas property tax law →</Link>
           <a href="https://statutes.capitol.texas.gov/" rel="noopener noreferrer" className="font-semibold underline underline-offset-4">Official Texas statutes ↗</a>
           <a href="https://www.sos.state.tx.us/elections/" rel="noopener noreferrer" className="font-semibold underline underline-offset-4">Official elections and ballot notices ↗</a>
         </div>
