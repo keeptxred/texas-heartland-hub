@@ -60,6 +60,24 @@ class MemoryStore extends Store {
     return structuredClone(this.products) as T;
   }
 }
+it("accepts PostgREST's empty successful cleanup response", async () => {
+  const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 204 }));
+  vi.stubGlobal("fetch", fetchMock);
+  const persistent = new Store({
+    SUPABASE_URL: "https://example.supabase.co",
+    SUPABASE_SERVICE_ROLE_KEY: "test-service-key",
+  });
+  await expect(
+    persistent.rest("publisher_state?expires_at=lt.now", "DELETE", undefined, "return=minimal"),
+  ).resolves.toBeNull();
+  expect(fetchMock).toHaveBeenCalledWith(
+    expect.stringContaining("publisher_state?expires_at=lt.now"),
+    expect.objectContaining({
+      method: "DELETE",
+      headers: expect.objectContaining({ Prefer: "return=minimal" }),
+    }),
+  );
+});
 function chunk(type: string, data: Buffer) {
   const payload = Buffer.concat([Buffer.from(type), data]);
   let crc = 0xffffffff;
