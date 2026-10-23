@@ -168,6 +168,7 @@ function LawsHubPage() {
             ["Elections", "/laws/topic/election-law"],
             ["Criminal Law", "/laws/topic/criminal-offenses-penalties-law"],
             ["Wills & Probate", "/laws/topic/wills-probate-inheritance-law"],
+            ["Business Formation", "/laws/topic/business-formation-llc-law"],
             ["Property Tax Law", "/laws/topic/property-tax-law"],
             ["Public Records", "/laws/topic/open-records-public-information"],
             ["Parental Rights", "/laws/topic/parental-rights-education-law"],
