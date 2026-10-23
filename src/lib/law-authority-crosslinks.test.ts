@@ -16,6 +16,7 @@ describe("reciprocal Texas legal authority network", () => {
     ["family", "family-custody-child-support-law"],
     ["probate", "wills-probate-inheritance-law"],
     ["criminal", "criminal-offenses-penalties-law"],
+    ["business", "business-formation-llc-law"],
     ["consumer", "consumer-protection-deceptive-trade-law"],
     ["elections", "election-law"],
     ["open-government", "open-records-public-information"],
@@ -33,6 +34,7 @@ describe("reciprocal Texas legal authority network", () => {
     "family-custody-child-support-law",
     "wills-probate-inheritance-law",
     "criminal-offenses-penalties-law",
+    "business-formation-llc-law",
     "consumer-protection-deceptive-trade-law",
   ])("only surfaces verified, public, canonically linked guides under %s", (slug) => {
     const guides = publicSupportingGuidesForAuthority(slug);
