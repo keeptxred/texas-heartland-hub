@@ -1,0 +1,69 @@
+name: Texas laws Lighthouse baseline
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/laws/report-lighthouse-baseline.mjs"
+      - "scripts/laws/test-report-lighthouse-baseline.mjs"
+      - "src/lib/laws-lighthouse-baseline.test.ts"
+      - ".github/workflows/verify-laws-lighthouse.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: laws-lighthouse-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+
+      - name: Check reporter without network
+        run: node --test scripts/laws/test-report-lighthouse-baseline.mjs
+
+      - name: Audit actual public legal pages using installed Chrome
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p lighthouse-law-reports
+          if command -v google-chrome >/dev/null 2>&1; then
+            export CHROME_PATH="$(command -v google-chrome)"
+          elif command -v chromium >/dev/null 2>&1; then
+            export CHROME_PATH="$(command -v chromium)"
+          else
+            echo "::error::No Chrome available on runner"
+            exit 1
+          fi
+          echo "Chrome: ${CHROME_PATH}"
+          for page in laws laws-topics laws-rentals; do
+            case "${page}" in
+              laws) url="https://keeptxred.com/laws" ;;
+              laws-topics) url="https://keeptxred.com/laws/topics" ;;
+              laws-rentals) url="https://keeptxred.com/laws/topic/landlord-tenant-rentals-law" ;;
+            esac
+            npx --yes lighthouse@12 "${url}" \
+              --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" \
+              --only-categories="performance,accessibility,best-practices,seo" \
+              --output=json --output-path="lighthouse-law-reports/${page}.json" --quiet
+          done
+
+      - name: Report measured lab metrics in GitHub summary
+        run: node scripts/laws/report-lighthouse-baseline.mjs lighthouse-law-reports
+
+      - name: Preserve reports for human performance analysis
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: texas-law-lighthouse-baseline
+          path: lighthouse-law-reports/*.json
+          if-no-files-found: ignore
+          retention-days: 5
