@@ -71,6 +71,6 @@ test("long law pages have working keyboard-friendly source navigation", async ({
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/#law-sources$/);
   await expect(page.locator("#law-sources")).toBeVisible();
-  await expect(page.getByRole("heading", { name: /official texas law and source documents/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^official sources$/i })).toBeVisible();
   await expectNoOverflow(page);
 });
