@@ -40,7 +40,7 @@ export function renderReport(reports) {
   lines.push("", "Scores are a single audit snapshot, not a guarantee of stable rankings. Review trace/report artifacts and repeat under consistent conditions before claiming measured improvement.");
   return lines.join("\n") + "\n";
 }
-if (process.argv[1]?.endsWith("report-lighthouse-baseline.mjs")) {
+if (basename(process.argv[1] ?? "") === "report-lighthouse-baseline.mjs") {
   const dir = process.argv[2];
   if (!dir) throw new Error("Usage: node report-lighthouse-baseline.mjs <audit-json-directory>");
   const files = readdirSync(dir).filter((file) => file.endsWith(".json")).sort();
