@@ -18,6 +18,12 @@ test("inventory covers every current law authority and does not miss new modules
   assert.ok(records.some((r) => r.slug === "business-formation-llc-law"));
 });
 
+test("accepts quoted JSON-style fields emitted by generated authority modules", () => {
+  const record = parseAuthority('export const EXAMPLE = {\\n  "slug": "generated-topic",\\n  "updated": "2026-10-23"\\n};', "generated.ts");
+  assert.equal(record.slug, "generated-topic");
+  assert.equal(record.updated, "2026-10-23");
+});
+
 test("reject malformed or fictitious review dates", () => {
   assert.throws(() => parseAuthority('slug: "example", updated: "2026-02-31"', "bad"), /missing|invalid/);
   assert.throws(() => parseAuthority('slug: "example",\n updated: "2026-02-31"', "bad"), /invalid review calendar date/);
