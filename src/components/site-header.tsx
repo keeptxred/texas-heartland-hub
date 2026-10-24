@@ -46,7 +46,7 @@ export function SiteHeader() {
                     key={article.slug}
                     to="/news/$slug"
                     params={{ slug: article.slug }}
-                    className="flex max-w-[320px] items-center gap-2 whitespace-nowrap hover:text-white"
+                    className="flex min-h-8 max-w-[320px] items-center gap-2 whitespace-nowrap hover:text-white"
                   >
                     <span
                       className={`size-1.5 shrink-0 rounded-full ${article.is_breaking ? "bg-primary" : "bg-accent"}`}
@@ -56,21 +56,21 @@ export function SiteHeader() {
                   </Link>
                 ))
               ) : (
-                <Link to="/elections/2026" className="flex items-center gap-2 whitespace-nowrap hover:text-white">
+                <Link to="/elections/2026" className="flex min-h-8 items-center gap-2 whitespace-nowrap hover:text-white">
                   <span className="size-1.5 rounded-full bg-primary" aria-hidden />
                   {electionHeadline}
                 </Link>
               )}
             </div>
           </div>
-          <Link to="/news" className="hidden shrink-0 text-[10px] font-bold uppercase tracking-[0.16em] text-white/75 hover:text-white sm:block">
+          <Link to="/news" className="hidden min-h-8 shrink-0 items-center text-[10px] font-bold uppercase tracking-[0.16em] text-white/75 hover:text-white sm:inline-flex">
             All news →
           </Link>
         </div>
       </div>
 
       <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-5 px-4 py-3 sm:px-6 lg:px-8">
-        <Link to="/" className="group shrink-0">
+        <Link to="/" className="group flex min-h-11 shrink-0 flex-col justify-center">
           <span className="flex items-baseline gap-1.5 font-display text-2xl leading-none tracking-tight">
             Keep <span className="text-primary">TX</span> Red
           </span>
@@ -90,7 +90,7 @@ export function SiteHeader() {
                 <DropdownMenu.Trigger asChild>
                   <button
                     type="button"
-                    className={`inline-flex min-h-10 items-center gap-1 rounded-md px-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                    className={`inline-flex min-h-11 items-center gap-1 rounded-md px-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                       active ? "bg-white/10 text-white" : "text-white/85 hover:bg-white/10 hover:text-white"
                     }`}
                   >
@@ -141,7 +141,7 @@ export function SiteHeader() {
           <Link
             to={SHOP_LINK.to}
             search={SHOP_LINK.search}
-            className="ml-1 inline-flex min-h-10 items-center rounded-md border border-white/20 px-3 text-sm font-semibold text-white/90 transition hover:border-white/40 hover:bg-white/10 hover:text-white"
+            className="ml-1 inline-flex min-h-11 items-center rounded-md border border-white/20 px-3 text-sm font-semibold text-white/90 transition hover:border-white/40 hover:bg-white/10 hover:text-white"
             activeProps={{ className: "border-primary text-white" }}
           >
             {SHOP_LINK.label}
@@ -152,7 +152,7 @@ export function SiteHeader() {
           type="button"
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
-          className="rounded-md p-2 transition hover:bg-white/10 lg:hidden"
+          className="inline-flex min-h-11 min-w-11 flex-col items-start justify-center rounded-md p-2 transition hover:bg-white/10 lg:hidden"
           onClick={() => setOpen((value) => !value)}
         >
           <span className="block w-6 border-t-2 border-current" />
@@ -173,13 +173,13 @@ export function SiteHeader() {
                   <Link
                     to={group.href}
                     onClick={() => setOpen(false)}
-                    className="flex items-center justify-between text-sm font-bold text-white"
+                    className="flex min-h-11 items-center justify-between text-sm font-bold text-white"
                   >
                     <span>{group.label}</span>
                     <span className="text-primary" aria-hidden>→</span>
                   </Link>
                 ) : (
-                  <div className="flex items-center justify-between text-sm font-bold text-white">
+                  <div className="flex min-h-11 items-center justify-between text-sm font-bold text-white">
                     <span>{group.label}</span>
                   </div>
                 )}
@@ -194,7 +194,7 @@ export function SiteHeader() {
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={() => setOpen(false)}
-                          className="rounded py-2 text-xs font-medium leading-5 text-white/70 hover:text-white"
+                          className="flex min-h-11 items-center rounded py-2 text-xs font-medium leading-5 text-white/70 hover:text-white"
                         >
                           {link.label} ↗
                         </a>
@@ -203,7 +203,7 @@ export function SiteHeader() {
                           key={link.to}
                           to={link.to}
                           onClick={() => setOpen(false)}
-                          className="rounded py-2 text-xs font-medium leading-5 text-white/70 hover:text-white"
+                          className="flex min-h-11 items-center rounded py-2 text-xs font-medium leading-5 text-white/70 hover:text-white"
                         >
                           {link.label}
                         </Link>
