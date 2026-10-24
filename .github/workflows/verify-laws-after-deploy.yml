@@ -30,6 +30,9 @@ jobs:
       - name: Checkout verified law smoke checks
         uses: actions/checkout@v5
 
+      - name: Validate law smoke script syntax
+        run: python3 -m py_compile scripts/verify-deployed-laws-runtime.py scripts/verify-deployed-law-guide-rendering.py
+
       - name: Verify all laws routes and shared guide on workers.dev
         shell: bash
         env:
