@@ -30,6 +30,15 @@ Call `publisher_catalog` after authenticating. It reads the actual shop sales ch
 
 ## Security and operations
 
+Printify failures report the HTTP method, API path (without query), status, content type,
+request ID/edge ray when present, and bounded JSON code/message. Credentials and URLs
+are redacted; HTML bodies and oversized/malformed bodies are omitted. No failed request
+is automatically retried. Use this evidence to distinguish upstream API permissions from
+an edge access/challenge response before changing credentials. Catalog reads use
+`catalog.read`, shop/template reads use `shops.read`/`products.read`, and preparation's
+`POST /v1/uploads/images.json` requires `uploads.write`. Successful shop reads alone
+do not establish permission to upload artwork or create products.
+
 OAuth authorization codes use S256 PKCE, pinned client metadata, exact redirects/resource, state and issuer identification. Consent nonces/codes are one-use and expire. One-hour access tokens and rotating refresh tokens are stored only as SHA-256 indexes. Revoking either token invalidates its connection family; changing the admin passcode invalidates existing credentials. Owner login is rate limited to five attempts per IP per fifteen minutes; consent initialization is also bounded. Expired transient records are removed during connection initialization. Job checkpoints persist for ten years to preserve duplicate protection; administrators should archive them only after deciding retries are no longer possible.
 
 The new table has RLS and no anon/authenticated grants or policies. Only the server service role accesses it. Public product data continues through the existing products table and public store APIs. The initial `/api/admin/printify-publish` shared-token endpoint returns 410 to prevent bypassing this workflow.
