@@ -1,26 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const LOCAL_PREVIEW = "http://127.0.0.1:4173";
-const ROUTES = [
-  "/laws",
-  "/laws/topics",
-  "/laws/topic/landlord-tenant-rentals-law",
-  "/laws/topic/employment-wages-workplace-rights-law",
-] as const;
-
-test.beforeEach(async ({ page }) => {
-  await page.route(`${LOCAL_PREVIEW}/**`, async (route) => {
-    await route.continue({
-      headers: {
-        ...route.request().headers(),
-        "x-forwarded-host": "keeptxred.com",
-        "x-forwarded-proto": "https",
-      },
-    });
-  });
-});
-
-async function expectNoOverflow(page: Page) {
+const ROUTES = [\n  "/laws",\n  "/laws/topics",\n  "/laws/topic/landlord-tenant-rentals-law",\n  "/laws/topic/employment-wages-workplace-rights-law",\n] as const;\n\nasync function expectNoOverflow(page: Page) {
   const widths = await page.evaluate(() => ({
     viewport: window.innerWidth,
     scroll: document.documentElement.scrollWidth,
