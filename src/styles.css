@@ -81,6 +81,14 @@
   h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.01em; }
 }
 
+/* Accessible Texas-red text on navy (header and dark heroes). Preserve the
+   deeper brand red for buttons and links against light cream backgrounds. */
+@layer utilities {
+  .bg-secondary .text-primary {
+    color: #fca5a5;
+  }
+}
+
 /* Keep article section labels visually aligned with the centered story column. */
 article > .prose > section > h2 {
   text-align: center;
