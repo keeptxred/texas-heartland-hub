@@ -1,36 +1,17 @@
+import { execFileSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { summarizeLighthouse, renderReport } from "../../scripts/laws/report-lighthouse-baseline.mjs";
 
-const sample = {
-  finalDisplayedUrl: "https://keeptxred.com/laws",
-  categories: {
-    performance: { score: 0.85 },
-    accessibility: { score: 0.92 },
-    "best-practices": { score: 0.96 },
-    seo: { score: 0.95 },
-  },
-  audits: {
-    "largest-contentful-paint": { displayValue: "2.2 s" },
-    "cumulative-layout-shift": { displayValue: "0.012" },
-    "total-blocking-time": { displayValue: "30 ms" },
-  },
-};
-describe("read-only law authority Lighthouse baseline", () => {
-  it("extracts measured scores and lab metrics, not speculative field values", () => {
-    const row = summarizeLighthouse(sample);
-    expect(row.scores).toEqual([85, 92, 96, 95]);
-    expect(row.lcp).toBe("2.2 s");
-    expect(row.cls).toBe("0.012");
-    expect(row.tbt).toBe("30 ms");
+describe("Lighthouse legal-page performance audit contract", () => {
+  it("runs audited report schema, provenance, and failure mode tests", () => {
+    expect(() => execFileSync("node", ["--test", "scripts/laws/test-report-lighthouse-baseline.mjs"], {
+      encoding: "utf8", timeout: 15000,
+    })).not.toThrow();
   });
-  it("makes a careful distinction between synthetic tests and field CWV", () => {
-    const report = renderReport([summarizeLighthouse(sample)]);
-    expect(report).toContain("Lab data only");
-    expect(report).toContain("real-user Core Web Vitals");
-    expect(report).toContain("https://keeptxred.com/laws");
-  });
-  it("rejects incomplete audits instead of reporting success", () => {
-    expect(() => summarizeLighthouse({ ...sample, categories: { performance: { score: 0.9 } } })).toThrow("missing scored categories");
-    expect(() => renderReport([])).toThrow("No Lighthouse audits produced");
+  it("prohibits silent performance promises without metrics", () => {
+    const source = readFileSync("scripts/laws/report-lighthouse-baseline.mjs", "utf8");
+    expect(source).toContain("Lab data only");
+    expect(source).toContain("real-user Core Web Vitals");
+    expect(source).toContain("missing scored categories");
   });
 });
