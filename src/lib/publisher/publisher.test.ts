@@ -220,6 +220,18 @@ async function plan() {
 }
 
 describe("secure artwork and catalog", () => {
+  it("accepts the observed ChatGPT signed storage account while rejecting other Azure accounts", () => {
+    const host = "oaisdmntprcentralus.blob.core.windows.net";
+    expect(artworkUrl(`https://${host}/private/file.png?sig=test-signature`).hostname).toBe(host);
+    for (const url of [
+      `https://${host}/private/file.png`,
+      "https://untrusted.blob.core.windows.net/private/file.png?sig=test-signature",
+      `https://${host}.evil.example/private/file.png?sig=test-signature`,
+      `http://${host}/private/file.png?sig=test-signature`,
+      `https://user:password@${host}/private/file.png?sig=test-signature`,
+    ])
+      expect(() => artworkUrl(url)).toThrow(PublisherError);
+  });
   it("diagnoses unsupported artwork references without exposing signed queries or paths", () => {
     try {
       artworkUrl("https://example.com/private-artwork.png?signature=secret-value");

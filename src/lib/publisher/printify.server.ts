@@ -230,13 +230,20 @@ export class Printify {
 }
 export function artworkUrl(raw: string) {
   const url = new URL(raw);
+  const openAiContent =
+    url.hostname === "files.oaiusercontent.com" || url.hostname.endsWith(".oaiusercontent.com");
+  // Observed from ChatGPT's resolved file-param transfer. Pin the storage account,
+  // not Azure's shared domain, and require its signed read URL.
+  const openAiSignedBlob =
+    url.hostname === "oaisdmntprcentralus.blob.core.windows.net" &&
+    Boolean(url.searchParams.get("sig"));
   if (
     url.protocol !== "https:" ||
     url.port ||
     url.username ||
     url.password ||
     url.hash ||
-    !(url.hostname === "files.oaiusercontent.com" || url.hostname.endsWith(".oaiusercontent.com"))
+    !(openAiContent || openAiSignedBlob)
   )
     throw new PublisherError(
       `Artwork must use a temporary ChatGPT file URL (received scheme=${url.protocol.replace(/[^a-zA-Z:-]/g, "").slice(0, 32)}, host=${url.hostname.replace(/[^a-zA-Z0-9.:-]/g, "").slice(0, 253) || "none"}). Signed URLs and local paths are not included in diagnostics.`,
