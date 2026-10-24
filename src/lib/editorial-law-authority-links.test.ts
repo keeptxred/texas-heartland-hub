@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { ARTICLES } from "@/data/articles";
+import { ARTICLES, type Article } from "@/data/articles";
 import {
   lawAuthorityForArticle,
   shouldShowEditorialLawLibrary,
@@ -21,7 +21,7 @@ describe("bidirectional verified legal editorials", () => {
 
   it("recognizes future articles that intentionally carry laws content classification", () => {
     const future = { ...find("constitutional-carry-one-year-later"), slug: "new-law-article",
-      topics: ["legislature"], subcategory: "state", contentCategory: "laws" } as const;
+      topics: ["legislature"], subcategory: "state", contentCategory: "laws" } as Article;
     expect(shouldShowEditorialLawLibrary(future)).toBe(true);
     expect(lawAuthorityForArticle(future)).toBeNull();
   });
