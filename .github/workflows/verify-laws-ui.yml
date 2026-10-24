@@ -25,6 +25,8 @@ jobs:
   law-ux:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      CLOUDFLARE_VITE_REMOTE_BINDINGS: "false"
     steps:
       - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
