@@ -7,7 +7,8 @@ const infolinks = root.split("const INFOLINKS_BOOTSTRAP = ")[1]?.split("function
 
 describe("Texas legal authority first-render ad scheduling", () => {
   it("preserves both providers and every existing eligibility gate", () => {
-    expect(adsense).toContain("pagead2.googlesyndication.com");
+    expect(root).toContain("pagead2.googlesyndication.com/pagead/js/adsbygoogle.js");
+    expect(adsense).toContain("ADSENSE_SCRIPT");
     expect(infolinks).toContain("resources.infolinks.com");
     for (const script of [adsense, infolinks]) {
       expect(script).toContain("if(excluded||noindex||ineligible)return");
