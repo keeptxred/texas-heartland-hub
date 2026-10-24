@@ -97,11 +97,37 @@ export class Printify {
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
       signal: AbortSignal.timeout(45000),
     });
-    if (!response.ok)
+    if (!response.ok) {
+      // Only expose bounded upstream error fields; never echo request data or credentials.
+      const clean = (value: unknown) =>
+        String(value ?? "")
+          .replaceAll(token, "[redacted]")
+          .replace(/https?:\/\/[^\s"<>]+/gi, "[url redacted]")
+          .replace(/Bearer\s+\S+/gi, "Bearer [redacted]")
+          .replace(/[^\u0020-\u007e]/g, " ")
+          .slice(0, 400);
+      let detail = "upstream error body unavailable";
+      try {
+        const raw = new TextDecoder().decode(await bounded(response, 16384));
+        if (response.headers.get("content-type")?.includes("json")) {
+          const error = JSON.parse(raw);
+          detail = JSON.stringify({
+            code: clean(error.code ?? error.error?.code),
+            message: clean(error.message ?? error.error?.message ?? error.error),
+          });
+        } else {
+          detail = /cloudflare|attention required|just a moment/i.test(raw)
+            ? "non-JSON edge access/challenge response"
+            : "non-JSON upstream response (body omitted)";
+        }
+      } catch {
+        // A malformed/oversized error must not hide the endpoint and HTTP status.
+      }
       throw new PublisherError(
-        `Printify request failed (${response.status}); no automatic mutation retry`,
+        `Printify ${method} /v1${path.split("?")[0]} failed (${response.status}); content_type=${clean(response.headers.get("content-type"))}; request_id=${clean(response.headers.get("x-request-id"))}; cf_ray=${clean(response.headers.get("cf-ray"))}; ${detail}; no automatic mutation retry`,
         502,
       );
+    }
     const text = new TextDecoder().decode(await bounded(response, 12_000_000));
     return (text ? JSON.parse(text) : null) as T;
   }

@@ -220,6 +220,49 @@ async function plan() {
 }
 
 describe("secure artwork and catalog", () => {
+  it("identifies a denied endpoint and bounded upstream error without exposing credentials", async () => {
+    const request = vi
+      .fn()
+      .mockResolvedValue(
+        Response.json(
+          {
+            code: 403,
+            message: "Missing scope test-token https://private.example/file?sig=secret",
+          },
+          { status: 403, headers: { "x-request-id": "upstream-123" } },
+        ),
+      );
+    vi.stubGlobal("fetch", request);
+    const api = new Printify(store);
+    let message = "";
+    try {
+      await api.api("/uploads/images.json", "POST", { contents: "private-artwork" });
+    } catch (error) {
+      message = (error as Error).message;
+    }
+    expect(message).toContain("POST /v1/uploads/images.json failed (403)");
+    expect(message).toContain("Missing scope");
+    expect(message).toContain("upstream-123");
+    expect(message).not.toMatch(/test-token|sig=secret|private-artwork/);
+    expect(request).toHaveBeenCalledTimes(1);
+  });
+  it.each([
+    ["text/html", "<html>Cloudflare Attention Required</html>", "edge access/challenge"],
+    ["application/json", "x".repeat(17000), "body unavailable"],
+  ])("preserves endpoint diagnostics for %s errors", async (type, body, detail) => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(body, {
+          status: 403,
+          headers: { "content-type": type },
+        }),
+      ),
+    );
+    await expect(new Printify(store).api("/catalog/blueprints/145.json")).rejects.toThrow(
+      new RegExp(`GET /v1/catalog/blueprints/145.json.*403.*${detail}`),
+    );
+  });
   it("accepts the observed ChatGPT signed storage account while rejecting other Azure accounts", () => {
     const host = "oaisdmntprcentralus.blob.core.windows.net";
     expect(artworkUrl(`https://${host}/private/file.png?sig=test-signature`).hostname).toBe(host);
