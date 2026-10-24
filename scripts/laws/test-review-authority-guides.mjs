@@ -19,7 +19,13 @@ test("inventory covers every current law authority and does not miss new modules
 });
 
 test("accepts quoted JSON-style fields emitted by generated authority modules", () => {
-  const record = parseAuthority('export const EXAMPLE = {\\n  "slug": "generated-topic",\\n  "updated": "2026-10-23"\\n};', "generated.ts");
+  const sample = [
+    'export const EXAMPLE = {',
+    '  "slug": "generated-topic",',
+    '  "updated": "2026-10-23"',
+    '};',
+  ].join(String.fromCharCode(10));
+  const record = parseAuthority(sample, "generated.ts");
   assert.equal(record.slug, "generated-topic");
   assert.equal(record.updated, "2026-10-23");
 });
