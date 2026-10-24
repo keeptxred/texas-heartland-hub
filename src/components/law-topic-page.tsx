@@ -3,6 +3,7 @@ import { LegalHelpResources } from "@/components/laws/legal-help-resources";
 import type { LawTopic } from "@/data/law-topics";
 import { buildSeo, SITE_URL } from "@/lib/seo";
 import { publicSupportingGuidesForAuthority } from "@/lib/law-authority-crosslinks";
+import { publicEditorialArticlesForLawTopic } from "@/lib/editorial-law-authority-links";
 
 export function lawTopicHead(topic: LawTopic) {
   const path = `/laws/topic/${topic.slug}`;
@@ -21,6 +22,7 @@ export function lawTopicHead(topic: LawTopic) {
 
 export function LawTopicPage({ topic }: { topic: LawTopic }) {
   const supportingGuides = publicSupportingGuidesForAuthority(topic.slug);
+  const editorials = publicEditorialArticlesForLawTopic(topic.slug);
   return (
     <article className="mx-auto max-w-4xl px-4 py-14 sm:px-6">
       <nav aria-label="Breadcrumb" className="mb-6 text-[11px] uppercase tracking-[0.22em] text-muted-foreground"><Link to="/">Home</Link><span className="mx-2">/</span><Link to="/laws">Texas Laws</Link><span className="mx-2">/</span><a href="/laws/topics">Law Topics</a></nav>
@@ -77,6 +79,21 @@ export function LawTopicPage({ topic }: { topic: LawTopic }) {
               <a key={guide.slug} href={guide.href} className="rounded-lg border bg-card p-4 hover:border-primary hover:bg-primary/5">
                 <span className="text-sm font-semibold text-primary">{guide.title} →</span>
                 <span className="mt-2 block text-xs leading-5 text-muted-foreground">{guide.description}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {editorials.length > 0 ? (
+        <section className="mt-10 border-t pt-8" aria-labelledby="law-editorial-coverage-heading">
+          <h2 id="law-editorial-coverage-heading" className="font-display text-2xl tracking-tight">Related Texas law reporting and explainers</h2>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">Editorial explanations provide historical and policy context. Confirm current legal requirements using the official source material above.</p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {editorials.map((item) => (
+              <a key={item.slug} href={item.href} className="rounded-lg border bg-card p-4 hover:border-primary hover:bg-primary/5">
+                <span className="text-sm font-semibold text-primary">{item.title} →</span>
+                <span className="mt-2 block text-xs leading-5 text-muted-foreground">{item.dek}</span>
               </a>
             ))}
           </div>
