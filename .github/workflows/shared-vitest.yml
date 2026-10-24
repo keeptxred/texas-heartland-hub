@@ -16,7 +16,11 @@ permissions:
   contents: read
 
 concurrency:
-  group: repository-health-${{ github.event.pull_request.number || github.event.merge_group.head_sha || github.ref }}
+  # GitHub keeps at most one pending job per group and replaces older pending jobs.
+  # Give every main revision and event type a separate queue so manual verification
+  # cannot evict the protected-main push verification needed for deployment.
+  # PRs keep one stable per-PR key so superseded checks can still be cancelled.
+  group: repository-health-${{ github.event_name }}-${{ github.event.pull_request.number || github.event.merge_group.head_sha || github.sha }}
   # Preserve protected-main push verification: its completion triggers production deploy.
   # A concurrent manual dispatch must not cancel an already-running main check.
   # Keep superseded PR/merge-queue checks cancellable for efficiency.
