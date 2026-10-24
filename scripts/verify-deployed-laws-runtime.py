@@ -34,9 +34,14 @@ class PageParser(HTMLParser):
         self.h1_parts: list[str] = []
         self.page_text_parts: list[str] = []
         self.canonicals: list[str] = []
+        self.hrefs: set[str] = set()
 
     def handle_starttag(self, tag, attrs):
         tag = tag.lower()
+        if tag == "a":
+            href = dict(attrs).get("href")
+            if href:
+                self.hrefs.add(href)
         if tag == "h1":
             self.h1_depth += 1
         if tag == "link":
@@ -124,6 +129,20 @@ def main() -> None:
                 failures.append("/laws: outdated constitutional income-tax claim still deployed")
         if path == "/laws/topics" and "Search the Texas law-topic library" not in page_text:
             failures.append("/laws/topics: searchable authority directory is absent from deployed HTML")
+        if path in {"/laws", "/laws/topics"}:
+            required = {
+                "/laws/topic/driving-traffic-insurance-law",
+                "/laws/topic/landlord-tenant-rentals-law",
+                "/laws/topic/employment-wages-workplace-rights-law",
+                "/laws/topic/consumer-protection-deceptive-trade-law",
+                "/laws/topic/family-custody-child-support-law",
+                "/laws/topic/wills-probate-inheritance-law",
+                "/laws/topic/criminal-offenses-penalties-law",
+                "/laws/topic/business-formation-llc-law",
+            }
+            missing = sorted(required - parser.hrefs)
+            if missing:
+                failures.append(f"{path}: authority hub is missing law guide links: {missing!r}")
 
         print(f"{path}: h1={h1!r} canonical={canonicals!r}")
 
