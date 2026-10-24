@@ -12,8 +12,6 @@ export const ARTICLE_LAW_AUTHORITY_BY_SLUG: Readonly<Record<string, string>> = {
   "property-tax-relief-package": "property-tax-law",
   "texas-election-laws-explained": "election-law",
   "texas-voter-registration-guide": "election-law",
-  "texas-open-meetings-public-info": "open-records-public-information",
-  "texas-school-board-powers": "parental-rights-education-law",
 };
 
 /** Future articles inherit a topical legal parent when explicitly tagged. */
