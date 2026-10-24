@@ -6,6 +6,7 @@ on:
     paths:
       - "src/routes/laws*.tsx"
       - "src/components/law-topic-page.tsx"
+      - "src/components/site-header.tsx"
       - "src/components/laws/**"
       - "src/data/law-topic-*.ts"
       - "src/lib/law-topic-search.ts"
