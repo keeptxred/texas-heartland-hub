@@ -23,162 +23,27 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     env:
       SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
     steps:
-      - name: Verify deployed law route ownership, H1s, and canonicals
+      - name: Checkout verified law smoke checks
+        uses: actions/checkout@v5
+
+      - name: Verify all laws routes and shared guide on workers.dev
         shell: bash
+        env:
+          SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
         run: |
           set -euo pipefail
-          python3 - <<'PY'
-          import re
-          import subprocess
-          from html.parser import HTMLParser
-          import os
+          python3 scripts/verify-deployed-laws-runtime.py
+          python3 scripts/verify-deployed-law-guide-rendering.py
 
-          site_url = os.environ["SITE_URL"].rstrip("/")
-          parent_h1 = "Texas Laws Explained:"
-          checks = [
-              ("/laws", parent_h1, "https://keeptxred.com/laws", False, False),
-              ("/laws/constitutional-amendments", "Texas Constitutional Amendments Tracker", "https://keeptxred.com/laws/constitutional-amendments", True, True),
-              ("/laws/effective-dates", "Texas Laws Taking Effect in 2026", "https://keeptxred.com/laws/effective-dates", True, True),
-              ("/laws/topics", "Texas Law Library", "https://keeptxred.com/laws/topics", True, True),
-              ("/laws/topic/property-tax-law", "Texas Property Tax Policy & Law", "https://keeptxred.com/laws/topic/property-tax-law", True, True),
-          ]
-
-          def normalize(value: str) -> str:
-              return re.sub(r"\s+", " ", value).strip()
-
-          class PageParser(HTMLParser):
-              def __init__(self):
-                  super().__init__(convert_charrefs=True)
-                  self.h1_depth = 0
-                  self.h1_parts = []
-                  self.canonicals = []
-
-              def handle_starttag(self, tag, attrs):
-                  tag = tag.lower()
-                  if tag == "h1":
-                      self.h1_depth += 1
-                  if tag == "link":
-                      values = dict(attrs)
-                      rel = {part.lower() for part in (values.get("rel") or "").split()}
-                      href = values.get("href")
-                      if "canonical" in rel and href:
-                          self.canonicals.append(href)
-
-              def handle_endtag(self, tag):
-                  if tag.lower() == "h1" and self.h1_depth:
-                      self.h1_depth -= 1
-
-              def handle_data(self, data):
-                  if self.h1_depth:
-                      self.h1_parts.append(data)
-
-          failures = []
-          for path, expected_h1, expected_canonical, exact_h1, forbid_parent in checks:
-              url = f"{site_url}{path}"
-              result = subprocess.run(
-                  [
-                      "curl", "--location", "--retry", "12", "--retry-delay", "2", "--retry-all-errors",
-                      "--connect-timeout", "10", "--max-time", "60", "--fail-with-body", "--silent", "--show-error",
-                      "-H", "cache-control: no-cache", "-H", "pragma: no-cache", url,
-                  ],
-                  capture_output=True,
-                  text=True,
-              )
-              if result.returncode != 0:
-                  failures.append(f"{path}: fetch failed ({result.stderr.strip() or result.returncode})")
-                  continue
-
-              parser = PageParser()
-              parser.feed(result.stdout)
-              h1 = normalize(" ".join(parser.h1_parts))
-              canonicals = [normalize(value) for value in parser.canonicals]
-
-              if not h1:
-                  failures.append(f"{path}: missing H1")
-              elif exact_h1 and h1 != expected_h1:
-                  failures.append(f"{path}: expected H1 {expected_h1!r}, got {h1!r}")
-              elif not exact_h1 and expected_h1 not in h1:
-                  failures.append(f"{path}: expected H1 containing {expected_h1!r}, got {h1!r}")
-
-              if forbid_parent and parent_h1 in h1:
-                  failures.append(f"{path}: child route is still rendering the /laws parent H1 ({h1!r})")
-
-              if canonicals != [expected_canonical]:
-                  failures.append(f"{path}: expected one canonical {expected_canonical!r}, got {canonicals!r}")
-
-              print(f"{path}: h1={h1!r} canonical={canonicals!r}")
-
-          # Verify the shared law-guide rendering contract on a representative
-          # production guide. This guards against regressions where inline guide
-          # links disappear from article copy or law-reference material is
-          # accidentally moved ahead of the substantive article.
-          child_support_path = "/guides/texas-child-support-guidelines-law"
-          child_support_url = f"{site_url}{child_support_path}"
-          child_support_result = subprocess.run(
-              [
-                  "curl", "--location", "--retry", "12", "--retry-delay", "2", "--retry-all-errors",
-                  "--connect-timeout", "10", "--max-time", "60", "--fail-with-body", "--silent", "--show-error",
-                  "-H", "cache-control: no-cache", "-H", "pragma: no-cache", child_support_url,
-              ],
-              capture_output=True,
-              text=True,
-          )
-          if child_support_result.returncode != 0:
-              failures.append(
-                  f"{child_support_path}: fetch failed "
-                  f"({child_support_result.stderr.strip() or child_support_result.returncode})"
-              )
-          else:
-              html = child_support_result.stdout
-              calculator_heading = "Texas Attorney General Child Support Calculator"
-              calculator_href = "https://www.texasattorneygeneral.gov/child-support/get-started"
-              faq_heading = "Frequently Asked Questions"
-              law_reference_heading = "Texas law reference"
-              old_calculator_copy = "provides an official calculator"
-
-              faq_pos = html.find(faq_heading)
-              law_reference_pos = html.find(law_reference_heading)
-              calculator_heading_pos = html.find(calculator_heading)
-              before_faq = html[:faq_pos] if faq_pos >= 0 else html
-
-              calculator_anchor_pattern = re.compile(
-                  rf'<a[^>]+href=["\']{re.escape(calculator_href)}["\'][^>]*>.*?'
-                  rf'{re.escape(calculator_heading)}.*?</a>',
-                  re.IGNORECASE | re.DOTALL,
-              )
-
-              if calculator_heading_pos < 0:
-                  failures.append(f"{child_support_path}: missing calculator section heading")
-              if not calculator_anchor_pattern.search(before_faq):
-                  failures.append(
-                      f"{child_support_path}: calculator link is not rendered inside article copy before the FAQ"
-                  )
-              if old_calculator_copy in html:
-                  failures.append(f"{child_support_path}: stale 'official calculator' copy is still rendered")
-              if faq_pos < 0:
-                  failures.append(f"{child_support_path}: missing FAQ heading")
-              if law_reference_pos < 0:
-                  failures.append(f"{child_support_path}: missing Texas law reference block")
-              if faq_pos >= 0 and law_reference_pos >= 0 and law_reference_pos < faq_pos:
-                  failures.append(
-                      f"{child_support_path}: Texas law reference block appears before the FAQ/article end"
-                  )
-
-              print(
-                  f"{child_support_path}: calculator_body_link="
-                  f"{bool(calculator_anchor_pattern.search(before_faq))} "
-                  f"faq_before_law_reference={faq_pos >= 0 and law_reference_pos > faq_pos}"
-              )
-
-          if failures:
-              raise SystemExit("Deployed laws route smoke failed:\n- " + "\n- ".join(failures))
-
-          print(
-              f"Deployed laws route smoke passed for {len(checks)} law routes "
-              f"plus the shared law-guide rendering contract on {site_url}."
-          )
-          PY
+      - name: Verify all laws routes and shared guide on canonical domain
+        shell: bash
+        env:
+          SITE_URL: https://keeptxred.com
+        run: |
+          set -euo pipefail
+          python3 scripts/verify-deployed-laws-runtime.py
+          python3 scripts/verify-deployed-law-guide-rendering.py
