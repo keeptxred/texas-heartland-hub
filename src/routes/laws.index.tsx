@@ -305,7 +305,7 @@ function LawsHubPage() {
             <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-primary">★ {section.eyebrow}</span>
             <h2 className="font-display text-4xl md:text-5xl tracking-tight mt-2">{section.heading}</h2>
             <p className="mt-3 max-w-3xl font-serif text-lg text-muted-foreground">{section.description}</p>
-            <p className="mt-1 max-w-3xl text-sm uppercase tracking-wide text-primary/80">{section.intent}</p>
+            <p className="mt-1 max-w-3xl text-sm font-semibold uppercase tracking-wide text-primary">{section.intent}</p>
 
             <div className="grid md:grid-cols-2 gap-5 mt-8">
               {section.articles.map((a) => (
