@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 const workflow = readFileSync(".github/workflows/verify-laws-after-deploy.yml", "utf8");
 const routes = readFileSync("scripts/verify-deployed-laws-runtime.py", "utf8");
 const guide = readFileSync("scripts/verify-deployed-law-guide-rendering.py", "utf8");
+const productionDeploy = readFileSync(".github/workflows/deploy-cloudflare-after-verify.yml", "utf8");
 
 describe("post-deploy laws verification covers production and every authority topic", () => {
   it("uses the maintained runtime scripts on both domains", () => {
@@ -33,6 +34,15 @@ describe("post-deploy laws verification covers production and every authority to
     expect(routes).toContain('fetch("/sitemap-pages.xml")');
     expect(routes).toContain('Official sources');
 
+  });
+
+  it("makes complete dual-host laws checking an actual production deploy gate", () => {
+    expect(productionDeploy).toContain("Verify complete law-topic sitemap and legal sources on both hosts");
+    expect(productionDeploy).toContain("python3 scripts/verify-deployed-laws-runtime.py");
+    expect(productionDeploy).toContain("python3 scripts/verify-deployed-law-guide-rendering.py");
+    expect(productionDeploy).toContain('for site in "$PREVIEW_URL" "$PRODUCTION_URL"; do');
+    expect(productionDeploy).toContain("steps.revision.outputs.deploy == 'true'");
+    expect(workflow).toContain("github.event_name == 'pull_request'");
   });
 
   it("continues verifying child support source links and article order", () => {
