@@ -501,7 +501,7 @@ export const ARTICLES: Article[] = [
     slug: "constitutional-carry-one-year-later",
     category: "Legislature",
     title: "Constitutional Carry in Texas: What the Law Actually Says",
-    dek: "House Bill 1927 lets eligible Texans 21 and older carry a handgun without a permit. Here's where you still can't carry, and what reciprocity means on the road.",
+    dek: "Texas enacted permitless handgun carry under HB 1927. Although the statute specifies age 21, a federal court barred age-only enforcement against otherwise-qualified 18-to-20-year-olds. Restricted places and other eligibility rules still apply.",
     author: "Liberty Desk",
     date: "2 weeks ago",
     publishedAt: "2026-06-12T12:00:00",
