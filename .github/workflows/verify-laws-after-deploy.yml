@@ -9,6 +9,11 @@ on:
     types: [completed]
     branches: [main]
   workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/deploy-cloudflare-after-verify.yml"
+      - ".github/workflows/verify-laws-after-deploy.yml"
 
 permissions:
   contents: read
@@ -20,6 +25,7 @@ concurrency:
 jobs:
   verify-laws:
     if: >-
+      github.event_name == 'pull_request' ||
       github.event_name == 'workflow_dispatch' ||
       github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
