@@ -2,6 +2,8 @@
 import os
 import re
 import subprocess
+import xml.etree.ElementTree as ET
+from urllib.parse import urlparse
 from html.parser import HTMLParser
 
 SITE_URL = os.environ.get("SITE_URL", "https://keeptxred-site.freddy-coppola.workers.dev").rstrip("/")
@@ -35,6 +37,7 @@ class PageParser(HTMLParser):
         self.page_text_parts: list[str] = []
         self.canonicals: list[str] = []
         self.hrefs: set[str] = set()
+        self.robots: list[str] = []
 
     def handle_starttag(self, tag, attrs):
         tag = tag.lower()
@@ -42,6 +45,10 @@ class PageParser(HTMLParser):
             href = dict(attrs).get("href")
             if href:
                 self.hrefs.add(href)
+        if tag == "meta":
+            values = dict(attrs)
+            if (values.get("name") or "").lower() == "robots":
+                self.robots.append((values.get("content") or "").lower())
         if tag == "h1":
             self.h1_depth += 1
         if tag == "link":
@@ -94,6 +101,7 @@ def fetch(path: str) -> str:
 
 def main() -> None:
     failures: list[str] = []
+    discovered_topics: set[str] = set()
     for path, expected_h1, expected_canonical, exact_h1, forbid_parent in CHECKS:
         try:
             body = fetch(path)
@@ -129,6 +137,11 @@ def main() -> None:
                 failures.append("/laws: outdated constitutional income-tax claim still deployed")
         if path == "/laws/topics" and "Search the Texas law-topic library" not in page_text:
             failures.append("/laws/topics: searchable authority directory is absent from deployed HTML")
+        if path == "/laws/topics":
+            discovered_topics = {
+                href for href in parser.hrefs
+                if re.fullmatch(r"/laws/topic/[a-z0-9-]+", href)
+            }
         if path in {"/laws", "/laws/topics"}:
             required = {
                 "/laws/topic/driving-traffic-insurance-law",
@@ -146,10 +159,60 @@ def main() -> None:
 
         print(f"{path}: h1={h1!r} canonical={canonicals!r}")
 
+    # The directory and sitemap share the indexability registry. Validate their
+    # complete live URLs against one another to catch missing or accidentally
+    # indexed law topics, including future topics not hard-coded above.
+    if len(discovered_topics) < 18:
+        failures.append(
+            f"/laws/topics: expected at least 18 indexable authority topics; "
+            f"found {len(discovered_topics)}"
+        )
+
+    checked_routes = {item[0] for item in CHECKS}
+    for path in sorted(discovered_topics - checked_routes):
+        try:
+            body = fetch(path)
+        except RuntimeError as exc:
+            failures.append(f"{path}: indexable directory link fetch failed ({exc})")
+            continue
+        parser = PageParser()
+        parser.feed(body)
+        heading = normalize(" ".join(parser.h1_parts))
+        canonicals = [normalize(item) for item in parser.canonicals]
+        if not heading or PARENT_H1 in heading:
+            failures.append(f"{path}: invalid or parent law H1 {heading!r}")
+        expected = f"https://keeptxred.com{path}"
+        if canonicals != [expected]:
+            failures.append(f"{path}: expected canonical {expected!r}; got {canonicals!r}")
+        if any("noindex" in robots for robots in parser.robots):
+            failures.append(f"{path}: linked indexable law topic declares noindex")
+        if "Official sources" not in normalize(" ".join(parser.page_text_parts)):
+            failures.append(f"{path}: official primary-source section is missing")
+        print(f"{path}: h1={heading!r} canonical={canonicals!r}")
+
+    try:
+        xml = fetch("/sitemap-pages.xml")
+        root = ET.fromstring(xml)
+        sitemap_topics = {
+            urlparse((node.text or "").strip()).path
+            for node in root.iter()
+            if node.tag.rsplit("}", 1)[-1] == "loc"
+            and "/laws/topic/" in (node.text or "")
+        }
+        if sitemap_topics != discovered_topics:
+            failures.append(
+                "Sitemap/directory law topic mismatch: "
+                f"missing from sitemap={sorted(discovered_topics - sitemap_topics)!r}; "
+                f"sitemap-only={sorted(sitemap_topics - discovered_topics)!r}"
+            )
+        print(f"/sitemap-pages.xml: {len(sitemap_topics)} indexable law topics listed")
+    except (RuntimeError, ET.ParseError) as exc:
+        failures.append(f"/sitemap-pages.xml: failed to fetch/parse ({exc})")
+
     if failures:
         raise SystemExit("Deployed laws route smoke failed:\n- " + "\n- ".join(failures))
 
-    print(f"Deployed laws route smoke passed for {len(CHECKS)} routes on {SITE_URL}.")
+    print(f"Deployed laws route smoke passed for {len(checked_routes | discovered_topics)} routes and sitemap on {SITE_URL}.")
 
 
 if __name__ == "__main__":
