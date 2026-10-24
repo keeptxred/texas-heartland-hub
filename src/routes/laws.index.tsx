@@ -239,10 +239,19 @@ function LawsHubPage() {
         <p>
           Local rules — ordinances, resolutions, orders, and policies adopted by city councils,
           commissioners courts, school boards, MUD boards, and other local bodies — operate within the
-          space state law allows. Texas is a Dillon's Rule state modified by a home-rule provision for
-          larger cities, which gives municipalities broad authority over local matters unless preempted by
-          state statute. Preemption is a live debate in areas including short-term rental rules,
-          firearms regulations, and employment law.
+          space state law allows. Counties, general-law cities, and home-rule cities have different sources of power. Counties
+          and general-law cities generally rely on authority granted expressly or necessarily implied by
+          the state constitution and statutes. Home-rule municipalities instead exercise broad local
+          self-government under a voter-adopted charter, subject to the Texas Constitution,
+          state law, and valid preemption. See{" "}
+          <Link to="/laws/topic/$slug" params={{ slug: "local-government-authority" }} className="text-primary underline underline-offset-4">
+            Texas local-government law
+          </Link>
+          {" "}and{" "}
+          <a href="https://statutes.capitol.texas.gov/Docs/LG/htm/LG.5.htm" target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-4">
+            Local Government Code Chapter 5
+          </a>
+          {" "}for the governing municipal classifications and rules.
         </p>
 
         <h2 className="font-display text-2xl md:text-3xl tracking-tight pt-6 border-b-2 border-foreground pb-2">
