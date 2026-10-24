@@ -1,0 +1,48 @@
+name: Review Texas law authority sources
+
+on:
+  schedule:
+    # Monthly, with January 20 capturing the beginning of odd-year regular sessions.
+    - cron: "0 14 20 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: keeptxred-law-authority-review
+  cancel-in-progress: false
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Verify zero-dependency review logic
+        run: node --test scripts/laws/test-review-authority-guides.mjs
+
+      - name: Inventory and report unreviewed laws
+        id: review
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/laws/review-authority-guides.mjs | tee /tmp/texas-law-review.md
+
+      - name: Post only actionable review reminders to master tracker
+        if: steps.review.outputs.due_count != '0'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REVIEW_MONTH: ${{ steps.review.outputs.month_key }}
+        run: |
+          set -euo pipefail
+          marker="law-review:${REVIEW_MONTH}"
+          if gh api --method GET "repos/${GITHUB_REPOSITORY}/issues/2938/comments?per_page=100" \
+              --jq '.[].body' | grep -Fq "${marker}"; then
+            echo "A review reminder for ${REVIEW_MONTH} already exists; not posting a duplicate."
+            exit 0
+          fi
+          gh issue comment 2938 --body-file /tmp/texas-law-review.md
