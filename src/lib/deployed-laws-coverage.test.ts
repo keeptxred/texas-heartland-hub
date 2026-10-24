@@ -27,6 +27,12 @@ describe("post-deploy laws verification covers production and every authority to
       expect(routes).toContain("/laws/topic/" + slug);
     }
     expect(routes).toContain("authority hub is missing law guide links");
+    expect(routes).toContain("discovered_topics");
+    expect(routes).toContain("len(discovered_topics) < 18");
+    expect(routes).toContain("sitemap_topics != discovered_topics");
+    expect(routes).toContain('fetch("/sitemap-pages.xml")');
+    expect(routes).toContain('Official sources');
+
   });
 
   it("continues verifying child support source links and article order", () => {
