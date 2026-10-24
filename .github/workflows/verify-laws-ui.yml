@@ -39,7 +39,7 @@ jobs:
       - name: Install headless Chromium
         run: bunx playwright install --with-deps chromium
 
-      - name: Verify mobile and desktop law authority experience
+      - name: Verify live mobile and desktop law authority experience
         run: bunx playwright test --config=playwright.laws.config.ts
 
       - name: Upload Playwright failure artifacts
