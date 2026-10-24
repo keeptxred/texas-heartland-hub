@@ -14,7 +14,6 @@ describe("bidirectional verified legal editorials", () => {
     ["texas-gun-laws-explained", "gun-carry-law"],
     ["texas-property-tax-laws-explained", "property-tax-law"],
     ["texas-election-laws-explained", "election-law"],
-    ["texas-open-meetings-public-info", "open-records-public-information"],
   ])("maps %s to statutory authority %s", (articleSlug, lawSlug) => {
     expect(lawAuthorityForArticle(find(articleSlug))?.slug).toBe(lawSlug);
   });
@@ -24,6 +23,11 @@ describe("bidirectional verified legal editorials", () => {
       topics: ["legislature"], subcategory: "state", contentCategory: "laws" } as Article;
     expect(shouldShowEditorialLawLibrary(future)).toBe(true);
     expect(lawAuthorityForArticle(future)).toBeNull();
+  });
+
+  it("avoids falsely assigning Open Meetings and school-board powers to unrelated statutory parents", () => {
+    expect(lawAuthorityForArticle(find("texas-open-meetings-public-info"))).toBeNull();
+    expect(lawAuthorityForArticle(find("texas-school-board-powers"))).toBeNull();
   });
 
   it("maps future articles with specific explicit topic tags, not loose headline keywords", () => {
