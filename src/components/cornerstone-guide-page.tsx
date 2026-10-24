@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import { Link } from "@tanstack/react-router";
+import { LegalHelpResources } from "@/components/laws/legal-help-resources";
 import { LawDisclaimer, LawQuickAnswer, LawStatuteCard } from "@/components/laws/law-guide-ui";
 import type { CornerstoneGuide } from "@/data/cornerstone-guides";
 import { GUIDE_MEDIA, type GuidePhoto } from "@/data/guide-media";
@@ -363,6 +364,8 @@ export function CornerstoneGuidePage({ guide }: { guide: CornerstoneGuide }) {
           </ul>
         </section>
       ) : null}
+
+      {lawMeta ? <LegalHelpResources /> : null}
 
       {publicRelated.length > 0 ? (
         <section className="mt-10 rounded-xl border bg-muted/20 p-6">

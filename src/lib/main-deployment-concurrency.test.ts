@@ -9,6 +9,11 @@ describe("protected main deployment verification", () => {
     expect(verify).toContain("branches:\n      - main");
     expect(verify).toContain("cancel-in-progress: ${{ github.event_name == 'pull_request' || github.event_name == 'merge_group' }}");
     expect(verify).not.toContain("cancel-in-progress: true");
+    // GitHub replaces older pending jobs in the same group even when
+    // cancel-in-progress is false; main push/manual events cannot share a key.
+    expect(verify).toContain("group: repository-health-${{ github.event_name }}-${{ github.event.pull_request.number || github.event.merge_group.head_sha || github.sha }}");
+    expect(verify).not.toContain("github.event.merge_group.head_sha || github.ref");
+
   });
   it("keeps deployment gated on successful verification of current main", () => {
     expect(deploy).toContain('workflows: ["Repository test and build health"]');

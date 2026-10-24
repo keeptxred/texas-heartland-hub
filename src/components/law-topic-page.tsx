@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { LegalHelpResources } from "@/components/laws/legal-help-resources";
 import type { LawTopic } from "@/data/law-topics";
 import { buildSeo, SITE_URL } from "@/lib/seo";
 import { publicSupportingGuidesForAuthority } from "@/lib/law-authority-crosslinks";
@@ -38,17 +39,34 @@ export function LawTopicPage({ topic }: { topic: LawTopic }) {
         <strong className="text-foreground">How to use this guide:</strong> A bill is a proposal until enacted. A statute, agency rule, court decision, and local ordinance may have different effective dates and scopes. Refer to the official sources below for controlling language, and check the individual law's effective date before relying on a summary.
       </aside>
 
-      <section className="mt-8 border-l-4 border-primary bg-primary/5 p-6"><p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-primary">Quick answer</p><p className="mt-3 text-base font-semibold leading-7">{topic.quickAnswer}</p></section>
+      <nav aria-label="On this page" className="mt-8 rounded-xl border bg-card p-5">
+        <h2 className="font-display text-xl tracking-tight">On this page</h2>
+        <ul className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
+          {[
+            ["Quick answer", "#law-quick-answer"],
+            ["Who this affects", "#law-who-affected"],
+            ["Legal framework", "#law-framework"],
+            ["Key rules", "#law-key-rules"],
+            ["Common questions", "#law-questions"],
+            ["Official sources", "#law-sources"],
+            ["Related guides", "#law-related"],
+          ].map(([name, href]) => (
+            <li key={href}><a href={href} className="inline-block rounded py-1 font-semibold text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">{name} →</a></li>
+          ))}
+        </ul>
+      </nav>
 
-      <section className="mt-10"><h2 className="border-b pb-2 font-display text-3xl tracking-tight">Who this law can affect</h2><div className="mt-5 grid gap-3 sm:grid-cols-2">{topic.appliesTo.map((item) => <div key={item} className="rounded-lg border bg-card p-4 text-sm font-semibold">{item}</div>)}</div></section>
+      <section id="law-quick-answer" className="mt-8 scroll-mt-24 border-l-4 border-primary bg-primary/5 p-6"><p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-primary">Quick answer</p><p className="mt-3 text-base font-semibold leading-7">{topic.quickAnswer}</p></section>
 
-      <section className="mt-11"><h2 className="border-b pb-2 font-display text-3xl tracking-tight">Legal framework</h2><div className="mt-5 space-y-5 font-serif text-base leading-8 md:text-[17px]">{topic.framework.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div></section>
+      <section id="law-who-affected" className="mt-10 scroll-mt-24"><h2 className="border-b pb-2 font-display text-3xl tracking-tight">Who this law can affect</h2><div className="mt-5 grid gap-3 sm:grid-cols-2">{topic.appliesTo.map((item) => <div key={item} className="rounded-lg border bg-card p-4 text-sm font-semibold">{item}</div>)}</div></section>
 
-      <section className="mt-11 rounded-xl border bg-card p-6"><h2 className="font-display text-2xl tracking-tight">Key rules to know</h2><ul className="mt-4 space-y-3 text-sm leading-6">{topic.keyRules.map((rule) => <li key={rule} className="flex gap-3"><span className="font-bold text-primary">•</span><span>{rule}</span></li>)}</ul></section>
+      <section id="law-framework" className="mt-11 scroll-mt-24"><h2 className="border-b pb-2 font-display text-3xl tracking-tight">Legal framework</h2><div className="mt-5 space-y-5 font-serif text-base leading-8 md:text-[17px]">{topic.framework.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div></section>
 
-      <section className="mt-11"><h2 className="border-b pb-2 font-display text-3xl tracking-tight">Common questions</h2><div className="mt-5 space-y-5">{topic.questions.map((item) => <div key={item.q}><h3 className="font-semibold">{item.q}</h3><p className="mt-2 text-sm leading-7 text-muted-foreground">{item.a}</p></div>)}</div></section>
+      <section id="law-key-rules" className="mt-11 scroll-mt-24 rounded-xl border bg-card p-6"><h2 className="font-display text-2xl tracking-tight">Key rules to know</h2><ul className="mt-4 space-y-3 text-sm leading-6">{topic.keyRules.map((rule) => <li key={rule} className="flex gap-3"><span className="font-bold text-primary">•</span><span>{rule}</span></li>)}</ul></section>
 
-      <section className="mt-12 border-t pt-8"><p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-muted-foreground">Primary law</p><h2 className="mt-2 font-display text-2xl tracking-tight">Official sources</h2><ul className="mt-4 space-y-3 text-sm">{topic.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary underline underline-offset-4">{source.label}</a>{source.note ? <span className="ml-2 text-muted-foreground">— {source.note}</span> : null}</li>)}</ul></section>
+      <section id="law-questions" className="mt-11 scroll-mt-24"><h2 className="border-b pb-2 font-display text-3xl tracking-tight">Common questions</h2><div className="mt-5 space-y-5">{topic.questions.map((item) => <div key={item.q}><h3 className="font-semibold">{item.q}</h3><p className="mt-2 text-sm leading-7 text-muted-foreground">{item.a}</p></div>)}</div></section>
+
+      <section id="law-sources" className="mt-12 scroll-mt-24 border-t pt-8"><p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-muted-foreground">Primary law</p><h2 className="mt-2 font-display text-2xl tracking-tight">Official sources</h2><ul className="mt-4 space-y-3 text-sm">{topic.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary underline underline-offset-4">{source.label}</a>{source.note ? <span className="ml-2 text-muted-foreground">— {source.note}</span> : null}</li>)}</ul></section>
 
       {supportingGuides.length > 0 ? (
         <section className="mt-12 border-t pt-8" aria-labelledby="law-supporting-guides-heading">
@@ -65,7 +83,9 @@ export function LawTopicPage({ topic }: { topic: LawTopic }) {
         </section>
       ) : null}
 
-      <section className="mt-10 rounded-xl border bg-muted/20 p-6"><h2 className="font-display text-2xl tracking-tight">Related KTR coverage</h2><div className="mt-4 grid gap-3 sm:grid-cols-2">{topic.related.map((item) => <a key={item.href} href={item.href} className="rounded-lg border bg-background p-4 text-sm font-semibold hover:border-primary hover:text-primary">{item.label} →</a>)}</div></section>
+      <section id="law-related" className="mt-10 scroll-mt-24 rounded-xl border bg-muted/20 p-6"><h2 className="font-display text-2xl tracking-tight">Related KTR coverage</h2><div className="mt-4 grid gap-3 sm:grid-cols-2">{topic.related.map((item) => <a key={item.href} href={item.href} className="rounded-lg border bg-background p-4 text-sm font-semibold hover:border-primary hover:text-primary">{item.label} →</a>)}</div></section>
+
+      <LegalHelpResources />
 
       <aside className="mt-10 border-t pt-6 text-xs leading-6 text-muted-foreground"><strong className="text-foreground">Legal-information standard:</strong> This page explains the statutory framework and is not legal advice. Statutes, court decisions, agency rules, and facts can change the result in an individual matter. Use the linked official law and qualified counsel for case-specific advice.</aside>
     </article>
