@@ -14,8 +14,10 @@ const LAW_FILE_RE = /^law-topic-[a-z0-9-]+-authority\.ts$/;
 const FIELD = (field) => new RegExp(`(?:^|\\n)\\s*${field}:\\s*["']([^"']+)["']`, "m");
 
 export function parseAuthority(text, file) {
-  const slug = text.match(FIELD("slug"))?.[1];
-  const updated = text.match(FIELD("updated"))?.[1];
+  // Both TS object literals (slug:) and JSON-style generated modules ("slug":) are valid.
+  const normalized = text.replace(/["\x27](slug|updated)["\x27]\s*:/g, "$1:");
+  const slug = normalized.match(FIELD("slug"))?.[1];
+  const updated = normalized.match(FIELD("updated"))?.[1];
   if (!slug || !updated || !/^\d{4}-\d{2}-\d{2}$/.test(updated)) {
     throw new Error(`${file}: authority guide has missing or invalid slug/review date`);
   }
