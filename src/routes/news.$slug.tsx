@@ -15,6 +15,7 @@ import { AdSlot } from "@/components/ad-slot";
 import { ContextualAffiliatePanel } from "@/components/monetization/contextual-affiliate-panel";
 import { NewsletterSignup } from "@/components/newsletter-signup";
 import { GooglePreferredSourceCta } from "@/components/google-preferred-source-cta";
+import { lawAuthorityForArticle, shouldShowEditorialLawLibrary } from "@/lib/editorial-law-authority-links";
 import {
   buildSeo,
   imageObjectJsonLd,
@@ -393,8 +394,8 @@ function ArticlePage() {
   const generatedImageDisclosure = getGeneratedArticleImageDisclosure(article.image);
   const containHero = shouldContainArticleImage(article.image);
   const isKeepTxRedEditorialGraphic = String(article.image ?? "").startsWith("/images/news/editorial/");
-  const isTexasLawExplainer = article.topics?.includes("laws") || article.subcategory === "laws" ||
-    ["texas-gun-laws-explained", "texas-property-tax-laws-explained", "texas-election-laws-explained", "how-a-bill-becomes-texas-law", "texas-new-laws-2026", "texas-open-meetings-public-info"].includes(article.slug);
+  const lawAuthority = lawAuthorityForArticle(article);
+  const isTexasLawExplainer = shouldShowEditorialLawLibrary(article);
 
 
   return (
@@ -443,6 +444,11 @@ function ArticlePage() {
           </p>
           <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
             <Link to="/laws" className="text-primary underline underline-offset-4">Texas laws hub →</Link>
+            {lawAuthority ? (
+              <Link to="/laws/topic/$slug" params={{ slug: lawAuthority.slug }} className="text-primary underline underline-offset-4">
+                {lawAuthority.title} →
+              </Link>
+            ) : null}
             <Link to="/laws/topics" className="text-primary underline underline-offset-4">Law-topic directory →</Link>
             <a href="https://statutes.capitol.texas.gov/" target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-4">Official Texas statutes ↗</a>
           </div>
