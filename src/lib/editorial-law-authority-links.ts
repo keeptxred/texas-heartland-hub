@@ -34,14 +34,16 @@ export const TOPIC_LAW_AUTHORITY_BY_TAG: Readonly<Record<string, string>> = {
   "business-formation": "business-formation-llc-law",
 };
 
-export function lawAuthorityForArticle(article: Article) {
+type ArticleLawFields = Pick<Article, "slug" | "topics" | "subcategory" | "contentCategory">;
+
+export function lawAuthorityForArticle(article: ArticleLawFields) {
   const exact = ARTICLE_LAW_AUTHORITY_BY_SLUG[article.slug];
   const tagged = article.topics?.map((tag) => TOPIC_LAW_AUTHORITY_BY_TAG[tag]).find(Boolean);
   const authority = getLawTopic(exact ?? tagged ?? "");
   return isLawTopicIndexable(authority) ? authority : null;
 }
 
-export function shouldShowEditorialLawLibrary(article: Article) {
+export function shouldShowEditorialLawLibrary(article: ArticleLawFields) {
   return Boolean(lawAuthorityForArticle(article)) ||
     article.topics?.includes("laws") === true ||
     article.subcategory === "laws" ||
