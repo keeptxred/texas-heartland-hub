@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { LegalHelpResources } from "@/components/laws/legal-help-resources";
 import type { LawTopic } from "@/data/law-topics";
 import { buildSeo, SITE_URL } from "@/lib/seo";
 import { publicSupportingGuidesForAuthority } from "@/lib/law-authority-crosslinks";
@@ -83,6 +84,8 @@ export function LawTopicPage({ topic }: { topic: LawTopic }) {
       ) : null}
 
       <section id="law-related" className="mt-10 scroll-mt-24 rounded-xl border bg-muted/20 p-6"><h2 className="font-display text-2xl tracking-tight">Related KTR coverage</h2><div className="mt-4 grid gap-3 sm:grid-cols-2">{topic.related.map((item) => <a key={item.href} href={item.href} className="rounded-lg border bg-background p-4 text-sm font-semibold hover:border-primary hover:text-primary">{item.label} →</a>)}</div></section>
+
+      <LegalHelpResources />
 
       <aside className="mt-10 border-t pt-6 text-xs leading-6 text-muted-foreground"><strong className="text-foreground">Legal-information standard:</strong> This page explains the statutory framework and is not legal advice. Statutes, court decisions, agency rules, and facts can change the result in an individual matter. Use the linked official law and qualified counsel for case-specific advice.</aside>
     </article>
