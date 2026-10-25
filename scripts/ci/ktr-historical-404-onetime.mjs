@@ -70,3 +70,10 @@ for(const url of [
   console.log('HISTORICAL-404-TARGET '+JSON.stringify({url,status:response.status,location:response.headers.get('location'),contentType:response.headers.get('content-type')}));
 }
 
+
+const sitemap=await fetch('https://keeptxred.com/sitemap-evergreen.xml?__ktr_historical_404_audit=20261025-final',{headers:{accept:'application/xml'}});
+const xml=await sitemap.text();
+console.log('HISTORICAL-404-TEA-SITEMAP '+JSON.stringify({
+  status:sitemap.status,
+  listed:xml.includes('/news/2026-08-14-texas-school-districts-show-improvement-in-tea-a-f-ratings-gbezru')
+}));
