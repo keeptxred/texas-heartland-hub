@@ -5,6 +5,7 @@ import { assignUniqueImages } from "@/lib/dedupe-images";
 import { AdSlot } from "@/components/ad-slot";
 import { NewsletterSignup } from "@/components/newsletter-signup";
 import { ELECTION_FEATURE_FLAGS } from "@/lib/elections";
+import { November2026VotingActionGuide } from "@/components/elections/November2026VotingActionGuide";
 import { buildSeo, organizationJsonLd, SITE_URL, webPageJsonLd, websiteJsonLd } from "@/lib/seo";
 import { shouldContainArticleImage } from "@/lib/article-image-attribution";
 
@@ -241,6 +242,7 @@ function PoliticalHomepage() {
       </section>
 
       <ElectionSeasonSpotlight />
+      <section className="mx-auto max-w-[1200px] px-6 pt-8"><November2026VotingActionGuide compact /></section>
       <BreakingStrip articles={valid} />
 
       <section className="mx-auto max-w-[1200px] px-6 py-16">

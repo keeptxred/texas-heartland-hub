@@ -618,9 +618,31 @@ async function handler({ request }: { request: Request }) {
       graphLinks: graphLinks.map((node) => node.href),
     });
   } catch (error) {
-    await db.from("news_publish_candidates").update({ status: "HELD" }).eq("id", candidate.id);
+    const details = error instanceof Error ? error.message : String(error);
+    const heldReason = details.startsWith("newsroom_image_publication_hold:")
+      ? "image_verification_failed"
+      : "publication_failed";
+    // Record the exact blocked step; otherwise a validated GENERATED draft
+    // becomes an opaque HELD candidate, and production silently goes stale.
+    // HELD remains non-retryable by the paid generator until explicitly
+    // reviewed or recovered. Never bypass the image/source quality gates.
+    const failureDetails = `${heldReason}: ${details}`.slice(0, 1000);
+    console.error("[newsroom] publication held", {
+      candidateId: candidate.id,
+      clusterId: candidate.cluster_id,
+      reason: failureDetails,
+    });
+    await db.from("news_publish_candidates").update({
+      status: "HELD",
+      rejection_reason: failureDetails,
+    }).eq("id", candidate.id);
     await db.rpc("newsroom_finalize_ai_generation", { p_site: SITE, p_kind: kind, p_success: generated });
-    return Response.json({ error: "Newsroom generation failed", details: String(error) }, { status: 500 });
+    return Response.json({
+      error: "Newsroom generation failed",
+      details: failureDetails,
+      candidateId: candidate.id,
+      heldReason,
+    }, { status: 500 });
   }
 }
 
