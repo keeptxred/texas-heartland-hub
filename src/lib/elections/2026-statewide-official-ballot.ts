@@ -81,6 +81,22 @@ export const OFFICIAL_2026_STATEWIDE_BALLOT: Record<string, OfficeChoices> = {
     printed: ["John Messinger", "Holly Taylor"],
     writeIn: [],
   },
+  // The Fifteenth Court of Appeals has statewide electoral jurisdiction.
+  // Its three November 2026 contests also appear on the Secretary of
+  // State's official statewide results listing, though KTR's 227-race
+  // internal registry does not yet have corresponding detail records.
+  "2026-fifteenth-court-chief-justice": {
+    printed: ["Scott Brister", "Jerry Zimmerer"],
+    writeIn: [],
+  },
+  "2026-fifteenth-court-place-2": {
+    printed: ["Scott K. Field", "Tom Baker"],
+    writeIn: [],
+  },
+  "2026-fifteenth-court-place-3": {
+    printed: ["April Farris", "Marc M. Meyer"],
+    writeIn: [],
+  },
 };
 
 export function normalizeOfficialCandidateName(name: string): string {
