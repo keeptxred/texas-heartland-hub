@@ -8,12 +8,9 @@ name: Run Daily News Now
 on:
   schedule:
     - cron: "15 */4 * * *"
-  # Run the existing guarded publisher once after an actual verified production
-  # deployment. This prevents an urgent image/provider repair from waiting for
-  # the next cron while maintaining the same AI/quality/publication limits.
-  workflow_run:
-    workflows: ["Deploy verified KeepTXRed to Cloudflare"]
-    types: [completed]
+  # Successful verified deployments explicitly dispatch this workflow after
+  # passing production newsroom smoke. This workflow retains its schedule and
+  # direct manual entry point but no longer duplicates post-deploy events.
   workflow_dispatch:
     inputs:
       flyover_feed_id:
@@ -45,7 +42,6 @@ concurrency:
 
 jobs:
   publish:
-    if: ${{ github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main') }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
