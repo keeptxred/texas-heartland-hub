@@ -30,6 +30,9 @@ const actions = [
 ] as const;
 
 export function November2026VotingActionGuide({ compact = false }: { compact?: boolean }) {
+  // Keep historical voter guidance available at its canonical URL, but do
+  // not promote an expired election over fresh stories on the homepage.
+  if (compact && Date.now() >= Date.parse("2026-11-04T00:00:00-06:00")) return null;
   return (
     <section aria-labelledby={compact ? "homepage-vote-2026" : "election-vote-2026"} className="rounded-xl border border-border bg-card p-5 shadow-sm sm:p-7">
       <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Officially sourced · November 2026</p>
