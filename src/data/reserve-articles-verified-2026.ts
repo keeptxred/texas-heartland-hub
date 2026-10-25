@@ -21,6 +21,13 @@ export const VERIFIED_ADDITIONAL_RESERVE_ARTICLES: ReserveArticle[] = [
       ],
       sections: [
         {
+          heading: "Why This Matters",
+          paragraphs: [
+            "An unofficial election-night figure can look conclusive even when it is not yet the legally established result. Texas public election records have several steps, including precinct returns, local canvassing and—in certain contests—state canvassing. Readers who know which authority signs off on each stage can distinguish normal updates from genuine disputes, identify the actual source document and avoid treating television projections or partial online dashboards as certified results.",
+            "The distinction is practical for local as well as statewide races. Counties, municipal governments and school districts can administer different elections under different legal responsibilities, and the records to request may differ. Before sharing a claim about a disputed count, identify the jurisdiction, reporting date, reporting authority, applicable official canvass and any later recount order. Those details are more useful than an unsupported claim about what an updated total means.",
+          ],
+        },
+        {
           heading: "Election-night returns and canvassed totals are different records",
           paragraphs: [
             "The figures posted by a county or election-night reporting service are typically unofficial. They are a public view of vote reporting as precinct and early-voting data becomes available, not a substitute for the canvass prescribed by the Election Code. An early lead can be meaningful, but its meaning depends on how many precincts have reported, whether early and election-day returns are included, and whether additional legally eligible ballots remain to be considered. A responsible viewer checks the reporting jurisdiction and timestamp before comparing two totals.",
@@ -85,6 +92,13 @@ export const VERIFIED_ADDITIONAL_RESERVE_ARTICLES: ReserveArticle[] = [
         "The commission's public campaign-finance search page includes reports, transaction records, datasets and explanations of its reporting formats. Texas Election Code Chapter 254 sets much of the filing framework, while forms, filer instructions and deadlines supply the reporting details. This guide is about interpreting published documents accurately. It does not infer donor motives from a contribution or assume a document is missing just because it does not appear in one search interface.",
       ],
       sections: [
+        {
+          heading: "Why This Matters",
+          paragraphs: [
+            "Campaign-finance reports are among the most useful original records for understanding what a candidate or political committee has disclosed, but a large fundraising headline is not enough to explain the financial position of a campaign. The reporting period, the filer, the type of transaction and the status of an amended report all affect what the numbers mean. This guide explains how to find and interpret the filed data without confusing reported spending with contributions.",
+            "The right database matters as much as the arithmetic. The Texas Ethics Commission hosts many state-filed reports, while some local reports are filed with municipal or other local authorities. Comparing two records without checking their reporting periods or custodians can create a false discrepancy. Readers who retain source links, transaction IDs and report dates are better equipped to evaluate public claims and correct errors when a later disclosure becomes available.",
+          ],
+        },
         {
           heading: "Identify the right filer and filing authority first",
           paragraphs: [
