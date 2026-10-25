@@ -238,9 +238,11 @@ jobs:
           # The reserve path also generates AND verifies a 1280×720 featured
           # image before publication. The previous 95-second client timeout
           # cut off valid attempts after the main publisher had already failed.
-          # One bounded request, no retry loop or lowered verification gates.
+          # At most two independently validated images may now be tested if
+          # the first article fails story-match vision (never provider quota/error).
+          # Allow the request to complete instead of cutting off validation.
           safety_status=$(curl -sS -X POST -o /tmp/safety-net.json -w '%{http_code}' \
-            --max-time 240 -H 'accept: application/json' \
+            --max-time 480 -H 'accept: application/json' \
             "${AUTOMATION_ORIGIN%/}/api/public/hooks/publishing-safety-net" || echo 000)
           cat /tmp/safety-net.json 2>/dev/null || true
           echo
