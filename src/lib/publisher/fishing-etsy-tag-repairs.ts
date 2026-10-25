@@ -135,5 +135,5 @@ export function approvedFishingRepair(job: string, productId: string, shopId: st
 }
 
 export function matchesTags(actual: readonly string[] | undefined, desired: readonly string[]) {
-  return Array.isArray(actual) && actual.length === desired.length && desired.every((tag, i) => actual[i] === tag);
+  return Array.isArray(actual) && actual.length === desired.length && desired.every((tag) => actual.includes(tag));
 }
