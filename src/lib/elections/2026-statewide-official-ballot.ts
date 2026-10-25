@@ -23,7 +23,7 @@ type OfficeChoices = { printed: readonly string[]; writeIn: readonly string[] };
 export const OFFICIAL_2026_STATEWIDE_BALLOT: Record<string, OfficeChoices> = {
   "2026-us-senate": {
     printed: ["Ken Paxton", "James Talarico", "Ted Brown"],
-    writeIn: ["Avery Ayers", "Bradford Brad Hall", "Zul Mohamed", "Jade Simmons"],
+    writeIn: ["Avery Ayers", "Bradford \"Brad\" Hall", "Zul Mohamed", "Jade Simmons"],
   },
   "2026-governor": {
     printed: ["Greg Abbott", "Gina Hinojosa", "Pat Dixon"],
