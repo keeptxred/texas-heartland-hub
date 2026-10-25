@@ -20,7 +20,7 @@ describe("official-record-backed Texas election civic-reference reserve", () => 
   it("retains substantial source-backed explanations, not invented race projections", () => {
     for (const article of VERIFIED_ADDITIONAL_RESERVE_ARTICLES) {
       expect(articleMainWordCount({ ...article.body, updated: "2026-10-25" })).toBeGreaterThanOrEqual(INGESTED_MIN_MAIN_WORDS);
-      expect(article.body.sections?.find(s => s.heading === "Why This Matters")?.paragraphs.length).toBeGreaterThanOrEqual(2);
+      expect(article.body.sections?.find(s => s.heading === "Why This Matters")?.paragraphs?.length ?? 0).toBeGreaterThanOrEqual(2);
       expect(article.body.sources.length).toBeGreaterThanOrEqual(3);
       expect(article.body.sources.every(x => x.url.startsWith("https://"))).toBe(true);
       expect(article.body.faq.length).toBeGreaterThanOrEqual(3);
