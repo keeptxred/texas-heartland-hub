@@ -188,6 +188,7 @@ async function publishOverdueGaps(request: Request) {
       audience: OIDC_AUDIENCE,
       repository: REPOSITORY,
       workflowPath: WORKFLOW_PATH,
+      allowedEventNames: ["schedule", "workflow_dispatch", "workflow_run"],
     });
   } catch (error) {
     return Response.json(
