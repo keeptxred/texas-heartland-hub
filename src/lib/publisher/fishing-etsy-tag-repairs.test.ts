@@ -112,6 +112,7 @@ describe("one-time owner-approved six-shirt Etsy SEO repair", () => {
     }));
     const first = await advance(store, subject, plan.job);
     if (!("results" in first)) throw Error("Expected publication results, not preview/processing");
+    if (!first.results) throw Error("Expected nonempty results");
     expect(first.results[0].tag_repair).toBe("publish-submitted");
     expect(product.tags).toEqual(plan.tags);
     expect(product.external.id).toBe(plan.etsy);
@@ -120,6 +121,7 @@ describe("one-time owner-approved six-shirt Etsy SEO repair", () => {
     expect(createCount).toBe(0);
     const second = await advance(store, subject, plan.job);
     if (!("results" in second)) throw Error("Expected publication results, not preview/processing");
+    if (!second.results) throw Error("Expected nonempty results");
     expect(second.results[0].tag_repair).toBe("publish-submitted");
     expect(putCount).toBe(1);
     expect(publishCount).toBe(1);
