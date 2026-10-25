@@ -153,12 +153,23 @@ jobs:
             echo "Updated existing election refresh PR #$pr_number."
           fi
 
-          # GITHUB_TOKEN-authored PR events do not start follow-on workflows. Explicitly dispatch
-          # the required verify workflow on the generated branch so branch protection still governs merge.
-          gh workflow run shared-vitest.yml --ref "$refresh_branch"
-          echo "Dispatched required verify for $refresh_branch."
+          # PR events created by GITHUB_TOKEN are suppressed by GitHub, so
+          # their PR check runs can remain action_required forever even when
+          # the manually dispatched verify job passed. Dispatch every
+          # existing required election/build workflow on this exact data SHA,
+          # not only the generic verify job. No polling, bypass, or parallel
+          # publisher; GitHub branch protection still enforces all checks.
+          for workflow in \
+            shared-vitest.yml \
+            production-build-validation.yml \
+            election-central-validation.yml \
+            election-central-mobile.yml; do
+            gh workflow run "$workflow" --ref "$refresh_branch"
+            echo "Dispatched $workflow on $refresh_branch."
+          done
 
-          # Let normal branch protection and the required verify check govern the merge.
+          # Auto-merge waits on required checks. Failed source-freshness
+          # validation stays red until authoritative records are updated.
           gh pr merge "$pr_number" --auto --squash
           echo "Election refresh is queued through protected PR #$pr_number."
       - name: Upload audit report
