@@ -4,6 +4,7 @@ import {
   rankEditorialCandidates,
   routeEditorialPillar,
   scoreEditorialCluster,
+  verifiedEditorialPublisherCounts,
 } from "./newsroom-editorial-scoring";
 
 describe("newsroom editorial scoring", () => {
@@ -57,6 +58,48 @@ describe("newsroom editorial scoring", () => {
     expect(isPrimaryNewsSource("Office of the Governor", "https://gov.texas.gov/news/post/example")).toBe(true);
     expect(isPrimaryNewsSource("Baylor Athletics", "https://baylorbears.com/news/2026/8/14/example")).toBe(true);
     expect(isPrimaryNewsSource("Office of the Texas Governor (.gov)", "https://news.google.com/rss/articles/example")).toBe(false);
+  });
+
+  it("does not count Google News RSS links as independent publisher corroboration", () => {
+    const result = verifiedEditorialPublisherCounts([
+      { url: "https://news.google.com/rss/articles/CBMiA", name: "Texas Tribune", flaggedPrimary: false },
+      { url: "https://news.google.com/rss/articles/CBMiB", name: "Attorney General (.gov)", flaggedPrimary: true },
+      { url: "https://news.google.com/rss/articles/CBMiC", name: "Local TV", flaggedPrimary: false },
+    ]);
+    expect(result).toEqual({ sourceCount: 0, primarySourceCount: 0 });
+  });
+
+  it("counts independent publisher families only once across duplicate feeds", () => {
+    const counts = verifiedEditorialPublisherCounts([
+      { url: "https://feeds.texastribune.org/link/abc", name: "Texas Tribune", flaggedPrimary: false },
+      { url: "https://www.texastribune.org/2026/10/25/news", name: "Texas Tribune", flaggedPrimary: false },
+      { url: "https://www.sacurrent.com/news/story", name: "San Antonio Current", flaggedPrimary: false },
+      { url: "https://lrl.texas.gov/currentIssues/clips/news", name: "Legislative clipping index", flaggedPrimary: true },
+    ]);
+    expect(counts).toEqual({ sourceCount: 2, primarySourceCount: 0 });
+  });
+
+  it("credits directly linked primary records without inferring authority from misleading labels", () => {
+    const verified = verifiedEditorialPublisherCounts([
+      { url: "https://www.texasattorneygeneral.gov/news/releases/example", name: "Texas Attorney General", flaggedPrimary: true },
+      { url: "https://news.google.com/rss/articles/example", name: "Texas Attorney General", flaggedPrimary: true },
+      { url: "https://www.sacurrent.com/news/example", name: "Office of Texas AG", flaggedPrimary: true },
+    ]);
+    expect(verified).toEqual({ sourceCount: 2, primarySourceCount: 1 });
+  });
+
+  it("makes corroboration scoring consistent with verified family counts", () => {
+    const direct = verifiedEditorialPublisherCounts([
+      { url: "https://www.texastribune.org/2026/10/25/example", name: "Texas Tribune", flaggedPrimary: false },
+      { url: "https://www.sacurrent.com/news/example", name: "San Antonio Current", flaggedPrimary: false },
+    ]);
+    const discovery = verifiedEditorialPublisherCounts([
+      { url: "https://news.google.com/rss/articles/aaa", name: "Texas Tribune", flaggedPrimary: false },
+      { url: "https://news.google.com/rss/articles/bbb", name: "San Antonio Current", flaggedPrimary: false },
+    ]);
+    const common = { texasRelevance: 75, sourceReputation: 80, viralScore: 20, trendVelocity: 10, ageHours: 4 };
+    expect(scoreEditorialCluster({ ...common, ...direct }).breakdown.corroboration).toBe(5);
+    expect(scoreEditorialCluster({ ...common, ...discovery }).breakdown.corroboration).toBe(0);
   });
 
   it("ranks the strongest statewide candidates globally rather than by pillar quotas", () => {
