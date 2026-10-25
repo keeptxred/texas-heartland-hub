@@ -99,6 +99,7 @@ async function authorized(request: Request, mode: "shadow" | "publish"): Promise
       audience: OIDC_AUDIENCE,
       repository: REPOSITORY,
       workflowPath: PRODUCTION_WORKFLOW_PATH,
+      allowedEventNames: ["schedule", "workflow_dispatch", "workflow_run"],
     });
     return true;
   } catch {
