@@ -152,6 +152,11 @@ export function isCloudflareImageSafetyRejection(status: number, detail: string)
   return /\b(?:output has been flagged|input has been flagged|flagged|content[- ]?filter(?:ed|ing)?|moderation|safety filter|unsafe|policy violation|blocked for policy)\b/i.test(detail);
 }
 
+/** Do not retry quota (429), safety (4xx) or input errors as provider outages. */
+export function isRetryableImageModelOutage(status: number): boolean {
+  return status === 408 || status === 425 || (status >= 500 && status <= 599);
+}
+
 function safetyRetryScene(prompt: string): string {
   const text = prompt.toLowerCase();
   if (/\b(broadcast|interview|television|tv|fcc|federal communications commission|radio|newsroom|media|studio)\b/.test(text)) {
@@ -221,6 +226,26 @@ export async function generateImageBytes(
   let usedFallback = false;
   let usedSafetyRetry = false;
 
+  // A quality-model internal 500 must not strand an otherwise valid article.
+  // Allow exactly ONE bounded retry on Klein 4B with the same story-specific
+  // prompt. The caller still requires exact Cloudflare vision approval before
+  // any image is stored or a newsroom article can become public.
+  // Never retry moderation rejections or quota exhaustion.
+  const recoverFromQualityOutage = async (failure: CloudflareImageFailure): Promise<Response> => {
+    if (!isRetryableImageModelOutage(failure.status)) {
+      throw cloudflareImageFailureError(activeModel, failure);
+    }
+    const failedModel = activeModel;
+    activeModel = CLOUDFLARE_IMAGE_MODEL;
+    usedFallback = true;
+    const recovered = await requestCloudflareImage(accountId, apiToken, activePrompt, activeNegativePrompt, activeModel);
+    if (!recovered.ok) {
+      const lastFailure = await readCloudflareImageFailure(recovered);
+      throw new Error(`Cloudflare Workers AI recovery failed after ${failedModel} ${failure.status}: ${activeModel} ${lastFailure.status}: ${lastFailure.detail}`);
+    }
+    return recovered;
+  };
+
   const runSafetyRetry = async (): Promise<Response> => {
     usedSafetyRetry = true;
     usedFallback = false;
@@ -237,7 +262,9 @@ export async function generateImageBytes(
     retry = await requestCloudflareImage(accountId, apiToken, activePrompt, activeNegativePrompt, activeModel);
     if (retry.ok) return retry;
     const fallbackFailure = await readCloudflareImageFailure(retry);
-    throw cloudflareImageFailureError(activeModel, fallbackFailure.status ? fallbackFailure : retryFailure);
+    // A transient provider failure is not the same as an image safety rejection.
+    // The recovered Klein 4B image must still pass the original vision checks.
+    return recoverFromQualityOutage(fallbackFailure.status ? fallbackFailure : retryFailure);
   };
 
   let res = await requestCloudflareImage(accountId, apiToken, activePrompt, activeNegativePrompt, activeModel);
@@ -255,11 +282,11 @@ export async function generateImageBytes(
         if (isCloudflareImageSafetyRejection(failure.status, failure.detail)) {
           res = await runSafetyRetry();
         } else {
-          throw cloudflareImageFailureError(activeModel, failure);
+          res = await recoverFromQualityOutage(failure);
         }
       }
     } else {
-      throw cloudflareImageFailureError(activeModel, failure);
+      res = await recoverFromQualityOutage(failure);
     }
   }
 
