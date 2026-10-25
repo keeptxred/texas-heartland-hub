@@ -54,7 +54,7 @@ jobs:
           const broken=results.filter(x=>x.status!==200);
           console.log('HISTORICAL_REDIRECT_AUDIT_SUMMARY '+JSON.stringify({checked:results.length,broken:broken.length,brokenSlugs:broken.map(x=>x.oldSlug)}));
           if(broken.length)process.exitCode=1;
-                    NODE
+          NODE
 
       - name: Audit every submitted sitemap page
         env:
