@@ -48,6 +48,18 @@ const ELECTION_RECOVERY_EXPIRES = "2026-10-30T23:59:59Z";
 function isFactualVotingAdministrationSubject(subject: string): boolean {
   return /\b(?:voters?|voting|ballots?|registration|polling|election turnout|election updates)\b/i.test(subject);
 }
+function electionDraftHeadlineMatchesEvent(subject: string, title: string): boolean {
+  // A draft originally clustered as a ballot error may drift into a completely
+  // different turnout story. Editorial approval cannot justify publishing a
+  // topic-shifted archived draft as though it verified the reported incident.
+  if (/ballot (?:errors?|issues?|discrepanc(?:y|ies))/.test(subject)) {
+    return /\bballot\b/i.test(title) && /\b(?:error|issue|discrepanc)/i.test(title);
+  }
+  if (/voter registrations?|registered vote/.test(subject)) {
+    return /\b(?:registrations?|registered|voters?)\b/i.test(title);
+  }
+  return true;
+}
 function electionStoryTokens(value: string): Set<string> {
   const raw = value.toLowerCase()
     .replace(/\b(\d{1,3})[ ,](\d{3})\b/g, "$1$2")
@@ -315,7 +327,8 @@ async function handler({ request }: { request: Request }) {
       const saved = savedDraftByCandidate.get(row.id);
       return record?.pillar_slug === "texas-elections"
         && isFactualVotingAdministrationSubject(record.canonical_subject)
-        && Boolean(saved && (saved.validation_reasons ?? []).length === 0);
+        && Boolean(saved && (saved.validation_reasons ?? []).length === 0)
+        && electionDraftHeadlineMatchesEvent(record.canonical_subject, saved?.draft_json?.title ?? "");
     });
     sawUnshadowed ||= unshadowedCandidates.length > 0;
     const evidenceEligibleCandidates = unshadowedCandidates.filter((row) => {
