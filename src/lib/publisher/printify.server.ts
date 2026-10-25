@@ -20,7 +20,9 @@ export const prepareSchema = z
     artwork: fileSchema,
     title: z.string().min(1).max(125),
     description: z.string().min(1).max(10000),
-    tags: z.array(z.string().min(1).max(20)).max(12).default([]),
+    tags: z.array(z.string().min(1).max(20)).max(13)
+      .refine((tags) => new Set(tags.map((tag) => tag.trim().toLowerCase())).size === tags.length, "Etsy SEO tags must be unique")
+      .default([]),
     products: z
       .array(kindSchema)
       .min(1)
@@ -633,7 +635,7 @@ export async function advance(store: Store, subject: string, id: string, approva
         const product = await api.api<Product>(`/shops/${api.shop}/products.json`, "POST", {
           title: `${state.value.title} – ${entry.kind === "shirt" ? "T-Shirt" : "Sticker"}`,
           description: state.value.description,
-          tags: [...state.value.tags, marker],
+          tags: [...(state.value.tags.length === 13 ? state.value.tags.slice(0, 12) : state.value.tags), marker],
           blueprint_id: config.blueprint_id,
           print_provider_id: config.print_provider_id,
           variants: config.variants.map((v) => ({ ...v, is_enabled: true })),
@@ -677,6 +679,8 @@ export async function advance(store: Store, subject: string, id: string, approva
       let product = await api.product(result.id);
       if (
         (!product.tags?.includes(marker) &&
+          !(result.creation === "confirmed" && state.value.tags.length === 13 &&
+            matchesTags(product.tags, state.value.tags)) &&
           !(approvedFishingRepair(id, result.id, state.value.shop_id, entry.kind, state.value.website) &&
             result.creation === "confirmed" &&
             matchesTags(product.tags, approvedFishingRepair(id, result.id, state.value.shop_id, entry.kind, state.value.website)!.tags))) ||
@@ -690,6 +694,41 @@ export async function advance(store: Store, subject: string, id: string, approva
         throw new PublisherError("Created product does not match the approved plan", 409);
       if (etsy && result.publication && result.id) {
         product = await repairApprovedFishingTags(api, id, state.value, result, product, marker, save);
+      }
+      // New Etsy jobs expose exactly thirteen descriptive tags. The recovery
+      // marker exists *only until* Printify confirms the product ID, so a lost
+      // create response can still be reconciled without duplicate products.
+      // Strip the marker before the very first Etsy publication.
+      if (etsy && result.id && result.creation === "confirmed" &&
+          !result.publication && state.value.tags.length === 13) {
+        if (!matchesTags(product.tags, state.value.tags)) {
+          const originalWithMarker = [...state.value.tags.slice(0, 12), marker];
+          if (!matchesTags(product.tags, originalWithMarker))
+            throw new PublisherError("New product tags drifted before Etsy publication", 409);
+          if (product.is_locked)
+            throw new PublisherError("Printify product locked before 13-tag conversion", 409);
+          if (result.tag_repair === "put-attempted")
+            throw new PublisherError("Previous 13-tag conversion PUT uncertain; do not retry", 409);
+          result.tag_repair = "put-attempted";
+          await save();
+          const after = await api.api<Product>(`/shops/${api.shop}/products/${encodeURIComponent(result.id)}.json`, "PUT", {
+            title: product.title,
+            tags: state.value.tags,
+          });
+          if (after.id !== product.id || !matchesTags(after.tags, state.value.tags) ||
+              after.blueprint_id !== product.blueprint_id ||
+              after.print_provider_id !== product.print_provider_id ||
+              after.variants.length !== product.variants.length ||
+              product.variants.some((variant) => !after.variants.some((v) =>
+                v.id === variant.id && v.price === variant.price && v.is_enabled === variant.is_enabled)))
+            throw new PublisherError("Pre-publication 13-tag conversion changed product identity or variants", 409);
+          product = after;
+          result.tag_repair = "printify-updated";
+          await save();
+        } else if (result.tag_repair === "put-attempted") {
+          result.tag_repair = "printify-updated";
+          await save();
+        }
       }
       if (etsy && !result.publication && !etsyUrl(product) && !product.is_locked) {
         result.publication = "attempted";

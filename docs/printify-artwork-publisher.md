@@ -18,6 +18,10 @@ Install the private package or register its MCP endpoint using the private-plugi
 
 Call `publisher_catalog` after authenticating. It reads the actual shop sales channel, current configurations, and existing product templates. With owner approval, call `configure_product` for shirt and sticker using an existing approved template product ID. The server copies enabled variants/prices and validates blueprint kind, provider and print position against the live Printify catalog. No hardcoded provider IDs, automatically guessed prices, or new provider subscriptions are introduced.
 
+## Required Etsy tags — existing and future listings
+
+Every new `prepare_products` MCP request **must contain exactly 13 unique, buyer-relevant tags of at most 20 characters**. Do not consume an Etsy search tag slot with an internal `hp-*` reconciliation marker. New products are initially created with the first 12 tags plus the deterministic recovery marker so a lost product-create response remains recoverable, then the marker is removed through a verified in-place Printify tag update immediately after the creation ID is durably confirmed and **before first Etsy publication**. A tags-only reconciliation of the six original TexasDefined fishing listings was separately owner-approved and implemented without new listings in PR #2966. Acceptance requires checking that the actual Etsy listing has all 13 descriptive tags; Printify submission alone is insufficient.
+
 ## Publication flow
 
 1. Generate and approve the artwork in the conversation. `prepare_products` accepts a complete ChatGPT file-param object containing `download_url` and `file_id` (optional `mime_type`, `file_name`). If a generated image cannot be selected as a file, attach its approved PNG. The server cannot scrape or access arbitrary conversation images.

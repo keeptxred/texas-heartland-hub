@@ -60,7 +60,7 @@ export const tools = [
   tool(
     "prepare_products",
     "Prepare approved artwork",
-    "Use only artwork the user has approved. Transfers the attached print-ready PNG securely from ChatGPT to Printify and returns exact variants, prices, placement and website destination for review. Creates no products/listings. Keep job_id stable across retries. Never invent file URLs. If the generated image is unavailable as a file, ask the user to attach the approved PNG.",
+    "Require exactly 13 unique, buyer-relevant descriptive tags (at most 20 characters each) for every new Etsy listing; internal hp-* reconciliation tags never occupy an Etsy search slot. Use only artwork the user has approved. Transfers the attached print-ready PNG securely from ChatGPT to Printify and returns exact variants, prices, placement and website destination for review. Creates no products/listings. Keep job_id stable across retries. Never invent file URLs. If the generated image is unavailable as a file, ask the user to attach the approved PNG.",
     schema(
       {
         job_id: job,
@@ -70,12 +70,12 @@ export const tools = [
         ]),
         title: text,
         description: text,
-        tags: { type: "array", items: text, maxItems: 12 },
+        tags: { type: "array", items: text, minItems: 13, maxItems: 13 },
         products: { type: "array", items: kind, minItems: 1, maxItems: 2, uniqueItems: true },
         website: { type: "string", enum: ["keeptxred", "texasdefined", "none"] },
         artwork_approved: { type: "boolean", const: true },
       },
-      ["job_id", "artwork", "title", "description", "products", "website", "artwork_approved"],
+      ["job_id", "artwork", "title", "description", "tags", "products", "website", "artwork_approved"],
     ),
     false,
     { "openai/fileParams": ["artwork"] },
