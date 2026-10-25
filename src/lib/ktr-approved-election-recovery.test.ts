@@ -11,7 +11,7 @@ describe("editorially approved October 11-25 election newsroom recovery", () => 
     expect(generator).toContain('const ELECTION_RECOVERY_EXPIRES = "2026-10-30T23:59:59Z"');
     expect(generator).toContain('record?.pillar_slug === "texas-elections"');
     expect(generator).toContain("isFactualVotingAdministrationSubject(record.canonical_subject)");
-    expect(generator).toContain('mode: "publish"');
+    expect(generator).toContain('const recoveryRequested = requestedMode === "publish"');
   });
 
   it("only reuses exact GENERATED publish-mode drafts without a new AI reservation", () => {
