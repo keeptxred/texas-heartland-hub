@@ -2,8 +2,6 @@
 name: Audit sitemap page indexability
 
 on:
-  push:
-    branches: [diagnostic/ktr-history-404-20261025]
   workflow_dispatch:
   schedule:
     - cron: "37 12 * * 1"
