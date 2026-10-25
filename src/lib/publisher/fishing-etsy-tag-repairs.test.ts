@@ -47,7 +47,8 @@ describe("one-time owner-approved six-shirt Etsy SEO repair", () => {
       expect(approvedFishingRepair(item.job, item.printify, "28098650", "shirt", "keeptxred")).toBeNull();
     }
     expect(matchesTags(["one", "two"], ["one", "two"])).toBe(true);
-    expect(matchesTags(["two", "one"], ["one", "two"])).toBe(false);
+    expect(matchesTags(["two", "one"], ["one", "two"])).toBe(true);
+    expect(matchesTags(["two", "extra"], ["one", "two"])).toBe(false);
   });
 
   it.each(approvedFishingTagRepairs)("repairs existing $job tags without creating products or changing inventory, idempotently", async (plan) => {
