@@ -2,6 +2,7 @@ import { Buffer } from "node:buffer";
 import { z } from "zod";
 import { mapProduct, type PrintifyProduct } from "../printify-sync-product";
 import { bounded, digest, PublisherError, Store } from "./store.server";
+import { approvedFishingRepair, matchesTags } from "./fishing-etsy-tag-repairs";
 
 export const kindSchema = z.enum(["shirt", "sticker"]);
 export const websiteSchema = z.enum(["keeptxred", "texasdefined", "none"]);
@@ -61,6 +62,8 @@ type Result = {
   website_url?: string;
   website_verified?: boolean;
   issue?: string;
+  /** Durable checkpoint for owner-approved existing-listing tag updates. */
+  tag_repair?: "put-attempted" | "printify-updated" | "publish-attempted" | "publish-submitted";
 };
 export type Job = {
   shop_id: string;
@@ -496,6 +499,88 @@ async function verifyPage(url: string, marker: string, isEtsy = false) {
     return false;
   }
 }
+/**
+ * Correct six existing Etsy listings via their original Printify sales channel.
+ * The marker exists for recovering a lost CREATE; the confirmed product ID and
+ * immutable job record remain durable after the public-facing tag correction.
+ */
+async function repairApprovedFishingTags(
+  api: Printify,
+  jobId: string,
+  job: Job,
+  result: Result,
+  product: Product,
+  marker: string,
+  save: () => Promise<void>,
+): Promise<Product> {
+  if (!result.id || result.creation !== "confirmed") return product;
+  const plan = approvedFishingRepair(jobId, result.id, job.shop_id, result.kind, job.website);
+  if (!plan) return product;
+  if (!Array.isArray(product.tags)) throw new PublisherError("Product has no tag data; no repair attempted", 409);
+  const currentListing = product.external?.id ?? etsyUrl(product)?.match(/listing\/(\d+)/)?.[1];
+  if (String(currentListing ?? "") !== plan.etsy)
+    throw new PublisherError("Etsy listing ID mismatched approved repair; no mutation", 409);
+  if (plan.tags.length !== 13 || new Set(plan.tags).size !== 13 ||
+      plan.tags.some((tag) => tag.length > 20 || !/^[a-zA-Z0-9 '-]+$/.test(tag)))
+    throw new PublisherError("Approved 13-tag plan invalid", 409);
+  const updated = matchesTags(product.tags, plan.tags);
+  if (!updated) {
+    // Refuse drift: all twelve original SEO tags plus the expected recovery marker.
+    const original = [...plan.tags.slice(0, 12), marker];
+    if (!matchesTags(product.tags, original))
+      throw new PublisherError("Product tag drift from original approved plan; no mutation", 409);
+    if (product.is_locked) {
+      result.issue = "Printify product locked; tag repair pending";
+      await save();
+      return product;
+    }
+    if (result.tag_repair === "put-attempted") {
+      result.issue = "Previous Printify tag update uncertain; no blind retry";
+      await save();
+      return product;
+    }
+    result.tag_repair = "put-attempted";
+    await save();
+    const after = await api.api<Product>(`/shops/${api.shop}/products/${encodeURIComponent(result.id)}.json`, "PUT", {
+      title: product.title, tags: plan.tags,
+    });
+    if (after.id !== product.id || !matchesTags(after.tags, plan.tags) ||
+        after.blueprint_id !== product.blueprint_id ||
+        after.print_provider_id !== product.print_provider_id ||
+        after.variants.length !== product.variants.length ||
+        product.variants.some((variant) => !after.variants.some((v) =>
+          v.id === variant.id && v.price === variant.price && v.is_enabled === variant.is_enabled)))
+      throw new PublisherError("Printify tag update altered product identity or variants", 409);
+    product = after;
+    result.tag_repair = "printify-updated";
+    await save();
+  } else if (result.tag_repair === "put-attempted") {
+    // Lost PUT response reconciled by exact existing Printify tag state.
+    result.tag_repair = "printify-updated";
+    await save();
+  }
+  if (result.tag_repair === "publish-submitted") return product;
+  if (result.tag_repair === "publish-attempted") {
+    result.issue = "Etsy tag-only publish uncertain; no blind retry";
+    await save();
+    return product;
+  }
+  if (product.is_locked) {
+    result.issue = "Printify locked after tag update; Etsy publish pending";
+    await save();
+    return product;
+  }
+  result.tag_repair = "publish-attempted";
+  await save();
+  await api.api(`/shops/${api.shop}/products/${encodeURIComponent(result.id)}/publish.json`, "POST", {
+    title: false, description: false, images: false, variants: false,
+    tags: true, keyFeatures: false, shipping_template: false,
+  });
+  result.tag_repair = "publish-submitted";
+  await save();
+  return api.product(result.id);
+}
+
 export async function advance(store: Store, subject: string, id: string, approval?: string) {
   if (!/^[A-Za-z0-9_-]{8,64}$/.test(id)) throw new PublisherError("Invalid job_id");
   let state = await store.get<Job>(`job:${subject}:${id}`);
@@ -591,7 +676,10 @@ export async function advance(store: Store, subject: string, id: string, approva
       }
       let product = await api.product(result.id);
       if (
-        !product.tags?.includes(marker) ||
+        (!product.tags?.includes(marker) &&
+          !(approvedFishingRepair(id, result.id, state.value.shop_id, entry.kind, state.value.website) &&
+            result.creation === "confirmed" &&
+            matchesTags(product.tags, approvedFishingRepair(id, result.id, state.value.shop_id, entry.kind, state.value.website)!.tags))) ||
         product.blueprint_id !== entry.config.blueprint_id ||
         product.print_provider_id !== entry.config.print_provider_id ||
         entry.config.variants.some(
@@ -600,6 +688,9 @@ export async function advance(store: Store, subject: string, id: string, approva
         )
       )
         throw new PublisherError("Created product does not match the approved plan", 409);
+      if (etsy && result.publication && result.id) {
+        product = await repairApprovedFishingTags(api, id, state.value, result, product, marker, save);
+      }
       if (etsy && !result.publication && !etsyUrl(product) && !product.is_locked) {
         result.publication = "attempted";
         await save();
