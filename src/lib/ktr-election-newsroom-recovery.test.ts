@@ -13,6 +13,7 @@ describe("November 2026 source-first voter guidance", () => {
     expect(component).toContain("not every county uses countywide vote centers");
     expect(component).toContain("www.sos.state.tx.us/elections/voter/important-election-dates.shtml");
     expect(component).toContain("www.votetexas.gov/voting/where");
+    expect(component).toContain('if (compact && Date.now() >= Date.parse("2026-11-04T00:00:00-06:00")) return null;');
   });
 
   it("cross-links official answers from both election and homepage", () => {

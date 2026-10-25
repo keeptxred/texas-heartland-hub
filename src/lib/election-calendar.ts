@@ -45,7 +45,7 @@ export const TEXAS_ELECTIONS: TexasElection[] = [
     jurisdiction: "Statewide",
     description: "General election for federal, state, and county offices.",
     source: "https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml",
-    lastUpdated: "2026-07-18",
+    lastUpdated: "2026-10-25",
   },
   {
     name: "Texas Primary Election",
