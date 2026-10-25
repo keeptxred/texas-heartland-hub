@@ -43,7 +43,7 @@ jobs:
           import re
           from pathlib import Path
 
-          text = Path('/tmp/publisher.log').read_text(errors='replace')
+          text = Path(os.environ.get('PUBLISHER_LOG_PATH', '/tmp/publisher.log')).read_text(errors='replace')
 
           def match(pattern, default=None, flags=0):
               found = re.search(pattern, text, flags)
