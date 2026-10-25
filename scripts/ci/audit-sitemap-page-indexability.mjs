@@ -17,6 +17,26 @@ let requestBudgetExceeded = false;
 const SITEMAP_CACHE_BUSTER = process.env.GITHUB_SHA || `audit-${Date.now()}`;
 const TRANSIENT = new Set([408, 425, 429, 500, 502, 503, 504, 520, 522, 524]);
 const LEGACY_REDIRECTS = new Map([
+  // Historical redirects preserved in the article_slug_redirects registry.
+  ["/news/2026-06-28-understanding-texas-property-taxes-why-they-stay-high-and-how-to-file", "/news/texas-property-tax-guide"],
+  ["/news/2026-07-01-how-to-verify-your-texas-voter-registration-and-identify-requirements", "/news/texas-voting-guide-2026"],
+  ["/news/2026-07-02-texas-homestead-exemption-explained-who-qualifies-and-how-to-file", "/news/homestead-exemption-explained"],
+  ["/news/2026-07-07-mapping-the-1-254-miles-the-real-reason-texas-border-geography-matters", "/news/texas-border-policy-full-guide"],
+  ["/news/2026-07-10-texas-constitutional-amendments-explained-simply-how-the-lone-star-state-governs", "/news/texas-constitutional-amendments-guide"],
+  ["/news/2026-08-07-harris-county-funds-ice-shooting-investigation", "/news/2026-08-09-harris-county-ice-shooting-investigation"],
+  ["/news/2026-08-07-presidio-border-wall-levee-ruling", "/news/2026-08-09-presidio-border-wall-levee-ruling"],
+  ["/news/2026-08-08-daniella-guzman-kprc-return-ticket-review", "/news/2026-08-09-daniella-guzman-kprc-return"],
+  ["/news/2026-08-08-texas-childrens-pavilion-women-expansion", "/news/2026-08-09-texas-childrens-pavilion-expansion"],
+  ["/news/2026-08-08-texas-measles-alert-montgomery-county", "/news/2026-08-09-montgomery-county-measles-outbreak"],
+  ["/news/2026-08-09-texas-data-center-audit-grid", "/news/2026-08-14-texas-data-centers-under-scrutiny-after-gov-abbott-s-order-sh190y"],
+  ["/news/2026-08-13-houston-mayor-john-whitmire-77-seeks-second-term-as-age-sparks-political-debate", "/news/2026-08-13-houston-mayor-john-whitmire-s-age-and-re-election-plans-spark-debate"],
+  ["/news/2026-08-14-texas-airports-face-review-over-religious-facilities-jq9lzk", "/news/2026-08-14-texas-governor-abbott-targets-airports-over-alleged-religious-discrimi-5y6nb3"],
+  ["/news/2026-08-21-gov-abbott-proposes-ban-on-h-1b-visa-use-for-texas-public-schools", "/news/2026-08-20-gov-abbott-proposes-ban-on-h-1b-visa-use-for-texas-public-schools"],
+  ["/news/live-2026-07-06-toyota-increases-san-antonio-footprint-with-massive-three-billion-doll-z2yvzl", "/news/live-2026-07-09-toyota-bolsters-san-antonio-manufacturing-footprint-with-major-tacoma--6ik2im"],
+  ["/news/live-2026-07-19-voter-registration-countdown-begins-for-texas-2026-midterm-elections-yx9ejb", "/news/texas-voting-guide-2026"],
+  ["/news/live-2026-07-24-san-antonio-residents-seek-organized-opposition-to-flock-safety-survei-hz11ng", "/news/2026-08-09-houston-flock-camera-backlash"],
+  // Cross-site handoff tracked in the historical registry, outside article_slug_redirects.
+  ["/news/texas-home-equity-heloc-guide", "https://texasdefined.com/article/texas-home-equity-heloc-guide"],
   ["/hubs", "/topics"],
   ["/hubs/texas-policy-law", "/laws"],
   ["/hubs/texas-politics", "/texas-politics"],
@@ -318,6 +338,39 @@ async function auditLegacyRedirects(robotsGroups, sitemapPages) {
       const resolved = location ? new URL(location, sourceUrl).href : "";
       if (![301, 308].includes(response.status) || resolved !== expected) {
         issues.push({ type: "legacy-redirect", url: sourceUrl.href, detail: `Expected permanent redirect to ${expected}; got HTTP ${response.status} -> ${resolved || "(no location)"}` });
+        continue;
+      }
+
+      // Checking only the first 301 concealed historical chains that ended in
+      // 404. Resolve the entire chain, including canonical cross-site handoffs.
+      let destination = expected;
+      const seen = new Set([sourceUrl.href]);
+      let reachedHtml = false;
+      for (let hop = 0; hop < 5; hop += 1) {
+        if (seen.has(destination)) {
+          issues.push({ type: "legacy-redirect-loop", url: sourceUrl.href, detail: `Repeated destination ${destination}` });
+          break;
+        }
+        seen.add(destination);
+        const targetResponse = await fetchManual(destination, "text/html,application/xhtml+xml;q=0.9,*/*;q=0.1");
+        if (targetResponse.status === 200) {
+          const type = (targetResponse.headers.get("content-type") || "").toLowerCase();
+          if (!type.includes("text/html")) {
+            issues.push({ type: "legacy-redirect-target-content", url: sourceUrl.href, detail: `HTTP 200 at ${destination}, but content-type was ${type}` });
+          } else {
+            reachedHtml = true;
+          }
+          break;
+        }
+        const location = targetResponse.headers.get("location");
+        if (![301, 308].includes(targetResponse.status) || !location) {
+          issues.push({ type: "legacy-redirect-dead-target", url: sourceUrl.href, detail: `HTTP ${targetResponse.status} at ${destination}; location=${location || ""}` });
+          break;
+        }
+        destination = new URL(location, destination).href;
+      }
+      if (!reachedHtml && !issues.some((issue) => issue.url === sourceUrl.href)) {
+        issues.push({ type: "legacy-redirect-too-many-hops", url: sourceUrl.href, detail: `Final target did not reach HTML in five hops; last destination ${destination}` });
       }
     } catch (error) {
       issues.push({ type: "legacy-redirect-fetch", url: sourceUrl.href, detail: String(error) });
