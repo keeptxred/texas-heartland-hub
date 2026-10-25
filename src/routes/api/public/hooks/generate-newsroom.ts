@@ -38,6 +38,18 @@ const PRODUCTION_WORKFLOW_PATH = ".github/workflows/run-daily-news-now.yml";
 const GENERATED_NEWS_PROVENANCE_SIGNATURE =
   "Keep TX Red rewrote the coverage independently and links to the original for verification.";
 
+// Explicit editorial approval received October 25 for already drafted factual
+// election reporting from the preceding fourteen days. This ONLY authorizes
+// re-evaluating saved drafts; it never waives independent sourcing, AI draft
+// validation, image vision verification, freshness context or duplicate checks.
+const ELECTION_RECOVERY_START = "2026-10-11T00:00:00Z";
+const ELECTION_RECOVERY_END = "2026-10-26T00:00:00Z";
+const ELECTION_RECOVERY_EXPIRES = "2026-10-30T23:59:59Z";
+function isFactualVotingAdministrationSubject(subject: string): boolean {
+  return /\b(?:voters?|voting|ballots?|registration|polling|election turnout|election updates)\b/i.test(subject);
+}
+
+
 type CandidateRow = {
   id: string;
   cluster_id: string;
@@ -47,6 +59,7 @@ type CandidateRow = {
 };
 type ClusterRow = { id: string; canonical_subject: string; pillar_slug: string | null };
 type PacketRow = { cluster_id: string; packet_json: ResearchPacket; source_count: number; primary_source_count: number };
+type SavedGeneratedDraft = { id: string; candidate_id: string; draft_json: NewsroomDraft; created_at: string; validation_reasons: string[]; model: string | null };
 
 type AuthorityMetadata = {
   model: "aggregated";
@@ -168,6 +181,8 @@ function productionAuthorityEligible(packetRow: PacketRow): boolean {
 async function handler({ request }: { request: Request }) {
   const url = new URL(request.url);
   const requestedMode = url.searchParams.get("mode") === "publish" ? "publish" : "shadow";
+  const recoveryRequested = requestedMode === "publish" && url.searchParams.get("recover_election") === "1";
+  const recoverElectionDraft = recoveryRequested && Date.now() <= Date.parse(ELECTION_RECOVERY_EXPIRES);
   if (!(await authorized(request, requestedMode))) return Response.json({ error: "Unauthorized" }, { status: 401 });
   if (process.env.NEWSROOM_AI_ENABLED !== "true") {
     return Response.json({ ok: false, disabled: true, reason: "newsroom_ai_disabled" }, { status: 503 });
@@ -181,14 +196,25 @@ async function handler({ request }: { request: Request }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabaseAdmin as any;
 
-  const { data: candidateData, error: candidateError } = await db
-    .from("news_publish_candidates")
-    .select("id,cluster_id,editorial_score,recommended_format,status")
-    // HELD means editorial/recovery intervention is required. Never retry a
-    // held draft by spending another paid AI call.
-    .eq("status", "PENDING")
-    .in("recommended_format", ["SINGLE", "MERGE", "SYNTHESIS"])
-    .gte("created_at", newsroomNewStoryCutoff())
+  if (recoveryRequested && !recoverElectionDraft) {
+    return Response.json({ ok: true, no_items: true, reason: "approved_election_recovery_window_expired", aiCalls: 0 });
+  }
+  const candidateQuery = recoverElectionDraft
+    ? db.from("news_publish_candidates")
+      .select("id,cluster_id,editorial_score,recommended_format,status")
+      // Only untried, explicitly held October 11–25 drafts; no status override.
+      .eq("status", "HELD")
+      .is("rejection_reason", null)
+      .in("recommended_format", ["SINGLE", "MERGE", "SYNTHESIS"])
+      .gte("created_at", ELECTION_RECOVERY_START)
+      .lt("created_at", ELECTION_RECOVERY_END)
+    : db.from("news_publish_candidates")
+      .select("id,cluster_id,editorial_score,recommended_format,status")
+      // Normal generation never selects a held draft for another paid AI call.
+      .eq("status", "PENDING")
+      .in("recommended_format", ["SINGLE", "MERGE", "SYNTHESIS"])
+      .gte("created_at", newsroomNewStoryCutoff());
+  const { data: candidateData, error: candidateError } = await candidateQuery
     .order("editorial_score", { ascending: false })
     .order("created_at", { ascending: false })
     .order("id", { ascending: true })
@@ -204,6 +230,7 @@ async function handler({ request }: { request: Request }) {
   let candidate: CandidateRow | undefined;
   let cluster: ClusterRow | undefined;
   let packetRow: PacketRow | undefined;
+  let savedGeneratedDraft: SavedGeneratedDraft | undefined;
   let sawUnshadowed = false;
   let sawEvidenceEligible = false;
   let sawAuthorityEligible = false;
@@ -219,23 +246,47 @@ async function handler({ request }: { request: Request }) {
     const shadowDraftQuery = requestedMode === "shadow"
       ? db.from("newsroom_generation_drafts").select("candidate_id").eq("mode", "shadow").in("candidate_id", candidateIds)
       : Promise.resolve({ data: [], error: null });
+    // No AI bill for previously GENERATED election drafts. Recover the last
+    // previously validated publish-mode draft from the exact candidate record.
+    const recoveryDraftQuery = recoverElectionDraft
+      ? db.from("newsroom_generation_drafts")
+        .select("id,candidate_id,draft_json,created_at,validation_reasons,model")
+        .eq("mode", "publish").eq("status", "GENERATED")
+        .in("candidate_id", candidateIds)
+        .order("created_at", { ascending: false })
+      : Promise.resolve({ data: [], error: null });
     const [
       { data: clusterData, error: clusterError },
       { data: packetData, error: packetError },
       { data: shadowDraftData, error: shadowDraftError },
+      { data: recoveryDraftData, error: recoveryDraftError },
     ] = await Promise.all([
       db.from("news_story_clusters").select("id,canonical_subject,pillar_slug").in("id", clusterIds),
       db.from("news_research_packets").select("cluster_id,packet_json,source_count,primary_source_count").in("cluster_id", clusterIds),
       shadowDraftQuery,
+      recoveryDraftQuery,
     ]);
     if (clusterError) return Response.json({ error: clusterError.message }, { status: 500 });
     if (packetError) return Response.json({ error: packetError.message }, { status: 500 });
     if (shadowDraftError) return Response.json({ error: shadowDraftError.message }, { status: 500 });
+    if (recoveryDraftError) return Response.json({ error: recoveryDraftError.message }, { status: 500 });
 
     const clusterById = new Map(((clusterData ?? []) as ClusterRow[]).map((row) => [row.id, row]));
     const packetByCluster = new Map(((packetData ?? []) as PacketRow[]).map((row) => [row.cluster_id, row]));
     const shadowedCandidateIds = new Set<string>((shadowDraftData ?? []).map((row: { candidate_id: string }) => row.candidate_id));
-    const unshadowedCandidates = batch.filter((row) => !shadowedCandidateIds.has(row.id));
+    const savedDraftByCandidate = new Map<string, SavedGeneratedDraft>();
+    for (const stored of ((recoveryDraftData ?? []) as SavedGeneratedDraft[])) {
+      if (!savedDraftByCandidate.has(stored.candidate_id)) savedDraftByCandidate.set(stored.candidate_id, stored);
+    }
+    const unshadowedCandidates = batch.filter((row) => {
+      if (shadowedCandidateIds.has(row.id)) return false;
+      if (!recoverElectionDraft) return true;
+      const record = clusterById.get(row.cluster_id);
+      const saved = savedDraftByCandidate.get(row.id);
+      return record?.pillar_slug === "texas-elections"
+        && isFactualVotingAdministrationSubject(record.canonical_subject)
+        && Boolean(saved && (saved.validation_reasons ?? []).length === 0);
+    });
     sawUnshadowed ||= unshadowedCandidates.length > 0;
     const evidenceEligibleCandidates = unshadowedCandidates.filter((row) => {
       const packetRow = packetByCluster.get(row.cluster_id);
@@ -268,7 +319,7 @@ async function handler({ request }: { request: Request }) {
         const { data: publishedClusters, error: subjectError } = await db.from("news_story_clusters")
           .select("canonical_subject")
           .eq("status", "PUBLISHED")
-          .gte("published_at", newsroomNewStoryCutoff())
+          .gte("published_at", recoverElectionDraft ? ELECTION_RECOVERY_START : newsroomNewStoryCutoff())
           .in("canonical_subject", subjects.slice(offset, offset + 20));
         if (subjectError) return Response.json({ error: subjectError.message }, { status: 500 });
         for (const publishedCluster of publishedClusters ?? []) {
@@ -312,6 +363,7 @@ async function handler({ request }: { request: Request }) {
       candidate = chosen;
       cluster = clusterById.get(chosen.cluster_id);
       packetRow = packetByCluster.get(chosen.cluster_id);
+      savedGeneratedDraft = recoverElectionDraft ? savedDraftByCandidate.get(chosen.id) : undefined;
       break;
     }
   }
