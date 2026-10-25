@@ -61,7 +61,7 @@ jobs:
               text,
           )
           legacy = re.search(r'DAILY_NEWS_PUBLISH_SUCCESS inserted=(\d+) rejected=(\d+)', text)
-          safety_net_invoked = 'invoking reserve safety net' in text
+          safety_net_invoked = re.search(r'invoking (?:curated )?reserve safety net', text, re.I) is not None
           # The production publisher writes a distinct success marker on a
           # successful reserve publication. Old telemetry only recognized this
           # stage inside the legacy RSS branch (which is no longer used).
