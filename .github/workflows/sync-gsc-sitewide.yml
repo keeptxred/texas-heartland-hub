@@ -13,6 +13,8 @@ on:
       - "scripts/seo/gsc-sitewide-utils.test.mjs"
       - "scripts/seo/gsc-sitewide-transport-contract.test.mjs"
       - "scripts/seo/sync-gsc-sitewide.mjs"
+      - "scripts/seo/gsc-ctr-opportunity-report.mjs"
+      - "scripts/seo/gsc-ctr-opportunity-report.test.mjs"
       - "src/lib/gsc-sitewide.ts"
       - "src/routes/api/admin/gsc-sitewide-sync.ts"
       - "supabase/migrations/*_gsc_sitewide_search_console.sql"
@@ -25,6 +27,8 @@ on:
       - "scripts/seo/gsc-sitewide-utils.test.mjs"
       - "scripts/seo/gsc-sitewide-transport-contract.test.mjs"
       - "scripts/seo/sync-gsc-sitewide.mjs"
+      - "scripts/seo/gsc-ctr-opportunity-report.mjs"
+      - "scripts/seo/gsc-ctr-opportunity-report.test.mjs"
       - "src/lib/gsc-sitewide.ts"
       - "src/routes/api/admin/gsc-sitewide-sync.ts"
       - "supabase/migrations/*_gsc_sitewide_search_console.sql"
@@ -50,6 +54,8 @@ jobs:
       - name: Validate sitewide Search Console scripts without credentials
         run: |
           node --check scripts/seo/sync-gsc-sitewide.mjs
+          node --check scripts/seo/gsc-ctr-opportunity-report.mjs
+          node --check scripts/seo/gsc-ctr-opportunity-report.test.mjs
           node --check scripts/seo/gsc-sitewide-utils.mjs
           node --check scripts/seo/gsc-sitewide-utils.test.mjs
           node --check scripts/seo/gsc-sitewide-transport-contract.test.mjs
@@ -73,3 +79,10 @@ jobs:
           node-version: 22
       - name: Backfill finalized page metrics and rotate URL Inspection coverage
         run: node scripts/seo/sync-gsc-sitewide.mjs
+      - name: Retain daily CTR and ranking-opportunity report
+        uses: actions/upload-artifact@v4
+        with:
+          name: ktr-gsc-ctr-opportunities
+          path: /tmp/ktr-gsc-ctr-opportunities.json
+          retention-days: 30
+          if-no-files-found: error
