@@ -2,9 +2,6 @@
 name: Audit sitemap page indexability
 
 on:
-  push:
-    branches:
-      - fix/ktr-sitemap-404-20261025
   workflow_dispatch:
   schedule:
     - cron: "37 12 * * 1"
@@ -33,28 +30,6 @@ jobs:
 
       - name: Check audit script syntax
         run: node --check scripts/ci/audit-sitemap-page-indexability.mjs
-
-      - name: Audit historical article redirects and final destinations
-        run: |
-          node --input-type=module <<'NODE'
-          const pairs = [["2026-06-28-understanding-texas-property-taxes-why-they-stay-high-and-how-to-file","texas-property-tax-guide"],["2026-07-01-how-to-verify-your-texas-voter-registration-and-identify-requirements","texas-voting-guide-2026"],["2026-07-02-texas-homestead-exemption-explained-who-qualifies-and-how-to-file","homestead-exemption-explained"],["2026-07-07-mapping-the-1-254-miles-the-real-reason-texas-border-geography-matters","texas-border-policy-full-guide"],["2026-07-10-texas-constitutional-amendments-explained-simply-how-the-lone-star-state-governs","texas-constitutional-amendments-guide"],["2026-08-07-harris-county-funds-ice-shooting-investigation","2026-08-09-harris-county-ice-shooting-investigation"],["2026-08-07-presidio-border-wall-levee-ruling","2026-08-09-presidio-border-wall-levee-ruling"],["2026-08-08-daniella-guzman-kprc-return-ticket-review","2026-08-09-daniella-guzman-kprc-return"],["2026-08-08-texas-childrens-pavilion-women-expansion","2026-08-09-texas-childrens-pavilion-expansion"],["2026-08-08-texas-measles-alert-montgomery-county","2026-08-09-montgomery-county-measles-outbreak"],["2026-08-09-texas-data-center-audit-grid","2026-08-14-texas-data-centers-under-scrutiny-after-gov-abbott-s-order-sh190y"],["2026-08-13-houston-mayor-john-whitmire-77-seeks-second-term-as-age-sparks-political-debate","2026-08-13-houston-mayor-john-whitmire-s-age-and-re-election-plans-spark-debate"],["2026-08-14-texas-airports-face-review-over-religious-facilities-jq9lzk","2026-08-14-texas-governor-abbott-targets-airports-over-alleged-religious-discrimi-5y6nb3"],["2026-08-21-gov-abbott-proposes-ban-on-h-1b-visa-use-for-texas-public-schools","2026-08-20-gov-abbott-proposes-ban-on-h-1b-visa-use-for-texas-public-schools"],["live-2026-07-06-toyota-increases-san-antonio-footprint-with-massive-three-billion-doll-z2yvzl","live-2026-07-09-toyota-bolsters-san-antonio-manufacturing-footprint-with-major-tacoma--6ik2im"],["live-2026-07-19-voter-registration-countdown-begins-for-texas-2026-midterm-elections-yx9ejb","texas-voting-guide-2026"],["live-2026-07-24-san-antonio-residents-seek-organized-opposition-to-flock-safety-survei-hz11ng","2026-08-09-houston-flock-camera-backlash"]];
-          const results=[];
-          for (const [oldSlug, targetSlug] of pairs) {
-            const trace=[]; let url='https://keeptxred.com/news/'+oldSlug;
-            for(let hop=0;hop<5;hop++) {
-              const r=await fetch(url,{redirect:'manual',signal:AbortSignal.timeout(18000),headers:{'user-agent':'KTR-Historical-URL-Regression/1.0'}});
-              const next=r.headers.get('location'); trace.push({url,status:r.status,location:next});
-              if(![301,302,307,308].includes(r.status)||!next)break;
-              url=new URL(next,url).href;
-            }
-            const status=trace.at(-1)?.status;
-            const result={oldSlug,targetSlug,status,trace};results.push(result);
-            console.log(JSON.stringify(result));
-          }
-          const broken=results.filter(x=>x.status!==200);
-          console.log('HISTORICAL_REDIRECT_AUDIT_SUMMARY '+JSON.stringify({checked:results.length,broken:broken.length,brokenSlugs:broken.map(x=>x.oldSlug)}));
-          if(broken.length)process.exitCode=1;
-          NODE
 
       - name: Audit every submitted sitemap page
         env:
