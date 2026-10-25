@@ -388,38 +388,56 @@ async function handler({ request }: { request: Request }) {
   const packet = compactResearchPacket(packetRow.packet_json);
   const kind = "normal";
 
-  const { data: reservation, error: reserveError } = await db.rpc("newsroom_reserve_ai_generation", {
-    p_site: SITE,
-    p_kind: kind,
-  });
-  if (reserveError) return Response.json({ error: reserveError.message }, { status: 500 });
-  if (!reservation?.reserved) {
-    return Response.json({ ok: true, no_items: true, reason: "ai_budget_exhausted", budget: reservation, aiCalls: 0 });
+  // Reusing a saved, validated draft consumes zero new AI generation budget.
+  if (!recoverElectionDraft) {
+    const { data: reservation, error: reserveError } = await db.rpc("newsroom_reserve_ai_generation", {
+      p_site: SITE,
+      p_kind: kind,
+    });
+    if (reserveError) return Response.json({ error: reserveError.message }, { status: 500 });
+    if (!reservation?.reserved) {
+      return Response.json({ ok: true, no_items: true, reason: "ai_budget_exhausted", budget: reservation, aiCalls: 0 });
+    }
   }
 
-  await db.from("news_publish_candidates").update({
+  const selectedQuery = db.from("news_publish_candidates").update({
     status: "SELECTED",
     selected_at: new Date().toISOString(),
   }).eq("id", candidate.id);
+  if (recoverElectionDraft) {
+    // Exactly one scheduler can claim a held draft; no duplicate publications.
+    const { data: claimed, error: claimError } = await selectedQuery.eq("status", "HELD").select("id");
+    if (claimError) return Response.json({ error: claimError.message }, { status: 500 });
+    if (!claimed?.length) return Response.json({ ok: true, no_items: true, reason: "recovery_claimed_elsewhere", aiCalls: 0 });
+  } else {
+    await selectedQuery;
+  }
 
   let generated = false;
   try {
-    let ai = await runCloudflareJson<NewsroomDraft>({
-      system: newsroomRewriteSystemPrompt(packet),
-      user: newsroomRewriteUserPrompt(packet),
-      maxTokens: 12000,
-      maxAttempts: 1,
-      jsonSchema: NEWSROOM_DRAFT_JSON_SCHEMA,
-    });
-    generated = true;
+    let ai = recoverElectionDraft
+      ? {
+          value: savedGeneratedDraft!.draft_json,
+          provider: "cloudflare-workers-ai" as const,
+          model: savedGeneratedDraft!.model ?? "reused-validated-newsroom-draft",
+          attempts: 0,
+        }
+      : await runCloudflareJson<NewsroomDraft>({
+          system: newsroomRewriteSystemPrompt(packet),
+          user: newsroomRewriteUserPrompt(packet),
+          maxTokens: 12000,
+          maxAttempts: 1,
+          jsonSchema: NEWSROOM_DRAFT_JSON_SCHEMA,
+        });
+    generated = !recoverElectionDraft;
     let draft = normalizeNewsroomDraft(ai.value) as NewsroomDraft;
     let validation = validateNewsroomDraft(draft, packet);
     const firstValidationReasons = [...validation.reasons];
-    let aiCalls = 1;
+    let aiCalls = recoverElectionDraft ? 0 : 1;
     let providerAttempts = ai.attempts;
     let repairAttempted = false;
 
-    if (!validation.ok && !validation.reasons.includes("brief_no_clear_news_event")) {
+    if (!recoverElectionDraft && !validation.ok && !validation.reasons.includes("brief_no_clear_news_event")) {
       repairAttempted = true;
       const repaired = await runCloudflareJson<NewsroomDraft>({
         system: `${newsroomRewriteSystemPrompt(packet)}\n\nREPAIR MODE: The previous draft failed local validation. Correct only the listed failures while preserving supported facts, a 4–6-section source-proportional structure, 2–3 factual paragraphs per section, and all existing source and anti-repetition quality requirements. Every repaired paragraph must stay at or below 130 words and 4 sentences; never merge multiple factual roles into one oversized paragraph. Do not invent detail or pad with generic commentary.`,
@@ -435,30 +453,33 @@ async function handler({ request }: { request: Request }) {
       validation = validateNewsroomDraft(draft, packet);
     }
 
-    const { data: draftRows, error: draftError } = await db.from("newsroom_generation_drafts").insert({
-      candidate_id: candidate.id,
-      cluster_id: candidate.cluster_id,
-      mode: requestedMode,
-      status: validation.ok ? "GENERATED" : "REJECTED",
-      draft_json: draft,
-      validation_reasons: validation.reasons,
-      main_word_count: validation.mainWordCount,
-      provider: ai.provider,
-      model: ai.model,
-      provider_attempts: providerAttempts,
-    }).select("id").limit(1);
+    const { data: draftRows, error: draftError } = recoverElectionDraft
+      ? { data: [{ id: savedGeneratedDraft!.id }], error: null }
+      : await db.from("newsroom_generation_drafts").insert({
+          candidate_id: candidate.id,
+          cluster_id: candidate.cluster_id,
+          mode: requestedMode,
+          status: validation.ok ? "GENERATED" : "REJECTED",
+          draft_json: draft,
+          validation_reasons: validation.reasons,
+          main_word_count: validation.mainWordCount,
+          provider: ai.provider,
+          model: ai.model,
+          provider_attempts: providerAttempts,
+        }).select("id").limit(1);
     if (draftError) throw new Error(draftError.message);
     const draftId = draftRows?.[0]?.id as string | undefined;
 
     if (!validation.ok) {
-      const shadowFailure = requestedMode === "shadow";
+      const shadowFailure = requestedMode === "shadow" || recoverElectionDraft;
       await db.from("news_publish_candidates").update(shadowFailure ? {
         status: "HELD",
+        ...(recoverElectionDraft ? { rejection_reason: ("recovery_draft_failed_revalidation:" + validation.reasons.join(",")).slice(0, 1000) } : {}),
       } : {
         status: "REJECTED",
         rejection_reason: validation.reasons.join(",").slice(0, 1000),
       }).eq("id", candidate.id);
-      await db.rpc("newsroom_finalize_ai_generation", { p_site: SITE, p_kind: kind, p_success: true });
+      if (!recoverElectionDraft) await db.rpc("newsroom_finalize_ai_generation", { p_site: SITE, p_kind: kind, p_success: true });
       return Response.json({
         ok: true,
         generated: true,
@@ -481,7 +502,7 @@ async function handler({ request }: { request: Request }) {
 
     if (requestedMode === "shadow") {
       await db.from("news_publish_candidates").update({ status: "HELD" }).eq("id", candidate.id);
-      await db.rpc("newsroom_finalize_ai_generation", { p_site: SITE, p_kind: kind, p_success: true });
+      if (!recoverElectionDraft) await db.rpc("newsroom_finalize_ai_generation", { p_site: SITE, p_kind: kind, p_success: true });
       return Response.json({
         ok: true,
         generated: true,
@@ -645,7 +666,7 @@ async function handler({ request }: { request: Request }) {
       db.from("news_story_clusters").update({ status: "PUBLISHED", published_at: now.toISOString(), published_article_id: articleId ?? null }).eq("id", candidate.cluster_id),
       draftId ? db.from("newsroom_generation_drafts").update({ status: "PUBLISHED", published_article_id: articleId ?? null }).eq("id", draftId) : Promise.resolve(),
     ]);
-    await db.rpc("newsroom_finalize_ai_generation", { p_site: SITE, p_kind: kind, p_success: true });
+    if (!recoverElectionDraft) await db.rpc("newsroom_finalize_ai_generation", { p_site: SITE, p_kind: kind, p_success: true });
 
     return Response.json({
       ok: true,
@@ -689,7 +710,7 @@ async function handler({ request }: { request: Request }) {
       status: "HELD",
       rejection_reason: failureDetails,
     }).eq("id", candidate.id);
-    await db.rpc("newsroom_finalize_ai_generation", { p_site: SITE, p_kind: kind, p_success: generated });
+    if (!recoverElectionDraft) await db.rpc("newsroom_finalize_ai_generation", { p_site: SITE, p_kind: kind, p_success: generated });
     return Response.json({
       error: "Newsroom generation failed",
       details: failureDetails,
