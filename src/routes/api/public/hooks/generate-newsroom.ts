@@ -38,6 +38,47 @@ const PRODUCTION_WORKFLOW_PATH = ".github/workflows/run-daily-news-now.yml";
 const GENERATED_NEWS_PROVENANCE_SIGNATURE =
   "Keep TX Red rewrote the coverage independently and links to the original for verification.";
 
+// Explicit editorial approval received October 25 for already drafted factual
+// election reporting from the preceding fourteen days. This ONLY authorizes
+// re-evaluating saved drafts; it never waives independent sourcing, AI draft
+// validation, image vision verification, freshness context or duplicate checks.
+const ELECTION_RECOVERY_START = "2026-10-11T00:00:00Z";
+const ELECTION_RECOVERY_END = "2026-10-26T00:00:00Z";
+const ELECTION_RECOVERY_EXPIRES = "2026-10-30T23:59:59Z";
+function isFactualVotingAdministrationSubject(subject: string): boolean {
+  return /\b(?:voters?|voting|ballots?|registration|polling|election turnout|election updates)\b/i.test(subject);
+}
+function electionDraftHeadlineMatchesEvent(subject: string, title: string): boolean {
+  // A draft originally clustered as a ballot error may drift into a completely
+  // different turnout story. Editorial approval cannot justify publishing a
+  // topic-shifted archived draft as though it verified the reported incident.
+  if (/ballot (?:errors?|issues?|discrepanc(?:y|ies))/.test(subject)) {
+    return /\bballot\b/i.test(title) && /\b(?:error|issue|discrepanc)/i.test(title);
+  }
+  if (/voter registrations?|registered vote/.test(subject)) {
+    return /\b(?:registrations?|registered|voters?)\b/i.test(title);
+  }
+  return true;
+}
+function electionStoryTokens(value: string): Set<string> {
+  const raw = value.toLowerCase()
+    .replace(/\b(\d{1,3})[ ,](\d{3})\b/g, "$1$2")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim().split(/\s+/);
+  const stop = new Set(["a", "an", "the", "are", "as", "for", "to", "of", "in", "by", "and", "from", "over", "more", "than", "with"]);
+  return new Set(raw.filter((token) => token.length > 1 && !stop.has(token)));
+}
+function duplicatesExistingElectionStory(subject: string, existingTitles: readonly string[]): boolean {
+  const tokens = electionStoryTokens(subject);
+  if (tokens.size < 4) return false;
+  return existingTitles.some((title) => {
+    const other = electionStoryTokens(title);
+    const shared = [...tokens].filter((token) => other.has(token)).length;
+    return shared >= 4 && shared / Math.max(tokens.size, other.size) >= 0.75;
+  });
+}
+
+
 type CandidateRow = {
   id: string;
   cluster_id: string;
@@ -47,6 +88,7 @@ type CandidateRow = {
 };
 type ClusterRow = { id: string; canonical_subject: string; pillar_slug: string | null };
 type PacketRow = { cluster_id: string; packet_json: ResearchPacket; source_count: number; primary_source_count: number };
+type SavedGeneratedDraft = { id: string; candidate_id: string; draft_json: NewsroomDraft; created_at: string; validation_reasons: string[]; model: string | null };
 
 type AuthorityMetadata = {
   model: "aggregated";
@@ -168,6 +210,8 @@ function productionAuthorityEligible(packetRow: PacketRow): boolean {
 async function handler({ request }: { request: Request }) {
   const url = new URL(request.url);
   const requestedMode = url.searchParams.get("mode") === "publish" ? "publish" : "shadow";
+  const recoveryRequested = requestedMode === "publish" && url.searchParams.get("recover_election") === "1";
+  const recoverElectionDraft = recoveryRequested && Date.now() <= Date.parse(ELECTION_RECOVERY_EXPIRES);
   if (!(await authorized(request, requestedMode))) return Response.json({ error: "Unauthorized" }, { status: 401 });
   if (process.env.NEWSROOM_AI_ENABLED !== "true") {
     return Response.json({ ok: false, disabled: true, reason: "newsroom_ai_disabled" }, { status: 503 });
@@ -181,14 +225,25 @@ async function handler({ request }: { request: Request }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabaseAdmin as any;
 
-  const { data: candidateData, error: candidateError } = await db
-    .from("news_publish_candidates")
-    .select("id,cluster_id,editorial_score,recommended_format,status")
-    // HELD means editorial/recovery intervention is required. Never retry a
-    // held draft by spending another paid AI call.
-    .eq("status", "PENDING")
-    .in("recommended_format", ["SINGLE", "MERGE", "SYNTHESIS"])
-    .gte("created_at", newsroomNewStoryCutoff())
+  if (recoveryRequested && !recoverElectionDraft) {
+    return Response.json({ ok: true, no_items: true, reason: "approved_election_recovery_window_expired", aiCalls: 0 });
+  }
+  const candidateQuery = recoverElectionDraft
+    ? db.from("news_publish_candidates")
+      .select("id,cluster_id,editorial_score,recommended_format,status")
+      // Only untried, explicitly held October 11–25 drafts; no status override.
+      .eq("status", "HELD")
+      .is("rejection_reason", null)
+      .in("recommended_format", ["SINGLE", "MERGE", "SYNTHESIS"])
+      .gte("created_at", ELECTION_RECOVERY_START)
+      .lt("created_at", ELECTION_RECOVERY_END)
+    : db.from("news_publish_candidates")
+      .select("id,cluster_id,editorial_score,recommended_format,status")
+      // Normal generation never selects a held draft for another paid AI call.
+      .eq("status", "PENDING")
+      .in("recommended_format", ["SINGLE", "MERGE", "SYNTHESIS"])
+      .gte("created_at", newsroomNewStoryCutoff());
+  const { data: candidateData, error: candidateError } = await candidateQuery
     .order("editorial_score", { ascending: false })
     .order("created_at", { ascending: false })
     .order("id", { ascending: true })
@@ -204,6 +259,7 @@ async function handler({ request }: { request: Request }) {
   let candidate: CandidateRow | undefined;
   let cluster: ClusterRow | undefined;
   let packetRow: PacketRow | undefined;
+  let savedGeneratedDraft: SavedGeneratedDraft | undefined;
   let sawUnshadowed = false;
   let sawEvidenceEligible = false;
   let sawAuthorityEligible = false;
@@ -211,6 +267,19 @@ async function handler({ request }: { request: Request }) {
   let sawNovelSubject = false;
   const recentlyPublishedSubjects = new Set<string>();
   const existingLeadSources = new Set<string>();
+  // Unlike the normal 72h newsroom duplicate scan, previously generated
+  // October 11–25 stories can collide with content published earlier in the
+  // approved period. Protect stable live URLs and avoid stale repeat coverage.
+  const existingElectionTitles: string[] = [];
+  if (recoverElectionDraft) {
+    const { data: existingElectionArticles, error: existingElectionError } = await db
+      .from("daily_articles").select("title")
+      .eq("category", "Elections")
+      .gte("published_at", ELECTION_RECOVERY_START)
+      .limit(300);
+    if (existingElectionError) return Response.json({ error: existingElectionError.message }, { status: 500 });
+    existingElectionTitles.push(...(existingElectionArticles ?? []).map((row: { title: string }) => row.title));
+  }
 
   for (let batchStart = 0; batchStart < candidates.length; batchStart += NEWSROOM_CANDIDATE_BATCH_SIZE) {
     const batch = candidates.slice(batchStart, batchStart + NEWSROOM_CANDIDATE_BATCH_SIZE);
@@ -219,23 +288,48 @@ async function handler({ request }: { request: Request }) {
     const shadowDraftQuery = requestedMode === "shadow"
       ? db.from("newsroom_generation_drafts").select("candidate_id").eq("mode", "shadow").in("candidate_id", candidateIds)
       : Promise.resolve({ data: [], error: null });
+    // No AI bill for previously GENERATED election drafts. Recover the last
+    // previously validated publish-mode draft from the exact candidate record.
+    const recoveryDraftQuery = recoverElectionDraft
+      ? db.from("newsroom_generation_drafts")
+        .select("id,candidate_id,draft_json,created_at,validation_reasons,model")
+        .eq("mode", "publish").eq("status", "GENERATED")
+        .in("candidate_id", candidateIds)
+        .order("created_at", { ascending: false })
+      : Promise.resolve({ data: [], error: null });
     const [
       { data: clusterData, error: clusterError },
       { data: packetData, error: packetError },
       { data: shadowDraftData, error: shadowDraftError },
+      { data: recoveryDraftData, error: recoveryDraftError },
     ] = await Promise.all([
       db.from("news_story_clusters").select("id,canonical_subject,pillar_slug").in("id", clusterIds),
       db.from("news_research_packets").select("cluster_id,packet_json,source_count,primary_source_count").in("cluster_id", clusterIds),
       shadowDraftQuery,
+      recoveryDraftQuery,
     ]);
     if (clusterError) return Response.json({ error: clusterError.message }, { status: 500 });
     if (packetError) return Response.json({ error: packetError.message }, { status: 500 });
     if (shadowDraftError) return Response.json({ error: shadowDraftError.message }, { status: 500 });
+    if (recoveryDraftError) return Response.json({ error: recoveryDraftError.message }, { status: 500 });
 
     const clusterById = new Map(((clusterData ?? []) as ClusterRow[]).map((row) => [row.id, row]));
     const packetByCluster = new Map(((packetData ?? []) as PacketRow[]).map((row) => [row.cluster_id, row]));
     const shadowedCandidateIds = new Set<string>((shadowDraftData ?? []).map((row: { candidate_id: string }) => row.candidate_id));
-    const unshadowedCandidates = batch.filter((row) => !shadowedCandidateIds.has(row.id));
+    const savedDraftByCandidate = new Map<string, SavedGeneratedDraft>();
+    for (const stored of ((recoveryDraftData ?? []) as SavedGeneratedDraft[])) {
+      if (!savedDraftByCandidate.has(stored.candidate_id)) savedDraftByCandidate.set(stored.candidate_id, stored);
+    }
+    const unshadowedCandidates = batch.filter((row) => {
+      if (shadowedCandidateIds.has(row.id)) return false;
+      if (!recoverElectionDraft) return true;
+      const record = clusterById.get(row.cluster_id);
+      const saved = savedDraftByCandidate.get(row.id);
+      return record?.pillar_slug === "texas-elections"
+        && isFactualVotingAdministrationSubject(record.canonical_subject)
+        && Boolean(saved && (saved.validation_reasons ?? []).length === 0)
+        && electionDraftHeadlineMatchesEvent(record.canonical_subject, saved?.draft_json?.title ?? "");
+    });
     sawUnshadowed ||= unshadowedCandidates.length > 0;
     const evidenceEligibleCandidates = unshadowedCandidates.filter((row) => {
       const packetRow = packetByCluster.get(row.cluster_id);
@@ -265,10 +359,13 @@ async function handler({ request }: { request: Request }) {
         .map((row) => clusterById.get(row.cluster_id)?.canonical_subject)
         .filter((subject): subject is string => Boolean(subject)))];
       for (let offset = 0; offset < subjects.length; offset += 20) {
-        const { data: publishedClusters, error: subjectError } = await db.from("news_story_clusters")
+        const publishedQuery = db.from("news_story_clusters")
           .select("canonical_subject")
-          .eq("status", "PUBLISHED")
-          .gte("published_at", newsroomNewStoryCutoff())
+          .eq("status", "PUBLISHED");
+        const publishedWindowQuery = recoverElectionDraft
+          ? publishedQuery.gte("published_at", ELECTION_RECOVERY_START)
+          : publishedQuery.gte("published_at", newsroomNewStoryCutoff());
+        const { data: publishedClusters, error: subjectError } = await publishedWindowQuery
           .in("canonical_subject", subjects.slice(offset, offset + 20));
         if (subjectError) return Response.json({ error: subjectError.message }, { status: 500 });
         for (const publishedCluster of publishedClusters ?? []) {
@@ -279,7 +376,8 @@ async function handler({ request }: { request: Request }) {
     const novelSubjectCandidates = requestedMode === "publish"
       ? independentlySourcedCandidates.filter((row) => {
         const subject = clusterById.get(row.cluster_id)?.canonical_subject;
-        return Boolean(subject && !recentlyPublishedSubjects.has(subject));
+        return Boolean(subject && !recentlyPublishedSubjects.has(subject)
+          && (!recoverElectionDraft || !duplicatesExistingElectionStory(subject, existingElectionTitles)));
       })
       : independentlySourcedCandidates;
     sawNovelSubject ||= novelSubjectCandidates.length > 0;
@@ -312,6 +410,7 @@ async function handler({ request }: { request: Request }) {
       candidate = chosen;
       cluster = clusterById.get(chosen.cluster_id);
       packetRow = packetByCluster.get(chosen.cluster_id);
+      savedGeneratedDraft = recoverElectionDraft ? savedDraftByCandidate.get(chosen.id) : undefined;
       break;
     }
   }
@@ -336,38 +435,56 @@ async function handler({ request }: { request: Request }) {
   const packet = compactResearchPacket(packetRow.packet_json);
   const kind = "normal";
 
-  const { data: reservation, error: reserveError } = await db.rpc("newsroom_reserve_ai_generation", {
-    p_site: SITE,
-    p_kind: kind,
-  });
-  if (reserveError) return Response.json({ error: reserveError.message }, { status: 500 });
-  if (!reservation?.reserved) {
-    return Response.json({ ok: true, no_items: true, reason: "ai_budget_exhausted", budget: reservation, aiCalls: 0 });
+  // Reusing a saved, validated draft consumes zero new AI generation budget.
+  if (!recoverElectionDraft) {
+    const { data: reservation, error: reserveError } = await db.rpc("newsroom_reserve_ai_generation", {
+      p_site: SITE,
+      p_kind: kind,
+    });
+    if (reserveError) return Response.json({ error: reserveError.message }, { status: 500 });
+    if (!reservation?.reserved) {
+      return Response.json({ ok: true, no_items: true, reason: "ai_budget_exhausted", budget: reservation, aiCalls: 0 });
+    }
   }
 
-  await db.from("news_publish_candidates").update({
+  const selectedQuery = db.from("news_publish_candidates").update({
     status: "SELECTED",
     selected_at: new Date().toISOString(),
   }).eq("id", candidate.id);
+  if (recoverElectionDraft) {
+    // Exactly one scheduler can claim a held draft; no duplicate publications.
+    const { data: claimed, error: claimError } = await selectedQuery.eq("status", "HELD").select("id");
+    if (claimError) return Response.json({ error: claimError.message }, { status: 500 });
+    if (!claimed?.length) return Response.json({ ok: true, no_items: true, reason: "recovery_claimed_elsewhere", aiCalls: 0 });
+  } else {
+    await selectedQuery;
+  }
 
   let generated = false;
   try {
-    let ai = await runCloudflareJson<NewsroomDraft>({
-      system: newsroomRewriteSystemPrompt(packet),
-      user: newsroomRewriteUserPrompt(packet),
-      maxTokens: 12000,
-      maxAttempts: 1,
-      jsonSchema: NEWSROOM_DRAFT_JSON_SCHEMA,
-    });
-    generated = true;
+    let ai = recoverElectionDraft
+      ? {
+          value: savedGeneratedDraft!.draft_json,
+          provider: "cloudflare-workers-ai" as const,
+          model: savedGeneratedDraft!.model ?? "reused-validated-newsroom-draft",
+          attempts: 0,
+        }
+      : await runCloudflareJson<NewsroomDraft>({
+          system: newsroomRewriteSystemPrompt(packet),
+          user: newsroomRewriteUserPrompt(packet),
+          maxTokens: 12000,
+          maxAttempts: 1,
+          jsonSchema: NEWSROOM_DRAFT_JSON_SCHEMA,
+        });
+    generated = !recoverElectionDraft;
     let draft = normalizeNewsroomDraft(ai.value) as NewsroomDraft;
     let validation = validateNewsroomDraft(draft, packet);
     const firstValidationReasons = [...validation.reasons];
-    let aiCalls = 1;
+    let aiCalls = recoverElectionDraft ? 0 : 1;
     let providerAttempts = ai.attempts;
     let repairAttempted = false;
 
-    if (!validation.ok && !validation.reasons.includes("brief_no_clear_news_event")) {
+    if (!recoverElectionDraft && !validation.ok && !validation.reasons.includes("brief_no_clear_news_event")) {
       repairAttempted = true;
       const repaired = await runCloudflareJson<NewsroomDraft>({
         system: `${newsroomRewriteSystemPrompt(packet)}\n\nREPAIR MODE: The previous draft failed local validation. Correct only the listed failures while preserving supported facts, a 4–6-section source-proportional structure, 2–3 factual paragraphs per section, and all existing source and anti-repetition quality requirements. Every repaired paragraph must stay at or below 130 words and 4 sentences; never merge multiple factual roles into one oversized paragraph. Do not invent detail or pad with generic commentary.`,
@@ -383,30 +500,33 @@ async function handler({ request }: { request: Request }) {
       validation = validateNewsroomDraft(draft, packet);
     }
 
-    const { data: draftRows, error: draftError } = await db.from("newsroom_generation_drafts").insert({
-      candidate_id: candidate.id,
-      cluster_id: candidate.cluster_id,
-      mode: requestedMode,
-      status: validation.ok ? "GENERATED" : "REJECTED",
-      draft_json: draft,
-      validation_reasons: validation.reasons,
-      main_word_count: validation.mainWordCount,
-      provider: ai.provider,
-      model: ai.model,
-      provider_attempts: providerAttempts,
-    }).select("id").limit(1);
+    const { data: draftRows, error: draftError } = recoverElectionDraft
+      ? { data: [{ id: savedGeneratedDraft!.id }], error: null }
+      : await db.from("newsroom_generation_drafts").insert({
+          candidate_id: candidate.id,
+          cluster_id: candidate.cluster_id,
+          mode: requestedMode,
+          status: validation.ok ? "GENERATED" : "REJECTED",
+          draft_json: draft,
+          validation_reasons: validation.reasons,
+          main_word_count: validation.mainWordCount,
+          provider: ai.provider,
+          model: ai.model,
+          provider_attempts: providerAttempts,
+        }).select("id").limit(1);
     if (draftError) throw new Error(draftError.message);
     const draftId = draftRows?.[0]?.id as string | undefined;
 
     if (!validation.ok) {
-      const shadowFailure = requestedMode === "shadow";
+      const shadowFailure = requestedMode === "shadow" || recoverElectionDraft;
       await db.from("news_publish_candidates").update(shadowFailure ? {
         status: "HELD",
+        ...(recoverElectionDraft ? { rejection_reason: ("recovery_draft_failed_revalidation:" + validation.reasons.join(",")).slice(0, 1000) } : {}),
       } : {
         status: "REJECTED",
         rejection_reason: validation.reasons.join(",").slice(0, 1000),
       }).eq("id", candidate.id);
-      await db.rpc("newsroom_finalize_ai_generation", { p_site: SITE, p_kind: kind, p_success: true });
+      if (!recoverElectionDraft) await db.rpc("newsroom_finalize_ai_generation", { p_site: SITE, p_kind: kind, p_success: true });
       return Response.json({
         ok: true,
         generated: true,
@@ -429,7 +549,7 @@ async function handler({ request }: { request: Request }) {
 
     if (requestedMode === "shadow") {
       await db.from("news_publish_candidates").update({ status: "HELD" }).eq("id", candidate.id);
-      await db.rpc("newsroom_finalize_ai_generation", { p_site: SITE, p_kind: kind, p_success: true });
+      if (!recoverElectionDraft) await db.rpc("newsroom_finalize_ai_generation", { p_site: SITE, p_kind: kind, p_success: true });
       return Response.json({
         ok: true,
         generated: true,
@@ -457,6 +577,11 @@ async function handler({ request }: { request: Request }) {
     const now = new Date();
     const slug = slugifyNewsroomTitle(draft.title, now.toISOString().slice(0, 10));
     const packetSources = uniquePacketSources(packet.sources);
+    const sourceDates = packetSources
+      .map((source) => source.publishedAt)
+      .filter((date): date is string => Boolean(date && Number.isFinite(Date.parse(date))))
+      .sort();
+    const firstSourceDate = sourceDates[0] ?? savedGeneratedDraft?.created_at ?? now.toISOString();
     const sourceCount = packetSources.length;
     const primarySourceCount = packetSources.filter((source) => source.isPrimarySource).length;
     const nonPrimarySourceCount = Math.max(0, sourceCount - primarySourceCount);
@@ -513,7 +638,10 @@ async function handler({ request }: { request: Request }) {
     }] : [];
     const bodyJson = {
       updated: now.toISOString(),
-      intro: [draft.summary.trim()],
+      intro: recoverElectionDraft ? [
+        `Retrospective election report: this article reviews source material originally published on or after ${new Date(firstSourceDate).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "America/Chicago" })}. This retrospective was published only after the saved draft, source record and featured image underwent additional checks. It is not a live election-night result or a claim that conditions have remained unchanged since those source reports.`,
+        draft.summary.trim(),
+      ] : [draft.summary.trim()],
       sections: [
         ...authoritySections,
         { heading: "Texas relevance", paragraphs: [draft.relevance.trim()] },
@@ -593,7 +721,7 @@ async function handler({ request }: { request: Request }) {
       db.from("news_story_clusters").update({ status: "PUBLISHED", published_at: now.toISOString(), published_article_id: articleId ?? null }).eq("id", candidate.cluster_id),
       draftId ? db.from("newsroom_generation_drafts").update({ status: "PUBLISHED", published_article_id: articleId ?? null }).eq("id", draftId) : Promise.resolve(),
     ]);
-    await db.rpc("newsroom_finalize_ai_generation", { p_site: SITE, p_kind: kind, p_success: true });
+    if (!recoverElectionDraft) await db.rpc("newsroom_finalize_ai_generation", { p_site: SITE, p_kind: kind, p_success: true });
 
     return Response.json({
       ok: true,
@@ -616,6 +744,7 @@ async function handler({ request }: { request: Request }) {
       model: ai.model,
       attempts: providerAttempts,
       aiCalls,
+      reusedApprovedDraft: recoverElectionDraft,
       graphLinks: graphLinks.map((node) => node.href),
     });
   } catch (error) {
@@ -637,7 +766,7 @@ async function handler({ request }: { request: Request }) {
       status: "HELD",
       rejection_reason: failureDetails,
     }).eq("id", candidate.id);
-    await db.rpc("newsroom_finalize_ai_generation", { p_site: SITE, p_kind: kind, p_success: generated });
+    if (!recoverElectionDraft) await db.rpc("newsroom_finalize_ai_generation", { p_site: SITE, p_kind: kind, p_success: generated });
     return Response.json({
       error: "Newsroom generation failed",
       details: failureDetails,
