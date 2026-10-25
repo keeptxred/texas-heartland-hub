@@ -270,7 +270,19 @@ export function newsroomAbstractPolicyVisualSubject(row: Pick<ArticleRow, "slug"
         scene: "An editorial documentary-style photograph of an anonymous Texas county public meeting room before a public meeting begins. FOREGROUND SUBJECTS fill the frame: a physical bulletin board displaying several plainly formatted meeting-notice sheets with ALL words deliberately blurred/unreadable; a neat stack of blank public agenda packets; microphones at an empty commissioners-style meeting table; and several rows of empty visitor chairs facing the table. Natural interior daylight, believable perspective, ordinary scuffs and paper texture. The image illustrates public notice, posted agendas and the right to observe an open meeting. It is NOT a photograph or reconstruction of any actual meeting or legal notice. No real or fake agency names, emblems, officials, recorded votes, legible texts, invented ordinance numbers, crowds, podium speeches, logos, signs or campaign materials.",
       }
     : undefined;
-  const assignment = visualAssignments[row.slug] ?? reserveLegislativeProcess ?? reserveRulemaking ?? reserveOpenMeetings;
+  const reserveCanvass = row.slug.endsWith("-how-texas-election-results-are-canvassed-and-certified")
+    ? {
+        domain: "politics" as Domain,
+        scene: "An editorial documentary photograph of a quiet anonymous Texas county election administration workspace after voting ends. Foreground is a substantial stack of plain, physically realistic precinct return envelopes and tabulation worksheets, with ALL figures and writing completely blurred and unidentifiable, alongside a stamped but unreadable binder tab, a pen, a closed file tray, and a manual office calculator. Natural daylight, ordinary wood tabletop, realistic paper texture and imperfect office details. The purpose is to illustrate canvassing official precinct returns and documenting a canvass. No invented vote totals, named candidate, identified jurisdiction, real or fabricated certificate, seals, logos, text, electronic voting machines, people or staged election event. It is strictly an illustrative scene, not a photograph of actual 2026 returns or results.",
+      }
+    : undefined;
+  const reserveCampaignFinance = row.slug.endsWith("-how-to-search-texas-campaign-finance-reports")
+    ? {
+        domain: "politics" as Domain,
+        scene: "An editorial documentary photograph of an anonymous researcher's neutral paper-document workspace, focusing on a realistic open blank campaign-finance disclosure binder, multiple white transaction ledger sheets with ALL writing and numbers completely out of focus, a small calculator and plain pencil, one clipped stack of reports, and a closed manila folder. The physical report-reading materials fill the frame and look naturally used, with sunlight and subtle office imperfections. No politicians, parties, campaign colors, logos, invented donor names, fabricated dollar figures, legible contribution amounts, real seals, logos, graph captions, electronic screens or staged official hearing. This illustrates the public process of researching disclosed campaign finance reports; it is not a reproduction of any real report.",
+      }
+    : undefined;
+  const assignment = visualAssignments[row.slug] ?? reserveLegislativeProcess ?? reserveRulemaking ?? reserveOpenMeetings ?? reserveCanvass ?? reserveCampaignFinance;
   if (!assignment) return subject;
   return {
     ...subject,

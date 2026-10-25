@@ -1,4 +1,5 @@
 import type { ArticleBody } from "@/data/article-bodies";
+import { VERIFIED_ADDITIONAL_RESERVE_ARTICLES } from "./reserve-articles-verified-2026";
 
 export type ReserveArticle = {
   key: string;
@@ -454,4 +455,5 @@ export const RESERVE_ARTICLES: ReserveArticle[] = [
       ],
     },
   },
+  ...VERIFIED_ADDITIONAL_RESERVE_ARTICLES,
 ];
