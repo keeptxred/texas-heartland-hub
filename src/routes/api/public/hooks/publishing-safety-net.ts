@@ -4,6 +4,7 @@ import { RESERVE_ARTICLES } from "@/data/reserve-articles";
 import { articleMainText, articleMainWordCount, INGESTED_MIN_MAIN_WORDS } from "@/lib/article-length";
 import { enrichArticleRow } from "@/lib/content-quality";
 import { prepareFeaturedImageForUnpublishedNewsroomArticle } from "@/lib/featured-image.functions";
+import { canTrySecondVerifiedReserveImage } from "@/lib/reserve-image-recovery";
 import { assertKeepTxRedPublication, inferKeepTxRedDomain } from "@/lib/content-publication-guard";
 
 const STALL_MS = 24 * 60 * 60 * 1000;
@@ -158,8 +159,12 @@ export async function runPublishingSafetyNet() {
     const publishedKeys = new Set(
       (publishedReserveResult.data ?? []).map((row: { reserve_key: string }) => row.reserve_key),
     );
-    const reserve = RESERVE_ARTICLES.find((article) => !publishedKeys.has(article.key));
-    if (reserve) {
+    // Avoid a six-day stall because one perfectly sourced reserve guide keeps
+    // failing the image's story-match visual test. Try at most ONE other vetted
+    // guide, only on a substantive image mismatch. Never skip a vision gate.
+    const reserveChoices = RESERVE_ARTICLES.filter((article) => !publishedKeys.has(article.key)).slice(0, 2);
+    const imageFailures: string[] = [];
+    for (const reserve of reserveChoices) {
       const now = new Date();
       const date = now.toISOString().slice(0, 10);
       const slug = `${date}-${reserve.slugStem}`;
@@ -207,9 +212,17 @@ export async function runPublishingSafetyNet() {
         category: row.category, body_json: row.body_json,
       });
       if (!preparedImage.ok || !preparedImage.url || !preparedImage.imageValidationNote) {
+        const failure = preparedImage.ok ? "missing_image_provenance" : preparedImage.error;
+        imageFailures.push(`${reserve.key}: ${failure}`);
+        if (reserveChoices.length > 1 && imageFailures.length === 1 && canTrySecondVerifiedReserveImage(failure)) {
+          console.warn("[publishing-safety-net] reserve image mismatched; trying one other verified article", {
+            reserveKey: reserve.key,
+          });
+          continue;
+        }
         return {
           ok: false as const, status: 503,
-          error: `reserve_newsroom_image_publication_hold: ${preparedImage.ok ? "missing_image_provenance" : preparedImage.error}`,
+          error: `reserve_newsroom_image_publication_hold: ${imageFailures.join(" | ").slice(0, 900)}`,
         };
       }
       const { error: articleError } = await supabase
@@ -242,6 +255,8 @@ export async function runPublishingSafetyNet() {
           .update({ reserve_slug: slug, updated_at: now.toISOString() })
           .eq("id", openAlert.id);
       }
+      // Never publish more than one reserve article per stalled run.
+      break;
     }
   }
 

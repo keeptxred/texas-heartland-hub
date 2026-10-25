@@ -261,7 +261,16 @@ export function newsroomAbstractPolicyVisualSubject(row: Pick<ArticleRow, "slug"
         scene: "A realistic unposed documentary photograph of an anonymous Texas state agency PUBLIC RULEMAKING COMMENT HEARING room, not a generic office. FOREGROUND SUBJECT filling most of the frame: long wooden public-comment table with two prominent slim black gooseneck microphones, one open thick binder of proposed-rule notice pages, a single visible public-comment submission form, an ordinary pen, and a small closed folder. Beyond the table there are several rows of EMPTY visitor chairs and a plain acoustic-panel wall, making it unmistakably a public participation space rather than a private desk. All printed text on proposed-rule notice papers and forms must be completely unreadable; no invented real agency document or agency seal. No people, no lawmakers, no staged testimony, no laptop, no computer screen, no calculator, no stock-photo handshake, NO building exterior, no Capitol dome, no podium speech, no generic office desk, no readable signage or logos. The scene is illustrative of how the public can review proposed state rules and give comments; it is not a photograph of an actual Texas hearing or a claim that any particular hearing occurred.",
       }
     : undefined;
-  const assignment = visualAssignments[row.slug] ?? reserveLegislativeProcess ?? reserveRulemaking;
+  // A practical guide to the Open Meetings Act needs an illustrative
+  // public-notice/attendance setting, not a generic Capitol photograph or an
+  // invented meeting involving identifiable elected officials.
+  const reserveOpenMeetings = row.slug.endsWith("-texas-open-meetings-act-practical-guide")
+    ? {
+        domain: "politics" as Domain,
+        scene: "An editorial documentary-style photograph of an anonymous Texas county public meeting room before a public meeting begins. FOREGROUND SUBJECTS fill the frame: a physical bulletin board displaying several plainly formatted meeting-notice sheets with ALL words deliberately blurred/unreadable; a neat stack of blank public agenda packets; microphones at an empty commissioners-style meeting table; and several rows of empty visitor chairs facing the table. Natural interior daylight, believable perspective, ordinary scuffs and paper texture. The image illustrates public notice, posted agendas and the right to observe an open meeting. It is NOT a photograph or reconstruction of any actual meeting or legal notice. No real or fake agency names, emblems, officials, recorded votes, legible texts, invented ordinance numbers, crowds, podium speeches, logos, signs or campaign materials.",
+      }
+    : undefined;
+  const assignment = visualAssignments[row.slug] ?? reserveLegislativeProcess ?? reserveRulemaking ?? reserveOpenMeetings;
   if (!assignment) return subject;
   return {
     ...subject,
