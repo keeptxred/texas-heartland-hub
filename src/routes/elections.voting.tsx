@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { CitationTrustPanel } from "@/components/authority/CitationTrustPanel";
 import { ElectionLayout, ElectionNavigation, VotingDates, type VotingDateItem } from "@/components/elections";
 import { TexasVoterIdReference } from "@/components/elections/voting/TexasVoterIdReference";
+import { November2026VotingActionGuide } from "@/components/elections/November2026VotingActionGuide";
 import { useElectionRaces } from "@/hooks/elections";
 import { TEXAS_ELECTIONS, formatElectionDate } from "@/lib/election-calendar";
 import { ELECTION_ROUTES } from "@/lib/elections";
@@ -12,7 +13,7 @@ import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 const MY_VOTER_PORTAL = "https://goelect.txelections.civixapps.com/ivis-mvp-ui/";
 const COUNTY_ELECTION_OFFICES = "https://www.sos.state.tx.us/elections/voter/county.shtml";
 const WHO_REPRESENTS_ME = "https://wrm.capitol.texas.gov/home";
-const VOTING_TITLE = formatElectionTitle("Texas Voting Dates, Voter ID & Ballot Research");
+const VOTING_TITLE = formatElectionTitle("Texas Early Voting 2026: Dates, Polls & Voter ID");
 const calendar2026 = TEXAS_ELECTIONS.filter((election) => election.date.startsWith("2026-"));
 const calendarSource = calendar2026.find((election) => election.source)?.source;
 const calendarVerified = calendar2026.map((election) => election.lastUpdated).sort().at(-1) ?? "Verification pending";
@@ -26,7 +27,7 @@ export const Route = createFileRoute("/elections/voting")({
   head: () => ({
     meta: [
       { title: VOTING_TITLE },
-      { name: "description", content: "Review the 2026 Texas election calendar, current voter-ID categories, browse published races by ZIP, county or district, and continue to official Texas voter resources." },
+      { name: "description", content: "Texas 2026 early voting is October 19–30 and Election Day is November 3. Check official polling locations, voter ID, registration, and ballot research." },
       { name: "robots", content: "index, follow, max-image-preview:large" },
       { property: "og:title", content: VOTING_TITLE },
       { property: "og:url", content: "https://keeptxred.com/elections/voting" },
@@ -113,6 +114,8 @@ function VotingResearch() {
       navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.voting} />}
     >
       <div className="space-y-8">
+        <November2026VotingActionGuide />
+
         <VotingDates dates={votingDates} title="2026 Texas election dates" description="Statewide primary, runoff and general-election dates from the centralized Texas election calendar. Local and special elections may use additional dates." />
 
         <TexasVoterIdReference />
