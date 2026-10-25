@@ -29,4 +29,12 @@ describe("bounded second curated reserve on image story mismatch", () => {
     expect(workflow).toContain("--max-time 480");
     expect(workflow.match(/\/api\/public\/hooks\/publishing-safety-net/g)).toHaveLength(1);
   });
+
+  it("uses a source-matched, non-deceptive physical scene for the alternate Open Meetings guide", () => {
+    const images = readFileSync("src/lib/featured-image.functions.ts", "utf8");
+    expect(images).toContain('row.slug.endsWith("-texas-open-meetings-act-practical-guide")');
+    expect(images).toContain("a physical bulletin board displaying several plainly formatted meeting-notice sheets");
+    expect(images).toContain("It is NOT a photograph or reconstruction of any actual meeting or legal notice");
+    expect(images).toContain("reserveRulemaking ?? reserveOpenMeetings");
+  });
 });
