@@ -162,11 +162,33 @@ jobs:
           run_zero_ai_stage packets build-newsroom-research-packets 180
 
           if [[ "$clustered_ready" -eq 1 ]]; then
+            # Editor approved October 11-25 factual election administration
+            # reporting on October 25. Recover ONE previously written GENERATED
+            # and held draft without spending another paid AI rewrite. Every
+            # source, word-count, uniqueness, and exact-image gate remains.
             newsroom_status=$(curl -sS -X POST -o /tmp/newsroom-publish.json -w '%{http_code}' \
               --max-time 600 \
               -H 'accept: application/json' \
               -H "Authorization: Bearer ${oidc_token}" \
-              "${AUTOMATION_ORIGIN%/}/api/public/hooks/generate-newsroom?mode=publish" || echo 000)
+              "${AUTOMATION_ORIGIN%/}/api/public/hooks/generate-newsroom?mode=publish&recover_election=1" || echo 000)
+            echo "approved-election-draft-recovery HTTP ${newsroom_status}"
+            cat /tmp/newsroom-publish.json 2>/dev/null || true
+            echo
+
+            if grep -Eqi 'daily free allocation|used up.*neurons|Workers AI.*quota|RESOURCE_EXHAUSTED|ai_budget_exhausted' /tmp/newsroom-publish.json 2>/dev/null; then
+              echo 'Cloudflare image quota exhausted during approved election recovery; stopping additional paid AI calls.' >&2
+              exit 1
+            fi
+
+            # If no approved, source-verified historical draft could go live,
+            # continue the SAME safe normal production and reserve paths.
+            if [[ "$newsroom_status" != "200" ]] || ! jq -e '.ok == true and .published == true' /tmp/newsroom-publish.json >/dev/null 2>&1; then
+              newsroom_status=$(curl -sS -X POST -o /tmp/newsroom-publish.json -w '%{http_code}' \
+                --max-time 600 \
+                -H 'accept: application/json' \
+                -H "Authorization: Bearer ${oidc_token}" \
+                "${AUTOMATION_ORIGIN%/}/api/public/hooks/generate-newsroom?mode=publish" || echo 000)
+            fi
 
             echo "clustered-newsroom HTTP ${newsroom_status}"
             cat /tmp/newsroom-publish.json 2>/dev/null || true
