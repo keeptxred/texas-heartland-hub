@@ -6,6 +6,13 @@ import { ElectionLayout, ElectionNavigation } from "@/components/elections";
 import { TEXAS_ELECTIONS } from "@/lib/election-calendar";
 import { ELECTION_ROUTES } from "@/lib/elections";
 import { formatElectionTitle } from "@/lib/elections/seo";
+import {
+  certified2026StatewideChoices,
+  normalizeOfficialCandidateName,
+  OFFICIAL_2026_STATEWIDE_ROSTER_CHECKED,
+  OFFICIAL_2026_STATEWIDE_ROSTER_SOURCE,
+  OFFICIAL_2026_ELECTION_INFORMATION_SOURCE,
+} from "@/lib/elections/2026-statewide-official-ballot";
 
 const URL = "https://keeptxred.com/elections/statewide";
 const PAGE_TITLE = formatElectionTitle("Texas 2026 Statewide Races & Candidates");
@@ -25,6 +32,9 @@ const STATEWIDE_RACES = [
   { slug: "2026-court-of-criminal-appeals-place-3", name: "Court of Criminal Appeals Place 3" },
   { slug: "2026-court-of-criminal-appeals-place-4", name: "Court of Criminal Appeals Place 4" },
   { slug: "2026-court-of-criminal-appeals-place-9", name: "Court of Criminal Appeals Place 9" },
+  { slug: "2026-fifteenth-court-chief-justice", name: "Fifteenth Court of Appeals — Chief Justice" },
+  { slug: "2026-fifteenth-court-place-2", name: "Fifteenth Court of Appeals — Place 2" },
+  { slug: "2026-fifteenth-court-place-3", name: "Fifteenth Court of Appeals — Place 3" },
 ] as const;
 
 const PUBLISHED_CANDIDATES = candidatesSnapshot.filter((candidate) => candidate.publicationStatus === "published" && candidate.verificationStatus === "verified");
@@ -32,7 +42,19 @@ const CANDIDATE_BY_ID = new Map(PUBLISHED_CANDIDATES.map((candidate) => [candida
 const PUBLISHED_RACE_BY_SLUG = new Map(racesSnapshot.filter((race) => race.publicationStatus === "published" && race.verificationStatus === "verified").map((race) => [race.slug, race] as const));
 const STATEWIDE_RECORDS = STATEWIDE_RACES.map((definition) => {
   const race = PUBLISHED_RACE_BY_SLUG.get(definition.slug);
-  const candidates = race?.candidateIds.map((id) => CANDIDATE_BY_ID.get(id)).filter((candidate): candidate is (typeof PUBLISHED_CANDIDATES)[number] => Boolean(candidate)) ?? [];
+  const publishedProfiles = race?.candidateIds.map((id) => CANDIDATE_BY_ID.get(id))
+    .filter((candidate): candidate is (typeof PUBLISHED_CANDIDATES)[number] => Boolean(candidate)) ?? [];
+  // A published profile is not evidence that its candidate qualified for the
+  // November 2026 ballot. Independents can be rejected and write-ins can have
+  // a different status. Begin with the Secretary of State's official roster.
+  const candidates = certified2026StatewideChoices(definition.slug).map((entry) => {
+    const profiles = publishedProfiles.filter(
+      (profile) => normalizeOfficialCandidateName(profile.fullName) === normalizeOfficialCandidateName(entry.name),
+    );
+    // A duplicate name can correspond to separate, conflicting filing statuses.
+    // Show the official name once, but do not link to an ambiguous profile.
+    return { ...entry, verifiedProfile: profiles.length === 1 ? profiles[0] : null };
+  });
   return { ...definition, race, candidates };
 });
 const verifiedStatewideCount = STATEWIDE_RECORDS.filter((item) => item.race).length;
@@ -99,24 +121,45 @@ function TexasStatewideElections() {
       <section className="mb-10">
         <p className="text-sm font-semibold text-primary">{verifiedStatewideCount} of {STATEWIDE_RACES.length} expected statewide race records are currently published and verified.</p>
         <h2 className="mt-2 text-2xl font-bold text-foreground">2026 statewide races and candidates</h2>
-        <p className="mt-2 max-w-3xl leading-7 text-muted-foreground">These offices are elected statewide. Candidate names below come only from published, verified candidate records attached to the corresponding verified race record.</p>
+        <p className="mt-2 max-w-3xl leading-7 text-muted-foreground">The names and ballot appearances below are checked against the Texas Secretary of State's November 2026 election listing. Printed ballot choices and certified write-ins are identified separately. Rejected independent filings are not listed as ballot choices. Only unambiguous, previously verified KTR candidate profiles are linked.</p>
         <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {STATEWIDE_RECORDS.map((item) => (
             <article key={item.slug} className="rounded-xl border border-border bg-card p-5 shadow-sm">
-              <a href={`/elections/races/${item.slug}`} className="text-lg font-bold text-foreground hover:text-primary hover:underline">{item.name}</a>
               {item.race ? (
-                item.candidates.length ? <ul className="mt-3 space-y-2">{item.candidates.map((candidate) => <li key={candidate.id}><a href={`/elections/candidates/${candidate.slug}`} className="text-sm font-semibold text-primary hover:underline">{candidate.fullName} →</a></li>)}</ul>
-                : <p className="mt-3 text-sm text-muted-foreground">Race verified; no published verified candidate profiles are attached yet.</p>
-              ) : <p className="mt-3 text-sm text-amber-700">Expected 2026 office; verified race record not yet published.</p>}
+                <a href={`/elections/races/${item.slug}`} className="text-lg font-bold text-foreground hover:text-primary hover:underline">{item.name}</a>
+              ) : <h3 className="text-lg font-bold text-foreground">{item.name}</h3>}
+              {item.candidates.length ? (
+                <ul className="mt-3 space-y-3">
+                  {item.candidates.map((candidate) => (
+                    <li key={`${item.slug}:${normalizeOfficialCandidateName(candidate.name)}`} className="text-sm">
+                      {candidate.verifiedProfile ? (
+                        <a href={`/elections/candidates/${candidate.verifiedProfile.slug}`} className="font-semibold text-primary hover:underline">{candidate.name} →</a>
+                      ) : <span className="font-semibold text-foreground">{candidate.name}</span>}
+                      <span className="ml-2 inline-block text-xs text-muted-foreground">{candidate.appearance === "write-in" ? "Certified write-in" : "Printed on ballot"}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : <p className="mt-3 text-sm text-muted-foreground">No official statewide ballot entries found for this office. Verify against the Secretary of State.</p>}
+              {!item.race && (
+                <p className="mt-3 text-xs leading-5 text-muted-foreground">
+                  Official statewide choices listed; the corresponding KTR race detail record is not yet independently verified.
+                  {item.slug.startsWith("2026-fifteenth-court") && <a href="/texas-government/fifteenth-court-of-appeals" className="ml-1 font-semibold text-primary hover:underline">Fifteenth Court authority guide →</a>}
+                </p>
+              )}
             </article>
           ))}
         </div>
       </section>
 
       <CitationTrustPanel
-        sources={calendarSource ? [{ name: "Texas Secretary of State election calendar", url: calendarSource }] : [{ name: "Texas election authority record" }]}
-        methodology="The statewide office list defines the expected 2026 statewide contests. A race is counted as live only when its Election Central record is both published and verified, and candidate names are shown only when their attached candidate records are also published and verified."
-        lastVerified={`Election calendar last verified ${calendarVerified}. Individual race and candidate records maintain their own verification timestamps and sources.`}
+        sources={[
+          { name: "Texas Secretary of State — November 2026 official election listing", url: OFFICIAL_2026_STATEWIDE_ROSTER_SOURCE },
+          { name: "Texas Secretary of State — current election and final ballot certification", url: OFFICIAL_2026_ELECTION_INFORMATION_SOURCE },
+          { name: "Texas Secretary of State — independent filing decisions", url: "https://www.sos.state.tx.us/elections/laws/independent-declarations-2026.shtml" },
+          ...(calendarSource ? [{ name: "Texas Secretary of State election calendar", url: calendarSource }] : []),
+        ]}
+        methodology="Ballot names are drawn from the Secretary of State's November 2026 general-election listing, not from all candidate filings. Printed choices and certified write-ins are distinguished, rejected independent filings are excluded, and duplicate public profiles are not linked when identity/status is ambiguous. The KTR race and candidate detail records retain their own publication, verification and source-date checks."
+        lastVerified={`Official 2026 statewide ballot roster checked ${OFFICIAL_2026_STATEWIDE_ROSTER_CHECKED}. Election calendar last verified ${calendarVerified}. Individual KTR race and candidate profiles have separate verification timestamps and may be older.`}
         title="Statewide race directory sources"
       />
 
