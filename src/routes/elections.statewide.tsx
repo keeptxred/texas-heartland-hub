@@ -8,7 +8,7 @@ import { ELECTION_ROUTES } from "@/lib/elections";
 import { formatElectionTitle } from "@/lib/elections/seo";
 
 const URL = "https://keeptxred.com/elections/statewide";
-const PAGE_TITLE = formatElectionTitle("2026 Texas Statewide Elections");
+const PAGE_TITLE = formatElectionTitle("Texas 2026 Statewide Races & Candidates");
 const STATEWIDE_RACES = [
   { slug: "2026-us-senate", name: "U.S. Senate" },
   { slug: "2026-governor", name: "Governor" },
@@ -44,10 +44,10 @@ export const Route = createFileRoute("/elections/statewide")({
   head: () => ({
     meta: [
       { title: PAGE_TITLE },
-      { name: "description", content: "Track verified 2026 Texas statewide election races and candidates for offices elected across Texas, with links to polling, forecasts and results." },
+      { name: "description", content: "Texas 2026 statewide election candidates and races: U.S. Senate, governor, attorney general, courts and more. Verify your own ballot with Texas election officials." },
       { name: "robots", content: "index, follow, max-image-preview:large" },
       { property: "og:title", content: PAGE_TITLE },
-      { property: "og:description", content: "Browse verified statewide Texas races and their verified candidate profiles." },
+      { property: "og:description", content: "Explore the 2026 Texas statewide races and candidate listings, then confirm current ballot details with the official Texas voter portal." },
       { property: "og:url", content: URL },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Keep TX Red" },
@@ -82,11 +82,20 @@ export const Route = createFileRoute("/elections/statewide")({
 function TexasStatewideElections() {
   return (
     <ElectionLayout
-      title="2026 Texas Statewide Elections"
-      description="Find verified statewide Texas races and the verified candidate profiles attached to each published Election Central record."
+      title="Texas 2026 Statewide Election Races & Candidates"
+      description="Compare 2026 Texas statewide offices, races and candidate records. Check the source and last-verified date before relying on a listing, and confirm your ballot with the Texas Secretary of State."
       canonicalUrl={URL}
       navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.statewide} />}
     >
+      <aside aria-label="2026 Texas statewide election voting dates and record freshness" className="mb-8 rounded-xl border border-border bg-card p-5 text-sm leading-7 text-foreground">
+        <p className="font-bold">November 3, 2026: Texas general election</p>
+        <p>Statewide early voting runs October 19–30, 2026. Candidate and race records on this page were verified on their individual source dates, not necessarily today; they must not be treated as an official voter-specific ballot.</p>
+        <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 font-semibold">
+          <a href="https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Official Texas election dates ↗</a>
+          <a href="https://www.votetexas.gov/voting/where" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Official polling-place lookup ↗</a>
+          <a href="/elections/voting" className="text-primary hover:underline">KTR voter ID and voting guide →</a>
+        </div>
+      </aside>
       <section className="mb-10">
         <p className="text-sm font-semibold text-primary">{verifiedStatewideCount} of {STATEWIDE_RACES.length} expected statewide race records are currently published and verified.</p>
         <h2 className="mt-2 text-2xl font-bold text-foreground">2026 statewide races and candidates</h2>
