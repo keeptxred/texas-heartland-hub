@@ -30,6 +30,9 @@ describe("editorially approved October 11-25 election newsroom recovery", () => 
     expect(generator).toContain("newsroomHasPublisherDiversity(sources)");
     expect(generator).toContain("duplicatesExistingElectionStory(subject, existingElectionTitles)");
     expect(generator).toContain("validateNewsroomDraft(draft, packet)");
+    expect(generator).toContain("electionDraftHeadlineMatchesEvent(record.canonical_subject, saved?.draft_json?.title");
+    expect(generator).toContain("ballot (?:errors?|issues?|discrepanc");
+    expect(generator).toContain("voter registrations?|registered vote");
     expect(generator).toContain("Retrospective election report:");
     expect(generator).toContain("await prepareFeaturedImageForUnpublishedNewsroomArticle");
     expect(generator).toContain("if (!preparedImage.ok || !preparedImage.url || !preparedImage.imageValidationNote)");
