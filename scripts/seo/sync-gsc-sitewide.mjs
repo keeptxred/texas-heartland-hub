@@ -1,4 +1,6 @@
 import crypto from 'node:crypto';
+import { appendFile, writeFile } from 'node:fs/promises';
+import { buildGscCtrOpportunityReport, formatGscCtrReportMarkdown } from './gsc-ctr-opportunity-report.mjs';
 import { extractSitemapLocs, normalizeSiteUrl, selectInspectionUrls } from './gsc-sitewide-utils.mjs';
 
 const credentialsJson = process.env.GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON;
@@ -228,6 +230,17 @@ async function writeBatch(payload) {
 
 const accessToken = await getAccessToken();
 const metrics = await fetchPageMetrics(accessToken);
+const ctrReport = buildGscCtrOpportunityReport(metrics, metricDate);
+const ctrMarkdown = formatGscCtrReportMarkdown(ctrReport);
+// No external analytics connector or additional paid query. This report
+// reuses the finalized page/day records already fetched by this GSC sync.
+if (!dryRun) {
+  await writeFile('/tmp/ktr-gsc-ctr-opportunities.json', JSON.stringify(ctrReport, null, 2) + '\n');
+  if (process.env.GITHUB_STEP_SUMMARY) {
+    await appendFile(process.env.GITHUB_STEP_SUMMARY, '\n' + ctrMarkdown);
+  }
+}
+console.log(ctrMarkdown);
 metrics.sort((a, b) => b.metricDate.localeCompare(a.metricDate) || b.impressions - a.impressions || b.clicks - a.clicks || a.url.localeCompare(b.url));
 
 if (dryRun) {
