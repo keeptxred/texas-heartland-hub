@@ -72,4 +72,69 @@ export const VERIFIED_ADDITIONAL_RESERVE_ARTICLES: ReserveArticle[] = [
       ],
     },
   },
+  {
+    key: "texas-campaign-finance-search",
+    slugStem: "how-to-search-texas-campaign-finance-reports",
+    category: "Politics",
+    title: "How to Read Texas Campaign Finance Reports and Follow Political Money",
+    dek: "Use the Texas Ethics Commission's actual filing database to distinguish candidates, PACs, donors, spending categories, local records, and the limits of reported totals.",
+    body: {
+      editorNote: "A reference guide based on Texas Ethics Commission public search tools and the Election Code. It explains public records, not the financing of an unverified specific race. Released only under KTR's verified-image publishing safety net.",
+      intro: [
+        "Political fundraising figures often appear in headlines without enough information to explain what they actually measure. A campaign can report new contributions, spending during a reporting period, debt, loans or money maintained at the end of the period. Those are not interchangeable measures. The Texas Ethics Commission makes many state-filed campaign reports searchable, but users still need to identify the proper filer, election, report date and filing authority before comparing numbers.",
+        "The commission's public campaign-finance search page includes reports, transaction records, datasets and explanations of its reporting formats. Texas Election Code Chapter 254 sets much of the filing framework, while forms, filer instructions and deadlines supply the reporting details. This guide is about interpreting published documents accurately. It does not infer donor motives from a contribution or assume a document is missing just because it does not appear in one search interface.",
+      ],
+      sections: [
+        {
+          heading: "Identify the right filer and filing authority first",
+          paragraphs: [
+            "A reader should begin with the exact name of the candidate, officeholder or political committee, and then locate that person's or committee's filer record. Similar names and campaign committees can cause a search for one person to return another record or nothing at all. The Texas Ethics Commission's search site lists the reports it maintains, but its own instructions explain that locally filed campaign-finance reports may be kept by local authorities rather than in the state database. Absence from a TEC result is therefore not conclusive evidence that no report exists.",
+            "For statewide and other state-level filers, the commission is an important source of original campaign-finance disclosures. Local races can require a different starting point, such as a city secretary, county office or other local filing authority. Voters should use the commission's guidance to identify the appropriate records custodian before claiming a report was not filed. When a person is seeking another office, an older filer identity or campaign account may also exist and must not automatically be combined with a new committee without documentary support.",
+            "The date of a filing matters as much as the candidate name. A report may cover a reporting period that ended before its filing date, while a newer transaction may belong to a later report. Searching for all reports and sorting by the period covered reduces the risk of describing money from one reporting window as current campaign cash. Special election, runoff, semiannual and other applicable schedules can differ, and viewers should consult the commission's published current filing calendar rather than relying on a generic yearly deadline.",
+          ],
+        },
+        {
+          heading: "Read receipts, expenditures, loans and ending balances separately",
+          paragraphs: [
+            "Campaign-finance cover sheets summarize major categories, but each label has a distinct meaning. Contributions identify reported support received under the applicable rules. Expenditures describe reported spending, which can range from advertising and staff costs to events, consulting and other activity. Loans, outstanding liabilities and related schedules can affect a campaign's overall position without appearing as ordinary cash donations. The exact accounting treatment is governed by the reporting instructions and the forms actually filed.",
+            "An ending-balance or cash-on-hand figure addresses money maintained at a reporting date, not necessarily the money a campaign will have on Election Day. A campaign may have later expenses, new receipts or outstanding invoices that are not part of that snapshot. Comparing the beginning and ending figures of separate report periods can be more useful than placing a single large contribution beside a rival's unrelated expenditure number. Readers should explicitly state the date attached to every reported total in their analysis.",
+            "A clean comparison starts by locating both campaigns' full reports for equivalent periods and checking that the report types are comparable. Contributions reported by one committee and expenditures by another are different metrics even when both numbers are expressed in dollars. If a candidate controls multiple political accounts, first establish their relationship and any transfers rather than adding totals without review. Summaries are useful signposts, but underlying schedules and amendments are necessary whenever a number looks surprising or politically consequential.",
+          ],
+        },
+        {
+          heading: "Inspect donor and vendor transactions without guessing intent",
+          paragraphs: [
+            "The commission's advanced search can help locate individual contributions and expenditures reported by a state filer. A contribution entry can contain a reported donor name, relevant date and amount along with other information required by the form. An expenditure entry can identify a reported payee and the declared purpose of spending. Such a record documents what was disclosed; it does not independently prove why a donor gave, whether a vendor benefited improperly or what policies a recipient intends to pursue.",
+            "Vendors, reimbursement entries, transfers between political committees and in-kind activity can make transaction lists harder to interpret. One purchase may be connected to several underlying activities, while a reported payment description may be broader than the campaign message visible to the public. Analysts should preserve the original transaction description, identify the relevant schedule and request supporting records when a claim requires greater precision. A descriptive line on a report should not be expanded into an allegation of misconduct without separate evidence.",
+            "When researching outside spending, distinguish the candidate's committee from a political action committee or another organization. The expenditure rules and reporting obligations depend on the filer and transaction type. A committee that supports a candidate is not automatically operated by that candidate; coordination and control are separate questions requiring evidence. The safest presentation identifies the legal filer, reported transaction, date, recipient and independent source before describing what a contribution or expenditure could mean for an election.",
+          ],
+        },
+        {
+          heading: "Verify amendments, local filings and the meaning of the data",
+          paragraphs: [
+            "Campaign-finance reports can be amended, so a result captured earlier may not be the latest filed version. Use the report identifiers, filing dates and amendment indicators available from the search tool, then note which version supplied a quoted amount. The Texas Ethics Commission also provides data layouts for downloadable campaign-finance records. Those layouts matter: a CSV column must be interpreted according to the correct reporting format, not merely by a familiar label copied from an unrelated election database.",
+            "For local candidates, the commission directs users to the appropriate local filing authority. Some jurisdictions provide online systems with searchable reports, while others publish PDFs or accept public-information requests for copies. Different formats are not evidence of different standards of honesty or compliance. Readers can still build a consistent research trail by recording the office, official filer name, report period, filing date, and permanent source URL or document copy obtained from each authority.",
+            "A balanced campaign-money story makes the limits clear: a reported contribution is not an endorsement of every policy, a spending total is not automatically a measure of advertising viewed by voters, and an absent record in the wrong database is not proof of concealment. To reproduce an analysis, keep the TEC or local authority URL, report ID, date accessed, reporting period and definition of the figure. If a complaint, enforcement action or legal allegation exists, report its own documentary status rather than confusing it with the ordinary disclosure record.",
+          ],
+        },
+      ],
+      faq: [
+        { q: "Does the Texas Ethics Commission list all local candidate campaign reports?", a: "No. The TEC search site says it contains only reports filed with TEC and directs users to the local filing authority for reports filed locally." },
+        { q: "Is campaign cash on hand the same as total contributions?", a: "No. Total reported contributions, expenditures, debts and the amount maintained at the end of a reporting period are different accounting concepts." },
+        { q: "Does a political donation prove a particular policy agreement?", a: "No. A campaign-finance entry records a disclosed transaction; claims about motivations or improper coordination need additional evidence." },
+      ],
+      sources: [
+        { label: "Texas Ethics Commission — Campaign Finance Report Search", url: "https://webservices.ethics.state.tx.us/search/cf/index.php" },
+        { label: "Texas Ethics Commission — Help for Filers and Deadlines", url: "https://www.ethics.texas.gov/filers/" },
+        { label: "Texas Election Code — Chapter 254, Political Reporting", url: "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.254.htm" },
+        { label: "Texas Ethics Commission — Official Website", url: "https://www.ethics.texas.gov/" },
+      ],
+      keyTakeaways: [
+        "Search the correct official filing authority before drawing conclusions from missing results.",
+        "Compare equivalent reporting periods and distinguish contributions, spending, loans and ending balances.",
+        "A transaction entry proves a reported disclosure, not a donor's motivation.",
+        "Check amendments and document the original report IDs and access dates.",
+      ],
+    },
+  },
 ];
