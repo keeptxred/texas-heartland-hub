@@ -152,6 +152,14 @@ export function isCloudflareImageSafetyRejection(status: number, detail: string)
   return /\b(?:output has been flagged|input has been flagged|flagged|content[- ]?filter(?:ed|ing)?|moderation|safety filter|unsafe|policy violation|blocked for policy)\b/i.test(detail);
 }
 
+/** Temporary provider errors may be retried through the primary model.
+ * Never retry quota (429), billing, permission or safety decisions as if
+ * they were an outage. Image acceptance still requires the usual vision gate.
+ */
+export function isTransientCloudflareImageFailure(status: number): boolean {
+  return status === 408 || status === 425 || (status >= 500 && status <= 599);
+}
+
 function safetyRetryScene(prompt: string): string {
   const text = prompt.toLowerCase();
   if (/\b(broadcast|interview|television|tv|fcc|federal communications commission|radio|newsroom|media|studio)\b/.test(text)) {
@@ -248,6 +256,26 @@ export async function generateImageBytes(
       res = await runSafetyRetry();
     } else if (activeModel === CLOUDFLARE_IMAGE_MODEL) {
       activeModel = CLOUDFLARE_IMAGE_FALLBACK_MODEL;
+      usedFallback = true;
+      res = await requestCloudflareImage(accountId, apiToken, activePrompt, activeNegativePrompt, activeModel);
+      if (!res.ok) {
+        failure = await readCloudflareImageFailure(res);
+        if (isCloudflareImageSafetyRejection(failure.status, failure.detail)) {
+          res = await runSafetyRetry();
+        } else {
+          throw cloudflareImageFailureError(activeModel, failure);
+        }
+      }
+    } else if (activeModel !== CLOUDFLARE_IMAGE_MODEL && isTransientCloudflareImageFailure(failure.status)) {
+      // Klein 9B occasionally returns an upstream 500 during the last strict
+      // vision retry. Try the quota-safe Klein 4B *once* rather than holding
+      // an otherwise verified news article solely because 9B is unavailable.
+      // Do not repeat this fallback indefinitely or retry quota/safety errors.
+      console.warn("[featured-image] premium model temporarily unavailable; attempting one primary-model fallback", {
+        model: activeModel,
+        status: failure.status,
+      });
+      activeModel = CLOUDFLARE_IMAGE_MODEL;
       usedFallback = true;
       res = await requestCloudflareImage(accountId, apiToken, activePrompt, activeNegativePrompt, activeModel);
       if (!res.ok) {
