@@ -19,6 +19,7 @@ const TRANSIENT = new Set([408, 425, 429, 500, 502, 503, 504, 520, 522, 524]);
 const LEGACY_REDIRECTS = new Map([
   // Historical redirects preserved in the article_slug_redirects registry.
   ["/news/2026-06-28-understanding-texas-property-taxes-why-they-stay-high-and-how-to-file", "/news/texas-property-tax-guide"],
+  ["/news/2026-06-28-texas-voter-registration-guide-deadlines-id-rules-and-verification", "/news/texas-voting-guide-2026"],
   ["/news/2026-07-01-how-to-verify-your-texas-voter-registration-and-identify-requirements", "/news/texas-voting-guide-2026"],
   ["/news/2026-07-02-texas-homestead-exemption-explained-who-qualifies-and-how-to-file", "/news/homestead-exemption-explained"],
   ["/news/2026-07-07-mapping-the-1-254-miles-the-real-reason-texas-border-geography-matters", "/news/texas-border-policy-full-guide"],
