@@ -1,6 +1,7 @@
 import { classifyContentPillar } from "./content-pillars";
 import { isGovernmentNewsClippingUrl } from "./newsroom-discovery-sources";
 import { classifySportsText } from "./sports-taxonomy";
+import { newsroomIndependentPublisherFamilyFromUrl } from "./newsroom-publication-preflight";
 
 function clamp(value: number, min = 0, max = 100): number {
   return Math.min(max, Math.max(min, Number.isFinite(value) ? value : 0));
@@ -53,6 +54,31 @@ export function isPrimaryNewsSource(sourceName: string | null | undefined, sourc
   if (hostname.endsWith(".gov") || hostname.endsWith(".mil") || hostname.endsWith(".state.tx.us")) return true;
   if (isOfficialSportsSource(sourceName, sourceUrl)) return true;
   return false;
+}
+
+/**
+ * Discovery records can include Google News RSS wrappers and multiple feeds
+ * from the same media publisher. Their raw cluster.source_count is useful for
+ * ingestion, NOT independent editorial corroboration.
+ *
+ * Use the same publisher-family exclusion as publication preflight, without
+ * granting primary status based only on source labels or duplicated links.
+ * This changes RANKING ONLY: strict downstream evidence and source checks
+ * remain the sole publication authority.
+ */
+export function verifiedEditorialPublisherCounts(
+  sources: readonly { url: string | null | undefined; name: string | null | undefined; flaggedPrimary: boolean }[],
+): { sourceCount: number; primarySourceCount: number } {
+  const families = new Set<string>();
+  const primaryFamilies = new Set<string>();
+  for (const source of sources) {
+    const url = source.url?.trim() ?? "";
+    const family = url ? newsroomIndependentPublisherFamilyFromUrl(url) : null;
+    if (!family) continue;
+    families.add(family);
+    if (source.flaggedPrimary && isPrimaryNewsSource(source.name, url)) primaryFamilies.add(family);
+  }
+  return { sourceCount: families.size, primarySourceCount: primaryFamilies.size };
 }
 
 export type EditorialScoreInput = {
