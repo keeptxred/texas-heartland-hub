@@ -35,6 +35,8 @@ const LEGACY_REDIRECTS = new Map([
   ["/news/live-2026-07-06-toyota-increases-san-antonio-footprint-with-massive-three-billion-doll-z2yvzl", "/news/live-2026-07-09-toyota-bolsters-san-antonio-manufacturing-footprint-with-major-tacoma--6ik2im"],
   ["/news/live-2026-07-19-voter-registration-countdown-begins-for-texas-2026-midterm-elections-yx9ejb", "/news/texas-voting-guide-2026"],
   ["/news/live-2026-07-24-san-antonio-residents-seek-organized-opposition-to-flock-safety-survei-hz11ng", "/news/2026-08-09-houston-flock-camera-backlash"],
+  // Cross-site handoff tracked in the historical registry, outside article_slug_redirects.
+  ["/news/texas-home-equity-heloc-guide", "https://texasdefined.com/article/texas-home-equity-heloc-guide"],
   ["/hubs", "/topics"],
   ["/hubs/texas-policy-law", "/laws"],
   ["/hubs/texas-politics", "/texas-politics"],
