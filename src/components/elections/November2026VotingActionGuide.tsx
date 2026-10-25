@@ -30,6 +30,9 @@ const actions = [
 ] as const;
 
 export function November2026VotingActionGuide({ compact = false }: { compact?: boolean }) {
+  // Do not keep a past election pinned above the homepage news feed.
+  // The canonical voting page retains this dated guide as an archive.
+  if (compact && Date.now() >= Date.parse("2026-11-04T00:00:00-06:00")) return null;
   return (
     <section aria-labelledby={compact ? "homepage-vote-2026" : "election-vote-2026"} className="rounded-xl border border-border bg-card p-5 shadow-sm sm:p-7">
       <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Officially sourced · November 2026</p>
