@@ -346,10 +346,13 @@ async function handler({ request }: { request: Request }) {
         .map((row) => clusterById.get(row.cluster_id)?.canonical_subject)
         .filter((subject): subject is string => Boolean(subject)))];
       for (let offset = 0; offset < subjects.length; offset += 20) {
-        const { data: publishedClusters, error: subjectError } = await db.from("news_story_clusters")
+        const publishedQuery = db.from("news_story_clusters")
           .select("canonical_subject")
-          .eq("status", "PUBLISHED")
-          .gte("published_at", recoverElectionDraft ? ELECTION_RECOVERY_START : newsroomNewStoryCutoff())
+          .eq("status", "PUBLISHED");
+        const publishedWindowQuery = recoverElectionDraft
+          ? publishedQuery.gte("published_at", ELECTION_RECOVERY_START)
+          : publishedQuery.gte("published_at", newsroomNewStoryCutoff());
+        const { data: publishedClusters, error: subjectError } = await publishedWindowQuery
           .in("canonical_subject", subjects.slice(offset, offset + 20));
         if (subjectError) return Response.json({ error: subjectError.message }, { status: 500 });
         for (const publishedCluster of publishedClusters ?? []) {
