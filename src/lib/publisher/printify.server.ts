@@ -20,7 +20,9 @@ export const prepareSchema = z
     artwork: fileSchema,
     title: z.string().min(1).max(125),
     description: z.string().min(1).max(10000),
-    tags: z.array(z.string().min(1).max(20)).max(13).default([]),
+    tags: z.array(z.string().min(1).max(20)).max(13)
+      .refine((tags) => new Set(tags.map((tag) => tag.trim().toLowerCase())).size === tags.length, "Etsy SEO tags must be unique")
+      .default([]),
     products: z
       .array(kindSchema)
       .min(1)
