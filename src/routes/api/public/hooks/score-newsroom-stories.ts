@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { routeEditorialPillar, scoreEditorialCluster } from "@/lib/newsroom-editorial-scoring";
+import { routeEditorialPillar, scoreEditorialCluster, verifiedEditorialPublisherCounts } from "@/lib/newsroom-editorial-scoring";
 import { rankNewsroomStorySelection } from "@/lib/newsroom-story-selection";
 
 const LOOKBACK_HOURS = 48;
@@ -107,13 +107,19 @@ async function handler() {
       .map((member) => feedById.get(member.feed_item_id))
       .filter((feed): feed is FeedScoreRow => Boolean(feed));
     const ageHours = Math.max(0, (now - Date.parse(cluster.first_seen_at)) / 3_600_000);
-    const primarySourceCount = Math.max(cluster.primary_source_count, members.filter((member) => member.is_primary_source).length);
+    const { sourceCount: verifiedSourceCount, primarySourceCount } = verifiedEditorialPublisherCounts(
+      members.map((member) => ({
+        url: feedById.get(member.feed_item_id)?.link,
+        name: feedById.get(member.feed_item_id)?.source,
+        flaggedPrimary: member.is_primary_source,
+      })),
+    );
     const score = scoreEditorialCluster({
       texasRelevance: maxNumber(feeds.map((feed) => feed.texas_relevance_score), 50),
       sourceReputation: maxNumber(feeds.map((feed) => feed.source_reputation_score), 50),
       viralScore: maxNumber(feeds.map((feed) => feed.viral_score), 0),
       trendVelocity: maxNumber(feeds.map((feed) => feed.trend_velocity), 0),
-      sourceCount: cluster.source_count,
+      sourceCount: verifiedSourceCount,
       primarySourceCount,
       ageHours,
     });
@@ -123,17 +129,17 @@ async function handler() {
       sourceNames: feeds.map((feed) => feed.source),
       sourceUrls: feeds.map((feed) => feed.link),
     });
-    return { cluster, score, pillarSlug, primarySourceCount };
+    return { cluster, score, pillarSlug, primarySourceCount, verifiedSourceCount };
   });
 
   // Phase 12: compare clusters against one another after their independent editorial
   // scores are known. This is selection ordering only; later readiness, verification,
   // synthesis quality, and publication lifecycle gates remain authoritative.
-  const ranked = rankNewsroomStorySelection(scored.map(({ cluster, score, pillarSlug, primarySourceCount }) => ({
+  const ranked = rankNewsroomStorySelection(scored.map(({ cluster, score, pillarSlug, primarySourceCount, verifiedSourceCount }) => ({
     id: cluster.id,
     canonicalSubject: cluster.canonical_subject,
     editorialScore: score.score,
-    sourceCount: cluster.source_count,
+    sourceCount: verifiedSourceCount,
     primarySourceCount,
     firstSeenAt: cluster.first_seen_at,
     lastSeenAt: cluster.last_seen_at,
@@ -141,7 +147,7 @@ async function handler() {
   })));
   const selectionByCluster = new Map(ranked.map((row) => [row.id, row]));
 
-  const clusterUpdates = scored.map(({ cluster, score, pillarSlug }) => {
+  const clusterUpdates = scored.map(({ cluster, score, pillarSlug, verifiedSourceCount }) => {
     const selection = selectionByCluster.get(cluster.id)!;
     return {
       id: cluster.id,
@@ -150,6 +156,7 @@ async function handler() {
       score_breakdown: {
         ...score.breakdown,
         baseEditorialScore: score.score,
+        verifiedPublisherFamilies: verifiedSourceCount,
         selectionScore: selection.selectionScore,
         selectionRank: selection.selectionRank,
         selectionTier: selection.selectionTier,
@@ -178,7 +185,7 @@ async function handler() {
     if (updateError) return Response.json({ ok: false, error: updateError.message }, { status: 500 });
   }
 
-  const candidates = scored.map(({ cluster, score }) => {
+  const candidates = scored.map(({ cluster, score, verifiedSourceCount }) => {
     const selection = selectionByCluster.get(cluster.id)!;
     const prior = existingCandidateByCluster.get(cluster.id);
     return {
@@ -188,6 +195,7 @@ async function handler() {
       score_breakdown: {
         ...score.breakdown,
         baseEditorialScore: score.score,
+        verifiedPublisherFamilies: verifiedSourceCount,
         selectionScore: selection.selectionScore,
         selectionRank: selection.selectionRank,
         selectionTier: selection.selectionTier,
