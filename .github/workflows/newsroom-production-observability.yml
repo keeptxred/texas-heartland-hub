@@ -65,7 +65,7 @@ jobs:
           # The production publisher writes a distinct success marker on a
           # successful reserve publication. Old telemetry only recognized this
           # stage inside the legacy RSS branch (which is no longer used).
-          reserve_slug = match(r'DAILY_NEWS_PUBLISH_SUCCESS reserve_published=([^\\s]+)')
+          reserve_slug = match(r'DAILY_NEWS_PUBLISH_SUCCESS reserve_published=(\S+)')
 
           publisher = 'none'
           slug = None
@@ -93,8 +93,7 @@ jobs:
               legacy_rejected = intval(legacy.group(2))
               if legacy_inserted > 0:
                   publisher = 'legacy_rss'
-              elif safety_net_invoked:
-                  publisher = 'safety_net'
+
 
           no_item_reason = match(r'Clustered newsroom had no production-eligible packet: ([^.\n]+)')
           clustered_http = match(r'clustered-newsroom HTTP (\d{3})')
@@ -107,13 +106,13 @@ jobs:
           # Categorize known operational failures without persisting story text,
           # provider request IDs, API credentials, or unsanitized log excerpts.
           failure_codes = []
-          if re.search(r'newsroom_image_publication_hold:.*?\\b(?:500|502|503|504)\\b|Cloudflare Workers AI.*?\\b(?:500|502|503|504)\\b', text, re.I | re.S):
+          if re.search(r'Cloudflare Workers AI[^\n]*\b5\d\d\b', text, re.I):
               failure_codes.append('image_provider_5xx')
           if re.search(r'newsroom_image_publication_hold:|reserve_newsroom_image_publication_hold:|CLUSTERED_NEWSROOM_IMAGE_FAILED', text):
               failure_codes.append('image_verification_hold')
           if re.search(r'editorial validation rejected|tiered_main_word_count|multisource_unattributed_claim', text, re.I):
               failure_codes.append('editorial_validation')
-          if re.search(r'PUBLISHING_SAFETY_NET_FAILED \\(HTTP 000', text):
+          if re.search(r'PUBLISHING_SAFETY_NET_FAILED \(HTTP 000', text):
               failure_codes.append('reserve_transport_failure')
           elif 'PUBLISHING_SAFETY_NET_FAILED' in text:
               failure_codes.append('reserve_endpoint_failure')
@@ -172,8 +171,8 @@ jobs:
               f"- Clustered AI calls: **{ai_calls}**; repair: **{repair_attempted}**\n"
               f"- Legacy offsets attempted: **{len(legacy_offsets)}**; expensive attempts: **{legacy_expensive_attempts}**; cap reached: **{legacy_cap_reached}**\n"
               f"- Legacy inserted: **{legacy_inserted}**; rejected: **{legacy_rejected}**\n"
-              f"- Safety net invoked: **{safety_net_invoked}**; published: **{reserve_slug is not None}**\\n"
-              f"- Classified publication failure codes: **{', '.join(sorted(set(failure_codes))) or 'none'}**\\n"
+              f"- Safety net invoked: **{safety_net_invoked}**; published: **{reserve_slug is not None}**\n"
+              f"- Classified publication failure codes: **{', '.join(sorted(set(failure_codes))) or 'none'}**\n"
               f"- Finalize warning: **{telemetry['finalizeWarning']}**; image warning: **{telemetry['imageWarning']}**\n"
               f"- Quota exhausted: **{telemetry['quotaExhausted']}**\n"
           )
