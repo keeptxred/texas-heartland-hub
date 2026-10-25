@@ -48,6 +48,23 @@ const ELECTION_RECOVERY_EXPIRES = "2026-10-30T23:59:59Z";
 function isFactualVotingAdministrationSubject(subject: string): boolean {
   return /\b(?:voters?|voting|ballots?|registration|polling|election turnout|election updates)\b/i.test(subject);
 }
+function electionStoryTokens(value: string): Set<string> {
+  const raw = value.toLowerCase()
+    .replace(/\b(\d{1,3})[ ,](\d{3})\b/g, "$1$2")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim().split(/\s+/);
+  const stop = new Set(["a", "an", "the", "are", "as", "for", "to", "of", "in", "by", "and", "from", "over", "more", "than", "with"]);
+  return new Set(raw.filter((token) => token.length > 1 && !stop.has(token)));
+}
+function duplicatesExistingElectionStory(subject: string, existingTitles: readonly string[]): boolean {
+  const tokens = electionStoryTokens(subject);
+  if (tokens.size < 4) return false;
+  return existingTitles.some((title) => {
+    const other = electionStoryTokens(title);
+    const shared = [...tokens].filter((token) => other.has(token)).length;
+    return shared >= 4 && shared / Math.max(tokens.size, other.size) >= 0.75;
+  });
+}
 
 
 type CandidateRow = {
@@ -238,6 +255,19 @@ async function handler({ request }: { request: Request }) {
   let sawNovelSubject = false;
   const recentlyPublishedSubjects = new Set<string>();
   const existingLeadSources = new Set<string>();
+  // Unlike the normal 72h newsroom duplicate scan, previously generated
+  // October 11–25 stories can collide with content published earlier in the
+  // approved period. Protect stable live URLs and avoid stale repeat coverage.
+  const existingElectionTitles: string[] = [];
+  if (recoverElectionDraft) {
+    const { data: existingElectionArticles, error: existingElectionError } = await db
+      .from("daily_articles").select("title")
+      .eq("category", "Elections")
+      .gte("published_at", ELECTION_RECOVERY_START)
+      .limit(300);
+    if (existingElectionError) return Response.json({ error: existingElectionError.message }, { status: 500 });
+    existingElectionTitles.push(...(existingElectionArticles ?? []).map((row: { title: string }) => row.title));
+  }
 
   for (let batchStart = 0; batchStart < candidates.length; batchStart += NEWSROOM_CANDIDATE_BATCH_SIZE) {
     const batch = candidates.slice(batchStart, batchStart + NEWSROOM_CANDIDATE_BATCH_SIZE);
@@ -330,7 +360,8 @@ async function handler({ request }: { request: Request }) {
     const novelSubjectCandidates = requestedMode === "publish"
       ? independentlySourcedCandidates.filter((row) => {
         const subject = clusterById.get(row.cluster_id)?.canonical_subject;
-        return Boolean(subject && !recentlyPublishedSubjects.has(subject));
+        return Boolean(subject && !recentlyPublishedSubjects.has(subject)
+          && (!recoverElectionDraft || !duplicatesExistingElectionStory(subject, existingElectionTitles)));
       })
       : independentlySourcedCandidates;
     sawNovelSubject ||= novelSubjectCandidates.length > 0;
@@ -530,6 +561,11 @@ async function handler({ request }: { request: Request }) {
     const now = new Date();
     const slug = slugifyNewsroomTitle(draft.title, now.toISOString().slice(0, 10));
     const packetSources = uniquePacketSources(packet.sources);
+    const sourceDates = packetSources
+      .map((source) => source.publishedAt)
+      .filter((date): date is string => Boolean(date && Number.isFinite(Date.parse(date))))
+      .sort();
+    const firstSourceDate = sourceDates[0] ?? savedGeneratedDraft?.created_at ?? now.toISOString();
     const sourceCount = packetSources.length;
     const primarySourceCount = packetSources.filter((source) => source.isPrimarySource).length;
     const nonPrimarySourceCount = Math.max(0, sourceCount - primarySourceCount);
@@ -586,7 +622,10 @@ async function handler({ request }: { request: Request }) {
     }] : [];
     const bodyJson = {
       updated: now.toISOString(),
-      intro: [draft.summary.trim()],
+      intro: recoverElectionDraft ? [
+        `Retrospective election report: this article reviews source material originally published on or after ${new Date(firstSourceDate).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "America/Chicago" })}. Our October 25 editorial approval covers this reporting period, but this article was published later after verification. It is not a live election-night result or a claim that conditions have remained unchanged since those source reports.`,
+        draft.summary.trim(),
+      ] : [draft.summary.trim()],
       sections: [
         ...authoritySections,
         { heading: "Texas relevance", paragraphs: [draft.relevance.trim()] },
@@ -689,6 +728,7 @@ async function handler({ request }: { request: Request }) {
       model: ai.model,
       attempts: providerAttempts,
       aiCalls,
+      reusedApprovedDraft: recoverElectionDraft,
       graphLinks: graphLinks.map((node) => node.href),
     });
   } catch (error) {
