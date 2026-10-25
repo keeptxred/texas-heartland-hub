@@ -9,10 +9,10 @@ import {
 } from "./elections/2026-statewide-official-ballot";
 
 describe("Texas SOS November 2026 statewide roster", () => {
-  it("uses the official 2026 general-election listing and covers all 15 statewide races", () => {
+  it("uses the official 2026 general-election listing and covers all 18 statewide contests", () => {
     expect(OFFICIAL_2026_STATEWIDE_ROSTER_SOURCE).toBe("https://electionresults.sos.state.tx.us/results.html");
     expect(OFFICIAL_2026_STATEWIDE_ROSTER_CHECKED).toBe("2026-10-25");
-    expect(Object.keys(OFFICIAL_2026_STATEWIDE_BALLOT)).toHaveLength(15);
+    expect(Object.keys(OFFICIAL_2026_STATEWIDE_BALLOT)).toHaveLength(18);
     for (const [slug, office] of Object.entries(OFFICIAL_2026_STATEWIDE_BALLOT)) {
       const entries = certified2026StatewideChoices(slug);
       expect(entries.length, slug).toBe(office.printed.length + office.writeIn.length);
@@ -36,11 +36,20 @@ describe("Texas SOS November 2026 statewide roster", () => {
     expect(certified2026StatewideChoices("2026-agriculture-commissioner").map((entry) => entry.name))
       .not.toContain("Alfred Molison Jr.");
     expect(normalizeOfficialCandidateName('Bradford "Brad" Hall')).toBe(normalizeOfficialCandidateName("Bradford Brad Hall"));
+    expect(certified2026StatewideChoices("2026-fifteenth-court-chief-justice").map((entry) => entry.name))
+      .toEqual(["Scott Brister", "Jerry Zimmerer"]);
+    expect(certified2026StatewideChoices("2026-fifteenth-court-place-2").map((entry) => entry.name))
+      .toEqual(["Scott K. Field", "Tom Baker"]);
+    expect(certified2026StatewideChoices("2026-fifteenth-court-place-3").map((entry) => entry.name))
+      .toEqual(["April Farris", "Marc M. Meyer"]);
   });
 
   it("renders roster-first instead of printing unverified candidate profiles as ballot choices", () => {
     const route = readFileSync("src/routes/elections.statewide.tsx", "utf8");
     expect(route).toContain("certified2026StatewideChoices(definition.slug)");
+    expect(route).toContain('name: "Fifteenth Court of Appeals — Place 3"');
+    expect(route).toContain('/texas-government/fifteenth-court-of-appeals');
+    expect(route).toContain('item.race ? (');
     expect(route).toContain('profiles.length === 1 ? profiles[0] : null');
     expect(route).toContain('candidate.appearance === "write-in"');
     expect(route).toContain('OFFICIAL_2026_STATEWIDE_ROSTER_SOURCE');
