@@ -191,6 +191,13 @@ beforeEach(() => {
         });
         return Response.json({});
       }
+      if (/\/products\/product\d+\.json$/.test(path) && init?.method === "PUT") {
+        const item = created.find((p) => path.includes(String(p.id)))!;
+        const input = JSON.parse(String(init.body));
+        expect(input.title).toBe(item.title);
+        Object.assign(item, { tags: input.tags });
+        return Response.json(item);
+      }
       if (/\/products\/product\d+\.json$/.test(path))
         return Response.json(created.find((p) => path.includes(String(p.id)))!);
       throw new Error(`Unexpected mock request: ${url}`);
@@ -353,6 +360,21 @@ describe("secure artwork and catalog", () => {
   });
 });
 describe("durable publication", () => {
+  it("publishes exactly 13 SEO tags and removes the recovery marker before Etsy publication", async () => {
+    await new Printify(store).configure("shirt", "template");
+    const tags = Array.from({ length: 13 }, (_, i) => "texas fishing " + (i + 1));
+    const preview = await prepare(store, "owner", { ...input(), tags });
+    expect(preview.products).toHaveLength(1);
+    expect(creates).toBe(0);
+    const result = await advance(store, "owner", preview.job_id, preview.approval_token);
+    expect(result).toMatchObject({ verified: true, results: [{ id: "product1" }] });
+    expect(created[0].tags).toEqual(tags);
+    expect((created[0].tags as string[]).some((tag) => tag.startsWith("hp-"))).toBe(false);
+    expect(store.products[0].tags).toEqual(tags);
+    await advance(store, "owner", preview.job_id);
+    expect(creates).toBe(1);
+    expect(publications).toBe(1);
+  });
   it("publishes both requested kinds without duplicate products on retry", async () => {
     await new Printify(store).configure("shirt", "template");
     await new Printify(store).configure("sticker", "template-sticker");
