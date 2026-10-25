@@ -623,7 +623,7 @@ async function handler({ request }: { request: Request }) {
     const bodyJson = {
       updated: now.toISOString(),
       intro: recoverElectionDraft ? [
-        `Retrospective election report: this article reviews source material originally published on or after ${new Date(firstSourceDate).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "America/Chicago" })}. Our October 25 editorial approval covers this reporting period, but this article was published later after verification. It is not a live election-night result or a claim that conditions have remained unchanged since those source reports.`,
+        `Retrospective election report: this article reviews source material originally published on or after ${new Date(firstSourceDate).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "America/Chicago" })}. This retrospective was published only after the saved draft, source record and featured image underwent additional checks. It is not a live election-night result or a claim that conditions have remained unchanged since those source reports.`,
         draft.summary.trim(),
       ] : [draft.summary.trim()],
       sections: [
