@@ -235,9 +235,9 @@ const ctrMarkdown = formatGscCtrReportMarkdown(ctrReport);
 // No external analytics connector or additional paid query. This report
 // reuses the finalized page/day records already fetched by this GSC sync.
 if (!dryRun) {
-  await writeFile('/tmp/ktr-gsc-ctr-opportunities.json', JSON.stringify(ctrReport, null, 2) + '\\n');
+  await writeFile('/tmp/ktr-gsc-ctr-opportunities.json', JSON.stringify(ctrReport, null, 2) + '\n');
   if (process.env.GITHUB_STEP_SUMMARY) {
-    await appendFile(process.env.GITHUB_STEP_SUMMARY, '\\n' + ctrMarkdown);
+    await appendFile(process.env.GITHUB_STEP_SUMMARY, '\n' + ctrMarkdown);
   }
 }
 console.log(ctrMarkdown);
