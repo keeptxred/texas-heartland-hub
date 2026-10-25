@@ -1,0 +1,32 @@
+import { readFileSync } from "node:fs";
+import { describe, expect, it } from "vitest";
+import { canTrySecondVerifiedReserveImage } from "./reserve-image-recovery";
+
+describe("bounded second curated reserve on image story mismatch", () => {
+  const publisher = readFileSync("src/routes/api/public/hooks/publishing-safety-net.ts", "utf8");
+  const workflow = readFileSync(".github/workflows/run-daily-news-now.yml", "utf8");
+
+  it("only permits a second source-backed article for a genuine image mismatch", () => {
+    expect(canTrySecondVerifiedReserveImage("Generated image failed Cloudflare story-match/photorealism validation: wrong physical subject")).toBe(true);
+    for (const error of [
+      "Cloudflare Workers AI @cf/black-forest-labs/flux-2-klein-9b 500: Internal server error",
+      "429 daily free allocation used up",
+      "Generated image request blocked by moderation",
+      "missing_image_provenance",
+      "Storage upload failed",
+      "Cloudflare Workers AI recovery failed after 500: 503",
+    ]) expect(canTrySecondVerifiedReserveImage(error)).toBe(false);
+  });
+
+  it("tries at most two distinct prewritten stories and never skips image validation", () => {
+    expect(publisher).toContain("RESERVE_ARTICLES.filter((article) => !publishedKeys.has(article.key)).slice(0, 2)");
+    expect(publisher).toContain("canTrySecondVerifiedReserveImage(failure)");
+    expect(publisher).toContain("await prepareFeaturedImageForUnpublishedNewsroomArticle");
+    expect(publisher).toContain("if (!preparedImage.ok || !preparedImage.url || !preparedImage.imageValidationNote)");
+    expect(publisher).toContain("reserve_newsroom_image_publication_hold:");
+    expect(publisher).toContain('image_generation_status: "ready"');
+    expect(publisher).toContain("Never publish more than one reserve article per stalled run");
+    expect(workflow).toContain("--max-time 480");
+    expect(workflow.match(/\/api\/public\/hooks\/publishing-safety-net/g)).toHaveLength(1);
+  });
+});
