@@ -10,6 +10,11 @@ describe("newsroom reserve still requires a story-matched image", () => {
     expect(workflow).not.toContain("--max-time 95 -H 'accept: application/json'");
     expect(workflow.match(/\/api\/public\/hooks\/publishing-safety-net/g)).toHaveLength(1);
     expect(workflow).toContain("PUBLISHING_SAFETY_NET_FAILED");
+    expect(workflow).toContain('workflows: ["Deploy verified KeepTXRed to Cloudflare"]');
+    expect(workflow).toContain('github.event.workflow_run.conclusion == \'success\'');
+    expect(workflow).toContain("github.event.workflow_run.head_branch == 'main'");
+    expect(workflow).toContain('cancel-in-progress: false');
+    expect(workflow).toContain('cron: "15 */4 * * *"');
     expect(reserve).toContain("await prepareFeaturedImageForUnpublishedNewsroomArticle");
     expect(reserve).toContain("reserve_newsroom_image_publication_hold:");
     expect(reserve).toContain('image_generation_status: "ready"');
