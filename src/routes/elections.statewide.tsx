@@ -32,6 +32,9 @@ const STATEWIDE_RACES = [
   { slug: "2026-court-of-criminal-appeals-place-3", name: "Court of Criminal Appeals Place 3" },
   { slug: "2026-court-of-criminal-appeals-place-4", name: "Court of Criminal Appeals Place 4" },
   { slug: "2026-court-of-criminal-appeals-place-9", name: "Court of Criminal Appeals Place 9" },
+  { slug: "2026-fifteenth-court-chief-justice", name: "Fifteenth Court of Appeals — Chief Justice" },
+  { slug: "2026-fifteenth-court-place-2", name: "Fifteenth Court of Appeals — Place 2" },
+  { slug: "2026-fifteenth-court-place-3", name: "Fifteenth Court of Appeals — Place 3" },
 ] as const;
 
 const PUBLISHED_CANDIDATES = candidatesSnapshot.filter((candidate) => candidate.publicationStatus === "published" && candidate.verificationStatus === "verified");
@@ -122,21 +125,27 @@ function TexasStatewideElections() {
         <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {STATEWIDE_RECORDS.map((item) => (
             <article key={item.slug} className="rounded-xl border border-border bg-card p-5 shadow-sm">
-              <a href={`/elections/races/${item.slug}`} className="text-lg font-bold text-foreground hover:text-primary hover:underline">{item.name}</a>
               {item.race ? (
-                item.candidates.length ? (
-                  <ul className="mt-3 space-y-3">
-                    {item.candidates.map((candidate) => (
-                      <li key={`${item.slug}:${normalizeOfficialCandidateName(candidate.name)}`} className="text-sm">
-                        {candidate.verifiedProfile ? (
-                          <a href={`/elections/candidates/${candidate.verifiedProfile.slug}`} className="font-semibold text-primary hover:underline">{candidate.name} →</a>
-                        ) : <span className="font-semibold text-foreground">{candidate.name}</span>}
-                        <span className="ml-2 inline-block text-xs text-muted-foreground">{candidate.appearance === "write-in" ? "Certified write-in" : "Printed on ballot"}</span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : <p className="mt-3 text-sm text-muted-foreground">The official roster has no matched general-election names for this office. Verify the source before relying on the listing.</p>
-              ) : <p className="mt-3 text-sm text-amber-700">Expected 2026 office; verified race record not yet published. Use the Secretary of State roster for the official ballot.</p>}
+                <a href={`/elections/races/${item.slug}`} className="text-lg font-bold text-foreground hover:text-primary hover:underline">{item.name}</a>
+              ) : <h3 className="text-lg font-bold text-foreground">{item.name}</h3>}
+              {item.candidates.length ? (
+                <ul className="mt-3 space-y-3">
+                  {item.candidates.map((candidate) => (
+                    <li key={`${item.slug}:${normalizeOfficialCandidateName(candidate.name)}`} className="text-sm">
+                      {candidate.verifiedProfile ? (
+                        <a href={`/elections/candidates/${candidate.verifiedProfile.slug}`} className="font-semibold text-primary hover:underline">{candidate.name} →</a>
+                      ) : <span className="font-semibold text-foreground">{candidate.name}</span>}
+                      <span className="ml-2 inline-block text-xs text-muted-foreground">{candidate.appearance === "write-in" ? "Certified write-in" : "Printed on ballot"}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : <p className="mt-3 text-sm text-muted-foreground">No official statewide ballot entries found for this office. Verify against the Secretary of State.</p>}
+              {!item.race && (
+                <p className="mt-3 text-xs leading-5 text-muted-foreground">
+                  Official statewide choices listed; the corresponding KTR race detail record is not yet independently verified.
+                  {item.slug.startsWith("2026-fifteenth-court") && <a href="/texas-government/fifteenth-court-of-appeals" className="ml-1 font-semibold text-primary hover:underline">Fifteenth Court authority guide →</a>}
+                </p>
+              )}
             </article>
           ))}
         </div>
