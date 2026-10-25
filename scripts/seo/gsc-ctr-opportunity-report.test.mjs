@@ -23,7 +23,7 @@ describe('Google page-level CTR opportunities', () => {
     expect(report.strikingDistance.map((p) => p.path)).toEqual(['/elections/statewide']);
     expect(report.rankFirst.map((p) => p.path)).toEqual(['/laws']);
     expect(formatGscCtrReportMarkdown(report)).toContain('0.00%');
-    expect(formatGscCtrReportMarkdown(report)).toContain('page/day');
+    expect(formatGscCtrReportMarkdown(report)).toContain('Page-level Google Search Console data');
   });
 
   it('never invents CTR or ranking candidates on empty data', () => {
