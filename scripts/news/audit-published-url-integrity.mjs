@@ -73,9 +73,103 @@ const newMissingBody = missingBody.filter((row) => Date.parse(row.created_at || 
 const recentlyMissingPlainTextBody = recentlyCreatedBodies.filter((row) =>
   row.kind === "news" && String(row.body ?? "").trim().length === 0);
 
+
+/**
+ * Restored in the registry must mean HTTP 200 in production, not merely that
+ * a row exists. This daily live check catches the historical false-restored
+ * status regression which database-only checks could not observe.
+ * All network calls have a timeout, retry bound and request budget.
+ */
+async function auditLiveRestoredUrls() {
+  if (process.env.KTR_VERIFY_LIVE !== "true") {
+    return { checked: 0, failures: [], skipped: true };
+  }
+  const candidates = registry.filter((entry) =>
+    entry.recovery_status === "restored" || entry.recovery_status === "redirected");
+  if (candidates.length > 1000) throw new Error("Historical live audit URL budget exceeded");
+  const allowedHosts = new Set(["keeptxred.com", "texasdefined.com", "www.texasdefined.com"]);
+  let requestCount = 0;
+  let cursor = 0;
+  const failures = [];
+  async function request(url) {
+    let last;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      if (++requestCount > 2500) throw new Error("Historical live audit request budget exceeded");
+      try {
+        const response = await fetch(url, {
+          redirect: "manual",
+          signal: AbortSignal.timeout(15000),
+          headers: { accept: "text/html", "user-agent": "KTR-Historical-URL-Integrity/1.0" },
+        });
+        if ([408, 429, 500, 502, 503, 504].includes(response.status) && attempt === 0) continue;
+        return response;
+      } catch (error) {
+        last = error;
+        if (attempt === 1) throw error;
+      }
+    }
+    throw last || new Error("Historical request failed");
+  }
+  async function inspect(entry) {
+    let url = "https://keeptxred.com/news/" + encodeURIComponent(entry.slug);
+    const seen = new Set();
+    const redirectExpected = entry.recovery_status === "redirected";
+    const intended = entry.redirect_target
+      ? new URL(
+        (entry.redirect_target.startsWith("https://") || entry.redirect_target.startsWith("http://"))
+          ? entry.redirect_target
+          : "/news/" + entry.redirect_target,
+        "https://keeptxred.com"
+      ).href
+      : null;
+    let redirected = false;
+    for (let hop = 0; hop < 6; hop++) {
+      if (seen.has(url)) return "redirect-loop";
+      seen.add(url);
+      if (!allowedHosts.has(new URL(url).hostname)) return "unexpected-host";
+      const response = await request(url);
+      if ([301, 302, 307, 308].includes(response.status)) {
+        const location = response.headers.get("location");
+        if (!location) return "redirect-missing-location";
+        const next = new URL(location, url).href;
+        if (!redirected && redirectExpected && intended && next !== intended) return "unexpected-redirect-target";
+        if (!redirectExpected && !redirected) return "restored-url-is-redirecting";
+        redirected = true;
+        url = next;
+        continue;
+      }
+      if (response.status !== 200) return "HTTP " + response.status;
+      if (!(response.headers.get("content-type") || "").toLowerCase().includes("text/html")) return "non-html";
+      const html = await response.text();
+      const title = new RegExp("<title[^>]*>([^<]*)</title>", "i").exec(html)?.[1] || "";
+      if (/(404|not found|page missing|article not found)/i.test(title)) return "soft-404";
+      if (redirectExpected && !redirected) return "expected-permanent-redirect";
+      return null;
+    }
+    return "redirect-hop-limit";
+  }
+  await Promise.all(Array.from({ length: 12 }, async () => {
+    while (cursor < candidates.length) {
+      const row = candidates[cursor++];
+      try {
+        const problem = await inspect(row);
+        if (problem) failures.push({ slug: row.slug, expected: row.recovery_status, problem });
+      } catch (error) {
+        failures.push({ slug: row.slug, expected: row.recovery_status, problem: String(error) });
+      }
+    }
+  }));
+  return { checked: candidates.length, requests: requestCount, failures, skipped: false };
+}
+const live = await auditLiveRestoredUrls();
+
 const report = {
   checkedAt: new Date().toISOString(),
   project,
+  liveVerified: live.checked,
+  liveProbeRequests: live.requests || 0,
+  liveProbeFailures: live.failures,
+  liveProbeSkipped: live.skipped,
   articles: articles.length,
   registeredUrls: registry.length,
   registryMissingContentAndRedirect: absent.length,
@@ -99,6 +193,8 @@ const summary = [
   "- Open historical recovery classifications: **" + report.pendingRecovery + "**",
   "- Historical \`live-*\` URLs pending recovery: **" + report.pendingHistoricalLive + "**",
   "- New unaccounted-for article losses: **" + report.newlyMissing.length + "**",
+  "- Live restored/redirected URLs verified: **" + report.liveVerified + "**",
+  "- Live URL regressions: **" + report.liveProbeFailures.length + "**",
   "- Dangling feed article pointers: **" + report.danglingFeedSlugs.length + "**",
   "- Recently published articles missing body structure: **" + report.newlyEmptyBodies.length + "**",
   "- Recently created news articles missing plain-text body: **" + report.recentlyCreatedNewsWithoutPlainTextBody.length + "**",
@@ -108,6 +204,6 @@ const summary = [
 ];
 if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary.join("\n"));
 console.log(JSON.stringify(report, null, 2));
-if (newMissing.length || staleFeed.length || newMissingBody.length || recentlyMissingPlainTextBody.length) {
+if (newMissing.length || staleFeed.length || newMissingBody.length || recentlyMissingPlainTextBody.length || live.failures.length) {
   throw new Error("KeepTXRed published-news URL integrity regression detected.");
 }
