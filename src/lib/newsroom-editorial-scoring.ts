@@ -1,7 +1,7 @@
 import { classifyContentPillar } from "./content-pillars";
 import { isGovernmentNewsClippingUrl } from "./newsroom-discovery-sources";
 import { classifySportsText } from "./sports-taxonomy";
-import { newsroomIndependentPublisherFamilyFromUrl } from "./newsroom-publication-preflight";
+import { newsroomIndependentPublisherFamilyFromUrl, newsroomOriginalReportKey } from "./newsroom-publication-preflight";
 
 function clamp(value: number, min = 0, max = 100): number {
   return Math.min(max, Math.max(min, Number.isFinite(value) ? value : 0));
@@ -67,16 +67,20 @@ export function isPrimaryNewsSource(sourceName: string | null | undefined, sourc
  * remain the sole publication authority.
  */
 export function verifiedEditorialPublisherCounts(
-  sources: readonly { url: string | null | undefined; name: string | null | undefined; flaggedPrimary: boolean }[],
+  sources: readonly { url: string | null | undefined; name: string | null | undefined; title?: string | null; flaggedPrimary: boolean }[],
 ): { sourceCount: number; primarySourceCount: number } {
   const families = new Set<string>();
   const primaryFamilies = new Set<string>();
+  const originalReports = new Set<string>();
   for (const source of sources) {
     const url = source.url?.trim() ?? "";
     const family = url ? newsroomIndependentPublisherFamilyFromUrl(url) : null;
     if (!family) continue;
-    families.add(family);
     if (source.flaggedPrimary && isPrimaryNewsSource(source.name, url)) primaryFamilies.add(family);
+    const key = newsroomOriginalReportKey(source.title);
+    if (key && originalReports.has(key)) continue;
+    if (key) originalReports.add(key);
+    families.add(family);
   }
   return { sourceCount: families.size, primarySourceCount: primaryFamilies.size };
 }
