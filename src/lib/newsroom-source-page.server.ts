@@ -102,7 +102,6 @@ function newsroomHtmlText(html: string): string {
     .replace(/&#8220;|&#8221;|&ldquo;|&rdquo;/gi, '"')
     .replace(/\s+/g, " ")
     .trim();
-  return text;
 }
 
 export async function fetchReadableNewsroomSource(url: string): Promise<string | null> {
