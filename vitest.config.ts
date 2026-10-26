@@ -12,6 +12,7 @@ export default defineConfig({
       ...configDefaults.exclude,
       "tests/elections/**/*.spec.ts",
       "tests/laws/**/*.spec.ts",
+      "tests/laws-deployed/**/*.spec.ts",
     ],
   },
 });
