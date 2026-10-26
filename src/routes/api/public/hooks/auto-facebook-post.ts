@@ -348,6 +348,10 @@ async function runAutoFacebookPost(request: Request) {
         editorial_reasons: rankedRow.reasons,
         external_id: result.external_id,
         post_url: result.post_url,
+        // The photo endpoint has already accepted the image bytes. Include
+        // the same asset URL in the successful response so Actions logs do not
+        // misleadingly report a blank image_url on verified photo posts.
+        image_url: row.featured_image_url,
         posted_at: result.posted_at,
         attempted: attempts.length + 1,
         mode,
