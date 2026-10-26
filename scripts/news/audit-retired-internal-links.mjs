@@ -27,7 +27,7 @@ const request=async url=>{
  if(!r.ok)throw Error("HTTP "+r.status+" at "+url);
  return r.text();
 };
-const locs=xml=>[...xml.matchAll(/<loc\\b[^>]*>([^<]+)<\\/loc>/gi)].map(m=>m[1].replace(/&amp;/g,"&"));
+const locs=xml=>[...xml.matchAll(/<loc\b[^>]*>([^<]+)<\/loc>/gi)].map(m=>m[1].replace(/&amp;/g,"&"));
 const pages=new Set();const queue=[origin+"/sitemap.xml"];const seen=new Set();
 while(queue.length){
  const sitemap=queue.shift();if(seen.has(sitemap))continue;
@@ -37,13 +37,13 @@ while(queue.length){
  for(const raw of locs(xml)){
   const u=new URL(raw,origin);
   if(u.hostname!=="keeptxred.com")throw Error("Cross-domain sitemap entry "+u.href);
-  if(/\\.xml$/i.test(u.pathname)&&/sitemap/i.test(u.pathname))queue.push(u.href);
+  if(/\.xml$/i.test(u.pathname)&&/sitemap/i.test(u.pathname))queue.push(u.href);
   else pages.add(u.href);
  }
  if(pages.size>2000)throw Error("Page scan limit; refusing partial result");
 }
 let cursor=0,values=[...pages];
-const extractHref=html=>[...html.matchAll(/\\bhref\\s*=\\s*([\"'])([^\"']+)\\1/gi)].map(m=>m[2]);
+const extractHref=html=>[...html.matchAll(/\bhref\s*=\s*(["'])([^"']+)\1/gi)].map(m=>m[2]);
 await Promise.all(Array.from({length:10},async()=>{
  while(cursor<values.length){
   const url=values[cursor++];
@@ -52,7 +52,7 @@ await Promise.all(Array.from({length:10},async()=>{
    for(const href of extractHref(html)){
     let loc;try{loc=new URL(href,url)}catch{continue}
     if(!["keeptxred.com","www.keeptxred.com"].includes(loc.hostname))continue;
-    const m=loc.pathname.match(/^\\/news\\/([^/]+)\\/?$/);
+    const m=loc.pathname.match(/^\/news\/([^/]+)\/?$/);
     if(!m)continue;
     let slug=m[1];try{slug=decodeURIComponent(slug)}catch{}
     if(retired.has(slug))failures.push({source:url,retiredSlug:slug,href});
