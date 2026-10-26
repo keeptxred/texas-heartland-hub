@@ -31,6 +31,16 @@ jobs:
         with:
           bun-version: 1.3.14
       - run: bun install --frozen-lockfile
+      - name: Verify current pages do not link to retired historical news
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: bun scripts/news/audit-retired-internal-links.mjs
+      - uses: actions/upload-artifact@v4
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        with:
+          name: retired-news-link-audit
+          path: artifacts/retired-news-links.json
+          if-no-files-found: warn
+          retention-days: 30
       - name: Verify live registry, article bodies and feed links
         run: bun scripts/news/audit-published-url-integrity.mjs
       - uses: actions/upload-artifact@v4
