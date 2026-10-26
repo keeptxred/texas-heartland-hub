@@ -35,6 +35,17 @@ test("deployed Texas legal navigation and source links have 44px mobile touch ta
   const officialCodes = page.getByRole("link", { name: /Official Texas codes and statutes/ });
   expect((await officialCodes.boundingBox())?.height).toBeGreaterThanOrEqual(44);
 
+  // The shared /guides/:slug template must preserve accessible legal guide
+  // breadcrumbs and reciprocal links to its controlling authority framework.
+  await page.goto("/guides/texas-child-support-guidelines-law", { waitUntil: "domcontentloaded" });
+  for (const name of ["Breadcrumb", "Parent Texas law framework"]) {
+    const links = page.getByRole("navigation", { name }).getByRole("link");
+    expect(await links.count(), `supporting guide ${name} links`).toBeGreaterThan(0);
+    for (let i = 0; i < await links.count(); i++) {
+      expect((await links.nth(i).boundingBox())?.height, `supporting guide ${name} link ${i}`).toBeGreaterThanOrEqual(44);
+    }
+  }
+
   await page.goto("/laws", { waitUntil: "domcontentloaded" });
   const headlineLinks = page.getByRole("navigation", { name: "Latest headlines" }).getByRole("link");
   expect(await headlineLinks.count()).toBeGreaterThan(0);
