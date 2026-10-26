@@ -157,6 +157,7 @@ export function extractNewsroomMarkedArticleBody(html: string): string | null {
     }
     if (closingAt <= 0) continue;
     const oneArticle = rest.slice(found[0].length, closingAt - match![0].length)
+      .replace(/<(?:script|style|noscript)\b[^>]*>[\s\S]*?<\/(?:script|style|noscript)>/gi, " ")
       .replace(/<(?:aside|nav|footer|header|form)\b[^>]*>[\s\S]*?<\/(?:aside|nav|footer|header|form)>/gi, " ");
     const text = newsroomHtmlText(oneArticle);
     if (text.length >= MIN_READABLE_CHARS && !looksSyntheticNewsroomText(text) && text.length > best.length) {
