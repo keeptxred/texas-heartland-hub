@@ -54,6 +54,23 @@ describe("new Texas law authority topics", () => {
       entry.a.includes("due for payment")
     )).toBe(true);
   });
+  it("separates DTPA treble-damage eligibility and written notice exceptions", () => {
+    const topic = CONSUMER_PROTECTION_LAW_TOPIC;
+    const corpus = [...topic.framework, ...topic.keyRules].join(" ");
+    expect(corpus).toContain("Section 17.50(b)(1)");
+    expect(corpus).toContain("Section 17.50(d)");
+    expect(corpus).toContain("Section 17.50(e)");
+    expect(corpus).toContain("Section 17.505(b)");
+    expect(corpus).toContain("intentional");
+    expect(corpus).toContain("not automatic");
+    expect(topic.questions.some((q) => q.q.includes("automatically award three times") &&
+      q.a.includes("not a guaranteed multiplier"))).toBe(true);
+    expect(topic.questions.some((q) => q.q.includes("without first giving 60 days") &&
+      q.a.includes("Section 17.505(b)"))).toBe(true);
+    expect(topic.published).toBe("2026-10-23");
+    expect(topic.updated).toBe("2026-10-23");
+  });
+
   it("separates probate four-year admission exceptions from letters testamentary authority", () => {
     const topic = WILLS_PROBATE_INHERITANCE_LAW_TOPIC;
     const text = topic.framework.join(" ");
