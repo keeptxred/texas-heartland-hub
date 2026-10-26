@@ -289,10 +289,14 @@ jobs:
       # Verify the rendered mobile geometry in the same release run, not only in a
       # downstream workflow_run (which GitHub can skip for deeply chained workflows).
       # A failure must fail deployment verification instead of being hidden.
-      - name: Install Chromium for production law touch-target verification
+      - name: Install headless Chromium for production law touch-target verification
         if: steps.revision.outputs.deploy == 'true'
         timeout-minutes: 7
-        run: bunx playwright install --with-deps chromium
+        # Ubuntu GitHub runners already ship the libraries needed for Chromium.
+        # Playwright --with-deps invokes apt and previously exhausted this
+        # release gate on a slow Ubuntu mirror after the Worker had deployed.
+        # Keep an actual browser install + the mandatory live geometry checks.
+        run: bunx playwright install --only-shell chromium
 
       - name: Measure deployed Texas law touch targets on the public hostname
         if: steps.revision.outputs.deploy == 'true'
