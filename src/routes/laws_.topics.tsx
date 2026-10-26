@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { LAW_TOPICS } from "@/data/law-topics";
-import { isLawTopicIndexable } from "@/lib/law-topic-indexability";
+import { getIndexableLawTopics } from "@/lib/law-library-route.functions";
 import { lawTopicMatchesQuery } from "@/lib/law-topic-search";
 import { buildSeo, SITE_URL, webPageJsonLd } from "@/lib/seo";
 
 const TITLE = "Texas Law Topics Explained | Keep TX Red Law Library";
 const DESCRIPTION = "Explore official-source Texas law guides for driving, housing, property taxes, work, consumer rights, families, wills, firearms, elections and government records.";
 const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
-const INDEXABLE_LAW_TOPICS = LAW_TOPICS.filter(isLawTopicIndexable);
 
 export const Route = createFileRoute("/laws/topics")({
-  head: () => {
+  loader: () => getIndexableLawTopics(),
+  head: ({ loaderData }) => {
+    const INDEXABLE_LAW_TOPICS = loaderData ?? [];
     const seo = buildSeo({ title: TITLE, description: DESCRIPTION, path: "/laws/topics" });
     return { meta: seo.meta, links: seo.links, scripts: [
       { type: "application/ld+json", children: JSON.stringify(webPageJsonLd({ name: TITLE, description: DESCRIPTION, path: "/laws/topics", type: "CollectionPage" })) },
@@ -23,6 +23,7 @@ export const Route = createFileRoute("/laws/topics")({
 });
 
 function LawTopicsHub() {
+  const INDEXABLE_LAW_TOPICS = Route.useLoaderData();
   const [query, setQuery] = useState("");
   const filteredTopics = INDEXABLE_LAW_TOPICS.filter((topic) => lawTopicMatchesQuery(topic, query));
   return <main className="bg-background">
