@@ -16,7 +16,8 @@ async function expectNoOverflow(page: Page) {
     .toBeLessThanOrEqual(widths.viewport + 1);
 }
 
-for (const width of [390, 1280]) {
+// 320 CSS pixels also exercises WCAG 1.4.10 reflow (e.g. a 640px viewport at 200% zoom).
+for (const width of [320, 390, 1280]) {
   test.describe(`${width}px law page layout`, () => {
     test.use({ viewport: { width, height: 844 } });
     for (const route of ROUTES) {
@@ -98,5 +99,17 @@ test("legal-page desktop primary navigation triggers meet 44px target height", a
   }
   const logo = header.locator('a[href="/"]').first();
   expect((await logo.boundingBox())?.height).toBeGreaterThanOrEqual(44);
+  await expectNoOverflow(page);
+});
+
+
+test("law directory reflows at 320 CSS pixels while keeping its search usable", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 640 });
+  const response = await page.goto("/laws/topics", { waitUntil: "domcontentloaded" });
+  expect(response?.status()).toBe(200);
+  const search = page.getByRole("searchbox", { name: /search the texas law-topic library/i });
+  await expect(search).toBeVisible();
+  await search.fill("security deposit");
+  await expect(page.locator('#law-topic-results a[href="/laws/topic/landlord-tenant-rentals-law"]')).toBeVisible();
   await expectNoOverflow(page);
 });
