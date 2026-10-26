@@ -107,6 +107,37 @@ describe("newsroom source-page enrichment", () => {
     expect(text).not.toContain("Navigation");
   });
 
+  it("selects the actual substantive article instead of the first teaser on a multi-article publisher page", () => {
+    const html = `<html><body><header>Home / Latest</header>
+      <article class="preview"><h2>Unrelated teaser</h2><p>${"Unrelated link. ".repeat(9)}</p></article>
+      <main><article class="content">
+        <h1>Texas public hearing and verified agency record</h1>
+        <p>${"Direct publisher report describing the official date, agency record, filing and response. ".repeat(55)}</p>
+      </article></main>
+      <article class="related"><h2>Another item</h2><p>${"Small related item. ".repeat(20)}</p></article>
+      <footer>Newsletter and promotions</footer></body></html>`;
+    const text = extractReadableNewsroomHtml(html);
+    expect(text?.length ?? 0).toBeGreaterThan(4_000);
+    expect(text).toContain("Texas public hearing and verified agency record");
+    expect(text).not.toContain("Unrelated teaser");
+    expect(text).not.toContain("Another item");
+    expect(text).not.toContain("Newsletter");
+  });
+
+  it("does not join separate short teaser articles into fabricated 500-character evidence", () => {
+    const html = `<main>${Array.from({ length: 12 }, (_, i) =>
+      `<article><p>Teaser ${i}. ${"Unrelated short news story. ".repeat(4)}</p></article>`).join("")}</main>`;
+    expect(extractReadableNewsroomHtml(html)).toBeNull();
+  });
+
+  it("keeps synthetic longest articles excluded instead of promoting fake evidence", () => {
+    const html = `<article>MULTI-SOURCE STORY PACKET. ${"Bogus source ledger. ".repeat(1100)}</article>
+      <article><h1>Genuine official record</h1><p>${"Verifiable full report. ".repeat(270)}</p></article>`;
+    const text = extractReadableNewsroomHtml(html);
+    expect(text).toContain("Genuine official record");
+    expect(text).not.toContain("Bogus source ledger.");
+  });
+
   it("rejects synthetic packet text even when it is long", () => {
     const html = `<article><p>MULTI-SOURCE STORY PACKET. ${"fake evidence sentence. ".repeat(100)}</p></article>`;
     expect(extractReadableNewsroomHtml(html)).toBeNull();

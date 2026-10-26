@@ -72,8 +72,25 @@ export function extractReadableNewsroomHtml(html: string): string | null {
     .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
     .replace(/<noscript\b[^>]*>[\s\S]*?<\/noscript>/gi, " ")
     .replace(/<(header|footer|nav|aside|form)\b[^>]*>[\s\S]*?<\/\1>/gi, " ");
-  const article = stripped.match(/<article\b[^>]*>[\s\S]*?<\/article>/i)?.[0] ?? stripped;
-  const text = article
+  const articleBlocks = stripped.match(/<article\b[^>]*>[\s\S]*?<\/article>/gi) ?? [];
+  // A news page can contain a brief related-story <article> before its own
+  // complete article. Previously the first element silently displaced the
+  // real source and made legitimately reportable stories appear thin.
+  // Only use entire-page fallback when no <article> elements exist; never
+  // concatenate unrelated articles into false evidence for one source.
+  const readableArticle = articleBlocks
+    .map((html) => {
+      const text = newsroomHtmlText(html);
+      return text.length >= MIN_READABLE_CHARS && !looksSyntheticNewsroomText(text) ? text : "";
+    })
+    .sort((left, right) => right.length - left.length)[0] ?? "";
+  const text = articleBlocks.length ? readableArticle : newsroomHtmlText(stripped);
+  if (text.length < MIN_READABLE_CHARS || looksSyntheticNewsroomText(text)) return null;
+  return text.slice(0, MAX_SOURCE_TEXT_CHARS);
+}
+
+function newsroomHtmlText(html: string): string {
+  return html
     .replace(/<[^>]+>/g, " ")
     .replace(/&nbsp;|&#160;/gi, " ")
     .replace(/&amp;/gi, "&")
@@ -85,8 +102,6 @@ export function extractReadableNewsroomHtml(html: string): string | null {
     .replace(/&#8220;|&#8221;|&ldquo;|&rdquo;/gi, '"')
     .replace(/\s+/g, " ")
     .trim();
-  if (text.length < MIN_READABLE_CHARS || looksSyntheticNewsroomText(text)) return null;
-  return text.slice(0, MAX_SOURCE_TEXT_CHARS);
 }
 
 export async function fetchReadableNewsroomSource(url: string): Promise<string | null> {
