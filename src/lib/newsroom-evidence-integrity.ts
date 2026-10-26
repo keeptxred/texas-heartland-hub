@@ -2,6 +2,8 @@ const SYNTHETIC_EVIDENCE_MARKERS = [
   "MULTI-SOURCE STORY PACKET.",
   "RAW SOURCE PACKET",
   "STRUCTURED FACT LEDGER",
+  "PRIMARY-RECORD-AUGMENTED SOURCE PACKET.",
+  "RELATED OFFICIAL RELEASE SERIES:",
 ] as const;
 
 export function isSyntheticNewsroomEvidence(value: string | null | undefined): boolean {
