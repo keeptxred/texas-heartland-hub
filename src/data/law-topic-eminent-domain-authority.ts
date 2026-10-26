@@ -49,6 +49,7 @@ export const EMINENT_DOMAIN_PROPERTY_RIGHTS_LAW_TOPIC: LawTopic = {
   ],
   sources: [
     { label: "Texas Constitution — Article I, Section 17", url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.1.htm#1.17", note: "State constitutional public-use and adequate-compensation protection." },
+    { label: "Texas Supreme Court — REME, L.L.C. v. State (2025)", url: "https://www.txcourts.gov/media/1460056/230707pc.pdf", note: "Controlling 2025 holding that filing the commissioners’ award with the trial court clerk starts the Section 21.018(a) objection period, assuming proper notice." },
     { label: "Texas Property Code — Chapter 21", url: "https://statutes.capitol.texas.gov/?artSec=21.001&chapter=PR.21&code=PR&tab=1", note: "Current condemnation procedure, bona fide offer, special commissioners, objections and related provisions." },
     { label: "Texas Government Code — Chapter 2206", url: "https://statutes.capitol.texas.gov/Docs/GV/pdf/GV.2206.pdf", note: "State limitations on eminent domain for private benefit, pretextual public use and economic-development purposes." },
     { label: "Texas Attorney General — Landowner's Bill of Rights", url: "https://www.texasattorneygeneral.gov/sites/default/files/files/divisions/general-oag/landowners-bill-of-rights-25.pdf", note: "Current November 2025 official landowner notice explaining condemnation rights and major procedural steps." },
