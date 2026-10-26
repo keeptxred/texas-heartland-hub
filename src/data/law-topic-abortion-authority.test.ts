@@ -41,6 +41,7 @@ describe("Texas abortion law authority", () => {
     expect(weldon!.a).toContain("reversed");
     expect(weldon!.a).toContain("remanded");
     expect(weldon!.a).toContain("too broad");
+    expect(ABORTION_LAW_TOPIC.framework.join(" ")).toContain("Texas Citizens Participation Act (TCPA)");
   });
 
   it("uses official Texas primary or institutional sources", () => {
