@@ -77,12 +77,12 @@ export function isNewsroomSourceFetchCoolingDown(
  * newly invented source or an additional corroborating publisher.
  */
 export function extractNewsroomArticleJsonLd(html: string): string | null {
-  const scripts = html.match(/<script\\b[^>]*>[\\s\\S]*?<\\/script>/gi) ?? [];
+  const scripts = html.match(/<script\b[^>]*>[\s\S]*?<\/script>/gi) ?? [];
   let best = "";
   for (const script of scripts.slice(0, 40)) {
-    const openTag = script.match(/^<script\\b[^>]*>/i)?.[0] ?? "";
-    if (!/\\btype\\s*=\\s*["']application\\/ld\\+json["']/i.test(openTag)) continue;
-    const raw = script.slice(openTag.length).replace(/<\\/script>\\s*$/i, "").trim();
+    const openTag = script.match(/^<script\b[^>]*>/i)?.[0] ?? "";
+    if (!/\btype\s*=\s*["']application\/ld\+json["']/i.test(openTag)) continue;
+    const raw = script.slice(openTag.length).replace(/<\/script>\s*$/i, "").trim();
     if (!raw || raw.length > 500_000) continue;
     let json: unknown;
     try { json = JSON.parse(raw); } catch { continue; }
