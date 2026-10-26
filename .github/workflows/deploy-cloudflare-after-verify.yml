@@ -286,6 +286,19 @@ jobs:
             SITE_URL="$site" python3 scripts/verify-deployed-law-guide-rendering.py
           done
 
+      # Verify the rendered mobile geometry in the same release run, not only in a
+      # downstream workflow_run (which GitHub can skip for deeply chained workflows).
+      # A failure must fail deployment verification instead of being hidden.
+      - name: Install Chromium for production law touch-target verification
+        if: steps.revision.outputs.deploy == 'true'
+        timeout-minutes: 7
+        run: bunx playwright install --with-deps chromium
+
+      - name: Measure deployed Texas law touch targets on the public hostname
+        if: steps.revision.outputs.deploy == 'true'
+        timeout-minutes: 5
+        run: bunx playwright test --config=playwright.laws-deployed.config.ts
+
       - name: Verify property-tax ownership handoff on deployed Worker
         if: steps.revision.outputs.deploy == 'true'
         env:
