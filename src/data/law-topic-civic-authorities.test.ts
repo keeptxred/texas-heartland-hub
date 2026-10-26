@@ -80,6 +80,13 @@ describe("civic Law Library authorities", () => {
   it("keeps home-rule, general-law, county and special-district authority separate", () => {
     const text = [LOCAL_GOVERNMENT_AUTHORITY_LAW_TOPIC.quickAnswer, ...LOCAL_GOVERNMENT_AUTHORITY_LAW_TOPIC.framework, ...LOCAL_GOVERNMENT_AUTHORITY_LAW_TOPIC.keyRules].join(" ");
     expect(text).toContain("Section 51.072");
+    expect(text).toContain("Article XI, Section 5");
+    expect(text).toContain("more than 5,000 inhabitants");
+    expect(text).toContain("Section 5.004");
+    expect(text).toContain("automatically revoke");
+    expect(LOCAL_GOVERNMENT_AUTHORITY_LAW_TOPIC.questions.some((item) =>
+      item.q.includes("automatically become home-rule") && item.a.includes("majority vote")
+    )).toBe(true);
     expect(text).toContain("general-law");
     expect(text).toContain("counties");
     expect(text).toContain("special districts");
