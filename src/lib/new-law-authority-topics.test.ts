@@ -126,6 +126,26 @@ describe("new Texas law authority topics", () => {
     expect(topic.updated).toBe("2026-10-23");
     expect(topic.published).toBe("2026-10-23");
   });
+  it("separates ordinary felony sentencing tiers and the state-jail enhancement exception", () => {
+    const topic = CRIMINAL_OFFENSES_PENALTIES_LAW_TOPIC;
+    const text = topic.framework.join(" ") + " " + topic.keyRules.join(" ");
+    for (const code of ["12.32", "12.33", "12.34", "12.35", "12.31", "12.35(c)"]) {
+      expect(text).toContain(code);
+    }
+    for (const range of ["five to 99 years", "two to 20 years", "two to 10 years", "180 days to two years"]) {
+      expect(text).toContain(range);
+    }
+    expect(text).toContain("$10,000");
+    expect(topic.questions.some((faq) =>
+      faq.q.includes("usual prison or state-jail ranges") &&
+      faq.a.includes("not automatic sentences") &&
+      faq.a.includes("Section 12.35(c)")
+    )).toBe(true);
+    expect(topic.sources.some((source) => source.url === "https://statutes.capitol.texas.gov/Docs/PE/htm/PE.12.htm")).toBe(true);
+    expect(topic.updated).toBe("2026-10-23");
+    expect(topic.published).toBe("2026-10-23");
+  });
+
   it("keeps law topic slugs unique for routes, canonicals and sitemap discovery", () => {
     const slugs = LAW_TOPICS.map((topic) => topic.slug);
     expect(new Set(slugs).size).toBe(slugs.length);
