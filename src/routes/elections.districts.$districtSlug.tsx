@@ -1,11 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ElectionLayout, ElectionNavigation } from "@/components/elections";
-import candidates from "@/data/elections/2026/candidates.json";
-import races from "@/data/elections/2026/races.json";
 import { ELECTION_ROUTES } from "@/lib/elections";
 import { formatElectionTitle } from "@/lib/elections/seo";
 import { RelatedAuthorityContent } from "@/components/authority/RelatedAuthorityContent";
 import { getRelatedAuthorityContent } from "@/lib/authority-relationships";
+import { getElectionDistrictDetailSnapshot } from "@/lib/elections/election-district-detail.functions";
 
 type DistrictType = "congressional" | "state_house" | "state_senate";
 const TEXAS_SENATE_DISTRICTS = new Set([1, 2, 3, 4, 5, 9, 11, 13, 18, 19, 21, 22, 24, 26, 28, 31]);
@@ -35,15 +34,6 @@ function parseDistrictSlug(slug: string): DistrictInfo | null {
   return null;
 }
 
-function getPublishedRace(raceSlug: string) {
-  return races.find(
-    (race) =>
-      race.slug === raceSlug &&
-      race.publicationStatus === "published" &&
-      race.verificationStatus === "verified",
-  );
-}
-
 function formatElectionDate(value: string) {
   return new Intl.DateTimeFormat("en-US", {
     month: "long",
@@ -54,18 +44,18 @@ function formatElectionDate(value: string) {
 }
 
 export const Route = createFileRoute("/elections/districts/$districtSlug")({
-  loader: ({ params }) => getRelatedAuthorityContent("district", params.districtSlug, 12).catch(() => []),
-  head: ({ params }) => {
+  loader: async ({ params }) => {
     const district = parseDistrictSlug(params.districtSlug);
-    const race = district ? getPublishedRace(district.raceSlug) : null;
-    const raceCandidates = race
-      ? candidates.filter(
-          (candidate) =>
-            race.candidateIds.includes(candidate.id) &&
-            candidate.publicationStatus === "published" &&
-            candidate.verificationStatus === "verified",
-        )
-      : [];
+    const [related, snapshot] = await Promise.all([
+      getRelatedAuthorityContent("district", params.districtSlug, 12).catch(() => []),
+      getElectionDistrictDetailSnapshot({ data: { raceSlug: district?.raceSlug ?? "" } }),
+    ]);
+    return { related, snapshot };
+  },
+  head: ({ params, loaderData }) => {
+    const district = parseDistrictSlug(params.districtSlug);
+    const race = loaderData?.snapshot.race ?? null;
+    const raceCandidates = loaderData?.snapshot.candidates ?? [];
     const canonicalUrl = `https://keeptxred.com/elections/districts/${params.districtSlug}`;
     const indexable = Boolean(district && race);
     const pageName = district
@@ -195,7 +185,7 @@ export const Route = createFileRoute("/elections/districts/$districtSlug")({
 
 function TexasElectionDistrict() {
   const { districtSlug } = Route.useParams();
-  const scoredRelated = Route.useLoaderData();
+  const { related: scoredRelated, snapshot } = Route.useLoaderData();
   const district = parseDistrictSlug(districtSlug);
   if (!district) {
     return (
@@ -206,15 +196,9 @@ function TexasElectionDistrict() {
   }
 
   const canonicalUrl = `https://keeptxred.com/elections/districts/${districtSlug}`;
-  const race = getPublishedRace(district.raceSlug);
-  const raceCandidates = race
-    ? candidates.filter(
-        (candidate) =>
-          race.candidateIds.includes(candidate.id) &&
-          candidate.publicationStatus === "published" &&
-          candidate.verificationStatus === "verified",
-      )
-    : [];
+  const race = snapshot.race;
+  const raceCandidates = snapshot.candidates;
+
   return (
     <ElectionLayout
       title={`2026 ${district.name} Election`}
