@@ -38,6 +38,6 @@ export function extractFirstPartyRssArticleBody(
     .trim();
 
   if (text.length < 500 || text.split(/\s+/).length < 85) return null;
-  if (/MULTI-SOURCE STORY PACKET\.|RAW SOURCE PACKET|STRUCTURED FACT LEDGER|PRIMARY-RECORD-AUGMENTED SOURCE PACKET\\.|RELATED OFFICIAL RELEASE SERIES:/i.test(text)) return null;
+  if (/MULTI-SOURCE STORY PACKET\.|RAW SOURCE PACKET|STRUCTURED FACT LEDGER|PRIMARY-RECORD-AUGMENTED SOURCE PACKET\.|RELATED OFFICIAL RELEASE SERIES:/i.test(text)) return null;
   return text.slice(0, 8000);
 }
