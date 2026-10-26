@@ -42,6 +42,19 @@ describe("civic Law Library authorities", () => {
     expect(text).toContain("Section 552.301");
   });
 
+  it("distinguishes precise online public-records production from a generic agency homepage", () => {
+    const topic = OPEN_RECORDS_PUBLIC_INFORMATION_LAW_TOPIC;
+    const text = [...topic.framework, ...topic.keyRules].join(" ");
+    expect(text).toContain("Section 552.221(b-1)");
+    expect(text).toContain("exact Internet location");
+    expect(text).toContain("identifiable and readily available");
+    expect(text).toContain("general home page");
+    expect(topic.questions.some((item) =>
+      item.q.includes("website link") && item.a.includes("Section 552.221(b-1)")
+    )).toBe(true);
+    expect(topic.updated).toBe("2026-09-06");
+  });
+
   it("keeps proposal, adoption, effectiveness and codification distinct", () => {
     const text = [ADMINISTRATIVE_RULEMAKING_LAW_TOPIC.quickAnswer, ...ADMINISTRATIVE_RULEMAKING_LAW_TOPIC.framework, ...ADMINISTRATIVE_RULEMAKING_LAW_TOPIC.keyRules].join(" ");
     expect(text).toContain("proposed rule is not");
