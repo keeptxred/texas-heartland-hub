@@ -31,6 +31,18 @@ export function looksSyntheticNewsroomText(value: string | null | undefined): bo
   return /MULTI-SOURCE STORY PACKET\.|RAW SOURCE PACKET|STRUCTURED FACT LEDGER/i.test(text);
 }
 
+/** Prefer a verifiable publisher body over any longer synthetic packet
+ * accidentally cached in extracted_body. Length comparisons apply only when
+ * BOTH versions are real, standalone publisher text.
+ */
+export function shouldReplaceNewsroomSourceBody(existingText: string | null | undefined, fetchedText: string | null | undefined): boolean {
+  const fetched = (fetchedText ?? "").trim();
+  if (fetched.length < MIN_READABLE_CHARS || looksSyntheticNewsroomText(fetched)) return false;
+  const existing = (existingText ?? "").trim();
+  if (looksSyntheticNewsroomText(existing)) return true;
+  return fetched.length > existing.length + 100;
+}
+
 export function shouldFetchNewsroomSourcePage(input: { url: string | null; extractedBody: string | null }): boolean {
   const url = (input.url ?? "").trim();
   if (!/^https?:\/\//i.test(url)) return false;
