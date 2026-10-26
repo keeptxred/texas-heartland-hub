@@ -104,7 +104,7 @@ function TopicSection({ topic, summaries }: { topic: LawTopic; summaries: LawHub
   const topicInfo = summaries.topics.find((entry) => entry.topic === topic);
   const guides = topicInfo?.guides ?? [];
 
-  if (guides.length === 0) return null;
+  if (!topicInfo || guides.length === 0) return null;
 
   return (
     <section className="border-t-4 border-foreground/10 bg-primary/[0.03]" aria-labelledby={`laws-${topic}-heading`}>
