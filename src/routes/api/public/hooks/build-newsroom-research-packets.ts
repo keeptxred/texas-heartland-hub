@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { buildResearchPacket } from "@/lib/newsroom-research-packet";
 import { categoryForPillar } from "@/lib/newsroom-rewrite-adapter";
-import { newsroomIndependentPublisherFamilyFromUrl } from "@/lib/newsroom-publication-preflight";
+import { newsroomIndependentPublisherFamilyFromUrl, newsroomOriginalReportKey } from "@/lib/newsroom-publication-preflight";
 import {
   fetchReadableNewsroomSource,
   isNewsroomSourceFetchCoolingDown,
@@ -217,14 +217,19 @@ async function handler() {
   for (const candidate of candidates) {
     const members = membersByClusterForPriority.get(candidate.cluster_id) ?? [];
     const families = new Set<string>();
+    const reportKeys = new Set<string>();
     let hasPrimary = false;
     let approximateEvidenceChars = 0;
     const seenEvidence = new Set<string>();
     for (const membership of members) {
       const feed = feedByIdForPriority.get(membership.feed_item_id);
       const family = newsroomIndependentPublisherFamilyFromUrl(feed?.link ?? "");
+      const originalReport = newsroomOriginalReportKey(feed?.title);
       if (family) {
-        families.add(family);
+        // Same headline syndicated by multiple websites is only one report.
+        // The publisher applies the same stricter test to the final packet.
+        if (!originalReport || !reportKeys.has(originalReport)) families.add(family);
+        if (originalReport) reportKeys.add(originalReport);
         hasPrimary ||= membership.is_primary_source;
       }
       const body = looksSyntheticNewsroomText(feed?.extracted_body) ? "" : (feed?.extracted_body ?? "").slice(0, 8_000);
@@ -245,8 +250,29 @@ async function handler() {
       requiredEvidenceChars,
       editorialScore: candidate.editorial_score,
     });
-    for (const membership of members) {
-      priorityByFeedId.set(membership.feed_item_id, Math.max(priorityByFeedId.get(membership.feed_item_id) ?? 0, priority));
+    const hydrationOriginals = new Set<string>();
+    const hydrationFamilies = new Set<string>();
+    // The fetch budget is 40 requests per cycle. Prefer original reports and
+    // distinct publishers instead of spending it on every syndicated copy
+    // of one high-scoring headline. Keep the copies eligible for later runs.
+    for (const membership of [...members].sort((left, right) => {
+      const a = feedByIdForPriority.get(left.feed_item_id);
+      const b = feedByIdForPriority.get(right.feed_item_id);
+      return Number(right.is_primary_source) - Number(left.is_primary_source)
+        || (b?.source_reputation_score ?? 0) - (a?.source_reputation_score ?? 0)
+        || left.feed_item_id - right.feed_item_id;
+    })) {
+      const feed = feedByIdForPriority.get(membership.feed_item_id);
+      const family = newsroomIndependentPublisherFamilyFromUrl(feed?.link ?? "");
+      const original = newsroomOriginalReportKey(feed?.title);
+      const duplicate = Boolean(family && hydrationFamilies.has(family))
+        || Boolean(original && hydrationOriginals.has(original));
+      if (family) hydrationFamilies.add(family);
+      if (original) hydrationOriginals.add(original);
+      const effectivePriority = duplicate ? Math.max(1, priority - 5_000) : priority;
+      priorityByFeedId.set(membership.feed_item_id, Math.max(
+        priorityByFeedId.get(membership.feed_item_id) ?? 0, effectivePriority,
+      ));
     }
   }
 
