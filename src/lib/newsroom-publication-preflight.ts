@@ -62,10 +62,37 @@ export function newsroomLeadSourceUrl(sources: ResearchPacketSource[]): string |
   return uniquePacketSources(sources)[0]?.url ?? null;
 }
 
+/**
+ * A story reprinted by a second outlet is not independent reporting simply
+ * because the republisher has a different domain. Exact long headlines
+ * published across two sites are a conservative, auditable syndication clue.
+ *
+ * Short/generic titles are not enough evidence to collapse distinct reporting,
+ * and this function does not mutate or erase original source citations.
+ */
+export function newsroomOriginalReportKey(title: string | null | undefined): string | null {
+  const normalized = (title ?? "").normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase().replace(/[^a-z0-9]+/g, " ").trim().replace(/\s+/g, " ");
+  if (normalized.length < 45 || normalized.split(" ").length < 8) return null;
+  return normalized;
+}
+
 /** Stricter than the database guard: discovery links never count as an independent publisher. */
 export function newsroomHasPublisherDiversity(sources: ResearchPacketSource[]): boolean {
   const unique = uniquePacketSources(sources);
   if (unique.some((source) => source.isPrimarySource)) return true;
-  const families = new Set(unique.map((source) => newsroomIndependentPublisherFamilyFromUrl(source.url)).filter(Boolean));
+  const families = new Set<string>();
+  const originalReports = new Set<string>();
+  for (const source of unique) {
+    const family = newsroomIndependentPublisherFamilyFromUrl(source.url);
+    if (!family) continue;
+    const originalReport = newsroomOriginalReportKey(source.title);
+    // For example, Texas Standard republishes KUT / Texas Newsroom's same
+    // long-headline story: two domains, but only ONE independent report.
+    if (originalReport && originalReports.has(originalReport)) continue;
+    if (originalReport) originalReports.add(originalReport);
+    families.add(family);
+  }
   return families.size >= 2;
 }
