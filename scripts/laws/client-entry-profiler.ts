@@ -93,6 +93,7 @@ export function clientEntryProfiler(): Plugin {
         "| Rank | Module | Attributed rendered bytes |",
         "|---:|---|---:|",
         ...top.map((row, i) => `| ${i + 1} | \`${row.source.replaceAll("|", "\\|")}\` | ${row.bytes} |`),
+        "",
         "## How large election data reaches the shared entry",
         "",
         "Static import chains below run from the large module toward the entry importer.",
@@ -104,7 +105,7 @@ export function clientEntryProfiler(): Plugin {
             `- ${path.map((id) => "\`" + id + "\`").join(" ← ")}`
           ) : ["- No static chain identified inside this emitted chunk"]),
           "",
-        ].join("\\n")),
+        ].join("\n")),
         "",
       ].join("\n"));
       console.log(`KTR client-entry profile: ${profile.rawBytes} bytes, ${profile.modules.length} contributing modules`);
