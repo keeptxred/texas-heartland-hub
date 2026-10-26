@@ -31,6 +31,20 @@ describe("rights and property Law Library authorities", () => {
     expect(text.toLowerCase()).toContain("use of force");
   });
 
+  it("does not confuse school premises offenses with Section 46.11 school-zone enhancement", () => {
+    const topic = GUN_CARRY_LAW_TOPIC;
+    const text = [...topic.framework, ...topic.keyRules].join(" ");
+    expect(text).toContain("Section 46.11(a)");
+    expect(text).toContain("Section 46.11(b)");
+    expect(text).toContain("300 feet");
+    expect(text).toContain("University Interscholastic League");
+    expect(text).toContain("Section 46.03(a)(1)");
+    expect(topic.questions.some((item) =>
+      item.q.includes("enhanced Texas penalty") && item.a.includes("Section 46.11")
+    )).toBe(true);
+    expect(topic.updated).toBe("2026-09-06");
+  });
+
   it("preserves the conditions and limits of Texas self-defense law", () => {
     const text = [SELF_DEFENSE_USE_OF_FORCE_LAW_TOPIC.quickAnswer, ...SELF_DEFENSE_USE_OF_FORCE_LAW_TOPIC.framework, ...SELF_DEFENSE_USE_OF_FORCE_LAW_TOPIC.keyRules].join(" ");
     expect(text).toContain("Section 9.31");
