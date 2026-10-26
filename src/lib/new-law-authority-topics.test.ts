@@ -54,6 +54,23 @@ describe("new Texas law authority topics", () => {
       entry.a.includes("due for payment")
     )).toBe(true);
   });
+  it("distinguishes mixed-family intestate community property and holographic self-proof", () => {
+    const topic = WILLS_PROBATE_INHERITANCE_LAW_TOPIC;
+    const corpus = [...topic.framework, ...topic.keyRules].join(" ");
+    for (const section of ["Section 201.003", "Section 201.002", "Section 251.052", "Section 251.102", "Section 251.107"]) {
+      expect(corpus).toContain(section);
+    }
+    expect(corpus).toContain("not also a descendant of the surviving spouse");
+    expect(corpus).toContain("undivided one-half community-property interest");
+    expect(corpus).toContain("does not otherwise change the treatment or validity requirements");
+    expect(topic.questions.some((entry) => entry.q.includes("children from an earlier relationship") &&
+      entry.a.includes("Section 201.003(c)"))).toBe(true);
+    expect(topic.questions.some((entry) => entry.q.includes("notarizing a handwritten will") &&
+      entry.a.includes("Section 251.107"))).toBe(true);
+    expect(topic.published).toBe("2026-10-23");
+    expect(topic.updated).toBe("2026-10-23");
+  });
+
   it("separates probate four-year admission exceptions from letters testamentary authority", () => {
     const topic = WILLS_PROBATE_INHERITANCE_LAW_TOPIC;
     const text = topic.framework.join(" ");
