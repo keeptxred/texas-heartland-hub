@@ -61,3 +61,42 @@ test("long law pages have working keyboard-friendly source navigation", async ({
   await expect(page.getByRole("heading", { name: /^official sources$/i })).toBeVisible();
   await expectNoOverflow(page);
 });
+
+
+test("legal-page header navigation has usable 44px tap targets on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/laws", { waitUntil: "domcontentloaded" });
+  const header = page.locator("header");
+  const menu = header.getByRole("button", { name: "Open menu" });
+  const menuBounds = await menu.boundingBox();
+  expect(menuBounds?.width, "mobile menu tap width").toBeGreaterThanOrEqual(44);
+  expect(menuBounds?.height, "mobile menu tap height").toBeGreaterThanOrEqual(44);
+  await menu.click();
+  const links = header.getByRole("navigation", { name: "Mobile navigation" }).getByRole("link");
+  const total = await links.count();
+  expect(total).toBeGreaterThan(5);
+  for (let index = 0; index < total; index++) {
+    const link = links.nth(index);
+    const rect = await link.boundingBox();
+    expect(rect?.height, `mobile navigation link ${index} tap height`).toBeGreaterThanOrEqual(44);
+  }
+  await expectNoOverflow(page);
+});
+
+test("legal-page desktop primary navigation triggers meet 44px target height", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 844 });
+  await page.goto("/laws", { waitUntil: "domcontentloaded" });
+  const header = page.locator("header");
+  const nav = header.getByRole("navigation", { name: "Primary navigation" });
+  await expect(nav).toBeVisible();
+  const controls = nav.locator("button, a");
+  const total = await controls.count();
+  expect(total).toBeGreaterThan(3);
+  for (let index = 0; index < total; index++) {
+    const rect = await controls.nth(index).boundingBox();
+    expect(rect?.height, `desktop primary nav control ${index}`).toBeGreaterThanOrEqual(44);
+  }
+  const logo = header.locator('a[href="/"]').first();
+  expect((await logo.boundingBox())?.height).toBeGreaterThanOrEqual(44);
+  await expectNoOverflow(page);
+});
