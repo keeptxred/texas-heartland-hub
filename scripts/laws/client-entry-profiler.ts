@@ -43,11 +43,8 @@ export function clientEntryProfiler(): Plugin {
     writeBundle(options, bundle) {
       const outputDir = String(options.dir ?? "").replaceAll("\\", "/");
       if (!/\/(?:dist\/)?client\/?$/.test("/" + outputDir)) return;
-      const entries = Object.values(bundle)
-        .filter((item) => item.type === "chunk" &&
-          /^assets\/index-[^/]+\.js$/.test(item.fileName))
-        .sort((a, b) => b.code.length - a.code.length);
-      const entry = entries[0];
+      const entry = Object.values(bundle).find((item) =>
+        item.type === "chunk" && /^assets\/index-[^/]+\.js$/.test(item.fileName));
       if (!entry || entry.type !== "chunk") {
         throw new Error("Cannot profile dist/client/assets/index-*.js: expected root client entry was not emitted");
       }
