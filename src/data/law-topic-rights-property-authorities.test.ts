@@ -38,6 +38,10 @@ describe("rights and property Law Library authorities", () => {
     expect(text).toContain("Verbal provocation alone");
     expect(text).toContain("duty to retreat");
     expect(text).toContain("Section 9.42");
+    expect(text).toContain("Section 9.41");
+    expect(text).toContain("nighttime theft");
+    expect(text).toContain("cannot be protected or recovered another way");
+    expect(SELF_DEFENSE_USE_OF_FORCE_LAW_TOPIC.questions.some((entry) => entry.q.includes("daytime thief") && entry.a.includes("not otherwise be protected"))).toBe(true);
   });
 
   it("anchors parental-rights coverage to current Chapter 26 and TEA implementation", () => {
