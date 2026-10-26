@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { clusterNewsFeedItems } from "@/lib/newsroom-clustering";
+import { clusterNewsFeedItems, reserveDirectPublisherCohort } from "@/lib/newsroom-clustering";
 import { isPrimaryNewsSource } from "@/lib/newsroom-editorial-scoring";
 import { countDistinctNewsSources, countDistinctPrimaryNewsSources } from "@/lib/newsroom-source-quality";
 
@@ -96,13 +96,15 @@ async function handler() {
       .limit(DIRECT_PUBLISHER_COHORT_LIMIT),
   ]);
   if (normalizedError || directError) return Response.json({ ok: false, error: (normalizedError || directError).message }, { status: 500 });
-  const normalizedRows = [...new Map<number, NormalizationRow>(
-    [...(normalizationData ?? []), ...(directData ?? [])]
-      .map((row: NormalizationRow): [number, NormalizationRow] => [row.feed_item_id, row]),
-  ).values()];
-  // Both cohorts are bounded; 72h-direct stories no longer disappear just
-  // because Google discovery produces hundreds of new wrappers every hour.
-  const directCohortUnique = normalizedRows.length - (normalizationData ?? []).length;
+  const normalizedRows = reserveDirectPublisherCohort(
+    (normalizationData ?? []) as NormalizationRow[],
+    (directData ?? []) as NormalizationRow[],
+    CLUSTER_LIMIT,
+  );
+  // Keep the original 500-row O(N²) similarity budget. The oldest Google
+  // wrappers are displaced by original-publisher records, not stacked on top.
+  const latestIds = new Set((normalizationData ?? []).map((row: NormalizationRow) => row.feed_item_id));
+  const directCohortUnique = normalizedRows.filter((row) => !latestIds.has(row.feed_item_id)).length;
 
   const feedIds = normalizedRows.map((row) => row.feed_item_id);
   if (!feedIds.length) {
