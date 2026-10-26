@@ -8,6 +8,33 @@ test("deployed Texas legal navigation and source links have 44px mobile touch ta
     const rect = await tocLinks.nth(i).boundingBox();
     expect(rect?.height, `law topic contents link ${i} target height`).toBeGreaterThanOrEqual(44);
   }
+  // Breadcrumbs, official statutory references and related navigation are
+  // clickable legal resources, not exempt tiny inline text.
+  for (const label of ["Breadcrumb", "Related Texas law resources"]) {
+    const links = page.getByRole("navigation", { name: label }).getByRole("link");
+    expect(await links.count(), `${label} link count`).toBeGreaterThan(0);
+    for (let i = 0; i < await links.count(); i++) {
+      const rect = await links.nth(i).boundingBox();
+      expect(rect?.height, `${label} link ${i} target height`).toBeGreaterThanOrEqual(44);
+    }
+  }
+  const statuteSources = page.locator("#law-sources").getByRole("link");
+  expect(await statuteSources.count()).toBeGreaterThan(0);
+  for (let i = 0; i < await statuteSources.count(); i++) {
+    const rect = await statuteSources.nth(i).boundingBox();
+    expect(rect?.height, `official statute source link ${i} target height`).toBeGreaterThanOrEqual(44);
+  }
+
+  await page.goto("/laws/topics", { waitUntil: "domcontentloaded" });
+  const directoryBreadcrumbs = page.getByRole("navigation", { name: "Breadcrumb" }).getByRole("link");
+  expect(await directoryBreadcrumbs.count()).toBe(2);
+  for (let i = 0; i < await directoryBreadcrumbs.count(); i++) {
+    const rect = await directoryBreadcrumbs.nth(i).boundingBox();
+    expect(rect?.height, `directory breadcrumb ${i} target height`).toBeGreaterThanOrEqual(44);
+  }
+  const officialCodes = page.getByRole("link", { name: /Official Texas codes and statutes/ });
+  expect((await officialCodes.boundingBox())?.height).toBeGreaterThanOrEqual(44);
+
   await page.goto("/laws", { waitUntil: "domcontentloaded" });
   const headlineLinks = page.getByRole("navigation", { name: "Latest headlines" }).getByRole("link");
   expect(await headlineLinks.count()).toBeGreaterThan(0);
