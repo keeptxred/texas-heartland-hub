@@ -1,9 +1,7 @@
 import { Fragment } from "react";
 import { Link } from "@tanstack/react-router";
-import { ALL_GUIDES } from "@/data/all-guides";
-import { LAW_TOPICS, type LawTopic } from "@/lib/law-guides";
-import { guidesForTopic } from "@/lib/guide-registry";
-import { isSupportingGuideIndexable } from "@/lib/supporting-guide-indexability";
+import type { LawTopic } from "@/lib/law-guides-core";
+import type { LawHubSummaries } from "@/lib/laws-hub-summaries.types";
 
 const FEATURED_LAW_TOPICS: LawTopic[] = [
   "driving",
@@ -41,9 +39,8 @@ const LAW_AUTHORITY_LINKS = [
   ["Texas Law Finder", "/civic-tools/texas-law-finder"],
 ] as const;
 
-function ChildSupportPriorityGuide() {
-  const guide = ALL_GUIDES[CHILD_SUPPORT_SLUG];
-  if (!isSupportingGuideIndexable(guide)) return null;
+function ChildSupportPriorityGuide({ visible }: { visible: boolean }) {
+  if (!visible) return null;
 
   return (
     <section className="border-t-4 border-primary bg-primary/[0.05]" aria-labelledby="texas-child-support-priority-heading">
@@ -103,12 +100,9 @@ function LawAuthorityDiscovery() {
   );
 }
 
-function TopicSection({ topic }: { topic: LawTopic }) {
-  const topicInfo = LAW_TOPICS[topic];
-  const guides = guidesForTopic(topic)
-    .filter((meta) => meta.status === "verified")
-    .map((meta) => ({ meta, guide: ALL_GUIDES[meta.slug] }))
-    .filter((entry) => isSupportingGuideIndexable(entry.guide));
+function TopicSection({ topic, summaries }: { topic: LawTopic; summaries: LawHubSummaries }) {
+  const topicInfo = summaries.topics.find((entry) => entry.topic === topic);
+  const guides = topicInfo?.guides ?? [];
 
   if (guides.length === 0) return null;
 
@@ -130,18 +124,18 @@ function TopicSection({ topic }: { topic: LawTopic }) {
         </p>
 
         <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {guides.map(({ meta, guide }) => (
+          {guides.map((guide) => (
             <Link
-              key={meta.slug}
+              key={guide.slug}
               to="/guides/$slug"
-              params={{ slug: meta.slug }}
+              params={{ slug: guide.slug }}
               className="group border-2 border-foreground/10 bg-card p-5 hover:border-primary hover:bg-primary/5 transition-colors"
             >
               <div className="flex items-center justify-between gap-3">
                 <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Verified Texas Law Guide</span>
-                {meta.lastVerified ? (
-                  <time className="text-[10px] text-muted-foreground" dateTime={meta.lastVerified}>
-                    {meta.lastVerified}
+                {guide.lastVerified ? (
+                  <time className="text-[10px] text-muted-foreground" dateTime={guide.lastVerified}>
+                    {guide.lastVerified}
                   </time>
                 ) : null}
               </div>
@@ -158,15 +152,15 @@ function TopicSection({ topic }: { topic: LawTopic }) {
   );
 }
 
-export function LawGuideTopicGrid({ topic }: { topic: LawTopic }) {
+export function LawGuideTopicGrid({ topic, summaries }: { topic: LawTopic; summaries: LawHubSummaries }) {
   const topics = topic === "driving" ? FEATURED_LAW_TOPICS : [topic];
   return (
     <>
       {topic === "driving" ? <LawAuthorityDiscovery /> : null}
-      {topic === "driving" ? <ChildSupportPriorityGuide /> : null}
+      {topic === "driving" ? <ChildSupportPriorityGuide visible={summaries.showChildSupportGuide} /> : null}
       {topics.map((item) => (
         <Fragment key={item}>
-          <TopicSection topic={item} />
+          <TopicSection topic={item} summaries={summaries} />
         </Fragment>
       ))}
     </>
