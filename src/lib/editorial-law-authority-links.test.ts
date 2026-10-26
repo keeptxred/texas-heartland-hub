@@ -53,7 +53,10 @@ describe("bidirectional verified legal editorials", () => {
     expect(news).toContain("lawAuthorityForArticle(article)");
     expect(news).toContain("shouldShowEditorialLawLibrary(article)");
     expect(news).toContain('to="/laws/topic/$slug"');
-    expect(authority).toContain("publicEditorialArticlesForLawTopic(topic.slug)");
+    const server = readFileSync("src/lib/law-library-route.functions.ts", "utf8");
+    expect(server).toContain("publicEditorialArticlesForLawTopic(topic.slug)");
+    expect(authority).toContain("editorials.map");
+    expect(authority).not.toContain("import { publicEditorialArticlesForLawTopic }");
     expect(authority).toContain("Related Texas law reporting and explainers");
   });
 });
