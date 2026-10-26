@@ -16,6 +16,13 @@ describe("Texas law authority reader-facing content", () => {
     }
   });
 
+  it("uses the actual October 2026 DPS RSD Connect launch date, not a stale future transition", () => {
+    const guide = readFileSync(`${directory}/law-topic-gun-carry-authority.ts`, "utf8");
+    expect(guide).toContain("RSD Connect");
+    expect(guide).toContain("October 1, 2026");
+    expect(guide).not.toContain("DPS is transitioning");
+  });
+
   it("states all three statutory exceptions to the usual 20-day agency rule filing clock", () => {
     const source = readFileSync(
       `${directory}/law-topic-administrative-rulemaking-authority.ts`, "utf8",
