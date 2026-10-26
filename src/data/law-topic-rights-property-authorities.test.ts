@@ -44,6 +44,9 @@ describe("rights and property Law Library authorities", () => {
     const text = [PARENTAL_RIGHTS_EDUCATION_LAW_TOPIC.quickAnswer, ...PARENTAL_RIGHTS_EDUCATION_LAW_TOPIC.framework, ...PARENTAL_RIGHTS_EDUCATION_LAW_TOPIC.keyRules].join(" ");
     expect(text).toContain("Section 26.0025");
     expect(text).toContain("Parental Rights Handbook");
+    expect(text).toContain("Right to Select Educational Setting");
+    expect(text).toContain("two separately enacted texts");
+    expect(PARENTAL_RIGHTS_EDUCATION_LAW_TOPIC.questions.some((entry) => entry.q.includes("26.0025 appear twice") && entry.a.includes("Senate Bill 204") && entry.a.includes("Senate Bill 12"))).toBe(true);
     expect(text).toContain("SB 12");
     expect(text).toContain("federal law");
   });
