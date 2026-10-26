@@ -52,7 +52,9 @@ describe("rights and property Law Library authorities", () => {
     const text = [EMINENT_DOMAIN_PROPERTY_RIGHTS_LAW_TOPIC.quickAnswer, ...EMINENT_DOMAIN_PROPERTY_RIGHTS_LAW_TOPIC.framework, ...EMINENT_DOMAIN_PROPERTY_RIGHTS_LAW_TOPIC.keyRules].join(" ");
     expect(text).toContain("Section 2206.001");
     expect(text).toContain("bona fide offer");
-    expect(text).toContain("30 days");
+    expect(text).toContain("30th day");
+    expect(text).toContain("at least 14 days");
+    expect(text).toContain("Section 21.0113");
     expect(text).toContain("seven days");
     expect(text).toContain("special commissioners");
   });
