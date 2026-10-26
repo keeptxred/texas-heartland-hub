@@ -27,8 +27,14 @@ function LawTopicsHub() {
   const filteredTopics = INDEXABLE_LAW_TOPICS.filter((topic) => lawTopicMatchesQuery(topic, query));
   return <main className="bg-background">
     <section className="border-b bg-secondary text-secondary-foreground"><div className="mx-auto max-w-[1180px] px-6 py-16 md:py-20"><p className="text-xs font-extrabold uppercase tracking-[0.25em] text-primary">Keep TX Red Law Desk</p><h1 className="mt-4 max-w-5xl font-display text-5xl leading-none tracking-tight md:text-7xl">Texas Law Library</h1><p className="mt-6 max-w-3xl text-lg leading-8 text-white/80 md:text-xl">The statutes behind the political arguments — organized by the legal questions Texans actually face.</p><p className="mt-5 max-w-3xl text-sm leading-7 text-white/65">Each guide starts with the controlling Texas code or official source, explains which government entity has authority, and connects the legal framework to KTR policy trackers, bills, elections, and editorial arguments.</p></div></section>
-    <nav aria-label="Breadcrumb" className="mx-auto max-w-[1180px] px-6 pt-6 text-xs text-muted-foreground"><Link to="/">Home</Link><span className="mx-2">/</span><Link to="/laws">Texas Laws</Link><span className="mx-2">/</span><span aria-current="page">Topics</span></nav>
-    <div className="mx-auto max-w-[1180px] px-6 pt-5 text-sm"><a href="https://statutes.capitol.texas.gov/" target="_blank" rel="noopener noreferrer" className="font-semibold text-primary underline underline-offset-4">Official Texas codes and statutes ↗</a></div>
+    <nav aria-label="Breadcrumb" className="mx-auto flex max-w-[1180px] flex-wrap items-center gap-1 px-6 pt-6 text-xs text-muted-foreground">
+      <Link to="/" className="inline-flex min-h-11 items-center rounded px-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">Home</Link>
+      <span className="mx-1" aria-hidden="true">/</span>
+      <Link to="/laws" className="inline-flex min-h-11 items-center rounded px-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">Texas Laws</Link>
+      <span className="mx-1" aria-hidden="true">/</span>
+      <span aria-current="page">Topics</span>
+    </nav>
+    <div className="mx-auto max-w-[1180px] px-6 pt-5 text-sm"><a href="https://statutes.capitol.texas.gov/" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center rounded px-2 font-semibold text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">Official Texas codes and statutes ↗</a></div>
     <section className="mx-auto max-w-[1180px] px-6 py-12">
       <label htmlFor="law-topic-filter" className="block text-sm font-bold">Search the Texas law-topic library</label>
       <input id="law-topic-filter" type="search" value={query} onChange={(event) => setQuery(event.target.value)}
