@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { clusterNewsFeedItems, reserveDirectPublisherCohort } from "@/lib/newsroom-clustering";
 import { isPrimaryNewsSource } from "@/lib/newsroom-editorial-scoring";
 import { countDistinctNewsSources, countDistinctPrimaryNewsSources } from "@/lib/newsroom-source-quality";
+import { staleUncommittedNewsroomMemberships } from "@/lib/newsroom-cluster-membership-reconciliation";
 
 // Use the same 72-hour horizon as the normal production writer.
 const LOOKBACK_HOURS = 72;
@@ -234,6 +235,103 @@ async function handler() {
     }
   }
 
+  // Reconcile historical duplicate assignments AFTER the desired new
+  // memberships exist, so a transient failure cannot leave a news source
+  // without its original evidence link. Protect published, selected and held
+  // story histories. Chunk reads because PostgREST caps response rows and
+  // a feed item can have several legacy cluster memberships.
+  let staleMembershipsRemoved = 0;
+  let staleClustersArchived = 0;
+  let staleClusterCountersUpdated = 0;
+  let protectedHistoricalMemberships = 0;
+  if (memberships.length) {
+    const existingByFeedId: Array<{ cluster_id: string; feed_item_id: number }> = [];
+    for (let offset = 0; offset < feedIds.length; offset += 70) {
+      const batch = feedIds.slice(offset, offset + 70);
+      for (let page = 0; page < 12; page += 1) {
+        const { data, error } = await newsroomDb.from("news_story_cluster_items")
+          .select("cluster_id,feed_item_id")
+          .in("feed_item_id", batch)
+          .order("feed_item_id", { ascending: true })
+          .order("cluster_id", { ascending: true })
+          .range(page * 1000, (page + 1) * 1000 - 1);
+        if (error) return Response.json({ ok: false, error: error.message, stage: "membership_reconciliation_read" }, { status: 500 });
+        const rows = (data ?? []) as Array<{ cluster_id: string; feed_item_id: number }>;
+        existingByFeedId.push(...rows);
+        if (rows.length < 1000) break;
+        if (page === 11) return Response.json({ ok: false, error: "bounded cluster membership read overflow" }, { status: 503 });
+      }
+    }
+    const desiredById = new Map(memberships.map((row) => [row.feed_item_id, row.cluster_id]));
+    const staleClusterIds = [...new Set(existingByFeedId
+      .filter((row) => desiredById.has(row.feed_item_id) && desiredById.get(row.feed_item_id) !== row.cluster_id)
+      .map((row) => row.cluster_id))];
+    if (staleClusterIds.length) {
+      const oldClusters: Array<{ id: string; status: string }> = [];
+      const oldCandidates: Array<{ cluster_id: string; status: string }> = [];
+      for (let offset = 0; offset < staleClusterIds.length; offset += 80) {
+        const batch = staleClusterIds.slice(offset, offset + 80);
+        const [clustersResult, candidatesResult] = await Promise.all([
+          newsroomDb.from("news_story_clusters").select("id,status").in("id", batch),
+          newsroomDb.from("news_publish_candidates").select("cluster_id,status").in("cluster_id", batch),
+        ]);
+        if (clustersResult.error || candidatesResult.error) {
+          return Response.json({ ok: false, error: (clustersResult.error || candidatesResult.error).message, stage: "membership_reconciliation_status" }, { status: 500 });
+        }
+        oldClusters.push(...((clustersResult.data ?? []) as Array<{ id: string; status: string }>));
+        oldCandidates.push(...((candidatesResult.data ?? []) as Array<{ cluster_id: string; status: string }>));
+      }
+      const reconciliation = staleUncommittedNewsroomMemberships(
+        memberships, existingByFeedId, oldClusters, oldCandidates,
+      );
+      protectedHistoricalMemberships = reconciliation.protectedCount;
+      const removalsByCluster = new Map<string, number[]>();
+      for (const row of reconciliation.obsolete) {
+        const list = removalsByCluster.get(row.cluster_id) ?? [];
+        list.push(row.feed_item_id);
+        removalsByCluster.set(row.cluster_id, list);
+      }
+      const removalGroups = [...removalsByCluster.entries()];
+      // Different historical clusters may be safely cleaned in parallel, but
+      // each cluster is updated only after its stale memberships were deleted.
+      for (let offset = 0; offset < removalGroups.length; offset += 4) {
+        const outcomes = await Promise.all(removalGroups.slice(offset, offset + 4).map(async ([clusterId, obsoleteFeedIds]) => {
+          for (let chunkStart = 0; chunkStart < obsoleteFeedIds.length; chunkStart += 80) {
+            const { error } = await newsroomDb.from("news_story_cluster_items").delete()
+              .eq("cluster_id", clusterId).in("feed_item_id", obsoleteFeedIds.slice(chunkStart, chunkStart + 80));
+            if (error) return { error: error.message, clusterId };
+          }
+          const { data: remaining, error: remainingError } = await newsroomDb.from("news_story_cluster_items")
+            .select("source_name,source_url,is_primary_source").eq("cluster_id", clusterId);
+          if (remainingError) return { error: remainingError.message, clusterId };
+          const sourceRows = ((remaining ?? []) as Array<{ source_name: string | null; source_url: string | null; is_primary_source: boolean }>)
+            .map((row) => ({ source: row.source_name, link: row.source_url }));
+          const archive = sourceRows.length === 0;
+          const { error: updateError } = await newsroomDb.from("news_story_clusters").update({
+            source_count: countDistinctNewsSources(sourceRows),
+            primary_source_count: countDistinctPrimaryNewsSources(sourceRows),
+            ...(archive ? { status: "ARCHIVED" } : {}),
+          }).eq("id", clusterId).in("status", ["DISCOVERED", "READY"]);
+          if (updateError) return { error: updateError.message, clusterId };
+          if (archive) {
+            const { error: candidateError } = await newsroomDb.from("news_publish_candidates")
+              .update({ status: "REJECTED", rejection_reason: "superseded_empty_reconciled_newsroom_cluster" })
+              .eq("cluster_id", clusterId).eq("status", "PENDING");
+            if (candidateError) return { error: candidateError.message, clusterId };
+          }
+          return { removed: obsoleteFeedIds.length, archive };
+        }));
+        const failed = outcomes.find((outcome) => "error" in outcome);
+        if (failed) return Response.json({ ok: false, error: failed.error, stage: "membership_reconciliation_update", clusterId: failed.clusterId }, { status: 500 });
+        for (const outcome of outcomes) {
+          staleMembershipsRemoved += outcome.removed ?? 0;
+          staleClusterCountersUpdated += 1;
+          if (outcome.archive) staleClustersArchived += 1;
+        }
+      }
+    }
+  }
+
   const multiSourceClusters = clusterRows.filter((row) => row.source_count > 1).length;
   const primarySourceItems = memberships.filter((row) => row.is_primary_source).length;
   const distinctPrimarySources = clusterRows.reduce((sum, row) => sum + row.primary_source_count, 0);
@@ -251,6 +349,10 @@ async function handler() {
     distinctPrimarySources,
     clusterVersion: CLUSTER_VERSION,
     directCohortUnique,
+    staleMembershipsRemoved,
+    staleClustersArchived,
+    staleClusterCountersUpdated,
+    protectedHistoricalMemberships,
     aiCalls: 0,
   });
 }
