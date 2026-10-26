@@ -6,6 +6,8 @@ on:
     branches: [main]
     paths:
       - "scripts/laws/client-entry-profiler.ts"
+      - "scripts/laws/client-entry-import-chains.ts"
+      - "scripts/laws/client-entry-import-chains.test.ts"
       - "scripts/laws/client-entry-profiler.test.ts"
       - ".github/workflows/profile-keeptxred-client.yml"
       - "vite.config.ts"
@@ -29,7 +31,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Test profiling attribution
-        run: bunx vitest run scripts/laws/client-entry-profiler.test.ts
+        run: bunx vitest run scripts/laws/client-entry-profiler.test.ts scripts/laws/client-entry-import-chains.test.ts
 
       - name: Build with opt-in attribution (no production behavioral changes)
         env:
