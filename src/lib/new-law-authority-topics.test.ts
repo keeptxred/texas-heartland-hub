@@ -80,6 +80,23 @@ describe("new Texas law authority topics", () => {
     )).toBe(true);
   });
 
+  it("states ordinary misdemeanor punishment ranges without assuming an unenhanced sentence", () => {
+    const topic = CRIMINAL_OFFENSES_PENALTIES_LAW_TOPIC;
+    const framework = topic.framework.join(" ");
+    expect(framework).toContain("Sections 12.21–12.23");
+    expect(framework).toContain("$4,000");
+    expect(framework).toContain("$2,000");
+    expect(framework).toContain("$500");
+    expect(framework).toContain("offense-specific provisions");
+    expect(topic.questions.some((entry) =>
+      entry.q.includes("Class A, B and C") &&
+      entry.a.includes("not mandatory sentences") &&
+      entry.a.includes("enhancements")
+    )).toBe(true);
+    expect(topic.sources.some((s) => s.url === "https://statutes.capitol.texas.gov/Docs/PE/htm/PE.12.htm")).toBe(true);
+    expect(topic.updated).toBe("2026-10-23");
+    expect(topic.published).toBe("2026-10-23");
+  });
   it("keeps law topic slugs unique for routes, canonicals and sitemap discovery", () => {
     const slugs = LAW_TOPICS.map((topic) => topic.slug);
     expect(new Set(slugs).size).toBe(slugs.length);
