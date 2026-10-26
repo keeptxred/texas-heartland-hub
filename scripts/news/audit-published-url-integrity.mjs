@@ -116,7 +116,7 @@ async function auditLiveRestoredUrls() {
     const redirectExpected = entry.recovery_status === "redirected";
     const intended = entry.redirect_target
       ? new URL(
-        /^https?:\\/\\//.test(entry.redirect_target)
+        (entry.redirect_target.startsWith("https://") || entry.redirect_target.startsWith("http://"))
           ? entry.redirect_target
           : "/news/" + entry.redirect_target,
         "https://keeptxred.com"
@@ -141,8 +141,8 @@ async function auditLiveRestoredUrls() {
       if (response.status !== 200) return "HTTP " + response.status;
       if (!(response.headers.get("content-type") || "").toLowerCase().includes("text/html")) return "non-html";
       const html = await response.text();
-      const title = html.match(/<title\\b[^>]*>([^<]*)<\\/title>/i)?.[1] || "";
-      if (/\\b(404|not found|page missing|article not found)\\b/i.test(title)) return "soft-404";
+      const title = new RegExp("<title[^>]*>([^<]*)</title>", "i").exec(html)?.[1] || "";
+      if (/(404|not found|page missing|article not found)/i.test(title)) return "soft-404";
       if (redirectExpected && !redirected) return "expected-permanent-redirect";
       return null;
     }
