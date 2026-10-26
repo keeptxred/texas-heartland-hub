@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
 import { LawGuideTopicGrid } from "@/components/laws/law-guide-topic-grid";
+import { getLawsHubSummaries } from "@/lib/laws-hub-summaries.functions";
 import { ARTICLES, isPublished } from "@/data/articles";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 import { SITE_URL } from "@/lib/seo";
@@ -8,6 +9,7 @@ import { SITE_URL } from "@/lib/seo";
 const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
 
 export const Route = createFileRoute("/laws/")({
+  loader: () => getLawsHubSummaries(),
   head: () => ({
     meta: [
       { title: "Texas Laws Explained: Important Texas Laws, Rights & Legislative Updates" },
@@ -140,6 +142,7 @@ const INTRO_FAQ = [
 ];
 
 function LawsHubPage() {
+  const lawHubSummaries = Route.useLoaderData();
   const sections = SECTIONS.map((s) => ({
     ...s,
     articles: s.articleSlugs.map(articleLink).filter((x): x is LinkedArticle => Boolean(x)),
@@ -184,7 +187,7 @@ function LawsHubPage() {
 
 
 
-      <LawGuideTopicGrid topic="driving" />
+      <LawGuideTopicGrid topic="driving" summaries={lawHubSummaries} />
 
       <article className="mx-auto max-w-4xl px-4 py-10 space-y-6 text-base leading-relaxed">
         <p className="text-lg font-serif text-muted-foreground">
