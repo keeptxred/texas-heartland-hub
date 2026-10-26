@@ -10,6 +10,8 @@ describe("original newsroom source evidence cannot be replaced by internally syn
   it("rejects known internally synthesized source content", () => {
     expect(isSyntheticNewsroomEvidence("MULTI-SOURCE STORY PACKET.\nRAW SOURCE PACKET")).toBe(true);
     expect(isSyntheticNewsroomEvidence("STRUCTURED FACT LEDGER: verified fact")).toBe(true);
+    expect(isSyntheticNewsroomEvidence("PRIMARY-RECORD-AUGMENTED SOURCE PACKET.\nSynthetic primary record synopsis")).toBe(true);
+    expect(isSyntheticNewsroomEvidence("RELATED OFFICIAL RELEASE SERIES:\nAggregated editorial context")).toBe(true);
     expect(isSyntheticNewsroomEvidence("Official court record: a genuine published order.")).toBe(false);
   });
 
@@ -38,6 +40,11 @@ describe("original newsroom source evidence cannot be replaced by internally syn
     const hydrator = readFileSync("src/lib/newsroom-source-page.server.ts", "utf8");
     const packets = readFileSync("src/routes/api/public/hooks/build-newsroom-research-packets.ts", "utf8");
     expect(hydrator).toContain("looksSyntheticNewsroomText(body)");
+    expect(hydrator).toContain("PRIMARY-RECORD-AUGMENTED SOURCE PACKET");
+    expect(hydrator).toContain("RELATED OFFICIAL RELEASE SERIES");
+    const rss = readFileSync("src/lib/newsroom-firstparty-rss-body.ts", "utf8");
+    expect(rss).toContain("PRIMARY-RECORD-AUGMENTED SOURCE PACKET");
+    expect(rss).toContain("RELATED OFFICIAL RELEASE SERIES");
     expect(hydrator).toContain("extractReadableNewsroomHtml");
     expect(packets).toContain("shouldFetchNewsroomSourcePage");
     expect(packets).toContain('update({ extracted_body: result.body })');
