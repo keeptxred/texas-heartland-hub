@@ -208,6 +208,13 @@ const summary = [
 ];
 if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary.join("\n"));
 console.log(JSON.stringify(report, null, 2));
-if (newMissing.length || staleFeed.length || newMissingBody.length || recentlyMissingPlainTextBody.length || live.failures.length) {
+// Every historical URL must have an explicit, defensible disposition. An
+// unreviewed GSC discovery must not remain indefinitely in a silent backlog.
+// The existing read-only audit never writes an automatic redirect or article.
+const unresolvedHistoricalUrls = !live.skipped && pending.length > 0;
+if (unresolvedHistoricalUrls) {
+  console.error("KeepTXRed historical URL backlog needs disposition:", pending.map((x) => x.slug));
+}
+if (newMissing.length || staleFeed.length || newMissingBody.length || recentlyMissingPlainTextBody.length || live.failures.length || unresolvedHistoricalUrls) {
   throw new Error("KeepTXRed published-news URL integrity regression detected.");
 }
