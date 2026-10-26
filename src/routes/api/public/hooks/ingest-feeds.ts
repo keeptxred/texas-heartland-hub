@@ -5,6 +5,7 @@ import { scoreFeedItem, TEXAS_RELEVANCE_MIN } from "@/lib/viral-score";
 import { selectRotatedSourceWindow } from "@/lib/ingest-source-window";
 import { parseTexasAgPressReleaseIndex } from "@/lib/texas-ag-press-releases";
 import { partitionFeedLinkLookups } from "@/lib/ingest-link-lookup";
+import { extractFirstPartyRssArticleBody } from "@/lib/newsroom-firstparty-rss-body";
 export { publishSingleFeedItem } from "@/lib/multi-source-publish";
 export { isPuzzleTitle } from "@/lib/ingest-feeds-legacy";
 
@@ -14,6 +15,7 @@ type Item = {
   pub_date: string;
   source: string;
   description: string;
+  extracted_body?: string;
 };
 type IngestRow = Item & { trend_source: string };
 
@@ -151,12 +153,16 @@ function parseFeed(xml: string, fallbackSource: string): Item[] {
         title = parts.join(" - ").trim() || title;
       }
     }
+    const embeddedArticle = extractFirstPartyRssArticleBody(block, fallbackSource, link);
     items.push({
       title: title.slice(0, 500),
       link,
       pub_date: resolvePublishTimestamp(rawDate || null),
       source,
       description: description.slice(0, 1200),
+      // Real article body supplied by this direct publisher. Never treat
+      // Google News or other discovery metadata as article evidence.
+      ...(embeddedArticle ? { extracted_body: embeddedArticle } : {}),
     });
   }
   return items;
