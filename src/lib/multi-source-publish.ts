@@ -349,28 +349,12 @@ async function publishSingleSourceWithPrimaryRecord(
     originalSourceText,
   ].filter(Boolean).join("\n\n");
 
-  const { error: augmentationError } = await db
-    .from("texas_news_feed")
-    .update({ extracted_body: augmentedSourceText.slice(0, 26000) })
-    .eq("id", feedItemId);
-  if (augmentationError) {
-    return { ok: false, error: `Could not attach verified primary-record evidence: ${augmentationError.message}` };
-  }
-
-  try {
-    return await publishLegacySingleFeedItem(feedItemId);
-  } finally {
-    const { error: restoreError } = await db
-      .from("texas_news_feed")
-      .update({ extracted_body: originalSourceText || null })
-      .eq("id", feedItemId);
-    if (restoreError) {
-      console.warn("[multi-source] original source extraction restore failed", {
-        feedItemId,
-        error: restoreError.message,
-      });
-    }
-  }
+  // Pass the verified official-record addendum directly to the writer. Never
+  // temporarily replace the original source text in a shared database row;
+  // another job might read it or the process could end before restoration.
+  return publishLegacySingleFeedItem(feedItemId, {
+    sourceOverride: augmentedSourceText.slice(0, 26000),
+  });
 }
 
 async function assessExistingStory(
@@ -604,11 +588,9 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
     `RAW SOURCE PACKET\n${packet}`,
   ].filter(Boolean).join("\n\n");
 
-  await db
-    .from("texas_news_feed")
-    .update({ extracted_body: synthesisMaterial.slice(0, 26000) })
-    .eq("id", feedItemId);
-
+  // This is synthesis guidance for ONE rewrite call, not original reporting.
+  // The normal newsroom must be able to read true publisher evidence from
+  // texas_news_feed.extracted_body after success OR any failed publication.
   await writeClusterMetadata(db, cluster, undefined, existingNovelty?.material ? {
     kind: "follow_up",
     novelty: existingNovelty,
@@ -682,7 +664,9 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
     };
   }
 
-  const result = await publishLegacySingleFeedItem(feedItemId);
+  const result = await publishLegacySingleFeedItem(feedItemId, {
+    sourceOverride: synthesisMaterial.slice(0, 26000),
+  });
   if (result.ok && result.slug) {
     await writeClusterMetadata(db, cluster, result.slug);
     await writeStoryAngleMetadata(db, feedItemId, anglePlan);
