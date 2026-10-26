@@ -1,6 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import type { Plugin } from "vite";
+import { traceEntryStaticImporterChains } from "./client-entry-import-chains";
 
 export type ClientEntryModule = { source: string; bytes: number };
 export type ClientEntryProfile = {
@@ -49,12 +50,33 @@ export function clientEntryProfiler(): Plugin {
         throw new Error("Cannot profile dist/client/assets/index-*.js: expected root client entry was not emitted");
       }
       const profile = clientEntryProfile(entry.fileName, entry.code, entry.modules);
+      const included = new Set(Object.keys(entry.modules));
+      const normalize = (id: string) => {
+        const absolute = id.replaceAll("\\", "/");
+        const cwd = process.cwd().replaceAll("\\", "/");
+        return absolute.startsWith(cwd + "/") ? absolute.slice(cwd.length + 1) : absolute;
+      };
+      const topAttribution = Object.entries(entry.modules)
+        .sort((a, b) => b[1].renderedLength - a[1].renderedLength)
+        .slice(0, 12)
+        .map(([id, details]) => ({
+          source: normalize(id),
+          bytes: details.renderedLength,
+          staticImportChains: traceEntryStaticImporterChains(
+            id, included,
+            (moduleId) => {
+              const info = this.getModuleInfo(moduleId);
+              return info ? { importers: info.importers } : null;
+            },
+          ).map((path) => path.map(normalize)),
+        }));
       const outDir = resolve("laws-client-bundle-profile");
       mkdirSync(outDir, { recursive: true });
       writeFileSync(resolve(outDir, "client-entry.json"), JSON.stringify({
         ...profile,
         topModules: profile.modules.slice(0, 60),
         moduleCount: profile.modules.length,
+        staticImporterProvenance: topAttribution,
       }, null, 2) + "\n");
       const top = profile.modules.slice(0, 30);
       writeFileSync(resolve(outDir, "client-entry.md"), [
@@ -71,6 +93,18 @@ export function clientEntryProfiler(): Plugin {
         "| Rank | Module | Attributed rendered bytes |",
         "|---:|---|---:|",
         ...top.map((row, i) => `| ${i + 1} | \`${row.source.replaceAll("|", "\\|")}\` | ${row.bytes} |`),
+        "## How large election data reaches the shared entry",
+        "",
+        "Static import chains below run from the large module toward the entry importer.",
+        "A chain describes inclusion, not execution or network transfer order.",
+        "",
+        ...topAttribution.map((item) => [
+          `### ${item.source} — ${item.bytes} attributed bytes`,
+          ...(item.staticImportChains.length ? item.staticImportChains.map((path) =>
+            `- ${path.map((id) => "\`" + id + "\`").join(" ← ")}`
+          ) : ["- No static chain identified inside this emitted chunk"]),
+          "",
+        ].join("\\n")),
         "",
       ].join("\n"));
       console.log(`KTR client-entry profile: ${profile.rawBytes} bytes, ${profile.modules.length} contributing modules`);
