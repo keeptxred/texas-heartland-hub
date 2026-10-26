@@ -141,6 +141,13 @@ describe("newsroom source-page enrichment", () => {
     expect(extracted).toContain("County election filing records reviewed");
     expect(extracted).not.toContain("Sidebar teaser");
     expect(extracted).not.toContain("Promotional subscription");
+    const withScripts = '<div class="article-body"><script>privateFakeFactFromScript()</script>'
+      + '<style>.fake-narrative { content: "unsupported"; }</style>'
+      + '<p>' + paragraph + '</p></div>';
+    const safe = extractNewsroomMarkedArticleBody(withScripts);
+    expect(safe).toContain("Official state records");
+    expect(safe).not.toContain("privateFakeFactFromScript");
+    expect(safe).not.toContain("unsupported");
   });
 
   it("supports schema.org itemprop and explicit article-body data-component markers", () => {
