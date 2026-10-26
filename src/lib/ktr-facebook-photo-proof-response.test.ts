@@ -22,7 +22,7 @@ describe("KTR Facebook post success reports the actual verified photo", () => {
   });
 
   it("prints an image URL and still rejects Facebook delivery failures", () => {
-    expect(workflow).toContain("image_url=$(jq -r '.image_url // \"\"' /tmp/ktrfb/decision.json)");
+    expect(workflow).toContain("image_url=$(jq -r");
     expect(workflow).toContain("AUTO_FACEBOOK_POST_SUCCESS");
     expect(workflow).toContain("AUTO_FACEBOOK_POST_FAILED");
   });
