@@ -78,6 +78,18 @@ describe("rights and property Law Library authorities", () => {
     expect(text).toContain("Section 21.0113");
     expect(text).toContain("seven days");
     expect(text).toContain("special commissioners");
+    expect(text).toContain("Section 21.018(a)");
+    expect(text).toContain("first Monday following the 20th day");
+    expect(text).toContain("trial court clerk");
+    expect(text).toContain("REME");
+    expect(EMINENT_DOMAIN_PROPERTY_RIGHTS_LAW_TOPIC.questions.some((item) =>
+      item.q.includes("special commissioners issue an award") &&
+      item.a.includes("first Monday following the 20th day")
+    )).toBe(true);
+    expect(EMINENT_DOMAIN_PROPERTY_RIGHTS_LAW_TOPIC.sources.some((source) =>
+      source.url === "https://www.txcourts.gov/media/1460056/230707pc.pdf"
+    )).toBe(true);
+
   });
 
   it("uses current primary and official Texas sources throughout the batch", () => {
