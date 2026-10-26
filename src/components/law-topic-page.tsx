@@ -25,17 +25,23 @@ export function LawTopicPage({ topic }: { topic: LawTopic }) {
   const editorials = publicEditorialArticlesForLawTopic(topic.slug);
   return (
     <article className="mx-auto max-w-4xl px-4 py-14 sm:px-6">
-      <nav aria-label="Breadcrumb" className="mb-6 text-[11px] uppercase tracking-[0.22em] text-muted-foreground"><Link to="/">Home</Link><span className="mx-2">/</span><Link to="/laws">Texas Laws</Link><span className="mx-2">/</span><a href="/laws/topics">Law Topics</a></nav>
+      <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-1 text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+        <Link to="/" className="inline-flex min-h-11 items-center rounded px-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">Home</Link>
+        <span className="mx-1" aria-hidden="true">/</span>
+        <Link to="/laws" className="inline-flex min-h-11 items-center rounded px-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">Texas Laws</Link>
+        <span className="mx-1" aria-hidden="true">/</span>
+        <a href="/laws/topics" className="inline-flex min-h-11 items-center rounded px-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">Law Topics</a>
+      </nav>
       <p className="text-[10px] font-extrabold uppercase tracking-[0.3em] text-primary">Texas Law Library</p>
       <h1 className="mt-3 font-display text-4xl leading-[1.03] tracking-tight md:text-6xl">{topic.title}</h1>
       <p className="mt-5 font-serif text-lg italic leading-snug text-muted-foreground md:text-xl">{topic.dek}</p>
       <div className="mt-6 border-y py-3 text-xs text-muted-foreground"><span className="font-semibold text-foreground">Keep TX Red Law Desk</span><span className="mx-2">•</span>Reviewed {new Date(`${topic.updated}T12:00:00-05:00`).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</div>
 
       <nav aria-label="Related Texas law resources" className="mt-7 flex flex-wrap gap-3 text-sm">
-        <Link to="/laws" className="rounded-lg border px-4 py-2 font-semibold hover:border-primary">Texas laws hub</Link>
-        <Link to="/laws/topics" className="rounded-lg border px-4 py-2 font-semibold hover:border-primary">All law topics</Link>
-        <a href="/civic-tools/texas-law-finder" className="rounded-lg border px-4 py-2 font-semibold hover:border-primary">Texas law finder</a>
-        <a href="https://statutes.capitol.texas.gov/" target="_blank" rel="noopener noreferrer" className="rounded-lg border px-4 py-2 font-semibold hover:border-primary">Official Texas statutes ↗</a>
+        <Link to="/laws" className="inline-flex min-h-11 items-center rounded-lg border px-4 py-2 font-semibold hover:border-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">Texas laws hub</Link>
+        <Link to="/laws/topics" className="inline-flex min-h-11 items-center rounded-lg border px-4 py-2 font-semibold hover:border-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">All law topics</Link>
+        <a href="/civic-tools/texas-law-finder" className="inline-flex min-h-11 items-center rounded-lg border px-4 py-2 font-semibold hover:border-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">Texas law finder</a>
+        <a href="https://statutes.capitol.texas.gov/" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center rounded-lg border px-4 py-2 font-semibold hover:border-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">Official Texas statutes ↗</a>
       </nav>
       <aside className="mt-7 border-l-4 border-border bg-muted/20 p-5 text-sm leading-7 text-muted-foreground" aria-label="Understanding legal status">
         <strong className="text-foreground">How to use this guide:</strong> A bill is a proposal until enacted. A statute, agency rule, court decision, and local ordinance may have different effective dates and scopes. Refer to the official sources below for controlling language, and check the individual law's effective date before relying on a summary.
@@ -68,7 +74,7 @@ export function LawTopicPage({ topic }: { topic: LawTopic }) {
 
       <section id="law-questions" className="mt-11 scroll-mt-24"><h2 className="border-b pb-2 font-display text-3xl tracking-tight">Common questions</h2><div className="mt-5 space-y-5">{topic.questions.map((item) => <div key={item.q}><h3 className="font-semibold">{item.q}</h3><p className="mt-2 text-sm leading-7 text-muted-foreground">{item.a}</p></div>)}</div></section>
 
-      <section id="law-sources" className="mt-12 scroll-mt-24 border-t pt-8"><p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-muted-foreground">Primary law</p><h2 className="mt-2 font-display text-2xl tracking-tight">Official sources</h2><ul className="mt-4 space-y-3 text-sm">{topic.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary underline underline-offset-4">{source.label}</a>{source.note ? <span className="ml-2 text-muted-foreground">— {source.note}</span> : null}</li>)}</ul></section>
+      <section id="law-sources" className="mt-12 scroll-mt-24 border-t pt-8"><p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-muted-foreground">Primary law</p><h2 className="mt-2 font-display text-2xl tracking-tight">Official sources</h2><ul className="mt-4 space-y-3 text-sm">{topic.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center rounded px-2 py-2 font-semibold text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">{source.label}</a>{source.note ? <span className="ml-2 text-muted-foreground">— {source.note}</span> : null}</li>)}</ul></section>
 
       {supportingGuides.length > 0 ? (
         <section className="mt-12 border-t pt-8" aria-labelledby="law-supporting-guides-heading">
