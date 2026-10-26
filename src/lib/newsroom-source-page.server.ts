@@ -31,6 +31,18 @@ export function looksSyntheticNewsroomText(value: string | null | undefined): bo
   return /MULTI-SOURCE STORY PACKET\.|RAW SOURCE PACKET|STRUCTURED FACT LEDGER/i.test(text);
 }
 
+/** Prefer a verifiable publisher body over any longer synthetic packet
+ * accidentally cached in extracted_body. Length comparisons apply only when
+ * BOTH versions are real, standalone publisher text.
+ */
+export function shouldReplaceNewsroomSourceBody(existingText: string | null | undefined, fetchedText: string | null | undefined): boolean {
+  const fetched = (fetchedText ?? "").trim();
+  if (fetched.length < MIN_READABLE_CHARS || looksSyntheticNewsroomText(fetched)) return false;
+  const existing = (existingText ?? "").trim();
+  if (looksSyntheticNewsroomText(existing)) return true;
+  return fetched.length > existing.length + 100;
+}
+
 export function shouldFetchNewsroomSourcePage(input: { url: string | null; extractedBody: string | null }): boolean {
   const url = (input.url ?? "").trim();
   if (!/^https?:\/\//i.test(url)) return false;
@@ -113,8 +125,63 @@ export function extractNewsroomArticleJsonLd(html: string): string | null {
   return best ? best.slice(0, MAX_SOURCE_TEXT_CHARS) : null;
 }
 
+/**
+ * A growing class of publisher templates renders the actual article in a
+ * nested <div class="article-body"> / itemprop="articleBody" while their
+ * <article> elements are only related-story cards. Use ONE explicitly marked
+ * article-body container, never the entire <main>, cards, nav, or concatenated
+ * unrelated excerpts as purported source evidence.
+ *
+ * Balance nested root tags rather than stopping at the first child </div>.
+ * This is a narrow zero-AI extraction path for the exact fetched publisher
+ * URL, not a corroborating second source and not an editorial gate bypass.
+ */
+export function extractNewsroomMarkedArticleBody(html: string): string | null {
+  const open = /<(div|section)\b([^>]*)>/gi;
+  let found: RegExpExecArray | null;
+  let best = "";
+  let checked = 0;
+  while ((found = open.exec(html)) !== null && checked < 48) {
+    const attrs = found[2];
+    const itemprop = /\bitemprop\s*=\s*(?:"articlebody"|'articlebody'|articlebody\b)/i.test(attrs);
+    const explicitData = /\bdata-(?:testid|component)\s*=\s*["'](?:article|story)[-_]?(?:body|content)["']/i.test(attrs);
+    const classText = attrs.match(/\bclass\s*=\s*(?:"([^"]*)"|'([^']*)')/i)?.slice(1).find(Boolean) ?? "";
+    const articleClass = /(?:^|\s)(?:article|story|entry)(?:-|__)(?:body|content|text)(?:\b|[-_])/i.test(classText);
+    if (!itemprop && !explicitData && !articleClass) continue;
+    checked += 1;
+    const tag = found[1].toLowerCase();
+    const rest = html.slice(found.index);
+    const matchingTag = new RegExp('<\\/?' + tag + '\\b[^>]*>', 'gi');
+    let match: RegExpExecArray | null;
+    let depth = 0;
+    let closingAt = -1;
+    while ((match = matchingTag.exec(rest)) !== null) {
+      if (/^<\//.test(match[0])) {
+        depth -= 1;
+        if (depth === 0) {
+          closingAt = matchingTag.lastIndex;
+          break;
+        }
+      } else if (!/\/>$/.test(match[0])) {
+        depth += 1;
+      }
+      if (matchingTag.lastIndex > 550_000) break;
+    }
+    if (closingAt <= 0) continue;
+    const oneArticle = rest.slice(found[0].length, closingAt - match![0].length)
+      .replace(/<(?:script|style|noscript)\b[^>]*>[\s\S]*?<\/(?:script|style|noscript)>/gi, " ")
+      .replace(/<(?:aside|nav|footer|header|form)\b[^>]*>[\s\S]*?<\/(?:aside|nav|footer|header|form)>/gi, " ");
+    const text = newsroomHtmlText(oneArticle);
+    if (text.length >= MIN_READABLE_CHARS && !looksSyntheticNewsroomText(text) && text.length > best.length) {
+      best = text;
+    }
+  }
+  return best ? best.slice(0, MAX_SOURCE_TEXT_CHARS) : null;
+}
+
 export function extractReadableNewsroomHtml(html: string): string | null {
   const structuredArticle = extractNewsroomArticleJsonLd(html);
+  const markedArticle = extractNewsroomMarkedArticleBody(html);
   const stripped = html
     .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
     .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
@@ -135,7 +202,8 @@ export function extractReadableNewsroomHtml(html: string): string | null {
   const text = articleBlocks.length ? readableArticle : newsroomHtmlText(stripped);
   // Never concatenate two partly overlapping article representations, and
   // never use unrelated teaser cards as padding. Choose one substantive body.
-  const winner = structuredArticle && structuredArticle.length > text.length ? structuredArticle : text;
+  const winner = [structuredArticle, markedArticle, text].filter((body): body is string => Boolean(body))
+    .sort((a, b) => b.length - a.length)[0] ?? "";
   if (winner.length < MIN_READABLE_CHARS || looksSyntheticNewsroomText(winner)) return null;
   return winner.slice(0, MAX_SOURCE_TEXT_CHARS);
 }
