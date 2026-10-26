@@ -22,7 +22,9 @@ describe("meaningful Texas law-topic search", () => {
   });
   it("preserves indexability filtering, informative no-results and accessible result context", () => {
     const route = readFileSync(new URL("../routes/laws_.topics.tsx", import.meta.url), "utf8");
-    expect(route).toContain("LAW_TOPICS.filter(isLawTopicIndexable)");
+    const server = readFileSync(new URL("./law-library-route.functions.ts", import.meta.url), "utf8");
+    expect(server).toContain("LAW_TOPICS.filter(isLawTopicIndexable)");
+    expect(route).toContain("loader: () => getIndexableLawTopics()");
     expect(route).toContain("lawTopicMatchesQuery(topic, query)");
     expect(route).toContain('id="law-topic-results"');
     expect(route).toContain("No law topics match that search");
