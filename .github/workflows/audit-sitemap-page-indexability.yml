@@ -2,8 +2,6 @@
 name: Audit sitemap page indexability
 
 on:
-  push:
-    branches: [diagnostic/ktr-404-recovery-20261025]
   workflow_dispatch:
   schedule:
     - cron: "37 12 * * 1"
@@ -29,12 +27,6 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 22
-
-      - name: Verify recovered 404 source URLs
-        run: node --input-type=module -e "const urls=[\"2026-08-14-austin-isd-s-future-hangs-in-the-balance-ebpaee\",\"2026-08-14-texas-public-information-act-request-guide\",\"2026-08-14-texas-school-districts-show-improvement-in-tea-a-f-ratings-gbezru\",\"2026-06-28-texas-voter-registration-guide-deadlines-id-rules-and-verification\",\"2026-08-14-san-antonio-families-ten-commandments-classroom-fight-takes-a-stand-mxzdlx\",\"2026-08-14-texas-school-voucher-program-raises-questions-after-20-000-students-re-9ijp0d\",\"2026-08-13-talarico-s-gender-surgery-vote-sparks-texas-senate-race-debate\",\"2026-09-14-ted-cruz-booed-college-gameday-protect-college-sports-act\",\"2026-09-14-texas-high-school-football-streaming-rights-victory-plus\",\"2026-09-13-buffalo-bills-beat-houston-texans-week-1-36-31\"];let bad=0;for(const slug of urls){let url='https://keeptxred.com/news/'+slug;const chain=[];for(let hop=0;hop<4;hop++){const r=await fetch(url,{redirect:'manual',signal:AbortSignal.timeout(16000)});chain.push({url,status:r.status,location:r.headers.get('location'),contentType:r.headers.get('content-type')});if([301,302,307,308].includes(r.status)&&r.headers.get('location')){url=new URL(r.headers.get('location'),url).href;continue;}break;}if(chain.at(-1).status!==200||!(chain.at(-1).contentType||'').includes('text/html'))bad++;console.log('RECOVERY_VERIFY '+JSON.stringify({slug,chain}));}if(bad)process.exitCode=1;"
-
-      - name: Enumerate valid canonical aliases previously marked restored
-        run: node --input-type=module -e "for(const slug of [\"appraisal-protest-playbook\",\"moving-to-austin-guide\",\"texas-property-tax-guide\",\"homestead-exemption-explained\",\"moving-to-texas-guide\",\"2026-07-04-the-real-reason-behind-the-resilience-of-texas-identity-in-2026-explained-simply\",\"county-appraisal-districts-explained\",\"true-cost-of-owning-a-home-in-texas\"]){const url='https://keeptxred.com/news/'+slug;const r=await fetch(url,{redirect:'manual',signal:AbortSignal.timeout(12000)});console.log('CANONICAL_ALIAS '+JSON.stringify({slug,http:r.status,destination:r.headers.get('location')}));if(![301,308].includes(r.status))process.exitCode=1}"
 
       - name: Check audit script syntax
         run: node --check scripts/ci/audit-sitemap-page-indexability.mjs
