@@ -25,6 +25,6 @@ describe("Texas law authority reader-facing content", () => {
     expect(source).toMatch(/later effective date/i);
     expect(source).toMatch(/emergency\/imminent-peril/);
     expect(source).toMatch(/federal law requires a different date/);
-    expect(source).toContain("https://statutes.capitol.texas.gov/Docs/GV/htm/GV.2001.htm");
+    expect(source).toContain("https://statutes.capitol.texas.gov/Docs/GV/pdf/GV.2001.pdf");
   });
 });
