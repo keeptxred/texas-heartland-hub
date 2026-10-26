@@ -66,7 +66,55 @@ export function isNewsroomSourceFetchCoolingDown(
   return lastAttemptMs > nowMs - cooldownMs;
 }
 
+/**
+ * Many Texas news publishers supply the actual article in schema.org
+ * NewsArticle.articleBody even when their public HTML has only a short
+ * client-rendered shell. Parse ONLY explicit articleBody from a JSON-LD
+ * NewsArticle/Article node; never substitute page description, webpage cards
+ * or synthetic/aggregated text as an independent reported source.
+ *
+ * This is an alternate representation of the same fetched source URL, not a
+ * newly invented source or an additional corroborating publisher.
+ */
+export function extractNewsroomArticleJsonLd(html: string): string | null {
+  const scripts = html.match(/<script\b[^>]*>[\s\S]*?<\/script>/gi) ?? [];
+  let best = "";
+  for (const script of scripts.slice(0, 40)) {
+    const openTag = script.match(/^<script\b[^>]*>/i)?.[0] ?? "";
+    if (!/\btype\s*=\s*["']application\/ld\+json["']/i.test(openTag)) continue;
+    const raw = script.slice(openTag.length).replace(/<\/script>\s*$/i, "").trim();
+    if (!raw || raw.length > 500_000) continue;
+    let json: unknown;
+    try { json = JSON.parse(raw); } catch { continue; }
+    const nodes: unknown[] = [json];
+    // Bound traversal to prevent an unrelated embedded site graph from
+    // producing expensive work, and only inspect relevant graph/item nodes.
+    for (let i = 0; i < nodes.length && i < 100; i++) {
+      const node = nodes[i];
+      if (Array.isArray(node)) {
+        nodes.push(...node.slice(0, 40));
+        continue;
+      }
+      if (!node || typeof node !== "object") continue;
+      const obj = node as Record<string, unknown>;
+      const kinds = Array.isArray(obj["@type"]) ? obj["@type"] : [obj["@type"]];
+      const isArticle = kinds.some((v) =>
+        typeof v === "string" && /^(?:NewsArticle|Article|ReportageNewsArticle|AnalysisNewsArticle|BackgroundNewsArticle)$/i.test(v));
+      if (isArticle && typeof obj.articleBody === "string") {
+        const text = newsroomHtmlText(obj.articleBody);
+        if (text.length >= MIN_READABLE_CHARS && !looksSyntheticNewsroomText(text) && text.length > best.length) {
+          best = text;
+        }
+      }
+      if (obj["@graph"]) nodes.push(obj["@graph"]);
+      if (obj.mainEntity) nodes.push(obj.mainEntity);
+    }
+  }
+  return best ? best.slice(0, MAX_SOURCE_TEXT_CHARS) : null;
+}
+
 export function extractReadableNewsroomHtml(html: string): string | null {
+  const structuredArticle = extractNewsroomArticleJsonLd(html);
   const stripped = html
     .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
     .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
@@ -85,8 +133,11 @@ export function extractReadableNewsroomHtml(html: string): string | null {
     })
     .sort((left, right) => right.length - left.length)[0] ?? "";
   const text = articleBlocks.length ? readableArticle : newsroomHtmlText(stripped);
-  if (text.length < MIN_READABLE_CHARS || looksSyntheticNewsroomText(text)) return null;
-  return text.slice(0, MAX_SOURCE_TEXT_CHARS);
+  // Never concatenate two partly overlapping article representations, and
+  // never use unrelated teaser cards as padding. Choose one substantive body.
+  const winner = structuredArticle && structuredArticle.length > text.length ? structuredArticle : text;
+  if (winner.length < MIN_READABLE_CHARS || looksSyntheticNewsroomText(winner)) return null;
+  return winner.slice(0, MAX_SOURCE_TEXT_CHARS);
 }
 
 function newsroomHtmlText(html: string): string {
