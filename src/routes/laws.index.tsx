@@ -175,10 +175,10 @@ function LawsHubPage() {
           ].map(([label, href]) => <a key={href} href={href} className="border-2 border-border bg-card px-4 py-4 text-sm font-bold hover:border-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">{label} →</a>)}
         </div>
         <div className="mt-5 flex flex-wrap gap-5 text-sm">
-          <Link to="/laws/topics" className="font-semibold text-primary underline underline-offset-4">Browse full Texas law-topic library →</Link>
-          <Link to="/laws/topic/$slug" params={{ slug: "property-tax-law" }} className="font-semibold text-primary underline underline-offset-4">Texas property tax law →</Link>
-          <a href="https://statutes.capitol.texas.gov/" rel="noopener noreferrer" className="font-semibold underline underline-offset-4">Official Texas statutes ↗</a>
-          <a href="https://www.sos.state.tx.us/elections/" rel="noopener noreferrer" className="font-semibold underline underline-offset-4">Official elections and ballot notices ↗</a>
+          <Link to="/laws/topics" className="inline-flex min-h-11 items-center px-2 py-2 font-semibold text-primary underline underline-offset-4">Browse full Texas law-topic library →</Link>
+          <Link to="/laws/topic/$slug" params={{ slug: "property-tax-law" }} className="inline-flex min-h-11 items-center px-2 py-2 font-semibold text-primary underline underline-offset-4">Texas property tax law →</Link>
+          <a href="https://statutes.capitol.texas.gov/" rel="noopener noreferrer" className="inline-flex min-h-11 items-center px-2 py-2 font-semibold underline underline-offset-4">Official Texas statutes ↗</a>
+          <a href="https://www.sos.state.tx.us/elections/" rel="noopener noreferrer" className="inline-flex min-h-11 items-center px-2 py-2 font-semibold underline underline-offset-4">Official elections and ballot notices ↗</a>
         </div>
       </nav>
 
