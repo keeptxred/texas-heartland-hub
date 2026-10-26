@@ -1,3 +1,4 @@
+# One-time post-reconciliation check of 8 verified cross-site canonical redirects.
 name: KeepTXRed News URL Integrity
 
 on:
