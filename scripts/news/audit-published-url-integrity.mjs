@@ -54,7 +54,10 @@ const absent = registry.filter((entry) =>
 );
 const isRetired = (entry) =>
   entry.recovery_status === "retired_low_value" && String(entry.retired_reason || "").trim().length > 12;
-const pending = absent.filter((entry) => !isRetired(entry) && entry.recovery_status !== "redirect_candidate");
+// Only registry entries actually marked pending belong in the recovery backlog.
+// Valid static articles have no daily_articles row; their restored status is checked
+// against live production by auditLiveRestoredUrls on scheduled/manual runs.
+const pending = absent.filter((entry) => entry.recovery_status === "pending");
 const historicalLive = pending.filter((entry) => entry.slug.startsWith("live-"));
 const newMissing = absent.filter((entry) =>
   !isRetired(entry) && (
