@@ -9,6 +9,12 @@ test("deployed Texas legal navigation and source links have 44px mobile touch ta
     expect(rect?.height, `law topic contents link ${i} target height`).toBeGreaterThanOrEqual(44);
   }
   await page.goto("/laws", { waitUntil: "domcontentloaded" });
+  const headlineLinks = page.getByRole("navigation", { name: "Latest headlines" }).getByRole("link");
+  expect(await headlineLinks.count()).toBeGreaterThan(0);
+  for (let i = 0; i < await headlineLinks.count(); i++) {
+    const rect = await headlineLinks.nth(i).boundingBox();
+    expect(rect?.height, `latest-headline link ${i} target height`).toBeGreaterThanOrEqual(44);
+  }
   for (const name of [
     /Browse full Texas law-topic library/i,
     /Texas property tax law/i,
