@@ -9,6 +9,7 @@ import {
   NEWSROOM_SUBSTANTIVE_SOURCE_CHARS,
   looksSyntheticNewsroomText,
   shouldFetchNewsroomSourcePage,
+  shouldReplaceNewsroomSourceBody,
 } from "./newsroom-source-page.server";
 
 describe("newsroom source-page enrichment", () => {
@@ -24,6 +25,19 @@ describe("newsroom source-page enrichment", () => {
     expect(builder).toContain("newsroomHydrationPriority({");
     expect(builder).toContain(".slice(0, SOURCE_PAGE_FETCH_LIMIT)");
     expect(builder).toContain("const SOURCE_PAGE_FETCH_LIMIT = 40");
+  });
+
+  it("replaces long synthetic cached packet strings with shorter genuine publisher text", () => {
+    const legacyFake = "MULTI-SOURCE STORY PACKET. " + "synthetic source summary. ".repeat(550);
+    const independentlyFetched = "The official filing includes dated records and verified procedural findings. ".repeat(38);
+    expect(legacyFake.length).toBeGreaterThan(independentlyFetched.length);
+    expect(shouldReplaceNewsroomSourceBody(legacyFake, independentlyFetched)).toBe(true);
+    expect(shouldReplaceNewsroomSourceBody(independentlyFetched, legacyFake)).toBe(false);
+    expect(shouldReplaceNewsroomSourceBody(independentlyFetched, "Short teaser")).toBe(false);
+    expect(shouldReplaceNewsroomSourceBody("Real original publisher record. ".repeat(250), independentlyFetched)).toBe(false);
+    const builder = readFileSync("src/routes/api/public/hooks/build-newsroom-research-packets.ts", "utf8");
+    expect(builder).toContain("shouldReplaceNewsroomSourceBody(result.feed.extracted_body, result.body)");
+    expect(builder).not.toContain("result.body.length <= existing.length + 100");
   });
 
   it("targets thin publisher bodies and synthetic pollution", () => {
