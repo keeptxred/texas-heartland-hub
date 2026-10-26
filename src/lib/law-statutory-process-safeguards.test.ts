@@ -23,7 +23,7 @@ describe("primary-source Texas law procedural safeguards", () => {
     expect(text).toContain("Section 92.107");
     expect(text).toContain("Section 92.109(a)");
     expect(text).toContain("three times");
-    expect(topic.questions.some((entry) => entry.q.includes("triple damages") && entry.a.includes("not automatically"))).toBe(true);
+    expect(topic.questions.some((entry) => entry.q.includes("triple damages") && entry.a.includes("does not award triple damages"))).toBe(true);
     expect(topic.sources.some((s) => s.url === "https://statutes.capitol.texas.gov/Docs/PR/htm/PR.92.htm")).toBe(true);
     expect(topic.published).toBe("2026-10-23");
     expect(topic.updated).toBe("2026-10-23");
