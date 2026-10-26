@@ -24,6 +24,20 @@ describe("new Texas law authority topics", () => {
     expect(topic.related.some((item) => item.href === "/laws")).toBe(true);
     expect(topic.related.some((item) => item.href === "/laws/topics")).toBe(true);
   });
+  it("separates probate four-year admission exceptions from letters testamentary authority", () => {
+    const topic = WILLS_PROBATE_INHERITANCE_LAW_TOPIC;
+    const text = topic.framework.join(" ");
+    expect(text).toContain("Section 256.003(a)");
+    expect(text).toContain("fourth anniversary");
+    expect(text).toContain("not in default");
+    expect(text).toContain("Section 256.003(b)");
+    expect(text).toContain("Chapter 501");
+    expect(topic.questions.some((entry) =>
+      entry.q.includes("admitted to probate") &&
+      entry.a.includes("late probate order") &&
+      entry.a.includes("letters testamentary")
+    )).toBe(true);
+  });
   it("keeps law topic slugs unique for routes, canonicals and sitemap discovery", () => {
     const slugs = LAW_TOPICS.map((topic) => topic.slug);
     expect(new Set(slugs).size).toBe(slugs.length);
