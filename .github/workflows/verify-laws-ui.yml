@@ -12,6 +12,8 @@ on:
       - "src/lib/law-topic-search.ts"
       - "playwright.laws.config.ts"
       - "tests/laws/**"
+      - "tests/laws-deployed/**"
+      - "src/lib/law-ad-network-idle-scheduling.test.ts"
       - ".github/workflows/verify-laws-ui.yml"
   workflow_dispatch:
 
@@ -42,6 +44,9 @@ jobs:
 
       - name: Verify live mobile and desktop law authority experience
         run: bunx playwright test --config=playwright.laws.config.ts
+
+      - name: Verify current live legal ad-script eligibility and deployed touch targets
+        run: bunx playwright test --config=playwright.laws-deployed.config.ts
 
       - name: Upload Playwright failure artifacts
         if: failure()

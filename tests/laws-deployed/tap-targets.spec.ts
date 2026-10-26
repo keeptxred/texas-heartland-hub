@@ -66,3 +66,19 @@ test("deployed Texas legal navigation and source links have 44px mobile touch ta
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(overflow, "mobile law hub horizontal overflow").toBeLessThanOrEqual(1);
 });
+
+test("indexable Texas laws pages still schedule both advertising providers in a real browser", async ({ page }) => {
+  // Script injection proves continued eligibility/scheduling, not actual
+  // impressions, consent acceptance, paid fill, or revenue.
+  for (const route of ["/laws", "/laws/topics", "/laws/topic/landlord-tenant-rentals-law"]) {
+    await page.goto(route, { waitUntil: "load" });
+    await expect(page.locator('script[data-adsense-gated="true"]'), route + " AdSense bootstrap").toHaveCount(1, { timeout: 15000 });
+    await expect(page.locator('script[data-infolinks-gated="true"]'), route + " Infolinks bootstrap").toHaveCount(1, { timeout: 15000 });
+    const providers = await page.evaluate(() => ({
+      adsense: document.querySelector<HTMLScriptElement>('script[data-adsense-gated="true"]')?.src ?? "",
+      infolinks: document.querySelector<HTMLScriptElement>('script[data-infolinks-gated="true"]')?.src ?? "",
+    }));
+    expect(providers.adsense).toContain("pagead2.googlesyndication.com/pagead/js/adsbygoogle.js");
+    expect(providers.infolinks).toBe("https://resources.infolinks.com/js/infolinks_main.js");
+  }
+});

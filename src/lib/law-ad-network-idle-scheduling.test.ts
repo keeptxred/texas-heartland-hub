@@ -25,6 +25,13 @@ describe("Texas legal authority first-render ad scheduling", () => {
       expect(script).toContain("else if(document.readyState==='loading')");
     }
   });
+  it("verifies eligible law-route ad bootstraps in real deployed Chromium without claiming fill", () => {
+    const browser = readFileSync("tests/laws-deployed/tap-targets.spec.ts", "utf8");
+    expect(browser).toContain('script[data-adsense-gated="true"]');
+    expect(browser).toContain('script[data-infolinks-gated="true"]');
+    expect(browser).toContain("pagead2.googlesyndication.com/pagead/js/adsbygoogle.js");
+    expect(browser).toContain("resources.infolinks.com/js/infolinks_main.js");
+  });
   it("stagger-loads the two independent monetization providers without removing them", () => {
     expect(adsense).toContain("else{load();}},0)");
     expect(infolinks).toContain("else{load();}},600)");
