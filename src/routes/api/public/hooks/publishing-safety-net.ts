@@ -53,12 +53,23 @@ export async function runPublishingSafetyNet() {
       supabase
         .from("daily_articles")
         .select("slug,published_at,source_name")
+        // A historical reconstruction with a pending/missing hero is not a
+        // fresh, quality-gated newsroom publication. Counting it as such
+        // masked a >10-day automated-newsroom outage in production.
+        .eq("image_generation_status", "ready")
+        .not("featured_image_url", "is", null)
+        .neq("featured_image_url", "")
         .order("published_at", { ascending: false })
         .limit(1)
         .maybeSingle<LatestRow>(),
       supabase
         .from("daily_articles")
         .select("slug,published_at,source_name")
+        // Mirror the exact same qualification for normal (non-reserve) news:
+        // a pending historical backfill must never resolve a publishing alert.
+        .eq("image_generation_status", "ready")
+        .not("featured_image_url", "is", null)
+        .neq("featured_image_url", "")
         .or(`source_name.neq.${RESERVE_SOURCE},source_name.is.null`)
         .order("published_at", { ascending: false })
         .limit(1)
