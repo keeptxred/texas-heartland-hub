@@ -25,7 +25,16 @@ export function parseAuthority(text, file) {
       new Date(`${updated}T00:00:00Z`).toISOString().slice(0, 10) !== updated) {
     throw new Error(`${file}: invalid review calendar date ${updated}`);
   }
-  return { slug, updated, file };
+  // Discover election-specific calendar dates from public guide text rather
+  // than a hardcoded election-year list. Historical examples may remain valid,
+  // but after election day they must receive an editorial freshness review.
+  const calendarEvents = [...text.matchAll(/for the ([A-Z][a-z]+ \\d{1,2}, \\d{4}) election\\b/gi)]
+    .map((match) => {
+      const ms = Date.parse(match[1] + " 00:00:00 GMT");
+      if (!Number.isFinite(ms)) throw new Error(file + ": invalid election calendar reference");
+      return new Date(ms).toISOString().slice(0, 10);
+    });
+  return { slug, updated, file, calendarEvents: [...new Set(calendarEvents)] };
 }
 
 export function inventoryAuthorityFiles(directory) {
@@ -56,9 +65,13 @@ export function reviewQueue(records, now = new Date()) {
     const ageDays = Math.floor((today - last) / daysMs);
     if (ageDays < 0) throw new Error(`Future law review date on ${record.slug}: ${record.updated}`);
     const overdue = ageDays >= REVIEW_AGE_DAYS;
-    return { ...record, ageDays, reviewNeeded: overdue || session,
+    const expiredCalendar = (record.calendarEvents ?? []).filter((date) =>
+      today > Date.parse(date + "T00:00:00Z") && last <= Date.parse(date + "T00:00:00Z"));
+    return { ...record, ageDays, reviewNeeded: overdue || session || expiredCalendar.length > 0,
       reason: [overdue ? `last reviewed ${ageDays} days ago` : null,
-               session ? "new Texas regular legislative session" : null].filter(Boolean).join("; ") };
+               session ? "new Texas regular legislative session" : null,
+               expiredCalendar.length ? "election-specific dates have passed (" + expiredCalendar.join(", ") + "); verify next election guidance" : null
+      ].filter(Boolean).join("; ") };
   });
 }
 
