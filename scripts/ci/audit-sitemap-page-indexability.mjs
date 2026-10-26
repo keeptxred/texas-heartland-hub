@@ -39,6 +39,10 @@ const LEGACY_REDIRECTS = new Map([
   // Cross-site handoff tracked in the historical registry, outside article_slug_redirects.
   ["/news/texas-home-equity-heloc-guide", "https://texasdefined.com/article/texas-home-equity-heloc-guide"],
   ["/news/2026-08-09-canyon-lake-full-capacity-recovery", "https://texasdefined.com/news/2026-08-10-canyon-lake-full-capacity-recovery"],
+  // Same-event July canonical stories restored from cited primary reporting.
+  ["/news/2026-07-12-eagle-pass-officials-deny-request-to-store-buoy-barriers-at-local-park", "/news/2026-07-11-eagle-pass-officials-deny-request-for-buoy-barrier-staging-in-city-park"],
+  ["/news/2026-07-12-breaking-u-s-supreme-court-upholds-texas-age-verification-law-for-app-stores", "/news/2026-07-11-breaking-texas-officials-respond-to-supreme-court-win-for-app-age-verification"],
+  ["/news/2026-07-12-breaking-court-voids-2021-texas-ballot-measure-that-expanded-county-debt-powers", "/news/2026-07-11-breaking-texas-judge-voids-2021-ballot-measure-over-misleading-debt-language"],
   ["/hubs", "/topics"],
   ["/hubs/texas-policy-law", "/laws"],
   ["/hubs/texas-politics", "/texas-politics"],
