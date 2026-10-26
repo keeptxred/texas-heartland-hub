@@ -28,6 +28,10 @@ export default defineConfig(({ mode }) => {
       }),
       tanstackStart({
         router: {
+          // Split noncritical route UI into on-demand chunks while keeping
+          // route loaders eager to avoid a second data-loading network hop.
+          // The protected build/browser checks must validate this change.
+          autoCodeSplitting: true,
           // Co-located tests are not file-based routes. Excluding them here
           // prevents route-generation warnings without moving or weakening tests.
           routeFileIgnorePattern: "\\.(test|spec)\\.(ts|tsx)$",
