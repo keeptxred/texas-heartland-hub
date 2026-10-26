@@ -21,7 +21,7 @@ export const DRIVING_TRAFFIC_INSURANCE_LAW_TOPIC: LawTopic = {
     "Transportation Code Section 521.021 provides the basic driver-license rule, subject to express exceptions in that chapter. License issuance, renewal, testing, restrictions and enforcement are not identical questions. Texas Department of Public Safety administers important portions of driver licensing, while courts may handle citations and other adjudicated penalties. A suspension or revocation may involve an administrative process separate from a traffic citation, and eligibility to drive should not be assumed merely because a person still physically possesses a license card.",
     "Transportation Code Chapter 601 addresses financial responsibility. Section 601.051 provides a general rule against operating without established financial responsibility, with exceptions and other authorized forms of responsibility specified by the code. Most motorists satisfy it through liability insurance. The Texas Department of Insurance explains the commonly referenced minimum 30/60/25 liability limits: $30,000 bodily injury per person, $60,000 bodily injury per accident, and $25,000 property damage per accident. Meeting that minimum does not ensure full compensation for every crash, nor does it guarantee that a particular policy covers the actual vehicle, driver or incident.",
     "The rules of the road are spread across multiple chapters, especially Transportation Code Chapter 545 for operation and movement, Chapter 544 for traffic-control devices, and Chapter 547 for equipment. For example, speeding and safe-speed questions can implicate the general speed requirement as well as posted limits and roadway conditions. Device-use restrictions, school-bus stops, work zones and other special situations can have their own statutory elements and exceptions. Read the applicable section before relying on a generalized account of what a ticket requires.",
-    "Vehicle title, registration and inspection matters are administrative as well as legal. Chapter 502 governs registration and Chapter 501 addresses title. Requirements may depend on vehicle type, use, residence and current law; distinguish DMV instructions from legislation that has only been introduced. A rule that changed for annual inspection procedures does not automatically eliminate registration, emissions or equipment obligations. Check Texas DMV, DPS and the statutes for the particular vehicle and county rather than relying on a social-media headline.",
+    "Vehicle title, registration and inspection matters are administrative as well as legal. Chapter 502 governs registration and Chapter 501 addresses title. Requirements may depend on vehicle type, use, residence and current law; distinguish DMV instructions from legislation that has only been introduced. House Bill 3297, effective January 1, 2025, eliminated the general pre-registration safety-inspection requirement for noncommercial vehicles. It did not eliminate vehicle registration, applicable county-based emissions testing, or required commercial-vehicle safety inspections. The legislation also provided an inspection-program replacement fee collected during noncommercial registration; eliminating an inspection should not be described as eliminating every associated state charge. DPS and TxDMV guidance distinguish the affected vehicle class, county, and current emissions requirements.",
     "A citation is an allegation under a particular provision, not proof of every alleged fact. Transportation Code Chapter 543 concerns arrest and prosecution procedures for many traffic offenses, while other statutes or local ordinances can apply. Drivers should examine the precise charge, applicable court and any posted deadlines. Serious incidents may also involve criminal statutes, civil negligence rules or insurance-contract questions. This guide is not advice to admit, contest or ignore a charge.",
     "Texas law can change through enacted legislation or valid administrative rules. A bill filed in Austin is not operative law; an enacted act may have its own effective date and application provisions. A court's interpretation or federal rule may also affect a driver's circumstances. Our related guide and bill-tracking pages are for context, while official statutory text and agency publications are the correct starting points for checking the present rule."
   ],
@@ -32,6 +32,7 @@ export const DRIVING_TRAFFIC_INSURANCE_LAW_TOPIC: LawTopic = {
     "Transportation Code Chapter 545 addresses many roadway operation rules; a posted speed limit does not displace the broader duty to drive at a safe speed under the applicable statute.",
     "Transportation Code Chapters 501 and 502 distinguish title from vehicle registration.",
     "Traffic-control devices and vehicle equipment are addressed in separate parts of the Transportation Code; license status alone is not proof of road legality.",
+    "HB 3297 removed most pre-registration noncommercial vehicle safety inspections effective January 1, 2025, but retained emissions-testing requirements where applicable, commercial safety inspections and a noncommercial inspection-program replacement fee.",
     "Agency forms and manuals can explain compliance steps but cannot override controlling statutory text.",
     "Verify an enacted law's effective date before treating a proposed transportation bill as a change to current driving rules."
   ],
@@ -50,7 +51,7 @@ export const DRIVING_TRAFFIC_INSURANCE_LAW_TOPIC: LawTopic = {
     },
     {
       "q": "Are annual vehicle registration and inspections the same legal requirement?",
-      "a": "No. Registration, title, safety or emissions compliance and equipment standards are distinct areas of law. A change to one inspection requirement does not by itself end registration or other statutory obligations. Check the Texas DMV and the governing Transportation Code provisions for the vehicle and county."
+      "a": "No. Registration, title, safety or emissions compliance and equipment standards are distinct areas of law. HB 3297 removed the general pre-registration safety inspection for noncommercial vehicles as of January 1, 2025. It did not remove required emissions inspections in affected counties or commercial-vehicle safety inspections. All vehicles still require applicable registration, and the new inspection-program replacement fee remains relevant to noncommercial vehicles. The current rule depends on vehicle type, emissions county and governing law."
     },
     {
       "q": "Where can I find the actual law behind a speeding or phone-use ticket?",
@@ -62,6 +63,11 @@ export const DRIVING_TRAFFIC_INSURANCE_LAW_TOPIC: LawTopic = {
     }
   ],
   "sources": [
+    {
+      "label": "Texas DPS — vehicle safety inspection program changes now in effect",
+      "url": "https://www.dps.texas.gov/news/vehicle-safety-inspection-program-changes-now-effect",
+      "note": "January 2025 official agency notice distinguishing HB 3297 noncommercial safety inspections, county emissions testing, commercial inspections and replacement fees."
+    },
     {
       "label": "Texas Transportation Code — Chapter 521 (Driver's Licenses)",
       "url": "https://statutes.capitol.texas.gov/Docs/TN/htm/TN.521.htm",
