@@ -39,6 +39,19 @@ describe("new Texas law authority topics", () => {
       entry.a.includes("due for payment")
     )).toBe(true);
   });
+  it("keeps DTPA pre-suit notice distinct from suit limitations and narrow delay extension", () => {
+    const guide = CONSUMER_PROTECTION_LAW_TOPIC;
+    const framework = guide.framework.join(" ");
+    expect(framework).toContain("Section 17.505");
+    expect(framework).toContain("Section 17.565");
+    expect(framework).toContain("60-day notice");
+    expect(framework).toContain("two years");
+    expect(framework).toContain("180-day extension");
+    expect(guide.questions.some((item) =>
+      item.q.includes("DTPA lawsuit") &&
+      item.a.includes("reasonably should have discovered")
+    )).toBe(true);
+  });
   it("keeps law topic slugs unique for routes, canonicals and sitemap discovery", () => {
     const slugs = LAW_TOPICS.map((topic) => topic.slug);
     expect(new Set(slugs).size).toBe(slugs.length);
