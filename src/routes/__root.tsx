@@ -14,7 +14,7 @@ import { SiteFooter } from "../components/site-footer";
 import { SiteNotFound } from "../components/site-not-found";
 import { ArticleSourceTransparencyPanel } from "../components/article-source-transparency";
 import { ShopAnalyticsTracker } from "../components/analytics/ShopAnalyticsTracker";
-import { organizationJsonLd } from "../lib/seo";
+import { rootOrganizationJsonLd } from "../lib/root-organization-jsonld";
 
 const ADSENSE_CLIENT = "ca-pub-1891256141359926";
 const ADSENSE_SCRIPT = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`;
@@ -119,7 +119,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         type: "application/ld+json",
         children: JSON.stringify({
-          ...organizationJsonLd(),
+          ...rootOrganizationJsonLd(),
           "@type": ["Organization", "NewsMediaOrganization"],
         }),
       },
