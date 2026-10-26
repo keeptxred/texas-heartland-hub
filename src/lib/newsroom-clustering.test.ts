@@ -60,6 +60,29 @@ describe("newsroom deterministic story clustering", () => {
     expect(score).toBe(0);
   });
 
+  it("reunites the exact governor announcement even if an agency and a newsroom use different categories", () => {
+    const announcement = "governor abbott announces 40 million strengthen texas teacher workforce";
+    const a = { feedItemId: 71, normalizedTitle: announcement, sourceKey: "gov.texas.gov", observedAt, pillarSlug: "texas-energy-oil" };
+    const b = { feedItemId: 72, normalizedTitle: announcement, sourceKey: "independent-publisher", observedAt, pillarSlug: "texas-economy-small-business" };
+    expect(deterministicStorySimilarity(a, b)).toBe(1);
+    const clusters = clusterNewsFeedItems([a, b]);
+    expect(clusters).toHaveLength(1);
+    expect(clusters[0].memberFeedItemIds).toEqual([71, 72]);
+  });
+
+  it("never uses cross-pillar fuzzy matching to conflate related-but-distinct facts", () => {
+    const a = { feedItemId: 81, normalizedTitle: "governor abbott announces 40 million strengthen texas teacher workforce", sourceKey: "gov", observedAt, pillarSlug: "texas-politics-government" };
+    const b = { feedItemId: 82, normalizedTitle: "governor abbott announces 20 million strengthen texas teacher workforce", sourceKey: "news", observedAt, pillarSlug: "texas-economy-small-business" };
+    expect(deterministicStorySimilarity(a, b)).toBe(0);
+    expect(clusterNewsFeedItems([a, b])).toHaveLength(2);
+  });
+
+  it("keeps exact but short recurring cross-pillar stories separate", () => {
+    const a = { feedItemId: 91, normalizedTitle: "governor abbott announces latest slate appointments", sourceKey: "gov", observedAt, pillarSlug: "texas-politics-government" };
+    const b = { feedItemId: 92, normalizedTitle: "governor abbott announces latest slate appointments", sourceKey: "news", observedAt, pillarSlug: "texas-elections" };
+    expect(deterministicStorySimilarity(a, b)).toBe(0);
+  });
+
   it("keeps reports beyond the 36-hour event window separate", () => {
     const score = deterministicStorySimilarity(
       { feedItemId: 1, normalizedTitle: "agency releases wildfire recovery grants west texas", sourceKey: "a", observedAt: "2026-08-13T00:00:00Z" },
