@@ -50,7 +50,10 @@ describe("reciprocal Texas legal authority network", () => {
   it("uses the same shared navigation in law frameworks and supporting guides", () => {
     const topic = readFileSync(new URL("../components/law-topic-page.tsx", import.meta.url), "utf8");
     const guide = readFileSync(new URL("../components/cornerstone-guide-page.tsx", import.meta.url), "utf8");
-    expect(topic).toContain("publicSupportingGuidesForAuthority(topic.slug)");
+    const server = readFileSync("src/lib/law-library-route.functions.ts", "utf8");
+    expect(server).toContain("publicSupportingGuidesForAuthority(topic.slug)");
+    expect(topic).toContain("supportingGuides.map");
+    expect(topic).not.toContain("import { publicSupportingGuidesForAuthority }");
     expect(topic).toContain("Explore detailed guides on this law");
     expect(guide).toContain("authorityForSupportingGuideTopic(lawMeta.topic)");
     expect(guide).toContain("Parent Texas law framework");
