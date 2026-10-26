@@ -2,6 +2,8 @@
 name: Audit sitemap page indexability
 
 on:
+  push:
+    branches: [diagnostic/ktr-42-livecheck-20261025]
   workflow_dispatch:
   schedule:
     - cron: "37 12 * * 1"
@@ -27,6 +29,9 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 22
+
+      - name: Verify seven reconstructed historical articles
+        run: node --input-type=module -e "const slugs=[\"2026-07-10-texas-wrestling-coach-from-amarillo-sentenced-to-18-years-for-abuse\",\"2026-07-11-eagle-pass-officials-deny-request-for-buoy-barrier-staging-in-city-park\",\"2026-07-11-breaking-texas-officials-respond-to-supreme-court-win-for-app-age-verification\",\"2026-07-11-breaking-texas-judge-voids-2021-ballot-measure-over-misleading-debt-language\",\"2026-07-10-texas-senators-investigate-foreign-influence-in-surrogacy-industry\",\"2026-07-12-university-of-north-texas-names-critical-race-theory-scholar-as-interim-provost\",\"2026-06-30-texas-officials-respond-to-boling-isd-trustee-sentencing-in-child-exploitation-c\"];let fail=0;for(const slug of slugs){const url='https://keeptxred.com/news/'+slug;const r=await fetch(url,{redirect:'manual',signal:AbortSignal.timeout(18000)});const html=await r.text();const title=(new RegExp('<title[^>]*>([^<]*)</title>','i').exec(html)||[])[1]||'';const result={slug,status:r.status,type:r.headers.get('content-type'),noindex:/(?:name=\\\"robots\\\"[^>]*noindex|noindex[^>]*name=\\\"robots\\\")/i.test(html),title:title.slice(0,110)};console.log('REBUILT_HISTORICAL '+JSON.stringify(result));if(r.status!==200||!result.type?.includes('text/html')||/404|not found/i.test(title))fail++}if(fail)process.exitCode=1;"
 
       - name: Check audit script syntax
         run: node --check scripts/ci/audit-sitemap-page-indexability.mjs
