@@ -40,8 +40,12 @@ jobs:
         run: |
           set -euo pipefail
           marker="law-review:${REVIEW_MONTH}"
-          if gh api --method GET "repos/${GITHUB_REPOSITORY}/issues/2938/comments?per_page=100" \
-              --jq '.[].body' | grep -Fq "${marker}"; then
+          # Search every page, not only the newest or oldest 100 comments.
+          # Materialize before grep to avoid grep -q causing a SIGPIPE under pipefail.
+          gh api --method GET --paginate \
+            "repos/${GITHUB_REPOSITORY}/issues/2938/comments?per_page=100" \
+            --jq '.[].body' > /tmp/texas-law-review-comments.txt
+          if grep -Fq "${marker}" /tmp/texas-law-review-comments.txt; then
             echo "A review reminder for ${REVIEW_MONTH} already exists; not posting a duplicate."
             exit 0
           fi

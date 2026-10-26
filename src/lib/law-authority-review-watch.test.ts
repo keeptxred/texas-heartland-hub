@@ -18,6 +18,8 @@ describe("evergreen Texas law authority review maintenance", () => {
     expect(workflow).toContain("node scripts/laws/review-authority-guides.mjs");
     expect(workflow).toContain("gh issue comment 2938");
     expect(workflow).toContain("already exists; not posting a duplicate");
+    expect(workflow).toContain("gh api --method GET --paginate");
+    expect(workflow).toContain("grep -Fq \"\${marker}\" /tmp/texas-law-review-comments.txt");
     expect(review).toContain("REVIEW_AGE_DAYS = 180");
     expect(review).toContain("isRegularSessionReviewMonth");
     expect(review).toContain("No legal text, source citations, published dates, or reviewed dates were changed automatically");
