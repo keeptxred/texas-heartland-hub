@@ -5,7 +5,7 @@ on:
     - cron: '23 10 * * *'
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, diagnostic/ktr-live-audit-test-20261025]
     paths:
       - 'scripts/news/audit-published-url-integrity.mjs'
       - '.github/workflows/news-url-integrity.yml'
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      KTR_VERIFY_LIVE: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
+      KTR_VERIFY_LIVE: 'true'
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.KEEP_TX_RED_SUPABASE_SERVICE_ROLE_KEY }}
     steps:
       - uses: actions/checkout@v5
