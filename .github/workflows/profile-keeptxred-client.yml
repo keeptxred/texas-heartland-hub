@@ -1,0 +1,54 @@
+name: Diagnose KeepTXRed shared client JS entry
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/laws/client-entry-profiler.ts"
+      - "scripts/laws/client-entry-profiler.test.ts"
+      - ".github/workflows/profile-keeptxred-client.yml"
+      - "vite.config.ts"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ktr-client-profile-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  profile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install locked dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Test profiling attribution
+        run: bunx vitest run scripts/laws/client-entry-profiler.test.ts
+
+      - name: Build with opt-in attribution (no production behavioral changes)
+        env:
+          KTR_BUNDLE_PROFILE: "1"
+        run: bun run build
+
+      - name: Display largest contributors in job summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s laws-client-bundle-profile/client-entry.json
+          test -s laws-client-bundle-profile/client-entry.md
+          cat laws-client-bundle-profile/client-entry.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Preserve full client module attribution for reproducible profiling
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: keeptxred-client-entry-module-attribution
+          path: laws-client-bundle-profile/*
+          if-no-files-found: ignore
+          retention-days: 7
