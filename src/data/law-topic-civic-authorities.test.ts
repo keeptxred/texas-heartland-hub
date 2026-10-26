@@ -35,6 +35,8 @@ describe("civic Law Library authorities", () => {
   it("keeps the Public Information Act ruling deadline distinct from production timing", () => {
     const text = [OPEN_RECORDS_PUBLIC_INFORMATION_LAW_TOPIC.quickAnswer, ...OPEN_RECORDS_PUBLIC_INFORMATION_LAW_TOPIC.framework, ...OPEN_RECORDS_PUBLIC_INFORMATION_LAW_TOPIC.keyRules].join(" ");
     expect(text).toContain("ten business days");
+    expect(text).toContain("15th business day");
+    expect(text).toContain("Section 552.301(e) and (e-1)");
     expect(text).toContain("not a universal rule");
     expect(text).toContain("existing information");
     expect(text).toContain("Section 552.301");
