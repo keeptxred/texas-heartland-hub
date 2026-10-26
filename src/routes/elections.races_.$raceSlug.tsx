@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import races from "@/data/elections/2026/races.json";
+import { getRaceRouteMetadata } from "@/lib/elections/race-route-metadata.functions";
 import {
   ElectionErrorState,
   ElectionLayout,
@@ -26,17 +26,15 @@ import {
 } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
 import { formatElectionTitle } from "@/lib/elections/seo";
-import { findRaceStoredSlug, raceSeoSlug } from "@/lib/elections/seoSlugs";
+import { raceSeoSlug } from "@/lib/elections/seoSlugs";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { electionSlugs, isElectionSlug } from "@/types/elections";
 
 export const Route = createFileRoute("/elections/races_/$raceSlug")({
-  beforeLoad: ({ params }) => {
-    const storedSlug = findRaceStoredSlug(params.raceSlug, races);
-    if (!storedSlug) return;
-
-    const canonicalSlug = raceSeoSlug(storedSlug);
-    if (params.raceSlug !== canonicalSlug) {
+  loader: async ({ params }) => {
+    const detail = await getRaceRouteMetadata({ data: { slug: params.raceSlug } });
+    const canonicalSlug = detail.storedSlug ? raceSeoSlug(detail.storedSlug) : null;
+    if (canonicalSlug && params.raceSlug !== canonicalSlug) {
       throw redirect({
         to: "/elections/races/$raceSlug",
         params: { raceSlug: canonicalSlug },
@@ -44,17 +42,11 @@ export const Route = createFileRoute("/elections/races_/$raceSlug")({
         statusCode: 301,
       });
     }
+    return detail;
   },
-  head: ({ params }) => {
-    const storedSlug = findRaceStoredSlug(params.raceSlug, races);
-    const record = storedSlug
-      ? races.find(
-          (item) =>
-            item.slug === storedSlug &&
-            item.publicationStatus === "published" &&
-            item.verificationStatus === "verified",
-        )
-      : undefined;
+  head: ({ params, loaderData }) => {
+    const storedSlug = loaderData?.storedSlug;
+    const record = loaderData?.record;
     const validSlug = Boolean(storedSlug && isElectionSlug(storedSlug));
     const indexable = validSlug && Boolean(record);
     const canonicalSlug = storedSlug ? raceSeoSlug(storedSlug) : params.raceSlug;
@@ -142,19 +134,9 @@ export const Route = createFileRoute("/elections/races_/$raceSlug")({
 
 function ElectionRaceDetailRoute() {
   const { raceSlug } = Route.useParams();
-  const storedSlug = findRaceStoredSlug(raceSlug, races);
+  const { storedSlug, record } = Route.useLoaderData();
   const validSlug = Boolean(storedSlug && isElectionSlug(storedSlug));
-  const indexable =
-    validSlug &&
-    Boolean(
-      storedSlug &&
-        races.some(
-          (item) =>
-            item.slug === storedSlug &&
-            item.publicationStatus === "published" &&
-            item.verificationStatus === "verified",
-        ),
-    );
+  const indexable = validSlug && Boolean(record);
   const canonicalSlug = storedSlug ? raceSeoSlug(storedSlug) : raceSlug;
 
   return (
