@@ -133,7 +133,8 @@ async function auditLiveRestoredUrls() {
         if (!location) return "redirect-missing-location";
         const next = new URL(location, url).href;
         if (!redirected && redirectExpected && intended && next !== intended) return "unexpected-redirect-target";
-        if (!redirectExpected && !redirected) return "restored-url-is-redirecting";
+        // A restored URL may have a valid canonical 301. Follow the chain to ensure
+        // the eventual HTML target is healthy; redirect existence is not an HTTP 404.
         redirected = true;
         url = next;
         continue;
