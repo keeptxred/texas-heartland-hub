@@ -50,6 +50,20 @@ describe("civic Law Library authorities", () => {
     expect(text).toContain("Section 2001.039");
   });
 
+  it("states the distinct four-year agency rule review clock and limited reset exception", () => {
+    const topic = ADMINISTRATIVE_RULEMAKING_LAW_TOPIC;
+    const text = [...topic.framework, ...topic.keyRules].join(" ");
+    expect(text).toContain("Section 2001.039(b)");
+    expect(text).toContain("fourth anniversary");
+    expect(text).toContain("every four years thereafter");
+    expect(text).toContain("amendment does not automatically reset");
+    expect(topic.questions.some((item) =>
+      item.q.includes("four-year legal review deadline") &&
+      item.a.includes("formal")
+    )).toBe(true);
+    expect(topic.updated).toBe("2026-09-06");
+  });
+
   it("keeps home-rule, general-law, county and special-district authority separate", () => {
     const text = [LOCAL_GOVERNMENT_AUTHORITY_LAW_TOPIC.quickAnswer, ...LOCAL_GOVERNMENT_AUTHORITY_LAW_TOPIC.framework, ...LOCAL_GOVERNMENT_AUTHORITY_LAW_TOPIC.keyRules].join(" ");
     expect(text).toContain("Section 51.072");
