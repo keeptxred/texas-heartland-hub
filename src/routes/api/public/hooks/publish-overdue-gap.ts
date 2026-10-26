@@ -98,31 +98,11 @@ async function prepareReleaseSeriesContext(db: any, selected: FeedRow): Promise<
     .slice(0, 10);
   if (related.length < 2) return null;
 
-  const evidence = related.map((row, index) => {
-    const sourceText = (row.extracted_body || row.description || "").trim().slice(0, 3500);
-    return [
-      `OFFICIAL RELEASE ${index + 1}`,
-      `DATE: ${row.pub_date}`,
-      `SOURCE: ${row.source}`,
-      `HEADLINE: ${row.title}`,
-      `URL: ${row.link}`,
-      `SOURCE MATERIAL: ${sourceText}`,
-    ].join("\n");
-  }).join("\n\n--- RELATED RELEASE ---\n\n");
-
-  const combined = [
-    "RELATED OFFICIAL RELEASE SERIES: These records are multiple announcements in the same Texas data-center standards rollout. Cover the rollout as one developing policy story rather than separate company-by-company articles. Do not treat same-publisher releases as independent corroboration.",
-    evidence,
-  ].join("\n\n").slice(0, 24000);
-
-  const { error: updateError } = await db
-    .from("texas_news_feed")
-    .update({ extracted_body: combined })
-    .eq("id", selected.id);
-  if (updateError) {
-    console.warn("[overdue-gap] release series evidence was not persisted", updateError.message);
-    return null;
-  }
+  // Related official releases remain independent source rows and are linked
+  // in the final article on success. Do not write a combined editorial packet
+  // into selected.extracted_body: the source-hydration and newsroom evidence
+  // stages must only see genuine publisher text, not internally assembled
+  // release-series guidance (especially if publication later fails).
 
   return {
     key,
