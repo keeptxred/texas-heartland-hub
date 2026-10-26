@@ -38,7 +38,7 @@ export function SiteHeader() {
           <span className="shrink-0 text-[10px] font-extrabold uppercase tracking-[0.2em] text-white/80">
             Latest
           </span>
-          <div className="min-w-0 flex-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div role="navigation" aria-label="Latest headlines" className="min-w-0 flex-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <div className="flex w-max items-center gap-6 pr-4 text-xs text-white/90">
               {tickerItems.length > 0 ? (
                 tickerItems.map((article) => (
@@ -46,7 +46,7 @@ export function SiteHeader() {
                     key={article.slug}
                     to="/news/$slug"
                     params={{ slug: article.slug }}
-                    className="flex min-h-8 max-w-[320px] items-center gap-2 whitespace-nowrap hover:text-white"
+                    className="flex min-h-11 max-w-[320px] items-center gap-2 whitespace-nowrap rounded-sm hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-white"
                   >
                     <span
                       className={`size-1.5 shrink-0 rounded-full ${article.is_breaking ? "bg-primary" : "bg-accent"}`}
@@ -56,14 +56,14 @@ export function SiteHeader() {
                   </Link>
                 ))
               ) : (
-                <Link to="/elections/2026" className="flex min-h-8 items-center gap-2 whitespace-nowrap hover:text-white">
+                <Link to="/elections/2026" className="flex min-h-11 items-center gap-2 whitespace-nowrap rounded-sm hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-white">
                   <span className="size-1.5 rounded-full bg-primary" aria-hidden />
                   {electionHeadline}
                 </Link>
               )}
             </div>
           </div>
-          <Link to="/news" className="hidden min-h-8 shrink-0 items-center text-[10px] font-bold uppercase tracking-[0.16em] text-white/75 hover:text-white sm:inline-flex">
+          <Link to="/news" className="hidden min-h-11 shrink-0 items-center rounded-sm text-[10px] font-bold uppercase tracking-[0.16em] text-white/75 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-white sm:inline-flex">
             All news →
           </Link>
         </div>
