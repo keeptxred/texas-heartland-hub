@@ -5,6 +5,7 @@ import { scoreFeedItem, TEXAS_RELEVANCE_MIN } from "@/lib/viral-score";
 import { selectRotatedSourceWindow } from "@/lib/ingest-source-window";
 import { parseTexasAgPressReleaseIndex } from "@/lib/texas-ag-press-releases";
 import { partitionFeedLinkLookups } from "@/lib/ingest-link-lookup";
+import { extractFirstPartyRssArticleBody } from "@/lib/newsroom-firstparty-rss-body";
 export { publishSingleFeedItem } from "@/lib/multi-source-publish";
 export { isPuzzleTitle } from "@/lib/ingest-feeds-legacy";
 
@@ -14,6 +15,7 @@ type Item = {
   pub_date: string;
   source: string;
   description: string;
+  extracted_body?: string;
 };
 type IngestRow = Item & { trend_source: string };
 
@@ -151,12 +153,16 @@ function parseFeed(xml: string, fallbackSource: string): Item[] {
         title = parts.join(" - ").trim() || title;
       }
     }
+    const embeddedArticle = extractFirstPartyRssArticleBody(block, fallbackSource, link);
     items.push({
       title: title.slice(0, 500),
       link,
       pub_date: resolvePublishTimestamp(rawDate || null),
       source,
       description: description.slice(0, 1200),
+      // Real article body supplied by this direct publisher. Never treat
+      // Google News or other discovery metadata as article evidence.
+      ...(embeddedArticle ? { extracted_body: embeddedArticle } : {}),
     });
   }
   return items;
@@ -546,6 +552,7 @@ async function handler() {
   let attributionSplits = 0;
   let attributionRetries = 0;
   let attributionFailures = 0;
+  let rssBodiesRecovered = 0;
   if (rows.length > 0) {
     const existingLinks = new Set<string>();
     const attributionNeededLinks = new Set<string>();
@@ -573,6 +580,30 @@ async function handler() {
         if (!existingRow.link) continue;
         existingLinks.add(existingRow.link);
         if (existingRow.trend_source == null) attributionNeededLinks.add(existingRow.link);
+      }
+    }
+
+    // Backfill up to twelve ALREADY DISCOVERED direct RSS reports with null
+    // source bodies. The conditional update is atomic: never replace a
+    // possibly richer source-page extraction that completed concurrently.
+    // This also unlocks reporting for existing 72-hour candidates without
+    // another outbound HTTP fetch or AI text rewrite.
+    const missingOriginalBodies = rows
+      .filter((row) => existingLinks.has(row.link) && Boolean(row.extracted_body))
+      .slice(0, 12);
+    for (const row of missingOriginalBodies) {
+      const { data: updated, error: recoveryError } = await supabaseAdmin
+        .from("texas_news_feed")
+        .update({ extracted_body: row.extracted_body })
+        .eq("link", row.link)
+        .is("extracted_body", null)
+        .select("id");
+      if (recoveryError) {
+        console.warn("[ingest-feeds] first-party RSS body backfill deferred", {
+          source: row.source, error: recoveryError.message,
+        });
+      } else {
+        rssBodiesRecovered += updated?.length ?? 0;
       }
     }
 
@@ -642,6 +673,7 @@ async function handler() {
     attributionSplits,
     attributionRetries,
     attributionFailures,
+    rssBodiesRecovered,
     diag,
   });
 }
