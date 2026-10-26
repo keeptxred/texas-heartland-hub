@@ -21,7 +21,7 @@ export const PROPERTY_TAX_LAW_TOPIC: LawTopic = {
     "School property taxes sit at the intersection of local taxation and state education finance. Legislative decisions about school-finance formulas, state appropriations, tax-rate compression, recapture, and exemptions can change how much revenue must be raised locally or supplied by the state. Coverage of a relief package should therefore distinguish a reduction in a school district tax rate from a change in appraisal, an exemption increase, or a shift in state funding.",
     "State-funded property-tax relief can alter local tax burdens without converting the system into a state property tax. The Legislature may appropriate state revenue for school-finance changes or other relief mechanisms while local taxing units continue to levy property taxes. The fiscal effect depends on the enacted mechanism, the tax year, local values, local rates, and the way state funding interacts with local revenue.",
     "Local government budgets, debt, and special districts are part of the policy picture. Counties, cities, school districts, municipal utility districts, hospital districts, emergency-services districts, and other authorized entities can have different tax bases, debt obligations, service responsibilities, and rate-setting rules. Statewide claims about property-tax policy should identify which taxing units and which portion of the bill are affected.",
-    "Appraisal governance is also a policy issue when legislation changes board structure, oversight, data standards, appraisal methods, or review procedures. The Legislature separately establishes a taxpayer's appraisal protest rights under Tax Code Chapter 41. For an ordinary Section 25.19 appraisal notice, Section 41.44(a)(1) generally uses May 15 or the 30th day after the notice's legally specified delivery date, whichever is later; other kinds of protests and specified circumstances have distinct rules and exceptions. That administrative-review deadline is not the same as a local taxing unit's rate-adoption calendar. Practical protest filing steps and appraisal-district lookup remain in TexasDefined's homeowner guides.",
+    "Appraisal governance is also a policy issue when legislation changes board structure, oversight, data standards, appraisal methods, or review procedures. Those institutional changes have statewide and local-government effects distinct from the step-by-step process of filing a homeowner tax protest.",
     "Implementation matters after legislation or a constitutional amendment passes. Effective dates, agency guidance, local budget cycles, appraisal calendars, school-finance calculations, and required notices can determine when a policy change reaches tax rates or tax bills. Reporting should separate enacted law from proposed legislation and should identify the tax year or budget cycle affected.",
     "KTR keeps this law topic focused on government authority, legislation, rate-setting, school finance, fiscal effects, and implementation. TexasDefined owns practical homeowner tasks such as exemption filing, appraisal protests, appraisal-district lookup, property-tax calculators, and payment or bill-management guidance.",
   ],
@@ -33,7 +33,6 @@ export const PROPERTY_TAX_LAW_TOPIC: LawTopic = {
     "School property-tax policy must be read together with state school-finance law because legislative appropriations, compression, exemptions, and formulas can shift the balance between state and local funding.",
     "Property-tax legislation can affect different taxing units in different ways; a statewide policy claim should identify the affected government level, tax year, and mechanism.",
     "Constitutional amendments, statutes, agency implementation, and local rate adoption are distinct stages and should not be described as though one automatically completes the others.",
-    "Tax Code Section 41.44 generally sets an ordinary appraisal-protest deadline of May 15 or 30 days after the prescribed appraisal notice delivery, whichever is later; special protest types and exceptions must be checked separately.",
     "Practical exemption applications, appraisal protests, appraisal-district lookup, calculators, and payment logistics belong on TexasDefined rather than KTR's policy-law authority page.",
   ],
   questions: [
@@ -58,17 +57,12 @@ export const PROPERTY_TAX_LAW_TOPIC: LawTopic = {
       a: "Some property-tax changes require or are implemented through amendments to the Texas Constitution. When that occurs, legislative approval places the proposed amendment before voters, and implementation can also require statutes, appropriations, agency guidance, or local action depending on the measure.",
     },
     {
-      q: "What legal deadline controls a typical Texas property appraisal protest?",
-      a: "Tax Code Section 41.44(a)(1) ordinarily requires a protest of a Section 25.19 appraisal notice by May 15 or the 30th day after the notice was delivered as provided by statute, whichever is later. Other protest subjects and statutory exceptions can have different deadlines. This taxpayer appeal process is separate from adoption of local tax rates; consult the Comptroller and TexasDefined\u0027s practical property-tax protest guide for filing guidance.",
-    },
-    {
       q: "Where should a homeowner go for exemptions, appraisal protests, appraisal-district help, or a tax estimate?",
       a: "Those practical homeowner tasks are owned by TexasDefined. KTR's property-tax coverage focuses on legislation, government authority, tax-rate policy, school finance, statewide relief, and implementation.",
     },
   ],
   sources: [
     { label: "Texas Tax Code", url: "https://statutes.capitol.texas.gov/?link=TX", note: "Controlling state statutory framework for appraisal, exemptions, rate adoption, protests, appeals, billing, and collection." },
-    { label: "Texas Tax Code — Chapter 41 (Appraisal Protests)", url: "https://statutes.capitol.texas.gov/Docs/TX/htm/TX.41.htm", note: "Official Section 41.44 deadlines, notice rules and distinct protest exceptions." },
     { label: "Texas Comptroller — Property Tax Assistance", url: "https://comptroller.texas.gov/taxes/property-tax/", note: "Statewide explanation of the state-local property-tax structure, administration resources, and official guidance." },
     { label: "Texas Comptroller — Property Tax System Basics", url: "https://comptroller.texas.gov/taxes/property-tax/basics.php", note: "Official overview of local taxing units, appraisal administration, and the state legal framework." },
     { label: "Texas Constitution — Article VIII", url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.8.htm", note: "Constitutional provisions governing taxation and major limits or authorities relevant to property-tax policy." },
