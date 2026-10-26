@@ -15,6 +15,21 @@ describe("primary-source Texas law procedural safeguards", () => {
     expect(topic.published).toBe("2026-10-23");
     expect(topic.updated).toBe("2026-10-23");
   });
+  it("distinguishes first tracked-mail repair notice from a later written notice", () => {
+    const topic = LANDLORD_TENANT_RENTALS_LAW_TOPIC;
+    const text = topic.framework.join(" ") + " " + topic.keyRules.join(" ");
+    expect(text).toContain("Section 92.056(b)(3)");
+    expect(text).toContain("subsequent written repair notice");
+    expect(text).toContain("certified mail");
+    expect(text).toContain("registered mail");
+    expect(text).toContain("delivery-tracked");
+    expect(text).toContain("Section 92.056(d)");
+    expect(text).toContain("seven days");
+    expect(text).toContain("presumption to be rebutted");
+    expect(topic.sources.some((source) => source.url === "https://statutes.capitol.texas.gov/Docs/PR/htm/PR.92.htm")).toBe(true);
+    expect(topic.updated).toBe("2026-10-23");
+    expect(topic.published).toBe("2026-10-23");
+  });
   it("explains consent, Texas residency and physical-service address for LLC registered agents", () => {
     const topic = BUSINESS_FORMATION_LLC_LAW_TOPIC;
     const text = topic.framework.join(" ");
