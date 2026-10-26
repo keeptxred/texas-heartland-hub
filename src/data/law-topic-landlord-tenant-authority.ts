@@ -32,7 +32,7 @@ export const LANDLORD_TENANT_RENTALS_LAW_TOPIC: LawTopic = {
     "Sections 92.056 and 92.0561 impose prerequisites for certain repair-related remedies; tenants should not assume unilateral rent withholding is lawful.",
     "Section 92.103 addresses deposit return timing; §92.107 separately concerns a tenant's written forwarding address.",
     "Section 92.104 prohibits deposit deductions for normal wear and tear while permitting qualifying lawful deductions.",
-    "Section 92.109(d) provides a conditional 30-day presumption of bad faith for an unreturned deposit or missing itemization, subject to Section 92.107\u0027s written-forwarding-address prerequisite; bad-faith damages are not automatic."
+    "Section 92.109(d) provides a conditional 30-day presumption of bad faith for an unreturned deposit or missing itemization, subject to Section 92.107\u0027s written-forwarding-address prerequisite; bad-faith damages are not automatic.",
     "Section 92.0081 regulates lockouts and exclusion; a lockout is not a substitute for a court-ordered eviction.",
     "Chapter 24 governs significant aspects of the eviction court process; a notice to vacate and an eviction judgment are different events.",
     "Sections 92.331 and following address specified landlord retaliation and exceptions.",
