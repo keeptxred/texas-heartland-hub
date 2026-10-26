@@ -1328,6 +1328,7 @@ async function handler() {
  */
 export async function publishSingleFeedItem(
   feedItemId: number,
+  options: { sourceOverride?: string } = {},
 ): Promise<{ ok: boolean; slug?: string; error?: string; alreadyPublished?: boolean }> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: row, error: rowErr } = await supabaseAdmin
@@ -1361,15 +1362,22 @@ export async function publishSingleFeedItem(
   // when we already paid to fetch it. Otherwise run extraction exactly once,
   // cache it, and hand it to the preflight assessor.
   // ------------------------------------------------------------------
-  const cachedBody =
+  // Original publisher text and a synthesized multi-source writer prompt
+  // must never share a storage field. Old newsroom runs contaminated the
+  // feed cache with "MULTI-SOURCE STORY PACKET." text; treat that cached
+  // synthesis as invalid, and fetch genuine publisher evidence again.
+  const { isSyntheticNewsroomEvidence } = await import("@/lib/newsroom-evidence-integrity");
+  const storedBody =
     typeof (row as { extracted_body?: string | null }).extracted_body === "string"
       ? ((row as { extracted_body?: string | null }).extracted_body ?? "").trim()
       : "";
-  let extractedBody: string = cachedBody;
+  const cachedBody = isSyntheticNewsroomEvidence(storedBody) ? "" : storedBody;
+  const sourceOverride = options.sourceOverride?.trim() || null;
+  let extractedBody: string = sourceOverride ?? cachedBody;
   let extractionFailureStage: "extraction" | "preflight" | "none" = "none";
   let resolvedSourceWordCount: number | null = null;
 
-  if (isRedditLink(item.link)) {
+  if (isRedditLink(item.link) && !sourceOverride) {
     // Resolve the exact Reddit source once so extraction, preflight and the AI
     // rewrite all use and count the same text. Cached extraction remains authoritative.
     let selftext: string | null = null;
@@ -1454,7 +1462,10 @@ export async function publishSingleFeedItem(
   await supabaseAdmin
     .from("texas_news_feed")
     .update({
-      extracted_body: extractedBody || null,
+      // The synthesis is an ephemeral rewrite input, NOT the publisher's
+      // original extracted article. Never persist an AI-assembled packet into
+      // the factual source cache, including on validation/rewrite failures.
+      ...(sourceOverride ? {} : { extracted_body: extractedBody || null }),
       preflight_json: toPersistedSnapshot(preflight, preflight.rewriteable ? "none" : "preflight"),
     } as never)
     .eq("id", feedItemId);

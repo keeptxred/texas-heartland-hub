@@ -151,7 +151,7 @@ describe("publication timing lifecycle", () => {
 
   it("runs timing and the atomic claim before the legacy synthesis publisher", () => {
     const lifecycleCall = publisher.indexOf("preparePublicationLifecycle(db, feedItemId");
-    const legacyCall = publisher.indexOf("publishLegacySingleFeedItem(feedItemId)", lifecycleCall);
+    const legacyCall = publisher.indexOf("publishLegacySingleFeedItem(feedItemId, {", lifecycleCall);
     expect(lifecycleCall).toBeGreaterThan(0);
     expect(legacyCall).toBeGreaterThan(lifecycleCall);
     expect(publisher).toContain("releasePublicationClaim(db, eventClusterId, lifecycle.claimToken)");

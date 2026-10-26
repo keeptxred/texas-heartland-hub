@@ -25,8 +25,10 @@ describe("core newsroom publication boundary", () => {
     expect(source).toContain("publishSingleSourceWithPrimaryRecord");
     expect(source).toContain("PRIMARY-RECORD-AUGMENTED SOURCE PACKET.");
     expect(source).toContain("use the official record and do not repeat the conflicting date as fact");
-    expect(source).toContain("await publishLegacySingleFeedItem(feedItemId)");
-    expect(source).toContain("original source extraction restore failed");
+    expect(source).toContain("sourceOverride: augmentedSourceText.slice(0, 26000)");
+    expect(source).toContain("sourceOverride: synthesisMaterial.slice(0, 26000)");
+    expect(source).not.toContain("update({ extracted_body: augmentedSourceText");
+    expect(source).not.toContain("update({ extracted_body: synthesisMaterial");
     expect(source).toContain("updateArticleAttribution(db, singleResult.slug, cluster, factVerification)");
   });
 

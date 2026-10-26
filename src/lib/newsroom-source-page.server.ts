@@ -28,7 +28,7 @@ export function newsroomHydrationPriority(input: {
 
 export function looksSyntheticNewsroomText(value: string | null | undefined): boolean {
   const text = (value ?? "").trim();
-  return /MULTI-SOURCE STORY PACKET\.|RAW SOURCE PACKET|STRUCTURED FACT LEDGER/i.test(text);
+  return /MULTI-SOURCE STORY PACKET\.|RAW SOURCE PACKET|STRUCTURED FACT LEDGER|PRIMARY-RECORD-AUGMENTED SOURCE PACKET\.|RELATED OFFICIAL RELEASE SERIES:/i.test(text);
 }
 
 /** Prefer a verifiable publisher body over any longer synthetic packet
