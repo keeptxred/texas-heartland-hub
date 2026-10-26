@@ -3,6 +3,7 @@ import tailwindcss from "@tailwindcss/vite";
 import viteReact from "@vitejs/plugin-react";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import { defineConfig, loadEnv } from "vite";
+import { clientEntryProfiler } from "./scripts/laws/client-entry-profiler";
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
@@ -35,6 +36,7 @@ export default defineConfig(({ mode }) => {
       }),
       tailwindcss(),
       viteReact(),
+      ...(process.env.KTR_BUNDLE_PROFILE === "1" ? [clientEntryProfiler()] : []),
     ],
     optimizeDeps: {
       force: true,
