@@ -8,6 +8,7 @@ const read = (path: string) => fs.readFileSync(new URL(path, import.meta.url), "
 const policyHub = read("../routes/policy.index.tsx");
 const policyManifest = read("../routes/policy-trackers[.]txt.ts");
 const lawHub = read("../routes/laws_.topics.tsx");
+const lawRouteData = read("./law-library-route.functions.ts");
 const dataHub = read("../routes/data.tsx");
 const agencyHub = read("../routes/texas-government.agencies.tsx");
 const graph = read("./government-graph.ts");
@@ -29,7 +30,8 @@ describe("reference discovery indexability alignment", () => {
   });
 
   it("filters law, data, and agency hub cards and schema through their page readiness gates", () => {
-    expect(lawHub).toContain("LAW_TOPICS.filter(isLawTopicIndexable)");
+    expect(lawRouteData).toContain("LAW_TOPICS.filter(isLawTopicIndexable)");
+    expect(lawHub).toContain("loader: () => getIndexableLawTopics()");
     expect(lawHub).toContain("INDEXABLE_LAW_TOPICS.map");
     expect(lawHub).toContain("numberOfItems: INDEXABLE_LAW_TOPICS.length");
 
