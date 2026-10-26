@@ -39,6 +39,47 @@ describe("new Texas law authority topics", () => {
       entry.a.includes("due for payment")
     )).toBe(true);
   });
+  it("separates probate four-year admission exceptions from letters testamentary authority", () => {
+    const topic = WILLS_PROBATE_INHERITANCE_LAW_TOPIC;
+    const text = topic.framework.join(" ");
+    expect(text).toContain("Section 256.003(a)");
+    expect(text).toContain("fourth anniversary");
+    expect(text).toContain("not in default");
+    expect(text).toContain("Section 256.003(b)");
+    expect(text).toContain("Chapter 501");
+    expect(topic.questions.some((entry) =>
+      entry.q.includes("admitted to probate") &&
+      entry.a.includes("late probate order") &&
+      entry.a.includes("letters testamentary")
+    )).toBe(true);
+  });
+
+  it("distinguishes Texas divorce waiting period and family-violence exceptions from child-only cases", () => {
+    const text = FAMILY_CUSTODY_CHILD_SUPPORT_LAW_TOPIC.framework.join(" ");
+    expect(text).toContain("Section 6.702(a)");
+    expect(text).toContain("60th day");
+    expect(text).toContain("Section 6.702(c)");
+    expect(text).toContain("family-violence");
+    expect(FAMILY_CUSTODY_CHILD_SUPPORT_LAW_TOPIC.questions.some((entry) =>
+      entry.q.includes("60-day waiting period") &&
+      entry.a.includes("not a guarantee")
+    )).toBe(true);
+  });
+
+  it("keeps DTPA pre-suit notice distinct from suit limitations and narrow delay extension", () => {
+    const guide = CONSUMER_PROTECTION_LAW_TOPIC;
+    const framework = guide.framework.join(" ");
+    expect(framework).toContain("Section 17.505");
+    expect(framework).toContain("Section 17.565");
+    expect(framework).toContain("60-day notice");
+    expect(framework).toContain("two years");
+    expect(framework).toContain("180-day extension");
+    expect(guide.questions.some((item) =>
+      item.q.includes("DTPA lawsuit") &&
+      item.a.includes("reasonably should have discovered")
+    )).toBe(true);
+  });
+
   it("keeps law topic slugs unique for routes, canonicals and sitemap discovery", () => {
     const slugs = LAW_TOPICS.map((topic) => topic.slug);
     expect(new Set(slugs).size).toBe(slugs.length);
