@@ -39,13 +39,24 @@ async function readAll(table, columns, applyFilters = (query) => query) {
 const recentBodyAuditSince = new Date(Math.max(baseline, Date.now() - 7 * 24 * 60 * 60 * 1000)).toISOString();
 const [registry, articles, redirects, feed, recentlyCreatedBodies] = await Promise.all([
   readAll("article_url_registry", "slug,origin,first_seen_at,recovery_status,redirect_target,retired_reason,had_search_visibility"),
-  readAll("daily_articles", "slug,created_at,body_json"),
+  readAll("daily_articles", "slug,created_at,published_at,quality_flags,body_json"),
   readAll("article_slug_redirects", "old_slug,new_slug"),
   readAll("texas_news_feed", "internal_slug", (query) => query.not("internal_slug", "is", null)),
   readAll("daily_articles", "slug,created_at,kind,body", (query) =>
     query.gte("created_at", recentBodyAuditSince)),
 ]);
 const articleBySlug = new Map(articles.map((article) => [article.slug, article]));
+// Reconstructing historical articles must not mislabel their publication dates.
+// Old live-YYYY-MM-DD and YYYY-MM-DD slugs identify the archival calendar day.
+// Exact original publication times remain unknown and are normalized separately.
+const archiveDateMismatches = articles
+  .filter((row) => (row.quality_flags ?? []).includes("historical_archive_recovery"))
+  .flatMap((row) => {
+    const archivalDay = row.slug.match(/^(?:live-)?(20\d{2}-\d{2}-\d{2})-/)?.[1];
+    const actualDay = typeof row.published_at === "string" ? row.published_at.slice(0, 10) : "";
+    if (!archivalDay || archivalDay !== actualDay) return [{ slug: row.slug, expected: archivalDay || "dated news URL", actual: actualDay || "(missing)" }];
+    return [];
+  });
 const redirectBySlug = new Map(redirects.map((redirect) => [redirect.old_slug, redirect.new_slug]));
 const absent = registry.filter((entry) =>
   !articleBySlug.has(entry.slug)
@@ -186,6 +197,7 @@ const report = {
   liveProbeFailures: live.failures,
   liveProbeSkipped: live.skipped,
   articles: articles.length,
+  archivePublicationDateMismatches: archiveDateMismatches,
   registeredUrls: registry.length,
   registryMissingContentAndRedirect: absent.length,
   pendingRecovery: pending.length,
@@ -211,6 +223,7 @@ const summary = [
   "- Historical URLs tested against live HTTP: **" + report.liveVerified + "**",
   "- Retired URLs confirmed HTTP 404/410: **" + report.liveRetirementsVerified + "**",
   "- Live URL regressions: **" + report.liveProbeFailures.length + "**",
+  "- Incorrect historical publication dates: **" + report.archivePublicationDateMismatches.length + "**",
   "- Dangling feed article pointers: **" + report.danglingFeedSlugs.length + "**",
   "- Recently published articles missing body structure: **" + report.newlyEmptyBodies.length + "**",
   "- Recently created news articles missing plain-text body: **" + report.recentlyCreatedNewsWithoutPlainTextBody.length + "**",
@@ -227,6 +240,6 @@ const unresolvedHistoricalUrls = !live.skipped && pending.length > 0;
 if (unresolvedHistoricalUrls) {
   console.error("KeepTXRed historical URL backlog needs disposition:", pending.map((x) => x.slug));
 }
-if (newMissing.length || staleFeed.length || newMissingBody.length || recentlyMissingPlainTextBody.length || live.failures.length || unresolvedHistoricalUrls) {
+if (newMissing.length || staleFeed.length || newMissingBody.length || recentlyMissingPlainTextBody.length || live.failures.length || unresolvedHistoricalUrls || archiveDateMismatches.length) {
   throw new Error("KeepTXRed published-news URL integrity regression detected.");
 }
