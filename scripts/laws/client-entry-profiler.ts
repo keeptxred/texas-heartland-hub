@@ -16,7 +16,8 @@ export function clientEntryProfile(
   modules: Record<string, { renderedLength: number }>,
   cwd = process.cwd(),
 ): ClientEntryProfile {
-  const root = cwd.replaceAll("\\", "/").replace(/\\/$/, "") + "/";
+  const normalizedCwd = cwd.replaceAll("\\", "/");
+  const root = normalizedCwd.endsWith("/") ? normalizedCwd : normalizedCwd + "/";
   const list = Object.entries(modules)
     .map(([id, info]) => ({
       source: id.replaceAll("\\", "/").replace(root, ""),
