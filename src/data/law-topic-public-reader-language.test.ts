@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 const directory = "src/data";
 const authorityPaths = readdirSync(directory)
-  .filter((name) => /^law-topic-[a-z0-9-]+-authority\\.ts$/.test(name))
+  .filter((name) => /^law-topic-[a-z0-9-]+-authority\.ts$/.test(name))
   .sort();
 
 describe("Texas law authority reader-facing content", () => {
@@ -11,8 +11,8 @@ describe("Texas law authority reader-facing content", () => {
     expect(authorityPaths.length).toBeGreaterThanOrEqual(18);
     for (const filename of authorityPaths) {
       const source = readFileSync(`${directory}/${filename}`, "utf8");
-      expect(source, filename).not.toMatch(/\\b(?:KTR|Keep TX Red)[^."\\n]{0,180}\\bshould\\b/i);
-      expect(source, filename).not.toMatch(/\\b(?:Permanent KTR|When KTR reports|For permanent KTR coverage|A complete KTR rule history)\\b/i);
+      expect(source, filename).not.toMatch(/\b(?:KTR|Keep TX Red)[^."\n]{0,180}\bshould\b/i);
+      expect(source, filename).not.toMatch(/\b(?:Permanent KTR|When KTR reports|For permanent KTR coverage|A complete KTR rule history)\b/i);
     }
   });
 
@@ -23,7 +23,7 @@ describe("Texas law authority reader-facing content", () => {
     expect(source).toContain("Government Code Section 2001.036");
     expect(source).toContain("20 days after filing");
     expect(source).toMatch(/later effective date/i);
-    expect(source).toMatch(/emergency\\/imminent-peril/);
+    expect(source).toMatch(/emergency\/imminent-peril/);
     expect(source).toMatch(/federal law requires a different date/);
     expect(source).toContain("https://statutes.capitol.texas.gov/Docs/GV/htm/GV.2001.htm");
   });
