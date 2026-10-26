@@ -601,3 +601,38 @@ jobs:
 
       - name: Run deployed newsroom smoke
         run: node --import ./scripts/news/worker-origin-canonical-fetch.mjs scripts/news/smoke-live-newsroom.mjs
+
+
+  # GitHub does not reliably propagate a workflow_run event across deep
+  # bot-authored verification/deployment chains. Explicit workflow_dispatch
+  # is allowed by GitHub even from GITHUB_TOKEN, and avoids another missed
+  # approved election-news run after a successfully verified deployment.
+  # Only dispatch after BOTH production deployment and post-deploy smoke pass.
+  guarded-newsroom-dispatch:
+    name: Dispatch existing guarded newsroom after verified deployment
+    needs: [deploy, newsroom-smoke]
+    if: >-
+      needs.deploy.result == 'success' &&
+      needs.newsroom-smoke.result == 'success' &&
+      needs.deploy.outputs.deployed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Dispatch guarded newsroom only for exact deployed main revision
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          DEPLOYED_SHA: ${{ needs.deploy.outputs.deployed_sha }}
+        run: |
+          set -euo pipefail
+          current_main="$(gh api "repos/$REPOSITORY/commits/main" --jq '.sha')"
+          if [[ -z "$DEPLOYED_SHA" || "$current_main" != "$DEPLOYED_SHA" ]]; then
+            echo "Main has advanced beyond deployed SHA; skipping the stale post-deploy newsroom trigger."
+            exit 0
+          fi
+          gh workflow run run-daily-news-now.yml --ref main
+          echo "Dispatched the existing guarded production newsroom for verified main=$DEPLOYED_SHA."

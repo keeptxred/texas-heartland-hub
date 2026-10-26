@@ -24,10 +24,18 @@ describe("post-deployment news publishing is authorized only for the exact guard
       expect(code, file).not.toContain('"pull_request"');
     }
   });
-  it("only triggers a post-deployment run for a successful main deployment", () => {
-    expect(trigger).toContain('workflows: ["Deploy verified KeepTXRed to Cloudflare"]');
-    expect(trigger).toContain("github.event.workflow_run.conclusion == 'success'");
-    expect(trigger).toContain("github.event.workflow_run.head_branch == 'main'");
+  it("only dispatches on exact-main verified deployment after passing production smoke", () => {
+    const deploy = readFileSync(".github/workflows/deploy-cloudflare-after-verify.yml", "utf8");
+    expect(deploy).toContain("guarded-newsroom-dispatch:");
+    expect(deploy).toContain("needs: [deploy, newsroom-smoke]");
+    expect(deploy).toContain("needs.newsroom-smoke.result == 'success'");
+    expect(deploy).toContain("needs.deploy.outputs.deployed == 'true'");
+    expect(deploy).toContain('gh api');
+    expect(deploy).toContain('current_main" != "$DEPLOYED_SHA"');
+    expect(deploy).toContain("gh workflow run run-daily-news-now.yml --ref main");
+    expect(deploy).toContain("actions: write");
+    expect(trigger).not.toContain("workflow_run:");
+    expect(trigger).toContain("workflow_dispatch:");
     expect(trigger).toContain('id-token: write');
   });
 });
