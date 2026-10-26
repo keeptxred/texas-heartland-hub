@@ -81,6 +81,8 @@ const recentlyMissingPlainTextBody = recentlyCreatedBodies.filter((row) =>
  * Restored in the registry must mean HTTP 200 in production, not merely that
  * a row exists. This daily live check catches the historical false-restored
  * status regression which database-only checks could not observe.
+ * A retired URL must return 404/410 at its original path; a new 200 or
+ * arbitrary redirect is also a regression and must not go unnoticed.
  * All network calls have a timeout, retry bound and request budget.
  */
 async function auditLiveRestoredUrls() {
@@ -88,7 +90,7 @@ async function auditLiveRestoredUrls() {
     return { checked: 0, failures: [], skipped: true };
   }
   const candidates = registry.filter((entry) =>
-    entry.recovery_status === "restored" || entry.recovery_status === "redirected");
+    ["restored", "redirected", "retired_low_value"].includes(entry.recovery_status));
   if (candidates.length > 1000) throw new Error("Historical live audit URL budget exceeded");
   const allowedHosts = new Set(["keeptxred.com", "texasdefined.com", "www.texasdefined.com"]);
   let requestCount = 0;
@@ -117,6 +119,7 @@ async function auditLiveRestoredUrls() {
     let url = "https://keeptxred.com/news/" + encodeURIComponent(entry.slug);
     const seen = new Set();
     const redirectExpected = entry.recovery_status === "redirected";
+    const retirementExpected = entry.recovery_status === "retired_low_value";
     const intended = entry.redirect_target
       ? new URL(
         (entry.redirect_target.startsWith("https://") || entry.redirect_target.startsWith("http://"))
@@ -132,6 +135,7 @@ async function auditLiveRestoredUrls() {
       if (!allowedHosts.has(new URL(url).hostname)) return "unexpected-host";
       const response = await request(url);
       if ([301, 302, 307, 308].includes(response.status)) {
+        if (retirementExpected) return "retired-url-unexpected-redirect";
         const location = response.headers.get("location");
         if (!location) return "redirect-missing-location";
         const next = new URL(location, url).href;
@@ -142,6 +146,8 @@ async function auditLiveRestoredUrls() {
         url = next;
         continue;
       }
+      if (retirementExpected && [404, 410].includes(response.status)) return null;
+      if (retirementExpected) return "retired-url-HTTP-" + response.status;
       if (response.status !== 200) return "HTTP " + response.status;
       if (!(response.headers.get("content-type") || "").toLowerCase().includes("text/html")) return "non-html";
       const html = await response.text();
@@ -163,7 +169,11 @@ async function auditLiveRestoredUrls() {
       }
     }
   }));
-  return { checked: candidates.length, requests: requestCount, failures, skipped: false };
+  return {
+    checked: candidates.length,
+    retiredChecked: candidates.filter((entry) => entry.recovery_status === "retired_low_value").length,
+    requests: requestCount, failures, skipped: false,
+  };
 }
 const live = await auditLiveRestoredUrls();
 
@@ -171,6 +181,7 @@ const report = {
   checkedAt: new Date().toISOString(),
   project,
   liveVerified: live.checked,
+  liveRetirementsVerified: live.retiredChecked || 0,
   liveProbeRequests: live.requests || 0,
   liveProbeFailures: live.failures,
   liveProbeSkipped: live.skipped,
@@ -197,7 +208,8 @@ const summary = [
   "- Open historical recovery classifications: **" + report.pendingRecovery + "**",
   "- Historical \`live-*\` URLs pending recovery: **" + report.pendingHistoricalLive + "**",
   "- New unaccounted-for article losses: **" + report.newlyMissing.length + "**",
-  "- Live restored/redirected URLs verified: **" + report.liveVerified + "**",
+  "- Historical URLs tested against live HTTP: **" + report.liveVerified + "**",
+  "- Retired URLs confirmed HTTP 404/410: **" + report.liveRetirementsVerified + "**",
   "- Live URL regressions: **" + report.liveProbeFailures.length + "**",
   "- Dangling feed article pointers: **" + report.danglingFeedSlugs.length + "**",
   "- Recently published articles missing body structure: **" + report.newlyEmptyBodies.length + "**",
