@@ -32,7 +32,7 @@ describe("post-deployment news publishing is authorized only for the exact guard
     expect(deploy).toContain("needs.deploy.outputs.deployed == 'true'");
     expect(deploy).toContain('gh api');
     expect(deploy).toContain('current_main" != "$DEPLOYED_SHA"');
-    expect(deploy).toContain("gh workflow run run-daily-news-now.yml --ref main");
+    expect(deploy).toContain('gh workflow run run-daily-news-now.yml --ref main --repo "$REPOSITORY"');
     expect(deploy).toContain("actions: write");
     expect(trigger).not.toContain("workflow_run:");
     expect(trigger).toContain("workflow_dispatch:");

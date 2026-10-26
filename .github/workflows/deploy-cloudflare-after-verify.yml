@@ -634,5 +634,5 @@ jobs:
             echo "Main has advanced beyond deployed SHA; skipping the stale post-deploy newsroom trigger."
             exit 0
           fi
-          gh workflow run run-daily-news-now.yml --ref main
+          gh workflow run run-daily-news-now.yml --ref main --repo "$REPOSITORY"
           echo "Dispatched the existing guarded production newsroom for verified main=$DEPLOYED_SHA."
