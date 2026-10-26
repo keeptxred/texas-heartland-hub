@@ -8,6 +8,7 @@ import {
   newsroomHydrationPriority,
   looksSyntheticNewsroomText,
   shouldFetchNewsroomSourcePage,
+  shouldReplaceNewsroomSourceBody,
 } from "@/lib/newsroom-source-page.server";
 
 const LOOKBACK_HOURS = 72;
@@ -307,8 +308,10 @@ async function handler() {
       fetchOutcomeById.set(result.feed.id, "no_readable_body");
       continue;
     }
-    const existing = (result.feed.extracted_body ?? "").trim();
-    if (result.body.length <= existing.length + 100) {
+    // A legacy synthetic source packet can be much longer than the actual
+    // fetched publisher report. Do not discard real verified text simply
+    // because the old synthetic pollution has more characters.
+    if (!shouldReplaceNewsroomSourceBody(result.feed.extracted_body, result.body)) {
       fetchOutcomeById.set(result.feed.id, "success");
       continue;
     }
