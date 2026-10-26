@@ -2,6 +2,8 @@
 name: Audit sitemap page indexability
 
 on:
+  push:
+    branches: [diagnostic/ktr-404-recovery-20261025]
   workflow_dispatch:
   schedule:
     - cron: "37 12 * * 1"
@@ -21,12 +23,24 @@ jobs:
       - name: Check out current main
         uses: actions/checkout@v5
         with:
-          ref: main
+          ref: diagnostic/ktr-404-recovery-20261025
 
       - name: Set up Node.js
         uses: actions/setup-node@v5
         with:
           node-version: 22
+
+      - name: Final 441-URL live historical reconciliation
+        run: node scripts/ci/ktr-historical-final-20261025.mjs
+
+      - name: Upload historical status report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ktr-historical-final-20261025
+          path: tmp/historical-404-final-20261025.json
+          if-no-files-found: warn
+          retention-days: 14
 
       - name: Check audit script syntax
         run: node --check scripts/ci/audit-sitemap-page-indexability.mjs
