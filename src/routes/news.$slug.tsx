@@ -14,6 +14,7 @@ import { normalizeCategoryName, type CategoryName } from "@/lib/articles-by-cate
 import { AdSlot } from "@/components/ad-slot";
 import { ContextualAffiliatePanel } from "@/components/monetization/contextual-affiliate-panel";
 import { NewsletterSignup } from "@/components/newsletter-signup";
+import { NewsGovernmentGraphRouter } from "@/components/news-government-graph-router";
 import { GooglePreferredSourceCta } from "@/components/google-preferred-source-cta";
 import { lawAuthorityForArticle, shouldShowEditorialLawLibrary } from "@/lib/editorial-law-authority-links";
 import {
@@ -665,6 +666,7 @@ function ArticlePage() {
       <div className="mt-10">
         <NewsletterSignup sourcePage={`/news/${article.slug}`} compact />
       </div>
+      <NewsGovernmentGraphRouter />
     </article>
   );
 }
