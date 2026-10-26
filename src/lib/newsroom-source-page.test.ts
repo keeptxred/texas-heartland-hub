@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   extractNewsroomArticleJsonLd,
   extractReadableNewsroomHtml,
+  extractNewsroomMarkedArticleBody,
   isNewsroomSourceFetchCoolingDown,
   newsroomHydrationPriority,
   NEWSROOM_SUBSTANTIVE_SOURCE_CHARS,
@@ -123,6 +124,41 @@ describe("newsroom source-page enrichment", () => {
     expect(text).not.toContain("Unrelated teaser");
     expect(text).not.toContain("Another item");
     expect(text).not.toContain("Newsletter");
+  });
+
+  it("extracts the complete nested publisher story body instead of a short related-story article", () => {
+    const paragraph = "Official state records and independently documented county testimony describe the agency action and its actual procedural requirements. ".repeat(48);
+    const html = '<main>'
+      + '<article class="related"><h2>Sidebar teaser</h2><p>' + "Unrelated teaser. ".repeat(24) + '</p></article>'
+      + '<div class="article-body story__content"><div class="wrapper">'
+      + '<h1>County election filing records reviewed</h1><p>' + paragraph + '</p>'
+      + '<div><p>' + "A verified source describes the filing date and named agency correspondence. ".repeat(14) + '</p></div>'
+      + '</div></div>'
+      + '<footer>' + "Promotional subscription messaging. ".repeat(60) + '</footer></main>';
+    const extracted = extractNewsroomMarkedArticleBody(html);
+    expect(extracted?.length).toBeGreaterThan(5_000);
+    expect(extractReadableNewsroomHtml(html)).toBe(extracted);
+    expect(extracted).toContain("County election filing records reviewed");
+    expect(extracted).not.toContain("Sidebar teaser");
+    expect(extracted).not.toContain("Promotional subscription");
+  });
+
+  it("supports schema.org itemprop and explicit article-body data-component markers", () => {
+    const paragraph = "The verified publisher article identifies official records, agency filings, response dates, and the statements directly attributable to each source. ".repeat(46);
+    for (const attrs of ['itemprop="articleBody"', 'data-testid="article-body"', 'data-component="ArticleBody"']) {
+      const html = '<section ' + attrs + '><div class="row"><p>' + paragraph + '</p></div></section>';
+      expect(extractNewsroomMarkedArticleBody(html)?.length ?? 0, attrs).toBeGreaterThan(4_000);
+    }
+  });
+
+  it("rejects generic main, synthetic packet text and unrelated short related cards as evidence", () => {
+    const generic = '<main class="site-body">' + "<p>Other site news and navigation. </p>".repeat(230) + '</main>';
+    expect(extractNewsroomMarkedArticleBody(generic)).toBeNull();
+    const fake = '<div class="article-body"><p>MULTI-SOURCE STORY PACKET. '
+      + "Fabricated composite packet data. ".repeat(250) + '</p></div>';
+    expect(extractNewsroomMarkedArticleBody(fake)).toBeNull();
+    const teaser = '<article class="related-article"><p>' + "Other news. ".repeat(15) + '</p></article>';
+    expect(extractNewsroomMarkedArticleBody(teaser)).toBeNull();
   });
 
   it("does not join separate short teaser articles into fabricated 500-character evidence", () => {
