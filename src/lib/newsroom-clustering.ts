@@ -1,3 +1,27 @@
+/**
+ * Preserve the fixed similarity CPU budget while keeping original publisher
+ * records discoverable when Google News wrappers saturate the latest feed.
+ * Both inputs must be independently ordered newest first by the database.
+ * This is candidate SELECTION only: it never attributes credibility or
+ * marks any two stories as independently confirmed.
+ */
+export function reserveDirectPublisherCohort<T extends { feed_item_id: number }>(
+  newest: readonly T[],
+  direct: readonly T[],
+  maxTotal: number,
+): T[] {
+  const chosen: T[] = [];
+  const ids = new Set<number>();
+  const max = Math.max(0, Math.floor(maxTotal));
+  for (const row of [...direct, ...newest]) {
+    if (chosen.length >= max) break;
+    if (ids.has(row.feed_item_id)) continue;
+    ids.add(row.feed_item_id);
+    chosen.push(row);
+  }
+  return chosen;
+}
+
 const CLUSTER_STOPWORDS = new Set([
   "a", "about", "after", "again", "against", "all", "an", "and", "are", "as", "at", "be", "before", "by",
   "for", "from", "has", "have", "in", "into", "is", "it", "its", "new", "of", "on", "or", "over", "says", "the",

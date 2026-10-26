@@ -1,10 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { clusterNewsFeedItems } from "@/lib/newsroom-clustering";
+import { clusterNewsFeedItems, reserveDirectPublisherCohort } from "@/lib/newsroom-clustering";
 import { isPrimaryNewsSource } from "@/lib/newsroom-editorial-scoring";
 import { countDistinctNewsSources, countDistinctPrimaryNewsSources } from "@/lib/newsroom-source-quality";
 
-const LOOKBACK_HOURS = 48;
+// Use the same 72-hour horizon as the normal production writer.
+const LOOKBACK_HOURS = 72;
+// Google News discovery wrappers are valuable leads but are not independently
+// attributable source evidence. Preserve the most-recent discovery window
+// while reserving space for the newest original publisher/agency URL records.
 const CLUSTER_LIMIT = 500;
+const DIRECT_PUBLISHER_COHORT_LIMIT = 320;
 const CLUSTER_VERSION = 1;
 
 type NormalizationRow = {
@@ -72,15 +77,34 @@ async function handler() {
   const newsroomDb = supabaseAdmin as any;
   const since = new Date(Date.now() - LOOKBACK_HOURS * 60 * 60 * 1000).toISOString();
 
-  const { data: normalizationData, error: normalizedError } = await newsroomDb
-    .from("news_feed_normalization")
-    .select("feed_item_id,normalized_title,source_key,observed_at")
-    .gte("observed_at", since)
-    .is("duplicate_of_feed_item_id", null)
-    .order("observed_at", { ascending: false })
-    .limit(CLUSTER_LIMIT);
-  if (normalizedError) return Response.json({ ok: false, error: normalizedError.message }, { status: 500 });
-  const normalizedRows = (normalizationData ?? []) as NormalizationRow[];
+  const [{ data: normalizationData, error: normalizedError }, { data: directData, error: directError }] = await Promise.all([
+    newsroomDb.from("news_feed_normalization")
+      .select("feed_item_id,normalized_title,source_key,observed_at")
+      .gte("observed_at", since)
+      .is("duplicate_of_feed_item_id", null)
+      .order("observed_at", { ascending: false })
+      .limit(CLUSTER_LIMIT),
+    newsroomDb.from("news_feed_normalization")
+      .select("feed_item_id,normalized_title,source_key,observed_at")
+      .gte("observed_at", since)
+      .is("duplicate_of_feed_item_id", null)
+      // Read only normalized URLs that identify a real publisher, not a
+      // news.google.com/rSS wrapper. This is selection priority, never
+      // verification: upstream and downstream source gates remain authoritative.
+      .not("canonical_url", "ilike", "https://news.google.com/%")
+      .order("observed_at", { ascending: false })
+      .limit(DIRECT_PUBLISHER_COHORT_LIMIT),
+  ]);
+  if (normalizedError || directError) return Response.json({ ok: false, error: (normalizedError || directError).message }, { status: 500 });
+  const normalizedRows = reserveDirectPublisherCohort(
+    (normalizationData ?? []) as NormalizationRow[],
+    (directData ?? []) as NormalizationRow[],
+    CLUSTER_LIMIT,
+  );
+  // Keep the original 500-row O(N²) similarity budget. The oldest Google
+  // wrappers are displaced by original-publisher records, not stacked on top.
+  const latestIds = new Set((normalizationData ?? []).map((row: NormalizationRow) => row.feed_item_id));
+  const directCohortUnique = normalizedRows.filter((row) => !latestIds.has(row.feed_item_id)).length;
 
   const feedIds = normalizedRows.map((row) => row.feed_item_id);
   if (!feedIds.length) {
@@ -226,6 +250,7 @@ async function handler() {
     primarySourceItems,
     distinctPrimarySources,
     clusterVersion: CLUSTER_VERSION,
+    directCohortUnique,
     aiCalls: 0,
   });
 }

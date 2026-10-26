@@ -1,7 +1,38 @@
 import { describe, expect, it } from "vitest";
-import { clusterNewsFeedItems, deterministicStorySimilarity } from "./newsroom-clustering";
+import { readFileSync } from "node:fs";
+import { clusterNewsFeedItems, deterministicStorySimilarity, reserveDirectPublisherCohort } from "./newsroom-clustering";
 
 const observedAt = "2026-08-15T12:00:00Z";
+
+describe("direct-source reservation within existing clustering budget", () => {
+  it("keeps all selected direct publisher records plus remaining newest wrappers without increasing work", () => {
+    const newest = [
+      { feed_item_id: 1, label: "recent Google wrapper 1" },
+      { feed_item_id: 2, label: "recent Google wrapper 2" },
+      { feed_item_id: 3, label: "recent direct report" },
+      { feed_item_id: 4, label: "another Google wrapper" },
+    ];
+    const direct = [
+      { feed_item_id: 3, label: "recent direct report" },
+      { feed_item_id: 5, label: "older official direct report" },
+    ];
+    expect(reserveDirectPublisherCohort(newest, direct, 4).map(row => row.feed_item_id)).toEqual([3, 5, 1, 2]);
+    expect(reserveDirectPublisherCohort(newest, direct, 6).map(row => row.feed_item_id)).toEqual([3, 5, 1, 2, 4]);
+    expect(reserveDirectPublisherCohort(newest, direct, 0)).toEqual([]);
+  });
+
+  it("still uses the 500-row, bounded 72h discovery horizon and requires actual direct URLs", () => {
+    const builder = readFileSync("src/routes/api/public/hooks/cluster-newsroom-stories.ts", "utf8");
+    expect(builder).toContain("const LOOKBACK_HOURS = 72");
+    expect(builder).toContain("const CLUSTER_LIMIT = 500");
+    expect(builder).toContain("const DIRECT_PUBLISHER_COHORT_LIMIT = 320");
+    expect(builder).toContain('.not("canonical_url", "ilike", "https://news.google.com/%")');
+    expect(builder).toContain("reserveDirectPublisherCohort(");
+    expect(builder).toContain("CLUSTER_LIMIT,");
+    expect(builder).toContain("isPrimaryNewsSource(feed?.source, feed?.link)");
+    expect(builder).toContain("countDistinctNewsSources(members)");
+  });
+});
 
 describe("newsroom deterministic story clustering", () => {
   it("groups independent outlets covering the same event", () => {
