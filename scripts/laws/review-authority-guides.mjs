@@ -28,7 +28,7 @@ export function parseAuthority(text, file) {
   // Discover election-specific calendar dates from public guide text rather
   // than a hardcoded election-year list. Historical examples may remain valid,
   // but after election day they must receive an editorial freshness review.
-  const calendarEvents = [...text.matchAll(/for the ([A-Z][a-z]+ \\d{1,2}, \\d{4}) election\\b/gi)]
+  const calendarEvents = [...text.matchAll(/for the ([A-Z][a-z]+ \d{1,2}, \d{4}) election\b/gi)]
     .map((match) => {
       const ms = Date.parse(match[1] + " 00:00:00 GMT");
       if (!Number.isFinite(ms)) throw new Error(file + ": invalid election calendar reference");
