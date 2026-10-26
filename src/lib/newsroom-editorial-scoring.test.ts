@@ -88,6 +88,21 @@ describe("newsroom editorial scoring", () => {
     expect(verified).toEqual({ sourceCount: 2, primarySourceCount: 1 });
   });
 
+  it("gives zero extra corroboration credit to the same long headline syndicated to another host", () => {
+    const sharedTitle = "As early voting begins in Texas, Gov. Abbott’s challenger Gina Hinojosa sues over Musk emails";
+    const sources = [
+      { url: "https://www.kut.org/politics/2026-10-19/report", name: "KUT 90.5", title: sharedTitle, flaggedPrimary: false },
+      { url: "https://texasstandard.org/stories/report", name: "Texas Standard", title: sharedTitle, flaggedPrimary: false },
+    ];
+    expect(verifiedEditorialPublisherCounts(sources)).toEqual({ sourceCount: 1, primarySourceCount: 0 });
+    expect(verifiedEditorialPublisherCounts([...sources, {
+      url: "https://news.bloomberglaw.com/litigation/independent-court-report",
+      name: "Bloomberg Law",
+      title: "Abbott’s Elon Musk Records Sought in Election Rival’s Suit",
+      flaggedPrimary: false,
+    }])).toEqual({ sourceCount: 2, primarySourceCount: 0 });
+  });
+
   it("makes corroboration scoring consistent with verified family counts", () => {
     const direct = verifiedEditorialPublisherCounts([
       { url: "https://www.texastribune.org/2026/10/25/example", name: "Texas Tribune", flaggedPrimary: false },

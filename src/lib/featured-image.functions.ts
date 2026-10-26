@@ -282,7 +282,21 @@ export function newsroomAbstractPolicyVisualSubject(row: Pick<ArticleRow, "slug"
         scene: "An editorial documentary photograph of an anonymous researcher's neutral paper-document workspace, focusing on a realistic open blank campaign-finance disclosure binder, multiple white transaction ledger sheets with ALL writing and numbers completely out of focus, a small calculator and plain pencil, one clipped stack of reports, and a closed manila folder. The physical report-reading materials fill the frame and look naturally used, with sunlight and subtle office imperfections. No politicians, parties, campaign colors, logos, invented donor names, fabricated dollar figures, legible contribution amounts, real seals, logos, graph captions, electronic screens or staged official hearing. This illustrates the public process of researching disclosed campaign finance reports; it is not a reproduction of any real report.",
       }
     : undefined;
-  const assignment = visualAssignments[row.slug] ?? reserveLegislativeProcess ?? reserveRulemaking ?? reserveOpenMeetings ?? reserveCanvass ?? reserveCampaignFinance;
+  // The October 19 public-records lawsuit recovered from the newsroom had
+  // repeatedly failed vision checks because a generic courthouse omits the
+  // defining disputed object: redacted government correspondence. Prefer a
+  // truthful symbolic records-inspection setting instead of inventing a photo
+  // of a candidate, the actual emails, the court hearing or claimed evidence.
+  const publicRecordsEmailsSuit = /\b(?:hinojosa|abbott)\b/i.test(row.title)
+    && /\bmusk\b/i.test(row.title)
+    && /\b(?:emails?|communications?|records?)\b/i.test(row.title)
+    && /\b(?:sues?|lawsuit|seeks?|requests?)\b/i.test(row.title)
+    ? {
+        domain: "politics" as Domain,
+        scene: "A truthful, photorealistic, illustrative Texas public-records inspection scene. FOREGROUND must clearly show a thick anonymized stack of photocopied email correspondence pages, physical black redaction bars across sections of the pages, blank or completely unreadable header areas, a plain manila public-records folder, a paper document review checklist with no readable writing, and an ordinary pen on a realistic desk. Distinct stacks of email correspondence and visibly redacted passages must dominate the frame, not courthouse architecture, a gavel, voting booth, Capitol exterior or campaign material. All real and invented names, email addresses, dates and text must be completely unreadable. NO actual Hinojosa, Abbott, Musk, recognizable person, fabricated real-world document, fake lawsuit filing, agency seal, news headline, logo, or simulated historical event. This is an explicitly representative records-review illustration, NOT the actual emails or an event photograph.",
+      }
+    : undefined;
+  const assignment = visualAssignments[row.slug] ?? reserveLegislativeProcess ?? reserveRulemaking ?? reserveOpenMeetings ?? reserveCanvass ?? reserveCampaignFinance ?? publicRecordsEmailsSuit;
   if (!assignment) return subject;
   return {
     ...subject,

@@ -22,6 +22,7 @@ type MembershipRow = { cluster_id: string; feed_item_id: number; is_primary_sour
 type ExistingCandidateRow = { cluster_id: string; editorial_score: number; score_breakdown: unknown; status: string };
 type FeedScoreRow = {
   id: number;
+  title: string | null;
   source: string | null;
   link: string | null;
   pillar_slug: string | null;
@@ -88,7 +89,7 @@ async function handler() {
   if (feedIds.length) {
     const { data: feedData, error: feedError } = await newsroomDb
       .from("texas_news_feed")
-      .select("id,source,link,pillar_slug,texas_relevance_score,source_reputation_score,viral_score,trend_velocity,pub_date,created_at")
+      .select("id,title,source,link,pillar_slug,texas_relevance_score,source_reputation_score,viral_score,trend_velocity,pub_date,created_at")
       .in("id", feedIds);
     if (feedError) return Response.json({ ok: false, error: feedError.message }, { status: 500 });
     feedRows = (feedData ?? []) as FeedScoreRow[];
@@ -111,6 +112,7 @@ async function handler() {
       members.map((member) => ({
         url: feedById.get(member.feed_item_id)?.link,
         name: feedById.get(member.feed_item_id)?.source,
+        title: feedById.get(member.feed_item_id)?.title,
         flaggedPrimary: member.is_primary_source,
       })),
     );

@@ -44,6 +44,29 @@ describe("newsroom publication preflight", () => {
     ])).toBe(true);
   });
 
+  it("does not treat a KUT story republished by Texas Standard as a second original report", () => {
+    const headline = "As early voting begins in Texas, Gov. Abbott’s challenger Gina Hinojosa sues over Musk emails";
+    const kut = {
+      ...source("https://www.kut.org/politics/2026-10-19/gina-hinojosa-lawsuit-greg-abbott-elon-musk-emails"),
+      title: headline,
+      source: "KUT 90.5 — Austin",
+    };
+    const standard = {
+      ...source("https://texasstandard.org/stories/as-early-voting-begins-in-texas-gov-abbotts-challenger-gina-hinojosa-sues-over-musk-emails/"),
+      title: headline,
+      source: "Texas Standard",
+    };
+    const independent = {
+      ...source("https://news.bloomberglaw.com/litigation/musks-communications-with-texas-governor-sought-in-new-suit"),
+      title: "Abbott’s Elon Musk Records Sought in Election Rival’s Suit",
+      source: "Bloomberg Law",
+    };
+    expect(newsroomHasPublisherDiversity([kut, standard])).toBe(false);
+    expect(newsroomHasPublisherDiversity([kut, standard, independent])).toBe(true);
+    expect(newsroomHasPublisherDiversity([kut, independent])).toBe(true);
+    expect(uniquePacketSources([kut, standard])).toHaveLength(2); // retain cited copies for audit, do not pretend independent
+  });
+
   it("excludes Google News discovery links from independent source corroboration", () => {
     const singlePublisherAndDiscovery = [
       source("https://www.kxan.com/politics/story"),
