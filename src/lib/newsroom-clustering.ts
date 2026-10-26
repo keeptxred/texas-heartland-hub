@@ -46,13 +46,28 @@ export function storyTokens(title: string): Set<string> {
 
 export function deterministicStorySimilarity(a: ClusterableFeedItem, b: ClusterableFeedItem): number {
   if (a.feedItemId === b.feedItemId) return 1;
-  if (a.pillarSlug && b.pillarSlug && a.pillarSlug !== b.pillarSlug) return 0;
   const hoursApart = Math.abs(Date.parse(a.observedAt) - Date.parse(b.observedAt)) / 3_600_000;
   if (!Number.isFinite(hoursApart) || hoursApart > 36) return 0;
 
   const aTokens = storyTokens(a.normalizedTitle);
   const bTokens = storyTokens(b.normalizedTitle);
   if (aTokens.size < 3 || bTokens.size < 3) return 0;
+
+  // Texas primary agencies and independent newsrooms may file the *identical*
+  // observed event under different editorial categories. Refusing to cluster
+  // exact, detailed reports merely because of category assignment discards
+  // direct primary records and independently reported evidence.
+  //
+  // This is a narrow exception, NOT cross-topic fuzzy merging: both headlines
+  // must be byte-for-byte equal after whitespace normalization, sufficiently
+  // specific, and observed within the existing 36-hour window. Short recurring
+  // headlines ("latest appointments", "election updates") still stay separate.
+  // Downstream primary-source, publisher-family and evidence gates are unchanged.
+  if (a.pillarSlug && b.pillarSlug && a.pillarSlug !== b.pillarSlug) {
+    const leftTitle = a.normalizedTitle.trim().replace(/\s+/g, " ");
+    const rightTitle = b.normalizedTitle.trim().replace(/\s+/g, " ");
+    if (leftTitle !== rightTitle || leftTitle.length < 55 || aTokens.size < 7) return 0;
+  }
   const intersection = [...aTokens].filter((token) => bTokens.has(token)).length;
   if (intersection < 3) return 0;
   const union = new Set([...aTokens, ...bTokens]).size;
