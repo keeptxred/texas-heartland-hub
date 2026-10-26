@@ -62,3 +62,29 @@ test("report includes a unique monthly marker and requires human verification", 
   assert.match(report.markdown,/law-review:2026-10/);
   assert.match(report.markdown,/No legal text, source citations, published dates, or reviewed dates were changed automatically/);
 });
+
+test("flags completed election calendars at the November review before 180 days pass", () => {
+  const election = inventoryAuthorityFiles(root).find((record) => record.slug === "election-law");
+  assert.ok(election, "Current election authority must remain in inventory");
+  assert.ok(election.calendarEvents.includes("2026-11-03"));
+  assert.equal(reviewQueue([election], new Date("2026-10-26T14:00:00Z"))[0].reviewNeeded, false);
+  const due = reviewQueue([election], new Date("2026-11-20T14:00:00Z"))[0];
+  assert.equal(due.reviewNeeded, true);
+  assert.match(due.reason, /election-specific dates have passed/);
+  assert.match(due.reason, /2026-11-03/);
+  assert.ok(due.ageDays < REVIEW_AGE_DAYS);
+  const refreshed = { ...election, updated: "2026-11-19" };
+  assert.equal(reviewQueue([refreshed], new Date("2026-11-20T14:00:00Z"))[0].reviewNeeded, false);
+  assert.equal(election.updated, "2026-09-06");
+});
+
+test("a new date-specific election guide enters monthly review automatically", () => {
+  const sample = [
+    'slug: "sample-new-election"',
+    'updated: "2026-09-01"',
+    'framework: ["For the November 3, 2026 election, consult the official calendar."]',
+  ].join("\n");
+  const record = parseAuthority(sample, "new.ts");
+  assert.deepEqual(record.calendarEvents, ["2026-11-03"]);
+  assert.equal(reviewQueue([record], new Date("2026-11-20T14:00:00Z"))[0].reviewNeeded, true);
+});
