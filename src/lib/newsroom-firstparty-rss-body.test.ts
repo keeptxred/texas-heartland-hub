@@ -49,6 +49,10 @@ describe("genuine original-publisher RSS source evidence", () => {
     expect(ingestion).toContain("extractFirstPartyRssArticleBody(block, fallbackSource, link)");
     expect(ingestion).toContain("...(embeddedArticle ? { extracted_body: embeddedArticle } : {})");
     expect(ingestion).toContain("ignoreDuplicates: true");
+    expect(ingestion).toContain('const missingOriginalBodies = rows');
+    expect(ingestion).toContain('.is("extracted_body", null)');
+    expect(ingestion).toContain('.slice(0, 12)');
+    expect(ingestion).toContain("rssBodiesRecovered");
     const preflight = readFileSync("src/lib/newsroom-publication-preflight.ts", "utf8");
     expect(preflight).toContain("newsroomHasPublisherDiversity");
     const publisher = readFileSync("src/routes/api/public/hooks/generate-newsroom.ts", "utf8");
