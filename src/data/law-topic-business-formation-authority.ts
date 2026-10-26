@@ -32,7 +32,7 @@ export const BUSINESS_FORMATION_LLC_LAW_TOPIC: LawTopic = {
     "Section 3.002 distinguishes nonfiling entity formation requirements.",
     "Chapter 4 governs submission, signatures and effective dates of many business-entity filings.",
     "Section 5.201 generally requires filing entities and registered foreign filing entities to maintain a registered agent and registered office in Texas.",
-    "Under Section 5.201(b), a Texas resident individual agent must consent in writing or electronically, and a filing LLC cannot designate itself as its own registered agent; the office needs a serviceable physical address."
+    "Under Section 5.201(b), a Texas resident individual agent must consent in writing or electronically, and a filing LLC cannot designate itself as its own registered agent; the office needs a serviceable physical address.",
     "Business Organizations Code Chapter 101 contains LLC-specific rules for members, managers and company agreements.",
     "Secretary of State Form 205 is used for domestic LLC formation; Form 201 is for a Texas for-profit corporation.",
     "Secretary of State entity formation is legally separate from tax permits, franchise tax, industry licenses and contracts.",
