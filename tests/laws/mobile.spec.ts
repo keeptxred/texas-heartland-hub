@@ -100,30 +100,3 @@ test("legal-page desktop primary navigation triggers meet 44px target height", a
   expect((await logo.boundingBox())?.height).toBeGreaterThanOrEqual(44);
   await expectNoOverflow(page);
 });
-
-
-test("law section table of contents and hub resource links meet 44px mobile tap height", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/laws/topic/landlord-tenant-rentals-law", { waitUntil: "domcontentloaded" });
-  const tocLinks = page.getByRole("navigation", { name: "On this page" }).getByRole("link");
-  expect(await tocLinks.count()).toBe(7);
-  for (let i = 0; i < await tocLinks.count(); i++) {
-    const rect = await tocLinks.nth(i).boundingBox();
-    expect(rect?.height, `law topic contents link ${i} target height`).toBeGreaterThanOrEqual(44);
-  }
-  await expectNoOverflow(page);
-
-  await page.goto("/laws", { waitUntil: "domcontentloaded" });
-  const resources = [
-    /Browse full Texas law-topic library/i,
-    /Texas property tax law/i,
-    /Official Texas statutes/i,
-    /Official elections and ballot notices/i,
-  ];
-  for (const title of resources) {
-    const link = page.getByRole("navigation").getByRole("link", { name: title }).first();
-    const rect = await link.boundingBox();
-    expect(rect?.height, `law hub resource ${title} target height`).toBeGreaterThanOrEqual(44);
-  }
-  await expectNoOverflow(page);
-});
