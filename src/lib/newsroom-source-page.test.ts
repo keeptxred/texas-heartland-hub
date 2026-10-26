@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
+  extractNewsroomArticleJsonLd,
   extractReadableNewsroomHtml,
   isNewsroomSourceFetchCoolingDown,
   newsroomHydrationPriority,
@@ -143,4 +144,49 @@ describe("newsroom source-page enrichment", () => {
     expect(extractReadableNewsroomHtml(html)).toBeNull();
     expect(looksSyntheticNewsroomText("RAW SOURCE PACKET stuff")).toBe(true);
   });
+  it("recovers full publisher NewsArticle JSON-LD when the rendered article shell is short", () => {
+    const full = "Local Texas officials described what the public record confirmed and what is still unresolved. ".repeat(65);
+    const structured = JSON.stringify({ "@context": "https://schema.org", "@type": "NewsArticle", articleBody: full });
+    const html = `<html><body><article><h1>Recent Texas story</h1><p>${"Brief preview. ".repeat(55)}</p></article><script type="application/ld+json">${structured}</script></body></html>`;
+    expect(full.length).toBeGreaterThan(5_000);
+    const result = extractReadableNewsroomHtml(html);
+    expect(result).toContain("Local Texas officials described");
+    expect(result?.length).toBeGreaterThan(5_000);
+    expect(result).not.toContain("Brief preview.");
+  });
+
+  it("handles nested schema.org graph without treating a website description as article evidence", () => {
+    const report = "Texas state agency records describe the published action and its statutory filing procedures. ".repeat(60);
+    const html = `<script data-id="publisher" type='application/ld+json'>${JSON.stringify({
+      "@context": "https://schema.org",
+      "@graph": [
+        { "@type": "WebSite", description: "This page is full of trustworthy facts. ".repeat(350) },
+        { "@type": ["Article", "NewsArticle"], articleBody: report },
+      ],
+    })}</script>`;
+    expect(extractNewsroomArticleJsonLd(html)).toContain("Texas state agency records");
+    expect(extractReadableNewsroomHtml(html)).not.toContain("This page is full of trustworthy facts");
+  });
+
+  it("refuses to invent research evidence from site descriptions or malformed structured data", () => {
+    const onlyDescription = `<script type="application/ld+json">${JSON.stringify({
+      "@type": "WebPage", description: "Generic site boilerplate. ".repeat(400),
+    })}</script>`;
+    expect(extractNewsroomArticleJsonLd(onlyDescription)).toBeNull();
+    expect(extractReadableNewsroomHtml(onlyDescription)).toBeNull();
+    expect(extractNewsroomArticleJsonLd('<script type="application/ld+json">{broken</script>')).toBeNull();
+    expect(extractNewsroomArticleJsonLd(`<script type="application/ld+json">${JSON.stringify({
+      "@type": "NewsArticle", articleBody: "MULTI-SOURCE STORY PACKET. " + "fabricated evidence ".repeat(700),
+    })}</script>`)).toBeNull();
+  });
+
+  it("keeps the existing main-word and independent publisher safety checks separate from extraction", () => {
+    const packetBuilder = readFileSync("src/routes/api/public/hooks/build-newsroom-research-packets.ts", "utf8");
+    const publisher = readFileSync("src/routes/api/public/hooks/generate-newsroom.ts", "utf8");
+    expect(packetBuilder).toContain("fetchReadableNewsroomSource(feed.link)");
+    expect(publisher).toContain("newsroomHasPublisherDiversity(sources)");
+    expect(publisher).toContain("researchPacketEvidenceChars(packetRow.packet_json)");
+    expect(publisher).toContain("if (!preparedImage.ok || !preparedImage.url || !preparedImage.imageValidationNote)");
+  });
+
 });
