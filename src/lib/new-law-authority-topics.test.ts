@@ -24,6 +24,21 @@ describe("new Texas law authority topics", () => {
     expect(topic.related.some((item) => item.href === "/laws")).toBe(true);
     expect(topic.related.some((item) => item.href === "/laws/topics")).toBe(true);
   });
+  it("distinguishes the jurisdictional 180-day TWC wage-claim period from other remedies", () => {
+    const topic = EMPLOYMENT_WORKPLACE_LAW_TOPIC;
+    const framework = topic.framework.join(" ");
+    const rules = topic.keyRules.join(" ");
+    expect(framework).toContain("Section 61.051(c)");
+    expect(framework).toContain("180th day");
+    expect(framework).toContain("jurisdictional");
+    expect(framework).toContain("federal wage enforcement");
+    expect(rules).toContain("Section 61.051(c)");
+    expect(topic.questions.some((entry) =>
+      entry.q.includes("Payday Law wage claim") &&
+      entry.a.includes("180th day") &&
+      entry.a.includes("due for payment")
+    )).toBe(true);
+  });
   it("keeps law topic slugs unique for routes, canonicals and sitemap discovery", () => {
     const slugs = LAW_TOPICS.map((topic) => topic.slug);
     expect(new Set(slugs).size).toBe(slugs.length);
