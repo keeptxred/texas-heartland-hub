@@ -53,7 +53,7 @@ export function LawTopicPage({ topic }: { topic: LawTopic }) {
             ["Official sources", "#law-sources"],
             ["Related guides", "#law-related"],
           ].map(([name, href]) => (
-            <li key={href}><a href={href} className="inline-block rounded py-1 font-semibold text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">{name} →</a></li>
+            <li key={href}><a href={href} className="inline-flex min-h-11 items-center rounded px-3 py-2 font-semibold text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">{name} →</a></li>
           ))}
         </ul>
       </nav>
