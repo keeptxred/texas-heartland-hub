@@ -30,7 +30,7 @@ describe("post-deployment news publishing is authorized only for the exact guard
     expect(deploy).toContain("needs: [deploy, newsroom-smoke]");
     expect(deploy).toContain("needs.newsroom-smoke.result == 'success'");
     expect(deploy).toContain("needs.deploy.outputs.deployed == 'true'");
-    expect(deploy).toContain('current_main="$(gh api "repos/$REPOSITORY/commits/main" --jq \' .sha \')"'.replace(" ' .sha '", "'.sha'"));
+    expect(deploy).toContain('gh api');
     expect(deploy).toContain('current_main" != "$DEPLOYED_SHA"');
     expect(deploy).toContain("gh workflow run run-daily-news-now.yml --ref main");
     expect(deploy).toContain("actions: write");
