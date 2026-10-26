@@ -198,28 +198,28 @@ export function CornerstoneGuidePage({ guide }: { guide: CornerstoneGuide }) {
     <article className="mx-auto max-w-4xl px-4 py-14">
       <nav
         aria-label="Breadcrumb"
-        className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground mb-6"
+        className="mb-6 flex flex-wrap items-center gap-1 text-[11px] uppercase tracking-[0.22em] text-muted-foreground"
       >
         {lawMeta ? (
           <>
-            <Link to="/laws" className="hover:text-primary">
+            <Link to="/laws" className="inline-flex min-h-11 items-center rounded px-2 hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
               Texas Laws
             </Link>
-            <span className="mx-2">/</span>
+            <span className="mx-1" aria-hidden="true">/</span>
             <span>{LAW_TOPICS[lawMeta.topic].label}</span>
           </>
         ) : (
           <>
-            <Link to="/topics" className="hover:text-primary">
+            <Link to="/topics" className="inline-flex min-h-11 items-center rounded px-2 hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
               Topics
             </Link>
-            <span className="mx-2">/</span>
-            <a href={guide.pillarHref} className="hover:text-primary">
+            <span className="mx-1" aria-hidden="true">/</span>
+            <a href={guide.pillarHref} className="inline-flex min-h-11 items-center rounded px-2 hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
               {guide.pillarLabel}
             </a>
           </>
         )}
-        <span className="mx-2">/</span>
+        <span className="mx-1" aria-hidden="true">/</span>
         <span className="text-primary">Guide</span>
       </nav>
 
@@ -325,8 +325,8 @@ export function CornerstoneGuidePage({ guide }: { guide: CornerstoneGuide }) {
           <h2 className="font-display text-xl tracking-tight">Understand the controlling law</h2>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">This practical guide belongs to the larger Texas legal framework. Review the underlying statute, primary sources and related legal issues before relying on a general explanation.</p>
           <div className="mt-3 flex flex-wrap gap-4 text-sm font-semibold">
-            <a className="text-primary underline underline-offset-4" href={`/laws/topic/${topicAuthority.slug}`}>{topicAuthority.title} →</a>
-            <Link className="text-primary underline underline-offset-4" to="/laws/topics">Browse all legal topics →</Link>
+            <a className="inline-flex min-h-11 items-center rounded px-2 text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary" href={`/laws/topic/${topicAuthority.slug}`}>{topicAuthority.title} →</a>
+            <Link className="inline-flex min-h-11 items-center rounded px-2 text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary" to="/laws/topics">Browse all legal topics →</Link>
           </div>
         </nav>
       ) : null}
@@ -355,7 +355,7 @@ export function CornerstoneGuidePage({ guide }: { guide: CornerstoneGuide }) {
                   href={source.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary underline underline-offset-4"
+                  className="inline-flex min-h-11 items-center rounded px-2 py-2 text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
                 >
                   {source.label}
                 </a>
@@ -372,7 +372,7 @@ export function CornerstoneGuidePage({ guide }: { guide: CornerstoneGuide }) {
           <h2 className="font-display text-2xl tracking-tight">Continue this topic</h2>
           <div className="mt-4 flex flex-wrap gap-x-5 gap-y-3 text-sm font-semibold">
             {publicRelated.map((item) => (
-              <a key={item.href} href={item.href} className="text-primary hover:underline">
+              <a key={item.href} href={item.href} className="inline-flex min-h-11 items-center rounded px-2 text-primary hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
                 {item.label} →
               </a>
             ))}
