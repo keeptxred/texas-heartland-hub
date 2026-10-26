@@ -66,6 +66,20 @@ describe("new Texas law authority topics", () => {
     )).toBe(true);
   });
 
+  it("treats the September 2025 child support net-resource cap as an adjustable guideline, not a support ceiling", () => {
+    const topic = FAMILY_CUSTODY_CHILD_SUPPORT_LAW_TOPIC;
+    const framework = topic.framework.join(" ");
+    expect(framework).toContain("Section 154.125(a-1)");
+    expect(framework).toContain("September 1, 2025");
+    expect(framework).toContain("$11,700");
+    expect(framework).toContain("Section 154.126");
+    expect(framework).toContain("not a universal ceiling");
+    expect(topic.questions.some((q) => q.a.includes("$11,700") && q.a.includes("Section 154.126"))).toBe(true);
+    expect(topic.sources.some((s) => s.url === "https://csapps.oag.texas.gov/system/files/2025-08/Final_REVISED_2025_Tax_Charts.pdf")).toBe(true);
+    expect(topic.updated).toBe("2026-10-23");
+    expect(topic.published).toBe("2026-10-23");
+  });
+
   it("keeps DTPA pre-suit notice distinct from suit limitations and narrow delay extension", () => {
     const guide = CONSUMER_PROTECTION_LAW_TOPIC;
     const framework = guide.framework.join(" ");
