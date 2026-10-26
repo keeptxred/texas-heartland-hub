@@ -39,6 +39,17 @@ describe("new Texas law authority topics", () => {
       entry.a.includes("due for payment")
     )).toBe(true);
   });
+  it("distinguishes Texas divorce waiting period and family-violence exceptions from child-only cases", () => {
+    const text = FAMILY_CUSTODY_CHILD_SUPPORT_LAW_TOPIC.framework.join(" ");
+    expect(text).toContain("Section 6.702(a)");
+    expect(text).toContain("60th day");
+    expect(text).toContain("Section 6.702(c)");
+    expect(text).toContain("family-violence");
+    expect(FAMILY_CUSTODY_CHILD_SUPPORT_LAW_TOPIC.questions.some((entry) =>
+      entry.q.includes("60-day waiting period") &&
+      entry.a.includes("not a guarantee")
+    )).toBe(true);
+  });
   it("keeps law topic slugs unique for routes, canonicals and sitemap discovery", () => {
     const slugs = LAW_TOPICS.map((topic) => topic.slug);
     expect(new Set(slugs).size).toBe(slugs.length);
