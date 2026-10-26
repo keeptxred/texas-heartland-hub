@@ -2,8 +2,6 @@ import { Link } from "@tanstack/react-router";
 import { LegalHelpResources } from "@/components/laws/legal-help-resources";
 import type { LawTopic } from "@/data/law-topics";
 import { buildSeo, SITE_URL } from "@/lib/seo";
-import { publicSupportingGuidesForAuthority } from "@/lib/law-authority-crosslinks";
-import { publicEditorialArticlesForLawTopic } from "@/lib/editorial-law-authority-links";
 
 export function lawTopicHead(topic: LawTopic) {
   const path = `/laws/topic/${topic.slug}`;
@@ -20,9 +18,14 @@ export function lawTopicHead(topic: LawTopic) {
   };
 }
 
-export function LawTopicPage({ topic }: { topic: LawTopic }) {
-  const supportingGuides = publicSupportingGuidesForAuthority(topic.slug);
-  const editorials = publicEditorialArticlesForLawTopic(topic.slug);
+type PublicSupportingLawGuide = { slug: string; title: string; description: string; href: string };
+type PublicLawEditorial = { slug: string; title: string; dek: string; href: string };
+
+export function LawTopicPage({ topic, supportingGuides, editorials }: {
+  topic: LawTopic;
+  supportingGuides: PublicSupportingLawGuide[];
+  editorials: PublicLawEditorial[];
+}) {
   return (
     <article className="mx-auto max-w-4xl px-4 py-14 sm:px-6">
       <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-1 text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
