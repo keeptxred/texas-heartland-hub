@@ -1,5 +1,5 @@
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
-import candidates from "@/data/elections/2026/candidates.json";
+import { getCandidateRouteMetadata } from "@/lib/elections/candidate-route-metadata.functions";
 import {
   CandidateBiographySection,
   CandidateCampaignLinks,
@@ -25,30 +25,16 @@ import {
 import { ELECTION_ROUTES } from "@/lib/elections";
 import { formatElectionTitle } from "@/lib/elections/seo";
 import { getFeaturedCandidateProfile } from "@/lib/elections/featuredCandidateProfiles";
-import { findCandidateStoredSlug, candidateSeoSlug } from "@/lib/elections/seoSlugs";
+import { candidateSeoSlug } from "@/lib/elections/seoSlugs";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { electionSlugs, isElectionSlug } from "@/types/elections";
 
 export const Route = createFileRoute("/elections/candidates_/$candidateSlug")({
-  beforeLoad: ({ params }) => {
-    const storedSlug = findCandidateStoredSlug(params.candidateSlug, candidates);
-    const record = storedSlug
-      ? candidates.find(
-          (item) =>
-            item.slug === storedSlug &&
-            item.publicationStatus === "published" &&
-            item.verificationStatus === "verified",
-        )
-      : undefined;
-
-    // Do not render a 200-status "candidate not found" shell. Google correctly
-    // treats those as soft 404s. Unknown, unpublished, and unverified candidate
-    // URLs must be real 404 responses until a publishable record exists.
-    if (!storedSlug || !record || !isElectionSlug(storedSlug)) {
-      throw notFound();
-    }
-
-    const canonicalSlug = candidateSeoSlug(storedSlug);
+  loader: async ({ params }) => {
+    const detail = await getCandidateRouteMetadata({ data: { slug: params.candidateSlug } });
+    // Keep real 404 responses for unpublished, unverified and unknown routes.
+    if (!detail || !isElectionSlug(detail.storedSlug)) throw notFound();
+    const canonicalSlug = candidateSeoSlug(detail.storedSlug);
     if (params.candidateSlug !== canonicalSlug) {
       throw redirect({
         to: "/elections/candidates/$candidateSlug",
@@ -57,19 +43,12 @@ export const Route = createFileRoute("/elections/candidates_/$candidateSlug")({
         statusCode: 301,
       });
     }
+    return detail;
   },
-  head: ({ params }) => {
-    const storedSlug = findCandidateStoredSlug(params.candidateSlug, candidates);
-    const record = storedSlug
-      ? candidates.find(
-          (item) =>
-            item.slug === storedSlug &&
-            item.publicationStatus === "published" &&
-            item.verificationStatus === "verified",
-        )
-      : undefined;
-    const validSlug = Boolean(storedSlug && isElectionSlug(storedSlug));
-    const indexable = validSlug && Boolean(record);
+  head: ({ params, loaderData }) => {
+    const storedSlug = loaderData?.storedSlug;
+    const record = loaderData?.record;
+    const indexable = Boolean(storedSlug && record);
     const canonicalSlug = storedSlug ? candidateSeoSlug(storedSlug) : params.candidateSlug;
     const canonicalUrl = `https://keeptxred.com/elections/candidates/${canonicalSlug}`;
     const recordName =
@@ -192,21 +171,9 @@ export const Route = createFileRoute("/elections/candidates_/$candidateSlug")({
 });
 
 function ElectionCandidateDetailRoute() {
-  const { candidateSlug } = Route.useParams();
-  const storedSlug = findCandidateStoredSlug(candidateSlug, candidates);
-  const validSlug = Boolean(storedSlug && isElectionSlug(storedSlug));
-  const indexable =
-    validSlug &&
-    Boolean(
-      storedSlug &&
-        candidates.some(
-          (item) =>
-            item.slug === storedSlug &&
-            item.publicationStatus === "published" &&
-            item.verificationStatus === "verified",
-        ),
-    );
-  const canonicalSlug = storedSlug ? candidateSeoSlug(storedSlug) : candidateSlug;
+  const { storedSlug, record } = Route.useLoaderData();
+  const indexable = Boolean(storedSlug && record);
+  const canonicalSlug = candidateSeoSlug(storedSlug);
 
   return (
     <ElectionRepositoryProvider>
