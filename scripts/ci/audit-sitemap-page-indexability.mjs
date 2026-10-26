@@ -38,6 +38,7 @@ const LEGACY_REDIRECTS = new Map([
   ["/news/live-2026-07-24-san-antonio-residents-seek-organized-opposition-to-flock-safety-survei-hz11ng", "/news/2026-08-09-houston-flock-camera-backlash"],
   // Cross-site handoff tracked in the historical registry, outside article_slug_redirects.
   ["/news/texas-home-equity-heloc-guide", "https://texasdefined.com/article/texas-home-equity-heloc-guide"],
+  ["/news/2026-08-09-canyon-lake-full-capacity-recovery", "https://texasdefined.com/news/2026-08-10-canyon-lake-full-capacity-recovery"],
   ["/hubs", "/topics"],
   ["/hubs/texas-policy-law", "/laws"],
   ["/hubs/texas-politics", "/texas-politics"],
