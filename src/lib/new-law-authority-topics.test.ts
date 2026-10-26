@@ -24,6 +24,21 @@ describe("new Texas law authority topics", () => {
     expect(topic.related.some((item) => item.href === "/laws")).toBe(true);
     expect(topic.related.some((item) => item.href === "/laws/topics")).toBe(true);
   });
+  it("distinguishes HB 3297 noncommercial safety repeal from emissions, commercial and registration duties", () => {
+    const guide = DRIVING_TRAFFIC_INSURANCE_LAW_TOPIC;
+    const text = guide.framework.join(" ") + " " + guide.keyRules.join(" ");
+    expect(text).toContain("House Bill 3297");
+    expect(text).toContain("January 1, 2025");
+    expect(text).toContain("noncommercial vehicles");
+    expect(text).toContain("emissions");
+    expect(text).toContain("commercial");
+    expect(text).toContain("inspection-program replacement fee");
+    expect(guide.sources.some(s => s.url ===
+      "https://www.dps.texas.gov/news/vehicle-safety-inspection-program-changes-now-effect")).toBe(true);
+    expect(guide.published).toBe("2026-10-23");
+    expect(guide.updated).toBe("2026-10-23");
+  });
+
   it("distinguishes the jurisdictional 180-day TWC wage-claim period from other remedies", () => {
     const topic = EMPLOYMENT_WORKPLACE_LAW_TOPIC;
     const framework = topic.framework.join(" ");
