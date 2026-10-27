@@ -14,6 +14,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 # Archive staging must never overlap a second export/retirement sequence.
 concurrency:
@@ -51,3 +52,12 @@ jobs:
           node --check scripts/data/export-supabase-cold-archives.mjs
       - name: Stage, privately back up, read back, verify, and retire only eligible rows
         run: bun scripts/ops/retire-verified-supabase-cold-records.mjs
+      - name: Report archive workflow failure on existing capacity issue
+        if: ${{ failure() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          # Do not echo any service-role secret, database rows or private
+          # manifest content. Expose only the authenticated Actions run URL.
+          gh issue comment 2762 --repo keeptxred/texas-heartland-hub --body "Verified Supabase cold-retention job failed closed: https://github.com/keeptxred/texas-heartland-hub/actions/runs/${GITHUB_RUN_ID} (attempt ${GITHUB_RUN_ATTEMPT}). Review the failing step; do not force source deletion or bypass private Storage readback checks. All failed staging/export attempts remain protected."
