@@ -71,6 +71,27 @@ describe("new Texas law authority topics", () => {
     expect(topic.updated).toBe("2026-10-23");
   });
 
+  it("keeps the Chapter 21 TWC 180/300 day discrimination complaint distinction separate from wages", () => {
+    const guide = EMPLOYMENT_WORKPLACE_LAW_TOPIC;
+    const framework = guide.framework.join(" ");
+    const rules = guide.keyRules.join(" ");
+    expect(framework).toContain("Section 21.202(a)");
+    expect(framework).toContain("subsection (a-1)");
+    expect(framework).toContain("within 180 days");
+    expect(framework).toContain("300 days");
+    expect(framework).toContain("Payday Law wage-claim deadline");
+    expect(rules).toContain("Section 21.202");
+    expect(guide.questions.some((item) =>
+      item.q.includes("sexual-harassment filing period") &&
+      item.a.includes("300 days") &&
+      item.a.includes("180 days")
+    )).toBe(true);
+    expect(guide.sources.some((source) => source.url ===
+      "https://statutes.capitol.texas.gov/Docs/LA/htm/LA.21.htm")).toBe(true);
+    expect(guide.updated).toBe("2026-10-23");
+    expect(guide.published).toBe("2026-10-23");
+  });
+
   it("separates probate four-year admission exceptions from letters testamentary authority", () => {
     const topic = WILLS_PROBATE_INHERITANCE_LAW_TOPIC;
     const text = topic.framework.join(" ");
