@@ -5,6 +5,24 @@ import { resolvePublicArticleDisplayTitle } from '@/lib/public-article-display-t
 
 const db = supabase as any;
 
+export function hydrateApprovedBillArticleRows(rows: any[]) {
+  return rows
+    .filter((row) => row?.review_status === 'approved')
+    .map((row) => {
+      const nested = row.daily_articles;
+      const article = Array.isArray(nested) ? nested[0] : nested;
+      return article?.id && article?.slug
+        ? {
+            ...article,
+            title: resolvePublicArticleDisplayTitle(article),
+            excerpt: article.dek,
+            relationship_type: row.relationship_type,
+          }
+        : null;
+    })
+    .filter((row) => row?.id);
+}
+
 /**
  * Public bill pages may expose only approved editorial relationships.
  * Official sponsors, actions, committees, and documents continue to use the
@@ -69,20 +87,6 @@ export async function getPublicBillRelations(billId: string) {
     ...base,
     sponsors,
     subjects: subjectRows.map((row: any) => row.bill_subjects).filter(Boolean),
-    articles: articleRelationshipRows
-      .filter((row: any) => row?.review_status === 'approved')
-      .map((row: any) => {
-        const nested = row.daily_articles;
-        const article = Array.isArray(nested) ? nested[0] : nested;
-        return article?.id && article?.slug
-          ? {
-              ...article,
-              title: resolvePublicArticleDisplayTitle(article),
-              excerpt: article.dek,
-              relationship_type: row.relationship_type,
-            }
-          : null;
-      })
-      .filter((row: any) => row?.id),
+    articles: hydrateApprovedBillArticleRows(articleRelationshipRows),
   };
 }
