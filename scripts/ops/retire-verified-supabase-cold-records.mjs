@@ -113,18 +113,21 @@ async function retire(kind, proof) {
     ? 'retire_verified_expired_free_tier_newsroom'
     : 'retire_verified_expired_free_tier_feed';
   const args = kind === 'newsroom'
-    ? {p_manifest_name: proof.manifestName,p_expected_clusters: metrics.rows,
+    ? {p_manifest_name: proof.manifestName,p_expected_clusters: metrics.parentRows,
        p_expected_batches: metrics.batches}
-    : {p_manifest_name: proof.manifestName,p_expected_feed_rows: metrics.rows,
+    : {p_manifest_name: proof.manifestName,p_expected_feed_rows: metrics.parentRows,
        p_expected_batches: metrics.batches};
 
+  // metrics.rows includes archived source + child rows, while these guarded
+  // RPCs explicitly require the number of live parent IDs (clusters/feed).
+  // Passing all archived rows here would reject every nontrivial batch.
   // Each pre-deployed SECURITY DEFINER retirement RPC is granted ONLY to
   // service_role. It locks sources, checks exact archived JSONB parity,
   // publication/soft references and every FK child before transactional
   // deletion. No optional bypass and no direct DELETE permissions here.
   const result = safeResult('Verified ' + kind + ' retirement', await db.rpc(rpc,args));
   const actual = Number(kind === 'newsroom' ? result?.retired_clusters : result?.retired_feed);
-  if (actual !== metrics.rows || result?.storage_manifest !== proof.manifestName) {
+  if (actual !== metrics.parentRows || result?.storage_manifest !== proof.manifestName) {
     throw new Error('Retirement response count/manifest mismatch: ' + kind);
   }
   console.log(JSON.stringify({phase:'retired_verified',kind,rows:actual,manifest:proof.manifestName}));

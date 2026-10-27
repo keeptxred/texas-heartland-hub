@@ -4,7 +4,17 @@
  * This code is deterministic, pure, and can be tested without service keys.
  */
 const PROJECT = 'ftkznprjljkhymknvhye';
-const ALLOWED = new Set(['feed', 'newsroom', 'legislative']);
+const PARENT_TABLE = Object.freeze({
+  feed: 'texas_news_feed',
+  newsroom: 'news_story_clusters',
+  legislative: 'legislative_content_opportunities',
+});
+const CHILD_TABLES = Object.freeze({
+  feed: new Set(['texas_news_feed','news_feed_normalization','newsroom_source_page_fetch_state']),
+  newsroom: new Set(['news_story_clusters','news_publish_candidates','news_research_packets','news_story_cluster_items']),
+  legislative: new Set(['legislative_content_opportunities']),
+});
+const ALLOWED = new Set(Object.keys(PARENT_TABLE));
 const MANIFEST = /^postgres-cold\/\d{4}-\d{2}-\d{2}\/manifest-([0-9a-f]{64})\.json$/;
 const ARCHIVE = /^postgres-cold\/\d{4}-\d{2}-\d{2}\/(feed|newsroom|legislative)-\d+-([0-9a-f]{64})\.ndjson\.gz$/;
 const MAX_OBJECT_BYTES = 45_000_000;
@@ -32,16 +42,18 @@ export function verifyColdArchiveProof(receipt, metadata) {
   const keys = new Set();
   for (const meta of metadata) {
     if (!ALLOWED.has(meta.archive_kind) || !meta.archive_key ||
-        !meta.source_table || typeof meta.record_checksum !== 'string' ||
+        !CHILD_TABLES[meta.archive_kind].has(meta.source_table) || typeof meta.record_checksum !== 'string' ||
         !/^[0-9a-f]{32}$/.test(meta.record_checksum)) {
       throw new Error('Invalid staged archive metadata');
     }
     const key = meta.archive_kind + ':' + meta.archive_key;
     if (keys.has(key)) throw new Error('Duplicate staged archive batch');
     keys.add(key);
-    const value = expected.get(meta.archive_kind) ?? { batches: 0, rows: 0 };
+    const value = expected.get(meta.archive_kind) ?? { batches: 0, rows: 0, parentRows: 0 };
     value.batches++;
-    value.rows += count(meta.record_count, 'record count');
+    const n = count(meta.record_count, 'record count');
+    value.rows += n;
+    if (meta.source_table === PARENT_TABLE[meta.archive_kind]) value.parentRows += n;
     expected.set(meta.archive_kind, value);
   }
 
@@ -65,6 +77,7 @@ export function verifyColdArchiveProof(receipt, metadata) {
     throw new Error('Storage manifest and database staged batch coverage differ');
   }
   for (const [kind, stats] of expected) {
+    if (!stats.parentRows) throw new Error('Missing archived source parent rows: ' + kind);
     const actual = received.get(kind);
     if (!actual || actual.rows !== stats.rows || actual.batches !== stats.batches) {
       throw new Error('Manifest missing or over-reporting ' + kind + ' archive records');

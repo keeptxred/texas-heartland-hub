@@ -20,7 +20,7 @@ const receipt = {
 };
 test('accepts downloaded, SHA-verified complete batch and row coverage', () => {
   const proof = verifyColdArchiveProof(receipt,metadata);
-  assert.deepEqual(proof.byKind, {newsroom:{batches:2,rows:100},feed:{batches:1,rows:42}});
+  assert.deepEqual(proof.byKind, {newsroom:{batches:2,rows:100,parentRows:50},feed:{batches:1,rows:42,parentRows:42}});
 });
 test('rejects a stale or unauthenticated Storage manifest', () => {
   assert.throws(() => verifyColdArchiveProof({...receipt,manifest_sha256:'z'.repeat(64)},metadata),/manifest/);
@@ -34,4 +34,17 @@ test('rejects even small gaps and duplicate batch coverage', () => {
 test('rejects mismatched object hashes and copies of the same path', () => {
   assert.throws(() => verifyColdArchiveProof({...receipt,archive_objects:[{...receipt.archive_objects[0],sha256:'c'.repeat(64)},receipt.archive_objects[1]]},metadata),/SHA-256/);
   assert.throws(() => verifyColdArchiveProof({...receipt,archive_objects:[receipt.archive_objects[0],receipt.archive_objects[0]]},metadata),/duplicate/);
+});
+
+test('requires parent records even if candidate child rows are archived', () => {
+  const childOnly = [
+    {archive_kind:'newsroom',archive_key:'child-one',source_table:'news_publish_candidates',record_count:50,record_checksum:md5},
+  ];
+  const matching = {...receipt,batch_count:1,archive_objects:[
+    {...receipt.archive_objects[0],batches:1,rows:50}
+  ]};
+  assert.throws(() => verifyColdArchiveProof(matching,childOnly),/Missing archived source parent rows/);
+});
+test('rejects cross-kind or unexpected source tables despite matching totals', () => {
+  assert.throws(() => verifyColdArchiveProof(receipt,metadata.map((x,i)=>i===0?{...x,source_table:'texas_news_feed'}:x)),/Invalid staged archive metadata/);
 });
