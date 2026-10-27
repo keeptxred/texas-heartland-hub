@@ -41,4 +41,27 @@ describe("primary-source Texas law procedural safeguards", () => {
     expect(topic.published).toBe("2026-10-23");
     expect(topic.updated).toBe("2026-10-23");
   });
+  it("keeps FinCEN's 2026 domestic-company BOI exemption separate from Texas entity registration", () => {
+    const topic = BUSINESS_FORMATION_LLC_LAW_TOPIC;
+    const text = [...topic.framework, ...topic.keyRules].join(" ");
+    expect(text).toContain("August 11, 2026");
+    expect(text).toContain("August 14");
+    expect(text).toContain("entities created in the United States");
+    expect(text).toContain("foreign-country");
+    expect(text).toContain("U.S. persons");
+    expect(topic.questions.some(({ q, a }) =>
+      q.includes("FinCEN beneficial-ownership") &&
+      a.includes("Texas domestic LLCs") &&
+      a.includes("foreign-country")
+    )).toBe(true);
+    expect(topic.sources.some(({ url }) =>
+      url === "https://www.fincen.gov/boi"
+    )).toBe(true);
+    expect(topic.sources.some(({ url }) =>
+      url.includes("fincen-permanently-ends-beneficial-ownership-reporting")
+    )).toBe(true);
+    expect(topic.updated).toBe("2026-10-23");
+    expect(topic.published).toBe("2026-10-23");
+  });
+
 });
