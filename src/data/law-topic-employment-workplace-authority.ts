@@ -84,6 +84,11 @@ export const EMPLOYMENT_WORKPLACE_LAW_TOPIC: LawTopic = {
       "note": "State employment-discrimination framework and procedures."
     },
     {
+      "label": "Texas Workforce Commission — Employment Discrimination Complaints",
+      "url": "https://www.twc.texas.gov/programs/civil-rights/employment-discrimination",
+      "note": "Current Texas Civil Rights Division intake instructions, employer coverage and complaint submission procedure."
+    },
+    {
       "label": "Texas Labor Code — Chapter 62 (Minimum Wage)",
       "url": "https://statutes.capitol.texas.gov/Docs/LA/htm/LA.62.htm",
       "note": "Texas minimum-wage framework and relationship to federal law."
