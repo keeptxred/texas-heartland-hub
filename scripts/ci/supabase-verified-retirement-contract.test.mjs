@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { describe, it } from 'node:test';
+import { describe, it } from 'vitest';
 import { strict as assert } from 'node:assert';
 const runner = readFileSync('scripts/ops/retire-verified-supabase-cold-records.mjs', 'utf8');
 const exporter = readFileSync('scripts/data/export-supabase-cold-archives.mjs', 'utf8');
