@@ -193,8 +193,8 @@ function LawsHubPage() {
         <p className="text-lg font-serif text-muted-foreground">
           Texas law is one of the most consequential things about living in Texas, and one of the least
           taught. Between the Texas Constitution, the biennial statutes passed by the Legislature, the
-          rules adopted by state agencies, and the ordinances of 254 counties and thousands of cities and
-          special districts, most residents encounter a piece of Texas law every day without recognizing
+          rules adopted by state agencies, municipal ordinances, legally authorized county orders, and
+          special-district rules, most residents encounter a piece of Texas law every day without recognizing
           it as such — the property tax bill, the driver's license renewal, the ballot in March, the
           restaurant that posts a 30.06 sign on the front door. This page is the Keep TX Red index of the
           Texas statutes that matter most, organized so a homeowner, a new resident, a voter, or a small
