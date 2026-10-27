@@ -18,6 +18,9 @@ describe('verified Free Plan retirement invariants', () => {
     assert.match(runner,/verifyColdArchiveProof\(receipt, metadata\)/);
     assert.match(runner,/retire_verified_expired_free_tier_newsroom/);
     assert.match(runner,/retire_verified_expired_free_tier_feed/);
+    assert.match(runner,/p_expected_clusters: metrics.parentRows/);
+    assert.match(runner,/p_expected_feed_rows: metrics.parentRows/);
+    assert.match(runner,/actual !== metrics.parentRows/);
     assert.match(exporter,/VERIFIED_COLD_ARCHIVE_RECEIPT=/);
     assert.match(exporter,/verifyArchiveBlob\(downloaded,slice\)/);
     assert.match(exporter,/storeAndReadBack\(manifestName, manifestBytes/);
