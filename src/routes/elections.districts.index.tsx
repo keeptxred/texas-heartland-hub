@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import racesSnapshot from "@/data/elections/2026/races.json";
+import { getVerifiedDistrictRaceDirectory } from "@/lib/elections/election-district-index.functions";
 import { CitationTrustPanel } from "@/components/authority/CitationTrustPanel";
 import { ElectionLayout, ElectionNavigation } from "@/components/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
@@ -10,17 +10,20 @@ const PAGE_TITLE = formatElectionTitle("Texas Election Districts & 2026 Race Loo
 const WHO_REPRESENTS_ME = "https://wrm.capitol.texas.gov/home";
 const REDISTRICTING = "https://redistricting.capitol.texas.gov/";
 const TEXAS_SENATE_DISTRICTS = [1, 2, 3, 4, 5, 9, 11, 13, 18, 19, 21, 22, 24, 26, 28, 31] as const;
-const VERIFIED_RACES = racesSnapshot.filter((race) => race.publicationStatus === "published" && race.verificationStatus === "verified");
 
-type VerifiedRace = (typeof VERIFIED_RACES)[number];
 
-function raceForDistrict(jurisdictionType: string, districtNumber: number): VerifiedRace | null {
+type VerifiedRace = { slug: string; name: string; jurisdictionType: string; districtNumber: string | null };
+
+function raceForDistrict(jurisdictionType: string, districtNumber: number, verifiedRaces: readonly VerifiedRace[]): VerifiedRace | null {
   const normalizedDistrictNumber = String(districtNumber);
-  return VERIFIED_RACES.find((race) => race.jurisdictionType === jurisdictionType && race.districtNumber === normalizedDistrictNumber) ?? null;
+  return verifiedRaces.find((race) => race.jurisdictionType === jurisdictionType && race.districtNumber === normalizedDistrictNumber) ?? null;
 }
 
 export const Route = createFileRoute("/elections/districts/")({
-  head: () => ({
+  loader: () => getVerifiedDistrictRaceDirectory(),
+  head: ({ loaderData }) => {
+    const VERIFIED_RACES = loaderData ?? [];
+    return ({
     meta: [
       { title: PAGE_TITLE },
       {
@@ -70,7 +73,8 @@ export const Route = createFileRoute("/elections/districts/")({
         },
       }),
     }],
-  }),
+  });
+  },
   component: TexasElectionDistricts,
 });
 
@@ -125,6 +129,7 @@ function DistrictGroup({
   count?: number;
   districts?: readonly number[];
 }) {
+  const verifiedRaces = Route.useLoaderData();
   const districtNumbers = districts ?? Array.from({ length: count ?? 0 }, (_, index) => index + 1);
   return (
     <section>
@@ -132,7 +137,7 @@ function DistrictGroup({
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
         {districtNumbers.map((number) => {
           const districtSlug = `${prefix}-${number}`;
-          const race = raceForDistrict(jurisdictionType, number);
+          const race = raceForDistrict(jurisdictionType, number, verifiedRaces);
           return (
             <div key={number} className="rounded-lg border border-border bg-card p-3 shadow-sm">
               <Link

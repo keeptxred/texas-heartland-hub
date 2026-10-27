@@ -1,13 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import candidatesSnapshot from "@/data/elections/2026/candidates.json";
-import racesSnapshot from "@/data/elections/2026/races.json";
 import { CitationTrustPanel } from "@/components/authority/CitationTrustPanel";
 import { ElectionLayout, ElectionNavigation } from "@/components/elections";
 import { TEXAS_ELECTIONS } from "@/lib/election-calendar";
+import { STATEWIDE_RACES } from "@/lib/elections/2026-statewide-race-definitions";
+import { getVerifiedStatewideRecords } from "@/lib/elections/election-statewide-records.functions";
 import { ELECTION_ROUTES } from "@/lib/elections";
 import { formatElectionTitle } from "@/lib/elections/seo";
 import {
-  certified2026StatewideChoices,
   normalizeOfficialCandidateName,
   OFFICIAL_2026_STATEWIDE_ROSTER_CHECKED,
   OFFICIAL_2026_STATEWIDE_ROSTER_SOURCE,
@@ -16,54 +15,18 @@ import {
 
 const URL = "https://keeptxred.com/elections/statewide";
 const PAGE_TITLE = formatElectionTitle("Texas 2026 Statewide Races & Candidates");
-const STATEWIDE_RACES = [
-  { slug: "2026-us-senate", name: "U.S. Senate" },
-  { slug: "2026-governor", name: "Governor" },
-  { slug: "2026-lieutenant-governor", name: "Lieutenant Governor" },
-  { slug: "2026-attorney-general", name: "Attorney General" },
-  { slug: "2026-comptroller", name: "Comptroller of Public Accounts" },
-  { slug: "2026-land-commissioner", name: "Land Commissioner" },
-  { slug: "2026-agriculture-commissioner", name: "Agriculture Commissioner" },
-  { slug: "2026-railroad-commissioner", name: "Railroad Commissioner" },
-  { slug: "2026-texas-supreme-court-place-1", name: "Texas Supreme Court Place 1" },
-  { slug: "2026-texas-supreme-court-place-2", name: "Texas Supreme Court Place 2" },
-  { slug: "2026-texas-supreme-court-place-7", name: "Texas Supreme Court Place 7" },
-  { slug: "2026-texas-supreme-court-place-8", name: "Texas Supreme Court Place 8" },
-  { slug: "2026-court-of-criminal-appeals-place-3", name: "Court of Criminal Appeals Place 3" },
-  { slug: "2026-court-of-criminal-appeals-place-4", name: "Court of Criminal Appeals Place 4" },
-  { slug: "2026-court-of-criminal-appeals-place-9", name: "Court of Criminal Appeals Place 9" },
-  { slug: "2026-fifteenth-court-chief-justice", name: "Fifteenth Court of Appeals — Chief Justice" },
-  { slug: "2026-fifteenth-court-place-2", name: "Fifteenth Court of Appeals — Place 2" },
-  { slug: "2026-fifteenth-court-place-3", name: "Fifteenth Court of Appeals — Place 3" },
-] as const;
 
-const PUBLISHED_CANDIDATES = candidatesSnapshot.filter((candidate) => candidate.publicationStatus === "published" && candidate.verificationStatus === "verified");
-const CANDIDATE_BY_ID = new Map(PUBLISHED_CANDIDATES.map((candidate) => [candidate.id, candidate] as const));
-const PUBLISHED_RACE_BY_SLUG = new Map(racesSnapshot.filter((race) => race.publicationStatus === "published" && race.verificationStatus === "verified").map((race) => [race.slug, race] as const));
-const STATEWIDE_RECORDS = STATEWIDE_RACES.map((definition) => {
-  const race = PUBLISHED_RACE_BY_SLUG.get(definition.slug);
-  const publishedProfiles = race?.candidateIds.map((id) => CANDIDATE_BY_ID.get(id))
-    .filter((candidate): candidate is (typeof PUBLISHED_CANDIDATES)[number] => Boolean(candidate)) ?? [];
-  // A published profile is not evidence that its candidate qualified for the
-  // November 2026 ballot. Independents can be rejected and write-ins can have
-  // a different status. Begin with the Secretary of State's official roster.
-  const candidates = certified2026StatewideChoices(definition.slug).map((entry) => {
-    const profiles = publishedProfiles.filter(
-      (profile) => normalizeOfficialCandidateName(profile.fullName) === normalizeOfficialCandidateName(entry.name),
-    );
-    // A duplicate name can correspond to separate, conflicting filing statuses.
-    // Show the official name once, but do not link to an ambiguous profile.
-    return { ...entry, verifiedProfile: profiles.length === 1 ? profiles[0] : null };
-  });
-  return { ...definition, race, candidates };
-});
-const verifiedStatewideCount = STATEWIDE_RECORDS.filter((item) => item.race).length;
+
 const calendar2026 = TEXAS_ELECTIONS.filter((item) => item.date.startsWith("2026-"));
 const calendarSource = calendar2026.find((item) => item.source)?.source;
 const calendarVerified = calendar2026.map((item) => item.lastUpdated).sort().at(-1) ?? "Verification pending";
 
 export const Route = createFileRoute("/elections/statewide")({
-  head: () => ({
+  loader: () => getVerifiedStatewideRecords(),
+  head: ({ loaderData }) => {
+    const verifiedStatewideCount = loaderData?.verifiedStatewideCount ?? 0;
+    const STATEWIDE_RECORDS = loaderData?.records ?? [];
+    return ({
     meta: [
       { title: PAGE_TITLE },
       { name: "description", content: "Texas 2026 statewide election candidates and races: U.S. Senate, governor, attorney general, courts and more. Verify your own ballot with Texas election officials." },
@@ -97,11 +60,13 @@ export const Route = createFileRoute("/elections/statewide")({
         })),
       }),
     }],
-  }),
+  });
+  },
   component: TexasStatewideElections,
 });
 
 function TexasStatewideElections() {
+  const { verifiedStatewideCount, records: STATEWIDE_RECORDS } = Route.useLoaderData();
   return (
     <ElectionLayout
       title="Texas 2026 Statewide Election Races & Candidates"

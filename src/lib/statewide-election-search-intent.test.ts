@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 
 describe("statewide Texas election search intent and voter-specific safeguards", () => {
   const source = readFileSync("src/routes/elections.statewide.tsx", "utf8");
+  const projected = readFileSync("src/lib/elections/election-statewide-records.functions.ts", "utf8");
 
   it("uses distinct statewide candidate intent without misleading official-ballot claims", () => {
     expect(source).toContain('formatElectionTitle("Texas 2026 Statewide Races & Candidates")');
@@ -16,8 +17,9 @@ describe("statewide Texas election search intent and voter-specific safeguards",
   });
 
   it("keeps race and candidate rows behind existing verification filters", () => {
-    expect(source).toContain('candidate.publicationStatus === "published" && candidate.verificationStatus === "verified"');
-    expect(source).toContain('race.publicationStatus === "published" && race.verificationStatus === "verified"');
+    expect(projected).toContain('candidate.publicationStatus === "published" && candidate.verificationStatus === "verified"');
+    expect(projected).toContain('race.publicationStatus === "published" && race.verificationStatus === "verified"');
+    expect(source).toContain("loader: () => getVerifiedStatewideRecords()");
     expect(source).toContain('rel: "canonical", href: URL');
   });
 });

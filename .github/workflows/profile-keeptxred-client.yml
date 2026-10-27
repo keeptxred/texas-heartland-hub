@@ -11,6 +11,10 @@ on:
       - "scripts/laws/client-entry-profiler.test.ts"
       - ".github/workflows/profile-keeptxred-client.yml"
       - "vite.config.ts"
+      - "src/routes/elections*.tsx"
+      - "src/lib/elections/*route-metadata.functions.ts"
+      - "src/lib/elections/election-*.functions.ts"
+      - "src/lib/elections/eager-snapshot-boundary.test.ts"
 
 permissions:
   contents: read

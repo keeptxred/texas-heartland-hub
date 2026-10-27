@@ -2,6 +2,8 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
+const server = readFileSync(resolve(process.cwd(), "src/lib/elections/election-district-detail.functions.ts"), "utf8");
+
 const route = readFileSync(
   resolve(process.cwd(), "src/routes/elections.districts.$districtSlug.tsx"),
   "utf8",
@@ -9,9 +11,9 @@ const route = readFileSync(
 
 describe("election district authority template", () => {
   it("uses verified race and candidate records", () => {
-    expect(route).toContain("getPublishedRace");
-    expect(route).toContain('publicationStatus === "published"');
-    expect(route).toContain('verificationStatus === "verified"');
+    expect(route).toContain("getElectionDistrictDetailSnapshot");
+    expect(server).toContain('publicationStatus === "published"');
+    expect(server).toContain('verificationStatus === "verified"');
     expect(route).toContain('to="/elections/candidates/$candidateSlug"');
     expect(route).toContain('to="/elections/races/$raceSlug"');
   });

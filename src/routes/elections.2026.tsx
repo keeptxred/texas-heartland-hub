@@ -1,10 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import candidatesSnapshot from "@/data/elections/2026/candidates.json";
-import racesSnapshot from "@/data/elections/2026/races.json";
 import { ElectionMasterReference } from "@/components/elections/ElectionMasterReference";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { formatElectionTitle } from "@/lib/elections/seo";
 import { ElectionHomePage } from "@/pages/elections";
+import { getElectionCentralPriority } from "@/lib/elections/election-central-priority.functions";
 
 const ELECTION_CENTRAL_URL = "https://keeptxred.com/elections/2026";
 const ELECTION_CENTRAL_NAME = "2026 Texas Election Central";
@@ -13,48 +12,6 @@ const ELECTION_CENTRAL_TITLE = formatElectionTitle(
 );
 const ELECTION_CENTRAL_DESCRIPTION =
   "Track verified 2026 Texas election races, candidate profiles, polls, forecasts, results, key dates, and voting information in Keep TX Red Election Central.";
-
-const PUBLISHED_RACES = racesSnapshot.filter(
-  (race) => race.publicationStatus === "published" && race.verificationStatus === "verified",
-);
-const PUBLISHED_CANDIDATES = candidatesSnapshot.filter(
-  (candidate) =>
-    candidate.publicationStatus === "published" && candidate.verificationStatus === "verified",
-);
-const CANDIDATE_BY_ID = new Map(PUBLISHED_CANDIDATES.map((candidate) => [candidate.id, candidate]));
-
-const PRIORITY_CANDIDATES = [
-  ...new Map(
-    PUBLISHED_RACES.slice(0, 10).flatMap((race) =>
-      race.candidateIds.flatMap((candidateId) => {
-        const candidate = CANDIDATE_BY_ID.get(candidateId);
-        return candidate ? [[candidate.slug, candidate] as const] : [];
-      }),
-    ),
-  ).values(),
-].slice(0, 12);
-
-function districtPathForRaceSlug(slug: string): { slug: string; label: string } | null {
-  const patterns: Array<[RegExp, string, string]> = [
-    [/^2026-us-house-district-(\d{1,2})$/, "congressional-district", "Congressional District"],
-    [/^2026-texas-house-district-(\d{1,3})$/, "texas-house-district", "Texas House District"],
-    [/^2026-texas-senate-district-(\d{1,2})$/, "texas-senate-district", "Texas Senate District"],
-  ];
-  for (const [pattern, prefix, label] of patterns) {
-    const match = pattern.exec(slug);
-    if (match) return { slug: `${prefix}-${match[1]}`, label: `${label} ${match[1]}` };
-  }
-  return null;
-}
-
-const PRIORITY_DISTRICTS = [
-  ...new Map(
-    PUBLISHED_RACES.flatMap((race) => {
-      const district = districtPathForRaceSlug(race.slug);
-      return district ? [[district.slug, district] as const] : [];
-    }),
-  ).values(),
-].slice(0, 12);
 
 const electionCentralSchema = {
   "@context": "https://schema.org",
@@ -99,6 +56,7 @@ const electionCentralSchema = {
 };
 
 export const Route = createFileRoute("/elections/2026")({
+  loader: () => getElectionCentralPriority(),
   head: () => ({
     meta: [
       { title: ELECTION_CENTRAL_TITLE },
@@ -136,6 +94,7 @@ function ElectionCentral2026Route() {
 }
 
 function PriorityElectionLinks() {
+  const { priorityCandidates: PRIORITY_CANDIDATES, priorityDistricts: PRIORITY_DISTRICTS } = Route.useLoaderData();
   return (
     <section className="border-t border-border bg-background" aria-labelledby="priority-election-pages">
       <div className="mx-auto max-w-[1200px] px-6 py-12">
