@@ -311,7 +311,7 @@ export async function getBillRelations(billId: string, options: BillRelationLoad
   return relations;
 }
 
-export async function getRepresentativeLegislation(sponsorSlug: string) {
+async function loadRepresentativeLegislation(sponsorSlug: string) {
   const directoryRepresentative = STATE_LEGISLATORS.find((member) => representativeSlug(member.name) === sponsorSlug);
   const possibleSlugs = new Set([sponsorSlug]);
   if (directoryRepresentative) {
@@ -368,6 +368,14 @@ export async function getRepresentativeLegislation(sponsorSlug: string) {
       .map((bill: any) => [bill.id, bill]),
   ).values()];
   return { identity, bills };
+}
+
+export async function getRepresentativeLegislation(sponsorSlug: string) {
+  return cachedPublicBill(
+    `representative-legislation:${sponsorSlug}`,
+    () => loadRepresentativeLegislation(sponsorSlug),
+    120_000,
+  );
 }
 
 export function billJsonLd(bill: Bill, sponsors: any[], actions: any[]) {
