@@ -69,7 +69,7 @@ export const WILLS_PROBATE_INHERITANCE_LAW_TOPIC: LawTopic = {
     },
     {
       "q": "How long after a death can a Texas will be admitted to probate?",
-      "a": "Under Estates Code Section 256.003(a), the general limit is the fourth anniversary of the testator's death. A will can sometimes be admitted later if the applicant proves they were not in default for the late presentation, and special rules for foreign wills apply. Section 256.003(b) imposes a separate rule for issuing letters testamentary if probate occurs after four years. Subsection (c) can also protect a good-faith buyer who paid value for property from the heirs after four years without knowledge of a will, even if a will is later offered for probate. Those provisions require separate fact-specific analysis; admitting a will late does not itself establish authority to administer the estate or override every later property purchase."
+      "a": "Under Estates Code Section 256.003(a), the general limit is the fourth anniversary of the testator's death. A will can sometimes be admitted later if the applicant proves they were not in default for the late presentation, and special rules for foreign wills apply. Section 256.003(b) imposes a separate rule for issuing letters testamentary if probate occurs after four years. Subsection (c) can also protect a good-faith buyer who paid value for property from the heirs after four years without knowledge of a will, even if a will is later offered for probate. Those provisions require separate fact-specific analysis; a late probate order does not itself establish authority to administer the estate or override every later property purchase."
     },
     {
       "q": "What is independent administration?",
