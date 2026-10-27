@@ -17,7 +17,7 @@ export const getPublishedForecastRouteMetadata = createServerFn({ method: "GET" 
     );
     return record ? {
       title: record.title,
-      sourceName: record.sourceName,
-      description: record.description,
+      sourceName: "sourceName" in record && typeof record.sourceName === "string" ? record.sourceName : null,
+      description: "description" in record && typeof record.description === "string" ? record.description : null,
     } : null;
   });
