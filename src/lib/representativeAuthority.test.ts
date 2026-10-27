@@ -30,6 +30,7 @@ const profile = readFileSync(
   "utf8",
 );
 const directory = readFileSync(resolve(process.cwd(), "src/routes/representatives.tsx"), "utf8");
+const routeAuthority = readFileSync(resolve(process.cwd(), "src/lib/representative-authority-route.functions.ts"), "utf8");
 
 describe("representative authority pages", () => {
   it("provides stable representative slugs", () => {
@@ -166,7 +167,10 @@ describe("representative authority pages", () => {
         0,
       );
     }
-    expect(profile).toContain("getHouseCommitteeAssignments");
+    expect(profile).toContain("houseCommittees");
+    expect(routeAuthority).toContain("getHouseCommitteeAssignments");
+    expect(routeAuthority).toContain("getRepresentativeAuthority");
+    expect(routeAuthority).toContain('await import("@/data/representative-authority")');
     expect(profile).toContain("Official House directory and committee assignments");
     expect(profile).toContain("Federal Election Commission candidate records");
   });

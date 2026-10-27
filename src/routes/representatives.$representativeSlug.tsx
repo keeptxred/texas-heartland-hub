@@ -1,10 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { findRepresentativeBySlug, representativeSlug } from "@/data/representatives";
 import { ARTICLES, isPublished } from "@/data/articles";
-import {
-  getHouseCommitteeAssignments,
-  getRepresentativeAuthority,
-} from "@/data/representative-authority";
+import { getRepresentativeAuthorityRouteData } from "@/lib/representative-authority-route.functions";
 import { canonicalBillPath, getRepresentativeLegislation, SITE_URL } from "@/lib/bills";
 import { getRelatedAuthorityContent } from "@/lib/authority-relationships";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
@@ -15,7 +12,7 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
   loader: async ({ params }) => {
     const directoryRepresentative = findRepresentativeBySlug(params.representativeSlug);
     const legislation = await getRepresentativeLegislation(params.representativeSlug);
-    const authority = getRepresentativeAuthority(params.representativeSlug);
+    const { authority, houseCommittees } = await getRepresentativeAuthorityRouteData({ data: { slug: params.representativeSlug } });
     if (!directoryRepresentative && !legislation.identity) throw notFound();
     const terms = (
       authority?.newsKeywords ?? (directoryRepresentative ? [directoryRepresentative.name] : [])
@@ -29,7 +26,7 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
       .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt))
       .slice(0, 6);
     const relatedContent = await getRelatedAuthorityContent("representative", params.representativeSlug);
-    return { directoryRepresentative, authority, news, relatedContent, ...legislation };
+    return { directoryRepresentative, authority, houseCommittees, news, relatedContent, ...legislation };
   },
   head: ({ params, loaderData }) => {
     if (!loaderData) return {};
@@ -142,12 +139,11 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
 
 function RepresentativeProfile() {
   const { representativeSlug: slug } = Route.useParams();
-  const { directoryRepresentative: rep, identity, authority, bills, news, relatedContent } = Route.useLoaderData();
+  const { directoryRepresentative: rep, identity, authority, houseCommittees, bills, news, relatedContent } = Route.useLoaderData();
   const name = rep?.name ?? identity?.sponsor_name ?? "Texas Representative";
   const office = rep?.office ?? chamberLabel(identity?.chamber);
   const district = rep?.district ?? identity?.district ?? null;
   const party = rep?.party ?? identity?.party ?? null;
-  const houseCommittees = getHouseCommitteeAssignments(slug);
   const profileAuthority =
     authority ??
     (rep?.office === "U.S. House"
