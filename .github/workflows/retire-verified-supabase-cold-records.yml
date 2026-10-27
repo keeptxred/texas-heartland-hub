@@ -46,7 +46,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          node --test scripts/ops/verified-cold-archive-proof.test.mjs
+          bunx vitest run scripts/ops/verified-cold-archive-proof.test.mjs scripts/ci/supabase-verified-retirement-contract.test.mjs
           node --check scripts/ops/retire-verified-supabase-cold-records.mjs
           node --check scripts/data/export-supabase-cold-archives.mjs
       - name: Stage, privately back up, read back, verify, and retire only eligible rows
