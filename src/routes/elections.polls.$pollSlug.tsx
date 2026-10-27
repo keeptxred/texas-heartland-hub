@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import records from "@/data/elections/2026/polls.json";
+import { createFileRoute, notFound } from "@tanstack/react-router";
+import { getPollRouteMetadata } from "@/lib/elections/poll-route-metadata.functions";
 import {
   ElectionErrorState,
   ElectionLayout,
@@ -14,13 +14,15 @@ import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { electionSlugs, isElectionSlug } from "@/types/elections";
 
 export const Route = createFileRoute("/elections/polls/$pollSlug")({
-  head: ({ params }) => {
-    const record = records.find(
-      (item) =>
-        item.slug === params.pollSlug &&
-        item.publicationStatus === "published" &&
-        item.verificationStatus === "verified",
-    );
+  loader: async ({ params }) => {
+    if (!isElectionSlug(params.pollSlug)) throw notFound();
+    const record = await getPollRouteMetadata({ data: { slug: params.pollSlug } });
+    // Do not serve invalid or unpublished poll profiles as HTTP 200 soft-404 shells.
+    if (!record) throw notFound();
+    return record;
+  },
+  head: ({ params, loaderData }) => {
+    const record = loaderData;
     const validSlug = isElectionSlug(params.pollSlug);
     const indexable = validSlug && Boolean(record);
     const canonicalUrl = `https://keeptxred.com/elections/polls/${params.pollSlug}`;
@@ -94,15 +96,8 @@ export const Route = createFileRoute("/elections/polls/$pollSlug")({
 
 function ElectionPollDetailRoute() {
   const { pollSlug } = Route.useParams();
-  const validSlug = isElectionSlug(pollSlug);
-  const indexable =
-    validSlug &&
-    records.some(
-      (item) =>
-        item.slug === pollSlug &&
-        item.publicationStatus === "published" &&
-        item.verificationStatus === "verified",
-    );
+  const record = Route.useLoaderData();
+  const indexable = isElectionSlug(pollSlug) && Boolean(record);
 
   return (
     <ElectionRepositoryProvider>
