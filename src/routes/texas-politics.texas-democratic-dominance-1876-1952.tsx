@@ -1,6 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PoliticalHistoryAuthorityPage, politicalHistoryAuthorityHead } from "@/components/political-history-authority-page";
-import { TEXAS_DEMOCRATIC_DOMINANCE_1876_1952 } from "@/data/texas-political-eras-authority";
+import { getPoliticsHistoricalAuthorityPage } from "@/lib/politics-history-route.functions";
 
-export const Route = createFileRoute("/texas-politics/texas-democratic-dominance-1876-1952")({ head: () => politicalHistoryAuthorityHead(TEXAS_DEMOCRATIC_DOMINANCE_1876_1952), component: Page });
-function Page() { return <PoliticalHistoryAuthorityPage page={TEXAS_DEMOCRATIC_DOMINANCE_1876_1952} />; }
+export const Route = createFileRoute("/texas-politics/texas-democratic-dominance-1876-1952")({
+  loader: () => getPoliticsHistoricalAuthorityPage({ data: { group: "eras", slug: "texas-democratic-dominance-1876-1952" } }),
+  head: ({ loaderData }) => loaderData
+    ? politicalHistoryAuthorityHead(loaderData)
+    : { meta: [{ title: "Page unavailable — Keep TX Red" }, { name: "robots", content: "noindex,follow" }] },
+  component: Page,
+});
+
+function Page() {
+  const page = Route.useLoaderData();
+  return <PoliticalHistoryAuthorityPage page={page} />;
+}
