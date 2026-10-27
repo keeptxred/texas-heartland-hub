@@ -26,6 +26,10 @@ on:
       - "src/lib/government-history-route.functions.ts"
       - "src/lib/government-history-ssr-boundary.test.ts"
       - "src/routes/texas-government.*.tsx"
+      - "src/routes/texas-politics.*.tsx"
+      - "src/lib/republic-history-route.functions.ts"
+      - "src/lib/republic-history-server-boundary.test.ts"
+      - "src/data/texas-republic-government-authority.ts"
 
 permissions:
   contents: read
