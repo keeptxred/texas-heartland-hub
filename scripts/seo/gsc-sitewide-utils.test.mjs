@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
 import { extractSitemapLocs, normalizeSiteUrl, selectInspectionUrls } from './gsc-sitewide-utils.mjs';
 
 const legacyWwwOrigin = `https://${['www', 'keeptxred', 'com'].join('.')}`;
@@ -17,6 +18,19 @@ describe('sitewide GSC URL utilities', () => {
       'https://keeptxred.com/a',
       'https://keeptxred.com/b?x=1&y=2',
     ]);
+  });
+
+  it('keeps the uncovered 2026 Texas Laws pages inside the existing small daily GSC priority budget', () => {
+    // The CLI script authenticates to Google at module evaluation; inspect only
+    // its static priority list here so no secrets or external API calls are needed.
+    const source = readFileSync(new URL('./sync-gsc-sitewide.mjs', import.meta.url), 'utf8');
+    const list = source.split('const builtInPriority = [')[1]?.split('];')[0] ?? '';
+    expect(list).toContain('https://keeptxred.com/laws/topics');
+    expect(list).toContain('https://keeptxred.com/laws/topic/wills-probate-inheritance-law');
+    const priorities = [...list.matchAll(/'https:\/\/keeptxred\.com\/[^']*'/g)].map((match) => match[0]);
+    expect(priorities.length).toBeLessThanOrEqual(25);
+    expect(priorities.length).toBeGreaterThan(0);
+    expect(new Set(priorities).size).toBe(priorities.length);
   });
 
   it('keeps priority pages and rotates sitemap inspection coverage deterministically', () => {
