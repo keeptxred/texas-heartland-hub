@@ -1,10 +1,10 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { SearchRecoveryAuthorityPage, searchRecoveryAuthorityHead } from "@/components/search-recovery-authority-page";
-import { SEARCH_RECOVERY_AUTHORITY_GUIDES } from "@/data/search-recovery-authority";
+import { getSearchRecoveryAuthorityGuide } from "@/lib/search-recovery-authority.functions";
 
 export const Route = createFileRoute("/texas-government/reference/$slug")({
-  loader: ({ params }) => {
-    const guide = SEARCH_RECOVERY_AUTHORITY_GUIDES[params.slug];
+  loader: async ({ params }) => {
+    const guide = await getSearchRecoveryAuthorityGuide({ data: { slug: params.slug } });
     if (!guide) throw notFound();
     return guide;
   },

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Building2, Gavel, Landmark, Scale } from "lucide-react";
 import { StatewideOfficePowersComparison } from "@/components/government/StatewideOfficePowersComparison";
-import { SEARCH_RECOVERY_AUTHORITY_GUIDES } from "@/data/search-recovery-authority";
+import { getSearchRecoveryAuthorityDirectory } from "@/lib/search-recovery-authority.functions";
 import { getGovernmentHistoryDirectory } from "@/lib/government-history-route.functions";
 import { GOVERNMENT_ENTITIES, governmentHubJsonLd, governmentPath } from "@/lib/texas-government";
 import { buildSeo } from "@/lib/seo";
@@ -26,7 +26,13 @@ export function texasGovernmentHead() {
 }
 
 export const Route = createFileRoute("/texas-government/")({
-  loader: () => getGovernmentHistoryDirectory(),
+  loader: async () => {
+    const [history, references] = await Promise.all([
+      getGovernmentHistoryDirectory(),
+      getSearchRecoveryAuthorityDirectory(),
+    ]);
+    return { ...history, references };
+  },
   head: texasGovernmentHead,
   component: TexasGovernmentHub,
 });
@@ -38,7 +44,7 @@ const groups = [
 ] as const;
 
 function TexasGovernmentHub() {
-  const { state, local, municipal } = Route.useLoaderData();
+  const { state, local, municipal, references } = Route.useLoaderData();
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <nav className="mb-5 text-sm text-muted-foreground" aria-label="Breadcrumb"><Link to="/">Home</Link> / Texas Government</nav>
@@ -56,7 +62,7 @@ function TexasGovernmentHub() {
           <p className="mt-3 leading-7 text-muted-foreground">Eight deliberately limited reference pages explain how to verify Texas lobbying, campaign finance, bills, fiscal notes, the state budget, agency rules, party offices and gubernatorial vetoes. They are maintained as durable primary-source guides rather than automated news rewrites.</p>
         </div>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
-          {Object.values(SEARCH_RECOVERY_AUTHORITY_GUIDES).map((guide) => (
+          {references.map((guide) => (
             <a key={guide.slug} href={`/texas-government/reference/${guide.slug}`} className="rounded-xl border bg-card p-5 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-sm">
               <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{guide.eyebrow}</p>
               <h3 className="mt-2 text-lg font-bold text-primary">{guide.title}</h3>

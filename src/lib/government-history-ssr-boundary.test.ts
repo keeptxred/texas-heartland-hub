@@ -40,8 +40,10 @@ describe("government historical-authority SSR payload boundary", () => {
   });
 
   it("preserves crawlable government hub cards with only light SSR summaries", () => {
-    expect(hub).toContain("loader: () => getGovernmentHistoryDirectory()");
-    expect(hub).toContain("const { state, local, municipal } = Route.useLoaderData()");
+    expect(hub).toContain("getGovernmentHistoryDirectory()");
+    expect(hub).toContain("getSearchRecoveryAuthorityDirectory()");
+    expect(hub).toContain("return { ...history, references }");
+    expect(hub).toContain("const { state, local, municipal, references } = Route.useLoaderData()");
     for (const group of ["state", "local", "municipal"]) {
       expect(hub).toContain(`{${group}.map((page) => (`);
     }
