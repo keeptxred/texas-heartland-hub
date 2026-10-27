@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import records from "@/data/elections/2026/forecasts.json";
+import { getPublishedForecastRouteMetadata } from "@/lib/elections/forecast-route-metadata.functions";
 import {
   ElectionErrorState,
   ForecastDetailView,
@@ -14,13 +14,9 @@ import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { electionSlugs, isElectionSlug } from "@/types/elections";
 
 export const Route = createFileRoute("/elections/forecast/$forecastSlug")({
-  head: ({ params }) => {
-    const record = records.find(
-      (item) =>
-        item.slug === params.forecastSlug &&
-        item.publicationStatus === "published" &&
-        item.verificationStatus === "verified",
-    );
+  loader: ({ params }) => getPublishedForecastRouteMetadata({ data: { slug: params.forecastSlug } }),
+  head: ({ params, loaderData }) => {
+    const record = loaderData;
     const validSlug = isElectionSlug(params.forecastSlug);
     const indexable = validSlug && Boolean(record);
     const canonicalUrl = `https://keeptxred.com/elections/forecast/${params.forecastSlug}`;
@@ -95,14 +91,7 @@ export const Route = createFileRoute("/elections/forecast/$forecastSlug")({
 function ElectionForecastDetailRoute() {
   const { forecastSlug } = Route.useParams();
   const validSlug = isElectionSlug(forecastSlug);
-  const indexable =
-    validSlug &&
-    records.some(
-      (item) =>
-        item.slug === forecastSlug &&
-        item.publicationStatus === "published" &&
-        item.verificationStatus === "verified",
-    );
+  const indexable = validSlug && Boolean(Route.useLoaderData());
 
   return (
     <ElectionRepositoryProvider>
