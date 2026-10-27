@@ -209,6 +209,8 @@ async function handler() {
   });
   const candidatesToWrite = candidates.filter((candidate) => {
     const prior = existingCandidateByCluster.get(candidate.cluster_id);
+    // Lifecycle state is authoritative even when the numeric score is steady.
+    if (prior && prior.status !== candidate.status) return true;
     return shouldPersistNewsroomScore(prior ? {
       score: prior.editorial_score,
       breakdown: prior.score_breakdown as Record<string, unknown> | null,
