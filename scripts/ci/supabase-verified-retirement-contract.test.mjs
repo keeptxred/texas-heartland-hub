@@ -8,6 +8,9 @@ describe('verified Free Plan retirement invariants', () => {
   it('retains default read-only behavior and never directly deletes rows', () => {
     assert.match(runner,/ENABLE_VERIFIED_COLD_RETIREMENT === '1'/);
     assert.match(runner,/if \(!active\)/);
+    assert.ok(runner.indexOf('const existing = await stagedMetadata();') <
+      runner.indexOf('if (!existing.length && STRICT_LIMIT - before < MIN_HEADROOM)'),
+      'Previously staged backups must be resumable during capacity pressure');
     assert.doesNotMatch(runner,/\.from\(['"](?:texas_news_feed|news_story_clusters)['"]\)\.delete\(/);
     assert.doesNotMatch(runner,/\b(?:DELETE FROM|TRUNCATE TABLE)\b/i);
   });
