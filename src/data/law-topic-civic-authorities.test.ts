@@ -63,6 +63,28 @@ describe("civic Law Library authorities", () => {
     expect(text).toContain("Section 552.301");
   });
 
+  it("covers the enacted 2025 Public Information Act response and request-channel amendments", () => {
+    const topic = OPEN_RECORDS_PUBLIC_INFORMATION_LAW_TOPIC;
+    const text = [...topic.framework, ...topic.keyRules].join(" ");
+    expect(text).toContain("Section 552.221(f)");
+    expect(text).toContain("Section 552.221(g)");
+    expect(text).toContain("House Bill 4219");
+    expect(text).toContain("September 1, 2025");
+    expect(text).toContain("no later than the 10th business day");
+    expect(text).toContain("House Bill 4214");
+    expect(text).toContain("June 20, 2025");
+    expect(text).toContain("Section 552.234(e) and (f)");
+    expect(text).toContain("October 1");
+    expect(text).toContain("not a new universal ten-day deadline");
+    expect(topic.questions.some((q) =>
+      q.q.includes("no records") && q.a.includes("Attorney General directory")
+    )).toBe(true);
+    expect(topic.sources.some((s) =>
+      s.url === "https://statutes.capitol.texas.gov/Docs/GV/pdf/GV.552.pdf"
+    )).toBe(true);
+    expect(topic.updated).toBe("2026-09-06");
+  });
+
   it("distinguishes precise online public-records production from a generic agency homepage", () => {
     const topic = OPEN_RECORDS_PUBLIC_INFORMATION_LAW_TOPIC;
     const text = [...topic.framework, ...topic.keyRules].join(" ");
