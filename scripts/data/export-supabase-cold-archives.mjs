@@ -265,8 +265,17 @@ for (const [kind, list] of grouped) {
 const totalBatches = manifest.archive_objects.reduce((sum,x)=>sum+x.batches,0);
 if (totalBatches !== metadata.length) throw new Error('Not every archive batch was exported.');
 const manifestBytes = Buffer.from(JSON.stringify(manifest,null,2)+'\n');
-await storeAndReadBack(
-  `postgres-cold/${folder}/manifest-${sha256(manifestBytes)}.json`,
-  manifestBytes,'application/json'
-);
+const manifestName = `postgres-cold/${folder}/manifest-${sha256(manifestBytes)}.json`;
+await storeAndReadBack(manifestName, manifestBytes, 'application/json');
 console.log('Complete private Storage export/read-back verified. No database rows deleted.');
+// This machine-readable receipt is consumed ONLY by the controlled retention
+// workflow after the current process successfully downloaded and SHA-verified
+// every archive object AND its immutable private manifest. A mere existing
+// Storage manifest path is not sufficient evidence to retire database rows.
+console.log('VERIFIED_COLD_ARCHIVE_RECEIPT=' + JSON.stringify({
+  project: manifest.project,
+  manifest_name: manifestName,
+  manifest_sha256: sha256(manifestBytes),
+  batch_count: totalBatches,
+  archive_objects: manifest.archive_objects,
+}));
