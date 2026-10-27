@@ -142,12 +142,14 @@ if (!active) {
 let totalFeed = 0, totalNewsroom = 0;
 for (let cycle = 1; cycle <= CYCLES; cycle++) {
   const before = await sizeSnapshot();
-  // Staging temporarily duplicates old evidence in PostgreSQL. If quota
-  // headroom is too tight to do so safely, preserve all rows and alert.
-  if (STRICT_LIMIT - before < MIN_HEADROOM) {
+  const existing = await stagedMetadata();
+  // Staging temporarily duplicates old evidence in PostgreSQL. Refuse NEW
+  // staging if space is too tight, but always allow recovery/export/retirement
+  // of a previously staged verified batch; otherwise an interrupted run could
+  // leave the database permanently stuck above this limit.
+  if (!existing.length && STRICT_LIMIT - before < MIN_HEADROOM) {
     throw new Error('Insufficient temporary archive staging headroom. Fail closed: ' + before);
   }
-  const existing = await stagedMetadata();
   if (!existing.length) {
     await stage('newsroom', MAX_STAGE_NEWSROOM);
     await stage('feed', MAX_STAGE_FEED);
