@@ -1,7 +1,8 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { getTexasDataSet } from "@/data/texas-data-catalog";
 import { getAccountabilityDataSet } from "@/data/accountability-data-catalog";
-import { TexasDataPage, texasDataHead } from "@/components/texas-data-page";
+import { TexasDataPage } from "@/components/texas-data-page";
+import { texasDataHead } from "@/lib/texas-data-head";
 import { isDataDetailIndexable } from "@/lib/data-detail-indexability";
 
 export const Route = createFileRoute("/data/$slug")({

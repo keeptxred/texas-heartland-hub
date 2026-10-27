@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { getTexasDataSet } from "@/data/texas-data-catalog";
+import { texasDataHead } from "@/lib/texas-data-head";
 import {
   dataReferenceCitation,
   dataReferenceSourceCollectionJsonLd,
@@ -55,9 +56,14 @@ describe("Data Center citation contract", () => {
 
   it("connects the article graph to the machine-readable source directory", () => {
     const page = readFileSync(new URL("../components/texas-data-page.tsx", import.meta.url), "utf8");
-    expect(page).toContain('"@id": `${url}#article`');
-    expect(page).toContain('hasPart: { "@id": `${url}#source-directory` }');
-    expect(page).toContain("dataReferenceSourceCollectionJsonLd(dataset)");
+    const metadata = readFileSync(new URL("./texas-data-head.ts", import.meta.url), "utf8");
+    expect(metadata).toContain('"@id": `${url}#article`');
+    expect(metadata).toContain('hasPart: { "@id": `${url}#source-directory` }');
+    expect(metadata).toContain("dataReferenceSourceCollectionJsonLd(dataset)");
+    const head = texasDataHead(dataset!);
+    expect(head.links.some((link) => link.rel === "canonical" && link.href === "https://keeptxred.com/data/energy-grid")).toBe(true);
+    expect(head.scripts).toHaveLength(3);
+    expect(head.scripts.some((script) => script.children.includes("#source-directory"))).toBe(true);
     expect(page).toContain('id="official-sources"');
   });
 });
