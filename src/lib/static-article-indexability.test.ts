@@ -103,7 +103,7 @@ describe("static article indexability", () => {
     expect(route.indexOf("article && isStaticArticleIndexable(article)")).toBeLessThan(
       route.indexOf("await getEvergreenBySlug"),
     );
-    expect(route).toContain("return { article: { ...article, noindex: true }, body, ctr: null }");
+    expect(route).toContain("return { article: { ...article, noindex: true }, body, relatedArticles: materials.relatedArticles, ctr: null }");
   });
 
   it("removes retired or fallback-only static inventory from newsroom and author discovery", () => {

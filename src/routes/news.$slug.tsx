@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
-import { ARTICLES, isPublished, sortByDateDesc, type Article } from "@/data/articles";
-import { ARTICLE_BODIES, type ArticleBody } from "@/data/article-bodies";
+import { ARTICLES, isPublished, type Article } from "@/data/articles";
+import type { ArticleBody } from "@/data/article-bodies";
+import { getNewsStaticMaterials } from "@/lib/news-static-materials.functions";
 import { authorSlug, getAuthor } from "@/data/authors";
 import {
   getEvergreenBySlug,
@@ -93,21 +94,19 @@ function isSpecificFaq(faq: { q: string; a: string }) {
   return !GENERIC_FAQ_PATTERNS.some((pattern) => pattern.test(`${question} ${answer}`));
 }
 
-function isStaticArticleDiscoverableForRelated(article: Article): boolean {
-  return isPublished(article) && isStaticArticleIndexable(article) && Boolean(ARTICLE_BODIES[article.slug]);
-}
-
 export const Route = createFileRoute("/news/$slug")({
   loader: async ({ params }): Promise<{
     article: RenderedArticle;
     body: StructuredArticleBody;
+    relatedArticles: Article[];
     ctr?: { variants: HeadlineVariants | null; score: number | null } | null;
   }> => {
     const article = ARTICLES.find((a) => a.slug === params.slug);
     if (article && isStaticArticleIndexable(article)) {
       if (!isPublished(article)) throw notFound();
-      const explicitBody = ARTICLE_BODIES[params.slug];
-      const rawBody = explicitBody ?? buildDefaultBody(article);
+      const materials = await getNewsStaticMaterials({ data: { slug: params.slug, category: article.category } });
+      const explicitBody = materials.authoredBody;
+      const rawBody = explicitBody ?? buildDefaultBody(article, materials.defaultRelatedSlugs);
       const body = dedupeArticleBody(rawBody) as ArticleBody;
       const renderedArticle: RenderedArticle = {
         ...article,
@@ -115,7 +114,7 @@ export const Route = createFileRoute("/news/$slug")({
         // out of search until they have explicit, substantive article content.
         noindex: !isStaticArticleIndexable(article) || !explicitBody,
       };
-      return { article: renderedArticle, body, ctr: null };
+      return { article: renderedArticle, body, relatedArticles: materials.relatedArticles, ctr: null };
     }
     const mapped = await resolveArticleSlugRedirect({ data: { slug: params.slug } });
     if (mapped.slug && mapped.slug !== params.slug) {
@@ -125,9 +124,10 @@ export const Route = createFileRoute("/news/$slug")({
     if (!ever || !ever.body) {
       if (article) {
         if (!isPublished(article)) throw notFound();
-        const rawBody = ARTICLE_BODIES[params.slug] ?? buildDefaultBody(article);
+        const materials = await getNewsStaticMaterials({ data: { slug: params.slug, category: article.category } });
+        const rawBody = materials.authoredBody ?? buildDefaultBody(article, materials.defaultRelatedSlugs);
         const body = dedupeArticleBody(rawBody) as ArticleBody;
-        return { article: { ...article, noindex: true }, body, ctr: null };
+        return { article: { ...article, noindex: true }, body, relatedArticles: materials.relatedArticles, ctr: null };
       }
       const parsed = parseArticleSlug(params.slug);
       if (parsed && isBadYearSlug(params.slug)) {
@@ -174,15 +174,14 @@ export const Route = createFileRoute("/news/$slug")({
       }),
       imageAlt: (ever.image_alt_text ?? "").trim() || displayTitle,
     };
+    const materials = await getNewsStaticMaterials({ data: { slug: params.slug, category: ever.category } });
     const rawBody: StructuredArticleBody = {
       updated: ever.body.updated,
       intro: ever.body.intro,
       sections: ever.body.sections,
       faq: ever.body.faq,
       sources: ever.body.sources,
-      related: ARTICLES.filter(
-        (x) => x.category === ever.category && isStaticArticleDiscoverableForRelated(x),
-      ).sort(sortByDateDesc).slice(0, 3).map((x) => x.slug),
+      related: materials.defaultRelatedSlugs,
       cta: { label: "Browse the Newsroom", href: "/news" },
       keyTakeaways: ever.body.keyTakeaways,
       entities: ever.body.entities,
@@ -190,6 +189,7 @@ export const Route = createFileRoute("/news/$slug")({
     return {
       article: synth,
       body: dedupeArticleBody(rawBody) as StructuredArticleBody,
+      relatedArticles: materials.relatedArticles,
       ctr: { variants: ever.headline_variants, score: ever.ctr_score },
     };
   },
@@ -316,11 +316,7 @@ export const Route = createFileRoute("/news/$slug")({
   component: ArticlePage,
 });
 
-function buildDefaultBody(a: Article): ArticleBody {
-  return _buildDefaultBody(a);
-}
-
-function _buildDefaultBody(a: Article): ArticleBody {
+function buildDefaultBody(a: Article, relatedSlugs: readonly string[]): ArticleBody {
   return {
     updated: (a.publishedAt ?? new Date().toISOString()).slice(0, 10),
     intro: [a.dek],
@@ -337,26 +333,18 @@ function _buildDefaultBody(a: Article): ArticleBody {
       { label: "Texas Legislature Online", url: "https://capitol.texas.gov/" },
       { label: "Texas Secretary of State", url: "https://www.sos.state.tx.us/" },
     ],
-    related: ARTICLES.filter(
-      (x) => x.category === a.category && x.slug !== a.slug && isStaticArticleDiscoverableForRelated(x),
-    )
-      .sort(sortByDateDesc)
-      .slice(0, 3)
-      .map((x) => x.slug),
+    related: [...relatedSlugs],
     cta: { label: "Browse the Newsroom", href: "/news" },
   };
 }
 
 function ArticlePage() {
-  const { article, body } = Route.useLoaderData() as {
+  const { article, body, relatedArticles: related } = Route.useLoaderData() as {
     article: RenderedArticle;
     body: ArticleBody;
+    relatedArticles: Article[];
     ctr?: { variants: HeadlineVariants | null; score: number | null } | null;
   };
-
-  const related = body.related
-    .map((slug) => ARTICLES.find((a) => a.slug === slug))
-    .filter((a): a is Article => Boolean(a) && isStaticArticleDiscoverableForRelated(a as Article));
 
   const wordCount =
     body.intro.join(" ").split(/\s+/).length +
