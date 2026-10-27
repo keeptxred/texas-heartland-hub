@@ -3,13 +3,17 @@ import {
   PoliticalHistoryAuthorityPage,
   politicalHistoryAuthorityHead,
 } from "@/components/political-history-authority-page";
-import { TEXAS_REDISTRICTING_HISTORY } from "@/data/texas-political-history-authority";
+import { getTexasPoliticalHistoryPage } from "@/lib/texas-political-history-route.functions";
 
 export const Route = createFileRoute("/texas-politics/texas-redistricting-history")({
-  head: () => politicalHistoryAuthorityHead(TEXAS_REDISTRICTING_HISTORY),
+  loader: () => getTexasPoliticalHistoryPage({ data: { slug: "texas-redistricting-history" } }),
+  head: ({ loaderData }) => loaderData
+    ? politicalHistoryAuthorityHead(loaderData)
+    : { meta: [{ name: "robots", content: "noindex,follow" }] },
   component: TexasRedistrictingHistoryPage,
 });
 
 function TexasRedistrictingHistoryPage() {
-  return <PoliticalHistoryAuthorityPage page={TEXAS_REDISTRICTING_HISTORY} />;
+  const page = Route.useLoaderData();
+  return <PoliticalHistoryAuthorityPage page={page} />;
 }
