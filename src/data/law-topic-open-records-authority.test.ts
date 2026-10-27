@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { OPEN_RECORDS_PUBLIC_INFORMATION_LAW_TOPIC } from "@/data/law-topic-open-records-authority";
 
-describe("Texas Public Information Act itemized cost notice and deadlines", () => {
+describe("Texas Public Information Act distinct requester and agency duties", () => {
   const topic = OPEN_RECORDS_PUBLIC_INFORMATION_LAW_TOPIC;
 
   it("distinguishes the 40-dollar itemized estimate from ordinary prompt production", () => {
@@ -34,6 +34,36 @@ describe("Texas Public Information Act itemized cost notice and deadlines", () =
     expect(text).toContain("15th business day");
     expect(topic.sources.some(({ url }) =>
       url === "https://statutes.capitol.texas.gov/GetStatute.aspx?Code=GV&Value=552.2615"
+    )).toBe(true);
+    expect(topic.updated).toBe("2026-09-06");
+  });
+
+  it("requires written certification and a reasonable access date if records cannot be produced in ten business days", () => {
+    const framework = topic.framework.join(" ");
+    expect(framework).toContain("Section 552.221(d)");
+    expect(framework).toContain("must certify that fact in writing");
+    expect(framework).toContain("set a date and hour within a reasonable time");
+    expect(topic.questions.some(({ q, a }) =>
+      q.includes("cannot produce my records within ten business days") &&
+      a.includes("Section 552.221(d)") &&
+      a.includes("certify in writing")
+    )).toBe(true);
+  });
+
+  it("requires conspicuous alternative access notice when government emails a records URL", () => {
+    const framework = topic.framework.join(" ");
+    expect(framework).toContain("Section 552.221(b-1)");
+    expect(framework).toContain("subsection (b-2)");
+    expect(framework).toContain("conspicuous font");
+    expect(framework).toContain("United States mail");
+    expect(topic.questions.some(({ q, a }) =>
+      q.includes("sending a website link") &&
+      a.includes("subsection (b-2)") &&
+      a.includes("conspicuous statement") &&
+      a.includes("inspection or duplication")
+    )).toBe(true);
+    expect(topic.sources.some(({ url }) =>
+      url === "https://statutes.capitol.texas.gov/GetStatute.aspx?Code=GV&Value=552.221"
     )).toBe(true);
     expect(topic.updated).toBe("2026-09-06");
   });
