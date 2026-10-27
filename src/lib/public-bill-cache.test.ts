@@ -27,8 +27,8 @@ describe("bounded public bill cache", () => {
     const loader = vi.fn().mockRejectedValueOnce(new Error("statement timeout"))
       .mockResolvedValueOnce({ ready: false }).mockResolvedValueOnce({ ready: true });
     await expect(cachedPublicBill("bill:3", loader)).rejects.toThrow("statement timeout");
-    expect(await cachedPublicBill("bill:3", loader, 60_000, (value) => value.ready)).toEqual({ ready: false });
-    expect(await cachedPublicBill("bill:3", loader, 60_000, (value) => value.ready)).toEqual({ ready: true });
+    expect(await cachedPublicBill("bill:3", loader, 60_000, (value) => (value as { ready: boolean }).ready)).toEqual({ ready: false });
+    expect(await cachedPublicBill("bill:3", loader, 60_000, (value) => (value as { ready: boolean }).ready)).toEqual({ ready: true });
     expect(loader).toHaveBeenCalledTimes(3);
   });
 });
