@@ -24,7 +24,7 @@ describe("Texas third-person property defense statutory prerequisites", () => {
   it("continues to distinguish strict deadly property force from ordinary force", () => {
     const text = [...topic.framework, ...topic.keyRules].join(" ");
     expect(text).toContain("Section 9.42");
-    expect(text).toContain("theft during the nighttime");
+    expect(text).toContain("nighttime theft");
     expect(text).toContain("immediately necessary");
     expect(topic.sources.some(({ url }) =>
       url === "https://statutes.capitol.texas.gov/?artSec=9.43&chapter=PE.9&code=PE&tab=1"
