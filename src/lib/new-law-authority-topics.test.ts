@@ -145,6 +145,24 @@ describe("new Texas law authority topics", () => {
     )).toBe(true);
   });
 
+  it("distinguishes DTPA 60-day notice exceptions from plea-in-abatement procedure", () => {
+    const topic = CONSUMER_PROTECTION_LAW_TOPIC;
+    const text = [...topic.framework, ...topic.keyRules].join(" ");
+    expect(text).toContain("Section 17.505(a)");
+    expect(text).toContain("Section 17.505(b)");
+    expect(text).toContain("counterclaim");
+    expect(text).toContain("avoid expiration of limitations");
+    expect(text).toContain("Section 17.505(c)–(e)");
+    expect(text).toContain("abatement");
+    expect(topic.questions.some((item) =>
+      item.q.includes("written DTPA demand") &&
+      item.a.includes("limitations") &&
+      item.a.includes("counterclaim")
+    )).toBe(true);
+    expect(topic.updated).toBe("2026-10-23");
+    expect(topic.published).toBe("2026-10-23");
+  });
+
   it("states ordinary misdemeanor punishment ranges without assuming an unenhanced sentence", () => {
     const topic = CRIMINAL_OFFENSES_PENALTIES_LAW_TOPIC;
     const framework = topic.framework.join(" ");
