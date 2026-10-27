@@ -26,9 +26,9 @@ export const EMPLOYMENT_WORKPLACE_LAW_TOPIC: LawTopic = {
     "Legislative proposals are not current workplace law merely because a bill passed a committee or one chamber. An enacted measure may include an applicability clause affecting different employers or dates, while federal agencies may separately amend rules. The Texas Legislature Online bill record, official Labor Code text, TWC regulations and applicable federal materials should be checked before relying on a news report about an employment-law change."
   ],
   "keyRules": [
-    "Labor Code Chapter 61 contains the Texas Payday Law: under Section 61.011 overtime-exempt employees generally must be paid at least monthly and other employees at least twice monthly; Section 61.012 mandates posted paydays and supplies the first and fifteenth by default; Section 61.014 sets final pay timing."
+    "Labor Code Chapter 61 contains the Texas Payday Law: under Section 61.011 overtime-exempt employees generally must be paid at least monthly and other employees at least twice monthly; Section 61.012 mandates posted paydays and supplies the first and fifteenth by default; Section 61.014 sets final pay timing.",
     "TWC explains that involuntary separation generally triggers a six-calendar-day final-pay deadline; voluntary resignation generally follows the next regular payday, subject to the governing facts and law.",
-    "An agreed wage or commission may be due even when a termination itself is otherwise lawful; Section 61.015 specifies the role of compensation agreements and collective bargaining agreements for commissions and bonuses."
+    "An agreed wage or commission may be due even when a termination itself is otherwise lawful; Section 61.015 specifies the role of compensation agreements and collective bargaining agreements for commissions and bonuses.",
     "Federal FLSA pay and overtime requirements can apply alongside Texas Labor Code Chapter 62.",
     "A salary label, independent-contractor agreement or internal title does not automatically settle legal wage classification.",
     "Labor Code Chapter 21 and applicable federal statutes regulate defined employment discrimination and retaliation.",
