@@ -23,6 +23,9 @@ describe("Law Library authority overrides", () => {
     expect(PROPERTY_TAX_LAW_TOPIC.updated).toBe("2026-09-18");
     const currentPolicy = PROPERTY_TAX_LAW_TOPIC.framework.join(" ") + " " + PROPERTY_TAX_LAW_TOPIC.keyRules.join(" ");
     expect(currentPolicy).toContain("Proposition 13");
+    expect(currentPolicy).toContain("Proposition 11");
+    expect(currentPolicy).toContain("Senate Bill 23");
+    expect(PROPERTY_TAX_LAW_TOPIC.sources.some((source) => source.label.includes("Proposition 11") && source.url.includes("lrl.texas.gov"))).toBe(true);
     expect(currentPolicy).not.toContain("$140,000");
     expect(currentPolicy).not.toContain("$60,000");
     expect(currentPolicy).toContain("tax year beginning January 1, 2025");
