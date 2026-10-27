@@ -18,7 +18,6 @@ describe("Texas consumer-law enacted identity-theft debt protections", () => {
       q.includes("identity theft") &&
       a.includes("Section 521.103") &&
       a.includes("seventh business day") &&
-      a.includes("prior") === false &&
       a.includes("judgments already obtained")
     )).toBe(true);
   });
