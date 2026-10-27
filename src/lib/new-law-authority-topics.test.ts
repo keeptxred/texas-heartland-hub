@@ -112,6 +112,25 @@ describe("new Texas law authority topics", () => {
     expect(topic.published).toBe("2026-10-23");
   });
 
+  it("distinguishes three-year support modification from independent changed-circumstance grounds", () => {
+    const topic = FAMILY_CUSTODY_CHILD_SUPPORT_LAW_TOPIC;
+    const text = topic.framework.join(" ") + " " + topic.keyRules.join(" ");
+    expect(text).toContain("Section 156.401(a)");
+    expect(text).toContain("three years");
+    expect(text).toContain("20 percent or $100");
+    expect(text).toContain("Section 156.401(a-1)");
+    expect(text).toContain("Section 156.401(a-2)");
+    expect(text).toContain("Section 156.401(b)");
+    expect(topic.questions.some((item) =>
+      item.q.includes("Must three years pass") &&
+      item.a.includes("material and substantial change") &&
+      item.a.includes("20-percent or $100")
+    )).toBe(true);
+    expect(topic.sources.some((s) => s.url.includes("FA.156"))).toBe(true);
+    expect(topic.updated).toBe("2026-10-23");
+    expect(topic.published).toBe("2026-10-23");
+  });
+
   it("keeps DTPA pre-suit notice distinct from suit limitations and narrow delay extension", () => {
     const guide = CONSUMER_PROTECTION_LAW_TOPIC;
     const framework = guide.framework.join(" ");
