@@ -28,7 +28,7 @@ describe("Law Library authority overrides", () => {
     expect(currentPolicy).toContain("tax year beginning January 1, 2025");
     expect(currentPolicy).toContain("Tax Code Section 11.13(b)");
     expect(currentPolicy).toContain("Section 11.13(c)");
-    expect(PROPERTY_TAX_LAW_TOPIC.questions.some((q) => q.q.includes("cut every local property-tax rate") && q.a.includes("Not automatically") === false && q.a.includes("No."))).toBe(true);
+    expect(PROPERTY_TAX_LAW_TOPIC.questions.some((q) => q.q.includes("cut every local property-tax rate") && q.a.startsWith("No."))).toBe(true);
     expect(PROPERTY_TAX_LAW_TOPIC.sources.some((source) => source.url === "https://statutes.capitol.texas.gov/Docs/TX/htm/TX.11.htm")).toBe(true);
 
     expect(PROPERTY_TAX_LAW_TOPIC.quickAnswer).toContain("no state property tax");
