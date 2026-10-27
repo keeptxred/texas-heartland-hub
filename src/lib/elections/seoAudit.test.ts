@@ -34,6 +34,18 @@ describe("Election Central SEO audit", () => {
     expect(hasOwnCanonical || delegatesCanonical).toBe(true);
   });
 
+  it("returns true 404 for unknown, draft or unverified election races", () => {
+    const race = readFileSync(resolve(process.cwd(), "src/routes/elections.races_.$raceSlug.tsx"), "utf8");
+    const candidate = readFileSync(resolve(process.cwd(), "src/routes/elections.candidates_.$candidateSlug.tsx"), "utf8");
+    const metadata = readFileSync(resolve(process.cwd(), "src/lib/elections/race-route-metadata.functions.ts"), "utf8");
+    expect(race).toContain("if (!detail.storedSlug || !detail.record || !isElectionSlug(detail.storedSlug))");
+    expect(race).toContain("throw notFound()");
+    expect(race).toContain("statusCode: 301");
+    expect(candidate).toContain("throw notFound()");
+    expect(metadata).toContain('item.publicationStatus === "published"');
+    expect(metadata).toContain('item.verificationStatus === "verified"');
+  });
+
   it.each(["pollSlug", "forecastSlug", "resultSlug"])(
     "%s detail route handles canonical and invalid indexing",
     (identifier) => {
