@@ -4,6 +4,23 @@ import { EMINENT_DOMAIN_PROPERTY_RIGHTS_LAW_TOPIC } from "@/data/law-topic-emine
 describe("Texas eminent-domain statutory claim safeguards", () => {
   const topic = EMINENT_DOMAIN_PROPERTY_RIGHTS_LAW_TOPIC;
 
+  it("checks required initial instrument and disclosure versus certified final offer amount", () => {
+    const text = [...topic.framework, ...topic.keyRules].join(" ");
+    expect(text).toContain("Section 21.0113(b)");
+    expect(text).toContain("a bold and larger-font statement");
+    expect(text).toContain("proposed deed, easement or other conveyance instrument");
+    expect(text).toContain("Section 21.0114");
+    expect(text).toContain("authorized representative");
+    expect(text).toContain("equal or exceed that appraised amount");
+    expect(topic.questions.some(({ q, a }) =>
+      q.includes("What documents must") &&
+      a.includes("Section 21.0113(b)(1)") &&
+      a.includes("Section 21.0113(b)(4)–(6)") &&
+      a.includes("30-day") &&
+      a.includes("14-day")
+    )).toBe(true);
+  });
+
   it("distinguishes complete offer-time appraisal history and hearing disclosures", () => {
     const text = [...topic.framework, ...topic.keyRules].join(" ");
     expect(text).toContain("Section 21.0111");
