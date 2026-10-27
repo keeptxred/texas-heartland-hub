@@ -5,6 +5,7 @@ import {
   representativeSlug,
 } from '@/data/representatives';
 import { publicBillPath } from '@/lib/bill-public-path';
+import { cachedPublicBill } from '@/lib/public-bill-cache';
 
 const db = supabase as any;
 export const SITE_URL = 'https://keeptxred.com';
@@ -209,17 +210,21 @@ export async function getBillFilterOptions() {
 }
 
 export async function getBill(legislature: number, billType: string, billNumber: number) {
-  const { data, error } = await db
-    .from('bills')
-    .select('*')
-    .eq('legislature_number', legislature)
-    .eq('session_code', 'R')
-    .eq('bill_type', normalizeBillType(billType))
-    .eq('bill_number', billNumber)
-    .eq('is_active', true)
-    .maybeSingle();
-  if (error) throw error;
-  return (data as Bill | null) ?? null;
+  // Public records are shared across readers. Short TTL reduces repeated
+  // point-lookups while retaining updates during an active session.
+  return cachedPublicBill(`bill:${legislature}:${normalizeBillType(billType)}:${billNumber}`, async () => {
+    const { data, error } = await db
+      .from('bills')
+      .select('*')
+      .eq('legislature_number', legislature)
+      .eq('session_code', 'R')
+      .eq('bill_type', normalizeBillType(billType))
+      .eq('bill_number', billNumber)
+      .eq('is_active', true)
+      .maybeSingle();
+    if (error) throw error;
+    return (data as Bill | null) ?? null;
+  }, 120_000);
 }
 
 export type BillEditorialEnrichment = {
@@ -234,31 +239,37 @@ export type BillEditorialEnrichment = {
 };
 
 export async function getBillEditorialEnrichment(billId: string) {
-  const { data, error } = await db
-    .from('bill_editorial_enrichments')
-    .select('plain_language_summary,what_changes,who_is_affected,effective_date_explanation,limitations,source_urls,source_notes,reviewed_at')
-    .eq('bill_id', billId)
-    .eq('review_status', 'approved')
-    .maybeSingle();
-  if (error) {
-    console.error(`getBillEditorialEnrichment failed for bill ${billId}:`, error.message ?? error);
+  try {
+    return await cachedPublicBill(`bill-approved-editorial:${billId}`, async () => {
+      const { data, error } = await db
+        .from('bill_editorial_enrichments')
+        .select('plain_language_summary,what_changes,who_is_affected,effective_date_explanation,limitations,source_urls,source_notes,reviewed_at')
+        .eq('bill_id', billId)
+        .eq('review_status', 'approved')
+        .maybeSingle();
+      if (error) throw error;
+      return (data as BillEditorialEnrichment | null) ?? null;
+    }, 120_000);
+  } catch (error: any) {
+    console.error(`getBillEditorialEnrichment failed for bill ${billId}:`, error?.message ?? error);
     return null;
   }
-  return (data as BillEditorialEnrichment | null) ?? null;
 }
 
 export type BillRelationLoadOptions = {
   includeEditorialRelations?: boolean;
 };
 
-export async function getBillRelations(billId: string, options: BillRelationLoadOptions = {}) {
+async function loadBillRelations(billId: string, options: BillRelationLoadOptions = {}) {
   const includeEditorialRelations = options.includeEditorialRelations ?? true;
+  let failed = false;
   const safe = async (label: string, build: () => any) => {
     try {
       const { data, error } = await build();
-      if (error) { console.error(`getBillRelations(${label}) failed for bill ${billId}:`, error.message ?? error); return { data: [] }; }
+      if (error) { failed = true; console.error(`getBillRelations(${label}) failed for bill ${billId}:`, error.message ?? error); return { data: [] }; }
       return { data: data ?? [] };
     } catch (error: any) {
+      failed = true;
       console.error(`getBillRelations(${label}) threw for bill ${billId}:`, error?.message ?? error);
       return { data: [] };
     }
@@ -284,7 +295,20 @@ export async function getBillRelations(billId: string, options: BillRelationLoad
     articles: (articles.data ?? [])
       .map((row: any) => (row.daily_articles ? { ...row.daily_articles, excerpt: row.daily_articles.dek, relationship_type: row.relationship_type } : null))
       .filter((row: any) => row?.id),
+    _failed: failed,
   };
+}
+
+export async function getBillRelations(billId: string, options: BillRelationLoadOptions = {}) {
+  const includeEditorial = options.includeEditorialRelations ?? true;
+  const result = await cachedPublicBill(
+    `bill-relations:${billId}:${includeEditorial}`,
+    () => loadBillRelations(billId, options),
+    120_000,
+    (value) => !value._failed,
+  );
+  const { _failed, ...relations } = result;
+  return relations;
 }
 
 export async function getRepresentativeLegislation(sponsorSlug: string) {
