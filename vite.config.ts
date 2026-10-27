@@ -29,7 +29,10 @@ export default defineConfig(({ mode }) => {
       }),
       tanstackStart({
         router: {
-          autoCodeSplitting: true,
+          // TanStack Start enables route splitting; configure only its supported code-split groups.
+          codeSplittingOptions: {
+            defaultBehavior: [["component"], ["errorComponent"], ["notFoundComponent"]],
+          },
           // Co-located tests are not file-based routes. Excluding them here
           // prevents route-generation warnings without moving or weakening tests.
           routeFileIgnorePattern: "\\.(test|spec)\\.(ts|tsx)$",
