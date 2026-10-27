@@ -46,14 +46,18 @@ describe("Texas SOS November 2026 statewide roster", () => {
 
   it("renders roster-first instead of printing unverified candidate profiles as ballot choices", () => {
     const route = readFileSync("src/routes/elections.statewide.tsx", "utf8");
-    expect(route).toContain("certified2026StatewideChoices(definition.slug)");
-    expect(route).toContain('name: "Fifteenth Court of Appeals — Place 3"');
+    const server = readFileSync("src/lib/elections/election-statewide-records.functions.ts", "utf8");
+    const definitions = readFileSync("src/lib/elections/2026-statewide-race-definitions.ts", "utf8");
+    expect(server).toContain("certified2026StatewideChoices(definition.slug)");
+    expect(definitions).toContain('name: "Fifteenth Court of Appeals — Place 3"');
     expect(route).toContain('/texas-government/fifteenth-court-of-appeals');
     expect(route).toContain('item.race ? (');
-    expect(route).toContain('profiles.length === 1 ? profiles[0] : null');
+    expect(server).toContain('profiles.length === 1 ? profiles[0] : null');
     expect(route).toContain('candidate.appearance === "write-in"');
     expect(route).toContain('OFFICIAL_2026_STATEWIDE_ROSTER_SOURCE');
     expect(route).toContain('https://www.sos.state.tx.us/elections/laws/independent-declarations-2026.shtml');
-    expect(route).toContain('candidate.publicationStatus === "published" && candidate.verificationStatus === "verified"');
+    expect(server).toContain('candidate.publicationStatus === "published" && candidate.verificationStatus === "verified"');
+    expect(route).toContain("Route.useLoaderData()");
+    expect(route).toContain("getVerifiedStatewideRecords()");
   });
 });
