@@ -43,5 +43,8 @@ describe("approved bill news relationships", () => {
     expect(source).not.toContain(".from('daily_articles')");
     expect(source).toContain("for (let attempt = 0; attempt < 2; attempt += 1)");
     expect(source).toContain("articles: hydrateApprovedBillArticleRows(articleRelationshipRows)");
+    expect(source).toContain("_hadQueryError: hadQueryError");
+    expect(source).toContain("cachedPublicBill(");
+    expect(source).toContain("!value._hadQueryError");
   });
 });

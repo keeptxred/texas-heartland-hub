@@ -2,6 +2,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { findRepresentativeBySlug } from '@/data/representatives';
 import { getBillRelations } from '@/lib/bills';
 import { resolvePublicArticleDisplayTitle } from '@/lib/public-article-display-title';
+import { cachedPublicBill } from '@/lib/public-bill-cache';
 
 const db = supabase as any;
 
@@ -31,22 +32,24 @@ export function hydrateApprovedBillArticleRows(rows: any[]) {
  * representative-profile link is exposed only when the slug resolves to the
  * verified representative directory.
  */
-export async function getPublicBillRelations(billId: string) {
+async function loadPublicBillRelations(billId: string) {
+  let hadQueryError = false;
   const base = await getBillRelations(billId, { includeEditorialRelations: false });
 
   const safe = async (label: string, build: () => any) => {
-    // These are read-only public relationships. Retry one failed request, not
-    // every legitimate empty response, to avoid dropping verified editorial
-    // crosslinks during a transient PostgREST/edge transport failure.
+    // Do not cache incomplete approved-only bill views after a failed read.
+    // One retry is permitted for read failures, not legitimate empty results.
     for (let attempt = 0; attempt < 2; attempt += 1) {
       try {
         const { data, error } = await build();
         if (!error) return data ?? [];
         if (attempt === 1) {
+          hadQueryError = true;
           console.error(`getPublicBillRelations(${label}) failed for bill ${billId}:`, error.message ?? error);
         }
       } catch (error: any) {
         if (attempt === 1) {
+          hadQueryError = true;
           console.error(`getPublicBillRelations(${label}) threw for bill ${billId}:`, error?.message ?? error);
         }
       }
@@ -74,9 +77,8 @@ export async function getPublicBillRelations(billId: string) {
     ),
   ]);
 
-  // The relationship's declared article_id FK lets PostgREST return the
-  // published article in the same public, approved-only read. This avoids a
-  // second independent lookup failing after an approved relation was fetched.
+  // The existing article_id foreign key provides the approved published
+  // article in one consistent read instead of two unrelated requests.
   const sponsors = (base.sponsors ?? []).map((sponsor: any) => {
     const slug = String(sponsor.sponsor_slug ?? '').trim();
     if (!slug || findRepresentativeBySlug(slug)) return sponsor;
@@ -85,8 +87,25 @@ export async function getPublicBillRelations(billId: string) {
 
   return {
     ...base,
+    _hadQueryError: hadQueryError,
     sponsors,
     subjects: subjectRows.map((row: any) => row.bill_subjects).filter(Boolean),
     articles: hydrateApprovedBillArticleRows(articleRelationshipRows),
   };
+}
+
+/**
+ * Cache approved-only public bill relations, not any personalized/admin view.
+ * Preserve the existing explicit review_status='approved' filters and avoid
+ * caching partial responses from upstream database errors.
+ */
+export async function getPublicBillRelations(billId: string) {
+  const result = await cachedPublicBill(
+    `public-approved-bill-relations:${billId}`,
+    () => loadPublicBillRelations(billId),
+    120_000,
+    (value) => !value._hadQueryError,
+  );
+  const { _hadQueryError, ...relations } = result;
+  return relations;
 }
