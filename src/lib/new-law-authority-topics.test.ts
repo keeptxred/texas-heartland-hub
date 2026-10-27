@@ -106,6 +106,21 @@ describe("new Texas law authority topics", () => {
     expect(text).toContain("fourth anniversary");
     expect(text).toContain("not in default");
     expect(text).toContain("Section 256.003(b)");
+    expect(text).toContain("Subsection (c)");
+    expect(text).toContain("good faith");
+    expect(text).toContain("purchaser");
+    expect(text).toContain("after the fourth anniversary");
+    expect(topic.questions.some((entry) =>
+      entry.q.includes("admitted to probate") &&
+      entry.a.includes("Subsection (c)") &&
+      entry.a.includes("good-faith buyer") &&
+      entry.a.includes("late probate order")
+    )).toBe(true);
+    expect(topic.sources.some(({ url }) =>
+      url === "https://statutes.capitol.texas.gov/Docs/ES/htm/ES.256.htm"
+    )).toBe(true);
+    expect(topic.published).toBe("2026-10-23");
+    expect(topic.updated).toBe("2026-10-23");
     expect(text).toContain("Chapter 501");
     expect(topic.questions.some((entry) =>
       entry.q.includes("admitted to probate") &&
