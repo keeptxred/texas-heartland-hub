@@ -3,13 +3,17 @@ import {
   PoliticalHistoryAuthorityPage,
   politicalHistoryAuthorityHead,
 } from "@/components/political-history-authority-page";
-import { TEXAS_ELECTION_HISTORY } from "@/data/texas-political-history-authority";
+import { getTexasPoliticalHistoryPage } from "@/lib/texas-political-history-route.functions";
 
 export const Route = createFileRoute("/texas-politics/texas-election-history")({
-  head: () => politicalHistoryAuthorityHead(TEXAS_ELECTION_HISTORY),
+  loader: () => getTexasPoliticalHistoryPage({ data: { slug: "texas-election-history" } }),
+  head: ({ loaderData }) => loaderData
+    ? politicalHistoryAuthorityHead(loaderData)
+    : { meta: [{ name: "robots", content: "noindex,follow" }] },
   component: TexasElectionHistoryPage,
 });
 
 function TexasElectionHistoryPage() {
-  return <PoliticalHistoryAuthorityPage page={TEXAS_ELECTION_HISTORY} />;
+  const page = Route.useLoaderData();
+  return <PoliticalHistoryAuthorityPage page={page} />;
 }
