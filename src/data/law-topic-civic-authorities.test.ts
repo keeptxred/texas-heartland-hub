@@ -32,6 +32,27 @@ describe("civic Law Library authorities", () => {
     expect(text).toContain("Chapter 221");
   });
 
+  it("separates the statewide proposition neutrality rule from limited SOS home-rule review", () => {
+    const election = ELECTION_LAW_TOPIC;
+    const text = [election.quickAnswer, ...election.framework, ...election.keyRules].join(" ");
+    expect(text).toContain("Senate Bill 506");
+    expect(text).toContain("September 1, 2025");
+    expect(text).toContain("Section 52.072(g)");
+    expect(text).toContain("Section 273.101");
+    expect(text).toContain("seventh day");
+    expect(text).toContain("Section 277.005");
+    expect(text).toContain("January 1, 2026");
+    expect(election.questions.some((q) =>
+      q.q.includes("review every ballot proposition") &&
+      q.a.includes("home-rule city") &&
+      q.a.includes("Section 1.006")
+    )).toBe(true);
+    expect(election.sources.some((s) =>
+      s.url === "https://www.sos.texas.gov/elections/laws/advisory2026-06.shtml"
+    )).toBe(true);
+    expect(election.updated).toBe("2026-09-06");
+  });
+
   it("keeps the Public Information Act ruling deadline distinct from production timing", () => {
     const text = [OPEN_RECORDS_PUBLIC_INFORMATION_LAW_TOPIC.quickAnswer, ...OPEN_RECORDS_PUBLIC_INFORMATION_LAW_TOPIC.framework, ...OPEN_RECORDS_PUBLIC_INFORMATION_LAW_TOPIC.keyRules].join(" ");
     expect(text).toContain("ten business days");
