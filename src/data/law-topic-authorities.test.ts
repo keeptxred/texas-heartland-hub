@@ -21,6 +21,17 @@ describe("Law Library authority overrides", () => {
 
   it("preserves current property-tax policy anchors", () => {
     expect(PROPERTY_TAX_LAW_TOPIC.updated).toBe("2026-09-18");
+    const currentPolicy = PROPERTY_TAX_LAW_TOPIC.framework.join(" ") + " " + PROPERTY_TAX_LAW_TOPIC.keyRules.join(" ");
+    expect(currentPolicy).toContain("Proposition 13");
+    expect(currentPolicy).not.toContain("$140,000");
+    expect(currentPolicy).not.toContain("$60,000");
+    expect(currentPolicy).toContain("tax year beginning January 1, 2025");
+    expect(currentPolicy).toContain("Tax Code Section 11.13(b)");
+    expect(currentPolicy).toContain("TexasDefined homeowner guides");
+    expect(currentPolicy).toContain("Section 11.13(c)");
+    expect(PROPERTY_TAX_LAW_TOPIC.questions.some((q) => q.q.includes("cut every local property-tax rate") && q.a.startsWith("No."))).toBe(true);
+    expect(PROPERTY_TAX_LAW_TOPIC.sources.some((source) => source.url === "https://statutes.capitol.texas.gov/Docs/TX/htm/TX.11.htm")).toBe(true);
+
     expect(PROPERTY_TAX_LAW_TOPIC.quickAnswer).toContain("no state property tax");
     expect(PROPERTY_TAX_LAW_TOPIC.keyRules.join(" ")).toContain("Tax Code Chapter 26");
     expect(PROPERTY_TAX_LAW_TOPIC.keyRules.join(" ")).toContain("TexasDefined");
