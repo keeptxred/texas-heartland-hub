@@ -1,0 +1,53 @@
+name: Verify and safely retire shared Supabase cold records
+on:
+  workflow_dispatch:
+  schedule:
+    # 6 bounded opportunities/day, staggered from the DB cron minute 19/45.
+    - cron: '27 0,4,8,12,16,20 * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/ops/retire-verified-supabase-cold-records.mjs'
+      - 'scripts/ops/verified-cold-archive-proof.mjs'
+      - 'scripts/data/export-supabase-cold-archives.mjs'
+      - '.github/workflows/retire-verified-supabase-cold-records.yml'
+
+permissions:
+  contents: read
+
+# Archive staging must never overlap a second export/retirement sequence.
+concurrency:
+  group: shared-supabase-verified-cold-retention
+  cancel-in-progress: false
+
+jobs:
+  verified-retention:
+    if: github.repository == 'keeptxred/texas-heartland-hub'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.KEEP_TX_RED_SUPABASE_SERVICE_ROLE_KEY }}
+      ENABLE_VERIFIED_COLD_RETIREMENT: '1'
+      GITHUB_REPOSITORY: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+      - name: Verify existing trusted Supabase key
+        shell: bash
+        run: |
+          test -n "${SUPABASE_SERVICE_ROLE_KEY}" || {
+            echo '::error::Existing Supabase service-role key missing; no archive operation performed'
+            exit 1
+          }
+      - run: bun install --frozen-lockfile
+      - name: Validate pure Storage coverage proof and script syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --test scripts/ops/verified-cold-archive-proof.test.mjs
+          node --check scripts/ops/retire-verified-supabase-cold-records.mjs
+          node --check scripts/data/export-supabase-cold-archives.mjs
+      - name: Stage, privately back up, read back, verify, and retire only eligible rows
+        run: bun scripts/ops/retire-verified-supabase-cold-records.mjs
