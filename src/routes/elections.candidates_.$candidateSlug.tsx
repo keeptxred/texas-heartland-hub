@@ -173,7 +173,7 @@ export const Route = createFileRoute("/elections/candidates_/$candidateSlug")({
 function ElectionCandidateDetailRoute() {
   const { storedSlug, record } = Route.useLoaderData();
   const indexable = Boolean(storedSlug && record);
-  const canonicalSlug = candidateSeoSlug(storedSlug);
+  const canonicalSlug = storedSlug ? candidateSeoSlug(storedSlug) : "";
 
   return (
     <ElectionRepositoryProvider>
