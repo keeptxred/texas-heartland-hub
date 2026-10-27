@@ -9,7 +9,7 @@ describe('verified Free Plan retirement invariants', () => {
     assert.match(runner,/ENABLE_VERIFIED_COLD_RETIREMENT === '1'/);
     assert.match(runner,/if \(!active\)/);
     assert.doesNotMatch(runner,/\.from\(['"](?:texas_news_feed|news_story_clusters)['"]\)\.delete\(/);
-    assert.doesNotMatch(runner,/\bTRUNCATE\b(?![^\n]*comment)/i);
+    assert.doesNotMatch(runner,/\b(?:DELETE FROM|TRUNCATE TABLE)\b/i);
   });
   it('backs up and reads the exact archive before protected retirement', () => {
     assert.match(runner,/verifyColdArchiveProof\(receipt, metadata\)/);
