@@ -264,6 +264,12 @@ const builtInPriority = [
   'https://keeptxred.com/texas-politics/figures',
   'https://keeptxred.com/elections/2026',
   'https://keeptxred.com/elections/candidates',
+  // 2026-10-26 stored Google inspection had /laws/topics unknown to Google,
+  // and no inspection row at all for this one remaining 18-guide URL.
+  // Keep within the existing 25-page priority budget and daily quota;
+  // the scheduled GSC sitewide workflow owns the live inspection/retention.
+  'https://keeptxred.com/laws/topics',
+  'https://keeptxred.com/laws/topic/wills-probate-inheritance-law',
   // HB 1056 returned "URL is unknown to Google" on 2026-09-03. Keep this
   // inspection-only URL observable until Search Console reports discovery.
   'https://keeptxred.com/news/texas-gold-silver-legal-tender-hb-1056',
