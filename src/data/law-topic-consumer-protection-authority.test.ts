@@ -13,6 +13,13 @@ describe("Texas consumer-law enacted identity-theft debt protections", () => {
     expect(framework).toContain("seventh business day");
     expect(framework).toContain("home-loan");
     expect(framework).toContain("judgment already obtained");
+    expect(framework).toContain("Section 392.308(d)(4)");
+    expect(framework).toContain("security interest in tangible personal property");
+    expect(framework).toContain("prohibits collecting any resulting deficiency from the identity-theft victim");
+    expect(topic.questions.some(({ q, a }) =>
+      q.includes("identity theft") && a.includes("Chapter 9") &&
+      a.includes("not collection of a deficiency")
+    )).toBe(true);
     expect(framework).toContain("A police report or FTC affidavit by itself is not the qualifying court order");
     expect(topic.questions.some(({ q, a }) =>
       q.includes("identity theft") &&
