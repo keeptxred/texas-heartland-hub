@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import html
+import http.client
 import json
 import os
 import re
@@ -51,7 +52,7 @@ def fetch(path: str) -> tuple[bytes, dict[str, str]]:
                     raise VerificationFailure(f"{path} returned HTTP {response.status}")
                 headers = {key.lower(): value for key, value in response.headers.items()}
                 return response.read(), headers
-        except (urllib.error.URLError, TimeoutError, VerificationFailure) as exc:
+        except (urllib.error.URLError, TimeoutError, http.client.IncompleteRead, http.client.RemoteDisconnected, VerificationFailure) as exc:
             last_error = exc
             if attempt < ATTEMPTS:
                 time.sleep(RETRY_SECONDS)
