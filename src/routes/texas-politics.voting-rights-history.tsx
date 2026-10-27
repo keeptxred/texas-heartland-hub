@@ -3,13 +3,17 @@ import {
   PoliticalHistoryAuthorityPage,
   politicalHistoryAuthorityHead,
 } from "@/components/political-history-authority-page";
-import { TEXAS_VOTING_RIGHTS_HISTORY } from "@/data/texas-political-history-authority";
+import { getTexasPoliticalHistoryPage } from "@/lib/texas-political-history-route.functions";
 
 export const Route = createFileRoute("/texas-politics/voting-rights-history")({
-  head: () => politicalHistoryAuthorityHead(TEXAS_VOTING_RIGHTS_HISTORY),
+  loader: () => getTexasPoliticalHistoryPage({ data: { slug: "voting-rights-history" } }),
+  head: ({ loaderData }) => loaderData
+    ? politicalHistoryAuthorityHead(loaderData)
+    : { meta: [{ name: "robots", content: "noindex,follow" }] },
   component: TexasVotingRightsHistoryPage,
 });
 
 function TexasVotingRightsHistoryPage() {
-  return <PoliticalHistoryAuthorityPage page={TEXAS_VOTING_RIGHTS_HISTORY} />;
+  const page = Route.useLoaderData();
+  return <PoliticalHistoryAuthorityPage page={page} />;
 }
