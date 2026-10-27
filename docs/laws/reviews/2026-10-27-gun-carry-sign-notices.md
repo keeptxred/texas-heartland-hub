@@ -1,0 +1,14 @@
+# Texas licensed handgun-carry and trespass signs — bounded source review
+
+**Checked:** 2026-10-27. Master [Texas Laws issue #2938](https://github.com/keeptxred/texas-heartland-hub/issues/2938). This is **not** a full gun-carry-law guide review.
+
+| Material claim | Primary controlling authority | Verified and qualified conclusion |
+|---|---|---|
+| Private-property exclusion of LTC concealed handgun carry | [Penal Code §30.06(a)-(c)](https://tcss.legis.texas.gov/resources/PE/htm/PE.30.htm), [DPS carrying FAQ](https://www.dps.texas.gov/section/handgun-licensing/faq/laws-relate-carrying-handgun-faqs) | Posted sign must contain §30.06 text in English and Spanish, contrasting colors and block letters **at least one inch** high, and be conspicuously visible to public. The statute separately recognizes oral notice and its exact prescribed card/document. These requirements concern the defined licensed concealed-carry offense, not every generic trespass scenario. |
+| LTC openly carried handgun notice | [§30.07(a)-(c)](https://tcss.legis.texas.gov/resources/PE/htm/PE.30.htm), DPS | Distinct §30.07 bilingual prescribed wording and contrasting block letters one inch or taller; posted open-carry sign must be conspicuously visible **at each entrance**. Oral notice and properly worded card/document also qualify. No assumption one 30.06 sign automatically satisfies 30.07. |
+| General private property trespass notice | [§30.05(a)-(b)](https://tcss.legis.texas.gov/resources/PE/htm/PE.30.htm) | Independent trespass law considers entry/remain without effective consent following proper notice; an otherwise inadequate LTC posted sign is not a blanket permission to ignore direct instructions from the owner or someone with apparent authority. Avoid categorical statements that §30.05 is irrelevant to licensed people. |
+| Government property and independently prohibited locations | [§§30.06(e), 30.07(e), 46.03](https://tcss.legis.texas.gov/resources/PE/htm/PE.30.htm) | Licensed-carry notice on government property has defined statutory exceptions but does **not** supersede independent prohibited-place rules. Existing guide already qualifies this and was left intact. |
+
+**Editorial change:** One exact statutory framework paragraph, key rule, plain-language FAQ and current official primary source. Add focused tests for bilingual/one-inch/each-entrance distinction and effective oral notice. Preserve original 2026-09-06 reviewed date. No actual penalty/legal-defense outcomes are predicted.
+
+**Out of scope:** The full universe of Penal Code §§30.05–.07 defenses and penalties, License to Carry eligibility, permitless carry age and federal overlay, prohibited-place exceptions, school enhancement and other FAQs require claim-by-claim review before whole-guide completion. Merge and exact-SHA release results belong in #2938.
