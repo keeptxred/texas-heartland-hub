@@ -3,7 +3,7 @@ import { HUBS } from "@/data/hubs";
 import { HubView } from "@/components/hub-view";
 import { AgedFeedSection } from "@/components/aged-feed-section";
 import { PillarRelationshipNav } from "@/components/pillar-relationship-nav";
-import { TEXAS_REPUBLIC_GOVERNMENT_AUTHORITY_PAGES } from "@/data/texas-republic-government-authority";
+import { getRepublicHistoryDirectory } from "@/lib/republic-history-route.functions";
 import { buildSeo } from "@/lib/seo";
 
 const HUB = HUBS.find((h) => h.slug === "texas-politics")!;
@@ -64,6 +64,7 @@ export function texasPoliticsHead(topic = "") {
 }
 
 export const Route = createFileRoute("/texas-politics/")({
+  loader: () => getRepublicHistoryDirectory(),
   validateSearch: (search: Record<string, unknown>): { topic?: string } =>
     typeof search.topic === "string" && search.topic ? { topic: search.topic } : {},
   head: ({ match }) => {
@@ -75,6 +76,7 @@ export const Route = createFileRoute("/texas-politics/")({
 
 function TexasPoliticsPage() {
   const { topic } = Route.useSearch();
+  const republicHistoryPages = Route.useLoaderData();
   return (
     <>
       <HubView hub={HUB} sections={SECTIONS} filterTopic={topic}>
@@ -115,7 +117,7 @@ function TexasPoliticsPage() {
             <p className="mt-3 leading-7 text-muted-foreground">Follow the Republic of Texas as a functioning national government: its presidency, Congress, 1836 Constitution, changing capitals, foreign diplomacy, debt and currency, annexation and the institutional handoff from President Anson Jones to Governor J. Pinckney Henderson.</p>
           </div>
           <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {TEXAS_REPUBLIC_GOVERNMENT_AUTHORITY_PAGES.map((page) => (
+            {republicHistoryPages.map((page) => (
               <a key={page.slug} href={`/texas-politics/${page.slug}`} className="rounded-xl border bg-card p-5 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-sm">
                 <h3 className="font-bold text-primary">{page.title}</h3>
                 <p className="mt-2 line-clamp-4 text-sm leading-6 text-muted-foreground">{page.description}</p>
