@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { getRaceRouteMetadata } from "@/lib/elections/race-route-metadata.functions";
 import {
   ElectionErrorState,
@@ -33,6 +33,10 @@ import { electionSlugs, isElectionSlug } from "@/types/elections";
 export const Route = createFileRoute("/elections/races_/$raceSlug")({
   loader: async ({ params }) => {
     const detail = await getRaceRouteMetadata({ data: { slug: params.raceSlug } });
+    // Do not serve soft-404 (HTTP 200) pages for unpublished or unknown races.
+    if (!detail.storedSlug || !detail.record || !isElectionSlug(detail.storedSlug)) {
+      throw notFound();
+    }
     const canonicalSlug = detail.storedSlug ? raceSeoSlug(detail.storedSlug) : null;
     if (canonicalSlug && params.raceSlug !== canonicalSlug) {
       throw redirect({
