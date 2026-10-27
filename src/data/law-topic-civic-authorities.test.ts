@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
 import { ELECTION_LAW_TOPIC } from "@/data/law-topic-election-authority";
 import { OPEN_RECORDS_PUBLIC_INFORMATION_LAW_TOPIC } from "@/data/law-topic-open-records-authority";
 import { ADMINISTRATIVE_RULEMAKING_LAW_TOPIC } from "@/data/law-topic-administrative-rulemaking-authority";
@@ -143,4 +144,22 @@ describe("civic Law Library authorities", () => {
       expect(topic.updated).toBe("2026-09-06");
     }
   });
+  it("does not assign general ordinance-making authority to every Texas county", () => {
+    const topic = LOCAL_GOVERNMENT_AUTHORITY_LAW_TOPIC;
+    const text = [topic.quickAnswer, ...topic.framework, ...topic.keyRules].join(" ");
+    expect(text).toContain("lack general ordinance-making");
+    expect(text).toContain("Section 826.014");
+    expect(topic.questions.some((entry) =>
+      entry.q.includes("pass any ordinance") &&
+      entry.a.includes("Opinion KP-0491")
+    )).toBe(true);
+    expect(topic.sources.some((source) =>
+      source.url === "https://www.texasattorneygeneral.gov/sites/default/files/opinion-files/opinion/2025/kp-0491.pdf"
+    )).toBe(true);
+    expect(topic.updated).toBe("2026-09-06");
+    const hub = readFileSync(new URL("../routes/laws.index.tsx", import.meta.url), "utf8");
+    expect(hub).not.toContain("ordinances of 254 counties");
+    expect(hub).toMatch(/municipal ordinances, legally authorized county orders, and\s+special-district rules/);
+  });
+
 });
