@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { routeEditorialPillar, scoreEditorialCluster, verifiedEditorialPublisherCounts } from "@/lib/newsroom-editorial-scoring";
 import { rankNewsroomStorySelection } from "@/lib/newsroom-story-selection";
+import { shouldPersistNewsroomScore } from "@/lib/newsroom-score-write-gate";
 
 const LOOKBACK_HOURS = 48;
 const CLUSTER_LIMIT = 500;
@@ -37,13 +38,6 @@ type FeedScoreRow = {
 function maxNumber(values: Array<number | null | undefined>, fallback = 0): number {
   const finite = values.filter((value): value is number => typeof value === "number" && Number.isFinite(value));
   return finite.length ? Math.max(...finite) : fallback;
-}
-
-function stableJson(value: unknown): string {
-  if (value === null || typeof value !== "object") return JSON.stringify(value) ?? "undefined";
-  if (Array.isArray(value)) return `[${value.map(stableJson).join(",")}]`;
-  const record = value as Record<string, unknown>;
-  return `{${Object.keys(record).sort().map((key) => `${JSON.stringify(key)}:${stableJson(record[key])}`).join(",")}}`;
 }
 
 async function handler() {
@@ -174,11 +168,16 @@ async function handler() {
   const clusterById = new Map(clusters.map((cluster) => [cluster.id, cluster]));
   const clusterUpdatesToWrite = clusterUpdates.filter((update) => {
     const prior = clusterById.get(update.id);
-    return !prior
-      || Number(prior.score) !== Number(update.score)
-      || stableJson(prior.score_breakdown) !== stableJson(update.score_breakdown)
-      || prior.pillar_slug !== update.pillar_slug
-      || prior.status !== update.status;
+    return prior?.pillar_slug !== update.pillar_slug
+      || shouldPersistNewsroomScore(prior ? {
+        score: prior.score,
+        breakdown: prior.score_breakdown as Record<string, unknown> | null,
+        status: prior.status,
+      } : null, {
+        score: update.score,
+        breakdown: update.score_breakdown,
+        status: update.status,
+      });
   });
   if (clusterUpdatesToWrite.length) {
     const { error: updateError } = await newsroomDb
@@ -210,10 +209,15 @@ async function handler() {
   });
   const candidatesToWrite = candidates.filter((candidate) => {
     const prior = existingCandidateByCluster.get(candidate.cluster_id);
-    return !prior
-      || Number(prior.editorial_score) !== Number(candidate.editorial_score)
-      || prior.status !== candidate.status
-      || stableJson(prior.score_breakdown) !== stableJson(candidate.score_breakdown);
+    return shouldPersistNewsroomScore(prior ? {
+      score: prior.editorial_score,
+      breakdown: prior.score_breakdown as Record<string, unknown> | null,
+      status: prior.status,
+    } : null, {
+      score: candidate.editorial_score,
+      breakdown: candidate.score_breakdown,
+      status: candidate.status,
+    });
   });
   if (candidatesToWrite.length) {
     const { error: candidateError } = await newsroomDb
