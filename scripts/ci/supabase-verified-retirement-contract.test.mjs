@@ -29,7 +29,7 @@ describe('verified Free Plan retirement invariants', () => {
     assert.match(workflow,/shared-supabase-verified-cold-retention/);
     assert.match(workflow,/cancel-in-progress: false/);
     assert.match(workflow,/SUPABASE_SERVICE_ROLE_KEY:/);
-    assert.match(workflow,/failure\\(\\)/);
+    assert.ok(workflow.includes('failure()'));
     assert.match(workflow,/issues: write/);
     assert.match(workflow,/gh issue comment 2762/);
     assert.match(workflow,/GITHUB_RUN_ID/);
