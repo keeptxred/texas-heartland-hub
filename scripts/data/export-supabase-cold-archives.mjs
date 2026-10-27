@@ -265,8 +265,9 @@ for (const [kind, list] of grouped) {
 const totalBatches = manifest.archive_objects.reduce((sum,x)=>sum+x.batches,0);
 if (totalBatches !== metadata.length) throw new Error('Not every archive batch was exported.');
 const manifestBytes = Buffer.from(JSON.stringify(manifest,null,2)+'\n');
-await storeAndReadBack(
-  `postgres-cold/${folder}/manifest-${sha256(manifestBytes)}.json`,
-  manifestBytes,'application/json'
-);
+const verifiedManifestPath = `postgres-cold/${folder}/manifest-${sha256(manifestBytes)}.json`;
+await storeAndReadBack(verifiedManifestPath,manifestBytes,'application/json');
 console.log('Complete private Storage export/read-back verified. No database rows deleted.');
+// Used by the scheduled retirement coordinator. Never emit until the full
+// private Storage upload and read-back checks have succeeded.
+console.log('VERIFIED_COLD_ARCHIVE_MANIFEST=' + verifiedManifestPath);
