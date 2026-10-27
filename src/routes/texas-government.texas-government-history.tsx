@@ -1,12 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { GovernmentHistoryAuthorityPage, governmentHistoryAuthorityHead } from "@/components/government-history-authority-page";
-import { TEXAS_GOVERNMENT_HISTORY } from "@/data/texas-government-history-authority";
+import { getGovernmentHistoryPage } from "@/lib/government-history-route.functions";
 
 export const Route = createFileRoute("/texas-government/texas-government-history")({
-  head: () => governmentHistoryAuthorityHead(TEXAS_GOVERNMENT_HISTORY),
-  component: TexasGovernmentHistoryPage,
+  loader: () => getGovernmentHistoryPage({ data: { group: "state", slug: "texas-government-history" } }),
+  head: ({ loaderData }) => loaderData
+    ? governmentHistoryAuthorityHead(loaderData)
+    : { meta: [{ title: "Guide unavailable — Keep TX Red" }, { name: "robots", content: "noindex,follow" }] },
+  component: Page,
 });
 
-function TexasGovernmentHistoryPage() {
-  return <GovernmentHistoryAuthorityPage page={TEXAS_GOVERNMENT_HISTORY} />;
+function Page() {
+  const page = Route.useLoaderData();
+  return <GovernmentHistoryAuthorityPage page={page} />;
 }

@@ -2,9 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Building2, Gavel, Landmark, Scale } from "lucide-react";
 import { StatewideOfficePowersComparison } from "@/components/government/StatewideOfficePowersComparison";
 import { SEARCH_RECOVERY_AUTHORITY_GUIDES } from "@/data/search-recovery-authority";
-import { GOVERNMENT_HISTORY_AUTHORITY_PAGES } from "@/data/texas-government-history-authority";
-import { TEXAS_LOCAL_GOVERNMENT_AUTHORITY_PAGES } from "@/data/texas-local-government-authority";
-import { TEXAS_MUNICIPAL_GOVERNMENT_AUTHORITY_PAGES } from "@/data/texas-municipal-government-authority";
+import { getGovernmentHistoryDirectory } from "@/lib/government-history-route.functions";
 import { GOVERNMENT_ENTITIES, governmentHubJsonLd, governmentPath } from "@/lib/texas-government";
 import { buildSeo } from "@/lib/seo";
 
@@ -28,6 +26,7 @@ export function texasGovernmentHead() {
 }
 
 export const Route = createFileRoute("/texas-government/")({
+  loader: () => getGovernmentHistoryDirectory(),
   head: texasGovernmentHead,
   component: TexasGovernmentHub,
 });
@@ -39,6 +38,7 @@ const groups = [
 ] as const;
 
 function TexasGovernmentHub() {
+  const { state, local, municipal } = Route.useLoaderData();
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <nav className="mb-5 text-sm text-muted-foreground" aria-label="Breadcrumb"><Link to="/">Home</Link> / Texas Government</nav>
@@ -74,7 +74,7 @@ function TexasGovernmentHub() {
           <p className="mt-3 leading-7 text-muted-foreground">Connect today's officeholders and court powers to the constitutional changes, legislative rules, elections and partisan transitions that produced them. These guides are built from Texas constitutional, legislative, archival and judicial sources.</p>
         </div>
         <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {GOVERNMENT_HISTORY_AUTHORITY_PAGES.map((page) => (
+          {state.map((page) => (
             <a key={page.slug} href={`/texas-government/${page.slug}`} className="rounded-xl border bg-card p-5 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-sm">
               <h3 className="font-bold text-primary">{page.title}</h3>
               <p className="mt-2 line-clamp-4 text-sm leading-6 text-muted-foreground">{page.description}</p>
@@ -117,7 +117,7 @@ function TexasGovernmentHub() {
           <div className="mt-5 flex flex-wrap gap-3"><a href="/news/2026-08-13-how-texas-county-government-works" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">How county government works</a><a href="/issues/texas-local-government-handbook" className="rounded-md border bg-card px-4 py-2 text-sm font-bold hover:border-primary">Local government handbook</a><a href="/county-elections" className="rounded-md border bg-card px-4 py-2 text-sm font-bold hover:border-primary">County elections</a></div>
         </div>
         <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {TEXAS_LOCAL_GOVERNMENT_AUTHORITY_PAGES.map((page) => (
+          {local.map((page) => (
             <a key={page.slug} href={`/texas-government/${page.slug}`} className="rounded-xl border bg-card p-5 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-sm">
               <h3 className="font-bold text-primary">{page.title}</h3>
               <p className="mt-2 line-clamp-4 text-sm leading-6 text-muted-foreground">{page.description}</p>
@@ -135,7 +135,7 @@ function TexasGovernmentHub() {
           <div className="mt-5 flex flex-wrap gap-3"><a href="/issues/texas-local-government-handbook" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">Local government handbook</a><a href="/policy/local-preemption-regulatory-consistency" className="rounded-md border bg-card px-4 py-2 text-sm font-bold hover:border-primary">State-local preemption tracker</a><a href="/elections/2026" className="rounded-md border bg-card px-4 py-2 text-sm font-bold hover:border-primary">Election Central</a></div>
         </div>
         <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {TEXAS_MUNICIPAL_GOVERNMENT_AUTHORITY_PAGES.map((page) => (
+          {municipal.map((page) => (
             <a key={page.slug} href={`/texas-government/${page.slug}`} className="rounded-xl border bg-card p-5 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-sm">
               <h3 className="font-bold text-primary">{page.title}</h3>
               <p className="mt-2 line-clamp-4 text-sm leading-6 text-muted-foreground">{page.description}</p>

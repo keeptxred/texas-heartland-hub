@@ -1,6 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { GovernmentHistoryAuthorityPage, governmentHistoryAuthorityHead } from "@/components/government-history-authority-page";
-import { TEXAS_JP_CONSTABLE_HISTORY } from "@/data/texas-local-government-authority";
+import { getGovernmentHistoryPage } from "@/lib/government-history-route.functions";
 
-export const Route = createFileRoute("/texas-government/justice-of-the-peace-constable-history")({ head: () => governmentHistoryAuthorityHead(TEXAS_JP_CONSTABLE_HISTORY), component: Page });
-function Page() { return <GovernmentHistoryAuthorityPage page={TEXAS_JP_CONSTABLE_HISTORY} />; }
+export const Route = createFileRoute("/texas-government/justice-of-the-peace-constable-history")({
+  loader: () => getGovernmentHistoryPage({ data: { group: "local", slug: "justice-of-the-peace-constable-history" } }),
+  head: ({ loaderData }) => loaderData
+    ? governmentHistoryAuthorityHead(loaderData)
+    : { meta: [{ title: "Guide unavailable — Keep TX Red" }, { name: "robots", content: "noindex,follow" }] },
+  component: Page,
+});
+
+function Page() {
+  const page = Route.useLoaderData();
+  return <GovernmentHistoryAuthorityPage page={page} />;
+}
