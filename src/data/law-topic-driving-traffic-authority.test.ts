@@ -16,7 +16,7 @@ describe("Texas driving law primary-source distinctions", () => {
       a.includes("daily driver") && a.includes("affidavit")
     )).toBe(true);
     expect(topic.questions.some(({ q, a }) =>
-      q.includes("proof of insurance") && a.includes("§601.053")
+      q.includes("proof of insurance") && a.includes("Section 601.053")
     )).toBe(true);
     expect(topic.sources.some(({ url }) => url ===
       "https://tcss.legis.texas.gov/docs/TN/htm/TN.601.htm"
