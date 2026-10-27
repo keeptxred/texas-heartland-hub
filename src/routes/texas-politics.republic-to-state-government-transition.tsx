@@ -1,6 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PoliticalHistoryAuthorityPage, politicalHistoryAuthorityHead } from "@/components/political-history-authority-page";
-import { REPUBLIC_TO_STATE_GOVERNMENT_TRANSITION } from "@/data/texas-republic-government-authority";
+import { getRepublicHistoryPage } from "@/lib/republic-history-route.functions";
 
-export const Route = createFileRoute("/texas-politics/republic-to-state-government-transition")({ head: () => politicalHistoryAuthorityHead(REPUBLIC_TO_STATE_GOVERNMENT_TRANSITION), component: Page });
-function Page() { return <PoliticalHistoryAuthorityPage page={REPUBLIC_TO_STATE_GOVERNMENT_TRANSITION} />; }
+export const Route = createFileRoute("/texas-politics/republic-to-state-government-transition")({
+  loader: () => getRepublicHistoryPage({ data: { slug: "republic-to-state-government-transition" } }),
+  head: ({ loaderData }) => loaderData
+    ? politicalHistoryAuthorityHead(loaderData)
+    : { meta: [{ title: "Page unavailable — Keep TX Red" }, { name: "robots", content: "noindex,follow" }] },
+  component: Page,
+});
+
+function Page() {
+  const page = Route.useLoaderData();
+  return <PoliticalHistoryAuthorityPage page={page} />;
+}
