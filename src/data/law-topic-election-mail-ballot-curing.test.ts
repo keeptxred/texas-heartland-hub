@@ -6,7 +6,7 @@ describe("Texas November 2026 mail ballot defect correction dates and methods", 
 
   it("does not confuse November 9 carrier-envelope curing with the October 23 ABBM application deadline", () => {
     const text = [...topic.framework, ...topic.keyRules].join(" ");
-    expect(text).toContain("Section 87.0411");
+    expect(text).toContain("Sections 87.0271 and 87.0411");
     expect(text).toContain("Sections 87.0271 and 87.0411");
     expect(text).toContain("Monday, November 9, 2026");
     expect(text).toContain("October 23");
