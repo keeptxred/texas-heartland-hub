@@ -3,13 +3,17 @@ import {
   PoliticalHistoryAuthorityPage,
   politicalHistoryAuthorityHead,
 } from "@/components/political-history-authority-page";
-import { TEXAS_CONSTITUTIONAL_HISTORY } from "@/data/texas-political-history-authority";
+import { getTexasPoliticalHistoryPage } from "@/lib/texas-political-history-route.functions";
 
 export const Route = createFileRoute("/texas-politics/texas-constitutional-history")({
-  head: () => politicalHistoryAuthorityHead(TEXAS_CONSTITUTIONAL_HISTORY),
+  loader: () => getTexasPoliticalHistoryPage({ data: { slug: "texas-constitutional-history" } }),
+  head: ({ loaderData }) => loaderData
+    ? politicalHistoryAuthorityHead(loaderData)
+    : { meta: [{ name: "robots", content: "noindex,follow" }] },
   component: TexasConstitutionalHistoryPage,
 });
 
 function TexasConstitutionalHistoryPage() {
-  return <PoliticalHistoryAuthorityPage page={TEXAS_CONSTITUTIONAL_HISTORY} />;
+  const page = Route.useLoaderData();
+  return <PoliticalHistoryAuthorityPage page={page} />;
 }
