@@ -18,8 +18,8 @@ export const getForecastRouteMetadata = createServerFn({ method: "GET" })
     );
     if (!record) return null;
     return {
-      title: record.title,
-      sourceName: record.sourceName,
-      description: record.description,
+      title: "title" in record && typeof record.title === "string" ? record.title : null,
+      sourceName: "sourceName" in record && typeof record.sourceName === "string" ? record.sourceName : null,
+      description: "description" in record && typeof record.description === "string" ? record.description : null,
     };
   });
