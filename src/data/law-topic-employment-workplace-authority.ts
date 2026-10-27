@@ -32,6 +32,7 @@ export const EMPLOYMENT_WORKPLACE_LAW_TOPIC: LawTopic = {
     "Federal FLSA pay and overtime requirements can apply alongside Texas Labor Code Chapter 62.",
     "A salary label, independent-contractor agreement or internal title does not automatically settle legal wage classification.",
     "Labor Code Chapter 21 and applicable federal statutes regulate defined employment discrimination and retaliation.",
+    "Labor Code Section 21.202 sets a typical 180-day Texas TWC civil-rights complaint period, with 300 days for allegations of sexual harassment under subsection (a-1), distinct from Payday Law wage-claim deadlines.",
     "Unemployment benefits, unpaid wage claims and wrongful termination are distinct legal and administrative issues.",
     "For a Texas Payday Law wage claim filed with TWC, Labor Code Section 61.051(c) imposes a jurisdictional filing deadline no later than the 180th day after the wages became due; other employment remedies have different rules.",
     "A proposed employment bill must be enacted and effective before it changes an employer's legal obligations.",
