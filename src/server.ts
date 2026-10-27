@@ -14,6 +14,7 @@ type ServerEntry = {
 type HtmlRewriterElement = {
   getAttribute: (name: string) => string | null;
   setAttribute: (name: string, value: string) => void;
+  remove: () => void;
 };
 
 type HtmlRewriterConstructor = new () => {
