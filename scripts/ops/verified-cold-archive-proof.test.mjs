@@ -1,4 +1,4 @@
-import { test } from 'node:test';
+import { it as test } from 'vitest';
 import { strict as assert } from 'node:assert';
 import { verifyColdArchiveProof } from './verified-cold-archive-proof.mjs';
 
