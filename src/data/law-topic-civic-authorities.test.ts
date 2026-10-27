@@ -80,7 +80,7 @@ describe("civic Law Library authorities", () => {
       q.q.includes("no records") && q.a.includes("Attorney General directory")
     )).toBe(true);
     expect(topic.sources.some((s) =>
-      s.url === "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.552.htm"
+      s.url === "https://statutes.capitol.texas.gov/Docs/GV/pdf/GV.552.pdf"
     )).toBe(true);
     expect(topic.updated).toBe("2026-09-06");
   });
