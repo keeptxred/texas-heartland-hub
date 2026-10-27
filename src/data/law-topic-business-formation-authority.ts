@@ -23,6 +23,7 @@ export const BUSINESS_FORMATION_LLC_LAW_TOPIC: LawTopic = {
     "Texas LLCs are separately governed by Chapter 101 as well as relevant general provisions. A company agreement may regulate internal relationships, management, admission of members, rights and duties, subject to statutory limits and other governing law. A single-member LLC is recognized under the statute. Members, managers and employees can hold different legal roles, and a public certificate of formation will not necessarily explain every internal power or obligation. The statute and actual governing documents must be considered together.",
     "The phrase 'limited liability' requires care. Formation may establish a separate entity and protections in specified circumstances, but those protections do not excuse an individual's own unlawful acts, fraudulent conduct, separately guaranteed obligations or any statutory responsibility that applies in the circumstances. Similarly, failing to honor required tax, business, contract, labor or safety rules is not cured by the mere existence of a corporate filing. Lawyers and accountants can advise how the actual ownership and transaction structure affects risk.",
     "Registering with the Secretary of State is also distinct from Texas Comptroller duties. Franchise-tax responsibility, tax permits, sales and use taxes and information-reporting duties depend on tax-specific statutes, thresholds, entity and business activity. The Texas Comptroller—not a generic LLC formation checklist—is the authoritative source for current tax requirements and forms. A 'no tax due' result for one type of tax does not automatically resolve every report or registration obligation.",
+    "Federal beneficial-ownership information (BOI) reporting is a separate legal question from Texas formation. FinCEN\u0027s August 11, 2026 final rule, effective August 14, permanently exempts entities created in the United States and U.S. persons from BOI reporting under the Corporate Transparency Act. A Texas-formed LLC therefore does not have to submit a FinCEN BOI report merely because it was formed. Certain entities created under foreign-country law and registered to do business in a U.S. state can still be federal reporting companies, but they do not report U.S. person beneficial owners under the revised rule. FinCEN\u0027s current final-rule guidance controls over older filing checklists; Texas Secretary of State formation filings and state tax duties remain separate.",
     "A business using an assumed name can have a distinct filing requirement depending on the entity and circumstances. A registered business name is not necessarily exclusive rights under all trademark laws and does not establish that a similar name is free of contractual, common-law or federal intellectual-property claims. Licensing by local governments, occupational regulators or industry-specific agencies also remains separate. For practical planning, verify each requirement with the relevant official state and local source.",
     "Business ownership and filings change over time. A company may amend its formation records, change agents, convert or dissolve under specified provisions and procedures. A public 'active' status is useful evidence of recorded status, but it does not prove the organization complies with every tax, contractual or regulatory obligation. For a dispute, read the effective statutes, filed instruments, actual company agreement and any controlling court orders.",
     "Legislative proposals concerning corporations and LLC governance should not be labeled enacted law until a valid act takes effect. Texas Business Organizations Code amendments can be substantive, including changes to fiduciary duties or formation rules. An act's effective-date and applicability language must be checked, including for existing entities and older agreements. This is a neutral framework for legal research, not a substitute for advice about which entity to form."
@@ -36,6 +37,7 @@ export const BUSINESS_FORMATION_LLC_LAW_TOPIC: LawTopic = {
     "Business Organizations Code Chapter 101 contains LLC-specific rules for members, managers and company agreements.",
     "Secretary of State Form 205 is used for domestic LLC formation; Form 201 is for a Texas for-profit corporation.",
     "Secretary of State entity formation is legally separate from tax permits, franchise tax, industry licenses and contracts.",
+    "FinCEN\u0027s August 2026 final rule exempts U.S.-created LLCs from federal BOI reporting; certain foreign-country entities registered in Texas can still be covered, with U.S. persons excluded from reporting.",
     "LLC ownership and limited-liability protections have statutory limits and do not universally shield personal wrongful acts.",
     "Proposed business law does not become current law solely because the bill was filed or passed a chamber."
   ],
@@ -63,6 +65,10 @@ export const BUSINESS_FORMATION_LLC_LAW_TOPIC: LawTopic = {
     {
       "q": "Does registering an LLC complete my Texas franchise-tax compliance?",
       "a": "No. Business registration and tax obligations are administered through different laws and agencies. Check Texas Comptroller instructions for the entity's specific tax and reporting responsibilities, rather than relying on the formation filing as proof of tax compliance."
+    },
+    {
+      "q": "Must every new Texas LLC file a federal FinCEN beneficial-ownership report?",
+      "a": "No. FinCEN\u0027s final rule effective August 14, 2026 exempts companies created in the United States, including Texas domestic LLCs, from federal BOI reports. Certain foreign-country entities registered to do business in Texas may still be reporting companies, but U.S. persons are not reportable under this rule. These rules do not replace Texas formation, agent, tax, or licensing duties."
     },
     {
       "q": "How can I tell when a business-organization amendment takes effect?",
@@ -99,6 +105,16 @@ export const BUSINESS_FORMATION_LLC_LAW_TOPIC: LawTopic = {
       "label": "Texas Secretary of State — Formation FAQs",
       "url": "https://www.sos.state.tx.us/corp/formationfaqs.shtml",
       "note": "Official formation guidance and the agency's limits on legal advice."
+    },
+    {
+      "label": "FinCEN — August 2026 Beneficial Ownership Reporting Final Rule",
+      "url": "https://www.fincen.gov/news/news-releases/fincen-permanently-ends-beneficial-ownership-reporting-requirements-millions",
+      "note": "Primary federal agency statement of the final domestic entity and U.S. person BOI exemptions and remaining foreign-entity duties."
+    },
+    {
+      "label": "FinCEN — Current Beneficial Ownership Reporting Requirements",
+      "url": "https://www.fincen.gov/boi",
+      "note": "Current final-rule effective date, domestic exemptions, foreign-company applicability and fraud warnings."
     },
     {
       "label": "Texas Comptroller — Franchise Tax",
