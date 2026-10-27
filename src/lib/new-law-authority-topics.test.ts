@@ -80,6 +80,11 @@ describe("new Texas law authority topics", () => {
     expect(framework).toContain("within 180 days");
     expect(framework).toContain("300 days");
     expect(framework).toContain("Payday Law wage-claim deadline");
+    expect(framework).toContain("Section 21.141");
+    expect(framework).toContain("Section 21.142");
+    expect(framework).toContain("one or more employees");
+    expect(rules).toContain("one or more employees");
+    expect(guide.questions.some((item) => item.q.includes("business with one employee?") && item.a.includes("§21.142"))).toBe(true);
     expect(rules).toContain("Section 21.202");
     expect(guide.questions.some((item) =>
       item.q.includes("sexual-harassment filing period") &&
