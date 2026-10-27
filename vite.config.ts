@@ -29,6 +29,7 @@ export default defineConfig(({ mode }) => {
       }),
       tanstackStart({
         router: {
+          autoCodeSplitting: true,
           // Co-located tests are not file-based routes. Excluding them here
           // prevents route-generation warnings without moving or weakening tests.
           routeFileIgnorePattern: "\\.(test|spec)\\.(ts|tsx)$",
