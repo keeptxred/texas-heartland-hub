@@ -13,7 +13,8 @@ const criticalRoutes = [
 describe("Election Central shared-bootstrap payload boundary", () => {
   it.each(criticalRoutes)("does not synchronously import 2026 race/candidate JSON into route config: %s", (filename) => {
     const content = read(`src/routes/${filename}`);
-    expect(content).not.toMatch(/import\\s+.*(?:candidates|races)Snapshot?\\s+from\\s+[\"']@\\/data\\/elections\\/2026\\/(?:candidates|races)\\.json/);
+    expect(content).not.toContain('from "@/data/elections/2026/races.json"');
+    expect(content).not.toContain('from "@/data/elections/2026/candidates.json"');
     expect(content).toContain("head:");
     expect(content).toContain('rel: "canonical"');
   });
