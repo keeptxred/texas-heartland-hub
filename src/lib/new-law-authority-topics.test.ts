@@ -88,6 +88,8 @@ describe("new Texas law authority topics", () => {
     )).toBe(true);
     expect(guide.sources.some((source) => source.url ===
       "https://statutes.capitol.texas.gov/Docs/LA/htm/LA.21.htm")).toBe(true);
+    expect(guide.sources.some((source) => source.url ===
+      "https://www.twc.texas.gov/programs/civil-rights/employment-discrimination")).toBe(true);
     expect(guide.updated).toBe("2026-10-23");
     expect(guide.published).toBe("2026-10-23");
   });
