@@ -14,6 +14,7 @@ type ServerEntry = {
 type HtmlRewriterElement = {
   getAttribute: (name: string) => string | null;
   setAttribute: (name: string, value: string) => void;
+  remove: () => void;
 };
 
 type HtmlRewriterConstructor = new () => {
@@ -107,15 +108,22 @@ export function normalizeCanonicalHref(href: string): string {
 }
 
 export function normalizeCanonicalLinksInHtmlText(html: string): string {
+  // Remove duplicate normalized canonicals without hiding conflicting URLs.
+  const seenCanonicalHrefs = new Set<string>();
   return html.replace(/<link\b[^>]*>/gi, (tag) => {
     const relMatch = tag.match(/\brel\s*=\s*(["'])([^"']*)\1/i);
     const relTokens = relMatch?.[2]?.trim().toLowerCase().split(/\s+/) ?? [];
     if (!relTokens.includes("canonical")) return tag;
 
-    return tag.replace(/\bhref\s*=\s*(["'])([^"']*)\1/i, (hrefAttribute, quote: string, href: string) => {
+    const normalizedTag = tag.replace(/\bhref\s*=\s*(["'])([^"']*)\1/i, (hrefAttribute, quote: string, href: string) => {
       const normalized = normalizeCanonicalHref(href);
       return normalized === href ? hrefAttribute : `href=${quote}${normalized}${quote}`;
     });
+    const match = normalizedTag.match(/\bhref\s*=\s*(["'])([^"']*)\1/i);
+    const href = match?.[2];
+    if (href && seenCanonicalHrefs.has(href)) return "";
+    if (href) seenCanonicalHrefs.add(href);
+    return normalizedTag;
   });
 }
 
@@ -143,12 +151,18 @@ export async function normalizeCanonicalLinksInHtml(response: Response): Promise
 
   const Rewriter = cloudflareHtmlRewriter();
   if (Rewriter) {
+    const seenCanonicalHrefs = new Set<string>();
     return new Rewriter()
       .on('link[rel~="canonical"]', {
         element(element) {
           const href = element.getAttribute("href");
           if (!href) return;
           const normalized = normalizeCanonicalHref(href);
+          if (seenCanonicalHrefs.has(normalized)) {
+            element.remove();
+            return;
+          }
+          seenCanonicalHrefs.add(normalized);
           if (normalized !== href) element.setAttribute("href", normalized);
         },
       })

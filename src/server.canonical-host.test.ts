@@ -133,6 +133,31 @@ describe("normalizeCanonicalLinksInHtmlText", () => {
     );
   });
 
+  it("emits one canonical for identical URLs emitted twice by separate SSR head sources", () => {
+    const html = [
+      "<!doctype html><html><head>",
+      '<link rel="canonical" href="https://keeptxred.com/bills/texas/89/hb/1056">',
+      '<link href="http://www.keeptxred.com/bills/texas/89/hb/1056/" rel="canonical">',
+      '<link rel="stylesheet" href="/assets/bill.css">',
+      "</head><body><h1>HB 1056</h1></body></html>",
+    ].join("");
+
+    const normalized = normalizeCanonicalLinksInHtmlText(html);
+    const matches = normalized.match(/<link[^>]+rel="canonical"[^>]*>/g) ?? [];
+    expect(matches).toEqual([
+      '<link rel="canonical" href="https://keeptxred.com/bills/texas/89/hb/1056">',
+    ]);
+    expect(normalized).toContain('<link rel="stylesheet" href="/assets/bill.css">');
+  });
+
+  it("does not hide contradictory canonical URLs from strict SEO verification", () => {
+    const html = [
+      '<link rel="canonical" href="https://keeptxred.com/laws">',
+      '<link rel="canonical" href="https://keeptxred.com/bills/texas/89/hb/1056">',
+    ].join("");
+    expect(normalizeCanonicalLinksInHtmlText(html)).toBe(html);
+  });
+
   it("keeps the root canonical slash", () => {
     expect(
       normalizeCanonicalLinksInHtmlText(

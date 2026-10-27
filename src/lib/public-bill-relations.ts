@@ -6,6 +6,24 @@ import { cachedPublicBill } from '@/lib/public-bill-cache';
 
 const db = supabase as any;
 
+export function hydrateApprovedBillArticleRows(rows: any[]) {
+  return rows
+    .filter((row) => row?.review_status === 'approved')
+    .map((row) => {
+      const nested = row.daily_articles;
+      const article = Array.isArray(nested) ? nested[0] : nested;
+      return article?.id && article?.slug
+        ? {
+            ...article,
+            title: resolvePublicArticleDisplayTitle(article),
+            excerpt: article.dek,
+            relationship_type: row.relationship_type,
+          }
+        : null;
+    })
+    .filter((row) => row?.id);
+}
+
 /**
  * Public bill pages may expose only approved editorial relationships.
  * Official sponsors, actions, committees, and documents continue to use the
@@ -19,19 +37,24 @@ async function loadPublicBillRelations(billId: string) {
   const base = await getBillRelations(billId, { includeEditorialRelations: false });
 
   const safe = async (label: string, build: () => any) => {
-    try {
-      const { data, error } = await build();
-      if (error) {
-        hadQueryError = true;
-        console.error(`getPublicBillRelations(${label}) failed for bill ${billId}:`, error.message ?? error);
-        return [];
+    // Do not cache incomplete approved-only bill views after a failed read.
+    // One retry is permitted for read failures, not legitimate empty results.
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        const { data, error } = await build();
+        if (!error) return data ?? [];
+        if (attempt === 1) {
+          hadQueryError = true;
+          console.error(`getPublicBillRelations(${label}) failed for bill ${billId}:`, error.message ?? error);
+        }
+      } catch (error: any) {
+        if (attempt === 1) {
+          hadQueryError = true;
+          console.error(`getPublicBillRelations(${label}) threw for bill ${billId}:`, error?.message ?? error);
+        }
       }
-      return data ?? [];
-    } catch (error: any) {
-      hadQueryError = true;
-      console.error(`getPublicBillRelations(${label}) threw for bill ${billId}:`, error?.message ?? error);
-      return [];
     }
+    return [];
   };
 
   const [subjectRows, articleRelationshipRows] = await Promise.all([
@@ -45,7 +68,7 @@ async function loadPublicBillRelations(billId: string) {
     safe('article relationships', () =>
       db
         .from('bill_article_relationships')
-        .select('article_id,relationship_type,confidence,is_manual')
+        .select('article_id,review_status,relationship_type,confidence,is_manual,daily_articles(id,title,seo_headline,slug,dek,published_at,image_url)')
         .eq('bill_id', billId)
         .eq('review_status', 'approved')
         .order('is_manual', { ascending: false })
@@ -54,25 +77,8 @@ async function loadPublicBillRelations(billId: string) {
     ),
   ]);
 
-  const articleIds = [...new Set(
-    articleRelationshipRows
-      .map((row: any) => String(row.article_id ?? '').trim())
-      .filter(Boolean),
-  )];
-
-  const articleRows = articleIds.length
-    ? await safe('articles', () =>
-        db
-          .from('daily_articles')
-          .select('id,title,seo_headline,slug,dek,published_at,image_url')
-          .in('id', articleIds),
-      )
-    : [];
-
-  const articleById = new Map<string, any>(
-    articleRows.map((article: any) => [String(article.id), article] as [string, any]),
-  );
-
+  // The existing article_id foreign key provides the approved published
+  // article in one consistent read instead of two unrelated requests.
   const sponsors = (base.sponsors ?? []).map((sponsor: any) => {
     const slug = String(sponsor.sponsor_slug ?? '').trim();
     if (!slug || findRepresentativeBySlug(slug)) return sponsor;
@@ -84,19 +90,7 @@ async function loadPublicBillRelations(billId: string) {
     _hadQueryError: hadQueryError,
     sponsors,
     subjects: subjectRows.map((row: any) => row.bill_subjects).filter(Boolean),
-    articles: articleRelationshipRows
-      .map((row: any) => {
-        const article = articleById.get(String(row.article_id));
-        return article
-          ? {
-              ...article,
-              title: resolvePublicArticleDisplayTitle(article),
-              excerpt: article.dek,
-              relationship_type: row.relationship_type,
-            }
-          : null;
-      })
-      .filter((row: any) => row?.id),
+    articles: hydrateApprovedBillArticleRows(articleRelationshipRows),
   };
 }
 
