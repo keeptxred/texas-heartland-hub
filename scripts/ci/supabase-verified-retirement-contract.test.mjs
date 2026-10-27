@@ -29,6 +29,15 @@ describe('verified Free Plan retirement invariants', () => {
     assert.match(workflow,/shared-supabase-verified-cold-retention/);
     assert.match(workflow,/cancel-in-progress: false/);
     assert.match(workflow,/SUPABASE_SERVICE_ROLE_KEY:/);
+    assert.ok(workflow.includes('if: 
+    assert.match(exporter,/await snapshotPublishedArticles\(\)/);
+    assert.match(exporter,/VERIFIED_COLD_RETENTION_JOB !== '1'/);
+  });
+});
+ + '{{ failure() }}'));
+    assert.match(workflow,/issues: write/);
+    assert.match(workflow,/gh issue comment 2762/);
+    assert.match(workflow,/GITHUB_RUN_ID/);
     assert.match(exporter,/await snapshotPublishedArticles\(\)/);
     assert.match(exporter,/VERIFIED_COLD_RETENTION_JOB !== '1'/);
   });
