@@ -588,8 +588,37 @@ async function handler() {
     // possibly richer source-page extraction that completed concurrently.
     // This also unlocks reporting for existing 72-hour candidates without
     // another outbound HTTP fetch or AI text rewrite.
+    // Previous behavior issued twelve conditional PATCHes on every half-hour
+    // ingestion even for URLs whose original body had already been saved.
+    // Probe null bodies with cheap indexed link-only reads before any writes.
+    // Rotate the bounded batch to avoid starving later sources behind a fixed
+    // first-twelve window; still retain the atomic NULL guard on each PATCH.
+    const originalBodyCandidates = rows
+      .filter((row) => existingLinks.has(row.link) && Boolean(row.extracted_body));
+    const backfillOffset = originalBodyCandidates.length
+      ? (Math.floor(Date.now() / (30 * 60 * 1000)) * 12) % originalBodyCandidates.length
+      : 0;
+    const bodyProbeWindow = [
+      ...originalBodyCandidates.slice(backfillOffset),
+      ...originalBodyCandidates.slice(0, backfillOffset),
+    ].slice(0, 12);
+    const missingBodyLinks = new Set<string>();
+    // Small groups keep encoded PostgREST URLs below gateway limits.
+    for (let start = 0; start < bodyProbeWindow.length; start += 6) {
+      const group = bodyProbeWindow.slice(start, start + 6);
+      const { data: missing, error: lookupError } = await supabaseAdmin
+        .from("texas_news_feed")
+        .select("link")
+        .in("link", group.map((row) => row.link))
+        .is("extracted_body", null);
+      if (lookupError) {
+        console.warn("[ingest-feeds] RSS bodyless lookup deferred", lookupError.message);
+        continue;
+      }
+      for (const item of missing ?? []) if (item.link) missingBodyLinks.add(item.link);
+    }
     const missingOriginalBodies = rows
-      .filter((row) => existingLinks.has(row.link) && Boolean(row.extracted_body))
+      .filter((row) => missingBodyLinks.has(row.link))
       .slice(0, 12);
     for (const row of missingOriginalBodies) {
       const { data: updated, error: recoveryError } = await supabaseAdmin

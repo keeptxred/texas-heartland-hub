@@ -4,6 +4,7 @@ const { fromMock, rpcMock } = vi.hoisted(() => ({ fromMock: vi.fn(), rpcMock: vi
 vi.mock("@/integrations/supabase/client", () => ({ supabase: { from: fromMock, rpc: rpcMock } }));
 
 import { listBills, getBillFilterOptions, getRepresentativeLegislation } from "./bills";
+import { clearPublicBillCache } from "./public-bill-cache";
 
 type QueryResult = { data: unknown[] | null; count?: number | null; error?: Error | null };
 type Call = { method: string; args: unknown[] };
@@ -109,7 +110,7 @@ describe("bill directory pagination under the public API timeout", () => {
       now.mockRestore();
     }
   });
-  beforeEach(() => { fromMock.mockReset(); rpcMock.mockReset(); });
+  beforeEach(() => { fromMock.mockReset(); rpcMock.mockReset(); clearPublicBillCache(); });
 
   it("keeps first-page requests as one query with planned totals", async () => {
     const first = mockQuery({ data: [{ id: "a", caption: "First bill" }], count: 12786 });

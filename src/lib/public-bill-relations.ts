@@ -2,6 +2,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { findRepresentativeBySlug } from '@/data/representatives';
 import { getBillRelations } from '@/lib/bills';
 import { resolvePublicArticleDisplayTitle } from '@/lib/public-article-display-title';
+import { cachedPublicBill } from '@/lib/public-bill-cache';
 
 const db = supabase as any;
 
@@ -13,18 +14,21 @@ const db = supabase as any;
  * representative-profile link is exposed only when the slug resolves to the
  * verified representative directory.
  */
-export async function getPublicBillRelations(billId: string) {
+async function loadPublicBillRelations(billId: string) {
+  let hadQueryError = false;
   const base = await getBillRelations(billId, { includeEditorialRelations: false });
 
   const safe = async (label: string, build: () => any) => {
     try {
       const { data, error } = await build();
       if (error) {
+        hadQueryError = true;
         console.error(`getPublicBillRelations(${label}) failed for bill ${billId}:`, error.message ?? error);
         return [];
       }
       return data ?? [];
     } catch (error: any) {
+      hadQueryError = true;
       console.error(`getPublicBillRelations(${label}) threw for bill ${billId}:`, error?.message ?? error);
       return [];
     }
@@ -77,6 +81,7 @@ export async function getPublicBillRelations(billId: string) {
 
   return {
     ...base,
+    _hadQueryError: hadQueryError,
     sponsors,
     subjects: subjectRows.map((row: any) => row.bill_subjects).filter(Boolean),
     articles: articleRelationshipRows
@@ -93,4 +98,20 @@ export async function getPublicBillRelations(billId: string) {
       })
       .filter((row: any) => row?.id),
   };
+}
+
+/**
+ * Cache approved-only public bill relations, not any personalized/admin view.
+ * Preserve the existing explicit review_status='approved' filters and avoid
+ * caching partial responses from upstream database errors.
+ */
+export async function getPublicBillRelations(billId: string) {
+  const result = await cachedPublicBill(
+    `public-approved-bill-relations:${billId}`,
+    () => loadPublicBillRelations(billId),
+    120_000,
+    (value) => !value._hadQueryError,
+  );
+  const { _hadQueryError, ...relations } = result;
+  return relations;
 }
