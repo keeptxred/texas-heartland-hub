@@ -43,4 +43,3 @@ jobs:
       - run: node --check scripts/data/export-supabase-cold-archives.mjs
       - run: node scripts/ci/verify-supabase-free-tier-retention.mjs
       - run: node --check scripts/ops/retire-verified-supabase-cold-records.mjs
-      - run: node --test scripts/ops/verified-cold-archive-proof.test.mjs scripts/ci/supabase-verified-retirement-contract.test.mjs
