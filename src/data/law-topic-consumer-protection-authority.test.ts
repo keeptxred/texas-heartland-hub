@@ -24,8 +24,8 @@ describe("Texas consumer-law enacted identity-theft debt protections", () => {
 
   it("retains correct collector scope and official enactment and code citations", () => {
     const text = [...topic.framework, ...topic.keyRules].join(" ");
-    expect(text).toContain('broad Texas "debt collector"');
-    expect(text).toContain('narrower "third-party debt collector"');
+    expect(text).toContain("broad Texas debt-collector category");
+    expect(text).toContain("narrower third-party-debt-collector category");
     expect(text).toContain("Section 392.001");
     expect(topic.sources.some(({ url }) =>
       url === "https://tcss.legis.texas.gov/docs/fi/htm/fi.392.htm"
