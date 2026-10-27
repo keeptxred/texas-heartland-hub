@@ -17,17 +17,23 @@ export async function getPublicBillRelations(billId: string) {
   const base = await getBillRelations(billId, { includeEditorialRelations: false });
 
   const safe = async (label: string, build: () => any) => {
-    try {
-      const { data, error } = await build();
-      if (error) {
-        console.error(`getPublicBillRelations(${label}) failed for bill ${billId}:`, error.message ?? error);
-        return [];
+    // These are read-only public relationships. Retry one failed request, not
+    // every legitimate empty response, to avoid dropping verified editorial
+    // crosslinks during a transient PostgREST/edge transport failure.
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        const { data, error } = await build();
+        if (!error) return data ?? [];
+        if (attempt === 1) {
+          console.error(`getPublicBillRelations(${label}) failed for bill ${billId}:`, error.message ?? error);
+        }
+      } catch (error: any) {
+        if (attempt === 1) {
+          console.error(`getPublicBillRelations(${label}) threw for bill ${billId}:`, error?.message ?? error);
+        }
       }
-      return data ?? [];
-    } catch (error: any) {
-      console.error(`getPublicBillRelations(${label}) threw for bill ${billId}:`, error?.message ?? error);
-      return [];
     }
+    return [];
   };
 
   const [subjectRows, articleRelationshipRows] = await Promise.all([
@@ -41,7 +47,7 @@ export async function getPublicBillRelations(billId: string) {
     safe('article relationships', () =>
       db
         .from('bill_article_relationships')
-        .select('article_id,relationship_type,confidence,is_manual')
+        .select('article_id,review_status,relationship_type,confidence,is_manual,daily_articles(id,title,seo_headline,slug,dek,published_at,image_url)')
         .eq('bill_id', billId)
         .eq('review_status', 'approved')
         .order('is_manual', { ascending: false })
@@ -50,25 +56,9 @@ export async function getPublicBillRelations(billId: string) {
     ),
   ]);
 
-  const articleIds = [...new Set(
-    articleRelationshipRows
-      .map((row: any) => String(row.article_id ?? '').trim())
-      .filter(Boolean),
-  )];
-
-  const articleRows = articleIds.length
-    ? await safe('articles', () =>
-        db
-          .from('daily_articles')
-          .select('id,title,seo_headline,slug,dek,published_at,image_url')
-          .in('id', articleIds),
-      )
-    : [];
-
-  const articleById = new Map<string, any>(
-    articleRows.map((article: any) => [String(article.id), article] as [string, any]),
-  );
-
+  // The relationship's declared article_id FK lets PostgREST return the
+  // published article in the same public, approved-only read. This avoids a
+  // second independent lookup failing after an approved relation was fetched.
   const sponsors = (base.sponsors ?? []).map((sponsor: any) => {
     const slug = String(sponsor.sponsor_slug ?? '').trim();
     if (!slug || findRepresentativeBySlug(slug)) return sponsor;
@@ -80,9 +70,11 @@ export async function getPublicBillRelations(billId: string) {
     sponsors,
     subjects: subjectRows.map((row: any) => row.bill_subjects).filter(Boolean),
     articles: articleRelationshipRows
+      .filter((row: any) => row?.review_status === 'approved')
       .map((row: any) => {
-        const article = articleById.get(String(row.article_id));
-        return article
+        const nested = row.daily_articles;
+        const article = Array.isArray(nested) ? nested[0] : nested;
+        return article?.id && article?.slug
           ? {
               ...article,
               title: resolvePublicArticleDisplayTitle(article),
