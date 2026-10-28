@@ -2,8 +2,10 @@ name: Verify and safely retire shared Supabase cold records
 on:
   workflow_dispatch:
   schedule:
-    # 6 bounded opportunities/day, staggered from the DB cron minute 19/45.
-    - cron: '27 0,4,8,12,16,20 * * *'
+    # 12 opportunities/day while backlog and quota pressure are high.
+    # Public-repository GitHub Actions; strict concurrency prevents overlap.
+    # Existing 2/4 sequential cycles per run, never more than 25 minutes.
+    - cron: '27 */2 * * *'
   push:
     branches: [main]
     paths:
