@@ -20,7 +20,11 @@ describe('verified Free Plan retirement invariants', () => {
     assert.match(runner,/retire_verified_expired_free_tier_feed/);
     assert.match(runner,/p_expected_clusters: metrics.parentRows/);
     assert.match(runner,/p_expected_feed_rows: metrics.parentRows/);
-    assert.ok(runner.includes("cycle === 1 ? 'newsroom' : 'feed'"));
+    assert.match(runner,/const PRESSURE_CYCLES = 4/);
+    assert.match(runner,/const PRESSURE_THRESHOLD_BYTES = 490_000_000/);
+    assert.match(runner,/const cycles = initial >= PRESSURE_THRESHOLD_BYTES \? PRESSURE_CYCLES : BASE_CYCLES/);
+    assert.match(runner,/cycle % 2 === 1 \? 'newsroom' : 'feed'/);
+    assert.ok(runner.includes("cycle % 2 === 1 ? 'newsroom' : 'feed'"));
     assert.ok(runner.includes("await stage(kind, kind === 'newsroom' ? MAX_STAGE_NEWSROOM : MAX_STAGE_FEED)"));
     assert.ok(!runner.includes("await stage('newsroom', MAX_STAGE_NEWSROOM);\\n    await stage('feed', MAX_STAGE_FEED);"));
     assert.match(runner,/Resuming previously staged archive batch without restaging/);

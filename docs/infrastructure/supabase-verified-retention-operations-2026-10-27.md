@@ -38,8 +38,21 @@ plus on deployment of its own workflow changes, and via manual dispatch.
 The only credential is the existing GitHub Supabase service-role secret.
 `ENABLE_VERIFIED_COLD_RETIREMENT=1` is required for any mutating action.
 
-Each scheduled run attempts up to two small sequential cycles, each with
-at most 65 newsroom clusters and 75 feed rows. A run requires at least
+Each scheduled run attempts two sequential cycles during normal capacity
+conditions, or up to four sequential cycles when the measured PostgreSQL size
+is at least 490,000,000 bytes. The four-cycle order is newsroom → feed →
+newsroom → feed; each cycle archives at most 65 newsroom clusters or 75 feed
+rows and completes Storage readback plus reference-checked retirement before
+another cycle begins. 
+This pressure-triggered mode raises maximum daily archival throughput from
+390 to 780 newsroom clusters and from 450 to 900 feed parent records (six
+scheduled runs/day). Actual throughput depends on source eligibility and
+publication protections; database pages are usually reused, not physically
+returned immediately. If a feed stage times out, previously completed
+newsroom retirements remain committed and fully backed up. Never respond by
+removing reference guards or increasing concurrent archive jobs.
+
+A run requires at least
 1.2 MB of temporary PostgreSQL staging headroom to avoid gratuitously
 worsening quota pressure. A tighter threshold or database failure stops
 before any attempt to delete.
