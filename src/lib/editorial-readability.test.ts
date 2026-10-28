@@ -39,7 +39,7 @@ describe("article readability validation", () => {
   it("never recombines a short tail into an invalid 6-sentence paragraph", () => {
     const original = [
       ...Array.from({ length: 4 }, (_, i) => `Earlier ${i + 1} ${words(26)}.`),
-      ...Array.from({ length: 2 }, (_, i) => `Later ${i + 1} ${words(11)}.`),
+      ...Array.from({ length: 2 }, (_, i) => `Later ${i + 1} ${words(10)}.`),
     ].join(" ");
     const article = {
       sections: [
