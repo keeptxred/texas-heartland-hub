@@ -53,14 +53,18 @@ The only credential is the existing GitHub Supabase service-role secret.
 Each scheduled run attempts two sequential cycles during normal capacity
 conditions, or up to four sequential cycles when the measured PostgreSQL size
 is at least 490,000,000 bytes. The four-cycle order is newsroom → feed →
-newsroom → feed; each cycle archives at most 65 newsroom clusters or 75 feed
+newsroom → feed; each cycle archives at most 65 newsroom clusters or 50 feed
 rows and completes Storage readback plus reference-checked retirement before
 another cycle begins. 
 This pressure-triggered mode raises maximum daily archival throughput from
-780 to 1,560 newsroom clusters and from 900 to 1,800 feed parent records (12
+780 to 1,560 newsroom clusters and from 600 to 1,200 feed parent records (12
 scheduled runs/day at four cycles under pressure). Actual throughput depends on source eligibility and
 publication protections; database pages are usually reused, not physically
-returned immediately. If a feed stage times out, previously completed
+returned immediately. The original eight-way feed selection still timed out when staging 75
+records. The updated feed function selects one of 32 shards per two-hour
+window (one complete rotation in ~64 hours, assuming scheduled execution)
+and stages up to 50 feed parent records per cycle, preserving all original
+age, publication, child and soft-reference checks. If a feed stage times out, previously completed
 newsroom retirements remain committed and fully backed up. Never respond by
 removing reference guards or increasing concurrent archive jobs.
 
