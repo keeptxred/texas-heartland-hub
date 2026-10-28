@@ -19,7 +19,7 @@ export function extractAuthoritySources(source, file) {
   const after = source.slice(marker);
   const end = after.search(/\n\s*(?:"related"|related)\s*:/m);
   const block = end < 0 ? after : after.slice(0, end);
-  const matches = [...block.matchAll(/\b(?:url|"url"|'url')\s*:\s*["'](https?:\/\/[^"']+)["']/g)];
+  const matches = [...block.matchAll(/(?:url|"url"|'url')\s*:\s*["'](https?:\/\/[^"']+)["']/g)];
   if (matches.length < 3) throw new Error(file + ": missing source URLs (expected >=3)");
   const urls = matches.map((match) => match[1]);
   for (const url of urls) {
