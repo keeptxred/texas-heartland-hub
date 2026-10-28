@@ -37,6 +37,13 @@ describe('verified Free Plan retirement invariants', () => {
     assert.match(workflow,/shared-supabase-verified-cold-retention/);
     assert.ok(workflow.includes("cron: '27 */2 * * *'"), '2-hour protected archival cadence required while backlog is high');
     assert.match(workflow,/cancel-in-progress: false/);
+    assert.match(workflow,/workflow_run:/);
+    assert.match(workflow,/workflows: \["KeepTXRed Article Hero Readiness Audit"\]/);
+    assert.match(workflow,/github.event.workflow_run.event == 'schedule'/);
+    assert.match(workflow,/github.event.workflow_run.head_repository.full_name == 'keeptxred\/texas-heartland-hub'/);
+    assert.match(workflow,/recent-success-gate:/);
+    assert.match(workflow,/needs.recent-success-gate.outputs.run_archive == 'true'/);
+    assert.match(workflow,/actions: read/);
     assert.match(workflow,/SUPABASE_SERVICE_ROLE_KEY:/);
     assert.ok(workflow.includes('failure()'));
     assert.match(workflow,/issues: write/);

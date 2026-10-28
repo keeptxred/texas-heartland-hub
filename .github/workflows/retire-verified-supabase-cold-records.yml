@@ -6,17 +6,25 @@ on:
     # Public-repository GitHub Actions; strict concurrency prevents overlap.
     # Existing 2/4 sequential cycles per run, never more than 25 minutes.
     - cron: '27 */2 * * *'
+  # Recovery opportunity if GitHub delays or drops a scheduled archive.
+  # Source is a first-party schedule-only run, never a fork/PR artifact.
+  workflow_run:
+    workflows: ["KeepTXRed Article Hero Readiness Audit"]
+    types: [completed]
+    branches: [main]
   push:
     branches: [main]
     paths:
       - 'scripts/ops/retire-verified-supabase-cold-records.mjs'
       - 'scripts/ops/verified-cold-archive-proof.mjs'
+      - 'scripts/ops/should-run-verified-retention.mjs'
       - 'scripts/data/export-supabase-cold-archives.mjs'
       - '.github/workflows/retire-verified-supabase-cold-records.yml'
 
 permissions:
   contents: read
   issues: write
+  actions: read
 
 # Archive staging must never overlap a second export/retirement sequence.
 concurrency:
@@ -24,8 +32,31 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  recent-success-gate:
+    if: >-
+      github.repository == 'keeptxred/texas-heartland-hub' &&
+      (github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.event == 'schedule' &&
+       github.event.workflow_run.head_repository.full_name == 'keeptxred/texas-heartland-hub' &&
+       github.event.workflow_run.head_branch == 'main'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    outputs:
+      run_archive: ${{ steps.decide.outputs.run_archive }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Skip fallback if a verified archive completed in the past 90 minutes
+        id: decide
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          WORKFLOW_RUN_SOURCE_EVENT: ${{ github.event.workflow_run.event }}
+          WORKFLOW_RUN_SOURCE_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          WORKFLOW_RUN_SOURCE_REPO: ${{ github.event.workflow_run.head_repository.full_name }}
+        run: node scripts/ops/should-run-verified-retention.mjs
+
   verified-retention:
-    if: github.repository == 'keeptxred/texas-heartland-hub'
+    needs: [recent-success-gate]
+    if: needs.recent-success-gate.outputs.run_archive == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
@@ -49,7 +80,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          bunx vitest run scripts/ops/verified-cold-archive-proof.test.mjs scripts/ci/supabase-verified-retirement-contract.test.mjs
+          bunx vitest run scripts/ops/verified-cold-archive-proof.test.mjs scripts/ops/should-run-verified-retention.test.mjs scripts/ci/supabase-verified-retirement-contract.test.mjs
           node --check scripts/ops/retire-verified-supabase-cold-records.mjs
           node --check scripts/data/export-supabase-cold-archives.mjs
       - name: Stage, privately back up, read back, verify, and retire only eligible rows

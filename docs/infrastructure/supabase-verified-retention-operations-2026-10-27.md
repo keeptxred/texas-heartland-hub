@@ -35,6 +35,18 @@ retention strategy.
 `.github/workflows/retire-verified-supabase-cold-records.yml` is
 serialized and runs every two hours at minute 27 UTC (12 runs/day),
 plus on deployment of its own workflow changes, and via manual dispatch.
+
+**Missed-GitHub-cron recovery:** the hourly first-party `KeepTXRed Article
+Hero Readiness Audit` is a secondary `workflow_run: completed` trigger.
+This does not use any audit artifacts or user-supplied payloads. The gate
+requires the audit to originate from a scheduled run on this repository's
+`main`, then queries authorized GitHub Actions metadata. It starts an archive
+only when the most recently *successful* archive is at least 90 minutes old,
+or none exists; recent successes are skipped. GitHub API failure stops before
+any private credentials or staging are used. Both normal cron and fallback
+share the SAME serialized workflow, checks, limits, Storage validation and
+protected retirement RPCs. Do not generalize this event to pull requests,
+untrusted forks, arbitrary workflow runs, or external artifacts.
 The only credential is the existing GitHub Supabase service-role secret.
 `ENABLE_VERIFIED_COLD_RETIREMENT=1` is required for any mutating action.
 
