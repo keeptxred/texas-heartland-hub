@@ -31,7 +31,7 @@ for(const predicate of [
   'n.duplicate_of_feed_item_id=f.id AND n.feed_item_id<>f.id',
 ]) assert.ok(sql.includes(predicate),'Missing safety predicate: '+predicate);
 
-assert.ok(runner.includes("cycle === 1 ? 'newsroom' : 'feed'"));
+assert.ok(runner.includes("cycle % 2 === 1 ? 'newsroom' : 'feed'"));
 assert.ok(runner.indexOf('const receipt = verifiedExport();') < runner.indexOf("totalNewsroom += await retire('newsroom', proof)"));
 assert.ok(runner.indexOf("totalNewsroom += await retire('newsroom', proof)") < runner.indexOf("totalFeed += await retire('feed', proof)"));
 console.log('Verified eight rotating shards, all published-source protections and independent archival phase order.');
