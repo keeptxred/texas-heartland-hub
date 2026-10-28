@@ -12,6 +12,10 @@ const REPOSITORY = "keeptxred/texas-heartland-hub";
 const WORKFLOW_PATH = ".github/workflows/run-daily-news-now.yml";
 const OVERDUE_HOURS = 6;
 const MAX_ATTEMPTS = 8;
+// A locked or cooling-down story is not an editorial/AI attempt. Scan at
+// most sixteen DIFFERENT stories to get eight substantive attempts, without
+// retrying a lock or increasing the paid rewrite budget.
+const MAX_CANDIDATE_SCAN = 16;
 const MAX_PUBLISHED = 1;
 const GAP_SCAN_LIMIT = 80;
 const FAILURE_LOOKBACK_HOURS = 24;
@@ -244,12 +248,21 @@ async function publishOverdueGaps(request: Request) {
     error?: string;
   }> = [];
   let published = 0;
+  let substantiveAttempts = 0;
+  let lockDeferrals = 0;
 
-  for (const gap of ranked.slice(0, MAX_ATTEMPTS)) {
+  for (const gap of ranked.slice(0, MAX_CANDIDATE_SCAN)) {
+    if (substantiveAttempts >= MAX_ATTEMPTS) break;
     const feed = feedById.get(gap.id);
     if (!feed) continue;
     const series = await prepareReleaseSeriesContext(db, feed);
     const result = await publishSingleFeedItem(gap.id);
+    // If another worker holds the story's exact event lock, trying another
+    // eligible candidate is not an unsafe retry of the locked story. Other
+    // failures still consume the existing eight-attempt editorial budget.
+    const lockDeferred = !result.ok && /^Publication deferred: another worker is already publishing this event or it is cooling down/i.test(result.error ?? "");
+    if (lockDeferred) lockDeferrals++;
+    else substantiveAttempts++;
     results.push({
       feed_item_id: gap.id,
       title: gap.title,
@@ -300,6 +313,10 @@ async function publishOverdueGaps(request: Request) {
     skipped_recent_failures: skippedForRecentFailures,
     recent_failure_limit: MAX_RECENT_AUTOMATED_FAILURES,
     attempted: results.length,
+    substantive_attempts: substantiveAttempts,
+    lock_deferrals: lockDeferrals,
+    max_substantive_attempts: MAX_ATTEMPTS,
+    max_scanned_candidates: MAX_CANDIDATE_SCAN,
     published,
     results,
   });
