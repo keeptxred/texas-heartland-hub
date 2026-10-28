@@ -6,7 +6,7 @@ import { selectRotatedSourceWindow } from "@/lib/ingest-source-window";
 import { parseTexasAgPressReleaseIndex } from "@/lib/texas-ag-press-releases";
 import { partitionFeedLinkLookups } from "@/lib/ingest-link-lookup";
 import { extractFirstPartyRssArticleBody } from "@/lib/newsroom-firstparty-rss-body";
-import { trustedNewsroomRssRelayUrl } from "@/lib/official-rss-egress";
+import { canFailoverTrustedRssStatus, trustedNewsroomRssRelayUrl } from "@/lib/official-rss-egress";
 export { publishSingleFeedItem } from "@/lib/multi-source-publish";
 export { isPuzzleTitle } from "@/lib/ingest-feeds-legacy";
 
@@ -390,7 +390,7 @@ async function fetchSource(source: Source): Promise<FetchResult> {
     fixedRelayUrl ? 1 : isGoogle ? 2 : isHtmlLinks ? 1 : 2,
     fixedRelayUrl ? 7000 : isGoogle ? 10000 : isHtmlLinks ? 12000 : 14000,
   );
-  const relayed = fixedRelayUrl && !direct.text
+  const relayed = fixedRelayUrl && !direct.text && canFailoverTrustedRssStatus(direct.status)
     ? await fetchText(fixedRelayUrl, accept, 1, 19000)
     : null;
   const fetched = relayed
