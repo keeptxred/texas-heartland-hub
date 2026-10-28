@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   isRoutineGovernmentAppointment,
+  isConcurrentPublicationDeferral,
   publicationInterestScore,
   rankPublicationCandidates,
   releaseSeriesKey,
@@ -37,6 +38,14 @@ describe("news publish candidate selection", () => {
     const court = candidate(1, "Texas counties sue feds over election security funding conditions", 4);
     const release = candidate(2, "Governor Abbott Announces Data Center Coalition Commits To Comply With His Data Center Standards", 4);
     expect(publicationInterestScore(court, now)).toBeGreaterThan(publicationInterestScore(release, now));
+  });
+
+  it("does not spend an editorial attempt when a different worker holds the same event", () => {
+    expect(isConcurrentPublicationDeferral("Publication deferred: another worker is already publishing this event or it is cooling down after a failed attempt; stale claims auto-expire after 15 minutes.")).toBe(true);
+    expect(isConcurrentPublicationDeferral("Publication held: source lacks two independent publishers")).toBe(false);
+    expect(isConcurrentPublicationDeferral("AI rewrite failed — editorial validation rejected the draft: tiered_main_word_count:410/800")).toBe(false);
+    expect(isConcurrentPublicationDeferral("newsroom_image_publication_hold: failed story-match")).toBe(false);
+    expect(isConcurrentPublicationDeferral("Publication deferred: new topic not verified")).toBe(false);
   });
 
   it("moves on after two recent automated rewrite failures", () => {

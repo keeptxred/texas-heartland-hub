@@ -60,10 +60,19 @@ function looksStructural(value: string): boolean {
 
 function splitOversizedProse(value: string): string[] {
   const trimmed = value.trim();
-  if (!trimmed || looksStructural(trimmed) || wordCount(trimmed) <= READABILITY_LIMITS.hardParagraphWords) return [trimmed];
+  if (!trimmed || looksStructural(trimmed)) return [trimmed];
 
+  const words = wordCount(trimmed);
   const sentences = splitSentences(trimmed);
-  if (sentences.length < 2) return [trimmed];
+  // The validator rejects paragraphs with >5 sentences AND >130 words even
+  // when below the separate 150-word hard limit. Previously the repair only
+  // split >150 words, so a 140-word, 8-sentence paragraph was repeatedly
+  // rejected after consuming an AI rewrite and its paid repair.
+  const tooManySentences = words > READABILITY_LIMITS.warningParagraphWords
+    && sentences.length > READABILITY_LIMITS.hardParagraphSentences;
+  if ((words <= READABILITY_LIMITS.hardParagraphWords && !tooManySentences) || sentences.length < 2) {
+    return [trimmed];
+  }
 
   const chunks: string[] = [];
   let current: string[] = [];
@@ -86,8 +95,18 @@ function splitOversizedProse(value: string): string[] {
   if (chunks.length > 1 && wordCount(chunks[chunks.length - 1]) < 25) {
     const tail = chunks.pop()!;
     const previous = chunks[chunks.length - 1];
-    if (wordCount(previous) + wordCount(tail) <= READABILITY_LIMITS.hardParagraphWords) chunks[chunks.length - 1] = `${previous} ${tail}`;
-    else chunks.push(tail);
+    // Do not undo the split by merging a short tail into a paragraph with
+    // 6+ sentences and >130 words; that would fail the same validator again.
+    const joined = `${previous} ${tail}`;
+    const joinedWords = wordCount(joined);
+    const joinedSentences = splitSentences(joined).length;
+    const passesSentenceLimit = joinedSentences <= READABILITY_LIMITS.hardParagraphSentences
+      || joinedWords <= READABILITY_LIMITS.warningParagraphWords;
+    if (joinedWords <= READABILITY_LIMITS.hardParagraphWords && passesSentenceLimit) {
+      chunks[chunks.length - 1] = joined;
+    } else {
+      chunks.push(tail);
+    }
   }
   return chunks;
 }
