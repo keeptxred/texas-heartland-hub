@@ -26,7 +26,7 @@ describe("article readability validation", () => {
         { heading: "Why it matters", paragraphs: [`${words(82)}.`] },
       ],
     };
-    expect(original.split(/\\s+/)).toHaveLength(136);
+    expect(original.split(/\s+/)).toHaveLength(136);
     expect(validateArticleReadability(article)).toContain("readability_paragraph_too_many_sentences:section_1_paragraph_1:8");
     const repaired = repairArticleReadability(article);
     expect(repaired.sections[0].paragraphs.length).toBeGreaterThanOrEqual(2);
