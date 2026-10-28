@@ -261,7 +261,14 @@ async function checkIngestion() {
   if (typeof payload.failedSources === "number" && typeof payload.sourceCount === "number" && payload.sourceCount > 0) {
     const failureRatio = payload.failedSources / payload.sourceCount;
     if (failureRatio > 0.10) {
-      throw new Error(`ingest-feeds transport failure ratio is ${(failureRatio * 100).toFixed(1)}% (${payload.failedSources}/${payload.sourceCount}): ${text.slice(0, 700)}`);
+      const sourceFailures = Array.isArray(payload.diag)
+        ? payload.diag
+          .filter((item) => Number(item?.status ?? 0) === 0 || Number(item?.status ?? 0) >= 400)
+          .slice(0, 18)
+          .map((item) => `${String(item?.source ?? "unknown").slice(0, 75)} [HTTP ${Number(item?.status ?? 0)}]`)
+          .join("; ")
+        : "";
+      throw new Error(`ingest-feeds transport failure ratio is ${(failureRatio * 100).toFixed(1)}% (${payload.failedSources}/${payload.sourceCount}); failed sources: ${sourceFailures || "not reported"}; summary: ${text.slice(0, 240)}`);
     }
     if (payload.failedSources > 0) {
       console.warn(`WARN ingest-feeds transient transport failures=${payload.failedSources}/${payload.sourceCount}; below 10% outage threshold`);

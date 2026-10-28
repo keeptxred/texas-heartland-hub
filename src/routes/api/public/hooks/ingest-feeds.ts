@@ -6,6 +6,8 @@ import { selectRotatedSourceWindow } from "@/lib/ingest-source-window";
 import { parseTexasAgPressReleaseIndex } from "@/lib/texas-ag-press-releases";
 import { partitionFeedLinkLookups } from "@/lib/ingest-link-lookup";
 import { extractFirstPartyRssArticleBody } from "@/lib/newsroom-firstparty-rss-body";
+import { canFailoverTrustedRssStatus, trustedNewsroomRssRelayUrl } from "@/lib/official-rss-egress";
+import { isGoogleNewsDiscoveryTransport } from "@/lib/ingest-discovery-source";
 export { publishSingleFeedItem } from "@/lib/multi-source-publish";
 export { isPuzzleTitle } from "@/lib/ingest-feeds-legacy";
 
@@ -35,6 +37,7 @@ type FetchResult = {
   attempts: number;
   mode: SourceMode;
   items: Item[];
+  relayUsed?: boolean;
   error?: string;
 };
 
@@ -85,13 +88,13 @@ const VERIFIED_YOUTUBE = new Map<string, string>([
 ]);
 
 const TRANSIENT_STATUS = new Set([408, 425, 429, 500, 502, 503, 504]);
-const GOOGLE_NEWS_RE = /^(?:https:\/\/news\.google\.com\/rss\/search|https:\/\/ftkznprjljkhymknvhye\.supabase\.co\/functions\/v1\/ktr-rss-relay\?feed=google-)/i;
+// Transport classification also recognizes -priority, -north and -sports relays.
 const GOOGLE_FEEDS_PER_RUN = 10;
 // Bound each scheduled invocation and rotate additional local feeds across
 // consecutive half-hour slots, without skipping primary first-party sources.
 const SUPPLEMENTAL_DIRECT_FEEDS_PER_RUN = 12;
 const DIRECT_CORE_URLS = new Set(
-  DIRECT_SOURCES.filter((source) => !GOOGLE_NEWS_RE.test(source.url))
+  DIRECT_SOURCES.filter((source) => !isGoogleNewsDiscoveryTransport(source.url))
     .map((source) => source.url.toLowerCase()),
 );
 // Keep trigger-heavy feed writes below the production statement timeout.
@@ -146,7 +149,7 @@ function parseFeed(xml: string, fallbackSource: string): Item[] {
     const description = pick(block, "description") || pick(block, "summary") || pick(block, "content");
     if (!title || !link || isLowValueTitle(title)) continue;
     let source = fallbackSource;
-    if (GOOGLE_NEWS_RE.test(link) || /news\.google\.com/i.test(link)) {
+    if (isGoogleNewsDiscoveryTransport(link) || /news\.google\.com/i.test(link)) {
       const parts = title.split(" - ");
       if (parts.length > 1) {
         source = parts.pop()!.trim() || fallbackSource;
@@ -375,21 +378,39 @@ function rotateGoogleSources(sources: Source[]): Source[] {
 }
 
 async function fetchSource(source: Source): Promise<FetchResult> {
-  const isGoogle = GOOGLE_NEWS_RE.test(source.url);
+  const isGoogle = isGoogleNewsDiscoveryTransport(source.url);
   const isHtmlLinks = source.mode === "html-links";
   const accept = source.mode === "rss" ? "application/rss+xml,application/atom+xml,application/xml,text/xml,*/*" : "text/html,application/xhtml+xml,*/*";
-  const fetched = await fetchText(source.url, accept, isGoogle ? 2 : isHtmlLinks ? 1 : 2, isGoogle ? 10000 : isHtmlLinks ? 12000 : 14000);
+  const fixedRelayUrl = source.mode === "rss" ? trustedNewsroomRssRelayUrl(source.url) : null;
+  // A real first-party URL must remain the article source. The fixed relay
+  // changes only the RSS transport when Cloudflare's egress to that host is
+  // failing. Bound both attempts together (7s direct + 19s relay), avoid
+  // retries/polling, and never fetch a caller-supplied arbitrary destination.
+  const direct = await fetchText(
+    source.url, accept,
+    fixedRelayUrl ? 1 : isGoogle ? 2 : isHtmlLinks ? 1 : 2,
+    fixedRelayUrl ? 7000 : isGoogle ? 10000 : isHtmlLinks ? 12000 : 14000,
+  );
+  const relayed = fixedRelayUrl && !direct.text && canFailoverTrustedRssStatus(direct.status)
+    ? await fetchText(fixedRelayUrl, accept, 1, 19000)
+    : null;
+  const fetched = relayed
+    ? { ...relayed, attempts: direct.attempts + relayed.attempts,
+        ...(relayed.text ? {} : { error: `direct=${direct.error ?? direct.status}; relay=${relayed.error ?? relayed.status}` }),
+      }
+    : direct;
+  const relayUsed = Boolean(relayed?.text);
   if (!fetched.text && source.name === "Texas Standard" && source.mode === "rss") {
     const fallback = await fetchText("https://texasstandard.org/", "text/html,application/xhtml+xml,*/*", 1, 12000);
     return { source: source.name, url: "https://texasstandard.org/", status: fallback.status, attempts: fetched.attempts + fallback.attempts, mode: "texas-standard-html", items: fallback.text ? parseTexasStandardHtml(fallback.text) : [], error: fallback.text ? undefined : fallback.error };
   }
-  if (!fetched.text) return { source: source.name, url: source.url, status: fetched.status, attempts: fetched.attempts, mode: source.mode, items: [], error: fetched.error };
+  if (!fetched.text) return { source: source.name, url: source.url, status: fetched.status, attempts: fetched.attempts, mode: source.mode, items: [], relayUsed, error: fetched.error };
   const items = source.name === "Texas Attorney General — Direct News Releases" && source.mode === "html-links"
     ? parseTexasAgPressReleaseIndex(fetched.text)
     : source.mode === "tpwd-html" ? parseTpwdHtml(fetched.text)
     : source.mode === "html-links" ? parseHtmlLinks(fetched.text, source)
     : parseFeed(fetched.text, source.name);
-  return { source: source.name, url: source.url, status: fetched.status, attempts: fetched.attempts, mode: source.mode, items: items.slice(0, 30) };
+  return { source: source.name, url: source.url, status: fetched.status, attempts: fetched.attempts, mode: source.mode, items: items.slice(0, 30), relayUsed };
 }
 
 async function upsertFeedRowsAdaptive(
@@ -515,8 +536,8 @@ async function backfillTrendSourceAdaptive(
 async function handler() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { sources, skippedLegacyYoutube } = await loadSources();
-  const configuredDirect = sources.filter((source) => !GOOGLE_NEWS_RE.test(source.url));
-  const allGoogle = sources.filter((source) => GOOGLE_NEWS_RE.test(source.url));
+  const configuredDirect = sources.filter((source) => !isGoogleNewsDiscoveryTransport(source.url));
+  const allGoogle = sources.filter((source) => isGoogleNewsDiscoveryTransport(source.url));
   const google = rotateGoogleSources(allGoogle);
   const directWindow = selectRotatedSourceWindow(
     configuredDirect,
@@ -694,6 +715,7 @@ async function handler() {
     directSourceWindows: directWindow.windows,
     googleNewsSourcesConfigured: allGoogle.length,
     googleNewsSourcesChecked: google.length,
+    trustedDirectRelayRecoveries: results.filter((result) => result.relayUsed).length,
     skippedLegacyYoutube,
     healthySources: successfulResults.filter((result) => result.items.length > 0).length,
     quietSources: successfulResults.filter((result) => result.items.length === 0).length,
