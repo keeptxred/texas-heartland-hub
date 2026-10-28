@@ -173,6 +173,12 @@ export function hasGovernedPublicArticleImage(article: PublicArticleCandidate): 
 
 export function isPublicArticleReady(article: PublicArticleCandidate): boolean {
   if (hasSeoDuplicateFlag(article.quality_flags)) return false;
+  // KTR's normal newsroom requires a real article-specific image before
+  // publication. Historical July stories newly inserted in October with
+  // image_generation_status=pending must not appear fresh in search,
+  // homepage feeds or sitemap merely because their text passed an audit.
+  // Other deliberately text-first content types retain their separate rules.
+  if (article.kind === "news" && !hasGovernedPublicArticleImage(article)) return false;
   if ((article.quality_flags ?? []).includes("legacy_url_restored") && articleMainWordCount(article.body_json as never) < RESTORED_LEGACY_MIN_MAIN_WORDS) return false;
   if ((article.category ?? "").trim().toLowerCase() === "non-political") return false;
   if (isRetiredKtrCategory(article.category)) return false;
