@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { trustedNewsroomRssRelayUrl } from "./official-rss-egress";
+import { canFailoverTrustedRssStatus, trustedNewsroomRssRelayUrl } from "./official-rss-egress";
 
 describe("KTR first-party RSS egress failover", () => {
   const ingest = readFileSync("src/routes/api/public/hooks/ingest-feeds.ts", "utf8");
@@ -32,9 +32,18 @@ describe("KTR first-party RSS egress failover", () => {
     ]) expect(trustedNewsroomRssRelayUrl(url), url).toBeNull();
   });
 
+  it("never circumvents 403, 404, or 429 upstream denials or rate limits", () => {
+    for (const status of [0,408,425,500,502,503,504]) {
+      expect(canFailoverTrustedRssStatus(status), String(status)).toBe(true);
+    }
+    for (const status of [200,301,400,401,403,404,409,422,429,451]) {
+      expect(canFailoverTrustedRssStatus(status), String(status)).toBe(false);
+    }
+  });
+
   it("preserves direct source attribution and uses at most one alternate network request", () => {
     expect(ingest).toContain('const fixedRelayUrl = source.mode === "rss" ? trustedNewsroomRssRelayUrl(source.url) : null');
-    expect(ingest).toContain("fixedRelayUrl && !direct.text");
+    expect(ingest).toContain("fixedRelayUrl && !direct.text && canFailoverTrustedRssStatus(direct.status)");
     expect(ingest).toContain("fetchText(fixedRelayUrl, accept, 1, 19000)");
     expect(ingest).toContain("fixedRelayUrl ? 7000");
     expect(ingest).toContain("const relayUsed = Boolean(relayed?.text)");
