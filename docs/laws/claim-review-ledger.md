@@ -6,7 +6,7 @@
 
 This ledger records individual claims and their verifying primary authorities. **It is not a certification that all 18 guides have been substantively audited.** The master tracker documents earlier focused corrections and their protected merges; those are not blanket proof that every paragraph, key rule and FAQ was reviewed against current law. A guide can be marked **fully reviewed** only after its introduction, quick answer, every framework paragraph, key rule, FAQ, exception, threshold, effective date, pending-litigation reference and official source link have each been checked against authoritative sources. Keep existing on-page review dates unchanged until that is done.
 
-## Guide inventory (full audit still outstanding)
+**Review scheduling:** The existing GitHub-owned [Texas law authority review workflow](https://github.com/keeptxred/texas-heartland-hub/blob/main/.github/workflows/review-texas-law-authority.yml) runs monthly and queues legal claim re-review after **90 days**, consistent with [the established 90-day law-guide policy](../content/laws-evergreen-inventory.md). Odd-year January regular-session starts and elapsed election-specific dates can trigger earlier reviews. This is an editorial alert and does not falsely update legal reviewed dates, certify partial topics, or automatically rewrite uncertain statutes. Effective legal changes still require source-backed corrections even before 90 days.\n\n## Guide inventory (full audit still outstanding)
 
 | Guide | Module | Full paragraph/FAQ claim audit |
 |---|---|---|
