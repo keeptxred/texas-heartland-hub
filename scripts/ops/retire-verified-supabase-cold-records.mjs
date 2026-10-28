@@ -20,7 +20,9 @@ const PROJECT = 'ftkznprjljkhymknvhye';
 const URL = 'https://' + PROJECT + '.supabase.co';
 const REPO = 'keeptxred/texas-heartland-hub';
 const ARCHIVE_EXPORTER = 'scripts/data/export-supabase-cold-archives.mjs';
-const CYCLES = 2;
+const BASE_CYCLES = 2;
+const PRESSURE_CYCLES = 4;
+const PRESSURE_THRESHOLD_BYTES = 490_000_000;
 const MAX_STAGE_FEED = 75;
 const MAX_STAGE_NEWSROOM = 65;
 const MIN_HEADROOM = 1_200_000;
@@ -142,8 +144,13 @@ if (!active) {
   process.exit(0);
 }
 
+// Increase bounded *sequential* verified retirement throughput when near the
+// strict Free Plan limit. This restores backlog headroom without overlapping
+// private Storage exports, bypassing staging checks, or increasing batch size.
+const cycles = initial >= PRESSURE_THRESHOLD_BYTES ? PRESSURE_CYCLES : BASE_CYCLES;
+console.log(`Verified retention cycles planned: ${cycles} (capacity-triggered, max 4)`);
 let totalFeed = 0, totalNewsroom = 0;
-for (let cycle = 1; cycle <= CYCLES; cycle++) {
+for (let cycle = 1; cycle <= cycles; cycle++) {
   const before = await sizeSnapshot();
   const existing = await stagedMetadata();
   // Staging temporarily duplicates old evidence in PostgreSQL. Refuse NEW
@@ -158,7 +165,7 @@ for (let cycle = 1; cycle <= CYCLES; cycle++) {
     // complete Storage readback and protected retirement of newsroom batches.
     // Cycle one prioritizes old unpublished newsroom; cycle two attempts feed.
     // Pending batches from an interrupted run always take priority.
-    const kind = cycle === 1 ? 'newsroom' : 'feed';
+    const kind = cycle % 2 === 1 ? 'newsroom' : 'feed';
     await stage(kind, kind === 'newsroom' ? MAX_STAGE_NEWSROOM : MAX_STAGE_FEED);
   } else {
     // Recovery from crash after staging or after exporting: do NOT replace
