@@ -8,6 +8,16 @@ export type NewsPublishCandidate = {
 
 export const MAX_RECENT_AUTOMATED_FAILURES = 2;
 
+/**
+ * This is a temporary event-lock or same-event cooldown, NOT an editorial
+ * attempt. Never retry that event in the same run; move to the next distinct
+ * candidate while preserving the existing eight substantive attempts.
+ */
+export function isConcurrentPublicationDeferral(error: string | null | undefined): boolean {
+  return /^Publication deferred: another worker is already publishing this event or it is cooling down/i.test(error ?? "");
+}
+
+
 const ROUTINE_APPOINTMENT_RE = /\b(appoints?|appointed|appointment|reappoints?|reappointed|reappointment|names?)\b.*\b(board|commission|committee|council|authority|panel|task force|director|member|members|judge|justice)\b/i;
 const APPOINTMENT_STAKES_RE = /\b(lawsuit|challenge|scrutiny|backlash|fight|dispute|probe|investigation|indict|arrest|resign|scandal|blocked|overturned|ruling|ethics|fraud|criminal|election|vacancy crisis)\b/i;
 const FORMULA_GOVERNMENT_RE = /^governor\s+abbott\s+(?:announces?|appoints?|reappoints?|names?)\b/i;
