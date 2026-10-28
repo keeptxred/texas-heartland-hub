@@ -8,6 +8,7 @@ on:
       - 'scripts/data/export-supabase-cold-archives.mjs'
       - 'scripts/ops/retire-verified-supabase-cold-records.mjs'
       - 'scripts/ops/verified-cold-archive-proof*.mjs'
+      - 'scripts/ops/should-run-verified-retention*.mjs'
       - 'scripts/ci/supabase-verified-retirement-contract.test.mjs'
       - 'scripts/ci/verify-supabase-feed-stage-window.mjs'
       - 'supabase/migrations/20261028012000_rotate_verified_feed_staging_to_reduce_io_timeout.sql'
@@ -25,6 +26,7 @@ on:
       - 'scripts/data/export-supabase-cold-archives.mjs'
       - 'scripts/ops/retire-verified-supabase-cold-records.mjs'
       - 'scripts/ops/verified-cold-archive-proof*.mjs'
+      - 'scripts/ops/should-run-verified-retention*.mjs'
       - 'scripts/ci/supabase-verified-retirement-contract.test.mjs'
       - 'scripts/ci/verify-supabase-feed-stage-window.mjs'
       - 'supabase/migrations/20261028012000_rotate_verified_feed_staging_to_reduce_io_timeout.sql'
@@ -47,4 +49,5 @@ jobs:
       - run: node --check scripts/data/export-supabase-cold-archives.mjs
       - run: node scripts/ci/verify-supabase-free-tier-retention.mjs
       - run: node --check scripts/ops/retire-verified-supabase-cold-records.mjs
+      - run: node --check scripts/ops/should-run-verified-retention.mjs
       - run: node scripts/ci/verify-supabase-feed-stage-window.mjs
