@@ -23,6 +23,12 @@ const SOURCE_KEYS: Record<string, string> = {
   "https://www.lmtonline.com/default/feed/news-rss-1512.php": "lmt-local",
 };
 
+/** Never route upstream 403/404 or 429 rate limits through another egress. */
+export function canFailoverTrustedRssStatus(status: number): boolean {
+  return status === 0 || status === 408 || status === 425
+    || status === 500 || status === 502 || status === 503 || status === 504;
+}
+
 export function trustedNewsroomRssRelayUrl(sourceUrl: string): string | null {
   const key = SOURCE_KEYS[sourceUrl];
   return key ? RELAY_BASE + encodeURIComponent(key) : null;
