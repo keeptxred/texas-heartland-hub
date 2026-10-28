@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { type Bill } from '@/lib/bills';
 import { publicBillPath } from '@/lib/bill-public-path';
+import { cachedPublicBill } from '@/lib/public-bill-cache';
 
 const db = supabase as any;
 
@@ -37,18 +38,23 @@ export type RelatedBillSeed = {
   subjectIds?: string[];
 };
 
-export async function getRelatedBills(
+async function loadRelatedBills(
   billId: string,
   legislatureNumber: number,
-  limit = 8,
-  seed: RelatedBillSeed = {},
-): Promise<RelatedBill[]> {
+  limit: number,
+  seed: RelatedBillSeed,
+): Promise<{ bills: RelatedBill[]; hadQueryError: boolean }> {
+  let hadQueryError = false;
   const safe = async (build: () => any) => {
     try {
       const { data, error } = await build();
-      if (error) return [];
+      if (error) {
+        hadQueryError = true;
+        return [];
+      }
       return data ?? [];
     } catch {
+      hadQueryError = true;
       return [];
     }
   };
@@ -78,7 +84,7 @@ export async function getRelatedBills(
   )];
   const sponsorSlugs = [...new Set(sponsorRows.map((row: any) => row.sponsor_slug).filter(Boolean))];
 
-  if (!subjectIds.length && !sponsorSlugs.length) return [];
+  if (!subjectIds.length && !sponsorSlugs.length) return { bills: [], hadQueryError };
 
   const [subjectMatches, sponsorMatches] = await Promise.all([
     subjectIds.length
@@ -124,7 +130,7 @@ export async function getRelatedBills(
     .slice(0, Math.max(limit * 3, limit))
     .map((item) => item.id);
 
-  if (!rankedIds.length) return [];
+  if (!rankedIds.length) return { bills: [], hadQueryError };
 
   const bills = await safe(() =>
     db
@@ -137,7 +143,7 @@ export async function getRelatedBills(
       .eq('is_active', true),
   );
 
-  return bills
+  const mapped = bills
     .map((bill: any) => {
       const score = scores.get(bill.id)!;
       const reasons: string[] = [];
@@ -164,4 +170,29 @@ export async function getRelatedBills(
         String(b.last_action_date ?? '').localeCompare(String(a.last_action_date ?? '')),
     )
     .slice(0, limit);
+  return { bills: mapped, hadQueryError };
+}
+
+/**
+ * These relationships come solely from public, approved bill graph edges.
+ * Cache for two minutes per Worker isolate; collapse concurrent SSR requests
+ * for the same bill. Never cache partial data when any Supabase query fails.
+ * Normalize optional preverified subject IDs to make cache identity stable.
+ */
+export async function getRelatedBills(
+  billId: string,
+  legislatureNumber: number,
+  limit = 8,
+  seed: RelatedBillSeed = {},
+): Promise<RelatedBill[]> {
+  const subjectKey = seed.subjectIds === undefined
+    ? null
+    : [...new Set(seed.subjectIds.filter(Boolean))].sort();
+  const result = await cachedPublicBill(
+    `public-related-bills:${billId}:${legislatureNumber}:${limit}:${JSON.stringify(subjectKey)}`,
+    () => loadRelatedBills(billId, legislatureNumber, limit, seed),
+    120_000,
+    (value) => !value.hadQueryError,
+  );
+  return result.bills;
 }
