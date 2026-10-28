@@ -35,6 +35,7 @@ describe('verified Free Plan retirement invariants', () => {
   });
   it('serializes runs, refuses cancellation and preserves daily article backup', () => {
     assert.match(workflow,/shared-supabase-verified-cold-retention/);
+    assert.ok(workflow.includes("cron: '27 */2 * * *'"), '2-hour protected archival cadence required while backlog is high');
     assert.match(workflow,/cancel-in-progress: false/);
     assert.match(workflow,/SUPABASE_SERVICE_ROLE_KEY:/);
     assert.ok(workflow.includes('failure()'));
