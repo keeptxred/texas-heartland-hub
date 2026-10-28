@@ -5,6 +5,13 @@ on:
     # Monthly, with January 20 capturing the beginning of odd-year regular sessions.
     - cron: "0 14 20 * *"
   workflow_dispatch:
+  # Verify the source audit once after the protected implementation merges; do not
+  # run another sitewide scan on ordinary editorial or deployment commits.
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/review-texas-law-authority.yml'
+      - 'scripts/laws/**'
   pull_request:
     branches: [main]
     paths:
