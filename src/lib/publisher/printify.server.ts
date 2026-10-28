@@ -3,6 +3,7 @@ import { z } from "zod";
 import { mapProduct, type PrintifyProduct } from "../printify-sync-product";
 import { bounded, digest, PublisherError, Store } from "./store.server";
 import { approvedFishingRepair, matchesTags } from "./fishing-etsy-tag-repairs";
+import { approvedFishingDescription, requiredFishingDescription } from "./fishing-etsy-description-repairs";
 
 export const kindSchema = z.enum(["shirt", "sticker"]);
 export const websiteSchema = z.enum(["keeptxred", "texasdefined", "none"]);
@@ -66,6 +67,7 @@ type Result = {
   issue?: string;
   /** Durable checkpoint for owner-approved existing-listing tag updates. */
   tag_repair?: "put-attempted" | "printify-updated" | "publish-attempted" | "publish-submitted";
+  description_repair?: "put-attempted" | "printify-updated" | "publish-attempted" | "publish-submitted";
 };
 export type Job = {
   shop_id: string;
@@ -583,6 +585,89 @@ async function repairApprovedFishingTags(
   return api.product(result.id);
 }
 
+/**
+ * Owner-approved copy repair for exactly six previously published fishing
+ * shirts. Resumes through their original durable Heartland job checkpoints.
+ * No creation, image, fulfillment, price, tag or variant write is performed.
+ */
+async function repairApprovedFishingDescription(
+  api: Printify,
+  jobId: string,
+  job: Job,
+  result: Result,
+  product: Product,
+  save: () => Promise<void>,
+): Promise<Product> {
+  if (!result.id || result.creation !== "confirmed" ||
+      result.publication !== "submitted" || result.tag_repair !== "publish-submitted" ||
+      result.kind !== "shirt" || job.website !== "texasdefined" ||
+      job.shop_id !== "28098650") return product;
+  const externalId = product.external?.id ?? etsyUrl(product)?.match(/listing\/(\d+)/)?.[1];
+  const plan = approvedFishingDescription(jobId, result.id, String(externalId ?? ""));
+  if (!plan) return product;
+  if (!matchesTags(product.tags, plan.tags))
+    throw new PublisherError("Etsy description repair stopped: 13 SEO tags not verified in Printify", 409);
+  const expected = requiredFishingDescription(product.description ?? "", plan.lead);
+  if (!expected) {
+    result.issue = "Existing fishing description differs from approved original; no automatic edits";
+    await save();
+    return product;
+  }
+  if (product.description !== expected) {
+    if (product.is_locked) {
+      result.issue = "Printify product locked; description repair deferred";
+      await save();
+      return product;
+    }
+    if (result.description_repair === "put-attempted") {
+      result.issue = "Prior Printify description PUT outcome uncertain; no blind retry";
+      await save();
+      return product;
+    }
+    result.description_repair = "put-attempted";
+    await save();
+    const after = await api.api<Product>(
+      `/shops/${api.shop}/products/${encodeURIComponent(result.id)}.json`, "PUT",
+      { title: product.title, description: expected }
+    );
+    if (after.id !== product.id || after.description !== expected ||
+        after.title !== product.title ||
+        !matchesTags(after.tags, plan.tags) ||
+        after.blueprint_id !== product.blueprint_id ||
+        after.print_provider_id !== product.print_provider_id ||
+        after.variants.length !== product.variants.length ||
+        product.variants.some((v) => !after.variants.some((a) =>
+          a.id === v.id && a.price === v.price && a.is_enabled === v.is_enabled)))
+      throw new PublisherError("Printify description repair changed protected product fields", 409);
+    product = after;
+    result.description_repair = "printify-updated";
+    await save();
+  } else if (result.description_repair === "put-attempted") {
+    result.description_repair = "printify-updated";
+    await save();
+  }
+  if (result.description_repair === "publish-submitted") return product;
+  if (result.description_repair === "publish-attempted") {
+    result.issue = "Description-only Etsy publish outcome uncertain; no blind retry";
+    await save();
+    return product;
+  }
+  if (product.is_locked) {
+    result.issue = "Printify locked after description update; Etsy sync pending";
+    await save();
+    return product;
+  }
+  result.description_repair = "publish-attempted";
+  await save();
+  await api.api(`/shops/${api.shop}/products/${encodeURIComponent(result.id)}/publish.json`, "POST", {
+    title: false, description: true, images: false, variants: false,
+    tags: false, keyFeatures: false, shipping_template: false,
+  });
+  result.description_repair = "publish-submitted";
+  await save();
+  return api.product(result.id);
+}
+
 export async function advance(store: Store, subject: string, id: string, approval?: string) {
   if (!/^[A-Za-z0-9_-]{8,64}$/.test(id)) throw new PublisherError("Invalid job_id");
   let state = await store.get<Job>(`job:${subject}:${id}`);
@@ -694,6 +779,9 @@ export async function advance(store: Store, subject: string, id: string, approva
         throw new PublisherError("Created product does not match the approved plan", 409);
       if (etsy && result.publication && result.id) {
         product = await repairApprovedFishingTags(api, id, state.value, result, product, marker, save);
+      }
+      if (etsy && result.publication && result.id) {
+        product = await repairApprovedFishingDescription(api, id, state.value, result, product, save);
       }
       // New Etsy jobs expose exactly thirteen descriptive tags. The recovery
       // marker exists *only until* Printify confirms the product ID, so a lost
