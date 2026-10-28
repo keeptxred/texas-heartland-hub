@@ -4,7 +4,21 @@ on:
   schedule:
     # Monthly, with January 20 capturing the beginning of odd-year regular sessions.
     - cron: "0 14 20 * *"
+    # Post-November general-election prompt: do not wait 17 days to flag elapsed election-specific guidance.
+    - cron: "0 14 4 11 *"
   workflow_dispatch:
+  # Verify the source audit once after the protected implementation merges; do not
+  # run another sitewide scan on ordinary editorial or deployment commits.
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/review-texas-law-authority.yml'
+      - 'scripts/laws/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/review-texas-law-authority.yml'
+      - 'scripts/laws/**'
 
 permissions:
   contents: read
@@ -15,14 +29,28 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  review:
+  validate:
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v5
+      - name: Validate all source-only law review checks without network
+        run: |
+          node --test scripts/laws/test-review-authority-guides.mjs scripts/laws/test-check-authority-source-links.mjs
+          node --check scripts/laws/check-authority-source-links.mjs
+
+  review:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v5
 
       - name: Verify zero-dependency review logic
-        run: node --test scripts/laws/test-review-authority-guides.mjs
+        run: node --test scripts/laws/test-review-authority-guides.mjs scripts/laws/test-check-authority-source-links.mjs
 
       - name: Inventory and report unreviewed laws
         id: review
@@ -31,8 +59,21 @@ jobs:
           set -euo pipefail
           node scripts/laws/review-authority-guides.mjs | tee /tmp/texas-law-review.md
 
+      - name: Check official guide source URLs with a bounded request budget
+        id: sourcecheck
+        run: node scripts/laws/check-authority-source-links.mjs
+
+      - name: Retain actual source-link audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: texas-laws-official-source-links
+          path: artifacts/texas-laws-source-links.json
+          retention-days: 14
+          if-no-files-found: warn
+
       - name: Post only actionable review reminders to master tracker
-        if: steps.review.outputs.due_count != '0'
+        if: ${{ steps.review.outputs.due_count != '0' || steps.sourcecheck.outputs.broken_count != '0' || steps.sourcecheck.outputs.inconclusive_count != '0' }}
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -48,5 +89,9 @@ jobs:
           if grep -Fq "${marker}" /tmp/texas-law-review-comments.txt; then
             echo "A review reminder for ${REVIEW_MONTH} already exists; not posting a duplicate."
             exit 0
+          fi
+          if [[ "${{ steps.sourcecheck.outputs.broken_count }}" != '0' || "${{ steps.sourcecheck.outputs.inconclusive_count }}" != '0' ]]; then
+            printf '\n' >> /tmp/texas-law-review.md
+            cat /tmp/texas-law-source-links.md >> /tmp/texas-law-review.md
           fi
           gh issue comment 2938 --body-file /tmp/texas-law-review.md

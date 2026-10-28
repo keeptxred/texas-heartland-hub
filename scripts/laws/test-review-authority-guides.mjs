@@ -72,6 +72,10 @@ test("flags completed election calendars at the November review before 90 days p
   assert.ok(election, "Current election authority must remain in inventory");
   assert.ok(election.calendarEvents.includes("2026-11-03"));
   assert.equal(reviewQueue([election], new Date("2026-10-26T14:00:00Z"))[0].reviewNeeded, false);
+  // The dedicated November 4 GitHub run must flag this guide immediately after Election Day.
+  const dayAfter = reviewQueue([election], new Date("2026-11-04T14:00:00Z"))[0];
+  assert.equal(dayAfter.reviewNeeded, true);
+  assert.match(dayAfter.reason, /2026-11-03/);
   const due = reviewQueue([election], new Date("2026-11-20T14:00:00Z"))[0];
   assert.equal(due.reviewNeeded, true);
   assert.match(due.reason, /election-specific dates have passed/);
