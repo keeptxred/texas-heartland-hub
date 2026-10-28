@@ -1,6 +1,6 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Link, useLocation } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { nextElectionHeadline } from "@/lib/election-calendar";
@@ -13,10 +13,6 @@ function isPathActive(pathname: string, to: string) {
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
-  const [clientReady, setClientReady] = useState(false);
-  // Mark the point at which React has attached event handlers. Browser checks
-  // must not mistake static SSR HTML for an interactive, hydrated page.
-  useEffect(() => setClientReady(true), []);
   const location = useLocation();
   const pathname = location.pathname;
   const isPaymentRoute = pathname.startsWith("/shop/checkout");
@@ -36,7 +32,7 @@ export function SiteHeader() {
   if (isPaymentRoute) return null;
 
   return (
-    <header data-client-ready={clientReady ? "true" : "false"} className="sticky top-0 z-50 border-b border-white/10 bg-secondary text-secondary-foreground shadow-sm">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-secondary text-secondary-foreground shadow-sm">
       <div className="border-b border-white/10 bg-tx-ink/50">
         <div className="mx-auto flex max-w-[1440px] items-center gap-3 px-4 py-2 sm:px-6 lg:px-8">
           <span className="shrink-0 text-[10px] font-extrabold uppercase tracking-[0.2em] text-white/80">
