@@ -64,8 +64,11 @@ returned immediately. The original eight-way feed selection still timed out when
 records. The updated feed function selects one of 32 shards per two-hour
 window (one complete rotation in ~64 hours, assuming scheduled execution)
 and stages up to 50 feed parent records per cycle, preserving all original
-age, publication, child and soft-reference checks. If a feed stage times out, previously completed
-newsroom retirements remain committed and fully backed up. Never respond by
+age, publication, child and soft-reference checks. If a feed stage still times out, the runner checks that the cancelled
+transaction left no staged claims, then retries that feed stage **once**
+with a 25-parent limit. Any further timeout or changed/protected reference
+fails closed. Previously completed newsroom retirements remain committed
+and fully backed up. Never respond by
 removing reference guards or increasing concurrent archive jobs.
 
 A run requires at least
