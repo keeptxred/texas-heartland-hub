@@ -68,6 +68,7 @@ type Result = {
   /** Durable checkpoint for owner-approved existing-listing tag updates. */
   tag_repair?: "put-attempted" | "printify-updated" | "publish-attempted" | "publish-submitted";
   description_repair?: "put-attempted" | "printify-updated" | "publish-attempted" | "publish-submitted";
+  sunrise_copy_fix?: "put-attempted" | "printify-updated" | "publish-attempted" | "publish-submitted";
 };
 export type Job = {
   shop_id: string;
@@ -668,6 +669,96 @@ async function repairApprovedFishingDescription(
   return api.product(result.id);
 }
 
+/**
+ * The live Etsy catalog still double-escapes Sunrise Cast's apostrophe after
+ * the AI disclosure publish. Replace the ENTIRE affected sentence with a
+ * grammatically equivalent version without apostrophes/entities, preserving
+ * the remaining original description and the AI disclosure verbatim.
+ */
+async function repairSunriseCastEntityCopy(
+  api: Printify,
+  jobId: string,
+  job: Job,
+  result: Result,
+  product: Product,
+  save: () => Promise<void>,
+): Promise<Product> {
+  if (jobId !== "TDFISH2026P1_05" || job.shop_id !== "28098650" ||
+      job.website !== "texasdefined" || result.kind !== "shirt" ||
+      result.id !== "6add29de2f0d45364d02c4a6" ||
+      result.description_repair !== "publish-submitted") return product;
+  const externalId = product.external?.id ?? etsyUrl(product)?.match(/listing\/(\d+)/)?.[1];
+  if (String(externalId) !== "4602558790")
+    throw new PublisherError("Sunrise copy repair Etsy listing drift", 409);
+  const expectedTags = approvedFishingRepair(jobId, result.id, job.shop_id, result.kind, job.website);
+  if (!expectedTags || !matchesTags(product.tags, expectedTags.tags))
+    throw new PublisherError("Sunrise copy repair stopped: missing 13 intended tags", 409);
+  const replacement = "The water is still, the sun is just clearing the trees, and the first cast is ready.";
+  const broken = /^The water is still, the sun is just clearing the trees and it.{0,36}s time for the first cast\./;
+  const original = product.description ?? "";
+  if (!original.includes("AI image-generation assistance"))
+    throw new PublisherError("Sunrise disclosure not yet present; copy fix deferred", 409);
+  if (!broken.test(original) && !original.startsWith(replacement)) {
+    result.issue = "Sunrise copy differs from approved original; no automatic edits";
+    await save();
+    return product;
+  }
+  const desired = original.replace(broken, replacement);
+  if (desired !== original) {
+    if (product.is_locked) {
+      result.issue = "Sunrise Printify product locked; entity fix deferred";
+      await save();
+      return product;
+    }
+    if (result.sunrise_copy_fix === "put-attempted") {
+      result.issue = "Sunrise copy update outcome uncertain; no blind retry";
+      await save();
+      return product;
+    }
+    result.sunrise_copy_fix = "put-attempted";
+    await save();
+    const after = await api.api<Product>(
+      `/shops/${api.shop}/products/${encodeURIComponent(result.id)}.json`, "PUT",
+      { title: product.title, description: desired }
+    );
+    if (after.id !== product.id || after.description !== desired ||
+        after.title !== product.title ||
+        !matchesTags(after.tags, expectedTags.tags) ||
+        after.blueprint_id !== product.blueprint_id ||
+        after.print_provider_id !== product.print_provider_id ||
+        after.variants.length !== product.variants.length ||
+        product.variants.some((v) => !after.variants.some((a) =>
+          a.id === v.id && a.price === v.price && a.is_enabled === v.is_enabled)))
+      throw new PublisherError("Sunrise copy update changed protected fields", 409);
+    product = after;
+    result.sunrise_copy_fix = "printify-updated";
+    await save();
+  } else if (result.sunrise_copy_fix === "put-attempted") {
+    result.sunrise_copy_fix = "printify-updated";
+    await save();
+  }
+  if (result.sunrise_copy_fix === "publish-submitted") return product;
+  if (result.sunrise_copy_fix === "publish-attempted") {
+    result.issue = "Sunrise description-only publish outcome uncertain; no blind retry";
+    await save();
+    return product;
+  }
+  if (product.is_locked) {
+    result.issue = "Sunrise Printify product locked after edit; publish deferred";
+    await save();
+    return product;
+  }
+  result.sunrise_copy_fix = "publish-attempted";
+  await save();
+  await api.api(`/shops/${api.shop}/products/${encodeURIComponent(result.id)}/publish.json`, "POST", {
+    title: false, description: true, images: false, variants: false,
+    tags: false, keyFeatures: false, shipping_template: false,
+  });
+  result.sunrise_copy_fix = "publish-submitted";
+  await save();
+  return api.product(result.id);
+}
+
 export async function advance(store: Store, subject: string, id: string, approval?: string) {
   if (!/^[A-Za-z0-9_-]{8,64}$/.test(id)) throw new PublisherError("Invalid job_id");
   let state = await store.get<Job>(`job:${subject}:${id}`);
@@ -782,6 +873,9 @@ export async function advance(store: Store, subject: string, id: string, approva
       }
       if (etsy && result.publication && result.id) {
         product = await repairApprovedFishingDescription(api, id, state.value, result, product, save);
+      }
+      if (etsy && result.publication && result.id) {
+        product = await repairSunriseCastEntityCopy(api, id, state.value, result, product, save);
       }
       // New Etsy jobs expose exactly thirteen descriptive tags. The recovery
       // marker exists *only until* Printify confirms the product ID, so a lost
