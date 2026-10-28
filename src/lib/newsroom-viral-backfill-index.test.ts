@@ -16,6 +16,6 @@ describe('newsroom score-viral cold backfill DB I/O index', () => {
     expect(route).toContain('const backfillSinceIso = new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString()');
     expect(route).toContain('.gte("pub_date", backfillSinceIso).is("viral_scored_at", null)');
     expect(route).toContain('.order("pub_date", { ascending: false }).limit(70)');
-    expect(sql).not.toMatch(/\\b(?:DELETE FROM|TRUNCATE TABLE|DROP INDEX|ALTER POLICY)\\b/i);
+    expect(sql).not.toMatch(/\b(?:DELETE FROM|TRUNCATE TABLE|DROP INDEX|ALTER POLICY)\b/i);
   });
 });
