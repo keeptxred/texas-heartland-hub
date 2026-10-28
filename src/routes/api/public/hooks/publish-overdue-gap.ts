@@ -3,6 +3,7 @@ import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 import { publishSingleFeedItem } from "@/lib/multi-source-publish";
 import {
   MAX_RECENT_AUTOMATED_FAILURES,
+  isConcurrentPublicationDeferral,
   rankPublicationCandidates,
   releaseSeriesKey,
 } from "@/lib/news-publish-selection";
@@ -260,7 +261,7 @@ async function publishOverdueGaps(request: Request) {
     // If another worker holds the story's exact event lock, trying another
     // eligible candidate is not an unsafe retry of the locked story. Other
     // failures still consume the existing eight-attempt editorial budget.
-    const lockDeferred = !result.ok && /^Publication deferred: another worker is already publishing this event or it is cooling down/i.test(result.error ?? "");
+    const lockDeferred = !result.ok && isConcurrentPublicationDeferral(result.error);
     if (lockDeferred) lockDeferrals++;
     else substantiveAttempts++;
     results.push({
