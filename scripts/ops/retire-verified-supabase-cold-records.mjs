@@ -154,8 +154,12 @@ for (let cycle = 1; cycle <= CYCLES; cycle++) {
     throw new Error('Insufficient temporary archive staging headroom. Fail closed: ' + before);
   }
   if (!existing.length) {
-    await stage('newsroom', MAX_STAGE_NEWSROOM);
-    await stage('feed', MAX_STAGE_FEED);
+    // Independent cycles: a slow feed eligibility query must never block the
+    // complete Storage readback and protected retirement of newsroom batches.
+    // Cycle one prioritizes old unpublished newsroom; cycle two attempts feed.
+    // Pending batches from an interrupted run always take priority.
+    const kind = cycle === 1 ? 'newsroom' : 'feed';
+    await stage(kind, kind === 'newsroom' ? MAX_STAGE_NEWSROOM : MAX_STAGE_FEED);
   } else {
     // Recovery from crash after staging or after exporting: do NOT replace
     // a pending verified claim. First re-export and complete it.
@@ -164,7 +168,7 @@ for (let cycle = 1; cycle <= CYCLES; cycle++) {
   const metadata = await stagedMetadata();
   if (!metadata.length) {
     console.log('No eligible cold records for this cycle');
-    break;
+    continue;
   }
   if (metadata.some(m => !['feed','newsroom'].includes(m.archive_kind))) {
     throw new Error('Unexpected additional archive kind; refusing unrelated retirement');

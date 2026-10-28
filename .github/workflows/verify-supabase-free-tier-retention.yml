@@ -9,6 +9,8 @@ on:
       - 'scripts/ops/retire-verified-supabase-cold-records.mjs'
       - 'scripts/ops/verified-cold-archive-proof*.mjs'
       - 'scripts/ci/supabase-verified-retirement-contract.test.mjs'
+      - 'scripts/ci/verify-supabase-feed-stage-window.mjs'
+      - 'supabase/migrations/20261028012000_rotate_verified_feed_staging_to_reduce_io_timeout.sql'
       - '.github/workflows/retire-verified-supabase-cold-records.yml'
       - 'supabase/migrations/20261011234405_create_private_legislative_editorial_cold_archive.sql'
       - 'supabase/migrations/20261011234848_create_private_newsroom_cold_archive.sql'
@@ -24,6 +26,8 @@ on:
       - 'scripts/ops/retire-verified-supabase-cold-records.mjs'
       - 'scripts/ops/verified-cold-archive-proof*.mjs'
       - 'scripts/ci/supabase-verified-retirement-contract.test.mjs'
+      - 'scripts/ci/verify-supabase-feed-stage-window.mjs'
+      - 'supabase/migrations/20261028012000_rotate_verified_feed_staging_to_reduce_io_timeout.sql'
       - '.github/workflows/retire-verified-supabase-cold-records.yml'
       - 'supabase/migrations/20261011234405_create_private_legislative_editorial_cold_archive.sql'
       - 'supabase/migrations/20261011234848_create_private_newsroom_cold_archive.sql'
@@ -43,3 +47,4 @@ jobs:
       - run: node --check scripts/data/export-supabase-cold-archives.mjs
       - run: node scripts/ci/verify-supabase-free-tier-retention.mjs
       - run: node --check scripts/ops/retire-verified-supabase-cold-records.mjs
+      - run: node scripts/ci/verify-supabase-feed-stage-window.mjs
