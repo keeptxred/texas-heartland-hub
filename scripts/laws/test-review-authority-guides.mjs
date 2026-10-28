@@ -35,13 +35,17 @@ test("reject malformed or fictitious review dates", () => {
   assert.throws(() => parseAuthority('slug: "example",\n updated: "2026-02-31"', "bad"), /invalid review calendar date/);
 });
 
-test("marks a guide due after 180 days without altering a publication date", () => {
-  const original = {slug: "sample", updated: "2026-04-01", published: "2025-12-01", file: "sample.ts"};
-  const rows = reviewQueue([original], new Date("2026-10-24T14:00:00Z"));
-  assert.equal(REVIEW_AGE_DAYS, 180);
-  assert.equal(rows[0].reviewNeeded, true);
-  assert.match(rows[0].reason, /last reviewed/);
-  assert.equal(original.updated, "2026-04-01");
+test("marks a guide due at 90 days and not at 89, without altering review or publication dates", () => {
+  const original = {slug: "sample", updated: "2026-07-26", published: "2025-12-01", file: "sample.ts"};
+  const before = reviewQueue([original], new Date("2026-10-23T14:00:00Z"));
+  const due = reviewQueue([original], new Date("2026-10-24T14:00:00Z"));
+  assert.equal(REVIEW_AGE_DAYS, 90);
+  assert.equal(before[0].ageDays, 89);
+  assert.equal(before[0].reviewNeeded, false);
+  assert.equal(due[0].ageDays, 90);
+  assert.equal(due[0].reviewNeeded, true);
+  assert.match(due[0].reason, /last reviewed 90 days ago/);
+  assert.equal(original.updated, "2026-07-26");
   assert.equal(original.published, "2025-12-01");
 });
 
