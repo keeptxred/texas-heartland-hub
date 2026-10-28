@@ -608,7 +608,11 @@ async function repairApprovedFishingDescription(
   if (!matchesTags(product.tags, plan.tags))
     throw new PublisherError("Etsy description repair stopped: 13 SEO tags not verified in Printify", 409);
   const expected = requiredFishingDescription(product.description ?? "", plan.lead);
-  if (!expected) throw new PublisherError("Fishing description has drifted; refused unapproved edit", 409);
+  if (!expected) {
+    result.issue = "Existing fishing description differs from approved original; no automatic edits";
+    await save();
+    return product;
+  }
   if (product.description !== expected) {
     if (product.is_locked) {
       result.issue = "Printify product locked; description repair deferred";
