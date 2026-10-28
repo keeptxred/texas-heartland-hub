@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { validateArticleReadability } from "./editorial-readability";
+import { repairArticleReadability, validateArticleReadability } from "./editorial-readability";
 
 const words = (count: number) => Array.from({ length: count }, (_, index) => `word${index + 1}`).join(" ");
 
@@ -15,6 +15,42 @@ describe("article readability validation", () => {
     });
 
     expect(reasons).toEqual([]);
+  });
+
+  it("repairs 8-sentence, 136-word paragraphs rejected by the validator without changing wording", () => {
+    const original = Array.from({ length: 8 }, (_, i) => `Item ${i + 1} ${words(15)}.`).join(" ");
+    const article = {
+      summary: `${words(55)}.`,
+      sections: [
+        { heading: "What happened", paragraphs: [original] },
+        { heading: "Why it matters", paragraphs: [`${words(82)}.`] },
+      ],
+    };
+    expect(original.split(/\\s+/)).toHaveLength(136);
+    expect(validateArticleReadability(article)).toContain("readability_paragraph_too_many_sentences:section_1_paragraph_1:8");
+    const repaired = repairArticleReadability(article);
+    expect(repaired.sections[0].paragraphs.length).toBeGreaterThanOrEqual(2);
+    expect(repaired.sections[0].paragraphs.join(" ")).toBe(original);
+    expect(validateArticleReadability(repaired)).toEqual([]);
+    // Each generated paragraph is a purely structural subdivision. No
+    // invented words, deleted facts, or lower editorial validation thresholds.
+  });
+
+  it("never recombines a short tail into an invalid 6-sentence paragraph", () => {
+    const original = [
+      ...Array.from({ length: 4 }, (_, i) => `Earlier ${i + 1} ${words(26)}.`),
+      ...Array.from({ length: 2 }, (_, i) => `Later ${i + 1} ${words(11)}.`),
+    ].join(" ");
+    const article = {
+      sections: [
+        { heading: "What happened", paragraphs: [original] },
+        { heading: "Why it matters", paragraphs: [`${words(72)}.`] },
+      ],
+    };
+    const repaired = repairArticleReadability(article);
+    expect(repaired.sections[0].paragraphs.join(" ")).toBe(original);
+    expect(repaired.sections[0].paragraphs.length).toBeGreaterThanOrEqual(2);
+    expect(validateArticleReadability(repaired)).toEqual([]);
   });
 
   it("rejects an extreme wall-of-text paragraph", () => {
