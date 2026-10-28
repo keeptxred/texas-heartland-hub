@@ -6,6 +6,7 @@ import { selectRotatedSourceWindow } from "@/lib/ingest-source-window";
 import { parseTexasAgPressReleaseIndex } from "@/lib/texas-ag-press-releases";
 import { partitionFeedLinkLookups } from "@/lib/ingest-link-lookup";
 import { extractFirstPartyRssArticleBody } from "@/lib/newsroom-firstparty-rss-body";
+import { isGoogleNewsDiscoveryFeed } from "@/lib/newsroom-google-discovery-feed";
 export { publishSingleFeedItem } from "@/lib/multi-source-publish";
 export { isPuzzleTitle } from "@/lib/ingest-feeds-legacy";
 
@@ -85,13 +86,13 @@ const VERIFIED_YOUTUBE = new Map<string, string>([
 ]);
 
 const TRANSIENT_STATUS = new Set([408, 425, 429, 500, 502, 503, 504]);
-const GOOGLE_NEWS_RE = /^(?:https:\/\/news\.google\.com\/rss\/search|https:\/\/ftkznprjljkhymknvhye\.supabase\.co\/functions\/v1\/ktr-rss-relay\?feed=google-)/i;
+// Google and project-hosted priority relays are discovery, not first-party reporting.
 const GOOGLE_FEEDS_PER_RUN = 10;
 // Bound each scheduled invocation and rotate additional local feeds across
 // consecutive half-hour slots, without skipping primary first-party sources.
 const SUPPLEMENTAL_DIRECT_FEEDS_PER_RUN = 12;
 const DIRECT_CORE_URLS = new Set(
-  DIRECT_SOURCES.filter((source) => !GOOGLE_NEWS_RE.test(source.url))
+  DIRECT_SOURCES.filter((source) => !isGoogleNewsDiscoveryFeed(source.url))
     .map((source) => source.url.toLowerCase()),
 );
 // Keep trigger-heavy feed writes below the production statement timeout.
@@ -146,7 +147,7 @@ function parseFeed(xml: string, fallbackSource: string): Item[] {
     const description = pick(block, "description") || pick(block, "summary") || pick(block, "content");
     if (!title || !link || isLowValueTitle(title)) continue;
     let source = fallbackSource;
-    if (GOOGLE_NEWS_RE.test(link) || /news\.google\.com/i.test(link)) {
+    if (isGoogleNewsDiscoveryFeed(link) || /news\.google\.com/i.test(link)) {
       const parts = title.split(" - ");
       if (parts.length > 1) {
         source = parts.pop()!.trim() || fallbackSource;
@@ -375,7 +376,7 @@ function rotateGoogleSources(sources: Source[]): Source[] {
 }
 
 async function fetchSource(source: Source): Promise<FetchResult> {
-  const isGoogle = GOOGLE_NEWS_RE.test(source.url);
+  const isGoogle = isGoogleNewsDiscoveryFeed(source.url);
   const isHtmlLinks = source.mode === "html-links";
   const accept = source.mode === "rss" ? "application/rss+xml,application/atom+xml,application/xml,text/xml,*/*" : "text/html,application/xhtml+xml,*/*";
   const fetched = await fetchText(source.url, accept, isGoogle ? 2 : isHtmlLinks ? 1 : 2, isGoogle ? 10000 : isHtmlLinks ? 12000 : 14000);
@@ -515,8 +516,8 @@ async function backfillTrendSourceAdaptive(
 async function handler() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { sources, skippedLegacyYoutube } = await loadSources();
-  const configuredDirect = sources.filter((source) => !GOOGLE_NEWS_RE.test(source.url));
-  const allGoogle = sources.filter((source) => GOOGLE_NEWS_RE.test(source.url));
+  const configuredDirect = sources.filter((source) => !isGoogleNewsDiscoveryFeed(source.url));
+  const allGoogle = sources.filter((source) => isGoogleNewsDiscoveryFeed(source.url));
   const google = rotateGoogleSources(allGoogle);
   const directWindow = selectRotatedSourceWindow(
     configuredDirect,
