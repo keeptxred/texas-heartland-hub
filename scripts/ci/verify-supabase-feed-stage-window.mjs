@@ -1,15 +1,15 @@
 import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
 
-const sql = readFileSync('supabase/migrations/20261028012000_rotate_verified_feed_staging_to_reduce_io_timeout.sql', 'utf8');
+const sql = readFileSync('supabase/migrations/20261028031500_stage_feed_32way_rotating_timeout_safe.sql', 'utf8');
 const runner = readFileSync('scripts/ops/retire-verified-supabase-cold-records.mjs', 'utf8');
 assert.match(sql,/CREATE OR REPLACE FUNCTION public\.stage_expired_free_tier_feed\(p_limit integer DEFAULT 1000\)/);
 assert.match(sql,/SECURITY DEFINER/);
 assert.match(sql,/SET search_path TO ''/);
-assert.match(sql,/\(f\.id % 8\) = \(/);
+assert.match(sql,/\(f\.id % 32\) = \(/);
 assert.match(sql,/pg_catalog\.date_part\('epoch', pg_catalog\.now\(\)\)/);
-assert.match(sql,/14400\)::bigint % 8/);
-assert.deepEqual([...new Set(Array.from({length:8},(_,i)=>(i+4)%8))].sort(),[0,1,2,3,4,5,6,7]);
+assert.match(sql,/7200\)::bigint % 32/);
+assert.deepEqual([...new Set(Array.from({length:32},(_,i)=>(i+1)%32))].sort((a,b)=>a-b),Array.from({length:32},(_,i)=>i));
 
 // The window is only an additional selection predicate. All protected
 // references remain checked *again* by the existing retirement SQL.
@@ -34,4 +34,5 @@ for(const predicate of [
 assert.ok(runner.includes("cycle % 2 === 1 ? 'newsroom' : 'feed'"));
 assert.ok(runner.indexOf('const receipt = verifiedExport();') < runner.indexOf("totalNewsroom += await retire('newsroom', proof)"));
 assert.ok(runner.indexOf("totalNewsroom += await retire('newsroom', proof)") < runner.indexOf("totalFeed += await retire('feed', proof)"));
-console.log('Verified eight rotating shards, all published-source protections and independent archival phase order.');
+assert.ok(runner.includes('const MAX_STAGE_FEED = 50;'));
+console.log('Verified 32 rotating feed shards, all publication protections and bounded 50-row stages.');

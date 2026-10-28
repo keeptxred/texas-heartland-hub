@@ -20,6 +20,13 @@ describe('verified Free Plan retirement invariants', () => {
     assert.match(runner,/retire_verified_expired_free_tier_feed/);
     assert.match(runner,/p_expected_clusters: metrics.parentRows/);
     assert.match(runner,/p_expected_feed_rows: metrics.parentRows/);
+    assert.ok(runner.includes("const MAX_STAGE_FEED = 50;"));
+    assert.ok(runner.includes("response.error.code === '57014'"));
+    assert.ok(runner.includes("const pending = await stagedMetadata();"));
+    assert.ok(runner.includes("if (pending.length)"));
+    assert.ok(runner.includes("const retrySize = 25;"));
+    assert.ok(runner.includes("data = safeResult('Stage feed bounded retry'"));
+    assert.ok(!runner.includes("for (;;)"));
     assert.match(runner,/const PRESSURE_CYCLES = 4/);
     assert.match(runner,/const PRESSURE_THRESHOLD_BYTES = 490_000_000/);
     assert.match(runner,/const cycles = initial >= PRESSURE_THRESHOLD_BYTES \? PRESSURE_CYCLES : BASE_CYCLES/);

@@ -23,7 +23,7 @@ const ARCHIVE_EXPORTER = 'scripts/data/export-supabase-cold-archives.mjs';
 const BASE_CYCLES = 2;
 const PRESSURE_CYCLES = 4;
 const PRESSURE_THRESHOLD_BYTES = 490_000_000;
-const MAX_STAGE_FEED = 75;
+const MAX_STAGE_FEED = 50;
 const MAX_STAGE_NEWSROOM = 65;
 const MIN_HEADROOM = 1_200_000;
 const STRICT_LIMIT = 500_000_000;
@@ -68,8 +68,28 @@ async function stagedMetadata() {
 
 async function stage(kind, size) {
   const rpc = kind === 'feed' ? 'stage_expired_free_tier_feed' : 'stage_expired_free_tier_newsroom';
-  const arg = kind === 'feed' ? {p_limit: size} : {p_limit: size};
-  const data = safeResult('Stage ' + kind, await db.rpc(rpc, arg));
+  const arg = {p_limit: size};
+  const response = await db.rpc(rpc,arg);
+  let data;
+  // Supabase PostgREST has a short per-statement limit. If an otherwise
+  // safe old-feed stage is cancelled (57014), it rolls back atomically.
+  // First verify there are NO partial pending backup claims, then retry
+  // exactly once with 25 parents; never retry other error types or relax
+  // any publication, age or soft-reference gate.
+  if (kind === 'feed' && size > 25 &&
+      response.error &&
+      (response.error.code === '57014' ||
+       /statement timeout|canceling statement due to statement timeout/i.test(response.error.message ?? ''))) {
+    const pending = await stagedMetadata();
+    if (pending.length) {
+      throw new Error('Timed-out feed staging left pending claims; refusing retry until certified backup');
+    }
+    const retrySize = 25;
+    console.warn('Feed stage timed out; retrying exactly once with bounded ' + retrySize + '-row batch');
+    data = safeResult('Stage feed bounded retry',await db.rpc(rpc,{p_limit:retrySize}));
+  } else {
+    data = safeResult('Stage ' + kind,response);
+  }
   if (!data || typeof data !== 'object' || data.pending_backup !== true &&
       data.pending_backup !== false) {
     throw new Error('Malformed staged archive response: ' + kind);
