@@ -16,6 +16,14 @@ async function expectNoOverflow(page: Page) {
     .toBeLessThanOrEqual(widths.viewport + 1);
 }
 
+// This site uses SSR. The initial HTML has every law card and an inert menu
+// until client hydration attaches search and navigation event handlers.
+// Waiting for this React-managed signal keeps the assertions strict and avoids
+// false positives from links that were present before search actually worked.
+async function expectInteractiveHydration(page: Page) {
+  await expect(page.locator("header")).toHaveAttribute("data-client-ready", "true", { timeout: 20_000 });
+}
+
 // 320 CSS pixels also exercises WCAG 1.4.10 reflow (e.g. a 640px viewport at 200% zoom).
 for (const width of [320, 390, 1280]) {
   test.describe(`${width}px law page layout`, () => {
@@ -38,6 +46,7 @@ for (const width of [320, 390, 1280]) {
 test("law library searches the actual legal answers and handles no results", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/laws/topics", { waitUntil: "domcontentloaded" });
+  await expectInteractiveHydration(page);
   const search = page.getByRole("searchbox", { name: /search the texas law-topic library/i });
   await search.fill("security deposit");
   await expect(page.locator('#law-topic-results a[href="/laws/topic/landlord-tenant-rentals-law"]')).toBeVisible();
@@ -67,6 +76,7 @@ test("long law pages have working keyboard-friendly source navigation", async ({
 test("legal-page header navigation has usable 44px tap targets on mobile", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/laws", { waitUntil: "domcontentloaded" });
+  await expectInteractiveHydration(page);
   const header = page.locator("header");
   const menu = header.getByRole("button", { name: "Open menu" });
   const menuBounds = await menu.boundingBox();
@@ -107,6 +117,7 @@ test("law directory reflows at 320 CSS pixels while keeping its search usable", 
   await page.setViewportSize({ width: 320, height: 640 });
   const response = await page.goto("/laws/topics", { waitUntil: "domcontentloaded" });
   expect(response?.status()).toBe(200);
+  await expectInteractiveHydration(page);
   const search = page.getByRole("searchbox", { name: /search the texas law-topic library/i });
   await expect(search).toBeVisible();
   await search.fill("security deposit");
