@@ -1,0 +1,15 @@
+# Texas criminal law — culpable mental states and burglary versus trespass (bounded no-change review)
+
+**Primary-source review date:** October 28, 2026. **Guide:** `src/data/law-topic-criminal-offenses-authority.ts` and `/laws/topic/criminal-offenses-penalties-law`.
+
+## Sources and precise verified claims
+
+1. [Current Texas Penal Code §§6.01–6.03](https://tcss.legis.texas.gov/resources/PE/htm/PE.6.htm). Section 6.02 generally requires a culpable mental state even when omitted from the particular offense text, **unless** that text plainly dispenses with a mental element; §6.02(c) prescribes intent, knowledge or recklessness if an unexpressed culpable mental state is otherwise required. Section 6.03 separately defines **intentional, knowing, reckless and criminally negligent**. A mental state is an element tied to the offense definition, not a blanket requirement that someone meant to injure or had a particular motive.
+2. [Current Texas Penal Code §§30.01, 30.02 and 30.05](https://tcss.legis.texas.gov/resources/PE/htm/PE.30.htm). Burglary under §30.02(a) has different predicates: unauthorized entry of qualifying habitation/building with specified intent; remaining concealed with specified intent; or entry followed by commission/attempt of specified offense. Section 30.02(b) addresses entry by body part or connected physical object. Criminal trespass under §30.05 has its own **notice** prerequisite (prior notice entry forbidden or notice to depart followed by failure to leave), scope, and separate entry definition. Therefore entry alone is not sufficient to conclude **either** burglary or trespass without meeting the required elements.
+3. [Texas Penal Code §22.01](https://tcss.legis.texas.gov/resources/PE/htm/PE.22.htm). Separately defined bodily injury, imminent-injury threats, and offensive or provocative contact support the guide's broad distinction; different culpable mental states may apply to different subsections. This is **not** verification of every assault classification, enhancement or defense in the guide.
+
+## Findings compared with published guide
+
+The existing quick answer, framework (mental states, burglary/trespass, assault overview), key rules, and directly relevant FAQs correctly distinguish the four culpable mental states and recognize when an offense dispenses with an element; distinguish burglary from notice-conditioned trespass; and avoid saying all assault offenses necessarily require bodily injury or intended harm. Existing wording does **not** require a legal-text change for these **specific** propositions. No fabricated punishment enhancement or categorical rule is added.
+
+**Status: partial.** Other criminal offenses, statutory punishments and exceptions, procedural rights, judicial precedent, offense date applicability, and every remaining paragraph/FAQ/source **have not** been independently certified by this bounded review. The guide's original published and reviewed date stays unchanged. Protected CI, merge and release reporting are tracked separately.
