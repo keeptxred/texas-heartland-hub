@@ -87,7 +87,7 @@ test("long law pages have working keyboard-friendly source navigation", async ({
 test("legal-page header navigation has usable 44px tap targets on mobile", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/laws", { waitUntil: "domcontentloaded" });
-  await expectInteractiveHydration(page);
+  await expectInteractiveHydration(page, 'header button[aria-label="Open menu"]', "onClick");
   const header = page.locator("header");
   const menu = header.getByRole("button", { name: "Open menu" });
   const menuBounds = await menu.boundingBox();
@@ -128,7 +128,7 @@ test("law directory reflows at 320 CSS pixels while keeping its search usable", 
   await page.setViewportSize({ width: 320, height: 640 });
   const response = await page.goto("/laws/topics", { waitUntil: "domcontentloaded" });
   expect(response?.status()).toBe(200);
-  await expectInteractiveHydration(page);
+  await expectInteractiveHydration(page, "#law-topic-filter", "onChange");
   const search = page.getByRole("searchbox", { name: /search the texas law-topic library/i });
   await expect(search).toBeVisible();
   await search.fill("security deposit");
