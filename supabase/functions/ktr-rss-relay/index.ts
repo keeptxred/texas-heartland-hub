@@ -1,6 +1,14 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const FEEDS: Record<string, string> = {
+  // Direct publisher RSS, proxied through the existing fixed-allowlist
+  // Supabase egress only when Cloudflare cannot reach the official host.
+  // Never accept a caller-provided destination URL.
+  "official-governor-rss": "https://gov.texas.gov/news/rss",
+  "official-secretary-of-state-press-rss": "https://www.sos.state.tx.us/rss/press.xml",
+  "official-texas-register-rss": "https://www.sos.state.tx.us/texreg/texreg.xml",
+  "official-texas-dps-wanted-rss": "https://www.dps.texas.gov/rss/most-wanted.xml",
+  "official-comptroller-rss": "https://public.govdelivery.com/topics/TXCOMPT_1/feed.rss",
   "khou-local": "https://www.khou.com/feeds/syndication/rss/news/local",
   "khou-sports": "https://www.khou.com/feeds/syndication/rss/sports/",
   "wfaa-local": "https://www.wfaa.com/feeds/syndication/rss/news/local",
