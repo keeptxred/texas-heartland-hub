@@ -8,7 +8,8 @@ import { readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { resolve, dirname } from "node:path";
 
-// Keep the operational cadence consistent with docs/content/laws-evergreen-inventory.md.\nexport const REVIEW_AGE_DAYS = 90;
+// Keep the operational cadence consistent with docs/content/laws-evergreen-inventory.md.
+export const REVIEW_AGE_DAYS = 90;
 export const REVIEW_ISSUE_NUMBER = 2938;
 const LAW_FILE_RE = /^law-topic-[a-z0-9-]+-authority\.ts$/;
 const FIELD = (field) => new RegExp(`(?:^|\\n)\\s*${field}:\\s*["']([^"']+)["']`, "m");
