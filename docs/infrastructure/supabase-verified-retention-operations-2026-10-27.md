@@ -33,7 +33,7 @@ retention strategy.
 ## Automated workflow and proof sequence
 
 `.github/workflows/retire-verified-supabase-cold-records.yml` is
-serialized and runs at 00:27, 04:27, 08:27, 12:27, 16:27 and 20:27 UTC,
+serialized and runs every two hours at minute 27 UTC (12 runs/day),
 plus on deployment of its own workflow changes, and via manual dispatch.
 The only credential is the existing GitHub Supabase service-role secret.
 `ENABLE_VERIFIED_COLD_RETIREMENT=1` is required for any mutating action.
@@ -45,8 +45,8 @@ newsroom → feed; each cycle archives at most 65 newsroom clusters or 75 feed
 rows and completes Storage readback plus reference-checked retirement before
 another cycle begins. 
 This pressure-triggered mode raises maximum daily archival throughput from
-390 to 780 newsroom clusters and from 450 to 900 feed parent records (six
-scheduled runs/day). Actual throughput depends on source eligibility and
+780 to 1,560 newsroom clusters and from 900 to 1,800 feed parent records (12
+scheduled runs/day at four cycles under pressure). Actual throughput depends on source eligibility and
 publication protections; database pages are usually reused, not physically
 returned immediately. If a feed stage times out, previously completed
 newsroom retirements remain committed and fully backed up. Never respond by
@@ -59,8 +59,10 @@ before any attempt to delete.
 
 1. Resume any existing private archive claims first; never overwrite pending
    batches left by a prior interrupted run.
-2. Otherwise call both of the already-deployed staging RPCs. No live
-   source rows are deleted at this stage.
+2. Otherwise stage ONE class of eligible source rows at a time (newsroom,
+   then feed, repeating only under quota pressure). No live source rows are
+   deleted during staging. Each stage is immediately exported and certified
+   before the next class is attempted.
 3. Invoke `scripts/data/export-supabase-cold-archives.mjs` in a restricted
    archive-only mode. The exporter independently reads every private
    staged batch, verifies record count and ordered ID MD5, compresses
