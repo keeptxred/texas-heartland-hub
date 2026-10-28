@@ -48,7 +48,7 @@ BEGIN
     -- publication checks unchanged but bounds their input each 4-hour cycle.
     -- Full coverage every 32h, no permanent first-page starvation.
     AND (f.id % 8) = (
-      pg_catalog.floor(pg_catalog.extract(epoch FROM pg_catalog.now()) / 14400)::bigint % 8
+      pg_catalog.floor(pg_catalog.date_part('epoch', pg_catalog.now()) / 14400)::bigint % 8
     )
     AND NOT EXISTS (SELECT 1 FROM protected_soft p WHERE p.id=f.id)
     AND NOT EXISTS (SELECT 1 FROM public.daily_articles d WHERE d.source_url=f.link)
