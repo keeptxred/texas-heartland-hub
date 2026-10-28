@@ -698,8 +698,11 @@ async function repairSunriseCastEntityCopy(
   const original = product.description ?? "";
   if (!original.includes("AI image-generation assistance"))
     throw new PublisherError("Sunrise disclosure not yet present; copy fix deferred", 409);
-  if (!broken.test(original) && !original.startsWith(replacement))
-    throw new PublisherError("Sunrise listing text changed unexpectedly; refusing mutation", 409);
+  if (!broken.test(original) && !original.startsWith(replacement)) {
+    result.issue = "Sunrise copy differs from approved original; no automatic edits";
+    await save();
+    return product;
+  }
   const desired = original.replace(broken, replacement);
   if (desired !== original) {
     if (product.is_locked) {
