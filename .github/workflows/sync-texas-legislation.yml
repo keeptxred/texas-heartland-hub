@@ -10,7 +10,7 @@ permissions:
   actions: read
 
 concurrency:
-  group: texas-legislation-sync
+  group: texas-legislation-imports
   cancel-in-progress: false
 
 jobs:
