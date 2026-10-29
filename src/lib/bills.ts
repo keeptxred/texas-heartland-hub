@@ -57,7 +57,7 @@ export type BillListFilters = {
 const STATUS_GROUPS: Record<string, string[]> = {
   filed: ['filed', 'introduced', 'received-by-secretary-of-senate'],
   'in-committee': ['in-committee', 'referred-to-committee', 'scheduled-for-hearing', 'reported-from-committee'],
-  passed: ['passed-house', 'passed-senate', 'passed-both-chambers', 'enrolled'],
+  passed: ['passed', 'passed-house', 'passed-senate', 'passed-both-chambers', 'enrolled'],
   'sent-to-governor': ['sent-to-governor', 'presented-to-governor'],
   signed: ['signed', 'became-law', 'effective'],
   adopted: ['adopted', 'signed-resolution', 'proposed-amendment'],
