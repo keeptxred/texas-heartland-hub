@@ -8,9 +8,9 @@ const adsenseRoute = readFileSync(new URL("../routes/api/public/hooks/adsense-im
 const DIRECT_WORKER_ORIGIN = "https://keeptxred-site.freddy-coppola.workers.dev";
 
 describe("image recovery OIDC workflow event contract", () => {
-  it("keeps general recovery on bounded scheduled, marker, manual, and verified-marker fallback events", () => {
+  it("runs bounded scheduled/manual recovery and exact markers only after verified deployment", () => {
     expect(imageWorkflow).toContain("schedule:");
-    expect(imageWorkflow).toContain("push:");
+    expect(imageWorkflow).not.toMatch(/^\s+push:\s*$/m);
     expect(imageWorkflow).toContain("workflow_dispatch:");
     expect(imageWorkflow).toContain("workflow_run:");
     expect(imageWorkflow).toContain('workflows: ["Deploy verified KeepTXRed to Cloudflare"]');
