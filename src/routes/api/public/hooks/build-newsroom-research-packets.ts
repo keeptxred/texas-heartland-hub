@@ -277,8 +277,17 @@ async function handler() {
     }
   }
 
+  // The standard 4k cached-body hydration threshold is too low for a
+  // standalone official primary record: the publisher still requires 5k
+  // deduplicated source characters. Fetch eligible 4k–5k primary pages again
+  // through the existing bounded queue, without crediting any new publisher.
+  const primaryFeedIds = new Set(memberships.filter((row) => row.is_primary_source).map((row) => row.feed_item_id));
   const sourcePageCandidates = feeds
-    .filter((feed) => shouldFetchNewsroomSourcePage({ url: feed.link, extractedBody: feed.extracted_body }));
+    .filter((feed) => shouldFetchNewsroomSourcePage({
+      url: feed.link,
+      extractedBody: feed.extracted_body,
+      minSubstantiveChars: primaryFeedIds.has(feed.id) ? 5_000 : undefined,
+    }));
   const nowMs = Date.now();
   const sourcePageCoolingDown = (feedId: number) => isNewsroomSourceFetchCoolingDown(
     sourcePageStateById.get(feedId),

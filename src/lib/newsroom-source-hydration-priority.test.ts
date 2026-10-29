@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { newsroomIndependentPublisherFamilyFromUrl, newsroomSourceFamilyFromUrl } from "@/lib/newsroom-publication-preflight";
-import { newsroomHydrationPriority } from "@/lib/newsroom-source-page.server";
+import { newsroomHydrationPriority, shouldFetchNewsroomSourcePage } from "@/lib/newsroom-source-page.server";
 
 const builder = readFileSync("src/routes/api/public/hooks/build-newsroom-research-packets.ts", "utf8");
 
@@ -31,6 +31,15 @@ describe("zero-AI research source-page prioritization", () => {
     expect(family.size).toBe(1);
     family.add(newsroomSourceFamilyFromUrl("https://texasstandard.org/story"));
     expect(family.size).toBe(2);
+  });
+
+  it("rehydrates authentic official records between 4k and 5k without loosening evidence or discovery safety", () => {
+    const official = { url: "https://gov.texas.gov/news/post/official-statement", extractedBody: "A".repeat(4_700) };
+    expect(shouldFetchNewsroomSourcePage(official)).toBe(false);
+    expect(shouldFetchNewsroomSourcePage({ ...official, minSubstantiveChars: 5_000 })).toBe(true);
+    expect(shouldFetchNewsroomSourcePage({ ...official, extractedBody: "A".repeat(5_100), minSubstantiveChars: 5_000 })).toBe(false);
+    expect(shouldFetchNewsroomSourcePage({ url: "https://news.google.com/rss/articles/id", extractedBody: "", minSubstantiveChars: 5_000 })).toBe(false);
+    expect(builder).toContain("primaryFeedIds.has(feed.id) ? 5_000 : undefined");
   });
 
   it("does not promote a Google News discovery pointer to a second publisher", () => {

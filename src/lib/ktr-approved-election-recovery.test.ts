@@ -5,12 +5,14 @@ describe("editorially approved October 11-25 election newsroom recovery", () => 
   const generator = readFileSync("src/routes/api/public/hooks/generate-newsroom.ts", "utf8");
   const workflow = readFileSync(".github/workflows/run-daily-news-now.yml", "utf8");
 
-  it("bounds approval to factual election administration drafts and expires recovery", () => {
+  it("bounds approval to factual archived election drafts and expires recovery", () => {
     expect(generator).toContain('const ELECTION_RECOVERY_START = "2026-10-11T00:00:00Z"');
     expect(generator).toContain('const ELECTION_RECOVERY_END = "2026-10-26T00:00:00Z"');
     expect(generator).toContain('const ELECTION_RECOVERY_EXPIRES = "2026-10-30T23:59:59Z"');
     expect(generator).toContain('record?.pillar_slug === "texas-elections"');
-    expect(generator).toContain("isFactualVotingAdministrationSubject(record.canonical_subject)");
+    expect(generator).toContain("electionDraftHeadlineMatchesEvent(record.canonical_subject, saved?.draft_json?.title");
+    expect(generator).not.toContain("&& isFactualVotingAdministrationSubject(record.canonical_subject)");
+    expect(generator).toContain("token.length >= 4 && titleTokens.has(token)");
     expect(generator).toContain('const recoveryRequested = requestedMode === "publish"');
   });
 

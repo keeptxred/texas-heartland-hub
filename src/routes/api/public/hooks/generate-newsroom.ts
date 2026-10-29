@@ -39,7 +39,7 @@ const GENERATED_NEWS_PROVENANCE_SIGNATURE =
   "Keep TX Red rewrote the coverage independently and links to the original for verification.";
 
 // Explicit editorial approval received October 25 for already drafted factual
-// election reporting from the preceding fourteen days. This ONLY authorizes
+// election reporting (including campaigns and voting administration) from the preceding fourteen days. This ONLY authorizes
 // re-evaluating saved drafts; it never waives independent sourcing, AI draft
 // validation, image vision verification, freshness context or duplicate checks.
 const ELECTION_RECOVERY_START = "2026-10-11T00:00:00Z";
@@ -58,7 +58,12 @@ function electionDraftHeadlineMatchesEvent(subject: string, title: string): bool
   if (/voter registrations?|registered vote/.test(subject)) {
     return /\b(?:registrations?|registered|voters?)\b/i.test(title);
   }
-  return true;
+  // For non-administrative election stories, require a meaningful match
+  // between the saved title and the original event; do not repurpose an
+  // archival draft into a different race, claim or campaign controversy.
+  const subjectTokens = electionStoryTokens(subject);
+  const titleTokens = electionStoryTokens(title);
+  return [...subjectTokens].filter((token) => token.length >= 4 && titleTokens.has(token)).length >= 3;
 }
 function electionStoryTokens(value: string): Set<string> {
   const raw = value.toLowerCase()
@@ -336,8 +341,10 @@ async function handler({ request }: { request: Request }) {
       if (recoverRecentHeldDraft) {
         return Boolean(saved && (saved.validation_reasons ?? []).length === 0);
       }
+      // October 11–25 approval covers factual election reporting generally,
+      // not just administration headlines. Keep exact saved-draft, editorial,
+      // source, duplicate and retrospective publication gates unchanged.
       return record?.pillar_slug === "texas-elections"
-        && isFactualVotingAdministrationSubject(record.canonical_subject)
         && Boolean(saved && (saved.validation_reasons ?? []).length === 0)
         && electionDraftHeadlineMatchesEvent(record.canonical_subject, saved?.draft_json?.title ?? "");
     });
