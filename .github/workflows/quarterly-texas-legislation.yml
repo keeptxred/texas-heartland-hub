@@ -1,6 +1,15 @@
 name: Quarterly Texas Legislature full-session reconciliation
 on:
   workflow_dispatch:
+  # One initial reconciliation when importer correctness changes are merged.
+  # Ordinary editorial/site pushes do not trigger expensive statewide scans.
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/legislature/session-identity.mjs'
+      - 'scripts/legislature/sync-texas-legislation.mjs'
+      - 'scripts/legislature/sync-bill-subjects.mjs'
+      - 'scripts/legislature/status-normalization.mjs'
   schedule:
     # January, April, July, October — in addition to daily regular-session sync.
     - cron: '35 15 1 1,4,7,10 *'
