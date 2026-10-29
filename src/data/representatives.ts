@@ -9,6 +9,8 @@ export type Rep = {
   phoneTX?: string;
   website: string;
   imageUrl?: string;
+  /** Former officials are retained for historical profile URLs, never the current directory. */
+  status?: "former";
 };
 
 export function representativeSlug(name: string) {
@@ -28,6 +30,7 @@ export function findRepresentativeBySlug(slug: string) {
     ...US_HOUSE_DELEGATION,
     ...TEXAS_SENATE_MEMBERS,
     ...TEXAS_HOUSE_MEMBERS,
+    ...FORMER_TEXAS_HOUSE_MEMBERS,
   ].find((representative) => representativeSlug(representative.name) === slug);
 }
 
@@ -424,6 +427,18 @@ function legislativeRepresentative(chamber: "house" | "senate") {
     imageUrl: seat.imageUrl ?? undefined,
   }));
 }
+
+/** Historical profiles only. These people must not appear in the sitting-member directory. */
+export const FORMER_TEXAS_HOUSE_MEMBERS: Rep[] = [
+  {
+    name: "Gary VanDeaver", office: "Former Texas House representative", party: "R",
+    district: "House District 1", website: "https://house.texas.gov/members/1", status: "former",
+  },
+  {
+    name: "Nate Schatzline", office: "Former Texas House representative", party: "R",
+    district: "House District 93", website: "https://house.texas.gov/members/93", status: "former",
+  },
+];
 
 export const TEXAS_HOUSE_MEMBERS: Rep[] = legislativeRepresentative("house");
 export const TEXAS_SENATE_MEMBERS: Rep[] = legislativeRepresentative("senate");
