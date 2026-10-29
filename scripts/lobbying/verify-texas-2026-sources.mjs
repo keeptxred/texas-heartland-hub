@@ -68,12 +68,19 @@ const previousById = new Map((previous.sources ?? []).map((entry) => [entry.id, 
 const changed = rows.filter((entry) => previousById.has(entry.id) && previousById.get(entry.id) !== entry.sha256).map((entry) => entry.id);
 const output = {
   checkedAt: new Date().toISOString(),
-  explanation: "Availability and SHA-256 of official sources, not the currentness of any individual registration or a complete 2026 lobbying total.",
+  explanation: "Last changed fingerprints of official sources, not the date of the latest GitHub Actions check or the currentness of any individual registration.",
   sourceChangesSinceLastCheck: changed,
   registrationChangedSinceEditorialReview: Boolean(previous.registrationChangedSinceEditorialReview) || changed.some((id) => id === "2026-client-pdf" || id === "2026-client-excel"),
   sources: rows,
 };
-writeFileSync(outputPath, JSON.stringify(output, null, 2) + "\n");
+const unchanged = previous.sources?.length === rows.length
+  && rows.every((entry) => previousById.get(entry.id) === entry.sha256)
+  && Boolean(previous.registrationChangedSinceEditorialReview) === output.registrationChangedSinceEditorialReview;
+if (!unchanged) {
+  writeFileSync(outputPath, JSON.stringify(output, null, 2) + "\n");
+} else {
+  console.log("No source-content changes; skipping unnecessary status commit and site rebuild.");
+}
 if (process.env.GITHUB_STEP_SUMMARY) {
   const { appendFileSync } = await import("node:fs");
   appendFileSync(process.env.GITHUB_STEP_SUMMARY, "## 2026 TEC lobbying source check\n\n" +
