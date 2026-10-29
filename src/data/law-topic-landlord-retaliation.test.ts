@@ -34,7 +34,7 @@ describe("Texas Property Code 92.331–92.335 landlord anti-retaliation", () => 
     expect(topic.questions.some(({ q, a }) =>
       q.includes("remedies can a Texas tenant") &&
       a.includes("§92.333") &&
-      a.includes("§92.335")
+      a.includes("Section 92.335")
     )).toBe(true);
   });
 
