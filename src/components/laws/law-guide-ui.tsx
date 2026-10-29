@@ -91,7 +91,7 @@ export function LawStatuteCard({ meta }: { meta: LawGuideMeta }) {
                   href={source.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-semibold text-primary underline underline-offset-4 hover:no-underline"
+                  className="inline-flex min-h-11 items-center rounded px-2 py-2 font-semibold text-primary underline underline-offset-4 hover:no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
                 >
                   {source.label} ↗
                 </a>

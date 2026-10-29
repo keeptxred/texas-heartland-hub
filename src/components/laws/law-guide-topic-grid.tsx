@@ -89,7 +89,7 @@ function LawAuthorityDiscovery() {
             <a
               key={href}
               href={href}
-              className="font-semibold text-foreground underline underline-offset-4 hover:text-primary"
+              className="inline-flex min-h-11 items-center rounded px-2 font-semibold text-foreground underline underline-offset-4 hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
             >
               {label}
             </a>

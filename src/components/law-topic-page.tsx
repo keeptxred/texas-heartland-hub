@@ -35,7 +35,7 @@ export function LawTopicPage({ topic }: { topic: LawTopic }) {
       <p className="text-[10px] font-extrabold uppercase tracking-[0.3em] text-primary">Texas Law Library</p>
       <h1 className="mt-3 font-display text-4xl leading-[1.03] tracking-tight md:text-6xl">{topic.title}</h1>
       <p className="mt-5 font-serif text-lg italic leading-snug text-muted-foreground md:text-xl">{topic.dek}</p>
-      <div className="mt-6 border-y py-3 text-xs text-muted-foreground"><span className="font-semibold text-foreground">Keep TX Red Law Desk</span><span className="mx-2">•</span>Reviewed {new Date(`${topic.updated}T12:00:00-05:00`).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</div>
+      <div className="mt-6 border-y py-3 text-xs text-muted-foreground"><span className="font-semibold text-foreground">Keep TX Red Law Desk</span><span className="mx-2">•</span>Last updated {new Date(`${topic.updated}T12:00:00-05:00`).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</div>
 
       <nav aria-label="Related Texas law resources" className="mt-7 flex flex-wrap gap-3 text-sm">
         <Link to="/laws" className="inline-flex min-h-11 items-center rounded-lg border px-4 py-2 font-semibold hover:border-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">Texas laws hub</Link>
