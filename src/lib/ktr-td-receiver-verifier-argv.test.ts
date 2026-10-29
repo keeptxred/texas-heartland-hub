@@ -11,7 +11,10 @@ describe("TexasDefined receiver verification uses bounded deployment lookup", ()
     expect(yaml).not.toContain("os.environ['RUNS_JSON']");
   });
   it("still requires the exact successful main deployment before probing the receiver", () => {
-    expect(yaml).toContain('if run.get("head_sha") == expected:');
+    expect(yaml).toContain('if run.get("head_sha") == expected]');
+    expect(yaml).toContain('if run.get("status") == "completed"');
+    expect(yaml).toContain('and run.get("conclusion") == "success"');
+    expect(yaml).toContain("chosen = successful or running or (matching[0] if matching else None)");
     expect(yaml).toContain('if [[ "$status" != "completed" ]]; then');
     expect(yaml).toContain('if [[ "$conclusion" != "success" ]]; then');
     expect(yaml).toContain("TexasDefined generated-image receiver returned HTTP");
