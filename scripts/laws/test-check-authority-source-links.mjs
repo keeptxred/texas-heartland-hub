@@ -3,7 +3,8 @@ import { test } from "node:test";
 import {
   SOURCE_CONCURRENCY, REQUEST_TIMEOUT_MS, classifySourceResult,
   extractAuthoritySources, collectAuthorityLinks, auditSourceLinks,
-  formatSourceReport, probeSource,
+  formatSourceReport, probeSource, fingerprintTexasStatuteHtml,
+  isOfficialTexasStatuteChapter, MAX_STATUTE_HTML_BYTES,
 } from "./check-authority-source-links.mjs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -75,4 +76,32 @@ test("reports reproducibly on distinct official URLs with their affected guides"
   assert.match(report.markdown, /2026-10/);
   assert.match(report.markdown, /one.ts, two.ts/);
   assert.match(report.markdown, /not legal-claim verification/);
+});
+
+test("hashes official statute text within the existing link probe, without a duplicate fetch", async () => {
+  const url = "https://tcss.legis.texas.gov/Docs/BC/htm/BC.17.htm";
+  assert.equal(isOfficialTexasStatuteChapter(url), true);
+  assert.equal(isOfficialTexasStatuteChapter("https://capitol.texas.gov/billlookup/BillSummary.aspx?Bill=SB1"), false);
+  assert.ok(MAX_STATUTE_HTML_BYTES <= 1_500_000);
+  const html = '<script>dynamic=Date.now()</script><main>Sec. 17.45. DEFINITIONS. A consumer buys goods or services. ' +
+    'Sec. 17.50. RELIEF FOR CONSUMERS. Reliance and a producing cause may be required. ' +
+    'The section contains exceptions, proof standards, damages, procedures and effective dates. </main>';
+  const changed = html.replace("Reliance and a producing cause", "Reliance or another cause");
+  const a = fingerprintTexasStatuteHtml(html);
+  const b = fingerprintTexasStatuteHtml(changed);
+  assert.match(a, /^[a-f0-9]{64}$/);
+  assert.notEqual(a, b);
+  assert.equal(fingerprintTexasStatuteHtml("<html>service unavailable</html>"), null);
+  let fetches = 0;
+  const fetched = await probeSource(url, async () => {
+    fetches += 1;
+    return { status: 200, url, headers: { get: () => "300" }, text: async () => html };
+  });
+  assert.equal(fetches, 1);
+  assert.equal(fetched.state, "healthy");
+  assert.equal(fetched.statuteFingerprint, a);
+  const blocked = await probeSource(url, async () => ({
+    status: 403, body: { cancel: async () => {} },
+  }));
+  assert.equal(blocked.statuteFingerprint, undefined);
 });
