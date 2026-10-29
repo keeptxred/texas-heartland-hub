@@ -58,7 +58,9 @@ function absoluteNewsDate(iso: string): string {
 }
 
 function verifiedImage(article: DailyArticle): string | null {
-  const url = article.featured_image_url?.trim();
+  const url = article.image_generation_status === "ready"
+    ? article.featured_image_url?.trim()
+    : null;
   // Do not silently replace missing, unverified or mismatched story imagery
   // with an unrelated generic Texas/category photograph.
   return url && !/\/og\/default\.jpg(?:[?#].*)?$/i.test(url) ? url : null;
