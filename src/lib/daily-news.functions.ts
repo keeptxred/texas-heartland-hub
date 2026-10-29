@@ -6,6 +6,7 @@ import { isPublicArticleReady } from "@/lib/public-article-readiness";
 import { isKeepTxRedSearchOwnedStory } from "@/lib/ktr-search-ownership";
 import { isPublicBreaking, PUBLIC_BREAKING_WINDOW_MS } from "@/lib/public-breaking";
 import { isCurrentNewsCandidate, CURRENT_NEWS_WINDOW_DAYS } from "@/lib/current-news-freshness";
+import { isEligiblePreviousReport } from "@/lib/newsroom-presentation";
 
 export type DailyArticle = {
   slug: string;
@@ -132,6 +133,36 @@ export const getDailyArticles = createServerFn({ method: "GET" }).handler(async 
 
   const merged = dedupeByTitle([...freshBreaking, ...dailyRotated]).slice(0, 30);
   return { articles: merged };
+});
+
+
+// Separate, bounded historical discovery. Only already-published, source-backed
+// and public-ready newsroom reporting is returned; this never changes its date
+// or allows restored URLs into the latest feed. Query strictly before the 7-day
+// current-news window to avoid merging current and historical products.
+export const getRecentNewsArchive = createServerFn({ method: "GET" }).handler(async () => {
+  const supabase = getSupabaseClient();
+  if (!supabase) return { articles: [] as DailyArticle[] };
+
+  const currentCutoff = new Date(Date.now() - CURRENT_NEWS_WINDOW_DAYS * 24 * 60 * 60 * 1000).toISOString();
+  const historyFloor = new Date(Date.now() - 120 * 24 * 60 * 60 * 1000).toISOString();
+  const { data, error } = await supabase
+    .from("daily_articles")
+    .select(DAILY_ARTICLE_SELECT)
+    .eq("kind", "news")
+    .gte("published_at", historyFloor)
+    .lt("published_at", currentCutoff)
+    .order("published_at", { ascending: false })
+    .order("slug", { ascending: true })
+    .limit(120);
+
+  if (error) {
+    console.error("getRecentNewsArchive failed", error);
+    return { articles: [] as DailyArticle[] };
+  }
+
+  const eligible = ((data ?? []) as DailyArticleRow[]).filter(isEligiblePreviousReport);
+  return { articles: dedupeByTitle(stripPrivateFields(eligible)).slice(0, 36) };
 });
 
 export const getPublishedAuthorArticles = createServerFn({ method: "GET" }).handler(async () => {
