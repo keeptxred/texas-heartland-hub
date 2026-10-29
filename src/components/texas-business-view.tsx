@@ -20,21 +20,18 @@ const EMPTY_BILLS_SEARCH = {
 export const BUSINESS_SLUGS: Record<string, string[]> = {
   energy: [
     "texas-energy-economy-overview",
-    "permian-energy",
     "texas-energy-policy-guide",
     "texas-grid-ercot-explained",
   ],
   jobs: ["texas-energy-economy-overview", "why-texas-has-no-income-tax"],
   regulation: ["texas-energy-policy-guide", "what-local-governments-control"],
   taxation: [
-    "property-tax-relief-package",
     "texas-property-tax-laws-explained",
     "isd-tax-burdens",
     "how-texas-counties-spend",
   ],
   policy: [
     "texas-energy-policy-guide",
-    "property-tax-relief-package",
     "what-local-governments-control",
   ],
 };

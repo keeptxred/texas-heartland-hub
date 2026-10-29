@@ -41,10 +41,8 @@ const TEXAS_NEWS_SLUGS: Record<string, string[]> = {
   economy: [
     "texas-energy-economy-overview",
     "why-texas-has-no-income-tax",
-    "permian-energy",
     "texas-grid-ercot-explained",
     "texas-energy-policy-guide",
-    "property-tax-relief-package",
   ],
   education: [
     "school-choice-esa-guide",
