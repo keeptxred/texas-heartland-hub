@@ -18,7 +18,7 @@ function findCommitteeArray(value, depth = 0) {
   }
   if (!isObject(value)) return null;
 
-  for (const key of ["committees", "memberCommittees", "data", "results", "items"]) {
+  for (const key of ["committees", "memberCommittees", "data", "results", "items", "list"]) {
     if (!(key in value)) continue;
     const found = findCommitteeArray(value[key], depth + 1);
     if (found) return found;
@@ -32,6 +32,10 @@ function findCommitteeArray(value, depth = 0) {
 }
 
 export function normalizeHouseCommitteePayload(payload) {
+  if (isObject(payload) && (payload.error === true || (typeof payload.error === "string" && payload.error.trim())))
+    throw new Error(`Texas House committee API reported an error: ${String(payload.error)}`);
+  if (isObject(payload) && payload.fetching === true)
+    throw new Error("Texas House committee API is still fetching assignments");
   const rows = findCommitteeArray(payload);
   if (!rows) {
     const shape = isObject(payload) ? Object.keys(payload).sort().join(",") : typeof payload;
