@@ -18,7 +18,7 @@ function toCents(amount) {
 export function parseTexasLobbyExpenditures(pdfText) {
   const lines = pdfText.replace(/\r/g, "").split("\n");
   const month = "(?:January|February|March|April|May|June|July|August|September|October|November|December)";
-  const printedDates = [...pdfText.matchAll(new RegExp("\\b" + month + " \\d{1,2}, 2026 \\d{1,2}:\\d{2}:\\d{2} (?:AM|PM)\\b", "g"))].map((match) => match[0]);
+  const printedDates = [...pdfText.matchAll(new RegExp("\\b" + month + " \\d{1,2}, 20\\d{2} \\d{1,2}:\\d{2}:\\d{2} (?:AM|PM)\\b", "g"))].map((match) => match[0]);
   if (!printedDates.length || new Set(printedDates).size !== 1)
     throw new Error("Missing or conflicting 2026 PDF printed-date stamps");
 
