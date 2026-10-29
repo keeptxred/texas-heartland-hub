@@ -8,7 +8,9 @@ import { parseTloSession, identityFromTloHistoryUrl } from './session-identity.m
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 
-const IMPORT_VERSION = 2;
+// Version 3 repairs false attribution from parsing the FTP grouping folder instead of the XML basename.
+// All version-2 records are intentionally re-evaluated with the corrected identity parser.
+const IMPORT_VERSION = 3;
 const SOURCE_KEY = 'texas-legislature-online';
 const SUBJECT_SOURCE = 'official-tlo-subject-record-v1';
 const execFileAsync = promisify(execFile);
@@ -158,7 +160,7 @@ for (const session of sessions) {
       const bill = identity ? bills.get(billKey(identity)) : null;
       if (!bill) {
         totals.missingBill += 1;
-        await markChecked(record, 0);
+        // Do not mark as imported when bill is absent: retry once the bill importer catches up.
         totals.checked += 1;
         continue;
       }
