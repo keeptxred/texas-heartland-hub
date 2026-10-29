@@ -2,6 +2,23 @@ import { createFileRoute } from "@tanstack/react-router";
 
 const EXPECTED_REPOSITORY = "keeptxred/texas-heartland-hub";
 const EXPECTED_WORKFLOW = ".github/workflows/sync-texas-legislation.yml";
+const VERIFIED_MAINTENANCE_WORKFLOWS = new Set([
+  ".github/workflows/quarterly-texas-legislation.yml",
+  ".github/workflows/recover-texas-bill-subjects.yml",
+]);
+function permittedLegislativeRun(run: Record<string, any>) {
+  // A job's short-lived GITHUB_TOKEN must identify a live run on protected main.
+  // Do not authorize pull_request events, other workflows or arbitrary references.
+  const event = String(run?.event || "");
+  const allowedEvent = run?.path === EXPECTED_WORKFLOW
+    ? ["schedule", "workflow_dispatch"].includes(event)
+    : VERIFIED_MAINTENANCE_WORKFLOWS.has(String(run?.path || ""))
+      && ["schedule", "workflow_dispatch", "push"].includes(event);
+  return run?.repository?.full_name === EXPECTED_REPOSITORY
+    && run?.head_branch === "main"
+    && allowedEvent
+    && ["queued", "in_progress"].includes(String(run?.status || ""));
+}
 const ALLOWED_METHODS = new Set(["GET", "POST", "PATCH", "DELETE"]);
 const ALLOWED_RPCS = new Set([
   "upsert_bidirectional_authority_relationship",
@@ -34,11 +51,7 @@ async function verifyGithubRun(request: Request) {
   });
   if (!response.ok) return false;
   const run = await response.json() as Record<string, any>;
-  return run?.repository?.full_name === EXPECTED_REPOSITORY
-    && run?.path === EXPECTED_WORKFLOW
-    && run?.head_branch === "main"
-    && ["schedule", "workflow_dispatch"].includes(String(run?.event || ""))
-    && ["queued", "in_progress"].includes(String(run?.status || ""));
+  return permittedLegislativeRun(run);
 }
 
 function serviceHeaders(serviceKey: string, prefer?: string) {

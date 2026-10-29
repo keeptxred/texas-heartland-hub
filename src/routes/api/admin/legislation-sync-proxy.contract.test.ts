@@ -34,6 +34,20 @@ describe("legislation sync Worker proxy contract", () => {
     }
   });
 
+  it("restricts newly approved reconciliation jobs to two specific protected-main workflows", () => {
+    const proxyEntrypoint = readFileSync(new URL("./legislation-sync-proxy.ts", import.meta.url), "utf8");
+    for (const source of [proxy, proxyEntrypoint]) {
+      expect(source).toContain('".github/workflows/quarterly-texas-legislation.yml"');
+      expect(source).toContain('".github/workflows/recover-texas-bill-subjects.yml"');
+      expect(source).toContain('run?.path === EXPECTED_WORKFLOW');
+      expect(source).toContain('VERIFIED_MAINTENANCE_WORKFLOWS.has');
+      expect(source).toContain('["schedule", "workflow_dispatch", "push"].includes(event)');
+      expect(source).toContain('run?.head_branch === "main"');
+      expect(source).toContain('["queued", "in_progress"].includes');
+      expect(source).not.toContain('"pull_request"');
+    }
+  });
+
   it("keeps database access restricted to legislative tables and explicit RPCs", () => {
     expect(proxy).toContain('const ALLOWED_RPCS = new Set([');
     expect(proxy).toContain('"upsert_bidirectional_authority_relationship"');

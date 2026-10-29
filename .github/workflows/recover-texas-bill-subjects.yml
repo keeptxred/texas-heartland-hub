@@ -38,6 +38,15 @@ jobs:
         run: |
           sessions=$(node scripts/legislature/plan-sessions.mjs --quarterly | tail -n 1)
           echo "sessions=$sessions" >> "$GITHUB_OUTPUT"
+      - name: Verify official Texas Legislature FTP reachability
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! curl --fail --silent --show-error --ftp-pasv --retry 2 --retry-delay 8 --connect-timeout 10 --max-time 35 \
+            'ftp://ftp.legis.state.tx.us/bills/89R/billhistory/history.xml' -o /dev/null; then
+            echo '::error title=Official TLO FTP temporarily unavailable::The official Texas Legislature FTP service is unreachable from the GitHub runner. No substitute source was scraped. The next scheduled run can retry.'
+            exit 1
+          fi
       - name: Recover official TLO bill subjects from checkpoint
         run: node scripts/legislature/sync-bill-subjects.mjs --sessions=${{ steps.sessions.outputs.sessions }} --subject-max-seconds=1000
       - name: Verify reporting scope
