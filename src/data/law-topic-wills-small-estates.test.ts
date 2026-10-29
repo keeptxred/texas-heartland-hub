@@ -31,7 +31,7 @@ describe("Texas Estates Code Chapter 205 limited small-estate affidavits", () =>
     expect(find("transfer a house")).toContain("§205.006");
     expect(find("transfer a house")).toContain("only real property");
     expect(find("Who signs")).toContain("two disinterested witnesses");
-    expect(find("Who signs")).toContain("§205.007");
+    expect(find("Who signs")).toContain("Section 205.007");
   });
 
   it("provides official authority and preserves other inheritance claims and original guide dates", () => {
