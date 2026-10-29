@@ -6,7 +6,7 @@ import { FIFTEENTH_COURT_REVIEWED } from "@/data/texas-fifteenth-court-authority
 import { SCJC_REVIEWED } from "@/data/texas-judicial-conduct-authority";
 import { TEXAS_TRIAL_COURTS_REVIEWED } from "@/data/texas-trial-courts-authority";
 import { GOVERNMENT_ENTITIES, GOVERNMENT_REVIEWED_AT, governmentPath, governmentReviewedAt } from "@/lib/texas-government";
-import { SEARCH_RECOVERY_AUTHORITY_SLUGS } from "@/data/search-recovery-authority";
+import { SEARCH_RECOVERY_AUTHORITY_GUIDES, SEARCH_RECOVERY_AUTHORITY_SLUGS } from "@/data/search-recovery-authority";
 import { getPublicationGovernmentEntities } from "@/lib/government-entity-publication";
 import { isGovernmentEntityIndexable } from "@/lib/government-entity-indexability";
 import { BASE_URL, renderUrlset, toIsoDate, xmlResponse } from "@/lib/sitemap-shared";
@@ -25,7 +25,7 @@ export const Route = createFileRoute("/sitemap-government.xml")({
         { loc: `${BASE_URL}/texas-government/state-commission-on-judicial-conduct`, lastmod: toIsoDate(SCJC_REVIEWED) },
         ...SEARCH_RECOVERY_AUTHORITY_SLUGS.map((slug) => ({
           loc: `${BASE_URL}/texas-government/reference/${slug}`,
-          lastmod: "2026-09-28",
+          lastmod: toIsoDate(SEARCH_RECOVERY_AUTHORITY_GUIDES[slug].updated),
         })),
         ...INDEXABLE_GOVERNMENT_ENTITIES.map((entity) => ({
           loc: `${BASE_URL}${governmentPath(entity.slug)}`,
