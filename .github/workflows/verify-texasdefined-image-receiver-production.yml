@@ -57,10 +57,22 @@ jobs:
           import json, sys
           expected = sys.argv[1]
           data = json.load(sys.stdin)
-          for run in data.get("workflow_runs", []):
-              if run.get("head_sha") == expected:
-                  print("{}|{}|{}".format(run.get("status",""), run.get("conclusion") or "", run.get("html_url","")))
-                  break
+          matching = [run for run in data.get("workflow_runs", [])
+                      if run.get("head_sha") == expected]
+          # GitHub can start duplicate deploys for one verified main commit.
+          # Any completed successful exact-SHA deploy proves this revision
+          # passed its protected production smoke. A later failed duplicate
+          # must not mask that success or falsely block receiver verification.
+          successful = next((run for run in matching
+                             if run.get("status") == "completed"
+                             and run.get("conclusion") == "success"), None)
+          running = next((run for run in matching
+                          if run.get("status") != "completed"), None)
+          chosen = successful or running or (matching[0] if matching else None)
+          if chosen:
+              print("{}|{}|{}".format(chosen.get("status",""),
+                                     chosen.get("conclusion") or "",
+                                     chosen.get("html_url","")))
           ' "$EXPECTED_SHA")"
 
             if [[ -z "$match" ]]; then
