@@ -157,7 +157,7 @@ function RepresentativesPage() {
   const sections = [
     { key: "us-senate", title: "U.S. Senate", reps: US_SENATORS },
     { key: "statewide", title: "Statewide Leadership", reps: STATE_LEADERSHIP },
-    { key: "us-house", title: "U.S. House — Current Texas Delegation", reps: US_HOUSE_DELEGATION },
+    { key: "us-house", title: "U.S. House — Complete Texas Delegation", reps: US_HOUSE_DELEGATION },
     { key: "texas-senate", title: "Texas Senate — Current Members", reps: TEXAS_SENATE_MEMBERS },
     { key: "texas-house", title: "Texas House — Current Members", reps: TEXAS_HOUSE_MEMBERS },
   ];
