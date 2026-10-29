@@ -1,0 +1,45 @@
+name: Recover official Texas bill subjects
+on:
+  workflow_dispatch:
+  # Isolated, checkpointed recovery. Completes pending subjects without
+  # replaying all 11,503 bill histories in the same GitHub runner.
+  schedule:
+    - cron: '45 6,18 * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/legislature/sync-bill-subjects.mjs'
+      - '.github/workflows/recover-texas-bill-subjects.yml'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: texas-legislation-imports
+  cancel-in-progress: false
+jobs:
+  repair-subjects:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      # Verified GitHub OIDC proxy used by the existing daily source importer;
+      # never copy a service-role secret into GitHub Actions.
+      SUPABASE_URL: https://keeptxred.com/api/admin/legislation-sync-proxy
+      SUPABASE_SERVICE_ROLE_KEY: ${{ github.token }}
+      TLO_SUBJECT_MAX_SECONDS: '1000'
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22.15.0'
+      - name: Verify official session identity and subject attribution
+        run: node --test scripts/legislature/session-identity.check.mjs
+      - name: Plan regular and known called sessions
+        id: sessions
+        run: |
+          sessions=$(node scripts/legislature/plan-sessions.mjs --quarterly | tail -n 1)
+          echo "sessions=$sessions" >> "$GITHUB_OUTPUT"
+      - name: Recover official TLO bill subjects from checkpoint
+        run: node scripts/legislature/sync-bill-subjects.mjs --sessions=${{ steps.sessions.outputs.sessions }} --subject-max-seconds=1000
+      - name: Verify reporting scope
+        if: always()
+        run: echo "The subject job is an incremental recovery. Refer to the per-session COMPLETE/PARTIAL/FAILED entries above before describing the whole index as rebuilt." >> "$GITHUB_STEP_SUMMARY"
