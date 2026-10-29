@@ -258,7 +258,7 @@ export function newsroomAbstractPolicyVisualSubject(row: Pick<ArticleRow, "slug"
   const reserveRulemaking = row.slug.endsWith("-how-texas-state-agencies-make-rules")
     ? {
         domain: "general" as Domain,
-        scene: "A realistic unposed documentary photograph of an anonymous Texas state agency PUBLIC RULEMAKING COMMENT HEARING room, not a generic office. FOREGROUND SUBJECT filling most of the frame: long wooden public-comment table with two prominent slim black gooseneck microphones, one open thick binder of proposed-rule notice pages, a single visible public-comment submission form, an ordinary pen, and a small closed folder. Beyond the table there are several rows of EMPTY visitor chairs and a plain acoustic-panel wall, making it unmistakably a public participation space rather than a private desk. All printed text on proposed-rule notice papers and forms must be completely unreadable; no invented real agency document or agency seal. No people, no lawmakers, no staged testimony, no laptop, no computer screen, no calculator, no stock-photo handshake, NO building exterior, no Capitol dome, no podium speech, no generic office desk, no readable signage or logos. The scene is illustrative of how the public can review proposed state rules and give comments; it is not a photograph of an actual Texas hearing or a claim that any particular hearing occurred.",
+        scene: "Documentary photograph inside an anonymous Texas state-agency public-rulemaking hearing room. DOMINANT FOREGROUND: a long wooden public-comment table with two prominent black gooseneck microphones, an OPEN BINDER of proposed-rule notice pages, a public-comment submission form and pen. Behind the table: rows of EMPTY visitor chairs and plain acoustic wall panels. The microphones, proposed-rule notice sheets and public-comment form must visibly fill the frame. All printed words completely unreadable; no invented legal documents. Natural indoor light, realistic worn materials and unposed camera perspective. No people, no generic office desk, NO building exterior, laptop, computer, seal, logos or branding. This illustrates participation in proposed rulemaking, not an actual hearing.",
       }
     : undefined;
   // A practical guide to the Open Meetings Act needs an illustrative
@@ -309,14 +309,16 @@ export function newsroomAbstractPolicyVisualSubject(row: Pick<ArticleRow, "slug"
   };
 }
 
-function buildRepeatedFailureRecoverySubject(row: ArticleRow, subject: SubjectExtract): SubjectExtract {
+export function buildRepeatedFailureRecoverySubject(row: Pick<ArticleRow, "slug">, subject: SubjectExtract): SubjectExtract {
   if (row.slug.endsWith("-how-texas-state-agencies-make-rules")) {
     return {
       ...subject,
       title: "Texas rulemaking records-and-comment workspace",
       firstParagraph: "",
       locations: [],
-      concreteSubject: `${subject.concreteSubject} Mandatory composition: the open rulemaking reference volume, proposed-rule notice sheets, public-comment form, envelopes, binder clip, and pen must dominate the foreground. Do not substitute a laptop, generic office desk, government building, Capitol exterior, conference room, or empty institutional workspace for these physical records-and-comment materials.`,
+      // Keep the retry scene consistent with the original, stricter vision subject.
+      // Lead with public hearing-table objects rather than a private reading-room scene.
+      concreteSubject: `Mandatory composition: visible public-comment submission form, paired gooseneck microphones and proposed-rule binder on a public-comment hearing table. Do not substitute a laptop, generic office desk, building facade or reference-library scene. ${subject.concreteSubject}`,
     };
   }
   if (row.slug === "2026-09-04-denton-191-turtles-shipment") {
