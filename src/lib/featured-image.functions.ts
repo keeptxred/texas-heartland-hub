@@ -258,7 +258,7 @@ export function newsroomAbstractPolicyVisualSubject(row: Pick<ArticleRow, "slug"
   const reserveRulemaking = row.slug.endsWith("-how-texas-state-agencies-make-rules")
     ? {
         domain: "general" as Domain,
-        scene: "Documentary photograph inside an anonymous Texas state-agency public-rulemaking hearing room, not a generic office. DOMINANT FOREGROUND: a long wooden PUBLIC-COMMENT TABLE with TWO prominent black GOOSENECK MICROPHONES, an OPEN BINDER of proposed-rule notice pages, a PUBLIC-COMMENT SUBMISSION FORM, and a pen. Behind the table: rows of EMPTY VISITOR CHAIRS and plain acoustic wall panels. The microphones, rule-notice binder and public-comment form must all be visible and fill the frame. Natural indoor light, ordinary worn materials and unposed camera perspective. No people, laptop, computer screen, private office desk, agency seal, legible text, invented official records or branding. This is an illustrative public-participation setting, not a photograph of an actual hearing.",
+        scene: "Documentary photograph inside an anonymous Texas state-agency public-rulemaking hearing room. DOMINANT FOREGROUND: a long wooden public-comment table with two prominent black gooseneck microphones, an OPEN BINDER of proposed-rule notice pages, a public-comment submission form and pen. Behind the table: rows of EMPTY visitor chairs and plain acoustic wall panels. The microphones, proposed-rule notice sheets and public-comment form must visibly fill the frame. All printed words completely unreadable; no invented legal documents. Natural indoor light, realistic worn materials and unposed camera perspective. No people, no generic office desk, NO building exterior, laptop, computer, seal, logos or branding. This illustrates participation in proposed rulemaking, not an actual hearing.",
       }
     : undefined;
   // A practical guide to the Open Meetings Act needs an illustrative
@@ -316,7 +316,9 @@ export function buildRepeatedFailureRecoverySubject(row: Pick<ArticleRow, "slug"
       title: "Texas rulemaking records-and-comment workspace",
       firstParagraph: "",
       locations: [],
-      // Keep the recovery scene consistent with the subject judged by vision:\n      // a PUBLIC hearing table with microphones, binder and comment form, not\n      // a separate reference-library or private-desk scene. The image model\n      // truncates long prompts, so do not append contradictory objects here.\n      concreteSubject: subject.concreteSubject,
+      // Keep the retry scene consistent with the original, stricter vision subject.
+      // Lead with public hearing-table objects rather than a private reading-room scene.
+      concreteSubject: `Mandatory composition: visible public-comment submission form, paired gooseneck microphones and proposed-rule binder on a public-comment hearing table. Do not substitute a laptop, generic office desk, building facade or reference-library scene. ${subject.concreteSubject}`,
     };
   }
   if (row.slug === "2026-09-04-denton-191-turtles-shipment") {
