@@ -88,7 +88,12 @@ async function handler() {
     editorial_score: candidate.editorial_score,
     recommended_format: result.decision,
     selection_reason: result.decision === "SKIP" ? null : result.reason,
-    rejection_reason: result.decision === "SKIP" ? result.reason : null,
+    // A fresh format recommendation does not reverse a previously held
+    // generation/publication incident. The recovery path explicitly validates
+    // such holds; keep their diagnostic reason for safe root-cause analysis.
+    rejection_reason: result.decision === "SKIP"
+      ? result.reason
+      : candidate.status === "HELD" ? candidate.rejection_reason : null,
   }));
   const candidateUpdatesToWrite = candidateUpdates.filter((update) => {
     const prior = candidates.find((candidate) => candidate.id === update.id);
