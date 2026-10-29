@@ -1,4 +1,5 @@
 import { TEXAS_LEGISLATIVE_SEATS, TEXAS_LEGISLATORS } from "./texas-legislators.generated";
+export { TEXAS_ROSTER_REVIEWED_AT } from "./texas-legislators.generated";
 
 export type Rep = {
   name: string;
