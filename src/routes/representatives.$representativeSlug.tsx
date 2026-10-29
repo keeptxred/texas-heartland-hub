@@ -32,11 +32,14 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
     if (!loaderData) return {};
     const representative = loaderData.directoryRepresentative;
     const identity = loaderData.identity;
+    const former = representative?.status === "former";
     const name = representative?.name ?? identity?.sponsor_name ?? "Texas Representative";
     const office = representative?.office ?? identity?.chamber ?? "Texas legislator";
     const district = representative?.district ?? identity?.district ?? null;
     const canonical = `${SITE_URL}/representatives/${params.representativeSlug}`;
-    const description = `Authority profile for ${name}, including office, district, official contact information, sponsored Texas legislation, election links, and primary sources.`;
+    const description = former
+      ? `Historical profile for former Texas legislator ${name}. This person does not currently hold the seat; verify its status with the Texas House.`
+      : `Authority profile for ${name}, including office, district, verified contact sources, election links, and legislative records where available.`;
     const graph = [
       {
         "@type": "ProfilePage",
@@ -113,7 +116,7 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
         { name: "description", content: description },
         {
           name: "robots",
-          content: representative
+          content: representative && !former
             ? "index,follow,max-image-preview:large"
             : "noindex,follow,max-image-preview:large",
         },
@@ -140,6 +143,8 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
 function RepresentativeProfile() {
   const { representativeSlug: slug } = Route.useParams();
   const { directoryRepresentative: rep, identity, authority, houseCommittees, bills, news, relatedContent } = Route.useLoaderData();
+  const former = rep?.status === "former";
+  const federal = rep?.office.startsWith("U.S.") ?? false;
   const name = rep?.name ?? identity?.sponsor_name ?? "Texas Representative";
   const office = rep?.office ?? chamberLabel(identity?.chamber);
   const district = rep?.district ?? identity?.district ?? null;
@@ -184,8 +189,14 @@ function RepresentativeProfile() {
           />
         ) : null}
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
-          Representative authority profile
+          {former ? "Historical representative record" : "Representative authority profile"}
         </p>
+        {former ? (
+          <div className="mt-4 rounded-lg border border-amber-500/40 bg-amber-500/10 p-4 text-sm leading-6">
+            <strong>Former officeholder — not the current representative.</strong> This Texas House seat is vacant as of the latest verified roster.
+            The official district page is the current source for constituent services and any future appointment or election.
+          </div>
+        ) : null}
         <h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">{name}</h1>
         <p className="mt-3 text-lg text-muted-foreground">
           {[office, district, partyLabel(party)].filter(Boolean).join(" · ")}
@@ -198,7 +209,7 @@ function RepresentativeProfile() {
               rel="noopener noreferrer"
               className="rounded-md bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground"
             >
-              Official office website
+              {former ? "View current district office" : "Official office website"}
             </a>
           ) : null}
           <a
@@ -293,7 +304,7 @@ function RepresentativeProfile() {
               <ProfileFact label="Office" value={office} />
               <ProfileFact label="District" value={district ?? "Statewide"} />
               <ProfileFact label="Party" value={partyLabel(party) ?? "Not published"} />
-              {rep?.phoneTX ? <ProfileFact label="Capitol phone" value={rep.phoneTX} /> : null}
+              {rep?.phoneTX ? <ProfileFact label="Texas office phone (verify)" value={rep.phoneTX} /> : null}
               <ProfileFact label="Profile identifier" value={representativeSlug(name)} />
             </dl>
             {district ? (
@@ -313,11 +324,15 @@ function RepresentativeProfile() {
             )}
           </section>
 
-          <RepresentativeLegislativeIntelligence
-            name={name}
-            bills={bills}
-            relatedContent={relatedContent}
-          />
+          {federal ? (
+            <section className="rounded-xl border bg-card p-6">
+              <h2 className="text-2xl font-bold">Federal legislative activity</h2>
+              <p className="mt-3 text-muted-foreground">KTR's Texas legislative graph does not cover a federal representative's complete congressional sponsorship or voting history. A zero here would be misleading.</p>
+              <a href="https://www.congress.gov/" target="_blank" rel="noopener noreferrer" className="mt-4 inline-block font-semibold text-primary hover:underline">Search Congress.gov for federal bills and activity →</a>
+            </section>
+          ) : !former ? (
+            <RepresentativeLegislativeIntelligence name={name} bills={bills} relatedContent={relatedContent} />
+          ) : null}
 
           <section className="rounded-xl border bg-card p-6">
             <span id="legislation" className="scroll-mt-24" />
@@ -325,7 +340,11 @@ function RepresentativeProfile() {
             <p className="mt-2 text-muted-foreground">
               Bills are connected through normalized sponsor records in the Texas Bills platform.
             </p>
-            {bills.length ? (
+            {federal ? (
+              <p className="mt-5 rounded-lg border border-dashed p-5 text-muted-foreground">
+                Federal sponsored legislation is not indexed in this Texas-only bills collection. Search Congress.gov for the complete official federal record.
+              </p>
+            ) : bills.length ? (
               <div className="mt-5 space-y-3">
                 {bills.map((bill: any) => (
                   <a
@@ -345,7 +364,7 @@ function RepresentativeProfile() {
               </div>
             ) : (
               <p className="mt-5 rounded-lg border border-dashed p-5 text-muted-foreground">
-                No sponsored bills are currently matched to this profile.
+                No Texas-sponsored bills are currently matched to this profile in KTR's indexed records. This does not imply no legislative activity.
               </p>
             )}
           </section>
