@@ -54,7 +54,7 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
       - name: Reconcile official bill history, subjects and relationships
-        run: bun run legislature:sync -- --sessions=${{ matrix.session }} --recheck-days=7
+        run: bun run legislature:sync -- --sessions=${{ matrix.session }} --recheck-days=7 --skip-relationships
       - name: Summary
         if: always()
-        run: echo "Session ${{ matrix.session }} — inspect sync output and legislative_sync_runs before declaring a complete refresh." >> "$GITHUB_STEP_SUMMARY"
+        run: echo "Session ${{ matrix.session }} — checkpointed bill/subject ingestion only. Global relationships deliberately deferred due to statement-timeout risk. Verify manifest cursor and legislative_sync_runs before claiming full reconciliation." >> "$GITHUB_STEP_SUMMARY"
