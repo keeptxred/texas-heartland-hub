@@ -54,6 +54,7 @@ const early2026Spending = [
 
 export function Lobbying2026Panel() {
   const sourceCheckedAt: string | null = sourceStatus.checkedAt;
+  const registrationChangedSinceReview: boolean = sourceStatus.registrationChangedSinceEditorialReview;
   return (
     <section className="mt-10 space-y-8" aria-labelledby="lobbying-2026-resources">
       <div>
@@ -67,6 +68,12 @@ export function Lobbying2026Panel() {
             ? `Automated source availability last checked ${new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(sourceCheckedAt))}. This is not a guarantee every filing is current.`
             : "Automated weekly source checking is configured; first successful check pending."}
         </p>
+        {registrationChangedSinceReview ? (
+          <p role="status" className="mt-3 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm">
+            TEC registration source files changed after the October 29, 2026 editorial review.
+            Example names and classifications below may have been amended. Use the current official registry links.
+          </p>
+        ) : null}
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           {resources.map((source) => (
             <a key={source.href} href={source.href} rel="noopener noreferrer"
