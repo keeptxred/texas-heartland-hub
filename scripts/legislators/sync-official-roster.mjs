@@ -319,7 +319,7 @@ async function main() {
     .map((district) => ({
       slug: `texas-house-district-${district}-vacant`,
       name: null, chamber: "house", district, party: null,
-      website: `https://house.texas.gov/members/${district}`, imageUrl: null,
+      website: "https://house.texas.gov/members", imageUrl: null,
       officialCode: null, home: null, phone: null, capitolAddress: null,
       districtAddress: null, vacant: true, authority: null,
     }));
