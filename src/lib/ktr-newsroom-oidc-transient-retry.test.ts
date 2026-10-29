@@ -23,6 +23,26 @@ describe("one-shot GitHub OIDC recovery for HELD newsroom drafts", () => {
     expect(section).not.toContain("skip_auth");
   });
 
+  it("also refreshes once for authenticated election recovery and normal newsroom calls", () => {
+    for (const [stage, startMarker, endMarker, expectedPath] of [
+      ["ELECTION_DRAFT", 'echo "approved-election-draft-recovery HTTP', "if grep -Eqi 'daily free allocation", "generate-newsroom?mode=publish&recover_election=1"],
+      ["NORMAL_NEWSROOM", 'echo "clustered-newsroom HTTP', "if grep -Eqi 'daily free allocation", 'generate-newsroom?mode=publish"'],
+    ] as const) {
+      const start = workflow.indexOf(startMarker);
+      const end = workflow.indexOf(endMarker, start);
+      expect(start).toBeGreaterThan(0);
+      expect(end).toBeGreaterThan(start);
+      const section = workflow.slice(start, end);
+      expect(section).toContain('if [[ "$newsroom_status" == "401" ]]; then');
+      expect(section).toContain("refresh_newsroom_oidc");
+      expect(section).toContain(`${stage}_AUTH_RETRY:`);
+      expect(section).toContain(`${stage}_AUTH_FAILED:`);
+      expect(section).toContain("exit 1");
+      expect(section).toContain(expectedPath);
+      expect(section).not.toContain("skip_auth");
+    }
+  });
+
   it("keeps strict Worker's OIDC identity and signature checks", () => {
     expect(generator).toContain("verifyGitHubActionsOidc");
     expect(generator).toContain('workflowPath: PRODUCTION_WORKFLOW_PATH');
