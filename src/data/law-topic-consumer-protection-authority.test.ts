@@ -44,6 +44,25 @@ describe("Texas consumer-law enacted identity-theft debt protections", () => {
     expect(topic.published).toBe("2026-10-23");
   });
 
+  it("states the current statutory consumer definition, private reliance requirement and conditional remedies", () => {
+    const framework = topic.framework.join(" ");
+    const rules = topic.keyRules.join(" ");
+    expect(framework).toContain("Section 17.45(4)");
+    expect(framework).toContain("$25 million");
+    expect(framework).toContain("Section 17.50(a)(1)");
+    expect(framework).toContain("detrimental consumer reliance");
+    expect(framework).toContain("Section 17.49");
+    expect(framework).toContain("Section 17.50(b)(1)");
+    expect(framework).toContain("Section 17.50(c)");
+    expect(framework).toContain("Section 17.50(d)");
+    expect(rules).toContain("trebling is not automatic");
+    expect(topic.questions.some(({ q, a }) =>
+      q.includes("triple damages") && a.includes("fact-finder discretion")
+    )).toBe(true);
+    expect(topic.updated).toBe("2026-10-23");
+    expect(topic.published).toBe("2026-10-23");
+  });
+
   it("does not collapse identity-theft procedures into DTPA presuit notice or limitations", () => {
     const text = [...topic.framework, ...topic.keyRules].join(" ");
     expect(text).toContain("Section 17.505(a)");
