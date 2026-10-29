@@ -47,12 +47,13 @@ describe("bounded second curated reserve on image story mismatch", () => {
     const retryScene = buildRepeatedFailureRecoverySubject(row, verifiedScene);
     const generatedPrompt = buildFlux2ImagePrompt(buildGenerationOnlyImagePrompt(retryScene));
     expect(verifiedScene.imageGroundingMode).toBe("verified_symbolic");
-    expect(retryScene.concreteSubject).toBe(verifiedScene.concreteSubject);
-    expect(generatedPrompt).toMatch(/PUBLIC-COMMENT TABLE/);
-    expect(generatedPrompt).toMatch(/GOOSENECK MICROPHONES/);
-    expect(generatedPrompt).toMatch(/OPEN BINDER/);
-    expect(generatedPrompt).toMatch(/SUBMISSION FORM/);
-    expect(generatedPrompt).toMatch(/EMPTY VISITOR CHAIRS/);
+    expect(retryScene.concreteSubject).toContain(verifiedScene.concreteSubject);
+    expect(retryScene.concreteSubject).toContain("Mandatory composition:");
+    expect(generatedPrompt).toMatch(/public-comment table/i);
+    expect(generatedPrompt).toMatch(/gooseneck microphones/i);
+    expect(generatedPrompt).toMatch(/OPEN BINDER/i);
+    expect(generatedPrompt).toMatch(/submission form/i);
+    expect(generatedPrompt).toMatch(/EMPTY visitor chairs/i);
     expect(generatedPrompt).not.toMatch(/reading-room reference volume|generic office desk with a laptop/i);
     // The validator still uses the original verifiedScene; no image quality gate is bypassed.
     const publisher = readFileSync("src/lib/featured-image.functions.ts", "utf8");
