@@ -1,5 +1,4 @@
-import test from "node:test";
-import assert from "node:assert/strict";
+import { describe, expect, it } from "vitest";
 import { parseTexasLobbyExpenditures } from "./parse-texas-expenditures.mjs";
 
 const fixture = [
@@ -10,20 +9,22 @@ const fixture = [
   "October 16, 2026 5:02:05 PM Page 2 of 2",
 ].join("\n");
 
-test("parses stamped 2025/2026 rows and exactly checks category totals", () => {
-  const report = parseTexasLobbyExpenditures(fixture);
-  assert.equal(report.reportPrintedAt, "October 16, 2026 5:02:05 PM");
-  assert.equal(report.year2025.total, 19032037.39);
-  assert.equal(report.year2026.total, 1882474.25);
-  assert.equal(report.year2026.lobbyistCount, 1584);
-  assert.equal(report.year2026.categories.length, 7);
-});
-test("fails closed on arithmetic mismatch", () => {
-  assert.throws(() => parseTexasLobbyExpenditures(fixture.replace("$1,882,474.25", "$1,882,474.24")), /do not add/);
-});
-test("fails closed on missing date", () => {
-  assert.throws(() => parseTexasLobbyExpenditures(fixture.replace("October 16, 2026 5:02:05 PM", "")), /printed-date/);
-});
-test("fails closed on duplicated rows", () => {
-  assert.throws(() => parseTexasLobbyExpenditures(fixture + "\n" + fixture), /one TEC expenditure row/);
+describe("2026 official TEC expenditure PDF extraction", () => {
+  it("parses stamped 2025 and 2026 rows and reconciles their totals", () => {
+    const report = parseTexasLobbyExpenditures(fixture);
+    expect(report.reportPrintedAt).toBe("October 16, 2026 5:02:05 PM");
+    expect(report.year2025.total).toBe(19032037.39);
+    expect(report.year2026.total).toBe(1882474.25);
+    expect(report.year2026.lobbyistCount).toBe(1584);
+    expect(report.year2026.categories).toHaveLength(7);
+  });
+  it("fails closed on arithmetic mismatch", () => {
+    expect(() => parseTexasLobbyExpenditures(fixture.replace("$1,882,474.25", "$1,882,474.24"))).toThrow(/do not add/);
+  });
+  it("fails closed on a missing stamped date", () => {
+    expect(() => parseTexasLobbyExpenditures(fixture.replace("October 16, 2026 5:02:05 PM", ""))).toThrow(/printed-date/);
+  });
+  it("fails closed on duplicated rows", () => {
+    expect(() => parseTexasLobbyExpenditures(fixture + "\n" + fixture)).toThrow(/one TEC expenditure row/);
+  });
 });
