@@ -113,7 +113,8 @@ async function post({ request }: { request: Request }) {
     && [article.source_url, ...sourceReferences.map((source) => source.url)]
       .some(isSearchRecoveryPrimarySourceUrl);
   const qualityFlags = [...new Set([
-    ...retainNewsroomEditorialFlags(article.quality_flags),
+    ...retainNewsroomEditorialFlags(article.quality_flags).filter((flag) =>
+      flag !== "newsroom_text_first_verified" || !image.ok),
     ...quality.flags,
     ...sourceIntegrityFlags,
     ...repetitionFlags,
@@ -128,11 +129,13 @@ async function post({ request }: { request: Request }) {
     .eq("slug", slug);
   if (qualityUpdateError) return Response.json({ error: qualityUpdateError.message }, { status: 500 });
 
-  // Publication never gets a green finalization result when its hero image is
-  // missing or rejected. Keep the existing article available for exact-slug
-  // repair, but propagate failure to the scheduled writer and diagnostics.
+  // Website publication can succeed without a hero. The image outcome is
+  // explicitly separate: social distribution must still require image.ok,
+  // and image recovery can revisit the exact slug without republishing it.
   return Response.json({
-    ok: image.ok,
+    ok: true,
+    imageReady: image.ok,
+    webOnly: !image.ok,
     slug,
     normalizedWhyThisMatters: normalized.changed,
     image,
@@ -141,8 +144,7 @@ async function post({ request }: { request: Request }) {
     sourceIntegrity,
     searchRecoverySourceFirst: sourceFirstRecoveryEligible,
     duplicateParagraphOccurrences: repetitionCount,
-    ...(!image.ok ? { error: "newsroom_featured_image_required" } : {}),
-  }, { status: image.ok ? 200 : 422 });
+  }, { status: 200 });
 }
 
 export const Route = createFileRoute("/api/public/hooks/finalize-newsroom-article")({
