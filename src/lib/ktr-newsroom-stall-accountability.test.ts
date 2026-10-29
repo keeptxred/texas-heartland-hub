@@ -15,7 +15,7 @@ describe("normal newsroom stall accountability", () => {
     // The normal-stall test MUST be outside the reserve-success branch so
     // publishing a reserve cannot mask a 24h regular article outage.
     const tail = workflow.slice(reserveBranch, stalled);
-    expect(tail).toMatch(/\n          fi\s*$/);
+    expect(tail).toMatch(/\n {10}fi\s*$/);
     expect(workflow.slice(stalled)).toContain("DAILY_NEWS_NORMAL_PUBLISHING_STALLED");
     expect(workflow.slice(stalled)).toContain("exit 1");
     expect(workflow).toContain("DAILY_NEWS_WEB_ONLY_SUCCESS");
