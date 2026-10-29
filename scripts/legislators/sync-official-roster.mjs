@@ -100,6 +100,18 @@ async function fetchText(url, options = {}, attempt = 1) {
   return response.text();
 }
 
+/** Retry source-provided 200-OK responses that report loading or transient API errors. */
+async function fetchHouseCommittees(code, attempt = 1) {
+  const url = `https://house.texas.gov/api/getMemberCommittees/${code}`;
+  try {
+    return normalizeHouseCommitteePayload(JSON.parse(await fetchText(url)));
+  } catch (error) {
+    if (attempt >= 4) throw new Error(`Could not validate committees for ${code}: ${String(error)}`);
+    await new Promise((resolveDelay) => setTimeout(resolveDelay, attempt * 750));
+    return fetchHouseCommittees(code, attempt + 1);
+  }
+}
+
 async function mapLimit(items, limit, mapper) {
   const results = new Array(items.length);
   let cursor = 0;
@@ -330,9 +342,7 @@ async function main() {
     const lrl = lrlMatch(lrlHouse, member.name, member.district);
     const [bioHtml, committees, lrlHtml] = await Promise.all([
       fetchText(`${member.website}/biography`),
-      fetchText(`https://house.texas.gov/api/getMemberCommittees/${member.code}`).then((text) =>
-        normalizeHouseCommitteePayload(JSON.parse(text)),
-      ),
+      fetchHouseCommittees(member.code),
       lrl?.memberId
         ? fetchText(
             `https://lrl.texas.gov/legeLeaders/members/memberDisplay.cfm?memberID=${lrl.memberId}`,
