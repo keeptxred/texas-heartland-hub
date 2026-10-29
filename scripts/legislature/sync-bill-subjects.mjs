@@ -109,7 +109,7 @@ async function loadBills(session) {
   for (let offset = 0; ; offset += 1000) {
     const response = await rest(
       `bills?legislature_number=eq.${parts.legislature_number}&session_code=eq.${parts.session_code}` +
-      `&select=id,legislature_number,session_code,bill_type,bill_number&offset=${offset}&limit=1000`,
+      `&is_active=eq.true&select=id,legislature_number,session_code,bill_type,bill_number&order=id.asc&offset=${offset}&limit=1000`,
     );
     const page = await response.json();
     rows.push(...page);
