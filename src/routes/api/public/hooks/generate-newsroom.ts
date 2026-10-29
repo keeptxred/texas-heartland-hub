@@ -690,24 +690,44 @@ async function handler({ request }: { request: Request }) {
       enriched.quality_flags = [...new Set([...(enriched.quality_flags ?? []), "seo_noindex", "single_source_aggregation"] )];
     }
 
-    // Never create a live newsroom article with an unverified hero. Generate
-    // and vision-validate first, using the same image writer and exact slug;
-    // a failed image holds the candidate instead of inserting text-only news.
+    // Editorial readiness and featured-image readiness are separate.
+    // Always validate a candidate's source, draft and uniqueness BEFORE this
+    // step. An image error must not strand an independently verified website
+    // article; Facebook and image-required distribution still require a
+    // separately approved hero and will not select a failed image.
     const preparedImage = await prepareFeaturedImageForUnpublishedNewsroomArticle({
       slug, title: row.title, dek: row.dek, category: row.category, body_json: row.body_json,
     });
-    if (!preparedImage.ok || !preparedImage.url || !preparedImage.imageValidationNote) {
-      throw new Error(`newsroom_image_publication_hold: ${preparedImage.ok ? "missing_image_provenance" : preparedImage.error}`);
+    const imageReady = Boolean(preparedImage.ok && preparedImage.url && preparedImage.imageValidationNote);
+    if (!imageReady) {
+      console.warn("[newsroom] image distribution held; publishing source-verified text-only article", {
+        candidateId: candidate.id,
+        clusterId: candidate.cluster_id,
+      });
     }
-    const readyRow = {
-      ...row,
-      featured_image_url: preparedImage.url,
-      image_url: preparedImage.url,
-      image_alt_text: preparedImage.alt,
-      image_generation_status: "ready",
-      image_validation_note: preparedImage.imageValidationNote,
-      image_prompt: preparedImage.imagePrompt ?? null,
-    };
+    const editorialRow = row as typeof row & { quality_flags?: string[] | null };
+    const readyRow = preparedImage.ok && preparedImage.url && preparedImage.imageValidationNote
+      ? {
+        ...editorialRow,
+        featured_image_url: preparedImage.url,
+        image_url: preparedImage.url,
+        image_alt_text: preparedImage.alt,
+        image_generation_status: "ready",
+        image_validation_note: preparedImage.imageValidationNote,
+        image_prompt: preparedImage.imagePrompt ?? null,
+      }
+      : {
+        ...editorialRow,
+        // This marker is added only AFTER the complete source/editorial
+        // publisher preflight, never to legacy backfills or external imports.
+        quality_flags: [...new Set([...(editorialRow.quality_flags ?? []), "newsroom_text_first_verified"])],
+        featured_image_url: null,
+        image_url: null,
+        image_alt_text: null,
+        image_generation_status: "failed",
+        image_validation_note: null,
+        image_prompt: null,
+      };
     const { data: articles, error: articleError } = await db
       .from("daily_articles")
       .upsert(readyRow, { onConflict: "slug" })
@@ -727,6 +747,8 @@ async function handler({ request }: { request: Request }) {
       ok: true,
       generated: true,
       published: true,
+      imageReady,
+      webOnly: !imageReady,
       candidateId: candidate.id,
       clusterId: candidate.cluster_id,
       draftId,
