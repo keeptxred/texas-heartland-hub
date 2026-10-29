@@ -25,7 +25,7 @@ describe("image recovery workflow bounds", () => {
   });
 
   it("caps force-marker repair at four exact slugs and permits safe partial-batch retries", () => {
-    expect(backlogWorkflow).toContain('if [[ "${GITHUB_EVENT_NAME}" == "push" || "${GITHUB_EVENT_NAME}" == "workflow_run" ]]; then');
+    expect(backlogWorkflow).toContain('if [[ "${GITHUB_EVENT_NAME}" == "workflow_run" ]]; then');
     expect(backlogWorkflow).toContain("max_per_run=4");
     expect(backlogWorkflow).toContain("force-image-backlog-recovery?ref=${MARKER_REF}");
     expect(backlogWorkflow).toContain("slug:[[:space:]]*");
@@ -44,6 +44,8 @@ describe("image recovery workflow bounds", () => {
     expect(backlogWorkflow).toContain("MARKER_REF: ${{ github.event.workflow_run.head_sha || github.sha }}");
     expect(backlogWorkflow).toContain('verified_message=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${MARKER_REF}" --jq \'.commit.message\')');
     expect(backlogWorkflow).toContain('if [[ "$verified_message" != *"[run-image-backlog]"* ]]; then');
+    // A marker change must not execute against the predeployment Worker.
+    expect(backlogWorkflow).not.toMatch(/^\s+push:\s*$/m);
     expect(backlogWorkflow).toContain("IMAGE_BACKLOG_RECOVERY_SKIP no [run-image-backlog] sentinel");
   });
 
