@@ -1,6 +1,43 @@
 {
-  "checkedAt": null,
-  "explanation": "Automated source-status check has not completed. Editorial content last verified October 29, 2026.",
+  "checkedAt": "2026-10-29T15:50:22.214Z",
+  "explanation": "Availability and SHA-256 of official sources, not the currentness of any individual registration or a complete 2026 lobbying total.",
   "sourceChangesSinceLastCheck": [],
-  "sources": []
+  "sources": [
+    {
+      "id": "registration-list",
+      "url": "https://www.ethics.state.tx.us/search/lobby/loblistsREG2026-2030.php",
+      "sizeBytes": 33183,
+      "sha256": "13c8ba274d9916f08afb4e1325d1aa1a3dc5492457439e830fba8d6661bc8916"
+    },
+    {
+      "id": "2026-client-pdf",
+      "url": "https://www.ethics.state.tx.us/data/search/lobby/2026/2026LobbyGroupByClient.pdf",
+      "sizeBytes": 3060405,
+      "sha256": "42708dc3675606d4e9b86a5bf4943feccc06dfd9fe25bf289dba2ca88de952d1"
+    },
+    {
+      "id": "2026-client-excel",
+      "url": "https://www.ethics.state.tx.us/data/search/lobby/2026/2026LobbyGroupByClient.xlsx",
+      "sizeBytes": 841081,
+      "sha256": "d4b309c7bc679e847c9caacc3cb606eb1c0f798a15f122986d2fc6728acf2c0c"
+    },
+    {
+      "id": "compensation-2026",
+      "url": "https://www.ethics.state.tx.us/search/lobby/",
+      "sizeBytes": 57696,
+      "sha256": "a332a590328d2a7ce6e58ef40ed1ab20c703dc55654d8debe26d455d87c5a79d"
+    },
+    {
+      "id": "quarterly-expenditures",
+      "url": "https://www.ethics.state.tx.us/data/search/lobby/LobbyExpendituresByCategory.pdf",
+      "sizeBytes": 6862,
+      "sha256": "c1a61c6f2512d960d406b8a113c1dbbe6c408158cdc55f80419512e70a3c695f"
+    },
+    {
+      "id": "adopted-rules",
+      "url": "https://www.ethics.state.tx.us/rules/adopted/2026-2030/adopted_May_2026.php",
+      "sizeBytes": 54867,
+      "sha256": "09eb52251fa7059932eca0bb62d8885c67b6f52d72d8d42f229c5f9bc87fe66d"
+    }
+  ]
 }
