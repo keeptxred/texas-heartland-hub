@@ -1,3 +1,5 @@
+import sourceStatus from "@/data/lobbying-2026-source-status.json";
+
 /** Source-first, date-bound 2026 lobbying reference tools.
  * Sample entries are from TEC's 2026 client-sorted list; not a complete register.
  * No estimate of pay, influence, or total 2026 annual expenditure is inferred.
@@ -41,6 +43,7 @@ export const TEXAS_2026_LOBBY_COMPENSATION_CODES = [
 ] as const;
 
 export function Lobbying2026Panel() {
+  const sourceCheckedAt: string | null = sourceStatus.checkedAt;
   return (
     <section className="mt-10 space-y-8" aria-labelledby="lobbying-2026-resources">
       <div>
@@ -48,6 +51,11 @@ export function Lobbying2026Panel() {
         <p className="mt-2 max-w-3xl leading-7 text-muted-foreground">
           Open the current Texas Ethics Commission registries, original activity reports and expenditure summaries.
           These source files can change after a client's registration, amendment or termination.
+        </p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {sourceCheckedAt
+            ? `Automated source availability last checked ${new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(sourceCheckedAt))}. This is not a guarantee every filing is current.`
+            : "Automated weekly source checking is configured; first successful check pending."}
         </p>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           {resources.map((source) => (
