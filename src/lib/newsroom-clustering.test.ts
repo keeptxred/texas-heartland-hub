@@ -25,7 +25,7 @@ describe("direct-source reservation within existing clustering budget", () => {
     const ktrDirect = [{ feed_item_id: 71 }, { feed_item_id: 72 }];
     const globalDirect = [{ feed_item_id: 72 }, { feed_item_id: 73 }];
     const newest = [{ feed_item_id: 75 }, { feed_item_id: 76 }];
-    const preferred = reserveDirectPublisherCohort(ktrDirect, reserveDirectPublisherCohort(globalDirect, newest, 4), 4);
+    const preferred = reserveDirectPublisherCohort(reserveDirectPublisherCohort(newest, globalDirect, 4), ktrDirect, 4);
     expect(preferred.map((row) => row.feed_item_id)).toEqual([71, 72, 73, 75]);
     expect(preferred).toHaveLength(4);
   });
@@ -40,7 +40,7 @@ describe("direct-source reservation within existing clustering budget", () => {
     expect(builder).toContain('.eq("target_site", "keeptxred")');
     expect(builder).toContain('.not("link", "ilike", "https://news.google.com/%")');
     expect(builder).toContain('.is("duplicate_of_feed_item_id", null)');
-    expect(builder).toContain("ktrDirectNormalized,");
+    expect(builder).toContain("    ktrDirectNormalized,\n    CLUSTER_LIMIT,");
     expect(builder).toContain('.not("canonical_url", "ilike", "https://news.google.com/%")');
     expect(builder).toContain("reserveDirectPublisherCohort(");
     expect(builder).toContain("CLUSTER_LIMIT,");
