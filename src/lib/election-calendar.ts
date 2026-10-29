@@ -71,9 +71,19 @@ function startOfDayUTC(d: Date): number {
   return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
 }
 
+// All countdowns use the civil date in Texas, not UTC (which can be tomorrow
+// while it is still the previous evening in Central time).
+function startOfTexasDayUTC(now: Date): number {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Chicago", year: "numeric", month: "2-digit", day: "2-digit",
+  }).formatToParts(now);
+  const value = (type: string) => Number(parts.find((p) => p.type === type)?.value ?? 0);
+  return Date.UTC(value("year"), value("month") - 1, value("day"));
+}
+
 /** Returns the next election on or after `now` (defaults to today). */
 export function getNextElection(now: Date = new Date()): TexasElection | null {
-  const today = startOfDayUTC(now);
+  const today = startOfTexasDayUTC(now);
   const upcoming = TEXAS_ELECTIONS
     .filter((e) => startOfDayUTC(new Date(e.date + "T00:00:00Z")) >= today)
     .sort((a, b) => a.date.localeCompare(b.date));
@@ -82,7 +92,7 @@ export function getNextElection(now: Date = new Date()): TexasElection | null {
 
 /** Whole days from `now` until the given election date (never negative). */
 export function daysUntil(election: TexasElection, now: Date = new Date()): number {
-  const today = startOfDayUTC(now);
+  const today = startOfTexasDayUTC(now);
   const target = startOfDayUTC(new Date(election.date + "T00:00:00Z"));
   return Math.max(0, Math.round((target - today) / 86_400_000));
 }
@@ -111,7 +121,7 @@ export function electionTypeLabel(type: TexasElectionType): string {
 /** Ticker headline, e.g. "142 Days to Texas Primary Election". */
 export function nextElectionHeadline(now: Date = new Date()): string {
   const next = getNextElection(now);
-  if (!next) return "2026 Texas Elections: Races, Candidates & Voter Guide";
+  if (!next) return "Texas Elections: Races, Candidates & Voter Guide";
   const days = daysUntil(next, now);
   if (days === 0) return `${next.name} — Today`;
   if (days === 1) return `1 Day to ${next.name}`;
