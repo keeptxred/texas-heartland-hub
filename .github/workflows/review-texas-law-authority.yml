@@ -34,13 +34,28 @@ jobs:
     permissions:
       contents: read
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
       - name: Validate all source-only law review checks without network
         run: |
           node --test scripts/laws/test-review-authority-guides.mjs scripts/laws/test-check-authority-source-links.mjs
           node --check scripts/laws/check-authority-source-links.mjs
+
+      # Validate actual official-law URL fetches on review-workflow/code PRs.
+      # Ordinary guide/content changes do not trigger this PR job, so this is
+      # not a full-site crawl on every publication or deployment.
+      - name: Verify bounded official-source fetch and save evidence
+        run: node scripts/laws/check-authority-source-links.mjs
+
+      - name: Retain PR source-link network evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: texas-laws-pr-source-link-evidence
+          path: artifacts/texas-laws-source-links.json
+          retention-days: 14
+          if-no-files-found: warn
 
   review:
     if: github.event_name != 'pull_request'

@@ -12,6 +12,14 @@ describe("evergreen Texas law authority review maintenance", () => {
     })).not.toThrow();
   });
 
+  it("runs bounded live cited-source checks for source-review code PRs, not all editorial changes", () => {
+    expect(workflow).toContain("scripts/laws/**");
+    expect(workflow).toContain("name: Verify bounded official-source fetch and save evidence");
+    expect(workflow).toContain("name: texas-laws-pr-source-link-evidence");
+    expect(workflow).toContain("node scripts/laws/check-authority-source-links.mjs");
+    expect(workflow).toContain('cron: "0 14 4 11 *"');
+  });
+
   it("reminds editors monthly without rewriting legal claims or timestamps", () => {
     expect(workflow).toContain('cron: "0 14 20 * *"');
     expect(workflow).toContain("issues: write");
