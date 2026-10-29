@@ -30,7 +30,7 @@ jobs:
         with:
           node-version: '22.15.0'
       - name: Check session planning and normalization regressions
-        run: node --test scripts/legislature/plan-sessions.test.mjs scripts/legislature/status-normalization.test.mjs scripts/legislature/session-identity.test.mjs
+        run: node --test scripts/legislature/plan-sessions.check.mjs scripts/legislature/status-normalization.check.mjs scripts/legislature/session-identity.check.mjs
       - name: Discover regular and called sessions from official TLO FTP
         id: plan
         run: node scripts/legislature/plan-sessions.mjs --quarterly --github-output
