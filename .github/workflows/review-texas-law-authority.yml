@@ -39,7 +39,7 @@ jobs:
       - uses: actions/checkout@v5
       - name: Validate all source-only law review checks without network
         run: |
-          node --test scripts/laws/test-review-authority-guides.mjs scripts/laws/test-check-authority-source-links.mjs
+          node --test scripts/laws/test-review-authority-guides.mjs scripts/laws/test-check-authority-source-links.mjs scripts/laws/test-reconcile-statute-digests.mjs
           node --check scripts/laws/check-authority-source-links.mjs
 
       # Validate actual official-law URL fetches on review-workflow/code PRs.
@@ -65,7 +65,7 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Verify zero-dependency review logic
-        run: node --test scripts/laws/test-review-authority-guides.mjs scripts/laws/test-check-authority-source-links.mjs
+        run: node --test scripts/laws/test-review-authority-guides.mjs scripts/laws/test-check-authority-source-links.mjs scripts/laws/test-reconcile-statute-digests.mjs
 
       - name: Inventory and report unreviewed laws
         id: review
@@ -86,6 +86,29 @@ jobs:
           path: artifacts/texas-laws-source-links.json
           retention-days: 14
           if-no-files-found: warn
+
+      # Fingerprint comparison reuses the exact official-URL responses above.
+      # Only snapshots from the GitHub Actions bot may serve as history.
+      # Content changes are review leads, never an automated legal conclusion.
+      - name: Reconcile official statute-text fingerprints with bot-only history
+        id: statutes
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api --method GET --paginate \
+            "repos/${GITHUB_REPOSITORY}/issues/2938/comments?per_page=100" \
+            --jq '.[] | select(.user.login == "github-actions[bot]") | .body' \
+            > /tmp/texas-law-statute-bot-comments.txt
+          node scripts/laws/reconcile-statute-digests.mjs \
+            /tmp/texas-law-statute-bot-comments.txt artifacts/texas-laws-source-links.json
+
+      - name: Record changed statute fingerprints for legal review
+        if: ${{ steps.statutes.outputs.publish_snapshot == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue comment 2938 --body-file /tmp/texas-law-statute-monitor.md
 
       - name: Post only actionable review reminders to master tracker
         if: ${{ steps.review.outputs.due_count != '0' || steps.sourcecheck.outputs.broken_count != '0' || steps.sourcecheck.outputs.inconclusive_count != '0' }}
