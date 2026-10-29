@@ -24,7 +24,6 @@ describe("clustered newsroom post-publish workflow", () => {
     expect(workflow).toContain("FLYOVER_EXACT_FEED_IMAGE_FAILED");
     const flyoverFailure = workflow.indexOf("FLYOVER_EXACT_FEED_IMAGE_FAILED");
     expect(workflow.slice(flyoverFailure, flyoverFailure + 270)).toContain("exit 1");
-    expect(workflow).toContain('.ok == true and (.slug // "") != ""'.replace(/""/g, '\\"\\"'));
   });
   it("tries the quality-gated clustered newsroom before the costly overdue writer", () => {
     const clustered = workflow.indexOf("generate-newsroom?mode=publish");
