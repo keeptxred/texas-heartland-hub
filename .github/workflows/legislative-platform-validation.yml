@@ -44,7 +44,7 @@ jobs:
           bun-version: 1.3.14
       - run: bun install --frozen-lockfile
       - name: Test Texas instrument statuses, session IDs and subject-file attribution
-        run: node --test scripts/legislature/status-normalization.test.mjs scripts/legislature/session-identity.test.mjs scripts/legislature/plan-sessions.test.mjs
+        run: node --test scripts/legislature/status-normalization.check.mjs scripts/legislature/session-identity.check.mjs scripts/legislature/plan-sessions.check.mjs
       - name: Validate legislative architecture
         run: bun run legislature:validate
       - name: Validate bill crawl URLs
