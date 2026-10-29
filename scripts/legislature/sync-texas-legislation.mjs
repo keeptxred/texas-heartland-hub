@@ -239,7 +239,7 @@ async function loadSourceRecords(session) {
   const map = new Map();
   if (dryRun) return map;
   for (let offset = 0; ; offset += 1000) {
-    const response = await rest(`legislative_source_records?source_key=eq.${SOURCE_KEY}&select=source_record_key,content_hash,last_imported_at&order=source_record_key.asc&offset=${offset}&limit=1000`);
+    const response = await rest(`legislative_source_records?source_key=eq.${SOURCE_KEY}&select=source_record_key,content_hash,last_imported_at,metadata&order=source_record_key.asc&offset=${offset}&limit=1000`);
     const rows = await response.json();
     for (const row of rows) if (row.source_record_key?.startsWith(`${session}:`)) map.set(row.source_record_key, row);
     if (rows.length < 1000) break;
@@ -328,7 +328,7 @@ async function importBill(session, sourceUrl, context) {
   const existing = sourceRecords.get(sourceRecordKey) || null;
   const nowIso = new Date().toISOString();
   if (existing?.content_hash === contentHash && !args['reclassify-all']) {
-    if (!dryRun) await upsert('legislative_source_records', [{ source_key: SOURCE_KEY, source_record_key: sourceRecordKey, source_url: sourceUrl, content_hash: contentHash, last_seen_at: nowIso, metadata: { session } }], 'source_key,source_record_key');
+    if (!dryRun) await upsert('legislative_source_records', [{ source_key: SOURCE_KEY, source_record_key: sourceRecordKey, source_url: sourceUrl, content_hash: contentHash, last_seen_at: nowIso, metadata: { ...(existing?.metadata || {}), session } }], 'source_key,source_record_key');
     sourceRecords.set(sourceRecordKey, { ...existing, last_imported_at: existing.last_imported_at || nowIso });
     return { result: 'unchanged' };
   }
