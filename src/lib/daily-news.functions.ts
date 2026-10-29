@@ -6,6 +6,7 @@ import { isPublicArticleReady } from "@/lib/public-article-readiness";
 import { isKeepTxRedSearchOwnedStory } from "@/lib/ktr-search-ownership";
 import { isPublicBreaking, PUBLIC_BREAKING_WINDOW_MS } from "@/lib/public-breaking";
 import { isCurrentNewsCandidate, CURRENT_NEWS_WINDOW_DAYS } from "@/lib/current-news-freshness";
+import { isEligiblePreviousReport } from "@/lib/newsroom-presentation";
 
 export type DailyArticle = {
   slug: string;
@@ -17,6 +18,7 @@ export type DailyArticle = {
   source_url: string | null;
   image_url: string | null;
   image_hash: string | null;
+  image_generation_status?: string | null;
   image_category: string | null;
   featured_image_url: string | null;
   image_alt_text?: string | null;
@@ -38,7 +40,7 @@ type DailyArticleRow = DailyArticle & {
 };
 
 const ARTICLE_PAGE_SIZE = 100;
-const DAILY_ARTICLE_SELECT = "slug,category,title,dek,author,source_name,source_url,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,seo_keywords,ctr_score,headline_variants,published_at,kind,score,is_breaking,body_json,quality_flags,content_quality_score";
+const DAILY_ARTICLE_SELECT = "slug,category,title,dek,author,source_name,source_url,image_url,image_hash,image_category,image_generation_status,featured_image_url,image_alt_text,seo_headline,discover_category,seo_keywords,ctr_score,headline_variants,published_at,kind,score,is_breaking,body_json,quality_flags,content_quality_score";
 
 function getSupabaseClient() {
   const url = process.env.SUPABASE_URL;
@@ -132,6 +134,36 @@ export const getDailyArticles = createServerFn({ method: "GET" }).handler(async 
 
   const merged = dedupeByTitle([...freshBreaking, ...dailyRotated]).slice(0, 30);
   return { articles: merged };
+});
+
+
+// Separate, bounded historical discovery. Only already-published, source-backed
+// and public-ready newsroom reporting is returned; this never changes its date
+// or allows restored URLs into the latest feed. Query strictly before the 7-day
+// current-news window to avoid merging current and historical products.
+export const getRecentNewsArchive = createServerFn({ method: "GET" }).handler(async () => {
+  const supabase = getSupabaseClient();
+  if (!supabase) return { articles: [] as DailyArticle[] };
+
+  const currentCutoff = new Date(Date.now() - CURRENT_NEWS_WINDOW_DAYS * 24 * 60 * 60 * 1000).toISOString();
+  const historyFloor = new Date(Date.now() - 120 * 24 * 60 * 60 * 1000).toISOString();
+  const { data, error } = await supabase
+    .from("daily_articles")
+    .select(DAILY_ARTICLE_SELECT)
+    .eq("kind", "news")
+    .gte("published_at", historyFloor)
+    .lt("published_at", currentCutoff)
+    .order("published_at", { ascending: false })
+    .order("slug", { ascending: true })
+    .limit(120);
+
+  if (error) {
+    console.error("getRecentNewsArchive failed", error);
+    return { articles: [] as DailyArticle[] };
+  }
+
+  const eligible = ((data ?? []) as DailyArticleRow[]).filter(isEligiblePreviousReport);
+  return { articles: dedupeByTitle(stripPrivateFields(eligible)).slice(0, 36) };
 });
 
 export const getPublishedAuthorArticles = createServerFn({ method: "GET" }).handler(async () => {
