@@ -35,9 +35,10 @@ describe("editorially approved October 11-25 election newsroom recovery", () => 
     expect(generator).toContain("voter registrations?|registered vote");
     expect(generator).toContain("Retrospective election report:");
     expect(generator).toContain("await prepareFeaturedImageForUnpublishedNewsroomArticle");
-    expect(generator).toContain("if (!preparedImage.ok || !preparedImage.url || !preparedImage.imageValidationNote)");
+    expect(generator).toContain("const imageReady = Boolean(preparedImage.ok");
     expect(generator).toContain('image_generation_status: "ready"');
-    expect(generator).toContain("newsroom_image_publication_hold:");
+    expect(generator).toContain('image_generation_status: "failed"');
+    expect(generator).toContain("newsroom_text_first_verified");
     expect(generator).toContain("reusedApprovedDraft: recoverElectionDraft");
   });
 
