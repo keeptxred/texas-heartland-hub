@@ -4,6 +4,7 @@
  * bill-history importer. Progress is checkpointed in legislative_source_records
  * metadata, including records where the official file contains no subjects.
  */
+import { parseTloSession, identityFromTloHistoryUrl } from './session-identity.mjs';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 
@@ -80,22 +81,8 @@ async function upsert(table, rows, onConflict) {
   return response.json();
 }
 
-function sessionParts(session) {
-  return {
-    legislature_number: Number(session.match(/^\d+/)?.[0]),
-    session_code: session.replace(/^\d+/, '').toUpperCase(),
-  };
-}
-function sourceIdentity(sourceUrl, session) {
-  const decoded = decodeURIComponent(sourceUrl);
-  const match = decoded.match(/([HS](?:B|JR|CR|R))\s*0*(\d{1,5})(?:\D|$)/i);
-  if (!match) return null;
-  return {
-    ...sessionParts(session),
-    bill_type: match[1].toLowerCase(),
-    bill_number: Number(match[2]),
-  };
-}
+const sessionParts = parseTloSession;
+const sourceIdentity = identityFromTloHistoryUrl;
 function billKey(record) {
   return `${record.legislature_number}:${record.session_code}:${record.bill_type}:${record.bill_number}`;
 }
