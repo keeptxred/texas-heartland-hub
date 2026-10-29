@@ -11,6 +11,11 @@ const LOOKBACK_HOURS = 72;
 // while reserving space for the newest original publisher/agency URL records.
 const CLUSTER_LIMIT = 500;
 const DIRECT_PUBLISHER_COHORT_LIMIT = 320;
+// Source normalization covers both websites. Reserve a bounded set of direct
+// KeepTXRed publisher/agency records so TexasDefined sources and Google News
+// wrappers cannot displace KTR's original reporting before clustering.
+const KTR_DIRECT_PUBLISHER_COHORT_LIMIT = 240;
+const KTR_DIRECT_NORMALIZATION_BATCH_SIZE = 80;
 const CLUSTER_VERSION = 1;
 
 type NormalizationRow = {
@@ -97,9 +102,40 @@ async function handler() {
       .limit(DIRECT_PUBLISHER_COHORT_LIMIT),
   ]);
   if (normalizedError || directError) return Response.json({ ok: false, error: (normalizedError || directError).message }, { status: 500 });
+  // Collect eligible KeepTXRed direct publisher IDs before spending the
+  // existing 500-row O(N^2) similarity budget. This is a retrieval priority,
+  // NOT a new primary-source designation or relaxed corroboration gate.
+  const { data: ktrDirectFeedData, error: ktrDirectFeedError } = await newsroomDb
+    .from("texas_news_feed")
+    .select("id")
+    .eq("target_site", "keeptxred")
+    .gte("pub_date", since)
+    .not("link", "ilike", "https://news.google.com/%")
+    .not("link", "ilike", "http://news.google.com/%")
+    .order("pub_date", { ascending: false })
+    .limit(KTR_DIRECT_PUBLISHER_COHORT_LIMIT);
+  if (ktrDirectFeedError) return Response.json({ ok: false, error: ktrDirectFeedError.message }, { status: 500 });
+
+  const ktrDirectIds = (ktrDirectFeedData ?? []).map((row: { id: number }) => row.id);
+  const ktrNormalizedResults = await Promise.all(
+    Array.from({ length: Math.ceil(ktrDirectIds.length / KTR_DIRECT_NORMALIZATION_BATCH_SIZE) }, (_, i) =>
+      newsroomDb.from("news_feed_normalization")
+        .select("feed_item_id,normalized_title,source_key,observed_at")
+        .in("feed_item_id", ktrDirectIds.slice(i * KTR_DIRECT_NORMALIZATION_BATCH_SIZE, (i + 1) * KTR_DIRECT_NORMALIZATION_BATCH_SIZE))
+        .gte("observed_at", since)
+        .is("duplicate_of_feed_item_id", null),
+    ),
+  );
+  const ktrNormalizationError = ktrNormalizedResults.find((result) => result.error)?.error;
+  if (ktrNormalizationError) return Response.json({ ok: false, error: ktrNormalizationError.message }, { status: 500 });
+  const ktrDirectNormalized = ktrNormalizedResults.flatMap((result) => result.data ?? []) as NormalizationRow[];
   const normalizedRows = reserveDirectPublisherCohort(
-    (normalizationData ?? []) as NormalizationRow[],
-    (directData ?? []) as NormalizationRow[],
+    reserveDirectPublisherCohort(
+      (normalizationData ?? []) as NormalizationRow[],
+      (directData ?? []) as NormalizationRow[],
+      CLUSTER_LIMIT,
+    ),
+    ktrDirectNormalized,
     CLUSTER_LIMIT,
   );
   // Keep the original 500-row O(N²) similarity budget. The oldest Google
