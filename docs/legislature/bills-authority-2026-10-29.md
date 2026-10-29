@@ -17,9 +17,9 @@
 - Existing 15-minute bills-health monitor checks that no resolutions are flagged as enacted laws.
 
 ## Test and deployment sequence
-1. Run `node --test scripts/legislature/status-normalization.test.mjs scripts/legislature/plan-sessions.test.mjs`.
+1. Run `node --test scripts/legislature/status-normalization.check.mjs scripts/legislature/plan-sessions.check.mjs`.
 2. Run `bun run test -- src/lib/bills-indexed-pagination.test.ts src/lib/bills-search-intent.test.ts` and `bun run legislature:validate`; run build/typecheck and review CI. Watch PostgREST count-timeouts: exact count is necessary for correctness but the endpoint must remain performant.
-3. Merge verified PR and let the Cloudflare deployment pipeline finish. Do **not** confuse Cloudflare OAuth user/token verification 401 with an integration problem.
+3. Original authority PR #3255 was merged in commit `7a6081ea1b83aa4278296a1c36beed6c002368bf`; separately verify the latest production Cloudflare deployment and any subsequent recovery PR. Do **not** confuse Cloudflare OAuth user/token verification 401 with an integration problem.
 4. Deploy the changed Supabase `tlo-missing-bill-backfill` Edge Function if it is deployed separately from GitHub CI.
 5. On production verify `/bills`, `?status=sent-to-governor`, actual last pagination page, and `/bills/texas/89/2/sr/2` and `/bills/texas/89/2/hcr/13`.
 6. Manually dispatch the quarterly workflow to reconcile any called sessions not covered by the daily regular-session job. Confirm workflow runs **completed** and inspect `legislative_sync_runs` for errors. GitHub schedules run only on the default branch after merge.
