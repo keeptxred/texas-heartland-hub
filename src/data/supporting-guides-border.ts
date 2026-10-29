@@ -60,7 +60,7 @@ export const BORDER_SUPPORTING_GUIDES: Record<string, CornerstoneGuide> = {
       { label: "Texas Military Department", url: "https://tmd.texas.gov/" },
       { label: "Texas Comptroller — State Spending", url: "https://comptroller.texas.gov/transparency/spending/" },
     ],
-    related: [...commonRelated, { label: "Operation Lone Star", href: "/news/operation-lone-star" }],
+    related: [...commonRelated, { label: "Texas state border-security role", href: "/news/border-security-state-role" }],
   },
 
   "texas-national-guard-border-guide": {
