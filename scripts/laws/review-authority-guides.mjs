@@ -48,6 +48,25 @@ export function inventoryAuthorityFiles(directory) {
   return records;
 }
 
+
+/** Report incomplete claim sign-offs independently of a guide's recent update date. */
+export function incompleteClaimAudits(ledger, records) {
+  const section = ledger.split("## Guide inventory (full audit still outstanding)")[1]?.split("## Individually verified claim")[0];
+  if (!section) throw Error("Claim-review ledger guide inventory missing");
+  const states = new Map();
+  for (const line of section.split("\n")) {
+    const m = line.match(/^\|\s*[^|]+\|\s*`src\/data\/(law-topic-[a-z0-9-]+-authority\.ts)`\s*\|\s*\*\*(Partial|Fully reviewed)\*\*/i);
+    if (!m) continue;
+    if (states.has(m[1])) throw Error("Duplicate law guide in ledger: " + m[1]);
+    states.set(m[1], m[2].toLowerCase());
+  }
+  return records.filter(r => {
+    const status = states.get(r.file);
+    if (!status) throw Error("Missing legal claim certification in ledger for " + r.file);
+    return status !== "fully reviewed";
+  });
+}
+
 export function isRegularSessionReviewMonth(date) {
   // Texas regular legislative sessions begin on the second Tuesday of January in odd years.
   // The monthly review runs on Jan 20, after that session-opening date.
@@ -76,12 +95,13 @@ export function reviewQueue(records, now = new Date()) {
   });
 }
 
-export function markdownReport(queue, now = new Date()) {
+export function markdownReport(queue, now = new Date(), incomplete = null) {
   const monthKey = now.toISOString().slice(0, 7);
   const due = queue.filter((record) => record.reviewNeeded).sort((a, b) => b.ageDays - a.ageDays);
   const heading = `### Texas laws editorial review — ${monthKey} <!-- law-review:${monthKey} -->`;
   const lines = [heading,
-    `Authority topics checked: ${queue.length}. Topics requiring human review: ${due.length}.`,
+    `Authority topics checked: ${queue.length}. Re-reviews due by date or election triggers: ${due.length}.`,
+    ...(incomplete === null ? [] : [`Guides still missing complete primary-source claim certification: ${incomplete.length} of ${queue.length}.`]),
     "No legal text, source citations, published dates, or reviewed dates were changed automatically.",
     "",
   ];
@@ -92,20 +112,28 @@ export function markdownReport(queue, now = new Date()) {
     }
     lines.push("", "Editorial checklist: confirm current Texas statutes, court decisions, agency rules, effective/applicability dates, and any changes in enacted versus proposed legislation. Update the review date only after a human verifies claims and references.");
   } else {
-    lines.push("No legal-topic re-review is currently due.");
+    lines.push("No 90-day or election-calendar re-review is currently due; this is not legal claim certification.");
   }
-  return { monthKey, dueCount: due.length, markdown: lines.join("\n") + "\n" };
+  if (incomplete !== null && incomplete.length) {
+    lines.push("", "#### Outstanding complete legal claim reviews",
+      "Recent guide updates do not mean every framework paragraph, threshold, exception, rule, FAQ and official source has been independently verified.");
+    for (const item of incomplete) lines.push("- " + item.slug + " — " + item.file);
+  }
+  return { monthKey, dueCount: due.length, claimPartialCount: incomplete?.length ?? null, markdown: lines.join("\n") + "\n" };
 }
 
 // Keep the CLI pure and dependency-free; the workflow uses a straightforward
 // GitHub output file for machine-readable due counts.
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const dataDir = resolve(dirname(fileURLToPath(import.meta.url)), "../../src/data");
-  const report = markdownReport(reviewQueue(inventoryAuthorityFiles(dataDir)));
+  const records = inventoryAuthorityFiles(dataDir);
+    const ledger = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), "../../docs/laws/claim-review-ledger.md"), "utf8");
+    const incomplete = incompleteClaimAudits(ledger, records);
+    const report = markdownReport(reviewQueue(records), new Date(), incomplete);
   process.stdout.write(report.markdown);
   if (process.env.GITHUB_OUTPUT) {
     const { appendFileSync } = await import("node:fs");
-    appendFileSync(process.env.GITHUB_OUTPUT, `due_count=${report.dueCount}\nmonth_key=${report.monthKey}\n`);
+    appendFileSync(process.env.GITHUB_OUTPUT, `due_count=${report.dueCount}\nclaim_partial_count=${report.claimPartialCount}\nmonth_key=${report.monthKey}\n`);
   }
   if (process.env.GITHUB_STEP_SUMMARY) {
     const { appendFileSync } = await import("node:fs");
