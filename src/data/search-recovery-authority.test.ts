@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { SEARCH_RECOVERY_AUTHORITY_GUIDES, SEARCH_RECOVERY_AUTHORITY_SLUGS } from "@/data/search-recovery-authority";
 
@@ -28,6 +29,17 @@ function wordCount(guide: (typeof SEARCH_RECOVERY_AUTHORITY_GUIDES)[string]) {
 }
 
 describe("KTR search-recovery authority guides", () => {
+  it("uses the individual verified date for each public government reference sitemap entry", () => {
+    const sitemap = readFileSync("src/routes/sitemap-government[.]xml.ts", "utf8");
+    expect(sitemap).toContain("toIsoDate(SEARCH_RECOVERY_AUTHORITY_GUIDES[slug].updated)");
+    expect(sitemap).not.toContain('lastmod: "2026-09-28"');
+    expect(SEARCH_RECOVERY_AUTHORITY_GUIDES["texas-lobbying-2026"].updated).toBe("2026-10-29");
+    for (const [slug, guide] of Object.entries(SEARCH_RECOVERY_AUTHORITY_GUIDES)) {
+      expect(guide.updated).toMatch(/^\\d{4}-\\d{2}-\\d{2}$/);
+      expect(guide.slug).toBe(slug);
+    }
+  });
+
   it("2026 lobbying authority links directly to original registries and does not invent exact amounts", () => {
     const guide = SEARCH_RECOVERY_AUTHORITY_GUIDES["texas-lobbying-2026"];
     const article = [guide.dek, ...guide.sections.flatMap((s) => s.paragraphs)].join(" ");
