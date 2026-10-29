@@ -39,6 +39,24 @@ describe("clustered newsroom post-publish workflow", () => {
     expect(workflow.slice(overdue, reserve)).toContain("OVERDUE_GAP_PUBLISHER_FAILED");
   });
 
+  it("never short-circuits guarded reserve because overdue fetch failed or timed out", () => {
+    const overdueStart = workflow.indexOf('overdue_failed=0');
+    const reserveStart = workflow.indexOf("/api/public/hooks/publishing-safety-net");
+    const boundary = workflow.slice(overdueStart, reserveStart);
+    expect(overdueStart).toBeGreaterThan(0);
+    expect(reserveStart).toBeGreaterThan(overdueStart);
+    expect(boundary).toContain('OVERDUE_GAP_PUBLISHER_FAILED HTTP=');
+    expect(boundary).toContain('overdue_failed=1');
+    expect(boundary).toContain('OVERDUE_GAP_FAILED_RESERVE_ATTEMPT');
+    expect(boundary).toContain('DAILY_NEWS_PUBLISH_SUCCESS overdue_published=');
+    // Exit with an actually published, guarded overdue article only.
+    expect(boundary).toMatch(/if \[\[ "\$overdue_published" -gt 0 \]\]; then\s+echo "[^"]*DAILY_NEWS_PUBLISH_SUCCESS overdue_published=[^"]*"\s+exit 0/);
+    expect(boundary).not.toContain('exit 1');
+    const rescue = workflow.slice(reserveStart);
+    expect(rescue).toContain("PUBLISHING_SAFETY_NET_FAILED");
+    expect(rescue).toContain("DAILY_NEWS_NORMAL_PUBLISHING_STALLED");
+  });
+
   it("reports a no-op honestly and fails if a publication gap is overdue", () => {
     const reserveBranch = workflow.slice(workflow.indexOf("reserve_published=$(jq -r"));
     expect(reserveBranch).toContain("DAILY_NEWS_NO_PUBLICATION");
