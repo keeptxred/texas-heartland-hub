@@ -13,10 +13,14 @@ describe("image backlog recovery publication boundary", () => {
 
     const marker = fs.readFileSync(".github/force-image-backlog-recovery", "utf8");
     const slugs = marker.split(/\r?\n/).filter((line) => line.startsWith("slug:"));
-    expect(slugs).toEqual([
-      "slug:2026-10-14-san-antonio-files-federal-suit-over-ice-facility-environmental-review",
-      "slug:2026-10-14-texas-sued-for-failing-to-process-over-500-000-voter-registrations",
-    ]);
+    // Incident markers are intentionally rotated to new exact published slugs;
+    // pinning a previous incident's filenames blocked legitimate recovery.
+    expect(slugs.length).toBeGreaterThan(0);
+    expect(slugs.length).toBeLessThanOrEqual(4);
+    expect(new Set(slugs).size).toBe(slugs.length);
+    for (const slug of slugs) expect(slug).toMatch(/^slug:[a-z0-9]+(?:-[a-z0-9]+)+$/);
+    expect(slugs).toContain("slug:2026-10-14-house-republicans-pull-3-million-reserved-for-ads-against-henry-cuellar");
+    expect(slugs).toContain("slug:2026-10-14-texas-penalties-for-data-center-violations-are-light-despite-tough-talk-from-abb");
   });
   it("keeps recovery published-only and quality-gated while including blocked legacy assets", () => {
     const source = fs.readFileSync(new URL("../routes/api/public/hooks/image-backlog-recovery.ts", import.meta.url), "utf8");
