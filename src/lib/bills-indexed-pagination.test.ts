@@ -119,7 +119,7 @@ describe("bill directory pagination under the public API timeout", () => {
     expect(result).toEqual({ bills: [{ id: "a", caption: "First bill" }], count: 12786 });
     expect(fromMock).toHaveBeenCalledTimes(1);
     expect(first.calls.find((call) => call.method === "select")?.args[0]).toContain("caption");
-    expect(first.calls.find((call) => call.method === "select")?.args[1]).toEqual({ count: "planned" });
+    expect(first.calls.find((call) => call.method === "select")?.args[1]).toEqual({ count: "exact" });
   });
 
   it("uses the indexed IDs before hydrating deep Senate pages and restores stable sorting", async () => {
@@ -132,7 +132,7 @@ describe("bill directory pagination under the public API timeout", () => {
       count: 4260,
     });
     expect(fromMock).toHaveBeenCalledTimes(2);
-    expect(first.calls.find((call) => call.method === "select")?.args).toEqual(["id", { count: "planned" }]);
+    expect(first.calls.find((call) => call.method === "select")?.args).toEqual(["id", { count: "exact" }]);
     expect(first.calls.find((call) => call.method === "range")?.args).toEqual([3936, 3959]);
     expect(first.calls).toContainEqual({ method: "eq", args: ["is_active", true] });
     expect(first.calls).toContainEqual({ method: "eq", args: ["chamber", "senate"] });
@@ -147,7 +147,7 @@ describe("bill directory pagination under the public API timeout", () => {
     const result = await listBills({ legislature: 89, limit: 24, offset: 12336 });
     expect(result).toEqual({ bills: [{ id: "b", caption: "B" }, { id: "a", caption: "A" }], count: 12786 });
     expect(fromMock).toHaveBeenCalledTimes(2);
-    expect(first.calls.find((call) => call.method === "select")?.args).toEqual(["id", { count: "planned" }]);
+    expect(first.calls.find((call) => call.method === "select")?.args).toEqual(["id", { count: "exact" }]);
     expect(first.calls).toContainEqual({ method: "eq", args: ["legislature_number", 89] });
     expect(first.calls).toContainEqual({ method: "range", args: [12336, 12359] });
     expect(hydration.calls).toContainEqual({ method: "in", args: ["id", ["b", "a"]] });
@@ -160,7 +160,7 @@ describe("bill directory pagination under the public API timeout", () => {
     const result = await listBills({ chamber: "house", status: "in-committee", limit: 24, offset: 4944 });
     expect(result).toEqual({ bills: [{ id: "z", caption: "Z" }, { id: "y", caption: "Y" }], count: 5285 });
     expect(fromMock).toHaveBeenCalledTimes(2);
-    expect(first.calls.find((call) => call.method === "select")?.args).toEqual(["id", { count: "planned" }]);
+    expect(first.calls.find((call) => call.method === "select")?.args).toEqual(["id", { count: "exact" }]);
     expect(first.calls).toContainEqual({ method: "eq", args: ["chamber", "house"] });
     expect(first.calls).toContainEqual({ method: "in", args: [
       "current_status_code", ["in-committee", "referred-to-committee", "scheduled-for-hearing", "reported-from-committee"],
@@ -176,12 +176,26 @@ describe("bill directory pagination under the public API timeout", () => {
     const result = await listBills({ status: "in-committee", limit: 24, offset: 6912 });
     expect(result).toEqual({ bills: [{ id: "b", caption: "B" }, { id: "a", caption: "A" }], count: 7458 });
     expect(fromMock).toHaveBeenCalledTimes(2);
-    expect(first.calls.find((call) => call.method === "select")?.args).toEqual(["id", { count: "planned" }]);
+    expect(first.calls.find((call) => call.method === "select")?.args).toEqual(["id", { count: "exact" }]);
     expect(first.calls).toContainEqual({ method: "in", args: [
       "current_status_code", ["in-committee", "referred-to-committee", "scheduled-for-hearing", "reported-from-committee"],
     ] });
     expect(first.calls).toContainEqual({ method: "range", args: [6912, 6935] });
     expect(hydration.calls).toContainEqual({ method: "in", args: ["id", ["b", "a"]] });
+  });
+
+  it("filters substantive statutes separately from nonstatutory measures", async () => {
+    const query = mockQuery({ data: [{ id: "statute" }], count: 1 });
+    fromMock.mockReturnValueOnce(query.builder);
+    expect((await listBills({ kind: "substantive" })).count).toBe(1);
+    expect(query.calls).toContainEqual({ method: "in", args: ["bill_type", ["hb", "sb"]] });
+    expect(query.calls.find(call => call.method === "select")?.args[1]).toEqual({ count: "exact" });
+    fromMock.mockReset();
+    const resolutions = mockQuery({ data: [{ id: "resolution" }], count: 1 });
+    fromMock.mockReturnValueOnce(resolutions.builder);
+    await listBills({ kind: "resolutions", status: "adopted" });
+    expect(resolutions.calls).toContainEqual({ method: "in", args: ["bill_type", ["hcr", "scr", "hr", "sr", "hjr", "sjr"]] });
+    expect(resolutions.calls).toContainEqual({ method: "in", args: ["current_status_code", ["adopted", "signed-resolution", "proposed-amendment"]] });
   });
 
   it("keeps short status-only pages as a single query", async () => {

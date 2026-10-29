@@ -15,7 +15,31 @@ const sessionFrom=(value:string)=>{try{value=decodeURIComponent(value);}catch{}c
 function refs(text:string,session:any):BillRef[]{if(!session)return[];const out=new Map<string,BillRef>();for(const m of text.matchAll(BILL_RE)){const ref={...session,billType:m[1].toLowerCase(),billNumber:+m[2]};out.set(`${ref.legislature}:${ref.sessionCode}:${ref.billType}:${ref.billNumber}`,ref);}return [...out.values()];}
 async function get(url:string,timeout=18000){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeout);try{const response=await fetch(url,{headers:HEADERS,redirect:"follow",signal:controller.signal});return{ok:response.ok,status:response.status,text:response.ok?await response.text():""};}finally{clearTimeout(timer);}}
 function actions(html:string){const out:any[]=[];for(const row of html.match(/<tr\b[\s\S]*?<\/tr>/gi)||[]){const cell=(label:string)=>clean(row.match(new RegExp(`<td[^>]+data-label=["']${label}["'][^>]*>([\\s\\S]*?)<\\/td>`,`i`))?.[1]||"");const text=cell("Action Description"),date=iso(cell("Action Date"));if(!text||!date)continue;const rawChamber=cell("Action Chamber").toUpperCase(),chamber=rawChamber==="H"?"house":rawChamber==="S"?"senate":rawChamber==="E"?"executive":null;const href=row.match(/<td[^>]+data-label=["']Action Description["'][^>]*>[\s\S]*?<a[^>]+href=["']([^"']+)["']/i)?.[1]||"";out.push({text,date,chamber,source:href?absolute(href):null});}return out;}
-function status(actionsList:any[]){const text=actionsList.map((action)=>action.text.toLowerCase());if(text.some((x)=>x.includes("vetoed")))return["vetoed","Vetoed",false];if(text.some((x)=>x.includes("effective on")||x.includes("effective immediately")))return["effective","Effective",true];if(text.some((x)=>x.includes("signed by the governor")))return["signed","Signed",true];if(text.some((x)=>x.includes("sent to the governor")))return["sent-to-governor","Sent to governor",false];if(text.some((x)=>/^passed\b/.test(x)||x.includes("passage")))return["passed","Passed",false];if(text.some((x)=>x.includes("referred to")))return["referred-to-committee","In committee",false];return["filed","Filed",false];}
+function status(billType:string,actionsList:any[]){
+  const text=actionsList.map((action)=>String(action.text||"").toLowerCase());
+  const has=(pattern:RegExp)=>text.some((line)=>pattern.test(line));
+  if(billType==="hr"||billType==="sr"){
+    if(has(/read\s*(?:&|and)\s*adopted|\badopted\b/))return["adopted","Adopted",false];
+    return["filed","Filed",false];
+  }
+  if(billType==="hcr"||billType==="scr"){
+    if(has(/signed by the governor/))return["signed-resolution","Signed by governor (resolution)",false];
+    if(has(/\badopted\b/))return["adopted","Adopted by legislature",false];
+    return["filed","Filed",false];
+  }
+  if(billType==="hjr"||billType==="sjr"){
+    if(has(/filed with (?:the )?secretary of state|submitted to (?:the )?voters/))return["proposed-amendment","Proposed constitutional amendment",false];
+    if(has(/\badopted\b/))return["passed","Passed legislature (joint resolution)",false];
+    return["filed","Filed",false];
+  }
+  if(has(/vetoed by the governor/))return["vetoed","Vetoed",false];
+  if(has(/signed by the governor/))return["signed","Signed by governor",true];
+  if(has(/^effective (?:on|immediately)/))return["effective","Effective",true];
+  if(has(/sent to the governor/))return["sent-to-governor","Sent to governor",false];
+  if(has(/passed (?:house|senate)|(?:house|senate) passage/))return["passed","Passed",false];
+  if(has(/referred to/))return["referred-to-committee","In committee",false];
+  return["filed","Filed",false];
+}
 
 Deno.serve(async(request)=>{
   if(request.method!=="POST")return Response.json({error:"POST required"},{status:405});
@@ -28,7 +52,7 @@ Deno.serve(async(request)=>{
       const{data:existing}=await db.from("bills").select("id").eq("legislature_number",ref.legislature).eq("session_code",ref.sessionCode).eq("bill_type",ref.billType).eq("bill_number",ref.billNumber).maybeSingle();if(existing?.id){stats.already_present++;continue;}
       const token=`${ref.billType.toUpperCase()}${ref.billNumber}`,identifier=`${ref.billType.toUpperCase()} ${ref.billNumber}`,history=`https://capitol.texas.gov/BillLookup/History.aspx?LegSess=${ref.legislature}${ref.sessionCode}&Bill=${token}`,page=await get(history,25000);if(!page.ok){stats.errors.push(`${identifier} history HTTP ${page.status}`);continue;}
       const caption=span(page.text,"lblCaptionText");if(!caption){stats.errors.push(`${identifier} missing caption`);continue;}
-      const historyActions=actions(page.text),state=status(historyActions),chronological=[...historyActions].reverse(),introduced=chronological.find((action)=>/filed/i.test(action.text))?.date||chronological[0]?.date||null,latest=historyActions[0]?.date||introduced;
+      const historyActions=actions(page.text),state=status(ref.billType,historyActions),chronological=[...historyActions].reverse(),introduced=chronological.find((action)=>/filed/i.test(action.text))?.date||chronological[0]?.date||null,latest=historyActions[0]?.date||introduced;
       const{data:sessionRow}=await db.from("legislative_sessions").select("id").eq("legislature_number",ref.legislature).eq("session_code",ref.sessionCode).maybeSingle();const effective=historyActions.find((action)=>/effective/i.test(action.text)),effectiveDate=effective?(iso(effective.text)||effective.date):null;
       const{data:bill,error:billError}=await db.from("bills").insert({legislative_session_id:sessionRow?.id||null,legislature_number:ref.legislature,session_code:ref.sessionCode,bill_type:ref.billType,bill_number:ref.billNumber,chamber:ref.billType.startsWith("h")?"house":ref.billType.startsWith("s")?"senate":"joint",caption,current_status_code:state[0],current_status_label:state[1],current_status_description:historyActions[0]?.text||state[1],introduced_date:introduced,last_action_date:latest,effective_date:effectiveDate,became_law:state[2],is_active:true,source_url:history,bill_text_url:`https://capitol.texas.gov/BillLookup/Text.aspx?LegSess=${ref.legislature}${ref.sessionCode}&Bill=${token}`,last_synced_at:new Date().toISOString()}).select("id").single();if(billError)throw billError;stats.created++;
       for(let index=0;index<historyActions.length;index++){const action=historyActions[index],{error}=await db.from("bill_actions").insert({bill_id:bill.id,action_date:action.date,action_sequence:900000-index,chamber:action.chamber,action_code:"tlo-history",action_text:action.text,source_url:action.source||history});if(error)throw error;stats.actions++;}

@@ -5,6 +5,7 @@ const checks = [
   ["bills-page", base + "/bills", false],
   ["bills-api", supabase + "/rest/v1/bills?select=id&limit=1", true],
   ["bills-filters", supabase + "/rest/v1/rpc/list_active_bill_filter_options", true],
+  ["resolutions-not-statutes", supabase + "/rest/v1/bills?select=id&became_law=eq.true&bill_type=in.(hcr,scr,hjr,sjr,hr,sr)&limit=1", true],
 ];
 let failures = 0;
 const failedChecks = [];
@@ -31,7 +32,7 @@ for (const [name, url, api] of checks) {
       signal: AbortSignal.timeout(10000),
     });
     const body = await response.text();
-    let valid = response.ok && body.length > 2;
+    let valid = response.ok && (name === "resolutions-not-statutes" ? body.trim() === "[]" : body.length > 2);
     if (api && valid) {
       try { JSON.parse(body); } catch { valid = false; }
     }

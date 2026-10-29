@@ -4,10 +4,13 @@
  * bill-history importer. Progress is checkpointed in legislative_source_records
  * metadata, including records where the official file contains no subjects.
  */
+import { parseTloSession, identityFromTloHistoryUrl } from './session-identity.mjs';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 
-const IMPORT_VERSION = 2;
+// Version 3 repairs false attribution from parsing the FTP grouping folder instead of the XML basename.
+// All version-2 records are intentionally re-evaluated with the corrected identity parser.
+const IMPORT_VERSION = 3;
 const SOURCE_KEY = 'texas-legislature-online';
 const SUBJECT_SOURCE = 'official-tlo-subject-record-v1';
 const execFileAsync = promisify(execFile);
@@ -80,22 +83,8 @@ async function upsert(table, rows, onConflict) {
   return response.json();
 }
 
-function sessionParts(session) {
-  return {
-    legislature_number: Number(session.match(/^\d+/)?.[0]),
-    session_code: session.replace(/^\d+/, '').toUpperCase(),
-  };
-}
-function sourceIdentity(sourceUrl, session) {
-  const decoded = decodeURIComponent(sourceUrl);
-  const match = decoded.match(/([HS](?:B|JR|CR|R))\s*0*(\d{1,5})(?:\D|$)/i);
-  if (!match) return null;
-  return {
-    ...sessionParts(session),
-    bill_type: match[1].toLowerCase(),
-    bill_number: Number(match[2]),
-  };
-}
+const sessionParts = parseTloSession;
+const sourceIdentity = identityFromTloHistoryUrl;
 function billKey(record) {
   return `${record.legislature_number}:${record.session_code}:${record.bill_type}:${record.bill_number}`;
 }
@@ -171,7 +160,7 @@ for (const session of sessions) {
       const bill = identity ? bills.get(billKey(identity)) : null;
       if (!bill) {
         totals.missingBill += 1;
-        await markChecked(record, 0);
+        // Do not mark as imported when bill is absent: retry once the bill importer catches up.
         totals.checked += 1;
         continue;
       }

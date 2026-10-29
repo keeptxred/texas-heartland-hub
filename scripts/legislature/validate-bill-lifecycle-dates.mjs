@@ -6,6 +6,7 @@ const commentFix = fs.readFileSync('supabase/migrations/20260906042500_normalize
 const lineItemFix = fs.readFileSync('supabase/migrations/20260906192000_handle_line_item_veto_lifecycle.sql', 'utf8');
 const temporalStatusFix = fs.readFileSync('supabase/migrations/20260906194000_normalize_temporal_bill_effective_status.sql', 'utf8');
 const importer = fs.readFileSync('scripts/legislature/sync-texas-legislation.mjs', 'utf8');
+const classification = fs.readFileSync('scripts/legislature/status-normalization.mjs', 'utf8');
 
 const required = [
   'tlo_explicit_effective_date',
@@ -51,13 +52,16 @@ const importerRequired = [
   'formatMdy(isoDate(comment))',
   'Effective on ${effectiveDate}',
   'action_text: normalizeActionText(part)',
-  "['vetoed', 'Vetoed', /vetoed by the governor/]",
+  'normalizeTexasBillStatus(identity.bill_type, actions)',
 ];
 for (const token of importerRequired) {
   if (!importer.includes(token)) throw new Error(`TLO importer is missing required safeguard: ${token}`);
 }
-if (importer.includes("['vetoed', 'Vetoed', /veto/]")) {
-  throw new Error('TLO importer must not classify any generic occurrence of veto as a whole-bill veto.');
+if (!classification.includes('/vetoed by the governor/i')) {
+  throw new Error('Whole-bill veto classification must require the explicit governor action.');
+}
+if (classification.includes('/veto/i')) {
+  throw new Error('TLO classification must not treat generic mentions of veto as a whole-bill veto.');
 }
 
 const commentFixRequired = [

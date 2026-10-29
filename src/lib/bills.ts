@@ -49,6 +49,7 @@ export type BillListFilters = {
   legislature?: number;
   chamber?: string;
   billType?: string;
+  kind?: 'substantive' | 'resolutions' | 'all';
   limit?: number;
   offset?: number;
 };
@@ -56,9 +57,10 @@ export type BillListFilters = {
 const STATUS_GROUPS: Record<string, string[]> = {
   filed: ['filed', 'introduced', 'received-by-secretary-of-senate'],
   'in-committee': ['in-committee', 'referred-to-committee', 'scheduled-for-hearing', 'reported-from-committee'],
-  passed: ['passed-house', 'passed-senate', 'passed-both-chambers', 'enrolled'],
+  passed: ['passed', 'passed-house', 'passed-senate', 'passed-both-chambers', 'enrolled'],
   'sent-to-governor': ['sent-to-governor', 'presented-to-governor'],
   signed: ['signed', 'became-law', 'effective'],
+  adopted: ['adopted', 'signed-resolution', 'proposed-amendment'],
   vetoed: ['vetoed'],
 };
 
@@ -134,23 +136,23 @@ export const canonicalBillPath = (
 export const normalizeBillType = (value: string) => value.trim().toLowerCase();
 export const normalizeStatus = (value: string) => value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
-const BILL_LIST_COLUMNS = 'id,legislature_number,session_code,bill_type,bill_number,bill_identifier,chamber,caption,current_status_code,current_status_label,last_action_date,became_law';
+const BILL_LIST_COLUMNS = 'id,legislature_number,session_code,bill_type,bill_number,bill_identifier,chamber,caption,current_status_code,current_status_label,last_action_date,became_law,last_synced_at';
 const INDEX_FIRST_BILL_PAGE_OFFSET = 480;
 
-export async function listBills({ search = '', status = '', legislature, chamber = '', billType = '', limit = 24, offset = 0 }: BillListFilters = {}): Promise<{ bills: Bill[]; count: number }> {
+export async function listBills({ search = '', status = '', legislature, chamber = '', billType = '', kind = 'all', limit = 24, offset = 0 }: BillListFilters = {}): Promise<{ bills: Bill[]; count: number }> {
   // Use indexed IDs for deep directory, legislature, chamber/status and
   // status-only pages where measured index scans avoid thousands of wide
   // row fetches. Use planned counts to avoid a full count on every request.
   // Searches, bill-type filters and unprofiled combinations stay unchanged.
-  const indexedDirectory = !status && !legislature && !billType;
-  const indexedLegislature = Boolean(legislature) && !status && !chamber && !billType;
-  const indexedChamberStatus = Boolean(status && chamber) && !legislature && !billType;
-  const indexedStatusOnly = Boolean(status) && !chamber && !legislature && !billType;
+  const indexedDirectory = !status && !legislature && !billType && kind === 'all';
+  const indexedLegislature = Boolean(legislature) && !status && !chamber && !billType && kind === 'all';
+  const indexedChamberStatus = Boolean(status && chamber) && !legislature && !billType && kind === 'all';
+  const indexedStatusOnly = Boolean(status) && !chamber && !legislature && !billType && kind === 'all';
   const indexFirst = offset >= INDEX_FIRST_BILL_PAGE_OFFSET && !search &&
     (indexedDirectory || indexedLegislature || indexedChamberStatus || indexedStatusOnly);
   let query = db
     .from('bills')
-    .select(indexFirst ? 'id' : BILL_LIST_COLUMNS, { count: 'planned' })
+    .select(indexFirst ? 'id' : BILL_LIST_COLUMNS, { count: 'exact' })
     .eq('is_active', true)
     .order('last_action_date', { ascending: false, nullsFirst: false })
     .order('id', { ascending: true })
@@ -159,6 +161,10 @@ export async function listBills({ search = '', status = '', legislature, chamber
     const codes = STATUS_GROUPS[status];
     query = codes?.length ? query.in('current_status_code', codes) : query.eq('current_status_code', status);
   }
+  // A direct HCR/SJR/SR identifier must work even when the home directory defaults to statutes.
+  const directResolutionLookup = /^(?:hcr|scr|hjr|sjr|hr|sr)\s*\d+\b/i.test(search.trim());
+  if (kind === 'substantive' && !directResolutionLookup) query = query.in('bill_type', ['hb', 'sb']);
+  if (kind === 'resolutions') query = query.in('bill_type', ['hcr', 'scr', 'hr', 'sr', 'hjr', 'sjr']);
   if (legislature) query = query.eq('legislature_number', legislature);
   if (chamber) query = query.eq('chamber', chamber);
   if (billType) query = query.eq('bill_type', normalizeBillType(billType));
