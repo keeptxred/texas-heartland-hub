@@ -28,7 +28,7 @@ function qualifiedWebsitePublication(row: LatestRow): boolean {
     || (row.kind === "news" && row.author === "Keep TX Red Newsroom"
       && (row.quality_flags ?? []).includes("newsroom_text_first_verified"));
 }
-type OpenAlert = { id: string; incident_key: string; opened_at: string };
+type OpenAlert = { id: string; incident_key: string; opened_at: string; resolved_at: string | null };
 
 function isOlderThan24Hours(iso: string | null): boolean {
   if (!iso) return true;
@@ -76,7 +76,7 @@ export async function runPublishingSafetyNet() {
         .limit(150),
       supabase
         .from("publishing_alerts")
-        .select("id,incident_key,opened_at")
+        .select("id,incident_key,opened_at,resolved_at")
         .eq("status", "open")
         .like("incident_key", "publishing-stall-%")
         .order("opened_at", { ascending: false })
@@ -103,6 +103,23 @@ export async function runPublishingSafetyNet() {
   let alertOpened = false;
   let webhookSent = false;
 
+  // An existing incident may have been reopened by a previous upsert that
+  // preserved its old resolution timestamp. Keep status and resolved_at in
+  // agreement without clearing or notifying unrelated editorial alerts.
+  if (automationStalled && openAlert?.resolved_at) {
+    const { error: reopenError } = await supabase
+      .from("publishing_alerts")
+      .update({ resolved_at: null, updated_at: new Date().toISOString() })
+      .eq("id", openAlert.id)
+      .eq("status", "open")
+      .like("incident_key", "publishing-stall-%");
+    if (reopenError) {
+      console.error("[publishing-safety-net] failed to reconcile reopened incident", reopenError);
+      return { ok: false as const, status: 500, error: reopenError.message };
+    }
+    openAlert = { ...openAlert, resolved_at: null };
+  }
+
   if (automationStalled && !openAlert) {
     const incidentKey = `publishing-stall-${latestAutomation?.published_at ?? "no-publication"}`;
     const message = latestAutomation
@@ -114,13 +131,14 @@ export async function runPublishingSafetyNet() {
         {
           incident_key: incidentKey,
           status: "open",
+          resolved_at: null,
           latest_published_at: latestAutomation?.published_at ?? null,
           message,
           updated_at: new Date().toISOString(),
         },
         { onConflict: "incident_key" },
       )
-      .select("id,incident_key,opened_at")
+      .select("id,incident_key,opened_at,resolved_at")
       .single<OpenAlert>();
     if (error) {
       console.error("[publishing-safety-net] failed to open alert", error);
