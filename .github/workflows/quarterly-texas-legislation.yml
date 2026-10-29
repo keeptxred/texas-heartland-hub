@@ -1,0 +1,51 @@
+name: Quarterly Texas Legislature full-session reconciliation
+on:
+  workflow_dispatch:
+  schedule:
+    # January, April, July, October — in addition to daily regular-session sync.
+    - cron: '35 15 1 1,4,7,10 *'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: texas-legislation-quarterly
+  cancel-in-progress: false
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      sessions: ${{ steps.plan.outputs.sessions }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22.15.0'
+      - name: Check session planning and normalization regressions
+        run: node --test scripts/legislature/plan-sessions.test.mjs scripts/legislature/status-normalization.test.mjs
+      - name: Discover regular and called sessions from official TLO FTP
+        id: plan
+        run: node scripts/legislature/plan-sessions.mjs --quarterly --github-output
+  reconcile:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        session: ${{ fromJSON(needs.plan.outputs.sessions) }}
+    env:
+      SUPABASE_URL: https://keeptxred.com/api/admin/legislation-sync-proxy
+      SUPABASE_SERVICE_ROLE_KEY: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Reconcile official bill history, subjects and relationships
+        run: bun run legislature:sync -- --sessions=${{ matrix.session }} --recheck-days=7
+      - name: Summary
+        if: always()
+        run: echo "Session ${{ matrix.session }} — inspect sync output and legislative_sync_runs before declaring a complete refresh." >> "$GITHUB_STEP_SUMMARY"
