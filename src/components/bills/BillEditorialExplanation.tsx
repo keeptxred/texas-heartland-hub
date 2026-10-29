@@ -94,7 +94,7 @@ export function BillEditorialExplanation({ billId, initialItem, initialBill, ini
 
       {bill ? <section className="scroll-mt-24 rounded-xl border bg-card p-6" id="law-agency-relationships">
         <div className="flex items-center gap-3"><Scale className="h-6 w-6 text-primary"/><h2 className="text-2xl font-bold">{isStatutoryBill ? "Bill → law → agency context" : "Resolution status and source context"}</h2></div>
-        <p className="mt-2 text-sm leading-6 text-muted-foreground">{isStatutoryBill ? "Enactment and effective dates come from the official legislative record. Fiscal-note agency references do not themselves establish administrative responsibility." : "Simple and concurrent resolutions do not become statutes. Joint resolutions may propose constitutional amendments for a vote. A governor-signed concurrent resolution is not enacted statutory law."} Agency names are shown only when verified in official fiscal material.</p>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">{isStatutoryBill ? "Enactment and effective dates come from the official legislative record. Being cited in a fiscal note does not by itself prove that the agency administers the resulting law." : "Simple and concurrent resolutions do not become statutes. Joint resolutions may propose constitutional amendments for a vote. A governor-signed concurrent resolution is not enacted statutory law."} Agency names are shown only when verified in official fiscal material.</p>
         <div className="mt-6 grid gap-5 md:grid-cols-2">
           <div className="rounded-lg border p-5">
             <p className="text-xs font-bold uppercase tracking-wide text-primary">{isStatutoryBill ? "Bill → law status" : "Resolution status"}</p>
