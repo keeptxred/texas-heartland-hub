@@ -16,13 +16,9 @@ on:
   # recovery so a persistent failure cannot trigger an unbounded retry storm.
   schedule:
     - cron: '45 2,10,18 * * *'
-  # The marker path provides an explicit, bounded production-repair mechanism.
-  # A marker push must name one to four exact slugs so an emergency repair can
-  # never spend the bounded batch on unrelated newer backlog rows.
-  push:
-    branches: [main]
-    paths:
-      - '.github/force-image-backlog-recovery'
+  # Exact incident markers are consumed ONLY following a successful verified
+  # production deployment of the matching sentinel commit. A raw push occurs
+  # before deployment and must not run the production recovery route.
 
 permissions:
   contents: read
@@ -135,7 +131,7 @@ jobs:
           # batches remain fail-closed if any requested slug fails.
           max_per_run=3
           strict_batch=0
-          if [[ "${GITHUB_EVENT_NAME}" == "push" || "${GITHUB_EVENT_NAME}" == "workflow_run" ]]; then
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_run" ]]; then
             strict_batch=1
             load_exact_marker_slugs
           else
