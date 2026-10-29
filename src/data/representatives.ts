@@ -14,6 +14,20 @@ export type Rep = {
   status?: "former";
 };
 
+/** Do not hotlink unknown third-party portraits on government authority profiles. */
+export function verifiedOfficialPortraitUrl(url?: string): string | undefined {
+  if (!url) return undefined;
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== "https:") return undefined;
+    const host = parsed.hostname.toLowerCase();
+    const allowed = ["house.texas.gov", "senate.texas.gov", "house.gov", "senate.gov"];
+    return allowed.some((domain) => host === domain || host.endsWith(`.${domain}`)) ? parsed.href : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 export function representativeSlug(name: string) {
   return name
     .trim()
