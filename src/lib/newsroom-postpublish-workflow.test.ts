@@ -13,20 +13,18 @@ describe("clustered newsroom post-publish workflow", () => {
     );
   });
 
-  it("fails the scheduled publication when image generation or validation failed", () => {
+  it("separates safe website-only publication from verified-image social readiness", () => {
     expect(workflow).toContain("CLUSTERED_NEWSROOM_FINALIZE_FAILED");
-    expect(workflow).toContain("CLUSTERED_NEWSROOM_IMAGE_FAILED");
-    expect(workflow).not.toContain("CLUSTERED_NEWSROOM_IMAGE_DEFERRED");
-    const finalizeFailure = workflow.indexOf("CLUSTERED_NEWSROOM_FINALIZE_FAILED");
-    const imageFailure = workflow.indexOf("CLUSTERED_NEWSROOM_IMAGE_FAILED");
-    expect(workflow.slice(finalizeFailure, finalizeFailure + 300)).toContain("exit 1");
-    expect(workflow.slice(imageFailure, imageFailure + 280)).toContain("exit 1");
+    expect(workflow).toContain("CLUSTERED_NEWSROOM_IMAGE_STATE_INVALID");
+    expect(workflow).toContain("DAILY_NEWS_WEB_ONLY_SUCCESS");
+    expect(workflow).toContain(".webOnly == true and .imageReady == false");
+    expect(workflow).toContain("social_image_ready=false");
+    const invalid = workflow.indexOf("CLUSTERED_NEWSROOM_IMAGE_STATE_INVALID");
+    expect(workflow.slice(invalid, invalid + 220)).toContain("exit 1");
     expect(workflow).toContain("FLYOVER_EXACT_FEED_IMAGE_FAILED");
-    expect(workflow).not.toContain("FLYOVER_EXACT_FEED_IMAGE_DEFERRED");
     const flyoverFailure = workflow.indexOf("FLYOVER_EXACT_FEED_IMAGE_FAILED");
     expect(workflow.slice(flyoverFailure, flyoverFailure + 270)).toContain("exit 1");
-    expect(workflow).toContain(".ok == true and (.slug // \"\") != \"\"");
-    expect(workflow).not.toContain("(.slug // \"\") != \"\" and .image.ok == true");
+    expect(workflow).toContain('.ok == true and (.slug // "") != ""'.replace(/""/g, '\\"\\"'));
   });
   it("tries the quality-gated clustered newsroom before the costly overdue writer", () => {
     const clustered = workflow.indexOf("generate-newsroom?mode=publish");
