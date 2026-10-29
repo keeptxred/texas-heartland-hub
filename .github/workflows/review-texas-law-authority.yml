@@ -111,7 +111,7 @@ jobs:
         run: gh issue comment 2938 --body-file /tmp/texas-law-statute-monitor.md
 
       - name: Post only actionable review reminders to master tracker
-        if: ${{ steps.review.outputs.due_count != '0' || steps.sourcecheck.outputs.broken_count != '0' || steps.sourcecheck.outputs.inconclusive_count != '0' }}
+        if: ${{ steps.review.outputs.due_count != '0' || steps.review.outputs.claim_partial_count != '0' || steps.sourcecheck.outputs.broken_count != '0' || steps.sourcecheck.outputs.inconclusive_count != '0' }}
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
