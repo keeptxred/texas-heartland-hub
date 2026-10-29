@@ -10,6 +10,7 @@ import { getBillEditorialEnrichment, type BillEditorialEnrichment } from '@/lib/
 type Editorial = BillEditorialEnrichment;
 type BillAuthorityRecord = {
   bill_identifier: string;
+  bill_type: string;
   current_status_label: string;
   last_action_date?: string | null;
   signed_date?: string | null;
@@ -48,7 +49,7 @@ export function BillEditorialExplanation({ billId, initialItem, initialBill, ini
     let active = true;
     Promise.all([
       getBillEditorialEnrichment(billId),
-      db.from('bills').select('bill_identifier,current_status_label,last_action_date,signed_date,effective_date,became_law,source_url,bill_text_url,analysis_url,fiscal_note_url,last_synced_at').eq('id', billId).maybeSingle(),
+      db.from('bills').select('bill_identifier,bill_type,current_status_label,last_action_date,signed_date,effective_date,became_law,source_url,bill_text_url,analysis_url,fiscal_note_url,last_synced_at').eq('id', billId).maybeSingle(),
       db.from('bill_documents').select('*').eq('bill_id', billId).order('document_date', { ascending: false }),
     ]).then(([editorial, billResult, documentResult]) => {
       if (!active) return;
@@ -59,6 +60,7 @@ export function BillEditorialExplanation({ billId, initialItem, initialBill, ini
     return () => { active = false; };
   }, [billId, initialItem, initialBill, initialDocuments]);
 
+  const isStatutoryBill = ['hb', 'sb'].includes(String(bill?.bill_type ?? '').toLowerCase());
   const fiscalImpact = useMemo(() => getLatestBillFiscalImpact(documents), [documents]);
   const verifiedAgencyContext = fiscalImpact?.verifiedSourceAgencies ?? [];
 
@@ -88,17 +90,17 @@ export function BillEditorialExplanation({ billId, initialItem, initialBill, ini
         title={`${bill.bill_identifier} sources, status methodology and verification`}
       /> : null}
 
-      <BillEffectiveDates billId={billId} initialRows={initialEffectiveDates} />
+      {isStatutoryBill ? <BillEffectiveDates billId={billId} initialRows={initialEffectiveDates} /> : null}
 
       {bill ? <section className="scroll-mt-24 rounded-xl border bg-card p-6" id="law-agency-relationships">
-        <div className="flex items-center gap-3"><Scale className="h-6 w-6 text-primary"/><h2 className="text-2xl font-bold">Bill → law → agency context</h2></div>
-        <p className="mt-2 text-sm leading-6 text-muted-foreground">This relationship layer distinguishes what the normalized official record can prove from what it cannot. Enactment and effective dates come from the bill record. Agency names below are shown only when an official fiscal document supplies a verified agency reference; being cited in a fiscal note does not by itself prove that the agency administers the resulting law.</p>
+        <div className="flex items-center gap-3"><Scale className="h-6 w-6 text-primary"/><h2 className="text-2xl font-bold">{isStatutoryBill ? "Bill → law → agency context" : "Resolution status and source context"}</h2></div>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">{isStatutoryBill ? "Enactment and effective dates come from the official legislative record. Being cited in a fiscal note does not by itself prove that the agency administers the resulting law." : "Simple and concurrent resolutions do not become statutes. Joint resolutions may propose constitutional amendments for a vote. A governor-signed concurrent resolution is not enacted statutory law."} Agency names are shown only when verified in official fiscal material.</p>
         <div className="mt-6 grid gap-5 md:grid-cols-2">
           <div className="rounded-lg border p-5">
-            <p className="text-xs font-bold uppercase tracking-wide text-primary">Bill → law status</p>
-            <h3 className="mt-2 text-xl font-bold">{bill.became_law ? `${bill.bill_identifier} is recorded as enacted` : `${bill.bill_identifier} is not recorded as enacted`}</h3>
-            <dl className="mt-4 space-y-3 text-sm"><RelationshipFact label="Current status" value={bill.current_status_label} />{bill.signed_date ? <RelationshipFact label="Signed" value={formatDate(bill.signed_date)} /> : null}{bill.effective_date ? <RelationshipFact label="Effective" value={formatDate(bill.effective_date)} /> : null}</dl>
-            <div className="mt-4 flex flex-wrap gap-4 text-sm font-semibold"><a href="/laws" className="text-primary hover:underline">Texas laws reference →</a>{bill.became_law ? <a href="/laws/effective-dates" className="text-primary hover:underline">Effective-date tracker →</a> : null}</div>
+            <p className="text-xs font-bold uppercase tracking-wide text-primary">{isStatutoryBill ? "Bill → law status" : "Resolution status"}</p>
+            <h3 className="mt-2 text-xl font-bold">{!isStatutoryBill ? `${bill.bill_identifier} is a resolution, not a statute` : bill.became_law ? `${bill.bill_identifier} is recorded as enacted` : `${bill.bill_identifier} is not recorded as enacted`}</h3>
+            <dl className="mt-4 space-y-3 text-sm"><RelationshipFact label="Current status" value={bill.current_status_label} />{bill.signed_date ? <RelationshipFact label={isStatutoryBill ? "Signed" : "Governor signed resolution"} value={formatDate(bill.signed_date)} /> : null}{isStatutoryBill && bill.effective_date ? <RelationshipFact label="Effective" value={formatDate(bill.effective_date)} /> : null}</dl>
+            {isStatutoryBill ? <div className="mt-4 flex flex-wrap gap-4 text-sm font-semibold"><a href="/laws" className="text-primary hover:underline">Texas laws reference →</a>{bill.became_law ? <a href="/laws/effective-dates" className="text-primary hover:underline">Effective-date tracker →</a> : null}</div> : null}
           </div>
           <div className="rounded-lg border p-5">
             <div className="flex items-center gap-2"><Landmark className="h-5 w-5 text-primary"/><p className="text-xs font-bold uppercase tracking-wide text-primary">Official fiscal-note agency context</p></div>
