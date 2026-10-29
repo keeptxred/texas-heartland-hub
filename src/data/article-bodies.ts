@@ -2207,7 +2207,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       { label: "Public Utility Commission of Texas", url: "https://www.puc.texas.gov/" },
       { label: "ERCOT", url: "https://www.ercot.com/" },
     ],
-    related: ["texas-grid-ercot-explained", "permian-energy", "texas-water-rights-explained"],
+    related: ["texas-grid-ercot-explained", "texas-energy-economy-overview", "texas-water-rights-explained"],
     cta: { label: "See Energy Coverage", href: "/news" },
   },
 
@@ -3086,7 +3086,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         heading: "Bottom Line for Texans",
         paragraphs: [
           "If you drive in Houston, run an HVAC in Dallas in August, work in a school in Austin, or own a ranch in the Permian, your daily life is downstream of the Texas energy economy. It funds your kids' classrooms, fuels your truck, heats your home, and is increasingly Europe's hedge against authoritarian energy suppliers.",
-          "Read our companion guides: the [Texas grid and ERCOT explained](/news/texas-grid-ercot-explained), the [Texas energy policy guide](/news/texas-energy-policy-guide), and our running [Permian Basin coverage](/news/permian-energy).",
+          "Read our companion guides: the [Texas grid and ERCOT explained](/news/texas-grid-ercot-explained), the [Texas energy policy guide](/news/texas-energy-policy-guide), and the [Texas energy authority hub](/texas-energy).",
         ],
       },
     ],
