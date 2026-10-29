@@ -65,7 +65,7 @@ export function Lobbying2026Panel() {
         </p>
         <p className="mt-2 text-sm text-muted-foreground">
           {sourceCheckedAt
-            ? `Automated source availability last checked ${new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(sourceCheckedAt))}. This is not a guarantee every filing is current.`
+            ? `Latest published TEC source fingerprint snapshot: ${new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(sourceCheckedAt))}. Unchanged weekly checks run without rebuilding this page; the date is not the latest check time or a guarantee every filing is current.`
             : "Automated weekly source checking is configured; first successful check pending."}
         </p>
         {registrationChangedSinceReview ? (
