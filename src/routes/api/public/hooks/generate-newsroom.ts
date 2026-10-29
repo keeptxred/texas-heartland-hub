@@ -697,6 +697,14 @@ async function handler({ request }: { request: Request }) {
     // separately approved hero and will not select a failed image.
     const preparedImage = await prepareFeaturedImageForUnpublishedNewsroomArticle({
       slug, title: row.title, dek: row.dek, category: row.category, body_json: row.body_json,
+    }).catch((error: unknown) => {
+      // Image-provider exceptions are distribution failures, not editorial
+      // rejections. Avoid logging untrusted provider output or credentials.
+      console.error("[newsroom] image generation threw; image recovery required", {
+        candidateId: candidate.id,
+        message: error instanceof Error ? error.name : "unknown_error",
+      });
+      return { ok: false as const, error: "featured_image_generation_unavailable" };
     });
     const imageReady = Boolean(preparedImage.ok && preparedImage.url && preparedImage.imageValidationNote);
     if (!imageReady) {
