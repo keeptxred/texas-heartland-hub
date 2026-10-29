@@ -219,8 +219,15 @@ jobs:
                 echo "CLUSTERED_NEWSROOM_FINALIZE_FAILED slug=${slug} HTTP=${finalize_status}; article remains published for safe recovery, but this run is not a production pass." >&2
                 exit 1
               fi
+              # A verified source-backed article is a successful WEBSITE
+              # publication even when its hero cannot be validated. Do not
+              # mark it image-ready, and never queue a photo-less Facebook post.
               if ! jq -e '.image.ok == true and (.image.url // "") != ""' /tmp/newsroom-finalize.json >/dev/null 2>&1; then
-                echo "CLUSTERED_NEWSROOM_IMAGE_FAILED slug=${slug}; no successful publication without a validated image." >&2
+                if jq -e '.webOnly == true and .imageReady == false' /tmp/newsroom-finalize.json >/dev/null 2>&1; then
+                  echo "DAILY_NEWS_WEB_ONLY_SUCCESS clustered_slug=${slug} social_image_ready=false sources=${source_count} primary=${primary_count}"
+                  exit 0
+                fi
+                echo "CLUSTERED_NEWSROOM_IMAGE_STATE_INVALID slug=${slug}; finalization did not confirm web-only or validated-image status." >&2
                 exit 1
               fi
 
