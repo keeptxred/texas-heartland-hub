@@ -1,3 +1,7 @@
+## Mandatory durable chat checkpoints — multi-step work
+
+For any substantial project that might outlast a conversation, **create or reuse a `[checkpoint]` GitHub issue before implementation**, using `.github/ISSUE_TEMPLATE/chat-checkpoint.md`. Update its objective, evidence, completed/incomplete tasks, blockers, branch/PR/CI/deploy state and exact next action **after each batch and before any lengthy operation**; link the issue from each related PR as `Checkpoint: #N`. Do not depend on generating a handoff in an already unresponsive chat. For a new chat, read the latest relevant checkpoint and linked GitHub evidence, verify only what changed, resume without asking for the initial prompt. Do not fabricate completion, duplicate project issues or expose credentials. Read **[docs/CHAT-RECOVERY.md](docs/CHAT-RECOVERY.md)** for the precise procedure. This rule adds no background chat tracking, no new secrets and no new CI/publishing workflow.
+
 ## Shared Cloudflare operating policy — both sites
 
 Applies to TexasDefined.com (keeptxred/TexasDefined, texasdefined-site) and KeepTXRed.com (keeptxred/texas-heartland-hub, keeptxred-site), including existing, in-progress, and future work.
