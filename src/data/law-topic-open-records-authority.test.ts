@@ -4,6 +4,18 @@ import { OPEN_RECORDS_PUBLIC_INFORMATION_LAW_TOPIC } from "@/data/law-topic-open
 describe("Texas Public Information Act distinct requester and agency duties", () => {
   const topic = OPEN_RECORDS_PUBLIC_INFORMATION_LAW_TOPIC;
 
+  it("requires a compelling-reason caveat rather than assuming missed AG deadlines release confidential records", () => {
+    const body = [...topic.framework, ...topic.keyRules].join(" ");
+    expect(body).toContain("Section 552.302");
+    expect(body).toContain("compelling reason to withhold");
+    expect(body).toContain("ten-business-day");
+    expect(body).toContain("fifteen-business-day");
+    expect(topic.questions.some(({ q, a }) =>
+      q.includes("every record must be released") && a.includes("compelling reason")
+    )).toBe(true);
+    expect(topic.sources.some(({ url }) => url.includes("/GV/htm/GV.552.htm"))).toBe(true);
+  });
+
   it("distinguishes the 40-dollar itemized estimate from ordinary prompt production", () => {
     const text = [...topic.framework, ...topic.keyRules].join(" ");
     expect(text).toContain("Section 552.2615(a)");
