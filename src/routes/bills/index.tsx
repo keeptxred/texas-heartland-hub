@@ -8,7 +8,7 @@ type BillSearch = {
   legislature: number;
   chamber: string;
   billType: string;
-  kind: 'substantive' | 'resolutions' | 'all';
+  kind?: 'substantive' | 'resolutions' | 'all';
   page: number;
 };
 
@@ -23,7 +23,7 @@ const DEFAULT_SEARCH: BillSearch = {
 };
 
 function hasBillFilters(search: BillSearch) {
-  return Boolean(search.q || search.status || search.legislature || search.chamber || search.billType || search.kind !== 'substantive');
+  return Boolean(search.q || search.status || search.legislature || search.chamber || search.billType || (search.kind && search.kind !== 'substantive'));
 }
 
 function paginationPages(current: number, total: number): number[] {
