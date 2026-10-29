@@ -156,11 +156,18 @@ def main() -> int:
         forbidden=["89th Texas Legislature · Called Session 2"],
         canonical="/bills/texas/89/2/sb/18",
     )
+    # The /bills directory now defaults to HB/SB "substantive" measures.
+    # Do not reuse deep pagination offsets from the former "all measures" view:
+    # they exceed the last real page and cause false deployment failures. These
+    # representative deep pages were checked against the active October 29
+    # public bills registry (senate 3,202; 89th 9,455; house committee 4,745;
+    # all committee 6,828; signed 1,207). Every URL MUST still render 24 bill
+    # cards, its exact page marker and the expected canonical/filters.
     check_deep_directory_page("/bills?page=166", 166, filtered=False)
-    check_deep_directory_page("/bills?chamber=senate&page=165", 165, filtered=True)
-    check_deep_directory_page("/bills?legislature=89&page=515", 515, filtered=True)
-    check_deep_directory_page("/bills?chamber=house&status=in-committee&page=207", 207, filtered=True)
-    check_deep_directory_page("/bills?status=in-committee&page=289", 289, filtered=True)
+    check_deep_directory_page("/bills?chamber=senate&page=120", 120, filtered=True)
+    check_deep_directory_page("/bills?legislature=89&page=350", 350, filtered=True)
+    check_deep_directory_page("/bills?chamber=house&status=in-committee&page=180", 180, filtered=True)
+    check_deep_directory_page("/bills?status=in-committee&page=250", 250, filtered=True)
     check_deep_directory_page("/bills?status=signed&page=44", 44, filtered=True)
     print("Texas Bills deployed-render smoke passed")
     return 0
