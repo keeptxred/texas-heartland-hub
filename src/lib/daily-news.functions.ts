@@ -18,6 +18,7 @@ export type DailyArticle = {
   source_url: string | null;
   image_url: string | null;
   image_hash: string | null;
+  image_generation_status?: string | null;
   image_category: string | null;
   featured_image_url: string | null;
   image_alt_text?: string | null;
@@ -39,7 +40,7 @@ type DailyArticleRow = DailyArticle & {
 };
 
 const ARTICLE_PAGE_SIZE = 100;
-const DAILY_ARTICLE_SELECT = "slug,category,title,dek,author,source_name,source_url,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,seo_keywords,ctr_score,headline_variants,published_at,kind,score,is_breaking,body_json,quality_flags,content_quality_score";
+const DAILY_ARTICLE_SELECT = "slug,category,title,dek,author,source_name,source_url,image_url,image_hash,image_category,image_generation_status,featured_image_url,image_alt_text,seo_headline,discover_category,seo_keywords,ctr_score,headline_variants,published_at,kind,score,is_breaking,body_json,quality_flags,content_quality_score";
 
 function getSupabaseClient() {
   const url = process.env.SUPABASE_URL;
