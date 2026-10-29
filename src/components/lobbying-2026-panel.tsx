@@ -42,6 +42,16 @@ export const TEXAS_2026_LOBBY_COMPENSATION_CODES = [
   ["LOBBCOMPEXACTAMT", "Exact amount — inspect original registration"],
 ] as const;
 
+const early2026Spending = [
+  ["Transportation", "$12,498.60"],
+  ["Food and beverages", "$99,661.15"],
+  ["Entertainment", "$14,735.16"],
+  ["Gifts", "$3,517.03"],
+  ["Awards", "$3,389.25"],
+  ["Events", "$0.00"],
+  ["Media", "$1,803.16"],
+] as const;
+
 export function Lobbying2026Panel() {
   const sourceCheckedAt: string | null = sourceStatus.checkedAt;
   return (
@@ -119,6 +129,36 @@ export function Lobbying2026Panel() {
         <p className="mt-2 text-sm text-muted-foreground">
           Source: <a href={original + "/search/lobby/"} className="font-semibold text-primary underline underline-offset-2">TEC 2026 compensation table</a>.
           A key embedded in the TEC's 2026 client-sorted PDF displays older band figures; this table follows TEC's explicitly labeled 2026 schedule.
+        </p>
+      </div>
+
+      <div>
+        <h2 className="text-2xl font-bold">2026 reported activity spending — dated source snapshot</h2>
+        <p className="mt-2 leading-7 text-muted-foreground">
+          In the TEC expenditure-by-category PDF examined for this guide, the 2026 row on a report
+          printed March 1, 2026 shows the following amounts. <strong>This is an early-year partial
+          report, not complete 2026 annual spending, not an October 2026 total and not lobbyist compensation.</strong>
+          TEC says its spending summaries are updated quarterly; consult the original PDF for more recent revisions.
+        </p>
+        <div className="mt-4 overflow-x-auto rounded-xl border">
+          <table className="w-full text-left text-sm">
+            <caption className="sr-only">TEC 2026 lobbying expenditure categories in a partial report printed March 1, 2026</caption>
+            <thead className="bg-muted/70"><tr><th scope="col" className="px-4 py-3">2026 reported expenditure category</th><th scope="col" className="px-4 py-3 text-right">Amount in dated report</th></tr></thead>
+            <tbody>
+              {early2026Spending.map(([category, amount]) => (
+                <tr key={category} className="border-t">
+                  <th scope="row" className="px-4 py-2 font-normal">{category}</th>
+                  <td className="px-4 py-2 text-right tabular-nums">{amount}</td>
+                </tr>
+              ))}
+              <tr className="border-t bg-muted/50 font-bold"><th scope="row" className="px-4 py-3">Dated 2026 partial total</th><td className="px-4 py-3 text-right tabular-nums">$135,604.35</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-2 text-sm text-muted-foreground">
+          <a href={original + "/data/search/lobby/LobbyExpendituresByCategory.pdf"} className="font-semibold text-primary underline underline-offset-2">
+            View TEC source and verify its print date
+          </a>. The same report lists $18,992,372.55 for 2025; these are separate reporting periods.
         </p>
       </div>
     </section>
