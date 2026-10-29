@@ -117,6 +117,21 @@ describe("static article indexability", () => {
     }
   });
 
+  it("never recommends the retired Permian fixture from active Texas Energy authority content", () => {
+    const energy = fs.readFileSync(new URL("../routes/texas-energy.tsx", import.meta.url), "utf8");
+    const articleBodies = fs.readFileSync(new URL("../data/article-bodies.ts", import.meta.url), "utf8");
+    const texasNews = fs.readFileSync(new URL("../components/texas-news-view.tsx", import.meta.url), "utf8");
+    const business = fs.readFileSync(new URL("../components/texas-business-view.tsx", import.meta.url), "utf8");
+    expect(isRetiredStaticNewsPath("/news/permian-energy")).toBe(true);
+    expect(energy).not.toContain('href: "/news/permian-energy"');
+    expect(energy).toContain('href: "/news/texas-energy-economy-overview"');
+    expect(articleBodies).not.toContain("](/news/permian-energy)");
+    for (const source of [texasNews, business]) {
+      expect(source).not.toContain('"permian-energy",');
+      expect(source).not.toContain('"property-tax-relief-package",');
+    }
+  });
+
   it("does not affect non-news paths", () => {
     expect(isRetiredStaticNewsPath("/laws")).toBe(false);
   });
