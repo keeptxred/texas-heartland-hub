@@ -8,6 +8,7 @@
  * Usage: node scripts/legislature/sync-texas-legislation.mjs --sessions=89R,88R
  */
 import { createHash } from 'node:crypto';
+import { normalizeTexasBillStatus } from './status-normalization.mjs';
 import { execFile } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import { hostname } from 'node:os';
@@ -168,16 +169,7 @@ function billIdentity(xml, sourceUrl, session) {
   const sessionCode = session.replace(/^\d+/, '').toUpperCase();
   return { legislature_number: legislature, session_code: sessionCode, bill_type: billType, bill_number: Number(match[2]) };
 }
-function normalizeStatus(actions) {
-  const text = actions.map((a) => a.action_text).join(' | ').toLowerCase();
-  const rules = [
-    ['vetoed', 'Vetoed', /vetoed by the governor/], ['signed', 'Signed by governor', /signed by the governor|governor signed/],
-    ['became-law', 'Became law', /effective|became law|filed without signature/], ['sent-to-governor', 'Sent to governor', /sent to the governor/],
-    ['passed-senate', 'Passed Senate', /passed senate/], ['passed-house', 'Passed House', /passed house/],
-    ['in-committee', 'In committee', /referred to|committee/],
-  ];
-  const hit = rules.find(([, , pattern]) => pattern.test(text)); return hit ? { code: hit[0], label: hit[1] } : { code: 'filed', label: 'Filed' };
-}
+// Classify legal instruments separately; a resolution is not an enacted statute.
 function parseBill(xml, sourceUrl, session) {
   const identity = billIdentity(xml, sourceUrl, session); if (!identity) return null;
   const actionBlocks = blocks(xml, ['action', 'billAction', 'historyAction']);
@@ -187,7 +179,7 @@ function parseBill(xml, sourceUrl, session) {
     action_code: value(part, ['actionCode', 'code']), action_text: normalizeActionText(part),
     source_url: sourceUrl,
   })).filter((a) => a.action_date && a.action_text);
-  const status = normalizeStatus(actions);
+  const status = normalizeTexasBillStatus(identity.bill_type, actions);
   const caption = value(xml, ['caption', 'billCaption', 'description', 'title']) || `${identity.bill_type.toUpperCase()} ${identity.bill_number}`;
   const chamber = identity.bill_type.startsWith('h') ? 'house' : identity.bill_type.startsWith('s') ? 'senate' : 'joint';
   const structuredSponsors = blocks(xml, ['author', 'coauthor', 'sponsor', 'cosponsor', 'billAuthor', 'billSponsor']).map((part, index) => {
@@ -217,7 +209,7 @@ function parseBill(xml, sourceUrl, session) {
   return {
     bill: { ...identity, chamber, caption, description: value(xml, ['description', 'summary']), current_status_code: status.code, current_status_label: status.label,
       current_status_description: actions.at(-1)?.action_text || null, introduced_date: isoDate(value(xml, ['filedDate', 'introducedDate'])),
-      last_action_date: actions.map((a) => a.action_date).sort().at(-1) || null, became_law: ['signed', 'became-law'].includes(status.code), is_active: true,
+      last_action_date: actions.map((a) => a.action_date).sort().at(-1) || null, became_law: status.becameLaw, is_active: true,
       source_url: value(xml, ['sourceUrl', 'billUrl']) || sourceUrl, bill_text_url: value(xml, ['billTextUrl', 'textUrl', 'WebPDFURL']), fiscal_note_url: value(xml, ['fiscalNoteUrl']), analysis_url: value(xml, ['analysisUrl']), last_synced_at: new Date().toISOString() },
     actions, sponsors, committees,
     agencies: [...new Map(values(xml, ['affectedAgency', 'agencyName', 'stateAgency']).map((name) => [slug(name), { name, slug: slug(name) }])).values()],
@@ -334,7 +326,7 @@ async function importBill(session, sourceUrl, context) {
   const contentHash = hash(xml);
   const existing = sourceRecords.get(sourceRecordKey) || null;
   const nowIso = new Date().toISOString();
-  if (existing?.content_hash === contentHash) {
+  if (existing?.content_hash === contentHash && !args['reclassify-all']) {
     if (!dryRun) await upsert('legislative_source_records', [{ source_key: SOURCE_KEY, source_record_key: sourceRecordKey, source_url: sourceUrl, content_hash: contentHash, last_seen_at: nowIso, metadata: { session } }], 'source_key,source_record_key');
     sourceRecords.set(sourceRecordKey, { ...existing, last_imported_at: existing.last_imported_at || nowIso });
     return { result: 'unchanged' };
@@ -440,7 +432,7 @@ for (const session of sessions) {
       const url = urls[position];
       const stored = context.sourceRecords.get(sourceRecordKeyFor(session, url));
       const lastImported = stored?.last_imported_at ? new Date(stored.last_imported_at).getTime() : 0;
-      if (stored?.content_hash && lastImported > recheckBefore) {
+      if (stored?.content_hash && lastImported > recheckBefore && !args['reclassify-all']) {
         // Proven already imported and recent: no download needed, but still refreshable on later runs.
         totals.skipped += 1; position += 1;
         if (position % 50 === 0) await checkpoint();
