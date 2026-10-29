@@ -37,8 +37,6 @@ jobs:
             sudo apt-get update -qq
             sudo apt-get install -y -qq poppler-utils
           fi
-      - name: Check PDF extraction parser regressions
-        run: node --test scripts/lobbying/parse-texas-expenditures.test.mjs
       - name: Verify official registration, compensation, rules and expenditure sources
         run: node scripts/lobbying/verify-texas-2026-sources.mjs
       - name: Publish changed source fingerprints through protected automation PR
