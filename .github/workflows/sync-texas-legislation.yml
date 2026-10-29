@@ -36,8 +36,13 @@ jobs:
         run: bun install --frozen-lockfile
       - name: Verify status and session contracts
         run: node --test scripts/legislature/status-normalization.check.mjs scripts/legislature/plan-sessions.check.mjs scripts/legislature/session-identity.check.mjs
+      # Global relationship refresh currently times out on the full 89th Legislature.
+      # Do not let this separate, expensive query block official bill/subject ingestion.
       - name: Incremental legislative sync
         run: |
           sessions=$(node scripts/legislature/plan-sessions.mjs --daily)
           echo "Syncing $sessions"
-          bun run legislature:sync -- --sessions="$sessions"
+          bun run legislature:sync -- --sessions="$sessions" --skip-relationships
+      - name: Record incremental-run scope
+        if: always()
+        run: echo "This is a checkpointed incremental bill/subject import; a successful job does not certify full-session reconciliation. Global relationship rebuilding is deferred pending a bounded operation." >> "$GITHUB_STEP_SUMMARY"
