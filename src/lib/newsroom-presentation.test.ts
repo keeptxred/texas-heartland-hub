@@ -27,6 +27,14 @@ describe("newsroom presentation classification", () => {
     }
   });
 
+  it("never promotes previously flagged low-value or unsafe news to archive discovery", () => {
+    for (const flag of ["seo_noindex", "seo_low_value_commodity", "source_integrity_failure", "internal_repetition"]) {
+      expect(isEligiblePreviousReport({
+        kind: "news", source_name: "Publisher", quality_flags: [flag],
+      })).toBe(false);
+    }
+  });
+
   it("does not promote an unclassified ingested article to reporting", () => {
     expect(isNewsroomReport({ kind: "ingested", source_name: "Publisher" })).toBe(false);
   });
