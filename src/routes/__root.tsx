@@ -18,7 +18,7 @@ import { organizationJsonLd } from "../lib/seo";
 
 const ADSENSE_CLIENT = "ca-pub-1891256141359926";
 const ADSENSE_SCRIPT = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`;
-const ICON_VERSION = "20260822";
+const ICON_VERSION = "20261029";
 const ADSENSE_EXCLUDED_PATH_PREFIXES = [
   "/admin",
   "/api",
