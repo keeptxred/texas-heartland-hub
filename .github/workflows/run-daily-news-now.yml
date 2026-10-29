@@ -51,14 +51,18 @@ jobs:
           set -euo pipefail
 
           oidc_url="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-newsroom"
-          oidc_token=$(curl -fsS \
-            -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
-            "$oidc_url" | jq -r '.value // empty')
-
-          if [[ -z "$oidc_token" ]]; then
-            echo 'GitHub Actions did not issue the newsroom OIDC token.' >&2
-            exit 1
-          fi
+          # Refresh only through the GitHub-hosted OIDC endpoint. The Worker
+          # independently checks issuer, signature, audience, main and workflow.
+          refresh_newsroom_oidc() {
+            oidc_token=$(curl -fsS --max-time 15 \
+              -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+              "$oidc_url" | jq -r '.value // empty')
+            if [[ -z "$oidc_token" ]]; then
+              echo 'GitHub Actions did not issue the newsroom OIDC token.' >&2
+              return 1
+            fi
+          }
+          refresh_newsroom_oidc
 
           # A Flyover dispatch names the exact feed item that this run is
           # authorized to evaluate. This avoids asking the general newsroom
@@ -170,6 +174,28 @@ jobs:
             echo "recent-held-draft-recovery HTTP ${newsroom_status}"
             cat /tmp/newsroom-publish.json 2>/dev/null || true
             echo
+
+            # A temporary GitHub OIDC JWKS lookup timeout can reject a valid
+            # signed token (401). Retry exactly once with a NEW GitHub-issued
+            # OIDC token; never retry a publishing attempt that got past auth,
+            # and never fall through as if a persistent 401 meant no eligible
+            # article. The Worker still performs every signature/claim check.
+            if [[ "$newsroom_status" == "401" ]]; then
+              echo 'HELD_DRAFT_AUTH_RETRY: refreshing GitHub OIDC once after 401'
+              refresh_newsroom_oidc
+              newsroom_status=$(curl -sS -X POST -o /tmp/newsroom-publish.json -w '%{http_code}' \
+                --max-time 600 \
+                -H 'accept: application/json' \
+                -H "Authorization: Bearer ${oidc_token}" \
+                "${AUTOMATION_ORIGIN%/}/api/public/hooks/generate-newsroom?mode=publish&recover_held=1" || echo 000)
+              echo "recent-held-draft-recovery-refreshed HTTP ${newsroom_status}"
+              cat /tmp/newsroom-publish.json 2>/dev/null || true
+              echo
+            fi
+            if [[ "$newsroom_status" == "401" ]]; then
+              echo 'HELD_DRAFT_AUTH_FAILED: refreshed signed GitHub OIDC was also denied' >&2
+              exit 1
+            fi
 
             if grep -Eqi 'daily free allocation|used up.*neurons|Workers AI.*quota|RESOURCE_EXHAUSTED|ai_budget_exhausted' /tmp/newsroom-publish.json 2>/dev/null; then
               echo 'Cloudflare image quota exhausted during recent held-draft recovery; stopping additional paid AI calls.' >&2
