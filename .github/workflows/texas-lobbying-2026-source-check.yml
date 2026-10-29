@@ -1,6 +1,9 @@
 name: Verify Texas 2026 lobbying primary sources
 
 on:
+  push:
+    branches: ["fix/texas-lobbying-2026-authority-20261029"]
+    paths: [".github/workflows/texas-lobbying-2026-source-check.yml"]
   schedule:
     - cron: "23 14 * * 1"
   workflow_dispatch:
