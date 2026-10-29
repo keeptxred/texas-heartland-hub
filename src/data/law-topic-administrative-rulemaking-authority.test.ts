@@ -46,6 +46,28 @@ describe("Texas agency rulemaking and SB 14 judicial-review rules", () => {
     )).toBe(true);
   });
 
+  it("limits Texas emergency rule adoption and a single extension under §2001.034", () => {
+    const framework = topic.framework.join(" ");
+    expect(framework).toContain("Section 2001.034");
+    expect(framework).toContain("120 days");
+    expect(framework).toContain("no longer than 60 more days");
+    expect(framework).toContain("written");
+    expect(topic.questions.some(({ q, a }) =>
+      q.includes("emergency agency rule") && a.includes("120 days")
+    )).toBe(true);
+  });
+
+  it("separates eligible rulemaking petitions from automatic adoption under §2001.021", () => {
+    const framework = topic.framework.join(" ");
+    expect(framework).toContain("Section 2001.021");
+    expect(framework).toContain("Within 60 days");
+    expect(framework).toContain("Texas-located businesses");
+    expect(topic.questions.some(({ q, a }) =>
+      q.includes("resident files a petition") && a.includes("does not compel adoption")
+    )).toBe(true);
+    expect(topic.updated).toBe("2026-09-06");
+  });
+
   it("retains dated authoritative rule publication and four-year review", () => {
     const text = [...topic.framework, ...topic.keyRules].join(" ");
     expect(text).toContain("Section 2001.036");
