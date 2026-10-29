@@ -384,3 +384,13 @@ jobs:
               exit 1
             fi
           fi
+
+          # A curated reserve guide keeps the website from going silent, but
+          # does NOT mean the regular newsroom has recovered. Fail the guarded
+          # workflow after the reserve attempt if the safety net confirms a
+          # 24-hour normal-publisher stall. This preserves successful normal
+          # publications above and quality-gated ordinary no-op runs when fresh.
+          if jq -e '.automation_stalled == true' /tmp/safety-net.json >/dev/null 2>&1; then
+            echo 'DAILY_NEWS_NORMAL_PUBLISHING_STALLED no_verified_normal_article_within_24h=true' >&2
+            exit 1
+          fi
