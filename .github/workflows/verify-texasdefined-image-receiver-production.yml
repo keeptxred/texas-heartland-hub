@@ -50,16 +50,18 @@ jobs:
               -H 'Accept: application/vnd.github+json' \
               "$api")"
 
-            match="$(RUNS_JSON="$runs_json" python3 - "$EXPECTED_SHA" <<'PY'
-          import json, os, sys
+            # Never export the full GitHub workflow run list as one environment
+            # variable: Linux execve limits individual arguments/env entries
+            # and real 30-run lists exceed MAX_ARG_STRLEN.
+            match="$(printf '%s' "$runs_json" | python3 -c '
+          import json, sys
           expected = sys.argv[1]
-          data = json.loads(os.environ['RUNS_JSON'])
-          for run in data.get('workflow_runs', []):
-              if run.get('head_sha') == expected:
-                  print(f"{run.get('status','')}|{run.get('conclusion') or ''}|{run.get('html_url','')}")
+          data = json.load(sys.stdin)
+          for run in data.get("workflow_runs", []):
+              if run.get("head_sha") == expected:
+                  print("{}|{}|{}".format(run.get("status",""), run.get("conclusion") or "", run.get("html_url","")))
                   break
-          PY
-          )"
+          ' "$EXPECTED_SHA")"
 
             if [[ -z "$match" ]]; then
               echo "Matching deployment for ${EXPECTED_SHA} has not started yet (${attempt}/72)."
