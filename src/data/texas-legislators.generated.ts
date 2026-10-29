@@ -7,6 +7,9 @@
 
 import type { RepresentativeAuthority } from "./representative-authority";
 
+/** Last fully-generated review; individual vacancy corrections are separately documented. */
+export const TEXAS_ROSTER_REVIEWED_AT = "2026-07-31";
+
 export type TexasLegislativeChamber = "house" | "senate";
 
 export type TexasLegislativeSeat = {
