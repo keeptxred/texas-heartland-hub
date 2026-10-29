@@ -126,6 +126,10 @@ describe("static article indexability", () => {
     expect(energy).not.toContain('href: "/news/permian-energy"');
     expect(energy).toContain('href: "/news/texas-energy-economy-overview"');
     expect(articleBodies).not.toContain("](/news/permian-energy)");
+    expect(articleBodies).not.toContain("](/news/operation-lone-star)");
+    expect(articleBodies).not.toContain("](/news/school-board-elections)");
+    const border = fs.readFileSync(new URL("../data/supporting-guides-border.ts", import.meta.url), "utf8");
+    expect(border).not.toContain('href: "/news/operation-lone-star"');
     for (const source of [texasNews, business]) {
       expect(source).not.toContain('"permian-energy",');
       expect(source).not.toContain('"property-tax-relief-package",');
