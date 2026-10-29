@@ -14,9 +14,12 @@ const WORKFLOW_PATH = ".github/workflows/run-daily-news-now.yml";
 const OVERDUE_HOURS = 6;
 const MAX_ATTEMPTS = 8;
 // A locked or cooling-down story is not an editorial/AI attempt. Scan at
-// most sixteen DIFFERENT stories to get eight substantive attempts, without
-// retrying a lock or increasing the paid rewrite budget.
-const MAX_CANDIDATE_SCAN = 16;
+// at most 48 DIFFERENT stories to get eight substantive attempts, without
+// retrying a lock or increasing the paid rewrite budget. Production verified
+// 15 lock deferrals in 16 scans on October 29; 16 was too shallow even though
+// 55 distinct eligible stories were ranked. Scanning locked items consumes no
+// editorial/AI attempt. The 80-gap query and 45-minute workflow still bound it.
+const MAX_CANDIDATE_SCAN = 48;
 const MAX_PUBLISHED = 1;
 const GAP_SCAN_LIMIT = 80;
 const FAILURE_LOOKBACK_HOURS = 24;
