@@ -31,6 +31,15 @@ jobs:
           node-version: '22.15.0'
       - name: Check session planning and normalization regressions
         run: node --test scripts/legislature/plan-sessions.check.mjs scripts/legislature/status-normalization.check.mjs scripts/legislature/session-identity.check.mjs
+      - name: Verify official Texas Legislature FTP reachability
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! curl --fail --silent --show-error --ftp-pasv --retry 2 --retry-delay 8 --connect-timeout 10 --max-time 35 \
+            'ftp://ftp.legis.state.tx.us/bills/89R/billhistory/history.xml' -o /dev/null; then
+            echo '::error title=Official TLO FTP temporarily unavailable::The official Texas Legislature FTP service is unreachable from the GitHub runner. No substitute source was scraped. The next scheduled run can retry.'
+            exit 1
+          fi
       - name: Discover regular and called sessions from official TLO FTP
         id: plan
         run: node scripts/legislature/plan-sessions.mjs --quarterly --github-output
