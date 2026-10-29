@@ -130,12 +130,12 @@ async function handler() {
   if (ktrNormalizationError) return Response.json({ ok: false, error: ktrNormalizationError.message }, { status: 500 });
   const ktrDirectNormalized = ktrNormalizedResults.flatMap((result) => result.data ?? []) as NormalizationRow[];
   const normalizedRows = reserveDirectPublisherCohort(
-    ktrDirectNormalized,
     reserveDirectPublisherCohort(
-      (directData ?? []) as NormalizationRow[],
       (normalizationData ?? []) as NormalizationRow[],
+      (directData ?? []) as NormalizationRow[],
       CLUSTER_LIMIT,
     ),
+    ktrDirectNormalized,
     CLUSTER_LIMIT,
   );
   // Keep the original 500-row O(N²) similarity budget. The oldest Google
