@@ -8,7 +8,7 @@ describe("newsroom author discovery", () => {
     expect(newsroom).toContain("activeAuthors");
     expect(newsroom).toContain("AUTHORS.filter");
     expect(newsroom).toContain('to="/authors/$slug"');
-    expect(newsroom).toContain('aria-label="Active Keep TX Red newsroom desks"');
+    expect(newsroom).toContain('aria-label="Keep TX Red editorial desks"');
   });
 
   it("keeps the full authors directory linked from the newsroom", () => {
