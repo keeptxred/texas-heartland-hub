@@ -26,6 +26,20 @@ describe("Texas House committee payload normalization", () => {
     ]);
   });
 
+  it("accepts the new official House list wrapper without ignoring API error status", () => {
+    expect(normalizeHouseCommitteePayload({
+      error: false, fetching: false,
+      list: [{ committeeName: "Public Health", position: "Chair" }],
+    })).toEqual([{ committeeName: "Public Health", position: "Chair" }]);
+
+    expect(() => normalizeHouseCommitteePayload({
+      error: true, fetching: false, list: [],
+    })).toThrow(/reported an error/);
+    expect(() => normalizeHouseCommitteePayload({
+      error: false, fetching: true, list: [],
+    })).toThrow(/still fetching/);
+  });
+
   it("fails closed on an unknown payload instead of publishing empty assignments", () => {
     expect(() => normalizeHouseCommitteePayload({ status: "ok", member: { id: 1 } }))
       .toThrow(/unsupported payload shape/i);
