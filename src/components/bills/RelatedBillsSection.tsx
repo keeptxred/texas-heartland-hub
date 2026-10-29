@@ -14,7 +14,7 @@ export function RelatedBillsSection({ bills }: { bills: readonly RelatedBill[] }
           <a key={bill.id} href={bill.href} className="rounded-lg border p-4 hover:border-primary">
             <div className="flex flex-wrap items-center gap-2">
               <strong>{bill.bill_identifier}</strong>
-              {bill.became_law ? (
+              {bill.became_law && ['hb', 'sb'].includes(bill.bill_type.toLowerCase()) ? (
                 <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-900">
                   Became law
                 </span>
