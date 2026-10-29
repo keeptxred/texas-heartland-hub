@@ -70,6 +70,11 @@ for (const target of targets) {
         encoding: "utf8", maxBuffer: 1024 * 1024, timeout: 30000,
       });
       expenditureReport = parseTexasLobbyExpenditures(text);
+      // A mirror/CDN must never silently roll a source-dated report backwards.
+      if (previous.expenditures?.reportPrintedAt &&
+          new Date(expenditureReport.reportPrintedAt) < new Date(previous.expenditures.reportPrintedAt)) {
+        throw new Error("TEC expenditure PDF report date regressed behind the published snapshot");
+      }
     } finally {
       rmSync(directory, { recursive: true, force: true });
     }
