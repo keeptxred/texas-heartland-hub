@@ -28,6 +28,19 @@ function wordCount(guide: (typeof SEARCH_RECOVERY_AUTHORITY_GUIDES)[string]) {
 }
 
 describe("KTR search-recovery authority guides", () => {
+  it("2026 lobbying authority links directly to original registries and does not invent exact amounts", () => {
+    const guide = SEARCH_RECOVERY_AUTHORITY_GUIDES["texas-lobbying-2026"];
+    const article = [guide.dek, ...guide.sections.flatMap((s) => s.paragraphs)].join(" ");
+    expect(article).toContain("1A Smart Start LLC");
+    expect(article).toContain("June 7, 2026");
+    expect(article).toContain("March 1, 2026");
+    expect(article).toContain("not a complete 2026 annual total");
+    expect(article).not.toContain("The long-term KTR product");
+    expect(guide.sources.some((s) => s.url.endsWith("/2026LobbyGroupByClient.xlsx"))).toBe(true);
+    expect(guide.sources.some((s) => s.url.includes("LobbyExpendituresByCategory.pdf"))).toBe(true);
+    expect(guide.sources.every((s) => !s.url.includes("webservices.ethics.state.tx.us"))).toBe(true);
+  });
+
   it("ships exactly the eight deliberately selected guides", () => {
     expect(SEARCH_RECOVERY_AUTHORITY_SLUGS).toHaveLength(8);
     expect(new Set(SEARCH_RECOVERY_AUTHORITY_SLUGS).size).toBe(8);
@@ -36,7 +49,7 @@ describe("KTR search-recovery authority guides", () => {
   for (const [slug, guide] of Object.entries(SEARCH_RECOVERY_AUTHORITY_GUIDES)) {
     it(`${slug} clears the authority quality floor`, () => {
       expect(guide.slug).toBe(slug);
-      expect(guide.updated).toBe("2026-09-28");
+      expect(guide.updated).toBe(slug === "texas-lobbying-2026" ? "2026-10-29" : "2026-09-28");
       expect(guide.keyTakeaways.length).toBeGreaterThanOrEqual(5);
       expect(guide.sections.length).toBeGreaterThanOrEqual(5);
       expect(guide.faq.length).toBeGreaterThanOrEqual(4);
