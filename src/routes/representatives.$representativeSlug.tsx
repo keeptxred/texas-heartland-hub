@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { findRepresentativeBySlug, representativeSlug } from "@/data/representatives";
+import { findRepresentativeBySlug, representativeSlug, verifiedOfficialPortraitUrl } from "@/data/representatives";
 import { ARTICLES, isPublished } from "@/data/articles";
 import { getRepresentativeAuthorityRouteData } from "@/lib/representative-authority-route.functions";
 import { canonicalBillPath, getRepresentativeLegislation, SITE_URL } from "@/lib/bills";
@@ -143,6 +143,7 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
 function RepresentativeProfile() {
   const { representativeSlug: slug } = Route.useParams();
   const { directoryRepresentative: rep, identity, authority, houseCommittees, bills, news, relatedContent } = Route.useLoaderData();
+  const portrait = verifiedOfficialPortraitUrl(rep?.imageUrl);
   const former = rep?.status === "former";
   const federal = rep?.office.startsWith("U.S.") ?? false;
   const name = rep?.name ?? identity?.sponsor_name ?? "Texas Representative";
@@ -181,9 +182,9 @@ function RepresentativeProfile() {
       </nav>
 
       <header className="mt-6 rounded-2xl border bg-card p-6 shadow-sm sm:p-10">
-        {rep?.imageUrl ? (
+        {portrait ? (
           <img
-            src={rep.imageUrl}
+            src={portrait}
             alt={`${name} official portrait`}
             className="mb-6 h-40 w-32 rounded-lg border object-cover"
           />
