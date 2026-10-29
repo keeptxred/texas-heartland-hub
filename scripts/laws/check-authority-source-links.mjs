@@ -6,6 +6,7 @@
  * inconclusive, not falsely certified as broken or healthy.
  */
 import { readFileSync, readdirSync, mkdirSync, writeFileSync, appendFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -43,6 +44,32 @@ export function collectAuthorityLinks(directory) {
   return { files, refs };
 }
 
+export const MAX_STATUTE_HTML_BYTES = 1_500_000;
+
+/** Only digest official Texas statute HTML chapters already present in the source audit. */
+export function isOfficialTexasStatuteChapter(url) {
+  try {
+    const u = new URL(url);
+    return /^(tcss\.legis\.texas\.gov|statutes\.capitol\.texas\.gov)$/i.test(u.hostname) &&
+      /^\/(?:docs|resources)\/[a-z]{2}\/htm\/[a-z]{2}\.\d+[a-z]?\.htm$/i.test(u.pathname);
+  } catch { return false; }
+}
+
+/** Strip navigation/scripts, normalize whitespace and hash the cited substantive statute text. */
+export function fingerprintTexasStatuteHtml(html) {
+  const visible = html
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
+    .replace(/<!--[\s\S]*?-->/g, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;|&#160;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/\s+/g, " ").trim();
+  const firstSection = visible.search(/\bSec\.\s*[A-Za-z0-9]+\.[A-Za-z0-9]+/i);
+  if (firstSection < 0 || visible.length - firstSection < 120) return null;
+  return createHash("sha256").update(visible.slice(firstSection), "utf8").digest("hex");
+}
+
 export function classifySourceResult(status, error = "") {
   if (status === 404 || status === 410) return "broken";
   if (status >= 200 && status < 400) return "healthy";
@@ -57,11 +84,33 @@ export async function probeSource(url, fetchImpl = fetch) {
         signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
         headers: { "User-Agent": "KeepTXRed-Legal-Source-Audit/1.0", "Accept": "text/html,application/pdf;q=0.9,*/*;q=0.8" },
       });
-      await response.body?.cancel();
       const status = response.status;
       const state = classifySourceResult(status);
+      let statuteFingerprint;
+      // Reuse this very same monthly source-link HTTP response: no second
+      // request, no browser crawl and no new scheduled workflow.
+      if (state === "healthy" && isOfficialTexasStatuteChapter(url) && typeof response.text === "function") {
+        try {
+          const size = Number(response.headers?.get?.("content-length") ?? 0);
+          if (!Number.isFinite(size) || size > MAX_STATUTE_HTML_BYTES) {
+            await response.body?.cancel();
+          } else {
+            const html = await response.text();
+            if (Buffer.byteLength(html, "utf8") <= MAX_STATUTE_HTML_BYTES) {
+              statuteFingerprint = fingerprintTexasStatuteHtml(html) ?? undefined;
+            }
+          }
+        } catch {
+          // A 2xx link can be reachable even if the body could not be
+          // fingerprinted. Never classify that URL as changed or certified.
+          await response.body?.cancel().catch(() => {});
+        }
+      } else {
+        await response.body?.cancel();
+      }
       if ((status >= 500 && status <= 599) && attempt === 1) continue;
-      return { url, status, state, attempts: attempt, finalUrl: response.url || url };
+      return { url, status, state, attempts: attempt, finalUrl: response.url || url,
+        ...(statuteFingerprint ? { statuteFingerprint } : {}) };
     } catch (error) {
       if (attempt === 2) return { url, status: null, state: "inconclusive", attempts: attempt, error: String(error).slice(0, 180) };
     }
