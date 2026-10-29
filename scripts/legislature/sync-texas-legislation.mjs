@@ -9,7 +9,7 @@
  */
 import { createHash } from 'node:crypto';
 import { normalizeTexasBillStatus } from './status-normalization.mjs';
-import { parseTloSession } from './session-identity.mjs';
+import { parseTloSession, identityFromTloHistoryUrl } from './session-identity.mjs';
 import { execFile } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import { hostname } from 'node:os';
@@ -160,9 +160,10 @@ async function syncElectionRelationships() {
 
 function billIdentity(xml, sourceUrl, session) {
   const rootBill = xml.match(/<billhistory\b[^>]*\bbill=["'][^"']*\b(HB|SB|HJR|SJR|HCR|SCR|HR|SR)\s*(\d+)/i);
+  const filenameIdentity = identityFromTloHistoryUrl(sourceUrl, session);
   const identifier = (rootBill ? `${rootBill[1]}${rootBill[2]}` : null)
     || value(xml, ['billNumber', 'billName', 'legislationNumber'])
-    || decodeURIComponent(sourceUrl).match(/([HS](?:B|JR|CR|R))\s*(\d{1,5})/i)?.slice(1).join('');
+    || (filenameIdentity ? `${filenameIdentity.bill_type.toUpperCase()}${filenameIdentity.bill_number}` : null);
   const match = identifier?.replace(/\s/g, '').match(/^(HB|SB|HJR|SJR|HCR|SCR|HR|SR)(\d+)$/i);
   if (!match) return null;
   const billType = match[1].toLowerCase();
