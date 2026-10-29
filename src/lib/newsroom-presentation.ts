@@ -22,7 +22,13 @@ export function isNewsroomReport(article: NewsroomItem): boolean {
   return article.kind === "news" && !isReserveDeskExplainer(article);
 }
 
-const HISTORICAL_FLAGS = new Set([
+const ARCHIVE_EXCLUSION_FLAGS = new Set([
+  // Newsroom archives are an internal discovery surface. Do not promote
+  // previously flagged low-value, repetitive or unsafe articles to it.
+  "seo_noindex",
+  "seo_low_value_commodity",
+  "source_integrity_failure",
+  "internal_repetition",
   "legacy_url_restored",
   "historical_archive",
   "historical_reconstruction",
@@ -30,5 +36,5 @@ const HISTORICAL_FLAGS = new Set([
 
 export function isEligiblePreviousReport(article: ArchivedNewsroomItem): boolean {
   return isNewsroomReport(article)
-    && !(article.quality_flags ?? []).some((flag) => HISTORICAL_FLAGS.has(flag));
+    && !(article.quality_flags ?? []).some((flag) => ARCHIVE_EXCLUSION_FLAGS.has(flag));
 }
