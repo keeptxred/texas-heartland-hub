@@ -10,7 +10,24 @@ import { assertKeepTxRedPublication, inferKeepTxRedDomain } from "@/lib/content-
 const STALL_MS = 24 * 60 * 60 * 1000;
 const RESERVE_SOURCE = "Keep TX Red Reserve Desk";
 
-type LatestRow = { slug: string; published_at: string; source_name: string | null };
+type LatestRow = {
+  slug: string;
+  published_at: string;
+  source_name: string | null;
+  author: string | null;
+  kind: string | null;
+  image_generation_status: string | null;
+  featured_image_url: string | null;
+  quality_flags: string[] | null;
+};
+// Historical unillustrated backfills never satisfy a publishing stall. The
+// text-first marker is created ONLY after the normal newsroom's complete
+// source, draft, duplicate and quality preflight, not by an image backfill.
+function qualifiedWebsitePublication(row: LatestRow): boolean {
+  return (row.image_generation_status === "ready" && Boolean(row.featured_image_url?.trim()))
+    || (row.kind === "news" && row.author === "Keep TX Red Newsroom"
+      && (row.quality_flags ?? []).includes("newsroom_text_first_verified"));
+}
 type OpenAlert = { id: string; incident_key: string; opened_at: string };
 
 function isOlderThan24Hours(iso: string | null): boolean {
@@ -48,38 +65,19 @@ export async function runPublishingSafetyNet() {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
-  const [latestAnyResult, latestAutomationResult, openAlertResult, publishedReserveResult] =
+  const [latestArticlesResult, openAlertResult, publishedReserveResult] =
     await Promise.all([
       supabase
         .from("daily_articles")
-        .select("slug,published_at,source_name")
-        // A historical reconstruction with a pending/missing hero is not a
-        // fresh, quality-gated newsroom publication. Counting it as such
-        // masked a >10-day automated-newsroom outage in production.
-        .eq("image_generation_status", "ready")
-        .not("featured_image_url", "is", null)
-        .neq("featured_image_url", "")
+        .select("slug,published_at,source_name,author,kind,image_generation_status,featured_image_url,quality_flags")
+        // Bounded current-publication window. An old pending-image import has
+        // no text-first verification marker and cannot mask a live outage.
         .order("published_at", { ascending: false })
-        .limit(1)
-        .maybeSingle<LatestRow>(),
-      supabase
-        .from("daily_articles")
-        .select("slug,published_at,source_name")
-        // Mirror the exact same qualification for normal (non-reserve) news:
-        // a pending historical backfill must never resolve a publishing alert.
-        .eq("image_generation_status", "ready")
-        .not("featured_image_url", "is", null)
-        .neq("featured_image_url", "")
-        .or(`source_name.neq.${RESERVE_SOURCE},source_name.is.null`)
-        .order("published_at", { ascending: false })
-        .limit(1)
-        .maybeSingle<LatestRow>(),
+        .limit(150),
       supabase
         .from("publishing_alerts")
         .select("id,incident_key,opened_at")
         .eq("status", "open")
-        // The safety net owns publication stalls only. A coverage-gap or
-        // editorial-review alert must never suppress or satisfy this lookup.
         .like("incident_key", "publishing-stall-%")
         .order("opened_at", { ascending: false })
         .limit(1)
@@ -88,8 +86,7 @@ export async function runPublishingSafetyNet() {
     ]);
 
   const readError =
-    latestAnyResult.error ||
-    latestAutomationResult.error ||
+    latestArticlesResult.error ||
     openAlertResult.error ||
     publishedReserveResult.error;
   if (readError) {
@@ -97,8 +94,9 @@ export async function runPublishingSafetyNet() {
     return { ok: false as const, status: 500, error: readError.message };
   }
 
-  const latestAny = latestAnyResult.data;
-  const latestAutomation = latestAutomationResult.data;
+  const qualified = ((latestArticlesResult.data ?? []) as LatestRow[]).filter(qualifiedWebsitePublication);
+  const latestAny = qualified[0] ?? null;
+  const latestAutomation = qualified.find((article) => article.source_name !== RESERVE_SOURCE) ?? null;
   const automationStalled = isOlderThan24Hours(latestAutomation?.published_at ?? null);
   const publicationGap = isOlderThan24Hours(latestAny?.published_at ?? null);
   let openAlert = openAlertResult.data;
