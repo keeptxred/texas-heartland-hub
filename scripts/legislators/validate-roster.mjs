@@ -20,7 +20,7 @@ for (const block of blocks) {
   const chamber = /^    chamber: "(house|senate)",/m.exec(block)?.[1];
   const district = Number(/^    district: (\d+),/m.exec(block)?.[1]);
   const vacancy = /^    vacant: (true|false),/m.exec(block)?.[1];
-  const name = /^    name: (null|"[^"]+"),/m.exec(block)?.[1];
+  const name = /^    name: (null|".*"),/m.exec(block)?.[1];
   const party = /^    party: (null|"[RD]"),/m.exec(block)?.[1];
   const authority = /^    authority: (null|\{)/m.exec(block)?.[1];
   if (!chamber || !district || !vacancy || !name || !party || !authority)
