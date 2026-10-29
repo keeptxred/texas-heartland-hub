@@ -166,7 +166,7 @@ function RepresentativesPage() {
       ...section,
       reps: section.reps.filter((rep) =>
         !normalizedQuery ||
-        [rep.name, rep.office, rep.district ?? ""].some((text) => text.toLowerCase().includes(normalizedQuery))
+        [rep.name, rep.office, rep.district ?? "", `${rep.office} District ${rep.district?.match(/\d+/)?.[0] ?? ""}`].some((text) => text.toLowerCase().includes(normalizedQuery))
       ),
     }));
   const matchCount = filteredSections.reduce((total, section) => total + section.reps.length, 0);
