@@ -35,7 +35,7 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
       - name: Verify status and session contracts
-        run: node --test scripts/legislature/status-normalization.test.mjs scripts/legislature/plan-sessions.test.mjs
+        run: node --test scripts/legislature/status-normalization.test.mjs scripts/legislature/plan-sessions.test.mjs scripts/legislature/session-identity.test.mjs
       - name: Incremental legislative sync
         run: |
           sessions=$(node scripts/legislature/plan-sessions.mjs --daily)
