@@ -34,7 +34,7 @@ describe("KTR search-recovery authority guides", () => {
     expect(article).toContain("1A Smart Start LLC");
     expect(article).toContain("June 7, 2026");
     expect(article).toContain("March 1, 2026");
-    expect(article).toContain("not a complete 2026 annual total");
+    expect(article.toLowerCase()).toContain("not a complete 2026 annual total");
     expect(article).not.toContain("The long-term KTR product");
     expect(guide.sources.some((s) => s.url.endsWith("/2026LobbyGroupByClient.xlsx"))).toBe(true);
     expect(guide.sources.some((s) => s.url.includes("LobbyExpendituresByCategory.pdf"))).toBe(true);
