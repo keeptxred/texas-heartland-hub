@@ -5,9 +5,10 @@ describe("overdue newsroom failover advances past unrelated event locks without 
   const route = readFileSync("src/routes/api/public/hooks/publish-overdue-gap.ts", "utf8");
   const workflow = readFileSync(".github/workflows/run-daily-news-now.yml", "utf8");
 
-  it("bounds the entire scan at 16 distinct candidates and paid/substantive work at eight attempts", () => {
+  it("scans up to 48 distinct candidates while limiting paid/substantive work to eight attempts", () => {
     expect(route).toContain("const MAX_ATTEMPTS = 8");
-    expect(route).toContain("const MAX_CANDIDATE_SCAN = 16");
+    expect(route).toContain("const MAX_CANDIDATE_SCAN = 48");
+    expect(route).toContain("const GAP_SCAN_LIMIT = 80");
     expect(route).toContain("for (const gap of ranked.slice(0, MAX_CANDIDATE_SCAN))");
     expect(route).toContain("if (substantiveAttempts >= MAX_ATTEMPTS) break");
     expect(route).toContain("const lockDeferred = !result.ok && isConcurrentPublicationDeferral(result.error)");
