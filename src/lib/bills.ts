@@ -161,7 +161,9 @@ export async function listBills({ search = '', status = '', legislature, chamber
     const codes = STATUS_GROUPS[status];
     query = codes?.length ? query.in('current_status_code', codes) : query.eq('current_status_code', status);
   }
-  if (kind === 'substantive') query = query.in('bill_type', ['hb', 'sb']);
+  // A direct HCR/SJR/SR identifier must work even when the home directory defaults to statutes.
+  const directResolutionLookup = /^(?:hcr|scr|hjr|sjr|hr|sr)\\s*\\d+\\b/i.test(search.trim());
+  if (kind === 'substantive' && !directResolutionLookup) query = query.in('bill_type', ['hb', 'sb']);
   if (kind === 'resolutions') query = query.in('bill_type', ['hcr', 'scr', 'hr', 'sr', 'hjr', 'sjr']);
   if (legislature) query = query.eq('legislature_number', legislature);
   if (chamber) query = query.eq('chamber', chamber);
