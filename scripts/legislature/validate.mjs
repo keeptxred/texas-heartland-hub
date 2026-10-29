@@ -236,7 +236,7 @@ const billsLib = sources.get('src/lib/bills.ts') || '';
 const statusContracts = [
   ["filed: ['filed', 'introduced', 'received-by-secretary-of-senate']", 'Filed status group'],
   ["'in-committee': ['in-committee', 'referred-to-committee', 'scheduled-for-hearing', 'reported-from-committee']", 'In Committee status group'],
-  ["passed: ['passed-house', 'passed-senate', 'passed-both-chambers', 'enrolled']", 'Passed status group'],
+  ["passed: ['passed', 'passed-house', 'passed-senate', 'passed-both-chambers', 'enrolled']", 'Passed status group'],
   ["'sent-to-governor': ['sent-to-governor', 'presented-to-governor']", 'Sent to Governor status group'],
   ["signed: ['signed', 'became-law', 'effective']", 'Signed status group'],
   ["vetoed: ['vetoed']", 'Vetoed status group'],
