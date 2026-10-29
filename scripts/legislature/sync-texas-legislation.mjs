@@ -9,6 +9,7 @@
  */
 import { createHash } from 'node:crypto';
 import { normalizeTexasBillStatus } from './status-normalization.mjs';
+import { parseTloSession } from './session-identity.mjs';
 import { execFile } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import { hostname } from 'node:os';
@@ -165,8 +166,7 @@ function billIdentity(xml, sourceUrl, session) {
   const match = identifier?.replace(/\s/g, '').match(/^(HB|SB|HJR|SJR|HCR|SCR|HR|SR)(\d+)$/i);
   if (!match) return null;
   const billType = match[1].toLowerCase();
-  const legislature = Number(session.match(/^\d+/)?.[0]);
-  const sessionCode = session.replace(/^\d+/, '').toUpperCase();
+  const { legislature_number: legislature, session_code: sessionCode } = parseTloSession(session);
   return { legislature_number: legislature, session_code: sessionCode, bill_type: billType, bill_number: Number(match[2]) };
 }
 // Classify legal instruments separately; a resolution is not an enacted statute.
@@ -230,7 +230,7 @@ const interruptedPatch = () => ({ status: 'failed', completed_at: new Date().toI
 const HOST = hostname();
 const processAlive = (pid) => { try { process.kill(pid, 0); return true; } catch { return false; } };
 
-const sessionParts = (session) => ({ legislature_number: Number(session.match(/^\d+/)[0]), session_code: session.replace(/^\d+/, '').toUpperCase() });
+const sessionParts = parseTloSession;
 const sourceRecordKeyFor = (session, sourceUrl) => `${session}:${sourceUrl.split('/').at(-1)}`;
 
 /** Load every stored source record for the session so restarts never re-download unchanged files. */
