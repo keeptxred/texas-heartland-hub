@@ -28,7 +28,7 @@ function qualifiedWebsitePublication(row: LatestRow): boolean {
     || (row.kind === "news" && row.author === "Keep TX Red Newsroom"
       && (row.quality_flags ?? []).includes("newsroom_text_first_verified"));
 }
-type OpenAlert = { id: string; incident_key: string; opened_at: string };
+type OpenAlert = { id: string; incident_key: string; opened_at: string; resolved_at: string | null };
 
 function isOlderThan24Hours(iso: string | null): boolean {
   if (!iso) return true;
@@ -76,7 +76,7 @@ export async function runPublishingSafetyNet() {
         .limit(150),
       supabase
         .from("publishing_alerts")
-        .select("id,incident_key,opened_at")
+        .select("id,incident_key,opened_at,resolved_at")
         .eq("status", "open")
         .like("incident_key", "publishing-stall-%")
         .order("opened_at", { ascending: false })
@@ -114,13 +114,15 @@ export async function runPublishingSafetyNet() {
         {
           incident_key: incidentKey,
           status: "open",
+          // Reopening a prior incident must clear its stale closed timestamp.
+          resolved_at: null,
           latest_published_at: latestAutomation?.published_at ?? null,
           message,
           updated_at: new Date().toISOString(),
         },
         { onConflict: "incident_key" },
       )
-      .select("id,incident_key,opened_at")
+      .select("id,incident_key,opened_at,resolved_at")
       .single<OpenAlert>();
     if (error) {
       console.error("[publishing-safety-net] failed to open alert", error);
@@ -140,6 +142,22 @@ export async function runPublishingSafetyNet() {
           .update({ notification_sent_at: new Date().toISOString(), updated_at: new Date().toISOString() })
           .eq("id", inserted.id);
       }
+    }
+  }
+
+  // An older reserve or recovery cycle can leave an existing incident
+  // status=open while resolved_at is non-null. Restore consistent open state
+  // without sending another alert or masking the normal publishing outage.
+  if (automationStalled && openAlert?.resolved_at) {
+    const { error: reconcileError } = await supabase
+      .from("publishing_alerts")
+      .update({ resolved_at: null, updated_at: new Date().toISOString() })
+      .eq("id", openAlert.id)
+      .eq("status", "open")
+      .like("incident_key", "publishing-stall-%");
+    if (reconcileError) {
+      console.error("[publishing-safety-net] failed to reconcile active stall incident", reconcileError);
+      return { ok: false as const, status: 500, error: "Publishing stall alert reconciliation failed" };
     }
   }
 
