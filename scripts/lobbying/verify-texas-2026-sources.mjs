@@ -70,6 +70,7 @@ const output = {
   checkedAt: new Date().toISOString(),
   explanation: "Availability and SHA-256 of official sources, not the currentness of any individual registration or a complete 2026 lobbying total.",
   sourceChangesSinceLastCheck: changed,
+  registrationChangedSinceEditorialReview: Boolean(previous.registrationChangedSinceEditorialReview) || changed.some((id) => id === "2026-client-pdf" || id === "2026-client-excel"),
   sources: rows,
 };
 writeFileSync(outputPath, JSON.stringify(output, null, 2) + "\n");
