@@ -40,5 +40,76 @@
       "sha256": "09eb52251fa7059932eca0bb62d8885c67b6f52d72d8d42f229c5f9bc87fe66d"
     }
   ],
-  "registrationChangedSinceEditorialReview": false
+  "registrationChangedSinceEditorialReview": false,
+  "expenditures": {
+    "reportPrintedAt": "March 1, 2026 3:00:13 AM",
+    "year2025": {
+      "lobbyistCount": 1898,
+      "categories": [
+        {
+          "category": "Transportation",
+          "amount": 63945.62
+        },
+        {
+          "category": "Food and beverages",
+          "amount": 4213208.12
+        },
+        {
+          "category": "Entertainment",
+          "amount": 367640.25
+        },
+        {
+          "category": "Gifts",
+          "amount": 282441.86
+        },
+        {
+          "category": "Awards",
+          "amount": 33830.64
+        },
+        {
+          "category": "Events",
+          "amount": 65313.7
+        },
+        {
+          "category": "Media",
+          "amount": 13965992.36
+        }
+      ],
+      "total": 18992372.55
+    },
+    "year2026": {
+      "lobbyistCount": 1379,
+      "categories": [
+        {
+          "category": "Transportation",
+          "amount": 12498.6
+        },
+        {
+          "category": "Food and beverages",
+          "amount": 99661.15
+        },
+        {
+          "category": "Entertainment",
+          "amount": 14735.16
+        },
+        {
+          "category": "Gifts",
+          "amount": 3517.03
+        },
+        {
+          "category": "Awards",
+          "amount": 3389.25
+        },
+        {
+          "category": "Events",
+          "amount": 0
+        },
+        {
+          "category": "Media",
+          "amount": 1803.16
+        }
+      ],
+      "total": 135604.35
+    }
+  }
 }
