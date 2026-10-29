@@ -3,7 +3,10 @@ name: Sync Texas legislator authority profiles
 on:
   workflow_dispatch:
   schedule:
+    # Weekly (Mondays): promptly catch vacancies, resignations and new members.
     - cron: "17 12 * * 1"
+    # Explicit quarterly backstop: Jan/Apr/Jul/Oct 2nd, even if Monday jobs are delayed.
+    - cron: "41 12 2 1,4,7,10 *"
   push:
     branches: [main]
     paths:
@@ -14,6 +17,7 @@ permissions:
   actions: write
   contents: write
   pull-requests: write
+  issues: write
 
 concurrency:
   group: texas-legislator-authority-sync
@@ -33,6 +37,9 @@ jobs:
           node-version: 22
       - name: Generate official roster profiles
         run: node scripts/legislators/sync-official-roster.mjs
+      - name: Validate complete district coverage and generated-source integrity
+        run: node scripts/legislators/validate-roster.mjs
+
       - name: Validate and publish refreshed authority data as PR
         env:
           GH_TOKEN: ${{ github.token }}
@@ -54,3 +61,19 @@ jobs:
             exit 1
           fi
           bash scripts/ci/publish-automation-pr.sh texas-legislators "$target"
+
+      - name: Alert on roster refresh failure without duplicate issues
+        if: ${{ failure() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          title="Texas legislator roster sync failed"
+          existing="$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "$title in:title" --json number --jq '.[0].number // empty')"
+          details="Official-member roster refresh failed on $(date -u +%F). Inspect [the failed GitHub run](https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID) before trusting a new roster. Previous verified data remains published; do not silently overwrite it."
+          if [[ -n "$existing" ]]; then
+            gh issue comment "$existing" --repo "$GITHUB_REPOSITORY" --body "$details"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" --body "$details"
+          fi
