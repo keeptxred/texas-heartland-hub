@@ -1673,7 +1673,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         heading: "Schools: ISDs, School Boards, and School Choice",
         paragraphs: [
           "Public education runs through more than 1,000 independent school districts, each with its own elected board. Not sure which ISD you fall under? Use our [Find My School District](/find-my-school-district) tool to look it up by address and jump straight to that district's registration page.",
-          "School board elections are low-turnout and often decided by a few hundred votes, yet they determine curriculum, budgets, and bond measures. See [Local School Board Elections: Why Every Conservative Vote Matters](/news/school-board-elections) and [Texas School Board Powers Explained](/news/texas-school-board-powers).",
+          "School board elections are low-turnout and often decided by a few hundred votes, yet they determine curriculum, budgets, and bond measures. See [Texas School Board Powers Explained](/news/texas-school-board-powers).",
           "Understand how your ISD is actually funded, especially in a high-property-value district — Texas's 'Robin Hood' recapture system redistributes revenue between districts. See [Understanding Texas School Finance](/news/texas-school-finance-explained).",
           "If school choice factors into your decision, Texas's new Education Savings Account program gives parents access to state funds for private tuition and other expenses. See [Education Savings Accounts: A Parent's Guide to Texas School Choice](/news/school-choice-esa-guide).",
         ],
@@ -2963,7 +2963,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         heading: "What Comes Next",
         paragraphs: [
           "Three questions will define Texas border policy in 2026 and beyond. First, does the federal government — under any administration — return to operational control of the border, removing Texas's stated justification for OLS? Second, do the courts ultimately uphold or strike down SB4 and similar state-led enforcement? Third, does Texas continue to scale the state wall and buoy systems into a permanent fortified line, or does it draw down once federal posture changes?",
-          "Read our companion explainers on [Operation Lone Star](/news/border-security-state-role), the [Texas border geography](/news/texas-border-geography-101), and the [reinforced Rio Grande crossings](/news/operation-lone-star).",
+          "Read our companion explainers on [Operation Lone Star](/news/border-security-state-role), the [Texas border geography](/news/texas-border-geography-101), and the [Texas border policy](/news/texas-border-policy-full-guide).",
         ],
       },
     ],
@@ -4762,7 +4762,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         paragraphs: [
           "The 2026-27 biennial budget continues Operation Lone Star funding at record levels, with allocations for Texas Department of Public Safety border deployments, the Texas National Guard, and the state's construction of border barrier infrastructure. Statutory provisions extend the trespass authorities granted to state and local law enforcement in border counties.",
           "The Texas Attorney General retains enhanced authority to bring civil actions against entities that assist unauthorized crossings and to coordinate with county prosecutors on transnational criminal cases. Federal preemption litigation on state border authority remains active, and the Legislature may return to the issue in the next session depending on how the courts rule.",
-          "For deeper context, see [Operation Lone Star](/news/operation-lone-star) and the pillar [Texas Border Policy Explained](/news/texas-border-policy-full-guide).",
+          "For deeper context, see [Texas state border-security authority](/news/border-security-state-role) and the pillar [Texas Border Policy Explained](/news/texas-border-policy-full-guide).",
         ],
       },
       {
