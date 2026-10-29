@@ -384,3 +384,11 @@ jobs:
               exit 1
             fi
           fi
+
+          # Reserve guides preserve site continuity but cannot prove that the
+          # normal automated newsroom has recovered. Escalate a verified 24h
+          # regular-publisher stall even if a fresh reserve masked the total gap.
+          if jq -e '.automation_stalled == true' /tmp/safety-net.json >/dev/null 2>&1; then
+            echo 'DAILY_NEWS_NORMAL_PUBLISHING_STALLED no_verified_normal_article_within_24h=true' >&2
+            exit 1
+          fi
