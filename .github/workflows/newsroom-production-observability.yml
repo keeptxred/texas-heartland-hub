@@ -60,6 +60,10 @@ jobs:
               r'DAILY_NEWS_PUBLISH_SUCCESS clustered_slug=([^\s]+) sources=(\d+) primary=(\d+) ai_calls=(\d+) repair=(true|false)',
               text,
           )
+          web_only = re.search(
+              r'DAILY_NEWS_WEB_ONLY_SUCCESS clustered_slug=([a-z0-9][a-z0-9-]+) social_image_ready=false sources=(\d+) primary=(\d+)',
+              text,
+          )
           legacy = re.search(r'DAILY_NEWS_PUBLISH_SUCCESS inserted=(\d+) rejected=(\d+)', text)
           safety_net_invoked = re.search(r'invoking (?:curated )?reserve safety net', text, re.I) is not None
           # The production publisher writes a distinct success marker on a
@@ -85,6 +89,11 @@ jobs:
               primary_source_count = intval(clustered.group(3))
               ai_calls = intval(clustered.group(4))
               repair_attempted = clustered.group(5) == 'true'
+          elif web_only:
+              publisher = 'clustered_newsroom_web_only'
+              slug = web_only.group(1)
+              source_count = intval(web_only.group(2))
+              primary_source_count = intval(web_only.group(3))
           elif reserve_slug:
               publisher = 'safety_net'
               slug = reserve_slug
@@ -130,6 +139,8 @@ jobs:
               'sourceCreatedAt': os.environ.get('SOURCE_RUN_CREATED_AT'),
               'publisher': publisher,
               'published': publisher != 'none',
+              'webOnly': publisher == 'clustered_newsroom_web_only',
+              'socialImageReady': publisher in ('clustered_newsroom', 'safety_net', 'overdue_gap'),
               'overduePublished': overdue,
               'clusteredAttempted': clustered_http is not None,
               'clusteredHttp': intval(clustered_http, -1) if clustered_http else None,
@@ -164,6 +175,7 @@ jobs:
           summary.write_text(
               '## Newsroom production telemetry\n\n'
               f"- Publisher: **{publisher}**\n"
+              f"- Web-only website publication: **{telemetry['webOnly']}**; ready for image-backed social: **{telemetry['socialImageReady']}**\n"
               f"- Source run: `{telemetry['sourceRunId']}` ({telemetry['sourceEvent']}, {telemetry['sourceConclusion']})\n"
               f"- Clustered attempted: **{telemetry['clusteredAttempted']}**\n"
               f"- Clustered no-item reason: `{no_item_reason or 'none'}`\n"
