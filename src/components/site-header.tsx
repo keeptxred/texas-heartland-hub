@@ -1,6 +1,6 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Link, useLocation } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { nextElectionHeadline } from "@/lib/election-calendar";
@@ -16,7 +16,15 @@ export function SiteHeader() {
   const location = useLocation();
   const pathname = location.pathname;
   const isPaymentRoute = pathname.startsWith("/shop/checkout");
-  const electionHeadline = nextElectionHeadline();
+  const [electionHeadline, setElectionHeadline] = useState(() => nextElectionHeadline());
+  useEffect(() => {
+    // Recompute after hydration in case a CDN cached yesterday's server HTML.
+    const refresh = () => setElectionHeadline(nextElectionHeadline());
+    refresh();
+    const timer = setInterval(refresh, 60 * 60 * 1000);
+    window.addEventListener("focus", refresh);
+    return () => { clearInterval(timer); window.removeEventListener("focus", refresh); };
+  }, []);
   const fetchDaily = useServerFn(getDailyArticles);
   const { data } = useQuery({
     queryKey: ["site-header-ticker"],

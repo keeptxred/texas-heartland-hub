@@ -136,14 +136,19 @@ describe("representative authority pages", () => {
     expect(TEXAS_LEGISLATIVE_SEATS).toHaveLength(181);
     expect(TEXAS_HOUSE_SEATS).toHaveLength(150);
     expect(TEXAS_SENATE_SEATS).toHaveLength(31);
-    expect(TEXAS_LEGISLATORS).toHaveLength(180);
-    expect(TEXAS_HOUSE_MEMBERS).toHaveLength(150);
-    expect(TEXAS_SENATE_MEMBERS).toHaveLength(30);
-    expect(TEXAS_LEGISLATIVE_VACANCIES).toEqual([
-      expect.objectContaining({ district: "Senate District 22", label: "Vacant" }),
-    ]);
-    expect(new Set(TEXAS_LEGISLATORS.map((seat) => seat.slug)).size).toBe(180);
-    expect(ALL_REPRESENTATIVE_AUTHORITY).toHaveLength(226);
+    expect(TEXAS_LEGISLATORS).toHaveLength(TEXAS_LEGISLATIVE_SEATS.filter((seat) => !seat.vacant).length);
+    expect(TEXAS_HOUSE_MEMBERS).toHaveLength(TEXAS_HOUSE_SEATS.filter((seat) => !seat.vacant).length);
+    expect(TEXAS_SENATE_MEMBERS).toHaveLength(TEXAS_SENATE_SEATS.filter((seat) => !seat.vacant).length);
+    expect(TEXAS_LEGISLATIVE_VACANCIES).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ district: "House District 1", label: "Vacant" }),
+        expect.objectContaining({ district: "House District 93", label: "Vacant" }),
+        expect.objectContaining({ district: "Senate District 22", label: "Vacant" }),
+      ]),
+    );
+    expect(TEXAS_LEGISLATIVE_VACANCIES).toHaveLength(TEXAS_LEGISLATIVE_SEATS.filter((seat) => seat.vacant).length);
+    expect(new Set(TEXAS_LEGISLATORS.map((seat) => seat.slug)).size).toBe(TEXAS_LEGISLATORS.length);
+    expect(ALL_REPRESENTATIVE_AUTHORITY).toHaveLength(REPRESENTATIVE_AUTHORITY.length + TEXAS_LEGISLATORS.length);
 
     for (const seat of TEXAS_LEGISLATORS) {
       expect(findRepresentativeBySlug(seat.slug)?.district).toContain(String(seat.district));

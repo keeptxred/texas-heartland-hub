@@ -7,6 +7,9 @@
 
 import type { RepresentativeAuthority } from "./representative-authority";
 
+/** Last fully-generated review; individual vacancy corrections are separately documented. */
+export const TEXAS_ROSTER_REVIEWED_AT = "2026-07-31";
+
 export type TexasLegislativeChamber = "house" | "senate";
 
 export type TexasLegislativeSeat = {
@@ -28,66 +31,20 @@ export type TexasLegislativeSeat = {
 
 export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
   {
-    slug: "gary-vandeaver",
-    name: "Gary VanDeaver",
+    slug: "texas-house-district-1-vacant",
+    name: null,
     chamber: "house",
     district: 1,
-    party: "R",
-    website: "https://house.texas.gov/members/2540",
-    imageUrl: "https://house.texas.gov/images/members/2540.jpg?v=1",
+    party: null,
+    website: "https://house.texas.gov/members",
+    imageUrl: null,
     officialCode: null,
     home: null,
-    phone: "903-628-0361",
-    capitolAddress: "710 James Bowie Drive, New Boston, TX 75570",
+    phone: null,
+    capitolAddress: null,
     districtAddress: null,
-    vacant: false,
-    authority: {
-      slug: "gary-vandeaver",
-      reviewedAt: "2026-07-31",
-      biography:
-        "Gary VanDeaver is the current Representative for Texas House District 1. This authority profile consolidates the official member page, current committee assignments, legislative service, contact information, campaign-finance lookup, and district sources.",
-      career: [
-        "Serving as Representative for Texas House District 1 since 2015-01-13.",
-        "Capitol office: 710 James Bowie Drive, New Boston, TX 75570",
-      ],
-      education: [
-        "Consult the linked official biography for published education and professional credentials; no independent credential claim is added here.",
-      ],
-      committees: ["Higher Education", "Public Health — Chair"],
-      electionHistory: [
-        {
-          year: "2015",
-          result: "Current recorded Texas House service began.",
-        },
-        {
-          year: "2025–2027",
-          result: "Serving during the 89th Texas Legislature.",
-        },
-      ],
-      districtOverview:
-        "Texas House District 1. District boundaries and address-level representation should be verified through the official Texas Legislature lookup.",
-      financeUrl: "https://www.ethics.state.tx.us/search/cf/",
-      financeLabel: "Texas Ethics Commission campaign-finance search",
-      newsKeywords: ["Gary VanDeaver", "Representative Gary VanDeaver", "Texas House District 1"],
-      sources: [
-        {
-          label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/2540",
-        },
-        {
-          label: "Official member biography",
-          url: "https://house.texas.gov/members/2540/biography",
-        },
-        {
-          label: "Texas Legislature Online member directory",
-          url: "https://capitol.texas.gov/Members/Members.aspx?Chamber=H",
-        },
-        {
-          label: "Open States maintained Texas legislator record",
-          url: "https://github.com/openstates/people/tree/main/data/tx/legislature",
-        },
-      ],
-    },
+    vacant: true,
+    authority: null,
   },
   {
     slug: "brent-money",
@@ -6086,70 +6043,20 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     },
   },
   {
-    slug: "nate-schatzline",
-    name: "Nate Schatzline",
+    slug: "texas-house-district-93-vacant",
+    name: null,
     chamber: "house",
     district: 93,
-    party: "R",
-    website: "https://house.texas.gov/members/4355",
-    imageUrl: "https://house.texas.gov/images/members/4355.jpg?v=1",
+    party: null,
+    website: "https://house.texas.gov/members",
+    imageUrl: null,
     officialCode: null,
     home: null,
-    phone: "512-463-0562",
-    capitolAddress: "Room E1.410, P.O. Box 12910, Austin, TX 78711",
+    phone: null,
+    capitolAddress: null,
     districtAddress: null,
-    vacant: false,
-    authority: {
-      slug: "nate-schatzline",
-      reviewedAt: "2026-07-31",
-      biography:
-        "Nate Schatzline is the current Representative for Texas House District 93. This authority profile consolidates the official member page, current committee assignments, legislative service, contact information, campaign-finance lookup, and district sources.",
-      career: [
-        "Serving as Representative for Texas House District 93 since 2023-01-10.",
-        "Capitol office: Room E1.410, P.O. Box 12910, Austin, TX 78711",
-      ],
-      education: [
-        "Consult the linked official biography for published education and professional credentials; no independent credential claim is added here.",
-      ],
-      committees: ["Corrections", "Human Services"],
-      electionHistory: [
-        {
-          year: "2023",
-          result: "Current recorded Texas House service began.",
-        },
-        {
-          year: "2025–2027",
-          result: "Serving during the 89th Texas Legislature.",
-        },
-      ],
-      districtOverview:
-        "Texas House District 93. District boundaries and address-level representation should be verified through the official Texas Legislature lookup.",
-      financeUrl: "https://www.ethics.state.tx.us/search/cf/",
-      financeLabel: "Texas Ethics Commission campaign-finance search",
-      newsKeywords: [
-        "Nate Schatzline",
-        "Representative Nate Schatzline",
-        "Texas House District 93",
-      ],
-      sources: [
-        {
-          label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/4355",
-        },
-        {
-          label: "Official member biography",
-          url: "https://house.texas.gov/members/4355/biography",
-        },
-        {
-          label: "Texas Legislature Online member directory",
-          url: "https://capitol.texas.gov/Members/Members.aspx?Chamber=H",
-        },
-        {
-          label: "Open States maintained Texas legislator record",
-          url: "https://github.com/openstates/people/tree/main/data/tx/legislature",
-        },
-      ],
-    },
+    vacant: true,
+    authority: null,
   },
   {
     slug: "tony-tinderholt",
@@ -10110,7 +10017,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     district: 4,
     party: "R",
     website: "https://senate.texas.gov/member.php?d=4",
-    imageUrl: "https://www.bihmfirm.com/images/att_brett.jpg",
+    imageUrl: null,
     officialCode: null,
     home: null,
     phone: null,
@@ -10122,7 +10029,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       reviewedAt: "2026-07-31",
       biography:
         "Brett Ligon is the current Senator for Texas Senate District 4. This authority profile consolidates the official member page, current committee assignments, legislative service, contact information, campaign-finance lookup, and district sources.",
-      career: ["Serving as Senator for Texas Senate District 4 since 2025-01-14."],
+      career: ["Serving as Senator for Texas Senate District 4 since 2026. Elected May 2, 2026."],
       education: [
         "Consult the linked official biography for published education and professional credentials; no independent credential claim is added here.",
       ],
@@ -10131,8 +10038,8 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       ],
       electionHistory: [
         {
-          year: "2025",
-          result: "Current recorded Texas Senate service began.",
+          year: "2026",
+          result: "Began Texas Senate service after the May 2, 2026 special election.",
         },
         {
           year: "2025–2027",

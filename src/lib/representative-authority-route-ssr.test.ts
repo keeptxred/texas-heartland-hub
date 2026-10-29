@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { TEXAS_LEGISLATORS } from "@/data/texas-legislators.generated";
 import { describe, expect, it } from "vitest";
 import {
   ALL_REPRESENTATIVE_AUTHORITY,
@@ -12,7 +13,7 @@ const server = read("src/lib/representative-authority-route.functions.ts");
 
 describe("Texas congressional and legislative authority SSR payload boundary", () => {
   it("preserves the original complete, sourced collection with exact server lookups", () => {
-    expect(ALL_REPRESENTATIVE_AUTHORITY).toHaveLength(226);
+    expect(ALL_REPRESENTATIVE_AUTHORITY).toHaveLength(46 + TEXAS_LEGISLATORS.length);
     expect(getRepresentativeAuthority("john-cornyn")?.sources.length).toBeGreaterThan(0);
     expect(getHouseCommitteeAssignments("dan-crenshaw").length).toBeGreaterThan(0);
     expect(server).toContain('await import("@/data/representative-authority")');

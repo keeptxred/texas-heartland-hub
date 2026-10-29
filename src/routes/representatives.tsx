@@ -1,5 +1,6 @@
 import { Outlet, createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { Helmet } from "react-helmet-async";
+import { useState } from "react";
 import { PageHero } from "@/components/page-hero";
 import {
   US_SENATORS,
@@ -10,7 +11,9 @@ import {
   TEXAS_SENATE_MEMBERS,
   TEXAS_LEGISLATIVE_VACANCIES,
   representativeSlug,
+  TEXAS_ROSTER_REVIEWED_AT,
   type Rep,
+  verifiedOfficialPortraitUrl,
 } from "@/data/representatives";
 
 const ALL_REPRESENTATIVES = [
@@ -75,12 +78,13 @@ export const Route = createFileRoute("/representatives")({
 });
 
 function RepCard({ rep }: { rep: Rep }) {
+  const portrait = verifiedOfficialPortraitUrl(rep.imageUrl);
   return (
     <div className="border-2 border-foreground/10 bg-card p-5">
       <div className="flex items-start justify-between gap-2">
-        {rep.imageUrl ? (
+        {portrait ? (
           <img
-            src={rep.imageUrl}
+            src={portrait}
             alt=""
             loading="lazy"
             className="h-20 w-16 shrink-0 rounded object-cover"
@@ -148,6 +152,27 @@ function Section({ title, reps }: { title: string; reps: Rep[] }) {
 }
 
 function RepresentativesPage() {
+  const [query, setQuery] = useState("");
+  const [chamber, setChamber] = useState("all");
+  const sections = [
+    { key: "us-senate", title: "U.S. Senate", reps: US_SENATORS },
+    { key: "statewide", title: "Statewide Leadership", reps: STATE_LEADERSHIP },
+    { key: "us-house", title: "U.S. House — Complete Texas Delegation", reps: US_HOUSE_DELEGATION },
+    { key: "texas-senate", title: "Texas Senate — Current Members", reps: TEXAS_SENATE_MEMBERS },
+    { key: "texas-house", title: "Texas House — Current Members", reps: TEXAS_HOUSE_MEMBERS },
+  ];
+  const normalizedQuery = query.trim().toLowerCase();
+  const filteredSections = sections
+    .filter((section) => chamber === "all" || section.key === chamber)
+    .map((section) => ({
+      ...section,
+      reps: section.reps.filter((rep) =>
+        !normalizedQuery ||
+        [rep.name, rep.office, rep.district ?? "", `${rep.office} District ${rep.district?.match(/\d+/)?.[0] ?? ""}`].some((text) => text.toLowerCase().includes(normalizedQuery))
+      ),
+    }));
+  const matchCount = filteredSections.reduce((total, section) => total + section.reps.length, 0);
+
   const { representativeSlug } = useParams({ strict: false }) as { representativeSlug?: string };
 
   if (representativeSlug) {
@@ -171,7 +196,7 @@ function RepresentativesPage() {
           to="/find-representative"
           className="inline-block bg-primary text-primary-foreground px-5 py-3 text-xs font-bold uppercase tracking-widest hover:bg-primary/90"
         >
-          Find My Rep by Address →
+          Find My Districts and Current Representatives →
         </Link>
       </PageHero>
       <div className="mx-auto max-w-6xl px-4 pb-16">
@@ -208,11 +233,34 @@ function RepresentativesPage() {
             </Link>
           </div>
         </section>
-        <Section title="U.S. Senate" reps={US_SENATORS} />
-        <Section title="Statewide Leadership" reps={STATE_LEADERSHIP} />
-        <Section title="U.S. House — Complete Texas Delegation" reps={US_HOUSE_DELEGATION} />
-        <Section title="Texas Senate — Current Members" reps={TEXAS_SENATE_MEMBERS} />
-        <Section title="Texas House — Current Members" reps={TEXAS_HOUSE_MEMBERS} />
+        <section className="mt-10 border-2 border-foreground/10 bg-card p-5" aria-label="Search current representatives">
+          <h2 className="font-display text-2xl">Find a current officeholder</h2>
+          <div className="mt-4 grid gap-3 sm:grid-cols-[minmax(0,2fr)_minmax(12rem,1fr)]">
+            <div>
+              <label htmlFor="representative-search" className="mb-2 block text-xs font-bold uppercase tracking-wide">Search by name, office or district</label>
+              <input id="representative-search" type="search" value={query} onChange={(event) => setQuery(event.target.value)}
+                placeholder="e.g. Texas House District 1, Brett Ligon"
+                className="w-full rounded border border-foreground/20 bg-background px-4 py-3" />
+            </div>
+            <div>
+              <label htmlFor="representative-chamber" className="mb-2 block text-xs font-bold uppercase tracking-wide">Office</label>
+              <select id="representative-chamber" value={chamber} onChange={(event) => setChamber(event.target.value)}
+                className="w-full rounded border border-foreground/20 bg-background px-4 py-3">
+                <option value="all">All offices</option>
+                <option value="us-senate">U.S. Senate</option>
+                <option value="us-house">U.S. House</option>
+                <option value="texas-senate">Texas Senate</option>
+                <option value="texas-house">Texas House</option>
+                <option value="statewide">Statewide leadership</option>
+              </select>
+            </div>
+          </div>
+          <p className="mt-3 text-sm text-muted-foreground" role="status" aria-live="polite">{matchCount} current officeholders match. Vacancies are listed separately below.</p>
+        </section>
+        <div id="representative-results">
+          {filteredSections.map((section) => section.reps.length ? <Section key={section.key} title={section.title} reps={section.reps} /> : null)}
+          {!matchCount ? <p className="mt-8 rounded border border-dashed p-5 text-muted-foreground">No current officeholder matched. A vacant district will not appear as a current person; check the vacancies and official district directory below.</p> : null}
+        </div>
         {TEXAS_LEGISLATIVE_VACANCIES.length ? (
           <section className="mt-8 rounded-xl border border-dashed bg-muted/30 p-5">
             <h2 className="font-display text-2xl">Current Texas Legislature vacancies</h2>
@@ -235,7 +283,7 @@ function RepresentativesPage() {
         ) : null}
         {US_HOUSE_VACANCIES.length ? (
           <section className="mt-8 rounded-xl border border-dashed bg-muted/30 p-5">
-            <h2 className="font-display text-2xl">Current House vacancies</h2>
+            <h2 className="font-display text-2xl">Current U.S. House vacancies</h2>
             <div className="mt-3 space-y-2">
               {US_HOUSE_VACANCIES.map((vacancy) => (
                 <p key={vacancy.district}>
@@ -253,7 +301,11 @@ function RepresentativesPage() {
             </div>
           </section>
         ) : null}
-        <p className="mt-10 text-xs text-muted-foreground italic">
+        <p className="mt-8 text-xs text-muted-foreground">
+          Texas legislative roster reviewed {TEXAS_ROSTER_REVIEWED_AT}. This date reflects the last generated official-source sync, not continuous live verification.
+          Status can change between refreshes. Verify time-sensitive membership with the <a href="https://house.texas.gov/members" className="underline text-primary">Texas House</a>, <a href="https://senate.texas.gov/members.php" className="underline text-primary">Texas Senate</a> and <a href="https://www.house.gov/representatives" className="underline text-primary">U.S. House</a>.
+        </p>
+        <p className="mt-5 text-xs text-muted-foreground italic">
           Membership and contact information are linked to official chamber records. For your
           specific district, use the{" "}
           <Link to="/find-representative" className="text-primary underline">

@@ -1,6 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { type FormEvent, useMemo, useState } from "react";
 import { PageHero } from "@/components/page-hero";
+import {
+  US_HOUSE_DELEGATION, TEXAS_HOUSE_MEMBERS, TEXAS_SENATE_MEMBERS,
+  US_HOUSE_VACANCIES, representativeSlug, type Rep,
+} from "@/data/representatives";
 import { useActiveElectionCycle, useElectionRaces } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
@@ -61,6 +65,20 @@ function FindRepPage() {
     pagination: { page: 1, pageSize: 500 },
     sort: [{ field: "name", direction: "asc" }],
   });
+
+  const currentOffices = useMemo(() => {
+    if (!lookup) return [];
+    const findMember = (members: Rep[], district: string) =>
+      members.find((rep) => Number(rep.district?.match(/\d+/)?.[0]) === Number(district));
+    const congressional = findMember(US_HOUSE_DELEGATION, lookup.districts.congressional);
+    const stateHouse = findMember(TEXAS_HOUSE_MEMBERS, lookup.districts.texasHouse);
+    const stateSenate = findMember(TEXAS_SENATE_MEMBERS, lookup.districts.texasSenate);
+    return [
+      { title: "U.S. House", district: lookup.districts.congressional, rep: congressional, official: "https://www.house.gov/representatives", isVacant: US_HOUSE_VACANCIES.some((v) => v.district === `TX-${lookup.districts.congressional}`) },
+      { title: "Texas House", district: lookup.districts.texasHouse, rep: stateHouse, official: "https://house.texas.gov/members", isVacant: !stateHouse },
+      { title: "Texas Senate", district: lookup.districts.texasSenate, rep: stateSenate, official: "https://senate.texas.gov/members.php", isVacant: !stateSenate },
+    ];
+  }, [lookup]);
 
   const matchedRaces = useMemo(() => {
     if (!lookup) return [];
@@ -163,8 +181,8 @@ function FindRepPage() {
             </button>
           </div>
           <p className="mt-4 text-xs leading-5 text-muted-foreground">
-            This lookup sends the address to the U.S. Census Bureau geocoder to resolve current
-            legislative districts. KTR does not persist the submitted address.
+            This lookup sends the address to the U.S. Census Bureau geocoder to identify legislative
+            districts. KTR does not persist the submitted address. Congressional election maps can differ from the districts currently represented; use the official chamber lookup to confirm your sitting member.
           </p>
           {lookupError ? (
             <p className="mt-4 border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-800">
@@ -179,9 +197,26 @@ function FindRepPage() {
               <p className="text-xs font-bold uppercase tracking-widest text-primary">Districts for</p>
               <h2 className="mt-2 font-display text-2xl">{lookup.matchedAddress}</h2>
               <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                KTR matches these current districts against its published, verified 2026
-                general-election race records.
+                First see the current officeholders in the KTR directory, then see the separate 2026 election races. Verify who represents you today with each official chamber: the congressional district map for the upcoming election may differ from the map for the sitting Congress.
               </p>
+              <section className="mt-6" aria-label="Current officeholders">
+                <h3 className="font-display text-xl">Current representatives — not election candidates</h3>
+                <div className="mt-4 grid gap-4 lg:grid-cols-3">
+                  {currentOffices.map((item) => (
+                    <article key={item.title} className="border-2 border-foreground/10 bg-background p-5">
+                      <p className="text-xs font-bold uppercase tracking-wide text-primary">{item.title} District {item.district}</p>
+                      <h4 className="mt-2 font-display text-xl">{item.rep?.name ?? (item.isVacant ? "Vacant seat" : "Officeholder not confirmed")}</h4>
+                      {item.rep ? (
+                        <a className="mt-3 block text-sm font-bold text-primary hover:underline" href={`/representatives/${representativeSlug(item.rep.name)}`}>View current representative profile →</a>
+                      ) : (
+                        <p className="mt-2 text-sm text-muted-foreground">No sitting member is listed for this district in the current KTR roster.</p>
+                      )}
+                      <a className="mt-3 block text-sm font-semibold text-primary hover:underline" href={item.official} target="_blank" rel="noopener noreferrer">Verify with official chamber →</a>
+                    </article>
+                  ))}
+                </div>
+              </section>
+              <h3 className="mt-8 font-display text-xl">2026 general-election races</h3>
 
               {activeCycle.isLoading || races.isLoading ? (
                 <p className="mt-6 text-sm text-muted-foreground">Loading verified 2026 races…</p>

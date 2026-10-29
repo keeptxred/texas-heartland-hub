@@ -1,4 +1,5 @@
 import { TEXAS_LEGISLATIVE_SEATS, TEXAS_LEGISLATORS } from "./texas-legislators.generated";
+export { TEXAS_ROSTER_REVIEWED_AT } from "./texas-legislators.generated";
 
 export type Rep = {
   name: string;
@@ -9,7 +10,23 @@ export type Rep = {
   phoneTX?: string;
   website: string;
   imageUrl?: string;
+  /** Former officials are retained for historical profile URLs, never the current directory. */
+  status?: "former";
 };
+
+/** Do not hotlink unknown third-party portraits on government authority profiles. */
+export function verifiedOfficialPortraitUrl(url?: string): string | undefined {
+  if (!url) return undefined;
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== "https:") return undefined;
+    const host = parsed.hostname.toLowerCase();
+    const allowed = ["house.texas.gov", "senate.texas.gov", "house.gov", "senate.gov"];
+    return allowed.some((domain) => host === domain || host.endsWith(`.${domain}`)) ? parsed.href : undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 export function representativeSlug(name: string) {
   return name
@@ -28,6 +45,7 @@ export function findRepresentativeBySlug(slug: string) {
     ...US_HOUSE_DELEGATION,
     ...TEXAS_SENATE_MEMBERS,
     ...TEXAS_HOUSE_MEMBERS,
+    ...FORMER_TEXAS_HOUSE_MEMBERS,
   ].find((representative) => representativeSlug(representative.name) === slug);
 }
 
@@ -424,6 +442,18 @@ function legislativeRepresentative(chamber: "house" | "senate") {
     imageUrl: seat.imageUrl ?? undefined,
   }));
 }
+
+/** Historical profiles only. These people must not appear in the sitting-member directory. */
+export const FORMER_TEXAS_HOUSE_MEMBERS: Rep[] = [
+  {
+    name: "Gary VanDeaver", office: "Former Texas House representative", party: "R",
+    district: "House District 1", website: "https://house.texas.gov/members", status: "former",
+  },
+  {
+    name: "Nate Schatzline", office: "Former Texas House representative", party: "R",
+    district: "House District 93", website: "https://house.texas.gov/members", status: "former",
+  },
+];
 
 export const TEXAS_HOUSE_MEMBERS: Rep[] = legislativeRepresentative("house");
 export const TEXAS_SENATE_MEMBERS: Rep[] = legislativeRepresentative("senate");
