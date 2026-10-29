@@ -45,9 +45,9 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
         "note": "A disclosed client compensation range, not a verified payment or expenditure total."
       },
       {
-        "label": "2025 reported expenditures",
-        "value": "$18,992,372.55",
-        "note": "TEC expenditure-by-category table's 2025 row in the source report consulted; separate from lobbyist pay."
+        "label": "Dated expenditure reports",
+        "value": "2025 + 2026 source rows",
+        "note": "Category breakdowns and totals reconcile against the printed date on TEC's official PDF; the 2026 row is a partial-year figure, not an annual total."
       }
     ],
     "sections": [
@@ -85,7 +85,7 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
         "heading": "What the official expenditure reports say about spending",
         "paragraphs": [
           "The TEC expenditure-by-category summary separates transportation, food and beverage, entertainment, gifts, awards, events and mass-media spending. TEC says its expenditure summary reports update quarterly. These spending disclosures do not measure all compensation paid to lobbying firms or all political contributions. The by-government-recipient version excludes mass-media spending because it cannot be assigned to a recipient, so do not compare the two reports as identical totals.",
-          "A concrete historical benchmark: the TEC expenditure-by-category PDF consulted for this review lists $18,992,372.55 in the 2025 total row. Its 2026 row shows $135,604.35, but the second page is stamped March 1, 2026: that amount is an early-year partial snapshot, NOT a complete 2026 annual total or the latest October total. Before quoting a 2026 running total in a headline, verify the PDF publication date and reporting coverage again. Both numbers are expenditure-category reports, not registration compensation.",
+          "The 2025 and 2026 expenditure figures in the table above are taken from the date-stamped official TEC PDF. A scheduled parser checks that the seven category amounts reconcile to each official total. The 2026 row is a partial-year snapshot, NOT a complete annual total. The report's printed timestamp appears with the table. These activity expenditures are not lobbyist compensation or campaign contributions.",
           "Direct source: expenditure-by-category PDF — https://www.ethics.state.tx.us/data/search/lobby/LobbyExpendituresByCategory.pdf . Report printed/source date must be recorded whenever a figure is reused."
         ]
       },
@@ -116,7 +116,7 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
       },
       {
         "q": "How much did Texas lobbyists spend in 2026?",
-        "a": "TEC's expenditure-by-category PDF includes an early 2026 figure of $135,604.35 on a table stamped March 1, 2026. That is a dated partial snapshot, not a verified full-year 2026 total. Check the quarterly PDF for a newer figure before using it."
+        "a": "The official TEC expenditure-by-category PDF includes a 2026 row whose printed date and category totals appear in the table on this page. It is a partial snapshot, not a verified full-year total. Check the quarterly official report before quoting figures."
       },
       {
         "q": "Who must register as a Texas lobbyist in 2026?",
@@ -193,7 +193,7 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
         "href": "/texas-government/reference/texas-campaign-finance-2026"
       }
     ],
-    "methodology": "Verified October 29, 2026 against primary TEC pages, the 2026 registration list and the official expenditure-category PDF. Filer examples are illustrations, not a comprehensive or ranked database. Code bands reflect TEC's explicit 2026 schedule even if a PDF footer/legend still shows old figures. March 1, 2026 expenditure figures are explicitly described as partial and separate from client compensation. June 7, 2026 registration thresholds are attributed to the adopted rule amendments and may differ from instructions issued earlier in the year. Recheck mutable records and official rules before quoting figures. No filing alone establishes wrongdoing, influence or legislative causation."
+    "methodology": "Verified October 29, 2026 against primary TEC pages, the 2026 registration list and the official expenditure-category PDF. Filer examples are illustrations, not a comprehensive or ranked database. Code bands reflect TEC's explicit 2026 schedule even if a PDF footer/legend still shows old figures. The expenditure table derives from source-dated TEC PDF rows whose seven categories must reconcile to the reported total. Its 2026 numbers remain partial and separate from client compensation. Subsequent source changes are published through a protected GitHub change rather than silently presented as newly editorially verified. June 7, 2026 registration thresholds are attributed to the adopted rule amendments and may differ from instructions issued earlier in the year. Recheck mutable records and official rules before quoting figures. No filing alone establishes wrongdoing, influence or legislative causation."
   },
   "texas-campaign-finance-2026": {
     "slug": "texas-campaign-finance-2026",
