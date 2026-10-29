@@ -43,6 +43,33 @@ function analyze(log: string) {
 }
 
 describe("newsroom production telemetry distinguishes valid outcomes", () => {
+  it("records a verified website-only publication without claiming an image or Facebook readiness", () => {
+    const slug = "2026-10-29-verified-texas-rulemaking-report";
+    const { telemetry, summary } = analyze(
+      'clustered-newsroom HTTP 200\n' +
+      'clustered-newsroom-finalize HTTP 200\n' +
+      'DAILY_NEWS_WEB_ONLY_SUCCESS clustered_slug=' + slug + ' social_image_ready=false sources=2 primary=1\n',
+    );
+    expect(telemetry.publisher).toBe("clustered_newsroom_web_only");
+    expect(telemetry.published).toBe(true);
+    expect(telemetry.webOnly).toBe(true);
+    expect(telemetry.socialImageReady).toBe(false);
+    expect(telemetry.slug).toBe(slug);
+    expect(telemetry.sourceCount).toBe(2);
+    expect(telemetry.primarySourceCount).toBe(1);
+    expect(telemetry.reservePublished).toBe(false);
+    expect(summary).toContain("Web-only website publication: **True**; ready for image-backed social: **False**");
+  });
+
+  it("does not parse unexecuted workflow shell commands as a real web-only publication", () => {
+    const { telemetry } = analyze(
+      'echo "DAILY_NEWS_WEB_ONLY_SUCCESS clustered_slug=${slug} social_image_ready=false sources=${source_count} primary=${primary_count}"\n' +
+      'DAILY_NEWS_NO_PUBLICATION no_quality_gated_article=true reserve_published=false\n',
+    );
+    expect(telemetry.publisher).toBe("none");
+    expect(telemetry.published).toBe(false);
+  });
+
   it("reports reserve publication instead of inventing a newsroom failure", () => {
     const slug = "2026-10-25-verified-texas-open-meetings";
     const { telemetry, summary } = analyze(
