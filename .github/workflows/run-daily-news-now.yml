@@ -340,18 +340,27 @@ jobs:
           cat /tmp/overdue-gap.json 2>/dev/null || true
           echo
 
+          # An overdue-writer timeout/transport error is a real failure, but
+          # it must not prevent the independently quality-gated reserve route
+          # from keeping the site publishing. Keep the failure visible and
+          # allow the existing 24h normal-publisher stall alert below to fire.
+          overdue_failed=0
           if [[ "$gap_status" != "200" ]] || ! jq -e '.ok == true' /tmp/overdue-gap.json >/dev/null 2>&1; then
-            echo 'OVERDUE_GAP_PUBLISHER_FAILED'
-            exit 1
+            echo "OVERDUE_GAP_PUBLISHER_FAILED HTTP=${gap_status}; evaluating reserve instead" >&2
+            overdue_failed=1
+          else
+            overdue_published=$(jq -r '.published // 0' /tmp/overdue-gap.json)
+            if [[ "$overdue_published" -gt 0 ]]; then
+              echo "DAILY_NEWS_PUBLISH_SUCCESS overdue_published=${overdue_published}"
+              exit 0
+            fi
           fi
 
-          overdue_published=$(jq -r '.published // 0' /tmp/overdue-gap.json)
-          if [[ "$overdue_published" -gt 0 ]]; then
-            echo "DAILY_NEWS_PUBLISH_SUCCESS overdue_published=${overdue_published}"
-            exit 0
+          if [[ "$overdue_failed" -eq 1 ]]; then
+            echo 'OVERDUE_GAP_FAILED_RESERVE_ATTEMPT preserve_error=true; no ordinary publication confirmed' >&2
+          else
+            echo 'No overdue gap publication; continuing to reserve safety net.'
           fi
-
-          echo 'No overdue gap publication; continuing to reserve safety net.'
 
           echo 'No quality-gated normal article published; invoking curated reserve safety net.'
           # The reserve path also generates AND verifies a 1280×720 featured
