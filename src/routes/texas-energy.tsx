@@ -4,7 +4,7 @@ import { EvergreenAuthorityReference } from "@/components/authority/EvergreenAut
 import { buildSeo } from "@/lib/seo";
 
 const SECTIONS = [
-  { title: "Permian Basin", description: "Oil and gas production, infrastructure, jobs, and policy in West Texas.", href: "/news/permian-energy" },
+  { title: "Permian Basin", description: "Oil and gas production, infrastructure, jobs, and policy in West Texas.", href: "/news/texas-energy-economy-overview" },
   { title: "ERCOT & the Grid", description: "Reliability, generation, transmission, demand, and the Texas power market.", href: "/news/texas-grid-ercot-explained" },
   { title: "Energy Policy", description: "Regulation, legislation, pipelines, refineries, LNG, and state energy agencies.", href: "/news/texas-energy-policy-guide" },
   { title: "Texas Economy", description: "How energy connects to jobs, taxes, investment, and the broader state economy.", href: "/texas-economy" },
@@ -61,7 +61,7 @@ function TexasEnergyPage() {
         ]}
         questions={[
           { question: "Does ERCOT regulate electric utilities?", answer: "ERCOT operates the grid and market functions assigned to it. The Public Utility Commission of Texas is the state regulator with jurisdiction over ERCOT activities and utility regulation. Keeping those roles separate is essential when assigning responsibility for a grid or consumer issue.", href: "/news/texas-grid-ercot-explained", linkLabel: "Read the ERCOT explainer" },
-          { question: "Who regulates Texas oil and gas production?", answer: "The Railroad Commission of Texas has primary state regulatory jurisdiction over oil and natural gas exploration, production and transportation, along with several related pipeline and natural-gas functions.", href: "/news/permian-energy", linkLabel: "Follow Permian Basin coverage" },
+          { question: "Who regulates Texas oil and gas production?", answer: "The Railroad Commission of Texas has primary state regulatory jurisdiction over oil and natural gas exploration, production and transportation, along with several related pipeline and natural-gas functions.", href: "/news/texas-energy-economy-overview", linkLabel: "Read the Texas energy economy overview" },
           { question: "Where do Texas energy rules come from?", answer: "The Legislature establishes statutory authority and can change the policy framework; agencies and ERCOT implement responsibilities assigned by law and regulation. For a specific proposal, follow the bill record and then the responsible regulator.", href: "/bills", linkLabel: "Search Texas bills" },
         ]}
         sources={[
