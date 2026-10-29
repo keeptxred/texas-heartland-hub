@@ -18,8 +18,8 @@ describe("editorially approved October 11-25 election newsroom recovery", () => 
     expect(generator).toContain('.eq("status", "HELD")');
     expect(generator).toContain('.is("rejection_reason", null)');
     expect(generator).toContain('.eq("mode", "publish").eq("status", "GENERATED")');
-    expect(generator).toContain('if (!recoverElectionDraft) {\n    const { data: reservation, error: reserveError }');
-    expect(generator).toContain('aiCalls = recoverElectionDraft ? 0 : 1');
+    expect(generator).toContain('if (!recoverSavedDraft) {\n    const { data: reservation, error: reserveError }');
+    expect(generator).toContain('aiCalls = recoverSavedDraft ? 0 : 1');
     expect(generator).toContain('savedGeneratedDraft!.id');
     expect(generator).toContain('const selectedQuery = db.from("news_publish_candidates").update(');
     expect(generator).toContain('.eq("status", "HELD").select("id")');
@@ -35,9 +35,10 @@ describe("editorially approved October 11-25 election newsroom recovery", () => 
     expect(generator).toContain("voter registrations?|registered vote");
     expect(generator).toContain("Retrospective election report:");
     expect(generator).toContain("await prepareFeaturedImageForUnpublishedNewsroomArticle");
-    expect(generator).toContain("if (!preparedImage.ok || !preparedImage.url || !preparedImage.imageValidationNote)");
+    expect(generator).toContain("const imageReady = Boolean(preparedImage.ok");
     expect(generator).toContain('image_generation_status: "ready"');
-    expect(generator).toContain("newsroom_image_publication_hold:");
+    expect(generator).toContain('image_generation_status: "failed"');
+    expect(generator).toContain("newsroom_text_first_verified");
     expect(generator).toContain("reusedApprovedDraft: recoverElectionDraft");
   });
 

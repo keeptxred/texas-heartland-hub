@@ -109,17 +109,17 @@ describe("image is required before a newsroom article can become public", () => 
     expect(source).toContain('reserve_newsroom_image_publication_hold:');
     expect(source).toContain('image_generation_status: "ready"');
   });
-  it("creates and validates a hero before the daily_articles upsert", () => {
+  it("attempts image verification but still publishes an editorially validated website article", () => {
     const source = readFileSync("src/routes/api/public/hooks/generate-newsroom.ts", "utf8");
     const prepareIndex = source.indexOf("await prepareFeaturedImageForUnpublishedNewsroomArticle({");
-    const guardIndex = source.indexOf("newsroom_image_publication_hold");
     const insertIndex = source.indexOf(".upsert(readyRow, { onConflict: \"slug\" })");
     expect(prepareIndex).toBeGreaterThan(0);
-    expect(guardIndex).toBeGreaterThan(prepareIndex);
-    expect(insertIndex).toBeGreaterThan(guardIndex);
-    expect(source).not.toContain(".upsert(row, { onConflict: \"slug\" })");
+    expect(insertIndex).toBeGreaterThan(prepareIndex);
+    expect(source).toContain("const imageReady = Boolean(preparedImage.ok");
+    expect(source).toContain("newsroom_text_first_verified");
+    expect(source).toContain('image_generation_status: "failed"');
     expect(source).toContain('image_generation_status: "ready"');
-    expect(source).toContain('image_validation_note: preparedImage.imageValidationNote');
+    expect(source).toContain("webOnly: !imageReady");
   });
   it("runs image storage/vision without needing a published daily_articles row", () => {
     const source = readFileSync("src/lib/featured-image.functions.ts", "utf8");
@@ -128,9 +128,11 @@ describe("image is required before a newsroom article can become public", () => 
     expect(source).toContain("return generateAndStore(row, { beforePublish: true })");
     expect(source).toContain("if (!verdict.matches) throw new Error");
   });
-  it("rejects missing hero finalization instead of reporting a successful text-only release", () => {
+  it("finalizes source-backed web-only stories without claiming their image is approved", () => {
     const source = readFileSync("src/routes/api/public/hooks/finalize-newsroom-article.ts", "utf8");
-    expect(source).toContain('error: "newsroom_featured_image_required"');
-    expect(source).toContain("status: image.ok ? 200 : 422");
+    expect(source).toContain("webOnly: !image.ok");
+    expect(source).toContain("imageReady: image.ok");
+    expect(source).toContain("status: 200");
+    expect(source).toContain("retainNewsroomEditorialFlags");
   });
 });

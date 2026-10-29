@@ -78,20 +78,38 @@ export function newsroomOriginalReportKey(title: string | null | undefined): str
   return normalized;
 }
 
+/**
+ * Near-verbatim long headlines are a conservative signal that a story was
+ * syndicated through two domains, even if one outlet dropped "is" or a
+ * connector. Never use this to collapse short generic titles.
+ */
+export function newsroomLikelySameOriginalReport(left: string, right: string): boolean {
+  const a = newsroomOriginalReportKey(left);
+  const b = newsroomOriginalReportKey(right);
+  if (!a || !b) return false;
+  if (a === b) return true;
+  const leftTerms = new Set(a.split(" "));
+  const rightTerms = new Set(b.split(" "));
+  if (Math.min(leftTerms.size, rightTerms.size) < 8) return false;
+  const shared = [...leftTerms].filter((term) => rightTerms.has(term)).length;
+  return shared / Math.max(leftTerms.size, rightTerms.size) >= 0.85;
+}
+
 /** Stricter than the database guard: discovery links never count as an independent publisher. */
 export function newsroomHasPublisherDiversity(sources: ResearchPacketSource[]): boolean {
   const unique = uniquePacketSources(sources);
   if (unique.some((source) => source.isPrimarySource)) return true;
   const families = new Set<string>();
-  const originalReports = new Set<string>();
+  const originalReports: string[] = [];
   for (const source of unique) {
     const family = newsroomIndependentPublisherFamilyFromUrl(source.url);
     if (!family) continue;
     const originalReport = newsroomOriginalReportKey(source.title);
     // For example, Texas Standard republishes KUT / Texas Newsroom's same
     // long-headline story: two domains, but only ONE independent report.
-    if (originalReport && originalReports.has(originalReport)) continue;
-    if (originalReport) originalReports.add(originalReport);
+    if (originalReport && originalReports.some((previous) =>
+      newsroomLikelySameOriginalReport(previous, originalReport))) continue;
+    if (originalReport) originalReports.push(originalReport);
     families.add(family);
   }
   return families.size >= 2;

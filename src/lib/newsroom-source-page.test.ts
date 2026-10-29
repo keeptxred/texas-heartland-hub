@@ -243,7 +243,8 @@ describe("newsroom source-page enrichment", () => {
     expect(packetBuilder).toContain("fetchReadableNewsroomSource(feed.link)");
     expect(publisher).toContain("newsroomHasPublisherDiversity(sources)");
     expect(publisher).toContain("researchPacketEvidenceChars(packetRow.packet_json)");
-    expect(publisher).toContain("if (!preparedImage.ok || !preparedImage.url || !preparedImage.imageValidationNote)");
+    expect(publisher).toContain("const imageReady = Boolean(preparedImage.ok");
+    expect(publisher).toContain("newsroom_text_first_verified");
   });
 
 });

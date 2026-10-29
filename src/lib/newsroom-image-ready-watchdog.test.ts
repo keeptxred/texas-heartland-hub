@@ -3,26 +3,27 @@ import { describe, expect, it } from "vitest";
 
 const guard = readFileSync("src/routes/api/public/hooks/publishing-safety-net.ts", "utf8");
 
-describe("KTR newsroom watchdog ignores historical unillustrated backfills", () => {
-  it("counts only actually image-ready publications for both live and normal-news health", () => {
-    const latestQuery = guard.split('const [latestAnyResult, latestAutomationResult, openAlertResult, publishedReserveResult] =')[1]
-      ?.split('const readError =')[0] ?? "";
-    expect(latestQuery).toContain('.from("daily_articles")');
-    expect(latestQuery.match(/\.eq\("image_generation_status", "ready"\)/g)).toHaveLength(2);
-    expect(latestQuery.match(/\.not\("featured_image_url", "is", null\)/g)).toHaveLength(2);
-    expect(latestQuery.match(/\.neq\("featured_image_url", ""\)/g)).toHaveLength(2);
-    expect(latestQuery).toContain('source_name.neq.');
-    expect(latestQuery).toContain('.order("published_at", { ascending: false })');
+describe("KTR newsroom watchdog distinguishes verified text-first news from unverified backfills", () => {
+  it("accepts images only when approved and text-only news only with its verified publisher marker", () => {
+    expect(guard).toContain('row.image_generation_status === "ready" && Boolean(row.featured_image_url?.trim())');
+    expect(guard).toContain('row.kind === "news" && row.author === "Keep TX Red Newsroom"');
+    expect(guard).toContain('"newsroom_text_first_verified"');
+    expect(guard).toContain('const qualified = ((latestArticlesResult.data ?? []) as LatestRow[]).filter(qualifiedWebsitePublication)');
+    expect(guard).toContain('.limit(150)');
+    // Pending-image historical imports have neither approved image nor new verified-publisher flag.
+    expect(guard).not.toContain('.eq("image_generation_status", "pending")');
   });
 
-  it("does not resolve normal-news stalls from an unready backfill", () => {
+  it("tracks the last normal non-reserve article separately from all website publications", () => {
+    expect(guard).toContain("const latestAny = qualified[0] ?? null");
+    expect(guard).toContain("article.source_name !== RESERVE_SOURCE");
     expect(guard).toContain("const automationStalled = isOlderThan24Hours(latestAutomation?.published_at ?? null)");
     expect(guard).toContain("const publicationGap = isOlderThan24Hours(latestAny?.published_at ?? null)");
     expect(guard).toContain("if (!automationStalled && openAlert)");
     expect(guard).toContain("if (automationStalled && publicationGap)");
+    // Emergency reserve remains strictly image-validated.
     expect(guard).toContain("await prepareFeaturedImageForUnpublishedNewsroomArticle");
     expect(guard).toContain('image_generation_status: "ready"');
     expect(guard).toContain("reserve_newsroom_image_publication_hold:");
-    expect(guard).toContain("reserve_article_publications");
   });
 });

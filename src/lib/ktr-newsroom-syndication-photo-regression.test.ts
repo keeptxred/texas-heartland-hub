@@ -24,12 +24,13 @@ describe("KTR newsroom independent original-report and symbolic-email image safe
     expect(code).toContain("if (!verdict.matches) throw new Error");
   });
 
-  it("does not weaken the post-validation hold or allow a saved draft to publish without an image", () => {
+  it("keeps image-independent website publication separate from image-dependent distribution", () => {
     const server = readFileSync("src/routes/api/public/hooks/generate-newsroom.ts", "utf8");
     expect(server).toContain("newsroomHasPublisherDiversity(sources)");
     expect(server).toContain("await prepareFeaturedImageForUnpublishedNewsroomArticle");
-    expect(server).toContain("if (!preparedImage.ok || !preparedImage.url || !preparedImage.imageValidationNote)");
-    expect(server).toContain("newsroom_image_publication_hold:");
-    expect(server).toContain('image_generation_status: "ready"');
+    expect(server).toContain("image_generation_status: \"ready\"");
+    expect(server).toContain("image_generation_status: \"failed\"");
+    expect(server).toContain("newsroom_text_first_verified");
+    expect(server).toContain("webOnly: !imageReady");
   });
 });

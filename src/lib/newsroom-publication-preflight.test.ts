@@ -4,6 +4,7 @@ import {
   newsroomHasPublisherDiversity,
   newsroomIndependentPublisherFamilyFromUrl,
   newsroomLeadSourceUrl,
+  newsroomLikelySameOriginalReport,
   newsroomSourceFamilyFromUrl,
   uniquePacketSources,
 } from "@/lib/newsroom-publication-preflight";
@@ -42,6 +43,24 @@ describe("newsroom publication preflight", () => {
       ...samePublisher,
       source("https://texasstandard.org/independent-report"),
     ])).toBe(true);
+  });
+
+  it("does not count near-verbatim syndicated reports as independent when headlines lose small words", () => {
+    const a = source("https://www.kwtx.com/texas-early-voting");
+    const b = source("https://www.sacurrent.com/texas-early-voting");
+    a.title = "Texas early voting rate is slightly behind 2018, when Beto O’Rourke challenged Ted Cruz";
+    b.title = "Texas early voting rate slightly behind 2018, when Beto O’Rourke challenged Ted Cruz";
+    expect(newsroomLikelySameOriginalReport(a.title, b.title)).toBe(true);
+    expect(newsroomHasPublisherDiversity([a, b])).toBe(false);
+    expect(newsroomHasPublisherDiversity([
+      a, b,
+      { ...source("https://www.texastribune.org/independent-voter-interview"), title: "New election turnout data from county voter records raises regional analysis" },
+    ])).toBe(true);
+    expect(newsroomLikelySameOriginalReport("Local election news", "Local election news")).toBe(false);
+    expect(newsroomLikelySameOriginalReport(
+      "Texas elections officials confirm detailed Bexar County first day turnout and procedural reports",
+      "State water board issues final reservoir permit after monthlong public hearing"
+    )).toBe(false);
   });
 
   it("does not treat a KUT story republished by Texas Standard as a second original report", () => {
