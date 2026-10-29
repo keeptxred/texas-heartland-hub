@@ -6,6 +6,7 @@
  */
 import { parseTloSession, identityFromTloHistoryUrl } from './session-identity.mjs';
 import { execFile } from 'node:child_process';
+import { appendFileSync } from 'node:fs';
 import { promisify } from 'node:util';
 
 // Version 3 repairs false attribution from parsing the FTP grouping folder instead of the XML basename.
@@ -144,6 +145,7 @@ async function markChecked(record, subjectCount) {
   );
 }
 
+let erroredSessions = 0;
 for (const session of sessions) {
   const bills = await loadBills(session);
   const sourceRecords = await loadSourceRecords(session);
@@ -199,9 +201,17 @@ for (const session of sessions) {
     }
   }
 
+  const remaining = Math.max(0, pending.length - totals.checked) + totals.missingBill;
+  const state = totals.errors ? 'FAILED' : remaining ? 'PARTIAL (checkpointed)' : 'COMPLETE';
   console.log(
-    `${session}: subject import stopped — checked ${totals.checked}/${pending.length}, ` +
+    `${session}: ${state} subject import — checked ${totals.checked}/${pending.length}, ` +
     `relationships ${totals.linked}, parsed subjects ${totals.subjects}, ` +
-    `missing bills ${totals.missingBill}, errors ${totals.errors}.`,
+    `missing bills ${totals.missingBill}, remaining/retry ${remaining}, errors ${totals.errors}.`,
   );
+  if (process.env.GITHUB_STEP_SUMMARY) {
+    appendFileSync(process.env.GITHUB_STEP_SUMMARY,
+      `\n### Official TLO subjects: ${session}\n- Result: **${state}**\n- Records checked: ${totals.checked}/${pending.length}\n- Linked: ${totals.linked}\n- Missing bill records for retry: ${totals.missingBill}\n- Still pending/retry: ${remaining}\n- Errors: ${totals.errors}\n`);
+  }
+  if (totals.errors) erroredSessions++;
 }
+if (erroredSessions) process.exitCode = 1;
