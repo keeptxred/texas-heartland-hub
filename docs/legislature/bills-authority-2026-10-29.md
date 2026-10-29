@@ -29,3 +29,11 @@
 - Do not call a concurrent/simple/joint resolution a statute, and do not conflate legislative passage with voter approval.
 - Do not mark a run successful if it was interrupted or completed with warnings.
 - Avoid heavy site-wide or bulk reprocessing on each ordinary content update; incremental hash checkpoints remain in place.
+
+## Confirmed subject-attribution defect and repair (same date)
+- Audited `bill_subject_relationships`: 1,972 approved subject links were all attached to only six HB records (HB 1, 100, 200, 300, 500, 700). Every link had source `official-tlo-subject-record-v1` and `is_manual=false`. The source filenames showed why: e.g. `.../HB00001_HB00099/HB%2010.xml` was incorrectly parsed as HB **1**, not HB **10**.
+- **Production DML completed:** removed the 1,972 untrustworthy automated links (no manual links present) to prevent fabricated topical associations. Public subject-link coverage is therefore temporarily zero until the corrected backfill runs. Never report subject pages as complete until independently verified.
+- `scripts/legislature/session-identity.mjs` now parses official XML basename only and splits `89R`, `891`, `892` into the correct Legislature/session ID. Both history and subject importers consume it; regression fixtures cover folder-range corruption and called sessions.
+- Subject importer `IMPORT_VERSION=3` deliberately invalidates version-2 checkpoints and repopulates correct subject links over subsequent GitHub runs. Source records missing a corresponding bill are retried rather than incorrectly marked completed.
+- Main bill sync now retains subject checkpoint metadata for unchanged file hashes; changed source files still invalidate prior metadata and are reprocessed. This avoids endlessly reimporting unchanged subjects.
+- Monitor recovery: after merge/deployment, inspect `select count(*), count(distinct bill_id) from bill_subject_relationships where source='official-tlo-subject-record-v1';` and compare known source filenames to linked bill identity. Do not re-add prior 1,972 links wholesale or reset their source identity.
