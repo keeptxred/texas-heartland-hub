@@ -37,4 +37,11 @@ WHERE article.slug = rejected.slug
   AND article.image_generation_status = 'failed'
   AND article.image_validation_note LIKE 'stored-cloudflare-vision-v5 rejected:%'
   AND article.published_at IS NOT NULL
-  AND article.kind = 'news';
+  AND article.kind = 'news'
+  -- Redundant to the exact slug+candidate join above, but deliberately pin
+  -- the affected articles directly in WHERE for the repository migration
+  -- safety contract as well as for human reviewers and DB execution.
+  AND (
+    article.slug = '2026-10-14-house-republicans-pull-3-million-reserved-for-ads-against-henry-cuellar'
+    OR article.slug = '2026-10-14-texas-penalties-for-data-center-violations-are-light-despite-tough-talk-from-abb'
+  );
