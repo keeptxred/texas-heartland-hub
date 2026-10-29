@@ -22,128 +22,178 @@ export type SearchRecoveryAuthorityGuide = {
 export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuthorityGuide> = {
   "texas-lobbying-2026": {
     "slug": "texas-lobbying-2026",
-    "title": "Who Lobbies Texas Government? 2026 Lobbyists, Clients and Spending Explained",
-    "dek": "A source-first guide to Texas Ethics Commission lobbying records: registrations, clients, compensation ranges, activity reports, expenditures, subject matter and the limits of what the public data can prove.",
-    "eyebrow": "Texas public-record research guide",
-    "updated": "2026-09-28",
+    "title": "Texas Lobbyists in 2026: Clients, Disclosures, Compensation and Spending",
+    "dek": "Search 2026 Texas lobbying clients and registrants, decode compensation ranges, inspect activity and expenditure reports, and follow a reproducible trail to official Texas Ethics Commission records.",
+    "eyebrow": "2026 Texas lobbying records and accountability",
+    "updated": "2026-10-29",
     "keyTakeaways": [
-      "The Texas Ethics Commission maintains searchable lobby registration and activity-report records and publishes current-year lists and downloadable data.",
-      "Lobby compensation is commonly disclosed through statutory reporting ranges rather than as a precise contract amount.",
-      "Activity and expenditure records add context, but a filing does not establish that a lobbyist caused a vote, agency decision or policy outcome.",
-      "Reliable analysis starts with an official registration and independently verifies any connected bill, rule or government action in the system that controls that subject.",
-      "KeepTXRed treats lobbying disclosures as public-record data, not as evidence of wrongdoing by themselves."
+      "TEC's 2026 registration lists identify clients and individual lobbyists; the full downloadable client- and lobbyist-sorted files are linked below.",
+      "2026 compensation code LOBBCOMP02 means $22,890–$57,219.99, not a known exact payment. Prospective, earned and paid amounts must not be conflated.",
+      "TEC's official expenditure-by-category report is quarterly, and a partial 2026 figure must never be presented as annual spending.",
+      "Rules effective June 7, 2026 set lobbying registration triggers at more than $650 in quarterly covered expenditures or more than $1,200 in quarterly covered compensation/reimbursement, subject to statutory and regulatory exclusions and exceptions.",
+      "Neither a reported client relationship nor a lobbyist registration proves influence over a particular vote, bill or state decision."
     ],
     "snapshot": [
       {
-        "label": "Registration archive",
-        "value": "1998–present",
-        "note": "TEC says lobby registrations have been collected since 1998."
+        "label": "2026 records",
+        "value": "Client + lobbyist lists",
+        "note": "TEC publishes downloadable 2026 lists, with client-sorted and lobbyist-sorted views; records can change."
       },
       {
-        "label": "Electronic activity data",
-        "value": "2000–present",
-        "note": "TEC says searchable electronic activity information begins in 2000."
+        "label": "2026 compensation code 02",
+        "value": "$22,890–$57,219.99",
+        "note": "A disclosed client compensation range, not a verified payment or expenditure total."
       },
       {
-        "label": "Current-year lists",
-        "value": "Updated daily",
-        "note": "TEC says current registration and activity lists are updated daily."
+        "label": "2025 reported expenditures",
+        "value": "$18,992,372.55",
+        "note": "TEC expenditure-by-category table's 2025 row in the source report consulted; separate from lobbyist pay."
       }
     ],
     "sections": [
       {
-        "heading": "What the Texas lobbying database actually contains",
+        "heading": "Find the lobbyist or client in 2026 public records",
         "paragraphs": [
-          "Texas requires covered lobbyists to register and file activity information with the Texas Ethics Commission. The public tools allow searches of registrations and activity reports and provide lobby expenditure information, client-compensation codes, subject-matter lists and downloadable data. That gives readers a path from a person or organization name to a primary filing rather than to a secondary summary.",
-          "The records answer different questions. A registration identifies the registrant and disclosed clients. Activity reports document required filings for a period. Expenditure records document reportable spending. Subject-matter classifications indicate broad areas of interest. None of those fields, standing alone, reveals every private communication or proves why a public official acted."
+          "Start with the searchable 2026 registration source rather than secondary rankings. TEC provides the client-sorted registration list as both PDF and Excel, plus a separate lobbyist-sorted version. The PDF shows registrant IDs, associated client names, reporting status, compensation codes and reported relationship dates. Search the name in the source document; preserve the filer ID and spelling when citing a record. The same client can appear with several registrants, and names can vary in punctuation or legal-entity form.",
+          "The official search interface also allows queries by lobbyist name, client name, filer ID, subject matter, location and compensation. A list describes what was disclosed, including records that can be amended or end during the year; it is not a guaranteed real-time roster of everyone actively lobbying today.",
+          "Direct records: 2026 client-sorted PDF — https://www.ethics.state.tx.us/data/search/lobby/2026/2026LobbyGroupByClient.pdf ; 2026 client-sorted Excel — https://www.ethics.state.tx.us/data/search/lobby/2026/2026LobbyGroupByClient.xlsx ; official searchable registrations — https://www.ethics.state.tx.us/search/lobby/LobbySimpleSearch.php ."
         ]
       },
       {
-        "heading": "How to trace a client through the official records",
+        "heading": "Real 2026 client–lobbyist disclosure examples",
         "paragraphs": [
-          "A useful starting point is the current registration list sorted by client name. It can show which registered lobbyists identify a particular business, association, nonprofit or other client. The lobbyist-sorted view shows the clients attached to a registrant, while subject-matter lists can narrow a broad research question before individual filings are opened.",
-          "The next step is to verify any bill, agency rule, budget item or appointment independently. Legislation belongs in Texas Legislature Online, agency rules in the Texas Register and Texas Administrative Code, and campaign contributions in the separate campaign-finance system. Keeping the systems separate prevents a registration from being misrepresented as a legislative action."
+          "The TEC's 2026 client-sorted PDF lists 1A Smart Start LLC with lobbyist Debra Coffey (filer ID 65598), category PAID and code LOBBCOMP01; the displayed disclosure period begins January 1, 2026. It also lists A LifeSafer of Texas Interlock, Inc. with Richard C. Cantella (filer ID 54009), category PROSPECT and code LOBBCOMP03, with a period beginning February 16, 2026. Another listed example is 1AU Technologies, Inc. with Ruth R. Hughs (filer ID 70972), PROSPECT, code LOBBCOMP04, starting May 5, 2026. Those entries are illustrations, not a ranking or an exhaustive directory.",
+          "These examples are transcribed from the TEC's 2026 client-sorted report checked for this page on October 29, 2026; use the linked source for any subsequent additions, terminations or amendments. PROSPECT indicates a prospective compensation category in the published list and must not be described as cash already received. No listed relationship, on its own, implies wrongdoing, policy control or a connection to a specific bill."
         ]
       },
       {
-        "heading": "Compensation codes are ranges, not exact contract prices",
+        "heading": "2026 registration thresholds and important exceptions",
         "paragraphs": [
-          "Texas lobbying disclosures use compensation or reimbursement codes. Those codes place compensation within a disclosed range, but they should not be converted into a fabricated exact payment. When the source gives a range, KTR should preserve the range and explain that the filing does not disclose a single precise amount.",
-          "Aggregations need the same caution. Adding the high end of every range produces a maximum-style estimate; adding the low end produces a minimum-style estimate. If KTR publishes either calculation, it should label the method and retain the filer, client, year and source record so a reader can reproduce it."
+          "TEC adopted amended lobbying rules effective June 7, 2026. Rule 34.41 describes a registration trigger for covered expenditures of more than $650 in a calendar quarter to communicate directly with covered executive- or legislative-branch officials to influence legislation or administrative action. Rule 34.43 specifies more than $1,200 in quarterly covered compensation or reimbursement for qualifying lobbying communications. These are triggers with conditions, not a rule that every person advocating for an issue must register.",
+          "The 40-hour compensation/reimbursement exception, exclusions for the registrant's own travel, food, lodging and membership dues, government-official exceptions, allocation rules and the nature of the communications matter. TEC's earlier 2026 registration instructions can reflect different thresholds because the rules changed during the year; this page dates the quoted thresholds to the June 7 effective rules rather than quietly mixing historical values. Other statutory requirements, including certain foreign-adversary lobbying provisions, can apply independently. For a compliance determination, consult the current statute, adopted rules and TEC directly."
         ]
       },
       {
-        "heading": "What activity and expenditure reports can show",
+        "heading": "Read the 2026 compensation codes correctly",
         "paragraphs": [
-          "Activity and expenditure records add timing and spending context. They can help identify patterns, compare reporting periods and direct readers to the underlying filing. They are particularly useful when paired with a clearly defined research question, such as which registered lobbyists listed a client during a legislative session.",
-          "They still do not establish causation. A reported expenditure is not a vote, a client relationship is not proof that the client wrote a bill, and a broad subject category is not proof of work on one specific measure. Any connection to legislation or rulemaking should be supported by an independent public record."
+          "The 2026 client-compensation schedule is adjusted for inflation. For example LOBBCOMP01 is less than $22,890; LOBBCOMP02 is $22,890–$57,219.99; LOBBCOMP03 is $57,220–$114,429.99; LOBBCOMP04 is $114,430–$228,869.99; and LOBBCOMP13 is $1,144,330 or more. LOBBCOMPEQZERO means zero and LOBBCOMPEXACTAMT refers to a separately disclosed exact amount. The complete code table is provided on this page below.",
+          "A compensation code is not a check, a campaign donation, the cost of meals or a payment to a politician. It reflects the applicable client's disclosure classification for a particular filing, and exact amounts cannot generally be calculated from the band. Don't multiply the number of clients by the upper bound to make a supposedly exact 'lobby spending' total. When a source uses an open-ended upper range, any purported maximum is especially misleading.",
+          "Reader warning: a key printed within one TEC 2026 registration PDF still shows the prior year's code-band amounts. For 2026 code interpretations, this guide uses the explicit 2026 table on TEC's lobby reports page, rather than the older legend embedded in that PDF."
         ]
       },
       {
-        "heading": "How KeepTXRed will use the lobbying data",
+        "heading": "What the official expenditure reports say about spending",
         "paragraphs": [
-          "The long-term KTR product should make the official data easier to navigate without replacing it. A lobbying profile can show the registrant, disclosed clients, compensation code, subject categories, filing period and direct official links. When a public document connects a client or registrant to a hearing, bill or rule, that connection can be added as a separately sourced fact.",
-          "This creates original utility without turning disclosure data into insinuation. Readers should be able to distinguish what the filer reported, what another government record independently shows and what KTR calculated. Calculated fields should state the formula and preserve the source information needed to check the work."
-        ],
-        "bullets": [
-          "Preserve filer names and identifiers exactly as reported.",
-          "Label compensation as a range when the source uses a range.",
-          "Keep lobbying and campaign-finance records as separate datasets.",
-          "Link legislative claims to Texas Legislature Online rather than inferring them from lobbying records.",
-          "Display a verification date because current-year filings can change."
+          "The TEC expenditure-by-category summary separates transportation, food and beverage, entertainment, gifts, awards, events and mass-media spending. TEC says its expenditure summary reports update quarterly. These spending disclosures do not measure all compensation paid to lobbying firms or all political contributions. The by-government-recipient version excludes mass-media spending because it cannot be assigned to a recipient, so do not compare the two reports as identical totals.",
+          "A concrete historical benchmark: the TEC expenditure-by-category PDF consulted for this review lists $18,992,372.55 in the 2025 total row. Its 2026 row shows $135,604.35, but the second page is stamped March 1, 2026: that amount is an early-year partial snapshot, NOT a complete 2026 annual total or the latest October total. Before quoting a 2026 running total in a headline, verify the PDF publication date and reporting coverage again. Both numbers are expenditure-category reports, not registration compensation.",
+          "Direct source: expenditure-by-category PDF — https://www.ethics.state.tx.us/data/search/lobby/LobbyExpendituresByCategory.pdf . Report printed/source date must be recorded whenever a figure is reused."
+        ]
+      },
+      {
+        "heading": "Activity reports, reporting deadlines and public-record limits",
+        "paragraphs": [
+          "Registration forms identify reported relationships; activity reports capture subsequent reportable activity and expenditures. TEC publishes 2026 lobby activity reports by registrant with links to underlying PDFs and a downloadable activity database. TEC says current-year registration and activity lists update daily, while expenditure summary tables update quarterly. A daily file availability claim should not be confused with a promise that every underlying filing is complete or instantly reviewed.",
+          "For monthly lobby filers, the 2026 TEC filing schedule generally places a report on the tenth day of the following month, subject to weekend/holiday adjustments. For example, the November 10, 2026 monthly activity deadline covers October 2026. Some qualifying lobbyists use a modified annual filing schedule. Verify which schedule and period apply to the registrant rather than assuming every listed lobbyist files every month.",
+          "TEC cautions that its registration search does not furnish the physical registration PDF; those copies may need an open-records request. When inspecting activity reports, keep the reported period and corrections alongside the filer ID and exact official report link."
+        ]
+      },
+      {
+        "heading": "Research a bill, agency rule or campaign contribution separately",
+        "paragraphs": [
+          "To investigate a possible connection to state policy, start with a documented TEC client–registrant relationship, identify the period covered and subject matter, then independently review a bill's committee records and votes at Texas Legislature Online or agency rules in the Texas Register. For lobbying expenditure claims, use the activity filings and official quarterly category totals, not client compensation bands. For donations, use the separate campaign-finance filing system.",
+          "Subject-matter tags show broad disclosed areas of lobbying interest and cannot, on their own, establish advocacy for or against a particular bill. A name match is not proof of direct contact, a promised result, a vote being bought or illicit activity. Report dates, amendments, source URLs and attribution should accompany any claim."
         ]
       }
     ],
     "faq": [
       {
-        "q": "Does a Texas lobbying registration show exactly how much a client paid?",
-        "a": "Not necessarily. Disclosures can use compensation or reimbursement codes representing ranges, so summaries should preserve the disclosed range unless an exact amount is independently documented."
+        "q": "Where can I look up a 2026 Texas lobbyist's clients?",
+        "a": "Use the TEC 2026 lobbyist-sorted registration list or its name/ID search. The official client-sorted PDF and Excel files are linked on this page. Match on filer ID where possible and check later amendments."
       },
       {
-        "q": "Can the database prove a lobbyist changed a legislator’s vote?",
-        "a": "No. Registration, activity and expenditure records document required disclosures; they do not by themselves establish causation or the reason for a vote."
+        "q": "What does LOBBCOMP02 mean in 2026?",
+        "a": "The official TEC 2026 schedule defines LOBBCOMP02 as $22,890 through $57,219.99. It is a reporting range for client compensation, not an exact transfer or a lobbying expenditure amount."
       },
       {
-        "q": "How current are the 2026 lobby lists?",
-        "a": "The Texas Ethics Commission states that current-year registration and activity lists are updated daily. A KTR page should still show its own verification date."
+        "q": "How much did Texas lobbyists spend in 2026?",
+        "a": "TEC's expenditure-by-category PDF includes an early 2026 figure of $135,604.35 on a table stamped March 1, 2026. That is a dated partial snapshot, not a verified full-year 2026 total. Check the quarterly PDF for a newer figure before using it."
       },
       {
-        "q": "How should I research a company or group?",
-        "a": "Start with the TEC client-sorted registration list, open the relevant filings, and independently verify any related bills, rules or government actions in the appropriate official system."
+        "q": "Who must register as a Texas lobbyist in 2026?",
+        "a": "Under amended TEC rules effective June 7, 2026, more than $650 in qualifying quarterly expenditures or more than $1,200 in qualifying quarterly compensation/reimbursement can trigger registration, subject to the statute, exceptions, and other independently applicable requirements."
+      },
+      {
+        "q": "Does registration mean the client influenced a specific bill?",
+        "a": "No. A client relationship and broad disclosed subject matter do not establish which legislation was lobbied on, what a legislator heard or why an agency or elected official acted. Independently check primary legislative or agency records."
+      },
+      {
+        "q": "Are lobbying compensation and campaign contributions the same?",
+        "a": "No. Compensation is reported for lobbying services; activity expenditures concern reportable lobbying spending; campaign donations are a separate disclosure category and must be researched through campaign-finance records."
       }
     ],
     "sources": [
       {
-        "name": "Texas Ethics Commission — Search Lobby Registrations and Activity Reports",
+        "name": "TEC — 2026 registration lists by client and lobbyist",
+        "url": "https://www.ethics.state.tx.us/search/lobby/loblistsREG2026-2030.php",
+        "note": "Official 2026 PDF/Excel lists with clients, registrants, IDs, compensation codes and subject lists."
+      },
+      {
+        "name": "TEC — 2026 registrants sorted by client (PDF)",
+        "url": "https://www.ethics.state.tx.us/data/search/lobby/2026/2026LobbyGroupByClient.pdf",
+        "note": "Primary source for the specific example relationships reported in this guide; inspect the current file for changes."
+      },
+      {
+        "name": "TEC — 2026 registrants sorted by client (Excel)",
+        "url": "https://www.ethics.state.tx.us/data/search/lobby/2026/2026LobbyGroupByClient.xlsx",
+        "note": "Downloadable full client-sorted registry for independent filtering and source checks."
+      },
+      {
+        "name": "TEC — searchable lobbying registration database",
+        "url": "https://www.ethics.state.tx.us/search/lobby/LobbySimpleSearch.php",
+        "note": "Official lookup by person, client, filer ID, location, subject and compensation."
+      },
+      {
+        "name": "TEC — 2026 activities report list",
+        "url": "https://www.ethics.state.tx.us/search/lobby/2026/LAReportsByYear2026.html",
+        "note": "Current-year registrant activity reports and associated filed PDFs."
+      },
+      {
+        "name": "TEC — 2026 compensation code table",
         "url": "https://www.ethics.state.tx.us/search/lobby/",
-        "note": "Official search portal, downloadable data and reporting resources."
+        "note": "2026 client compensation ranges and differences among quarterly and daily TEC data."
       },
       {
-        "name": "Texas Ethics Commission — 2026 Lobby Registration Lists",
-        "url": "https://webservices.ethics.state.tx.us/search/lobby/loblistsREG2026-2030.php",
-        "note": "Current-year lists sorted by client, lobbyist and subject matter."
+        "name": "TEC — expenditure by category (PDF)",
+        "url": "https://www.ethics.state.tx.us/data/search/lobby/LobbyExpendituresByCategory.pdf",
+        "note": "Quarterly expenditure-category summary; read year and source PDF's print date before using totals."
       },
       {
-        "name": "Texas Government Code Chapter 305 — Registration of Lobbyists",
+        "name": "TEC — 2026 monthly and annual filing schedule",
+        "url": "https://www.ethics.state.tx.us/data/filinginfo/schedules/s26lobby.pdf",
+        "note": "Due dates and periods for monthly and qualifying annual activity filers."
+      },
+      {
+        "name": "TEC — lobbying rules adopted May 2026, effective June 7",
+        "url": "https://www.ethics.state.tx.us/rules/adopted/2026-2030/adopted_May_2026.php",
+        "note": "Rules 34.41 and 34.43, including the $650/$1,200 quarterly thresholds and exceptions."
+      },
+      {
+        "name": "Texas Government Code Chapter 305",
         "url": "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.305.htm",
-        "note": "Statutory framework for Texas lobby registration and reporting."
+        "note": "Texas statutory framework for registration, reporting and exemptions."
       }
     ],
     "related": [
       {
-        "label": "Texas bill lookup",
-        "href": "/bills"
-      },
-      {
-        "label": "Texas Legislature guide",
-        "href": "/texas-legislature"
-      },
-      {
         "label": "Texas government agencies",
         "href": "/texas-government/agencies"
+      },
+      {
+        "label": "2026 campaign finance research",
+        "href": "/texas-government/reference/texas-campaign-finance-2026"
       }
     ],
-    "methodology": "This guide separates filer-reported lobbying disclosures from legislative or agency actions. KeepTXRed uses Texas Ethics Commission records for registration, client, compensation-code, activity and expenditure claims and uses the official legislative or agency system separately for a bill, rule or government action."
+    "methodology": "Verified October 29, 2026 against primary TEC pages, the 2026 registration list and the official expenditure-category PDF. Filer examples are illustrations, not a comprehensive or ranked database. Code bands reflect TEC's explicit 2026 schedule even if a PDF footer/legend still shows old figures. March 1, 2026 expenditure figures are explicitly described as partial and separate from client compensation. June 7, 2026 registration thresholds are attributed to the adopted rule amendments and may differ from instructions issued earlier in the year. Recheck mutable records and official rules before quoting figures. No filing alone establishes wrongdoing, influence or legislative causation."
   },
   "texas-campaign-finance-2026": {
     "slug": "texas-campaign-finance-2026",
