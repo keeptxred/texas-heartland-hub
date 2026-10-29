@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { CitationTrustPanel } from "@/components/authority/CitationTrustPanel";
+import { Lobbying2026Panel } from "@/components/lobbying-2026-panel";
 import type { SearchRecoveryAuthorityGuide } from "@/data/search-recovery-authority";
 import { buildSeo, SITE_URL } from "@/lib/seo";
 
@@ -72,24 +73,27 @@ export function searchRecoveryAuthorityHead(guide: SearchRecoveryAuthorityGuide)
 }
 
 export function SearchRecoveryAuthorityPage({ guide }: { guide: SearchRecoveryAuthorityGuide }) {
+  const verifiedDate = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" })
+    .format(new Date(`${guide.updated}T00:00:00Z`));
+  const relatedLinks = guide.related.filter((item) => !["/bills", "/texas-legislature", "/laws"].includes(item.href));
   return (
     <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
       <nav className="text-sm text-muted-foreground" aria-label="Breadcrumb">
-        <Link to="/">Home</Link> / <Link to="/texas-government">Texas Government</Link> / Reference
+        <Link to="/">Home</Link> / <Link to="/texas-government">Texas Government</Link> / <span aria-current="page">{guide.slug === "texas-lobbying-2026" ? "2026 lobbying records" : guide.title}</span>
       </nav>
 
       <header className="mt-6 border-b pb-8">
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">{guide.eyebrow}</p>
         <h1 className="mt-3 max-w-4xl text-4xl font-bold tracking-tight sm:text-5xl">{guide.title}</h1>
         <p className="mt-5 max-w-4xl text-lg leading-8 text-muted-foreground">{guide.dek}</p>
-        <p className="mt-4 text-sm text-muted-foreground">Last verified: <time dateTime={guide.updated}>September 28, 2026</time></p>
+        <p className="mt-4 text-sm text-muted-foreground">Last verified: <time dateTime={guide.updated}>{verifiedDate}</time></p>
       </header>
 
       <section className="mt-8 rounded-2xl border border-primary/20 bg-primary/[0.04] p-6 md:p-8" aria-labelledby="key-findings">
         <h2 id="key-findings" className="text-2xl font-bold">Key points</h2>
         <ul className="mt-4 grid gap-3 md:grid-cols-2">
           {guide.keyTakeaways.map((item) => (
-            <li key={item} className="rounded-lg border bg-card p-4 text-sm leading-6">• {item}</li>
+            <li key={item} className="rounded-lg border bg-card p-4 text-sm leading-6">{item}</li>
           ))}
         </ul>
       </section>
@@ -108,6 +112,8 @@ export function SearchRecoveryAuthorityPage({ guide }: { guide: SearchRecoveryAu
           </div>
         </section>
       ) : null}
+
+      {guide.slug === "texas-lobbying-2026" ? <Lobbying2026Panel /> : null}
 
       <div className="mt-10 space-y-10">
         {guide.sections.map((section) => (
@@ -143,7 +149,7 @@ export function SearchRecoveryAuthorityPage({ guide }: { guide: SearchRecoveryAu
         className="mt-12"
         sources={guide.sources}
         methodology={guide.methodology}
-        lastVerified="September 28, 2026"
+        lastVerified={verifiedDate}
         title="Primary sources and methodology"
       />
 
@@ -154,7 +160,7 @@ export function SearchRecoveryAuthorityPage({ guide }: { guide: SearchRecoveryAu
           <Link to="/bills" search={EMPTY_BILLS_SEARCH} className="rounded-md border bg-card px-4 py-2 text-sm font-semibold text-primary hover:border-primary">Texas bill search →</Link>
           <Link to="/texas-legislature" className="rounded-md border bg-card px-4 py-2 text-sm font-semibold text-primary hover:border-primary">Texas Legislature →</Link>
           <Link to="/laws" className="rounded-md border bg-card px-4 py-2 text-sm font-semibold text-primary hover:border-primary">Texas laws →</Link>
-          {guide.related.map((item) => (
+          {relatedLinks.map((item) => (
             <a key={item.href} href={item.href} className="rounded-md border bg-card px-4 py-2 text-sm font-semibold text-primary hover:border-primary">{item.label} →</a>
           ))}
         </div>
