@@ -447,11 +447,11 @@ function legislativeRepresentative(chamber: "house" | "senate") {
 export const FORMER_TEXAS_HOUSE_MEMBERS: Rep[] = [
   {
     name: "Gary VanDeaver", office: "Former Texas House representative", party: "R",
-    district: "House District 1", website: "https://house.texas.gov/members/1", status: "former",
+    district: "House District 1", website: "https://house.texas.gov/members", status: "former",
   },
   {
     name: "Nate Schatzline", office: "Former Texas House representative", party: "R",
-    district: "House District 93", website: "https://house.texas.gov/members/93", status: "former",
+    district: "House District 93", website: "https://house.texas.gov/members", status: "former",
   },
 ];
 
