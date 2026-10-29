@@ -13,6 +13,7 @@ import {
   representativeSlug,
   TEXAS_ROSTER_REVIEWED_AT,
   type Rep,
+  verifiedOfficialPortraitUrl,
 } from "@/data/representatives";
 
 const ALL_REPRESENTATIVES = [
@@ -77,12 +78,13 @@ export const Route = createFileRoute("/representatives")({
 });
 
 function RepCard({ rep }: { rep: Rep }) {
+  const portrait = verifiedOfficialPortraitUrl(rep.imageUrl);
   return (
     <div className="border-2 border-foreground/10 bg-card p-5">
       <div className="flex items-start justify-between gap-2">
-        {rep.imageUrl ? (
+        {portrait ? (
           <img
-            src={rep.imageUrl}
+            src={portrait}
             alt=""
             loading="lazy"
             className="h-20 w-16 shrink-0 rounded object-cover"
