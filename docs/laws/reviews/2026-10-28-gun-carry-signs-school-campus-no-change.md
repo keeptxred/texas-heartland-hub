@@ -1,0 +1,21 @@
+# Texas handgun carry: notice, campus, school-zone exception and LTC continuity — bounded official review
+
+**Reviewed:** October 28–29, 2026. **Guide:** `src/data/law-topic-gun-carry-authority.ts` / `/laws/topic/gun-carry-law`. Public guide `updated` remains **2026-09-06**.
+
+## Verified authoritative claims
+
+1. [Texas Department of Public Safety: LTC benefits](https://www.dps.texas.gov/section/handgun-licensing/ltc-benefits) and [handgun licensing overview](https://www.dps.texas.gov/section/handgun-licensing/overview) confirm 2021 House Bill 1927 **did not repeal** the license program under Government Code Chapter 411, Subchapter H. DPS retains license applications, background checks, issuance and other services; LTC may matter for campus carry, some licensed-vs-unlicensed restrictions, reciprocity and qualified purchasing procedures. The guide correctly does not claim permitless carry means an LTC is worthless.
+2. [Penal Code Chapter 30, current Legislature text](https://tcss.legis.texas.gov/resources/PE/htm/PE.30.htm) contains **three different** relevant property-notice sections:
+   - **§30.05:** general trespass and specified firearm-exclusion notice; owner/authorized-agent oral notice and certain signs can matter. No blanket rule that a generic sign must satisfy the distinct licensed-carry sections.
+   - **§30.06(c)(3):** posted **licensed concealed-carry** exclusion language English and Spanish, contrasting colors and block letters **at least one inch** tall, conspicuous display; effective individual oral/document notice is separately recognized.
+   - **§30.07(c)(3):** analogous **licensed open-carry** exclusion, but posted notice must be clearly visible **at each entrance**. Individually given oral notice and statutory immediate departure rules can affect treatment.
+   - These are not interchangeable legal pathways. The guide accurately keeps carry manner and license status distinct, and warns not to ignore owner instructions merely because an LTC-specific sign may be defective.
+3. [Penal Code Chapter 46, §46.11(a)–(b), current official text](https://tcss.legis.texas.gov/resources/PE/htm/PE.46.htm): qualifying predicate Chapter 46 offenses receive a specified higher punishment classification for a proven **knowing** 300-foot school proximity, school function or UIL event; §46.03(a)(1) offenses are **excluded** from that enhancement. The guide does not incorrectly imply every handgun within 300 feet of any school automatically triggers it.
+4. [Government Code §411.2031, current Texas statutes](https://statutes.capitol.texas.gov/Docs/GV/htm/GV.411.htm) and [DPS campus-carry FAQ](https://www.dps.texas.gov/section/handgun-licensing/faq/laws-relate-carrying-handgun-faqs): qualifying concealed handguns on a covered university campus require an **LTC** and remain subject to valid campus restrictions; **open campus carry** is not legalized by general permitless carry. A private institution may have separate rulemaking authority under §411.2031(e), so the guide correctly avoids one universal permission.
+5. [DPS official October 2026 handgun licensing notice](https://www.dps.texas.gov/section/handgun-licensing) and [September 2026 announcement](https://www.dps.texas.gov/news/dps-launches-rsd-connect-changes-ltc-licensing-platform) confirm the **RSD Connect platform actually launched October 1, 2026**; the guide's new-service statement is accurate, and should not be misread as an amendment of Penal Code eligibility.
+
+## Finding and limits
+
+**No guide change required in this bounded set.** The existing framework, key rules, relevant FAQs, official sources and platform update match the current statutes and DPS. Do not modify its public date solely from this partial check. The user-facing guide is still not fully claim-certified.
+
+**Still unreviewed:** Every individual §46.03 prohibited place/exemption, §46.02 prohibited-person/age/enforcement circumstances, the full statutory notice defense and misdemeanor penalty structure, federal possession and school-zone provisions, current federal NICS exceptions, broader reciprocity jurisdictions, local litigation and other details. Use the current primary law, not this note, when deciding an actual situation. This is informational editorial research, not legal advice.
