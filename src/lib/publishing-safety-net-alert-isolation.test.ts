@@ -8,7 +8,7 @@ const source = readFileSync(
 
 describe("publishing safety-net alert isolation", () => {
   it("only reads open publishing-stall incidents, never unrelated coverage alerts", () => {
-    const query = source.split('const [latestAnyResult, latestAutomationResult, openAlertResult')[1]
+    const query = source.split('const [latestArticlesResult, openAlertResult, publishedReserveResult]')[1]
       ?.split('const readError =')[0] ?? "";
     expect(query).toContain('.from("publishing_alerts")');
     expect(query).toContain('.eq("status", "open")');
