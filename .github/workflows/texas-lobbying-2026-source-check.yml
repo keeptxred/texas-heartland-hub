@@ -1,0 +1,51 @@
+name: Verify Texas 2026 lobbying primary sources
+
+on:
+  schedule:
+    - cron: "23 14 * * 1"
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: texas-2026-lobbying-primary-sources
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+      - name: Verify official registration, compensation, rules and expenditure sources
+        run: node scripts/lobbying/verify-texas-2026-sources.mjs
+      - name: Publish changed source fingerprints through protected automation PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_TITLE: Refresh verified Texas lobbying primary-source fingerprints
+          PR_BODY: Automated weekly TEC source verification. Six official source files validated and SHA-256 changes recorded; no unverified editorial claims or fabricated spending values. Protected test gates remain required.
+          COMMIT_MESSAGE: "chore(lobbying): record changed TEC source fingerprints"
+        shell: bash
+        run: |
+          set -euo pipefail
+          target='src/data/lobbying-2026-source-status.json'
+          if git diff --quiet -- "$target"; then
+            echo 'Source documents unchanged; no new PR or build is necessary.'
+            exit 0
+          fi
+          unexpected=$(git status --short | awk '{print $2}' | grep -vxF "$target" || true)
+          if [[ -n "$unexpected" ]]; then
+            echo 'Unexpected file changes; refusing automation publish:' >&2
+            echo "$unexpected" >&2
+            exit 1
+          fi
+          bash scripts/ci/publish-automation-pr.sh texas-lobbying-2026 "$target"
