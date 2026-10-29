@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
 import {
   parseAuthority, inventoryAuthorityFiles, isRegularSessionReviewMonth,
-  reviewQueue, markdownReport, REVIEW_AGE_DAYS
+  reviewQueue, markdownReport, incompleteClaimAudits, REVIEW_AGE_DAYS
 } from "./review-authority-guides.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../../src/data");
@@ -95,4 +96,39 @@ test("a new date-specific election guide enters monthly review automatically", (
   const record = parseAuthority(sample, "new.ts");
   assert.deepEqual(record.calendarEvents, ["2026-11-03"]);
   assert.equal(reviewQueue([record], new Date("2026-11-20T14:00:00Z"))[0].reviewNeeded, true);
+});
+
+test("primary legal claim certification is independent of calendar re-review age", () => {
+  const q = String.fromCharCode(96);
+  const ledger = [
+    "## Guide inventory (full audit still outstanding)",
+    "| Guide | Module | Full paragraph/FAQ claim audit |",
+    "|---|---|---|",
+    "| One | " + q + "src/data/law-topic-one-authority.ts" + q + " | **Partial** — needs full claim review |",
+    "| Two | " + q + "src/data/law-topic-two-authority.ts" + q + " | **Fully reviewed** — all claims verified |",
+    "## Individually verified claim",
+  ].join("\n");
+  const records = [
+    {slug:"one",file:"law-topic-one-authority.ts",updated:"2026-10-25",calendarEvents:[]},
+    {slug:"two",file:"law-topic-two-authority.ts",updated:"2026-10-25",calendarEvents:[]},
+  ];
+  const incomplete = incompleteClaimAudits(ledger, records);
+  assert.deepEqual(incomplete.map(r=>r.slug), ["one"]);
+  const now = new Date("2026-10-29T14:00:00Z");
+  const report = markdownReport(reviewQueue(records, now), now, incomplete);
+  assert.equal(report.dueCount, 0);
+  assert.equal(report.claimPartialCount, 1);
+  assert.match(report.markdown, /Re-reviews due by date or election triggers: 0/);
+  assert.match(report.markdown, /missing complete primary-source claim certification: 1 of 2/);
+  assert.match(report.markdown, /one-authority\.ts/);
+  assert.doesNotMatch(report.markdown, /two-authority\.ts/);
+  assert.throws(() => incompleteClaimAudits(ledger,
+    [...records,{slug:"three",file:"law-topic-three-authority.ts"}]), /Missing legal claim certification/);
+});
+test("production ledger distinguishes 18 partial audits from passing freshness checks", () => {
+  const ledger = readFileSync(resolve(root, "../../docs/laws/claim-review-ledger.md"),"utf8");
+  const records = inventoryAuthorityFiles(root);
+  const partial = incompleteClaimAudits(ledger, records);
+  assert.equal(records.length,18);
+  assert.equal(partial.length,18);
 });
