@@ -41,7 +41,7 @@ jobs:
           EXPECTED_SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
           set -euo pipefail
-          api="https://api.github.com/repos/${REPOSITORY}/actions/workflows/deploy-cloudflare-after-verify.yml/runs?branch=main&event=workflow_dispatch&per_page=30"
+          # The protected auto-deploy fires from workflow_run; duplicate/manual\n          # runs fire from workflow_dispatch. Both prove production status.\n          # Do not filter to manual events: that silently hides the successful\n          # automatic deploy when a later duplicate manual run fails.\n          api="https://api.github.com/repos/${REPOSITORY}/actions/workflows/deploy-cloudflare-after-verify.yml/runs?branch=main&per_page=100"
 
           for attempt in $(seq 1 72); do
             runs_json="$(curl --retry 3 --retry-delay 2 --retry-all-errors \

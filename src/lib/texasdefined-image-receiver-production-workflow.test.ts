@@ -24,6 +24,16 @@ describe("TexasDefined generated-image receiver production smoke", () => {
     expect(workflow).toContain("deploy-cloudflare-after-verify.yml");
   });
 
+  it("accepts successful automatic workflow_run deploys despite failed later manual duplicates", () => {
+    // Production incident: 40935568994 succeeded via workflow_run, but the
+    // old event=workflow_dispatch filter saw only failed 40935681682.
+    expect(workflow).toContain("runs?branch=main&per_page=100");
+    expect(workflow).not.toContain("event=workflow_dispatch&per_page=");
+    expect(workflow).toContain('if run.get("head_sha") == expected]');
+    expect(workflow).toContain('and run.get("conclusion") == "success"');
+    expect(workflow).toContain("chosen = successful or running or (matching[0] if matching else None)");
+  });
+
   it("keeps the live receiver fail-closed security contract", () => {
     expect(workflow).toContain("publish-texasdefined-generated-image");
     expect(workflow).toContain('if [[ "$status" != "401" ]]');
