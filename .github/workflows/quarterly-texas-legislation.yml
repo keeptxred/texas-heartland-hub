@@ -17,7 +17,7 @@ permissions:
   contents: read
   actions: read
 concurrency:
-  group: texas-legislation-quarterly
+  group: texas-legislation-imports
   cancel-in-progress: false
 jobs:
   plan:
@@ -44,6 +44,9 @@ jobs:
       matrix:
         session: ${{ fromJSON(needs.plan.outputs.sessions) }}
     env:
+      # Fit within the 90-minute runner while allowing substantial checkpoint progress.
+      TLO_MAX_SECONDS: '2300'
+      TLO_SUBJECT_MAX_SECONDS: '1800'
       SUPABASE_URL: https://keeptxred.com/api/admin/legislation-sync-proxy
       SUPABASE_SERVICE_ROLE_KEY: ${{ github.token }}
     steps:
