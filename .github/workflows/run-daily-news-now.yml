@@ -213,6 +213,26 @@ jobs:
               echo "approved-election-draft-recovery HTTP ${newsroom_status}"
               cat /tmp/newsroom-publish.json 2>/dev/null || true
               echo
+              # Re-issued GitHub OIDC tokens do not guarantee every Worker
+              # request can fetch its signing keys. A 401 is NOT a legitimate
+              # editorial no-item; refresh and retry once, then fail closed.
+              # Authorization happens before any draft selection/DB mutation.
+              if [[ "$newsroom_status" == "401" ]]; then
+                echo 'ELECTION_DRAFT_AUTH_RETRY: refreshing signed OIDC once after 401'
+                refresh_newsroom_oidc
+                newsroom_status=$(curl -sS -X POST -o /tmp/newsroom-publish.json -w '%{http_code}' \
+                  --max-time 600 \
+                  -H 'accept: application/json' \
+                  -H "Authorization: Bearer ${oidc_token}" \
+                  "${AUTOMATION_ORIGIN%/}/api/public/hooks/generate-newsroom?mode=publish&recover_election=1" || echo 000)
+                echo "approved-election-draft-recovery-refreshed HTTP ${newsroom_status}"
+                cat /tmp/newsroom-publish.json 2>/dev/null || true
+                echo
+              fi
+              if [[ "$newsroom_status" == "401" ]]; then
+                echo 'ELECTION_DRAFT_AUTH_FAILED: refreshed OIDC was denied' >&2
+                exit 1
+              fi
               if grep -Eqi 'daily free allocation|used up.*neurons|Workers AI.*quota|RESOURCE_EXHAUSTED|ai_budget_exhausted' /tmp/newsroom-publish.json 2>/dev/null; then
                 echo 'Cloudflare image quota exhausted during approved election recovery; stopping additional paid AI calls.' >&2
                 exit 1
@@ -232,6 +252,26 @@ jobs:
             echo "clustered-newsroom HTTP ${newsroom_status}"
             cat /tmp/newsroom-publish.json 2>/dev/null || true
             echo
+            # Do not misclassify transient signing-key/OIDC failures as a
+            # lack of independently corroborated stories. Retry an HTTP 401
+            # at most once with newly issued GitHub OIDC; on repeat 401 fail
+            # this run. The Worker still verifies issuer, signature and claims.
+            if [[ "$newsroom_status" == "401" ]]; then
+              echo 'NORMAL_NEWSROOM_AUTH_RETRY: refreshing signed OIDC once after 401'
+              refresh_newsroom_oidc
+              newsroom_status=$(curl -sS -X POST -o /tmp/newsroom-publish.json -w '%{http_code}' \
+                --max-time 600 \
+                -H 'accept: application/json' \
+                -H "Authorization: Bearer ${oidc_token}" \
+                "${AUTOMATION_ORIGIN%/}/api/public/hooks/generate-newsroom?mode=publish" || echo 000)
+              echo "clustered-newsroom-refreshed HTTP ${newsroom_status}"
+              cat /tmp/newsroom-publish.json 2>/dev/null || true
+              echo
+            fi
+            if [[ "$newsroom_status" == "401" ]]; then
+              echo 'NORMAL_NEWSROOM_AUTH_FAILED: refreshed OIDC was denied' >&2
+              exit 1
+            fi
 
             if grep -Eqi 'daily free allocation|used up.*neurons|Workers AI.*quota|RESOURCE_EXHAUSTED|ai_budget_exhausted' /tmp/newsroom-publish.json 2>/dev/null; then
               echo 'Clustered newsroom AI budget/quota exhausted; stopping to avoid additional AI calls.' >&2
