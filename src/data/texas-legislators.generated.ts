@@ -45,7 +45,8 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     districtAddress: null,
     vacant: true,
     authority: null,
-  },  {
+  },
+  {
     slug: "brent-money",
     name: "Brent Money",
     chamber: "house",
@@ -6056,7 +6057,8 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     districtAddress: null,
     vacant: true,
     authority: null,
-  },  {
+  },
+  {
     slug: "tony-tinderholt",
     name: "Tony Tinderholt",
     chamber: "house",
