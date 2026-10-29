@@ -35,7 +35,7 @@ describe("KTR search-recovery authority guides", () => {
     expect(sitemap).not.toContain('lastmod: "2026-09-28"');
     expect(SEARCH_RECOVERY_AUTHORITY_GUIDES["texas-lobbying-2026"].updated).toBe("2026-10-29");
     for (const [slug, guide] of Object.entries(SEARCH_RECOVERY_AUTHORITY_GUIDES)) {
-      expect(guide.updated).toMatch(/^\\d{4}-\\d{2}-\\d{2}$/);
+      expect(guide.updated).toMatch(/^\d{4}-\d{2}-\d{2}$/);
       expect(guide.slug).toBe(slug);
     }
   });
