@@ -43,7 +43,7 @@ export function shouldReplaceNewsroomSourceBody(existingText: string | null | un
   return fetched.length > existing.length + 100;
 }
 
-export function shouldFetchNewsroomSourcePage(input: { url: string | null; extractedBody: string | null }): boolean {
+export function shouldFetchNewsroomSourcePage(input: { url: string | null; extractedBody: string | null; minSubstantiveChars?: number }): boolean {
   const url = (input.url ?? "").trim();
   if (!/^https?:\/\//i.test(url)) return false;
   if (/^https?:\/\/(?:www\.)?news\.google\.com\//i.test(url)) return false;
@@ -52,7 +52,11 @@ export function shouldFetchNewsroomSourcePage(input: { url: string | null; extra
   // Worker CPU fetching these known discovery pointers.
   if (isGovernmentNewsClippingUrl(url)) return false;
   const body = (input.extractedBody ?? "").trim();
-  return looksSyntheticNewsroomText(body) || body.length < NEWSROOM_SUBSTANTIVE_SOURCE_CHARS;
+  // A primary record can be the only independently authoritative source.
+  // It still must meet the unchanged 5k newsroom evidence gate. Give a
+  // 4k–5k primary record a bounded opportunity to retrieve its fuller page.
+  const threshold = Math.max(NEWSROOM_SUBSTANTIVE_SOURCE_CHARS, input.minSubstantiveChars ?? NEWSROOM_SUBSTANTIVE_SOURCE_CHARS);
+  return looksSyntheticNewsroomText(body) || body.length < threshold;
 }
 
 /** Avoid repeatedly spending CPU/network time on blocked or persistently thin pages.
