@@ -1,6 +1,9 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { canTrySecondVerifiedReserveImage } from "./reserve-image-recovery";
+import { buildGenerationOnlyImagePrompt, buildRepeatedFailureRecoverySubject, newsroomAbstractPolicyVisualSubject } from "./featured-image.functions";
+import { buildFlux2ImagePrompt } from "./featured-image-cloudflare";
+import type { SubjectExtract } from "./featured-image-core";
 
 describe("bounded second curated reserve on image story mismatch", () => {
   const publisher = readFileSync("src/routes/api/public/hooks/publishing-safety-net.ts", "utf8");
@@ -28,6 +31,32 @@ describe("bounded second curated reserve on image story mismatch", () => {
     expect(publisher).toContain("Never publish more than one reserve article per stalled run");
     expect(workflow).toContain("--max-time 480");
     expect(workflow.match(/\/api\/public\/hooks\/publishing-safety-net/g)).toHaveLength(1);
+  });
+
+  it("preserves the Texas rulemaking hearing subject after actual Flux prompt truncation", () => {
+    const subject: SubjectExtract = {
+      title: "How Texas state agencies make rules",
+      firstParagraph: "Texas state agencies publish proposed rules and accept comments.",
+      entities: ["Texas"],
+      locations: ["Texas"],
+      domain: "politics",
+      concreteSubject: "A public participation hearing and proposed-rule review.",
+    };
+    const row = { slug: "2026-10-29-how-texas-state-agencies-make-rules", title: subject.title };
+    const verifiedScene = newsroomAbstractPolicyVisualSubject(row, subject);
+    const retryScene = buildRepeatedFailureRecoverySubject(row, verifiedScene);
+    const generatedPrompt = buildFlux2ImagePrompt(buildGenerationOnlyImagePrompt(retryScene));
+    expect(verifiedScene.imageGroundingMode).toBe("verified_symbolic");
+    expect(retryScene.concreteSubject).toBe(verifiedScene.concreteSubject);
+    expect(generatedPrompt).toMatch(/PUBLIC-COMMENT TABLE/);
+    expect(generatedPrompt).toMatch(/GOOSENECK MICROPHONES/);
+    expect(generatedPrompt).toMatch(/OPEN BINDER/);
+    expect(generatedPrompt).toMatch(/SUBMISSION FORM/);
+    expect(generatedPrompt).toMatch(/EMPTY VISITOR CHAIRS/);
+    expect(generatedPrompt).not.toMatch(/reading-room reference volume|generic office desk with a laptop/i);
+    // The validator still uses the original verifiedScene; no image quality gate is bypassed.
+    const publisher = readFileSync("src/lib/featured-image.functions.ts", "utf8");
+    expect(publisher).toContain("validateImageMatchesArticle(bytes, subject)");
   });
 
   it("uses a source-matched, non-deceptive physical scene for the alternate Open Meetings guide", () => {
