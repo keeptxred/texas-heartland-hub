@@ -1,0 +1,32 @@
+name: Accept unattended Texas lobbying source release
+
+on:
+  workflow_dispatch:
+  schedule:
+    # After Monday's 14:23 UTC primary-source refresh; no duplicate source fetch.
+    - cron: "11 15 * * 2"
+
+permissions:
+  actions: read
+  contents: read
+  issues: write
+  pull-requests: read
+  checks: read
+
+concurrency:
+  group: lobbying-source-change-acceptance
+  cancel-in-progress: false
+
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout current acceptance verifier
+        uses: actions/checkout@v5
+        with:
+          ref: main
+      - name: Verify bot PR, eligible checks, merge, deployment, and both live hosts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/lobbying/verify-unattended-acceptance.py
