@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { normalizeNewsroomDraft, reflowNewsroomParagraph, repeatedNewsroomParagraphPositions, newsroomRewriteSystemPrompt, validateNewsroomDraft, type NewsroomDraft } from "./newsroom-rewrite-adapter";
+import { normalizeNewsroomDraft, reflowNewsroomParagraph, newsroomNonRepeatingRepairOutline, repeatedNewsroomParagraphPositions, newsroomRewriteSystemPrompt, validateNewsroomDraft, type NewsroomDraft } from "./newsroom-rewrite-adapter";
 import type { ResearchPacket } from "./newsroom-research-packet";
 import { duplicateParagraphOccurrences } from "./public-article-readiness";
 
@@ -109,6 +109,38 @@ describe("newsroom prepublication duplicate paragraph gate", () => {
     ]);
     expect(duplicateParagraphOccurrences({ sections: draft.sections })).toBe(3);
     expect(draft.sections[1].paragraphs[1]).toBe(paragraphs[4]);
+  });
+
+  it("gives AI repair a nonrepetitive source-faithful seed without deleting the original failed draft", () => {
+    // Reproduce the October 29 source-grounded draft shape: six sections,
+    // four verbatim repeated paragraphs; some sections then contain zero or
+    // one unique paragraphs and are NOT suitable for direct publication.
+    const originals = Array.from({ length: 16 }, (_, i) =>
+      "Source-backed distinct factual paragraph " + i + ": " +
+      "The official record identifies a concrete dated administrative action and the agency responsible for it. ".repeat(4),
+    );
+    const draft = createDraft(Array.from({ length: 18 }, (_, i) =>
+      originals[i % originals.length]));
+    draft.sections = [
+      { heading: "Official filing", paragraphs: originals.slice(0, 3) },
+      { heading: "Cited public records", paragraphs: originals.slice(3, 6) },
+      { heading: "State's stated position", paragraphs: originals.slice(6, 9) },
+      { heading: "Possible implications", paragraphs: [originals[9], originals[8], originals[10]] },
+      { heading: "County response", paragraphs: [originals[11], originals[5]] },
+      { heading: "Repeated records", paragraphs: [originals[3], originals[4]] },
+    ];
+    const oldCopy = JSON.stringify(draft);
+    expect(repeatedNewsroomParagraphPositions(draft)).toHaveLength(4);
+    const outline = newsroomNonRepeatingRepairOutline(draft);
+    expect(repeatedNewsroomParagraphPositions(outline)).toHaveLength(0);
+    expect(outline.sections.map((section) => section.paragraphs.length)).toEqual([3, 3, 3, 2, 1, 0]);
+    expect(outline.title).toBe(draft.title);
+    expect(outline.summary).toBe(draft.summary);
+    expect(outline.sections[0].paragraphs[0]).toBe(draft.sections[0].paragraphs[0]);
+    expect(JSON.stringify(draft)).toBe(oldCopy);
+    expect(JSON.stringify(outline)).not.toBe(oldCopy);
+    // Repair outline is only model INPUT; it cannot pass publication review.
+    expect(validateNewsroomDraft(outline, packet).reasons).toContain("paragraph_count");
   });
 
   it("does not misdiagnose repeated short fragments as substantive paragraphs", () => {
