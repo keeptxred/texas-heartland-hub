@@ -1,0 +1,40 @@
+name: Verify live Texas lobbying 2026 authority
+
+on:
+  workflow_run:
+    workflows:
+      - Deploy verified KeepTXRed to Cloudflare
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: "47 13 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-live-texas-lobbying-2026
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout deployed reference checks
+        uses: actions/checkout@v5
+        with:
+          ref: main
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Accept rendered authority on deployed Worker
+        env:
+          SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
+        run: python3 scripts/lobbying/live-acceptance.py
+      - name: Accept rendered authority on canonical production host
+        env:
+          SITE_URL: https://keeptxred.com
+        run: python3 scripts/lobbying/live-acceptance.py
