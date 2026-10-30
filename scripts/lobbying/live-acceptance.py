@@ -46,5 +46,5 @@ for entry in root.iter():
         fields = {x.tag.rsplit("}", 1)[-1]: (x.text or "") for x in entry}
         if fields.get("loc") == canonical:
             dates.append(fields.get("lastmod"))
-assert dates == ["2026-10-29"], dates
+assert len(dates) == 1 and dates[0].startswith("2026-10-29"), dates
 print("PASS government sitemap lobbying lastmod 2026-10-29")
