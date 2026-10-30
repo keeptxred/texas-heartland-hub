@@ -34,6 +34,21 @@ describe("TexasDefined generated-image receiver production smoke", () => {
     expect(workflow).toContain("chosen = successful or running or (matching[0] if matching else None)");
   });
 
+  it("does not comment out the deployed-runs API assignment with escaped newlines", () => {
+    // A literal \\n in a shell comment suppressed the api= assignment and
+    // failed production with 'api: unbound variable'. Keep each comment
+    // on its own physical line before executing the lookup.
+    const lookup = workflow.slice(
+      workflow.indexOf("set -euo pipefail"),
+      workflow.indexOf("for attempt in $(seq 1 72)"),
+    );
+    expect(lookup).not.toContain(String.raw`\n`);
+    expect(
+      lookup.split("\n").some((line) =>
+        line.trimStart().startsWith('api="https://api.github.com/repos/${REPOSITORY}/actions/workflows/')),
+    ).toBe(true);
+  });
+
   it("keeps the live receiver fail-closed security contract", () => {
     expect(workflow).toContain("publish-texasdefined-generated-image");
     expect(workflow).toContain('if [[ "$status" != "401" ]]');
