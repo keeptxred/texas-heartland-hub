@@ -24,8 +24,8 @@ const packet: ResearchPacket = {
 };
 
 type SchemaProperties = {
-  summary: { minLength: number; maxLength: number };
-  sections: { items: { properties: { paragraphs: { items: { minLength: number } } } } };
+  summary: { minLength?: number; maxLength: number };
+  sections: { minItems: number; items: { properties: { paragraphs: { minItems: number; items: { minLength?: number } } } } };
 };
 
 describe("Phase 13 draft generation targets", () => {
@@ -59,10 +59,19 @@ describe("Phase 13 draft generation targets", () => {
     expect(generator).toContain("repeatedParagraphLocations:");
   });
 
-  it("constrains summary and paragraph sizes in the provider schema", () => {
+  it("allows an honest empty-model abstention while final publication still enforces word and shape gates", () => {
     const properties = NEWSROOM_DRAFT_JSON_SCHEMA.properties as SchemaProperties;
     expect(properties.summary.maxLength).toBe(600);
-    expect(properties.summary.minLength).toBe(250);
-    expect(properties.sections.items.properties.paragraphs.items.minLength).toBe(380);
+    // The provider JSON schema must permit empty arrays/strings when
+    // brief.hasClearNewsEvent=false, or it pushes the model to invent text.
+    expect(properties.summary.minLength).toBeUndefined();
+    expect(properties.sections.minItems).toBe(0);
+    expect(properties.sections.items.properties.paragraphs.minItems).toBe(0);
+    expect(properties.sections.items.properties.paragraphs.items.minLength).toBeUndefined();
+    const adapter = readFileSync("src/lib/newsroom-rewrite-adapter.ts", "utf8");
+    expect(adapter).toContain("sections.length < 4 || typedDraft.sections.length > 6");
+    expect(adapter).toContain("section.paragraphs.length < 2 || section.paragraphs.length > 6");
+    expect(adapter).toContain("if (mainWordCount < requiredMainWords)");
+    expect(adapter).toContain("reasons.push(\"below_news_word_floor\")");
   });
 });
