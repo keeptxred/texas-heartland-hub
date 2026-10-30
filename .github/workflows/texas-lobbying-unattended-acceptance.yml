@@ -1,6 +1,11 @@
 name: Accept unattended Texas lobbying source release
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/texas-lobbying-unattended-acceptance.yml"
+      - "scripts/lobbying/verify-unattended-acceptance.py"
   workflow_dispatch:
   schedule:
     # After Monday's 14:23 UTC primary-source refresh; no duplicate source fetch.
@@ -26,6 +31,8 @@ jobs:
         uses: actions/checkout@v5
         with:
           ref: main
+      - name: Compile guarded verifier
+        run: python3 -m py_compile scripts/lobbying/verify-unattended-acceptance.py
       - name: Verify bot PR, eligible checks, merge, deployment, and both live hosts
         env:
           GH_TOKEN: ${{ github.token }}
