@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   categoryForPillar,
+  NEWSROOM_DRAFT_JSON_SCHEMA,
   newsroomRewriteSystemPrompt,
   newsroomRewriteUserPrompt,
   normalizeNewsroomDraft,
@@ -60,6 +61,30 @@ describe("newsroom rewrite adapter", () => {
     expect(generator).toContain("if these sources cannot support".replace("if", "If"));
     expect(generator).toContain("Never repeat a previously used fact to reach the minimum");
     expect(generator).toContain("maxAttempts: 1");
+  });
+
+  it("accepts a schema-valid empty abstention but rejects it before an invented repair", () => {
+    const schema = NEWSROOM_DRAFT_JSON_SCHEMA.properties as Record<string, unknown>;
+    const sections = schema.sections as { minItems: number };
+    const summary = schema.summary as { minLength?: number };
+    expect(sections.minItems).toBe(0);
+    expect(summary.minLength).toBeUndefined();
+    const abstention = {
+      brief: { hasClearNewsEvent: false },
+      title: "", dek: "", summary: "", relevance: "",
+      sections: [], keyTakeaways: [], faq: [],
+    };
+    expect(validateNewsroomDraft(abstention, packet)).toEqual({
+      ok: false,
+      reasons: ["brief_no_clear_news_event"],
+      mainWordCount: 0,
+    });
+    // A model that says it DOES have a news event cannot use this empty shape
+    // to bypass the unchanged local publication validator.
+    expect(validateNewsroomDraft({
+      ...abstention,
+      brief: { hasClearNewsEvent: true },
+    }, packet).ok).toBe(false);
   });
 
   it("passes the source-grounded packet without adding outside research", () => {
