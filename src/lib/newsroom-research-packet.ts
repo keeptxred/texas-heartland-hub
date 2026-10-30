@@ -1,4 +1,5 @@
 import { isSyntheticNewsroomEvidence } from "./newsroom-evidence-integrity";
+import { newsroomLikelySameOriginalReport } from "./newsroom-publication-preflight";
 
 export type ResearchPacketSource = {
   feedItemId: number;
@@ -41,8 +42,26 @@ function normalizeEvidenceSegment(value: string): string {
     .trim();
 }
 
+/**
+ * The official TDEM press-release layout embeds a long "Related Pages"
+ * archive of *other* releases after the dated story. That archive is navigation,
+ * not evidence about the release or its event. Remove it only on canonical
+ * TDEM press-release URLs; never strip an arbitrary publisher's story text.
+ */
+function verifiedSourceBody(source: ResearchPacketSource): string {
+  const body = isSyntheticNewsroomEvidence(source.extractedBody) ? "" : source.extractedBody;
+  try {
+    const url = new URL(source.url);
+    if (url.hostname.replace(/^www\./i, "").toLowerCase() !== "tdem.texas.gov"
+      || !/^\/press-release\/\d{1,2}-\d{1,2}-\d{2}\/?$/i.test(url.pathname)) return body;
+    return body.replace(/\bRelated Pages(?=\s+[A-Z][a-z]+\s+\d{1,2},\s+20\d{2}\b)[\s\S]*$/i, "").trim();
+  } catch {
+    return body;
+  }
+}
+
 function sourceEvidenceSegments(source: ResearchPacketSource): string[] {
-  const safeExtractedBody = isSyntheticNewsroomEvidence(source.extractedBody) ? "" : source.extractedBody;
+  const safeExtractedBody = verifiedSourceBody(source);
   const safeDescription = isSyntheticNewsroomEvidence(source.description) ? "" : source.description;
   const combined = `${safeDescription ?? ""}\n${safeExtractedBody ?? ""}`;
   return combined
@@ -51,19 +70,72 @@ function sourceEvidenceSegments(source: ResearchPacketSource): string[] {
     .filter((segment) => segment.length >= 40 && !PACKET_BOILERPLATE.test(segment));
 }
 
+function evidenceKey(segment: string): string {
+  // Canonicalize typography (including curly quotes) before deduplicating
+  // publisher evidence; punctuation differences are not new reported facts.
+  return segment.normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+function longWordShingles(body: string): Set<string> {
+  const words = evidenceKey(body).split(/\s+/).filter(Boolean);
+  const result = new Set<string>();
+  if (words.length < 100) return result;
+  for (let i = 0; i <= words.length - 8; i++) {
+    result.add(words.slice(i, i + 8).join(" "));
+  }
+  return result;
+}
+
+/**
+ * Cross-host republications of the same government press release may differ
+ * only in quotes, HTML navigation or publisher chrome. Never count a second
+ * copy as fresh evidence merely because it has another .gov hostname.
+ *
+ * Keep different original reports, substantially expanded articles and every
+ * source URL. Suppress only a long, near-verbatim report with the same
+ * distinctive headline and comparable body length.
+ */
+function isNearCopyOriginalReport(
+  title: string,
+  body: string,
+  earlier: { title: string; body: string; shingles: Set<string> },
+): boolean {
+  if (!newsroomLikelySameOriginalReport(title, earlier.title)) return false;
+  const shingles = longWordShingles(body);
+  if (shingles.size < 60 || earlier.shingles.size < 60) return false;
+  const smaller = Math.min(shingles.size, earlier.shingles.size);
+  const bigger = Math.max(shingles.size, earlier.shingles.size);
+  if (smaller / bigger < 0.65) return false;
+  let common = 0;
+  for (const value of shingles) if (earlier.shingles.has(value)) common++;
+  return common / smaller >= 0.85;
+}
+
 export function compactResearchPacket(packet: ResearchPacket): ResearchPacket {
   const seen = new Set<string>();
+  const originals: Array<{ title: string; body: string; shingles: Set<string> }> = [];
   const sources = packet.sources.map((source) => {
+    const segments = sourceEvidenceSegments(source);
+    const body = segments.join(" ");
+    const republished = originals.some((earlier) => isNearCopyOriginalReport(source.title, body, earlier));
+    if (!republished && body) originals.push({
+      title: source.title,
+      body,
+      shingles: longWordShingles(body),
+    });
     const unique: string[] = [];
-    for (const segment of sourceEvidenceSegments(source)) {
-      const key = segment.toLowerCase();
-      if (seen.has(key)) continue;
+    if (!republished) for (const segment of segments) {
+      const key = evidenceKey(segment);
+      if (!key || seen.has(key)) continue;
       seen.add(key);
       unique.push(segment);
     }
     return {
       ...source,
       description: "",
+      // Retain the reprinted publisher's attribution/link, but do not
+      // spend word budget or count the same release a second time.
       extractedBody: unique.join("\n"),
     };
   });
