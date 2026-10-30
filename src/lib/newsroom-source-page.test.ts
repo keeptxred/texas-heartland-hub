@@ -43,7 +43,11 @@ describe("newsroom source-page enrichment", () => {
 
   it("replaces a previously cached TDEM archive with the shorter verified full release", () => {
     const officialUrl = "https://www.tdem.texas.gov/press-release/10-29-26";
-    const article = "The state agency records describe the original declaration, local response, assessment process and accurately dated source statement. ".repeat(24);
+    // Use varied substantive content: a real article has many unique seven-word
+    // sequences; repeating one sentence 24 times is not an adequate continuity fixture.
+    const article = Array.from({ length: 32 }, (_, index) =>
+      `Official release paragraph ${index + 1} records the county response coordination unit ${index + 10}, documented hazard assessment, specific field assistance, evacuation guidance and dated emergency resource deployment.`
+    ).join(" ");
     const navigation = "Related Pages " + "October 29, 2026 October 28, 2026 September 25, 2026 ".repeat(70) + "Privacy Policy";
     const polluted = article + navigation;
     expect(polluted.length).toBeGreaterThan(4_000);
