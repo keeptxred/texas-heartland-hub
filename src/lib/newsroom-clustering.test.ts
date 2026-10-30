@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
-import { clusterNewsFeedItems, deterministicStorySimilarity, reserveDirectPublisherCohort } from "./newsroom-clustering";
+import { clusterNewsFeedItems, deterministicStorySimilarity, guardedCountyClerkVotingAdsLawsuitKey, reserveDirectPublisherCohort } from "./newsroom-clustering";
 
 const observedAt = "2026-08-15T12:00:00Z";
 
@@ -46,6 +46,69 @@ describe("direct-source reservation within existing clustering budget", () => {
     expect(builder).toContain("CLUSTER_LIMIT,");
     expect(builder).toContain("isPrimaryNewsSource(feed?.source, feed?.link)");
     expect(builder).toContain("countDistinctNewsSources(members)");
+  });
+});
+
+describe("same named voter-ad lawsuit across independently authored reporting", () => {
+  const time = "2026-10-29T20:00:00Z";
+  const official = {
+    feedItemId: 6649862,
+    normalizedTitle: "the office attorney general sues harris county clerk running racially discriminatory voter suppression scheme that could harm integrity texas elections",
+    sourceKey: "texas-attorney-general-direct-news-releases",
+    observedAt: "2026-10-29T12:00:00Z",
+    pillarSlug: "texas-elections",
+  };
+  const hpm = {
+    feedItemId: 6650833,
+    normalizedTitle: "texas ag s office sues harris county clerk allegedly running racially discriminatory advertisements",
+    sourceKey: "houston-public-media",
+    observedAt: "2026-10-29T19:43:15Z",
+    pillarSlug: "texas-laws-legislature",
+  };
+  const kprc = {
+    feedItemId: 6650345,
+    normalizedTitle: "texas ag s office sues harris county clerk over accusations selectively targeting demographics voting ads",
+    sourceKey: "kprc-2-click2houston",
+    observedAt: "2026-10-29T19:20:25Z",
+    pillarSlug: "texas-elections",
+  };
+  it("identifies the same particular lawsuit, not publisher identity", () => {
+    const key = guardedCountyClerkVotingAdsLawsuitKey(official.normalizedTitle);
+    expect(key).toBe("attorney-general-sues-harris-county-clerk-discriminatory-voter-ads");
+    expect(guardedCountyClerkVotingAdsLawsuitKey(hpm.normalizedTitle)).toBe(key);
+    expect(guardedCountyClerkVotingAdsLawsuitKey(kprc.normalizedTitle)).toBe(key);
+    expect(deterministicStorySimilarity(official, hpm)).toBe(0.8);
+    expect(deterministicStorySimilarity(official, kprc)).toBe(0.8);
+    const clusters = clusterNewsFeedItems([official, hpm, kprc]);
+    expect(clusters).toHaveLength(1);
+    expect(clusters[0].memberFeedItemIds).toEqual([6649862, 6650345, 6650833]);
+  });
+  it("does not equate different counties, actors, dates, or a voting theme with the same filing", () => {
+    const otherCounty = { ...kprc, feedItemId: 9, normalizedTitle: kprc.normalizedTitle.replace("harris county", "dallas county") };
+    const oppositeLawsuit = { ...kprc, feedItemId: 10,
+      normalizedTitle: "harris county clerk sues attorney general for racially discriminatory voting ads" };
+    const noDiscrimination = { ...kprc, feedItemId: 11,
+      normalizedTitle: "texas ag s office sues harris county clerk over late public records disclosure" };
+    const otherIssue = { ...kprc, feedItemId: 12,
+      normalizedTitle: "texas ag s office sues harris county clerk about a racially discriminatory hiring policy" };
+    const stale = { ...kprc, feedItemId: 13, observedAt: "2026-10-26T00:00:00Z" };
+    for (const unrelated of [otherCounty, oppositeLawsuit, noDiscrimination, otherIssue, stale]) {
+      expect(deterministicStorySimilarity(official, unrelated), unrelated.normalizedTitle).toBe(0);
+      expect(clusterNewsFeedItems([official, unrelated]), unrelated.normalizedTitle).toHaveLength(2);
+    }
+    expect(guardedCountyClerkVotingAdsLawsuitKey("texas ag office sues local agency over voting ads")).toBeNull();
+    expect(guardedCountyClerkVotingAdsLawsuitKey("harris county election officials review voter advertising")).toBeNull();
+  });
+  it("does not infer the missing named county clerk from a different Tribune headline", () => {
+    const independentlyAuthored = {
+      feedItemId: 6653302,
+      normalizedTitle: "texas ag s office labels get out vote ads discriminatory focus black latino asian voters",
+      sourceKey: "the-texas-tribune-politics",
+      observedAt: time,
+      pillarSlug: "texas-elections",
+    };
+    expect(guardedCountyClerkVotingAdsLawsuitKey(independentlyAuthored.normalizedTitle)).toBeNull();
+    expect(deterministicStorySimilarity(official, independentlyAuthored)).toBe(0);
   });
 });
 
