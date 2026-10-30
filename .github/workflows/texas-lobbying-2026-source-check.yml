@@ -28,6 +28,7 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
+          token: ${{ secrets.KTR_AUTOMATION_PR_TOKEN || github.token }}
       - uses: actions/setup-node@v5
         with:
           node-version: "22"
@@ -41,7 +42,8 @@ jobs:
         run: node scripts/lobbying/verify-texas-2026-sources.mjs
       - name: Publish changed source fingerprints through protected automation PR
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.KTR_AUTOMATION_PR_TOKEN || github.token }}
+          PR_AUTH_TOKEN: ${{ secrets.KTR_AUTOMATION_PR_TOKEN }}
           PR_TITLE: Refresh verified Texas lobbying primary-source fingerprints
           PR_BODY: Automated weekly TEC source verification. Six official source files validated and SHA-256 changes recorded; no unverified editorial claims or fabricated spending values. Protected test gates remain required.
           COMMIT_MESSAGE: "chore(lobbying): record changed TEC source fingerprints"
@@ -52,6 +54,10 @@ jobs:
           if git diff --quiet -- "$target"; then
             echo 'Source documents unchanged; no new PR or build is necessary.'
             exit 0
+          fi
+          if [[ -z "$PR_AUTH_TOKEN" ]]; then
+            echo '::error title=Bot PR credential missing::Set secret KTR_AUTOMATION_PR_TOKEN with repository Contents:write and Pull requests:write permissions. GITHUB_TOKEN-created PRs cannot trigger eligible required pull_request checks.' >&2
+            exit 1
           fi
           unexpected=$(git status --short | awk '{print $2}' | grep -vxF "$target" || true)
           if [[ -n "$unexpected" ]]; then
