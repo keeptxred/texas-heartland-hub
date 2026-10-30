@@ -30,22 +30,40 @@ for (const target of targets) {
   let lastError;
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      const response = await fetch(target.url, {
-        redirect: "follow",
-        signal: AbortSignal.timeout(30000),
-        headers: {
-          "User-Agent": "KeepTXRed-SourceVerification/1.0 (+https://keeptxred.com/texas-government/reference/texas-lobbying-2026)",
-          "Accept": "*/*",
-        },
-      });
-      if (!response.ok) throw new Error("HTTP " + response.status);
-      payload = Buffer.from(await response.arrayBuffer());
+      try {
+        const response = await fetch(target.url, {
+          redirect: "follow",
+          signal: AbortSignal.timeout(30000),
+          headers: {
+            "User-Agent": "KeepTXRed-SourceVerification/1.0 (+https://keeptxred.com/texas-government/reference/texas-lobbying-2026)",
+            "Accept": "*/*",
+          },
+        });
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        payload = Buffer.from(await response.arrayBuffer());
+      } catch (networkError) {
+        // GitHub-hosted Node fetch can fail before receiving an HTTP response.
+        // Retry through system curl with normal certificate validation and
+        // forced IPv4; never use a stale cached copy or ignore source checks.
+        if (!(networkError instanceof TypeError && String(networkError).includes("fetch failed"))) throw networkError;
+        payload = execFileSync("curl", [
+          "--fail-with-body", "--location", "--silent", "--show-error",
+          "--ipv4", "--retry", "2", "--retry-delay", "2",
+          "--connect-timeout", "15", "--max-time", "60",
+          "--user-agent", "KeepTXRed-SourceVerification/1.0",
+          target.url,
+        ], { maxBuffer: 32 * 1024 * 1024, timeout: 90000 });
+      }
       if (payload.byteLength < target.minimum) throw new Error("unexpectedly short document");
       if (target.kind === "pdf" && !payload.subarray(0, 5).equals(Buffer.from("%PDF-"))) throw new Error("non-PDF response");
       if (target.kind === "xlsx" && !payload.subarray(0, 4).equals(Buffer.from([0x50, 0x4b, 0x03, 0x04]))) throw new Error("non-XLSX response");
       if (target.kind === "html") {
         const html = payload.toString("utf8");
         if (!/<html[\s>]/i.test(html)) throw new Error("non-HTML response");
+        if (target.id === "registration-list" &&
+            !html.includes("2026LobbyGroupByClient.pdf")) {
+          throw new Error("TEC registration directory has no official 2026 client PDF link");
+        }
         if (target.id === "compensation-2026" && !(html.includes("LOBBCOMP02") && html.includes("22,890") && html.includes("57,219"))) {
           throw new Error("2026 compensation codes no longer match verified source");
         }
