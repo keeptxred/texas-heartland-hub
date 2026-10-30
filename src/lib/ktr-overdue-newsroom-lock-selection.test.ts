@@ -5,12 +5,16 @@ describe("overdue newsroom failover advances past unrelated event locks without 
   const route = readFileSync("src/routes/api/public/hooks/publish-overdue-gap.ts", "utf8");
   const workflow = readFileSync(".github/workflows/run-daily-news-now.yml", "utf8");
 
-  it("scans up to 48 distinct candidates while limiting paid/substantive work to eight attempts", () => {
-    expect(route).toContain("const MAX_ATTEMPTS = 8");
+  it("scans up to 48 distinct candidates while bounding Worker paid work to two attempts", () => {
+    expect(route).toContain("const MAX_ATTEMPTS = 2");
+    expect(route).toContain("const OVERDUE_REQUEST_DEADLINE_MS = 45_000");
     expect(route).toContain("const MAX_CANDIDATE_SCAN = 48");
     expect(route).toContain("const GAP_SCAN_LIMIT = 80");
     expect(route).toContain("for (const gap of ranked.slice(0, MAX_CANDIDATE_SCAN))");
     expect(route).toContain("if (substantiveAttempts >= MAX_ATTEMPTS) break");
+    expect(route).toContain("if (Date.now() - requestStartMs >= OVERDUE_REQUEST_DEADLINE_MS)");
+    expect(route).toContain("request_deadline_reached: requestDeadlineReached");
+    expect(route).toContain("elapsed_ms: Date.now() - requestStartMs");
     expect(route).toContain("const lockDeferred = !result.ok && isConcurrentPublicationDeferral(result.error)");
     expect(route).toContain("if (lockDeferred) lockDeferrals++");
     expect(route).toContain("else substantiveAttempts++");

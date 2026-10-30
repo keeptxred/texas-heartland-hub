@@ -12,7 +12,13 @@ const OIDC_AUDIENCE = "keeptxred-newsroom";
 const REPOSITORY = "keeptxred/texas-heartland-hub";
 const WORKFLOW_PATH = ".github/workflows/run-daily-news-now.yml";
 const OVERDUE_HOURS = 6;
-const MAX_ATTEMPTS = 8;
+// Eight sequential AI/editorial attempts caused the Cloudflare edge to reset
+// a still-running request after about 64s (2026-10-30 guarded run 41120142609).
+// Fail closed on timing instead of losing the entire response and any saved
+// result. Existing 6 daily GitHub runs provide repeat opportunities; the exact
+// event lock and recent-failure checks still prevent unsafe same-story retries.
+const MAX_ATTEMPTS = 2;
+const OVERDUE_REQUEST_DEADLINE_MS = 45_000;
 // A locked or cooling-down story is not an editorial/AI attempt. Scan at
 // at most 48 DIFFERENT stories to get eight substantive attempts, without
 // retrying a lock or increasing the paid rewrite budget. Production verified
@@ -189,6 +195,7 @@ async function publishOverdueGaps(request: Request) {
     );
   }
 
+  const requestStartMs = Date.now();
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const db = supabaseAdmin as any;
   const cutoff = new Date(Date.now() - OVERDUE_HOURS * 60 * 60 * 1000).toISOString();
@@ -255,8 +262,15 @@ async function publishOverdueGaps(request: Request) {
   let substantiveAttempts = 0;
   let lockDeferrals = 0;
 
+  let requestDeadlineReached = false;
   for (const gap of ranked.slice(0, MAX_CANDIDATE_SCAN)) {
     if (substantiveAttempts >= MAX_ATTEMPTS) break;
+    // A previous candidate may have consumed most of the request lifetime.
+    // Do not begin a *new* expensive attempt that risks the 60s edge cutoff.
+    if (Date.now() - requestStartMs >= OVERDUE_REQUEST_DEADLINE_MS) {
+      requestDeadlineReached = true;
+      break;
+    }
     const feed = feedById.get(gap.id);
     if (!feed) continue;
     const series = await prepareReleaseSeriesContext(db, feed);
@@ -320,6 +334,8 @@ async function publishOverdueGaps(request: Request) {
     substantive_attempts: substantiveAttempts,
     lock_deferrals: lockDeferrals,
     max_substantive_attempts: MAX_ATTEMPTS,
+    elapsed_ms: Date.now() - requestStartMs,
+    request_deadline_reached: requestDeadlineReached,
     max_scanned_candidates: MAX_CANDIDATE_SCAN,
     published,
     results,
