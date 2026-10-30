@@ -42,9 +42,13 @@ export const NEWSROOM_DRAFT_JSON_SCHEMA: Record<string, unknown> = {
           heading: { type: "string" },
           paragraphs: {
             type: "array",
+            // Empty paragraphs array is a truthful brief=false abstention.
+            // For a model that DOES write paragraphs, preserve the proven
+            // 380-character provider guidance. Removing this accidentally
+            // yielded 12 x 28–59-word paragraphs (587/800) in live drafting.
             minItems: 0,
             maxItems: 3,
-            items: { type: "string" },
+            items: { type: "string", minLength: 380 },
           },
         },
         required: ["heading", "paragraphs"],
