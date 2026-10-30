@@ -67,7 +67,10 @@ describe("Phase 13 draft generation targets", () => {
     expect(properties.summary.minLength).toBeUndefined();
     expect(properties.sections.minItems).toBe(0);
     expect(properties.sections.items.properties.paragraphs.minItems).toBe(0);
-    expect(properties.sections.items.properties.paragraphs.items.minLength).toBeUndefined();
+    // Empty arrays allow a truthful brief=false. A nonempty factual
+    // paragraph still needs enough provider-side length guidance to avoid
+    // a 12-paragraph draft totaling just ~587/800 words.
+    expect(properties.sections.items.properties.paragraphs.items.minLength).toBe(380);
     const adapter = readFileSync("src/lib/newsroom-rewrite-adapter.ts", "utf8");
     expect(adapter).toContain("sections.length < 4 || typedDraft.sections.length > 6");
     expect(adapter).toContain("section.paragraphs.length < 2 || section.paragraphs.length > 6");
