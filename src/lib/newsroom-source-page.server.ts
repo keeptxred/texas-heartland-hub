@@ -67,9 +67,12 @@ export function shouldReplaceNewsroomSourceBody(existingText: string | null | un
   // release archive. Prefer the shorter, newly fetched clean original instead
   // of preserving polluted evidence solely because its byte count was longer.
   const originalTdemReport = trimTdemPressReleaseArchive(sourceUrl, existing);
-  if (originalTdemReport !== existing
-    && trimTdemPressReleaseArchive(sourceUrl, fetched) === fetched
-    && hasSourceBodyContinuity(originalTdemReport, fetched)) return true;
+  if (originalTdemReport !== existing) {
+    // Once archive pollution is confirmed, every replacement must prove it
+    // contains the same original release; a longer bot challenge is no exception.
+    return trimTdemPressReleaseArchive(sourceUrl, fetched) === fetched
+      && hasSourceBodyContinuity(originalTdemReport, fetched);
+  }
   return fetched.length > existing.length + 100;
 }
 
