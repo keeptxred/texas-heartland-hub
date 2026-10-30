@@ -60,6 +60,11 @@ for (const target of targets) {
       if (target.kind === "html") {
         const html = payload.toString("utf8");
         if (!/<html[\s>]/i.test(html)) throw new Error("non-HTML response");
+        if (target.id === "registration-list" &&
+            !(html.includes("2026 Registered Lobbyists with Clients") &&
+              html.includes("2026LobbyGroupByClient.pdf"))) {
+          throw new Error("TEC registration directory structure not found");
+        }
         if (target.id === "compensation-2026" && !(html.includes("LOBBCOMP02") && html.includes("22,890") && html.includes("57,219"))) {
           throw new Error("2026 compensation codes no longer match verified source");
         }
