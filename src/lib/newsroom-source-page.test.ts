@@ -68,6 +68,24 @@ describe("newsroom source-page enrichment", () => {
     expect(builder).toContain('enrichedById.get(result.feed.id) ?? result.feed.extracted_body');
   });
 
+  it("automatically repairs at most one polluted TDEM source outside pending clusters without bypassing cooldowns", () => {
+    const builder = readFileSync("src/routes/api/public/hooks/build-newsroom-research-packets.ts", "utf8");
+    expect(builder).toContain("const TDEM_CACHE_CLEANUP_SCAN_LIMIT = 8");
+    expect(builder).toContain("const TDEM_CACHE_CLEANUP_FETCH_LIMIT = 1");
+    expect(builder).toContain('.eq("source", "Texas Division of Emergency Management — Direct Releases")');
+    expect(builder).toContain('.gte("created_at", tdemScanSince)');
+    expect(builder).toContain('.limit(TDEM_CACHE_CLEANUP_SCAN_LIMIT)');
+    expect(builder).toContain("trimTdemPressReleaseArchive(feed.link, feed.extracted_body) !== feed.extracted_body");
+    expect(builder).toContain(".slice(0, TDEM_CACHE_CLEANUP_FETCH_LIMIT)");
+    expect(builder).toContain('from("newsroom_source_page_fetch_state")');
+    expect(builder).toContain("tdemMaintenanceFeeds.map((feed) => feed.id)");
+    expect(builder).toContain("sourcePageStateById.set(row.feed_item_id, row)");
+    expect(builder).toContain("priorityByFeedId.set(feed.id, Math.max(priorityByFeedId.get(feed.id) ?? 0, 25_000))");
+    expect(builder).toContain(".slice(0, SOURCE_PAGE_FETCH_LIMIT)");
+    expect(builder).toContain("sourcePageCoolingDown(feed.id)");
+    expect(builder).not.toContain('status: "PENDING"');
+  });
+
   it("targets thin publisher bodies and synthetic pollution", () => {
     expect(shouldFetchNewsroomSourcePage({
       url: "https://example.com/story",
