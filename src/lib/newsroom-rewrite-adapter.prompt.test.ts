@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   NEWSROOM_DRAFT_JSON_SCHEMA,
@@ -50,7 +51,7 @@ describe("Phase 13 draft generation targets", () => {
 
     // These two protections must remain in the repair path, not just
     // the first-pass prompt. Nothing changes the AI budget or editorial floor.
-    const generator = require("node:fs").readFileSync(
+    const generator = readFileSync(
       "src/routes/api/public/hooks/generate-newsroom.ts", "utf8",
     );
     expect(generator).toContain("consolidate those redundant headings into the minimum four");
