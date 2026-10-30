@@ -75,6 +75,22 @@ for cycle in 1 2 3; do
   dispatch_and_watch_verify "$branch" "$branch_sha"
 
   git fetch origin main
+
+  # A protected PR may auto-merge while its publisher is still watching the
+  # independent verification run. The post-merge branch may already be deleted.
+  # Do not rebase/push that vanished branch: verify the merged commit actually
+  # reached main and let the existing PR auto-merge release workflow finish.
+  pr_state="$(gh pr view "$pr_url" --repo "$repo" --json state --jq '.state')"
+  if [[ "$pr_state" == "MERGED" ]]; then
+    merged_sha="$(gh pr view "$pr_url" --repo "$repo" --json mergeCommit --jq '.mergeCommit.oid // empty')"
+    if [[ -z "$merged_sha" ]] || ! git merge-base --is-ancestor "$merged_sha" origin/main; then
+      echo "::error title=Unverifiable early automation merge::PR merged, but its merge SHA is absent from current main." >&2
+      exit 1
+    fi
+    echo "Protected automation PR $pr_url already merged as $merged_sha; avoiding stale branch rebase and allowing post-merge release orchestration to finish."
+    exit 0
+  fi
+
   if git merge-base --is-ancestor origin/main HEAD; then
     echo 'Automation branch contains current main and passed protected verify.'
     break
