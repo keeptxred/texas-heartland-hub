@@ -1,7 +1,9 @@
 {
-  "checkedAt": "2026-10-29T16:33:29.261Z",
+  "checkedAt": "2026-10-30T21:00:12.965Z",
   "explanation": "Last changed fingerprints of official sources, not the date of the latest GitHub Actions check or the currentness of any individual registration.",
-  "sourceChangesSinceLastCheck": [],
+  "sourceChangesSinceLastCheck": [
+    "compensation-2026"
+  ],
   "expenditures": {
     "reportPrintedAt": "October 16, 2026 5:02:05 PM",
     "year2025": {
@@ -97,7 +99,7 @@
       "id": "compensation-2026",
       "url": "https://www.ethics.state.tx.us/search/lobby/",
       "sizeBytes": 57696,
-      "sha256": "a332a590328d2a7ce6e58ef40ed1ab20c703dc55654d8debe26d455d87c5a79d"
+      "sha256": "538f878b181cc226b26d64dbe8101b1c2abec15caf9f154cf0611fcce6654d7c"
     },
     {
       "id": "quarterly-expenditures",
