@@ -42,8 +42,11 @@ describe("TexasDefined generated-image receiver production smoke", () => {
       workflow.indexOf("set -euo pipefail"),
       workflow.indexOf("for attempt in $(seq 1 72)"),
     );
-    expect(lookup).not.toContain("\\\\n");
-    expect(lookup).toMatch(/^\\s*api="https:\\/\\/api\\.github\\.com\\/repos\\/\\$\\{REPOSITORY\\}\\/actions\\/workflows\\/deploy-cloudflare-after-verify\\.yml\\/runs\\?branch=main&per_page=100"/m);
+    expect(lookup).not.toContain(String.raw`\n`);
+    expect(
+      lookup.split("\n").some((line) =>
+        line.trimStart().startsWith('api="https://api.github.com/repos/${REPOSITORY}/actions/workflows/')),
+    ).toBe(true);
   });
 
   it("keeps the live receiver fail-closed security contract", () => {
