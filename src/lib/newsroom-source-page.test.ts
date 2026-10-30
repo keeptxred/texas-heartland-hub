@@ -11,6 +11,7 @@ import {
   shouldFetchNewsroomSourcePage,
   shouldReplaceNewsroomSourceBody,
 } from "./newsroom-source-page.server";
+import { trimTdemPressReleaseArchive } from "./tdem-press-release-body";
 
 describe("newsroom source-page enrichment", () => {
   it("spends the fixed fetch budget on independent pending stories near the evidence floor first", () => {
@@ -36,8 +37,28 @@ describe("newsroom source-page enrichment", () => {
     expect(shouldReplaceNewsroomSourceBody(independentlyFetched, "Short teaser")).toBe(false);
     expect(shouldReplaceNewsroomSourceBody("Real original publisher record. ".repeat(250), independentlyFetched)).toBe(false);
     const builder = readFileSync("src/routes/api/public/hooks/build-newsroom-research-packets.ts", "utf8");
-    expect(builder).toContain("shouldReplaceNewsroomSourceBody(result.feed.extracted_body, result.body)");
+    expect(builder).toContain("shouldReplaceNewsroomSourceBody(result.feed.extracted_body, result.body, result.feed.link)");
     expect(builder).not.toContain("result.body.length <= existing.length + 100");
+  });
+
+  it("replaces a previously cached TDEM archive with the shorter verified full release", () => {
+    const officialUrl = "https://www.tdem.texas.gov/press-release/10-29-26";
+    const article = "The state agency records describe the original declaration, local response, assessment process and accurately dated source statement. ".repeat(24);
+    const navigation = "Related Pages " + "October 29, 2026 October 28, 2026 September 25, 2026 ".repeat(70) + "Privacy Policy";
+    const polluted = article + navigation;
+    expect(polluted.length).toBeGreaterThan(4_000);
+    expect(trimTdemPressReleaseArchive(officialUrl, polluted)).toBe(article.trim());
+    expect(shouldFetchNewsroomSourcePage({ url: officialUrl, extractedBody: polluted })).toBe(true);
+    expect(shouldReplaceNewsroomSourceBody(polluted, article.trim(), officialUrl)).toBe(true);
+    // Neither a short RSS teaser nor a different publisher can trigger this replacement.
+    expect(shouldReplaceNewsroomSourceBody(polluted, "short", officialUrl)).toBe(false);
+    expect(shouldReplaceNewsroomSourceBody(polluted, article, "https://example.com/article")).toBe(false);
+    expect(trimTdemPressReleaseArchive("https://example.com/article", polluted)).toBe(polluted);
+    expect(trimTdemPressReleaseArchive("https://www.tdem.texas.gov/regions", polluted)).toBe(polluted);
+    expect(trimTdemPressReleaseArchive(officialUrl, article)).toBe(article);
+    const builder = readFileSync("src/routes/api/public/hooks/build-newsroom-research-packets.ts", "utf8");
+    expect(builder).toContain("shouldReplaceNewsroomSourceBody(result.feed.extracted_body, result.body, result.feed.link)");
+    expect(builder).toContain('enrichedById.get(result.feed.id) ?? result.feed.extracted_body');
   });
 
   it("targets thin publisher bodies and synthetic pollution", () => {
