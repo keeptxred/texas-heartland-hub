@@ -1,4 +1,5 @@
 import { isGovernmentNewsClippingUrl } from "./newsroom-discovery-sources";
+import { trimTdemPressReleaseArchive } from "./tdem-press-release-body";
 
 const MAX_SOURCE_TEXT_CHARS = 12_000;
 const MIN_READABLE_CHARS = 500;
@@ -35,11 +36,16 @@ export function looksSyntheticNewsroomText(value: string | null | undefined): bo
  * accidentally cached in extracted_body. Length comparisons apply only when
  * BOTH versions are real, standalone publisher text.
  */
-export function shouldReplaceNewsroomSourceBody(existingText: string | null | undefined, fetchedText: string | null | undefined): boolean {
+export function shouldReplaceNewsroomSourceBody(existingText: string | null | undefined, fetchedText: string | null | undefined, sourceUrl?: string | null): boolean {
   const fetched = (fetchedText ?? "").trim();
   if (fetched.length < MIN_READABLE_CHARS || looksSyntheticNewsroomText(fetched)) return false;
   const existing = (existingText ?? "").trim();
   if (looksSyntheticNewsroomText(existing)) return true;
+  // A previously cached TDEM HTML extraction includes a long unrelated
+  // release archive. Prefer the shorter, newly fetched clean original instead
+  // of preserving polluted evidence solely because its byte count was longer.
+  if (trimTdemPressReleaseArchive(sourceUrl, existing) !== existing
+    && trimTdemPressReleaseArchive(sourceUrl, fetched) === fetched) return true;
   return fetched.length > existing.length + 100;
 }
 
@@ -52,6 +58,9 @@ export function shouldFetchNewsroomSourcePage(input: { url: string | null; extra
   // Worker CPU fetching these known discovery pointers.
   if (isGovernmentNewsClippingUrl(url)) return false;
   const body = (input.extractedBody ?? "").trim();
+  // Stale TDEM archive pollution is always eligible for a *bounded* real-page
+  // refresh, even when navigation made the cached text appear substantive.
+  if (trimTdemPressReleaseArchive(url, body) !== body) return true;
   // A primary record can be the only independently authoritative source.
   // It still must meet the unchanged 5k newsroom evidence gate. Give a
   // 4k–5k primary record a bounded opportunity to retrieve its fuller page.
@@ -241,7 +250,8 @@ export async function fetchReadableNewsroomSource(url: string): Promise<string |
     if (!response.ok) return null;
     const type = response.headers.get("content-type") ?? "";
     if (!/text\/html|application\/xhtml/i.test(type)) return null;
-    return extractReadableNewsroomHtml(await response.text());
+    const extracted = extractReadableNewsroomHtml(await response.text());
+    return extracted ? trimTdemPressReleaseArchive(url, extracted) : null;
   } catch {
     return null;
   }
