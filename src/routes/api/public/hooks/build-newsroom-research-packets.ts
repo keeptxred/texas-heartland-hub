@@ -320,7 +320,7 @@ async function handler() {
     // A legacy synthetic source packet can be much longer than the actual
     // fetched publisher report. Do not discard real verified text simply
     // because the old synthetic pollution has more characters.
-    if (!shouldReplaceNewsroomSourceBody(result.feed.extracted_body, result.body)) {
+    if (!shouldReplaceNewsroomSourceBody(result.feed.extracted_body, result.body, result.feed.link)) {
       fetchOutcomeById.set(result.feed.id, "success");
       continue;
     }
@@ -349,7 +349,7 @@ async function handler() {
         last_attempt_at: attemptedAt,
         last_success_at: result.body ? attemptedAt : (prior?.last_success_at ?? null),
         last_result: outcome,
-        chars: Math.max((result.feed.extracted_body ?? "").trim().length, result.body?.length ?? 0),
+        chars: (enrichedById.get(result.feed.id) ?? result.feed.extracted_body ?? "").trim().length,
       };
     });
     const { error: stateUpsertError } = await newsroomDb
