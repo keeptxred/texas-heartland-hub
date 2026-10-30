@@ -173,7 +173,18 @@ export async function listBills({ search = '', status = '', legislature, chamber
     query = query.or(`bill_identifier.ilike.%${safe}%,caption.ilike.%${safe}%`);
   }
   const { data, error, count } = await query;
-  if (error) throw error;
+  if (error) {
+    // PostgREST returns PGRST103 (HTTP 416) for a range beyond the final
+    // filtered result. Recover the actual count with one cheap first-row
+    // probe so the route can return a real 404 instead of a server error.
+    // Only retry this known range error; genuine database failures still fail.
+    if (offset > 0 && error.code === 'PGRST103') {
+      const probe = await query.range(0, 0);
+      if (probe.error) throw probe.error;
+      return { bills: [], count: probe.count ?? 0 };
+    }
+    throw error;
+  }
   if (!indexFirst) return { bills: (data ?? []) as Bill[], count: count ?? 0 };
 
   const ids = (data ?? []).map((row: { id: string }) => row.id);
