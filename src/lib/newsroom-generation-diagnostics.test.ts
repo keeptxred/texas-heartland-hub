@@ -31,4 +31,19 @@ describe("Phase 13 newsroom generation diagnostics", () => {
     expect(source).toContain("researchPacketEvidenceChars(packet.packet_json)");
     expect(source).toContain("closestBelowFloor");
   });
+  it("separates shadow evidence readiness from safe normal-publication preflight", () => {
+    expect(source).toContain('newsroomNewStoryCutoff()');
+    expect(source).toContain('newsroomHasPublisherDiversity(packet.packet_json.sources ?? [])');
+    expect(source).toContain('publicationExclusionReason = "not_pending"');
+    expect(source).toContain('publicationExclusionReason = "outside_fresh_news_window"');
+    expect(source).toContain('publicationExclusionReason = "insufficient_authority_evidence"');
+    expect(source).toContain('publicationExclusionReason = "insufficient_independent_sources"');
+    expect(source).toContain('packet.source_count < 2 && packet.primary_source_count < 1');
+    expect(source).toContain('publicationPreflightEligible: publicationExclusionReason === null');
+    expect(source).toContain('publicationReasonCounts');
+    expect(source).toContain('top_100_pending_or_held_not_full_publisher_pool');
+    // Never misreport a diagnostic as a validated or published newsroom story.
+    expect(source).toContain('Still only *pre-AI* qualification');
+  });
+
 });
