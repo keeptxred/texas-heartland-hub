@@ -23,7 +23,7 @@ WORKFLOW = ".github/workflows/texas-lobbying-2026-source-check.yml"
 def api(path, method="GET", payload=None):
     body = None if payload is None else json.dumps(payload).encode()
     req = urllib.request.Request(
-        "https://api.github.com/repos/" + REPO + path,
+        ("https://api.github.com" + path if path.startswith("/search/") else "https://api.github.com/repos/" + REPO + path),
         method=method,
         data=body,
         headers={
