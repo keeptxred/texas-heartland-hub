@@ -277,6 +277,19 @@ async function checkIngestion() {
   if (payload.fetched < 1) throw new Error(`ingest-feeds completed but fetched zero Texas-relevant candidates: ${text.slice(0, 500)}`);
   const elapsed = Math.round((Date.now() - startedAt) / 1000);
   console.log(`OK ingest-feeds elapsed=${elapsed}s fetched=${payload.fetched} inserted=${payload.inserted} healthySources=${payload.healthySources ?? "n/a"} quietSources=${payload.quietSources ?? "n/a"} failedSources=${payload.failedSources ?? "n/a"}`);
+  // DPS was added as an original first-party source. A successful *overall*
+  // ingestion can conceal a single official index blocked by upstream egress,
+  // or a date parser extracting zero releases. Emit only bounded source-status
+  // metadata already returned by this one existing scheduled smoke POST. No
+  // additional HTTP fetch, crawler, or ingestion/publishing attempt.
+  const dps = (Array.isArray(payload.diag) ? payload.diag : [])
+    .find((source) => source.source === "Texas DPS — Direct Press Releases");
+  if (dps) {
+    const safeError = String(dps.error ?? "").slice(0, 160).replace(/[\r\n\t]/g, " ");
+    console.log(`INFO dps-firstparty-ingest status=${Number(dps.status ?? 0)} item_count=${Number(dps.count ?? 0)} attempts=${Number(dps.attempts ?? 0)} error=${safeError || "none"}`);
+  } else {
+    console.warn("WARN dps-firstparty-ingest not present in response diagnostics; inspect current deployed source config");
+  }
 }
 
 const failures = [];
