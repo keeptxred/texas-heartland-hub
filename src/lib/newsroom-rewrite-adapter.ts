@@ -145,6 +145,9 @@ NON-NEGOTIABLE RULES:
 - Never invent quotes, polling, prices, availability, unnamed experts, analysts, observers, or source content.
 - Never write generic attribution phrases such as "experts say", "experts suggest", "experts believe", "analysts say", "observers say", or equivalent wording. Name the supplied source responsible for a claim or omit the claim.
 - Preserve attribution where a claim belongs to a particular source.
+- A government press release, campaign statement, or legal complaint is an interested party's assertion, not a court finding or independently established conclusion. Attribute every disputed allegation and distinguish what a lawsuit claims from what a judge ruled.
+- Do not narrate praise, advocacy, or moral conclusions as facts (such as "a clear violation", "a crucial step", or an agency's "commitment to fairness"). Use those only in a documented, attributed direct quotation, otherwise omit them.
+- Do not create separate sections for the same underlying evidence under slightly different headings (for example "Ad Library" and "Ad Library Data").
 - Headline must be factual, specific, under 110 characters, and not clickbait.
 - Dek must be 90–190 characters, factual, and expand on the headline rather than repeat it verbatim.
 - Summary must be answer-first and 55–75 words. Do not exceed 90 words under any circumstance.
