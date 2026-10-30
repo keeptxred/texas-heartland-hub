@@ -19,5 +19,9 @@ describe("Texas lobbying source refresh protected PR publication", () => {
     const publisher = readFileSync("scripts/ci/publish-automation-pr.sh", "utf8");
     expect(publisher).toContain("dispatch_and_watch_verify");
     expect(publisher).toContain("gh pr merge");
+    expect(publisher).toContain("Unverifiable early automation merge");
+    expect(publisher).toContain('git merge-base --is-ancestor "$merged_sha" origin/main');
+    expect(publisher.indexOf("Unverifiable early automation merge")).toBeLessThan(publisher.indexOf("git rebase origin/main"));
+    expect(workflow).toContain('"scripts/ci/publish-automation-pr.sh"');
   });
 });
