@@ -41,6 +41,23 @@ describe("Phase 13 draft generation targets", () => {
     expect(prompt).toContain("Do not exceed 90 words under any circumstance");
   });
 
+  it("keeps lawsuits attributed and forces repairs to consolidate redundant headings rather than pad", () => {
+    const prompt = newsroomRewriteSystemPrompt(packet);
+    expect(prompt).toContain("not a court finding or independently established conclusion");
+    expect(prompt).toContain("distinguish what a lawsuit claims from what a judge ruled");
+    expect(prompt).toContain("Do not narrate praise, advocacy, or moral conclusions as facts");
+    expect(prompt).toContain('Do not create separate sections for the same underlying evidence');
+
+    // These two protections must remain in the repair path, not just
+    // the first-pass prompt. Nothing changes the AI budget or editorial floor.
+    const generator = require("node:fs").readFileSync(
+      "src/routes/api/public/hooks/generate-newsroom.ts", "utf8",
+    );
+    expect(generator).toContain("consolidate those redundant headings into the minimum four");
+    expect(generator).toContain("existing main-story word floor");
+    expect(generator).toContain("repeatedParagraphLocations:");
+  });
+
   it("constrains summary and paragraph sizes in the provider schema", () => {
     const properties = NEWSROOM_DRAFT_JSON_SCHEMA.properties as SchemaProperties;
     expect(properties.summary.maxLength).toBe(600);
