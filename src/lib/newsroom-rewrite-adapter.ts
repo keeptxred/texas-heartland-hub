@@ -28,11 +28,13 @@ export const NEWSROOM_DRAFT_JSON_SCHEMA: Record<string, unknown> = {
     },
     title: { type: "string" },
     dek: { type: "string" },
-    summary: { type: "string", minLength: 250, maxLength: 600 },
+    // The model must be able to decline a thin packet with empty strings.
+    // Full publishable-draft requirements are enforced by the local validator.
+    summary: { type: "string", maxLength: 600 },
     relevance: { type: "string" },
     sections: {
       type: "array",
-      minItems: 4,
+      minItems: 0,
       maxItems: 6,
       items: {
         type: "object",
@@ -40,9 +42,9 @@ export const NEWSROOM_DRAFT_JSON_SCHEMA: Record<string, unknown> = {
           heading: { type: "string" },
           paragraphs: {
             type: "array",
-            minItems: 2,
+            minItems: 0,
             maxItems: 3,
-            items: { type: "string", minLength: 380 },
+            items: { type: "string" },
           },
         },
         required: ["heading", "paragraphs"],
@@ -338,14 +340,17 @@ function draftShapeReasons(value: unknown): string[] {
 }
 
 export function validateNewsroomDraft(draft: unknown, packet: ResearchPacket): DraftValidation {
+  // A truthful abstention deliberately has empty story strings and sections.
+  // Recognize it BEFORE shape validation so the bounded repair never spends a
+  // second paid AI call trying to invent 800 words from missing source facts.
+  // This is ALWAYS a rejection, never a quality/publication override.
+  if (isRecord(draft) && isRecord(draft.brief) && draft.brief.hasClearNewsEvent === false) {
+    return { ok: false, reasons: ["brief_no_clear_news_event"], mainWordCount: 0 };
+  }
   const shapeReasons = draftShapeReasons(draft);
   if (shapeReasons.length) return { ok: false, reasons: shapeReasons, mainWordCount: 0 };
 
   const typedDraft = draft as NewsroomDraft;
-  if (!typedDraft.brief.hasClearNewsEvent) {
-    return { ok: false, reasons: ["brief_no_clear_news_event"], mainWordCount: 0 };
-  }
-
   const bodyJson = {
     intro: [typedDraft.summary],
     sections: [
