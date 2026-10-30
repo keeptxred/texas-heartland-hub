@@ -5,6 +5,7 @@ import { scoreFeedItem, TEXAS_RELEVANCE_MIN } from "@/lib/viral-score";
 import { selectRotatedSourceWindow } from "@/lib/ingest-source-window";
 import { parseTexasAgPressReleaseIndex } from "@/lib/texas-ag-press-releases";
 import { datedTdemReleasePublishedAt } from "@/lib/texas-tdem-press-release-date";
+import { datedDpsReleaseFromIndexTail } from "@/lib/texas-dps-press-release-date";
 import { partitionFeedLinkLookups } from "@/lib/ingest-link-lookup";
 import { extractFirstPartyRssArticleBody } from "@/lib/newsroom-firstparty-rss-body";
 import { canFailoverTrustedRssStatus, trustedNewsroomRssRelayUrl } from "@/lib/official-rss-egress";
@@ -53,6 +54,9 @@ const DIRECT_SOURCES: Source[] = [
   // The Attorney General legacy RSS returns HTTP 404; use the verified, dated official release index.
   { name: "Texas Attorney General — Direct News Releases", url: "https://www.texasattorneygeneral.gov/news/press_releases", category: "Politics", mode: "html-links", include: "^/news/releases/" },
   { name: "Texas DPS — Direct Most Wanted RSS", url: "https://www.dps.texas.gov/rss/most-wanted.xml", category: "Local", mode: "rss" },
+  // DPS publishes dated original state police records under non-dated /news/<slug> links.
+  // The index date must be verified; old releases are NEVER dated by crawl time.
+  { name: "Texas DPS — Direct Press Releases", url: "https://www.dps.texas.gov/news/press-releases", category: "Local", mode: "html-links", include: "^/news/(?!press-releases(?:/|$)|most-wanted(?:/|$))[a-z0-9][a-z0-9-]+/?$" },
   { name: "Texas Register", url: "https://www.sos.state.tx.us/texreg/texreg.xml", mode: "rss" },
   { name: "Texas Comptroller", url: "https://public.govdelivery.com/topics/TXCOMPT_1/feed.rss", mode: "rss" },
   // Canonical first-party releases are necessary: Google News RSS wrappers
@@ -211,6 +215,13 @@ function parseHtmlLinks(html: string, source: Source): Item[] {
       // The index includes historical releases; admit only real dated
       // first-party links within the existing 21-day recency window.
       const dated = datedTdemReleasePublishedAt(parsed.pathname);
+      if (!dated) continue;
+      publishDate = dated;
+    }
+    if (source.name === "Texas DPS — Direct Press Releases") {
+      // DPS's undated article permalinks need the verified date shown directly
+      // after their listing links; do not import archive links as new news.
+      const dated = datedDpsReleaseFromIndexTail(html, (match.index ?? 0) + match[0].length);
       if (!dated) continue;
       publishDate = dated;
     }
