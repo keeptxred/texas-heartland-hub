@@ -40,6 +40,15 @@ jobs:
           fi
       - name: Verify official registration, compensation, rules and expenditure sources
         run: node scripts/lobbying/verify-texas-2026-sources.mjs
+      - name: Report eligible PR-trigger credential readiness without disclosing value
+        env:
+          PR_AUTH_TOKEN: ${{ secrets.KTR_AUTOMATION_PR_TOKEN }}
+        run: |
+          if [[ -n "$PR_AUTH_TOKEN" ]]; then
+            echo "CI-triggering PR credential is configured."
+          else
+            echo "::warning title=Bot PR credential missing::Unchanged TEC sources need no PR. Any verified source change will fail closed until KTR_AUTOMATION_PR_TOKEN is configured."
+          fi
       - name: Publish changed source fingerprints through protected automation PR
         env:
           GH_TOKEN: ${{ secrets.KTR_AUTOMATION_PR_TOKEN || github.token }}
