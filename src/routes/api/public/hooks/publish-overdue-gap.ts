@@ -13,6 +13,9 @@ const REPOSITORY = "keeptxred/texas-heartland-hub";
 const WORKFLOW_PATH = ".github/workflows/run-daily-news-now.yml";
 const OVERDUE_HOURS = 6;
 const MAX_ATTEMPTS = 8;
+// In the guarded GitHub workflow, bound a single Worker invocation to one
+// substantive rewrite. The workflow resumes with explicit excluded IDs and
+// retains the same global limit of eight paid/editorial attempts.
 // A locked or cooling-down story is not an editorial/AI attempt. Scan at
 // at most 48 DIFFERENT stories to get eight substantive attempts, without
 // retrying a lock or increasing the paid rewrite budget. Production verified
@@ -189,6 +192,23 @@ async function publishOverdueGaps(request: Request) {
     );
   }
 
+  // The authenticated workflow can split eight attempts across up to eight
+  // short requests. Request body is NOT trusted to expand either existing
+  // maximum. Excluded IDs are exact feed IDs already visited by this one
+  // guarded workflow run; never retry them across request boundaries.
+  const payload: unknown = await request.json().catch(() => null);
+  const options = payload && typeof payload === "object" && !Array.isArray(payload)
+    ? payload as Record<string, unknown> : {};
+  const requestedLimit = options.max_substantive_attempts;
+  const perRequestLimit = Number.isInteger(requestedLimit) && Number(requestedLimit) >= 1
+    ? Math.min(Number(requestedLimit), MAX_ATTEMPTS) : MAX_ATTEMPTS;
+  const excludedFeedIds = new Set<number>();
+  if (Array.isArray(options.exclude_feed_ids)) {
+    for (const id of options.exclude_feed_ids.slice(0, MAX_CANDIDATE_SCAN)) {
+      if (Number.isSafeInteger(id) && id > 0) excludedFeedIds.add(id);
+    }
+  }
+
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const db = supabaseAdmin as any;
   const cutoff = new Date(Date.now() - OVERDUE_HOURS * 60 * 60 * 1000).toISOString();
@@ -257,6 +277,8 @@ async function publishOverdueGaps(request: Request) {
 
   for (const gap of ranked.slice(0, MAX_CANDIDATE_SCAN)) {
     if (substantiveAttempts >= MAX_ATTEMPTS) break;
+    if (substantiveAttempts >= perRequestLimit) break;
+    if (excludedFeedIds.has(gap.id)) continue;
     const feed = feedById.get(gap.id);
     if (!feed) continue;
     const series = await prepareReleaseSeriesContext(db, feed);
@@ -320,6 +342,8 @@ async function publishOverdueGaps(request: Request) {
     substantive_attempts: substantiveAttempts,
     lock_deferrals: lockDeferrals,
     max_substantive_attempts: MAX_ATTEMPTS,
+    per_request_substantive_attempt_limit: perRequestLimit,
+    excluded_feed_ids_count: excludedFeedIds.size,
     max_scanned_candidates: MAX_CANDIDATE_SCAN,
     published,
     results,
