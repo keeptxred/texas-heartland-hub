@@ -11,6 +11,7 @@ import {
   shouldFetchNewsroomSourcePage,
   shouldReplaceNewsroomSourceBody,
 } from "./newsroom-source-page.server";
+import { trimTdemPressReleaseArchive } from "./tdem-press-release-body";
 
 describe("newsroom source-page enrichment", () => {
   it("spends the fixed fetch budget on independent pending stories near the evidence floor first", () => {
@@ -36,8 +37,53 @@ describe("newsroom source-page enrichment", () => {
     expect(shouldReplaceNewsroomSourceBody(independentlyFetched, "Short teaser")).toBe(false);
     expect(shouldReplaceNewsroomSourceBody("Real original publisher record. ".repeat(250), independentlyFetched)).toBe(false);
     const builder = readFileSync("src/routes/api/public/hooks/build-newsroom-research-packets.ts", "utf8");
-    expect(builder).toContain("shouldReplaceNewsroomSourceBody(result.feed.extracted_body, result.body)");
+    expect(builder).toContain("shouldReplaceNewsroomSourceBody(result.feed.extracted_body, result.body, result.feed.link)");
     expect(builder).not.toContain("result.body.length <= existing.length + 100");
+  });
+
+  it("replaces a previously cached TDEM archive with the shorter verified full release", () => {
+    const officialUrl = "https://www.tdem.texas.gov/press-release/10-29-26";
+    // Use varied substantive content: a real article has many unique seven-word
+    // sequences; repeating one sentence 24 times is not an adequate continuity fixture.
+    const article = Array.from({ length: 32 }, (_, index) =>
+      `Official release paragraph ${index + 1} records the county response coordination unit ${index + 10}, documented hazard assessment, specific field assistance, evacuation guidance and dated emergency resource deployment.`
+    ).join(" ");
+    const navigation = "Related Pages " + "October 29, 2026 October 28, 2026 September 25, 2026 ".repeat(70) + "Privacy Policy";
+    const polluted = article + navigation;
+    expect(polluted.length).toBeGreaterThan(4_000);
+    expect(trimTdemPressReleaseArchive(officialUrl, polluted)).toBe(article.trim());
+    expect(shouldFetchNewsroomSourcePage({ url: officialUrl, extractedBody: polluted })).toBe(true);
+    expect(shouldReplaceNewsroomSourceBody(polluted, article.trim(), officialUrl)).toBe(true);
+    const challengeHtml = "Please verify you are a person before viewing this website. Security check and cookie challenge in progress. ".repeat(140);
+    expect(challengeHtml.length).toBeGreaterThan(polluted.length);
+    expect(shouldReplaceNewsroomSourceBody(polluted, challengeHtml, officialUrl)).toBe(false);
+    // Neither a short RSS teaser nor a different publisher can trigger this replacement.
+    expect(shouldReplaceNewsroomSourceBody(polluted, "short", officialUrl)).toBe(false);
+    expect(shouldReplaceNewsroomSourceBody(polluted, article, "https://example.com/article")).toBe(false);
+    expect(trimTdemPressReleaseArchive("https://example.com/article", polluted)).toBe(polluted);
+    expect(trimTdemPressReleaseArchive("https://www.tdem.texas.gov/regions", polluted)).toBe(polluted);
+    expect(trimTdemPressReleaseArchive(officialUrl, article)).toBe(article);
+    const builder = readFileSync("src/routes/api/public/hooks/build-newsroom-research-packets.ts", "utf8");
+    expect(builder).toContain("shouldReplaceNewsroomSourceBody(result.feed.extracted_body, result.body, result.feed.link)");
+    expect(builder).toContain('enrichedById.get(result.feed.id) ?? result.feed.extracted_body');
+  });
+
+  it("automatically repairs at most one polluted TDEM source outside pending clusters without bypassing cooldowns", () => {
+    const builder = readFileSync("src/routes/api/public/hooks/build-newsroom-research-packets.ts", "utf8");
+    expect(builder).toContain("const TDEM_CACHE_CLEANUP_SCAN_LIMIT = 8");
+    expect(builder).toContain("const TDEM_CACHE_CLEANUP_FETCH_LIMIT = 1");
+    expect(builder).toContain('.eq("source", "Texas Division of Emergency Management — Direct Releases")');
+    expect(builder).toContain('.gte("created_at", tdemScanSince)');
+    expect(builder).toContain('.limit(TDEM_CACHE_CLEANUP_SCAN_LIMIT)');
+    expect(builder).toContain("trimTdemPressReleaseArchive(feed.link, feed.extracted_body) !== feed.extracted_body");
+    expect(builder).toContain(".slice(0, TDEM_CACHE_CLEANUP_FETCH_LIMIT)");
+    expect(builder).toContain('from("newsroom_source_page_fetch_state")');
+    expect(builder).toContain("tdemMaintenanceFeeds.map((feed) => feed.id)");
+    expect(builder).toContain("sourcePageStateById.set(row.feed_item_id, row)");
+    expect(builder).toContain("priorityByFeedId.set(feed.id, Math.max(priorityByFeedId.get(feed.id) ?? 0, 25_000))");
+    expect(builder).toContain(".slice(0, SOURCE_PAGE_FETCH_LIMIT)");
+    expect(builder).toContain("sourcePageCoolingDown(feed.id)");
+    expect(builder).not.toContain('status: "PENDING"');
   });
 
   it("targets thin publisher bodies and synthetic pollution", () => {

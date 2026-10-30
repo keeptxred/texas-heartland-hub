@@ -1,5 +1,6 @@
 import { isSyntheticNewsroomEvidence } from "./newsroom-evidence-integrity";
 import { newsroomLikelySameOriginalReport } from "./newsroom-publication-preflight";
+import { trimTdemPressReleaseArchive } from "./tdem-press-release-body";
 
 export type ResearchPacketSource = {
   feedItemId: number;
@@ -42,26 +43,11 @@ function normalizeEvidenceSegment(value: string): string {
     .trim();
 }
 
-/**
- * The official TDEM press-release layout embeds a long "Related Pages"
- * archive of *other* releases after the dated story. That archive is navigation,
- * not evidence about the release or its event. Remove it only on canonical
- * TDEM press-release URLs; never strip an arbitrary publisher's story text.
- */
-function verifiedSourceBody(source: ResearchPacketSource): string {
-  const body = isSyntheticNewsroomEvidence(source.extractedBody) ? "" : source.extractedBody;
-  try {
-    const url = new URL(source.url);
-    if (url.hostname.replace(/^www\./i, "").toLowerCase() !== "tdem.texas.gov"
-      || !/^\/press-release\/\d{1,2}-\d{1,2}-\d{2}\/?$/i.test(url.pathname)) return body;
-    return body.replace(/\bRelated Pages(?=\s+[A-Z][a-z]+\s+\d{1,2},\s+20\d{2}\b)[\s\S]*$/i, "").trim();
-  } catch {
-    return body;
-  }
-}
-
 function sourceEvidenceSegments(source: ResearchPacketSource): string[] {
-  const safeExtractedBody = verifiedSourceBody(source);
+  const safeExtractedBody = trimTdemPressReleaseArchive(
+    source.url,
+    isSyntheticNewsroomEvidence(source.extractedBody) ? "" : source.extractedBody,
+  );
   const safeDescription = isSyntheticNewsroomEvidence(source.description) ? "" : source.description;
   const combined = `${safeDescription ?? ""}\n${safeExtractedBody ?? ""}`;
   return combined

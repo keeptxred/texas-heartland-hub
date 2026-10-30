@@ -1,4 +1,5 @@
 import { isGovernmentNewsClippingUrl } from "./newsroom-discovery-sources";
+import { trimTdemPressReleaseArchive } from "./tdem-press-release-body";
 
 const MAX_SOURCE_TEXT_CHARS = 12_000;
 const MIN_READABLE_CHARS = 500;
@@ -31,15 +32,47 @@ export function looksSyntheticNewsroomText(value: string | null | undefined): bo
   return /MULTI-SOURCE STORY PACKET\.|RAW SOURCE PACKET|STRUCTURED FACT LEDGER|PRIMARY-RECORD-AUGMENTED SOURCE PACKET\.|RELATED OFFICIAL RELEASE SERIES:/i.test(text);
 }
 
+/** Do not overwrite a legitimate original release with a shorter HTML
+ * challenge/error page that happens to return HTTP200. Replacements must
+ * demonstrably contain the same original article text, not just the same URL.
+ */
+function hasSourceBodyContinuity(previous: string, fetched: string): boolean {
+  const shingles = (text: string) => {
+    const words = text.normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase().replace(/[^a-z0-9]+/g, " ").trim().split(/\s+/).filter(Boolean);
+    const result = new Set<string>();
+    for (let i = 0; i <= words.length - 7; i++) result.add(words.slice(i, i + 7).join(" "));
+    return result;
+  };
+  const oldShingles = shingles(previous);
+  const newShingles = shingles(fetched);
+  if (oldShingles.size < 30 || newShingles.size < 30) return false;
+  const smaller = Math.min(oldShingles.size, newShingles.size);
+  if (smaller / Math.max(oldShingles.size, newShingles.size) < 0.45) return false;
+  let shared = 0;
+  for (const part of newShingles) if (oldShingles.has(part)) shared++;
+  return shared / smaller >= 0.65;
+}
+
 /** Prefer a verifiable publisher body over any longer synthetic packet
  * accidentally cached in extracted_body. Length comparisons apply only when
  * BOTH versions are real, standalone publisher text.
  */
-export function shouldReplaceNewsroomSourceBody(existingText: string | null | undefined, fetchedText: string | null | undefined): boolean {
+export function shouldReplaceNewsroomSourceBody(existingText: string | null | undefined, fetchedText: string | null | undefined, sourceUrl?: string | null): boolean {
   const fetched = (fetchedText ?? "").trim();
   if (fetched.length < MIN_READABLE_CHARS || looksSyntheticNewsroomText(fetched)) return false;
   const existing = (existingText ?? "").trim();
   if (looksSyntheticNewsroomText(existing)) return true;
+  // A previously cached TDEM HTML extraction includes a long unrelated
+  // release archive. Prefer the shorter, newly fetched clean original instead
+  // of preserving polluted evidence solely because its byte count was longer.
+  const originalTdemReport = trimTdemPressReleaseArchive(sourceUrl, existing);
+  if (originalTdemReport !== existing) {
+    // Once archive pollution is confirmed, every replacement must prove it
+    // contains the same original release; a longer bot challenge is no exception.
+    return trimTdemPressReleaseArchive(sourceUrl, fetched) === fetched
+      && hasSourceBodyContinuity(originalTdemReport, fetched);
+  }
   return fetched.length > existing.length + 100;
 }
 
@@ -52,6 +85,9 @@ export function shouldFetchNewsroomSourcePage(input: { url: string | null; extra
   // Worker CPU fetching these known discovery pointers.
   if (isGovernmentNewsClippingUrl(url)) return false;
   const body = (input.extractedBody ?? "").trim();
+  // Stale TDEM archive pollution is always eligible for a *bounded* real-page
+  // refresh, even when navigation made the cached text appear substantive.
+  if (trimTdemPressReleaseArchive(url, body) !== body) return true;
   // A primary record can be the only independently authoritative source.
   // It still must meet the unchanged 5k newsroom evidence gate. Give a
   // 4k–5k primary record a bounded opportunity to retrieve its fuller page.
@@ -241,7 +277,8 @@ export async function fetchReadableNewsroomSource(url: string): Promise<string |
     if (!response.ok) return null;
     const type = response.headers.get("content-type") ?? "";
     if (!/text\/html|application\/xhtml/i.test(type)) return null;
-    return extractReadableNewsroomHtml(await response.text());
+    const extracted = extractReadableNewsroomHtml(await response.text());
+    return extracted ? trimTdemPressReleaseArchive(url, extracted) : null;
   } catch {
     return null;
   }
