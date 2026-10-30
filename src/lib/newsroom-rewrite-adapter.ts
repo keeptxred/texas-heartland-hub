@@ -99,6 +99,32 @@ export function repeatedNewsroomParagraphPositions(
   return repeats;
 }
 
+/**
+ * Build a fact-preserving repair SEED, not a publishable article. Repeating
+ * long paragraphs in a model's repair context often causes the smaller
+ * rewrite model to copy them back verbatim. Keep every FIRST occurrence and
+ * all existing article metadata, but omit repeated full paragraphs from the
+ * second AI request. Empty/one-paragraph sections are intentional in this
+ * incomplete outline: only a fresh source-grounded generation passing the
+ * unchanged full validator may be published.
+ */
+export function newsroomNonRepeatingRepairOutline(draft: NewsroomDraft): NewsroomDraft {
+  const seen = new Set<string>();
+  return {
+    ...draft,
+    sections: draft.sections.map((section) => ({
+      ...section,
+      paragraphs: section.paragraphs.filter((paragraph) => {
+        const normalized = paragraph.trim().replace(/\s+/g, " ").toLowerCase();
+        if (normalized.length < 120) return true;
+        if (seen.has(normalized)) return false;
+        seen.add(normalized);
+        return true;
+      }),
+    })),
+  };
+}
+
 export function newsroomRewriteSystemPrompt(packet: ResearchPacket): string {
   const mergeRule = packet.recommendedFormat === "MERGE"
     ? "This is a MERGE package. Reconcile overlapping reports into one story, preserve attribution for outlet-specific facts, and do not treat repeated reporting as independent new facts."

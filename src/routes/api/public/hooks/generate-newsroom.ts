@@ -13,6 +13,7 @@ import {
   newsroomRewriteSystemPrompt,
   newsroomRewriteUserPrompt,
   normalizeNewsroomDraft,
+  newsroomNonRepeatingRepairOutline,
   repeatedNewsroomParagraphPositions,
   slugifyNewsroomTitle,
   validateNewsroomDraft,
@@ -196,14 +197,25 @@ function newsroomRepairUserPrompt(
   previousDraft: NewsroomDraft,
   validationReasons: string[],
 ): string {
+  const hasRepeatedParagraphs = validationReasons.includes("repeated_newsroom_paragraphs");
+  // The previous draft is diagnostic evidence, NOT a template for duplicating
+  // text. The smaller rewrite model often echoes whole repeated paragraphs
+  // when shown the full rejected article. Strip only repeated occurrences
+  // from the repair request; never remove anything from publication validation.
+  const repairSeed = hasRepeatedParagraphs
+    ? newsroomNonRepeatingRepairOutline(previousDraft)
+    : previousDraft;
   return JSON.stringify({
-    instruction: "Repair the previous draft rather than restarting. Preserve every source-supported fact that already works. Fix every listed validation failure, remove unsupported/generic phrasing, keep the exact required JSON shape, and do not add facts that are absent from the packet. Return the complete corrected draft JSON.",
+    instruction: hasRepeatedParagraphs
+      ? "Rebuild the complete article sections from the supplied ORIGINAL source packet. The previousDraft is an incomplete, deduplicated outline, not a finished article: missing paragraphs were deliberate duplicates and must NOT be copied back. Keep supported title, summary, relevance, verifiable facts and attribution where accurate. Prefer four distinct source-backed sections with 2–3 genuinely different paragraphs each over six repetitive sections. Preserve the category's full main-word minimum, factual attribution and all other validation gates. Never invent reporting or fill sections with generic commentary. If evidence cannot support the full article, set brief.hasClearNewsEvent=false."
+      : "Repair the previous draft rather than restarting. Preserve every source-supported fact that already works. Fix every listed validation failure, remove unsupported/generic phrasing, keep the exact required JSON shape, and do not add facts that are absent from the packet. Return the complete corrected draft JSON.",
     validationFailures: validationReasons,
-    repeatedParagraphLocations: validationReasons.includes("repeated_newsroom_paragraphs")
+    repeatedParagraphLocations: hasRepeatedParagraphs
       ? repeatedNewsroomParagraphPositions(previousDraft)
       : [],
     repetitionRepairRule: "For each listed repeat, keep a factual first occurrence if supported. Rewrite the repeated location using genuinely different specific facts found in the supplied packet, without recycling another paragraph's facts. Do not merely rephrase the original, add generic commentary, or invent new details to meet a word target. If the packet lacks distinct evidence for all required paragraphs, set brief.hasClearNewsEvent=false rather than returning repetitive or unsupported copy.",
-    previousDraft,
+    previousDraftWasDeduplicatedForPrompt: hasRepeatedParagraphs,
+    previousDraft: repairSeed,
     packet: JSON.parse(newsroomRewriteUserPrompt(packet)),
   });
 }
@@ -505,7 +517,7 @@ async function handler({ request }: { request: Request }) {
     if (!recoverSavedDraft && !validation.ok && !validation.reasons.includes("brief_no_clear_news_event")) {
       repairAttempted = true;
       const repaired = await runCloudflareJson<NewsroomDraft>({
-        system: `${newsroomRewriteSystemPrompt(packet)}\n\nREPAIR MODE: The previous draft failed local validation. Correct only the listed failures while preserving supported facts, a 4–6-section source-proportional structure, 2–3 factual paragraphs per section, and all existing source and anti-repetition quality requirements. Every repaired paragraph must stay at or below 130 words and 4 sentences; never merge multiple factual roles into one oversized paragraph. Do not invent detail or pad with generic commentary.`,
+        system: `${newsroomRewriteSystemPrompt(packet)}\n\nREPAIR MODE: The previous draft failed local validation. Correct only the listed failures while preserving supported facts, a 4–6-section source-proportional structure, 2–3 factual paragraphs per section, and all existing source and anti-repetition quality requirements. Every repaired paragraph must stay at or below 130 words and 4 sentences; never merge multiple factual roles into one oversized paragraph. Do not invent detail or pad with generic commentary.${validation.reasons.includes("repeated_newsroom_paragraphs") ? " The supplied previousDraft deliberately excludes repeated paragraphs. Rebuild the full sections using independent original facts from the packet; never restore the deleted duplicates, never pad to length, and prefer four well-supported sections over six repetitive ones." : ""}`,
         user: newsroomRepairUserPrompt(packet, draft, validation.reasons),
         maxTokens: 12000,
         maxAttempts: 1,
