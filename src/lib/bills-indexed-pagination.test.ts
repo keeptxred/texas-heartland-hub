@@ -221,6 +221,25 @@ describe("bill directory pagination under the public API timeout", () => {
     }
   });
 
+  it("recovers a PostgREST unsatisfiable deep Senate range without masking other errors", async () => {
+    const query = mockQuery({ data: null });
+    let requests = 0;
+    query.builder.then = (resolve: (result: QueryResult) => unknown, reject: (error: unknown) => unknown) =>
+      Promise.resolve(requests++ === 0
+        ? { data: null, error: Object.assign(new Error("Requested range not satisfiable"), { code: "PGRST103" }) }
+        : { data: [{ id: "first-senate-bill" }], count: 3202, error: null }).then(resolve, reject);
+    fromMock.mockReturnValueOnce(query.builder);
+    expect(await listBills({ chamber: "senate", kind: "substantive", offset: 3936 })).toEqual({
+      bills: [], count: 3202,
+    });
+    expect(fromMock).toHaveBeenCalledTimes(1);
+    expect(query.calls.filter(call => call.method === "range")).toEqual([
+      { method: "range", args: [3936, 3959] },
+      { method: "range", args: [0, 0] },
+    ]);
+    expect(query.calls).toContainEqual({ method: "in", args: ["bill_type", ["hb", "sb"]] });
+  });
+
   it("does not issue a hydration query for an out-of-range deep page", async () => {
     const first = mockQuery({ data: [], count: 4260 });
     fromMock.mockReturnValueOnce(first.builder);
