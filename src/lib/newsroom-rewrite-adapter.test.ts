@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   categoryForPillar,
@@ -46,6 +47,19 @@ describe("newsroom rewrite adapter", () => {
     expect(prompt).toContain("MERGE package");
     expect(prompt).toContain("Use only facts");
     expect(prompt).toContain("Never invent quotes");
+  });
+
+  it("demands distinct factual depth rather than padding an 800-word article from thin source records", () => {
+    const prompt = newsroomRewriteSystemPrompt(packet);
+    expect(prompt).toContain("four sections with three substantively different paragraphs");
+    expect(prompt).toContain("Plan factual paragraph roles before writing");
+    expect(prompt).toContain("Never create a twelfth paragraph by recycling another fact");
+    expect(prompt).toContain("set brief.hasClearNewsEvent=false");
+    const generator = readFileSync("src/routes/api/public/hooks/generate-newsroom.ts", "utf8");
+    expect(generator).toContain("const underlength = validationReasons.some");
+    expect(generator).toContain("if these sources cannot support".replace("if", "If"));
+    expect(generator).toContain("Never repeat a previously used fact to reach the minimum");
+    expect(generator).toContain("maxAttempts: 1");
   });
 
   it("passes the source-grounded packet without adding outside research", () => {
