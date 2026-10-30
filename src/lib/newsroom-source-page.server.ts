@@ -32,6 +32,28 @@ export function looksSyntheticNewsroomText(value: string | null | undefined): bo
   return /MULTI-SOURCE STORY PACKET\.|RAW SOURCE PACKET|STRUCTURED FACT LEDGER|PRIMARY-RECORD-AUGMENTED SOURCE PACKET\.|RELATED OFFICIAL RELEASE SERIES:/i.test(text);
 }
 
+/** Do not overwrite a legitimate original release with a shorter HTML
+ * challenge/error page that happens to return HTTP200. Replacements must
+ * demonstrably contain the same original article text, not just the same URL.
+ */
+function hasSourceBodyContinuity(previous: string, fetched: string): boolean {
+  const shingles = (text: string) => {
+    const words = text.normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase().replace(/[^a-z0-9]+/g, " ").trim().split(/\s+/).filter(Boolean);
+    const result = new Set<string>();
+    for (let i = 0; i <= words.length - 7; i++) result.add(words.slice(i, i + 7).join(" "));
+    return result;
+  };
+  const oldShingles = shingles(previous);
+  const newShingles = shingles(fetched);
+  if (oldShingles.size < 30 || newShingles.size < 30) return false;
+  const smaller = Math.min(oldShingles.size, newShingles.size);
+  if (smaller / Math.max(oldShingles.size, newShingles.size) < 0.45) return false;
+  let shared = 0;
+  for (const part of newShingles) if (oldShingles.has(part)) shared++;
+  return shared / smaller >= 0.65;
+}
+
 /** Prefer a verifiable publisher body over any longer synthetic packet
  * accidentally cached in extracted_body. Length comparisons apply only when
  * BOTH versions are real, standalone publisher text.
@@ -44,8 +66,10 @@ export function shouldReplaceNewsroomSourceBody(existingText: string | null | un
   // A previously cached TDEM HTML extraction includes a long unrelated
   // release archive. Prefer the shorter, newly fetched clean original instead
   // of preserving polluted evidence solely because its byte count was longer.
-  if (trimTdemPressReleaseArchive(sourceUrl, existing) !== existing
-    && trimTdemPressReleaseArchive(sourceUrl, fetched) === fetched) return true;
+  const originalTdemReport = trimTdemPressReleaseArchive(sourceUrl, existing);
+  if (originalTdemReport !== existing
+    && trimTdemPressReleaseArchive(sourceUrl, fetched) === fetched
+    && hasSourceBodyContinuity(originalTdemReport, fetched)) return true;
   return fetched.length > existing.length + 100;
 }
 
