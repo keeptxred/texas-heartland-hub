@@ -50,8 +50,8 @@ describe("newsroom source-page enrichment", () => {
     expect(trimTdemPressReleaseArchive(officialUrl, polluted)).toBe(article.trim());
     expect(shouldFetchNewsroomSourcePage({ url: officialUrl, extractedBody: polluted })).toBe(true);
     expect(shouldReplaceNewsroomSourceBody(polluted, article.trim(), officialUrl)).toBe(true);
-    const challengeHtml = "Please verify you are a person before viewing this website. Security check and cookie challenge in progress. ".repeat(24);
-    expect(challengeHtml.length).toBeGreaterThan(500);
+    const challengeHtml = "Please verify you are a person before viewing this website. Security check and cookie challenge in progress. ".repeat(140);
+    expect(challengeHtml.length).toBeGreaterThan(polluted.length);
     expect(shouldReplaceNewsroomSourceBody(polluted, challengeHtml, officialUrl)).toBe(false);
     // Neither a short RSS teaser nor a different publisher can trigger this replacement.
     expect(shouldReplaceNewsroomSourceBody(polluted, "short", officialUrl)).toBe(false);
