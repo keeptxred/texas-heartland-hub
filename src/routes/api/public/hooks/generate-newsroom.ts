@@ -213,7 +213,7 @@ function newsroomRepairUserPrompt(
     repeatedParagraphLocations: hasRepeatedParagraphs
       ? repeatedNewsroomParagraphPositions(previousDraft)
       : [],
-    repetitionRepairRule: "For each listed repeat, keep a factual first occurrence if supported. Rewrite the repeated location using genuinely different specific facts found in the supplied packet, without recycling another paragraph's facts. Do not merely rephrase the original, add generic commentary, or invent new details to meet a word target. If the packet lacks distinct evidence for all required paragraphs, set brief.hasClearNewsEvent=false rather than returning repetitive or unsupported copy.",
+    repetitionRepairRule: "For each listed repeat, keep a factual first occurrence if supported. Rewrite the repeated location using genuinely different specific facts found in the supplied packet, without recycling another paragraph's facts. Do not merely rephrase the original, add generic commentary, or invent new details to meet a word target. When repetition comes from overlapping sections, consolidate those redundant headings into the minimum four distinct source-supported sections instead of recreating the same sections and facts. Treat allegations from government complaints and press releases as attributed claims, not adjudicated facts or praise. If the packet lacks distinct evidence for all required paragraphs and the existing main-story word floor, set brief.hasClearNewsEvent=false rather than returning repetitive or unsupported copy.",
     previousDraftWasDeduplicatedForPrompt: hasRepeatedParagraphs,
     previousDraft: repairSeed,
     packet: JSON.parse(newsroomRewriteUserPrompt(packet)),
