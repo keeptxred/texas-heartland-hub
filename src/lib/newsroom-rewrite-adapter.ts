@@ -28,11 +28,13 @@ export const NEWSROOM_DRAFT_JSON_SCHEMA: Record<string, unknown> = {
     },
     title: { type: "string" },
     dek: { type: "string" },
-    summary: { type: "string", minLength: 250, maxLength: 600 },
+    // The model must be able to decline a thin packet with empty strings.
+    // Full publishable-draft requirements are enforced by the local validator.
+    summary: { type: "string", maxLength: 600 },
     relevance: { type: "string" },
     sections: {
       type: "array",
-      minItems: 4,
+      minItems: 0,
       maxItems: 6,
       items: {
         type: "object",
@@ -40,9 +42,9 @@ export const NEWSROOM_DRAFT_JSON_SCHEMA: Record<string, unknown> = {
           heading: { type: "string" },
           paragraphs: {
             type: "array",
-            minItems: 2,
+            minItems: 0,
             maxItems: 3,
-            items: { type: "string", minLength: 380 },
+            items: { type: "string" },
           },
         },
         required: ["heading", "paragraphs"],
@@ -154,10 +156,12 @@ NON-NEGOTIABLE RULES:
 - The relevance field MUST be prose explaining why the story matters to Texas readers, never a numeric score.
 - Use heading (not title) for every section object.
 - Use q for the QUESTION and a for the ANSWER in every FAQ object.
-- Write 4 to 6 substantive sections, each containing 2 to 3 separate paragraphs, choosing the smallest structure that can cover the packet's distinct source-backed facts.
+- Write 4 to 6 substantive sections, each containing 2 to 3 separate paragraphs, choosing a source-proportional structure, not the fewest tokens that a JSON schema permits.
+- When the packet supports at least twelve SEPARATE verified factual roles, use four sections with three substantively different paragraphs per section (12 total). The common four-section/two-paragraph minimum yields a short, nonpublishable draft even from rich material. Never create a twelfth paragraph by recycling another fact, paraphrasing the same claim, or asserting unsupported context.
+- If only eight or nine distinct paragraphs can be supported, use that structure ONLY when actual original factual detail still meets the unchanged main-story word floor. Otherwise set brief.hasClearNewsEvent=false; a complete-looking underlength article is not a success.
 - Do not create standalone FAQ, FAQs, Sources, Source Attribution, Conclusion, or filler sections; FAQ and source attribution are handled separately by the application.
 - This packet maps to the ${category} category. Its validator requires at least ${requiredMainWords} main-story words.
-- Aim for 85–110 words per substantive paragraph, with approximately 10–12 paragraphs when evidence permits. Meet the category-specific main-story floor by verified facts, not by manufacturing an extra section or repeating claims.
+- Aim for 85–110 words per substantive paragraph, each original and source-grounded, with approximately 10–12 genuinely different paragraphs when evidence permits. Plan factual paragraph roles before writing and verify main-story word count against ${requiredMainWords} BEFORE emitting the JSON. Meet the category-specific floor from distinct documented facts, not by manufacturing a section or repeating claims.
 - Keep every paragraph at or below 130 words and no more than 4 sentences. These are hard readability targets with margin below the publication validator's 150-word / 5-sentence ceiling; split distinct facts into separate paragraphs instead of producing one long paragraph.
 - Every section paragraph should be at least about 380 characters of source-supported prose unless the packet cannot factually support that depth.
 - Each section paragraph must contain source-supported detail rather than generic commentary, predictions, public reaction, or moral framing.
@@ -336,14 +340,17 @@ function draftShapeReasons(value: unknown): string[] {
 }
 
 export function validateNewsroomDraft(draft: unknown, packet: ResearchPacket): DraftValidation {
+  // A truthful abstention deliberately has empty story strings and sections.
+  // Recognize it BEFORE shape validation so the bounded repair never spends a
+  // second paid AI call trying to invent 800 words from missing source facts.
+  // This is ALWAYS a rejection, never a quality/publication override.
+  if (isRecord(draft) && isRecord(draft.brief) && draft.brief.hasClearNewsEvent === false) {
+    return { ok: false, reasons: ["brief_no_clear_news_event"], mainWordCount: 0 };
+  }
   const shapeReasons = draftShapeReasons(draft);
   if (shapeReasons.length) return { ok: false, reasons: shapeReasons, mainWordCount: 0 };
 
   const typedDraft = draft as NewsroomDraft;
-  if (!typedDraft.brief.hasClearNewsEvent) {
-    return { ok: false, reasons: ["brief_no_clear_news_event"], mainWordCount: 0 };
-  }
-
   const bodyJson = {
     intro: [typedDraft.summary],
     sections: [

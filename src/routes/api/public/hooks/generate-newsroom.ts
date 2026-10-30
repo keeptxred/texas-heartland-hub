@@ -198,6 +198,7 @@ function newsroomRepairUserPrompt(
   validationReasons: string[],
 ): string {
   const hasRepeatedParagraphs = validationReasons.includes("repeated_newsroom_paragraphs");
+  const underlength = validationReasons.some((reason) => reason === "below_news_word_floor" || reason.startsWith("tiered_main_word_count:"));
   // The previous draft is diagnostic evidence, NOT a template for duplicating
   // text. The smaller rewrite model often echoes whole repeated paragraphs
   // when shown the full rejected article. Strip only repeated occurrences
@@ -208,7 +209,9 @@ function newsroomRepairUserPrompt(
   return JSON.stringify({
     instruction: hasRepeatedParagraphs
       ? "Rebuild the complete article sections from the supplied ORIGINAL source packet. The previousDraft is an incomplete, deduplicated outline, not a finished article: missing paragraphs were deliberate duplicates and must NOT be copied back. Keep supported title, summary, relevance, verifiable facts and attribution where accurate. Prefer four distinct source-backed sections with 2–3 genuinely different paragraphs each over six repetitive sections. Preserve the category's full main-word minimum, factual attribution and all other validation gates. Never invent reporting or fill sections with generic commentary. If evidence cannot support the full article, set brief.hasClearNewsEvent=false."
-      : "Repair the previous draft rather than restarting. Preserve every source-supported fact that already works. Fix every listed validation failure, remove unsupported/generic phrasing, keep the exact required JSON shape, and do not add facts that are absent from the packet. Return the complete corrected draft JSON.",
+      : underlength
+        ? "Repair the previous draft from the ORIGINAL supplied source packet, specifically its underlength main-story body. Preserve supported facts and attribution, and identify additional unused, verifiable facts before writing each additional paragraph. When evidence supports twelve distinct factual roles, aim for four sections with three fact-distinct paragraphs each, 85–105 factual words per paragraph. Every added claim must be traceable to the provided source material. Never repeat a previously used fact to reach the minimum, invent figures, pad with general commentary or merge unrelated events. If these sources cannot support the unchanged main-word minimum, set brief.hasClearNewsEvent=false rather than returning a longer or shorter unsupported draft."
+        : "Repair the previous draft rather than restarting. Preserve every source-supported fact that already works. Fix every listed validation failure, remove unsupported/generic phrasing, keep the exact required JSON shape, and do not add facts that are absent from the packet. Return the complete corrected draft JSON.",
     validationFailures: validationReasons,
     repeatedParagraphLocations: hasRepeatedParagraphs
       ? repeatedNewsroomParagraphPositions(previousDraft)
