@@ -90,7 +90,8 @@ jobs:
             -o /tmp/newsroom-generation-diagnostics.json
           jq -e '.ok == true and .aiCalls == 0 and .writes == 0' /tmp/newsroom-generation-diagnostics.json >/dev/null
           jq -r '
-            "generation-eligibility | total=\(.summary.total) | eligible=\(.summary.eligible) | maxEvidence=\(.summary.maxEvidenceChars) | reasons=\(.summary.reasonCounts | tojson)",
+            "shadow-evidence-eligibility | total=\(.summary.total) | eligible=\(.summary.eligible) | maxEvidence=\(.summary.maxEvidenceChars) | reasons=\(.summary.reasonCounts | tojson)",
+            "publication-preflight-sample | scope=\(.summary.publicationSampleScope) | eligible=\(.summary.publicationPreflightEligible) | reasons=\(.summary.publicationReasonCounts | tojson)",
             (.closestBelowFloor[]? | "closest | candidate=\(.candidateId) | score=\(.score) | pillar=\(.pillar // "-") | format=\(.format) | evidence=\(.evidenceChars)/\(.evidenceFloor) | gap=\(.evidenceGap) | sources=\(.sourceCount) | primary=\(.primarySourceCount) | shadowed=\(.alreadyShadowed)"),
             (.eligible[]? | "eligible | candidate=\(.candidateId) | score=\(.score) | pillar=\(.pillar // "-") | format=\(.format) | evidence=\(.evidenceChars)/\(.evidenceFloor) | sources=\(.sourceCount) | primary=\(.primarySourceCount)")
           ' /tmp/newsroom-generation-diagnostics.json
