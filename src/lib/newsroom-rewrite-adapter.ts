@@ -115,7 +115,7 @@ export function newsroomNonRepeatingRepairOutline(draft: NewsroomDraft): Newsroo
     sections: draft.sections.map((section) => ({
       ...section,
       paragraphs: section.paragraphs.filter((paragraph) => {
-        const normalized = paragraph.trim().replace(/\\s+/g, " ").toLowerCase();
+        const normalized = paragraph.trim().replace(/\s+/g, " ").toLowerCase();
         if (normalized.length < 120) return true;
         if (seen.has(normalized)) return false;
         seen.add(normalized);
