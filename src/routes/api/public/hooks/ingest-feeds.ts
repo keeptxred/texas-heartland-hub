@@ -4,6 +4,7 @@ import { isLowValueTitle } from "@/lib/low-value-titles";
 import { scoreFeedItem, TEXAS_RELEVANCE_MIN } from "@/lib/viral-score";
 import { selectRotatedSourceWindow } from "@/lib/ingest-source-window";
 import { parseTexasAgPressReleaseIndex } from "@/lib/texas-ag-press-releases";
+import { datedTdemReleasePublishedAt } from "@/lib/texas-tdem-press-release-date";
 import { partitionFeedLinkLookups } from "@/lib/ingest-link-lookup";
 import { extractFirstPartyRssArticleBody } from "@/lib/newsroom-firstparty-rss-body";
 import { canFailoverTrustedRssStatus, trustedNewsroomRssRelayUrl } from "@/lib/official-rss-egress";
@@ -46,6 +47,8 @@ type FetchResult = {
 // KeepTXRed to the statewide/local stories readers expect.
 const DIRECT_SOURCES: Source[] = [
   { name: "Office of the Governor", url: "https://gov.texas.gov/news/rss", mode: "rss" },
+  // First-party dated release permalinks; Google News TDEM items are discovery pointers only.
+  { name: "Texas Division of Emergency Management — Direct Releases", url: "https://www.tdem.texas.gov/press-release", category: "Politics", mode: "html-links", include: "^/press-release/[0-9]{1,2}-[0-9]{1,2}-[0-9]{2}/?$" },
   { name: "Texas Secretary of State", url: "https://www.sos.state.tx.us/rss/press.xml", mode: "rss" },
   // The Attorney General legacy RSS returns HTTP 404; use the verified, dated official release index.
   { name: "Texas Attorney General — Direct News Releases", url: "https://www.texasattorneygeneral.gov/news/press_releases", category: "Politics", mode: "html-links", include: "^/news/releases/" },
@@ -204,6 +207,13 @@ function parseHtmlLinks(html: string, source: Source): Item[] {
     if (seen.has(cleanLink)) continue;
 
     let publishDate = new Date().toISOString();
+    if (source.name === "Texas Division of Emergency Management — Direct Releases") {
+      // The index includes historical releases; admit only real dated
+      // first-party links within the existing 21-day recency window.
+      const dated = datedTdemReleasePublishedAt(parsed.pathname);
+      if (!dated) continue;
+      publishDate = dated;
+    }
     if (source.name === "Texas Comptroller of Public Accounts") {
       // The index lists years of releases; only ingest fresh stories, and use
       // their actual YYYYMMDD permalink date rather than today's crawl date.
