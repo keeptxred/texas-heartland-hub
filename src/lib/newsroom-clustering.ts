@@ -75,8 +75,16 @@ export function deterministicStorySimilarity(a: ClusterableFeedItem, b: Clustera
   const aTokens = storyTokens(a.normalizedTitle);
   const bTokens = storyTokens(b.normalizedTitle);
   const litigationKey = guardedCountyClerkVotingAdsLawsuitKey(a.normalizedTitle);
-  const sameSpecificLitigationEvent = Boolean(litigationKey
-    && litigationKey === guardedCountyClerkVotingAdsLawsuitKey(b.normalizedTitle));
+  const otherLitigationKey = guardedCountyClerkVotingAdsLawsuitKey(b.normalizedTitle);
+  const sameSpecificLitigationEvent = Boolean(litigationKey && litigationKey === otherLitigationKey);
+  // Avoid the older broad containment score accidentally uniting a named
+  // voter-ad lawsuit with a different allegation against that county clerk.
+  // One precise same-event fingerprint and one missing/mismatched fingerprint
+  // is NOT sufficient confirmation of identity.
+  if ((litigationKey || otherLitigationKey)
+      && /\bcounty clerk\b/.test(a.normalizedTitle)
+      && /\bcounty clerk\b/.test(b.normalizedTitle)
+      && !sameSpecificLitigationEvent) return 0;
   if (aTokens.size < 3 || bTokens.size < 3) return 0;
 
   // Texas primary agencies and independent newsrooms may file the *identical*
