@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { buildResearchPacket } from "@/lib/newsroom-research-packet";
+import { trimTdemPressReleaseArchive } from "@/lib/tdem-press-release-body";
 import { categoryForPillar } from "@/lib/newsroom-rewrite-adapter";
 import { newsroomIndependentPublisherFamilyFromUrl, newsroomLikelySameOriginalReport, newsroomOriginalReportKey } from "@/lib/newsroom-publication-preflight";
 import {
@@ -23,6 +24,10 @@ const CANDIDATE_LIMIT = 500;
 // the work at the highest-scored candidate sources first.
 const SOURCE_PAGE_FETCH_LIMIT = 40;
 const SOURCE_PAGE_CONCURRENCY = 4;
+// Clean at most one recent first-party TDEM archive per scheduled packet build.
+// This is part of the SAME global 40-page fetch budget, never another crawler.
+const TDEM_CACHE_CLEANUP_SCAN_LIMIT = 8;
+const TDEM_CACHE_CLEANUP_FETCH_LIMIT = 1;
 const HYDRATION_ID_BATCH_SIZE = 100;
 const HYDRATION_READ_CONCURRENCY = 2;
 // Keep full-length successful fetches on the six-hour retry cadence, but wait
@@ -200,6 +205,46 @@ async function handler() {
     }
   }
 
+  // The direct TDEM release first entered a cluster whose draft was REJECTED.
+  // Rejected historical clusters are correctly excluded from the ordinary
+  // candidate/packet cohort. Their original feed cache, however, can still
+  // contain an unrelated dated 'Related Pages' archive used by other readers.
+  // Repair only ONE verified, recent, first-party source per run using the
+  // EXISTING bounded 40-page fetch budget and the same persistent cooldowns.
+  // Do not re-enable any rejected candidate or create a new publishing path.
+  const tdemScanSince = new Date(Date.now() - 14 * 86_400_000).toISOString();
+  const { data: tdemRecentRows, error: tdemRecentError } = await newsroomDb
+    .from("texas_news_feed")
+    .select("id,title,source,link,pub_date,description,extracted_body,source_reputation_score")
+    .eq("source", "Texas Division of Emergency Management — Direct Releases")
+    .gte("created_at", tdemScanSince)
+    .order("created_at", { ascending: false })
+    .limit(TDEM_CACHE_CLEANUP_SCAN_LIMIT);
+  if (tdemRecentError) console.warn("[newsroom-packets] TDEM cache-hygiene read unavailable", tdemRecentError.message);
+  let tdemMaintenanceFeeds = ((tdemRecentRows ?? []) as FeedPacketRow[])
+    .filter((feed) => Boolean(feed.link && feed.extracted_body
+      && trimTdemPressReleaseArchive(feed.link, feed.extracted_body) !== feed.extracted_body))
+    .slice(0, TDEM_CACHE_CLEANUP_FETCH_LIMIT);
+  if (tdemMaintenanceFeeds.length) {
+    // State records must be included: a failed/unreadable TDEM extraction is
+    // allowed only one attempt per cooldown, never every scheduled run.
+    const { data: maintenanceState, error: maintenanceError } = await newsroomDb
+      .from("newsroom_source_page_fetch_state")
+      .select("feed_item_id,last_attempt_at,last_success_at,last_result,chars")
+      .in("feed_item_id", tdemMaintenanceFeeds.map((feed) => feed.id));
+    if (maintenanceError) {
+      console.warn("[newsroom-packets] TDEM cache-hygiene cooldown unavailable", maintenanceError.message);
+      tdemMaintenanceFeeds = [];
+    } else {
+      for (const row of (maintenanceState ?? []) as SourcePageFetchStateRow[]) {
+        sourcePageStateById.set(row.feed_item_id, row);
+      }
+      feeds = [...new Map<number, FeedPacketRow>(
+        [...feeds, ...tdemMaintenanceFeeds].map((feed): [number, FeedPacketRow] => [feed.id, feed]),
+      ).values()];
+    }
+  }
+
   // Spend the same forty network fetches where they can unlock a qualified
   // new article: PENDING candidates with independent source families and a
   // small remaining evidence deficit. Existing complete packets can already
@@ -275,6 +320,12 @@ async function handler() {
         priorityByFeedId.get(membership.feed_item_id) ?? 0, effectivePriority,
       ));
     }
+  }
+
+  // Reserve at most ONE of the ordinary 40 fetch slots for verified
+  // archive-contaminated TDEM source-cache hygiene, including rejected cohorts.
+  for (const feed of tdemMaintenanceFeeds) {
+    priorityByFeedId.set(feed.id, Math.max(priorityByFeedId.get(feed.id) ?? 0, 25_000));
   }
 
   // The standard 4k cached-body hydration threshold is too low for a
