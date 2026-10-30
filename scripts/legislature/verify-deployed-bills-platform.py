@@ -104,6 +104,26 @@ def check_deep_directory_page(path: str, page: int, *, filtered: bool) -> None:
     print(f"PASS deep pagination {url} (24 cards, page={page})")
 
 
+def check_out_of_range_directory_page(path: str) -> None:
+    """An impossible filtered page must return HTTP 404, never HTTP 500."""
+    url = f"{SITE_URL}{path}"
+    request = urllib.request.Request(
+        url,
+        headers={
+            "User-Agent": "KeepTXRed-Texas-Bills-Deploy-Smoke/1.0",
+            "Accept": "text/html,application/xhtml+xml",
+        },
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=30) as response:
+            status = response.status
+    except urllib.error.HTTPError as exc:
+        status = exc.code
+    if status != 404:
+        raise AssertionError(f"{url}: expected HTTP 404 for out-of-range pagination, got HTTP {status}")
+    print(f"PASS out-of-range pagination {url} (HTTP 404)")
+
+
 def main() -> int:
     check(
         "/bills",
@@ -169,6 +189,9 @@ def main() -> int:
     check_deep_directory_page("/bills?chamber=house&status=in-committee&page=180", 180, filtered=True)
     check_deep_directory_page("/bills?status=in-committee&page=250", 250, filtered=True)
     check_deep_directory_page("/bills?status=signed&page=44", 44, filtered=True)
+    # Guard against a regression of issue #3266. A far-out-of-range page
+    # must be a 404, even when PostgREST rejects the requested SQL range.
+    check_out_of_range_directory_page("/bills?chamber=senate&page=10000")
     print("Texas Bills deployed-render smoke passed")
     return 0
 
