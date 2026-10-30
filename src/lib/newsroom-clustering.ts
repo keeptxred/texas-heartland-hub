@@ -44,6 +44,29 @@ export function storyTokens(title: string): Set<string> {
   );
 }
 
+/**
+ * A narrowly scoped SAME-EVENT signal for headlines describing the Texas
+ * attorney general SUING a named county clerk over allegedly discriminatory
+ * voter outreach advertisements. Publishers spell the actor and issue very
+ * differently, so raw headline token overlap can miss distinct reporting
+ * about the same filing.
+ *
+ * This does not establish independent sourcing. Separate source-family,
+ * primary-record and full-length evidence checks run before publication.
+ * The 36-hour match window and all general fuzzy-clustering floors remain.
+ */
+export function guardedCountyClerkVotingAdsLawsuitKey(title: string): string | null {
+  const normalized = title.toLowerCase().replace(/\s+/g, " ")
+    .replace(/\b(?:texas\s+)?ag\s+s\s+office\b/g, "attorney general")
+    .replace(/\b(?:the\s+)?office\s+(?:of\s+)?(?:the\s+)?attorney\s+general\b/g, "attorney general")
+    .replace(/\battorney\s+general\s+office\b/g, "attorney general");
+  const match = normalized.match(/\battorney general sues ([a-z][a-z-]{2,}) county clerk\b/);
+  if (!match) return null;
+  if (!/\b(?:racially|racial|discriminatory|discrimination|demographic|demographics|ethnic|ethnicity)\b/.test(normalized)) return null;
+  if (!/\b(?:voter|voting|vote|election|elections|ballot|advertising|advertisements|ads|targeting)\b/.test(normalized)) return null;
+  return "attorney-general-sues-" + match[1] + "-county-clerk-discriminatory-voter-ads";
+}
+
 export function deterministicStorySimilarity(a: ClusterableFeedItem, b: ClusterableFeedItem): number {
   if (a.feedItemId === b.feedItemId) return 1;
   const hoursApart = Math.abs(Date.parse(a.observedAt) - Date.parse(b.observedAt)) / 3_600_000;
@@ -51,6 +74,9 @@ export function deterministicStorySimilarity(a: ClusterableFeedItem, b: Clustera
 
   const aTokens = storyTokens(a.normalizedTitle);
   const bTokens = storyTokens(b.normalizedTitle);
+  const litigationKey = guardedCountyClerkVotingAdsLawsuitKey(a.normalizedTitle);
+  const sameSpecificLitigationEvent = Boolean(litigationKey
+    && litigationKey === guardedCountyClerkVotingAdsLawsuitKey(b.normalizedTitle));
   if (aTokens.size < 3 || bTokens.size < 3) return 0;
 
   // Texas primary agencies and independent newsrooms may file the *identical*
@@ -66,8 +92,12 @@ export function deterministicStorySimilarity(a: ClusterableFeedItem, b: Clustera
   if (a.pillarSlug && b.pillarSlug && a.pillarSlug !== b.pillarSlug) {
     const leftTitle = a.normalizedTitle.trim().replace(/\s+/g, " ");
     const rightTitle = b.normalizedTitle.trim().replace(/\s+/g, " ");
-    if (leftTitle !== rightTitle || leftTitle.length < 55 || aTokens.size < 7) return 0;
+    if (!sameSpecificLitigationEvent
+        && (leftTitle !== rightTitle || leftTitle.length < 55 || aTokens.size < 7)) return 0;
   }
+  // Event identity, not generalized keyword overlap. All publisher and
+  // editorial quality gates still run against the completed research packet.
+  if (sameSpecificLitigationEvent) return 0.8;
   const intersection = [...aTokens].filter((token) => bTokens.has(token)).length;
   if (intersection < 3) return 0;
   const union = new Set([...aTokens, ...bTokens]).size;
