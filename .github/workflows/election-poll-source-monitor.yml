@@ -1,0 +1,44 @@
+name: Monitor Election Central poll releases
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 12 * * *"
+permissions:
+  contents: read
+  issues: write
+concurrency:
+  group: election-poll-source-monitor
+  cancel-in-progress: true
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Compare original-source indexes against published polls
+        id: monitor
+        continue-on-error: true
+        run: node scripts/elections/monitor-poll-freshness.mjs
+      - name: Create or resolve deduplicated source-freshness issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STATUS: ${{ steps.monitor.outcome }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          title='[Election Central] Poll source refresh needed'
+          existing="$(gh issue list --state open --json number,title --jq '.[] | select(.title == "[Election Central] Poll source refresh needed") | .number' | head -n 1)"
+          if [[ "$STATUS" == "failure" ]]; then
+            if [[ -z "$existing" ]]; then
+              gh issue create --title "$title" --body-file poll-monitor-report.md
+            else
+              echo "Existing polling refresh issue #$existing remains open."
+            fi
+          elif [[ -n "$existing" ]]; then
+            gh issue close "$existing" --comment "Source monitor is passing again; verified data now matches monitored source dates or the 2026 pre-election window is closed."
+          else
+            echo "No polling freshness issue is open."
+          fi
