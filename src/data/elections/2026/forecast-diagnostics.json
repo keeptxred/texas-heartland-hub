@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-09-09T15:08:07.705Z",
+  "generatedAt": "2026-10-31T23:26:43.349Z",
   "totals": {
     "races": 227,
     "candidates": 491,
-    "polls": 8,
+    "polls": 18,
     "publishedVerifiedRaces": 227,
     "racesWithCandidateMatches": 208,
     "racesWithPollMatches": 5,
@@ -24,12 +24,12 @@
       },
       "pollCount": 2,
       "pollIds": [
-        "poll-tpor-may-2026-us-senate",
-        "poll-ut-texas-politics-project-june-2026-us-senate"
+        "poll-ut-texas-october-2026-us-senate",
+        "poll-tsu-texas-late-october-2026-us-senate"
       ],
       "pollCandidateIds": [
-        "candidate-james-talarico-democratic-race-2026-us-senate",
         "candidate-ken-paxton-republican-race-2026-us-senate",
+        "candidate-james-talarico-democratic-race-2026-us-senate",
         "candidate-ted-brown-libertarian-race-2026-us-senate"
       ],
       "matchedCandidateCount": 8,
@@ -46,8 +46,8 @@
       "republicanCandidateId": "candidate-ken-paxton-republican-race-2026-us-senate",
       "democraticCandidateId": "candidate-james-talarico-democratic-race-2026-us-senate",
       "pollingAverageCandidateIds": [
-        "candidate-james-talarico-democratic-race-2026-us-senate",
         "candidate-ken-paxton-republican-race-2026-us-senate",
+        "candidate-james-talarico-democratic-race-2026-us-senate",
         "candidate-ted-brown-libertarian-race-2026-us-senate"
       ],
       "outcome": "generated"
@@ -62,8 +62,8 @@
       },
       "pollCount": 2,
       "pollIds": [
-        "poll-tpor-may-2026-governor",
-        "poll-ut-texas-politics-project-june-2026-governor"
+        "poll-ut-texas-october-2026-governor",
+        "poll-tsu-texas-late-october-2026-governor"
       ],
       "pollCandidateIds": [
         "candidate-greg-abbott-republican-race-2026-governor",
@@ -99,9 +99,10 @@
         "present": true,
         "enabled": false
       },
-      "pollCount": 1,
+      "pollCount": 2,
       "pollIds": [
-        "poll-ut-texas-politics-project-june-2026-lieutenant-governor"
+        "poll-ut-texas-october-2026-lieutenant-governor",
+        "poll-tsu-texas-late-october-2026-lieutenant-governor"
       ],
       "pollCandidateIds": [
         "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
@@ -139,8 +140,8 @@
       },
       "pollCount": 2,
       "pollIds": [
-        "poll-tpor-may-2026-attorney-general",
-        "poll-ut-texas-politics-project-june-2026-attorney-general"
+        "poll-ut-texas-october-2026-attorney-general",
+        "poll-tsu-texas-late-october-2026-attorney-general"
       ],
       "pollCandidateIds": [
         "candidate-mayes-middleton-republican-race-2026-attorney-general",
@@ -170,13 +171,15 @@
         "present": true,
         "enabled": false
       },
-      "pollCount": 1,
+      "pollCount": 2,
       "pollIds": [
-        "poll-ut-texas-politics-project-june-2026-comptroller"
+        "poll-ut-texas-october-2026-comptroller",
+        "poll-tsu-texas-late-october-2026-comptroller"
       ],
       "pollCandidateIds": [
         "candidate-don-huffines-republican-race-2026-comptroller",
         "candidate-sarah-eckhardt-democratic-race-2026-comptroller",
+        "candidate-v-alonzo-echavarria-garza-libertarian-race-2026-comptroller",
         "candidate-shehla-faizi-green-race-2026-comptroller"
       ],
       "matchedCandidateCount": 4,
@@ -191,6 +194,7 @@
       "pollingAverageCandidateIds": [
         "candidate-don-huffines-republican-race-2026-comptroller",
         "candidate-sarah-eckhardt-democratic-race-2026-comptroller",
+        "candidate-v-alonzo-echavarria-garza-libertarian-race-2026-comptroller",
         "candidate-shehla-faizi-green-race-2026-comptroller"
       ],
       "outcome": "generated"

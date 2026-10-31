@@ -2,130 +2,157 @@
   {
     "raceId": "race-2026-attorney-general",
     "pollCount": 2,
-    "fieldDateFrom": "2026-05-28",
-    "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-09-09T15:08:07.483Z",
-    "weightedMargin": 5,
+    "fieldDateFrom": "2026-10-05",
+    "fieldDateTo": "2026-10-25",
+    "recalculatedAt": "2026-10-31T23:26:42.826Z",
+    "weightedMargin": 2.5,
     "uncertaintyRange": {
-      "low": 2.2,
-      "high": 7.8
+      "low": -0.1,
+      "high": 5.1
     },
     "candidates": [
       {
         "candidateId": "candidate-mayes-middleton-republican-race-2026-attorney-general",
         "candidateName": "MAYES MIDDLETON",
-        "averagePercentage": 42.4,
+        "averagePercentage": 48.4,
         "pollCount": 2
       },
       {
         "candidateId": "candidate-nathan-johnson-democratic-race-2026-attorney-general",
         "candidateName": "NATHAN JOHNSON",
-        "averagePercentage": 37.4,
+        "averagePercentage": 45.9,
         "pollCount": 2
       },
       {
         "candidateId": "candidate-tom-oxford-libertarian-race-2026-attorney-general",
         "candidateName": "TOM OXFORD",
-        "averagePercentage": 2,
-        "pollCount": 1
+        "averagePercentage": 1.7,
+        "pollCount": 2
       }
     ],
     "pollWeights": [
       {
-        "pollId": "poll-tpor-may-2026-attorney-general",
-        "pollsterName": "Texas Public Opinion Research",
-        "fieldEndDate": "2026-05-28",
-        "finalWeight": 0.115,
-        "factors": {
-          "recency": 0.12,
-          "sampleSize": 1.65,
-          "population": 1,
-          "pollsterQuality": 0.8,
-          "independence": 1,
-          "methodology": 0.727
-        },
-        "explanation": [
-          "104 day(s) old",
-          "1,670 likely voters",
-          "pollster grade unrated",
-          "independent poll",
-          "unknown methodology"
-        ]
-      },
-      {
-        "pollId": "poll-ut-texas-politics-project-june-2026-attorney-general",
+        "pollId": "poll-ut-texas-october-2026-attorney-general",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
-        "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.131,
+        "fieldEndDate": "2026-10-05",
+        "finalWeight": 0.437,
         "factors": {
-          "recency": 0.12,
-          "sampleSize": 1.414,
-          "population": 0.88,
+          "recency": 0.417,
+          "sampleSize": 1.198,
+          "population": 1,
           "pollsterQuality": 0.8,
           "independence": 1,
           "methodology": 1.093
         },
         "explanation": [
-          "89 day(s) old",
-          "1,200 registered voters",
+          "26 day(s) old",
+          "861 likely voters",
           "pollster grade unrated",
           "independent poll",
           "online panel methodology"
+        ]
+      },
+      {
+        "pollId": "poll-tsu-texas-late-october-2026-attorney-general",
+        "pollsterName": "Texas Southern University / Barbara Jordan Public Policy Research and Survey Center",
+        "fieldEndDate": "2026-10-25",
+        "finalWeight": 1.026,
+        "factors": {
+          "recency": 0.808,
+          "sampleSize": 1.65,
+          "population": 1,
+          "pollsterQuality": 0.8,
+          "independence": 1,
+          "methodology": 0.962
+        },
+        "explanation": [
+          "6 day(s) old",
+          "2,000 likely voters",
+          "pollster grade unrated",
+          "independent poll",
+          "text message methodology"
         ]
       }
     ]
   },
   {
     "raceId": "race-2026-comptroller",
-    "pollCount": 1,
-    "fieldDateFrom": "2026-06-12",
-    "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-09-09T15:08:07.483Z",
-    "weightedMargin": 6,
+    "pollCount": 2,
+    "fieldDateFrom": "2026-10-05",
+    "fieldDateTo": "2026-10-25",
+    "recalculatedAt": "2026-10-31T23:26:42.826Z",
+    "weightedMargin": 4.5,
     "uncertaintyRange": {
-      "low": 2,
-      "high": 10
+      "low": 1.9,
+      "high": 7.1
     },
     "candidates": [
       {
         "candidateId": "candidate-don-huffines-republican-race-2026-comptroller",
         "candidateName": "DON HUFFINES",
-        "averagePercentage": 40,
-        "pollCount": 1
+        "averagePercentage": 49.1,
+        "pollCount": 2
       },
       {
         "candidateId": "candidate-sarah-eckhardt-democratic-race-2026-comptroller",
         "candidateName": "SARAH ECKHARDT",
-        "averagePercentage": 34,
-        "pollCount": 1
+        "averagePercentage": 44.6,
+        "pollCount": 2
+      },
+      {
+        "candidateId": "candidate-v-alonzo-echavarria-garza-libertarian-race-2026-comptroller",
+        "candidateName": "V. ALONZO ECHAVARRIA-GARZA",
+        "averagePercentage": 1.3,
+        "pollCount": 2
       },
       {
         "candidateId": "candidate-shehla-faizi-green-race-2026-comptroller",
         "candidateName": "SHEHLA FAIZI",
-        "averagePercentage": 1,
-        "pollCount": 1
+        "averagePercentage": 0.3,
+        "pollCount": 2
       }
     ],
     "pollWeights": [
       {
-        "pollId": "poll-ut-texas-politics-project-june-2026-comptroller",
+        "pollId": "poll-ut-texas-october-2026-comptroller",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
-        "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.131,
+        "fieldEndDate": "2026-10-05",
+        "finalWeight": 0.437,
         "factors": {
-          "recency": 0.12,
-          "sampleSize": 1.414,
-          "population": 0.88,
+          "recency": 0.417,
+          "sampleSize": 1.198,
+          "population": 1,
           "pollsterQuality": 0.8,
           "independence": 1,
           "methodology": 1.093
         },
         "explanation": [
-          "89 day(s) old",
-          "1,200 registered voters",
+          "26 day(s) old",
+          "861 likely voters",
           "pollster grade unrated",
           "independent poll",
           "online panel methodology"
+        ]
+      },
+      {
+        "pollId": "poll-tsu-texas-late-october-2026-comptroller",
+        "pollsterName": "Texas Southern University / Barbara Jordan Public Policy Research and Survey Center",
+        "fieldEndDate": "2026-10-25",
+        "finalWeight": 1.026,
+        "factors": {
+          "recency": 0.808,
+          "sampleSize": 1.65,
+          "population": 1,
+          "pollsterQuality": 0.8,
+          "independence": 1,
+          "methodology": 0.962
+        },
+        "explanation": [
+          "6 day(s) old",
+          "2,000 likely voters",
+          "pollster grade unrated",
+          "independent poll",
+          "text message methodology"
         ]
       }
     ]
@@ -133,136 +160,157 @@
   {
     "raceId": "race-2026-governor",
     "pollCount": 2,
-    "fieldDateFrom": "2026-05-28",
-    "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-09-09T15:08:07.483Z",
-    "weightedMargin": 6,
+    "fieldDateFrom": "2026-10-05",
+    "fieldDateTo": "2026-10-25",
+    "recalculatedAt": "2026-10-31T23:26:42.826Z",
+    "weightedMargin": 1.8,
     "uncertaintyRange": {
-      "low": 3.2,
-      "high": 8.8
+      "low": -0.8,
+      "high": 4.4
     },
     "candidates": [
       {
         "candidateId": "candidate-greg-abbott-republican-race-2026-governor",
         "candidateName": "GREG ABBOTT",
-        "averagePercentage": 46.5,
+        "averagePercentage": 49.4,
         "pollCount": 2
       },
       {
         "candidateId": "candidate-gina-hinojosa-democratic-race-2026-governor",
         "candidateName": "GINA HINOJOSA",
-        "averagePercentage": 40.5,
+        "averagePercentage": 47.6,
         "pollCount": 2
       },
       {
         "candidateId": "candidate-pat-dixon-libertarian-race-2026-governor",
         "candidateName": "PAT DIXON",
-        "averagePercentage": 1,
-        "pollCount": 1
+        "averagePercentage": 1.7,
+        "pollCount": 2
       }
     ],
     "pollWeights": [
       {
-        "pollId": "poll-tpor-may-2026-governor",
-        "pollsterName": "Texas Public Opinion Research",
-        "fieldEndDate": "2026-05-28",
-        "finalWeight": 0.115,
-        "factors": {
-          "recency": 0.12,
-          "sampleSize": 1.65,
-          "population": 1,
-          "pollsterQuality": 0.8,
-          "independence": 1,
-          "methodology": 0.727
-        },
-        "explanation": [
-          "104 day(s) old",
-          "1,670 likely voters",
-          "pollster grade unrated",
-          "independent poll",
-          "unknown methodology"
-        ]
-      },
-      {
-        "pollId": "poll-ut-texas-politics-project-june-2026-governor",
+        "pollId": "poll-ut-texas-october-2026-governor",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
-        "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.131,
+        "fieldEndDate": "2026-10-05",
+        "finalWeight": 0.437,
         "factors": {
-          "recency": 0.12,
-          "sampleSize": 1.414,
-          "population": 0.88,
+          "recency": 0.417,
+          "sampleSize": 1.198,
+          "population": 1,
           "pollsterQuality": 0.8,
           "independence": 1,
           "methodology": 1.093
         },
         "explanation": [
-          "89 day(s) old",
-          "1,200 registered voters",
+          "26 day(s) old",
+          "861 likely voters",
           "pollster grade unrated",
           "independent poll",
           "online panel methodology"
+        ]
+      },
+      {
+        "pollId": "poll-tsu-texas-late-october-2026-governor",
+        "pollsterName": "Texas Southern University / Barbara Jordan Public Policy Research and Survey Center",
+        "fieldEndDate": "2026-10-25",
+        "finalWeight": 1.026,
+        "factors": {
+          "recency": 0.808,
+          "sampleSize": 1.65,
+          "population": 1,
+          "pollsterQuality": 0.8,
+          "independence": 1,
+          "methodology": 0.962
+        },
+        "explanation": [
+          "6 day(s) old",
+          "2,000 likely voters",
+          "pollster grade unrated",
+          "independent poll",
+          "text message methodology"
         ]
       }
     ]
   },
   {
     "raceId": "race-2026-lieutenant-governor",
-    "pollCount": 1,
-    "fieldDateFrom": "2026-06-12",
-    "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-09-09T15:08:07.483Z",
-    "weightedMargin": 7,
+    "pollCount": 2,
+    "fieldDateFrom": "2026-10-05",
+    "fieldDateTo": "2026-10-25",
+    "recalculatedAt": "2026-10-31T23:26:42.826Z",
+    "weightedMargin": 1.9,
     "uncertaintyRange": {
-      "low": 3,
-      "high": 11
+      "low": -0.7,
+      "high": 4.5
     },
     "candidates": [
       {
         "candidateId": "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
         "candidateName": "DAN PATRICK",
-        "averagePercentage": 43,
-        "pollCount": 1
+        "averagePercentage": 48.1,
+        "pollCount": 2
       },
       {
         "candidateId": "candidate-vikki-goodwin-democratic-race-2026-lieutenant-governor",
         "candidateName": "VIKKI GOODWIN",
-        "averagePercentage": 36,
-        "pollCount": 1
+        "averagePercentage": 46.2,
+        "pollCount": 2
       },
       {
         "candidateId": "candidate-anthony-cristo-libertarian-race-2026-lieutenant-governor",
         "candidateName": "ANTHONY CRISTO",
         "averagePercentage": 2,
-        "pollCount": 1
+        "pollCount": 2
       },
       {
         "candidateId": "candidate-kevin-mccormick-green-race-2026-lieutenant-governor",
         "candidateName": "KEVIN MCCORMICK",
         "averagePercentage": 1,
-        "pollCount": 1
+        "pollCount": 2
       }
     ],
     "pollWeights": [
       {
-        "pollId": "poll-ut-texas-politics-project-june-2026-lieutenant-governor",
+        "pollId": "poll-ut-texas-october-2026-lieutenant-governor",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
-        "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.131,
+        "fieldEndDate": "2026-10-05",
+        "finalWeight": 0.437,
         "factors": {
-          "recency": 0.12,
-          "sampleSize": 1.414,
-          "population": 0.88,
+          "recency": 0.417,
+          "sampleSize": 1.198,
+          "population": 1,
           "pollsterQuality": 0.8,
           "independence": 1,
           "methodology": 1.093
         },
         "explanation": [
-          "89 day(s) old",
-          "1,200 registered voters",
+          "26 day(s) old",
+          "861 likely voters",
           "pollster grade unrated",
           "independent poll",
           "online panel methodology"
+        ]
+      },
+      {
+        "pollId": "poll-tsu-texas-late-october-2026-lieutenant-governor",
+        "pollsterName": "Texas Southern University / Barbara Jordan Public Policy Research and Survey Center",
+        "fieldEndDate": "2026-10-25",
+        "finalWeight": 1.026,
+        "factors": {
+          "recency": 0.808,
+          "sampleSize": 1.65,
+          "population": 1,
+          "pollsterQuality": 0.8,
+          "independence": 1,
+          "methodology": 0.962
+        },
+        "explanation": [
+          "6 day(s) old",
+          "2,000 likely voters",
+          "pollster grade unrated",
+          "independent poll",
+          "text message methodology"
         ]
       }
     ]
@@ -270,75 +318,75 @@
   {
     "raceId": "race-2026-us-senate",
     "pollCount": 2,
-    "fieldDateFrom": "2026-05-28",
-    "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-09-09T15:08:07.483Z",
-    "weightedMargin": 0.8,
+    "fieldDateFrom": "2026-10-05",
+    "fieldDateTo": "2026-10-25",
+    "recalculatedAt": "2026-10-31T23:26:42.826Z",
+    "weightedMargin": 2.3,
     "uncertaintyRange": {
-      "low": -2,
-      "high": 3.6
+      "low": -0.3,
+      "high": 4.9
     },
     "candidates": [
       {
         "candidateId": "candidate-james-talarico-democratic-race-2026-us-senate",
         "candidateName": "JAMES TALARICO",
-        "averagePercentage": 44.3,
+        "averagePercentage": 49.3,
         "pollCount": 2
       },
       {
         "candidateId": "candidate-ken-paxton-republican-race-2026-us-senate",
         "candidateName": "KEN PAXTON",
-        "averagePercentage": 43.5,
+        "averagePercentage": 47,
         "pollCount": 2
       },
       {
         "candidateId": "candidate-ted-brown-libertarian-race-2026-us-senate",
         "candidateName": "TED BROWN",
-        "averagePercentage": 3,
-        "pollCount": 1
+        "averagePercentage": 2.4,
+        "pollCount": 2
       }
     ],
     "pollWeights": [
       {
-        "pollId": "poll-tpor-may-2026-us-senate",
-        "pollsterName": "Texas Public Opinion Research",
-        "fieldEndDate": "2026-05-28",
-        "finalWeight": 0.115,
-        "factors": {
-          "recency": 0.12,
-          "sampleSize": 1.65,
-          "population": 1,
-          "pollsterQuality": 0.8,
-          "independence": 1,
-          "methodology": 0.727
-        },
-        "explanation": [
-          "104 day(s) old",
-          "1,670 likely voters",
-          "pollster grade unrated",
-          "independent poll",
-          "unknown methodology"
-        ]
-      },
-      {
-        "pollId": "poll-ut-texas-politics-project-june-2026-us-senate",
+        "pollId": "poll-ut-texas-october-2026-us-senate",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
-        "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.131,
+        "fieldEndDate": "2026-10-05",
+        "finalWeight": 0.437,
         "factors": {
-          "recency": 0.12,
-          "sampleSize": 1.414,
-          "population": 0.88,
+          "recency": 0.417,
+          "sampleSize": 1.198,
+          "population": 1,
           "pollsterQuality": 0.8,
           "independence": 1,
           "methodology": 1.093
         },
         "explanation": [
-          "89 day(s) old",
-          "1,200 registered voters",
+          "26 day(s) old",
+          "861 likely voters",
           "pollster grade unrated",
           "independent poll",
           "online panel methodology"
+        ]
+      },
+      {
+        "pollId": "poll-tsu-texas-late-october-2026-us-senate",
+        "pollsterName": "Texas Southern University / Barbara Jordan Public Policy Research and Survey Center",
+        "fieldEndDate": "2026-10-25",
+        "finalWeight": 1.026,
+        "factors": {
+          "recency": 0.808,
+          "sampleSize": 1.65,
+          "population": 1,
+          "pollsterQuality": 0.8,
+          "independence": 1,
+          "methodology": 0.962
+        },
+        "explanation": [
+          "6 day(s) old",
+          "2,000 likely voters",
+          "pollster grade unrated",
+          "independent poll",
+          "text message methodology"
         ]
       }
     ]
