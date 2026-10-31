@@ -148,8 +148,13 @@ export async function listBills({ search = '', status = '', legislature, chamber
   const indexedLegislature = Boolean(legislature) && !status && !chamber && !billType && kind === 'all';
   const indexedChamberStatus = Boolean(status && chamber) && !legislature && !billType && kind === 'all';
   const indexedStatusOnly = Boolean(status) && !chamber && !legislature && !billType && kind === 'all';
+  // The public /bills route defaults to substantive HB/SB measures. On deep
+  // pages its filters were using a full wide-row range rather than the tested
+  // index-first ID/hydration path, even for page 315+ requests. Project only
+  // the ordered IDs first; the 24-row hydration preserves exact page content.
+  const indexedSubstantive = kind === 'substantive' && !billType;
   const indexFirst = offset >= INDEX_FIRST_BILL_PAGE_OFFSET && !search &&
-    (indexedDirectory || indexedLegislature || indexedChamberStatus || indexedStatusOnly);
+    (indexedDirectory || indexedLegislature || indexedChamberStatus || indexedStatusOnly || indexedSubstantive);
   let query = db
     .from('bills')
     .select(indexFirst ? 'id' : BILL_LIST_COLUMNS, { count: 'exact' })
