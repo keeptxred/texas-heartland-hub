@@ -101,7 +101,7 @@ const definitions = [
       ["Don Huffines", "republican", 40],
       ["Sarah Eckhardt", "democratic", 34],
       ["Shehla Faizi", "green", 1],
-      ["Alonzo Echavarria-Garza", "libertarian", 1],
+      ["V. Alonzo Echavarria-Garza", "libertarian", 1],
       ["Someone else", null, 2],
       ["No opinion", null, 21],
     ],
