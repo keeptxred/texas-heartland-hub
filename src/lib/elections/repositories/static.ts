@@ -929,7 +929,7 @@ const pollRepository: ReadonlyElectionPollRepository = {
       .sort(
         (left, right) =>
           right.fieldEndDate.localeCompare(left.fieldEndDate) ||
-          (priority.get(left.raceId) ?? 99) - (priority.get(right.raceId) ?? 99) ||
+          (priority.get(left.raceId ?? "") ?? 99) - (priority.get(right.raceId ?? "") ?? 99) ||
           left.id.localeCompare(right.id),
       )
       .slice(0, limit)
