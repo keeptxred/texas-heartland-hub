@@ -141,7 +141,10 @@ function freshness(record, label) {
     return;
   }
   const days = (now.getTime() - checked.getTime()) / 86_400_000;
-  if (days > 60) errors.push(`${label} has not been checked in ${Math.floor(days)} days.`);
+  // Operational QA must not prevent correcting unrelated source records merely because
+  // existing catalog entries await re-verification. Preserve the visible warning.
+  // launch-readiness.mjs independently blocks homepage promotion for stale entries.
+  if (days > 60) warnings.push(`${label} is stale: not checked in ${Math.floor(days)} days. Reverification required before launch.`);
   else if (days > 30) warnings.push(`${label} has not been checked in ${Math.floor(days)} days.`);
 }
 
