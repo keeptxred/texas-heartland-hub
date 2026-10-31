@@ -22,7 +22,8 @@ permissions:
 
 concurrency:
   group: election-forecast-refresh
-  cancel-in-progress: true
+  # Do not let a snapshot-only merge cancel the pending source-data refresh.
+  cancel-in-progress: false
 
 jobs:
   update:
