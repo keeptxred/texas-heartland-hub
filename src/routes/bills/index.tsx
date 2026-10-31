@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound, stripSearchParams } from '@tanstack/react-router';
 import { Search, Landmark, Scale, FileCheck2 } from 'lucide-react';
 import { listBills, getBillFilterOptions, SITE_URL, canonicalBillPath } from '@/lib/bills';
+import { loadOptionalBillFilterOptions } from '@/lib/bills-filter-resilience';
 
 type BillSearch = {
   q: string;
@@ -69,7 +70,7 @@ export const Route = createFileRoute('/bills/')({
         limit: 24,
         offset: (deps.page - 1) * 24,
       }),
-      getBillFilterOptions(),
+      loadOptionalBillFilterOptions(getBillFilterOptions),
     ]);
     const maxPage = Math.max(1, Math.ceil(results.count / 24));
     if (deps.page > maxPage) throw notFound();
