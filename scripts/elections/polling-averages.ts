@@ -28,7 +28,13 @@ for (const poll of polls.filter(isPublic)) {
 
 const output = [];
 for (const [raceId, racePolls] of grouped) {
-  const summaries = racePolls.map(toPollSummary).filter(Boolean);
+  // Historical polls more than 45 days old never enter current weighted averages.
+  const recent = racePolls.filter((poll) => {
+    const fieldEnd = new Date(`${String(poll.fieldEndDate)}T23:59:59Z`);
+    const daysOld = (asOf.getTime() - fieldEnd.getTime()) / 86_400_000;
+    return Number.isFinite(fieldEnd.getTime()) && daysOld >= 0 && daysOld <= 45;
+  });
+  const summaries = recent.map(toPollSummary).filter(Boolean);
   const average = calculatePollingAverage(summaries as never, { asOf });
   if (!average) continue;
   output.push({
