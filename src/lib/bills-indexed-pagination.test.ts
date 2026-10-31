@@ -184,6 +184,20 @@ describe("bill directory pagination under the public API timeout", () => {
     expect(hydration.calls).toContainEqual({ method: "in", args: ["id", ["b", "a"]] });
   });
 
+  it("hydrates deep default substantive committee pages from IDs before full bill rows", async () => {
+    const first = mockQuery({ data: [{ id: "b" }, { id: "a" }], count: 8000 });
+    const hydration = mockQuery({ data: [{ id: "a", caption: "Alpha" }, { id: "b", caption: "Bravo" }] });
+    fromMock.mockReturnValueOnce(first.builder).mockReturnValueOnce(hydration.builder);
+    const result = await listBills({ kind: "substantive", status: "in-committee", legislature: 89, offset: 7536, limit: 24 });
+    expect(result).toEqual({ bills: [{ id: "b", caption: "Bravo" }, { id: "a", caption: "Alpha" }], count: 8000 });
+    expect(fromMock).toHaveBeenCalledTimes(2);
+    expect(first.calls.find((call) => call.method === "select")?.args).toEqual(["id", { count: "exact" }]);
+    expect(first.calls).toContainEqual({ method: "in", args: ["bill_type", ["hb", "sb"]] });
+    expect(first.calls).toContainEqual({ method: "eq", args: ["legislature_number", 89] });
+    expect(first.calls).toContainEqual({ method: "range", args: [7536, 7559] });
+    expect(hydration.calls).toContainEqual({ method: "in", args: ["id", ["b", "a"]] });
+  });
+
   it("filters substantive statutes separately from nonstatutory measures", async () => {
     const query = mockQuery({ data: [{ id: "statute" }], count: 1 });
     fromMock.mockReturnValueOnce(query.builder);
