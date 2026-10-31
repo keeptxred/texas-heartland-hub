@@ -29,6 +29,7 @@ import {
 } from "@/lib/election-calendar";
 import { buildElectionCollectionSchema, ELECTION_ROUTES } from "@/lib/elections";
 import { useElectionRepositoryMode } from "@/lib/elections/repositories";
+import { isRecentElectionPoll } from "@/lib/elections/pollFreshness";
 import {
   FORECAST_CONFIDENCE_LEVEL_LABELS,
   FORECAST_RATING_LABELS,
@@ -125,6 +126,7 @@ export function ElectionHomePage() {
   const featuredRaces = useFeaturedElectionRaces(activeCycle.data?.id, 6);
   const latestPolls = useLatestElectionPolls(activeCycle.data?.id, 3);
   const featuredForecasts = useFeaturedForecasts(activeCycle.data?.id, 3);
+  const recentPolls = latestPolls.data?.filter((poll) => isRecentElectionPoll(poll.fieldEndDate)) ?? [];
   const electionNews = getArticlesByCategory("elections").slice(0, 6);
   const uniqueImages = assignUniqueImages(
     electionNews,
@@ -390,7 +392,7 @@ export function ElectionHomePage() {
                 id="latest-polls"
                 className="mt-2 font-display text-3xl leading-none tracking-tight text-foreground"
               >
-                Latest election polls
+                {recentPolls.length ? "Recent election polls" : "Election poll archive"}
               </h2>
             </div>
             <a
@@ -404,7 +406,7 @@ export function ElectionHomePage() {
           <div className="mt-6">
             {activeCycle.isPending || (activeCycle.data && latestPolls.isPending) ? (
               <div className="rounded-xl border border-border bg-card p-5">
-                <p className="font-semibold text-foreground">{PUBLISHED_POLLS.length} verified poll records are published.</p>
+                <p className="font-semibold text-foreground">{PUBLISHED_POLLS.length} verified poll records are published. Historical dates are preserved in the archive.</p>
                 <a href={ELECTION_ROUTES.polls} className="mt-3 inline-block text-sm font-semibold text-primary">Review polls and methodology →</a>
               </div>
             ) : activeCycle.isError || latestPolls.isError ? (
@@ -420,23 +422,16 @@ export function ElectionHomePage() {
                 }}
                 secondaryActions={[]}
               />
-            ) : !activeCycle.data || latestPolls.isEmpty ? (
-              <ElectionEmptyState kind="polls" />
+            ) : !activeCycle.data || latestPolls.isEmpty || recentPolls.length === 0 ? (
+              <div className="rounded-xl border border-amber-300 bg-amber-50 p-5 text-sm text-amber-950" role="status">
+                No verified poll records fielded within the last 35 days are available. Older polls remain in the historical archive, not the current polling section.
+                <a href={ELECTION_ROUTES.polls} className="ml-2 font-semibold underline">View historical polls</a>
+              </div>
             ) : (
               <>
-                {latestPolls.data?.some(
-                  (poll) => poll.freshnessStatus === "stale" || poll.freshnessStatus === "expired",
-                ) ? (
-                  <p
-                    role="status"
-                    className="mb-5 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-950"
-                  >
-                    One or more polls are older than the configured freshness window. Review each
-                    poll’s field dates before drawing conclusions.
-                  </p>
-                ) : null}
+                <p className="mb-5 text-sm text-muted-foreground">Source-verified surveys with fieldwork ending within the past 35 days. Older poll records remain in the archive.</p>
                 <div className="grid gap-5 xl:grid-cols-3">
-                  {latestPolls.data?.map((poll) => (
+                  {recentPolls.map((poll) => (
                     <PollCard
                       key={poll.id}
                       pollster={poll.pollsterName}
