@@ -82,7 +82,7 @@ Deno.serve(async (req: Request) => {
       status: upstream.status,
       headers: {
         "Content-Type": upstream.headers.get("content-type") || "application/rss+xml; charset=utf-8",
-        "Cache-Control": "public, max-age=120, s-maxage=120",
+        "Cache-Control": upstream.ok ? "public, max-age=120, s-maxage=120" : "no-store",
         "X-KTR-RSS-Source": key,
         "X-Content-Type-Options": "nosniff",
       },
