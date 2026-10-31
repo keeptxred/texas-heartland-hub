@@ -4,10 +4,17 @@ on:
   schedule:
     - cron: "17 11 * * *"
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Repository test and build health"]
+    types: [completed]
+    branches: [main]
   push:
     branches: [main]
     paths:
       - '.github/workflows/update-election-forecasts.yml'
+      - 'src/data/elections/2026/polls.json'
+      - 'scripts/elections/forecast.ts'
+      - 'scripts/elections/polling-averages.ts'
 
 permissions:
   contents: write
@@ -19,6 +26,7 @@ concurrency:
 
 jobs:
   update:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -28,7 +36,136 @@ jobs:
           ref: main
           fetch-depth: 0
 
+      - name: Check whether verified revision changed polling inputs
+        id: inputs
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TRIGGER: ${{ github.event_name }}
+          VERIFIED_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          if [[ "$TRIGGER" != "workflow_run" ]]; then
+            echo 'run=true' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # Workflow runs can finish after automation-only snapshot changes.
+          # Check exact input paths to avoid an endless refresh/merge/deploy loop.
+          changed="$(gh api "repos/$REPOSITORY/commits/$VERIFIED_SHA" --jq '.files[].filename')"
+          if grep -Eq '^(src/data/elections/2026/polls\.json|scripts/elections/(forecast|polling-averages)\.ts|\.github/workflows/update-election-forecasts\.yml)
+        with:
+          bun-version: 1.3.14
+
+      - name: Install dependencies
+        if: steps.inputs.outputs.run == 'true'
+        run: bun install --frozen-lockfile
+
+      - name: Recalculate forecasts from latest main
+        if: steps.inputs.outputs.run == 'true'
+        shell: bash
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
+          bun run elections:polling-averages
+          bun run elections:forecast
+
+      - name: Validate election data and forecast invariants
+        if: steps.inputs.outputs.run == 'true'
+        run: |
+          bun run elections:validate
+          bun run elections:validate:forecast
+          bun run elections:qa
+
+      - name: Publish changed forecast snapshots through PR
+        if: steps.inputs.outputs.run == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          allowed='^src/data/elections/2026/(forecasts|forecast-diagnostics|polling-averages|sources|readiness)\.json$'
+          tracked_paths=(
+            src/data/elections/2026/forecasts.json
+            src/data/elections/2026/forecast-diagnostics.json
+            src/data/elections/2026/polling-averages.json
+            src/data/elections/2026/sources.json
+            src/data/elections/2026/readiness.json
+          )
+          refresh_branch='automation/election-forecast-refresh'
+
+          git add "${tracked_paths[@]}"
+          if git diff --cached --quiet; then
+            echo "No forecast changes to publish."
+            exit 0
+          fi
+
+          unexpected_files="$(git diff --cached --name-only | grep -vE "$allowed" || true)"
+          if [[ -n "$unexpected_files" ]]; then
+            echo "Refusing to publish files outside the forecast allowlist:" >&2
+            echo "$unexpected_files" >&2
+            exit 1
+          fi
+
+          git diff --cached --binary > /tmp/election-forecast-refresh.patch
+          if [[ ! -s /tmp/election-forecast-refresh.patch ]]; then
+            echo "No staged forecast patch to publish."
+            exit 0
+          fi
+
+          git config user.name "KeepTXRed Election Forecasts"
+          git config user.email "actions@users.noreply.github.com"
+
+          git fetch origin main
+          git reset --hard origin/main
+          if ! git apply --index --3way /tmp/election-forecast-refresh.patch; then
+            echo "Fresh forecast patch conflicts with current main; refusing to publish without a new forecast run." >&2
+            exit 1
+          fi
+
+          unexpected_files="$(git diff --cached --name-only | grep -vE "$allowed" || true)"
+          if [[ -n "$unexpected_files" ]]; then
+            echo "Reapplied forecast patch touched files outside the forecast allowlist:" >&2
+            echo "$unexpected_files" >&2
+            exit 1
+          fi
+
+          bun run elections:validate
+          bun run elections:validate:forecast
+          bun run elections:qa
+
+          if git diff --cached --quiet; then
+            echo "Forecast snapshots already match current main."
+            exit 0
+          fi
+
+          git checkout -B "$refresh_branch"
+          git commit -m "Update daily election forecast snapshots"
+          git push --force-with-lease origin "$refresh_branch"
+
+          pr_number="$(gh pr list --head "$refresh_branch" --base main --state open --json number --jq '.[0].number // empty')"
+          if [[ -z "$pr_number" ]]; then
+            pr_url="$(gh pr create \
+              --base main \
+              --head "$refresh_branch" \
+              --title "Update daily election forecast snapshots" \
+              --body $'Automated Election Central forecast refresh.\n\nThe workflow restricts publication to forecast snapshot files, rebases the validated forecast patch onto current protected main, and reruns election, forecast, and structural QA before opening this PR. Normal branch protection and required checks remain authoritative.')"
+            pr_number="${pr_url##*/}"
+          else
+            echo "Updated existing election forecast refresh PR #$pr_number."
+          fi
+
+          gh pr merge "$pr_number" --auto --squash
+          echo "Election forecast refresh is queued through protected PR #$pr_number."
+ <<<"$changed"; then
+            echo 'run=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'run=false' >> "$GITHUB_OUTPUT"
+            echo "Verified main did not change polling input files; skipping forecast regeneration."
+          fi
+
       - name: Set up Bun
+        if: steps.inputs.outputs.run == 'true'
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.3.14
