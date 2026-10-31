@@ -15,6 +15,14 @@ const notices = [];
 const checks = [];
 const active = today < new Date("2026-11-05T00:00:00Z");
 const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+// Polling for the 2026 general election ends after Election Day. Preserve the archive
+// without generating perpetual false freshness alarms in subsequent months.
+if (!active) {
+  const archived = `# Election Central polling source freshness\n\n2026 pre-election monitoring window closed as of ${today.toISOString()}. Archived poll records are preserved.\n`;
+  await writeFile(reportFile, archived);
+  console.log(archived);
+  process.exit(0);
+}
 
 async function fetchText(url) {
   const response = await fetch(url, {
