@@ -62,7 +62,14 @@ for (const race of races) {
     (poll) =>
       poll.raceId === race.id &&
       isPublicVerified(poll) &&
-      ["published", "revised", "completed"].includes(poll.status),
+      ["published", "revised", "completed"].includes(poll.status) &&
+      // Forecasts must use the same current-poll window as persisted averages,
+      // not historical May/June polling after more recent surveys arrive.
+      (() => {
+        const end = Date.parse(`${poll.fieldEndDate}T23:59:59Z`);
+        const ageDays = (now.getTime() - end) / 86_400_000;
+        return Number.isFinite(end) && ageDays >= 0 && ageDays <= 45;
+      })(),
   );
   if (racePolls.length > 0) diagnostics.totals.racesWithPollMatches += 1;
 

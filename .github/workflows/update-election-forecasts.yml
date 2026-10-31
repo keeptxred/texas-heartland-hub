@@ -4,10 +4,17 @@ on:
   schedule:
     - cron: "17 11 * * *"
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Repository test and build health"]
+    types: [completed]
+    branches: [main]
   push:
     branches: [main]
     paths:
       - '.github/workflows/update-election-forecasts.yml'
+      - 'src/data/elections/2026/polls.json'
+      - 'scripts/elections/forecast.ts'
+      - 'scripts/elections/polling-averages.ts'
 
 permissions:
   contents: write
@@ -15,10 +22,12 @@ permissions:
 
 concurrency:
   group: election-forecast-refresh
-  cancel-in-progress: true
+  # Do not let a snapshot-only merge cancel the pending source-data refresh.
+  cancel-in-progress: false
 
 jobs:
   update:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -28,15 +37,41 @@ jobs:
           ref: main
           fetch-depth: 0
 
+      - name: Check whether verified revision changed polling inputs
+        id: inputs
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TRIGGER: ${{ github.event_name }}
+          VERIFIED_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          if [[ "$TRIGGER" != "workflow_run" ]]; then
+            echo 'run=true' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # Avoid a replay loop after publishing a snapshot-only automation PR.
+          changed="$(gh api "repos/$REPOSITORY/commits/$VERIFIED_SHA" --jq '.files[].filename')"
+          if grep -Eq '^(src/data/elections/2026/polls\.json|scripts/elections/(forecast|polling-averages)\.ts|\.github/workflows/update-election-forecasts\.yml)$' <<<"$changed"; then
+            echo 'run=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'run=false' >> "$GITHUB_OUTPUT"
+            echo "No new polling inputs in the verified revision; skip this run."
+          fi
+
       - name: Set up Bun
+        if: steps.inputs.outputs.run == 'true'
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.3.14
 
       - name: Install dependencies
+        if: steps.inputs.outputs.run == 'true'
         run: bun install --frozen-lockfile
 
       - name: Recalculate forecasts from latest main
+        if: steps.inputs.outputs.run == 'true'
         shell: bash
         run: |
           git fetch origin main
@@ -45,12 +80,14 @@ jobs:
           bun run elections:forecast
 
       - name: Validate election data and forecast invariants
+        if: steps.inputs.outputs.run == 'true'
         run: |
           bun run elections:validate
           bun run elections:validate:forecast
           bun run elections:qa
 
       - name: Publish changed forecast snapshots through PR
+        if: steps.inputs.outputs.run == 'true'
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}

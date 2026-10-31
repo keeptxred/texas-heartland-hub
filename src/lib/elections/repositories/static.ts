@@ -915,9 +915,23 @@ const pollRepository: ReadonlyElectionPollRepository = {
       .map(pollSummary);
   },
   async listLatest(cycleId, limit) {
+    // Same-day releases can contain several races; surface the marquee
+    // statewide contests first instead of alphabetical JSON record order.
+    const priority = new Map<string, number>([
+      ["race-2026-us-senate", 0],
+      ["race-2026-governor", 1],
+      ["race-2026-lieutenant-governor", 2],
+      ["race-2026-attorney-general", 3],
+      ["race-2026-comptroller", 4],
+    ]);
     return [...polls]
       .filter((record) => record.electionCycleId === cycleId)
-      .sort((left, right) => right.fieldEndDate.localeCompare(left.fieldEndDate))
+      .sort(
+        (left, right) =>
+          right.fieldEndDate.localeCompare(left.fieldEndDate) ||
+          (priority.get(left.raceId ?? "") ?? 99) - (priority.get(right.raceId ?? "") ?? 99) ||
+          left.id.localeCompare(right.id),
+      )
       .slice(0, limit)
       .map(pollSummary);
   },
