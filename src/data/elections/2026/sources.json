@@ -110,6 +110,17 @@
     "url": "https://texaspublicopinionresearch.substack.com/p/new-poll-james-talarico-leads-ken"
   },
   {
+    "id": "source-tsu-statewide-late-october-2026",
+    "name": "Texas Southern University — Barbara Jordan Public Policy Research and Survey Center",
+    "sourceType": "academic",
+    "sourceUrl": "https://www.jordanresearchcenter.org/s/TSUStatewideOct2026.pdf",
+    "retrievedAt": "2026-10-31T22:12:45.232Z",
+    "lastVerifiedAt": "2026-10-31T22:12:45.232Z",
+    "notes": "Original October 2026 statewide survey report, n=2000 likely voters, October 21–25.",
+    "type": "academic",
+    "url": "https://www.jordanresearchcenter.org/s/TSUStatewideOct2026.pdf"
+  },
+  {
     "id": "source-u-s-census-bureau-tigerweb-857fc897",
     "name": "U.S. Census Bureau TIGERweb",
     "sourceType": "government",
@@ -130,6 +141,17 @@
     "notes": "University of Texas/Texas Politics Project Poll, June 2026",
     "type": "academic",
     "url": "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash"
+  },
+  {
+    "id": "source-ut-texas-politics-project-october-2026",
+    "name": "University of Texas/Texas Politics Project Poll",
+    "sourceType": "academic",
+    "sourceUrl": "https://texaspolitics.utexas.edu/blog/latest-ut-texas-politics-poll-finds-historic-levels-of-competition-in-texas-midterm-elections",
+    "retrievedAt": "2026-10-31T22:12:45.232Z",
+    "lastVerifiedAt": "2026-10-31T22:12:45.232Z",
+    "notes": "Original October 2026 statewide likely-voter trial ballot, n=861, September 25–October 5, released October 13.",
+    "type": "academic",
+    "url": "https://texaspolitics.utexas.edu/blog/latest-ut-texas-politics-poll-finds-historic-levels-of-competition-in-texas-midterm-elections"
   },
   {
     "id": "tx-sos-2026-election-dates",
