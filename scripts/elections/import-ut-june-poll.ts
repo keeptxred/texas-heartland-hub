@@ -240,6 +240,22 @@ for (const definition of definitions) {
   });
 }
 
+// These archived surveys are static fixtures. Re-running the importer is NOT
+// a new verification of the original survey and must never refresh its trust date.
+const oldPollsById = new Map(existingPolls.map((poll) => [poll.id, poll]));
+for (const poll of generated) {
+  const previous = oldPollsById.get(poll.id);
+  if (previous) {
+    poll.createdAt = previous.createdAt;
+    poll.updatedAt = previous.updatedAt;
+    poll.verifiedAt = previous.verifiedAt;
+    poll.lastCheckedAt = previous.lastCheckedAt;
+    poll.source.retrievedAt = previous.source?.retrievedAt ?? previous.verifiedAt;
+  }
+  const ageDays = (Date.parse(timestamp) - Date.parse(`${poll.fieldEndDate}T23:59:59Z`)) / 86_400_000;
+  poll.freshnessStatus = ageDays > 60 ? "stale" : ageDays > 21 ? "aging" : "fresh";
+}
+
 const generatedIds = new Set(generated.map((poll) => poll.id));
 const outputPolls = [
   ...existingPolls.filter((poll) => !generatedIds.has(poll.id)),
@@ -257,7 +273,7 @@ const sourceRecord = {
 };
 const outputSources = [
   ...existingSources.filter((source) => source.id !== SOURCE_ID),
-  sourceRecord,
+  { ...sourceRecord, retrievedAt: existingSources.find((source) => source.id === SOURCE_ID)?.retrievedAt ?? sourceRecord.retrievedAt, lastVerifiedAt: existingSources.find((source) => source.id === SOURCE_ID)?.lastVerifiedAt ?? sourceRecord.lastVerifiedAt },
 ].sort((left, right) => String(left.id).localeCompare(String(right.id)));
 
 await Promise.all([

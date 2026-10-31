@@ -9,6 +9,8 @@ import {
 } from "@/components/elections";
 import { buildElectionCollectionSchema, ELECTION_ROUTES } from "@/lib/elections";
 import { TEXAS_POLLING_REFERENCE_SOURCES } from "@/lib/elections/pollingSources";
+import { isRecentElectionPoll } from "@/lib/elections/pollFreshness";
+import pollsSnapshot from "@/data/elections/2026/polls.json";
 
 const POLL_PAGE_DESCRIPTION =
   "Review published Texas election polls with field dates, samples, sponsors, and methodology disclosures.";
@@ -26,6 +28,7 @@ export function ElectionPollListPage({
   isLoading = false,
   onRetry,
 }: ElectionPollListPageProps) {
+  const recentPollCount = pollsSnapshot.filter((poll) => poll.publicationStatus === "published" && poll.verificationStatus === "verified" && isRecentElectionPoll(poll.fieldEndDate)).length;
   return (
     <ElectionLayout
       title="Texas Election Polls"
@@ -54,7 +57,8 @@ export function ElectionPollListPage({
           </p>
         </header>
 
-        <aside className="rounded-xl border border-amber-200 bg-amber-50 p-5 text-sm leading-6 text-amber-950">
+        <aside role="status" className="rounded-xl border border-amber-200 bg-amber-50 p-5 text-sm leading-6 text-amber-950">
+          {recentPollCount === 0 ? "No source-verified polls within the last 35 days: records below are historical. " : `${recentPollCount} source-verified polls ended fieldwork within the past 35 days. Older records below are historical. `}
           Polls are snapshots of a surveyed population, not predictions or election results. Compare
           field dates, sample populations, question wording, sponsors, and methodology before
           drawing conclusions.

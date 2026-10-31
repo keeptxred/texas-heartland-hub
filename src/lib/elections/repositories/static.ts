@@ -252,6 +252,10 @@ function latest<T extends { updatedAt: string }>(items: readonly T[]): T | null 
   return [...items].sort((left, right) => right.updatedAt.localeCompare(left.updatedAt))[0] ?? null;
 }
 
+function latestPollByFieldDate<T extends { fieldEndDate: string; updatedAt: string }>(items: readonly T[]): T | null {
+  return [...items].sort((left, right) => right.fieldEndDate.localeCompare(left.fieldEndDate) || right.updatedAt.localeCompare(left.updatedAt))[0] ?? null;
+}
+
 function cycleSummary(record: ElectionCycleRecord): ElectionCycleSummary {
   return {
     id: record.id,
@@ -309,7 +313,7 @@ function raceCandidate(candidate: ExtendedCandidate) {
 
 function raceSummary(record: ExtendedRace): RaceSummary {
   const raceCandidates = candidates.filter((candidate) => candidate.raceIds.includes(record.id));
-  const latestPoll = latest(polls.filter((poll) => poll.raceId === record.id));
+  const latestPoll = latestPollByFieldDate(polls.filter((poll) => poll.raceId === record.id));
   const latestForecast = latest(forecasts.filter((forecast) => forecast.raceId === record.id));
   const latestResult = latest(results.filter((result) => result.raceId === record.id));
   return {
@@ -348,7 +352,7 @@ function raceSummary(record: ExtendedRace): RaceSummary {
 }
 
 function raceDetail(record: ExtendedRace): RaceDetail {
-  const poll = latest(polls.filter((item) => item.raceId === record.id));
+  const poll = latestPollByFieldDate(polls.filter((item) => item.raceId === record.id));
   const forecast = latest(forecasts.filter((item) => item.raceId === record.id));
   const result = latest(results.filter((item) => item.raceId === record.id));
   return {
