@@ -351,6 +351,123 @@
     }
   },
   {
+    "id": "poll-activote-texas-october-2026-lieutenant-governor",
+    "slug": "activote-texas-october-2026-lieutenant-governor",
+    "electionCycleId": "election-cycle-2026-texas-general",
+    "raceId": "race-2026-lieutenant-governor",
+    "jurisdictionId": "jurisdiction-texas",
+    "title": "October 2026 Texas lieutenant governor survey — ActiVote",
+    "status": "published",
+    "pollster": {
+      "name": "ActiVote",
+      "slug": "activote",
+      "websiteUrl": "https://www.activote.net/",
+      "grade": "unrated",
+      "transparencyScore": null,
+      "methodologyUrl": "https://www.activote.net/polls/2026/tx-lt-governor/2026-10-29/"
+    },
+    "sponsors": [
+      {
+        "name": "ActiVote",
+        "type": "pollster",
+        "websiteUrl": "https://www.activote.net/",
+        "partisanAffiliation": null,
+        "notes": null
+      }
+    ],
+    "fieldStartDate": "2026-10-18",
+    "fieldEndDate": "2026-10-29",
+    "releaseDate": "2026-10-29",
+    "revisedAt": null,
+    "methodology": {
+      "population": "likely_voters",
+      "sampleSize": 400,
+      "marginOfError": 4.9,
+      "confidenceLevel": null,
+      "mode": "online_panel",
+      "languages": [],
+      "weightingDescription": "Demographic and political-spectrum weighting; reported ±4.9% average expected error.",
+      "samplingDescription": "400 likely Texas midterm voters surveyed October 18–29.",
+      "likelyVoterModelDescription": null,
+      "questionOrderRandomized": null,
+      "includesCellPhones": null,
+      "responseRate": null,
+      "methodologyUrl": "https://www.activote.net/polls/2026/tx-lt-governor/2026-10-29/"
+    },
+    "questions": [
+      {
+        "id": "activote-texas-october-2026-lieutenant-governor-question",
+        "type": "head_to_head",
+        "prompt": "Texas 2026 lieutenant governor general-election choice (consult original pollster wording)",
+        "order": 1,
+        "sampleSize": 400,
+        "population": "likely_voters",
+        "responses": [
+          {
+            "id": "activote-texas-october-2026-lieutenant-governor-question-response-1",
+            "label": "Dan Patrick",
+            "candidateId": "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
+            "party": "republican",
+            "percentage": 56.4,
+            "respondentCount": null,
+            "marginFromLeader": 0,
+            "isLeader": true,
+            "isUndecided": false,
+            "isOther": false
+          },
+          {
+            "id": "activote-texas-october-2026-lieutenant-governor-question-response-2",
+            "label": "Vikki Goodwin",
+            "candidateId": "candidate-vikki-goodwin-democratic-race-2026-lieutenant-governor",
+            "party": "democratic",
+            "percentage": 43.6,
+            "respondentCount": null,
+            "marginFromLeader": 12.8,
+            "isLeader": false,
+            "isUndecided": false,
+            "isOther": false
+          }
+        ],
+        "notes": "ActiVote original October 29 survey of 400 likely voters, ±4.9% reported expected error."
+      }
+    ],
+    "primaryQuestionId": "activote-texas-october-2026-lieutenant-governor-question",
+    "toplineUrl": "https://www.activote.net/polls/2026/tx-lt-governor/2026-10-29/",
+    "questionnaireUrl": "https://www.activote.net/polls/2026/tx-lt-governor/2026-10-29/",
+    "crosstabsUrl": "https://www.activote.net/polls/2026/tx-lt-governor/2026-10-29/",
+    "archiveUrl": "https://www.activote.net/polls/2026/tx-lt-governor/2026-10-29/",
+    "internalPoll": false,
+    "partisanPoll": false,
+    "trackingPoll": false,
+    "supersededByPollId": null,
+    "notes": "Original ActiVote crosstab and field dates verified October 31.",
+    "createdAt": "2026-10-31T23:55:00.000Z",
+    "updatedAt": "2026-10-31T23:55:00.000Z",
+    "verificationStatus": "verified",
+    "verifiedAt": "2026-10-31T23:55:00.000Z",
+    "verifiedBy": "Cross-source election data import",
+    "verificationNotes": "Original ActiVote October 29 Texas lieutenant governor page confirms field dates October 18–29, Dan Patrick 56.4%, Vikki Goodwin 43.6%, sample 400 likely voters and ±4.9% expected error.",
+    "publicationStatus": "published",
+    "publishedAt": "2026-10-31T23:55:00.000Z",
+    "unpublishedAt": null,
+    "scheduledFor": null,
+    "publishedBy": "Cross-source election data import",
+    "dataAsOf": "2026-10-29T23:59:59.000Z",
+    "lastCheckedAt": "2026-10-31T23:55:00.000Z",
+    "staleAfter": "2026-11-29T00:00:00.000Z",
+    "expiresAt": "2026-11-05T00:00:00.000Z",
+    "freshnessStatus": "fresh",
+    "source": {
+      "sourceId": "source-activote-texas-october-29-2026",
+      "sourceName": "ActiVote",
+      "sourceType": "pollster",
+      "sourceUrl": "https://www.activote.net/polls/2026/tx-lt-governor/2026-10-29/",
+      "sourceRecordId": "activote-texas-october-2026-lieutenant-governor",
+      "retrievedAt": "2026-10-31T23:55:00.000Z",
+      "attributionText": "ActiVote, Texas lieutenant governor, October 29, 2026"
+    }
+  },
+  {
     "id": "poll-activote-texas-october-2026-us-senate",
     "slug": "activote-texas-october-2026-us-senate",
     "electionCycleId": "election-cycle-2026-texas-general",
