@@ -113,12 +113,12 @@
     "id": "source-quantus-texas-october-30-2026",
     "name": "Quantus Insights",
     "sourceType": "pollster",
-    "sourceUrl": "https://quantusinsights.org/f/texas-survey-paxton-up-one-abbott-ahead-by-five",
+    "sourceUrl": "https://data.ddhq.io/polls/2026/10/30/Quantus-Insights-Texas",
     "retrievedAt": "2026-10-31T23:55:00.000Z",
     "lastVerifiedAt": "2026-10-31T23:55:00.000Z",
-    "notes": "Original October 30 reporting for Texas survey conducted October 26–28; 1,221 overall likely voters.",
+    "notes": "Original 32-page Quantus report, October 26–28, n=1,221 LVs, ±3.2% MOE. Initial and leaner-allocated toplines are distinctly published. Individual Senate n=1,207 and governor n=1,214.",
     "type": "pollster",
-    "url": "https://quantusinsights.org/f/texas-survey-paxton-up-one-abbott-ahead-by-five"
+    "url": "https://data.ddhq.io/polls/2026/10/30/Quantus-Insights-Texas"
   },
   {
     "id": "source-texas-secretary-of-state-2026-primary-runoff-results",
