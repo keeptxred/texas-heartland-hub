@@ -11,6 +11,17 @@
     "notes": "Keep TX Red deterministic election model"
   },
   {
+    "id": "source-a2-insights-texas-october-2026",
+    "name": "A2 Insights",
+    "sourceType": "pollster",
+    "sourceUrl": "https://drive.google.com/file/d/1UACnmnM84Dd1hU0l6iqHNgXkyh5oCelO/view",
+    "retrievedAt": "2026-10-31T23:55:00.000Z",
+    "lastVerifiedAt": "2026-10-31T23:55:00.000Z",
+    "notes": "Original pollster 2026 PDF is in Google Drive and not crawler readable. Exact Oct 23–27 631 likely-voter Senate toplines corroborated across multiple indexes.",
+    "type": "pollster",
+    "url": "https://drive.google.com/file/d/1UACnmnM84Dd1hU0l6iqHNgXkyh5oCelO/view"
+  },
+  {
     "id": "source-activote-texas-october-29-2026",
     "name": "ActiVote",
     "sourceType": "pollster",
@@ -20,6 +31,17 @@
     "notes": "October 29 releases: 400 likely voters per statewide race. Separate race-specific toplines linked from poll records.",
     "type": "pollster",
     "url": "https://www.activote.net/polls/2026/tx-u-s-senate/2026-10-29/"
+  },
+  {
+    "id": "source-cnn-ssrs-texas-october-2026",
+    "name": "CNN/SSRS",
+    "sourceType": "news_organization",
+    "sourceUrl": "https://edition.cnn.com/2026/10/29/politics/cnn-polls-michigan-maine-texas-kansas-senate-races-midterms-vis",
+    "retrievedAt": "2026-10-31T23:55:00.000Z",
+    "lastVerifiedAt": "2026-10-31T23:55:00.000Z",
+    "notes": "October 20–27 Texas Senate and governor survey, n=923 LVs, ±4.2% MOE; publicly crosschecked via UT and independent archived poll indexes.",
+    "type": "news_organization",
+    "url": "https://edition.cnn.com/2026/10/29/politics/cnn-polls-michigan-maine-texas-kansas-senate-races-midterms-vis"
   },
   {
     "id": "source-data-for-progress-texas-october-2026",
