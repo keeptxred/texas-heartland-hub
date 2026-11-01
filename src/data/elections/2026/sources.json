@@ -6,8 +6,8 @@
     "sourceUrl": "https://keeptxred.com/elections/methodology",
     "type": "forecast_provider",
     "url": "https://keeptxred.com/elections/methodology",
-    "retrievedAt": "2026-11-01T00:20:56.410Z",
-    "lastVerifiedAt": "2026-11-01T00:20:56.410Z",
+    "retrievedAt": "2026-09-09T15:08:07.705Z",
+    "lastVerifiedAt": "2026-09-09T15:08:07.705Z",
     "notes": "Keep TX Red deterministic election model"
   },
   {
@@ -17,7 +17,7 @@
     "sourceUrl": "https://drive.google.com/file/d/1UACnmnM84Dd1hU0l6iqHNgXkyh5oCelO/view",
     "retrievedAt": "2026-10-31T23:55:00.000Z",
     "lastVerifiedAt": "2026-10-31T23:55:00.000Z",
-    "notes": "A2 Insights, October 2026",
+    "notes": "Original pollster 2026 PDF is in Google Drive and not crawler readable. Exact Oct 23–27 631 likely-voter Senate toplines corroborated across multiple indexes.",
     "type": "pollster",
     "url": "https://drive.google.com/file/d/1UACnmnM84Dd1hU0l6iqHNgXkyh5oCelO/view"
   },
@@ -25,56 +25,12 @@
     "id": "source-activote-texas-october-29-2026",
     "name": "ActiVote",
     "sourceType": "pollster",
-    "sourceUrl": "https://www.activote.net/polls/2026/tx-attorney-general/2026-10-29/",
-    "retrievedAt": "2026-10-31T23:55:00.000Z",
-    "lastVerifiedAt": "2026-10-31T23:55:00.000Z",
-    "notes": "ActiVote, October 2026",
-    "type": "pollster",
-    "url": "https://www.activote.net/polls/2026/tx-attorney-general/2026-10-29/"
-  },
-  {
-    "id": "source-activote-texas-october-29-2026-09bc6218",
-    "name": "ActiVote",
-    "sourceType": "pollster",
-    "sourceUrl": "https://www.activote.net/polls/2026/tx-governor/2026-10-29/",
-    "retrievedAt": "2026-10-31T23:55:00.000Z",
-    "lastVerifiedAt": "2026-10-31T23:55:00.000Z",
-    "notes": "ActiVote, October 2026",
-    "type": "pollster",
-    "url": "https://www.activote.net/polls/2026/tx-governor/2026-10-29/"
-  },
-  {
-    "id": "source-activote-texas-october-29-2026-226ba0e9",
-    "name": "ActiVote",
-    "sourceType": "pollster",
     "sourceUrl": "https://www.activote.net/polls/2026/tx-u-s-senate/2026-10-29/",
     "retrievedAt": "2026-10-31T23:55:00.000Z",
     "lastVerifiedAt": "2026-10-31T23:55:00.000Z",
-    "notes": "ActiVote, October 2026",
+    "notes": "October 29 releases: 400 likely voters per statewide race. Separate race-specific toplines linked from poll records.",
     "type": "pollster",
     "url": "https://www.activote.net/polls/2026/tx-u-s-senate/2026-10-29/"
-  },
-  {
-    "id": "source-activote-texas-october-29-2026-3c347f93",
-    "name": "ActiVote",
-    "sourceType": "pollster",
-    "sourceUrl": "https://www.activote.net/polls/2026/tx-lt-governor/2026-10-29/",
-    "retrievedAt": "2026-10-31T23:55:00.000Z",
-    "lastVerifiedAt": "2026-10-31T23:55:00.000Z",
-    "notes": "ActiVote, Texas lieutenant governor, October 29, 2026",
-    "type": "pollster",
-    "url": "https://www.activote.net/polls/2026/tx-lt-governor/2026-10-29/"
-  },
-  {
-    "id": "source-activote-texas-october-29-2026-9c4e55c8",
-    "name": "ActiVote",
-    "sourceType": "pollster",
-    "sourceUrl": "https://www.activote.net/polls/2026/tx-comptroller/",
-    "retrievedAt": "2026-10-31T23:55:00.000Z",
-    "lastVerifiedAt": "2026-10-31T23:55:00.000Z",
-    "notes": "ActiVote, October 29, 2026",
-    "type": "pollster",
-    "url": "https://www.activote.net/polls/2026/tx-comptroller/"
   },
   {
     "id": "source-cnn-ssrs-texas-october-2026",
@@ -83,7 +39,7 @@
     "sourceUrl": "https://edition.cnn.com/2026/10/29/politics/cnn-polls-michigan-maine-texas-kansas-senate-races-midterms-vis",
     "retrievedAt": "2026-10-31T23:55:00.000Z",
     "lastVerifiedAt": "2026-10-31T23:55:00.000Z",
-    "notes": "CNN/SSRS, October 2026",
+    "notes": "October 20–27 Texas Senate and governor survey, n=923 LVs, ±4.2% MOE; publicly crosschecked via UT and independent archived poll indexes.",
     "type": "news_organization",
     "url": "https://edition.cnn.com/2026/10/29/politics/cnn-polls-michigan-maine-texas-kansas-senate-races-midterms-vis"
   },
@@ -94,7 +50,7 @@
     "sourceUrl": "https://www.filesforprogress.org/datasets/2026/10/dfp_2026_tx_ge_tabs.pdf",
     "retrievedAt": "2026-10-31T23:55:00.000Z",
     "lastVerifiedAt": "2026-10-31T23:55:00.000Z",
-    "notes": "Data for Progress, October 2026",
+    "notes": "Original seven-page Texas statewide crosstab, October 23–26, n=712 likely voters, ±4%.",
     "type": "pollster",
     "url": "https://www.filesforprogress.org/datasets/2026/10/dfp_2026_tx_ge_tabs.pdf"
   },
@@ -106,7 +62,7 @@
     "type": "government",
     "url": "https://www.fec.gov/data/candidate/H6TX14181/?election_full=true&cycle=2026",
     "retrievedAt": "2026-07-28T20:24:58.080Z",
-    "lastVerifiedAt": "2026-09-09T16:38:01.607Z",
+    "lastVerifiedAt": "2026-08-27T14:05:07.504Z",
     "notes": "Candidate profile source for candidate-thurman-bill-bartie-democratic-race-2026-us-house-14."
   },
   {
@@ -117,7 +73,7 @@
     "type": "government",
     "url": "https://www.fec.gov/data/candidate/H6TX19206/?election_full=true&cycle=2026",
     "retrievedAt": "2026-07-28T20:24:58.080Z",
-    "lastVerifiedAt": "2026-09-09T16:38:01.607Z",
+    "lastVerifiedAt": "2026-08-27T14:05:07.504Z",
     "notes": "Candidate profile source for candidate-tom-sell-republican-race-2026-us-house-19."
   },
   {
@@ -128,7 +84,7 @@
     "type": "government",
     "url": "https://www.fec.gov/data/candidate/H6TX17168/?election_full=true&cycle=2026",
     "retrievedAt": "2026-07-28T20:24:58.080Z",
-    "lastVerifiedAt": "2026-09-09T16:38:01.607Z",
+    "lastVerifiedAt": "2026-08-27T14:05:07.504Z",
     "notes": "Candidate profile source for candidate-casey-shepard-democratic-race-2026-us-house-17."
   },
   {
@@ -139,17 +95,17 @@
     "type": "government",
     "url": "https://www.fec.gov/data/candidate/H6TX24172/?election_full=true&cycle=2026",
     "retrievedAt": "2026-07-28T20:24:58.080Z",
-    "lastVerifiedAt": "2026-09-09T16:38:01.607Z",
+    "lastVerifiedAt": "2026-08-27T14:05:07.504Z",
     "notes": "Candidate profile source for candidate-kevin-burge-democratic-race-2026-us-house-24."
   },
   {
     "id": "source-kstrat-texas-october-30-2026",
-    "name": "Kreate Strategies (KStrat)",
+    "name": "Kreate Strategies",
     "sourceType": "pollster",
     "sourceUrl": "https://kstrat.net/press/texas-2026-senate-governor-talarico-leads-paxton-october",
     "retrievedAt": "2026-10-31T23:55:00.000Z",
     "lastVerifiedAt": "2026-10-31T23:55:00.000Z",
-    "notes": "Kreate Strategies (KStrat), October 2026",
+    "notes": "Original pollster press link independently located, but full text was not extractable. Senate and governor ballot figures cross-checked against multiple NYT-syndicated indexes and DDHQ.",
     "type": "pollster",
     "url": "https://kstrat.net/press/texas-2026-senate-governor-talarico-leads-paxton-october"
   },
@@ -160,7 +116,7 @@
     "sourceUrl": "https://data.ddhq.io/polls/2026/10/30/Quantus-Insights-Texas",
     "retrievedAt": "2026-10-31T23:55:00.000Z",
     "lastVerifiedAt": "2026-10-31T23:55:00.000Z",
-    "notes": "Quantus Insights, October 2026",
+    "notes": "Original 32-page Quantus report, October 26–28, n=1,221 LVs, ±3.2% MOE. Initial and leaner-allocated toplines are distinctly published. Individual Senate n=1,207 and governor n=1,214.",
     "type": "pollster",
     "url": "https://data.ddhq.io/polls/2026/10/30/Quantus-Insights-Texas"
   },
@@ -171,8 +127,8 @@
     "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
     "type": "official",
     "url": "https://electionresults.sos.state.tx.us/results.html",
-    "retrievedAt": "2026-09-09T16:38:01.607Z",
-    "lastVerifiedAt": "2026-09-09T16:38:01.607Z",
+    "retrievedAt": "2026-08-27T14:05:07.504Z",
+    "lastVerifiedAt": "2026-08-27T14:05:07.504Z",
     "notes": "candidates source for candidate-ken-paxton-republican-race-2026-us-senate."
   },
   {
@@ -183,7 +139,7 @@
     "type": "official",
     "url": "https://goelect.txelections.civixapps.com/ivis-enr-ui/races",
     "retrievedAt": "2026-08-21T15:58:06.180Z",
-    "lastVerifiedAt": "2026-09-09T16:38:01.607Z",
+    "lastVerifiedAt": "2026-08-27T14:05:07.504Z",
     "notes": "Candidate profile source for candidate-ken-paxton-republican-race-2026-us-senate."
   },
   {
@@ -204,8 +160,8 @@
     "sourceUrl": "https://goelect.txelections.civixapps.com/ivis-cbp-ui/candidate-information",
     "type": "official",
     "url": "https://goelect.txelections.civixapps.com/ivis-cbp-ui/candidate-information",
-    "retrievedAt": "2026-09-09T16:37:54.105Z",
-    "lastVerifiedAt": "2026-09-09T16:38:01.607Z",
+    "retrievedAt": "2026-08-27T14:05:00.697Z",
+    "lastVerifiedAt": "2026-08-27T14:05:07.504Z",
     "notes": "candidates source for candidate-zul-mohamed-other-race-2026-us-senate."
   },
   {
@@ -221,12 +177,12 @@
   },
   {
     "id": "source-tsu-statewide-late-october-2026",
-    "name": "Texas Southern University / Barbara Jordan Public Policy Research and Survey Center",
+    "name": "Texas Southern University — Barbara Jordan Public Policy Research and Survey Center",
     "sourceType": "academic",
     "sourceUrl": "https://www.jordanresearchcenter.org/s/TSUStatewideOct2026.pdf",
     "retrievedAt": "2026-10-31T22:12:45.232Z",
     "lastVerifiedAt": "2026-10-31T22:12:45.232Z",
-    "notes": "Texas Southern University, October 2026",
+    "notes": "Original October 2026 statewide survey report, n=2000 likely voters, October 21–25.",
     "type": "academic",
     "url": "https://www.jordanresearchcenter.org/s/TSUStatewideOct2026.pdf"
   },
@@ -259,18 +215,18 @@
     "sourceUrl": "https://texaspolitics.utexas.edu/blog/latest-ut-texas-politics-poll-finds-historic-levels-of-competition-in-texas-midterm-elections",
     "retrievedAt": "2026-10-31T22:12:45.232Z",
     "lastVerifiedAt": "2026-10-31T22:12:45.232Z",
-    "notes": "UT/Texas Politics Project, October 2026",
+    "notes": "Original October 2026 statewide likely-voter trial ballot, n=861, September 25–October 5, released October 13.",
     "type": "academic",
     "url": "https://texaspolitics.utexas.edu/blog/latest-ut-texas-politics-poll-finds-historic-levels-of-competition-in-texas-midterm-elections"
   },
   {
     "id": "source-yougov-blue-254-labs-october-2026",
-    "name": "YouGov Blue / 254 Labs",
+    "name": "YouGov Blue for 254 Labs",
     "sourceType": "pollster",
     "sourceUrl": "https://254labs.io/news/2026-10-tx.pdf",
     "retrievedAt": "2026-10-31T23:55:00.000Z",
     "lastVerifiedAt": "2026-10-31T23:55:00.000Z",
-    "notes": "YouGov Blue / 254 Labs, October 2026",
+    "notes": "Poll fielded October 21–26; 1,000 registered voters weighted to likely voter targets, political research organization sponsorship.",
     "type": "pollster",
     "url": "https://254labs.io/news/2026-10-tx.pdf"
   },
@@ -281,8 +237,8 @@
     "sourceUrl": "https://www.sos.texas.gov/elections/voter/important-election-dates.shtml",
     "type": "official",
     "url": "https://www.sos.texas.gov/elections/voter/important-election-dates.shtml",
-    "retrievedAt": "2026-09-17T22:17:00.000Z",
-    "lastVerifiedAt": "2026-09-17T22:17:00.000Z",
+    "retrievedAt": "2026-07-28T12:00:00.000Z",
+    "lastVerifiedAt": "2026-07-28T12:00:00.000Z",
     "notes": "Texas Secretary of State election dates"
   },
   {
