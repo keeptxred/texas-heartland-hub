@@ -14,14 +14,14 @@
       "modelVersion": "ktr-2026.2",
       "methodologyUrl": "https://keeptxred.com/elections/methodology",
       "simulationCount": null,
-      "lastModelRunAt": "2026-11-01T00:20:56.410Z",
+      "lastModelRunAt": "2026-11-01T17:08:15.186Z",
       "fundamentals": {
         "previousElectionMargin": null,
         "districtPartisanLean": null,
         "incumbencyAdjustment": 0,
         "fundraisingAdvantage": 0,
         "candidateQualityAdjustment": 0,
-        "dataAsOf": "2026-11-01T00:20:56.410Z",
+        "dataAsOf": "2026-11-01T17:08:15.186Z",
         "sourceUrls": [
           "https://www.activote.net/polls/2026/tx-attorney-general/2026-10-29/",
           "https://www.jordanresearchcenter.org/s/TSUStatewideOct2026.pdf",
@@ -40,7 +40,7 @@
         "projectedVoteShareLow": 46.7,
         "projectedVoteShareHigh": 55.7,
         "pollingAverage": 48.7,
-        "winProbabilityChange": -1
+        "winProbabilityChange": 0
       },
       {
         "candidateId": "candidate-nathan-johnson-democratic-race-2026-attorney-general",
@@ -51,7 +51,7 @@
         "projectedVoteShareLow": 44.3,
         "projectedVoteShareHigh": 53.4,
         "pollingAverage": 46.4,
-        "winProbabilityChange": 1
+        "winProbabilityChange": 0
       }
     ],
     "projectedMargin": 2.3,
@@ -60,19 +60,19 @@
     "finalizedAt": null,
     "notes": "Polling-only forecast using weighted verified public polls; no fundamentals adjustments were applied.",
     "createdAt": "2026-07-29T04:01:38.706Z",
-    "updatedAt": "2026-11-01T00:20:56.410Z",
+    "updatedAt": "2026-11-01T17:08:15.186Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-11-01T00:20:56.410Z",
+    "verifiedAt": "2026-11-01T17:08:15.186Z",
     "verifiedBy": "GitHub Actions election forecast workflow",
     "verificationNotes": null,
     "publicationStatus": "published",
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "GitHub Actions election forecast workflow",
-    "dataAsOf": "2026-11-01T00:20:56.410Z",
-    "lastCheckedAt": "2026-11-01T00:20:56.410Z",
-    "staleAfter": "2026-11-03T00:20:56.410Z",
-    "expiresAt": "2026-11-08T00:20:56.410Z",
+    "dataAsOf": "2026-11-01T17:08:15.186Z",
+    "lastCheckedAt": "2026-11-01T17:08:15.186Z",
+    "staleAfter": "2026-11-03T17:08:15.186Z",
+    "expiresAt": "2026-11-08T17:08:15.186Z",
     "freshnessStatus": "fresh",
     "source": {
       "sourceId": "ktr-forecast-model",
@@ -80,7 +80,7 @@
       "sourceType": "forecast_provider",
       "sourceUrl": "https://keeptxred.com/elections/methodology",
       "sourceRecordId": "race-2026-attorney-general",
-      "retrievedAt": "2026-11-01T00:20:56.410Z",
+      "retrievedAt": "2026-11-01T17:08:15.186Z",
       "attributionText": "Keep TX Red deterministic election model"
     },
     "fundamentalsBased": false,
@@ -723,7 +723,7 @@
       },
       {
         "forecastId": "forecast-race-2026-attorney-general",
-        "capturedAt": "2026-11-01T00:20:56.410Z",
+        "capturedAt": "2026-11-01T17:08:15.186Z",
         "status": "active",
         "rating": "toss_up",
         "confidenceLevel": "medium",
@@ -741,7 +741,7 @@
             "projectedVoteShareLow": 46.7,
             "projectedVoteShareHigh": 55.7,
             "pollingAverage": 48.7,
-            "winProbabilityChange": -1
+            "winProbabilityChange": 0
           },
           {
             "candidateId": "candidate-nathan-johnson-democratic-race-2026-attorney-general",
@@ -754,7 +754,7 @@
             "projectedVoteShareLow": 44.3,
             "projectedVoteShareHigh": 53.4,
             "pollingAverage": 46.4,
-            "winProbabilityChange": 1
+            "winProbabilityChange": 0
           }
         ]
       }
@@ -775,14 +775,14 @@
       "modelVersion": "ktr-2026.2",
       "methodologyUrl": "https://keeptxred.com/elections/methodology",
       "simulationCount": null,
-      "lastModelRunAt": "2026-11-01T00:20:56.410Z",
+      "lastModelRunAt": "2026-11-01T17:08:15.186Z",
       "fundamentals": {
         "previousElectionMargin": null,
         "districtPartisanLean": null,
         "incumbencyAdjustment": 0,
         "fundraisingAdvantage": 0,
         "candidateQualityAdjustment": 0,
-        "dataAsOf": "2026-11-01T00:20:56.410Z",
+        "dataAsOf": "2026-11-01T17:08:15.186Z",
         "sourceUrls": [
           "https://www.activote.net/polls/2026/tx-comptroller/",
           "https://www.jordanresearchcenter.org/s/TSUStatewideOct2026.pdf",
@@ -800,7 +800,7 @@
         "projectedVoteShareLow": 48.5,
         "projectedVoteShareHigh": 57.5,
         "pollingAverage": 50.8,
-        "winProbabilityChange": 6
+        "winProbabilityChange": 0
       },
       {
         "candidateId": "candidate-sarah-eckhardt-democratic-race-2026-comptroller",
@@ -811,7 +811,7 @@
         "projectedVoteShareLow": 42.5,
         "projectedVoteShareHigh": 51.5,
         "pollingAverage": 44.8,
-        "winProbabilityChange": -6
+        "winProbabilityChange": 0
       }
     ],
     "projectedMargin": 6,
@@ -820,19 +820,19 @@
     "finalizedAt": null,
     "notes": "Polling-only forecast using weighted verified public polls; no fundamentals adjustments were applied.",
     "createdAt": "2026-07-29T04:01:38.706Z",
-    "updatedAt": "2026-11-01T00:20:56.410Z",
+    "updatedAt": "2026-11-01T17:08:15.186Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-11-01T00:20:56.410Z",
+    "verifiedAt": "2026-11-01T17:08:15.186Z",
     "verifiedBy": "GitHub Actions election forecast workflow",
     "verificationNotes": null,
     "publicationStatus": "published",
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "GitHub Actions election forecast workflow",
-    "dataAsOf": "2026-11-01T00:20:56.410Z",
-    "lastCheckedAt": "2026-11-01T00:20:56.410Z",
-    "staleAfter": "2026-11-03T00:20:56.410Z",
-    "expiresAt": "2026-11-08T00:20:56.410Z",
+    "dataAsOf": "2026-11-01T17:08:15.186Z",
+    "lastCheckedAt": "2026-11-01T17:08:15.186Z",
+    "staleAfter": "2026-11-03T17:08:15.186Z",
+    "expiresAt": "2026-11-08T17:08:15.186Z",
     "freshnessStatus": "fresh",
     "source": {
       "sourceId": "ktr-forecast-model",
@@ -840,7 +840,7 @@
       "sourceType": "forecast_provider",
       "sourceUrl": "https://keeptxred.com/elections/methodology",
       "sourceRecordId": "race-2026-comptroller",
-      "retrievedAt": "2026-11-01T00:20:56.410Z",
+      "retrievedAt": "2026-11-01T17:08:15.186Z",
       "attributionText": "Keep TX Red deterministic election model"
     },
     "fundamentalsBased": false,
@@ -1482,7 +1482,7 @@
       },
       {
         "forecastId": "forecast-race-2026-comptroller",
-        "capturedAt": "2026-11-01T00:20:56.410Z",
+        "capturedAt": "2026-11-01T17:08:15.186Z",
         "status": "active",
         "rating": "leans_republican",
         "confidenceLevel": "medium",
@@ -1500,7 +1500,7 @@
             "projectedVoteShareLow": 48.5,
             "projectedVoteShareHigh": 57.5,
             "pollingAverage": 50.8,
-            "winProbabilityChange": 6
+            "winProbabilityChange": 0
           },
           {
             "candidateId": "candidate-sarah-eckhardt-democratic-race-2026-comptroller",
@@ -1513,7 +1513,7 @@
             "projectedVoteShareLow": 42.5,
             "projectedVoteShareHigh": 51.5,
             "pollingAverage": 44.8,
-            "winProbabilityChange": -6
+            "winProbabilityChange": 0
           }
         ]
       }
@@ -1534,14 +1534,14 @@
       "modelVersion": "ktr-2026.2",
       "methodologyUrl": "https://keeptxred.com/elections/methodology",
       "simulationCount": null,
-      "lastModelRunAt": "2026-11-01T00:20:56.410Z",
+      "lastModelRunAt": "2026-11-01T17:08:15.186Z",
       "fundamentals": {
         "previousElectionMargin": null,
         "districtPartisanLean": null,
         "incumbencyAdjustment": 0,
         "fundraisingAdvantage": 0,
         "candidateQualityAdjustment": 0,
-        "dataAsOf": "2026-11-01T00:20:56.410Z",
+        "dataAsOf": "2026-11-01T17:08:15.186Z",
         "sourceUrls": [
           "https://www.activote.net/polls/2026/tx-governor/2026-10-29/",
           "https://edition.cnn.com/2026/10/29/politics/cnn-polls-michigan-maine-texas-kansas-senate-races-midterms-vis",
@@ -1564,7 +1564,7 @@
         "projectedVoteShareLow": 46.5,
         "projectedVoteShareHigh": 55.5,
         "pollingAverage": 49.1,
-        "winProbabilityChange": 1
+        "winProbabilityChange": 0
       },
       {
         "candidateId": "candidate-gina-hinojosa-democratic-race-2026-governor",
@@ -1575,7 +1575,7 @@
         "projectedVoteShareLow": 44.5,
         "projectedVoteShareHigh": 53.5,
         "pollingAverage": 47.1,
-        "winProbabilityChange": -1
+        "winProbabilityChange": 0
       }
     ],
     "projectedMargin": 2,
@@ -1584,19 +1584,19 @@
     "finalizedAt": null,
     "notes": "Polling-only forecast using weighted verified public polls; no fundamentals adjustments were applied.",
     "createdAt": "2026-07-29T04:01:38.706Z",
-    "updatedAt": "2026-11-01T00:20:56.410Z",
+    "updatedAt": "2026-11-01T17:08:15.186Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-11-01T00:20:56.410Z",
+    "verifiedAt": "2026-11-01T17:08:15.186Z",
     "verifiedBy": "GitHub Actions election forecast workflow",
     "verificationNotes": null,
     "publicationStatus": "published",
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "GitHub Actions election forecast workflow",
-    "dataAsOf": "2026-11-01T00:20:56.410Z",
-    "lastCheckedAt": "2026-11-01T00:20:56.410Z",
-    "staleAfter": "2026-11-03T00:20:56.410Z",
-    "expiresAt": "2026-11-08T00:20:56.410Z",
+    "dataAsOf": "2026-11-01T17:08:15.186Z",
+    "lastCheckedAt": "2026-11-01T17:08:15.186Z",
+    "staleAfter": "2026-11-03T17:08:15.186Z",
+    "expiresAt": "2026-11-08T17:08:15.186Z",
     "freshnessStatus": "fresh",
     "source": {
       "sourceId": "ktr-forecast-model",
@@ -1604,7 +1604,7 @@
       "sourceType": "forecast_provider",
       "sourceUrl": "https://keeptxred.com/elections/methodology",
       "sourceRecordId": "race-2026-governor",
-      "retrievedAt": "2026-11-01T00:20:56.410Z",
+      "retrievedAt": "2026-11-01T17:08:15.186Z",
       "attributionText": "Keep TX Red deterministic election model"
     },
     "fundamentalsBased": false,
@@ -2251,7 +2251,7 @@
       },
       {
         "forecastId": "forecast-race-2026-governor",
-        "capturedAt": "2026-11-01T00:20:56.410Z",
+        "capturedAt": "2026-11-01T17:08:15.186Z",
         "status": "active",
         "rating": "toss_up",
         "confidenceLevel": "medium",
@@ -2269,7 +2269,7 @@
             "projectedVoteShareLow": 46.5,
             "projectedVoteShareHigh": 55.5,
             "pollingAverage": 49.1,
-            "winProbabilityChange": 1
+            "winProbabilityChange": 0
           },
           {
             "candidateId": "candidate-gina-hinojosa-democratic-race-2026-governor",
@@ -2282,7 +2282,7 @@
             "projectedVoteShareLow": 44.5,
             "projectedVoteShareHigh": 53.5,
             "pollingAverage": 47.1,
-            "winProbabilityChange": -1
+            "winProbabilityChange": 0
           }
         ]
       }
@@ -2303,14 +2303,14 @@
       "modelVersion": "ktr-2026.2",
       "methodologyUrl": "https://keeptxred.com/elections/methodology",
       "simulationCount": null,
-      "lastModelRunAt": "2026-11-01T00:20:56.410Z",
+      "lastModelRunAt": "2026-11-01T17:08:15.186Z",
       "fundamentals": {
         "previousElectionMargin": null,
         "districtPartisanLean": null,
         "incumbencyAdjustment": 0,
         "fundraisingAdvantage": 0,
         "candidateQualityAdjustment": 0,
-        "dataAsOf": "2026-11-01T00:20:56.410Z",
+        "dataAsOf": "2026-11-01T17:08:15.186Z",
         "sourceUrls": [
           "https://www.activote.net/polls/2026/tx-lt-governor/2026-10-29/",
           "https://www.jordanresearchcenter.org/s/TSUStatewideOct2026.pdf",
@@ -2329,7 +2329,7 @@
         "projectedVoteShareLow": 47.2,
         "projectedVoteShareHigh": 56.2,
         "pollingAverage": 49.4,
-        "winProbabilityChange": 7
+        "winProbabilityChange": 0
       },
       {
         "candidateId": "candidate-vikki-goodwin-democratic-race-2026-lieutenant-governor",
@@ -2340,7 +2340,7 @@
         "projectedVoteShareLow": 43.8,
         "projectedVoteShareHigh": 52.8,
         "pollingAverage": 46,
-        "winProbabilityChange": -7
+        "winProbabilityChange": 0
       }
     ],
     "projectedMargin": 3.4,
@@ -2349,19 +2349,19 @@
     "finalizedAt": null,
     "notes": "Polling-only forecast using weighted verified public polls; no fundamentals adjustments were applied.",
     "createdAt": "2026-07-29T04:01:38.706Z",
-    "updatedAt": "2026-11-01T00:20:56.410Z",
+    "updatedAt": "2026-11-01T17:08:15.186Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-11-01T00:20:56.410Z",
+    "verifiedAt": "2026-11-01T17:08:15.186Z",
     "verifiedBy": "GitHub Actions election forecast workflow",
     "verificationNotes": null,
     "publicationStatus": "published",
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "GitHub Actions election forecast workflow",
-    "dataAsOf": "2026-11-01T00:20:56.410Z",
-    "lastCheckedAt": "2026-11-01T00:20:56.410Z",
-    "staleAfter": "2026-11-03T00:20:56.410Z",
-    "expiresAt": "2026-11-08T00:20:56.410Z",
+    "dataAsOf": "2026-11-01T17:08:15.186Z",
+    "lastCheckedAt": "2026-11-01T17:08:15.186Z",
+    "staleAfter": "2026-11-03T17:08:15.186Z",
+    "expiresAt": "2026-11-08T17:08:15.186Z",
     "freshnessStatus": "fresh",
     "source": {
       "sourceId": "ktr-forecast-model",
@@ -2369,7 +2369,7 @@
       "sourceType": "forecast_provider",
       "sourceUrl": "https://keeptxred.com/elections/methodology",
       "sourceRecordId": "race-2026-lieutenant-governor",
-      "retrievedAt": "2026-11-01T00:20:56.410Z",
+      "retrievedAt": "2026-11-01T17:08:15.186Z",
       "attributionText": "Keep TX Red deterministic election model"
     },
     "fundamentalsBased": false,
@@ -3012,7 +3012,7 @@
       },
       {
         "forecastId": "forecast-race-2026-lieutenant-governor",
-        "capturedAt": "2026-11-01T00:20:56.410Z",
+        "capturedAt": "2026-11-01T17:08:15.186Z",
         "status": "active",
         "rating": "leans_republican",
         "confidenceLevel": "medium",
@@ -3030,7 +3030,7 @@
             "projectedVoteShareLow": 47.2,
             "projectedVoteShareHigh": 56.2,
             "pollingAverage": 49.4,
-            "winProbabilityChange": 7
+            "winProbabilityChange": 0
           },
           {
             "candidateId": "candidate-vikki-goodwin-democratic-race-2026-lieutenant-governor",
@@ -3043,7 +3043,7 @@
             "projectedVoteShareLow": 43.8,
             "projectedVoteShareHigh": 52.8,
             "pollingAverage": 46,
-            "winProbabilityChange": -7
+            "winProbabilityChange": 0
           }
         ]
       }
@@ -3064,14 +3064,14 @@
       "modelVersion": "ktr-2026.2",
       "methodologyUrl": "https://keeptxred.com/elections/methodology",
       "simulationCount": null,
-      "lastModelRunAt": "2026-11-01T00:20:56.410Z",
+      "lastModelRunAt": "2026-11-01T17:08:15.186Z",
       "fundamentals": {
         "previousElectionMargin": null,
         "districtPartisanLean": null,
         "incumbencyAdjustment": 0,
         "fundraisingAdvantage": 0,
         "candidateQualityAdjustment": 0,
-        "dataAsOf": "2026-11-01T00:20:56.410Z",
+        "dataAsOf": "2026-11-01T17:08:15.186Z",
         "sourceUrls": [
           "https://drive.google.com/file/d/1UACnmnM84Dd1hU0l6iqHNgXkyh5oCelO/view",
           "https://www.activote.net/polls/2026/tx-u-s-senate/2026-10-29/",
@@ -3095,7 +3095,7 @@
         "projectedVoteShareLow": 43.8,
         "projectedVoteShareHigh": 52.8,
         "pollingAverage": 45.9,
-        "winProbabilityChange": -6
+        "winProbabilityChange": 0
       },
       {
         "candidateId": "candidate-james-talarico-democratic-race-2026-us-senate",
@@ -3106,7 +3106,7 @@
         "projectedVoteShareLow": 47.3,
         "projectedVoteShareHigh": 56.3,
         "pollingAverage": 49.4,
-        "winProbabilityChange": 6
+        "winProbabilityChange": 0
       }
     ],
     "projectedMargin": -3.5,
@@ -3115,19 +3115,19 @@
     "finalizedAt": null,
     "notes": "Polling-only forecast using weighted verified public polls; no fundamentals adjustments were applied.",
     "createdAt": "2026-07-29T04:01:38.706Z",
-    "updatedAt": "2026-11-01T00:20:56.410Z",
+    "updatedAt": "2026-11-01T17:08:15.186Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-11-01T00:20:56.410Z",
+    "verifiedAt": "2026-11-01T17:08:15.186Z",
     "verifiedBy": "GitHub Actions election forecast workflow",
     "verificationNotes": null,
     "publicationStatus": "published",
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "GitHub Actions election forecast workflow",
-    "dataAsOf": "2026-11-01T00:20:56.410Z",
-    "lastCheckedAt": "2026-11-01T00:20:56.410Z",
-    "staleAfter": "2026-11-03T00:20:56.410Z",
-    "expiresAt": "2026-11-08T00:20:56.410Z",
+    "dataAsOf": "2026-11-01T17:08:15.186Z",
+    "lastCheckedAt": "2026-11-01T17:08:15.186Z",
+    "staleAfter": "2026-11-03T17:08:15.186Z",
+    "expiresAt": "2026-11-08T17:08:15.186Z",
     "freshnessStatus": "fresh",
     "source": {
       "sourceId": "ktr-forecast-model",
@@ -3135,7 +3135,7 @@
       "sourceType": "forecast_provider",
       "sourceUrl": "https://keeptxred.com/elections/methodology",
       "sourceRecordId": "race-2026-us-senate",
-      "retrievedAt": "2026-11-01T00:20:56.410Z",
+      "retrievedAt": "2026-11-01T17:08:15.186Z",
       "attributionText": "Keep TX Red deterministic election model"
     },
     "fundamentalsBased": false,
@@ -3783,7 +3783,7 @@
       },
       {
         "forecastId": "forecast-race-2026-us-senate",
-        "capturedAt": "2026-11-01T00:20:56.410Z",
+        "capturedAt": "2026-11-01T17:08:15.186Z",
         "status": "active",
         "rating": "leans_democratic",
         "confidenceLevel": "medium",
@@ -3801,7 +3801,7 @@
             "projectedVoteShareLow": 43.8,
             "projectedVoteShareHigh": 52.8,
             "pollingAverage": 45.9,
-            "winProbabilityChange": -6
+            "winProbabilityChange": 0
           },
           {
             "candidateId": "candidate-james-talarico-democratic-race-2026-us-senate",
@@ -3814,7 +3814,7 @@
             "projectedVoteShareLow": 47.3,
             "projectedVoteShareHigh": 56.3,
             "pollingAverage": 49.4,
-            "winProbabilityChange": 6
+            "winProbabilityChange": 0
           }
         ]
       }
