@@ -11,6 +11,28 @@
     "notes": "Keep TX Red deterministic election model"
   },
   {
+    "id": "source-activote-texas-october-29-2026",
+    "name": "ActiVote",
+    "sourceType": "pollster",
+    "sourceUrl": "https://www.activote.net/polls/2026/tx-u-s-senate/2026-10-29/",
+    "retrievedAt": "2026-10-31T23:55:00.000Z",
+    "lastVerifiedAt": "2026-10-31T23:55:00.000Z",
+    "notes": "October 29 releases: 400 likely voters per statewide race. Separate race-specific toplines linked from poll records.",
+    "type": "pollster",
+    "url": "https://www.activote.net/polls/2026/tx-u-s-senate/2026-10-29/"
+  },
+  {
+    "id": "source-data-for-progress-texas-october-2026",
+    "name": "Data for Progress",
+    "sourceType": "pollster",
+    "sourceUrl": "https://www.filesforprogress.org/datasets/2026/10/dfp_2026_tx_ge_tabs.pdf",
+    "retrievedAt": "2026-10-31T23:55:00.000Z",
+    "lastVerifiedAt": "2026-10-31T23:55:00.000Z",
+    "notes": "Original seven-page Texas statewide crosstab, October 23–26, n=712 likely voters, ±4%.",
+    "type": "pollster",
+    "url": "https://www.filesforprogress.org/datasets/2026/10/dfp_2026_tx_ge_tabs.pdf"
+  },
+  {
     "id": "source-federal-election-commission-00350917",
     "name": "Federal Election Commission",
     "sourceType": "government",
@@ -53,6 +75,28 @@
     "retrievedAt": "2026-07-28T20:24:58.080Z",
     "lastVerifiedAt": "2026-08-27T14:05:07.504Z",
     "notes": "Candidate profile source for candidate-kevin-burge-democratic-race-2026-us-house-24."
+  },
+  {
+    "id": "source-kstrat-texas-october-30-2026",
+    "name": "Kreate Strategies",
+    "sourceType": "pollster",
+    "sourceUrl": "https://kstrat.net/press/texas-2026-senate-governor-talarico-leads-paxton-october",
+    "retrievedAt": "2026-10-31T23:55:00.000Z",
+    "lastVerifiedAt": "2026-10-31T23:55:00.000Z",
+    "notes": "Original pollster press link independently located, but full text was not extractable. Senate and governor ballot figures cross-checked against multiple NYT-syndicated indexes and DDHQ.",
+    "type": "pollster",
+    "url": "https://kstrat.net/press/texas-2026-senate-governor-talarico-leads-paxton-october"
+  },
+  {
+    "id": "source-quantus-texas-october-30-2026",
+    "name": "Quantus Insights",
+    "sourceType": "pollster",
+    "sourceUrl": "https://quantusinsights.org/f/texas-survey-paxton-up-one-abbott-ahead-by-five",
+    "retrievedAt": "2026-10-31T23:55:00.000Z",
+    "lastVerifiedAt": "2026-10-31T23:55:00.000Z",
+    "notes": "Original October 30 reporting for Texas survey conducted October 26–28; 1,221 overall likely voters.",
+    "type": "pollster",
+    "url": "https://quantusinsights.org/f/texas-survey-paxton-up-one-abbott-ahead-by-five"
   },
   {
     "id": "source-texas-secretary-of-state-2026-primary-runoff-results",
@@ -152,6 +196,17 @@
     "notes": "Original October 2026 statewide likely-voter trial ballot, n=861, September 25–October 5, released October 13.",
     "type": "academic",
     "url": "https://texaspolitics.utexas.edu/blog/latest-ut-texas-politics-poll-finds-historic-levels-of-competition-in-texas-midterm-elections"
+  },
+  {
+    "id": "source-yougov-blue-254-labs-october-2026",
+    "name": "YouGov Blue for 254 Labs",
+    "sourceType": "pollster",
+    "sourceUrl": "https://254labs.io/news/2026-10-tx.pdf",
+    "retrievedAt": "2026-10-31T23:55:00.000Z",
+    "lastVerifiedAt": "2026-10-31T23:55:00.000Z",
+    "notes": "Poll fielded October 21–26; 1,000 registered voters weighted to likely voter targets, political research organization sponsorship.",
+    "type": "pollster",
+    "url": "https://254labs.io/news/2026-10-tx.pdf"
   },
   {
     "id": "tx-sos-2026-election-dates",
