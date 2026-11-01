@@ -73,6 +73,34 @@ try {
 } catch (error) {
   notices.push(`Could not verify UT latest-poll date: ${error.message}. ${universityUrl}`);
 }
+
+// The university monitor alone missed releases from independent pollsters.
+// Public indexes are discovery leads; source-checked original pollster records
+// remain the requirement for publication, not copied index values.
+for (const { raceId, label, url } of [
+  { raceId: "race-2026-us-senate", label: "U.S. Senate", url: "https://pollresults.org/races/senate/texas/" },
+  { raceId: "race-2026-governor", label: "Governor", url: "https://pollresults.org/races/governor/texas/" },
+]) {
+  const importedFieldEnd = maxDate(eligible.filter((poll) => poll.raceId === raceId));
+  try {
+    const indexText = await fetchText(url);
+    const match = indexText.match(/Most recent poll\s+([A-Za-z]{3,9})\s+(\d{1,2}),\s*2026/i);
+    if (!match) throw new Error("Latest-poll date missing or source format changed");
+    const month = months.findIndex((value) => value.toLowerCase().startsWith(match[1].toLowerCase()));
+    const day = Number(match[2]);
+    if (month < 0 || day < 1 || day > 31) throw new Error("Invalid index date");
+    const indexedDate = "2026-" + String(month + 1).padStart(2, "0") + "-" + String(day).padStart(2, "0");
+    checks.push(label + " index field end: " + indexedDate + "; KeepTXRed: " + (importedFieldEnd || "none") + ".");
+    if (!importedFieldEnd || indexedDate > importedFieldEnd) {
+      notices.push("Newer " + label + " polling indexed through " + indexedDate +
+        " while KeepTXRed ends " + (importedFieldEnd || "none") +
+        ". Check the original pollster release before importing. " + url);
+    }
+  } catch (error) {
+    notices.push("Could not check multi-pollster " + label + " index: " + error.message + ". " + url);
+  }
+}
+
 if (active && newestSenate) {
   const days = Math.floor((today.getTime() - Date.parse(`${newestSenate}T00:00:00Z`)) / 86_400_000);
   if (days > 21) notices.push(`Most recent imported Senate poll finished ${days} days ago; current survey coverage may be out of date.`);
