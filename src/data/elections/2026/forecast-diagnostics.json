@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-10-31T23:26:43.349Z",
+  "generatedAt": "2026-11-01T00:20:56.410Z",
   "totals": {
     "races": 227,
     "candidates": 491,
-    "polls": 18,
+    "polls": 36,
     "publishedVerifiedRaces": 227,
     "racesWithCandidateMatches": 208,
     "racesWithPollMatches": 5,
@@ -22,14 +22,21 @@
         "present": true,
         "enabled": false
       },
-      "pollCount": 2,
+      "pollCount": 9,
       "pollIds": [
+        "poll-a2-insights-texas-october-2026-us-senate",
+        "poll-activote-texas-october-2026-us-senate",
+        "poll-cnn-ssrs-texas-october-2026-us-senate",
+        "poll-dfp-texas-october-2026-us-senate",
+        "poll-kstrat-texas-october-2026-us-senate",
+        "poll-quantus-texas-october-2026-us-senate",
+        "poll-tsu-texas-late-october-2026-us-senate",
         "poll-ut-texas-october-2026-us-senate",
-        "poll-tsu-texas-late-october-2026-us-senate"
+        "poll-yougov-texas-october-2026-us-senate"
       ],
       "pollCandidateIds": [
-        "candidate-ken-paxton-republican-race-2026-us-senate",
         "candidate-james-talarico-democratic-race-2026-us-senate",
+        "candidate-ken-paxton-republican-race-2026-us-senate",
         "candidate-ted-brown-libertarian-race-2026-us-senate"
       ],
       "matchedCandidateCount": 8,
@@ -46,8 +53,8 @@
       "republicanCandidateId": "candidate-ken-paxton-republican-race-2026-us-senate",
       "democraticCandidateId": "candidate-james-talarico-democratic-race-2026-us-senate",
       "pollingAverageCandidateIds": [
-        "candidate-ken-paxton-republican-race-2026-us-senate",
         "candidate-james-talarico-democratic-race-2026-us-senate",
+        "candidate-ken-paxton-republican-race-2026-us-senate",
         "candidate-ted-brown-libertarian-race-2026-us-senate"
       ],
       "outcome": "generated"
@@ -60,10 +67,16 @@
         "present": true,
         "enabled": false
       },
-      "pollCount": 2,
+      "pollCount": 8,
       "pollIds": [
+        "poll-activote-texas-october-2026-governor",
+        "poll-cnn-ssrs-texas-october-2026-governor",
+        "poll-dfp-texas-october-2026-governor",
+        "poll-kstrat-texas-october-2026-governor",
+        "poll-quantus-texas-october-2026-governor",
+        "poll-tsu-texas-late-october-2026-governor",
         "poll-ut-texas-october-2026-governor",
-        "poll-tsu-texas-late-october-2026-governor"
+        "poll-yougov-texas-october-2026-governor"
       ],
       "pollCandidateIds": [
         "candidate-greg-abbott-republican-race-2026-governor",
@@ -99,10 +112,12 @@
         "present": true,
         "enabled": false
       },
-      "pollCount": 2,
+      "pollCount": 4,
       "pollIds": [
+        "poll-activote-texas-october-2026-lieutenant-governor",
+        "poll-tsu-texas-late-october-2026-lieutenant-governor",
         "poll-ut-texas-october-2026-lieutenant-governor",
-        "poll-tsu-texas-late-october-2026-lieutenant-governor"
+        "poll-yougov-texas-october-2026-lieutenant-governor"
       ],
       "pollCandidateIds": [
         "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
@@ -138,10 +153,12 @@
         "present": true,
         "enabled": false
       },
-      "pollCount": 2,
+      "pollCount": 4,
       "pollIds": [
+        "poll-activote-texas-october-2026-attorney-general",
+        "poll-tsu-texas-late-october-2026-attorney-general",
         "poll-ut-texas-october-2026-attorney-general",
-        "poll-tsu-texas-late-october-2026-attorney-general"
+        "poll-yougov-texas-october-2026-attorney-general"
       ],
       "pollCandidateIds": [
         "candidate-mayes-middleton-republican-race-2026-attorney-general",
@@ -171,10 +188,11 @@
         "present": true,
         "enabled": false
       },
-      "pollCount": 2,
+      "pollCount": 3,
       "pollIds": [
-        "poll-ut-texas-october-2026-comptroller",
-        "poll-tsu-texas-late-october-2026-comptroller"
+        "poll-activote-texas-october-2026-comptroller",
+        "poll-tsu-texas-late-october-2026-comptroller",
+        "poll-ut-texas-october-2026-comptroller"
       ],
       "pollCandidateIds": [
         "candidate-don-huffines-republican-race-2026-comptroller",
