@@ -1537,7 +1537,7 @@
       "websiteUrl": "https://quantusinsights.org/",
       "grade": "unrated",
       "transparencyScore": null,
-      "methodologyUrl": "https://quantusinsights.org/f/texas-survey-paxton-up-one-abbott-ahead-by-five"
+      "methodologyUrl": "https://data.ddhq.io/polls/2026/10/30/Quantus-Insights-Texas"
     },
     "sponsors": [
       {
@@ -1555,17 +1555,17 @@
     "methodology": {
       "population": "likely_voters",
       "sampleSize": 1221,
-      "marginOfError": null,
+      "marginOfError": 3.2,
       "confidenceLevel": 95,
       "mode": "unknown",
       "languages": [],
       "weightingDescription": null,
-      "samplingDescription": "Quantus Insights October 26–28 Texas survey of 1,221 likely voters; the source provides overall sample, and available race-level ballot shares.",
+      "samplingDescription": "Original Quantus statewide survey n=1,221 likely voters (effective n=954); eligible race-specific sample n=1,207 for U.S. Senate or n=1,214 for governor; poll depicts initial ballot before leaner allocation.",
       "likelyVoterModelDescription": null,
       "questionOrderRandomized": null,
       "includesCellPhones": null,
       "responseRate": null,
-      "methodologyUrl": "https://quantusinsights.org/f/texas-survey-paxton-up-one-abbott-ahead-by-five"
+      "methodologyUrl": "https://data.ddhq.io/polls/2026/10/30/Quantus-Insights-Texas"
     },
     "questions": [
       {
@@ -1573,7 +1573,7 @@
         "type": "multi_candidate",
         "prompt": "2026 Texas governor general-election ballot question (consult original source for verbatim wording).",
         "order": 1,
-        "sampleSize": 1221,
+        "sampleSize": 1214,
         "population": "likely_voters",
         "responses": [
           {
@@ -1625,25 +1625,25 @@
             "isOther": false
           }
         ],
-        "notes": "Only explicitly published ballot shares included; missing remainder is not inferred. Quantus Insights original October 30 report checked. Original report figures retained to one decimal; sample size refers to overall survey, not unverified race-level subsample."
+        "notes": "These are the ORIGINAL INITIAL BALLOT percentages, not the separate with-leaners-allocated toplines also reported in the same PDF. The poll's race-specific eligible sample is shown. Source: Quantus original report, page 2."
       }
     ],
     "primaryQuestionId": "quantus-texas-october-2026-governor-question",
-    "toplineUrl": "https://quantusinsights.org/f/texas-survey-paxton-up-one-abbott-ahead-by-five",
-    "questionnaireUrl": "https://quantusinsights.org/f/texas-survey-paxton-up-one-abbott-ahead-by-five",
-    "crosstabsUrl": null,
-    "archiveUrl": "https://quantusinsights.org/f/texas-survey-paxton-up-one-abbott-ahead-by-five",
+    "toplineUrl": "https://data.ddhq.io/polls/2026/10/30/Quantus-Insights-Texas",
+    "questionnaireUrl": "https://data.ddhq.io/polls/2026/10/30/Quantus-Insights-Texas",
+    "crosstabsUrl": "https://data.ddhq.io/polls/2026/10/30/Quantus-Insights-Texas",
+    "archiveUrl": "https://data.ddhq.io/polls/2026/10/30/Quantus-Insights-Texas",
     "internalPoll": false,
     "partisanPoll": false,
     "trackingPoll": false,
     "supersededByPollId": null,
-    "notes": null,
+    "notes": "Quantus separately reports leaner-allocated toplines (Senate 49.4/48.4; governor 51.6/46.3). This record deliberately uses the original initial ballot. Compare on a like-for-like basis.",
     "createdAt": "2026-10-31T23:55:00.000Z",
     "updatedAt": "2026-10-31T23:55:00.000Z",
     "verificationStatus": "verified",
     "verifiedAt": "2026-10-31T23:55:00.000Z",
     "verifiedBy": "Cross-source election data import",
-    "verificationNotes": "Quantus Insights original October 30 report checked. Original report figures retained to one decimal; sample size refers to overall survey, not unverified race-level subsample.",
+    "verificationNotes": "Original Quantus Insights 32-page report inspected, including image of page 2. Initial Senate percentages 48.7/47.6 and governor 50.7/45.8; separate with-leaners-allocated results are not silently mixed. Overall n=1,221, race-specific n=1,207 Senate and n=1,214 governor, reported ±3.2% overall MOE.",
     "publicationStatus": "published",
     "publishedAt": "2026-10-31T23:55:00.000Z",
     "unpublishedAt": null,
@@ -1658,7 +1658,7 @@
       "sourceId": "source-quantus-texas-october-30-2026",
       "sourceName": "Quantus Insights",
       "sourceType": "pollster",
-      "sourceUrl": "https://quantusinsights.org/f/texas-survey-paxton-up-one-abbott-ahead-by-five",
+      "sourceUrl": "https://data.ddhq.io/polls/2026/10/30/Quantus-Insights-Texas",
       "sourceRecordId": "quantus-texas-october-2026-governor",
       "retrievedAt": "2026-10-31T23:55:00.000Z",
       "attributionText": "Quantus Insights, October 2026"
@@ -1678,7 +1678,7 @@
       "websiteUrl": "https://quantusinsights.org/",
       "grade": "unrated",
       "transparencyScore": null,
-      "methodologyUrl": "https://quantusinsights.org/f/texas-survey-paxton-up-one-abbott-ahead-by-five"
+      "methodologyUrl": "https://data.ddhq.io/polls/2026/10/30/Quantus-Insights-Texas"
     },
     "sponsors": [
       {
@@ -1696,17 +1696,17 @@
     "methodology": {
       "population": "likely_voters",
       "sampleSize": 1221,
-      "marginOfError": null,
+      "marginOfError": 3.2,
       "confidenceLevel": 95,
       "mode": "unknown",
       "languages": [],
       "weightingDescription": null,
-      "samplingDescription": "Quantus Insights October 26–28 Texas survey of 1,221 likely voters; the source provides overall sample, and available race-level ballot shares.",
+      "samplingDescription": "Original Quantus statewide survey n=1,221 likely voters (effective n=954); eligible race-specific sample n=1,207 for U.S. Senate or n=1,214 for governor; poll depicts initial ballot before leaner allocation.",
       "likelyVoterModelDescription": null,
       "questionOrderRandomized": null,
       "includesCellPhones": null,
       "responseRate": null,
-      "methodologyUrl": "https://quantusinsights.org/f/texas-survey-paxton-up-one-abbott-ahead-by-five"
+      "methodologyUrl": "https://data.ddhq.io/polls/2026/10/30/Quantus-Insights-Texas"
     },
     "questions": [
       {
@@ -1714,7 +1714,7 @@
         "type": "multi_candidate",
         "prompt": "2026 Texas us senate general-election ballot question (consult original source for verbatim wording).",
         "order": 1,
-        "sampleSize": 1221,
+        "sampleSize": 1207,
         "population": "likely_voters",
         "responses": [
           {
@@ -1766,25 +1766,25 @@
             "isOther": false
           }
         ],
-        "notes": "Only explicitly published ballot shares included; missing remainder is not inferred. Quantus Insights original October 30 report checked. Original report figures retained to one decimal; sample size refers to overall survey, not unverified race-level subsample."
+        "notes": "These are the ORIGINAL INITIAL BALLOT percentages, not the separate with-leaners-allocated toplines also reported in the same PDF. The poll's race-specific eligible sample is shown. Source: Quantus original report, page 2."
       }
     ],
     "primaryQuestionId": "quantus-texas-october-2026-us-senate-question",
-    "toplineUrl": "https://quantusinsights.org/f/texas-survey-paxton-up-one-abbott-ahead-by-five",
-    "questionnaireUrl": "https://quantusinsights.org/f/texas-survey-paxton-up-one-abbott-ahead-by-five",
-    "crosstabsUrl": null,
-    "archiveUrl": "https://quantusinsights.org/f/texas-survey-paxton-up-one-abbott-ahead-by-five",
+    "toplineUrl": "https://data.ddhq.io/polls/2026/10/30/Quantus-Insights-Texas",
+    "questionnaireUrl": "https://data.ddhq.io/polls/2026/10/30/Quantus-Insights-Texas",
+    "crosstabsUrl": "https://data.ddhq.io/polls/2026/10/30/Quantus-Insights-Texas",
+    "archiveUrl": "https://data.ddhq.io/polls/2026/10/30/Quantus-Insights-Texas",
     "internalPoll": false,
     "partisanPoll": false,
     "trackingPoll": false,
     "supersededByPollId": null,
-    "notes": null,
+    "notes": "Quantus separately reports leaner-allocated toplines (Senate 49.4/48.4; governor 51.6/46.3). This record deliberately uses the original initial ballot. Compare on a like-for-like basis.",
     "createdAt": "2026-10-31T23:55:00.000Z",
     "updatedAt": "2026-10-31T23:55:00.000Z",
     "verificationStatus": "verified",
     "verifiedAt": "2026-10-31T23:55:00.000Z",
     "verifiedBy": "Cross-source election data import",
-    "verificationNotes": "Quantus Insights original October 30 report checked. Original report figures retained to one decimal; sample size refers to overall survey, not unverified race-level subsample.",
+    "verificationNotes": "Original Quantus Insights 32-page report inspected, including image of page 2. Initial Senate percentages 48.7/47.6 and governor 50.7/45.8; separate with-leaners-allocated results are not silently mixed. Overall n=1,221, race-specific n=1,207 Senate and n=1,214 governor, reported ±3.2% overall MOE.",
     "publicationStatus": "published",
     "publishedAt": "2026-10-31T23:55:00.000Z",
     "unpublishedAt": null,
@@ -1799,7 +1799,7 @@
       "sourceId": "source-quantus-texas-october-30-2026",
       "sourceName": "Quantus Insights",
       "sourceType": "pollster",
-      "sourceUrl": "https://quantusinsights.org/f/texas-survey-paxton-up-one-abbott-ahead-by-five",
+      "sourceUrl": "https://data.ddhq.io/polls/2026/10/30/Quantus-Insights-Texas",
       "sourceRecordId": "quantus-texas-october-2026-us-senate",
       "retrievedAt": "2026-10-31T23:55:00.000Z",
       "attributionText": "Quantus Insights, October 2026"
