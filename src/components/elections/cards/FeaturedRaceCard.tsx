@@ -85,7 +85,7 @@ export function FeaturedRaceCard({
         <div className="mt-5">
           <h4 className="text-sm font-semibold text-foreground">Candidates</h4>
           <ul className="mt-2 space-y-2">
-            {candidates.slice(0, 4).map((candidate) => (
+            {candidates.map((candidate) => (
               <li key={`${candidate.name}-${candidate.party ?? "candidate"}`} className="flex items-center justify-between gap-3 rounded-lg bg-muted/40 px-3 py-2 text-sm">
                 <span className="font-medium text-foreground">
                   {candidate.name}{candidate.incumbent ? " (Incumbent)" : ""}
