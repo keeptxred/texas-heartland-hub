@@ -22,7 +22,12 @@ const [existingCandidates, races] = await Promise.all([
 const raceById = new Map(races.map((race) => [race.id, race]));
 const rows = [];
 
-rows.push(...(await loadNormalizedRows(process.env.ELECTION_CANDIDATE_IMPORT ?? DEFAULT_IMPORT_FILE)));
+// During a verified SOS race-source outage, never load bundled candidate
+// fixtures as if they were freshly retrieved. Live official scrapes and
+// independent election authorities still remain eligible sources.
+const candidateInput = process.env.ELECTION_CANDIDATE_IMPORT ??
+  (process.env.ELECTION_SKIP_CACHED_CANDIDATES === "true" ? null : DEFAULT_IMPORT_FILE);
+rows.push(...(await loadNormalizedRows(candidateInput)));
 rows.push(...(await fetchRunoffWinners()));
 rows.push(...(await fetchIndependentCandidates()));
 if (process.env.ELECTION_CANDIDATE_LIST_URL) {
