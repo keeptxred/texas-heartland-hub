@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
   issues: write
 
 concurrency:
@@ -23,6 +24,28 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 6
     steps:
+      # A successful workflow_run can still be an intentionally skipped stale
+      # deployment. Only compare production against source after the upstream
+      # GitHub job actually executed the Worker deployment step.
+      - name: Verify upstream Worker deployment really ran
+        id: deployed
+        if: github.event_name == 'workflow_run'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UPSTREAM_RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          set -euo pipefail
+          total="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$UPSTREAM_RUN_ID/jobs?per_page=100" \
+            --jq '[.jobs[].steps[] | select(.name == "Deploy verified revision" and .conclusion == "success")] | length')"
+          if [[ "$total" -gt 0 ]]; then
+            echo "performed=true" >> "$GITHUB_OUTPUT"
+            echo "Upstream workflow completed the Worker deployment."
+          else
+            echo "performed=false" >> "$GITHUB_OUTPUT"
+            echo "Upstream workflow returned success without deploying (stale or skipped); production content check intentionally skipped."
+          fi
+
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
@@ -32,6 +55,7 @@ jobs:
       # interferes with the deploy, or substitutes a stale cached search result.
       - name: Check origin election overview and polls-directory SSR
         id: check
+        if: github.event_name == 'workflow_dispatch' || steps.deployed.outputs.performed == 'true'
         continue-on-error: true
         shell: bash
         run: |
@@ -114,7 +138,7 @@ jobs:
           NODE
 
       - name: Save and report poll-directory production result
-        if: always()
+        if: always() && (github.event_name == 'workflow_dispatch' || steps.deployed.outputs.performed == 'true')
         env:
           GH_TOKEN: ${{ github.token }}
           STATUS: ${{ steps.check.outcome }}
