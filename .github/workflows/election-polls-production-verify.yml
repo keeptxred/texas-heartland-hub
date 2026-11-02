@@ -1,0 +1,137 @@
+name: Verify Election Central polls production response
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Deploy verified KeepTXRed to Cloudflare"]
+    types: [completed]
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: keeptxred-election-polls-production-verification
+  cancel-in-progress: false
+
+jobs:
+  polls-production-response:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      # Complements source-freshness monitoring. Never publishes poll data,
+      # interferes with the deploy, or substitutes a stale cached search result.
+      - name: Check origin election overview and polls-directory SSR
+        id: check
+        continue-on-error: true
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFile, writeFile } from "node:fs/promises";
+          const polls = JSON.parse(await readFile("src/data/elections/2026/polls.json", "utf8"));
+          const active = polls.filter(p => p.publicationStatus === "published" && p.verificationStatus === "verified");
+          const newestField = active.map(p => p.fieldEndDate).filter(Boolean).sort().at(-1);
+          const verified = active.flatMap(p => [p.verifiedAt, p.updatedAt, p.dataAsOf, p.sourceCheckedAt])
+            .filter(v => v && !Number.isNaN(Date.parse(v))).sort().at(-1);
+          const expectedVerified = verified && new Date(verified).toLocaleDateString("en-US", {
+            year: "numeric", month: "long", day: "numeric", timeZone: "UTC",
+          });
+          const errors = [];
+          const observations = [];
+          const origin = "https://keeptxred.com";
+          const toText = html => html
+            .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
+            .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
+            .replace(/<[^>]+>/g, " ")
+            .replace(/&nbsp;|&#160;/gi, " ")
+            .replace(/&amp;/gi, "&")
+            .replace(/\s+/g, " ");
+          async function inspect(path) {
+            const url = new URL(path, origin);
+            url.searchParams.set("ktr_polls_verify", process.env.GITHUB_RUN_ID ?? "manual");
+            const response = await fetch(url, {
+              headers: { "Cache-Control": "no-cache", "User-Agent": "KeepTXRed-Election-Polls-Production-Verifier/1.0" },
+              redirect: "follow",
+              signal: AbortSignal.timeout(25000),
+            });
+            const html = await response.text();
+            const text = toText(html);
+            observations.push(`${path}: HTTP ${response.status}; HTML ${html.length} bytes; final URL ${response.url}`);
+            if (!response.ok) errors.push(`${path}: HTTP ${response.status}`);
+            return { html, text };
+          }
+          try {
+            const overview = await inspect("/elections/2026");
+            if (!overview.text.includes("Recent election polls")) {
+              errors.push("/elections/2026: missing server-visible recent polling section");
+            }
+            if (newestField && !overview.text.includes(newestField)) {
+              errors.push(`/elections/2026: latest imported field end ${newestField} absent from visible HTML`);
+            }
+          } catch (error) {
+            errors.push(`/elections/2026 request failed: ${error.message}`);
+          }
+          try {
+            const directory = await inspect("/elections/polls");
+            if (!directory.text.includes("Texas polling source network")) {
+              errors.push("/elections/polls: missing expected directory source section");
+            }
+            if (expectedVerified &&
+                !directory.text.includes(`Latest published record verification/update in this directory: ${expectedVerified}`)) {
+              errors.push(`/elections/polls: current repository verification date ${expectedVerified} absent from HTML; check stale response or SSR`);
+            }
+            // A client-side list may require hydration. Record this as a diagnostic
+            // rather than erroneously certifying Google-visible poll cards.
+            observations.push("Directory source HTML contains poll filters: " + directory.text.includes("Refine polling"));
+          } catch (error) {
+            errors.push(`/elections/polls request failed: ${error.message}`);
+          }
+          const report = [
+            "# Election Central polls — live production response",
+            `Checked: ${new Date().toISOString()}`,
+            `Repository: ${active.length} verified published polls; newest field end ${newestField ?? "none"}; newest verification ${expectedVerified ?? "none"}.`,
+            "",
+            "## Observations",
+            ...observations.map(x => "- " + x),
+            "",
+            errors.length ? "## Failures (needs investigation)" : "## Essential live-response checks passed",
+            ...errors.map(x => "- " + x),
+            "",
+            "These are raw HTTP/SSR checks, not a browser hydration or canonical audit. No source records are changed.",
+          ].join("\n") + "\n";
+          await writeFile("election-polls-production-report.md", report);
+          console.log(report);
+          if (errors.length) process.exitCode = 1;
+          NODE
+
+      - name: Save and report poll-directory production result
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STATUS: ${{ steps.check.outcome }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          title='[Election Central] Poll directory production response needs verification'
+          existing="$(gh issue list --state open --json number,title --jq '.[] | select(.title == "[Election Central] Poll directory production response needs verification") | .number' | head -n 1)"
+          if [[ "$STATUS" == "failure" ]]; then
+            if [[ -z "$existing" ]]; then
+              gh issue create --title "$title" --body-file election-polls-production-report.md
+            else
+              echo "Existing production-response issue #$existing preserved."
+            fi
+            exit 1
+          fi
+          if [[ -n "$existing" ]]; then
+            gh issue close "$existing" --comment 'Direct GitHub runner production-response verification is passing again; see the latest workflow run for details.'
+          fi
+          echo "Election Central production-response verification passed."
