@@ -74,6 +74,34 @@ try {
   notices.push(`Could not verify UT latest-poll date: ${error.message}. ${universityUrl}`);
 }
 
+// Siena's original release published on November 1, 2026 includes both Texas
+// Senate and governor surveys. This source was absent from our index-only
+// discovery checks on the first day of release. Check the original pollster
+// publication directly without inventing or automatically importing results.
+const sienaReleaseUrl = "https://sri.siena.edu/2026/11/01/nytimes-siena-poll-of-likely-voters-alaska-iowa-kansas-maine-michigan-ohio-and-texas/";
+try {
+  const sienaText = await fetchText(sienaReleaseUrl);
+  if (!/Texas\s*:\s*U\.S\. Senate\s*:\s*James Talarico/i.test(sienaText) ||
+      !/Governor\s*:\s*Gina Hinojosa/i.test(sienaText)) {
+    throw new Error("Siena original Texas Senate/governor results not present (source format changed)");
+  }
+  for (const { raceId, label } of [
+    { raceId: "race-2026-us-senate", label: "U.S. Senate" },
+    { raceId: "race-2026-governor", label: "Governor" },
+  ]) {
+    const imported = eligible.some((poll) =>
+      poll.raceId === raceId &&
+      poll.pollster?.slug === "nyt-siena-research-institute" &&
+      poll.fieldEndDate === "2026-11-01" &&
+      poll.source?.sourceUrl === sienaReleaseUrl
+    );
+    checks.push("Nov 1 original Siena Texas " + label + " release: " + (imported ? "source-verified imported" : "MISSING"));
+    if (!imported) notices.push("Original Nov 1 Siena Texas " + label + " survey is missing. Verify the original release and full methodology before importing. " + sienaReleaseUrl);
+  }
+} catch (error) {
+  notices.push("Could not verify original Siena Nov 1 Texas release: " + error.message + ". " + sienaReleaseUrl);
+}
+
 // The university monitor alone missed releases from independent pollsters.
 // Public indexes are discovery leads; source-checked original pollster records
 // remain the requirement for publication, not copied index values.
