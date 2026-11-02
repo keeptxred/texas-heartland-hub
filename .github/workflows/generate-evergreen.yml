@@ -1,0 +1,58 @@
+name: Authenticated KTR evergreen explainer generation
+
+on:
+  schedule:
+    # Preserve the former Supabase daily UTC schedule exactly.
+    - cron: '30 8 * * *'
+    - cron: '0 18 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: ktr-evergreen-publisher
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish one vetted evergreen explainer
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Call signed GitHub OIDC-only publishing endpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          oidc_url="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-evergreen"
+          oidc_token="$(curl -fsS --max-time 15 \
+            -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+            "$oidc_url" | jq -r '.value // empty')"
+          if [[ -z "$oidc_token" ]]; then
+            echo 'GitHub OIDC did not return a signing token.' >&2
+            exit 1
+          fi
+
+          endpoint='https://keeptxred.com/api/public/hooks/generate-evergreen'
+          status="$(curl -sS --max-time 245 -o /tmp/ktr-evergreen-response.json \
+            -w '%{http_code}' -X POST \
+            -H 'accept: application/json' \
+            -H 'content-type: application/json' \
+            -H "Authorization: Bearer ${oidc_token}" \
+            --data '{}' "$endpoint")"
+
+          # Never print or save the short-lived OIDC token.
+          if [[ "$status" != '200' ]]; then
+            echo "Evergreen writer HTTP $status; no successful publication certified." >&2
+            jq -r '.error // "Unknown publisher error"' /tmp/ktr-evergreen-response.json 2>/dev/null | head -c 400 >&2 || true
+            exit 1
+          fi
+          if ! jq -e '.ok == true and (.slug | type == "string") and (.category | type == "string")' \
+            /tmp/ktr-evergreen-response.json >/dev/null; then
+            echo 'Evergreen writer returned HTTP200 without accepted publication.' >&2
+            exit 1
+          fi
+          echo "Published validated evergreen: $(jq -r '.slug' /tmp/ktr-evergreen-response.json)"
+          echo "## Evergreen publication" >> "$GITHUB_STEP_SUMMARY"
+          echo "Verified writer HTTP200; published slug: $(jq -r '.slug' /tmp/ktr-evergreen-response.json)" >> "$GITHUB_STEP_SUMMARY"
