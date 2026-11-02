@@ -5,6 +5,7 @@ import { EVERGREEN_MIN_MAIN_WORDS, articleMainWordCount } from "@/lib/article-le
 import { validateArticle } from "@/lib/editorial-pipeline";
 import { EVERGREEN_EVIDENCE_ADDENDUM, fatalEvergreenEditorialReasons } from "@/lib/evergreen-editorial-prompt";
 import { runCloudflareJson } from "@/lib/cloudflare-json-ai.server";
+import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 import { getGovernmentGraphLinks } from "@/lib/government-graph";
 
 const TOPICS: { category: string; topic: string }[] = [
@@ -121,7 +122,7 @@ Markdown links inside paragraph strings are allowed.`;
   const ai = await runCloudflareJson<GeneratedBody & { brief?: import("@/lib/editorial-pipeline").StoryBrief }>({
     system: system + EVERGREEN_EVIDENCE_ADDENDUM,
     user: `Topic: ${topic}\nCategory: ${category}\n\nWrite the complete evergreen explainer.`,
-    maxTokens: 12000,
+    maxTokens: 6000,
     maxAttempts: 2,
   });
   const parsed = ai.value;
@@ -150,7 +151,28 @@ Markdown links inside paragraph strings are allowed.`;
 export const Route = createFileRoute("/api/public/hooks/generate-evergreen")({
   server: {
     handlers: {
-      POST: async () => {
+      POST: async ({ request }) => {
+        // AI generation and service-role publication must never be callable
+        // by anonymous browsers or third-party bots. Match signed main-branch
+        // scheduled/dispatch GitHub Actions only (existing OIDC verifier).
+        const bearer = request.headers.get("authorization")?.match(/^Bearer\s+(.+)$/i)?.[1]?.trim();
+        if (!bearer) return Response.json({ error: "GitHub Actions authorization required" }, {
+          status: 401, headers: { "Cache-Control": "no-store" },
+        });
+        try {
+          await verifyGitHubActionsOidc({
+            token: bearer,
+            audience: "keeptxred-evergreen",
+            repository: "keeptxred/texas-heartland-hub",
+            workflowPath: ".github/workflows/generate-evergreen.yml",
+            allowedEventNames: ["schedule", "workflow_dispatch"],
+          });
+        } catch {
+          return Response.json({ error: "Invalid GitHub Actions authorization" }, {
+            status: 403, headers: { "Cache-Control": "no-store" },
+          });
+        }
+
         const supabaseUrl = process.env.SUPABASE_URL;
         const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
         if (!supabaseUrl || !serviceKey) {
