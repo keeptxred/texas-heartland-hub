@@ -25,6 +25,7 @@ import {
   useResultByRace,
 } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
+import { sortRaceCandidatesByParty } from "@/lib/elections/candidate-display-order";
 import { formatElectionTitle } from "@/lib/elections/seo";
 import { raceSeoSlug } from "@/lib/elections/seoSlugs";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
@@ -227,13 +228,15 @@ function ElectionRaceDetailData({ raceSlug }: { raceSlug: string }) {
     );
   }
 
+  const displayCandidates = sortRaceCandidatesByParty(candidates.data ?? [], (candidate) => candidate.party);
+
   return (
     <div className="space-y-10">
       <RaceDetailSeo race={race.data} />
       <RaceDetailHeader race={race.data} />
-      <RaceRelationshipMap race={race.data} candidates={candidates.data ?? []} />
+      <RaceRelationshipMap race={race.data} candidates={displayCandidates} />
       <RaceAuthoritySection race={race.data} />
-      <RaceCandidateSection race={race.data} candidates={candidates.data ?? []} />
+      <RaceCandidateSection race={race.data} candidates={displayCandidates} />
       <RacePollingSection
         race={race.data}
         polls={polls.data?.items ?? []}
@@ -241,7 +244,7 @@ function ElectionRaceDetailData({ raceSlug }: { raceSlug: string }) {
       />
       <RaceForecastSection forecast={forecastDetail.data ?? null} />
       <RaceResultsSection result={result.data ?? null} isPreElection={result.isPreElection} />
-      <RaceInternalLinks candidates={candidates.data ?? []} relatedRaces={relatedRaces.data} />
+      <RaceInternalLinks candidates={displayCandidates} relatedRaces={relatedRaces.data} />
     </div>
   );
 }

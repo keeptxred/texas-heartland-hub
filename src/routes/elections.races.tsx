@@ -442,6 +442,7 @@ function ElectionRacesContent() {
                     id: candidate.id,
                     name: candidate.fullName,
                     partyLabel: candidate.partyLabel ?? undefined,
+                    party: candidate.party,
                     candidateHref: ELECTION_ROUTES.candidate(candidate.slug),
                     incumbent: candidate.incumbent,
                   }))}
