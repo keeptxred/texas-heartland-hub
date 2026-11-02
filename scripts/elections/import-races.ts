@@ -4,19 +4,13 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const DATA_FILE = path.join(ROOT, "src/data/elections/2026/races.json");
-const OFFICES_URL =
-  "https://www.sos.texas.gov/elections/candidates/guide/2026/offices2026.shtml";
-const CYCLE_ID = "election-cycle-2026-texas-general";
-const ELECTION_DATE = "2026-11-03";
-const timestamp = new Date(process.env.ELECTION_IMPORT_AS_OF ?? Date.now()).toISOString();
-
-const page = await fetch(OFFICES_URL, {
-  headers: { "user-agent": "KeepTXRed Election Central data importer" },
-});
-if (!page.ok) throw new Error(`Texas SOS offices import failed: ${page.status} ${page.statusText}`);
-const html = await page.text();
-const officialPageText = normalizeHtmlText(html);
-for (const expected of [
+// Both are published Texas Secretary of State hostnames. Never use mirrors,
+// cached search pages, or unofficial copies to reverify the race catalog.
+const OFFICES_URLS = [
+  "https://www.sos.texas.gov/elections/candidates/guide/2026/offices2026.shtml",
+  "https://www.sos.state.tx.us/elections/candidates/guide/2026/offices2026.shtml",
+];
+const REQUIRED_SECTIONS = [
   /offices up for election in 2026/i,
   /united states representatives/i,
   /state representatives/i,
@@ -24,11 +18,15 @@ for (const expected of [
   /state board of education/i,
   /supreme court/i,
   /court of criminal appeals/i,
-]) {
-  if (!expected.test(officialPageText)) {
-    throw new Error(`Texas SOS offices page changed; expected office category not found: ${expected}`);
-  }
-}
+];
+const CYCLE_ID = "election-cycle-2026-texas-general";
+const ELECTION_DATE = "2026-11-03";
+const timestamp = new Date(process.env.ELECTION_IMPORT_AS_OF ?? Date.now()).toISOString();
+
+// A denied official source must not update verifiedAt, retrievedAt, or
+// race freshness. This throws *before* any JSON write when neither official
+// host provides the complete 2026 office list.
+const verifiedOfficesUrl = await loadVerifiedOfficialOffices();
 
 const existing = JSON.parse(await readFile(DATA_FILE, "utf8"));
 const existingById = new Map(existing.map((record) => [record.id, record]));
@@ -38,6 +36,37 @@ if (races.length !== 227) {
 }
 await writeFile(DATA_FILE, `${JSON.stringify(races, null, 2)}\n`);
 console.log(`Imported ${races.length} Texas 2026 races from the official offices-up-for-election scope.`);
+
+async function loadVerifiedOfficialOffices() {
+  const failures = [];
+  for (const url of OFFICES_URLS) {
+    const hostname = new URL(url).hostname;
+    try {
+      const response = await fetch(url, {
+        headers: { "user-agent": "KeepTXRed Election Central data importer" },
+        signal: AbortSignal.timeout(15000),
+      });
+      if (!response.ok) {
+        failures.push(`${hostname}: HTTP ${response.status}`);
+        continue;
+      }
+      const bodyText = normalizeHtmlText(await response.text());
+      const missing = REQUIRED_SECTIONS.filter((expected) => !expected.test(bodyText));
+      if (missing.length) {
+        failures.push(`${hostname}: missing ${missing.length} required office sections`);
+        continue;
+      }
+      console.log(`Texas SOS office scope verified from official host ${hostname}.`);
+      return url;
+    } catch (error) {
+      failures.push(`${hostname}: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+  throw new Error(
+    `Texas SOS offices import failed; no official source verified. ${failures.join("; ")}. ` +
+    "Preserving the previously verified race directory without changing source timestamps.",
+  );
+}
 
 function buildCatalog() {
   return [
@@ -174,7 +203,7 @@ function buildRace(definition, previous) {
     sourceId: "tx-sos-offices-up-2026",
     sourceName: "Texas Secretary of State",
     sourceType: "official",
-    sourceUrl: OFFICES_URL,
+    sourceUrl: verifiedOfficesUrl,
     sourceRecordId: definition.slug,
     retrievedAt: timestamp,
     attributionText: "Texas Secretary of State offices up for election in 2026",
