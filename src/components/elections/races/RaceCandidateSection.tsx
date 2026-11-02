@@ -2,6 +2,7 @@ import { CandidateCard } from "../cards";
 import { ElectionEmptyState } from "../states";
 import { ELECTION_ROUTES } from "@/lib/elections";
 import { getFeaturedCandidateProfile } from "@/lib/elections/featuredCandidateProfiles";
+import { sortRaceCandidatesByParty } from "@/lib/elections/candidate-display-order";
 import type { CandidateSummary, RaceDetail } from "@/types/elections";
 
 export interface RaceCandidateSectionProps {
@@ -27,7 +28,7 @@ export function RaceCandidateSection({ race, candidates }: RaceCandidateSectionP
         />
       ) : (
         <div className="grid gap-5 lg:grid-cols-2">
-          {candidates.map((candidate) => {
+          {sortRaceCandidatesByParty(candidates, (candidate) => candidate.party).map((candidate) => {
             const featuredProfile = getFeaturedCandidateProfile(candidate.ballotName);
             return (
               <CandidateCard
