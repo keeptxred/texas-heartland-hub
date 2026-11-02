@@ -67,7 +67,7 @@ const UPSTREAM_HEADERS = {
   "User-Agent": "Mozilla/5.0 (compatible; KeepTXRedBot/1.2; +https://keeptxred.com)",
   Accept: "application/rss+xml,application/atom+xml,application/xml,text/xml,*/*",
   "Accept-Language": "en-US,en;q=0.9",
-  "Cache-Control": "no-cache",
+  // Allow source/provider edge caching of successful RSS responses.
 };
 
 Deno.serve(async (req: Request) => {
