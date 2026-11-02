@@ -71,11 +71,11 @@ jobs:
           }
           try {
             const overview = await inspect("/elections/2026");
-            if (!overview.text.includes("Recent election polls")) {
-              errors.push("/elections/2026: missing server-visible recent polling section");
+            if (!overview.text.includes("Election poll archive")) {
+              errors.push("/elections/2026: missing server-visible polling archive section");
             }
-            if (newestField && !overview.text.includes(newestField)) {
-              errors.push(`/elections/2026: latest imported field end ${newestField} absent from visible HTML`);
+            if (!overview.text.includes(`${active.length} verified poll records are published`)) {
+              errors.push(`/elections/2026: published poll total differs from current repository (${active.length})`);
             }
           } catch (error) {
             errors.push(`/elections/2026 request failed: ${error.message}`);
