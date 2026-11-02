@@ -110,6 +110,17 @@
     "url": "https://kstrat.net/press/texas-2026-senate-governor-talarico-leads-paxton-october"
   },
   {
+    "id": "source-nyt-siena-texas-november-1-2026",
+    "name": "The New York Times/Siena Research Institute",
+    "sourceType": "pollster",
+    "sourceUrl": "https://sri.siena.edu/2026/11/01/nytimes-siena-poll-of-likely-voters-alaska-iowa-kansas-maine-michigan-ohio-and-texas/",
+    "retrievedAt": "2026-11-02T17:37:09.165Z",
+    "lastVerifiedAt": "2026-11-02T17:37:09.165Z",
+    "notes": "Original Siena press release November 1: Texas Senate Talarico 50–Paxton 43; Governor Hinojosa 48–Abbott 47; ±3.4 percentage points. Sample n=1,215 likely voters and Oct 27–Nov 1 field dates cross-checked with published polling archive; NYT original toplines linked from Siena.",
+    "type": "pollster",
+    "url": "https://sri.siena.edu/2026/11/01/nytimes-siena-poll-of-likely-voters-alaska-iowa-kansas-maine-michigan-ohio-and-texas/"
+  },
+  {
     "id": "source-quantus-texas-october-30-2026",
     "name": "Quantus Insights",
     "sourceType": "pollster",
