@@ -1,10 +1,12 @@
 import type { ElectionResourceLink, RaceRating, RaceStatus } from "@/types/elections";
+import { sortRaceCandidatesByParty } from "@/lib/elections/candidate-display-order";
 import { RACE_STATUS_LABELS } from "@/types/elections/raceClassifications";
 
 export interface RaceCardCandidate {
   id: string;
   name: string;
   partyLabel?: string;
+  party?: string;
   candidateHref?: string;
   incumbent?: boolean;
 }
@@ -110,7 +112,7 @@ export function RaceCard({
         <section aria-label={`${name} candidates`} className="mt-5">
           <h4 className="text-sm font-semibold text-foreground">Candidates</h4>
           <ul className="mt-3 divide-y divide-border rounded-lg border border-border">
-            {candidates.map((candidate) => (
+            {sortRaceCandidatesByParty(candidates, (candidate) => candidate.party ?? candidate.partyLabel).map((candidate) => (
               <li
                 key={candidate.id}
                 className="flex items-center justify-between gap-3 px-4 py-3 text-sm"
