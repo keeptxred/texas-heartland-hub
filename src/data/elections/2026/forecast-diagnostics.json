@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-01T00:20:56.410Z",
+  "generatedAt": "2026-11-02T17:46:56.010Z",
   "totals": {
     "races": 227,
     "candidates": 491,
-    "polls": 36,
+    "polls": 38,
     "publishedVerifiedRaces": 227,
     "racesWithCandidateMatches": 208,
     "racesWithPollMatches": 5,
@@ -22,13 +22,14 @@
         "present": true,
         "enabled": false
       },
-      "pollCount": 9,
+      "pollCount": 10,
       "pollIds": [
         "poll-a2-insights-texas-october-2026-us-senate",
         "poll-activote-texas-october-2026-us-senate",
         "poll-cnn-ssrs-texas-october-2026-us-senate",
         "poll-dfp-texas-october-2026-us-senate",
         "poll-kstrat-texas-october-2026-us-senate",
+        "poll-nyt-siena-texas-november-2026-us-senate",
         "poll-quantus-texas-october-2026-us-senate",
         "poll-tsu-texas-late-october-2026-us-senate",
         "poll-ut-texas-october-2026-us-senate",
@@ -67,12 +68,13 @@
         "present": true,
         "enabled": false
       },
-      "pollCount": 8,
+      "pollCount": 9,
       "pollIds": [
         "poll-activote-texas-october-2026-governor",
         "poll-cnn-ssrs-texas-october-2026-governor",
         "poll-dfp-texas-october-2026-governor",
         "poll-kstrat-texas-october-2026-governor",
+        "poll-nyt-siena-texas-november-2026-governor",
         "poll-quantus-texas-october-2026-governor",
         "poll-tsu-texas-late-october-2026-governor",
         "poll-ut-texas-october-2026-governor",

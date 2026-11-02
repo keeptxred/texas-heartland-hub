@@ -4,7 +4,7 @@
     "pollCount": 4,
     "fieldDateFrom": "2026-10-05",
     "fieldDateTo": "2026-10-29",
-    "recalculatedAt": "2026-11-01T00:20:56.277Z",
+    "recalculatedAt": "2026-11-02T17:46:55.883Z",
     "weightedMargin": 2.3,
     "uncertaintyRange": {
       "low": -0.3,
@@ -35,9 +35,9 @@
         "pollId": "poll-activote-texas-october-2026-attorney-general",
         "pollsterName": "ActiVote",
         "fieldEndDate": "2026-10-29",
-        "finalWeight": 0.656,
+        "finalWeight": 0.62,
         "factors": {
-          "recency": 0.92,
+          "recency": 0.869,
           "sampleSize": 0.816,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -45,7 +45,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "3 day(s) old",
+          "4 day(s) old",
           "400 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -56,9 +56,9 @@
         "pollId": "poll-tsu-texas-late-october-2026-attorney-general",
         "pollsterName": "Texas Southern University / Barbara Jordan Public Policy Research and Survey Center",
         "fieldEndDate": "2026-10-25",
-        "finalWeight": 1.025,
+        "finalWeight": 0.968,
         "factors": {
-          "recency": 0.807,
+          "recency": 0.762,
           "sampleSize": 1.65,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -66,7 +66,7 @@
           "methodology": 0.962
         },
         "explanation": [
-          "7 day(s) old",
+          "8 day(s) old",
           "2,000 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -77,9 +77,9 @@
         "pollId": "poll-ut-texas-october-2026-attorney-general",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-10-05",
-        "finalWeight": 0.437,
+        "finalWeight": 0.413,
         "factors": {
-          "recency": 0.417,
+          "recency": 0.394,
           "sampleSize": 1.198,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -87,7 +87,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "27 day(s) old",
+          "28 day(s) old",
           "861 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -98,9 +98,9 @@
         "pollId": "poll-yougov-texas-october-2026-attorney-general",
         "pollsterName": "YouGov Blue / 254 Labs",
         "fieldEndDate": "2026-10-26",
-        "finalWeight": 0.644,
+        "finalWeight": 0.608,
         "factors": {
-          "recency": 0.834,
+          "recency": 0.787,
           "sampleSize": 1.291,
           "population": 0.88,
           "pollsterQuality": 0.8,
@@ -108,7 +108,7 @@
           "methodology": 1.18
         },
         "explanation": [
-          "6 day(s) old",
+          "7 day(s) old",
           "1,000 registered voters",
           "pollster grade unrated",
           "partisan poll penalty",
@@ -122,7 +122,7 @@
     "pollCount": 3,
     "fieldDateFrom": "2026-10-05",
     "fieldDateTo": "2026-10-29",
-    "recalculatedAt": "2026-11-01T00:20:56.277Z",
+    "recalculatedAt": "2026-11-02T17:46:55.883Z",
     "weightedMargin": 6,
     "uncertaintyRange": {
       "low": 3.2,
@@ -159,9 +159,9 @@
         "pollId": "poll-activote-texas-october-2026-comptroller",
         "pollsterName": "ActiVote",
         "fieldEndDate": "2026-10-29",
-        "finalWeight": 0.656,
+        "finalWeight": 0.62,
         "factors": {
-          "recency": 0.92,
+          "recency": 0.869,
           "sampleSize": 0.816,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -169,7 +169,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "3 day(s) old",
+          "4 day(s) old",
           "400 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -180,9 +180,9 @@
         "pollId": "poll-tsu-texas-late-october-2026-comptroller",
         "pollsterName": "Texas Southern University / Barbara Jordan Public Policy Research and Survey Center",
         "fieldEndDate": "2026-10-25",
-        "finalWeight": 1.025,
+        "finalWeight": 0.968,
         "factors": {
-          "recency": 0.807,
+          "recency": 0.762,
           "sampleSize": 1.65,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -190,7 +190,7 @@
           "methodology": 0.962
         },
         "explanation": [
-          "7 day(s) old",
+          "8 day(s) old",
           "2,000 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -201,9 +201,9 @@
         "pollId": "poll-ut-texas-october-2026-comptroller",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-10-05",
-        "finalWeight": 0.437,
+        "finalWeight": 0.413,
         "factors": {
-          "recency": 0.417,
+          "recency": 0.394,
           "sampleSize": 1.198,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -211,7 +211,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "27 day(s) old",
+          "28 day(s) old",
           "861 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -222,27 +222,27 @@
   },
   {
     "raceId": "race-2026-governor",
-    "pollCount": 8,
+    "pollCount": 9,
     "fieldDateFrom": "2026-10-05",
-    "fieldDateTo": "2026-10-30",
-    "recalculatedAt": "2026-11-01T00:20:56.277Z",
-    "weightedMargin": 2,
+    "fieldDateTo": "2026-11-01",
+    "recalculatedAt": "2026-11-02T17:46:55.883Z",
+    "weightedMargin": 1.5,
     "uncertaintyRange": {
-      "low": 0.1,
-      "high": 3.9
+      "low": -0.3,
+      "high": 3.3
     },
     "candidates": [
       {
         "candidateId": "candidate-greg-abbott-republican-race-2026-governor",
         "candidateName": "GREG ABBOTT",
-        "averagePercentage": 49.1,
-        "pollCount": 8
+        "averagePercentage": 48.8,
+        "pollCount": 9
       },
       {
         "candidateId": "candidate-gina-hinojosa-democratic-race-2026-governor",
         "candidateName": "GINA HINOJOSA",
-        "averagePercentage": 47.1,
-        "pollCount": 8
+        "averagePercentage": 47.3,
+        "pollCount": 9
       },
       {
         "candidateId": "candidate-pat-dixon-libertarian-race-2026-governor",
@@ -256,9 +256,9 @@
         "pollId": "poll-activote-texas-october-2026-governor",
         "pollsterName": "ActiVote",
         "fieldEndDate": "2026-10-29",
-        "finalWeight": 0.656,
+        "finalWeight": 0.62,
         "factors": {
-          "recency": 0.92,
+          "recency": 0.869,
           "sampleSize": 0.816,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -266,7 +266,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "3 day(s) old",
+          "4 day(s) old",
           "400 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -277,9 +277,9 @@
         "pollId": "poll-cnn-ssrs-texas-october-2026-governor",
         "pollsterName": "CNN/SSRS",
         "fieldEndDate": "2026-10-27",
-        "finalWeight": 1.009,
+        "finalWeight": 0.953,
         "factors": {
-          "recency": 0.862,
+          "recency": 0.814,
           "sampleSize": 1.24,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -287,7 +287,7 @@
           "methodology": 1.18
         },
         "explanation": [
-          "5 day(s) old",
+          "6 day(s) old",
           "923 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -298,9 +298,9 @@
         "pollId": "poll-dfp-texas-october-2026-governor",
         "pollsterName": "Data for Progress",
         "fieldEndDate": "2026-10-26",
-        "finalWeight": 0.587,
+        "finalWeight": 0.554,
         "factors": {
-          "recency": 0.834,
+          "recency": 0.787,
           "sampleSize": 1.089,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -308,7 +308,7 @@
           "methodology": 1.122
         },
         "explanation": [
-          "6 day(s) old",
+          "7 day(s) old",
           "712 likely voters",
           "pollster grade unrated",
           "partisan poll penalty",
@@ -319,9 +319,9 @@
         "pollId": "poll-kstrat-texas-october-2026-governor",
         "pollsterName": "Kreate Strategies (KStrat)",
         "fieldEndDate": "2026-10-30",
-        "finalWeight": 0.619,
+        "finalWeight": 0.585,
         "factors": {
-          "recency": 0.951,
+          "recency": 0.899,
           "sampleSize": 1.225,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -329,8 +329,29 @@
           "methodology": 0.664
         },
         "explanation": [
-          "2 day(s) old",
+          "3 day(s) old",
           "900 likely voters",
+          "pollster grade unrated",
+          "independent poll",
+          "unknown methodology"
+        ]
+      },
+      {
+        "pollId": "poll-nyt-siena-texas-november-2026-governor",
+        "pollsterName": "The New York Times/Siena Research Institute",
+        "fieldEndDate": "2026-11-01",
+        "finalWeight": 0.795,
+        "factors": {
+          "recency": 0.96,
+          "sampleSize": 1.423,
+          "population": 1,
+          "pollsterQuality": 0.8,
+          "independence": 1,
+          "methodology": 0.727
+        },
+        "explanation": [
+          "1 day(s) old",
+          "1,215 likely voters",
           "pollster grade unrated",
           "independent poll",
           "unknown methodology"
@@ -340,9 +361,9 @@
         "pollId": "poll-quantus-texas-october-2026-governor",
         "pollsterName": "Quantus Insights",
         "fieldEndDate": "2026-10-28",
-        "finalWeight": 0.739,
+        "finalWeight": 0.698,
         "factors": {
-          "recency": 0.89,
+          "recency": 0.841,
           "sampleSize": 1.427,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -350,7 +371,7 @@
           "methodology": 0.727
         },
         "explanation": [
-          "4 day(s) old",
+          "5 day(s) old",
           "1,221 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -361,9 +382,9 @@
         "pollId": "poll-tsu-texas-late-october-2026-governor",
         "pollsterName": "Texas Southern University / Barbara Jordan Public Policy Research and Survey Center",
         "fieldEndDate": "2026-10-25",
-        "finalWeight": 1.025,
+        "finalWeight": 0.968,
         "factors": {
-          "recency": 0.807,
+          "recency": 0.762,
           "sampleSize": 1.65,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -371,7 +392,7 @@
           "methodology": 0.962
         },
         "explanation": [
-          "7 day(s) old",
+          "8 day(s) old",
           "2,000 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -382,9 +403,9 @@
         "pollId": "poll-ut-texas-october-2026-governor",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-10-05",
-        "finalWeight": 0.437,
+        "finalWeight": 0.413,
         "factors": {
-          "recency": 0.417,
+          "recency": 0.394,
           "sampleSize": 1.198,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -392,7 +413,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "27 day(s) old",
+          "28 day(s) old",
           "861 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -403,9 +424,9 @@
         "pollId": "poll-yougov-texas-october-2026-governor",
         "pollsterName": "YouGov Blue / 254 Labs",
         "fieldEndDate": "2026-10-26",
-        "finalWeight": 0.644,
+        "finalWeight": 0.608,
         "factors": {
-          "recency": 0.834,
+          "recency": 0.787,
           "sampleSize": 1.291,
           "population": 0.88,
           "pollsterQuality": 0.8,
@@ -413,7 +434,7 @@
           "methodology": 1.18
         },
         "explanation": [
-          "6 day(s) old",
+          "7 day(s) old",
           "1,000 registered voters",
           "pollster grade unrated",
           "partisan poll penalty",
@@ -427,7 +448,7 @@
     "pollCount": 4,
     "fieldDateFrom": "2026-10-05",
     "fieldDateTo": "2026-10-29",
-    "recalculatedAt": "2026-11-01T00:20:56.277Z",
+    "recalculatedAt": "2026-11-02T17:46:55.883Z",
     "weightedMargin": 3.4,
     "uncertaintyRange": {
       "low": 0.8,
@@ -464,9 +485,9 @@
         "pollId": "poll-activote-texas-october-2026-lieutenant-governor",
         "pollsterName": "ActiVote",
         "fieldEndDate": "2026-10-29",
-        "finalWeight": 0.656,
+        "finalWeight": 0.62,
         "factors": {
-          "recency": 0.92,
+          "recency": 0.869,
           "sampleSize": 0.816,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -474,7 +495,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "3 day(s) old",
+          "4 day(s) old",
           "400 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -485,9 +506,9 @@
         "pollId": "poll-tsu-texas-late-october-2026-lieutenant-governor",
         "pollsterName": "Texas Southern University / Barbara Jordan Public Policy Research and Survey Center",
         "fieldEndDate": "2026-10-25",
-        "finalWeight": 1.025,
+        "finalWeight": 0.968,
         "factors": {
-          "recency": 0.807,
+          "recency": 0.762,
           "sampleSize": 1.65,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -495,7 +516,7 @@
           "methodology": 0.962
         },
         "explanation": [
-          "7 day(s) old",
+          "8 day(s) old",
           "2,000 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -506,9 +527,9 @@
         "pollId": "poll-ut-texas-october-2026-lieutenant-governor",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-10-05",
-        "finalWeight": 0.437,
+        "finalWeight": 0.413,
         "factors": {
-          "recency": 0.417,
+          "recency": 0.394,
           "sampleSize": 1.198,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -516,7 +537,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "27 day(s) old",
+          "28 day(s) old",
           "861 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -527,9 +548,9 @@
         "pollId": "poll-yougov-texas-october-2026-lieutenant-governor",
         "pollsterName": "YouGov Blue / 254 Labs",
         "fieldEndDate": "2026-10-26",
-        "finalWeight": 0.644,
+        "finalWeight": 0.608,
         "factors": {
-          "recency": 0.834,
+          "recency": 0.787,
           "sampleSize": 1.291,
           "population": 0.88,
           "pollsterQuality": 0.8,
@@ -537,7 +558,7 @@
           "methodology": 1.18
         },
         "explanation": [
-          "6 day(s) old",
+          "7 day(s) old",
           "1,000 registered voters",
           "pollster grade unrated",
           "partisan poll penalty",
@@ -548,27 +569,27 @@
   },
   {
     "raceId": "race-2026-us-senate",
-    "pollCount": 9,
+    "pollCount": 10,
     "fieldDateFrom": "2026-10-05",
-    "fieldDateTo": "2026-10-30",
-    "recalculatedAt": "2026-11-01T00:20:56.277Z",
-    "weightedMargin": 3.5,
+    "fieldDateTo": "2026-11-01",
+    "recalculatedAt": "2026-11-02T17:46:55.883Z",
+    "weightedMargin": 4,
     "uncertaintyRange": {
-      "low": 1.7,
-      "high": 5.3
+      "low": 2.3,
+      "high": 5.7
     },
     "candidates": [
       {
         "candidateId": "candidate-james-talarico-democratic-race-2026-us-senate",
         "candidateName": "JAMES TALARICO",
-        "averagePercentage": 49.4,
-        "pollCount": 9
+        "averagePercentage": 49.5,
+        "pollCount": 10
       },
       {
         "candidateId": "candidate-ken-paxton-republican-race-2026-us-senate",
         "candidateName": "KEN PAXTON",
-        "averagePercentage": 45.9,
-        "pollCount": 9
+        "averagePercentage": 45.5,
+        "pollCount": 10
       },
       {
         "candidateId": "candidate-ted-brown-libertarian-race-2026-us-senate",
@@ -582,9 +603,9 @@
         "pollId": "poll-a2-insights-texas-october-2026-us-senate",
         "pollsterName": "A2 Insights",
         "fieldEndDate": "2026-10-27",
-        "finalWeight": 0.514,
+        "finalWeight": 0.486,
         "factors": {
-          "recency": 0.862,
+          "recency": 0.814,
           "sampleSize": 1.026,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -592,7 +613,7 @@
           "methodology": 0.727
         },
         "explanation": [
-          "5 day(s) old",
+          "6 day(s) old",
           "631 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -603,9 +624,9 @@
         "pollId": "poll-activote-texas-october-2026-us-senate",
         "pollsterName": "ActiVote",
         "fieldEndDate": "2026-10-28",
-        "finalWeight": 0.635,
+        "finalWeight": 0.6,
         "factors": {
-          "recency": 0.89,
+          "recency": 0.841,
           "sampleSize": 0.816,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -613,7 +634,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "4 day(s) old",
+          "5 day(s) old",
           "400 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -624,9 +645,9 @@
         "pollId": "poll-cnn-ssrs-texas-october-2026-us-senate",
         "pollsterName": "CNN/SSRS",
         "fieldEndDate": "2026-10-27",
-        "finalWeight": 1.009,
+        "finalWeight": 0.953,
         "factors": {
-          "recency": 0.862,
+          "recency": 0.814,
           "sampleSize": 1.24,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -634,7 +655,7 @@
           "methodology": 1.18
         },
         "explanation": [
-          "5 day(s) old",
+          "6 day(s) old",
           "923 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -645,9 +666,9 @@
         "pollId": "poll-dfp-texas-october-2026-us-senate",
         "pollsterName": "Data for Progress",
         "fieldEndDate": "2026-10-26",
-        "finalWeight": 0.587,
+        "finalWeight": 0.554,
         "factors": {
-          "recency": 0.834,
+          "recency": 0.787,
           "sampleSize": 1.089,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -655,7 +676,7 @@
           "methodology": 1.122
         },
         "explanation": [
-          "6 day(s) old",
+          "7 day(s) old",
           "712 likely voters",
           "pollster grade unrated",
           "partisan poll penalty",
@@ -666,9 +687,9 @@
         "pollId": "poll-kstrat-texas-october-2026-us-senate",
         "pollsterName": "Kreate Strategies (KStrat)",
         "fieldEndDate": "2026-10-30",
-        "finalWeight": 0.619,
+        "finalWeight": 0.585,
         "factors": {
-          "recency": 0.951,
+          "recency": 0.899,
           "sampleSize": 1.225,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -676,8 +697,29 @@
           "methodology": 0.664
         },
         "explanation": [
-          "2 day(s) old",
+          "3 day(s) old",
           "900 likely voters",
+          "pollster grade unrated",
+          "independent poll",
+          "unknown methodology"
+        ]
+      },
+      {
+        "pollId": "poll-nyt-siena-texas-november-2026-us-senate",
+        "pollsterName": "The New York Times/Siena Research Institute",
+        "fieldEndDate": "2026-11-01",
+        "finalWeight": 0.795,
+        "factors": {
+          "recency": 0.96,
+          "sampleSize": 1.423,
+          "population": 1,
+          "pollsterQuality": 0.8,
+          "independence": 1,
+          "methodology": 0.727
+        },
+        "explanation": [
+          "1 day(s) old",
+          "1,215 likely voters",
           "pollster grade unrated",
           "independent poll",
           "unknown methodology"
@@ -687,9 +729,9 @@
         "pollId": "poll-quantus-texas-october-2026-us-senate",
         "pollsterName": "Quantus Insights",
         "fieldEndDate": "2026-10-28",
-        "finalWeight": 0.739,
+        "finalWeight": 0.698,
         "factors": {
-          "recency": 0.89,
+          "recency": 0.841,
           "sampleSize": 1.427,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -697,7 +739,7 @@
           "methodology": 0.727
         },
         "explanation": [
-          "4 day(s) old",
+          "5 day(s) old",
           "1,221 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -708,9 +750,9 @@
         "pollId": "poll-tsu-texas-late-october-2026-us-senate",
         "pollsterName": "Texas Southern University / Barbara Jordan Public Policy Research and Survey Center",
         "fieldEndDate": "2026-10-25",
-        "finalWeight": 1.025,
+        "finalWeight": 0.968,
         "factors": {
-          "recency": 0.807,
+          "recency": 0.762,
           "sampleSize": 1.65,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -718,7 +760,7 @@
           "methodology": 0.962
         },
         "explanation": [
-          "7 day(s) old",
+          "8 day(s) old",
           "2,000 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -729,9 +771,9 @@
         "pollId": "poll-ut-texas-october-2026-us-senate",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-10-05",
-        "finalWeight": 0.437,
+        "finalWeight": 0.413,
         "factors": {
-          "recency": 0.417,
+          "recency": 0.394,
           "sampleSize": 1.198,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -739,7 +781,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "27 day(s) old",
+          "28 day(s) old",
           "861 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -750,9 +792,9 @@
         "pollId": "poll-yougov-texas-october-2026-us-senate",
         "pollsterName": "YouGov Blue / 254 Labs",
         "fieldEndDate": "2026-10-26",
-        "finalWeight": 0.644,
+        "finalWeight": 0.608,
         "factors": {
-          "recency": 0.834,
+          "recency": 0.787,
           "sampleSize": 1.291,
           "population": 0.88,
           "pollsterQuality": 0.8,
@@ -760,7 +802,7 @@
           "methodology": 1.18
         },
         "explanation": [
-          "6 day(s) old",
+          "7 day(s) old",
           "1,000 registered voters",
           "pollster grade unrated",
           "partisan poll penalty",
