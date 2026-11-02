@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const migration = readFileSync(
-  "supabase/migrations/20261102204800_index_texas_news_feed_source_created_at.sql",
+  "supabase/migrations/20261102204654_index_texas_news_feed_source_created_at.sql",
   "utf8",
 );
 const hook = readFileSync(
