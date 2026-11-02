@@ -15,6 +15,7 @@ on:
       - '.github/workflows/update-election-data.yml'
       - 'scripts/elections/scrape-official-primary-winners.mjs'
       - 'scripts/elections/import-races.ts'
+      - 'scripts/elections/import-candidates.ts'
 
 permissions:
   contents: write
@@ -101,7 +102,16 @@ jobs:
 
       - name: Refresh authoritative candidate records
         shell: bash
+        env:
+          RACE_SOURCE_OUTCOME: ${{ steps.race_directory.outcome }}
         run: |
+          # A blocked office-list source cannot justify re-stamping the
+          # bundled candidate fixture as freshly verified. Live official
+          # primary/candidate scrapes and independent official lookups remain.
+          if [[ "$RACE_SOURCE_OUTCOME" != "success" ]]; then
+            export ELECTION_SKIP_CACHED_CANDIDATES=true
+            echo "::warning title=Cached candidate source held::Skipping bundled candidate fixture; using live official sources only while SOS race directory is unavailable."
+          fi
           imported=false
           if [[ -s /tmp/texas-primary-winners.json ]]; then
             ELECTION_CANDIDATE_IMPORT=/tmp/texas-primary-winners.json bun run elections:import:candidates
