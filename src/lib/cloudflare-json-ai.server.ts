@@ -4,6 +4,10 @@ type CloudflareEnvelope = {
   errors?: Array<{ message?: string }>;
 };
 
+// Verified 2026-11-02 against the authenticated Cloudflare Workers AI model catalog.
+// The old fallback, llama-3.1-8b-instruct-fast, is NOT a listed model.
+export const DEFAULT_CLOUDFLARE_JSON_MODEL = "@cf/meta/llama-3.1-8b-instruct-fp8";
+
 export type CloudflareJsonResult<T> = {
   value: T;
   provider: "cloudflare-workers-ai";
@@ -46,7 +50,7 @@ export async function runCloudflareJson<T>(input: {
   const cf = credentials();
   if (!cf) throw new Error("Cloudflare Workers AI credentials are not configured");
 
-  const model = process.env.AI_REWRITE_MODEL_CF || "@cf/meta/llama-3.1-8b-instruct-fast";
+  const model = process.env.AI_REWRITE_MODEL_CF || DEFAULT_CLOUDFLARE_JSON_MODEL;
   const endpoint = `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(cf.accountId)}/ai/run/${model}`;
   const maxAttempts = Math.min(Math.max(input.maxAttempts ?? 1, 1), 3);
   const requestTimeoutMs = Math.min(Math.max(input.requestTimeoutMs ?? 90_000, 10_000), 120_000);
