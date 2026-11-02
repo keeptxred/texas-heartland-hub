@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import { enrichArticleRow } from "@/lib/content-quality";
 import { EVERGREEN_MIN_MAIN_WORDS, articleMainWordCount } from "@/lib/article-length";
-import { EDITORIAL_SYSTEM_ADDENDUM, validateArticle } from "@/lib/editorial-pipeline";
+import { validateArticle } from "@/lib/editorial-pipeline";
+import { EVERGREEN_EVIDENCE_ADDENDUM, fatalEvergreenEditorialReasons } from "@/lib/evergreen-editorial-prompt";
 import { runCloudflareJson } from "@/lib/cloudflare-json-ai.server";
 import { getGovernmentGraphLinks } from "@/lib/government-graph";
 
@@ -118,7 +119,7 @@ Return only valid JSON with this shape:
 Markdown links inside paragraph strings are allowed.`;
 
   const ai = await runCloudflareJson<GeneratedBody & { brief?: import("@/lib/editorial-pipeline").StoryBrief }>({
-    system: system + EDITORIAL_SYSTEM_ADDENDUM,
+    system: system + EVERGREEN_EVIDENCE_ADDENDUM,
     user: `Topic: ${topic}\nCategory: ${category}\n\nWrite the complete evergreen explainer.`,
     maxTokens: 12000,
     maxAttempts: 2,
@@ -138,12 +139,8 @@ Markdown links inside paragraph strings are allowed.`;
   );
 
   if (!validation.ok) {
-    const fatal = validation.reasons.filter(
-      (reason) =>
-        !reason.startsWith("brief_no_clear_news_event") &&
-        !reason.startsWith("headline_does_not_match_body"),
-    );
-    if (fatal.length > 0) throw new Error(`Editorial validation failed: ${fatal.join(", ")}`);
+    const fatal = fatalEvergreenEditorialReasons(validation.reasons);
+    if (fatal.length > 0) throw new Error(`Evergreen editorial validation failed: ${fatal.join(", ")}`);
   }
 
   delete (parsed as { brief?: unknown }).brief;
