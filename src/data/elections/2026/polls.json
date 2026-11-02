@@ -1524,6 +1524,254 @@
     }
   },
   {
+    "id": "poll-nyt-siena-texas-november-2026-governor",
+    "slug": "nyt-siena-texas-november-2026-governor",
+    "electionCycleId": "election-cycle-2026-texas-general",
+    "raceId": "race-2026-governor",
+    "jurisdictionId": "jurisdiction-texas",
+    "title": "November 2026 Texas Governor likely-voter poll — NYTimes/Siena",
+    "status": "published",
+    "pollster": {
+      "name": "The New York Times/Siena Research Institute",
+      "slug": "nyt-siena-research-institute",
+      "websiteUrl": "https://sri.siena.edu/",
+      "grade": "unrated",
+      "transparencyScore": null,
+      "methodologyUrl": "https://sri.siena.edu/about-us/likely-voter-methodology/"
+    },
+    "sponsors": [
+      {
+        "name": "The New York Times",
+        "type": "news_organization",
+        "websiteUrl": "https://www.nytimes.com/",
+        "partisanAffiliation": null,
+        "notes": "Poll conducted in partnership with Siena Research Institute."
+      },
+      {
+        "name": "Siena Research Institute",
+        "type": "pollster",
+        "websiteUrl": "https://sri.siena.edu/",
+        "partisanAffiliation": null,
+        "notes": null
+      }
+    ],
+    "fieldStartDate": "2026-10-27",
+    "fieldEndDate": "2026-11-01",
+    "releaseDate": "2026-11-01",
+    "revisedAt": null,
+    "methodology": {
+      "population": "likely_voters",
+      "sampleSize": 1215,
+      "marginOfError": 3.4,
+      "confidenceLevel": null,
+      "mode": "unknown",
+      "languages": [],
+      "weightingDescription": null,
+      "samplingDescription": "Texas statewide survey of 1,215 likely voters, fielded October 27–November 1, 2026; sample/field dates cross-checked in contemporaneous published poll archives.",
+      "likelyVoterModelDescription": "Siena documents a likely-voter index based on registration file/voting history and respondents' self-assessed voting likelihood.",
+      "questionOrderRandomized": null,
+      "includesCellPhones": null,
+      "responseRate": null,
+      "methodologyUrl": "https://sri.siena.edu/about-us/likely-voter-methodology/"
+    },
+    "questions": [
+      {
+        "id": "nyt-siena-texas-november-2026-governor-question",
+        "type": "multi_candidate",
+        "prompt": "Texas 2026 Governor ballot choice (refer to original New York Times toplines for verbatim question)",
+        "order": 1,
+        "sampleSize": 1215,
+        "population": "likely_voters",
+        "responses": [
+          {
+            "id": "nyt-siena-texas-november-2026-governor-question-response-1",
+            "label": "Gina Hinojosa",
+            "candidateId": "candidate-gina-hinojosa-democratic-race-2026-governor",
+            "party": "democratic",
+            "percentage": 48,
+            "respondentCount": null,
+            "marginFromLeader": 0,
+            "isLeader": true,
+            "isUndecided": false,
+            "isOther": false
+          },
+          {
+            "id": "nyt-siena-texas-november-2026-governor-question-response-2",
+            "label": "Greg Abbott",
+            "candidateId": "candidate-greg-abbott-republican-race-2026-governor",
+            "party": "republican",
+            "percentage": 47,
+            "respondentCount": null,
+            "marginFromLeader": 1,
+            "isLeader": false,
+            "isUndecided": false,
+            "isOther": false
+          }
+        ],
+        "notes": "Reported rounded candidate toplines from Siena original release; omitted categories are not estimated."
+      }
+    ],
+    "primaryQuestionId": "nyt-siena-texas-november-2026-governor-question",
+    "toplineUrl": "https://sri.siena.edu/2026/11/01/nytimes-siena-poll-of-likely-voters-alaska-iowa-kansas-maine-michigan-ohio-and-texas/",
+    "questionnaireUrl": "https://www.nytimes.com/interactive/2026/11/01/polls/times-siena-tx-poll-toplines.html",
+    "crosstabsUrl": "https://www.nytimes.com/interactive/2026/11/01/polls/times-siena-tx-poll-crosstabs.html",
+    "archiveUrl": "https://sri.siena.edu/2026/11/01/nytimes-siena-poll-of-likely-voters-alaska-iowa-kansas-maine-michigan-ohio-and-texas/",
+    "internalPoll": false,
+    "partisanPoll": false,
+    "trackingPoll": false,
+    "supersededByPollId": null,
+    "notes": "Siena Research Institute's November 1, 2026 original release reports rounded likely-voter toplines and a Texas ±3.4 percentage-point margin of error. Texas n=1,215 and October 27–November 1 field dates are independently cross-checked in contemporaneous polling archives. The original New York Times Texas toplines/crosstabs linked by Siena were not directly retrievable here; question wording and unreported response categories are not inferred.",
+    "createdAt": "2026-11-02T17:37:09.165Z",
+    "updatedAt": "2026-11-02T17:37:09.165Z",
+    "verificationStatus": "verified",
+    "verifiedAt": "2026-11-02T17:37:09.165Z",
+    "verifiedBy": "Original Siena Institute release with independent metadata cross-check",
+    "verificationNotes": "Siena Research Institute's November 1, 2026 original release reports rounded likely-voter toplines and a Texas ±3.4 percentage-point margin of error. Texas n=1,215 and October 27–November 1 field dates are independently cross-checked in contemporaneous polling archives. The original New York Times Texas toplines/crosstabs linked by Siena were not directly retrievable here; question wording and unreported response categories are not inferred.",
+    "publicationStatus": "published",
+    "publishedAt": "2026-11-02T17:37:09.165Z",
+    "unpublishedAt": null,
+    "scheduledFor": null,
+    "publishedBy": "Source-verified election polling update",
+    "dataAsOf": "2026-11-01T23:59:59.000Z",
+    "lastCheckedAt": "2026-11-02T17:37:09.165Z",
+    "staleAfter": "2026-11-15T23:59:59.000Z",
+    "expiresAt": "2026-11-05T00:00:00.000Z",
+    "freshnessStatus": "fresh",
+    "source": {
+      "sourceId": "source-nyt-siena-texas-november-1-2026",
+      "sourceName": "The New York Times/Siena Research Institute",
+      "sourceType": "pollster",
+      "sourceUrl": "https://sri.siena.edu/2026/11/01/nytimes-siena-poll-of-likely-voters-alaska-iowa-kansas-maine-michigan-ohio-and-texas/",
+      "sourceRecordId": "nyt-siena-texas-november-2026-governor",
+      "retrievedAt": "2026-11-02T17:37:09.165Z",
+      "attributionText": "Siena Research Institute / The New York Times, Nov 1, 2026"
+    }
+  },
+  {
+    "id": "poll-nyt-siena-texas-november-2026-us-senate",
+    "slug": "nyt-siena-texas-november-2026-us-senate",
+    "electionCycleId": "election-cycle-2026-texas-general",
+    "raceId": "race-2026-us-senate",
+    "jurisdictionId": "jurisdiction-texas",
+    "title": "November 2026 Texas U.S. Senate likely-voter poll — NYTimes/Siena",
+    "status": "published",
+    "pollster": {
+      "name": "The New York Times/Siena Research Institute",
+      "slug": "nyt-siena-research-institute",
+      "websiteUrl": "https://sri.siena.edu/",
+      "grade": "unrated",
+      "transparencyScore": null,
+      "methodologyUrl": "https://sri.siena.edu/about-us/likely-voter-methodology/"
+    },
+    "sponsors": [
+      {
+        "name": "The New York Times",
+        "type": "news_organization",
+        "websiteUrl": "https://www.nytimes.com/",
+        "partisanAffiliation": null,
+        "notes": "Poll conducted in partnership with Siena Research Institute."
+      },
+      {
+        "name": "Siena Research Institute",
+        "type": "pollster",
+        "websiteUrl": "https://sri.siena.edu/",
+        "partisanAffiliation": null,
+        "notes": null
+      }
+    ],
+    "fieldStartDate": "2026-10-27",
+    "fieldEndDate": "2026-11-01",
+    "releaseDate": "2026-11-01",
+    "revisedAt": null,
+    "methodology": {
+      "population": "likely_voters",
+      "sampleSize": 1215,
+      "marginOfError": 3.4,
+      "confidenceLevel": null,
+      "mode": "unknown",
+      "languages": [],
+      "weightingDescription": null,
+      "samplingDescription": "Texas statewide survey of 1,215 likely voters, fielded October 27–November 1, 2026; sample/field dates cross-checked in contemporaneous published poll archives.",
+      "likelyVoterModelDescription": "Siena documents a likely-voter index based on registration file/voting history and respondents' self-assessed voting likelihood.",
+      "questionOrderRandomized": null,
+      "includesCellPhones": null,
+      "responseRate": null,
+      "methodologyUrl": "https://sri.siena.edu/about-us/likely-voter-methodology/"
+    },
+    "questions": [
+      {
+        "id": "nyt-siena-texas-november-2026-us-senate-question",
+        "type": "multi_candidate",
+        "prompt": "Texas 2026 U.S. Senate ballot choice (refer to original New York Times toplines for verbatim question)",
+        "order": 1,
+        "sampleSize": 1215,
+        "population": "likely_voters",
+        "responses": [
+          {
+            "id": "nyt-siena-texas-november-2026-us-senate-question-response-1",
+            "label": "James Talarico",
+            "candidateId": "candidate-james-talarico-democratic-race-2026-us-senate",
+            "party": "democratic",
+            "percentage": 50,
+            "respondentCount": null,
+            "marginFromLeader": 0,
+            "isLeader": true,
+            "isUndecided": false,
+            "isOther": false
+          },
+          {
+            "id": "nyt-siena-texas-november-2026-us-senate-question-response-2",
+            "label": "Ken Paxton",
+            "candidateId": "candidate-ken-paxton-republican-race-2026-us-senate",
+            "party": "republican",
+            "percentage": 43,
+            "respondentCount": null,
+            "marginFromLeader": 7,
+            "isLeader": false,
+            "isUndecided": false,
+            "isOther": false
+          }
+        ],
+        "notes": "Reported rounded candidate toplines from Siena original release; omitted categories are not estimated."
+      }
+    ],
+    "primaryQuestionId": "nyt-siena-texas-november-2026-us-senate-question",
+    "toplineUrl": "https://sri.siena.edu/2026/11/01/nytimes-siena-poll-of-likely-voters-alaska-iowa-kansas-maine-michigan-ohio-and-texas/",
+    "questionnaireUrl": "https://www.nytimes.com/interactive/2026/11/01/polls/times-siena-tx-poll-toplines.html",
+    "crosstabsUrl": "https://www.nytimes.com/interactive/2026/11/01/polls/times-siena-tx-poll-crosstabs.html",
+    "archiveUrl": "https://sri.siena.edu/2026/11/01/nytimes-siena-poll-of-likely-voters-alaska-iowa-kansas-maine-michigan-ohio-and-texas/",
+    "internalPoll": false,
+    "partisanPoll": false,
+    "trackingPoll": false,
+    "supersededByPollId": null,
+    "notes": "Siena Research Institute's November 1, 2026 original release reports rounded likely-voter toplines and a Texas ±3.4 percentage-point margin of error. Texas n=1,215 and October 27–November 1 field dates are independently cross-checked in contemporaneous polling archives. The original New York Times Texas toplines/crosstabs linked by Siena were not directly retrievable here; question wording and unreported response categories are not inferred.",
+    "createdAt": "2026-11-02T17:37:09.165Z",
+    "updatedAt": "2026-11-02T17:37:09.165Z",
+    "verificationStatus": "verified",
+    "verifiedAt": "2026-11-02T17:37:09.165Z",
+    "verifiedBy": "Original Siena Institute release with independent metadata cross-check",
+    "verificationNotes": "Siena Research Institute's November 1, 2026 original release reports rounded likely-voter toplines and a Texas ±3.4 percentage-point margin of error. Texas n=1,215 and October 27–November 1 field dates are independently cross-checked in contemporaneous polling archives. The original New York Times Texas toplines/crosstabs linked by Siena were not directly retrievable here; question wording and unreported response categories are not inferred.",
+    "publicationStatus": "published",
+    "publishedAt": "2026-11-02T17:37:09.165Z",
+    "unpublishedAt": null,
+    "scheduledFor": null,
+    "publishedBy": "Source-verified election polling update",
+    "dataAsOf": "2026-11-01T23:59:59.000Z",
+    "lastCheckedAt": "2026-11-02T17:37:09.165Z",
+    "staleAfter": "2026-11-15T23:59:59.000Z",
+    "expiresAt": "2026-11-05T00:00:00.000Z",
+    "freshnessStatus": "fresh",
+    "source": {
+      "sourceId": "source-nyt-siena-texas-november-1-2026",
+      "sourceName": "The New York Times/Siena Research Institute",
+      "sourceType": "pollster",
+      "sourceUrl": "https://sri.siena.edu/2026/11/01/nytimes-siena-poll-of-likely-voters-alaska-iowa-kansas-maine-michigan-ohio-and-texas/",
+      "sourceRecordId": "nyt-siena-texas-november-2026-us-senate",
+      "retrievedAt": "2026-11-02T17:37:09.165Z",
+      "attributionText": "Siena Research Institute / The New York Times, Nov 1, 2026"
+    }
+  },
+  {
     "id": "poll-quantus-texas-october-2026-governor",
     "slug": "quantus-texas-october-2026-governor",
     "electionCycleId": "election-cycle-2026-texas-general",
