@@ -54,7 +54,7 @@ export function ResultSummaryCard({ result }: ResultSummaryCardProps) {
       </dl>
 
       <div className="mt-5 divide-y divide-border">
-        {result.candidates.slice(0, 3).map((candidate) => (
+        {result.candidates.map((candidate) => (
           <div key={candidate.candidateId} className="grid grid-cols-[1fr_auto] gap-4 py-3 text-sm">
             <div>
               <p className="font-semibold text-foreground">{candidate.ballotName}</p>
