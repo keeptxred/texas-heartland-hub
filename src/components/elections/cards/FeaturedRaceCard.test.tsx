@@ -24,6 +24,9 @@ describe("FeaturedRaceCard", () => {
       expect(html).toContain(candidate.name);
     }
     expect((html.match(/<li /g) ?? []).length).toBe(candidates.length);
+    // This race historically omitted the Republican candidate from its featured card.
+    expect(html.indexOf("Ken Paxton")).toBeLessThan(html.indexOf("James Talarico"));
+    expect(html.indexOf("James Talarico")).toBeLessThan(html.indexOf("Jade Simmons"));
   });
 
   it("does not invent candidates when the list is empty", () => {
