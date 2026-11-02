@@ -29,7 +29,7 @@ Deno.serve(async (req: Request) => {
         headers: {
           "User-Agent": "Mozilla/5.0 (compatible; KeepTXRedBot/1.2; +https://keeptxred.com)",
           Accept: "application/rss+xml,application/atom+xml,application/xml,text/xml,*/*",
-          "Cache-Control": "no-cache",
+          // Allow source/provider edge caching of successful RSS responses.
         },
         redirect: "follow",
         signal: AbortSignal.timeout(20000),
