@@ -14,6 +14,7 @@ on:
     paths:
       - '.github/workflows/update-election-data.yml'
       - 'scripts/elections/scrape-official-primary-winners.mjs'
+      - 'scripts/elections/import-races.ts'
 
 permissions:
   contents: write
@@ -46,7 +47,19 @@ jobs:
         run: bun x playwright install --with-deps chromium
 
       - name: Refresh official race directory
+        id: race_directory
+        # Denied source access must not erase verified races or prevent
+        # independent updates from undergoing their original validation gates.
+        continue-on-error: true
         run: bun run elections:import:races
+
+      - name: Preserve verified race scope when official source is blocked
+        if: steps.race_directory.outcome == 'failure'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- src/data/elections/2026/races.json
+          echo "::warning title=Texas SOS race source unavailable::Existing race scope and source verification dates preserved; independent election imports continue through original gates. See issue #3369."
 
       - name: Extract official March primary winners
         id: primary_winner_scrape
@@ -163,12 +176,19 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           JOB_STATUS: ${{ job.status }}
+          RACE_SOURCE_OUTCOME: ${{ steps.race_directory.outcome }}
           RUN_ID: ${{ github.run_id }}
           RUN_ATTEMPT: ${{ github.run_attempt }}
           RUN_SHA: ${{ github.sha }}
           RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           set -euo pipefail
+          finish_degraded() {
+            if [[ "$JOB_STATUS" == "success" && "$RACE_SOURCE_OUTCOME" != "success" ]]; then
+              echo "::error title=Partial Election Central refresh::Texas SOS scope was not reverified; independently validated changes may have been published. See issue #3369."
+              exit 1
+            fi
+          }
           if [[ "$JOB_STATUS" == "cancelled" ]]; then
             echo "Superseded refresh cancelled; preserving the last completed workflow status."
             exit 0
@@ -185,9 +205,18 @@ jobs:
             return lines.slice(-100).join("\n").slice(-16000) || null;
           }
 
+          const raceVerified = process.env.RACE_SOURCE_OUTCOME === "success";
           const status = {
             updatedAt: new Date().toISOString(),
-            conclusion: process.env.JOB_STATUS,
+            conclusion: process.env.JOB_STATUS === "success" && !raceVerified
+              ? "degraded" : process.env.JOB_STATUS,
+            raceDirectory: {
+              outcome: raceVerified ? "verified" : "source_unavailable",
+              note: raceVerified
+                ? "2026 office scope validated against an official Texas Secretary of State hostname."
+                : "Official office list inaccessible or failed structural validation. Previously verified race scope and source dates preserved; other imports independently validated.",
+              trackingIssue: "https://github.com/keeptxred/texas-heartland-hub/issues/3369",
+            },
             runId: process.env.RUN_ID,
             runAttempt: process.env.RUN_ATTEMPT,
             triggerCommit: process.env.RUN_SHA,
@@ -216,6 +245,7 @@ jobs:
           git restore --worktree .
           if git diff --cached --quiet; then
             echo "No refresh status or election data changes to publish."
+            finish_degraded
             exit 0
           fi
 
@@ -230,6 +260,7 @@ jobs:
           git diff --cached --binary > /tmp/election-data-refresh.patch
           if [[ ! -s /tmp/election-data-refresh.patch ]]; then
             echo "No staged election-data patch to publish."
+            finish_degraded
             exit 0
           fi
 
@@ -254,6 +285,7 @@ jobs:
 
           if git diff --cached --quiet; then
             echo "Election data already matches current main."
+            finish_degraded
             exit 0
           fi
 
@@ -276,3 +308,4 @@ jobs:
 
           gh pr merge "$pr_number" --auto --squash
           echo "Election refresh is queued through protected PR #$pr_number."
+          finish_degraded
