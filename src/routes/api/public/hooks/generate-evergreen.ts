@@ -155,7 +155,7 @@ export const Route = createFileRoute("/api/public/hooks/generate-evergreen")({
         // AI generation and service-role publication must never be callable
         // by anonymous browsers or third-party bots. Match signed main-branch
         // scheduled/dispatch GitHub Actions only (existing OIDC verifier).
-        const bearer = request.headers.get("authorization")?.match(/^Bearer\\s+(.+)$/i)?.[1]?.trim();
+        const bearer = request.headers.get("authorization")?.match(/^Bearer\s+(.+)$/i)?.[1]?.trim();
         if (!bearer) return Response.json({ error: "GitHub Actions authorization required" }, {
           status: 401, headers: { "Cache-Control": "no-store" },
         });
