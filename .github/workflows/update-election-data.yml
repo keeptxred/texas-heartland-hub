@@ -236,7 +236,11 @@ jobs:
 
           if [[ "$JOB_STATUS" == "success" ]]; then
             git add src/data/elections/2026
-            message="Refresh verified 2026 election data"
+            if [[ "$RACE_SOURCE_OUTCOME" == "success" ]]; then
+              message="Refresh verified 2026 election data"
+            else
+              message="Refresh separately verified election data (SOS race source degraded)"
+            fi
           else
             git add src/data/elections/2026/workflow-status.json
             message="Record failed election data refresh"
