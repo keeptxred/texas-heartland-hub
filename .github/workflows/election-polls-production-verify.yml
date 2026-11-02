@@ -22,7 +22,7 @@ jobs:
       (github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
-    timeout-minutes: 6
+    timeout-minutes: 14
     steps:
       # A successful workflow_run can still be an intentionally skipped stale
       # deployment. Only compare production against source after the upstream
@@ -47,6 +47,8 @@ jobs:
           fi
 
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
       - uses: actions/setup-node@v5
         with:
           node-version: '22'
@@ -159,3 +161,62 @@ jobs:
             gh issue close "$existing" --comment 'Direct GitHub runner production-response verification is passing again; see the latest workflow run for details.'
           fi
           echo "Election Central production-response verification passed."
+
+      # Reuse the existing deployed-polls verification boundary; do not create
+      # another production workflow or check a skipped/stale Worker deployment.
+      - uses: oven-sh/setup-bun@v2
+        if: >-
+          (github.event_name == 'workflow_dispatch' ||
+           steps.deployed.outputs.performed == 'true') &&
+          steps.check.outcome == 'success'
+        with:
+          bun-version: 1.3.14
+
+      - name: Install single production Chromium browser
+        if: >-
+          (github.event_name == 'workflow_dispatch' ||
+           steps.deployed.outputs.performed == 'true') &&
+          steps.check.outcome == 'success'
+        run: |
+          bun install --frozen-lockfile
+          bun x playwright install --with-deps chromium
+
+      - name: Verify hydrated Election Central forecasts on production
+        id: forecast
+        if: >-
+          (github.event_name == 'workflow_dispatch' ||
+           steps.deployed.outputs.performed == 'true') &&
+          steps.check.outcome == 'success'
+        continue-on-error: true
+        run: node scripts/elections/verify-live-forecast.mjs
+
+      - name: Save and report forecast browser acceptance
+        if: >-
+          always() &&
+          (github.event_name == 'workflow_dispatch' ||
+           steps.deployed.outputs.performed == 'true') &&
+          steps.check.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STATUS: ${{ steps.forecast.outcome }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          title='[Election Central] Forecast production browser acceptance needs verification'
+          existing="$(gh issue list --state open --json number,title --jq '.[] | select(.title == "[Election Central] Forecast production browser acceptance needs verification") | .number' | head -n 1)"
+          if [[ "$STATUS" != "success" ]]; then
+            if [[ ! -s election-forecast-production-report.md ]]; then
+              printf '## Forecast browser infrastructure failed before verification\nRun: %s\nOutcome: %s\n' \
+                "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" "$STATUS" > election-forecast-production-report.md
+            fi
+            if [[ -z "$existing" ]]; then
+              gh issue create --title "$title" --body-file election-forecast-production-report.md
+            else
+              echo "Existing forecast production-response issue #$existing preserved."
+            fi
+            exit 1
+          fi
+          if [[ -n "$existing" ]]; then
+            gh issue close "$existing" --comment 'One-page Chromium production forecast hydration acceptance passed; see the latest workflow run.'
+          fi
+          echo "Election Central live hydrated forecast acceptance passed."
