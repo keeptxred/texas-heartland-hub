@@ -59,3 +59,24 @@ jobs:
               raise SystemExit("Provider is stale or blocked")
           print("PASS: KTR production is serving parsed official Texas SOS election returns.")
           PY
+
+      - name: Verify results page includes deployed live interface
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --location --fail-with-body --silent --show-error \
+            --connect-timeout 10 --max-time 35 \
+            -H 'Cache-Control: no-cache' \
+            -o /tmp/ktr-election-results-page.html \
+            "https://keeptxred.com/elections/results?verify=$(date +%s)"
+          python3 - <<'PY'
+          from pathlib import Path
+          html = Path("/tmp/ktr-election-results-page.html").read_text(errors="replace")
+          markers = ["Waiting for official election-night returns", "Connecting to the Texas Secretary of State", "Checks every 30 seconds while open"]
+          present = [marker for marker in markers if marker in html]
+          print(f"Public KTR results page bytes: {len(html)}")
+          print(f"Live interface markers: {present}")
+          if not present:
+              raise SystemExit("Production results page does not contain the new live-election UI; investigate cache or deployment routing.")
+          print("PASS: Production election results page includes the new live feed UI.")
+          PY
