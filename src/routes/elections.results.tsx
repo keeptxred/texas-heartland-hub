@@ -1,228 +1,222 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ElectionEmptyState, ResultListFilters, ResultSummaryCard } from "@/components/elections";
-import { useElectionCycles, useElectionResults } from "@/hooks/elections";
-import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
+import { createFileRoute } from "@tanstack/react-router";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ElectionResultsListPage } from "@/pages/elections";
-import type {
-  CertificationStatus,
-  ElectionResultSummary,
-  OfficeLevel,
-  ResultReportingStatus,
-} from "@/types/elections";
-import { isOfficeLevel } from "@/types/elections/raceClassifications";
-import {
-  isCertificationStatus,
-  isResultReportingStatus,
-} from "@/types/elections/resultClassifications";
 
-interface ResultSearch {
-  officeLevel?: OfficeLevel;
-  reporting?: ResultReportingStatus;
-  certification?: CertificationStatus;
-  cycle?: string;
+interface OfficialCandidate {
+  party: string;
+  name: string;
+  votes: number | null;
 }
-
-function parseResultSearch(search: Record<string, unknown>): ResultSearch {
-  return {
-    officeLevel: isOfficeLevel(search.officeLevel) ? search.officeLevel : undefined,
-    reporting: isResultReportingStatus(search.reporting) ? search.reporting : undefined,
-    certification: isCertificationStatus(search.certification) ? search.certification : undefined,
-    cycle: typeof search.cycle === "string" && search.cycle ? search.cycle : undefined,
-  };
+interface OfficialRace {
+  id: string;
+  title: string;
+  reportingPercent: number | null;
+  totalReportedVotes: number | null;
+  candidates: OfficialCandidate[];
 }
+interface OfficialFeed {
+  source: string;
+  sourceUrl: string;
+  sourceUpdatedLabel: string | null;
+  retrievedAt: string;
+  reportingNow: boolean;
+  stale: boolean;
+  providerError?: string;
+  races: OfficialRace[];
+}
+const REFRESH_MS = 30_000;
+const SOS_URL = "https://electionresults.sos.state.tx.us/results.html";
+const featured = [
+  "U. S. SENATOR",
+  "GOVERNOR",
+  "LIEUTENANT GOVERNOR",
+  "ATTORNEY GENERAL",
+  "COMPTROLLER OF PUBLIC ACCOUNTS",
+  "COMMISSIONER OF THE GENERAL LAND OFFICE",
+  "COMMISSIONER OF AGRICULTURE",
+  "RAILROAD COMMISSIONER",
+];
+const votesLabel = (votes: number | null) => votes === null ? "Not reported" : votes.toLocaleString("en-US");
+const localTime = (iso: string) => {
+  const time = new Date(iso);
+  return Number.isFinite(time.getTime()) ? time.toLocaleString("en-US", {
+    timeZone: "America/Chicago", month: "short", day: "numeric",
+    hour: "numeric", minute: "2-digit", timeZoneName: "short",
+  }) : "Time unavailable";
+};
 
 export const Route = createFileRoute("/elections/results")({
-  validateSearch: parseResultSearch,
   head: () => ({
     meta: [
-      { title: "Texas Election Results | Keep TX Red Election Central" },
-      {
-        name: "description",
-        content:
-          "Follow published Texas election results with reporting progress, candidate vote totals, source attribution, and certification status.",
-      },
-      {
-        property: "og:title",
-        content: "Texas Election Results | Keep TX Red Election Central",
-      },
+      { title: "Live 2026 Texas Election Results | Keep TX Red" },
+      { name: "description", content: "Unofficial 2026 Texas general election returns from the Texas Secretary of State, refreshed automatically on election night." },
+      { property: "og:title", content: "2026 Texas Election Results | Keep TX Red" },
       { property: "og:url", content: "https://keeptxred.com/elections/results" },
       { property: "og:type", content: "website" },
       { name: "robots", content: "index, follow, max-image-preview:large" },
-      { property: "og:site_name", content: "Keep TX Red" },
-      { property: "og:image", content: "https://keeptxred.com/images/elections/election-central-social.jpg" },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
-      { property: "og:image:alt", content: "2026 Texas Election Central" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: "https://keeptxred.com/images/elections/election-central-social.jpg" },
     ],
-    links: [
-      {
-        rel: "canonical",
-        href: "https://keeptxred.com/elections/results",
-      },
-    ],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/elections/results" }],
   }),
-  component: ElectionResultsRoute,
+  component: ElectionNightResultsPage,
 });
 
-function ElectionResultsRoute() {
-  return (
-    <ElectionRepositoryProvider>
-      <ElectionResultsContent />
-    </ElectionRepositoryProvider>
-  );
-}
+function ElectionNightResultsPage() {
+  const [feed, setFeed] = useState<OfficialFeed | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [filter, setFilter] = useState("");
+  const [visible, setVisible] = useState(60);
 
-function ElectionResultsContent() {
-  const search = Route.useSearch();
-  const navigate = useNavigate({ from: Route.fullPath });
-  const cycles = useElectionCycles({
-    filters: { stateCodes: ["TX"], publicationStatuses: ["published"] },
-    sort: [{ field: "election_date", direction: "desc" }],
-  });
-  const cycleId = cycles.data?.items.find((cycle) => cycle.id === search.cycle)?.id ?? null;
-  const results = useElectionResults({
-    filters: {
-      electionCycleIds: cycleId ? [cycleId] : undefined,
-      officeLevels: search.officeLevel ? [search.officeLevel] : undefined,
-      reportingStatuses: search.reporting ? [search.reporting] : undefined,
-      certificationStatuses: search.certification ? [search.certification] : undefined,
-      publicationStatuses: ["published"],
-    },
-    pagination: { page: 1, pageSize: 100 },
-    sort: [
-      { field: "election_date", direction: "desc" },
-      { field: "reporting_percentage", direction: "desc" },
-    ],
-  });
-  const groupedResults = (results.data?.items ?? []).reduce((groups, result) => {
-    const electionDate = result.race.electionDate;
-    const group = groups.get(electionDate);
-    if (group) group.push(result);
-    else groups.set(electionDate, [result]);
-    return groups;
-  }, new Map<string, ElectionResultSummary[]>());
-  const updateSearch = (updates: Partial<ResultSearch>) => {
-    void navigate({
-      search: (previous: any) => ({ ...previous, ...updates }),
-      replace: true,
+  const refresh = useCallback(async (signal?: AbortSignal) => {
+    setRefreshing(true);
+    try {
+      const response = await fetch("/api/public/election-results", {
+        headers: { Accept: "application/json" },
+        cache: "no-store",
+        signal,
+      });
+      const payload: OfficialFeed & { error?: string } = await response.json();
+      if (!response.ok || !Array.isArray(payload.races)) {
+        throw new Error(payload.error || "Election results provider unavailable.");
+      }
+      if (!signal?.aborted) { setFeed(payload); setError(null); }
+    } catch (caught) {
+      if (!signal?.aborted) {
+        setError(caught instanceof Error ? caught.message : "Results could not be loaded.");
+      }
+    } finally {
+      if (!signal?.aborted) setRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    void refresh(controller.signal);
+    const timer = window.setInterval(() => {
+      if (document.visibilityState === "visible") void refresh();
+    }, REFRESH_MS);
+    return () => { controller.abort(); window.clearInterval(timer); };
+  }, [refresh]);
+
+  const sorted = useMemo(() => {
+    const races = (feed?.races ?? []).filter((race) =>
+      race.title.toLowerCase().includes(filter.trim().toLowerCase()) ||
+      race.candidates.some((candidate) => candidate.name.toLowerCase().includes(filter.trim().toLowerCase())),
+    );
+    return races.sort((left, right) => {
+      const a = featured.indexOf(left.title);
+      const b = featured.indexOf(right.title);
+      if (a >= 0 || b >= 0) return (a < 0 ? featured.length : a) - (b < 0 ? featured.length : b);
+      return left.title.localeCompare(right.title, "en-US", { numeric: true });
     });
-  };
-  const hasFilters = Boolean(search.officeLevel || search.reporting || search.certification || search.cycle);
-  const clearFilters = () => {
-    updateSearch({ officeLevel: undefined, reporting: undefined, certification: undefined, cycle: undefined });
-  };
+  }, [feed, filter]);
 
   return (
-    <ElectionResultsListPage
-      error={cycles.error ?? results.error}
-      isLoading={cycles.isLoading || results.isLoading}
-      onRetry={() => {
-        void cycles.refetch();
-        void results.refetch();
-      }}
-    >
-      <div className="space-y-8">
-        <section aria-labelledby="results-filter-heading" className="rounded-xl border border-border bg-card p-5 shadow-sm">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Results directory</p>
-              <h2 id="results-filter-heading" className="mt-1 text-lg font-bold text-foreground">Filter published results</h2>
-              <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">Narrow election returns by office level, reporting state, certification status, or election cycle. Unofficial and certified totals remain clearly labeled.</p>
-            </div>
-            {hasFilters ? (
-              <button type="button" onClick={clearFilters} className="text-sm font-semibold text-primary underline-offset-4 hover:underline">Clear all filters</button>
-            ) : null}
+    <ElectionResultsListPage>
+      <div className="space-y-7">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 px-5 py-4">
+          <div>
+            <p className="font-bold text-slate-900">
+              {feed?.stale ? "Official feed temporarily unavailable — last verified snapshot" :
+                feed?.reportingNow ? "Unofficial results reporting" :
+                "Waiting for official election-night returns"}
+            </p>
+            <p className="mt-1 text-sm text-slate-600">
+              {feed ? "Last retrieved " + localTime(feed.retrievedAt) : "Connecting to the Texas Secretary of State"}
+              {feed?.sourceUpdatedLabel ? " · State source updated " + feed.sourceUpdatedLabel : ""}
+            </p>
           </div>
-          <div className="mt-5 border-t border-border pt-5">
-            <ResultListFilters
-              officeLevel={search.officeLevel ?? null}
-              reportingStatus={search.reporting ?? null}
-              certificationStatus={search.certification ?? null}
-              electionCycleId={cycleId}
-              electionCycles={
-                cycles.data?.items.map((cycle) => ({
-                  value: cycle.id,
-                  label: cycle.name,
-                })) ?? []
-              }
-              onOfficeLevelChange={(value) => updateSearch({ officeLevel: value ?? undefined })}
-              onReportingStatusChange={(value) => updateSearch({ reporting: value ?? undefined })}
-              onCertificationStatusChange={(value) =>
-                updateSearch({ certification: value ?? undefined })
-              }
-              onElectionCycleChange={(value) => updateSearch({ cycle: value ?? undefined })}
-            />
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-xs text-slate-600">Checks every 30 seconds while open</span>
+            <button type="button" onClick={() => void refresh()} disabled={refreshing}
+              className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-100 disabled:opacity-50">
+              {refreshing ? "Checking…" : "Refresh now"}
+            </button>
           </div>
-        </section>
+        </div>
 
-        {results.isEmpty ? (
-          <ElectionEmptyState kind="filters" />
-        ) : (
-          <div className="space-y-12">
-            {Array.from(groupedResults.entries()).map(([electionDate, items]) => {
-              const reporting = items.filter((result) => !isCompletedResult(result));
-              const completed = items.filter(isCompletedResult);
-
-              return (
-                <section key={electionDate} aria-labelledby={`election-${electionDate}`}>
-                  <h2
-                    id={`election-${electionDate}`}
-                    className="font-display text-3xl leading-none tracking-tight text-foreground"
-                  >
-                    {formatElectionDate(electionDate)}
-                  </h2>
-                  <div className="mt-6 space-y-8">
-                    {reporting.length > 0 ? (
-                      <ResultGroup title="Reporting now" results={reporting} />
-                    ) : null}
-                    {completed.length > 0 ? (
-                      <ResultGroup title="Completed reporting" results={completed} />
-                    ) : null}
-                  </div>
-                </section>
-              );
-            })}
+        {error ? (
+          <div role="alert" className="rounded-xl border border-amber-300 bg-amber-50 p-5 text-sm text-amber-950">
+            <p className="font-bold">Official feed connection issue</p>
+            <p className="mt-1">{error} {feed ? "Showing the last successfully retrieved data below; do not treat it as current." : "No vote totals are being shown until the source is verified."}</p>
+            <a className="mt-3 inline-block font-semibold underline" href={SOS_URL} target="_blank" rel="noopener noreferrer">
+              View official Texas SOS results
+            </a>
           </div>
-        )}
+        ) : null}
+        {feed?.stale && !error ? (
+          <div role="status" className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950">
+            Results may be delayed: the official source could not be refreshed. Last validated source data is displayed.
+          </div>
+        ) : null}
+
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <label className="block w-full max-w-lg text-sm font-semibold text-slate-800">
+            Search races or candidates
+            <input type="search" value={filter} onChange={(e) => { setFilter(e.target.value); setVisible(60); }}
+              placeholder="Senate, governor, district, candidate…" className="mt-2 w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-base text-slate-900" />
+          </label>
+          <div className="text-sm text-slate-600">
+            {feed ? String(sorted.length) + " of " + feed.races.length + " official contests" : "Loading contests…"}
+            <p><a href={SOS_URL} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary underline underline-offset-4">Official Texas SOS source</a></p>
+          </div>
+        </div>
+
+        {!feed && !error ? (
+          <p role="status" className="rounded-xl border border-slate-200 bg-white p-6">Loading verified Texas election results…</p>
+        ) : null}
+        {feed && sorted.length === 0 ? (
+          <p className="rounded-xl border border-slate-200 bg-white p-6">No matching contests. Try another race or candidate name.</p>
+        ) : null}
+        <div className="grid gap-5 lg:grid-cols-2">
+          {sorted.slice(0, visible).map((race) => (
+            <section key={race.id} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm" aria-label={race.title}>
+              <h3 className="text-lg font-bold text-slate-950">{race.title}</h3>
+              <div className="mt-1 flex flex-wrap gap-3 text-xs text-slate-600">
+                <span>Polling locations reporting: {race.reportingPercent === null ? "Not reported" : race.reportingPercent + "%"}</span>
+                <span>Votes shown: {votesLabel(race.totalReportedVotes)}</span>
+              </div>
+              <div className="mt-4 space-y-3">
+                {race.candidates.map((candidate, index) => {
+                  const share = race.totalReportedVotes && candidate.votes !== null
+                    ? (100 * candidate.votes / race.totalReportedVotes) : null;
+                  return (
+                    <div key={candidate.party + "-" + candidate.name + "-" + index} className="border-t border-slate-100 pt-3">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <p className="font-semibold text-slate-900">{candidate.name}</p>
+                          <p className="text-xs text-slate-600">{candidate.party}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold tabular-nums text-slate-900">{votesLabel(candidate.votes)}</p>
+                          {share !== null ? <p className="text-xs tabular-nums text-slate-600">{share.toFixed(1)}% of votes shown</p> : null}
+                        </div>
+                      </div>
+                      {share !== null ? <div aria-hidden="true" className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100">
+                        <div className="h-full rounded-full bg-slate-700" style={{ width: Math.min(100, share) + "%" }} />
+                      </div> : null}
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="mt-4 text-xs text-slate-500">Source: Texas Secretary of State · Unofficial · No winner projected</p>
+            </section>
+          ))}
+        </div>
+        {sorted.length > visible ? (
+          <div className="text-center">
+            <button type="button" onClick={() => setVisible((previous) => previous + 60)}
+              className="rounded-lg border border-slate-300 bg-white px-6 py-3 font-semibold hover:bg-slate-100">
+              Show more contests ({sorted.length - visible} remaining)
+            </button>
+          </div>
+        ) : null}
+        <p className="text-sm leading-6 text-slate-600">
+          These are unofficial returns published by the Texas Secretary of State. Polling-location reporting is not the
+          percentage of all votes counted. Results may be corrected or delayed; no candidate is declared the winner
+          here until an authoritative source makes that determination.
+        </p>
       </div>
     </ElectionResultsListPage>
   );
-}
-
-function ResultGroup({
-  title,
-  results,
-}: {
-  title: string;
-  results: readonly ElectionResultSummary[];
-}) {
-  return (
-    <section>
-      <h3 className="text-lg font-bold text-foreground">{title}</h3>
-      <div className="mt-4 grid gap-6 lg:grid-cols-2">
-        {results.map((result) => (
-          <ResultSummaryCard key={result.id} result={result} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function isCompletedResult(result: ElectionResultSummary) {
-  return (
-    result.reportingStatus === "complete" ||
-    result.status === "final_unofficial" ||
-    result.status === "certified"
-  );
-}
-
-function formatElectionDate(value: string) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(new Date(`${value}T00:00:00Z`));
 }
