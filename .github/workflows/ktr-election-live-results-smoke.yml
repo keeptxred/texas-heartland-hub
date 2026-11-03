@@ -3,13 +3,18 @@ name: Check live KTR Texas SOS election results
 on:
   push:
     branches:
-      - fix/ktr-election-live-production-smoke-2026
+      - fix/ktr-election-night-independent-feed-monitor-2026
     paths:
       - .github/workflows/ktr-election-live-results-smoke.yml
   workflow_run:
     workflows: ["Deploy verified KeepTXRed to Cloudflare"]
     types: [completed]
     branches: [main]
+  schedule:
+    # Independent checks while Texas returns are being released (Nov 3 evening CT).
+    # GitHub workflow_run chaining can be suppressed after three levels.
+    - cron: "*/5 23 3 11 *"
+    - cron: "*/5 0-7 4 11 *"
   workflow_dispatch:
 
 permissions:
@@ -21,7 +26,19 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - name: Gate the one-night 2026 schedule
+        id: election_window
+        shell: bash
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == "schedule" && "$(date -u +%Y)" != "2026" ]]; then
+            echo "check=false" >> "$GITHUB_OUTPUT"
+            echo "Scheduled 2026 election-night monitoring has expired; no network calls."
+          else
+            echo "check=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Probe verified production election feed
+        if: steps.election_window.outputs.check == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -61,6 +78,7 @@ jobs:
           PY
 
       - name: Verify results page includes deployed live interface
+        if: steps.election_window.outputs.check == 'true'
         shell: bash
         run: |
           set -euo pipefail
