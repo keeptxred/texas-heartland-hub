@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { sortRaceCandidatesByParty } from "./candidate-display-order";
 
 /**
  * SSR district detail reads published+verified election records server-side.
@@ -33,12 +34,15 @@ export const getElectionDistrictDetailSnapshot = createServerFn({ method: "GET" 
         geographySource: record.geographySource,
         countyElectionLinkSource: record.countyElectionLinkSource,
       },
-      candidates: candidates
-        .filter((candidate) =>
+      // One presentation order is shared by SSR candidate cards and JSON-LD
+      // ItemList positions. Never mutate the imported verified ballot records.
+      candidates: sortRaceCandidatesByParty(
+        candidates.filter((candidate) =>
           record.candidateIds.includes(candidate.id) &&
           candidate.publicationStatus === "published" &&
-          candidate.verificationStatus === "verified")
-        .map((candidate) => ({
+          candidate.verificationStatus === "verified"),
+        (candidate) => candidate.party,
+      ).map((candidate) => ({
           id: candidate.id,
           slug: candidate.slug,
           fullName: candidate.fullName,
