@@ -1,0 +1,61 @@
+name: Check live KTR Texas SOS election results
+
+on:
+  push:
+    branches:
+      - fix/ktr-election-live-production-smoke-2026
+    paths:
+      - .github/workflows/ktr-election-live-results-smoke.yml
+  workflow_run:
+    workflows: ["Deploy verified KeepTXRed to Cloudflare"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live-results:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Probe verified production election feed
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint="https://keeptxred.com/api/public/election-results?probe=$(date +%s)"
+          http_status="$(curl --location --silent --show-error \
+            --connect-timeout 10 --max-time 35 \
+            -H 'Accept: application/json' -H 'Cache-Control: no-cache' \
+            -o /tmp/ktr-election-live-response.json \
+            -w '%{http_code}' "$endpoint" || true)"
+          echo "Production election-results HTTP status: $http_status"
+          if [[ "$http_status" != "200" ]]; then
+            echo "::error title=KTR election results feed down::Expected 200 from /api/public/election-results; got $http_status"
+            head -c 800 /tmp/ktr-election-live-response.json 2>/dev/null || true
+            exit 1
+          fi
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          body = Path("/tmp/ktr-election-live-response.json").read_text()
+          try:
+              result = json.loads(body)
+          except Exception as error:
+              raise SystemExit(f"Production feed returned non-JSON content: {error}; first 200 chars={body[:200]!r}")
+          races = result.get("races") or []
+          titles = {str(race.get("title", "")).upper() for race in races}
+          source = result.get("source")
+          print(f"Source: {source}; races: {len(races)}; source updated: {result.get('sourceUpdatedLabel')}")
+          print(f"Retrieved: {result.get('retrievedAt')}; reporting now: {result.get('reportingNow')}; stale: {result.get('stale')}")
+          print("First races:", [(r.get("title"),r.get("reportingPercent"),r.get("totalReportedVotes")) for r in races[:7]])
+          if source != "Texas Secretary of State":
+              raise SystemExit("Not the expected official source")
+          if len(races) < 5 or not any("SENATOR" in title for title in titles) or "GOVERNOR" not in titles:
+              raise SystemExit("Parser returned missing or invalid official contests")
+          if result.get("stale"):
+              raise SystemExit("Provider is stale or blocked")
+          print("PASS: KTR production is serving parsed official Texas SOS election returns.")
+          PY
