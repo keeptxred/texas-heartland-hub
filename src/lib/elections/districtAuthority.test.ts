@@ -18,6 +18,16 @@ describe("election district authority template", () => {
     expect(route).toContain('to="/elections/races/$raceSlug"');
   });
 
+  it("uses the shared Republican-first party order in both rendered cards and JSON-LD", () => {
+    // The server projection feeds both consumers, preventing divergent ordering.
+    expect(server).toContain('import { sortRaceCandidatesByParty } from "./candidate-display-order"');
+    expect(server).toContain("candidates: sortRaceCandidatesByParty(");
+    expect(server).toContain("(candidate) => candidate.party,");
+    expect(route).toContain("const raceCandidates = snapshot.candidates;");
+    expect(route).toContain("itemListElement: raceCandidates.map((candidate, index) => ({");
+    expect(route).toContain("{raceCandidates.map((candidate) => (");
+  });
+
   it("publishes geography, official-source, and candidate structured data", () => {
     expect(route).toContain('"@type": "AdministrativeArea"');
     expect(route).toContain('"@type": "Event"');
