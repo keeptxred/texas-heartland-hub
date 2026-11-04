@@ -1,6 +1,9 @@
 import { createFileRoute, Link, notFound, stripSearchParams } from '@tanstack/react-router';
+import { useCallback, useEffect, useState } from 'react';
+import { billSearchKey, parseBillSearchKey } from '@/lib/bill-public-path';
+import { BillDetailPanel } from '@/components/bills/BillDetailPanel';
 import { Search, Landmark, Scale, FileCheck2 } from 'lucide-react';
-import { listBills, getBillFilterOptions, SITE_URL, canonicalBillPath } from '@/lib/bills';
+import { listBills, getBillFilterOptions, SITE_URL } from '@/lib/bills';
 import { loadOptionalBillFilterOptions } from '@/lib/bills-filter-resilience';
 
 type BillSearch = {
@@ -93,12 +96,8 @@ export const Route = createFileRoute('/bills/')({
   head: ({ loaderData }) => {
     const search = loaderData?.search ?? DEFAULT_SEARCH;
     const filtered = hasBillFilters(search);
-    const canonical = !filtered && search.page > 1
-      ? `${SITE_URL}/bills?page=${search.page}`
-      : `${SITE_URL}/bills`;
-    const title = !filtered && search.page > 1
-      ? `Texas Bill Lookup & Legislature Search — Page ${search.page} | KeepTXRed`
-      : 'Texas Bill Lookup & Legislature Bill Search | KeepTXRed';
+    const canonical = `${SITE_URL}/bills`;
+    const title = 'Texas Bill Lookup & Legislature Bill Search | KeepTXRed';
     const description = 'Look up and search Texas Legislature bills by bill number, subject, chamber, session and status. Review sponsors, committees, actions, documents and bill history.';
 
     return {
@@ -107,7 +106,7 @@ export const Route = createFileRoute('/bills/')({
         { name: 'description', content: description },
         {
           name: 'robots',
-          content: filtered
+          content: filtered || search.page > 1
             ? 'noindex,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1'
             : 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1',
         },
@@ -119,7 +118,7 @@ export const Route = createFileRoute('/bills/')({
       scripts: [{ type: 'application/ld+json', children: JSON.stringify({
         '@context': 'https://schema.org',
         '@type': 'CollectionPage',
-        name: !filtered && search.page > 1 ? `Texas Bill Lookup and Legislature Search — Page ${search.page}` : 'Texas Bill Lookup and Legislature Bill Search',
+        name: 'Texas Bill Lookup and Legislature Bill Search',
         url: canonical,
         description,
         breadcrumb: { '@type': 'BreadcrumbList', itemListElement: [
@@ -144,6 +143,32 @@ const billTypeLabel = (value: string) => value.toUpperCase().replace(/([A-Z])([A
 function BillsPage() {
   const { bills, count, options } = Route.useLoaderData();
   const search = Route.useSearch();
+  const [selectedBill, setSelectedBill] = useState<string | null>(null);
+  useEffect(() => {
+    const syncHash = () => {
+      const match = window.location.hash.match(/^#bill=(.+)$/);
+      let key = '';
+      try { key = match ? decodeURIComponent(match[1]) : ''; } catch { key = ''; }
+      setSelectedBill(parseBillSearchKey(key) ? key : null);
+    };
+    syncHash();
+    window.addEventListener('hashchange', syncHash);
+    window.addEventListener('popstate', syncHash);
+    return () => {
+      window.removeEventListener('hashchange', syncHash);
+      window.removeEventListener('popstate', syncHash);
+    };
+  }, []);
+  const openBill = (bill: any) => {
+    const key = billSearchKey(bill);
+    window.history.pushState(null, '', `#bill=${key}`);
+    setSelectedBill(key);
+    requestAnimationFrame(() => document.getElementById('bill-detail')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  };
+  const closeBill = useCallback(() => {
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    setSelectedBill(null);
+  }, []);
   const pages = Math.max(1, Math.ceil(count / 24));
   const visiblePages = paginationPages(search.page, pages);
   const hasFilters = hasBillFilters(search);
@@ -159,7 +184,7 @@ function BillsPage() {
         <p className="text-sm font-bold uppercase tracking-[0.18em] text-primary">Texas Legislature</p>
         <h1 className="mt-2 text-4xl font-bold tracking-tight md:text-5xl">Texas Bill Lookup and Legislature Bill Search</h1>
         <p className="mt-4 max-w-3xl text-lg text-muted-foreground">Search Texas House and Senate bills by bill number, caption or subject, then review official legislative status, sponsors, committee history, actions and documents. Resolutions and proposed constitutional amendments can be explored separately.</p>
-        <p className="mt-3 max-w-3xl text-sm text-muted-foreground">Bill identifiers are tied to a legislative session. Texas can reuse a bill number in a regular session and a called session, so results identify the session as 89(R), 89(1), 89(2), and so on, and each link points to that session’s canonical bill record.</p>
+        <p className="mt-3 max-w-3xl text-sm text-muted-foreground">Bill identifiers are tied to a legislative session. Texas can reuse a bill number in a regular session and a called session, so results identify the session as 89(R), 89(1), 89(2), and so on, and selecting a result opens its official record inside this search page.</p>
         <form className="mt-7 space-y-3" action="/bills" method="get">
           <div className="flex flex-col gap-3 sm:flex-row">
             <label className="relative flex-1"><span className="sr-only">Search Texas bills</span><Search className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground"/><input name="q" defaultValue={search.q} placeholder="Search HB 1, SB 21, caption or subject" className="h-12 w-full rounded-md border bg-background pl-10 pr-4"/></label>
@@ -203,29 +228,9 @@ function BillsPage() {
         </div>
       </section>
 
-      {legislatures.length > 0 ? (
-        <section className="mt-10 rounded-2xl border bg-muted/20 p-6" aria-labelledby="browse-legislature-heading">
-          <div className="flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Bill directory</p>
-              <h2 id="browse-legislature-heading" className="mt-1 text-2xl font-bold">Browse by Legislature</h2>
-              <p className="mt-2 max-w-3xl text-sm text-muted-foreground">Browse Texas bills by Legislature, then open its House, Senate and joint measures by bill type before drilling into individual bill histories. Regular and called sessions are labeled on each bill result.</p>
-            </div>
-          </div>
-          <div className="mt-5 flex flex-wrap gap-3">
-            {legislatures.map((item) => (
-              <Link
-                key={item.value}
-                to="/bills/texas/$legislature"
-                params={{ legislature: String(item.value) }}
-                className="rounded-lg border bg-card px-4 py-3 font-semibold transition hover:border-primary hover:text-primary"
-              >
-                {item.label.replace(/\s+·\s+.+$/, '')}
-              </Link>
-            ))}
-          </div>
-        </section>
-      ) : null}
+      <p className="mt-8 text-sm text-muted-foreground">Choose a Legislature using the search filters above to explore the complete database without leaving this page.</p>
+
+      {selectedBill ? <BillDetailPanel key={selectedBill} billKey={selectedBill} onClose={closeBill} /> : null}
 
       <section className="mt-10">
         <div className="flex flex-wrap items-end justify-between gap-4">
@@ -236,7 +241,7 @@ function BillsPage() {
             {hasFilters && <Link to="/bills" search={{ q: '', status: '', legislature: 0, chamber: '', billType: '', kind: 'substantive', page: 1 }} className="rounded-full border border-dashed px-3 py-1.5 text-sm hover:border-primary">Clear filters</Link>}
           </div>
         </div>
-        {bills.length ? <div className="mt-6 grid gap-4 lg:grid-cols-2">{bills.map((bill: any) => <article key={bill.id} className="rounded-xl border bg-card p-5 transition hover:border-primary"><div className="flex items-start justify-between gap-4"><div><a href={canonicalBillPath(bill)} className="text-xl font-bold text-primary hover:underline">{bill.bill_identifier}</a><p className="mt-2 font-medium leading-snug">{bill.caption}</p></div><span className="shrink-0 rounded-full bg-muted px-3 py-1 text-xs font-semibold">{bill.current_status_label}</span></div><div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground"><span>{bill.chamber === 'house' ? 'Texas House' : bill.chamber === 'senate' ? 'Texas Senate' : 'Joint'}</span><span className="font-semibold text-foreground/80">{billSessionLabel(bill.legislature_number, bill.session_code)}</span><span>{bill.bill_type.toUpperCase()}</span>{bill.last_synced_at && <span title="Last record synchronization">Synced {new Date(bill.last_synced_at).toLocaleDateString()}</span>}{bill.last_action_date && <span>Last official action {new Date(`${bill.last_action_date}T12:00:00`).toLocaleDateString()}</span>}</div></article>)}</div> : <div className="mt-6 rounded-xl border border-dashed p-10 text-center"><h3 className="font-semibold">No matching bills</h3><p className="mt-2 text-sm text-muted-foreground">Clear one or more filters or try a broader bill number, caption or subject search.</p></div>}
+        {bills.length ? <div className="mt-6 grid gap-4 lg:grid-cols-2">{bills.map((bill: any) => <article key={bill.id} className="rounded-xl border bg-card p-5 transition hover:border-primary"><div className="flex items-start justify-between gap-4"><div><button type="button" onClick={() => openBill(bill)} aria-controls="bill-detail" aria-expanded={selectedBill === billSearchKey(bill)} className="text-left text-xl font-bold text-primary hover:underline">{bill.bill_identifier}</button><p className="mt-2 font-medium leading-snug">{bill.caption}</p></div><span className="shrink-0 rounded-full bg-muted px-3 py-1 text-xs font-semibold">{bill.current_status_label}</span></div><div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground"><span>{bill.chamber === 'house' ? 'Texas House' : bill.chamber === 'senate' ? 'Texas Senate' : 'Joint'}</span><span className="font-semibold text-foreground/80">{billSessionLabel(bill.legislature_number, bill.session_code)}</span><span>{bill.bill_type.toUpperCase()}</span>{bill.last_synced_at && <span title="Last record synchronization">Synced {new Date(bill.last_synced_at).toLocaleDateString()}</span>}{bill.last_action_date && <span>Last official action {new Date(`${bill.last_action_date}T12:00:00`).toLocaleDateString()}</span>}</div></article>)}</div> : <div className="mt-6 rounded-xl border border-dashed p-10 text-center"><h3 className="font-semibold">No matching bills</h3><p className="mt-2 text-sm text-muted-foreground">Clear one or more filters or try a broader bill number, caption or subject search.</p></div>}
         {pages > 1 && (
           <nav className="mt-8 flex flex-wrap items-center justify-center gap-2" aria-label="Bill results pages">
             {search.page > 1 ? <Link to="/bills" search={{ ...search, page: search.page - 1 }} className="rounded-md border px-4 py-2">Previous</Link> : <span className="rounded-md border px-4 py-2 opacity-50">Previous</span>}
