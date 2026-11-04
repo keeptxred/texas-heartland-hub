@@ -39,6 +39,7 @@ function TexasBorderSecurityPage() {
         hubSlug="texas-border-security"
         sections={SECTIONS}
         feedSection="border"
+        featuredContent={<BorderSecurityAuthorityResearch />}
         heading="Texas at the Border"
         paragraphs={[
           "Keep TX Red follows the Texas-specific decisions behind border security and immigration enforcement: state deployments, state legislation, federal litigation, ports of entry, local impacts, and the agencies responsible for carrying policy out.",
@@ -52,7 +53,6 @@ function TexasBorderSecurityPage() {
           { label: "TexasDefined: Texas borderlands historic sites", href: "https://texasdefined.com/article/texas-borderlands-historic-sites-guide" },
         ]}
       />
-      <BorderSecurityAuthorityResearch />
       <SupportingGuideGrid pillarHref="/texas-border-security" />
     </>
   );
