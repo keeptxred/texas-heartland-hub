@@ -67,6 +67,9 @@ jobs:
           source = result.get("source")
           print(f"Source: {source}; races: {len(races)}; source updated: {result.get('sourceUpdatedLabel')}")
           print(f"Retrieved: {result.get('retrievedAt')}; reporting now: {result.get('reportingNow')}; stale: {result.get('stale')}")
+          print(f"SOS source age minutes: {result.get('sourceAgeMinutes')}; source lagging: {result.get('sourceLagging')}")
+          if result.get("sourceLagging"):
+              print("::warning title=Texas SOS source delayed::Official state result timestamp is more than 20 minutes old.")
           print("First races:", [(r.get("title"),r.get("reportingPercent"),r.get("totalReportedVotes")) for r in races[:7]])
           if source != "Texas Secretary of State":
               raise SystemExit("Not the expected official source")
