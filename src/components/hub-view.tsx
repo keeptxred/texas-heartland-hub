@@ -8,7 +8,7 @@ import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 
 export type HubSection = { title: string; description: string; href?: string };
 
-export function HubView({ hub, sections, children, filterTopic }: { hub: Hub; sections?: HubSection[]; children?: ReactNode; filterTopic?: string }) {
+export function HubView({ hub, sections, children, filterTopic, featuredContent }: { hub: Hub; sections?: HubSection[]; children?: ReactNode; filterTopic?: string; featuredContent?: ReactNode }) {
   const articles = hub.articleSlugs
     .map((s) => ARTICLES.find((a) => a.slug === s))
     .filter((a): a is Article =>
@@ -47,6 +47,8 @@ export function HubView({ hub, sections, children, filterTopic }: { hub: Hub; se
           })}
         </div>
       ) : null}
+
+      {featuredContent}
 
       {pillar ? (
         <Link to="/news/$slug" params={{ slug: pillar.slug }} className="group block mt-10 border-2 border-primary bg-primary/5 p-6 md:p-8 hover:bg-primary/10 transition-colors">
