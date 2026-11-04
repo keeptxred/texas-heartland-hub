@@ -1,0 +1,35 @@
+name: Election night SOS parser diagnostic
+on:
+  push:
+    branches: [fix/ktr-election-night-parser-completeness-20261103]
+    paths: [.github/workflows/ktr-election-parser-diagnostic.yml, src/lib/elections/official-results.server.ts, src/lib/elections/official-results.server.test.ts]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Fetch raw official source and compare parser with production
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fLSs --max-time 35 -H "Cache-Control: no-cache" "https://electionresults.sos.state.tx.us/results.html?diagnose=$(date +%s)" -o /tmp/ktr-sos.html
+          curl -fLSs --max-time 35 -H "Accept: application/json" "https://keeptxred.com/api/public/election-results?diagnose=$(date +%s)" -o /tmp/ktr-production.json
+          bun -e '
+            import {readFileSync} from "node:fs";
+            import {parseOfficialTexasResults} from "./src/lib/elections/official-results.server.ts";
+            const html=readFileSync("/tmp/ktr-sos.html","utf8");
+            const production=JSON.parse(readFileSync("/tmp/ktr-production.json","utf8"));
+            console.log("SOS HTML bytes",html.length,"polling progress strings",(html.match(/Polling\\s+Locations\\s+Reporting/gi)||[]).length,"table rows",(html.match(/<tr\\b/gi)||[]).length,"candidate cells",(html.match(/REPUBLICAN|DEMOCRATIC/g)||[]).length);
+            console.log("Raw source head",html.slice(0,450));
+            const feed=parseOfficialTexasResults(html);
+            console.log("Parsed races",feed.races.length,"reporting now",feed.reportingNow,"source timestamp",feed.sourceUpdatedLabel);
+            console.log("Parsed first",feed.races.slice(0,15).map(r=>r.title));
+            console.log("Parsed last",feed.races.slice(-15).map(r=>r.title));
+            console.log("Production races",production.races?.length,"production timestamp",production.sourceUpdatedLabel,"sample last",production.races?.slice(-10).map(r=>r.title));
+            if (feed.races.length<500) throw new Error("SOS parser dropped contests: "+feed.races.length);
+          '
