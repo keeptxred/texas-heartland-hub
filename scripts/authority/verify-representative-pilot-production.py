@@ -34,6 +34,8 @@ READY = (
     "denise-villalobos", "oscar-longoria", "sergio-munoz", "janie-lopez",
     "erin-gamez", "mando-martinez", "terry-canales", "bobby-guerra",
     "richard-raymond", "alan-schoolcraft", "erin-zwiener",
+    "sheryl-cole", "vikki-goodwin", "donna-howard", "gina-hinojosa", "james-talarico",
+    "lulu-flores", "caroline-harris-davila", "brad-buckley", "hillary-hickland", "shelby-slawson",
     "cecil-bell", "keith-bell", "cole-hefner", "daniel-alders", "jay-dean",
     "cody-harris", "trent-ashby", "brian-harrison", "trey-wharton",
     "steve-toth", "stan-gerdes", "ellen-troxclair", "terry-wilson",

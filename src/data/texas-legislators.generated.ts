@@ -3492,7 +3492,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 54,
     party: "R",
-    website: "https://house.texas.gov/members/54",
+    website: "https://house.texas.gov/members/3585",
     imageUrl: "https://house.texas.gov/images/members/3585.jpg?v=1",
     officialCode: null,
     home: "1301 N. Stagecoach Road, Salado, TX 76571",
@@ -3536,7 +3536,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/54",
+          url: "https://house.texas.gov/members/3585",
         },
         {
           label: "Official member biography",
@@ -3559,7 +3559,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 55,
     party: "R",
-    website: "https://house.texas.gov/members/55",
+    website: "https://house.texas.gov/members/4520",
     imageUrl: "https://www.house.texas.gov/images/members/4520.jpg?v=1",
     officialCode: null,
     home: "2180 N. Main St. Office H7, Belton, TX 76513",
@@ -3608,7 +3608,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/55",
+          url: "https://house.texas.gov/members/4520",
         },
         {
           label: "Official member biography",
