@@ -11,8 +11,8 @@ const [electionSitemap, sitemapIndex, sitemapShared, priority] = await Promise.a
 ]);
 const priorityUrls = JSON.parse(priority);
 const errors = [];
-if (!electionSitemap.includes("renderUrlset([])")) errors.push("Retired election sitemap is not empty.");
-if (sitemapIndex.includes('"sitemap-elections.xml"')) errors.push("Retired election sitemap is still advertised.");
+if (!electionSitemap.includes("ELECTION_FEATURE_FLAGS.homepagePromotion ? PRIORITY_ELECTION_PATHS : []")) errors.push("Retired election sitemap is not empty.");
+if (!sitemapIndex.includes('ELECTION_FEATURE_FLAGS.homepagePromotion ? ["sitemap-elections.xml"] : []')) errors.push("Retired election sitemap is still advertised.");
 if (!sitemapShared.includes('"/elections"')) errors.push("Shared sitemap renderer does not filter retired election paths.");
 if (priorityUrls.some((url) => new URL(url).pathname.startsWith("/elections/"))) errors.push("Priority sitemap contains retired election URL.");
 if (errors.length) {
