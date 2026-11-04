@@ -2,21 +2,14 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const loaderSource = readFileSync(new URL('./bill-primary-source-data.ts', import.meta.url), 'utf8');
-const regularReferenceRoute = readFileSync(
-  new URL('../routes/bills.texas.$legislature.$billType.$billNumber.reference[.]json.ts', import.meta.url),
-  'utf8',
-);
-const sessionReferenceRoute = readFileSync(
-  new URL('../routes/bills.texas.$legislature.$session.$billType.$billNumber.reference[.]json.ts', import.meta.url),
-  'utf8',
-);
+const retiredGuard = readFileSync(new URL('./retired-bill-documents.ts', import.meta.url), 'utf8');
+const publicApi = readFileSync(new URL('../routes/api/public/bill-detail.ts', import.meta.url), 'utf8');
 
 describe('bill reference route performance contract', () => {
-  it('keeps both bill reference routes off the broad six-relation loader', () => {
-    for (const source of [regularReferenceRoute, sessionReferenceRoute]) {
-      expect(source).toContain('getBillPrimarySourceRelations');
-      expect(source).not.toContain('getBillRelations');
-    }
+  it('keeps legacy reference documents retired instead of publishing JSON URLs', () => {
+    expect(retiredGuard).toContain("normalized.startsWith('/bills/')");
+    expect(publicApi).toContain("'X-Robots-Tag': 'noindex, follow'");
+    expect(publicApi).toContain("getPublicBillRelations(bill.id)");
   });
 
   it('loads only official actions and documents for reference.json', () => {

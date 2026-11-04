@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ExternalLink, X } from 'lucide-react';
 import { publicBillSessionLabel } from '@/lib/bill-public-path';
 import { BillDocumentsPanel } from '@/components/bills/BillDocumentsPanel';
+import { BillHearingsAndVotes } from '@/components/bills/BillHearingsAndVotes';
 import { BillEditorialExplanation } from '@/components/bills/BillEditorialExplanation';
 import { OfficialBillTextViewer } from '@/components/legislature/OfficialBillTextViewer';
 
@@ -9,6 +10,7 @@ type BillDetailData = {
   bill: any;
   relations: { sponsors?: any[]; committees?: any[]; actions?: any[]; documents?: any[]; articles?: any[] };
   editorial: any | null;
+  effectiveDates: any[];
 };
 
 const formatDate = (value?: string | null) => value
@@ -75,11 +77,17 @@ export function BillDetailPanel({ billKey, onClose }: { billKey: string; onClose
           {bill.last_action_date ? <p className="mt-2 text-sm">Last official action: {formatDate(bill.last_action_date)}</p> : null}
           {bill.effective_date ? <p className="mt-2 text-sm">Effective date: {formatDate(bill.effective_date)}</p> : null}
           {bill.last_synced_at ? <p className="mt-2 text-xs text-muted-foreground">Record synchronized {new Date(bill.last_synced_at).toLocaleString()}</p> : null}
-          <div className="mt-3"><OfficialSource href={bill.source_url} label="Texas Legislature Online" /></div>
+          <div className="mt-3 flex flex-wrap gap-4">
+            <OfficialSource
+              href={`https://capitol.texas.gov/BillLookup/History.aspx?LegSess=${encodeURIComponent(`${bill.legislature_number}${String(bill.session_code || 'R').toUpperCase()}`)}&Bill=${encodeURIComponent(String(bill.bill_identifier || '').replace(/\\s/g, ''))}`}
+              label="Texas Legislature Online"
+            />
+            {bill.source_url ? <OfficialSource href={bill.source_url} label="Official source record" /> : null}
+          </div>
         </header>
         {bill.current_status_description ? <section><h3 className="font-bold">Status explanation</h3><p className="mt-2">{bill.current_status_description}</p></section> : null}
         {bill.plain_language_summary || bill.summary || bill.description ? <section><h3 className="font-bold">Bill overview</h3><p className="mt-2 leading-7">{bill.plain_language_summary || bill.summary || bill.description}</p></section> : null}
-        <BillEditorialExplanation billId={bill.id} initialItem={data?.editorial} initialBill={bill} initialDocuments={documents} />
+        <BillEditorialExplanation billId={bill.id} initialItem={data?.editorial} initialBill={bill} initialDocuments={documents} initialEffectiveDates={data.effectiveDates} />
         <section><h3 className="text-xl font-bold">Sponsors and authors</h3>
           {sponsors.length ? <ul className="mt-3 grid gap-3 sm:grid-cols-2">{sponsors.map((person: any) => <li key={person.id} className="rounded-md border p-3"><strong>{person.sponsor_name}</strong><p className="mt-1 text-xs text-muted-foreground">{[person.sponsor_role, person.party, person.district].filter(Boolean).join(' · ')}</p>{person.sponsor_slug ? <a href={`/representatives/${person.sponsor_slug}`} className="text-sm text-primary underline">Representative profile</a> : null}</li>)}</ul>
             : <p className="mt-2 text-sm text-muted-foreground">No sponsors recorded.</p>}
@@ -88,6 +96,7 @@ export function BillDetailPanel({ billKey, onClose }: { billKey: string; onClose
           {committees.length ? <ol className="mt-3 space-y-3">{committees.map((entry: any) => <li key={entry.id} className="border-l-2 pl-4"><strong>{entry.committee_name || entry.legislative_committees?.committee_name || 'Committee'}</strong><p className="text-sm">{entry.action_description || entry.action_type || 'Activity recorded'}</p>{entry.referred_date ? <p className="text-xs text-muted-foreground">Referred {formatDate(entry.referred_date)}</p> : null}</li>)}</ol>
             : <p className="mt-2 text-sm text-muted-foreground">No committee history recorded.</p>}
         </section>
+        <BillHearingsAndVotes activities={committees} />
         <section><h3 className="text-xl font-bold">Legislative actions</h3>
           {actions.length ? <ol className="mt-3 max-h-[32rem] space-y-3 overflow-y-auto">{actions.map((entry: any) => <li key={entry.id} className="border-l-2 pl-4"><time className="text-sm font-semibold">{formatDate(entry.action_date)}</time><p>{entry.action_text}</p><OfficialSource href={entry.source_url} label="Official action" /></li>)}</ol>
             : <p className="mt-2 text-sm text-muted-foreground">No recorded actions.</p>}

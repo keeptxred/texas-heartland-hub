@@ -3,6 +3,7 @@ import type {} from '@tanstack/react-start';
 import { supabase } from '@/integrations/supabase/client';
 import { getBillEditorialEnrichment } from '@/lib/bills';
 import { getPublicBillRelations } from '@/lib/public-bill-relations';
+import { getBillEffectiveDateProvisions } from '@/lib/bill-effective-date-provisions';
 import { parseBillSearchKey } from '@/lib/bill-public-path';
 
 const db = supabase as any;
@@ -26,11 +27,12 @@ export const Route = createFileRoute('/api/public/bill-detail')({
             .maybeSingle();
           if (error) throw error;
           if (!bill) return Response.json({ error: 'Bill not found.' }, { status: 404, headers: NOINDEX });
-          const [relations, editorial] = await Promise.all([
+          const [relations, editorial, effectiveDates] = await Promise.all([
             getPublicBillRelations(bill.id),
             getBillEditorialEnrichment(bill.id),
+            getBillEffectiveDateProvisions(bill.id),
           ]);
-          return Response.json({ bill, relations, editorial }, {
+          return Response.json({ bill, relations, editorial, effectiveDates }, {
             headers: { ...NOINDEX, 'Cache-Control': 'public, max-age=60, s-maxage=120' },
           });
         } catch (error) {
