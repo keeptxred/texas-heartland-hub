@@ -13,7 +13,7 @@ const INVALID_IMAGE_PATTERN =
   /(?:placeholder|spacer|blank(?:[-_.]?image)?|transparent(?:[-_.]?pixel)?|pixel\.gif|1x1)/i;
 const LIVE_SLUG_DATE = /^live-(\d{4})-(\d{2})-(\d{2})-/i;
 const UNRESOLVED_ROUTE_TOKEN = /(?:^|\/)(?:\$[a-z][a-z0-9_-]*|%24[a-z][a-z0-9_-]*)(?:\/|$)/i;
-const SEARCH_SCOPE_EXCLUDED_PATH_PREFIXES = ["/texas-sports"] as const;
+const SEARCH_SCOPE_EXCLUDED_PATH_PREFIXES = ["/texas-sports", "/elections"] as const;
 
 export function xmlEscape(s: string): string {
   return s
