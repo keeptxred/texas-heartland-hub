@@ -1,9 +1,8 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Link, useLocation } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { nextElectionHeadline } from "@/lib/election-calendar";
 import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions";
 import { SHOP_LINK, SITE_NAV_GROUPS } from "@/lib/site-navigation";
 
@@ -16,15 +15,6 @@ export function SiteHeader() {
   const location = useLocation();
   const pathname = location.pathname;
   const isPaymentRoute = pathname.startsWith("/shop/checkout");
-  const [electionHeadline, setElectionHeadline] = useState(() => nextElectionHeadline());
-  useEffect(() => {
-    // Recompute after hydration in case a CDN cached yesterday's server HTML.
-    const refresh = () => setElectionHeadline(nextElectionHeadline());
-    refresh();
-    const timer = setInterval(refresh, 60 * 60 * 1000);
-    window.addEventListener("focus", refresh);
-    return () => { clearInterval(timer); window.removeEventListener("focus", refresh); };
-  }, []);
   const fetchDaily = useServerFn(getDailyArticles);
   const { data } = useQuery({
     queryKey: ["site-header-ticker"],
@@ -64,9 +54,9 @@ export function SiteHeader() {
                   </Link>
                 ))
               ) : (
-                <Link to="/elections/2026" className="flex min-h-11 items-center gap-2 whitespace-nowrap rounded-sm hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-white">
+                <Link to="/news" className="flex min-h-11 items-center gap-2 whitespace-nowrap rounded-sm hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-white">
                   <span className="size-1.5 rounded-full bg-primary" aria-hidden />
-                  {electionHeadline}
+                  Latest Texas news and analysis
                 </Link>
               )}
             </div>
