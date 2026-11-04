@@ -16,8 +16,8 @@ const TRUST_BY_PATH: Record<string, TrustConfig> = {
     sources: [
       { name: 'Texas Legislature Online', url: TLO, note: 'Official bill text, actions, sponsors, committees, votes and documents.' },
     ],
-    methodology: 'The bill directory normalizes legislative records for search and navigation. Individual bill pages preserve their own current status, official action history, source links and synchronization context. A filter or search view does not create a separate factual record.',
-    lastVerified: 'Directory source hierarchy reviewed August 11, 2026. Each bill’s official action and synchronization dates control its time-sensitive status.',
+    methodology: 'The bill search normalizes legislative records for discovery. Selecting a result opens its official status, action history, sponsor and committee relationships, documents and synchronization dates within this page; no standalone bill pages are published. Search filters do not create new factual records.',
+    lastVerified: 'Each selected bill displays its available synchronization and official-action dates. Verify time-sensitive status against the linked Texas Legislature Online record.',
   },
   '/laws': {
     title: 'Texas law reference sources',
