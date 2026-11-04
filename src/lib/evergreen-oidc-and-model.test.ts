@@ -57,7 +57,7 @@ describe("verified Cloudflare AI model and private evergreen writer", () => {
   it("only generates quarantined evergreen drafts on explicit dispatch, never on a paid twice-daily schedule", () => {
     expect(workflow).not.toContain("30 8 * * *");
     expect(workflow).not.toContain("0 18 * * *");
-    expect(workflow).not.toMatch(/^  schedule:/m);
+    expect(workflow).not.toMatch(/^ {2}schedule:/m);
     expect(workflow).toContain("workflow_dispatch:");
     expect(hook).toContain('EVERGREEN_EDITORIAL_REVIEW_REQUIRED_FLAG,');
     expect(hook).toContain('"seo_noindex"');
