@@ -2264,52 +2264,137 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
 
   "what-local-governments-control": {
-    updated: "2026-06-02",
-    intro: [
-      "When Texans complain about 'the government,' they almost always mean Washington — but the governments that actually tax you, school your kids, and pave your road are all local. Here is who does what.",
+    "updated": "2026-11-04",
+    "editorNote": "Substantively revised November 2026 to distinguish county, municipal, school-district, and special-district authority with statutory sources and a jurisdiction-checking procedure.",
+    "intro": [
+      "A Texas address can fall within several governments at once. The county, a city, an independent school district, and one or more special districts can have different elected boards and legal powers. The quickest way to get a problem resolved is to identify which entity controls the service or decision, not simply which office is geographically closest.",
+      "Each type of government has powers set by the Texas Constitution, state laws, and—where permitted—local charters or enabling acts. Home-rule cities have broader local self-government authority than general-law cities, but neither can ignore applicable state law. Counties operate under powers granted by law; an elected county officer's duties are not interchangeable with those of the commissioners court."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "The Five Layers",
-        table: {
-          headers: ["Layer", "Top Responsibility", "Taxing Power"],
-          rows: [
-            ["County", "Sheriff, jail, district courts, roads", "Property tax"],
-            ["City", "Police, fire, zoning, water", "Property + sales tax"],
-            ["ISD", "K-12 education", "Property tax (largest share)"],
-            [
-              "MUD",
-              "Water and sewer in unincorporated growth areas",
-              "Property tax + utility fees",
-            ],
-            ["Special District", "Hospitals, EMS, community college", "Property tax"],
-          ],
-        },
-      },
-    ],
-    faq: [
-      {
-        q: "Why do I pay so many different property taxes?",
-        a: "Because each layer is a separate government with its own elected board and its own tax rate, all stacked on the same parcel.",
+        "heading": "Counties: courts, jails, elected offices, and many unincorporated-area services",
+        "paragraphs": [
+          "The commissioners court manages much of the county's general business: budget, tax rate, county facilities, contracts, and many roads and bridges for which the county is responsible. The court is composed of the county judge and four commissioners. The sheriff, county and district clerks, and other independently elected officers carry out statutory responsibilities; the commissioners court allocates many budgets but cannot simply assume those offices' decision-making powers.",
+          "County criminal justice functions include the sheriff and jail, support for trial courts, and records administration. Counties also have emergency-management and other duties under state law. The precise road or emergency-service provider at an address may be a city, special district, state agency, or contracted partner instead, so look up the responsible road authority or service area rather than relying on the word 'county.'"
+        ]
       },
       {
-        q: "Who handles 911?",
-        a: "Cities handle 911 inside city limits; counties or Emergency Services Districts (ESDs) handle it elsewhere.",
+        "heading": "Cities: municipal ordinances and services within their authority",
+        "paragraphs": [
+          "Municipal government ordinarily addresses local matters such as police and fire services, streets, land use and zoning where authorized, municipal utility operations, and city facilities. Services and ordinances vary: some cities use contracted fire protection or water service, and a road crossing a city may still be maintained by another entity. A city council or other municipal governing body makes policy within its legal authority.",
+          "Texas Local Government Code Chapter 51 distinguishes general municipal powers and home-rule authority. Home-rule municipalities have powers of local self-government subject to constitutional and statutory limits; general-law municipalities rely on powers granted under applicable law. If a dispute concerns a permit, ordinance, or utility charge, locate the relevant city code, tariff, and agenda before assuming the county can reverse the city's decision."
+        ]
       },
-    ],
-    sources: [
-      { label: "Texas Association of Counties", url: "https://www.county.org/" },
       {
-        label: "Texas Comptroller — Local Government",
-        url: "https://comptroller.texas.gov/economy/local/",
+        "heading": "School districts: trustees, superintendents, and state oversight",
+        "paragraphs": [
+          "Independent school districts have governing boards of trustees with management and oversight responsibilities under Texas Education Code Chapter 11. Trustees adopt policy and budgets and oversee the superintendent's implementation of district goals. An individual trustee generally cannot act for the board alone; formal board decisions require the applicable open-meeting and voting procedures.",
+          "State law, the Texas Education Agency, and other education authorities also impose requirements and oversight. If a question is about the district budget or board policy, start with the elected trustees and public board materials. If it involves a state graduation requirement, school accountability rule, or another statewide mandate, identify the state rule before blaming or crediting a local board."
+        ]
       },
+      {
+        "heading": "Special districts: powers depend on the particular district",
+        "paragraphs": [
+          "Municipal utility districts, emergency services districts, hospital districts, junior college districts, and other special-purpose bodies may operate alongside cities, counties, and school districts. Some are empowered to levy property taxes, charge service fees, issue debt, or provide particular services under their enabling statutes. A district's name does not by itself prove that it provides every service in a neighborhood.",
+          "Look up the district's legal name, boundaries, governing board, tax notices, and service contracts. A household may pay a district property tax while receiving its water, fire, or emergency response through an arrangement with another provider. For questions about a district's authority, consult its enabling law and adopted financial records."
+        ]
+      },
+      {
+        "heading": "Tax rates, appraisals, and tax collection are separate decisions",
+        "paragraphs": [
+          "Texas has no state property tax. Local taxing units set rates within the legal framework and use the revenue for local services. County appraisal districts value property for the local tax system; they do not decide every taxing unit's annual budget or adopted rate. A county tax assessor-collector may collect taxes for the county and other units under agreements, but tax collection is not the same as deciding how each unit spends its revenue.",
+          "The Comptroller's truth-in-taxation resources explain proposed rates, notices, no-new-revenue and voter-approval calculations, and the public information that taxing units must provide. The governing body's adopted budget and rate record determine the local policy choice. An appraisal protest and a tax-rate or spending objection follow different processes."
+        ]
+      },
+      {
+        "heading": "Who handles roads, public safety, and water at this address?",
+        "paragraphs": [
+          "Responsibility follows jurisdiction and ownership, not a simple city-versus-county slogan. A state highway can pass through municipal limits; a county road may lie outside an incorporated city; and utility or emergency services can be supplied by districts or contractors. Even within the same ZIP code, a resident's school district, fire district, and water provider may have different boundaries.",
+          "For a road issue, begin with the roadway name and check the official city, county, or state-maintained road map. For fire or emergency services, ask the relevant city or emergency-services district for its service-area map and provider. For water and sewer, check the utility bill or water provider and any district board notices. Record the responsible entity before contacting an elected official."
+        ]
+      },
+      {
+        "heading": "Find the accountable board in five steps",
+        "bullets": [
+          "Read the taxing-units list on your property-tax statement; it identifies local entities with property-tax authority over that parcel but is not a complete list of every service provider.",
+          "Check the county appraisal district's taxing-unit pages and boundaries; confirm any additional MUD, ESD, or other special-district geography.",
+          "Find the city or county department, school district, or special district responsible for the actual decision and service.",
+          "Read that body's current budget, adopted tax-rate notice, meeting agenda, minutes, ordinance, policy, or service contract before making a claim about its authority.",
+          "Contact the correct elected board or statutory officer, citing the specific record, address, date, and requested action."
+        ]
+      },
+      {
+        "heading": "Public meetings and records provide a paper trail",
+        "paragraphs": [
+          "Texas Government Code Chapter 551 governs many public meetings and meeting notices. Chapter 552 governs access to public information, subject to statutory exceptions and procedures. These laws make it possible to compare a public board's proposed action with recorded votes, contracts, and the documents the body actually maintains.",
+          "An agenda may tell you whether an item was up for consideration; adopted minutes or an order tell you what the body decided. For a disputed spending decision, request the approved contract, relevant budget line, and meeting record from the entity that made the commitment. If a record is not already published, use that government's public-information request instructions rather than assuming the state Comptroller has every local invoice."
+        ]
+      },
+      {
+        "heading": "State law sets the outer boundaries",
+        "paragraphs": [
+          "A local government cannot expand its powers by describing a program as popular, nor can a county commissioner nullify a lawful municipal ordinance by personal request. State law allocates government responsibilities and sometimes reserves decisions to specialized elected officers, courts, school boards, or state agencies.",
+          "That is why two superficially similar disputes can have different answers: zoning may hinge on municipal authority, school curriculum may reflect state rules and district implementation, and property taxes involve appraisal, rates, exemptions, collection, and budgets handled by different entities. The first useful question is not 'which level of government is strongest?' but 'which law and public body control this specific decision?'"
+        ]
+      }
     ],
-    related: [
+    "faq": [
+      {
+        "q": "Can a Texas county commissioner overturn a city ordinance?",
+        "a": "A county commissioner does not generally control a municipality's ordinances. Municipal authority comes from Texas law and, for home-rule cities, the local charter, subject to state and federal limits."
+      },
+      {
+        "q": "Why are several government entities listed on one Texas property-tax bill?",
+        "a": "A parcel can fall within the boundaries of a county, school district, city, and one or more special taxing districts. Each lawful taxing unit adopts its own rate; the same collector may collect for multiple units."
+      },
+      {
+        "q": "Who controls policy for an independent Texas school district?",
+        "a": "The elected board of trustees governs and oversees district management under Texas Education Code Chapter 11, while the superintendent administers operations and state law imposes additional requirements."
+      },
+      {
+        "q": "How do I find which district provides my fire or water service?",
+        "a": "Check the service-provider notice, utility bill, official district boundaries, and city or county emergency-services map. A property-tax district label alone does not always identify the contracted provider."
+      }
+    ],
+    "sources": [
+      {
+        "label": "Texas Local Government Code Chapter 51 — Municipal Powers",
+        "url": "https://statutes.capitol.texas.gov/Docs/LG/htm/LG.51.htm"
+      },
+      {
+        "label": "Texas Education Code Chapter 11 — School District Governance",
+        "url": "https://statutes.capitol.texas.gov/Docs/ED/htm/ED.11.htm"
+      },
+      {
+        "label": "Texas Association of Counties — County Judge and Commissioners",
+        "url": "https://texascountiesdeliver.org/county-officials/county-judge-and-county-commissioners/"
+      },
+      {
+        "label": "Texas Comptroller — Property Tax System Basics",
+        "url": "https://comptroller.texas.gov/taxes/property-tax/basics.php"
+      },
+      {
+        "label": "Texas Comptroller — Truth-in-Taxation",
+        "url": "https://comptroller.texas.gov/taxes/property-tax/truth-in-taxation/"
+      },
+      {
+        "label": "Texas Government Code Chapter 551 — Open Meetings",
+        "url": "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.551.htm"
+      },
+      {
+        "label": "Texas Government Code Chapter 552 — Public Information",
+        "url": "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.552.htm"
+      }
+    ],
+    "related": [
       "how-texas-counties-spend",
       "texas-property-tax-laws-explained",
-      "why-texas-has-no-income-tax",
+      "why-texas-has-no-income-tax"
     ],
-    cta: { label: "See What Your County Charges", href: "https://texasdefined.com/decide/property-taxes" },
+    "cta": {
+      "label": "Explore Texas Government Authority",
+      "href": "/texas-government"
+    }
   },
 
   "texas-border-geography-101": {
@@ -2441,48 +2526,129 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
 
   "how-texas-counties-spend": {
-    updated: "2026-06-03",
-    intro: [
-      "A Texas county's budget is dominated by public safety. Strip away the sheriff, the jail, and the courts, and there's not much left.",
+    "updated": "2026-11-04",
+    "editorNote": "Substantively revised November 2026. The previous generic spending-share estimates were removed because actual percentages vary by county and year. Use the cited adopted budgets and audited results for local comparisons.",
+    "intro": [
+      "Texas counties do not operate on one standard spending formula. A rural county with a small jail, a growing suburban county building roads, and a metropolitan county with a large court system can have very different budgets. An old chart of supposedly typical percentages cannot tell a taxpayer what any particular county actually spends.",
+      "The useful question is narrower and verifiable: what did the commissioners court adopt for the fiscal year, what money may be spent from each fund, and how much was actually spent when the year ended? Texas Local Government Code Chapter 111 describes county budgeting, with different procedures depending on population and the budget method a county uses."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "Where the Money Goes (Typical County)",
-        table: {
-          headers: ["Function", "Approximate Share"],
-          rows: [
-            ["Sheriff's office & patrol", "20-25%"],
-            ["Jail operations", "15-20%"],
-            ["District & county courts", "10-15%"],
-            ["Indigent defense", "5-7%"],
-            ["Road & bridge", "10-12%"],
-            ["Administration & elections", "5-10%"],
-          ],
-        },
+        "heading": "Who controls county spending",
+        "paragraphs": [
+          "The commissioners court is the county's principal governing body for county finances. It consists of the county judge and four county commissioners. It adopts the budget, sets the county property-tax rate, approves many purchases and contracts, and decides how available money is allocated among lawful county purposes. That does not mean commissioners can direct the outcome of an individual court case or override duties that state law assigns to independently elected county officials.",
+          "Budget preparation is not identical statewide. Chapter 111 provides different procedures for different county populations and permits certain counties to use an appointed budget officer. The county judge is the budget officer under the statutory method applicable to many smaller counties; the county auditor has a major role under another method. Identify which subchapter your county uses before assuming a deadline or official from a different county applies."
+        ]
       },
+      {
+        "heading": "What a county budget actually buys",
+        "paragraphs": [
+          "Common county functions include the sheriff and jail, criminal and civil courts, prosecutors and public defense obligations, elections and records offices, roads and bridges under county responsibility, facilities, information systems, and debt service. A county may also support public health, emergency management, parks, libraries, or other programs, but the exact scope depends on local arrangements and statutory authority.",
+          "Do not interpret one department label as a complete service cost. Jail-related spending, for example, may appear under staffing, health care, food service, contracted operations, facilities, and capital construction. Court costs can be split among judicial offices, clerks, juries, indigent defense, and court security. Compare consistent classifications, not only the largest line in one department."
+        ]
+      },
+      {
+        "heading": "Find the adopted budget, amendments, and actual results",
+        "paragraphs": [
+          "Start with the county's official website. Search for the adopted budget for the precise fiscal year you are examining, commissioners court agendas and minutes, tax-rate adoption documents, and the annual financial report or audit. Texas Comptroller local-government transparency resources may help locate financial reporting, but the county's own adopted documents remain the starting point for what it authorized.",
+          "The proposed budget, adopted budget, and audited actual spending answer different questions. A proposal is not an appropriation. An adopted appropriation authorizes spending under applicable law. A later amendment can move amounts or authorize other changes under the applicable Chapter 111 procedure. The year-end report shows results after actual transactions and accounting adjustments. Label these versions separately in any comparison."
+        ]
+      },
+      {
+        "heading": "Use the funds, not just the grand total",
+        "paragraphs": [
+          "County reports often separate a general fund, road-and-bridge activities, special-revenue funds, debt-service funds, and capital projects. Restrictions matter: a dedicated grant or bond-financed project cannot automatically be treated as cash available for another purpose. A large one-time construction expense may inflate a year's total without showing a permanent increase in operating costs.",
+          "For a fair year-over-year comparison, use the same funds, fiscal-year dates and accounting basis. Check whether an activity moved between departments, whether a project was paid from accumulated reserves, and whether a new debt issue increased capital spending. These changes can make a percentage appear to rise or fall even when the underlying service level changed little."
+        ]
+      },
+      {
+        "heading": "Calculate spending shares from a real county's numbers",
+        "paragraphs": [
+          "Choose one year and one consistent total. For example, if you are evaluating the adopted general-fund budget, divide a department's general-fund appropriation by the total adopted general-fund expenditure budget for that same year, then multiply by 100. Do not mix a general-fund department numerator with an all-funds denominator or compare an adopted budget amount with an audited actual.",
+          "Record the document title, page, fiscal year, category, amount, denominator, and calculation. When a budget groups multiple activities together, say so. Without that source trail, claims such as 'county jails typically consume one fifth of spending' are not meaningful statewide benchmarks and should not be published as verified Texas averages."
+        ]
+      },
+      {
+        "heading": "Where the revenue comes from",
+        "paragraphs": [
+          "County governments commonly rely on property taxes as a major funding source, alongside fees, grants, intergovernmental revenue, and other amounts authorized by law. Revenue composition varies. Texas has no state property tax; each eligible local taxing unit determines its own tax rate within the legal framework. The property appraisal process and the county's decision about its tax rate are separate steps.",
+          "Inspect the revenue section of the same budget you used for spending analysis. Property-tax revenue growth can reflect changes in taxable value, the adopted tax rate, exemptions, and new construction. Grant revenue can have use restrictions or matching obligations. Debt proceeds are financing, not recurring operating income. These distinctions matter before describing a county as able to afford a permanent program."
+        ]
+      },
+      {
+        "heading": "Public hearings, votes, and spending changes",
+        "paragraphs": [
+          "Texas Local Government Code Chapter 111 requires public budget steps, including filing, inspection and hearings under the applicable subchapter. The county's exact notice requirements and timing depend on the statutory procedure. The commissioners court adopts the budget, and some versions of the statute expressly require a recorded adoption vote and specified website postings.",
+          "A taxpayer can compare the published proposed budget with the adopted version, review the agenda packet for the budget hearing, and read the recorded votes. Later amendments are just as important when spending priorities change. Ask for the order or minutes authorizing an amendment rather than assuming every variation between the original budget and later financial reports was unauthorized."
+        ]
+      },
+      {
+        "heading": "Five questions worth asking before a budget vote",
+        "bullets": [
+          "Which fiscal year, accounting basis, and funds does the advertised total cover?",
+          "How much of the proposed increase is recurring staff and operations versus one-time capital construction?",
+          "Are sheriff, jail, court, and road costs broken out consistently with last year?",
+          "Which revenue sources are legally restricted or depend on grants, bonds, or one-time transfers?",
+          "Where are the public hearing notice, adopted budget, recorded vote, amendments, and latest audited actual figures?"
+        ]
+      },
+      {
+        "heading": "What this guide does not estimate",
+        "paragraphs": [
+          "This is a guide to checking a specific county's public records, not a ranking of all Texas counties. It does not claim a statewide average share for law enforcement, jails, roads, or courts, because that would require a comparable, current data set with harmonized categories and fund treatment. A county-by-county comparison should publish its source year and calculation method so a reader can reproduce it.",
+          "For the legal procedures, start with Chapter 111. For the commissioner's role and the distinction between a county judge and a court, consult the Texas Association of Counties explanation. For local tax-rate and financial transparency materials, use the Texas Comptroller's resources. These sources describe the framework; the particular county's actual documents establish its numbers."
+        ]
+      }
     ],
-    faq: [
+    "faq": [
       {
-        q: "Who sets the county budget?",
-        a: "The five-member Commissioners Court — the county judge plus four precinct commissioners.",
+        "q": "Does every Texas county spend the same percentage on the sheriff or jail?",
+        "a": "No. Population, detention arrangements, service responsibilities, capital projects, and fund classifications differ. Calculate the share using the adopted or actual financial report of the county and year you are assessing."
       },
       {
-        q: "Why is the jail so expensive?",
-        a: "Counties bear nearly all pretrial detention costs and most jails operate 24/7 with state-mandated staffing ratios.",
+        "q": "Who votes on a Texas county budget?",
+        "a": "The county judge and four commissioners, acting as the commissioners court, adopt the county budget under the applicable Texas Local Government Code Chapter 111 process."
       },
+      {
+        "q": "Can a county change its budget after adoption?",
+        "a": "Chapter 111 provides budget-amendment and transfer mechanisms that vary by the applicable county budgeting procedure. Review the commissioners court's recorded order and the amended budget rather than assuming the original plan never changes."
+      },
+      {
+        "q": "Where can I verify a county's real spending?",
+        "a": "Use the county's adopted budget, commissioners court minutes, and year-end financial report or audit for the same fiscal year. The Texas Comptroller's local-government transparency pages provide supplementary reporting resources."
+      }
     ],
-    sources: [
+    "sources": [
       {
-        label: "Texas Association of Counties — Budgets",
-        url: "https://www.county.org/Education-Training/County-Budgets",
+        "label": "Texas Local Government Code, Chapter 111 — County Budget",
+        "url": "https://statutes.capitol.texas.gov/Docs/LG/htm/LG.111.htm"
       },
       {
-        label: "Texas Comptroller — Local Finances",
-        url: "https://comptroller.texas.gov/transparency/local/",
+        "label": "Texas Association of Counties — County Judge and Commissioners",
+        "url": "https://texascountiesdeliver.org/county-officials/county-judge-and-county-commissioners/"
       },
+      {
+        "label": "Texas Comptroller — Local Government Transparency",
+        "url": "https://comptroller.texas.gov/transparency/local/"
+      },
+      {
+        "label": "Texas Comptroller — Property Tax System Basics",
+        "url": "https://comptroller.texas.gov/taxes/property-tax/basics.php"
+      },
+      {
+        "label": "Texas Comptroller — Truth-in-Taxation",
+        "url": "https://comptroller.texas.gov/taxes/property-tax/truth-in-taxation/"
+      }
     ],
-    related: ["what-local-governments-control", "texas-property-tax-laws-explained", "why-texas-has-no-income-tax"],
-    cta: { label: "Use TexasDefined Property-Tax Tools", href: "https://texasdefined.com/decide/property-taxes" },
+    "related": [
+      "what-local-governments-control",
+      "texas-property-tax-laws-explained",
+      "why-texas-has-no-income-tax"
+    ],
+    "cta": {
+      "label": "Examine Texas Local Government Financial Reporting",
+      "href": "https://comptroller.texas.gov/transparency/local/"
+    }
   },
 
   "texas-water-rights-explained": {
