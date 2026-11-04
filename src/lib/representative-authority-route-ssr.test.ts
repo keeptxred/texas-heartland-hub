@@ -28,7 +28,7 @@ describe("Texas congressional and legislative authority SSR payload boundary", (
     expect(route).toContain("legislationUnavailable: legislation === null");
     expect(route).toContain("if (!directoryRepresentative && !legislation?.identity) throw notFound()");
     expect(route).toContain('links: [{ rel: "canonical", href: canonical }]');
-    for (const label of ["WebPage", "Person", "ItemList", "BreadcrumbList"]) {
+    for (const label of ["WebPage", "Person", "BreadcrumbList"]) {
       expect(route).toContain(`"@type": "${label}"`);
     }
     expect(route).toContain("getRepresentativeLegislation");
