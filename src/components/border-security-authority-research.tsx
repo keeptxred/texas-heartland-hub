@@ -9,8 +9,9 @@ const sources = {
   gaa: "https://lbb.texas.gov/Documents/Appropriations_Bills/89/Final/General_Appropriations_Act_2026_2027.pdf",
   txdot: "https://www.txdot.gov/projects/projects-studies/statewide/texas-mexico-border-crossings.html",
   planning: "https://www.txdot.gov/projects/planning/international-trade-border-planning.html",
+  crossingCounts: "https://www.txdot.gov/projects/planning/international-trade-border-planning/btmp.html",
   sb4: "https://capitol.texas.gov/tlodocs/884/billtext/pdf/SB00004F.pdf",
-  firstAppeal: "https://www.govinfo.gov/app/details/USCOURTS-ca5-24-50149",
+  firstAppeal: "https://www.ca5.uscourts.gov/Opinions/pub/24/24-50149-CV2.pdf",
   secondAppeal: "https://www.tmcec.com/wp-content/uploads/2026/05/26-50418_documents.pdf",
   timeline: "https://www.tmcec.com/resources/sb4/",
   uscourts: "https://pacer.uscourts.gov/",
@@ -82,14 +83,14 @@ export function BorderSecurityAuthorityResearch() {
   const after = BORDER_SECURITY_TOTALS.biennium2026_27Millions;
   const change = borderSecurityFundingChangePercent();
   return (
-    <article className="mx-auto max-w-6xl px-4 pb-14 text-foreground" aria-labelledby="texas-border-research-heading">
+    <article className="mt-8 pb-8 text-foreground" aria-labelledby="texas-border-research-heading">
       <header className="border-t pt-10">
         <p className="text-xs font-bold uppercase tracking-[0.16em] text-primary">Texas border public-records reference</p>
         <h2 id="texas-border-research-heading" className="mt-3 font-display text-3xl tracking-tight md:text-4xl">Who controls what, what Texas budgeted, and how to check the law</h2>
         <p className="mt-4 max-w-4xl text-base leading-8">
           A single border headline may mix state policing, federal immigration administration, Guard deployments, and a court order. Those are different questions with different sources. This reference puts them side by side, then connects budget totals and border geography to the records behind them.
         </p>
-        <p className="mt-4 text-sm text-muted-foreground">Prepared by the Keep TX Red editorial desk · Source-check completed November 4, 2026 for the records cited below. Court dockets can change after this review. This is public-policy research, not legal advice.</p>
+        <p className="mt-4 text-sm text-muted-foreground">Prepared by the <a href="/editorial-standards" className="font-semibold text-primary underline underline-offset-4">Keep TX Red editorial desk</a> · Source-check completed November 4, 2026 for the records cited below. Court dockets can change after this review. This is public-policy research, not legal advice.</p>
         <nav aria-label="Sections of this border-security reference" className="mt-6 flex flex-wrap gap-x-5 gap-y-3 text-sm font-bold">
           <a href="#border-powers" className="text-primary underline underline-offset-4">Authority comparison</a>
           <a href="#border-spending" className="text-primary underline underline-offset-4">Budget by agency</a>
@@ -135,7 +136,7 @@ export function BorderSecurityAuthorityResearch() {
           Texas's <Source href={sources.sb4}>2023 SB 4 (88th Legislature, Fourth Called Session)</Source> added state illegal-entry and reentry offenses and provisions concerning return orders. The legal dispute is not resolved by quoting the law alone: a reader must distinguish the statutory text from orders in specific federal lawsuits.
         </p>
         <ol className="mt-5 space-y-5 border-l-2 border-primary/30 pl-6">
-          <li><strong>April 24, 2026 — Fifth Circuit, No. 24-50149:</strong> the en banc court vacated a preliminary injunction because the plaintiffs lacked Article III standing. It <em>did not decide</em> the merits of the preemption challenge. <Source href={sources.firstAppeal}>Official archived appellate opinion</Source>.</li>
+          <li><strong>April 24, 2026 — Fifth Circuit, No. 24-50149:</strong> the en banc court vacated a preliminary injunction because the plaintiffs lacked Article III standing. It <em>did not decide</em> the merits of the preemption challenge. <Source href={sources.firstAppeal}>Read the Fifth Circuit’s April 24 opinion (PDF)</Source>.</li>
           <li><strong>May 14, 2026 — Western District of Texas, No. 1:26-cv-01170:</strong> in <em>L.M.L. & K.G.S. v. Martin</em>, the district court preliminarily enjoined certain reentry and return-order provisions, while leaving other portions outside that particular injunction. <Source href={sources.timeline}>Texas Municipal Courts Education Center case summary and links</Source>.</li>
           <li><strong>May 29, 2026 — Fifth Circuit, No. 26-50418:</strong> the appeals court stayed the May 14 preliminary injunction pending appeal. A stay is not a final holding that the challenged statute is constitutional. <Source href={sources.secondAppeal}>Read the appellate order</Source>.</li>
         </ol>
@@ -150,7 +151,7 @@ export function BorderSecurityAuthorityResearch() {
       <section id="border-geography" className="mt-12 scroll-mt-24">
         <h3 className="font-display text-2xl tracking-tight">4. Five border regions that should not be treated as one story</h3>
         <p className="mt-3 max-w-4xl text-sm leading-7">
-          TxDOT describes a <strong>1,254-mile</strong> Texas–Mexico boundary and lists <strong>28 international bridges and border crossings</strong> in its crossing inventory. Other TxDOT planning materials count broader multimodal crossing facilities differently, so do not combine totals without the source definition. A bridge traffic delay, a remote river barrier, and a Border Patrol sector encounter are not interchangeable measurements. <Source href={sources.txdot}>TxDOT crossing inventory</Source>.
+          TxDOT describes a <strong>1,254-mile</strong> Texas–Mexico boundary. Its public <Source href={sources.txdot}>crossing inventory</Source> lists <strong>28 international bridges and crossings</strong>, while the <Source href={sources.crossingCounts}>multimodal Border Transportation Master Plan update</Source> counts <strong>34 crossings: 28 vehicle, 5 rail and 1 pedestrian</strong>. Those figures use different facility definitions, not different border lengths. A bridge traffic delay, a remote river barrier, and a Border Patrol sector encounter are not interchangeable measurements.
         </p>
         <div className="mt-5 grid gap-3 md:grid-cols-2">
           {regions.map((region) => <div key={region.area} className="rounded-xl border p-5">
