@@ -12,9 +12,11 @@ type BillSearch = {
   legislature: number;
   chamber: string;
   billType: string;
-  session: string;
-  sponsor: string;
-  sort: 'latest' | 'oldest' | 'bill-number';
+  // Optional in the typed URL contract so existing cross-site /bills links
+  // do not have to repeat default values. validateSearch populates defaults.
+  session?: string;
+  sponsor?: string;
+  sort?: 'latest' | 'oldest' | 'bill-number';
   kind?: 'substantive' | 'resolutions' | 'all';
   page: number;
 };
@@ -33,7 +35,7 @@ const DEFAULT_SEARCH: BillSearch = {
 };
 
 function hasBillFilters(search: BillSearch) {
-  return Boolean(search.q || search.status || search.legislature || search.chamber || search.billType || search.session || search.sponsor || search.sort !== 'latest' || (search.kind && search.kind !== 'substantive'));
+  return Boolean(search.q || search.status || search.legislature || search.chamber || search.billType || search.session || search.sponsor || (search.sort && search.sort !== 'latest') || (search.kind && search.kind !== 'substantive'));
 }
 
 function paginationPages(current: number, total: number): number[] {
