@@ -4539,7 +4539,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 70,
     party: "D",
-    website: "https://house.texas.gov/members/70",
+    website: "https://house.texas.gov/members/4345",
     imageUrl: "https://house.texas.gov/images/members/4345.jpg?v=1",
     officialCode: null,
     home: "900 E. Park Blvd. Suite 140-C, Plano, TX 75074",
@@ -4579,7 +4579,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/70",
+          url: "https://house.texas.gov/members/4345",
         },
         {
           label: "Official member biography",
