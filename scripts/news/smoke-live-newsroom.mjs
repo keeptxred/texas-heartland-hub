@@ -292,12 +292,72 @@ async function checkIngestion() {
   }
 }
 
+/** Phase 2A: exercise rendered production robots, structured data and sitemap contracts.
+ * These deliberately use stored historical URLs and never generate a new article.
+ */
+async function checkNewsArchiveIndexability() {
+  const checked = [
+    { slug: "how-a-bill-becomes-texas-law", indexable: true },
+    { slug: "texas-policing-agencies-compared", indexable: true },
+    { slug: "2026-09-14-ercot-november-2026-grid-outlook-winter-risk", indexable: false },
+  ];
+  for (const { slug, indexable } of checked) {
+    const path = `/news/${slug}`;
+    const response = await fetchWithTimeout(`${baseUrl}${path}`, {
+      redirect: "manual",
+      headers: { Accept: "text/html", "Cache-Control": "no-cache", "User-Agent": "KeepTXRed-Archive-SEO-Smoke/1.0" },
+    });
+    const html = await response.text();
+    if (response.status !== 200 || /article not found|page not found|404 not found/i.test(html)) {
+      throw new Error(`archive ${path} not publicly readable: HTTP ${response.status}`);
+    }
+    const robots = extractMeta(html, "robots").toLowerCase();
+    const canonical = extractCanonical(html);
+    const expected = `https://keeptxred.com${path}`;
+    if (canonical !== expected) throw new Error(`archive canonical mismatch ${path}: ${canonical || "missing"}`);
+    if (indexable && robots.includes("noindex")) throw new Error(`protected authority article incorrectly noindex: ${path}`);
+    if (!indexable && !robots.includes("noindex")) throw new Error(`automated archive article incorrectly indexable: ${path}`);
+    if (!indexable && /<script[^>]*type=["']application\/ld\+json["'][^>]*>[\s\S]*?NewsArticle[\s\S]*?<\/script>/i.test(html)) {
+      throw new Error(`noindex archive retains misleading NewsArticle schema: ${path}`);
+    }
+    console.log(`OK archive ${path} indexable=${indexable} robots=${robots || "default"} canonical=${canonical}`);
+  }
+
+  for (const sitemap of ["/sitemap-news.xml", "/sitemap-evergreen.xml"]) {
+    const response = await fetchWithTimeout(`${baseUrl}${sitemap}`, {
+      headers: { Accept: "application/xml", "Cache-Control": "no-cache", "User-Agent": "KeepTXRed-Archive-SEO-Smoke/1.0" },
+    });
+    const xml = await response.text();
+    if (response.status !== 200 || !xml.includes("<urlset")) throw new Error(`invalid ${sitemap}: HTTP ${response.status}`);
+    if (xml.includes("2026-09-14-ercot-november-2026-grid-outlook-winter-risk")) {
+      throw new Error(`source-first automated archive leaked into ${sitemap}`);
+    }
+    console.log(`OK guarded article sitemap ${sitemap}`);
+  }
+
+  const removed = await fetchWithTimeout(`${baseUrl}/news/operation-lone-star`, {
+    redirect: "manual",
+    headers: { "User-Agent": "KeepTXRed-Archive-SEO-Smoke/1.0" },
+  });
+  if (removed.status !== 404) throw new Error(`explicitly retired static news returned ${removed.status}, expected 404`);
+  const moved = await fetchWithTimeout(`${baseUrl}/news/texas-constitutional-amendments-guide`, {
+    redirect: "manual",
+    headers: { "User-Agent": "KeepTXRed-Archive-SEO-Smoke/1.0" },
+  });
+  const location = moved.headers.get("location") || "";
+  if (moved.status !== 301 || new URL(location || baseUrl, baseUrl).pathname !== "/laws/constitutional-amendments") {
+    throw new Error(`static equivalent redirect invalid: HTTP ${moved.status} location=${location}`);
+  }
+  console.log("OK retired 404 and equivalent static 301");
+}
+
 const failures = [];
 for (const [label, check] of [
   ["coverage gaps admin route", () => retry("coverage gaps admin route", () => checkProtectedAdminRoute("/admin/coverage-gaps"))],
   ["deployment fingerprint", () => retry("deployment fingerprint", checkDeploymentFingerprint)],
   ["newsroom-health endpoint", () => retry("newsroom-health endpoint", checkNewsroomHealth)],
   ["verified historical news URL recovery", checkRecoveredHistoricalNewsUrls],
+  ["Phase 2A production article/sitemap indexability", () => retry("Phase 2A production article/sitemap indexability", checkNewsArchiveIndexability, 3, 5000)],
   ["feed ingestion", checkIngestion],
   ["TexasDefined routed publication", () => retry("TexasDefined routed publication", checkTexasDefinedLive, 10, 30000)],
   ["cross-site publication boundary", () => retry("cross-site publication boundary", checkCrossSiteBoundary, 10, 30000)],
