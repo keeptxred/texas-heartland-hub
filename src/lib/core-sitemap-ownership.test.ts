@@ -7,7 +7,7 @@ const legislatureSitemap = readFileSync(new URL("../routes/sitemap-legislature[.
 
 describe("core sitemap canonical ownership", () => {
   it("keeps Find Representative in an advertised primary sitemap", () => {
-    expect(rootSitemap).not.toContain('"sitemap-elections.xml"');
+    expect(rootSitemap).toContain('ELECTION_FEATURE_FLAGS.homepagePromotion ? ["sitemap-elections.xml"] : []');
     expect(rootSitemap).toContain('"sitemap-pages.xml"');
     expect(readFileSync(new URL("../routes/sitemap-pages[.]xml.ts", import.meta.url), "utf8")).toContain('"/find-representative"');
     expect(electionSitemap).toContain("renderUrlset([])");
