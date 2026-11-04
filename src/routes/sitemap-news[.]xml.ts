@@ -16,7 +16,6 @@ import { listSitemapArticles } from "@/lib/evergreen.functions";
 import { getNewsSitemapHeadlines } from "@/lib/news-sitemap.functions";
 import { isKeepTxRedSearchOwnedStory } from "@/lib/ktr-search-ownership";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
-import { isCloudArticleSearchEligibleByKind } from "@/lib/cloud-search-indexability";
 
 const WINDOW_MS = 48 * 60 * 60 * 1000;
 const MAX_NEWS_URLS = 1000;
@@ -65,7 +64,8 @@ export const Route = createFileRoute("/sitemap-news.xml")({
           const { articles } = await listSitemapArticles();
           const recentCloud = articles.filter((a) => {
             if (!isGoogleNewsArticleKind(a.kind)) return false;
-            if (!isCloudArticleSearchEligibleByKind(a.kind, a.quality_flags)) return false;
+            // listSitemapArticles already applies the same page-level recovery
+            // and provenance rules. Do not re-test stripped source fields here.
             if (!isKeepTxRedSearchOwnedStory({
               title: a.title,
               description: a.dek,

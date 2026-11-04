@@ -26,9 +26,11 @@ describe("article sitemap indexability alignment", () => {
   it("keeps automated cloud news suppressed while carrying governed authority flags through discovery", () => {
     const evergreenFunctions = readFileSync(join(ROOT, "src/lib/evergreen.functions.ts"), "utf8");
     const news = readFileSync(newsSitemap, "utf8");
-    expect(evergreenFunctions).toContain("isCloudArticleSearchEligibleByKind(a.kind, a.quality_flags)");
+    expect(evergreenFunctions).toContain("isCloudArticleSearchEligibleByKind(a.kind, a.quality_flags, articleProvenanceUrls(a))");
     expect(evergreenFunctions).not.toContain("quality_flags: _flags");
-    expect(news).toContain("isCloudArticleSearchEligibleByKind(a.kind, a.quality_flags)");
+    expect(news).toContain("listSitemapArticles()");
+    expect(news).not.toContain("isCloudArticleSearchEligibleByKind(a.kind, a.quality_flags)");
+    expect(evergreenFunctions).toContain("isLegacyArticleSearchEligible(slug, qualityFlags)");
   });
 
   it("keeps both guarded article sitemaps advertised by the deterministic root index", () => {

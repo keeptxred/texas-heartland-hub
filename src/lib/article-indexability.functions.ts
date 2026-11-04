@@ -3,7 +3,11 @@ import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { hasSeoDuplicateFlag } from "@/lib/article-canonical";
 import { isKeepTxRedSearchOwnedStory } from "@/lib/ktr-search-ownership";
-import { isCloudArticleSearchEligibleByKind } from "@/lib/cloud-search-indexability";
+import {
+  articleProvenanceUrls,
+  isCloudArticleSearchEligibleByKind,
+  isLegacyArticleSearchEligible,
+} from "@/lib/cloud-search-indexability";
 import {
   isPublicArticleReady,
   type PublicArticleCandidate,
@@ -24,7 +28,12 @@ export function shouldNoindexCloudArticle(
   if (Array.isArray(candidate) || candidate == null) {
     return hasSeoDuplicateFlag(candidate as string[] | null | undefined);
   }
-  if (!isCloudArticleSearchEligibleByKind(candidate.kind, candidate.quality_flags)) return true;
+  if (candidate.slug && !isLegacyArticleSearchEligible(candidate.slug, candidate.quality_flags)) return true;
+  if (!isCloudArticleSearchEligibleByKind(
+    candidate.kind,
+    candidate.quality_flags,
+    articleProvenanceUrls(candidate),
+  )) return true;
   return !isPublicArticleReady(candidate);
 }
 
@@ -36,7 +45,7 @@ export const getCloudArticleIndexability = createServerFn({ method: "GET" })
 
     const { data: row, error } = await supabase
       .from("daily_articles")
-      .select("title,dek,kind,category,discover_category,source_name,source_url,published_at,content_quality_score,body_json,quality_flags,image_url,featured_image_url,image_generation_status")
+      .select("slug,title,dek,kind,category,discover_category,source_name,source_url,published_at,content_quality_score,body_json,quality_flags,image_url,featured_image_url,image_generation_status")
       .eq("slug", data.slug)
       .maybeSingle();
 

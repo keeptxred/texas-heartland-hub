@@ -55,12 +55,55 @@ describe("shouldNoindexCloudArticle", () => {
     expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", quality_flags: ["search_recovery_authority", "editorial_reviewed"] }, true)).toBe(true);
   });
 
-  it("keeps the automated source-first recovery lane behind normal readiness gates", () => {
+  it("requires editorial approval before a source-first article may become indexable", () => {
     const sourceFirstFlags = ["search_recovery_source_first"];
-    expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", quality_flags: sourceFirstFlags }, true)).toBe(false);
+    const reviewedSourceFirst = [...sourceFirstFlags, "editorial_reviewed", "primary_sources"];
+    expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", quality_flags: sourceFirstFlags }, true)).toBe(true);
+    expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", quality_flags: reviewedSourceFirst }, true)).toBe(false);
     expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", content_quality_score: 59, quality_flags: sourceFirstFlags }, true)).toBe(true);
-    expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", image_generation_status: "failed", quality_flags: sourceFirstFlags }, true)).toBe(false);
+    expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", image_generation_status: "failed", quality_flags: reviewedSourceFirst }, true)).toBe(false);
     expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", quality_flags: ["search_recovery_source_first", "seo_duplicate"] }, true)).toBe(true);
+  });
+
+  it("enforces the same legacy live restoration rule as sitemap discovery", () => {
+    const live = {
+      ...readyRow,
+      slug: "live-2026-07-01-unrestored",
+      kind: "news",
+      // Meet the independent >=500-word legacy restoration floor so this
+      // test isolates the newly unified page/sitemap restoration flag.
+      body_json: {
+        ...readyRow.body_json,
+        intro: ["An independently sourced historical public-policy explanation."],
+        sections: [{
+          heading: "Substantive context",
+          paragraphs: [Array(550).fill("Verified historical context").join(" ")],
+        }],
+      },
+      quality_flags: ["search_recovery_authority", "editorial_reviewed", "primary_sources"],
+    };
+    expect(shouldNoindexCloudArticle(live, true)).toBe(true);
+    expect(shouldNoindexCloudArticle({
+      ...live,
+      quality_flags: [...live.quality_flags, "legacy_url_restored"],
+    }, true)).toBe(false);
+  });
+
+  it("rejects stale source-first flags without an actual official source URL", () => {
+    const sourceFirst = {
+      ...readyRow,
+      kind: "news",
+      quality_flags: ["search_recovery_source_first", "editorial_reviewed", "primary_sources"],
+    };
+    expect(shouldNoindexCloudArticle(sourceFirst, true)).toBe(false);
+    expect(shouldNoindexCloudArticle({
+      ...sourceFirst,
+      source_url: "https://example.com/article",
+      body_json: {
+        ...sourceFirst.body_json,
+        sources: [{ label: "Secondary", url: "https://example.com/article" }],
+      },
+    }, true)).toBe(true);
   });
 
   it("allows image-deferred articles through editorial readiness while preserving quarantine", () => {

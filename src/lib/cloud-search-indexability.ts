@@ -18,6 +18,32 @@ export const SEARCH_RECOVERY_SUPPRESSED_CLOUD_KINDS = [
 export const SEARCH_RECOVERY_AUTHORITY_FLAG = "search_recovery_authority";
 export const SEARCH_RECOVERY_SOURCE_FIRST_FLAG = "search_recovery_source_first";
 
+/** A legacy rapid-publish URL may enter search only after explicit restoration. */
+export function isLegacyArticleSearchEligible(
+  slug: string,
+  qualityFlags: string[] | null | undefined,
+): boolean {
+  if (!String(slug ?? "").trim().toLowerCase().startsWith("live-")) return true;
+  return (qualityFlags ?? []).some(
+    (flag) => String(flag).trim().toLowerCase() === "legacy_url_restored",
+  );
+}
+
+/** Read factual source URLs from the stored article, not from a quality flag. */
+export function articleProvenanceUrls(article: { source_url?: string | null; body_json?: unknown }): string[] {
+  const urls: string[] = [];
+  if (article.source_url) urls.push(article.source_url);
+  if (!article.body_json || typeof article.body_json !== "object") return urls;
+  const sources = (article.body_json as { sources?: unknown }).sources;
+  if (!Array.isArray(sources)) return urls;
+  for (const source of sources) {
+    if (source && typeof source === "object" && typeof source.url === "string") {
+      urls.push(source.url);
+    }
+  }
+  return urls;
+}
+
 const SUPPRESSED = new Set<string>(SEARCH_RECOVERY_SUPPRESSED_CLOUD_KINDS);
 const REQUIRED_AUTHORITY_FLAGS = [
   SEARCH_RECOVERY_AUTHORITY_FLAG,
@@ -26,8 +52,8 @@ const REQUIRED_AUTHORITY_FLAGS = [
 ] as const;
 
 /**
- * Official/public-source URLs that are strong enough to support the automated
- * source-first recovery lane. `.gov` covers federal, state, county, and local
+ * Official/public-source URLs that can support a source-first editorial review
+ * but are not by themselves permission to index automated reporting. `.gov` covers federal, state, county, and local
  * public agencies. ERCOT is included because it is the authoritative operator
  * and publisher for Texas grid/resource-adequacy data even though it uses .com.
  */
@@ -49,9 +75,10 @@ export function isSearchRecoveryPrimarySourceUrl(value: string | null | undefine
  *
  * 1. a manually reviewed authority item carrying all three review/provenance
  *    flags; or
- * 2. a source-first newsroom item carrying the internal flag emitted only by
- *    the post-publish finalizer after a >=90 quality score, source-integrity
- *    checks, repetition checks, and an official/public primary source.
+ * 2. a source-first newsroom item with an official/public primary source AND
+ *    documented editorial approval ("editorial_reviewed" and "primary_sources").
+ *    The finalizer's automated quality score and source-first flag alone
+ *    NEVER authorize indexing of external/RSS-derived content.
  *
  * All callers must still apply the normal public-readiness and site-ownership
  * gates. A recovery flag never overrides duplicate, thin, off-topic, image, or
@@ -60,6 +87,7 @@ export function isSearchRecoveryPrimarySourceUrl(value: string | null | undefine
 export function isCloudArticleSearchEligibleByKind(
   kind: string | null | undefined,
   qualityFlags: string[] | null | undefined = null,
+  provenanceUrls: readonly (string | null | undefined)[] = [],
 ): boolean {
   const normalizedKind = (kind ?? "").trim().toLowerCase();
   if (!SUPPRESSED.has(normalizedKind)) return true;
@@ -67,6 +95,13 @@ export function isCloudArticleSearchEligibleByKind(
   const flags = new Set(
     (qualityFlags ?? []).map((flag) => String(flag).trim().toLowerCase()),
   );
-  if (flags.has(SEARCH_RECOVERY_SOURCE_FIRST_FLAG)) return true;
+  // Keep auto-generated source-first flags for provenance/triage, not
+  // publication approval. A human-reviewed source-first exception must
+  // demonstrate both review flags and a real official source in current data.
+  if (flags.has(SEARCH_RECOVERY_SOURCE_FIRST_FLAG)) {
+    return flags.has("editorial_reviewed")
+      && flags.has("primary_sources")
+      && provenanceUrls.some(isSearchRecoveryPrimarySourceUrl);
+  }
   return REQUIRED_AUTHORITY_FLAGS.every((flag) => flags.has(flag));
 }

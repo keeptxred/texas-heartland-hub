@@ -2,6 +2,7 @@ import { hasSeoDuplicateFlag } from "@/lib/article-canonical";
 import { articleMainWordCount } from "@/lib/article-length";
 
 export type PublicArticleCandidate = {
+  slug?: string | null;
   kind?: string | null;
   category?: string | null;
   discover_category?: string | null;
