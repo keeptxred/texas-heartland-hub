@@ -267,6 +267,13 @@ jobs:
           print("Live payment runtime verification passed")
           PY
 
+      - name: Certify deployed representative pilot metadata and official research
+        if: steps.revision.outputs.deploy == 'true'
+        timeout-minutes: 5
+        env:
+          SITE_URL: ${{ env.PREVIEW_URL }}
+        run: python3 scripts/authority/verify-representative-pilot-production.py
+
       - name: Verify deployed law route ownership, H1s, and canonicals
         if: steps.revision.outputs.deploy == 'true'
         env:
