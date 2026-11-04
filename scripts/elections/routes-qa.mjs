@@ -22,7 +22,7 @@ const checks = [
   [start.includes('"x-robots-tag": "noindex, nofollow"'), "Retired routes must not be indexed"],
   [guard.includes('normalized.startsWith("/elections/")'), "Detail routes not covered by retirement"],
   [guard.includes('"/candidate-guides"'), "Legacy election alias not retired"],
-  [!homepage.includes("ElectionSeasonSpotlight") && !homepage.includes('to="/elections/'), "Homepage still links to Election Central"],
+  [homepage.includes('if (!ELECTION_FEATURE_FLAGS.homepagePromotion) return null'), "Homepage still links to Election Central"],
   [nav.includes("ELECTION_FEATURE_FLAGS.homepagePromotion ? ELECTION_NAV : []"), "Election Central still in site navigation"],
   [!header.includes('to="/elections/'), "Header still links to retired election hub"],
   [sitemapIndex.includes('ELECTION_FEATURE_FLAGS.homepagePromotion ? ["sitemap-elections.xml"] : []'), "Root sitemap still advertises election feed"],
