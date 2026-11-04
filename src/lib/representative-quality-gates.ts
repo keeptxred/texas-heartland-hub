@@ -108,6 +108,18 @@ export const SIX_PROFILE_PILOT = [
   "dan-crenshaw", "john-cornyn",
 ] as const;
 
+/** Checked against current official member pages 2026-11-04. Each entry must
+ * independently pass all A-F gates before appearing in the representative sitemap. */
+export const SCRIPT2_REVIEWED_SLUGS = [
+  "brent-money", "will-metcalf", "tan-parker", "royce-west",
+  "joanne-shofner", "lois-kolkhorst", "richard-hayes", "cesar-blanco",
+] as const;
+
+export const CERTIFICATION_CANDIDATE_SLUGS = [
+  ...SIX_PROFILE_PILOT,
+  ...SCRIPT2_REVIEWED_SLUGS,
+] as const;
+
 export function applyPilotEditorial(
   slug: string,
   authority: RepresentativeAuthority | null,
