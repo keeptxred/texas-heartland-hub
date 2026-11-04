@@ -231,10 +231,12 @@ function RepresentativeProfile() {
             </a>
           ) : null}
           <a
-            href={`/elections/candidates?q=${encodeURIComponent(name)}`}
+            href="https://www.sos.state.tx.us/elections/historical/elections-results-archive.shtml"
+            target="_blank"
+            rel="noopener noreferrer"
             className="rounded-md border px-4 py-2.5 text-sm font-bold"
           >
-            Related election records
+            Official Texas election results archive
           </a>
         </div>
         {profileAuthority ? (
@@ -291,10 +293,12 @@ function RepresentativeProfile() {
                   </ol>
                 ) : null}
                 <a
-                  href={`/elections/candidates?q=${encodeURIComponent(name)}`}
+                  href="https://www.sos.state.tx.us/elections/historical/elections-results-archive.shtml"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="mt-5 inline-block font-semibold text-primary hover:underline"
                 >
-                  Search related election records →
+                  Verify election results in the official state archive →
                 </a>
               </AuthoritySection>
               ) : null}
@@ -312,17 +316,17 @@ function RepresentativeProfile() {
             </dl>
             {district ? (
               <a
-                href={`/elections/districts/${districtRouteSlug(district)}`}
+                href={districtResearchPath(office, district)}
                 className="mt-5 inline-block font-semibold text-primary hover:underline"
               >
-                View district election authority page →
+                View official district information →
               </a>
             ) : (
               <a
-                href="/elections/statewide"
+                href={federal ? "https://www.senate.gov/states/TX/intro.htm" : "/representatives"}
                 className="mt-5 inline-block font-semibold text-primary hover:underline"
               >
-                View statewide elections →
+                {federal ? "Official Texas Senate delegation →" : "View Texas representatives directory →"}
               </a>
             )}
           </section>
@@ -396,12 +400,12 @@ function RepresentativeProfile() {
                 <a
                   href={
                     district
-                      ? `/elections/districts/${districtRouteSlug(district)}`
-                      : "/elections/statewide"
+                      ? districtResearchPath(office, district)
+                      : federal ? "https://www.senate.gov/states/TX/intro.htm" : "/representatives"
                   }
                   className="mt-4 inline-block font-semibold text-primary hover:underline"
                 >
-                  {district ? "District" : "Statewide"} election authority page →
+                  {district ? "Official district information" : "Texas office directory"} →
                 </a>
               </AuthoritySection>
               {news.length ? (
@@ -544,15 +548,12 @@ function partyLabel(party?: string | null) {
   return party;
 }
 
-function districtRouteSlug(district: string) {
-  const congressional = /^TX-(\d+)/i.exec(district);
-  if (congressional) return `congressional-district-${congressional[1]}`;
-  const house = /house\s*(?:district)?\s*(\d+)/i.exec(district);
-  if (house) return `texas-house-district-${house[1]}`;
-  const senate = /senate\s*(?:district)?\s*(\d+)/i.exec(district);
-  if (senate) return `texas-senate-district-${senate[1]}`;
-  return district
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
+function districtResearchPath(office: string, district: string): string {
+  const house = /house\\s*(?:district)?\\s*(\\d+)/i.exec(district);
+  const senate = /senate\\s*(?:district)?\\s*(\\d+)/i.exec(district);
+  if (office === "Texas House" && house) return `/districts/texas-house-${house[1]}`;
+  if (office === "Texas Senate" && senate) return `/districts/texas-senate-${senate[1]}`;
+  // Our /districts index currently covers Texas state legislative districts.
+  // Do not pretend federal congressional districts have KTR authority pages.
+  return "https://www.house.gov/representatives/find-your-representative";
 }
