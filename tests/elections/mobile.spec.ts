@@ -63,7 +63,7 @@ for (const route of ROUTES) {
 
     const response = await page.goto(route, { waitUntil: "domcontentloaded" });
     if (process.env.VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE !== "true") {
-      expect(response?.status(), `${route} should be hidden when Election Central is off`).toBe(410);
+      expect(response?.status(), `${route} should be hidden when Election Central is off`).toBe(404);
       return;
     }
     expect(response?.status(), `${route} returned an error status`).toBeLessThan(400);
