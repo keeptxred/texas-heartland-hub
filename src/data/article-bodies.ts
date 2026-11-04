@@ -1914,60 +1914,152 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
 
   "how-a-bill-becomes-texas-law": {
-    updated: "2026-05-20",
-    editorNote: "Updated May 2026 by the Keep TX Red editorial team.",
-    intro: [
-      "The Texas Legislature meets in regular session for 140 days every other year. In that window, lawmakers file roughly 7,000 bills and pass fewer than 1,500. Knowing how a bill moves through the process is the difference between effective advocacy and shouting into the void.",
-      "Here is the path every Texas bill takes from filing to the Governor's desk — and the chokepoints where citizens can actually influence it.",
+    "updated": "2026-11-04",
+    "editorNote": "Substantively reviewed November 2026 against Texas Legislature Online's bill-tracking instructions and the Texas Constitution. Earlier text incorrectly implied every bill receives a hearing and conference committee.",
+    "intro": [
+      "A bill does not become Texas law merely because it has been filed, assigned to a committee, or passed one chamber. The Texas Legislature follows a series of procedural stages, and many filed bills stop without a public hearing or final floor vote. Knowing the difference is essential when a headline says lawmakers are 'considering' or 'advancing' a proposal.",
+      "Texas Legislature Online (TLO) is the public starting point for checking a bill number, filed text, sponsors, committee referral, amendments, votes, governor action and final enrolled law. This guide explains the decision points and how a voter can verify them without confusing a proposal with an enacted requirement."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "The Eight Steps",
-        bullets: [
-          "Filed with the House or Senate clerk and assigned a number.",
-          "Referred to committee by the Speaker or Lieutenant Governor.",
-          "Committee hearing — the only stage where public testimony is taken.",
-          "Committee vote to report the bill favorably (or kill it).",
-          "Calendars Committee (House) or Intent Calendar (Senate) schedules floor debate.",
-          "Second and third reading on the floor — amendments allowed at second reading.",
-          "Conference committee reconciles House and Senate versions.",
-          "Governor signs, vetoes, or lets it become law without a signature.",
-        ],
+        "heading": "Step 1: a member files a proposal",
+        "paragraphs": [
+          "A representative or senator introduces legislation during an authorized session, subject to the filing and chamber rules. A House bill and a Senate bill use different prefixes and numbering; a number must be considered together with its legislative session. Different sessions can reuse the same bill number for unrelated proposals.",
+          "The filed text describes the first version, not necessarily the version that becomes law. Read the caption and the substantive provisions, note the filing date and author, and watch for committee substitutes or later amendments. Statements made during filing are explanations or advocacy, not amendments to current law.",
+          "TLO's bill status and history pages identify official actions. If you have a headline but not a bill number, search the subject and keywords, then verify that the bill matches the correct session before sharing a link."
+        ]
       },
       {
-        heading: "Regular Session vs. Special Session",
-        paragraphs: [
-          "A regular session lasts 140 days and starts the second Tuesday of January in odd-numbered years. Only the Governor can call a special session, which is limited to 30 days and to the subjects the Governor lists in the call.",
-        ],
+        "heading": "Step 2: a presiding officer assigns the bill to a committee",
+        "paragraphs": [
+          "Following introduction, a bill may be referred to a committee in its originating chamber. The committee has jurisdiction over particular subjects and determines whether to schedule discussion under its rules. A referral is important, but it does not mean the measure has received committee approval or even a hearing date.",
+          "Committee assignments matter because members may receive testimony, request information from agencies, deliberate on alternatives and propose a substitute text. Use the committee's official meeting notices, agendas and minutes to distinguish scheduled consideration from actual committee votes."
+        ]
       },
+      {
+        "heading": "Step 3: hearing, testimony and committee report",
+        "paragraphs": [
+          "A public committee hearing provides a formal opportunity for citizens, affected organizations and agencies to address pending legislation. But it is wrong to say every bill receives a hearing. Bills can remain pending until deadlines pass. Some are considered in forms or meetings governed by different rules, and a written submission is not the same as testimony recorded at a hearing.",
+          "Check the meeting notice for the correct hearing date, registration instructions and participation rules. Afterward, consult committee minutes and any archived broadcast or record. A favorable committee report moves a bill toward later stages but still does not make it law.",
+          "A committee substitute can substantially rewrite the original proposal. Compare the substitute with the introduced version; focusing only on the original filing may miss the provisions that lawmakers later vote on."
+        ]
+      },
+      {
+        "heading": "Step 4: eligibility for the floor calendar",
+        "paragraphs": [
+          "A bill reported from committee must still navigate each chamber's floor-scheduling and calendar rules. House and Senate procedures differ, and there are deadlines for certain types of action. A favorable committee vote does not guarantee debate by the full House or Senate.",
+          "The TLO calendar and chamber journal can show whether a bill was actually scheduled, taken up and voted on. Treat an announcement that a bill is 'headed to the floor' as a procedural expectation until the official calendar or journal confirms the next step."
+        ]
+      },
+      {
+        "heading": "Step 5: floor debate, amendments and chamber passage",
+        "paragraphs": [
+          "On the chamber floor, members debate proposals and may consider amendments according to chamber rules. Texas constitutional provisions and chamber rules address readings and passage. Important votes, including final passage votes, are recorded in the chamber's official journal.",
+          "A bill described as 'passed the House' may still need Senate consideration, and vice versa. Passage in its originating chamber is not gubernatorial approval. Verify the final text passed, the recorded vote and the chamber before describing a bill as enacted."
+        ]
+      },
+      {
+        "heading": "Step 6: the second chamber may change the bill",
+        "paragraphs": [
+          "The other legislative chamber conducts its own consideration and may approve the same text, make amendments, or decline to take the bill up. If both chambers approve identical language under the governing procedures, the measure need not automatically go to a conference committee.",
+          "When the House and Senate pass different versions, lawmakers may resolve differences through concurrence or other permitted procedures. A conference committee can be appointed for unresolved differences, but not every successful bill goes through conference. Check the official history for the actual action taken.",
+          "This distinction matters when a news report treats a conference report as inevitable. A bill may die during inter-chamber disagreement, may be amended through another process, or may reach enrollment without conference. Report what the record shows, not an assumed universal eight-step path."
+        ]
+      },
+      {
+        "heading": "Step 7: enrollment and governor action",
+        "paragraphs": [
+          "After the required legislative passage steps, a bill is prepared in its enrolled form. The governor may sign it, veto it, or allow it to become law without a signature according to constitutional procedures and deadlines. The governor's ability to use a line-item veto is limited to appropriations matters, rather than an unrestricted power to delete any clause of any bill.",
+          "An enrolled bill is not itself proof that a law has taken effect. Separate the legislative passage date, governor's action, filing with the appropriate state authority and any later effective date. The bill status page and session laws can confirm the final procedural outcome."
+        ]
+      },
+      {
+        "heading": "Step 8: effective dates and codified law",
+        "paragraphs": [
+          "An enacted bill can specify an effective date, be subject to constitutional timing provisions, or take effect on another legally applicable date. A temporary provision may expire or be modified later. An effective date in a news article should come from the enacted text, not a filing or preliminary substitute.",
+          "Texas session laws and published statutes are useful for identifying final law. A bill may amend several code provisions; the actual statutory language, not only the headline, controls. When explaining a new law, link the reader to the enrolled act and then to the updated code sections if available."
+        ]
+      },
+      {
+        "heading": "Regular and special sessions are different",
+        "paragraphs": [
+          "The Texas Legislature normally meets in regular sessions in odd-numbered years for up to 140 days. The governor may call a special session, whose duration and subject matters are constrained by the Texas Constitution. A policy idea debated in one session does not automatically carry procedural status into the next.",
+          "Always verify the session identifier on TLO. When covering older bills or an upcoming session, do not refer to a proposal as 'currently moving' unless the official history shows current action. Historical bill pages remain useful as records, but they are not substitutes for live status."
+        ]
+      },
+      {
+        "heading": "Follow a bill yourself using primary records",
+        "bullets": [
+          "Write down the bill prefix, number and session; verify them on Texas Legislature Online.",
+          "Open the filed text and later substitutes or amendments to see what changed.",
+          "Inspect the status history, committee referral and meeting notice; do not treat referral as hearing approval.",
+          "Check calendars, chamber journals and record votes rather than relying only on a news headline.",
+          "If both chambers acted, compare their texts and any recorded concurrence or conference report.",
+          "Confirm enrollment and governor action, then read the enacted effective-date provision.",
+          "For analysis, record when you checked the page and distinguish pending, failed, enrolled, enacted and effective."
+        ]
+      },
+      {
+        "heading": "How this differs from browsing the KTR bill database",
+        "paragraphs": [
+          "KTR's /bills page is a discovery and search interface for Texas legislative records. It should not produce a separate independently indexable Google page for every bill number. When accuracy matters, compare the displayed overview against TLO's official history and documents, especially for amendments, sponsors or late procedural actions.",
+          "A meaningful KTR explainer should focus on what readers cannot get from a copied bill title: who has authority, how a provision affects existing law, what is uncertain, and what publicly verifiable records establish the conclusion. Do not create fresh AI articles for every newly filed bill or manufacture a claim that legislation has passed."
+        ]
+      }
     ],
-    faq: [
+    "faq": [
       {
-        q: "When can I testify on a bill?",
-        a: "Only during the committee hearing stage. Most committees post hearings 24-72 hours in advance on the Texas Legislature Online site.",
+        "q": "Does every filed Texas bill receive a committee hearing?",
+        "a": "No. A referral to committee does not guarantee the chair schedules a hearing; many proposals stop before further action. Verify official committee notices and minutes for the specific bill."
       },
       {
-        q: "Can the Governor line-item veto?",
-        a: "Only on appropriations bills. On every other bill, the Governor must sign or veto the entire bill.",
+        "q": "Does every Texas bill that passes both chambers require a conference committee?",
+        "a": "No. A conference may help resolve differences between House and Senate versions, but identical passage or other permitted agreement procedures can avoid a conference."
       },
       {
-        q: "Why do so many bills die?",
-        a: "Most bills never receive a committee hearing. Calendar deadlines and committee chair discretion kill the vast majority.",
+        "q": "Where can I verify the final version of a Texas law?",
+        "a": "Use Texas Legislature Online for status, enrolled text, votes and governor action, then consult published Texas session laws and statutes for the enacted language and effective-date provisions."
       },
+      {
+        "q": "When does a signed bill take effect?",
+        "a": "The applicable effective date depends on the Texas Constitution and the enacted bill's text. It is not necessarily the date the governor signed it."
+      },
+      {
+        "q": "Is a bill that passed one chamber already law?",
+        "a": "No. Passage in a single chamber is a procedural milestone, not enactment. The other chamber and the remaining legislative and executive steps must be checked."
+      }
     ],
-    sources: [
-      { label: "Texas Legislature Online", url: "https://capitol.texas.gov/" },
+    "sources": [
       {
-        label: "Texas Constitution Article III",
-        url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.3.htm",
+        "label": "Texas Legislature Online — How to Follow a Bill",
+        "url": "https://capitol.texas.gov/resources/FollowABill.aspx"
       },
+      {
+        "label": "Texas Legislature Online — Bill Search and Status",
+        "url": "https://capitol.texas.gov/"
+      },
+      {
+        "label": "Texas Constitution — Legislative Department, Article III",
+        "url": "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.3.htm"
+      },
+      {
+        "label": "Texas Constitution — Executive Department, Article IV",
+        "url": "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.4.htm"
+      },
+      {
+        "label": "Texas Legislature Online — Legislative Reference Library",
+        "url": "https://lrl.texas.gov/"
+      }
     ],
-    related: [
+    "related": [
       "texas-political-terminology",
       "texas-constitutional-amendments-guide",
-      "speaker-special-session",
+      "speaker-special-session"
     ],
-    cta: { label: "Find Your Representative", href: "/find-representative" },
+    "cta": {
+      "label": "Search Official Texas Bills and Actions",
+      "href": "/bills"
+    }
   },
 
   "primary-vs-general-election": {
@@ -2169,46 +2261,145 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
 
   "texas-energy-policy-guide": {
-    updated: "2026-06-08",
-    intro: [
-      "Texas produces more energy than any other state and most countries. Three agencies divide the regulatory pie — and almost none of it is what their names suggest.",
+    "updated": "2026-11-04",
+    "editorNote": "Substantively revised November 2026. Institutional duties and federal reliability oversight checked against PUCT, ERCOT and RRC primary materials; earlier blanket claim of no federal jurisdiction removed.",
+    "intro": [
+      "Texas energy policy is not governed by one agency. The state separately regulates oil and natural-gas production, utility service, and operation of much of the electric grid. Understanding which office is responsible matters when a household sees a high bill, an oil operator disputes a permit, or the state debates winter reliability.",
+      "The names can mislead: the Railroad Commission no longer regulates railroads; the Public Utility Commission oversees key utility and electricity-market functions; and ERCOT operates the electric system and wholesale market in its region under oversight rather than serving as a retail electric provider. State jurisdiction also does not eliminate federal reliability requirements for applicable bulk-electric facilities."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "The Three Regulators",
-        table: {
-          headers: ["Agency", "What It Actually Regulates"],
-          rows: [
-            ["Railroad Commission", "Oil, natural gas, pipelines (not railroads since 2005)."],
-            ["Public Utility Commission", "Retail electricity, water, telecom utilities."],
-            ["ERCOT", "Operates the grid that serves about 90% of Texas load."],
-          ],
-        },
+        "heading": "Three institutions, three different jobs",
+        "paragraphs": [
+          "The Railroad Commission of Texas regulates oil and gas exploration and production, pipeline safety for specified intrastate pipelines, and other energy-related activities assigned to it by law. Its name reflects its history, but railroad regulation was transferred away long ago. A Railroad Commission permit is not a household electric-rate ruling.",
+          "The Public Utility Commission of Texas is a state regulator with authority over electric utilities, competitive-electricity market rules and specific water and telecommunications matters, depending on the governing statute and provider. ERCOT is the independent system operator for most of the Texas grid, managing system balancing and wholesale settlements. These are not three interchangeable customer-service offices.",
+          "For a dispute, identify the product and actor first: a producing well, an oil-and-gas pipeline, a transmission line, a wholesale generator, a retail electricity contract, or a municipally owned utility may fall under different authorities."
+        ]
       },
       {
-        heading: "Why Texas Has Its Own Grid",
-        paragraphs: [
-          "ERCOT covers most of Texas as an electrical island, deliberately kept separate from the Eastern and Western Interconnections so federal regulators have no jurisdiction.",
-        ],
-      },
-    ],
-    faq: [
-      {
-        q: "Does Texas import electricity?",
-        a: "ERCOT is largely self-contained, though small DC ties exist with the Eastern grid and Mexico.",
+        "heading": "What ERCOT operates and what it does not own",
+        "paragraphs": [
+          "ERCOT coordinates electric power flows for the bulk of Texas load, administers the competitive wholesale electricity market in its region, and supports retail choice transactions in eligible areas. The Texas Legislature and PUCT set the governing framework, while ERCOT's board and stakeholder processes administer technical rules within that framework.",
+          "ERCOT does not itself own most power plants, transmission lines, neighborhood wires, or individual retail customer accounts. Generators build and run facilities, transmission and distribution utilities maintain physical networks, and retail electric providers bill many competitive-market consumers. Distinguishing the system operator from those companies prevents accountability from being assigned to the wrong organization.",
+          "An ERCOT system notice can describe reserves, scarcity, transmission constraints, and operational action, but a consumer asking about a damaged neighborhood line generally needs the transmission-and-distribution utility identified by the electricity account or outage map."
+        ]
       },
       {
-        q: "Who sets electricity prices?",
-        a: "In deregulated areas, the PUC supervises a competitive retail market; you pick your provider.",
+        "heading": "Why most, but not all, Texans are served by the ERCOT grid",
+        "paragraphs": [
+          "The ERCOT interconnection is electrically distinct from much of the Eastern and Western Interconnections, with limited ties and operational arrangements. It serves roughly 90 percent of Texas electric load, not every Texas address. Parts of the state rely on electric systems outside ERCOT, and their market and oversight arrangements can differ.",
+          "Some cities own utilities and some areas are served by electric cooperatives rather than competitive retail providers. A resident should check the provider and utility service territory before assuming they can select among retail plans, enter an ERCOT-specific complaint path, or use a particular wholesale-price explanation."
+        ]
       },
+      {
+        "heading": "State authority and federal reliability oversight coexist",
+        "paragraphs": [
+          "Texas policy has long placed substantial responsibility for much of its intrastate electricity market with state institutions. But the broad assertion that federal regulators have no authority over Texas's grid is incorrect. ERCOT's own compliance guidance states that applicable bulk-electric-system owners and operators are subject to federal requirements and oversight involving FERC, the North American Electric Reliability Corporation, and Texas Reliability Entity.",
+          "A useful distinction is between the jurisdiction for particular wholesale transactions or retail market decisions and the enforceable reliability standards applicable to qualifying facilities. The PUCT also administers Texas statutory requirements and oversees ERCOT protocols and other binding market documents. This overlapping framework should be described issue by issue, not with a blanket 'exempt from all federal regulation' claim."
+        ]
+      },
+      {
+        "heading": "Who sets retail bills and electricity-market rules?",
+        "paragraphs": [
+          "In retail-choice areas, customers often select a retail electric provider and contract plan while a transmission-and-distribution utility maintains physical delivery service. Contract rate terms, usage, regulated delivery charges, taxes and fees can all contribute to an actual bill. It is inaccurate to say ERCOT directly sets what each household must pay.",
+          "PUCT rules and state laws govern key aspects of retail competition, customer protections, and utility regulation. In municipal and cooperative territories, rates and governance may involve the utility's governing board and different statutory arrangements. Start by identifying the utility type, then read the applicable tariff or terms before comparing providers or filing a complaint.",
+          "Wholesale prices can affect costs passed through contracts or utility procurement, but consumers should distinguish spot-market movements from fixed-rate retail plans. A statewide price headline without a contract description is not a reliable estimate of a particular Texan's bill."
+        ]
+      },
+      {
+        "heading": "Oil, gas, and pipeline regulation are separate from electric-grid dispatch",
+        "paragraphs": [
+          "Railroad Commission records concern many state oil-and-gas production and pipeline matters, including permits and compliance. PUCT and ERCOT information concern different portions of the electricity sector. The agencies interact indirectly because natural gas is a major power-generation fuel, but a gas-well permit does not authorize ERCOT to dispatch an electric generator.",
+          "Energy policy discussions should specify whether the question is about upstream fuel production, gas transportation, a generating plant, an electric transmission line, utility customers, or the overall grid. Each can involve more than one regulator and additional environmental, federal or local legal obligations."
+        ]
+      },
+      {
+        "heading": "Reliability involves both physical equipment and market incentives",
+        "paragraphs": [
+          "Grid reliability depends on generation availability, demand forecasts, transmission constraints, weatherization, fuel supply, and operator procedures. A legislative proposal that funds dispatchable capacity addresses a different mechanism from a rule governing generator maintenance, transmission upgrades, or emergency conservation communications.",
+          "When evaluating a reliability proposal, ask which failure mode it targets, which entity must comply, how the cost is recovered, and what public record will demonstrate completion. Do not assume that installing one type of generation or changing one pricing mechanism eliminates every potential outage cause.",
+          "ERCOT publishes system conditions and market reports; PUCT posts rulemaking, orders and meetings; and the Legislature publishes bills and committee testimony. The strongest analysis traces a proposal to those records rather than repeating generalized grid talking points."
+        ]
+      },
+      {
+        "heading": "How legislation and appointments affect energy policy",
+        "paragraphs": [
+          "The Legislature may amend the Public Utility Regulatory Act and other state statutes, create reporting requirements, change financing mechanisms, or define the scope of agencies' responsibilities. The governor and state appointment processes can affect leadership and oversight. Proposed legislation is not binding law simply because it passed a committee or received a news conference.",
+          "Use Texas Legislature Online to see a bill's filed text, amendments, committee referrals, votes and final status. Then check the PUCT docket or rulemaking adopted under that law. A new statute may require agencies to develop implementation rules before a practical change reaches the market."
+        ]
+      },
+      {
+        "heading": "A source-first checklist for an energy-policy claim",
+        "bullets": [
+          "Identify the issue precisely: retail customer pricing, wholesale dispatch, power-plant permitting, oil-and-gas activity, line maintenance, or reliability compliance.",
+          "Read the responsible body's official statute, rule, tariff, docket, protocol or hearing record.",
+          "Verify whether the location is in the ERCOT service region and whether the customer has retail choice.",
+          "Separate proposals and legislative testimony from laws, adopted orders and actual enforcement actions.",
+          "Compare the claimed cost or benefit with the dated filing and explain what the evidence does not show.",
+          "Check which layer of state and federal oversight applies instead of saying either one has no role."
+        ]
+      },
+      {
+        "heading": "What to monitor after a major policy announcement",
+        "paragraphs": [
+          "A durable energy-policy guide should show how to follow the outcome, not merely recap a press release. Look for the enacted bill and effective date, agency rulemaking notice, docket filings, published ERCOT protocols or compliance deadlines, and any independent audit or enforcement report.",
+          "Use official meeting archives and public data where available. Note whether a quoted forecast concerns summer reserves, winter resources, fuel availability or long-term demand; these are distinct analytical products. For future coverage, link to the primary document and preserve the date of the forecast rather than presenting an older scenario as newly issued."
+        ]
+      }
     ],
-    sources: [
-      { label: "Texas Railroad Commission", url: "https://www.rrc.texas.gov/" },
-      { label: "Public Utility Commission of Texas", url: "https://www.puc.texas.gov/" },
-      { label: "ERCOT", url: "https://www.ercot.com/" },
+    "faq": [
+      {
+        "q": "Is the Railroad Commission responsible for Texas railroads today?",
+        "a": "No. Despite its historical name, the Railroad Commission now primarily regulates oil and gas, specified pipeline matters, and other assigned energy functions; rail oversight was transferred to other agencies."
+      },
+      {
+        "q": "Does ERCOT set my household electricity price?",
+        "a": "ERCOT administers wholesale-market and grid functions in its region. Your billed price depends on the retail contract or utility tariff, delivery charges, usage and applicable rules. ERCOT is generally not your retail electricity provider."
+      },
+      {
+        "q": "Is the ERCOT grid exempt from every federal regulation?",
+        "a": "No. ERCOT's own compliance guidance describes federal reliability oversight of qualifying bulk-electric-system facilities by FERC, NERC and Texas RE. The applicable authority depends on the issue and facility."
+      },
+      {
+        "q": "Who oversees ERCOT?",
+        "a": "The Public Utility Commission of Texas has jurisdiction over ERCOT activities under state law, and the Texas Legislature establishes the legal framework. ERCOT has a board and technical stakeholder processes."
+      }
     ],
-    related: ["texas-grid-ercot-explained", "texas-energy-economy-overview", "texas-water-rights-explained"],
-    cta: { label: "See Energy Coverage", href: "/news" },
+    "sources": [
+      {
+        "label": "ERCOT — Governance and PUCT Oversight",
+        "url": "https://www.ercot.com/about/governance"
+      },
+      {
+        "label": "ERCOT — Compliance in ERCOT",
+        "url": "https://www.ercot.com/mktrules/compliance"
+      },
+      {
+        "label": "ERCOT — About the Organization",
+        "url": "https://www.ercot.com/about"
+      },
+      {
+        "label": "Railroad Commission — Authority and Jurisdiction",
+        "url": "https://www.rrc.texas.gov/about-us/faqs/rrc-authority-and-jurisdiction"
+      },
+      {
+        "label": "Public Utility Commission of Texas",
+        "url": "https://www.puc.texas.gov/"
+      },
+      {
+        "label": "Texas Legislature Online",
+        "url": "https://capitol.texas.gov/"
+      }
+    ],
+    "related": [
+      "texas-grid-ercot-explained",
+      "texas-energy-economy-overview",
+      "texas-water-rights-explained"
+    ],
+    "cta": {
+      "label": "See Texas Energy and Grid Reporting",
+      "href": "/news"
+    }
   },
 
   "county-appraisal-districts-explained": {
