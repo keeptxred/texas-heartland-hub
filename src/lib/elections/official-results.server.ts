@@ -88,7 +88,7 @@ function raceId(title: string): string {
  * The source's polling-location percentage is NOT estimated vote completeness.
  */
 export function sosSourceAgeMinutes(label: string | null, now = Date.now()): number | null {
-  const match = label?.match(/^(\\d{1,2})\\/(\\d{1,2})\\/(2026)\\s+(\\d{1,2}):(\\d{2})\\s*(AM|PM)$/i);
+  const match = label?.match(/^(\d{1,2})\/(\d{1,2})\/(2026)\s+(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
   if (!match) return null;
   const month = Number(match[1]);
   const day = Number(match[2]);
