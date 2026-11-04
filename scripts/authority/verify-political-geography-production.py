@@ -41,7 +41,7 @@ CORE_SUPPORTING_PATHS = (
     "/texas-politics/how-texas-became-republican",
     "/texas-politics/texas-urban-suburban-rural-politics-history",
     COMPETITIVENESS_PATH,
-    "/elections/2026",
+    "/texas-politics",
 )
 
 
@@ -313,12 +313,6 @@ def verify_reciprocal_cluster() -> None:
         required_schema={"Article", "FAQPage"},
         required_hrefs={PILLAR_PATH},
     )
-    verify_cluster_page(
-        "/elections/2026",
-        expected_h1=None,
-        required_schema={"CollectionPage"},
-        required_hrefs={PILLAR_PATH, COMPETITIVENESS_PATH},
-    )
 
 
 def parse_locs(body: bytes, source: str) -> list[str]:
@@ -426,7 +420,7 @@ def main() -> int:
             print(f"FAIL: {failure}", file=sys.stderr)
         return 1
 
-    print(f"Political-geography production smoke passed: {len(ROUTES)} geography routes plus the reciprocal Keep Texas Red pillar, election-history, realignment, and Election Central cluster are intact across canonicals, indexability, schema, dates, backlinks, hub discovery, and dedicated sitemap ownership.")
+    print(f"Political-geography production smoke passed: {len(ROUTES)} geography routes plus the reciprocal Keep Texas Red pillar, election-history, realignment, and Texas Politics reference cluster are intact across canonicals, indexability, schema, dates, backlinks, hub discovery, and dedicated sitemap ownership.")
     return 0
 
 
