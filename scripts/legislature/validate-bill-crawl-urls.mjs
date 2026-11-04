@@ -25,6 +25,8 @@ requireText(index, [
   "content: filtered || search.page > 1",
   "const maxPage = Math.max(1, Math.ceil(results.count / 24));",
   "BillDetailPanel",
+  'name="sponsor"',
+  'name="session"',
   "billSearchKey",
   "setSelectedBill",
   "to=\"/bills\"",
@@ -34,7 +36,7 @@ if (index.includes('href={canonicalBillPath(bill)}')) errors.push('Hub still lin
 requireText(start, ["isRetiredBillDocumentPath(url.pathname)", "status: 410", '"x-robots-tag": "noindex, follow"'], 'HTTP retirement');
 requireText(guard, ["normalized.startsWith('/bills/')"], 'Retired document matcher');
 requireText(paths, ["billSearchKey", "billSearchPath", "parseBillSearchKey"], 'Bill identity');
-requireText(bills, ["billSearchPath(bill)", "rpc('list_active_bill_filter_options')", ".order('id', { ascending: true })"], 'Bill server query');
+requireText(bills, ["billSearchPath(bill)", "ktr_bill_search_page", "rpc('list_active_bill_filter_options')", ".order('id', { ascending: true })"], 'Bill server query');
 requireText(sitemap, ["return [{ loc: absUrl('/bills') }]"], 'Bill sitemap');
 if (sitemap.includes('hierarchyEntries(') || sitemap.includes('sitemapBills.map(')) errors.push('Bill sitemap creates retired URLs');
 requireText(api, ["parseBillSearchKey", "getPublicBillRelations(bill.id)", ".eq('session_code', identity.session_code)", "'X-Robots-Tag': 'noindex, follow'"], 'Detail data API');

@@ -50,6 +50,7 @@ export type BillListFilters = {
   chamber?: string;
   billType?: string;
   sessionCode?: string;
+  sponsor?: string;
   sort?: 'latest' | 'oldest' | 'bill-number';
   kind?: 'substantive' | 'resolutions' | 'all';
   limit?: number;
@@ -141,7 +142,33 @@ export const normalizeStatus = (value: string) => value.trim().toLowerCase().rep
 const BILL_LIST_COLUMNS = 'id,legislature_number,session_code,bill_type,bill_number,bill_identifier,chamber,caption,current_status_code,current_status_label,last_action_date,became_law,last_synced_at';
 const INDEX_FIRST_BILL_PAGE_OFFSET = 480;
 
-export async function listBills({ search = '', status = '', legislature, chamber = '', billType = '', kind = 'all', sessionCode = '', sort = 'latest', limit = 24, offset = 0 }: BillListFilters = {}): Promise<{ bills: Bill[]; count: number }> {
+export async function listBills({ search = '', status = '', legislature, chamber = '', billType = '', kind = 'all', sessionCode = '', sponsor = '', sort = 'latest', limit = 24, offset = 0 }: BillListFilters = {}): Promise<{ bills: Bill[]; count: number }> {
+  // Official subjects and sponsors are matched in the database, under RLS.
+  // An exact windowed count accompanies the paginated result set.
+  if (search.trim() || sponsor.trim()) {
+    const safeSearch = search.replace(/[,%()]/g, ' ').trim().slice(0, 120);
+    const safeSponsor = sponsor.replace(/[,%()]/g, ' ').trim().slice(0, 120);
+    const statusCodes = status ? (STATUS_GROUPS[status] ?? [status]) : null;
+    const { data: rows, error } = await db.rpc('ktr_bill_search_page', {
+      p_query: safeSearch,
+      p_sponsor: safeSponsor,
+      p_status_codes: statusCodes,
+      p_legislature: legislature || null,
+      p_session: sessionCode,
+      p_chamber: chamber,
+      p_bill_type: billType,
+      p_kind: kind,
+      p_sort: sort,
+      p_limit: limit,
+      p_offset: offset,
+    });
+    if (error) throw error;
+    return {
+      bills: ((rows ?? []) as Array<{ bill: Bill; total_count: number }>).map((row) => row.bill),
+      count: Number(rows?.[0]?.total_count ?? 0),
+    };
+  }
+
   // Use indexed IDs for deep directory, legislature, chamber/status and
   // status-only pages where measured index scans avoid thousands of wide
   // row fetches. Use planned counts to avoid a full count on every request.

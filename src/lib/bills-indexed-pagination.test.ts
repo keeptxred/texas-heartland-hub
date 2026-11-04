@@ -112,6 +112,24 @@ describe("bill directory pagination under the public API timeout", () => {
   });
   beforeEach(() => { fromMock.mockReset(); rpcMock.mockReset(); clearPublicBillCache(); });
 
+
+  it("queries sponsor and subject with an exact server-side total", async () => {
+    rpcMock.mockResolvedValueOnce({
+      data: [{ bill: { id: "89-2-hb-4", bill_identifier: "HB 4", session_code: "2" }, total_count: 33 }],
+      error: null,
+    });
+    const result = await listBills({
+      search: "property tax", sponsor: "Bettencourt", sessionCode: "2",
+      legislature: 89, limit: 24, offset: 0,
+    });
+    expect(result.count).toBe(33);
+    expect(result.bills).toHaveLength(1);
+    expect(fromMock).not.toHaveBeenCalled();
+    expect(rpcMock).toHaveBeenCalledWith("ktr_bill_search_page", expect.objectContaining({
+      p_query: "property tax", p_sponsor: "Bettencourt", p_session: "2", p_legislature: 89,
+    }));
+  });
+
   it("keeps first-page requests as one query with planned totals", async () => {
     const first = mockQuery({ data: [{ id: "a", caption: "First bill" }], count: 12786 });
     fromMock.mockReturnValueOnce(first.builder);
