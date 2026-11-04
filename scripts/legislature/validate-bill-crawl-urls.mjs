@@ -40,7 +40,7 @@ requireText(bills, ["billSearchPath(bill)", "ktr_bill_search_page", "rpc('list_a
 requireText(sitemap, ["return [{ loc: absUrl('/bills') }]"], 'Bill sitemap');
 if (sitemap.includes('hierarchyEntries(') || sitemap.includes('sitemapBills.map(')) errors.push('Bill sitemap creates retired URLs');
 requireText(api, ["parseBillSearchKey", "getPublicBillRelations(bill.id)", ".eq('session_code', identity.session_code)", "'X-Robots-Tag': 'noindex, follow'"], 'Detail data API');
-requireText(panel, ["BillEditorialExplanation", "BillDocumentsPanel", "OfficialBillTextViewer", "Sponsors and authors", "Committee history", "Legislative actions"], 'Detail viewer');
+requireText(panel, ["BillEditorialExplanation", "BillDocumentsPanel", "OfficialBillTextViewer", "BillHearingsAndVotes", "Sponsors and authors", "Committee history", "Legislative actions"], 'Detail viewer');
 requireText(relations, ["review_status', 'approved'", "findRepresentativeBySlug"], 'Public relations');
 if (robots.includes('Disallow: /*?page=')) errors.push('robots.txt may not block legacy page states');
 if (robots.includes('Disallow: /bills')) errors.push('robots.txt may not block 410 retirement observation');
