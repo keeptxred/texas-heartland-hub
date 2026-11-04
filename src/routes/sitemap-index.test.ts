@@ -12,7 +12,6 @@ const advertised = [
   "sitemap-news.xml",
   "sitemap-evergreen.xml",
   "sitemap-priority.xml",
-  "sitemap-elections.xml",
   "sitemap-government.xml",
   "sitemap-political-figures.xml",
   "sitemap-political-geography.xml",
@@ -27,6 +26,10 @@ const advertised = [
 describe("root sitemap availability contract", () => {
   it("advertises the approved child sitemap set", () => {
     for (const file of advertised) expect(source).toContain(`\"${file}\"`);
+  });
+
+  it("does not advertise the retired election sitemap", () => {
+    expect(source).not.toContain('"sitemap-elections.xml"');
   });
 
   it("does not make optional runtime service calls before returning the index", () => {
