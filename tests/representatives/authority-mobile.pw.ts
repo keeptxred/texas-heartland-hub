@@ -18,6 +18,10 @@ test("certified representative pilot pages work on mobile with usable source res
     await expect(page.getByRole("searchbox", {
       name: "Search bill identifier, subject or status",
     })).toBeVisible();
+    // SSR content can be visible before the React bundle hydrates. Interacting
+    // before hydration would incorrectly test an inert pre-hydration input.
+    // This also fails closed when a JS bundle is truly missing or broken.
+    await expect(page.locator('[data-research-hydrated="true"]')).toBeVisible({ timeout: 20000 });
     const sources = page.getByRole("link", { name: "Official Texas Legislature bill history" });
     expect(await sources.count(), slug).toBeGreaterThanOrEqual(16);
     const tooWide = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 2);
