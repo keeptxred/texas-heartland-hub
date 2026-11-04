@@ -50,16 +50,20 @@ describe("representative authority pages", () => {
     }
   });
 
-  it("cross-links elections, districts, bills, and legislative resources", () => {
+  it("cross-links official election archives, permanent districts, bills, and legislative resources", () => {
     for (const path of [
-      "/elections/candidates",
-      "/elections/districts",
+      "https://www.sos.state.tx.us/elections/historical/elections-results-archive.shtml",
+      "/districts/texas-house-",
+      "/districts/texas-senate-",
       "/bills",
       "/texas-legislature",
       "/find-representative",
       "/contact-legislators",
     ]) {
       expect(profile).toContain(path);
+    }
+    for (const retired of ["/elections/candidates", "/elections/districts", "/elections/statewide"]) {
+      expect(profile).not.toContain(retired);
     }
   });
 
