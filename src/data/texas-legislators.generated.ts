@@ -2172,7 +2172,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 34,
     party: "R",
-    website: "https://house.texas.gov/members/34",
+    website: "https://house.texas.gov/members/4770",
     imageUrl: "https://house.texas.gov/images/members/4770.jpg?v=1",
     officialCode: null,
     home: "101 E. Main Ave., Robstown, TX 78380",
@@ -2221,7 +2221,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/34",
+          url: "https://house.texas.gov/members/4770",
         },
         {
           label: "Official member biography",
@@ -2373,7 +2373,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 37,
     party: "R",
-    website: "https://house.texas.gov/members/37",
+    website: "https://house.texas.gov/members/4295",
     imageUrl: "https://house.texas.gov/images/members/4295.jpg?v=2",
     officialCode: null,
     home: "1390 W. Expressway 83, San Benito, TX 78586",
@@ -2413,7 +2413,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/37",
+          url: "https://house.texas.gov/members/4295",
         },
         {
           label: "Official member biography",
