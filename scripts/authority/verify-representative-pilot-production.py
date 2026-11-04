@@ -22,6 +22,8 @@ READY = (
     "bryan-hughes", "judith-zaffirini", "terri-leo-wilson", "mihaela-plesa",
     "brent-money", "will-metcalf", "tan-parker", "royce-west",
     "joanne-shofner", "lois-kolkhorst", "richard-hayes", "cesar-blanco",
+    "bob-hall", "robert-nichols", "charles-schwertner", "carol-alvarado",
+    "paul-bettencourt", "angela-paxton", "phil-king", "mayes-middleton",
 )
 NOT_READY = ("dan-crenshaw", "john-cornyn", "greg-abbott", "cody-vasut")
 NS = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
