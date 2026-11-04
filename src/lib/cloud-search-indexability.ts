@@ -18,6 +18,32 @@ export const SEARCH_RECOVERY_SUPPRESSED_CLOUD_KINDS = [
 export const SEARCH_RECOVERY_AUTHORITY_FLAG = "search_recovery_authority";
 export const SEARCH_RECOVERY_SOURCE_FIRST_FLAG = "search_recovery_source_first";
 
+/** A legacy rapid-publish URL may enter search only after explicit restoration. */
+export function isLegacyArticleSearchEligible(
+  slug: string,
+  qualityFlags: string[] | null | undefined,
+): boolean {
+  if (!String(slug ?? "").trim().toLowerCase().startsWith("live-")) return true;
+  return (qualityFlags ?? []).some(
+    (flag) => String(flag).trim().toLowerCase() === "legacy_url_restored",
+  );
+}
+
+/** Read factual source URLs from the stored article, not from a quality flag. */
+export function articleProvenanceUrls(article: { source_url?: string | null; body_json?: unknown }): string[] {
+  const urls: string[] = [];
+  if (article.source_url) urls.push(article.source_url);
+  if (!article.body_json || typeof article.body_json !== "object") return urls;
+  const sources = (article.body_json as { sources?: unknown }).sources;
+  if (!Array.isArray(sources)) return urls;
+  for (const source of sources) {
+    if (source && typeof source === "object" && typeof source.url === "string") {
+      urls.push(source.url);
+    }
+  }
+  return urls;
+}
+
 const SUPPRESSED = new Set<string>(SEARCH_RECOVERY_SUPPRESSED_CLOUD_KINDS);
 const REQUIRED_AUTHORITY_FLAGS = [
   SEARCH_RECOVERY_AUTHORITY_FLAG,
@@ -60,6 +86,7 @@ export function isSearchRecoveryPrimarySourceUrl(value: string | null | undefine
 export function isCloudArticleSearchEligibleByKind(
   kind: string | null | undefined,
   qualityFlags: string[] | null | undefined = null,
+  provenanceUrls: readonly (string | null | undefined)[] = [],
 ): boolean {
   const normalizedKind = (kind ?? "").trim().toLowerCase();
   if (!SUPPRESSED.has(normalizedKind)) return true;
@@ -67,6 +94,10 @@ export function isCloudArticleSearchEligibleByKind(
   const flags = new Set(
     (qualityFlags ?? []).map((flag) => String(flag).trim().toLowerCase()),
   );
-  if (flags.has(SEARCH_RECOVERY_SOURCE_FIRST_FLAG)) return true;
+  // A stored flag alone is insufficient: the official/public primary source
+  // must still be present on the current article after any later edits.
+  if (flags.has(SEARCH_RECOVERY_SOURCE_FIRST_FLAG)) {
+    return provenanceUrls.some(isSearchRecoveryPrimarySourceUrl);
+  }
   return REQUIRED_AUTHORITY_FLAGS.every((flag) => flags.has(flag));
 }
