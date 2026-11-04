@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { billSearchKey, billSearchPath, parseBillSearchKey } from '@/lib/bill-public-path';
 import { isRetiredBillDocumentPath } from '@/lib/retired-bill-documents';
@@ -50,9 +50,27 @@ describe('Texas bills single-indexable-page contract', () => {
     expect(source('src/routes/sitemap-bills[.]xml.ts')).toContain('BASE_URL}/bills');
   });
 
+  it('does not regenerate retired bill document and directory route files', () => {
+    for (const path of [
+      'src/routes/bills/subject/$subjectSlug.tsx',
+      'src/routes/bills/texas/$legislature/index.tsx',
+      'src/routes/bills/texas/$legislature/$billType/index.tsx',
+      'src/routes/bills/texas/$legislature/$billType/$billNumber.tsx',
+      'src/routes/bills/texas/$legislature/$session/$billType/$billNumber.tsx',
+      'src/routes/bills.texas.$legislature.$billType.$billNumber.reference[.]json.ts',
+      'src/routes/bills.texas.$legislature.$session.$billType.$billNumber.reference[.]json.ts',
+    ]) expect(existsSync(path)).toBe(false);
+  });
+
   it('only reads a session-specific record using a noindex data API', () => {
     const api = source('src/routes/api/public/bill-detail.ts');
     expect(api).toContain("getPublicBillRelations(bill.id)");
+    expect(api).toContain('getBillEffectiveDateProvisions(bill.id)');
+    expect(api).toContain('getRelatedBills(bill.id');
+    const panel = source('src/components/bills/BillDetailPanel.tsx');
+    expect(panel).toContain('<BillHearingsAndVotes activities={committees} />');
+    expect(panel).toContain('<RelatedBillsSection bills={data?.relatedBills ?? []} />');
+    expect(panel).toContain('initialEffectiveDates={data?.effectiveDates}');
     expect(api).toContain(".eq('session_code', identity.session_code)");
     expect(api).toContain("'X-Robots-Tag': 'noindex, follow'");
     expect(api).not.toContain('SUPABASE_SERVICE_ROLE_KEY');
