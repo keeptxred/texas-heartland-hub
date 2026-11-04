@@ -280,6 +280,12 @@ jobs:
           SITE_URL: ${{ env.PREVIEW_URL }}
         run: python3 scripts/seo/verify-deployed-laws-routes.py
 
+      - name: Verify deployed Texas border-security authority and indexability
+        if: steps.revision.outputs.deploy == 'true'
+        env:
+          SITE_URL: ${{ env.PREVIEW_URL }}
+        run: python3 scripts/seo/verify-deployed-border-security.py
+
       - name: Verify complete law-topic sitemap and legal sources on both hosts
         if: steps.revision.outputs.deploy == 'true'
         timeout-minutes: 10
