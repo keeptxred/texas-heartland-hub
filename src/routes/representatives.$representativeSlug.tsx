@@ -7,13 +7,29 @@ import { getRelatedAuthorityContent } from "@/lib/authority-relationships";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 import { RelatedAuthorityContent } from "@/components/authority/RelatedAuthorityContent";
 import { RepresentativeLegislativeIntelligence } from "@/components/representative-legislative-intelligence";
+import { RepresentativePrimarySourceResearch } from "@/components/representative-primary-source-research";
+import { applyPilotEditorial, certifyRepresentative, pilotResearchFor } from "@/lib/representative-quality-gates";
 
 export const Route = createFileRoute("/representatives/$representativeSlug")({
   loader: async ({ params }) => {
     const directoryRepresentative = findRepresentativeBySlug(params.representativeSlug);
-    const legislation = await getRepresentativeLegislation(params.representativeSlug);
-    const { authority, houseCommittees } = await getRepresentativeAuthorityRouteData({ data: { slug: params.representativeSlug } });
-    if (!directoryRepresentative && !legislation.identity) throw notFound();
+    // Keep previously verified historical research accessible during a temporary
+    // data-service failure. Never infer that a missing response means zero bills.
+    let legislation: Awaited<ReturnType<typeof getRepresentativeLegislation>> | null = null;
+    try {
+      legislation = await getRepresentativeLegislation(params.representativeSlug);
+    } catch {
+      legislation = null;
+    }
+    const { authority: catalogAuthority, houseCommittees } = await getRepresentativeAuthorityRouteData({ data: { slug: params.representativeSlug } });
+    if (!directoryRepresentative && !legislation?.identity) throw notFound();
+    const authority = applyPilotEditorial(params.representativeSlug, catalogAuthority);
+    const certification = certifyRepresentative({
+      slug: params.representativeSlug,
+      representative: directoryRepresentative,
+      authority,
+      temporaryDataOutage: legislation === null,
+    });
     const terms = (
       authority?.newsKeywords ?? (directoryRepresentative ? [directoryRepresentative.name] : [])
     ).map((term) => term.toLowerCase());
@@ -26,7 +42,13 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
       .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt))
       .slice(0, 6);
     const relatedContent = await getRelatedAuthorityContent("representative", params.representativeSlug);
-    return { directoryRepresentative, authority, houseCommittees, news, relatedContent, ...legislation };
+    return {
+      directoryRepresentative, authority, houseCommittees, news, relatedContent,
+      identity: legislation?.identity ?? null,
+      bills: legislation?.bills ?? [],
+      certification,
+      legislationUnavailable: legislation === null,
+    };
   },
   head: ({ params, loaderData }) => {
     if (!loaderData) return {};
@@ -42,12 +64,12 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
       : `Authority profile for ${name}, including office, district, verified contact sources, election links, and legislative records where available.`;
     const graph = [
       {
-        "@type": "ProfilePage",
+        "@type": "WebPage",
         "@id": `${canonical}#webpage`,
         url: canonical,
         name: `${name} — ${office}`,
         description,
-        mainEntity: { "@id": `${canonical}#person` },
+        about: { "@id": `${canonical}#person` },
       },
       {
         "@type": "Person",
@@ -116,7 +138,7 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
         { name: "description", content: description },
         {
           name: "robots",
-          content: representative && !former
+          content: loaderData.certification.state === "AUTHORITY_READY"
             ? "index,follow,max-image-preview:large"
             : "noindex,follow,max-image-preview:large",
         },
@@ -142,7 +164,7 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
 
 function RepresentativeProfile() {
   const { representativeSlug: slug } = Route.useParams();
-  const { directoryRepresentative: rep, identity, authority, houseCommittees, bills, news, relatedContent } = Route.useLoaderData();
+  const { directoryRepresentative: rep, identity, authority, houseCommittees, bills, news, relatedContent, certification, legislationUnavailable } = Route.useLoaderData();
   const portrait = verifiedOfficialPortraitUrl(rep?.imageUrl);
   const former = rep?.status === "former";
   const federal = rep?.office.startsWith("U.S.") ?? false;
@@ -150,30 +172,8 @@ function RepresentativeProfile() {
   const office = rep?.office ?? chamberLabel(identity?.chamber);
   const district = rep?.district ?? identity?.district ?? null;
   const party = rep?.party ?? identity?.party ?? null;
-  const profileAuthority =
-    authority ??
-    (rep?.office === "U.S. House"
-      ? {
-          biography: `${name} serves as the United States representative for ${district ?? "a Texas congressional district"}. This profile connects the member's official office, current House committee assignments, federal campaign-finance records, district election coverage, sponsored legislation and related KeepTXRed reporting.`,
-          career: [
-            `Current member of the U.S. House of Representatives for ${district ?? "Texas"}.`,
-          ],
-          education: [] as string[],
-          committees: houseCommittees.map((committee) => `House Committee on ${committee}.`),
-          electionHistory: [] as { year: string; result: string }[],
-          districtOverview: `${district ?? "This congressional district"} is represented in the U.S. House. District boundaries and address-level representation should be verified through the official House lookup.`,
-          financeUrl: `https://www.fec.gov/data/candidates/?search=${encodeURIComponent(name)}`,
-          financeLabel: "Federal Election Commission candidate records",
-          sources: [
-            { label: "Official congressional office", url: rep.website },
-            {
-              label: "Official House directory and committee assignments",
-              url: "https://www.house.gov/representatives",
-            },
-          ],
-          reviewedAt: "2026-07-30",
-        }
-      : null);
+  const profileAuthority = authority;
+  const hasPrimarySourceResearch = pilotResearchFor(slug).length > 0;
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
@@ -190,12 +190,12 @@ function RepresentativeProfile() {
           />
         ) : null}
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
-          {former ? "Historical representative record" : "Representative authority profile"}
+          {former ? "Historical representative record" : "Public government research record"}
         </p>
         {former ? (
           <div className="mt-4 rounded-lg border border-amber-500/40 bg-amber-500/10 p-4 text-sm leading-6">
-            <strong>Former officeholder — not the current representative.</strong> This Texas House seat is vacant as of the latest verified roster.
-            The official district page is the current source for constituent services and any future appointment or election.
+            <strong>Former officeholder — not listed as the current representative.</strong>
+            Verify the current seat status and constituent-services contact through the official chamber roster.
           </div>
         ) : null}
         <h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">{name}</h1>
@@ -325,17 +325,19 @@ function RepresentativeProfile() {
             )}
           </section>
 
-          {federal ? (
+          {hasPrimarySourceResearch ? (
+            <RepresentativePrimarySourceResearch slug={slug} name={name} />
+          ) : federal ? (
             <section className="rounded-xl border bg-card p-6">
               <h2 className="text-2xl font-bold">Federal legislative activity</h2>
               <p className="mt-3 text-muted-foreground">KTR's Texas legislative graph does not cover a federal representative's complete congressional sponsorship or voting history. A zero here would be misleading.</p>
               <a href="https://www.congress.gov/" target="_blank" rel="noopener noreferrer" className="mt-4 inline-block font-semibold text-primary hover:underline">Search Congress.gov for federal bills and activity →</a>
             </section>
-          ) : !former ? (
+          ) : !former && bills.length ? (
             <RepresentativeLegislativeIntelligence name={name} bills={bills} relatedContent={relatedContent} />
           ) : null}
 
-          <section className="rounded-xl border bg-card p-6">
+          {!hasPrimarySourceResearch ? <section className="rounded-xl border bg-card p-6">
             <span id="legislation" className="scroll-mt-24" />
             <h2 className="text-2xl font-bold">Sponsored legislation</h2>
             <p className="mt-2 text-muted-foreground">
@@ -368,7 +370,7 @@ function RepresentativeProfile() {
                 No Texas-sponsored bills are currently matched to this profile in KTR's indexed records. This does not imply no legislative activity.
               </p>
             )}
-          </section>
+          </section> : null}
 
           {profileAuthority ? (
             <>
@@ -451,6 +453,12 @@ function RepresentativeProfile() {
                 </p>
               </AuthoritySection>
             </>
+          ) : null}
+          {legislationUnavailable ? (
+            <p role="status" className="rounded-lg border p-4 text-sm text-muted-foreground">
+              Live bill database temporarily unavailable. Historical source-linked research, where
+              published, remains visible; absence of a live response is not a zero bill count.
+            </p>
           ) : null}
           <RelatedAuthorityContent items={relatedContent} />
         </div>
