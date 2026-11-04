@@ -3,6 +3,7 @@ import { MIGRATED_PRACTICAL_GUIDE_CANONICALS } from "./migrated-practical-guide-
 import { MIGRATED_TOOL_CANONICALS } from "./migrated-tool-canonical";
 import {
   canonicalInternalRedirectHref,
+  resolveInternalRedirectDestination,
   canonicalizeInternalRedirectMarkdownLinks,
 } from "./canonical-internal-redirects";
 
@@ -17,7 +18,7 @@ const mappings = [
   ["/texas-law-policy", "/laws"],
   ["/texas-news", "/news"],
   ["/elections", "/texas-politics"],
-  ["/voting-locations", "/register-to-vote"],
+  ["/voting-locations", "/county-elections"],
   ["/news/texas-constitutional-amendments-guide", "/laws/constitutional-amendments"],
   [
     "/texas-government/texas-court-of-criminal-appeals-history",
@@ -40,6 +41,17 @@ const mappings = [
 describe("canonical internal redirect links", () => {
   it.each(mappings)("maps %s directly to %s", (alias, canonical) => {
     expect(canonicalInternalRedirectHref(alias)).toBe(canonical);
+  });
+
+  it("preserves all current public election routes when the next cycle is switched on", () => {
+    for (const path of ["/elections/2026", "/elections/races", "/elections/candidates", "/elections/voting"]) {
+      expect(resolveInternalRedirectDestination(path, true)).toBeUndefined();
+    }
+    expect(resolveInternalRedirectDestination("/elections", true)).toBe("/elections/2026");
+    expect(resolveInternalRedirectDestination("/candidate-guides", true)).toBe("/elections/2026");
+    expect(resolveInternalRedirectDestination("/voting-locations", true)).toBe("/elections/voting");
+    expect(resolveInternalRedirectDestination("/elections/races", false)).toBe("/texas-politics");
+    expect(resolveInternalRedirectDestination("/voting-locations", false)).toBe("/county-elections");
   });
 
   it("maps every migrated practical guide directly to its TexasDefined owner", () => {
