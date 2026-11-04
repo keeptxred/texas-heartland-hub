@@ -68,6 +68,12 @@ describe("Representative authority: six profile rollout with real official resea
     expect(generic.state).toBe("NOT_READY");
     expect(generic.evidenceCount).toBe(0);
     expect(route).toContain("legislationUnavailable");
+    expect(route).toContain("https://www.sos.state.tx.us/elections/historical/elections-results-archive.shtml");
+    expect(route).toContain("/districts/texas-house-");
+    expect(route).toContain("/districts/texas-senate-");
+    expect(route).not.toContain("/elections/candidates");
+    expect(route).not.toContain("/elections/districts");
+    expect(route).not.toContain("/elections/statewide");
     expect(route).toContain("noindex,follow");
     expect(route).toContain("loaderData.certification.state === \"AUTHORITY_READY\"");
   });
