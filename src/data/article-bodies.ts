@@ -2725,46 +2725,146 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
 
   "texas-school-finance-explained": {
-    updated: "2026-05-30",
-    intro: [
-      "Texas school finance is engineered to confuse — and it succeeds. Two ISDs with identical tax rates can fund students at wildly different levels because of recapture, the basic allotment, and a dozen weighted student categories.",
+    "updated": "2026-11-04",
+    "editorNote": "Substantively revised November 2026 to reflect the current Education Code Chapter 48 funding framework, TEA Summary of Finances and the distinction between formula entitlement, local tax collections and recapture. Unsupported statewide recapture-dollar claims removed.",
+    "intro": [
+      "Texas public-school finance combines state funding formulas, local property taxes and different program allotments. Two districts can adopt similar tax rates yet receive different revenue per student because their enrollment, attendance, student needs, property wealth, debt and statutory formula entitlements differ. A single statewide spending-per-pupil number does not explain a district's actual finances.",
+      "The Foundation School Program (FSP), established in Texas Education Code Chapter 48, is a central mechanism for calculating many school districts' operating resources. The Texas Education Agency publishes district-specific Summary of Finances (SOF) reports showing the figures behind those calculations. A credible comparison starts with a district's own year and report rather than the slogan 'Robin Hood' or an unexplained statewide dollar total."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "The Foundation School Program",
-        paragraphs: [
-          "The state guarantees every ISD a per-student funding floor. Local property taxes are counted first; the state fills the gap. When a district raises more locally than its formula entitlement, the excess is recaptured.",
-        ],
+        "heading": "The Foundation School Program is a formula entitlement, not a blank check",
+        "paragraphs": [
+          "Chapter 48 describes the Foundation School Program as a two-tier structure intended to provide a basic educational program and an opportunity for an enriched program, with separate facilities-related provisions. Formula rules take account of student attendance, programs and district characteristics. The district's legal entitlement is calculated under statute and appropriation; it is not simply the number of enrolled students multiplied by a generic rate.",
+          "TEA administers state aid under the law. The Legislature changes statutes and appropriations; districts supply and certify relevant data; public reports are updated as final information becomes available. Any news article using a current basic-allotment figure should identify the school year and cite the relevant Chapter 48 provision, not reuse a number from a previous legislative session."
+        ]
       },
       {
-        heading: "Recapture ('Robin Hood')",
-        paragraphs: [
-          "Property-wealthy districts send a portion of their M&O collections to the state, which redistributes the money to property-poor districts. Recapture now exceeds $5 billion per year.",
-        ],
+        "heading": "Average daily attendance differs from enrollment",
+        "paragraphs": [
+          "Many FSP calculations use average daily attendance, or ADA, rather than a raw enrollment count. Attendance is measured over the relevant period and subject to TEA reporting rules. A district with the same number of enrolled students as its neighbor can have a different ADA figure and therefore a different calculated entitlement.",
+          "Weighted average daily attendance, or WADA, is a derived funding measure that accounts for particular allotments under the formula. TEA's Summary of Finances distinguishes ADA, WADA, property values, rates and other funding factors. Do not divide a district's entire budget by ADA and claim that the result is the statutory basic allotment; that ratio mixes categories and funding sources."
+        ]
       },
+      {
+        "heading": "Basic and additional allotments serve different student needs",
+        "paragraphs": [
+          "Education Code §48.051 defines the basic allotment calculation for eligible average daily attendance, subject to statutory adjustments. Other provisions support programs or district circumstances, such as special education, career and technology education, compensatory education, bilingual education, transportation, or small and mid-sized district adjustments as applicable.",
+          "The amount and eligibility can change by school year and by legislative amendment. Special education provisions were amended by 2025 legislation, including transition provisions for the 2026–2027 period. The useful question is not whether one district receives 'extra money' in the abstract but which statutory allotment applies, what conditions must be met, and which report documents the calculation."
+        ]
+      },
+      {
+        "heading": "The state share and local share fit together",
+        "paragraphs": [
+          "Chapter 48 financing provisions identify each district's formula funding entitlement and the corresponding local funding component. Property tax capacity and other statutory inputs affect how much of the entitlement is financed locally and how much the state pays. The available school fund and other components have separate accounting roles; TEA explains that certain per-capita distributions are a method of financing FSP, not an unrelated bonus.",
+          "A statewide share quoted in a campaign speech may conceal large district-level variation. Read the district SOF for the specific year, identify the formula entitlement and local-share amount, and then inspect actual state aid payments. A projected formula worksheet, the adopted operating budget and audited year-end results need not match exactly."
+        ]
+      },
+      {
+        "heading": "Recapture applies to particular property-wealth situations",
+        "paragraphs": [
+          "Recapture refers to statutory mechanisms by which property-wealthy districts may have to reduce excess local revenue available under the equalized school-finance system. The procedures and amounts depend on the governing law and a district's property wealth, tax collections, formula entitlement and other inputs. It is misleading to claim every property-tax dollar above a uniform amount automatically leaves every district.",
+          "Texas Education Code Chapter 49 describes equalization arrangements and recapture mechanisms. Public discussion often calls this 'Robin Hood,' but that label alone does not explain the funding calculation. A particular recapture figure should be taken from the same school year's district data, not from an unrelated state's or year's total. Keep operating (maintenance-and-operations) tax discussions distinct from debt-service issues."
+        ]
+      },
+      {
+        "heading": "Operating budgets and bond debt are not the same fund",
+        "paragraphs": [
+          "School district property-tax discussions distinguish maintenance-and-operations (M&O) taxes from interest-and-sinking (I&S) debt-service taxes. M&O is connected to ongoing operations and the school-finance formula. I&S is tied to authorized debt service and does not operate as a free substitute for general classroom spending.",
+          "A bond election may authorize school facility debt, but voter authorization is not identical to the immediate receipt or expenditure of the entire proposed amount. When comparing tax burdens, examine the district's tax notices and adopted rates, bond maturity schedules, debt outstanding and actual project spending. Texas school finance policy and local property-tax appraisal are related but separate decisions."
+        ]
+      },
+      {
+        "heading": "Where to find the numbers for your district",
+        "paragraphs": [
+          "TEA's Summary of Finances reports contain district-level ADA and WADA, funding entitlements, local property values, tax rates and collections, and projected state aid. Several reports may be issued during a school year as inputs are revised. The exact SOF version and certification date matter when a figure changes.",
+          "Start with TEA's FSP and Summary of Finances pages, then locate your district's adopted budget, current tax-rate documents, official board minutes and annual audit or financial accountability reports. Write down the district number and fiscal or school year. Comparing a 2025–2026 forecast for one district with a 2026–2027 audited result from another is not an apples-to-apples analysis."
+        ]
+      },
+      {
+        "heading": "Why equal tax rates can produce different school services",
+        "paragraphs": [
+          "The statutory formula recognizes different student needs, program requirements, local revenue and facilities circumstances. Two districts charging the same nominal M&O rate may have different taxable values per student and different state-aid calculations. They may also make different spending choices in payroll, facilities, transportation and services, subject to applicable law.",
+          "That does not demonstrate by itself that a district is efficient, wasteful or legally underfunded. A rigorous comparison adjusts for the fiscal year, student mix, ADA, regional costs where relevant, fund categories and local debt. It should connect dollars to documented services and outcomes rather than treat a high or low per-student total as self-explanatory."
+        ]
+      },
+      {
+        "heading": "How Texans can verify a school-finance claim",
+        "bullets": [
+          "Identify the district name/number and the specific school year, and retrieve TEA's corresponding Summary of Finances.",
+          "Separate the Chapter 48 formula entitlement, state share, local share and any Chapter 49 recapture entry.",
+          "Check whether figures are based on average daily attendance, weighted attendance, total enrollment, or district property wealth.",
+          "Distinguish M&O operations from I&S bond-debt service and identify any restricted funding.",
+          "Match a legislative proposal to the enacted statute and its effective date; the published TEA formula may have changed.",
+          "Compare projections with adopted budgets and the audited financial report, labeling which version each number came from.",
+          "Record direct source links, page/report date and calculations so another reader can reproduce the finding."
+        ]
+      },
+      {
+        "heading": "Limitations and interpretation",
+        "paragraphs": [
+          "This guide is not a current recapture ledger for every district and does not claim a statewide recapture total without a verified school-year report. A public-policy analysis should state exactly which formula, school year and accounting basis it uses. Statutory allotments can change, and temporary provisions may affect the next cycle.",
+          "The strongest reader service is to show a district's official SOF beside its public board budget and explain which governmental body controls each decision. Texas Education Code Chapters 48 and 49, TEA's FSP materials and the local board's adopted financial records provide the essential evidence."
+        ]
+      }
     ],
-    faq: [
+    "faq": [
       {
-        q: "Does recapture leave Texas?",
-        a: "No. Every recaptured dollar is spent inside the Texas school finance system.",
+        "q": "Does the basic allotment equal a district's entire spending per student?",
+        "a": "No. The basic allotment is a defined part of a statutory funding formula. A district's actual spending includes additional funding categories, local resources, restricted funds and other costs."
       },
       {
-        q: "What is the basic allotment?",
-        a: "The dollar-per-student amount the Legislature sets as the funding floor. It is the lever that drives nearly every other formula.",
+        "q": "What is average daily attendance in Texas school finance?",
+        "a": "ADA is an attendance-based measure used for many Foundation School Program calculations; it differs from total enrollment and should be identified by school year."
       },
+      {
+        "q": "Do all Texas school districts send some property tax revenue through recapture?",
+        "a": "No. Recapture depends on the statutory equalization framework, district property wealth and actual financing calculations. Check a district's current year Chapter 49 status and financial reports."
+      },
+      {
+        "q": "Are school bond taxes the same as maintenance-and-operations taxes?",
+        "a": "No. Debt-service I&S taxes and operating M&O taxes have different authorized purposes. Keep those fund categories separate in taxpayer comparisons."
+      },
+      {
+        "q": "Where can I verify a district's funding formula calculation?",
+        "a": "Use TEA's official Summary of Finances report and Foundation School Program materials for the specific district and school year, then compare with district budgets and audits."
+      }
     ],
-    sources: [
+    "sources": [
       {
-        label: "TEA — School Finance",
-        url: "https://tea.texas.gov/finance-and-grants/state-funding",
+        "label": "Texas Education Code Chapter 48 — Foundation School Program",
+        "url": "https://statutes.capitol.texas.gov/Docs/ED/htm/ED.48.htm"
       },
       {
-        label: "Education Code Chapter 48",
-        url: "https://statutes.capitol.texas.gov/Docs/ED/htm/ED.48.htm",
+        "label": "Texas Education Code Chapter 49 — Local Revenue Equalization",
+        "url": "https://statutes.capitol.texas.gov/Docs/ED/htm/ED.49.htm"
       },
+      {
+        "label": "Texas Education Agency — Foundation School Program",
+        "url": "https://tea.texas.gov/about-tea/state-funding/foundation-school-program/foundation-school-program"
+      },
+      {
+        "label": "Texas Education Agency — Summary of Finances",
+        "url": "https://tea.texas.gov/finance-and-grants/state-funding/foundation-school-program/summary-of-finances"
+      },
+      {
+        "label": "Texas Education Agency — Per Capita Rates / Available School Fund",
+        "url": "https://tea.texas.gov/about-tea/state-funding/additional-finance-resources/capita-rates"
+      },
+      {
+        "label": "Texas Comptroller — Property Tax Basics",
+        "url": "https://comptroller.texas.gov/taxes/property-tax/basics.php"
+      }
     ],
-    related: ["texas-school-board-powers", "school-choice-esa-guide", "isd-tax-burdens"],
-    cta: { label: "See School Tax Burdens by County", href: "https://texasdefined.com/decide/property-taxes" },
+    "related": [
+      "texas-school-board-powers",
+      "school-choice-esa-guide",
+      "texas-property-tax-laws-explained"
+    ],
+    "cta": {
+      "label": "See Official TEA School Finance Reports",
+      "href": "https://tea.texas.gov/about-tea/state-funding/foundation-school-program/foundation-school-program"
+    }
   },
 
   "texas-political-terminology": {
