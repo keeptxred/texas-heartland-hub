@@ -84,7 +84,7 @@ describe("article source authority", () => {
         {
           heading: "Follow the Legislature",
           paragraphs: [
-            `Use [Legislative Updates](/legislative-updates) and [Texas Law & Policy](https://${legacyWwwHost}/texas-law-policy#guide), while keeping [Election Races](/elections/races) unchanged.`,
+            `Use [Legislative Updates](/legislative-updates) and [Texas Law & Policy](https://${legacyWwwHost}/texas-law-policy#guide), while keeping [Election Races](/texas-politics) unchanged.`,
           ],
           bullets: ["Read [Texas Laws](/texas-laws) before the next session."],
         },
@@ -100,13 +100,13 @@ describe("article source authority", () => {
     });
 
     expect(body.intro?.[0]).toContain("[Texas News](/news)");
-    expect(body.intro?.[0]).toContain("[Election Central](/elections/2026?cycle=2026#top)");
+    expect(body.intro?.[0]).toContain("[Election Central](/texas-politics?cycle=2026#top)");
     expect(body.sections?.[0]?.paragraphs?.[0]).toContain("[Legislative Updates](/bills)");
     expect(body.sections?.[0]?.paragraphs?.[0]).toContain("https://keeptxred.com/laws#guide");
-    expect(body.sections?.[0]?.paragraphs?.[0]).toContain("[Election Races](/elections/races)");
+    expect(body.sections?.[0]?.paragraphs?.[0]).toContain("[Election Races](/texas-politics)");
     expect(body.sections?.[0]?.bullets?.[0]).toContain("[Texas Laws](/laws)");
     expect(body.keyTakeaways?.[0]).toContain("[laws guide](/laws)");
-    expect(body.faq?.[0]?.q).toContain("[election hub](/elections/2026)");
-    expect(body.faq?.[0]?.a).toContain("[Election Central](/elections/2026)");
+    expect(body.faq?.[0]?.q).toContain("[election hub](/texas-politics)");
+    expect(body.faq?.[0]?.a).toContain("[Election Central](/texas-politics)");
   });
 });
