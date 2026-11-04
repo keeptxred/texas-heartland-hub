@@ -12,9 +12,9 @@ const RECOVERY_LINKS = [
     description: "Texas politics, government accountability and public affairs.",
   },
   {
-    to: "/texas-politics",
-    label: "Politics & Government",
-    description: "Texas government, campaigns, officials, legislation, and policy coverage.",
+    to: "/texas-legislature",
+    label: "Texas Legislature",
+    description: "Legislative sessions, lawmakers, committees, bills, and public records.",
   },
   {
     to: "/laws",
