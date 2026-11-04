@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { AgedFeedSection } from "@/components/aged-feed-section";
 import { HubView, type HubSection } from "@/components/hub-view";
 import { HUBS } from "@/data/hubs";
@@ -14,9 +15,10 @@ type Props = {
   heading: string;
   paragraphs: string[];
   related?: { label: string; href: string }[];
+  featuredContent?: ReactNode;
 };
 
-export function ContentPillarView({ hubSlug, sections, feedSection, heading, paragraphs, related = [] }: Props) {
+export function ContentPillarView({ hubSlug, sections, feedSection, heading, paragraphs, related = [], featuredContent }: Props) {
   const hub = HUBS.find((item) => item.slug === hubSlug);
   if (!hub) return null;
 
@@ -30,7 +32,7 @@ export function ContentPillarView({ hubSlug, sections, feedSection, heading, par
 
   return (
     <>
-      <HubView hub={hub} sections={sections}>
+      <HubView hub={hub} sections={sections} featuredContent={featuredContent}>
         <section className="mt-10 max-w-3xl">
           <h2 className="font-display text-2xl tracking-tight mb-3">{heading}</h2>
           <div className="space-y-4 font-serif text-base text-foreground/90 leading-relaxed">
