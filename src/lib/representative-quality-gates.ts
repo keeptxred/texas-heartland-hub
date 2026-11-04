@@ -148,6 +148,90 @@ export const EDITORIAL_REVIEWS: Record<string, EditorialReview> = {
     biography: "Mayes Middleton represents Texas Senate District 11, covering portions of Brazoria, Galveston and Harris counties. The Texas Senate biography identifies him as president of an independent oil and gas company, with bachelor's and law degrees from the University of Texas at Austin. He served two terms in the Texas House before joining the Senate in 2023 and was formerly chair of the Texas House Freedom Caucus; his recorded bill roles and outcomes are traceable to individual Texas Legislature histories.",
     identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=11",
   },
+  "borris-miles": {
+    name: "Borris Miles", office: "Texas Senate", district: "Senate District 13", party: "D",
+    officialUrl: "https://senate.texas.gov/member.php?d=13",
+    biography: "Borris L. Miles represents Texas Senate District 13 in Houston. The official Texas Senate biography records previous Texas House service from 2007 to 2017 and Senate service beginning in 2017. A graduate of Sam Houston State University, Miles works in insurance and real estate development and has served on the Health and Human Services, Criminal Justice, Nominations and Transportation committees. This profile distinguishes recorded legislative authorship and sponsorship from other coauthor or cosponsor roles.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=13",
+  },
+  "sarah-eckhardt": {
+    name: "Sarah Eckhardt", office: "Texas Senate", district: "Senate District 14", party: "D",
+    officialUrl: "https://senate.texas.gov/member.php?d=14",
+    biography: "Sarah Eckhardt represents Texas Senate District 14 in Travis County. According to the official Senate biography, she entered the Senate in 2020 after serving as Travis County commissioner from 2006 through 2013 and county judge from 2015 through 2020. She earned a public affairs master's degree and law degree from the University of Texas at Austin and previously worked in the Travis County Attorney's Office. Official bill histories below allow readers to verify her different legislative roles and outcomes.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=14",
+  },
+  "molly-cook": {
+    name: "Molly Cook", office: "Texas Senate", district: "Senate District 15", party: "D",
+    officialUrl: "https://senate.texas.gov/member.php?d=15",
+    biography: "Molly Cook represents Texas Senate District 15 in Houston and joined the Senate in 2024. Her official Senate biography identifies her as an emergency-room nurse and public-health organizer with a bachelor's degree in nursing from the University of Texas at Austin and graduate nursing and public-health degrees from Johns Hopkins University. The Senate member page also documents her Health and Human Services committee work and research on health and transportation issues; the linked bill-history sample identifies specific legislative roles.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=15",
+  },
+  "nathan-johnson": {
+    name: "Nathan Johnson", office: "Texas Senate", district: "Senate District 16", party: "D",
+    officialUrl: "https://senate.texas.gov/member.php?d=16",
+    biography: "Nathan Johnson represents Texas Senate District 16 in Dallas County and has served since 2019. The official Senate biography identifies his work as an attorney, a physics degree from the University of Arizona, and a law degree from the University of Texas. It describes legislative priorities spanning the electric grid, health care, government transparency and state infrastructure. This page supplies bill-by-bill Texas Legislature Online links so readers can distinguish measure authorship and sponsorship from floor voting.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=16",
+  },
+  "joan-huffman": {
+    name: "Joan Huffman", office: "Texas Senate", district: "Senate District 17", party: "R",
+    officialUrl: "https://senate.texas.gov/member.php?d=17",
+    biography: "Joan Huffman represents Texas Senate District 17 in the Houston region and has served in the Senate since 2008. The official Senate biography recounts her earlier work as a Harris County prosecutor and criminal district court judge, and lists degrees from Louisiana State University and South Texas College of Law. She chairs the Senate Finance Committee and has served on Criminal Justice and the Legislative Budget Board. The 89th Legislature research below records the role and status of specific bills without implying a roll-call voting record.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=17",
+  },
+  "roland-gutierrez": {
+    name: "Roland Gutierrez", office: "Texas Senate", district: "Senate District 19", party: "D",
+    officialUrl: "https://senate.texas.gov/member.php?d=19",
+    biography: "Roland Gutierrez represents Texas Senate District 19, covering a substantial South Texas area. His official Senate biography lists Texas House service from 2008 to 2021 and Senate service beginning in 2021. A San Antonio attorney with degrees from the University of Texas at San Antonio and St. Mary's University School of Law, he has worked on rural mental health, defense and veterans' affairs, and firearm safety following the Uvalde school shooting. Original bill histories document each sampled legislative role.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=19",
+  },
+  "chuy-hinojosa": {
+    name: "Chuy Hinojosa", office: "Texas Senate", district: "Senate District 20", party: "D",
+    officialUrl: "https://senate.texas.gov/member.php?d=20",
+    biography: "Juan 'Chuy' Hinojosa represents Texas Senate District 20. His official Senate biography documents service in the U.S. Marine Corps during the Vietnam War, a political science degree from the University of Texas–Pan American, and a law degree from Georgetown University. He served in the Texas House from 1981 to 1991 and again from 1997 to 2003 before entering the Senate in 2003. The related Texas Legislature histories identify individual sponsorship and authorship records, not inferred voting behavior.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=20",
+  },
+  "pete-flores": {
+    name: "Pete Flores", office: "Texas Senate", district: "Senate District 24", party: "R",
+    officialUrl: "https://senate.texas.gov/member.php?d=24",
+    biography: "Pete Flores represents Texas Senate District 24, serving first from 2018 to 2021 and again from 2023. His official Senate biography documents 27 years as a Texas game warden, including service as a colonel overseeing statewide operations, and his studies at Texas A&M University. He chaired Criminal Justice during the 89th Regular Legislature and served in a leadership role investigating the July 2025 Hill Country flooding. The research records below distinguish his separate bill roles and outcomes.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=24",
+  },
+  "donna-campbell": {
+    name: "Donna Campbell", office: "Texas Senate", district: "Senate District 25", party: "R",
+    officialUrl: "https://senate.texas.gov/member.php?d=25",
+    biography: "Donna Campbell represents Texas Senate District 25, which covers parts of the Texas Hill Country, and has served in the Senate since 2013. The official Texas Senate biography identifies her as a board-certified emergency-room physician with nursing degrees from Central State University and Texas Woman's University and a medical degree from Texas Tech University. It documents service on education, nominations and veterans committees. Each sampled 89th Legislature bill links to a primary-source history and its recorded status.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=25",
+  },
+  "jose-menendez": {
+    name: "José Menéndez", office: "Texas Senate", district: "Senate District 26", party: "D",
+    officialUrl: "https://senate.texas.gov/member.php?d=26",
+    biography: "José Menéndez represents Texas Senate District 26 in San Antonio and has served since 2015, after Texas House service from 2001 through 2015. The Senate's official biography documents earlier work on the San Antonio City Council and professional experience in title insurance and multicultural markets. His legislative work has addressed public schools, cyberbullying prevention through David's Law, veterans' services and local development. The source-linked research sample distinguishes authored measures from sponsorship and other bill roles.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=26",
+  },
+  "adam-hinojosa": {
+    name: "Adam Hinojosa", office: "Texas Senate", district: "Senate District 27", party: "R",
+    officialUrl: "https://senate.texas.gov/member.php?d=27",
+    biography: "Adam Hinojosa represents Texas Senate District 27 along the southern Gulf Coast. Elected in 2024, he began Senate service in 2025; the official biography identifies experience as a small-business owner and finance executive, and education at Del Mar College. The Senate's March 2026 press materials report his appointment as chair of the Committee on Nominations. The 89th Legislature research below connects his specific bill roles and recorded outcomes to original Texas Legislature histories.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=27",
+  },
+  "charles-perry": {
+    name: "Charles Perry", office: "Texas Senate", district: "Senate District 28", party: "R",
+    officialUrl: "https://senate.texas.gov/member.php?d=28",
+    biography: "Charles Perry represents Texas Senate District 28 and is based in Lubbock. According to the official Texas Senate biography, he is a certified public accountant with an accounting and management-information degree from Texas Tech University. Following Texas House service from 2010 to 2014, he entered the Senate in 2014 and chairs Water, Agriculture and Rural Affairs while working on health, finance and infrastructure matters. The searchable legislative sample provides direct primary-source bill histories.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=28",
+  },
+  "brent-hagenbuch": {
+    name: "Brent Hagenbuch", office: "Texas Senate", district: "Senate District 30", party: "R",
+    officialUrl: "https://www.senate.texas.gov/member.php?d=30",
+    biography: "Brent Hagenbuch represents Texas Senate District 30 and began Senate service in 2025. The official member biography identifies him as chairman of a transportation and logistics company, a former U.S. Navy Civil Engineer Corps officer, and a graduate of the U.S. Naval Academy, Stanford University and UCLA. His business career includes transport operations and management roles. This page presents historical 89th Legislature authored and sponsored bill examples separately from coauthor and cosponsor records.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=30",
+  },
+  "kevin-sparks": {
+    name: "Kevin Sparks", office: "Texas Senate", district: "Senate District 31", party: "R",
+    officialUrl: "https://senate.texas.gov/member.php?d=31",
+    biography: "Kevin Sparks represents Texas Senate District 31 in West Texas and has served since 2023. His official Senate biography identifies him as an oil and gas operator based in Midland and a University of Texas at Austin business graduate. His public 89th Legislature agenda includes electric-grid reliability, water supply, child-welfare reform, and efforts against oilfield theft. The research records below use Texas Legislature Online bill histories to distinguish each formal legislative role and recorded outcome.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=31",
+  },
 };
 
 export const SIX_PROFILE_PILOT = [
@@ -163,6 +247,10 @@ export const SCRIPT2_REVIEWED_SLUGS = [
   "joanne-shofner", "lois-kolkhorst", "richard-hayes", "cesar-blanco",
   "bob-hall", "robert-nichols", "charles-schwertner", "carol-alvarado",
   "paul-bettencourt", "angela-paxton", "phil-king", "mayes-middleton",
+  "borris-miles", "sarah-eckhardt", "molly-cook", "nathan-johnson",
+  "joan-huffman", "roland-gutierrez", "chuy-hinojosa", "pete-flores",
+  "donna-campbell", "jose-menendez", "adam-hinojosa", "charles-perry",
+  "brent-hagenbuch", "kevin-sparks",
 ] as const;
 
 export const CERTIFICATION_CANDIDATE_SLUGS = [
@@ -266,7 +354,9 @@ export function certifyRepresentative(input: {
       typeof row.bill_identifier === "string" && Boolean(row.caption?.trim()) &&
       !Number.isNaN(Date.parse(row.last_synced_at)) &&
       row.legislature_number === 89
-    ) && authority.sources.some((source) => source.url.replace(/^https:\/\/www\./, "https://") === review.officialUrl));
+    ) && authority.sources.some((source) =>
+    source.url.replace(/^https:\/\/www\./, "https://") ===
+    review.officialUrl.replace(/^https:\/\/www\./, "https://")));
   if (!gates.C) reasons.push("C: official bill histories, timestamps, or member source traceability incomplete");
 
   const cleanBiography = authority?.biography?.trim() ?? "";
