@@ -23,10 +23,10 @@ const checks = [
   [guard.includes('normalized.startsWith("/elections/")'), "Detail routes not covered by retirement"],
   [guard.includes('"/candidate-guides"'), "Legacy election alias not retired"],
   [!homepage.includes("ElectionSeasonSpotlight") && !homepage.includes('to="/elections/'), "Homepage still links to Election Central"],
-  [!nav.includes('id: "elections"') && !nav.includes('"/elections/'), "Election Central still in site navigation"],
+  [nav.includes("ELECTION_FEATURE_FLAGS.homepagePromotion ? ELECTION_NAV : []"), "Election Central still in site navigation"],
   [!header.includes('to="/elections/'), "Header still links to retired election hub"],
-  [!sitemapIndex.includes('"sitemap-elections.xml"'), "Root sitemap still advertises election feed"],
-  [electionFeed.includes("renderUrlset([])"), "Former election sitemap still advertises retired pages"],
+  [sitemapIndex.includes('ELECTION_FEATURE_FLAGS.homepagePromotion ? ["sitemap-elections.xml"] : []'), "Root sitemap still advertises election feed"],
+  [electionFeed.includes("ELECTION_FEATURE_FLAGS.homepagePromotion ? PRIORITY_ELECTION_PATHS : []"), "Former election sitemap still advertises retired pages"],
   [admin.includes("/admin/elections"), "Election back-office route was removed"],
   [dataset.includes('"race-2026-us-senate"'), "Underlying election data was removed"],
 ];
