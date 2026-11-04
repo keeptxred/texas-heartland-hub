@@ -1,4 +1,5 @@
 import pilot from "@/data/representative-research-pilot.json";
+import expansion from "@/data/representative-research-script2.json";
 import type { Rep } from "@/data/representatives";
 import type { RepresentativeAuthority } from "@/data/representative-authority";
 
@@ -67,8 +68,21 @@ export function applyPilotEditorial(
   return authority && review ? { ...authority, biography: review.biography } : authority;
 }
 
+/**
+ * All historical research is indexed by officeholder on the server. These
+ * records are source-linked samples, not a complete bill or voting history.
+ * Expansion records are not in themselves proof of member identity or
+ * authority-page readiness; the six editorial gates remain fail-closed.
+ */
+const RESEARCH_BY_SLUG = new Map<string, PilotResearchRecord[]>();
+for (const row of [...pilot.records, ...expansion.records]) {
+  const records = RESEARCH_BY_SLUG.get(row.sponsor_slug) ?? [];
+  records.push(row as PilotResearchRecord);
+  RESEARCH_BY_SLUG.set(row.sponsor_slug, records);
+}
+
 export function pilotResearchFor(slug: string): PilotResearchRecord[] {
-  return pilot.records.filter((row) => row.sponsor_slug === slug);
+  return RESEARCH_BY_SLUG.get(slug) ?? [];
 }
 
 export type RepresentativeCertification = {
