@@ -41,7 +41,9 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
       })
       .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt))
       .slice(0, 6);
-    const relatedContent = await getRelatedAuthorityContent("representative", params.representativeSlug);
+    const relatedContent = await getRelatedAuthorityContent(
+      "representative", params.representativeSlug
+    ).catch(() => []);
     return {
       directoryRepresentative, authority, houseCommittees, news, relatedContent,
       identity: legislation?.identity ?? null,
@@ -105,18 +107,6 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
               ],
             }
           : {}),
-      },
-      {
-        "@type": "ItemList",
-        "@id": `${canonical}#sponsored-legislation`,
-        name: `Sponsored legislation connected to ${name}`,
-        numberOfItems: loaderData.bills.length,
-        itemListElement: loaderData.bills.map((bill: any, index: number) => ({
-          "@type": "ListItem",
-          position: index + 1,
-          url: `${SITE_URL}${canonicalBillPath(bill)}`,
-          name: `${bill.bill_identifier}: ${bill.caption}`,
-        })),
       },
       {
         "@type": "BreadcrumbList",
