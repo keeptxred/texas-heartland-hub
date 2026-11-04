@@ -2560,7 +2560,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       { label: "Texas Constitution", url: "https://statutes.capitol.texas.gov/?link=CN" },
     ],
     related: ["how-a-bill-becomes-texas-law", "texas-political-terminology"],
-    cta: { label: "See This Year's Propositions", href: "/texas-politics" },
+    cta: { label: "Texas Constitutional Amendments Guide", href: "/laws/constitutional-amendments" },
   },
 
   "texas-open-meetings-public-info": {
