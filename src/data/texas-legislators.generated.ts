@@ -1501,7 +1501,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 24,
     party: "R",
-    website: "https://house.texas.gov/members/24",
+    website: "https://house.texas.gov/members/2875",
     imageUrl: "https://house.texas.gov/images/members/2875.jpg?v=1",
     officialCode: null,
     home: "174 Calder Road Suite 1000, League City, TX 77573",
@@ -1546,11 +1546,11 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/24",
+          url: "https://house.texas.gov/members/2875",
         },
         {
           label: "Official member biography",
-          url: "https://house.texas.gov/members/2875/biography",
+          url: "https://www.house.texas.gov/index.php/members/2875/biography",
         },
         {
           label: "Texas Legislature Online member directory",
@@ -1638,7 +1638,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 26,
     party: "R",
-    website: "https://house.texas.gov/members/26",
+    website: "https://house.texas.gov/members/4675",
     imageUrl: "https://www.house.texas.gov/images/members/4675.jpg?v=1",
     officialCode: null,
     home: "22333 Grand Corner Drive, Katy, TX 77494",
@@ -1678,11 +1678,11 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/26",
+          url: "https://house.texas.gov/members/4675",
         },
         {
           label: "Official member biography",
-          url: "https://house.texas.gov/members/26",
+          url: "https://www.house.texas.gov/index.php/members/4675/biography",
         },
         {
           label: "Texas Legislature Online member directory",

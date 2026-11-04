@@ -24,8 +24,8 @@ describe("representative Script 2 source-first certification", () => {
     }
   });
 
-  it("requires all six genuine quality gates for forty-six individually reviewed expansion profiles", () => {
-    expect(SCRIPT2_REVIEWED_SLUGS).toHaveLength(46);
+  it("requires all six genuine quality gates for fifty-one individually reviewed expansion profiles", () => {
+    expect(SCRIPT2_REVIEWED_SLUGS).toHaveLength(51);
     for (const slug of SCRIPT2_REVIEWED_SLUGS) {
       const records = pilotResearchFor(slug);
       expect(records.length, slug + " evidence").toBeGreaterThanOrEqual(16);
@@ -41,7 +41,7 @@ describe("representative Script 2 source-first certification", () => {
   });
 
   it("never mistakes bulk bill records for completed editorial review", () => {
-    const slug = "cody-vasut";
+    const slug = "jeff-barry";
     expect(pilotResearchFor(slug).length).toBeGreaterThanOrEqual(16);
     const report = certificationFor(slug);
     expect(report.state).toBe("NOT_READY");
