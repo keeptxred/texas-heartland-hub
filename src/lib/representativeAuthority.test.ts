@@ -44,8 +44,8 @@ describe("representative authority pages", () => {
     expect(profile).toContain("canonicalBillPath");
   });
 
-  it("publishes profile, person, bill-list, and breadcrumb schema", () => {
-    for (const type of ["WebPage", "Person", "ItemList", "BreadcrumbList"]) {
+  it("publishes appropriate webpage, person and breadcrumb schema", () => {
+    for (const type of ["WebPage", "Person", "BreadcrumbList"]) {
       expect(profile).toContain(`"@type": "${type}"`);
     }
   });
