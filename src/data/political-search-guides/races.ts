@@ -44,7 +44,7 @@ export const POLITICAL_RACE_SEARCH_GUIDES: PoliticalSearchGuide[] = [
     ],
     watchFor: ["Certified runoff totals", "Cornyn post-election political activity", "How primary voters realign in the general election"],
     sources: [{ label: "Texas Secretary of State 2026 runoff results", url: "https://electionresults.sos.state.tx.us/results.html", primary: true }, { label: "Texas Tribune runoff report", url: "https://www.texastribune.org/2026/05/26/texas-john-cornyn-ken-paxton-us-senate-republican-primary-runoff/" }],
-    related: [{ label: "Texas election results", href: "/texas-politics" }, { label: "2026 Senate races", href: "/texas-politics" }],
+    related: [{ label: "Texas election results data", href: "/data/elections-results" }, { label: "Political race reference guides", href: "/texas-political-reference" }],
   },
   {
     slug: "ted-cruz-vs-colin-allred-2024-margin",
