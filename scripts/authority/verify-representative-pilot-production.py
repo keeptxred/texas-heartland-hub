@@ -28,6 +28,7 @@ READY = (
     "joan-huffman", "roland-gutierrez", "chuy-hinojosa", "pete-flores",
     "donna-campbell", "jose-menendez", "adam-hinojosa", "charles-perry",
     "brent-hagenbuch", "kevin-sparks",
+    "angelia-orr", "paul-dyson", "janis-holt",
 )
 NOT_READY = ("dan-crenshaw", "john-cornyn", "greg-abbott", "cody-vasut")
 NS = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
