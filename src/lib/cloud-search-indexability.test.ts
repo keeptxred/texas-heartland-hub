@@ -29,6 +29,11 @@ describe("cloud search recovery policy", () => {
     expect(isCloudArticleSearchEligibleByKind("news", ["search_recovery_source_first"])).toBe(false);
     expect(isCloudArticleSearchEligibleByKind(
       "news", ["search_recovery_source_first"], ["https://www.sos.texas.gov/elections/"],
+    )).toBe(false);
+    expect(isCloudArticleSearchEligibleByKind(
+      "news",
+      ["search_recovery_source_first", "editorial_reviewed", "primary_sources"],
+      ["https://www.sos.texas.gov/elections/"],
     )).toBe(true);
     expect(isCloudArticleSearchEligibleByKind(
       "news", ["search_recovery_source_first"], ["https://news.google.com/read/example"],
@@ -54,9 +59,13 @@ describe("cloud search recovery policy", () => {
     ]);
     expect(isCloudArticleSearchEligibleByKind(
       "news", ["search_recovery_source_first"], articleProvenanceUrls(article),
+    )).toBe(false);
+    expect(isCloudArticleSearchEligibleByKind(
+      "news", ["search_recovery_source_first", "editorial_reviewed", "primary_sources"],
+      articleProvenanceUrls(article),
     )).toBe(true);
     expect(isCloudArticleSearchEligibleByKind(
-      "news", ["search_recovery_source_first"], articleProvenanceUrls({
+      "news", ["search_recovery_source_first", "editorial_reviewed", "primary_sources"], articleProvenanceUrls({
         ...article, body_json: { sources: [] },
       }),
     )).toBe(false);
