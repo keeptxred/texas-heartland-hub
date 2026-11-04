@@ -74,7 +74,7 @@ export const ELECTION_LAW_TOPIC: LawTopic = {
     { label: "Texas Secretary of State — Recounts", url: "https://www.sos.state.tx.us/elections/laws/recounts.shtml", note: "Official recount outlines, forms and distinction between recount procedures and election contests." },
   ],
   related: [
-    { label: "Election Central", href: "/elections/2026" },
+    { label: "Texas Politics", href: "/texas-politics" },
     { label: "Texas Election Results and Voter Data", href: "/data/elections-results" },
     { label: "Election Law & Integrity Policy Tracker", href: "/policy/elections" },
     { label: "Texas Political Reference", href: "/texas-political-reference" },
