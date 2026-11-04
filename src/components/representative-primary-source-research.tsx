@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { pilotResearchFor } from "@/lib/representative-quality-gates";
 
 const ROLE_LABELS: Record<string, string> = {
@@ -10,6 +10,8 @@ export function RepresentativePrimarySourceResearch({ slug, name }: { slug: stri
   const records = pilotResearchFor(slug);
   const [query, setQuery] = useState("");
   const [role, setRole] = useState("all");
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => { setHydrated(true); }, []);
   if (!records.length) return null;
 
   const normalized = query.trim().toLocaleLowerCase("en");
@@ -26,7 +28,7 @@ export function RepresentativePrimarySourceResearch({ slug, name }: { slug: stri
   const laws = records.filter((row) => row.became_law).length;
 
   return (
-    <section id="activity" className="scroll-mt-24 rounded-xl border bg-card p-6">
+    <section id="activity" data-research-hydrated={hydrated ? "true" : "false"} className="scroll-mt-24 rounded-xl border bg-card p-6">
       <h2 className="text-2xl font-bold">89th Legislature: official bill-role research</h2>
       <p className="mt-3 leading-7">
         This searchable research sample identifies the distinct roles connected to {name} in
