@@ -7,15 +7,30 @@ interface OfficialCandidate {
   name: string;
   votes: number | null;
 }
+interface EstimatedCountSource {
+  sourceName: string;
+  sourceFamily: string;
+  sourceUrl: string;
+  updatedAt: string;
+  percent: number;
+}
+interface EstimatedCountProgress {
+  percent: number;
+  method: "single_provider" | "independent_mean";
+  sources: EstimatedCountSource[];
+  updatedAt: string;
+}
 interface OfficialRace {
   id: string;
   title: string;
   reportingPercent: number | null;
   totalReportedVotes: number | null;
   candidates: OfficialCandidate[];
+  estimatedVotesCounted?: EstimatedCountProgress | null;
 }
 interface OfficialFeed {
   source: string;
+  estimatedCountStatus?: "not_configured" | "available" | "unavailable";
   sourceUrl: string;
   sourceUpdatedLabel: string | null;
   retrievedAt: string;
@@ -154,6 +169,19 @@ function ElectionNightResultsPage() {
           ) : null}
         </div>
 
+        {feed && feed.estimatedCountStatus !== "available" ? (
+          <p role="status" className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
+            <strong>Estimated votes counted:</strong> Not available from a verified external provider.
+            The SOS polling-location percentage below is a different measure and must not be used as a substitute.
+          </p>
+        ) : null}
+        {feed?.estimatedCountStatus === "available" ? (
+          <p className="text-sm font-semibold text-slate-700">
+            Estimated votes counted are shown separately where an authorized, current provider supplied them.
+            They are unofficial estimates, not Texas SOS figures.
+          </p>
+        ) : null}
+
         {feed?.sourceLagging ? (
           <div role="status" className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950">
             <strong>State data update delayed:</strong> the official SOS source has not published a new update for
@@ -203,6 +231,27 @@ function ElectionNightResultsPage() {
                 <span>SOS polling locations reporting: {race.reportingPercent === null ? "Not reported" : race.reportingPercent + "%"}</span>
                 <span>Votes shown: {votesLabel(race.totalReportedVotes)}</span>
               </div>
+              {race.estimatedVotesCounted ? (
+                <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm">
+                  <p className="font-semibold text-slate-900">
+                    Estimated votes counted: {race.estimatedVotesCounted.percent.toFixed(1)}%
+                    {" · "}{race.estimatedVotesCounted.method === "independent_mean"
+                      ? "Independent-provider average" : "Single-provider estimate"}
+                  </p>
+                  <p className="mt-1 text-xs text-slate-600">
+                    Updated {localTime(race.estimatedVotesCounted.updatedAt)} · Unofficial estimate
+                  </p>
+                  <p className="mt-1 text-xs text-slate-600">
+                    Sources: {race.estimatedVotesCounted.sources.map((source, index) => (
+                      <span key={source.sourceFamily}>
+                        {index > 0 ? " · " : ""}
+                        <a href={source.sourceUrl} target="_blank" rel="noopener noreferrer"
+                          className="font-semibold underline underline-offset-2">{source.sourceName}</a>
+                      </span>
+                    ))}
+                  </p>
+                </div>
+              ) : null}
               <div className="mt-4 space-y-3">
                 {race.candidates.map((candidate, index) => {
                   const share = race.totalReportedVotes && candidate.votes !== null
