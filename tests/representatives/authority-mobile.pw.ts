@@ -18,6 +18,9 @@ test("certified representative pilot pages work on mobile with usable source res
     await expect(page.getByRole("searchbox", {
       name: "Search bill identifier, subject or status",
     })).toBeVisible();
+    // The form is present in server HTML before React attaches event
+    // handlers. Verify real hydration rather than racing a premature fill.
+    await expect(page.locator('#activity[data-research-interactive="true"]')).toBeVisible();
     const sources = page.getByRole("link", { name: "Official Texas Legislature bill history" });
     expect(await sources.count(), slug).toBeGreaterThanOrEqual(16);
     const tooWide = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 2);
@@ -26,6 +29,7 @@ test("certified representative pilot pages work on mobile with usable source res
       name: "Search bill identifier, subject or status",
     }).fill("unmatched-specific-test-search-zzz");
     await expect(page.getByText("No sampled records match these filters.")).toBeVisible();
+    await expect(page.getByText("Showing 0 of 32 sampled role-linked records.")).toBeVisible();
   }
 });
 
