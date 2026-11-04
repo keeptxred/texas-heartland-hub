@@ -18,8 +18,12 @@ from urllib.parse import urlparse
 
 SITE_URL = os.environ.get("SITE_URL", "https://keeptxred-site.freddy-coppola.workers.dev").rstrip("/")
 CANONICAL = "https://keeptxred.com"
-READY = ("bryan-hughes", "judith-zaffirini", "terri-leo-wilson", "mihaela-plesa")
-NOT_READY = ("dan-crenshaw", "john-cornyn", "greg-abbott")
+READY = (
+    "bryan-hughes", "judith-zaffirini", "terri-leo-wilson", "mihaela-plesa",
+    "brent-money", "will-metcalf", "tan-parker", "royce-west",
+    "joanne-shofner", "lois-kolkhorst", "richard-hayes", "cesar-blanco",
+)
+NOT_READY = ("dan-crenshaw", "john-cornyn", "greg-abbott", "cody-vasut")
 NS = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
 
 

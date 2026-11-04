@@ -4,7 +4,7 @@ import { BASE_URL, renderUrlset, xmlResponse } from "@/lib/sitemap-shared";
 import { getRepresentativeAuthority } from "@/data/representative-authority";
 import { findRepresentativeBySlug } from "@/data/representatives";
 import {
-  SIX_PROFILE_PILOT,
+  CERTIFICATION_CANDIDATE_SLUGS,
   applyPilotEditorial,
   certifyRepresentative,
 } from "@/lib/representative-quality-gates";
@@ -16,7 +16,7 @@ import {
  * claim of current activity. Others remain discoverable by internal links but
  * are intentionally absent from this sitemap during recovery.
  */
-export const INDEXABLE_REPRESENTATIVE_SLUGS = SIX_PROFILE_PILOT.filter((slug) =>
+export const INDEXABLE_REPRESENTATIVE_SLUGS = CERTIFICATION_CANDIDATE_SLUGS.filter((slug) =>
   certifyRepresentative({
     slug,
     representative: findRepresentativeBySlug(slug),

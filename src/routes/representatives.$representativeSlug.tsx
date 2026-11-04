@@ -8,7 +8,6 @@ import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 import { RelatedAuthorityContent } from "@/components/authority/RelatedAuthorityContent";
 import { RepresentativeLegislativeIntelligence } from "@/components/representative-legislative-intelligence";
 import { RepresentativePrimarySourceResearch } from "@/components/representative-primary-source-research";
-import { applyPilotEditorial, certifyRepresentative, pilotResearchFor } from "@/lib/representative-quality-gates";
 
 export const Route = createFileRoute("/representatives/$representativeSlug")({
   loader: async ({ params }) => {
@@ -21,15 +20,14 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
     } catch {
       legislation = null;
     }
-    const { authority: catalogAuthority, houseCommittees } = await getRepresentativeAuthorityRouteData({ data: { slug: params.representativeSlug } });
     if (!directoryRepresentative && !legislation?.identity) throw notFound();
-    const authority = applyPilotEditorial(params.representativeSlug, catalogAuthority);
-    const certification = certifyRepresentative({
-      slug: params.representativeSlug,
-      representative: directoryRepresentative,
-      authority,
-      temporaryDataOutage: legislation === null,
-    });
+    const { authority, houseCommittees, certification, primarySourceResearch } =
+      await getRepresentativeAuthorityRouteData({
+        data: {
+          slug: params.representativeSlug,
+          temporaryDataOutage: legislation === null,
+        },
+      });
     const terms = (
       authority?.newsKeywords ?? (directoryRepresentative ? [directoryRepresentative.name] : [])
     ).map((term) => term.toLowerCase());
@@ -48,7 +46,7 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
       directoryRepresentative, authority, houseCommittees, news, relatedContent,
       identity: legislation?.identity ?? null,
       bills: legislation?.bills ?? [],
-      certification,
+      certification, primarySourceResearch,
       legislationUnavailable: legislation === null,
     };
   },
@@ -156,7 +154,7 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
 
 function RepresentativeProfile() {
   const { representativeSlug: slug } = Route.useParams();
-  const { directoryRepresentative: rep, identity, authority, bills, news, relatedContent, certification, legislationUnavailable } = Route.useLoaderData();
+  const { directoryRepresentative: rep, identity, authority, bills, news, relatedContent, certification, primarySourceResearch, legislationUnavailable } = Route.useLoaderData();
   const portrait = verifiedOfficialPortraitUrl(rep?.imageUrl);
   const former = rep?.status === "former";
   const federal = rep?.office.startsWith("U.S.") ?? false;
@@ -165,7 +163,7 @@ function RepresentativeProfile() {
   const district = rep?.district ?? identity?.district ?? null;
   const party = rep?.party ?? identity?.party ?? null;
   const profileAuthority = authority;
-  const hasPrimarySourceResearch = pilotResearchFor(slug).length > 0;
+  const hasPrimarySourceResearch = primarySourceResearch.length > 0;
   const profileEducation = profileAuthority?.education.filter(
     (item) => !/consult the linked official biography|no independent credential claim/i.test(item)
   ) ?? [];
@@ -332,7 +330,7 @@ function RepresentativeProfile() {
           </section>
 
           {hasPrimarySourceResearch ? (
-            <RepresentativePrimarySourceResearch slug={slug} name={name} />
+            <RepresentativePrimarySourceResearch name={name} records={primarySourceResearch} />
           ) : federal ? (
             <section className="rounded-xl border bg-card p-6">
               <h2 className="text-2xl font-bold">Federal legislative activity</h2>
