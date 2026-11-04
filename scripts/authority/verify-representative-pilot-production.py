@@ -29,11 +29,12 @@ READY = (
     "donna-campbell", "jose-menendez", "adam-hinojosa", "charles-perry",
     "brent-hagenbuch", "kevin-sparks",
     "angelia-orr", "paul-dyson", "janis-holt",
+    "greg-bonnen", "cody-vasut", "matt-morgan", "ron-reynolds", "gary-gates",
     "cecil-bell", "keith-bell", "cole-hefner", "daniel-alders", "jay-dean",
     "cody-harris", "trent-ashby", "brian-harrison", "trey-wharton",
     "steve-toth", "stan-gerdes", "ellen-troxclair", "terry-wilson",
 )
-NOT_READY = ("dan-crenshaw", "john-cornyn", "greg-abbott", "cody-vasut")
+NOT_READY = ("dan-crenshaw", "john-cornyn", "greg-abbott", "jeff-barry")
 NS = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
 
 
