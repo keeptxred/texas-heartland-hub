@@ -32,18 +32,18 @@ function LegislatureHubRoute() {
         </div>
       </div>
     </section>
-    <section className="mx-auto max-w-6xl px-4 pb-12" aria-labelledby="legislature-election-central-links">
+    <section className="mx-auto max-w-6xl px-4 pb-12" aria-labelledby="legislature-reference-links">
       <div className="rounded-xl border bg-card p-6">
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">2026 election context</p>
-        <h2 id="legislature-election-central-links" className="mt-2 text-2xl font-bold text-foreground">
-          Follow the elections that determine the next Texas Legislature
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Legislative reference</p>
+        <h2 id="legislature-reference-links" className="mt-2 text-2xl font-bold text-foreground">
+          Explore the Texas Legislature, lawmakers, and districts
         </h2>
         <p className="mt-3 max-w-3xl leading-7 text-muted-foreground">
           Explore the Legislature, its districts, serving representatives, and current legislation through permanent reference resources.
         </p>
         <div className="mt-5 flex flex-wrap gap-x-6 gap-y-3 font-semibold">
           <Link to="/representatives" className="text-primary hover:underline">Serving Texas Representatives →</Link>
-          <Link to="/bills" className="text-primary hover:underline">Track Texas Bills →</Link>
+          <a href="/bills" className="text-primary hover:underline">Track Texas Bills →</a>
           <Link to="/districts" className="text-primary hover:underline">Texas legislative districts →</Link>
         </div>
       </div>
