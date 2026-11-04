@@ -4,8 +4,6 @@ import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions"
 import { assignUniqueImages } from "@/lib/dedupe-images";
 import { AdSlot } from "@/components/ad-slot";
 import { NewsletterSignup } from "@/components/newsletter-signup";
-import { ELECTION_FEATURE_FLAGS } from "@/lib/elections";
-import { November2026VotingActionGuide } from "@/components/elections/November2026VotingActionGuide";
 import { buildSeo, organizationJsonLd, SITE_URL, webPageJsonLd, websiteJsonLd } from "@/lib/seo";
 import { shouldContainArticleImage } from "@/lib/article-image-attribution";
 
@@ -20,10 +18,6 @@ const HOMEPAGE_FAQS = [
   {
     question: "Is Keep TX Red news, commentary, or both?",
     answer: "Both. Keep TX Red publishes source-backed reporting and reference pages as well as clearly labeled commentary. The Texas Case section contains the site's permanent editorial positions, while factual reference resources preserve source and methodology context.",
-  },
-  {
-    question: "Where can I follow the 2026 Texas elections?",
-    answer: "Election Central brings together verified Texas races, candidates, polling, forecasts, voting information, and sourced results. It also links to methodology and official voting resources.",
   },
   {
     question: "How does Keep TX Red source government and election information?",
@@ -127,26 +121,6 @@ function BreakingStrip({ articles }: { articles: DailyArticle[] }) {
   );
 }
 
-function ElectionSeasonSpotlight() {
-  if (!ELECTION_FEATURE_FLAGS.homepagePromotion) return null;
-
-  return (
-    <section className="border-b bg-primary/5" aria-labelledby="election-central-spotlight">
-      <div className="mx-auto grid max-w-[1200px] gap-6 px-6 py-8 md:grid-cols-[1fr_auto] md:items-center">
-        <div>
-          <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-primary">2026 election season</p>
-          <h2 id="election-central-spotlight" className="mt-2 font-display text-3xl tracking-tight">Election Central is KTR's dedicated election authority destination</h2>
-          <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">Follow Texas races, candidate profiles, polls, forecasts, voting logistics, methodology, district pages, and sourced results from one canonical destination.</p>
-        </div>
-        <div className="flex flex-wrap gap-3 md:justify-end">
-          <Link to="/elections/2026" className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Open Election Central →</Link>
-          <Link to="/elections/voting" className="rounded-md border bg-background px-5 py-3 text-sm font-semibold">Voting guide</Link>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function DiscoveryPriorityLinks() {
   return (
     <section className="border-t bg-background" aria-labelledby="keep-tx-red-discovery-priority">
@@ -154,7 +128,7 @@ function DiscoveryPriorityLinks() {
         <div className="max-w-3xl">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">More from Keep TX Red</p>
           <h2 id="keep-tx-red-discovery-priority" className="mt-2 font-display text-3xl sm:text-4xl">Find the part of KTR you need</h2>
-          <p className="mt-3 leading-7 text-muted-foreground">Election Central remains the dedicated election destination while the homepage preserves KTR's broader identity across politics, government, law, policy, business, and the Texas economy.</p>
+          <p className="mt-3 leading-7 text-muted-foreground">Browse KTR's coverage of politics, government, law, policy, business, and the Texas economy.</p>
         </div>
 
         <div className="mt-9 grid gap-8 lg:grid-cols-3">
@@ -188,7 +162,7 @@ function HomepageFaqs() {
         <div className="max-w-3xl">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Keep TX Red FAQ</p>
           <h2 id="keep-tx-red-faq" className="mt-2 font-display text-3xl sm:text-4xl">Questions about Keep TX Red</h2>
-          <p className="mt-3 leading-7 text-muted-foreground">A quick guide to what KTR covers, how its reference material is sourced, and where to find election, government, and correction resources.</p>
+          <p className="mt-3 leading-7 text-muted-foreground">A quick guide to KTR coverage, sourcing, government resources, and corrections.</p>
         </div>
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           {HOMEPAGE_FAQS.map((item) => (
@@ -226,7 +200,7 @@ function PoliticalHomepage() {
             <p className="mt-3 max-w-3xl text-xl font-semibold text-white/90">Texas politics, elections, government and public affairs</p>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/80">Keep TX Red — short for Keep Texas Red — covers Texas politics, elections, bills, public officials, government accountability, law, policy, business and the economy — and makes the common-sense case for the principles we believe Texas should defend.</p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/elections/2026" className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Election Central</Link>
+              <Link to="/news" className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Latest Texas News</Link>
               <a href="/texas-case" className="rounded-md border border-white/25 px-5 py-3 text-sm font-semibold">The Texas Case</a>
               <Link to="/bills" search={EMPTY_BILLS_SEARCH} className="rounded-md border border-white/25 px-5 py-3 text-sm font-semibold">Track Texas bills</Link>
               <Link to="/texas-politics" className="rounded-md border border-white/25 px-5 py-3 text-sm font-semibold">Texas politics</Link>
@@ -241,8 +215,6 @@ function PoliticalHomepage() {
         </div>
       </section>
 
-      <ElectionSeasonSpotlight />
-      <section className="mx-auto max-w-[1200px] px-6 pt-8"><November2026VotingActionGuide compact /></section>
       <BreakingStrip articles={valid} />
 
       <section className="mx-auto max-w-[1200px] px-6 py-16">
@@ -252,7 +224,7 @@ function PoliticalHomepage() {
       </section>
 
       <section className="border-y bg-muted/40"><div className="mx-auto grid max-w-[1200px] gap-5 px-6 py-14 sm:grid-cols-2 lg:grid-cols-4">
-        <Link to="/elections/2026" className="rounded-xl border bg-card p-5 hover:shadow-md"><h3 className="font-semibold">Elections</h3><p className="mt-2 text-sm text-muted-foreground">Candidates, races, polling, forecasts, voting information, and results.</p><span className="mt-4 block text-sm font-semibold text-primary">Open →</span></Link>
+        <Link to="/texas-politics" className="rounded-xl border bg-card p-5 hover:shadow-md"><h3 className="font-semibold">Texas Politics</h3><p className="mt-2 text-sm text-muted-foreground">Political reporting, public officials, policy debates, and government accountability.</p><span className="mt-4 block text-sm font-semibold text-primary">Open →</span></Link>
         <Link to="/texas-legislature" className="rounded-xl border bg-card p-5 hover:shadow-md"><h3 className="font-semibold">Texas Legislature</h3><p className="mt-2 text-sm text-muted-foreground">Sessions, chambers, committees, lawmakers, and legislative resources.</p><span className="mt-4 block text-sm font-semibold text-primary">Open →</span></Link>
         <Link to="/bills" search={EMPTY_BILLS_SEARCH} className="rounded-xl border bg-card p-5 hover:shadow-md"><h3 className="font-semibold">Bills</h3><p className="mt-2 text-sm text-muted-foreground">Search and follow Texas legislation, actions, sponsors, and documents.</p><span className="mt-4 block text-sm font-semibold text-primary">Open →</span></Link>
         <a href="/texas-case" className="rounded-xl border bg-card p-5 hover:shadow-md"><h3 className="font-semibold">The Texas Case</h3><p className="mt-2 text-sm text-muted-foreground">Permanent KTR editorial positions backed by laws, data, and primary records.</p><span className="mt-4 block text-sm font-semibold text-primary">Open →</span></a>
