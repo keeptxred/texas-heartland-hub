@@ -297,13 +297,13 @@ def verify_bill() -> None:
         try:
             with urllib.request.urlopen(request, timeout=TIMEOUT_SECONDS) as response:
                 status = response.status
-                response_headers = dict(response.headers.items())
+                response_headers = {key.lower(): value for key, value in response.headers.items()}
         except urllib.error.HTTPError as error:
             status = error.code
-            response_headers = dict(error.headers.items())
+            response_headers = {key.lower(): value for key, value in error.headers.items()}
         if status != 410:
             raise SmokeFailure(f"Retired {retired} returned HTTP {status}; expected 410 Gone")
-        if "noindex" not in response_headers.get("X-Robots-Tag", "").lower():
+        if "noindex" not in response_headers.get("x-robots-tag", "").lower():
             raise SmokeFailure(f"Retired {retired} missing noindex X-Robots-Tag")
 
     print(
