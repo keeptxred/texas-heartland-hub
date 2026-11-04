@@ -26,8 +26,9 @@ describe("homepage GEO signals", () => {
   it("keeps homepage GEO signals while removing public Election Central promotions", () => {
     const source = homepageSource();
 
-    expect(source).not.toContain("<ElectionSeasonSpotlight />");
-    expect(source).not.toContain('to="/elections/2026"');
+    expect(source).toContain("<ElectionSeasonSpotlight />");
+    expect(source).toContain("if (!ELECTION_FEATURE_FLAGS.homepagePromotion) return null");
+    expect(source).toContain('to="/elections/2026"');
     expect(source).toContain('to="/news"');
     expect(source).toContain("<HomepageFaqs />");
     expect(source).not.toContain("<ElectionHomePage");

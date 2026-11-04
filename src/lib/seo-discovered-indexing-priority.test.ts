@@ -9,8 +9,8 @@ describe("discovered-not-indexed crawl priority", () => {
     const electionFeed = read("src/routes/sitemap-elections[.]xml.ts");
     const sitemapIndex = read("src/routes/sitemap[.]xml.ts");
     const shared = read("src/lib/sitemap-shared.ts");
-    expect(electionFeed).toContain("renderUrlset([])");
-    expect(sitemapIndex).not.toContain('"sitemap-elections.xml"');
+    expect(electionFeed).toContain("ELECTION_FEATURE_FLAGS.homepagePromotion ? PRIORITY_ELECTION_PATHS : []");
+    expect(sitemapIndex).toContain('ELECTION_FEATURE_FLAGS.homepagePromotion ? ["sitemap-elections.xml"] : []');
     expect(shared).toContain('"/elections"');
   });
 

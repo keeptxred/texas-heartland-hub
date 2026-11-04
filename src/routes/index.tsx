@@ -4,6 +4,7 @@ import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions"
 import { assignUniqueImages } from "@/lib/dedupe-images";
 import { AdSlot } from "@/components/ad-slot";
 import { NewsletterSignup } from "@/components/newsletter-signup";
+import { ELECTION_FEATURE_FLAGS } from "@/lib/elections/featureFlags";
 import { buildSeo, organizationJsonLd, SITE_URL, webPageJsonLd, websiteJsonLd } from "@/lib/seo";
 import { shouldContainArticleImage } from "@/lib/article-image-attribution";
 
@@ -121,6 +122,26 @@ function BreakingStrip({ articles }: { articles: DailyArticle[] }) {
   );
 }
 
+function ElectionSeasonSpotlight() {
+  if (!ELECTION_FEATURE_FLAGS.homepagePromotion) return null;
+
+  return (
+    <section className="border-b bg-primary/5" aria-labelledby="election-central-spotlight">
+      <div className="mx-auto grid max-w-[1200px] gap-6 px-6 py-8 md:grid-cols-[1fr_auto] md:items-center">
+        <div>
+          <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-primary">2026 election season</p>
+          <h2 id="election-central-spotlight" className="mt-2 font-display text-3xl tracking-tight">Election Central is KTR's dedicated election authority destination</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">Follow Texas races, candidate profiles, polls, forecasts, voting logistics, methodology, district pages, and sourced results from one canonical destination.</p>
+        </div>
+        <div className="flex flex-wrap gap-3 md:justify-end">
+          <Link to="/elections/2026" className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Open Election Central →</Link>
+          <Link to="/elections/voting" className="rounded-md border bg-background px-5 py-3 text-sm font-semibold">Voting guide</Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function DiscoveryPriorityLinks() {
   return (
     <section className="border-t bg-background" aria-labelledby="keep-tx-red-discovery-priority">
@@ -216,6 +237,7 @@ function PoliticalHomepage() {
       </section>
 
       <BreakingStrip articles={valid} />
+      <ElectionSeasonSpotlight />
 
       <section className="mx-auto max-w-[1200px] px-6 py-16">
         <div className="flex items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Latest coverage</p><h2 className="mt-2 font-display text-4xl">Texas political news</h2></div><Link to="/news" className="text-sm font-semibold text-primary hover:underline">View all news →</Link></div>

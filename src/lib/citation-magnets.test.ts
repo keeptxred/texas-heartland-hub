@@ -67,7 +67,7 @@ describe("citation magnet discovery and extraction contracts", () => {
   });
 
   it("keeps the retired Election Central feed empty and removes its manifest records", () => {
-    expect(electionSitemap).toContain("renderUrlset([])");
+    expect(electionSitemap).toContain("ELECTION_FEATURE_FLAGS.homepagePromotion ? PRIORITY_ELECTION_PATHS : []");
     expect(manifest.resources.every((resource) => !new URL(resource.url).pathname.startsWith("/elections/"))).toBe(true);
     expect(llms).not.toContain("(/elections/2026)");
   });

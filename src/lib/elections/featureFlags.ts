@@ -17,7 +17,7 @@ const electionCentralReady = Boolean(electionReadiness.ready);
 export const ELECTION_FEATURE_FLAGS = {
   homepagePromotion: electionCentralReady && readBooleanFlag(
     import.meta.env.VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE,
-    true,
+    false,
   ),
 } as const;
 

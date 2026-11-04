@@ -1,3 +1,4 @@
+import { ELECTION_FEATURE_FLAGS } from "@/lib/elections/featureFlags";
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { BASE_URL, xmlEscape, xmlResponse } from "@/lib/sitemap-shared";
@@ -20,6 +21,7 @@ const ADVERTISED_SITEMAPS = [
   "sitemap-news.xml",
   "sitemap-evergreen.xml",
   "sitemap-priority.xml",
+  ...(ELECTION_FEATURE_FLAGS.homepagePromotion ? ["sitemap-elections.xml"] : []),
   "sitemap-government.xml",
   "sitemap-political-figures.xml",
   "sitemap-political-geography.xml",
