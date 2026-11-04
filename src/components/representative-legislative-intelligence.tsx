@@ -75,20 +75,21 @@ export function RepresentativeLegislativeIntelligence({
         month: "short",
         day: "numeric",
       })
-    : "None recorded";
+    : "Not available in sample";
 
   return (
     <section id="activity" className="scroll-mt-24 rounded-xl border bg-card p-6">
       <h2 className="text-2xl font-bold">Legislative activity and policy connections</h2>
       <p className="mt-3 leading-7 text-muted-foreground">
-        This section summarizes bills connected to {name} through KTR&apos;s normalized sponsor
+        This section summarizes the most recent linked bills for {name} through KTR&apos;s normalized sponsor
         records and approved authority relationships. It does not describe floor votes, committee
         votes, or imply that the member supports every subject connected to a bill.
       </p>
 
+      <p className="mt-2 text-sm text-muted-foreground">The database currently returns at most 100 matching sponsor rows per page. Counts below describe only this returned sample, not a complete legislative-session or lifetime record.</p>
       <div className="mt-5 grid gap-4 sm:grid-cols-3">
-        <ActivityFact label="Sponsor-linked bills" value={String(activity.billCount)} />
-        <ActivityFact label="Became law" value={String(activity.becameLawCount)} />
+        <ActivityFact label="Distinct bills in sample" value={String(activity.billCount)} />
+        <ActivityFact label="Sampled bills that became law" value={String(activity.becameLawCount)} />
         <ActivityFact label="Latest bill action" value={latestAction} />
       </div>
 
