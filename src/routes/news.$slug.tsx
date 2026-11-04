@@ -237,7 +237,10 @@ export const Route = createFileRoute("/news/$slug")({
     return {
       meta: seo.meta,
       links: seo.links,
-      scripts: [
+      // A visitor-accessible noindex archive is not independently published
+      // Google News reporting. Avoid emitting NewsArticle/FAQ schema that can
+      // misrepresent syndicated or draft content as original KTR reporting.
+      scripts: article.noindex ? [] : [
         {
           type: "application/ld+json",
           children: JSON.stringify({
