@@ -47,20 +47,27 @@ describe("verified Cloudflare AI model and private evergreen writer", () => {
     expect(credentials).toBeGreaterThan(gate);
     expect(hook).toContain('audience: "keeptxred-evergreen"');
     expect(hook).toContain('workflowPath: ".github/workflows/generate-evergreen.yml"');
-    expect(hook).toContain('allowedEventNames: ["schedule", "workflow_dispatch"]');
+    expect(hook).toContain('allowedEventNames: ["workflow_dispatch"]');
     expect(hook).toContain('status: 401, headers: { "Cache-Control": "no-store" }');
     expect(hook).toContain('status: 403, headers: { "Cache-Control": "no-store" }');
     expect(hook).toContain("maxTokens: 6000");
     expect(hook).toContain("if (mainWordCount < EVERGREEN_MIN_MAIN_WORDS)");
   });
 
-  it("runs twice daily via GitHub Actions and verifies a successfully published slug", () => {
-    expect(workflow).toContain("30 8 * * *");
-    expect(workflow).toContain("0 18 * * *");
+  it("only generates quarantined evergreen drafts on explicit dispatch, never on a paid twice-daily schedule", () => {
+    expect(workflow).not.toContain("30 8 * * *");
+    expect(workflow).not.toContain("0 18 * * *");
+    expect(workflow).not.toMatch(/^  schedule:/m);
+    expect(workflow).toContain("workflow_dispatch:");
+    expect(hook).toContain('EVERGREEN_EDITORIAL_REVIEW_REQUIRED_FLAG,');
+    expect(hook).toContain('"seo_noindex"');
+    expect(hook).toContain('status: "review_required"');
+    expect(hook).toContain('indexable: false');
     expect(workflow).toContain("id-token: write");
     expect(workflow).toContain("audience=keeptxred-evergreen");
     expect(workflow).toContain("Authorization: Bearer");
-    expect(workflow).toContain(".ok == true");
+    expect(workflow).toContain('.status == "review_required"');
+    expect(workflow).toContain(".indexable == false");
     expect(workflow).toContain("cancel-in-progress: false");
     expect(workflow).not.toContain("SUPABASE_SERVICE_ROLE_KEY");
   });
