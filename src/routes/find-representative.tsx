@@ -157,7 +157,7 @@ function FindRepPage() {
       <PageHero
         eyebrow={ELECTION_FEATURE_FLAGS.homepagePromotion ? "2026 Election Lookup" : "Texas District Lookup"}
         title="FIND YOUR"
-        highlight={ELECTION_FEATURE_FLAGS.homepagePromotion ? "RACES" : "REPRESENTATIVES"}
+        highlight={ELECTION_FEATURE_FLAGS.homepagePromotion ? "RACES" : "DISTRICTS"}
         description={ELECTION_FEATURE_FLAGS.homepagePromotion
           ? "Enter your Texas street address to identify your congressional, Texas House, and Texas Senate districts and connect them to verified election races."
           : "Enter a Texas street address to find your congressional, Texas House, and Texas Senate districts and current representatives."}
