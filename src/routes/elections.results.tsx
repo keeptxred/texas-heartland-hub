@@ -21,6 +21,8 @@ interface OfficialFeed {
   retrievedAt: string;
   reportingNow: boolean;
   stale: boolean;
+  sourceAgeMinutes?: number | null;
+  sourceLagging?: boolean;
   providerError?: string;
   races: OfficialRace[];
 }
@@ -118,6 +120,7 @@ function ElectionNightResultsPage() {
           <div>
             <p className="font-bold text-slate-900">
               {feed?.stale ? "Official feed temporarily unavailable — last verified snapshot" :
+                feed?.sourceLagging ? "Unofficial SOS results — source update delayed" :
                 feed?.reportingNow ? "Unofficial results reporting" :
                 "Waiting for official election-night returns"}
             </p>
@@ -134,6 +137,30 @@ function ElectionNightResultsPage() {
             </button>
           </div>
         </div>
+
+        <div className="rounded-xl border border-blue-200 bg-blue-50 p-5 text-sm leading-6 text-blue-950">
+          <p className="font-bold">Reporting percentage is NOT the percentage of votes counted</p>
+          <p className="mt-1">
+            The Texas Secretary of State reports the percentage of <strong>polling locations</strong> reporting to the state,
+            not an estimate of ballots counted. Early-voting totals can represent millions of votes even when few
+            polling locations show as reported. Other live election outlets may display a higher estimated-vote percentage,
+            which is a different measure. Do not compare the two percentages directly.
+          </p>
+          {feed?.sourceUpdatedLabel ? (
+            <p className="mt-2 font-semibold">SOS source last updated: {feed.sourceUpdatedLabel} Central
+              {feed.sourceAgeMinutes !== null && feed.sourceAgeMinutes !== undefined
+                ? " (" + feed.sourceAgeMinutes + " minutes ago)" : ""}.
+            </p>
+          ) : null}
+        </div>
+
+        {feed?.sourceLagging ? (
+          <div role="status" className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950">
+            <strong>State data update delayed:</strong> the official SOS source has not published a new update for
+            {feed.sourceAgeMinutes ? " " + feed.sourceAgeMinutes + " minutes" : " some time"}.
+            KTR is still checking automatically, but its vote totals and reporting figures may lag other providers.
+          </div>
+        ) : null}
 
         {error ? (
           <div role="alert" className="rounded-xl border border-amber-300 bg-amber-50 p-5 text-sm text-amber-950">
@@ -173,7 +200,7 @@ function ElectionNightResultsPage() {
             <section key={race.id} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm" aria-label={race.title}>
               <h3 className="text-lg font-bold text-slate-950">{race.title}</h3>
               <div className="mt-1 flex flex-wrap gap-3 text-xs text-slate-600">
-                <span>Polling locations reporting: {race.reportingPercent === null ? "Not reported" : race.reportingPercent + "%"}</span>
+                <span>SOS polling locations reporting: {race.reportingPercent === null ? "Not reported" : race.reportingPercent + "%"}</span>
                 <span>Votes shown: {votesLabel(race.totalReportedVotes)}</span>
               </div>
               <div className="mt-4 space-y-3">

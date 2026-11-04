@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseOfficialTexasResults } from "./official-results.server";
+import { parseOfficialTexasResults, sosSourceAgeMinutes } from "./official-results.server";
 
 const fixture = '<!doctype html><html><body><h1>Election Results - Tuesday, November 3, 2026</h1><p>2026 NOVEMBER GENERAL ELECTION (Updated 11/03/2026 07:42 PM)</p>' +
   ["U. S. SENATOR", "GOVERNOR", "LIEUTENANT GOVERNOR", "ATTORNEY GENERAL", "RAILROAD COMMISSIONER", "U. S. REPRESENTATIVE DISTRICT 1"].map((race, idx) =>
@@ -32,6 +32,14 @@ describe("official Texas election night parser", () => {
     expect(feed.reportingNow).toBe(false);
     expect(feed.races[0].candidates[0].votes).toBeNull();
     expect(feed.races[0].totalReportedVotes).toBeNull();
+  });
+
+  it("detects a lagging state-source update in Texas Central time", () => {
+    const reference = Date.parse("2026-11-04T02:50:00.000Z");
+    expect(sosSourceAgeMinutes("11/03/2026 08:19 PM", reference)).toBe(31);
+    expect(sosSourceAgeMinutes("11/03/2026 08:49 PM", reference)).toBe(1);
+    expect(sosSourceAgeMinutes(null, reference)).toBeNull();
+    expect(sosSourceAgeMinutes("invalid", reference)).toBeNull();
   });
 
   it("refuses a source that is not the November 2026 general election", () => {
