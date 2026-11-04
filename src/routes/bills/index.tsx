@@ -12,6 +12,8 @@ type BillSearch = {
   legislature: number;
   chamber: string;
   billType: string;
+  session: string;
+  sort: 'latest' | 'oldest' | 'bill-number';
   kind?: 'substantive' | 'resolutions' | 'all';
   page: number;
 };
@@ -22,12 +24,14 @@ const DEFAULT_SEARCH: BillSearch = {
   legislature: 0,
   chamber: '',
   billType: '',
+  session: '',
+  sort: 'latest',
   kind: 'substantive',
   page: 1,
 };
 
 function hasBillFilters(search: BillSearch) {
-  return Boolean(search.q || search.status || search.legislature || search.chamber || search.billType || (search.kind && search.kind !== 'substantive'));
+  return Boolean(search.q || search.status || search.legislature || search.chamber || search.billType || search.session || search.sort !== 'latest' || (search.kind && search.kind !== 'substantive'));
 }
 
 function paginationPages(current: number, total: number): number[] {
@@ -54,6 +58,8 @@ export const Route = createFileRoute('/bills/')({
     legislature: Math.max(0, Number(search.legislature) || 0),
     chamber: typeof search.chamber === 'string' ? search.chamber.slice(0, 20) : '',
     billType: typeof search.billType === 'string' ? search.billType.slice(0, 20) : '',
+    session: typeof search.session === 'string' && /^(R|[1-9])$/i.test(search.session) ? search.session.toUpperCase() : '',
+    sort: search.sort === 'oldest' || search.sort === 'bill-number' ? search.sort : 'latest',
     kind: search.kind === 'all' || search.kind === 'resolutions' ? search.kind : 'substantive',
     page: Math.max(1, Number(search.page) || 1),
   }),
@@ -69,6 +75,8 @@ export const Route = createFileRoute('/bills/')({
         legislature: deps.legislature || undefined,
         chamber: deps.chamber,
         billType: deps.billType,
+        sessionCode: deps.session,
+        sort: deps.sort,
         kind: deps.kind,
         limit: 24,
         offset: (deps.page - 1) * 24,
@@ -172,10 +180,11 @@ function BillsPage() {
   const pages = Math.max(1, Math.ceil(count / 24));
   const visiblePages = paginationPages(search.page, pages);
   const hasFilters = hasBillFilters(search);
-  const preserved = { q: search.q, status: search.status, legislature: search.legislature, chamber: search.chamber, billType: search.billType, kind: search.kind };
+  const preserved = { q: search.q, status: search.status, legislature: search.legislature, chamber: search.chamber, billType: search.billType, session: search.session, sort: search.sort, kind: search.kind };
   const legislatures = options.legislatures as Array<{ value: number; label: string }>;
   const chambers = options.chambers as string[];
   const billTypes = options.billTypes as string[];
+  const sessions = ('sessions' in options ? options.sessions : []) as string[];
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -190,11 +199,13 @@ function BillsPage() {
             <label className="relative flex-1"><span className="sr-only">Search Texas bills</span><Search className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground"/><input name="q" defaultValue={search.q} placeholder="Search HB 1, SB 21, caption or subject" className="h-12 w-full rounded-md border bg-background pl-10 pr-4"/></label>
             <button className="h-12 rounded-md bg-primary px-6 font-semibold text-primary-foreground">Search bills</button>
           </div>
-          <div className="grid gap-3 sm:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <label><span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">Legislature</span><select name="legislature" defaultValue={search.legislature || ''} className="h-11 w-full rounded-md border bg-background px-3"><option value="">All legislatures</option>{legislatures.map((item) => <option key={item.value} value={item.value}>{item.label.replace(/\s+·\s+.+$/, '')}</option>)}</select></label>
             <label><span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">Chamber</span><select name="chamber" defaultValue={search.chamber} className="h-11 w-full rounded-md border bg-background px-3"><option value="">All chambers</option>{chambers.map((value) => <option key={value} value={value}>{chamberLabel(value)}</option>)}</select></label>
             <label><span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">Measure category</span><select name="kind" defaultValue={search.kind} className="h-11 w-full rounded-md border bg-background px-3"><option value="substantive">House &amp; Senate bills</option><option value="resolutions">Resolutions &amp; amendments</option><option value="all">All measures</option></select></label>
             <label><span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">Bill type</span><select name="billType" defaultValue={search.billType} className="h-11 w-full rounded-md border bg-background px-3"><option value="">All bill types</option>{billTypes.map((value) => <option key={value} value={value}>{billTypeLabel(value)}</option>)}</select></label>
+            <label><span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">Session</span><select name="session" defaultValue={search.session} className="h-11 w-full rounded-md border bg-background px-3"><option value="">All sessions</option>{sessions.map((code) => <option key={code} value={code}>{code === 'R' ? 'Regular session' : `Called session ${code}`}</option>)}</select></label>
+            <label><span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">Sort results</span><select name="sort" defaultValue={search.sort} className="h-11 w-full rounded-md border bg-background px-3"><option value="latest">Latest action first</option><option value="oldest">Oldest action first</option><option value="bill-number">Bill number ascending</option></select></label>
           </div>
           {search.status && <input type="hidden" name="status" value={search.status} />}
           <p className="text-xs text-muted-foreground">House and Senate bills can become statutes. Simple and concurrent resolutions are not statutes; joint resolutions may propose constitutional amendments.</p>
@@ -238,7 +249,7 @@ function BillsPage() {
           <div className="flex flex-wrap gap-2">
             <Link to="/bills" search={{ ...preserved, status: '', page: 1 }} className={`rounded-full border px-3 py-1.5 text-sm ${!search.status ? 'bg-primary text-primary-foreground' : 'bg-background hover:border-primary'}`}>All statuses</Link>
             {statuses.map(([value,label]) => <Link key={value} to="/bills" search={{ ...preserved, kind: value === 'adopted' ? 'resolutions' : (value === 'signed' && search.kind === 'resolutions' ? 'substantive' : search.kind), status: value, page: 1 }} className={`rounded-full border px-3 py-1.5 text-sm ${search.status === value ? 'bg-primary text-primary-foreground' : 'bg-background hover:border-primary'}`}>{label}</Link>)}
-            {hasFilters && <Link to="/bills" search={{ q: '', status: '', legislature: 0, chamber: '', billType: '', kind: 'substantive', page: 1 }} className="rounded-full border border-dashed px-3 py-1.5 text-sm hover:border-primary">Clear filters</Link>}
+            {hasFilters && <Link to="/bills" search={{ q: '', status: '', legislature: 0, chamber: '', billType: '', session: '', sort: 'latest', kind: 'substantive', page: 1 }} className="rounded-full border border-dashed px-3 py-1.5 text-sm hover:border-primary">Clear filters</Link>}
           </div>
         </div>
         {bills.length ? <div className="mt-6 grid gap-4 lg:grid-cols-2">{bills.map((bill: any) => <article key={bill.id} className="rounded-xl border bg-card p-5 transition hover:border-primary"><div className="flex items-start justify-between gap-4"><div><button type="button" onClick={() => openBill(bill)} aria-controls="bill-detail" aria-expanded={selectedBill === billSearchKey(bill)} className="text-left text-xl font-bold text-primary hover:underline">{bill.bill_identifier}</button><p className="mt-2 font-medium leading-snug">{bill.caption}</p></div><span className="shrink-0 rounded-full bg-muted px-3 py-1 text-xs font-semibold">{bill.current_status_label}</span></div><div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground"><span>{bill.chamber === 'house' ? 'Texas House' : bill.chamber === 'senate' ? 'Texas Senate' : 'Joint'}</span><span className="font-semibold text-foreground/80">{billSessionLabel(bill.legislature_number, bill.session_code)}</span><span>{bill.bill_type.toUpperCase()}</span>{bill.last_synced_at && <span title="Last record synchronization">Synced {new Date(bill.last_synced_at).toLocaleDateString()}</span>}{bill.last_action_date && <span>Last official action {new Date(`${bill.last_action_date}T12:00:00`).toLocaleDateString()}</span>}</div></article>)}</div> : <div className="mt-6 rounded-xl border border-dashed p-10 text-center"><h3 className="font-semibold">No matching bills</h3><p className="mt-2 text-sm text-muted-foreground">Clear one or more filters or try a broader bill number, caption or subject search.</p></div>}

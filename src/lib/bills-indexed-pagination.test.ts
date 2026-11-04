@@ -93,7 +93,7 @@ describe("bill directory pagination under the public API timeout", () => {
       const [first, second] = await Promise.all([getBillFilterOptions(), getBillFilterOptions()]);
       expect(first).toEqual({
         legislatures: [{ value: 89, label: "89th Legislature · R" }],
-        billTypes: ["hb"], chambers: ["house"],
+        billTypes: ["hb"], chambers: ["house"], sessions: ["R"],
       });
       expect(second).toEqual(first);
       expect(await getBillFilterOptions()).toEqual(first);
