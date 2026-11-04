@@ -37,10 +37,10 @@ describe("generated internal links", () => {
     }
   });
 
-  it("sends elections directly to the canonical Election Central hub", () => {
+  it("keeps election articles linked to public Texas Politics without retired hub URLs", () => {
     const links = pickInternalLinks({ category: "Elections", title: "Texas primary election update" });
-    expect(links.some((link) => link.href === "/elections/2026")).toBe(true);
-    expect(links.some((link) => link.href === "/elections")).toBe(false);
+    expect(links.some((link) => link.href === "/texas-politics")).toBe(true);
+    expect(links.some((link) => link.href.startsWith("/elections"))).toBe(false);
   });
 
   it("supports the existing voting-guide search foothold for voting-intent stories", () => {
