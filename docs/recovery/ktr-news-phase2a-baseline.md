@@ -11,7 +11,7 @@ This report is a **complete initial URL inventory from the currently accessible 
 - Existing `article_slug_redirects`: **21** aliases.
 - Deduplicated URL ledger: **388** entries (storage counts: {"daily_articles":319,"static_ARTICLES":57,"slug_redirect_alias":12}).
 - Duplicate slugs between Supabase and static registry: 3 (`live-2026-07-07-texas-pitmasters-to-feature-in-new-food-network-competition-series-v3wglp`, `live-2026-07-02-secretary-of-state-releases-july-3-texas-register-detailing-new-state--m0th5w`, `live-2026-06-29-the-history-behind-the-texas-stock-tank-name-bxkvg7`).
-- Provisional dispositions: `A`: 50, `B`: 2, `C`: 305, `D`: 23, `E`: 8.
+- Provisional dispositions: `A`: 48, `B`: 4, `C`: 305, `D`: 23, `E`: 8.
 - GSC impressions/clicks reflect **internal GSC daily mirror through 2026-10-31**, NOT independently certified finalized external GSC and NOT ranking/index verdicts.
 - URL Inspection verdicts are a partial cached sample and may predate the code now serving a URL. Empty cells mean unknown, **not zero indexing**.
 - Source availability, original reporting, live indexability, sitemap membership, HTTP status, duplicates/redirect equivalence, internal link dependencies, social/newsletter references remain to be independently verified before final status.
@@ -34,3 +34,8 @@ This report is a **complete initial URL inventory from the currently accessible 
 - PR #3425 upgrades the source-backed static civic guides `how-texas-counties-spend` and `what-local-governments-control` under disposition B (improve and retain).
 - These two are no longer merely hypothetical A candidates: the existing short bodies and overbroad statements were directly inspected and revised using statutory primary sources. The original May 2026 publication dates remain unchanged.
 - Both rows have `REPAIRED_IN_CODE_PENDING_PRODUCTION` pending tests, protected merge, and post-deployment HTTP verification. No count represents a Google indexing verdict.
+
+## Phase 2A next reviewed civic guide batch (pending separate PR)
+- `texas-energy-policy-guide`: updated from a shallow 52-word authority summary into a source-grounded explanation distinguishing ERCOT, PUCT, RRC, and applicable federal reliability jurisdiction; historic publication preserved.
+- `how-a-bill-becomes-texas-law`: replaces erroneous all-bills-hearing/conference assumptions with TLO-verified checkpoints, procedural records, governor action and effective dates; historic publication preserved.
+- Both now category B for targeted improvement; original A designation was provisional. No Google recovery or final editorial certification claimed before protected production smoke.
