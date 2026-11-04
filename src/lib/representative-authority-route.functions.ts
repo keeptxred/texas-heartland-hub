@@ -1,19 +1,36 @@
 import { createServerFn } from "@tanstack/react-start";
 
 /**
- * Fetch the existing verified 226-profile editorial authority catalog only on
- * the server. The representative route needs one article and a committee list,
- * not the complete state and U.S. delegation authority corpus on every page.
+ * Only the server reads the full source-linked evidence catalog. Return at
+ * most one representative's records to the client; never send the whole
+ * legislature's research JSON in a browser bundle or route payload.
  */
 export const getRepresentativeAuthorityRouteData = createServerFn({ method: "GET" })
-  .validator((input: { slug: string }) => ({
+  .validator((input: { slug: string; temporaryDataOutage?: boolean }) => ({
     slug: String(input.slug ?? "").trim().slice(0, 180),
+    temporaryDataOutage: Boolean(input.temporaryDataOutage),
   }))
   .handler(async ({ data }) => {
-    const { getRepresentativeAuthority, getHouseCommitteeAssignments } =
-      await import("@/data/representative-authority");
+    const [
+      { getRepresentativeAuthority, getHouseCommitteeAssignments },
+      { findRepresentativeBySlug },
+      { applyPilotEditorial, certifyRepresentative, pilotResearchFor },
+    ] = await Promise.all([
+      import("@/data/representative-authority"),
+      import("@/data/representatives"),
+      import("@/lib/representative-quality-gates"),
+    ]);
+    const authority = applyPilotEditorial(data.slug, getRepresentativeAuthority(data.slug) ?? null);
+    const representative = findRepresentativeBySlug(data.slug);
     return {
-      authority: getRepresentativeAuthority(data.slug) ?? null,
+      authority,
       houseCommittees: getHouseCommitteeAssignments(data.slug),
+      certification: certifyRepresentative({
+        slug: data.slug,
+        representative,
+        authority,
+        temporaryDataOutage: data.temporaryDataOutage,
+      }),
+      primarySourceResearch: pilotResearchFor(data.slug),
     };
   });
