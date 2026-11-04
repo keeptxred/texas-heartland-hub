@@ -83,6 +83,23 @@ function raceId(title: string): string {
   return title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
+/**
+ * SOS "Updated" times are Central Standard Time on November 3-4, 2026.
+ * The source's polling-location percentage is NOT estimated vote completeness.
+ */
+export function sosSourceAgeMinutes(label: string | null, now = Date.now()): number | null {
+  const match = label?.match(/^(\\d{1,2})\\/(\\d{1,2})\\/(2026)\\s+(\\d{1,2}):(\\d{2})\\s*(AM|PM)$/i);
+  if (!match) return null;
+  const month = Number(match[1]);
+  const day = Number(match[2]);
+  const year = Number(match[3]);
+  const hour = Number(match[4]) % 12 + (match[6].toUpperCase() === "PM" ? 12 : 0);
+  const minute = Number(match[5]);
+  if (month !== 11 || (day !== 3 && day !== 4) || hour > 23 || minute > 59) return null;
+  const sourceMs = Date.parse(`${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}T${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:00-06:00`);
+  return Number.isFinite(sourceMs) && sourceMs <= now ? Math.floor((now - sourceMs) / 60000) : null;
+}
+
 export function parseOfficialTexasResults(html: string, retrievedAt = new Date().toISOString()): OfficialResultsFeed {
   if (!/2026\s+NOVEMBER\s+GENERAL\s+ELECTION/i.test(textEntities(html.replace(/<[^>]+>/g, " ")))) {
     throw new Error("SOS response did not identify the November 2026 general election.");
