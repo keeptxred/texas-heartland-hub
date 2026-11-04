@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ABOUT_LINKS, SHOP_LINK, SHOP_POLICY_LINKS, SITE_NAV_GROUPS } from "./site-navigation";
+import { ELECTION_FEATURE_FLAGS } from "./elections/featureFlags";
 
 const REDIRECT_ALIASES = new Set([
   "/elections",
@@ -61,10 +62,13 @@ describe("site navigation", () => {
     }
   });
 
-  it("does not expose retired Election Central in global navigation", () => {
-    expect(SITE_NAV_GROUPS.map((group) => group.id)).not.toContain("elections");
-    for (const group of SITE_NAV_GROUPS) {
-      expect(group.links.every((link) => !("to" in link && link.to.startsWith("/elections")))).toBe(true);
+  it("honors the seasonal Election Central switch in global navigation", () => {
+    const electionGroup = SITE_NAV_GROUPS.find((group) => group.id === "elections");
+    expect(Boolean(electionGroup)).toBe(ELECTION_FEATURE_FLAGS.homepagePromotion);
+    if (!ELECTION_FEATURE_FLAGS.homepagePromotion) {
+      for (const group of SITE_NAV_GROUPS) {
+        expect(group.links.every((link) => !("to" in link && link.to.startsWith("/elections")))).toBe(true);
+      }
     }
   });
 
