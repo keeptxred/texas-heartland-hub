@@ -26,7 +26,7 @@ export const POLITICAL_RACE_SEARCH_GUIDES: PoliticalSearchGuide[] = [
       { label: "Federal Election Commission data", url: "https://www.fec.gov/data/", primary: true },
       { label: "Texas Tribune: July 28, 2026 poll report", url: "https://www.texastribune.org/2026/07/28/texas-senate-poll-james-talarico-ken-paxton-july-2026/" },
     ],
-    related: [{ label: "2026 Election Central", href: "/elections/2026" }, { label: "Texas election polls", href: "/elections/polls" }, { label: "The Texas Case for Election Integrity", href: "/texas-case/election-integrity" }],
+    related: [{ label: "Texas Politics", href: "/texas-politics" }, { label: "Texas election history", href: "/texas-politics/texas-election-history" }, { label: "The Texas Case for Election Integrity", href: "/texas-case/election-integrity" }],
   },
   {
     slug: "john-cornyn-texas-senate-primary-results-2026",
@@ -44,7 +44,7 @@ export const POLITICAL_RACE_SEARCH_GUIDES: PoliticalSearchGuide[] = [
     ],
     watchFor: ["Certified runoff totals", "Cornyn post-election political activity", "How primary voters realign in the general election"],
     sources: [{ label: "Texas Secretary of State 2026 runoff results", url: "https://electionresults.sos.state.tx.us/results.html", primary: true }, { label: "Texas Tribune runoff report", url: "https://www.texastribune.org/2026/05/26/texas-john-cornyn-ken-paxton-us-senate-republican-primary-runoff/" }],
-    related: [{ label: "Texas election results", href: "/elections/results" }, { label: "2026 Senate races", href: "/elections/2026" }],
+    related: [{ label: "Texas election results", href: "/texas-politics" }, { label: "2026 Senate races", href: "/texas-politics" }],
   },
   {
     slug: "ted-cruz-vs-colin-allred-2024-margin",
@@ -59,7 +59,7 @@ export const POLITICAL_RACE_SEARCH_GUIDES: PoliticalSearchGuide[] = [
     context: ["The 2024 result is frequently used as a benchmark for claims that Texas is becoming more or less competitive. That comparison is useful only when the same geography, office type, turnout environment, and candidate effects are kept in mind.", "KTR should use the 2024 margin as a historical baseline rather than as a prediction for 2026. Midterm turnout, open-seat dynamics, candidate favorability, national conditions, and district maps can all produce different results."],
     watchFor: ["Final certified statewide totals", "County-level comparison with 2018 and 2020", "How 2024 margins compare with 2026 contests"],
     sources: [{ label: "Texas Secretary of State election archive", url: "https://www.sos.state.tx.us/elections/historical/elections-results-archive.shtml", primary: true }, { label: "Texas Tribune result summary", url: "https://www.texastribune.org/2024/11/05/ted-cruz-colin-allred-texas-senate-election-2024/" }],
-    related: [{ label: "Texas election results", href: "/elections/results" }, { label: "Texas political trends", href: "/texas-politics" }],
+    related: [{ label: "Texas election results", href: "/texas-politics" }, { label: "Texas political trends", href: "/texas-politics" }],
   },
   {
     slug: "greg-abbott-reelection-campaign-2026",
@@ -89,7 +89,7 @@ export const POLITICAL_RACE_SEARCH_GUIDES: PoliticalSearchGuide[] = [
     context: ["Search interest in Hunt's campaign remains useful because the primary was a three-way test of Republican constituencies and because Hunt remains a federal officeholder. A permanent page should preserve the timeline instead of implying the campaign is still active.", "KTR should link this page to Hunt's officeholder profile and future election activity rather than creating a new disconnected identity page each cycle."],
     watchFor: ["Future House reelection activity", "Endorsements in the Paxton-Talarico race", "Any future statewide campaign announcements"],
     sources: [{ label: "Texas Secretary of State primary results", url: "https://electionresults.sos.state.tx.us/results.html", primary: true }, { label: "Texas Tribune primary report", url: "https://www.texastribune.org/2026/03/03/john-cornyn-ken-paxton-wesley-hunt-runoff-primary-texas-senate-republican/" }],
-    related: [{ label: "Texas representatives", href: "/representatives" }, { label: "Election Central", href: "/elections/2026" }],
+    related: [{ label: "Texas representatives", href: "/representatives" }, { label: "Texas Politics", href: "/texas-politics" }],
   },
   {
     slug: "monica-de-la-cruz-rio-grande-valley-election-2026",
@@ -104,7 +104,7 @@ export const POLITICAL_RACE_SEARCH_GUIDES: PoliticalSearchGuide[] = [
     context: ["The race is often described as a referendum on the political shift in South Texas, but one district cannot stand in for every Latino voter or every border county. Candidate identity, turnout, local issues, district boundaries, and national conditions all matter.", "KTR should make this page a bridge between the individual race and permanent South Texas trend data: county returns, voter registration, turnout, district maps, and prior federal election results."],
     watchFor: ["DCCC and NRCC spending", "District-level polling if methodology is public", "Hidalgo County turnout", "Election-night precinct and county returns"],
     sources: [{ label: "Texas Secretary of State election information", url: "https://www.sos.state.tx.us/elections/", primary: true }, { label: "Federal Election Commission", url: "https://www.fec.gov/data/", primary: true }, { label: "Texas Tribune race context", url: "https://www.texastribune.org/2026/04/09/bobby-pulido-quinceaneras-monica-de-la-cruz-south-texas-congress/" }],
-    related: [{ label: "Texas congressional races", href: "/elections/races" }, { label: "Texas voter trends", href: "/texas-politics" }],
+    related: [{ label: "Texas congressional races", href: "/texas-politics" }, { label: "Texas voter trends", href: "/texas-politics" }],
   },
   {
     slug: "bobby-pulido-texas-congress-race-2026",
@@ -119,7 +119,7 @@ export const POLITICAL_RACE_SEARCH_GUIDES: PoliticalSearchGuide[] = [
     context: ["Searchers often use 'Texas House' to mean a congressional seat from Texas, but that phrase normally refers to the Texas House of Representatives in Austin. This page should answer the intent while correcting the office so readers do not confuse state and federal races.", "The most useful long-term treatment is a race page tied to the district, candidates, finance records, and results—not personality-only coverage that becomes obsolete after November."],
     watchFor: ["Federal campaign-finance filings", "Candidate debates and forums", "Outside spending", "General-election result"],
     sources: [{ label: "Federal Election Commission", url: "https://www.fec.gov/data/", primary: true }, { label: "Texas Secretary of State elections", url: "https://www.sos.state.tx.us/elections/", primary: true }, { label: "Texas Tribune July race report", url: "https://www.texastribune.org/2026/07/06/texas-bobby-pulido-former-bandmate-sex-offender-congress-south-texas/" }],
-    related: [{ label: "Election races", href: "/elections/races" }, { label: "Candidates", href: "/elections/candidates" }],
+    related: [{ label: "Election races", href: "/texas-politics" }, { label: "Candidates", href: "/representatives" }],
   },
   {
     slug: "texas-35th-congressional-district-candidates-2026",
@@ -134,7 +134,7 @@ export const POLITICAL_RACE_SEARCH_GUIDES: PoliticalSearchGuide[] = [
     context: ["TX-35 is one of the clearest examples of why candidate pages must be tied to district maps. The same district number can represent a significantly different electorate after redistricting, so historical results need to be labeled by the boundaries in effect at the time.", "KTR should keep the 2026 candidate list, runoff results, map, and eventual general-election result together on one permanent district history page."],
     watchFor: ["General-election finance filings", "District-specific polling", "Court action affecting PlanC2333", "November results"],
     sources: [{ label: "Texas Secretary of State runoff results", url: "https://electionresults.sos.state.tx.us/results.html", primary: true }, { label: "Texas Redistricting current districts", url: "https://redistricting.capitol.texas.gov/Current-districts", primary: true }, { label: "Texas Tribune runoff report", url: "https://www.texastribune.org/2026/05/26/texas-35th-congressional-district-democrat-republican-primary-runoff/" }],
-    related: [{ label: "Election districts", href: "/elections/districts" }, { label: "Election candidates", href: "/elections/candidates" }],
+    related: [{ label: "Election districts", href: "/districts" }, { label: "Election candidates", href: "/representatives" }],
   },
   {
     slug: "texas-attorney-general-runoff-2026",
@@ -149,7 +149,7 @@ export const POLITICAL_RACE_SEARCH_GUIDES: PoliticalSearchGuide[] = [
     context: ["The attorney general is one of Texas' most consequential statewide offices because it controls major state litigation, consumer-protection enforcement, legal opinions, and representation of state agencies. The runoff therefore drew attention beyond ordinary down-ballot contests.", "This permanent page should preserve the primary history while linking forward to the eventual general-election result and the next officeholder profile."],
     watchFor: ["General-election opponent and result", "Campaign finance", "Transition planning for the Office of the Attorney General"],
     sources: [{ label: "Texas Secretary of State runoff results", url: "https://electionresults.sos.state.tx.us/results.html", primary: true }, { label: "Texas Ethics Commission", url: "https://www.ethics.state.tx.us/search/cf/", primary: true }, { label: "Texas Tribune runoff result", url: "https://www.texastribune.org/2026/05/26/mayes-middleton-chip-roy-texas-republican-runoff-attorney-general/" }],
-    related: [{ label: "Texas government", href: "/texas-government" }, { label: "Election results", href: "/elections/results" }],
+    related: [{ label: "Texas government", href: "/texas-government" }, { label: "Election results", href: "/texas-politics" }],
   },
   {
     slug: "republican-vs-democrat-seats-texas-house-2026",
@@ -164,6 +164,6 @@ export const POLITICAL_RACE_SEARCH_GUIDES: PoliticalSearchGuide[] = [
     context: ["A chamber-control page should distinguish current membership from election targets. A party can target a district without being favored to win it, and vacancies can temporarily change the count without changing the underlying partisan balance.", "KTR should maintain a simple seat ledger with current members, vacancies, competitive districts, election results, and the math required for either party to control the speaker election."],
     watchFor: ["Vacancies and special elections", "Competitive district ratings", "November seat flips", "Speaker coalition after the election"],
     sources: [{ label: "Texas House membership", url: "https://house.texas.gov/members", primary: true }, { label: "Texas Secretary of State elections", url: "https://www.sos.state.tx.us/elections/", primary: true }, { label: "Texas Tribune June 2026 battleground report", url: "https://www.texastribune.org/2026/06/03/texas-house-national-democrats-target-list-gop-districts-2026-midterms-legislature/" }],
-    related: [{ label: "Texas Legislature", href: "/texas-legislature" }, { label: "Texas House", href: "/texas-legislature/house" }, { label: "Election districts", href: "/elections/districts" }],
+    related: [{ label: "Texas Legislature", href: "/texas-legislature" }, { label: "Texas House", href: "/texas-legislature/house" }, { label: "Election districts", href: "/districts" }],
   },
 ];
