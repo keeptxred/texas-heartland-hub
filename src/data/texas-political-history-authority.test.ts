@@ -52,7 +52,8 @@ describe("Texas political history authority pages", () => {
   it("connects every history page back to current civic authority", () => {
     for (const page of TEXAS_POLITICAL_HISTORY_AUTHORITY_PAGES) {
       const hrefs = new Set(page.relatedLinks.map((link) => link.href));
-      expect(hrefs.has("/elections/2026"), page.slug).toBe(true);
+      expect(hrefs.has("/texas-politics"), page.slug).toBe(true);
+      expect([...hrefs].every((href) => !href.startsWith("/elections")), page.slug).toBe(true);
     }
   });
 
