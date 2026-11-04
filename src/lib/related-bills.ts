@@ -1,6 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { type Bill } from '@/lib/bills';
-import { publicBillPath } from '@/lib/bill-public-path';
+import { billSearchPath } from '@/lib/bill-public-path';
 import { cachedPublicBill } from '@/lib/public-bill-cache';
 
 const db = supabase as any;
@@ -159,7 +159,7 @@ async function loadRelatedBills(
       }
       return {
         ...bill,
-        href: publicBillPath(bill),
+        href: billSearchPath(bill),
         relationshipReasons: reasons,
         relationshipScore: score.subjectMatches * 3 + score.sponsorMatches,
       } as RelatedBill;

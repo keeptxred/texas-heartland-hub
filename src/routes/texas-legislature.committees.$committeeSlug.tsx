@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from '@tanstack/react-router';
 import { supabase } from '@/integrations/supabase/client';
 import { SITE_URL } from '@/lib/bills';
-import { publicBillPath } from '@/lib/bill-public-path';
+import { billSearchPath } from '@/lib/bill-public-path';
 import { getRelatedAuthorityContent } from '@/lib/authority-relationships';
 import { RelatedAuthorityContent } from '@/components/authority/RelatedAuthorityContent';
 
@@ -15,7 +15,7 @@ const hasCanonicalBillFields = (bill: any) =>
   Number.isFinite(Number(bill.bill_number));
 
 const safeCanonicalBillPath = (bill: any) =>
-  hasCanonicalBillFields(bill) ? publicBillPath(bill) : null;
+  hasCanonicalBillFields(bill) ? billSearchPath(bill) : null;
 
 const formatScheduleDate = (value: string | null | undefined) => {
   if (!value) return '';
