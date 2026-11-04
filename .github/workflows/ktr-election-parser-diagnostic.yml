@@ -17,7 +17,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          for v in plain compressed no-cache http11 browser range civix; do
+          for v in plain compressed no-cache http11 browser range fullrange civix; do
             hdr="/tmp/headers-${v}"
             body="/tmp/body-${v}"
             base="https://electionresults.sos.state.tx.us/results.html"
@@ -28,6 +28,7 @@ jobs:
               http11) curl -sSL --http1.1 --max-time 15 -D "$hdr" -o "$body" "$base";;
               browser) curl -sSL --max-time 15 -A 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/129 Safari/537.36' -D "$hdr" -o "$body" "$base";;
               range) curl -sSL --max-time 15 -H 'Range: bytes=8192-1000000' -D "$hdr" -o "$body" "$base";;
+              fullrange) curl -sSL --max-time 15 -H 'Range: bytes=0-9000000' -D "$hdr" -o "$body" "$base";;
               civix) curl -sSL --max-time 15 -D "$hdr" -o "$body" 'https://goelect.txelections.civixapps.com/ivis-enr-ui/races';;
             esac
             echo "VARIANT=$v bytes=$(wc -c < "$body" 2>/dev/null) tail=$(tail -c 75 "$body" 2>/dev/null)"
@@ -43,10 +44,10 @@ jobs:
           bun -e '
             import {readFileSync} from "node:fs";
             import {parseOfficialTexasResults} from "./src/lib/elections/official-results.server.ts";
-            const html=readFileSync("/tmp/ktr-sos.html","utf8");
+            const html=readFileSync("/tmp/body-fullrange","utf8");
             const production=JSON.parse(readFileSync("/tmp/ktr-production.json","utf8"));
             console.log("SOS HTML bytes",html.length,"polling progress strings",(html.match(/Polling\\s+Locations\\s+Reporting/gi)||[]).length,"table rows",(html.match(/<tr\\b/gi)||[]).length,"candidate cells",(html.match(/REPUBLICAN|DEMOCRATIC/g)||[]).length);
-            console.log("Raw source HTML",html);
+            console.log("Raw full-range head/tail",html.slice(0,220),html.slice(-220));
             const feed=parseOfficialTexasResults(html);
             console.log("Parsed races",feed.races.length,"reporting now",feed.reportingNow,"source timestamp",feed.sourceUpdatedLabel);
             console.log("Parsed first",feed.races.slice(0,15).map(r=>r.title));
