@@ -232,6 +232,84 @@ export const EDITORIAL_REVIEWS: Record<string, EditorialReview> = {
     biography: "Kevin Sparks represents Texas Senate District 31 in West Texas and has served since 2023. His official Senate biography identifies him as an oil and gas operator based in Midland and a University of Texas at Austin business graduate. His public 89th Legislature agenda includes electric-grid reliability, water supply, child-welfare reform, and efforts against oilfield theft. The research records below use Texas Legislature Online bill histories to distinguish each formal legislative role and recorded outcome.",
     identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=31",
   },
+  "cecil-bell": {
+    name: "Cecil Bell", office: "Texas House", district: "House District 3", party: "R",
+    officialUrl: "https://house.texas.gov/members/2335",
+    biography: "Cecil Bell, Jr. represents House District 3. His official Texas House biography identifies him as a sixth-generation Texan who grew up in several parts of the state and works as chief executive of nine active businesses. It also describes his cattle-ranching operations in Leon and Freestone counties and his recognition as a Southwest regional entrepreneurship award finalist. The distinct 89th Legislature bill research below identifies source-linked authorship, sponsorship, and other recorded legislative roles.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/2335/biography",
+  },
+  "keith-bell": {
+    name: "Keith Bell", office: "Texas House", district: "House District 4", party: "R",
+    officialUrl: "https://house.texas.gov/members/3695",
+    biography: "Keith Bell represents House District 4 and lives in Forney. According to his official Texas House biography, he served for twenty years on the Forney Independent School District board, founded Intex Electrical Contractors in 1983 and holds a Texas master electrician's license. He also led state and Dallas-area Independent Electrical Contractors organizations. The official bill-history research below connects individual 89th Legislature measures to their recorded roles and outcomes.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/3695/biography",
+  },
+  "cole-hefner": {
+    name: "Cole Hefner", office: "Texas House", district: "House District 5", party: "R",
+    officialUrl: "https://house.texas.gov/members/3505",
+    biography: "Cole Hefner represents House District 5, covering Camp, Rains, Titus, Upshur, Wood and part of Smith counties. His official House biography says he has served since 2017, previously represented Upshur County as a commissioner, operated a construction business for sixteen years and subsequently worked in commercial construction and insurance. The 89th Legislature activity section links each sampled legislative role and its recorded outcome to an official Texas Legislature history.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/3505/biography",
+  },
+  "daniel-alders": {
+    name: "Daniel Alders", office: "Texas House", district: "House District 6", party: "R",
+    officialUrl: "https://house.texas.gov/members/4395",
+    biography: "Daniel Alders serves House District 6, a Smith County district including Tyler, Whitehouse, Troup and several nearby communities. The official Texas House biography identifies his election to a first term in the 89th Legislature, a liberal arts degree from New Saint Andrews College and a real-estate career begun after returning to East Texas. This page distinguishes the legislation on which he served as an author, sponsor, coauthor or cosponsor and links individual recorded outcomes to official bill histories.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/4395/biography",
+  },
+  "jay-dean": {
+    name: "Jay Dean", office: "Texas House", district: "House District 7", party: "R",
+    officialUrl: "https://house.texas.gov/members/3515",
+    biography: "Jay Dean represents Texas House District 7, which has included Gregg, Harrison and Marion counties since the 2023 district configuration. His official Texas House biography dates his state service to 2017 and describes a decade as Longview mayor preceded by five years on the city council. His local-government background and work on public education and economic development provide context for the source-linked 89th Legislature bill roles and outcomes presented below.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/3515/biography",
+  },
+  "cody-harris": {
+    name: "Cody Harris", office: "Texas House", district: "House District 8", party: "R",
+    officialUrl: "https://house.texas.gov/members/3580",
+    biography: "Cody Harris represents House District 8 across Anderson, Cherokee, Henderson and Navarro counties. His official House biography describes his family's longstanding East Texas ties along the Trinity River and his emphasis on the needs of rural communities. The House member page supplies direct links to legislative activity, while this profile's searchable 89th Legislature research distinguishes authored measures from coauthorship, sponsorship and cosponsorship without claiming these entries represent his floor votes.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/3580/biography",
+  },
+  "trent-ashby": {
+    name: "Trent Ashby", office: "Texas House", district: "House District 9", party: "R",
+    officialUrl: "https://house.texas.gov/members/2330",
+    biography: "Trent Ashby represents House District 9, including Angelina, Houston, Polk, San Augustine, Trinity and Tyler counties. The official Texas House biography dates his service to January 2013 and identifies him as chair of Culture, Recreation and Tourism and a member of Transportation during the 89th Legislature. He previously held roles on Appropriations, Public Education and Natural Resources committees. This profile connects those responsibilities to individual source-linked bill-role examples rather than an invented voting history.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/2330/biography",
+  },
+  "brian-harrison": {
+    name: "Brian Harrison", office: "Texas House", district: "House District 10", party: "R",
+    officialUrl: "https://house.texas.gov/members/4085",
+    biography: "Brian Harrison represents Texas House District 10, covering Ellis County. His official House biography recounts his service as chief of staff at the U.S. Department of Health and Human Services during the first Trump administration and his upbringing in the Ellis County area. His prior federal executive-branch work provides distinct career context; the separate 89th Legislature source records document the bills on which he appeared as author, coauthor, sponsor or cosponsor and their recorded statuses.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/4085/biography",
+  },
+  "trey-wharton": {
+    name: "Trey Wharton", office: "Texas House", district: "House District 12", party: "R",
+    officialUrl: "https://house.texas.gov/members/4795",
+    biography: "Trey Wharton represents House District 12, which includes Grimes, Madison, Robertson, Walker, Washington and part of Brazos counties. His official House biography documents service on the Huntsville Independent School District board, including three years as its president, and the founding of an insurance business in 1991 after earning a finance degree at Texas Christian University. In his first House term he served on Corrections, Insurance, and Health Care Affordability committees; specific bill roles are linked below.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/4795/biography",
+  },
+  "steve-toth": {
+    name: "Steve Toth", office: "Texas House", district: "House District 15", party: "R",
+    officialUrl: "https://house.texas.gov/members/2825",
+    biography: "Steve Toth represents Texas House District 15 in southern Montgomery County. The official Texas House biography describes him as a small-business owner from the Woodlands area who has served on the Appropriations Committee since 2019. His legislative work includes county-government ethics, school visitation rights and support tools for students with dyslexia. This page links individual 89th Legislature bill histories and carefully separates recorded bill roles from actual votes or comprehensive legislative totals.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/2825/biography",
+  },
+  "stan-gerdes": {
+    name: "Stan Gerdes", office: "Texas House", district: "House District 17", party: "R",
+    officialUrl: "https://house.texas.gov/members/4195",
+    biography: "Stan Gerdes represents House District 17 and resides in Smithville. His official Texas House biography documents more than a decade working with Rick Perry, first while Perry served as Texas governor and later during his service as U.S. secretary of energy. The biography also describes Gerdes's work on rural law-enforcement funding and the Texas Water Fund. Official Texas Legislature links below show the distinct legislative roles and recorded outcomes associated with his 89th Legislature bill activity.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/4195/biography",
+  },
+  "ellen-troxclair": {
+    name: "Ellen Troxclair", office: "Texas House", district: "House District 19", party: "R",
+    officialUrl: "https://house.texas.gov/members/19",
+    biography: "Ellen Troxclair represents House District 19 across Blanco, Burnet, Gillespie, Kendall and western Travis counties. Elected to the Texas House in 2022, she previously served on Austin City Council and worked in residential real estate. The official House biography identifies past committee responsibilities in Homeland Security, Culture and Recreation, community safety and property-tax relief. The searchable official bill histories below document particular legislative roles rather than asserting complete voting or sponsorship totals.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/4385/biography",
+  },
+  "terry-wilson": {
+    name: "Terry Wilson", office: "Texas House", district: "House District 20", party: "R",
+    officialUrl: "https://house.texas.gov/members/3525",
+    biography: "Terry Wilson represents House District 20. The official Texas House biography identifies him as a retired United States Army colonel who served more than thirty years and holds a business degree from Texas A&M University and a graduate degree in strategic logistics. He chaired the House Higher Education Committee and served on Elections and Redistricting during the 89th Legislature, with previous Defense and Veterans' Affairs and Appropriations leadership. The activity records below link to the original Texas Legislature bill histories.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/3525/biography",
+  },
 };
 
 export const SIX_PROFILE_PILOT = [
@@ -251,6 +329,9 @@ export const SCRIPT2_REVIEWED_SLUGS = [
   "joan-huffman", "roland-gutierrez", "chuy-hinojosa", "pete-flores",
   "donna-campbell", "jose-menendez", "adam-hinojosa", "charles-perry",
   "brent-hagenbuch", "kevin-sparks",
+  "cecil-bell", "keith-bell", "cole-hefner", "daniel-alders", "jay-dean",
+  "cody-harris", "trent-ashby", "brian-harrison", "trey-wharton",
+  "steve-toth", "stan-gerdes", "ellen-troxclair", "terry-wilson",
 ] as const;
 
 export const CERTIFICATION_CANDIDATE_SLUGS = [
