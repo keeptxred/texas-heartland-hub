@@ -55,12 +55,14 @@ const fallback = (row: any): RelatedAuthorityItem => {
     election: '/elections/races/',
     government: '/texas-government/',
     session: '/texas-legislature/sessions/',
-    subject: '/bills/subject/',
+    subject: '/bills',
   };
   const type = row.target_type as AuthorityRelationshipType;
-  const href = isAuthorityEntityType(type)
-    ? authorityEntityPath(type, row.target_key)
-    : `${legacyPaths[type] || '/'}${row.target_key}`;
+  const href = type === 'subject'
+    ? `/bills?q=${encodeURIComponent(String(row.target_key).replaceAll('-', ' '))}`
+    : isAuthorityEntityType(type)
+      ? authorityEntityPath(type, row.target_key)
+      : `${legacyPaths[type] || '/'}${row.target_key}`;
 
   return {
     type,

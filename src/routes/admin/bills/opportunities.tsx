@@ -1,3 +1,4 @@
+import { billSearchPath } from '@/lib/bill-public-path';
 import { createFileRoute } from '@tanstack/react-router';
 import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -106,7 +107,7 @@ function OpportunityDashboard() {
         <div className="mt-6 space-y-4">
           {items.map((item) => {
             const bill = item.bills;
-            const path = bill ? `/bills/texas/${bill.legislature_number}/${String(bill.bill_type).toLowerCase()}/${bill.bill_number}` : '#';
+            const path = bill ? billSearchPath(bill) : '#';
             return (
               <article key={item.id} className="rounded-xl border bg-card p-5">
                 <div className="flex flex-wrap items-start justify-between gap-3">

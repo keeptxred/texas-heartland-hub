@@ -12,7 +12,7 @@ Keep TX Red covers Texas politics, elections, public officials, the Legislature,
 - [Texas Policy Trackers](/policy): Permanent factual policy pages grounded in controlling Texas law, agencies, official records, current status, and review dates.
 - [Texas Policy Tools & Calculators](/tools): Transparent fiscal-policy calculators and scenario explorers that expose assumptions and link back to source context rather than presenting model output as law or forecast.
 - [Machine-readable policy tracker index](/policy-trackers.txt): Plain-text index of every current policy tracker with canonical URL, title, and review date.
-- Per-bill primary-source JSON: append `/reference.json` to any canonical Texas bill URL, for example `/bills/texas/{legislature}/{bill-type}/{bill-number}/reference.json`. The JSON exposes the canonical Keep TX Red bill URL, official Texas Legislature bill URL, official document versions, and dated official actions while excluding database IDs, ingestion metadata, editorial relationships, and internal fields.
+- Bill records are explored at `/bills`, with session-aware links like `/bills#bill=89-2-hb-4`. The public, noindex JSON data API is `/api/public/bill-detail?bill=89-2-hb-4`; the former individual bill and `/reference.json` pages have been permanently retired (HTTP 410).
 - [Texas Legislature](/texas-legislature): Chambers, sessions, committees, lawmakers, and legislative relationships.
 - [Current Texas Legislative Session](/texas-legislature/current-session): Current-session orientation tied to Texas Legislature Online.
 - [Texas Legislative Committees](/texas-legislature/committees): Committee directory and authority records.

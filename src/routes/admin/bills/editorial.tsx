@@ -1,3 +1,4 @@
+import { billSearchPath } from '@/lib/bill-public-path';
 import { createFileRoute } from '@tanstack/react-router';
 import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -128,7 +129,7 @@ function EditorialCard({ item, token, onSaved }: { item: any; token: string; onS
 
   return (
     <article className="rounded-xl border bg-card p-5">
-      <a href={bill ? `/bills/texas/${bill.legislature_number}/${bill.bill_type}/${bill.bill_number}` : '#'} target="_blank" rel="noreferrer" className="text-xl font-bold text-primary hover:underline">{bill?.bill_identifier || 'Unknown bill'}</a>
+      <a href={bill ? billSearchPath(bill) : '#'} target="_blank" rel="noreferrer" className="text-xl font-bold text-primary hover:underline">{bill?.bill_identifier || 'Unknown bill'}</a>
       <p className="mt-1 text-sm text-muted-foreground">{bill?.caption}</p>
       <div className="mt-5 grid gap-4">
         {field('Plain-language summary', 'plainLanguageSummary')}

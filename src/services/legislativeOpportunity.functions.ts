@@ -26,7 +26,7 @@ export const listLegislativeOpportunities = createServerFn({ method: 'POST' })
     const admin = await getAdmin();
     const { data: rows, error } = await admin
       .from('legislative_content_opportunities')
-      .select('id,bill_id,event_type,event_date,headline,summary,priority,source_url,status,metadata,created_at,bills(id,legislature_number,bill_type,bill_number,bill_identifier,caption,current_status_label)')
+      .select('id,bill_id,event_type,event_date,headline,summary,priority,source_url,status,metadata,created_at,bills(id,legislature_number,session_code,bill_type,bill_number,bill_identifier,caption,current_status_label)')
       .eq('status', data.status)
       .order('priority', { ascending: false })
       .order('event_date', { ascending: false })

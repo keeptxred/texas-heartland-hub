@@ -28,7 +28,7 @@ export const listBillRelationshipReviews = createServerFn({ method: 'POST' })
     if (data.type !== 'article') {
       const { data: rows, error } = await admin
         .from('bill_subject_relationships')
-        .select('bill_id,subject_id,confidence,source,is_manual,review_status,evidence,created_at,updated_at,bills(bill_identifier,caption,legislature_number,bill_type,bill_number),bill_subjects(name,slug)')
+        .select('bill_id,subject_id,confidence,source,is_manual,review_status,evidence,created_at,updated_at,bills(bill_identifier,caption,legislature_number,session_code,bill_type,bill_number),bill_subjects(name,slug)')
         .eq('review_status', data.status)
         .order('confidence', { ascending: false, nullsFirst: false })
         .limit(data.limit);
@@ -39,7 +39,7 @@ export const listBillRelationshipReviews = createServerFn({ method: 'POST' })
     if (data.type !== 'subject') {
       const { data: rows, error } = await admin
         .from('bill_article_relationships')
-        .select('id,bill_id,article_id,relationship_type,confidence,source,is_manual,review_status,evidence,created_at,updated_at,bills(bill_identifier,caption,legislature_number,bill_type,bill_number),daily_articles(title,slug,dek,published_at)')
+        .select('id,bill_id,article_id,relationship_type,confidence,source,is_manual,review_status,evidence,created_at,updated_at,bills(bill_identifier,caption,legislature_number,session_code,bill_type,bill_number),daily_articles(title,slug,dek,published_at)')
         .eq('review_status', data.status)
         .order('confidence', { ascending: false, nullsFirst: false })
         .limit(data.limit);

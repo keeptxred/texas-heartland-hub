@@ -319,7 +319,7 @@ function billUrl(row: Record<string, unknown>) {
   const billType = String(row.bill_type ?? "").toLowerCase();
   const billNumber = Number(row.bill_number);
   if (!Number.isFinite(legislature) || !session || !billType || !Number.isFinite(billNumber)) return `${KTR_ORIGIN}/bills`;
-  return `${KTR_ORIGIN}/bills/texas/${legislature}/${session}/${billType}/${billNumber}`;
+  return `${KTR_ORIGIN}/bills#bill=${legislature}-${session.toLowerCase()}-${billType}-${billNumber}`;
 }
 
 function billResult(row: Record<string, unknown>, query: string, terms: string[], bonus = 0): KnowledgeResult {
