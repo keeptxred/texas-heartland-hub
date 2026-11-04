@@ -63,17 +63,24 @@ describe("deployed law routes production gate", () => {
     expect(runtimeSmoke).toContain(expectedRouteTuple);
   });
 
-  it("hard-gates the HB 1056 related article in freshly deployed HTML", () => {
+  it("keeps the HB 1056 URL retired while verifying its evergreen article remains discoverable", () => {
     expect(smokeScript).toContain('HB1056_PATH = "/bills/texas/89/hb/1056"');
-    expect(smokeScript).toContain('HB1056_CANONICAL = "https://keeptxred.com/bills/texas/89/hb/1056"');
     expect(smokeScript).toContain('HB1056_ARTICLE_PATH = "/news/texas-gold-silver-legal-tender-hb-1056"');
-    expect(smokeScript).toContain('HB1056_ARTICLE_TITLE = "Texas Gold and Silver Legal Tender Law: What HB 1056 Does Sept. 1"');
-    expect(smokeScript).toContain("KeepTXRed has not linked a related article to this bill yet.");
-    expect(smokeScript).toContain('if anchor["href"] == HB1056_ARTICLE_PATH');
-    expect(smokeScript).toContain('HB1056_ARTICLE_TITLE in anchor["text"]');
-    expect(smokeScript).toContain('hb_observation["missing_article_fallback_found"]');
-    expect(smokeScript).toContain("stale missing-related-article fallback is still rendered");
-    expect(smokeScript).toContain("plus the HB 1056 related article");
+    expect(smokeScript).toContain('"expected_http_status": 410');
+    expect(smokeScript).toContain('hb_observation["observed_http_status"] = status');
+    expect(smokeScript).toContain('_header_values(headers, "x-robots-tag")');
+    expect(smokeScript).toContain('HB1056_ARTICLE_CANONICAL = f"https://keeptxred.com{HB1056_ARTICLE_PATH}"');
+    expect(smokeScript).toContain("article_in_evergreen_sitemap");
+    expect(smokeScript).not.toContain("expected one canonical {HB1056_CANONICAL!r}");
+  });
+
+  it("uses the one-indexable-bills production checker instead of retired detail HTML checks", () => {
+    const billSmoke = readFileSync("scripts/legislature/verify-deployed-bills-platform.py", "utf8");
+    const consolidated = readFileSync("scripts/legislature/verify-bills-consolidation.py", "utf8");
+    expect(billSmoke).toContain("verify-bills-consolidation.py");
+    expect(billSmoke).not.toContain("check_deep_directory_page");
+    expect(consolidated).toContain("status == 410");
+    expect(consolidated).toContain('get("/api/public/bill-detail?bill=89-2-hb-4")');
   });
 
   it("probes the freshly deployed Worker without a Cloudflare-rejected Host override", () => {

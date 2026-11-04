@@ -1,204 +1,21 @@
 #!/usr/bin/env python3
-from __future__ import annotations
+"""Compatibility entrypoint for the current one-indexable-page Texas bills contract.
 
-import html
-import os
-import re
+The former deploy smoke required retired bill-detail pages to return 200 and
+render deep historical pagination. The authoritative production contract now
+has one indexable /bills search hub, noindex search states, retired 410 detail
+URLs, and the read-only bill-detail API. Reuse its existing end-to-end checker
+instead of maintaining contradictory deployment assertions here.
+"""
+from pathlib import Path
+import subprocess
 import sys
-import time
-import urllib.error
-import urllib.request
-
-SITE_URL = os.environ.get("SITE_URL", "https://keeptxred-site.freddy-coppola.workers.dev").rstrip("/")
-
-
-def fetch(path: str) -> tuple[str, str]:
-    url = f"{SITE_URL}{path}"
-    last_error: Exception | None = None
-    for attempt in range(1, 13):
-        request = urllib.request.Request(
-            url,
-            headers={
-                "User-Agent": "KeepTXRed-Texas-Bills-Deploy-Smoke/1.0",
-                "Accept": "text/html,application/xhtml+xml",
-            },
-        )
-        try:
-            with urllib.request.urlopen(request, timeout=30) as response:
-                if response.status != 200:
-                    raise RuntimeError(f"{url} returned HTTP {response.status}")
-                body = response.read().decode("utf-8", errors="replace")
-                if not body.strip():
-                    raise RuntimeError(f"{url} returned an empty body")
-                return url, body
-        except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, RuntimeError) as exc:
-            last_error = exc
-            if attempt == 12:
-                break
-            time.sleep(min(2 * attempt, 10))
-    raise RuntimeError(f"Unable to fetch {url}: {last_error}")
-
-
-def visible_text(body: str) -> str:
-    text = re.sub(r"<script\b[^>]*>.*?</script>", " ", body, flags=re.I | re.S)
-    text = re.sub(r"<style\b[^>]*>.*?</style>", " ", text, flags=re.I | re.S)
-    text = re.sub(r"<[^>]+>", " ", text)
-    return re.sub(r"\s+", " ", html.unescape(text)).strip()
-
-
-def require(text: str, needle: str, *, context: str) -> None:
-    if needle not in text:
-        raise AssertionError(f"{context}: missing expected text {needle!r}")
-
-
-def forbid(text: str, needle: str, *, context: str) -> None:
-    if needle in text:
-        raise AssertionError(f"{context}: found stale text {needle!r}")
-
-
-def require_canonical(body: str, path: str, *, context: str) -> None:
-    expected = f"https://keeptxred.com{path}"
-    canonical_tags = re.findall(r"<link\b[^>]*rel=[\"']canonical[\"'][^>]*>", body, flags=re.I)
-    if not canonical_tags:
-        canonical_tags = re.findall(r"<link\b[^>]*href=[\"'][^\"']+[\"'][^>]*rel=[\"']canonical[\"'][^>]*>", body, flags=re.I)
-    if not canonical_tags or not any(expected in tag for tag in canonical_tags):
-        raise AssertionError(f"{context}: canonical must be {expected!r}")
-
-
-def check(path: str, required: list[str], forbidden: list[str] | None = None, canonical: str | None = None) -> None:
-    url, body = fetch(path)
-    text = visible_text(body)
-    for needle in required:
-        require(text, needle, context=url)
-    for needle in forbidden or []:
-        forbid(text, needle, context=url)
-    if canonical:
-        require_canonical(body, canonical, context=url)
-    print(f"PASS {url}")
-
-
-def check_deep_directory_page(path: str, page: int, *, filtered: bool) -> None:
-    """Verify a genuinely populated SSR page, not just an HTTP 200 error fallback."""
-    url, body = fetch(path)
-    text = visible_text(body)
-    require(text, "Texas Bill Lookup and Legislature Bill Search", context=url)
-    require(text, "Matching Texas bills" if filtered else "Recently updated Texas bills", context=url)
-    forbid(text, "Texas bills are temporarily unavailable", context=url)
-    forbid(text, "No matching bills", context=url)
-
-    # The chosen deep pages each have at least 24 matching bills in the source registry.
-    # Assert the server rendered every result, not a skeleton or empty response.
-    article_count = len(re.findall(r"<article(?:[ >])", body, flags=re.I))
-    if article_count != 24:
-        raise AssertionError(f"{url}: expected 24 SSR bill cards, found {article_count}")
-    active_page = re.search(r'<span[^>]+aria-current="page"[^>]*>([^<]+)</span>', body, flags=re.I)
-    if active_page is None or active_page.group(1).strip() != str(page):
-        raise AssertionError(f"{url}: expected active pagination marker for page {page}")
-    if filtered:
-        if "chamber=senate" in path:
-            require(text, "Texas Senate", context=url)
-        if "chamber=house" in path:
-            require(text, "Texas House", context=url)
-    else:
-        require_canonical(body, path, context=url)
-    print(f"PASS deep pagination {url} (24 cards, page={page})")
-
-
-def check_out_of_range_directory_page(path: str) -> None:
-    """An impossible filtered page must return HTTP 404, never HTTP 500."""
-    url = f"{SITE_URL}{path}"
-    request = urllib.request.Request(
-        url,
-        headers={
-            "User-Agent": "KeepTXRed-Texas-Bills-Deploy-Smoke/1.0",
-            "Accept": "text/html,application/xhtml+xml",
-        },
-    )
-    try:
-        with urllib.request.urlopen(request, timeout=30) as response:
-            status = response.status
-    except urllib.error.HTTPError as exc:
-        status = exc.code
-    if status != 404:
-        raise AssertionError(f"{url}: expected HTTP 404 for out-of-range pagination, got HTTP {status}")
-    print(f"PASS out-of-range pagination {url} (HTTP 404)")
 
 
 def main() -> int:
-    check(
-        "/bills",
-        ["Texas Bill Lookup and Legislature Bill Search", "89(2) · 2nd Called Session"],
-    )
-    check(
-        "/bills/texas/89",
-        ["89th Texas Legislature Bills", "89(2) · 2nd Called Session"],
-    )
-    check(
-        "/bills/texas/89/hb/1056",
-        [
-            "89(R) · Regular Session",
-            "Effective-date schedule",
-            "September 1, 2026",
-            "May 1, 2027",
-        ],
-        forbidden=["89th Texas Legislature · Session R"],
-        canonical="/bills/texas/89/hb/1056",
-    )
-    check(
-        "/bills/texas/89/sb/5",
-        [
-            "89(R) · Regular Session",
-            "Effective-date schedule",
-            "December 1, 2025",
-            "Condition status: Satisfied",
-        ],
-        forbidden=["89th Texas Legislature · Session R"],
-        canonical="/bills/texas/89/sb/5",
-    )
-    check(
-        "/bills/texas/89/2/hb/16",
-        [
-            "89(2) · 2nd Called Session",
-            "Effective-date schedule",
-            "January 1, 2029",
-            "Condition status: Failed",
-        ],
-        forbidden=["89th Texas Legislature · Called Session 2"],
-        canonical="/bills/texas/89/2/hb/16",
-    )
-    check(
-        "/bills/texas/89/2/sb/18",
-        [
-            "89(2) · 2nd Called Session",
-            "Vetoed",
-            "It did not become law and therefore has no effective date.",
-        ],
-        forbidden=["89th Texas Legislature · Called Session 2"],
-        canonical="/bills/texas/89/2/sb/18",
-    )
-    # The /bills directory now defaults to HB/SB "substantive" measures.
-    # Do not reuse deep pagination offsets from the former "all measures" view:
-    # they exceed the last real page and cause false deployment failures. These
-    # representative deep pages were checked against the active October 29
-    # public bills registry (senate 3,202; 89th 9,455; house committee 4,745;
-    # all committee 6,828; signed 1,207). Every URL MUST still render 24 bill
-    # cards, its exact page marker and the expected canonical/filters.
-    check_deep_directory_page("/bills?page=166", 166, filtered=False)
-    check_deep_directory_page("/bills?chamber=senate&page=120", 120, filtered=True)
-    check_deep_directory_page("/bills?legislature=89&page=350", 350, filtered=True)
-    check_deep_directory_page("/bills?chamber=house&status=in-committee&page=180", 180, filtered=True)
-    check_deep_directory_page("/bills?status=in-committee&page=250", 250, filtered=True)
-    check_deep_directory_page("/bills?status=signed&page=44", 44, filtered=True)
-    # Guard against a regression of issue #3266. A far-out-of-range page
-    # must be a 404, even when PostgREST rejects the requested SQL range.
-    check_out_of_range_directory_page("/bills?chamber=senate&page=10000")
-    print("Texas Bills deployed-render smoke passed")
-    return 0
+    verifier = Path(__file__).with_name("verify-bills-consolidation.py")
+    return subprocess.call([sys.executable, str(verifier)])
 
 
 if __name__ == "__main__":
-    try:
-        raise SystemExit(main())
-    except Exception as exc:
-        print(f"Texas Bills deployed-render smoke failed: {exc}", file=sys.stderr)
-        raise
+    raise SystemExit(main())
