@@ -3425,7 +3425,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 53,
     party: "R",
-    website: "https://house.texas.gov/members/53",
+    website: "https://house.texas.gov/members/4775",
     imageUrl: "https://www.house.texas.gov/images/members/4775.jpg?v=1",
     officialCode: null,
     home: "301 Junction Highway Suite 254, Kerrville, TX 78028",
@@ -3469,11 +3469,15 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/53",
+          url: "https://house.texas.gov/members/4775",
         },
         {
           label: "Official member biography",
           url: "https://house.texas.gov/members/4775/biography",
+        },
+        {
+          label: "Official Texas Legislative Directory member record",
+          url: "https://legdir.capitol.texas.gov/MemberInfo.aspx?Chamber=H&Code=A4775",
         },
         {
           label: "Texas Legislature Online member directory",
@@ -3682,6 +3686,10 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
           url: "https://house.texas.gov/members/4415/biography",
         },
         {
+          label: "Official Texas Legislative Directory member record",
+          url: "https://legdir.capitol.texas.gov/MemberInfo.aspx?Chamber=H&Code=A4415",
+        },
+        {
           label: "Texas Legislature Online member directory",
           url: "https://capitol.texas.gov/Members/Members.aspx?Chamber=H",
         },
@@ -3765,7 +3773,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 58,
     party: "R",
-    website: "https://house.texas.gov/members/58",
+    website: "https://house.texas.gov/members/4575",
     imageUrl: "https://www.house.texas.gov/images/members/4575.jpg?v=1",
     officialCode: null,
     home: "100 N. Main St. Suite A, Joshua, TX 76058",
@@ -3805,11 +3813,15 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/58",
+          url: "https://house.texas.gov/members/4575",
         },
         {
           label: "Official member biography",
           url: "https://house.texas.gov/members/4575/biography",
+        },
+        {
+          label: "Official Texas Legislative Directory member record",
+          url: "https://legdir.capitol.texas.gov/MemberInfo.aspx?Chamber=H&Code=A4575",
         },
         {
           label: "Texas Legislature Online member directory",
@@ -3897,7 +3909,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 60,
     party: "R",
-    website: "https://house.texas.gov/members/60",
+    website: "https://house.texas.gov/members/4705",
     imageUrl: "https://www.house.texas.gov/images/members/4705.jpg?v=1",
     officialCode: null,
     home: "212 Santa Fe Drive, Weatherford, TX 76086",
@@ -3937,11 +3949,15 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/60",
+          url: "https://house.texas.gov/members/4705",
         },
         {
           label: "Official member biography",
           url: "https://house.texas.gov/members/4705/biography",
+        },
+        {
+          label: "Official Texas Legislative Directory member record",
+          url: "https://legdir.capitol.texas.gov/MemberInfo.aspx?Chamber=H&Code=A4705",
         },
         {
           label: "Texas Legislature Online member directory",
@@ -3960,7 +3976,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 61,
     party: "R",
-    website: "https://house.texas.gov/members/61",
+    website: "https://house.texas.gov/members/4735",
     imageUrl: "https://house.texas.gov/images/members/4735.jpg?v=1",
     officialCode: null,
     home: null,
@@ -4003,7 +4019,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/61",
+          url: "https://house.texas.gov/members/4735",
         },
         {
           label: "Official member biography",
@@ -4026,7 +4042,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 62,
     party: "R",
-    website: "https://house.texas.gov/members/62",
+    website: "https://house.texas.gov/members/4645",
     imageUrl: "https://www.house.texas.gov/images/members/4645.jpg?v=1",
     officialCode: null,
     home: "Room #201, 100 N. Travis St., Sherman, TX 75090",
@@ -4070,11 +4086,15 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/62",
+          url: "https://house.texas.gov/members/4645",
         },
         {
           label: "Official member biography",
           url: "https://house.texas.gov/members/4645/biography",
+        },
+        {
+          label: "Official Texas Legislative Directory member record",
+          url: "https://legdir.capitol.texas.gov/MemberInfo.aspx?Chamber=H&Code=A4645",
         },
         {
           label: "Texas Legislature Online member directory",
@@ -4093,7 +4113,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 63,
     party: "R",
-    website: "https://house.texas.gov/members/63",
+    website: "https://house.texas.gov/members/4125",
     imageUrl: "https://house.texas.gov/images/members/4125.jpg?v=1",
     officialCode: null,
     home: "108 S. Oak St., Roanoke, TX 76262",
@@ -4133,7 +4153,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/63",
+          url: "https://house.texas.gov/members/4125",
         },
         {
           label: "Official member biography",
@@ -4156,7 +4176,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 64,
     party: "R",
-    website: "https://house.texas.gov/members/64",
+    website: "https://house.texas.gov/members/4555",
     imageUrl: "https://www.house.texas.gov/images/members/4555.jpg?v=1",
     officialCode: null,
     home: "204 W. Walnut St., Decatur, TX 76234",
@@ -4196,7 +4216,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/64",
+          url: "https://house.texas.gov/members/4555",
         },
         {
           label: "Official member biography",
@@ -4265,6 +4285,10 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
           url: "https://house.texas.gov/members/4615",
         },
         {
+          label: "Official Texas Legislative Directory member record",
+          url: "https://legdir.capitol.texas.gov/MemberInfo.aspx?Chamber=H&Code=A4615",
+        },
+        {
           label: "Texas Legislature Online member directory",
           url: "https://capitol.texas.gov/Members/Members.aspx?Chamber=H",
         },
@@ -4281,7 +4305,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 66,
     party: "R",
-    website: "https://house.texas.gov/members/66",
+    website: "https://house.texas.gov/members/2995",
     imageUrl: "https://house.texas.gov/images/members/2995.jpg?v=1",
     officialCode: null,
     home: "TX",
@@ -4321,7 +4345,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/66",
+          url: "https://house.texas.gov/members/2995",
         },
         {
           label: "Official member biography",
@@ -4456,7 +4480,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
         },
         {
           label: "Official member biography",
-          url: "https://house.texas.gov/members/4075",
+          url: "https://house.texas.gov/members/4075/biography",
         },
         {
           label: "Texas Legislature Online member directory",
