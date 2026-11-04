@@ -105,13 +105,14 @@ export function BorderSecurityAuthorityResearch() {
         <p className="mt-3 max-w-4xl text-sm leading-7 text-muted-foreground">
           The Supremacy Clause controls conflicts involving valid federal law; the Tenth Amendment reserves powers not delegated to the federal government. Neither is a blanket answer to every border dispute. Specific statutes, orders, and legal status matter. See the <Source href={sources.preemption}>Supremacy Clause</Source> and <Source href={sources.tenth}>Tenth Amendment</Source>.
         </p>
-        <div className="mt-5 overflow-x-auto rounded-xl border">
+        <div className="mt-5 overflow-x-auto rounded-xl border" role="region" aria-label="Texas and federal border powers comparison, horizontally scrollable" tabIndex={0}>
           <table className="w-full min-w-[820px] border-collapse text-left text-sm">
             <caption className="sr-only">Practical division of Texas and federal border authority, with primary record links</caption>
             <thead className="bg-muted/40"><tr><th scope="col" className="p-4">Reader's question</th><th scope="col" className="p-4">Texas and local role</th><th scope="col" className="p-4">Federal role</th><th scope="col" className="p-4">Where to verify</th></tr></thead>
             <tbody>{authorityRows.map((row) => <tr key={row.question} className="border-t align-top"><th scope="row" className="p-4 font-semibold">{row.question}</th><td className="p-4 leading-6">{row.texas}</td><td className="p-4 leading-6">{row.federal}</td><td className="p-4 leading-6"><Source href={row.url}>{row.check}</Source></td></tr>)}</tbody>
           </table>
         </div>
+        <p className="mt-2 text-xs text-muted-foreground md:hidden">Swipe horizontally inside the comparison table to view all four columns.</p>
         <p className="mt-4 max-w-4xl text-sm leading-7">
           <strong>What this clarifies:</strong> an officer helping another agency does not automatically gain that agency's full powers. An arrest under Texas criminal law is not identical to federal admission or removal. A state Guard deployment is not necessarily a federal deployment. And a court stay changes what can happen during litigation without necessarily deciding who is right on the constitutional merits.
         </p>
