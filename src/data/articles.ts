@@ -587,7 +587,7 @@ export const ARTICLES: Article[] = [
     slug: "texas-school-board-powers",
     category: "Education",
     title: "Texas School Board Powers Explained: Curriculum, Budgets, and Why They Matter",
-    dek: "What an elected school board actually controls — from library policy and bond elections to superintendent hiring — and why low-turnout May races shape your kids' classrooms.",
+    dek: "What Texas trustees actually decide, what superintendents manage, and how to verify district budgets, meeting votes, state rules, and local election notices.",
     author: "Education Desk",
     date: "May 27, 2026",
     publishedAt: "2026-05-27T16:00:00",
