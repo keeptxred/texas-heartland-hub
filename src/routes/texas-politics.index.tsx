@@ -8,7 +8,7 @@ import { buildSeo } from "@/lib/seo";
 
 const HUB = HUBS.find((h) => h.slug === "texas-politics")!;
 const SECTIONS = [
-  { title: "Elections", description: "Primaries, runoffs, and the races shaping the next Texas Legislature.", href: "/elections/2026" },
+  { title: "Texas Election History", description: "How Texas elections and political coalitions have changed over time.", href: "/texas-politics/texas-election-history" },
   { title: "Why Texas Is Politically Competitive", description: "How population growth, turnout, metros, suburbs, rural margins and South Texas create different kinds of electoral competition beneath the statewide result.", href: "/texas-politics/why-texas-is-politically-competitive" },
   { title: "Republic of Texas Government", description: "The presidency, Congress, 1836 Constitution, capitals, diplomacy, public finance, annexation and transition from independent republic to state government.", href: "/texas-politics/republic-of-texas-government-history" },
   { title: "Democratic Dominance, 1876–1952", description: "How one-party Democratic control, primary politics and suffrage restrictions shaped Texas after Reconstruction.", href: "/texas-politics/texas-democratic-dominance-1876-1952" },
@@ -25,7 +25,7 @@ const SECTIONS = [
   { title: "Urban, Suburban & Rural Texas", description: "How cities, suburbs, exurbs and rural counties moved onto different partisan tracks.", href: "/texas-politics/texas-urban-suburban-rural-politics-history" },
   { title: "South Texas & Rio Grande Valley Politics", description: "Machines, voting rights, Mexican American political organization, Democratic strength and recent Republican gains.", href: "/texas-politics/south-texas-rio-grande-valley-political-history" },
   { title: "Texas Metro Realignment", description: "The separate political paths of Dallas-Fort Worth, Houston, Austin and San Antonio and their suburban rings.", href: "/texas-politics/texas-metro-regional-realignment-history" },
-  { title: "Texas Election History", description: "How Texas moved from one-party primary dominance to two-party competition, Republican statewide control, modern turnout patterns and Election Central.", href: "/texas-politics/texas-election-history" },
+  { title: "Texas Election History", description: "How Texas moved from one-party primary dominance to two-party competition, Republican statewide control, modern turnout patterns.", href: "/texas-politics/texas-election-history" },
   { title: "Texas Constitutional History", description: "The Republic and state constitutions from 1836 through the Constitution of 1876, the plural executive, amendment system and failed 1974 rewrite.", href: "/texas-politics/texas-constitutional-history" },
   { title: "Texas Voting Rights History", description: "Poll taxes, white primaries, women's suffrage, the Voting Rights Act, federal litigation and the changing legal framework for Texas voters.", href: "/texas-politics/voting-rights-history" },
   { title: "Texas Redistricting History", description: "Census-driven maps, one-person-one-vote, the Legislative Redistricting Board, Voting Rights Act litigation and the 2003 mid-decade redraw.", href: "/texas-politics/texas-redistricting-history" },
@@ -40,7 +40,7 @@ const SECTIONS = [
   { title: "How Texas Became Republican", description: "A sourced timeline of Texas's shift from one-party Democratic rule to Republican statewide and legislative control.", href: "/texas-politics/how-texas-became-republican" },
   { title: "State Legislature", description: "Bills, special sessions, and the conservative caucus in Austin.", href: "/texas-legislature" },
   { title: "Governor & Leadership", description: "The Governor, Lt. Governor, AG, and statewide officeholders.", href: "/representatives" },
-  { title: "Voting & Policy", description: "Voter ID, registration, election integrity, and ballot access.", href: "/elections/voting" },
+  { title: "Register to Vote", description: "Texas voter registration information and official resources.", href: "/register-to-vote" },
 ];
 
 const POLITICS_TOPICS = [
@@ -158,7 +158,7 @@ function TexasPoliticsPage() {
               KTR's <a href="/texas-politics/texas-constitutional-history" className="font-semibold text-primary underline underline-offset-4">Texas Constitutional History</a> explains why that power is divided in the first place: the sequence from the Republic constitution through the 1845, 1861, 1866, 1869 and 1876 charters, the post-Reconstruction reaction against concentrated authority, the plural executive and the amendment system voters still use today.
             </p>
             <p>
-              The <a href="/texas-politics/texas-election-history" className="font-semibold text-primary underline underline-offset-4">Texas Election History</a> guide supplies the electoral chronology beneath Election Central, from the era when the Democratic primary usually decided statewide office through presidential ticket-splitting, Republican breakthroughs, the 1998 statewide sweep and the 2002 Texas House takeover.
+              The <a href="/texas-politics/texas-election-history" className="font-semibold text-primary underline underline-offset-4">Texas Election History</a> guide supplies the electoral chronology, from the era when the Democratic primary usually decided statewide office through presidential ticket-splitting, Republican breakthroughs, the 1998 statewide sweep and the 2002 Texas House takeover.
             </p>
             <p>
               Our <a href="/texas-politics/voting-rights-history" className="font-semibold text-primary underline underline-offset-4">Texas Voting Rights History</a> keeps the legal history distinct from present partisan disputes: poll taxes, white-primary litigation, women's suffrage, federal voting-rights law, language access and the post-2013 preclearance framework are sourced and explained as institutional changes.
