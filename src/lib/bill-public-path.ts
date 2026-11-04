@@ -52,3 +52,18 @@ export function publicBillPath(bill: PublicBillPathIdentity) {
 export function publicBillReferencePath(bill: PublicBillPathIdentity) {
   return `${publicBillPath(bill)}/reference.json`;
 }
+
+/** Share a bill inside the one indexable bills document. */
+export function billSearchKey(bill: PublicBillPathIdentity): string {
+  return `${bill.legislature_number}-${normalizePublicBillSessionCode(bill.session_code).toLowerCase()}-${String(bill.bill_type).trim().toLowerCase()}-${bill.bill_number}`;
+}
+
+export function billSearchPath(bill: PublicBillPathIdentity): string {
+  return `/bills#bill=${billSearchKey(bill)}`;
+}
+
+export function parseBillSearchKey(value: string): PublicBillPathIdentity | null {
+  const match = /^(\d{1,3})-(r|[1-9]\d{0,2})-([a-z]{1,8})-([1-9]\d{0,5})$/i.exec(value.trim());
+  if (!match) return null;
+  return { legislature_number: Number(match[1]), session_code: match[2].toUpperCase(), bill_type: match[3].toLowerCase(), bill_number: Number(match[4]) };
+}

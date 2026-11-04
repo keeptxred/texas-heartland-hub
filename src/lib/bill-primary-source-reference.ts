@@ -3,7 +3,7 @@ import {
   legislativeDocumentHref,
   type LegislativeDocument,
 } from '@/lib/bill-documents';
-import { publicBillPath } from '@/lib/bill-public-path';
+import { billSearchPath } from '@/lib/bill-public-path';
 
 const SITE_URL = 'https://keeptxred.com';
 const TEXAS_CAPITOL_BILL_LOOKUP = 'https://capitol.texas.gov/BillLookup/History.aspx';
@@ -81,7 +81,7 @@ export function buildBillPrimarySourceReference(
   actions: readonly BillActionRecord[],
   documents: readonly LegislativeDocument[],
 ): BillPrimarySourceReference {
-  const canonicalUrl = `${SITE_URL}${publicBillPath(bill)}`;
+  const canonicalUrl = `${SITE_URL}${billSearchPath(bill)}`;
 
   const publicDocuments = [...documents]
     .filter((document) => Boolean(legislativeDocumentHref(document)))

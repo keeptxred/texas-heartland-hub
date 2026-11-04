@@ -25,7 +25,7 @@ export const listBillEditorialEnrichments = createServerFn({ method: 'POST' })
     const db = await adminClient();
     const { data: rows, error } = await db
       .from('bill_editorial_enrichments')
-      .select('*,bills(id,bill_identifier,caption,legislature_number,bill_type,bill_number,current_status_label)')
+      .select('*,bills(id,bill_identifier,caption,legislature_number,session_code,bill_type,bill_number,current_status_label)')
       .eq('review_status', data.status)
       .order('updated_at', { ascending: false })
       .limit(data.limit);

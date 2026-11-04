@@ -6,7 +6,7 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: mocks.from },
 }));
 vi.mock('@/lib/bill-public-path', () => ({
-  publicBillPath: (b: {bill_number:number}) => '/bills/texas/89/hb/' + b.bill_number,
+  billSearchPath: (b: {bill_number:number}) => '/bills#bill=89-r-hb-' + b.bill_number,
 }));
 
 import { getRelatedBills } from './related-bills';

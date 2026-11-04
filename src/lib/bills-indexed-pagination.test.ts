@@ -93,7 +93,7 @@ describe("bill directory pagination under the public API timeout", () => {
       const [first, second] = await Promise.all([getBillFilterOptions(), getBillFilterOptions()]);
       expect(first).toEqual({
         legislatures: [{ value: 89, label: "89th Legislature · R" }],
-        billTypes: ["hb"], chambers: ["house"],
+        billTypes: ["hb"], chambers: ["house"], sessions: ["R"],
       });
       expect(second).toEqual(first);
       expect(await getBillFilterOptions()).toEqual(first);
@@ -111,6 +111,24 @@ describe("bill directory pagination under the public API timeout", () => {
     }
   });
   beforeEach(() => { fromMock.mockReset(); rpcMock.mockReset(); clearPublicBillCache(); });
+
+
+  it("queries sponsor and subject with an exact server-side total", async () => {
+    rpcMock.mockResolvedValueOnce({
+      data: [{ bill: { id: "89-2-hb-4", bill_identifier: "HB 4", session_code: "2" }, total_count: 33 }],
+      error: null,
+    });
+    const result = await listBills({
+      search: "property tax", sponsor: "Bettencourt", sessionCode: "2",
+      legislature: 89, limit: 24, offset: 0,
+    });
+    expect(result.count).toBe(33);
+    expect(result.bills).toHaveLength(1);
+    expect(fromMock).not.toHaveBeenCalled();
+    expect(rpcMock).toHaveBeenCalledWith("ktr_bill_search_page", expect.objectContaining({
+      p_query: "property tax", p_sponsor: "Bettencourt", p_session: "2", p_legislature: 89,
+    }));
+  });
 
   it("keeps first-page requests as one query with planned totals", async () => {
     const first = mockQuery({ data: [{ id: "a", caption: "First bill" }], count: 12786 });
@@ -261,13 +279,16 @@ describe("bill directory pagination under the public API timeout", () => {
     expect(fromMock).toHaveBeenCalledTimes(1);
   });
 
-  it("preserves existing one-query filtered-search behavior", async () => {
-    const first = mockQuery({ data: [{ id: "match" }], count: 1 });
-    fromMock.mockReturnValueOnce(first.builder);
+  it("preserves exact counts for deep filtered searches with a single RLS RPC", async () => {
+    rpcMock.mockResolvedValueOnce({
+      data: [{ bill: { id: "match" }, total_count: 1 }],
+      error: null,
+    });
     expect(await listBills({ offset: 800, search: "water" })).toEqual({ bills: [{ id: "match" }], count: 1 });
-    expect(fromMock).toHaveBeenCalledTimes(1);
-    expect(first.calls.find((call) => call.method === "select")?.args[0]).toContain("caption");
-    expect(first.calls.some((call) => call.method === "or")).toBe(true);
+    expect(fromMock).not.toHaveBeenCalled();
+    expect(rpcMock).toHaveBeenCalledWith("ktr_bill_search_page", expect.objectContaining({
+      p_query: "water", p_offset: 800,
+    }));
   });
 
   it("surfaces failures from either stage instead of inventing a partial bill list", async () => {

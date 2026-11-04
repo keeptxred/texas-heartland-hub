@@ -1,3 +1,4 @@
+import { billSearchPath } from '@/lib/bill-public-path';
 import { createFileRoute } from '@tanstack/react-router';
 import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -120,7 +121,7 @@ function ReviewDashboard() {
             const bill = item.bills;
             const subject = item.bill_subjects;
             const article = item.daily_articles;
-            const billPath = bill ? `/bills/texas/${bill.legislature_number}/${String(bill.bill_type).toLowerCase()}/${bill.bill_number}` : '#';
+            const billPath = bill ? billSearchPath(bill) : '#';
             return (
               <article key={`${item.type}:${item.id}`} className="rounded-xl border bg-card p-5">
                 <div className="flex flex-wrap items-start justify-between gap-3">

@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { publicBillPath } from '@/lib/bill-public-path';
+import { billSearchPath } from '@/lib/bill-public-path';
 import {
   isAuthorityEntityType,
   type AuthorityEntityType,
@@ -55,12 +55,14 @@ const fallback = (row: any): RelatedAuthorityItem => {
     election: '/elections/races/',
     government: '/texas-government/',
     session: '/texas-legislature/sessions/',
-    subject: '/bills/subject/',
+    subject: '/bills',
   };
   const type = row.target_type as AuthorityRelationshipType;
-  const href = isAuthorityEntityType(type)
-    ? authorityEntityPath(type, row.target_key)
-    : `${legacyPaths[type] || '/'}${row.target_key}`;
+  const href = type === 'subject'
+    ? `/bills?q=${encodeURIComponent(String(row.target_key).replaceAll('-', ' '))}`
+    : isAuthorityEntityType(type)
+      ? authorityEntityPath(type, row.target_key)
+      : `${legacyPaths[type] || '/'}${row.target_key}`;
 
   return {
     type,
@@ -132,7 +134,7 @@ export async function getRelatedAuthorityContent(
         score: row.score,
         title: `${bill.bill_identifier}: ${bill.caption}`,
         description: bill.current_status_label,
-        href: publicBillPath(bill),
+        href: billSearchPath(bill),
       }];
     }
     if (row.target_type === 'article') {

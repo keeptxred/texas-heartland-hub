@@ -4,7 +4,7 @@ import {
   TEXAS_SENATE_MEMBERS,
   representativeSlug,
 } from '@/data/representatives';
-import { publicBillPath } from '@/lib/bill-public-path';
+import { billSearchPath } from '@/lib/bill-public-path';
 import { cachedPublicBill } from '@/lib/public-bill-cache';
 
 const db = supabase as any;
@@ -49,6 +49,9 @@ export type BillListFilters = {
   legislature?: number;
   chamber?: string;
   billType?: string;
+  sessionCode?: string;
+  sponsor?: string;
+  sort?: 'latest' | 'oldest' | 'bill-number';
   kind?: 'substantive' | 'resolutions' | 'all';
   limit?: number;
   offset?: number;
@@ -131,7 +134,7 @@ function resolveSponsorIdentity(sponsor: any) {
 
 export const canonicalBillPath = (
   bill: Pick<Bill, 'legislature_number' | 'bill_type' | 'bill_number'> & Partial<Pick<Bill, 'session_code'>>,
-) => publicBillPath(bill);
+) => billSearchPath(bill);
 
 export const normalizeBillType = (value: string) => value.trim().toLowerCase();
 export const normalizeStatus = (value: string) => value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -139,7 +142,33 @@ export const normalizeStatus = (value: string) => value.trim().toLowerCase().rep
 const BILL_LIST_COLUMNS = 'id,legislature_number,session_code,bill_type,bill_number,bill_identifier,chamber,caption,current_status_code,current_status_label,last_action_date,became_law,last_synced_at';
 const INDEX_FIRST_BILL_PAGE_OFFSET = 480;
 
-export async function listBills({ search = '', status = '', legislature, chamber = '', billType = '', kind = 'all', limit = 24, offset = 0 }: BillListFilters = {}): Promise<{ bills: Bill[]; count: number }> {
+export async function listBills({ search = '', status = '', legislature, chamber = '', billType = '', kind = 'all', sessionCode = '', sponsor = '', sort = 'latest', limit = 24, offset = 0 }: BillListFilters = {}): Promise<{ bills: Bill[]; count: number }> {
+  // Official subjects and sponsors are matched in the database, under RLS.
+  // An exact windowed count accompanies the paginated result set.
+  if (search.trim() || sponsor.trim()) {
+    const safeSearch = search.replace(/[,%()]/g, ' ').trim().slice(0, 120);
+    const safeSponsor = sponsor.replace(/[,%()]/g, ' ').trim().slice(0, 120);
+    const statusCodes = status ? (STATUS_GROUPS[status] ?? [status]) : null;
+    const { data: rows, error } = await db.rpc('ktr_bill_search_page', {
+      p_query: safeSearch,
+      p_sponsor: safeSponsor,
+      p_status_codes: statusCodes,
+      p_legislature: legislature || null,
+      p_session: sessionCode,
+      p_chamber: chamber,
+      p_bill_type: billType,
+      p_kind: kind,
+      p_sort: sort,
+      p_limit: limit,
+      p_offset: offset,
+    });
+    if (error) throw error;
+    return {
+      bills: ((rows ?? []) as Array<{ bill: Bill; total_count: number }>).map((row) => row.bill),
+      count: Number(rows?.[0]?.total_count ?? 0),
+    };
+  }
+
   // Use indexed IDs for deep directory, legislature, chamber/status and
   // status-only pages where measured index scans avoid thousands of wide
   // row fetches. Use planned counts to avoid a full count on every request.
@@ -153,13 +182,13 @@ export async function listBills({ search = '', status = '', legislature, chamber
   // index-first ID/hydration path, even for page 315+ requests. Project only
   // the ordered IDs first; the 24-row hydration preserves exact page content.
   const indexedSubstantive = kind === 'substantive' && !billType;
-  const indexFirst = offset >= INDEX_FIRST_BILL_PAGE_OFFSET && !search &&
+  const indexFirst = sort === 'latest' && !sessionCode && offset >= INDEX_FIRST_BILL_PAGE_OFFSET && !search &&
     (indexedDirectory || indexedLegislature || indexedChamberStatus || indexedStatusOnly || indexedSubstantive);
   let query = db
     .from('bills')
     .select(indexFirst ? 'id' : BILL_LIST_COLUMNS, { count: 'exact' })
     .eq('is_active', true)
-    .order('last_action_date', { ascending: false, nullsFirst: false })
+    .order(sort === 'bill-number' ? 'bill_number' : 'last_action_date', { ascending: sort !== 'latest', nullsFirst: false })
     .order('id', { ascending: true })
     .range(offset, offset + limit - 1);
   if (status) {
@@ -171,6 +200,7 @@ export async function listBills({ search = '', status = '', legislature, chamber
   if (kind === 'substantive' && !directResolutionLookup) query = query.in('bill_type', ['hb', 'sb']);
   if (kind === 'resolutions') query = query.in('bill_type', ['hcr', 'scr', 'hr', 'sr', 'hjr', 'sjr']);
   if (legislature) query = query.eq('legislature_number', legislature);
+  if (sessionCode) query = query.eq('session_code', sessionCode.toUpperCase());
   if (chamber) query = query.eq('chamber', chamber);
   if (billType) query = query.eq('bill_type', normalizeBillType(billType));
   if (search) {
@@ -220,7 +250,8 @@ export async function getBillFilterOptions() {
   const legislatures = [...new Map(rows.map((row: any) => [row.legislature_number, { value: row.legislature_number, label: `${row.legislature_number}th Legislature${row.session_code ? ` · ${row.session_code}` : ''}` }])).values()];
   const billTypes = [...new Set(rows.map((row: any) => row.bill_type).filter(Boolean))].sort();
   const chambers = [...new Set(rows.map((row: any) => row.chamber).filter(Boolean))].sort();
-  return { legislatures, billTypes, chambers };
+  const sessions = [...new Set(rows.map((row: any) => String(row.session_code ?? '').toUpperCase()).filter(Boolean))].sort();
+  return { legislatures, billTypes, chambers, sessions };
   })();
   filterOptionsPromise = request;
   filterOptionsExpiresAt = Date.now() + 5 * 60 * 1000;
