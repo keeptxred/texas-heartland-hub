@@ -29,17 +29,18 @@ const checks = [
     ],
   },
   {
-    file: 'src/routes/bills/texas/$legislature/$billType/$billNumber.tsx',
+    file: 'src/routes/api/public/bill-detail.ts',
     required: [
-      'getPublicBillRelations',
-      'subjectIds: relations.subjects',
+      'getPublicBillRelations(bill.id)',
+      'subjectIds: (relations.subjects ?? [])',
     ],
   },
   {
-    file: 'src/routes/bills/texas/$legislature/$session/$billType/$billNumber.tsx',
+    file: 'src/components/bills/BillDetailPanel.tsx',
     required: [
-      'getPublicBillRelations',
-      'subjectIds: relations.subjects',
+      'relations?.subjects',
+      'RelatedBillsSection',
+      'Verified related coverage',
     ],
   },
 ];

@@ -75,6 +75,13 @@ def smoke():
     )
     for name in ("sponsors", "actions", "committees", "documents"):
         require(isinstance((payload.get("relations") or {}).get(name), list), f"Missing {name} records list")
+    for name in ("effectiveDates", "relatedBills"):
+        require(isinstance(payload.get(name), list), f"Missing in-page bill details: {name}")
+    for related in payload["relatedBills"]:
+        require(
+            isinstance(related, dict) and str(related.get("href", "")).startswith("/bills#bill="),
+            "Related bill must link to a fragment within the single bills document",
+        )
     require("SUPABASE_SERVICE_ROLE_KEY" not in body, "API exposed privileged credential")
     print("PASS bill API: correct 89(2) HB 4, official relations and noindex")
 

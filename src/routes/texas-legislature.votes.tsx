@@ -106,7 +106,7 @@ function LegislativeVoteReference() {
           }) : <p className="p-6 text-muted-foreground">No committee vote dates are currently available in the normalized public record.</p>}
         </div>
       </section>
-      <CitationTrustPanel className="mt-8" sources={[{ name: 'Texas Legislature Online', url: TLO_URL, note: 'Official legislative and committee record system.' }]} methodology="This page reads only bill committee-history rows that contain an official vote_date, joins them to canonical bill records, and preserves any stored official source URL. It does not infer vote totals or individual member positions from committee activity dates." lastVerified="Records reflect the current normalized Texas legislative database; individual source links and bill pages show their most recent synchronized official context." title="Committee vote reference sources and methodology" />
+      <CitationTrustPanel className="mt-8" sources={[{ name: 'Texas Legislature Online', url: TLO_URL, note: 'Official legislative and committee record system.' }]} methodology="This page reads only bill committee-history rows that contain an official vote_date, joins them to canonical bill records, and preserves any stored official source URL. It does not infer vote totals or individual member positions from committee activity dates." lastVerified="Records reflect the current normalized Texas legislative database; official source links and selected records inside the bills search show the latest available synchronized context." title="Committee vote reference sources and methodology" />
     </main>
   );
 }

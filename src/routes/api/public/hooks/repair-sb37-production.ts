@@ -7,7 +7,7 @@ const FEATURED_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/a/a3/UT-A
 const BODY = {
   updated: "2026-08-11",
   intro: [
-    "Texas public universities are moving deeper into implementation of [Senate Bill 37](/bills/texas/89/sb/37), a sweeping higher-education governance law that shifts more authority over curriculum and university decision-making toward governor-appointed governing boards.",
+    "Texas public universities are moving deeper into implementation of [Senate Bill 37](/bills#bill=89-r-sb-37), a sweeping higher-education governance law that shifts more authority over curriculum and university decision-making toward governor-appointed governing boards.",
     "The law requires recurring reviews of general education curriculum, gives boards broader influence over academic programs and faculty governance, and creates new oversight mechanisms through the Texas Higher Education Coordinating Board. University leaders say implementation is underway, while faculty members and students have argued that the new structure can encourage self-censorship and weaken academic independence.",
   ],
   sections: [

@@ -74,8 +74,15 @@ jobs:
         run: |
           set -euo pipefail
           bun run typecheck
-          grep -Fq "from './routes/bills.texas.\$legislature.\$billType.\$billNumber.reference[.]json'" src/routeTree.gen.ts
-          grep -Fq "'/bills/texas/\$legislature/\$billType/\$billNumber/reference.json': typeof" src/routeTree.gen.ts
+          # The generated router must contain the single bills document and its
+          # nonindexable detail API, never old individual bill documents.
+          grep -Fq "from './routes/bills/index'" src/routeTree.gen.ts
+          grep -Fq "from './routes/api/public/bill-detail'" src/routeTree.gen.ts
+          if grep -Fq "from './routes/bills.texas.\$legislature.\$billType.\$billNumber.reference[.]json'" src/routeTree.gen.ts || \
+             grep -Fq "'/bills/texas/\$legislature/\$billType/\$billNumber/reference.json': typeof" src/routeTree.gen.ts; then
+            echo "::error title=Retired bill route generated::Individual bill reference routes must never reappear in the router tree."
+            exit 1
+          fi
 
       - name: SEO validation
         id: seo

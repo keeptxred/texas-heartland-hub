@@ -2,6 +2,8 @@ import { createFileRoute } from '@tanstack/react-router';
 import type {} from '@tanstack/react-start';
 import { supabase } from '@/integrations/supabase/client';
 import { getBillEditorialEnrichment } from '@/lib/bills';
+import { getBillEffectiveDateProvisions } from '@/lib/bill-effective-date-provisions';
+import { getRelatedBills } from '@/lib/related-bills';
 import { getPublicBillRelations } from '@/lib/public-bill-relations';
 import { parseBillSearchKey } from '@/lib/bill-public-path';
 
@@ -26,11 +28,18 @@ export const Route = createFileRoute('/api/public/bill-detail')({
             .maybeSingle();
           if (error) throw error;
           if (!bill) return Response.json({ error: 'Bill not found.' }, { status: 404, headers: NOINDEX });
-          const [relations, editorial] = await Promise.all([
+          const [relations, editorial, effectiveDates] = await Promise.all([
             getPublicBillRelations(bill.id),
             getBillEditorialEnrichment(bill.id),
+            getBillEffectiveDateProvisions(bill.id),
           ]);
-          return Response.json({ bill, relations, editorial }, {
+          const relatedBills = await getRelatedBills(bill.id, bill.legislature_number, 8, {
+            subjectIds: (relations.subjects ?? []).map((subject: any) => subject.id).filter(Boolean),
+          }).catch((relatedError) => {
+            console.error('[bill-detail] related bills unavailable', relatedError);
+            return [];
+          });
+          return Response.json({ bill, relations, editorial, effectiveDates, relatedBills }, {
             headers: { ...NOINDEX, 'Cache-Control': 'public, max-age=60, s-maxage=120' },
           });
         } catch (error) {
