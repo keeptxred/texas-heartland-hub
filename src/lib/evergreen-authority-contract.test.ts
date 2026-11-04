@@ -23,7 +23,14 @@ describe('evergreen authority references', () => {
   it('requires the border-security hub to provide documented, testable authority research', () => {
     const route = read('../routes/texas-border-security.tsx');
     const research = read('../components/border-security-authority-research.tsx');
-    expect(route).toContain('BorderSecurityAuthorityResearch');
+    expect(route).toContain('featuredContent={<BorderSecurityAuthorityResearch />}');
+    const pillarView = read('../components/content-pillar-view.tsx');
+    const hub = read('../components/hub-view.tsx');
+    expect(pillarView).toContain('featuredContent={featuredContent}');
+    expect(hub).toContain('{featuredContent}');
+    expect(hub.indexOf('{featuredContent}')).toBeLessThan(hub.indexOf('{pillar ? ('));
+    expect(research).toContain('Keep TX Red editorial desk');
+    expect(research).toContain('28 vehicle, 5 rail and 1 pedestrian');
     expect(route).toContain('href: "#border-powers"');
     expect(route).not.toContain('href: "/news/border-security-state-role"');
     expect(research).toContain('BorderSecuritySpendingPanel');
@@ -44,9 +51,10 @@ describe('evergreen authority references', () => {
     for (const officialRecord of [
       'General_Appropriations_Act_2026_2027.pdf',
       'SB00004F.pdf',
-      'USCOURTS-ca5-24-50149',
+      '24-50149-CV2.pdf',
       '26-50418_documents.pdf',
       'texas-mexico-border-crossings.html',
+      'international-trade-border-planning/btmp.html',
     ]) expect(research).toContain(officialRecord);
   });
 
