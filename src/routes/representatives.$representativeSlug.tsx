@@ -95,7 +95,9 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
         ...(loaderData.authority
           ? {
               description: loaderData.authority.biography,
-              alumniOf: loaderData.authority.education.map((name) => ({
+              alumniOf: loaderData.authority.education.filter((name) =>
+                !/consult the linked official biography|no independent credential claim/i.test(name)
+              ).map((name) => ({
                 "@type": "EducationalOrganization",
                 name,
               })),
