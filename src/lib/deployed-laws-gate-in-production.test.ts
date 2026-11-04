@@ -74,6 +74,15 @@ describe("deployed law routes production gate", () => {
     expect(smokeScript).not.toContain("expected one canonical {HB1056_CANONICAL!r}");
   });
 
+  it("uses the one-indexable-bills production checker instead of retired detail HTML checks", () => {
+    const billSmoke = readFileSync("scripts/legislature/verify-deployed-bills-platform.py", "utf8");
+    const consolidated = readFileSync("scripts/legislature/verify-bills-consolidation.py", "utf8");
+    expect(billSmoke).toContain("verify-bills-consolidation.py");
+    expect(billSmoke).not.toContain("check_deep_directory_page");
+    expect(consolidated).toContain("status == 410");
+    expect(consolidated).toContain('get("/api/public/bill-detail?bill=89-2-hb-4")');
+  });
+
   it("probes the freshly deployed Worker without a Cloudflare-rejected Host override", () => {
     for (const probe of [smokeScript, prioritySmoke]) {
       expect(probe).toContain('DEPLOYMENT_SMOKE_HEADER = "x-keeptxred-deployment-smoke: canonical"');
