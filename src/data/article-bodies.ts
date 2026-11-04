@@ -3251,88 +3251,139 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     cta: { label: "Meet Your Texas Representatives", href: "/representatives" },
   },
   "texas-governor-powers": {
-    updated: "2026-07-02",
-    editorNote:
-      "Part of our Texas civics series. See also our guide to the [Powers of the Texas Attorney General](/news/texas-attorney-general-powers).",
-    intro: [
-      "On paper, the Texas Governor is one of the weakest chief executives in the country. Power is deliberately fragmented across separately elected statewide officers — the Lieutenant Governor, Attorney General, Comptroller, Land Commissioner, and Agriculture Commissioner — none of whom answer to the governor.",
-      "In practice, the modern Texas Governor is one of the most politically powerful figures in state government, thanks to a small number of constitutional tools used aggressively: the appointment power, the line-item veto, the special-session call, and command of the Texas National Guard.",
+    "updated": "2026-11-04",
+    "editorNote": "Substantively revised November 2026 to distinguish constitutional governor powers from the independent elected officers, Senate confirmation, budget veto, legislative sessions and statutory emergency powers. Historic publication date unchanged.",
+    "intro": [
+      "Texas has an independently elected governor, but the office does not supervise every other elected statewide officer. The Texas Constitution divides executive responsibilities among several offices, and the Legislature, courts and other elected bodies exercise their own authority. That arrangement is commonly called the plural executive. It makes the governor's actual powers important to understand rather than assuming the office functions like a president directing a cabinet.",
+      "The most consequential tools include appointing certain state officials, vetoing legislation within constitutional rules, calling special legislative sessions, issuing lawful executive orders and exercising powers assigned by disaster and emergency statutes. Each tool has limits. Texans assessing an announcement should identify the law authorizing it, the date it takes effect and the body responsible for implementation."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "A Plural Executive by Design",
-        paragraphs: [
-          "The 1876 Texas Constitution was written in reaction to Reconstruction-era Governor E.J. Davis, whose centralized authority Texans loathed. The framers split executive power across multiple elected offices — a structure known as the 'plural executive' — so no single official could dominate state government.",
-          "That's why the [Attorney General](/news/texas-attorney-general-powers), Comptroller, and Land Commissioner each run independent operations. The governor cannot fire them, override their decisions, or veto their budgets.",
-        ],
+        "heading": "What the Texas Constitution assigns the governor",
+        "paragraphs": [
+          "Article IV of the Texas Constitution establishes the executive department, including a governor and separately elected officers. The governor is the chief executive of the state, but that phrase does not turn the Attorney General, Comptroller, Land Commissioner or Agriculture Commissioner into at-will subordinates. Their terms and legal duties come from their own constitutional and statutory offices.",
+          "For any power claim, begin with Article IV and the specific statute implementing the power. A governor can propose policies and advocate for a bill, but a press release is not the same as an enacted law, an appropriations decision or a final court ruling. The actual instrument—bill, veto proclamation, executive order, appointment or disaster declaration—determines the legal effect."
+        ]
       },
       {
-        heading: "The Powers That Matter",
-        bullets: [
-          "Appointments: roughly 1,500 appointments per term to boards, commissions, and judicial vacancies — including university regents, the Public Utility Commission, and Texas Supreme Court vacancies.",
-          "Line-item veto: the governor can strike individual spending items from the state budget without vetoing the whole bill (a power the U.S. President does not have).",
-          "Special sessions: the governor — and only the governor — can call the Legislature into a 30-day special session and set its agenda.",
-          "Veto power: any bill can be vetoed; overrides require a two-thirds vote in both chambers and are historically rare.",
-          "Commander-in-chief of the Texas National Guard and Texas State Guard, including deployment for border security under [Operation Lone Star](/news/border-security-state-role).",
-          "Emergency declarations and suspension of statutes during declared disasters.",
-        ],
+        "heading": "Appointments and Senate confirmation",
+        "paragraphs": [
+          "The governor appoints members of numerous state boards and commissions and fills certain vacancies where law authorizes gubernatorial appointment. The relevant office, vacancy, qualifications and term are governed by its enabling law. Article IV §12 describes the appointment and Senate advice-and-consent framework for state or district office vacancies, subject to legal exceptions.",
+          "Appointments do not always become final merely because a governor announces a nominee. In some situations Senate confirmation is required; recess appointments have their own nomination and review provisions. Check the governor's official appointments announcement, the Texas Senate's confirmation record and the relevant agency's roster. Avoid publishing a fixed total number of appointments per term without defining the period and included offices."
+        ]
       },
       {
-        heading: "What the Governor Cannot Do",
-        paragraphs: [
-          "The governor does not set the legislative agenda the way a president does. The [Speaker of the House and Lieutenant Governor](/news/texas-political-terminology) — the latter elected statewide and presiding over the Senate — control the flow of legislation.",
-          "The governor cannot reorganize state agencies at will, cannot remove most appointees once confirmed, and cannot block the Attorney General from filing or settling lawsuits in the state's name.",
-        ],
+        "heading": "Calling the Legislature into special session",
+        "paragraphs": [
+          "Regular Texas legislative sessions follow the constitutional schedule and last up to 140 days. Article IV §8 authorizes the governor to convene the Legislature on extraordinary occasions and requires the proclamation to state the purposes. Special sessions are generally limited in duration, and Article III supplies restrictions on the subjects the Legislature may consider.",
+          "The governor can influence which subjects appear in a special-session call, but cannot personally enact a bill or force both legislative chambers to pass a particular version. A bill still must proceed through the relevant chamber procedures and obtain the approvals required by law. Review the call, amended calls, official legislative journals, and enacted session laws rather than equating a special-session announcement with changed policy."
+        ]
       },
       {
-        heading: "Term, Salary, and Succession",
-        table: {
-          headers: ["Item", "Detail"],
-          rows: [
-            ["Term length", "4 years, no term limit"],
-            ["Annual salary (2025)", "$153,750"],
-            ["Successor if vacant", "Lieutenant Governor"],
-            ["Residence", "Texas Governor's Mansion, Austin"],
-            ["Minimum age", "30"],
-          ],
-        },
+        "heading": "Whole-bill veto and appropriations item veto",
+        "paragraphs": [
+          "The Constitution allows the governor to veto legislation and establishes procedures for presentation, timing and reconsideration. An ordinary veto concerns an entire bill; the special item-veto authority applies to distinct items of appropriation in appropriations measures under Article IV §14. The governor does not possess a general power to delete a sentence from every bill while signing the rest.",
+          "A legislative override is possible under the applicable constitutional voting requirements, but whether the Legislature is in session and the timing of the return matter. For any disputed veto, read the final bill, governor's filed veto statement and the journal showing any override attempt. A statement that an 'appropriation was vetoed' should identify the actual budget item and affected fiscal period."
+        ]
       },
+      {
+        "heading": "Budget influence is shared with lawmakers and independent officers",
+        "paragraphs": [
+          "The governor proposes priorities and may veto certain appropriations items, but legislative appropriations are enacted through the Legislature. State agency budgets, spending authorization and financial controls involve statutory limits, agency rules, legislative oversight and duties of independently elected officers. The governor cannot simply take another constitutional officer's funds or alter tax law by press statement.",
+          "Financial claims should identify whether money was appropriated, transferred under a specific authority, granted through an authorized program, or merely requested for a future budget. Consult the enacted appropriations act, Legislative Budget Board materials and Comptroller financial records. A proposed number and a spent amount are not interchangeable."
+        ]
+      },
+      {
+        "heading": "Commander in chief and state military forces",
+        "paragraphs": [
+          "Article IV §7 addresses the governor's commander-in-chief role regarding state military forces, subject to the constitutional exception when forces enter actual federal service. Texas statutes separately describe the roles, activation and organization of state military forces and related agencies.",
+          "An activation announcement should be checked against the actual order, funding authority, mission, geographic limits and jurisdiction. The governor's commander-in-chief title does not replace federal command when the relevant forces are in federal service, nor does it waive ordinary constitutional limits on individual rights. Report the legal basis and actual operational responsibility rather than a slogan alone."
+        ]
+      },
+      {
+        "heading": "Disaster declarations and emergency management",
+        "paragraphs": [
+          "Texas Government Code Chapter 418 grants specified disaster and emergency-management powers, including procedures for proclamations, extensions and measures to respond to defined emergencies. Those powers are statutory and limited; a declaration is not a permanent substitute for legislative lawmaking or judicial review.",
+          "To evaluate an executive action, locate the issued order, cite the exact statutory section relied on and determine whether the rule applies statewide, to particular counties, or to specified agencies. Look for amendments, expirations, legislative changes and court judgments. Vague claims that a governor can 'suspend all laws' without identifying the statute and conditions are not reliable."
+        ]
+      },
+      {
+        "heading": "What independent statewide officers and courts do instead",
+        "paragraphs": [
+          "The Lieutenant Governor presides over the Senate and has legislative influence but is separately elected. The Attorney General is the state's legal officer with duties under the Constitution and Government Code. The Comptroller exercises statutory tax and finance responsibilities. The judiciary interprets the law and resolves cases within its jurisdiction. None of these offices derives all of its power from a governor's personal instruction.",
+          "The governor has political influence, appointment authority and a public platform, but specific disputes about elections, taxes, litigation or rulemaking require locating the lawful decision-maker. A court judgment can constrain an executive order, an appropriations act can limit an agency expenditure, and a separately elected officer's statutory duties continue despite political disagreement."
+        ]
+      },
+      {
+        "heading": "How to independently check a governor announcement",
+        "bullets": [
+          "Identify the legal instrument: appointment, proclamation, executive order, disaster order, budget proposal, veto or legislative request.",
+          "Read Texas Constitution Article IV and the cited statutory section for the claimed authority.",
+          "Verify the effective date, geographic scope, delegated agency and any expiration or extension.",
+          "For appointments, check the named board, statutory qualifications and Senate confirmation status.",
+          "For a new spending claim, distinguish appropriation, authorization, obligation and actual disbursement.",
+          "For a special session or bill, compare the official call and final legislative history to the announced objective.",
+          "Record subsequent court orders and amendments rather than assuming the original announcement remains controlling."
+        ]
+      }
     ],
-    faq: [
+    "faq": [
       {
-        q: "Does the Texas Governor have term limits?",
-        a: "No. Texas is one of 14 states with no gubernatorial term limit. Rick Perry holds the record at 14 consecutive years.",
+        "q": "Can the Texas governor fire the Attorney General?",
+        "a": "The Attorney General is independently elected and the governor does not ordinarily possess at-will firing authority over that constitutional officer. Removal and vacancy rules depend on constitutional and statutory processes."
       },
       {
-        q: "Can the governor override the Lieutenant Governor or Attorney General?",
-        a: "No. Each is independently elected and constitutionally autonomous. The governor's leverage is political and budgetary, not hierarchical.",
+        "q": "Can the Texas governor pass a law during a special session?",
+        "a": "No. The governor can convene a special session and identify subjects for consideration, but legislative bills still require constitutionally prescribed lawmaking steps."
       },
       {
-        q: "How is the line-item veto different from a regular veto?",
-        a: "A line-item veto lets the governor strike specific dollar amounts from an appropriations bill while signing the rest. It applies only to spending bills, not to substantive policy legislation.",
+        "q": "Can the governor veto a single policy sentence from any bill?",
+        "a": "No. An item veto applies to items of appropriation in the relevant appropriations context; the ordinary veto addresses the whole bill under Article IV procedures."
       },
       {
-        q: "Can the Legislature meet without the governor's permission?",
-        a: "During the biennial 140-day regular session, yes. Outside that window, only the governor can call a special session and set its agenda.",
+        "q": "Are every appointment and agency decision made solely by the governor?",
+        "a": "No. Appointments are governed by enabling laws and, where required, Senate confirmation. Numerous independently elected offices, boards and courts possess their own legal responsibilities."
       },
+      {
+        "q": "Where can I verify an executive order?",
+        "a": "Find the governor's published order or proclamation, check its statutory authority and effective date, and review subsequent amendments, expiration orders or court decisions."
+      }
     ],
-    sources: [
-      { label: "Office of the Texas Governor", url: "https://gov.texas.gov/" },
+    "sources": [
       {
-        label: "Texas Constitution Article 4 §1–§16 (Executive Department)",
-        url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.4.htm",
+        "label": "Texas Constitution — Article IV, Executive Department",
+        "url": "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.4.htm"
       },
       {
-        label: "Texas Legislative Reference Library — Governors of Texas",
-        url: "https://lrl.texas.gov/legeLeaders/governors/",
+        "label": "Texas Constitution — Article III, Legislative Department",
+        "url": "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.3.htm"
       },
+      {
+        "label": "Texas Government Code Chapter 418 — Emergency Management",
+        "url": "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.418.htm"
+      },
+      {
+        "label": "Office of the Governor — Appointments",
+        "url": "https://gov.texas.gov/organization/appointments"
+      },
+      {
+        "label": "Texas Legislature Online — Bill Histories",
+        "url": "https://capitol.texas.gov/"
+      },
+      {
+        "label": "Texas Legislative Budget Board",
+        "url": "https://www.lbb.texas.gov/"
+      }
     ],
-    related: [
+    "related": [
       "texas-attorney-general-powers",
       "how-a-bill-becomes-texas-law",
-      "texas-constitutional-amendments-guide",
+      "texas-political-terminology"
     ],
-    cta: { label: "Meet Your Texas Representatives", href: "/representatives" },
+    "cta": {
+      "label": "Verify Texas Governor and Legislature Actions",
+      "href": "/texas-government"
+    }
   },
 
   "texas-border-policy-full-guide": {
