@@ -101,7 +101,7 @@ function BillLink({ bill }: { bill: string }) {
   const calledSessionMatch = /(\d+)(?:st|nd|rd|th) Called Session/i.exec(bill);
   const legislature = legislatureMatch ? Number(legislatureMatch[1]) : 89;
   const sessionCode = calledSessionMatch ? calledSessionMatch[1] : 'R';
-  const href = publicBillPath({
+  const href = billSearchPath({
     legislature_number: legislature,
     session_code: sessionCode,
     bill_type: billMatch[1],
