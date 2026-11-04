@@ -2020,7 +2020,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       "texas-voter-registration-guide",
       "voter-id-surge",
     ],
-    cta: { label: "Find Your Polling Place", href: "/elections/voting" },
+    cta: { label: "Find Your Polling Place", href: "/register-to-vote" },
   },
 
   "beginners-guide-texas-elections": {
@@ -2560,7 +2560,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       { label: "Texas Constitution", url: "https://statutes.capitol.texas.gov/?link=CN" },
     ],
     related: ["how-a-bill-becomes-texas-law", "texas-political-terminology"],
-    cta: { label: "See This Year's Propositions", href: "/elections/2026" },
+    cta: { label: "See This Year's Propositions", href: "/texas-politics" },
   },
 
   "texas-open-meetings-public-info": {
@@ -3293,7 +3293,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       "primary-vs-general-election",
       "beginners-guide-texas-elections",
     ],
-    cta: { label: "Find Your Polling Place", href: "/elections/voting" },
+    cta: { label: "Find Your Polling Place", href: "/register-to-vote" },
   },
 
   "speaker-special-session": {
@@ -3685,7 +3685,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     related: ["school-choice-esa-guide", "voter-id-surge", "primary-vs-general-election"],
-    cta: { label: "Find Your Ballot", href: "/elections/voting" },
+    cta: { label: "Find Your Ballot", href: "/register-to-vote" },
     keyTakeaways: [
       "87 Texas ISDs have organized parental-rights candidate slates for May.",
       "School boards control curriculum, budget, superintendent, and tax rate.",
