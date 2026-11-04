@@ -236,62 +236,6 @@ async function checkRecoveredHistoricalNewsUrls() {
   console.log(`OK historical Toyota canonical 301 ${oldSlug} -> ${newSlug}`);
 }
 
-async function checkIngestion() {
-  const startedAt = Date.now();
-  let response;
-  try {
-    response = await fetchWithTimeout(`${baseUrl}/api/public/hooks/ingest-feeds`, {
-      method: "POST",
-      redirect: "follow",
-      headers: { Accept: "application/json", "User-Agent": "KeepTXRed-Newsroom-Smoke/1.0" },
-    }, 180000);
-  } catch (error) {
-    const elapsed = Math.round((Date.now() - startedAt) / 1000);
-    if (error?.name === "AbortError") throw new Error(`ingest-feeds did not finish within ${elapsed}s; endpoint is reachable but ingestion is too slow`);
-    throw error;
-  }
-  if (!response.ok) throw new Error(`ingest-feeds returned HTTP ${response.status}`);
-  const text = await response.text();
-  let payload;
-  try { payload = JSON.parse(text); } catch { throw new Error("ingest-feeds did not return JSON"); }
-  if (payload?.ok !== true) throw new Error(`ingest-feeds returned ok=${String(payload?.ok)}: ${text.slice(0, 500)}`);
-  if (typeof payload.fetched !== "number" || typeof payload.inserted !== "number") throw new Error(`ingest-feeds response lacks numeric ingestion counts: ${text.slice(0, 500)}`);
-  if (typeof payload.sourceCount === "number" && payload.sourceCount < 1) throw new Error(`ingest-feeds reports zero configured sources: ${text.slice(0, 500)}`);
-  if (typeof payload.healthySources === "number" && payload.healthySources < 1) throw new Error(`ingest-feeds reports zero healthy sources: ${text.slice(0, 500)}`);
-  if (typeof payload.failedSources === "number" && typeof payload.sourceCount === "number" && payload.sourceCount > 0) {
-    const failureRatio = payload.failedSources / payload.sourceCount;
-    if (failureRatio > 0.10) {
-      const sourceFailures = Array.isArray(payload.diag)
-        ? payload.diag
-          .filter((item) => Number(item?.status ?? 0) === 0 || Number(item?.status ?? 0) >= 400)
-          .slice(0, 18)
-          .map((item) => `${String(item?.source ?? "unknown").slice(0, 75)} [HTTP ${Number(item?.status ?? 0)}]`)
-          .join("; ")
-        : "";
-      throw new Error(`ingest-feeds transport failure ratio is ${(failureRatio * 100).toFixed(1)}% (${payload.failedSources}/${payload.sourceCount}); failed sources: ${sourceFailures || "not reported"}; summary: ${text.slice(0, 240)}`);
-    }
-    if (payload.failedSources > 0) {
-      console.warn(`WARN ingest-feeds transient transport failures=${payload.failedSources}/${payload.sourceCount}; below 10% outage threshold`);
-    }
-  }
-  if (payload.fetched < 1) throw new Error(`ingest-feeds completed but fetched zero Texas-relevant candidates: ${text.slice(0, 500)}`);
-  const elapsed = Math.round((Date.now() - startedAt) / 1000);
-  console.log(`OK ingest-feeds elapsed=${elapsed}s fetched=${payload.fetched} inserted=${payload.inserted} healthySources=${payload.healthySources ?? "n/a"} quietSources=${payload.quietSources ?? "n/a"} failedSources=${payload.failedSources ?? "n/a"}`);
-  // DPS was added as an original first-party source. A successful *overall*
-  // ingestion can conceal a single official index blocked by upstream egress,
-  // or a date parser extracting zero releases. Emit only bounded source-status
-  // metadata already returned by this one existing scheduled smoke POST. No
-  // additional HTTP fetch, crawler, or ingestion/publishing attempt.
-  const dps = (Array.isArray(payload.diag) ? payload.diag : [])
-    .find((source) => source.source === "Texas DPS — Direct Press Releases");
-  if (dps) {
-    const safeError = String(dps.error ?? "").slice(0, 160).replace(/[\r\n\t]/g, " ");
-    console.log(`INFO dps-firstparty-ingest status=${Number(dps.status ?? 0)} item_count=${Number(dps.count ?? 0)} attempts=${Number(dps.attempts ?? 0)} error=${safeError || "none"}`);
-  } else {
-    console.warn("WARN dps-firstparty-ingest not present in response diagnostics; inspect current deployed source config");
-  }
-}
-
 /** Phase 2A: exercise rendered production robots, structured data and sitemap contracts.
  * These deliberately use stored historical URLs and never generate a new article.
  */
@@ -350,6 +294,63 @@ async function checkNewsArchiveIndexability() {
   }
   console.log("OK retired 404 and equivalent static 301");
 }
+
+async function checkIngestion() {
+  const startedAt = Date.now();
+  let response;
+  try {
+    response = await fetchWithTimeout(`${baseUrl}/api/public/hooks/ingest-feeds`, {
+      method: "POST",
+      redirect: "follow",
+      headers: { Accept: "application/json", "User-Agent": "KeepTXRed-Newsroom-Smoke/1.0" },
+    }, 180000);
+  } catch (error) {
+    const elapsed = Math.round((Date.now() - startedAt) / 1000);
+    if (error?.name === "AbortError") throw new Error(`ingest-feeds did not finish within ${elapsed}s; endpoint is reachable but ingestion is too slow`);
+    throw error;
+  }
+  if (!response.ok) throw new Error(`ingest-feeds returned HTTP ${response.status}`);
+  const text = await response.text();
+  let payload;
+  try { payload = JSON.parse(text); } catch { throw new Error("ingest-feeds did not return JSON"); }
+  if (payload?.ok !== true) throw new Error(`ingest-feeds returned ok=${String(payload?.ok)}: ${text.slice(0, 500)}`);
+  if (typeof payload.fetched !== "number" || typeof payload.inserted !== "number") throw new Error(`ingest-feeds response lacks numeric ingestion counts: ${text.slice(0, 500)}`);
+  if (typeof payload.sourceCount === "number" && payload.sourceCount < 1) throw new Error(`ingest-feeds reports zero configured sources: ${text.slice(0, 500)}`);
+  if (typeof payload.healthySources === "number" && payload.healthySources < 1) throw new Error(`ingest-feeds reports zero healthy sources: ${text.slice(0, 500)}`);
+  if (typeof payload.failedSources === "number" && typeof payload.sourceCount === "number" && payload.sourceCount > 0) {
+    const failureRatio = payload.failedSources / payload.sourceCount;
+    if (failureRatio > 0.10) {
+      const sourceFailures = Array.isArray(payload.diag)
+        ? payload.diag
+          .filter((item) => Number(item?.status ?? 0) === 0 || Number(item?.status ?? 0) >= 400)
+          .slice(0, 18)
+          .map((item) => `${String(item?.source ?? "unknown").slice(0, 75)} [HTTP ${Number(item?.status ?? 0)}]`)
+          .join("; ")
+        : "";
+      throw new Error(`ingest-feeds transport failure ratio is ${(failureRatio * 100).toFixed(1)}% (${payload.failedSources}/${payload.sourceCount}); failed sources: ${sourceFailures || "not reported"}; summary: ${text.slice(0, 240)}`);
+    }
+    if (payload.failedSources > 0) {
+      console.warn(`WARN ingest-feeds transient transport failures=${payload.failedSources}/${payload.sourceCount}; below 10% outage threshold`);
+    }
+  }
+  if (payload.fetched < 1) throw new Error(`ingest-feeds completed but fetched zero Texas-relevant candidates: ${text.slice(0, 500)}`);
+  const elapsed = Math.round((Date.now() - startedAt) / 1000);
+  console.log(`OK ingest-feeds elapsed=${elapsed}s fetched=${payload.fetched} inserted=${payload.inserted} healthySources=${payload.healthySources ?? "n/a"} quietSources=${payload.quietSources ?? "n/a"} failedSources=${payload.failedSources ?? "n/a"}`);
+  // DPS was added as an original first-party source. A successful *overall*
+  // ingestion can conceal a single official index blocked by upstream egress,
+  // or a date parser extracting zero releases. Emit only bounded source-status
+  // metadata already returned by this one existing scheduled smoke POST. No
+  // additional HTTP fetch, crawler, or ingestion/publishing attempt.
+  const dps = (Array.isArray(payload.diag) ? payload.diag : [])
+    .find((source) => source.source === "Texas DPS — Direct Press Releases");
+  if (dps) {
+    const safeError = String(dps.error ?? "").slice(0, 160).replace(/[\r\n\t]/g, " ");
+    console.log(`INFO dps-firstparty-ingest status=${Number(dps.status ?? 0)} item_count=${Number(dps.count ?? 0)} attempts=${Number(dps.attempts ?? 0)} error=${safeError || "none"}`);
+  } else {
+    console.warn("WARN dps-firstparty-ingest not present in response diagnostics; inspect current deployed source config");
+  }
+}
+
 
 const failures = [];
 for (const [label, check] of [
