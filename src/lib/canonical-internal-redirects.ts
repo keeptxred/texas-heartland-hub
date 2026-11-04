@@ -3,6 +3,26 @@ import { MIGRATED_TOOL_CANONICALS } from "./migrated-tool-canonical";
 
 const INTERNAL_REDIRECT_CANONICALS: Readonly<Record<string, string>> = {
   "/about-keep-texas-red": "/about",
+  // Retired public Election Central destinations must be rewritten in article
+  // bodies and profile links, not retained as broken internal destinations.
+  "/candidate-guides": "/texas-politics",
+  "/election": "/texas-politics",
+  "/election-central": "/texas-politics",
+  "/texas-elections": "/texas-politics",
+  "/elections-2026": "/texas-politics",
+  "/elections": "/texas-politics",
+  "/elections/2026": "/texas-politics",
+  "/elections/races": "/texas-politics",
+  "/elections/candidates": "/representatives",
+  "/elections/districts": "/districts",
+  "/elections/legislative": "/texas-legislature",
+  "/elections/statewide": "/texas-politics",
+  "/elections/polls": "/texas-politics/texas-election-history",
+  "/elections/forecast": "/texas-politics",
+  "/elections/results": "/texas-politics",
+  "/elections/voting": "/register-to-vote",
+  "/elections/methodology": "/editorial-standards",
+  "/elections/corrections": "/contact",
   "/laws-to-know": "/laws",
   "/legislative-updates": "/bills",
   "/texas-laws": "/laws",
