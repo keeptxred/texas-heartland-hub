@@ -255,68 +255,60 @@ def verify_elections() -> None:
 
 
 def verify_bill() -> None:
-    path = "/bills/texas/89/sb/37/reference.json"
+    """Verify the only public bill reader is the noindex data API, not legacy HTML."""
+    path = "/api/public/bill-detail?bill=89-2-hb-4"
     payload, headers = fetch_json(path)
     if "noindex" not in headers.get("x-robots-tag", "").lower():
         raise SmokeFailure(f"{path} is missing noindex X-Robots-Tag")
 
-    canonical = "https://keeptxred.com/bills/texas/89/sb/37"
-    link = headers.get("link", "")
-    if canonical not in link or 'rel="canonical"' not in link:
-        raise SmokeFailure(f"{path} canonical Link header is invalid: {link!r}")
-
+    bill = payload.get("bill")
+    if not isinstance(bill, dict):
+        raise SmokeFailure(f"{path} is missing a bill record")
     require_equal(
-        payload,
+        bill,
         {
-            "schemaVersion": 1,
-            "site": "Keep TX Red",
-            "jurisdiction": "Texas",
-            "billIdentifier": "SB 37",
-            "legislature": 89,
-            "canonicalUrl": canonical,
+            "legislature_number": 89,
+            "session_code": "2",
+            "bill_type": "hb",
+            "bill_number": 4,
         },
-        "Bill reference",
+        "Second called session HB 4",
     )
+    relations = payload.get("relations")
+    if not isinstance(relations, dict):
+        raise SmokeFailure("Bill detail API missing official relations")
+    for name in ("sponsors", "actions", "committees", "documents"):
+        if not isinstance(relations.get(name), list):
+            raise SmokeFailure(f"Bill detail API missing {name} array")
+    if "SUPABASE_SERVICE_ROLE_KEY" in json.dumps(payload):
+        raise SmokeFailure("Bill detail API exposed a privileged credential")
 
-    official_bill_url = payload.get("officialBillUrl")
-    if not isinstance(official_bill_url, str) or "capitol.texas.gov" not in official_bill_url:
-        raise SmokeFailure(
-            f"Bill reference missing Texas Legislature source URL: {official_bill_url!r}"
+    # Old machine-reference and document URLs must remain observable as 410.
+    # Do not redirect them to an unrelated hub or disallow them in robots.txt.
+    for retired in (
+        "/bills/texas/89/sb/37/reference.json",
+        "/bills/texas/89/2/hb/4",
+        "/bills/subject/property-tax",
+    ):
+        request = urllib.request.Request(
+            f"{SITE_URL}{retired}",
+            headers={"User-Agent": "KeepTXRed-authority-production-smoke/1.0"},
         )
+        try:
+            with urllib.request.urlopen(request, timeout=TIMEOUT_SECONDS) as response:
+                status = response.status
+                response_headers = dict(response.headers.items())
+        except urllib.error.HTTPError as error:
+            status = error.code
+            response_headers = dict(error.headers.items())
+        if status != 410:
+            raise SmokeFailure(f"Retired {retired} returned HTTP {status}; expected 410 Gone")
+        if "noindex" not in response_headers.get("X-Robots-Tag", "").lower():
+            raise SmokeFailure(f"Retired {retired} missing noindex X-Robots-Tag")
 
-    documents = payload.get("documents")
-    actions = payload.get("actions")
-    if not isinstance(documents, list) or not isinstance(actions, list):
-        raise SmokeFailure("Bill reference documents/actions are not arrays")
-    if not documents and not actions:
-        raise SmokeFailure("Bill reference contains no primary-source documents or official actions")
-
-    for document in documents:
-        if not isinstance(document, dict):
-            raise SmokeFailure(f"Bill reference document is not an object: {document!r}")
-        official_url = document.get("officialUrl")
-        if not isinstance(official_url, str) or "capitol.texas.gov" not in official_url:
-            raise SmokeFailure(
-                f"Bill document is not an official Texas Legislature URL: {official_url!r}"
-            )
-
-    ensure_no_keys(
-        payload,
-        {
-            "id",
-            "metadata",
-            "internal_note",
-            "internalNotes",
-            "editorialRelationships",
-            "ingestionMetadata",
-            "created_at",
-            "updated_at",
-        },
-        "Bill reference",
-    )
     print(
-        f"Bill reference healthy: documents={len(documents)} "
-        f"actions={len(actions)} lastSyncedAt={payload.get('lastSyncedAt')}"
+        "Bill API healthy: 89(2) HB 4, approved official relations, "
+        "noindex API and retired bill URLs returning 410"
     )
 
 
@@ -326,12 +318,15 @@ def verify_manifest() -> None:
     serialized = json.dumps(payload, sort_keys=True)
     required = (
         "/elections/reference.json",
-        "/bills/texas/{legislature}/{bill-type}/{bill-number}/reference.json",
+        "https://keeptxred.com/bills",
+        "/api/public/bill-detail?bill={legislature}-{session}-{bill-type}-{bill-number}",
     )
     missing = [needle for needle in required if needle not in serialized]
     if missing:
-        raise SmokeFailure(f"Citation manifest is missing authority resources: {missing}")
-    print("Citation manifest advertises both authority JSON resource families")
+        raise SmokeFailure(f"Citation manifest is missing current authority resources: {missing}")
+    if "/bills/texas/" in serialized:
+        raise SmokeFailure("Citation manifest still promotes a retired individual bill URL")
+    print("Citation manifest advertises the single bills hub and noindex detail API")
 
 
 def verify_city_migration() -> None:
