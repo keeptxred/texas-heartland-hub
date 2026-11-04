@@ -827,7 +827,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 14,
     party: "R",
-    website: "https://house.texas.gov/members/14",
+    website: "https://house.texas.gov/members/4475",
     imageUrl: "https://www.house.texas.gov/images/members/4475.jpg?v=1",
     officialCode: null,
     home: "3000 Briarcrest Drive Suite 212, Bryan, TX 77802",
@@ -871,11 +871,15 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/14",
+          url: "https://house.texas.gov/members/4475",
         },
         {
           label: "Official member biography",
           url: "https://house.texas.gov/members/4475/biography",
+        },
+        {
+          label: "Official Texas Legislative Directory member record",
+          url: "https://legdir.capitol.texas.gov/MemberInfo.aspx?Chamber=H&Code=A4475",
         },
         {
           label: "Texas Legislature Online member directory",
@@ -1087,7 +1091,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 18,
     party: "R",
-    website: "https://house.texas.gov/members/18",
+    website: "https://house.texas.gov/members/4535",
     imageUrl: "https://www.house.texas.gov/images/members/4535.jpg?v=2",
     officialCode: null,
     home: "1023 N. Main St. Suite 103, Liberty, TX 77575",
@@ -1130,7 +1134,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/18",
+          url: "https://house.texas.gov/members/4535",
         },
         {
           label: "Official member biography",
