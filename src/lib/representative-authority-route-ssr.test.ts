@@ -24,14 +24,17 @@ describe("Texas congressional and legislative authority SSR payload boundary", (
 
   it("retains server-rendered profile, canonical and authority-section delivery", () => {
     expect(route).toContain("getRepresentativeAuthorityRouteData({ data: { slug: params.representativeSlug } })");
-    expect(route).toContain("return { directoryRepresentative, authority, houseCommittees, news, relatedContent, ...legislation }");
-    expect(route).toContain("if (!directoryRepresentative && !legislation.identity) throw notFound()");
+    expect(route).toContain("certifyRepresentative({");
+    expect(route).toContain("legislationUnavailable: legislation === null");
+    expect(route).toContain("if (!directoryRepresentative && !legislation?.identity) throw notFound()");
     expect(route).toContain('links: [{ rel: "canonical", href: canonical }]');
-    for (const label of ["ProfilePage", "Person", "ItemList", "BreadcrumbList"]) {
+    for (const label of ["WebPage", "Person", "ItemList", "BreadcrumbList"]) {
       expect(route).toContain(`"@type": "${label}"`);
     }
     expect(route).toContain("getRepresentativeLegislation");
     expect(route).toContain("getRelatedAuthorityContent");
-    expect(route).toContain("houseCommittees.map");
+    expect(route).toContain("houseCommittees, news, relatedContent");
+    expect(route).toContain('loaderData.certification.state === "AUTHORITY_READY"');
+    expect(route).not.toContain('"@type": "ProfilePage"');
   });
 });
