@@ -2436,7 +2436,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 38,
     party: "D",
-    website: "https://house.texas.gov/members/38",
+    website: "https://house.texas.gov/members/4095",
     imageUrl: "https://house.texas.gov/images/members/4095.jpg?v=1",
     officialCode: null,
     home: "777 E. Harrison St. Second Floor, Brownsville, TX 78520",
@@ -2481,7 +2481,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/38",
+          url: "https://house.texas.gov/members/4095",
         },
         {
           label: "Official member biography",
