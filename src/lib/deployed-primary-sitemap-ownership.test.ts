@@ -32,13 +32,12 @@ describe("deployed primary sitemap ownership hard gate", () => {
       "/contact-legislators",
       "/laws",
       "/texas-legislature",
-      "/elections/2026",
     ]) {
       expect(ownershipSmoke).toContain(route);
     }
 
     expect(ownershipSmoke).toContain(
-      'f"{SITE_ORIGIN}/find-representative": f"{SITE_ORIGIN}/sitemap-elections.xml"',
+      'f"{SITE_ORIGIN}/find-representative": f"{SITE_ORIGIN}/sitemap-pages.xml"',
     );
     expect(ownershipSmoke).toContain(
       'f"{SITE_ORIGIN}/bills": f"{SITE_ORIGIN}/sitemap-legislature.xml"',
@@ -47,6 +46,8 @@ describe("deployed primary sitemap ownership hard gate", () => {
       'f"{SITE_ORIGIN}/districts": f"{SITE_ORIGIN}/sitemap-pages.xml"',
     );
     expect(ownershipSmoke).toContain("expected exactly one primary owner");
+    expect(ownershipSmoke).toContain("RETIRED_ELECTION_CENTRAL_PATHS");
+    expect(ownershipSmoke).not.toContain('f"{SITE_ORIGIN}/elections/2026": f"{SITE_ORIGIN}/sitemap-elections.xml"');
   });
 
   it("keeps migrated vehicle routes retired from every KTR primary sitemap", () => {
