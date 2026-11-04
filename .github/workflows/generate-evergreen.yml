@@ -1,10 +1,8 @@
-name: Authenticated KTR evergreen explainer generation
+name: Authenticated KTR evergreen draft generation
 
 on:
-  schedule:
-    # Preserve the former Supabase daily UTC schedule exactly.
-    - cron: '30 8 * * *'
-    - cron: '0 18 * * *'
+  # Phase 2A: no scheduled AI evergreen publication. An operator may explicitly
+  # generate a quarantined review draft without creating an indexable URL.
   workflow_dispatch:
 
 permissions:
@@ -17,11 +15,11 @@ concurrency:
 
 jobs:
   publish:
-    name: Publish one vetted evergreen explainer
+    name: Generate one nonindexable evergreen review draft
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
-      - name: Call signed GitHub OIDC-only publishing endpoint
+      - name: Call signed GitHub OIDC-only draft-generation endpoint
         shell: bash
         run: |
           set -euo pipefail
@@ -44,15 +42,15 @@ jobs:
 
           # Never print or save the short-lived OIDC token.
           if [[ "$status" != '200' ]]; then
-            echo "Evergreen writer HTTP $status; no successful publication certified." >&2
+            echo "Evergreen draft writer HTTP $status; no successful draft certified." >&2
             jq -r '.error // "Unknown publisher error"' /tmp/ktr-evergreen-response.json 2>/dev/null | head -c 400 >&2 || true
             exit 1
           fi
-          if ! jq -e '.ok == true and (.slug | type == "string") and (.category | type == "string")' \
+          if ! jq -e '.ok == true and .status == "review_required" and .indexable == false and (.slug | type == "string") and (.category | type == "string")' \
             /tmp/ktr-evergreen-response.json >/dev/null; then
-            echo 'Evergreen writer returned HTTP200 without accepted publication.' >&2
+            echo 'Evergreen writer returned HTTP200 without a quarantined review draft.' >&2
             exit 1
           fi
-          echo "Published validated evergreen: $(jq -r '.slug' /tmp/ktr-evergreen-response.json)"
-          echo "## Evergreen publication" >> "$GITHUB_STEP_SUMMARY"
-          echo "Verified writer HTTP200; published slug: $(jq -r '.slug' /tmp/ktr-evergreen-response.json)" >> "$GITHUB_STEP_SUMMARY"
+          echo "Saved nonindexable evergreen review draft: $(jq -r '.slug' /tmp/ktr-evergreen-response.json)"
+          echo "## Evergreen review draft" >> "$GITHUB_STEP_SUMMARY"
+          echo "Verified HTTP200; draft (not indexable) slug: $(jq -r '.slug' /tmp/ktr-evergreen-response.json)" >> "$GITHUB_STEP_SUMMARY"
