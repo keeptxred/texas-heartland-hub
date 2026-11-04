@@ -204,7 +204,8 @@ function hasNoindexState(url: URL): boolean {
 
 const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
   const url = new URL(request.url);
-  // Keep legislative data/search alive, but retire all old bill HTML documents.
+  // Permanently retire individual bill and bill-directory HTML documents, while
+  // keeping the single /bills search page and its data API accessible.
   if (isRetiredBillDocumentPath(url.pathname)) {
     return new Response('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex,follow"><title>Bill page retired | KeepTXRed</title></head><body><main><h1>Individual bill page retired</h1><p>This Texas legislative record remains available through the searchable bills database.</p><p><a href="/bills">Open Texas Bill Search</a></p></main></body></html>', {
       status: 410,
@@ -215,15 +216,16 @@ const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
       },
     });
   }
-  // All public Election Central pages and legacy aliases are gone, including
-  // /elections/reference.json. Preserve /admin/elections and internal records.
+
+  // Election Central is seasonal. Hide its public pages and legacy aliases while
+  // the existing switch is off, preserving their routes and data for next cycle.
   if (isRetiredElectionCentralPath(url.pathname)) {
-    return new Response("This page is no longer available.", {
-      status: 410,
+    return new Response("Election Central is temporarily unavailable between election cycles.", {
+      status: 404,
       headers: {
         "content-type": "text/plain; charset=utf-8",
         "x-robots-tag": "noindex, nofollow",
-        "cache-control": "public, max-age=300",
+        "cache-control": "no-store",
       },
     });
   }

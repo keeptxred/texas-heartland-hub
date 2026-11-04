@@ -437,8 +437,8 @@ jobs:
           retired_status="$(curl --retry 8 --retry-delay 2 --retry-all-errors --silent --show-error \
             -D "$retired_headers" -o "$retired_body" -w '%{http_code}' \
             "$PREVIEW_URL/elections/reference.json")"
-          if [ "$retired_status" != "410" ]; then
-            echo "::error title=Retired election reference still public::Expected 410, got $retired_status"
+          if [ "$retired_status" != "404" ]; then
+            echo "::error title=Retired election reference still public::Expected seasonal 404, got $retired_status"
             exit 1
           fi
           if ! grep -iq '^x-robots-tag:.*noindex' "$retired_headers"; then
@@ -446,8 +446,7 @@ jobs:
             exit 1
           fi
           rm -f "$retired_headers" "$retired_body"
-          # Bill detail reference documents were permanently retired. Verify the
-          # new search, HTTP 410 removals, data API and one-entry sitemap instead.
+          # After new bill search is live, legacy bill JSON is 410, not a 200.
           SITE_URL="$PREVIEW_URL" python3 scripts/legislature/verify-bills-consolidation.py
 
       - name: Verify Keep Texas Red political-geography cluster
