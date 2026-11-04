@@ -24,7 +24,16 @@ describe("cloud search recovery policy", () => {
   it("keeps ordinary news suppressed while allowing only governed exceptions", () => {
     expect(isCloudArticleSearchEligibleByKind("news", [])).toBe(false);
     expect(isCloudArticleSearchEligibleByKind("ingested", [])).toBe(false);
-    expect(isCloudArticleSearchEligibleByKind("evergreen", [])).toBe(true);
+    expect(isCloudArticleSearchEligibleByKind("evergreen", [])).toBe(false);
+    expect(isCloudArticleSearchEligibleByKind("evergreen", [
+      "evergreen_authority", "editorial_reviewed", "primary_sources",
+    ])).toBe(true);
+    expect(isCloudArticleSearchEligibleByKind("evergreen", [
+      "evergreen_authority", "editorial_reviewed", "primary_sources", "editorial_review_required",
+    ])).toBe(false);
+    expect(isCloudArticleSearchEligibleByKind("evergreen", [
+      "evergreen_authority", "primary_sources",
+    ])).toBe(false);
 
     expect(isCloudArticleSearchEligibleByKind("news", ["search_recovery_source_first"])).toBe(false);
     expect(isCloudArticleSearchEligibleByKind(

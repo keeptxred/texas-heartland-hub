@@ -17,6 +17,7 @@ export const SEARCH_RECOVERY_SUPPRESSED_CLOUD_KINDS = [
 
 export const SEARCH_RECOVERY_AUTHORITY_FLAG = "search_recovery_authority";
 export const SEARCH_RECOVERY_SOURCE_FIRST_FLAG = "search_recovery_source_first";
+export const EVERGREEN_EDITORIAL_REVIEW_REQUIRED_FLAG = "editorial_review_required";
 
 /** A legacy rapid-publish URL may enter search only after explicit restoration. */
 export function isLegacyArticleSearchEligible(
@@ -90,11 +91,21 @@ export function isCloudArticleSearchEligibleByKind(
   provenanceUrls: readonly (string | null | undefined)[] = [],
 ): boolean {
   const normalizedKind = (kind ?? "").trim().toLowerCase();
-  if (!SUPPRESSED.has(normalizedKind)) return true;
-
   const flags = new Set(
     (qualityFlags ?? []).map((flag) => String(flag).trim().toLowerCase()),
   );
+
+  // Cloud evergreen is sometimes assembled automatically by the signed GitHub
+  // generation workflow. A large AI-produced body and plausible source links
+  // must never be interpreted as editorial approval. Existing approved cloud
+  // evergreens carry these review flags and remain indexable.
+  if (normalizedKind === "evergreen") {
+    return !flags.has(EVERGREEN_EDITORIAL_REVIEW_REQUIRED_FLAG)
+      && flags.has("evergreen_authority")
+      && flags.has("editorial_reviewed")
+      && flags.has("primary_sources");
+  }
+  if (!SUPPRESSED.has(normalizedKind)) return true;
   // Keep auto-generated source-first flags for provenance/triage, not
   // publication approval. A human-reviewed source-first exception must
   // demonstrate both review flags and a real official source in current data.

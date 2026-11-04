@@ -7,6 +7,7 @@ import { EVERGREEN_EVIDENCE_ADDENDUM, fatalEvergreenEditorialReasons } from "@/l
 import { runCloudflareJson } from "@/lib/cloudflare-json-ai.server";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 import { getGovernmentGraphLinks } from "@/lib/government-graph";
+import { EVERGREEN_EDITORIAL_REVIEW_REQUIRED_FLAG } from "@/lib/cloud-search-indexability";
 
 const TOPICS: { category: string; topic: string }[] = [
   { category: "Tax & Spending", topic: "How Texas property-tax policy is set and what the Legislature can change" },
@@ -165,7 +166,7 @@ export const Route = createFileRoute("/api/public/hooks/generate-evergreen")({
             audience: "keeptxred-evergreen",
             repository: "keeptxred/texas-heartland-hub",
             workflowPath: ".github/workflows/generate-evergreen.yml",
-            allowedEventNames: ["schedule", "workflow_dispatch"],
+            allowedEventNames: ["workflow_dispatch"],
           });
         } catch {
           return Response.json({ error: "Invalid GitHub Actions authorization" }, {
@@ -285,7 +286,7 @@ export const Route = createFileRoute("/api/public/hooks/generate-evergreen")({
           category: pick.category,
           title: generated.title.slice(0, 200),
           dek: generated.dek.slice(0, 400),
-          author: "Keep TX Red Editorial Staff",
+          author: "Keep TX Red Automated Draft",
           source_name: null as string | null,
           source_url: null as string | null,
           published_at: now.toISOString(),
@@ -295,13 +296,32 @@ export const Route = createFileRoute("/api/public/hooks/generate-evergreen")({
 
         enrichArticleRow(row);
 
-        const { error } = await supabase.from("daily_articles").upsert(row, { onConflict: "slug" });
+        // Save for editorial review rather than silently publishing new AI
+        // material to the public newsroom or Google. Retain all quality flags
+        // from scoring; promotion requires removing both quarantine flags
+        // and adding the independent approved-evergreen evidence flags.
+        const reviewRow = row as typeof row & { quality_flags?: string[] | null };
+        reviewRow.quality_flags = [...new Set([
+          ...(reviewRow.quality_flags ?? []),
+          EVERGREEN_EDITORIAL_REVIEW_REQUIRED_FLAG,
+          "seo_noindex",
+        ])];
+
+        const { error } = await supabase.from("daily_articles").upsert(reviewRow, { onConflict: "slug" });
         if (error) {
           console.error("evergreen insert failed", error);
           return Response.json({ error: error.message }, { status: 500 });
         }
 
-        return Response.json({ ok: true, slug, category: pick.category, provider: "cloudflare-workers-ai", graphLinks: graphLinks.map((node) => node.href) });
+        return Response.json({
+          ok: true,
+          slug,
+          category: pick.category,
+          status: "review_required",
+          indexable: false,
+          provider: "cloudflare-workers-ai",
+          graphLinks: graphLinks.map((node) => node.href),
+        });
       },
     },
   },
