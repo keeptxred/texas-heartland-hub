@@ -52,6 +52,24 @@ export const EDITORIAL_REVIEWS: Record<string, EditorialReview> = {
     biography: "Mihaela Pleșa represents Texas House District 70 in parts of Collin County. The official House biography describes her as a vice chair of the Pensions, Investments and Financial Services committee and a member of the Elections committee.",
     identityChecked: "2026-11-04", source: "https://house.texas.gov/members/4345/biography",
   },
+  "angelia-orr": {
+    name: "Angelia Orr", office: "Texas House", district: "House District 13", party: "R",
+    officialUrl: "https://house.texas.gov/members/4340",
+    biography: "Angelia Orr represents Texas House District 13, covering Hill, Bosque, Falls, Limestone, Freestone, Leon and part of McLennan counties. Her official House biography describes running small businesses, prior work on the Itasca school board and service as Hill County district clerk. She graduated from Texas A&M University in 1992 and began House service in 2023. Her official member page links individual authored and sponsored bills; the research below identifies the recorded role on each linked measure.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/4340/biography",
+  },
+  "paul-dyson": {
+    name: "Paul Dyson", office: "Texas House", district: "House District 14", party: "R",
+    officialUrl: "https://house.texas.gov/members/4475",
+    biography: "Paul Dyson represents Texas House District 14 in Brazos County and began service in January 2025. The official Texas Legislative Directory identifies him as an attorney educated at Texas A&M University and South Texas College of Law. His recorded House committee assignments include Energy Resources, Judiciary and Civil Jurisprudence, and the July 2025 flooding investigation. His official legislative and member sources provide traceable bill histories rather than unsupported voting or lifetime sponsorship totals.",
+    identityChecked: "2026-11-04", source: "https://legdir.capitol.texas.gov/MemberInfo.aspx?Chamber=H&Code=A4475",
+  },
+  "janis-holt": {
+    name: "Janis Holt", office: "Texas House", district: "House District 18", party: "R",
+    officialUrl: "https://house.texas.gov/members/4535",
+    biography: "Janis Holt represents Texas House District 18 and began her first legislative term in January 2025. Her official House biography describes her Silsbee roots, ownership of an air-purification business, prior work in education and service on the Silsbee Independent School District board. Texas legislative records identify her appointments to the Homeland Security, Public Safety and Veterans' Affairs and Pensions, Investments and Financial Services committees; individual 89th Legislature bill roles and outcomes are documented in the source-linked research below.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/4535/biography",
+  },
   "brent-money": {
     name: "Brent Money", office: "Texas House", district: "House District 2", party: "R",
     officialUrl: "https://house.texas.gov/members/2",
@@ -251,6 +269,7 @@ export const SCRIPT2_REVIEWED_SLUGS = [
   "joan-huffman", "roland-gutierrez", "chuy-hinojosa", "pete-flores",
   "donna-campbell", "jose-menendez", "adam-hinojosa", "charles-perry",
   "brent-hagenbuch", "kevin-sparks",
+  "angelia-orr", "paul-dyson", "janis-holt",
 ] as const;
 
 export const CERTIFICATION_CANDIDATE_SLUGS = [
