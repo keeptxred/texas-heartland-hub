@@ -2213,51 +2213,143 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
 
   "texas-school-board-powers": {
-    updated: "2026-05-28",
-    intro: [
-      "Independent School District boards are the most powerful local government most Texans have never voted for. A seven-member board controls a budget larger than the city it sits in — and is elected by a fraction of the turnout that picks the mayor.",
+    "updated": "2026-11-04",
+    "editorNote": "Substantively revised November 2026. Removed unsupported statewide turnout and uniform board-size claims; school district governance, election scheduling and independent record checking now reference official state materials.",
+    "intro": [
+      "Texas independent school districts are governed by boards of trustees. These boards adopt policy, oversee finances and evaluate the superintendent, but do not personally run classrooms or the district's day-to-day operations. State law also sets requirements that local boards cannot simply ignore. For a voter evaluating a trustee candidate, the most useful distinction is between decisions a board can lawfully change and those that belong to the superintendent, Texas Education Agency, State Board of Education or other authorities.",
+      "Texas Education Code Chapter 11 provides much of the legal framework. The Texas Education Agency's school-board guidance describes trustees as a collective governing body responsible for setting direction, financial and academic oversight, and accountability. This page explains those roles, the public records to check and the election questions that vary among districts."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "What ISD Boards Actually Control",
-        bullets: [
-          "Annual budget and the M&O property tax rate.",
-          "Superintendent hiring and contract.",
-          "Curriculum adoption and library policy.",
-          "Bond elections for new construction.",
-          "Attendance boundaries and school closures.",
-        ],
+        "heading": "What the board can decide—and what it cannot",
+        "paragraphs": [
+          "Under Texas Education Code §11.151, trustees as a body have the duty to govern and oversee management of their district, subject to powers assigned by statute to the Texas Education Agency or State Board of Education and other state limits. Boards adopt policies, long-range goals, local budgets and certain tax decisions; they oversee assets and evaluate district performance. They must operate within state and federal law, not independently rewrite statewide requirements.",
+          "Individual trustees generally do not possess the board's collective power. Texas Education Code §11.051 explains that, unless authorized, a member cannot individually act for the board, and the board acts through lawful meetings and majority votes when a quorum is present. A candidate can promise to advocate or vote for a change, but cannot alone order the superintendent to fire an employee, approve a contract or amend policy."
+        ]
       },
       {
-        heading: "Why May Races Decide So Much",
-        paragraphs: [
-          "School board elections are held in May, when turnout often falls below 5%. A few hundred votes routinely decide districts with tens of thousands of students.",
-        ],
+        "heading": "The superintendent manages day-to-day district operations",
+        "paragraphs": [
+          "Boards hire and evaluate their superintendent, define lawful district goals and monitor results. The superintendent and administrative staff then implement board policy and handle ongoing operations under applicable law and delegated authority. A trustee's oversight obligation does not mean the trustee supervises each principal or chooses classroom assignments.",
+          "The TEA Framework for School Board Development explicitly distinguishes board vision and governance from the superintendent's responsibility to manage the district and direct personnel. For a complaint about daily operations, locate the district's complaint policy and administrative chain first. If the question concerns a districtwide policy or whether the superintendent is meeting board goals, review board agendas, public evaluations where available and the adopted governing documents."
+        ]
       },
+      {
+        "heading": "Budget oversight, tax rates and bond propositions",
+        "paragraphs": [
+          "The board adopts the district budget and takes actions concerning its local property-tax rate within the statutory school-finance framework. However, state funding formulas, statutory tax limits, voter-approval requirements, federal grants and legally restricted accounts shape what a board can spend. A school district cannot treat the full amount printed on a property-tax statement as discretionary cash.",
+          "A bond proposition and annual operating budget address different decisions. Voters decide whether to authorize eligible bond debt when required, while a board later manages projects and spending within that authority. To examine a proposal, request the board-adopted budget, bond election order, ballot language, projected debt service, construction or procurement documents, and subsequent amendments. Compare the current fiscal year and the same fund category rather than relying on an isolated social-media claim about a single district expense."
+        ]
+      },
+      {
+        "heading": "Curriculum and school library decisions have state boundaries",
+        "paragraphs": [
+          "School boards adopt local policy and oversee educational goals, but the State Board of Education, TEA and Legislature establish statewide standards and other requirements. Texas Essential Knowledge and Skills and related mandates constrain local choices. Distinguish locally selected instructional materials or library procedures from statewide graduation rules, assessments and statutory education requirements.",
+          "To evaluate a curriculum or library controversy, locate the actual district policy or approved instructional-materials list, the applicable state rule and the agenda or vote that changed it. Don't assume a trustee can unilaterally ban a statewide standard, choose every textbook, or override federal constitutional protections. Comparing the specific proposal with controlling law makes a stronger voter guide than treating any one campaign slogan as an enacted policy."
+        ]
+      },
+      {
+        "heading": "Trustee elections: dates, positions and boundaries vary",
+        "paragraphs": [
+          "Not every Texas school-board election occurs in May, and not every independent school district has an identical board structure or election system. Texas Education Code Chapter 11 addresses board composition, positions, districts, terms, vacancies and joint elections, while the Election Code and state election advisories govern relevant uniform dates and procedures. Some local districts conduct elections with cities or counties, and a particular district's election order provides the operative local details.",
+          "Read the district's official election notice, candidate information and adopted election order. Check whether a seat is elected at large or from a geographic trustee district, which position is on the ballot, the term length and the applicable filing rules. The Secretary of State publishes calendars and guidance for local political subdivisions. Do not assume a fixed 5% turnout or that every district's board is composed of seven members; measure turnout from the official canvass for the specific election and district."
+        ]
+      },
+      {
+        "heading": "How to verify a contested board decision",
+        "paragraphs": [
+          "First identify the district, policy issue and precise meeting date. Search the official board agenda for the proposed action and supporting packet. Then check the approved minutes, order or recorded vote to determine whether the measure actually passed. Public discussion is not the same as adoption, and a trustee's campaign endorsement is not a board directive.",
+          "Texas Government Code Chapter 551 provides the general open-meeting framework, and Chapter 552 provides the public-information framework with applicable exceptions. Certain personnel or student information may be confidential. Requests for public records should name the document, decision and date while respecting protected information. A citizen can compare board decisions with a district's strategic plan, budget and public accountability reports without guessing at motives."
+        ]
+      },
+      {
+        "heading": "How voters should evaluate trustee performance",
+        "paragraphs": [
+          "Compare measurable commitments with the board's adopted goals and the superintendent's implementation reports. Look for documented actions on student outcomes, fiscal oversight, staffing retention, debt management and legal compliance. The meaning of an academic performance metric depends on its definitions, reporting period and student population; one number without context is not enough.",
+          "Keep the board and administrative roles separate when assigning credit or responsibility. A board vote for a policy is a governance action, while a later classroom or building outcome often depends on implementation and many outside factors. When a campaign claims a school is failing or a budget is wasteful, request the cited official report and check whether the candidate accurately identifies the board decision that could address it."
+        ]
+      },
+      {
+        "heading": "A district-specific research checklist",
+        "bullets": [
+          "Find the official school district website, current board roster and adopted board policies.",
+          "Confirm your trustee district or at-large electorate; read the current election notice and term information.",
+          "Review agendas, board packets, minutes and recorded votes for the policy in question.",
+          "Compare the adopted operating budget, applicable tax-rate notices and bond documents before repeating financial claims.",
+          "Check TEA accountability materials and any relevant state rule or Education Code section for limits on local authority.",
+          "Separate what a candidate promises to advocate from what an individual trustee or the board can legally accomplish.",
+          "Retain links and access dates so readers can reproduce the finding from the original source."
+        ]
+      },
+      {
+        "heading": "What this page does not claim",
+        "paragraphs": [
+          "This guide explains a legal and accountability framework rather than ranking every Texas school board, endorsing a slate or asserting a statewide turnout percentage. Election schedules and board composition should always be confirmed for the individual district and year. A district's actual budget or contract cannot be inferred from a different district's example.",
+          "For the most reliable answers, start with Chapter 11 of the Texas Education Code, TEA school-board guidance, the official local board packet and the Texas Secretary of State's election resources. If a policy is disputed, describe what the official record establishes and what remains an allegation or interpretation."
+        ]
+      }
     ],
-    faq: [
+    "faq": [
       {
-        q: "Are school board races partisan?",
-        a: "Officially no — but coalitions of parents, teachers' unions, and political groups openly endorse and fund slates.",
+        "q": "Can one Texas school-board trustee change district policy alone?",
+        "a": "Generally no. The board acts as a collective governing body at a properly called meeting with applicable quorum and voting rules. A trustee can advocate, request information and vote but normally cannot individually direct district operations."
       },
       {
-        q: "Can I recall a board member?",
-        a: "Texas does not allow recall of elected ISD trustees; you must wait for the next election.",
+        "q": "Do all Texas independent school districts hold school-board elections in May?",
+        "a": "No. Election dates and joint-election arrangements vary under applicable state law and local orders. Check the specific district's election notice and the Secretary of State's guidance for the relevant year."
       },
+      {
+        "q": "Does a Texas school board directly supervise classroom teachers?",
+        "a": "Boards govern district policy, oversight and superintendent evaluation. The superintendent and administration generally manage day-to-day personnel and school operations under law and delegated district authority."
+      },
+      {
+        "q": "Where can I find how a school board member voted?",
+        "a": "Search the district's official meeting agenda, approved minutes and available recordings or vote records. If a document is not posted, follow the district's public-information request process."
+      },
+      {
+        "q": "Who sets Texas school curriculum standards?",
+        "a": "The Texas Legislature, State Board of Education, TEA and local school districts have distinct statutory responsibilities. Boards make local decisions within statewide requirements, rather than replacing those requirements at will."
+      }
     ],
-    sources: [
-      { label: "Texas Education Agency", url: "https://tea.texas.gov/" },
+    "sources": [
       {
-        label: "Texas Education Code Chapter 11 (School Districts)",
-        url: "https://statutes.capitol.texas.gov/Docs/ED/htm/ED.11.htm",
+        "label": "Texas Education Code Chapter 11 — School Districts",
+        "url": "https://statutes.capitol.texas.gov/Docs/ED/htm/ED.11.htm"
       },
+      {
+        "label": "Texas Education Agency — About School Boards",
+        "url": "https://tea2.tea.texas.gov/about-tea/contact-us/general-inquiry/about-school-boards"
+      },
+      {
+        "label": "Texas Education Agency — School Board Trustee Training",
+        "url": "https://tea2.tea.texas.gov/health-safety-and-discipline/school-boards/school-board-member-training/school-board-trustee-training"
+      },
+      {
+        "label": "Texas Secretary of State — Changing Local Election Dates",
+        "url": "https://www.sos.state.tx.us/elections/laws/changing-election-dates-local-political-subdivisions.shtml"
+      },
+      {
+        "label": "Texas Secretary of State — 2026 Uniform Election Calendar",
+        "url": "https://www.sos.state.tx.us/elections/laws/advisory2026-21-november-3-election-law-calendar.shtml"
+      },
+      {
+        "label": "Texas Government Code Chapter 551 — Open Meetings",
+        "url": "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.551.htm"
+      },
+      {
+        "label": "Texas Government Code Chapter 552 — Public Information",
+        "url": "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.552.htm"
+      }
     ],
-    related: [
+    "related": [
       "school-board-elections",
       "texas-school-finance-explained",
-      "school-choice-esa-guide",
+      "school-choice-esa-guide"
     ],
-    cta: { label: "Find Your School Board Race", href: "/county-elections" },
+    "cta": {
+      "label": "Read Texas School-Board Laws",
+      "href": "https://statutes.capitol.texas.gov/Docs/ED/htm/ED.11.htm"
+    }
   },
 
   "texas-energy-policy-guide": {
