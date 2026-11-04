@@ -62,6 +62,10 @@ for (const route of ROUTES) {
     });
 
     const response = await page.goto(route, { waitUntil: "domcontentloaded" });
+    if (process.env.VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE !== "true") {
+      expect(response?.status(), `${route} should be hidden when Election Central is off`).toBe(410);
+      return;
+    }
     expect(response?.status(), `${route} returned an error status`).toBeLessThan(400);
     await expect(page.locator("h1").first()).toBeVisible();
     await expectNoHorizontalOverflow(page);
@@ -70,6 +74,7 @@ for (const route of ROUTES) {
 }
 
 test("polling and forecasts are sourced while result states remain honest", async ({ page }) => {
+  test.skip(process.env.VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE !== "true", "Public Election Central is switched off.");
   await page.goto("/elections/polls", { waitUntil: "domcontentloaded" });
   await expect(page.getByRole("link", { name: /view poll source/i }).first()).toBeVisible({
     timeout: 20_000,
