@@ -2681,47 +2681,151 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
 
   "texas-border-geography-101": {
-    updated: "2026-05-18",
-    intro: [
-      "The Texas-Mexico border runs 1,254 miles along the center of the Rio Grande. Understanding what happens there starts with the map.",
+    "updated": "2026-11-04",
+    "editorNote": "Substantively revised November 2026 against TxDOT border-crossing data, CBP's sector geography, the International Boundary and Water Commission and federal crossing statistics. Earlier static barrier-coverage and river-depth claims removed because they lacked reliable comparable evidence.",
+    "intro": [
+      "Texas and Mexico share roughly 1,254 miles of international border, according to the Texas Department of Transportation. The Rio Grande forms most of that boundary. On a map, however, the international line, the federal agencies operating at crossings, the areas patrolled between crossings, and the state's own roads and law-enforcement jurisdictions are different layers.",
+      "That difference matters for understanding a headline about migration, freight, river conditions or border security. A port of entry is not the same thing as a Border Patrol sector; a bridge count is not a count of customs ports; and a wall or fence estimate can mean different things depending on what is being measured and when. This guide shows how to verify each claim using primary government records."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "The Five Border Patrol Sectors in Texas",
-        bullets: [
-          "El Paso Sector — far West Texas plus New Mexico.",
-          "Big Bend Sector — sparsely populated Trans-Pecos.",
-          "Del Rio Sector — Eagle Pass and surrounding ranchland.",
-          "Laredo Sector — Webb County and the I-35 corridor.",
-          "Rio Grande Valley Sector — the four-county Valley, historically the busiest.",
-        ],
+        "heading": "The river and the international boundary are related, but not interchangeable",
+        "paragraphs": [
+          "The International Boundary and Water Commission (IBWC), a binational institution, describes the United States–Mexico boundary established under historic treaties, including the 1970 Boundary Treaty. It identifies the Rio Grande's centerline along the Texas–Mexico river boundary and explains that treaties address how the international boundary is maintained as the river changes. State political announcements do not independently redefine the treaty boundary.",
+          "The Texas–Mexico boundary length is often summarized as approximately 1,254 miles in TxDOT documents; IBWC describes about 1,255 river-border miles between the Gulf and the El Paso–Ciudad Juárez area. These close figures come from different descriptions and rounding, not two independent land-border segments that should be added together.",
+          "The river is not a uniformly shallow or easily traversable channel. Flow, reservoirs, irrigation works, seasonal flooding, channel changes and local conditions vary substantially. A simplistic claim that one entire region is 'walkable' is not a safe or reliable geographic statement; consult IBWC notices and official local hazard information for specific current conditions."
+        ]
       },
       {
-        heading: "Major Ports of Entry",
-        paragraphs: [
-          "Texas hosts more than two dozen international bridges and crossings, including Laredo's World Trade Bridge — the busiest commercial truck crossing in the hemisphere.",
-        ],
+        "heading": "Border Patrol sectors are not customs ports",
+        "paragraphs": [
+          "U.S. Border Patrol agents primarily work to detect and address unauthorized cross-border movement between designated ports of entry. U.S. Customs and Border Protection's Office of Field Operations handles inspection and admissibility of travelers and goods at official ports. Both are within CBP, but they have different functions, personnel and reporting systems.",
+          "CBP identifies five Border Patrol sectors associated with the Texas portion of the southwest boundary: El Paso, Big Bend, Del Rio, Laredo, and Rio Grande Valley. The El Paso Sector also includes a substantial area of New Mexico, so a sector-wide statistic should not automatically be described as a Texas-only measurement. Sector operational areas are administrative boundaries, not definitions of Texas counties or U.S. congressional districts."
+        ]
       },
+      {
+        "heading": "El Paso and Big Bend: cities, mountains, and remote stretches",
+        "paragraphs": [
+          "The western Texas border includes the El Paso–Ciudad Juárez metropolitan crossing area and the remote Chihuahuan Desert landscapes of the Big Bend region. El Paso is a major urban crossing area; Big Bend covers a very different mix of terrain, long travel distances, and smaller communities. These distinctions matter for emergency response and border infrastructure cost.",
+          "Texas transportation and federal border-sector maps show the locations of established bridges and inspection facilities, while the National Park Service and local land managers administer substantial nearby public lands. A Border Patrol sector name does not imply that all roads, riverbanks or public land within that area are managed by Border Patrol."
+        ]
+      },
+      {
+        "heading": "Del Rio, Eagle Pass and Laredo: crossing systems and freight",
+        "paragraphs": [
+          "Del Rio and Eagle Pass are important border communities in the Del Rio sector region, while Laredo and neighboring Nuevo Laredo anchor another major trade corridor. The bridges serving those communities have different vehicle classifications, inspection facilities and operating conditions. Some crossings are primarily used for commercial freight; others handle passenger vehicles or pedestrians.",
+          "The World Trade Bridge in Laredo is a major commercial-truck crossing, but any claim that it is the single 'busiest' crossing needs the traffic category and date. Truck traffic, total people, passenger vehicles, imports by value, and rail freight yield different rankings. Use TxDOT, CBP or the U.S. Bureau of Transportation Statistics for a clearly labeled measure rather than repeating an undated superlative."
+        ]
+      },
+      {
+        "heading": "Rio Grande Valley: multiple cities and crossing types",
+        "paragraphs": [
+          "The Rio Grande Valley includes border communities near Hidalgo, Starr and Cameron counties and connects to several crossings used for freight, vehicles and pedestrians. CBP's Rio Grande Valley Border Patrol Sector is an operational geography, not an exact synonym for one county group or every community that describes itself as part of the Valley.",
+          "Border crossings near Brownsville, Hidalgo/Pharr and surrounding communities serve different transportation needs. When evaluating economic or security claims, first identify the actual crossing or CBP port, the period covered, and whether the reported figures represent arrivals at a port or encounters between ports."
+        ]
+      },
+      {
+        "heading": "Why official sources may count crossings differently",
+        "paragraphs": [
+          "TxDOT's general border-crossing page describes 28 international bridges and border crossings using one published set of categories, including dam crossings and a ferry. Its Border Transportation Master Plan uses a larger total when it separates vehicle, rail and pedestrian crossings. Those figures should not be presented as contradictory without accounting for the facility types included in each count.",
+          "A CBP 'port' is a customs administrative location and may encompass more than one physical bridge. The Bureau of Transportation Statistics explicitly warns that its border-crossing statistics are reported at CBP port level, not necessarily each separate roadway or bridge. For a defensible public claim, name whether the unit is a bridge, passenger crossing, freight rail facility, commercial truck lane or CBP port."
+        ]
+      },
+      {
+        "heading": "Reading traffic and trade statistics responsibly",
+        "paragraphs": [
+          "BTS border crossing/entry data cover northbound entries by categories such as commercial trucks, personal vehicles, buses, trains and pedestrians. The federal program does not publish comparable outbound counts from the same collection. An inbound count is therefore not a complete measure of two-way traffic, and it cannot be directly converted into the number of distinct people entering and leaving.",
+          "Different series also answer different questions: a truck count measures vehicles, a container or rail series measures a mode of freight movement, and dollar-valued import statistics measure trade rather than bridge queue lengths. Cite the exact port, month or year, series and definitions before describing whether activity has risen or fallen."
+        ]
+      },
+      {
+        "heading": "Barriers, river access and law-enforcement authority",
+        "paragraphs": [
+          "Physical border infrastructure can include fences, gates, roads, sensors, lighting and other facilities. Projects and ownership are not uniform along the river. CBP, federal land agencies, the State of Texas, counties, private landowners and the IBWC can each have relevant roles depending on the location and type of work.",
+          "Do not use a broad numerical claim that a fixed fraction of the Texas border is fenced unless it cites a current, consistently measured baseline distinguishing primary pedestrian barriers, vehicle barriers, state projects and other installations. Likewise, river access and land ownership are location-specific legal questions; the public should use official crossing and park guidance, not generalized descriptions of remote access."
+        ]
+      },
+      {
+        "heading": "Water management, reservoirs and boundary administration",
+        "paragraphs": [
+          "International water-sharing and river-boundary management involve treaties and the IBWC. The 1944 Water Treaty addresses use of river waters and authorized construction and operation of international dams, while the 1970 treaty addresses boundary-maintenance procedures. Reservoirs, irrigation projects and flood-management structures are therefore not simply local works that can be understood from one county map.",
+          "Where a news report alleges that the border moved, a bank eroded, or a new structure affects river flow, check the relevant treaty, IBWC record and official technical map. Political assertions about river islands or a changed channel require treaty-based verification, not a presumption that the water's appearance today settles sovereignty."
+        ]
+      },
+      {
+        "heading": "A reusable verification checklist for border news",
+        "bullets": [
+          "Identify the precise community, bridge, port, Border Patrol sector or river segment named in the claim.",
+          "Check TxDOT's latest official crossing inventory and maps for facility type and traffic purpose.",
+          "Use CBP's sector and port lists to distinguish between-port activity from port inspections.",
+          "Record whether a statistic counts northbound entries, vehicles, people, trade value or encounters.",
+          "Date the report and its reporting window; do not call an earlier peak 'current' without new evidence.",
+          "For river or boundary disputes, consult the IBWC treaty and technical information rather than a campaign statement.",
+          "Exclude unsupported barrier-coverage, river-depth and 'busiest crossing' generalizations unless the necessary measurement and source exist."
+        ]
+      }
     ],
-    faq: [
+    "faq": [
       {
-        q: "Where is the river the deepest?",
-        a: "Below Falcon and Amistad reservoirs the Rio Grande runs deep and wide; in the Big Bend and upper sectors it is often walkable in dry months.",
+        "q": "How long is the Texas–Mexico border?",
+        "a": "TxDOT describes approximately 1,254 miles. IBWC describes roughly 1,255 miles of Rio Grande boundary from the Gulf to El Paso; rounding and measurement descriptions differ."
       },
       {
-        q: "Is the border fenced everywhere?",
-        a: "No. Roughly a third of the Texas border has some form of barrier; the rest is open river, ranchland, or desert.",
+        "q": "Are the five Texas Border Patrol sectors the same as the ports of entry?",
+        "a": "No. Border Patrol sectors organize work between ports, while CBP's Office of Field Operations manages inspections at legal ports. El Paso Sector also covers territory in New Mexico."
       },
+      {
+        "q": "How many bridges and border crossings does Texas have?",
+        "a": "The count depends on what is included. TxDOT reports 28 bridges and border crossings in one overview and a larger modal count in its border transportation plan. State the source date and whether vehicle, rail and pedestrian facilities are counted separately."
+      },
+      {
+        "q": "Are federal border crossings and the Rio Grande boundary administered by Texas alone?",
+        "a": "No. CBP administers federal inspections and between-port enforcement, while the international river boundary and many related water matters operate under U.S.–Mexico treaties and the IBWC."
+      },
+      {
+        "q": "Can BTS crossing data show total two-way border traffic?",
+        "a": "Not by itself. BTS describes its series as northbound entries reported by CBP port; it does not collect comparable outbound crossing data in that collection."
+      }
     ],
-    sources: [
+    "sources": [
       {
-        label: "U.S. Customs and Border Protection — Sectors",
-        url: "https://www.cbp.gov/border-security/along-us-borders/border-patrol-sectors",
+        "label": "TxDOT — Texas–Mexico Border Crossings Overview",
+        "url": "https://www.txdot.gov/projects/projects-studies/statewide/texas-mexico-border-crossings.html"
       },
-      { label: "Texas DPS — Border Operations", url: "https://www.dps.texas.gov/" },
+      {
+        "label": "TxDOT — Border Transportation Master Plan",
+        "url": "https://www.txdot.gov/projects/planning/international-trade-border-planning/btmp.html"
+      },
+      {
+        "label": "CBP — Border Patrol Sectors",
+        "url": "https://www.cbp.gov/border-security/along-us-borders/border-patrol-sectors"
+      },
+      {
+        "label": "International Boundary and Water Commission — About the Boundary",
+        "url": "https://www.ibwc.gov/about-us/"
+      },
+      {
+        "label": "International Boundary and Water Commission — Treaties",
+        "url": "https://www.ibwc.gov/treaties"
+      },
+      {
+        "label": "Bureau of Transportation Statistics — Border Crossing/Entry Data",
+        "url": "https://www.bts.gov/explore-topics-and-geography/geography/border-crossingentry-data"
+      },
+      {
+        "label": "TxDOT — 2024 Texas–Mexico Border Crossing Guide",
+        "url": "https://www.txdot.gov/content/dam/docs/tpp/international-trade/2024-border-crossing-guide.pdf"
+      }
     ],
-    related: ["operation-lone-star", "border-security-state-role"],
-    cta: { label: "Read Border Coverage", href: "/news" },
+    "related": [
+      "border-security-state-role",
+      "texas-border-policy-full-guide",
+      "texas-water-rights-explained"
+    ],
+    "cta": {
+      "label": "View Official TxDOT Texas–Mexico Crossing Information",
+      "href": "https://www.txdot.gov/projects/projects-studies/statewide/texas-mexico-border-crossings.html"
+    }
   },
 
   "texas-school-finance-explained": {
