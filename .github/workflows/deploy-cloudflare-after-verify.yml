@@ -305,6 +305,13 @@ jobs:
         # Keep an actual browser install + the mandatory live geometry checks.
         run: bunx playwright install --only-shell chromium
 
+      - name: Verify representative pilot mobile layout with one Chromium worker
+        if: steps.revision.outputs.deploy == 'true'
+        timeout-minutes: 5
+        env:
+          SITE_URL: ${{ env.PREVIEW_URL }}
+        run: bunx playwright test --config=playwright.representatives-deployed.config.ts --workers=1
+
       - name: Measure deployed Texas law touch targets on the public hostname
         if: steps.revision.outputs.deploy == 'true'
         timeout-minutes: 5
