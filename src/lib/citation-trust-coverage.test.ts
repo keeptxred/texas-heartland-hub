@@ -21,11 +21,11 @@ describe('citation trust coverage', () => {
     expect(trustPanel).toContain('>Last verified<');
   });
 
-  it('keeps record-derived trust on promoted election collection directories', () => {
-    expect(manifestPaths.has('/elections/races')).toBe(true);
-    expect(manifestPaths.has('/elections/candidates')).toBe(true);
-    expect(manifestPaths.has('/elections/polls')).toBe(true);
-    expect(manifestPaths.has('/elections/results')).toBe(true);
+  it('retains election record trust components without promoting retired public directories', () => {
+    expect(manifestPaths.has('/elections/races')).toBe(false);
+    expect(manifestPaths.has('/elections/candidates')).toBe(false);
+    expect(manifestPaths.has('/elections/polls')).toBe(false);
+    expect(manifestPaths.has('/elections/results')).toBe(false);
     expect(raceList).toContain('<ElectionDirectoryTrustPanel kind="races" />');
     expect(candidateList).toContain('<ElectionDirectoryTrustPanel kind="candidates" />');
     expect(pollList).toContain('<ElectionDirectoryTrustPanel kind="polls" />');
