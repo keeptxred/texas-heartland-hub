@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
-import { pilotResearchFor } from "@/lib/representative-quality-gates";
+import type { PilotResearchRecord } from "@/lib/representative-quality-gates";
 
 const ROLE_LABELS: Record<string, string> = {
   author: "Author", coauthor: "Coauthor",
   sponsor: "Sponsor in receiving chamber", cosponsor: "Cosponsor",
 };
 
-export function RepresentativePrimarySourceResearch({ slug, name }: { slug: string; name: string }) {
-  const records = pilotResearchFor(slug);
+export function RepresentativePrimarySourceResearch({ name, records }: { name: string; records: PilotResearchRecord[] }) {
   const [query, setQuery] = useState("");
   const [role, setRole] = useState("all");
   const [hydrated, setHydrated] = useState(false);
