@@ -54,7 +54,7 @@ function ConstitutionalAmendmentsTracker() {
         <p className="mt-3 leading-7 text-muted-foreground">That distinction matters: a city, school district, county or other political subdivision may have a local proposition even when there is no statewide constitutional-amendment election. Use your county’s final sample ballot for the measures that apply to your address.</p>
         <div className="mt-5 flex flex-wrap gap-4">
           <a href={CURRENT_ELECTION_URL} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline">Check the official 2026 election calendar →</a>
-          <Link to="/elections/voting" className="font-semibold text-primary hover:underline">Texas voting rules and deadlines →</Link>
+          <Link to="/register-to-vote" className="font-semibold text-primary hover:underline">Texas voter registration →</Link>
         </div>
       </section>
 
@@ -110,7 +110,7 @@ function ConstitutionalAmendmentsTracker() {
           <div className="rounded-2xl border p-5"><h3 className="text-lg font-bold">Are there statewide Texas constitutional amendments on the November 3, 2026 ballot?</h3><p className="mt-2 leading-7 text-muted-foreground">As of September 7, 2026, the Secretary of State’s current statewide election materials do not publish a statewide constitutional-amendment slate for the November 3 general election. Local propositions can still appear on local ballots.</p></div>
           <div className="rounded-2xl border p-5"><h3 className="text-lg font-bold">Can the Legislature amend the Texas Constitution without voters?</h3><p className="mt-2 leading-7 text-muted-foreground">No. The Legislature can propose an amendment after meeting the Article XVII voting threshold, but the proposal must then be submitted to Texas voters and receive a majority of votes cast on that proposition.</p></div>
           <div className="rounded-2xl border p-5"><h3 className="text-lg font-bold">Where can I find the exact ballot language?</h3><p className="mt-2 leading-7 text-muted-foreground">Use the Texas Secretary of State’s election materials for the official proposition wording and the historical constitutional-amendment archive for prior elections. The Texas Legislative Council also publishes analyses when statewide amendments are referred to voters.</p></div>
-          <div className="rounded-2xl border p-5"><h3 className="text-lg font-bold">Where should I follow the next statewide amendment election?</h3><p className="mt-2 leading-7 text-muted-foreground">This page will track the statewide status. For the wider election calendar, candidates, voting rules and results, use <Link to="/elections/2026" className="font-semibold text-primary hover:underline">Texas Election Central</Link>.</p></div>
+          <div className="rounded-2xl border p-5"><h3 className="text-lg font-bold">Where should I follow the next statewide amendment election?</h3><p className="mt-2 leading-7 text-muted-foreground">This page will track the statewide status. For historical context, see <Link to="/texas-politics/texas-election-history" className="font-semibold text-primary hover:underline">Texas election history</Link>. For current election details, verify with the Secretary of State.</p></div>
         </div>
       </section>
 
@@ -120,8 +120,8 @@ function ConstitutionalAmendmentsTracker() {
           <Link to="/laws" className="font-semibold text-primary hover:underline">Texas laws explained →</Link>
           <Link to="/laws/topics" className="font-semibold text-primary hover:underline">Texas law library →</Link>
           <Link to="/laws/effective-dates" className="font-semibold text-primary hover:underline">Texas law effective dates →</Link>
-          <Link to="/elections/2026" className="font-semibold text-primary hover:underline">2026 Texas Election Central →</Link>
-          <Link to="/elections/voting" className="font-semibold text-primary hover:underline">Texas voting guide →</Link>
+          <Link to="/texas-politics/texas-election-history" className="font-semibold text-primary hover:underline">Texas election history →</Link>
+          <Link to="/register-to-vote" className="font-semibold text-primary hover:underline">Texas voter registration →</Link>
           <Link to="/texas-legislature" className="font-semibold text-primary hover:underline">Texas Legislature guide →</Link>
         </div>
       </section>
