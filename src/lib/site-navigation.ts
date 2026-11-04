@@ -28,20 +28,6 @@ export const SITE_NAV_GROUPS = [
     ],
   },
   {
-    id: "elections",
-    label: "Elections",
-    href: "/elections/2026",
-    description: "The 2026 Texas election hub for races, candidates, polls, voting, and results.",
-    links: [
-      { to: "/elections/2026", label: "Election Central", description: "Start with the complete 2026 election overview." },
-      { to: "/elections/races", label: "Races", description: "Statewide, congressional, legislative, and local contests." },
-      { to: "/elections/candidates", label: "Candidates", description: "Candidate profiles, backgrounds, and sourced campaign information." },
-      { to: "/elections/polls", label: "Polls", description: "Published polling with field dates and methodology." },
-      { to: "/elections/voting", label: "Voting Guide", description: "Dates, voter ID, ballot research, and official resources." },
-      { to: "/elections/results", label: "Results", description: "Sourced unofficial returns and certified results when available." },
-    ],
-  },
-  {
     id: "guides",
     label: "Issues & Guides",
     href: "/issues",
