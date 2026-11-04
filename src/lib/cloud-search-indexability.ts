@@ -52,8 +52,8 @@ const REQUIRED_AUTHORITY_FLAGS = [
 ] as const;
 
 /**
- * Official/public-source URLs that are strong enough to support the automated
- * source-first recovery lane. `.gov` covers federal, state, county, and local
+ * Official/public-source URLs that can support a source-first editorial review
+ * but are not by themselves permission to index automated reporting. `.gov` covers federal, state, county, and local
  * public agencies. ERCOT is included because it is the authoritative operator
  * and publisher for Texas grid/resource-adequacy data even though it uses .com.
  */
@@ -75,9 +75,10 @@ export function isSearchRecoveryPrimarySourceUrl(value: string | null | undefine
  *
  * 1. a manually reviewed authority item carrying all three review/provenance
  *    flags; or
- * 2. a source-first newsroom item carrying the internal flag emitted only by
- *    the post-publish finalizer after a >=90 quality score, source-integrity
- *    checks, repetition checks, and an official/public primary source.
+ * 2. a source-first newsroom item with an official/public primary source AND
+ *    documented editorial approval ("editorial_reviewed" and "primary_sources").
+ *    The finalizer's automated quality score and source-first flag alone
+ *    NEVER authorize indexing of external/RSS-derived content.
  *
  * All callers must still apply the normal public-readiness and site-ownership
  * gates. A recovery flag never overrides duplicate, thin, off-topic, image, or
@@ -94,10 +95,13 @@ export function isCloudArticleSearchEligibleByKind(
   const flags = new Set(
     (qualityFlags ?? []).map((flag) => String(flag).trim().toLowerCase()),
   );
-  // A stored flag alone is insufficient: the official/public primary source
-  // must still be present on the current article after any later edits.
+  // Keep auto-generated source-first flags for provenance/triage, not
+  // publication approval. A human-reviewed source-first exception must
+  // demonstrate both review flags and a real official source in current data.
   if (flags.has(SEARCH_RECOVERY_SOURCE_FIRST_FLAG)) {
-    return provenanceUrls.some(isSearchRecoveryPrimarySourceUrl);
+    return flags.has("editorial_reviewed")
+      && flags.has("primary_sources")
+      && provenanceUrls.some(isSearchRecoveryPrimarySourceUrl);
   }
   return REQUIRED_AUTHORITY_FLAGS.every((flag) => flags.has(flag));
 }
