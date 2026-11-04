@@ -24,8 +24,8 @@ describe("representative Script 2 source-first certification", () => {
     }
   });
 
-  it("requires all six genuine quality gates for sixteen individually reviewed profiles", () => {
-    expect(SCRIPT2_REVIEWED_SLUGS).toHaveLength(16);
+  it("requires all six genuine quality gates for thirty individually reviewed expansion profiles", () => {
+    expect(SCRIPT2_REVIEWED_SLUGS).toHaveLength(30);
     for (const slug of SCRIPT2_REVIEWED_SLUGS) {
       const records = pilotResearchFor(slug);
       expect(records.length, slug + " evidence").toBeGreaterThanOrEqual(16);
