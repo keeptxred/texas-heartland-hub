@@ -3166,90 +3166,144 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     cta: { label: "Estimate Your Property Tax", href: "https://texasdefined.com/decide/property-taxes" },
   },
   "texas-attorney-general-powers": {
-    updated: "2026-06-29",
-    editorNote:
-      "Part of our Texas civics series. See also our guide to the [Powers of the Texas Governor](/news/texas-governor-powers).",
-    intro: [
-      "The Texas Attorney General is the state's top lawyer — elected statewide, accountable to voters, and constitutionally independent of the governor. Unlike the U.S. Attorney General, who serves at the pleasure of the president, the Texas AG answers only to the people who put them in office.",
-      "That independence has made the office one of the most consequential conservative posts in the country. The AG defends Texas law in court, files suits against federal overreach, issues binding legal opinions to state officials, and runs the largest child-support enforcement operation in the United States.",
+    "updated": "2026-11-04",
+    "editorNote": "Substantively revised November 2026 against the Texas Constitution, Government Code Chapter 402 and Texas OAG guidance. Corrects earlier claims that attorney general opinions create binding law or that the office has unlimited criminal jurisdiction.",
+    "intro": [
+      "The Texas Attorney General is a separately elected constitutional officer and the chief legal officer for the State of Texas. The office represents the state's legal interests in many disputes and operates statutory programs involving consumer protection, child support, legal opinions and other responsibilities. That does not make the Attorney General the personal lawyer of individual Texans, the supervisor of every local prosecutor or an appellate judge who can change the law by opinion.",
+      "To understand a specific headline, first ask which type of action is involved: a civil lawsuit on behalf of the state, formal interpretation of existing law, consumer enforcement, child-support case, public-information ruling or criminal prosecution within granted jurisdiction. The governing authority varies, and news coverage can mislead when those duties are presented as one unlimited power."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "A Constitutional, Elected Office",
-        paragraphs: [
-          "Article 4 of the Texas Constitution creates the Attorney General as a separately elected executive officer serving a four-year term. The AG is not appointed by the governor and cannot be fired by the governor — a structural check that the [Texas Constitution](/news/texas-constitutional-amendments-guide) has preserved since 1876.",
-          "The office operates out of the William P. Clements Building in Austin with more than 4,000 employees statewide, making it one of the largest law offices in the country.",
-        ],
+        "heading": "A separately elected constitutional office",
+        "paragraphs": [
+          "Article IV of the Texas Constitution creates the Attorney General as part of the plural executive rather than as a direct employee appointed by the governor. The Attorney General serves a term fixed by law and exercises constitutional and statutory duties. That independent electoral status is different from a federal cabinet attorney general, but it does not mean the office acts without laws, courts or checks.",
+          "Texas Government Code Chapter 402 details the agency's duties and authorizations. A claim that the governor 'ordered the AG to prosecute' should be assessed against who has statutory authority to initiate the particular case. The governor and Attorney General can coordinate policy or litigation positions, but they do not gain one another's powers simply by political agreement."
+        ]
       },
       {
-        heading: "Core Powers of the Office",
-        bullets: [
-          "Defend the constitutionality of Texas statutes in state and federal court.",
-          "Represent the State of Texas, its agencies, and its officers in civil litigation.",
-          "Issue Attorney General Opinions interpreting state law for elected officials and agency heads.",
-          "Enforce the Deceptive Trade Practices Act and consumer protection laws.",
-          "Operate the Child Support Division — collecting more than $5 billion in court-ordered support annually.",
-          "Prosecute Medicaid fraud, human trafficking, and certain election-integrity cases.",
-          "Enforce the [Texas Open Meetings and Public Information Acts](/news/texas-open-meetings-public-info).",
-        ],
+        "heading": "Representing the state in civil litigation",
+        "paragraphs": [
+          "The Attorney General represents Texas interests in numerous civil proceedings involving state agencies, state law and constitutional claims. The office may file suits, defend agency decisions, seek relief or appeal judgments when authorized. This is representation of public entities and legal interests, not a guarantee that the Attorney General will take a private citizen's personal lawsuit.",
+          "A press announcement that Texas has sued the federal government is only the start of a case. To evaluate its status, find the filed complaint, relevant court docket and any temporary or final order. A request for an injunction is not an injunction already granted. Appeals, stays and later judgments can alter what an earlier news story correctly reported."
+        ]
       },
       {
-        heading: "What the AG Cannot Do",
-        paragraphs: [
-          "Despite the broad portfolio, the Texas AG has narrower criminal authority than many people assume. Texas places general criminal prosecution in the hands of locally elected District Attorneys and County Attorneys — not the state AG.",
-          "The AG can prosecute criminal cases only when the Legislature has specifically granted that authority (e.g., Medicaid fraud) or when a local prosecutor formally requests assistance. The Court of Criminal Appeals has reinforced these limits in recent rulings.",
-        ],
+        "heading": "Formal Attorney General opinions are legal interpretations, not new laws",
+        "paragraphs": [
+          "Under the Texas Constitution and Government Code §§402.042–.043, authorized public officials can request formal Attorney General opinions on legal questions. The OAG states that these opinions interpret existing law; they do not enact a new statute, correct defects in law or resolve disputed underlying facts. They also do not replace a court judgment.",
+          "Only requesters designated by law can obtain a formal opinion. Ordinary residents generally cannot demand a formal opinion by sending an email asking for personalized advice. Read the question posed, the governing legal text and the full opinion before claiming the document settles a separate factual dispute. Courts may consider such reasoning, but an Attorney General opinion does not automatically bind the judiciary."
+        ]
       },
       {
-        heading: "Powers Compared",
-        table: {
-          headers: ["Power", "Texas AG", "Texas Governor"],
-          rows: [
-            ["Sue the federal government", "Yes (lead role)", "No"],
-            ["Veto legislation", "No", "Yes"],
-            ["Issue binding legal opinions", "Yes", "No"],
-            ["Appoint state judges (vacancies)", "No", "Yes"],
-            ["Prosecute general crimes", "Limited", "No"],
-            ["Enforce consumer protection", "Yes", "No"],
-          ],
-        },
+        "heading": "Consumer protection and civil enforcement",
+        "paragraphs": [
+          "The Attorney General enforces state consumer-protection laws within statutory authority and can investigate or bring public enforcement proceedings. Fraud, misleading business practices and certain other matters can involve OAG divisions. The office may seek injunctions, penalties or other relief authorized by applicable law, but it does not serve as a small-claims attorney for every person with a billing dispute.",
+          "The official consumer complaint process is useful for reporting conduct and providing evidence. It is not a promise that the state will obtain individual reimbursement or intervene in every private transaction. Residents should preserve contracts, advertisements, payment records, correspondence and dates when submitting a complaint, and distinguish public enforcement action from private civil remedies."
+        ]
       },
+      {
+        "heading": "Child support is different from child custody and visitation",
+        "paragraphs": [
+          "The Child Support Division establishes and enforces child-support obligations through statutory processes and court orders. The office may locate parents, pursue payments and take permitted enforcement measures; specific options depend on the case and court orders. Enforcement of a child-support order is not the same as setting a custody arrangement or enforcing a visitation schedule.",
+          "The OAG's own guidance explains that it cannot enforce visitation orders and that custody or visitation questions often require different legal assistance or judicial remedies. Citizens should use the agency's published child-support case resources for the specific order rather than assuming a hotline operator can resolve unrelated family-law disagreements."
+        ]
+      },
+      {
+        "heading": "Criminal prosecution authority has limits",
+        "paragraphs": [
+          "Texas ordinarily assigns prosecution of local criminal offenses to district attorneys, county attorneys or other prosecutors with jurisdiction. The state Attorney General handles particular criminal matters when granted authority by statutes, referrals or constitutionally permissible procedures. A statewide title does not give the AG unlimited power to take over any county criminal charge.",
+          "For a specific case, identify the filed charging document, prosecuting office, statute and court. Claims about elections, Medicaid fraud, organized crime or public corruption can involve different jurisdictional rules and sometimes joint work with local and federal authorities. Describe the actual authorization rather than inferring it from the political prominence of the case."
+        ]
+      },
+      {
+        "heading": "Open government and public-information duties",
+        "paragraphs": [
+          "The Attorney General's office has responsibilities under Texas public-information law and other transparency provisions, including formal rulings on asserted exceptions in circumstances governed by statute. The Texas Public Information Act is found in Government Code Chapter 552; the Open Meetings Act is in Chapter 551. They have different enforcement and procedural mechanisms.",
+          "A public-information ruling is not a judgment about whether every aspect of the underlying government program is lawful. To assess a withheld record, find the precise request, statutory exception, deadline and any issued OAG decision or court appeal. Readers should distinguish agency guidance from the underlying statute and any binding court order."
+        ]
+      },
+      {
+        "heading": "What the office cannot do for an individual",
+        "paragraphs": [
+          "The OAG's official consumer-facing guidance states that the Attorney General may not act as a private attorney in ordinary legal disputes. It also does not regulate individual lawyers through the State Bar or routinely override the decisions of a local prosecutor. Even where the agency handles a related public program, an individual may need a legal aid resource, local court or different agency.",
+          "Recognizing limits can save time. A complaint about a judge's ruling has an appellate or judicial-process route, not a direct order from the AG; a private custody dispute is distinct from child-support enforcement; and a business service dispute may require consumer assistance outside any state enforcement case. Consult the official OAG contact and referrals rather than relying on generalized political rhetoric."
+        ]
+      },
+      {
+        "heading": "How to verify an Attorney General announcement",
+        "bullets": [
+          "Identify whether the matter is a civil filing, court appeal, official opinion, open-records ruling, consumer enforcement action, child-support matter or authorized criminal case.",
+          "Read Texas Constitution Article IV and the relevant Government Code Chapter 402 provision for the particular claimed power.",
+          "Find the formal opinion number and requester's authorized status, or the lawsuit's court docket and filing date.",
+          "Check whether a claim is an allegation, a preliminary order, a final judgment, or a later appeal or stay.",
+          "Verify the agency or public body the OAG represents and whether the action is on behalf of the state rather than an individual client.",
+          "Record changes and subsequent rulings instead of continuing to describe an old filing as newly successful."
+        ]
+      }
     ],
-    faq: [
+    "faq": [
       {
-        q: "Can the governor fire the Texas Attorney General?",
-        a: "No. The AG is independently elected. Removal requires impeachment by the Texas House and conviction by the Senate.",
+        "q": "Can the Texas Attorney General represent me in a private lawsuit?",
+        "a": "Generally no. The Texas OAG represents state legal interests and administers authorized public programs, but it does not provide ordinary private legal representation to individual residents."
       },
       {
-        q: "Are Attorney General Opinions legally binding?",
-        a: "They are binding guidance for state officials and agencies who request them, but courts treat them as persuasive — not controlling — authority.",
+        "q": "Do Texas Attorney General opinions create binding new state laws?",
+        "a": "No. Formal opinions interpret existing law for statutorily authorized requesters. They cannot create new statutory provisions or resolve disputed facts, and courts make their own judicial determinations."
       },
       {
-        q: "Who can request an Attorney General Opinion?",
-        a: "Only certain officials: the governor, lieutenant governor, House speaker, agency heads, county and district attorneys, and the chairs of legislative committees.",
+        "q": "Can the Attorney General take over any Texas county criminal prosecution?",
+        "a": "No. Local district and county prosecutors generally control their cases; OAG criminal authority depends on the offense and applicable law, authorization or referral."
       },
+      {
+        "q": "Does the OAG enforce child visitation orders?",
+        "a": "No. The OAG's child-support services and visitation or custody enforcement are separate. The agency states it does not enforce visitation orders."
+      },
+      {
+        "q": "How can I confirm whether an Attorney General lawsuit succeeded?",
+        "a": "Check the filed case number and court docket for the latest order, appeal or stay. Filing a complaint or requesting emergency relief is not proof that a court granted the state its requested remedy."
+      }
     ],
-    sources: [
+    "sources": [
       {
-        label: "Office of the Texas Attorney General",
-        url: "https://www.texasattorneygeneral.gov/",
+        "label": "Texas Constitution — Article IV, Executive Department",
+        "url": "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.4.htm"
       },
       {
-        label: "Texas Constitution Article 4 (Executive Department)",
-        url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.4.htm",
+        "label": "Texas Government Code Chapter 402 — Attorney General",
+        "url": "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.402.htm"
       },
       {
-        label: "Texas Government Code Chapter 402 (AG Duties)",
-        url: "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.402.htm",
+        "label": "Texas Attorney General — Duties and Responsibilities",
+        "url": "https://www5.texasattorneygeneral.gov/agency/duties-responsibilities-of-the-office-of-the-attorney-general"
       },
+      {
+        "label": "Texas Attorney General — Opinions and Their Limits",
+        "url": "https://www.texasattorneygeneral.gov/attorney-general-opinions"
+      },
+      {
+        "label": "Texas Attorney General — What the Office Can Do",
+        "url": "https://www5.texasattorneygeneral.gov/agency/what-the-attorney-general-can-do-for-you"
+      },
+      {
+        "label": "Texas Attorney General — Child Support and Visitation Limitations",
+        "url": "https://www.texasattorneygeneral.gov/child-support/child-support-enforcement/what-we-can-cannot-do"
+      },
+      {
+        "label": "Texas Government Code Chapter 552 — Public Information",
+        "url": "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.552.htm"
+      }
     ],
-    related: [
+    "related": [
       "texas-governor-powers",
       "how-a-bill-becomes-texas-law",
-      "texas-open-meetings-public-info",
+      "texas-open-meetings-public-info"
     ],
-    cta: { label: "Meet Your Texas Representatives", href: "/representatives" },
+    "cta": {
+      "label": "Explore Texas Government Authority",
+      "href": "/texas-government"
+    }
   },
+
   "texas-governor-powers": {
     "updated": "2026-11-04",
     "editorNote": "Substantively revised November 2026 to distinguish constitutional governor powers from the independent elected officers, Senate confirmation, budget veto, legislative sessions and statutory emergency powers. Historic publication date unchanged.",
