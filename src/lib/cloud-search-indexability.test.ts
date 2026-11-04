@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   isCloudArticleSearchEligibleByKind,
   isSearchRecoveryPrimarySourceUrl,
+  isLegacyArticleSearchEligible,
+  articleProvenanceUrls,
 } from "./cloud-search-indexability";
 
 describe("cloud search recovery policy", () => {
@@ -24,7 +26,13 @@ describe("cloud search recovery policy", () => {
     expect(isCloudArticleSearchEligibleByKind("ingested", [])).toBe(false);
     expect(isCloudArticleSearchEligibleByKind("evergreen", [])).toBe(true);
 
-    expect(isCloudArticleSearchEligibleByKind("news", ["search_recovery_source_first"])).toBe(true);
+    expect(isCloudArticleSearchEligibleByKind("news", ["search_recovery_source_first"])).toBe(false);
+    expect(isCloudArticleSearchEligibleByKind(
+      "news", ["search_recovery_source_first"], ["https://www.sos.texas.gov/elections/"],
+    )).toBe(true);
+    expect(isCloudArticleSearchEligibleByKind(
+      "news", ["search_recovery_source_first"], ["https://news.google.com/read/example"],
+    )).toBe(false);
     expect(isCloudArticleSearchEligibleByKind("news", [
       "search_recovery_authority",
       "editorial_reviewed",
@@ -34,5 +42,29 @@ describe("cloud search recovery policy", () => {
       "search_recovery_authority",
       "primary_sources",
     ])).toBe(false);
+  });
+  it("uses current, stored source URLs and does not trust recovery flags alone", () => {
+    const article = {
+      source_url: "https://news.example.com/story",
+      body_json: { sources: [{ label: "Official", url: "https://www.austintexas.gov/health" }] },
+    };
+    expect(articleProvenanceUrls(article)).toEqual([
+      "https://news.example.com/story",
+      "https://www.austintexas.gov/health",
+    ]);
+    expect(isCloudArticleSearchEligibleByKind(
+      "news", ["search_recovery_source_first"], articleProvenanceUrls(article),
+    )).toBe(true);
+    expect(isCloudArticleSearchEligibleByKind(
+      "news", ["search_recovery_source_first"], articleProvenanceUrls({
+        ...article, body_json: { sources: [] },
+      }),
+    )).toBe(false);
+  });
+
+  it("never exposes an un-restored legacy live article to search", () => {
+    expect(isLegacyArticleSearchEligible("live-2026-07-01-example", [])).toBe(false);
+    expect(isLegacyArticleSearchEligible("live-2026-07-01-example", ["legacy_url_restored"])).toBe(true);
+    expect(isLegacyArticleSearchEligible("2026-07-01-example", [])).toBe(true);
   });
 });
