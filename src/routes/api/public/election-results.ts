@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
   parseOfficialTexasResults,
+  sosSourceAgeMinutes,
   TEXAS_SOS_RESULTS_URL,
   type OfficialResultsFeed,
 } from "@/lib/elections/official-results.server";
@@ -27,10 +28,21 @@ async function retrieve(): Promise<OfficialResultsFeed> {
   return parseOfficialTexasResults(html);
 }
 
+function responseFeed(feed: OfficialResultsFeed, stale: boolean, providerError?: string) {
+  const sourceAgeMinutes = sosSourceAgeMinutes(feed.sourceUpdatedLabel);
+  return {
+    ...feed,
+    stale,
+    ...(providerError ? { providerError } : {}),
+    sourceAgeMinutes,
+    sourceLagging: feed.reportingNow && sourceAgeMinutes !== null && sourceAgeMinutes >= 20,
+  };
+}
+
 async function handler() {
   const now = Date.now();
   if (recent && now - recent.checkedAt < FRESH_MS) {
-    return Response.json({ ...recent.feed, stale: false }, {
+    return Response.json(responseFeed(recent.feed, false), {
       headers: { "Cache-Control": "public, max-age=15, s-maxage=25", "X-Content-Type-Options": "nosniff" },
     });
   }
@@ -39,14 +51,14 @@ async function handler() {
     ongoing ??= retrieve();
     const feed = await ongoing;
     recent = { feed, checkedAt: Date.now() };
-    return Response.json({ ...feed, stale: false }, {
+    return Response.json(responseFeed(feed, false), {
       headers: { "Cache-Control": "public, max-age=15, s-maxage=25", "X-Content-Type-Options": "nosniff" },
     });
   } catch (error) {
     const reason = error instanceof Error ? error.message : "Unknown provider failure";
     console.error("[official-election-results] source unavailable:", reason);
     if (recent && now - recent.checkedAt < STALE_FALLBACK_MS) {
-      return Response.json({ ...recent.feed, stale: true, providerError: reason }, {
+      return Response.json(responseFeed(recent.feed, true, reason), {
         headers: { "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" },
       });
     }
