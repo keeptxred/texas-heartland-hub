@@ -17,17 +17,18 @@ describe("homepage GEO signals", () => {
     expect(source).toContain("Questions about Keep TX Red");
     expect(source).toContain("What does Keep TX Red cover?");
     expect(source).toContain("Is Keep TX Red news, commentary, or both?");
-    expect(source).toContain("Where can I follow the 2026 Texas elections?");
+    expect(source).not.toContain("Where can I follow the 2026 Texas elections?");
     expect(source).toContain("How does Keep TX Red source government and election information?");
     expect(source).toContain("How can I find my Texas representatives or track a bill?");
     expect(source).toContain("How can I request a correction or send Keep TX Red a tip?");
   });
 
-  it("keeps the homepage distinct while prominently promoting Election Central", () => {
+  it("keeps homepage GEO signals while removing public Election Central promotions", () => {
     const source = homepageSource();
 
-    expect(source).toContain("<ElectionSeasonSpotlight />");
-    expect(source).toContain('to="/elections/2026"');
+    expect(source).not.toContain("<ElectionSeasonSpotlight />");
+    expect(source).not.toContain('to="/elections/2026"');
+    expect(source).toContain('to="/news"');
     expect(source).toContain("<HomepageFaqs />");
     expect(source).not.toContain("<ElectionHomePage");
     expect(source).toContain("Keep Texas Red (Keep TX Red) | Texas Politics & Elections");
