@@ -68,6 +68,16 @@ describe("shouldNoindexCloudArticle", () => {
       ...readyRow,
       slug: "live-2026-07-01-unrestored",
       kind: "news",
+      // Meet the independent >=500-word legacy restoration floor so this
+      // test isolates the newly unified page/sitemap restoration flag.
+      body_json: {
+        ...readyRow.body_json,
+        intro: ["An independently sourced historical public-policy explanation."],
+        sections: [{
+          heading: "Substantive context",
+          paragraphs: [Array(550).fill("Verified historical context").join(" ")],
+        }],
+      },
       quality_flags: ["search_recovery_authority", "editorial_reviewed", "primary_sources"],
     };
     expect(shouldNoindexCloudArticle(live, true)).toBe(true);
