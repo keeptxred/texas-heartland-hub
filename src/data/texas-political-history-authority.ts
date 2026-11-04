@@ -152,7 +152,7 @@ export const TEXAS_CONSTITUTIONAL_HISTORY: PoliticalHistoryAuthorityPage = {
     { href: "/texas-government", label: "Texas government", description: "The present-day institutions created by the constitution and state law." },
     { href: "/texas-legislature", label: "Texas Legislature", description: "How the House and Senate exercise the legislative power defined by the constitution." },
     { href: "/texas-politics/texas-supreme-court-realignment", label: "Texas Supreme Court realignment", description: "How judicial elections and partisan change reshaped the state's highest civil court." },
-    { href: "/texas-politics", label: "Texas Politics", description: "Current races and ballot information, including constitutional amendment elections when scheduled." },
+    { href: "/texas-politics", label: "Texas Politics", description: "Political history, statewide government, and the context behind election laws and constitutional amendments." },
   ],
   faqs: [
     {
@@ -178,7 +178,7 @@ export const TEXAS_ELECTION_HISTORY: PoliticalHistoryAuthorityPage = {
   title: "Texas Election History",
   seoTitle: "Texas Election History: Parties, Primaries, Turnout and Realignment | KeepTXRed",
   description:
-    "A source-backed history of Texas elections from one-party Democratic dominance through primaries, runoffs, Republican realignment, early voting, turnout changes and today's Texas Politics.",
+    "A source-backed history of Texas elections from one-party Democratic dominance through primaries, runoffs, Republican realignment, early voting, turnout changes and contemporary political coalitions.",
   eyebrow: "Texas election history",
   intro:
     "Texas election history is not a single red-versus-blue timeline. For decades after Reconstruction, the decisive contest was often the Democratic primary because general elections were not competitive statewide. The twentieth century gradually introduced Republican presidential strength, breakthrough statewide candidates, two-party legislative competition and eventually Republican control of statewide offices and both legislative chambers. At the same time, registration rules, early voting, runoff procedures and federal voting-rights law changed how Texans participated.",
@@ -200,7 +200,7 @@ export const TEXAS_ELECTION_HISTORY: PoliticalHistoryAuthorityPage = {
       heading: "1. For much of modern Texas history, the primary was the real election",
       paragraphs: [
         "Following Reconstruction, the Democratic Party dominated Texas government for generations. In many statewide and local races, the meaningful competition occurred in the Democratic primary, with the general election functioning more as ratification than a competitive partisan contest. That structure affected everything from factional politics to voting-rights litigation because access to the primary could determine whether a citizen had a meaningful voice in choosing officeholders.",
-        "Texas still uses party primaries and runoff elections, but the political meaning has changed. Today's Republican primary often performs the same practical gatekeeping function in strongly Republican districts that the Democratic primary once performed under one-party dominance. KTR's Texas Politics therefore treats primaries and runoffs as core elections rather than preliminaries to November.",
+        "Texas still uses party primaries and runoff elections, but the political meaning has changed. Today's Republican primary often performs the same practical gatekeeping function in strongly Republican districts that the Democratic primary once performed under one-party dominance. KTR's political reporting treats primaries and runoffs as consequential elections rather than mere preliminaries to November.",
       ],
     },
     {
@@ -225,10 +225,10 @@ export const TEXAS_ELECTION_HISTORY: PoliticalHistoryAuthorityPage = {
       ],
     },
     {
-      heading: "5. Today's Texas Politics is the current layer of a much longer system",
+      heading: "5. Today's campaigns are the latest chapter of a much longer history",
       paragraphs: [
         "Modern Texas elections combine constitutional rules, the Election Code, federal law, party procedures, county administration and district boundaries created through redistricting. Each current race is therefore connected to institutional history: the office may have evolved, its district may have been redrawn, its electorate may have changed and its party competition may look very different from a generation earlier.",
-        "KTR's durable election-history pages are intended to keep that context separate from cycle-specific forecasting. Texas Politics can focus on verified candidates, dates, polls, finance and results while linking readers to the historical explanations that do not expire after November.",
+        "KTR's durable election-history pages are intended to keep that context separate from cycle-specific forecasting. Current political reporting can cover campaigns, public records and results while linking readers to historical explanations that do not expire after November.",
       ],
     },
   ],
@@ -242,7 +242,7 @@ export const TEXAS_ELECTION_HISTORY: PoliticalHistoryAuthorityPage = {
   ],
   relatedLinks: [
     { href: "/keep-texas-red", label: "Keep Texas Red pillar", description: "The core KTR guide connecting elections, institutions, policy and government accountability." },
-    { href: "/texas-politics", label: "Texas Politics", description: "Verified current races, candidates, dates, polls, forecasts and voting information." },
+    { href: "/texas-politics", label: "Texas Politics", description: "Permanent Texas political history and source-backed election context." },
     { href: "/texas-politics/why-texas-is-politically-competitive", label: "Why Texas is politically competitive", description: "How population growth, turnout and regional vote margins shape modern statewide and district competition." },
     { href: "/texas-politics/how-texas-became-republican", label: "How Texas became Republican", description: "A deeper chronology of the state's modern partisan realignment." },
     { href: "/texas-politics/voting-rights-history", label: "Texas voting-rights history", description: "How access to the ballot and primary changed through state law, litigation and federal law." },
@@ -328,7 +328,7 @@ export const TEXAS_VOTING_RIGHTS_HISTORY: PoliticalHistoryAuthorityPage = {
     { href: "/texas-politics/texas-election-history", label: "Texas election history", description: "The broader history of primaries, turnout, party competition and election administration." },
     { href: "/texas-politics/texas-redistricting-history", label: "Texas redistricting history", description: "How population equality, the Voting Rights Act and partisan conflict shaped district maps." },
     { href: "/register-to-vote", label: "Register to vote in Texas", description: "Current registration guidance and official voter resources." },
-    { href: "/texas-politics", label: "Texas Politics", description: "Current verified races, dates and voting information." },
+    { href: "/texas-politics", label: "Texas Politics", description: "Texas political history and the institutions behind elections." },
   ],
   faqs: [
     { question: "What was the Texas white primary?", answer: "During the one-party era, Texas Democratic primary rules excluded Black voters from the election that often effectively selected officeholders. The U.S. Supreme Court held the white primary unconstitutional in Smith v. Allwright in 1944." },
@@ -392,7 +392,7 @@ export const TEXAS_REDISTRICTING_HISTORY: PoliticalHistoryAuthorityPage = {
       heading: "5. Redistricting history connects directly to today's district and election pages",
       paragraphs: [
         "A current district page is a snapshot of one map cycle, not a permanent natural boundary. District numbers can move geographically, constituencies can change dramatically and incumbents can inherit districts that bear little resemblance to earlier versions with the same number. Historical election results therefore need map context before they are compared across decades.",
-        "KeepTXRed treats the redistricting history page as the durable explanation beneath current district authority. Texas Politics can link a 2026 race to its present district, while the history layer explains why that district exists, which census cycle produced it and which legal rules govern the next redraw.",
+        "KeepTXRed treats the redistricting history page as the durable explanation beneath current district authority. Current political coverage can connect a race to its district, while the history layer explains why that district exists, which census cycle produced it and which legal rules govern the next redraw.",
       ],
     },
   ],
@@ -410,7 +410,7 @@ export const TEXAS_REDISTRICTING_HISTORY: PoliticalHistoryAuthorityPage = {
     { href: "/texas-politics/voting-rights-history", label: "Texas voting-rights history", description: "The federal and state rights framework that constrains district maps." },
     { href: "/texas-politics/texas-election-history", label: "Texas election history", description: "How map changes interact with party realignment and voter behavior." },
     { href: "/texas-politics/figures/tom-delay-texas-redistricting-congress", label: "Tom DeLay and Texas redistricting", description: "Political-figure context for the 2003 congressional redistricting fight." },
-    { href: "/texas-politics", label: "Texas Politics", description: "Current races contested under the district lines in force for this cycle." },
+    { href: "/texas-politics", label: "Texas Politics", description: "Political geography, district history, and redistricting context." },
   ],
   faqs: [
     { question: "Who draws Texas legislative districts?", answer: "The Texas Legislature has the first responsibility to redraw Texas House and Senate districts after the decennial census. If it fails to do so in the constitutionally specified session, the Legislative Redistricting Board becomes responsible for those state legislative maps." },
