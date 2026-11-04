@@ -52,6 +52,24 @@ export const EDITORIAL_REVIEWS: Record<string, EditorialReview> = {
     biography: "Mihaela Pleșa represents Texas House District 70 in parts of Collin County. The official House biography describes her as a vice chair of the Pensions, Investments and Financial Services committee and a member of the Elections committee.",
     identityChecked: "2026-11-04", source: "https://house.texas.gov/members/4345/biography",
   },
+  "ryan-guillen": {
+    name: "Ryan Guillen", office: "Texas House", district: "House District 31", party: "R",
+    officialUrl: "https://house.texas.gov/members/3045",
+    biography: "Ryan Guillen represents House District 31, a South Texas district including Brooks, Duval, Starr and other counties. His Texas House biography describes six generations of South Texas family ties, work on a cattle ranch and feed store, an agriculture degree from Texas A&M University and experience teaching high-school agriculture. He chairs the House Homeland Security and Public Safety Committee and serves on State Affairs. The official legislative histories below distinguish recorded authored, coauthored and sponsored bills and their outcomes, not floor votes.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/3045/biography",
+  },
+  "todd-hunter": {
+    name: "Todd Hunter", office: "Texas House", district: "House District 32", party: "R",
+    officialUrl: "https://house.texas.gov/members/3365",
+    biography: "Todd Hunter represents Texas House District 32, covering Aransas County and part of Nueces County. His official House biography records that he studied at the University of Kansas and Southern Methodist University law school and began practicing law in Corpus Christi in 1978. First elected in 1988 and returning in 2008, he chairs the House Calendars Committee during the 89th Legislature and serves on Land and Resource Management and Public Education. The linked research provides individual bill-role and outcome sources without claiming a complete career voting record.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/3365/biography",
+  },
+  "katrina-pierson": {
+    name: "Katrina Pierson", office: "Texas House", district: "House District 33", party: "R",
+    officialUrl: "https://house.texas.gov/members/4715",
+    biography: "Katrina Pierson represents Texas House District 33 in Rockwall County and part of Collin County. Her official Texas House biography describes graduating from Forney High School, earning a biology degree from the University of Texas at Dallas and building a career in healthcare, communications and public-affairs consulting. She served as a national spokesperson for Donald Trump's 2016 presidential campaign and as a senior adviser in 2020. The separate 89th Legislature research table documents individual legislative roles and recorded bill outcomes against official records.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/4715/biography",
+  },
   "greg-bonnen": {
     name: "Greg Bonnen", office: "Texas House", district: "House District 24", party: "R",
     officialUrl: "https://house.texas.gov/members/2875",
@@ -379,6 +397,7 @@ export const SCRIPT2_REVIEWED_SLUGS = [
   "brent-hagenbuch", "kevin-sparks",
   "angelia-orr", "paul-dyson", "janis-holt",
   "greg-bonnen", "cody-vasut", "matt-morgan", "ron-reynolds", "gary-gates",
+  "ryan-guillen", "todd-hunter", "katrina-pierson",
   "cecil-bell", "keith-bell", "cole-hefner", "daniel-alders", "jay-dean",
   "cody-harris", "trent-ashby", "brian-harrison", "trey-wharton",
   "steve-toth", "stan-gerdes", "ellen-troxclair", "terry-wilson",
