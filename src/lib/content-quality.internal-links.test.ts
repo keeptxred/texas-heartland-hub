@@ -43,9 +43,9 @@ describe("generated internal links", () => {
     expect(links.some((link) => link.href.startsWith("/elections"))).toBe(false);
   });
 
-  it("supports the existing voting-guide search foothold for voting-intent stories", () => {
+  it("links voting-intent stories to permanent county election resources", () => {
     const links = pickInternalLinks({ category: "Elections", title: "Texas voter and ballot guide" });
-    expect(links.some((link) => link.href === "/news/texas-voting-guide-2026")).toBe(true);
+    expect(links.some((link) => link.href === "/county-elections")).toBe(true);
   });
 
   it("does not send sports categories into the retired KTR sports tree", () => {
