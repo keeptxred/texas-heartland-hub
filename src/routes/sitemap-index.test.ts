@@ -17,6 +17,7 @@ const advertised = [
   "sitemap-political-geography.xml",
   "sitemap-party-representation.xml",
   "sitemap-legislature.xml",
+  "sitemap-representatives.xml",
   "sitemap-committees.xml",
   "sitemap-authors.xml",
   "sitemap-products.xml",
@@ -48,7 +49,6 @@ describe("root sitemap availability contract", () => {
   it("keeps bulk crawl-budget sitemaps out of the advertised index", () => {
     for (const suppressed of [
       "sitemap-districts.xml",
-      "sitemap-representatives.xml",
       "sitemap-bills.xml",
     ]) {
       expect(source).not.toContain(`\"${suppressed}\"`);
