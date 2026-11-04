@@ -6,7 +6,11 @@ import { isSitemapEligibleSlug } from "@/lib/article-slug-integrity";
 import { selectCanonicalArticles } from "@/lib/article-canonical";
 import { isPublicArticleReady } from "@/lib/public-article-readiness";
 import { isKeepTxRedSearchOwnedStory } from "@/lib/ktr-search-ownership";
-import { isCloudArticleSearchEligibleByKind } from "@/lib/cloud-search-indexability";
+import {
+  articleProvenanceUrls,
+  isCloudArticleSearchEligibleByKind,
+  isLegacyArticleSearchEligible,
+} from "@/lib/cloud-search-indexability";
 import { getChatNewsFallbackBySlug } from "@/lib/chat-news-fallback";
 
 export type EvergreenSection = {
@@ -86,18 +90,11 @@ const PUBLIC_ARTICLE_KINDS = new Set([
  * XML discovery feeds. A future live-blog product should use its own explicitly
  * reviewed indexability contract instead of inheriting these legacy slugs.
  */
-function isLegacyLiveSlug(slug: string): boolean {
-  return String(slug ?? "").trim().toLowerCase().startsWith("live-");
-}
-
 export function isLegacyArticleAllowedInSitemap(
   slug: string,
   qualityFlags: string[] | null | undefined,
 ): boolean {
-  if (!isLegacyLiveSlug(slug)) return true;
-  return (qualityFlags ?? []).some(
-    (flag) => String(flag).trim().toLowerCase() === "legacy_url_restored",
-  );
+  return isLegacyArticleSearchEligible(slug, qualityFlags);
 }
 
 function client() {
@@ -308,7 +305,7 @@ export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
         if (!a.body_json) return false;
         if (!isLegacyArticleAllowedInSitemap(a.slug, a.quality_flags)) return false;
         if (!isSitemapEligibleSlug(a.slug, a.published_at)) return false;
-        if (!isCloudArticleSearchEligibleByKind(a.kind, a.quality_flags)) return false;
+        if (!isCloudArticleSearchEligibleByKind(a.kind, a.quality_flags, articleProvenanceUrls(a))) return false;
         if (!isPublicArticleReady(a)) return false;
         if (!isKeepTxRedSearchOwnedStory({
           title: a.title,
