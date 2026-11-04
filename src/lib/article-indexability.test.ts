@@ -63,6 +63,33 @@ describe("shouldNoindexCloudArticle", () => {
     expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", quality_flags: ["search_recovery_source_first", "seo_duplicate"] }, true)).toBe(true);
   });
 
+  it("enforces the same legacy live restoration rule as sitemap discovery", () => {
+    const live = {
+      ...readyRow,
+      slug: "live-2026-07-01-unrestored",
+      kind: "news",
+      quality_flags: ["search_recovery_authority", "editorial_reviewed", "primary_sources"],
+    };
+    expect(shouldNoindexCloudArticle(live, true)).toBe(true);
+    expect(shouldNoindexCloudArticle({
+      ...live,
+      quality_flags: [...live.quality_flags, "legacy_url_restored"],
+    }, true)).toBe(false);
+  });
+
+  it("rejects stale source-first flags without an actual official source URL", () => {
+    const sourceFirst = { ...readyRow, kind: "news", quality_flags: ["search_recovery_source_first"] };
+    expect(shouldNoindexCloudArticle(sourceFirst, true)).toBe(false);
+    expect(shouldNoindexCloudArticle({
+      ...sourceFirst,
+      source_url: "https://example.com/article",
+      body_json: {
+        ...sourceFirst.body_json,
+        sources: [{ label: "Secondary", url: "https://example.com/article" }],
+      },
+    }, true)).toBe(true);
+  });
+
   it("allows image-deferred articles through editorial readiness while preserving quarantine", () => {
     expect(shouldNoindexCloudArticle({ ...readyRow, featured_image_url: null, image_url: null }, true)).toBe(false);
     expect(shouldNoindexCloudArticle({ ...readyRow, image_generation_status: "failed" }, true)).toBe(false);
