@@ -54,7 +54,7 @@ function FindRepPage() {
   const [lookup, setLookup] = useState<DistrictLookupResult | null>(null);
   const [lookupError, setLookupError] = useState<string | null>(null);
   const [isLookingUp, setIsLookingUp] = useState(false);
-  const activeCycle = useActiveElectionCycle();
+  const activeCycle = useActiveElectionCycle("TX", { enabled: ELECTION_FEATURE_FLAGS.homepagePromotion });
   const races = useElectionRaces({
     filters: {
       electionCycleIds: activeCycle.data?.id ? [activeCycle.data.id] : [],
@@ -70,7 +70,7 @@ function FindRepPage() {
     },
     pagination: { page: 1, pageSize: 500 },
     sort: [{ field: "name", direction: "asc" }],
-  });
+  }, { enabled: ELECTION_FEATURE_FLAGS.homepagePromotion });
 
   const currentOffices = useMemo(() => {
     if (!lookup) return [];
@@ -210,7 +210,7 @@ function FindRepPage() {
                   : "See your legislative districts and current officeholders, then confirm your representation using each official chamber directory. District boundaries and current representation can differ."}
               </p>
               <section className="mt-6" aria-label="Current officeholders">
-                <h3 className="font-display text-xl">Current representatives — not election candidates</h3>
+                <h3 className="font-display text-xl">{ELECTION_FEATURE_FLAGS.homepagePromotion ? "Current representatives — not election candidates" : "Current representatives"}</h3>
                 <div className="mt-4 grid gap-4 lg:grid-cols-3">
                   {currentOffices.map((item) => (
                     <article key={item.title} className="border-2 border-foreground/10 bg-background p-5">
