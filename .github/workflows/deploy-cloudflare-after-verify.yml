@@ -446,7 +446,9 @@ jobs:
             exit 1
           fi
           rm -f "$retired_headers" "$retired_body"
-          verify_reference "$PREVIEW_URL/bills/texas/89/sb/37/reference.json" bill
+          # Bill detail reference documents were permanently retired. Verify the
+          # new search, HTTP 410 removals, data API and one-entry sitemap instead.
+          SITE_URL="$PREVIEW_URL" python3 scripts/legislature/verify-bills-consolidation.py
 
       - name: Verify Keep Texas Red political-geography cluster
         if: steps.revision.outputs.deploy == 'true'
