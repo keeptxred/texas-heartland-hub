@@ -29,7 +29,7 @@ describe("root sitemap availability contract", () => {
   });
 
   it("does not advertise the retired election sitemap", () => {
-    expect(source).not.toContain('"sitemap-elections.xml"');
+    expect(source).toContain('ELECTION_FEATURE_FLAGS.homepagePromotion ? ["sitemap-elections.xml"] : []');
   });
 
   it("does not make optional runtime service calls before returning the index", () => {
