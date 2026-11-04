@@ -2,24 +2,17 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const loaderSource = readFileSync(new URL('./bill-primary-source-data.ts', import.meta.url), 'utf8');
-const regularReferenceRoute = readFileSync(
-  new URL('../routes/bills.texas.$legislature.$billType.$billNumber.reference[.]json.ts', import.meta.url),
-  'utf8',
-);
-const sessionReferenceRoute = readFileSync(
-  new URL('../routes/bills.texas.$legislature.$session.$billType.$billNumber.reference[.]json.ts', import.meta.url),
-  'utf8',
-);
+const billDetailApiSource = readFileSync(new URL('../routes/api/public/bill-detail.ts', import.meta.url), 'utf8');
 
-describe('bill reference route performance contract', () => {
-  it('keeps both bill reference routes off the broad six-relation loader', () => {
-    for (const source of [regularReferenceRoute, sessionReferenceRoute]) {
-      expect(source).toContain('getBillPrimarySourceRelations');
-      expect(source).not.toContain('getBillRelations');
-    }
+describe('retired reference JSON and retained official source projection', () => {
+  it('serves bill details only from the session-aware noindex API', () => {
+    expect(billDetailApiSource).toContain("parseBillSearchKey");
+    expect(billDetailApiSource).toContain(".eq('session_code', identity.session_code)");
+    expect(billDetailApiSource).toContain("getPublicBillRelations(bill.id)");
+    expect(billDetailApiSource).toContain("'X-Robots-Tag': 'noindex, follow'");
   });
 
-  it('loads only official actions and documents for reference.json', () => {
+  it('retains official actions and documents in source projection', () => {
     expect(loaderSource).toContain(".from('bill_actions')");
     expect(loaderSource).toContain(".from('bill_documents')");
     expect(loaderSource).not.toContain(".from('bill_sponsors')");
