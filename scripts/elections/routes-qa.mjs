@@ -18,7 +18,7 @@ const [start, guard, homepage, nav, header, sitemapIndex, electionFeed, admin, d
 
 const checks = [
   [start.includes("isRetiredElectionCentralPath(url.pathname)"), "Retirement guard missing from request middleware"],
-  [start.includes("status: 410"), "Retirement must return 410 Gone"],
+  [start.includes("status: 404"), "Seasonal shutdown must return 404, not permanent 410"],
   [start.includes('"x-robots-tag": "noindex, nofollow"'), "Retired routes must not be indexed"],
   [guard.includes('normalized.startsWith("/elections/")'), "Detail routes not covered by retirement"],
   [guard.includes('"/candidate-guides"'), "Legacy election alias not retired"],
