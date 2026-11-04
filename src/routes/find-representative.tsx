@@ -7,6 +7,7 @@ import {
 } from "@/data/representatives";
 import { useActiveElectionCycle, useElectionRaces } from "@/hooks/elections";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
+import { ELECTION_FEATURE_FLAGS } from "@/lib/elections/featureFlags";
 import type { JurisdictionType, RaceSummary } from "@/types/elections";
 
 type DistrictLookupResult = {
@@ -21,13 +22,19 @@ type DistrictLookupResult = {
 export const Route = createFileRoute("/find-representative")({
   head: () => ({
     meta: [
-      { title: "Find Your 2026 Texas Races & Representatives — Keep TX Red" },
+      { title: ELECTION_FEATURE_FLAGS.homepagePromotion
+        ? "Find Your 2026 Texas Races & Representatives — Keep TX Red"
+        : "Find Your Texas Representatives & Legislative Districts — Keep TX Red" },
       {
         name: "description",
         content:
-          "Enter a Texas street address to find your U.S. House, Texas House, and Texas Senate districts and the verified 2026 KTR races tied to them.",
+          ELECTION_FEATURE_FLAGS.homepagePromotion
+          ? "Enter a Texas address to find your legislative districts, officeholders, and verified election races."
+          : "Use a Texas street address to identify your U.S. House, Texas House, and Texas Senate districts and their current representatives.",
       },
-      { property: "og:title", content: "Find Your 2026 Texas Races & Representatives" },
+      { property: "og:title", content: ELECTION_FEATURE_FLAGS.homepagePromotion
+        ? "Find Your 2026 Texas Races & Representatives"
+        : "Find Your Texas Representatives & Legislative Districts" },
     ],
     links: [{ rel: "canonical", href: "https://keeptxred.com/find-representative" }],
   }),
@@ -148,10 +155,12 @@ function FindRepPage() {
   return (
     <>
       <PageHero
-        eyebrow="2026 Election Lookup"
+        eyebrow={ELECTION_FEATURE_FLAGS.homepagePromotion ? "2026 Election Lookup" : "Texas District Lookup"}
         title="FIND YOUR"
-        highlight="RACES"
-        description="Enter your Texas street address to identify your congressional, Texas House, and Texas Senate districts and connect them to verified 2026 KTR race pages."
+        highlight={ELECTION_FEATURE_FLAGS.homepagePromotion ? "RACES" : "REPRESENTATIVES"}
+        description={ELECTION_FEATURE_FLAGS.homepagePromotion
+          ? "Enter your Texas street address to identify your congressional, Texas House, and Texas Senate districts and connect them to verified election races."
+          : "Enter a Texas street address to find your congressional, Texas House, and Texas Senate districts and current representatives."}
       />
       <div className="mx-auto max-w-5xl px-4 py-14">
         <form onSubmit={submit} className="border-2 border-foreground/10 bg-card p-6 md:p-8">
@@ -176,7 +185,7 @@ function FindRepPage() {
               disabled={isLookingUp}
               className="h-12 bg-primary px-6 text-xs font-bold uppercase tracking-widest text-primary-foreground hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isLookingUp ? "Finding…" : "Find My Races →"}
+              {isLookingUp ? "Finding…" : ELECTION_FEATURE_FLAGS.homepagePromotion ? "Find My Races →" : "Find My Representatives →"}
             </button>
           </div>
           <p className="mt-4 text-xs leading-5 text-muted-foreground">
@@ -196,7 +205,9 @@ function FindRepPage() {
               <p className="text-xs font-bold uppercase tracking-widest text-primary">Districts for</p>
               <h2 className="mt-2 font-display text-2xl">{lookup.matchedAddress}</h2>
               <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                First see the current officeholders in the KTR directory, then see the separate 2026 election races. Verify who represents you today with each official chamber: the congressional district map for the upcoming election may differ from the map for the sitting Congress.
+                {ELECTION_FEATURE_FLAGS.homepagePromotion
+                  ? "First see the current officeholders in the KTR directory, then see the separate 2026 election races. Verify who represents you today with each official chamber: election district maps can differ from current representation."
+                  : "See your legislative districts and current officeholders, then confirm your representation using each official chamber directory. District boundaries and current representation can differ."}
               </p>
               <section className="mt-6" aria-label="Current officeholders">
                 <h3 className="font-display text-xl">Current representatives — not election candidates</h3>
@@ -215,6 +226,8 @@ function FindRepPage() {
                   ))}
                 </div>
               </section>
+              {ELECTION_FEATURE_FLAGS.homepagePromotion ? (
+                <>
               <h3 className="mt-8 font-display text-xl">2026 general-election races</h3>
 
               {activeCycle.isLoading || races.isLoading ? (
@@ -278,6 +291,8 @@ function FindRepPage() {
                   Official statewide Texas election information →
                 </a>
               </div>
+                </>
+              ) : null}
             </div>
 
             <div className="border-2 border-foreground/10 bg-card p-6">
