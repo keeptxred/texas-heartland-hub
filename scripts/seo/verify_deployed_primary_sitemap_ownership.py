@@ -18,7 +18,6 @@ DERIVATIVE_SITEMAPS = {
 
 SUPPRESSED_BULK_SITEMAPS = {
     f"{SITE_ORIGIN}/sitemap-districts.xml",
-    f"{SITE_ORIGIN}/sitemap-representatives.xml",
     f"{SITE_ORIGIN}/sitemap-bills.xml",
 }
 
@@ -65,6 +64,10 @@ EXPECTED_PRIMARY_OWNER = {
     f"{SITE_ORIGIN}/contact-legislators": f"{SITE_ORIGIN}/sitemap-pages.xml",
     f"{SITE_ORIGIN}/laws": f"{SITE_ORIGIN}/sitemap-pages.xml",
     f"{SITE_ORIGIN}/texas-legislature": f"{SITE_ORIGIN}/sitemap-pages.xml",
+    f"{SITE_ORIGIN}/representatives/bryan-hughes": f"{SITE_ORIGIN}/sitemap-representatives.xml",
+    f"{SITE_ORIGIN}/representatives/judith-zaffirini": f"{SITE_ORIGIN}/sitemap-representatives.xml",
+    f"{SITE_ORIGIN}/representatives/terri-leo-wilson": f"{SITE_ORIGIN}/sitemap-representatives.xml",
+    f"{SITE_ORIGIN}/representatives/mihaela-plesa": f"{SITE_ORIGIN}/sitemap-representatives.xml",
     f"{SITE_ORIGIN}/texas-government/fifteenth-court-of-appeals": f"{SITE_ORIGIN}/sitemap-government.xml",
 }
 

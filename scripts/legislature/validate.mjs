@@ -127,15 +127,19 @@ const sitemapIndex = await readFile('src/routes/sitemap[.]xml.ts', 'utf8');
 for (const name of ['committees', 'government', 'legislature']) {
   if (!sitemapIndex.includes(`sitemap-${name}.xml`)) errors.push(`Sitemap index missing ${name}`);
 }
-// Large programmatic detail sitemap routes must continue to exist for historical
-// Search Console submissions and future promotion, but they are intentionally
-// omitted from the advertised sitemap index during crawl-recovery. Their hub-only
-// endpoints remain valid so a stale direct Google fetch drains rather than refills
-// the discovered-but-not-crawled queue.
-for (const name of ['bills', 'representatives', 'districts']) {
+// Bulk bill and district detail feeds remain unadvertised during crawl recovery.
+// Unlike the former bulk representative feed, representative sitemap entries
+// must now pass every source/evidence gate before individual publication.
+for (const name of ['bills', 'districts']) {
   if (sitemapIndex.includes(`sitemap-${name}.xml`)) {
     errors.push(`Low-priority sitemap unexpectedly advertised: ${name}`);
   }
+}
+const representativeSitemap = await readFile('src/routes/sitemap-representatives[.]xml.ts', 'utf8');
+if (!sitemapIndex.includes('sitemap-representatives.xml') ||
+    !representativeSitemap.includes('certifyRepresentative(') ||
+    !representativeSitemap.includes('state === "AUTHORITY_READY"')) {
+  errors.push('Representative sitemap must advertise only quality-certified profiles, never a bulk inventory');
 }
 
 const legislativeSitemaps = sources.get('src/lib/legislative-sitemaps.ts') || '';

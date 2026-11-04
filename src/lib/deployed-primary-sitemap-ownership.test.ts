@@ -57,15 +57,15 @@ describe("deployed primary sitemap ownership hard gate", () => {
     expect(ownershipSmoke).not.toContain("for path in DMV_EVERGREEN_PATHS");
   });
 
-  it("keeps the bulk district, representative, and bill feeds unadvertised", () => {
+  it("suppresses district/bill bulk feeds but advertises only certified representative entries", () => {
     for (const sitemap of [
       "sitemap-districts.xml",
-      "sitemap-representatives.xml",
       "sitemap-bills.xml",
     ]) {
       expect(ownershipSmoke).toContain(sitemap);
     }
     expect(ownershipSmoke).toContain("crawl-budget sitemap is incorrectly advertised");
+    expect(ownershipSmoke).toContain('f"{SITE_ORIGIN}/representatives/bryan-hughes": f"{SITE_ORIGIN}/sitemap-representatives.xml"');
   });
 
   it("probes the exact deployed Worker through the canonical deployment-smoke path", () => {

@@ -4539,13 +4539,13 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 70,
     party: "D",
-    website: "https://house.texas.gov/members/70",
+    website: "https://house.texas.gov/members/4345",
     imageUrl: "https://house.texas.gov/images/members/4345.jpg?v=1",
     officialCode: null,
-    home: "900 E. Park Blvd. Suite 140-C, Plano, TX 75074",
+    home: "900 E. Park Blvd., Suite 130, Plano, TX 75074",
     phone: "512-463-0356",
     capitolAddress: "Room E2.210, P.O. Box 12910, Austin, TX 78711",
-    districtAddress: "900 E. Park Blvd. Suite 140-C, Plano, TX 75074",
+    districtAddress: "900 E. Park Blvd., Suite 130, Plano, TX 75074",
     vacant: false,
     authority: {
       slug: "mihaela-plesa",
@@ -4555,7 +4555,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       career: [
         "Serving as Representative for Texas House District 70 since 2023-01-10.",
         "Capitol office: Room E2.210, P.O. Box 12910, Austin, TX 78711",
-        "District office: 900 E. Park Blvd. Suite 140-C, Plano, TX 75074",
+        "District office: 900 E. Park Blvd., Suite 130, Plano, TX 75074",
       ],
       education: [
         "Consult the linked official biography for published education and professional credentials; no independent credential claim is added here.",
@@ -4579,7 +4579,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/70",
+          url: "https://house.texas.gov/members/4345",
         },
         {
           label: "Official member biography",

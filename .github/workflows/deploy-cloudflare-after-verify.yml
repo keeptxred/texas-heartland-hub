@@ -267,6 +267,13 @@ jobs:
           print("Live payment runtime verification passed")
           PY
 
+      - name: Certify deployed representative pilot metadata and official research
+        if: steps.revision.outputs.deploy == 'true'
+        timeout-minutes: 5
+        env:
+          SITE_URL: ${{ env.PREVIEW_URL }}
+        run: python3 scripts/authority/verify-representative-pilot-production.py
+
       - name: Verify deployed law route ownership, H1s, and canonicals
         if: steps.revision.outputs.deploy == 'true'
         env:
@@ -297,6 +304,13 @@ jobs:
         # release gate on a slow Ubuntu mirror after the Worker had deployed.
         # Keep an actual browser install + the mandatory live geometry checks.
         run: bunx playwright install --only-shell chromium
+
+      - name: Verify representative pilot mobile layout with one Chromium worker
+        if: steps.revision.outputs.deploy == 'true'
+        timeout-minutes: 5
+        env:
+          SITE_URL: ${{ env.PREVIEW_URL }}
+        run: bunx playwright test --config=playwright.representatives-deployed.config.ts --workers=1
 
       - name: Measure deployed Texas law touch targets on the public hostname
         if: steps.revision.outputs.deploy == 'true'
