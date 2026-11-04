@@ -2725,87 +2725,290 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
 
   "texas-school-finance-explained": {
-    updated: "2026-05-30",
-    intro: [
-      "Texas school finance is engineered to confuse — and it succeeds. Two ISDs with identical tax rates can fund students at wildly different levels because of recapture, the basic allotment, and a dozen weighted student categories.",
+    "updated": "2026-11-04",
+    "editorNote": "Substantively revised November 2026 to reflect the current Education Code Chapter 48 funding framework, TEA Summary of Finances and the distinction between formula entitlement, local tax collections and recapture. Unsupported statewide recapture-dollar claims removed.",
+    "intro": [
+      "Texas public-school finance combines state funding formulas, local property taxes and different program allotments. Two districts can adopt similar tax rates yet receive different revenue per student because their enrollment, attendance, student needs, property wealth, debt and statutory formula entitlements differ. A single statewide spending-per-pupil number does not explain a district's actual finances.",
+      "The Foundation School Program (FSP), established in Texas Education Code Chapter 48, is a central mechanism for calculating many school districts' operating resources. The Texas Education Agency publishes district-specific Summary of Finances (SOF) reports showing the figures behind those calculations. A credible comparison starts with a district's own year and report rather than the slogan 'Robin Hood' or an unexplained statewide dollar total."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "The Foundation School Program",
-        paragraphs: [
-          "The state guarantees every ISD a per-student funding floor. Local property taxes are counted first; the state fills the gap. When a district raises more locally than its formula entitlement, the excess is recaptured.",
-        ],
+        "heading": "The Foundation School Program is a formula entitlement, not a blank check",
+        "paragraphs": [
+          "Chapter 48 describes the Foundation School Program as a two-tier structure intended to provide a basic educational program and an opportunity for an enriched program, with separate facilities-related provisions. Formula rules take account of student attendance, programs and district characteristics. The district's legal entitlement is calculated under statute and appropriation; it is not simply the number of enrolled students multiplied by a generic rate.",
+          "TEA administers state aid under the law. The Legislature changes statutes and appropriations; districts supply and certify relevant data; public reports are updated as final information becomes available. Any news article using a current basic-allotment figure should identify the school year and cite the relevant Chapter 48 provision, not reuse a number from a previous legislative session."
+        ]
       },
       {
-        heading: "Recapture ('Robin Hood')",
-        paragraphs: [
-          "Property-wealthy districts send a portion of their M&O collections to the state, which redistributes the money to property-poor districts. Recapture now exceeds $5 billion per year.",
-        ],
+        "heading": "Average daily attendance differs from enrollment",
+        "paragraphs": [
+          "Many FSP calculations use average daily attendance, or ADA, rather than a raw enrollment count. Attendance is measured over the relevant period and subject to TEA reporting rules. A district with the same number of enrolled students as its neighbor can have a different ADA figure and therefore a different calculated entitlement.",
+          "Weighted average daily attendance, or WADA, is a derived funding measure that accounts for particular allotments under the formula. TEA's Summary of Finances distinguishes ADA, WADA, property values, rates and other funding factors. Do not divide a district's entire budget by ADA and claim that the result is the statutory basic allotment; that ratio mixes categories and funding sources."
+        ]
       },
+      {
+        "heading": "Basic and additional allotments serve different student needs",
+        "paragraphs": [
+          "Education Code §48.051 defines the basic allotment calculation for eligible average daily attendance, subject to statutory adjustments. Other provisions support programs or district circumstances, such as special education, career and technology education, compensatory education, bilingual education, transportation, or small and mid-sized district adjustments as applicable.",
+          "The amount and eligibility can change by school year and by legislative amendment. Special education provisions were amended by 2025 legislation, including transition provisions for the 2026–2027 period. The useful question is not whether one district receives 'extra money' in the abstract but which statutory allotment applies, what conditions must be met, and which report documents the calculation."
+        ]
+      },
+      {
+        "heading": "The state share and local share fit together",
+        "paragraphs": [
+          "Chapter 48 financing provisions identify each district's formula funding entitlement and the corresponding local funding component. Property tax capacity and other statutory inputs affect how much of the entitlement is financed locally and how much the state pays. The available school fund and other components have separate accounting roles; TEA explains that certain per-capita distributions are a method of financing FSP, not an unrelated bonus.",
+          "A statewide share quoted in a campaign speech may conceal large district-level variation. Read the district SOF for the specific year, identify the formula entitlement and local-share amount, and then inspect actual state aid payments. A projected formula worksheet, the adopted operating budget and audited year-end results need not match exactly."
+        ]
+      },
+      {
+        "heading": "Recapture applies to particular property-wealth situations",
+        "paragraphs": [
+          "Recapture refers to statutory mechanisms by which property-wealthy districts may have to reduce excess local revenue available under the equalized school-finance system. The procedures and amounts depend on the governing law and a district's property wealth, tax collections, formula entitlement and other inputs. It is misleading to claim every property-tax dollar above a uniform amount automatically leaves every district.",
+          "Texas Education Code Chapter 49 describes equalization arrangements and recapture mechanisms. Public discussion often calls this 'Robin Hood,' but that label alone does not explain the funding calculation. A particular recapture figure should be taken from the same school year's district data, not from an unrelated state's or year's total. Keep operating (maintenance-and-operations) tax discussions distinct from debt-service issues."
+        ]
+      },
+      {
+        "heading": "Operating budgets and bond debt are not the same fund",
+        "paragraphs": [
+          "School district property-tax discussions distinguish maintenance-and-operations (M&O) taxes from interest-and-sinking (I&S) debt-service taxes. M&O is connected to ongoing operations and the school-finance formula. I&S is tied to authorized debt service and does not operate as a free substitute for general classroom spending.",
+          "A bond election may authorize school facility debt, but voter authorization is not identical to the immediate receipt or expenditure of the entire proposed amount. When comparing tax burdens, examine the district's tax notices and adopted rates, bond maturity schedules, debt outstanding and actual project spending. Texas school finance policy and local property-tax appraisal are related but separate decisions."
+        ]
+      },
+      {
+        "heading": "Where to find the numbers for your district",
+        "paragraphs": [
+          "TEA's Summary of Finances reports contain district-level ADA and WADA, funding entitlements, local property values, tax rates and collections, and projected state aid. Several reports may be issued during a school year as inputs are revised. The exact SOF version and certification date matter when a figure changes.",
+          "Start with TEA's FSP and Summary of Finances pages, then locate your district's adopted budget, current tax-rate documents, official board minutes and annual audit or financial accountability reports. Write down the district number and fiscal or school year. Comparing a 2025–2026 forecast for one district with a 2026–2027 audited result from another is not an apples-to-apples analysis."
+        ]
+      },
+      {
+        "heading": "Why equal tax rates can produce different school services",
+        "paragraphs": [
+          "The statutory formula recognizes different student needs, program requirements, local revenue and facilities circumstances. Two districts charging the same nominal M&O rate may have different taxable values per student and different state-aid calculations. They may also make different spending choices in payroll, facilities, transportation and services, subject to applicable law.",
+          "That does not demonstrate by itself that a district is efficient, wasteful or legally underfunded. A rigorous comparison adjusts for the fiscal year, student mix, ADA, regional costs where relevant, fund categories and local debt. It should connect dollars to documented services and outcomes rather than treat a high or low per-student total as self-explanatory."
+        ]
+      },
+      {
+        "heading": "How Texans can verify a school-finance claim",
+        "bullets": [
+          "Identify the district name/number and the specific school year, and retrieve TEA's corresponding Summary of Finances.",
+          "Separate the Chapter 48 formula entitlement, state share, local share and any Chapter 49 recapture entry.",
+          "Check whether figures are based on average daily attendance, weighted attendance, total enrollment, or district property wealth.",
+          "Distinguish M&O operations from I&S bond-debt service and identify any restricted funding.",
+          "Match a legislative proposal to the enacted statute and its effective date; the published TEA formula may have changed.",
+          "Compare projections with adopted budgets and the audited financial report, labeling which version each number came from.",
+          "Record direct source links, page/report date and calculations so another reader can reproduce the finding."
+        ]
+      },
+      {
+        "heading": "Limitations and interpretation",
+        "paragraphs": [
+          "This guide is not a current recapture ledger for every district and does not claim a statewide recapture total without a verified school-year report. A public-policy analysis should state exactly which formula, school year and accounting basis it uses. Statutory allotments can change, and temporary provisions may affect the next cycle.",
+          "The strongest reader service is to show a district's official SOF beside its public board budget and explain which governmental body controls each decision. Texas Education Code Chapters 48 and 49, TEA's FSP materials and the local board's adopted financial records provide the essential evidence."
+        ]
+      }
     ],
-    faq: [
+    "faq": [
       {
-        q: "Does recapture leave Texas?",
-        a: "No. Every recaptured dollar is spent inside the Texas school finance system.",
+        "q": "Does the basic allotment equal a district's entire spending per student?",
+        "a": "No. The basic allotment is a defined part of a statutory funding formula. A district's actual spending includes additional funding categories, local resources, restricted funds and other costs."
       },
       {
-        q: "What is the basic allotment?",
-        a: "The dollar-per-student amount the Legislature sets as the funding floor. It is the lever that drives nearly every other formula.",
+        "q": "What is average daily attendance in Texas school finance?",
+        "a": "ADA is an attendance-based measure used for many Foundation School Program calculations; it differs from total enrollment and should be identified by school year."
       },
+      {
+        "q": "Do all Texas school districts send some property tax revenue through recapture?",
+        "a": "No. Recapture depends on the statutory equalization framework, district property wealth and actual financing calculations. Check a district's current year Chapter 49 status and financial reports."
+      },
+      {
+        "q": "Are school bond taxes the same as maintenance-and-operations taxes?",
+        "a": "No. Debt-service I&S taxes and operating M&O taxes have different authorized purposes. Keep those fund categories separate in taxpayer comparisons."
+      },
+      {
+        "q": "Where can I verify a district's funding formula calculation?",
+        "a": "Use TEA's official Summary of Finances report and Foundation School Program materials for the specific district and school year, then compare with district budgets and audits."
+      }
     ],
-    sources: [
+    "sources": [
       {
-        label: "TEA — School Finance",
-        url: "https://tea.texas.gov/finance-and-grants/state-funding",
+        "label": "Texas Education Code Chapter 48 — Foundation School Program",
+        "url": "https://statutes.capitol.texas.gov/Docs/ED/htm/ED.48.htm"
       },
       {
-        label: "Education Code Chapter 48",
-        url: "https://statutes.capitol.texas.gov/Docs/ED/htm/ED.48.htm",
+        "label": "Texas Education Code Chapter 49 — Local Revenue Equalization",
+        "url": "https://statutes.capitol.texas.gov/Docs/ED/htm/ED.49.htm"
       },
+      {
+        "label": "Texas Education Agency — Foundation School Program",
+        "url": "https://tea.texas.gov/about-tea/state-funding/foundation-school-program/foundation-school-program"
+      },
+      {
+        "label": "Texas Education Agency — Summary of Finances",
+        "url": "https://tea.texas.gov/finance-and-grants/state-funding/foundation-school-program/summary-of-finances"
+      },
+      {
+        "label": "Texas Education Agency — Per Capita Rates / Available School Fund",
+        "url": "https://tea.texas.gov/about-tea/state-funding/additional-finance-resources/capita-rates"
+      },
+      {
+        "label": "Texas Comptroller — Property Tax Basics",
+        "url": "https://comptroller.texas.gov/taxes/property-tax/basics.php"
+      }
     ],
-    related: ["texas-school-board-powers", "school-choice-esa-guide", "isd-tax-burdens"],
-    cta: { label: "See School Tax Burdens by County", href: "https://texasdefined.com/decide/property-taxes" },
+    "related": [
+      "texas-school-board-powers",
+      "school-choice-esa-guide",
+      "texas-property-tax-laws-explained"
+    ],
+    "cta": {
+      "label": "See Official TEA School Finance Reports",
+      "href": "https://tea.texas.gov/about-tea/state-funding/foundation-school-program/foundation-school-program"
+    }
   },
 
   "texas-political-terminology": {
-    updated: "2026-06-20",
-    intro: [
-      "Texas politics has its own dialect. Here is a working glossary of the terms reporters and lobbyists throw around without ever defining.",
+    "updated": "2026-11-04",
+    "editorNote": "Substantively expanded November 2026 as a practical interpretation guide to Texas legislative and election terminology. Definitions checked against Texas Legislative Council, House and Secretary of State glossaries; historic date remains unchanged.",
+    "intro": [
+      "A Texas political headline can use familiar words that describe very different legal steps. A bill 'filed' is not a law passed, a 'committee substitute' can replace the text voters first read, and a 'proposition' on a ballot is not necessarily a constitutional amendment. Those distinctions determine whether a news report accurately describes what government has done.",
+      "This is a working guide for reading official Texas legislative and election records. It focuses on terms that change the meaning of a headline, with a practical way to verify each in Texas Legislature Online, chamber journals, the Texas Legislative Council glossary and Secretary of State election records. For a broader subject dictionary, KTR maintains a separate /glossary."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "Core Terms",
-        bullets: [
-          "Special session — a 30-day session called by the Governor on specific subjects.",
-          "Sunset review — periodic audit that abolishes a state agency unless reauthorized.",
-          "Calendars Committee — the House gatekeeper that schedules floor debate.",
-          "Point of order — a parliamentary objection that can kill a bill on procedure.",
-          "Constitutional amendment — voter-approved change to the Texas Constitution.",
-          "Recapture — Robin Hood redistribution of ISD property tax revenue.",
-          "Compression — state buy-down of school M&O property tax rates.",
-        ],
-      },
-    ],
-    faq: [
-      {
-        q: "What is 'chub'?",
-        a: "House slang for talking a bill to death as a procedural deadline approaches.",
+        "heading": "Filed, referred and reported from committee",
+        "paragraphs": [
+          "Filing means a member has introduced a legislative proposal under the applicable chamber rules. A filed bill can be assigned a bill number and available text without anyone else endorsing its contents. 'Referred' describes assignment to a committee; it does not certify that a hearing has been scheduled or a vote has occurred.",
+          "A committee may consider the proposal, take testimony, adopt amendments or recommend a substitute and issue a report. A favorable committee report signals progress toward another stage, not passage into law. TLO's official history identifies referral, meetings, report dates and later floor actions. When a headline says a bill 'advanced,' name the actual recorded action."
+        ]
       },
       {
-        q: "What is the 'Local & Consent Calendar'?",
-        a: "The House calendar for non-controversial bills, debated under time-limited rules.",
+        "heading": "Bill, joint resolution and constitutional amendment",
+        "paragraphs": [
+          "A bill is a proposed act of legislation. A joint resolution serves different purposes, including proposing a constitutional amendment when the relevant constitutional procedures apply. A constitutional amendment in Texas requires the specified legislative vote and later voter approval on a ballot proposition; it does not become part of the constitution because a single chamber announces support.",
+          "The Texas Legislative Council's glossary distinguishes these instruments. The exact session and measure prefix matter because a House bill, Senate bill and joint resolution can address similar subjects but have different procedural paths. Voters should check the enrolled or adopted language and any ballot order before comparing a campaign summary with the actual legal proposal."
+        ]
       },
+      {
+        "heading": "Committee substitute and floor amendment",
+        "paragraphs": [
+          "A committee substitute is a recommended complete replacement text for a bill or resolution within the relevant subject, rather than a minor amendment to one sentence. The introduced bill may therefore differ substantially from the version that advances. A floor amendment is proposed while a chamber considers a measure according to that chamber's rules.",
+          "To compare promises with action, open the introduced text, committee substitute, floor amendments and final enrolled version. Identify the version date and chamber. A news article that quotes a provision from the original filing but does not inspect a later substitute can be materially misleading."
+        ]
+      },
+      {
+        "heading": "Calendar, point of order and passage",
+        "paragraphs": [
+          "Chamber calendars identify measures scheduled for consideration according to House or Senate procedures. The House Calendars Committee is important to floor scheduling, but a favorable committee report does not guarantee a proposal will be selected. A point of order is a procedural objection raising a claimed rules violation; its consequences depend on the relevant rule and the presiding officer's handling.",
+          "A bill can fail to advance because of scheduling or procedural rules without a recorded final floor vote on the merits. 'Passed the House' means a specific chamber has approved the measure at a particular step, not that the governor has signed it. Consult the chamber journal and TLO actions for the actual disposition rather than assuming every point of order automatically kills a bill."
+        ]
+      },
+      {
+        "heading": "Concurrence, conference committee and enrolled bill",
+        "paragraphs": [
+          "When the House and Senate approve different versions, the originating chamber may concur in amendments or other legislative procedures may be used to reconcile differences. A conference committee is one possible route, but not a universal requirement for every enacted law. A conference report describes the negotiated proposed text under applicable rules.",
+          "An enrolled bill is the final legislative text prepared after the necessary chamber approvals. Governor action and effective-date provisions must still be checked. 'Enrolled' should not be used interchangeably with 'effective'; those are different milestones and can occur on different dates."
+        ]
+      },
+      {
+        "heading": "Regular session, called session and special session",
+        "paragraphs": [
+          "The Texas Legislature meets regularly in odd-numbered years on the schedule set by the Constitution. The governor may convene a special or called session on identified subjects. A regular session can consider a broad legislative agenda within the rules, while a special session has a call and constitutional restrictions relevant to its subject matter and duration.",
+          "Readers should check the specific session identifier. A legislative proposal from an earlier session may be informative history without any present procedural status. When a reporter describes a measure as 'alive this session,' verify that it appears in the current session's bill history rather than recycling a prior bill number."
+        ]
+      },
+      {
+        "heading": "Sunset review and agency reauthorization",
+        "paragraphs": [
+          "Sunset review is a Texas process for periodically evaluating selected state agencies and programs under the Sunset Act and related statutes. Recommendations may include reforms, continuing an agency, or other legislative changes. A Sunset Commission recommendation is not itself an enacted repeal or new law.",
+          "When coverage says an agency 'faces sunset,' identify its review schedule, the Sunset staff report, final commission recommendations and any resulting bill. Actual abolition or continuation depends on the applicable statute and legislative action. This keeps an administrative-review milestone from being confused with a legally effective change."
+        ]
+      },
+      {
+        "heading": "Election precinct, primary, runoff and general election",
+        "paragraphs": [
+          "A county election precinct identifies a geographic election-administration area; a legislative district identifies the voters represented by an elected office. They are not interchangeable. A primary election, party runoff, general election and special election also serve different functions under Texas election law and party nomination procedures.",
+          "A runoff generally occurs when the governing voting rule requires a majority and no candidate receives the necessary votes. A special election is not the same as a runoff. The Secretary of State's official elections glossary and calendar establish precise definitions and applicable dates. When discussing a candidate, specify the election type, office, district, and whether the result is unofficial or canvassed."
+        ]
+      },
+      {
+        "heading": "Canvass, recount, contest and certified result",
+        "paragraphs": [
+          "A canvass is the formal compilation and review of election returns by the authorized canvassing body. A recount follows specific statutory conditions and procedures to retabulate votes; an election contest is a separate court process concerning the election's legal result. These are not the same as ordinary corrections to unofficial election-night reporting.",
+          "Do not describe a news feed's election-night margin as an official certified result before the appropriate canvass. Review county election materials, Secretary of State advisories and the actual court record when disputes arise. A challenge filed in court is a claim requiring judicial action, not itself proof that the election outcome changed."
+        ]
+      },
+      {
+        "heading": "How to translate a Texas political headline into a document check",
+        "bullets": [
+          "Write down the measure prefix, number and session; open its official TLO status/history.",
+          "For 'bill passes,' identify which chamber voted, the version, and whether any further approval is required.",
+          "For 'constitutional amendment,' locate the joint resolution and verify both legislative votes and ballot approval.",
+          "For 'committee approval,' inspect the report, substitute text and next procedural calendar.",
+          "For 'governor signs,' check the enacted act and separate its effective date from the signature date.",
+          "For 'election results,' distinguish unofficial reporting, official canvass, recount and any court contest.",
+          "For 'agency sunset,' identify the staff review, recommendation, enacted continuation bill or applicable expiration provision.",
+          "Keep the relevant source links and dates so readers can reproduce the conclusion."
+        ]
+      }
     ],
-    sources: [
-      { label: "Texas House Rules", url: "https://capitol.texas.gov/" },
-      { label: "Glossary of Legislative Terms", url: "https://www.tlc.texas.gov/" },
+    "faq": [
+      {
+        "q": "Does a bill being referred to committee mean it has passed?",
+        "a": "No. Referral is an early procedural step. A measure still requires the legislative approvals and other steps prescribed for its type."
+      },
+      {
+        "q": "Is a committee substitute just a small edit?",
+        "a": "No. A substitute can replace the proposed text while remaining within the required subject matter. Compare the latest substitute with the original version."
+      },
+      {
+        "q": "Does every bill require a conference committee?",
+        "a": "No. Different House/Senate versions can be handled through concurrence or other permitted processes; a conference is only one possible mechanism."
+      },
+      {
+        "q": "Are election-night totals the same as a canvassed result?",
+        "a": "No. Unofficial election-night reporting can precede the formal canvass and statutory recount or contest procedures."
+      },
+      {
+        "q": "Does a Sunset Commission recommendation abolish an agency immediately?",
+        "a": "No. A recommendation is part of the review and legislative process; the applicable law and enacted legislative actions determine the result."
+      }
     ],
-    related: [
+    "sources": [
+      {
+        "label": "Texas Legislative Council — Legislative Glossary",
+        "url": "https://tlc.texas.gov/glossary"
+      },
+      {
+        "label": "Texas House of Representatives — Legislative Glossary",
+        "url": "https://www.house.texas.gov/glossary"
+      },
+      {
+        "label": "Texas Secretary of State — Election Terminology Glossary",
+        "url": "https://www.sos.state.tx.us/elections/laws/glossary.shtml"
+      },
+      {
+        "label": "Texas Legislature Online — Bills and Actions",
+        "url": "https://capitol.texas.gov/"
+      },
+      {
+        "label": "Texas Constitution Article III — Legislature",
+        "url": "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.3.htm"
+      },
+      {
+        "label": "Texas Sunset Advisory Commission",
+        "url": "https://www.sunset.texas.gov/"
+      }
+    ],
+    "related": [
       "how-a-bill-becomes-texas-law",
-      "texas-constitutional-amendments-guide",
-      "speaker-special-session",
+      "primary-vs-general-election",
+      "texas-constitutional-amendments-guide"
     ],
-    cta: { label: "Browse the Full Glossary", href: "/glossary" },
+    "cta": {
+      "label": "Open KTR's Full Government Glossary",
+      "href": "/glossary"
+    }
   },
 
   "how-texas-counties-spend": {
