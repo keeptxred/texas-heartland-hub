@@ -79,7 +79,7 @@ export function BillDetailPanel({ billKey, onClose }: { billKey: string; onClose
           {bill.last_synced_at ? <p className="mt-2 text-xs text-muted-foreground">Record synchronized {new Date(bill.last_synced_at).toLocaleString()}</p> : null}
           <div className="mt-3 flex flex-wrap gap-4">
             <OfficialSource
-              href={`https://capitol.texas.gov/BillLookup/History.aspx?LegSess=${encodeURIComponent(`${bill.legislature_number}${String(bill.session_code || 'R').toUpperCase()}`)}&Bill=${encodeURIComponent(String(bill.bill_identifier || '').replace(/\\s/g, ''))}`}
+              href={`https://capitol.texas.gov/BillLookup/History.aspx?LegSess=${encodeURIComponent(`${bill.legislature_number}${String(bill.session_code || 'R').toUpperCase()}`)}&Bill=${encodeURIComponent(String(bill.bill_identifier || '').replace(/\s/g, ''))}`}
               label="Texas Legislature Online"
             />
             {bill.source_url ? <OfficialSource href={bill.source_url} label="Official source record" /> : null}
