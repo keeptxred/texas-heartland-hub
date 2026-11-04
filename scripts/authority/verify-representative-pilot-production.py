@@ -32,6 +32,8 @@ READY = (
     "greg-bonnen", "cody-vasut", "matt-morgan", "ron-reynolds", "gary-gates",
     "ryan-guillen", "todd-hunter", "katrina-pierson",
     "denise-villalobos", "oscar-longoria", "sergio-munoz", "janie-lopez",
+    "erin-gamez", "mando-martinez", "terry-canales", "bobby-guerra",
+    "richard-raymond", "alan-schoolcraft", "erin-zwiener",
     "cecil-bell", "keith-bell", "cole-hefner", "daniel-alders", "jay-dean",
     "cody-harris", "trent-ashby", "brian-harrison", "trey-wharton",
     "steve-toth", "stan-gerdes", "ellen-troxclair", "terry-wilson",
