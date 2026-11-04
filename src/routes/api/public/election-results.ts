@@ -14,6 +14,10 @@ let ongoing: Promise<OfficialResultsFeed> | null = null;
 async function retrieve(): Promise<OfficialResultsFeed> {
   const upstream = await fetch(TEXAS_SOS_RESULTS_URL, {
     headers: {
+      // The SOS/Cloudflare edge has returned truncated 8 KB HTTP 200 documents under election-night load.
+      // A single HTTP byte-range response returns the full ~290 KB source (206 Partial Content).
+      // Never allow a truncated partial race feed to silently replace the statewide results.
+      Range: "bytes=0-8999999",
       Accept: "text/html,application/xhtml+xml",
       "User-Agent": "KeepTXRed-Election-Results/1.0 (+https://keeptxred.com/elections/results)",
     },
@@ -25,7 +29,13 @@ async function retrieve(): Promise<OfficialResultsFeed> {
   if (html.length < 500 || html.length > 9_000_000) {
     throw new Error("Unexpected Texas SOS results response size");
   }
-  return parseOfficialTexasResults(html);
+  const feed = parseOfficialTexasResults(html);
+  // This November election has 581 contests. Reject malformed/truncated SOS responses
+  // rather than publishing 10 valid-looking races and silently dropping all others.
+  if (feed.races.length < 500) {
+    throw new Error("Incomplete SOS statewide response: only " + feed.races.length + " races.");
+  }
+  return feed;
 }
 
 function responseFeed(feed: OfficialResultsFeed, stale: boolean, providerError?: string) {
