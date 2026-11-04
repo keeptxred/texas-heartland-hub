@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { publicBillPath } from '@/lib/bill-public-path';
+import { billSearchPath } from '@/lib/bill-public-path';
 import {
   isAuthorityEntityType,
   type AuthorityEntityType,
@@ -132,7 +132,7 @@ export async function getRelatedAuthorityContent(
         score: row.score,
         title: `${bill.bill_identifier}: ${bill.caption}`,
         description: bill.current_status_label,
-        href: publicBillPath(bill),
+        href: billSearchPath(bill),
       }];
     }
     if (row.target_type === 'article') {

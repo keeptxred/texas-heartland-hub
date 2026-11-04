@@ -55,7 +55,7 @@ describe('buildBillPrimarySourceReference', () => {
       ],
     );
 
-    expect(payload.canonicalUrl).toBe('https://keeptxred.com/bills/texas/89/hb/7');
+    expect(payload.canonicalUrl).toBe('https://keeptxred.com/bills#bill=89-r-hb-7');
     expect(payload.officialBillUrl).toBe(
       'https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=HB7',
     );
@@ -105,7 +105,7 @@ describe('buildBillPrimarySourceReference', () => {
       [],
     );
 
-    expect(payload.canonicalUrl).toBe('https://keeptxred.com/bills/texas/89/2/hb/8');
+    expect(payload.canonicalUrl).toBe('https://keeptxred.com/bills#bill=89-2-hb-8');
     expect(payload.officialBillUrl).toBe(
       'https://capitol.texas.gov/BillLookup/History.aspx?LegSess=892&Bill=HB8',
     );

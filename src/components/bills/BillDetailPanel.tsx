@@ -79,7 +79,7 @@ export function BillDetailPanel({ billKey, onClose }: { billKey: string; onClose
         </header>
         {bill.current_status_description ? <section><h3 className="font-bold">Status explanation</h3><p className="mt-2">{bill.current_status_description}</p></section> : null}
         {bill.plain_language_summary || bill.summary || bill.description ? <section><h3 className="font-bold">Bill overview</h3><p className="mt-2 leading-7">{bill.plain_language_summary || bill.summary || bill.description}</p></section> : null}
-        <BillEditorialExplanation billId={bill.id} initialItem={data.editorial} initialBill={bill} initialDocuments={documents} />
+        <BillEditorialExplanation billId={bill.id} initialItem={data?.editorial} initialBill={bill} initialDocuments={documents} />
         <section><h3 className="text-xl font-bold">Sponsors and authors</h3>
           {sponsors.length ? <ul className="mt-3 grid gap-3 sm:grid-cols-2">{sponsors.map((person: any) => <li key={person.id} className="rounded-md border p-3"><strong>{person.sponsor_name}</strong><p className="mt-1 text-xs text-muted-foreground">{[person.sponsor_role, person.party, person.district].filter(Boolean).join(' · ')}</p>{person.sponsor_slug ? <a href={`/representatives/${person.sponsor_slug}`} className="text-sm text-primary underline">Representative profile</a> : null}</li>)}</ul>
             : <p className="mt-2 text-sm text-muted-foreground">No sponsors recorded.</p>}
