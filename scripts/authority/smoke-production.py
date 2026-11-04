@@ -199,6 +199,24 @@ def ensure_no_keys(value: Any, forbidden: set[str], label: str) -> None:
 
 def verify_elections() -> None:
     path = "/elections/reference.json"
+    # Election Central is intentionally switched off between election cycles.
+    # Its temporarily retired reference endpoint must return 404/noindex, not
+    # break the unrelated bills/deployment smoke. When switched on, validate
+    # the full machine-readable election data as before.
+    request = urllib.request.Request(
+        f"{SITE_URL}{path}",
+        headers={"User-Agent": "KeepTXRed-authority-production-smoke/1.0"},
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=TIMEOUT_SECONDS):
+            pass
+    except urllib.error.HTTPError as error:
+        if error.code != 404:
+            raise SmokeFailure(f"{path} returned unexpected HTTP {error.code}")
+        if "noindex" not in error.headers.get("X-Robots-Tag", "").lower():
+            raise SmokeFailure(f"{path} temporary 404 missing X-Robots-Tag noindex")
+        print("Election reference intentionally hidden between cycles: 404/noindex")
+        return
     payload, headers = fetch_json(path)
     if "noindex" not in headers.get("x-robots-tag", "").lower():
         raise SmokeFailure(f"{path} is missing noindex X-Robots-Tag")
