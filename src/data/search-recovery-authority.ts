@@ -306,7 +306,7 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
     ],
     "related": [
       {
-        "label": "2026 Texas Texas Politics",
+        "label": "Texas Politics",
         "href": "/texas-politics"
       },
       {
@@ -878,7 +878,7 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
     ],
     "related": [
       {
-        "label": "2026 Texas Texas Politics",
+        "label": "Texas Politics",
         "href": "/texas-politics"
       },
       {

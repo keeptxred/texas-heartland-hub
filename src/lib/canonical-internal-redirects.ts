@@ -1,10 +1,10 @@
 import { MIGRATED_PRACTICAL_GUIDE_CANONICALS } from "./migrated-practical-guide-canonical";
 import { MIGRATED_TOOL_CANONICALS } from "./migrated-tool-canonical";
+import { ELECTION_FEATURE_FLAGS } from "./elections/featureFlags";
 
 const INTERNAL_REDIRECT_CANONICALS: Readonly<Record<string, string>> = {
   "/about-keep-texas-red": "/about",
-  // Retired public Election Central destinations must be rewritten in article
-  // bodies and profile links, not retained as broken internal destinations.
+  // Off-season destinations used only while public Election Central is disabled.
   "/candidate-guides": "/texas-politics",
   "/election": "/texas-politics",
   "/election-central": "/texas-politics",
@@ -20,7 +20,7 @@ const INTERNAL_REDIRECT_CANONICALS: Readonly<Record<string, string>> = {
   "/elections/polls": "/texas-politics/texas-election-history",
   "/elections/forecast": "/texas-politics",
   "/elections/results": "/texas-politics",
-  "/elections/voting": "/register-to-vote",
+  "/elections/voting": "/county-elections",
   "/elections/methodology": "/editorial-standards",
   "/elections/corrections": "/contact",
   "/laws-to-know": "/laws",
@@ -28,7 +28,7 @@ const INTERNAL_REDIRECT_CANONICALS: Readonly<Record<string, string>> = {
   "/texas-laws": "/laws",
   "/texas-law-policy": "/laws",
   "/texas-news": "/news",
-  "/voting-locations": "/register-to-vote",
+  "/voting-locations": "/county-elections",
   "/news/texas-constitutional-amendments-guide": "/laws/constitutional-amendments",
   "/texas-government/texas-court-of-criminal-appeals-history": "/texas-government/court-of-criminal-appeals-history",
   "/find-my-dmv": "https://texasdefined.com/find-my-dmv",
@@ -53,6 +53,31 @@ const INTERNAL_REDIRECT_CANONICALS: Readonly<Record<string, string>> = {
   ...MIGRATED_PRACTICAL_GUIDE_CANONICALS,
 };
 
+const ELECTION_CYCLE_ALIASES = new Set([
+  "/candidate-guides",
+  "/election",
+  "/election-central",
+  "/texas-elections",
+  "/elections-2026",
+]);
+
+/**
+ * During the off-season, article links are directed to permanent site resources.
+ * When Election Central is enabled again, preserve live race/detail URLs rather
+ * than permanently rewriting them to the general politics page.
+ */
+export function resolveInternalRedirectDestination(
+  pathname: string,
+  electionCentralEnabled = ELECTION_FEATURE_FLAGS.homepagePromotion,
+): string | undefined {
+  if (electionCentralEnabled) {
+    if (pathname === "/elections" || ELECTION_CYCLE_ALIASES.has(pathname)) return "/elections/2026";
+    if (pathname === "/voting-locations") return "/elections/voting";
+    if (pathname.startsWith("/elections/")) return undefined;
+  }
+  return INTERNAL_REDIRECT_CANONICALS[pathname];
+}
+
 const CANONICAL_HOST = "keeptxred.com";
 
 function normalizedAliasPath(pathname: string) {
@@ -71,7 +96,7 @@ export function canonicalInternalRedirectHref(href: string) {
 
   if (raw.startsWith("/")) {
     const parsed = new URL(raw, `https://${CANONICAL_HOST}`);
-    const canonical = INTERNAL_REDIRECT_CANONICALS[normalizedAliasPath(parsed.pathname)];
+    const canonical = resolveInternalRedirectDestination(normalizedAliasPath(parsed.pathname));
     return canonical ? withSuffix(canonical, parsed.search, parsed.hash, false) : href;
   }
 
@@ -79,7 +104,7 @@ export function canonicalInternalRedirectHref(href: string) {
     const parsed = new URL(raw);
     const host = parsed.hostname.toLowerCase().replace(/^www\./, "");
     if (host !== CANONICAL_HOST) return href;
-    const canonical = INTERNAL_REDIRECT_CANONICALS[normalizedAliasPath(parsed.pathname)];
+    const canonical = resolveInternalRedirectDestination(normalizedAliasPath(parsed.pathname));
     return canonical ? withSuffix(canonical, parsed.search, parsed.hash, true) : href;
   } catch {
     return href;

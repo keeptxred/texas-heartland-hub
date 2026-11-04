@@ -147,7 +147,7 @@ export function pickInternalLinks(input: {
     push({ label: "Texas Bills", href: "/bills", kind: "resource" });
   }
   if (/vote|ballot|election|primary/.test(hay)) push({ label: "Texas Politics", href: "/texas-politics", kind: "hub" });
-  if (/voter|voting|ballot/.test(hay)) push({ label: "Texas Voting Guide", href: "/news/texas-voting-guide-2026", kind: "evergreen" });
+  if (/voter|voting|ballot/.test(hay)) push({ label: "County Election Offices & Ballots", href: "/county-elections", kind: "resource" });
   if (/moving|relocat|newcomer|housing market/.test(hay)) push({ label: "Texas Economy", href: "/texas-economy", kind: "hub" });
   ALWAYS_AVAILABLE.forEach(push);
   return out.slice(0, 5);

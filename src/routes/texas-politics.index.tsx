@@ -8,7 +8,7 @@ import { buildSeo } from "@/lib/seo";
 
 const HUB = HUBS.find((h) => h.slug === "texas-politics")!;
 const SECTIONS = [
-  { title: "Texas Election History", description: "How Texas elections and political coalitions have changed over time.", href: "/texas-politics/texas-election-history" },
+  { title: "County Election Offices & Ballots", description: "Official county election offices, ballot resources, and local election administration.", href: "/county-elections" },
   { title: "Why Texas Is Politically Competitive", description: "How population growth, turnout, metros, suburbs, rural margins and South Texas create different kinds of electoral competition beneath the statewide result.", href: "/texas-politics/why-texas-is-politically-competitive" },
   { title: "Republic of Texas Government", description: "The presidency, Congress, 1836 Constitution, capitals, diplomacy, public finance, annexation and transition from independent republic to state government.", href: "/texas-politics/republic-of-texas-government-history" },
   { title: "Democratic Dominance, 1876–1952", description: "How one-party Democratic control, primary politics and suffrage restrictions shaped Texas after Reconstruction.", href: "/texas-politics/texas-democratic-dominance-1876-1952" },

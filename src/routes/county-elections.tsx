@@ -42,9 +42,9 @@ function CountyElectionsPage() {
       <div className="mx-auto max-w-6xl px-4 py-14">
         <section className="mb-10 grid gap-5 md:grid-cols-3" aria-label="County election resources">
           <ElectionResource
-            href="/texas-politics/texas-election-history"
-            title="Texas election history"
-            description="Explore the political history of Texas elections."
+            href="/issues/texas-election-law"
+            title="Texas election law"
+            description="Understand the laws behind elections and voting in Texas."
           />
           <ElectionResource
             href="/districts"

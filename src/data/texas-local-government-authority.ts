@@ -57,7 +57,7 @@ export const TEXAS_COUNTY_GOVERNMENT_HISTORY: GovernmentHistoryAuthorityPage = {
     { href: LOCAL_HANDBOOK, label: "Texas local government handbook", description: "A broader guide to county, city, school and special-district authority." },
     { href: "/texas-government/commissioners-court-history", label: "Commissioners court history", description: "How the county's governing body developed and what it controls." },
     { href: "/county-elections", label: "Texas county elections", description: "County-level election administration and local voting resources." },
-    { href: "/texas-politics", label: "Texas Politics", description: "Current elections for local and statewide offices." },
+    { href: "/texas-politics", label: "Texas Politics", description: "Political history and local and statewide government context." },
   ],
   faqs: [
     { question: "Are Texas counties home-rule governments?", answer: "No. Texas counties generally exercise powers granted by the state constitution and statutes. They do not possess the broad home-rule authority available to qualifying cities." },
@@ -119,7 +119,7 @@ export const TEXAS_COMMISSIONERS_COURT_HISTORY: GovernmentHistoryAuthorityPage =
     { href: "/texas-government/county-judge-history", label: "County judge history", description: "The countywide presiding officer and the office's judicial-administrative dual role." },
     { href: "/texas-government/county-commissioner-history", label: "County commissioner history", description: "The four precinct officials who share commissioners-court power." },
     { href: COUNTY_EXPLAINER, label: "How Texas county government works", description: "Practical current guidance on budgets, roads and independent county offices." },
-    { href: "/texas-politics", label: "Texas Politics", description: "Current election coverage and local-office context." },
+    { href: "/texas-politics", label: "Texas Politics", description: "Political history and context for local public offices." },
   ],
   faqs: [
     { question: "Is a Texas commissioners court actually a court?", answer: "Despite the name, its primary modern function is the legislative and administrative business of the county. It does not function as the ordinary trial court for county civil and criminal cases." },
@@ -243,7 +243,7 @@ export const TEXAS_COUNTY_COMMISSIONER_HISTORY: GovernmentHistoryAuthorityPage =
     { href: "/texas-government/county-judge-history", label: "County judge history", description: "The countywide officer who presides over commissioners court." },
     { href: "/texas-government/texas-county-government-history", label: "Texas county government history", description: "How delegated local power developed across the state." },
     { href: COUNTY_EXPLAINER, label: "How Texas county government works", description: "Current practical explanation of budgets, roads and independent offices." },
-    { href: "/texas-politics", label: "Texas Politics", description: "Current electoral context for local and statewide government." },
+    { href: "/texas-politics", label: "Texas Politics", description: "Political history and institutional context for local and statewide government." },
   ],
   faqs: [
     { question: "How many county commissioners does a Texas county have?", answer: "Four. Each county is divided into four commissioners precincts, and voters in each precinct elect one commissioner." },
@@ -305,7 +305,7 @@ export const TEXAS_COUNTY_SHERIFF_HISTORY: GovernmentHistoryAuthorityPage = {
     { href: "/texas-government/commissioners-court-history", label: "Commissioners court history", description: "The body that funds county operations and fills a sheriff vacancy." },
     { href: "/texas-government/justice-of-the-peace-constable-history", label: "JP and constable history", description: "The precinct-level judicial and peace-officer offices that coexist with the sheriff." },
     { href: COUNTY_EXPLAINER, label: "How Texas county government works", description: "Current practical guidance on sheriffs, budgets and independent county officers." },
-    { href: "/texas-politics", label: "Texas Politics", description: "Current election coverage and voting resources." },
+    { href: "/texas-politics", label: "Texas Politics", description: "Historical political context and government reference resources." },
   ],
   faqs: [
     { question: "Who elects the Texas county sheriff?", answer: "Qualified voters of the county elect the sheriff countywide for a four-year term under the Texas Constitution." },
@@ -367,7 +367,7 @@ export const TEXAS_COUNTY_CLERKS_HISTORY: GovernmentHistoryAuthorityPage = {
     { href: "/texas-government/commissioners-court-history", label: "Commissioners court history", description: "The body whose proceedings the county clerk records." },
     { href: "/county-elections", label: "Texas county elections", description: "Election resources connected to county-level administration." },
     { href: COUNTY_EXPLAINER, label: "How Texas county government works", description: "Current practical explanation of clerks and other independent county offices." },
-    { href: "/texas-politics", label: "Texas Politics", description: "Current election coverage and voter resources." },
+    { href: "/texas-politics", label: "Texas Politics", description: "Historical political context and government reference resources." },
   ],
   faqs: [
     { question: "What is the difference between a Texas county clerk and district clerk?", answer: "The county clerk serves county courts and commissioners court and maintains many public records, while the district clerk serves district courts and maintains their filings, judgments, registry funds and related records." },
@@ -429,7 +429,7 @@ export const TEXAS_TAX_ASSESSOR_COLLECTOR_HISTORY: GovernmentHistoryAuthorityPag
     { href: "/texas-government/county-sheriff-history", label: "Texas sheriff history", description: "Why the sheriff can also serve as assessor-collector in qualifying smaller counties." },
     { href: "/news/texas-property-tax-laws-explained", label: "Texas property-tax laws", description: "How appraisal, rates, exemptions, protests and collection fit together." },
     { href: COUNTY_EXPLAINER, label: "How Texas county government works", description: "Current practical guidance on county tax offices and local authority." },
-    { href: "/texas-politics", label: "Texas Politics", description: "Current election coverage and voter resources." },
+    { href: "/texas-politics", label: "Texas Politics", description: "Historical political context and government reference resources." },
   ],
   faqs: [
     { question: "Does the county tax assessor-collector appraise my property?", answer: "No. County appraisal districts determine appraised values. The assessor-collector administers tax calculations and collection using certified values and rates adopted by taxing units." },
@@ -491,7 +491,7 @@ export const TEXAS_JP_CONSTABLE_HISTORY: GovernmentHistoryAuthorityPage = {
     { href: "/texas-government/county-sheriff-history", label: "Texas sheriff history", description: "Compare the countywide sheriff with precinct constables." },
     { href: "/texas-government/commissioners-court-history", label: "Commissioners court history", description: "The countywide body that manages budgets and precinct boundaries under law." },
     { href: COUNTY_EXPLAINER, label: "How Texas county government works", description: "Current practical explanation of independent county and precinct offices." },
-    { href: "/texas-politics", label: "Texas Politics", description: "Current election coverage and voting resources." },
+    { href: "/texas-politics", label: "Texas Politics", description: "Historical political context and government reference resources." },
   ],
   faqs: [
     { question: "What does a Texas justice of the peace do?", answer: "A justice of the peace presides over a justice court with limited civil and criminal jurisdiction and also performs magistrate, inquest and other duties assigned by law." },

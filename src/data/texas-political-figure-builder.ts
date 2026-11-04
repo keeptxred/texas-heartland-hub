@@ -45,7 +45,7 @@ const categoryLinks: Record<PoliticalFigureCategory, Array<{ href: string; label
   ],
   "U.S. senators": [
     { href: "/texas-politics", label: "Texas Politics" },
-    { href: "/texas-politics", label: "Texas Politics" },
+    { href: "/representatives", label: "Representatives & Senators" },
   ],
   "Texas judicial leaders": [
     { href: "/texas-politics/texas-supreme-court-realignment", label: "Texas Supreme Court realignment" },
@@ -53,7 +53,7 @@ const categoryLinks: Record<PoliticalFigureCategory, Array<{ href: string; label
     { href: "/laws", label: "Texas Laws" },
   ],
   "Current U.S. representatives": [
-    { href: "/texas-politics", label: "Texas Politics" },
+    { href: "/representatives", label: "Representative Directory" },
     { href: "/texas-politics", label: "Texas Politics" },
   ],
   "Historical U.S. House leaders": [
@@ -70,7 +70,7 @@ const categoryLinks: Record<PoliticalFigureCategory, Array<{ href: string; label
   ],
   "Party organizers and conservative activists": [
     { href: "/texas-politics", label: "Texas Politics" },
-    { href: "/texas-politics", label: "Texas Politics" },
+    { href: "/texas-politics/texas-republican-party-history", label: "Texas Republican Party History" },
   ],
 };
 

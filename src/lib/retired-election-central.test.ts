@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { isRetiredElectionCentralPath } from "./retired-election-central";
+import { ELECTION_FEATURE_FLAGS } from "./elections/featureFlags";
 
-describe("public Election Central retirement", () => {
+describe("seasonal public Election Central availability", () => {
   it.each([
     "/elections",
     "/elections/",
@@ -15,7 +16,7 @@ describe("public Election Central retirement", () => {
     "/candidate-guides",
     "/texas-news/elections",
   ])("retires %s", (path) => {
-    expect(isRetiredElectionCentralPath(path)).toBe(true);
+    expect(isRetiredElectionCentralPath(path)).toBe(!ELECTION_FEATURE_FLAGS.homepagePromotion);
   });
 
   it.each([

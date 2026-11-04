@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { renderUrlset } from "@/lib/sitemap-shared";
+import { ELECTION_FEATURE_FLAGS } from "@/lib/elections/featureFlags";
 
 describe("sitemap search-scope exclusions", () => {
   it("omits retired sports and election route trees while preserving legislative URLs", () => {
@@ -12,7 +13,11 @@ describe("sitemap search-scope exclusions", () => {
     ]);
 
     expect(xml).not.toContain("/texas-sports");
-    expect(xml).not.toContain("https://keeptxred.com/elections/2026");
+    if (ELECTION_FEATURE_FLAGS.homepagePromotion) {
+      expect(xml).toContain("https://keeptxred.com/elections/2026");
+    } else {
+      expect(xml).not.toContain("https://keeptxred.com/elections/2026");
+    }
     expect(xml).toContain("https://keeptxred.com/texas-legislature");
   });
 });
