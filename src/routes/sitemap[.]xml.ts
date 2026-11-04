@@ -20,7 +20,6 @@ const ADVERTISED_SITEMAPS = [
   "sitemap-news.xml",
   "sitemap-evergreen.xml",
   "sitemap-priority.xml",
-  "sitemap-elections.xml",
   "sitemap-government.xml",
   "sitemap-political-figures.xml",
   "sitemap-political-geography.xml",

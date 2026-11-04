@@ -10,14 +10,14 @@ const legacyWwwHost = ["www", "keeptxred", "com"].join(".");
 
 const mappings = [
   ["/about-keep-texas-red", "/about"],
-  ["/candidate-guides", "/elections/2026"],
+  ["/candidate-guides", "/texas-politics"],
   ["/laws-to-know", "/laws"],
   ["/legislative-updates", "/bills"],
   ["/texas-laws", "/laws"],
   ["/texas-law-policy", "/laws"],
   ["/texas-news", "/news"],
-  ["/elections", "/elections/2026"],
-  ["/voting-locations", "/elections/voting"],
+  ["/elections", "/texas-politics"],
+  ["/voting-locations", "/register-to-vote"],
   ["/news/texas-constitutional-amendments-guide", "/laws/constitutional-amendments"],
   [
     "/texas-government/texas-court-of-criminal-appeals-history",
@@ -56,7 +56,7 @@ describe("canonical internal redirect links", () => {
 
   it("preserves query and hash state while removing the redirect hop", () => {
     expect(canonicalInternalRedirectHref("/elections/?cycle=2026#top")).toBe(
-      "/elections/2026?cycle=2026#top",
+      "/texas-politics?cycle=2026#top",
     );
     expect(canonicalInternalRedirectHref("/news/texas-constitutional-amendments-guide?year=2026#process")).toBe(
       "/laws/constitutional-amendments?year=2026#process",
@@ -94,7 +94,7 @@ describe("canonical internal redirect links", () => {
     expect(canonicalInternalRedirectHref(`https://${legacyWwwHost}/texas-law-policy#guide`)).toBe(
       "https://keeptxred.com/laws#guide",
     );
-    expect(canonicalInternalRedirectHref("/elections/races")).toBe("/elections/races");
+    expect(canonicalInternalRedirectHref("/elections/races")).toBe("/texas-politics");
     expect(canonicalInternalRedirectHref("https://example.com/elections")).toBe(
       "https://example.com/elections",
     );
@@ -106,7 +106,7 @@ describe("canonical internal redirect links", () => {
         "Read [Election Central](/elections), [amendment process](/news/texas-constitutional-amendments-guide), [DMV guide](/dmv), [vehicle registration](/vehicles/registration), [registration renewal](/vehicles/renewal), [vehicle fees](/vehicles/registration-fees-taxes), [DMV offices](/find-my-dmv), [Texas sports](/texas-sports), and [Moving to Texas](/moving-to-texas).",
       ),
     ).toBe(
-      "Read [Election Central](/elections/2026), [amendment process](/laws/constitutional-amendments), [DMV guide](https://texasdefined.com/texas-dmv), [vehicle registration](https://texasdefined.com/texas-vehicle-registration), [registration renewal](https://texasdefined.com/texas-vehicle-registration-renewal), [vehicle fees](https://texasdefined.com/texas-vehicle-registration-fees-taxes), [DMV offices](https://texasdefined.com/find-my-dmv), [Texas sports](https://texasdefined.com/sports), and [Moving to Texas](https://texasdefined.com/moving-to-texas).",
+      "Read [Election Central](/texas-politics), [amendment process](/laws/constitutional-amendments), [DMV guide](https://texasdefined.com/texas-dmv), [vehicle registration](https://texasdefined.com/texas-vehicle-registration), [registration renewal](https://texasdefined.com/texas-vehicle-registration-renewal), [vehicle fees](https://texasdefined.com/texas-vehicle-registration-fees-taxes), [DMV offices](https://texasdefined.com/find-my-dmv), [Texas sports](https://texasdefined.com/sports), and [Moving to Texas](https://texasdefined.com/moving-to-texas).",
     );
   });
 });

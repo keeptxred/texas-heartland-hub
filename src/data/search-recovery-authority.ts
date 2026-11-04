@@ -306,16 +306,16 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
     ],
     "related": [
       {
-        "label": "2026 Texas Election Central",
-        "href": "/elections/2026"
+        "label": "2026 Texas Texas Politics",
+        "href": "/texas-politics"
       },
       {
         "label": "Texas candidates",
-        "href": "/elections/candidates"
+        "href": "/representatives"
       },
       {
         "label": "Texas races",
-        "href": "/elections/races"
+        "href": "/texas-politics"
       }
     ],
     "methodology": "KeepTXRed treats TEC filings as the primary source for state-level campaign-finance claims and preserves filer IDs, report periods and metric definitions. Derived totals document query settings and duplicate handling. Local filing coverage is checked separately."
@@ -878,8 +878,8 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
     ],
     "related": [
       {
-        "label": "2026 Texas Election Central",
-        "href": "/elections/2026"
+        "label": "2026 Texas Texas Politics",
+        "href": "/texas-politics"
       },
       {
         "label": "County elections",

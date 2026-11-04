@@ -181,8 +181,8 @@ export const TEXAS_CASE_WAVE2_POSITIONS: TexasCasePosition[] = [
       { label: "VoteTexas.gov", url: "https://www.votetexas.gov/" },
     ],
     related: [
-      { label: "Election Central", href: "/elections/2026" },
-      { label: "Voting information", href: "/elections/voting" },
+      { label: "Texas Politics", href: "/texas-politics" },
+      { label: "Voting information", href: "/register-to-vote" },
       { label: "Texas laws", href: "/laws" },
       { label: "Texas bills", href: "/bills" },
     ],

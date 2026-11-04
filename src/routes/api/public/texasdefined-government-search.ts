@@ -79,9 +79,9 @@ const GOVERNMENT_HUBS: KnowledgeResult[] = [
   {
     id: "hub-elections",
     kind: "government-hub",
-    title: "Texas Elections 2026",
-    summary: "Verified Texas election races, candidates, voting dates, polls and election reference material.",
-    url: `${KTR_ORIGIN}/elections/2026`,
+    title: "Texas Elections & Political History",
+    summary: "Texas political history, election context and public-policy coverage.",
+    url: `${KTR_ORIGIN}/texas-politics`,
     sourceUrl: "https://www.sos.texas.gov/elections/",
     dataAsOf: null,
     factuality: "reference",

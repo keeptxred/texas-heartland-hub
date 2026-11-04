@@ -48,16 +48,16 @@ function TexasPoliticalReferenceHub() {
           <p className="text-xs font-extrabold uppercase tracking-[0.25em] text-primary">Keep TX Red Reference Desk</p>
           <h1 className="mt-4 max-w-5xl font-display text-5xl leading-none tracking-tight md:text-7xl">Texas Political Reference</h1>
           <p className="mt-6 max-w-3xl text-lg leading-8 text-white/80 md:text-xl">Permanent Texas political reference, connected to verified election, government, legal and evidence layers.</p>
-          <p className="mt-5 max-w-3xl text-sm leading-7 text-white/65">Reference detail guides appear here only after they meet KTR's source, depth and freshness standards. Use Election Central and the permanent authority libraries below while additional reference guides remain under review.</p>
+          <p className="mt-5 max-w-3xl text-sm leading-7 text-white/65">Reference detail guides appear here only after they meet KTR's source, depth and freshness standards. Use the permanent authority libraries below while additional reference guides remain under review.</p>
         </div>
       </section>
 
       <section className="mx-auto max-w-[1180px] px-6 py-10">
         <div className="grid gap-4 md:grid-cols-3">
-          <a href="/elections/2026" className="rounded-xl border bg-card p-5 transition hover:border-primary">
-            <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-primary">Live election layer</p>
-            <h2 className="mt-2 font-display text-2xl tracking-tight">2026 Election Central</h2>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">Verified races, candidates, polls, dates, forecasts, voting information, and results.</p>
+          <a href="/texas-politics/texas-election-history" className="rounded-xl border bg-card p-5 transition hover:border-primary">
+            <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-primary">Permanent historical reference</p>
+            <h2 className="mt-2 font-display text-2xl tracking-tight">Texas Election History</h2>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">Sourced context on Texas elections, political coalitions, and statewide realignment.</p>
           </a>
           <a href="/texas-case" className="rounded-xl border bg-card p-5 transition hover:border-primary">
             <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-primary">Separate editorial layer</p>

@@ -11,9 +11,9 @@ describe("shared news ticker accessibility on Texas laws pages", () => {
     expect((header.match(/focus-visible:outline-white/g) ?? []).length).toBeGreaterThanOrEqual(3);
   });
 
-  it("preserves dynamic news and election fallback destinations", () => {
+  it("preserves dynamic news and a non-election fallback destination", () => {
     expect(header).toContain('to="/news/$slug"');
-    expect(header).toContain('to="/elections/2026"');
+    expect(header).not.toContain('to="/elections/2026"');
     expect(header).toContain('to="/news"');
   });
 });

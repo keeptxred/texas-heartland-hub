@@ -77,7 +77,7 @@ const CATEGORY_HUB: Record<string, InternalLink[]> = {
   ],
   Elections: [
     { label: "Register to Vote in Texas", href: "/register-to-vote", kind: "resource" },
-    { label: "Election Central", href: "/elections/2026", kind: "hub" },
+    { label: "Texas Politics", href: "/texas-politics", kind: "hub" },
   ],
   Legislature: [
     { label: "Texas Politics", href: "/texas-politics", kind: "hub" },
@@ -146,7 +146,7 @@ export function pickInternalLinks(input: {
     push({ label: "Texas Legislature", href: "/texas-legislature", kind: "hub" });
     push({ label: "Texas Bills", href: "/bills", kind: "resource" });
   }
-  if (/vote|ballot|election|primary/.test(hay)) push({ label: "Election Central", href: "/elections/2026", kind: "hub" });
+  if (/vote|ballot|election|primary/.test(hay)) push({ label: "Texas Politics", href: "/texas-politics", kind: "hub" });
   if (/voter|voting|ballot/.test(hay)) push({ label: "Texas Voting Guide", href: "/news/texas-voting-guide-2026", kind: "evergreen" });
   if (/moving|relocat|newcomer|housing market/.test(hay)) push({ label: "Texas Economy", href: "/texas-economy", kind: "hub" });
   ALWAYS_AVAILABLE.forEach(push);

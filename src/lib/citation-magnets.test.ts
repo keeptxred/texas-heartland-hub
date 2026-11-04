@@ -10,7 +10,7 @@ const manifest = JSON.parse(
 };
 const llms = readFileSync(new URL("../../public/llms.txt", import.meta.url), "utf8");
 const pagesSitemap = readFileSync(new URL("../routes/sitemap-pages[.]xml.ts", import.meta.url), "utf8");
-const electionSitemap = readFileSync(new URL("./elections/sitemap.ts", import.meta.url), "utf8");
+const electionSitemap = readFileSync(new URL("../routes/sitemap-elections[.]xml.ts", import.meta.url), "utf8");
 const trustPanel = readFileSync(new URL("../components/authority/CitationTrustPanel.tsx", import.meta.url), "utf8");
 const currentSession = readFileSync(new URL("../components/legislature/CurrentSessionAuthorityReference.tsx", import.meta.url), "utf8");
 const governmentHub = readFileSync(new URL("../routes/texas-government.index.tsx", import.meta.url), "utf8");
@@ -66,10 +66,10 @@ describe("citation magnet discovery and extraction contracts", () => {
     }
   });
 
-  it("keeps election citation hubs in the election sitemap architecture", () => {
-    for (const routeKey of ["ELECTION_ROUTES.root", "ELECTION_ROUTES.races", "ELECTION_ROUTES.statewide", "ELECTION_ROUTES.districts", "ELECTION_ROUTES.candidates", "ELECTION_ROUTES.polls", "ELECTION_ROUTES.results", "ELECTION_ROUTES.voting"]) {
-      expect(electionSitemap).toContain(routeKey);
-    }
+  it("keeps the retired Election Central feed empty and removes its manifest records", () => {
+    expect(electionSitemap).toContain("renderUrlset([])");
+    expect(manifest.resources.every((resource) => !new URL(resource.url).pathname.startsWith("/elections/"))).toBe(true);
+    expect(llms).not.toContain("(/elections/2026)");
   });
 
   it("keeps citation magnets linked from authority hubs", () => {
@@ -97,7 +97,7 @@ describe("citation magnet discovery and extraction contracts", () => {
     expect(amendments).toContain("adopted 16 of the 17 proposed amendments");
     expect(amendments).toContain("When does an approved Texas constitutional amendment take effect?");
     expect(amendments).toContain("Texas constitutional amendment FAQ");
-    for (const path of ["/laws/effective-dates", "/laws/topics", "/elections/2026", "/elections/voting", "/texas-legislature", "/bills"]) {
+    for (const path of ["/laws/effective-dates", "/laws/topics", "/texas-politics/texas-election-history", "/register-to-vote", "/texas-legislature", "/bills"]) {
       expect(amendments).toContain(`to=\"${path}\"`);
     }
     for (const officialSource of [

@@ -36,6 +36,7 @@ describe("priority sitemap inventory", () => {
     }
 
     expect(paths).not.toContain("/elections");
+    expect(paths.every((path) => !path.startsWith("/elections/"))).toBe(true);
     expect(paths).not.toContain("/elections/polls/methodology");
     expect(paths).not.toContain("/bills/capital-punishment");
     expect(paths).not.toContain("/texas-legislature/cross-party-scorecard");
@@ -53,10 +54,10 @@ describe("priority sitemap inventory", () => {
   it("keeps the highest-priority authority surfaces represented", () => {
     for (const path of [
       "/",
-      "/elections/2026",
-      "/elections/candidates",
-      "/elections/forecast",
-      "/elections/voting",
+      "/news",
+      "/find-representative",
+      "/keep-texas-red",
+      "/county-elections",
       "/news/texas-voting-guide-2026",
       "/texas-legislature",
       "/texas-legislature/votes",

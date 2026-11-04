@@ -41,11 +41,11 @@ type FigureInput = {
 const categoryLinks: Record<PoliticalFigureCategory, Array<{ href: string; label: string }>> = {
   "Statewide executive leaders": [
     { href: "/texas-government", label: "Texas Government" },
-    { href: "/elections/2026", label: "Texas Election Central" },
+    { href: "/texas-politics", label: "Texas Politics" },
   ],
   "U.S. senators": [
     { href: "/texas-politics", label: "Texas Politics" },
-    { href: "/elections/2026", label: "Texas Election Central" },
+    { href: "/texas-politics", label: "Texas Politics" },
   ],
   "Texas judicial leaders": [
     { href: "/texas-politics/texas-supreme-court-realignment", label: "Texas Supreme Court realignment" },
@@ -53,7 +53,7 @@ const categoryLinks: Record<PoliticalFigureCategory, Array<{ href: string; label
     { href: "/laws", label: "Texas Laws" },
   ],
   "Current U.S. representatives": [
-    { href: "/elections/2026", label: "Texas Election Central" },
+    { href: "/texas-politics", label: "Texas Politics" },
     { href: "/texas-politics", label: "Texas Politics" },
   ],
   "Historical U.S. House leaders": [
@@ -70,7 +70,7 @@ const categoryLinks: Record<PoliticalFigureCategory, Array<{ href: string; label
   ],
   "Party organizers and conservative activists": [
     { href: "/texas-politics", label: "Texas Politics" },
-    { href: "/elections/2026", label: "Texas Election Central" },
+    { href: "/texas-politics", label: "Texas Politics" },
   ],
 };
 

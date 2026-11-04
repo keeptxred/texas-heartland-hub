@@ -30,7 +30,7 @@ describe("political reference discovery quarantine", () => {
   });
 
   it("preserves durable public authority destinations while detail guides are quarantined", () => {
-    for (const href of ["/elections/2026", "/texas-case", "/texas-case/facts", "/bills", "/laws", "/representatives"]) {
+    for (const href of ["/texas-politics/texas-election-history", "/texas-case", "/texas-case/facts", "/bills", "/laws", "/representatives"]) {
       expect(hub).toContain(href);
     }
   });

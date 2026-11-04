@@ -310,7 +310,7 @@ const publicOwnershipFiles = [
   {
     path: 'src/routes/keep-texas-red.tsx',
     forbidden: ['/tax-calculator', 'Property tax calculator by county', 'moving to Texas'],
-    required: ['/elections', '/bills', '/texas-legislature', 'government accountability'],
+    required: ['/texas-politics', '/bills', '/texas-legislature', 'government accountability'],
   },
   {
     path: 'src/lib/static-no-income-tax-upgrade.ts',

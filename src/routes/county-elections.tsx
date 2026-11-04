@@ -11,14 +11,14 @@ export const Route = createFileRoute("/county-elections")({
       {
         name: "description",
         content:
-          "Find Texas county election resources, official ballot links, Election Central races, districts, candidates, and voting information.",
+          "Find Texas county election resources, official ballot links, county election offices, registration resources, and district information.",
       },
       { name: "robots", content: "index, follow, max-image-preview:large" },
       { property: "og:title", content: "Texas County Election Offices & Ballot Resources" },
       {
         property: "og:description",
         content:
-          "Browse Texas counties and continue to official county election offices, ballot research, and 2026 Election Central coverage.",
+          "Browse Texas counties and continue to official county election offices, ballot research, voter registration, and district information.",
       },
       { property: "og:url", content: URL },
       { property: "og:type", content: "website" },
@@ -37,24 +37,24 @@ function CountyElectionsPage() {
         eyebrow="Local Elections"
         title="TEXAS COUNTY"
         highlight="ELECTION RESOURCES"
-        description="Texas counties administer elections locally. Find your county and continue to official election-office, ballot, and Election Central resources."
+        description="Texas counties administer elections locally. Find your county and continue to official election-office, ballot, and voter resources."
       />
       <div className="mx-auto max-w-6xl px-4 py-14">
-        <section className="mb-10 grid gap-5 md:grid-cols-3" aria-label="Election Central resources">
+        <section className="mb-10 grid gap-5 md:grid-cols-3" aria-label="County election resources">
           <ElectionResource
-            href="/elections/2026"
-            title="2026 Election Central"
-            description="Follow verified Texas races, candidates, polling, forecasts, and results."
+            href="/texas-politics/texas-election-history"
+            title="Texas election history"
+            description="Explore the political history of Texas elections."
           />
           <ElectionResource
-            href="/elections/districts"
-            title="Texas election districts"
+            href="/districts"
+            title="Texas legislative districts"
             description="Browse congressional, Texas House, and Texas Senate district pages."
           />
           <ElectionResource
-            href="/elections/voting"
-            title="Texas ballot research"
-            description="Browse published races and continue to official voter and ballot tools."
+            href="/register-to-vote"
+            title="Texas voter registration"
+            description="Learn about voter registration and official ballot resources."
           />
         </section>
 
@@ -83,10 +83,10 @@ function CountyElectionsPage() {
                   {county.region}
                 </p>
                 <a
-                  href={`/elections/races?browse=county&area=${encodeURIComponent(`${county.name} County`)}`}
+                  href="https://www.sos.state.tx.us/elections/voter/county.shtml"
                   className="mt-4 inline-block text-xs font-bold uppercase tracking-widest text-primary hover:underline"
                 >
-                  Browse {county.name} County election races →
+                  Find {county.name} County election office →
                 </a>
               </article>
             ))}

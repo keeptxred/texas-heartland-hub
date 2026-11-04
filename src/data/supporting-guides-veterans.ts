@@ -286,7 +286,7 @@ export const VETERANS_SUPPORTING_GUIDES: Record<string, CornerstoneGuide> = {
       { label: "Federal Voting Assistance Program", url: "https://www.fvap.gov/" },
       { label: "VoteTexas.gov", url: "https://www.votetexas.gov/" },
     ],
-    related: [...commonRelated, { label: "Texas Elections", href: "/elections/2026" }],
+    related: [...commonRelated, { label: "Texas Elections", href: "/texas-politics" }],
   },
 
   "texas-veteran-employment-guide": {

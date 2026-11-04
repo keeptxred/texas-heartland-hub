@@ -191,7 +191,7 @@ const STATIC_PATHS:string[]=[
   "/texas-government/mayor-city-council-history","/texas-government/city-manager-government-history",
   "/texas-government/texas-municipal-courts-history","/texas-government/texas-special-district-government-history",
   "/texas-government/municipal-elections-representation-history","/texas-government/municipal-finance-tax-debt-history","/districts",
-  "/about","/representatives","/register-to-vote","/contact-legislators",
+  "/about","/representatives","/find-representative","/register-to-vote","/contact-legislators",
   "/get-involved","/county-elections","/laws","/laws/topics","/laws/constitutional-amendments","/laws/effective-dates","/data",
   "/civic-tools","/civic-tools/government-authority-finder","/civic-tools/texas-law-finder","/civic-tools/bill-finder","/civic-tools/compare-legislators",
   "/contact","/privacy","/terms-of-service",

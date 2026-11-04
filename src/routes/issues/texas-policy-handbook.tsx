@@ -80,11 +80,11 @@ const chapters = [
     title: "Elections: rules, administration, candidates and results belong in different layers",
     body: [
       "The Texas Election Code and Secretary of State guidance establish much of the statewide framework, but counties conduct many election functions and courts can alter implementation through litigation. Candidate qualifications, voter registration, mail ballots, poll watchers, voting systems, recounts and campaign-finance questions are governed by different provisions.",
-      "KTR keeps permanent election-law explainers separate from Election Central's candidate and results coverage. That lets a breaking dispute link back to durable legal context without rewriting the same background in every election story.",
+      "KTR keeps permanent election-law explainers separate from Texas Politics's candidate and results coverage. That lets a breaking dispute link back to durable legal context without rewriting the same background in every election story.",
     ],
     links: [
       ["Texas election law", "/issues/texas-election-law"],
-      ["Election Central", "/elections/2026"],
+      ["Texas Politics", "/texas-politics"],
       ["Register to vote", "/register-to-vote"],
     ],
   },

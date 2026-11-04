@@ -27,6 +27,7 @@ const DISALLOWED_PRIORITY_PATHS = new Set([
 
 function isDisallowedPriorityPath(path: string) {
   return DISALLOWED_PRIORITY_PATHS.has(path)
+    || path.startsWith("/elections/")
     || path.startsWith("/texas-house/")
     || path.startsWith("/texas-senate/");
 }

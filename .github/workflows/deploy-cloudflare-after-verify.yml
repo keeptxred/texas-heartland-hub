@@ -431,7 +431,21 @@ jobs:
           PY
           }
 
-          verify_reference "$PREVIEW_URL/elections/reference.json" election
+          # Public Election Central (including reference JSON) has been retired.
+          retired_headers="$(mktemp)"
+          retired_body="$(mktemp)"
+          retired_status="$(curl --retry 8 --retry-delay 2 --retry-all-errors --silent --show-error \
+            -D "$retired_headers" -o "$retired_body" -w '%{http_code}' \
+            "$PREVIEW_URL/elections/reference.json")"
+          if [ "$retired_status" != "410" ]; then
+            echo "::error title=Retired election reference still public::Expected 410, got $retired_status"
+            exit 1
+          fi
+          if ! grep -iq '^x-robots-tag:.*noindex' "$retired_headers"; then
+            echo "::error title=Retired election reference indexable::Missing noindex response header"
+            exit 1
+          fi
+          rm -f "$retired_headers" "$retired_body"
           verify_reference "$PREVIEW_URL/bills/texas/89/sb/37/reference.json" bill
 
       - name: Verify Keep Texas Red political-geography cluster

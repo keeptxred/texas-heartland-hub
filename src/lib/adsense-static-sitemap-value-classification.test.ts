@@ -18,7 +18,7 @@ const VALUE_CLASSES = {
     "/tools/texas-spending-growth-cap", "/tools/texas-tax-structure-comparison", "/tools/texas-rainy-day-fund", "/tools/texas-budget-headroom",
   ],
   authorityReference: [
-    "/texas-legislature/current-session", "/texas-legislature/votes", "/register-to-vote", "/contact-legislators", "/county-elections",
+    "/texas-legislature/current-session", "/texas-legislature/votes", "/find-representative", "/register-to-vote", "/contact-legislators", "/county-elections",
     "/laws/constitutional-amendments", "/laws/effective-dates", "/glossary", "/citation-guide", "/issues/texas-policy-handbook",
     "/issues/texas-government-accountability-handbook", "/issues/texas-local-government-handbook",
     "/texas-politics/texas-constitutional-history", "/texas-politics/texas-election-history",

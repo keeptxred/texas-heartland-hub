@@ -61,11 +61,11 @@ describe("site navigation", () => {
     }
   });
 
-  it("keeps the canonical election hub discoverable", () => {
-    const elections = SITE_NAV_GROUPS.find((group) => group.id === "elections");
-
-    expect(elections?.href).toBe("/elections/2026");
-    expect(elections?.links.some((link) => "to" in link && link.to === "/elections/2026")).toBe(true);
+  it("does not expose retired Election Central in global navigation", () => {
+    expect(SITE_NAV_GROUPS.map((group) => group.id)).not.toContain("elections");
+    for (const group of SITE_NAV_GROUPS) {
+      expect(group.links.every((link) => !("to" in link && link.to.startsWith("/elections")))).toBe(true);
+    }
   });
 
   it("keeps the Texas Government authority hub globally discoverable", () => {

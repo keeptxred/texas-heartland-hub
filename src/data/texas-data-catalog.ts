@@ -64,7 +64,7 @@ export const TEXAS_DATA_SETS: TexasDataSet[] = [
       { label: "Texas Elections", url: "https://www.sos.state.tx.us/elections/", publisher: "Texas Secretary of State", scope: "State election administration, results, registration, dates, and official guidance" },
       { label: "VoteTexas.gov", url: "https://www.votetexas.gov/", publisher: "Texas Secretary of State", scope: "Voter-facing registration and voting information" },
     ],
-    related: [{ label: "Election Central", href: "/elections/2026" }, { label: "Election Policy Tracker", href: "/policy/elections" }, { label: "Texas Political Reference", href: "/texas-political-reference" }],
+    related: [{ label: "Texas Politics", href: "/texas-politics" }, { label: "Election Policy Tracker", href: "/policy/elections" }, { label: "Texas Political Reference", href: "/texas-political-reference" }],
   },
   {
     slug: "population-demographics",
@@ -79,7 +79,7 @@ export const TEXAS_DATA_SETS: TexasDataSet[] = [
       { label: "Census Data", url: "https://data.census.gov/", publisher: "U.S. Census Bureau", scope: "Decennial Census, ACS, population, housing, and demographic tables" },
       { label: "Texas Demographic Center", url: "https://demographics.texas.gov/", publisher: "Texas Demographic Center", scope: "Texas population estimates, projections, maps, and demographic analysis" },
     ],
-    related: [{ label: "Texas Political Reference", href: "/texas-political-reference" }, { label: "Election Central", href: "/elections/2026" }, { label: "Texas Economy", href: "/texas-economy" }],
+    related: [{ label: "Texas Political Reference", href: "/texas-political-reference" }, { label: "Texas Politics", href: "/texas-politics" }, { label: "Texas Economy", href: "/texas-economy" }],
   },
   {
     slug: "energy-grid",

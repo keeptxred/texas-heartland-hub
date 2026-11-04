@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { renderUrlset } from "@/lib/sitemap-shared";
 
 describe("sitemap search-scope exclusions", () => {
-  it("omits the retired sports route tree while preserving core political URLs", () => {
+  it("omits retired sports and election route trees while preserving legislative URLs", () => {
     const xml = renderUrlset([
       { loc: "https://keeptxred.com/texas-sports" },
       { loc: "https://keeptxred.com/texas-sports/nfl" },
@@ -12,7 +12,7 @@ describe("sitemap search-scope exclusions", () => {
     ]);
 
     expect(xml).not.toContain("/texas-sports");
-    expect(xml).toContain("https://keeptxred.com/elections/2026");
+    expect(xml).not.toContain("https://keeptxred.com/elections/2026");
     expect(xml).toContain("https://keeptxred.com/texas-legislature");
   });
 });

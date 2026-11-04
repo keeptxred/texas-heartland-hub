@@ -47,15 +47,24 @@ RETIRED_DMV_PATHS = {
     "/vehicles/title-transfer",
 }
 
+RETIRED_ELECTION_CENTRAL_PATHS = {
+    "/elections",
+    "/election",
+    "/election-central",
+    "/texas-elections",
+    "/elections-2026",
+    "/candidate-guides",
+    "/texas-news/elections",
+}
+
 EXPECTED_PRIMARY_OWNER = {
-    f"{SITE_ORIGIN}/find-representative": f"{SITE_ORIGIN}/sitemap-elections.xml",
+    f"{SITE_ORIGIN}/find-representative": f"{SITE_ORIGIN}/sitemap-pages.xml",
     f"{SITE_ORIGIN}/bills": f"{SITE_ORIGIN}/sitemap-legislature.xml",
     f"{SITE_ORIGIN}/districts": f"{SITE_ORIGIN}/sitemap-pages.xml",
     f"{SITE_ORIGIN}/representatives": f"{SITE_ORIGIN}/sitemap-pages.xml",
     f"{SITE_ORIGIN}/contact-legislators": f"{SITE_ORIGIN}/sitemap-pages.xml",
     f"{SITE_ORIGIN}/laws": f"{SITE_ORIGIN}/sitemap-pages.xml",
     f"{SITE_ORIGIN}/texas-legislature": f"{SITE_ORIGIN}/sitemap-pages.xml",
-    f"{SITE_ORIGIN}/elections/2026": f"{SITE_ORIGIN}/sitemap-elections.xml",
     f"{SITE_ORIGIN}/texas-government/fifteenth-court-of-appeals": f"{SITE_ORIGIN}/sitemap-government.xml",
 }
 
@@ -181,6 +190,12 @@ def verify_primary_sitemap_ownership(site_url: str | None = None) -> None:
             continue
         child_path = child_url[len(SITE_ORIGIN):]
         locs = fetch_xml(site_url, child_path, "urlset", "sm:url/sm:loc", failures)
+        for loc in locs:
+            for retired_path in RETIRED_ELECTION_CENTRAL_PATHS:
+                url = f"{SITE_ORIGIN}{retired_path}"
+                if loc == url or loc.startswith(f"{url}/"):
+                    failures.append(f"{child_path}: retired Election Central URL remains in sitemap: {loc}")
+                    break
         for canonical_url in ownership:
             if canonical_url in locs:
                 ownership[canonical_url].append(child_url)

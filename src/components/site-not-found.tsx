@@ -7,9 +7,9 @@ const RECOVERY_LINKS = [
     description: "Breaking news, statewide reporting, politics, business, and public affairs.",
   },
   {
-    to: "/elections/2026",
-    label: "Election Central",
-    description: "Texas races, candidates, polls, voting information, forecasts, and results.",
+    to: "/texas-politics",
+    label: "Texas Politics",
+    description: "Texas politics, government accountability and public affairs.",
   },
   {
     to: "/texas-politics",

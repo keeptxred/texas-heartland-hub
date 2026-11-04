@@ -36,9 +36,9 @@ const SUPPORTING_GUIDES = [
     description: "How population growth, turnout and regional margins can produce competition beneath statewide results.",
   },
   {
-    href: "/elections/2026",
-    title: "2026 Texas Election Central",
-    description: "Current verified races, candidates, districts, voting information, polls and results.",
+    href: "/texas-politics",
+    title: "Texas Politics",
+    description: "Texas political reporting, government and policy context.",
   },
 ] as const;
 
@@ -163,7 +163,7 @@ function KeepTexasRedPage() {
           Texas voters choose statewide officials, legislators, judges, members of Congress, county officials, school-board members and local leaders. Primary elections often decide the direction of the Republican Party because many districts are not competitive in November. Runoffs, low-turnout local elections and constitutional-amendment elections can therefore matter as much as the most visible statewide race.
         </p>
         <p>
-          Keep TX Red tracks candidates, races, districts, polls and results through <Link to="/elections/2026" className="text-primary underline">Election Central</Link>. Voters can also use the <Link to="/representatives" className="text-primary underline">representatives directory</Link> to connect campaign promises with an official’s actual record.
+          Keep TX Red covers campaigns, elections, governance, and policy through <Link to="/texas-politics" className="text-primary underline">Texas Politics</Link>. Voters can also use the <Link to="/representatives" className="text-primary underline">representatives directory</Link> to connect campaign promises with an official’s actual record.
         </p>
         <p>
           For the geographic and demographic forces beneath those statewide results, see <Link to="/texas-politics/why-texas-is-politically-competitive" className="text-primary underline">Why Texas Is Politically Competitive</Link>, which connects population growth, turnout, metro and rural margins, changing suburbs, South Texas and redistricting to the statewide electoral map.
@@ -256,7 +256,7 @@ function KeepTexasRedPage() {
           <li><Link to="/texas-politics" className="text-primary hover:underline">Texas politics →</Link></li>
           <li><Link to="/texas-politics/why-texas-is-politically-competitive" className="text-primary hover:underline">Why Texas is politically competitive →</Link></li>
           <li><Link to="/texas-economy" className="text-primary hover:underline">Texas economic policy →</Link></li>
-          <li><Link to="/elections/2026" className="text-primary hover:underline">Election Central →</Link></li>
+          <li><Link to="/texas-politics" className="text-primary hover:underline">Texas Politics →</Link></li>
           <li><Link to="/bills" search={EMPTY_BILLS_SEARCH} className="text-primary hover:underline">Search Texas bills →</Link></li>
           <li><Link to="/about" className="text-primary hover:underline">About Keep TX Red →</Link></li>
         </ul>

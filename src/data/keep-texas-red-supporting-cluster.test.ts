@@ -18,10 +18,6 @@ const realignmentSource = readFileSync(
   new URL("../routes/texas-politics.how-texas-became-republican.tsx", import.meta.url),
   "utf8",
 );
-const electionCentralSource = readFileSync(
-  new URL("../routes/elections.2026.tsx", import.meta.url),
-  "utf8",
-);
 
 const verifiedDeployWorkflow = readFileSync(
   new URL("../../.github/workflows/deploy-cloudflare-after-verify.yml", import.meta.url),
@@ -48,18 +44,17 @@ describe("Keep Texas Red supporting-content cluster", () => {
 
   it("keeps route-based supporting pages linked back to the pillar", () => {
     expect(realignmentSource).toContain('href="/keep-texas-red"');
-    expect(electionCentralSource).toContain('to="/keep-texas-red"');
     expect(competitivenessSource).toContain('href: "/keep-texas-red"');
   });
 
-  it("keeps the pillar linked to the six core supporting guides", () => {
+  it("keeps the pillar linked to the five guides and the Texas Politics hub", () => {
     for (const href of [
       "/texas-politics/texas-political-geography-history",
       "/texas-politics/texas-election-history",
       "/texas-politics/how-texas-became-republican",
       "/texas-politics/texas-urban-suburban-rural-politics-history",
       COMPETITIVENESS_PATH,
-      "/elections/2026",
+      "/texas-politics",
     ]) {
       expect(keepTexasRedSource).toContain(`href: "${href}"`);
     }
