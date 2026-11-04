@@ -74,8 +74,11 @@ jobs:
         run: |
           set -euo pipefail
           bun run typecheck
-          grep -Fq "from './routes/bills.texas.\$legislature.\$billType.\$billNumber.reference[.]json'" src/routeTree.gen.ts
-          grep -Fq "'/bills/texas/\$legislature/\$billType/\$billNumber/reference.json': typeof" src/routeTree.gen.ts
+          grep -Fq "from './routes/api/public/bill-detail'" src/routeTree.gen.ts
+          if grep -Fq "from './routes/bills.texas." src/routeTree.gen.ts; then
+            echo "::error title=Retired bill documents reintroduced::Route tree must not generate standalone bill JSON pages."
+            exit 1
+          fi
 
       - name: SEO validation
         id: seo
