@@ -52,6 +52,54 @@ export const EDITORIAL_REVIEWS: Record<string, EditorialReview> = {
     biography: "Mihaela Pleșa represents Texas House District 70 in parts of Collin County. The official House biography describes her as a vice chair of the Pensions, Investments and Financial Services committee and a member of the Elections committee.",
     identityChecked: "2026-11-04", source: "https://house.texas.gov/members/4345/biography",
   },
+  "brent-money": {
+    name: "Brent Money", office: "Texas House", district: "House District 2", party: "R",
+    officialUrl: "https://house.texas.gov/members/2",
+    biography: "Brent Money represents House District 2, covering Hunt, Hopkins, and Van Zandt counties. His official Texas House biography describes his work as an attorney and business owner. His House member record lists his capitol and district offices and links directly to authored and sponsored legislation; the separate research table on this page distinguishes his different legislative roles and recorded bill outcomes.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/4670/biography",
+  },
+  "will-metcalf": {
+    name: "Will Metcalf", office: "Texas House", district: "House District 16", party: "R",
+    officialUrl: "https://house.texas.gov/members/2900",
+    biography: "Will Metcalf represents House District 16, including the Conroe area of Montgomery County. According to his official Texas House biography, his professional background includes banking and business development, and he earned a criminal-justice degree from Sam Houston State University. The official House record provides legislative and district sources; the searchable 89th Legislature research below separates his authored and sponsored measures from coauthor and cosponsor roles.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/2900/biography",
+  },
+  "tan-parker": {
+    name: "Tan Parker", office: "Texas Senate", district: "Senate District 12", party: "R",
+    officialUrl: "https://senate.texas.gov/member.php?d=12",
+    biography: "Tan Parker represents Senate District 12. His official Texas Senate biography records service in the Texas House from 2007 through 2023, followed by Senate service beginning in 2023, along with business experience and education at the University of Dallas and the London School of Economics. His Senate page documents transportation and criminal-justice committee leadership, while the linked legislative histories distinguish each 89th Legislature bill role.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=12",
+  },
+  "royce-west": {
+    name: "Royce West", office: "Texas Senate", district: "Senate District 23", party: "D",
+    officialUrl: "https://senate.texas.gov/member.php?d=23",
+    biography: "Royce West represents Senate District 23 in the Dallas area and has served in the Texas Senate since 1993, according to the official Senate member record. An attorney and managing partner of West & Associates, he has pursued education and higher-education legislation and is listed as vice chair of the Senate Transportation Committee. This page separates source-recorded authorship, sponsorship, and other legislative roles rather than treating all participation as a vote.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=23",
+  },
+  "joanne-shofner": {
+    name: "Joanne Shofner", office: "Texas House", district: "House District 11", party: "R",
+    officialUrl: "https://house.texas.gov/members/11",
+    biography: "Joanne Shofner represents House District 11, including Nacogdoches, Newton, Panola, Rusk, Shelby, and Sabine counties. Her official Texas House biography identifies her 89th Legislature committee appointments to Higher Education and Public Health, and describes work on House Bill 25. The accompanying bill-research records use the original Texas Legislature histories to distinguish individual bill roles and outcomes from statements about votes or overall legislative totals.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/4755/biography",
+  },
+  "lois-kolkhorst": {
+    name: "Lois Kolkhorst", office: "Texas Senate", district: "Senate District 18", party: "R",
+    officialUrl: "https://senate.texas.gov/member.php?d=18",
+    biography: "Lois Kolkhorst represents Senate District 18 and is based in Brenham. The official Senate biography documents her Texas House service from 2001 to 2014, Senate service since 2014, a business background, and a degree from Texas Christian University. Her Senate responsibilities include Health and Human Services, and the official member page links legislative activity to independently checkable Texas Legislature bill histories and recorded outcomes.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=18",
+  },
+  "richard-hayes": {
+    name: "Richard Hayes", office: "Texas House", district: "House District 57", party: "R",
+    officialUrl: "https://house.texas.gov/members/4165",
+    biography: "Richard Hayes represents House District 57 in Denton County. The official Texas House biography describes his election in 2022, work as a business and real-estate attorney, and education at Texas Christian University, Texas A&M University, and St. Mary's University School of Law. During the 89th Legislature he was appointed to the Judiciary and Civil Jurisprudence, pensions and financial-services, and Governmental Oversight committees; linked bill histories document his distinct legislative roles.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/4165/biography",
+  },
+  "cesar-blanco": {
+    name: "César Blanco", office: "Texas Senate", district: "Senate District 29", party: "D",
+    officialUrl: "https://senate.texas.gov/member.php?d=29",
+    biography: "César Blanco represents Senate District 29, covering El Paso and several West Texas counties. His official Senate biography describes his Navy service, degree from the University of Texas at El Paso, Texas House service from 2015 through 2021, and Senate service beginning in 2021. His official committee work spans business, health, natural resources, and disaster preparedness; the legislative sample provides primary-source links for specific bills and distinguishes each recorded role.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=29",
+  },
 };
 
 export const SIX_PROFILE_PILOT = [
