@@ -39,12 +39,12 @@ function LegislatureHubRoute() {
           Follow the elections that determine the next Texas Legislature
         </h2>
         <p className="mt-3 max-w-3xl leading-7 text-muted-foreground">
-          Election Central connects legislative districts and offices to verified 2026 races and published candidate profiles.
+          Explore the Legislature, its districts, serving representatives, and current legislation through permanent reference resources.
         </p>
         <div className="mt-5 flex flex-wrap gap-x-6 gap-y-3 font-semibold">
-          <Link to="/elections/2026" className="text-primary hover:underline">2026 Texas Election Central →</Link>
-          <Link to="/elections/candidates" className="text-primary hover:underline">Browse verified Texas candidates →</Link>
-          <Link to="/elections/legislative" className="text-primary hover:underline">Texas legislative races →</Link>
+          <Link to="/representatives" className="text-primary hover:underline">Serving Texas Representatives →</Link>
+          <Link to="/bills" className="text-primary hover:underline">Track Texas Bills →</Link>
+          <Link to="/districts" className="text-primary hover:underline">Texas legislative districts →</Link>
         </div>
       </div>
     </section>
