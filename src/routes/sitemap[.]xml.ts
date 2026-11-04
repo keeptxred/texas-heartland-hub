@@ -9,8 +9,8 @@ import { BASE_URL, xmlEscape, xmlResponse } from "@/lib/sitemap-shared";
  * The root sitemap must remain available even when optional database, catalog,
  * or byline services are cold or unavailable. Child sitemap routes own their
  * data fetching and may return an empty but valid urlset when they have no
- * eligible entries. Bulk district, representative, and bill-detail sitemaps
- * remain intentionally unadvertised to protect crawl budget.
+ * eligible entries. Bulk district and bill-detail sitemaps remain unadvertised. The
+ * representatives sitemap advertises only specifically certified profiles.
  *
  * sitemap-priority.xml is a derivative discovery feed: every URL it advertises
  * must also be canonically owned by one of the primary child sitemaps.
@@ -27,6 +27,7 @@ const ADVERTISED_SITEMAPS = [
   "sitemap-political-geography.xml",
   "sitemap-party-representation.xml",
   "sitemap-legislature.xml",
+  "sitemap-representatives.xml",
   "sitemap-committees.xml",
   "sitemap-authors.xml",
   "sitemap-products.xml",
