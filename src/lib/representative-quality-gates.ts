@@ -52,6 +52,30 @@ export const EDITORIAL_REVIEWS: Record<string, EditorialReview> = {
     biography: "Mihaela Pleșa represents Texas House District 70 in parts of Collin County. The official House biography describes her as a vice chair of the Pensions, Investments and Financial Services committee and a member of the Elections committee.",
     identityChecked: "2026-11-04", source: "https://house.texas.gov/members/4345/biography",
   },
+  "denise-villalobos": {
+    name: "Denise Villalobos", office: "Texas House", district: "House District 34", party: "R",
+    officialUrl: "https://house.texas.gov/members/4770",
+    biography: "Denise Villalobos represents Texas House District 34 in part of Nueces County, where she grew up in Corpus Christi. Her official Texas House biography describes her engineering education at Texas A&M University–Kingsville and master's degree in business at Texas Tech University, followed by refinery reliability and oil-and-gas project management. She previously served on the Tuloso-Midway school board and joined the House in 2025. Her 89th-session committee appointments include Appropriations, Natural Resources and Local and Consent Calendars; separate source-linked records document individual bill roles and outcomes.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/4770/biography",
+  },
+  "oscar-longoria": {
+    name: "Oscar Longoria", office: "Texas House", district: "House District 35", party: "D",
+    officialUrl: "https://house.texas.gov/members/2485",
+    biography: "Oscar Longoria represents House District 35 in parts of Hidalgo and Cameron counties. His official Texas House biography records degrees from the University of Texas at Austin and UT School of Law, work as an attorney, and previous service on an area utility district and South Texas College board. In the 89th Legislature he chairs the Workforce subcommittee and serves as vice chair of the International Relations subcommittee, in addition to Licensing and Trade, Workforce and Economic Development committees. Official bill histories below identify individual recorded legislative roles and outcomes.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/2485/biography",
+  },
+  "sergio-munoz": {
+    name: "Sergio Muñoz", office: "Texas House", district: "House District 36", party: "D",
+    officialUrl: "https://house.texas.gov/members/2060",
+    biography: "Sergio Muñoz Jr. represents Texas House District 36 in Hidalgo County and was first elected in March 2010. His official Texas House biography describes graduating from Mission High School, earning a business administration degree at the University of Texas at Austin, then a law degree with honors from Thurgood Marshall School of Law. His committee experience includes Insurance, Land and Resource Management and Appropriations, with documented work on regional healthcare and infrastructure. The separate legislative research supplies original bill-role and status citations rather than assuming each bill was his sole sponsorship.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/2060/biography",
+  },
+  "janie-lopez": {
+    name: "Janie Lopez", office: "Texas House", district: "House District 37", party: "R",
+    officialUrl: "https://house.texas.gov/members/4295",
+    biography: "Janie Lopez represents Texas House District 37, which includes Willacy County and part of Cameron County. Her official Texas House biography records her 2022 election, graduation from San Benito High School in 1997, graduate education in mental health and work as a mental healthcare professional serving children, veterans and first responders. Before taking state office she worked in San Benito school district leadership and focused on student achievement and discipline. The linked 89th Legislature research differentiates documented authored, coauthored and sponsored measures and their recorded outcomes.",
+    identityChecked: "2026-11-04", source: "https://house.texas.gov/members/4295/biography",
+  },
   "ryan-guillen": {
     name: "Ryan Guillen", office: "Texas House", district: "House District 31", party: "R",
     officialUrl: "https://house.texas.gov/members/3045",
@@ -398,6 +422,7 @@ export const SCRIPT2_REVIEWED_SLUGS = [
   "angelia-orr", "paul-dyson", "janis-holt",
   "greg-bonnen", "cody-vasut", "matt-morgan", "ron-reynolds", "gary-gates",
   "ryan-guillen", "todd-hunter", "katrina-pierson",
+  "denise-villalobos", "oscar-longoria", "sergio-munoz", "janie-lopez",
   "cecil-bell", "keith-bell", "cole-hefner", "daniel-alders", "jay-dean",
   "cody-harris", "trent-ashby", "brian-harrison", "trey-wharton",
   "steve-toth", "stan-gerdes", "ellen-troxclair", "terry-wilson",
