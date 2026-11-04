@@ -25,7 +25,7 @@ jobs:
             const html=readFileSync("/tmp/ktr-sos.html","utf8");
             const production=JSON.parse(readFileSync("/tmp/ktr-production.json","utf8"));
             console.log("SOS HTML bytes",html.length,"polling progress strings",(html.match(/Polling\\s+Locations\\s+Reporting/gi)||[]).length,"table rows",(html.match(/<tr\\b/gi)||[]).length,"candidate cells",(html.match(/REPUBLICAN|DEMOCRATIC/g)||[]).length);
-            console.log("Raw source head",html.slice(0,450));
+            console.log("Raw source HTML",html);
             const feed=parseOfficialTexasResults(html);
             console.log("Parsed races",feed.races.length,"reporting now",feed.reportingNow,"source timestamp",feed.sourceUpdatedLabel);
             console.log("Parsed first",feed.races.slice(0,15).map(r=>r.title));
