@@ -7,12 +7,13 @@ import {
 import { useElectionRepositories } from "@/lib/elections/repositories";
 import type { RaceListQuery } from "@/types/elections";
 
-export function useElectionRaces(query?: RaceListQuery) {
+export function useElectionRaces(query?: RaceListQuery, options?: { enabled?: boolean }) {
   const { races } = useElectionRepositories();
   const result = useQuery({
     ...electionQueryDefaults,
     queryKey: electionQueryKeys.races.list(query),
     queryFn: () => races.list(query),
+    enabled: options?.enabled ?? true,
     staleTime: electionQueryStaleTimes.races,
   });
 
