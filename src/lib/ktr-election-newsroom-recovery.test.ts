@@ -16,8 +16,8 @@ describe("November 2026 source-first voter guidance", () => {
     expect(component).toContain('if (compact && Date.now() >= Date.parse("2026-11-04T00:00:00-06:00")) return null;');
   });
 
-  it("cross-links official answers from both election and homepage", () => {
-    expect(homepage).toContain("<November2026VotingActionGuide compact />");
+  it("preserves official election source reference without promoting retired homepage widget", () => {
+    expect(homepage).not.toContain("<November2026VotingActionGuide compact />");
     expect(voting).toContain("<November2026VotingActionGuide />");
     expect(component).toContain('to="/elections/voting/polling-place"');
     expect(component).toContain('to="/elections/voting/voter-registration-card"');
