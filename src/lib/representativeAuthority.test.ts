@@ -179,9 +179,12 @@ describe("representative authority pages", () => {
     expect(profile).toContain("houseCommittees");
     expect(routeAuthority).toContain("getHouseCommitteeAssignments");
     expect(routeAuthority).toContain("getRepresentativeAuthority");
-    expect(routeAuthority).toContain('await import("@/data/representative-authority")');
+    expect(routeAuthority).toContain('import("@/data/representative-authority")');
+    expect(routeAuthority).toContain('import("@/lib/representative-quality-gates")');
+    expect(routeAuthority).toContain("certifyRepresentative({");
     expect(profile).toContain("RepresentativePrimarySourceResearch");
-    expect(profile).toContain("certifyRepresentative");
+    expect(profile).toContain("certification, primarySourceResearch");
+    expect(profile).toContain("getRepresentativeAuthorityRouteData({");
     expect(profile).not.toContain('"@type": "ProfilePage"');
   });
 
