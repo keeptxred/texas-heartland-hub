@@ -637,7 +637,7 @@ export const ARTICLES: Article[] = [
     slug: "texas-border-geography-101",
     category: "Border",
     title: "Texas Border Geography 101: The Rio Grande, Ports of Entry, and Sector Maps",
-    dek: "A factual tour of the 1,254-mile border — Border Patrol sectors, international bridges, and the river communities of the Rio Grande Valley, El Paso, and Big Bend.",
+    dek: "Use IBWC boundary treaties, CBP sector and port records, and Texas Comptroller data to understand Texas's border geography, crossings, and river claims.",
     author: "Border Bureau",
     date: "May 27, 2026",
     publishedAt: "2026-05-27T21:00:00",
