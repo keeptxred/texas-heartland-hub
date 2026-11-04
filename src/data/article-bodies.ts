@@ -2169,46 +2169,145 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
 
   "texas-energy-policy-guide": {
-    updated: "2026-06-08",
-    intro: [
-      "Texas produces more energy than any other state and most countries. Three agencies divide the regulatory pie — and almost none of it is what their names suggest.",
+    "updated": "2026-11-04",
+    "editorNote": "Substantively revised November 2026. Institutional duties and federal reliability oversight checked against PUCT, ERCOT and RRC primary materials; earlier blanket claim of no federal jurisdiction removed.",
+    "intro": [
+      "Texas energy policy is not governed by one agency. The state separately regulates oil and natural-gas production, utility service, and operation of much of the electric grid. Understanding which office is responsible matters when a household sees a high bill, an oil operator disputes a permit, or the state debates winter reliability.",
+      "The names can mislead: the Railroad Commission no longer regulates railroads; the Public Utility Commission oversees key utility and electricity-market functions; and ERCOT operates the electric system and wholesale market in its region under oversight rather than serving as a retail electric provider. State jurisdiction also does not eliminate federal reliability requirements for applicable bulk-electric facilities."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "The Three Regulators",
-        table: {
-          headers: ["Agency", "What It Actually Regulates"],
-          rows: [
-            ["Railroad Commission", "Oil, natural gas, pipelines (not railroads since 2005)."],
-            ["Public Utility Commission", "Retail electricity, water, telecom utilities."],
-            ["ERCOT", "Operates the grid that serves about 90% of Texas load."],
-          ],
-        },
+        "heading": "Three institutions, three different jobs",
+        "paragraphs": [
+          "The Railroad Commission of Texas regulates oil and gas exploration and production, pipeline safety for specified intrastate pipelines, and other energy-related activities assigned to it by law. Its name reflects its history, but railroad regulation was transferred away long ago. A Railroad Commission permit is not a household electric-rate ruling.",
+          "The Public Utility Commission of Texas is a state regulator with authority over electric utilities, competitive-electricity market rules and specific water and telecommunications matters, depending on the governing statute and provider. ERCOT is the independent system operator for most of the Texas grid, managing system balancing and wholesale settlements. These are not three interchangeable customer-service offices.",
+          "For a dispute, identify the product and actor first: a producing well, an oil-and-gas pipeline, a transmission line, a wholesale generator, a retail electricity contract, or a municipally owned utility may fall under different authorities."
+        ]
       },
       {
-        heading: "Why Texas Has Its Own Grid",
-        paragraphs: [
-          "ERCOT covers most of Texas as an electrical island, deliberately kept separate from the Eastern and Western Interconnections so federal regulators have no jurisdiction.",
-        ],
-      },
-    ],
-    faq: [
-      {
-        q: "Does Texas import electricity?",
-        a: "ERCOT is largely self-contained, though small DC ties exist with the Eastern grid and Mexico.",
+        "heading": "What ERCOT operates and what it does not own",
+        "paragraphs": [
+          "ERCOT coordinates electric power flows for the bulk of Texas load, administers the competitive wholesale electricity market in its region, and supports retail choice transactions in eligible areas. The Texas Legislature and PUCT set the governing framework, while ERCOT's board and stakeholder processes administer technical rules within that framework.",
+          "ERCOT does not itself own most power plants, transmission lines, neighborhood wires, or individual retail customer accounts. Generators build and run facilities, transmission and distribution utilities maintain physical networks, and retail electric providers bill many competitive-market consumers. Distinguishing the system operator from those companies prevents accountability from being assigned to the wrong organization.",
+          "An ERCOT system notice can describe reserves, scarcity, transmission constraints, and operational action, but a consumer asking about a damaged neighborhood line generally needs the transmission-and-distribution utility identified by the electricity account or outage map."
+        ]
       },
       {
-        q: "Who sets electricity prices?",
-        a: "In deregulated areas, the PUC supervises a competitive retail market; you pick your provider.",
+        "heading": "Why most, but not all, Texans are served by the ERCOT grid",
+        "paragraphs": [
+          "The ERCOT interconnection is electrically distinct from much of the Eastern and Western Interconnections, with limited ties and operational arrangements. It serves roughly 90 percent of Texas electric load, not every Texas address. Parts of the state rely on electric systems outside ERCOT, and their market and oversight arrangements can differ.",
+          "Some cities own utilities and some areas are served by electric cooperatives rather than competitive retail providers. A resident should check the provider and utility service territory before assuming they can select among retail plans, enter an ERCOT-specific complaint path, or use a particular wholesale-price explanation."
+        ]
       },
+      {
+        "heading": "State authority and federal reliability oversight coexist",
+        "paragraphs": [
+          "Texas policy has long placed substantial responsibility for much of its intrastate electricity market with state institutions. But the broad assertion that federal regulators have no authority over Texas's grid is incorrect. ERCOT's own compliance guidance states that applicable bulk-electric-system owners and operators are subject to federal requirements and oversight involving FERC, the North American Electric Reliability Corporation, and Texas Reliability Entity.",
+          "A useful distinction is between the jurisdiction for particular wholesale transactions or retail market decisions and the enforceable reliability standards applicable to qualifying facilities. The PUCT also administers Texas statutory requirements and oversees ERCOT protocols and other binding market documents. This overlapping framework should be described issue by issue, not with a blanket 'exempt from all federal regulation' claim."
+        ]
+      },
+      {
+        "heading": "Who sets retail bills and electricity-market rules?",
+        "paragraphs": [
+          "In retail-choice areas, customers often select a retail electric provider and contract plan while a transmission-and-distribution utility maintains physical delivery service. Contract rate terms, usage, regulated delivery charges, taxes and fees can all contribute to an actual bill. It is inaccurate to say ERCOT directly sets what each household must pay.",
+          "PUCT rules and state laws govern key aspects of retail competition, customer protections, and utility regulation. In municipal and cooperative territories, rates and governance may involve the utility's governing board and different statutory arrangements. Start by identifying the utility type, then read the applicable tariff or terms before comparing providers or filing a complaint.",
+          "Wholesale prices can affect costs passed through contracts or utility procurement, but consumers should distinguish spot-market movements from fixed-rate retail plans. A statewide price headline without a contract description is not a reliable estimate of a particular Texan's bill."
+        ]
+      },
+      {
+        "heading": "Oil, gas, and pipeline regulation are separate from electric-grid dispatch",
+        "paragraphs": [
+          "Railroad Commission records concern many state oil-and-gas production and pipeline matters, including permits and compliance. PUCT and ERCOT information concern different portions of the electricity sector. The agencies interact indirectly because natural gas is a major power-generation fuel, but a gas-well permit does not authorize ERCOT to dispatch an electric generator.",
+          "Energy policy discussions should specify whether the question is about upstream fuel production, gas transportation, a generating plant, an electric transmission line, utility customers, or the overall grid. Each can involve more than one regulator and additional environmental, federal or local legal obligations."
+        ]
+      },
+      {
+        "heading": "Reliability involves both physical equipment and market incentives",
+        "paragraphs": [
+          "Grid reliability depends on generation availability, demand forecasts, transmission constraints, weatherization, fuel supply, and operator procedures. A legislative proposal that funds dispatchable capacity addresses a different mechanism from a rule governing generator maintenance, transmission upgrades, or emergency conservation communications.",
+          "When evaluating a reliability proposal, ask which failure mode it targets, which entity must comply, how the cost is recovered, and what public record will demonstrate completion. Do not assume that installing one type of generation or changing one pricing mechanism eliminates every potential outage cause.",
+          "ERCOT publishes system conditions and market reports; PUCT posts rulemaking, orders and meetings; and the Legislature publishes bills and committee testimony. The strongest analysis traces a proposal to those records rather than repeating generalized grid talking points."
+        ]
+      },
+      {
+        "heading": "How legislation and appointments affect energy policy",
+        "paragraphs": [
+          "The Legislature may amend the Public Utility Regulatory Act and other state statutes, create reporting requirements, change financing mechanisms, or define the scope of agencies' responsibilities. The governor and state appointment processes can affect leadership and oversight. Proposed legislation is not binding law simply because it passed a committee or received a news conference.",
+          "Use Texas Legislature Online to see a bill's filed text, amendments, committee referrals, votes and final status. Then check the PUCT docket or rulemaking adopted under that law. A new statute may require agencies to develop implementation rules before a practical change reaches the market."
+        ]
+      },
+      {
+        "heading": "A source-first checklist for an energy-policy claim",
+        "bullets": [
+          "Identify the issue precisely: retail customer pricing, wholesale dispatch, power-plant permitting, oil-and-gas activity, line maintenance, or reliability compliance.",
+          "Read the responsible body's official statute, rule, tariff, docket, protocol or hearing record.",
+          "Verify whether the location is in the ERCOT service region and whether the customer has retail choice.",
+          "Separate proposals and legislative testimony from laws, adopted orders and actual enforcement actions.",
+          "Compare the claimed cost or benefit with the dated filing and explain what the evidence does not show.",
+          "Check which layer of state and federal oversight applies instead of saying either one has no role."
+        ]
+      },
+      {
+        "heading": "What to monitor after a major policy announcement",
+        "paragraphs": [
+          "A durable energy-policy guide should show how to follow the outcome, not merely recap a press release. Look for the enacted bill and effective date, agency rulemaking notice, docket filings, published ERCOT protocols or compliance deadlines, and any independent audit or enforcement report.",
+          "Use official meeting archives and public data where available. Note whether a quoted forecast concerns summer reserves, winter resources, fuel availability or long-term demand; these are distinct analytical products. For future coverage, link to the primary document and preserve the date of the forecast rather than presenting an older scenario as newly issued."
+        ]
+      }
     ],
-    sources: [
-      { label: "Texas Railroad Commission", url: "https://www.rrc.texas.gov/" },
-      { label: "Public Utility Commission of Texas", url: "https://www.puc.texas.gov/" },
-      { label: "ERCOT", url: "https://www.ercot.com/" },
+    "faq": [
+      {
+        "q": "Is the Railroad Commission responsible for Texas railroads today?",
+        "a": "No. Despite its historical name, the Railroad Commission now primarily regulates oil and gas, specified pipeline matters, and other assigned energy functions; rail oversight was transferred to other agencies."
+      },
+      {
+        "q": "Does ERCOT set my household electricity price?",
+        "a": "ERCOT administers wholesale-market and grid functions in its region. Your billed price depends on the retail contract or utility tariff, delivery charges, usage and applicable rules. ERCOT is generally not your retail electricity provider."
+      },
+      {
+        "q": "Is the ERCOT grid exempt from every federal regulation?",
+        "a": "No. ERCOT's own compliance guidance describes federal reliability oversight of qualifying bulk-electric-system facilities by FERC, NERC and Texas RE. The applicable authority depends on the issue and facility."
+      },
+      {
+        "q": "Who oversees ERCOT?",
+        "a": "The Public Utility Commission of Texas has jurisdiction over ERCOT activities under state law, and the Texas Legislature establishes the legal framework. ERCOT has a board and technical stakeholder processes."
+      }
     ],
-    related: ["texas-grid-ercot-explained", "texas-energy-economy-overview", "texas-water-rights-explained"],
-    cta: { label: "See Energy Coverage", href: "/news" },
+    "sources": [
+      {
+        "label": "ERCOT — Governance and PUCT Oversight",
+        "url": "https://www.ercot.com/about/governance"
+      },
+      {
+        "label": "ERCOT — Compliance in ERCOT",
+        "url": "https://www.ercot.com/mktrules/compliance"
+      },
+      {
+        "label": "ERCOT — About the Organization",
+        "url": "https://www.ercot.com/about"
+      },
+      {
+        "label": "Railroad Commission — Authority and Jurisdiction",
+        "url": "https://www.rrc.texas.gov/about-us/faqs/rrc-authority-and-jurisdiction"
+      },
+      {
+        "label": "Public Utility Commission of Texas",
+        "url": "https://www.puc.texas.gov/"
+      },
+      {
+        "label": "Texas Legislature Online",
+        "url": "https://capitol.texas.gov/"
+      }
+    ],
+    "related": [
+      "texas-grid-ercot-explained",
+      "texas-energy-economy-overview",
+      "texas-water-rights-explained"
+    ],
+    "cta": {
+      "label": "See Texas Energy and Grid Reporting",
+      "href": "/news"
+    }
   },
 
   "county-appraisal-districts-explained": {
