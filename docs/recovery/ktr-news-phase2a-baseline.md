@@ -11,7 +11,7 @@ This report is a **complete initial URL inventory from the currently accessible 
 - Existing `article_slug_redirects`: **21** aliases.
 - Deduplicated URL ledger: **388** entries (storage counts: {"daily_articles":319,"static_ARTICLES":57,"slug_redirect_alias":12}).
 - Duplicate slugs between Supabase and static registry: 3 (`live-2026-07-07-texas-pitmasters-to-feature-in-new-food-network-competition-series-v3wglp`, `live-2026-07-02-secretary-of-state-releases-july-3-texas-register-detailing-new-state--m0th5w`, `live-2026-06-29-the-history-behind-the-texas-stock-tank-name-bxkvg7`).
-- Provisional dispositions: `A`: 45, `B`: 7, `C`: 305, `D`: 23, `E`: 8.
+- Provisional dispositions: `A`: 43, `B`: 9, `C`: 305, `D`: 23, `E`: 8.
 - GSC impressions/clicks reflect **internal GSC daily mirror through 2026-10-31**, NOT independently certified finalized external GSC and NOT ranking/index verdicts.
 - URL Inspection verdicts are a partial cached sample and may predate the code now serving a URL. Empty cells mean unknown, **not zero indexing**.
 - Source availability, original reporting, live indexability, sitemap membership, HTTP status, duplicates/redirect equivalence, internal link dependencies, social/newsletter references remain to be independently verified before final status.
@@ -50,3 +50,9 @@ This report is a **complete initial URL inventory from the currently accessible 
 - `texas-governor-powers`: specific constitutional limits on appointments, Senate confirmation, veto, special sessions and emergency powers replace unsupported sweeping power claims.
 - `texas-attorney-general-powers`: legal-opinion limits, distinct public/private counsel, local prosecution and child-support versus visitation authority corrected from OAG and Government Code primary documents.
 - Both original historical June 2026 publication timestamps preserved; November 4 substantive revisions. Provisional ledger entries B with `REPAIRED_IN_CODE_PENDING_PRODUCTION`. Finish CI, merge, deployment and newsroom smoke before claiming live correction.
+
+## Targeted school finance and terminology quality improvements
+
+- `texas-school-finance-explained`: removes unverified statewide recapture claim, adds TEA SOF, current FSP formula guidance, state/local funding and school-year evidence methods.
+- `texas-political-terminology`: turns a skeletal list into a differentiated citizen's guide for interpreting official legislative and election actions using Texas Legislative Council and Secretary of State sources.
+- Original May 27, 2026 published timestamps remain; substantive revised November 4. Rows B are repaired **in code only** until protected CI and production checks confirm live publication.
