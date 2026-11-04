@@ -6,7 +6,6 @@ import {
   US_HOUSE_VACANCIES, representativeSlug, type Rep,
 } from "@/data/representatives";
 import { useActiveElectionCycle, useElectionRaces } from "@/hooks/elections";
-import { ELECTION_ROUTES } from "@/lib/elections";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import type { JurisdictionType, RaceSummary } from "@/types/elections";
 
@@ -244,16 +243,18 @@ function FindRepPage() {
                             </p>
                           ) : null}
                           <a
-                            href={ELECTION_ROUTES.race(item.race.slug)}
+                            href="https://www.sos.state.tx.us/elections/"
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="mt-4 inline-block text-sm font-bold text-primary hover:underline"
                           >
-                            View 2026 race →
+                            Official Texas election information →
                           </a>
                           <a
-                            href={ELECTION_ROUTES.district(item.districtSlug)}
+                            href="/districts"
                             className="mt-3 block text-sm font-semibold text-primary hover:underline"
                           >
-                            View district page →
+                            Browse legislative district references →
                           </a>
                         </>
                       ) : (
@@ -269,10 +270,12 @@ function FindRepPage() {
 
               <div className="mt-6 border-t border-foreground/10 pt-5">
                 <a
-                  href={ELECTION_ROUTES.statewide}
+                  href="https://www.sos.state.tx.us/elections/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-sm font-bold text-primary hover:underline"
                 >
-                  View statewide 2026 Texas races that apply to every voter →
+                  Official statewide Texas election information →
                 </a>
               </div>
             </div>
@@ -321,10 +324,10 @@ function FindRepPage() {
             <br />
             <span className="text-xs text-muted-foreground">Get on the rolls</span>
           </Link>
-          <Link to="/elections/2026" className="border-2 border-foreground/10 p-5 hover:border-primary">
-            <strong className="font-display text-xl">Election Central</strong>
+          <Link to="/texas-politics" className="border-2 border-foreground/10 p-5 hover:border-primary">
+            <strong className="font-display text-xl">Texas Politics</strong>
             <br />
-            <span className="text-xs text-muted-foreground">Races, candidates, polls & results</span>
+            <span className="text-xs text-muted-foreground">Political coverage and policy</span>
           </Link>
         </div>
       </div>
