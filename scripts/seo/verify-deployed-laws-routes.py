@@ -6,18 +6,15 @@ import subprocess
 from html.parser import HTMLParser
 from pathlib import Path
 
-from verify_deployed_priority_sitemap import verify_priority_sitemap
+from verify_deployed_priority_sitemap import verify_priority_sitemap, _curl
 
 SITE_URL = os.environ.get("SITE_URL", "https://keeptxred-site.freddy-coppola.workers.dev").rstrip("/")
 DEPLOYMENT_SMOKE_HEADER = "x-keeptxred-deployment-smoke: canonical"
 DEPLOYMENT_SMOKE_REPORT = os.environ.get("DEPLOYMENT_SMOKE_REPORT")
 PARENT_H1 = "Texas Laws Explained:"
 HB1056_PATH = "/bills/texas/89/hb/1056"
-HB1056_CANONICAL = "https://keeptxred.com/bills/texas/89/hb/1056"
 HB1056_ARTICLE_PATH = "/news/texas-gold-silver-legal-tender-hb-1056"
 HB1056_ARTICLE_CANONICAL = f"https://keeptxred.com{HB1056_ARTICLE_PATH}"
-HB1056_ARTICLE_TITLE = "Texas Gold and Silver Legal Tender Law: What HB 1056 Does Sept. 1"
-HB1056_MISSING_ARTICLE_FALLBACK = "KeepTXRed has not linked a related article to this bill yet."
 HB1056_EVERGREEN_SITEMAP_PATH = "/sitemap-evergreen.xml"
 HB1056_IMAGE_ROBOTS_ALLOW = "Allow: /api/public/article-image/"
 CHECKS = [
@@ -141,14 +138,12 @@ def main() -> int:
         "site_url": SITE_URL,
         "routes": [],
         "route_failures": failures,
-        "hb1056_relationship": {
+        "hb1056_retirement": {
             "path": HB1056_PATH,
-            "fetch": "pending",
+            "expected_http_status": 410,
+            "observed_http_status": None,
+            "robots_noindex": False,
             "fetch_error": None,
-            "canonicals": [],
-            "article_link_found": False,
-            "article_title_found": False,
-            "missing_article_fallback_found": False,
         },
         "hb1056_discovery": {
             "article_fetch": "pending",
@@ -243,52 +238,22 @@ def main() -> int:
         print(f"{path}: h1={h1!r} canonical={canonicals!r}")
         write_report(report)
 
-    hb_observation = report["hb1056_relationship"]
+    # Individual bill-detail URLs are intentionally retired; only the
+    # searchable /bills hub remains public. Preserve the related evergreen
+    # article and official bill data API, which are tested separately below.
+    hb_observation = report["hb1056_retirement"]
     try:
-        hb_body = fetch(f"{SITE_URL}{HB1056_PATH}")
-        hb_observation["fetch"] = "ok"
-        hb_parser = PageParser()
-        hb_parser.feed(hb_body)
-        hb_canonicals = [normalize(value) for value in hb_parser.canonicals]
-        hb_observation["canonicals"] = hb_canonicals
-        matching_links = [
-            anchor for anchor in hb_parser.anchors
-            if anchor["href"] == HB1056_ARTICLE_PATH
-        ]
-        visible_text = normalize(" ".join(hb_parser.text_parts))
-        hb_observation["article_link_found"] = bool(matching_links)
-        hb_observation["article_title_found"] = any(
-            HB1056_ARTICLE_TITLE in anchor["text"] for anchor in matching_links
-        )
-        hb_observation["missing_article_fallback_found"] = HB1056_MISSING_ARTICLE_FALLBACK in visible_text
-
-        if hb_canonicals != [HB1056_CANONICAL]:
-            failures.append(
-                f"{HB1056_PATH}: expected one canonical {HB1056_CANONICAL!r}, got {hb_canonicals!r}"
-            )
-        if not hb_observation["article_link_found"]:
-            failures.append(
-                f"{HB1056_PATH}: missing related article link {HB1056_ARTICLE_PATH!r}"
-            )
-        elif not hb_observation["article_title_found"]:
-            failures.append(
-                f"{HB1056_PATH}: related article link is present but title {HB1056_ARTICLE_TITLE!r} is not rendered inside it"
-            )
-        if hb_observation["missing_article_fallback_found"]:
-            failures.append(
-                f"{HB1056_PATH}: stale missing-related-article fallback is still rendered"
-            )
-
-        print(
-            f"{HB1056_PATH}: canonical={hb_canonicals!r} "
-            f"article_link={hb_observation['article_link_found']} "
-            f"article_title={hb_observation['article_title_found']} "
-            f"fallback={hb_observation['missing_article_fallback_found']}"
-        )
+        status, headers, _body = _curl(f"{SITE_URL}{HB1056_PATH}")
+        hb_observation["observed_http_status"] = status
+        hb_observation["robots_noindex"] = "noindex" in headers.lower()
+        if status != 410:
+            failures.append(f"{HB1056_PATH}: expected retired bill HTTP 410, got {status}")
+        if not hb_observation["robots_noindex"]:
+            failures.append(f"{HB1056_PATH}: retired bill response missing X-Robots-Tag noindex")
+        print(f"{HB1056_PATH}: retired_status={status} noindex={hb_observation['robots_noindex']}")
     except RuntimeError as exc:
-        hb_observation["fetch"] = "failed"
         hb_observation["fetch_error"] = str(exc)
-        failures.append(f"{HB1056_PATH}: fetch failed ({exc})")
+        failures.append(f"{HB1056_PATH}: retirement probe failed ({exc})")
     write_report(report)
 
     discovery = report["hb1056_discovery"]
@@ -359,7 +324,7 @@ def main() -> int:
             github_error("Deployed laws route smoke failed", failure)
         raise SystemExit("Deployed laws route smoke failed:\n- " + "\n- ".join(failures))
 
-    print(f"Deployed laws route smoke passed for {len(CHECKS)} routes plus the HB 1056 related article and discovery surfaces on {SITE_URL}.")
+    print(f"Deployed laws route smoke passed for {len(CHECKS)} routes plus the retired HB 1056 URL and evergreen article discovery surfaces on {SITE_URL}.")
     try:
         verify_priority_sitemap(SITE_URL)
         report["priority_sitemap"] = {"status": "passed", "error": None}
