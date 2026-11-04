@@ -4,6 +4,7 @@ import { renderErrorPage } from "./lib/error-page";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 import { isExplicitlyRetiredStaticNewsPath } from "@/lib/retired-static-news";
 import { isRetiredElectionCentralPath } from "@/lib/retired-election-central";
+import { isRetiredBillDocumentPath } from "@/lib/retired-bill-documents";
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
@@ -188,7 +189,7 @@ function isIndexableBillPagination(url: URL): boolean {
   const pathname = normalizePagePath(url.pathname);
   const page = url.searchParams.get("page") ?? "";
   if (!/^[2-9]\d*$/.test(page)) return false;
-  return pathname === "/bills" || /^\/bills\/texas\/\d+\/[a-z]{1,8}$/i.test(pathname);
+  return /^\/bills\/texas\/\d+\/[a-z]{1,8}$/i.test(pathname);
 }
 
 function hasNoindexState(url: URL): boolean {
@@ -203,6 +204,17 @@ function hasNoindexState(url: URL): boolean {
 
 const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
   const url = new URL(request.url);
+  // Keep legislative data/search alive, but retire all old bill HTML documents.
+  if (isRetiredBillDocumentPath(url.pathname)) {
+    return new Response('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex,follow"><title>Bill page retired | KeepTXRed</title></head><body><main><h1>Individual bill page retired</h1><p>This Texas legislative record remains available through the searchable bills database.</p><p><a href="/bills">Open Texas Bill Search</a></p></main></body></html>', {
+      status: 410,
+      headers: {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex, follow",
+        "cache-control": "public, max-age=300",
+      },
+    });
+  }
   // All public Election Central pages and legacy aliases are gone, including
   // /elections/reference.json. Preserve /admin/elections and internal records.
   if (isRetiredElectionCentralPath(url.pathname)) {

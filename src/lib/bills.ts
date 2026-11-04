@@ -4,7 +4,7 @@ import {
   TEXAS_SENATE_MEMBERS,
   representativeSlug,
 } from '@/data/representatives';
-import { publicBillPath } from '@/lib/bill-public-path';
+import { billSearchPath } from '@/lib/bill-public-path';
 import { cachedPublicBill } from '@/lib/public-bill-cache';
 
 const db = supabase as any;
@@ -131,7 +131,7 @@ function resolveSponsorIdentity(sponsor: any) {
 
 export const canonicalBillPath = (
   bill: Pick<Bill, 'legislature_number' | 'bill_type' | 'bill_number'> & Partial<Pick<Bill, 'session_code'>>,
-) => publicBillPath(bill);
+) => billSearchPath(bill);
 
 export const normalizeBillType = (value: string) => value.trim().toLowerCase();
 export const normalizeStatus = (value: string) => value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
