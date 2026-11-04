@@ -6,7 +6,7 @@ import subprocess
 from html.parser import HTMLParser
 from pathlib import Path
 
-from verify_deployed_priority_sitemap import verify_priority_sitemap, _curl
+from verify_deployed_priority_sitemap import verify_priority_sitemap, _curl, _header_values
 
 SITE_URL = os.environ.get("SITE_URL", "https://keeptxred-site.freddy-coppola.workers.dev").rstrip("/")
 DEPLOYMENT_SMOKE_HEADER = "x-keeptxred-deployment-smoke: canonical"
@@ -245,7 +245,9 @@ def main() -> int:
     try:
         status, headers, _body = _curl(f"{SITE_URL}{HB1056_PATH}")
         hb_observation["observed_http_status"] = status
-        hb_observation["robots_noindex"] = "noindex" in headers.lower()
+        hb_observation["robots_noindex"] = any(
+            "noindex" in value.lower() for value in _header_values(headers, "x-robots-tag")
+        )
         if status != 410:
             failures.append(f"{HB1056_PATH}: expected retired bill HTTP 410, got {status}")
         if not hb_observation["robots_noindex"]:
