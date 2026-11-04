@@ -2020,7 +2020,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       "texas-voter-registration-guide",
       "voter-id-surge",
     ],
-    cta: { label: "Find Your Polling Place", href: "/register-to-vote" },
+    cta: { label: "Find Your County Election Office", href: "/county-elections" },
   },
 
   "beginners-guide-texas-elections": {
@@ -3293,7 +3293,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       "primary-vs-general-election",
       "beginners-guide-texas-elections",
     ],
-    cta: { label: "Find Your Polling Place", href: "/register-to-vote" },
+    cta: { label: "Find Your County Election Office", href: "/county-elections" },
   },
 
   "speaker-special-session": {
@@ -3685,7 +3685,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     related: ["school-choice-esa-guide", "voter-id-surge", "primary-vs-general-election"],
-    cta: { label: "Find Your Ballot", href: "/register-to-vote" },
+    cta: { label: "Find County Ballot Resources", href: "/county-elections" },
     keyTakeaways: [
       "87 Texas ISDs have organized parental-rights candidate slates for May.",
       "School boards control curriculum, budget, superintendent, and tax rate.",
