@@ -1,0 +1,64 @@
+name: KTR Phase 2A News Archive Batch Certification
+
+on:
+  schedule:
+    # One small deterministic cohort per day; no post-deploy full-site crawl.
+    - cron: "17 9 * * *"
+  workflow_dispatch:
+    inputs:
+      batch_index:
+        description: "Optional zero-based cohort number; blank selects today's cohort"
+        required: false
+        type: string
+        default: ""
+      batch_size:
+        description: "Number of archived URLs to check (1-40)"
+        required: false
+        type: number
+        default: 25
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ktr-news-archive-phase2a-batch
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Verify bounded archive URL cohort
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out the exact default-branch inventory
+        uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+
+      # Offline verifier tests are run by protected Vitest CI before merge.
+      - name: Read-only production archive/robots/sitemap verification
+        id: verify
+        continue-on-error: true
+        env:
+          BATCH_INDEX: ${{ inputs.batch_index || '' }}
+          BATCH_SIZE: ${{ inputs.batch_size || 25 }}
+          OUTPUT_PATH: reports/news-archive-certification/result.json
+        run: node scripts/seo/certify-news-archive-batch.mjs
+
+      - name: Retain the exact HTTP evidence for this cohort
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ktr-news-archive-phase2a-${{ github.run_id }}
+          path: reports/news-archive-certification/result.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Fail transparently on unexplained production mismatches
+        if: steps.verify.outcome == 'failure'
+        run: |
+          echo "Review the bounded URL ledger artifact and workflow summary." >&2
+          echo "This is not an instruction to bulk noindex, delete or redirect articles." >&2
+          exit 1
