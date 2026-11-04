@@ -12,7 +12,7 @@ const readyRow = {
     updated: "2026-08-19T12:00:00Z",
     sources: [{ label: "Texas Legislature", url: "https://capitol.texas.gov/" }],
   },
-  quality_flags: [] as string[],
+  quality_flags: ["evergreen_authority", "editorial_reviewed", "primary_sources"] as string[],
   image_url: "/api/public/article-image/legislature-example.jpg",
   featured_image_url: "/api/public/article-image/legislature-example.jpg",
   image_generation_status: "ready",
@@ -40,6 +40,20 @@ describe("shouldNoindexCloudArticle", () => {
     expect(shouldNoindexCloudArticle({ ...readyRow, category: "Non-Political" }, true)).toBe(true);
     expect(shouldNoindexCloudArticle({ ...readyRow, content_quality_score: 59 }, true)).toBe(true);
     expect(shouldNoindexCloudArticle({ ...readyRow, source_url: null, body_json: { updated: readyRow.published_at, sources: [] } }, true)).toBe(true);
+  });
+
+  it("does not automatically index AI-generated cloud evergreen drafts", () => {
+    expect(shouldNoindexCloudArticle({
+      ...readyRow, quality_flags: [], kind: "evergreen",
+    }, true)).toBe(true);
+    expect(shouldNoindexCloudArticle({
+      ...readyRow,
+      quality_flags: ["evergreen_authority", "editorial_reviewed", "primary_sources", "editorial_review_required"],
+    }, true)).toBe(true);
+    expect(shouldNoindexCloudArticle({
+      ...readyRow,
+      quality_flags: ["evergreen_authority", "editorial_reviewed", "primary_sources"],
+    }, true)).toBe(false);
   });
 
   it("suppresses ordinary cloud news during search recovery", () => {
