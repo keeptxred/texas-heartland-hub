@@ -35,7 +35,7 @@ export const CONTENT_PILLARS: readonly ContentPillar[] = [
     slug: "texas-elections",
     title: "Texas Elections",
     shortTitle: "Elections",
-    href: "/elections/2026",
+    href: "/texas-politics",
     description: "Texas elections, candidates, races, polling, voting rules, results, and election administration.",
     keywords: /\b(election|primary|runoff|candidate|campaign|ballot|voter|voting|polling place|polls?|precinct|election day|early voting|absentee|mail ballot)\b/i,
     subtopics: ["Candidates", "Races", "Voting rules", "Polling", "Election results", "Election administration"],
