@@ -100,6 +100,54 @@ export const EDITORIAL_REVIEWS: Record<string, EditorialReview> = {
     biography: "César Blanco represents Senate District 29, covering El Paso and several West Texas counties. His official Senate biography describes his Navy service, degree from the University of Texas at El Paso, Texas House service from 2015 through 2021, and Senate service beginning in 2021. His official committee work spans business, health, natural resources, and disaster preparedness; the legislative sample provides primary-source links for specific bills and distinguishes each recorded role.",
     identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=29",
   },
+  "bob-hall": {
+    name: "Bob Hall", office: "Texas Senate", district: "Senate District 2", party: "R",
+    officialUrl: "https://senate.texas.gov/member.php?d=2",
+    biography: "Bob Hall represents Texas Senate District 2, and the official Texas Senate member page lists his service in the Senate beginning in 2015. A retired U.S. Air Force captain, he also worked as an aerospace systems engineer and established a business consulting company. His Senate committee work includes chairing Administration and participation in Finance, Health and Human Services, and State Affairs; individual legislative roles and outcomes are documented below against official bill histories.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=2",
+  },
+  "robert-nichols": {
+    name: "Robert Nichols", office: "Texas Senate", district: "Senate District 3", party: "R",
+    officialUrl: "https://senate.texas.gov/member.php?d=3",
+    biography: "Robert Nichols represents Texas Senate District 3, an East Texas district. According to the official Texas Senate biography, he has served since 2007, holds an industrial engineering degree from Lamar University, and worked in plastics manufacturing. The Senate identifies transportation policy as a central part of his legislative service and lists his roles on Transportation, Finance, Local Government, and Business and Commerce; official bill histories below identify specific recorded legislative roles.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=3",
+  },
+  "charles-schwertner": {
+    name: "Charles Schwertner", office: "Texas Senate", district: "Senate District 5", party: "R",
+    officialUrl: "https://senate.texas.gov/member.php?d=5",
+    biography: "Charles Schwertner represents Texas Senate District 5, covering parts of Central and East Texas. The official Senate biography identifies him as an orthopedic surgeon who earned a pharmacy degree from the University of Texas at Austin and a medical degree from the University of Texas Medical Branch. After serving in the Texas House from 2011 to 2013, he joined the Senate in 2013 and chairs Business and Commerce, with other responsibilities in Finance, State Affairs, and Economic Development.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=5",
+  },
+  "carol-alvarado": {
+    name: "Carol Alvarado", office: "Texas Senate", district: "Senate District 6", party: "D",
+    officialUrl: "https://senate.texas.gov/member.php?d=6",
+    biography: "Carol Alvarado represents Texas Senate District 6 in Harris County. Her official Texas Senate biography documents previous Houston City Council service from 2002 through 2008 and Texas House service beginning in 2009 before she won a 2018 Senate special election. She holds a political-science bachelor's degree and MBA from the University of Houston, chairs the Senate Democratic Caucus, and serves on committees covering finance, economic development, and natural resources.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=6",
+  },
+  "paul-bettencourt": {
+    name: "Paul Bettencourt", office: "Texas Senate", district: "Senate District 7", party: "R",
+    officialUrl: "https://senate.texas.gov/member.php?d=7",
+    biography: "Paul Bettencourt represents Texas Senate District 7 in the Houston area and has served since 2015. According to the Texas Senate's official member biography, he previously served as Harris County tax assessor-collector from 1998 through 2008 and earned an industrial-distribution degree from Texas A&M University. His Senate work includes chairing Local Government and work on property tax, education, finance and transportation legislation; each bill role in the research sample is linked to its original history.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=7",
+  },
+  "angela-paxton": {
+    name: "Angela Paxton", office: "Texas Senate", district: "Senate District 8", party: "R",
+    officialUrl: "https://senate.texas.gov/member.php?d=8",
+    biography: "Angela Paxton represents Texas Senate District 8 and was elected in 2018, beginning service in 2019. Her official Senate biography describes more than two decades as a secondary mathematics teacher and school counselor, a degree from Baylor University, and a graduate education degree from the University of Houston–Clear Lake. She chairs Economic Development and serves as vice chair of State Affairs and the Religious Liberty select committee, with additional duties in finance and education.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=8",
+  },
+  "phil-king": {
+    name: "Phil King", office: "Texas Senate", district: "Senate District 10", party: "R",
+    officialUrl: "https://senate.texas.gov/member.php?d=10",
+    biography: "Phil King represents Texas Senate District 10. The official Texas Senate member biography records his Texas House service from 1999 through 2022 and his Senate service beginning in 2023. An attorney and former Fort Worth police officer, he served in law enforcement for 15 years and holds degrees from Dallas Baptist University and Texas A&M University School of Law. His district encompasses parts of North and West Texas, including Brown and Parker counties.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=10",
+  },
+  "mayes-middleton": {
+    name: "Mayes Middleton", office: "Texas Senate", district: "Senate District 11", party: "R",
+    officialUrl: "https://senate.texas.gov/member.php?d=11",
+    biography: "Mayes Middleton represents Texas Senate District 11, covering portions of Brazoria, Galveston and Harris counties. The Texas Senate biography identifies him as president of an independent oil and gas company, with bachelor's and law degrees from the University of Texas at Austin. He served two terms in the Texas House before joining the Senate in 2023 and was formerly chair of the Texas House Freedom Caucus; his recorded bill roles and outcomes are traceable to individual Texas Legislature histories.",
+    identityChecked: "2026-11-04", source: "https://senate.texas.gov/member.php?d=11",
+  },
 };
 
 export const SIX_PROFILE_PILOT = [
@@ -113,6 +161,8 @@ export const SIX_PROFILE_PILOT = [
 export const SCRIPT2_REVIEWED_SLUGS = [
   "brent-money", "will-metcalf", "tan-parker", "royce-west",
   "joanne-shofner", "lois-kolkhorst", "richard-hayes", "cesar-blanco",
+  "bob-hall", "robert-nichols", "charles-schwertner", "carol-alvarado",
+  "paul-bettencourt", "angela-paxton", "phil-king", "mayes-middleton",
 ] as const;
 
 export const CERTIFICATION_CANDIDATE_SLUGS = [
