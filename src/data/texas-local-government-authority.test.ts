@@ -46,7 +46,8 @@ describe("Texas local government authority pages", () => {
     for (const page of TEXAS_LOCAL_GOVERNMENT_AUTHORITY_PAGES) {
       const hrefs = new Set(page.relatedLinks.map((link) => link.href));
       expect(hrefs.has("/news/2026-08-13-how-texas-county-government-works"), page.slug).toBe(true);
-      expect(hrefs.has("/elections/2026"), page.slug).toBe(true);
+      expect(hrefs.has("/texas-politics"), page.slug).toBe(true);
+      expect([...hrefs].every((href) => !href.startsWith("/elections")), page.slug).toBe(true);
     }
   });
 
