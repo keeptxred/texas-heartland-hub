@@ -55,7 +55,7 @@ export function parseEstimatedCountFeed(
     const { raceId, sourceName, sourceFamily, sourceUrl, updatedAt, percent } = item;
     if (typeof raceId !== "string" || !allowedIds.has(raceId) ||
         typeof sourceName !== "string" || sourceName.trim().length < 2 || sourceName.length > 100 ||
-        typeof sourceFamily !== "string" || !/^[a-z0-9_-]{2,40}$/i.test(sourceFamily) ||
+        typeof sourceFamily !== "string" || !/^[a-z0-9_-]{1,40}$/i.test(sourceFamily) ||
         !safeUrl(sourceUrl) || typeof updatedAt !== "string" ||
         typeof percent !== "number" || !Number.isFinite(percent) || percent < 0 || percent > 100) {
       continue;
