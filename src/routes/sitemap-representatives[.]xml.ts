@@ -1,19 +1,34 @@
-import { createFileRoute } from '@tanstack/react-router';
-import type {} from '@tanstack/react-start';
-import { BASE_URL, renderUrlset, xmlResponse } from '@/lib/sitemap-shared';
+import { createFileRoute } from "@tanstack/react-router";
+import type {} from "@tanstack/react-start";
+import { BASE_URL, renderUrlset, xmlResponse } from "@/lib/sitemap-shared";
+import { getRepresentativeAuthority } from "@/data/representative-authority";
+import { findRepresentativeBySlug } from "@/data/representatives";
+import {
+  SIX_PROFILE_PILOT,
+  applyPilotEditorial,
+  certifyRepresentative,
+} from "@/lib/representative-quality-gates";
 
 /**
- * Keep this historically submitted sitemap valid without advertising the full
- * representative directory. Search Console showed 225 submitted representative
- * URLs while higher-priority hubs and current election pages were still waiting
- * to be crawled. Representative detail pages remain live and internally linked;
- * the canonical directory hub is the only URL promoted here during recovery.
+ * Detail URLs are listed only when they pass the identical six-gate
+ * publication contract used by server-rendered per-profile robots metadata.
+ * Official-source pilot evidence is a bounded, dated snapshot, not an implicit
+ * claim of current activity. Others remain discoverable by internal links but
+ * are intentionally absent from this sitemap during recovery.
  */
-export const Route = createFileRoute('/sitemap-representatives.xml')({
+export const INDEXABLE_REPRESENTATIVE_SLUGS = SIX_PROFILE_PILOT.filter((slug) =>
+  certifyRepresentative({
+    slug,
+    representative: findRepresentativeBySlug(slug),
+    authority: applyPilotEditorial(slug, getRepresentativeAuthority(slug) ?? null),
+  }).state === "AUTHORITY_READY",
+);
+
+export const Route = createFileRoute("/sitemap-representatives.xml")({
   server: {
     handlers: {
       GET: async () => xmlResponse(renderUrlset([
-        { loc: `${BASE_URL}/representatives` },
+        ...INDEXABLE_REPRESENTATIVE_SLUGS.map((slug) => ({ loc: `${BASE_URL}/representatives/${slug}` })),
       ])),
     },
   },
