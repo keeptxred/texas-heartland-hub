@@ -13,8 +13,8 @@ const calledSession = await readFile(new URL('../../supabase/migrations/20260906
 const effectiveDateLoader = await readFile(new URL('../../src/lib/bill-effective-date-provisions.ts', import.meta.url), 'utf8');
 const component = await readFile(new URL('../../src/components/bills/BillEffectiveDates.tsx', import.meta.url), 'utf8');
 const explanation = await readFile(new URL('../../src/components/bills/BillEditorialExplanation.tsx', import.meta.url), 'utf8');
-const regularRoute = await readFile(new URL('../../src/routes/bills/texas/$legislature/$billType/$billNumber.tsx', import.meta.url), 'utf8');
-const calledRoute = await readFile(new URL('../../src/routes/bills/texas/$legislature/$session/$billType/$billNumber.tsx', import.meta.url), 'utf8');
+const billApi = await readFile(new URL('../../src/routes/api/public/bill-detail.ts', import.meta.url), 'utf8');
+const billPanel = await readFile(new URL('../../src/components/bills/BillDetailPanel.tsx', import.meta.url), 'utf8');
 
 const requiredMigrationPatterns = [
   /create table if not exists public\.bill_effective_date_provisions/i,
@@ -81,12 +81,11 @@ if (!/BillEffectiveDates/.test(explanation)) throw new Error('Bill editorial sur
 if (!/initialItem/.test(explanation) || !/initialBill/.test(explanation) || !/initialEffectiveDates/.test(explanation)) throw new Error('Bill editorial surface must accept server-loaded editorial, bill, and effective-date data.');
 if (!/initialRows=\{initialEffectiveDates\}/.test(explanation)) throw new Error('Bill editorial surface must hydrate the effective-date component from route data.');
 
-for (const [label, route] of [['regular', regularRoute], ['called', calledRoute]]) {
-  if (!/getBillEditorialEnrichment/.test(route)) throw new Error(`${label} bill route must preload approved editorial enrichment.`);
-  if (!/getBillEffectiveDateProvisions/.test(route)) throw new Error(`${label} bill route must preload structured effective dates.`);
-  if (!/initialItem=\{editorial\}/.test(route)) throw new Error(`${label} bill route must server-render the reviewed editorial explanation.`);
-  if (!/initialEffectiveDates=\{effectiveDates\}/.test(route)) throw new Error(`${label} bill route must server-render the structured effective-date schedule.`);
-  if (!/editorial\?\.plain_language_summary/.test(route)) throw new Error(`${label} bill route must expose the reviewed summary to bill JSON-LD.`);
+for (const token of ['getBillEditorialEnrichment', 'getBillEffectiveDateProvisions', 'effectiveDates']) {
+  if (!billApi.includes(token)) throw new Error('Bill data API must preserve approved explanations and structured dates: '+token);
+}
+for (const token of ['initialItem={data?.editorial}', 'initialEffectiveDates={data?.effectiveDates}', 'initialBill={bill}']) {
+  if (!billPanel.includes(token)) throw new Error('In-page reader must render reviewed explanations and structured dates: '+token);
 }
 
 console.log('Structured bill effective-date validation passed.');
