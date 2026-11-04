@@ -24,6 +24,10 @@ READY = (
     "joanne-shofner", "lois-kolkhorst", "richard-hayes", "cesar-blanco",
     "bob-hall", "robert-nichols", "charles-schwertner", "carol-alvarado",
     "paul-bettencourt", "angela-paxton", "phil-king", "mayes-middleton",
+    "borris-miles", "sarah-eckhardt", "molly-cook", "nathan-johnson",
+    "joan-huffman", "roland-gutierrez", "chuy-hinojosa", "pete-flores",
+    "donna-campbell", "jose-menendez", "adam-hinojosa", "charles-perry",
+    "brent-hagenbuch", "kevin-sparks",
 )
 NOT_READY = ("dan-crenshaw", "john-cornyn", "greg-abbott", "cody-vasut")
 NS = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
