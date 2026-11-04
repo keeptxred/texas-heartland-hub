@@ -37,9 +37,7 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Validate verifier's offline policy regression tests
-        run: node --test scripts/seo/certify-news-archive-batch.test.mjs
-
+      # Offline verifier tests are run by protected Vitest CI before merge.
       - name: Read-only production archive/robots/sitemap verification
         id: verify
         continue-on-error: true
