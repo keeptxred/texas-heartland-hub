@@ -104,11 +104,16 @@ def fetch(site_url: str) -> tuple[int, str, str]:
     with tempfile.TemporaryDirectory(prefix="ktr-border-verify-") as directory:
         body_path = Path(directory) / "body.html"
         headers_path = Path(directory) / "headers.txt"
+        smoke_header = (
+            ["--header", "x-keeptxred-deployment-smoke: canonical"]
+            if parsed.hostname == "keeptxred-site.freddy-coppola.workers.dev"
+            else []
+        )
         result = subprocess.run(
             [
                 "curl", "--location", "--retry", "2", "--retry-delay", "2",
                 "--connect-timeout", "8", "--max-time", "45",
-                "--silent", "--show-error", "--dump-header", str(headers_path),
+                "--silent", "--show-error", *smoke_header, "--dump-header", str(headers_path),
                 "--output", str(body_path), "--write-out", "%{http_code}", url,
             ],
             capture_output=True, text=True, check=False,
