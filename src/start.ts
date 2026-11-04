@@ -3,6 +3,7 @@ import { createCsrfMiddleware, createStart, createMiddleware } from "@tanstack/r
 import { renderErrorPage } from "./lib/error-page";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 import { isExplicitlyRetiredStaticNewsPath } from "@/lib/retired-static-news";
+import { isRetiredElectionCentralPath } from "@/lib/retired-election-central";
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
@@ -202,6 +203,18 @@ function hasNoindexState(url: URL): boolean {
 
 const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
   const url = new URL(request.url);
+  // All public Election Central pages and legacy aliases are gone, including
+  // /elections/reference.json. Preserve /admin/elections and internal records.
+  if (isRetiredElectionCentralPath(url.pathname)) {
+    return new Response("This page is no longer available.", {
+      status: 410,
+      headers: {
+        "content-type": "text/plain; charset=utf-8",
+        "x-robots-tag": "noindex, nofollow",
+        "cache-control": "public, max-age=300",
+      },
+    });
+  }
   const directHost = url.host.toLowerCase();
   const isDirectDeploymentSmoke =
     directHost === DIRECT_WORKER_HOST
