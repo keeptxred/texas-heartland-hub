@@ -73,7 +73,7 @@ jobs:
           print("First races:", [(r.get("title"),r.get("reportingPercent"),r.get("totalReportedVotes")) for r in races[:7]])
           if source != "Texas Secretary of State":
               raise SystemExit("Not the expected official source")
-          if len(races) < 5 or not any("SENATOR" in title for title in titles) or "GOVERNOR" not in titles:
+          if len(races) < 500 or not any("SENATOR" in title for title in titles) or "GOVERNOR" not in titles:
               raise SystemExit("Parser returned missing or invalid official contests")
           if result.get("stale"):
               raise SystemExit("Provider is stale or blocked")
