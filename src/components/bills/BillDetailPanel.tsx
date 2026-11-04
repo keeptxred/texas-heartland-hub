@@ -3,12 +3,18 @@ import { ExternalLink, X } from 'lucide-react';
 import { publicBillSessionLabel } from '@/lib/bill-public-path';
 import { BillDocumentsPanel } from '@/components/bills/BillDocumentsPanel';
 import { BillEditorialExplanation } from '@/components/bills/BillEditorialExplanation';
+import { BillHearingsAndVotes } from '@/components/bills/BillHearingsAndVotes';
+import { RelatedBillsSection } from '@/components/bills/RelatedBillsSection';
+import type { BillEffectiveDateProvision } from '@/lib/bill-effective-date-provisions';
+import type { RelatedBill } from '@/lib/related-bills';
 import { OfficialBillTextViewer } from '@/components/legislature/OfficialBillTextViewer';
 
 type BillDetailData = {
   bill: any;
-  relations: { sponsors?: any[]; committees?: any[]; actions?: any[]; documents?: any[]; articles?: any[] };
+  relations: { sponsors?: any[]; committees?: any[]; actions?: any[]; documents?: any[]; articles?: any[]; subjects?: any[] };
   editorial: any | null;
+  effectiveDates?: BillEffectiveDateProvision[];
+  relatedBills?: RelatedBill[];
 };
 
 const formatDate = (value?: string | null) => value
@@ -79,7 +85,7 @@ export function BillDetailPanel({ billKey, onClose }: { billKey: string; onClose
         </header>
         {bill.current_status_description ? <section><h3 className="font-bold">Status explanation</h3><p className="mt-2">{bill.current_status_description}</p></section> : null}
         {bill.plain_language_summary || bill.summary || bill.description ? <section><h3 className="font-bold">Bill overview</h3><p className="mt-2 leading-7">{bill.plain_language_summary || bill.summary || bill.description}</p></section> : null}
-        <BillEditorialExplanation billId={bill.id} initialItem={data?.editorial} initialBill={bill} initialDocuments={documents} />
+        <BillEditorialExplanation billId={bill.id} initialItem={data?.editorial} initialBill={bill} initialDocuments={documents} initialEffectiveDates={data?.effectiveDates} />
         <section><h3 className="text-xl font-bold">Sponsors and authors</h3>
           {sponsors.length ? <ul className="mt-3 grid gap-3 sm:grid-cols-2">{sponsors.map((person: any) => <li key={person.id} className="rounded-md border p-3"><strong>{person.sponsor_name}</strong><p className="mt-1 text-xs text-muted-foreground">{[person.sponsor_role, person.party, person.district].filter(Boolean).join(' · ')}</p>{person.sponsor_slug ? <a href={`/representatives/${person.sponsor_slug}`} className="text-sm text-primary underline">Representative profile</a> : null}</li>)}</ul>
             : <p className="mt-2 text-sm text-muted-foreground">No sponsors recorded.</p>}
@@ -88,11 +94,14 @@ export function BillDetailPanel({ billKey, onClose }: { billKey: string; onClose
           {committees.length ? <ol className="mt-3 space-y-3">{committees.map((entry: any) => <li key={entry.id} className="border-l-2 pl-4"><strong>{entry.committee_name || entry.legislative_committees?.committee_name || 'Committee'}</strong><p className="text-sm">{entry.action_description || entry.action_type || 'Activity recorded'}</p>{entry.referred_date ? <p className="text-xs text-muted-foreground">Referred {formatDate(entry.referred_date)}</p> : null}</li>)}</ol>
             : <p className="mt-2 text-sm text-muted-foreground">No committee history recorded.</p>}
         </section>
+        <BillHearingsAndVotes activities={committees} />
         <section><h3 className="text-xl font-bold">Legislative actions</h3>
           {actions.length ? <ol className="mt-3 max-h-[32rem] space-y-3 overflow-y-auto">{actions.map((entry: any) => <li key={entry.id} className="border-l-2 pl-4"><time className="text-sm font-semibold">{formatDate(entry.action_date)}</time><p>{entry.action_text}</p><OfficialSource href={entry.source_url} label="Official action" /></li>)}</ol>
             : <p className="mt-2 text-sm text-muted-foreground">No recorded actions.</p>}
         </section>
         <OfficialBillTextViewer key={bill.id} billIdentifier={bill.bill_identifier} sessionCode={bill.session_code} billType={bill.bill_type} billNumber={bill.bill_number} currentTextUrl={bill.bill_text_url} documents={documents} />
+        {relations?.subjects?.length ? <section><h3 className="text-xl font-bold">Verified subjects</h3><div className="mt-3 flex flex-wrap gap-2">{relations.subjects.map((subject: any) => <span key={subject.id} className="rounded-full border px-3 py-1.5 text-sm">{subject.name}</span>)}</div></section> : null}
+        <RelatedBillsSection bills={data?.relatedBills ?? []} />
         <BillDocumentsPanel documents={documents} fallbackLinks={[bill.bill_text_url && { href: bill.bill_text_url, label: 'Bill text' }, bill.analysis_url && { href: bill.analysis_url, label: 'Official analysis' }, bill.fiscal_note_url && { href: bill.fiscal_note_url, label: 'Fiscal note' }].filter(Boolean) as Array<{ href: string; label: string }>} />
         {articles.length ? <section><h3 className="text-xl font-bold">Verified related coverage</h3><ul className="mt-3 space-y-2">{articles.map((article: any) => <li key={article.id}><a href={`/news/${article.slug}`} className="text-primary underline">{article.title}</a></li>)}</ul></section> : null}
       </div> : null}
