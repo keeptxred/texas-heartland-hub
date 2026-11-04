@@ -2868,44 +2868,147 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
 
   "texas-political-terminology": {
-    updated: "2026-06-20",
-    intro: [
-      "Texas politics has its own dialect. Here is a working glossary of the terms reporters and lobbyists throw around without ever defining.",
+    "updated": "2026-11-04",
+    "editorNote": "Substantively expanded November 2026 as a practical interpretation guide to Texas legislative and election terminology. Definitions checked against Texas Legislative Council, House and Secretary of State glossaries; historic date remains unchanged.",
+    "intro": [
+      "A Texas political headline can use familiar words that describe very different legal steps. A bill 'filed' is not a law passed, a 'committee substitute' can replace the text voters first read, and a 'proposition' on a ballot is not necessarily a constitutional amendment. Those distinctions determine whether a news report accurately describes what government has done.",
+      "This is a working guide for reading official Texas legislative and election records. It focuses on terms that change the meaning of a headline, with a practical way to verify each in Texas Legislature Online, chamber journals, the Texas Legislative Council glossary and Secretary of State election records. For a broader subject dictionary, KTR maintains a separate /glossary."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "Core Terms",
-        bullets: [
-          "Special session — a 30-day session called by the Governor on specific subjects.",
-          "Sunset review — periodic audit that abolishes a state agency unless reauthorized.",
-          "Calendars Committee — the House gatekeeper that schedules floor debate.",
-          "Point of order — a parliamentary objection that can kill a bill on procedure.",
-          "Constitutional amendment — voter-approved change to the Texas Constitution.",
-          "Recapture — Robin Hood redistribution of ISD property tax revenue.",
-          "Compression — state buy-down of school M&O property tax rates.",
-        ],
-      },
-    ],
-    faq: [
-      {
-        q: "What is 'chub'?",
-        a: "House slang for talking a bill to death as a procedural deadline approaches.",
+        "heading": "Filed, referred and reported from committee",
+        "paragraphs": [
+          "Filing means a member has introduced a legislative proposal under the applicable chamber rules. A filed bill can be assigned a bill number and available text without anyone else endorsing its contents. 'Referred' describes assignment to a committee; it does not certify that a hearing has been scheduled or a vote has occurred.",
+          "A committee may consider the proposal, take testimony, adopt amendments or recommend a substitute and issue a report. A favorable committee report signals progress toward another stage, not passage into law. TLO's official history identifies referral, meetings, report dates and later floor actions. When a headline says a bill 'advanced,' name the actual recorded action."
+        ]
       },
       {
-        q: "What is the 'Local & Consent Calendar'?",
-        a: "The House calendar for non-controversial bills, debated under time-limited rules.",
+        "heading": "Bill, joint resolution and constitutional amendment",
+        "paragraphs": [
+          "A bill is a proposed act of legislation. A joint resolution serves different purposes, including proposing a constitutional amendment when the relevant constitutional procedures apply. A constitutional amendment in Texas requires the specified legislative vote and later voter approval on a ballot proposition; it does not become part of the constitution because a single chamber announces support.",
+          "The Texas Legislative Council's glossary distinguishes these instruments. The exact session and measure prefix matter because a House bill, Senate bill and joint resolution can address similar subjects but have different procedural paths. Voters should check the enrolled or adopted language and any ballot order before comparing a campaign summary with the actual legal proposal."
+        ]
       },
+      {
+        "heading": "Committee substitute and floor amendment",
+        "paragraphs": [
+          "A committee substitute is a recommended complete replacement text for a bill or resolution within the relevant subject, rather than a minor amendment to one sentence. The introduced bill may therefore differ substantially from the version that advances. A floor amendment is proposed while a chamber considers a measure according to that chamber's rules.",
+          "To compare promises with action, open the introduced text, committee substitute, floor amendments and final enrolled version. Identify the version date and chamber. A news article that quotes a provision from the original filing but does not inspect a later substitute can be materially misleading."
+        ]
+      },
+      {
+        "heading": "Calendar, point of order and passage",
+        "paragraphs": [
+          "Chamber calendars identify measures scheduled for consideration according to House or Senate procedures. The House Calendars Committee is important to floor scheduling, but a favorable committee report does not guarantee a proposal will be selected. A point of order is a procedural objection raising a claimed rules violation; its consequences depend on the relevant rule and the presiding officer's handling.",
+          "A bill can fail to advance because of scheduling or procedural rules without a recorded final floor vote on the merits. 'Passed the House' means a specific chamber has approved the measure at a particular step, not that the governor has signed it. Consult the chamber journal and TLO actions for the actual disposition rather than assuming every point of order automatically kills a bill."
+        ]
+      },
+      {
+        "heading": "Concurrence, conference committee and enrolled bill",
+        "paragraphs": [
+          "When the House and Senate approve different versions, the originating chamber may concur in amendments or other legislative procedures may be used to reconcile differences. A conference committee is one possible route, but not a universal requirement for every enacted law. A conference report describes the negotiated proposed text under applicable rules.",
+          "An enrolled bill is the final legislative text prepared after the necessary chamber approvals. Governor action and effective-date provisions must still be checked. 'Enrolled' should not be used interchangeably with 'effective'; those are different milestones and can occur on different dates."
+        ]
+      },
+      {
+        "heading": "Regular session, called session and special session",
+        "paragraphs": [
+          "The Texas Legislature meets regularly in odd-numbered years on the schedule set by the Constitution. The governor may convene a special or called session on identified subjects. A regular session can consider a broad legislative agenda within the rules, while a special session has a call and constitutional restrictions relevant to its subject matter and duration.",
+          "Readers should check the specific session identifier. A legislative proposal from an earlier session may be informative history without any present procedural status. When a reporter describes a measure as 'alive this session,' verify that it appears in the current session's bill history rather than recycling a prior bill number."
+        ]
+      },
+      {
+        "heading": "Sunset review and agency reauthorization",
+        "paragraphs": [
+          "Sunset review is a Texas process for periodically evaluating selected state agencies and programs under the Sunset Act and related statutes. Recommendations may include reforms, continuing an agency, or other legislative changes. A Sunset Commission recommendation is not itself an enacted repeal or new law.",
+          "When coverage says an agency 'faces sunset,' identify its review schedule, the Sunset staff report, final commission recommendations and any resulting bill. Actual abolition or continuation depends on the applicable statute and legislative action. This keeps an administrative-review milestone from being confused with a legally effective change."
+        ]
+      },
+      {
+        "heading": "Election precinct, primary, runoff and general election",
+        "paragraphs": [
+          "A county election precinct identifies a geographic election-administration area; a legislative district identifies the voters represented by an elected office. They are not interchangeable. A primary election, party runoff, general election and special election also serve different functions under Texas election law and party nomination procedures.",
+          "A runoff generally occurs when the governing voting rule requires a majority and no candidate receives the necessary votes. A special election is not the same as a runoff. The Secretary of State's official elections glossary and calendar establish precise definitions and applicable dates. When discussing a candidate, specify the election type, office, district, and whether the result is unofficial or canvassed."
+        ]
+      },
+      {
+        "heading": "Canvass, recount, contest and certified result",
+        "paragraphs": [
+          "A canvass is the formal compilation and review of election returns by the authorized canvassing body. A recount follows specific statutory conditions and procedures to retabulate votes; an election contest is a separate court process concerning the election's legal result. These are not the same as ordinary corrections to unofficial election-night reporting.",
+          "Do not describe a news feed's election-night margin as an official certified result before the appropriate canvass. Review county election materials, Secretary of State advisories and the actual court record when disputes arise. A challenge filed in court is a claim requiring judicial action, not itself proof that the election outcome changed."
+        ]
+      },
+      {
+        "heading": "How to translate a Texas political headline into a document check",
+        "bullets": [
+          "Write down the measure prefix, number and session; open its official TLO status/history.",
+          "For 'bill passes,' identify which chamber voted, the version, and whether any further approval is required.",
+          "For 'constitutional amendment,' locate the joint resolution and verify both legislative votes and ballot approval.",
+          "For 'committee approval,' inspect the report, substitute text and next procedural calendar.",
+          "For 'governor signs,' check the enacted act and separate its effective date from the signature date.",
+          "For 'election results,' distinguish unofficial reporting, official canvass, recount and any court contest.",
+          "For 'agency sunset,' identify the staff review, recommendation, enacted continuation bill or applicable expiration provision.",
+          "Keep the relevant source links and dates so readers can reproduce the conclusion."
+        ]
+      }
     ],
-    sources: [
-      { label: "Texas House Rules", url: "https://capitol.texas.gov/" },
-      { label: "Glossary of Legislative Terms", url: "https://www.tlc.texas.gov/" },
+    "faq": [
+      {
+        "q": "Does a bill being referred to committee mean it has passed?",
+        "a": "No. Referral is an early procedural step. A measure still requires the legislative approvals and other steps prescribed for its type."
+      },
+      {
+        "q": "Is a committee substitute just a small edit?",
+        "a": "No. A substitute can replace the proposed text while remaining within the required subject matter. Compare the latest substitute with the original version."
+      },
+      {
+        "q": "Does every bill require a conference committee?",
+        "a": "No. Different House/Senate versions can be handled through concurrence or other permitted processes; a conference is only one possible mechanism."
+      },
+      {
+        "q": "Are election-night totals the same as a canvassed result?",
+        "a": "No. Unofficial election-night reporting can precede the formal canvass and statutory recount or contest procedures."
+      },
+      {
+        "q": "Does a Sunset Commission recommendation abolish an agency immediately?",
+        "a": "No. A recommendation is part of the review and legislative process; the applicable law and enacted legislative actions determine the result."
+      }
     ],
-    related: [
+    "sources": [
+      {
+        "label": "Texas Legislative Council — Legislative Glossary",
+        "url": "https://tlc.texas.gov/glossary"
+      },
+      {
+        "label": "Texas House of Representatives — Legislative Glossary",
+        "url": "https://www.house.texas.gov/glossary"
+      },
+      {
+        "label": "Texas Secretary of State — Election Terminology Glossary",
+        "url": "https://www.sos.state.tx.us/elections/laws/glossary.shtml"
+      },
+      {
+        "label": "Texas Legislature Online — Bills and Actions",
+        "url": "https://capitol.texas.gov/"
+      },
+      {
+        "label": "Texas Constitution Article III — Legislature",
+        "url": "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.3.htm"
+      },
+      {
+        "label": "Texas Sunset Advisory Commission",
+        "url": "https://www.sunset.texas.gov/"
+      }
+    ],
+    "related": [
       "how-a-bill-becomes-texas-law",
-      "texas-constitutional-amendments-guide",
-      "speaker-special-session",
+      "primary-vs-general-election",
+      "texas-constitutional-amendments-guide"
     ],
-    cta: { label: "Browse the Full Glossary", href: "/glossary" },
+    "cta": {
+      "label": "Open KTR's Full Government Glossary",
+      "href": "/glossary"
+    }
   },
 
   "how-texas-counties-spend": {
