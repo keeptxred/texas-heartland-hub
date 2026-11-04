@@ -140,7 +140,7 @@ Only after `readiness.json` reports `"ready": true` should the deployment enviro
 VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE=true
 ```
 
-The same existing `VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE` switch now controls the entire public Election Central experience and defaults to `false`. When OFF, public `/elections` pages return HTTP 410 and are excluded from main navigation, homepage promotion, and the sitemap index. All election route code, records, and `/admin/elections` tools are retained. Set the switch to `true` at build/deploy time to bring the existing public routes and discovery features back; redeploy after changing the switch. The site homepage remains normal while OFF.
+The same existing `VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE` switch now controls the entire public Election Central experience and defaults to `false`. When OFF, public `/elections` pages return HTTP 404 (temporarily unavailable) and are excluded from main navigation, homepage promotion, and the sitemap index. All election route code, records, and `/admin/elections` tools are retained. Set the switch to `true` at build/deploy time to bring the existing public routes and discovery features back; redeploy after changing the switch. The site homepage remains normal while OFF.
 
 ## Browser QA
 

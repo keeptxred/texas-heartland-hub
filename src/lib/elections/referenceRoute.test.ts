@@ -11,7 +11,7 @@ describe("retired public election reference endpoint", () => {
   it("preserves its source data while denying public requests before routing", () => {
     expect(route).toContain("createFileRoute('/elections/reference.json')");
     expect(middleware).toContain("isRetiredElectionCentralPath(url.pathname)");
-    expect(middleware).toContain("status: 410");
+    expect(middleware).toContain("status: 404");
   });
 
   it("does not promote the retired endpoint from public discovery materials", () => {
