@@ -3,14 +3,12 @@ import { MIGRATED_TOOL_CANONICALS } from "./migrated-tool-canonical";
 
 const INTERNAL_REDIRECT_CANONICALS: Readonly<Record<string, string>> = {
   "/about-keep-texas-red": "/about",
-  "/candidate-guides": "/elections/2026",
   "/laws-to-know": "/laws",
   "/legislative-updates": "/bills",
   "/texas-laws": "/laws",
   "/texas-law-policy": "/laws",
   "/texas-news": "/news",
-  "/elections": "/elections/2026",
-  "/voting-locations": "/elections/voting",
+  "/voting-locations": "/register-to-vote",
   "/news/texas-constitutional-amendments-guide": "/laws/constitutional-amendments",
   "/texas-government/texas-court-of-criminal-appeals-history": "/texas-government/court-of-criminal-appeals-history",
   "/find-my-dmv": "https://texasdefined.com/find-my-dmv",
