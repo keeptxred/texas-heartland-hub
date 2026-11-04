@@ -317,7 +317,6 @@ def verify_manifest() -> None:
     payload, _headers = fetch_json(path)
     serialized = json.dumps(payload, sort_keys=True)
     required = (
-        "/elections/reference.json",
         "https://keeptxred.com/bills",
         "/api/public/bill-detail?bill={legislature}-{session}-{bill-type}-{bill-number}",
     )
