@@ -2101,7 +2101,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 33,
     party: "R",
-    website: "https://house.texas.gov/members/33",
+    website: "https://house.texas.gov/members/4715",
     imageUrl: "https://www.house.texas.gov/images/members/4715.jpg?v=2",
     officialCode: null,
     home: "101 E. Rusk St. Suite 201, Rockwall, TX 75087",
@@ -2149,7 +2149,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/33",
+          url: "https://house.texas.gov/members/4715",
         },
         {
           label: "Official member biography",
