@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { loadEstimatedCountFeed, type EstimatedCountProgress } from "@/lib/elections/estimated-count-progress.server";
 import {
   parseOfficialTexasResults,
   sosSourceAgeMinutes,
@@ -8,10 +9,14 @@ import {
 
 const FRESH_MS = 25_000;
 const STALE_FALLBACK_MS = 3 * 60_000;
-let recent: { checkedAt: number; feed: OfficialResultsFeed } | null = null;
-let ongoing: Promise<OfficialResultsFeed> | null = null;
+type EnrichedElectionFeed = OfficialResultsFeed & {
+  estimatedCountStatus: "not_configured" | "available" | "unavailable";
+  races: Array<OfficialResultsFeed["races"][number] & { estimatedVotesCounted: EstimatedCountProgress | null }>;
+};
+let recent: { checkedAt: number; feed: EnrichedElectionFeed } | null = null;
+let ongoing: Promise<EnrichedElectionFeed> | null = null;
 
-async function retrieve(): Promise<OfficialResultsFeed> {
+async function retrieve(): Promise<EnrichedElectionFeed> {
   const upstream = await fetch(TEXAS_SOS_RESULTS_URL, {
     headers: {
       // The SOS/Cloudflare edge has returned truncated 8 KB HTTP 200 documents under election-night load.
@@ -35,7 +40,17 @@ async function retrieve(): Promise<OfficialResultsFeed> {
   if (feed.races.length < 500) {
     throw new Error("Incomplete SOS statewide response: only " + feed.races.length + " races.");
   }
-  return feed;
+  // An estimated-vote provider is optional and must be licensed/authorized.
+  // Never derive a purported "% of votes counted" from SOS polling locations.
+  const estimates = await loadEstimatedCountFeed(feed.races.map((race) => race.id));
+  return {
+    ...feed,
+    estimatedCountStatus: estimates.state,
+    races: feed.races.map((race) => ({
+      ...race,
+      estimatedVotesCounted: estimates.byRace[race.id] ?? null,
+    })),
+  };
 }
 
 function responseFeed(feed: OfficialResultsFeed, stale: boolean, providerError?: string) {
