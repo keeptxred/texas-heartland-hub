@@ -37,9 +37,9 @@ describe('evergreen authority references', () => {
     expect(research).toContain('aria-label');
     expect(research).toContain('scope="col"');
     expect(research).toContain('scope="row"');
-    expect(research).toContain('current-status warning'.replace('current-status warning', 'Current-status warning'));
+    expect(research).toContain('Current-status warning');
     expect(research).toContain('not a real-time declaration of enforceability');
-    expect(research).toContain('method');
+    expect(research).toContain('Method:');
     expect(research).toContain('editorial desk');
     for (const officialRecord of [
       'General_Appropriations_Act_2026_2027.pdf',
