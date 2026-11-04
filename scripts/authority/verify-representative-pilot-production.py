@@ -28,6 +28,7 @@ READY = (
     "joan-huffman", "roland-gutierrez", "chuy-hinojosa", "pete-flores",
     "donna-campbell", "jose-menendez", "adam-hinojosa", "charles-perry",
     "brent-hagenbuch", "kevin-sparks",
+    "angelia-orr", "paul-dyson", "janis-holt",
     "cecil-bell", "keith-bell", "cole-hefner", "daniel-alders", "jay-dean",
     "cody-harris", "trent-ashby", "brian-harrison", "trey-wharton",
     "steve-toth", "stan-gerdes", "ellen-troxclair", "terry-wilson",
