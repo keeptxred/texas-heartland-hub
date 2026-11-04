@@ -55,11 +55,13 @@ describe("shouldNoindexCloudArticle", () => {
     expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", quality_flags: ["search_recovery_authority", "editorial_reviewed"] }, true)).toBe(true);
   });
 
-  it("keeps the automated source-first recovery lane behind normal readiness gates", () => {
+  it("requires editorial approval before a source-first article may become indexable", () => {
     const sourceFirstFlags = ["search_recovery_source_first"];
-    expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", quality_flags: sourceFirstFlags }, true)).toBe(false);
+    const reviewedSourceFirst = [...sourceFirstFlags, "editorial_reviewed", "primary_sources"];
+    expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", quality_flags: sourceFirstFlags }, true)).toBe(true);
+    expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", quality_flags: reviewedSourceFirst }, true)).toBe(false);
     expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", content_quality_score: 59, quality_flags: sourceFirstFlags }, true)).toBe(true);
-    expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", image_generation_status: "failed", quality_flags: sourceFirstFlags }, true)).toBe(false);
+    expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", image_generation_status: "failed", quality_flags: reviewedSourceFirst }, true)).toBe(false);
     expect(shouldNoindexCloudArticle({ ...readyRow, kind: "news", quality_flags: ["search_recovery_source_first", "seo_duplicate"] }, true)).toBe(true);
   });
 
@@ -88,7 +90,11 @@ describe("shouldNoindexCloudArticle", () => {
   });
 
   it("rejects stale source-first flags without an actual official source URL", () => {
-    const sourceFirst = { ...readyRow, kind: "news", quality_flags: ["search_recovery_source_first"] };
+    const sourceFirst = {
+      ...readyRow,
+      kind: "news",
+      quality_flags: ["search_recovery_source_first", "editorial_reviewed", "primary_sources"],
+    };
     expect(shouldNoindexCloudArticle(sourceFirst, true)).toBe(false);
     expect(shouldNoindexCloudArticle({
       ...sourceFirst,
