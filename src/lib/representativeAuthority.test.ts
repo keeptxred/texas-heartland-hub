@@ -45,7 +45,7 @@ describe("representative authority pages", () => {
   });
 
   it("publishes profile, person, bill-list, and breadcrumb schema", () => {
-    for (const type of ["ProfilePage", "Person", "ItemList", "BreadcrumbList"]) {
+    for (const type of ["WebPage", "Person", "ItemList", "BreadcrumbList"]) {
       expect(profile).toContain(`"@type": "${type}"`);
     }
   });
@@ -176,8 +176,9 @@ describe("representative authority pages", () => {
     expect(routeAuthority).toContain("getHouseCommitteeAssignments");
     expect(routeAuthority).toContain("getRepresentativeAuthority");
     expect(routeAuthority).toContain('await import("@/data/representative-authority")');
-    expect(profile).toContain("Official House directory and committee assignments");
-    expect(profile).toContain("Federal Election Commission candidate records");
+    expect(profile).toContain("RepresentativePrimarySourceResearch");
+    expect(profile).toContain("certifyRepresentative");
+    expect(profile).not.toContain('"@type": "ProfilePage"');
   });
 
   it("replaces verification notices with sourced editorial profiles for the first expansion batch", () => {
