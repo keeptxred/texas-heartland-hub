@@ -238,6 +238,7 @@ function houseRoster(html) {
         "Keresa Richardson:61": "4735",
         "Ben Bumgarner:63": "4125",
         "Andy Hopper:64": "4555",
+        "Matt Shaheen:66": "2995",
       })[`${reverseHouseName(member.member_name)}:${Number(member.id)}`] ?? member.member_bill_code}`,
       imageUrl: new URL(member.image, "https://house.texas.gov/").href,
     }))

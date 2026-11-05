@@ -1,0 +1,42 @@
+{
+  "reviewedAt": "2026-11-05",
+  "status": "SOURCE_REVIEWED_NOT_CERTIFIED",
+  "profiles": [
+    {
+      "slug": "matt-shaheen",
+      "office": "Texas House",
+      "district": "House District 66",
+      "party": "R",
+      "memberUrl": "https://house.texas.gov/members/2995",
+      "biographyUrl": "https://house.texas.gov/members/2995/biography",
+      "biography": "Matt Shaheen represents the western Collin County communities of Texas House District 66. His official House biography documents former Collin County Commissioners Court service, professional technology work, and chairmanship of Elections with current Higher Education and Sunset roles."
+    },
+    {
+      "slug": "jeff-leach",
+      "office": "Texas House",
+      "district": "House District 67",
+      "party": "R",
+      "memberUrl": "https://house.texas.gov/members/2475",
+      "biographyUrl": "https://house.texas.gov/members/2475/biography",
+      "biography": "Jeff Leach represents District 67 in Collin County. His official House biography documents his legal education at Baylor and Southern Methodist, civil-litigation practice, and work chairing Judiciary and Civil Jurisprudence while serving on the Public Education and Calendars committees."
+    },
+    {
+      "slug": "david-spiller",
+      "office": "Texas House",
+      "district": "House District 68",
+      "party": "R",
+      "memberUrl": "https://house.texas.gov/members/4075",
+      "biographyUrl": "https://house.texas.gov/members/4075/biography",
+      "biography": "David Spiller represents a twelve-county district stretching across rural North and Central Texas. His official House biography identifies his Jacksboro roots, University of Texas and St. Mary's degrees, legal practice, and 26 years of Jacksboro ISD trusteeship."
+    },
+    {
+      "slug": "james-frank",
+      "office": "Texas House",
+      "district": "House District 69",
+      "party": "R",
+      "memberUrl": "https://house.texas.gov/members/2385",
+      "biographyUrl": "https://house.texas.gov/members/2385/biography",
+      "biography": "James Frank represents the Wichita Falls area and additional Northwest Texas counties in District 69. His official House biography records a finance degree, banking experience, manufacturing businesses, past chairmanship of Human Services, and 89th Legislature work on Public Education and Public Health."
+    }
+  ]
+}

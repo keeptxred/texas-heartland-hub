@@ -4281,17 +4281,17 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 66,
     party: "R",
-    website: "https://house.texas.gov/members/66",
+    website: "https://house.texas.gov/members/2995",
     imageUrl: "https://house.texas.gov/images/members/2995.jpg?v=1",
     officialCode: null,
-    home: "TX",
+    home: null,
     phone: "512-463-0594",
     capitolAddress: "Room GS.6, P.O. Box 12910, Austin, TX 78711",
-    districtAddress: "TX",
+    districtAddress: null,
     vacant: false,
     authority: {
       slug: "matt-shaheen",
-      reviewedAt: "2026-07-31",
+      reviewedAt: "2026-11-05",
       biography:
         "Matt Shaheen is the current Representative for Texas House District 66. This authority profile consolidates the official member page, current committee assignments, legislative service, contact information, campaign-finance lookup, and district sources.",
       career: [
@@ -4321,7 +4321,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/66",
+          url: "https://house.texas.gov/members/2995",
         },
         {
           label: "Official member biography",
@@ -4354,7 +4354,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     vacant: false,
     authority: {
       slug: "jeff-leach",
-      reviewedAt: "2026-07-31",
+      reviewedAt: "2026-11-05",
       biography:
         "Jeff Leach is the current Representative for Texas House District 67. This authority profile consolidates the official member page, current committee assignments, legislative service, contact information, campaign-finance lookup, and district sources.",
       career: [
@@ -4410,20 +4410,20 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     website: "https://house.texas.gov/members/4075",
     imageUrl: "https://house.texas.gov/images/members/4075.jpg?v=1",
     officialCode: null,
-    home: "110 E. Pecan St., Gainesville, TX 76240",
+    home: "100 E. Pecan Street, Gainesville, TX 76240",
     phone: "512-463-0526",
     capitolAddress: "Room E1.302, P.O. Box 12910, Austin, TX 78711",
-    districtAddress: "110 E. Pecan St., Gainesville, TX 76240",
+    districtAddress: "100 E. Pecan Street, Gainesville, TX 76240",
     vacant: false,
     authority: {
       slug: "david-spiller",
-      reviewedAt: "2026-07-31",
+      reviewedAt: "2026-11-05",
       biography:
         "David Spiller is the current Representative for Texas House District 68. This authority profile consolidates the official member page, current committee assignments, legislative service, contact information, campaign-finance lookup, and district sources.",
       career: [
         "Serving as Representative for Texas House District 68 since 2021-03-09.",
         "Capitol office: Room E1.302, P.O. Box 12910, Austin, TX 78711",
-        "District office: 110 E. Pecan St., Gainesville, TX 76240",
+        "District office: 100 E. Pecan Street, Gainesville, TX 76240",
       ],
       education: [
         "Consult the linked official biography for published education and professional credentials; no independent credential claim is added here.",
@@ -4485,7 +4485,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     vacant: false,
     authority: {
       slug: "james-frank",
-      reviewedAt: "2026-07-31",
+      reviewedAt: "2026-11-05",
       biography:
         "James Frank is the current Representative for Texas House District 69. This authority profile consolidates the official member page, current committee assignments, legislative service, contact information, campaign-finance lookup, and district sources.",
       career: [
