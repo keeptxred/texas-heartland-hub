@@ -11,7 +11,7 @@ This report is a **complete initial URL inventory from the currently accessible 
 - Existing `article_slug_redirects`: **21** aliases.
 - Deduplicated URL ledger: **388** entries (storage counts: {"daily_articles":319,"static_ARTICLES":57,"slug_redirect_alias":12}).
 - Duplicate slugs between Supabase and static registry: 3 (`live-2026-07-07-texas-pitmasters-to-feature-in-new-food-network-competition-series-v3wglp`, `live-2026-07-02-secretary-of-state-releases-july-3-texas-register-detailing-new-state--m0th5w`, `live-2026-06-29-the-history-behind-the-texas-stock-tank-name-bxkvg7`).
-- Provisional dispositions: `A`: 39, `B`: 13, `C`: 305, `D`: 23, `E`: 8.
+- Provisional dispositions in the **latest ledger**, after November 5 geographically invalid redirect correction: `A`: 39, `B`: 13, `C`: 305, `D`: 22, `E`: 9 (388 URLs). Original November 4 starting snapshot had `D`: 23, `E`: 8. These are editorial triage labels, not certified Google-index counts.
 - GSC impressions/clicks reflect **internal GSC daily mirror through 2026-10-31**, NOT independently certified finalized external GSC and NOT ranking/index verdicts.
 - URL Inspection verdicts are a partial cached sample and may predate the code now serving a URL. Empty cells mean unknown, **not zero indexing**.
 - Source availability, original reporting, live indexability, sitemap membership, HTTP status, duplicates/redirect equivalence, internal link dependencies, social/newsletter references remain to be independently verified before final status.
@@ -23,7 +23,7 @@ This report is a **complete initial URL inventory from the currently accessible 
 - **B — improve and retain**: questionable candidates requiring editorial correction, no automatic AI-expanded prose.
 - **C — keep public, noindex**: ordinary automated rewrites and off-topic/retired-search archive candidates. Do not repeat existing PR #2593 suppression.
 - **D — consolidate**: existing redirect aliases or explicitly redirected static URLs. No new indiscriminate redirects were created. Verify equivalent content before final acceptance.
-- **E — retire**: existing explicit static removal candidates only. Do not bulk delete stored content.
+- **E — retire**: explicitly retired static URLs and independently identified non-equivalent legacy aliases with no surviving source content. Do not bulk delete stored articles or redirect unrelated historical stories.
 
 **Follow-up:** reconcile every provisional row with rendered page and sitemap, real internal links, primary-source validity, GSC finalized signals and ownership, then process in small restartable batches. File: `docs/recovery/ktr-news-phase2a-disposition-ledger.csv`. Related issue #3421 and prior issues #2041, #3406 and PR #2593.
 
@@ -73,3 +73,10 @@ This report is a **complete initial URL inventory from the currently accessible 
 - `/news/primary-vs-general-election` and `/news/beginners-guide-texas-elections` moved A→B **repaired in code, pending production**; published dates preserved.
 - Corrected unsupported blanket November-formality claim, unfounded universal one-third runoff turnout statistic, and claim that subdivisions choose May elections to depress turnout. Updated titles, metadata and related crosslink.
 - Added eight evidence-based sections and official sources per guide on Texas party affiliation, majority primaries/runoffs, actual general-election stakes, local elections, sample ballots, special districts, propositions and redistricting map checks. New regression tests included; no mass noindex, changes to original publication dates or indexing certification.
+
+## November 5 cross-region redirect correction — production and database verified
+
+- [PR #3485](https://github.com/keeptxred/texas-heartland-hub/pull/3485) merged to main at `df3921894ee0cf2370e6bd4545df723fdf08b6ad` after all required CI checks. Exact-SHA production deployment [#42084237220](https://github.com/keeptxred/texas-heartland-hub/actions/runs/42084237220) and follow-up live newsroom smoke [#42084265269](https://github.com/keeptxred/texas-heartland-hub/actions/runs/42084265269) succeeded. These successes alone did not individually exercise the retired alias.
+- Authenticated read-only Supabase baseline found that the July San Antonio Flock opposition alias incorrectly mapped to a geographically different August Houston Flock report, with a stale circular backlink. The original San Antonio article did not exist in the current `daily_articles` table.
+- Following protected merge, applied only the guarded one-alias SQL fix preserved in `docs/recovery/ktr-news-phase2a-cross-region-redirect-fix.sql`. Authenticated read-only postflight found `article_slug_redirects` old alias count **0**; Houston article's body and `internal_links` old-alias references **false**; credible contemporaneous Boerne article source **present**; original Houston `published_at` **2026-08-09 17:26 UTC**, unchanged. Total `daily_articles` remains **319**. No historical news record was deleted or re-dated.
+- Category D→E exactly once; ledger is now **A39/B13/C305/D22/E9**, still provisional. Follow-up [PR #3488](https://github.com/keeptxred/texas-heartland-hub/pull/3488) adds permanent live smoke for genuine HTTP 404, correct Houston 200 self-canonical, and absence of old alias; it must pass CI, merge, deploy, and production checks before this specific HTTP behavior is certified.
