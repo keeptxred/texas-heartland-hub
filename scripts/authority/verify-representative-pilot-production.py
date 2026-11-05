@@ -49,6 +49,7 @@ READY = (
     "stan-lambert", "drew-darby", "carrie-isaac", "eddie-morales",
     "mary-gonzalez", "suleman-lalani", "vince-perez", "joe-moody",
     "claudia-ordaz", "don-mclaughlin", "brooks-landgraf", "tom-craddick",
+    "dustin-burrows",
 )
 NOT_READY = ("dan-crenshaw", "john-cornyn", "greg-abbott", "jeff-barry")
 NS = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
@@ -156,14 +157,26 @@ def check_profile(slug: str, expected_index: bool) -> None:
     assert "<title>" in body.lower() or titles, f"{path}: no title"
     if expected_index:
         copy = " ".join(parsed.words)
-        assert "89th Legislature: official bill-role research" in copy, f"{path}: missing source-linked research module"
         assert "Coverage and freshness" in copy, f"{path}: missing coverage boundaries"
-        official_bill_links = {
-            link for link in parsed.anchors
-            if urlparse(link).hostname == "capitol.texas.gov" and "BillLookup/History.aspx" in link
-        }
-        assert len(official_bill_links) >= 16, f"{path}: only {len(official_bill_links)} linked official bills"
-        assert "Captured on November 4, 2026" not in copy or True
+        if slug == "dustin-burrows":
+            assert "89th Legislature: documented Speaker actions" in copy, f"{path}: missing Speaker record module"
+            assert "not evidence" in copy, f"{path}: missing no-bill-authorship disclaimer"
+            speaker_links = {
+                link for link in parsed.anchors
+                if ((urlparse(link).hostname == "lrl.texas.gov" and
+                     urlparse(link).path.startswith("/scanned/leadershipdocs/")) or
+                    (urlparse(link).hostname == "www.house.texas.gov" and
+                     urlparse(link).path.startswith("/pdfs/speaker/")))
+            }
+            assert len(speaker_links) >= 16, f"{path}: only {len(speaker_links)} real Speaker document links"
+            assert "89th Legislature: official bill-role research" not in copy, f"{path}: misrepresented Speaker sponsorship"
+        else:
+            assert "89th Legislature: official bill-role research" in copy, f"{path}: missing source-linked research module"
+            official_bill_links = {
+                link for link in parsed.anchors
+                if urlparse(link).hostname == "capitol.texas.gov" and "BillLookup/History.aspx" in link
+            }
+            assert len(official_bill_links) >= 16, f"{path}: only {len(official_bill_links)} linked official bills"
     print(f"PASS {path}: status=200 robots={robots} canonical={expected} server_html=True")
 
 
