@@ -16,9 +16,11 @@ export function RepresentativeSpeakerActivity({ records }: { records: readonly S
         Dustin Burrows authored, sponsored, voted for, or enacted that bill.
       </p>
       <p className="mt-3 text-sm text-muted-foreground">
-        {records.length} distinct official documents are listed, across {kinds.length} record types.
-        This is a selected archive, not a complete record of Speaker decisions, House votes, or
-        the eventual legal status of the measures discussed. Reviewed November 5, 2026.
+        <strong>Coverage and freshness:</strong> {records.length} distinct official documents are listed,
+        across {kinds.length} record types. This source-checked 89th Legislature research sample
+        is a selected archive, not a complete record of Speaker decisions, House votes, or the
+        eventual legal status of the measures discussed. Reviewed November 5, 2026;
+        future Speaker actions are not represented until a documented update.
       </p>
       <ul className="mt-5 space-y-4">
         {records.map(record => (
