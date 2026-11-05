@@ -831,16 +831,16 @@ export const ARTICLES: Article[] = [
   {
     slug: "texas-new-laws-2026",
     category: "Legislature",
-    title: "Texas New Laws 2026: Major Legislative Changes Explained",
-    dek: "The major statutes that took effect in Texas for 2026 — property tax relief, education savings accounts, border security funding, criminal justice updates, and the effective dates every Texan should know.",
+    title: "Texas New Laws 2026: Verified Effective Dates and What Changed",
+    dek: "A primary-source guide to laws actually effective in 2026, the 2025 homestead tax-year distinction, education accounts, and Bexar County emissions testing.",
     author: "Austin Bureau",
     date: "July 15, 2026",
     publishedAt: "2026-07-15T10:30:00",
     image: rotunda,
     pillar: true,
     contentCategory: "laws",
-    lastReviewedDate: "2026-07-15",
-    dateModified: "2026-07-15",
+    lastReviewedDate: "2026-11-05",
+    dateModified: "2026-11-05",
   },
 ];
 
