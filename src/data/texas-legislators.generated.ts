@@ -3960,7 +3960,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 61,
     party: "R",
-    website: "https://house.texas.gov/members/61",
+    website: "https://house.texas.gov/members/4735",
     imageUrl: "https://house.texas.gov/images/members/4735.jpg?v=1",
     officialCode: null,
     home: null,
@@ -3970,7 +3970,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     vacant: false,
     authority: {
       slug: "keresa-richardson",
-      reviewedAt: "2026-07-31",
+      reviewedAt: "2026-11-05",
       biography:
         "Keresa Richardson is the current Representative for Texas House District 61. This authority profile consolidates the official member page, current committee assignments, legislative service, contact information, campaign-finance lookup, and district sources.",
       career: [
@@ -4003,7 +4003,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/61",
+          url: "https://house.texas.gov/members/4735",
         },
         {
           label: "Official member biography",
@@ -4093,7 +4093,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 63,
     party: "R",
-    website: "https://house.texas.gov/members/63",
+    website: "https://house.texas.gov/members/4125",
     imageUrl: "https://house.texas.gov/images/members/4125.jpg?v=1",
     officialCode: null,
     home: "108 S. Oak St., Roanoke, TX 76262",
@@ -4103,7 +4103,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     vacant: false,
     authority: {
       slug: "ben-bumgarner",
-      reviewedAt: "2026-07-31",
+      reviewedAt: "2026-11-05",
       biography:
         "Ben Bumgarner is the current Representative for Texas House District 63. This authority profile consolidates the official member page, current committee assignments, legislative service, contact information, campaign-finance lookup, and district sources.",
       career: [
@@ -4133,7 +4133,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/63",
+          url: "https://house.texas.gov/members/4125",
         },
         {
           label: "Official member biography",
@@ -4156,7 +4156,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 64,
     party: "R",
-    website: "https://house.texas.gov/members/64",
+    website: "https://house.texas.gov/members/4555",
     imageUrl: "https://www.house.texas.gov/images/members/4555.jpg?v=1",
     officialCode: null,
     home: "204 W. Walnut St., Decatur, TX 76234",
@@ -4166,7 +4166,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     vacant: false,
     authority: {
       slug: "andy-hopper",
-      reviewedAt: "2026-07-31",
+      reviewedAt: "2026-11-05",
       biography:
         "Andy Hopper is the current Representative for Texas House District 64. This authority profile consolidates the official member page, current committee assignments, legislative service, contact information, campaign-finance lookup, and district sources.",
       career: [
@@ -4196,7 +4196,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/64",
+          url: "https://house.texas.gov/members/4555",
         },
         {
           label: "Official member biography",
