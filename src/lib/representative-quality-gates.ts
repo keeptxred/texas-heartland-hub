@@ -29,6 +29,48 @@ type EditorialReview = {
  * A synchronized roster change that disagrees with a review FAILS CLOSED.
  */
 export const EDITORIAL_REVIEWS: Record<string, EditorialReview> = {
+  "carl-tepper": {
+    name: "Carl Tepper", office: "Texas House", district: "House District 84", party: "R",
+    officialUrl: "https://house.texas.gov/members/4360",
+    biography: "Carl Tepper represents House District 84, confined to Lubbock County. The official Texas House biography documents his service as an Air Force C-130 flight engineer during the Persian Gulf War, graduation from Texas Tech in 1995, and later commercial-real-estate and downtown Lubbock redevelopment work. His 89th House committee assignments include Appropriations, Calendars, Redistricting and Intergovernmental Affairs, including chairing its State-Federal Relations subcommittee. The source-linked 89th-session records below distinguish authorship from other sponsorship roles and recorded outcomes, rather than presenting an unverified total of votes or bills.",
+    identityChecked: "2026-11-05", source: "https://house.texas.gov/members/4360/biography",
+  },
+  "stan-kitzman": {
+    name: "Stan Kitzman", office: "Texas House", district: "House District 85", party: "R",
+    officialUrl: "https://house.texas.gov/members/4280",
+    biography: "Stan Kitzman represents House District 85, which includes Austin, Colorado, Fayette, Waller and Wharton counties and part of Fort Bend County. His official House biography identifies a former Waller County commissioner, public-school teacher and Texas A&M Agricultural Systems Management graduate. Kitzman served 21 years in the Texas Army National Guard, with three deployments. For the 89th Legislature he served on Appropriations, Agriculture and Livestock and the Sunset Advisory Commission, with additional leadership of the Appropriations Article III subcommittee and the Water Caucus. The dated bill-role histories below are samples of documented 89th-session work, not a complete voting or lifetime record.",
+    identityChecked: "2026-11-05", source: "https://house.texas.gov/members/4280/biography",
+  },
+  "john-smithee": {
+    name: "John Smithee", office: "Texas House", district: "House District 86", party: "R",
+    officialUrl: "https://house.texas.gov/members/4530",
+    biography: "John T. Smithee represents House District 86, comprising Armstrong, Dallam, Deaf Smith, Hartley, Oldham, Parmer and Randall counties in the Panhandle. The official Legislative Reference Library records his Texas House service beginning in 1985, including multiple committee chairmanships. The current Legislative Directory identifies his occupation as attorney and confirms a business degree from West Texas A&M and a law degree from Texas Tech. In the 89th Legislature he chairs Criminal Jurisprudence and serves on State Affairs. The House biography page itself contains no substantive biography, so this review relies on the official Legislative Directory, Legislative Reference Library and actual bill histories, and does not invent educational or personal claims.",
+    identityChecked: "2026-11-05", source: "https://legdir.capitol.texas.gov/MemberInfo.aspx?Chamber=H&Code=A4530",
+  },
+  "caroline-fairly": {
+    name: "Caroline Fairly", office: "Texas House", district: "House District 87", party: "R",
+    officialUrl: "https://house.texas.gov/members/4480",
+    biography: "Caroline Fairly represents House District 87 in the Amarillo area. Her official House biography identifies an Abilene Christian University Business Marketing graduate, previous congressional constituent-service work in Washington, D.C., and medical-negotiation experience with The OccuNet Company. In the 89th House, her committees include Appropriations, Local and Consent Calendars, Natural Resources and the Select Committee on Civil Discourse and Freedom of Speech in Higher Education. The official House member identifier is 4480, not district number 87; this source review corrects the permanent roster link. Specific official bill-history entries below distinguish recorded roles, legislative status and actual passage rather than treating introductions as laws.",
+    identityChecked: "2026-11-05", source: "https://house.texas.gov/members/4480/biography",
+  },
+  "ken-king": {
+    name: "Ken King", office: "Texas House", district: "House District 88", party: "R",
+    officialUrl: "https://house.texas.gov/members/2455",
+    biography: "Ken King represents House District 88, covering 19 counties across the Texas Panhandle and South Plains. His official House biography identifies earlier service as Canadian ISD school-board president and Hemphill County Appraisal District board chair, alongside his leadership of Black Gold Pump and Supply in Canadian. In the 89th Legislature he chaired State Affairs and participated in House Administration, the Energy Council and the House Research Organization board. These public office, district and committee facts are distinct from the 89th bill-role source histories displayed below; the sample does not claim to include his entire legislative record or all floor votes.",
+    identityChecked: "2026-11-05", source: "https://house.texas.gov/members/2455/biography",
+  },
+  "candy-noble": {
+    name: "Candy Noble", office: "Texas House", district: "House District 89", party: "R",
+    officialUrl: "https://house.texas.gov/members/3740",
+    biography: "Candy Noble represents House District 89 in eastern Collin County, including communities such as Lucas, Murphy, Princeton and Wylie. Her official House biography identifies an education degree from Hardin-Simmons University, where she also serves as a trustee, and long involvement in Collin County. For the 89th Legislature she serves on Human Services and Ways and Means and is vice chair of the Ways and Means subcommittee on Property Tax Appraisals. The source-linked official histories below separate each recorded bill-author, coauthor, sponsor or cosponsor role from the outcome, avoiding unsupported claims that a filing necessarily became law or reflected a recorded floor vote.",
+    identityChecked: "2026-11-05", source: "https://house.texas.gov/members/3740/biography",
+  },
+  "ramon-romero": {
+    name: "Ramon Romero", office: "Texas House", district: "House District 90", party: "D",
+    officialUrl: "https://house.texas.gov/members/3060",
+    biography: "Ramon Romero represents House District 90 in Fort Worth; the official Texas House biography styles his name Ramón Romero, Jr. and records a 2014 first election after service on the Fort Worth Zoning and Planning commissions. He founded A-Fast Tile and Coping and also owns Stone Mason Supply. In the 89th Legislature he chairs the Mexican American Legislative Caucus and serves on Calendars, Natural Resources and Licensing and Administrative Procedures. The bill-history section below draws individual roles from official 89th-session records and does not assume that all coauthored measures, sponsorships, amendments or floor votes are interchangeable.",
+    identityChecked: "2026-11-05", source: "https://house.texas.gov/members/3060/biography",
+  },
   "dustin-burrows": {
     name: "Dustin Burrows", office: "Texas House", district: "House District 83", party: "R",
     officialUrl: "https://house.texas.gov/members/3055",
@@ -672,6 +714,8 @@ export const SCRIPT2_REVIEWED_SLUGS = [
   "mary-gonzalez", "suleman-lalani", "vince-perez", "joe-moody",
   "claudia-ordaz", "don-mclaughlin", "brooks-landgraf", "tom-craddick",
   "dustin-burrows",
+  "carl-tepper", "stan-kitzman", "john-smithee", "caroline-fairly",
+  "ken-king", "candy-noble", "ramon-romero",
 ] as const;
 
 export const CERTIFICATION_CANDIDATE_SLUGS = [
