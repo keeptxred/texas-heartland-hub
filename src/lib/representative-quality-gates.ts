@@ -1,6 +1,7 @@
 import pilot from "@/data/representative-research-pilot.json";
 import expansion from "@/data/representative-research-script2.json";
 import type { Rep } from "@/data/representatives";
+import { speakerActivityFor } from "@/data/representative-speaker-activity";
 import type { RepresentativeAuthority } from "@/data/representative-authority";
 
 /** Internal publishing states, not Google's assessment of search quality. */
@@ -28,6 +29,12 @@ type EditorialReview = {
  * A synchronized roster change that disagrees with a review FAILS CLOSED.
  */
 export const EDITORIAL_REVIEWS: Record<string, EditorialReview> = {
+  "dustin-burrows": {
+    name: "Dustin Burrows", office: "Texas House", district: "House District 83", party: "R",
+    officialUrl: "https://house.texas.gov/members/3055",
+    biography: "Dustin Burrows represents House District 83 and was elected by his House colleagues as the 77th Speaker in January 2025. His official House biography documents earlier leadership of the Calendars and Ways and Means committees and work on investigations of the Uvalde school shooting and Panhandle wildfires. The Speaker presides over floor debate and appoints committee members; those powers differ from authoring or sponsoring legislation. The dated 89th-Legislature Speaker records below show specific committee appointments, interim charges, House proceedings and public statements, without attributing another member’s bill or vote to Burrows.",
+    identityChecked: "2026-11-05", source: "https://house.texas.gov/speaker",
+  },
   "bryan-hughes": {
     name: "Bryan Hughes", office: "Texas Senate", district: "Senate District 1", party: "R",
     officialUrl: "https://senate.texas.gov/member.php?d=1",
@@ -664,6 +671,7 @@ export const SCRIPT2_REVIEWED_SLUGS = [
   "stan-lambert", "drew-darby", "carrie-isaac", "eddie-morales",
   "mary-gonzalez", "suleman-lalani", "vince-perez", "joe-moody",
   "claudia-ordaz", "don-mclaughlin", "brooks-landgraf", "tom-craddick",
+  "dustin-burrows",
 ] as const;
 
 export const CERTIFICATION_CANDIDATE_SLUGS = [
@@ -736,6 +744,16 @@ export function certifyRepresentative(input: {
   const { slug, representative, authority } = input;
   const review = EDITORIAL_REVIEWS[slug];
   const records = pilotResearchFor(slug);
+  const speakerRecords = speakerActivityFor(slug);
+  const speakerEvidence = slug === "dustin-burrows" && speakerRecords.length >= 16 &&
+    new Set(speakerRecords.map((record) => record.sourceUrl)).size === speakerRecords.length &&
+    new Set(speakerRecords.map((record) => record.title)).size === speakerRecords.length &&
+    new Set(speakerRecords.map((record) => record.kind)).size >= 3 &&
+    new Set(speakerRecords.map((record) => record.date)).size >= 8 &&
+    speakerRecords.every((record) => /^202[56]-\d{2}-\d{2}$/.test(record.date) &&
+      Number.isFinite(Date.parse(record.date)) &&
+      (record.sourceUrl.startsWith("https://lrl.texas.gov/scanned/leadershipdocs/") ||
+       record.sourceUrl.startsWith("https://www.house.texas.gov/pdfs/speaker/")));
   const reasons: string[] = [];
   const gates: RepresentativeCertification["gates"] =
     { A: false, B: false, C: false, D: false, E: false, F: false };
@@ -757,12 +775,12 @@ export function certifyRepresentative(input: {
   const roles = new Set(records.map((row) => row.sponsor_role));
   const statuses = new Set(records.map((row) => row.current_status_label));
   // Capped role-stratified 89th-legislature sample, not a complete career count.
-  gates.B = Boolean(review && unique.size >= 16 && roles.size >= 2 && statuses.size >= 2);
+  gates.B = Boolean(review && ((unique.size >= 16 && roles.size >= 2 && statuses.size >= 2) || speakerEvidence));
   if (!gates.B) reasons.push("B: distinctive, profile-specific official legislative role/outcome research not certified");
 
   gates.C = Boolean(review && authority?.reviewedAt && /^\d{4}-\d{2}-\d{2}$/.test(authority.reviewedAt) &&
     review.source.startsWith("https://") &&
-    records.length >= 16 && records.every((row) =>
+    (records.length >= 16 || speakerEvidence) && records.every((row) =>
       isOfficialLegislativeSource(row.source_url) &&
       typeof row.bill_identifier === "string" && Boolean(row.caption?.trim()) &&
       !Number.isNaN(Date.parse(row.last_synced_at)) &&
@@ -779,14 +797,15 @@ export function certifyRepresentative(input: {
 
   gates.E = Boolean(review && authority &&
     authority.sources.every((source) => source.url.startsWith("https://")) &&
-    representative && !representative.status && records.every((row) => row.bill_id));
+    representative && !representative.status &&
+    ((records.length >= 16 && records.every((row) => row.bill_id)) || speakerEvidence));
   if (!gates.E) reasons.push("E: canonical office/source and research record linkage incomplete");
 
   const otherBiographies = Object.entries(EDITORIAL_REVIEWS)
     .filter(([other]) => other !== slug).map(([, data]) => data.biography);
   gates.F = Boolean(review && cleanBiography.length >= 140 &&
     !otherBiographies.includes(cleanBiography) &&
-    new Set(records.map((row) => row.bill_identifier + ":" + row.sponsor_role)).size >= 16);
+    (new Set(records.map((row) => row.bill_identifier + ":" + row.sponsor_role)).size >= 16 || speakerEvidence));
   if (!gates.F) reasons.push("F: profile-specific factual distinctiveness unverified");
 
   const state: RepresentativeCertificationState = mismatch ? "VERIFICATION_FAILED" :
@@ -796,8 +815,8 @@ export function certifyRepresentative(input: {
     gates,
     reasons,
     evaluatedAt: review?.identityChecked ?? pilot.capturedAt,
-    evidenceCount: records.length,
-    ...(review ? { officialSource: review.source, researchCapture: pilot.capturedAt } : {}),
+    evidenceCount: speakerEvidence ? speakerRecords.length : records.length,
+    ...(review ? { officialSource: review.source, researchCapture: speakerEvidence ? review.identityChecked : pilot.capturedAt } : {}),
     temporaryDataOutage: Boolean(input.temporaryDataOutage),
   };
 }
