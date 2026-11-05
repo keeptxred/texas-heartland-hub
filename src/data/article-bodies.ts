@@ -1666,7 +1666,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         heading: "Registering to Vote and Understanding Texas Elections",
         paragraphs: [
           "Texas requires voter registration at least 30 days before an election, and you'll need to update it any time you move counties. See [The Texas Voter Registration Guide](/news/texas-voter-registration-guide) for accepted ID and mail-ballot rules.",
-          "In much of Texas, the March Republican primary effectively decides who holds the seat — the November general is often a formality. See [Primary vs. General](/news/primary-vs-general-election) for how that works, and [The Texas Voting Guide for 2026](/news/texas-voting-guide-2026) for the full calendar. If you're new to open primaries and runoff math, start with [A Beginner's Guide to Texas Elections](/news/beginners-guide-texas-elections).",
+          "In some Texas districts a primary can be decisive when the eventual nominee has no November opponent, but the general election determines the officeholder and may be contested. See [Primary vs. General](/news/primary-vs-general-election) for how that works, and [The Texas Voting Guide for 2026](/news/texas-voting-guide-2026) for the full calendar. If you're new to open primaries and runoff math, start with [A Beginner's Guide to Texas Elections](/news/beginners-guide-texas-elections).",
         ],
       },
       {
