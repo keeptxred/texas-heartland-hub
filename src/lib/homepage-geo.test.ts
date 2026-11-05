@@ -32,8 +32,27 @@ describe("homepage GEO signals", () => {
     expect(source).toContain('to="/news"');
     expect(source).toContain("<HomepageFaqs />");
     expect(source).not.toContain("<ElectionHomePage");
-    expect(source).toContain("Keep Texas Red (Keep TX Red) | Texas Politics & Elections");
+    expect(source).toContain("Keep TX Red | Texas Politics, Government & Accountability");
     expect(source).toContain(">Keep Texas Red <");
-    expect(source).toContain("Keep TX Red — short for Keep Texas Red —");
+    expect(source).toContain("Keep TX Red examines Texas government decisions");
   });
+  it("keeps the current-news boundary while featuring substantive dated research", () => {
+    const source = homepageSource();
+
+    expect(source).toContain("No recent verified news reports are available in this feed.");
+    expect(source).toContain("<ResearchSpotlight />");
+    expect(source).toContain("/news/why-texas-has-no-income-tax");
+    expect(source).toContain("/news/texas-new-laws-2026");
+    expect(source).toContain("Trace a bill through the Legislature");
+  });
+
+  it("does not offer a subscription when the newsletter feature is disabled", () => {
+    const source = homepageSource();
+
+    expect(source).not.toContain("<NewsletterSignup />");
+    expect(source).not.toContain("Subscribe for important Texas updates");
+    expect(source).toContain("Send a tip or correction");
+    expect(source).toContain("Read editorial standards");
+  });
+
 });
