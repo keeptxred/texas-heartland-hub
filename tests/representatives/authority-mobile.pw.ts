@@ -43,6 +43,9 @@ test("House Speaker profile is usable on mobile without inventing bill sponsorsh
   expect(await page.locator('meta[name="robots"]').getAttribute("content")).toContain("index,follow");
   const copy = await page.locator('[data-speaker-research="verified"]').innerText();
   expect(copy).toContain("not evidence");
+  expect(copy).toContain("Coverage and freshness:");
+  expect(copy).toContain("reviewed November 5, 2026");
+  expect(copy).toContain("not a complete list");
   expect(copy).not.toContain("Role-linked sample entries");
   const tooWide = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 2);
   expect(tooWide, "Speaker archive has horizontal overflow").toBe(false);

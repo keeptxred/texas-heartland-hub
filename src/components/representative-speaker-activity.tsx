@@ -32,6 +32,17 @@ export function RepresentativeSpeakerActivity({ records }: { records: readonly S
           </li>
         ))}
       </ul>
+      <div className="mt-6 border-t pt-5 text-sm leading-6 text-muted-foreground">
+        <strong>Coverage and freshness:</strong> This selection documents dated House Speaker
+        appointments, interim committee charges, public statements and chamber proceedings from
+        2025–2026 during the 89th Legislature, not a complete list of the Speaker's actions.
+        The underlying documents are maintained by the Texas House and Texas Legislative Reference
+        Library; each title links directly to its dated primary record. This independent KTR
+        chronology was reviewed November 5, 2026. Future proclamations, corrections and official
+        updates can change the archive, so check the linked official sources for the latest
+        information. A missing document or bill sponsorship in this selection is not evidence
+        that the Speaker took no other legislative action.
+      </div>
       <p className="mt-5 text-sm leading-6 text-muted-foreground">
         Source indexes: <a className="underline" href={SPEAKER_ARCHIVE_URL} target="_blank" rel="noopener noreferrer">Texas Legislative Reference Library Speaker releases</a>
         {", "}and <a className="underline" href={SPEAKER_OFFICE_URL} target="_blank" rel="noopener noreferrer">Texas House Speaker proclamations and duties</a>.
