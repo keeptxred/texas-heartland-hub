@@ -230,9 +230,15 @@ function houseRoster(html) {
       code: String(member.member_bill_code),
       // Member ID and district number are distinct; House public API occasionally
       // supplies the district in member_bill_code for individual records.
-      website: member.member_name && reverseHouseName(member.member_name) === "Mihaela Pleșa" && Number(member.id) === 70
-        ? "https://house.texas.gov/members/4345"
-        : `https://house.texas.gov/members/${member.member_bill_code}`,
+      // The public roster occasionally supplies a district or outdated bill code
+      // instead of the House member-page ID. These exact name+district pairs were
+      // independently checked against official House member biographies.
+      website: `https://house.texas.gov/members/${({
+        "Mihaela Pleša:70": "4345",
+        "Keresa Richardson:61": "4735",
+        "Ben Bumgarner:63": "4125",
+        "Andy Hopper:64": "4555",
+      })[`${reverseHouseName(member.member_name)}:${Number(member.id)}`] ?? member.member_bill_code}`,
       imageUrl: new URL(member.image, "https://house.texas.gov/").href,
     }))
     .sort((a, b) => a.district - b.district);
