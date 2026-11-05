@@ -5001,7 +5001,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 77,
     party: "D",
-    website: "https://house.texas.gov/members/77",
+    website: "https://house.texas.gov/members/4710",
     imageUrl: "https://www.house.texas.gov/images/members/4710.jpg?v=1",
     officialCode: null,
     home: "100 N. Ochoa St., Suite A, El Paso, TX 79901",
@@ -5041,7 +5041,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/77",
+          url: "https://house.texas.gov/members/4710",
         },
         {
           label: "Official member biography",

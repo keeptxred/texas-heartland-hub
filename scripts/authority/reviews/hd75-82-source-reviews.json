@@ -1,0 +1,122 @@
+{
+  "purpose": "Eight independent official-source 89th Legislature editorial identity reviews, not automatically generated SEO copy",
+  "reviewedAt": "2026-11-05",
+  "reviewedInReconciliationWith": "src/data/texas-legislators.generated.ts; src/data/representative-research-script2.json; live House/Legislature/Legislative Reference Library official sources",
+  "method": "Capture individual officeholder identity, current legislative committee assignments, career details and member URL. Separately require existing 89th bill history evidence and strict A-F gates. Stale or blank official biographies are explicitly flagged instead of invented.",
+  "reviews": [
+    {
+      "slug": "mary-gonzalez",
+      "name": "Mary González",
+      "district": "House District 75",
+      "party": "D",
+      "officialMemberPage": "https://house.texas.gov/members/2410",
+      "biographySource": "https://house.texas.gov/members/2410/biography",
+      "primaryCommitteeSource": "https://house.texas.gov/members/2410",
+      "facts": [
+        "Representing eastern El Paso County, first elected in 2012",
+        "Raised in Clint, degrees including a doctorate in curriculum and instruction from University of Texas at Austin",
+        "89th Appropriations vice chair and Natural Resources member"
+      ]
+    },
+    {
+      "slug": "suleman-lalani",
+      "name": "Suleman Lalani",
+      "district": "House District 76",
+      "party": "D",
+      "officialMemberPage": "https://house.texas.gov/members/4285",
+      "biographySource": "https://house.texas.gov/members/4285/biography",
+      "facts": [
+        "Sugar Land, Stafford, Richmond and Meadows Place",
+        "Internal medicine physician with geriatrics and hospice/palliative board credentials",
+        "89th Land and Resource Management vice chair; Higher Education and Health Care Affordability Select committee assignments"
+      ]
+    },
+    {
+      "slug": "vince-perez",
+      "name": "Vince Perez",
+      "district": "House District 77",
+      "party": "D",
+      "officialMemberPage": "https://house.texas.gov/members/4710",
+      "biographySource": "https://house.texas.gov/members/4710/biography",
+      "facts": [
+        "Current El Paso House district 77, includes UTEP and downtown El Paso",
+        "Previously two-term El Paso County Commissioner; Georgetown University undergraduate and graduate government degrees",
+        "89th Higher Education, Ways and Means, and Local and Consent Calendars committees",
+        "House member ID 4710, not district number 77"
+      ]
+    },
+    {
+      "slug": "joe-moody",
+      "name": "Joe Moody",
+      "district": "House District 78",
+      "party": "D",
+      "officialMemberPage": "https://house.texas.gov/members/3850",
+      "biographySource": "https://house.texas.gov/members/3850/biography",
+      "facts": [
+        "El Paso attorney and longtime House Speaker Pro Tempore",
+        "Founded Criminal Justice Reform Caucus",
+        "89th House Administration, Criminal Jurisprudence, Judiciary/Civil Jurisprudence, General Investigating and other committee roles"
+      ]
+    },
+    {
+      "slug": "claudia-ordaz",
+      "name": "Claudia Ordaz",
+      "district": "House District 79",
+      "party": "D",
+      "officialMemberPage": "https://house.texas.gov/members/4015",
+      "biographySource": "https://house.texas.gov/members/4015/biography",
+      "primaryCommitteeSource": "https://capitol.texas.gov/Committees/MembershipMbr.aspx?LegCode=A4015&LegSess=89R",
+      "facts": [
+        "Northeast and east El Paso area around Fort Bliss and El Paso International Airport",
+        "89th Environmental Regulation vice chair and Trade, Workforce and Economic Development member",
+        "Former El Paso City Council service; bachelor's degree from UTEP"
+      ],
+      "provenanceWarning": "House public biography still lists 88th Legislature committee assignments. Correct current 89th assignments verified independently from Texas Legislature Online and Legislative Reference Library. Do not repeat stale 88th assignments as current."
+    },
+    {
+      "slug": "don-mclaughlin",
+      "name": "Don McLaughlin",
+      "district": "House District 80",
+      "party": "R",
+      "officialMemberPage": "https://house.texas.gov/members/4655",
+      "primaryIdentitySource": "https://legdir.capitol.texas.gov/MemberInfo.aspx?Chamber=H&Code=A4655",
+      "primaryCommitteeSource": "https://capitol.texas.gov/Members/MemberInfo.aspx?Chamber=H&Code=A4655&Leg=89",
+      "biographySupplement": "https://malc.org/members/don-mclaughlin/",
+      "facts": [
+        "House District 80 spans Atascosa, Dimmit, Frio, Uvalde, part of Webb and Zavala counties",
+        "Former Uvalde mayor; official Legislative Directory lists occupation in sales",
+        "89th Agriculture and Livestock and Homeland Security/Public Safety/Veterans Affairs committees"
+      ],
+      "provenanceWarning": "Official House biography page is blank; never invent education or achievements to compensate. 89th identity and committee facts from TLO/Legislative Directory; prior mayorship from documented institutional biography."
+    },
+    {
+      "slug": "brooks-landgraf",
+      "name": "Brooks Landgraf",
+      "district": "House District 81",
+      "party": "R",
+      "officialMemberPage": "https://house.texas.gov/members/3040",
+      "biographySource": "https://house.texas.gov/members/3040/biography",
+      "facts": [
+        "Ector, Loving, Ward and Winkler counties in Permian Basin",
+        "Odessa attorney, fifth-generation family cattle ranch background; Texas A&M and St. Mary's law degrees",
+        "89th Environmental Regulation chair and Governmental Oversight (Select) plus Judiciary and Civil Jurisprudence committee roles"
+      ]
+    },
+    {
+      "slug": "tom-craddick",
+      "name": "Tom Craddick",
+      "district": "House District 82",
+      "party": "R",
+      "officialMemberPage": "https://house.texas.gov/members/2610",
+      "biographySource": "https://house.texas.gov/members/2610/biography",
+      "primaryCommitteeSource": "https://lrl.texas.gov/legeLeaders/members/memberDisplay.cfm?memberID=109",
+      "primaryIdentitySource": "https://legdir.capitol.texas.gov/memberInfo.aspx?Chamber=H&Code=A2610",
+      "facts": [
+        "Midland member representing Dawson, Martin and Midland counties",
+        "Longest-serving member in Texas legislative history and former House Speaker, documented by Legislature Reference Library",
+        "Texas Tech BBA and MBA; 89th Transportation chair and Energy Resources member"
+      ],
+      "provenanceWarning": "Official House biography uses malformed literal party placeholders; use independent primary LRL and Legislative Directory records for role and party."
+    }
+  ]
+}
