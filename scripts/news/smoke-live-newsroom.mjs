@@ -371,8 +371,18 @@ async function checkIngestion() {
   const dps = (Array.isArray(payload.diag) ? payload.diag : [])
     .find((source) => source.source === "Texas DPS — Direct Press Releases");
   if (dps) {
-    const safeError = String(dps.error ?? "").slice(0, 160).replace(/[\r\n\t]/g, " ");
+    const rawError = String(dps.error ?? "").replace(/[\r\n\t]/g, " ");
+    const safeError = rawError.slice(0, 160);
     console.log(`INFO dps-firstparty-ingest status=${Number(dps.status ?? 0)} item_count=${Number(dps.count ?? 0)} attempts=${Number(dps.attempts ?? 0)} error=${safeError || "none"}`);
+    // The first error can contain several repeated redirect URLs and hide
+    // the second same-agency attempt behind the 160-character smoke cap.
+    // Report the transport-specific suffix separately without another fetch.
+    const officialNewsMarker = "; official-news=";
+    const officialNewsIndex = rawError.indexOf(officialNewsMarker);
+    if (officialNewsIndex >= 0) {
+      const officialNewsError = rawError.slice(officialNewsIndex + officialNewsMarker.length).slice(0, 160);
+      console.log(`INFO dps-official-news-fallback status=${Number(dps.status ?? 0)} error=${officialNewsError || "none"}`);
+    }
   } else {
     console.warn("WARN dps-firstparty-ingest not present in response diagnostics; inspect current deployed source config");
   }

@@ -9,7 +9,10 @@ test("reports the source-specific DPS result using only already-received ingesti
   expect(smoke.includes("WARN dps-firstparty-ingest not present")).toBe(true);
   expect(smoke.includes("Array.isArray(payload.diag)")).toBe(true);
   expect(smoke.includes("Number(dps.count ?? 0)")).toBe(true);
-  expect(smoke.includes('safeError = String(dps.error ?? "").slice(0, 160)')).toBe(true);
+  expect(smoke.includes('const rawError = String(dps.error ?? "").replace(')).toBe(true);
+  expect(smoke.includes('const safeError = rawError.slice(0, 160)')).toBe(true);
+  expect(smoke.includes('const officialNewsMarker = "; official-news="')).toBe(true);
+  expect(smoke.includes("INFO dps-official-news-fallback status=")).toBe(true);
   const start = smoke.indexOf("// DPS was added as an original first-party source.");
   const end = smoke.indexOf("\n}\n\nconst failures", start);
   const inserted = smoke.slice(start, end);
