@@ -1,0 +1,33 @@
+{
+  "reviewedAt": "2026-11-04",
+  "status": "SOURCE_REVIEWED_NOT_CERTIFIED",
+  "profiles": [
+    {
+      "slug": "keresa-richardson",
+      "office": "Texas House",
+      "district": "House District 61",
+      "party": "R",
+      "memberUrl": "https://house.texas.gov/members/4735",
+      "biographyUrl": "https://house.texas.gov/members/4735/biography",
+      "biography": "Keresa Richardson represents House District 61 in Collin County. Her official Texas House biography identifies her as CEO of The Lawton Group, a Texas trades-service company spanning plumbing, HVAC, electrical, refrigeration and pest-control work. She draws on decades of entrepreneurship and highlights small-business and skilled-trades issues."
+    },
+    {
+      "slug": "ben-bumgarner",
+      "office": "Texas House",
+      "district": "House District 63",
+      "party": "R",
+      "memberUrl": "https://house.texas.gov/members/4125",
+      "biographyUrl": "https://house.texas.gov/members/4125/biography",
+      "biography": "Ben Bumgarner serves House District 63 in southern Denton County. The official House biography lists prior service on the Flower Mound Town Council and as mayor pro tem, a degree from Austin College, and small-business ownership. The published 89th Legislature assignments include Environmental Regulation and Pensions, Investments and Financial Services."
+    },
+    {
+      "slug": "andy-hopper",
+      "office": "Texas House",
+      "district": "House District 64",
+      "party": "R",
+      "memberUrl": "https://house.texas.gov/members/4555",
+      "biographyUrl": "https://house.texas.gov/members/4555/biography",
+      "biography": "Andy Hopper represents Texas House District 64, encompassing Wise County and part of Denton County. His official House biography records University of North Texas graduation in 2000, defense-industry software engineering, software-company ownership and service in the Texas State Guard beginning in 2014."
+    }
+  ]
+}
