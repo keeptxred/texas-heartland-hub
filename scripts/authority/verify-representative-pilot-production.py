@@ -47,6 +47,8 @@ READY = (
     "shelley-luther", "mitch-little",
     "matt-shaheen", "jeff-leach", "david-spiller", "james-frank",
     "stan-lambert", "drew-darby", "carrie-isaac", "eddie-morales",
+    "mary-gonzalez", "suleman-lalani", "vince-perez", "joe-moody",
+    "claudia-ordaz", "don-mclaughlin", "brooks-landgraf", "tom-craddick",
 )
 NOT_READY = ("dan-crenshaw", "john-cornyn", "greg-abbott", "jeff-barry")
 NS = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
