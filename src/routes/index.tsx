@@ -3,7 +3,6 @@ import heroFlag from "@/assets/hero-flag.jpg";
 import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions";
 import { assignUniqueImages } from "@/lib/dedupe-images";
 import { AdSlot } from "@/components/ad-slot";
-import { NewsletterSignup } from "@/components/newsletter-signup";
 import { ELECTION_FEATURE_FLAGS } from "@/lib/elections/featureFlags";
 import { buildSeo, organizationJsonLd, SITE_URL, webPageJsonLd, websiteJsonLd } from "@/lib/seo";
 import { shouldContainArticleImage } from "@/lib/article-image-attribution";
@@ -31,6 +30,27 @@ const HOMEPAGE_FAQS = [
   {
     question: "How can I request a correction or send Keep TX Red a tip?",
     answer: "Use the Contact page to send questions, tips, or correction requests. Keep TX Red's Editorial Standards explain the site's sourcing, accuracy, corrections, and AI-use practices.",
+  },
+] as const;
+
+const FEATURED_RESEARCH = [
+  {
+    label: "Texas tax analysis",
+    title: "Where Texas government gets its money",
+    description: "Review official revenue sources and the important distinction between state taxes and local property taxes.",
+    href: "/news/why-texas-has-no-income-tax",
+  },
+  {
+    label: "Texas law reference",
+    title: "Major Texas laws taking effect in 2026",
+    description: "Understand important legislative changes with dated explanations and references to the underlying legal records.",
+    href: "/news/texas-new-laws-2026",
+  },
+  {
+    label: "Public-record research",
+    title: "Trace a bill through the Legislature",
+    description: "Search legislative sessions, sponsors, status, actions and documents, then verify details with Texas Legislature Online.",
+    href: "/bills",
   },
 ] as const;
 
@@ -77,7 +97,7 @@ function homepageFaqJsonLd() {
 }
 
 function homepageHead() {
-  const title = "Keep Texas Red (Keep TX Red) | Texas Politics & Elections";
+  const title = "Keep TX Red | Texas Politics, Government & Accountability";
   const description = "Keep Texas Red (Keep TX Red) covers Texas politics, elections, government accountability, legislation, public officials, policy, business, and the economy.";
   const seo = buildSeo({ title, description, path: "/", image: heroFlag, imageAlt: "Keep Texas Red (Keep TX Red) Texas politics and election coverage", type: "website" });
   return {
@@ -176,6 +196,30 @@ function DiscoveryPriorityLinks() {
   );
 }
 
+function ResearchSpotlight() {
+  return (
+    <section className="border-t bg-background" aria-labelledby="ktr-research-spotlight">
+      <div className="mx-auto max-w-[1200px] px-6 py-14 sm:py-16">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Research & public records</p>
+        <h2 id="ktr-research-spotlight" className="mt-2 font-display text-3xl sm:text-4xl">Understand the Texas record</h2>
+        <p className="mt-3 max-w-3xl leading-7 text-muted-foreground">
+          Use dated explanations and practical government-record tools to examine the laws, taxes and legislative decisions behind political claims. These are not presented as today's breaking news.
+        </p>
+        <div className="mt-8 grid gap-5 md:grid-cols-3">
+          {FEATURED_RESEARCH.map((item) => (
+            <a key={item.href} href={item.href} className="group rounded-xl border bg-card p-6 transition hover:border-primary hover:shadow-sm">
+              <p className="text-xs font-bold uppercase tracking-wider text-primary">{item.label}</p>
+              <h3 className="mt-3 text-xl font-semibold leading-snug group-hover:text-primary">{item.title}</h3>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">{item.description}</p>
+              <span className="mt-5 block text-sm font-semibold text-primary">Explore the source-backed resource →</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function HomepageFaqs() {
   return (
     <section className="border-t bg-muted/30" aria-labelledby="keep-tx-red-faq">
@@ -219,7 +263,7 @@ function PoliticalHomepage() {
             <p className="text-xs font-bold uppercase tracking-[0.22em] text-primary">Texas politics. Elections. Government. Verified facts. Clear context.</p>
             <h1 className="mt-4 max-w-4xl font-display text-5xl leading-none tracking-tight sm:text-6xl">Keep Texas Red <span className="sr-only">(Keep TX Red)</span></h1>
             <p className="mt-3 max-w-3xl text-xl font-semibold text-white/90">Texas politics, elections, government and public affairs</p>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/80">Keep TX Red — short for Keep Texas Red — covers Texas politics, elections, bills, public officials, government accountability, law, policy, business and the economy — and makes the common-sense case for the principles we believe Texas should defend.</p>
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/80">Keep TX Red examines Texas government decisions, legislative votes, public spending and policy. Read source-backed reporting, explore official records, and see clearly labeled conservative commentary without confusing opinion with the underlying facts.</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/news" className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Latest Texas News</Link>
               <a href="/texas-case" className="rounded-md border border-white/25 px-5 py-3 text-sm font-semibold">The Texas Case</a>
@@ -241,7 +285,7 @@ function PoliticalHomepage() {
 
       <section className="mx-auto max-w-[1200px] px-6 py-16">
         <div className="flex items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Latest coverage</p><h2 className="mt-2 font-display text-4xl">Texas political news</h2></div><Link to="/news" className="text-sm font-semibold text-primary hover:underline">View all news →</Link></div>
-        {latest.length === 0 ? <p className="mt-8 text-muted-foreground">New coverage is being prepared.</p> : <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">{latest.map((article, index) => <Link key={article.slug} to="/news/$slug" params={{ slug: article.slug }} className="group block"><div className="aspect-[16/10] overflow-hidden rounded-lg bg-muted"><img src={images.get(article.slug) ?? heroFlag} alt="" width={640} height={400} loading={index === 0 ? "eager" : "lazy"} className={`size-full ${shouldContainArticleImage(images.get(article.slug) ?? heroFlag) ? "object-contain bg-white p-4" : "object-cover"} transition-transform group-hover:scale-[1.02]`} /></div><p className="mt-4 text-xs font-semibold uppercase tracking-wider text-primary">{article.category ?? "Texas News"}</p><h3 className="mt-1 text-lg font-semibold leading-snug group-hover:text-primary">{article.title}</h3></Link>)}</div>}
+        {latest.length === 0 ? <div className="mt-8 rounded-xl border bg-muted/30 p-6"><p className="leading-7 text-muted-foreground">No recent verified news reports are available in this feed. We preserve original publication dates rather than presenting older stories as breaking news. Explore dated reporting in the archive or the research resources below.</p><Link to="/news" className="mt-4 inline-block text-sm font-semibold text-primary hover:underline">Browse previous reporting →</Link></div> : <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">{latest.map((article, index) => <Link key={article.slug} to="/news/$slug" params={{ slug: article.slug }} className="group block"><div className="aspect-[16/10] overflow-hidden rounded-lg bg-muted"><img src={images.get(article.slug) ?? heroFlag} alt="" width={640} height={400} loading={index === 0 ? "eager" : "lazy"} className={`size-full ${shouldContainArticleImage(images.get(article.slug) ?? heroFlag) ? "object-contain bg-white p-4" : "object-cover"} transition-transform group-hover:scale-[1.02]`} /></div><p className="mt-4 text-xs font-semibold uppercase tracking-wider text-primary">{article.category ?? "Texas News"}</p><h3 className="mt-1 text-lg font-semibold leading-snug group-hover:text-primary">{article.title}</h3></Link>)}</div>}
         <AdSlot placement="banner" />
       </section>
 
@@ -252,9 +296,25 @@ function PoliticalHomepage() {
         <a href="/texas-case" className="rounded-xl border bg-card p-5 hover:shadow-md"><h3 className="font-semibold">The Texas Case</h3><p className="mt-2 text-sm text-muted-foreground">Permanent KTR editorial positions backed by laws, data, and primary records.</p><span className="mt-4 block text-sm font-semibold text-primary">Open →</span></a>
       </div></section>
 
+      <ResearchSpotlight />
       <DiscoveryPriorityLinks />
 
-      <section className="mx-auto grid max-w-[1200px] gap-8 px-6 py-16 md:grid-cols-[1fr_0.8fr] md:items-center"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Support independent coverage</p><h2 className="mt-2 font-display text-4xl">Stay informed and support the newsroom</h2><p className="mt-4 max-w-2xl text-muted-foreground">Subscribe for important Texas updates and visit the Keep TX Red shop. Store purchases support independent reporting and platform operations.</p><div className="mt-6"><Link to="/shop" search={EMPTY_SHOP_SEARCH} className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Visit the shop</Link></div></div><NewsletterSignup /></section>
+      <section className="mx-auto grid max-w-[1200px] gap-8 px-6 py-16 md:grid-cols-[1fr_0.8fr] md:items-center">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Support independent coverage</p>
+          <h2 className="mt-2 font-display text-4xl">Help make Texas coverage more useful</h2>
+          <p className="mt-4 max-w-2xl leading-7 text-muted-foreground">Follow our dated reporting, share a documented tip or correction, and explore the Keep TX Red shop. Store purchases support independent reporting and platform operations.</p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link to="/contact" className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Send a tip or correction</Link>
+            <Link to="/shop" search={EMPTY_SHOP_SEARCH} className="rounded-md border px-5 py-3 text-sm font-semibold">Visit the shop</Link>
+          </div>
+        </div>
+        <aside className="rounded-xl border bg-muted/30 p-6">
+          <h3 className="text-lg font-semibold">Our sourcing commitment</h3>
+          <p className="mt-3 text-sm leading-6 text-muted-foreground">We identify reported sources, distinguish commentary from records, and welcome corrections with supporting evidence.</p>
+          <Link to="/editorial-standards" className="mt-4 inline-block text-sm font-semibold text-primary hover:underline">Read editorial standards →</Link>
+        </aside>
+      </section>
 
       <HomepageFaqs />
     </main>
