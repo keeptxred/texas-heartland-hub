@@ -10,12 +10,12 @@ describe("legacy live news retirement", () => {
     ).toBe("/news/texas-voting-guide-2026");
   });
 
-  it("redirects the old Flock story to the stronger regional privacy article", () => {
+  it("does not redirect San Antonio opposition to an unrelated Houston report", () => {
     expect(
       legacyNewsRedirect(
         "live-2026-07-24-san-antonio-residents-seek-organized-opposition-to-flock-safety-survei-hz11ng",
       ),
-    ).toBe("/news/2026-08-09-houston-flock-camera-backlash");
+    ).toBeNull();
   });
 
   it("does not invent redirects for unrelated legacy stories", () => {
