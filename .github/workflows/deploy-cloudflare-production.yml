@@ -264,7 +264,7 @@ jobs:
           if status == "404":
               if "election central is temporarily unavailable between election cycles." not in election.lower():
                   raise SystemExit("Preview 404 is not the intentional seasonal Election Central retirement")
-              if not re.search(r"^x-robots-tag:\\s*noindex\\s*,\\s*nofollow\\s*$", headers, flags=re.M):
+              if not re.search(r"^x-robots-tag:\s*noindex\s*,\s*nofollow\s*$", headers, flags=re.M):
                   raise SystemExit("Retired Election Central lacks the required noindex,nofollow header")
               print("Preview Election Central is intentionally retired: 404 and noindex,nofollow verified")
           elif status == "200":
