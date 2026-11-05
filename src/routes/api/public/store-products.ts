@@ -30,6 +30,14 @@ export const Route = createFileRoute("/api/public/store-products")({
         const productId = url.searchParams.get("id")?.trim() || null;
         const requestedLimit = Number(url.searchParams.get("limit") || 100);
         const limit = Number.isFinite(requestedLimit) ? Math.min(Math.max(Math.floor(requestedLimit), 1), 250) : 100;
+        // Stable offset pagination enables complete product XML sitemap coverage.
+        const requestedOffset = Number(url.searchParams.get("offset") || 0);
+        const offset = Number.isSafeInteger(requestedOffset) && requestedOffset >= 0 && requestedOffset <= 100000
+          ? requestedOffset
+          : null;
+        if (offset === null) {
+          return Response.json({ ok: false, error: "offset must be a nonnegative integer <= 100000" }, { status: 400, headers: corsHeaders(request) });
+        }
         const prefix = site === "keeptxred" ? "keeptxred" : "texasdefined";
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -41,7 +49,9 @@ export const Route = createFileRoute("/api/public/store-products")({
           .order(`${prefix}_featured`, { ascending: false })
           .order(`${prefix}_display_order`, { ascending: true })
           .order("synced_at", { ascending: false })
-          .limit(productId ? 1 : limit);
+          // Stable tiebreaker prevents duplicate/missing rows across pages.
+          .order("id", { ascending: true })
+          .range(productId ? 0 : offset, productId ? 0 : offset + limit - 1);
 
         if (collection) query = query.contains(`${prefix}_collections`, [collection]);
         if (productId) query = query.eq("id", productId);
