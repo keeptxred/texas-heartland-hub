@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
 import { csvRow, loadLedger, selectBatch, assess } from "./certify-news-archive-batch.mjs";
 
 const base = {
@@ -47,6 +48,23 @@ describe("KTR Phase 2A archive verification", () => {
     expect(assess(indexable, { status: 200, html: html("index,follow") }).passedHttpPolicy).toBe(true);
     expect(assess(indexable, { status: 200, html: html() }).errors).toContain("unexpected-noindex");
     expect(assess(indexable, { status: 200, html: html("index,follow", "https://keeptxred.com/news/elsewhere") }).errors).toContain("canonical-mismatch");
+  });
+
+  it("keeps existing TexasDefined lifestyle ownership handoffs out of the KTR indexable archive", () => {
+    const ledger = loadLedger(readFileSync("docs/recovery/ktr-news-phase2a-disposition-ledger.csv", "utf8"));
+    const lookup = new Map(ledger.map(row => [new URL(row.url).pathname, row]));
+    const source = readFileSync("src/lib/migrated-practical-guide-canonical.ts", "utf8");
+    const migrated = [...source.matchAll(/"(\\/news\\/[^"]+)":\\s*"(https:\\/\\/texasdefined\\.com\\/[^"]+)"/g)];
+    expect(migrated.length).toBeGreaterThanOrEqual(16);
+    for (const [, path, target] of migrated) {
+      const entry = lookup.get(path);
+      expect(entry, path + " missing from complete archive").toBeDefined();
+      expect(entry, path).toMatchObject({
+        disposition: "D",
+        expected_indexability: "redirect",
+        redirect_to: target,
+      });
+    }
   });
 
   it("requires true permanent redirects and 404/410 for retired URLs", () => {
