@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/deploy-cloudflare-production.yml'
+      - 'src/routes/index.tsx'
   workflow_dispatch:
     inputs:
       activate_custom_domain:
