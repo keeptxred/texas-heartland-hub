@@ -39,10 +39,15 @@ describe("homepage GEO signals", () => {
   it("keeps the current-news boundary while featuring substantive dated research", () => {
     const source = homepageSource();
 
-    expect(source).toContain("No recent verified news reports are available in this feed.");
-    expect(source).toContain("<ResearchSpotlight />");
+    expect(source).toContain("Previous verified reporting");
+    expect(source).toContain("Browse the dated news archive");
+    expect(source).toContain("latest.length === 0 && <ResearchSpotlight />");
+    expect(source).toContain("latest.length > 0 && <ResearchSpotlight />");
+    expect(source).toContain("function ResearchSpotlight()");
     expect(source).toContain("/news/why-texas-has-no-income-tax");
-    expect(source).toContain("/news/texas-new-laws-2026");
+    expect(source).toContain("Find Texas laws and official statutes");
+    expect(source).toContain('href: "/laws"');
+    expect(source).not.toContain('href: "/news/texas-new-laws-2026"');
     expect(source).toContain("Trace a bill through the Legislature");
   });
 

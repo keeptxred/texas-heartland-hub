@@ -42,9 +42,9 @@ const FEATURED_RESEARCH = [
   },
   {
     label: "Texas law reference",
-    title: "Major Texas laws taking effect in 2026",
-    description: "Understand important legislative changes with dated explanations and references to the underlying legal records.",
-    href: "/news/texas-new-laws-2026",
+    title: "Find Texas laws and official statutes",
+    description: "Browse Texas legal topics and cross-check the controlling statutes, effective dates and official source records.",
+    href: "/laws",
   },
   {
     label: "Public-record research",
@@ -283,11 +283,23 @@ function PoliticalHomepage() {
       <BreakingStrip articles={valid} />
       <ElectionSeasonSpotlight />
 
+      {latest.length === 0 && <ResearchSpotlight />}
+
+      {latest.length > 0 ? (
       <section className="mx-auto max-w-[1200px] px-6 py-16">
         <div className="flex items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Latest coverage</p><h2 className="mt-2 font-display text-4xl">Texas political news</h2></div><Link to="/news" className="text-sm font-semibold text-primary hover:underline">View all news →</Link></div>
-        {latest.length === 0 ? <div className="mt-8 rounded-xl border bg-muted/30 p-6"><p className="leading-7 text-muted-foreground">No recent verified news reports are available in this feed. We preserve original publication dates rather than presenting older stories as breaking news. Explore dated reporting in the archive or the research resources below.</p><Link to="/news" className="mt-4 inline-block text-sm font-semibold text-primary hover:underline">Browse previous reporting →</Link></div> : <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">{latest.map((article, index) => <Link key={article.slug} to="/news/$slug" params={{ slug: article.slug }} className="group block"><div className="aspect-[16/10] overflow-hidden rounded-lg bg-muted"><img src={images.get(article.slug) ?? heroFlag} alt="" width={640} height={400} loading={index === 0 ? "eager" : "lazy"} className={`size-full ${shouldContainArticleImage(images.get(article.slug) ?? heroFlag) ? "object-contain bg-white p-4" : "object-cover"} transition-transform group-hover:scale-[1.02]`} /></div><p className="mt-4 text-xs font-semibold uppercase tracking-wider text-primary">{article.category ?? "Texas News"}</p><h3 className="mt-1 text-lg font-semibold leading-snug group-hover:text-primary">{article.title}</h3></Link>)}</div>}
+        <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">{latest.map((article, index) => <Link key={article.slug} to="/news/$slug" params={{ slug: article.slug }} className="group block"><div className="aspect-[16/10] overflow-hidden rounded-lg bg-muted"><img src={images.get(article.slug) ?? heroFlag} alt="" width={640} height={400} loading={index === 0 ? "eager" : "lazy"} className={`size-full ${shouldContainArticleImage(images.get(article.slug) ?? heroFlag) ? "object-contain bg-white p-4" : "object-cover"} transition-transform group-hover:scale-[1.02]`} /></div><p className="mt-4 text-xs font-semibold uppercase tracking-wider text-primary">{article.category ?? "Texas News"}</p><h3 className="mt-1 text-lg font-semibold leading-snug group-hover:text-primary">{article.title}</h3></Link>)}</div>
         <AdSlot placement="banner" />
       </section>
+      ) : (
+        <section className="mx-auto max-w-[1200px] px-6 pb-12 pt-4" aria-labelledby="ktr-previous-reporting">
+          <div className="border-t pt-8">
+            <h2 id="ktr-previous-reporting" className="font-display text-2xl">Previous verified reporting</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">Read previously published news with its original dates and attributed sources. Older reports are not presented as new developments.</p>
+            <Link to="/news" className="mt-3 inline-block text-sm font-semibold text-primary hover:underline">Browse the dated news archive →</Link>
+          </div>
+        </section>
+      )}
 
       <section className="border-y bg-muted/40"><div className="mx-auto grid max-w-[1200px] gap-5 px-6 py-14 sm:grid-cols-2 lg:grid-cols-4">
         <Link to="/texas-politics" className="rounded-xl border bg-card p-5 hover:shadow-md"><h3 className="font-semibold">Texas Politics</h3><p className="mt-2 text-sm text-muted-foreground">Political reporting, public officials, policy debates, and government accountability.</p><span className="mt-4 block text-sm font-semibold text-primary">Open →</span></Link>
@@ -296,7 +308,7 @@ function PoliticalHomepage() {
         <a href="/texas-case" className="rounded-xl border bg-card p-5 hover:shadow-md"><h3 className="font-semibold">The Texas Case</h3><p className="mt-2 text-sm text-muted-foreground">Permanent KTR editorial positions backed by laws, data, and primary records.</p><span className="mt-4 block text-sm font-semibold text-primary">Open →</span></a>
       </div></section>
 
-      <ResearchSpotlight />
+      {latest.length > 0 && <ResearchSpotlight />}
       <DiscoveryPriorityLinks />
 
       <section className="mx-auto grid max-w-[1200px] gap-8 px-6 py-16 md:grid-cols-[1fr_0.8fr] md:items-center">
