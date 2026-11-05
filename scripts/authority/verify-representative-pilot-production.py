@@ -8,8 +8,12 @@ misreported as a broken URL or a false zero activity count.
 from __future__ import annotations
 
 import html
+import http.client
 import os
 import re
+import socket
+import sys
+import time
 import urllib.request
 import urllib.error
 import xml.etree.ElementTree as ET
@@ -72,6 +76,19 @@ class ParsedHtml(HTMLParser):
             self.words.append(data.strip())
 
 
+# Retrying an interrupted TCP/HTTP transfer does not waive any page-level check.
+# HTTP status codes, wrong canonicals, missing sources and failed robots gates are
+# deliberately not retried or interpreted as successes.
+MAX_INTERRUPTED_READ_ATTEMPTS = 3
+INTERRUPTED_TRANSFER_ERRORS = (
+    http.client.IncompleteRead,
+    http.client.RemoteDisconnected,
+    ConnectionResetError,
+    TimeoutError,
+    socket.timeout,
+)
+
+
 def get(path: str) -> tuple[int, str]:
     headers = {
         "User-Agent": "KeepTXRed-representative-pilot-smoke/1.0",
@@ -80,11 +97,33 @@ def get(path: str) -> tuple[int, str]:
     if "workers.dev" in SITE_URL:
         headers["x-keeptxred-deployment-smoke"] = "canonical"
     req = urllib.request.Request(SITE_URL + path, headers=headers)
-    try:
-        with urllib.request.urlopen(req, timeout=40) as response:
-            return response.status, response.read().decode("utf-8", errors="replace")
-    except urllib.error.HTTPError as error:
-        return error.code, error.read().decode("utf-8", errors="replace")
+    for attempt in range(1, MAX_INTERRUPTED_READ_ATTEMPTS + 1):
+        try:
+            with urllib.request.urlopen(req, timeout=40) as response:
+                payload = response.read()
+                declared_size = response.headers.get("Content-Length")
+                if declared_size is not None and len(payload) != int(declared_size):
+                    raise http.client.IncompleteRead(
+                        payload, int(declared_size) - len(payload)
+                    )
+                return response.status, payload.decode("utf-8", errors="replace")
+        except urllib.error.HTTPError as error:
+            # A bad status is a page/deployment failure; never hide it by retrying.
+            return error.code, error.read().decode("utf-8", errors="replace")
+        except INTERRUPTED_TRANSFER_ERRORS as error:
+            if attempt == MAX_INTERRUPTED_READ_ATTEMPTS:
+                raise AssertionError(
+                    f"{SITE_URL}{path}: interrupted HTTP response after "
+                    f"{attempt} complete-fetch attempts: {error!r}"
+                ) from error
+            print(
+                f"Transport interrupted at {SITE_URL}{path} "
+                f"(attempt {attempt}/{MAX_INTERRUPTED_READ_ATTEMPTS}); "
+                "retrying the entire document, not bypassing checks",
+                file=sys.stderr,
+            )
+            time.sleep(attempt * 0.5)
+    raise AssertionError(f"{SITE_URL}{path}: unexpected transport retry state")
 
 
 def robots_tags(parsed: ParsedHtml) -> list[str]:

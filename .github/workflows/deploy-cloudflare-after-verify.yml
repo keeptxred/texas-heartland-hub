@@ -267,6 +267,14 @@ jobs:
           print("Live payment runtime verification passed")
           PY
 
+      - name: Verify representative smoke HTTP transport contract
+        if: steps.revision.outputs.deploy == 'true'
+        timeout-minutes: 2
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s scripts/authority -p 'test_verify_representative_transport.py' -v
+
       - name: Certify representative pilot on Worker and public hostname
         if: steps.revision.outputs.deploy == 'true'
         timeout-minutes: 6
