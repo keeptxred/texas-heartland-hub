@@ -52,6 +52,24 @@ export const EDITORIAL_REVIEWS: Record<string, EditorialReview> = {
     biography: "Mihaela Pleșa represents Texas House District 70 in parts of Collin County. The official House biography describes her as a vice chair of the Pensions, Investments and Financial Services committee and a member of the Elections committee.",
     identityChecked: "2026-11-04", source: "https://house.texas.gov/members/4345/biography",
   },
+  "keresa-richardson": {
+    name: "Keresa Richardson", office: "Texas House", district: "House District 61", party: "R",
+    officialUrl: "https://house.texas.gov/members/4735",
+    biography: "Keresa Richardson represents Texas House District 61, including part of Collin County. Her official Texas House biography identifies her as chief executive of The Lawton Group, which operates plumbing, HVAC, electrical, refrigeration and pest-control services in Texas. It describes more than forty years of business experience and her work advocating for small businesses and women in skilled trades. The linked 89th Legislature records below separately identify her recorded bill roles and legislative outcomes, not floor votes or an exhaustive career history.",
+    identityChecked: "2026-11-05", source: "https://house.texas.gov/members/4735/biography",
+  },
+  "ben-bumgarner": {
+    name: "Ben Bumgarner", office: "Texas House", district: "House District 63", party: "R",
+    officialUrl: "https://house.texas.gov/members/4125",
+    biography: "Ben Bumgarner represents House District 63 in southern Denton County, including parts of Flower Mound and Lewisville. His official Texas House biography documents earlier service on the Flower Mound Town Council and as mayor pro tem, a history degree from Austin College, and small-business ownership. During the 89th Legislature he served on Environmental Regulation and Pensions, Investments and Financial Services committees. This profile's separately linked official bill histories show specific authorship or sponsorship roles and recorded outcomes rather than claiming every bill passed.",
+    identityChecked: "2026-11-05", source: "https://house.texas.gov/members/4125/biography",
+  },
+  "andy-hopper": {
+    name: "Andy Hopper", office: "Texas House", district: "House District 64", party: "R",
+    officialUrl: "https://house.texas.gov/members/4555",
+    biography: "Andy Hopper represents House District 64, covering Wise County and part of Denton County, and began House service in 2025. His official Texas House biography records graduating from the University of North Texas in 2000, working in defense-industry software engineering, owning a software company, and serving in the Texas State Guard since 2014. The 89th Legislature records below link particular measures to his documented bill roles and statuses; they are not presented as his voting history or the complete set of bills on which he worked.",
+    identityChecked: "2026-11-05", source: "https://house.texas.gov/members/4555/biography",
+  },
   "sheryl-cole": {
     name: "Sheryl Cole", office: "Texas House", district: "House District 46", party: "D",
     officialUrl: "https://house.texas.gov/members/3625",
@@ -532,6 +550,7 @@ export const SCRIPT2_REVIEWED_SLUGS = [
   "cecil-bell", "keith-bell", "cole-hefner", "daniel-alders", "jay-dean",
   "cody-harris", "trent-ashby", "brian-harrison", "trey-wharton",
   "steve-toth", "stan-gerdes", "ellen-troxclair", "terry-wilson",
+  "keresa-richardson", "ben-bumgarner", "andy-hopper",
 ] as const;
 
 export const CERTIFICATION_CANDIDATE_SLUGS = [
