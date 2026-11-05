@@ -2161,57 +2161,149 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
 
   "texas-voter-registration-guide": {
-    updated: "2026-06-12",
-    intro: [
-      "Registering to vote in Texas takes about five minutes and one piece of paper. Here is everything you need to know — including the often-missed 30-day deadline that disqualifies thousands of would-be voters every cycle.",
+    "updated": "2026-11-05",
+    "editorNote": "Evergreen civic-reference guide checked against the Texas Election Code and Secretary of State guidance on November 5, 2026. Registration and voter-ID rules are separate; verify the applicable election calendar and county registrar before acting.",
+    "intro": [
+      "Texas has separate procedures for registering to vote, changing an existing registration, and proving identity at a polling place. Mixing those steps can cause avoidable problems: the registration deadline determines eligibility for an election, while photo-ID rules generally apply when casting a ballot in person.",
+      "This guide covers the ordinary Texas process using [Election Code Chapter 13](https://statutes.capitol.texas.gov/Docs/EL/htm/EL.13.htm) and the Secretary of State's instructions. It identifies situations where a county voter registrar or election official needs to assess individual eligibility instead of treating a short FAQ as a legal ruling."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "Who Can Register",
-        bullets: [
-          "U.S. citizen, age 18 by Election Day.",
-          "Resident of the Texas county where you apply.",
-          "Not finally convicted of a felony (or have completed sentence, parole, and probation).",
-          "Not declared mentally incapacitated by a court.",
+        "heading": "1. Check eligibility before applying",
+        "paragraphs": [
+          "Election Code §13.001 generally requires U.S. citizenship, residence in the Texas county where registration is sought, and age 18 by the time a person votes. Someone at least 17 years and 10 months old may apply in advance, but cannot vote before turning 18.",
+          "A final felony conviction does not always mean a permanent loss of voting rights: the statute covers completion of the full sentence, including incarceration, parole or supervision, or probation, as well as pardon or other release from the disability. Specific court judgments concerning mental capacity can affect eligibility; the law does not impose a blanket disqualification based on disability. Seek a county registrar's or qualified legal professional's guidance when an individual record is unclear."
+        ]
+      },
+      {
+        "heading": "2. Start a new registration: paper form and limited online pathways",
+        "paragraphs": [
+          "For an ordinary new application, the [Secretary of State's online form](https://www.sos.state.tx.us/elections/voter/reqvr.shtml) is a form-preparation tool: fill it out, print, sign, and mail it to the county voter registrar, or request a paper application from the registrar. Merely filling in a web form is not the same as submitting a new voter registration.",
+          "A separate exception exists for eligible users completing a Texas Department of Public Safety driver-license or state-ID renewal, replacement, or qualifying update: DPS offers a voter-registration option in that transaction. Existing registered voters can also update their name or address through the official Texas.gov service. Do not confuse those services with blanket online registration for any new applicant."
+        ]
+      },
+      {
+        "heading": "3. Calculate the effective date, not just a slogan about 30 days",
+        "paragraphs": [
+          "Under Election Code §13.143, an approved registration generally takes effect on the 30th day after the application is submitted. A properly addressed, postage-paid application mailed to the registrar is treated as submitted when placed in U.S. mail; the postmark is evidence of that date. An application handed over in person uses the delivery date. A mailed application is not categorically required to arrive 30 days before the election.",
+          "If the ordinary 30-day deadline falls on a Saturday, Sunday, or legal holiday, Texas law can extend it to the next regular business day. As a concrete example, the deadline for the November 3, 2026 general election was **Monday, October 5, 2026**, because the 30th day fell on Sunday. That date is historical, not the deadline for every future election. Use the [Secretary of State's election calendars](https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml) for the next contest.",
+          "Because USPS collection and postmark dates can differ, the Secretary of State recommends taking a mailed application to a USPS retail counter and requesting a free manual postmark. Keep a copy or submission details and check your registration status afterward."
+        ]
+      },
+      {
+        "heading": "4. Confirm that the registration was processed",
+        "paragraphs": [
+          "Submitting a form is not proof that the county accepted the registration. Use the Secretary of State's [Am I Registered? service](https://teamrv-mvp.sos.texas.gov/MVP/mvp.do) to look up your record and confirm the county and address. If a new application does not appear when expected, contact the county voter registrar rather than assuming a card will arrive in time.",
+          "Registration is maintained at the county level. A voter-registration certificate and the website's status information can help identify a mismatch; neither should be confused with the separate ID rules used at polling places."
+        ]
+      },
+      {
+        "heading": "5. Moving or changing your name: two different cases",
+        "paragraphs": [
+          "If you are already registered in Texas, the official [Texas.gov voter name and address service](https://txapps.texas.gov/tolapp/sos/SOSACManager) can update an existing record, including a move across county lines. Moving to another county through that service cancels the old county record and updates the new county record; it is not simply a change of precinct within the same county. Check the effective date and verify the updated record.",
+          "If you move within the same county and your change is not effective by Election Day, Texas has a statement-of-residence or 'fail-safe' procedure that may allow you to vote in your old precinct when its statutory conditions are met. If you move to a different county too close to an election, a limited ballot may be available during early voting at the designated main early voting location, subject to eligibility. Do not assume the two situations have the same remedy."
+        ]
+      },
+      {
+        "heading": "6. Seven types of photo identification for in-person voting",
+        "bullets": [
+          "Texas driver license issued by the Department of Public Safety.",
+          "Texas Election Identification Certificate issued by DPS.",
+          "Texas personal identification card issued by DPS.",
+          "Texas handgun license issued by DPS.",
+          "U.S. military identification card containing a photograph.",
+          "U.S. citizenship certificate containing a photograph.",
+          "U.S. passport book or passport card."
         ],
+        "paragraphs": [
+          "Texas generally accepts these IDs when current. Except for a U.S. citizenship certificate, which does not expire, a voter aged 18–69 may present an ID expired no more than four years; a voter aged 70 or older may use an otherwise valid listed ID regardless of how long it has been expired. These are polling-place identification rules—not requirements to possess photo ID merely to submit a registration application."
+        ]
       },
       {
-        heading: "The 30-Day Rule",
-        paragraphs: [
-          "Your application must be received by the county voter registrar at least 30 days before the election you want to vote in. Texas does not offer same-day registration.",
-        ],
+        "heading": "7. What if you cannot reasonably obtain an accepted photo ID?",
+        "paragraphs": [
+          "An otherwise eligible registered voter who does not possess and cannot reasonably obtain one of the seven photo IDs may ordinarily use a supporting document, such as a voter-registration certificate, certain government documents, a utility bill, bank statement or paycheck, together with a signed Reasonable Impediment Declaration at the polling place. The declaration requires a truthful explanation of the impediment; it is not a universal substitute for photo ID.",
+          "Different rules apply when a voter possesses an accepted ID but simply did not bring it, or cannot meet the supporting-document procedure. A provisional ballot may be available and may require additional action by a deadline. Ask the election judge or county election office for the applicable process; do not walk away based only on an abbreviated online ID list."
+        ]
       },
       {
-        heading: "Accepted Photo ID",
-        bullets: [
-          "Texas Driver License (or expired up to 4 years; lifetime if 70+).",
-          "Texas Election Identification Certificate (EIC).",
-          "U.S. passport, military ID, or citizenship certificate.",
-          "Texas handgun license.",
-        ],
-      },
+        "heading": "8. Check ballot access and deadlines separately from registration",
+        "paragraphs": [
+          "Registration alone does not tell you your assigned polling location, which districts are on your ballot, whether you qualify to vote by mail, or the last date to request a mail ballot. Those rules depend on the election and sometimes the county or special district. Use your county election office and the Secretary of State's current election-calendar notices instead of recycling a prior year's timetable.",
+          "Before voting, confirm your voter record, the correct county and precinct, the date and place of voting, and which acceptable identification or alternative procedure applies. If the portal and county records disagree, contact the county voter registrar before the deadline."
+        ]
+      }
     ],
-    faq: [
+    "faq": [
       {
-        q: "What if I moved counties?",
-        a: "You must re-register in your new county. Update your address on the Secretary of State portal.",
+        "q": "Can I register entirely online in Texas?",
+        "a": "The ordinary first-time form must generally be printed, signed, and mailed or delivered. Eligible DPS driver-license/state-ID online transactions can include a voter-registration option; registered voters can update their existing name or address through Texas.gov."
       },
       {
-        q: "Can I register online?",
-        a: "Texas does not have full online voter registration — you must mail or hand-deliver a paper application.",
+        "q": "Does my mailed application have to arrive 30 days before Election Day?",
+        "a": "Not necessarily. Election Code §13.143 generally treats a properly addressed, postage-paid mailed application as submitted on the date it was mailed, with postmark evidence. Weekend or holiday deadline extensions may apply. Check the election-specific Secretary of State calendar."
       },
+      {
+        "q": "If I moved to another Texas county, can I update an existing registration online?",
+        "a": "Yes. Texas.gov allows qualifying already-registered voters to update their address across county lines. The old county registration is canceled and the new county registration must become effective; verify the new record and ask about a limited ballot if the move happened close to an election."
+      },
+      {
+        "q": "Is a voter-registration card one of the seven photo IDs?",
+        "a": "No. It can be an eligible supporting document when a voter who cannot reasonably obtain accepted photo ID completes the Reasonable Impediment Declaration. Registration status and in-person identification are different requirements."
+      },
+      {
+        "q": "Can someone with a past felony conviction register?",
+        "a": "Texas law provides for restoration of voting eligibility after a fully discharged sentence, including supervision or probation, or a qualifying pardon or release. Individual cases may be complex, so confirm the particular record with the registrar or appropriate legal adviser."
+      },
+      {
+        "q": "Where should I check whether I am registered?",
+        "a": "Use the Texas Secretary of State's Am I Registered? portal to verify the record, then contact the county voter registrar if anything is missing or incorrect."
+      }
     ],
-    sources: [
+    "sources": [
       {
-        label: "Vote Texas — Register to Vote",
-        url: "https://www.votetexas.gov/register-to-vote/",
+        "label": "Texas Election Code, Chapter 13 — registration eligibility and effective date",
+        "url": "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.13.htm"
       },
-      { label: "Texas Secretary of State", url: "https://www.sos.state.tx.us/elections/" },
+      {
+        "label": "VoteTexas — register to vote and confirm status",
+        "url": "https://www.votetexas.gov/register-to-vote/"
+      },
+      {
+        "label": "Texas Secretary of State — application and submission methods",
+        "url": "https://www.sos.state.tx.us/elections/voter/reqvr.shtml"
+      },
+      {
+        "label": "Texas.gov — update existing voter information",
+        "url": "https://www.texas.gov/living-in-texas/texas-voter-registration/"
+      },
+      {
+        "label": "VoteTexas — seven accepted voter IDs and reasonable-impediment procedure",
+        "url": "https://www.votetexas.gov/voting/need-id"
+      },
+      {
+        "label": "Texas Secretary of State — 2026 November election law calendar",
+        "url": "https://www.sos.state.tx.us/elections/laws/advisory2026-21-november-3-election-law-calendar.shtml"
+      },
+      {
+        "label": "Texas Secretary of State — moved voter fail-safe guidance",
+        "url": "https://www.sos.state.tx.us/elections/laws/advisory2025-16.shtml"
+      },
+      {
+        "label": "Texas Election Code, Chapter 11 — qualifications to vote",
+        "url": "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.11.htm"
+      }
     ],
-    related: ["primary-vs-general-election", "beginners-guide-texas-elections", "voter-id-surge"],
-    cta: { label: "Get the Registration Form", href: "/register-to-vote" },
+    "related": [
+      "primary-vs-general-election",
+      "beginners-guide-texas-elections",
+      "voter-id-surge"
+    ],
+    "cta": {
+      "label": "Check or start registration with VoteTexas",
+      "href": "https://www.votetexas.gov/register-to-vote/"
+    }
   },
-
   "texas-school-board-powers": {
     "updated": "2026-11-04",
     "editorNote": "Substantively revised November 2026. Removed unsupported statewide turnout and uniform board-size claims; school district governance, election scheduling and independent record checking now reference official state materials.",
