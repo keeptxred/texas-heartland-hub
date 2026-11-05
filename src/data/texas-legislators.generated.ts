@@ -4737,7 +4737,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 73,
     party: "R",
-    website: "https://house.texas.gov/members/73",
+    website: "https://house.texas.gov/members/4265",
     imageUrl: "https://house.texas.gov/images/members/4265.jpg?v=3",
     officialCode: null,
     home: "445 N. Seguin Ave., New Braunfels, TX 78130",
@@ -4777,7 +4777,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/73",
+          url: "https://house.texas.gov/members/4265",
         },
         {
           label: "Official member biography",
