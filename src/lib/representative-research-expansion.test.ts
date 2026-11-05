@@ -24,8 +24,8 @@ describe("representative Script 2 source-first certification", () => {
     }
   });
 
-  it("requires all six genuine quality gates for eighty-four individually reviewed expansion profiles", () => {
-    expect(SCRIPT2_REVIEWED_SLUGS).toHaveLength(84);
+  it("requires all six genuine quality gates for eighty-eight individually reviewed expansion profiles", () => {
+    expect(SCRIPT2_REVIEWED_SLUGS).toHaveLength(88);
     for (const slug of SCRIPT2_REVIEWED_SLUGS) {
       const records = pilotResearchFor(slug);
       expect(records.length, slug + " evidence").toBeGreaterThanOrEqual(16);
@@ -51,6 +51,31 @@ describe("representative Script 2 source-first certification", () => {
       expect(report.state, slug + ": " + report.reasons.join("; ")).toBe("AUTHORITY_READY");
       expect(report.officialSource).toMatch(/^https:\/\//);
       expect(findRepresentativeBySlug(slug)?.website).toBe("https://house.texas.gov/members/" + memberId);
+    }
+  });
+
+  it("requires current official identity and four distinct role samples for House 71–74", () => {
+    const expected = [
+      ["stan-lambert", "3225"],
+      ["drew-darby", "2645"],
+      ["carrie-isaac", "4265"],
+      ["eddie-morales", "4000"],
+    ];
+    for (const [slug, officialId] of expected) {
+      expect(SCRIPT2_REVIEWED_SLUGS).toContain(slug);
+      expect(findRepresentativeBySlug(slug)?.website).toBe(
+        "https://house.texas.gov/members/" + officialId
+      );
+      const records = pilotResearchFor(slug);
+      expect(records).toHaveLength(32);
+      expect(new Set(records.map((row) => row.sponsor_role))).toEqual(
+        new Set(["author", "coauthor", "sponsor", "cosponsor"])
+      );
+      expect(new Set(records.map((row) => row.bill_id + ":" + row.sponsor_role)).size).toBe(32);
+      expect(new Set(records.map((row) => row.current_status_label)).size).toBeGreaterThan(1);
+      const certification = certificationFor(slug);
+      expect(certification.state, slug + ": " + certification.reasons.join("; ")).toBe("AUTHORITY_READY");
+      expect(Object.values(certification.gates).every(Boolean)).toBe(true);
     }
   });
 

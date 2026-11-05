@@ -1,0 +1,67 @@
+{
+  "purpose": "Independently reviewed official officeholder identity and biographical provenance for strictly gated Script 2 House 71–74 cohort",
+  "checkedAt": "2026-11-05",
+  "researchSnapshot": "src/data/representative-research-hd71-74.json",
+  "researchMethod": "Select at most 8 dated official 89th Texas Legislature bill histories for each of four recorded sponsor roles from the existing KTR database. Bill-role records are not votes or complete legislative counts.",
+  "reviews": [
+    {
+      "slug": "stan-lambert",
+      "name": "Stan Lambert",
+      "district": "House District 71",
+      "party": "R",
+      "officialMemberPage": "https://house.texas.gov/members/3225",
+      "biographySource": "https://house.texas.gov/members/3225/biography",
+      "additionalPrimarySource": "https://legdir.capitol.texas.gov/MemberInfo.aspx?Chamber=H&Code=A3225",
+      "sourceChecked": "2026-11-05",
+      "verifiedFacts": [
+        "Official district 71 covers Callahan, Jones, Nolan and Taylor counties",
+        "Abilene banker, previously Ennis mayor and Abilene ISD trustee",
+        "89th committee chair of Pensions, Investments and Financial Services; Higher Education member"
+      ]
+    },
+    {
+      "slug": "drew-darby",
+      "name": "Drew Darby",
+      "district": "House District 72",
+      "party": "R",
+      "officialMemberPage": "https://house.texas.gov/members/2645",
+      "biographySource": "https://house.texas.gov/members/2645/biography",
+      "sourceChecked": "2026-11-05",
+      "verifiedFacts": [
+        "Represents 10 West Texas counties and is from San Angelo",
+        "UT Austin BBA and JD; worked in title/real estate business",
+        "89th Energy Resources chair; House Administration and State Affairs member"
+      ]
+    },
+    {
+      "slug": "carrie-isaac",
+      "name": "Carrie Isaac",
+      "district": "House District 73",
+      "party": "R",
+      "officialMemberPage": "https://house.texas.gov/members/4265",
+      "biographySource": "https://house.texas.gov/members/4265/biography",
+      "additionalPrimarySource": "https://legdir.capitol.texas.gov/MemberInfo.aspx?Chamber=H&Code=A4265",
+      "sourceChecked": "2026-11-05",
+      "verifiedFacts": [
+        "District 73 covers Comal and part of Hays County",
+        "Prior nonprofit work and Stephen F. Austin bachelor/Purdue University Global master's degrees",
+        "89th Elections and Homeland Security, Public Safety and Veterans' Affairs committees",
+        "Correct member ID 4265, not House district number 73"
+      ]
+    },
+    {
+      "slug": "eddie-morales",
+      "name": "Eddie Morales",
+      "district": "House District 74",
+      "party": "D",
+      "officialMemberPage": "https://house.texas.gov/members/4000",
+      "biographySource": "https://house.texas.gov/members/4000/biography",
+      "sourceChecked": "2026-11-05",
+      "verifiedFacts": [
+        "Eleven-county district extends from Maverick County to part of El Paso County",
+        "Eagle Pass background, University of Texas at Austin undergraduate degree, St. Mary's law degree",
+        "89th Energy Resources vice chair, Governmental Oversight (Select), Transportation member"
+      ]
+    }
+  ]
+}

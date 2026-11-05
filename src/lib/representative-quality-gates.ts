@@ -556,6 +556,30 @@ export const EDITORIAL_REVIEWS: Record<string, EditorialReview> = {
     biography: "Terry Wilson represents House District 20. The official Texas House biography identifies him as a retired United States Army colonel who served more than thirty years and holds a business degree from Texas A&M University and a graduate degree in strategic logistics. He chaired the House Higher Education Committee and served on Elections and Redistricting during the 89th Legislature, with previous Defense and Veterans' Affairs and Appropriations leadership. The activity records below link to the original Texas Legislature bill histories.",
     identityChecked: "2026-11-04", source: "https://house.texas.gov/members/3525/biography",
   },
+  "stan-lambert": {
+    name: "Stan Lambert", office: "Texas House", district: "House District 71", party: "R",
+    officialUrl: "https://house.texas.gov/members/3225",
+    biography: "Stan Lambert represents House District 71, covering Callahan, Jones, Nolan and Taylor counties around Abilene. A former community banker, he earned a business degree at Abilene Christian University and previously served as mayor of Ennis and on the Abilene ISD board. The official Legislative Directory lists him as chair of Pensions, Investments and Financial Services and as a member of Higher Education during the 89th Legislature. The individually linked bill histories below identify his recorded author, coauthor, sponsor and cosponsor roles; they do not constitute a roll-call voting record.",
+    identityChecked: "2026-11-05", source: "https://legdir.capitol.texas.gov/MemberInfo.aspx?Chamber=H&Code=A3225",
+  },
+  "drew-darby": {
+    name: "Drew Darby", office: "Texas House", district: "House District 72", party: "R",
+    officialUrl: "https://house.texas.gov/members/2645",
+    biography: "Drew Darby represents House District 72 across ten West Texas counties, including San Angelo and communities in the Concho Valley and Permian Basin. A University of Texas at Austin business and law graduate, he has worked in real estate and title services. His official 89th Legislature biography identifies him as chair of Energy Resources and a member of House Administration and State Affairs. The recorded bills linked below allow readers to distinguish his specific sponsorship roles from bill passage or enactment; they are a limited historical sample, not his full legislative career.",
+    identityChecked: "2026-11-05", source: "https://house.texas.gov/members/2645/biography",
+  },
+  "carrie-isaac": {
+    name: "Carrie Isaac", office: "Texas House", district: "House District 73", party: "R",
+    officialUrl: "https://house.texas.gov/members/4265",
+    biography: "Carrie Isaac represents House District 73, covering Comal County and part of Hays County. Her official House biography describes earlier work with nonprofit organizations and states that she earned a bachelor's degree from Stephen F. Austin State University and a master's degree from Purdue University Global. For the 89th Legislature her recorded committee assignments include Elections and Homeland Security, Public Safety and Veterans' Affairs. The cited bill histories below separate individual legislative roles and reported outcomes, without presenting a complete voting history or assuming a bill became law from her involvement.",
+    identityChecked: "2026-11-05", source: "https://house.texas.gov/members/4265/biography",
+  },
+  "eddie-morales": {
+    name: "Eddie Morales", office: "Texas House", district: "House District 74", party: "D",
+    officialUrl: "https://house.texas.gov/members/4000",
+    biography: "Eddie Morales represents House District 74, an eleven-county West Texas and border district that includes Maverick County and part of El Paso County. Born in Eagle Pass, he earned a political science degree from the University of Texas at Austin and a law degree from St. Mary's University, then worked as an attorney. His 89th Legislature committee assignments include Energy Resources as vice chair, Governmental Oversight (Select), and Transportation. The independently linked Texas Legislature histories below describe specific recorded bill roles and results rather than an unverified lifetime total or roll-call voting pattern.",
+    identityChecked: "2026-11-05", source: "https://house.texas.gov/members/4000/biography",
+  },
 };
 
 export const SIX_PROFILE_PILOT = [
@@ -589,6 +613,7 @@ export const SCRIPT2_REVIEWED_SLUGS = [
   "keresa-richardson", "ben-bumgarner", "andy-hopper",
   "shelley-luther", "mitch-little",
   "matt-shaheen", "jeff-leach", "david-spiller", "james-frank",
+  "stan-lambert", "drew-darby", "carrie-isaac", "eddie-morales",
 ] as const;
 
 export const CERTIFICATION_CANDIDATE_SLUGS = [
