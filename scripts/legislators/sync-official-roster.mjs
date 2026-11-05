@@ -84,15 +84,51 @@ function reverseHouseName(value) {
   return `${first} ${last}`.replace(/\s+/g, " ").trim();
 }
 
+// The Legislative Reference Library throttles bursts. Serialize calls to that
+// host (including retries) with a minimum inter-request gap. Other official
+// source hosts remain independent; the source roster still fails closed.
+const sleep = (ms) => new Promise((resolveDelay) => setTimeout(resolveDelay, ms));
+let lrlRequestQueue = Promise.resolve();
+
+async function rateLimitedFetch(url, options) {
+  if (new URL(url).hostname !== "lrl.texas.gov") return fetch(url, options);
+  const previous = lrlRequestQueue;
+  let release;
+  lrlRequestQueue = new Promise((resolve) => { release = resolve; });
+  await previous;
+  try {
+    const response = await fetch(url, options);
+    await sleep(900);
+    return response;
+  } finally {
+    release();
+  }
+}
+
+function retryAfterDelay(header) {
+  if (!header) return null;
+  const seconds = Number(header);
+  if (Number.isFinite(seconds) && seconds >= 0)
+    return Math.min(60_000, Math.max(1000, seconds * 1000));
+  const timestamp = Date.parse(header);
+  return Number.isFinite(timestamp)
+    ? Math.min(60_000, Math.max(1000, timestamp - Date.now()))
+    : null;
+}
+
 async function fetchText(url, options = {}, attempt = 1) {
-  const response = await fetch(url, {
+  const response = await rateLimitedFetch(url, {
     redirect: "follow",
     headers: { "user-agent": "KeepTXRed authority roster sync/1.0" },
     ...options,
   });
   if (!response.ok) {
-    if (attempt < 3 && response.status >= 500) {
-      await new Promise((resolveDelay) => setTimeout(resolveDelay, attempt * 400));
+    const retryable = response.status === 429 || response.status >= 500;
+    if (retryable && attempt < 6) {
+      const backoffMs = retryAfterDelay(response.headers.get("retry-after"))
+        ?? Math.min(30_000, 1500 * 2 ** (attempt - 1));
+      console.warn(`Official roster source HTTP ${response.status}; retry ${attempt}/5 after ${backoffMs}ms: ${url}`);
+      await sleep(backoffMs);
       return fetchText(url, options, attempt + 1);
     }
     throw new Error(`${response.status} ${response.statusText}: ${url}`);
