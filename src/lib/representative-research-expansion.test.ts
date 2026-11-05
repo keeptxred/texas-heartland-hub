@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { findRepresentativeBySlug } from "@/data/representatives";
 import { getRepresentativeAuthority } from "@/data/representative-authority";
+import { speakerActivityFor } from "@/data/representative-speaker-activity";
 import {
   SIX_PROFILE_PILOT,
   SCRIPT2_REVIEWED_SLUGS,
@@ -25,10 +26,18 @@ describe("representative Script 2 source-first certification", () => {
     }
   });
 
-  it("requires all six genuine quality gates for ninety-six individually reviewed expansion profiles", () => {
-    expect(SCRIPT2_REVIEWED_SLUGS).toHaveLength(96);
+  it("requires all six genuine quality gates for ninety-seven individually reviewed expansion profiles", () => {
+    expect(SCRIPT2_REVIEWED_SLUGS).toHaveLength(97);
     for (const slug of SCRIPT2_REVIEWED_SLUGS) {
       const records = pilotResearchFor(slug);
+      if (slug === "dustin-burrows") {
+        expect(records).toHaveLength(0);
+        expect(speakerActivityFor(slug).length).toBeGreaterThanOrEqual(16);
+        const report = certificationFor(slug);
+        expect(report.state, slug + ": " + report.reasons.join("; ")).toBe("AUTHORITY_READY");
+        expect(Object.values(report.gates).every(Boolean)).toBe(true);
+        continue;
+      }
       expect(records.length, slug + " evidence").toBeGreaterThanOrEqual(16);
       expect(new Set(records.map((row) => row.sponsor_role)).size, slug).toBeGreaterThanOrEqual(2);
       expect(new Set(records.map((row) => row.current_status_label)).size, slug).toBeGreaterThanOrEqual(2);
@@ -118,6 +127,17 @@ describe("representative Script 2 source-first certification", () => {
     expect(EDITORIAL_REVIEWS["don-mclaughlin"].biography).toContain("official House biography contains no substantive text");
   });
 
+  it("requires diverse, dated primary-source Speaker records instead of fictional sponsorship", () => {
+    const actions = speakerActivityFor("dustin-burrows");
+    expect(actions.length).toBe(19);
+    expect(pilotResearchFor("dustin-burrows")).toHaveLength(0);
+    expect(new Set(actions.map(action => action.sourceUrl)).size).toBe(19);
+    expect(new Set(actions.map(action => action.date)).size).toBeGreaterThan(8);
+    expect(new Set(actions.map(action => action.kind)).size).toBeGreaterThanOrEqual(3);
+    expect(actions.every(action => /^https:\/\/(?:www\.house\.texas\.gov|lrl\.texas\.gov)\//.test(action.sourceUrl))).toBe(true);
+    expect(certificationFor("dustin-burrows").state).toBe("AUTHORITY_READY");
+  });
+
   it("never mistakes bulk bill records for completed editorial review", () => {
     const slug = "jeff-barry";
     expect(pilotResearchFor(slug).length).toBeGreaterThanOrEqual(16);
@@ -127,7 +147,7 @@ describe("representative Script 2 source-first certification", () => {
   });
 
   it("keeps evidence gaps and federal exceptions outside authority indexing", () => {
-    for (const slug of ["dustin-burrows", "brett-ligon", "taylor-rehmet",
+    for (const slug of ["brett-ligon", "taylor-rehmet",
       "dan-crenshaw", "john-cornyn", "ted-cruz"]) {
       expect(pilotResearchFor(slug), slug).toHaveLength(0);
       expect(certificationFor(slug).state, slug).not.toBe("AUTHORITY_READY");

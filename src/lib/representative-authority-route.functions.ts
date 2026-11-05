@@ -20,6 +20,7 @@ export const getRepresentativeAuthorityRouteData = createServerFn({ method: "GET
       import("@/data/representatives"),
       import("@/lib/representative-quality-gates"),
     ]);
+    const { speakerActivityFor } = await import("@/data/representative-speaker-activity");
     const authority = applyPilotEditorial(data.slug, getRepresentativeAuthority(data.slug) ?? null);
     const representative = findRepresentativeBySlug(data.slug);
     return {
@@ -32,5 +33,6 @@ export const getRepresentativeAuthorityRouteData = createServerFn({ method: "GET
         temporaryDataOutage: data.temporaryDataOutage,
       }),
       primarySourceResearch: pilotResearchFor(data.slug),
+      speakerActivityResearch: speakerActivityFor(data.slug),
     };
   });
