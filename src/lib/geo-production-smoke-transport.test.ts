@@ -21,6 +21,14 @@ describe("production GEO smoke transport", () => {
 
   it("does not downgrade unreachable HTML into a skipped GEO assertion", () => {
     expect(workflow).not.toContain("page-level GEO assertions were not evaluated");
-    expect(workflow).toContain("Deployed Worker did not return HTTP 200 for the required HTML GEO checks.");
+    expect(workflow).toContain("Deployed Worker home GEO check did not return HTTP 200.");
+    expect(workflow).toContain("Election Central returned unexpected HTTP $election_status.");
+    expect(workflow).toContain('if [[ "$election_status" != "200" && "$election_status" != "404" ]]');
+    expect(workflow).toContain('if status == "404":');
+    expect(workflow).toContain("election central is temporarily unavailable between election cycles.");
+    expect(workflow).toContain("Live retired Election Central lacks noindex,nofollow header");
+    expect(workflow).toContain('else:');
+    expect(workflow).toContain("Active Election Central is missing its required H1");
+    expect(workflow).toContain("Live home HTML is missing FAQPage JSON-LD");
   });
 });
