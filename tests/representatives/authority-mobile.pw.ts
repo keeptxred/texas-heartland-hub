@@ -33,6 +33,21 @@ test("certified representative pilot pages work on mobile with usable source res
   }
 });
 
+test("House Speaker profile is usable on mobile without inventing bill sponsorship", async ({ page }) => {
+  const response = await page.goto("/representatives/dustin-burrows", { waitUntil: "domcontentloaded" });
+  expect(response?.status()).toBe(200);
+  await expect(page.getByRole("heading", { name: "Dustin Burrows", level: 1 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "89th Legislature: documented Speaker actions" })).toBeVisible();
+  const official = page.locator('[data-speaker-research="verified"] a[href$=".pdf"]');
+  expect(await official.count()).toBeGreaterThanOrEqual(16);
+  expect(await page.locator('meta[name="robots"]').getAttribute("content")).toContain("index,follow");
+  const copy = await page.locator('[data-speaker-research="verified"]').innerText();
+  expect(copy).toContain("not evidence");
+  expect(copy).not.toContain("Role-linked sample entries");
+  const tooWide = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 2);
+  expect(tooWide, "Speaker archive has horizontal overflow").toBe(false);
+});
+
 test("federal profiles remain public but are not presented as certified research", async ({ page }) => {
   for (const slug of ["dan-crenshaw", "john-cornyn"]) {
     const response = await page.goto("/representatives/" + slug, { waitUntil: "domcontentloaded" });
