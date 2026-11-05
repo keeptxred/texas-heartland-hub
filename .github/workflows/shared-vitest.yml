@@ -65,6 +65,9 @@ jobs:
         id: lint
         run: bun run lint
 
+      - name: Representative production HTTP transport regression
+        run: python3 -m unittest discover -s scripts/authority -p 'test_verify_representative_transport.py' -v
+
       - name: Full Vitest suite
         id: tests
         run: bun run test
