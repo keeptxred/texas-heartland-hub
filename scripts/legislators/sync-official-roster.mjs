@@ -277,6 +277,8 @@ function houseRoster(html) {
         "Shelley Luther:62": "4645",
         "Matt Shaheen:66": "2995",
         "Carrie Isaac:73": "4265",
+        "Vince Perez:77": "4710",
+        "Vincent Perez:77": "4710",
       })[`${reverseHouseName(member.member_name)}:${Number(member.id)}`] ?? member.member_bill_code}`,
       imageUrl: new URL(member.image, "https://house.texas.gov/").href,
     }))
