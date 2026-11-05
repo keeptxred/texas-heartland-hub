@@ -54,7 +54,7 @@ describe("KTR Phase 2A archive verification", () => {
     const ledger = loadLedger(readFileSync("docs/recovery/ktr-news-phase2a-disposition-ledger.csv", "utf8"));
     const lookup = new Map(ledger.map(row => [new URL(row.url).pathname, row]));
     const source = readFileSync("src/lib/migrated-practical-guide-canonical.ts", "utf8");
-    const migrated = [...source.matchAll(/"(\\/news\\/[^"]+)":\\s*"(https:\\/\\/texasdefined\\.com\\/[^"]+)"/g)];
+    const migrated = [...source.matchAll(/"(\/news\/[^"]+)":\s*"(https:\/\/texasdefined\.com\/[^"]+)"/g)];
     expect(migrated.length).toBeGreaterThanOrEqual(16);
     for (const [, path, target] of migrated) {
       const entry = lookup.get(path);
