@@ -580,6 +580,54 @@ export const EDITORIAL_REVIEWS: Record<string, EditorialReview> = {
     biography: "Eddie Morales represents House District 74, an eleven-county West Texas and border district that includes Maverick County and part of El Paso County. Born in Eagle Pass, he earned a political science degree from the University of Texas at Austin and a law degree from St. Mary's University, then worked as an attorney. His 89th Legislature committee assignments include Energy Resources as vice chair, Governmental Oversight (Select), and Transportation. The independently linked Texas Legislature histories below describe specific recorded bill roles and results rather than an unverified lifetime total or roll-call voting pattern.",
     identityChecked: "2026-11-05", source: "https://house.texas.gov/members/4000/biography",
   },
+  "mary-gonzalez": {
+    name: "Mary González", office: "Texas House", district: "House District 75", party: "D",
+    officialUrl: "https://house.texas.gov/members/2410",
+    biography: "Mary González represents House District 75 in eastern El Paso County. Raised in Clint, she was first elected in 2012 and earned a doctorate in curriculum and instruction from the University of Texas at Austin after earlier study at UT Austin and St. Edward's. During the 89th Legislature she served as vice chair of House Appropriations and as a Natural Resources committee member. The source-linked bill records below identify specific author, coauthor, sponsor and cosponsor roles and recorded outcomes, rather than a complete roll-call voting history.",
+    identityChecked: "2026-11-05", source: "https://house.texas.gov/members/2410/biography",
+  },
+  "suleman-lalani": {
+    name: "Suleman Lalani", office: "Texas House", district: "House District 76", party: "D",
+    officialUrl: "https://house.texas.gov/members/4285",
+    biography: "Suleman Lalani represents Texas House District 76, covering parts of Fort Bend County around Sugar Land, Stafford, Richmond and Meadows Place. A physician practicing in the area for nearly thirty years, he holds certifications in internal medicine, geriatric medicine, and hospice and palliative care. The 89th Legislature lists him as vice chair of Land and Resource Management and as a member of Higher Education and the Health Care Affordability select committee. Individual historical bill links below distinguish legislative roles and outcomes from unsupported claims of a complete record.",
+    identityChecked: "2026-11-05", source: "https://house.texas.gov/members/4285/biography",
+  },
+  "vince-perez": {
+    name: "Vince Perez", office: "Texas House", district: "House District 77", party: "D",
+    officialUrl: "https://house.texas.gov/members/4710",
+    biography: "Vince Perez represents Texas House District 77 in El Paso, including downtown and the University of Texas at El Paso. His official biography describes two earlier terms as an El Paso County commissioner and undergraduate and graduate government degrees from Georgetown University. In the 89th Legislature his assignments include Higher Education, Ways and Means, and Local and Consent Calendars. The links below provide original Texas Legislature bill histories for his individual recorded legislative roles; they are a bounded sample, not evidence of how he voted on every bill.",
+    identityChecked: "2026-11-05", source: "https://house.texas.gov/members/4710/biography",
+  },
+  "joe-moody": {
+    name: "Joe Moody", office: "Texas House", district: "House District 78", party: "D",
+    officialUrl: "https://house.texas.gov/members/3850",
+    biography: "Joe Moody represents Texas House District 78 in El Paso and serves as Speaker Pro Tempore of the Texas House. A practicing attorney, he founded and co-chairs the Criminal Justice Reform Caucus, with work focused on criminal justice and indigent access to counsel. His 89th Legislature assignments include Criminal Jurisprudence, Judiciary and Civil Jurisprudence, House Administration and multiple investigating committees. Original bill history links below distinguish his recorded sponsorship activities from floor votes or claims about all legislation during his career.",
+    identityChecked: "2026-11-05", source: "https://house.texas.gov/members/3850/biography",
+  },
+  "claudia-ordaz": {
+    name: "Claudia Ordaz", office: "Texas House", district: "House District 79", party: "D",
+    officialUrl: "https://house.texas.gov/members/4015",
+    biography: "Claudia Ordaz represents House District 79 in eastern and northeastern El Paso, including areas around Fort Bliss and the international airport. Before serving in the Texas Legislature she was an El Paso city council member, and the Legislative Directory records a political science degree from the University of Texas at El Paso. For the 89th Legislature, Texas Legislature Online—not the outdated committee list on her House biography—identifies her as vice chair of Environmental Regulation and a member of Trade, Workforce and Economic Development. The linked records below describe recorded bill roles and outcomes, not a complete voting record.",
+    identityChecked: "2026-11-05", source: "https://capitol.texas.gov/Committees/MembershipMbr.aspx?LegCode=A4015&LegSess=89R",
+  },
+  "don-mclaughlin": {
+    name: "Don McLaughlin", office: "Texas House", district: "House District 80", party: "R",
+    officialUrl: "https://house.texas.gov/members/4655",
+    biography: "Don McLaughlin represents House District 80, encompassing Atascosa, Dimmit, Frio, Uvalde and Zavala counties and part of Webb County. He previously served as mayor of Uvalde; the official Legislative Directory describes his occupation as sales. His 89th Legislature assignments are Agriculture and Livestock and Homeland Security, Public Safety and Veterans' Affairs. Because his official House biography contains no substantive text, this profile relies on separately identified institutional and official legislative records and does not attribute unverified education or accomplishments to him.",
+    identityChecked: "2026-11-05", source: "https://legdir.capitol.texas.gov/MemberInfo.aspx?Chamber=H&Code=A4655",
+  },
+  "brooks-landgraf": {
+    name: "Brooks Landgraf", office: "Texas House", district: "House District 81", party: "R",
+    officialUrl: "https://house.texas.gov/members/3040",
+    biography: "Brooks Landgraf represents the Permian Basin's House District 81, comprising Ector, Loving, Ward and Winkler counties. An Odessa native from a longtime West Texas ranching family, he studied at Texas A&M University and St. Mary's University School of Law and has practiced law in energy and healthcare matters. In the 89th Legislature he chaired Environmental Regulation and served on Governmental Oversight (Select) and Judiciary and Civil Jurisprudence. The official bill links below are role-specific historical examples, not a complete voting or career-total claim.",
+    identityChecked: "2026-11-05", source: "https://house.texas.gov/members/3040/biography",
+  },
+  "tom-craddick": {
+    name: "Tom Craddick", office: "Texas House", district: "House District 82", party: "R",
+    officialUrl: "https://house.texas.gov/members/2610",
+    biography: "Tom Craddick represents House District 82, covering Dawson, Martin and Midland counties. Texas legislative records identify the Midland lawmaker as the longest-serving member in the Legislature's history and a former Speaker of the House. His Legislative Directory credentials include a B.B.A. and M.B.A. from Texas Tech University. For the 89th Legislature he chaired Transportation and served on Energy Resources. Individual bill histories below provide dated author and sponsorship roles, not unsupported lifetime bill totals or a complete account of roll-call votes.",
+    identityChecked: "2026-11-05", source: "https://lrl.texas.gov/legeLeaders/members/memberDisplay.cfm?memberID=109",
+  },
 };
 
 export const SIX_PROFILE_PILOT = [
@@ -614,6 +662,8 @@ export const SCRIPT2_REVIEWED_SLUGS = [
   "shelley-luther", "mitch-little",
   "matt-shaheen", "jeff-leach", "david-spiller", "james-frank",
   "stan-lambert", "drew-darby", "carrie-isaac", "eddie-morales",
+  "mary-gonzalez", "suleman-lalani", "vince-perez", "joe-moody",
+  "claudia-ordaz", "don-mclaughlin", "brooks-landgraf", "tom-craddick",
 ] as const;
 
 export const CERTIFICATION_CANDIDATE_SLUGS = [
