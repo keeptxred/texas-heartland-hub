@@ -11,7 +11,7 @@ This report is a **complete initial URL inventory from the currently accessible 
 - Existing `article_slug_redirects`: **21** aliases.
 - Deduplicated URL ledger: **388** entries (storage counts: {"daily_articles":319,"static_ARTICLES":57,"slug_redirect_alias":12}).
 - Duplicate slugs between Supabase and static registry: 3 (`live-2026-07-07-texas-pitmasters-to-feature-in-new-food-network-competition-series-v3wglp`, `live-2026-07-02-secretary-of-state-releases-july-3-texas-register-detailing-new-state--m0th5w`, `live-2026-06-29-the-history-behind-the-texas-stock-tank-name-bxkvg7`).
-- Provisional dispositions: `A`: 41, `B`: 11, `C`: 305, `D`: 23, `E`: 8.
+- Provisional dispositions: `A`: 39, `B`: 13, `C`: 305, `D`: 23, `E`: 8.
 - GSC impressions/clicks reflect **internal GSC daily mirror through 2026-10-31**, NOT independently certified finalized external GSC and NOT ranking/index verdicts.
 - URL Inspection verdicts are a partial cached sample and may predate the code now serving a URL. Empty cells mean unknown, **not zero indexing**.
 - Source availability, original reporting, live indexability, sitemap membership, HTTP status, duplicates/redirect equivalence, internal link dependencies, social/newsletter references remain to be independently verified before final status.
@@ -67,3 +67,9 @@ This report is a **complete initial URL inventory from the currently accessible 
 - Removed the false universal claim that a mailed application must **be received** 30 days before an election, documented the statutory mailing/postmark rule and weekend/holiday extension with the concrete October 5, 2026 deadline.
 - Distinguished ordinary paper registration from eligible DPS transactions and existing-voter Texas.gov updates; covered county moves, fail-safe and limited ballots, reasonable-impediment ID alternatives and full seven-photo-ID list, backed by eight official sources and a new regression test.
 - Keep genuine source-backed civic guides rather than indiscriminately noindexing them. No verification of Google indexing or Cloudflare production is claimed at this stage.
+
+## Remediation batch 12 — Election civics authority (November 5, 2026)
+
+- `/news/primary-vs-general-election` and `/news/beginners-guide-texas-elections` moved A→B **repaired in code, pending production**; published dates preserved.
+- Corrected unsupported blanket November-formality claim, unfounded universal one-third runoff turnout statistic, and claim that subdivisions choose May elections to depress turnout. Updated titles, metadata and related crosslink.
+- Added eight evidence-based sections and official sources per guide on Texas party affiliation, majority primaries/runoffs, actual general-election stakes, local elections, sample ballots, special districts, propositions and redistricting map checks. New regression tests included; no mass noindex, changes to original publication dates or indexing certification.

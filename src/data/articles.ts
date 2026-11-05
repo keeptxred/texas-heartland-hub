@@ -512,8 +512,8 @@ export const ARTICLES: Article[] = [
   {
     slug: "primary-vs-general-election",
     category: "Elections",
-    title: "Primary vs. General: Why the March Ballot Decides More Than November Does",
-    dek: "In most Texas districts the Republican primary is the real election. We break down open primaries, runoff math, and why low-turnout March races set the next decade of policy.",
+    title: "Texas Primary vs. General Elections: Nominations, Runoffs, and Ballot Rules",
+    dek: "Learn how Texas party primaries nominate candidates, why majority thresholds trigger runoffs, how party affiliation works, and why November contests still determine officeholders.",
     author: "Elections Desk",
     date: "June 12, 2026",
     publishedAt: "2026-06-12T13:00:00",
@@ -574,8 +574,8 @@ export const ARTICLES: Article[] = [
   {
     slug: "beginners-guide-texas-elections",
     category: "Elections",
-    title: "A Beginner's Guide to Texas Elections: Primaries, Runoffs, and General Ballots",
-    dek: "How Texas's open-primary system works, when runoffs trigger, how districts are drawn, and the dates every conservative voter should mark on the calendar.",
+    title: "A Beginner's Guide to Texas Elections: Ballots, Districts, and Local Dates",
+    dek: "A source-backed guide to Texas election types, local government ballots, sample ballots, district maps, propositions, and dates that differ by jurisdiction.",
     author: "Elections Desk",
     date: "May 27, 2026",
     publishedAt: "2026-05-27T15:00:00",

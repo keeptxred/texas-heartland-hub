@@ -1666,7 +1666,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         heading: "Registering to Vote and Understanding Texas Elections",
         paragraphs: [
           "Texas requires voter registration at least 30 days before an election, and you'll need to update it any time you move counties. See [The Texas Voter Registration Guide](/news/texas-voter-registration-guide) for accepted ID and mail-ballot rules.",
-          "In much of Texas, the March Republican primary effectively decides who holds the seat — the November general is often a formality. See [Primary vs. General](/news/primary-vs-general-election) for how that works, and [The Texas Voting Guide for 2026](/news/texas-voting-guide-2026) for the full calendar. If you're new to open primaries and runoff math, start with [A Beginner's Guide to Texas Elections](/news/beginners-guide-texas-elections).",
+          "In some Texas districts a primary can be decisive when the eventual nominee has no November opponent, but the general election determines the officeholder and may be contested. See [Primary vs. General](/news/primary-vs-general-election) for how that works, and [The Texas Voting Guide for 2026](/news/texas-voting-guide-2026) for the full calendar. If you're new to open primaries and runoff math, start with [A Beginner's Guide to Texas Elections](/news/beginners-guide-texas-elections).",
         ],
       },
       {
@@ -2063,101 +2063,279 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
 
   "primary-vs-general-election": {
-    updated: "2026-06-01",
-    intro: [
-      "In most of Texas, the November general election is a formality. The real contest is the March Republican primary — that's where statewide offices, congressional seats, and the legislature are actually decided.",
-      "Understanding why means understanding open primaries, runoff math, and turnout patterns that have held for two decades.",
+    "updated": "2026-11-05",
+    "editorNote": "Source-checked against Texas Secretary of State 2026 primary guidance and Election Code Chapters 162 and 172 on November 5, 2026. This guide distinguishes party nominations from holding office and does not infer a statewide competitiveness or turnout rate from an individual race.",
+    "intro": [
+      "A Texas party primary selects a party's nominee; the later general election determines who holds the office. Those are different decisions. A contested primary can be highly consequential, especially when the eventual nominee has no November opponent, but calling the entire November election a formality is inaccurate and obscures genuinely contested races.",
+      "The most useful way to compare the elections is to examine **the particular office and district**, its candidate list and ballot rules, and certified results. The [Secretary of State's primary affiliation guidance](https://www.sos.state.tx.us/elections/candidates/guide/2026/faqs.shtml) and [Election Code Chapter 172](https://statutes.capitol.texas.gov/Docs/EL/htm/EL.172.htm) define the nomination rules; they do not guarantee a party any seat."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "Texas Has an Open Primary",
-        paragraphs: [
-          "You do not register with a party in Texas. On primary day you pick a Republican or Democratic ballot, and that becomes your party affiliation for the rest of the election cycle.",
-        ],
+        "heading": "What the primary actually decides",
+        "paragraphs": [
+          "For races using Texas party primaries, the Republican and Democratic primaries are separate contests held on the same day. Each party chooses the candidate it will nominate for covered offices in the November general election. A candidate's primary victory is not itself a general-election victory and does not seat that person in office.",
+          "Not every election runs through a Republican or Democratic primary. Municipal, independent school district, and many special-district ballots generally follow their own election rules, often without party labels. A special election to fill a vacancy can have procedures and dates different from an ordinary party-primary cycle. Start by checking which authority orders the election."
+        ]
       },
       {
-        heading: "When a Runoff Happens",
-        paragraphs: [
-          "If no candidate wins more than 50% of the primary vote, the top two go to a May runoff. Runoff turnout is typically a third of primary turnout — small, dedicated electorates decide.",
-        ],
+        "heading": "Open primaries do not mean party registration",
+        "paragraphs": [
+          "Texas voters do not sign up as Republican or Democratic when registering to vote. An eligible registered voter who has not otherwise affiliated with a party for the applicable voting year may choose which party's primary to participate in. Casting a ballot in that primary makes the voter affiliated with that party for the voting year under Election Code Chapter 162.",
+          "A voter cannot participate in both parties' primaries or vote in the other party's runoff during that same voting year. Affiliation from voting in an even-year primary generally expires on December 31 of that calendar year. Voting in a primary does **not** force the voter to support that party's nominee in the general election. Consult the Secretary of State for cases involving prior convention affiliation or disputed voting-history records."
+        ]
       },
       {
-        heading: "Key Dates",
-        bullets: [
-          "Primary Election: first Tuesday in March",
-          "Primary Runoff: fourth Tuesday in May",
-          "General Election: first Tuesday after the first Monday in November",
-        ],
+        "heading": "When a primary runoff occurs",
+        "paragraphs": [
+          "Election Code §172.003 ordinarily requires a candidate to receive a **majority** of the votes cast for that party nomination. If no candidate earns the required majority, a runoff between the qualifying candidates determines the nomination under §172.004 and the relevant runoff rules. Do not confuse a simple plurality lead with a majority-winning nomination.",
+          "A qualified voter does not have to have participated in the March primary to vote in a subsequent party-primary runoff, provided that voter has not affiliated with another party in a way that disqualifies participation in the chosen runoff. The unqualified claim that every runoff has one-third the primary turnout has no general statutory basis; examine certified election-specific turnout instead."
+        ]
       },
+      {
+        "heading": "What the general election decides",
+        "paragraphs": [
+          "The November ballot is where voters choose among the candidates who qualified for that general election, including party nominees and other candidates who lawfully obtained ballot access. For a typical election for federal, state, or county officers, the general election determines the officeholder, not merely a symbolic endorsement of the primary.",
+          "In some districts a nominee faces no major-party opponent; in others, the November contest is competitive. Even where an office is uncontested, other offices and propositions may appear on the same ballot. The practical lesson is to read the full sample ballot and verify the actual district contest rather than relying on statewide political shorthand."
+        ]
+      },
+      {
+        "heading": "Use the 2026 cycle as an example—not a perpetual calendar",
+        "paragraphs": [
+          "For the 2026 statewide cycle, the Texas Secretary of State scheduled the general primary on **March 3, 2026**, the primary runoff on **May 26, 2026**, and the general election for state and county officers on **November 3, 2026**. These dates are now historical. They are helpful for understanding the stages, not a substitute for the Secretary of State's calendar in another election year.",
+          "Candidate filings, registration deadlines, in-person early voting, mail-ballot applications and canvasses each have their own deadlines. Local uniform-date runoffs and special elections may follow an entirely different timetable. Always open the official calendar for the election named on your ballot."
+        ]
+      },
+      {
+        "heading": "A repeatable way to tell which stage matters in your district",
+        "bullets": [
+          "Find the exact office and election district from your current registration record and the appropriate county election office; do not infer the district from a ZIP code alone.",
+          "Check the election authority's actual candidate list. Determine whether candidates are competing in a party primary, general election, nonpartisan local contest or special election.",
+          "For a contested primary, check the number of candidates and certified total votes, then verify whether a majority or a runoff was required.",
+          "For the general election, inspect every candidate appearing on the office's sample ballot, including any qualifying non-major-party candidates.",
+          "To describe a seat as safe, competitive or uncontested, cite specific recent district-level results and dates rather than claiming all Texas districts behave alike."
+        ]
+      },
+      {
+        "heading": "Which public records answer which question?",
+        "paragraphs": [
+          "The [Texas Secretary of State](https://www.sos.state.tx.us/elections/) provides statewide election notices, candidate and filing information, election-law guidance, and official calendar links. County election offices publish local polling places, sample ballots and often local results; for a city, school district or other subdivision, the ordering authority may publish additional candidate notices and canvass records.",
+          "Campaign contribution and expenditure reports are separate from election results. When researching candidates, consult the appropriate official campaign-finance agency, such as the Texas Ethics Commission for covered Texas state and local filings or the Federal Election Commission for federal campaigns. A campaign report does not establish who won an election."
+        ]
+      },
+      {
+        "heading": "Common mistakes to avoid",
+        "paragraphs": [
+          "Do not treat the party selected in a March primary as a permanent party-registration category. Do not assume a voter who skipped the March primary is barred from the May runoff. Do not call an election unwinnable merely because a party has held the office previously. And do not use aggregate turnout assertions as if they were facts about every runoff.",
+          "A reliable elections explainer distinguishes current election law, the named year's official calendar, and historical election results. For registration and photo-ID questions, use the separate [Texas voter-registration guide](/news/texas-voter-registration-guide); they are not consequences of which party's primary a voter selects."
+        ]
+      }
     ],
-    faq: [
+    "faq": [
       {
-        q: "Can I vote in both primaries?",
-        a: "No. Picking one party's primary ballot locks you out of the other party's runoff.",
+        "q": "Do I register as a Republican or Democrat to vote in a Texas primary?",
+        "a": "No. Texas registration has no party-registration category. If eligible and not otherwise affiliated for the voting year, a voter can choose a party primary; participating creates that year's party affiliation."
       },
       {
-        q: "Do I need to register as a Republican?",
-        a: "Texas does not have party registration. Anyone registered to vote can request either party's primary ballot.",
+        "q": "Can I vote in the other party's primary runoff?",
+        "a": "Generally no if you voted or affiliated with the first party in the same voting year. If you did not vote in any primary or otherwise affiliate, you may be eligible to choose the party's runoff even without voting in the original primary."
       },
+      {
+        "q": "Does a primary vote dictate my choice in November?",
+        "a": "No. Texas Secretary of State guidance states that voting in a party primary does not require a vote for that party's candidates in the general election."
+      },
+      {
+        "q": "Does a plurality win a Texas party nomination without a runoff?",
+        "a": "Ordinarily not. Election Code §172.003 requires a majority for covered party nominations; when no candidate has the required majority a runoff is generally held under §172.004."
+      },
+      {
+        "q": "Are school-board elections part of the Republican and Democratic primaries?",
+        "a": "Usually no. School-board trustees and other local bodies are elected under separate local rules. Check the subdivision's own election notice and the Secretary of State's local election calendar."
+      }
     ],
-    sources: [
-      { label: "Texas Secretary of State — Voter Information", url: "https://www.votetexas.gov/" },
+    "sources": [
       {
-        label: "Election Code Chapter 172 (Primaries)",
-        url: "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.172.htm",
+        "label": "Texas Secretary of State — 2026 party affiliation and primary FAQs",
+        "url": "https://www.sos.state.tx.us/elections/candidates/guide/2026/faqs.shtml"
       },
+      {
+        "label": "Texas Election Code Chapter 162 — party affiliation",
+        "url": "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.162.htm"
+      },
+      {
+        "label": "Texas Election Code Chapter 172 — primary nomination and runoff rules",
+        "url": "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.172.htm"
+      },
+      {
+        "label": "Texas Secretary of State — 2026 primary and general election dates",
+        "url": "https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml"
+      },
+      {
+        "label": "Texas Secretary of State — 2026 candidate and party election timeline",
+        "url": "https://www.sos.state.tx.us/elections/candidates/guide/2026/dates2026.shtml"
+      },
+      {
+        "label": "Texas Secretary of State — November 2026 state and local election law calendar",
+        "url": "https://www.sos.state.tx.us/elections/laws/advisory2026-21-november-3-election-law-calendar.shtml"
+      },
+      {
+        "label": "Texas Election Code Chapter 41 — election dates",
+        "url": "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.41.htm"
+      }
     ],
-    related: [
+    "related": [
       "beginners-guide-texas-elections",
       "texas-voter-registration-guide",
-      "voter-id-surge",
+      "texas-school-board-powers"
     ],
-    cta: { label: "Find Your County Election Office", href: "/county-elections" },
+    "cta": {
+      "label": "Check Texas's official election calendar",
+      "href": "https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml"
+    }
   },
 
   "beginners-guide-texas-elections": {
-    updated: "2026-06-05",
-    intro: [
-      "Texas runs more elections than most states realize: federal, state, county, ISD, city, MUD, water district, hospital district, and constitutional amendments. Here is a plain-English map of the cycle so you know which ballot does what.",
+    "updated": "2026-11-05",
+    "editorNote": "Evergreen guide verified against Texas Secretary of State election calendars, Texas Election Code Chapter 41 and Texas Legislative Council map resources on November 5, 2026. Local election timing and ballot contents differ by jurisdiction and should be verified for each election.",
+    "intro": [
+      "There is no single Texas election ballot that appears unchanged for every voter. Your address determines overlapping districts, and the election date determines which of their offices or propositions are actually being decided. A voter may face statewide offices in November, a school trustee in May, and a special-district proposition at another permitted election.",
+      "This is a practical map of **who orders which elections, where ballot items come from, and how to verify your own ballot**. The [Texas Secretary of State's elections division](https://www.sos.state.tx.us/elections/) and county or local election notices should control over any generalized calendar summary."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "The Annual Calendar",
-        bullets: [
-          "March — Party primaries (every even year).",
-          "May — Primary runoffs, plus most school board and city council races.",
-          "November — General election (federal/state every even year, constitutional amendments every odd year).",
+        "heading": "Start with the four layers of government on your ballot",
+        "paragraphs": [
+          "Federal contests include president, U.S. Senate and U.S. House when those offices are up for election in your district. Texas state elections can include governor, other statewide executive offices, state Senate, state House, State Board of Education and eligible judicial offices, depending on the election cycle and district. County ballots can include commissioner, county judge, sheriff, clerk and other county offices as scheduled.",
+          "Local subdivisions have their own election authorities: a city elects its governing body, an independent school district elects trustees, and special districts such as municipal utility or water districts may elect directors or put authorized propositions before voters. These institutions are not interchangeable; a school board does not set a city tax rate, and a countywide contest is not necessarily on a city's special-election ballot."
+        ]
+      },
+      {
+        "heading": "Understand the main election types",
+        "bullets": [
+          "Party primary: eligible participating voters help nominate a party's candidate for covered offices; it is not the election that seats the officeholder.",
+          "Primary runoff: determines a party nomination when the candidates fail to meet the required primary majority; it is not a repeat of the November contest.",
+          "General election: fills offices scheduled for election, including federal, state, county and local offices as applicable.",
+          "Special election: addresses an authorized vacancy or proposition under its own election order; the date and runoff rules depend on the office and law.",
+          "Proposition election: asks voters to approve or reject a specified measure, such as an authorized bond, charter amendment, or constitutional amendment, rather than choose a candidate."
         ],
+        "paragraphs": [
+          "An official election order and sample ballot are the best evidence of which category applies. Political-party labels do not appear on every local ballot, and rules for a particular runoff may differ from those for party primaries."
+        ]
       },
       {
-        heading: "How Districts Are Drawn",
-        paragraphs: [
-          "The Legislature redraws congressional, state House, state Senate, and State Board of Education districts after each U.S. Census. Local districts are drawn by counties and cities.",
+        "heading": "Why March, May and November can all matter",
+        "paragraphs": [
+          "Texas generally schedules party primaries in even-numbered years, with a later primary runoff if needed. The Election Code also specifies uniform May and November dates for many ordinary general and special elections, subject to exceptions. Many cities, school districts and water districts use a uniform local election date; it is not accurate to claim that all local elections occur in May or that an authority chose May to suppress turnout.",
+          "As an example—not a future calendar—the Secretary of State listed March 3, 2026 for the general primary, May 2 for a limited uniform local election, May 26 for the primary runoff, and November 3 for the general election. The 2026 local May runoff was set for June 13, while the November uniform-date local runoff was set for December 12. Those two separate local runoff dates are not the party-primary runoff date."
+        ]
+      },
+      {
+        "heading": "Constitutional amendments and local propositions are not annual certainties",
+        "paragraphs": [
+          "Texas constitutional amendments reach voters through the constitutional process, including legislative proposal and voter approval. They can appear in elections in which amendments are submitted, but the presence of an amendment ballot in one odd-numbered year does not guarantee one every November. Read the official ballot language and the underlying proposed amendment before describing its effects.",
+          "City charter amendments, bonds, tax-rate propositions and special-district measures each have distinct enabling laws and official orders. For a local proposition, find the entity named on the ballot, the legal notice, the proposed use of proceeds or legal change, and any applicable financial disclosures; never infer consequences from the headline alone."
+        ]
+      },
+      {
+        "heading": "Find the districts tied to your actual residence",
+        "paragraphs": [
+          "A residence can be in a U.S. House district, Texas Senate district, Texas House district, State Board of Education district, county precinct, city district, school attendance or trustee district, and one or more special districts. Their boundaries may differ. Use the [Texas Legislative Council's redistricting and district-viewer tools](https://tlc.texas.gov/redistricting) for legislative map research, then verify the election-specific district and precinct with your county election office.",
+          "Redistricting often follows the decennial census, but the maps in force for a specific election can also be affected by enacted mid-cycle changes and court orders. Do not rely on old images, a city name, or a ZIP code to assign someone's current district; record the map source and election year when presenting district-level results."
+        ]
+      },
+      {
+        "heading": "How to obtain the actual sample ballot",
+        "paragraphs": [
+          "First verify your registration and current county through the [Texas voter portal](https://teamrv-mvp.sos.texas.gov/MVP/mvp.do). Next visit your county elections administrator or county clerk's election page for the election date, early-voting locations, precinct information and sample-ballot lookup. For a city, ISD or other subdivision, also review its notice of election and candidate filings if county materials do not show the full detail.",
+          "A statewide candidate list is not a substitute for your sample ballot: only the offices and propositions authorized for your voting districts appear for your address. If an item looks missing or appears tied to a district where you do not live, ask the county election office to verify the precinct before relying on a third-party map."
+        ]
+      },
+      {
+        "heading": "Registration, identification and voting by mail have different rules",
+        "paragraphs": [
+          "Texas registration eligibility and deadline rules are not the same as the identification procedure used at an in-person polling place. A mail-ballot application also has eligibility and submission rules distinct from voter registration and from the deadline to return the voted ballot. Refer to the [Texas voter-registration guide](/news/texas-voter-registration-guide) and current VoteTexas instructions for those separate processes.",
+          "Election-specific legal calendars can change after state legislation or litigation. Before taking action, cross-check the named election's official Secretary of State law calendar and the county election office. Do not copy a past year's early-voting period or mail-ballot deadline."
+        ]
+      },
+      {
+        "heading": "A six-step method for researching a Texas ballot",
+        "bullets": [
+          "Write down the election date and the authority holding the election.",
+          "Verify your current registration county, precinct and address.",
+          "Retrieve the election-specific county or subdivision sample ballot, not a generic statewide list.",
+          "For each candidate, check the office's actual statutory powers and the candidate's official filings; distinguish claims from public records.",
+          "For each proposition, locate the order of election, legal ballot text and available budget or fiscal documents.",
+          "When reporting turnout, winners or margins, identify the election, county/district, source, canvass status and as-of date."
         ],
-      },
+        "paragraphs": [
+          "A good reference page makes its evidence reproducible. The official canvass, election calendar and archived notices are more reliable for historical claims than treating a preliminary election-night graphic as a certified final result."
+        ]
+      }
     ],
-    faq: [
+    "faq": [
       {
-        q: "Why are there so many May elections?",
-        a: "Texas law lets local governments (ISDs, cities, MUDs) hold elections on uniform May or November dates. Most pick May to depress turnout and let core voters decide.",
+        "q": "Are Texas school-board elections always in May?",
+        "a": "No. Texas local election dates and applicable exceptions depend on the subdivision and its election order. Many use May or November uniform dates. Check the ISD and county election office for the particular contest."
       },
       {
-        q: "When do I vote on judges?",
-        a: "Texas elects most judges in partisan November elections.",
+        "q": "Does every odd-numbered November have a constitutional amendment ballot?",
+        "a": "No. Constitutional amendments appear when lawfully proposed and submitted to voters. Check the specific election's Secretary of State ballot notices."
       },
+      {
+        "q": "Is the primary runoff the same date as a city runoff?",
+        "a": "Not necessarily. In 2026, the party primary runoff was May 26, the May 2 local uniform-date runoff was June 13, and the November 3 local uniform-date runoff was December 12."
+      },
+      {
+        "q": "Why does my neighbor have a different ballot?",
+        "a": "Differences can arise from residence-based district and precinct boundaries or the election authority. Verify the exact addresses and official sample ballots before concluding an error occurred."
+      },
+      {
+        "q": "Where can I find my actual Texas sample ballot?",
+        "a": "Begin with the election-specific page of your county election office, using your registration record and precinct. For smaller local subdivisions, also check the subdivision's posted notice of election."
+      }
     ],
-    sources: [
+    "sources": [
       {
-        label: "Texas Secretary of State — Election Dates",
-        url: "https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml",
+        "label": "Texas Secretary of State — elections division and official resources",
+        "url": "https://www.sos.state.tx.us/elections/"
       },
+      {
+        "label": "Texas Secretary of State — 2026 election dates",
+        "url": "https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml"
+      },
+      {
+        "label": "Texas Election Code Chapter 41 — election dates and exceptions",
+        "url": "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.41.htm"
+      },
+      {
+        "label": "Texas Secretary of State — May 2, 2026 local uniform-date calendar",
+        "url": "https://www.sos.state.tx.us/elections/laws/advisory2026-02-may-election-law-calendar.shtml"
+      },
+      {
+        "label": "Texas Secretary of State — November 3, 2026 law calendar",
+        "url": "https://www.sos.state.tx.us/elections/laws/advisory2026-21-november-3-election-law-calendar.shtml"
+      },
+      {
+        "label": "Texas Secretary of State — December 12, 2026 local runoff guidance",
+        "url": "https://www.sos.state.tx.us/elections/laws/advisory2026-27-dec-12-runoff-election-law-calendar.shtml"
+      },
+      {
+        "label": "Texas Legislative Council — district maps and redistricting tools",
+        "url": "https://tlc.texas.gov/redistricting"
+      },
+      {
+        "label": "Texas Secretary of State — local vacancy election procedures",
+        "url": "https://www.sos.state.tx.us/elections/laws/vacancies-in-a-local-election.shtml"
+      }
     ],
-    related: [
+    "related": [
       "primary-vs-general-election",
       "texas-voter-registration-guide",
-      "texas-school-board-powers",
+      "texas-school-board-powers"
     ],
-    cta: { label: "Check County Election Pages", href: "/county-elections" },
+    "cta": {
+      "label": "Find current Texas election dates",
+      "href": "https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml"
+    }
   },
 
   "texas-voter-registration-guide": {
