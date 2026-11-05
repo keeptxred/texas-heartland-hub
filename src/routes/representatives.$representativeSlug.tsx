@@ -8,6 +8,7 @@ import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 import { RelatedAuthorityContent } from "@/components/authority/RelatedAuthorityContent";
 import { RepresentativeLegislativeIntelligence } from "@/components/representative-legislative-intelligence";
 import { RepresentativePrimarySourceResearch } from "@/components/representative-primary-source-research";
+import { RepresentativeSpeakerActivity } from "@/components/representative-speaker-activity";
 
 export const Route = createFileRoute("/representatives/$representativeSlug")({
   loader: async ({ params }) => {
@@ -21,7 +22,7 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
       legislation = null;
     }
     if (!directoryRepresentative && !legislation?.identity) throw notFound();
-    const { authority, houseCommittees, certification, primarySourceResearch } =
+    const { authority, houseCommittees, certification, primarySourceResearch, speakerActivityResearch } =
       await getRepresentativeAuthorityRouteData({
         data: {
           slug: params.representativeSlug,
@@ -46,7 +47,7 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
       directoryRepresentative, authority, houseCommittees, news, relatedContent,
       identity: legislation?.identity ?? null,
       bills: legislation?.bills ?? [],
-      certification, primarySourceResearch,
+      certification, primarySourceResearch, speakerActivityResearch,
       legislationUnavailable: legislation === null,
     };
   },
@@ -154,7 +155,7 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
 
 function RepresentativeProfile() {
   const { representativeSlug: slug } = Route.useParams();
-  const { directoryRepresentative: rep, identity, authority, bills, news, relatedContent, certification, primarySourceResearch, legislationUnavailable } = Route.useLoaderData();
+  const { directoryRepresentative: rep, identity, authority, bills, news, relatedContent, certification, primarySourceResearch, speakerActivityResearch, legislationUnavailable } = Route.useLoaderData();
   const portrait = verifiedOfficialPortraitUrl(rep?.imageUrl);
   const former = rep?.status === "former";
   const federal = rep?.office.startsWith("U.S.") ?? false;
@@ -164,6 +165,7 @@ function RepresentativeProfile() {
   const party = rep?.party ?? identity?.party ?? null;
   const profileAuthority = authority;
   const hasPrimarySourceResearch = primarySourceResearch.length > 0;
+  const hasSpeakerActivity = speakerActivityResearch.length > 0;
   const profileEducation = profileAuthority?.education.filter(
     (item) => !/consult the linked official biography|no independent credential claim/i.test(item)
   ) ?? [];
@@ -176,8 +178,8 @@ function RepresentativeProfile() {
     ...(profileEducation.length ? ["Education"] : []),
     ...(profileAuthority?.committees.length ? ["Committees"] : []),
     ...(profileElections.length ? ["Elections"] : []),
-    ...(hasPrimarySourceResearch || (!federal && bills.length) ? ["Activity"] : []),
-    ...(!hasPrimarySourceResearch && (federal || bills.length) ? ["Legislation"] : []),
+    ...(hasPrimarySourceResearch || hasSpeakerActivity || (!federal && bills.length) ? ["Activity"] : []),
+    ...(!hasPrimarySourceResearch && !hasSpeakerActivity && (federal || bills.length) ? ["Legislation"] : []),
     ...(profileAuthority?.financeUrl ? ["Finance"] : []),
     ...(profileAuthority?.districtOverview ? ["District"] : []),
     ...(news.length ? ["News"] : []),
@@ -213,7 +215,7 @@ function RepresentativeProfile() {
         </p>
         <p className="mt-4 text-sm leading-6 text-muted-foreground">
           Research coverage: {certification.state === "AUTHORITY_READY"
-            ? "Source-backed historical Texas legislative research is available below."
+            ? (hasSpeakerActivity ? "Official House Speaker actions and dated statements are documented below; these are not personal sponsorship records." : "Source-backed historical Texas legislative research is available below.")
             : "This page is being reviewed for completeness and source verification."}
           {" "}This is a KeepTXRed editorial classification, not an assessment from Google.
         </p>
@@ -329,7 +331,9 @@ function RepresentativeProfile() {
             )}
           </section>
 
-          {hasPrimarySourceResearch ? (
+          {hasSpeakerActivity ? (
+            <RepresentativeSpeakerActivity records={speakerActivityResearch} />
+          ) : hasPrimarySourceResearch ? (
             <RepresentativePrimarySourceResearch name={name} records={primarySourceResearch} />
           ) : federal ? (
             <section className="rounded-xl border bg-card p-6">
@@ -341,7 +345,7 @@ function RepresentativeProfile() {
             <RepresentativeLegislativeIntelligence name={name} bills={bills} relatedContent={relatedContent} />
           ) : null}
 
-          {!hasPrimarySourceResearch ? <section className="rounded-xl border bg-card p-6">
+          {!hasPrimarySourceResearch && !hasSpeakerActivity ? <section className="rounded-xl border bg-card p-6">
             <span id="legislation" className="scroll-mt-24" />
             <h2 className="text-2xl font-bold">Sponsored legislation</h2>
             <p className="mt-2 text-muted-foreground">
