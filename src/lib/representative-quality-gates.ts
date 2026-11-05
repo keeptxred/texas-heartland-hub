@@ -52,6 +52,18 @@ export const EDITORIAL_REVIEWS: Record<string, EditorialReview> = {
     biography: "Mihaela Pleșa represents Texas House District 70 in parts of Collin County. The official House biography describes her as a vice chair of the Pensions, Investments and Financial Services committee and a member of the Elections committee.",
     identityChecked: "2026-11-04", source: "https://house.texas.gov/members/4345/biography",
   },
+  "shelley-luther": {
+    name: "Shelley Luther", office: "Texas House", district: "House District 62", party: "R",
+    officialUrl: "https://house.texas.gov/members/4645",
+    biography: "Shelley Luther represents House District 62, covering Delta, Fannin, Franklin and Grayson counties. The official Legislative Directory identifies her as a business owner with a B.A. degree, while the Texas House member record lists her Sherman district office. Her 89th Legislature committee assignments include Health Care Affordability (Select), Intergovernmental Affairs, and Trade, Workforce and Economic Development. The linked official bill histories below distinguish individual sponsorship roles and recorded legislative outcomes without claiming to show all votes or complete career activity.",
+    identityChecked: "2026-11-05", source: "https://legdir.capitol.texas.gov/memberInfo.aspx?Chamber=H&Code=A4645",
+  },
+  "mitch-little": {
+    name: "Mitch Little", office: "Texas House", district: "House District 65", party: "R",
+    officialUrl: "https://house.texas.gov/members/4615",
+    biography: "Mitch Little represents House District 65 in Denton County. The official Legislative Directory lists his occupation as attorney and records a bachelor's degree from Harvard University and a law degree from the University of Texas. The Texas Legislative Reference Library lists his 89th Legislature committee work on Criminal Jurisprudence, Governmental Oversight (Select) and Transportation. The linked legislative histories below identify particular bill roles and recorded outcomes rather than a complete voting record or a lifetime sponsorship total.",
+    identityChecked: "2026-11-05", source: "https://legdir.capitol.texas.gov/MemberInfo.aspx?Chamber=H&Code=A4615",
+  },
   "matt-shaheen": {
     name: "Matt Shaheen", office: "Texas House", district: "House District 66", party: "R",
     officialUrl: "https://house.texas.gov/members/2995",
@@ -575,6 +587,7 @@ export const SCRIPT2_REVIEWED_SLUGS = [
   "cody-harris", "trent-ashby", "brian-harrison", "trey-wharton",
   "steve-toth", "stan-gerdes", "ellen-troxclair", "terry-wilson",
   "keresa-richardson", "ben-bumgarner", "andy-hopper",
+  "shelley-luther", "mitch-little",
   "matt-shaheen", "jeff-leach", "david-spiller", "james-frank",
 ] as const;
 

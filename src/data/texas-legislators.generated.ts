@@ -4026,7 +4026,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 62,
     party: "R",
-    website: "https://house.texas.gov/members/62",
+    website: "https://house.texas.gov/members/4645",
     imageUrl: "https://www.house.texas.gov/images/members/4645.jpg?v=1",
     officialCode: null,
     home: "Room #201, 100 N. Travis St., Sherman, TX 75090",
@@ -4036,7 +4036,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     vacant: false,
     authority: {
       slug: "shelley-luther",
-      reviewedAt: "2026-07-31",
+      reviewedAt: "2026-11-05",
       biography:
         "Shelley Luther is the current Representative for Texas House District 62. This authority profile consolidates the official member page, current committee assignments, legislative service, contact information, campaign-finance lookup, and district sources.",
       career: [
@@ -4070,11 +4070,11 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/62",
+          url: "https://house.texas.gov/members/4645",
         },
         {
-          label: "Official member biography",
-          url: "https://house.texas.gov/members/4645/biography",
+          label: "Official Legislative Directory: education, career and committees",
+          url: "https://legdir.capitol.texas.gov/memberInfo.aspx?Chamber=H&Code=A4645",
         },
         {
           label: "Texas Legislature Online member directory",
@@ -4229,7 +4229,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     vacant: false,
     authority: {
       slug: "mitch-little",
-      reviewedAt: "2026-07-31",
+      reviewedAt: "2026-11-05",
       biography:
         "Mitch Little is the current Representative for Texas House District 65. This authority profile consolidates the official member page, current committee assignments, legislative service, contact information, campaign-finance lookup, and district sources.",
       career: [
@@ -4261,8 +4261,8 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
           url: "https://house.texas.gov/members/4615",
         },
         {
-          label: "Official member biography",
-          url: "https://house.texas.gov/members/4615",
+          label: "Official Legislative Directory: education, career and committees",
+          url: "https://legdir.capitol.texas.gov/MemberInfo.aspx?Chamber=H&Code=A4615",
         },
         {
           label: "Texas Legislature Online member directory",
