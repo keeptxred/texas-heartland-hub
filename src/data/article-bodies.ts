@@ -5855,167 +5855,155 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     ],
   },
   "texas-new-laws-2026": {
-    updated: "2026-07-15",
-    intro: [
-      "Every regular session of the Texas Legislature produces hundreds of bills that make it to the governor's desk, and every biennium a specific slate of laws takes effect on September 1 (the default effective date) or on January 1 of the following year. This guide covers the major statutes that took effect for the 2026 cycle — the property tax reform package voters approved in November 2025, the expanded education savings account program, additional border security funding, criminal justice updates, and the elections-and-administration bills that shape day-to-day life in Texas.",
-      "For an overview of how any Texas bill becomes law, see [How a Bill Becomes Texas Law](/news/how-a-bill-becomes-texas-law). For the ongoing tracker used by the newsroom, visit our [Legislative Updates](/legislative-updates) hub.",
+    "updated": "2026-11-05",
+    "editorNote": "Substantively corrected November 5, 2026 against enrolled legislation and current agency guidance. The original July 15 publication date is retained. Prior text incorrectly assigned the $140,000 school-district residence-homestead exemption to the 2026 tax year and grouped numerous unsourced 2025 measures as 2026 changes. This revision distinguishes legal effective dates, tax-year applicability, program rollout and agency implementation; it is not a complete catalog of all enacted Texas bills.",
+    "intro": [
+      "Which Texas laws actually began in 2026? The answer is more precise than a list of popular laws passed in 2025. A bill can be signed in June 2025, become legally effective in September 2025, apply to a tax year beginning January 2025, and start serving residents during the 2026–27 school year. These dates describe different things. This guide uses [Texas Legislature Online's January 1, 2026 report](https://capitol.texas.gov/reports/Report.aspx?ID=effectivejan1&LegSess=89R) and enrolled bill text to distinguish them rather than treating every policy discussed in 2026 as a new 2026 statute.",
+      "The 89th regular session's official report identifies 31 bills effective January 1, 2026; the [89th Second Called Session report](https://capitol.texas.gov/reports/Report.aspx?ID=effectivejan1&LegSess=892) lists two more. Those counts describe the specified effective-date reports, not every policy people experienced during 2026. Below are specific, verifiable examples, followed by two important changes that were enacted or applicable earlier but implemented during 2026."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "Property Tax Relief: $140,000 Homestead Exemption and Continued Rate Compression",
-        paragraphs: [
-          "The single largest change taking effect for the 2026 tax year is the increase of the residence homestead exemption from $100,000 to $140,000, approved by voters as a constitutional amendment on the November 2025 ballot. The additional exemption for homeowners 65 and older or with a qualifying disability was also expanded.",
-          "Alongside the exemption increase, the 2025 legislative package continued the school district maintenance-and-operations rate compression that began with SB 2 in 2019 and the 2023 relief package. Combined, the compression and exemption produce a meaningful reduction on the school-district portion of most residential bills. See [Texas Property Tax Laws Explained](/news/texas-property-tax-laws-explained) for the full framework.",
-          "The temporary 20% appraisal cap for non-homestead residential properties valued at $5 million or less remains in effect through the 2026 tax year. Whether the Legislature extends or makes it permanent will be a headline debate in the next session.",
-        ],
+        "heading": "January 1, 2026: HB 149 established Texas AI governance requirements",
+        "paragraphs": [
+          "House Bill 149 is a concrete example of legislation with a genuine January 1, 2026 effective date. The [enrolled HB 149 text](https://capitol.texas.gov/tlodocs/89R/billtext/html/HB00149F.htm) creates the Texas Responsible Artificial Intelligence Governance Act and adds provisions governing certain uses of artificial intelligence. It addresses specified conduct, disclosures, enforcement authority, and protections for individuals. This does not mean every use of AI in Texas became unlawful on January 1; applicability depends on the legal definitions, covered actors, prohibited practices, and statutory exceptions.",
+          "The official [enrolled bill summary](https://capitol.texas.gov/billlookup/BillSummary.aspx?Bill=HB149&LegSess=89R) describes requirements affecting certain governmental entities and health-care providers and identifies prohibited uses involving protected rights and biometric information. Businesses should read the enacted definitions and enforcement provisions before assuming that a general-purpose AI tool, an internal workflow, or an ordinary consumer product is covered in the same manner. The date is important, but it cannot replace an analysis of what the law actually regulates."
+        ]
       },
       {
-        heading: "Education Savings Accounts: Statewide Implementation",
-        paragraphs: [
-          "The Texas Education Savings Account program authorized by SB 2 in 2025 begins operating at scale in the 2026-27 school year. Eligible families receive approximately $10,000 per participating child (with a higher amount for students with disabilities and a lower amount for homeschool families) that can be spent on private-school tuition, tutoring, curriculum, therapy services, and other qualifying educational expenses.",
-          "The initial rollout prioritizes low-income families, students with disabilities, and children currently enrolled in public schools rated as low performing, then expands to other Texas families as capacity permits. Applications open through a state-selected program manager. See [Education Savings Accounts: A Parent's Guide](/news/school-choice-esa-guide) for the qualification walkthrough and timeline.",
-        ],
+        "heading": "January 1, 2026: HB 22 addressed intangible personal-property taxation",
+        "paragraphs": [
+          "House Bill 22 amended the Texas Tax Code's treatment of intangible personal property and related appraisal provisions. [Section 5 of the enrolled bill](https://capitol.texas.gov/tlodocs/89R/billtext/html/HB00022F.htm) expressly sets January 1, 2026 as the effective date. Its application provision limits the changed tax treatment to a property-tax year beginning on or after that date. That is a different timeline from the residence-homestead exemption discussed below; the two measures should not be confused merely because both involve taxation.",
+          "The enacted text changes Tax Code Section 11.02 and repeals several provisions dealing with transportation-business intangibles and appraisal. Most homeowners will not need to make a new filing because of this measure alone. Taxpayers with specialized property or accounting issues should review the law's scope and ask the responsible appraisal or tax authority how it applies to their specific holdings. The takeaway is that a real January 2026 tax law can exist without being a change to the ordinary residential homestead exemption."
+        ]
       },
       {
-        heading: "Border Security Funding and Operation Lone Star Continuation",
-        paragraphs: [
-          "The 2026-27 biennial budget continues Operation Lone Star funding at record levels, with allocations for Texas Department of Public Safety border deployments, the Texas National Guard, and the state's construction of border barrier infrastructure. Statutory provisions extend the trespass authorities granted to state and local law enforcement in border counties.",
-          "The Texas Attorney General retains enhanced authority to bring civil actions against entities that assist unauthorized crossings and to coordinate with county prosecutors on transnational criminal cases. Federal preemption litigation on state border authority remains active, and the Legislature may return to the issue in the next session depending on how the courts rule.",
-          "For deeper context, see [Texas state border-security authority](/news/border-security-state-role) and the pillar [Texas Border Policy Explained](/news/texas-border-policy-full-guide).",
-        ],
+        "heading": "2025, not 2026: the $140,000 school-district homestead exemption",
+        "paragraphs": [
+          "The increase in the general school-district residence-homestead exemption from $100,000 to $140,000 was approved by Texas voters in November 2025, but **it applies beginning with the tax year that started January 1, 2025**. The [enrolled SJR 2 amendment](https://capitol.texas.gov/tlodocs/89R/billtext/html/SJ00002F.htm) states that applicability date explicitly. The implementing [SB 4, Section 1.04](https://capitol.texas.gov/tlodocs/89R/billtext/html/SB00004F.htm) likewise applies the changed exemption to tax years beginning on or after January 1, 2025. Calling this a new exemption first effective for tax year 2026 is inaccurate.",
+          "The distinction matters when reading a 2025 tax bill or discussing relief in 2026. SB 4 contains provisions for provisional 2025 school-district bills, their treatment after the constitutional amendment election, and tax-roll corrections. It also addresses school-finance calculations. The exemption concerns qualifying residence homesteads and school-district property taxation; it is not an across-the-board $140,000 reduction for every taxing unit or every property. For an address-specific question, verify exemption eligibility and the taxing units listed on the actual appraisal and tax records rather than promising a fixed dollar saving."
+        ]
       },
       {
-        heading: "Criminal Justice and Public Safety Updates",
-        paragraphs: [
-          "Several criminal-justice bills took effect for 2026, including sentence enhancements for organized retail theft, fentanyl-related distribution offenses, and human smuggling in border counties. A dedicated statutory framework for prosecuting fentanyl deaths as murder in certain circumstances expanded during the 2025 session.",
-          "The Legislature also continued the phased expansion of the state's mental-health beds through the Texas Health and Human Services Commission, and refined the involuntary commitment process for individuals repeatedly charged with certain violent offenses.",
-          "Bail reform provisions from earlier sessions remain in effect, with additional restrictions on cash-bond releases for defendants with prior violent-offense histories.",
-        ],
+        "heading": "2026–27 school year: education freedom accounts began a new program cycle",
+        "paragraphs": [
+          "Senate Bill 2 created the Texas Education Freedom Accounts program. The [89th Legislature's enrolled summary for SB 2](https://capitol.texas.gov/billlookup/BillSummary.aspx?Bill=SB2&LegSess=89R) identifies September 1, 2025 as the bill's legal effective date; the program's first school-year cycle is 2026–27. It is therefore more accurate to say that the state implemented a program during 2026 than to say SB 2 first became law in 2026. Statutory eligibility, approved uses, prioritization, funding availability, and administration rules are separate questions from the bill's enactment.",
+          "The state's [official families portal](https://educationfreedom.texas.gov/families/) reports that applications for the 2026–27 school year ran February 4 through March 17, 2026 and are now closed. The portal explains that applications are prioritized, rather than approved simply in the order submitted, and offers updates about future cycles. Not every eligible applicant necessarily receives an award, and amounts and permitted uses depend on the enacted rules and the family's circumstances. Families should confirm the current program status on that official portal instead of relying on an older article's open-enrollment prediction."
+        ]
       },
       {
-        heading: "Elections Administration: Continued SB 1 Implementation",
-        paragraphs: [
-          "The 2025 session refined the SB 1 (2021) framework rather than reopening its core provisions. Adjustments included tighter deadlines for ballot-cure notifications, standardized statewide poll watcher training curricula, and additional record-retention requirements on county elections administrators.",
-          "The Secretary of State retains expanded authority to audit county election administration, and the Attorney General's election integrity unit continues its investigative work under existing statutory grants. See [Texas Election Laws Explained](/news/texas-election-laws-explained) for the full framework.",
-        ],
+        "heading": "November 1, 2026: Bexar County vehicle emissions inspections",
+        "paragraphs": [
+          "A separate implementation change began November 1, 2026: Bexar County joined the emissions-inspection program. The [Texas Department of Public Safety's Bexar County FAQ](https://www.dps.texas.gov/section/vehicle-inspection/faq/bexar-county-emission-inspections) says qualifying gasoline-powered vehicles from two through 24 years old registered in Bexar County must pass an emissions inspection for registration. This is geographically limited; it does not impose a new statewide emissions test on every Texas vehicle.",
+          "The [Texas Department of Motor Vehicles October 2026 reminder](https://content.govdelivery.com/accounts/TXDMV/bulletins/42e59be?reqfrom=share) explains that the test is due for covered vehicles before initial registration or renewal, not that all drivers must report on November 1. It also distinguishes this emissions requirement from the general noncommercial vehicle safety inspection eliminated beginning in 2025. Drivers should check vehicle age, fuel type, registration county, renewal timing, exemptions, and nearby certified test locations with DPS or TxDMV before assuming a test is required."
+        ]
       },
       {
-        heading: "Firearms Law Refinements",
-        paragraphs: [
-          "House Bill 1927's constitutional-carry framework remains the backbone of Texas firearms law. The 2025 session added narrow clarifications on carry authority in state parks, at governmental meetings, and by peace officers in their private capacity, plus continued expansion of the School Marshal and Guardian programs that allow trained employees to be armed on campus.",
-          "No state-level restrictions on firearm ownership, magazine capacity, or so-called assault weapons were enacted. For the operational reality of Texas gun law in 2026, see [Texas Gun Laws Explained](/news/texas-gun-laws-explained).",
-        ],
+        "heading": "What the January 2026 effective-date reports do—and do not—prove",
+        "paragraphs": [
+          "The [89th regular-session January 1 report](https://capitol.texas.gov/reports/Report.aspx?ID=effectivejan1&LegSess=89R) is a useful starting list because each row identifies a bill, authors, its short caption and the recorded effective date. The [Second Called Session January 1 report](https://capitol.texas.gov/reports/Report.aspx?ID=effectivejan1&LegSess=892) separately records HB 23 and SB 14. Those reports let readers distinguish measures effective on a named date from broad descriptions of governmental programs. They are discovery tools: each bill's enrolled text is still needed to determine exceptions, conditions, transition rules and who is covered.",
+          "A headline such as 'Texas laws in 2026' can legitimately include rules people encounter during 2026 even where the statutory effective date was earlier. But the article must say which category applies. The homestead amendment has 2025 tax-year applicability; SB 2 has a 2025 legal effective date and 2026–27 operation; HB 149 and HB 22 have January 2026 legal effective dates; Bexar emissions rules begin in November 2026. Without that distinction, a topical overview can accidentally mislead readers about when rights, filings, or obligations actually changed."
+        ]
       },
       {
-        heading: "Business, Regulatory, and Tort Reform",
-        paragraphs: [
-          "The 2025 session included several statutes aimed at the business-relocation pipeline. The Texas Business Court, a specialized commercial court created in 2023, expanded operational capacity in 2026 with additional divisions in Houston, Dallas, and Austin — handling complex commercial cases with a specialized bench.",
-          "Franchise-tax thresholds were adjusted for inflation, marginally expanding the number of small businesses exempted from filing. Occupational licensing reforms narrowed several boards' authority to impose fees or continuing-education requirements that were determined to lack a substantive public-safety justification.",
-          "Tort reform legislation refined damage caps in specific medical liability contexts and clarified attorney-fee recovery rules in construction disputes.",
-        ],
+        "heading": "How Texans can verify a law's exact operative date",
+        "paragraphs": [
+          "Start by searching the bill number and legislative session in [Texas Legislature Online](https://capitol.texas.gov/). Open the enrolled bill or the act's final text; then read its effective-date section, applicability clauses, and any language conditioning operation on an election, future appropriation or agency rulemaking. An effective-date report is useful for finding candidates, but the final text controls where a bill has special conditions. Where a constitutional amendment is involved, read the resolution and the implementing statute together rather than assuming approval day is the first tax year of relief.",
+          "After checking the law, confirm the operational guidance from the agency responsible for implementation. For school-district tax questions that may mean the Comptroller, an appraisal district, or a tax assessor-collector. For education accounts it is the official program administrator. For emissions inspections it is DPS and TxDMV. Agency pages can explain steps and deadlines, but they should not be used to replace enrolled law for a legal assertion. Record when the guidance was last checked, because forms, deadlines, and program capacity can change without a new legislative act."
+        ]
       },
       {
-        heading: "Water, Energy, and Infrastructure",
-        paragraphs: [
-          "The Texas Water Fund, created by voters in 2023 and expanded by the Legislature in 2025, continues to distribute grants and low-interest loans for municipal water infrastructure and new water supply. Rural water systems and border-region infrastructure received priority allocations in the 2026 disbursement cycle.",
-          "The Texas Energy Fund, aimed at incentivizing dispatchable (non-intermittent) generation on the ERCOT grid, entered its second application round. Approved projects receive low-interest loans conditioned on completion and interconnection by set deadlines. See [The Texas Grid Explained](/news/texas-grid-ercot-explained) for how the fund fits the broader ERCOT reliability question.",
-          "Water rights and groundwater conservation district authorities remained unchanged in substance for 2026; see [Texas Water Rights Explained](/news/texas-water-rights-explained).",
-        ],
-      },
-      {
-        heading: "Health Care and Family Policy",
-        paragraphs: [
-          "Continued statutory protections for pre-born children remain in effect, with the Texas Attorney General maintaining primary enforcement authority. Expanded maternal-health investments — including a longer postpartum Medicaid coverage window — took effect for the 2026 fiscal year.",
-          "The Legislature strengthened parental rights notification requirements for public schools on health-related interventions and continued reforms to the Texas foster-care system, including additional oversight of contracted care providers.",
-        ],
-      },
-      {
-        heading: "Effective Dates and How to Track Ongoing Changes",
-        paragraphs: [
-          "Most Texas laws take effect September 1 following the regular session, with some designated for earlier effect (immediate effect with two-thirds vote) or later (January 1 or specific fiscal year). Constitutional amendments take effect upon voter approval and canvass of the November election.",
-          "The Legislative Reference Library, Texas Legislature Online, and Texas Register are the three primary places to track statutes and rulemaking. Our [Legislative Updates](/legislative-updates) hub aggregates the bills we're tracking for readers.",
-        ],
-      },
-      {
-        heading: "What Ordinary Texans Should Do About New Laws",
-        paragraphs: [
-          "For most residents, staying current on new Texas law involves a small set of habits: watch the November constitutional-amendment ballot each odd-numbered year, review the changes to your annual property tax notice each spring, and check the [Texas Laws Explained](/texas-laws) page for major statutes that touch your household directly.",
-          "For families with school-age children, the ESA rollout is the practical change most likely to affect a household decision this cycle. For property owners, the exemption increase and rate compression will show up on the fall bill without any action required beyond confirming your homestead exemption is on file.",
-        ],
-      },
-      {
-        heading: "Constitutional Amendments on Recent and Upcoming Ballots",
-        paragraphs: [
-          "The November 2025 ballot delivered the most consequential set of Texas constitutional amendments in a decade, headlined by the homestead exemption increase to $140,000. Additional propositions addressed the Texas Water Fund expansion, the Texas Energy Fund's dispatchable-generation loan program, judicial retirement changes, and various housekeeping items in the Property Code.",
-          "Constitutional amendments in Texas require a two-thirds vote of each chamber of the Legislature to be referred to voters, then a simple majority of Texans voting on the specific proposition to be adopted. Because Texas has amended its 1876 constitution more than 500 times, the November ballot in every odd-numbered year is where a substantial amount of Texas law is actually written.",
-          "The 2027 ballot is likely to include amendments touching bail reform, further property tax reductions, and specific water infrastructure authorizations, though the actual set will not be finalized until the 2027 regular session concludes.",
-        ],
-      },
-      {
-        heading: "What Did Not Change in 2025",
-        paragraphs: [
-          "As important as what took effect is what did not. The 2025 session did not enact a state personal income tax, an assault-weapons ban, universal mail-in voting, same-day voter registration, adult-use marijuana legalization, or a state-level minimum-wage increase. None of these was seriously considered in either chamber. Understanding what a session did not do is often as useful as understanding what it did.",
-          "The 2025 session also declined to make the temporary 20% non-homestead residential appraisal cap permanent. That cap expires at the end of the 2026 tax year unless extended by the 2027 Legislature, which is one of the highest-stakes property tax questions on the near horizon for owners of rental single-family and small multi-family properties.",
-        ],
-      },
-      {
-        heading: "How to Read a Texas Bill",
-        paragraphs: [
-          "A Texas bill's caption is a one-sentence description of what the bill does; the caption is legally binding on what the bill can contain under the single-subject rule. The body of the bill sets out new statutory text (in underlined type) and struck-through language (existing text being deleted). The final sections state the effective date and any severability, applicability, or transition provisions.",
-          "For any bill under active consideration, the most useful pages on Texas Legislature Online are the Bill Analysis (a plain-English committee summary), the Fiscal Note (the projected cost to the state), and the Actions history (a chronological record of every committee referral, hearing, vote, and floor action). These three documents together will tell any reader most of what they need to know about the actual policy content of a bill.",
-        ],
-      },
+        "heading": "What readers can do next",
+        "paragraphs": [
+          "Homeowners who are unsure whether the $140,000 exemption is reflected correctly should inspect the school-district portion of their actual tax records and ask the local appraisal district to confirm their residence-homestead status. Households interested in education accounts should use the program's official families page to check whether an application cycle is open. Bexar County motorists should consult DPS guidance and their vehicle's registration renewal date before paying for a required emissions test. A business concerned about AI regulation should read the definitions and exemptions of HB 149 rather than assuming the law covers every software product.",
+          "This guide intentionally does not classify every 2025 budget item, criminal-law change, court dispute, or policy announcement as a 'new 2026 law.' Each such claim would require its own controlling enactment and effective-date check. Readers looking for every bill effective on a particular date can use the Legislature's dated reports and then navigate to the bill's enrolled text. Keep TX Red's [Texas laws directory](/laws) and [bill tracker](/bills) provide additional context and links to the primary records without converting introduced proposals into enacted statutes."
+        ]
+      }
     ],
-    faq: [
+    "faq": [
       {
-        q: "What was the biggest new Texas law for 2026?",
-        a: "The constitutional amendment raising the residence homestead exemption to $140,000, combined with continued school-district rate compression — the largest ongoing property tax relief package in state history.",
+        "q": "Did the $140,000 Texas school-district homestead exemption first take effect in 2026?",
+        "a": "No. SJR 2 and SB 4 apply the exemption increase beginning with the property-tax year starting January 1, 2025, after the required voter approval in November 2025. Its appearance in 2026 discussions does not change that applicability date."
       },
       {
-        q: "When did the education savings account program actually start?",
-        a: "The ESA program authorized by SB 2 in 2025 begins operating at scale in the 2026-27 school year, prioritizing low-income families, students with disabilities, and children in low-performing public schools.",
+        "q": "Which Texas bills definitely became effective January 1, 2026?",
+        "a": "The Texas Legislature's 89th regular-session report lists 31, including HB 22 on intangible personal-property taxation and HB 149 on certain AI uses. The 89th Second Called Session report lists two additional bills. Check each enrolled bill for any exceptions or applicability limitations."
       },
       {
-        q: "Did Texas pass any new gun laws in 2025?",
-        a: "No major changes. Constitutional carry under HB 1927 remains the operative framework, with narrow clarifications on carry in state parks and expansions of the School Marshal program.",
+        "q": "Was the Texas Education Freedom Accounts law enacted in 2026?",
+        "a": "No. SB 2's legal effective date was September 1, 2025. Its first application period and school-year operation occurred during 2026 for the 2026–27 school year. The state's portal says applications for that first cycle are closed."
       },
       {
-        q: "How do I find out when a specific bill takes effect?",
-        a: "Check the bill's caption on Texas Legislature Online — the effective date is stated in the final section of every enrolled bill. Default is September 1 after the regular session.",
+        "q": "Do all Texas vehicles need new emissions inspections in 2026?",
+        "a": "No. The November 1 change concerns covered vehicles registered in Bexar County. DPS and TxDMV identify which vehicles and registration events require the test and what exemptions apply."
       },
       {
-        q: "What is the Texas Business Court and does it affect small businesses?",
-        a: "The Business Court handles complex commercial disputes above a jurisdictional threshold — it primarily affects mid-size and larger enterprises, not typical small-business litigation.",
+        "q": "How can I distinguish a bill's effective date from its implementation date?",
+        "a": "Read the enrolled bill's final sections for the effective date, then its applicability and transition clauses. Separately check agency rules and program guidance. Tax years, fiscal years, school years, and agency launch dates do not necessarily match the bill's effective date."
       },
       {
-        q: "Are there major new laws taking effect in 2027?",
-        a: "The Legislature will meet in regular session in early 2027; new statutes from that session typically take effect September 1, 2027, or January 1, 2028.",
-      },
+        "q": "Are these examples a complete list of Texas laws effective in 2026?",
+        "a": "No. The guide selects documented examples and links to official session-and-date reports that readers can use to inspect the complete lists."
+      }
     ],
-    sources: [
-      { label: "Texas Legislature Online", url: "https://capitol.texas.gov/" },
-      { label: "Legislative Reference Library", url: "https://lrl.texas.gov/" },
-      { label: "Texas Register", url: "https://www.sos.state.tx.us/texreg/" },
+    "sources": [
       {
-        label: "Texas Comptroller — Property Tax",
-        url: "https://comptroller.texas.gov/taxes/property-tax/",
+        "label": "Texas Legislature Online — bills effective January 1, 2026 (89th regular session)",
+        "url": "https://capitol.texas.gov/reports/Report.aspx?ID=effectivejan1&LegSess=89R"
       },
-      { label: "Texas Education Agency — ESA Program", url: "https://tea.texas.gov/" },
+      {
+        "label": "Texas Legislature Online — bills effective January 1, 2026 (89th Second Called Session)",
+        "url": "https://capitol.texas.gov/reports/Report.aspx?ID=effectivejan1&LegSess=892"
+      },
+      {
+        "label": "HB 149 enrolled act — Texas AI governance",
+        "url": "https://capitol.texas.gov/tlodocs/89R/billtext/html/HB00149F.htm"
+      },
+      {
+        "label": "HB 22 enrolled act — intangible personal-property tax",
+        "url": "https://capitol.texas.gov/tlodocs/89R/billtext/html/HB00022F.htm"
+      },
+      {
+        "label": "SJR 2 enrolled amendment — 2025 homestead tax-year applicability",
+        "url": "https://capitol.texas.gov/tlodocs/89R/billtext/html/SJ00002F.htm"
+      },
+      {
+        "label": "SB 4 enrolled act — homestead implementation",
+        "url": "https://capitol.texas.gov/tlodocs/89R/billtext/html/SB00004F.htm"
+      },
+      {
+        "label": "SB 2 official enacted summary — education savings accounts",
+        "url": "https://capitol.texas.gov/billlookup/BillSummary.aspx?Bill=SB2&LegSess=89R"
+      },
+      {
+        "label": "Texas Education Freedom Accounts — official families portal",
+        "url": "https://educationfreedom.texas.gov/families/"
+      },
+      {
+        "label": "Texas Department of Public Safety — Bexar County emissions FAQ",
+        "url": "https://www.dps.texas.gov/section/vehicle-inspection/faq/bexar-county-emission-inspections"
+      },
+      {
+        "label": "Texas Department of Motor Vehicles — October 2026 emissions bulletin",
+        "url": "https://content.govdelivery.com/accounts/TXDMV/bulletins/42e59be?reqfrom=share"
+      }
     ],
-    related: [
+    "related": [
       "texas-property-tax-laws-explained",
-      "texas-gun-laws-explained",
-      "texas-election-laws-explained",
       "school-choice-esa-guide",
+      "how-a-bill-becomes-texas-law",
       "legislative-updates",
+      "texas-election-laws-explained"
     ],
-    cta: { label: "Track Bills In Our Legislative Hub", href: "/bills" },
-    keyTakeaways: [
-      "The homestead exemption rose to $140,000 for the 2026 tax year via 2025 constitutional amendment.",
-      "The Texas ESA program begins at scale for 2026-27, prioritizing low-income and disabled students.",
-      "Operation Lone Star funding continues at record levels through the 2026-27 biennium.",
-      "SB 1's elections framework was refined, not reopened, in the 2025 session.",
-      "Most 2025 session bills took effect September 1, 2025; constitutional amendments effective on canvass.",
-    ],
+    "cta": {
+      "label": "Search official-backed Texas bills",
+      "href": "/bills"
+    },
+    "keyTakeaways": [
+      "HB 149 (AI governance) and HB 22 (intangible-property taxation) have genuine January 1, 2026 effective dates according to their enrolled acts.",
+      "The $140,000 school-district homestead exemption applies beginning with tax year 2025, not first with tax year 2026.",
+      "Texas Education Freedom Accounts is a 2025-enacted program with a 2026–27 school-year rollout; the first application period has closed.",
+      "Bexar County emissions testing for covered vehicles began November 1, 2026, tied to registration and renewal requirements.",
+      "Effective dates, tax-year applicability, school-year operation, and agency implementation must be checked separately."
+    ]
   },
 };
