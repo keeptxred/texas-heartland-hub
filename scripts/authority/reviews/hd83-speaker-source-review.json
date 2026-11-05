@@ -1,0 +1,36 @@
+{
+  "purpose": "Individual Speaker-specific primary-source review for House District 83; no bill sponsorship inferred",
+  "reviewedAt": "2026-11-05",
+  "profile": {
+    "slug": "dustin-burrows",
+    "name": "Dustin Burrows",
+    "office": "Texas House",
+    "district": "House District 83",
+    "party": "R",
+    "officialMemberPage": "https://house.texas.gov/members/3055",
+    "officialBiography": "https://house.texas.gov/members/3055/biography",
+    "speakerOffice": "https://house.texas.gov/speaker",
+    "legislativeReferenceLibrary": "https://lrl.texas.gov/legeleaders/leadership/speakerPage.cfm?memberID=5778",
+    "speakerArchive": "https://lrl.texas.gov/legeleaders/leadership/searchproc.cfm?authorSpeaker=5778&type=newsRelease",
+    "facts": [
+      "Texas House 77th Speaker since January 14, 2025; House District 83 and Lubbock",
+      "Previously chaired Calendars (87th and 88th) and Ways and Means (86th)",
+      "Speaker's official duties include presiding, committee membership assignments and referrals, distinct from individual bill sponsorship",
+      "19 uniquely linked, dated House Speaker-office records recorded separately from sponsorship history"
+    ],
+    "sourceBoundaries": [
+      "The canonical KTR Supabase bill_sponsors dataset contains zero mapped 89th individual bill sponsorship records for Dustin Burrows; this is an evidence gap, not proof of no legislative work.",
+      "Speaker's announcements about bills introduced by other representatives are not individual authored bills, enacted laws, or roll-call votes.",
+      "Official record links provide verifiable dated events. A source title denotes the speaker office's announcement, not independent endorsement.",
+      "All other approved profiles continue to require actual bill histories with 16+ independent roles/outcomes; alternate Speaker evidence is limited to this identified leadership office."
+    ]
+  },
+  "certificationScope": "House 83 only, strict A-F gates with source-unique speaker actions, no global exceptions, no change to federal noindex exceptions",
+  "sourceCount": 19,
+  "sourceKinds": [
+    "Appointment",
+    "Interim directive",
+    "House proceedings",
+    "Public statement"
+  ]
+}
