@@ -617,7 +617,7 @@ export const ARTICLES: Article[] = [
     slug: "texas-voter-registration-guide",
     category: "Elections",
     title: "The Texas Voter Registration Guide: Deadlines, ID Rules, and FAQs",
-    dek: "Who can register, the 30-day deadline before each election, accepted photo ID, and how to update your address when you move counties — everything you need before you vote.",
+    dek: "How Texas registration really works: mail postmarks and deadlines, paper and DPS pathways, cross-county address changes, seven voter IDs, and official status checks.",
     author: "Civics Desk",
     date: "May 27, 2026",
     publishedAt: "2026-05-27T19:00:00",
