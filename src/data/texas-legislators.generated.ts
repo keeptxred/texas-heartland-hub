@@ -5659,7 +5659,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 87,
     party: "R",
-    website: "https://house.texas.gov/members/87",
+    website: "https://house.texas.gov/members/4480",
     imageUrl: "https://www.house.texas.gov/images/members/4480.jpg?v=1",
     officialCode: null,
     home: "1800 S. Washington St., Amarillo, TX 79102",
@@ -5708,7 +5708,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/87",
+          url: "https://house.texas.gov/members/4480",
         },
         {
           label: "Official member biography",

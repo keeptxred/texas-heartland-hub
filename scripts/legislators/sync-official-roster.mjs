@@ -279,6 +279,7 @@ function houseRoster(html) {
         "Carrie Isaac:73": "4265",
         "Vince Perez:77": "4710",
         "Vincent Perez:77": "4710",
+        "Caroline Fairly:87": "4480",
       })[`${reverseHouseName(member.member_name)}:${Number(member.id)}`] ?? member.member_bill_code}`,
       imageUrl: new URL(member.image, "https://house.texas.gov/").href,
     }))

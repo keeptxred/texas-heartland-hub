@@ -50,6 +50,8 @@ READY = (
     "mary-gonzalez", "suleman-lalani", "vince-perez", "joe-moody",
     "claudia-ordaz", "don-mclaughlin", "brooks-landgraf", "tom-craddick",
     "dustin-burrows",
+    "carl-tepper", "stan-kitzman", "john-smithee", "caroline-fairly",
+    "ken-king", "candy-noble", "ramon-romero",
 )
 NOT_READY = ("dan-crenshaw", "john-cornyn", "greg-abbott", "jeff-barry")
 NS = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}

@@ -1,0 +1,127 @@
+{
+  "purpose": "Independently source-checked identity, biographical, committee and current office references for Texas House 84–90. Source-only research: does NOT grant readiness, change sitemap or deploy/index these profiles.",
+  "reviewedAt": "2026-11-05",
+  "preliminaryState": "NOT_READY: source research has not yet been integrated into A–F gates or production-verified",
+  "nextVerifiedProductionPrerequisite": "101-profile Speaker release must pass exact-main dual-host production certification before promotion",
+  "individualReviews": [
+    {
+      "slug": "carl-tepper",
+      "district": 84,
+      "name": "Carl Tepper",
+      "officialId": "4360",
+      "party": "R",
+      "officialMemberPage": "https://house.texas.gov/members/4360",
+      "biographySource": "https://house.texas.gov/members/4360/biography",
+      "facts": [
+        "House District 84 is entirely in Lubbock County",
+        "US Air Force C-130 flight engineer, Air Medal recipient, served during Persian Gulf War",
+        "Texas Tech University graduate 1995; commercial real estate career and 2009 Lubbock redevelopment work",
+        "89th committee roles include Appropriations, Calendars, Redistricting and Intergovernmental Affairs; State-Federal Relations subcommittee chair"
+      ],
+      "historical89thBillsInCanonicalDb": 229
+    },
+    {
+      "slug": "stan-kitzman",
+      "district": 85,
+      "name": "Stan Kitzman",
+      "officialId": "4280",
+      "party": "R",
+      "officialMemberPage": "https://house.texas.gov/members/4280",
+      "biographySource": "https://house.texas.gov/members/4280/biography",
+      "facts": [
+        "HD85 comprises Austin, Colorado, Fayette, Waller, Wharton and part Fort Bend counties",
+        "Former Waller County commissioner and public-school teacher, Texas A&M Agricultural Systems Management graduate",
+        "Texas Army National Guard veteran with 21-year service and three deployments",
+        "89th roles include Appropriations, Agriculture and Livestock, Sunset Advisory Commission, Article III subcommittee chair and Water Caucus chair"
+      ],
+      "historical89thBillsInCanonicalDb": 214
+    },
+    {
+      "slug": "john-smithee",
+      "district": 86,
+      "name": "John Smithee",
+      "officialId": "4530",
+      "party": "R",
+      "officialMemberPage": "https://house.texas.gov/members/4530",
+      "biographySource": "https://house.texas.gov/members/4530/biography",
+      "primaryBiographicalSource": "https://legdir.capitol.texas.gov/MemberInfo.aspx?Chamber=H&Code=A4530",
+      "officialHistoricalSource": "https://lrl.texas.gov/legeleaders/members/memberdisplay.cfm?memberID=238",
+      "facts": [
+        "HD86 covers Armstrong, Dallam, Deaf Smith, Hartley, Oldham, Parmer and Randall counties",
+        "Official Legislative Directory confirms profession attorney; BBA West Texas A&M University and law degree Texas Tech University",
+        "Served in Texas House from 1985 across successive sessions; 89th Criminal Jurisprudence chair and State Affairs member",
+        "89th official member and TLO committee entries independently confirm present terms and committee assignments"
+      ],
+      "provenanceWarning": "House public biography page is blank. Use official Legislative Directory and Legislative Reference Library rather than inventing autobiographical claims.",
+      "historical89thBillsInCanonicalDb": 150
+    },
+    {
+      "slug": "caroline-fairly",
+      "district": 87,
+      "name": "Caroline Fairly",
+      "officialId": "4480",
+      "party": "R",
+      "officialMemberPage": "https://house.texas.gov/members/4480",
+      "biographySource": "https://house.texas.gov/members/4480/biography",
+      "facts": [
+        "Amarillo native and Abilene Christian University Business Marketing graduate",
+        "Worked in constituent service in Washington D.C.; medical-negotiator professional role at The OccuNet Company",
+        "89th committees: Appropriations, Local & Consent Calendars, Natural Resources, and Select Committee on Civil Discourse and Freedom of Speech in Higher Education",
+        "Appointed to 1836 Project Advisory Committee and involved in healthcare/water/digital-safety/phone-free school issues"
+      ],
+      "provenanceWarning": "Generated roster currently uses stale /members/87. Correct to official member ID 4480 and fix roster-sync generator to prevent regression before certification.",
+      "historical89thBillsInCanonicalDb": 114
+    },
+    {
+      "slug": "ken-king",
+      "district": 88,
+      "name": "Ken King",
+      "officialId": "2455",
+      "party": "R",
+      "officialMemberPage": "https://house.texas.gov/members/2455",
+      "biographySource": "https://house.texas.gov/members/2455/biography",
+      "facts": [
+        "House District 88 covers 19 Panhandle and South Plains counties",
+        "Former Canadian ISD school board president and Hemphill County Appraisal District leadership",
+        "Owner/president of Black Gold Pump and Supply in Canadian, Texas",
+        "89th State Affairs chair, House Administration member, Energy Council member and House Research Organization board member"
+      ],
+      "historical89thBillsInCanonicalDb": 125
+    },
+    {
+      "slug": "candy-noble",
+      "district": 89,
+      "name": "Candy Noble",
+      "officialId": "3740",
+      "party": "R",
+      "officialMemberPage": "https://house.texas.gov/members/3740",
+      "biographySource": "https://house.texas.gov/members/3740/biography",
+      "facts": [
+        "Represents Collin County HD89 and several eastern Collin communities",
+        "Education degree from Hardin-Simmons University, where she is a trustee",
+        "89th Human Services and Ways and Means committees and Ways and Means property-tax-appraisal subcommittee vice chair",
+        "Second term as president of Texas Conservative Coalition board"
+      ],
+      "historical89thBillsInCanonicalDb": 220
+    },
+    {
+      "slug": "ramon-romero",
+      "district": 90,
+      "name": "Ramon Romero",
+      "officialId": "3060",
+      "party": "D",
+      "officialMemberPage": "https://house.texas.gov/members/3060",
+      "biographySource": "https://house.texas.gov/members/3060/biography",
+      "facts": [
+        "Fort Worth House District 90 and 89th Mexican American Legislative Caucus chair",
+        "89th Calendars, Natural Resources and Licensing & Administrative Procedures committee assignments",
+        "Former Fort Worth Zoning Commission member and Planning Commission chair before Texas House election in 2014",
+        "Founded local small business A-Fast Tile & Coping and also owns Stone Mason Supply"
+      ],
+      "provenanceWarning": "House biography identifies him as Ramón Romero Jr., while generated roster currently uses Ramon Romero. Retain exact canonical roster identity until name reconciliation; do not force a mismatch or imply office vacancy.",
+      "historical89thBillsInCanonicalDb": 57
+    }
+  ],
+  "researchBounds": "Database row counts were read from existing KTR Supabase public.bill_sponsors INNER JOIN public.bills on 89th legislative session on 2026-11-05. Counts are source-identity discovery evidence, NOT complete lifetime bills, sponsorship assertions for any specific measure, or certification. Runtime must independently require 16+ unique official 89th history links, 2+ distinct roles/outcomes and six gates per profile.",
+  "disposition": "SOURCE_PREPARATION_ONLY; 0 new certified profiles, 0 new exceptions, no public indexability changes."
+}

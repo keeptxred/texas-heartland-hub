@@ -26,8 +26,8 @@ describe("representative Script 2 source-first certification", () => {
     }
   });
 
-  it("requires all six genuine quality gates for ninety-seven individually reviewed expansion profiles", () => {
-    expect(SCRIPT2_REVIEWED_SLUGS).toHaveLength(97);
+  it("requires all six genuine quality gates for 104 individually reviewed expansion profiles", () => {
+    expect(SCRIPT2_REVIEWED_SLUGS).toHaveLength(104);
     for (const slug of SCRIPT2_REVIEWED_SLUGS) {
       const records = pilotResearchFor(slug);
       if (slug === "dustin-burrows") {
@@ -125,6 +125,37 @@ describe("representative Script 2 source-first certification", () => {
     expect(EDITORIAL_REVIEWS["claudia-ordaz"].biography).toContain("Environmental Regulation");
     expect(EDITORIAL_REVIEWS["claudia-ordaz"].biography).not.toContain("vice chair of International Relations");
     expect(EDITORIAL_REVIEWS["don-mclaughlin"].biography).toContain("official House biography contains no substantive text");
+  });
+
+  it("requires independently sourced HD84–90 identity and actual role/outcome evidence before indexing", () => {
+    const members: readonly [string, string][] = [
+      ["carl-tepper", "4360"], ["stan-kitzman", "4280"],
+      ["john-smithee", "4530"], ["caroline-fairly", "4480"],
+      ["ken-king", "2455"], ["candy-noble", "3740"],
+      ["ramon-romero", "3060"],
+    ];
+    for (const [slug, memberId] of members) {
+      expect(SCRIPT2_REVIEWED_SLUGS).toContain(slug);
+      const source = EDITORIAL_REVIEWS[slug];
+      expect(source?.officialUrl).toBe("https://house.texas.gov/members/" + memberId);
+      expect(source?.identityChecked).toBe("2026-11-05");
+      expect(source?.biography.length, slug).toBeGreaterThan(180);
+      expect(findRepresentativeBySlug(slug)?.website).toBe(source.officialUrl);
+      const records = pilotResearchFor(slug);
+      expect(records.length, slug + " primary-source histories").toBeGreaterThanOrEqual(16);
+      expect(new Set(records.map(row => row.sponsor_role)).size, slug).toBeGreaterThanOrEqual(2);
+      expect(new Set(records.map(row => row.current_status_label)).size, slug).toBeGreaterThanOrEqual(2);
+      expect(new Set(records.map(row => row.bill_id + ":" + row.sponsor_role)).size, slug).toBe(records.length);
+      expect(records.every(row => row.legislature_number === 89 &&
+        row.source_url.startsWith("https://capitol.texas.gov/BillLookup/History.aspx?")
+      ), slug + " official 89th legislative sources").toBe(true);
+      const certification = certificationFor(slug);
+      expect(certification.state, slug + ": " + certification.reasons.join("; ")).toBe("AUTHORITY_READY");
+      expect(Object.values(certification.gates).every(Boolean), slug).toBe(true);
+    }
+    // Missing House biography must not become an invented source.
+    expect(EDITORIAL_REVIEWS["john-smithee"].source).toContain("legdir.capitol.texas.gov");
+    expect(EDITORIAL_REVIEWS["caroline-fairly"].biography).toContain("4480");
   });
 
   it("requires diverse, dated primary-source Speaker records instead of fictional sponsorship", () => {
