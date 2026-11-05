@@ -40,6 +40,7 @@ READY = (
     "cody-harris", "trent-ashby", "brian-harrison", "trey-wharton",
     "steve-toth", "stan-gerdes", "ellen-troxclair", "terry-wilson",
     "keresa-richardson", "ben-bumgarner", "andy-hopper",
+    "matt-shaheen", "jeff-leach", "david-spiller", "james-frank",
 )
 NOT_READY = ("dan-crenshaw", "john-cornyn", "greg-abbott", "jeff-barry")
 NS = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
