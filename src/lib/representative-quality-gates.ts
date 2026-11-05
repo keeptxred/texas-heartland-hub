@@ -1,6 +1,5 @@
 import pilot from "@/data/representative-research-pilot.json";
 import expansion from "@/data/representative-research-script2.json";
-import house71to74 from "@/data/representative-research-hd71-74.json";
 import type { Rep } from "@/data/representatives";
 import type { RepresentativeAuthority } from "@/data/representative-authority";
 
@@ -637,7 +636,7 @@ export function applyPilotEditorial(
  * authority-page readiness; the six editorial gates remain fail-closed.
  */
 const RESEARCH_BY_SLUG = new Map<string, PilotResearchRecord[]>();
-for (const row of [...pilot.records, ...expansion.records, ...house71to74.records]) {
+for (const row of [...pilot.records, ...expansion.records]) {
   const records = RESEARCH_BY_SLUG.get(row.sponsor_slug) ?? [];
   records.push(row as PilotResearchRecord);
   RESEARCH_BY_SLUG.set(row.sponsor_slug, records);
