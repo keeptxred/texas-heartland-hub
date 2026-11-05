@@ -56,6 +56,14 @@ describe("KTR Phase 2A archive verification", () => {
     const source = readFileSync("src/lib/migrated-practical-guide-canonical.ts", "utf8");
     const migrated = [...source.matchAll(/"(\/news\/[^"]+)":\s*"(https:\/\/texasdefined\.com\/[^"]+)"/g)];
     expect(migrated.length).toBeGreaterThanOrEqual(16);
+    // A category-D archive URL must identify its *specific* surviving page;
+    // a generic or missing destination cannot establish redirect equivalence.
+    const redirects = ledger.filter(row => row.disposition === "D");
+    expect(redirects.length).toBeGreaterThanOrEqual(37);
+    for (const row of redirects) {
+      expect(row.expected_indexability, row.url).toBe("redirect");
+      expect(row.redirect_to, row.url).toMatch(/^https:\/\/(?:keeptxred|texasdefined)\.com\//);
+    }
     for (const [, path, target] of migrated) {
       const entry = lookup.get(path);
       expect(entry, path + " missing from complete archive").toBeDefined();
