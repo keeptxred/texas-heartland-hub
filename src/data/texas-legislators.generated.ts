@@ -5708,7 +5708,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/87",
+          url: "https://house.texas.gov/members/4480",
         },
         {
           label: "Official member biography",
