@@ -52,6 +52,30 @@ export const EDITORIAL_REVIEWS: Record<string, EditorialReview> = {
     biography: "Mihaela Pleșa represents Texas House District 70 in parts of Collin County. The official House biography describes her as a vice chair of the Pensions, Investments and Financial Services committee and a member of the Elections committee.",
     identityChecked: "2026-11-04", source: "https://house.texas.gov/members/4345/biography",
   },
+  "matt-shaheen": {
+    name: "Matt Shaheen", office: "Texas House", district: "House District 66", party: "R",
+    officialUrl: "https://house.texas.gov/members/2995",
+    biography: "Matt Shaheen represents Texas House District 66 in western Collin County, including portions of Plano, Frisco, Prosper, Celina and McKinney. His current House biography records five years of earlier service on the Collin County Commissioners Court and a technology career focused on corporate digital transformation. The House identifies him as chair of the Elections Committee and a member of Higher Education and the Sunset Advisory Commission. His separately cited 89th Legislature bill records identify authored or sponsored measures and their recorded outcomes, not a complete voting record.",
+    identityChecked: "2026-11-05", source: "https://house.texas.gov/members/2995/biography",
+  },
+  "jeff-leach": {
+    name: "Jeff Leach", office: "Texas House", district: "House District 67", party: "R",
+    officialUrl: "https://house.texas.gov/members/2475",
+    biography: "Jeff Leach represents Texas House District 67 in Collin County. His House biography documents undergraduate study at Baylor University and a law degree from Southern Methodist University, followed by a career in commercial and civil litigation. For the 89th Legislature, the House identifies him as chair of Judiciary and Civil Jurisprudence, with assignments to Public Education and Calendars. His public legislative history includes work on the judiciary, property taxes, water and education. Individual source-linked bills below distinguish his recorded authorship or sponsorship roles from enactment and voting records.",
+    identityChecked: "2026-11-05", source: "https://house.texas.gov/members/2475/biography",
+  },
+  "david-spiller": {
+    name: "David Spiller", office: "Texas House", district: "House District 68", party: "R",
+    officialUrl: "https://house.texas.gov/members/4075",
+    biography: "David Spiller represents a twelve-county North and Central Texas House District 68, with communities stretching from the Red River south toward Lampasas. His official biography identifies him as a Jacksboro resident who earned a business degree at the University of Texas at Austin and a law degree at St. Mary's University, then practiced law and served as a Jacksboro school board trustee for 26 years. The district includes substantial rural communities, making school, hospital, infrastructure and water questions locally consequential. The linked bill histories show specific legislative roles and statuses rather than unverified claims of successful passage.",
+    identityChecked: "2026-11-05", source: "https://house.texas.gov/members/4075/biography",
+  },
+  "james-frank": {
+    name: "James Frank", office: "Texas House", district: "House District 69", party: "R",
+    officialUrl: "https://house.texas.gov/members/2385",
+    biography: "James Frank represents Texas House District 69, which includes Wichita Falls and a broad group of North and Northwest Texas counties. According to his House biography, he earned a finance degree from Texas A&M University, worked in banking and later helped grow manufacturing businesses in Wichita Falls. First elected in 2012, he previously chaired Human Services and served during the 89th Legislature on Public Education and Public Health, including leadership of a Public Health subcommittee. Separately cited official bill records identify measures linked to his author or sponsor roles, the recorded outcomes and primary legislative sources.",
+    identityChecked: "2026-11-05", source: "https://house.texas.gov/members/2385/biography",
+  },
   "keresa-richardson": {
     name: "Keresa Richardson", office: "Texas House", district: "House District 61", party: "R",
     officialUrl: "https://house.texas.gov/members/4735",
@@ -551,6 +575,7 @@ export const SCRIPT2_REVIEWED_SLUGS = [
   "cody-harris", "trent-ashby", "brian-harrison", "trey-wharton",
   "steve-toth", "stan-gerdes", "ellen-troxclair", "terry-wilson",
   "keresa-richardson", "ben-bumgarner", "andy-hopper",
+  "matt-shaheen", "jeff-leach", "david-spiller", "james-frank",
 ] as const;
 
 export const CERTIFICATION_CANDIDATE_SLUGS = [
