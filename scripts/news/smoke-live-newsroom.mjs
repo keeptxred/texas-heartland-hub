@@ -293,6 +293,33 @@ async function checkNewsArchiveIndexability() {
     throw new Error(`static equivalent redirect invalid: HTTP ${moved.status} location=${location}`);
   }
   console.log("OK retired 404 and equivalent static 301");
+
+  // Phase 2A #3485: a San Antonio opposition alias must never redirect to a
+  // geographically different Houston article. Keep the historic publication
+  // date and readable Houston report, but retire the false alias.
+  const sanAntonioAlias = "live-2026-07-24-san-antonio-residents-seek-organized-opposition-to-flock-safety-survei-hz11ng";
+  const sanAntonioPath = `/news/${sanAntonioAlias}`;
+  const sanAntonioResponse = await fetchWithTimeout(`${baseUrl}${sanAntonioPath}`, {
+    redirect: "manual",
+    headers: { Accept: "text/html", "Cache-Control": "no-cache", "User-Agent": "KeepTXRed-Archive-SEO-Smoke/1.0" },
+  });
+  if (sanAntonioResponse.status !== 404) {
+    throw new Error(`non-equivalent San Antonio archive alias returned HTTP ${sanAntonioResponse.status}; expected true 404, no redirect or soft 404`);
+  }
+  const houstonPath = "/news/2026-08-09-houston-flock-camera-backlash";
+  const houstonResponse = await fetchWithTimeout(`${baseUrl}${houstonPath}`, {
+    redirect: "manual",
+    headers: { Accept: "text/html", "Cache-Control": "no-cache", "User-Agent": "KeepTXRed-Archive-SEO-Smoke/1.0" },
+  });
+  const houstonHtml = await houstonResponse.text();
+  const houstonCanonical = extractCanonical(houstonHtml);
+  if (houstonResponse.status !== 200 || houstonCanonical !== `https://keeptxred.com${houstonPath}`) {
+    throw new Error(`retained Houston Flock report unavailable or incorrectly canonicalized: HTTP ${houstonResponse.status}, canonical=${houstonCanonical || "missing"}`);
+  }
+  if (houstonHtml.includes(sanAntonioAlias)) {
+    throw new Error("Houston Flock report still includes retired San Antonio archive alias");
+  }
+  console.log("OK Phase 2A retired non-equivalent San Antonio alias HTTP 404; Houston survivor HTTP 200 and stale link absent");
 }
 
 async function checkIngestion() {
