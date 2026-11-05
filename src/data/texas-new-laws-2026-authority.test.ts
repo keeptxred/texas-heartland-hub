@@ -17,7 +17,7 @@ describe("Texas new laws 2026 authority guide", () => {
   const body = ARTICLE_BODIES[slug];
   const article = ARTICLES.find((a) => a.slug === slug);
   const paragraphs = [...body.intro, ...body.sections.flatMap((section) => section.paragraphs ?? [])];
-  const prose = [...paragraphs, ...body.keyTakeaways ?? [], ...body.faq.map(({ a }) => a)].join(" ");
+  const prose = [...paragraphs, ...(body.keyTakeaways ?? []), ...body.faq.map(({ a }) => a)].join(" ");
 
   it("preserves original publication while dating only the substantive correction", () => {
     expect(article?.publishedAt).toBe("2026-07-15T10:30:00");
