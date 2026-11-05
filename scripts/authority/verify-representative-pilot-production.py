@@ -40,6 +40,7 @@ READY = (
     "cody-harris", "trent-ashby", "brian-harrison", "trey-wharton",
     "steve-toth", "stan-gerdes", "ellen-troxclair", "terry-wilson",
     "keresa-richardson", "ben-bumgarner", "andy-hopper",
+    "shelley-luther", "mitch-little",
     "matt-shaheen", "jeff-leach", "david-spiller", "james-frank",
 )
 NOT_READY = ("dan-crenshaw", "john-cornyn", "greg-abbott", "jeff-barry")

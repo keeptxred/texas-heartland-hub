@@ -24,8 +24,8 @@ describe("representative Script 2 source-first certification", () => {
     }
   });
 
-  it("requires all six genuine quality gates for eighty-two individually reviewed expansion profiles", () => {
-    expect(SCRIPT2_REVIEWED_SLUGS).toHaveLength(82);
+  it("requires all six genuine quality gates for eighty-four individually reviewed expansion profiles", () => {
+    expect(SCRIPT2_REVIEWED_SLUGS).toHaveLength(84);
     for (const slug of SCRIPT2_REVIEWED_SLUGS) {
       const records = pilotResearchFor(slug);
       expect(records.length, slug + " evidence").toBeGreaterThanOrEqual(16);
@@ -37,6 +37,20 @@ describe("representative Script 2 source-first certification", () => {
       const report = certificationFor(slug);
       expect(report.state, slug + ": " + report.reasons.join("; ")).toBe("AUTHORITY_READY");
       expect(Object.values(report.gates).every(Boolean), slug).toBe(true);
+    }
+  });
+
+  it("keeps House 62, 65 and 66 source-identity corrections mandatory", () => {
+    for (const [slug, memberId] of [
+      ["shelley-luther", "4645"],
+      ["mitch-little", "4615"],
+      ["matt-shaheen", "2995"],
+    ]) {
+      expect(SCRIPT2_REVIEWED_SLUGS).toContain(slug);
+      const report = certificationFor(slug);
+      expect(report.state, slug + ": " + report.reasons.join("; ")).toBe("AUTHORITY_READY");
+      expect(report.officialSource).toMatch(/^https:\/\//);
+      expect(findRepresentativeBySlug(slug)?.website).toBe("https://house.texas.gov/members/" + memberId);
     }
   });
 

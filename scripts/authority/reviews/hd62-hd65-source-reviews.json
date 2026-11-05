@@ -1,0 +1,26 @@
+{
+  "reviewedAt": "2026-11-05",
+  "status": "SOURCE_REVIEWED_NOT_PRODUCTION_CERTIFIED",
+  "profiles": [
+    {
+      "slug": "shelley-luther",
+      "office": "Texas House",
+      "district": "House District 62",
+      "party": "R",
+      "memberUrl": "https://house.texas.gov/members/4645",
+      "primaryBiographicalSource": "https://legdir.capitol.texas.gov/memberInfo.aspx?Chamber=H&Code=A4645",
+      "historicalCommitteeSource": "https://lrl.texas.gov/legeleaders/members/memberdisplay.cfm?memberID=5911",
+      "note": "Official House biography is blank; occupation, education and committee assignment drawn from Legislature directory; distinct bill roles evaluated separately by A-F gates."
+    },
+    {
+      "slug": "mitch-little",
+      "office": "Texas House",
+      "district": "House District 65",
+      "party": "R",
+      "memberUrl": "https://house.texas.gov/members/4615",
+      "primaryBiographicalSource": "https://legdir.capitol.texas.gov/MemberInfo.aspx?Chamber=H&Code=A4615",
+      "historicalCommitteeSource": "https://lrl.texas.gov/legeleaders/members/memberdisplay.cfm?memberID=5913",
+      "note": "Official House biography is blank; professional credentials and committee assignments grounded in legislative directory, not inferred from campaign material."
+    }
+  ]
+}
