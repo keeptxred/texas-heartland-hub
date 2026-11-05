@@ -55,12 +55,16 @@ jobs:
           echo "Home page HTTP status: $home_status"
           grep -Ei '^(cache-control|cf-cache-status|age|content-type|server):' "$home_headers" || true
 
-          if [[ "$election_status" != "200" || "$home_status" != "200" ]]; then
-            echo "Deployed Worker did not return HTTP 200 for the required HTML GEO checks." >&2
+          if [[ "$home_status" != "200" ]]; then
+            echo "Deployed Worker home GEO check did not return HTTP 200." >&2
+            exit 1
+          fi
+          if [[ "$election_status" != "200" && "$election_status" != "404" ]]; then
+            echo "Election Central returned unexpected HTTP $election_status." >&2
             exit 1
           fi
 
-          python3 - "$election_body" "$home_body" <<'PY'
+          python3 - "$election_body" "$home_body" "$election_headers" "$election_status" <<'PY'
           import pathlib
           import re
           import sys
@@ -68,20 +72,26 @@ jobs:
           election = pathlib.Path(sys.argv[1]).read_text(encoding="utf-8", errors="replace")
           home = pathlib.Path(sys.argv[2]).read_text(encoding="utf-8", errors="replace")
 
-          strong_h1 = "2026 Texas Election Central: Races, Candidates, Polls & Results"
-          if strong_h1 not in election:
-              h1s = re.findall(r"<h1\b[^>]*>(.*?)</h1>", election, flags=re.I | re.S)
-              simplified = [re.sub(r"<[^>]+>", "", value).strip() for value in h1s]
-              raise SystemExit(f"Live election HTML is missing the strengthened H1; observed h1={simplified!r}")
-
-          for marker in ('"Organization"', '"NewsMediaOrganization"'):
-              if marker not in election:
-                  raise SystemExit(f"Live election HTML is missing JSON-LD marker {marker}")
+          headers = pathlib.Path(sys.argv[3]).read_text(encoding="utf-8", errors="replace").lower()
+          status = sys.argv[4]
+          if status == "404":
+              if election.strip().lower() != "election central is temporarily unavailable between election cycles.":
+                  raise SystemExit("Live Election Central 404 is not the intentional seasonal retirement")
+              if not re.search(r"^x-robots-tag:\s*noindex\s*,\s*nofollow\s*$", headers, flags=re.M):
+                  raise SystemExit("Live retired Election Central lacks noindex,nofollow header")
+              print("Live Election Central seasonal 404/noindex verified")
+          else:
+              strong_h1 = "2026 Texas Election Central: Races, Candidates, Polls & Results"
+              if strong_h1 not in election:
+                  raise SystemExit("Active Election Central is missing its required H1")
+              for marker in ('"Organization"', '"NewsMediaOrganization"'):
+                  if marker not in election:
+                      raise SystemExit(f"Active Election Central is missing JSON-LD marker {marker}")
 
           if '"FAQPage"' not in home:
               raise SystemExit("Live home HTML is missing FAQPage JSON-LD")
 
-          print("Raw live HTML contains the strengthened election H1, Organization/NewsMediaOrganization JSON-LD, and home FAQPage JSON-LD.")
+          print("Live seasonal Election Central contract and home FAQPage GEO checks passed.")
           PY
 
       - name: Verify XML sitemap index
