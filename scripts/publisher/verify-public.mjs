@@ -3,9 +3,37 @@ const base = process.env.SITE_URL || 'https://keeptxred.com';
 const origin = 'https://keeptxred.com';
 const resource = `${origin}/api/publisher/mcp`;
 const issuer = `${origin}/publisher/oauth`;
+const TRANSIENT_HTTP_STATUSES = new Set([429, 502, 503, 504]);
+const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 async function read(path, init) {
-  const response = await fetch(new URL(path, base), { redirect: 'error', ...init, signal: AbortSignal.timeout(20000) });
-  return response;
+  const url = new URL(path, base);
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    try {
+      const response = await fetch(url, {
+        redirect: 'error',
+        ...init,
+        signal: AbortSignal.timeout(20000),
+      });
+      if (TRANSIENT_HTTP_STATUSES.has(response.status) && attempt < 5) {
+        const retryAfter = Number(response.headers.get('retry-after'));
+        const backoff = Number.isFinite(retryAfter) && retryAfter > 0
+          ? Math.min(retryAfter * 1000, 15000)
+          : 500 * (2 ** (attempt - 1));
+        console.warn(`Publisher boundary probe HTTP ${response.status} (${url.pathname}); retry ${attempt}/4 after ${backoff}ms`);
+        await pause(backoff);
+        continue;
+      }
+      return response;
+    } catch (error) {
+      // Transient TCP resets, timeouts and dropped connections must not
+      // silently downgrade the OAuth/publication assertions below.
+      if (attempt === 5) throw new Error(`Publisher boundary transport failed after 5 attempts at ${url.pathname}`, { cause: error });
+      const backoff = 500 * (2 ** (attempt - 1));
+      console.warn(`Publisher boundary transport retry ${attempt}/4 at ${url.pathname}: ${String(error)}`);
+      await pause(backoff);
+    }
+  }
+  throw new Error(`Publisher boundary probe retries exhausted at ${url.pathname}`);
 }
 function requireValue(condition, message) { if (!condition) throw new Error(message); }
 const metadataResponse = await read('/.well-known/oauth-protected-resource/api/publisher/mcp');
