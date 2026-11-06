@@ -1,0 +1,41 @@
+name: KTR Phase 2A Archive Completion Notification
+
+on:
+  schedule:
+    # After the existing 09:17 UTC 25-URL read-only cohort, once daily.
+    - cron: "17 10 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "docs/recovery/ktr-news-phase2a-disposition-ledger.csv"
+      - "docs/recovery/ktr-news-phase2a-completion-signoff.json"
+      - "scripts/seo/notify-news-archive-completion.mjs"
+
+permissions:
+  contents: read
+  actions: read
+  issues: write
+
+concurrency:
+  group: ktr-news-phase2a-completion-notice
+  cancel-in-progress: false
+
+jobs:
+  verify-and-notify:
+    name: Notify once only after all 388 archive URLs are certified
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out current main decision ledger
+        uses: actions/checkout@v5
+
+      - name: Use Node 22
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+
+      - name: Verify editorial, live cohort and exact-commit release evidence before notification
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/seo/notify-news-archive-completion.mjs

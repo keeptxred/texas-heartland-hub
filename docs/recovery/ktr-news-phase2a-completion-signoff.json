@@ -1,0 +1,12 @@
+{
+  "approved": false,
+  "approver": "",
+  "all_required_fixes_verified": false,
+  "unresolved_findings": [
+    "388 provisional editorial dispositions still require review and final evidence"
+  ],
+  "final_editorial_evidence": "",
+  "production_run_url": "",
+  "production_sha": "",
+  "verification_not_before": ""
+}
