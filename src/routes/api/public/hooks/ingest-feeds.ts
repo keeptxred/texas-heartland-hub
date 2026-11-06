@@ -424,8 +424,6 @@ async function fetchSource(source: Source): Promise<FetchResult> {
         ...(relayed.text ? {} : { error: `direct=${direct.error ?? direct.status}; relay=${relayed.error ?? relayed.status}` }),
       }
     : direct;
-  const relayUsed = Boolean(relayed?.text);
-
   // DPS's official /news/press-releases index sometimes loops on redirects
   // from the Worker runtime. Only after that exact transport failure, try
   // the agency's official /news listing once: it also displays dated release
@@ -446,17 +444,40 @@ async function fetchSource(source: Source): Promise<FetchResult> {
           : { error: `press-index=${fetched.error ?? fetched.status}; official-news=${dpsOfficialNewsFallback.error ?? dpsOfficialNewsFallback.status}` }),
       }
     : fetched;
-  if (!resolved.text && source.name === "Texas Standard" && source.mode === "rss") {
+  // When both first-party DPS pages loop only from Cloudflare, use the
+  // already-established, fixed-allowlist Supabase egress for the *same*
+  // official index. No user-supplied URLs, no syndication rewriting and no
+  // additional publisher credit. Parse the actual dated DPS HTML as before.
+  const dpsRelayUrl =
+    "https://ftkznprjljkhymknvhye.supabase.co/functions/v1/ktr-rss-relay?feed=official-texas-dps-press-index";
+  const dpsRelay =
+    source.name === "Texas DPS — Direct Press Releases"
+    && source.mode === "html-links"
+    && !resolved.text
+    && /too many redirects/i.test(fetched.error ?? "")
+      ? await fetchText(dpsRelayUrl, accept, 1, 12000)
+      : null;
+  const finalResult = dpsRelay
+    ? {
+        ...dpsRelay,
+        attempts: resolved.attempts + dpsRelay.attempts,
+        ...(dpsRelay.text
+          ? {}
+          : { error: `${resolved.error ?? resolved.status}; dps-relay=${dpsRelay.error ?? dpsRelay.status}` }),
+      }
+    : resolved;
+  const relayUsed = Boolean(relayed?.text || dpsRelay?.text);
+  if (!finalResult.text && source.name === "Texas Standard" && source.mode === "rss") {
     const fallback = await fetchText("https://texasstandard.org/", "text/html,application/xhtml+xml,*/*", 1, 12000);
     return { source: source.name, url: "https://texasstandard.org/", status: fallback.status, attempts: fetched.attempts + fallback.attempts, mode: "texas-standard-html", items: fallback.text ? parseTexasStandardHtml(fallback.text) : [], error: fallback.text ? undefined : fallback.error };
   }
-  if (!resolved.text) return { source: source.name, url: source.url, status: resolved.status, attempts: resolved.attempts, mode: source.mode, items: [], relayUsed, error: resolved.error };
+  if (!finalResult.text) return { source: source.name, url: source.url, status: finalResult.status, attempts: finalResult.attempts, mode: source.mode, items: [], relayUsed, error: finalResult.error };
   const items = source.name === "Texas Attorney General — Direct News Releases" && source.mode === "html-links"
-    ? parseTexasAgPressReleaseIndex(resolved.text)
-    : source.mode === "tpwd-html" ? parseTpwdHtml(resolved.text)
-    : source.mode === "html-links" ? parseHtmlLinks(resolved.text, source)
-    : parseFeed(resolved.text, source.name);
-  return { source: source.name, url: source.url, status: resolved.status, attempts: resolved.attempts, mode: source.mode, items: items.slice(0, 30), relayUsed };
+    ? parseTexasAgPressReleaseIndex(finalResult.text)
+    : source.mode === "tpwd-html" ? parseTpwdHtml(finalResult.text)
+    : source.mode === "html-links" ? parseHtmlLinks(finalResult.text, source)
+    : parseFeed(finalResult.text, source.name);
+  return { source: source.name, url: source.url, status: finalResult.status, attempts: finalResult.attempts, mode: source.mode, items: items.slice(0, 30), relayUsed };
 }
 
 async function upsertFeedRowsAdaptive(

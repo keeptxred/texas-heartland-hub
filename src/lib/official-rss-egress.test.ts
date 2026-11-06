@@ -46,7 +46,7 @@ describe("KTR first-party RSS egress failover", () => {
     expect(ingest).toContain("fixedRelayUrl && !direct.text && canFailoverTrustedRssStatus(direct.status)");
     expect(ingest).toContain("fetchText(fixedRelayUrl, accept, 1, 19000)");
     expect(ingest).toContain("fixedRelayUrl ? 7000");
-    expect(ingest).toContain("const relayUsed = Boolean(relayed?.text)");
+    expect(ingest).toContain("const relayUsed = Boolean(relayed?.text || dpsRelay?.text)");
     expect(ingest).toContain('return { source: source.name, url: source.url');
     expect(ingest).toContain("trustedDirectRelayRecoveries:");
     expect(ingest).not.toContain("url: fixedRelayUrl, source:");

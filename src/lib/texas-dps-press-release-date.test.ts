@@ -38,7 +38,7 @@ describe("first-party Texas DPS release date integrity", () => {
     expect(ingest).toContain('fetchText("https://www.dps.texas.gov/news", accept, 1, 8500)');
     expect(ingest).toContain('/too many redirects/i.test(fetched.error ?? "")');
     expect(ingest).toContain('&& source.name === "Texas DPS — Direct Press Releases"'.replace('&& ', '')); 
-    expect(ingest).toContain('parseHtmlLinks(resolved.text, source)');
+    expect(ingest).toContain('parseHtmlLinks(finalResult.text, source)');
     expect(ingest).toContain('press-index=');
     expect(ingest).not.toContain('parseHtmlLinks(fetched.text, source)');
     expect(ingest).toContain('if (source.name === "Texas DPS — Direct Press Releases")');
