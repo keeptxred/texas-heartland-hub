@@ -18,13 +18,13 @@ export function verifiedSpeakerAssignment(memberCode, memberName, html) {
     throw new Error("Speaker fallback rejected: House roster member identity changed");
   }
   const visible = String(html ?? "")
-    .replace(/<script\\b[^>]*>[\\s\\S]*?<\\/script>/gi, " ")
-    .replace(/<style\\b[^>]*>[\\s\\S]*?<\\/style>/gi, " ")
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
     .replace(/<[^>]*>/g, " ")
-    .replace(/\\s+/g, " ")
+    .replace(/\s+/g, " ")
     .trim();
   if (!/Speaker of the House/i.test(visible) ||
-      !/Speaker(?: of the House)?[\\s\\S]{0,600}Dustin Burrows/i.test(visible)) {
+      !/Speaker(?: of the House)?[\s\S]{0,600}Dustin Burrows/i.test(visible)) {
     throw new Error("Speaker fallback rejected: current official House page does not confirm Dustin Burrows as Speaker");
   }
   return [{ committeeName: "Legislative Budget Board", position: "Joint Chair" }];
