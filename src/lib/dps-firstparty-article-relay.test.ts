@@ -64,7 +64,13 @@ describe("original DPS HTML mislabeled text/plain", () => {
     vi.stubGlobal("fetch", vi.fn(async (url: string) => {
       calls++;
       if (url === sourceUrl) throw new TypeError("Too many redirects");
-      if (url === relayUrl) return new Response(dpsHtml, { status: 200, headers: { "Content-Type": "text/plain; charset=UTF-8" } });
+      if (url === relayUrl) {
+        const response = new Response(dpsHtml, { status: 200, headers: { "Content-Type": "text/plain; charset=UTF-8" } });
+        // A real fetch Response exposes its final URL. Synthetic Responses
+        // constructed by Node do not unless we supply it explicitly.
+        Object.defineProperty(response, "url", { value: relayUrl });
+        return response;
+      }
       throw new Error("Unexpected network request");
     }));
     try {
