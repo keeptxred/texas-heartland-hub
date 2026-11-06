@@ -1,0 +1,136 @@
+{
+  "purpose": "Nine independently sourced HD91–100 Texas House authority reviews, with 89R source provenance and uncertainty. Nothing in this file alone permits indexing.",
+  "sourceCheckedOn": "2026-11-06",
+  "sourcesReviewed": [
+    "https://house.texas.gov/members",
+    "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf",
+    "Supabase public.bill_sponsors joined to public.bills, 89th Legislature, existing KTR data"
+  ],
+  "period": "89th Texas Legislature regular-session committee roster and dated official bill history; no claim of lifetime completeness or roll-call vote coverage",
+  "notes": [
+    "Texas House district 93 is vacant in KTR source roster; do not treat as a current represented seat or fabricate a new officeholder",
+    "Several generated official House profile URLs incorrectly used district numbers instead of the House's verified member identifiers; five corrected and persisted in roster sync",
+    "Tony Tinderholt and Charlie Geren House biographical committee mentions differ from the House-issued 89R committee assignment document. This review uses the 89R dated assignment list and surfaces its URL on each page",
+    "Nicole Collier House biography describes earlier-session committees. 89R roster independently confirms Appropriations and Public Health.",
+    "Some government bill tables have newer sync timestamps than others. These are historical records, not an assertion of live government API completeness."
+  ],
+  "profiles": [
+    {
+      "slug": "david-lowe",
+      "district": 91,
+      "name": "David Lowe",
+      "party": "R",
+      "officialMemberUrl": "https://house.texas.gov/members/4643",
+      "biographySource": "https://house.texas.gov/members/4643/biography",
+      "committeeSource": "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf",
+      "verifiedTopics": "U.S. Army military police deployments; North Richland Hills law enforcement; Corrections and Intergovernmental Affairs/County and Regional Government, 89R",
+      "canonicalExistingRoute": "https://keeptxred.com/representatives/david-lowe",
+      "existing89thDatabaseBillRoleRows": 245,
+      "researchLimits": "Raw joined rows are not unique laws, authored-only records, or comprehensive vote counts; separately require source-backed >=16 distinct bill-role samples, multiple roles/statuses and A–F quality gates."
+    },
+    {
+      "slug": "salman-bhojani",
+      "district": 92,
+      "name": "Salman Bhojani",
+      "party": "D",
+      "officialMemberUrl": "https://house.texas.gov/members/4115",
+      "biographySource": "https://house.texas.gov/members/4115/biography",
+      "committeeSource": "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf",
+      "verifiedTopics": "Euless City Council/mayor pro tem; attorney and business owner; 89R Delivery of Government Efficiency vice chair and Trade/Workforce",
+      "canonicalExistingRoute": "https://keeptxred.com/representatives/salman-bhojani",
+      "existing89thDatabaseBillRoleRows": 226,
+      "researchLimits": "Raw joined rows are not unique laws, authored-only records, or comprehensive vote counts; separately require source-backed >=16 distinct bill-role samples, multiple roles/statuses and A–F quality gates."
+    },
+    {
+      "slug": "tony-tinderholt",
+      "district": 94,
+      "name": "Tony Tinderholt",
+      "party": "R",
+      "officialMemberUrl": "https://house.texas.gov/members/3065",
+      "biographySource": "https://house.texas.gov/members/3065/biography",
+      "committeeSource": "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf",
+      "verifiedTopics": "U.S. Air Force and Army service; 89R Delivery of Government Efficiency/Higher Education, superseding older biography committee descriptions",
+      "canonicalExistingRoute": "https://keeptxred.com/representatives/tony-tinderholt",
+      "existing89thDatabaseBillRoleRows": "Not counted in preliminary query; certification still requires distinct actual record links",
+      "researchLimits": "Raw joined rows are not unique laws, authored-only records, or comprehensive vote counts; separately require source-backed >=16 distinct bill-role samples, multiple roles/statuses and A–F quality gates."
+    },
+    {
+      "slug": "nicole-collier",
+      "district": 95,
+      "name": "Nicole Collier",
+      "party": "D",
+      "officialMemberUrl": "https://house.texas.gov/members/2360",
+      "biographySource": "https://house.texas.gov/members/2360/biography",
+      "committeeSource": "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf",
+      "verifiedTopics": "Attorney; prior Criminal Jurisprudence chair; 89R Appropriations and Public Health, not stale earlier committee list",
+      "canonicalExistingRoute": "https://keeptxred.com/representatives/nicole-collier",
+      "existing89thDatabaseBillRoleRows": 80,
+      "researchLimits": "Raw joined rows are not unique laws, authored-only records, or comprehensive vote counts; separately require source-backed >=16 distinct bill-role samples, multiple roles/statuses and A–F quality gates."
+    },
+    {
+      "slug": "david-cook",
+      "district": 96,
+      "name": "David Cook",
+      "party": "R",
+      "officialMemberUrl": "https://house.texas.gov/members/3960",
+      "biographySource": "https://house.texas.gov/members/3960/biography",
+      "committeeSource": "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf",
+      "verifiedTopics": "Mansfield mayor 2008–2021; attorney; 89R Criminal Jurisprudence/Juvenile Justice subcommittee chair and Delivery of Government Efficiency",
+      "canonicalExistingRoute": "https://keeptxred.com/representatives/david-cook",
+      "existing89thDatabaseBillRoleRows": 332,
+      "researchLimits": "Raw joined rows are not unique laws, authored-only records, or comprehensive vote counts; separately require source-backed >=16 distinct bill-role samples, multiple roles/statuses and A–F quality gates."
+    },
+    {
+      "slug": "john-mcqueeney",
+      "district": 97,
+      "name": "John McQueeney",
+      "party": "R",
+      "officialMemberUrl": "https://house.texas.gov/members/4665",
+      "biographySource": "https://house.texas.gov/members/4665/biography",
+      "committeeSource": "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf",
+      "verifiedTopics": "First elected 2024; logistics/restaurant business; 89R State Affairs, Licensing and Administrative Procedures, Telecommunications/Broadband",
+      "canonicalExistingRoute": "https://keeptxred.com/representatives/john-mcqueeney",
+      "existing89thDatabaseBillRoleRows": 184,
+      "researchLimits": "Raw joined rows are not unique laws, authored-only records, or comprehensive vote counts; separately require source-backed >=16 distinct bill-role samples, multiple roles/statuses and A–F quality gates."
+    },
+    {
+      "slug": "giovanni-capriglione",
+      "district": 98,
+      "name": "Giovanni Capriglione",
+      "party": "R",
+      "officialMemberUrl": "https://house.texas.gov/members/2345",
+      "biographySource": "https://house.texas.gov/members/2345/biography",
+      "committeeSource": "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf",
+      "verifiedTopics": "Entrepreneur/financial career; 89R Delivery of Government Efficiency chair and Ways & Means/Property Tax Appraisals",
+      "canonicalExistingRoute": "https://keeptxred.com/representatives/giovanni-capriglione",
+      "existing89thDatabaseBillRoleRows": 282,
+      "researchLimits": "Raw joined rows are not unique laws, authored-only records, or comprehensive vote counts; separately require source-backed >=16 distinct bill-role samples, multiple roles/statuses and A–F quality gates."
+    },
+    {
+      "slug": "charlie-geren",
+      "district": 99,
+      "name": "Charlie Geren",
+      "party": "R",
+      "officialMemberUrl": "https://house.texas.gov/members/2945",
+      "biographySource": "https://house.texas.gov/members/2945/biography",
+      "committeeSource": "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf",
+      "verifiedTopics": "Water Development Board and Water District public service; 89R House Administration chair, General Investigating, Licensing/State Affairs",
+      "canonicalExistingRoute": "https://keeptxred.com/representatives/charlie-geren",
+      "existing89thDatabaseBillRoleRows": 133,
+      "researchLimits": "Raw joined rows are not unique laws, authored-only records, or comprehensive vote counts; separately require source-backed >=16 distinct bill-role samples, multiple roles/statuses and A–F quality gates."
+    },
+    {
+      "slug": "venton-jones",
+      "district": 100,
+      "name": "Venton Jones",
+      "party": "D",
+      "officialMemberUrl": "https://house.texas.gov/members/4275",
+      "biographySource": "https://house.texas.gov/members/4275/biography",
+      "committeeSource": "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf",
+      "verifiedTopics": "Dallas nonprofit health advocacy; 89R Appropriations and Corrections vice chair",
+      "canonicalExistingRoute": "https://keeptxred.com/representatives/venton-jones",
+      "existing89thDatabaseBillRoleRows": 106,
+      "researchLimits": "Raw joined rows are not unique laws, authored-only records, or comprehensive vote counts; separately require source-backed >=16 distinct bill-role samples, multiple roles/statuses and A–F quality gates."
+    }
+  ]
+}

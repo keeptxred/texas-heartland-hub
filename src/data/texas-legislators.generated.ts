@@ -5923,7 +5923,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 91,
     party: "R",
-    website: "https://house.texas.gov/members/91",
+    website: "https://house.texas.gov/members/4643",
     imageUrl: "https://www.house.texas.gov/images/members/4643.jpg?v=1",
     officialCode: null,
     home: "8376 Davis Blvd. Suite 267, North Richland Hills, TX 76182",
@@ -5963,7 +5963,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/91",
+          url: "https://house.texas.gov/members/4643",
         },
         {
           label: "Official member biography",
@@ -5986,7 +5986,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 92,
     party: "D",
-    website: "https://house.texas.gov/members/92",
+    website: "https://house.texas.gov/members/4115",
     imageUrl: "https://house.texas.gov/images/members/4115.jpg?v=1",
     officialCode: null,
     home: "1001 W. Euless Blvd. Suite 410B, Euless, TX 76040",
@@ -6029,7 +6029,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/92",
+          url: "https://house.texas.gov/members/4115",
         },
         {
           label: "Official member biography",
@@ -6135,7 +6135,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 95,
     party: "D",
-    website: "https://house.texas.gov/members/95",
+    website: "https://house.texas.gov/members/2360",
     imageUrl: "https://house.texas.gov/images/members/2360.jpg?v=1",
     officialCode: null,
     home: "101. S. Jennings Suite 103A, Fort Worth, TX 76104",
@@ -6175,7 +6175,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/95",
+          url: "https://house.texas.gov/members/2360",
         },
         {
           label: "Official member biography",
@@ -6261,7 +6261,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 97,
     party: "R",
-    website: "https://house.texas.gov/members/97",
+    website: "https://house.texas.gov/members/4665",
     imageUrl: "https://www.house.texas.gov/images/members/4665.jpg?v=1",
     officialCode: null,
     home: "4521 S. Hulen St. Suite 122, Fort Worth, TX 76109",
@@ -6306,7 +6306,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/97",
+          url: "https://house.texas.gov/members/4665",
         },
         {
           label: "Official member biography",
@@ -6329,7 +6329,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 98,
     party: "R",
-    website: "https://house.texas.gov/members/98",
+    website: "https://house.texas.gov/members/2345",
     imageUrl: "https://house.texas.gov/images/members/2345.jpg?v=1",
     officialCode: null,
     home: null,
@@ -6372,7 +6372,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/98",
+          url: "https://house.texas.gov/members/2345",
         },
         {
           label: "Official member biography",
@@ -6920,7 +6920,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 107,
     party: "D",
-    website: "https://house.texas.gov/members/107",
+    website: "https://house.texas.gov/members/4485",
     imageUrl: "https://www.house.texas.gov/images/members/4485.jpg?v=3",
     officialCode: null,
     home: "18601 Lyndon B. Johnson Freeway Suite 509, Mesquite, TX 75150",
@@ -6963,7 +6963,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/107",
+          url: "https://house.texas.gov/members/4485",
         },
         {
           label: "Official member biography",
@@ -7054,7 +7054,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 109,
     party: "D",
-    website: "https://house.texas.gov/members/109",
+    website: "https://house.texas.gov/members/4465",
     imageUrl: "https://www.house.texas.gov/images/members/4465.jpg?v=1",
     officialCode: null,
     home: null,
@@ -7093,7 +7093,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/109",
+          url: "https://house.texas.gov/members/4465",
         },
         {
           label: "Official member biography",

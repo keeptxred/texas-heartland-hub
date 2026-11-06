@@ -1,3 +1,4 @@
+import { dpsOfficialArticleRelayUrl } from "./dps-firstparty-article-relay";
 import { isGovernmentNewsClippingUrl } from "./newsroom-discovery-sources";
 import { trimTdemPressReleaseArchive } from "./tdem-press-release-body";
 
@@ -263,23 +264,79 @@ function newsroomHtmlText(html: string): string {
     .trim();
 }
 
+/**
+ * DPS's trusted, origin-verified relay has returned actual HTML with a
+ * text/plain media type. Never reinterpret plain text from an arbitrary
+ * publisher or unrelated relay as an article. The relay validates the final
+ * upstream host/path; we also verify that its response resembles an HTML
+ * document carrying the named official publisher.
+ */
+export function isVerifiedDpsRelayHtml(input: {
+  sourceUrl: string;
+  responseUrl: string;
+  contentType: string;
+  body: string;
+}): boolean {
+  const trustedRelayUrl = dpsOfficialArticleRelayUrl(input.sourceUrl);
+  if (!trustedRelayUrl || input.responseUrl !== trustedRelayUrl) return false;
+  if (!/^text\/plain(?:\s*;|\s*$)/i.test(input.contentType.trim())) return false;
+  const beginning = input.body.slice(0, 4_000);
+  if (!/(?:<!doctype\s+html\b|<html\b)/i.test(beginning)) return false;
+  const doc = input.body.slice(0, 20_000);
+  if (!/(?:Department of Public Safety|Texas DPS|dps\.texas\.gov)/i.test(doc)) return false;
+  if (/please verify you are (?:a person|human)|checking your browser|enable javascript to continue|access denied/i.test(doc.slice(0, 2_000))) return false;
+  return true;
+}
+
 export async function fetchReadableNewsroomSource(url: string): Promise<string | null> {
+  const requestOptions = {
+    headers: {
+      "User-Agent": "Mozilla/5.0 (compatible; KeepTXRedBot/1.2; +https://keeptxred.com)",
+      Accept: "text/html,application/xhtml+xml",
+      "Accept-Language": "en-US,en;q=0.9",
+    },
+    redirect: "follow" as const,
+    signal: AbortSignal.timeout(10_000),
+  };
+  let response: Response;
   try {
-    const response = await fetch(url, {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; KeepTXRedBot/1.2; +https://keeptxred.com)",
-        Accept: "text/html,application/xhtml+xml",
-        "Accept-Language": "en-US,en;q=0.9",
-      },
-      redirect: "follow",
-      signal: AbortSignal.timeout(10_000),
-    });
-    if (!response.ok) return null;
-    const type = response.headers.get("content-type") ?? "";
-    if (!/text\/html|application\/xhtml/i.test(type)) return null;
-    const extracted = extractReadableNewsroomHtml(await response.text());
-    return extracted ? trimTdemPressReleaseArchive(url, extracted) : null;
-  } catch {
-    return null;
+    response = await fetch(url, requestOptions);
+  } catch (error) {
+    // Only the observed Cloudflare DPS redirect-loop failure may use this
+    // fixed first-party egress. It does not expand arbitrary source fetching.
+    const relay = dpsOfficialArticleRelayUrl(url);
+    if (!relay || !/too many redirects/i.test(error instanceof Error ? error.message : String(error))) {
+      return null;
+    }
+    try {
+      response = await fetch(relay, {
+        headers: requestOptions.headers,
+        redirect: "follow",
+        signal: AbortSignal.timeout(10_000),
+      });
+    } catch {
+      return null;
+    }
   }
+  if (!response.ok) return null;
+  const type = response.headers.get("content-type") ?? "";
+  const declaredHtml = /(?:^text\/html\b|^application\/xhtml\+xml\b)/i.test(type.trim());
+  // Read text only for declared HTML or the fixed, verified DPS article relay
+  // that is known to mislabel HTML as text/plain. Non-DPS text/plain is never
+  // accepted. Reading isn't evidence credit: the extractor's substantive and
+  // synthetic-content filters still apply.
+  const officialDpsRelay = dpsOfficialArticleRelayUrl(url);
+  const maybeMislabeledDps = !!officialDpsRelay
+    && response.url === officialDpsRelay
+    && /^text\/plain(?:\s*;|\s*$)/i.test(type.trim());
+  if (!declaredHtml && !maybeMislabeledDps) return null;
+  const body = await response.text();
+  if (!declaredHtml && !isVerifiedDpsRelayHtml({
+    sourceUrl: url,
+    responseUrl: response.url,
+    contentType: type,
+    body,
+  })) return null;
+  const extracted = extractReadableNewsroomHtml(body);
+  return extracted ? trimTdemPressReleaseArchive(url, extracted) : null;
 }

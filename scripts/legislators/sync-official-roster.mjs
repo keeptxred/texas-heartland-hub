@@ -1,6 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { normalizeHouseCommitteePayload } from "./normalize-house-committees.mjs";
+import { verifiedSpeakerAssignment, SPEAKER_SOURCE, SPEAKER_LBB_SOURCE } from "./verify-speaker-board.mjs";
 
 const REVIEWED_AT = new Date().toISOString().slice(0, 10);
 const HOUSE_LIST_URL = "https://house.texas.gov/members";
@@ -137,14 +138,26 @@ async function fetchText(url, options = {}, attempt = 1) {
 }
 
 /** Retry source-provided 200-OK responses that report loading or transient API errors. */
-async function fetchHouseCommittees(code, attempt = 1) {
+async function fetchHouseCommittees(code, attempt = 1, memberName = null) {
   const url = `https://house.texas.gov/api/getMemberCommittees/${code}`;
   try {
     return normalizeHouseCommitteePayload(JSON.parse(await fetchText(url)));
   } catch (error) {
-    if (attempt >= 4) throw new Error(`Could not validate committees for ${code}: ${String(error)}`);
+    if (attempt >= 4) {
+      // 89th House Speaker: the ordinary member committee endpoint returns
+      // {error:true}. Verify the Speaker identity against a separate live,
+      // official House source; never infer an empty committee list.
+      if (String(code) === "3055") {
+        const verified = verifiedSpeakerAssignment(code, memberName, await fetchText(SPEAKER_SOURCE));
+        if (verified) {
+          console.warn("House committee endpoint unavailable for verified Speaker 3055; using source-backed Legislative Budget Board joint-chair role");
+          return verified;
+        }
+      }
+      throw new Error(`Could not validate committees for ${code}: ${String(error)}`);
+    }
     await new Promise((resolveDelay) => setTimeout(resolveDelay, attempt * 750));
-    return fetchHouseCommittees(code, attempt + 1);
+    return fetchHouseCommittees(code, attempt + 1, memberName);
   }
 }
 
@@ -280,6 +293,13 @@ function houseRoster(html) {
         "Vince Perez:77": "4710",
         "Vincent Perez:77": "4710",
         "Caroline Fairly:87": "4480",
+        "David Lowe:91": "4643",
+        "Salman Bhojani:92": "4115",
+        "Nicole Collier:95": "2360",
+        "John McQueeney:97": "4665",
+        "Giovanni Capriglione:98": "2345",
+        "Linda Garcia:107": "4485",
+        "Aicha Davis:109": "4465",
       })[`${reverseHouseName(member.member_name)}:${Number(member.id)}`] ?? member.member_bill_code}`,
       imageUrl: new URL(member.image, "https://house.texas.gov/").href,
     }))
@@ -394,7 +414,7 @@ async function main() {
     const lrl = lrlMatch(lrlHouse, member.name, member.district);
     const [bioHtml, committees, lrlHtml] = await Promise.all([
       fetchText(`${member.website}/biography`),
-      fetchHouseCommittees(member.code),
+      fetchHouseCommittees(member.code, 1, member.name),
       lrl?.memberId
         ? fetchText(
             `https://lrl.texas.gov/legeLeaders/members/memberDisplay.cfm?memberID=${lrl.memberId}`,
@@ -441,6 +461,12 @@ async function main() {
           `House District ${member.district}`,
         ]),
         sources: [
+          ...(String(member.code) === "3055"
+            ? [
+                { label: "Official Speaker of the Texas House", url: SPEAKER_SOURCE },
+                { label: "Official Legislative Budget Board current members", url: SPEAKER_LBB_SOURCE },
+              ]
+            : []),
           { label: "Official Texas House member page", url: member.website },
           { label: "Official Texas House biography", url: `${member.website}/biography` },
           {

@@ -29,6 +29,132 @@ type EditorialReview = {
  * A synchronized roster change that disagrees with a review FAILS CLOSED.
  */
 export const EDITORIAL_REVIEWS: Record<string, EditorialReview> = {
+  "chris-turner": {
+    name: "Chris Turner", office: "Texas House", district: "House District 101", party: "D",
+    officialUrl: "https://house.texas.gov/members/4680",
+    biography: "Chris Turner serves House District 101 in Tarrant County, including Arlington and Grand Prairie. The House biography documents work on veterans benefits, school finance and earlier Democratic Caucus leadership. The 89th Legislature official committee list records State Affairs and Ways and Means, including chairmanship of the Property Tax Appraisals subcommittee, not the older assignments still described in his biography. The sourced bill histories below distinguish actual 89th-session legislative roles and outcomes from unverifiable roll-call totals.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/4680/biography",
+  },
+  "ana-maria-rodriguez-ramos": {
+    name: "Ana-Maria Rodriguez Ramos", office: "Texas House", district: "House District 102", party: "D",
+    officialUrl: "https://house.texas.gov/members/3735",
+    biography: "Ana-María Rodríguez Ramos represents Dallas County House District 102 and was first elected in 2018. Her official House biography identifies a law and community-revitalization career, with education at UT Arlington, Texas Woman's University and Southern Methodist University. The 89th Legislature committee record lists Criminal Jurisprudence and Delivery of Government Efficiency, superseding earlier committee references in her biography. Official histories on this profile distinguish recorded individual sponsor roles and bill status without implying that every measure became law.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/3735/biography",
+  },
+  "rafael-anchia": {
+    name: "Rafael Anchía", office: "Texas House", district: "House District 103", party: "D",
+    officialUrl: "https://house.texas.gov/members/2150",
+    biography: "Rafael Anchía represents House District 103 across western Dallas County communities. His House biography records previous Dallas ISD trustee service, Tulane legal education and leadership of the Mexican American Legislative Caucus. During the 89th Legislature he served on Environmental Regulation and State Affairs and chaired the Telecommunications and Broadband subcommittee, according to the official committee roster. Linked bill histories identify individual author or sponsor roles and their recorded outcomes, not a comprehensive collection of votes.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/2150/biography",
+  },
+  "jessica-gonzalez": {
+    name: "Jessica González", office: "Texas House", district: "House District 104", party: "D",
+    officialUrl: "https://house.texas.gov/members/3335",
+    biography: "Jessica González represents Dallas County House District 104. Her official House biography records criminology and criminal-justice studies at UT Arlington, legal education and practice, and earlier public-policy work in Washington, D.C. The 89th Legislature committee roster lists Insurance, Judiciary and Civil Jurisprudence with Family and Fiduciary Relationships, and Local and Consent Calendars. The source-linked bill research distinguishes the documented role on each measure and its legislative status, rather than presenting all introductions as successful laws.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/3335/biography",
+  },
+  "terry-meza": {
+    name: "Terry Meza", office: "Texas House", district: "House District 105", party: "D",
+    officialUrl: "https://house.texas.gov/members/3455",
+    biography: "Terry Meza represents House District 105 in the Irving area. Her House biography documents prior teaching, nonprofit economic-development and workforce work, and two decades of legal practice. Because that biography still names committee assignments from 2023, the 89th Legislature committee record is used for current-session scope: Corrections and Trade, Workforce and Economic Development. The dated government bill histories below record specific legislative sponsor roles and outcomes, not a complete lifetime total.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/3455/biography",
+  },
+  "jared-patterson": {
+    name: "Jared Patterson", office: "Texas House", district: "House District 106", party: "R",
+    officialUrl: "https://house.texas.gov/members/3655",
+    biography: "Jared Patterson serves House District 106 in Denton County and was first elected in 2018. His official House biography cites Texas A&M University and describes legislative work related to school libraries, taxes, public safety and transportation. The published 89th Legislature committee roster records his chairmanship of Local and Consent Calendars and membership on Licensing and Administrative Procedures, Transportation and its Transportation Funding subcommittee. The linked bill histories distinguish recorded roles and outcomes from an unsupported assertion of floor votes.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/3655/biography",
+  },
+  "linda-garcia": {
+    name: "Linda Garcia", office: "Texas House", district: "House District 107", party: "D",
+    officialUrl: "https://house.texas.gov/members/4485",
+    biography: "Linda Garcia represents Dallas County House District 107 from Mesquite. Her House biography is blank; the official Texas Legislative Directory instead identifies her occupation as author and records business and marketing education. The Texas Legislature's 89th-session member record confirms Delivery of Government Efficiency and Pensions, Investments and Financial Services committee assignments. This page does not invent a personal history from a missing biography. The official bill histories below document dated individual sponsorship roles and legislative outcomes.",
+    identityChecked: "2026-11-06", source: "https://legdir.capitol.texas.gov/MemberInfo.aspx?Chamber=H&Code=A4485",
+  },
+  "morgan-meyer": {
+    name: "Morgan Meyer", office: "Texas House", district: "House District 108", party: "R",
+    officialUrl: "https://house.texas.gov/members/3075",
+    biography: "Morgan Meyer represents House District 108 in Dallas County, including University Park and Highland Park. First elected in 2014, his official biography discusses prior Texas tax legislation and human-trafficking laws. The published 89th Legislature committee roster lists him as chair of Ways and Means and a member of House Administration. This profile separately links its own 89th-session records to distinguish authored or sponsored measures and their recorded status; older achievements are not automatically assigned to a later legislative session.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/3075/biography",
+  },
+  "aicha-davis": {
+    name: "Aicha Davis", office: "Texas House", district: "House District 109", party: "D",
+    officialUrl: "https://house.texas.gov/members/4465",
+    biography: "Aicha Davis represents House District 109 in Dallas County and began legislative service in 2025, according to the Texas Legislative Reference Library. Because her official House biography is blank, this profile uses official Legislative Directory records documenting an education career, a Southern Mississippi bachelor's degree and a University of North Texas education master's degree. The 89th Legislature committee roster lists Higher Education and Human Services. Actual source-linked bill histories supply the dated activity instead of invented biography or voting totals.",
+    identityChecked: "2026-11-06", source: "https://lrl.texas.gov/legeleaders/members/memberdisplay.cfm?memberID=5921",
+  },
+  "toni-rose": {
+    name: "Toni Rose", office: "Texas House", district: "House District 110", party: "D",
+    officialUrl: "https://house.texas.gov/members/2555",
+    biography: "Toni Rose represents House District 110 in Dallas County, including Oak Cliff, Pleasant Grove and Balch Springs. Her official House biography describes health and mental-health policy work and a Paul Quinn College education. In the 89th Legislature she served as vice chair of Calendars and on Appropriations and Human Services, with Article II budget-subcommittee work documented in her House-issued newsletter. Official bill histories below distinguish individual legislative roles and enacted outcomes without relying on unsupported aggregate performance claims.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/2555/biography",
+  },
+  "yvonne-davis": {
+    name: "Yvonne Davis", office: "Texas House", district: "House District 111", party: "D",
+    officialUrl: "https://house.texas.gov/members/2625",
+    biography: "Yvonne Davis represents House District 111 in Dallas County, where Texas Legislative Reference Library service records date her House tenure to 1993. The Library's official 89th Legislature committee history lists Land and Resource Management and State Affairs, which differ from her Judiciary and Transportation work in earlier sessions. Her linked 89th-session histories identify individual bill roles and recorded statuses rather than mixing decades of service into an unverified lifetime count or claiming every measure passed.",
+    identityChecked: "2026-11-06", source: "https://lrl.texas.gov/legeleaders/members/memberdisplay.cfm?memberID=116",
+  },
+  "angie-button": {
+    name: "Angie Button", office: "Texas House", district: "House District 112", party: "R",
+    officialUrl: "https://house.texas.gov/members/2510",
+    biography: "Angie Chen Button serves House District 112 in Dallas County communities including Garland, Richardson and Rowlett. Her House biography documents international marketing work at Texas Instruments, service with Dallas Area Rapid Transit, CPA credentials and graduate training in public finance and management science. The official 89th Legislature committee roster identifies her as chair of Trade, Workforce and Economic Development and a member of House Administration and Ways and Means. The sourced bill histories below identify particular legislative roles and recorded results rather than a complete voting record.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/2510/biography",
+  },
+  "david-lowe": {
+    name: "David Lowe", office: "Texas House", district: "House District 91", party: "R",
+    officialUrl: "https://house.texas.gov/members/4643",
+    biography: "David Lowe represents Texas House District 91 in Tarrant County. His official House biography records U.S. Army military-police service, multiple overseas deployments including Afghanistan, and later law-enforcement work after Texas Peace Officer Academy training. The published 89th Legislature committee roster places him on Corrections and Intergovernmental Affairs and its County and Regional Government subcommittee. Linked official bill histories below document individual roles and the recorded outcomes of measures, rather than a lifetime bill total or roll-call voting history.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/4643/biography",
+  },
+  "salman-bhojani": {
+    name: "Salman Bhojani", office: "Texas House", district: "House District 92", party: "D",
+    officialUrl: "https://house.texas.gov/members/4115",
+    biography: "Salman Bhojani represents House District 92 in Tarrant County. The official House biography describes his immigration to Texas as a teenager, legal and business career and previous service on the Euless City Council as mayor pro tem. The 89th Legislature's published standing-committee roster lists him as vice chair of Delivery of Government Efficiency and a Trade, Workforce and Economic Development member, including its workforce subcommittee. The official bill-history records below distinguish his separate recorded sponsorship roles and statuses without treating introduced legislation as enacted law.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/4115/biography",
+  },
+  "tony-tinderholt": {
+    name: "Tony Tinderholt", office: "Texas House", district: "House District 94", party: "R",
+    officialUrl: "https://house.texas.gov/members/3065",
+    biography: "Tony Tinderholt represents House District 94, serving parts of Arlington, Fort Worth and surrounding Tarrant County communities. His official biography describes prior U.S. Air Force and Army service, a later teaching career and business ownership. The 89th Legislature standing-committee roster records Delivery of Government Efficiency and Higher Education, unlike older committee appointments still mentioned in parts of his biography; this dated roster governs the 89th-session summary. His cited bill histories identify actual legislative roles and outcomes, not presumed votes or complete lifetime activity.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/3065/biography",
+  },
+  "nicole-collier": {
+    name: "Nicole Collier", office: "Texas House", district: "House District 95", party: "D",
+    officialUrl: "https://house.texas.gov/members/2360",
+    biography: "Nicole Collier represents House District 95 in Fort Worth. Her official biography documents a legal career and degrees from the University of Houston and Texas Wesleyan University School of Law, as well as earlier leadership of the Criminal Jurisprudence committee. The House's published 89th Legislature standing-committee assignments list Appropriations and Public Health, distinct from prior-session committee positions mentioned in the biography. The profile's linked 89th-session records trace actual individual bill roles and recorded status; they do not assume every bill passed or every legislative action was a personal floor vote.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/2360/biography",
+  },
+  "david-cook": {
+    name: "David Cook", office: "Texas House", district: "House District 96", party: "R",
+    officialUrl: "https://house.texas.gov/members/3960",
+    biography: "David Cook represents House District 96, encompassing parts of Mansfield, Arlington, Kennedale, Crowley and other Tarrant County communities. The official House biography documents his Mansfield mayoral service from 2008 through 2021 and work as an attorney and managing partner. During the 89th Legislature, the published committee roster identifies Criminal Jurisprudence, the Juvenile Justice subcommittee chairmanship, and Delivery of Government Efficiency. The dated official bill histories below separate authorship and other sponsor roles from the recorded legislative outcome, not a comprehensive voting record.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/3960/biography",
+  },
+  "john-mcqueeney": {
+    name: "John McQueeney", office: "Texas House", district: "House District 97", party: "R",
+    officialUrl: "https://house.texas.gov/members/4665",
+    biography: "John McQueeney was first elected in 2024 to represent House District 97 in southwest Tarrant County, including areas of Fort Worth. His official House biography documents a Texas Christian University business education and an earlier career in logistics, retail development and restaurant operations. The 89th Legislature standing-committee roster lists State Affairs, Licensing and Administrative Procedures, and the Telecommunications and Broadband subcommittee. Linked official 89th-session bill histories show documented individual sponsor roles and outcomes, not fabricated votes or a full legislative career inventory.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/4665/biography",
+  },
+  "giovanni-capriglione": {
+    name: "Giovanni Capriglione", office: "Texas House", district: "House District 98", party: "R",
+    officialUrl: "https://house.texas.gov/members/2345",
+    biography: "Giovanni Capriglione represents House District 98 in northeast Tarrant County, including communities such as Keller, Southlake and Grapevine. His House biography documents a physics degree, finance MBA, a technology and investment career and ownership of a business-services company. The 89th Legislature committee assignment document lists him as chair of Delivery of Government Efficiency, and as a member of Ways and Means and its Property Tax Appraisals subcommittee. The individually cited bill histories distinguish recorded legislative roles from actual passage and do not claim to capture all votes.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/2345/biography",
+  },
+  "charlie-geren": {
+    name: "Charlie Geren", office: "Texas House", district: "House District 99", party: "R",
+    officialUrl: "https://house.texas.gov/members/2945",
+    biography: "Charlie Geren represents Texas House District 99 in Tarrant County and was first elected in November 2000. His official biography documents earlier service on the Texas Water Development Board and Tarrant Regional Water District, along with commercial real estate work. The 89th Legislature's standing-committee assignment document identifies him as House Administration chair and a member of General Investigating, Licensing and Administrative Procedures, and State Affairs. This dated roster differs from some committee roles described in his biographical page. The official legislative histories below show individual sponsor roles and actual outcomes, not an unverified lifetime total.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/2945/biography",
+  },
+  "venton-jones": {
+    name: "Venton Jones", office: "Texas House", district: "House District 100", party: "D",
+    officialUrl: "https://house.texas.gov/members/4275",
+    biography: "Venton Jones represents House District 100, which includes portions of South, West and East Dallas and Oak Cliff. First elected in 2022, his official House biography describes a nonprofit health-policy advocacy career and academic training in community health and health care administration. The published 89th Legislature standing-committee roster lists him as vice chair of Corrections and a member of Appropriations. The 89th-session bill histories linked below are dated examples of distinct recorded legislative roles and outcomes; they are not a complete roll-call voting record or proof that every measure became law.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/4275/biography",
+  },
   "carl-tepper": {
     name: "Carl Tepper", office: "Texas House", district: "House District 84", party: "R",
     officialUrl: "https://house.texas.gov/members/4360",
@@ -716,6 +842,9 @@ export const SCRIPT2_REVIEWED_SLUGS = [
   "dustin-burrows",
   "carl-tepper", "stan-kitzman", "john-smithee", "caroline-fairly",
   "ken-king", "candy-noble", "ramon-romero",
+  "david-lowe", "salman-bhojani", "tony-tinderholt", "nicole-collier",
+  "david-cook", "john-mcqueeney", "giovanni-capriglione", "charlie-geren", "venton-jones",
+  "chris-turner", "ana-maria-rodriguez-ramos", "rafael-anchia", "jessica-gonzalez", "terry-meza", "jared-patterson", "linda-garcia", "morgan-meyer", "aicha-davis", "toni-rose", "yvonne-davis", "angie-button",
 ] as const;
 
 export const CERTIFICATION_CANDIDATE_SLUGS = [
@@ -728,7 +857,16 @@ export function applyPilotEditorial(
   authority: RepresentativeAuthority | null,
 ): RepresentativeAuthority | null {
   const review = EDITORIAL_REVIEWS[slug];
-  return authority && review ? { ...authority, biography: review.biography } : authority;
+  if (!authority || !review) return authority;
+  const official89RCommittees = "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf";
+  const cohort = ["david-lowe","salman-bhojani","tony-tinderholt","nicole-collier","david-cook","john-mcqueeney","giovanni-capriglione","charlie-geren","venton-jones","chris-turner","ana-maria-rodriguez-ramos","rafael-anchia","jessica-gonzalez","terry-meza","jared-patterson","linda-garcia","morgan-meyer","aicha-davis","toni-rose","yvonne-davis","angie-button"] as readonly string[];
+  return {
+    ...authority,
+    biography: review.biography,
+    sources: cohort.includes(slug) && !authority.sources.some((item) => item.url === official89RCommittees)
+      ? [...authority.sources, { label: "Official House 89th Legislature standing committee assignment roster", url: official89RCommittees }]
+      : authority.sources,
+  };
 }
 
 /**

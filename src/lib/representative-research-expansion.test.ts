@@ -26,8 +26,8 @@ describe("representative Script 2 source-first certification", () => {
     }
   });
 
-  it("requires all six genuine quality gates for 104 individually reviewed expansion profiles", () => {
-    expect(SCRIPT2_REVIEWED_SLUGS).toHaveLength(104);
+  it("requires all six genuine quality gates for 125 individually reviewed expansion profiles", () => {
+    expect(SCRIPT2_REVIEWED_SLUGS).toHaveLength(125);
     for (const slug of SCRIPT2_REVIEWED_SLUGS) {
       const records = pilotResearchFor(slug);
       if (slug === "dustin-burrows") {
@@ -156,6 +156,85 @@ describe("representative Script 2 source-first certification", () => {
     // Missing House biography must not become an invented source.
     expect(EDITORIAL_REVIEWS["john-smithee"].source).toContain("legdir.capitol.texas.gov");
     expect(EDITORIAL_REVIEWS["caroline-fairly"].biography).toContain("4480");
+  });
+
+  it("keeps HD91–100 excluded unless official identity, 89th-session role evidence and all six A-F gates agree", () => {
+    const expected: readonly [string, string][] = [
+      ["david-lowe", "4643"], ["salman-bhojani", "4115"],
+      ["tony-tinderholt", "3065"], ["nicole-collier", "2360"],
+      ["david-cook", "3960"], ["john-mcqueeney", "4665"],
+      ["giovanni-capriglione", "2345"], ["charlie-geren", "2945"],
+      ["venton-jones", "4275"],
+    ];
+    const originalBios = new Set<string>();
+    for (const [slug, memberId] of expected) {
+      expect(SCRIPT2_REVIEWED_SLUGS).toContain(slug);
+      const review = EDITORIAL_REVIEWS[slug];
+      expect(review.officialUrl).toBe("https://house.texas.gov/members/" + memberId);
+      expect(review.identityChecked).toBe("2026-11-06");
+      expect(findRepresentativeBySlug(slug)?.website).toBe(review.officialUrl);
+      expect(review.biography.length).toBeGreaterThan(230);
+      originalBios.add(review.biography);
+      const authority = applyPilotEditorial(slug, getRepresentativeAuthority(slug) ?? null);
+      expect(authority?.sources.some(source => source.url ===
+        "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf")).toBe(true);
+      const records = pilotResearchFor(slug);
+      expect(records.length, slug + " official history evidence").toBeGreaterThanOrEqual(16);
+      expect(new Set(records.map(row => row.sponsor_role)).size, slug).toBeGreaterThanOrEqual(2);
+      expect(new Set(records.map(row => row.current_status_label)).size, slug).toBeGreaterThanOrEqual(2);
+      expect(new Set(records.map(row => row.bill_id + ":" + row.sponsor_role)).size, slug).toBe(records.length);
+      expect(records.every(row => row.legislature_number === 89 &&
+        row.source_url.startsWith("https://capitol.texas.gov/BillLookup/History.aspx?")
+      ), slug + " source provenance").toBe(true);
+      const cert = certificationFor(slug);
+      expect(cert.state, slug + ": " + cert.reasons.join("; ")).toBe("AUTHORITY_READY");
+      expect(Object.values(cert.gates).every(Boolean), slug).toBe(true);
+    }
+    expect(originalBios.size).toBe(expected.length);
+    expect(EDITORIAL_REVIEWS["tony-tinderholt"].biography).toContain("older committee appointments");
+    expect(EDITORIAL_REVIEWS["charlie-geren"].biography).toContain("dated roster differs");
+    expect(SCRIPT2_REVIEWED_SLUGS).not.toContain("nate-schatzline");
+  });
+
+  it("requires truthful HD101–112 person-specific biography, 89R sources, exact House IDs and genuine A-F evidence", () => {
+    const entries: readonly [string, string][] = [
+      ["chris-turner", "4680"], ["ana-maria-rodriguez-ramos", "3735"],
+      ["rafael-anchia", "2150"], ["jessica-gonzalez", "3335"],
+      ["terry-meza", "3455"], ["jared-patterson", "3655"],
+      ["linda-garcia", "4485"], ["morgan-meyer", "3075"],
+      ["aicha-davis", "4465"], ["toni-rose", "2555"],
+      ["yvonne-davis", "2625"], ["angie-button", "2510"],
+    ];
+    const biographies = new Set<string>();
+    for (const [slug, id] of entries) {
+      expect(SCRIPT2_REVIEWED_SLUGS).toContain(slug);
+      const member = findRepresentativeBySlug(slug);
+      const review = EDITORIAL_REVIEWS[slug];
+      expect(review?.officialUrl).toBe("https://house.texas.gov/members/" + id);
+      expect(review?.identityChecked).toBe("2026-11-06");
+      expect(member?.website).toBe(review?.officialUrl);
+      expect(review.biography.length, slug).toBeGreaterThan(190);
+      biographies.add(review.biography);
+      const authority = applyPilotEditorial(slug, getRepresentativeAuthority(slug) ?? null);
+      expect(authority?.sources.some(source => source.url ===
+        "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf")).toBe(true);
+      const records = pilotResearchFor(slug);
+      expect(records.length, slug + " source-linked official bill histories").toBeGreaterThanOrEqual(16);
+      expect(new Set(records.map(r => r.sponsor_role)).size, slug).toBeGreaterThanOrEqual(2);
+      expect(new Set(records.map(r => r.current_status_label)).size, slug).toBeGreaterThanOrEqual(2);
+      expect(new Set(records.map(r => r.bill_id + ":" + r.sponsor_role)).size, slug).toBe(records.length);
+      expect(records.every(r => r.legislature_number === 89 &&
+        r.source_url.startsWith("https://capitol.texas.gov/BillLookup/History.aspx?")
+      ), slug).toBe(true);
+      const certification = certificationFor(slug);
+      expect(certification.state, slug + ": " + certification.reasons.join("; ")).toBe("AUTHORITY_READY");
+      expect(Object.values(certification.gates).every(Boolean), slug).toBe(true);
+    }
+    expect(biographies.size).toBe(entries.length);
+    for (const slug of ["linda-garcia", "aicha-davis"]) {
+      expect(EDITORIAL_REVIEWS[slug].biography).toContain("biography");
+      expect(EDITORIAL_REVIEWS[slug].source).not.toContain("/biography");
+    }
   });
 
   it("requires diverse, dated primary-source Speaker records instead of fictional sponsorship", () => {

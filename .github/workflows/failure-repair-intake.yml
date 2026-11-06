@@ -1,0 +1,48 @@
+name: Failure repair intake (protected, bounded)
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: 'Failed GitHub Actions run ID to diagnose'
+        required: true
+        type: string
+
+permissions:
+  actions: read
+  contents: read
+  issues: write
+
+jobs:
+  capture-failure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Record exact failed jobs and steps without bypassing protection
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runId = Number(context.payload.inputs.run_id);
+            if (!Number.isSafeInteger(runId) || runId <= 0) core.setFailed('A positive integer run_id is required');
+            else {
+              const {owner, repo} = context.repo;
+              const run = (await github.rest.actions.getWorkflowRun({owner, repo, run_id: runId})).data;
+              if (run.repository.full_name !== context.repo.owner + '/' + repo) core.setFailed('Run repository mismatch');
+              else if (run.status !== 'completed') core.setFailed('Run is still running; retry after completion');
+              else {
+                const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRun, {owner, repo, run_id: runId, per_page: 100});
+                const failed = jobs.filter(j => j.conclusion === 'failure' || j.conclusion === 'timed_out');
+                if (!failed.length) { core.info('No failed jobs; nothing to repair'); return; }
+                const details = failed.map(j => {
+                  const steps = (j.steps || []).filter(s => s.conclusion === 'failure' || s.conclusion === 'timed_out');
+                  return '- Job [' + j.name + '](' + j.html_url + ') (' + j.conclusion + '): ' + (steps.map(s => s.name).join('; ') || 'inspect job logs');
+                }).join('\\n');
+                const title = '[repair] Workflow run ' + runId + ' failed';
+                const body = 'Automated failure intake only — **not a repair or certification**.\\n\\nSource run: ' + run.html_url + '\\nCommit: ' + run.head_sha + '\\n\\n' + details + '\\n\\nRequired: diagnose root cause, repair on protected PR, rerun validation, verify production if applicable. Do not close until verified. If a CI step is stale, prove supersession before closing.';
+                const existing = await github.paginate(github.rest.issues.listForRepo, {owner, repo, state: 'open', per_page: 100});
+                const issue = existing.find(i => !i.pull_request && i.title === title);
+                if (issue) await github.rest.issues.update({owner, repo, issue_number: issue.number, body});
+                else await github.rest.issues.create({owner, repo, title, body});
+                core.setFailed('Failures captured; repair and protected verification still required');
+              }
+            }

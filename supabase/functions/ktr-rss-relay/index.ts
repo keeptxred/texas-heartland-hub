@@ -75,14 +75,39 @@ const UPSTREAM_HEADERS = {
 
 Deno.serve(async (req: Request) => {
   if (req.method !== "GET") return new Response("Method not allowed", { status: 405, headers: { Allow: "GET" } });
-  const key = new URL(req.url).searchParams.get("feed") ?? "";
-  const upstreamUrl = FEEDS[key];
+  const inputUrl = new URL(req.url);
+  const key = inputUrl.searchParams.get("feed") ?? "";
+  const slug = inputUrl.searchParams.get("slug") ?? "";
+  // This is a **single** fixed government host and article route, not a
+  // general-purpose URL proxy. Reject arbitrary hostnames, query strings,
+  // paths, encoded slashes and navigation escapes.
+  const allowedDpsSlug = slug.length <= 120
+    && /^(?!press-releases$|most-wanted$)[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug);
+  const officialDpsArticle =
+    key === "official-texas-dps-article" && allowedDpsSlug
+      ? `https://www.dps.texas.gov/news/${slug}`
+      : null;
+  const upstreamUrl = officialDpsArticle ?? (key === "official-texas-dps-article" ? undefined : FEEDS[key]);
   if (!upstreamUrl) return new Response("Unknown feed", { status: 404 });
   try {
-    const headers = key === "official-texas-dps-press-index"
+    const headers = key === "official-texas-dps-press-index" || key === "official-texas-dps-article"
       ? { ...UPSTREAM_HEADERS, Accept: "text/html,application/xhtml+xml,*/*" }
       : UPSTREAM_HEADERS;
     const upstream = await fetch(upstreamUrl, { headers, redirect: "follow", signal: AbortSignal.timeout(15000) });
+    // Prevent an upstream error redirect or fallback page from being stored as
+    // evidence under the requested original article's URL.
+    if (officialDpsArticle && upstream.ok) {
+      const final = new URL(upstream.url);
+      const requested = new URL(officialDpsArticle);
+      const trimSlash = (path: string) => path.replace(/\/$/, "");
+      if (final.protocol !== "https:" || final.hostname !== requested.hostname
+        || trimSlash(final.pathname) !== trimSlash(requested.pathname)
+        || final.search || final.hash) {
+        return new Response("DPS article redirected away from the verified source", {
+          status: 502, headers: { "Cache-Control": "no-store" },
+        });
+      }
+    }
     const body = await upstream.arrayBuffer();
     return new Response(body, {
       status: upstream.status,
