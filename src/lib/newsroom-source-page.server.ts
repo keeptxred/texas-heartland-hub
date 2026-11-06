@@ -264,6 +264,30 @@ function newsroomHtmlText(html: string): string {
     .trim();
 }
 
+/**
+ * DPS's trusted, origin-verified relay has returned actual HTML with a
+ * text/plain media type. Never reinterpret plain text from an arbitrary
+ * publisher or unrelated relay as an article. The relay validates the final
+ * upstream host/path; we also verify that its response resembles an HTML
+ * document carrying the named official publisher.
+ */
+export function isVerifiedDpsRelayHtml(input: {
+  sourceUrl: string;
+  responseUrl: string;
+  contentType: string;
+  body: string;
+}): boolean {
+  const trustedRelayUrl = dpsOfficialArticleRelayUrl(input.sourceUrl);
+  if (!trustedRelayUrl || input.responseUrl !== trustedRelayUrl) return false;
+  if (!/^text\/plain(?:\s*;|\s*$)/i.test(input.contentType.trim())) return false;
+  const beginning = input.body.slice(0, 4_000);
+  if (!/(?:<!doctype\s+html\b|<html\b)/i.test(beginning)) return false;
+  const doc = input.body.slice(0, 20_000);
+  if (!/(?:Department of Public Safety|Texas DPS|dps\.texas\.gov)/i.test(doc)) return false;
+  if (/please verify you are (?:a person|human)|checking your browser|enable javascript to continue|access denied/i.test(doc.slice(0, 2_000))) return false;
+  return true;
+}
+
 export async function fetchReadableNewsroomSource(url: string): Promise<string | null> {
   const requestOptions = {
     headers: {
@@ -296,7 +320,23 @@ export async function fetchReadableNewsroomSource(url: string): Promise<string |
   }
   if (!response.ok) return null;
   const type = response.headers.get("content-type") ?? "";
-  if (!/text\/html|application\/xhtml/i.test(type)) return null;
-  const extracted = extractReadableNewsroomHtml(await response.text());
+  const declaredHtml = /(?:^text\/html\b|^application\/xhtml\+xml\b)/i.test(type.trim());
+  // Read text only for declared HTML or the fixed, verified DPS article relay
+  // that is known to mislabel HTML as text/plain. Non-DPS text/plain is never
+  // accepted. Reading isn't evidence credit: the extractor's substantive and
+  // synthetic-content filters still apply.
+  const officialDpsRelay = dpsOfficialArticleRelayUrl(url);
+  const maybeMislabeledDps = !!officialDpsRelay
+    && response.url === officialDpsRelay
+    && /^text\/plain(?:\s*;|\s*$)/i.test(type.trim());
+  if (!declaredHtml && !maybeMislabeledDps) return null;
+  const body = await response.text();
+  if (!declaredHtml && !isVerifiedDpsRelayHtml({
+    sourceUrl: url,
+    responseUrl: response.url,
+    contentType: type,
+    body,
+  })) return null;
+  const extracted = extractReadableNewsroomHtml(body);
   return extracted ? trimTdemPressReleaseArchive(url, extracted) : null;
 }
