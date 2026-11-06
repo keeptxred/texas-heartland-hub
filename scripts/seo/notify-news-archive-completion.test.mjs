@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { editorialGate, assessReportCoverage, EXPECTED_URLS, MARKER } from "./notify-news-archive-completion.mjs";
+import { editorialGate, assessReportCoverage, shouldReopenIssue, EXPECTED_URLS, MARKER } from "./notify-news-archive-completion.mjs";
 
 const urls = Array.from({ length: EXPECTED_URLS }, (_, i) => "https://keeptxred.com/news/archive-" + i);
 const rows = (final = true) => urls.map((url, i) => ({
@@ -78,6 +78,14 @@ describe("KTR archive once-only completion gate", () => {
     const reports2 = reports(ledger);
     reports2[0].sitemapErrors = ["sitemap XML missing"];
     expect(assessReportCoverage(ledger, reports2, signoff().verification_not_before).complete).toBe(false);
+  });
+
+  it("reopens only premature completed closure of master issue, never intentional abandonment", () => {
+    expect(shouldReopenIssue({ number: 3421, state: "closed", state_reason: "completed" }, "issues")).toBe(true);
+    expect(shouldReopenIssue({ number: 3421, state: "closed", state_reason: "not_planned" }, "issues")).toBe(false);
+    expect(shouldReopenIssue({ number: 3421, state: "open", state_reason: "reopened" }, "issues")).toBe(false);
+    expect(shouldReopenIssue({ number: 3422, state: "closed", state_reason: "completed" }, "issues")).toBe(false);
+    expect(shouldReopenIssue({ number: 3421, state: "closed", state_reason: "completed" }, "schedule")).toBe(false);
   });
 
   it("defines a stable marker for idempotent GitHub issue mention notification", () => {
