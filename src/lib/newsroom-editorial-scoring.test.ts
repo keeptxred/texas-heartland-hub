@@ -88,6 +88,60 @@ describe("newsroom editorial scoring", () => {
     expect(verified).toEqual({ sourceCount: 2, primarySourceCount: 1 });
   });
 
+  it("does not inflate independent primary sources for a Governor–TDEM cross-posted release", () => {
+    const shared = "Governor Abbott Activates Additional State Emergency Response Resources Ahead of Flood Threat";
+    const gov = {
+      url: "https://gov.texas.gov/news/post/governor-abbott-activates-additional-response",
+      name: "Office of the Governor",
+      title: shared,
+      flaggedPrimary: true,
+    };
+    const tdem = {
+      url: "https://www.tdem.texas.gov/press-release/11-6-26",
+      name: "Texas Division of Emergency Management — Direct Releases",
+      title: shared.toUpperCase(),
+      flaggedPrimary: true,
+    };
+    expect(verifiedEditorialPublisherCounts([gov, tdem])).toEqual({ sourceCount: 1, primarySourceCount: 1 });
+    expect(verifiedEditorialPublisherCounts([tdem, gov])).toEqual({ sourceCount: 1, primarySourceCount: 1 });
+    // Same parent publisher family: even distinct Texas agencies on texas.gov
+    // do not establish a second independent publisher by themselves.
+    expect(verifiedEditorialPublisherCounts([gov, { ...tdem, title: "TDEM announces a separate independently sourced federal evacuation funding agreement" }])).toEqual({ sourceCount: 1, primarySourceCount: 1 });
+
+    // A second agency on a DIFFERENT government publisher family may host
+    // the identical long release; that is still only one original report.
+    const federal = {
+      url: "https://www.fema.gov/press-release/texas-flood-response",
+      name: "FEMA — Direct News Release",
+      title: shared,
+      flaggedPrimary: true,
+    };
+    expect(verifiedEditorialPublisherCounts([gov, federal])).toEqual({ sourceCount: 1, primarySourceCount: 1 });
+    expect(verifiedEditorialPublisherCounts([federal, gov])).toEqual({ sourceCount: 1, primarySourceCount: 1 });
+    expect(verifiedEditorialPublisherCounts([gov, {
+      ...federal,
+      title: "FEMA releases separate independently sourced Texas flood risk assessments and response guidance",
+    }])).toEqual({ sourceCount: 2, primarySourceCount: 2 });
+  });
+
+  it("retains authentic official-record credit if a nonprimary syndicated copy appeared first", () => {
+    const shared = "Texas Department of Public Safety Announces New Crime Laboratory Records Portal For Counties";
+    const secondary = {
+      url: "https://www.sacurrent.com/news/portal-article",
+      name: "San Antonio Current",
+      title: shared,
+      flaggedPrimary: false,
+    };
+    const primary = {
+      url: "https://www.dps.texas.gov/news/crime-laboratory-records-portal",
+      name: "Texas DPS — Direct Press Releases",
+      title: shared,
+      flaggedPrimary: true,
+    };
+    expect(verifiedEditorialPublisherCounts([secondary, primary])).toEqual({ sourceCount: 1, primarySourceCount: 1 });
+    expect(verifiedEditorialPublisherCounts([primary, secondary])).toEqual({ sourceCount: 1, primarySourceCount: 1 });
+  });
+
   it("gives zero extra corroboration credit to the same long headline syndicated to another host", () => {
     const sharedTitle = "As early voting begins in Texas, Gov. Abbott’s challenger Gina Hinojosa sues over Musk emails";
     const sources = [

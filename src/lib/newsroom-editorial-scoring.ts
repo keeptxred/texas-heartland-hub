@@ -71,16 +71,29 @@ export function verifiedEditorialPublisherCounts(
 ): { sourceCount: number; primarySourceCount: number } {
   const families = new Set<string>();
   const primaryFamilies = new Set<string>();
-  const originalReports = new Set<string>();
+  // One long, identical original release can appear on two official .gov
+  // domains. Count it as ONE report, including for primary-source scoring.
+  // Prefer the verified primary URL if a secondary copy was encountered first.
+  const representativeByReport = new Map<string, { family: string; primary: boolean }>();
   for (const source of sources) {
     const url = source.url?.trim() ?? "";
     const family = url ? newsroomIndependentPublisherFamilyFromUrl(url) : null;
     if (!family) continue;
-    if (source.flaggedPrimary && isPrimaryNewsSource(source.name, url)) primaryFamilies.add(family);
+    const primary = source.flaggedPrimary && isPrimaryNewsSource(source.name, url);
     const key = newsroomOriginalReportKey(source.title);
-    if (key && originalReports.has(key)) continue;
-    if (key) originalReports.add(key);
+    if (!key) {
+      families.add(family);
+      if (primary) primaryFamilies.add(family);
+      continue;
+    }
+    const previous = representativeByReport.get(key);
+    if (!previous || (primary && !previous.primary)) {
+      representativeByReport.set(key, { family, primary });
+    }
+  }
+  for (const { family, primary } of representativeByReport.values()) {
     families.add(family);
+    if (primary) primaryFamilies.add(family);
   }
   return { sourceCount: families.size, primarySourceCount: primaryFamilies.size };
 }
