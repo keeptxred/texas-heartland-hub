@@ -145,7 +145,8 @@ async function collectReports(token, rows, notBefore) {
 async function validateProduction(token, signoff) {
   const runId = signoff.production_run_url.match(/\/runs\/(\d+)$/)[1];
   const run = await api(token, "/repos/" + REPO + "/actions/runs/" + runId);
-  if (run.status !== "completed" || run.conclusion !== "success" || run.head_sha !== signoff.production_sha) {
+  if (run.status !== "completed" || run.conclusion !== "success" || run.head_sha !== signoff.production_sha ||
+      !Number.isFinite(Date.parse(run.updated_at)) || Date.parse(signoff.verification_not_before) < Date.parse(run.updated_at)) {
     return false;
   }
   const jobs = await api(token, "/repos/" + REPO + "/actions/runs/" + runId + "/jobs?per_page=100");
@@ -160,6 +161,8 @@ async function validateEditorialEvidence(token, signoff) {
   const comment = await api(token, "/repos/" + REPO + "/issues/comments/" + id);
   return comment.issue_url === "https://api.github.com/repos/" + REPO + "/issues/" + ISSUE &&
     comment.user?.login === signoff.approver &&
+    Number.isFinite(Date.parse(comment.created_at)) &&
+    Date.parse(signoff.verification_not_before) >= Date.parse(comment.created_at) &&
     (comment.body || "").includes("KTR_PHASE2A_EDITORIAL_SIGNOFF_388") &&
     (comment.body || "").includes("no unresolved findings");
 }
