@@ -280,6 +280,11 @@ function houseRoster(html) {
         "Vince Perez:77": "4710",
         "Vincent Perez:77": "4710",
         "Caroline Fairly:87": "4480",
+        "David Lowe:91": "4643",
+        "Salman Bhojani:92": "4115",
+        "Nicole Collier:95": "2360",
+        "John McQueeney:97": "4665",
+        "Giovanni Capriglione:98": "2345",
       })[`${reverseHouseName(member.member_name)}:${Number(member.id)}`] ?? member.member_bill_code}`,
       imageUrl: new URL(member.image, "https://house.texas.gov/").href,
     }))

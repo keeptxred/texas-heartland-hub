@@ -52,6 +52,9 @@ READY = (
     "dustin-burrows",
     "carl-tepper", "stan-kitzman", "john-smithee", "caroline-fairly",
     "ken-king", "candy-noble", "ramon-romero",
+    "david-lowe", "salman-bhojani", "tony-tinderholt", "nicole-collier",
+    "david-cook", "john-mcqueeney", "giovanni-capriglione", "charlie-geren",
+    "venton-jones",
 )
 NOT_READY = ("dan-crenshaw", "john-cornyn", "greg-abbott", "jeff-barry")
 NS = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
