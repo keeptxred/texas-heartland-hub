@@ -26,8 +26,8 @@ describe("representative Script 2 source-first certification", () => {
     }
   });
 
-  it("requires all six genuine quality gates for 153 individually reviewed expansion profiles", () => {
-    expect(SCRIPT2_REVIEWED_SLUGS).toHaveLength(153);
+  it("requires all six genuine quality gates for 163 individually reviewed expansion profiles", () => {
+    expect(SCRIPT2_REVIEWED_SLUGS).toHaveLength(163);
     for (const slug of SCRIPT2_REVIEWED_SLUGS) {
       const records = pilotResearchFor(slug);
       if (slug === "dustin-burrows") {
@@ -371,6 +371,54 @@ describe("representative Script 2 source-first certification", () => {
     expect(EDITORIAL_REVIEWS["gene-wu"].biography).toContain("coauthor");
     const wu = applyPilotEditorial("gene-wu", getRepresentativeAuthority("gene-wu") ?? null);
     expect(wu?.sources.some(s => s.label.includes("coauthored") && s.url.endsWith("Bill=HB107"))).toBe(true);
+  });
+
+  it("requires official 89th session person-specific House HD141-150 identity, bill status and all six gates", () => {
+    const cases: readonly [string, string, string][] = [
+      ["senfronia-thompson", "4630", "HB109"],
+      ["harold-dutton", "2650", "HB100"],
+      ["ana-hernandez", "3155", "HB1445"],
+      ["mary-ann-perez", "2535", "HB201"],
+      ["christina-morales", "3910", "HB2492"],
+      ["lauren-simmons", "4765", "HB107"],
+      ["jo-jones", "4105", "HB109"],
+      ["penny-morales-shaw", "4035", "HB1875"],
+      ["hubert-vo", "4900", "HB1052"],
+      ["valoree-swanson", "3425", "HB1532"],
+    ];
+    const originalBios = new Set<string>();
+    for (const [slug, id, bill] of cases) {
+      expect(SCRIPT2_REVIEWED_SLUGS).toContain(slug);
+      const review = EDITORIAL_REVIEWS[slug];
+      expect(review.officialUrl, slug).toBe("https://house.texas.gov/members/" + id);
+      expect(findRepresentativeBySlug(slug)?.website).toBe(review.officialUrl);
+      expect(review.identityChecked).toBe("2026-11-06");
+      expect(review.biography.length, slug).toBeGreaterThan(310);
+      originalBios.add(review.biography);
+      const authority = applyPilotEditorial(slug, getRepresentativeAuthority(slug) ?? null);
+      expect(authority?.sources.some(x => x.url ===
+        "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf"), slug).toBe(true);
+      expect(authority?.sources.some(x => x.url ===
+        "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=" + bill), slug).toBe(true);
+      const records = pilotResearchFor(slug);
+      expect(records.length, slug).toBeGreaterThanOrEqual(16);
+      expect(new Set(records.map(x => x.sponsor_role)).size, slug).toBeGreaterThanOrEqual(2);
+      expect(new Set(records.map(x => x.current_status_label)).size, slug).toBeGreaterThanOrEqual(2);
+      expect(new Set(records.map(x => x.bill_id + ":" + x.sponsor_role)).size).toBe(records.length);
+      expect(records.every(x => x.legislature_number === 89 &&
+        x.source_url.startsWith("https://capitol.texas.gov/BillLookup/History.aspx?")
+      ), slug).toBe(true);
+      const result = certificationFor(slug);
+      expect(result.state, slug + ": " + result.reasons.join("; ")).toBe("AUTHORITY_READY");
+      expect(Object.values(result.gates).every(Boolean), slug).toBe(true);
+    }
+    expect(originalBios.size).toBe(cases.length);
+    for (const [slug, bill] of [["lauren-simmons", "HB2520"], ["jo-jones", "HB413"]] as const) {
+      expect(EDITORIAL_REVIEWS[slug].biography).toContain("vetoed");
+      const a = applyPilotEditorial(slug, getRepresentativeAuthority(slug) ?? null);
+      expect(a?.sources.some(x => x.url.endsWith("Bill=" + bill) && x.label.includes("vetoed"))).toBe(true);
+    }
+    expect(EDITORIAL_REVIEWS["penny-morales-shaw"].biography).toContain("87th-session");
   });
 
   it("requires diverse, dated primary-source Speaker records instead of fictional sponsorship", () => {
