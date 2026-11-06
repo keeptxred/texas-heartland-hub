@@ -29,6 +29,31 @@ type EditorialReview = {
  * A synchronized roster change that disagrees with a review FAILS CLOSED.
  */
 export const EDITORIAL_REVIEWS: Record<string, EditorialReview> = {
+  "lauren-simmons": {
+    name: "Lauren Simmons", office: "Texas House", district: "House District 146", party: "D",
+    officialUrl: "https://house.texas.gov/members/4765", biography: "Lauren Ashley Simmons began representing House District 146 in southwest Houston in January 2025. Her official Texas House biography documents experience in the labor movement, including organizing with the Texas State Employees Union and the American Federation of Teachers, along with work as a Communications Workers of America shop steward. The 89th Legislature committee roster lists Appropriations and Public Health. She is recorded as an author of HB 107 creating a sickle-cell disease registry, which state history marks effective. By contrast, her coauthored or authored HB 2520 on open meetings was vetoed, so its legislative outcome cannot be counted as enactment.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/4765/biography",
+  },
+  "jo-jones": {
+    name: "Jo Jones", office: "Texas House", district: "House District 147", party: "D",
+    officialUrl: "https://house.texas.gov/members/4105", biography: "Jolanda 'Jo' Jones represents House District 147 in Houston and previously served on Houston City Council and on a local school board. Her official biography documents earlier athletics and legal/advocacy work, as well as mentoring and community involvement. For the 89th Legislature, the House standing-committee roster lists Criminal Jurisprudence, with vice chairmanship of the Juvenile Justice subcommittee, plus Public Health and Redistricting. She authored HB 109 on inpatient mental-health facilities and residential treatment resources; its official legislative history is recorded effective. Her separate HB 413 concerning detention of defendants pending trial was vetoed.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/4105/biography",
+  },
+  "penny-morales-shaw": {
+    name: "Penny Morales Shaw", office: "Texas House", district: "House District 148", party: "D",
+    officialUrl: "https://house.texas.gov/members/4035", biography: "Penny Morales Shaw represents House District 148, including portions of Spring Branch, Garden Oaks, Oak Forest and the Cy-Fair area of Houston. Her official House biography documents legal practice and involvement in legislative caucuses concerned with environmental issues and women's health. Because the biography discusses 87th-session committee appointments, this profile instead uses the House's dated 89th Legislature roster, which lists Elections and Environmental Regulation. She authored HB 1875 directing a General Land Office study of veterans cemeteries; the official bill history records it as effective. Sponsorship evidence is not conflated with a personal floor vote.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/4035/biography",
+  },
+  "hubert-vo": {
+    name: "Hubert Vo", office: "Texas House", district: "House District 149", party: "D",
+    officialUrl: "https://house.texas.gov/members/4900", biography: "Hubert Vo represents House District 149 in southwest Houston, including Alief and nearby west Houston and Katy areas. His official House biography describes a career in real estate development, a mechanical-engineering degree from the University of Houston and participation in the Alief Super Neighborhood Council. The dated 89th Legislature committee roster lists Insurance, where he was vice chair, and Pensions, Investments and Financial Services. He authored HB 1052 addressing coverage of telemedicine and related telehealth services, with the 2025 Texas Legislature history recording the measure effective. This current-session example is separate from his longer legislative tenure.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/4900/biography",
+  },
+  "valoree-swanson": {
+    name: "Valoree Swanson", office: "Texas House", district: "House District 150", party: "R",
+    officialUrl: "https://house.texas.gov/members/3425", biography: "Valoree Swanson has represented House District 150 in northern Harris County since January 2017. Her official Texas House biography documents a Baylor University business degree and previous work in commercial real estate, as well as community involvement with youth sports and families. The 89th Legislature roster lists Elections and Human Services. The state legislative record identifies her as an author of HB 1532 concerning the Lake Houston Dredging and Maintenance District, which is marked effective. Her separately introduced HB 1201 Medicaid doula-services pilot remained in committee; the different legislative statuses are preserved rather than counted together as enacted laws.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/3425/biography",
+  },
   "senfronia-thompson": {
     name: "Senfronia Thompson", office: "Texas House", district: "House District 141", party: "D",
     officialUrl: "https://house.texas.gov/members/4630", biography: "Senfronia Thompson has represented northeast Houston's House District 141 for decades and is recognized as dean of the Texas House. Her official House biography documents growing up in Houston and earning degrees in biology from Texas Southern University, education from Prairie View A&M University, law from Thurgood Marshall School of Law and international law from the University of Houston. The dated 89th Legislature roster lists Licensing and Administrative Procedures, where she was vice chair, and State Affairs. She authored HB 109 on development of inpatient mental-health facilities and designation of residential treatment resources; the official bill history records it as effective.",
@@ -1032,6 +1057,7 @@ export const SCRIPT2_REVIEWED_SLUGS = [
   "tom-oliverson", "alma-allen", "mike-schofield", "mano-deayala", "ann-johnson",
   "jon-rosenthal", "john-bucy", "gene-wu", "lacey-hull", "charlene-ward-johnson", "armando-walle",
   "senfronia-thompson", "harold-dutton", "ana-hernandez", "mary-ann-perez", "christina-morales",
+  "lauren-simmons", "jo-jones", "penny-morales-shaw", "hubert-vo", "valoree-swanson",
 ] as const;
 
 export const CERTIFICATION_CANDIDATE_SLUGS = [
@@ -1046,7 +1072,7 @@ export function applyPilotEditorial(
   const review = EDITORIAL_REVIEWS[slug];
   if (!authority || !review) return authority;
   const official89RCommittees = "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf";
-  const cohort = ["david-lowe","salman-bhojani","tony-tinderholt","nicole-collier","david-cook","john-mcqueeney","giovanni-capriglione","charlie-geren","venton-jones","chris-turner","ana-maria-rodriguez-ramos","rafael-anchia","jessica-gonzalez","terry-meza","jared-patterson","linda-garcia","morgan-meyer","aicha-davis","toni-rose","yvonne-davis","angie-button","rhetta-bowers","john-bryant","cas-garcia-hernandez","trey-martinez-fischer","philip-cortez","john-lujan","liz-campos","barbara-gervin-hawkins","marc-lahood","mark-dorazio","diego-bernal","josey-garcia","ray-lopez","sam-harless","charles-cunningham","briscoe-cain","dennis-paul","tom-oliverson","alma-allen","mike-schofield","mano-deayala","ann-johnson","jon-rosenthal","john-bucy","gene-wu","lacey-hull","charlene-ward-johnson","armando-walle","senfronia-thompson","harold-dutton","ana-hernandez","mary-ann-perez","christina-morales"] as readonly string[];
+  const cohort = ["david-lowe","salman-bhojani","tony-tinderholt","nicole-collier","david-cook","john-mcqueeney","giovanni-capriglione","charlie-geren","venton-jones","chris-turner","ana-maria-rodriguez-ramos","rafael-anchia","jessica-gonzalez","terry-meza","jared-patterson","linda-garcia","morgan-meyer","aicha-davis","toni-rose","yvonne-davis","angie-button","rhetta-bowers","john-bryant","cas-garcia-hernandez","trey-martinez-fischer","philip-cortez","john-lujan","liz-campos","barbara-gervin-hawkins","marc-lahood","mark-dorazio","diego-bernal","josey-garcia","ray-lopez","sam-harless","charles-cunningham","briscoe-cain","dennis-paul","tom-oliverson","alma-allen","mike-schofield","mano-deayala","ann-johnson","jon-rosenthal","john-bucy","gene-wu","lacey-hull","charlene-ward-johnson","armando-walle","senfronia-thompson","harold-dutton","ana-hernandez","mary-ann-perez","christina-morales","lauren-simmons","jo-jones","penny-morales-shaw","hubert-vo","valoree-swanson"] as readonly string[];
   const authoredBillHighlights: Record<string, string> = {
     "rhetta-bowers": "HB1734",
     "john-bryant": "HB2703",
@@ -1081,16 +1107,23 @@ export function applyPilotEditorial(
     "ana-hernandez": "HB1445",
     "mary-ann-perez": "HB201",
     "christina-morales": "HB2492",
+    "lauren-simmons": "HB107",
+    "jo-jones": "HB109",
+    "penny-morales-shaw": "HB1875",
+    "hubert-vo": "HB1052",
+    "valoree-swanson": "HB1532",
   };
   const sourceList = cohort.includes(slug) && !authority.sources.some((item) => item.url === official89RCommittees)
     ? [...authority.sources, { label: "Official House 89th Legislature standing committee assignment roster", url: official89RCommittees }]
     : authority.sources;
   const billNumber = authoredBillHighlights[slug];
   const billHistory = billNumber ? `https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=${billNumber}` : null;
-  const contrastingVetoUrl = ["briscoe-cain", "ann-johnson"].includes(slug)
+  const contrastingVetoUrl = ["briscoe-cain", "ann-johnson", "lauren-simmons"].includes(slug)
     ? "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=HB2520"
     : ["tom-oliverson", "alma-allen"].includes(slug)
-    ? "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=HB2243" : null;
+    ? "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=HB2243"
+    : slug === "jo-jones"
+    ? "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=HB413" : null;
   return {
     ...authority,
     biography: review.biography,
@@ -1100,7 +1133,7 @@ export function applyPilotEditorial(
         ? [{ label: `Official 89th Legislature ${slug === "gene-wu" ? "coauthored" : "authored"} bill history (${billNumber})`, url: billHistory }]
         : []),
       ...(contrastingVetoUrl && !sourceList.some((item) => item.url === contrastingVetoUrl)
-        ? [{ label: `Official 89th Legislature vetoed bill history (${["tom-oliverson", "alma-allen"].includes(slug) ? "HB2243 teacher retention" : "HB2520 open meetings"})`, url: contrastingVetoUrl }]
+        ? [{ label: `Official 89th Legislature vetoed bill history (${["tom-oliverson", "alma-allen"].includes(slug) ? "HB2243 teacher retention" : slug === "jo-jones" ? "HB413 pretrial detention" : "HB2520 open meetings"})`, url: contrastingVetoUrl }]
         : []),
     ],
   };
