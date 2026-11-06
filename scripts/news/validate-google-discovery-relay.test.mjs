@@ -13,7 +13,7 @@ const feedKeys = [
 test('all Google discovery uses the fixed allowlist RSS relay', () => {
   expect(migration).toContain('/functions/v1/ktr-rss-relay?feed=');
   expect(relay).toContain('const FEEDS: Record<string, string>');
-  expect(relay).toContain('const upstreamUrl = FEEDS[key]');
+  expect(relay).toContain('const upstreamUrl = officialDpsArticle ?? (key === "official-texas-dps-article" ? undefined : FEEDS[key])');
   expect(relay).toContain('if (!upstreamUrl) return new Response("Unknown feed", { status: 404 });');
   for (const key of feedKeys) {
     expect(migration).toContain(key);
