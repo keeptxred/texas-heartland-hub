@@ -176,6 +176,24 @@ async function commentsContainMarker(token) {
   throw new Error("Issue comment scan reached pagination safety cap");
 }
 
+export function shouldReopenIssue(issue, eventName) {
+  return eventName === "issues" && issue?.number === ISSUE &&
+    issue?.state === "closed" && issue?.state_reason === "completed";
+}
+
+async function reopenPrematureIssueClosure(token, reason) {
+  if (process.env.GITHUB_EVENT_NAME !== "issues" || !token) return;
+  const issue = await api(token, "/repos/" + REPO + "/issues/" + ISSUE);
+  if (!shouldReopenIssue(issue, process.env.GITHUB_EVENT_NAME)) return;
+  await api(token, "/repos/" + REPO + "/issues/" + ISSUE, "PATCH", { state: "open" });
+  await api(token, "/repos/" + REPO + "/issues/" + ISSUE + "/comments", "POST", {
+    body: "Phase 2A completion safeguard: issue reopened because its final 388-URL verification gate has not passed (" +
+      reason + "). Please keep this issue open until the guarded notifier records the actual final certification. " +
+      "Historical article repair and deployment milestones are separate from 388-URL editorial completion.",
+  });
+  console.log("Reopened premature completed closure of archive issue #" + ISSUE);
+}
+
 export async function main({ token = process.env.GITHUB_TOKEN } = {}) {
   const rows = loadLedger(readFileSync("docs/recovery/ktr-news-phase2a-disposition-ledger.csv", "utf8"));
   const signoff = JSON.parse(readFileSync(SIGNOFF, "utf8"));
@@ -183,18 +201,24 @@ export async function main({ token = process.env.GITHUB_TOKEN } = {}) {
   console.log("Phase 2A archive final dispositions: " + gate.finalized + "/" + gate.total);
   if (!gate.ready) {
     console.log("Completion notification withheld: " + gate.blockers.slice(0, 8).join("; "));
+    await reopenPrematureIssueClosure(token, "provisional editorial decisions or incomplete sign-off");
     return { notified: false, gate };
   }
   if (!token) throw new Error("GITHUB_TOKEN is required for the verified completion gate");
   if (!await validateEditorialEvidence(token, signoff)) {
     console.log("Completion withheld: identified maintainer did not post the required final editorial certification on issue #3421");
+    await reopenPrematureIssueClosure(token, "missing required maintainer sign-off comment");
     return { notified: false, editorialEvidence: false };
   }
   const verified = await collectReports(token, rows, signoff.verification_not_before);
   console.log("Post-release production URL evidence: " + verified.verified + "/" + verified.total);
-  if (!verified.complete) return { notified: false, verified };
+  if (!verified.complete) {
+    await reopenPrematureIssueClosure(token, "not all 388 live URL policies have post-release evidence");
+    return { notified: false, verified };
+  }
   if (!await validateProduction(token, signoff)) {
     console.log("Completion withheld: exact deployment and non-skipped smoke not verified");
+    await reopenPrematureIssueClosure(token, "successful exact-deployment evidence is missing");
     return { notified: false, verified };
   }
   const issue = await api(token, "/repos/" + REPO + "/issues/" + ISSUE);
