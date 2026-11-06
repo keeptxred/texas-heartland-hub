@@ -5,6 +5,8 @@ on:
     # After the existing 09:17 UTC 25-URL read-only cohort, once daily.
     - cron: "17 10 * * *"
   workflow_dispatch:
+  issues:
+    types: [closed]
   push:
     branches: [main]
     paths:
@@ -24,6 +26,7 @@ concurrency:
 jobs:
   verify-and-notify:
     name: Notify once only after all 388 archive URLs are certified
+    if: github.event_name != 'issues' || github.event.issue.number == 3421
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
