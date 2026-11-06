@@ -29,6 +29,54 @@ type EditorialReview = {
  * A synchronized roster change that disagrees with a review FAILS CLOSED.
  */
 export const EDITORIAL_REVIEWS: Record<string, EditorialReview> = {
+  "rhetta-bowers": {
+    name: "Rhetta Bowers", office: "Texas House", district: "House District 113", party: "D",
+    officialUrl: "https://house.texas.gov/members/3565",
+    biography: "Rhetta Andrews Bowers has represented Dallas County's House District 113 since 2019, covering parts of Rowlett, Garland, Mesquite and Seagoville. Her official House biography details work as a broadcast journalist and educational-services coordinator at KERA, followed by local service on the Rowlett Parks and Recreation Advisory Board. Her dated 89th Legislature committee record includes Criminal Jurisprudence, Delivery of Government Efficiency and the vice chairmanship of Local and Consent Calendars. Her authored HB 1734 concerned transfers of certain parent-child court files and is recorded as effective in the state bill history; other measures have different outcomes.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/3565/biography",
+  },
+  "john-bryant": {
+    name: "John Bryant", office: "Texas House", district: "House District 114", party: "D",
+    officialUrl: "https://house.texas.gov/members/4120",
+    biography: "John Wiley Bryant represents Dallas County House District 114. The Legislative Reference Library documents House terms from 1974 through 1983 and a return in 2023, a significant break that a routine first-election date would obscure. The state Legislative Directory lists him as an attorney with a Southern Methodist University B.A. and J.D.; the official House biography page contains no substantive text. In the 89th Legislature he served on Public Education and Pensions, Investments and Financial Services. His authored HB 2703 designating July as American Patriotism Month is recorded as effective. This session-specific work is kept distinct from earlier decades.",
+    identityChecked: "2026-11-06", source: "https://www.lrl.texas.gov/legeLeaders/members/memberDisplay.cfm?memberID=499",
+  },
+  "cas-garcia-hernandez": {
+    name: "Cas Garcia Hernandez", office: "Texas House", district: "House District 115", party: "D",
+    officialUrl: "https://house.texas.gov/members/4495",
+    biography: "Cassandra Garcia Hernandez began representing House District 115 in Dallas County in January 2025, with Farmers Branch listed as her home city in the Legislative Reference Library. The House biography page is empty, so the official Legislative Directory supplies the documented qualifications: lawyer, University of Houston B.B.A., and South Texas College of Law J.D. Her 89th Legislature committee assignments were Appropriations and Intergovernmental Affairs, including vice chairmanship of the State-Federal Relations subcommittee. She authored HB 4325 on civil liability for prohibited barratry, which the official 2025 history records as effective. No additional personal history is assumed.",
+    identityChecked: "2026-11-06", source: "https://legdir.capitol.texas.gov/MemberInfo.aspx?Chamber=H&Code=A4495",
+  },
+  "trey-martinez-fischer": {
+    name: "Trey Martinez Fischer", office: "Texas House", district: "House District 116", party: "D",
+    officialUrl: "https://house.texas.gov/members/2835",
+    biography: "Trey Martinez Fischer serves San Antonio's House District 116 and previously led both the House Democratic Caucus and Mexican American Legislative Caucus. His House biography documents studies at UT San Antonio, a Baruch College master's degree in public administration, and a law degree from the University of Texas. The official 89th Legislature roster lists him as vice chair of Ways and Means and a member of Culture, Recreation and Tourism. His authored HB 20 established an Applied Sciences Pathway program and is recorded as effective. The profile distinguishes that measure's actual status and authorship from any unverified lifetime claim.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/2835/biography",
+  },
+  "philip-cortez": {
+    name: "Philip Cortez", office: "Texas House", district: "House District 117", party: "D",
+    officialUrl: "https://house.texas.gov/members/2365",
+    biography: "Philip Cortez represents House District 117 on San Antonio's south and west sides. Before entering the House in 2013, he was a San Antonio city councilmember; the official biography also documents a University of Texas at Austin doctorate in educational administration and 20 years of U.S. Air Force service ending in 2019. His 89th Legislature committees were Homeland Security, Public Safety and Veterans' Affairs and Intergovernmental Affairs, including chairmanship of the Defense and Veterans' Affairs subcommittee. His authored HB 1052 addressed telemedicine, teledentistry and telehealth coverage and is recorded as effective in the official bill history.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/2365/biography",
+  },
+  "john-lujan": {
+    name: "John Lujan", office: "Texas House", district: "House District 118", party: "R",
+    officialUrl: "https://house.texas.gov/members/3145",
+    biography: "John Lujan serves House District 118 in South, East and Northeast Bexar County. His Texas House biography records five years as a Bexar County sheriff's deputy and more than 25 years with the San Antonio Fire Department, alongside work developing an IT business. During the 89th Legislature he served on Appropriations, Local and Consent Calendars, and Trade, Workforce and Economic Development, and chaired the International Relations subcommittee. He authored HB 1211 about tuition and fee exemptions for certain students attending Texas public higher-education institutions. The official bill history marks it effective; coauthored measures are separately identified.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/3145/biography",
+  },
+  "liz-campos": {
+    name: "Liz Campos", office: "Texas House", district: "House District 119", party: "D",
+    officialUrl: "https://house.texas.gov/members/3950",
+    biography: "Elizabeth 'Liz' Campos represents House District 119 around east San Antonio. Her official House biography records decades as a legal administrator, service in legislative staff jobs including Senate chief of staff, and her status as the first woman elected to the district. The 89th Legislature assigned her to Delivery of Government Efficiency and Public Health, where she served as vice chair. Her authored HB 1866 on state law-enforcement authority for certain National Park Service officers is recorded as effective, but her separate HB 3772 electronic-cigarette proposal remained in committee. The difference matters when evaluating an officeholder's actual legislative outcomes.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/3950/biography",
+  },
+  "barbara-gervin-hawkins": {
+    name: "Barbara Gervin-Hawkins", office: "Texas House", district: "House District 120", party: "D",
+    officialUrl: "https://house.texas.gov/members/3445",
+    biography: "Barbara Gervin-Hawkins represents House District 120 in parts of San Antonio, Converse, Windcrest and Kirby. Her official biography documents helping found the George Gervin Youth Center and George Gervin Academy and earlier service on the San Antonio Zoning Commission. In the 89th Legislature the published House roster assigns her to Appropriations, Redistricting and Ways and Means. Her authored HB 2894 concerns state aid for certain local governments affected by property-tax provisions and is recorded as effective in the official history. Other sponsored bills are not automatically described as enacted.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/3445/biography",
+  },
   "chris-turner": {
     name: "Chris Turner", office: "Texas House", district: "House District 101", party: "D",
     officialUrl: "https://house.texas.gov/members/4680",
@@ -845,6 +893,7 @@ export const SCRIPT2_REVIEWED_SLUGS = [
   "david-lowe", "salman-bhojani", "tony-tinderholt", "nicole-collier",
   "david-cook", "john-mcqueeney", "giovanni-capriglione", "charlie-geren", "venton-jones",
   "chris-turner", "ana-maria-rodriguez-ramos", "rafael-anchia", "jessica-gonzalez", "terry-meza", "jared-patterson", "linda-garcia", "morgan-meyer", "aicha-davis", "toni-rose", "yvonne-davis", "angie-button",
+  "rhetta-bowers", "john-bryant", "cas-garcia-hernandez", "trey-martinez-fischer", "philip-cortez", "john-lujan", "liz-campos", "barbara-gervin-hawkins",
 ] as const;
 
 export const CERTIFICATION_CANDIDATE_SLUGS = [
@@ -859,13 +908,28 @@ export function applyPilotEditorial(
   const review = EDITORIAL_REVIEWS[slug];
   if (!authority || !review) return authority;
   const official89RCommittees = "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf";
-  const cohort = ["david-lowe","salman-bhojani","tony-tinderholt","nicole-collier","david-cook","john-mcqueeney","giovanni-capriglione","charlie-geren","venton-jones","chris-turner","ana-maria-rodriguez-ramos","rafael-anchia","jessica-gonzalez","terry-meza","jared-patterson","linda-garcia","morgan-meyer","aicha-davis","toni-rose","yvonne-davis","angie-button"] as readonly string[];
+  const cohort = ["david-lowe","salman-bhojani","tony-tinderholt","nicole-collier","david-cook","john-mcqueeney","giovanni-capriglione","charlie-geren","venton-jones","chris-turner","ana-maria-rodriguez-ramos","rafael-anchia","jessica-gonzalez","terry-meza","jared-patterson","linda-garcia","morgan-meyer","aicha-davis","toni-rose","yvonne-davis","angie-button","rhetta-bowers","john-bryant","cas-garcia-hernandez","trey-martinez-fischer","philip-cortez","john-lujan","liz-campos","barbara-gervin-hawkins"] as readonly string[];
+  const authoredBillHighlights: Record<string, string> = {
+    "rhetta-bowers": "HB1734",
+    "john-bryant": "HB2703",
+    "cas-garcia-hernandez": "HB4325",
+    "trey-martinez-fischer": "HB20",
+    "philip-cortez": "HB1052",
+    "john-lujan": "HB1211",
+    "liz-campos": "HB1866",
+    "barbara-gervin-hawkins": "HB2894",
+  };
+  const sourceList = cohort.includes(slug) && !authority.sources.some((item) => item.url === official89RCommittees)
+    ? [...authority.sources, { label: "Official House 89th Legislature standing committee assignment roster", url: official89RCommittees }]
+    : authority.sources;
+  const billNumber = authoredBillHighlights[slug];
+  const billHistory = billNumber ? `https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=${billNumber}` : null;
   return {
     ...authority,
     biography: review.biography,
-    sources: cohort.includes(slug) && !authority.sources.some((item) => item.url === official89RCommittees)
-      ? [...authority.sources, { label: "Official House 89th Legislature standing committee assignment roster", url: official89RCommittees }]
-      : authority.sources,
+    sources: billHistory && !sourceList.some((item) => item.url === billHistory)
+      ? [...sourceList, { label: `Official 89th Legislature authored bill history (${billNumber})`, url: billHistory }]
+      : sourceList,
   };
 }
 
