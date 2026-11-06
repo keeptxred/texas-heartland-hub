@@ -57,7 +57,7 @@ describe("homepage GEO signals", () => {
     const electionPolicy = readFileSync(join(process.cwd(), "src/data/policy-trackers.ts"), "utf8");
 
     expect(homepage).toContain('{latest.length > 0 ? "Latest Texas News" : "Browse dated Texas reporting"}');
-    expect(newsroom).toContain('<Link to="/policy/elections"');
+    expect(newsroom).toContain('<Link to="/policy/$slug" params={{ slug: "elections" }}');
     expect(newsroom).not.toContain('<Link to="/elections"');
     expect(electionPolicy).not.toContain('label: "Election Central", href: "/elections/2026"');
   });
