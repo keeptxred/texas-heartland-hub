@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
-import { dpsOfficialArticleRelayUrl } from "./dps-firstparty-article-relay";\nimport { fetchReadableNewsroomSource, isVerifiedDpsRelayHtml } from "./newsroom-source-page.server";\nimport { vi } from "vitest";
+import { dpsOfficialArticleRelayUrl } from "./dps-firstparty-article-relay";
+import { fetchReadableNewsroomSource, isVerifiedDpsRelayHtml } from "./newsroom-source-page.server";
+import { vi } from "vitest";
 
 describe("bounded DPS article evidence egress", () => {
   it("accepts only exact DPS first-party article URLs", () => {
