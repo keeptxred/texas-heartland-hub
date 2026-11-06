@@ -26,8 +26,8 @@ describe("representative Script 2 source-first certification", () => {
     }
   });
 
-  it("requires all six genuine quality gates for 142 individually reviewed expansion profiles", () => {
-    expect(SCRIPT2_REVIEWED_SLUGS).toHaveLength(142);
+  it("requires all six genuine quality gates for 153 individually reviewed expansion profiles", () => {
+    expect(SCRIPT2_REVIEWED_SLUGS).toHaveLength(153);
     for (const slug of SCRIPT2_REVIEWED_SLUGS) {
       const records = pilotResearchFor(slug);
       if (slug === "dustin-burrows") {
@@ -324,6 +324,53 @@ describe("representative Script 2 source-first certification", () => {
     const cain = applyPilotEditorial("briscoe-cain", getRepresentativeAuthority("briscoe-cain") ?? null);
     expect(cain?.sources.some(x => x.url.endsWith("Bill=HB2520"))).toBe(true);
     expect(EDITORIAL_REVIEWS["briscoe-cain"].biography).toContain("vetoed");
+  });
+
+  it("certifies 11 individually sourced House 130–140 members with exact identity and recorded outcomes", () => {
+    const cases: readonly [string, string, string][] = [
+      ["tom-oliverson", "3535", "HB1052"], ["alma-allen", "2100", "HB2598"],
+      ["mike-schofield", "3095", "HB1445"], ["mano-deayala", "4135", "HB2253"],
+      ["ann-johnson", "3985", "HB1481"], ["jon-rosenthal", "3635", "HB367"],
+      ["john-bucy", "3595", "HB2421"], ["gene-wu", "2865", "HB107"],
+      ["lacey-hull", "3975", "HB138"], ["charlene-ward-johnson", "4785", "HB1105"],
+      ["armando-walle", "4930", "HB1532"],
+    ];
+    const distinctReviews = new Set<string>();
+    for (const [slug, id, bill] of cases) {
+      expect(SCRIPT2_REVIEWED_SLUGS).toContain(slug);
+      const review = EDITORIAL_REVIEWS[slug];
+      expect(review.officialUrl).toBe("https://house.texas.gov/members/" + id);
+      expect(findRepresentativeBySlug(slug)?.website).toBe(review.officialUrl);
+      expect(review.identityChecked).toBe("2026-11-06");
+      expect(review.biography.length, slug).toBeGreaterThan(300);
+      distinctReviews.add(review.biography);
+      const authority = applyPilotEditorial(slug, getRepresentativeAuthority(slug) ?? null);
+      expect(authority?.sources.some(source => source.url ===
+        "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf"), slug).toBe(true);
+      expect(authority?.sources.some(source => source.url ===
+        "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=" + bill), slug).toBe(true);
+      const histories = pilotResearchFor(slug);
+      expect(histories.length, slug).toBeGreaterThanOrEqual(16);
+      expect(new Set(histories.map(x => x.sponsor_role)).size, slug).toBeGreaterThanOrEqual(2);
+      expect(new Set(histories.map(x => x.current_status_label)).size, slug).toBeGreaterThanOrEqual(2);
+      expect(new Set(histories.map(x => x.bill_id + ":" + x.sponsor_role)).size).toBe(histories.length);
+      expect(histories.every(x => x.legislature_number === 89 &&
+        x.source_url.startsWith("https://capitol.texas.gov/BillLookup/History.aspx?")
+      ), slug).toBe(true);
+      const result = certificationFor(slug);
+      expect(result.state, slug + ": " + result.reasons.join("; ")).toBe("AUTHORITY_READY");
+      expect(Object.values(result.gates).every(Boolean), slug).toBe(true);
+    }
+    expect(distinctReviews.size).toBe(cases.length);
+    expect(EDITORIAL_REVIEWS["charlene-ward-johnson"].source).toContain("legdir.capitol.texas.gov");
+    for (const slug of ["tom-oliverson", "alma-allen"]) {
+      const sources = applyPilotEditorial(slug, getRepresentativeAuthority(slug) ?? null)?.sources ?? [];
+      expect(sources.some(s => s.url.endsWith("Bill=HB2243"))).toBe(true);
+      expect(EDITORIAL_REVIEWS[slug].biography).toContain("vetoed");
+    }
+    expect(EDITORIAL_REVIEWS["gene-wu"].biography).toContain("coauthor");
+    const wu = applyPilotEditorial("gene-wu", getRepresentativeAuthority("gene-wu") ?? null);
+    expect(wu?.sources.some(s => s.label.includes("coauthored") && s.url.endsWith("Bill=HB107"))).toBe(true);
   });
 
   it("requires diverse, dated primary-source Speaker records instead of fictional sponsorship", () => {
