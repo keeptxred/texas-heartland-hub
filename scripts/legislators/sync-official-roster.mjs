@@ -304,6 +304,9 @@ function houseRoster(html) {
         "Elizabeth Campos:119": "3950",
         'Elizabeth "Liz" Campos:119': "3950",
         "Barbara Gervin-Hawkins:120": "3445",
+        "Marc LaHood:121": "4595",
+        "Mark Dorazio:122": "4145",
+        "Josey Garcia:124": "4170",
       })[`${reverseHouseName(member.member_name)}:${Number(member.id)}`] ?? member.member_bill_code}`,
       imageUrl: new URL(member.image, "https://house.texas.gov/").href,
     }))
