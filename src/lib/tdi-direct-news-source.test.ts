@@ -9,7 +9,7 @@ describe("TDI official dated newsroom feed", () => {
       '{ name: "Texas Department of Insurance — Direct News Releases", url: "https://www.tdi.texas.gov/news/index.rss", category: "Politics", mode: "rss" }'
     );
     expect(ingest).toContain("source.mode === \"rss\" ? \"application/rss+xml");
-    expect(ingest).toContain("parseFeed(resolved.text, source.name)");
+    expect(ingest).toContain("parseFeed(finalResult.text, source.name)");
     expect(ingest).toContain("resolvePublishTimestamp(rawDate || null)");
     expect(ingest).toContain("isTexasRelevant(item, result.source)");
   });
