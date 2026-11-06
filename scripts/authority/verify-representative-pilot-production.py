@@ -61,6 +61,9 @@ READY = (
     "rhetta-bowers", "john-bryant", "cas-garcia-hernandez",
     "trey-martinez-fischer", "philip-cortez", "john-lujan",
     "liz-campos", "barbara-gervin-hawkins",
+    "marc-lahood", "mark-dorazio", "diego-bernal", "josey-garcia",
+    "ray-lopez", "sam-harless", "charles-cunningham", "briscoe-cain",
+    "dennis-paul",
 )
 NOT_READY = ("dan-crenshaw", "john-cornyn", "greg-abbott", "jeff-barry")
 NS = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
