@@ -298,6 +298,8 @@ function houseRoster(html) {
         "Nicole Collier:95": "2360",
         "John McQueeney:97": "4665",
         "Giovanni Capriglione:98": "2345",
+        "Linda Garcia:107": "4485",
+        "Aicha Davis:109": "4465",
       })[`${reverseHouseName(member.member_name)}:${Number(member.id)}`] ?? member.member_bill_code}`,
       imageUrl: new URL(member.image, "https://house.texas.gov/").href,
     }))

@@ -55,6 +55,9 @@ READY = (
     "david-lowe", "salman-bhojani", "tony-tinderholt", "nicole-collier",
     "david-cook", "john-mcqueeney", "giovanni-capriglione", "charlie-geren",
     "venton-jones",
+    "chris-turner", "ana-maria-rodriguez-ramos", "rafael-anchia", "jessica-gonzalez",
+    "terry-meza", "jared-patterson", "linda-garcia", "morgan-meyer", "aicha-davis",
+    "toni-rose", "yvonne-davis", "angie-button",
 )
 NOT_READY = ("dan-crenshaw", "john-cornyn", "greg-abbott", "jeff-barry")
 NS = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
