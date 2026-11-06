@@ -1066,10 +1066,10 @@ export function applyPilotEditorial(
     sources: [
       ...sourceList,
       ...(billHistory && !sourceList.some((item) => item.url === billHistory)
-        ? [{ label: `Official 89th Legislature authored bill history (${billNumber})`, url: billHistory }]
+        ? [{ label: `Official 89th Legislature ${slug === "gene-wu" ? "coauthored" : "authored"} bill history (${billNumber})`, url: billHistory }]
         : []),
       ...(contrastingVetoUrl && !sourceList.some((item) => item.url === contrastingVetoUrl)
-        ? [{ label: "Official 89th Legislature open-meetings bill history (HB2520; vetoed)", url: contrastingVetoUrl }]
+        ? [{ label: `Official 89th Legislature vetoed bill history (${["tom-oliverson", "alma-allen"].includes(slug) ? "HB2243 teacher retention" : "HB2520 open meetings"})`, url: contrastingVetoUrl }]
         : []),
     ],
   };
