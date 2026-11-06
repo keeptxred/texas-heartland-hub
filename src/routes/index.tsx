@@ -265,7 +265,7 @@ function PoliticalHomepage() {
             <p className="mt-3 max-w-3xl text-xl font-semibold text-white/90">Texas politics, elections, government and public affairs</p>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/80">Keep TX Red examines Texas government decisions, legislative votes, public spending and policy. Read source-backed reporting, explore official records, and see clearly labeled conservative commentary without confusing opinion with the underlying facts.</p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/news" className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Latest Texas News</Link>
+              <Link to="/news" className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">{latest.length > 0 ? "Latest Texas News" : "Browse dated Texas reporting"}</Link>
               <a href="/texas-case" className="rounded-md border border-white/25 px-5 py-3 text-sm font-semibold">The Texas Case</a>
               <Link to="/bills" search={EMPTY_BILLS_SEARCH} className="rounded-md border border-white/25 px-5 py-3 text-sm font-semibold">Track Texas bills</Link>
               <Link to="/texas-politics" className="rounded-md border border-white/25 px-5 py-3 text-sm font-semibold">Texas politics</Link>
