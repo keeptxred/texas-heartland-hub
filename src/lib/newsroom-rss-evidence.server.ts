@@ -1,4 +1,6 @@
 import { isSyntheticNewsroomEvidence } from "./newsroom-evidence-integrity";
+import { dpsOfficialArticleRelayUrl } from "./dps-firstparty-article-relay";
+import { fetchReadableNewsroomSource } from "./newsroom-source-page.server";
 
 const RSS_EVIDENCE_FEEDS = [
   "https://gov.texas.gov/news/rss",
@@ -19,6 +21,10 @@ const RSS_EVIDENCE_FEEDS = [
 const MIN_USEFUL_BODY_CHARS = 400;
 const MAX_BODY_CHARS = 30_000;
 const FETCH_TIMEOUT_MS = 12_000;
+const DPS_PRIMARY_PREFLIGHT_LOOKBACK_HOURS = 72;
+// Two first-party government records per run, with existing 6 daily GitHub
+// opportunities. Do not extend the paid or published-article budgets.
+const DPS_PRIMARY_PREFLIGHT_FETCH_LIMIT = 2;
 
 type ExistingFeedRow = { id: number; link: string | null; extracted_body: string | null };
 
@@ -30,6 +36,10 @@ type EvidenceRefreshResult = {
   updatedRows: number;
   repairedSyntheticRows: number;
   evidenceCharsWritten: number;
+  dpsSourceRowsChecked: number;
+  dpsSourceBodiesFetched: number;
+  dpsSourceBodiesWritten: number;
+  dpsSourceCharsWritten: number;
   failures: Array<{ url: string; error: string }>;
   aiCalls: 0;
 };
@@ -123,12 +133,55 @@ async function mapWithConcurrency<T, R>(items: readonly T[], limit: number, fn: 
   return output;
 }
 
+/**
+ * Source text must be available before candidate scoring. The research-packet
+ * hydrator only sees *already chosen* candidates and cannot bootstrap a
+ * previously unseen primary-source story. Recover a maximum of two fresh,
+ * first-party DPS releases early, without minting packets or articles.
+ */
+async function prehydrateRecentDpsPrimaryEvidence(db: any): Promise<{
+  rowsChecked: number; fetched: number; written: number; chars: number;
+}> {
+  const since = new Date(Date.now() - DPS_PRIMARY_PREFLIGHT_LOOKBACK_HOURS * 60 * 60 * 1000).toISOString();
+  const { data, error } = await db.from("texas_news_feed")
+    .select("id,link,extracted_body")
+    .eq("source", "Texas DPS — Direct Press Releases")
+    .eq("target_site", "keeptxred")
+    .gte("pub_date", since)
+    .order("pub_date", { ascending: false })
+    .limit(8);
+  if (error) throw new Error(`DPS source preflight read failed: ${error.message}`);
+
+  const eligible = ((data ?? []) as ExistingFeedRow[])
+    .filter((row) => row.link && dpsOfficialArticleRelayUrl(row.link))
+    .filter((row) => !row.extracted_body || row.extracted_body.length < MIN_USEFUL_BODY_CHARS
+      || isSyntheticNewsroomEvidence(row.extracted_body))
+    .slice(0, DPS_PRIMARY_PREFLIGHT_FETCH_LIMIT);
+  const fetched = await mapWithConcurrency(eligible, 2, async (row) =>
+    ({ row, body: await fetchReadableNewsroomSource(row.link!) }));
+
+  let written = 0;
+  let chars = 0;
+  for (const { row, body } of fetched) {
+    if (!body || !shouldReplaceExistingEvidence(row.extracted_body, body)) continue;
+    const { error: updateError } = await db.from("texas_news_feed")
+      .update({ extracted_body: body })
+      .eq("id", row.id)
+      .eq("source", "Texas DPS — Direct Press Releases");
+    if (updateError) throw new Error(`DPS source preflight write failed for feed ${row.id}: ${updateError.message}`);
+    written++;
+    chars += body.length;
+  }
+  return { rowsChecked: (data ?? []).length, fetched: fetched.length, written, chars };
+}
+
 export async function refreshNewsroomRssEvidence(): Promise<EvidenceRefreshResult> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   // Feed evidence columns intentionally lead the generated Database type.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabaseAdmin as any;
   const fetched = await mapWithConcurrency(RSS_EVIDENCE_FEEDS, 4, fetchFeed);
+  const dps = await prehydrateRecentDpsPrimaryEvidence(db);
   const failures = fetched.filter((item) => item.error).map((item) => ({ url: item.url, error: item.error! }));
   const evidenceByLink = new Map<string, string>();
   for (const result of fetched) {
@@ -171,6 +224,10 @@ export async function refreshNewsroomRssEvidence(): Promise<EvidenceRefreshResul
     updatedRows,
     repairedSyntheticRows,
     evidenceCharsWritten,
+    dpsSourceRowsChecked: dps.rowsChecked,
+    dpsSourceBodiesFetched: dps.fetched,
+    dpsSourceBodiesWritten: dps.written,
+    dpsSourceCharsWritten: dps.chars,
     failures,
     aiCalls: 0,
   };
