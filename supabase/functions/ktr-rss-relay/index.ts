@@ -8,6 +8,9 @@ const FEEDS: Record<string, string> = {
   "official-secretary-of-state-press-rss": "https://www.sos.state.tx.us/rss/press.xml",
   "official-texas-register-rss": "https://www.sos.state.tx.us/texreg/texreg.xml",
   "official-texas-dps-wanted-rss": "https://www.dps.texas.gov/rss/most-wanted.xml",
+  // The DPS HTML release index is a fixed first-party page. Only the transport
+  // changes here; the original URLs and dated headings remain unchanged.
+  "official-texas-dps-press-index": "https://www.dps.texas.gov/news/press-releases",
   "official-comptroller-rss": "https://public.govdelivery.com/topics/TXCOMPT_1/feed.rss",
   "khou-local": "https://www.khou.com/feeds/syndication/rss/news/local",
   "khou-sports": "https://www.khou.com/feeds/syndication/rss/sports/",
@@ -76,7 +79,10 @@ Deno.serve(async (req: Request) => {
   const upstreamUrl = FEEDS[key];
   if (!upstreamUrl) return new Response("Unknown feed", { status: 404 });
   try {
-    const upstream = await fetch(upstreamUrl, { headers: UPSTREAM_HEADERS, redirect: "follow", signal: AbortSignal.timeout(15000) });
+    const headers = key === "official-texas-dps-press-index"
+      ? { ...UPSTREAM_HEADERS, Accept: "text/html,application/xhtml+xml,*/*" }
+      : UPSTREAM_HEADERS;
+    const upstream = await fetch(upstreamUrl, { headers, redirect: "follow", signal: AbortSignal.timeout(15000) });
     const body = await upstream.arrayBuffer();
     return new Response(body, {
       status: upstream.status,
