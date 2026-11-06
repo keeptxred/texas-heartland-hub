@@ -58,6 +58,9 @@ READY = (
     "chris-turner", "ana-maria-rodriguez-ramos", "rafael-anchia", "jessica-gonzalez",
     "terry-meza", "jared-patterson", "linda-garcia", "morgan-meyer", "aicha-davis",
     "toni-rose", "yvonne-davis", "angie-button",
+    "rhetta-bowers", "john-bryant", "cas-garcia-hernandez",
+    "trey-martinez-fischer", "philip-cortez", "john-lujan",
+    "liz-campos", "barbara-gervin-hawkins",
 )
 NOT_READY = ("dan-crenshaw", "john-cornyn", "greg-abbott", "jeff-barry")
 NS = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
