@@ -29,6 +29,8 @@ describe("bounded DPS article evidence egress", () => {
     expect(proxy).toContain('key === "official-texas-dps-article" && allowedDpsSlug');
     expect(proxy).toContain("https://www.dps.texas.gov/news/");
     expect(proxy).toContain('if (!upstreamUrl) return new Response("Unknown feed"');
+    expect(proxy).toContain('trimSlash(final.pathname) !== trimSlash(requested.pathname)');
+    expect(proxy).toContain("DPS article redirected away from the verified source");
     expect(proxy).toContain('key === "official-texas-dps-article"');
     expect(hydration).toContain("dpsOfficialArticleRelayUrl(url)");
     expect(hydration).toContain('/too many redirects/i.test(');
