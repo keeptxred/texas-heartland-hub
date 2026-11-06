@@ -29,6 +29,31 @@ type EditorialReview = {
  * A synchronized roster change that disagrees with a review FAILS CLOSED.
  */
 export const EDITORIAL_REVIEWS: Record<string, EditorialReview> = {
+  "tom-oliverson": {
+    name: "Tom Oliverson", office: "Texas House", district: "House District 130", party: "R",
+    officialUrl: "https://house.texas.gov/members/3535", biography: "Tom Oliverson represents House District 130 in northwest Harris County, including Tomball and Cypress. An anesthesiologist, his official House biography documents a leadership role in the House Republican Caucus and former presidency of the National Council of State Insurance Legislators. The official 89th Legislature roster assigns him to Appropriations, Environmental Regulation and Redistricting. He authored HB 1052 on telehealth benefit coverage, which state records identify as effective. His separate HB 2243 proposal concerning teacher job satisfaction and retention was vetoed, so an introduction is not counted as a law.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/3535/biography",
+  },
+  "alma-allen": {
+    name: "Alma Allen", office: "Texas House", district: "House District 131", party: "D",
+    officialUrl: "https://house.texas.gov/members/2100", biography: "Alma A. Allen serves Houston's House District 131. Before entering the Texas House, she served more than ten years on the State Board of Education and taught and led schools in Houston ISD over a 39-year education career. Her official House biography lists Texas Southern University degrees and a University of Houston doctorate in curriculum and instruction. The 89th Legislature roster identifies Corrections and Public Education. She authored HB 2598 regarding licensed school psychologists, recorded effective; HB 2243 concerning a teacher-retention commission was separately vetoed. These distinct outcomes are tied to official bill histories.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/2100/biography",
+  },
+  "mike-schofield": {
+    name: "Mike Schofield", office: "Texas House", district: "House District 132", party: "R",
+    officialUrl: "https://house.texas.gov/members/3095", biography: "Mike Schofield represents Katy, Cy-Fair and Waller areas in House District 132. His official biography records eleven years advising former Governor Rick Perry, including on property rights, eminent domain and election integrity, and prior state income-tax amendment work. The 89th Legislature committee roster lists Judiciary and Civil Jurisprudence and Public Health. The state's source-linked bill history records his authorship of HB 1445 regarding payment for appointed counsel serving indigent defendants in criminal and juvenile proceedings; that measure is listed as effective. Prior-session work is not counted as a current-session vote or law.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/3095/biography",
+  },
+  "mano-deayala": {
+    name: "Mano DeAyala", office: "Texas House", district: "House District 133", party: "R",
+    officialUrl: "https://house.texas.gov/members/4135", biography: "Mano DeAyala serves House District 133 in west Houston's Energy Corridor. The official House biography describes a 2017 appointment to the Texas Board of Criminal Justice and a 2020 federal appointment to adjudicate trade disputes under the USMCA. For the 89th Legislature, he was assigned to Appropriations and Culture, Recreation and Tourism, including vice chairmanship of the Articles I, IV and V appropriations subcommittee described on his House page. He authored HB 2253 on cancelling certain bond-authorization elections; the 2025 state bill history identifies that proposal as effective.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/4135/biography",
+  },
+  "ann-johnson": {
+    name: "Ann Johnson", office: "Texas House", district: "House District 134", party: "D",
+    officialUrl: "https://house.texas.gov/members/3985", biography: "Ann Johnson serves Houston's House District 134. Her official House biography documents legal training at South Texas College of Law Houston, service as the Harris County chief human-trafficking prosecutor and involvement with a specialty juvenile court assisting trafficking survivors. The 89th Legislature committee assignments include Calendars, Judiciary and Civil Jurisprudence as vice chair, and Public Health. She authored HB 1481 governing student personal communication devices on school campuses, recorded effective by the Texas Legislature. Her separate HB 2520 open-meetings proposal was vetoed, so source-backed outcomes must remain distinct.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/3985/biography",
+  },
   "marc-lahood": {
     name: "Marc LaHood", office: "Texas House", district: "House District 121", party: "R",
     officialUrl: "https://house.texas.gov/members/4595",
@@ -949,6 +974,7 @@ export const SCRIPT2_REVIEWED_SLUGS = [
   "chris-turner", "ana-maria-rodriguez-ramos", "rafael-anchia", "jessica-gonzalez", "terry-meza", "jared-patterson", "linda-garcia", "morgan-meyer", "aicha-davis", "toni-rose", "yvonne-davis", "angie-button",
   "rhetta-bowers", "john-bryant", "cas-garcia-hernandez", "trey-martinez-fischer", "philip-cortez", "john-lujan", "liz-campos", "barbara-gervin-hawkins",
   "marc-lahood", "mark-dorazio", "diego-bernal", "josey-garcia", "ray-lopez", "sam-harless", "charles-cunningham", "briscoe-cain", "dennis-paul",
+  "tom-oliverson", "alma-allen", "mike-schofield", "mano-deayala", "ann-johnson",
 ] as const;
 
 export const CERTIFICATION_CANDIDATE_SLUGS = [
@@ -963,7 +989,7 @@ export function applyPilotEditorial(
   const review = EDITORIAL_REVIEWS[slug];
   if (!authority || !review) return authority;
   const official89RCommittees = "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf";
-  const cohort = ["david-lowe","salman-bhojani","tony-tinderholt","nicole-collier","david-cook","john-mcqueeney","giovanni-capriglione","charlie-geren","venton-jones","chris-turner","ana-maria-rodriguez-ramos","rafael-anchia","jessica-gonzalez","terry-meza","jared-patterson","linda-garcia","morgan-meyer","aicha-davis","toni-rose","yvonne-davis","angie-button","rhetta-bowers","john-bryant","cas-garcia-hernandez","trey-martinez-fischer","philip-cortez","john-lujan","liz-campos","barbara-gervin-hawkins","marc-lahood","mark-dorazio","diego-bernal","josey-garcia","ray-lopez","sam-harless","charles-cunningham","briscoe-cain","dennis-paul"] as readonly string[];
+  const cohort = ["david-lowe","salman-bhojani","tony-tinderholt","nicole-collier","david-cook","john-mcqueeney","giovanni-capriglione","charlie-geren","venton-jones","chris-turner","ana-maria-rodriguez-ramos","rafael-anchia","jessica-gonzalez","terry-meza","jared-patterson","linda-garcia","morgan-meyer","aicha-davis","toni-rose","yvonne-davis","angie-button","rhetta-bowers","john-bryant","cas-garcia-hernandez","trey-martinez-fischer","philip-cortez","john-lujan","liz-campos","barbara-gervin-hawkins","marc-lahood","mark-dorazio","diego-bernal","josey-garcia","ray-lopez","sam-harless","charles-cunningham","briscoe-cain","dennis-paul","tom-oliverson","alma-allen","mike-schofield","mano-deayala","ann-johnson"] as readonly string[];
   const authoredBillHighlights: Record<string, string> = {
     "rhetta-bowers": "HB1734",
     "john-bryant": "HB2703",
@@ -982,13 +1008,21 @@ export function applyPilotEditorial(
     "charles-cunningham": "HB1178",
     "briscoe-cain": "HB1397",
     "dennis-paul": "HB138",
+    "tom-oliverson": "HB1052",
+    "alma-allen": "HB2598",
+    "mike-schofield": "HB1445",
+    "mano-deayala": "HB2253",
+    "ann-johnson": "HB1481",
   };
   const sourceList = cohort.includes(slug) && !authority.sources.some((item) => item.url === official89RCommittees)
     ? [...authority.sources, { label: "Official House 89th Legislature standing committee assignment roster", url: official89RCommittees }]
     : authority.sources;
   const billNumber = authoredBillHighlights[slug];
   const billHistory = billNumber ? `https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=${billNumber}` : null;
-  const contrastingVetoUrl = slug === "briscoe-cain" ? "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=HB2520" : null;
+  const contrastingVetoUrl = ["briscoe-cain", "ann-johnson"].includes(slug)
+    ? "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=HB2520"
+    : ["tom-oliverson", "alma-allen"].includes(slug)
+    ? "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=HB2243" : null;
   return {
     ...authority,
     biography: review.biography,
