@@ -58,3 +58,12 @@ These rules apply to every human or AI coding agent working in this repository.
 ## Supabase Data API permissions
 
 For every new public table, include explicit per-role GRANT statements and ENABLE ROW LEVEL SECURITY in the same migration. Grant only the access the application needs; private tables must not receive anon/authenticated grants. Identity/serial inserts also need explicit sequence privileges for the inserting role. Policies do not replace grants. Run `node scripts/database/validate-data-api-grants.mjs` and its test alongside the repository validation contract. The October 2026 readiness migration handles the frozen legacy creation history; do not add new files to its legacy exemption list.
+
+
+## Mandatory failure-repair execution contract (owner-approved 2026-11-06)
+
+This is an implementation contract, not a reporting-only checklist. For each discovered failure: inspect the exact failed step and logs; identify the underlying source/configuration/data cause; make the smallest safe repair on a protected branch; execute the relevant validation; repair any new failures and repeat; verify the deployed result where applicable. Never weaken, skip, or bypass protection, invent evidence, or promote unverified pages. A checkpoint or PR creation is not completion.
+
+**Stopping conditions:** (1) every assigned workstream is fixed and independently verified; (2) a genuine fatal blocker prevents further work and no independent actionable work remains; or (3) a hard execution/tool limit is reached. A running GitHub Action, pending PR, posted checkpoint, discovered error, or completion of only one workstream is NOT a stopping condition. When CI is pending, work on another independent failure. Record precise pending actions and evidence in the existing checkpoint before a hard limit. Never claim a repair or production verification before it actually passes.
+
+**Automation safety:** GitHub Actions may collect and classify failed checks and create/update an issue with evidence, but may not silently modify protected branches, weaken gates, auto-merge arbitrary generated repairs, or loop without bounds. Automated code repair requires a separately authorized agent with scoped permissions and a maximum attempt budget; it must propose protected PRs and pass existing gates. Do not create recurring ChatGPT tasks for this work.
