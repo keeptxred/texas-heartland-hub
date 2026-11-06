@@ -30,6 +30,7 @@ const MAX_PUBLISHED = 1;
 const GAP_SCAN_LIMIT = 80;
 const FAILURE_LOOKBACK_HOURS = 24;
 const SERIES_LOOKBACK_HOURS = 72;
+const GAP_VIEW_MAX_READ_ATTEMPTS = 2;
 
 type GapRow = {
   id: number;
@@ -65,6 +66,33 @@ function bearerToken(request: Request): string | null {
 
 function titleKey(value: string): string {
   return value.trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+async function loadOverdueGapsWithTimeoutRetry(db: any, cutoff: string): Promise<{
+  data: GapRow[] | null;
+  error: { code?: string; message: string } | null;
+  attempts: number;
+}> {
+  // The view involves a per-feed cluster aggregate and title deduplication.
+  // Retry ONLY this read-only query once after SQLSTATE 57014 (or its text
+  // equivalent), not downstream AI generation or actual publication.
+  for (let attempt = 1; attempt <= GAP_VIEW_MAX_READ_ATTEMPTS; attempt++) {
+    const { data, error } = await db
+      .from("news_coverage_gaps")
+      .select("id,title,coverage_priority,source_reputation_score,pub_date")
+      .eq("gap_reason", "article_generation_or_publish_gap")
+      .lt("pub_date", cutoff)
+      .order("pub_date", { ascending: false })
+      .limit(GAP_SCAN_LIMIT);
+    if (!error) return { data: (data ?? []) as GapRow[], error: null, attempts: attempt };
+    const timedOut = error.code === "57014"
+      || /statement timeout|canceling statement due to statement timeout/i.test(error.message ?? "");
+    if (!timedOut || attempt >= GAP_VIEW_MAX_READ_ATTEMPTS) {
+      return { data: null, error, attempts: attempt };
+    }
+    console.warn("[overdue-gap] one retry of timed-out coverage-gap read; publication gates unchanged");
+  }
+  return { data: null, error: { message: "Coverage-gap read attempt budget exhausted" }, attempts: GAP_VIEW_MAX_READ_ATTEMPTS };
 }
 
 async function recentFailureCounts(db: any, ids: number[]): Promise<Map<number, number>> {
@@ -200,16 +228,11 @@ async function publishOverdueGaps(request: Request) {
   const db = supabaseAdmin as any;
   const cutoff = new Date(Date.now() - OVERDUE_HOURS * 60 * 60 * 1000).toISOString();
 
-  const { data: rawGaps, error: gapError } = await db
-    .from("news_coverage_gaps")
-    .select("id,title,coverage_priority,source_reputation_score,pub_date")
-    .eq("gap_reason", "article_generation_or_publish_gap")
-    .lt("pub_date", cutoff)
-    .order("pub_date", { ascending: false })
-    .limit(GAP_SCAN_LIMIT);
+  const { data: rawGaps, error: gapError, attempts: gapReadAttempts } =
+    await loadOverdueGapsWithTimeoutRetry(db, cutoff);
 
   if (gapError) {
-    return Response.json({ ok: false, error: gapError.message }, { status: 500 });
+    return Response.json({ ok: false, error: gapError.message, gap_read_attempts: gapReadAttempts }, { status: 500 });
   }
 
   const gaps = (rawGaps ?? []) as GapRow[];
