@@ -58,6 +58,10 @@ const DIRECT_SOURCES: Source[] = [
   // The index date must be verified; old releases are NEVER dated by crawl time.
   { name: "Texas DPS — Direct Press Releases", url: "https://www.dps.texas.gov/news/press-releases", category: "Local", mode: "html-links", include: "^/news/(?!press-releases(?:/|$)|most-wanted(?:/|$))[a-z0-9][a-z0-9-]+/?$" },
   { name: "Texas Register", url: "https://www.sos.state.tx.us/texreg/texreg.xml", mode: "rss" },
+  // Texas Department of Insurance maintains an agency-published RSS 2.0 news
+  // release feed. Keep the original .gov source URLs and real RSS timestamps;
+  // do not synthesize dates or classify discovery mirrors as primary evidence.
+  { name: "Texas Department of Insurance — Direct News Releases", url: "https://www.tdi.texas.gov/news/index.rss", category: "Politics", mode: "rss" },
   { name: "Texas Comptroller", url: "https://public.govdelivery.com/topics/TXCOMPT_1/feed.rss", mode: "rss" },
   // Canonical first-party releases are necessary: Google News RSS wrappers
   // have neither a reliable primary URL nor enough text for quality preflight.
