@@ -1,0 +1,159 @@
+{
+  "purpose": "Specific reviewed official-source provenance for House districts 101–112, not an indexability grant by itself.",
+  "reviewedAt": "2026-11-06",
+  "period": "89th Texas Legislature, 2025-2026, with older service dates clearly separated",
+  "committeeRoster": "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf",
+  "notes": [
+    "Texas House pages for Linda Garcia (HD107) and Aicha Davis (HD109) contain no substantive biographies. Use the state Legislative Directory, Legislative Reference Library and official 89R biographical source instead; never invent degrees or credentials",
+    "Terry Meza and Chris Turner House biographical committee statements mention prior legislatures. Use the explicitly dated 89R official standing-committee roster to avoid presenting stale assignments as current",
+    "Generated primary member references for HD107 and HD109 used district numbers instead of official member IDs. Corrected with scheduled roster-sync preservation",
+    "Names on government sources may include diacritics or middle names absent from longstanding KTR canonical slugs; keep previously established profile URL and verify identity by office/district/member ID",
+    "Bill-role row counts in Supabase are not numbers of enacted bills, complete voting records, or official lifetime totals; existing verified limited 89th bill histories are reused and all six gates independently enforced"
+  ],
+  "reviews": [
+    {
+      "slug": "chris-turner",
+      "district": 101,
+      "name": "Chris Turner",
+      "officialMemberUrl": "https://house.texas.gov/members/4680",
+      "primaryBiographySource": "https://house.texas.gov/members/4680/biography",
+      "officialCommitteeSource": "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf",
+      "existing89thBillRoleDatabaseRows": 143,
+      "canonicalUrl": "https://keeptxred.com/representatives/chris-turner",
+      "sourceLimits": "Role-linked 89th history samples only; not all enacted laws, votes or sponsored bills.",
+      "reviewedAt": "2026-11-06"
+    },
+    {
+      "slug": "ana-maria-rodriguez-ramos",
+      "district": 102,
+      "name": "Ana-Maria Rodriguez Ramos",
+      "officialMemberUrl": "https://house.texas.gov/members/3735",
+      "primaryBiographySource": "https://house.texas.gov/members/3735/biography",
+      "officialCommitteeSource": "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf",
+      "existing89thBillRoleDatabaseRows": 148,
+      "canonicalUrl": "https://keeptxred.com/representatives/ana-maria-rodriguez-ramos",
+      "sourceLimits": "Role-linked 89th history samples only; not all enacted laws, votes or sponsored bills.",
+      "reviewedAt": "2026-11-06"
+    },
+    {
+      "slug": "rafael-anchia",
+      "district": 103,
+      "name": "Rafael Anchía",
+      "officialMemberUrl": "https://house.texas.gov/members/2150",
+      "primaryBiographySource": "https://house.texas.gov/members/2150/biography",
+      "officialCommitteeSource": "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf",
+      "existing89thBillRoleDatabaseRows": 162,
+      "canonicalUrl": "https://keeptxred.com/representatives/rafael-anchia",
+      "sourceLimits": "Role-linked 89th history samples only; not all enacted laws, votes or sponsored bills.",
+      "reviewedAt": "2026-11-06"
+    },
+    {
+      "slug": "jessica-gonzalez",
+      "district": 104,
+      "name": "Jessica González",
+      "officialMemberUrl": "https://house.texas.gov/members/3335",
+      "primaryBiographySource": "https://house.texas.gov/members/3335/biography",
+      "officialCommitteeSource": "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf",
+      "existing89thBillRoleDatabaseRows": 72,
+      "canonicalUrl": "https://keeptxred.com/representatives/jessica-gonzalez",
+      "sourceLimits": "Role-linked 89th history samples only; not all enacted laws, votes or sponsored bills.",
+      "reviewedAt": "2026-11-06"
+    },
+    {
+      "slug": "terry-meza",
+      "district": 105,
+      "name": "Terry Meza",
+      "officialMemberUrl": "https://house.texas.gov/members/3455",
+      "primaryBiographySource": "https://house.texas.gov/members/3455/biography",
+      "officialCommitteeSource": "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf",
+      "existing89thBillRoleDatabaseRows": 134,
+      "canonicalUrl": "https://keeptxred.com/representatives/terry-meza",
+      "sourceLimits": "Role-linked 89th history samples only; not all enacted laws, votes or sponsored bills.",
+      "reviewedAt": "2026-11-06"
+    },
+    {
+      "slug": "jared-patterson",
+      "district": 106,
+      "name": "Jared Patterson",
+      "officialMemberUrl": "https://house.texas.gov/members/3655",
+      "primaryBiographySource": "https://house.texas.gov/members/3655/biography",
+      "officialCommitteeSource": "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf",
+      "existing89thBillRoleDatabaseRows": 292,
+      "canonicalUrl": "https://keeptxred.com/representatives/jared-patterson",
+      "sourceLimits": "Role-linked 89th history samples only; not all enacted laws, votes or sponsored bills.",
+      "reviewedAt": "2026-11-06"
+    },
+    {
+      "slug": "linda-garcia",
+      "district": 107,
+      "name": "Linda Garcia",
+      "officialMemberUrl": "https://house.texas.gov/members/4485",
+      "primaryBiographySource": "https://legdir.capitol.texas.gov/MemberInfo.aspx?Chamber=H&Code=A4485",
+      "officialCommitteeSource": "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf",
+      "existing89thBillRoleDatabaseRows": 85,
+      "canonicalUrl": "https://keeptxred.com/representatives/linda-garcia",
+      "sourceLimits": "Role-linked 89th history samples only; not all enacted laws, votes or sponsored bills.",
+      "reviewedAt": "2026-11-06"
+    },
+    {
+      "slug": "morgan-meyer",
+      "district": 108,
+      "name": "Morgan Meyer",
+      "officialMemberUrl": "https://house.texas.gov/members/3075",
+      "primaryBiographySource": "https://house.texas.gov/members/3075/biography",
+      "officialCommitteeSource": "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf",
+      "existing89thBillRoleDatabaseRows": 147,
+      "canonicalUrl": "https://keeptxred.com/representatives/morgan-meyer",
+      "sourceLimits": "Role-linked 89th history samples only; not all enacted laws, votes or sponsored bills.",
+      "reviewedAt": "2026-11-06"
+    },
+    {
+      "slug": "aicha-davis",
+      "district": 109,
+      "name": "Aicha Davis",
+      "officialMemberUrl": "https://house.texas.gov/members/4465",
+      "primaryBiographySource": "https://lrl.texas.gov/legeLeaders/members/memberdisplay.cfm?memberID=5921",
+      "officialCommitteeSource": "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf",
+      "existing89thBillRoleDatabaseRows": 169,
+      "canonicalUrl": "https://keeptxred.com/representatives/aicha-davis",
+      "sourceLimits": "Role-linked 89th history samples only; not all enacted laws, votes or sponsored bills.",
+      "reviewedAt": "2026-11-06"
+    },
+    {
+      "slug": "toni-rose",
+      "district": 110,
+      "name": "Toni Rose",
+      "officialMemberUrl": "https://house.texas.gov/members/2555",
+      "primaryBiographySource": "https://house.texas.gov/members/2555/biography",
+      "officialCommitteeSource": "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf",
+      "existing89thBillRoleDatabaseRows": 93,
+      "canonicalUrl": "https://keeptxred.com/representatives/toni-rose",
+      "sourceLimits": "Role-linked 89th history samples only; not all enacted laws, votes or sponsored bills.",
+      "reviewedAt": "2026-11-06"
+    },
+    {
+      "slug": "yvonne-davis",
+      "district": 111,
+      "name": "Yvonne Davis",
+      "officialMemberUrl": "https://house.texas.gov/members/2625",
+      "primaryBiographySource": "https://lrl.texas.gov/legeLeaders/members/memberdisplay.cfm?memberID=116",
+      "officialCommitteeSource": "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf",
+      "existing89thBillRoleDatabaseRows": 71,
+      "canonicalUrl": "https://keeptxred.com/representatives/yvonne-davis",
+      "sourceLimits": "Role-linked 89th history samples only; not all enacted laws, votes or sponsored bills.",
+      "reviewedAt": "2026-11-06"
+    },
+    {
+      "slug": "angie-button",
+      "district": 112,
+      "name": "Angie Button",
+      "officialMemberUrl": "https://house.texas.gov/members/2510",
+      "primaryBiographySource": "https://house.texas.gov/members/2510/biography",
+      "officialCommitteeSource": "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf",
+      "existing89thBillRoleDatabaseRows": 168,
+      "canonicalUrl": "https://keeptxred.com/representatives/angie-button",
+      "sourceLimits": "Role-linked 89th history samples only; not all enacted laws, votes or sponsored bills.",
+      "reviewedAt": "2026-11-06"
+    }
+  ]
+}
