@@ -29,6 +29,31 @@ type EditorialReview = {
  * A synchronized roster change that disagrees with a review FAILS CLOSED.
  */
 export const EDITORIAL_REVIEWS: Record<string, EditorialReview> = {
+  "senfronia-thompson": {
+    name: "Senfronia Thompson", office: "Texas House", district: "House District 141", party: "D",
+    officialUrl: "https://house.texas.gov/members/4630", biography: "Senfronia Thompson has represented northeast Houston's House District 141 for decades and is recognized as dean of the Texas House. Her official House biography documents growing up in Houston and earning degrees in biology from Texas Southern University, education from Prairie View A&M University, law from Thurgood Marshall School of Law and international law from the University of Houston. The dated 89th Legislature roster lists Licensing and Administrative Procedures, where she was vice chair, and State Affairs. She authored HB 109 on development of inpatient mental-health facilities and designation of residential treatment resources; the official bill history records it as effective.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/4630/biography",
+  },
+  "harold-dutton": {
+    name: "Harold Dutton", office: "Texas House", district: "House District 142", party: "D",
+    officialUrl: "https://house.texas.gov/members/2650", biography: "Harold V. Dutton Jr. represents House District 142 in northeast Houston and has long-standing roots in the Fifth Ward. His official Texas House biography documents an accounting degree from Texas Southern University, work at Conoco and earlier service as executive director of Julia C. Hester House, along with involvement in Houston television broadcasting. The published 89th Legislature committee roster names Judiciary and Civil Jurisprudence, including chairmanship of the Family and Fiduciary Relationships subcommittee, and Public Education. He authored HB 100 on school instructional-material purchase, adoption and use; the Texas Legislature's 2025 history reports the measure effective.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/2650/biography",
+  },
+  "ana-hernandez": {
+    name: "Ana Hernandez", office: "Texas House", district: "House District 143", party: "D",
+    officialUrl: "https://house.texas.gov/members/3155", biography: "Ana Hernandez represents House District 143, encompassing Houston's Second Ward and Magnolia Park, Galena Park, Jacinto City, and portions of Baytown and the East End. Her official biography records being born in Reynosa, raised in Pasadena and having served multiple Texas House terms. The 89th Legislature dated roster lists Calendars, Licensing and Administrative Procedures and State Affairs, where she was vice chair, plus Telecommunications and Broadband. She authored HB 1445 addressing compensation for appointed legal counsel for indigent people in criminal and juvenile proceedings; the state 2025 legislative record reports the measure effective. Her previous committee history is not substituted for 89th-session appointments.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/3155/biography",
+  },
+  "mary-ann-perez": {
+    name: "Mary Ann Perez", office: "Texas House", district: "House District 144", party: "D",
+    officialUrl: "https://house.texas.gov/members/2535", biography: "Mary Ann Perez serves House District 144 in southeastern Harris County. Before election to the Texas House, she chaired the Houston Community College Board of Trustees, worked in insurance and earned a business-administration degree from the University of Houston-Downtown, according to her official biography. The 89th Legislature roster places her on Licensing and Administrative Procedures and Transportation, where she served as vice chair, together with its Transportation Funding subcommittee. She authored HB 201 concerning the financial crimes intelligence center; the state bill history records it as effective. Her separate HB 3063 municipal parking enforcement proposal was listed as passed but not enacted.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/2535/biography",
+  },
+  "christina-morales": {
+    name: "Christina Morales", office: "Texas House", district: "House District 145", party: "D",
+    officialUrl: "https://house.texas.gov/members/3910", biography: "Christina Morales represents Houston's House District 145 and inherited leadership of the family-owned Morales Funeral Home at age 23. Her official House biography traces the business to her grandparents' 1931 Houston funeral home and their later Spanish-language radio station, documenting a distinct history of civic and commercial work in the Second Ward. During the 89th Legislature she served on Human Services and Transportation. She authored HB 2492 on detention after bond posting in certain family-violence arrests; the official 2025 bill history marks it effective. A signed House concurrent resolution is not characterized as a new state law.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/3910/biography",
+  },
   "jon-rosenthal": {
     name: "Jon Rosenthal", office: "Texas House", district: "House District 135", party: "D",
     officialUrl: "https://house.texas.gov/members/3635", biography: "Jon E. Rosenthal serves House District 135 in northwest Houston, Cypress and Katy. The official House biography records a mechanical-engineering degree from the University of Texas at Austin, postgraduate subsea-engineering studies at the University of Houston, and over 25 years of oil-and-gas engineering and project-management work. In the 89th Legislature he served on Energy Resources and Intergovernmental Affairs and was vice chair of Redistricting. His authored HB 367 addresses verification of excused school absences for children with serious illnesses and was recorded effective. A separate firefighters employment proposal, HB 3977, passed but is not reported here as enacted.",
@@ -1006,6 +1031,7 @@ export const SCRIPT2_REVIEWED_SLUGS = [
   "marc-lahood", "mark-dorazio", "diego-bernal", "josey-garcia", "ray-lopez", "sam-harless", "charles-cunningham", "briscoe-cain", "dennis-paul",
   "tom-oliverson", "alma-allen", "mike-schofield", "mano-deayala", "ann-johnson",
   "jon-rosenthal", "john-bucy", "gene-wu", "lacey-hull", "charlene-ward-johnson", "armando-walle",
+  "senfronia-thompson", "harold-dutton", "ana-hernandez", "mary-ann-perez", "christina-morales",
 ] as const;
 
 export const CERTIFICATION_CANDIDATE_SLUGS = [
@@ -1020,7 +1046,7 @@ export function applyPilotEditorial(
   const review = EDITORIAL_REVIEWS[slug];
   if (!authority || !review) return authority;
   const official89RCommittees = "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf";
-  const cohort = ["david-lowe","salman-bhojani","tony-tinderholt","nicole-collier","david-cook","john-mcqueeney","giovanni-capriglione","charlie-geren","venton-jones","chris-turner","ana-maria-rodriguez-ramos","rafael-anchia","jessica-gonzalez","terry-meza","jared-patterson","linda-garcia","morgan-meyer","aicha-davis","toni-rose","yvonne-davis","angie-button","rhetta-bowers","john-bryant","cas-garcia-hernandez","trey-martinez-fischer","philip-cortez","john-lujan","liz-campos","barbara-gervin-hawkins","marc-lahood","mark-dorazio","diego-bernal","josey-garcia","ray-lopez","sam-harless","charles-cunningham","briscoe-cain","dennis-paul","tom-oliverson","alma-allen","mike-schofield","mano-deayala","ann-johnson","jon-rosenthal","john-bucy","gene-wu","lacey-hull","charlene-ward-johnson","armando-walle"] as readonly string[];
+  const cohort = ["david-lowe","salman-bhojani","tony-tinderholt","nicole-collier","david-cook","john-mcqueeney","giovanni-capriglione","charlie-geren","venton-jones","chris-turner","ana-maria-rodriguez-ramos","rafael-anchia","jessica-gonzalez","terry-meza","jared-patterson","linda-garcia","morgan-meyer","aicha-davis","toni-rose","yvonne-davis","angie-button","rhetta-bowers","john-bryant","cas-garcia-hernandez","trey-martinez-fischer","philip-cortez","john-lujan","liz-campos","barbara-gervin-hawkins","marc-lahood","mark-dorazio","diego-bernal","josey-garcia","ray-lopez","sam-harless","charles-cunningham","briscoe-cain","dennis-paul","tom-oliverson","alma-allen","mike-schofield","mano-deayala","ann-johnson","jon-rosenthal","john-bucy","gene-wu","lacey-hull","charlene-ward-johnson","armando-walle","senfronia-thompson","harold-dutton","ana-hernandez","mary-ann-perez","christina-morales"] as readonly string[];
   const authoredBillHighlights: Record<string, string> = {
     "rhetta-bowers": "HB1734",
     "john-bryant": "HB2703",
@@ -1050,6 +1076,11 @@ export function applyPilotEditorial(
     "lacey-hull": "HB138",
     "charlene-ward-johnson": "HB1105",
     "armando-walle": "HB1532",
+    "senfronia-thompson": "HB109",
+    "harold-dutton": "HB100",
+    "ana-hernandez": "HB1445",
+    "mary-ann-perez": "HB201",
+    "christina-morales": "HB2492",
   };
   const sourceList = cohort.includes(slug) && !authority.sources.some((item) => item.url === official89RCommittees)
     ? [...authority.sources, { label: "Official House 89th Legislature standing committee assignment roster", url: official89RCommittees }]
