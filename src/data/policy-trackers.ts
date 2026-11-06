@@ -272,7 +272,6 @@ export const POLICY_TRACKERS: PolicyTracker[] = [
     related: [
       { label: "The Texas Case for Election Integrity", href: "/texas-case/election-integrity", kind: "editorial" },
       { label: "Election-integrity facts & framework", href: "/texas-case/facts/election-integrity", kind: "facts" },
-      { label: "Election Central", href: "/elections/2026", kind: "reference" },
       { label: "Texas Political Reference", href: "/texas-political-reference", kind: "reference" },
     ],
     keywords: ["election", "elections", "voter id", "voter registration", "mail ballot", "ballot", "election integrity", "poll watcher", "audit"],
