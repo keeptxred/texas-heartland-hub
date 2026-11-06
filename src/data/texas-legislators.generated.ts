@@ -6920,7 +6920,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 107,
     party: "D",
-    website: "https://house.texas.gov/members/107",
+    website: "https://house.texas.gov/members/4485",
     imageUrl: "https://www.house.texas.gov/images/members/4485.jpg?v=3",
     officialCode: null,
     home: "18601 Lyndon B. Johnson Freeway Suite 509, Mesquite, TX 75150",
@@ -6963,7 +6963,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/107",
+          url: "https://house.texas.gov/members/4485",
         },
         {
           label: "Official member biography",
@@ -7054,7 +7054,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 109,
     party: "D",
-    website: "https://house.texas.gov/members/109",
+    website: "https://house.texas.gov/members/4465",
     imageUrl: "https://www.house.texas.gov/images/members/4465.jpg?v=1",
     officialCode: null,
     home: null,
@@ -7093,7 +7093,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/109",
+          url: "https://house.texas.gov/members/4465",
         },
         {
           label: "Official member biography",
